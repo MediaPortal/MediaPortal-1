@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
-
 using MediaPortal.Services;
 using MediaPortal.ServiceImplementations;
 using MediaPortal.TagReader;
@@ -42,10 +41,10 @@ namespace MediaPortal.Util
   /// </summary>
   public class FolderThumbCreator
   {
-    private char[] trimChars = { ' ', '\x00', '|' };
-    string _filename = string.Empty;
-    MusicTag _filetag = null;
-    Work work;
+    private char[] trimChars = {' ', '\x00', '|'};
+    private string _filename = string.Empty;
+    private MusicTag _filetag = null;
+    private Work work;
 
     // Filename is a full path+file
     public FolderThumbCreator(string Filename, MusicTag FileTag)
@@ -90,20 +89,23 @@ namespace MediaPortal.Util
               if (File.Exists(largeAlbumThumb))
               {
                 File.Copy(largeAlbumThumb, strRemoteFolderThumb, false);
-                File.SetAttributes(strRemoteFolderThumb, File.GetAttributes(strRemoteFolderThumb) | FileAttributes.Hidden);
+                File.SetAttributes(strRemoteFolderThumb,
+                                   File.GetAttributes(strRemoteFolderThumb) | FileAttributes.Hidden);
               }
               else
               {
                 File.Copy(albumThumb, strRemoteFolderThumb, false);
-                File.SetAttributes(strRemoteFolderThumb, File.GetAttributes(strRemoteFolderThumb) | FileAttributes.Hidden);
+                File.SetAttributes(strRemoteFolderThumb,
+                                   File.GetAttributes(strRemoteFolderThumb) | FileAttributes.Hidden);
               }
               Log.Info("GUIMusicFiles: Using album art for missing folder thumb {0}", strRemoteFolderThumb);
 
               // now we need to cache that new thumb, too
               if (File.Exists(strRemoteFolderThumb))
-              {                  
+              {
                 FolderThumbCacher cacheNow = new FolderThumbCacher(Path.GetDirectoryName(strRemoteFolderThumb), false);
-                File.SetAttributes(strRemoteFolderThumb, File.GetAttributes(strRemoteFolderThumb) | FileAttributes.Hidden);                
+                File.SetAttributes(strRemoteFolderThumb,
+                                   File.GetAttributes(strRemoteFolderThumb) | FileAttributes.Hidden);
               }
             }
           }
@@ -113,7 +115,6 @@ namespace MediaPortal.Util
           return;
         }
       }
-
     }
   }
 }

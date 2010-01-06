@@ -68,7 +68,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("textureFocus", "colorKey")] protected long _borderColorKeyTF = 0xFFFFFFFF;
     [XMLSkin("textureNoFocus", "border")] protected string _strBorderTNF = "";
     [XMLSkin("textureNoFocus", "position")] protected string _strBorderPositionTNF = "outside";
-    [XMLSkin("textureNoFocus", "textureRepeat")]protected bool _borderTextureRepeatTNF = false;
+    [XMLSkin("textureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatTNF = false;
     [XMLSkin("textureNoFocus", "textureRotate")] protected bool _borderTextureRotateTNF = false;
     [XMLSkin("textureNoFocus", "texture")] protected string _borderTextureFileNameTNF = "image_border.png";
     [XMLSkin("textureNoFocus", "colorKey")] protected long _borderColorKeyTNF = 0xFFFFFFFF;
@@ -79,9 +79,7 @@ namespace MediaPortal.GUI.Library
     protected GUILabelControl _labelControl = null;
     protected GUICheckMarkControl checkMark = null;
 
-    public GUICheckButton(int dwParentID) : base(dwParentID)
-    {
-    }
+    public GUICheckButton(int dwParentID) : base(dwParentID) {}
 
     /// <summary>
     /// The constructor of the GUICheckButton class.
@@ -129,14 +127,16 @@ namespace MediaPortal.GUI.Library
       _imageFocused.ParentControl = this;
       _imageFocused.Filtering = false;
       _imageFocused.DimColor = DimColor;
-      _imageFocused.SetBorder(_strBorderTF, _strBorderPositionTF, _borderTextureRepeatTF, _borderTextureRotateTF, _borderTextureFileNameTF, _borderColorKeyTF);
+      _imageFocused.SetBorder(_strBorderTF, _strBorderPositionTF, _borderTextureRepeatTF, _borderTextureRotateTF,
+                              _borderTextureFileNameTF, _borderColorKeyTF);
 
       _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
                                               _nonFocusedTextureName);
       _imageNonFocused.ParentControl = this;
       _imageNonFocused.Filtering = false;
       _imageNonFocused.DimColor = DimColor;
-      _imageNonFocused.SetBorder(_strBorderTNF, _strBorderPositionTNF, _borderTextureRepeatTNF, _borderTextureRotateTNF, _borderTextureFileNameTNF, _borderColorKeyTNF);
+      _imageNonFocused.SetBorder(_strBorderTNF, _strBorderPositionTNF, _borderTextureRepeatTNF, _borderTextureRotateTNF,
+                                 _borderTextureFileNameTNF, _borderColorKeyTNF);
       GUILocalizeStrings.LocalizeLabel(ref _label);
 
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
@@ -290,7 +290,7 @@ namespace MediaPortal.GUI.Library
       }
 
       _labelControl.SetPosition(x, y);
-        _labelControl.Render(timePassed);
+      _labelControl.Render(timePassed);
 
       x = 0;
       y = 0;
@@ -372,13 +372,13 @@ namespace MediaPortal.GUI.Library
           // If this links to another window go to the window.
           if (_hyperLinkWindowId >= 0)
           {
-            GUIWindowManager.ActivateWindow((int) _hyperLinkWindowId);
+            GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId);
             return;
           }
           // If this button corresponds to an action generate that action.
           if (ActionID >= 0)
           {
-            Action newaction = new Action((Action.ActionType) ActionID, 0, 0);
+            Action newaction = new Action((Action.ActionType)ActionID, 0, 0);
             GUIGraphicsContext.OnAction(newaction);
             return;
           }
@@ -393,7 +393,7 @@ namespace MediaPortal.GUI.Library
             {
               SelectedItem = 0;
             }
-            Label = (string) GetSubItem(SelectedItem);
+            Label = (string)GetSubItem(SelectedItem);
           }
         }
       }
@@ -452,7 +452,7 @@ namespace MediaPortal.GUI.Library
 
       if (SubItemCount > 0)
       {
-        Label = (string) GetSubItem(SelectedItem);
+        Label = (string)GetSubItem(SelectedItem);
       }
       _labelControl.Width = _width;
       _labelControl.Height = _height;
@@ -755,7 +755,7 @@ namespace MediaPortal.GUI.Library
           {
             _selectedItem = 0;
           }
-          Label = (string) GetSubItem(_selectedItem);
+          Label = (string)GetSubItem(_selectedItem);
         }
         else
         {

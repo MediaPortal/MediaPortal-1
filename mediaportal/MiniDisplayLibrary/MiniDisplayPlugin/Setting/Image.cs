@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Xml.Serialization;
@@ -45,7 +45,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
               if (System.IO.File.Exists(path))
               {
                 Log.Info("MiniDisplayPlugin.Setting.Image(): loading image file \"{0}\".", new object[] {this.File});
-                this.bitmap = (Bitmap) System.Drawing.Image.FromFile(path);
+                this.bitmap = (Bitmap)System.Drawing.Image.FromFile(path);
               }
             }
             return this.bitmap;
@@ -55,7 +55,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
             if (System.IO.File.Exists(this.fileName))
             {
               Log.Info("MiniDisplayPlugin.Setting.Image(): loading image filename \"{0}\".", new object[] {this.File});
-              this.bitmap = (Bitmap) System.Drawing.Image.FromFile(this.fileName);
+              this.bitmap = (Bitmap)System.Drawing.Image.FromFile(this.fileName);
             }
             else
             {
@@ -76,7 +76,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
       }
     }
 
-    [DefaultValue((string) null), XmlAttribute]
+    [DefaultValue((string)null), XmlAttribute]
     public string File
     {
       get
@@ -92,7 +92,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
       }
     }
 
-    [XmlElement("Property", typeof (Property)), XmlElement("Parse", typeof (Parse)), DefaultValue((string) null),
+    [XmlElement("Property", typeof (Property)), XmlElement("Parse", typeof (Parse)), DefaultValue((string)null),
      XmlElement("Text", typeof (Text))]
     public Value Value
     {

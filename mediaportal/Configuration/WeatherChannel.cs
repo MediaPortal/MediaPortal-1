@@ -54,9 +54,7 @@ namespace MediaPortal.Configuration
       }
     }
 
-    public WeatherChannel()
-    {
-    }
+    public WeatherChannel() {}
 
     public ArrayList SearchCity(string searchString)
     {
@@ -74,7 +72,7 @@ namespace MediaPortal.Configuration
           // wr.Proxy = WebProxy.GetDefaultProxy();
           request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception) {}
         WebResponse response = request.GetResponse();
 
         // Read data from the response stream
@@ -122,7 +120,7 @@ namespace MediaPortal.Configuration
             || ((charValue >= 65) && (charValue <= 90)) // A-Z
             || ((charValue >= 97) && (charValue <= 122))) // a-z
         {
-          strWtr.Write((char) charValue);
+          strWtr.Write((char)charValue);
         }
         else if (charValue == 32) // Space
         {

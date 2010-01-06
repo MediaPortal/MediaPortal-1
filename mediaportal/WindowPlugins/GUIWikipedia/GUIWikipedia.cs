@@ -67,7 +67,7 @@ namespace Wikipedia
 
     public GUIWikipedia()
     {
-      GetID = (int) Window.WINDOW_WIKIPEDIA;
+      GetID = (int)Window.WINDOW_WIKIPEDIA;
     }
 
     #region ISetupForm Members
@@ -169,7 +169,7 @@ namespace Wikipedia
       if (control == buttonSearch)
       {
         // If the search Button was clicked we need to bring up the search keyboard.
-        VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+        VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
         if (null == keyboard)
         {
           return;
@@ -197,7 +197,7 @@ namespace Wikipedia
           // Else display an error dialog.
         else
         {
-          GUIDialogOK dlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+          GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
           dlg.SetHeading(GUILocalizeStrings.Get(257)); // Error
           dlg.SetLine(1, GUILocalizeStrings.Get(2500)); // No searchterm entered!
           dlg.SetLine(2, string.Empty);
@@ -209,7 +209,7 @@ namespace Wikipedia
       if (control == buttonLocal)
       {
         // Create a new selection dialog.
-        GUIDialogMenu pDlgOK = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+        GUIDialogMenu pDlgOK = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
         if (pDlgOK != null)
         {
           pDlgOK.Reset();
@@ -239,7 +239,7 @@ namespace Wikipedia
         if (linkArray.Count > 0)
         {
           // Create a new selection dialog.
-          GUIDialogMenu pDlgOK = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+          GUIDialogMenu pDlgOK = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
           if (pDlgOK != null)
           {
             pDlgOK.Reset();
@@ -260,7 +260,7 @@ namespace Wikipedia
         }
         else
         {
-          GUIDialogOK dlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+          GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
           dlg.SetHeading(GUILocalizeStrings.Get(257)); // Error
           dlg.SetLine(1, GUILocalizeStrings.Get(2506)); // No Links from this article.
           dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -272,7 +272,7 @@ namespace Wikipedia
         if (imagedescArray.Count > 0)
         {
           // Create a new selection dialog.
-          GUIDialogMenu pDlgOK = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+          GUIDialogMenu pDlgOK = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
           if (pDlgOK != null)
           {
             pDlgOK.Reset();
@@ -294,7 +294,7 @@ namespace Wikipedia
         }
         else
         {
-          GUIDialogOK dlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+          GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
           dlg.SetHeading(GUILocalizeStrings.Get(257)); // Error
           dlg.SetLine(1, GUILocalizeStrings.Get(2508)); // No Images referenced in this article.
           dlg.DoModal(GUIWindowManager.ActiveWindow);
@@ -373,7 +373,7 @@ namespace Wikipedia
       }
       else
       {
-        GUIDialogOK dlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+        GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
         dlg.SetHeading(GUILocalizeStrings.Get(257)); // Error
         dlg.SetLine(1, GUILocalizeStrings.Get(2512)); // Can't display image.
         dlg.SetLine(2, GUILocalizeStrings.Get(2513)); // Please have a look at the logfile.
@@ -439,7 +439,7 @@ namespace Wikipedia
           if (articletext == "REDIRECT")
           {
             txtArticle.Label = GUILocalizeStrings.Get(2509) + "\n" + GUILocalizeStrings.Get(2510);
-              //This page is only a redirect. Please chose the redirect aim from the link list.
+            //This page is only a redirect. Please chose the redirect aim from the link list.
           }
           else if (articletext == string.Empty)
           {

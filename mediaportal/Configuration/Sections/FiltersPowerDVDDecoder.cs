@@ -56,9 +56,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public FiltersPowerDVDDecoder()
-      : this("PowerDVD Decoder")
-    {
-    }
+      : this("PowerDVD Decoder") {}
 
     /// <summary>
     /// 
@@ -338,9 +336,9 @@ namespace MediaPortal.Configuration.Sections
         {
           try
           {
-            regValue = (Int32) subkey.GetValue("AuDsInterface", 8);
-            regAuDsDnmx = (Int32) subkey.GetValue("AuDsDnmx", 2);
-            regAuDsChanExpand = (Int32) subkey.GetValue("AuDsChanExpand", -1);
+            regValue = (Int32)subkey.GetValue("AuDsInterface", 8);
+            regAuDsDnmx = (Int32)subkey.GetValue("AuDsDnmx", 2);
+            regAuDsChanExpand = (Int32)subkey.GetValue("AuDsChanExpand", -1);
             switch (regValue)
             {
                 // Headphones (comboBoxSpeakerConfig index 0)
@@ -563,9 +561,7 @@ namespace MediaPortal.Configuration.Sections
                 break;
             }
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
 
@@ -575,7 +571,7 @@ namespace MediaPortal.Configuration.Sections
         {
           try
           {
-            Int32 regUIUseHVA = (Int32) subkey.GetValue("UIUseHVA", 1);
+            Int32 regUIUseHVA = (Int32)subkey.GetValue("UIUseHVA", 1);
             if (regUIUseHVA == 1)
             {
               checkBoxUIUseHVA.Checked = true;
@@ -584,7 +580,7 @@ namespace MediaPortal.Configuration.Sections
             {
               checkBoxUIUseHVA.Checked = false;
             }
-            Int32 regUIVMode = (Int32) subkey.GetValue("UIVMode", 0);
+            Int32 regUIVMode = (Int32)subkey.GetValue("UIVMode", 0);
             if (regUIVMode == 1)
             {
               comboBoxDeInterlace.SelectedIndex = 0;
@@ -602,9 +598,7 @@ namespace MediaPortal.Configuration.Sections
               comboBoxDeInterlace.SelectedIndex = 0;
             }
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
 
@@ -614,7 +608,7 @@ namespace MediaPortal.Configuration.Sections
         {
           try
           {
-            Int32 regH264UIUseHVA = (Int32) subkey.GetValue("UIUseHVA", 1);
+            Int32 regH264UIUseHVA = (Int32)subkey.GetValue("UIUseHVA", 1);
             if (regH264UIUseHVA == 1)
             {
               checkBoxUIUseH264HVA.Checked = true;
@@ -623,7 +617,7 @@ namespace MediaPortal.Configuration.Sections
             {
               checkBoxUIUseH264HVA.Checked = false;
             }
-            Int32 regH264UIVMode = (Int32) subkey.GetValue("UIVMode", 0);
+            Int32 regH264UIVMode = (Int32)subkey.GetValue("UIVMode", 0);
             if (regH264UIVMode == 1)
             {
               comboBoxH264DeInterlace.SelectedIndex = 0;
@@ -641,9 +635,7 @@ namespace MediaPortal.Configuration.Sections
               comboBoxH264DeInterlace.SelectedIndex = 0;
             }
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
     }

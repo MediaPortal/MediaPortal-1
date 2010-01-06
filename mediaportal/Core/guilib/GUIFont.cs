@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
@@ -367,8 +367,10 @@ namespace MediaPortal.GUI.Library
                                long dwShadowColor)
     {
       // Draw the shadow
-      float fShadowX = (float)Math.Round((double)iShadowDistance * Math.Cos(ConvertDegreesToRadians((double)iShadowAngle)));
-      float fShadowY = (float)Math.Round((double)iShadowDistance * Math.Sin(ConvertDegreesToRadians((double)iShadowAngle)));
+      float fShadowX =
+        (float)Math.Round((double)iShadowDistance * Math.Cos(ConvertDegreesToRadians((double)iShadowAngle)));
+      float fShadowY =
+        (float)Math.Round((double)iShadowDistance * Math.Sin(ConvertDegreesToRadians((double)iShadowAngle)));
       DrawText(fOriginX + fShadowX, fOriginY + fShadowY, dwShadowColor, strText, alignment, -1);
 
       // Draw the text
@@ -376,16 +378,18 @@ namespace MediaPortal.GUI.Library
     }
 
     public void DrawShadowTextWidth(float fOriginX, float fOriginY, long dwColor,
-                               string strText,
-                               GUIControl.Alignment alignment,
-                               int iShadowAngle,
-                               int iShadowDistance,
-                               long dwShadowColor,
-                               float fMaxWidth)
+                                    string strText,
+                                    GUIControl.Alignment alignment,
+                                    int iShadowAngle,
+                                    int iShadowDistance,
+                                    long dwShadowColor,
+                                    float fMaxWidth)
     {
       // Draw the shadow
-      float fShadowX = (float)Math.Round((double)iShadowDistance * Math.Cos(ConvertDegreesToRadians((double)iShadowAngle)));
-      float fShadowY = (float)Math.Round((double)iShadowDistance * Math.Sin(ConvertDegreesToRadians((double)iShadowAngle)));
+      float fShadowX =
+        (float)Math.Round((double)iShadowDistance * Math.Cos(ConvertDegreesToRadians((double)iShadowAngle)));
+      float fShadowY =
+        (float)Math.Round((double)iShadowDistance * Math.Sin(ConvertDegreesToRadians((double)iShadowAngle)));
       DrawTextWidth(fOriginX + fShadowX, fOriginY + fShadowY, dwShadowColor, strText, fMaxWidth, alignment);
 
       // Draw the text
@@ -962,7 +966,7 @@ namespace MediaPortal.GUI.Library
       // Calculate the dimensions for the smallest power-of-two texture which
       // can hold all the printable characters
       _textureWidth = _textureHeight = 256;
-      for (; ; )
+      for (;;)
       {
         try
         {
@@ -997,7 +1001,7 @@ namespace MediaPortal.GUI.Library
         _textureScale = (float)d3dCaps.MaxTextureWidth / (float)_textureWidth;
         _textureWidth = _textureHeight = d3dCaps.MaxTextureWidth;
 
-        for (; ; )
+        for (;;)
         {
           // Create a new, smaller font
           _fontHeight = (int)Math.Floor(_fontHeight * _textureScale);
@@ -1029,7 +1033,7 @@ namespace MediaPortal.GUI.Library
       g.SmoothingMode = SmoothingMode.AntiAlias;
       g.TextRenderingHint = TextRenderingHint.AntiAlias;
       g.TextContrast = 0;
-      _textureCoords = new float[(10 + _EndCharacter - _StartCharacter), 4];
+      _textureCoords = new float[(10 + _EndCharacter - _StartCharacter),4];
       // Draw the alphabet
       PaintAlphabet(g, false);
       _textureCoords[_EndCharacter - _StartCharacter, 0] = _spacingPerChar;
@@ -1077,7 +1081,8 @@ namespace MediaPortal.GUI.Library
             _textureHeight = info.Height;
             _textureWidth = info.Width;
 
-            Log.Debug("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}", _fontName, _fontHeight,
+            Log.Debug("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}", _fontName,
+                      _fontHeight,
                       _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
           }
           catch (Exception)
@@ -1131,12 +1136,13 @@ namespace MediaPortal.GUI.Library
                 s = File.Open(strCache + ".bxml", FileMode.CreateNew, FileAccess.ReadWrite);
                 b.Serialize(s, (object)_textureCoords);
                 s.Close();
-                Log.Debug("Saving font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}", _fontName, _fontHeight,
+                Log.Debug("Saving font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}", _fontName,
+                          _fontHeight,
                           _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
               }
             }
           }
-          catch (Exception) { }
+          catch (Exception) {}
         }
 
 
@@ -1250,7 +1256,7 @@ namespace MediaPortal.GUI.Library
           try
           {
             if (c != ' ')
-            // We need the special case here because a space has a 0 width in GenericTypoGraphic stringformats
+              // We need the special case here because a space has a 0 width in GenericTypoGraphic stringformats
             {
               g.DrawString(str, _systemFont, Brushes.White, new Point((int)x, (int)y), StringFormat.GenericTypographic);
             }

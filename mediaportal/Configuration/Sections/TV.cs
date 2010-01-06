@@ -50,9 +50,7 @@ namespace MediaPortal.Configuration.Sections
     public int pluginVersion;
 
     public TV()
-      : this("TV")
-    {
-    }
+      : this("TV") {}
 
     public TV(string name)
       : base(name)
@@ -109,8 +107,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.byIndexCheckBox);
       this.groupBox3.Controls.Add(this.showChannelNumberCheckBox);
       this.groupBox3.Controls.Add(this.channelNumberMaxLengthNumUpDn);
@@ -149,24 +149,30 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.channelNumberMaxLengthNumUpDn.AutoSize = true;
       this.channelNumberMaxLengthNumUpDn.Location = new System.Drawing.Point(178, 66);
-      this.channelNumberMaxLengthNumUpDn.Maximum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-      this.channelNumberMaxLengthNumUpDn.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+      this.channelNumberMaxLengthNumUpDn.Maximum = new decimal(new int[]
+                                                                 {
+                                                                   5,
+                                                                   0,
+                                                                   0,
+                                                                   0
+                                                                 });
+      this.channelNumberMaxLengthNumUpDn.Minimum = new decimal(new int[]
+                                                                 {
+                                                                   1,
+                                                                   0,
+                                                                   0,
+                                                                   0
+                                                                 });
       this.channelNumberMaxLengthNumUpDn.Name = "channelNumberMaxLengthNumUpDn";
       this.channelNumberMaxLengthNumUpDn.Size = new System.Drawing.Size(42, 20);
       this.channelNumberMaxLengthNumUpDn.TabIndex = 3;
-      this.channelNumberMaxLengthNumUpDn.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
+      this.channelNumberMaxLengthNumUpDn.Value = new decimal(new int[]
+                                                               {
+                                                                 3,
+                                                                 0,
+                                                                 0,
+                                                                 0
+                                                               });
       // 
       // lblChanNumMaxLen
       // 
@@ -179,8 +185,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox5
       // 
-      this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox5.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox5.Controls.Add(this.cbAutoFullscreen);
       this.groupBox5.Controls.Add(this.cbTurnOnTv);
       this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -224,15 +232,19 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbDeinterlace
       // 
-      this.cbDeinterlace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbDeinterlace.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cbDeinterlace.BorderColor = System.Drawing.Color.Empty;
       this.cbDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbDeinterlace.Items.AddRange(new object[] {
-            "None",
-            "Bob",
-            "Weave",
-            "Best"});
+      this.cbDeinterlace.Items.AddRange(new object[]
+                                          {
+                                            "None",
+                                            "Bob",
+                                            "Weave",
+                                            "Best"
+                                          });
       this.cbDeinterlace.Location = new System.Drawing.Point(166, 19);
       this.cbDeinterlace.Name = "cbDeinterlace";
       this.cbDeinterlace.Size = new System.Drawing.Size(288, 21);
@@ -264,7 +276,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox5.PerformLayout();
       this.mpGroupBoxAdditional.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
 
     #endregion

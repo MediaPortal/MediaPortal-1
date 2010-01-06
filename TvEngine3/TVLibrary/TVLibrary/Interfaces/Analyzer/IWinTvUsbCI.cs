@@ -31,6 +31,7 @@ namespace TvLibrary.Interfaces.Analyzer
   public class WinTv_CI_Wrapper
   {
     #region Callback definitions
+
     ///<summary>
     /// APDU_Callback
     ///</summary>
@@ -39,6 +40,7 @@ namespace TvLibrary.Interfaces.Analyzer
     ///<param name="SizeOfAPDU">APDU data size</param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     public delegate Int32 APDU_Callback([Out] IBaseFilter pUSBCIFilter, [Out] IntPtr APDU, [Out] long SizeOfAPDU);
+
     /// <summary>
     /// Status callback
     /// </summary>
@@ -47,6 +49,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     public delegate Int32 Status_Callback([Out] IBaseFilter pUSBCIFilter, [Out] long Status);
+
     /// <summary>
     /// Cam Info callback
     /// </summary>
@@ -57,7 +60,10 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="Info">Info</param>
     /// <returns></returns>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public delegate Int32 CamInfo_Callback([Out] IntPtr Context, [Out] byte appType, [Out] ushort appManuf, [Out] ushort manufCode, [Out, MarshalAs(UnmanagedType.LPStr)] StringBuilder Info);
+    public delegate Int32 CamInfo_Callback(
+      [Out] IntPtr Context, [Out] byte appType, [Out] ushort appManuf, [Out] ushort manufCode,
+      [Out, MarshalAs(UnmanagedType.LPStr)] StringBuilder Info);
+
     /// <summary>
     /// Close MMI Callback
     /// </summary>
@@ -65,9 +71,11 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     public delegate Int32 CloseMMI_Callback([Out] IBaseFilter pUSBCIFilter);
+
     #endregion
 
     #region Public functions
+
     /// <summary>
     /// WinTV CI init
     /// </summary>
@@ -78,7 +86,9 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="onCloseMMI">Close MMI Callback</param>
     /// <returns></returns>
     [DllImport("hcwWinTVCI.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern Int32 WinTVCI_Init(IBaseFilter pUSBCIFilter, Status_Callback onStatus, CamInfo_Callback onCamInfo, APDU_Callback onAPDU, CloseMMI_Callback onCloseMMI);
+    public static extern Int32 WinTVCI_Init(IBaseFilter pUSBCIFilter, Status_Callback onStatus,
+                                            CamInfo_Callback onCamInfo, APDU_Callback onAPDU,
+                                            CloseMMI_Callback onCloseMMI);
 
     /// <summary>
     /// WinTV CI Send pmt
@@ -88,7 +98,8 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="lLength">Length of the pmt</param>
     /// <returns></returns>
     [DllImport("hcwWinTVCI.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern Int32 WinTVCI_SendPMT(IBaseFilter pUSBCIFilter, [In, MarshalAs(UnmanagedType.LPArray)]  byte[] pPMT, int lLength);
+    public static extern Int32 WinTVCI_SendPMT(IBaseFilter pUSBCIFilter,
+                                               [In, MarshalAs(UnmanagedType.LPArray)] byte[] pPMT, int lLength);
 
     /// <summary>
     /// WinTV CI 
@@ -98,7 +109,8 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="lLength">Length of the apdu data</param>
     /// <returns></returns>
     [DllImport("hcwWinTVCI.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern Int32 WinTVCI_SendAPDU(IBaseFilter pUSBCIFilter, [In, MarshalAs(UnmanagedType.LPArray)]  byte[] pAPDU, int lLength);
+    public static extern Int32 WinTVCI_SendAPDU(IBaseFilter pUSBCIFilter,
+                                                [In, MarshalAs(UnmanagedType.LPArray)] byte[] pAPDU, int lLength);
 
     /// <summary>
     /// WinTV CI open the mmi
@@ -123,6 +135,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [DllImport("hcwWinTVCI.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern Int32 WinTVCI_Shutdown(IBaseFilter pUSBCIFilter);
+
     #endregion
   }
 }

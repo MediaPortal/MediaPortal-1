@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
@@ -29,7 +29,7 @@ namespace TvLibrary.Interfaces
   public enum CiMenuState
   {
     /// menu is closed
-    Closed    = 0,
+    Closed = 0,
     /// opened
     Opened = 1,
     /// ready
@@ -56,10 +56,10 @@ namespace TvLibrary.Interfaces
     /// <param name="nNumChoices">number of choices</param>
     /// <returns></returns>
     int OnCiMenu(
-      string  lpszTitle,
-      string  lpszSubTitle,
-      string  lpszBottom,
-      int     nNumChoices);
+      string lpszTitle,
+      string lpszSubTitle,
+      string lpszBottom,
+      int nNumChoices);
 
     /// <summary>
     /// Callback for each menu entry
@@ -68,8 +68,8 @@ namespace TvLibrary.Interfaces
     /// <param name="lpszText">choice text</param>
     /// <returns></returns>
     int OnCiMenuChoice(
-      int     nChoice,
-      string  lpszText);
+      int nChoice,
+      string lpszText);
 
     /// <summary>
     /// Callback on closing display
@@ -77,7 +77,7 @@ namespace TvLibrary.Interfaces
     /// <param name="nDelay">delay in seconds</param>
     /// <returns></returns>
     int OnCiCloseDisplay(
-      int     nDelay);
+      int nDelay);
 
     /// <summary>
     /// Callback on requesting user input (PIN,...)
@@ -87,8 +87,8 @@ namespace TvLibrary.Interfaces
     /// <param name="lpszText">request text</param>
     /// <returns></returns>
     int OnCiRequest(
-      bool    bBlind,
-      uint    nAnswerLength,
-      string  lpszText);
-  };
+      bool bBlind,
+      uint nAnswerLength,
+      string lpszText);
+  } ;
 }

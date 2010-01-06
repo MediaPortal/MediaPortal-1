@@ -28,7 +28,5 @@ namespace MediaPortal.UserInterface.Controls
   /// <summary>
   /// Summary description for MPTextBox.
   /// </summary>
-  public class MPTextBox : System.Windows.Forms.TextBox
-  {
-  }
+  public class MPTextBox : System.Windows.Forms.TextBox {}
 }

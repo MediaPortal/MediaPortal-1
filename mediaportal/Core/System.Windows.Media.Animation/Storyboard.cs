@@ -36,9 +36,7 @@ namespace System.Windows.Media.Animation
                                                            typeof (Storyboard));
     }
 
-    public Storyboard()
-    {
-    }
+    public Storyboard() {}
 
     #endregion Constructors
 
@@ -46,12 +44,12 @@ namespace System.Windows.Media.Animation
 
     public static string GetTargetName(DependencyObject d)
     {
-      return (string) d.GetValue(TargetNameProperty);
+      return (string)d.GetValue(TargetNameProperty);
     }
 
     public static string GetTargetProperty(DependencyObject d)
     {
-      return (string) d.GetValue(TargetPropertyProperty);
+      return (string)d.GetValue(TargetPropertyProperty);
     }
 
     public static void SetTargetName(DependencyObject d, string name)
@@ -70,13 +68,13 @@ namespace System.Windows.Media.Animation
 
     public string TargetName
     {
-      get { return (string) GetValue(TargetNameProperty); }
+      get { return (string)GetValue(TargetNameProperty); }
       set { SetValue(TargetNameProperty, value); }
     }
 
     public string TargetProperty
     {
-      get { return (string) GetValue(TargetPropertyProperty); }
+      get { return (string)GetValue(TargetPropertyProperty); }
       set { SetValue(TargetPropertyProperty, value); }
     }
 

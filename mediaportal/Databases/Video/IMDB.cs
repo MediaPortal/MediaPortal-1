@@ -151,7 +151,7 @@ namespace MediaPortal.Video.Database
           {
             return null;
           }
-          return (IMDBUrl) t.elements[position];
+          return (IMDBUrl)t.elements[position];
         }
       }
 
@@ -218,7 +218,7 @@ namespace MediaPortal.Video.Database
         {
           Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
           AsmHelper script = new AsmHelper(CSScript.Load(scriptFileName, null, false));
-          this.Grabber = (IIMDBScriptGrabber) script.CreateObject("Grabber");
+          this.Grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
         }
         catch (Exception ex)
         {
@@ -246,9 +246,7 @@ namespace MediaPortal.Video.Database
     #region ctor
 
     public IMDB()
-      : this(null)
-    {
-    }
+      : this(null) {}
 
     public IMDB(IProgress progress)
     {
@@ -313,7 +311,7 @@ namespace MediaPortal.Video.Database
 
     public IMDBUrl this[int index]
     {
-      get { return (IMDBUrl) elements[index]; }
+      get { return (IMDBUrl)elements[index]; }
     }
 
     public IMDBEnumerator GetEnumerator() // non-IEnumerable version
@@ -325,7 +323,7 @@ namespace MediaPortal.Video.Database
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return (IEnumerator) new IMDBEnumerator(this);
+      return (IEnumerator)new IMDBEnumerator(this);
     }
 
     #endregion
@@ -353,7 +351,7 @@ namespace MediaPortal.Video.Database
           // wr.Proxy = WebProxy.GetDefaultProxy();
           req.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception) {}
         result = req.GetResponse();
         ReceiveStream = result.GetResponseStream();
 
@@ -376,9 +374,7 @@ namespace MediaPortal.Video.Database
           {
             sr.Close();
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
         if (ReceiveStream != null)
         {
@@ -386,9 +382,7 @@ namespace MediaPortal.Video.Database
           {
             ReceiveStream.Close();
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
         if (result != null)
         {
@@ -396,9 +390,7 @@ namespace MediaPortal.Video.Database
           {
             result.Close();
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
       return strBody;
@@ -606,7 +598,7 @@ namespace MediaPortal.Video.Database
           try
           {
             db.Grabber.FindFilm(strSearch, db.Limit, elements);
-            percent += 100/databaseList.Count;
+            percent += 100 / databaseList.Count;
             if (m_progress != null)
             {
               m_progress.OnProgress(line1, line2, line3, percent);

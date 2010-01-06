@@ -33,10 +33,12 @@ namespace TvLibrary.Implementations.Analog
   public class AnalogSubChannel : BaseSubChannel, ITvSubChannel, IAnalogTeletextCallBack, IAnalogVideoAudioObserver
   {
     #region variables
+
     private readonly TvCardAnalog _card;
     private readonly TvAudio _tvAudio;
     private readonly IBaseFilter _mpFileWriter;
     private readonly IMPRecord _mpRecord;
+
     #endregion
 
     #region ctor
@@ -44,7 +46,8 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Initializes a new instance of the <see cref="AnalogSubChannel"/> class.
     /// </summary>
-    internal AnalogSubChannel(TvCardAnalog card, int subchnnelId, TvAudio tvAudio, bool hasTeletext, IBaseFilter mpFileWriter)
+    internal AnalogSubChannel(TvCardAnalog card, int subchnnelId, TvAudio tvAudio, bool hasTeletext,
+                              IBaseFilter mpFileWriter)
     {
       _card = card;
       _hasTeletext = hasTeletext;
@@ -54,6 +57,7 @@ namespace TvLibrary.Implementations.Analog
       _mpRecord.AddChannel(ref _subChannelId);
       _subChannelId = subchnnelId;
     }
+
     #endregion
 
     #region tuning and graph methods
@@ -132,12 +136,12 @@ namespace TvLibrary.Implementations.Analog
     /// should be called when graph has been stopped
     /// Resets the graph state
     /// </summary>
-    public override void OnGraphStopped()
-    {
-    }
+    public override void OnGraphStopped() {}
+
     #endregion
 
     #region Timeshifting - Recording methods
+
     /// <summary>
     /// sets the filename used for timeshifting
     /// </summary>
@@ -153,7 +157,8 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog:SetTimeShiftFileName: uses .ts");
       ScanParameters parameters = _card.Parameters;
       _mpRecord.SetVideoAudioObserver(_subChannelId, this);
-      _mpRecord.SetTimeShiftParams(_subChannelId, parameters.MinimumFiles, parameters.MaximumFiles, parameters.MaximumFileSize);
+      _mpRecord.SetTimeShiftParams(_subChannelId, parameters.MinimumFiles, parameters.MaximumFiles,
+                                   parameters.MaximumFileSize);
       _mpRecord.SetTimeShiftFileName(_subChannelId, fileName);
       _mpRecord.StartTimeShifting(_subChannelId);
       _dateTimeShiftStarted = DateTime.Now;
@@ -201,28 +206,28 @@ namespace TvLibrary.Implementations.Analog
         _card.Quality.StartPlayback();
       }
     }
+
     /// <summary>
     /// Returns the position in the current timeshift file and the id of the current timeshift file
     /// </summary>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    protected override void OnGetTimeShiftFilePosition(ref Int64 position,ref long bufferId)
+    protected override void OnGetTimeShiftFilePosition(ref Int64 position, ref long bufferId)
     {
       position = -1;
       bufferId = -1;
     }
+
     #endregion
 
     #region audio streams
+
     /// <summary>
     /// returns the list of available audio streams
     /// </summary>
     public override List<IAudioStream> AvailableAudioStreams
     {
-      get
-      {
-        return _tvAudio.GetAvailableAudioStreams();
-      }
+      get { return _tvAudio.GetAvailableAudioStreams(); }
     }
 
     /// <summary>
@@ -230,28 +235,21 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override IAudioStream CurrentAudioStream
     {
-      get
-      {
-        return _tvAudio.CurrentAudioStream;
-      }
-      set
-      {
-        _tvAudio.CurrentAudioStream = value;
-      }
+      get { return _tvAudio.CurrentAudioStream; }
+      set { _tvAudio.CurrentAudioStream = value; }
     }
+
     #endregion
 
     #region video stream
+
     /// <summary>
     /// Returns true when unscrambled audio/video is received otherwise false
     /// </summary>
     /// <returns>true of false</returns>
     public override bool IsReceivingAudioVideo
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
 
     /// <summary>
@@ -260,14 +258,13 @@ namespace TvLibrary.Implementations.Analog
     /// <value>The number of channels decrypting.</value>
     public override int GetCurrentVideoStream
     {
-      get
-      {
-        return 2;
-      }
+      get { return 2; }
     }
+
     #endregion
 
     #region teletext
+
     /// <summary>
     /// A derrived class should activate or deactivate the teletext grabbing on the tv card.
     /// </summary>
@@ -290,9 +287,11 @@ namespace TvLibrary.Implementations.Analog
         _mpRecord.TTxSetCallback(_subChannelId, null);
       }
     }
+
     #endregion
 
     #region OnDecompose
+
     /// <summary>
     /// Decomposes this subchannel
     /// </summary>
@@ -303,9 +302,7 @@ namespace TvLibrary.Implementations.Analog
         _mpRecord.DeleteChannel(_subChannelId);
       }
     }
+
     #endregion
-
-
   }
 }
-

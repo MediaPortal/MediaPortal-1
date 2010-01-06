@@ -74,9 +74,7 @@ namespace Pabo.MozBar
       CharSet = CharSet.Unicode)]
     private static extern int DllGetVersion(ref DLLVERSIONINFO s);
 
-    public ThemeManager()
-    {
-    }
+    public ThemeManager() {}
 
     public bool _IsAppThemed()
     {
@@ -109,9 +107,7 @@ namespace Pabo.MozBar
       {
         CloseThemeData(hwnd);
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
 
     public IntPtr _OpenThemeData(IntPtr hwnd, string classes)

@@ -41,8 +41,6 @@ namespace TvEngine.PowerScheduler
     /// Create a new instance of this exception.
     /// </summary>
     /// <param name="sReason">Some text to describe the error condition.</param>
-    public TimerException(string sReason) : base(sReason)
-    {
-    }
+    public TimerException(string sReason) : base(sReason) {}
   }
 }

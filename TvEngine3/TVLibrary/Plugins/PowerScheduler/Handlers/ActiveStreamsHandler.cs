@@ -1,4 +1,5 @@
 #region Copyright (C) 2007-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2007-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,14 +20,17 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 using TvControl;
 using TvEngine.PowerScheduler.Interfaces;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Handlers
@@ -37,28 +41,34 @@ namespace TvEngine.PowerScheduler.Handlers
   public class ActiveStreamsHandler : IStandbyHandler
   {
     #region Variables
-    IController _controller;
+
+    private IController _controller;
+
     #endregion
 
     #region Constructor
+
     public ActiveStreamsHandler(IController controller)
     {
       _controller = controller;
     }
+
     #endregion
 
     #region IStandbyHandler implementation
+
     public bool DisAllowShutdown
     {
       get { return (_controller.ActiveStreams > 0); }
     }
-    public void UserShutdownNow()
-    {
-    }
+
+    public void UserShutdownNow() {}
+
     public string HandlerName
     {
       get { return "ActiveStreamsHandler"; }
     }
+
     #endregion
   }
 }

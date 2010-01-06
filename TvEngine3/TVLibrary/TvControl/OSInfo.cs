@@ -16,8 +16,7 @@ namespace OSInfo
       public int dwMinorVersion;
       public int dwBuildNumber;
       public int dwPlatformId;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-      public string szCSDVersion;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string szCSDVersion;
       public short wServicePackMajor;
       public short wServicePackMinor;
       public short wSuiteMask;
@@ -29,6 +28,7 @@ namespace OSInfo
     private static extern bool GetVersionEx(ref OSVERSIONINFOEX osVersionInfo);
 
     #region Private Constants
+
     private const int VER_NT_WORKSTATION = 1;
     private const int VER_NT_DOMAIN_CONTROLLER = 2;
     private const int VER_NT_SERVER = 3;
@@ -40,9 +40,11 @@ namespace OSInfo
     private const int VER_SUITE_PERSONAL = 512;
     private const int VER_SUITE_BLADE = 1024;
     private const int VER_SUITE_WH_SERVER = 32768;
+
     #endregion
 
     #region Operating System enum
+
     /// <summary>
     /// List of all operating systems
     /// </summary>
@@ -77,9 +79,11 @@ namespace OSInfo
       ///</summary>
       Windows2008
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Returns the product type of the operating system running on this computer.
     /// </summary>
@@ -87,7 +91,7 @@ namespace OSInfo
     public static string GetOSProductType()
     {
       OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
       if (!GetVersionEx(ref osVersionInfo)) return string.Empty;
 
       switch (OSMajorVersion)
@@ -206,7 +210,7 @@ namespace OSInfo
     public static string GetOSServicePack()
     {
       OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
       return !GetVersionEx(ref osVersionInfo) ? string.Empty : osVersionInfo.szCSDVersion;
     }
 
@@ -348,18 +352,17 @@ namespace OSInfo
           return 0;
       }
     }
+
     #endregion
 
     #region Public Properties
+
     /// <summary>
     /// Gets the full version of the operating system running on this computer.
     /// </summary>
     public static string OSVersion
     {
-      get
-      {
-        return Environment.OSVersion.Version.ToString();
-      }
+      get { return Environment.OSVersion.Version.ToString(); }
     }
 
     /// <summary>
@@ -367,10 +370,7 @@ namespace OSInfo
     /// </summary>
     public static int OSMajorVersion
     {
-      get
-      {
-        return Environment.OSVersion.Version.Major;
-      }
+      get { return Environment.OSVersion.Version.Major; }
     }
 
     /// <summary>
@@ -378,10 +378,7 @@ namespace OSInfo
     /// </summary>
     public static int OSMinorVersion
     {
-      get
-      {
-        return Environment.OSVersion.Version.Minor;
-      }
+      get { return Environment.OSVersion.Version.Minor; }
     }
 
     /// <summary>
@@ -389,10 +386,7 @@ namespace OSInfo
     /// </summary>
     public static int OSBuildVersion
     {
-      get
-      {
-        return Environment.OSVersion.Version.Build;
-      }
+      get { return Environment.OSVersion.Version.Build; }
     }
 
     /// <summary>
@@ -400,10 +394,7 @@ namespace OSInfo
     /// </summary>
     public static int OSRevisionVersion
     {
-      get
-      {
-        return Environment.OSVersion.Version.Revision;
-      }
+      get { return Environment.OSVersion.Version.Revision; }
     }
 
     /// <summary>
@@ -414,7 +405,7 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
         if (!GetVersionEx(ref osVersionInfo)) return -1;
         return osVersionInfo.wServicePackMajor;
       }
@@ -428,7 +419,7 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
         if (!GetVersionEx(ref osVersionInfo)) return -1;
         return osVersionInfo.wServicePackMinor;
       }
@@ -442,11 +433,12 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
         if (!GetVersionEx(ref osVersionInfo)) return 0x0;
         return osVersionInfo.wProductType;
       }
     }
+
     #endregion
   }
 }

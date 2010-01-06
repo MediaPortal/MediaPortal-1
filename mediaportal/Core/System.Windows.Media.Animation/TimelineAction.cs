@@ -27,9 +27,7 @@ namespace System.Windows.Media.Animation
 {
   public class TimelineAction : TriggerAction
   {
-    public TimelineAction()
-    {
-    }
+    public TimelineAction() {}
 
     #region Properties
 

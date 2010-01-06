@@ -93,9 +93,7 @@ namespace MediaPortal.InputDevices
 
     #endregion
 
-    public IrTrans()
-    {
-    }
+    public IrTrans() {}
 
     /// <summary>
     /// Read Port number of IRTrans Server and Remote Key file as specified on Configuration
@@ -233,19 +231,19 @@ namespace MediaPortal.InputDevices
     {
       try
       {
-        CSocketPacket theSockId = (CSocketPacket) asyn.AsyncState;
+        CSocketPacket theSockId = (CSocketPacket)asyn.AsyncState;
         //Do an end receive first
         int bytesReceived = 0;
         bytesReceived = theSockId.thisSocket.EndReceive(asyn);
         // Map the received data to the structure
         IntPtr ptrReceive = Marshal.AllocHGlobal(bytesReceived);
         Marshal.Copy(theSockId.receiveBuffer, 0, ptrReceive, bytesReceived);
-        NETWORKRECV netrecv = (NETWORKRECV) Marshal.PtrToStructure(ptrReceive, typeof (NETWORKRECV));
+        NETWORKRECV netrecv = (NETWORKRECV)Marshal.PtrToStructure(ptrReceive, typeof (NETWORKRECV));
         if (logVerbose)
         {
           Log.Info("IRTrans: Command Start --------------------------------------------");
           Log.Info("IRTrans: Client       = {0}", netrecv.clientid);
-          Log.Info("IRTrans: Status       = {0}", (IrTransStatus) netrecv.statustype);
+          Log.Info("IRTrans: Status       = {0}", (IrTransStatus)netrecv.statustype);
           Log.Info("IRTrans: Remote       = {0}", netrecv.remote);
           Log.Info("IRTrans: Command Num. = {0}", netrecv.command_num.ToString());
           Log.Info("IRTrans: Command      = {0}", netrecv.command);
@@ -254,7 +252,7 @@ namespace MediaPortal.InputDevices
         }
 
         // Do an action only on Receive and if the command came from the selected Remote
-        if ((IrTransStatus) netrecv.statustype == IrTransStatus.STATUS_RECEIVE)
+        if ((IrTransStatus)netrecv.statustype == IrTransStatus.STATUS_RECEIVE)
         {
           if (netrecv.remote.Trim() == remoteModel)
           {
@@ -288,9 +286,7 @@ namespace MediaPortal.InputDevices
         Marshal.FreeHGlobal(ptrReceive);
         WaitForData();
       }
-      catch (ObjectDisposedException)
-      {
-      }
+      catch (ObjectDisposedException) {}
       catch (SocketException se)
       {
         if (logVerbose)

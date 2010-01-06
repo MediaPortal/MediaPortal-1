@@ -136,9 +136,7 @@ namespace System.Windows.Controls
       #endregion HozitonalContentAlignment
     }
 
-    public Control()
-    {
-    }
+    public Control() {}
 
     #endregion Constructors
 
@@ -184,33 +182,19 @@ namespace System.Windows.Controls
       return base.MeasureOverride(availableSize);
     }
 
-    protected virtual void OnMouseDoubleClick(MouseButtonEventArgs e)
-    {
-    }
+    protected virtual void OnMouseDoubleClick(MouseButtonEventArgs e) {}
 
-    protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
-    {
-    }
+    protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e) {}
 
-    protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
-    {
-    }
+    protected override void OnMouseRightButtonDown(MouseButtonEventArgs e) {}
 
-    protected virtual void OnPreviewMouseDoubleClick(MouseButtonEventArgs e)
-    {
-    }
+    protected virtual void OnPreviewMouseDoubleClick(MouseButtonEventArgs e) {}
 
-    protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
-    {
-    }
+    protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e) {}
 
-    protected override void OnPreviewMouseRightButtonDown(MouseButtonEventArgs e)
-    {
-    }
+    protected override void OnPreviewMouseRightButtonDown(MouseButtonEventArgs e) {}
 
-    protected virtual void OnTemplateChanged(ControlTemplate oldTemplate, ControlTemplate newTemplate)
-    {
-    }
+    protected virtual void OnTemplateChanged(ControlTemplate oldTemplate, ControlTemplate newTemplate) {}
 
     public override string ToString()
     {
@@ -224,41 +208,41 @@ namespace System.Windows.Controls
     [Bindable(true)]
     public HorizontalAlignment HorizontalContentAlignment
     {
-      get { return (HorizontalAlignment) GetValue(HorizontalContentAlignmentProperty); }
+      get { return (HorizontalAlignment)GetValue(HorizontalContentAlignmentProperty); }
       set { SetValue(HorizontalContentAlignmentProperty, value); }
     }
 
     [Bindable(true)]
     public Thickness Padding
     {
-      get { return (Thickness) GetValue(PaddingProperty); }
+      get { return (Thickness)GetValue(PaddingProperty); }
       set { SetValue(PaddingProperty, value); }
     }
 
     [Bindable(true)]
     public bool IsTabStop
     {
-      get { return (bool) GetValue(IsTabStopProperty); }
+      get { return (bool)GetValue(IsTabStopProperty); }
       set { SetValue(IsTabStopProperty, value); }
     }
 
     [Bindable(true)]
     public int TabIndex
     {
-      get { return (int) GetValue(TabIndexProperty); }
+      get { return (int)GetValue(TabIndexProperty); }
       set { SetValue(TabIndexProperty, value); }
     }
 
     public ControlTemplate Template
     {
-      get { return (ControlTemplate) GetValue(TemplateProperty); }
+      get { return (ControlTemplate)GetValue(TemplateProperty); }
       set { SetValue(TemplateProperty, value); }
     }
 
     [Bindable(true)]
     public VerticalAlignment VerticalContentAlignment
     {
-      get { return (VerticalAlignment) GetValue(VerticalContentAlignmentProperty); }
+      get { return (VerticalAlignment)GetValue(VerticalContentAlignmentProperty); }
       set { SetValue(VerticalContentAlignmentProperty, value); }
     }
 

@@ -31,30 +31,36 @@ namespace TvLibrary.Implementations.Hybrid
   public class HybridCard : ITVCard
   {
     #region variables
+
     /// <summary>
     /// Hybrid card group
     /// </summary>
     private readonly HybridCardGroup _group;
+
     /// <summary>
     /// Internal card
     /// </summary>
     private readonly ITVCard _internalCard;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="HybridCard"/> class.
     /// </summary>
     /// <param name="group">The corresponding group for this card wrapper</param>
     /// <param name="internalCard">The internal card for this wrapper</param>
-    public HybridCard(HybridCardGroup group,ITVCard internalCard)
+    public HybridCard(HybridCardGroup group, ITVCard internalCard)
     {
       _group = group;
       _internalCard = internalCard;
     }
+
     #endregion
 
     #region methods
+
     /// <summary>
     /// Checks if the active card is the one with given id
     /// </summary>
@@ -66,24 +72,19 @@ namespace TvLibrary.Implementations.Hybrid
     {
       return _group.IsCardIdActive(idCard);
     }
+
     #endregion
 
     #region properties
 
     /// <summary>
-		/// returns true if card is currently present
-		/// </summary>
-		public bool CardPresent
-		{
-			get
-			{
-        return _internalCard.CardPresent;
-			}
-			set
-			{
-        _internalCard.CardPresent = value;
-			}
-		}
+    /// returns true if card is currently present
+    /// </summary>
+    public bool CardPresent
+    {
+      get { return _internalCard.CardPresent; }
+      set { _internalCard.CardPresent = value; }
+    }
 
     /// <summary>
     /// Does the card have a CA module.
@@ -91,10 +92,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value>The number of channels decrypting.</value>
     public bool HasCA
     {
-      get
-      {
-        return _internalCard.HasCA;
-      }
+      get { return _internalCard.HasCA; }
     }
 
     /// <summary>
@@ -103,10 +101,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value>The number of channels decrypting.</value>
     public int NumberOfChannelsDecrypting
     {
-      get
-      {
-        return _internalCard.NumberOfChannelsDecrypting;
-      }
+      get { return _internalCard.NumberOfChannelsDecrypting; }
     }
 
     /// <summary>
@@ -115,15 +110,10 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value>The parameters.</value>
     public ScanParameters Parameters
     {
-      get
-      {
-        return _group.Parameters;
-      }
-      set
-      {
-        _group.Parameters = value;
-      }
+      get { return _group.Parameters; }
+      set { _group.Parameters = value; }
     }
+
     #endregion
 
     #region ITVCard Members
@@ -134,10 +124,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value><c>true</c> if card supports sub channels; otherwise, <c>false</c>.</value>
     public bool SupportsSubChannels
     {
-      get
-      {
-        return _internalCard.SupportsSubChannels;
-      }
+      get { return _internalCard.SupportsSubChannels; }
     }
 
     /// <summary>
@@ -145,13 +132,8 @@ namespace TvLibrary.Implementations.Hybrid
     /// </summary>
     public bool IsHybrid
     {
-      get
-      {
-        return false;
-      }
-      set
-      {
-      }
+      get { return false; }
+      set { }
     }
 
     /// <summary>
@@ -160,14 +142,8 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value></value>
     public string Name
     {
-      get
-      {
-        return _internalCard.Name;
-      }
-      set
-      {
-        _internalCard.Name = value;
-      }
+      get { return _internalCard.Name; }
+      set { _internalCard.Name = value; }
     }
 
     /// <summary>
@@ -176,10 +152,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value></value>
     public string DevicePath
     {
-      get
-      {
-        return _internalCard.DevicePath;
-      }
+      get { return _internalCard.DevicePath; }
     }
 
 
@@ -210,14 +183,8 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value></value>
     public bool IsEpgGrabbing
     {
-      get
-      {
-        return _internalCard.IsEpgGrabbing;
-      }
-      set
-      {
-        _group.IsEpgGrabbing = value;
-      }
+      get { return _internalCard.IsEpgGrabbing; }
+      set { _group.IsEpgGrabbing = value; }
     }
 
     /// <summary>
@@ -226,14 +193,8 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value></value>
     public bool IsScanning
     {
-      get
-      {
-        return _internalCard.IsScanning;
-      }
-      set
-      {
-        _group.IsScanning = value;
-      }
+      get { return _internalCard.IsScanning; }
+      set { _group.IsScanning = value; }
     }
 
     /// <summary>
@@ -242,10 +203,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value></value>
     public int MinChannel
     {
-      get
-      {
-        return _internalCard.MinChannel;
-      }
+      get { return _internalCard.MinChannel; }
     }
 
     /// <summary>
@@ -254,10 +212,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value>The max channel.</value>
     public int MaxChannel
     {
-      get
-      {
-        return _internalCard.MaxChannel;
-      }
+      get { return _internalCard.MaxChannel; }
     }
 
     /// <summary>
@@ -266,14 +221,8 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value>The type of the cam.</value>
     public CamType CamType
     {
-      get
-      {
-        return _internalCard.CamType;
-      }
-      set
-      {
-        _internalCard.CamType = value;
-      }
+      get { return _internalCard.CamType; }
+      set { _internalCard.CamType = value; }
     }
 
     /// <summary>
@@ -282,10 +231,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value></value>
     public CardType CardType
     {
-      get
-      {
-        return _internalCard.CardType;
-      }
+      get { return _internalCard.CardType; }
     }
 
     /// <summary>
@@ -294,12 +240,9 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value>Theinterface for controlling the diseqc motor.</value>
     public IDiSEqCMotor DiSEqCMotor
     {
-      get
-      {
-        return _internalCard.DiSEqCMotor;
-      }
+      get { return _internalCard.DiSEqCMotor; }
     }
-    
+
     /// <summary>
     /// Starts scanning for linkage info
     /// </summary>
@@ -307,7 +250,7 @@ namespace TvLibrary.Implementations.Hybrid
     {
       _group.StartLinkageScanner(callback);
     }
-    
+
     /// <summary>
     /// Stops/Resets the linkage scanner
     /// </summary>
@@ -315,16 +258,13 @@ namespace TvLibrary.Implementations.Hybrid
     {
       _group.ResetLinkageScanner();
     }
-    
+
     /// <summary>
     /// Returns the channel linkages grabbed
     /// </summary>
     public List<PortalChannel> ChannelLinkages
     {
-      get
-      {
-        return _group.ChannelLinkages;
-      }
+      get { return _group.ChannelLinkages; }
     }
 
     /// <summary>
@@ -335,7 +275,7 @@ namespace TvLibrary.Implementations.Hybrid
     {
       _group.GrabEpg(callback);
     }
-    
+
     /// <summary>
     /// Start grabbing the epg while timeshifting
     /// </summary>
@@ -358,10 +298,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value>The epg.</value>
     public List<EpgChannel> Epg
     {
-      get
-      {
-        return _group.Epg;
-      }
+      get { return _group.Epg; }
     }
 
     /// <summary>
@@ -370,10 +307,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value></value>
     public ITVScanning ScanningInterface
     {
-      get
-      {
-        return _internalCard.ScanningInterface;
-      }
+      get { return _internalCard.ScanningInterface; }
     }
 
     /// <summary>
@@ -393,14 +327,8 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value></value>
     public IQuality Quality
     {
-      get
-      {
-        return _internalCard.Quality;
-      }
-      set
-      {
-        _internalCard.Quality = value;
-      }
+      get { return _internalCard.Quality; }
+      set { _internalCard.Quality = value; }
     }
 
     /// <summary>
@@ -409,10 +337,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value></value>
     public bool SupportsQualityControl
     {
-      get
-      {
-        return _group.SupportsQualityControl;
-      }
+      get { return _group.SupportsQualityControl; }
     }
 
     /// <summary>
@@ -422,10 +347,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value></value>
     public bool IsTunerLocked
     {
-      get
-      {
-        return _internalCard.IsTunerLocked;
-      }
+      get { return _internalCard.IsTunerLocked; }
     }
 
     /// <summary>
@@ -434,10 +356,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value></value>
     public int SignalQuality
     {
-      get
-      {
-        return _group.SignalQuality;
-      }
+      get { return _group.SignalQuality; }
     }
 
     /// <summary>
@@ -446,10 +365,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value></value>
     public int SignalLevel
     {
-      get
-      {
-        return _group.SignalLevel;
-      }
+      get { return _group.SignalLevel; }
     }
 
     /// <summary>
@@ -466,14 +382,8 @@ namespace TvLibrary.Implementations.Hybrid
     /// <value>The context.</value>
     public object Context
     {
-      get
-      {
-        return _group.Context;
-      }
-      set
-      {
-        _group.Context = value;
-      }
+      get { return _group.Context; }
+      set { _group.Context = value; }
     }
 
     /// <summary>
@@ -483,7 +393,7 @@ namespace TvLibrary.Implementations.Hybrid
     {
       _internalCard.Dispose();
     }
-    
+
     /// <summary>
     /// Gets the sub channel.
     /// </summary>
@@ -493,19 +403,16 @@ namespace TvLibrary.Implementations.Hybrid
     {
       return _group.GetSubChannel(id);
     }
-    
+
     /// <summary>
     /// Gets the sub channels.
     /// </summary>
     /// <value>The sub channels.</value>
     public ITvSubChannel[] SubChannels
     {
-      get
-      {
-        return _group.SubChannels;
-      }
+      get { return _group.SubChannels; }
     }
-   
+
     /// <summary>
     /// Frees the sub channel.
     /// </summary>

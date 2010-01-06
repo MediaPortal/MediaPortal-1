@@ -31,7 +31,8 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class ATSCScanning : DvbBaseScanning, ITVScanning, IDisposable
   {
-    readonly TvCardATSC _card;
+    private readonly TvCardATSC _card;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ATSCScanning"/> class.
     /// </summary>
@@ -49,10 +50,7 @@ namespace TvLibrary.Implementations.DVB
     /// <value></value>
     public ITVCard TvCard
     {
-      get
-      {
-        return _card;
-      }
+      get { return _card; }
     }
 
     /// <summary>
@@ -71,6 +69,7 @@ namespace TvLibrary.Implementations.DVB
     {
       _card.ResetSignalUpdate();
     }
+
     /// <summary>
     /// Creates the new channel.
     /// </summary>
@@ -88,7 +87,11 @@ namespace TvLibrary.Implementations.DVB
       atscChannel.PhysicalChannel = tuningChannel.PhysicalChannel;
       atscChannel.MajorChannel = info.majorChannel;
       atscChannel.MinorChannel = info.minorChannel;
-      atscChannel.IsTv = (info.serviceType == (int)ServiceType.Video || info.serviceType == (int)ServiceType.Mpeg2HDStream || info.serviceType == (int)ServiceType.H264Stream || info.serviceType == (int)ServiceType.AdvancedCodecHDVideoStream || info.serviceType == (int)ServiceType.Mpeg4OrH264Stream);
+      atscChannel.IsTv = (info.serviceType == (int)ServiceType.Video ||
+                          info.serviceType == (int)ServiceType.Mpeg2HDStream ||
+                          info.serviceType == (int)ServiceType.H264Stream ||
+                          info.serviceType == (int)ServiceType.AdvancedCodecHDVideoStream ||
+                          info.serviceType == (int)ServiceType.Mpeg4OrH264Stream);
       atscChannel.IsRadio = (info.serviceType == (int)ServiceType.Audio);
       atscChannel.NetworkId = info.networkID;
       atscChannel.ServiceId = info.serviceID;

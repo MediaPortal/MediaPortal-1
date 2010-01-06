@@ -32,9 +32,7 @@ namespace MediaPortal.Configuration.Sections
     private string[] JumpToOptions = new string[] {"Now Playing", "Playlist", "Don't jump (stay at current window)"};
 
     public MusicMisc()
-      : this("Music Miscellaneous")
-    {
-    }
+      : this("Music Miscellaneous") {}
 
     public MusicMisc(string name) : base(name)
     {

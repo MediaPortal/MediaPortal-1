@@ -59,16 +59,12 @@ using System;
 namespace Rss
 {
   /// <summary>Class does not exist on the .NET Compact Framework</summary>
-  internal class Serializable : Attribute
-  {
-  }
+  internal class Serializable : Attribute {}
 
   /// <summary>Class does not exist on the .NET Compact Framework</summary>
   internal class SecurityPermissionAttribute : Attribute
   {
-    public SecurityPermissionAttribute(SecurityAction securityAction)
-    {
-    }
+    public SecurityPermissionAttribute(SecurityAction securityAction) {}
 
 //		public bool Execution;
   }

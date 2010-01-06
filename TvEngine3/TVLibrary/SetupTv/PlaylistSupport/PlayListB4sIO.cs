@@ -77,7 +77,8 @@ namespace MediaPortal.Playlists
           playlist.Add(newItem);
         }
         return true;
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         return false;
       }
@@ -143,7 +144,6 @@ namespace MediaPortal.Playlists
           writer.WriteEndElement();
         }
       }
-
     }
   }
 }

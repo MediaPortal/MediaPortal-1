@@ -1,30 +1,30 @@
-ï»¿using System.Reflection;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
-// Allgemeine Informationen Ã¼ber eine Assembly werden Ã¼ber die folgenden 
-// Attribute gesteuert. Ã„ndern Sie diese Attributwerte, um die Informationen zu Ã¤ndern,
-// die mit einer Assembly verknÃ¼pft sind.
+// Allgemeine Informationen über eine Assembly werden über die folgenden 
+// Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
+// die mit einer Assembly verknüpft sind.
 
 [assembly: AssemblyTitle("MPInstaller.Library")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Team MediaPortal")]
 [assembly: AssemblyProduct("MediaPortal")]
-[assembly: AssemblyCopyright("Copyright Â© 2005-2010 Team MediaPortal")]
+[assembly: AssemblyCopyright("Copyright © 2005-2010 Team MediaPortal")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Durch Festlegen von ComVisible auf "false" werden die Typen in dieser Assembly unsichtbar 
-// fÃ¼r COM-Komponenten. Wenn Sie auf einen Typ in dieser Assembly von 
-// COM zugreifen mÃ¼ssen, legen Sie das ComVisible-Attribut fÃ¼r diesen Typ auf "true" fest.
+// für COM-Komponenten. Wenn Sie auf einen Typ in dieser Assembly von 
+// COM zugreifen müssen, legen Sie das ComVisible-Attribut für diesen Typ auf "true" fest.
 
 [assembly: ComVisible(false)]
 
-// Die folgende GUID bestimmt die ID der Typbibliothek, wenn dieses Projekt fÃ¼r COM verfÃ¼gbar gemacht wird
+// Die folgende GUID bestimmt die ID der Typbibliothek, wenn dieses Projekt für COM verfügbar gemacht wird
 
 [assembly: Guid("c47993da-1f0f-48e5-82d6-1ec4fe295314")]
 
-// Versionsinformationen fÃ¼r eine Assembly bestehen aus den folgenden vier Werten:
+// Versionsinformationen für eine Assembly bestehen aus den folgenden vier Werten:
 //
 //      Hauptversion
 //      Nebenversion 

@@ -63,9 +63,7 @@ namespace MediaPortal
           owner.Restore();
           return true;
         }
-        catch
-        {
-        } // return false;
+        catch {} // return false;
       }
 
       return false;

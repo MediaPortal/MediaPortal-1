@@ -37,20 +37,23 @@ namespace MediaPortal.Visualization
   public class SoniqueViz : VisualizationBase
   {
     #region Variables
-    IntPtr dataPtr = IntPtr.Zero;
-    IntPtr fftPtr = IntPtr.Zero;
+
+    private IntPtr dataPtr = IntPtr.Zero;
+    private IntPtr fftPtr = IntPtr.Zero;
     private bool firstRun = true;
     private BASS_VIS_EXEC visExec;
+
     #endregion
 
     #region Constructors/Destructors
+
     public SoniqueViz(VisualizationInfo vizPluginInfo, VisualizationWindow vizCtrl)
-      : base(vizPluginInfo, vizCtrl)
-    {
-    }
+      : base(vizPluginInfo, vizCtrl) {}
+
     #endregion
 
     #region IVisualisation Implementation
+
     public override bool Initialize()
     {
       try
@@ -114,9 +117,7 @@ namespace MediaPortal.Visualization
         BassVis.BASS_VIS_SONIQUERenderToDC(BASSVISPlugin.BASSVISKIND_SONIQUE, (IntPtr)_visParam.VisHandle, stream, hdc);
       }
 
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       return 1;
     }
@@ -189,8 +190,7 @@ namespace MediaPortal.Visualization
         {
           BassVis.BASS_VIS_Free(_visParam);
         }
-        catch (AccessViolationException)
-        { }
+        catch (AccessViolationException) {}
 
         _visParam.VisHandle = 0;
       }
@@ -207,11 +207,11 @@ namespace MediaPortal.Visualization
         visExec.Top = VisualizationWindow.Top;
         BassVis.BASS_VIS_ExecutePlugin(visExec, _visParam);
       }
-      catch (Exception)
-      { }
+      catch (Exception) {}
       firstRun = false;
       return _visParam.VisHandle != 0;
     }
+
     #endregion
   }
 }

@@ -56,9 +56,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public FiltersDScalerVideo()
-      : this("DScaler Video Decoder")
-    {
-    }
+      : this("DScaler Video Decoder") {}
 
     /// <summary>
     /// 
@@ -330,7 +328,7 @@ namespace MediaPortal.Configuration.Sections
         {
           try
           {
-            Int32 regValue = (Int32) subkey.GetValue("3:2 playback smoothing");
+            Int32 regValue = (Int32)subkey.GetValue("3:2 playback smoothing");
             if (regValue == 1)
             {
               cbSmoothing.Checked = true;
@@ -340,7 +338,7 @@ namespace MediaPortal.Configuration.Sections
               cbSmoothing.Checked = false;
             }
 
-            regValue = (Int32) subkey.GetValue("Display Forced Subtitles");
+            regValue = (Int32)subkey.GetValue("Display Forced Subtitles");
             if (regValue == 1)
             {
               cbForcedSubtitles.Checked = true;
@@ -350,7 +348,7 @@ namespace MediaPortal.Configuration.Sections
               cbForcedSubtitles.Checked = false;
             }
 
-            regValue = (Int32) subkey.GetValue("Use accurate aspect ratios");
+            regValue = (Int32)subkey.GetValue("Use accurate aspect ratios");
             if (regValue == 1)
             {
               cbAspectRatio.Checked = true;
@@ -360,7 +358,7 @@ namespace MediaPortal.Configuration.Sections
               cbAspectRatio.Checked = false;
             }
 
-            regValue = (Int32) subkey.GetValue("Hardcode for PAL with ffdshow");
+            regValue = (Int32)subkey.GetValue("Hardcode for PAL with ffdshow");
             if (regValue == 1)
             {
               cbHardcodePal.Checked = true;
@@ -370,7 +368,7 @@ namespace MediaPortal.Configuration.Sections
               cbHardcodePal.Checked = false;
             }
 
-            regValue = (Int32) subkey.GetValue("Do Analog Blanking");
+            regValue = (Int32)subkey.GetValue("Do Analog Blanking");
             if (regValue == 1)
             {
               cbAnalogBlanking.Checked = true;
@@ -380,24 +378,22 @@ namespace MediaPortal.Configuration.Sections
               cbAnalogBlanking.Checked = false;
             }
 
-            regValue = (Int32) subkey.GetValue("Video Delay");
+            regValue = (Int32)subkey.GetValue("Video Delay");
             tbVideoOffset.Text = regValue.ToString();
 
-            regValue = (Int32) subkey.GetValue("Deinterlace Mode");
+            regValue = (Int32)subkey.GetValue("Deinterlace Mode");
             cbDeinterlace.SelectedIndex = regValue;
 
-            regValue = (Int32) subkey.GetValue("DVB Aspect Preferences");
+            regValue = (Int32)subkey.GetValue("DVB Aspect Preferences");
             cbDVBAR.SelectedIndex = regValue;
 
-            regValue = (Int32) subkey.GetValue("IDCT to Use");
+            regValue = (Int32)subkey.GetValue("IDCT to Use");
             cbIDCT.SelectedIndex = regValue;
 
-            regValue = (Int32) subkey.GetValue("Colour space to output");
+            regValue = (Int32)subkey.GetValue("Colour space to output");
             cbColorSpace.SelectedIndex = regValue;
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
     }
@@ -459,16 +455,16 @@ namespace MediaPortal.Configuration.Sections
           }
           subkey.SetValue("Do Analog Blanking", regValue);
 
-          regValue = (Int32) Int32.Parse(tbVideoOffset.Text);
+          regValue = (Int32)Int32.Parse(tbVideoOffset.Text);
           subkey.SetValue("Video Delay", regValue);
 
-          subkey.SetValue("Deinterlace Mode", (Int32) cbDeinterlace.SelectedIndex);
+          subkey.SetValue("Deinterlace Mode", (Int32)cbDeinterlace.SelectedIndex);
 
-          subkey.SetValue("DVB Aspect Preferences", (Int32) cbDVBAR.SelectedIndex);
+          subkey.SetValue("DVB Aspect Preferences", (Int32)cbDVBAR.SelectedIndex);
 
-          subkey.SetValue("IDCT to Use", (Int32) cbIDCT.SelectedIndex);
+          subkey.SetValue("IDCT to Use", (Int32)cbIDCT.SelectedIndex);
 
-          subkey.SetValue("Colour space to output", (Int32) cbColorSpace.SelectedIndex);
+          subkey.SetValue("Colour space to output", (Int32)cbColorSpace.SelectedIndex);
         }
       }
     }

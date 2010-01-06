@@ -30,18 +30,14 @@ using MediaPortal.UserInterface.Controls;
 
 namespace SetupTv.Sections
 {
-
-
   public partial class TvEpgGrabber : SectionSettings
   {
-
-    bool _loaded;
+    private bool _loaded;
 
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
+
     public TvEpgGrabber()
-      : this("TV Epg grabber")
-    {
-    }
+      : this("TV Epg grabber") {}
 
     public TvEpgGrabber(string name)
       : base(name)
@@ -52,7 +48,7 @@ namespace SetupTv.Sections
       mpListView1.ListViewItemSorter = lvwColumnSorter;
     }
 
-    void LoadLanguages()
+    private void LoadLanguages()
     {
       _loaded = true;
       mpListView2.BeginUpdate();
@@ -67,7 +63,7 @@ namespace SetupTv.Sections
       string values = "";
       for (int j = 0; j < list.Count; j++)
       {
-        ListViewItem item = new ListViewItem(new string[] { list[j], codes[j] });
+        ListViewItem item = new ListViewItem(new string[] {list[j], codes[j]});
         mpListView2.Items.Add(item);
         item.Tag = codes[j];
         if (setting.Value == "")
@@ -92,8 +88,8 @@ namespace SetupTv.Sections
         setting.Persist();
         //DatabaseManager.Instance.SaveChanges();
       }
-
     }
+
     public override void OnSectionDeActivated()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -120,7 +116,7 @@ namespace SetupTv.Sections
       base.OnSectionActivated();
       mpListView1.Items.Clear();
 
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
       IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
@@ -163,7 +159,9 @@ namespace SetupTv.Sections
               case CardType.Atsc:
                 atsc = true;
                 break;
-              case CardType.DvbIP: dvbip = true; break;
+              case CardType.DvbIP:
+                dvbip = true;
+                break;
             }
           }
         }
@@ -204,7 +202,6 @@ namespace SetupTv.Sections
         item.SubItems.Add(line);
         item.Checked = ch.GrabEpg;
         item.Tag = ch;
-
       }
       mpListView1.EndUpdate();
     }
@@ -269,7 +266,6 @@ namespace SetupTv.Sections
           string code = (string)mpListView2.Items[i].Tag;
           setting.Value += code;
           setting.Value += ",";
-
         }
       }
       setting.Persist();
@@ -302,7 +298,8 @@ namespace SetupTv.Sections
       for (int i = 0; i < mpListView1.Items.Count; ++i)
       {
         Channel ch = (Channel)mpListView1.Items[i].Tag;
-        mpListView1.Items[i].Checked = (ch.ReferringGroupMap().Count > 1); // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
+        mpListView1.Items[i].Checked = (ch.ReferringGroupMap().Count > 1);
+          // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
       }
       mpListView1.EndUpdate();
     }
@@ -312,7 +309,9 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+        lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending
+                                  ? SortOrder.Descending
+                                  : SortOrder.Ascending;
       }
       else
       {
@@ -324,9 +323,5 @@ namespace SetupTv.Sections
       // Perform the sort with these new sort options.
       mpListView1.Sort();
     }
-
-
-
-
   }
 }

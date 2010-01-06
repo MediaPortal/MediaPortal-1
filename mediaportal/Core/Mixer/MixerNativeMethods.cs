@@ -32,9 +32,7 @@ namespace MediaPortal.Mixer
   {
     #region Constructors
 
-    private MixerNativeMethods()
-    {
-    }
+    private MixerNativeMethods() {}
 
     #endregion Constructors
 

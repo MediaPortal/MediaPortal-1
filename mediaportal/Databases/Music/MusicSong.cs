@@ -34,9 +34,7 @@ namespace MediaPortal.Music.Database
     private string m_strSongName;
     private int m_iDuration;
 
-    public MusicSong()
-    {
-    }
+    public MusicSong() {}
 
     public int Track
     {

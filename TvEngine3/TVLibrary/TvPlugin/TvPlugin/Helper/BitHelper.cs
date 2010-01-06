@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
@@ -36,10 +36,14 @@ namespace TvPlugin
   public class BitHelper<T>
   {
     private Int32 _value = 0;
+
     /// <summary>
     /// Returns values
     /// </summary>
-    public Int32 Value { get { return _value; } }
+    public Int32 Value
+    {
+      get { return _value; }
+    }
 
     /// <summary>
     /// ctor
@@ -94,6 +98,7 @@ namespace TvPlugin
     {
       return !IsSet(val);
     }
+
     /// <summary>
     /// Checks if all flags are set
     /// </summary>

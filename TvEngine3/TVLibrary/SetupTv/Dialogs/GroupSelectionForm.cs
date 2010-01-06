@@ -29,8 +29,8 @@ namespace SetupTv.Sections
 {
   public partial class GroupSelectionForm : Form
   {
-    string _preselectedGroupName = string.Empty;
-    List<object> _groups = new List<object>();
+    private string _preselectedGroupName = string.Empty;
+    private List<object> _groups = new List<object>();
 
     private SelectionType _SelectionType = SelectionType.ForDeleting;
 
@@ -40,7 +40,7 @@ namespace SetupTv.Sections
       ForRenaming
     }
 
-    public SelectionType Selection 
+    public SelectionType Selection
     {
       get { return _SelectionType; }
       set { _SelectionType = value; }
@@ -86,22 +86,22 @@ namespace SetupTv.Sections
 
     private void LoadGroups(Type groupType)
     {
-      if (groupType == typeof(ChannelGroup))
+      if (groupType == typeof (ChannelGroup))
       {
         IList<ChannelGroup> tmp = ChannelGroup.ListAll();
         foreach (ChannelGroup group in tmp)
         {
           bool isFixedGroupName = (
-                group.GroupName == TvConstants.TvGroupNames.AllChannels ||
-                (
-                  _SelectionType == SelectionType.ForRenaming && 
-                  (
-                    group.GroupName == TvConstants.TvGroupNames.Analog ||
-                    group.GroupName == TvConstants.TvGroupNames.DVBC ||
-                    group.GroupName == TvConstants.TvGroupNames.DVBS ||
-                    group.GroupName == TvConstants.TvGroupNames.DVBT)
-                  )
-                );
+                                    group.GroupName == TvConstants.TvGroupNames.AllChannels ||
+                                    (
+                                      _SelectionType == SelectionType.ForRenaming &&
+                                      (
+                                        group.GroupName == TvConstants.TvGroupNames.Analog ||
+                                        group.GroupName == TvConstants.TvGroupNames.DVBC ||
+                                        group.GroupName == TvConstants.TvGroupNames.DVBS ||
+                                        group.GroupName == TvConstants.TvGroupNames.DVBT)
+                                    )
+                                  );
 
           if (!isFixedGroupName)
           {
@@ -109,22 +109,22 @@ namespace SetupTv.Sections
           }
         }
       }
-      else if (groupType == typeof(RadioChannelGroup))
+      else if (groupType == typeof (RadioChannelGroup))
       {
         IList<RadioChannelGroup> tmp = RadioChannelGroup.ListAll();
         foreach (RadioChannelGroup group in tmp)
         {
           bool isFixedGroupName = (
-                group.GroupName == TvConstants.RadioGroupNames.AllChannels ||
-                (
-                  _SelectionType == SelectionType.ForRenaming &&
-                  (
-                    group.GroupName == TvConstants.RadioGroupNames.Analog ||
-                    group.GroupName == TvConstants.RadioGroupNames.DVBC ||
-                    group.GroupName == TvConstants.RadioGroupNames.DVBS ||
-                    group.GroupName == TvConstants.RadioGroupNames.DVBT)
-                  )
-                );
+                                    group.GroupName == TvConstants.RadioGroupNames.AllChannels ||
+                                    (
+                                      _SelectionType == SelectionType.ForRenaming &&
+                                      (
+                                        group.GroupName == TvConstants.RadioGroupNames.Analog ||
+                                        group.GroupName == TvConstants.RadioGroupNames.DVBC ||
+                                        group.GroupName == TvConstants.RadioGroupNames.DVBS ||
+                                        group.GroupName == TvConstants.RadioGroupNames.DVBT)
+                                    )
+                                  );
 
           if (!isFixedGroupName)
           {
@@ -141,7 +141,9 @@ namespace SetupTv.Sections
       {
         foreach (object group in _groups)
         {
-          string name = group.GetType().InvokeMember("GroupName", System.Reflection.BindingFlags.GetProperty, null, group, null).ToString();
+          string name =
+            group.GetType().InvokeMember("GroupName", System.Reflection.BindingFlags.GetProperty, null, group, null).
+              ToString();
 
           listBox1.Items.Add(name);
 

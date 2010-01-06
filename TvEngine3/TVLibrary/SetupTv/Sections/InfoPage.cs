@@ -32,7 +32,7 @@ namespace SetupTv.Sections
   public partial class InfoPage : SectionSettings
   {
     public InfoPage()
-      : this("InfoPage") { }
+      : this("InfoPage") {}
 
     public InfoPage(string name)
       : base(name)
@@ -42,14 +42,8 @@ namespace SetupTv.Sections
 
     public string InfoText
     {
-      get
-      {
-        return lblInfoText.Text;
-      }
-      set
-      {
-        lblInfoText.Text = value;
-      }
+      get { return lblInfoText.Text; }
+      set { lblInfoText.Text = value; }
     }
   }
 }

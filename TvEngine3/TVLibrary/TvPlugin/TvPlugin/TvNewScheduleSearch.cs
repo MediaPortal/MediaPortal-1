@@ -61,12 +61,10 @@ namespace TvPlugin
     public TvNewScheduleSearch()
     {
       Log.Info("newsearch ctor");
-      GetID = (int) Window.WINDOW_TV_SEARCH;
+      GetID = (int)Window.WINDOW_TV_SEARCH;
     }
 
-    ~TvNewScheduleSearch()
-    {
-    }
+    ~TvNewScheduleSearch() {}
 
     public override bool IsTv
     {
@@ -87,7 +85,7 @@ namespace TvPlugin
       if (LastActionTime + 100 > Environment.TickCount && action == LastAction)
       {
         return;
-          // don't do anything if the keypress is comes to soon after the previos one and the action is the same as before.
+        // don't do anything if the keypress is comes to soon after the previos one and the action is the same as before.
       }
 
       switch (action.wID)
@@ -114,7 +112,7 @@ namespace TvPlugin
         if (GetFocusControlId() != smsInputControl.GetID)
         {
           // set focus to the default control then
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, (int) smsInputControl.GetID,
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, (int)smsInputControl.GetID,
                                           0, 0, null);
           OnMessage(msg);
         }
@@ -160,7 +158,7 @@ namespace TvPlugin
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, listResults.GetID, 0, 0,
                                         null);
         OnMessage(msg);
-        int iItem = (int) msg.Param1;
+        int iItem = (int)msg.Param1;
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
         {
           OnClick(iItem);
@@ -188,7 +186,7 @@ namespace TvPlugin
       TVProgramInfo.CurrentProgram = item.TVTag as Program;
       if (TVProgramInfo.CurrentProgram != null)
       {
-        GUIWindowManager.ActivateWindow((int) Window.WINDOW_TV_PROGRAM_INFO);
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_PROGRAM_INFO);
       }
       return;
     }

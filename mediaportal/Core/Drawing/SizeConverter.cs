@@ -47,7 +47,7 @@ namespace MediaPortal.Drawing
     {
       if (value is string)
       {
-        string[] param = ((string) value).Split(',');
+        string[] param = ((string)value).Split(',');
 
         if (param.Length == 1)
         {

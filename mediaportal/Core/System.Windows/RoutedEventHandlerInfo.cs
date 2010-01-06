@@ -45,7 +45,7 @@ namespace System.Windows
     {
       if (other is RoutedEventHandlerInfo)
       {
-        return this.Equals((RoutedEventHandlerInfo) other);
+        return this.Equals((RoutedEventHandlerInfo)other);
       }
 
       return false;

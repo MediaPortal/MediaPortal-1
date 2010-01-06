@@ -28,7 +28,6 @@ namespace TvLibrary.Teletext
   ///</summary>
   public class TeletextPageRenderer
   {
-
     #region constructors
 
     ///<summary>
@@ -42,33 +41,38 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region constants
-    const int MAX_ROWS = 50;
+
+    private const int MAX_ROWS = 50;
+
     #endregion
 
     #region variables
+
     //regional stuff
-    readonly bool _isRegionalDK;
+    private readonly bool _isRegionalDK;
 
-    Bitmap _pageBitmap;
-    Graphics _renderGraphics;
-    Font _fontTeletext;
+    private Bitmap _pageBitmap;
+    private Graphics _renderGraphics;
+    private Font _fontTeletext;
 
-    bool _hiddenMode = true;
-    bool _transparentMode;
-    bool _fullscreenMode;
+    private bool _hiddenMode = true;
+    private bool _transparentMode;
+    private bool _fullscreenMode;
 
-    string _selectedPageText = "";
+    private string _selectedPageText = "";
 
-    int _pageRenderWidth = 1920;
-    int _pageRenderHeight = 1080;
-    int _percentageOfMaximumHeight = 80;
+    private int _pageRenderWidth = 1920;
+    private int _pageRenderHeight = 1080;
+    private int _percentageOfMaximumHeight = 80;
+
     #endregion
 
     #region enums
+
     /// <summary>
     /// Enumeration of all availabel colors in teletext
     /// </summary>
-    enum TextColors
+    private enum TextColors
     {
       Black,
       Red,
@@ -216,40 +220,65 @@ namespace TvLibrary.Teletext
       /// </summary>
       ReleaseMosaic
     }
+
     #endregion
 
     #region character and other tables for multi-language support. Referring the bits C12-C14 in the header
 
-    readonly char[,] m_charTableA = new char[,]{{ '#', '\u016F' },{ '£', '$' }, 
-	{ '#', 'õ' },{ 'é', 'ï' }, { '#', '$' }, { '£', '$' },{ '#', '$' },
-	{ '#', '\u0149' },{ 'ç', '$' }, { '#', '¤' },{ '#', 'Ë' }, { '#', '¤' },{ '£', '\u011F' }
-	};
+    private readonly char[,] m_charTableA = new char[,]
+                                              {
+                                                {'#', '\u016F'}, {'£', '$'},
+                                                {'#', 'õ'}, {'é', 'ï'}, {'#', '$'}, {'£', '$'}, {'#', '$'},
+                                                {'#', '\u0149'}, {'ç', '$'}, {'#', '¤'}, {'#', 'Ë'}, {'#', '¤'},
+                                                {'£', '\u011F'}
+                                              };
 
-    readonly char[] m_charTableB = new char[] { '\u010D', '@', '\u0160', 'à', '§', 'é', '\u0160', '\u0105', '¡', '\u0162', '\u010C', 'É', '\u0130' };
+    private readonly char[] m_charTableB = new char[]
+                                             {
+                                               '\u010D', '@', '\u0160', 'à', '§', 'é', '\u0160', '\u0105', '¡', '\u0162',
+                                               '\u010C', 'É', '\u0130'
+                                             };
 
-    readonly char[,] m_charTableC = new char[,]{{ '\u0165', '\u017E', 'ý', 'í', '\u0159', 'é' },{'\u2190', '½','\u2192','\u2191', '#', '\u0336' },
-	{ 'Ä', 'Ö', '\u017D', 'Ü', 'Õ', '\u0161' },{ 'ë', 'ê', 'ù', 'î', '#', 'è' },
-	{ 'Ä', 'Ö', 'Ü', '^', '_', '°' },{ '°', 'ç','\u2192','\u2191', '#', 'ù' },
-	{ 'é', '\u0229', '\u017D', '\u010D', '\u016B', '\u0161' },{ '\u01B5', '\u015A', '\u0141', '\u0107', 'ó', '\u0119' },
-	{ 'á', 'é', 'í', 'ó', 'ú', '¿' },{ 'Â', '\u015E', '\u01CD', 'Î', '\u0131', '\u0163' },
-	{ '\u0106', '\u017D', '\u0110', '\u0160', 'ë', '\u010D' },
-    { 'Ä', 'Ö', 'Å', 'Ü', '_', 'é' },
-	{ '\u015E', 'Ö', 'Ç', 'Ü', '\u01E6', '\u0131' },
-    { 'Æ', 'Ø', 'Å', 'Ü', '_', 'é' }
-    };
+    private readonly char[,] m_charTableC = new char[,]
+                                              {
+                                                {'\u0165', '\u017E', 'ý', 'í', '\u0159', 'é'},
+                                                {'\u2190', '½', '\u2192', '\u2191', '#', '\u0336'},
+                                                {'Ä', 'Ö', '\u017D', 'Ü', 'Õ', '\u0161'}, {'ë', 'ê', 'ù', 'î', '#', 'è'}
+                                                ,
+                                                {'Ä', 'Ö', 'Ü', '^', '_', '°'}, {'°', 'ç', '\u2192', '\u2191', '#', 'ù'}
+                                                ,
+                                                {'é', '\u0229', '\u017D', '\u010D', '\u016B', '\u0161'},
+                                                {'\u01B5', '\u015A', '\u0141', '\u0107', 'ó', '\u0119'},
+                                                {'á', 'é', 'í', 'ó', 'ú', '¿'},
+                                                {'Â', '\u015E', '\u01CD', 'Î', '\u0131', '\u0163'},
+                                                {'\u0106', '\u017D', '\u0110', '\u0160', 'ë', '\u010D'},
+                                                {'Ä', 'Ö', 'Å', 'Ü', '_', 'é'},
+                                                {'\u015E', 'Ö', 'Ç', 'Ü', '\u01E6', '\u0131'},
+                                                {'Æ', 'Ø', 'Å', 'Ü', '_', 'é'}
+                                              };
 
-    readonly char[,] m_charTableD = new char[,]{{ 'á', '\u011B', 'ú', '\u0161' },{ '¼','\u2016', '¾', '÷' },
-	{ 'ä', 'ö', '\u017E', 'ü' },{ 'â', 'ô', 'û', 'ç' },{ 'ä', 'ö', 'ü', 'ß' },
-	{ 'à', 'ò', 'è', 'ì' },{ '\u0105', '\u0173', '\u017E', '\u012F' },{ '\u017C', '\u015B', '\u0142', '\u017A' },
-	{ 'ü', 'ñ', 'è', 'à' },{ 'â', '\u015F', '\u01CE', 'î' },{ '\u0107', '\u017E', '\u0111', '\u0161' },
-	{ 'ä', 'ö', 'å', 'ü' },{ '\u015F', 'ö', 'ç', 'ü' },
-    { 'æ', 'ø', 'å', 'ü' }
-    };
+    private readonly char[,] m_charTableD = new char[,]
+                                              {
+                                                {'á', '\u011B', 'ú', '\u0161'}, {'¼', '\u2016', '¾', '÷'},
+                                                {'ä', 'ö', '\u017E', 'ü'}, {'â', 'ô', 'û', 'ç'}, {'ä', 'ö', 'ü', 'ß'},
+                                                {'à', 'ò', 'è', 'ì'}, {'\u0105', '\u0173', '\u017E', '\u012F'},
+                                                {'\u017C', '\u015B', '\u0142', '\u017A'},
+                                                {'ü', 'ñ', 'è', 'à'}, {'â', '\u015F', '\u01CE', 'î'},
+                                                {'\u0107', '\u017E', '\u0111', '\u0161'},
+                                                {'ä', 'ö', 'å', 'ü'}, {'\u015F', 'ö', 'ç', 'ü'},
+                                                {'æ', 'ø', 'å', 'ü'}
+                                              };
 
-    readonly char[] m_charTableE = new char[] { '\u2190', '\u2192', '\u2191', '\u2193', 'O', 'K', '\u2190', '\u2190', '\u2190' };
+    private readonly char[] m_charTableE = new char[]
+                                             {
+                                               '\u2190', '\u2192', '\u2191', '\u2193', 'O', 'K', '\u2190', '\u2190',
+                                               '\u2190'
+                                             };
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// Width of the bitmap
     /// </summary>
@@ -281,14 +310,8 @@ namespace TvLibrary.Teletext
     /// </summary>
     public bool HiddenMode
     {
-      get
-      {
-        return _hiddenMode;
-      }
-      set
-      {
-        _hiddenMode = value;
-      }
+      get { return _hiddenMode; }
+      set { _hiddenMode = value; }
     }
 
     /// <summary>
@@ -314,10 +337,7 @@ namespace TvLibrary.Teletext
     /// </summary>
     public string PageSelectText
     {
-      get
-      {
-        return _selectedPageText;
-      }
+      get { return _selectedPageText; }
       set
       {
         _selectedPageText = "";
@@ -340,9 +360,11 @@ namespace TvLibrary.Teletext
       get { return _percentageOfMaximumHeight; }
       set { _percentageOfMaximumHeight = value; }
     }
+
     #endregion
 
     #region private methods
+
     /// <summary>
     /// Render a single position in the bitmap
     /// </summary>
@@ -400,7 +422,8 @@ namespace TvLibrary.Teletext
                 graph.FillRectangle(foreBrush, x + 1, y + mosaicY[y1] + 1, w1 - 2, mosaicY[y1 + 1] - mosaicY[y1] - 2);
               graph.FillRectangle(backBrush, x + w1, y + mosaicY[y1], w2, mosaicY[y1 + 1] - mosaicY[y1]);
               if ((chr & 2) > 0)
-                graph.FillRectangle(foreBrush, x + w1 + 1, y + mosaicY[y1] + 1, w2 - 2, mosaicY[y1 + 1] - mosaicY[y1] - 2);
+                graph.FillRectangle(foreBrush, x + w1 + 1, y + mosaicY[y1] + 1, w2 - 2,
+                                    mosaicY[y1 + 1] - mosaicY[y1] - 2);
               chr >>= 2;
             }
           else
@@ -574,7 +597,7 @@ namespace TvLibrary.Teletext
           if (factor == 2)
           {
             graph.FillRectangle(backBrush, x, y + h, w, h);
-            Color[,] pixelColor = new Color[w + 1, h + 1];
+            Color[,] pixelColor = new Color[w + 1,h + 1];
             // save char
             for (int ypos = 0; ypos < h; ypos++)
             {
@@ -586,10 +609,8 @@ namespace TvLibrary.Teletext
             // draw doubleheight
             for (int ypos = 0; ypos < h; ypos++)
             {
-
               for (int xpos = 0; xpos < w; xpos++)
               {
-
                 try
                 {
                   if (y + (ypos * 2) + 1 < _pageBitmap.Height)
@@ -597,11 +618,13 @@ namespace TvLibrary.Teletext
                     _pageBitmap.SetPixel(x + xpos, y + (ypos * 2), pixelColor[xpos, ypos]); // backup old line
                     _pageBitmap.SetPixel(x + xpos, y + (ypos * 2) + 1, pixelColor[xpos, ypos]);
                   }
-                } catch (Exception ex)
-                { Log.Log.Info("Error in teletext page renderer: ", ex); }
+                }
+                catch (Exception ex)
+                {
+                  Log.Log.Info("Error in teletext page renderer: ", ex);
+                }
               }
             }
-
           }
           x += w;
         }
@@ -615,6 +638,7 @@ namespace TvLibrary.Teletext
       }
       return;
     }
+
     /// <summary>
     /// Converts the color of the teletext informations to a system color
     /// </summary>
@@ -622,7 +646,6 @@ namespace TvLibrary.Teletext
     /// <returns>Corresponding System Color, or black if the value is not defined</returns>
     private static Color GetColor(int colorNumber)
     {
-
       switch (colorNumber)
       {
         case (int)TextColors.Black:
@@ -648,6 +671,7 @@ namespace TvLibrary.Teletext
       }
       return Color.Black;
     }
+
     /// <summary>
     /// Checks if is a valid page to be displayed
     /// </summary>
@@ -661,6 +685,7 @@ namespace TvLibrary.Teletext
     #endregion
 
     #region public methods
+
     /// <summary>
     /// Renders a teletext page to a bitmap
     /// </summary>
@@ -748,7 +773,6 @@ namespace TvLibrary.Teletext
         default:
           txtLanguage = 1;
           break;
-
       }
       // Detect if it's a boxed page. Boxed Page = subtitle and/or newsflash bit is set
       bool isSubtitlePage = Hamming.IsSubtitleBitSet(0, ref byPage);
@@ -757,7 +781,9 @@ namespace TvLibrary.Teletext
 
       // Determine if the header or toptext line sould be displayed.
       bool displayHeaderAndTopText = !_fullscreenMode || !isBoxed || (_selectedPageText.IndexOf("-") != -1)
-        || (_selectedPageText.IndexOf("-") == -1 && !_selectedPageText.Equals(Convert.ToString(mPage, 16)));
+                                     ||
+                                     (_selectedPageText.IndexOf("-") == -1 &&
+                                      !_selectedPageText.Equals(Convert.ToString(mPage, 16)));
 
       // Iterate over all lines of the teletext page and prepare the rendering
       for (row = 0; row <= 24; row++)
@@ -910,11 +936,13 @@ namespace TvLibrary.Teletext
                     {
                       if (_fullscreenMode)
                       {
-                        pageAttribs[row * 40 + clear] = doubleheight << 10 | charset << 8 | (int)TextColors.Trans1 << 4 | (int)TextColors.Trans1;
+                        pageAttribs[row * 40 + clear] = doubleheight << 10 | charset << 8 | (int)TextColors.Trans1 << 4 |
+                                                        (int)TextColors.Trans1;
                       }
                       else
                       {
-                        pageAttribs[row * 40 + clear] = doubleheight << 10 | charset << 8 | (int)TextColors.Black << 4 | (int)TextColors.Black;
+                        pageAttribs[row * 40 + clear] = doubleheight << 10 | charset << 8 | (int)TextColors.Black << 4 |
+                                                        (int)TextColors.Black;
                       }
                     }
                     // Set the standard background color
@@ -1046,14 +1074,15 @@ namespace TvLibrary.Teletext
             if (pageChars[count] == 255)
             {
               for (int loop1 = 0; loop1 < 40; loop1++)
-                pageAttribs[(row + 1) * 40 + loop1] = ((pageAttribs[(row * 40) + loop1] & 0xF0) | ((pageAttribs[(row * 40) + loop1] & 0xF0) >> 4));
+                pageAttribs[(row + 1) * 40 + loop1] = ((pageAttribs[(row * 40) + loop1] & 0xF0) |
+                                                       ((pageAttribs[(row * 40) + loop1] & 0xF0) >> 4));
 
               row++;
               break;
             }
           }
         }
-      }//for (int rowNr = 0; rowNr < 24; rowNr++)
+      } //for (int rowNr = 0; rowNr < 24; rowNr++)
 
       // Generate header line, if it should be displayed
       if (IsDecimalPage(mPage) && displayHeaderAndTopText)
@@ -1129,7 +1158,8 @@ namespace TvLibrary.Teletext
             int x = 0;
             // Draw a single point
             for (col = 0; col < 40; col++)
-              Render(_renderGraphics, pageChars[row * 40 + col], pageAttribs[row * 40 + col], ref x, ref y, width, height, txtLanguage);
+              Render(_renderGraphics, pageChars[row * 40 + col], pageAttribs[row * 40 + col], ref x, ref y, width,
+                     height, txtLanguage);
 
             y += height + (row == 23 ? 2 : 0);
           }
@@ -1145,6 +1175,7 @@ namespace TvLibrary.Teletext
       return _pageBitmap;
       // send the bitmap to the callback
     }
+
     /// <summary>
     /// Clear the bitmap
     /// </summary>
@@ -1158,6 +1189,7 @@ namespace TvLibrary.Teletext
         _renderGraphics.Dispose();
       _renderGraphics = null;
     }
+
     #endregion
   }
 }

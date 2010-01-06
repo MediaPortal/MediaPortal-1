@@ -36,6 +36,7 @@ using System.Windows.Forms;
 ///	Feel free to donate any amount of money if this code makes you happy ;)
 ///	Use this code at your own risk. If your machine blows up while using it - don't blame me.
 /// </summary>
+
 namespace MWCommon
 {
   /// <summary>
@@ -69,8 +70,6 @@ namespace MWCommon
 
     #endregion Variables
 
-
-
     #region Constructor
 
     /// <summary>
@@ -88,8 +87,6 @@ namespace MWCommon
 
     #endregion Constructor
 
-
-
     #region Properties
 
     /// <summary>
@@ -97,14 +94,8 @@ namespace MWCommon
     /// </summary>
     public TreeNode Node
     {
-      get
-      {
-        return tnNode;
-      }
-      set
-      {
-        tnNode = value;
-      }
+      get { return tnNode; }
+      set { tnNode = value; }
     }
 
     /// <summary>
@@ -112,14 +103,8 @@ namespace MWCommon
     /// </summary>
     public int ImageIndex
     {
-      get
-      {
-        return iImageIndex;
-      }
-      set
-      {
-        iImageIndex = value;
-      }
+      get { return iImageIndex; }
+      set { iImageIndex = value; }
     }
 
     /// <summary>
@@ -127,19 +112,11 @@ namespace MWCommon
     /// </summary>
     public int SelectedImageIndex
     {
-      get
-      {
-        return iSelectedImageIndex;
-      }
-      set
-      {
-        iSelectedImageIndex = value;
-      }
+      get { return iSelectedImageIndex; }
+      set { iSelectedImageIndex = value; }
     }
 
     #endregion Properties
-
-
 
     #region Methods
 
@@ -161,8 +138,6 @@ namespace MWCommon
     }
 
     #endregion Methods
-
-
 
     #region Static Methods
 
@@ -196,8 +171,6 @@ namespace MWCommon
 
     #endregion Static Methods
 
-
-
     #region Methods
 
     /// <summary>
@@ -211,7 +184,5 @@ namespace MWCommon
     }
 
     #endregion Methods
-
   }
-
 }

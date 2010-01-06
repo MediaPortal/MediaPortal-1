@@ -27,8 +27,6 @@ namespace MediaPortal.Drawing
 {
   public class GlyphRun
   {
-    public GlyphRun()
-    {
-    }
+    public GlyphRun() {}
   }
 }

@@ -34,7 +34,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Profile;
-using Timer=System.Timers.Timer;
+using Timer = System.Timers.Timer;
 
 namespace MediaPortal.Audioscrobbler
 {
@@ -83,7 +83,7 @@ namespace MediaPortal.Audioscrobbler
           Thread stateThread = new Thread(new ParameterizedThreadStart(PlaybackStartedThread));
           stateThread.IsBackground = true;
           stateThread.Name = "Scrobbler event";
-          stateThread.Start((object) filename);
+          stateThread.Start((object)filename);
 
           Thread LoadThread = new Thread(new ThreadStart(OnSongLoadedThread));
           LoadThread.IsBackground = true;
@@ -284,7 +284,7 @@ namespace MediaPortal.Audioscrobbler
           songFound = (g_Player.Player.CurrentFile == AudioscrobblerBase.CurrentPlayingSong.FileName);
         }
         else
-        // local DB file
+          // local DB file
         {
           songFound = GetCurrentSong();
         }
@@ -295,7 +295,7 @@ namespace MediaPortal.Audioscrobbler
           SetStartTime();
           OnSongChangedEvent();
         }
-        // DB lookup of song failed
+          // DB lookup of song failed
         else if (g_Player.IsMusic)
         {
           if (AudioscrobblerBase.CurrentPlayingSong.Title != null &&
@@ -440,7 +440,7 @@ namespace MediaPortal.Audioscrobbler
         {
           Log.Info("Audioscrobbler plugin: Starting song length timer with an interval of {0} seconds",
                    intervalLength.ToString());
-          SongLengthTimer.Interval = intervalLength*1000;
+          SongLengthTimer.Interval = intervalLength * 1000;
           SongLengthTimer.Start();
         }
         else
@@ -538,7 +538,7 @@ namespace MediaPortal.Audioscrobbler
       // is half over, otherwise after 240 seconds.
       if (AudioscrobblerBase.CurrentPlayingSong.Duration < 480)
       {
-        return AudioscrobblerBase.CurrentPlayingSong.Duration/2;
+        return AudioscrobblerBase.CurrentPlayingSong.Duration / 2;
       }
       else
       {

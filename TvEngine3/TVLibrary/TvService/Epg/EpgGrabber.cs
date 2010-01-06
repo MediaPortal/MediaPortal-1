@@ -51,16 +51,19 @@ namespace TvService
   public class EpgGrabber
   {
     #region variables
-    int _epgReGrabAfter = 4 * 60;//hours
-    readonly System.Timers.Timer _epgTimer = new System.Timers.Timer();
 
-    bool _isRunning;
-    bool _reEntrant;
-    readonly TVController _tvController;
-    List<EpgCard> _epgCards;
+    private int _epgReGrabAfter = 4 * 60; //hours
+    private readonly System.Timers.Timer _epgTimer = new System.Timers.Timer();
+
+    private bool _isRunning;
+    private bool _reEntrant;
+    private readonly TVController _tvController;
+    private List<EpgCard> _epgCards;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -71,23 +74,24 @@ namespace TvService
       _epgTimer.Interval = 30000;
       _epgTimer.Elapsed += _epgTimer_Elapsed;
     }
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// Property which returns true if EPG grabber is currently grabbing the epg
     /// or false is epg grabber is idle
     /// </summary>
     public bool IsRunning
     {
-      get
-      {
-        return _isRunning;
-      }
+      get { return _isRunning; }
     }
+
     #endregion
 
     #region public members
+
     /// <summary>
     /// Starts the epg grabber
     /// </summary>
@@ -133,10 +137,11 @@ namespace TvService
           {
             continue;
           }
-        } 
+        }
         catch (Exception e)
         {
-          Log.Error("card: unable to start job for card {0} at:{0}", e.Message, card.Name, card.ReferencedServer().HostName);
+          Log.Error("card: unable to start job for card {0} at:{0}", e.Message, card.Name,
+                    card.ReferencedServer().HostName);
         }
 
         EpgCard epgCard = new EpgCard(_tvController, card);
@@ -165,9 +170,11 @@ namespace TvService
         epgCard.Dispose();
       }
     }
+
     #endregion
 
     #region private members
+
     /// <summary>
     /// timer callback.
     /// This method is called by a timer every 30 seconds to wake up the epg grabber
@@ -176,7 +183,7 @@ namespace TvService
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    void _epgTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    private void _epgTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       //security check, dont allow re-entrancy here
       if (_reEntrant)
@@ -192,7 +199,8 @@ namespace TvService
           string threadname = Thread.CurrentThread.Name;
           if (string.IsNullOrEmpty(threadname))
             Thread.CurrentThread.Name = "DVB EPG timer";
-        } catch (InvalidOperationException) { }
+        }
+        catch (InvalidOperationException) {}
 
         if (_tvController.AllCardsIdle == false)
           return;
@@ -205,7 +213,8 @@ namespace TvService
             return;
           GrabEpgOnCard(card);
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -219,7 +228,7 @@ namespace TvService
     /// Grabs the epg for a card.
     /// </summary>
     /// <param name="epgCard">The epg card.</param>
-    void GrabEpgOnCard(EpgCard epgCard)
+    private void GrabEpgOnCard(EpgCard epgCard)
     {
       CardType type = _tvController.Type(epgCard.Card.IdCard);
       //skip analog and webstream cards 
@@ -241,7 +250,8 @@ namespace TvService
           continue;
         if (type == CardType.DvbT && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 4)
           continue;
-        if (type == CardType.DvbIP && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 7) continue;
+        if (type == CardType.DvbIP && TransponderList.Instance.CurrentTransponder.TuningDetail.ChannelType != 7)
+          continue;
 
         //find next channel to grab
         while (TransponderList.Instance.CurrentTransponder.GetNextChannel() != null)
@@ -260,7 +270,8 @@ namespace TvService
           if (epgCard.Card.canTuneTvChannel(ch.IdChannel))
           {
             Log.Epg("Grab for card:#{0} transponder #{1}/{2} channel: {3}",
-                      epgCard.Card.IdCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count, ch.DisplayName);
+                    epgCard.Card.IdCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count,
+                    ch.DisplayName);
             //start grabbing
             epgCard.GrabEpg();
             return;
@@ -268,7 +279,6 @@ namespace TvService
         }
       }
     }
-
 
     #endregion
   }

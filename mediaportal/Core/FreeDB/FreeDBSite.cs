@@ -57,9 +57,7 @@ namespace MediaPortal.Freedb
     /// <summary>The description of the the server's location. </summary>
     private string m_location;
 
-    public FreeDBSite()
-    {
-    }
+    public FreeDBSite() {}
 
     public FreeDBSite(string host, FreeDBProtocol proto, int port, string uri,
                       string latitude, string longitude, string location)

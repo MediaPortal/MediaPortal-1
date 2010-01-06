@@ -27,20 +27,20 @@ using System;
 
 namespace MediaPortal.Util
 {
-	/// <summary>
-	/// Summary description for ConditionChecker.
-	/// </summary>
-	public class ConditionChecker
-	{
-		public ConditionChecker()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
-		}
+  /// <summary>
+  /// Summary description for ConditionChecker.
+  /// </summary>
+  public class ConditionChecker
+  {
+    public ConditionChecker()
+    {
+      //
+      // TODO: Add constructor logic here
+      //
+    }
 
-    string strProblems = "";
-    string strSeparator = "";
+    private string strProblems = "";
+    private string strSeparator = "";
 
     public void Clear()
     {
@@ -60,19 +60,12 @@ namespace MediaPortal.Util
 
     public bool IsOk
     {
-      get
-      {
-        return (strProblems == "");
-      }
+      get { return (strProblems == ""); }
     }
 
     public string Problems
     {
-      get
-      {
-        return strProblems;
-      }
+      get { return strProblems; }
     }
-
-	}
+  }
 }

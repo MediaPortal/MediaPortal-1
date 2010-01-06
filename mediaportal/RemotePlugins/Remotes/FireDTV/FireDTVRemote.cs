@@ -82,9 +82,7 @@ namespace MediaPortal.InputDevices
 
     #endregion
 
-    public FireDTVRemote()
-    {
-    }
+    public FireDTVRemote() {}
 
     /// <summary>
     /// Initialise the FireDTV remote
@@ -141,9 +139,9 @@ namespace MediaPortal.InputDevices
     public bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
     {
       keyCode = Keys.A;
-      key = (char) 0;
+      key = (char)0;
       action = null;
-      switch ((FireDTVConstants.FireDTVWindowMessages) msg.Msg)
+      switch ((FireDTVConstants.FireDTVWindowMessages)msg.Msg)
       {
         case FireDTVConstants.FireDTVWindowMessages.DeviceAttached:
           Log.Info("FireDTVRemote: DeviceAttached");
@@ -152,7 +150,7 @@ namespace MediaPortal.InputDevices
 
         case FireDTVConstants.FireDTVWindowMessages.DeviceDetached:
           Log.Info("FireDTVRemote: DeviceDetached");
-          _fireDTV.SourceFilters.RemoveByHandle((uint) msg.WParam);
+          _fireDTV.SourceFilters.RemoveByHandle((uint)msg.WParam);
           break;
 
         case FireDTVConstants.FireDTVWindowMessages.DeviceChanged:

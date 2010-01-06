@@ -31,14 +31,12 @@ namespace SetupTv.Sections
 {
   public partial class TestService : SectionSettings
   {
-    IList<Card> _cards;
-    Dictionary<int, string> _channelNames;
+    private IList<Card> _cards;
+    private Dictionary<int, string> _channelNames;
 
     //Player _player;
     public TestService()
-      : this("Manual Control")
-    {
-    }
+      : this("Manual Control") {}
 
     public TestService(string name)
       : base(name)
@@ -102,7 +100,6 @@ namespace SetupTv.Sections
 
     private void mpButtonTimeShift_Click(object sender, EventArgs e)
     {
-
       if (ServiceHelper.IsStopped) return;
       if (mpComboBoxChannels.SelectedItem == null) return;
       int id = ((ComboBoxExItem)mpComboBoxChannels.SelectedItem).Id;
@@ -119,7 +116,7 @@ namespace SetupTv.Sections
         string timeShiftingFilename = string.Empty;
         User user = new User();
         user.Name = "setuptv";
-        user.IsAdmin = true;          //fixing mantis bug 1513: recordings you start in manual control can not be stopped  
+        user.IsAdmin = true; //fixing mantis bug 1513: recordings you start in manual control can not be stopped  
         //user.Name = "setuptv" + id.ToString();
         int cardId = -1;
         foreach (ListViewItem listViewItem in mpListView1.SelectedItems)
@@ -277,7 +274,7 @@ namespace SetupTv.Sections
       mpButtonTimeShift.Enabled = true;
     }
 
-    void UpdateCardStatus()
+    private void UpdateCardStatus()
     {
       if (ServiceHelper.IsStopped) return;
       if (_cards == null) return;
@@ -443,7 +440,6 @@ namespace SetupTv.Sections
           item.SubItems[5].Text = "";
           item.SubItems[6].Text = "";
         }
-
       }
       catch (Exception ex)
       {
@@ -461,15 +457,11 @@ namespace SetupTv.Sections
         RemoteControl.Clear();
         if (ServiceHelper.IsStopped)
         {
-          if (ServiceHelper.Start())
-          {
-          }
+          if (ServiceHelper.Start()) {}
         }
         else if (ServiceHelper.IsRunning)
         {
-          if (ServiceHelper.Stop())
-          {
-          }
+          if (ServiceHelper.Stop()) {}
         }
         RemoteControl.Clear();
         timer1.Enabled = true;
@@ -515,7 +507,6 @@ namespace SetupTv.Sections
         {
           if (usersForCard[i].IdChannel == channelId)
           {
-
             VirtualCard vcard = new VirtualCard(usersForCard[i], RemoteControl.HostName);
             if (vcard.IsTimeShifting)
             {
@@ -565,7 +556,7 @@ namespace SetupTv.Sections
       mpComboBoxChannels.Items.Clear();
       if (idItem.Id == -1)
       {
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
         sb.AddOrderByField(true, "sortOrder");
         SqlStatement stmt = sb.GetStatement(true);
         IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
@@ -578,7 +569,6 @@ namespace SetupTv.Sections
           ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
 
           mpComboBoxChannels.Items.Add(item);
-
         }
       }
       else

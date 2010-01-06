@@ -32,9 +32,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    protected ResourceKey()
-    {
-    }
+    protected ResourceKey() {}
 
     #endregion Constructors
 

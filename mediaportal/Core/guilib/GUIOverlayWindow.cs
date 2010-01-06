@@ -53,9 +53,7 @@ namespace MediaPortal.GUI.Library
     /// For example the topbar is rendered on layer #1
     /// while the music overlay is rendered on layer #2 (and thus on top of the topbar)</param>
     /// </summary>
-    public virtual void PostRender(float timePassed, int iLayer)
-    {
-    }
+    public virtual void PostRender(float timePassed, int iLayer) {}
 
     /// <summary>
     /// Returns wither or not the window does postrendering.
@@ -86,7 +84,7 @@ namespace MediaPortal.GUI.Library
             if (DoesPostRender())
             {
               OnMessage(msg);
-              return (int) (Focused ? GUIWindowManager.FocusState.FOCUSED : GUIWindowManager.FocusState.NOT_FOCUSED);
+              return (int)(Focused ? GUIWindowManager.FocusState.FOCUSED : GUIWindowManager.FocusState.NOT_FOCUSED);
             }
           }
         }
@@ -131,12 +129,12 @@ namespace MediaPortal.GUI.Library
           if (ShouldFocus(action))
           {
             Focused = true;
-            return (int) GUIWindowManager.FocusState.FOCUSED;
+            return (int)GUIWindowManager.FocusState.FOCUSED;
           }
         }
         Focused = false;
       }
-      return (int) GUIWindowManager.FocusState.NOT_FOCUSED;
+      return (int)GUIWindowManager.FocusState.NOT_FOCUSED;
     }
 
     protected virtual bool ShouldFocus(Action action)
@@ -148,7 +146,7 @@ namespace MediaPortal.GUI.Library
     {
       for (int i = Children.Count - 1; i >= 0; i--)
       {
-        GUIControl control = (GUIControl) Children[i];
+        GUIControl control = (GUIControl)Children[i];
         bool bFocus;
         int controlID;
         if (control.HitTest(cx, cy, out controlID, out bFocus))

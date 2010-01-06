@@ -40,8 +40,8 @@ namespace MediaPortal.Support
       for (int i = 0; i < subKeys.Length; i++)
       {
         RegistryKey key = mainKey.OpenSubKey(subKeys[i]);
-        string cpuType = (string) key.GetValue("ProcessorNameString", "<unknown>");
-        int cpuSpeed = (int) key.GetValue("~MHz", 0);
+        string cpuType = (string)key.GetValue("ProcessorNameString", "<unknown>");
+        int cpuSpeed = (int)key.GetValue("~MHz", 0);
         cpuInfos += cpuType + " running at ~" + cpuSpeed + " MHz.<br>";
         key.Close();
       }
@@ -49,9 +49,7 @@ namespace MediaPortal.Support
       return cpuInfos;
     }
 
-    public PlatformLogger()
-    {
-    }
+    public PlatformLogger() {}
 
     public void CreateLogs(string destinationFolder)
     {

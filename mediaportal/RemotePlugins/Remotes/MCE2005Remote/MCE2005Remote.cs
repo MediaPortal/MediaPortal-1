@@ -46,9 +46,7 @@ namespace MediaPortal.InputDevices
     /// <summary>
     /// Constructor
     /// </summary>
-    public MCE2005Remote()
-    {
-    }
+    public MCE2005Remote() {}
 
 
     /// <summary>
@@ -175,16 +173,16 @@ namespace MediaPortal.InputDevices
       if (controlEnabled && (msg.Msg == 0x0319))
       {
         int command = (msg.LParam.ToInt32() >> 16) & ~0xF000;
-        InputDevices.LastHidRequest = (AppCommands) command;
+        InputDevices.LastHidRequest = (AppCommands)command;
 
         RemoteButton button = RemoteButton.None;
 
-        if ((AppCommands) command == AppCommands.VolumeUp)
+        if ((AppCommands)command == AppCommands.VolumeUp)
         {
           button = RemoteButton.VolumeUp;
         }
 
-        if ((AppCommands) command == AppCommands.VolumeDown)
+        if ((AppCommands)command == AppCommands.VolumeDown)
         {
           button = RemoteButton.VolumeDown;
         }
@@ -192,7 +190,7 @@ namespace MediaPortal.InputDevices
         if (button != RemoteButton.None)
         {
           // Get & execute Mapping
-          if (_inputHandler.MapAction((int) button))
+          if (_inputHandler.MapAction((int)button))
           {
             if (logVerbose)
             {
@@ -270,7 +268,7 @@ namespace MediaPortal.InputDevices
       }
 
       // Get & execute Mapping
-      if (_inputHandler.MapAction((int) button))
+      if (_inputHandler.MapAction((int)button))
       {
         if (logVerbose)
         {

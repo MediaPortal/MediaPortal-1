@@ -46,7 +46,7 @@ namespace System.Windows.Media.Animation
     {
       if (value is string)
       {
-        return Duration.Parse((string) value);
+        return Duration.Parse((string)value);
       }
 
       return base.ConvertFrom(context, culture, value);

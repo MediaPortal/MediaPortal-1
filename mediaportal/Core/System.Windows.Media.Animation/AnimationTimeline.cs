@@ -37,9 +37,7 @@ namespace System.Windows.Media.Animation
                                                          new PropertyMetadata(false));
     }
 
-    protected AnimationTimeline()
-    {
-    }
+    protected AnimationTimeline() {}
 
     #endregion Constructors
 

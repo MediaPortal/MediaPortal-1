@@ -52,7 +52,7 @@ namespace MediaPortal.GUI.Library
 
     public static void RegisterLayer(IRenderLayer renderer, LayerType zOrder)
     {
-      _layers[(int) zOrder] = renderer;
+      _layers[(int)zOrder] = renderer;
     }
 
     public static void UnRegisterLayer(IRenderLayer renderer)
@@ -68,7 +68,7 @@ namespace MediaPortal.GUI.Library
 
     public static IRenderLayer GetLayer(LayerType zOrder)
     {
-      return _layers[(int) zOrder];
+      return _layers[(int)zOrder];
     }
 
     public static void Render(float timePassed)
@@ -77,7 +77,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      int videoLayer = (int) LayerType.Video;
+      int videoLayer = (int)LayerType.Video;
       if (GUIGraphicsContext.ShowBackground == false)
       {
         if (_layers[videoLayer] != null)

@@ -25,7 +25,5 @@
 
 namespace MediaPortal.ControlDevices
 {
-  public interface IControlOutput
-  {
-  }
+  public interface IControlOutput {}
 }

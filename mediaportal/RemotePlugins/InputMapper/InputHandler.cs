@@ -393,9 +393,10 @@ namespace MediaPortal.InputDevices
         case "ACTION": // execute Action x
           Key key = new Key(map.CmdKeyChar, map.CmdKeyCode);
 #if DEBUG
-          Log.Info("Executing: key {0} / {1} / Action: {2} / {3}", map.CmdKeyChar, map.CmdKeyCode, map.CmdProperty, ((Action.ActionType)Convert.ToInt32(map.CmdProperty)).ToString());
+          Log.Info("Executing: key {0} / {1} / Action: {2} / {3}", map.CmdKeyChar, map.CmdKeyCode, map.CmdProperty,
+                   ((Action.ActionType)Convert.ToInt32(map.CmdProperty)).ToString());
 #endif
-          action = new Action(key, (Action.ActionType) Convert.ToInt32(map.CmdProperty), 0, 0);
+          action = new Action(key, (Action.ActionType)Convert.ToInt32(map.CmdProperty), 0, 0);
           GUIGraphicsContext.OnAction(action);
           break;
         case "KEY": // send Key x
@@ -404,18 +405,18 @@ namespace MediaPortal.InputDevices
         case "WINDOW": // activate Window x
           GUIGraphicsContext.ResetLastActivity();
           GUIMessage msg;
-          if ((Convert.ToInt32(map.CmdProperty) == (int) GUIWindow.Window.WINDOW_HOME) ||
-              (Convert.ToInt32(map.CmdProperty) == (int) GUIWindow.Window.WINDOW_SECOND_HOME))
+          if ((Convert.ToInt32(map.CmdProperty) == (int)GUIWindow.Window.WINDOW_HOME) ||
+              (Convert.ToInt32(map.CmdProperty) == (int)GUIWindow.Window.WINDOW_SECOND_HOME))
           {
             if (_basicHome)
             {
               msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
-                                   (int) GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
+                                   (int)GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
             }
             else
             {
               msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
-                                   (int) GUIWindow.Window.WINDOW_HOME, 0, null);
+                                   (int)GUIWindow.Window.WINDOW_HOME, 0, null);
             }
           }
           else
@@ -547,7 +548,7 @@ namespace MediaPortal.InputDevices
               case "WINDOW": // Window-ID = x
                 if ((!GUIWindowManager.IsOsdVisible &&
                      (GUIWindowManager.ActiveWindowEx == Convert.ToInt32(map.ConProperty))) ||
-                    ((int) GUIWindowManager.VisibleOsd == Convert.ToInt32(map.ConProperty)))
+                    ((int)GUIWindowManager.VisibleOsd == Convert.ToInt32(map.ConProperty)))
                 {
                   found = map;
                 }

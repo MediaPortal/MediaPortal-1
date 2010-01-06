@@ -35,13 +35,16 @@ namespace TvLibrary.Implementations.Analog.QualityControl
   public class VideoEncoderControl : BaseControl
   {
     #region variable
+
     /// <summary>
     /// Instance of the encoder that supports the IVideoEncoder
     /// </summary>
     private readonly IVideoEncoder _videoEncoder;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="VideoEncoderControl"/> class.
     /// </summary>
@@ -51,12 +54,15 @@ namespace TvLibrary.Implementations.Analog.QualityControl
       : base(configuration)
     {
       _videoEncoder = videoEncoder;
-      Log.Log.WriteFile("analog: IVideoEncoder supported by: " + FilterGraphTools.GetFilterName(_videoEncoder as IBaseFilter) + "; Checking capabilities ");
+      Log.Log.WriteFile("analog: IVideoEncoder supported by: " +
+                        FilterGraphTools.GetFilterName(_videoEncoder as IBaseFilter) + "; Checking capabilities ");
       CheckCapabilities();
     }
+
     #endregion
 
     #region protected method
+
     /// <summary>
     /// Checks if the encoder supports the given GUID
     /// </summary>
@@ -86,7 +92,8 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// <param name="valueMax">maximum out value</param>
     /// <param name="steppingDelta">stepping delta out value</param>
     /// <returns>HR result</returns>
-    protected override int GetParameterRange(Guid guid, out object valueMin, out object valueMax, out object steppingDelta)
+    protected override int GetParameterRange(Guid guid, out object valueMin, out object valueMax,
+                                             out object steppingDelta)
     {
       return _videoEncoder.GetParameterRange(guid, out valueMin, out valueMax, out steppingDelta);
     }
@@ -101,6 +108,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     {
       return _videoEncoder.GetDefaultValue(guid, out qualityObject);
     }
+
     #endregion
   }
 }

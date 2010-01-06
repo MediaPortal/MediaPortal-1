@@ -40,7 +40,7 @@ namespace MediaPortal.Dialogs
 
     public GUIDialogFileStacking()
     {
-      GetID = (int) Window.WINDOW_DIALOG_FILESTACKING;
+      GetID = (int)Window.WINDOW_DIALOG_FILESTACKING;
     }
 
     public override bool Init()
@@ -76,7 +76,7 @@ namespace MediaPortal.Dialogs
                   pControl.NavigateRight = 101;
                 }
               }
-              else 
+              else
               {
                 Log.Error("Missing control ID ({0}) in dialogFileStacking.xml", i + m_indexStackItemOffset);
               }
@@ -114,7 +114,7 @@ namespace MediaPortal.Dialogs
         {
           GUIControl pControl = GetControl(m_indexStackItemOffset + 1);
           distance = pDialog.Width / m_MaxNumberOfCDs;
-          
+
           // do not allow "loose stacking", i.e. less than half overlayed items
           if (distance > pControl.Width / 2)
           {
@@ -129,13 +129,14 @@ namespace MediaPortal.Dialogs
           GUIControl pControl = GetControl(i + m_indexStackItemOffset);
           if (null != pControl)
           {
-            int dwEndPos = dwScreenWidth / 2 - ((m_MaxNumberOfCDs - i) * distance) + pDialog.Width / 2 - (int)((float)pControl.Width / 1.5);
+            int dwEndPos = dwScreenWidth / 2 - ((m_MaxNumberOfCDs - i) * distance) + pDialog.Width / 2 -
+                           (int)((float)pControl.Width / 1.5);
             int dwStartPos = dwScreenWidth / 2 + pDialog.Width / 2 - pControl.Width;
             float fStep = dwStartPos - dwEndPos;
             fStep /= 25.0f;
             fStep *= m_iFrames;
-            int dwPosX = (int) (dwStartPos - fStep);
-            pControl.SetPosition(dwPosX, GUIGraphicsContext.Height/2);
+            int dwPosX = (int)(dwStartPos - fStep);
+            pControl.SetPosition(dwPosX, GUIGraphicsContext.Height / 2);
           }
         }
         if (m_iFrames == 25)

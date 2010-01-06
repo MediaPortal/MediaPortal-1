@@ -49,9 +49,7 @@ namespace MediaPortal.Configuration
     private bool _allowOverlay;
     private Form _hintForm;
 
-    public ConfigSplashScreen()
-    {
-    }
+    public ConfigSplashScreen() {}
 
 
     /// <summary>
@@ -264,10 +262,13 @@ namespace MediaPortal.Configuration
         // 
         // informationLabel
         // 
-        this.informationLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.informationLabel.Anchor =
+          ((System.Windows.Forms.AnchorStyles)
+           (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+             | System.Windows.Forms.AnchorStyles.Right)));
         this.informationLabel.BackColor = System.Drawing.Color.Transparent;
-        this.informationLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.informationLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold,
+                                                             System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.informationLabel.ForeColor = System.Drawing.Color.White;
         this.informationLabel.Location = new System.Drawing.Point(11, 138);
         this.informationLabel.Name = "informationLabel";
@@ -278,10 +279,13 @@ namespace MediaPortal.Configuration
         // 
         // versionLabel
         // 
-        this.versionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.versionLabel.Anchor =
+          ((System.Windows.Forms.AnchorStyles)
+           (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+             | System.Windows.Forms.AnchorStyles.Right)));
         this.versionLabel.BackColor = System.Drawing.Color.Transparent;
-        this.versionLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.versionLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular,
+                                                         System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.versionLabel.Location = new System.Drawing.Point(277, 113);
         this.versionLabel.Name = "versionLabel";
         this.versionLabel.Size = new System.Drawing.Size(100, 16);
@@ -308,11 +312,9 @@ namespace MediaPortal.Configuration
         this.TransparencyKey = System.Drawing.Color.FromArgb(0, 0, 0, 0);
         this.panel1.ResumeLayout(false);
         this.ResumeLayout(false);
-
       }
 
       #endregion
     }
   }
-
 }

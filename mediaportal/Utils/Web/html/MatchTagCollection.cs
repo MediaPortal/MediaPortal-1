@@ -33,7 +33,7 @@ namespace MediaPortal.Utils.Web
 
     public virtual MatchTag this[int Index]
     {
-      get { return (MatchTag) this.List[Index]; }
+      get { return (MatchTag)this.List[Index]; }
     }
 
     #endregion

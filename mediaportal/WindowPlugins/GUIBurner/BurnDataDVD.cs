@@ -198,7 +198,7 @@ namespace MediaPortal.GUI.GUIBurner
       if (_FileNameCount <= _FileNames.Count)
       {
         //get next filename and reset the state
-        _CurrentFileName = (string) _FileNames[_FileNameCount - 1];
+        _CurrentFileName = (string)_FileNames[_FileNameCount - 1];
         _CurrentCopyState = CopyState.FileCopy;
 
         ProvideStatusUpdate("Copying " + _CurrentFileName);
@@ -416,7 +416,7 @@ namespace MediaPortal.GUI.GUIBurner
             {
               BurnerProcess = new Process();
               BurnerProcess.EnableRaisingEvents = true;
-                // Gets or sets whether the Exited event should be raised when the process terminates. 
+              // Gets or sets whether the Exited event should be raised when the process terminates. 
               BurnerProcess.StartInfo.WorkingDirectory = Config.GetFolder(Config.Dir.BurnerSupport);
               BurnerProcess.StartInfo.UseShellExecute = false;
 
@@ -453,11 +453,11 @@ namespace MediaPortal.GUI.GUIBurner
 
         case CopyState.Finished: // Finished one file Start Next
 
-          ProvideStatusUpdate("Completed File Copy For: " + (string) _FileNames[_FileNameCount - 1]);
+          ProvideStatusUpdate("Completed File Copy For: " + (string)_FileNames[_FileNameCount - 1]);
 
           if (FileFinished != null)
           {
-            FileFinished(this, new FileFinishedEventArgs((string) _FileNames[_FileNameCount - 1], _CurrentFileName));
+            FileFinished(this, new FileFinishedEventArgs((string)_FileNames[_FileNameCount - 1], _CurrentFileName));
           }
           _FilesToBurn.Add(_CurrentFileName);
           NextFileCopy();

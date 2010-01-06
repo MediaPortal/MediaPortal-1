@@ -31,9 +31,7 @@ namespace System.Windows.Input
   {
     #region Constructors
 
-    private CommandManager()
-    {
-    }
+    private CommandManager() {}
 
     #endregion Constructors
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Xml.Serialization;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
@@ -8,8 +8,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
   {
     [XmlAttribute("Value")] public string value = "";
 
-    protected FixedValue()
-    {
-    }
+    protected FixedValue() {}
   }
 }

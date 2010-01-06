@@ -69,9 +69,7 @@ namespace MediaPortal.Configuration.Sections
     private MPTextBox idTextBox;
 
     public Keys()
-      : this("Keys and Sounds")
-    {
-    }
+      : this("Keys and Sounds") {}
 
     public Keys(string name)
       : base(name)
@@ -126,9 +124,7 @@ namespace MediaPortal.Configuration.Sections
       {
         action = Enum.GetName(typeof (Action.ActionType), id);
       }
-      catch
-      {
-      }
+      catch {}
 
       return action;
     }
@@ -940,16 +936,14 @@ namespace MediaPortal.Configuration.Sections
 
             try
             {
-              Action.ActionType actionType = (Action.ActionType) Enum.Parse(typeof (Action.ActionType), idComboBox.Text);
+              Action.ActionType actionType = (Action.ActionType)Enum.Parse(typeof (Action.ActionType), idComboBox.Text);
 
-              action.Id = (int) actionType;
+              action.Id = (int)actionType;
 
               currentlySelectedNode.Text = action.Description + " (" + action.Id + ")";
               currentlySelectedNode.Nodes[0].Text = String.Format("Action = " + GetActionName(action.Id));
             }
-            catch
-            {
-            }
+            catch {}
           }
         }
       }
@@ -1050,17 +1044,17 @@ namespace MediaPortal.Configuration.Sections
 
     public void Add(System.Windows.Forms.Keys key, string name, string settingName)
     {
-      Add((int) key, key, name, settingName, true);
+      Add((int)key, key, name, settingName, true);
     }
 
     public void Add(System.Windows.Forms.Keys key, string name)
     {
-      Add((int) key, key, name, name, true);
+      Add((int)key, key, name, name, true);
     }
 
     public void Add(System.Windows.Forms.Keys key, string name, bool valid)
     {
-      Add((int) key, key, name, name, valid);
+      Add((int)key, key, name, name, valid);
     }
 
     public string GetName(int code)
@@ -1077,7 +1071,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Item wasn't found in map, this must be a common key
         //
-        result = String.Format("{0}", (char) code);
+        result = String.Format("{0}", (char)code);
       }
 
       return result;
@@ -1097,7 +1091,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Item wasn't found in map, this must be a common key
         //
-        result = String.Format("{0}", (char) code);
+        result = String.Format("{0}", (char)code);
       }
 
       return result;

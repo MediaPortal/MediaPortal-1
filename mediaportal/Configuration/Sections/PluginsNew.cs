@@ -79,9 +79,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     public PluginsNew()
-      : this("Plugins")
-    {
-    }
+      : this("Plugins") {}
 
     public PluginsNew(string name)
       : base(name)
@@ -239,7 +237,7 @@ namespace MediaPortal.Configuration.Sections
             foreach (Type type in exportedTypes)
             {
               bool isPlugin = (type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null);
-              bool isGuiWindow = ((type.IsClass) && (type.IsSubclassOf(typeof(GUIWindow))));
+              bool isGuiWindow = ((type.IsClass) && (type.IsSubclassOf(typeof (GUIWindow))));
 
               // an abstract class cannot be instanciated
               if (type.IsAbstract)
@@ -326,7 +324,9 @@ namespace MediaPortal.Configuration.Sections
                   tag.Type = win.GetType().ToString();
                   tag.IsProcess = false;
                   tag.IsWindow = true;
-                  Log.Debug("PluginsNew: {0}, window plugin, does not implement \"ISetupForm\" and \"GUIWindow\" in the same class", tag.Type);
+                  Log.Debug(
+                    "PluginsNew: {0}, window plugin, does not implement \"ISetupForm\" and \"GUIWindow\" in the same class",
+                    tag.Type);
                   break;
                 }
               }
@@ -357,7 +357,7 @@ namespace MediaPortal.Configuration.Sections
     private static void LoadPluginImages(Type type, ItemTag tag)
     {
       PluginIconsAttribute[] icons =
-        (PluginIconsAttribute[])type.GetCustomAttributes(typeof(PluginIconsAttribute), false);
+        (PluginIconsAttribute[])type.GetCustomAttributes(typeof (PluginIconsAttribute), false);
       if (icons == null || icons.Length == 0)
       {
         //Log.Debug("PluginsNew: no icons");

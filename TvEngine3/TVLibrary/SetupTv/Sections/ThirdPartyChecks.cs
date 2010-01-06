@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -19,9 +19,7 @@ namespace SetupTv.Sections
     private static WmpServiceStatus _wmpServices;
 
     public ThirdPartyChecks()
-      : this("Additional 3rd party checks")
-    {
-    }
+      : this("Additional 3rd party checks") {}
 
     public ThirdPartyChecks(string name)
       : base(name)
@@ -204,7 +202,7 @@ namespace SetupTv.Sections
       return _mcsServices;
     }
 
-    enum McsPolicyStatus
+    private enum McsPolicyStatus
     {
       NotAMceSystem,
       ServicesRunning,
@@ -284,7 +282,7 @@ namespace SetupTv.Sections
       }
     }
 
-    enum WmpServiceStatus
+    private enum WmpServiceStatus
     {
       NotInstalled,
       StartupAutomatic,
@@ -309,6 +307,5 @@ namespace SetupTv.Sections
     }
 
     #endregion
-
   }
 }

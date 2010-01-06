@@ -32,9 +32,7 @@ namespace MediaPortal.Drawing.Transforms
   {
     #region Constructors
 
-    public TransformGroup()
-    {
-    }
+    public TransformGroup() {}
 
     public TransformGroup(TransformCollection transforms)
     {
@@ -69,12 +67,10 @@ namespace MediaPortal.Drawing.Transforms
         _children = new TransformCollection();
       }
 
-      _children.Add((Transform) child);
+      _children.Add((Transform)child);
     }
 
-    void IAddChild.AddText(string text)
-    {
-    }
+    void IAddChild.AddText(string text) {}
 
     #endregion Methods
 

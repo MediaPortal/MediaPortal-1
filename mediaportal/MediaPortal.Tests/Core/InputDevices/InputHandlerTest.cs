@@ -35,9 +35,7 @@ namespace MediaPortal.Tests.Core.InputDevices
   public class InputHandlerTest
   {
     [SetUp]
-    public void Init()
-    {
-    }
+    public void Init() {}
 
     [Test]
     public void GetPathDefaultXml()

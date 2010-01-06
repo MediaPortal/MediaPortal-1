@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using TvLibrary.Interfaces;
@@ -18,17 +18,23 @@ namespace SetupTv.Sections
   /// <summary>
   /// Counter class
   /// </summary>
-  class suminfo
+  internal class suminfo
   {
     private List<IChannel> _allNewChannels = new List<IChannel>();
-    public List<IChannel> newChannels { get { return _allNewChannels; } }
+
+    public List<IChannel> newChannels
+    {
+      get { return _allNewChannels; }
+    }
 
     public int newChannel = 0;
     public int updChannel = 0;
-    public int newChannelSum 
+
+    public int newChannelSum
     {
       get { return _allNewChannels.Count; }
     }
+
     public int updChannelSum = 0;
   }
 

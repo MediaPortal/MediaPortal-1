@@ -73,9 +73,9 @@ namespace MediaPortal.GUI.Library
 
       try
       {
-        _sourceRectangle.Y = _image1*(_imageVolumeBar.TextureHeight/_imageHeight);
+        _sourceRectangle.Y = _image1 * (_imageVolumeBar.TextureHeight / _imageHeight);
         _sourceRectangle.Width = _imageVolumeBar.TextureWidth;
-        _sourceRectangle.Height = _imageVolumeBar.TextureHeight/_imageHeight;
+        _sourceRectangle.Height = _imageVolumeBar.TextureHeight / _imageHeight;
 
         switch (_alignment)
         {
@@ -84,11 +84,11 @@ namespace MediaPortal.GUI.Library
             break;
           case Alignment.ALIGN_CENTER:
             _destinationRectangle.X = _positionX -
-                                      (((_maximum*_imageVolumeBar.TextureWidth) - _imageVolumeBar.TextureWidth)/2);
+                                      (((_maximum * _imageVolumeBar.TextureWidth) - _imageVolumeBar.TextureWidth) / 2);
             break;
           case Alignment.ALIGN_RIGHT:
             _destinationRectangle.X = _imageVolumeBar.TextureWidth + _positionX -
-                                      (_maximum*_imageVolumeBar.TextureWidth);
+                                      (_maximum * _imageVolumeBar.TextureWidth);
             break;
         }
 
@@ -105,7 +105,7 @@ namespace MediaPortal.GUI.Library
 
         if (_image2 != _image1)
         {
-          _sourceRectangle.Y = _image2*(_imageVolumeBar.TextureHeight/_imageHeight);
+          _sourceRectangle.Y = _image2 * (_imageVolumeBar.TextureHeight / _imageHeight);
         }
 
         for (int index = _current + 1; index < _maximum; ++index)

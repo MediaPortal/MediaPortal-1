@@ -125,9 +125,7 @@ namespace MediaPortal.GUI.Home
       }
     }
 
-    protected virtual void LoadButtonNames()
-    {
-    }
+    protected virtual void LoadButtonNames() {}
 
     public override bool OnMessage(GUIMessage message)
     {
@@ -269,13 +267,13 @@ namespace MediaPortal.GUI.Home
       {
         case GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM:
           //if (GUIGraphicsContext.IsFullScreenVideo) return;
-          GUIDialogNotify dialogNotify = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
+          GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
           TVProgramDescription notify = message.Object as TVProgramDescription;
           if (notify == null)
           {
             return;
           }
-          int minUntilStart = _preNotifyConfig/60;
+          int minUntilStart = _preNotifyConfig / 60;
           if (minUntilStart > 1)
           {
             dialogNotify.SetHeading(String.Format(GUILocalizeStrings.Get(1018), minUntilStart));
@@ -376,7 +374,7 @@ namespace MediaPortal.GUI.Home
           break;
 
         case GUIMessage.MessageType.GUI_MSG_GET_STRING:
-          VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+          VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
           if (null == keyboard)
           {
             return;
@@ -395,7 +393,7 @@ namespace MediaPortal.GUI.Home
           break;
 
         case GUIMessage.MessageType.GUI_MSG_GET_PASSWORD:
-          VirtualKeyboard keyboard2 = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+          VirtualKeyboard keyboard2 = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
           if (null == keyboard2)
           {
             return;
@@ -420,7 +418,7 @@ namespace MediaPortal.GUI.Home
           {
             if (!xmlreader.GetValueAsBool("general", "hidewrongpin", false))
             {
-              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
               if (dlgYesNo == null)
               {
                 return;
@@ -442,7 +440,7 @@ namespace MediaPortal.GUI.Home
 
     private void ShowInfo(string strHeading, string strLine1, string strLine2)
     {
-      GUIDialogOK pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow(2002);
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
       pDlgOK.SetHeading(strHeading);
       pDlgOK.SetLine(1, strLine1);
       pDlgOK.SetLine(2, strLine2);
@@ -452,7 +450,7 @@ namespace MediaPortal.GUI.Home
 
     private void ShowNotify(string strHeading, string description, string imgFileName)
     {
-      GUIDialogNotify dlgYesNo = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
+      GUIDialogNotify dlgYesNo = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
       dlgYesNo.SetHeading(strHeading);
       dlgYesNo.SetText(description);
       dlgYesNo.SetImage(imgFileName);
@@ -461,7 +459,7 @@ namespace MediaPortal.GUI.Home
 
     private bool AskYesNo(string strHeading, string strLine1, string strLine2, string strLine3)
     {
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
       dlgYesNo.SetHeading(strHeading);
       dlgYesNo.SetLine(1, strLine1);
       dlgYesNo.SetLine(2, strLine2);

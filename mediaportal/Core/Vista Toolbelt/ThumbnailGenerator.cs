@@ -27,7 +27,9 @@ namespace VistaToolbelt.Shell
 
       // Convert from GDI HBITMAP to WPF BitmapSource.
       // Get the thumbnail image.
-      ((IShellItemImageFactory)ppsi).GetImage(new SIZE(256, 256), SIIGBF.SIIGBF_BIGGERSIZEOK | SIIGBF.SIIGBF_THUMBNAILONLY, out hbitmap);//SIIGBF.SIIGBF_THUMBNAILONLY | SIIGBF.SIIGBF_RESIZETOFIT, out hbitmap);
+      ((IShellItemImageFactory)ppsi).GetImage(new SIZE(256, 256),
+                                              SIIGBF.SIIGBF_BIGGERSIZEOK | SIIGBF.SIIGBF_THUMBNAILONLY, out hbitmap);
+        //SIIGBF.SIIGBF_THUMBNAILONLY | SIIGBF.SIIGBF_RESIZETOFIT, out hbitmap);
 
       System.Drawing.Image source = System.Drawing.Image.FromHbitmap(hbitmap);
 

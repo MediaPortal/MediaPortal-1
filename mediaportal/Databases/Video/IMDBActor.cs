@@ -47,9 +47,7 @@ namespace MediaPortal.Video.Database
     private string _biography = string.Empty;
     private ArrayList movies = new ArrayList();
 
-    public IMDBActor()
-    {
-    }
+    public IMDBActor() {}
 
     public string Name
     {
@@ -94,7 +92,7 @@ namespace MediaPortal.Video.Database
 
     public IMDBActorMovie this[int index]
     {
-      get { return (IMDBActorMovie) movies[index]; }
+      get { return (IMDBActorMovie)movies[index]; }
       set { movies[index] = value; }
     }
 

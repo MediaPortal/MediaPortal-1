@@ -49,12 +49,19 @@ namespace MediaPortal.GUI.RADIOLASTFM
     #region Event delegates
 
     public delegate void PlaylistUpdated(List<Song> songs, string listname, bool playnow);
+
     public event PlaylistUpdated PlaylistUpdateSuccess;
+
     public delegate void PlaylistEmpty(bool playnow);
+
     public event PlaylistEmpty PlaylistUpdateError;
+
     protected delegate void ThreadStartBass(Song starttrack);
+
     protected delegate void ThreadStopPlayer();
+
     protected delegate void ThreadFacadeAddItem(Song songitem);
+
     protected delegate void ThreadUpdateThumb(string thumbpath);
 
     #endregion
@@ -74,15 +81,15 @@ namespace MediaPortal.GUI.RADIOLASTFM
       LIST_RADIO_PLAYLIST = 123
     }
 
-    [SkinControl((int) SkinControlIDs.BTN_START_STREAM)] protected GUIButtonControl btnStartStream = null;
-    [SkinControl((int) SkinControlIDs.BTN_CHOOSE_ARTIST)] protected GUIButtonControl btnChooseArtist = null;
-    [SkinControl((int) SkinControlIDs.BTN_CHOOSE_TAG)] protected GUIButtonControl btnChooseTag = null;
-    [SkinControl((int) SkinControlIDs.BTN_CHOOSE_FRIEND)] protected GUIButtonControl btnChooseFriend = null;
-    [SkinControl((int) SkinControlIDs.BTN_SUBMIT_PROFILE)] protected GUIToggleButtonControl btnSubmitProfile = null;
-    [SkinControl((int) SkinControlIDs.BTN_DISCOVERY_MODE)] protected GUIToggleButtonControl btnDiscoveryMode = null;
+    [SkinControl((int)SkinControlIDs.BTN_START_STREAM)] protected GUIButtonControl btnStartStream = null;
+    [SkinControl((int)SkinControlIDs.BTN_CHOOSE_ARTIST)] protected GUIButtonControl btnChooseArtist = null;
+    [SkinControl((int)SkinControlIDs.BTN_CHOOSE_TAG)] protected GUIButtonControl btnChooseTag = null;
+    [SkinControl((int)SkinControlIDs.BTN_CHOOSE_FRIEND)] protected GUIButtonControl btnChooseFriend = null;
+    [SkinControl((int)SkinControlIDs.BTN_SUBMIT_PROFILE)] protected GUIToggleButtonControl btnSubmitProfile = null;
+    [SkinControl((int)SkinControlIDs.BTN_DISCOVERY_MODE)] protected GUIToggleButtonControl btnDiscoveryMode = null;
     //[SkinControlAttribute((int)SkinControlIDs.LIST_TRACK_TAGS)]     protected GUIListControl facadeTrackTags = null;
-    [SkinControl((int) SkinControlIDs.IMG_ARTIST_ART)] protected GUIImage imgArtistArt = null;
-    [SkinControl((int) SkinControlIDs.LIST_RADIO_PLAYLIST)] protected GUIListControl facadeRadioPlaylist = null;
+    [SkinControl((int)SkinControlIDs.IMG_ARTIST_ART)] protected GUIImage imgArtistArt = null;
+    [SkinControl((int)SkinControlIDs.LIST_RADIO_PLAYLIST)] protected GUIListControl facadeRadioPlaylist = null;
 
     private PlayListPlayer PlaylistPlayer = null;
     private AudioscrobblerUtils InfoScrobbler = null;
@@ -165,7 +172,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
         // Do the tasks needed everytime we enter the plugin:
         string ThumbFileName = String.Empty;
-        if (AudioscrobblerBase.CurrentPlayingSong != null && AudioscrobblerBase.CurrentPlayingSong.Artist != String.Empty)
+        if (AudioscrobblerBase.CurrentPlayingSong != null &&
+            AudioscrobblerBase.CurrentPlayingSong.Artist != String.Empty)
         {
           // If we leave and reenter the plugin try to set the correct duration
           SetDuration(AudioscrobblerBase.CurrentPlayingSong, false);
@@ -764,7 +772,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         result += singleString + " ";
       }
-      result = result.TrimEnd(new char[] { ' ' });
+      result = result.TrimEnd(new char[] {' '});
       return result;
     }
 
@@ -773,7 +781,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       List<string> ResultList = new List<string>();
       try
       {
-        Array SingleStrings = aConcatString.Split(new char[] { '.', ',' });
+        Array SingleStrings = aConcatString.Split(new char[] {'.', ','});
         foreach (string strTag in SingleStrings)
         {
           ResultList.Add(strTag.Trim());
@@ -808,7 +816,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
                 Log.Debug("GUIRadioLastFM: OnMessage - selected playlist item {0}",
                           _radioTrackList[facadeRadioPlaylist.SelectedListItemIndex].ToShortString());
                 GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams),
-                                               new object[] { _radioTrackList[facadeRadioPlaylist.SelectedListItemIndex] });
+                                               new object[] {_radioTrackList[facadeRadioPlaylist.SelectedListItemIndex]});
               }
             }
           }
@@ -938,7 +946,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
             StopPlaybackIfNeed();
             AudioscrobblerBase.DoChangeUser(userdlg.SelectedLabelText,
                                             MusicDatabase.Instance.AddScrobbleUserPassword(
-                                              Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(userdlg.SelectedLabelText)), ""));
+                                              Convert.ToString(
+                                                MusicDatabase.Instance.AddScrobbleUser(userdlg.SelectedLabelText)), ""));
 
             LoadSettings();
           }
@@ -1157,7 +1166,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         // If the download was unsuccessful or disabled in config then do not remove a possibly present placeholder by specifing a not existing file
         if (File.Exists(ThumbFileName))
         {
-          GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] { ThumbFileName });
+          GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] {ThumbFileName});
         }
       }
       else
@@ -1316,7 +1325,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     {
       LastFMStation.CurrentStreamState = StreamPlaybackState.initialized;
 
-      GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] { String.Empty });
+      GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] {String.Empty});
 
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.TrackTags", String.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.SimilarArtists", String.Empty);
@@ -1354,7 +1363,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (aPlayNow)
         {
           GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams),
-                                         new object[] { DetermineNextPlaylistTrack() });
+                                         new object[] {DetermineNextPlaylistTrack()});
         }
       }
       else if (aPlayNow)
@@ -1395,7 +1404,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (facadeRadioPlaylist != null && !aPlayNow)
         {
           GUIGraphicsContext.form.Invoke(new ThreadFacadeAddItem(AddItemToFacadeControl),
-                                         new object[] { _radioTrackList[i] });
+                                         new object[] {_radioTrackList[i]});
         }
       }
 
@@ -1407,7 +1416,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         {
           GUIGraphicsContext.form.Invoke(new ThreadStopPlayer(StopPlaybackIfNeed));
           GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams),
-                                         new object[] { DetermineNextPlaylistTrack() });
+                                         new object[] {DetermineNextPlaylistTrack()});
         }
         catch (Exception ex)
         {
@@ -1459,7 +1468,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     private void OnPlaybackStarted()
     {
-      GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] { String.Empty });
+      GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] {String.Empty});
 
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.TrackTags", String.Empty);
       GUIPropertyManager.SetProperty("#Play.Current.Lastfm.SimilarArtists", String.Empty);
@@ -1511,7 +1520,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (_configDirectSkip || directSkip)
         {
           GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams),
-                                         new object[] { DetermineNextPlaylistTrack() });
+                                         new object[] {DetermineNextPlaylistTrack()});
         }
         else
         {
@@ -1534,7 +1543,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
           }
 
           GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams),
-                                         new object[] { _radioTrackList[dlg.SelectedId - 1] });
+                                         new object[] {_radioTrackList[dlg.SelectedId - 1]});
         }
       }
       else
@@ -1579,7 +1588,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         if (_radioTrackList.Count > 0)
         {
           GUIGraphicsContext.form.Invoke(new ThreadStartBass(PlayPlayListStreams),
-                                         new object[] { DetermineNextPlaylistTrack() });
+                                         new object[] {DetermineNextPlaylistTrack()});
         }
         else
         {
@@ -1893,7 +1902,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         MenuItem menuItem3 = new MenuItem();
 
         // Initialize contextMenuLastFM
-        contextMenuLastFM.MenuItems.AddRange(new MenuItem[] { menuItem1, menuItem2, menuItem3 });
+        contextMenuLastFM.MenuItems.AddRange(new MenuItem[] {menuItem1, menuItem2, menuItem3});
 
         // Initialize menuItem1
         menuItem1.Index = 0;

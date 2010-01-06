@@ -1,4 +1,5 @@
 #region Copyright (C) 2007-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2007-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,9 +20,11 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -30,6 +33,7 @@ using TvDatabase;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using TvEngine.PowerScheduler.Interfaces;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Handlers
@@ -40,20 +44,26 @@ namespace TvEngine.PowerScheduler.Handlers
   public class ProcessActiveHandler : IStandbyHandler
   {
     #region Variables
+
     private List<string> _processes = new List<string>();
     private List<string> _preventers = new List<string>();
+
     #endregion
 
     #region Constructor
+
     public ProcessActiveHandler()
     {
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
-        GlobalServiceProvider.Instance.Get<IPowerScheduler>().OnPowerSchedulerEvent += new PowerSchedulerEventHandler(ProcessActiveHandler_OnPowerSchedulerEvent);
+        GlobalServiceProvider.Instance.Get<IPowerScheduler>().OnPowerSchedulerEvent +=
+          new PowerSchedulerEventHandler(ProcessActiveHandler_OnPowerSchedulerEvent);
     }
+
     #endregion
 
     #region Private methods
-    void ProcessActiveHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
+
+    private void ProcessActiveHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
     {
       switch (args.EventType)
       {
@@ -93,9 +103,11 @@ namespace TvEngine.PowerScheduler.Handlers
           return false;
       return true;
     }
+
     #endregion
 
     #region IStandbyHandler implementation
+
     public bool DisAllowShutdown
     {
       get
@@ -110,9 +122,8 @@ namespace TvEngine.PowerScheduler.Handlers
         return (_preventers.Count > 0);
       }
     }
-    public void UserShutdownNow()
-    {
-    }
+
+    public void UserShutdownNow() {}
 
     public string HandlerName
     {
@@ -124,6 +135,7 @@ namespace TvEngine.PowerScheduler.Handlers
         return String.Format("ProcessActiveHandler:{0}", preventers);
       }
     }
+
     #endregion
   }
 }

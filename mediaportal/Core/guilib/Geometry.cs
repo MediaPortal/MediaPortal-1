@@ -58,9 +58,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Empty constructor
     /// </summary>
-    public Geometry()
-    {
-    }
+    public Geometry() {}
 
     /// <summary>
     /// property to get/set the width of the video/image
@@ -142,7 +140,7 @@ namespace MediaPortal.GUI.Library
     public void GetWindow(int arVideoWidth, int arVideoHeight, out Rectangle rSource, out Rectangle rDest,
                           CropSettings cropSettings)
     {
-      float fSourceFrameRatio = (float) arVideoWidth/(float) arVideoHeight;
+      float fSourceFrameRatio = (float)arVideoWidth / (float)arVideoHeight;
       GetWindow(fSourceFrameRatio, out rSource, out rDest, cropSettings);
     }
 
@@ -155,7 +153,7 @@ namespace MediaPortal.GUI.Library
 
     public void GetWindow(float fSourceFrameRatio, out Rectangle rSource, out Rectangle rDest, CropSettings cropSettings)
     {
-      float fOutputFrameRatio = fSourceFrameRatio/PixelRatio;
+      float fOutputFrameRatio = fSourceFrameRatio / PixelRatio;
 
       // make sure the crop settings are acceptable
       cropSettings = cropSettings.EnsureSanity(ImageWidth, ImageHeight);
@@ -169,8 +167,8 @@ namespace MediaPortal.GUI.Library
       int croppedImageHeight = ImageHeight - cropH;
 
       // suggested by ziphnor
-      float fSourcePixelRatio = fSourceFrameRatio/((float) ImageWidth/(float) ImageHeight);
-      float fCroppedOutputFrameRatio = fSourcePixelRatio*((float) croppedImageWidth/(float) croppedImageHeight)/
+      float fSourcePixelRatio = fSourceFrameRatio / ((float)ImageWidth / (float)ImageHeight);
+      float fCroppedOutputFrameRatio = fSourcePixelRatio * ((float)croppedImageWidth / (float)croppedImageHeight) /
                                        PixelRatio;
 
       //Log.Debug("croppedImage W/H {0}x{1}", croppedImageWidth, croppedImageHeight);
@@ -195,28 +193,28 @@ namespace MediaPortal.GUI.Library
             // calculate AR compensation (see http://www.iki.fi/znark/video/conversion)
             // assume that the movie is widescreen first, so use full height
             float fVertBorder = 0;
-            float fNewHeight = (float) (ScreenHeight);
-            float fNewWidth = fNewHeight*fCroppedOutputFrameRatio;
-            float fHorzBorder = (fNewWidth - (float) ScreenWidth)/2.0f;
-            float fFactor = fNewWidth/((float) ImageWidth);
+            float fNewHeight = (float)(ScreenHeight);
+            float fNewWidth = fNewHeight * fCroppedOutputFrameRatio;
+            float fHorzBorder = (fNewWidth - (float)ScreenWidth) / 2.0f;
+            float fFactor = fNewWidth / ((float)ImageWidth);
             fFactor *= PixelRatio;
-            fHorzBorder = fHorzBorder/fFactor;
+            fHorzBorder = fHorzBorder / fFactor;
 
-            if ((int) fNewWidth < ScreenWidth)
+            if ((int)fNewWidth < ScreenWidth)
             {
               fHorzBorder = 0;
-              fNewWidth = (float) (ScreenWidth);
-              fNewHeight = fNewWidth/fCroppedOutputFrameRatio;
-              fVertBorder = (fNewHeight - (float) ScreenHeight)/2.0f;
-              fFactor = fNewWidth/((float) ImageWidth);
+              fNewWidth = (float)(ScreenWidth);
+              fNewHeight = fNewWidth / fCroppedOutputFrameRatio;
+              fVertBorder = (fNewHeight - (float)ScreenHeight) / 2.0f;
+              fFactor = fNewWidth / ((float)ImageWidth);
               fFactor *= PixelRatio;
-              fVertBorder = fVertBorder/fFactor;
+              fVertBorder = fVertBorder / fFactor;
             }
 
-            rSource = new Rectangle((int) fHorzBorder,
-                                    (int) fVertBorder,
-                                    (int) ((float) ImageWidth - 2.0f*fHorzBorder),
-                                    (int) ((float) ImageHeight - 2.0f*fVertBorder));
+            rSource = new Rectangle((int)fHorzBorder,
+                                    (int)fVertBorder,
+                                    (int)((float)ImageWidth - 2.0f * fHorzBorder),
+                                    (int)((float)ImageHeight - 2.0f * fVertBorder));
             rDest = new Rectangle(0, 0, ScreenWidth, ScreenHeight);
             AdjustSourceForCropping(ref rSource, cropSettings);
           }
@@ -225,29 +223,29 @@ namespace MediaPortal.GUI.Library
         case Type.Normal:
           {
             // maximize the movie width
-            float fNewWidth = (float) ScreenWidth;
-            float fNewHeight = (float) (fNewWidth/fCroppedOutputFrameRatio);
+            float fNewWidth = (float)ScreenWidth;
+            float fNewHeight = (float)(fNewWidth / fCroppedOutputFrameRatio);
 
             if (fNewHeight > ScreenHeight)
             {
               fNewHeight = ScreenHeight;
-              fNewWidth = fNewHeight*fCroppedOutputFrameRatio;
+              fNewWidth = fNewHeight * fCroppedOutputFrameRatio;
             }
 
             // this shouldnt happen, but just make sure that everything still fits onscreen
             if (fNewWidth > ScreenWidth || fNewHeight > ScreenHeight)
             {
-              fNewWidth = (float) ImageWidth;
-              fNewWidth = (float) croppedImageWidth;
-              fNewHeight = (float) croppedImageHeight;
+              fNewWidth = (float)ImageWidth;
+              fNewWidth = (float)croppedImageWidth;
+              fNewHeight = (float)croppedImageHeight;
             }
 
             // Centre the movie
-            float iPosY = (ScreenHeight - fNewHeight)/2;
-            float iPosX = (ScreenWidth - fNewWidth)/2;
+            float iPosY = (ScreenHeight - fNewHeight) / 2;
+            float iPosX = (ScreenWidth - fNewWidth) / 2;
 
             rSource = new Rectangle(cropSettings.Left, cropSettings.Top, croppedImageWidth, croppedImageHeight);
-            rDest = new Rectangle((int) iPosX, (int) iPosY, (int) (fNewWidth + 0.5f), (int) (fNewHeight + 0.5f));
+            rDest = new Rectangle((int)iPosX, (int)iPosY, (int)(fNewWidth + 0.5f), (int)(fNewHeight + 0.5f));
 
             //AdjustForCropping(ref rSource, ref rDest, cropSettings, true);
           }
@@ -256,13 +254,13 @@ namespace MediaPortal.GUI.Library
         case Type.Original:
           {
             // maximize the movie width
-            float fNewWidth = (float) Math.Min(ImageWidth, ScreenWidth);
-            float fNewHeight = (float) (fNewWidth/fOutputFrameRatio);
+            float fNewWidth = (float)Math.Min(ImageWidth, ScreenWidth);
+            float fNewHeight = (float)(fNewWidth / fOutputFrameRatio);
 
             if (fNewHeight > ScreenHeight)
             {
               fNewHeight = Math.Min(ImageHeight, ScreenHeight);
-              fNewWidth = fNewHeight*fOutputFrameRatio;
+              fNewWidth = fNewHeight * fOutputFrameRatio;
             }
 
             // this shouldnt happen, but just make sure that everything still fits onscreen
@@ -273,42 +271,42 @@ namespace MediaPortal.GUI.Library
             }
 
             // Centre the movie
-            float iPosY = (ScreenHeight - fNewHeight)/2;
-            float iPosX = (ScreenWidth - fNewWidth)/2;
+            float iPosY = (ScreenHeight - fNewHeight) / 2;
+            float iPosX = (ScreenWidth - fNewWidth) / 2;
 
             // The original zoom mode ignores cropping parameters:
             rSource = new Rectangle(0, 0, ImageWidth, ImageHeight);
-            rDest = new Rectangle((int) iPosX, (int) iPosY, (int) (fNewWidth + 0.5f), (int) (fNewHeight + 0.5f));
+            rDest = new Rectangle((int)iPosX, (int)iPosY, (int)(fNewWidth + 0.5f), (int)(fNewHeight + 0.5f));
           }
           break;
 
         case Type.LetterBox43:
           {
             // shrink movie 33% vertically
-            float fNewWidth = (float) ScreenWidth;
-            float fNewHeight = (float) (fNewWidth/fOutputFrameRatio);
+            float fNewWidth = (float)ScreenWidth;
+            float fNewHeight = (float)(fNewWidth / fOutputFrameRatio);
             fNewHeight *= (1.0f - 0.33333333333f);
 
             if (fNewHeight > ScreenHeight)
             {
               fNewHeight = ScreenHeight;
               fNewHeight *= (1.0f - 0.33333333333f);
-              fNewWidth = fNewHeight*fOutputFrameRatio;
+              fNewWidth = fNewHeight * fOutputFrameRatio;
             }
 
             // this shouldnt happen, but just make sure that everything still fits onscreen
             if (fNewWidth > ScreenWidth || fNewHeight > ScreenHeight)
             {
-              fNewWidth = (float) ImageWidth;
-              fNewHeight = (float) ImageHeight;
+              fNewWidth = (float)ImageWidth;
+              fNewHeight = (float)ImageHeight;
             }
 
             // Centre the movie
-            float iPosY = (ScreenHeight - fNewHeight)/2;
-            float iPosX = (ScreenWidth - fNewWidth)/2;
+            float iPosY = (ScreenHeight - fNewHeight) / 2;
+            float iPosX = (ScreenWidth - fNewWidth) / 2;
 
             rSource = new Rectangle(0, 0, ImageWidth, ImageHeight);
-            rDest = new Rectangle((int) iPosX, (int) iPosY, (int) (fNewWidth + 0.5f), (int) (fNewHeight + 0.5f));
+            rDest = new Rectangle((int)iPosX, (int)iPosY, (int)(fNewWidth + 0.5f), (int)(fNewHeight + 0.5f));
             AdjustSourceForCropping(ref rSource, cropSettings);
           }
           break;
@@ -316,35 +314,35 @@ namespace MediaPortal.GUI.Library
         case Type.NonLinearStretch:
           {
             // If screen is 16:9 do non-linear stretch, otherwise panscan
-            float fScreenRatio = (float) ScreenWidth/ScreenHeight;
+            float fScreenRatio = (float)ScreenWidth / ScreenHeight;
             fScreenRatio *= PixelRatio;
             if (fScreenRatio < 1.59)
             {
               // pan and scan
               // assume that the movie is widescreen first, so use full height
               float fVertBorder = 0;
-              float fNewHeight = (float) (ScreenHeight);
-              float fNewWidth = fNewHeight*fOutputFrameRatio*1.66666666667f;
-              float fHorzBorder = (fNewWidth - (float) ScreenWidth)/2.0f;
-              float fFactor = fNewWidth/((float) ImageWidth);
+              float fNewHeight = (float)(ScreenHeight);
+              float fNewWidth = fNewHeight * fOutputFrameRatio * 1.66666666667f;
+              float fHorzBorder = (fNewWidth - (float)ScreenWidth) / 2.0f;
+              float fFactor = fNewWidth / ((float)ImageWidth);
               fFactor *= PixelRatio;
-              fHorzBorder = fHorzBorder/fFactor;
+              fHorzBorder = fHorzBorder / fFactor;
 
-              if ((int) fNewWidth < ScreenWidth)
+              if ((int)fNewWidth < ScreenWidth)
               {
                 fHorzBorder = 0;
-                fNewWidth = (float) (ScreenWidth);
-                fNewHeight = fNewWidth/fOutputFrameRatio;
-                fVertBorder = (fNewHeight - (float) ScreenHeight)/2.0f;
-                fFactor = fNewWidth/((float) ImageWidth);
+                fNewWidth = (float)(ScreenWidth);
+                fNewHeight = fNewWidth / fOutputFrameRatio;
+                fVertBorder = (fNewHeight - (float)ScreenHeight) / 2.0f;
+                fFactor = fNewWidth / ((float)ImageWidth);
                 fFactor *= PixelRatio;
-                fVertBorder = fVertBorder/fFactor;
+                fVertBorder = fVertBorder / fFactor;
               }
 
-              rSource = new Rectangle((int) fHorzBorder,
-                                      (int) fVertBorder,
-                                      (int) ((float) ImageWidth - 2.0f*fHorzBorder),
-                                      (int) ((float) ImageHeight - 2.0f*fVertBorder));
+              rSource = new Rectangle((int)fHorzBorder,
+                                      (int)fVertBorder,
+                                      (int)((float)ImageWidth - 2.0f * fHorzBorder),
+                                      (int)((float)ImageHeight - 2.0f * fVertBorder));
               rDest = new Rectangle(0, 0, ScreenWidth, ScreenHeight);
               AdjustSourceForCropping(ref rSource, cropSettings);
             }
@@ -353,14 +351,14 @@ namespace MediaPortal.GUI.Library
               m_bUseNonLinearStretch = true;
               //here we just need to remove 8.3% from top/bottom of the image (=Zoom in 9.1%)
               //The non-linear stretching part will be handled by the VMR9 presenter
-              int newTop = cropSettings.Top + (int) (0.083f*((float) croppedImageHeight)/2.0f);
-              int newHeight = (int) (((float) croppedImageHeight)*(1.0f - 0.083f));
+              int newTop = cropSettings.Top + (int)(0.083f * ((float)croppedImageHeight) / 2.0f);
+              int newHeight = (int)(((float)croppedImageHeight) * (1.0f - 0.083f));
               //For 16:10 screens the cropping should not be done, which fixes the aspect ratio issue within tolerable accuracy
               if ((fScreenRatio < 1.61) && (fScreenRatio > 1.59))
               {
                 newTop = cropSettings.Top;
                 newHeight = (int)croppedImageHeight;
-              }              
+              }
               rSource = new Rectangle(cropSettings.Left, newTop, croppedImageWidth, newHeight);
               rDest = new Rectangle(0, 0, ScreenWidth, ScreenHeight);
             }
@@ -370,53 +368,53 @@ namespace MediaPortal.GUI.Library
         case Type.Zoom14to9:
           {
             // fit the image to screen size
-            float fNewWidth = (float) ScreenWidth;
-            float fNewHeight = (float) (fNewWidth/fOutputFrameRatio);
+            float fNewWidth = (float)ScreenWidth;
+            float fNewHeight = (float)(fNewWidth / fOutputFrameRatio);
 
             if (fNewHeight > ScreenHeight)
             {
               fNewHeight = ScreenHeight;
-              fNewWidth = fNewHeight*fOutputFrameRatio;
+              fNewWidth = fNewHeight * fOutputFrameRatio;
             }
 
             float iPosX = 0;
             float iPosY = 0;
             float fVertBorder = 0;
             float fHorzBorder = 0;
-            float fFactor = fNewWidth/((float) ImageWidth);
+            float fFactor = fNewWidth / ((float)ImageWidth);
             fFactor *= PixelRatio;
             // increase the image size by 12.5% and crop or pad if needed
-            fNewHeight = fNewHeight*1.125f;
-            fNewWidth = fNewHeight*fOutputFrameRatio;
+            fNewHeight = fNewHeight * 1.125f;
+            fNewWidth = fNewHeight * fOutputFrameRatio;
 
-            if ((int) fNewHeight < ScreenHeight)
+            if ((int)fNewHeight < ScreenHeight)
             {
-              fHorzBorder = (fNewWidth - (float) ScreenWidth)/2.0f;
-              fHorzBorder = fHorzBorder/fFactor;
-              iPosY = (ScreenHeight - fNewHeight)/2;
+              fHorzBorder = (fNewWidth - (float)ScreenWidth) / 2.0f;
+              fHorzBorder = fHorzBorder / fFactor;
+              iPosY = (ScreenHeight - fNewHeight) / 2;
             }
 
-            if ((int) fNewWidth < ScreenWidth)
+            if ((int)fNewWidth < ScreenWidth)
             {
-              fVertBorder = (fNewHeight - (float) ScreenHeight)/2.0f;
-              fVertBorder = fVertBorder/fFactor;
-              iPosX = (ScreenWidth - fNewWidth)/2;
+              fVertBorder = (fNewHeight - (float)ScreenHeight) / 2.0f;
+              fVertBorder = fVertBorder / fFactor;
+              iPosX = (ScreenWidth - fNewWidth) / 2;
             }
 
-            if ((int) fNewWidth > ScreenWidth && (int) fNewHeight > ScreenHeight)
+            if ((int)fNewWidth > ScreenWidth && (int)fNewHeight > ScreenHeight)
             {
-              fHorzBorder = (fNewWidth - (float) ScreenWidth)/2.0f;
-              fHorzBorder = fHorzBorder/fFactor;
-              fVertBorder = (fNewHeight - (float) ScreenHeight)/2.0f;
-              fVertBorder = fVertBorder/fFactor;
+              fHorzBorder = (fNewWidth - (float)ScreenWidth) / 2.0f;
+              fHorzBorder = fHorzBorder / fFactor;
+              fVertBorder = (fNewHeight - (float)ScreenHeight) / 2.0f;
+              fVertBorder = fVertBorder / fFactor;
             }
 
-            rSource = new Rectangle((int) fHorzBorder,
-                                    (int) fVertBorder,
-                                    (int) ((float) ImageWidth - 2.0f*fHorzBorder),
-                                    (int) ((float) ImageHeight - 2.0f*fVertBorder));
-            rDest = new Rectangle((int) iPosX, (int) iPosY, (int) (fNewWidth - (2.0f*fHorzBorder*fFactor) + 0.5f),
-                                  (int) (fNewHeight - (2.0f*fVertBorder*fFactor) + 0.5f));
+            rSource = new Rectangle((int)fHorzBorder,
+                                    (int)fVertBorder,
+                                    (int)((float)ImageWidth - 2.0f * fHorzBorder),
+                                    (int)((float)ImageHeight - 2.0f * fVertBorder));
+            rDest = new Rectangle((int)iPosX, (int)iPosY, (int)(fNewWidth - (2.0f * fHorzBorder * fFactor) + 0.5f),
+                                  (int)(fNewHeight - (2.0f * fVertBorder * fFactor) + 0.5f));
             AdjustSourceForCropping(ref rSource, cropSettings);
           }
           break;
@@ -544,7 +542,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     private float CalculateFrameAspectRatio()
     {
-      return (float) ImageWidth/(float) ImageHeight;
+      return (float)ImageWidth / (float)ImageHeight;
     }
   }
 }

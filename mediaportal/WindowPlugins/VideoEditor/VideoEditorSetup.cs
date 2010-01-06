@@ -33,9 +33,7 @@ namespace WindowPlugins.VideoEditor
   {
     //    int windowID = 170601;
 
-    public VideoEditorSetup()
-    {
-    }
+    public VideoEditorSetup() {}
 
     #region ISetupForm Member
 
@@ -71,7 +69,7 @@ namespace WindowPlugins.VideoEditor
 
     public int GetWindowId()
     {
-      return (int) GUIWindow.Window.WINDOW_VIDEO_EDITOR;
+      return (int)GUIWindow.Window.WINDOW_VIDEO_EDITOR;
     }
 
     public bool HasSetup()

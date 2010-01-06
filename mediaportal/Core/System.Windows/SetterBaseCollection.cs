@@ -32,9 +32,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public SetterBaseCollection()
-    {
-    }
+    public SetterBaseCollection() {}
 
     #endregion Constructors
 
@@ -87,12 +85,10 @@ namespace System.Windows
         throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof (SetterBase)));
       }
 
-      List.Add((SetterBase) child);
+      List.Add((SetterBase)child);
     }
 
-    void IAddChild.AddText(string text)
-    {
-    }
+    void IAddChild.AddText(string text) {}
 
     public int IndexOf(SetterBase setter)
     {
@@ -137,7 +133,7 @@ namespace System.Windows
 
     public SetterBase this[int index]
     {
-      get { return (Setter) List[index]; }
+      get { return (Setter)List[index]; }
       set { List[index] = value; }
     }
 

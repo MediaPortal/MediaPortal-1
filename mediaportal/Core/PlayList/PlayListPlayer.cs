@@ -127,9 +127,7 @@ namespace MediaPortal.Playlists
     private bool _repeatPlayList = true;
     private string _currentPlaylistName = string.Empty;
 
-    public PlayListPlayer()
-    {
-    }
+    public PlayListPlayer() {}
 
     private static PlayListPlayer singletonPlayer = new PlayListPlayer();
 

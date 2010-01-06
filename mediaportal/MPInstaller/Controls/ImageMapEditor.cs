@@ -49,9 +49,7 @@ namespace Pabo.MozBar
 
     #region constructor
 
-    public ImageMapEditor()
-    {
-    }
+    public ImageMapEditor() {}
 
     #endregion
 
@@ -61,7 +59,7 @@ namespace Pabo.MozBar
     {
       if (component is MozItem.ImageCollection)
       {
-        return ((MozItem.ImageCollection) component).GetImageList();
+        return ((MozItem.ImageCollection)component).GetImageList();
       }
 
       return null;
@@ -73,7 +71,7 @@ namespace Pabo.MozBar
 
     public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
     {
-      wfes = (IWindowsFormsEditorService) provider.GetService(typeof (IWindowsFormsEditorService));
+      wfes = (IWindowsFormsEditorService)provider.GetService(typeof (IWindowsFormsEditorService));
       if ((wfes == null) || (context == null))
       {
         return null;
@@ -93,7 +91,7 @@ namespace Pabo.MozBar
       m_imagePanel.VLinesColor = Color.FromArgb(182, 189, 210);
       m_imagePanel.BorderColor = Color.FromArgb(0, 0, 0);
       m_imagePanel.EnableDragDrop = true;
-      m_imagePanel.Init(imageList, 12, 12, 6, (int) value);
+      m_imagePanel.Init(imageList, 12, 12, 6, (int)value);
 
       // add listner for event
       m_imagePanel.ItemClick += new ImageListPanelEventHandler(OnItemClicked);
@@ -104,7 +102,7 @@ namespace Pabo.MozBar
       wfes.DropDownControl(m_imagePanel);
 
       // return the selection (or the original value if none selected)
-      return (m_selectedIndex != -1) ? m_selectedIndex : (int) value;
+      return (m_selectedIndex != -1) ? m_selectedIndex : (int)value;
     }
 
     public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
@@ -130,11 +128,9 @@ namespace Pabo.MozBar
       {
         try
         {
-          imageIndex = (int) Convert.ToUInt16(pe.Value.ToString());
+          imageIndex = (int)Convert.ToUInt16(pe.Value.ToString());
         }
-        catch
-        {
-        }
+        catch {}
       }
       // no instance, or the instance represents an undefined image
       if ((pe.Context.Instance == null) || (imageIndex < 0))
@@ -158,7 +154,7 @@ namespace Pabo.MozBar
 
     public void OnItemClicked(object sender, ImageListPanelEventArgs e)
     {
-      m_selectedIndex = ((ImageListPanelEventArgs) e).SelectedItem;
+      m_selectedIndex = ((ImageListPanelEventArgs)e).SelectedItem;
 
       //remove listner
       m_imagePanel.ItemClick -= new ImageListPanelEventHandler(OnItemClicked);

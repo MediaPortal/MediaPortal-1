@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ServiceProcess;
 using Microsoft.Win32;
 
@@ -9,9 +9,7 @@ namespace MediaPortal.Configuration.Sections
     private static McsPolicyStatus _mcsServices;
 
     public ThirdPartyChecks()
-      : this("Additional 3rd party checks")
-    {
-    }
+      : this("Additional 3rd party checks") {}
 
     public ThirdPartyChecks(string name)
       : base(name)
@@ -22,7 +20,7 @@ namespace MediaPortal.Configuration.Sections
     public override void OnSectionActivated()
     {
       _mcsServices = McsPolicyCheck();
-      
+
       RefreshForm();
     }
 
@@ -138,7 +136,7 @@ namespace MediaPortal.Configuration.Sections
       return _mcsServices;
     }
 
-    enum McsPolicyStatus
+    private enum McsPolicyStatus
     {
       NotAMceSystem,
       ServicesRunning,
@@ -153,6 +151,5 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #endregion
-
   }
 }

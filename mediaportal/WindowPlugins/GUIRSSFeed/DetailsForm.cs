@@ -172,8 +172,8 @@ namespace GUIRSSFeed
       // 
       // textBoxURL
       // 
-      this.textBoxURL.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                 | AnchorStyles.Right)));
+      this.textBoxURL.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                | AnchorStyles.Right)));
       this.textBoxURL.BorderColor = Color.Empty;
       this.textBoxURL.Location = new Point(80, 58);
       this.textBoxURL.Name = "textBoxURL";
@@ -182,8 +182,8 @@ namespace GUIRSSFeed
       // 
       // textEncoding
       // 
-      this.textEncoding.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                   | AnchorStyles.Right)));
+      this.textEncoding.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                  | AnchorStyles.Right)));
       this.textEncoding.BorderColor = Color.Empty;
       this.textEncoding.Location = new Point(80, 93);
       this.textEncoding.Name = "textEncoding";
@@ -193,7 +193,7 @@ namespace GUIRSSFeed
       // 
       // buttonSave
       // 
-      this.buttonSave.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.buttonSave.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
       this.buttonSave.Location = new Point(320, 180);
       this.buttonSave.Name = "buttonSave";
       this.buttonSave.Size = new Size(75, 23);
@@ -204,8 +204,8 @@ namespace GUIRSSFeed
       // 
       // textDescription
       // 
-      this.textDescription.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                      | AnchorStyles.Right)));
+      this.textDescription.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                     | AnchorStyles.Right)));
       this.textDescription.BorderColor = Color.Empty;
       this.textDescription.Location = new Point(340, 24);
       this.textDescription.Name = "textDescription";
@@ -214,7 +214,7 @@ namespace GUIRSSFeed
       // 
       // buttonCancel
       // 
-      this.buttonCancel.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.buttonCancel.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
       this.buttonCancel.DialogResult = DialogResult.Cancel;
       this.buttonCancel.Location = new Point(401, 180);
       this.buttonCancel.Name = "buttonCancel";
@@ -235,8 +235,8 @@ namespace GUIRSSFeed
       // 
       // textImage
       // 
-      this.textImage.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.textImage.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.textImage.BorderColor = Color.Empty;
       this.textImage.Location = new Point(80, 128);
       this.textImage.Name = "textImage";
@@ -245,7 +245,7 @@ namespace GUIRSSFeed
       // 
       // buttonBrowse
       // 
-      this.buttonBrowse.Anchor = ((AnchorStyles) ((AnchorStyles.Top | AnchorStyles.Right)));
+      this.buttonBrowse.Anchor = ((AnchorStyles)((AnchorStyles.Top | AnchorStyles.Right)));
       this.buttonBrowse.Location = new Point(401, 126);
       this.buttonBrowse.Name = "buttonBrowse";
       this.buttonBrowse.Size = new Size(75, 23);

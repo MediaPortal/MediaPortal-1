@@ -29,7 +29,7 @@ namespace TsCutterPackage
       }
       try
       {
-        _reader = new BufferedStream(new FileStream(tsFile, FileMode.Open), (int) (packetsToBuffer*188));
+        _reader = new BufferedStream(new FileStream(tsFile, FileMode.Open), (int)(packetsToBuffer * 188));
       }
       catch (Exception)
       {
@@ -52,7 +52,7 @@ namespace TsCutterPackage
 
     public int GetPositionInPercent()
     {
-      return (int) (_reader.Position*100/fileSize);
+      return (int)(_reader.Position * 100 / fileSize);
     }
 
     public bool SeekToFirstPacket()
@@ -65,7 +65,7 @@ namespace TsCutterPackage
         {
           return false;
         }
-        byte b = (byte) ch;
+        byte b = (byte)ch;
         if (b == SYNC_BYTE)
         {
           _reader.Seek(-1, SeekOrigin.Current);

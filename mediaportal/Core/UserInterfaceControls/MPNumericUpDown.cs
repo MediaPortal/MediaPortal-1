@@ -32,9 +32,6 @@ namespace MediaPortal.UserInterface.Controls
   /// </summary>
   public class MPNumericUpDown : System.Windows.Forms.NumericUpDown
   {
-    public MPNumericUpDown()
-    {
-
-    }
+    public MPNumericUpDown() {}
   }
 }

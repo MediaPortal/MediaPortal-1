@@ -45,9 +45,9 @@ namespace MediaPortal.Visualization
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct TimedLevel
     {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2*MaxSamples)] public byte[] frequency;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2 * MaxSamples)] public byte[] frequency;
 
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2*MaxSamples)] public byte[] waveform;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2 * MaxSamples)] public byte[] waveform;
 
       public int State;
       public Int64 TimeStamp;
@@ -111,7 +111,8 @@ namespace MediaPortal.Visualization
         rect.bottom = VisualizationWindow.Height;
 
         OutputContextType outputType = VisualizationWindow.OutputContextType;
-        result = WMPInterop.InitWMPEngine(VizPluginInfo.CLSID, VizPluginInfo.PresetIndex, OutputContextType.WindowHandle, IntPtr.Zero,
+        result = WMPInterop.InitWMPEngine(VizPluginInfo.CLSID, VizPluginInfo.PresetIndex, OutputContextType.WindowHandle,
+                                          IntPtr.Zero,
                                           VisualizationWindow.Handle, ref rect);
         _Initialized = result;
         Log.Info("  Visualization Manager: WMP visualization initialization {0}", (result ? "succeeded." : "failed!"));
@@ -139,7 +140,7 @@ namespace MediaPortal.Visualization
       if (VisualizationWindow.InvokeRequired)
       {
         ThreadSafeRenderDelegate d = new ThreadSafeRenderDelegate(RenderVisualization);
-        return (int) VisualizationWindow.Invoke(d);
+        return (int)VisualizationWindow.Invoke(d);
       }
 
       RECT rect = new RECT();
@@ -150,7 +151,7 @@ namespace MediaPortal.Visualization
 
       TimedLvl.waveform = new byte[2048];
       TimedLvl.frequency = new byte[2048];
-      TimedLvl.State = (int) WMPInterop.AudioState.Playing;
+      TimedLvl.State = (int)WMPInterop.AudioState.Playing;
 
       bool gotWaveData = GetWaveData(ref TimedLvl.waveform);
       bool gotfreqData = GetFftData(ref TimedLvl.frequency);
@@ -227,12 +228,12 @@ namespace MediaPortal.Visualization
     {
       int multiplier = 4;
       const int sampleLength = 2048;
-      float[] buf = new float[sampleLength*multiplier];
+      float[] buf = new float[sampleLength * multiplier];
       //float[] pcm = new float[sampleLength]; ;
 
       if (!_IsPreviewVisualization)
       {
-        int stream = (int) Bass.GetCurrentVizStream();
+        int stream = (int)Bass.GetCurrentVizStream();
 
         if (stream == 0)
         {
@@ -253,7 +254,7 @@ namespace MediaPortal.Visualization
             // Following code taken as a sugesstion from Symphy (Thx for the contribution)
 
             // Convert float value between -1 and 1 to 0 and 255
-            float val = (buf[i] + 1f)*127.5f;
+            float val = (buf[i] + 1f) * 127.5f;
 
             if (val < 0)
             {
@@ -265,14 +266,14 @@ namespace MediaPortal.Visualization
             }
 
             // Left Channel
-            if (i%2 == 0)
+            if (i % 2 == 0)
             {
-              audioData[x] = (byte) val;
+              audioData[x] = (byte)val;
             }
               // Right Channel
             else
             {
-              audioData[x + 1024] = (byte) val;
+              audioData[x + 1024] = (byte)val;
               x++;
             }
           }
@@ -293,15 +294,15 @@ namespace MediaPortal.Visualization
         for (int i = 0; i < sampleLength; i++)
         {
           // Left Channel
-          if (i%2 == 0)
+          if (i % 2 == 0)
           {
-            audioData[x] = (byte) rand.Next(0, 127);
+            audioData[x] = (byte)rand.Next(0, 127);
           }
 
             // Right Channel
           else
           {
-            audioData[x + 1024] = (byte) rand.Next(128, 255);
+            audioData[x + 1024] = (byte)rand.Next(128, 255);
           }
         }
       }
@@ -315,7 +316,7 @@ namespace MediaPortal.Visualization
 
       if (!_IsPreviewVisualization)
       {
-        int stream = (int) Bass.GetCurrentVizStream();
+        int stream = (int)Bass.GetCurrentVizStream();
 
         if (stream == 0)
         {
@@ -323,24 +324,24 @@ namespace MediaPortal.Visualization
         }
 
         fft = new float[1024];
-        Un4seen.Bass.Bass.BASS_ChannelGetData(stream, fft, (int) BASSData.BASS_DATA_FFT2048);
+        Un4seen.Bass.Bass.BASS_ChannelGetData(stream, fft, (int)BASSData.BASS_DATA_FFT2048);
       }
 
       else
       {
         fft = new float[1024];
-        float stepValue = 1.0f/1024f;
+        float stepValue = 1.0f / 1024f;
 
         Random rand = new Random();
 
         for (int i = 0; i < fft.Length; i++)
         {
-          float val = (float) rand.Next(0, (1024/2))*stepValue;
+          float val = (float)rand.Next(0, (1024 / 2)) * stepValue;
           fft[i] = val;
         }
       }
 
-      float fftDataLen = (float) fft.Length;
+      float fftDataLen = (float)fft.Length;
 
       // The first value is the DC component so we'll skip it and start at index 1
       for (int i = 1; i < 1024; i++)
@@ -348,7 +349,7 @@ namespace MediaPortal.Visualization
         try
         {
           // Following code taken as a sugesstion from Symphy (Thx for the contribution)
-          float val = (90f + ((float) Math.Log10(fft[i])*20f))*(255f/90f);
+          float val = (90f + ((float)Math.Log10(fft[i]) * 20f)) * (255f / 90f);
           if (val < 0)
           {
             val = 0;
@@ -358,8 +359,8 @@ namespace MediaPortal.Visualization
             val = 255;
           }
 
-          audioData[i] = (byte) val;
-          audioData[i + 1024] = (byte) val;
+          audioData[i] = (byte)val;
+          audioData[i + 1024] = (byte)val;
         }
 
         catch (Exception ex)

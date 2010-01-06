@@ -37,9 +37,7 @@ namespace MediaPortal.Player.DSP
     /// <summary>
     /// Needed for XmlSerializer
     /// </summary>
-    public BassEffectParm()
-    {
-    }
+    public BassEffectParm() {}
 
     public BassEffectParm(string name, string value)
     {

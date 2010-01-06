@@ -14,9 +14,7 @@ namespace MediaPortal.Configuration.Sections
     #region ctor
 
     public GeneralStartupDelay()
-      : this("Startup Delay")
-    {
-    }
+      : this("Startup Delay") {}
 
     public GeneralStartupDelay(string name)
       : base(name)

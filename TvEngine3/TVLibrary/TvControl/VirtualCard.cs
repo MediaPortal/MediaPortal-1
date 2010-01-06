@@ -635,7 +635,7 @@ namespace TvControl
         }
         return false;
       }
-    }    
+    }
 
     /// <summary>
     /// Returns if card is currently timeshifting or not
@@ -653,7 +653,7 @@ namespace TvControl
             return false;
           }
           RemoteControl.HostName = _server;
-          return WaitFor<bool>.Run(CommandTimeOut, () => RemoteControl.Instance.IsTimeShifting(ref _user));          
+          return WaitFor<bool>.Run(CommandTimeOut, () => RemoteControl.Instance.IsTimeShifting(ref _user));
         }
         catch (Exception)
         {
@@ -1452,8 +1452,9 @@ namespace TvControl
     }
 
     #endregion
-    
+
     #region CI Menu Handling
+
     /// <summary>
     /// Indicates, if the card supports CI Menu
     /// </summary>
@@ -1517,6 +1518,7 @@ namespace TvControl
       }
       return false;
     }
+
     /// <summary>
     /// Closes the CI Menu for current card
     /// </summary>
@@ -1525,7 +1527,7 @@ namespace TvControl
     {
       try
       {
-         if (User.CardId < 0 || !IsOwner())
+        if (User.CardId < 0 || !IsOwner())
         {
           return false;
         }
@@ -1560,6 +1562,7 @@ namespace TvControl
       }
       return false;
     }
+
     /// <summary>
     /// Sets a callback handler
     /// </summary>
@@ -1584,6 +1587,7 @@ namespace TvControl
       }
       return false;
     }
+
     #endregion
-  }  
+  }
 }

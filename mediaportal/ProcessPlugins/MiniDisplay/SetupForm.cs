@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
@@ -164,9 +164,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
     }
 
-    private void btnCancel_Click(object sender, EventArgs e)
-    {
-    }
+    private void btnCancel_Click(object sender, EventArgs e) {}
 
     private void btnOK_Click(object sender, EventArgs e)
     {
@@ -299,7 +297,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // btnAdvanced
       // 
-      this.btnAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnAdvanced.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnAdvanced.Location = new System.Drawing.Point(271, 41);
       this.btnAdvanced.Name = "btnAdvanced";
       this.btnAdvanced.Size = new System.Drawing.Size(88, 23);
@@ -312,22 +312,24 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       this.cmbPort.BorderColor = System.Drawing.Color.Empty;
       this.cmbPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbPort.Items.AddRange(new object[] {
-            "LPT1",
-            "LPT2",
-            "LPT3",
-            "LPT4",
-            "USB",
-            "COM1",
-            "COM2",
-            "COM3",
-            "COM4",
-            "COM5",
-            "COM6",
-            "COM7",
-            "COM8",
-            "NONE",
-            "localhost"});
+      this.cmbPort.Items.AddRange(new object[]
+                                    {
+                                      "LPT1",
+                                      "LPT2",
+                                      "LPT3",
+                                      "LPT4",
+                                      "USB",
+                                      "COM1",
+                                      "COM2",
+                                      "COM3",
+                                      "COM4",
+                                      "COM5",
+                                      "COM6",
+                                      "COM7",
+                                      "COM8",
+                                      "NONE",
+                                      "localhost"
+                                    });
       this.cmbPort.Location = new System.Drawing.Point(40, 42);
       this.cmbPort.Name = "cmbPort";
       this.cmbPort.Size = new System.Drawing.Size(64, 21);
@@ -344,9 +346,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.btnTest);
       this.groupBox1.Controls.Add(this.groupShutdown);
       this.groupBox1.Controls.Add(this.cbContrast);
@@ -376,7 +380,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // btnTest
       // 
-      this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnTest.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnTest.Location = new System.Drawing.Point(271, 348);
       this.btnTest.Name = "btnTest";
       this.btnTest.Size = new System.Drawing.Size(92, 48);
@@ -387,7 +393,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // groupShutdown
       // 
-      this.groupShutdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.groupShutdown.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.groupShutdown.Controls.Add(this.label11);
       this.groupShutdown.Controls.Add(this.label6);
       this.groupShutdown.Controls.Add(this.mpShutdown2);
@@ -479,7 +487,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // btnTestDisplay
       // 
-      this.btnTestDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnTestDisplay.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnTestDisplay.Location = new System.Drawing.Point(179, 41);
       this.btnTestDisplay.Name = "btnTestDisplay";
       this.btnTestDisplay.Size = new System.Drawing.Size(88, 23);
@@ -519,8 +529,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // gbGraphMode
       // 
-      this.gbGraphMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.gbGraphMode.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.gbGraphMode.Controls.Add(this.txtPixelsToScroll);
       this.gbGraphMode.Controls.Add(this.mpLabel5);
       this.gbGraphMode.Controls.Add(this.ckForceGraphicText);
@@ -544,8 +556,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // txtPixelsToScroll
       // 
-      this.txtPixelsToScroll.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtPixelsToScroll.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.txtPixelsToScroll.BorderColor = System.Drawing.Color.Empty;
       this.txtPixelsToScroll.Location = new System.Drawing.Point(86, 135);
       this.txtPixelsToScroll.Name = "txtPixelsToScroll";
@@ -575,8 +589,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // txtFontSize
       // 
-      this.txtFontSize.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtFontSize.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.txtFontSize.BorderColor = System.Drawing.Color.Empty;
       this.txtFontSize.Location = new System.Drawing.Point(86, 110);
       this.txtFontSize.Name = "txtFontSize";
@@ -595,8 +611,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // txtFont
       // 
-      this.txtFont.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtFont.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.txtFont.BorderColor = System.Drawing.Color.Empty;
       this.txtFont.Location = new System.Drawing.Point(86, 87);
       this.txtFont.Name = "txtFont";
@@ -624,8 +642,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // txtTimG
       // 
-      this.txtTimG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtTimG.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.txtTimG.BorderColor = System.Drawing.Color.Empty;
       this.txtTimG.Location = new System.Drawing.Point(86, 64);
       this.txtTimG.Name = "txtTimG";
@@ -635,8 +655,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // txtRowsG
       // 
-      this.txtRowsG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtRowsG.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.txtRowsG.BorderColor = System.Drawing.Color.Empty;
       this.txtRowsG.Location = new System.Drawing.Point(86, 40);
       this.txtRowsG.Name = "txtRowsG";
@@ -646,8 +668,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // txtColsG
       // 
-      this.txtColsG.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtColsG.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.txtColsG.BorderColor = System.Drawing.Color.Empty;
       this.txtColsG.Location = new System.Drawing.Point(86, 16);
       this.txtColsG.Name = "txtColsG";
@@ -805,8 +829,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // cmbType
       // 
-      this.cmbType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cmbType.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cmbType.BorderColor = System.Drawing.Color.Empty;
       this.cmbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmbType.Location = new System.Drawing.Point(40, 16);
@@ -832,7 +858,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // cbPropertyBrowser
       // 
-      this.cbPropertyBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.cbPropertyBrowser.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.cbPropertyBrowser.AutoSize = true;
       this.cbPropertyBrowser.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbPropertyBrowser.Location = new System.Drawing.Point(8, 447);
@@ -844,7 +872,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // btnOK
       // 
-      this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnOK.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnOK.Location = new System.Drawing.Point(213, 435);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new System.Drawing.Size(78, 23);
@@ -855,7 +885,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // cbExtensiveLogging
       // 
-      this.cbExtensiveLogging.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.cbExtensiveLogging.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.cbExtensiveLogging.AutoSize = true;
       this.cbExtensiveLogging.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbExtensiveLogging.Location = new System.Drawing.Point(8, 430);
@@ -867,7 +899,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // mpDisableGUISetup
       // 
-      this.mpDisableGUISetup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpDisableGUISetup.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpDisableGUISetup.AutoSize = true;
       this.mpDisableGUISetup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpDisableGUISetup.Location = new System.Drawing.Point(8, 413);
@@ -879,7 +913,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // btnCancel
       // 
-      this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnCancel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.btnCancel.Location = new System.Drawing.Point(297, 435);
       this.btnCancel.Name = "btnCancel";
@@ -917,7 +953,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.gbTextMode.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
 
     private void SetupForm_Load(object sender, EventArgs e)
@@ -973,7 +1008,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         this.gbTextMode.Visible = this.lcd.SupportsText;
         Settings.Instance.LCDType = this.lcd;
       }
-      catch { }
+      catch {}
       Log.Info("MiniDisplay.SetupForm.Load(): completed");
     }
 
@@ -987,6 +1022,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         this.groupShutdown.Enabled = true;
       }
-    }    
+    }
   }
 }

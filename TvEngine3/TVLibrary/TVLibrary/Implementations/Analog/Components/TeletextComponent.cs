@@ -36,21 +36,26 @@ namespace TvLibrary.Implementations.Analog.Components
   internal class TeletextComponent : IDisposable
   {
     #region variable
+
     /// <summary>
     /// The see sink filter
     /// </summary>
     private IBaseFilter _teeSink;
+
     /// <summary>
     /// The teletext decoder filter
     /// </summary>
     private IBaseFilter _filterWstDecoder;
+
     /// <summary>
     /// The teletext output pin
     /// </summary>
     private IPin _pinWST_VBI;
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// Gets the teletext output pin
     /// </summary>
@@ -58,9 +63,11 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       get { return _pinWST_VBI; }
     }
+
     #endregion
 
     #region Dispose
+
     /// <summary>
     /// Disposes the teletext component
     /// </summary>
@@ -76,15 +83,17 @@ namespace TvLibrary.Implementations.Analog.Components
         Release.ComObject("teesink filter", _teeSink);
         _teeSink = null;
       }
-      if(_pinWST_VBI != null)
+      if (_pinWST_VBI != null)
       {
         Release.ComObject("wst/vbi codec pinout", _pinWST_VBI);
         _pinWST_VBI = null;
       }
     }
+
     #endregion
 
     #region CreateFilterInstance method
+
     /// <summary>
     /// Creates the teletext component in the graph. First we try to use the stored informations in the graph
     /// </summary>
@@ -95,7 +104,7 @@ namespace TvLibrary.Implementations.Analog.Components
     public bool CreateFilterInstance(Graph graph, IFilterGraph2 graphBuilder, Capture capture)
     {
       Log.Log.WriteFile("analog: SetupTeletext()");
-      Guid guidBaseFilter = typeof(IBaseFilter).GUID;
+      Guid guidBaseFilter = typeof (IBaseFilter).GUID;
       object obj;
       //find and add tee/sink to sink filter
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSSplitter);
@@ -129,7 +138,7 @@ namespace TvLibrary.Implementations.Analog.Components
           if (device.Name != null && device.Name.Equals(graph.Teletext.Name))
           {
             //found it, add it to the graph
-            Log.Log.Info("analog:Using teletext component - {0}",graph.Teletext.Name);
+            Log.Log.Info("analog:Using teletext component - {0}", graph.Teletext.Name);
             device.Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
             _filterWstDecoder = (IBaseFilter)obj;
             hr = graphBuilder.AddFilter(_filterWstDecoder, device.Name);
@@ -157,7 +166,7 @@ namespace TvLibrary.Implementations.Analog.Components
             //found it, add it to the graph
             Log.Log.Info("analog:Found WST Codec filter");
             device.Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
-            _filterWstDecoder = (IBaseFilter) obj;
+            _filterWstDecoder = (IBaseFilter)obj;
             hr = graphBuilder.AddFilter(_filterWstDecoder, device.Name);
             if (hr != 0)
             {
@@ -183,7 +192,7 @@ namespace TvLibrary.Implementations.Analog.Components
               //found it, add it to the graph
               Log.Log.Info("analog:Found VBI Codec filter");
               device.Mon.BindToObject(null, null, ref guidBaseFilter, out obj);
-              _filterWstDecoder = (IBaseFilter) obj;
+              _filterWstDecoder = (IBaseFilter)obj;
               hr = graphBuilder.AddFilter(_filterWstDecoder, device.Name);
               if (hr != 0)
               {
@@ -239,7 +248,7 @@ namespace TvLibrary.Implementations.Analog.Components
 
       return true;
     }
-    #endregion
 
+    #endregion
   }
 }

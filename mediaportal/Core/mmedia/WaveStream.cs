@@ -138,10 +138,7 @@ namespace WaveLib
     }
 
 
-    public WaveStream(string fileName) : this(new FileStream(fileName, FileMode.Open))
-
-    {
-    }
+    public WaveStream(string fileName) : this(new FileStream(fileName, FileMode.Open)) {}
 
     public WaveStream(Stream S)
 
@@ -207,10 +204,7 @@ namespace WaveLib
       Dispose();
     }
 
-    public override void Flush()
-
-    {
-    }
+    public override void Flush() {}
 
     public override void SetLength(long len)
 
@@ -249,7 +243,7 @@ namespace WaveLib
     public override int Read(byte[] buf, int ofs, int count)
 
     {
-      int toread = (int) Math.Min(count, m_Length - Position);
+      int toread = (int)Math.Min(count, m_Length - Position);
 
       return m_Stream.Read(buf, ofs, toread);
     }

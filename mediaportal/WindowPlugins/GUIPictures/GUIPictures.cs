@@ -399,7 +399,7 @@ namespace MediaPortal.GUI.Pictures
           {
             currentFolder = lastFolder;
           }
-          disp = (Display)xmlreader.GetValueAsInt("pictures", "lastview", (int)disp);                    
+          disp = (Display)xmlreader.GetValueAsInt("pictures", "lastview", (int)disp);
         }
         _switchRemovableDrives = xmlreader.GetValueAsBool("pictures", "SwitchRemovableDrives", true);
         //_hideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
@@ -418,9 +418,7 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private void SaveSettings()
-    {
-    }
+    private void SaveSettings() {}
 
     #endregion
 
@@ -960,9 +958,7 @@ namespace MediaPortal.GUI.Pictures
           {
             thumbCreationPaths.Remove(aPath);
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
         //Log.Debug("GUIPictures: MissingThumbCacher already working on path {0}", aPath);
         return false;
@@ -976,7 +972,7 @@ namespace MediaPortal.GUI.Pictures
         folderName = "root";
       }
       object o;
-      FolderSettings.GetFolderSetting(folderName, "Pictures", typeof(MapSettings), out o);
+      FolderSettings.GetFolderSetting(folderName, "Pictures", typeof (MapSettings), out o);
       if (o != null)
       {
         mapSettings = o as MapSettings;
@@ -1013,7 +1009,7 @@ namespace MediaPortal.GUI.Pictures
       {
         folder = "root";
       }
-      FolderSettings.AddFolderSetting(folder, "Pictures", typeof(MapSettings), mapSettings);
+      FolderSettings.AddFolderSetting(folder, "Pictures", typeof (MapSettings), mapSettings);
     }
 
     #endregion
@@ -1313,12 +1309,13 @@ namespace MediaPortal.GUI.Pictures
         // make sure there's no conflicting access
         CheckPathForHistory(aPicturePath, true);
 
-        if (Util.Picture.CreateThumbnail(aPicturePath, thumbnailImage, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, rotate, Thumbs.SpeedThumbsSmall))
+        if (Util.Picture.CreateThumbnail(aPicturePath, thumbnailImage, (int)Thumbs.ThumbResolution,
+                                         (int)Thumbs.ThumbResolution, rotate, Thumbs.SpeedThumbsSmall))
         {
           Thread.Sleep(10);
           if (Util.Picture.CreateThumbnail(aPicturePath, thumbnailImageLarge, (int)Thumbs.ThumbLargeResolution,
-                                                       (int)Thumbs.ThumbLargeResolution, rotate,
-                                                       Thumbs.SpeedThumbsLarge))
+                                           (int)Thumbs.ThumbLargeResolution, rotate,
+                                           Thumbs.SpeedThumbsLarge))
             Log.Debug("GUIPictures: Recreation of thumbnails after rotation successful for {0}", aPicturePath);
         }
       }
@@ -1371,9 +1368,7 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private void OnQueueItem(int itemIndex)
-    {
-    }
+    private void OnQueueItem(int itemIndex) {}
 
     private void OnShowPicture(string strFile)
     {

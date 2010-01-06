@@ -102,7 +102,7 @@ namespace MediaPortal.InputDevices
         {
           newParameter = string.Empty;
         }
-        type = (string) newType;
+        type = (string)newType;
         dataValue = newValue;
         parameter = newParameter;
       }
@@ -117,7 +117,7 @@ namespace MediaPortal.InputDevices
         {
           newParameter = string.Empty;
         }
-        type = (string) newType;
+        type = (string)newType;
         dataValue = newValue;
         parameter = newParameter;
         focus = newFocus;
@@ -204,42 +204,42 @@ namespace MediaPortal.InputDevices
       {
         if (wnd.ToString().IndexOf("DIALOG") == -1)
         {
-          switch ((int) Enum.Parse(typeof (GUIWindow.Window), wnd.ToString()))
+          switch ((int)Enum.Parse(typeof (GUIWindow.Window), wnd.ToString()))
           {
-            case (int) GUIWindow.Window.WINDOW_ARTIST_INFO:
-            case (int) GUIWindow.Window.WINDOW_DIALOG_DATETIME:
-            case (int) GUIWindow.Window.WINDOW_DIALOG_EXIF:
-            case (int) GUIWindow.Window.WINDOW_DIALOG_FILE:
-            case (int) GUIWindow.Window.WINDOW_DIALOG_FILESTACKING:
-            case (int) GUIWindow.Window.WINDOW_DIALOG_MENU:
-            case (int) GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT:
-            case (int) GUIWindow.Window.WINDOW_DIALOG_NOTIFY:
-            case (int) GUIWindow.Window.WINDOW_DIALOG_OK:
-            case (int) GUIWindow.Window.WINDOW_DIALOG_PROGRESS:
-            case (int) GUIWindow.Window.WINDOW_DIALOG_RATING:
-            case (int) GUIWindow.Window.WINDOW_DIALOG_SELECT:
-            case (int) GUIWindow.Window.WINDOW_DIALOG_SELECT2:
-            case (int) GUIWindow.Window.WINDOW_DIALOG_TEXT:
-            case (int) GUIWindow.Window.WINDOW_DIALOG_TVGUIDE:
-            case (int) GUIWindow.Window.WINDOW_DIALOG_YES_NO:
-            case (int) GUIWindow.Window.WINDOW_DIALOG_PLAY_STOP:
-            case (int) GUIWindow.Window.WINDOW_INVALID:
-            case (int) GUIWindow.Window.WINDOW_MINI_GUIDE:
-            case (int) GUIWindow.Window.WINDOW_TV_CROP_SETTINGS:
-            case (int) GUIWindow.Window.WINDOW_MSNOSD:
-            case (int) GUIWindow.Window.WINDOW_MUSIC:
-            case (int) GUIWindow.Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS:
-            case (int) GUIWindow.Window.WINDOW_MUSIC_INFO:
-            case (int) GUIWindow.Window.WINDOW_OSD:
-            case (int) GUIWindow.Window.WINDOW_TOPBAR:
+            case (int)GUIWindow.Window.WINDOW_ARTIST_INFO:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_DATETIME:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_EXIF:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_FILE:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_FILESTACKING:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_MENU:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_OK:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_RATING:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_SELECT:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_SELECT2:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_TEXT:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_YES_NO:
+            case (int)GUIWindow.Window.WINDOW_DIALOG_PLAY_STOP:
+            case (int)GUIWindow.Window.WINDOW_INVALID:
+            case (int)GUIWindow.Window.WINDOW_MINI_GUIDE:
+            case (int)GUIWindow.Window.WINDOW_TV_CROP_SETTINGS:
+            case (int)GUIWindow.Window.WINDOW_MSNOSD:
+            case (int)GUIWindow.Window.WINDOW_MUSIC:
+            case (int)GUIWindow.Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS:
+            case (int)GUIWindow.Window.WINDOW_MUSIC_INFO:
+            case (int)GUIWindow.Window.WINDOW_OSD:
+            case (int)GUIWindow.Window.WINDOW_TOPBAR:
               //case (int)GUIWindow.Window.WINDOW_TOPBARHOME:
-            case (int) GUIWindow.Window.WINDOW_TVMSNOSD:
-            case (int) GUIWindow.Window.WINDOW_TVOSD:
-            case (int) GUIWindow.Window.WINDOW_TVZAPOSD:
-            case (int) GUIWindow.Window.WINDOW_VIDEO_ARTIST_INFO:
-            case (int) GUIWindow.Window.WINDOW_VIDEO_INFO:
-            case (int) GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD:
-            case (int) GUIWindow.Window.WINDOW_VIRTUAL_WEB_KEYBOARD:
+            case (int)GUIWindow.Window.WINDOW_TVMSNOSD:
+            case (int)GUIWindow.Window.WINDOW_TVOSD:
+            case (int)GUIWindow.Window.WINDOW_TVZAPOSD:
+            case (int)GUIWindow.Window.WINDOW_VIDEO_ARTIST_INFO:
+            case (int)GUIWindow.Window.WINDOW_VIDEO_INFO:
+            case (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD:
+            case (int)GUIWindow.Window.WINDOW_VIRTUAL_WEB_KEYBOARD:
               break;
             default:
               windowsListFiltered.Add(GetFriendlyName(wnd.ToString()));
@@ -465,7 +465,7 @@ namespace MediaPortal.InputDevices
       this.headerLabel.Caption = "";
       this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
       this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular,
-                                                      System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+                                                      System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.Location = new System.Drawing.Point(16, 16);
       this.headerLabel.Name = "headerLabel";
@@ -474,7 +474,7 @@ namespace MediaPortal.InputDevices
       this.headerLabel.TabIndex = 17;
       this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular,
-                                                          System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+                                                          System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       // 
       // groupBoxAction
       // 
@@ -851,7 +851,7 @@ namespace MediaPortal.InputDevices
           XmlNodeList listButtons = nodeRemote.SelectNodes("button");
           foreach (XmlNode nodeButton in listButtons)
           {
-            TreeNode buttonNode = new TreeNode((string) nodeButton.Attributes["name"].Value);
+            TreeNode buttonNode = new TreeNode((string)nodeButton.Attributes["name"].Value);
             buttonNode.Tag = new Data("BUTTON", nodeButton.Attributes["name"].Value, nodeButton.Attributes["code"].Value);
             remoteNode.Nodes.Add(buttonNode);
 
@@ -1043,7 +1043,7 @@ namespace MediaPortal.InputDevices
         XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile), Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 1;
-        writer.IndentChar = (char) 9;
+        writer.IndentChar = (char)9;
         writer.WriteStartDocument(true);
         writer.WriteStartElement("mappings"); // <mappings>
         writer.WriteAttributeString("version", "3");
@@ -1052,14 +1052,14 @@ namespace MediaPortal.InputDevices
           foreach (TreeNode remoteNode in treeMapping.Nodes)
           {
             writer.WriteStartElement("remote"); // <remote>
-            writer.WriteAttributeString("family", (string) ((Data) remoteNode.Tag).Value);
+            writer.WriteAttributeString("family", (string)((Data)remoteNode.Tag).Value);
             if (remoteNode.Nodes.Count > 0)
             {
               foreach (TreeNode buttonNode in remoteNode.Nodes)
               {
                 writer.WriteStartElement("button"); // <button>
-                writer.WriteAttributeString("name", (string) ((Data) buttonNode.Tag).Parameter);
-                writer.WriteAttributeString("code", (string) ((Data) buttonNode.Tag).Value);
+                writer.WriteAttributeString("name", (string)((Data)buttonNode.Tag).Parameter);
+                writer.WriteAttributeString("code", (string)((Data)buttonNode.Tag).Value);
 
                 if (buttonNode.Nodes.Count > 0)
                 {
@@ -1078,20 +1078,20 @@ namespace MediaPortal.InputDevices
                       bool focus = false;
                       foreach (TreeNode commandNode in conditionNode.Nodes)
                       {
-                        switch (((Data) commandNode.Tag).Type)
+                        switch (((Data)commandNode.Tag).Type)
                         {
                           case "COMMAND":
                             {
-                              command = (string) ((Data) commandNode.Tag).Parameter;
-                              focus = ((Data) commandNode.Tag).Focus;
+                              command = (string)((Data)commandNode.Tag).Parameter;
+                              focus = ((Data)commandNode.Tag).Focus;
                               if (command != "KEY")
                               {
-                                cmdProperty = ((Data) commandNode.Tag).Value.ToString();
+                                cmdProperty = ((Data)commandNode.Tag).Value.ToString();
                               }
                               else
                               {
                                 command = "ACTION";
-                                Key key = (Key) ((Data) commandNode.Tag).Value;
+                                Key key = (Key)((Data)commandNode.Tag).Value;
                                 cmdProperty = "93";
                                 cmdKeyChar = key.KeyChar.ToString();
                                 cmdKeyCode = key.KeyCode.ToString();
@@ -1099,13 +1099,13 @@ namespace MediaPortal.InputDevices
                             }
                             break;
                           case "SOUND":
-                            sound = (string) ((Data) commandNode.Tag).Value;
+                            sound = (string)((Data)commandNode.Tag).Value;
                             break;
                         }
                       }
-                      condition = (string) ((Data) conditionNode.Tag).Parameter;
-                      conProperty = ((Data) conditionNode.Tag).Value.ToString();
-                      layer = Convert.ToString(((Data) layerNode.Tag).Value);
+                      condition = (string)((Data)conditionNode.Tag).Parameter;
+                      conProperty = ((Data)conditionNode.Tag).Value.ToString();
+                      layer = Convert.ToString(((Data)layerNode.Tag).Value);
                       writer.WriteStartElement("action"); // <action>
                       writer.WriteAttributeString("layer", layer);
                       writer.WriteAttributeString("condition", condition);
@@ -1167,7 +1167,7 @@ namespace MediaPortal.InputDevices
     private TreeNode getNode(string type)
     {
       TreeNode node = treeMapping.SelectedNode;
-      Data data = (Data) node.Tag;
+      Data data = (Data)node.Tag;
       if (data.Type == type)
       {
         return node;
@@ -1183,7 +1183,7 @@ namespace MediaPortal.InputDevices
             node = node.Parent;
             foreach (TreeNode subNode in node.Nodes)
             {
-              data = (Data) subNode.Tag;
+              data = (Data)subNode.Tag;
               if (data.Type == type)
               {
                 return subNode;
@@ -1194,7 +1194,7 @@ namespace MediaPortal.InputDevices
           {
             foreach (TreeNode subNode in node.Nodes)
             {
-              data = (Data) subNode.Tag;
+              data = (Data)subNode.Tag;
               if (data.Type == type)
               {
                 return subNode;
@@ -1208,7 +1208,7 @@ namespace MediaPortal.InputDevices
             node = node.Parent;
             foreach (TreeNode subNode in node.Nodes)
             {
-              data = (Data) subNode.Tag;
+              data = (Data)subNode.Tag;
               if (data.Type == type)
               {
                 return subNode;
@@ -1219,7 +1219,7 @@ namespace MediaPortal.InputDevices
           {
             foreach (TreeNode subNode in node.Nodes)
             {
-              data = (Data) subNode.Tag;
+              data = (Data)subNode.Tag;
               if (data.Type == type)
               {
                 return subNode;
@@ -1290,7 +1290,7 @@ namespace MediaPortal.InputDevices
       }
 
       TreeNode node = e.Node;
-      Data data = (Data) node.Tag;
+      Data data = (Data)node.Tag;
       switch (data.Type)
       {
         case "REMOTE":
@@ -1322,16 +1322,16 @@ namespace MediaPortal.InputDevices
             groupBoxLayer.Enabled = true;
             if ((data.Type == "COMMAND") || (data.Type == "SOUND"))
             {
-              comboBoxLayer.SelectedIndex = Convert.ToInt32(((Data) node.Parent.Parent.Tag).Value);
+              comboBoxLayer.SelectedIndex = Convert.ToInt32(((Data)node.Parent.Parent.Tag).Value);
               node = node.Parent;
-              data = (Data) node.Tag;
+              data = (Data)node.Tag;
             }
             else
             {
-              comboBoxLayer.SelectedIndex = Convert.ToInt32(((Data) node.Parent.Tag).Value);
+              comboBoxLayer.SelectedIndex = Convert.ToInt32(((Data)node.Parent.Tag).Value);
             }
 
-            switch ((string) data.Parameter)
+            switch ((string)data.Parameter)
             {
               case "WINDOW":
                 radioButtonWindow.Checked = true;
@@ -1355,7 +1355,7 @@ namespace MediaPortal.InputDevices
                 radioButtonPlaying.Checked = true;
                 comboBoxCondProperty.Enabled = true;
                 UpdateCombo(ref comboBoxCondProperty, playerList,
-                            playerList[Array.IndexOf(nativePlayerList, (string) data.Value)]);
+                            playerList[Array.IndexOf(nativePlayerList, (string)data.Value)]);
                 break;
               case "*":
                 comboBoxCondProperty.Text = "none";
@@ -1366,11 +1366,11 @@ namespace MediaPortal.InputDevices
             }
             foreach (TreeNode typeNode in node.Nodes)
             {
-              data = (Data) typeNode.Tag;
+              data = (Data)typeNode.Tag;
               switch (data.Type)
               {
                 case "SOUND":
-                  if ((string) data.Value != string.Empty)
+                  if ((string)data.Value != string.Empty)
                   {
                     comboBoxSound.SelectedItem = data.Value;
                   }
@@ -1381,7 +1381,7 @@ namespace MediaPortal.InputDevices
                   break;
                 case "COMMAND":
                   checkBoxGainFocus.Checked = data.Focus;
-                  switch ((string) data.Parameter)
+                  switch ((string)data.Parameter)
                   {
                     case "ACTION":
                       comboBoxCmdProperty.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -1397,8 +1397,8 @@ namespace MediaPortal.InputDevices
                       comboBoxCmdProperty.DropDownStyle = ComboBoxStyle.DropDownList;
                       radioButtonAction.Checked = true;
                       textBoxKeyChar.Enabled = textBoxKeyCode.Enabled = true;
-                      textBoxKeyChar.Text = ((Key) data.Value).KeyChar.ToString();
-                      textBoxKeyCode.Text = ((Key) data.Value).KeyCode.ToString();
+                      textBoxKeyChar.Text = ((Key)data.Value).KeyChar.ToString();
+                      textBoxKeyCode.Text = ((Key)data.Value).KeyCode.ToString();
                       comboBoxCmdProperty.Enabled = true;
                       UpdateCombo(ref comboBoxCmdProperty, actionList, "Key Pressed");
                       break;
@@ -1430,7 +1430,7 @@ namespace MediaPortal.InputDevices
                       textBoxKeyChar.Text = textBoxKeyCode.Text = string.Empty;
                       string friendlyName = string.Empty;
                       UpdateCombo(ref comboBoxCmdProperty, powerList,
-                                  powerList[Array.IndexOf(nativePowerList, (string) data.Value)]);
+                                  powerList[Array.IndexOf(nativePowerList, (string)data.Value)]);
                       break;
                     case "PROCESS":
                       comboBoxCmdProperty.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -1440,7 +1440,7 @@ namespace MediaPortal.InputDevices
                       textBoxKeyChar.Enabled = textBoxKeyCode.Enabled = false;
                       textBoxKeyChar.Text = textBoxKeyCode.Text = string.Empty;
                       UpdateCombo(ref comboBoxCmdProperty, processList,
-                                  processList[Array.IndexOf(nativeProcessList, (string) data.Value)]);
+                                  processList[Array.IndexOf(nativeProcessList, (string)data.Value)]);
                       break;
                   }
                   break;
@@ -1536,9 +1536,7 @@ namespace MediaPortal.InputDevices
             actionName = friendlyName.Replace(' ', '_').ToUpper();
           }
         }
-        catch (ArgumentException)
-        {
-        }
+        catch (ArgumentException) {}
       }
 
       return actionName;
@@ -1560,7 +1558,7 @@ namespace MediaPortal.InputDevices
       TreeNode node = getNode("CONDITION");
       node.Tag = new Data("CONDITION", "WINDOW", "0");
       UpdateCombo(ref comboBoxCondProperty, windowsList, GetFriendlyName(Enum.GetName(typeof (GUIWindow.Window), 0)));
-      node.Text = (string) comboBoxCondProperty.SelectedItem;
+      node.Text = (string)comboBoxCondProperty.SelectedItem;
       changedSettings = true;
     }
 
@@ -1570,7 +1568,7 @@ namespace MediaPortal.InputDevices
       TreeNode node = getNode("CONDITION");
       node.Tag = new Data("CONDITION", "FULLSCREEN", "true");
       UpdateCombo(ref comboBoxCondProperty, fullScreenList, "Fullscreen");
-      node.Text = (string) comboBoxCondProperty.SelectedItem;
+      node.Text = (string)comboBoxCondProperty.SelectedItem;
       changedSettings = true;
     }
 
@@ -1607,8 +1605,8 @@ namespace MediaPortal.InputDevices
       node.Tag = data;
       UpdateCombo(ref comboBoxCmdProperty, actionList,
                   GetFriendlyName(Enum.GetName(typeof (Action.ActionType), Convert.ToInt32(data.Value))));
-      node.Text = "Action \"" + (string) comboBoxCmdProperty.SelectedItem + "\"";
-      ((Data) node.Tag).Focus = checkBoxGainFocus.Checked;
+      node.Text = "Action \"" + (string)comboBoxCmdProperty.SelectedItem + "\"";
+      ((Data)node.Tag).Focus = checkBoxGainFocus.Checked;
       changedSettings = true;
     }
 
@@ -1622,8 +1620,8 @@ namespace MediaPortal.InputDevices
       node.Tag = data;
       UpdateCombo(ref comboBoxCmdProperty, windowsListFiltered,
                   GetFriendlyName(Enum.GetName(typeof (GUIWindow.Window), Convert.ToInt32(data.Value))));
-      node.Text = "Window \"" + (string) comboBoxCmdProperty.SelectedItem + "\"";
-      ((Data) node.Tag).Focus = checkBoxGainFocus.Checked;
+      node.Text = "Window \"" + (string)comboBoxCmdProperty.SelectedItem + "\"";
+      ((Data)node.Tag).Focus = checkBoxGainFocus.Checked;
       changedSettings = true;
     }
 
@@ -1639,7 +1637,7 @@ namespace MediaPortal.InputDevices
       Data data = new Data("COMMAND", "TOGGLE", "-1");
       node.Tag = data;
       node.Text = "Toggle Layer";
-      ((Data) node.Tag).Focus = checkBoxGainFocus.Checked;
+      ((Data)node.Tag).Focus = checkBoxGainFocus.Checked;
       changedSettings = true;
     }
 
@@ -1654,7 +1652,7 @@ namespace MediaPortal.InputDevices
       node.Tag = new Data("COMMAND", "POWER", "EXIT");
       node.Text = powerList[0];
       UpdateCombo(ref comboBoxCmdProperty, powerList, powerList[0]);
-      ((Data) node.Tag).Focus = checkBoxGainFocus.Checked;
+      ((Data)node.Tag).Focus = checkBoxGainFocus.Checked;
       changedSettings = true;
     }
 
@@ -1669,7 +1667,7 @@ namespace MediaPortal.InputDevices
       node.Tag = new Data("COMMAND", "PROCESS", "CLOSE");
       node.Text = processList[0];
       UpdateCombo(ref comboBoxCmdProperty, processList, processList[0]);
-      ((Data) node.Tag).Focus = checkBoxGainFocus.Checked;
+      ((Data)node.Tag).Focus = checkBoxGainFocus.Checked;
       changedSettings = true;
     }
 
@@ -1694,23 +1692,23 @@ namespace MediaPortal.InputDevices
     {
       bool expanded = false;
       TreeNode node = treeMapping.SelectedNode;
-      if (((Data) node.Tag).Type != "BUTTON")
+      if (((Data)node.Tag).Type != "BUTTON")
       {
         expanded = node.IsExpanded;
       }
-      if ((((Data) node.Tag).Type == "COMMAND") || (((Data) node.Tag).Type == "SOUND"))
+      if ((((Data)node.Tag).Type == "COMMAND") || (((Data)node.Tag).Type == "SOUND"))
       {
         node = node.Parent;
         expanded = true;
       }
-      if ((((Data) node.Tag).Type != "BUTTON") && (((Data) node.Tag).Type != "CONDITION"))
+      if ((((Data)node.Tag).Type != "BUTTON") && (((Data)node.Tag).Type != "CONDITION"))
       {
         return;
       }
       if (node.Index > 0)
       {
         int index = node.Index - 1;
-        TreeNode tmpNode = (TreeNode) node.Clone();
+        TreeNode tmpNode = (TreeNode)node.Clone();
         TreeNode parentNode = node.Parent;
         node.Remove();
         if (expanded)
@@ -1727,23 +1725,23 @@ namespace MediaPortal.InputDevices
     {
       bool expanded = false;
       TreeNode node = treeMapping.SelectedNode;
-      if (((Data) node.Tag).Type != "BUTTON")
+      if (((Data)node.Tag).Type != "BUTTON")
       {
         expanded = node.IsExpanded;
       }
-      if ((((Data) node.Tag).Type == "COMMAND") || (((Data) node.Tag).Type == "SOUND"))
+      if ((((Data)node.Tag).Type == "COMMAND") || (((Data)node.Tag).Type == "SOUND"))
       {
         node = node.Parent;
         expanded = true;
       }
-      if ((((Data) node.Tag).Type != "BUTTON") && (((Data) node.Tag).Type != "CONDITION"))
+      if ((((Data)node.Tag).Type != "BUTTON") && (((Data)node.Tag).Type != "CONDITION"))
       {
         return;
       }
       if (node.Index < node.Parent.Nodes.Count - 1)
       {
         int index = node.Index + 1;
-        TreeNode tmpNode = (TreeNode) node.Clone();
+        TreeNode tmpNode = (TreeNode)node.Clone();
         TreeNode parentNode = node.Parent;
         node.Remove();
         if (expanded)
@@ -1759,11 +1757,11 @@ namespace MediaPortal.InputDevices
     private void buttonRemove_Click(object sender, EventArgs e)
     {
       TreeNode node = treeMapping.SelectedNode;
-      Data data = (Data) node.Tag;
+      Data data = (Data)node.Tag;
       if ((data.Type == "COMMAND") || (data.Type == "SOUND") || (data.Type == "CONDITION"))
       {
         node = getNode("CONDITION");
-        data = (Data) node.Tag;
+        data = (Data)node.Tag;
       }
       DialogResult result = MessageBox.Show(this, "Are you sure you want to remove this " + data.Type.ToLower() + "?",
                                             "Remove " + data.Type.ToLower(),
@@ -1780,7 +1778,7 @@ namespace MediaPortal.InputDevices
     private void buttonNew_Click(object sender, EventArgs e)
     {
       TreeNode node = treeMapping.SelectedNode;
-      Data data = (Data) node.Tag;
+      Data data = (Data)node.Tag;
 
       TreeNode newLayer = new TreeNode("All Layers");
       newLayer.Tag = new Data("LAYER", null, "0");
@@ -1889,18 +1887,18 @@ namespace MediaPortal.InputDevices
     private void comboBoxCondProperty_SelectionChangeCommitted(object sender, EventArgs e)
     {
       TreeNode node = getNode("CONDITION");
-      Data data = (Data) node.Tag;
-      switch ((string) data.Parameter)
+      Data data = (Data)node.Tag;
+      switch ((string)data.Parameter)
       {
         case "WINDOW":
           node.Tag = new Data("CONDITION", "WINDOW",
                               (int)
                               Enum.Parse(typeof (GUIWindow.Window),
-                                         GetWindowName((string) comboBoxCondProperty.SelectedItem)));
-          node.Text = (string) comboBoxCondProperty.SelectedItem;
+                                         GetWindowName((string)comboBoxCondProperty.SelectedItem)));
+          node.Text = (string)comboBoxCondProperty.SelectedItem;
           break;
         case "FULLSCREEN":
-          if ((string) comboBoxCondProperty.SelectedItem == "Fullscreen")
+          if ((string)comboBoxCondProperty.SelectedItem == "Fullscreen")
           {
             node.Tag = new Data("CONDITION", "FULLSCREEN", "true");
           }
@@ -1908,13 +1906,13 @@ namespace MediaPortal.InputDevices
           {
             node.Tag = new Data("CONDITION", "FULLSCREEN", "false");
           }
-          node.Text = (string) comboBoxCondProperty.SelectedItem;
+          node.Text = (string)comboBoxCondProperty.SelectedItem;
           break;
         case "PLAYER":
           {
             node.Tag = new Data("CONDITION", "PLAYER",
-                                nativePlayerList[Array.IndexOf(playerList, (string) comboBoxCondProperty.SelectedItem)]);
-            node.Text = (string) comboBoxCondProperty.SelectedItem;
+                                nativePlayerList[Array.IndexOf(playerList, (string)comboBoxCondProperty.SelectedItem)]);
+            node.Text = (string)comboBoxCondProperty.SelectedItem;
             break;
           }
         case "*":
@@ -1925,7 +1923,7 @@ namespace MediaPortal.InputDevices
 
     private void comboBoxCmdProperty_SelectionChangeCommitted(object sender, EventArgs e)
     {
-      if ((string) comboBoxCmdProperty.SelectedItem == "Key Pressed")
+      if ((string)comboBoxCmdProperty.SelectedItem == "Key Pressed")
       {
         textBoxKeyChar.Enabled = textBoxKeyCode.Enabled = true;
       }
@@ -1936,17 +1934,17 @@ namespace MediaPortal.InputDevices
       }
 
       TreeNode node = getNode("COMMAND");
-      Data data = (Data) node.Tag;
-      switch ((string) data.Parameter)
+      Data data = (Data)node.Tag;
+      switch ((string)data.Parameter)
       {
         case "ACTION":
-          if ((string) comboBoxCmdProperty.SelectedItem != "Key Pressed")
+          if ((string)comboBoxCmdProperty.SelectedItem != "Key Pressed")
           {
             node.Tag = new Data("COMMAND", "ACTION",
                                 (int)
                                 Enum.Parse(typeof (Action.ActionType),
-                                           GetActionName((string) comboBoxCmdProperty.SelectedItem)));
-            node.Text = "Action \"" + (string) comboBoxCmdProperty.SelectedItem + "\"";
+                                           GetActionName((string)comboBoxCmdProperty.SelectedItem)));
+            node.Text = "Action \"" + (string)comboBoxCmdProperty.SelectedItem + "\"";
           }
           else
           {
@@ -1961,28 +1959,28 @@ namespace MediaPortal.InputDevices
           node.Tag = new Data("COMMAND", "WINDOW",
                               (int)
                               Enum.Parse(typeof (GUIWindow.Window),
-                                         GetWindowName((string) comboBoxCmdProperty.SelectedItem)));
-          node.Text = "Window \"" + (string) comboBoxCmdProperty.SelectedItem + "\"";
+                                         GetWindowName((string)comboBoxCmdProperty.SelectedItem)));
+          node.Text = "Window \"" + (string)comboBoxCmdProperty.SelectedItem + "\"";
           break;
         case "POWER":
           node.Tag = new Data("COMMAND", "POWER",
-                              nativePowerList[Array.IndexOf(powerList, (string) comboBoxCmdProperty.SelectedItem)]);
-          node.Text = (string) comboBoxCmdProperty.SelectedItem;
+                              nativePowerList[Array.IndexOf(powerList, (string)comboBoxCmdProperty.SelectedItem)]);
+          node.Text = (string)comboBoxCmdProperty.SelectedItem;
           break;
         case "PROCESS":
           node.Tag = new Data("COMMAND", "PROCESS",
-                              nativeProcessList[Array.IndexOf(processList, (string) comboBoxCmdProperty.SelectedItem)]);
-          node.Text = (string) comboBoxCmdProperty.SelectedItem;
+                              nativeProcessList[Array.IndexOf(processList, (string)comboBoxCmdProperty.SelectedItem)]);
+          node.Text = (string)comboBoxCmdProperty.SelectedItem;
           break;
       }
-      ((Data) node.Tag).Focus = checkBoxGainFocus.Checked;
+      ((Data)node.Tag).Focus = checkBoxGainFocus.Checked;
       changedSettings = true;
     }
 
     private void comboBoxSound_SelectionChangeCommitted(object sender, EventArgs e)
     {
       TreeNode node = getNode("SOUND");
-      node.Text = (string) comboBoxSound.SelectedItem;
+      node.Text = (string)comboBoxSound.SelectedItem;
       if (node.Text == "none")
       {
         node.Tag = new Data("SOUND", null, string.Empty);
@@ -1990,7 +1988,7 @@ namespace MediaPortal.InputDevices
       }
       else
       {
-        node.Tag = new Data("SOUND", null, (string) comboBoxSound.SelectedItem);
+        node.Tag = new Data("SOUND", null, (string)comboBoxSound.SelectedItem);
       }
       changedSettings = true;
     }
@@ -2011,7 +2009,7 @@ namespace MediaPortal.InputDevices
       Key key = new Key(Convert.ToInt32(keyChar), Convert.ToInt32(keyCode));
       node.Tag = new Data("COMMAND", "KEY", key);
       node.Text = string.Format("Key Pressed: {0} [{1}]", keyChar, keyCode);
-      ((Data) node.Tag).Focus = checkBoxGainFocus.Checked;
+      ((Data)node.Tag).Focus = checkBoxGainFocus.Checked;
       changedSettings = true;
     }
 
@@ -2032,7 +2030,7 @@ namespace MediaPortal.InputDevices
     private void checkBoxGainFocus_CheckedChanged(object sender, EventArgs e)
     {
       TreeNode node = getNode("COMMAND");
-      ((Data) node.Tag).Focus = checkBoxGainFocus.Checked;
+      ((Data)node.Tag).Focus = checkBoxGainFocus.Checked;
       changedSettings = true;
     }
 

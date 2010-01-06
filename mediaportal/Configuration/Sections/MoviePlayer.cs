@@ -51,16 +51,13 @@ namespace MediaPortal.Configuration.Sections
     private bool _init = false;
 
     public MoviePlayer()
-      : this("Video Player")
-    {
-    }
+      : this("Video Player") {}
 
     public MoviePlayer(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-
     }
 
     public override void OnSectionActivated()
@@ -154,8 +151,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxExternalPlayer
       // 
-      this.groupBoxExternalPlayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxExternalPlayer.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxExternalPlayer.Controls.Add(this.externalPlayerCheckBox);
       this.groupBoxExternalPlayer.Controls.Add(this.parametersButton);
       this.groupBoxExternalPlayer.Controls.Add(this.parametersTextBox);
@@ -185,7 +184,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // parametersButton
       // 
-      this.parametersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.parametersButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersButton.Location = new System.Drawing.Point(384, 84);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
@@ -196,8 +197,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // parametersTextBox
       // 
-      this.parametersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.parametersTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersTextBox.BorderColor = System.Drawing.Color.Empty;
       this.parametersTextBox.Location = new System.Drawing.Point(168, 84);
       this.parametersTextBox.Name = "parametersTextBox";
@@ -214,7 +217,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameButton
       // 
-      this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameButton.Location = new System.Drawing.Point(384, 60);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
@@ -225,8 +230,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameTextBox
       // 
-      this.fileNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.fileNameTextBox.Location = new System.Drawing.Point(168, 60);
       this.fileNameTextBox.Name = "fileNameTextBox";
@@ -243,8 +250,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // wmvGroupBox
       // 
-      this.wmvGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.wmvGroupBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.wmvGroupBox.Controls.Add(this.mpLabel2);
       this.wmvGroupBox.Controls.Add(this.wmvCheckBox);
       this.wmvGroupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -285,7 +294,6 @@ namespace MediaPortal.Configuration.Sections
       this.wmvGroupBox.ResumeLayout(false);
       this.wmvGroupBox.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

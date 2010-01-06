@@ -37,9 +37,7 @@ namespace MediaPortal.Player.DSP
     /// <summary>
     /// Needed for XmlSerializer
     /// </summary>
-    public VSTPluginParm()
-    {
-    }
+    public VSTPluginParm() {}
 
     public VSTPluginParm(string name, int index, string value)
     {

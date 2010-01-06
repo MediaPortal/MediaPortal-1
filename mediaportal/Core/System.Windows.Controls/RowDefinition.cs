@@ -37,9 +37,7 @@ namespace System.Windows.Controls
                                                    new PropertyMetadata(new GridLength(GridUnitType.Star)));
     }
 
-    public RowDefinition()
-    {
-    }
+    public RowDefinition() {}
 
     #endregion Constructors
 
@@ -47,24 +45,24 @@ namespace System.Windows.Controls
 
     public double ActualHeight
     {
-      get { return ((GridLength) GetValue(HeightProperty)).Value; }
+      get { return ((GridLength)GetValue(HeightProperty)).Value; }
     }
 
     public GridLength Height
     {
-      get { return (GridLength) GetValue(HeightProperty); }
+      get { return (GridLength)GetValue(HeightProperty); }
       set { SetValue(HeightProperty, value); }
     }
 
     public double MaxHeight
     {
-      get { return (double) GetValue(MaxHeightProperty); }
+      get { return (double)GetValue(MaxHeightProperty); }
       set { SetValue(MaxHeightProperty, value); }
     }
 
     public double MinHeight
     {
-      get { return (double) GetValue(MinHeightProperty); }
+      get { return (double)GetValue(MinHeightProperty); }
       set { SetValue(MinHeightProperty, value); }
     }
 

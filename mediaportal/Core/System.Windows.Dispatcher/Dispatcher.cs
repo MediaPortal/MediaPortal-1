@@ -67,9 +67,7 @@ namespace System.Windows.Dispatcher
       return new DispatcherOperation(priority, this);
     }
 
-    public void BeginInvokeShutdown(DispatcherPriority priority)
-    {
-    }
+    public void BeginInvokeShutdown(DispatcherPriority priority) {}
 
     private void BeginInvokeShutdownWorker()
     {
@@ -99,9 +97,7 @@ namespace System.Windows.Dispatcher
       throw new NotImplementedException();
     }
 
-    public static void ExitAllFrames()
-    {
-    }
+    public static void ExitAllFrames() {}
 
     public static Dispatcher FromThread(Thread thread)
     {
@@ -133,13 +129,9 @@ namespace System.Windows.Dispatcher
       throw new NotImplementedException();
     }
 
-    public void InvokeShutdown()
-    {
-    }
+    public void InvokeShutdown() {}
 
-    public static void PushFrame(DispatcherFrame frame)
-    {
-    }
+    public static void PushFrame(DispatcherFrame frame) {}
 
     public static void Run()
     {
@@ -152,9 +144,7 @@ namespace System.Windows.Dispatcher
 
       for (;;)
       {
-        try
-        {
-        }
+        try {}
         catch (Exception e)
         {
           if (UnhandledExceptionFilter != null)
@@ -172,9 +162,7 @@ namespace System.Windows.Dispatcher
 //			_currentDispatcher = null;
     }
 
-    public static void ValidatePriority(DispatcherPriority priority, string parameterName)
-    {
-    }
+    public static void ValidatePriority(DispatcherPriority priority, string parameterName) {}
 
     public void VerifyAccess()
     {

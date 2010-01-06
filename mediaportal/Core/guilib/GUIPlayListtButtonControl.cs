@@ -205,9 +205,7 @@ namespace MediaPortal.GUI.Library
     #region Constructors
 
     public GUIPlayListButtonControl(int parentId)
-      : base(parentId)
-    {
-    }
+      : base(parentId) {}
 
 
     /// <summary>
@@ -349,7 +347,7 @@ namespace MediaPortal.GUI.Library
 
       string skinFolderPath = String.Format(@"{0}\media\", GUIGraphicsContext.Skin);
       ImgUpButtonDisabled = GetDisabledButtonImage(skinFolderPath, TextureMoveUpFileName, WindowId, WindowId + 10002,
-                                                     UpBtnXOffset, UpBtnYOffset, UpBtnWidth, UpBtnHeight);
+                                                   UpBtnXOffset, UpBtnYOffset, UpBtnWidth, UpBtnHeight);
 
       if (ImgUpButtonDisabled != null)
       {
@@ -358,8 +356,8 @@ namespace MediaPortal.GUI.Library
       }
 
       ImgDownButtonDisabled = GetDisabledButtonImage(skinFolderPath, TextureMoveDownFileName, WindowId,
-                                                       WindowId + 10005, DownBtnXOffset, DownBtnYOffset, DownBtnWidth,
-                                                       DownBtnHeight);
+                                                     WindowId + 10005, DownBtnXOffset, DownBtnYOffset, DownBtnWidth,
+                                                     DownBtnHeight);
 
       if (ImgDownButtonDisabled != null)
       {
@@ -368,8 +366,8 @@ namespace MediaPortal.GUI.Library
       }
 
       ImgDeleteButtonDisabled = GetDisabledButtonImage(skinFolderPath, TextureDeleteFileName, WindowId,
-                                                         WindowId + 10008, DeleteBtnXOffset, DeleteBtnYOffset,
-                                                         DeleteBtnWidth, DeleteBtnHeight);
+                                                       WindowId + 10008, DeleteBtnXOffset, DeleteBtnYOffset,
+                                                       DeleteBtnWidth, DeleteBtnHeight);
 
       if (ImgDeleteButtonDisabled != null)
       {
@@ -878,7 +876,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="height"></param>
     /// <returns>GUIImage</returns>
     private GUIAnimation GetDisabledButtonImage(string skinFolderImagePath, string origImageFileName, int parentId,
-                                                  int id, int xOffset, int yOffset, int width, int height)
+                                                int id, int xOffset, int yOffset, int width, int height)
     {
       string imagePath = Path.Combine(skinFolderImagePath, origImageFileName);
 

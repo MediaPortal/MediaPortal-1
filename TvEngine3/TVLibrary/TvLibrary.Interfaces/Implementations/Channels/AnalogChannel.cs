@@ -276,6 +276,7 @@ namespace TvLibrary.Implementations
     #endregion
 
     #region overrides
+
     /// <summary>
     /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>
@@ -357,10 +358,11 @@ namespace TvLibrary.Implementations
     {
       return base.GetHashCode() ^ _channelName.GetHashCode() ^ _channelFrequency.GetHashCode() ^
              _channelNumber.GetHashCode() ^ _country.GetHashCode() ^ _isRadio.GetHashCode() ^
-             _tunerSource.GetHashCode() ^ _videoInputType.GetHashCode() ^ _audioInputType.GetHashCode() ^ _vcrSginal.GetHashCode();
+             _tunerSource.GetHashCode() ^ _videoInputType.GetHashCode() ^ _audioInputType.GetHashCode() ^
+             _vcrSginal.GetHashCode();
     }
-    #endregion
 
+    #endregion
 
     /// <summary>
     /// Checks if the given channel and this instance are on the different transponder

@@ -25,9 +25,10 @@
 
 namespace System.Windows.Media.Imaging
 {
-	#region Delegates
 
-	public delegate void DownloadProgressEventHandler(object sender, DownloadProgressEventArgs e);
+  #region Delegates
 
-	#endregion Delegates
+  public delegate void DownloadProgressEventHandler(object sender, DownloadProgressEventArgs e);
+
+  #endregion Delegates
 }

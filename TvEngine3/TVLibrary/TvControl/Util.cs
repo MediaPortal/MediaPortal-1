@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -6,14 +6,15 @@ using System.Threading;
 namespace TvControl
 {
   public delegate TResult Func<TResult>();
-  
+
   /// <summary>
   /// Helper class for invoking tasks with timeout. Overhead is 0,005 ms.
   /// </summary>
   /// <typeparam name="TResult">The type of the result.</typeparam>
   public sealed class WaitFor<TResult>
   {
-    readonly int _timeout;
+    private readonly int _timeout;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="WaitFor{T}"/> class,
     /// using the specified timeout for all operations.        
@@ -23,6 +24,7 @@ namespace TvControl
     {
       _timeout = timeout;
     }
+
     /// <summary>
     /// Executes the specified function within the current thread, aborting it        
     /// if it does not complete within the specified timeout interval.         
@@ -43,20 +45,20 @@ namespace TvControl
       var sync = new object();
       var isCompleted = false;
       WaitCallback watcher = obj =>
-      {
-        var watchedThread = obj as Thread;
-        lock (sync)
-        {
-          if (!isCompleted)
-          {
-            Monitor.Wait(sync, _timeout);
-          }
-          if (!isCompleted)
-          {
-            watchedThread.Abort();
-          }
-        }
-      };
+                               {
+                                 var watchedThread = obj as Thread;
+                                 lock (sync)
+                                 {
+                                   if (!isCompleted)
+                                   {
+                                     Monitor.Wait(sync, _timeout);
+                                   }
+                                   if (!isCompleted)
+                                   {
+                                     watchedThread.Abort();
+                                   }
+                                 }
+                               };
       try
       {
         ThreadPool.QueueUserWorkItem(watcher, Thread.CurrentThread);
@@ -77,6 +79,7 @@ namespace TvControl
         }
       }
     }
+
     /// <summary>
     /// 
     /// Executes the specified function within the current thread, aborting it        

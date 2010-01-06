@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,7 +9,7 @@ namespace MpeCore.Classes
     Install,
     Uninstall
   }
-  
+
   public class QueueCommand
   {
     public QueueCommand()
@@ -17,13 +17,13 @@ namespace MpeCore.Classes
       Date = DateTime.Now;
       CommandEnum = CommandEnum.Install;
     }
-    
+
     public QueueCommand(PackageClass packageClass, CommandEnum oper)
     {
-        Date = DateTime.Now;
-        CommandEnum = oper;
-        TargetId = packageClass.GeneralInfo.Id;
-        TargetVersion = packageClass.GeneralInfo.Version;
+      Date = DateTime.Now;
+      CommandEnum = oper;
+      TargetId = packageClass.GeneralInfo.Id;
+      TargetVersion = packageClass.GeneralInfo.Version;
     }
 
     public CommandEnum CommandEnum { get; set; }

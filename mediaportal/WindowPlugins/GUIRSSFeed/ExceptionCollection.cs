@@ -69,7 +69,7 @@ namespace Rss
     /// <remarks>This method is an indexer that can be used to access the collection.</remarks>
     public Exception this[int index]
     {
-      get { return ((Exception) (List[index])); }
+      get { return ((Exception)(List[index])); }
       set { List[index] = value; }
     }
 

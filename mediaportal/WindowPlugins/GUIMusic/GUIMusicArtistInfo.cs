@@ -69,7 +69,7 @@ namespace MediaPortal.GUI.Music
 
     public GUIMusicArtistInfo()
     {
-      GetID = (int) Window.WINDOW_ARTIST_INFO;
+      GetID = (int)Window.WINDOW_ARTIST_INFO;
     }
 
     public override bool Init()
@@ -77,9 +77,7 @@ namespace MediaPortal.GUI.Music
       return Load(GUIGraphicsContext.Skin + @"\DialogArtistInfo.xml");
     }
 
-    public override void PreInit()
-    {
-    }
+    public override void PreInit() {}
 
     public override void OnAction(Action action)
     {
@@ -261,7 +259,7 @@ namespace MediaPortal.GUI.Music
           StringBuilder strLine2 = new StringBuilder(512);
           for (int i = 0; i < list.Count; ++i)
           {
-            string[] listInfo = (string[]) list[i];
+            string[] listInfo = (string[])list[i];
             tmpLine = String.Format("{0} - {1} ({2})\n",
                                     listInfo[0], // year 
                                     listInfo[1], // title
@@ -290,7 +288,7 @@ namespace MediaPortal.GUI.Music
           StringBuilder strLine2 = new StringBuilder(512);
           for (int i = 0; i < list.Count; ++i)
           {
-            string[] listInfo = (string[]) list[i];
+            string[] listInfo = (string[])list[i];
             tmpLine = String.Format("{0} - {1} ({2})\n",
                                     listInfo[0], // year 
                                     listInfo[1], // title
@@ -319,7 +317,7 @@ namespace MediaPortal.GUI.Music
           StringBuilder strLine2 = new StringBuilder(512);
           for (int i = 0; i < list.Count; ++i)
           {
-            string[] listInfo = (string[]) list[i];
+            string[] listInfo = (string[])list[i];
             tmpLine = String.Format("{0} - {1} ({2})\n",
                                     listInfo[0], // year 
                                     listInfo[1], // title
@@ -348,7 +346,7 @@ namespace MediaPortal.GUI.Music
           StringBuilder strLine2 = new StringBuilder(512);
           for (int i = 0; i < list.Count; ++i)
           {
-            string[] listInfo = (string[]) list[i];
+            string[] listInfo = (string[])list[i];
             tmpLine = String.Format("{0} - {1} ({2})\n",
                                     listInfo[0], // year 
                                     listInfo[1], // title
@@ -377,8 +375,8 @@ namespace MediaPortal.GUI.Music
 
       if (null != imgCoverArt)
       {
-        float x = (float) imgCoverArt.XPosition;
-        float y = (float) imgCoverArt.YPosition;
+        float x = (float)imgCoverArt.XPosition;
+        float y = (float)imgCoverArt.YPosition;
         int width;
         int height;
         GUIGraphicsContext.Correct(ref x, ref y);
@@ -389,7 +387,7 @@ namespace MediaPortal.GUI.Music
                                          out height);
 
         GUIFontManager.Present();
-        Util.Picture.RenderImage(coverArtTexture, (int) x, (int) y, width, height, coverArtTextureWidth,
+        Util.Picture.RenderImage(coverArtTexture, (int)x, (int)y, width, height, coverArtTextureWidth,
                                  coverArtTextureHeight, 0, 0, true);
       }
     }

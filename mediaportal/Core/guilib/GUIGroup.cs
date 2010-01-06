@@ -42,9 +42,7 @@ namespace MediaPortal.GUI.Library
     #region Constructors
 
     public GUIGroup(int parentId)
-      : base(parentId)
-    {
-    }
+      : base(parentId) {}
 
     #endregion Constructors
 
@@ -181,7 +179,7 @@ namespace MediaPortal.GUI.Library
 
       for (int index = Children.Count - 1; index >= 0; index--)
       {
-        if ((((GUIControl) Children[index])).HitTest(x, y, out controlID, out focused))
+        if ((((GUIControl)Children[index])).HitTest(x, y, out controlID, out focused))
         {
           return true;
         }
@@ -207,7 +205,7 @@ namespace MediaPortal.GUI.Library
       {
         if (control is GUIGroup)
         {
-          ((GUIGroup) control).Remove(controlId);
+          ((GUIGroup)control).Remove(controlId);
           break;
         }
         else if (control.GetID == controlId)
@@ -224,7 +222,7 @@ namespace MediaPortal.GUI.Library
       {
         if (control is GUIGroup)
         {
-          int focusedId = ((GUIGroup) control).GetFocusControlId();
+          int focusedId = ((GUIGroup)control).GetFocusControlId();
 
           if (focusedId != -1)
           {
@@ -295,7 +293,7 @@ namespace MediaPortal.GUI.Library
 
     public GUIControl this[int index]
     {
-      get { return (GUIControl) Children[index]; }
+      get { return (GUIControl)Children[index]; }
     }
 
     /// <summary>
@@ -327,7 +325,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      GUIControl cntl = (GUIControl) value;
+      GUIControl cntl = (GUIControl)value;
       //cntl.AddAnimations(base.Animations);
       if (base.Animations.Count != 0)
       {
@@ -337,9 +335,7 @@ namespace MediaPortal.GUI.Library
       Children.Add(cntl);
     }
 
-    void IAddChild.AddText(string text)
-    {
-    }
+    void IAddChild.AddText(string text) {}
 
     protected void Arrange()
     {

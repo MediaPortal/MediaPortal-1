@@ -167,22 +167,22 @@ namespace MediaPortal.GUI.Video
           {
             if (sortAscending)
             {
-              return (int) (item1.Duration - item2.Duration);
+              return (int)(item1.Duration - item2.Duration);
             }
             else
             {
-              return (int) (item2.Duration - item1.Duration);
+              return (int)(item2.Duration - item1.Duration);
             }
           }
           else
           {
             if (sortAscending)
             {
-              return (int) (item1.FileInfo.Length - item2.FileInfo.Length);
+              return (int)(item1.FileInfo.Length - item2.FileInfo.Length);
             }
             else
             {
-              return (int) (item2.FileInfo.Length - item1.FileInfo.Length);
+              return (int)(item2.FileInfo.Length - item1.FileInfo.Length);
             }
           }
 
@@ -223,7 +223,7 @@ namespace MediaPortal.GUI.Video
               if (!sortAscending) ret = 1;
             }
             return ret;
-          }      
+          }
       }
       return 0;
     }

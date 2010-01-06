@@ -29,17 +29,13 @@ namespace MediaPortal.ControlDevices.Keyboard
 {
   internal class KeyboardSettings : AbstractControlSettings
   {
-    public KeyboardSettings(IControlPlugin plugin) : base(plugin, "keyboard")
-    {
-    }
+    public KeyboardSettings(IControlPlugin plugin) : base(plugin, "keyboard") {}
 
     public override UserControl SettingsPanel
     {
-      get { return (UserControl) new ControlDevicePanel(_plugin); }
+      get { return (UserControl)new ControlDevicePanel(_plugin); }
     }
 
-    public override void ShowAdvancedSettings()
-    {
-    }
+    public override void ShowAdvancedSettings() {}
   }
 }

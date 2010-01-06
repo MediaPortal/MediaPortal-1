@@ -1,4 +1,5 @@
 #region Copyright (C) 2007-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2007-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,9 +20,11 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -32,6 +35,7 @@ using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
 using System.Threading;
 using System.Diagnostics;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Handlers
@@ -42,19 +46,22 @@ namespace TvEngine.PowerScheduler.Handlers
   public class EpgGrabbingHandler : IStandbyHandler, IWakeupHandler, IEpgHandler
   {
     #region Structs
-    class GrabberSource   // don't use struct! they are value types and mess when used in a dictionary!
+
+    private class GrabberSource // don't use struct! they are value types and mess when used in a dictionary!
     {
-      string _name;
-      bool _standbyAllowed;
-      DateTime _timeout;
-      DateTime _nextWakeupTime;
+      private string _name;
+      private bool _standbyAllowed;
+      private DateTime _timeout;
+      private DateTime _nextWakeupTime;
+
       public GrabberSource(string name, bool standbyAllowed, int timeout)
       {
         _name = name;
         _standbyAllowed = standbyAllowed;
-        _timeout = DateTime.Now.AddSeconds( timeout );
+        _timeout = DateTime.Now.AddSeconds(timeout);
         _nextWakeupTime = DateTime.MaxValue;
       }
+
       public string Name
       {
         get { return _name; }
@@ -65,49 +72,56 @@ namespace TvEngine.PowerScheduler.Handlers
         get { return _standbyAllowed; }
       }
 
-      public void SetStandbyAllowed( bool allowed, int timeout )
+      public void SetStandbyAllowed(bool allowed, int timeout)
       {
         _standbyAllowed = allowed;
-        _timeout = DateTime.Now.AddSeconds( timeout );
+        _timeout = DateTime.Now.AddSeconds(timeout);
       }
 
       public DateTime Timeout
       {
         get { return _timeout; }
       }
+
       public DateTime NextWakeupTime
       {
         get { return _nextWakeupTime; }
-        set
-        {
-          _nextWakeupTime = value;
-        }
+        set { _nextWakeupTime = value; }
       }
     }
+
     #endregion
 
     #region Events
+
     private event EPGScheduleHandler _epgScheduleDue;
+
     #endregion
 
     #region Variables
-    IController _controller;
-    Dictionary<object, GrabberSource> _extGrabbers;
+
+    private IController _controller;
+    private Dictionary<object, GrabberSource> _extGrabbers;
+
     #endregion
 
     #region Constructor
+
     public EpgGrabbingHandler(IController controller)
     {
       _controller = controller;
       _extGrabbers = new Dictionary<object, GrabberSource>();
-      GlobalServiceProvider.Instance.Get<IPowerScheduler>().OnPowerSchedulerEvent += new PowerSchedulerEventHandler(EpgGrabbingHandler_OnPowerSchedulerEvent);
+      GlobalServiceProvider.Instance.Get<IPowerScheduler>().OnPowerSchedulerEvent +=
+        new PowerSchedulerEventHandler(EpgGrabbingHandler_OnPowerSchedulerEvent);
       if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
         GlobalServiceProvider.Instance.Remove<IEpgHandler>();
       GlobalServiceProvider.Instance.Add<IEpgHandler>(this);
     }
+
     #endregion
 
     #region Private methods
+
     [MethodImpl(MethodImplOptions.Synchronized)]
     private void EpgGrabbingHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
     {
@@ -222,7 +236,7 @@ namespace TvEngine.PowerScheduler.Handlers
     public void RunExternalCommand(String action)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      String cmd= layer.GetSetting("PowerSchedulerEpgCommand", String.Empty).Value;
+      String cmd = layer.GetSetting("PowerSchedulerEpgCommand", String.Empty).Value;
       if (cmd.Equals(String.Empty))
         return;
       using (Process p = new Process())
@@ -250,7 +264,7 @@ namespace TvEngine.PowerScheduler.Handlers
 
     private bool _epgThreadRunning;
 
-    void EPGThreadFunction()
+    private void EPGThreadFunction()
     {
       // ShouldRun still returns true until LastRun is updated, 
       // shutdown is disallowed until then
@@ -259,7 +273,7 @@ namespace TvEngine.PowerScheduler.Handlers
       EPGWakeupConfig config = new EPGWakeupConfig((layer.GetSetting("EPGWakeupConfig", String.Empty).Value));
 
       Log.Info("PowerScheduler: EPG schedule {0}:{1} is due: {2}:{3}",
-        config.Hour, config.Minutes, DateTime.Now.Hour, DateTime.Now.Minute);
+               config.Hour, config.Minutes, DateTime.Now.Hour, DateTime.Now.Minute);
 
       // start external command
       RunExternalCommand("epg");
@@ -370,9 +384,11 @@ namespace TvEngine.PowerScheduler.Handlers
       }
       return nextRun;
     }
+
     #endregion
 
     #region IStandbyHandler/IWakeupHandler implementation
+
     public bool DisAllowShutdown
     {
       [MethodImpl(MethodImplOptions.Synchronized)]
@@ -417,7 +433,7 @@ namespace TvEngine.PowerScheduler.Handlers
       // check if any external EPG source wants to wakeup the system
       foreach (GrabberSource source in _extGrabbers.Values)
       {
-        DateTime sourceNext= source.NextWakeupTime;
+        DateTime sourceNext = source.NextWakeupTime;
         // check if source has set a valid preferred wakeup time
         if (sourceNext != DateTime.MaxValue)
         {
@@ -438,14 +454,14 @@ namespace TvEngine.PowerScheduler.Handlers
         Log.Debug("PowerScheduler: next EPG wakeup set by external EPG source {0}", externalName);
       return nextRun;
     }
-    public void UserShutdownNow()
-    {
-    }
+
+    public void UserShutdownNow() {}
 
     public string HandlerName
     {
       get { return "EpgGrabbingHandler"; }
     }
+
     #endregion
 
     #region IEpgHandler implementation
@@ -462,7 +478,7 @@ namespace TvEngine.PowerScheduler.Handlers
         GrabberSource gSource = _extGrabbers[source];
         gSource.SetStandbyAllowed(allowed, timeout);
       }
-     }
+    }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void SetNextEPGWakeupTime(object source, DateTime time)
@@ -487,6 +503,7 @@ namespace TvEngine.PowerScheduler.Handlers
     }
 
     #region Events
+
     public event EPGScheduleHandler EPGScheduleDue
     {
       add
@@ -505,7 +522,7 @@ namespace TvEngine.PowerScheduler.Handlers
                 _epgScheduleDue -= del as EPGScheduleHandler;
             }
           }
-          catch (Exception) { }
+          catch (Exception) {}
           _epgScheduleDue += handler;
         }
       }
@@ -517,6 +534,7 @@ namespace TvEngine.PowerScheduler.Handlers
         }
       }
     }
+
     #endregion
 
     #endregion

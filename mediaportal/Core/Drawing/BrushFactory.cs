@@ -29,9 +29,7 @@ namespace MediaPortal.Drawing
   {
     #region Constructors
 
-    private BrushFactory()
-    {
-    }
+    private BrushFactory() {}
 
     #endregion Constructors
 

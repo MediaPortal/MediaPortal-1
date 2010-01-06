@@ -76,7 +76,7 @@ namespace MediaPortal.Configuration
       //
       // Set password character
       //
-      pinCodeTextBox.PasswordChar = (char) 0x25CF;
+      pinCodeTextBox.PasswordChar = (char)0x25CF;
     }
 
     /// <summary>
@@ -542,9 +542,7 @@ namespace MediaPortal.Configuration
       }
     }
 
-    private void groupBox1_Enter(object sender, EventArgs e)
-    {
-    }
+    private void groupBox1_Enter(object sender, EventArgs e) {}
 
     private void EditShareForm_Load(object sender, EventArgs e)
     {
@@ -590,9 +588,7 @@ namespace MediaPortal.Configuration
         {
           port = Int32.Parse(textBoxPort.Text);
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
         return port;
       }
       set { textBoxPort.Text = value.ToString(); }

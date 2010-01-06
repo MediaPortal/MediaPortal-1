@@ -4,10 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using System.Text;
-
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-
 
 
 namespace MediaPortal.MPInstaller
@@ -38,13 +36,12 @@ namespace MediaPortal.MPInstaller
     /// <summary>
     /// Execute when the package is downloaded via GUI 
     /// </summary>
-    virtual public void GUI_GetOptions()
+    public virtual void GUI_GetOptions()
     {
       if (CurrentPackage.InstallerInfo.SetupGroups.Count > 1)
       {
         if (CurrentPackage.InstallerInfo.ProjectProperties.SingleGroupSelect)
         {
-
           GUIDialogMenu dlgselect = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
           if (dlgselect == null) return;
           dlgselect.Reset();
@@ -62,7 +59,8 @@ namespace MediaPortal.MPInstaller
         {
           foreach (GroupString gs in CurrentPackage.InstallerInfo.SetupGroups)
           {
-            GUIDialogYesNo dlgselect = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+            GUIDialogYesNo dlgselect =
+              (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
             dlgselect.SetHeading(14011); // Sort options
             dlgselect.SetLine(1, gs.Name);
             dlgselect.DoModal(GUIWindowManager.ActiveWindow);
@@ -78,14 +76,17 @@ namespace MediaPortal.MPInstaller
     /// This use when installing via GUI
     /// </summary>
     /// <returns></returns>
-    virtual public bool GUI_Warning()
+    public virtual bool GUI_Warning()
     {
       if (!TestVersion(CurrentPackage))
       {
-        GUIDialogYesNo dlgcontinue = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+        GUIDialogYesNo dlgcontinue =
+          (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
         dlgcontinue.Reset();
         dlgcontinue.SetHeading(14011); // Sort options
-        dlgcontinue.SetLine(1, string.Format(GUILocalizeStrings.Get(14012), CurrentPackage.InstallerInfo.ProjectProperties.MPMinVersion));
+        dlgcontinue.SetLine(1,
+                            string.Format(GUILocalizeStrings.Get(14012),
+                                          CurrentPackage.InstallerInfo.ProjectProperties.MPMinVersion));
         dlgcontinue.SetLine(1, 14013);
         dlgcontinue.DoModal(GUIWindowManager.ActiveWindow);
         if (!dlgcontinue.IsConfirmed)
@@ -98,30 +99,30 @@ namespace MediaPortal.MPInstaller
     /// Test if version is compatible and show warning
     /// </summary>
     /// <returns></returns>
-    virtual public bool Warning()
+    public virtual bool Warning()
     {
       if (!TestVersion(CurrentPackage))
       {
-        if (MessageBox.Show(string.Format("Not supported Mediaportal version !(Needed version {0}) Do you want continue ?", CurrentPackage.InstallerInfo.ProjectProperties.MPMinVersion), "", MessageBoxButtons.YesNo) == DialogResult.No)
+        if (
+          MessageBox.Show(
+            string.Format("Not supported Mediaportal version !(Needed version {0}) Do you want continue ?",
+                          CurrentPackage.InstallerInfo.ProjectProperties.MPMinVersion), "", MessageBoxButtons.YesNo) ==
+          DialogResult.No)
           return false;
       }
       return true;
     }
+
     /// <summary>
     /// Inits this instance.
     /// executed when the package it is loaded
     /// </summary>
-    virtual public void Init()
-    {
-    
-    }
+    public virtual void Init() {}
 
     /// <summary>
     /// Called when the install wizard start.
     /// </summary>
-    virtual public void OnInstallStart()
-    {
-    }
+    public virtual void OnInstallStart() {}
 
     /// <summary>
     /// Installs the current package.
@@ -129,7 +130,7 @@ namespace MediaPortal.MPInstaller
     /// <param name="pb">ProgressBar for overall progress (can bee null) </param>
     /// <param name="pb1">ProgressBar for current copied file (can bee null)</param>
     /// <param name="listbox">Listbox for file listing(can bee null) </param>
-    virtual public void Install(ProgressBar pb, ProgressBar pb1, ListBox listbox)
+    public virtual void Install(ProgressBar pb, ProgressBar pb1, ListBox listbox)
     {
       CurrentPackage.InstallPackage(pb, pb1, listbox);
       CurrentPackage.installLanguage(listbox);
@@ -140,32 +141,26 @@ namespace MediaPortal.MPInstaller
     /// Called when [install file procesed].
     /// </summary>
     /// <param name="mpiFileInfo">The mpi file info.</param>
-    virtual public void OnInstallFileProcesed(MPIFileList mpiFileInfo)
-    {
-
-    }
+    public virtual void OnInstallFileProcesed(MPIFileList mpiFileInfo) {}
 
     /// <summary>
     /// Called when [install done].
     /// </summary>
-    virtual public void OnInstallDone()
-    {
-
-    }
+    public virtual void OnInstallDone() {}
 
 
     /// <summary>
     /// Executed only if EnableWizard is false
     /// </summary>
     /// <returns>True if unistall done</returns>
-    virtual public bool UnInstall()
+    public virtual bool UnInstall()
     {
       return true;
     }
 
     #region Generic methods
-    #endregion
 
+    #endregion
 
     #region helper func's
 
@@ -177,13 +172,15 @@ namespace MediaPortal.MPInstaller
     private bool TestVersion(MPpackageStruct package)
     {
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-      if (VersionPharser.CompareVersions(versionInfo.FileVersion, package.InstallerInfo.ProjectProperties.MPMinVersion) < 0)
+      if (
+        VersionPharser.CompareVersions(versionInfo.FileVersion, package.InstallerInfo.ProjectProperties.MPMinVersion) <
+        0)
       {
         return false;
       }
       return true;
     }
 
-#endregion
+    #endregion
   }
 }

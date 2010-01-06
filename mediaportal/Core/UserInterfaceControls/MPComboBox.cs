@@ -34,7 +34,7 @@ namespace MediaPortal.UserInterface.Controls
   /// </summary>
   public class MPComboBox : System.Windows.Forms.ComboBox
   {
-    Color _borderColor = Color.Empty;
+    private Color _borderColor = Color.Empty;
 
     public Color BorderColor
     {
@@ -42,9 +42,7 @@ namespace MediaPortal.UserInterface.Controls
       set { _borderColor = value; }
     }
 
-    public MPComboBox()
-    {
-    }
+    public MPComboBox() {}
 
     protected override void WndProc(ref Message msg)
     {
@@ -52,15 +50,14 @@ namespace MediaPortal.UserInterface.Controls
       {
         Graphics graphics = Graphics.FromHwnd(this.Parent.Handle);
         Rectangle rectangle = new Rectangle(
-             this.Left - 1,
-             this.Top - 1,
-             this.Width + 1,
-             this.Height + 1);
+          this.Left - 1,
+          this.Top - 1,
+          this.Width + 1,
+          this.Height + 1);
         graphics.DrawRectangle(new Pen(_borderColor), rectangle);
         graphics.Dispose();
       }
       base.WndProc(ref msg);
     }
   }
-
 }

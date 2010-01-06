@@ -125,7 +125,7 @@ namespace MediaPortal.Player
 
     public int Open(String FileName)
     {
-      return (int) MediaInfo_Open(Handle, FileName);
+      return (int)MediaInfo_Open(Handle, FileName);
     }
 
     public void Close()
@@ -135,22 +135,22 @@ namespace MediaPortal.Player
 
     public String Inform()
     {
-      return Marshal.PtrToStringUni(MediaInfo_Inform(Handle, (IntPtr) 0));
+      return Marshal.PtrToStringUni(MediaInfo_Inform(Handle, (IntPtr)0));
     }
 
     public String Get(StreamKind StreamKind, int StreamNumber, String Parameter, InfoKind KindOfInfo,
                       InfoKind KindOfSearch)
     {
       return
-        Marshal.PtrToStringUni(MediaInfo_Get(Handle, (IntPtr) StreamKind, (IntPtr) StreamNumber, Parameter,
-                                             (IntPtr) KindOfInfo, (IntPtr) KindOfSearch));
+        Marshal.PtrToStringUni(MediaInfo_Get(Handle, (IntPtr)StreamKind, (IntPtr)StreamNumber, Parameter,
+                                             (IntPtr)KindOfInfo, (IntPtr)KindOfSearch));
     }
 
     public String Get(StreamKind StreamKind, int StreamNumber, int Parameter, InfoKind KindOfInfo)
     {
       return
-        Marshal.PtrToStringUni(MediaInfo_GetI(Handle, (IntPtr) StreamKind, (IntPtr) StreamNumber, (IntPtr) Parameter,
-                                              (IntPtr) KindOfInfo));
+        Marshal.PtrToStringUni(MediaInfo_GetI(Handle, (IntPtr)StreamKind, (IntPtr)StreamNumber, (IntPtr)Parameter,
+                                              (IntPtr)KindOfInfo));
     }
 
     public String Option(String Option, String Value)
@@ -160,12 +160,12 @@ namespace MediaPortal.Player
 
     public int State_Get()
     {
-      return (int) MediaInfo_State_Get(Handle);
+      return (int)MediaInfo_State_Get(Handle);
     }
 
     public int Count_Get(StreamKind StreamKind, int StreamNumber)
     {
-      return (int) MediaInfo_Count_Get(Handle, (IntPtr) StreamKind, (IntPtr) StreamNumber);
+      return (int)MediaInfo_Count_Get(Handle, (IntPtr)StreamKind, (IntPtr)StreamNumber);
     }
 
     private IntPtr Handle;
@@ -196,4 +196,6 @@ namespace MediaPortal.Player
       return Count_Get(StreamKind, -1);
     }
   }
-} //NameSpace
+}
+
+//NameSpace

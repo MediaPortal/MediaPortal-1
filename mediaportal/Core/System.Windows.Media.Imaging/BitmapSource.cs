@@ -25,30 +25,28 @@
 
 namespace System.Windows.Media.Imaging
 {
-	public abstract class BitmapSource : MediaPortal.Drawing.ImageSource
-	{
-		#region Constructors
+  public abstract class BitmapSource : MediaPortal.Drawing.ImageSource
+  {
+    #region Constructors
 
-		public BitmapSource()
-		{
-		}
+    public BitmapSource() {}
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Events
+    #region Events
 
-		// TODO: MSDN docs show these are virtual
-		public abstract event EventHandler					DownloadCompleted;
-		public abstract event DownloadProgressEventHandler	DownloadProgress;
+    // TODO: MSDN docs show these are virtual
+    public abstract event EventHandler DownloadCompleted;
+    public abstract event DownloadProgressEventHandler DownloadProgress;
 
-		#endregion Events
+    #endregion Events
 
-		#region Methods
+    #region Methods
 
-		public new BitmapSource Copy()
-		{
-			return (BitmapSource)base.Copy();
-		}
+    public new BitmapSource Copy()
+    {
+      return (BitmapSource)base.Copy();
+    }
 
 //		public virtual void CopyPixels(Array pixels, int stride, int offset)
 //		{
@@ -74,20 +72,20 @@ namespace System.Windows.Media.Imaging
 //		{
 //			throw new NotImplementedException();
 //		}
-			
-		protected override bool FreezeCore(bool isChecking)
-		{
-			throw new NotImplementedException();
-		}
 
-		public new BitmapSource GetCurrentValue()
-		{
-			return this;
-		}
-			
-		#endregion Methods
+    protected override bool FreezeCore(bool isChecking)
+    {
+      throw new NotImplementedException();
+    }
 
-		#region Properties
+    public new BitmapSource GetCurrentValue()
+    {
+      return this;
+    }
+
+    #endregion Methods
+
+    #region Properties
 
 //		public virtual ColorContext ColorContext
 //		{
@@ -95,62 +93,62 @@ namespace System.Windows.Media.Imaging
 //			set { throw new NotImplementedException(); }
 //		}
 
-		public virtual double DpiX
-		{
-			get { return _dpiX; }
-		}
+    public virtual double DpiX
+    {
+      get { return _dpiX; }
+    }
 
-		public virtual double DpiY
-		{
-			get { return _dpiY; }
-		}
+    public virtual double DpiY
+    {
+      get { return _dpiY; }
+    }
 
 //		public virtual PixelFormat Format
 //		{
 //			get { throw new NotImplementedException(); }
 //		}
 
-		public override double Height
-		{
-			get { return _height; }
-		}
+    public override double Height
+    {
+      get { return _height; }
+    }
 
-		public virtual bool IsDownloading
-		{
-			get { return false; }
-		}
+    public virtual bool IsDownloading
+    {
+      get { return false; }
+    }
 
 //		public virtual BitmapPalette Palette
 //		{
 //			get { throw new NotImplementedException(); }
 //		}
 
-		public virtual int PixelHeight
-		{
-			get { return _pixelHeight; }
-		}
+    public virtual int PixelHeight
+    {
+      get { return _pixelHeight; }
+    }
 
-		public virtual int PixelWidth
-		{
-			get { return _pixelWidth; }
-		}
+    public virtual int PixelWidth
+    {
+      get { return _pixelWidth; }
+    }
 
-		public override double Width
-		{
-			get { return _width; }
-		}
+    public override double Width
+    {
+      get { return _width; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		int							_dpiX = 0;
-		int							_dpiY = 0;
-		int							_height = 0;
-		int							_pixelHeight = 0;
-		int							_pixelWidth = 0;
-		int							_width = 0;
+    private int _dpiX = 0;
+    private int _dpiY = 0;
+    private int _height = 0;
+    private int _pixelHeight = 0;
+    private int _pixelWidth = 0;
+    private int _width = 0;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

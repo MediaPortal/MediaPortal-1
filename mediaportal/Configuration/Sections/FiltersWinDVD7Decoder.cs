@@ -52,9 +52,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public FiltersWinDVD7Decoder()
-      : this("WinDVD 7 Decoder")
-    {
-    }
+      : this("WinDVD 7 Decoder") {}
 
     /// <summary>
     /// 
@@ -277,7 +275,7 @@ namespace MediaPortal.Configuration.Sections
         {
           try
           {
-            regAUDIOCHAN = (Int32) subkey.GetValue("AUDIOCHAN", 1);
+            regAUDIOCHAN = (Int32)subkey.GetValue("AUDIOCHAN", 1);
             switch (regAUDIOCHAN)
             {
                 //2 Speaker (comboBoxSpeakerConfig index 0)
@@ -294,7 +292,7 @@ namespace MediaPortal.Configuration.Sections
                                                       "Stereo",
                                                       "Dolby Surround Capable"
                                                     });
-                regAUDIO = (Int32) subkey.GetValue("AUDIO", 1);
+                regAUDIO = (Int32)subkey.GetValue("AUDIO", 1);
                 if (regAUDIO == 0)
                 {
                   iIndex = 0;
@@ -374,9 +372,7 @@ namespace MediaPortal.Configuration.Sections
                 break;
             }
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
 
@@ -386,7 +382,7 @@ namespace MediaPortal.Configuration.Sections
         {
           try
           {
-            Int32 regDxVA = (Int32) subkey.GetValue("DXVA", 1);
+            Int32 regDxVA = (Int32)subkey.GetValue("DXVA", 1);
             if (regDxVA == 1)
             {
               checkBoxDxVA.Checked = true;
@@ -396,7 +392,7 @@ namespace MediaPortal.Configuration.Sections
               checkBoxDxVA.Checked = false;
             }
 
-            Int32 regHWMC = (Int32) subkey.GetValue("HWMC", 1);
+            Int32 regHWMC = (Int32)subkey.GetValue("HWMC", 1);
             if (regHWMC == 1)
             {
               checkBoxHWMC.Checked = true;
@@ -406,7 +402,7 @@ namespace MediaPortal.Configuration.Sections
               checkBoxHWMC.Checked = false;
             }
 
-            Int32 regBOBWEAVE = (Int32) subkey.GetValue("BOBWEAVE", 0);
+            Int32 regBOBWEAVE = (Int32)subkey.GetValue("BOBWEAVE", 0);
             if (regBOBWEAVE == 0)
             {
               comboBoxDeInterlace.SelectedIndex = 0;
@@ -428,9 +424,7 @@ namespace MediaPortal.Configuration.Sections
               comboBoxDeInterlace.SelectedIndex = 0;
             }
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
     }

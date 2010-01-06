@@ -39,9 +39,7 @@ namespace MediaPortal.GUI.View
     protected ArrayList listFilters = new ArrayList();
     private string name;
 
-    public ViewDefinition()
-    {
-    }
+    public ViewDefinition() {}
 
     [XmlElement("Name")]
     public string Name

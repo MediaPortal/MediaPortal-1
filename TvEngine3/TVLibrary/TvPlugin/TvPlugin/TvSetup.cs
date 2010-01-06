@@ -17,12 +17,9 @@ namespace TvPlugin
     #region Variables
 
     private string _hostName;
-    [SkinControl(24)]
-    protected GUIButtonControl btnChange = null;
-    [SkinControl(25)]
-    protected GUIButtonControl btnBack = null;
-    [SkinControl(30)]
-    protected GUILabelControl lblHostName = null;
+    [SkinControl(24)] protected GUIButtonControl btnChange = null;
+    [SkinControl(25)] protected GUIButtonControl btnBack = null;
+    [SkinControl(30)] protected GUILabelControl lblHostName = null;
 
     #endregion
 
@@ -212,7 +209,7 @@ namespace TvPlugin
           succeeded = false;
         }
       }
-      else 
+      else
       {
         succeeded = false;
       }
@@ -246,9 +243,7 @@ namespace TvPlugin
             {
               ctrl.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 30));
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
             if (ctrl.Status == ServiceControllerStatus.Running)
             {
               Log.Info("TvSetup: TvService started.");
@@ -319,7 +314,7 @@ namespace TvPlugin
 
             TVHome.Navigator.ReLoad();
             Settings xmlreader = new MPSettings();
-            TVHome.Navigator.LoadSettings(xmlreader);            
+            TVHome.Navigator.LoadSettings(xmlreader);
             if (pDlgOK != null)
             {
               pDlgOK.SetHeading(GUILocalizeStrings.Get(605));

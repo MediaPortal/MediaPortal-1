@@ -33,9 +33,7 @@ namespace MediaPortal.Hooks
   {
     #region Constructors
 
-    public Hook()
-    {
-    }
+    public Hook() {}
 
     public Hook(HookType hookType)
     {

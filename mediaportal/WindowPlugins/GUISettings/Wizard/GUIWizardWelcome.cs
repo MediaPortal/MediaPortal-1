@@ -44,7 +44,7 @@ namespace MediaPortal.GUI.Settings
 
     public GUIWizardWelcome()
     {
-      GetID = (int) Window.WINDOW_WIZARD_WELCOME;
+      GetID = (int)Window.WINDOW_WIZARD_WELCOME;
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -66,7 +66,7 @@ namespace MediaPortal.GUI.Settings
 
     private void OnLanguage()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       dlg.Reset();
       dlg.SetHeading(GUILocalizeStrings.Get(924)); //Menu
       dlg.ShowQuickNumbers = false;
@@ -90,7 +90,7 @@ namespace MediaPortal.GUI.Settings
 
     private void OnCountry()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       dlg.Reset();
       dlg.SetHeading(GUILocalizeStrings.Get(924)); //Menu
       dlg.ShowQuickNumbers = false;
@@ -114,7 +114,7 @@ namespace MediaPortal.GUI.Settings
 
     private void OnNextPage()
     {
-      TunerCountry country = (TunerCountry) lblCountry.Data;
+      TunerCountry country = (TunerCountry)lblCountry.Data;
 
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
@@ -129,7 +129,7 @@ namespace MediaPortal.GUI.Settings
       GUIPropertyManager.SetProperty("#WizardCountryCode", country.CountryCode);
       GUIPropertyManager.SetProperty("#WizardCountry", country.Country);
 
-      GUIWindowManager.ActivateWindow((int) Window.WINDOW_WIZARD_GENERAL);
+      GUIWindowManager.ActivateWindow((int)Window.WINDOW_WIZARD_GENERAL);
     }
 
     public override bool Init()

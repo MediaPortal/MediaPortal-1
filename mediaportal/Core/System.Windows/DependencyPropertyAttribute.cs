@@ -30,9 +30,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public DependencyPropertyAttribute()
-    {
-    }
+    public DependencyPropertyAttribute() {}
 
     #endregion Constructors
 

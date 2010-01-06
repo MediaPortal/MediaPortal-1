@@ -47,7 +47,7 @@ namespace MediaPortal.Drawing
     {
       if (value is string)
       {
-        string[] param = ((string) value).Split(',');
+        string[] param = ((string)value).Split(',');
 
         return new Point(Convert.ToDouble(param[0], CultureInfo.CurrentCulture),
                          Convert.ToDouble(param[1], CultureInfo.CurrentCulture));

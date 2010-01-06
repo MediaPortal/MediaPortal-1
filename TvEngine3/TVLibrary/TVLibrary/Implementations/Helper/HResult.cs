@@ -60,6 +60,7 @@ namespace TvLibrary
   public class HResult
   {
     #region Enums
+
     /// <summary>
     /// HResult serverity enum
     /// </summary>
@@ -209,18 +210,22 @@ namespace TvLibrary
       /// </summary>
       D3DX = 0x877
     }
+
     #endregion
 
     #region Variables
+
     private uint _hresult;
     private int _facilityCode;
     private Facility _facility = Facility.Unknown;
     private int _serverityCode;
     private Serverity _serverity = Serverity.Unknown;
     private int _code;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="HResult"/> class.
     /// </summary>
@@ -229,9 +234,11 @@ namespace TvLibrary
     {
       Set(hresult);
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Gets the facility type.
     /// </summary>
@@ -285,9 +292,11 @@ namespace TvLibrary
     {
       get { return GetDXErrorDescription((int)_hresult); }
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Sets the specified hresult.
     /// </summary>
@@ -302,13 +311,12 @@ namespace TvLibrary
       _facilityCode = (int)(_hresult >> 16);
       _facilityCode = _facilityCode & 0x0FFF;
 
-      if (Enum.IsDefined(typeof(Facility), _facilityCode))
+      if (Enum.IsDefined(typeof (Facility), _facilityCode))
         _facility = (Facility)_facilityCode;
       else
         _facility = Facility.Unknown;
 
       _code = (int)_hresult & 0x0000FFFF;
-
     }
 
     /// <summary>
@@ -316,7 +324,8 @@ namespace TvLibrary
     /// </summary>
     /// <param name="hresult">The hresult.</param>
     /// <returns>the DX error string</returns>
-    [DllImport("Dxerr9.dll", EntryPoint = "GetDXErrorString", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    [DllImport("Dxerr9.dll", EntryPoint = "GetDXErrorString", ExactSpelling = false,
+      CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public static extern string GetDXErrorString(int hresult);
 
     /// <summary>
@@ -324,7 +333,8 @@ namespace TvLibrary
     /// </summary>
     /// <param name="hresult">The hresult.</param>
     /// <returns>the DX error description</returns>
-    [DllImport("Dxerr9.dll", EntryPoint = "GetDXErrorDescription", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    [DllImport("Dxerr9.dll", EntryPoint = "GetDXErrorDescription", ExactSpelling = false,
+      CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public static extern string GetDXErrorDescription(int hresult);
 
     /// <summary>
@@ -335,7 +345,11 @@ namespace TvLibrary
     /// </returns>
     public override string ToString()
     {
-      return _facility == Facility.Unknown ? String.Format("0x{0} - {1}:Unknown(0x{2}):0x{3}", _hresult.ToString("X").PadLeft(8, '0'), _serverity, _facilityCode.ToString("X").PadLeft(3, '0'), _code.ToString("X").PadLeft(4, '0')) : String.Format("0x{0} - {1}:{2}:0x{3}", _hresult.ToString("X").PadLeft(8, '0'), _serverity, _facility, _code.ToString("X").PadLeft(4, '0'));
+      return _facility == Facility.Unknown
+               ? String.Format("0x{0} - {1}:Unknown(0x{2}):0x{3}", _hresult.ToString("X").PadLeft(8, '0'), _serverity,
+                               _facilityCode.ToString("X").PadLeft(3, '0'), _code.ToString("X").PadLeft(4, '0'))
+               : String.Format("0x{0} - {1}:{2}:0x{3}", _hresult.ToString("X").PadLeft(8, '0'), _serverity, _facility,
+                               _code.ToString("X").PadLeft(4, '0'));
     }
 
     /// <summary>
@@ -346,7 +360,10 @@ namespace TvLibrary
     /// </returns>
     public string ToDXString()
     {
-      return _hresult == 0 ? String.Format("No DX Error") : String.Format("DX Error: {0} - Error: {1}, Description:{2}", ToString(), DXErrorString, DXErrorDescription);
+      return _hresult == 0
+               ? String.Format("No DX Error")
+               : String.Format("DX Error: {0} - Error: {1}, Description:{2}", ToString(), DXErrorString,
+                               DXErrorDescription);
     }
 
     /// <summary>
@@ -441,6 +458,7 @@ namespace TvLibrary
     {
       return _hresult.GetHashCode();
     }
+
     #endregion
   }
 }

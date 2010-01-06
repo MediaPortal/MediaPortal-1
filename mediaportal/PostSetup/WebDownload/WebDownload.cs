@@ -60,7 +60,7 @@ namespace PostSetup
         // wr.Proxy = WebProxy.GetDefaultProxy();
         req.Proxy.Credentials = CredentialCache.DefaultCredentials;
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       // Create the state object.
       DownloadInfo info = new DownloadInfo();
@@ -72,7 +72,7 @@ namespace PostSetup
       info.ProgressCallback += progressCB;
 
       // Issue the async request.
-      IAsyncResult r = (IAsyncResult) req.BeginGetResponse(new AsyncCallback(ResponseCallback), info);
+      IAsyncResult r = (IAsyncResult)req.BeginGetResponse(new AsyncCallback(ResponseCallback), info);
 
       // Wait until the ManualResetEvent is set so that the application
       // does not exit until after the callback is called.
@@ -89,7 +89,7 @@ namespace PostSetup
         byte[] data = new byte[info.dataBufferSlow.Count];
         for (int b = 0; b < info.dataBufferSlow.Count; b++)
         {
-          data[b] = (byte) info.dataBufferSlow[b];
+          data[b] = (byte)info.dataBufferSlow[b];
         }
         return data;
       }
@@ -100,7 +100,7 @@ namespace PostSetup
       // Get the DownloadInfo object from the async result were
       // we're storing all of the temporary data and the download
       // buffer.
-      DownloadInfo info = (DownloadInfo) ar.AsyncState;
+      DownloadInfo info = (DownloadInfo)ar.AsyncState;
 
       // Get the WebRequest from RequestState.
       WebRequest req = info.Request;
@@ -110,7 +110,7 @@ namespace PostSetup
         // wr.Proxy = WebProxy.GetDefaultProxy();
         req.Proxy.Credentials = CredentialCache.DefaultCredentials;
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       // Call EndGetResponse, which produces the WebResponse object
       // that came from the request issued above.
@@ -147,7 +147,7 @@ namespace PostSetup
     private void ReadCallBack(IAsyncResult asyncResult)
     {
       // Get the DownloadInfo object from AsyncResult.
-      DownloadInfo info = (DownloadInfo) asyncResult.AsyncState;
+      DownloadInfo info = (DownloadInfo)asyncResult.AsyncState;
 
       // Retrieve the ResponseStream that was set in RespCallback.
       Stream responseStream = info.ResponseStream;

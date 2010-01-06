@@ -38,6 +38,7 @@ using System.Windows.Forms;
 ///	Feel free to donate any amount of money if this code makes you happy ;)
 ///	Use this code at your own risk. If your machine blows up while using it - don't blame me.
 /// </summary>
+
 namespace MWCommon
 {
   /// <summary>
@@ -73,8 +74,6 @@ namespace MWCommon
 
     #endregion Width related Methods
 
-
-
     #region Rectangle related Methods
 
     /// <summary>
@@ -99,14 +98,13 @@ namespace MWCommon
       Region reg = string.Empty != str ? GetGraphicalStringRegion(g, str, fnt) : new Region(new Rectangle(0, 0, 0, 0));
 
       RectangleF rectF = reg.GetBounds(g);
-      Rectangle rect = new Rectangle((int)Math.Floor(rectF.Left), (int)Math.Floor(rectF.Top), (int)Math.Ceiling(rectF.Width), (int)Math.Ceiling(rectF.Height));
+      Rectangle rect = new Rectangle((int)Math.Floor(rectF.Left), (int)Math.Floor(rectF.Top),
+                                     (int)Math.Ceiling(rectF.Width), (int)Math.Ceiling(rectF.Height));
 
       return rect;
     }
 
     #endregion Rectangle related Methods
-
-
 
     #region Region related Methods
 
@@ -131,7 +129,7 @@ namespace MWCommon
     {
       StringFormat format = new StringFormat();
       RectangleF rect = new RectangleF(0, 0, 1000, 1000);
-      CharacterRange[] ranges = { new CharacterRange(0, str.Length) };
+      CharacterRange[] ranges = {new CharacterRange(0, str.Length)};
 
       format.SetMeasurableCharacterRanges(ranges);
 
@@ -143,8 +141,6 @@ namespace MWCommon
     #endregion Region related Methods
 
     #endregion GraphicalString Methods
-
-
 
     #region StringFormattedString Methods
 
@@ -158,7 +154,8 @@ namespace MWCommon
     /// <returns>Width of the Text of the Control supplied using the StringFormat supplied.</returns>
     public static int GetStringFormattedStringWidth(Control ctl, StringFormat strfmt)
     {
-      return GetStringFormattedStringRectangle(ctl.CreateGraphics(), ctl.Text, ctl.Font, ctl.ClientRectangle, strfmt).Width;
+      return
+        GetStringFormattedStringRectangle(ctl.CreateGraphics(), ctl.Text, ctl.Font, ctl.ClientRectangle, strfmt).Width;
     }
 
     /// <summary>
@@ -176,8 +173,6 @@ namespace MWCommon
     }
 
     #endregion Width related Methods
-
-
 
     #region Rectangle related Methods
 
@@ -201,19 +196,21 @@ namespace MWCommon
     /// <param name="rct">Rectangle to measure string in.</param>
     /// <param name="strfmt">StringFormat to use when measuring the string.</param>
     /// <returns>Smallest Rectangle encompassing the Text of the Control supplied using the StringFormat supplied.</returns>
-    public static Rectangle GetStringFormattedStringRectangle(Graphics g, string str, Font fnt, Rectangle rct, StringFormat strfmt)
+    public static Rectangle GetStringFormattedStringRectangle(Graphics g, string str, Font fnt, Rectangle rct,
+                                                              StringFormat strfmt)
     {
-      Region reg = string.Empty != str ? GetStringFormattedStringRegion(g, str, fnt, rct, strfmt) : new Region(new Rectangle(0, 0, 0, 0));
+      Region reg = string.Empty != str
+                     ? GetStringFormattedStringRegion(g, str, fnt, rct, strfmt)
+                     : new Region(new Rectangle(0, 0, 0, 0));
 
       RectangleF rctF = reg.GetBounds(g);
-      Rectangle rctRet = new Rectangle((int)Math.Floor(rctF.Left), (int)Math.Floor(rctF.Top), (int)Math.Ceiling(rctF.Width), (int)Math.Ceiling(rctF.Height));
+      Rectangle rctRet = new Rectangle((int)Math.Floor(rctF.Left), (int)Math.Floor(rctF.Top),
+                                       (int)Math.Ceiling(rctF.Width), (int)Math.Ceiling(rctF.Height));
 
       return rctRet;
     }
 
     #endregion Rectangle related Methods
-
-
 
     #region Region related Methods
 
@@ -237,10 +234,11 @@ namespace MWCommon
     /// <param name="rct">Rectangle to measure string in.</param>
     /// <param name="strfmt">StringFormat to use when measuring the string.</param>
     /// <returns>Smallest Region encompassing the Text of the Control supplied using the StringFormat supplied.</returns>
-    public static Region GetStringFormattedStringRegion(Graphics g, string str, Font fnt, Rectangle rct, StringFormat strfmt)
+    public static Region GetStringFormattedStringRegion(Graphics g, string str, Font fnt, Rectangle rct,
+                                                        StringFormat strfmt)
     {
       RectangleF rctF = new RectangleF(rct.X, rct.Y, rct.Width, rct.Height);
-      CharacterRange[] ranges = { new CharacterRange(0, str.Length) };
+      CharacterRange[] ranges = {new CharacterRange(0, str.Length)};
 
       strfmt.SetMeasurableCharacterRanges(ranges);
 
@@ -252,7 +250,5 @@ namespace MWCommon
     #endregion Region related Methods
 
     #endregion StringFormattedString Methods
-
   }
-
 }

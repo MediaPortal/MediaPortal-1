@@ -66,7 +66,9 @@ namespace MediaPortal.Dialogs
 
     // Maximum number of characters in string
     protected int _max_chars = 64;
-    public int MAX_CHARS {
+
+    public int MAX_CHARS
+    {
       get { return _max_chars; }
     }
 
@@ -75,8 +77,8 @@ namespace MediaPortal.Dialogs
     public const int KEY_WIDTH = 34; // width of std key in pixels
 
     public bool _usingKeyboard;
-    public char _currentKeyb = (char) 0;
-    public char _previousKey = (char) 0;
+    public char _currentKeyb = (char)0;
+    public char _previousKey = (char)0;
     public DateTime _timerKey = DateTime.Now;
 
     #endregion
@@ -510,23 +512,23 @@ namespace MediaPortal.Dialogs
       _currentKey = 0;
       _lastColumn = 0;
       //m_fRepeatDelay   = fINITIAL_REPEAT;
-      _keyHeight = 42.0f*SkinRatio;
+      _keyHeight = 42.0f * SkinRatio;
       _maxRows = 5;
       _position = 0;
       _textEntered = "";
       _caretTimer = DateTime.Now;
 
-      _searchKind = (int) SearchKinds.SEARCH_CONTAINS; // default search Contains
+      _searchKind = (int)SearchKinds.SEARCH_CONTAINS; // default search Contains
 
       int y = 411;
       int x = 40;
       GUIGraphicsContext.ScalePosToScreenResolution(ref x, ref y);
 
-      int width = (int) (42*SkinRatio);
+      int width = (int)(42 * SkinRatio);
       GUIGraphicsContext.ScaleVertical(ref width);
       _keyHeight = width;
 
-      width = (int) (576.0f - 64.0f - 4.0f - 4.0f - 10.0f - 80.0f);
+      width = (int)(576.0f - 64.0f - 4.0f - 4.0f - 10.0f - 80.0f);
       GUIGraphicsContext.ScaleHorizontal(ref width);
       fTEXTBOX_WIDTH = width;
 
@@ -578,20 +580,20 @@ namespace MediaPortal.Dialogs
     {
       // Draw each row
       int y1 = 250;
-      int x1 = (int) (64*SkinRatio);
+      int x1 = (int)(64 * SkinRatio);
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1, ref y1);
       float fY = y1;
-      ArrayList keyBoard = (ArrayList) _keyboardList[(int) _currentKeyboard];
+      ArrayList keyBoard = (ArrayList)_keyboardList[(int)_currentKeyboard];
       for (int row = 0; row < _maxRows; ++row, fY += _keyHeight)
       {
         float fX = x1;
         float fWidthSum = 0.0f;
-        ArrayList keyRow = (ArrayList) keyBoard[row];
+        ArrayList keyRow = (ArrayList)keyBoard[row];
         int dwIndex = 0;
         for (int i = 0; i < keyRow.Count; i++)
         {
-          Key key = (Key) keyRow[i];
-          int width = (int) (key.dwWidth*SkinRatio);
+          Key key = (Key)keyRow[i];
+          int width = (int)(key.dwWidth * SkinRatio);
           GUIGraphicsContext.ScaleHorizontal(ref width);
           if (x >= fX + fWidthSum && x <= fX + fWidthSum + width)
           {
@@ -607,7 +609,7 @@ namespace MediaPortal.Dialogs
           // keys) and the main keyboard
           if (dwIndex == 0)
           {
-            width = (int) (GAP2_WIDTH*SkinRatio);
+            width = (int)(GAP2_WIDTH * SkinRatio);
             GUIGraphicsContext.ScaleHorizontal(ref width);
             fWidthSum += width;
           }
@@ -691,7 +693,7 @@ namespace MediaPortal.Dialogs
           {
             if (action.m_key.KeyChar >= 32)
             {
-              Press((char) action.m_key.KeyChar);
+              Press((char)action.m_key.KeyChar);
             }
             if (action.m_key.KeyChar == 8)
             {
@@ -775,7 +777,7 @@ namespace MediaPortal.Dialogs
       _shiftTurnedOn = false;
       _textEntered = "";
       _position = 0;
-      int height = (int) (42*SkinRatio);
+      int height = (int)(42 * SkinRatio);
       GUIGraphicsContext.ScaleVertical(ref height);
       _keyHeight = height;
       _maxRows = 5;
@@ -872,7 +874,7 @@ namespace MediaPortal.Dialogs
       keyRow.Add(new Key(Xkey.XK_X));
       keyRow.Add(new Key(Xkey.XK_Y));
       keyRow.Add(new Key(Xkey.XK_Z));
-      keyRow.Add(new Key(Xkey.XK_BACKSPACE, (KEY_WIDTH*4) + (GAP_WIDTH*3)));
+      keyRow.Add(new Key(Xkey.XK_BACKSPACE, (KEY_WIDTH * 4) + (GAP_WIDTH * 3)));
       keyBoard.Add(keyRow);
 
       // Fifth row is <empty>, Space, Left, Right
@@ -887,9 +889,9 @@ namespace MediaPortal.Dialogs
         keyRow.Add(new Key(Xkey.XK_NULL, MODEKEY_WIDTH));
       }
 
-      keyRow.Add(new Key(Xkey.XK_SPACE, (KEY_WIDTH*6) + (GAP_WIDTH*5)));
-      keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (KEY_WIDTH*2) + (GAP_WIDTH*1)));
-      keyRow.Add(new Key(Xkey.XK_ARROWRIGHT, (KEY_WIDTH*2) + (GAP_WIDTH*1)));
+      keyRow.Add(new Key(Xkey.XK_SPACE, (KEY_WIDTH * 6) + (GAP_WIDTH * 5)));
+      keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
+      keyRow.Add(new Key(Xkey.XK_ARROWRIGHT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
       keyBoard.Add(keyRow);
 
       // Add the alpha keyboard to the list
@@ -983,7 +985,7 @@ namespace MediaPortal.Dialogs
       keyRow.Add(new Key(Xkey.XK_RT_DBL_ANGLE_QUOTE));
       keyRow.Add(new Key(Xkey.XK_COMMA));
       keyRow.Add(new Key(Xkey.XK_PERIOD));
-      keyRow.Add(new Key(Xkey.XK_BACKSPACE, (KEY_WIDTH*4) + (GAP_WIDTH*3)));
+      keyRow.Add(new Key(Xkey.XK_BACKSPACE, (KEY_WIDTH * 4) + (GAP_WIDTH * 3)));
       keyBoard.Add(keyRow);
 
       // Fifth row is Accents, Space, Left, Right
@@ -998,9 +1000,9 @@ namespace MediaPortal.Dialogs
         keyRow.Add(new Key(Xkey.XK_NULL, MODEKEY_WIDTH));
       }
 
-      keyRow.Add(new Key(Xkey.XK_SPACE, (KEY_WIDTH*6) + (GAP_WIDTH*5)));
-      keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (KEY_WIDTH*2) + (GAP_WIDTH*1)));
-      keyRow.Add(new Key(Xkey.XK_ARROWRIGHT, (KEY_WIDTH*2) + (GAP_WIDTH*1)));
+      keyRow.Add(new Key(Xkey.XK_SPACE, (KEY_WIDTH * 6) + (GAP_WIDTH * 5)));
+      keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
+      keyRow.Add(new Key(Xkey.XK_ARROWRIGHT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
       keyBoard.Add(keyRow);
 
       // Add the symbol keyboard to the list
@@ -1095,7 +1097,7 @@ namespace MediaPortal.Dialogs
 
       keyRow.Add(new Key(Xkey.XK_CAP_Y_ACUTE));
       keyRow.Add(new Key(Xkey.XK_CAP_Y_DIAERESIS));
-      keyRow.Add(new Key(Xkey.XK_BACKSPACE, (KEY_WIDTH*4) + (GAP_WIDTH*3)));
+      keyRow.Add(new Key(Xkey.XK_BACKSPACE, (KEY_WIDTH * 4) + (GAP_WIDTH * 3)));
       keyBoard.Add(keyRow);
 
       // Fifth row
@@ -1110,9 +1112,9 @@ namespace MediaPortal.Dialogs
         keyRow.Add(new Key(Xkey.XK_NULL, MODEKEY_WIDTH));
       }
 
-      keyRow.Add(new Key(Xkey.XK_SPACE, (KEY_WIDTH*6) + (GAP_WIDTH*5)));
-      keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (KEY_WIDTH*2) + (GAP_WIDTH*1)));
-      keyRow.Add(new Key(Xkey.XK_ARROWRIGHT, (KEY_WIDTH*2) + (GAP_WIDTH*1)));
+      keyRow.Add(new Key(Xkey.XK_SPACE, (KEY_WIDTH * 6) + (GAP_WIDTH * 5)));
+      keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
+      keyRow.Add(new Key(Xkey.XK_ARROWRIGHT, (KEY_WIDTH * 2) + (GAP_WIDTH * 1)));
       keyBoard.Add(keyRow);
 
       // Add the accents keyboard to the list
@@ -1176,8 +1178,8 @@ namespace MediaPortal.Dialogs
 
     protected void ChangeKey(int iBoard, int iRow, int iKey, Key newkey)
     {
-      ArrayList board = (ArrayList) _keyboardList[iBoard];
-      ArrayList row = (ArrayList) board[iRow];
+      ArrayList board = (ArrayList)_keyboardList[iBoard];
+      ArrayList row = (ArrayList)board[iRow];
       row[iKey] = newkey;
     }
 
@@ -1188,9 +1190,9 @@ namespace MediaPortal.Dialogs
         return;
       }
 
-      ArrayList board = (ArrayList) _keyboardList[(int) _currentKeyboard];
-      ArrayList row = (ArrayList) board[_currentRow];
-      Key key = (Key) row[_currentKey];
+      ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
+      ArrayList row = (ArrayList)board[_currentRow];
+      Key key = (Key)row[_currentKey];
 
       // Press it
       Press(key.xKey);
@@ -1204,7 +1206,7 @@ namespace MediaPortal.Dialogs
       }
 
       // If the key represents a character, add it to the word
-      if (((uint) xk) < 0x10000 && xk != Xkey.XK_ARROWLEFT && xk != Xkey.XK_ARROWRIGHT)
+      if (((uint)xk) < 0x10000 && xk != Xkey.XK_ARROWLEFT && xk != Xkey.XK_ARROWRIGHT)
       {
         // Don't add more than the maximum characters, and don't allow 
         // text to exceed the width of the text entry field
@@ -1301,22 +1303,22 @@ namespace MediaPortal.Dialogs
             // starts here...
 
           case Xkey.XK_SEARCH_IS:
-            _searchKind = (int) SearchKinds.SEARCH_STARTS_WITH;
+            _searchKind = (int)SearchKinds.SEARCH_STARTS_WITH;
             SetSearchKind();
             break;
 
           case Xkey.XK_SEARCH_CONTAINS:
-            _searchKind = (int) SearchKinds.SEARCH_ENDS_WITH;
+            _searchKind = (int)SearchKinds.SEARCH_ENDS_WITH;
             SetSearchKind();
             break;
 
           case Xkey.XK_SEARCH_ENDS_WITH:
-            _searchKind = (int) SearchKinds.SEARCH_IS;
+            _searchKind = (int)SearchKinds.SEARCH_IS;
             SetSearchKind();
             break;
 
           case Xkey.XK_SEARCH_START_WITH:
-            _searchKind = (int) SearchKinds.SEARCH_CONTAINS;
+            _searchKind = (int)SearchKinds.SEARCH_CONTAINS;
             SetSearchKind();
             break;
             // code by Agree ends here
@@ -1329,20 +1331,20 @@ namespace MediaPortal.Dialogs
     {
       switch (_searchKind)
       {
-        case (int) SearchKinds.SEARCH_STARTS_WITH:
-          ChangeKey((int) _currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_START_WITH, MODEKEY_WIDTH));
+        case (int)SearchKinds.SEARCH_STARTS_WITH:
+          ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_START_WITH, MODEKEY_WIDTH));
           break;
 
-        case (int) SearchKinds.SEARCH_ENDS_WITH:
-          ChangeKey((int) _currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_ENDS_WITH, MODEKEY_WIDTH));
+        case (int)SearchKinds.SEARCH_ENDS_WITH:
+          ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_ENDS_WITH, MODEKEY_WIDTH));
           break;
 
-        case (int) SearchKinds.SEARCH_IS:
-          ChangeKey((int) _currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_IS, MODEKEY_WIDTH));
+        case (int)SearchKinds.SEARCH_IS:
+          ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_IS, MODEKEY_WIDTH));
           break;
 
-        case (int) SearchKinds.SEARCH_CONTAINS:
-          ChangeKey((int) _currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_CONTAINS, MODEKEY_WIDTH));
+        case (int)SearchKinds.SEARCH_CONTAINS:
+          ChangeKey((int)_currentKeyboard, 1, 0, new Key(Xkey.XK_SEARCH_CONTAINS, MODEKEY_WIDTH));
           break;
       }
       if (TextChanged != null)
@@ -1462,9 +1464,9 @@ namespace MediaPortal.Dialogs
       }
 
       // If the new key is a single character, remember it for later
-      ArrayList board = (ArrayList) _keyboardList[(int) _currentKeyboard];
-      ArrayList row = (ArrayList) board[_currentRow];
-      Key key = (Key) row[_currentKey];
+      ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
+      ArrayList row = (ArrayList)board[_currentRow];
+      Key key = (Key)row[_currentKey];
       if (key.name == "")
       {
         switch (key.xKey)
@@ -1493,9 +1495,9 @@ namespace MediaPortal.Dialogs
         return true;
       }
 
-      ArrayList board = (ArrayList) _keyboardList[(int) _currentKeyboard];
-      ArrayList row = (ArrayList) board[_currentRow];
-      Key key = (Key) row[_currentKey];
+      ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
+      ArrayList row = (ArrayList)board[_currentRow];
+      Key key = (Key)row[_currentKey];
 
       // On the symbols keyboard, Shift and Caps Lock are disabled
       if (_currentKeyboard == KeyboardTypes.TYPE_SYMBOLS)
@@ -1511,7 +1513,7 @@ namespace MediaPortal.Dialogs
     protected char GetChar(Xkey xk)
     {
       // Handle case conversion
-      char wc = (char) (((uint) xk) & 0xffff);
+      char wc = (char)(((uint)xk) & 0xffff);
 
       if ((_capsLockTurnedOn && !_shiftTurnedOn) || (!_capsLockTurnedOn && _shiftTurnedOn))
       {
@@ -1536,13 +1538,13 @@ namespace MediaPortal.Dialogs
       string strKey = GetChar(key.xKey).ToString();
       string name = (key.name.Length == 0) ? strKey : key.name;
 
-      int width = (int) ((key.dwWidth - KEY_INSET)*SkinRatio) + 2;
-      int height = (int) (KEY_INSET*SkinRatio) + 2;
+      int width = (int)((key.dwWidth - KEY_INSET) * SkinRatio) + 2;
+      int height = (int)(KEY_INSET * SkinRatio) + 2;
       GUIGraphicsContext.ScaleHorizontal(ref width);
       GUIGraphicsContext.ScaleVertical(ref height);
 
-      float x = fX + (int) (KEY_INSET*SkinRatio);
-      float y = fY + (int) (KEY_INSET*SkinRatio);
+      float x = fX + (int)(KEY_INSET * SkinRatio);
+      float y = fY + (int)(KEY_INSET * SkinRatio);
       float z = fX + width; //z
       float w = fY + _keyHeight - height; //w
 
@@ -1553,25 +1555,25 @@ namespace MediaPortal.Dialogs
       const float v = 1.0f;
       const float u = 1.0f;
 
-      _keyTexture.Draw(x, y, nw, nh, uoffs, 0.0f, u, v, (int) keyColor);
+      _keyTexture.Draw(x, y, nw, nh, uoffs, 0.0f, u, v, (int)keyColor);
 
       // Draw the key text. If key name is, use a slightly smaller font.
       float textWidth = 0;
       float textHeight = 0;
-      float positionX = (x + z)/2.0f;
-      float positionY = (y + w)/2.0f;
+      float positionX = (x + z) / 2.0f;
+      float positionY = (y + w) / 2.0f;
       if (key.name.Length > 1 && Char.IsUpper(key.name[1]))
       {
         _font12.GetTextExtent(name, ref textWidth, ref textHeight);
-        positionX -= (textWidth/2);
-        positionY -= (textHeight/2);
+        positionX -= (textWidth / 2);
+        positionY -= (textHeight / 2);
         _font12.DrawText(positionX, positionY, textColor, name, GUIControl.Alignment.ALIGN_LEFT, -1);
       }
       else
       {
         _font18.GetTextExtent(name, ref textWidth, ref textHeight);
-        positionX -= (textWidth/2);
-        positionY -= (textHeight/2);
+        positionX -= (textWidth / 2);
+        positionY -= (textHeight / 2);
         _font18.DrawText(positionX, positionY, textColor, name, GUIControl.Alignment.ALIGN_LEFT, -1);
       }
     }
@@ -1616,14 +1618,14 @@ namespace MediaPortal.Dialogs
 
       // Draw blinking caret using line primitives.
       TimeSpan ts = DateTime.Now - _caretTimer;
-      if ((ts.TotalSeconds%fCARET_BLINK_RATE) < fCARET_ON_RATIO)
+      if ((ts.TotalSeconds % fCARET_BLINK_RATE) < fCARET_ON_RATIO)
       {
         string line = textLine.Substring(0, _position);
 
         float caretWidth = 0.0f;
         float caretHeight = 0.0f;
         _fontSearchText.GetTextExtent(line, ref caretWidth, ref caretHeight);
-        x += (int) caretWidth;
+        x += (int)caretWidth;
         _fontSearchText.DrawText(x, y, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT, -1);
       }
     }
@@ -1667,9 +1669,10 @@ namespace MediaPortal.Dialogs
     {
       _max_chars = maxLen;
     }
+
     protected override void InitializeInstance()
     {
-      GetID = (int) Window.WINDOW_VIRTUAL_KEYBOARD;
+      GetID = (int)Window.WINDOW_VIRTUAL_KEYBOARD;
       _capsLockTurnedOn = false;
       _shiftTurnedOn = false;
       _state = State.STATE_KEYBOARD;
@@ -1681,17 +1684,17 @@ namespace MediaPortal.Dialogs
       //m_fRepeatDelay   = fINITIAL_REPEAT;
       _keyTexture = null;
 
-      int tempwidth = (int) (576.0f - 64.0f - 4.0f - 4.0f - 10.0f - 80.0f);
+      int tempwidth = (int)(576.0f - 64.0f - 4.0f - 4.0f - 10.0f - 80.0f);
       GUIGraphicsContext.ScaleHorizontal(ref tempwidth);
       fTEXTBOX_WIDTH = tempwidth;
 
-      SkinRatio = GUIGraphicsContext.SkinSize.Width/720.0f;
-      _keyHeight = 42.0f*SkinRatio;
+      SkinRatio = GUIGraphicsContext.SkinSize.Width / 720.0f;
+      _keyHeight = 42.0f * SkinRatio;
       _maxRows = 5;
       _pressedEnter = false;
       _caretTimer = DateTime.Now;
       // construct search def.
-      _searchKind = (int) SearchKinds.SEARCH_CONTAINS; // default search Contains
+      _searchKind = (int)SearchKinds.SEARCH_CONTAINS; // default search Contains
 
       if (GUIGraphicsContext.DX9Device != null)
       {
@@ -1710,8 +1713,8 @@ namespace MediaPortal.Dialogs
       {
         if (_currentKey <= 0)
         {
-          ArrayList board = (ArrayList) _keyboardList[(int) _currentKeyboard];
-          ArrayList row = (ArrayList) board[_currentRow];
+          ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
+          ArrayList row = (ArrayList)board[_currentRow];
           _currentKey = row.Count - 1;
         }
         else
@@ -1732,8 +1735,8 @@ namespace MediaPortal.Dialogs
 
       do
       {
-        ArrayList board = (ArrayList) _keyboardList[(int) _currentKeyboard];
-        ArrayList row = (ArrayList) board[_currentRow];
+        ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
+        ArrayList row = (ArrayList)board[_currentRow];
 
         if (_currentKey == row.Count - 1)
         {
@@ -1757,7 +1760,7 @@ namespace MediaPortal.Dialogs
         float fWidth = 0, fHeight = 0;
         _fontSearchText.GetTextExtent(_textEntered, ref fWidth, ref fHeight);
 
-        if (fWidth < (fTEXTBOX_WIDTH*SkinRatio))
+        if (fWidth < (fTEXTBOX_WIDTH * SkinRatio))
         {
           if (_position >= _textEntered.Length)
           {
@@ -1780,28 +1783,28 @@ namespace MediaPortal.Dialogs
     protected override void RenderKeyboardLatin(float timePassed)
     {
       // Show text and caret
-      DrawTextBox(timePassed, (int) (64*SkinRatio), 208,
-                  (int) ((MODEKEY_WIDTH + GAP_WIDTH*9 + GAP2_WIDTH + KEY_WIDTH*10 + 67.0f)*SkinRatio), 248);
-        //- 64.0f - 4.0f - 4.0f - 10.0f
-      DrawText((int) (82*SkinRatio), 208);
+      DrawTextBox(timePassed, (int)(64 * SkinRatio), 208,
+                  (int)((MODEKEY_WIDTH + GAP_WIDTH * 9 + GAP2_WIDTH + KEY_WIDTH * 10 + 67.0f) * SkinRatio), 248);
+      //- 64.0f - 4.0f - 4.0f - 10.0f
+      DrawText((int)(82 * SkinRatio), 208);
 
 
-      int x1 = (int) (64*SkinRatio);
+      int x1 = (int)(64 * SkinRatio);
       int y1 = 250;
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1, ref y1);
       // Draw each row
       float fY = y1;
-      ArrayList keyBoard = (ArrayList) _keyboardList[(int) _currentKeyboard];
+      ArrayList keyBoard = (ArrayList)_keyboardList[(int)_currentKeyboard];
       for (int row = 0; row < _maxRows; ++row, fY += _keyHeight)
       {
         float fX = x1;
         float fWidthSum = 0.0f;
-        ArrayList keyRow = (ArrayList) keyBoard[row];
+        ArrayList keyRow = (ArrayList)keyBoard[row];
         int dwIndex = 0;
         for (int i = 0; i < keyRow.Count; i++)
         {
           // Determine key name
-          Key key = (Key) keyRow[i];
+          Key key = (Key)keyRow[i];
           long selKeyColor = 0xffffffff;
           long selTextColor = COLOR_NORMAL;
 
@@ -1854,7 +1857,7 @@ namespace MediaPortal.Dialogs
 
           RenderKey(fX + fWidthSum, fY, key, selKeyColor, selTextColor);
 
-          int width = (int) (key.dwWidth*SkinRatio);
+          int width = (int)(key.dwWidth * SkinRatio);
           GUIGraphicsContext.ScaleHorizontal(ref width);
           fWidthSum += width;
 
@@ -1862,7 +1865,7 @@ namespace MediaPortal.Dialogs
           // keys) and the main keyboard
           if (dwIndex == 0)
           {
-            width = (int) (GAP2_WIDTH*SkinRatio);
+            width = (int)(GAP2_WIDTH * SkinRatio);
           }
           else
           {
@@ -1881,7 +1884,7 @@ namespace MediaPortal.Dialogs
   {
     protected override void InitializeInstance()
     {
-      GetID = (int) Window.WINDOW_VIRTUAL_SMS_KEYBOARD;
+      GetID = (int)Window.WINDOW_VIRTUAL_SMS_KEYBOARD;
       _capsLockTurnedOn = true;
       _shiftTurnedOn = false;
       _state = State.STATE_KEYBOARD;
@@ -1898,7 +1901,7 @@ namespace MediaPortal.Dialogs
       _pressedEnter = false;
       _caretTimer = DateTime.Now;
       // construct search def.
-      _searchKind = (int) SearchKinds.SEARCH_CONTAINS; // default search Contains
+      _searchKind = (int)SearchKinds.SEARCH_CONTAINS; // default search Contains
 
       if (GUIGraphicsContext.DX9Device != null)
       {
@@ -1928,7 +1931,7 @@ namespace MediaPortal.Dialogs
       {
         _usingKeyboard = true;
       }
-      if ((k == (char) 126))
+      if ((k == (char)126))
       {
         _capsLockTurnedOn = _capsLockTurnedOn == false;
       }
@@ -1936,7 +1939,7 @@ namespace MediaPortal.Dialogs
       if (!_usingKeyboard)
       {
         // Check different key presse
-        if (k != _previousKey && _currentKeyb != (char) 0)
+        if (k != _previousKey && _currentKeyb != (char)0)
         {
           if (_position == _textEntered.Length)
           {
@@ -1947,8 +1950,8 @@ namespace MediaPortal.Dialogs
             _textEntered = _textEntered.Insert(_position, _currentKeyb.ToString());
           }
 
-          _previousKey = (char) 0;
-          _currentKeyb = (char) 0;
+          _previousKey = (char)0;
+          _currentKeyb = (char)0;
           _timerKey = DateTime.Now;
           _position++;
         }
@@ -2186,9 +2189,9 @@ namespace MediaPortal.Dialogs
       }
       else
       {
-        if ((k != (char) 126))
+        if ((k != (char)126))
         {
-          if (k == (char) 8) // Backspace
+          if (k == (char)8) // Backspace
           {
             if (_position > 0)
             {
@@ -2209,8 +2212,8 @@ namespace MediaPortal.Dialogs
             _position++;
           }
         }
-        _previousKey = (char) 0;
-        _currentKeyb = (char) 0;
+        _previousKey = (char)0;
+        _currentKeyb = (char)0;
         _timerKey = DateTime.Now;
       }
 
@@ -2233,7 +2236,7 @@ namespace MediaPortal.Dialogs
       TimeSpan ts = DateTime.Now - _timerKey;
       if (ts.TotalMilliseconds >= 800)
       {
-        if (_currentKeyb != (char) 0)
+        if (_currentKeyb != (char)0)
         {
           if (_capsLockTurnedOn)
           {
@@ -2249,8 +2252,8 @@ namespace MediaPortal.Dialogs
           }
           _position++;
         }
-        _previousKey = (char) 0;
-        _currentKeyb = (char) 0;
+        _previousKey = (char)0;
+        _currentKeyb = (char)0;
         _timerKey = DateTime.Now;
       }
     }

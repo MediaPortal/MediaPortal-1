@@ -31,9 +31,7 @@ namespace MediaPortal.Drawing
   {
     #region Constructors
 
-    public RectangleGeometry()
-    {
-    }
+    public RectangleGeometry() {}
 
     public RectangleGeometry(Rect rect)
     {
@@ -68,14 +66,14 @@ namespace MediaPortal.Drawing
 //			_svg_cairo_length_to_pixel (svg_cairo, _radiusX_len, &_radiusX);
 //			_svg_cairo_length_to_pixel (svg_cairo, _radiusY_len, &_radiusY);
 
-      if (_radiusX > _rect.Width/2.0)
+      if (_radiusX > _rect.Width / 2.0)
       {
-        _radiusX = _rect.Width/2.0;
+        _radiusX = _rect.Width / 2.0;
       }
 
-      if (_radiusY > _rect.Height/2.0)
+      if (_radiusY > _rect.Height / 2.0)
       {
-        _radiusY = _rect.Height/2.0;
+        _radiusY = _rect.Height / 2.0;
       }
 
 /*			PathFigure figure = new PathFigure();

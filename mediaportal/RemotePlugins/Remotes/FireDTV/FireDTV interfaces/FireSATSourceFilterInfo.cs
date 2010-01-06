@@ -43,49 +43,49 @@ namespace MediaPortal.InputDevices.FireDTV
 
       StringBuilder displayName = new StringBuilder(256);
       uint returnCode = FireDTVAPI.FS_GetDisplayString(Handle, displayName);
-      if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+      if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
       {
-        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes) returnCode,
+        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode,
                                    "Unable to get Device Display Name!");
       }
       _name = displayName.ToString();
 
       StringBuilder GuidString = new StringBuilder(256);
       returnCode = FireDTVAPI.FS_GetGUIDString(Handle, GuidString);
-      if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+      if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
       {
-        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes) returnCode, "Unable to get GUID String!");
+        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Unable to get GUID String!");
       }
       _GUID = GuidString.ToString();
 
       string DriverFriend;
       returnCode = FireDTVAPI.FS_GetFriendlyString(Handle, out DriverFriend);
-      if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+      if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
       {
-        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes) returnCode,
+        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode,
                                    "Unable to get Device Friendly Name!");
       }
       _friendlyName = DriverFriend;
 
       FireDTVConstants.FireDTV_DRIVER_VERSION version = new FireDTVConstants.FireDTV_DRIVER_VERSION();
       returnCode = FireDTVAPI.FS_GetDriverVersion(Handle, ref version);
-      if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+      if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
       {
-        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes) returnCode, "Unable to get Driver Version!");
+        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Unable to get Driver Version!");
       }
       _driverVersion = Encoding.ASCII.GetString(version.DriverVersion);
 
       returnCode = FireDTVAPI.FS_GetFirmwareVersion(Handle, ref _firmwareVersion);
-      if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+      if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
       {
-        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes) returnCode,
+        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode,
                                    "Unable to get Firmware Hardware Version!");
       }
 
       returnCode = FireDTVAPI.FS_GetSystemInfo(Handle, ref _systemInfo);
-      if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+      if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
       {
-        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes) returnCode, "Unable to get System Information!");
+        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Unable to get System Information!");
       }
 
 
@@ -122,7 +122,7 @@ namespace MediaPortal.InputDevices.FireDTV
     private string _friendlyName;
     private string _GUID;
     private string _driverVersion;
-    private IntPtr _windowHandle = (IntPtr) 0;
+    private IntPtr _windowHandle = (IntPtr)0;
     private bool _remoteRunning = false;
     private bool _notificationRegistered = false;
 
@@ -184,9 +184,9 @@ namespace MediaPortal.InputDevices.FireDTV
     {
       get
       {
-        if (_windowHandle == (IntPtr) 0)
+        if (_windowHandle == (IntPtr)0)
         {
-          return (IntPtr) FireDTVAPI.GetActiveWindow();
+          return (IntPtr)FireDTVAPI.GetActiveWindow();
         }
         else
         {
@@ -212,9 +212,9 @@ namespace MediaPortal.InputDevices.FireDTV
     internal void CloseFireDTVHandle()
     {
       uint returnCode = FireDTVAPI.FS_CloseDeviceHandle(Handle);
-      if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+      if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
       {
-        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes) returnCode, "Device Close Failure");
+        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Device Close Failure");
       }
       _handle = 0;
     }
@@ -225,10 +225,10 @@ namespace MediaPortal.InputDevices.FireDTV
 
     public void RegisterNotifications()
     {
-      uint returnCode = FireDTVAPI.FS_RegisterNotifications(Handle, (int) this.WindowHandle);
-      if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+      uint returnCode = FireDTVAPI.FS_RegisterNotifications(Handle, (int)this.WindowHandle);
+      if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
       {
-        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes) returnCode, "Unable to Register Notifiations");
+        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Unable to Register Notifiations");
       }
       _notificationRegistered = true;
     }
@@ -236,9 +236,9 @@ namespace MediaPortal.InputDevices.FireDTV
     public void UnRegisterNotifications()
     {
       uint returnCode = FireDTVAPI.FS_UnregisterNotifications(Handle);
-      if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+      if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
       {
-        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes) returnCode, "Unable to unRegister Notifiations");
+        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Unable to unRegister Notifiations");
       }
       _notificationRegistered = false;
     }
@@ -250,9 +250,9 @@ namespace MediaPortal.InputDevices.FireDTV
     public void StartFireDTVRemoteControlSupport()
     {
       uint returnCode = FireDTVAPI.FS_RemoteControl_Start(Handle);
-      if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+      if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
       {
-        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes) returnCode, "Unable to Start RC Support");
+        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Unable to Start RC Support");
       }
       _remoteRunning = true;
     }
@@ -260,9 +260,9 @@ namespace MediaPortal.InputDevices.FireDTV
     public void StopFireDTVRemoteControlSupport()
     {
       uint returnCode = FireDTVAPI.FS_RemoteControl_Stop(Handle);
-      if ((FireDTVConstants.FireDTVStatusCodes) returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
+      if ((FireDTVConstants.FireDTVStatusCodes)returnCode != FireDTVConstants.FireDTVStatusCodes.Success)
       {
-        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes) returnCode, "Unable to Stop RC Support");
+        throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Unable to Stop RC Support");
       }
       _remoteRunning = true;
     }
@@ -300,7 +300,7 @@ namespace MediaPortal.InputDevices.FireDTV
       }
       else
       {
-        ((FireDTVSourceFilterInfo) List[index]).Close();
+        ((FireDTVSourceFilterInfo)List[index]).Close();
         List.RemoveAt(index);
       }
     }
@@ -329,7 +329,7 @@ namespace MediaPortal.InputDevices.FireDTV
       }
       else
       {
-        return (FireDTVSourceFilterInfo) List[index];
+        return (FireDTVSourceFilterInfo)List[index];
       }
     }
 

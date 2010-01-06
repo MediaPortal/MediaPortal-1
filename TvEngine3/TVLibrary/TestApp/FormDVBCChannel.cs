@@ -3,11 +3,13 @@ using System.Windows.Forms;
 using TvLibrary.Interfaces;
 using TvLibrary.Channels;
 using DirectShowLib.BDA;
+
 namespace TestApp
 {
   public partial class FormDVBCChannel : Form
   {
-    DVBCChannel _channel = new DVBCChannel();
+    private DVBCChannel _channel = new DVBCChannel();
+
     public FormDVBCChannel()
     {
       InitializeComponent();
@@ -16,10 +18,7 @@ namespace TestApp
 
     public IChannel Channel
     {
-      get
-      {
-        return _channel;
-      }
+      get { return _channel; }
       set
       {
         _channel = (DVBCChannel)value;

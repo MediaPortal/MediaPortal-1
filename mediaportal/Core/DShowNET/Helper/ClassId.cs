@@ -30,9 +30,7 @@ namespace DShowNET.Helper
   public class ClassId
   {
     /// <summary>Prevent instantiation.</summary>
-    private ClassId()
-    {
-    }
+    private ClassId() {}
 
     public static readonly Guid SystemDeviceEnum = new Guid(0x62BE5D10, 0x60EB, 0x11d0, 0xBD, 0x3B, 0x00, 0xA0, 0xC9,
                                                             0x11, 0xCE, 0x86);

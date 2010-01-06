@@ -50,15 +50,15 @@ namespace MediaPortal.Player
       PayloadUnitStart = (data[1] & 0x40) > 0 ? true : false;
       TransportPriority = (data[1] & 0x20) > 0 ? true : false;
       Pid = ((data[1] & 0x1F) << 8) + data[2];
-      TScrambling = (byte) (data[3] & 0xC0);
-      AdaptionControl = (byte) ((data[3] >> 4) & 0x3);
-      ContinuityCounter = (byte) (data[3] & 0x0F);
+      TScrambling = (byte)(data[3] & 0xC0);
+      AdaptionControl = (byte)((data[3] >> 4) & 0x3);
+      ContinuityCounter = (byte)(data[3] & 0x0F);
       AdaptionFieldLength = 0;
       PayLoadStart = 4;
       if (AdaptionControl >= 2)
       {
         AdaptionFieldLength = data[4];
-        PayLoadStart = (byte) (5 + AdaptionFieldLength);
+        PayLoadStart = (byte)(5 + AdaptionFieldLength);
       }
       if (AdaptionControl == 1)
       {
@@ -70,7 +70,7 @@ namespace MediaPortal.Player
           }
           else
           {
-            PayLoadStart = (byte) (data[4] + 5);
+            PayLoadStart = (byte)(data[4] + 5);
           }
         }
       }

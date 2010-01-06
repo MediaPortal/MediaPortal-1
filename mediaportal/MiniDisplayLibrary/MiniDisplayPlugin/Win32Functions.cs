@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -98,7 +98,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         for (int j = 0; j < rect.Bottom; j += 5)
         {
-          SendMessage(notificationAreaHandle, 0x200, 0, (uint) ((j << 0x16) + i));
+          SendMessage(notificationAreaHandle, 0x200, 0, (uint)((j << 0x16) + i));
         }
       }
     }

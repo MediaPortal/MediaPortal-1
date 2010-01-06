@@ -34,12 +34,12 @@ namespace TvService
 {
   public class Recorder
   {
-    readonly ITvCardHandler _cardHandler;
-    readonly bool _timeshiftingEpgGrabberEnabled;
-    readonly int _waitForTimeshifting = 15; // seconds
-    ManualResetEvent _eventAudio; // gets signaled when audio PID is seen
-    ManualResetEvent _eventVideo; // gets signaled when video PID is seen
-    ITvSubChannel _subchannel; // the active sub channel to record
+    private readonly ITvCardHandler _cardHandler;
+    private readonly bool _timeshiftingEpgGrabberEnabled;
+    private readonly int _waitForTimeshifting = 15; // seconds
+    private ManualResetEvent _eventAudio; // gets signaled when audio PID is seen
+    private ManualResetEvent _eventVideo; // gets signaled when video PID is seen
+    private ITvSubChannel _subchannel; // the active sub channel to record
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Recording"/> class.
@@ -59,12 +59,11 @@ namespace TvService
     private void AudioVideoEventHandler(PidType pidType)
     {
       Log.Debug("Recorder audioVideoEventHandler {0}", pidType);
-      
+
       // we are only interested in video and audio PIDs
       if (pidType == PidType.Audio)
       {
         _eventAudio.Set();
-
       }
 
       if (pidType == PidType.Video)
@@ -72,6 +71,7 @@ namespace TvService
         _eventVideo.Set();
       }
     }
+
     /// <summary>
     /// Starts recording.
     /// </summary>
@@ -102,9 +102,11 @@ namespace TvService
             {
               return RemoteControl.Instance.StartRecording(ref user, ref fileName, contentRecording, startTime);
             }
-          } catch (Exception)
+          }
+          catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+            Log.Error("card: unable to connect to slave controller at:{0}",
+                      _cardHandler.DataBaseCard.ReferencedServer().HostName);
             return TvResult.UnknownError;
           }
 
@@ -125,7 +127,7 @@ namespace TvService
           fileName = System.IO.Path.ChangeExtension(fileName, ".ts");
 
           useErrorDetection = true;
-          
+
           if (useErrorDetection)
           {
             Log.Debug("Recorder.start add audioVideoEventHandler");
@@ -147,7 +149,7 @@ namespace TvService
 
                 Stop(ref user);
                 _cardHandler.Users.RemoveUser(user);
-                
+
                 // delete 0-byte file in case of error
                 Utils.DeleteFileAndEmptyDirectory(fileName);
                 ((BaseSubChannel)subchannel).AudioVideoEvent -= AudioVideoEventHandler;
@@ -170,9 +172,9 @@ namespace TvService
           }
 
           return TvResult.Succeeded;
-
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -203,9 +205,11 @@ namespace TvService
             {
               return RemoteControl.Instance.StopRecording(ref user);
             }
-          } catch (Exception)
+          }
+          catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+            Log.Error("card: unable to connect to slave controller at:{0}",
+                      _cardHandler.DataBaseCard.ReferencedServer().HostName);
             return false;
           }
           Log.Write("card: StopRecording for card:{0}", _cardHandler.DataBaseCard.IdCard);
@@ -252,13 +256,13 @@ namespace TvService
           }
           return true;
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
       }
       return false;
     }
-
 
 
     public bool IsRecordingChannel(string channelName)
@@ -332,7 +336,6 @@ namespace TvService
         {
           return true;
         }
-
       }
       return false;
     }
@@ -359,9 +362,11 @@ namespace TvService
           {
             return RemoteControl.Instance.IsRecording(ref user);
           }
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
 
@@ -373,7 +378,8 @@ namespace TvService
         if (subchannel == null)
           return false;
         return subchannel.IsRecording;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return false;
@@ -402,9 +408,11 @@ namespace TvService
           {
             return RemoteControl.Instance.RecordingFileName(ref user);
           }
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return "";
         }
 
@@ -416,7 +424,8 @@ namespace TvService
         if (subchannel == null)
           return null;
         return subchannel.RecordingFileName;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return "";
@@ -443,9 +452,11 @@ namespace TvService
           {
             return RemoteControl.Instance.RecordingStarted(user);
           }
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return DateTime.MinValue;
         }
 
@@ -457,12 +468,14 @@ namespace TvService
         if (subchannel == null)
           return DateTime.MinValue;
         return subchannel.RecordingStarted;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return DateTime.MinValue;
       }
     }
+
     /// <summary>
     /// Waits for recording file to be at leat 300kb. 
     /// </summary>
@@ -473,7 +486,7 @@ namespace TvService
     {
       ///(taken from timeshifter)
       scrambled = false;
-  
+
       //lets check if stream is initially scrambled, if it is and the card has no CA, then we are unable to decrypt stream.
       if (_cardHandler.IsScrambled(ref user))
       {
@@ -537,7 +550,8 @@ namespace TvService
           else
           {
             TimeSpan ts = DateTime.Now - timeStart;
-            Log.Write("card: WaitForRecordingFile - video was found, but audio was not found after {0} seconds", ts.TotalSeconds);
+            Log.Write("card: WaitForRecordingFile - video was found, but audio was not found after {0} seconds",
+                      ts.TotalSeconds);
             if (_cardHandler.IsScrambled(ref user))
             {
               Log.Write("card: WaitForRecordingFile - audio stream is scrambled");

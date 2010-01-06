@@ -42,9 +42,7 @@ namespace MediaPortal.Music.Database
     private bool _excludeHiddenFiles;
 
 
-    public MusicDatabaseSettings()
-    {
-    }
+    public MusicDatabaseSettings() {}
 
     public bool TreatFolderAsAlbum
     {

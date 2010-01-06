@@ -202,7 +202,7 @@ namespace MediaPortal.Player.Teletext
 
       assert(pos > 0 && pos < 188, "Pos error : " + pos);
       assert(m_iWritePos + 188 - pos <= MAX_PES_PACKET, "About to exceed buffer size!");
-        // check that the buffer is not overrunning
+      // check that the buffer is not overrunning
 
       int bytesToWrite = 188 - pos;
       assert(bytesToWrite < 188, "Bytes to write too big : " + bytesToWrite);

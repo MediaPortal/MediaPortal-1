@@ -26,7 +26,8 @@ namespace TvService
 {
   public class DisEqcManagement
   {
-    readonly ITvCardHandler _cardHandler;
+    private readonly ITvCardHandler _cardHandler;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DisEqcManagement"/> class.
     /// </summary>
@@ -57,7 +58,7 @@ namespace TvService
       IDiSEqCMotor motor = _cardHandler.Card.DiSEqCMotor;
       if (motor == null)
         return;
-      motor.GetPosition(out  satellitePosition, out  stepsAzimuth, out  stepsElevation);
+      motor.GetPosition(out satellitePosition, out stepsAzimuth, out stepsElevation);
     }
 
     /// <summary>
@@ -75,6 +76,7 @@ namespace TvService
         return;
       motor.Reset();
     }
+
     /// <summary>
     /// stops the diseqc motor
     /// </summary>
@@ -90,6 +92,7 @@ namespace TvService
         return;
       motor.StopMotor();
     }
+
     /// <summary>
     /// sets the east limit of the diseqc motor
     /// </summary>
@@ -105,6 +108,7 @@ namespace TvService
         return;
       motor.SetEastLimit();
     }
+
     /// <summary>
     /// sets the west limit of the diseqc motor
     /// </summary>
@@ -120,6 +124,7 @@ namespace TvService
         return;
       motor.SetWestLimit();
     }
+
     /// <summary>
     /// Enables or disables the use of the west/east limits
     /// </summary>
@@ -136,6 +141,7 @@ namespace TvService
         return;
       motor.ForceLimits = onOff;
     }
+
     /// <summary>
     /// Drives the diseqc motor in the direction specified by the number of steps
     /// </summary>
@@ -153,6 +159,7 @@ namespace TvService
         return;
       motor.DriveMotor(direction, numberOfSteps);
     }
+
     /// <summary>
     /// Stores the current diseqc motor position
     /// </summary>
@@ -169,6 +176,7 @@ namespace TvService
         return;
       motor.StorePosition(position);
     }
+
     /// <summary>
     /// Drives the diseqc motor to the reference positition
     /// </summary>
@@ -184,6 +192,7 @@ namespace TvService
         return;
       motor.GotoReferencePosition();
     }
+
     /// <summary>
     /// Drives the diseqc motor to the specified position
     /// </summary>
@@ -200,6 +209,7 @@ namespace TvService
         return;
       motor.GotoPosition(position);
     }
+
     #endregion
   }
 }

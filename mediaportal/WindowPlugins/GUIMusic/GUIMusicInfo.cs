@@ -68,7 +68,7 @@ namespace MediaPortal.GUI.Music
 
     public GUIMusicInfo()
     {
-      GetID = (int) Window.WINDOW_MUSIC_INFO;
+      GetID = (int)Window.WINDOW_MUSIC_INFO;
     }
 
     public override bool Init()
@@ -76,9 +76,7 @@ namespace MediaPortal.GUI.Music
       return Load(GUIGraphicsContext.Skin + @"\DialogAlbumInfo.xml");
     }
 
-    public override void PreInit()
-    {
-    }
+    public override void PreInit() {}
 
     public override void OnAction(Action action)
     {
@@ -277,8 +275,8 @@ namespace MediaPortal.GUI.Music
 
       if (null != imgCoverArt)
       {
-        float x = (float) imgCoverArt.XPosition;
-        float y = (float) imgCoverArt.YPosition;
+        float x = (float)imgCoverArt.XPosition;
+        float y = (float)imgCoverArt.YPosition;
         int width;
         int height;
         GUIGraphicsContext.Correct(ref x, ref y);
@@ -289,7 +287,7 @@ namespace MediaPortal.GUI.Music
                                          out height);
 
         GUIFontManager.Present();
-        Util.Picture.RenderImage(coverArtTexture, (int) x, (int) y, width, height, coverArtTextureWidth,
+        Util.Picture.RenderImage(coverArtTexture, (int)x, (int)y, width, height, coverArtTextureWidth,
                                  coverArtTextureHeight, 0, 0, true);
       }
     }

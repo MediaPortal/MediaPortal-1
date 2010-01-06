@@ -37,20 +37,13 @@ namespace MediaPortal.GUI.Library
 
     #region XML properties
 
-    [XMLSkinElement("scrollStartDelaySec")]
-    protected int _scrollStartDelay = 3;
-    [XMLSkinElement("spaceBetweenItems")]
-    protected int _spaceBetweenItems = 2;
-    [XMLSkinElement("font")]
-    protected string _fontName = "";
-    [XMLSkinElement("textcolor")]
-    protected long _textColor = 0xFFFFFFFF;
-    [XMLSkinElement("label")]
-    protected string _property = "";
-    [XMLSkinElement("seperator")]
-    protected string _seperator = "";
-    [XMLSkinElement("textalign")]
-    protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = 3;
+    [XMLSkinElement("spaceBetweenItems")] protected int _spaceBetweenItems = 2;
+    [XMLSkinElement("font")] protected string _fontName = "";
+    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("label")] protected string _property = "";
+    [XMLSkinElement("seperator")] protected string _seperator = "";
+    [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
 
     #endregion
 
@@ -75,9 +68,7 @@ namespace MediaPortal.GUI.Library
     #region Constructors
 
     public GUITextScrollUpControl(int dwParentID)
-      : base(dwParentID)
-    {
-    }
+      : base(dwParentID) {}
 
     public GUITextScrollUpControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
                                   string strFont, long dwTextColor)
@@ -209,7 +200,7 @@ namespace MediaPortal.GUI.Library
         Viewport oldviewport = GUIGraphicsContext.DX9Device.Viewport;
         if (GUIGraphicsContext.graphics != null)
         {
-          GUIGraphicsContext.graphics.SetClip(new Rectangle(_positionX, _positionY, 
+          GUIGraphicsContext.graphics.SetClip(new Rectangle(_positionX, _positionY,
                                                             _width, _itemsPerPage * _itemHeight));
         }
         else
@@ -303,7 +294,8 @@ namespace MediaPortal.GUI.Library
                   x = dwPosX + dMaxWidth + _width;
                   break;
               }
-              _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText2.Trim(), fTextWidth, _textAlignment);
+              _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
+                                  wszText2.Trim(), fTextWidth, _textAlignment);
             }
 
             switch (_textAlignment)
@@ -317,7 +309,8 @@ namespace MediaPortal.GUI.Library
                 x = dwPosX + _width;
                 break;
             }
-            _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText1.Trim(), (float)dMaxWidth, _textAlignment);
+            _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
+                                wszText1.Trim(), (float)dMaxWidth, _textAlignment);
 
             //            Log.Info("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3}", _positionY, dwPosY, _yPositionScroll, _scrollOffset);
             //            Log.Info("dw wszText1.Trim() {0}", wszText1.Trim());
@@ -338,7 +331,8 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Error("GUITextScrollUpControl: Error during the render process - maybe a threading issue. {0}", ex.ToString());
+        Log.Error("GUITextScrollUpControl: Error during the render process - maybe a threading issue. {0}",
+                  ex.ToString());
       }
     }
 

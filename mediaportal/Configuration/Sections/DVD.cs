@@ -54,9 +54,7 @@ namespace MediaPortal.Configuration.Sections
                                          };
 
     public DVD()
-      : this("DVD")
-    {
-    }
+      : this("DVD") {}
 
     public DVD(string name)
       : base(name)
@@ -66,7 +64,9 @@ namespace MediaPortal.Configuration.Sections
 
       // Populate combo box with languages
       string curCultureTwoLetter = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
-      m_strDefaultRegionLanguage = CultureInfo.CurrentCulture.IsNeutralCulture ? CultureInfo.CurrentCulture.EnglishName : CultureInfo.CurrentCulture.Parent.EnglishName;
+      m_strDefaultRegionLanguage = CultureInfo.CurrentCulture.IsNeutralCulture
+                                     ? CultureInfo.CurrentCulture.EnglishName
+                                     : CultureInfo.CurrentCulture.Parent.EnglishName;
 
       Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, curCultureTwoLetter);
       Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, curCultureTwoLetter);
@@ -97,8 +97,8 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("dvdplayer", "audiolanguage", 
-                                                                                m_strDefaultRegionLanguage);
+        defaultAudioLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("dvdplayer", "audiolanguage",
+                                                                               m_strDefaultRegionLanguage);
         defaultSubtitleLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage",
                                                                                   m_strDefaultRegionLanguage);
 
@@ -174,8 +174,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.defaultAudioLanguagelabel);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.defaultAudioLanguageComboBox);
@@ -209,8 +211,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultAudioLanguageComboBox
       // 
-      this.defaultAudioLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultAudioLanguageComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultAudioLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultAudioLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultAudioLanguageComboBox.Location = new System.Drawing.Point(168, 68);
@@ -221,8 +225,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultSubtitleLanguageComboBox
       // 
-      this.defaultSubtitleLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultSubtitleLanguageComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultSubtitleLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultSubtitleLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultSubtitleLanguageComboBox.Location = new System.Drawing.Point(168, 44);
@@ -244,8 +250,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.labelAutoPlay);
       this.mpGroupBox2.Controls.Add(this.autoPlayComboBox);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -267,8 +275,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // autoPlayComboBox
       // 
-      this.autoPlayComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.autoPlayComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.autoPlayComboBox.BorderColor = System.Drawing.Color.Empty;
       this.autoPlayComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.autoPlayComboBox.Location = new System.Drawing.Point(168, 24);
@@ -287,7 +297,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

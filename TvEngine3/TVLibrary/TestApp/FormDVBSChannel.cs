@@ -3,11 +3,13 @@ using System.Windows.Forms;
 using TvLibrary.Interfaces;
 using TvLibrary.Channels;
 using DirectShowLib.BDA;
+
 namespace TestApp
 {
   public partial class FormDVBSChannel : Form
   {
-    DVBSChannel _channel = new DVBSChannel();
+    private DVBSChannel _channel = new DVBSChannel();
+
     public FormDVBSChannel()
     {
       InitializeComponent();
@@ -15,14 +17,8 @@ namespace TestApp
       comboBoxPol.SelectedIndex = 0;
     }
 
-    private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
-    private void textBox1_TextChanged(object sender, EventArgs e)
-    {
-
-    }
+    private void comboBox1_SelectedIndexChanged(object sender, EventArgs e) {}
+    private void textBox1_TextChanged(object sender, EventArgs e) {}
 
     public IChannel Channel
     {

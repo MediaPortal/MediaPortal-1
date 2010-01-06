@@ -43,9 +43,7 @@ namespace MediaPortal.GUI.Library
     protected bool _setVideoWindow = true;
 
 
-    public GUIVideoControl(int dwParentID) : base(dwParentID)
-    {
-    }
+    public GUIVideoControl(int dwParentID) : base(dwParentID) {}
 
     public GUIVideoControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
                            string texturename)
@@ -92,32 +90,31 @@ namespace MediaPortal.GUI.Library
       blackImage.FreeResources();
     }
 
-		public override void OnDeInit()
-		{
-			GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
-			base.OnDeInit();
-		}
+    public override void OnDeInit()
+    {
+      GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
+      base.OnDeInit();
+    }
 
-		public override void OnInit()
-		{
-			base.OnInit();
+    public override void OnInit()
+    {
+      base.OnInit();
 
-			float x = base.XPosition;
-			float y = base.YPosition;
-			GUIGraphicsContext.Correct(ref x, ref y);
+      float x = base.XPosition;
+      float y = base.YPosition;
+      GUIGraphicsContext.Correct(ref x, ref y);
 
-			_videoWindows[0].X = (int)x;
-			_videoWindows[0].Y = (int)y;
-			_videoWindows[0].Width = base.Width;
-			_videoWindows[0].Height = base.Height;
+      _videoWindows[0].X = (int)x;
+      _videoWindows[0].Y = (int)y;
+      _videoWindows[0].Width = base.Width;
+      _videoWindows[0].Height = base.Height;
 
-			if (_setVideoWindow)
-			{
-				GUIGraphicsContext.VideoWindow = _videoWindows[0];
-			}
+      if (_setVideoWindow)
+      {
+        GUIGraphicsContext.VideoWindow = _videoWindows[0];
+      }
+    }
 
-		}
-		
 
     public override bool CanFocus()
     {
@@ -150,8 +147,8 @@ namespace MediaPortal.GUI.Library
         float y = base.YPosition;
         GUIGraphicsContext.Correct(ref x, ref y);
 
-        _videoWindows[0].X = (int) x;
-        _videoWindows[0].Y = (int) y;
+        _videoWindows[0].X = (int)x;
+        _videoWindows[0].Y = (int)y;
         _videoWindows[0].Width = base.Width;
         _videoWindows[0].Height = base.Height;
 
@@ -172,7 +169,7 @@ namespace MediaPortal.GUI.Library
             int h = 10;
             GUIGraphicsContext.ScalePosToScreenResolution(ref xoff, ref yoff);
             GUIGraphicsContext.ScalePosToScreenResolution(ref w, ref h);
-            _imageFocusRectangle.SetPosition((int) x - xoff, (int) y - yoff);
+            _imageFocusRectangle.SetPosition((int)x - xoff, (int)y - yoff);
             _imageFocusRectangle.Width = base.Width + w;
             _imageFocusRectangle.Height = base.Height + h;
             _imageFocusRectangle.Render(timePassed);
@@ -223,7 +220,7 @@ namespace MediaPortal.GUI.Library
           // If this button corresponds to an action generate that action.
           if (ActionID >= 0)
           {
-            Action newaction = new Action((Action.ActionType) ActionID, 0, 0);
+            Action newaction = new Action((Action.ActionType)ActionID, 0, 0);
             GUIGraphicsContext.OnAction(newaction);
             return;
           }

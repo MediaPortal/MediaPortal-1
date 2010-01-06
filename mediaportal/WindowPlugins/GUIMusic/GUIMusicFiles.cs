@@ -62,8 +62,8 @@ namespace MediaPortal.GUI.Music
           // Is it album folder or a song file. If album folder, sort by album name. Otherwise, sort by track number
         else
         {
-          MusicTag tag1 = (MusicTag) item1.MusicTag;
-          MusicTag tag2 = (MusicTag) item2.MusicTag;
+          MusicTag tag1 = (MusicTag)item1.MusicTag;
+          MusicTag tag2 = (MusicTag)item2.MusicTag;
 
           if (tag1.Track < 1)
           {
@@ -157,11 +157,12 @@ namespace MediaPortal.GUI.Music
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
     private bool _switchRemovableDrives;
+
     #endregion
 
     public GUIMusicFiles()
     {
-      GetID = (int) Window.WINDOW_MUSIC_FILES;
+      GetID = (int)Window.WINDOW_MUSIC_FILES;
 
       _virtualDirectory.AddDrives();
       _virtualDirectory.SetExtensions(Util.Utils.AudioExtensions);
@@ -253,7 +254,7 @@ namespace MediaPortal.GUI.Music
           share.FtpPassword = xmlreader.GetValueAsString("music", sharePwd, string.Empty);
           share.FtpPort = xmlreader.GetValueAsInt("music", sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString("music", remoteFolder, "/");
-          share.DefaultView = (Share.Views) xmlreader.GetValueAsInt("music", shareViewPath, (int) Share.Views.List);
+          share.DefaultView = (Share.Views)xmlreader.GetValueAsInt("music", shareViewPath, (int)Share.Views.List);
 
           if (share.Name.Length > 0)
           {
@@ -374,7 +375,7 @@ namespace MediaPortal.GUI.Music
 
       if (MusicState.StartWindow != GetID)
       {
-        GUIWindowManager.ReplaceWindow((int) Window.WINDOW_MUSIC_GENRE);
+        GUIWindowManager.ReplaceWindow((int)Window.WINDOW_MUSIC_GENRE);
         return;
       }
 
@@ -598,7 +599,7 @@ namespace MediaPortal.GUI.Music
       bool isDVD = IsDVD(item.Path);
       bool isUpFolder = false;
 
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -726,7 +727,7 @@ namespace MediaPortal.GUI.Music
         case 136: // show playlist
           _selectedItem = facadeView.SelectedListItemIndex;
           SaveFolderSettings(currentFolder);
-          GUIWindowManager.ActivateWindow((int) Window.WINDOW_MUSIC_PLAYLIST);
+          GUIWindowManager.ActivateWindow((int)Window.WINDOW_MUSIC_PLAYLIST);
           break;
 
         case 654: // Eject
@@ -801,7 +802,7 @@ namespace MediaPortal.GUI.Music
             int viewNr = -1;
             for (int x = 0; x < handler.Views.Count; ++x)
             {
-              ViewDefinition view = (ViewDefinition) handler.Views[x];
+              ViewDefinition view = (ViewDefinition)handler.Views[x];
               if (view.Name.ToLower().IndexOf("artist") >= 0)
               {
                 viewNr = x;
@@ -811,11 +812,11 @@ namespace MediaPortal.GUI.Music
             {
               return;
             }
-            ViewDefinition selectedView = (ViewDefinition) handler.Views[viewNr];
+            ViewDefinition selectedView = (ViewDefinition)handler.Views[viewNr];
             handler.CurrentView = selectedView.Name;
             MusicState.View = selectedView.Name;
             GUIMusicGenres.SelectArtist(artist);
-            int nNewWindow = (int) Window.WINDOW_MUSIC_GENRE;
+            int nNewWindow = (int)Window.WINDOW_MUSIC_GENRE;
             if (GetID != nNewWindow)
             {
               MusicState.StartWindow = nNewWindow;
@@ -909,7 +910,7 @@ namespace MediaPortal.GUI.Music
         playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
         playlistPlayer.Reset();
         List<GUIListItem> queueItems = new List<GUIListItem>();
-        for (int i = 0; i < (int) facadeView.Count; i++)
+        for (int i = 0; i < (int)facadeView.Count; i++)
         {
           GUIListItem pItem = facadeView[i];
           if (pItem.IsFolder)
@@ -994,7 +995,7 @@ namespace MediaPortal.GUI.Music
 
     private bool GetUserInputString(ref string sString)
     {
-      VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
       if (null == keyboard)
       {
         return false;
@@ -1023,7 +1024,7 @@ namespace MediaPortal.GUI.Music
       }
 
       // init
-      GUIDialogFile dlgFile = (GUIDialogFile) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_FILE);
+      GUIDialogFile dlgFile = (GUIDialogFile)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_FILE);
       if (dlgFile == null)
       {
         return;
@@ -1072,7 +1073,7 @@ namespace MediaPortal.GUI.Music
 
       if (pItem.IsFolder && pItem.Label != "..")
       {
-        GUIDialogOK pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
 
         if (null != pDlgOK && !Win32API.IsConnectedToInternet())
         {
@@ -1118,9 +1119,9 @@ namespace MediaPortal.GUI.Music
           // Nope, it's a artist folder or share
         else
         {
-          int windowID = (int) Window.WINDOW_MUSIC_COVERART_GRABBER_PROGRESS;
+          int windowID = (int)Window.WINDOW_MUSIC_COVERART_GRABBER_PROGRESS;
           GUICoverArtGrabberProgress guiCoverArtProgress =
-            (GUICoverArtGrabberProgress) GUIWindowManager.GetWindow(windowID);
+            (GUICoverArtGrabberProgress)GUIWindowManager.GetWindow(windowID);
 
           if (guiCoverArtProgress != null)
           {
@@ -1274,8 +1275,8 @@ namespace MediaPortal.GUI.Music
           _mapSettings = new MapSettings();
         }
         CurrentSortAsc = _mapSettings.SortAscending;
-        CurrentSortMethod = (MusicSort.SortMethod) _mapSettings.SortBy;
-        currentView = (View) _mapSettings.ViewAs;
+        CurrentSortMethod = (MusicSort.SortMethod)_mapSettings.SortBy;
+        currentView = (View)_mapSettings.ViewAs;
       }
       else
       {
@@ -1287,8 +1288,8 @@ namespace MediaPortal.GUI.Music
             _mapSettings = new MapSettings();
           }
           CurrentSortAsc = _mapSettings.SortAscending;
-          CurrentSortMethod = (MusicSort.SortMethod) _mapSettings.SortBy;
-          currentView = (View) share.DefaultView;
+          CurrentSortMethod = (MusicSort.SortMethod)_mapSettings.SortBy;
+          currentView = (View)share.DefaultView;
         }
       }
       using (Profile.Settings xmlreader = new Profile.MPSettings())
@@ -1310,8 +1311,8 @@ namespace MediaPortal.GUI.Music
         strDirectory = "root";
       }
       _mapSettings.SortAscending = CurrentSortAsc;
-      _mapSettings.SortBy = (int) CurrentSortMethod;
-      _mapSettings.ViewAs = (int) currentView;
+      _mapSettings.SortBy = (int)CurrentSortMethod;
+      _mapSettings.ViewAs = (int)currentView;
       FolderSettings.AddFolderSetting(strDirectory, "MusicFiles", typeof (MapSettings), _mapSettings);
     }
 
@@ -1392,7 +1393,7 @@ namespace MediaPortal.GUI.Music
 
     private void GetStringFromKeyboard(ref string strLine)
     {
-      VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
       if (null == keyboard)
       {
         return;
@@ -1503,9 +1504,7 @@ namespace MediaPortal.GUI.Music
         int iTrack = Convert.ToInt32(strTrack);
         return iTrack;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return 1;
     }
 
@@ -1530,39 +1529,39 @@ namespace MediaPortal.GUI.Music
 
     public static bool IsMusicWindow(int window)
     {
-      if (window == (int) Window.WINDOW_MUSIC)
+      if (window == (int)Window.WINDOW_MUSIC)
       {
         return true;
       }
-      if (window == (int) Window.WINDOW_MUSIC_PLAYLIST)
+      if (window == (int)Window.WINDOW_MUSIC_PLAYLIST)
       {
         return true;
       }
-      if (window == (int) Window.WINDOW_MUSIC_FILES)
+      if (window == (int)Window.WINDOW_MUSIC_FILES)
       {
         return true;
       }
-      if (window == (int) Window.WINDOW_MUSIC_ALBUM)
+      if (window == (int)Window.WINDOW_MUSIC_ALBUM)
       {
         return true;
       }
-      if (window == (int) Window.WINDOW_MUSIC_ARTIST)
+      if (window == (int)Window.WINDOW_MUSIC_ARTIST)
       {
         return true;
       }
-      if (window == (int) Window.WINDOW_MUSIC_GENRE)
+      if (window == (int)Window.WINDOW_MUSIC_GENRE)
       {
         return true;
       }
-      if (window == (int) Window.WINDOW_MUSIC_TOP100)
+      if (window == (int)Window.WINDOW_MUSIC_TOP100)
       {
         return true;
       }
-      if (window == (int) Window.WINDOW_MUSIC_FAVORITES)
+      if (window == (int)Window.WINDOW_MUSIC_FAVORITES)
       {
         return true;
       }
-      if (window == (int) Window.WINDOW_MUSIC_PLAYING_NOW)
+      if (window == (int)Window.WINDOW_MUSIC_PLAYING_NOW)
       {
         return true;
       }
@@ -1619,12 +1618,12 @@ namespace MediaPortal.GUI.Music
       }
 
       // Skip items with folders only
-      if (nFolderCount == (int) items.Count)
+      if (nFolderCount == (int)items.Count)
       {
         return;
       }
 
-      GUIDialogProgress dlg = (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+      GUIDialogProgress dlg = (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       if (!aPlaylistAdd)
       {
         dlg = null;
@@ -1659,7 +1658,7 @@ namespace MediaPortal.GUI.Music
 
       bool bCDDAFailed = false;
       // for every file found, but skip folder
-      for (int i = 0; i < (int) items.Count; ++i)
+      for (int i = 0; i < (int)items.Count; ++i)
       {
         GUIListItem pItem = items[i];
         if (pItem.IsRemote)
@@ -1692,7 +1691,7 @@ namespace MediaPortal.GUI.Music
 
         if (m_bScan && dlg != null)
         {
-          dlg.SetPercentage((int) ((double) i/(double) items.Count*100.00));
+          dlg.SetPercentage((int)((double)i / (double)items.Count * 100.00));
           dlg.Progress();
           dlg.ShowProgressBar(true);
         }
@@ -1702,7 +1701,7 @@ namespace MediaPortal.GUI.Music
         {
           // is tag for this file already loaded?
           bool bNewFile = false;
-          MusicTag tag = (MusicTag) pItem.MusicTag;
+          MusicTag tag = (MusicTag)pItem.MusicTag;
           if (tag == null)
           {
             // no, then we gonna load it. But dont load tags from cdda files
@@ -1775,7 +1774,7 @@ namespace MediaPortal.GUI.Music
               try
               {
                 // check internet connectivity
-                GUIDialogOK pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+                GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
                 if (null != pDlgOK && !Win32API.IsConnectedToInternet())
                 {
                   pDlgOK.SetHeading(703);
@@ -1844,7 +1843,7 @@ namespace MediaPortal.GUI.Music
                           //show dialog with all albums found
                           string szText = GUILocalizeStrings.Get(181);
                           GUIDialogSelect pDlg =
-                            (GUIDialogSelect) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_SELECT);
+                            (GUIDialogSelect)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT);
                           if (null != pDlg)
                           {
                             pDlg.Reset();
@@ -1968,7 +1967,7 @@ namespace MediaPortal.GUI.Music
 
     private bool DoScan(string strDir, ref List<GUIListItem> items)
     {
-      GUIDialogProgress dlg = (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+      GUIDialogProgress dlg = (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       if (dlg != null)
       {
         string strPath = Path.GetFileName(strDir);
@@ -1985,7 +1984,7 @@ namespace MediaPortal.GUI.Music
       }
 
       bool bCancel = false;
-      for (int i = 0; i < (int) items.Count; ++i)
+      for (int i = 0; i < (int)items.Count; ++i)
       {
         GUIListItem pItem = items[i];
         if (pItem.IsRemote)
@@ -2023,7 +2022,7 @@ namespace MediaPortal.GUI.Music
 
     private void OnScan()
     {
-      GUIDialogProgress dlg = (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+      GUIDialogProgress dlg = (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       GUIGraphicsContext.Overlay = false;
 
       m_bScan = true;
@@ -2344,67 +2343,67 @@ namespace MediaPortal.GUI.Music
     /// false: if the specified window should not maintain virtual directory</returns>
     public static bool KeepVirtualDirectory(int windowId)
     {
-      if (windowId == (int) Window.WINDOW_ARTIST_INFO)
+      if (windowId == (int)Window.WINDOW_ARTIST_INFO)
       {
         return true;
       }
-      if (windowId == (int) Window.WINDOW_FULLSCREEN_VIDEO)
+      if (windowId == (int)Window.WINDOW_FULLSCREEN_VIDEO)
       {
         return true;
       }
-      if (windowId == (int) Window.WINDOW_FULLSCREEN_MUSIC)
+      if (windowId == (int)Window.WINDOW_FULLSCREEN_MUSIC)
       {
         return true; //SV Added by SteveV 2006-09-07
       }
-      if (windowId == (int) Window.WINDOW_MUSIC)
+      if (windowId == (int)Window.WINDOW_MUSIC)
       {
         return true;
       }
-      if (windowId == (int) Window.WINDOW_MUSIC_ALBUM)
+      if (windowId == (int)Window.WINDOW_MUSIC_ALBUM)
       {
         return true;
       }
-      if (windowId == (int) Window.WINDOW_MUSIC_ARTIST)
+      if (windowId == (int)Window.WINDOW_MUSIC_ARTIST)
       {
         return true;
       }
-      if (windowId == (int) Window.WINDOW_MUSIC_COVERART_GRABBER_PROGRESS)
+      if (windowId == (int)Window.WINDOW_MUSIC_COVERART_GRABBER_PROGRESS)
       {
         return true;
       }
-      if (windowId == (int) Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS)
+      if (windowId == (int)Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS)
       {
         return true;
       }
-      if (windowId == (int) Window.WINDOW_MUSIC_FAVORITES)
+      if (windowId == (int)Window.WINDOW_MUSIC_FAVORITES)
       {
         return true;
       }
-      if (windowId == (int) Window.WINDOW_MUSIC_FILES)
+      if (windowId == (int)Window.WINDOW_MUSIC_FILES)
       {
         return true;
       }
-      if (windowId == (int) Window.WINDOW_MUSIC_GENRE)
+      if (windowId == (int)Window.WINDOW_MUSIC_GENRE)
       {
         return true;
       }
-      if (windowId == (int) Window.WINDOW_MUSIC_INFO)
+      if (windowId == (int)Window.WINDOW_MUSIC_INFO)
       {
         return true;
       }
-      if (windowId == (int) Window.WINDOW_MUSIC_PLAYING_NOW)
+      if (windowId == (int)Window.WINDOW_MUSIC_PLAYING_NOW)
       {
         return true;
       }
-      if (windowId == (int) Window.WINDOW_MUSIC_PLAYLIST)
+      if (windowId == (int)Window.WINDOW_MUSIC_PLAYLIST)
       {
         return true;
       }
-      if (windowId == (int) Window.WINDOW_MUSIC_TOP100)
+      if (windowId == (int)Window.WINDOW_MUSIC_TOP100)
       {
         return true;
       }
-      if (windowId == (int) Window.WINDOW_MUSIC_YEARS)
+      if (windowId == (int)Window.WINDOW_MUSIC_YEARS)
       {
         return true;
       }
@@ -2458,9 +2457,7 @@ namespace MediaPortal.GUI.Music
       return "Plugin to play & organize your music";
     }
 
-    public void ShowPlugin()
-    {
-    }
+    public void ShowPlugin() {}
 
     #endregion
 

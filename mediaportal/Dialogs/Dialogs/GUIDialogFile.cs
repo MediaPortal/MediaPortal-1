@@ -78,7 +78,7 @@ namespace MediaPortal.Dialogs
 
     public GUIDialogFile()
     {
-      GetID = (int) Window.WINDOW_DIALOG_FILE;
+      GetID = (int)Window.WINDOW_DIALOG_FILE;
     }
 
     public override bool Init()
@@ -91,9 +91,7 @@ namespace MediaPortal.Dialogs
       get { return true; }
     }
 
-    public override void PreInit()
-    {
-    }
+    public override void PreInit() {}
 
 
     public override void OnAction(Action action)
@@ -197,7 +195,7 @@ namespace MediaPortal.Dialogs
           {
             int iAction = message.Param1;
             int iControl = message.SenderControlId;
-            if (btnCancel != null && iControl == (int) btnCancel.GetID)
+            if (btnCancel != null && iControl == (int)btnCancel.GetID)
             {
               m_bCanceled = true;
               if (!m_bBusy)
@@ -206,7 +204,7 @@ namespace MediaPortal.Dialogs
               }
             }
 
-            if (btnYes != null && iControl == (int) btnYes.GetID)
+            if (btnYes != null && iControl == (int)btnYes.GetID)
             {
               if (!m_bBusy)
               {
@@ -221,17 +219,17 @@ namespace MediaPortal.Dialogs
               }
             }
 
-            if (btnNo != null && iControl == (int) btnNo.GetID)
+            if (btnNo != null && iControl == (int)btnNo.GetID)
             {
               m_bButtonNo = true;
             }
 
-            if (btnAlways != null && iControl == (int) btnAlways.GetID)
+            if (btnAlways != null && iControl == (int)btnAlways.GetID)
             {
               m_bAlways = true;
             }
 
-            if (btnNever != null && iControl == (int) btnNever.GetID)
+            if (btnNever != null && iControl == (int)btnNever.GetID)
             {
               m_bNever = true;
             }
@@ -386,7 +384,7 @@ namespace MediaPortal.Dialogs
       }
 
       // update dialog information			
-      SetPercentage((m_iFileNr*100)/m_iNrOfItems);
+      SetPercentage((m_iFileNr * 100) / m_iNrOfItems);
       string strFileOperation = "";
       if (m_iFileMode == 1)
       {
@@ -543,10 +541,10 @@ namespace MediaPortal.Dialogs
       SetLine(1, SourceOfError);
       SetLine(2, iError);
       SetButtonsHidden(false);
-      GUIControl.HideControl(GetID, (int) btnAlways.GetID);
-      GUIControl.HideControl(GetID, (int) btnNever.GetID);
-      GUIControl.HideControl(GetID, (int) btnCancel.GetID);
-      GUIControl.HideControl(GetID, (int) btnNo.GetID);
+      GUIControl.HideControl(GetID, (int)btnAlways.GetID);
+      GUIControl.HideControl(GetID, (int)btnNever.GetID);
+      GUIControl.HideControl(GetID, (int)btnCancel.GetID);
+      GUIControl.HideControl(GetID, (int)btnNo.GetID);
 
       // wait for input
       while (!m_bButtonYes)
@@ -557,13 +555,13 @@ namespace MediaPortal.Dialogs
       SetLine(1, "");
       SetLine(2, "");
       SetButtonsHidden(true);
-      GUIControl.ShowControl(GetID, (int) btnCancel.GetID);
-      GUIControl.ShowControl(GetID, (int) btnNo.GetID);
+      GUIControl.ShowControl(GetID, (int)btnCancel.GetID);
+      GUIControl.ShowControl(GetID, (int)btnNo.GetID);
     }
 
     private void ShowErrorDialog(int iError, string SourceOfError)
     {
-      GUIDialogOK dlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       if (dlgOK != null)
       {
         dlgOK.SetHeading(iError);
@@ -577,16 +575,16 @@ namespace MediaPortal.Dialogs
     {
       if (bHide)
       {
-        GUIControl.HideControl(GetID, (int) btnAlways.GetID);
-        GUIControl.HideControl(GetID, (int) btnNever.GetID);
-        GUIControl.ShowControl(GetID, (int) imgProgressBackground.GetID);
+        GUIControl.HideControl(GetID, (int)btnAlways.GetID);
+        GUIControl.HideControl(GetID, (int)btnNever.GetID);
+        GUIControl.ShowControl(GetID, (int)imgProgressBackground.GetID);
         ShowProgressBar(true);
       }
       else
       {
-        GUIControl.ShowControl(GetID, (int) btnAlways.GetID);
-        GUIControl.ShowControl(GetID, (int) btnNever.GetID);
-        GUIControl.HideControl(GetID, (int) imgProgressBackground.GetID);
+        GUIControl.ShowControl(GetID, (int)btnAlways.GetID);
+        GUIControl.ShowControl(GetID, (int)btnNever.GetID);
+        GUIControl.HideControl(GetID, (int)imgProgressBackground.GetID);
         ShowProgressBar(false);
       }
 
@@ -620,7 +618,7 @@ namespace MediaPortal.Dialogs
         return;
       }
 
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -794,13 +792,13 @@ namespace MediaPortal.Dialogs
 
       // set number of objects
       strFileOperation += " " + m_iNrOfItems.ToString() + " " + GUILocalizeStrings.Get(507) + " (";
-      if (m_dwTotalSize > 1024*1024)
+      if (m_dwTotalSize > 1024 * 1024)
       {
-        strFileOperation += (m_dwTotalSize/(1024*1024)).ToString() + " MB)";
+        strFileOperation += (m_dwTotalSize / (1024 * 1024)).ToString() + " MB)";
       }
       else if (m_dwTotalSize > 1024)
       {
-        strFileOperation += (m_dwTotalSize/1024).ToString() + " KB)";
+        strFileOperation += (m_dwTotalSize / 1024).ToString() + " KB)";
       }
       else
       {
@@ -830,7 +828,7 @@ namespace MediaPortal.Dialogs
 
     private bool GetUserInputString(ref string sString)
     {
-      VirtualKeyboard keyBoard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+      VirtualKeyboard keyBoard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
       if (null == keyBoard)
       {
         return false;
@@ -853,7 +851,7 @@ namespace MediaPortal.Dialogs
         return;
       }
 
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo)
       {
         return;
@@ -906,7 +904,7 @@ namespace MediaPortal.Dialogs
             DoDeleteItem(subItem);
           }
 
-          Util.Utils.DirectoryDelete(item.Path,true);
+          Util.Utils.DirectoryDelete(item.Path, true);
         }
       }
       else if (!item.IsRemote)
@@ -959,7 +957,7 @@ namespace MediaPortal.Dialogs
         // Determine whether the directory exists.
         if (Directory.Exists(path))
         {
-          GUIDialogOK dlgOk = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+          GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
           dlgOk.SetHeading(119);
           dlgOk.SetLine(1, 2224);
           dlgOk.SetLine(2, "");

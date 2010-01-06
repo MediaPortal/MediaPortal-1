@@ -30,7 +30,7 @@ using System.Collections.Generic;
 using System.Threading;
 using MediaPortal.Threading;
 using NUnit.Framework;
-using ThreadPool=MediaPortal.Threading.ThreadPool;
+using ThreadPool = MediaPortal.Threading.ThreadPool;
 
 #endregion
 
@@ -204,9 +204,7 @@ namespace MediaPortal.Tests.Core.Threading
         _pool.Add(w);
         Assert.Fail("InvalidOperationException not thrown");
       }
-      catch (InvalidOperationException)
-      {
-      }
+      catch (InvalidOperationException) {}
     }
 
     [Test]
@@ -220,9 +218,7 @@ namespace MediaPortal.Tests.Core.Threading
         _pool.Add(w);
         Assert.Fail("InvalidOperationException not thrown");
       }
-      catch (InvalidOperationException)
-      {
-      }
+      catch (InvalidOperationException) {}
     }
 
     [Test]
@@ -304,7 +300,7 @@ namespace MediaPortal.Tests.Core.Threading
       Assert.IsTrue(work.Exception is ArgumentOutOfRangeException);
       ArgumentOutOfRangeException e = work.Exception as ArgumentOutOfRangeException;
       Assert.AreEqual("test", e.ParamName, "Expected \"test\" as ParamName");
-      Assert.AreEqual(0, (int) e.ActualValue, "Expected \"0\" as ActualValue");
+      Assert.AreEqual(0, (int)e.ActualValue, "Expected \"0\" as ActualValue");
     }
 
     private int TestIntervalWorkRuns = 0;

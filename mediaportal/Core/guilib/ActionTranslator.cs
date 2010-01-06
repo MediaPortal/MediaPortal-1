@@ -61,9 +61,7 @@ namespace MediaPortal.GUI.Library
     } ;
 
     // singleton. Dont allow any instance of this class
-    private ActionTranslator()
-    {
-    }
+    private ActionTranslator() {}
 
     /// <summary>
     /// Loads the keymap file and creates the mapping.
@@ -209,7 +207,7 @@ namespace MediaPortal.GUI.Library
         return;
       }
       button but = new button();
-      but.eAction = (Action.ActionType) Int32.Parse(nodeId.InnerText);
+      but.eAction = (Action.ActionType)Int32.Parse(nodeId.InnerText);
       but.m_strSoundFile = "";
 
       if (nodeSound != null && nodeSound.InnerText != null)
@@ -222,7 +220,7 @@ namespace MediaPortal.GUI.Library
         string strButton = nodeGamepad.InnerText.ToLower();
         if (strButton.Length == 1)
         {
-          but.eKeyChar = (int) strButton[0];
+          but.eKeyChar = (int)strButton[0];
           but.eKeyCode = 0;
         }
         else
@@ -232,104 +230,103 @@ namespace MediaPortal.GUI.Library
 
           switch (strButton)
           {
-              case "f1": 
-                  but.eKeyCode = (int)Keys.F1;
-                  break;
-              case "f2": 
-                  but.eKeyCode = (int)Keys.F2;
-                  break;
-              case "f3": 
-                  but.eKeyCode = (int)Keys.F3;
-                  break;
-              case "f4": 
-                  but.eKeyCode = (int)Keys.F4;
-                  break;
-              case "f5": 
-                  but.eKeyCode = (int)Keys.F5;
-                  break;
-              case "f6": 
-                  but.eKeyCode = (int)Keys.F6;
-                  break;
-              case "f7": 
-                  but.eKeyCode = (int)Keys.F7;
-                  break;
-              case "f8": 
-                  but.eKeyCode = (int)Keys.F8;
-                  break;
-              case "f9": 
-                  but.eKeyCode = (int)Keys.F9;
-                  break;
-              case "f10": 
-                  but.eKeyCode = (int)Keys.F10;
-                  break;
-              case "f11": 
-                  but.eKeyCode = (int)Keys.F11;
-                  break;
-              case "f12": 
-                  but.eKeyCode = (int)Keys.F12;
-                  break;
-              case "backspace": 
-                  but.eKeyCode = (int)Keys.Back;
-                  break;
-              case "tab": 
-                  but.eKeyCode = (int)Keys.Tab;
-                  break;
-              case "end": 
-                  but.eKeyCode = (int)Keys.End;
-                  break;
-              case "insert": 
-                  but.eKeyCode = (int)Keys.Insert;
-                  break;
-              case "home": 
-                  but.eKeyCode = (int)Keys.Home;
-                  break;
-              case "pageup": 
-                  but.eKeyCode = (int)Keys.PageUp;
-                  break;
-              case "pagedown": 
-                  but.eKeyCode = (int)Keys.PageDown;
-                  break;
-              case "left": 
-                  but.eKeyCode = (int)Keys.Left;
-                  break;
-              case "right": 
-                  but.eKeyCode = (int)Keys.Right;
-                  break;
-              case "up": 
-                  but.eKeyCode = (int)Keys.Up;
-                  break;
-              case "down": 
-                  but.eKeyCode = (int)Keys.Down;
-                  break;
-              case "enter": 
-                  but.eKeyCode = (int)Keys.Enter;
-                  break;
-              case "delete": 
-                  but.eKeyCode = (int)Keys.Delete;
-                  break;
-              case "pause": 
-                  but.eKeyCode = (int)Keys.Pause;
-                  break;
-              case "print": 
-                  but.eKeyCode = (int)Keys.PrintScreen;
-                  break;
-              case "escape": 
-                  but.eKeyCode = (int)Keys.Escape;
-                  break;
-              case "esc": 
-                  but.eKeyCode = (int)Keys.Escape;
-                  break;
-              case "apps": 
-                  but.eKeyCode = (int)Keys.Apps;
-                  break;
-              case "win": 
-                  but.eKeyCode = (int)Keys.LWin;
-                  break;
-              case "space": 
-                  but.eKeyCode = 0;
-                  but.eKeyChar = 32;
-                  break;
-
+            case "f1":
+              but.eKeyCode = (int)Keys.F1;
+              break;
+            case "f2":
+              but.eKeyCode = (int)Keys.F2;
+              break;
+            case "f3":
+              but.eKeyCode = (int)Keys.F3;
+              break;
+            case "f4":
+              but.eKeyCode = (int)Keys.F4;
+              break;
+            case "f5":
+              but.eKeyCode = (int)Keys.F5;
+              break;
+            case "f6":
+              but.eKeyCode = (int)Keys.F6;
+              break;
+            case "f7":
+              but.eKeyCode = (int)Keys.F7;
+              break;
+            case "f8":
+              but.eKeyCode = (int)Keys.F8;
+              break;
+            case "f9":
+              but.eKeyCode = (int)Keys.F9;
+              break;
+            case "f10":
+              but.eKeyCode = (int)Keys.F10;
+              break;
+            case "f11":
+              but.eKeyCode = (int)Keys.F11;
+              break;
+            case "f12":
+              but.eKeyCode = (int)Keys.F12;
+              break;
+            case "backspace":
+              but.eKeyCode = (int)Keys.Back;
+              break;
+            case "tab":
+              but.eKeyCode = (int)Keys.Tab;
+              break;
+            case "end":
+              but.eKeyCode = (int)Keys.End;
+              break;
+            case "insert":
+              but.eKeyCode = (int)Keys.Insert;
+              break;
+            case "home":
+              but.eKeyCode = (int)Keys.Home;
+              break;
+            case "pageup":
+              but.eKeyCode = (int)Keys.PageUp;
+              break;
+            case "pagedown":
+              but.eKeyCode = (int)Keys.PageDown;
+              break;
+            case "left":
+              but.eKeyCode = (int)Keys.Left;
+              break;
+            case "right":
+              but.eKeyCode = (int)Keys.Right;
+              break;
+            case "up":
+              but.eKeyCode = (int)Keys.Up;
+              break;
+            case "down":
+              but.eKeyCode = (int)Keys.Down;
+              break;
+            case "enter":
+              but.eKeyCode = (int)Keys.Enter;
+              break;
+            case "delete":
+              but.eKeyCode = (int)Keys.Delete;
+              break;
+            case "pause":
+              but.eKeyCode = (int)Keys.Pause;
+              break;
+            case "print":
+              but.eKeyCode = (int)Keys.PrintScreen;
+              break;
+            case "escape":
+              but.eKeyCode = (int)Keys.Escape;
+              break;
+            case "esc":
+              but.eKeyCode = (int)Keys.Escape;
+              break;
+            case "apps":
+              but.eKeyCode = (int)Keys.Apps;
+              break;
+            case "win":
+              but.eKeyCode = (int)Keys.LWin;
+              break;
+            case "space":
+              but.eKeyCode = 0;
+              but.eKeyChar = 32;
+              break;
           }
         }
       }
@@ -363,7 +360,7 @@ namespace MediaPortal.GUI.Library
         return false;
       }
       // Now fill our action structure
-      action.wID = (Action.ActionType) wAction;
+      action.wID = (Action.ActionType)wAction;
       action.m_key = key;
       action.m_SoundFileName = strSoundFile;
       return true;
@@ -384,22 +381,22 @@ namespace MediaPortal.GUI.Library
       }
       for (int iw = 0; iw < mapWindows.Count; ++iw)
       {
-        WindowMap window = (WindowMap) mapWindows[iw];
+        WindowMap window = (WindowMap)mapWindows[iw];
         if (window.iWindow == wWindow)
         {
           for (int ib = 0; ib < window.mapButtons.Count; ib++)
           {
-            button but = (button) window.mapButtons[ib];
+            button but = (button)window.mapButtons[ib];
 
             if (but.eKeyChar == key.KeyChar && key.KeyChar > 0)
             {
               strSoundFile = but.m_strSoundFile;
-              return (int) but.eAction;
+              return (int)but.eAction;
             }
             if (but.eKeyCode == key.KeyCode && key.KeyCode > 0)
             {
               strSoundFile = but.m_strSoundFile;
-              return (int) but.eAction;
+              return (int)but.eAction;
             }
           }
           return 0;
@@ -422,14 +419,14 @@ namespace MediaPortal.GUI.Library
       }
       for (int iw = 0; iw < mapWindows.Count; ++iw)
       {
-        WindowMap window = (WindowMap) mapWindows[iw];
+        WindowMap window = (WindowMap)mapWindows[iw];
         if (window.iWindow == wWindow)
         {
           for (int ib = 0; ib < window.mapButtons.Count; ib++)
           {
-            button but = (button) window.mapButtons[ib];
+            button but = (button)window.mapButtons[ib];
 
-            if (but.eAction == (Action.ActionType) action.wID)
+            if (but.eAction == (Action.ActionType)action.wID)
             {
               action.SoundFileName = but.m_strSoundFile;
               return true;

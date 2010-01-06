@@ -22,7 +22,6 @@
 using System;
 using System.Collections;
 using System.Xml;
-
 using SetupControls;
 
 namespace SetupTv
@@ -44,22 +43,18 @@ namespace SetupTv
     {
       AutoScroll = true;
     }
+
     private void Init(string text)
     {
       Init();
       Text = text;
     }
-    public virtual void SaveSettings()
-    {
-    }
 
-    public virtual void LoadSettings()
-    {
-    }
+    public virtual void SaveSettings() {}
 
-    public virtual void LoadWizardSettings(XmlNode node)
-    {
-    }
+    public virtual void LoadSettings() {}
+
+    public virtual void LoadWizardSettings(XmlNode node) {}
 
 
     /// <summary>
@@ -111,13 +106,9 @@ namespace SetupTv
     }
 
 
-    public virtual void OnSectionActivated()
-    {
-    }
+    public virtual void OnSectionActivated() {}
 
-    public virtual void OnSectionDeActivated()
-    {
-    }
+    public virtual void OnSectionDeActivated() {}
 
     public virtual bool CanActivate
     {

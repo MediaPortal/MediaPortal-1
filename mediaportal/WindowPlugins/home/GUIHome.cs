@@ -43,7 +43,7 @@ namespace MediaPortal.GUI.Home
 
     public GUIHome()
     {
-      GetID = (int) Window.WINDOW_HOME;
+      GetID = (int)Window.WINDOW_HOME;
     }
 
     #endregion
@@ -133,7 +133,7 @@ namespace MediaPortal.GUI.Home
           string hover = GetHoverFileName("my plugins");
           string nonFocusHover = GetNonFocusHoverFileName("my plugins");
           int index = xmlreader.GetValueAsInt("pluginSorting", "my Plugins", Int32.MaxValue);
-          menuMain.ButtonInfos.Add(new MenuButtonInfo(GUILocalizeStrings.Get(913), (int) Window.WINDOW_MYPLUGINS,
+          menuMain.ButtonInfos.Add(new MenuButtonInfo(GUILocalizeStrings.Get(913), (int)Window.WINDOW_MYPLUGINS,
                                                       focusTexture, nonFocusTexture, hover, nonFocusHover, index));
         }
       }

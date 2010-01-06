@@ -32,13 +32,9 @@ namespace System.Windows
   {
     #region Constructors
 
-    public TemplateBindingExtension()
-    {
-    }
+    public TemplateBindingExtension() {}
 
-    public TemplateBindingExtension(DependencyProperty property)
-    {
-    }
+    public TemplateBindingExtension(DependencyProperty property) {}
 
     #endregion Constructors
 

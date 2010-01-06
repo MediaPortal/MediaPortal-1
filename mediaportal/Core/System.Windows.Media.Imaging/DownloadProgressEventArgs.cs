@@ -25,30 +25,30 @@
 
 namespace System.Windows.Media.Imaging
 {
-	public class DownloadProgressEventArgs : EventArgs
-	{
-		#region Constructors
+  public class DownloadProgressEventArgs : EventArgs
+  {
+    #region Constructors
 
-		public DownloadProgressEventArgs(int progress)
-		{
-			_progress = progress;
-		}
+    public DownloadProgressEventArgs(int progress)
+    {
+      _progress = progress;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public int Progress
-		{
-			get { return _progress; }
-		}
+    public int Progress
+    {
+      get { return _progress; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		int							_progress;
+    private int _progress;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

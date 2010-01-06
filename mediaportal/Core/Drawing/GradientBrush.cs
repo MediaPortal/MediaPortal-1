@@ -31,9 +31,7 @@ namespace MediaPortal.Drawing
   {
     #region Constructors
 
-    public GradientBrush()
-    {
-    }
+    public GradientBrush() {}
 
     public GradientBrush(GradientStopCollection gradientStops)
     {

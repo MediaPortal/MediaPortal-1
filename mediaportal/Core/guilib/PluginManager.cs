@@ -47,9 +47,7 @@ namespace MediaPortal.GUI.Library
     private static bool _windowPluginsLoaded = false;
     private static bool _nonWindowPluginsLoaded = false;
 
-    static PluginManager()
-    {
-    }
+    static PluginManager() {}
 
     public static ArrayList GUIPlugins
     {
@@ -84,9 +82,7 @@ namespace MediaPortal.GUI.Library
         Directory.CreateDirectory(Config.GetFolder(Config.Dir.Plugins));
         Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Plugins, "process"));
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       string[] strFiles = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "process"), "*.dll");
       foreach (string strFile in strFiles)
       {
@@ -108,9 +104,7 @@ namespace MediaPortal.GUI.Library
         Directory.CreateDirectory(Config.GetFolder(Config.Dir.Plugins));
         Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Plugins, "windows"));
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       LoadWindowPlugin(Config.GetFile(Config.Dir.Plugins, @"windows\WindowPlugins.dll")); //need to load this first!!!
 
       string[] strFiles = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "windows"), "*.dll");
@@ -216,8 +210,8 @@ namespace MediaPortal.GUI.Library
                   foundInterfaces = t.FindInterfaces(myFilter2, "MediaPortal.GUI.Library.IPlugin");
                   if (foundInterfaces.Length > 0)
                   {
-                    newObj = (object) Activator.CreateInstance(t);
-                    plugin = (IPlugin) newObj;
+                    newObj = (object)Activator.CreateInstance(t);
+                    plugin = (IPlugin)newObj;
                   }
                 }
                 catch (TargetInvocationException ex)
@@ -247,9 +241,9 @@ namespace MediaPortal.GUI.Library
                   {
                     if (newObj == null)
                     {
-                      newObj = (object) Activator.CreateInstance(t);
+                      newObj = (object)Activator.CreateInstance(t);
                     }
-                    ISetupForm setup = (ISetupForm) newObj;
+                    ISetupForm setup = (ISetupForm)newObj;
                     // don't activate plugins that have NO entry at all in 
                     // MediaPortal.xml
                     if (PluginEntryExists(setup.PluginName()) && IsPluginNameEnabled(setup.PluginName()))
@@ -273,9 +267,9 @@ namespace MediaPortal.GUI.Library
                   {
                     if (newObj == null)
                     {
-                      newObj = (object) Activator.CreateInstance(t);
+                      newObj = (object)Activator.CreateInstance(t);
                     }
-                    IWakeable setup = (IWakeable) newObj;
+                    IWakeable setup = (IWakeable)newObj;
                     if (PluginEntryExists(setup.PluginName()) && IsPluginNameEnabled(setup.PluginName()))
                     {
                       _wakeables.Add(setup);
@@ -290,9 +284,7 @@ namespace MediaPortal.GUI.Library
                 }
               }
             }
-            catch (NullReferenceException)
-            {
-            }
+            catch (NullReferenceException) {}
           }
         }
       }
@@ -337,8 +329,8 @@ namespace MediaPortal.GUI.Library
                 {
                   try
                   {
-                    newObj = (object) Activator.CreateInstance(t);
-                    GUIWindow win = (GUIWindow) newObj;
+                    newObj = (object)Activator.CreateInstance(t);
+                    GUIWindow win = (GUIWindow)newObj;
 
                     if (win.GetID >= 0 && IsWindowPlugInEnabled(win.GetType().ToString()))
                     {
@@ -370,9 +362,9 @@ namespace MediaPortal.GUI.Library
                   {
                     if (newObj == null)
                     {
-                      newObj = (object) Activator.CreateInstance(t);
+                      newObj = (object)Activator.CreateInstance(t);
                     }
-                    ISetupForm setup = (ISetupForm) newObj;
+                    ISetupForm setup = (ISetupForm)newObj;
                     if (PluginEntryExists(setup.PluginName()) && IsPluginNameEnabled(setup.PluginName()))
                     {
                       _setupForms.Add(setup);
@@ -393,9 +385,9 @@ namespace MediaPortal.GUI.Library
                   {
                     if (newObj == null)
                     {
-                      newObj = (object) Activator.CreateInstance(t);
+                      newObj = (object)Activator.CreateInstance(t);
                     }
-                    IWakeable setup = (IWakeable) newObj;
+                    IWakeable setup = (IWakeable)newObj;
                     if (PluginEntryExists(setup.PluginName()) && IsPluginNameEnabled(setup.PluginName()))
                     {
                       _wakeables.Add(setup);
@@ -410,15 +402,11 @@ namespace MediaPortal.GUI.Library
                 }
               }
             }
-            catch (NullReferenceException)
-            {
-            }
+            catch (NullReferenceException) {}
           }
         }
       }
-      catch (BadImageFormatException)
-      {
-      }
+      catch (BadImageFormatException) {}
       catch (Exception ex)
       {
         Log.Info(

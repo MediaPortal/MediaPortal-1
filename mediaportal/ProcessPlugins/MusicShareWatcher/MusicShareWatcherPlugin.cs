@@ -52,9 +52,7 @@ namespace MediaPortal.MusicShareWatcher
 
     private bool _suspended = false;
 
-    public MusicShareWatcherPlugin()
-    {
-    }
+    public MusicShareWatcherPlugin() {}
 
     #region Interface IPluginReceiver
 
@@ -187,9 +185,7 @@ namespace MediaPortal.MusicShareWatcher
       return false;
     }
 
-    public void ShowPlugin()
-    {
-    }
+    public void ShowPlugin() {}
 
     #endregion
   }

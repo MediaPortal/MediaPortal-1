@@ -56,7 +56,7 @@ namespace MediaPortal.GUI.Library
       base.FinalizeConstruction();
       for (int i = 0; i < SubItemCount; ++i)
       {
-        string strTexture = (string) GetSubItem(i);
+        string strTexture = (string)GetSubItem(i);
         GUIImage img = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _textureWidth, _textureHeight,
                                     strTexture, 0);
         img.ParentControl = this;
@@ -96,9 +96,7 @@ namespace MediaPortal.GUI.Library
         {
           Percentage = (int)(Math.Round(Double.Parse(percent)) * 10d);
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
       if (_orientation == eOrientation.Horizontal)
       {
@@ -114,7 +112,7 @@ namespace MediaPortal.GUI.Library
     private void RenderHorizontal(float timePassed)
     {
       int startx = _positionX;
-      int imagesToDraw = _width/_textureWidth; // in case no fixed value exists => calculate it
+      int imagesToDraw = _width / _textureWidth; // in case no fixed value exists => calculate it
       if (_imagesToDraw > -1)
       {
         imagesToDraw = _imagesToDraw; // we have a fixed value
@@ -123,18 +121,18 @@ namespace MediaPortal.GUI.Library
       for (int i = 0; i < imagesToDraw; ++i)
       {
         int texture = 0;
-        int currentPercent = ((i + 1)*100)/imagesToDraw;
+        int currentPercent = ((i + 1) * 100) / imagesToDraw;
         if (_alignment == Alignment.ALIGN_RIGHT)
         {
-          currentPercent = ((imagesToDraw - i)*100)/(imagesToDraw);
+          currentPercent = ((imagesToDraw - i) * 100) / (imagesToDraw);
         }
         if (currentPercent <= Percentage)
         {
           int textureCount = _itemList.Count - 1;
           float fcurrentPercent = currentPercent;
           fcurrentPercent /= 100f;
-          fcurrentPercent *= ((float) textureCount);
-          texture = (int) fcurrentPercent;
+          fcurrentPercent *= ((float)textureCount);
+          texture = (int)fcurrentPercent;
 
           //if (_alignment==Alignment.ALIGN_RIGHT)
           //	texture=textureCount-texture;
@@ -148,7 +146,7 @@ namespace MediaPortal.GUI.Library
           }
         }
 
-        GUIImage img = (GUIImage) _itemList[texture];
+        GUIImage img = (GUIImage)_itemList[texture];
         img.SetPosition(startx, _positionY);
         img.Render(timePassed);
         if (_alignment == Alignment.ALIGN_LEFT)
@@ -162,9 +160,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    private void RenderVertical(float timePassed)
-    {
-    }
+    private void RenderVertical(float timePassed) {}
 
     public int Percentage
     {

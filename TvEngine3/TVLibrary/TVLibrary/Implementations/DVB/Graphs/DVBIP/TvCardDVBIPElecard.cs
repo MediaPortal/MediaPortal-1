@@ -35,9 +35,7 @@ namespace TvLibrary.Implementations.DVB
     /// CLSID_ElecardNWSourcePlus
     /// </summary>
     [ComImport, Guid("62341545-9318-4671-9D62-9CAACDD5D20A")]
-    public class ElecardNWSourcePlus
-    {
-    }
+    public class ElecardNWSourcePlus {}
 
     /// <summary>
     /// Constructor
@@ -57,7 +55,8 @@ namespace TvLibrary.Implementations.DVB
     protected override void AddStreamSourceFilter(string url)
     {
       Log.Log.WriteFile("dvbip:Add NWSource-Plus");
-      _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, typeof(ElecardNWSourcePlus).GUID, "Elecard NWSource-Plus");
+      _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, typeof (ElecardNWSourcePlus).GUID,
+                                                                "Elecard NWSource-Plus");
       AMMediaType mpeg2ProgramStream = new AMMediaType();
       mpeg2ProgramStream.majorType = MediaType.Stream;
       mpeg2ProgramStream.subType = MediaSubType.Mpeg2Transport;

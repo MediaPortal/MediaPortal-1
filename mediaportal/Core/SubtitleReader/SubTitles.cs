@@ -43,9 +43,7 @@ namespace MediaPortal.Subtitle
       private int m_iStartTime = 0;
       private int m_iEndTime = 0;
 
-      public Line()
-      {
-      }
+      public Line() {}
 
       public Line(string strLine, int iStart, int iEnd)
       {
@@ -88,7 +86,7 @@ namespace MediaPortal.Subtitle
 
     public SubTitles(SubTitles subs)
     {
-      m_subs = (ArrayList) subs.m_subs.Clone();
+      m_subs = (ArrayList)subs.m_subs.Clone();
     }
 
     public void Clear()
@@ -108,7 +106,7 @@ namespace MediaPortal.Subtitle
 
     public void Render(double dTime)
     {
-      int lTime = (int) (1000.0d*dTime);
+      int lTime = (int)(1000.0d * dTime);
       foreach (Line line in m_subs)
       {
         if (lTime >= line.StartTime && lTime <= line.EndTime)
@@ -119,14 +117,12 @@ namespace MediaPortal.Subtitle
             {
               float fw = 0, fh = 0;
               m_font.GetTextExtent(line.Text, ref fw, ref fh);
-              int iposx = (GUIGraphicsContext.OverScanWidth - (int) fw)/2;
-              int iposy = (GUIGraphicsContext.Subtitles - (int) fh);
-              m_font.DrawShadowText((float) iposx, (float) iposy, m_iColor, line.Text, GUIControl.Alignment.ALIGN_LEFT,
+              int iposx = (GUIGraphicsContext.OverScanWidth - (int)fw) / 2;
+              int iposy = (GUIGraphicsContext.Subtitles - (int)fh);
+              m_font.DrawShadowText((float)iposx, (float)iposy, m_iColor, line.Text, GUIControl.Alignment.ALIGN_LEFT,
                                     m_iShadow, m_iShadow, 0xff000000);
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
           }
         }
         if (line.StartTime > lTime)

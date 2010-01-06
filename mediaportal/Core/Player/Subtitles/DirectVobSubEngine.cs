@@ -31,7 +31,8 @@ namespace MediaPortal.Player.Subtitles
       if (vobSub == null)
         return false;
 
-      { //set style
+      {
+        //set style
         Log.Debug("VideoPlayerVMR9: Setting DirectVobsub parameters");
         //string strTmp = "";
         //string strFont = xmlreader.GetValueAsString("subtitles", "fontface", "Arial");
@@ -43,10 +44,11 @@ namespace MediaPortal.Player.Subtitles
         LOGFONT logFont = new LOGFONT();
         int txtcolor;
         bool fShadow, fOutLine, fAdvancedRenderer = false;
-        int size = Marshal.SizeOf(typeof(LOGFONT));
+        int size = Marshal.SizeOf(typeof (LOGFONT));
         vobSub.get_TextSettings(logFont, size, out txtcolor, out fShadow, out fOutLine, out fAdvancedRenderer);
         FontStyle fontStyle = defStyle.fontIsBold ? FontStyle.Regular : FontStyle.Bold;
-        Font Subfont = new Font(defStyle.fontName, defStyle.fontSize, fontStyle, GraphicsUnit.Point, (byte)defStyle.fontCharset);
+        Font Subfont = new Font(defStyle.fontName, defStyle.fontSize, fontStyle, GraphicsUnit.Point,
+                                (byte)defStyle.fontCharset);
         Subfont.ToLogFont(logFont);
         //int R = (int)((iColor >> 16) & 0xff);
         //int G = (int)((iColor >> 8) & 0xff);
@@ -57,7 +59,8 @@ namespace MediaPortal.Player.Subtitles
         vobSub.put_TextSettings(logFont, size, defStyle.fontColor, fShadow, fOutLine, fAdvancedRenderer);
       }
 
-      { //load sub streams
+      {
+        //load sub streams
         IBaseFilter hms = null;
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.HaaliGuid, out hms);
         embeddedSelector = hms as IAMStreamSelect;
@@ -117,9 +120,7 @@ namespace MediaPortal.Player.Subtitles
       current = -1;
     }
 
-    public void SaveToDisk()
-    {
-    }
+    public void SaveToDisk() {}
 
     public bool IsModified()
     {
@@ -136,9 +137,7 @@ namespace MediaPortal.Player.Subtitles
       get { return AutoSaveTypeEnum.NEVER; }
     }
 
-    public void Render(Rectangle subsRect, Rectangle frameRect)
-    {
-    }
+    public void Render(Rectangle subsRect, Rectangle frameRect) {}
 
     public int GetCount()
     {
@@ -171,10 +170,7 @@ namespace MediaPortal.Player.Subtitles
 
     public int Current
     {
-      get
-      {
-        return current;
-      }
+      get { return current; }
       set
       {
         if (value < 0 || value >= GetCount())
@@ -221,10 +217,7 @@ namespace MediaPortal.Player.Subtitles
 
     public int DelayInterval
     {
-      get
-      {
-        return delayInterval;
-      }
+      get { return delayInterval; }
     }
 
     public int Delay
@@ -235,10 +228,7 @@ namespace MediaPortal.Player.Subtitles
         vobSub.get_SubtitleTiming(out delay, out speedmul, out speeddiv);
         return delay;
       }
-      set
-      {
-        vobSub.put_SubtitleTiming(value, 1, 1);
-      }
+      set { vobSub.put_SubtitleTiming(value, 1, 1); }
     }
 
     public void DelayPlus()
@@ -251,9 +241,8 @@ namespace MediaPortal.Player.Subtitles
       Delay = Delay - delayInterval;
     }
 
-    public void SetTime(long nsSampleTime)
-    {
-    }
+    public void SetTime(long nsSampleTime) {}
+
     #endregion
   }
 
@@ -263,7 +252,7 @@ namespace MediaPortal.Player.Subtitles
     {
       int hr;
       IBaseFilter vob = null;
-      
+
       DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.DirectVobSubAutoload, out vob);
       if (vob == null)
       {
@@ -295,10 +284,10 @@ namespace MediaPortal.Player.Subtitles
         }
       }
       else // VobSub already loaded
-      {        
+      {
         return null;
       }
-      
+
       // Check if Haali Media Splitter is in the graph.
       IBaseFilter hms = null;
       IPin pinSubTo = null;
@@ -313,12 +302,12 @@ namespace MediaPortal.Player.Subtitles
           Log.Debug("VideoPlayerVMR9: Connecting Haali's subtitle output to VobSub's input.");
           // Try to render pins
           IPin pinVobSubSub = DirectShowUtil.FindPin(vob, PinDirection.Input, "Input");
-          graphBuilder.Connect(pinSubTo,pinVobSubSub);
+          graphBuilder.Connect(pinSubTo, pinVobSubSub);
           DirectShowUtil.ReleaseComObject(pinSubTo);
           DirectShowUtil.ReleaseComObject(pinVobSubSub);
         }
       }
-      
+
       // Now check if vobsub's video input is not connected.
       // Check only if vmr9 is connected (render was successful).
       VMR9Util Vmr9 = VMR9Util.g_vmr9;
@@ -355,8 +344,7 @@ namespace MediaPortal.Player.Subtitles
         DirectShowUtil.ReleaseComObject(pinVideoTo);
         DirectShowUtil.ReleaseComObject(pinVobSubVideoIn);
         DirectShowUtil.ReleaseComObject(pinVobSubVideoOut);
-        DirectShowUtil.ReleaseComObject(pinVideoFrom);    
-
+        DirectShowUtil.ReleaseComObject(pinVideoFrom);
       }
       // Force vobsub to reload available subtitles.
       // This is needed if added as postprocessing filter.
@@ -375,10 +363,10 @@ namespace MediaPortal.Player.Subtitles
       }
 
       if (vob != null)
-      { 
-        Log.Info("VideoPlayerVMR9: DirectVobSub in graph, removing...");          
+      {
+        Log.Info("VideoPlayerVMR9: DirectVobSub in graph, removing...");
         // Check where video inputs are connected
-        IPin pinVideoIn = DsFindPin.ByDirection(vob, PinDirection.Input, 0);        
+        IPin pinVideoIn = DsFindPin.ByDirection(vob, PinDirection.Input, 0);
         IPin pinVideoOut = DsFindPin.ByDirection(vob, PinDirection.Output, 0);
 
         //find directvobsub's video output pin source input pin
@@ -387,7 +375,7 @@ namespace MediaPortal.Player.Subtitles
         //find directvobsub's video input pin source output pin
         IPin pinVideoFrom = null;
         pinVideoIn.ConnectedTo(out pinVideoFrom);
-        
+
         PinInfo pininfo;
         int hr;
 
@@ -398,9 +386,9 @@ namespace MediaPortal.Player.Subtitles
           if (hr != 0)
           {
             Log.Error("VideoPlayerVMR9: DirectVobSub failed disconnecting pin1: {0}", pininfo.name);
-          }          
-        }        
-        
+          }
+        }
+
         if (pinVideoTo != null)
         {
           pinVideoTo.QueryPinInfo(out pininfo);
@@ -415,7 +403,7 @@ namespace MediaPortal.Player.Subtitles
         graphBuilder.RemoveFilter(vob);
         while ((hr = DirectShowUtil.ReleaseComObject(vob)) > 0) ;
         vob = null;
-        
+
         //reconnect the source output pin to the vmr9/evr filter
         hr = graphBuilder.Connect(pinVideoFrom, pinVideoTo);
         //hr = graphBuilder.Render(pinVideoFrom);

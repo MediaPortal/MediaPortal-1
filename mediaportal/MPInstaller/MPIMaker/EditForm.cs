@@ -314,7 +314,7 @@ namespace MediaPortal.MPInstaller
       this.Text = projectFile;
       for (int i = 0; i < _struct.FileList.Count; i++)
       {
-        addrow((MPIFileList) _struct.FileList[i]);
+        addrow((MPIFileList)_struct.FileList[i]);
       }
       scriptEditor.textBox_code.Text = _struct.Script;
       openFileDialog1.InitialDirectory = Path.GetDirectoryName(_struct.ProjectFileName);
@@ -681,7 +681,7 @@ namespace MediaPortal.MPInstaller
 
     private void propertyGrid2_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
     {
-      bossview.SelectedItems[0].SubItems[5].Text = ((FilePropertiesClass) propertyGrid2.SelectedObject).ToString();
+      bossview.SelectedItems[0].SubItems[5].Text = ((FilePropertiesClass)propertyGrid2.SelectedObject).ToString();
     }
 
     private void setupGroupsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -768,7 +768,7 @@ namespace MediaPortal.MPInstaller
         }
         return;
       }
-     
+
       if (fil.ToUpper().Contains("THUMBS"))
       {
         foreach (string subdir in thumbst_comboBox1.Items)
@@ -849,13 +849,13 @@ namespace MediaPortal.MPInstaller
       bossview.Items.Clear();
       for (int i = 0; i < _struct.FileList.Count; i++)
       {
-        if (((MPIFileList) _struct.FileList[i]).SkinType &&
-            ((MPIFileList) _struct.FileList[i]).FileName.Contains(@"\" + skint_comboBox1.Text + @"\"))
+        if (((MPIFileList)_struct.FileList[i]).SkinType &&
+            ((MPIFileList)_struct.FileList[i]).FileName.Contains(@"\" + skint_comboBox1.Text + @"\"))
         {
-          ((MPIFileList) _struct.FileList[i]).FileProperties.DefaultFile = true;
-          ((MPIFileList) _struct.FileList[i]).Option = ((MPIFileList) _struct.FileList[i]).FileProperties.ToString();
+          ((MPIFileList)_struct.FileList[i]).FileProperties.DefaultFile = true;
+          ((MPIFileList)_struct.FileList[i]).Option = ((MPIFileList)_struct.FileList[i]).FileProperties.ToString();
         }
-        addrow((MPIFileList) _struct.FileList[i]);
+        addrow((MPIFileList)_struct.FileList[i]);
       }
     }
 
@@ -865,13 +865,13 @@ namespace MediaPortal.MPInstaller
       bossview.Items.Clear();
       for (int i = 0; i < _struct.FileList.Count; i++)
       {
-        if (((MPIFileList) _struct.FileList[i]).SkinType &&
-            ((MPIFileList) _struct.FileList[i]).FileName.Contains(@"\" + skint_comboBox1.Text + @"\"))
+        if (((MPIFileList)_struct.FileList[i]).SkinType &&
+            ((MPIFileList)_struct.FileList[i]).FileName.Contains(@"\" + skint_comboBox1.Text + @"\"))
         {
-          ((MPIFileList) _struct.FileList[i]).FileProperties.DefaultFile = false;
-          ((MPIFileList) _struct.FileList[i]).Option = ((MPIFileList) _struct.FileList[i]).FileProperties.ToString();
+          ((MPIFileList)_struct.FileList[i]).FileProperties.DefaultFile = false;
+          ((MPIFileList)_struct.FileList[i]).Option = ((MPIFileList)_struct.FileList[i]).FileProperties.ToString();
         }
-        addrow((MPIFileList) _struct.FileList[i]);
+        addrow((MPIFileList)_struct.FileList[i]);
       }
     }
 

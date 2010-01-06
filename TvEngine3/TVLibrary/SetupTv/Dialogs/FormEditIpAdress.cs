@@ -7,8 +7,8 @@ namespace SetupTv.Sections
 {
   public partial class FormEditIpAdress : Form
   {
-    string _hostName = "";
-    int _portNo = 554;
+    private string _hostName = "";
+    private int _portNo = 554;
 
     public FormEditIpAdress()
     {
@@ -53,27 +53,14 @@ namespace SetupTv.Sections
 
     public string HostName
     {
-      get
-      {
-        return _hostName;
-      }
-      set
-      {
-        _hostName = value;
-      }
+      get { return _hostName; }
+      set { _hostName = value; }
     }
 
     public int PortNo
     {
-      get
-      {
-        return _portNo;
-      }
-      set
-      {
-        _portNo = value;
-      }
+      get { return _portNo; }
+      set { _portNo = value; }
     }
-
   }
 }

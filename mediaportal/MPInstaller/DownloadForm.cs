@@ -36,7 +36,7 @@ namespace MediaPortal.MPInstaller
   {
     private string source = string.Empty;
     private string dest = string.Empty;
-    private WebClient client = new WebClient();    
+    private WebClient client = new WebClient();
     public int direction = 0;
     public string user = string.Empty;
     public string password = string.Empty;
@@ -86,8 +86,9 @@ namespace MediaPortal.MPInstaller
                 //client.DownloadFileAsync(
                 //  new Uri(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mpe.php?option=getxml&user=" + user + "&passwd=" +
                 //          password), dest);
-                client.DownloadFileAsync(new Uri(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=getxml&user=" + user + "&passwd=" +
-          password), dest);
+                client.DownloadFileAsync(
+                  new Uri(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=getxml&user=" + user + "&passwd=" +
+                          password), dest);
               }
               else
               {
@@ -99,8 +100,9 @@ namespace MediaPortal.MPInstaller
                 //client.DownloadFileAsync(
                 //  new Uri(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mpe.php?option=down&user=" + user + "&passwd=" +
                 //          password + "&filename=" + Path.GetFileName(source)), dest);
-                client.DownloadFileAsync(  new Uri(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=down&user=" + user + "&passwd=" +
-          password + "&filename=" + Path.GetFileName(source)), dest);
+                client.DownloadFileAsync(
+                  new Uri(MPinstallerStruct.DEFAULT_UPDATE_SITE + "/mp.php?option=down&user=" + user + "&passwd=" +
+                          password + "&filename=" + Path.GetFileName(source)), dest);
               }
             }
             // TODO
@@ -127,7 +129,7 @@ namespace MediaPortal.MPInstaller
     private void DownloadProgressCallback(object sender, DownloadProgressChangedEventArgs e)
     {
       progressBar1.Value = e.ProgressPercentage;
-      label2.Text = string.Format("{0} kb/{1} kb", e.BytesReceived/1024, e.TotalBytesToReceive/1024);
+      label2.Text = string.Format("{0} kb/{1} kb", e.BytesReceived / 1024, e.TotalBytesToReceive / 1024);
     }
 
     private void UploadProgressCallback(object sender, UploadProgressChangedEventArgs e)
@@ -147,9 +149,7 @@ namespace MediaPortal.MPInstaller
             {
               File.Delete(dest);
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
           }
         }
         MessageBox.Show(e.Error.Message + "\n" + e.Error.InnerException);
@@ -167,12 +167,12 @@ namespace MediaPortal.MPInstaller
         //fileName = <<Name of the file to be created(Need not be the name of the file on FTP server).>>
         FileStream outputStream = new FileStream(dest, FileMode.Create);
 
-        reqFTP = (FtpWebRequest) FtpWebRequest.Create(new Uri(source));
+        reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(source));
         reqFTP.Proxy.Credentials = CredentialCache.DefaultCredentials;
         reqFTP.Method = WebRequestMethods.Ftp.DownloadFile;
         reqFTP.UseBinary = true;
         reqFTP.Credentials = new NetworkCredential(user, pwd);
-        FtpWebResponse response = (FtpWebResponse) reqFTP.GetResponse();
+        FtpWebResponse response = (FtpWebResponse)reqFTP.GetResponse();
         Stream ftpStream = response.GetResponseStream();
         long cl = response.ContentLength;
         int bufferSize = 2048;
@@ -218,7 +218,7 @@ namespace MediaPortal.MPInstaller
       FtpWebRequest reqFTP;
 
       // Create FtpWebRequest object from the Uri provided
-      reqFTP = (FtpWebRequest) FtpWebRequest.Create(new Uri(dest));
+      reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(dest));
 
       // Provide the WebPermission Credintials
       reqFTP.Credentials = new NetworkCredential(user, pwd);
@@ -281,13 +281,13 @@ namespace MediaPortal.MPInstaller
       try
       {
         MessageBox.Show(newFilename);
-        reqFTP = (FtpWebRequest) FtpWebRequest.Create(new Uri(source));
+        reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(source));
         reqFTP.Proxy.Credentials = CredentialCache.DefaultCredentials;
         reqFTP.Method = WebRequestMethods.Ftp.Rename;
         reqFTP.RenameTo = newFilename;
         reqFTP.UseBinary = true;
         reqFTP.Credentials = new NetworkCredential(user, pwd);
-        FtpWebResponse response = (FtpWebResponse) reqFTP.GetResponse();
+        FtpWebResponse response = (FtpWebResponse)reqFTP.GetResponse();
         Stream ftpStream = response.GetResponseStream();
 
         ftpStream.Close();

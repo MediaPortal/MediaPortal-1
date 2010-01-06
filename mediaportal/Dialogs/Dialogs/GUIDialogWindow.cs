@@ -62,7 +62,7 @@ namespace MediaPortal.Dialogs
     {
       if (GUIWindowManager.IsRouted)
       {
-        GUIDialogWindow win = (GUIDialogWindow) GUIWindowManager.GetWindow(GUIWindowManager.RoutedWindow);
+        GUIDialogWindow win = (GUIDialogWindow)GUIWindowManager.GetWindow(GUIWindowManager.RoutedWindow);
         if (win != null)
         {
           win.PageDestroy();
@@ -204,9 +204,7 @@ namespace MediaPortal.Dialogs
 
     #region PreInit
 
-    public override void PreInit()
-    {
-    }
+    public override void PreInit() {}
 
     #endregion
 

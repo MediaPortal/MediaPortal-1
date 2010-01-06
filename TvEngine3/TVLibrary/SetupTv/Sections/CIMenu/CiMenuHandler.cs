@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
@@ -26,17 +26,21 @@ using TvLibrary.Log;
 
 namespace SetupTv.Sections
 {
+
   #region CI Menu
+
   /// <summary>
   /// Handler class for gui interactions of ci menu
   /// </summary>
   public class CiMenuHandler : CiMenuCallbackSink
   {
-    CI_Menu_Dialog refDlg;
+    private CI_Menu_Dialog refDlg;
+
     public void SetCaller(CI_Menu_Dialog caller)
     {
       refDlg = caller;
     }
+
     /// <summary>
     /// eventhandler to show CI Menu dialog
     /// </summary>
@@ -53,12 +57,14 @@ namespace SetupTv.Sections
       }
       catch
       {
-        Menu = new CiMenu("Remoting Exception", "Communication with server failed", null, TvLibrary.Interfaces.CiMenuState.Error);
+        Menu = new CiMenu("Remoting Exception", "Communication with server failed", null,
+                          TvLibrary.Interfaces.CiMenuState.Error);
         // pass menu to calling dialog
         if (refDlg != null)
           refDlg.CiMenuCallback(Menu);
       }
     }
   }
+
   #endregion
 }

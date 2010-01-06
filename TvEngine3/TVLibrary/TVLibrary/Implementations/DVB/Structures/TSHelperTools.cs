@@ -37,50 +37,62 @@ namespace TvLibrary.Implementations.DVB.Structures
       /// Sync byte
       /// </summary>
       public int SyncByte;
+
       /// <summary>
       /// Transport error
       /// </summary>
       public bool TransportError;
+
       /// <summary>
       /// Payload unit start
       /// </summary>
       public bool PayloadUnitStart;
+
       /// <summary>
       /// Transport priority
       /// </summary>
       public bool TransportPriority;
+
       /// <summary>
       /// Pid
       /// </summary>
       public int Pid;
+
       /// <summary>
       /// Transport scrambling
       /// </summary>
       public int TransportScrambling;
+
       /// <summary>
       /// Adaption field control
       /// </summary>
       public int AdaptionFieldControl;
+
       /// <summary>
       /// Continuity Counter
       /// </summary>
       public int ContinuityCounter;
+
       /// <summary>
       /// Adpation field
       /// </summary>
       public int AdaptionField;
+
       /// <summary>
       /// Table id
       /// </summary>
       public int TableID;
+
       /// <summary>
       /// Section Len
       /// </summary>
       public int SectionLen;
+
       /// <summary>
       /// Is MHW Table
       /// </summary>
       public bool IsMHWTable;
+
       /// <summary>
       /// MHW Indicator
       /// </summary>
@@ -99,7 +111,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       TSHeader header = new TSHeader();
       header.SyncByte = data[0]; // indicates header is not valid
       if (data[0] != 0x47)
-        return header;// no ts-header, return
+        return header; // no ts-header, return
       header.SyncByte = data[0];
       header.TransportError = (data[1] & 0x80) > 0 ? true : false;
       header.PayloadUnitStart = (data[1] & 0x40) > 0 ? true : false;
@@ -113,6 +125,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       header.SectionLen = ((data[6] - 0x70) << 8) + data[7];
       return header;
     }
+
     ///<summary>
     /// Converts the binary data into a TsHeader
     ///</summary>
@@ -123,7 +136,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       TSHeader header = new TSHeader();
       header.SyncByte = data[0]; // indicates header is not valid
       if (data[0] != 0x47)
-        return header;// no ts-header, return
+        return header; // no ts-header, return
       header.SyncByte = data[0];
       header.TransportError = (data[1] & 0x80) > 0 ? true : false;
       header.PayloadUnitStart = (data[1] & 0x40) > 0 ? true : false;

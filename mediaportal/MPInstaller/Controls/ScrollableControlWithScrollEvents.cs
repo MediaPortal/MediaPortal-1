@@ -100,14 +100,14 @@ namespace Pabo.MozBar
       {
         if (HorizontalScroll != null)
         {
-          uint wParam = (uint) m.WParam.ToInt32();
+          uint wParam = (uint)m.WParam.ToInt32();
           SCROLLINFO si = new SCROLLINFO();
           si.cbSize = Marshal.SizeOf(si);
           si.fMask = SIF_ALL;
           bool ret = GetScrollInfo(this.Handle, SB_HORZ, ref si);
           HorizontalScroll(this,
                            new MozScrollEventArgs(
-                             GetEventType(wParam & 0xffff), (int) (wParam >> 16), si));
+                             GetEventType(wParam & 0xffff), (int)(wParam >> 16), si));
         }
       } 
         // or a vertical scroll message?
@@ -115,14 +115,14 @@ namespace Pabo.MozBar
       {
         if (VerticalScroll != null)
         {
-          uint wParam = (uint) m.WParam.ToInt32();
+          uint wParam = (uint)m.WParam.ToInt32();
           SCROLLINFO si = new SCROLLINFO();
           si.cbSize = Marshal.SizeOf(si);
           si.fMask = SIF_ALL;
           bool ret = GetScrollInfo(this.Handle, SB_VERT, ref si);
           VerticalScroll(this,
                          new MozScrollEventArgs(
-                           GetEventType(wParam & 0xffff), (int) (wParam >> 16), si));
+                           GetEventType(wParam & 0xffff), (int)(wParam >> 16), si));
         }
       }
     }

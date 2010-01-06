@@ -163,7 +163,7 @@ namespace Yeti.Lame
     //public byte[]   btReserved;//[255-4*sizeof(DWORD) - sizeof( WORD )];
     public LHV1(WaveFormat format, uint MpeBitRate)
     {
-      if (format.wFormatTag != (short) WaveFormats.Pcm)
+      if (format.wFormatTag != (short)WaveFormats.Pcm)
       {
         throw new ArgumentOutOfRangeException("format", "Only PCM format supported");
       }
@@ -172,7 +172,7 @@ namespace Yeti.Lame
         throw new ArgumentOutOfRangeException("format", "Only 16 bits samples supported");
       }
       dwStructVersion = 1;
-      dwStructSize = (uint) Marshal.SizeOf(typeof (BE_CONFIG));
+      dwStructSize = (uint)Marshal.SizeOf(typeof (BE_CONFIG));
       switch (format.nSamplesPerSec)
       {
         case 16000:
@@ -188,7 +188,7 @@ namespace Yeti.Lame
         default:
           throw new ArgumentOutOfRangeException("format", "Unsupported sample rate");
       }
-      dwSampleRate = (uint) format.nSamplesPerSec; // INPUT FREQUENCY
+      dwSampleRate = (uint)format.nSamplesPerSec; // INPUT FREQUENCY
       dwReSampleRate = 0; // DON'T RESAMPLE
       switch (format.nChannels)
       {
@@ -295,9 +295,7 @@ namespace Yeti.Lame
     }
 
     public BE_CONFIG(WaveFormat format)
-      : this(format, 128)
-    {
-    }
+      : this(format, 128) {}
   }
 
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
@@ -409,8 +407,8 @@ namespace Yeti.Lame
       GCHandle handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
       try
       {
-        IntPtr ptr = (IntPtr) (handle.AddrOfPinnedObject().ToInt32() + index);
-        res = beEncodeChunk(hbeStream, nBytes/2 /*Samples*/, ptr, pOutput, ref pdwOutput);
+        IntPtr ptr = (IntPtr)(handle.AddrOfPinnedObject().ToInt32() + index);
+        res = beEncodeChunk(hbeStream, nBytes / 2 /*Samples*/, ptr, pOutput, ref pdwOutput);
       }
       finally
       {
@@ -431,7 +429,7 @@ namespace Yeti.Lame
     /// <returns>On success: BE_ERR_SUCCESSFUL</returns>
     public static uint EncodeChunk(uint hbeStream, byte[] buffer, byte[] pOutput, ref uint pdwOutput)
     {
-      return EncodeChunk(hbeStream, buffer, 0, (uint) buffer.Length, pOutput, ref pdwOutput);
+      return EncodeChunk(hbeStream, buffer, 0, (uint)buffer.Length, pOutput, ref pdwOutput);
     }
 
     /// <summary>

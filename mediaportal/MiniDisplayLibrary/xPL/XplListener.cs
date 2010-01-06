@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,7 +12,7 @@ using System.Timers;
 using System.Xml;
 using MediaPortal.GUI.Library;
 using Microsoft.Win32;
-using Timer=System.Timers.Timer;
+using Timer = System.Timers.Timer;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 {
@@ -134,9 +134,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           }
         }
       }
-      catch
-      {
-      }
+      catch {}
       return false;
     }
 
@@ -155,9 +153,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           this.sockIncoming.Close();
         }
       }
-      catch
-      {
-      }
+      catch {}
     }
 
     ~XplListener()
@@ -169,9 +165,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           this.Dispose();
         }
       }
-      catch
-      {
-      }
+      catch {}
     }
 
     private string getVersionNumber()
@@ -281,9 +275,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
                     this.XplReConfigDone();
                   }
                 }
-                catch
-                {
-                }
+                catch {}
                 this.SaveState();
                 this.SendHeartbeatMessage(false);
               }
@@ -445,7 +437,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
             if ((reader.NodeType == XmlNodeType.Element) & (reader.Name == "configItem"))
             {
               this.ConfigItems.Add(reader.GetAttribute("key"), reader.GetAttribute("value"),
-                                   (xplConfigTypes) int.Parse(reader.GetAttribute("cfgtype")));
+                                   (xplConfigTypes)int.Parse(reader.GetAttribute("cfgtype")));
             }
           }
           reader.Close();
@@ -535,7 +527,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
 
     private bool MsgTypeMatchesFilter(string m, XplMessageTypes f)
     {
-      if (((int) f) == 0xff)
+      if (((int)f) == 0xff)
       {
         return true;
       }
@@ -547,17 +539,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         {
           if (str == "xpl-stat")
           {
-            if (((byte) (f & XplMessageTypes.Status)) > 0)
+            if (((byte)(f & XplMessageTypes.Status)) > 0)
             {
               flag = true;
             }
           }
-          else if ((str == "xpl-trig") && (((byte) (f & XplMessageTypes.Trigger)) > 0))
+          else if ((str == "xpl-trig") && (((byte)(f & XplMessageTypes.Trigger)) > 0))
           {
             flag = true;
           }
         }
-        else if (((byte) (f & XplMessageTypes.Command)) > 0)
+        else if (((byte)(f & XplMessageTypes.Command)) > 0)
         {
           flag = true;
         }
@@ -577,7 +569,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
       {
         EndPoint epIncoming = this.epIncoming;
         int count = this.sockIncoming.EndReceiveFrom(ar, ref epIncoming);
-        this.epIncoming = (IPEndPoint) epIncoming;
+        this.epIncoming = (IPEndPoint)epIncoming;
         if (this.DoDebug)
         {
           Log.Info("xPL.XplListener.ReceiveData(): received {0} bytes", new object[] {count});
@@ -720,7 +712,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
               writer.WriteStartElement("configItem");
               writer.WriteAttributeString("key", item.Name);
               writer.WriteAttributeString("value", item.Values[j]);
-              writer.WriteAttributeString("cfgtype", ((int) item.ConfigType).ToString());
+              writer.WriteAttributeString("cfgtype", ((int)item.ConfigType).ToString());
               writer.WriteEndElement();
             }
           }
@@ -811,7 +803,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           key = Registry.LocalMachine.OpenSubKey(@"Software\xPL");
           if (key != null)
           {
-            str = (string) key.GetValue("ListenOnAddress", "ANY_LOCAL");
+            str = (string)key.GetValue("ListenOnAddress", "ANY_LOCAL");
             if (extensiveLogging)
             {
               Log.Info("xPL.XplListener.sListenOnIP: retreived \"{0}\" from registry", new object[] {str});
@@ -875,7 +867,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           return XplMessageTypes.Trigger;
 
         case "*":
-          return (XplMessageTypes) 0xff;
+          return (XplMessageTypes)0xff;
       }
       return XplMessageTypes.None;
     }
@@ -893,7 +885,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         case XplMessageTypes.Trigger:
           return "xpl-trig";
 
-        case (XplMessageTypes) 0xff:
+        case (XplMessageTypes)0xff:
           return "*";
       }
       return "";
@@ -934,9 +926,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
             {
               this.XplOnTimer();
             }
-            catch
-            {
-            }
+            catch {}
           }
           this.HBeat_Count++;
           if ((this.HBeat_Count >= this.HBeat_Interval) | this.bConfigOnly)
@@ -944,7 +934,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
             this.SendHeartbeatMessage(false);
             this.HBeat_Count = 0;
           }
-          this.XPLTimer.Interval = ((60 - DateTime.Now.Second) + 1)*0x3e8;
+          this.XPLTimer.Interval = ((60 - DateTime.Now.Second) + 1) * 0x3e8;
         }
         if (this.WriteDebugInfo)
         {
@@ -1084,7 +1074,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
             key = Registry.LocalMachine.OpenSubKey(@"Software\xPL");
             if (key != null)
             {
-              str = (string) key.GetValue("ListenToAddresses", "ANY");
+              str = (string)key.GetValue("ListenToAddresses", "ANY");
               if (this.DoDebug)
               {
                 Log.Info("xPL.XplListener.ListenOnIPs: retreived \"{0}\" from registry", new object[] {str});

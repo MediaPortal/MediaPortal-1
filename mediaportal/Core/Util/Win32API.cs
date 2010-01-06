@@ -43,6 +43,7 @@ namespace MediaPortal.Util
     #region Interop declarations
 
     #region Constants
+
     private const int SW_HIDE = 0;
     private const int SW_SHOWNORMAL = 1;
     private const int SW_SHOWMINIMIZED = 2;
@@ -51,9 +52,10 @@ namespace MediaPortal.Util
     private const int WPF_RESTORETOMAXIMIZED = 2;
     public const int WM_SHOWWINDOW = 0x0018;
     private const int SHGFP_TYPE_CURRENT = 0;
-    public const int CSIDL_MYMUSIC = 0x000d;     // "My Music" folder
-    public const int CSIDL_MYVIDEO = 0x000e;     // "My Videos" folder
-    public const int CSIDL_MYPICTURES = 0x0027;  // "My Pictures" folder
+    public const int CSIDL_MYMUSIC = 0x000d; // "My Music" folder
+    public const int CSIDL_MYVIDEO = 0x000e; // "My Videos" folder
+    public const int CSIDL_MYPICTURES = 0x0027; // "My Pictures" folder
+
     #endregion
 
     #region Methods
@@ -82,8 +84,10 @@ namespace MediaPortal.Util
     [DllImportAttribute("user32", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
     public static extern int UnhookWindowsHookEx(int hHook);
 
-    [DllImportAttribute("user32", EntryPoint = "FindWindowA", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
-    public static extern uint FindWindow([MarshalAs(UnmanagedType.VBByRefStr)] ref string lpClassName, [MarshalAs(UnmanagedType.VBByRefStr)] ref string lpWindowName);
+    [DllImportAttribute("user32", EntryPoint = "FindWindowA", ExactSpelling = true, CharSet = CharSet.Ansi,
+      SetLastError = true)]
+    public static extern uint FindWindow([MarshalAs(UnmanagedType.VBByRefStr)] ref string lpClassName,
+                                         [MarshalAs(UnmanagedType.VBByRefStr)] ref string lpWindowName);
 
     [DllImportAttribute("user32", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
     public static extern int GetWindow(int hwnd, int wCmd);
@@ -125,22 +129,25 @@ namespace MediaPortal.Util
     public static extern bool PostThreadMessage(int idThread, uint Msg, uint wParam, uint lParam);
 
     [DllImport("wininet.dll")]
-    private extern static bool InternetGetConnectedState(out int Description, int ReservedValue);
+    private static extern bool InternetGetConnectedState(out int Description, int ReservedValue);
 
     // Takes the CSIDL of a folder and returns the pathname.
     [DllImport("shell32.dll")]
     public static extern Int32 SHGetFolderPath(
-        IntPtr hwndOwner,        // Handle to an owner window.
-        Int32 nFolder,           // A CSIDL value that identifies the folder whose path is to be retrieved.
-        IntPtr hToken,           // An access token that can be used to represent a particular user.
-        UInt32 dwFlags,          // Flags to specify which path is to be returned. It is used for cases where the folder associated with a CSIDL may be moved or renamed by the user. 
-        StringBuilder pszPath);  // Pointer to a null-terminated string which will receive the path.
+      IntPtr hwndOwner, // Handle to an owner window.
+      Int32 nFolder, // A CSIDL value that identifies the folder whose path is to be retrieved.
+      IntPtr hToken, // An access token that can be used to represent a particular user.
+      UInt32 dwFlags,
+      // Flags to specify which path is to be returned. It is used for cases where the folder associated with a CSIDL may be moved or renamed by the user. 
+      StringBuilder pszPath);
+
+    // Pointer to a null-terminated string which will receive the path.
 
     [DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool IsWow64Process(
-        [In] IntPtr hProcess,
-        [Out] out bool lpSystemInfo);
+      [In] IntPtr hProcess,
+      [Out] out bool lpSystemInfo);
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct WIN32_FIND_DATA
@@ -153,10 +160,8 @@ namespace MediaPortal.Util
       public int nFileSizeLow;
       public int dwReserved0;
       public int dwReserved1;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-      public string cFileName;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
-      public string cAlternate;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string cFileName;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)] public string cAlternate;
     }
 
     [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
@@ -239,6 +244,7 @@ namespace MediaPortal.Util
     #endregion
 
     #region Power Saving
+
     [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     public static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE flags);
 
@@ -261,9 +267,11 @@ namespace MediaPortal.Util
     {
       SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS);
     }
+
     #endregion
 
     #region x64
+
     public static bool Check64Bit()
     {
       //IsWow64Process is not supported under Windows2000 ( ver 5.0 )
@@ -280,6 +288,7 @@ namespace MediaPortal.Util
       }
       return isWow64;
     }
+
     #endregion
 
     //Checks if the computer is connected to the internet...
@@ -334,7 +343,7 @@ namespace MediaPortal.Util
       {
         Show("Shell_TrayWnd", "", bVisible);
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     public static void EnableStartBar(bool bEnable)
@@ -343,7 +352,7 @@ namespace MediaPortal.Util
       {
         Enable("Shell_TrayWnd", "", bEnable);
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     /// <summary> 
@@ -358,10 +367,10 @@ namespace MediaPortal.Util
 
       switch (windowPlacement.showCmd)
       {
-        case SW_HIDE:           //Window is hidden
+        case SW_HIDE: //Window is hidden
           ShowWindow(_hWnd, SW_RESTORE);
           break;
-        case SW_SHOWMINIMIZED:  //Window is minimized
+        case SW_SHOWMINIMIZED: //Window is minimized
           // if the window is minimized, then we need to restore it to its 
           // previous size. we also take into account whether it was 
           // previously maximized. 
@@ -400,7 +409,8 @@ namespace MediaPortal.Util
         Environment.Exit(0);
       }
       Log.Info("Main: Could not activate running instance");
-      MessageBox.Show("Could not activate running instance.", string.Format("{0} is already running", processName), MessageBoxButtons.OK,
+      MessageBox.Show("Could not activate running instance.", string.Format("{0} is already running", processName),
+                      MessageBoxButtons.OK,
                       MessageBoxIcon.Warning);
       Environment.Exit(0);
     }

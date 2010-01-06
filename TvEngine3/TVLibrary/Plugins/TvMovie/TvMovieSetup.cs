@@ -30,7 +30,6 @@ using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-
 using TvDatabase;
 using TvEngine;
 using TvLibrary.Log;
@@ -41,11 +40,12 @@ namespace SetupTv.Sections
   public partial class TvMovieSetup : SetupTv.SectionSettings
   {
     #region ChannelInfo class
-    class ChannelInfo
+
+    private class ChannelInfo
     {
-      string _start = "00:00";
-      string _end = "00:00";
-      string _name = string.Empty;
+      private string _start = "00:00";
+      private string _end = "00:00";
+      private string _name = string.Empty;
 
       public string Start
       {
@@ -71,9 +71,11 @@ namespace SetupTv.Sections
         _end = "00:00";
       }
     }
+
     #endregion
 
     #region Form Methods
+
     private void treeViewStations_DoubleClick(object sender, EventArgs e)
     {
       if (treeViewTvMStations.SelectedNode != null)
@@ -90,19 +92,20 @@ namespace SetupTv.Sections
     {
       Process.Start("http://www.tvmovie.de/ClickFinder.57.0.html");
     }
+
     #endregion
 
     #region Constructor
+
     public TvMovieSetup()
-      : this("TV Movie Clickfinder EPG import")
-    {
-    }
+      : this("TV Movie Clickfinder EPG import") {}
 
     public TvMovieSetup(string name)
       : base(name)
     {
       InitializeComponent();
     }
+
     #endregion
 
     #region Serialisation
@@ -254,7 +257,7 @@ namespace SetupTv.Sections
                 imageListTvmStations.Images.Add(new Icon(stationThumb, new Size(32, 22)));
               }
 
-              TreeNode stationNode = new TreeNode(station.TvmEpgDescription, i, i);//, subItems);
+              TreeNode stationNode = new TreeNode(station.TvmEpgDescription, i, i); //, subItems);
               ChannelInfo channelInfo = new ChannelInfo();
               channelInfo.Name = station.TvmEpgChannel;
               stationNode.Tag = channelInfo;
@@ -371,7 +374,8 @@ namespace SetupTv.Sections
           TvMovieMapping mapping = null;
           try
           {
-            mapping = new TvMovieMapping(((Channel)channel.Tag).IdChannel, channelInfo.Name, channelInfo.Start, channelInfo.End);
+            mapping = new TvMovieMapping(((Channel)channel.Tag).IdChannel, channelInfo.Name, channelInfo.Start,
+                                         channelInfo.End);
           }
           catch (Exception exm)
           {
@@ -446,7 +450,8 @@ namespace SetupTv.Sections
             }
             catch (Exception exInner)
             {
-              Log.Debug("TVMovie plugin: Mapping of station {0} failed; maybe it has been deleted / changed ({1})", MpChannelName, exInner.Message);
+              Log.Debug("TVMovie plugin: Mapping of station {0} failed; maybe it has been deleted / changed ({1})",
+                        MpChannelName, exInner.Message);
             }
           }
         }
@@ -548,7 +553,8 @@ namespace SetupTv.Sections
       maskedTextBoxTimeStart.Text = CleanInput(maskedTextBoxTimeStart.Text);
       treeViewMpChannels.SelectedNode.Tag = channelInfo;
       if (channelInfo.Start != "00:00" || channelInfo.End != "00:00")
-        treeViewMpChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start, channelInfo.End);
+        treeViewMpChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start,
+                                                             channelInfo.End);
       else
         treeViewMpChannels.SelectedNode.Text = string.Format("{0}", channelInfo.Name);
     }
@@ -560,7 +566,8 @@ namespace SetupTv.Sections
       maskedTextBoxTimeEnd.Text = CleanInput(maskedTextBoxTimeEnd.Text);
       treeViewMpChannels.SelectedNode.Tag = channelInfo;
       if (channelInfo.Start != "00:00" || channelInfo.End != "00:00")
-        treeViewMpChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start, channelInfo.End);
+        treeViewMpChannels.SelectedNode.Text = string.Format("{0} ({1}-{2})", channelInfo.Name, channelInfo.Start,
+                                                             channelInfo.End);
       else
         treeViewMpChannels.SelectedNode.Text = string.Format("{0}", channelInfo.Name);
     }
@@ -588,15 +595,15 @@ namespace SetupTv.Sections
     private string GetRestPeriod()
     {
       if (radioButton6h.Checked)
-        return "6"; else
-        if (radioButton12h.Checked)
-        return "12"; else
-          if (radioButton24h.Checked)
-        return "24"; else
-            if (radioButton2d.Checked)
-        return "48"; else
-              if (radioButton7d.Checked)
-                return "168";
+        return "6";
+      else if (radioButton12h.Checked)
+        return "12";
+      else if (radioButton24h.Checked)
+        return "24";
+      else if (radioButton2d.Checked)
+        return "48";
+      else if (radioButton7d.Checked)
+        return "168";
 
       return "24";
     }
@@ -605,12 +612,24 @@ namespace SetupTv.Sections
     {
       switch (RadioButtonSetting)
       {
-        case "6": radioButton6h.Checked = true; break;
-        case "12": radioButton12h.Checked = true; break;
-        case "24": radioButton24h.Checked = true; break;
-        case "48": radioButton2d.Checked = true; break;
-        case "168": radioButton7d.Checked = true; break;
-        default: radioButton24h.Checked = true; break;
+        case "6":
+          radioButton6h.Checked = true;
+          break;
+        case "12":
+          radioButton12h.Checked = true;
+          break;
+        case "24":
+          radioButton24h.Checked = true;
+          break;
+        case "48":
+          radioButton2d.Checked = true;
+          break;
+        case "168":
+          radioButton7d.Checked = true;
+          break;
+        default:
+          radioButton24h.Checked = true;
+          break;
       }
     }
 
@@ -624,7 +643,8 @@ namespace SetupTv.Sections
 
     private void checkBoxEnableImport_CheckedChanged(object sender, EventArgs e)
     {
-      groupBoxDescriptions.Enabled = groupBoxImportTime.Enabled = groupBoxInstallMethod.Enabled = checkBoxEnableImport.Checked;
+      groupBoxDescriptions.Enabled =
+        groupBoxImportTime.Enabled = groupBoxInstallMethod.Enabled = checkBoxEnableImport.Checked;
 
       if (checkBoxEnableImport.Checked)
       {
@@ -638,9 +658,12 @@ namespace SetupTv.Sections
         }
         catch (Exception ex1)
         {
-          MessageBox.Show(this, "Please make sure a supported TV Movie Clickfinder release has been successfully installed.", "Error loading TV Movie stations", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show(this,
+                          "Please make sure a supported TV Movie Clickfinder release has been successfully installed.",
+                          "Error loading TV Movie stations", MessageBoxButtons.OK, MessageBoxIcon.Error);
           checkBoxEnableImport.Checked = false;
-          Log.Info("TVMovie plugin: Error enabling TV Movie import in LoadStations() - {0},{1}", ex1.Message, ex1.StackTrace);
+          Log.Info("TVMovie plugin: Error enabling TV Movie import in LoadStations() - {0},{1}", ex1.Message,
+                   ex1.StackTrace);
           return;
         }
 
@@ -650,9 +673,11 @@ namespace SetupTv.Sections
         }
         catch (Exception ex2)
         {
-          MessageBox.Show(this, "Please make sure your using a valid channel mapping.", "Error loading TVM <-> MP channel mapping", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show(this, "Please make sure your using a valid channel mapping.",
+                          "Error loading TVM <-> MP channel mapping", MessageBoxButtons.OK, MessageBoxIcon.Error);
           checkBoxEnableImport.Checked = false;
-          Log.Info("TVMovie plugin: Error enabling TV Movie import in LoadMapping() - {0},{1}", ex2.Message, ex2.StackTrace);
+          Log.Info("TVMovie plugin: Error enabling TV Movie import in LoadMapping() - {0},{1}", ex2.Message,
+                   ex2.StackTrace);
           return;
         }
       }

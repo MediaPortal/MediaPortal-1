@@ -30,9 +30,11 @@ using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
 {
+
   #region API Enums
 
   #region TTApiResult
+
   /// <summary>
   /// Return values of TT API
   /// </summary>
@@ -119,9 +121,11 @@ namespace TvLibrary.Implementations.DVB
     /// </summary> 
     BufferTooSmall
   }
+
   #endregion
-  
+
   #region TTApiDeviceCat
+
   /// <summary>
   /// API Device Catagory
   /// </summary>
@@ -156,104 +160,136 @@ namespace TvLibrary.Implementations.DVB
     /// </summary> 
     PREMIUM
   }
+
   #endregion
 
   #region TTCiSlotStatus
+
   /// <summary>
   /// Status for CI Slot
   /// </summary>
   public enum TTCiSlotStatus
   {
     /// Common interface slot is empty.
-  	SlotEmpty           = 0,
+    SlotEmpty = 0,
     /// A CAM is inserted into the common interface.
-    SlotModuleInserted  = 1,
+    SlotModuleInserted = 1,
     /// CAM initialisation ready.
-    SlotModuleOk        = 2,
+    SlotModuleOk = 2,
     /// CAM initialisation ready.
-    SlotCaOk            = 3,
+    SlotCaOk = 3,
     /// CAM initialisation ready.
-    SlotDbgMsg          = 4,
+    SlotDbgMsg = 4,
     /// Slot state could not be determined.
-    SlotUnknownState    = 0xFF
+    SlotUnknownState = 0xFF
   }
+
   #endregion
+
   #endregion
 
   /// <summary>
   /// Technotrend BDA API wrapper and CI handler
   /// </summary>
-  unsafe public class TechnoTrendAPI : IDisposable, IDiSEqCController, ICiMenuActions
+  public unsafe class TechnoTrendAPI : IDisposable, IDiSEqCController, ICiMenuActions
   {
     #region Structs for callback and arguments
+
     /// <summary>
     /// Technotrend: Callback structures
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    struct TTCallbackStruct
+    private struct TTCallbackStruct
     {
       public OnSlotStatusCallback p01;
+
       /// Context pointer for PCBFCN_CI_OnSlotStatus
       public IntPtr p01Context;
+
       /// PCBFCN_CI_OnCAStatus
       public OnCaChangeCallback p02;
+
       /// Context pointer for PCBFCN_CI_OnCAStatus
       public IntPtr p02Context;
+
       /// PCBFCN_CI_OnDisplayString
       public OnDisplayString p03;
+
       /// Context pointer for PCBFCN_CI_OnDisplayString
       public IntPtr p03Context;
+
       /// PCBFCN_CI_OnDisplayMenu
       public OnDisplayMenuAndLists p04; // use same type of delegate
+
       /// Context pointer for PCBFCN_CI_OnDisplayMenu
       public IntPtr p04Context;
+
       /// PCBFCN_CI_OnDisplayList
       public OnDisplayMenuAndLists p05; // use same type of delegate
+
       /// Context pointer for PCBFCN_CI_OnDisplayList
       public IntPtr p05Context;
+
       /// PCBFCN_CI_OnSwitchOsdOff
       public OnSwitchOsdOff p06;
+
       /// Context pointer for PCBFCN_CI_OnSwitchOsdOff
       public IntPtr p06Context;
+
       /// PCBFCN_CI_OnInputRequest
       public OnInputRequest p07;
+
       /// Context pointer for PCBFCN_CI_OnInputRequest
       public IntPtr p07Context;
+
       /// PCBFCN_CI_OnLscSetDescriptor
       public OnLscSetDescriptor p08;
+
       /// Context pointer for PCBFCN_CI_OnLscSetDescriptor
       public IntPtr p08Context;
+
       /// PCBFCN_CI_OnLscConnect
       public OnLscConnect p09;
+
       /// Context pointer for PCBFCN_CI_OnLscConnect
       public IntPtr p09Context;
+
       /// PCBFCN_CI_OnLscDisconnect
       public OnLscDisconnect p10;
+
       /// Context pointer for PCBFCN_CI_OnLscDisconnect
       public IntPtr p10Context;
+
       /// PCBFCN_CI_OnLscSetParams
       public OnLscSetParams p11;
+
       /// Context pointer for PCBFCN_CI_OnLscSetParams
       public IntPtr p11Context;
+
       /// PCBFCN_CI_OnLscEnquireStatus
       public OnLscEnquireStatus p12;
+
       /// Context pointer for PCBFCN_CI_OnLscEnquireStatus
       public IntPtr p12Context;
+
       /// PCBFCN_CI_OnLscGetNextBuffer
       public OnLscGetNextBuffer p13;
+
       /// Context pointer for PCBFCN_CI_OnLscGetNextBuffer
       public IntPtr p13Context;
+
       /// PCBFCN_CI_OnLscTransmitBuffer
       public OnLscTransmitBuffer p14;
+
       /// Context pointer for PCBFCN_CI_OnLscTransmitBuffer
       public IntPtr p14Context;
-    };
+    } ;
 
     /// <summary>
     /// Technotrend: Callback structures
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    unsafe struct TTSlimCallbackStruct
+    private unsafe struct TTSlimCallbackStruct
     {
       public OnSlotStatusCallback OnSlotStatus;
       public IntPtr OnSlotStatusContext;
@@ -269,10 +305,13 @@ namespace TvLibrary.Implementations.DVB
     {
       /// CI status
       public Byte nStatus;
+
       /// menu title string
       public IntPtr pMenuTitleString;
+
       /// cam system ID's
       public UInt16* pCaSystemIDs;
+
       /// number of cam system ID's
       public UInt16 wNoOfCaSystemIDs;
     }
@@ -280,6 +319,7 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region DLL Imports
+
     /// <summary>
     /// Technotrend: Open hardware
     /// </summary>
@@ -287,18 +327,18 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="deviceIdentifier"></param>
     /// <returns>handle to opened device</returns>
     [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    [SuppressUnmanagedCodeSecurity]    
+    [SuppressUnmanagedCodeSecurity]
     private static extern IntPtr bdaapiOpenHWIdx(TTApiDeviceCat deviceType, UInt32 deviceIdentifier);
-   
+
     /// <summary>
     /// Technotrend: Open CI
     /// </summary>
     /// <param name="device"></param>
     /// <returns></returns>
     [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    [SuppressUnmanagedCodeSecurity]    
+    [SuppressUnmanagedCodeSecurity]
     private static extern TTApiResult bdaapiOpenCIWithoutPointer(IntPtr device);
-   
+
     /// <summary>
     /// Technotrend: Open CI
     /// </summary>
@@ -306,9 +346,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="callback"></param>
     /// <returns></returns>
     [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    [SuppressUnmanagedCodeSecurity]    
+    [SuppressUnmanagedCodeSecurity]
     private static extern TTApiResult bdaapiOpenCISlim(IntPtr device, TTSlimCallbackStruct callback);
-   
+
     /// <summary>
     /// Technotrend: Open CI
     /// </summary>
@@ -318,13 +358,13 @@ namespace TvLibrary.Implementations.DVB
     [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TTApiResult bdaapiOpenCI(IntPtr device, TTCallbackStruct callback);
-   
+
     /// <summary>
     /// Technotrend: Close API
     /// </summary>
     /// <param name="device"></param>
     [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    [SuppressUnmanagedCodeSecurity]    
+    [SuppressUnmanagedCodeSecurity]
     private static extern void bdaapiClose(IntPtr device);
 
     /// <summary>
@@ -342,9 +382,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="slot"></param>
     /// <returns></returns>
     [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    [SuppressUnmanagedCodeSecurity]    
+    [SuppressUnmanagedCodeSecurity]
     private static extern TTApiResult bdaapiCIGetSlotStatus(IntPtr device, byte slot);
-  
+
     /// <summary>
     /// Technotrend: get driver version
     /// </summary>
@@ -355,9 +395,10 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="v4"></param>
     /// <returns></returns>
     [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-    [SuppressUnmanagedCodeSecurity]    
-    private static extern TTApiResult bdaapiGetDrvVersion(IntPtr device, ref byte v1, ref byte v2, ref byte v3, ref byte v4);
- 
+    [SuppressUnmanagedCodeSecurity]
+    private static extern TTApiResult bdaapiGetDrvVersion(IntPtr device, ref byte v1, ref byte v2, ref byte v3,
+                                                          ref byte v4);
+
     /// <summary>
     /// Technotrend: decodes PMT
     /// </summary>
@@ -368,7 +409,7 @@ namespace TvLibrary.Implementations.DVB
     [DllImport("ttBdaDrvApi_Dll.dll", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     [SuppressUnmanagedCodeSecurity]
     private static extern TTApiResult bdaapiCIMultiDecode(IntPtr device, IntPtr pNrs, Int32 count);
-   
+
     /// <summary>
     /// Technotrend: Diseqc
     /// </summary>
@@ -380,8 +421,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="polarity"></param>
     /// <returns></returns>
     [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiSetDiSEqCMsg", CallingConvention = CallingConvention.Cdecl)]
-    public static extern TTApiResult bdaapiSetDiSEqCMsg(IntPtr device, IntPtr data, byte length, byte repeat, byte toneburst, int polarity);
-    
+    public static extern TTApiResult bdaapiSetDiSEqCMsg(IntPtr device, IntPtr data, byte length, byte repeat,
+                                                        byte toneburst, int polarity);
+
     /// <summary>
     /// Technotrend: set antenna power
     /// </summary>
@@ -390,7 +432,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiSetDVBTAntPwr", CallingConvention = CallingConvention.Cdecl)]
     public static extern TTApiResult bdaapiSetDVBTAntPwr(IntPtr device, bool bAntPwrOnOff);
-  
+
     /// <summary>
     /// Technotrend: get antenna power
     /// </summary>
@@ -399,16 +441,17 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiGetDVBTAntPwr", CallingConvention = CallingConvention.Cdecl)]
     public static extern TTApiResult bdaapiGetDVBTAntPwr(IntPtr device, ref int uiAntPwrOnOff);
-   
+
     /// <summary>
     /// Technotrend: Enter CI menu
     /// </summary>
     /// <param name="device"></param>
     /// <param name="slot"></param>
     /// <returns></returns>
-    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiCIEnterModuleMenu", CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiCIEnterModuleMenu",
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern TTApiResult bdaapiCIEnterModuleMenu(IntPtr device, byte slot);
-    
+
     /// <summary>
     /// Technotrend: Select CI menu choice
     /// </summary>
@@ -418,7 +461,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiCIMenuAnswer", CallingConvention = CallingConvention.Cdecl)]
     public static extern TTApiResult bdaapiCIMenuAnswer(IntPtr device, byte slot, byte selection);
-    
+
     /// <summary>
     /// Technotrend: Send CI menu answer
     /// </summary>
@@ -428,12 +471,13 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nLength"></param>
     /// <returns></returns>
     [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiCIAnswer", CallingConvention = CallingConvention.Cdecl)]
-    public static extern TTApiResult bdaapiCIAnswer(IntPtr device, byte slot, [MarshalAs(UnmanagedType.LPStr)] String pKeyBuffer, byte nLength);
-    
+    public static extern TTApiResult bdaapiCIAnswer(IntPtr device, byte slot,
+                                                    [MarshalAs(UnmanagedType.LPStr)] String pKeyBuffer, byte nLength);
+
     #endregion
 
     #region callback delegate definitions
-    
+
     /// <summary>
     /// Technotrend: Callbacks from CI
     /// </summary>
@@ -443,7 +487,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="csInfo"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     public unsafe delegate void OnSlotStatusCallback(IntPtr Context, byte nSlot, byte nStatus, SlotInfo* csInfo);
-  
+
     /// <summary>
     /// Technotrend: Callbacks from CI
     /// </summary>
@@ -453,7 +497,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="wStatus"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     public unsafe delegate void OnCaChangeCallback(IntPtr Context, byte nSlot, byte nReplyTag, Int16 wStatus);
-   
+
     /// <summary>
     /// Technotrend: Callbacks from CI
     /// </summary>
@@ -463,7 +507,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="wLength"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     public unsafe delegate void OnDisplayString(IntPtr Context, byte nSlot, IntPtr pString, Int16 wLength);
-    
+
     /// <summary>
     /// Technotrend: Callbacks from CI
     /// </summary>
@@ -473,8 +517,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pStringArray"></param>
     /// <param name="wLength"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnDisplayMenuAndLists(IntPtr Context, byte nSlot, Int16 wItems, IntPtr pStringArray, Int16 wLength);
-    
+    public unsafe delegate void OnDisplayMenuAndLists(
+      IntPtr Context, byte nSlot, Int16 wItems, IntPtr pStringArray, Int16 wLength);
+
     /// <summary>
     /// Technotrend: Callbacks from CI
     /// </summary>
@@ -482,7 +527,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nSlot"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     public unsafe delegate void OnSwitchOsdOff(IntPtr Context, byte nSlot);
-    
+
     /// <summary>
     /// Technotrend: Callbacks from CI
     /// </summary>
@@ -492,8 +537,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nExpectedLength"></param>
     /// <param name="dwKeyMask"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnInputRequest(IntPtr Context, byte nSlot, bool bBlindAnswer, byte nExpectedLength, Int16 dwKeyMask);
-    
+    public unsafe delegate void OnInputRequest(
+      IntPtr Context, byte nSlot, bool bBlindAnswer, byte nExpectedLength, Int16 dwKeyMask);
+
     /// <summary>
     /// Technotrend: Callbacks from CI
     /// </summary>
@@ -502,7 +548,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pDescriptor"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     public unsafe delegate void OnLscSetDescriptor(IntPtr Context, byte nSlot, IntPtr pDescriptor);
-    
+
     /// <summary>
     /// Technotrend: Callbacks from CI
     /// </summary>
@@ -510,7 +556,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nSlot"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     public unsafe delegate void OnLscConnect(IntPtr Context, byte nSlot);
-    
+
     /// <summary>
     /// Technotrend: Callbacks from CI
     /// </summary>
@@ -518,7 +564,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nSlot"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     public unsafe delegate void OnLscDisconnect(IntPtr Context, byte nSlot);
-    
+
     /// <summary>
     /// Technotrend: Callbacks from CI
     /// </summary>
@@ -528,7 +574,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="Timeout10Ms"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     public unsafe delegate void OnLscSetParams(IntPtr Context, byte nSlot, byte BufferSize, byte Timeout10Ms);
-    
+
     /// <summary>
     /// Technotrend: Callbacks from CI
     /// </summary>
@@ -536,7 +582,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nSlot"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     public unsafe delegate void OnLscEnquireStatus(IntPtr Context, byte nSlot);
-    
+
     /// <summary>
     /// Technotrend: Callbacks from CI
     /// </summary>
@@ -545,7 +591,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="PhaseID"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     public unsafe delegate void OnLscGetNextBuffer(IntPtr Context, byte nSlot, byte PhaseID);
-    
+
     /// <summary>
     /// Technotrend: Callbacks from CI
     /// </summary>
@@ -555,33 +601,36 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pData"></param>
     /// <param name="nLength"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnLscTransmitBuffer(IntPtr Context, byte nSlot, byte PhaseID, IntPtr pData, Int16 nLength);
+    public unsafe delegate void OnLscTransmitBuffer(
+      IntPtr Context, byte nSlot, byte PhaseID, IntPtr pData, Int16 nLength);
 
     #endregion
 
     #region Constants
-    const string LBDG2_NAME                       = "TechnoTrend BDA/DVB Capture";
-    const string LBDG2_NAME_C_TUNER               ="TechnoTrend BDA/DVB-C Tuner";
-    const string LBDG2_NAME_S_TUNER               ="TechnoTrend BDA/DVB-S Tuner";
-    const string LBDG2_NAME_T_TUNER               ="TechnoTrend BDA/DVB-T Tuner";
-    const string LBDG2_NAME_NEW                   ="ttBudget2 BDA DVB Capture";
-    const string LBDG2_NAME_C_TUNER_NEW           ="ttBudget2 BDA DVB-C Tuner";
-    const string LBDG2_NAME_S_TUNER_NEW           ="ttBudget2 BDA DVB-S Tuner";
-    const string LBDG2_NAME_T_TUNER_NEW           ="ttBudget2 BDA DVB-T Tuner";
-    const string LBUDGET3NAME                     ="TTHybridTV BDA Digital Capture";
-    const string LBUDGET3NAME_TUNER               ="TTHybridTV BDA DVBT Tuner";
-    const string LBUDGET3NAME_ATSC_TUNER          ="TTHybridTV BDA ATSC Tuner";
-    const string LBUDGET3NAME_TUNER_ANLG          ="TTHybridTV BDA Analog TV Tuner";
-    const string LBUDGET3NAME_ANLG                ="TTHybridTV BDA Analog Capture";
-    const string LUSB2BDA_DVB_NAME                ="USB 2.0 BDA DVB Capture";
-    const string LUSB2BDA_DSS_NAME                ="USB 2.0 BDA DSS Capture";
-    const string LUSB2BDA_DSS_NAME_TUNER          ="USB 2.0 BDA DSS Tuner";
-    const string LUSB2BDA_DVB_NAME_C_TUNER        ="USB 2.0 BDA DVB-C Tuner";
-    const string LUSB2BDA_DVB_NAME_S_TUNER        ="USB 2.0 BDA DVB-S Tuner";
-    const string LUSB2BDA_DVB_NAME_S_TUNER_FAKE   ="USB 2.0 BDA (DVB-T Fake) DVB-T Tuner";
-    const string LUSB2BDA_DVB_NAME_T_TUNER        ="USB 2.0 BDA DVB-T Tuner";
-    const string LUSB2BDA_DVBS_NAME_PIN           ="Pinnacle PCTV 4XXe Capture";
-    const string LUSB2BDA_DVBS_NAME_PIN_TUNER     ="Pinnacle PCTV 4XXe Tuner";
+
+    private const string LBDG2_NAME = "TechnoTrend BDA/DVB Capture";
+    private const string LBDG2_NAME_C_TUNER = "TechnoTrend BDA/DVB-C Tuner";
+    private const string LBDG2_NAME_S_TUNER = "TechnoTrend BDA/DVB-S Tuner";
+    private const string LBDG2_NAME_T_TUNER = "TechnoTrend BDA/DVB-T Tuner";
+    private const string LBDG2_NAME_NEW = "ttBudget2 BDA DVB Capture";
+    private const string LBDG2_NAME_C_TUNER_NEW = "ttBudget2 BDA DVB-C Tuner";
+    private const string LBDG2_NAME_S_TUNER_NEW = "ttBudget2 BDA DVB-S Tuner";
+    private const string LBDG2_NAME_T_TUNER_NEW = "ttBudget2 BDA DVB-T Tuner";
+    private const string LBUDGET3NAME = "TTHybridTV BDA Digital Capture";
+    private const string LBUDGET3NAME_TUNER = "TTHybridTV BDA DVBT Tuner";
+    private const string LBUDGET3NAME_ATSC_TUNER = "TTHybridTV BDA ATSC Tuner";
+    private const string LBUDGET3NAME_TUNER_ANLG = "TTHybridTV BDA Analog TV Tuner";
+    private const string LBUDGET3NAME_ANLG = "TTHybridTV BDA Analog Capture";
+    private const string LUSB2BDA_DVB_NAME = "USB 2.0 BDA DVB Capture";
+    private const string LUSB2BDA_DSS_NAME = "USB 2.0 BDA DSS Capture";
+    private const string LUSB2BDA_DSS_NAME_TUNER = "USB 2.0 BDA DSS Tuner";
+    private const string LUSB2BDA_DVB_NAME_C_TUNER = "USB 2.0 BDA DVB-C Tuner";
+    private const string LUSB2BDA_DVB_NAME_S_TUNER = "USB 2.0 BDA DVB-S Tuner";
+    private const string LUSB2BDA_DVB_NAME_S_TUNER_FAKE = "USB 2.0 BDA (DVB-T Fake) DVB-T Tuner";
+    private const string LUSB2BDA_DVB_NAME_T_TUNER = "USB 2.0 BDA DVB-T Tuner";
+    private const string LUSB2BDA_DVBS_NAME_PIN = "Pinnacle PCTV 4XXe Capture";
+    private const string LUSB2BDA_DVBS_NAME_PIN_TUNER = "Pinnacle PCTV 4XXe Tuner";
+
     #endregion
 
     #region Member variables
@@ -591,25 +640,23 @@ namespace TvLibrary.Implementations.DVB
     private byte m_slot;
     private bool m_verboseLogging = false;
     private bool m_ciSlotAvailable = false;
-    private int  m_ciStatus; // set to -1 when no ca resource
-    private int  m_caErrorCount; // number of failures to setProgramm
-    private int  m_waitTimeout;
+    private int m_ciStatus; // set to -1 when no ca resource
+    private int m_caErrorCount; // number of failures to setProgramm
+    private int m_waitTimeout;
     private String m_ciDisplayString;
     private TTCiSlotStatus m_slotStatus;
     private TTApiDeviceCat m_deviceType;
     private IBaseFilter m_tunerFilter;
     private DVBSChannel _previousChannel;
     private ICiMenuCallbacks ciMenuCallbacks;
-    readonly IntPtr ptrPmt;
-    readonly IntPtr _ptrDataInstance;
+    private readonly IntPtr ptrPmt;
+    private readonly IntPtr _ptrDataInstance;
 
 
     //TTSlimCallbackStruct slimCallback;
-    TTCallbackStruct     fullCallback;
+    private TTCallbackStruct fullCallback;
 
     #endregion
-
-
 
     /// <summary>
     /// constructor for enabling technotrend ci 
@@ -617,16 +664,16 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tunerFilter">tunerfilter</param>
     public TechnoTrendAPI(IBaseFilter tunerFilter)
     {
-      m_deviceID        = 0;
-      m_slot            = 0;
-      m_ciStatus        = 0;
-      m_caErrorCount    = 0;
-      m_waitTimeout     = 0;
+      m_deviceID = 0;
+      m_slot = 0;
+      m_ciStatus = 0;
+      m_caErrorCount = 0;
+      m_waitTimeout = 0;
       m_ciSlotAvailable = false;
-      m_slotStatus      = TTCiSlotStatus.SlotUnknownState;
-      m_tunerFilter     = tunerFilter;
-      ptrPmt            = Marshal.AllocCoTaskMem(1024); // buffer for handling pmt
-      _ptrDataInstance  = Marshal.AllocCoTaskMem(1024); // buffer for diseqc messages
+      m_slotStatus = TTCiSlotStatus.SlotUnknownState;
+      m_tunerFilter = tunerFilter;
+      ptrPmt = Marshal.AllocCoTaskMem(1024); // buffer for handling pmt
+      _ptrDataInstance = Marshal.AllocCoTaskMem(1024); // buffer for diseqc messages
 
       // detect card type
       DetectCardType();
@@ -657,9 +704,16 @@ namespace TvLibrary.Implementations.DVB
 
       // assign callback functions
       fullCallback.p01Context = fullCallback.p02Context = fullCallback.p03Context = fullCallback.p04Context =
-      fullCallback.p05Context = fullCallback.p06Context = fullCallback.p07Context = fullCallback.p08Context =
-      fullCallback.p09Context = fullCallback.p10Context = fullCallback.p11Context = fullCallback.p12Context =
-      fullCallback.p13Context = fullCallback.p14Context = m_hBdaApi;
+                                                                                    fullCallback.p05Context =
+                                                                                    fullCallback.p06Context =
+                                                                                    fullCallback.p07Context =
+                                                                                    fullCallback.p08Context =
+                                                                                    fullCallback.p09Context =
+                                                                                    fullCallback.p10Context =
+                                                                                    fullCallback.p11Context =
+                                                                                    fullCallback.p12Context =
+                                                                                    fullCallback.p13Context =
+                                                                                    fullCallback.p14Context = m_hBdaApi;
       fullCallback.p01 = onSlotChange;
       fullCallback.p02 = onCaChange;
       fullCallback.p03 = onDisplayString;
@@ -680,7 +734,7 @@ namespace TvLibrary.Implementations.DVB
       if (result == TTApiResult.Success)
       {
         m_ciSlotAvailable = true;
-        m_caErrorCount    = 0; // (re)set error counter
+        m_caErrorCount = 0; // (re)set error counter
         Log.Log.Debug("TechnoTrend: OpenCI succeeded");
       }
       else
@@ -750,7 +804,6 @@ namespace TvLibrary.Implementations.DVB
       return TTApiResult.Success;
     }
 
-  
 
     /// <summary>
     ///**************************************************************************************************
@@ -760,7 +813,7 @@ namespace TvLibrary.Implementations.DVB
     ///**************************************************************************************************
     /// </summary>
     /// <returns></returns>
-    bool GetDeviceID()
+    private bool GetDeviceID()
     {
       m_deviceID = 0;
 
@@ -778,12 +831,12 @@ namespace TvLibrary.Implementations.DVB
           RegPinMedium rpm;
 
           // Load it all
-          for (int i = 0, s = Marshal.SizeOf(typeof(RegPinMedium)); i < countRecPin; i++ )
+          for (int i = 0, s = Marshal.SizeOf(typeof (RegPinMedium)); i < countRecPin; i++)
           {
             // Get the reference
             IntPtr addr = new IntPtr(raw.ToInt32() + 8 + s * i);
             // Reconstruct
-            rpm = (RegPinMedium)Marshal.PtrToStructure(addr, typeof(RegPinMedium));
+            rpm = (RegPinMedium)Marshal.PtrToStructure(addr, typeof (RegPinMedium));
             m_deviceID = (uint)rpm.dw1;
           }
           // Report
@@ -808,6 +861,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get { return (m_deviceType != TTApiDeviceCat.UNKNOWN); }
     }
+
     /// <summary>
     /// Determines whether cam is ready.
     /// </summary>
@@ -823,7 +877,8 @@ namespace TvLibrary.Implementations.DVB
       }
       if (m_verboseLogging) Log.Log.Debug("TechnoTrend: IsCamReady: {0}", yesNo);
       return yesNo;
-    }    
+    }
+
     /// <summary>
     /// Determines whether cam is ready.
     /// </summary>
@@ -833,7 +888,8 @@ namespace TvLibrary.Implementations.DVB
     public bool IsCamPresent()
     {
       bool yesNo = true;
-      if (m_ciSlotAvailable == false || m_slotStatus == TTCiSlotStatus.SlotEmpty || m_slotStatus == TTCiSlotStatus.SlotUnknownState)
+      if (m_ciSlotAvailable == false || m_slotStatus == TTCiSlotStatus.SlotEmpty ||
+          m_slotStatus == TTCiSlotStatus.SlotUnknownState)
       {
         yesNo = false;
       }
@@ -850,7 +906,6 @@ namespace TvLibrary.Implementations.DVB
       FilterInfo info;
       if (m_tunerFilter.QueryFilterInfo(out info) == 0)
       {
-
         switch (info.achName)
         {
           case LBDG2_NAME_C_TUNER:
@@ -924,11 +979,12 @@ namespace TvLibrary.Implementations.DVB
       for (int i = 0; i < filteredChannels.Count; ++i)
       {
         ConditionalAccessContext context = filteredChannels[i];
-        Log.Log.Debug("TechnoTrend: DescrambleMultiple: serviceId:{0}",context.ServiceId);
+        Log.Log.Debug("TechnoTrend: DescrambleMultiple: serviceId:{0}", context.ServiceId);
         Marshal.WriteInt16(ptrPmt, 2 * i, (short)context.ServiceId);
       }
 
-      if (m_slotStatus == TTCiSlotStatus.SlotCaOk || m_slotStatus == TTCiSlotStatus.SlotModuleOk) // || m_slotStatus==CI_SLOT_DBG_MSG)
+      if (m_slotStatus == TTCiSlotStatus.SlotCaOk || m_slotStatus == TTCiSlotStatus.SlotModuleOk)
+        // || m_slotStatus==CI_SLOT_DBG_MSG)
       {
         result = bdaapiCIMultiDecode(m_hBdaApi, ptrPmt, (short)filteredChannels.Count);
         if (result == TTApiResult.Success)
@@ -937,7 +993,6 @@ namespace TvLibrary.Implementations.DVB
           {
             succeeded = true;
             Log.Log.Debug("TechnoTrend: services decoded:{0} {1}", result, m_ciStatus);
-
           }
           else
           {
@@ -988,20 +1043,21 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_previousChannel != null)
       {
-        if (_previousChannel.Frequency    == channel.Frequency &&
-            _previousChannel.DisEqc       == channel.DisEqc &&
+        if (_previousChannel.Frequency == channel.Frequency &&
+            _previousChannel.DisEqc == channel.DisEqc &&
             _previousChannel.Polarisation == channel.Polarisation)
         {
-          Log.Log.WriteFile("TechnoTrend: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}", channel.DisEqc, channel.Frequency, channel.Polarisation);
+          Log.Log.WriteFile("TechnoTrend: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}", channel.DisEqc,
+                            channel.Frequency, channel.Polarisation);
           return;
         }
       }
       _previousChannel = channel;
       int antennaNr = BandTypeConverter.GetAntennaNr(channel);
       //"01,02,03,04,05,06,07,08,09,0a,0b,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,"	
-      Marshal.WriteByte(_ptrDataInstance, 0, 0xE0);//diseqc command 1. uFraming=0xe0
-      Marshal.WriteByte(_ptrDataInstance, 1, 0x10);//diseqc command 1. uAddress=0x10
-      Marshal.WriteByte(_ptrDataInstance, 2, 0x38);//diseqc command 1. uCommand=0x38
+      Marshal.WriteByte(_ptrDataInstance, 0, 0xE0); //diseqc command 1. uFraming=0xe0
+      Marshal.WriteByte(_ptrDataInstance, 1, 0x10); //diseqc command 1. uAddress=0x10
+      Marshal.WriteByte(_ptrDataInstance, 2, 0x38); //diseqc command 1. uCommand=0x38
       //bit 0	(1)	: 0=low band, 1 = hi band
       //bit 1 (2) : 0=vertical, 1 = horizontal
       //bit 3 (4) : 0=satellite position A, 1=satellite position B
@@ -1012,8 +1068,11 @@ namespace TvLibrary.Implementations.DVB
       // 3        B         A
       // 4        B         B
       bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
-      Log.Log.WriteFile("TechnoTrend SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, polarisation:{3} hiband:{4}", channel.DisEqc, antennaNr, channel.Frequency, channel.Polarisation, hiBand);
-      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));
+      Log.Log.WriteFile(
+        "TechnoTrend SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, polarisation:{3} hiband:{4}",
+        channel.DisEqc, antennaNr, channel.Frequency, channel.Polarisation, hiBand);
+      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
+                           (channel.Polarisation == Polarisation.CircularL));
       byte cmd = 0xf0;
       cmd |= (byte)(hiBand ? 1 : 0);
       cmd |= (byte)((isHorizontal) ? 2 : 0);
@@ -1022,6 +1081,7 @@ namespace TvLibrary.Implementations.DVB
       bdaapiSetDiSEqCMsg(m_hBdaApi, _ptrDataInstance, 4, 1, 0, (short)channel.Polarisation);
       Log.Log.Info("TechnoTrend: Diseqc Command Send");
     }
+
     /// <summary>
     /// Here we turn on the USB DVB-T antennae
     /// </summary>
@@ -1048,8 +1108,8 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Info("TechnoTrend DVB-T 5v Antennae status:{0}", Get5vAntennae);
     }
 
-
     #region callback handlers
+
     /// <summary>
     /// callback from driver for CI slot status
     /// </summary>
@@ -1057,34 +1117,35 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nSlot">Is the Slot ID.</param>
     /// <param name="nStatus"></param>
     /// <param name="csInfo"></param>
-    unsafe public void onSlotChange(
+    public unsafe void onSlotChange(
       IntPtr Context,
       byte nSlot,
       byte nStatus,
       SlotInfo* csInfo
       )
     {
-        try
+      try
+      {
+        m_slotStatus = (TTCiSlotStatus)nStatus;
+        Log.Log.Debug("TechnoTrend: slot {0} changed", nSlot);
+        if (csInfo != null)
         {
-          m_slotStatus = (TTCiSlotStatus)nStatus;
-          Log.Log.Debug("TechnoTrend: slot {0} changed", nSlot);
-          if (csInfo != null) {
-            Log.Log.Debug("TechnoTrend:    CI status:{0} ", m_slotStatus);
-            if (csInfo->pMenuTitleString != null)
-            {
-              Log.Log.Debug("TechnoTrend:    CI text  :{0} ", Marshal.PtrToStringAnsi(csInfo->pMenuTitleString));
-            }
+          Log.Log.Debug("TechnoTrend:    CI status:{0} ", m_slotStatus);
+          if (csInfo->pMenuTitleString != null)
+          {
+            Log.Log.Debug("TechnoTrend:    CI text  :{0} ", Marshal.PtrToStringAnsi(csInfo->pMenuTitleString));
+          }
 
-            for (int i = 0; i < csInfo->wNoOfCaSystemIDs; ++i)
-            {
-              Log.Log.Debug("TechnoTrend:      ca system id  :{0:X} ", csInfo->pCaSystemIDs[i]);
-            }
+          for (int i = 0; i < csInfo->wNoOfCaSystemIDs; ++i)
+          {
+            Log.Log.Debug("TechnoTrend:      ca system id  :{0:X} ", csInfo->pCaSystemIDs[i]);
           }
         }
-        catch (Exception)
-        {
-          Log.Log.Debug("TechnoTrend: OnSlotChange() exception");
-        }
+      }
+      catch (Exception)
+      {
+        Log.Log.Debug("TechnoTrend: OnSlotChange() exception");
+      }
     }
 
     /// <summary>
@@ -1094,7 +1155,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nSlot">Is the Slot ID.</param>
     /// <param name="nReplyTag"></param>
     /// <param name="wStatus"></param>
-    unsafe public void onCaChange(IntPtr Context, byte nSlot, byte nReplyTag, Int16 wStatus)
+    public unsafe void onCaChange(IntPtr Context, byte nSlot, byte nReplyTag, Int16 wStatus)
     {
       try
       {
@@ -1154,9 +1215,10 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nSlot">Is the Slot ID.</param>
     /// <param name="pString"></param>
     /// <param name="wLength"></param>
-    unsafe public void onDisplayString(IntPtr Context, byte nSlot, IntPtr pString, Int16 wLength)
+    public unsafe void onDisplayString(IntPtr Context, byte nSlot, IntPtr pString, Int16 wLength)
     {
-      try {
+      try
+      {
         m_ciDisplayString = Marshal.PtrToStringAnsi(pString, wLength);
         Log.Log.Debug("TechnoTrend:OnDisplayString slot:{0} {1}", nSlot, m_ciDisplayString);
       }
@@ -1175,18 +1237,19 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="wItems">Number of Items in the List</param>
     /// <param name="pStringArray">Contains all strings of the list.</param>
     /// <param name="wLength">Length of the string array.</param>
-    unsafe public void onDisplayMenuOrList(IntPtr Context, byte nSlot, Int16 wItems, IntPtr pStringArray, Int16 wLength)
+    public unsafe void onDisplayMenuOrList(IntPtr Context, byte nSlot, Int16 wItems, IntPtr pStringArray, Int16 wLength)
     {
-     try
+      try
       {
-        Log.Log.Debug("TechnoTrend: OnDisplayMenu/List; {0} items; wLength: {1}; pStringArray: {2:x} ", wItems, wLength, pStringArray);
+        Log.Log.Debug("TechnoTrend: OnDisplayMenu/List; {0} items; wLength: {1}; pStringArray: {2:x} ", wItems, wLength,
+                      pStringArray);
         // construct all strings for callback
         StringBuilder[] Entries = new StringBuilder[wItems];
-        int idx=0;
+        int idx = 0;
         byte charChode;
-        for (int i=0; i < wLength-1; ++i) // wLength-1 --> last char is a 0, avoid one additional loop and callback
+        for (int i = 0; i < wLength - 1; ++i) // wLength-1 --> last char is a 0, avoid one additional loop and callback
         {
-          charChode=Marshal.ReadByte((IntPtr)(pStringArray.ToInt32() + i));
+          charChode = Marshal.ReadByte((IntPtr)(pStringArray.ToInt32() + i));
           if (Entries[idx] == null) Entries[idx] = new StringBuilder();
           if (charChode != 0) // we don't need \0 at end of string
           {
@@ -1196,24 +1259,25 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.Debug("TechnoTrend: {0}: {1} ", idx, Entries[idx].ToString());
             // is title part finished?
-            if (ciMenuCallbacks != null) 
+            if (ciMenuCallbacks != null)
             {
-              if (idx == 2) 
+              if (idx == 2)
               {
-                ciMenuCallbacks.OnCiMenu(Entries[0].ToString(), Entries[1].ToString(), Entries[2].ToString(), wItems - 3); //-3 header lines
-              } 
-              if (idx > 2) 
+                ciMenuCallbacks.OnCiMenu(Entries[0].ToString(), Entries[1].ToString(), Entries[2].ToString(), wItems - 3);
+                  //-3 header lines
+              }
+              if (idx > 2)
               {
                 ciMenuCallbacks.OnCiMenuChoice(idx - 3, Entries[idx].ToString()); // current line as option
-              }  
+              }
             }
             idx++; // next line
           }
         }
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
-        Log.Log.Debug("TechnoTrend: OnDisplayMenu() exception: {0}", ex.ToString());  
+        Log.Log.Debug("TechnoTrend: OnDisplayMenu() exception: {0}", ex.ToString());
       }
     }
 
@@ -1223,7 +1287,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
     /// <param name="nSlot">Is the Slot ID.</param>
-    unsafe public void onSwitchOsdOff(IntPtr Context, byte nSlot)
+    public unsafe void onSwitchOsdOff(IntPtr Context, byte nSlot)
     {
       Log.Log.Debug("TechnoTrend:CI_OnSwitchOsdOff slot:{0}", nSlot);
     }
@@ -1236,12 +1300,15 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="bBlindAnswer">True if hidden input (*)</param>
     /// <param name="nExpectedLength">Expected max. answer length</param>
     /// <param name="dwKeyMask">Key mask</param>
-    unsafe public void onInputRequest(IntPtr Context, byte nSlot, bool bBlindAnswer, byte nExpectedLength, Int16 dwKeyMask)
+    public unsafe void onInputRequest(IntPtr Context, byte nSlot, bool bBlindAnswer, byte nExpectedLength,
+                                      Int16 dwKeyMask)
     {
-      Log.Log.Debug("TechnoTrend: OnInputRequest; bBlindAnswer {0}, nExpectedLength: {1}; dwKeyMask: {2} ", bBlindAnswer, nExpectedLength, dwKeyMask);
+      Log.Log.Debug("TechnoTrend: OnInputRequest; bBlindAnswer {0}, nExpectedLength: {1}; dwKeyMask: {2} ", bBlindAnswer,
+                    nExpectedLength, dwKeyMask);
       if (ciMenuCallbacks != null)
       {
-        ciMenuCallbacks.OnCiRequest(bBlindAnswer, nExpectedLength, m_ciDisplayString); // m_ciDisplayString from former callback!
+        ciMenuCallbacks.OnCiRequest(bBlindAnswer, nExpectedLength, m_ciDisplayString);
+          // m_ciDisplayString from former callback!
       }
     }
 
@@ -1251,7 +1318,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
     /// <param name="nSlot">Is the Slot ID.</param>
     /// <param name="pDescriptor">Descriptor</param>
-    unsafe public void onLscSetDescriptor(IntPtr Context, byte nSlot, IntPtr pDescriptor)
+    public unsafe void onLscSetDescriptor(IntPtr Context, byte nSlot, IntPtr pDescriptor)
     {
       Log.Log.Debug("TechnoTrend:OnLscSetDescriptor slot:{0}", nSlot);
     }
@@ -1261,7 +1328,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
     /// <param name="nSlot">Is the Slot ID.</param>
-    unsafe public void onLscConnect(IntPtr Context, byte nSlot)
+    public unsafe void onLscConnect(IntPtr Context, byte nSlot)
     {
       Log.Log.Debug("TechnoTrend:OnLscConnect slot:{0}", nSlot);
     }
@@ -1271,7 +1338,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
     /// <param name="nSlot">Is the Slot ID.</param>
-    unsafe public void onLscDisconnect(IntPtr Context, byte nSlot)
+    public unsafe void onLscDisconnect(IntPtr Context, byte nSlot)
     {
       Log.Log.Debug("TechnoTrend:OnLscDisconnect slot:{0}", nSlot);
     }
@@ -1283,7 +1350,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nSlot">Is the Slot ID.</param>
     /// <param name="BufferSize">Buffer size</param>
     /// <param name="Timeout10Ms">Timeout</param>
-    unsafe public void onLscSetParams(IntPtr Context, byte nSlot, byte BufferSize, byte Timeout10Ms)
+    public unsafe void onLscSetParams(IntPtr Context, byte nSlot, byte BufferSize, byte Timeout10Ms)
     {
       Log.Log.Debug("TechnoTrend:OnLscSetParams slot:{0}", nSlot);
     }
@@ -1293,7 +1360,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
     /// <param name="nSlot">Is the Slot ID.</param>
-    unsafe public void onLscEnquireStatus(IntPtr Context, byte nSlot)
+    public unsafe void onLscEnquireStatus(IntPtr Context, byte nSlot)
     {
       Log.Log.Debug("TechnoTrend:OnLscEnquireStatus slot:{0}", nSlot);
     }
@@ -1304,7 +1371,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="Context">Can be used for a context pointer in the calling application. This parameter can be NULL.</param>
     /// <param name="nSlot">Is the Slot ID.</param>
     /// <param name="PhaseID">Phase</param>
-    unsafe public void onLscGetNextBuffer(IntPtr Context, byte nSlot, byte PhaseID)
+    public unsafe void onLscGetNextBuffer(IntPtr Context, byte nSlot, byte PhaseID)
     {
       Log.Log.Debug("TechnoTrend:OnLscGetNextBuffer slot:{0}", nSlot);
     }
@@ -1317,10 +1384,11 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="PhaseID">Phase</param>
     /// <param name="pData">Data</param>
     /// <param name="nLength">Length</param>
-    unsafe public void onLscTransmitBuffer(IntPtr Context, byte nSlot, byte PhaseID, IntPtr pData, Int16 nLength)
+    public unsafe void onLscTransmitBuffer(IntPtr Context, byte nSlot, byte PhaseID, IntPtr pData, Int16 nLength)
     {
       Log.Log.Debug("TechnoTrend:OnLscTransmitBuffer slot:{0}", nSlot);
     }
+
     #endregion
 
     #region IDisposable Member
@@ -1334,6 +1402,7 @@ namespace TvLibrary.Implementations.DVB
       Marshal.FreeCoTaskMem(ptrPmt);
       Marshal.FreeCoTaskMem(_ptrDataInstance);
     }
+
     #endregion
 
     #region IDiSEqCController Members
@@ -1346,7 +1415,7 @@ namespace TvLibrary.Implementations.DVB
     public bool SendDiSEqCCommand(byte[] diSEqC)
     {
       if (!IsTechnoTrend) return false;
-      
+
       for (int i = 0; i < diSEqC.Length; ++i)
         Marshal.WriteByte(_ptrDataInstance, i, diSEqC[i]);
       Polarisation pol = Polarisation.LinearV;
@@ -1366,6 +1435,7 @@ namespace TvLibrary.Implementations.DVB
       reply = null;
       return false;
     }
+
     #endregion
 
     #region ICiMenuActions Member
@@ -1378,7 +1448,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (ciMenuHandler != null)
       {
-        ciMenuCallbacks=ciMenuHandler;
+        ciMenuCallbacks = ciMenuHandler;
         return true;
       }
       return false;
@@ -1443,7 +1513,7 @@ namespace TvLibrary.Implementations.DVB
       }
       return true;
     }
-    #endregion
 
+    #endregion
   }
 }

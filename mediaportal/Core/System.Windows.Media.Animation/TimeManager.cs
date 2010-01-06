@@ -29,9 +29,7 @@ namespace System.Windows.Media.Animation
   {
     #region Constructors
 
-    public TimeManager()
-    {
-    }
+    public TimeManager() {}
 
     public TimeManager(Clock clock)
     {

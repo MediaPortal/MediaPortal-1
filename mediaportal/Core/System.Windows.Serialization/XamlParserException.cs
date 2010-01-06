@@ -28,37 +28,38 @@ using System.Xml;
 
 namespace System.Windows.Serialization
 {
-	public class XamlParserException : Exception
-	{
-		#region Constructors
+  public class XamlParserException : Exception
+  {
+    #region Constructors
 
-		public XamlParserException(string message, string filename, XmlTextReader reader) : base(string.Format("{0}({1},{2}): {3}", filename, reader.LineNumber, reader.LinePosition, message))
-		{
-			_lineNumber = reader.LineNumber;
-			_linePosition = reader.LinePosition;
-		}
+    public XamlParserException(string message, string filename, XmlTextReader reader)
+      : base(string.Format("{0}({1},{2}): {3}", filename, reader.LineNumber, reader.LinePosition, message))
+    {
+      _lineNumber = reader.LineNumber;
+      _linePosition = reader.LinePosition;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Properties
+    #region Properties
 
-		public int LineNumber
-		{
-			get { return _lineNumber; }
-		}
+    public int LineNumber
+    {
+      get { return _lineNumber; }
+    }
 
-		public int LinePosition
-		{
-			get { return _linePosition; }
-		}
+    public int LinePosition
+    {
+      get { return _linePosition; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		int							_lineNumber;
-		int							_linePosition;
+    private int _lineNumber;
+    private int _linePosition;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

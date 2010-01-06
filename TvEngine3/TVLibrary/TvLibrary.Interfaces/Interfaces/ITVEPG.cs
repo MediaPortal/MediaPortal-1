@@ -49,9 +49,7 @@ namespace TvLibrary.Interfaces
     /// Gets called when epg has been cancelled
     /// Should be overriden by the class
     /// </summary>
-    public virtual void OnEpgCancelled()
-    {
-    }
+    public virtual void OnEpgCancelled() {}
 
     /// <summary>
     /// Gets called when epg has been received

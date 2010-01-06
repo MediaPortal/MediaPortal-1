@@ -31,9 +31,7 @@ namespace System.Windows.Controls
   {
     #region Constructors
 
-    public ColumnDefinitionCollection()
-    {
-    }
+    public ColumnDefinitionCollection() {}
 
     #endregion Constructors
 
@@ -112,7 +110,7 @@ namespace System.Windows.Controls
 
     public ColumnDefinition this[int index]
     {
-      get { return (ColumnDefinition) List[index]; }
+      get { return (ColumnDefinition)List[index]; }
       set { List[index] = value; }
     }
 

@@ -30,13 +30,14 @@ using System.Text;
 
 namespace MediaPortal.Util
 {
+
   #region ThumbnailExtractor
 
   /// Summary description for ThumbnailExtractor.
-
   public class ThumbnailExtractor : IDisposable
   {
     #region ShellFolder Enumerations
+
     [Flags]
     private enum ESTRRET : int
     {
@@ -44,6 +45,7 @@ namespace MediaPortal.Util
       STRRET_OFFSET = 0x0001, // Use STRRET.uOffset to Ansi
       STRRET_CSTR = 0x0002 // Use STRRET.cStr
     }
+
     [Flags]
     private enum ESHCONTF : int
     {
@@ -60,6 +62,7 @@ namespace MediaPortal.Util
       SHGDN_FORADDRESSBAR = 16384,
       SHGDN_FORPARSING = 32768
     }
+
     [Flags]
     private enum ESFGAO : int
     {
@@ -85,9 +88,11 @@ namespace MediaPortal.Util
       SFGAO_REMOVABLE = 33554432,
       SFGAO_COMPRESSED = 67108864
     }
+
     #endregion
 
     #region IExtractImage Enumerations
+
     private enum EIEIFLAG
     {
       IEIFLAG_ASYNC = 0x0001, // ask the extractor if it supports ASYNC extract (free threaded)
@@ -99,26 +104,26 @@ namespace MediaPortal.Util
       IEIFLAG_ORIGSIZE = 0x0040, // render to the approx size passed, but crop if neccessary
       IEIFLAG_NOSTAMP = 0x0080, // returned from the extractor if it does NOT want an icon stamp on the thumbnail
       IEIFLAG_NOBORDER = 0x0100, // returned from the extractor if it does NOT want an a border around the thumbnail
-      IEIFLAG_QUALITY = 0x0200 // passed to the Extract method to indicate that a slower, higher quality image is desired, re-compute the thumbnail
+      IEIFLAG_QUALITY = 0x0200
+      // passed to the Extract method to indicate that a slower, higher quality image is desired, re-compute the thumbnail
     }
+
     #endregion
 
     #region ShellFolder Structures
+
     [StructLayoutAttribute(LayoutKind.Sequential, Pack = 4, Size = 0, CharSet = CharSet.Auto)]
     private struct STRRET_CSTR
     {
       public ESTRRET uType;
-      [MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValArray, SizeConst = 520)]
-      public byte[] cStr;
+      [MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValArray, SizeConst = 520)] public byte[] cStr;
     }
 
     [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Auto)]
     private struct STRRET_ANY
     {
-      [FieldOffset(0)]
-      public ESTRRET uType;
-      [FieldOffset(4)]
-      public IntPtr pOLEString;
+      [FieldOffset(0)] public ESTRRET uType;
+      [FieldOffset(4)] public IntPtr pOLEString;
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential)]
@@ -127,9 +132,11 @@ namespace MediaPortal.Util
       public int cx;
       public int cy;
     }
+
     #endregion
 
     #region Com Interop for IUnknown
+
     [ComImport, Guid("00000000-0000-0000-C000-000000000046")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IUnknown
@@ -143,9 +150,11 @@ namespace MediaPortal.Util
       [PreserveSig]
       IntPtr Release();
     }
+
     #endregion
 
     #region COM Interop for IMalloc
+
     [ComImportAttribute()]
     [GuidAttribute("00000002-0000-0000-C000-000000000046")]
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
@@ -157,8 +166,8 @@ namespace MediaPortal.Util
 
       [PreserveSig]
       IntPtr Realloc(
-      IntPtr pv,
-      int cb);
+        IntPtr pv,
+        int cb);
 
       [PreserveSig]
       void Free(IntPtr pv);
@@ -171,10 +180,12 @@ namespace MediaPortal.Util
 
       [PreserveSig]
       void HeapMinimize();
-    };
+    } ;
+
     #endregion
 
     #region COM Interop for IEnumIDList
+
     [ComImportAttribute()]
     [GuidAttribute("000214F2-0000-0000-C000-000000000046")]
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
@@ -183,21 +194,23 @@ namespace MediaPortal.Util
     {
       [PreserveSig]
       int Next(
-      int celt,
-      ref IntPtr rgelt,
-      out int pceltFetched);
+        int celt,
+        ref IntPtr rgelt,
+        out int pceltFetched);
 
       void Skip(
-      int celt);
+        int celt);
 
       void Reset();
 
       void Clone(
-      ref IEnumIDList ppenum);
-    };
+        ref IEnumIDList ppenum);
+    } ;
+
     #endregion
 
     #region COM Interop for IShellFolder
+
     [ComImportAttribute()]
     [GuidAttribute("000214E6-0000-0000-C000-000000000046")]
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
@@ -205,81 +218,81 @@ namespace MediaPortal.Util
     private interface IShellFolder
     {
       void ParseDisplayName(
-      IntPtr hwndOwner,
-      IntPtr pbcReserved,
-      [MarshalAs(UnmanagedType.LPWStr)] string lpszDisplayName,
-      out int pchEaten,
-      out IntPtr ppidl,
-      out int pdwAttributes
-      );
+        IntPtr hwndOwner,
+        IntPtr pbcReserved,
+        [MarshalAs(UnmanagedType.LPWStr)] string lpszDisplayName,
+        out int pchEaten,
+        out IntPtr ppidl,
+        out int pdwAttributes
+        );
 
       void EnumObjects(
-      IntPtr hwndOwner,
-      [MarshalAs(UnmanagedType.U4)] ESHCONTF grfFlags,
-      ref IEnumIDList ppenumIDList
-      );
+        IntPtr hwndOwner,
+        [MarshalAs(UnmanagedType.U4)] ESHCONTF grfFlags,
+        ref IEnumIDList ppenumIDList
+        );
 
       void BindToObject(
-      IntPtr pidl,
-      IntPtr pbcReserved,
-      ref Guid riid,
-      ref IShellFolder ppvOut
-      );
+        IntPtr pidl,
+        IntPtr pbcReserved,
+        ref Guid riid,
+        ref IShellFolder ppvOut
+        );
 
       void BindToStorage(
-      IntPtr pidl,
-      IntPtr pbcReserved,
-      ref Guid riid,
-      IntPtr ppvObj
-      );
+        IntPtr pidl,
+        IntPtr pbcReserved,
+        ref Guid riid,
+        IntPtr ppvObj
+        );
 
       [PreserveSig]
       int CompareIDs(
-      IntPtr lParam,
-      IntPtr pidl1,
-      IntPtr pidl2
-      );
+        IntPtr lParam,
+        IntPtr pidl1,
+        IntPtr pidl2
+        );
 
       void CreateViewObject(
-      IntPtr hwndOwner,
-      ref Guid riid,
-      IntPtr ppvOut
-      );
+        IntPtr hwndOwner,
+        ref Guid riid,
+        IntPtr ppvOut
+        );
 
       void GetAttributesOf(
-      int cidl,
-      IntPtr apidl,
-      [MarshalAs(UnmanagedType.U4)] ref ESFGAO rgfInOut
-      );
+        int cidl,
+        IntPtr apidl,
+        [MarshalAs(UnmanagedType.U4)] ref ESFGAO rgfInOut
+        );
 
       void GetUIObjectOf(
-      IntPtr hwndOwner,
-      int cidl,
-      ref IntPtr apidl,
-      ref Guid riid,
-      out int prgfInOut,
-      ref IUnknown ppvOut
-      );
+        IntPtr hwndOwner,
+        int cidl,
+        ref IntPtr apidl,
+        ref Guid riid,
+        out int prgfInOut,
+        ref IUnknown ppvOut
+        );
 
       void GetDisplayNameOf(
-      IntPtr pidl,
-      [MarshalAs(UnmanagedType.U4)] ESHGDN uFlags,
-      ref STRRET_CSTR lpName
-      );
+        IntPtr pidl,
+        [MarshalAs(UnmanagedType.U4)] ESHGDN uFlags,
+        ref STRRET_CSTR lpName
+        );
 
       void SetNameOf(
-      IntPtr hwndOwner,
-      IntPtr pidl,
-      [MarshalAs(UnmanagedType.LPWStr)] string lpszName,
-      [MarshalAs(UnmanagedType.U4)] ESHCONTF uFlags,
-      ref IntPtr ppidlOut
-      );
-
-    };
+        IntPtr hwndOwner,
+        IntPtr pidl,
+        [MarshalAs(UnmanagedType.LPWStr)] string lpszName,
+        [MarshalAs(UnmanagedType.U4)] ESHCONTF uFlags,
+        ref IntPtr ppidlOut
+        );
+    } ;
 
     #endregion
 
     #region COM Interop for IExtractImage
+
     [ComImportAttribute()]
     [GuidAttribute("BB2E617C-0920-11d1-9A0B-00C04FC2D6C1")]
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
@@ -287,64 +300,60 @@ namespace MediaPortal.Util
     private interface IExtractImage
     {
       void GetLocation(
-      [Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszPathBuffer,
-      int cch,
-      ref int pdwPriority,
-      ref SIZE prgSize,
-      int dwRecClrDepth,
-      ref int pdwFlags
-      );
+        [Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszPathBuffer,
+        int cch,
+        ref int pdwPriority,
+        ref SIZE prgSize,
+        int dwRecClrDepth,
+        ref int pdwFlags
+        );
 
       void Extract(
-      out IntPtr phBmpThumbnail
-      );
+        out IntPtr phBmpThumbnail
+        );
     }
 
     #endregion
 
     #region UnManagedMethods for IShellFolder
+
     private class UnManagedMethods
     {
       [DllImport("shell32", CharSet = CharSet.Auto)]
-      internal extern static int SHGetMalloc(out IMalloc ppMalloc);
+      internal static extern int SHGetMalloc(out IMalloc ppMalloc);
 
       [DllImport("shell32", CharSet = CharSet.Auto)]
-      internal extern static int SHGetDesktopFolder(out IShellFolder ppshf);
+      internal static extern int SHGetDesktopFolder(out IShellFolder ppshf);
 
       [DllImport("shell32", CharSet = CharSet.Auto)]
-      internal extern static int SHGetPathFromIDList(IntPtr pidl, StringBuilder pszPath);
+      internal static extern int SHGetPathFromIDList(IntPtr pidl, StringBuilder pszPath);
 
       [DllImport("gdi32", CharSet = CharSet.Auto)]
-      internal extern static int DeleteObject(IntPtr hObject);
+      internal static extern int DeleteObject(IntPtr hObject);
     }
+
     #endregion
 
     #region Member Variables
+
     private IMalloc alloc = null;
     private bool disposed = false;
     private System.Drawing.Size desiredSize = new System.Drawing.Size(100, 100);
     private System.Drawing.Bitmap thumbNail = null;
+
     #endregion
 
     #region Implementation
+
     public System.Drawing.Bitmap ThumbNail
     {
-      get
-      {
-        return thumbNail;
-      }
+      get { return thumbNail; }
     }
 
     public System.Drawing.Size DesiredSize
     {
-      get
-      {
-        return desiredSize;
-      }
-      set
-      {
-        desiredSize = value;
-      }
+      get { return desiredSize; }
+      set { desiredSize = value; }
     }
 
     private IMalloc Allocator
@@ -372,8 +381,8 @@ namespace MediaPortal.Util
       if ((!File.Exists(file)) && (!Directory.Exists(file)))
       {
         throw new FileNotFoundException(
-        String.Format("The file '{0}' does not exist", file),
-        file);
+          String.Format("The file '{0}' does not exist", file),
+          file);
       }
 
       if (thumbNail != null)
@@ -402,12 +411,12 @@ namespace MediaPortal.Util
           string filePath = Path.GetDirectoryName(file);
           pidlMain = IntPtr.Zero;
           folder.ParseDisplayName(
-          IntPtr.Zero,
-          IntPtr.Zero,
-          filePath,
-          out cParsed,
-          out pidlMain,
-          out pdwAttrib);
+            IntPtr.Zero,
+            IntPtr.Zero,
+            filePath,
+            out cParsed,
+            out pidlMain,
+            out pdwAttrib);
         }
         catch (Exception ex)
         {
@@ -419,7 +428,7 @@ namespace MediaPortal.Util
         {
           // IShellFolder:
           Guid iidShellFolder = new
-          Guid("000214E6-0000-0000-C000-000000000046");
+            Guid("000214E6-0000-0000-C000-000000000046");
           IShellFolder item = null;
 
           try
@@ -552,9 +561,10 @@ namespace MediaPortal.Util
             // E.g. for PDFs on Vista...
             try
             {
-              extractImage.GetLocation(location, location.Capacity, ref priority, ref sz, requestedColourDepth, ref uFlags);
+              extractImage.GetLocation(location, location.Capacity, ref priority, ref sz, requestedColourDepth,
+                                       ref uFlags);
             }
-            catch (Exception) { }
+            catch (Exception) {}
 
             extractImage.Extract(out hBmp);
             if (hBmp != IntPtr.Zero)
@@ -611,12 +621,12 @@ namespace MediaPortal.Util
         return ppshf;
       }
     }
+
     #endregion
 
     #region Constructor, Destructor, Dispose
-    public ThumbnailExtractor()
-    {
-    }
+
+    public ThumbnailExtractor() {}
 
     public void Dispose()
     {
@@ -641,7 +651,9 @@ namespace MediaPortal.Util
     {
       Dispose();
     }
+
     #endregion
   }
+
   #endregion
 }

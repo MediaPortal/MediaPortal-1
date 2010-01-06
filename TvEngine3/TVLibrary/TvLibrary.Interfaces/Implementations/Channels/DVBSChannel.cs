@@ -142,7 +142,7 @@ namespace TvLibrary.Channels
       {
         return false;
       }
-      return channel.Frequency >= (sw*1000);
+      return channel.Frequency >= (sw * 1000);
     }
 
     /// <summary>

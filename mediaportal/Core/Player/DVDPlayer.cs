@@ -39,6 +39,7 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
+
 //using DirectX.Capture;
 
 // OK: 720x576 Windowed Mode, 
@@ -156,9 +157,7 @@ namespace MediaPortal.Player
 
     protected ArrayList _mouseMsg;
 
-    public DVDPlayer()
-    {
-    }
+    public DVDPlayer() {}
 
     public override void WndProc(ref Message m)
     {
@@ -224,7 +223,7 @@ namespace MediaPortal.Player
       _mouseMsg = new ArrayList();
 
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-      
+
       if (!FirstPlayDvd(file))
       {
         return false;
@@ -273,7 +272,7 @@ namespace MediaPortal.Player
 
         if (Util.VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(file)))
           file = DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO";
-        
+
         // Cyberlink navigator needs E:\\VIDEO_TS formatted path with double \
         path = file.Replace(@"\\", @"\").Replace(Path.GetFileName(file), "").Replace(@"\", @"\\");
 
@@ -312,7 +311,7 @@ namespace MediaPortal.Player
           if (hr == 0)
           {
             hr = _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child +
-              (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+                                                         (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
             if (hr != 0)
             {
               Log.Error("DVDPlayer:Unable to set window style 0x{0:X}", hr);
@@ -408,7 +407,7 @@ namespace MediaPortal.Player
 
     /// <summary> do cleanup and release DirectShow. </summary>
     protected virtual void CloseInterfaces()
-    {      
+    {
       if (_graphBuilder == null)
       {
         return;
@@ -440,7 +439,7 @@ namespace MediaPortal.Player
         {
           _vmr7.RemoveVMR7();
         }
-        _vmr7 = null;        
+        _vmr7 = null;
 
         if (_dvdbasefilter != null)
         {
@@ -467,8 +466,6 @@ namespace MediaPortal.Player
         }
 
 
-        
-
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);
@@ -492,7 +489,7 @@ namespace MediaPortal.Player
           }
           _dvdGraph = null;
         }
-        _state = PlayState.Init;        
+        _state = PlayState.Init;
 
         GUIGraphicsContext.form.Invalidate(true);
         GUIGraphicsContext.form.Activate();
@@ -630,7 +627,7 @@ namespace MediaPortal.Player
 
         if (_dvdInfo == null)
         {
-          riid = typeof(IDvdInfo2).GUID;
+          riid = typeof (IDvdInfo2).GUID;
           hr = _dvdGraph.GetDvdInterface(riid, out comobj);
           if (hr < 0)
           {
@@ -642,7 +639,7 @@ namespace MediaPortal.Player
 
         if (_dvdCtrl == null)
         {
-          riid = typeof(IDvdControl2).GUID;
+          riid = typeof (IDvdControl2).GUID;
           hr = _dvdGraph.GetDvdInterface(riid, out comobj);
           if (hr < 0)
           {
@@ -766,7 +763,7 @@ namespace MediaPortal.Player
               break;
 
             case EventCode.DvdSubPicictureStreamChange:
-              Log.Debug("EVT:DvdSubPicture Changed to:{0} Enabled:{1}", p1, p2);              
+              Log.Debug("EVT:DvdSubPicture Changed to:{0} Enabled:{1}", p1, p2);
               break;
 
             case EventCode.DvdChapterStart:
@@ -832,9 +829,9 @@ namespace MediaPortal.Player
                   _state = PlayState.Playing;
                   VMR9Util.g_vmr9.EVRSetDVDMenuState(false);
                   break;
-                // The DVD Navigator has completed playback of the title or 
-                // chapter and did not find any other branching instruction for 
-                // subsequent playback.
+                  // The DVD Navigator has completed playback of the title or 
+                  // chapter and did not find any other branching instruction for 
+                  // subsequent playback.
                 case DvdDomain.Stop:
                   Log.Debug("EVT:DVDPlayer:domain=stop");
                   Stop();
@@ -886,7 +883,7 @@ namespace MediaPortal.Player
       if (_currDomain == DvdDomain.Title)
       {
         bool pbIsDisabled;
-        int pulStreamsAvailable, pulCurrentStream, subtitleStream;        
+        int pulStreamsAvailable, pulCurrentStream, subtitleStream;
         int hr = _dvdInfo.GetCurrentSubpicture(out pulStreamsAvailable, out pulCurrentStream, out pbIsDisabled);
         if (hr != 0)
         {
@@ -898,7 +895,7 @@ namespace MediaPortal.Player
           for (subtitleStream = 0; subtitleStream < pulStreamsAvailable; subtitleStream++)
           {
             if (_defaultSubtitleLanguage == SubtitleLanguage(subtitleStream))
-            {              
+            {
               break;
             }
           }
@@ -927,7 +924,7 @@ namespace MediaPortal.Player
         {
           Log.Error("DVDPlayer:OnCmdComplete() GetCmdFromEvent failed!");
           return;
-        }        
+        }
 
         if (cmd != _cmdOption)
         {
@@ -952,9 +949,7 @@ namespace MediaPortal.Player
     }
 
     /// <summary> update menu items to match current playback state </summary>
-    protected void UpdateMenu()
-    {
-    }
+    protected void UpdateMenu() {}
 
     public override int PositionX
     {
@@ -1097,7 +1092,7 @@ namespace MediaPortal.Player
     public override void Stop()
     {
       int hr = 0;
-      if (_mediaCtrl == null || !Playing )
+      if (_mediaCtrl == null || !Playing)
       {
         return;
       }
@@ -1113,7 +1108,7 @@ namespace MediaPortal.Player
         _state = PlayState.Stopped;
         UpdateMenu();
       }
-      CloseInterfaces();      
+      CloseInterfaces();
       GUIGraphicsContext.IsFullScreenVideo = false;
       GUIGraphicsContext.IsPlaying = false;
     }
@@ -1405,9 +1400,8 @@ namespace MediaPortal.Player
           }
 
           DirectShowUtil.ReleaseComObject(dvdState);
-
         }
-        catch { }
+        catch {}
       }
       Log.Info("DVDPlayer::SetResumeState() end false");
       return false;
@@ -1529,7 +1523,7 @@ namespace MediaPortal.Player
       {
         nh = GUIGraphicsContext.OverScanHeight;
       }
-      lock (typeof(DVDPlayer))
+      lock (typeof (DVDPlayer))
       {
         if (GUIGraphicsContext.IsFullScreenVideo)
         {
@@ -1883,7 +1877,7 @@ namespace MediaPortal.Player
             Log.Error("DVDPlayer:Failed to set audiostream to {0} with error code:{1}", value, hr);
           }
         }
-        catch { }
+        catch {}
       }
     }
 
@@ -1903,7 +1897,7 @@ namespace MediaPortal.Player
           int noc = attr.bNumberOfChannels;
 
           if (noc > 2)
-          {            
+          {
             noc -= 1;
             channelInfo = noc + "." + "1";
           }
@@ -1913,9 +1907,9 @@ namespace MediaPortal.Player
           }
 
           details = " (" + attr.AudioFormat
-            + " " + channelInfo
-            + " - " + attr.dwFrequency + " Hz " +
-            + +attr.bQuantization + " bits)";
+                    + " " + channelInfo
+                    + " - " + attr.dwFrequency + " Hz " +
+                    + +attr.bQuantization + " bits)";
         }
 
         foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
@@ -1977,7 +1971,7 @@ namespace MediaPortal.Player
             Log.Error("DVDPlayer:CurrentSubtitleStream:Unable to set current subpicture with code {0}", hr);
           }
         }
-        catch { }
+        catch {}
         //_log.Debug("DVDPlayer:CurrentSubtitleStream:Setting subpicture stream: stream {0}", value);
       }
     }
@@ -2081,7 +2075,7 @@ namespace MediaPortal.Player
           }
           //_log.Debug("DVDPlayer:EnableSubtitle:Setting subpicture state to enabled {0}", value);
         }
-        catch { }
+        catch {}
       }
     }
 
@@ -2115,8 +2109,6 @@ namespace MediaPortal.Player
       return false;
     }
 
-    protected virtual void Repaint()
-    {
-    }
+    protected virtual void Repaint() {}
   }
 }

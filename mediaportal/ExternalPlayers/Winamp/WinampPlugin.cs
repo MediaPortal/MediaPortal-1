@@ -57,9 +57,7 @@ namespace MediaPortal.WinampPlayer
     private bool _notifyPlaying = false;
     private bool _isCDA = false;
 
-    public WinampPlugin()
-    {
-    }
+    public WinampPlugin() {}
 
     public override void ShowPlugin()
     {
@@ -337,9 +335,9 @@ namespace MediaPortal.WinampPlayer
       double dCurrentPos = CurrentPosition;
       double dDuration = Duration;
 
-      double fCurPercent = (dCurrentPos/Duration)*100.0d;
-      double fOnePercent = Duration/100.0d;
-      fCurPercent = fCurPercent + (double) iPercentage;
+      double fCurPercent = (dCurrentPos / Duration) * 100.0d;
+      double fOnePercent = Duration / 100.0d;
+      fCurPercent = fCurPercent + (double)iPercentage;
       fCurPercent *= fOnePercent;
       if (fCurPercent < 0.0d)
       {
@@ -362,8 +360,8 @@ namespace MediaPortal.WinampPlayer
       {
         iPercentage = 100;
       }
-      double fPercent = Duration/100.0f;
-      fPercent *= (double) iPercentage;
+      double fPercent = Duration / 100.0f;
+      fPercent *= (double)iPercentage;
       m_winampController.Position = fPercent;
     }
 

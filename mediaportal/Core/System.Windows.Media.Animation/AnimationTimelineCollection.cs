@@ -31,9 +31,7 @@ namespace System.Windows.Media.Animation
   {
     #region Constructors
 
-    public AnimationTimelineCollection()
-    {
-    }
+    public AnimationTimelineCollection() {}
 
     #endregion Constructors
 
@@ -112,7 +110,7 @@ namespace System.Windows.Media.Animation
 
     public AnimationTimeline this[int index]
     {
-      get { return (AnimationTimeline) List[index]; }
+      get { return (AnimationTimeline)List[index]; }
       set { List[index] = value; }
     }
 

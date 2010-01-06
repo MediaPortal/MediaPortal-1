@@ -27,15 +27,17 @@ using TvDatabase;
 
 namespace TvLibrary
 {
-  class TimeShiftingEPGGrabber : BaseEpgGrabber
+  internal class TimeShiftingEPGGrabber : BaseEpgGrabber
   {
     #region Variables
+
     private readonly ITVCard _card;
     private readonly System.Timers.Timer _epgTimer = new System.Timers.Timer();
-    DateTime _grabStartTime;
+    private DateTime _grabStartTime;
     private List<EpgChannel> _epg;
     private bool _updateThreadRunning;
     private readonly EpgDBUpdater _dbUpdater;
+
     #endregion
 
     public TimeShiftingEPGGrabber(IEpgEvents epgEvents, ITVCard card)
@@ -45,6 +47,7 @@ namespace TvLibrary
       _updateThreadRunning = false;
       _epgTimer.Elapsed += _epgTimer_Elapsed;
     }
+
     private void LoadSettings()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -53,6 +56,7 @@ namespace TvLibrary
         timeout = 2;
       _epgTimer.Interval = timeout * 60000;
     }
+
     public bool StartGrab()
     {
       if (_updateThreadRunning)
@@ -66,7 +70,8 @@ namespace TvLibrary
       _epgTimer.Enabled = true;
       return true;
     }
-    void _epgTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+
+    private void _epgTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       TimeSpan ts = DateTime.Now - _grabStartTime;
       Log.Log.Epg("TimeshiftingEpgGrabber: timeout after {1} mins", ts.TotalMinutes);
@@ -75,6 +80,7 @@ namespace TvLibrary
     }
 
     #region BaseEpgGrabber implementation
+
     /// <summary>
     /// Gets called when epg has been cancelled
     /// Should be overriden by the class
@@ -85,6 +91,7 @@ namespace TvLibrary
       _card.IsEpgGrabbing = false;
       _epgTimer.Enabled = false;
     }
+
     /// <summary>
     /// Gets called when epg has been received
     /// Should be overriden by the class
@@ -96,7 +103,8 @@ namespace TvLibrary
       try
       {
         grabbedEpg = _card.Epg;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Epg("TimeshiftingEpgGrabber: Error while retrieving the epg data: ", ex);
       }
@@ -119,9 +127,11 @@ namespace TvLibrary
       _epgTimer.Enabled = false;
       return 0;
     }
+
     #endregion
 
     #region Database update routines
+
     private void UpdateDatabaseThread()
     {
       if (_epg == null)
@@ -138,6 +148,7 @@ namespace TvLibrary
       _card.IsEpgGrabbing = false;
       _updateThreadRunning = false;
     }
+
     #endregion
   }
 }

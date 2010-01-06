@@ -101,7 +101,7 @@ namespace MediaPortal.Hardware
 
       CreateParams Params = new CreateParams();
       Params.ExStyle = 0x80;
-      Params.Style = unchecked((int) 0x80000000);
+      Params.Style = unchecked((int)0x80000000);
       CreateHandle(Params);
     }
 
@@ -126,11 +126,11 @@ namespace MediaPortal.Hardware
         switch (m.WParam.ToInt32())
         {
           case DBT_DEVICEARRIVAL:
-            OnDeviceArrival((DeviceBroadcastHeader) Marshal.PtrToStructure(m.LParam, typeof (DeviceBroadcastHeader)),
+            OnDeviceArrival((DeviceBroadcastHeader)Marshal.PtrToStructure(m.LParam, typeof (DeviceBroadcastHeader)),
                             m.LParam);
             break;
           case DBT_DEVICEREMOVECOMPLETE:
-            OnDeviceRemoval((DeviceBroadcastHeader) Marshal.PtrToStructure(m.LParam, typeof (DeviceBroadcastHeader)),
+            OnDeviceRemoval((DeviceBroadcastHeader)Marshal.PtrToStructure(m.LParam, typeof (DeviceBroadcastHeader)),
                             m.LParam);
             break;
         }
@@ -225,7 +225,7 @@ namespace MediaPortal.Hardware
       if (dbh.DeviceType == 0x05)
       {
         DeviceBroadcastInterface dbi =
-          (DeviceBroadcastInterface) Marshal.PtrToStructure(ptr, typeof (DeviceBroadcastInterface));
+          (DeviceBroadcastInterface)Marshal.PtrToStructure(ptr, typeof (DeviceBroadcastInterface));
 
         if (dbi.ClassGuid == _deviceClass && DeviceArrival != null)
         {
@@ -238,7 +238,7 @@ namespace MediaPortal.Hardware
     {
       if (header.DeviceType == 0x06)
       {
-        DeviceBroadcastHandle dbh = (DeviceBroadcastHandle) Marshal.PtrToStructure(ptr, typeof (DeviceBroadcastHandle));
+        DeviceBroadcastHandle dbh = (DeviceBroadcastHandle)Marshal.PtrToStructure(ptr, typeof (DeviceBroadcastHandle));
 
         if (dbh.Handle != _deviceHandle.DangerousGetHandle())
         {

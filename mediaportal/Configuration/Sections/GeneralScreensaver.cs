@@ -7,9 +7,7 @@ namespace MediaPortal.Configuration.Sections
     #region ctor
 
     public GeneralScreensaver()
-      : this("Screensaver")
-    {
-    }
+      : this("Screensaver") {}
 
     public GeneralScreensaver(string name)
       : base(name)

@@ -82,9 +82,7 @@ namespace TvLibrary.Log
     /// <summary>
     /// Private singleton constructor . Do not allow any instance of this class.
     /// </summary>
-    private Log()
-    {
-    }
+    private Log() {}
 
     /// <summary>
     /// Static constructor
@@ -263,14 +261,10 @@ namespace TvLibrary.Log
           {
             File.SetCreationTime(aFileName, DateTime.Now);
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
 
     /// <summary>
@@ -312,15 +306,9 @@ namespace TvLibrary.Log
             // Create a new log file with correct timestamps
             CreateBlankFile(logFileName);
           }
-          catch (UnauthorizedAccessException)
-          {
-          }
-          catch (ArgumentException)
-          {
-          }
-          catch (IOException)
-          {
-          }
+          catch (UnauthorizedAccessException) {}
+          catch (ArgumentException) {}
+          catch (IOException) {}
         }
       }
       catch (Exception)
@@ -396,14 +384,12 @@ namespace TvLibrary.Log
             fileDate = logFi.CreationTime;
 
             // Some log source went out of control here - do not log until out of disk space!
-            if (logFi.Length > _maxLogSizeMb*1000*1000)
+            if (logFi.Length > _maxLogSizeMb * 1000 * 1000)
             {
               result = false;
             }
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
           // File is older than today - _logDaysToKeep = rotate
           if (checkDate.CompareTo(fileDate) > 0)
           {
@@ -411,9 +397,7 @@ namespace TvLibrary.Log
           }
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return result;
     }
 
@@ -454,9 +438,7 @@ namespace TvLibrary.Log
             }
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
     }
 

@@ -32,19 +32,20 @@ namespace TvService
   {
     #region variables
 
-    readonly Schedule _schedule;
-    readonly Channel _channel;
-    string _fileName;
-    readonly DateTime _endTime;
-    readonly TvDatabase.Program _program;
-    CardDetail _cardInfo;
-    DateTime _dateTimeRecordingStarted;
-    Recording _recording;
-    readonly bool _isSerie;
+    private readonly Schedule _schedule;
+    private readonly Channel _channel;
+    private string _fileName;
+    private readonly DateTime _endTime;
+    private readonly TvDatabase.Program _program;
+    private CardDetail _cardInfo;
+    private DateTime _dateTimeRecordingStarted;
+    private Recording _recording;
+    private readonly bool _isSerie;
 
     #endregion
 
     #region ctor
+
     /// <summary>
     /// constructor
     /// </summary>
@@ -61,7 +62,7 @@ namespace TvService
       _channel = channel;
       _endTime = endTime;
       _program = null;
-      _isSerie = isSerie;      
+      _isSerie = isSerie;
 
       TvDatabase.Program _current = schedule.ReferencedChannel().CurrentProgram; // current running program
       TvDatabase.Program _next = schedule.ReferencedChannel().NextProgram; // next running one
@@ -76,7 +77,7 @@ namespace TvService
         {
           if (schedule.StartTime.Hour == _current.StartTime.Hour &&
               schedule.StartTime.Minute == _current.StartTime.Minute)
-          // the program we wanna record is the current running show?
+            // the program we wanna record is the current running show?
           {
             _program = _current;
           }
@@ -86,7 +87,7 @@ namespace TvService
           // maybe the next then ...
           {
             if (schedule.StartTime.Hour == _next.StartTime.Hour &&
-            schedule.StartTime.Minute == _next.StartTime.Minute)
+                schedule.StartTime.Minute == _next.StartTime.Minute)
             {
               _program = _next;
             }
@@ -100,36 +101,30 @@ namespace TvService
       //no program? then treat this as a manual recording
       if (_program == null)
       {
-        _program = new TvDatabase.Program(0, DateTime.Now, endTime, "manual", "", "", TvDatabase.Program.ProgramState.None, System.Data.SqlTypes.SqlDateTime.MinValue.Value, string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, 0);
+        _program = new TvDatabase.Program(0, DateTime.Now, endTime, "manual", "", "",
+                                          TvDatabase.Program.ProgramState.None,
+                                          System.Data.SqlTypes.SqlDateTime.MinValue.Value, string.Empty, string.Empty,
+                                          string.Empty, string.Empty, -1, string.Empty, 0);
       }
     }
+
     #endregion
 
     #region properties
+
     public Recording Recording
     {
-      get
-      {
-        return _recording;
-      }
-      set
-      {
-        _recording = value;
-      }
+      get { return _recording; }
+      set { _recording = value; }
     }
+
     /// <summary>
     /// get/sets the CardInfo for this recording
     /// </summary>
     public CardDetail CardInfo
     {
-      get
-      {
-        return _cardInfo;
-      }
-      set
-      {
-        _cardInfo = value;
-      }
+      get { return _cardInfo; }
+      set { _cardInfo = value; }
     }
 
     /// <summary>
@@ -138,14 +133,8 @@ namespace TvService
     /// <value>The recording start date time.</value>
     public DateTime RecordingStartDateTime
     {
-      get
-      {
-        return _dateTimeRecordingStarted;
-      }
-      set
-      {
-        _dateTimeRecordingStarted = value;
-      }
+      get { return _dateTimeRecordingStarted; }
+      set { _dateTimeRecordingStarted = value; }
     }
 
     /// <summary>
@@ -153,54 +142,40 @@ namespace TvService
     /// </summary>
     public Schedule Schedule
     {
-      get
-      {
-        return _schedule;
-      }
+      get { return _schedule; }
     }
+
     /// <summary>
     /// gets the Channel which is being recorded
     /// </summary>
     public Channel Channel
     {
-      get
-      {
-        return _channel;
-      }
+      get { return _channel; }
     }
+
     /// <summary>
     /// Gets the filename of the recording
     /// </summary>
     public string FileName
     {
-      get
-      {
-        return _fileName;
-      }
-      set
-      {
-        _fileName = value;
-      }
+      get { return _fileName; }
+      set { _fileName = value; }
     }
+
     /// <summary>
     /// Gets the date/time on which the recording should stop
     /// </summary>
     public DateTime EndTime
     {
-      get
-      {
-        return _endTime;
-      }
+      get { return _endTime; }
     }
+
     /// <summary>
     /// Gets the Program which is being recorded
     /// </summary>
     public TvDatabase.Program Program
     {
-      get
-      {
-        return _program;
-      }
+      get { return _program; }
     }
 
     /// <summary>
@@ -228,6 +203,7 @@ namespace TvService
     #endregion
 
     #region private members
+
     /// <summary>
     /// Create the filename for the recording 
     /// </summary>
@@ -261,28 +237,30 @@ namespace TvService
       string fileName;
       const string recEngineExt = ".ts";
 
-      string[] TagNames = { "%channel%", 
-                            "%title%", 
-                            "%name%", 
-                            "%series%", 
-                            "%episode%", 
-                            "%part%", 
+      string[] TagNames = {
+                            "%channel%",
+                            "%title%",
+                            "%name%",
+                            "%series%",
+                            "%episode%",
+                            "%part%",
                             "%date%",
                             "%start%",
                             "%end%",
-                            "%genre%", 
-                            "%startday%", 
-                            "%startmonth%", 
-                            "%startyear%", 
-                            "%starthh%", 
-                            "%startmm%", 
-                            "%endday%", 
-                            "%endmonth%", 
-                            "%endyear%", 
-                            "%endhh%", 
+                            "%genre%",
+                            "%startday%",
+                            "%startmonth%",
+                            "%startyear%",
+                            "%starthh%",
+                            "%startmm%",
+                            "%endday%",
+                            "%endmonth%",
+                            "%endyear%",
+                            "%endhh%",
                             "%endmm%"
                           };
-      string[] TagValues = { _schedule.ReferencedChannel().DisplayName,
+      string[] TagValues = {
+                             _schedule.ReferencedChannel().DisplayName,
                              Program.Title,
                              Program.EpisodeName,
                              Program.SeriesNum,
@@ -339,11 +317,11 @@ namespace TvService
       {
         DateTime dt = Program.StartTime;
         fileName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
-                                  _schedule.ReferencedChannel().DisplayName, Program.Title,
-                                  dt.Year, dt.Month, dt.Day,
-                                  dt.Hour,
-                                  dt.Minute,
-                                  DateTime.Now.Minute, DateTime.Now.Second);
+                                 _schedule.ReferencedChannel().DisplayName, Program.Title,
+                                 dt.Year, dt.Month, dt.Day,
+                                 dt.Hour,
+                                 dt.Minute,
+                                 DateTime.Now.Minute, DateTime.Now.Second);
       }
       fileName = Utils.MakeFileName(fileName);
       if (DoesFileExist(fullPath + "\\" + fileName))
@@ -362,7 +340,7 @@ namespace TvService
     /// </summary>
     /// <param name="fileName">full path and filename expect the extension.</param>
     /// <returns>true if file exists, otherwise false</returns>
-    static bool DoesFileExist(string fileName)
+    private static bool DoesFileExist(string fileName)
     {
       if (System.IO.File.Exists(fileName + ".mpg"))
         return true;
@@ -370,7 +348,7 @@ namespace TvService
         return true;
       return false;
     }
+
     #endregion
   }
-
 }

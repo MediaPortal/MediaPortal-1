@@ -32,9 +32,7 @@ namespace MediaPortal.Core.Transcoding
   /// </summary>
   public class TranscodeFactory
   {
-    public TranscodeFactory()
-    {
-    }
+    public TranscodeFactory() {}
 
     public ITranscode GetTranscoder(TranscodeInfo info, VideoFormat format)
     {

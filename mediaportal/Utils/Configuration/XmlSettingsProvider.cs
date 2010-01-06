@@ -127,9 +127,7 @@ namespace MediaPortal.Profile
           File.Move(filename, filename + ".bak");
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       using (StreamWriter stream = new StreamWriter(filename, false))
       {

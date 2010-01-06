@@ -78,9 +78,9 @@ namespace MediaPortal.Configuration
       }
 
       Log.Info("Using Directories:");
-      foreach (string options in Enum.GetNames(typeof(Config.Dir)))
+      foreach (string options in Enum.GetNames(typeof (Config.Dir)))
       {
-        Log.Info("{0} - {1}", options, Config.GetFolder((Config.Dir)Enum.Parse(typeof(Config.Dir), options)));
+        Log.Info("{0} - {1}", options, Config.GetFolder((Config.Dir)Enum.Parse(typeof (Config.Dir), options)));
       }
 
       // rtv: disabled Wizard due to frequent bug reports on serveral sections.
@@ -145,7 +145,8 @@ namespace MediaPortal.Configuration
         {
           ServicePack = " ( " + ServicePack + " )";
         }
-        Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSNameString() + ServicePack + " [" + OSInfo.OSInfo.OSVersion + "]");
+        Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSNameString() +
+                 ServicePack + " [" + OSInfo.OSInfo.OSVersion + "]");
 
         //Check for unsupported operating systems
         if (OSInfo.OSInfo.GetOSSupported() != 1)
@@ -180,7 +181,7 @@ namespace MediaPortal.Configuration
 
         string MpConfig = Assembly.GetExecutingAssembly().Location;
 #if !DEBUG
-        // Check TvPlugin version
+  // Check TvPlugin version
         string tvPlugin = Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll";
       if (File.Exists(tvPlugin) && !_avoidVersionChecking)
         {
@@ -212,7 +213,6 @@ namespace MediaPortal.Configuration
             Log.Info("Create new standard setup");
             applicationForm = new SettingsForm(_debugOptions);
             break;
-
         }
 
         if (applicationForm != null)
@@ -262,9 +262,12 @@ namespace MediaPortal.Configuration
     {
       DialogResult res;
 
-      const string MsgNotSupported = "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
-      const string MsgNotInstallable = "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
-      const string MsgBetaServicePack = "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
+      const string MsgNotSupported =
+        "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
+      const string MsgNotInstallable =
+        "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
+      const string MsgBetaServicePack =
+        "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
 
       string ServicePack = OSInfo.OSInfo.GetOSServicePack();
       if (!string.IsNullOrEmpty(ServicePack))

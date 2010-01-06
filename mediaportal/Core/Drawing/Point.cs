@@ -35,9 +35,7 @@ namespace MediaPortal.Drawing
   {
     #region Constructors
 
-    public Point(Size s) : this(s.Width, s.Height)
-    {
-    }
+    public Point(Size s) : this(s.Width, s.Height) {}
 
     public Point(double x, double y)
     {
@@ -71,12 +69,12 @@ namespace MediaPortal.Drawing
 
     public static implicit operator Vector2(Point point)
     {
-      return new Vector2((float) point.X, (float) point.Y);
+      return new Vector2((float)point.X, (float)point.Y);
     }
 
     public static implicit operator Vector3(Point point)
     {
-      return new Vector3((float) point.X, (float) point.Y, 0);
+      return new Vector3((float)point.X, (float)point.Y, 0);
     }
 
     #endregion Operators
@@ -85,12 +83,12 @@ namespace MediaPortal.Drawing
 
     public override bool Equals(object o)
     {
-      return o is Point && ((Point) o)._x == _x && ((Point) o)._y == _y;
+      return o is Point && ((Point)o)._x == _x && ((Point)o)._y == _y;
     }
 
     public override int GetHashCode()
     {
-      return (int) ((uint) _x ^ (uint) _y);
+      return (int)((uint)_x ^ (uint)_y);
     }
 
     public void Offset(Point point)
@@ -110,7 +108,7 @@ namespace MediaPortal.Drawing
 //			TODO:
 //			result->x = a->x + ((b->x - a->x) >> 1);
 //			result->y = a->y + ((b->y - a->y) >> 1);
-      return new Point(a.X + ((int) (b.X - a.X) >> 1), a.Y + ((int) (b.Y - a.Y) >> 1));
+      return new Point(a.X + ((int)(b.X - a.X) >> 1), a.Y + ((int)(b.Y - a.Y) >> 1));
     }
 
     public PointF ToPointF()
@@ -125,12 +123,12 @@ namespace MediaPortal.Drawing
 
     public Vector2 ToVector2()
     {
-      return new Vector2((float) _x, (float) _y);
+      return new Vector2((float)_x, (float)_y);
     }
 
     public Vector3 ToVector3()
     {
-      return new Vector3((float) _x, (float) _y, 0);
+      return new Vector3((float)_x, (float)_y, 0);
     }
 
     #endregion Methods

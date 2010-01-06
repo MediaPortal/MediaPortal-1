@@ -82,9 +82,7 @@ namespace Rss
     private RssItemCollection items = new RssItemCollection();
 
     /// <summary>Initialize a new instance of the RssChannel class.</summary>
-    public RssChannel()
-    {
-    }
+    public RssChannel() {}
 
     /// <summary>Returns a string representation of the current Object.</summary>
     /// <returns>The channel's title, description, or "RssChannel" if the title and description are blank.</returns>

@@ -59,8 +59,6 @@ namespace Rss
   public abstract class RssElement
   {
     /// <summary>Initialize a new instance of the RssElement class</summary>
-    protected RssElement()
-    {
-    }
+    protected RssElement() {}
   }
 }

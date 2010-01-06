@@ -208,7 +208,7 @@ namespace SQLite.NET
       try
       {
         string file = System.IO.Path.GetFileName(fileName);
-        
+
         validFile = file.Length > 0;
       }
       catch (Exception)
@@ -221,14 +221,14 @@ namespace SQLite.NET
       if (validFile)
       {
         while (!File.Exists(fileName) && currentWaitCount < maxWaitCount)
-        {          
+        {
           System.Threading.Thread.Sleep(250);
           currentWaitCount++;
           Log.Info("SQLLiteClient: waiting for remote database file {0} for {1} msec", fileName, currentWaitCount * 240);
         }
       }
       else
-      {       
+      {
         return true;
       }
 
@@ -246,11 +246,11 @@ namespace SQLite.NET
     // Methods
 
     private void init(string dbName)
-    {      
+    {
       bool isRemotePath = PathIsNetworkPath(dbName);
       if (isRemotePath)
       {
-        Log.Info("SQLLiteClient: database is remote {0}",this.DBName);
+        Log.Info("SQLLiteClient: database is remote {0}", this.DBName);
         WaitForFile(dbName);
       }
 
@@ -319,7 +319,7 @@ namespace SQLite.NET
       throw new SQLiteException(
         String.Format("SQLiteClient: {0} cmd:{1} err:{2} detailed:{3} query:{4}", databaseName, statement,
                       err.ToString(),
-                      errorMsg, sqlQuery), err);      
+                      errorMsg, sqlQuery), err);
     }
 
     public SQLiteResultSet Execute(string query)
@@ -348,7 +348,7 @@ namespace SQLite.NET
         {
           IntPtr pVm;
           IntPtr pzTail;
-          err = sqlite3_prepare16(dbHandle, query, query.Length*2, out pVm, out pzTail);
+          err = sqlite3_prepare16(dbHandle, query, query.Length * 2, out pVm, out pzTail);
           if (err == SqliteError.OK)
           {
             ReadpVm(query, set1, ref pVm);
@@ -360,9 +360,7 @@ namespace SQLite.NET
           }
           err = sqlite3_finalize(pVm, out errMsg);
         }
-        finally
-        {
-        }
+        finally {}
         if (err != SqliteError.OK)
         {
           Log.Error("SQLiteClient: query returned {0} {1}", err.ToString(), query);
@@ -410,7 +408,7 @@ namespace SQLite.NET
 
           // bool res2 = WaitForFile(this.DBName);
 
-          SqliteError err = (SqliteError) sqlite3_open16(this.DBName, out dbHandle);
+          SqliteError err = (SqliteError)sqlite3_open16(this.DBName, out dbHandle);
 
           if (err != SqliteError.OK)
           {
@@ -420,7 +418,7 @@ namespace SQLite.NET
           else
           {
             IntPtr pzTail;
-            err = sqlite3_prepare16(dbHandle, query, query.Length*2, out pVm, out pzTail);
+            err = sqlite3_prepare16(dbHandle, query, query.Length * 2, out pVm, out pzTail);
 
             res = sqlite3_step(pVm);
             pN = sqlite3_column_count(pVm);

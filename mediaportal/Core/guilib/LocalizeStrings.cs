@@ -51,9 +51,7 @@ namespace MediaPortal.GUI.Library
     #region Constructors/Destructors
 
     // singleton. Dont allow any instance of this class
-    private GUILocalizeStrings()
-    {
-    }
+    private GUILocalizeStrings() {}
 
     public static void Dispose()
     {
@@ -126,7 +124,7 @@ namespace MediaPortal.GUI.Library
         _stringProvider.ChangeLanguage(GetCultureName(language));
         if (_stringProvider.Characters > GUIGraphicsContext.CharsInCharacterSet)
         {
-            GUIGraphicsContext.CharsInCharacterSet = _stringProvider.Characters;
+          GUIGraphicsContext.CharsInCharacterSet = _stringProvider.Characters;
         }
       }
     }
@@ -273,7 +271,7 @@ namespace MediaPortal.GUI.Library
 
         for (int i = 0; i < sortedLanguages.Count; i++)
         {
-          _languages[i] = (string) sortedLanguages.GetByIndex(i);
+          _languages[i] = (string)sortedLanguages.GetByIndex(i);
         }
       }
 

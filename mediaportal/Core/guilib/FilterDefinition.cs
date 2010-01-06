@@ -46,9 +46,7 @@ namespace MediaPortal.GUI.View
     protected string defaultSort = "Name";
     protected int limit = -1;
 
-    public FilterDefinition()
-    {
-    }
+    public FilterDefinition() {}
 
     [XmlElement("distinct")]
     public bool Distinct

@@ -254,7 +254,7 @@ namespace MediaPortal.InputDevices
             }
             //IRData must be "remote+TAB+code+TAB+repeatcount"
             IRData = channelparts[0] + TAB + s + TAB + m_repeat;
-            cds.dwData = (IntPtr) 0;
+            cds.dwData = (IntPtr)0;
             cds.lpData = IRData;
             cds.cbData = IRData.Length + 1;
             SendMessage(m_hwnd, WM_COPYDATA, 0, ref cds);

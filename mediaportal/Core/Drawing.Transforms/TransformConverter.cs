@@ -52,12 +52,12 @@ namespace MediaPortal.Drawing.Transforms
     {
       if (value is string)
       {
-        return Parse(context, culture, (string) value);
+        return Parse(context, culture, (string)value);
       }
 
       if (value is TransformCollection)
       {
-        return new TransformGroup((TransformCollection) value);
+        return new TransformGroup((TransformCollection)value);
       }
 
       if (value is Transform)
@@ -97,7 +97,7 @@ namespace MediaPortal.Drawing.Transforms
         if (tokens.Count == 3)
         {
           return new RotateTransform(double.Parse(tokens[1]),
-                                     (Point) new PointConverter().ConvertFromString(context, culture, tokens[2]));
+                                     (Point)new PointConverter().ConvertFromString(context, culture, tokens[2]));
         }
 
         if (tokens.Count == 2)
@@ -128,7 +128,7 @@ namespace MediaPortal.Drawing.Transforms
         if (tokens.Count == 4)
         {
           return new ScaleTransform(double.Parse(tokens[1]), double.Parse(tokens[2]),
-                                    (Point) new PointConverter().ConvertFromString(context, culture, tokens[3]));
+                                    (Point)new PointConverter().ConvertFromString(context, culture, tokens[3]));
         }
 
         if (tokens.Count == 3)

@@ -48,10 +48,7 @@ namespace SetupTv.Sections
 
       public Card Card
       {
-        get
-        {
-          return _card;
-        }
+        get { return _card; }
       }
 
       public CardInfo(Card card)
@@ -64,6 +61,7 @@ namespace SetupTv.Sections
         return _card.Name;
       }
     }
+
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
     private readonly MPListViewStringColumnSorter lvwColumnSorter2;
 
@@ -197,7 +195,7 @@ namespace SetupTv.Sections
         mpListView1.Items.Clear();
         Channel.ListAll();
         int channelCount = 0;
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
         sb.AddOrderByField(true, "sortOrder");
         SqlStatement stmt = sb.GetStatement(true);
         IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
@@ -348,7 +346,7 @@ namespace SetupTv.Sections
             float frequency;
             switch (detail.ChannelType)
             {
-              case 0://Analog
+              case 0: //Analog
                 if (detail.VideoSource == (int)AnalogChannel.VideoInputType.Tuner)
                 {
                   frequency = detail.Frequency;
@@ -361,33 +359,35 @@ namespace SetupTv.Sections
                 }
                 break;
 
-              case 1://ATSC
-                item.SubItems.Add(String.Format("{0} {1}:{2}", detail.ChannelNumber, detail.MajorChannel, detail.MinorChannel));
+              case 1: //ATSC
+                item.SubItems.Add(String.Format("{0} {1}:{2}", detail.ChannelNumber, detail.MajorChannel,
+                                                detail.MinorChannel));
                 break;
 
-              case 2:// DVB-C
+              case 2: // DVB-C
                 frequency = detail.Frequency;
                 frequency /= 1000.0f;
                 item.SubItems.Add(String.Format("{0} MHz SR:{1}", frequency.ToString("f2"), detail.Symbolrate));
                 break;
 
-              case 3:// DVB-S
+              case 3: // DVB-S
                 frequency = detail.Frequency;
                 frequency /= 1000.0f;
-                item.SubItems.Add(String.Format("{0} MHz {1}", frequency.ToString("f2"), (((Polarisation)detail.Polarisation))));
+                item.SubItems.Add(String.Format("{0} MHz {1}", frequency.ToString("f2"),
+                                                (((Polarisation)detail.Polarisation))));
                 break;
 
-              case 4:// DVB-T
+              case 4: // DVB-T
                 frequency = detail.Frequency;
                 frequency /= 1000.0f;
                 item.SubItems.Add(String.Format("{0} MHz BW:{1}", frequency.ToString("f2"), detail.Bandwidth));
                 break;
 
-              case 7:// DVB-IP
+              case 7: // DVB-IP
                 item.SubItems.Add(detail.Url);
                 break;
 
-              case 5:// Webstream
+              case 5: // Webstream
                 item.SubItems.Add(detail.Url);
                 break;
             }
@@ -526,10 +526,7 @@ namespace SetupTv.Sections
       OnSectionActivated();
     }
 
-    private void TvChannels_Load(object sender, EventArgs e)
-    {
-
-    }
+    private void TvChannels_Load(object sender, EventArgs e) {}
 
     private void mpButtonDel_Click(object sender, EventArgs e)
     {
@@ -540,7 +537,8 @@ namespace SetupTv.Sections
       //Since it takes a very long time to add channels, make sure the user really wants to delete them
       if (mpListView1.SelectedItems.Count > 0)
       {
-        string holder = String.Format("Are you sure you want to delete these {0:d} channels?", mpListView1.SelectedItems.Count);
+        string holder = String.Format("Are you sure you want to delete these {0:d} channels?",
+                                      mpListView1.SelectedItems.Count);
 
         if (MessageBox.Show(holder, "", MessageBoxButtons.YesNo) == DialogResult.No)
         {
@@ -548,7 +546,8 @@ namespace SetupTv.Sections
           return;
         }
       }
-      NotifyForm dlg = new NotifyForm("Deleting selected tv channels...", "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Deleting selected tv channels...",
+                                      "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
 
@@ -647,7 +646,9 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+        lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending
+                                  ? SortOrder.Descending
+                                  : SortOrder.Ascending;
       }
       else
       {
@@ -705,7 +706,8 @@ namespace SetupTv.Sections
 
     private void mpButtonUncheckEncrypted_Click(object sender, EventArgs e)
     {
-      NotifyForm dlg = new NotifyForm("Unchecking all scrambled tv channels...", "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Unchecking all scrambled tv channels...",
+                                      "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
       foreach (ListViewItem item in mpListView1.Items)
@@ -719,7 +721,8 @@ namespace SetupTv.Sections
 
     private void mpButtonDeleteEncrypted_Click(object sender, EventArgs e)
     {
-      NotifyForm dlg = new NotifyForm("Deleting all scrambled tv channels...", "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Deleting all scrambled tv channels...",
+                                      "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
       List<ListViewItem> itemsToRemove = new List<ListViewItem>();
@@ -742,7 +745,8 @@ namespace SetupTv.Sections
 
     private void renameMarkedChannelsBySIDToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      NotifyForm dlg = new NotifyForm("Renaming selected tv channels by SID ...", "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Renaming selected tv channels by SID ...",
+                                      "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
       foreach (ListViewItem item in mpListView1.SelectedItems)
@@ -762,7 +766,8 @@ namespace SetupTv.Sections
 
     private void addSIDInFrontOfNameToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      NotifyForm dlg = new NotifyForm("Adding SID in front of name...", "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Adding SID in front of name...",
+                                      "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
 
@@ -842,7 +847,7 @@ namespace SetupTv.Sections
       {
         if (item.Checked == false)
         {
-          continue;  // do not test "un-checked" channels
+          continue; // do not test "un-checked" channels
         }
         Channel _channel = (Channel)item.Tag; // get channel
         dlg.SetMessage(
@@ -933,7 +938,7 @@ namespace SetupTv.Sections
       GroupSelectionForm dlgGrpSel = new GroupSelectionForm();
       dlgGrpSel.Selection = GroupSelectionForm.SelectionType.ForRenaming;
 
-      if (dlgGrpSel.ShowDialog(typeof(ChannelGroup), this) != DialogResult.OK)
+      if (dlgGrpSel.ShowDialog(typeof (ChannelGroup), this) != DialogResult.OK)
       {
         return;
       }
@@ -968,7 +973,7 @@ namespace SetupTv.Sections
     {
       GroupSelectionForm dlgGrpSel = new GroupSelectionForm();
 
-      if (dlgGrpSel.ShowDialog(typeof(ChannelGroup), this) != DialogResult.OK)
+      if (dlgGrpSel.ShowDialog(typeof (ChannelGroup), this) != DialogResult.OK)
       {
         return;
       }
@@ -980,7 +985,7 @@ namespace SetupTv.Sections
       }
 
       DialogResult result = MessageBox.Show(string.Format("Are you sure you want to delete the group '{0}'?",
-        group.GroupName), "", MessageBoxButtons.YesNo);
+                                                          group.GroupName), "", MessageBoxButtons.YesNo);
 
       if (result == DialogResult.No)
       {
@@ -1034,7 +1039,7 @@ namespace SetupTv.Sections
     private void tabControl1_DragOver(object sender, DragEventArgs e)
     {
       //means a channel group assignment is going to be performed
-      if (e.Data.GetData(typeof(MPListView)) != null)
+      if (e.Data.GetData(typeof (MPListView)) != null)
       {
         for (int i = 0; i < tabControl1.TabPages.Count; i++)
         {
@@ -1054,7 +1059,7 @@ namespace SetupTv.Sections
 
     private void tabControl1_DragDrop(object sender, DragEventArgs e)
     {
-      TabPage droppedTabPage = e.Data.GetData(typeof(TabPage)) as TabPage;
+      TabPage droppedTabPage = e.Data.GetData(typeof (TabPage)) as TabPage;
       if (droppedTabPage == null)
       {
         return;
@@ -1136,16 +1141,16 @@ namespace SetupTv.Sections
       }
 
       bool isFixedGroupName = (
-          group.GroupName == TvConstants.TvGroupNames.AllChannels ||
-          group.GroupName == TvConstants.TvGroupNames.Analog ||
-          group.GroupName == TvConstants.TvGroupNames.DVBC ||
-          group.GroupName == TvConstants.TvGroupNames.DVBS ||
-          group.GroupName == TvConstants.TvGroupNames.DVBT
-          );
+                                group.GroupName == TvConstants.TvGroupNames.AllChannels ||
+                                group.GroupName == TvConstants.TvGroupNames.Analog ||
+                                group.GroupName == TvConstants.TvGroupNames.DVBC ||
+                                group.GroupName == TvConstants.TvGroupNames.DVBS ||
+                                group.GroupName == TvConstants.TvGroupNames.DVBT
+                              );
 
       bool isGlobalChannelsGroup = (
-          group.GroupName == TvConstants.TvGroupNames.AllChannels
-          );
+                                     group.GroupName == TvConstants.TvGroupNames.AllChannels
+                                   );
 
       renameGroupToolStripMenuItem.Tag = tabControl1.TabPages[targetIndex];
       deleteGroupToolStripMenuItem.Tag = renameGroupToolStripMenuItem.Tag;
@@ -1224,7 +1229,7 @@ namespace SetupTv.Sections
       }
 
       DialogResult result = MessageBox.Show(string.Format("Are you sure you want to delete the group '{0}'?",
-        group.GroupName), "", MessageBoxButtons.YesNo);
+                                                          group.GroupName), "", MessageBoxButtons.YesNo);
 
       if (result == DialogResult.No)
       {
@@ -1246,6 +1251,5 @@ namespace SetupTv.Sections
         this.RefreshContextMenu();
       }
     }
-
   }
 }

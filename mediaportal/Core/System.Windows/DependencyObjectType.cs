@@ -29,9 +29,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public DependencyObjectType()
-    {
-    }
+    public DependencyObjectType() {}
 
     #endregion Constructors
 

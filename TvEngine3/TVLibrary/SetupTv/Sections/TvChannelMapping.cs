@@ -26,6 +26,7 @@ using Gentle.Framework;
 using TvDatabase;
 using TvLibrary.Interfaces;
 using MediaPortal.UserInterface.Controls;
+
 namespace SetupTv.Sections
 {
   public partial class TvChannelMapping : SectionSettings
@@ -36,10 +37,7 @@ namespace SetupTv.Sections
 
       public Card Card
       {
-        get
-        {
-          return _card;
-        }
+        get { return _card; }
       }
 
       public CardInfo(Card card)
@@ -54,9 +52,7 @@ namespace SetupTv.Sections
     }
 
     public TvChannelMapping()
-      : this("TV Mapping")
-    {
-    }
+      : this("TV Mapping") {}
 
     private readonly MPListViewStringColumnSorter lvwColumnSorter1;
     private readonly MPListViewStringColumnSorter lvwColumnSorter2;
@@ -92,7 +88,8 @@ namespace SetupTv.Sections
 
     private void mpButtonMap_Click(object sender, EventArgs e)
     {
-      NotifyForm dlg = new NotifyForm("Mapping selected channels to TV-Card...", "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Mapping selected channels to TV-Card...",
+                                      "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
@@ -123,7 +120,8 @@ namespace SetupTv.Sections
 
     private void mpButtonUnmap_Click(object sender, EventArgs e)
     {
-      NotifyForm dlg = new NotifyForm("Unmapping selected channels from TV-Card...", "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Unmapping selected channels from TV-Card...",
+                                      "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
       mpListViewChannels.BeginUpdate();
@@ -162,7 +160,7 @@ namespace SetupTv.Sections
       mpListViewMapped.Items.Clear();
       mpListViewChannels.Items.Clear();
 
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
       IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
@@ -170,13 +168,13 @@ namespace SetupTv.Sections
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
       IList<ChannelMap> maps = card.ReferringChannelMap();
 
-			// get cardtype, dvb, analogue etc.		
-			CardType cardType = RemoteControl.Instance.Type(card.IdCard);
+      // get cardtype, dvb, analogue etc.		
+      CardType cardType = RemoteControl.Instance.Type(card.IdCard);
       //Card card = Card.Retrieve(card.IdCard);
       TvBusinessLayer layer = new TvBusinessLayer();
       bool enableDVBS2 = (layer.GetSetting("dvbs" + card.IdCard + "enabledvbs2", "false").Value == "true");
-      
-      
+
+
       List<ListViewItem> items = new List<ListViewItem>();
       foreach (ChannelMap map in maps)
       {
@@ -184,9 +182,8 @@ namespace SetupTv.Sections
         try
         {
           channel = map.ReferencedChannel();
-        } catch (Exception)
-        {
         }
+        catch (Exception) {}
         if (channel == null)
           continue;
         if (channel.IsTv == false)
@@ -241,15 +238,15 @@ namespace SetupTv.Sections
               foundValidTuningDetail = (tDetail.ChannelType == 2);
               break;
 
-						case CardType.DvbS:
+            case CardType.DvbS:
 
               if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
               {
                 continue;
               }
 
-							foundValidTuningDetail = (tDetail.ChannelType == 3);
-							break;
+              foundValidTuningDetail = (tDetail.ChannelType == 3);
+              break;
 
             case CardType.DvbT:
               foundValidTuningDetail = (tDetail.ChannelType == 4);
@@ -296,7 +293,9 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter1.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        lvwColumnSorter1.Order = lvwColumnSorter1.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+        lvwColumnSorter1.Order = lvwColumnSorter1.Order == SortOrder.Ascending
+                                   ? SortOrder.Descending
+                                   : SortOrder.Ascending;
       }
       else
       {
@@ -314,7 +313,9 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter2.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        lvwColumnSorter2.Order = lvwColumnSorter2.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+        lvwColumnSorter2.Order = lvwColumnSorter2.Order == SortOrder.Ascending
+                                   ? SortOrder.Descending
+                                   : SortOrder.Ascending;
       }
       else
       {

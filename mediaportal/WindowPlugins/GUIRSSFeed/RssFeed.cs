@@ -74,9 +74,7 @@ namespace Rss
     private Encoding encoding = null;
 
     /// <summary>Initialize a new instance of the RssFeed class.</summary>
-    public RssFeed()
-    {
-    }
+    public RssFeed() {}
 
     /// <summary>Initialize a new instance of the RssFeed class with a specified encoding.</summary>
     public RssFeed(Encoding encoding)
@@ -207,14 +205,14 @@ namespace Rss
         case "http":
           if (request == null)
           {
-            request = (HttpWebRequest) WebRequest.Create(uri);
+            request = (HttpWebRequest)WebRequest.Create(uri);
             try
             {
               // Use the current user in case an NTLM Proxy or similar is used.
               // request.Proxy = WebProxy.GetDefaultProxy();
               request.Proxy.Credentials = CredentialCache.DefaultCredentials;
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
           if (oldFeed != null)
           {
@@ -223,7 +221,7 @@ namespace Rss
           }
           try
           {
-            HttpWebResponse response = (HttpWebResponse) request.GetResponse();
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             feed.lastModified = response.LastModified;
             feed.etag = response.Headers["ETag"];
             try
@@ -233,9 +231,7 @@ namespace Rss
                 feed.encoding = Encoding.GetEncoding(response.ContentEncoding);
               }
             }
-            catch
-            {
-            }
+            catch {}
             stream = response.GetResponseStream();
           }
           catch (WebException we)
@@ -264,7 +260,7 @@ namespace Rss
             element = reader.Read();
             if (element is RssChannel)
             {
-              feed.Channels.Add((RssChannel) element);
+              feed.Channels.Add((RssChannel)element);
             }
           } while (element != null);
           feed.rssVersion = reader.Version;

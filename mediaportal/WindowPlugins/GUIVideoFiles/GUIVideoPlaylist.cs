@@ -64,7 +64,7 @@ namespace MediaPortal.GUI.Video
 
     public GUIVideoPlayList()
     {
-      GetID = (int) Window.WINDOW_VIDEO_PLAYLIST;
+      GetID = (int)Window.WINDOW_VIDEO_PLAYLIST;
       playlistPlayer = PlayListPlayer.SingletonPlayer;
       m_directory.AddDrives();
       m_directory.SetExtensions(Util.Utils.VideoExtensions);
@@ -126,7 +126,7 @@ namespace MediaPortal.GUI.Video
             {
               PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
               if (playList != null && playList.Count > 0)
-              {                
+              {
                 playlistPlayer.Play(0);
                 UpdateButtonStates();
               }
@@ -205,7 +205,7 @@ namespace MediaPortal.GUI.Video
             return;
         }
         playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
-        playlistPlayer.Reset();        
+        playlistPlayer.Reset();
         playlistPlayer.Play(facadeView.SelectedListItemIndex);
         UpdateButtonStates();
       }
@@ -354,7 +354,7 @@ namespace MediaPortal.GUI.Video
                g_Player.Playing
                && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_VIDEO_TEMP)
               ||
-              (GetID == (int) Window.WINDOW_VIDEO_PLAYLIST &&
+              (GetID == (int)Window.WINDOW_VIDEO_PLAYLIST &&
                playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_VIDEO
                && g_Player.Playing))
           {
@@ -397,7 +397,7 @@ namespace MediaPortal.GUI.Video
           int iTotalItems = itemlist.Count;
           if (itemlist.Count > 0)
           {
-            GUIListItem rootItem = (GUIListItem) itemlist[0];
+            GUIListItem rootItem = (GUIListItem)itemlist[0];
             if (rootItem.Label == "..")
             {
               iTotalItems--;
@@ -449,7 +449,7 @@ namespace MediaPortal.GUI.Video
       ArrayList movies = new ArrayList();
       for (int x = 0; x < items.Count; ++x)
       {
-        listItem = (GUIListItem) items[x];
+        listItem = (GUIListItem)items[x];
         if (listItem.IsFolder)
         {
           if (File.Exists(listItem.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
@@ -459,7 +459,7 @@ namespace MediaPortal.GUI.Video
             VideoDatabase.GetMoviesByPath(pathName, ref movies);
             for (int i = 0; i < movies.Count; ++i)
             {
-              IMDBMovie movieDetails = (IMDBMovie) movies[i];
+              IMDBMovie movieDetails = (IMDBMovie)movies[i];
               string fileName = "VIDEO_TS.IFO";
               if (movieDetails.File[0] == '\\' || movieDetails.File[0] == '/')
               {
@@ -499,7 +499,7 @@ namespace MediaPortal.GUI.Video
       VideoDatabase.GetMoviesByPath(currentFolder, ref movies);
       for (int x = 0; x < items.Count; ++x)
       {
-        listItem = (GUIListItem) items[x];
+        listItem = (GUIListItem)items[x];
         if (!listItem.IsFolder)
         {
           IMDBMovie movieDetails = new IMDBMovie();

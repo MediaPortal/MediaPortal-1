@@ -10,9 +10,10 @@ namespace SetupTv.Sections
 {
   public partial class FormPreview : MPForm
   {
-    Channel _channel;
-    VirtualCard _card;
-    Player _player;
+    private Channel _channel;
+    private VirtualCard _card;
+    private Player _player;
+
     public FormPreview()
     {
       InitializeComponent();
@@ -20,36 +21,31 @@ namespace SetupTv.Sections
 
     public Channel Channel
     {
-      get
-      {
-        return _channel;
-      }
-      set
-      {
-        _channel = value;
-      }
+      get { return _channel; }
+      set { _channel = value; }
     }
 
-      public new DialogResult ShowDialog(IWin32Window owner)
+    public new DialogResult ShowDialog(IWin32Window owner)
+    {
+      Text = "Preview " + _channel.Name;
+
+      TvServer server = new TvServer();
+      User user = new User();
+      TvResult result = server.StartTimeShifting(ref user, _channel.IdChannel, out _card);
+      if (result != TvResult.Succeeded)
       {
-          Text = "Preview " + _channel.Name;
-
-          TvServer server = new TvServer();
-        User user = new User();
-          TvResult result = server.StartTimeShifting(ref user, _channel.IdChannel, out _card);
-          if (result != TvResult.Succeeded)
-          {
-              MessageBox.Show("Preview failed:" + result);
-              Close();
-              return DialogResult.None;
-          }
-
-          Log.Info("preview {0} user:{1} {2} {3} {4}", _channel.Name, user.CardId, user.SubChannel, user.Name, _card.TimeShiftFileName);
-          _player = new Player();
-          _player.Play(_card.TimeShiftFileName, this);
-
-         return base.ShowDialog(owner);
+        MessageBox.Show("Preview failed:" + result);
+        Close();
+        return DialogResult.None;
       }
+
+      Log.Info("preview {0} user:{1} {2} {3} {4}", _channel.Name, user.CardId, user.SubChannel, user.Name,
+               _card.TimeShiftFileName);
+      _player = new Player();
+      _player.Play(_card.TimeShiftFileName, this);
+
+      return base.ShowDialog(owner);
+    }
 
     protected override void OnClosing(CancelEventArgs e)
     {

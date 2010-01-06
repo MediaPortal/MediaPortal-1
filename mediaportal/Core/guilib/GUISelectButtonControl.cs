@@ -83,9 +83,7 @@ namespace MediaPortal.GUI.Library
     public event EventHandler CaptionChanged;
 
     public GUISelectButtonControl(int dwParentID)
-      : base(dwParentID)
-    {
-    }
+      : base(dwParentID) {}
 
     /// <summary>
     /// The constructor of the GUISelectButtonControl class.
@@ -320,7 +318,7 @@ namespace MediaPortal.GUI.Library
 
           _labelControl.TextColor = dwTextColor;
           _labelControl.TextAlignment = _textAlignment;
-          _labelControl.Label = (string) _subItemList[SelectedItem];
+          _labelControl.Label = (string)_subItemList[SelectedItem];
           _labelControl.Width = _width - (_imageRight.Width + _imageLeft.Width + _textOffsetX);
           _labelControl.Render(timePassed);
         }
@@ -513,7 +511,7 @@ namespace MediaPortal.GUI.Library
           if (_subItemList.Count > 0)
           {
             SelectedItem++;
-            if (SelectedItem >= (int) _subItemList.Count)
+            if (SelectedItem >= (int)_subItemList.Count)
             {
               SelectedItem = 0;
             }
@@ -551,7 +549,7 @@ namespace MediaPortal.GUI.Library
 
           if (_hyperLinkWindowId >= 0)
           {
-            GUIWindowManager.ActivateWindow((int) _hyperLinkWindowId);
+            GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId);
             return;
           }
           // button selected.
@@ -589,7 +587,7 @@ namespace MediaPortal.GUI.Library
           if (SelectedItem >= 0 && SelectedItem < _subItemList.Count)
           {
             message.Param1 = SelectedItem;
-            message.Label = (string) _subItemList[SelectedItem];
+            message.Label = (string)_subItemList[SelectedItem];
           }
           else
           {
@@ -600,7 +598,7 @@ namespace MediaPortal.GUI.Library
           // Selects an item.
         else if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECT)
         {
-          _defaultItem = SelectedItem = (int) message.Param1;
+          _defaultItem = SelectedItem = (int)message.Param1;
         }
       }
       // Sets the label of the control.
@@ -708,7 +706,7 @@ namespace MediaPortal.GUI.Library
 
       int y1 = 16;
       GUIGraphicsContext.ScaleVertical(ref y1);
-      int dwPosY = _positionY + (_height - y1)/2;
+      int dwPosY = _positionY + (_height - y1) / 2;
       _imageRight.SetPosition(dwPosX, dwPosY);
       _imageRightFocus.SetPosition(dwPosX, dwPosY);
 
@@ -1062,7 +1060,7 @@ namespace MediaPortal.GUI.Library
       {
         if (SelectedItem >= 0 && SelectedItem < _subItemList.Count)
         {
-          return (string) _subItemList[SelectedItem];
+          return (string)_subItemList[SelectedItem];
         }
         return string.Empty;
       }

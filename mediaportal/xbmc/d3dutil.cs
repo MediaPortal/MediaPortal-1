@@ -35,9 +35,7 @@ namespace MediaPortal
     /// <summary>
     /// Private Constructor 
     /// </summary>
-    private D3DUtil()
-    {
-    }
+    private D3DUtil() {}
 
     /// <summary>
     /// Gets the number of ColorChanelBits from a format

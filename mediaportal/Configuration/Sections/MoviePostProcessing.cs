@@ -31,14 +31,10 @@ namespace MediaPortal.Configuration.Sections
   public class MoviePostProcessing : BasePostProcessing
   {
     public MoviePostProcessing()
-      : this("Video Post Processing")
-    {
-    }
+      : this("Video Post Processing") {}
 
     public MoviePostProcessing(string name)
-      : base(name)
-    {
-    }
+      : base(name) {}
 
     public override void LoadSettings()
     {

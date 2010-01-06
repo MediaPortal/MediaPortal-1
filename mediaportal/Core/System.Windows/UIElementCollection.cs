@@ -104,7 +104,7 @@ namespace System.Windows
 
     public UIElement this[int index]
     {
-      get { return (UIElement) List[index]; }
+      get { return (UIElement)List[index]; }
       set { List[index] = value; }
     }
 

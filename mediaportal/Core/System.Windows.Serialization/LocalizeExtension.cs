@@ -28,15 +28,15 @@ using System.Windows;
 
 namespace System.Windows.Serialization
 {
-	public class LocalizeExtension : MarkupExtension
-	{
-		#region Methods
+  public class LocalizeExtension : MarkupExtension
+  {
+    #region Methods
 
-		public override object ProvideValue(object target, object value)
-		{
-			return MediaPortal.GUI.Library.GUILocalizeStrings.Get(Convert.ToInt32(value));
-		}
+    public override object ProvideValue(object target, object value)
+    {
+      return MediaPortal.GUI.Library.GUILocalizeStrings.Get(Convert.ToInt32(value));
+    }
 
-		#endregion Methods
-	}
+    #endregion Methods
+  }
 }

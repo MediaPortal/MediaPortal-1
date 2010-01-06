@@ -29,7 +29,6 @@ using System.Text;
 
 namespace MediaPortal.TagReader
 {
-
   /// <summary>
   /// Holds Cue track information
   /// </summary>
@@ -43,7 +42,7 @@ namespace MediaPortal.TagReader
     #endregion
 
     #region Properties
-    
+
     // returns track file name
     public string CueFileName
     {

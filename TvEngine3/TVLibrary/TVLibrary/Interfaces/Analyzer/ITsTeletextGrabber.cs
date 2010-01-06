@@ -27,8 +27,8 @@ namespace TvLibrary.Interfaces.Analyzer
   /// Interface to the Teletext callback 
   /// </summary>
   [ComVisible(true), ComImport,
-  Guid("540EA3F3-C2E0-4a96-9FC2-071875962911"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("540EA3F3-C2E0-4a96-9FC2-071875962911"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITeletextCallBack
   {
     /// <summary>
@@ -39,14 +39,14 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int OnTeletextReceived(IntPtr data, short packetCount);
-  };
+  } ;
 
   /// <summary>
   /// Interface to the Teletext grabber com object
   /// </summary>
   [ComVisible(true), ComImport,
- Guid("9A9E7592-A178-4a63-A210-910FD7FFEC8C"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("9A9E7592-A178-4a63-A210-910FD7FFEC8C"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsTeletextGrabber
   {
     /// <summary>
@@ -78,6 +78,5 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int SetCallBack(ITeletextCallBack callback);
-
   }
 }

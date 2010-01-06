@@ -29,7 +29,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Timers;
-using Timer=System.Timers.Timer;
+using Timer = System.Timers.Timer;
 
 namespace MediaPortal.MusicShareWatcher
 {

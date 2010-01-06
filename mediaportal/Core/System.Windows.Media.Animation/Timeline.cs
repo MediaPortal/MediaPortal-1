@@ -48,14 +48,10 @@ namespace System.Windows.Media.Animation
       }
     }
 
-    protected Timeline(Nullable<TimeSpan> beginTime) : this(beginTime, Duration.Automatic)
-    {
-    }
+    protected Timeline(Nullable<TimeSpan> beginTime) : this(beginTime, Duration.Automatic) {}
 
     protected Timeline(Nullable<TimeSpan> beginTime, Duration duration)
-      : this(beginTime, duration, RepeatBehavior.Forever)
-    {
-    }
+      : this(beginTime, duration, RepeatBehavior.Forever) {}
 
     protected Timeline(Nullable<TimeSpan> beginTime, Duration duration, RepeatBehavior repeatBehavior)
     {
@@ -85,14 +81,14 @@ namespace System.Windows.Media.Animation
 
     public new Timeline Copy()
     {
-      return (Timeline) base.Copy();
+      return (Timeline)base.Copy();
     }
 
     protected override void CopyCore(Freezable sourceFreezable)
     {
       base.CopyCore(sourceFreezable);
 
-      Timeline sourceTimeline = (Timeline) sourceFreezable;
+      Timeline sourceTimeline = (Timeline)sourceFreezable;
 
       sourceTimeline._accelerationRatio = _accelerationRatio;
       sourceTimeline._beginTime = _beginTime;
@@ -127,9 +123,7 @@ namespace System.Windows.Media.Animation
       return clock.NaturalDuration;
     }
 
-    protected override void OnPropertyInvalidated(DependencyProperty dp, PropertyMetadata metadata)
-    {
-    }
+    protected override void OnPropertyInvalidated(DependencyProperty dp, PropertyMetadata metadata) {}
 
     #endregion Methods
 

@@ -66,35 +66,35 @@ namespace MediaPortal.GUI.Music
       IMG_CURRENT_PROG_BG = 101,
     }
 
-    [SkinControl((int) ControlIDs.LBL_OVERALL_PROGRESS)] protected GUIFadeLabel lblOverallProgress = null;
+    [SkinControl((int)ControlIDs.LBL_OVERALL_PROGRESS)] protected GUIFadeLabel lblOverallProgress = null;
 
-    [SkinControl((int) ControlIDs.LBL_CURRENT_PROGRESS)] protected GUIFadeLabel lblCurrentProgress = null;
+    [SkinControl((int)ControlIDs.LBL_CURRENT_PROGRESS)] protected GUIFadeLabel lblCurrentProgress = null;
 
-    [SkinControl((int) ControlIDs.LBL_FOLDERNAME)] protected GUILabelControl lblFolderName = null;
+    [SkinControl((int)ControlIDs.LBL_FOLDERNAME)] protected GUILabelControl lblFolderName = null;
 
-    [SkinControl((int) ControlIDs.LBL_CURRENT_ALBUM)] protected GUIFadeLabel lblCurrentAlbum = null;
+    [SkinControl((int)ControlIDs.LBL_CURRENT_ALBUM)] protected GUIFadeLabel lblCurrentAlbum = null;
 
-    [SkinControl((int) ControlIDs.LBL_ALBUM_FILTERED_SEARCH)] protected GUIFadeLabel lblFilteredSearch = null;
+    [SkinControl((int)ControlIDs.LBL_ALBUM_FILTERED_SEARCH)] protected GUIFadeLabel lblFilteredSearch = null;
 
-    [SkinControl((int) ControlIDs.BTN_START)] protected GUIButtonControl btnStart = null;
+    [SkinControl((int)ControlIDs.BTN_START)] protected GUIButtonControl btnStart = null;
 
-    [SkinControl((int) ControlIDs.BTN_CANCEL)] protected GUIButtonControl btnCancel = null;
+    [SkinControl((int)ControlIDs.BTN_CANCEL)] protected GUIButtonControl btnCancel = null;
 
-    [SkinControl((int) ControlIDs.PROG_OVERALL)] protected GUIProgressControl progOverall = null;
+    [SkinControl((int)ControlIDs.PROG_OVERALL)] protected GUIProgressControl progOverall = null;
 
-    [SkinControl((int) ControlIDs.PROG_CURRENT)] protected GUIProgressControl progCurrent = null;
+    [SkinControl((int)ControlIDs.PROG_CURRENT)] protected GUIProgressControl progCurrent = null;
 
-    [SkinControl((int) ControlIDs.CHECK_SKIP_IF_EXISTS)] protected GUICheckMarkControl checkSkipExisting = null;
+    [SkinControl((int)ControlIDs.CHECK_SKIP_IF_EXISTS)] protected GUICheckMarkControl checkSkipExisting = null;
 
-    [SkinControl((int) ControlIDs.CHECK_SAVE_TO_ALBUM_FOLDER)] protected GUICheckMarkControl checkSaveInAlbumFolder =
+    [SkinControl((int)ControlIDs.CHECK_SAVE_TO_ALBUM_FOLDER)] protected GUICheckMarkControl checkSaveInAlbumFolder =
       null;
 
-    [SkinControl((int) ControlIDs.CHECK_SAVE_TO_THUMBS_FOLDER)] protected GUICheckMarkControl checkSaveInThumbsFolder =
+    [SkinControl((int)ControlIDs.CHECK_SAVE_TO_THUMBS_FOLDER)] protected GUICheckMarkControl checkSaveInThumbsFolder =
       null;
 
-    [SkinControl((int) ControlIDs.IMG_OVERALL_PROG_BG)] protected GUIImage imgOverallProgBG = null;
+    [SkinControl((int)ControlIDs.IMG_OVERALL_PROG_BG)] protected GUIImage imgOverallProgBG = null;
 
-    [SkinControl((int) ControlIDs.IMG_CURRENT_PROG_BG)] protected GUIImage imgCurrentProgBG = null;
+    [SkinControl((int)ControlIDs.IMG_CURRENT_PROG_BG)] protected GUIImage imgCurrentProgBG = null;
 
     #region Base Dialog Variables
 
@@ -187,7 +187,7 @@ namespace MediaPortal.GUI.Music
 
         if (_AlbumCount > 0 && _CurrentCoverArtIndex > 0)
         {
-          progPrecent = (int) (((float) _CurrentCoverArtIndex/(float) _AlbumCount)*100f);
+          progPrecent = (int)(((float)_CurrentCoverArtIndex / (float)_AlbumCount) * 100f);
         }
 
         SetTotalProgressPercentage(progPrecent);
@@ -257,7 +257,7 @@ namespace MediaPortal.GUI.Music
 
     public GUICoverArtGrabberProgress()
     {
-      GetID = (int) Window.WINDOW_MUSIC_COVERART_GRABBER_PROGRESS;
+      GetID = (int)Window.WINDOW_MUSIC_COVERART_GRABBER_PROGRESS;
     }
 
     public override bool Init()
@@ -523,31 +523,31 @@ namespace MediaPortal.GUI.Music
 
       switch (controlId)
       {
-        case (int) ControlIDs.BTN_CANCEL:
+        case (int)ControlIDs.BTN_CANCEL:
           {
             Close();
             break;
           }
 
-        case (int) ControlIDs.BTN_START:
+        case (int)ControlIDs.BTN_START:
           {
             GetCoverArt();
             break;
           }
 
-        case (int) ControlIDs.CHECK_SAVE_TO_ALBUM_FOLDER:
+        case (int)ControlIDs.CHECK_SAVE_TO_ALBUM_FOLDER:
           {
             _SaveImageToAlbumFolder = checkSaveInAlbumFolder.Selected;
             break;
           }
 
-        case (int) ControlIDs.CHECK_SAVE_TO_THUMBS_FOLDER:
+        case (int)ControlIDs.CHECK_SAVE_TO_THUMBS_FOLDER:
           {
             _SaveImageToThumbsFolder = checkSaveInThumbsFolder.Selected;
             break;
           }
 
-        case (int) ControlIDs.CHECK_SKIP_IF_EXISTS:
+        case (int)ControlIDs.CHECK_SKIP_IF_EXISTS:
           {
             _SkipIfCoverArtExists = checkSkipExisting.Selected;
             break;
@@ -590,7 +590,7 @@ namespace MediaPortal.GUI.Music
       string progressText = string.Format("{0}% - Getting cover art {1} of {2}", percent, _CurrentCoverArtIndex,
                                           _AlbumCount);
       lblOverallProgress.Label = progressText;
-      GUIControl.RefreshControl(GetID, (int) ControlIDs.PROG_OVERALL);
+      GUIControl.RefreshControl(GetID, (int)ControlIDs.PROG_OVERALL);
       Application.DoEvents();
     }
 
@@ -632,9 +632,7 @@ namespace MediaPortal.GUI.Music
               // This appears to be a music folder
               isMusicFolder = true;
 
-              if (_SkipIfCoverArtExists)
-              {
-              }
+              if (_SkipIfCoverArtExists) {}
 
               break;
             }
@@ -833,7 +831,7 @@ namespace MediaPortal.GUI.Music
 
     private void UpdateAlbumScanProgress(string album, int albumCount, int curCount)
     {
-      int progPrecent = (int) (((float) curCount/(float) albumCount)*100f);
+      int progPrecent = (int)(((float)curCount / (float)albumCount) * 100f);
       string statusText = string.Format(SearchFolderNameFormatString, album);
       string progressText = string.Format(SearchFolderProgressFormatString, progPrecent, curCount, albumCount);
 
@@ -1006,7 +1004,7 @@ namespace MediaPortal.GUI.Music
         if (_AlbumCount > 0)
         {
           GuiCoverArtResults =
-            (GUICoverArtGrabberResults) GUIWindowManager.GetWindow((int) Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS);
+            (GUICoverArtGrabberResults)GUIWindowManager.GetWindow((int)Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS);
 
           if (null == GuiCoverArtResults)
           {
@@ -1147,7 +1145,7 @@ namespace MediaPortal.GUI.Music
     public static void ShowResultsDialog(bool abortedByUser, bool completedSuccessfully, int coversGrabbed,
                                          int parentWindowID)
     {
-      GUIDialogOK dlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
 
       if (dlg != null)
       {

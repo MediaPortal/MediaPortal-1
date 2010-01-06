@@ -128,7 +128,7 @@ namespace MediaPortal.MPInstaller
       listView3.Items.Clear();
       foreach (MPIFileList fl in _struct.FileList)
       {
-        if (_struct.FindFileInGroup(((GroupString) comboBox1.SelectedItem).Id, fl.FileName))
+        if (_struct.FindFileInGroup(((GroupString)comboBox1.SelectedItem).Id, fl.FileName))
         {
           ListViewItem item1 = new ListViewItem(fl.FileName, 0);
           //item1.SubItems.Add(fl.FileName);
@@ -213,7 +213,7 @@ namespace MediaPortal.MPInstaller
     {
       for (int i = 0; i < _struct.SetupGroupsMappig.Count; i++)
       {
-        if (_struct.SetupGroupsMappig[i].Id == ((GroupString) comboBox1.SelectedItem).Id)
+        if (_struct.SetupGroupsMappig[i].Id == ((GroupString)comboBox1.SelectedItem).Id)
         {
           _struct.SetupGroupsMappig.RemoveAt(i);
         }
@@ -221,14 +221,12 @@ namespace MediaPortal.MPInstaller
 
       for (int i = 0; i < listView3.Items.Count; i++)
       {
-        _struct.SetupGroupsMappig.Add(new GroupStringMapping(((GroupString) comboBox1.SelectedItem).Id,
+        _struct.SetupGroupsMappig.Add(new GroupStringMapping(((GroupString)comboBox1.SelectedItem).Id,
                                                              listView3.Items[i].Text));
       }
     }
 
-    private void button5_Click(object sender, EventArgs e)
-    {
-    }
+    private void button5_Click(object sender, EventArgs e) {}
 
     private void button_delete_group_Click(object sender, EventArgs e)
     {

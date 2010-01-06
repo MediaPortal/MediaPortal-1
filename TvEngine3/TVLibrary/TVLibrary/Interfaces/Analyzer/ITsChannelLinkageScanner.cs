@@ -27,8 +27,8 @@ namespace TvLibrary.Interfaces.Analyzer
   /// Interface to the channel linkage scanner com object
   /// </summary>
   [ComVisible(true), ComImport,
- Guid("26DF395C-3D13-4f3e-9EC1-453FAAFFB13E"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("26DF395C-3D13-4f3e-9EC1-453FAAFFB13E"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsChannelLinkageScanner
   {
     /// <summary>
@@ -62,7 +62,8 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="service_id">The service_id.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetChannel([In] uint channelIndex, [In, Out] ref UInt16 network_id, [In, Out] ref UInt16 transport_id, [In, Out] ref UInt16 service_id);
+    int GetChannel([In] uint channelIndex, [In, Out] ref UInt16 network_id, [In, Out] ref UInt16 transport_id,
+                   [In, Out] ref UInt16 service_id);
 
     /// <summary>
     /// Gets the number of linked channels for a channel
@@ -84,7 +85,8 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="name">The channel name</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetLinkedChannel([In] uint channelIndex, [In] uint linkIndex, [In, Out] ref UInt16 network_id, [In, Out] ref UInt16 transport_id, [In, Out] ref UInt16 service_id, out IntPtr name);
+    int GetLinkedChannel([In] uint channelIndex, [In] uint linkIndex, [In, Out] ref UInt16 network_id,
+                         [In, Out] ref UInt16 transport_id, [In, Out] ref UInt16 service_id, out IntPtr name);
 
 
     /// <summary>

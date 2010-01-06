@@ -306,7 +306,7 @@ private Config()
                   }
                   try
                   {
-                    Set((Dir) Enum.Parse(typeof (Dir), dirId.InnerText), strPath);
+                    Set((Dir)Enum.Parse(typeof (Dir), dirId.InnerText), strPath);
                   }
                   catch (Exception)
                   {

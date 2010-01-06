@@ -72,9 +72,7 @@ namespace Rss
     private RssSource source = null;
 
     /// <summary>Initialize a new instance of the RssItem class</summary>
-    public RssItem()
-    {
-    }
+    public RssItem() {}
 
     /// <summary>Returns a string representation of the current Object.</summary>
     /// <returns>The item's title, description, or "RssItem" if the title and description are blank.</returns>

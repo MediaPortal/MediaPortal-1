@@ -32,9 +32,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public TriggerActionCollection()
-    {
-    }
+    public TriggerActionCollection() {}
 
     #endregion Constructors
 
@@ -87,12 +85,10 @@ namespace System.Windows
         throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof (TriggerAction)));
       }
 
-      List.Add((TriggerAction) child);
+      List.Add((TriggerAction)child);
     }
 
-    void IAddChild.AddText(string text)
-    {
-    }
+    void IAddChild.AddText(string text) {}
 
     public int IndexOf(TriggerAction action)
     {
@@ -137,7 +133,7 @@ namespace System.Windows
 
     public TriggerAction this[int index]
     {
-      get { return (TriggerAction) List[index]; }
+      get { return (TriggerAction)List[index]; }
       set { List[index] = value; }
     }
 

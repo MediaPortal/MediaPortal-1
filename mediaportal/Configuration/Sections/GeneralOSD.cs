@@ -48,9 +48,7 @@ namespace MediaPortal.Configuration.Sections
     private MPTextBox textBoxZapTimeout;
 
     public GeneralOSD()
-      : this("On-Screen Display")
-    {
-    }
+      : this("On-Screen Display") {}
 
     public GeneralOSD(string name)
       : base(name)

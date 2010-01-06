@@ -41,9 +41,7 @@ namespace SetupTv.Sections
   public partial class ImportExport : SectionSettings
   {
     public ImportExport()
-      : this("Import/Export")
-    {
-    }
+      : this("Import/Export") {}
 
     public ImportExport(string name)
       : base(name)
@@ -76,7 +74,9 @@ namespace SetupTv.Sections
     // store DateTime Values as strings. Improves readability
     private static void AddAttribute(XmlNode node, string tagName, DateTime tagValue)
     {
-      AddAttribute(node, tagName, String.Format("{0}-{1}-{2} {3}:{4}:{5}", tagValue.Year, tagValue.Month, tagValue.Day, tagValue.Hour, tagValue.Minute, tagValue.Second));
+      AddAttribute(node, tagName,
+                   String.Format("{0}-{1}-{2} {3}:{4}:{5}", tagValue.Year, tagValue.Month, tagValue.Day, tagValue.Hour,
+                                 tagValue.Minute, tagValue.Second));
     }
 
     private static void AddAttribute(XmlNode node, string tagName, bool tagValue)
@@ -84,7 +84,8 @@ namespace SetupTv.Sections
       AddAttribute(node, tagName, tagValue.ToString());
     }
 
-    private void Export(string fileName, bool exporttv, bool exporttvgroups, bool exportradio, bool exportradiogroups, bool exportschedules)
+    private void Export(string fileName, bool exporttv, bool exporttvgroups, bool exportradio, bool exportradiogroups,
+                        bool exportschedules)
     {
       XmlDocument xmlDoc = new XmlDocument();
       XmlNode rootElement = xmlDoc.CreateElement("tvserver");
@@ -302,7 +303,9 @@ namespace SetupTv.Sections
       openFileDialog1.DefaultExt = "xml";
       openFileDialog1.RestoreDirectory = true;
       openFileDialog1.Title = "Load channels, channel groups and schedules";
-      openFileDialog1.InitialDirectory = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+      openFileDialog1.InitialDirectory = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server",
+                                                       Environment.GetFolderPath(
+                                                         Environment.SpecialFolder.CommonApplicationData));
       openFileDialog1.FileName = "export.xml";
       openFileDialog1.AddExtension = true;
       openFileDialog1.Multiselect = false;
@@ -324,7 +327,10 @@ namespace SetupTv.Sections
         if (layer.Channels.Count > 0 && (importtv || importradio))
         {
           // rtv: we could offer to set a "merge" property here so tuningdetails would be updated for existing channels.
-          if (MessageBox.Show("Existing channels detected! \nIf you continue to import your old backup then all identically named channels will be treated equal - there is a risk of duplicate entries. \nDo you really want to go on?", "Channels found", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.Cancel)
+          if (
+            MessageBox.Show(
+              "Existing channels detected! \nIf you continue to import your old backup then all identically named channels will be treated equal - there is a risk of duplicate entries. \nDo you really want to go on?",
+              "Channels found", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.Cancel)
             return;
           else
             mergeChannels = true;
@@ -350,10 +356,13 @@ namespace SetupTv.Sections
               bool grabEpg = (GetNodeAttribute(nodeChannel, "GrabEpg", "True") == "True");
               bool isRadio = (GetNodeAttribute(nodeChannel, "IsRadio", "False") == "True");
               bool isTv = (GetNodeAttribute(nodeChannel, "IsTv", "True") == "True");
-              DateTime lastGrabTime = DateTime.ParseExact(GetNodeAttribute(nodeChannel, "LastGrabTime", "01.01.1900"), "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+              DateTime lastGrabTime = DateTime.ParseExact(GetNodeAttribute(nodeChannel, "LastGrabTime", "01.01.1900"),
+                                                          "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
               int sortOrder = Int32.Parse(GetNodeAttribute(nodeChannel, "SortOrder", "0"));
               int timesWatched = Int32.Parse(GetNodeAttribute(nodeChannel, "TimesWatched", "0"));
-              DateTime totalTimeWatched = DateTime.ParseExact(GetNodeAttribute(nodeChannel, "TotalTimeWatched", "01.01.1900"), "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+              DateTime totalTimeWatched =
+                DateTime.ParseExact(GetNodeAttribute(nodeChannel, "TotalTimeWatched", "01.01.1900"), "yyyy-M-d H:m:s",
+                                    CultureInfo.InvariantCulture);
               bool visibileInGuide = (GetNodeAttribute(nodeChannel, "VisibleInGuide", "True") == "True");
               bool FreeToAir = (GetNodeAttribute(nodeChannel, "FreeToAir", "True") == "True");
               string displayName = GetNodeAttribute(nodeChannel, "DisplayName", name);
@@ -389,7 +398,8 @@ namespace SetupTv.Sections
               foreach (XmlNode nodeMap in mappingList)
               {
                 int idCard = Int32.Parse(nodeMap.Attributes["IdCard"].Value);
-                XmlNode nodeCard = doc.SelectSingleNode(String.Format("/tvserver/servers/server/cards/card[@IdCard={0}]", idCard));
+                XmlNode nodeCard =
+                  doc.SelectSingleNode(String.Format("/tvserver/servers/server/cards/card[@IdCard={0}]", idCard));
                 Card dbCard = layer.GetCardByDevicePath(nodeCard.Attributes["DevicePath"].Value);
                 if (dbCard != null)
                 {
@@ -469,7 +479,8 @@ namespace SetupTv.Sections
                     atscChannel.VideoPid = videoPid;
                     atscChannel.ModulationType = (ModulationType)modulation;
                     layer.AddTuningDetails(dbChannel, atscChannel);
-                    Log.Info("TvChannels: Added tuning details for ATSC channel: {0} number: {1} provider: {2}", name, channelNumber, provider);
+                    Log.Info("TvChannels: Added tuning details for ATSC channel: {0} number: {1} provider: {2}", name,
+                             channelNumber, provider);
                     break;
                   case 2: //DVBCChannel
                     DVBCChannel dvbcChannel = new DVBCChannel();
@@ -561,16 +572,16 @@ namespace SetupTv.Sections
               tvChannelGroupCount++;
               string groupName = nodeChannelGroup.Attributes["GroupName"].Value;
               int groupSortOrder = Int32.Parse(nodeChannelGroup.Attributes["SortOrder"].Value);
-              ChannelGroup group=null;
+              ChannelGroup group = null;
               if (groupName == TvConstants.TvGroupNames.AllChannels)
               {
                 group = layer.GetGroupByName(groupName) ??
-                                   new ChannelGroup(groupName, groupSortOrder);
+                        new ChannelGroup(groupName, groupSortOrder);
               }
               else
               {
                 group = layer.GetGroupByName(groupName, groupSortOrder) ??
-                                    new ChannelGroup(groupName, groupSortOrder);
+                        new ChannelGroup(groupName, groupSortOrder);
               }
               group.Persist();
               XmlNodeList mappingList = nodeChannelGroup.SelectNodes("mappings/map");
@@ -603,7 +614,7 @@ namespace SetupTv.Sections
               string groupName = nodeChannelGroup.Attributes["GroupName"].Value;
               int groupSortOrder = Int32.Parse(nodeChannelGroup.Attributes["SortOrder"].Value);
               RadioChannelGroup group = layer.GetRadioChannelGroupByName(groupName) ??
-                                   new RadioChannelGroup(groupName, groupSortOrder);
+                                        new RadioChannelGroup(groupName, groupSortOrder);
               group.Persist();
               XmlNodeList mappingList = nodeChannelGroup.SelectNodes("mappings/map");
               foreach (XmlNode nodeMap in mappingList)
@@ -639,13 +650,16 @@ namespace SetupTv.Sections
               {
                 idChannel = layer.GetChannelByName(channel).IdChannel;
               }
-              DateTime startTime = DateTime.ParseExact(nodeSchedule.Attributes["StartTime"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
-              DateTime endTime = DateTime.ParseExact(nodeSchedule.Attributes["EndTime"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+              DateTime startTime = DateTime.ParseExact(nodeSchedule.Attributes["StartTime"].Value, "yyyy-M-d H:m:s",
+                                                       CultureInfo.InvariantCulture);
+              DateTime endTime = DateTime.ParseExact(nodeSchedule.Attributes["EndTime"].Value, "yyyy-M-d H:m:s",
+                                                     CultureInfo.InvariantCulture);
               int scheduleType = Int32.Parse(nodeSchedule.Attributes["ScheduleType"].Value);
               Schedule schedule = layer.AddSchedule(idChannel, programName, startTime, endTime, scheduleType);
 
               schedule.ScheduleType = scheduleType;
-              schedule.KeepDate = DateTime.ParseExact(nodeSchedule.Attributes["KeepDate"].Value, "yyyy-M-d H:m:s", CultureInfo.InvariantCulture);
+              schedule.KeepDate = DateTime.ParseExact(nodeSchedule.Attributes["KeepDate"].Value, "yyyy-M-d H:m:s",
+                                                      CultureInfo.InvariantCulture);
               schedule.PreRecordInterval = Int32.Parse(nodeSchedule.Attributes["PreRecordInterval"].Value);
               schedule.PostRecordInterval = Int32.Parse(nodeSchedule.Attributes["PostRecordInterval"].Value);
               schedule.Priority = Int32.Parse(nodeSchedule.Attributes["Priority"].Value);
@@ -673,8 +687,12 @@ namespace SetupTv.Sections
         }
 
         dlg.Close();
-        Log.Info("TvChannels: Imported {0} channels, {1} tv channel groups, {2} radio channel groups and {3} schedules", channelCount, tvChannelGroupCount, radioChannelGroupCount, scheduleCount);
-        MessageBox.Show(String.Format("Imported {0} channels, {1} tv channel groups, {2} radio channel groups and {3} schedules", channelCount, tvChannelGroupCount, radioChannelGroupCount, scheduleCount));
+        Log.Info(
+          "TvChannels: Imported {0} channels, {1} tv channel groups, {2} radio channel groups and {3} schedules",
+          channelCount, tvChannelGroupCount, radioChannelGroupCount, scheduleCount);
+        MessageBox.Show(
+          String.Format("Imported {0} channels, {1} tv channel groups, {2} radio channel groups and {3} schedules",
+                        channelCount, tvChannelGroupCount, radioChannelGroupCount, scheduleCount));
       }
       catch (Exception ex)
       {
@@ -693,7 +711,9 @@ namespace SetupTv.Sections
       saveFileDialog1.DefaultExt = "xml";
       saveFileDialog1.RestoreDirectory = true;
       saveFileDialog1.Title = "Save channels, channel groups and schedules";
-      saveFileDialog1.InitialDirectory = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+      saveFileDialog1.InitialDirectory = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server",
+                                                       Environment.GetFolderPath(
+                                                         Environment.SpecialFolder.CommonApplicationData));
       saveFileDialog1.FileName = "export.xml";
       saveFileDialog1.AddExtension = true;
       if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
@@ -701,7 +721,8 @@ namespace SetupTv.Sections
         NotifyForm dlg = new NotifyForm("Exporting tv channels...", "This can take some time\n\nPlease be patient...");
         dlg.Show();
         dlg.WaitForDisplay();
-        Export(saveFileDialog1.FileName, exCheckTVChannels.Checked, exCheckTVGroups.Checked, exCheckRadioChannels.Checked, exCheckRadioGroups.Checked, exCheckSchedules.Checked);
+        Export(saveFileDialog1.FileName, exCheckTVChannels.Checked, exCheckTVGroups.Checked,
+               exCheckRadioChannels.Checked, exCheckRadioGroups.Checked, exCheckSchedules.Checked);
         dlg.Close();
       }
     }

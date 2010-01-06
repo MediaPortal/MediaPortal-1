@@ -167,7 +167,7 @@ namespace MediaPortal.FoobarPlugin
         newProcess.Start();
 
         IntPtr httpPluginWindow;
-        for (int i = 0; i < (2*6); i++) // wait 6 seconds for Foobar2k to start.
+        for (int i = 0; i < (2 * 6); i++) // wait 6 seconds for Foobar2k to start.
         {
           Thread.Sleep(500);
           httpPluginWindow = FindWindow("foo_httpserver_ctrl", null);
@@ -230,9 +230,7 @@ namespace MediaPortal.FoobarPlugin
         {
           m_port = Convert.ToInt32(port);
         }
-        catch
-        {
-        }
+        catch {}
       }
       if (startupparameter != null && startupparameter.Length > 0)
       {
@@ -311,7 +309,7 @@ namespace MediaPortal.FoobarPlugin
         // wr.Proxy = WebProxy.GetDefaultProxy();
         myRequest.Proxy.Credentials = CredentialCache.DefaultCredentials;
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       // Return the response. 
       WebResponse myResponse = myRequest.GetResponse();
@@ -502,7 +500,7 @@ namespace MediaPortal.FoobarPlugin
 
         string playListName = "MPPlaylist";
         COPYDATASTRUCT cds;
-        cds.dwData = (IntPtr) 1; // find/create playlist
+        cds.dwData = (IntPtr)1; // find/create playlist
         cds.lpData = Marshal.StringToCoTaskMemAnsi(playListName);
         cds.cbData = playListName.Length + 1;
 
@@ -521,7 +519,7 @@ namespace MediaPortal.FoobarPlugin
         // Let's encode the filename so any extended ASCII character is played correctly
         // by the Foobar Plugin
         byte[] byData = encode.GetBytes(HttpUtility.UrlEncode(strFile).Replace("+", "%20"));
-        cds.dwData = (IntPtr) 0; // Play song
+        cds.dwData = (IntPtr)0; // Play song
         cds.lpData = Marshal.AllocCoTaskMem(byData.Length + 1);
         cds.cbData = byData.Length + 1;
         // write all the bytes to the lpData byte by byte
@@ -530,7 +528,7 @@ namespace MediaPortal.FoobarPlugin
           Marshal.WriteByte(cds.lpData, i, byData[i]);
         }
         // write the end of string '\0'
-        Marshal.WriteByte(cds.lpData, byData.Length, (byte) 0);
+        Marshal.WriteByte(cds.lpData, byData.Length, (byte)0);
         if (SendMessage(m_hwndPlugin, WM_COPYDATA, 0, ref cds) == 0)
         {
           Marshal.FreeCoTaskMem(cds.lpData);
@@ -681,12 +679,10 @@ namespace MediaPortal.FoobarPlugin
         }
         if (dTime < Duration)
         {
-          SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int) dTime);
+          SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int)dTime);
         }
       }
-      catch
-      {
-      }
+      catch {}
     }
 
     /// <summary>
@@ -704,12 +700,10 @@ namespace MediaPortal.FoobarPlugin
         }
         if (dTime < Duration)
         {
-          SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int) dTime);
+          SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int)dTime);
         }
       }
-      catch
-      {
-      }
+      catch {}
     }
 
     /// <summary>
@@ -721,9 +715,9 @@ namespace MediaPortal.FoobarPlugin
       double dCurrentPos = CurrentPosition;
       double dDuration = Duration;
 
-      double fCurPercent = (dCurrentPos/Duration)*100.0d;
-      double fOnePercent = Duration/100.0d;
-      fCurPercent = fCurPercent + (double) iPercentage;
+      double fCurPercent = (dCurrentPos / Duration) * 100.0d;
+      double fOnePercent = Duration / 100.0d;
+      fCurPercent = fCurPercent + (double)iPercentage;
       fCurPercent *= fOnePercent;
       if (fCurPercent < 0.0d)
       {
@@ -733,11 +727,9 @@ namespace MediaPortal.FoobarPlugin
       {
         try
         {
-          SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int) fCurPercent);
+          SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int)fCurPercent);
         }
-        catch
-        {
-        }
+        catch {}
       }
     }
 
@@ -755,15 +747,13 @@ namespace MediaPortal.FoobarPlugin
       {
         iPercentage = 100;
       }
-      double fPercent = Duration/100.0f;
-      fPercent *= (double) iPercentage;
+      double fPercent = Duration / 100.0f;
+      fPercent *= (double)iPercentage;
       try
       {
-        SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int) fPercent);
+        SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int)fPercent);
       }
-      catch
-      {
-      }
+      catch {}
     }
 
 
@@ -800,5 +790,7 @@ namespace MediaPortal.FoobarPlugin
     {
       get { return _isCDA; }
     }
-  } // public class FoobarPlugin : MediaPortal.Player.IExternalPlayer
+  }
+
+  // public class FoobarPlugin : MediaPortal.Player.IExternalPlayer
 }

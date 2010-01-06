@@ -28,7 +28,5 @@ namespace MediaPortal.UserInterface.Controls
   /// <summary>
   /// Summary description for MPToolTip.
   /// </summary>
-  public class MPToolTip : System.Windows.Forms.ToolTip
-  {
-  }
+  public class MPToolTip : System.Windows.Forms.ToolTip {}
 }

@@ -28,7 +28,7 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using MediaPortal.Drawing;
 using MediaPortal.GUI.Library;
-using Geometry=MediaPortal.Drawing.Geometry;
+using Geometry = MediaPortal.Drawing.Geometry;
 
 namespace System.Windows
 {
@@ -120,9 +120,7 @@ namespace System.Windows
       //			EventManager.RegisterClassHandler(
     }
 
-    public UIElement()
-    {
-    }
+    public UIElement() {}
 
     #endregion Constructors
 
@@ -349,22 +347,22 @@ namespace System.Windows
 
     private static object OnIsEnabledPropertyGetValue(DependencyObject d)
     {
-      return ((UIElement) d).IsEnabled;
+      return ((UIElement)d).IsEnabled;
     }
 
     private static void OnIsEnabledPropertyInvalidated(DependencyObject d)
     {
-      ((UIElement) d)._isEnabledDirty = true;
+      ((UIElement)d)._isEnabledDirty = true;
     }
 
     private static object OnIsFocusedPropertyGetValue(DependencyObject d)
     {
-      return ((UIElement) d).IsFocused;
+      return ((UIElement)d).IsFocused;
     }
 
     private static void OnIsFocusedPropertyInvalidated(DependencyObject d)
     {
-      ((UIElement) d)._isFocusedDirty = true;
+      ((UIElement)d)._isFocusedDirty = true;
     }
 
     protected internal virtual void OnIsFocusWithinChanged(DependencyPropertyChangedEventArgs e)
@@ -372,9 +370,7 @@ namespace System.Windows
       throw new NotImplementedException();
     }
 
-    protected internal virtual void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
-    {
-    }
+    protected internal virtual void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e) {}
 
     protected virtual void OnMouseEnter(MouseEventArgs e)
     {
@@ -416,17 +412,11 @@ namespace System.Windows
       throw new NotImplementedException();
     }
 
-    protected virtual void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
-    {
-    }
+    protected virtual void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e) {}
 
-    protected virtual void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
-    {
-    }
+    protected virtual void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e) {}
 
-    protected virtual void OnPreviewMouseRightButtonDown(MouseButtonEventArgs e)
-    {
-    }
+    protected virtual void OnPreviewMouseRightButtonDown(MouseButtonEventArgs e) {}
 
     protected override void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata)
     {
@@ -461,12 +451,12 @@ namespace System.Windows
 
     private static object OnVisibilityPropertyGetValue(DependencyObject d)
     {
-      return ((UIElement) d).Visibility;
+      return ((UIElement)d).Visibility;
     }
 
     private static void OnVisibilityPropertyInvalidated(DependencyObject d)
     {
-      ((UIElement) d)._visibilityDirty = true;
+      ((UIElement)d)._visibilityDirty = true;
     }
 
     public void RaiseEvent(RoutedEventArgs e)
@@ -562,7 +552,7 @@ namespace System.Windows
       {
         if (_isEnabledDirty)
         {
-          _isEnabledCache = (bool) GetValueBase(IsEnabledProperty);
+          _isEnabledCache = (bool)GetValueBase(IsEnabledProperty);
           _isEnabledDirty = false;
         }
         return _isEnabledCache;
@@ -575,7 +565,7 @@ namespace System.Windows
       {
         if (_isFocusedDirty)
         {
-          _isFocusedCache = (bool) GetValueBase(IsFocusedProperty);
+          _isFocusedCache = (bool)GetValueBase(IsFocusedProperty);
           _isFocusedDirty = false;
         }
         return _isFocusedCache;
@@ -609,13 +599,13 @@ namespace System.Windows
 
     public virtual double Opacity
     {
-      get { return (double) GetValue(OpacityProperty); }
+      get { return (double)GetValue(OpacityProperty); }
       set { SetValue(OpacityProperty, value); }
     }
 
     public Brush OpacityMask
     {
-      get { return (Brush) GetValue(OpacityMaskProperty); }
+      get { return (Brush)GetValue(OpacityMaskProperty); }
       set { SetValue(OpacityMaskProperty, value); }
     }
 
@@ -631,7 +621,7 @@ namespace System.Windows
       {
         if (_visibilityDirty)
         {
-          _visibilityCache = (Visibility) GetValueBase(VisibilityProperty);
+          _visibilityCache = (Visibility)GetValueBase(VisibilityProperty);
           _visibilityDirty = false;
         }
         return _visibilityCache;

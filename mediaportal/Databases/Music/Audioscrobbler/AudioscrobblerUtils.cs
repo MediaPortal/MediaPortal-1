@@ -445,9 +445,7 @@ namespace MediaPortal.Music.Database
     public RandomTracksRequestHandler RandomTracksRequestCompleted;
 
     public RandomTracksRequest()
-      : base(RequestType.GetRandomTracks)
-    {
-    }
+      : base(RequestType.GetRandomTracks) {}
 
     public RandomTracksRequest(RandomTracksRequestHandler handler)
       : this()
@@ -472,9 +470,7 @@ namespace MediaPortal.Music.Database
     public UnheardTracksRequestHandler UnheardTracksRequestCompleted;
 
     public UnheardTracksRequest()
-      : base(RequestType.GetUnhearedTracks)
-    {
-    }
+      : base(RequestType.GetUnhearedTracks) {}
 
     public UnheardTracksRequest(UnheardTracksRequestHandler handler)
       : this()
@@ -499,9 +495,7 @@ namespace MediaPortal.Music.Database
     public FavoriteTracksRequestHandler FavoriteTracksRequestCompleted;
 
     public FavoriteTracksRequest()
-      : base(RequestType.GetFavoriteTracks)
-    {
-    }
+      : base(RequestType.GetFavoriteTracks) {}
 
     public FavoriteTracksRequest(FavoriteTracksRequestHandler handler)
       : this()
@@ -596,9 +590,7 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Static constructor
     /// </summary>
-    static AudioscrobblerUtils()
-    {
-    }
+    static AudioscrobblerUtils() {}
 
     /// <summary>
     /// ctor
@@ -873,7 +865,7 @@ namespace MediaPortal.Music.Database
       }
 
       _randomNessPercent = (tmpRand >= 25) ? tmpRand : 77;
-      ArtistMatchPercent = 100 - (int) (0.9*_randomNessPercent);
+      ArtistMatchPercent = 100 - (int)(0.9 * _randomNessPercent);
       _unwantedTags = buildTagBlacklist();
       LookupLock = new object();
     }
@@ -1108,7 +1100,7 @@ namespace MediaPortal.Music.Database
                   ArrayList artistsInDB = new ArrayList();
                   if (mdb.GetArtists(4, unfilteredList_[s].Artist, ref artistsInDB))
                   {
-                    artistArray = (String[]) artistsInDB.ToArray(typeof (String));
+                    artistArray = (String[])artistsInDB.ToArray(typeof (String));
                     foreach (String singleArtist in artistArray)
                     {
                       Song addSong = new Song();
@@ -1144,7 +1136,7 @@ namespace MediaPortal.Music.Database
                   ArrayList albumsInDB = new ArrayList();
                   if (mdb.GetAlbums(2, unfilteredList_[s].Album, ref albumsInDB))
                   {
-                    albumArray = (AlbumInfo[]) albumsInDB.ToArray(typeof (AlbumInfo));
+                    albumArray = (AlbumInfo[])albumsInDB.ToArray(typeof (AlbumInfo));
                     foreach (AlbumInfo singleAlbum in albumArray)
                     {
                       Song addSong = new Song();
@@ -1335,11 +1327,11 @@ namespace MediaPortal.Music.Database
           // only use the top 10 tags
           if (tagTracks.Count > _limitRandomListCount)
           {
-            calcRandValue = (_limitRandomListCount)*_randomNessPercent/100;
+            calcRandValue = (_limitRandomListCount) * _randomNessPercent / 100;
           }
           else
           {
-            calcRandValue = ((tagTracks.Count) - 1)*_randomNessPercent/100;
+            calcRandValue = ((tagTracks.Count) - 1) * _randomNessPercent / 100;
           }
 
           // make sure calcRandValue is not lower then random(minvalue, )
@@ -1360,7 +1352,7 @@ namespace MediaPortal.Music.Database
               // Log.Debug("AudioScrobblerUtils: Tag {0} in blacklist, randomly chosing another one", tmpGenre);
               // do not try to often..
               // if random picking doesn't lead to a result quit the randomness and pick the best
-              if (x > tagTracks.Count*3)
+              if (x > tagTracks.Count * 3)
               {
                 for (int t = 0; t < tagTracks.Count; t++)
                 {
@@ -1526,7 +1518,7 @@ namespace MediaPortal.Music.Database
         if (taggedArtists.Count > _limitRandomListCount)
         {
           int minRandValue = _limitRandomListCount;
-          int calcRandValue = (taggedArtists.Count - 1)*_randomNessPercent/100;
+          int calcRandValue = (taggedArtists.Count - 1) * _randomNessPercent / 100;
           while (artistsAdded < _limitRandomListCount)
           {
             bool foundDoubleEntry = false;
@@ -1607,7 +1599,7 @@ namespace MediaPortal.Music.Database
         if (similarArtists.Count > _limitRandomListCount)
         {
           int minRandValue = _limitRandomListCount;
-          int calcRandValue = (similarArtists.Count - 1)*_randomNessPercent/100;
+          int calcRandValue = (similarArtists.Count - 1) * _randomNessPercent / 100;
           while (artistsAdded < _limitRandomListCount)
           {
             bool foundDoubleEntry = false;
@@ -1762,10 +1754,10 @@ namespace MediaPortal.Music.Database
               {
                 try
                 {
-                  Util.Picture.CreateThumbnail(tmpFile, fullPath, (int) Thumbs.ThumbResolution,
-                                               (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
-                  Util.Picture.CreateThumbnail(tmpFile, fullLargePath, (int) Thumbs.ThumbLargeResolution,
-                                               (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+                  Util.Picture.CreateThumbnail(tmpFile, fullPath, (int)Thumbs.ThumbResolution,
+                                               (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
+                  Util.Picture.CreateThumbnail(tmpFile, fullLargePath, (int)Thumbs.ThumbLargeResolution,
+                                               (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
                   Log.Debug("MyMusic: fetched better thumb {0} overwriting existing one", fullLargePath);
                 }
                 catch (IOException ex)
@@ -1777,10 +1769,10 @@ namespace MediaPortal.Music.Database
             }
             else
             {
-              Util.Picture.CreateThumbnail(tmpFile, fullPath, (int) Thumbs.ThumbResolution, (int) Thumbs.ThumbResolution,
+              Util.Picture.CreateThumbnail(tmpFile, fullPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution,
                                            0, Thumbs.SpeedThumbsSmall);
-              Util.Picture.CreateThumbnail(tmpFile, fullLargePath, (int) Thumbs.ThumbLargeResolution,
-                                           (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+              Util.Picture.CreateThumbnail(tmpFile, fullLargePath, (int)Thumbs.ThumbLargeResolution,
+                                           (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
               Log.Info("MyMusic: Thumb successfully downloaded: {0}", fullLargePath);
             }
             success = true;
@@ -1831,7 +1823,7 @@ namespace MediaPortal.Music.Database
             // If error e.g. 503, server busy, etc wait and try again.
             if (wex.Status == WebExceptionStatus.ProtocolError && retryHttpError)
             {
-              HttpWebResponse httpResponse = (HttpWebResponse) wex.Response;
+              HttpWebResponse httpResponse = (HttpWebResponse)wex.Response;
               switch (httpResponse.StatusCode)
               {
                 case HttpStatusCode.BadGateway:
@@ -1883,7 +1875,7 @@ namespace MediaPortal.Music.Database
       int loops = 0;
 
       // fetch more than needed since there could be double entries
-      while (addedSongs < _limitRandomListCount*3)
+      while (addedSongs < _limitRandomListCount * 3)
       {
         loops++;
         lookupSong.Clear();
@@ -1965,7 +1957,7 @@ namespace MediaPortal.Music.Database
         if (myNeighbours.Count > _limitRandomListCount)
         {
           int minRandValue = _limitRandomListCount;
-          int calcRandValue = (myNeighbours.Count - 1)*_randomNessPercent/100;
+          int calcRandValue = (myNeighbours.Count - 1) * _randomNessPercent / 100;
           while (neighboursAdded < _limitRandomListCount)
           {
             bool foundDoubleEntry = false;
@@ -2016,11 +2008,11 @@ namespace MediaPortal.Music.Database
             {
               // get _limitRandomListCount artists for each random neighbour
               int artistsAdded = 0;
-              int artistsPerNeighbour = _limitRandomListCount/myNeighbours.Count;
+              int artistsPerNeighbour = _limitRandomListCount / myNeighbours.Count;
               // make sure there is at least one song per neighbour
               artistsPerNeighbour = artistsPerNeighbour > 1 ? artistsPerNeighbour : 1;
               int minRandAValue = _limitRandomListCount;
-              int calcRandAValue = (myNeighboorsArtists.Count - 1)*_randomNessPercent/100;
+              int calcRandAValue = (myNeighboorsArtists.Count - 1) * _randomNessPercent / 100;
               while (artistsAdded <= artistsPerNeighbour)
               {
                 bool foundDoubleEntry = false;
@@ -2076,11 +2068,11 @@ namespace MediaPortal.Music.Database
             {
               // get _limitRandomListCount artists for each neighbour
               int artistsAdded = 0;
-              int artistsPerNeighbour = _limitRandomListCount/myNeighbours.Count;
+              int artistsPerNeighbour = _limitRandomListCount / myNeighbours.Count;
               // make sure there is at least one song per neighbour
               artistsPerNeighbour = artistsPerNeighbour > 1 ? artistsPerNeighbour : 1;
               int minRandAValue = _limitRandomListCount;
-              int calcRandAValue = (myNeighboorsArtists.Count - 1)*_randomNessPercent/100;
+              int calcRandAValue = (myNeighboorsArtists.Count - 1) * _randomNessPercent / 100;
               while (artistsAdded <= artistsPerNeighbour)
               {
                 bool foundDoubleEntry = false;
@@ -2207,10 +2199,12 @@ namespace MediaPortal.Music.Database
             {
               try
               {
-                nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+                nodeSong.TimesPlayed =
+                  Convert.ToInt32(
+                    Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
               }
-              catch (FormatException) { }
-              catch (OverflowException) { }
+              catch (FormatException) {}
+              catch (OverflowException) {}
             }
             else if (child.Name == "url" && child.ChildNodes.Count != 0)
             {
@@ -2269,10 +2263,13 @@ namespace MediaPortal.Music.Database
             {
               try
               {
-                nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(mainchild.ChildNodes[0].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+                nodeSong.TimesPlayed =
+                  Convert.ToInt32(
+                    Math.Round(Double.Parse(mainchild.ChildNodes[0].Value, NumberStyles.Float,
+                                            CultureInfo.InvariantCulture)));
               }
-              catch (FormatException) { }
-              catch (OverflowException) { }
+              catch (FormatException) {}
+              catch (OverflowException) {}
             }
             else if (mainchild.Name == "url" && mainchild.ChildNodes.Count != 0)
             {
@@ -2427,10 +2424,12 @@ namespace MediaPortal.Music.Database
             {
               try
               {
-                nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+                nodeSong.TimesPlayed =
+                  Convert.ToInt32(
+                    Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
               }
-              catch (FormatException) { }
-              catch (OverflowException) { }
+              catch (FormatException) {}
+              catch (OverflowException) {}
             }
           }
           UsedTagsList.Add(nodeSong);
@@ -2522,10 +2521,13 @@ namespace MediaPortal.Music.Database
             {
               try
               {
-                nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(node.Attributes["count"].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+                nodeSong.TimesPlayed =
+                  Convert.ToInt32(
+                    Math.Round(Double.Parse(node.Attributes["count"].Value, NumberStyles.Float,
+                                            CultureInfo.InvariantCulture)));
               }
-              catch (FormatException) { }
-              catch (OverflowException) { }
+              catch (FormatException) {}
+              catch (OverflowException) {}
             }
           }
           TagsList.Add(nodeSong);
@@ -2588,10 +2590,13 @@ namespace MediaPortal.Music.Database
                 {
                   try
                   {
-                    nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+                    nodeSong.TimesPlayed =
+                      Convert.ToInt32(
+                        Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float,
+                                                CultureInfo.InvariantCulture)));
                   }
-                  catch (FormatException) { }
-                  catch (OverflowException) { }
+                  catch (FormatException) {}
+                  catch (OverflowException) {}
                 }
                 else if (child.Name == "url" && child.ChildNodes.Count != 0)
                 {
@@ -2617,10 +2622,13 @@ namespace MediaPortal.Music.Database
                 {
                   try
                   {
-                    nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+                    nodeSong.TimesPlayed =
+                      Convert.ToInt32(
+                        Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float,
+                                                CultureInfo.InvariantCulture)));
                   }
-                  catch (FormatException) { }
-                  catch (OverflowException) { }
+                  catch (FormatException) {}
+                  catch (OverflowException) {}
                 }
                 else if (child.Name == "url" && child.ChildNodes.Count != 0)
                 {
@@ -2636,10 +2644,13 @@ namespace MediaPortal.Music.Database
                 {
                   try
                   {
-                    nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+                    nodeSong.TimesPlayed =
+                      Convert.ToInt32(
+                        Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float,
+                                                CultureInfo.InvariantCulture)));
                   }
-                  catch (FormatException) { }
-                  catch (OverflowException) { }
+                  catch (FormatException) {}
+                  catch (OverflowException) {}
                 }
                 else if (child.Name == "url" && child.ChildNodes.Count != 0)
                 {
@@ -2653,13 +2664,16 @@ namespace MediaPortal.Music.Database
                   nodeSong.Artist = DecodeUtf8String(node.Attributes["name"].Value);
                 }
                 if (node.Attributes["count"].Value != "")
-                {                  
+                {
                   try
                   {
-                    nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(node.Attributes["count"].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+                    nodeSong.TimesPlayed =
+                      Convert.ToInt32(
+                        Math.Round(Double.Parse(node.Attributes["count"].Value, NumberStyles.Float,
+                                                CultureInfo.InvariantCulture)));
                   }
-                  catch (FormatException) { }
-                  catch (OverflowException) { }
+                  catch (FormatException) {}
+                  catch (OverflowException) {}
                 }
                 if (node.Attributes["url"].Value != "")
                 {
@@ -2735,10 +2749,13 @@ namespace MediaPortal.Music.Database
                 {
                   try
                   {
-                    nodeSong.TimesPlayed = Convert.ToInt32(Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float, CultureInfo.InvariantCulture)));
+                    nodeSong.TimesPlayed =
+                      Convert.ToInt32(
+                        Math.Round(Double.Parse(child.ChildNodes[0].Value, NumberStyles.Float,
+                                                CultureInfo.InvariantCulture)));
                   }
-                  catch (FormatException) { }
-                  catch (OverflowException) { }
+                  catch (FormatException) {}
+                  catch (OverflowException) {}
                 }
                 else if (child.Name == "statsreset" && child.ChildNodes.Count != 0)
                 {
@@ -2849,9 +2866,7 @@ namespace MediaPortal.Music.Database
                       mbContainer.Year = born.Year;
                     }
                   }
-                  catch (Exception)
-                  {
-                  }
+                  catch (Exception) {}
                 }
                 else if (reader.Name == "disambiguation")
                 {
@@ -2943,7 +2958,7 @@ namespace MediaPortal.Music.Database
             }
             else if (mainchild.Name == "duration" && mainchild.ChildNodes.Count != 0)
             {
-              nodeSong.Duration = Convert.ToInt32(Convert.ToInt32(mainchild.ChildNodes[0].Value)/1000);
+              nodeSong.Duration = Convert.ToInt32(Convert.ToInt32(mainchild.ChildNodes[0].Value) / 1000);
             }
             else if (mainchild.Name == "lastfm:trackauth" && mainchild.ChildNodes.Count != 0)
             {

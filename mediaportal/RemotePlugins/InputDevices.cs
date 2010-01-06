@@ -33,9 +33,7 @@ namespace MediaPortal.InputDevices
   {
     #region Methods
 
-    static InputDevices()
-    {
-    }
+    static InputDevices() {}
 
     public static void Init()
     {
@@ -77,7 +75,7 @@ namespace MediaPortal.InputDevices
     public static bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
     {
       action = null;
-      key = (char) 0;
+      key = (char)0;
       keyCode = Keys.A;
 
       if (CentareaRemote.WndProc(ref msg))

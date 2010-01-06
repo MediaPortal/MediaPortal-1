@@ -34,8 +34,8 @@ namespace TvLibrary.Implementations
   /// </summary>
   public abstract class TvCardBase
   {
-
     #region ctor
+
     ///<summary>
     /// Base constructor
     ///</summary>
@@ -68,7 +68,7 @@ namespace TvLibrary.Implementations
       if (_graphBuilder != null)
       {
         FilterState state;
-        ((IMediaControl) _graphBuilder).GetState(10, out state);
+        ((IMediaControl)_graphBuilder).GetState(10, out state);
         graphRunning = (state == FilterState.Running);
       }
       //Log.Log.WriteFile("subch:{0} GraphRunning: {1}", _subChannelId, graphRunning);
@@ -76,18 +76,22 @@ namespace TvLibrary.Implementations
     }
 
     #region variables
+
     /// <summary>
     /// Indicates, if the card should be preloaded
     /// </summary>
     protected bool _preloadCard;
+
     /// <summary>
     /// Scanning Paramters
     /// </summary>
     protected ScanParameters _parameters;
+
     /// <summary>
     /// Instance of the conditional access
     /// </summary>
     protected ConditionalAccess _conditionalAccess;
+
     /// <summary>
     /// Instance of the conditional access
     /// </summary>
@@ -100,46 +104,57 @@ namespace TvLibrary.Implementations
     /// Dictionary of the corresponding sub channels
     /// </summary>
     protected Dictionary<int, BaseSubChannel> _mapSubChannels;
+
     /// <summary>
     /// Indicates, if the card is a hybrid one
     /// </summary>
     protected bool _isHybrid;
+
     /// <summary>
     /// Context reference
     /// </summary>
     protected object m_context;
+
     /// <summary>
     /// Indicates, if the tuner is locked
     /// </summary>
     protected bool _tunerLocked;
+
     /// <summary>
     /// Value of the signal level
     /// </summary>
     protected int _signalLevel;
+
     /// <summary>
     /// Value of the signal quality
     /// </summary>
     protected int _signalQuality;
+
     /// <summary>
     /// Device Path of the tv card
     /// </summary>
     protected String _devicePath;
+
     /// <summary>
     /// Indicates, if the card is grabbing epg
     /// </summary>
     protected bool _epgGrabbing;
+
     /// <summary>
     /// Name of the tv card
     /// </summary>
     protected String _name;
+
     /// <summary>
     /// Indicates, if the card is scanning
     /// </summary>
     protected bool _isScanning;
+
     /// <summary>
     /// State of the graph
     /// </summary>
     protected GraphState _graphState = GraphState.Idle;
+
     /// <summary>
     /// The graph builder
     /// </summary>
@@ -149,50 +164,62 @@ namespace TvLibrary.Implementations
     /// Type of the cam
     /// </summary>
     protected CamType _camType;
+
     /// <summary>
     /// Indicates, if the card sub channels
     /// </summary>
     protected bool _supportsSubChannels;
+
     /// <summary>
     /// Minimum analog channel number
     /// </summary>
     protected int _minChannel;
+
     /// <summary>
     /// Maximum analog channel number
     /// </summary>
     protected int _maxChannel;
+
     /// <summary>
     /// Type of the card
     /// </summary>
     protected CardType _cardType;
+
     /// <summary>
     /// Date and time of the last signal update
     /// </summary>
     protected DateTime _lastSignalUpdate;
+
     /// <summary>
     /// Last subchannel id
     /// </summary>
     protected int _subChannelId;
+
     /// <summary>
     /// Indicates, if the signal is present
     /// </summary>
     protected bool _signalPresent;
+
     /// <summary>
     /// Indicates, if the card is present
     /// </summary>
     protected bool _cardPresent = true;
+
     /// <summary>
     /// The tuner device
     /// </summary>
     protected DsDevice _tunerDevice;
+
     /// <summary>
     /// Main device of the card
     /// </summary>
     protected DsDevice _device;
+
     /// <summary>
     /// The db card id
     /// </summary>
     protected int _cardId;
+
     #endregion
 
     #region properties
@@ -203,10 +230,7 @@ namespace TvLibrary.Implementations
     public virtual int CardId
     {
       get { return _cardId; }
-      set
-      {
-        _cardId = value;
-      }
+      set { _cardId = value; }
     }
 
 
@@ -215,10 +239,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     public bool PreloadCard
     {
-      get
-      {
-        return _preloadCard;
-      }
+      get { return _preloadCard; }
     }
 
     /// <summary>
@@ -227,10 +248,7 @@ namespace TvLibrary.Implementations
     /// <value><c>true</c> if card supports sub channels; otherwise, <c>false</c>.</value>
     public bool SupportsSubChannels
     {
-      get
-      {
-        return _supportsSubChannels;
-      }
+      get { return _supportsSubChannels; }
     }
 
     /// <summary>
@@ -239,10 +257,7 @@ namespace TvLibrary.Implementations
     /// <value>The parameters.</value>
     public ScanParameters Parameters
     {
-      get
-      {
-        return _parameters;
-      }
+      get { return _parameters; }
       set
       {
         _parameters = value;
@@ -260,14 +275,8 @@ namespace TvLibrary.Implementations
     /// <value></value>
     public string Name
     {
-      get
-      {
-        return _name;
-      }
-      set
-      {
-        _name = value;
-      }
+      get { return _name; }
+      set { _name = value; }
     }
 
     /// <summary>
@@ -275,14 +284,8 @@ namespace TvLibrary.Implementations
     /// </summary>
     public bool CardPresent
     {
-      get
-      {
-        return _cardPresent;
-      }
-      set
-      {
-        _cardPresent = value;
-      }
+      get { return _cardPresent; }
+      set { _cardPresent = value; }
     }
 
     /// <summary>
@@ -290,10 +293,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     public virtual string DevicePath
     {
-      get
-      {
-        return _devicePath;
-      }
+      get { return _devicePath; }
     }
 
     /// <summary>
@@ -319,14 +319,8 @@ namespace TvLibrary.Implementations
     /// <value>The type of the cam.</value>
     public CamType CamType
     {
-      get
-      {
-        return _camType;
-      }
-      set
-      {
-        _camType = value;
-      }
+      get { return _camType; }
+      set { _camType = value; }
     }
 
     /// <summary>
@@ -334,10 +328,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     public virtual CardType CardType
     {
-      get
-      {
-        return _cardType;
-      }
+      get { return _cardType; }
     }
 
     /// <summary>
@@ -402,14 +393,8 @@ namespace TvLibrary.Implementations
     /// <value><c>true</c> if this instance is hybrid; otherwise, <c>false</c>.</value>
     public bool IsHybrid
     {
-      get
-      {
-        return _isHybrid;
-      }
-      set
-      {
-        _isHybrid = value;
-      }
+      get { return _isHybrid; }
+      set { _isHybrid = value; }
     }
 
     /// <summary>
@@ -470,14 +455,8 @@ namespace TvLibrary.Implementations
     /// <value>The context.</value>
     public object Context
     {
-      get
-      {
-        return m_context;
-      }
-      set
-      {
-        m_context = value;
-      }
+      get { return m_context; }
+      set { m_context = value; }
     }
 
     /// <summary>
@@ -485,10 +464,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     public bool IsEpgGrabbing
     {
-      get
-      {
-        return _epgGrabbing;
-      }
+      get { return _epgGrabbing; }
       set
       {
         UpdateEpgGrabber(value);
@@ -501,10 +477,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     public bool IsScanning
     {
-      get
-      {
-        return _isScanning;
-      }
+      get { return _isScanning; }
       set
       {
         _isScanning = value;
@@ -518,6 +491,7 @@ namespace TvLibrary.Implementations
     #endregion
 
     #region HelperMethods
+
     /// <summary>
     /// Reads the preload bit and card id from the db
     /// </summary>
@@ -577,15 +551,15 @@ namespace TvLibrary.Implementations
         }
       }
     }
+
     #endregion
 
     #region virtual methods
+
     /// <summary>
     /// Builds the graph.
     /// </summary>
-    public virtual void BuildGraph()
-    {
-    }
+    public virtual void BuildGraph() {}
 
     ///<summary>
     /// Checks if the tuner is locked in and a sginal is present
@@ -615,15 +589,18 @@ namespace TvLibrary.Implementations
     /// </summary>
     ///     
     public abstract void StopGraph();
+
     /// <summary>
     /// A derrived class should activate / deactivate the epg grabber
     /// </summary>
     /// <param name="value">Mode</param>
     protected abstract void UpdateEpgGrabber(bool value);
+
     /// <summary>
     /// A derrived class should activate / deactivate the scanning
     /// </summary>
     protected abstract void OnScanning();
+
     #endregion
 
     #region subchannel management
@@ -664,7 +641,8 @@ namespace TvLibrary.Implementations
     /// <param name="continueGraph">Indicates, if the graph should be continued or stopped</param>
     private void FreeSubChannel(int id, bool continueGraph)
     {
-      Log.Log.Info("tvcard:FreeSubChannel: subchannels count {0} subch#{1} keep graph={2}", _mapSubChannels.Count, id, continueGraph);
+      Log.Log.Info("tvcard:FreeSubChannel: subchannels count {0} subch#{1} keep graph={2}", _mapSubChannels.Count, id,
+                   continueGraph);
       if (_mapSubChannels.ContainsKey(id))
       {
         if (_mapSubChannels[id].IsTimeShifting)
@@ -700,7 +678,7 @@ namespace TvLibrary.Implementations
         Log.Log.Info("tvcard:FreeSubChannel :{0} - sub channel not found", id);
       }
       if (_mapSubChannels.Count == 0)
-      {        
+      {
         _subChannelId = 0;
         if (!continueGraph)
         {
@@ -717,6 +695,7 @@ namespace TvLibrary.Implementations
         Log.Log.Info("tvcard:FreeSubChannel : subchannels STILL present {}, continueing graph", _mapSubChannels.Count);
       }
     }
+
     /// <summary>
     /// Frees all sub channels.
     /// </summary>
@@ -764,7 +743,7 @@ namespace TvLibrary.Implementations
         return channels;
       }
     }
-    #endregion
 
+    #endregion
   }
 }

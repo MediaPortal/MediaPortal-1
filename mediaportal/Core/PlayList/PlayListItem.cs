@@ -50,14 +50,10 @@ namespace MediaPortal.Playlists
     private bool _isPlayed = false;
     private PlayListItemType _itemType = PlayListItemType.Unknown;
 
-    public PlayListItem()
-    {
-    }
+    public PlayListItem() {}
 
     public PlayListItem(string description, string fileName)
-      : this(description, fileName, 0)
-    {
-    }
+      : this(description, fileName, 0) {}
 
     public PlayListItem(string description, string fileName, int duration)
     {

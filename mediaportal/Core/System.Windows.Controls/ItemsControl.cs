@@ -40,9 +40,7 @@ namespace System.Windows.Controls
                                                      new PropertyMetadata(false));
     }
 
-    public ItemsControl()
-    {
-    }
+    public ItemsControl() {}
 
     #endregion Constructors
 
@@ -73,26 +71,18 @@ namespace System.Windows.Controls
       // no default implementation
     }
 
-    public override void BeginInit()
-    {
-    }
+    public override void BeginInit() {}
 
-    public override void EndInit()
-    {
-    }
+    public override void EndInit() {}
 
     protected virtual DependencyObject GetContainerForItemOverride(object item)
     {
       throw new NotImplementedException();
     }
 
-    protected override void OnKeyDown(KeyEventArgs e)
-    {
-    }
+    protected override void OnKeyDown(KeyEventArgs e) {}
 
-    protected virtual void PrepareContainerForItemOverride(DependencyObject element, object item)
-    {
-    }
+    protected virtual void PrepareContainerForItemOverride(DependencyObject element, object item) {}
 
     protected virtual bool IsItemItsOwnContainerOverride(object item)
     {
@@ -105,7 +95,7 @@ namespace System.Windows.Controls
 
     public bool HasItems
     {
-      get { return (bool) GetValue(HasItemsProperty); }
+      get { return (bool)GetValue(HasItemsProperty); }
       set { SetValue(HasItemsProperty, value); }
     }
 

@@ -52,7 +52,7 @@ namespace MediaPortal.EPG
     #region Events
 
     public event ShowProgressHandler ShowProgress;
-    
+
     #endregion
 
     #region Private Structs
@@ -71,40 +71,45 @@ namespace MediaPortal.EPG
     #endregion
 
     #region Public Classes
-    
+
     public class Stats
     {
-      string _status = "";
-      int _programs = 0;
-      int _channels = 0;
-      DateTime _startTime = DateTime.Now;
-      DateTime _endTime = DateTime.Now;
+      private string _status = "";
+      private int _programs = 0;
+      private int _channels = 0;
+      private DateTime _startTime = DateTime.Now;
+      private DateTime _endTime = DateTime.Now;
+
       public string Status
       {
         get { return _status; }
         set { _status = value; }
       }
+
       public int Programs
       {
         get { return _programs; }
         set { _programs = value; }
       }
+
       public int Channels
       {
         get { return _channels; }
         set { _channels = value; }
       }
+
       public DateTime StartTime
       {
         get { return _startTime; }
         set { _startTime = value; }
       }
+
       public DateTime EndTime
       {
         get { return _endTime; }
         set { _endTime = value; }
       }
-    };
+    } ;
 
     #endregion
 
@@ -128,7 +133,7 @@ namespace MediaPortal.EPG
     {
       Log.Info("Assembly versions:");
       Log.Info(this.GetType().Assembly.GetName().Name + " " + this.GetType().Assembly.GetName().Version.ToString());
-      Log.Info(typeof(Log).Assembly.GetName().Name + " " + typeof(Log).Assembly.GetName().Version.ToString());
+      Log.Info(typeof (Log).Assembly.GetName().Name + " " + typeof (Log).Assembly.GetName().Version.ToString());
       // set config directories and files.
       _configFile = configFile;
       //_xmltvDirectory = xmltvDirectory;
@@ -155,7 +160,6 @@ namespace MediaPortal.EPG
     /// <returns>bool - sucess/fail</returns>
     public bool Import()
     {
-
       _status.Status = "Loading configuration...";
       _status.Channels = 0;
       _status.Programs = 0;
@@ -243,7 +247,7 @@ namespace MediaPortal.EPG
               grab.linked = true;
               grab.linkTime = new TimeRange(merged.start, merged.end);
               Log.Debug("  Loading Merged Sub-channel: {0} Time range: {1}", merged.id,
-                         grab.linkTime.ToString());
+                        grab.linkTime.ToString());
 
               if (!_grabList.ContainsKey(merged.id))
               {
@@ -259,7 +263,7 @@ namespace MediaPortal.EPG
             else
             {
               Log.Info("  Ignoring Merged Sub-channel: {0}/{1} - No Grabber id", channel.displayName,
-                        merged.id);
+                       merged.id);
             }
           }
         }
@@ -293,7 +297,8 @@ namespace MediaPortal.EPG
           // Get channel listing
           if (initResult)
           {
-            programs = _epgGrabber.GetGuide(channelid, _grabList[channelid][0].name, _grabList[channelid][0].linked, _grabList[channelid][0].linkTime);
+            programs = _epgGrabber.GetGuide(channelid, _grabList[channelid][0].name, _grabList[channelid][0].linked,
+                                            _grabList[channelid][0].linkTime);
           }
 
           if (programs != null)
@@ -337,7 +342,7 @@ namespace MediaPortal.EPG
                   _epgDataSink.EndChannelPrograms(channelid, grab.name);
                 }
               }
-              
+
               _status.Channels++;
               if (ShowProgress != null) ShowProgress(_status);
             }
@@ -393,7 +398,7 @@ namespace MediaPortal.EPG
       {
         XmlSerializer s = new XmlSerializer(typeof (WebepgConfigFile));
         TextReader r = new StreamReader(_configFile);
-        _config = (WebepgConfigFile) s.Deserialize(r);
+        _config = (WebepgConfigFile)s.Deserialize(r);
         r.Close();
       }
       catch (InvalidOperationException ex)

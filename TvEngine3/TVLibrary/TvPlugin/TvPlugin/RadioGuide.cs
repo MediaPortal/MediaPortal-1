@@ -34,16 +34,15 @@ namespace TvPlugin
   {
     public RadioGuide()
     {
-      GetID = (int) Window.WINDOW_RADIO_GUIDE;
+      GetID = (int)Window.WINDOW_RADIO_GUIDE;
     }
 
     public override bool Init()
     {
       bool result = Load(GUIGraphicsContext.Skin + @"\myradioguide.xml");
       Initialize();
-      GetID = (int) Window.WINDOW_RADIO_GUIDE;
+      GetID = (int)Window.WINDOW_RADIO_GUIDE;
       return result;
     }
-
   }
 }

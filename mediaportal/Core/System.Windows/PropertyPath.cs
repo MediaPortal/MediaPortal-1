@@ -32,9 +32,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public PropertyPath()
-    {
-    }
+    public PropertyPath() {}
 
     private PropertyPath(string path, object[] propertyInfoArray)
     {

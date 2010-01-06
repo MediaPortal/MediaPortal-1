@@ -42,9 +42,7 @@ namespace System.Windows.Input
                                                                    typeof (FocusManager));
     }
 
-    private FocusManager()
-    {
-    }
+    private FocusManager() {}
 
     #endregion Constructors
 
@@ -62,7 +60,7 @@ namespace System.Windows.Input
 
     public static bool GetIsFocusScope(DependencyObject d)
     {
-      return (bool) d.GetValue(IsFocusScopeProperty);
+      return (bool)d.GetValue(IsFocusScopeProperty);
     }
 
     public static void SetFocusedElement(DependencyObject d, IInputElement focusedElement)

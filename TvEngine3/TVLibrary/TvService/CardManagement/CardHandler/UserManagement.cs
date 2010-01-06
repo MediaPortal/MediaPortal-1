@@ -30,7 +30,7 @@ namespace TvService
 {
   public class UserManagement
   {
-    readonly ITvCardHandler _cardHandler;
+    private readonly ITvCardHandler _cardHandler;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UserManagement"/> class.
@@ -83,9 +83,11 @@ namespace TvService
         {
           RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
           return RemoteControl.Instance.IsOwner(_cardHandler.DataBaseCard.IdCard, user);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
       }
@@ -106,9 +108,11 @@ namespace TvService
           RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
           RemoteControl.Instance.RemoveUserFromOtherCards(_cardHandler.DataBaseCard.IdCard, user);
           return;
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return;
         }
       }
@@ -129,12 +133,16 @@ namespace TvService
           if (subChannel.IsTimeShifting)
           {
             subChannel.StopTimeShifting();
-          } else if (subChannel.IsRecording)
+          }
+          else if (subChannel.IsRecording)
           {
             subChannel.StopRecording();
           }
           _cardHandler.Card.FreeSubChannel(user.SubChannel);
-          CleanTimeshiftFilesThread cleanTimeshiftFilesThread = new CleanTimeshiftFilesThread(_cardHandler.DataBaseCard.TimeShiftFolder, String.Format("live{0}-{1}.ts", _cardHandler.DataBaseCard.IdCard, user.SubChannel));
+          CleanTimeshiftFilesThread cleanTimeshiftFilesThread =
+            new CleanTimeshiftFilesThread(_cardHandler.DataBaseCard.TimeShiftFolder,
+                                          String.Format("live{0}-{1}.ts", _cardHandler.DataBaseCard.IdCard,
+                                                        user.SubChannel));
           Thread cleanupThread = new Thread(cleanTimeshiftFilesThread.CleanTimeshiftFiles);
           cleanupThread.IsBackground = true;
           cleanupThread.Name = "TS_File_Cleanup";
@@ -208,9 +216,11 @@ namespace TvService
         {
           RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
           return RemoteControl.Instance.GetUsersForCard(_cardHandler.DataBaseCard.IdCard);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return null;
         }
       }

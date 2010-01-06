@@ -17,14 +17,14 @@ namespace TvEngine.PowerScheduler.Handlers
   /// </summary>
   internal class NetworkAdapter
   {
-    private PerformanceCounter dlCounter, ulCounter;	// Performance counters to monitor download and upload speed.
+    private PerformanceCounter dlCounter, ulCounter; // Performance counters to monitor download and upload speed.
     //private long dlSpeed, ulSpeed;			  	          // Download Upload speed in bytes per second.
     //private long dlValue, ulValue;				            // Download Upload counter value in bytes.
-    private long dlValueOld, ulValueOld;		          // Download Upload counter value one second earlier, in bytes.
+    private long dlValueOld, ulValueOld; // Download Upload counter value one second earlier, in bytes.
     private DateTime lastSampleTime;
 
-    internal long dlSpeedPeak, ulSpeedPeak;  // Download Upload peak values in KB/s
-    internal string name;							       // The name of the adapter.
+    internal long dlSpeedPeak, ulSpeedPeak; // Download Upload peak values in KB/s
+    internal string name; // The name of the adapter.
 
     /// <summary>
     /// Instances of this class are supposed to be created only in an NetworkMonitorHandler.
@@ -68,12 +68,12 @@ namespace TvEngine.PowerScheduler.Handlers
       dlValueOld = dlValue;
       ulValueOld = ulValue;
 
-      if ((dlSpeed / 1024) > dlSpeedPeak)     // Store peak values in KB/s
+      if ((dlSpeed / 1024) > dlSpeedPeak) // Store peak values in KB/s
       {
         dlSpeedPeak = (dlSpeed / 1024);
       }
 
-      if ((ulSpeed / 1024) > ulSpeedPeak)     // Store peak values in KB/s
+      if ((ulSpeed / 1024) > ulSpeedPeak) // Store peak values in KB/s
       {
         ulSpeedPeak = (ulSpeed / 1024);
       }
@@ -83,31 +83,35 @@ namespace TvEngine.PowerScheduler.Handlers
   public class NetworkMonitorHandler : IStandbyHandler
   {
     #region Constants
-    
+
     private const int MonitorInteval = 10; // seconds
-    
+
     #endregion
 
     #region Variables
 
-    private Timer timer;						        // The timer event executes every second to refresh the values in adapters.
-    private Int32 idleLimit;                // Minimum transferrate considered as network activity in KB/s.
+    private Timer timer; // The timer event executes every second to refresh the values in adapters.
+    private Int32 idleLimit; // Minimum transferrate considered as network activity in KB/s.
 
-    private ArrayList monitoredAdapters = new ArrayList(); 		// The list of monitored adapters on the computer.
-    private List<string> _preventers = new List<string>();    // The list of standby preventers.
+    private ArrayList monitoredAdapters = new ArrayList(); // The list of monitored adapters on the computer.
+    private List<string> _preventers = new List<string>(); // The list of standby preventers.
 
     #endregion
 
     #region Constructor
+
     public NetworkMonitorHandler()
     {
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
-        GlobalServiceProvider.Instance.Get<IPowerScheduler>().OnPowerSchedulerEvent += new PowerSchedulerEventHandler(NetworkMonitorHandler_OnPowerSchedulerEvent);
+        GlobalServiceProvider.Instance.Get<IPowerScheduler>().OnPowerSchedulerEvent +=
+          new PowerSchedulerEventHandler(NetworkMonitorHandler_OnPowerSchedulerEvent);
     }
+
     #endregion
 
     #region Private methods
-    void NetworkMonitorHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
+
+    private void NetworkMonitorHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
     {
       switch (args.EventType)
       {
@@ -126,7 +130,7 @@ namespace TvEngine.PowerScheduler.Handlers
           setting = ps.Settings.GetSetting("NetworkMonitorEnabled");
           enabled = Convert.ToBoolean(layer.GetSetting("NetworkMonitorEnabled", "false").Value);
 
-          if (setting.Get<bool>() != enabled)  // Setting changed
+          if (setting.Get<bool>() != enabled) // Setting changed
           {
             setting.Set<bool>(enabled);
             if (enabled) // Start
@@ -141,7 +145,7 @@ namespace TvEngine.PowerScheduler.Handlers
             }
           }
 
-          if (enabled)   // Get minimum transferrate considered as network activity
+          if (enabled) // Get minimum transferrate considered as network activity
           {
             idleLimit = Int32.Parse(layer.GetSetting("NetworkMonitorIdleLimit", "2").Value);
             Log.Debug("NetworkMonitorHandler: idle limit in KB/s: {0}", idleLimit);
@@ -167,7 +171,7 @@ namespace TvEngine.PowerScheduler.Handlers
         // Create an instance of NetworkAdapter class.        
         NetworkAdapter adapter = new NetworkAdapter(name);
 
-        monitoredAdapters.Add(adapter);    // Add it to monitored adapters
+        monitoredAdapters.Add(adapter); // Add it to monitored adapters
       }
 
       // Create and enable the timer 
@@ -193,6 +197,7 @@ namespace TvEngine.PowerScheduler.Handlers
     #endregion
 
     #region IStandbyHandler implementation
+
     public bool DisAllowShutdown
     {
       get
@@ -206,12 +211,12 @@ namespace TvEngine.PowerScheduler.Handlers
             Log.Debug("NetworkMonitorHandler: ulSpeed: {0}", adapter.ulSpeedPeak);
             Log.Debug("NetworkMonitorHandler: dlSpeed: {0}", adapter.dlSpeedPeak);
 
-            adapter.ulSpeedPeak = 0;  // Clear peak values
+            adapter.ulSpeedPeak = 0; // Clear peak values
             adapter.dlSpeedPeak = 0;
 
-            _preventers.Add(adapter.name);  // Add adapter to preventers
+            _preventers.Add(adapter.name); // Add adapter to preventers
 
-            DateTime now = DateTime.Now;    // Get current date and time
+            DateTime now = DateTime.Now; // Get current date and time
 
             //Network activity is considered as user activity
             IPowerScheduler ps = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
@@ -221,13 +226,14 @@ namespace TvEngine.PowerScheduler.Handlers
         return (_preventers.Count > 0);
       }
     }
-    public void UserShutdownNow()
-    {
-    }
+
+    public void UserShutdownNow() {}
+
     public string HandlerName
     {
       get { return "NetworkMonitorHandler"; }
     }
+
     #endregion
   }
 }

@@ -15,12 +15,16 @@ namespace MediaPortal.Player.Subtitles
   {
     private byte MSB3_NP(byte x)
     {
-      return (byte) (x & 0x70);
-    } // 3 most significant bits, removing parity bit
+      return (byte)(x & 0x70);
+    }
+
+    // 3 most significant bits, removing parity bit
     private byte LSB4(byte x)
     {
-      return (byte) (x & 0x0F);
-    } // 4 less significant bits (no parity)
+      return (byte)(x & 0x0F);
+    }
+
+    // 4 less significant bits (no parity)
 
     public const int TELETEXT_LINES = 25;
     public const int TELETEXT_WIDTH = 40;
@@ -40,7 +44,7 @@ namespace MediaPortal.Player.Subtitles
     public TeletextMagazine()
     {
       Log.Debug("Magazine ctor");
-      pageContent = new byte[TELETEXT_LINES*TELETEXT_WIDTH];
+      pageContent = new byte[TELETEXT_LINES * TELETEXT_WIDTH];
       pageNumInProgress = -1;
       language = -1;
       magID = -1;
@@ -120,7 +124,7 @@ namespace MediaPortal.Player.Subtitles
     public void SetLine(int l, byte[] line_data)
     {
       assert(line_data.Length == TELETEXT_WIDTH, "Line data length not equal to TELETEXT_WIDTH : " + line_data.Length);
-      Array.Copy(line_data, 0, pageContent, Math.Max(l - 1, 0)*TELETEXT_WIDTH, TELETEXT_WIDTH);
+      Array.Copy(line_data, 0, pageContent, Math.Max(l - 1, 0) * TELETEXT_WIDTH, TELETEXT_WIDTH);
     }
 
     public void EndPage()
@@ -182,8 +186,8 @@ namespace MediaPortal.Player.Subtitles
 		        Log.Debug("(BLANK PAGE)");
 	        }*/
 
-      byte[] byte_text = new byte[TELETEXT_WIDTH*TELETEXT_LINES];
-      Array.Copy(pageContent, byte_text, TELETEXT_LINES*TELETEXT_WIDTH);
+      byte[] byte_text = new byte[TELETEXT_WIDTH * TELETEXT_LINES];
+      Array.Copy(pageContent, byte_text, TELETEXT_LINES * TELETEXT_WIDTH);
       char[] text = TextConversion.Convert(language, byte_text);
 
       LineContent[] lc = new LineContent[TELETEXT_LINES];
@@ -203,7 +207,7 @@ namespace MediaPortal.Player.Subtitles
         StringBuilder lineBuilder = new StringBuilder();
         for (int c = 0; c < TELETEXT_WIDTH; c++)
         {
-          lineBuilder.Append((char) text[line*TELETEXT_WIDTH + c]);
+          lineBuilder.Append((char)text[line * TELETEXT_WIDTH + c]);
         }
         lc[line] = new LineContent();
         if (realLang != "")
@@ -221,10 +225,10 @@ namespace MediaPortal.Player.Subtitles
       for (int i = 0; i < text.Length; i++)
       {
         //sbuf.Append((char)text[i]);
-        textBuilder.Append((char) text[i]);
+        textBuilder.Append((char)text[i]);
 
         //sbuf.Append("" + ((int)pageContent[i]) + " ");
-        if (((i + 1)%40) == 0)
+        if (((i + 1) % 40) == 0)
         {
           textBuilder.Append('\n');
         }
@@ -247,7 +251,7 @@ namespace MediaPortal.Player.Subtitles
       {
         TeletextPageEntry pageEntry = new TeletextPageEntry();
         pageEntry.language = String.Copy(sub.language);
-        pageEntry.encoding = (TeletextCharTable) sub.encoding;
+        pageEntry.encoding = (TeletextCharTable)sub.encoding;
         pageEntry.page = sub.page;
 
         owner.SubPageInfoCallback(pageEntry);
@@ -267,7 +271,7 @@ namespace MediaPortal.Player.Subtitles
     {
       SanityCheck();
       byte[] line_data = new byte[TELETEXT_WIDTH];
-      Array.Copy(pageContent, Math.Max(l - 1, 0)*TELETEXT_WIDTH, line_data, 0, TELETEXT_WIDTH);
+      Array.Copy(pageContent, Math.Max(l - 1, 0) * TELETEXT_WIDTH, line_data, 0, TELETEXT_WIDTH);
       return line_data;
     }
 
@@ -314,7 +318,7 @@ namespace MediaPortal.Player.Subtitles
     private byte[] pageContent; // indexed by line and character (col)
 
     private static Dictionary<int, string> langInfo = new Dictionary<int, string>();
-                                           // DVB SI language info for sub pages
+    // DVB SI language info for sub pages
 
     private int magID;
   }

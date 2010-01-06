@@ -33,13 +33,13 @@ namespace MediaPortal.UserInterface.Controls
   /// <summary>
   /// Summary description for GradientLabel.
   /// </summary>
-  [ToolboxBitmap(typeof(Label))]
+  [ToolboxBitmap(typeof (Label))]
   public class MPGradientLabel : UserControl
   {
-    Color firstColor;
-    Color lastColor;
+    private Color firstColor;
+    private Color lastColor;
 
-    int paddingTop, paddingLeft;
+    private int paddingTop, paddingLeft;
 
     private Label workingLabel;
 
@@ -69,9 +69,9 @@ namespace MediaPortal.UserInterface.Controls
       // Create gradient brush
       //
       Brush gradientBrush = new LinearGradientBrush(workingLabel.ClientRectangle,
-        firstColor,
-        lastColor,
-        LinearGradientMode.Horizontal);
+                                                    firstColor,
+                                                    lastColor,
+                                                    LinearGradientMode.Horizontal);
 
       //
       // Draw brush
@@ -94,9 +94,9 @@ namespace MediaPortal.UserInterface.Controls
       // Draw caption
       //
       graphics.DrawString(Caption,
-                TextFont,
-                new SolidBrush(TextColor),
-                paddingLeft, paddingTop);
+                          TextFont,
+                          new SolidBrush(TextColor),
+                          paddingLeft, paddingTop);
     }
 
     [Browsable(true), Category("Gradient")]
@@ -192,6 +192,7 @@ namespace MediaPortal.UserInterface.Controls
     }
 
     #region Component Designer generated code
+
     /// <summary> 
     /// Required method for Designer support - do not modify 
     /// the contents of this method with the code editor.
@@ -215,8 +216,8 @@ namespace MediaPortal.UserInterface.Controls
       this.Controls.Add(this.workingLabel);
       this.Name = "GradientLabel";
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     private void workingLabel_Paint(object sender, PaintEventArgs e)

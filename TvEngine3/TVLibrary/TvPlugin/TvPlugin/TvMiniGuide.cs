@@ -89,7 +89,7 @@ namespace TvPlugin
     /// </summary>
     public TvMiniGuide()
     {
-      GetID = (int) Window.WINDOW_MINI_GUIDE;
+      GetID = (int)Window.WINDOW_MINI_GUIDE;
     }
 
     public override bool SupportsDelayedLoad
@@ -143,7 +143,7 @@ namespace TvPlugin
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\TVMiniGuide.xml");
 
-      GetID = (int) Window.WINDOW_MINI_GUIDE;
+      GetID = (int)Window.WINDOW_MINI_GUIDE;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
       _canceled = true;
       LoadSettings();
@@ -183,9 +183,7 @@ namespace TvPlugin
             }
           }
         }
-        catch
-        {
-        }
+        catch {}
 
         if (_channelList.Count == 0)
         {
@@ -231,21 +229,21 @@ namespace TvPlugin
           {
             if (message.SenderControlId == 35 || message.SenderControlId == 37) // listbox
             {
-              if ((int) Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
+              if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
               {
                 // switching logic
-                SelectedChannel = (Channel) lstChannels.SelectedListItem.MusicTag;
+                SelectedChannel = (Channel)lstChannels.SelectedListItem.MusicTag;
 
                 Channel changeChannel = null;
                 if (AutoZap)
                 {
-                  string selectedChan = (string) lstChannels.SelectedListItem.TVTag;
+                  string selectedChan = (string)lstChannels.SelectedListItem.TVTag;
                   if ((TVHome.Navigator.CurrentChannel != selectedChan) || g_Player.IsTVRecording)
                   {
                     List<Channel> tvChannelList = GetChannelListByGroup();
                     if (tvChannelList != null)
                     {
-                      changeChannel = (Channel) tvChannelList[lstChannels.SelectedListItemIndex];
+                      changeChannel = (Channel)tvChannelList[lstChannels.SelectedListItemIndex];
                     }
                   }
                 }
@@ -485,7 +483,8 @@ namespace TvPlugin
       benchClock.Reset();
       benchClock.Start();
 
-      if (TVHome.Navigator.CurrentGroup.GroupName.Equals(TvConstants.TvGroupNames.AllChannels) || (!g_Player.IsTV && !g_Player.Playing))
+      if (TVHome.Navigator.CurrentGroup.GroupName.Equals(TvConstants.TvGroupNames.AllChannels) ||
+          (!g_Player.IsTV && !g_Player.Playing))
       {
         //we have no way of using the cached channelstates on the server in the following situations.
         // 1) when the "all channels" group is selected - too many channels.
@@ -522,11 +521,11 @@ namespace TvPlugin
 
         if (tvChannelStatesList != null && tvChannelStatesList.ContainsKey(CurrentId))
         {
-          CurrentChanState = (int) tvChannelStatesList[CurrentId];
+          CurrentChanState = (int)tvChannelStatesList[CurrentId];
         }
         else
         {
-          CurrentChanState = (int) ChannelState.tunable;
+          CurrentChanState = (int)ChannelState.tunable;
         }
 
         if (CurrentChan.VisibleInGuide)
@@ -541,7 +540,8 @@ namespace TvPlugin
           ChannelLogo = Utils.GetCoverArt(Thumbs.TVChannel, CurrentChan.DisplayName);
 
           // if we are watching this channel mark it
-          if (TVHome.Navigator != null && TVHome.Navigator.Channel != null && TVHome.Navigator.Channel.IdChannel == CurrentId)
+          if (TVHome.Navigator != null && TVHome.Navigator.Channel != null &&
+              TVHome.Navigator.Channel.IdChannel == CurrentId)
           {
             item.IsRemote = true;
             SelectedID = lstChannels.Count;
@@ -564,7 +564,7 @@ namespace TvPlugin
 
             switch (CurrentChanState)
             {
-              case (int) ChannelState.nottunable: //not avail.                
+              case (int)ChannelState.nottunable: //not avail.                
                 item.IsPlayed = true;
                 if (showChannelStateIcons)
                 {
@@ -576,7 +576,7 @@ namespace TvPlugin
                   sb.Append(local1056);
                 }
                 break;
-              case (int) ChannelState.timeshifting: // timeshifting                
+              case (int)ChannelState.timeshifting: // timeshifting                
                 if (showChannelStateIcons)
                 {
                   item.PinImage = Thumbs.TvIsTimeshiftingIcon;
@@ -587,7 +587,7 @@ namespace TvPlugin
                   sb.Append(local1055);
                 }
                 break;
-              case (int) ChannelState.recording: // recording                
+              case (int)ChannelState.recording: // recording                
                 if (showChannelStateIcons)
                 {
                   item.PinImage = Thumbs.TvIsRecordingIcon;
@@ -615,7 +615,8 @@ namespace TvPlugin
             //tmpString = CurrentChan.CurrentProgram.Title; <-- this would be SLOW
             if (!string.IsNullOrEmpty(listNowNext[CurrentId].TitleNow))
             {
-              tmpString = TVUtil.TitleDisplay(listNowNext[CurrentId].TitleNow, listNowNext[CurrentId].EpisodeName, listNowNext[CurrentId].SeriesNum,
+              tmpString = TVUtil.TitleDisplay(listNowNext[CurrentId].TitleNow, listNowNext[CurrentId].EpisodeName,
+                                              listNowNext[CurrentId].SeriesNum,
                                               listNowNext[CurrentId].EpisodeNum, listNowNext[CurrentId].EpisodePart);
             }
           }
@@ -651,8 +652,10 @@ namespace TvPlugin
           tmpString = local736;
           if ((listNowNext.ContainsKey(CurrentId)) && (listNowNext[CurrentId].IdProgramNext != -1))
           {
-            tmpString = TVUtil.TitleDisplay(listNowNext[CurrentId].TitleNext,listNowNext[CurrentId].EpisodeNameNext,listNowNext[CurrentId].SeriesNumNext,
-                                            listNowNext[CurrentId].EpisodeNumNext,listNowNext[CurrentId].EpisodePartNext);
+            tmpString = TVUtil.TitleDisplay(listNowNext[CurrentId].TitleNext, listNowNext[CurrentId].EpisodeNameNext,
+                                            listNowNext[CurrentId].SeriesNumNext,
+                                            listNowNext[CurrentId].EpisodeNumNext,
+                                            listNowNext[CurrentId].EpisodePartNext);
           }
 
           item.Label2 = sb.ToString();
@@ -684,7 +687,7 @@ namespace TvPlugin
       double fprogress = 0;
       if (length.TotalMinutes > 0)
       {
-        fprogress = (passed.TotalMinutes/length.TotalMinutes)*100;
+        fprogress = (passed.TotalMinutes / length.TotalMinutes) * 100;
         fprogress = Math.Floor(fprogress);
         if (fprogress > 100.0f)
         {

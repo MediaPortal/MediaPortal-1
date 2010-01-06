@@ -10,10 +10,8 @@ using TvDatabase;
 
 namespace TvEngine
 {
-
   public class ComSkipLauncher : ITvServerPlugin
   {
-
     #region Constants
 
     private const bool DefaultRunAtStrart = true;
@@ -24,9 +22,9 @@ namespace TvEngine
 
     #region Members
 
-    static bool _runAtStart = DefaultRunAtStrart;
-    static string _program = DefaultProgram;
-    static string _parameters = DefaultParameters;
+    private static bool _runAtStart = DefaultRunAtStrart;
+    private static string _program = DefaultProgram;
+    private static string _parameters = DefaultParameters;
 
     #endregion Members
 
@@ -39,6 +37,7 @@ namespace TvEngine
     {
       get { return "ComSkipLauncher"; }
     }
+
     /// <summary>
     /// returns the version of the plugin
     /// </summary>
@@ -46,6 +45,7 @@ namespace TvEngine
     {
       get { return "1.0.2.0"; }
     }
+
     /// <summary>
     /// returns the author of the plugin
     /// </summary>
@@ -53,6 +53,7 @@ namespace TvEngine
     {
       get { return "and-81"; }
     }
+
     /// <summary>
     /// returns if the plugin should only run on the master server
     /// or also on slave servers
@@ -67,11 +68,13 @@ namespace TvEngine
       get { return _runAtStart; }
       set { _runAtStart = value; }
     }
+
     internal static string Program
     {
       get { return _program; }
       set { _program = value; }
     }
+
     internal static string Parameters
     {
       get { return _parameters; }
@@ -112,7 +115,7 @@ namespace TvEngine
 
     #region Implementation
 
-    static void ComSkipLauncher_OnTvServerEvent(object sender, EventArgs eventArgs)
+    private static void ComSkipLauncher_OnTvServerEvent(object sender, EventArgs eventArgs)
     {
       try
       {
@@ -124,7 +127,8 @@ namespace TvEngine
 
           string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, channel.DisplayName);
 
-          Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...", tvEvent.Recording.FileName, channel.DisplayName, _program, parameters);
+          Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...",
+                   tvEvent.Recording.FileName, channel.DisplayName, _program, parameters);
 
           LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
         }
@@ -134,7 +138,8 @@ namespace TvEngine
 
           string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, channel.DisplayName);
 
-          Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...", tvEvent.Recording.FileName, channel.DisplayName, _program, parameters);
+          Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...",
+                   tvEvent.Recording.FileName, channel.DisplayName, _program, parameters);
 
           LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
         }
@@ -151,7 +156,8 @@ namespace TvEngine
       {
         TvBusinessLayer layer = new TvBusinessLayer();
 
-        _runAtStart = Convert.ToBoolean(layer.GetSetting("ComSkipLauncher_RunAtStart", DefaultRunAtStrart.ToString()).Value);
+        _runAtStart =
+          Convert.ToBoolean(layer.GetSetting("ComSkipLauncher_RunAtStart", DefaultRunAtStrart.ToString()).Value);
         _program = layer.GetSetting("ComSkipLauncher_Program", DefaultProgram).Value;
         _parameters = layer.GetSetting("ComSkipLauncher_Parameters", DefaultParameters).Value;
       }
@@ -164,6 +170,7 @@ namespace TvEngine
         Log.Error("ComSkipLauncher - LoadSettings(): {0}", ex.Message);
       }
     }
+
     internal static void SaveSettings()
     {
       try
@@ -195,15 +202,15 @@ namespace TvEngine
       try
       {
         output = string.Format(
-          input,                                      // Format
-          fileName,                                   // {0} = Recorded filename (includes path)
-          Path.GetFileName(fileName),                 // {1} = Recorded filename (w/o path)
+          input, // Format
+          fileName, // {0} = Recorded filename (includes path)
+          Path.GetFileName(fileName), // {1} = Recorded filename (w/o path)
           Path.GetFileNameWithoutExtension(fileName), // {2} = Recorded filename (w/o path or extension)
-          Path.GetDirectoryName(fileName),            // {3} = Recorded file path
-          DateTime.Now.ToShortDateString(),           // {4} = Current date
-          DateTime.Now.ToShortTimeString(),           // {5} = Current time
-          channel                                     // {6} = Channel name
-        );
+          Path.GetDirectoryName(fileName), // {3} = Recorded file path
+          DateTime.Now.ToShortDateString(), // {4} = Current date
+          DateTime.Now.ToShortTimeString(), // {5} = Current time
+          channel // {6} = Channel name
+          );
       }
       catch (Exception ex)
       {
@@ -213,7 +220,8 @@ namespace TvEngine
       return output;
     }
 
-    internal static void LaunchProcess(string program, string parameters, string workingFolder, ProcessWindowStyle windowStyle)
+    internal static void LaunchProcess(string program, string parameters, string workingFolder,
+                                       ProcessWindowStyle windowStyle)
     {
       try
       {
@@ -233,7 +241,5 @@ namespace TvEngine
     }
 
     #endregion Implementation
-
   }
-
 }

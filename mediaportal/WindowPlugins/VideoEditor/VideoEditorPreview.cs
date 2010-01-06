@@ -166,7 +166,7 @@ namespace WindowPlugins.VideoEditor
         durationNew = 0;
         GUIGraphicsContext.VMR9Allowed = true;
         GUIGraphicsContext.IsFullScreenVideo = false;
-        GUIWindowManager.ActiveWindow = (int) Window.WINDOW_TV;
+        GUIWindowManager.ActiveWindow = (int)Window.WINDOW_TV;
         if (videoWindow != null)
         {
           GUIGraphicsContext.VideoWindow =
@@ -176,8 +176,8 @@ namespace WindowPlugins.VideoEditor
         g_Player.Play(inFilename.FullName);
         g_Player.Pause();
         durationOld = g_Player.Duration;
-        oldLenghtLbl.Label = Utils.SecondsToHMSString((int) durationOld);
-        newLenghtLbl.Label = Utils.SecondsToHMSString((int) durationNew);
+        oldLenghtLbl.Label = Utils.SecondsToHMSString((int)durationOld);
+        newLenghtLbl.Label = Utils.SecondsToHMSString((int)durationNew);
 
         positionSld.Percentage = 0;
         progressBar.Percentage = 0;
@@ -210,7 +210,7 @@ namespace WindowPlugins.VideoEditor
     {
       progressBar.Percentage = 100;
       //MessageBox(GUILocalizeStrings.Get(2083), GUILocalizeStrings.Get(2111)); //Dvrms:Finished to cut the video file , 
-      GUIDialogYesNo yesnoDialog = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+      GUIDialogYesNo yesnoDialog = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
       yesnoDialog.SetHeading(2111); // Finished !
       yesnoDialog.SetLine(1, 2082); // //Finished to cut the video file
       yesnoDialog.SetLine(2, 2083); // Would you like to delete the original file?
@@ -228,7 +228,7 @@ namespace WindowPlugins.VideoEditor
       cutBtn.IsEnabled = false;
       addBtn.IsEnabled = false;
       int fileId = VideoDatabase.GetFileId(inFilename.FullName);
-      VideoDatabase.SetMovieDuration(fileId, (int) durationNew);
+      VideoDatabase.SetMovieDuration(fileId, (int)durationNew);
     }
 
     private void dvrMod_OnProgress(int percentage)
@@ -270,12 +270,12 @@ namespace WindowPlugins.VideoEditor
       if (control == startBtn)
       {
         startCut = g_Player.CurrentPosition;
-        startPosLbl.Label = Utils.SecondsToHMSString((int) startCut);
+        startPosLbl.Label = Utils.SecondsToHMSString((int)startCut);
       }
       if (control == endBtn)
       {
         endCut = g_Player.CurrentPosition;
-        endPosLbl.Label = Utils.SecondsToHMSString((int) endCut);
+        endPosLbl.Label = Utils.SecondsToHMSString((int)endCut);
       }
       if (control == addBtn)
       {
@@ -294,9 +294,9 @@ namespace WindowPlugins.VideoEditor
           else
           {
             cutListCtrl.Add(
-              new GUIListItem(Utils.SecondsToHMSString((int) startCut) + " - " + Utils.SecondsToHMSString((int) endCut)));
+              new GUIListItem(Utils.SecondsToHMSString((int)startCut) + " - " + Utils.SecondsToHMSString((int)endCut)));
             durationNew += (endCut - startCut);
-            newLenghtLbl.Label = Utils.SecondsToHMSString((int) durationNew);
+            newLenghtLbl.Label = Utils.SecondsToHMSString((int)durationNew);
             cutPointsList.Add(new TimeDomain(startCut, endCut));
           }
 
@@ -318,18 +318,18 @@ namespace WindowPlugins.VideoEditor
           g_Player.SeekAbsolute(newPos);
         }
 
-        positionSld.Percentage = (int) ((100/durationOld)*(g_Player.CurrentPosition + 1.0));
+        positionSld.Percentage = (int)((100 / durationOld) * (g_Player.CurrentPosition + 1.0));
         g_Player.Pause();
       }
       if (control == backwardBtn)
       {
         g_Player.SeekAbsolute(g_Player.CurrentPosition - 1.0); //org 1.0
-        positionSld.Percentage = (int) ((100/durationOld)*g_Player.CurrentPosition);
+        positionSld.Percentage = (int)((100 / durationOld) * g_Player.CurrentPosition);
         g_Player.Pause();
       }
       if (control == positionSld)
       {
-        double newPos = (durationOld/100)*positionSld.Percentage;
+        double newPos = (durationOld / 100) * positionSld.Percentage;
         if (newPos >= g_Player.Duration - 0.5)
         {
           g_Player.SeekAbsolute(g_Player.Duration - 0.5);
@@ -355,7 +355,8 @@ namespace WindowPlugins.VideoEditor
           g_Player.SeekAbsolute(cutPointsList[cutListCtrl.SelectedListItemIndex].StartTime);
           goToStartPoint = false;
           lastIndexedCutPoint = cutListCtrl.SelectedListItemIndex;
-          positionSld.Percentage = (int) ((100/durationOld)*cutPointsList[cutListCtrl.SelectedListItemIndex].StartTime);
+          positionSld.Percentage =
+            (int)((100 / durationOld) * cutPointsList[cutListCtrl.SelectedListItemIndex].StartTime);
           g_Player.Pause();
         }
         else
@@ -363,7 +364,7 @@ namespace WindowPlugins.VideoEditor
           g_Player.SeekAbsolute(cutPointsList[cutListCtrl.SelectedListItemIndex].EndTime);
           goToStartPoint = true;
           lastIndexedCutPoint = cutListCtrl.SelectedListItemIndex;
-          positionSld.Percentage = (int) ((100/durationOld)*cutPointsList[cutListCtrl.SelectedListItemIndex].EndTime);
+          positionSld.Percentage = (int)((100 / durationOld) * cutPointsList[cutListCtrl.SelectedListItemIndex].EndTime);
           g_Player.Pause();
         }
       }
@@ -380,7 +381,7 @@ namespace WindowPlugins.VideoEditor
 
       if (editCutPoint)
       {
-        GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
         if (dlg == null)
         {
           return;
@@ -402,7 +403,7 @@ namespace WindowPlugins.VideoEditor
       }
       else
       {
-        GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
         if (dlg == null)
         {
           return;
@@ -447,11 +448,11 @@ namespace WindowPlugins.VideoEditor
       foreach (TimeDomain cutPoints in cutPointsList)
       {
         cutListCtrl.Add(
-          new GUIListItem(Utils.SecondsToHMSString((int) cutPoints.StartTime) + " - " +
-                          Utils.SecondsToHMSString((int) cutPoints.EndTime)));
+          new GUIListItem(Utils.SecondsToHMSString((int)cutPoints.StartTime) + " - " +
+                          Utils.SecondsToHMSString((int)cutPoints.EndTime)));
         durationNew += (cutPoints.EndTime - cutPoints.StartTime);
       }
-      newLenghtLbl.Label = Utils.SecondsToHMSString((int) durationNew);
+      newLenghtLbl.Label = Utils.SecondsToHMSString((int)durationNew);
     }
 
     #endregion
@@ -463,7 +464,7 @@ namespace WindowPlugins.VideoEditor
       {
         if (File.Exists(comskipFilePath))
         {
-          GUIDialogYesNo yesnoDialog = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+          GUIDialogYesNo yesnoDialog = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
           if (yesnoDialog == null)
           {
             return;
@@ -487,7 +488,7 @@ namespace WindowPlugins.VideoEditor
             double curPos = 0;
             if (BaseCompareValidator.CanConvert(lineParts[lineParts.Length - 1], ValidationDataType.Integer))
             {
-              framesPerSec = Convert.ToInt32(lineParts[lineParts.Length - 1])/100;
+              framesPerSec = Convert.ToInt32(lineParts[lineParts.Length - 1]) / 100;
             }
             comSkipFile.ReadLine();
             while (!comSkipFile.EndOfStream)
@@ -499,7 +500,7 @@ namespace WindowPlugins.VideoEditor
               if (BaseCompareValidator.CanConvert(lineParts[0], ValidationDataType.Integer))
               {
                 cutPoint1 = Convert.ToInt32(lineParts[0].Trim());
-                endPoint = cutPoint1/framesPerSec;
+                endPoint = cutPoint1 / framesPerSec;
               }
               else
               {
@@ -510,7 +511,7 @@ namespace WindowPlugins.VideoEditor
               if (BaseCompareValidator.CanConvert(lineParts[1], ValidationDataType.Integer))
               {
                 cutPoint2 = Convert.ToInt32(lineParts[1].Trim());
-                startPoint = cutPoint2/framesPerSec;
+                startPoint = cutPoint2 / framesPerSec;
               }
               else
               {
@@ -518,18 +519,18 @@ namespace WindowPlugins.VideoEditor
                 return;
               }
               cutListCtrl.Add(
-                new GUIListItem(Utils.SecondsToHMSString((int) curPos) + " - " +
-                                Utils.SecondsToHMSString((int) endPoint)));
+                new GUIListItem(Utils.SecondsToHMSString((int)curPos) + " - " +
+                                Utils.SecondsToHMSString((int)endPoint)));
               durationNew += (endPoint - curPos);
-              newLenghtLbl.Label = Utils.SecondsToHMSString((int) durationNew);
+              newLenghtLbl.Label = Utils.SecondsToHMSString((int)durationNew);
               cutPointsList.Add(new TimeDomain(curPos, endPoint));
               curPos = startPoint;
             }
             cutListCtrl.Add(
-              new GUIListItem(Utils.SecondsToHMSString((int) curPos) + " - " +
-                              Utils.SecondsToHMSString((int) durationOld)));
+              new GUIListItem(Utils.SecondsToHMSString((int)curPos) + " - " +
+                              Utils.SecondsToHMSString((int)durationOld)));
             durationNew += (durationOld - curPos);
-            newLenghtLbl.Label = Utils.SecondsToHMSString((int) durationNew);
+            newLenghtLbl.Label = Utils.SecondsToHMSString((int)durationNew);
             cutPointsList.Add(new TimeDomain(curPos, durationOld));
             cutBtn.IsEnabled = true;
           }
@@ -584,7 +585,7 @@ namespace WindowPlugins.VideoEditor
 
     private void MessageBox(string text, string title)
     {
-      GUIDialogOK dlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       dlg.SetHeading(title);
       dlg.SetLine(1, text);
       dlg.SetLine(2, string.Empty);
@@ -614,9 +615,9 @@ namespace WindowPlugins.VideoEditor
             if (iCount < NR_OF_SPILTER_TIME_STAMPS)
             {
               tStamp[iCount].start = new DateTime(1900, 1, 1, 0, 0, 0, 0);
-              tStamp[iCount].start = tStamp[iCount].start.AddSeconds((int) cutPointsList[iCount].StartTime);
+              tStamp[iCount].start = tStamp[iCount].start.AddSeconds((int)cutPointsList[iCount].StartTime);
               tStamp[iCount].end = new DateTime(1900, 1, 1, 0, 0, 0, 0);
-              tStamp[iCount].end = tStamp[iCount].end.AddSeconds((int) cutPointsList[iCount].EndTime);
+              tStamp[iCount].end = tStamp[iCount].end.AddSeconds((int)cutPointsList[iCount].EndTime);
             }
           }
           cutThread = new Thread(new ThreadStart(CutMpeg));
@@ -679,7 +680,7 @@ namespace WindowPlugins.VideoEditor
           cutList.Add(new TimeDomain(cutPointsList[i - 1].EndTime, cutPointsList[i].StartTime));
         }
         // Don't add the last cutpoint if the last endtime is the end of the file
-        if ((int) cutPointsList[cutPointsList.Count - 1].EndTime != (int) durationOld)
+        if ((int)cutPointsList[cutPointsList.Count - 1].EndTime != (int)durationOld)
         {
           cutList.Add(new TimeDomain(cutPointsList[cutPointsList.Count - 1].EndTime, durationOld));
         }

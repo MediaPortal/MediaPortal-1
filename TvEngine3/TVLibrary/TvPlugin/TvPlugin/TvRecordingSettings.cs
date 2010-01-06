@@ -26,6 +26,7 @@
 using System;
 using MediaPortal.GUI.Library;
 using TvDatabase;
+
 //using MediaPortal.Utils.Services;
 
 namespace TvPlugin
@@ -42,7 +43,7 @@ namespace TvPlugin
 
     public TvRecordingSettings()
     {
-      GetID = (int) Window.WINDOW_SETTINGS_RECORDINGS;
+      GetID = (int)Window.WINDOW_SETTINGS_RECORDINGS;
     }
 
     public override bool Init()

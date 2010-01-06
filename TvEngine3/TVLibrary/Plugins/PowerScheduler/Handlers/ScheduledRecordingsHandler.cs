@@ -1,4 +1,5 @@
 #region Copyright (C) 2007-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2007-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,14 +20,17 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
+
 using System;
 using System.Collections.Generic;
 using TvDatabase;
 using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Handlers
@@ -37,9 +41,13 @@ namespace TvEngine.PowerScheduler.Handlers
   public class ScheduledRecordingsHandler : IWakeupHandler
   {
     #region Variables
-    int _idleTimeout = 5;
+
+    private int _idleTimeout = 5;
+
     #endregion
+
     #region Ctor
+
     public ScheduledRecordingsHandler()
     {
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
@@ -55,8 +63,11 @@ namespace TvEngine.PowerScheduler.Handlers
         }
       }
     }
+
     #endregion
+
     #region IWakeupHandler implementation
+
     public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -93,18 +104,21 @@ namespace TvEngine.PowerScheduler.Handlers
       }
       return nextWakeuptime;
     }
+
     public string HandlerName
     {
       get { return "ScheduledRecordingsHandler"; }
     }
+
     #endregion
 
     #region Private methods
+
     /// <summary>
     /// Handles settings changed events
     /// </summary>
     /// <param name="args">PowerScheduler event arguments</param>
-    void ScheduledRecordingsHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
+    private void ScheduledRecordingsHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
     {
       switch (args.EventType)
       {
@@ -117,6 +131,7 @@ namespace TvEngine.PowerScheduler.Handlers
           break;
       }
     }
+
     /// <summary>
     /// GetWakeupTime determines the wakeup time for a Schedule when no guide data is present
     /// Note that this obviously only works for the following ScheduleRecordingsType's:
@@ -132,8 +147,10 @@ namespace TvEngine.PowerScheduler.Handlers
     {
       ScheduleRecordingType type = (ScheduleRecordingType)schedule.ScheduleType;
       DateTime now = DateTime.Now;
-      DateTime start = new DateTime(now.Year, now.Month, now.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, schedule.StartTime.Second);
-      DateTime stop = new DateTime(now.Year, now.Month, now.Day, schedule.EndTime.Hour, schedule.EndTime.Minute, schedule.EndTime.Second);
+      DateTime start = new DateTime(now.Year, now.Month, now.Day, schedule.StartTime.Hour, schedule.StartTime.Minute,
+                                    schedule.StartTime.Second);
+      DateTime stop = new DateTime(now.Year, now.Month, now.Day, schedule.EndTime.Hour, schedule.EndTime.Minute,
+                                   schedule.EndTime.Second);
       WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       switch (type)
       {
@@ -211,6 +228,7 @@ namespace TvEngine.PowerScheduler.Handlers
       // other recording types cannot be determined manually (every time on ...)
       return DateTime.MaxValue;
     }
+
     #endregion
   }
 }

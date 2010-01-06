@@ -121,8 +121,8 @@ namespace MediaPortal.Mixer
         _mixerControlDetailsVolume = GetControl(_componentType, MixerControlType.Volume);
         _mixerControlDetailsMute = GetControl(_componentType, MixerControlType.Mute);
 
-        _isMuted = (int) GetValue(_componentType, MixerControlType.Mute) == 1;
-        _volume = (int) GetValue(_componentType, MixerControlType.Volume);
+        _isMuted = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
+        _volume = (int)GetValue(_componentType, MixerControlType.Volume);
       }
     }
 
@@ -281,8 +281,8 @@ namespace MediaPortal.Mixer
 
     private void OnControlChanged(object sender, MixerEventArgs e)
     {
-      _isMuted = (int) GetValue(_componentType, MixerControlType.Mute) == 1;
-      _volume = (int) GetValue(_componentType, MixerControlType.Volume);
+      _isMuted = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
+      _volume = (int)GetValue(_componentType, MixerControlType.Volume);
 
       if (ControlChanged != null)
       {

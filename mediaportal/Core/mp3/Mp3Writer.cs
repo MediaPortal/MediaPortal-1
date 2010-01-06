@@ -77,9 +77,7 @@ namespace Yeti.MMedia.Mp3
     /// <param name="Output">Stream that will hold the MP3 resulting data</param>
     /// <param name="InputDataFormat">PCM format of input data</param>
     public Mp3Writer(Stream Output, WaveFormat InputDataFormat)
-      : this(Output, InputDataFormat, new BE_CONFIG(InputDataFormat))
-    {
-    }
+      : this(Output, InputDataFormat, new BE_CONFIG(InputDataFormat)) {}
 
     /// <summary>
     /// Create a Mp3Writer with specific MP3 format
@@ -87,9 +85,7 @@ namespace Yeti.MMedia.Mp3
     /// <param name="Output">Stream that will hold the MP3 resulting data</param>
     /// <param name="cfg">Writer Config</param>
     public Mp3Writer(Stream Output, Mp3WriterConfig cfg)
-      : this(Output, cfg.Format, cfg.Mp3Config)
-    {
-    }
+      : this(Output, cfg.Format, cfg.Mp3Config) {}
 
     /// <summary>
     /// Create a Mp3Writer with specific MP3 format
@@ -110,7 +106,7 @@ namespace Yeti.MMedia.Mp3
           throw new ApplicationException(string.Format("Lame_encDll.beInitStream failed with the error code {0}",
                                                        LameResult));
         }
-        m_InBuffer = new byte[m_InputSamples*2]; //Input buffer is expected as short[]
+        m_InBuffer = new byte[m_InputSamples * 2]; //Input buffer is expected as short[]
         m_OutBuffer = new byte[m_OutBufferSize];
       }
       catch
@@ -143,12 +139,12 @@ namespace Yeti.MMedia.Mp3
           if (m_InBufferPos > 0)
           {
             if (
-              Lame_encDll.EncodeChunk(m_hLameStream, m_InBuffer, 0, (uint) m_InBufferPos, m_OutBuffer, ref EncodedSize) ==
+              Lame_encDll.EncodeChunk(m_hLameStream, m_InBuffer, 0, (uint)m_InBufferPos, m_OutBuffer, ref EncodedSize) ==
               Lame_encDll.BE_ERR_SUCCESSFUL)
             {
               if (EncodedSize > 0)
               {
-                base.Write(m_OutBuffer, 0, (int) EncodedSize);
+                base.Write(m_OutBuffer, 0, (int)EncodedSize);
               }
             }
           }
@@ -157,7 +153,7 @@ namespace Yeti.MMedia.Mp3
           {
             if (EncodedSize > 0)
             {
-              base.Write(m_OutBuffer, 0, (int) EncodedSize);
+              base.Write(m_OutBuffer, 0, (int)EncodedSize);
             }
           }
         }
@@ -199,7 +195,7 @@ namespace Yeti.MMedia.Mp3
             {
               if (EncodedSize > 0)
               {
-                base.Write(m_OutBuffer, 0, (int) EncodedSize);
+                base.Write(m_OutBuffer, 0, (int)EncodedSize);
               }
             }
             else
@@ -215,12 +211,12 @@ namespace Yeti.MMedia.Mp3
           {
             if (
               (LameResult =
-               Lame_encDll.EncodeChunk(m_hLameStream, buffer, index, (uint) m_InBuffer.Length, m_OutBuffer,
+               Lame_encDll.EncodeChunk(m_hLameStream, buffer, index, (uint)m_InBuffer.Length, m_OutBuffer,
                                        ref EncodedSize)) == Lame_encDll.BE_ERR_SUCCESSFUL)
             {
               if (EncodedSize > 0)
               {
-                base.Write(m_OutBuffer, 0, (int) EncodedSize);
+                base.Write(m_OutBuffer, 0, (int)EncodedSize);
               }
             }
             else

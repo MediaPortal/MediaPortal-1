@@ -25,9 +25,9 @@ using similaritymetrics;
 
 namespace TvLibrary
 {
-  class DeviceSorter
+  internal class DeviceSorter
   {
-    class SortItem : IComparable
+    private class SortItem : IComparable
     {
       public float rate;
       public DsDevice device;
@@ -41,10 +41,11 @@ namespace TvLibrary
           return -1;
         return 1;
       }
-      #endregion
-    };
 
-    static public DsDevice[] Sort(DsDevice[] devices, params object[] arg)
+      #endregion
+    } ;
+
+    public static DsDevice[] Sort(DsDevice[] devices, params object[] arg)
     {
       try
       {
@@ -56,7 +57,7 @@ namespace TvLibrary
         foreach (object obj in arg)
         {
           String name = obj as String;
-          if(!string.IsNullOrEmpty(name))
+          if (!string.IsNullOrEmpty(name))
           {
             compareNames.Add(name);
             continue;
@@ -119,7 +120,8 @@ namespace TvLibrary
           index++;
         }
         return newDevices;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
         return devices;

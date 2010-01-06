@@ -48,9 +48,7 @@ namespace MediaPortal.GUI.Library
     protected GUIFont _font = null;
     protected Rectangle _rectangle = new Rectangle();
 
-    public GUICheckMarkControl(int dwParentID) : base(dwParentID)
-    {
-    }
+    public GUICheckMarkControl(int dwParentID) : base(dwParentID) {}
 
     /// <summary>
     /// The constructor of the GUICheckMarkControl class.
@@ -162,9 +160,9 @@ namespace MediaPortal.GUI.Library
           // calculate the position of the checkmark if the text appears at the left side of the checkmark
           float fTextHeight = 0, fTextWidth = 0;
           _font.GetTextExtent(_label, ref fTextWidth, ref fTextHeight);
-          dwCheckMarkPosX += ((int) (fTextWidth) + 5);
+          dwCheckMarkPosX += ((int)(fTextWidth) + 5);
           _rectangle.X = _positionX;
-          _rectangle.Width = 5 + (int) fTextWidth + _imageCheckMarkFocused.Width;
+          _rectangle.Width = 5 + (int)fTextWidth + _imageCheckMarkFocused.Width;
         }
         else
         {
@@ -174,12 +172,12 @@ namespace MediaPortal.GUI.Library
           float fTextHeight = 0, fTextWidth = 0;
           _font.GetTextExtent(_label, ref fTextWidth, ref fTextHeight);
           _rectangle.X = dwTextPosX;
-          _rectangle.Width = (dwTextPosX + (int) fTextWidth + 5) - dwTextPosX;
+          _rectangle.Width = (dwTextPosX + (int)fTextWidth + 5) - dwTextPosX;
         }
         if (Disabled)
         {
           // If disabled, draw the text in the disabled color.
-          _font.DrawText((float) dwTextPosX, (float) _positionY, _disabledColor, _label, Alignment.ALIGN_LEFT, -1);
+          _font.DrawText((float)dwTextPosX, (float)_positionY, _disabledColor, _label, Alignment.ALIGN_LEFT, -1);
         }
         else
         {
@@ -188,12 +186,12 @@ namespace MediaPortal.GUI.Library
           {
             if (_shadow)
             {
-              _font.DrawShadowText((float) dwTextPosX, (float) _positionY, _textColor, _label, Alignment.ALIGN_LEFT, 5,
+              _font.DrawShadowText((float)dwTextPosX, (float)_positionY, _textColor, _label, Alignment.ALIGN_LEFT, 5,
                                    5, 0xff000000);
             }
             else
             {
-              _font.DrawText((float) dwTextPosX, (float) _positionY, _textColor, _label, Alignment.ALIGN_LEFT, -1);
+              _font.DrawText((float)dwTextPosX, (float)_positionY, _textColor, _label, Alignment.ALIGN_LEFT, -1);
             }
           }
             // Draw non-focused text and shadow
@@ -201,12 +199,12 @@ namespace MediaPortal.GUI.Library
           {
             if (_shadow)
             {
-              _font.DrawShadowText((float) dwTextPosX, (float) _positionY, _disabledColor, _label, Alignment.ALIGN_LEFT,
+              _font.DrawShadowText((float)dwTextPosX, (float)_positionY, _disabledColor, _label, Alignment.ALIGN_LEFT,
                                    5, 5, 0xff000000);
             }
             else
             {
-              _font.DrawText((float) dwTextPosX, (float) _positionY, _disabledColor, _label, Alignment.ALIGN_LEFT, -1);
+              _font.DrawText((float)dwTextPosX, (float)_positionY, _disabledColor, _label, Alignment.ALIGN_LEFT, -1);
             }
           }
         }
@@ -243,7 +241,7 @@ namespace MediaPortal.GUI.Library
           // Send a message that the checkbox was clicked.
           _isSelected = !_isSelected;
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID,
-                                          (int) action.wID, 0, null);
+                                          (int)action.wID, 0, null);
           GUIGraphicsContext.SendMessage(msg);
         }
       }

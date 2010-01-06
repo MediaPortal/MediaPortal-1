@@ -27,7 +27,6 @@ using System;
 using System.IO;
 using System.Collections;
 using System.ComponentModel;
-
 using EnterpriseDT.Net.Ftp;
 using MediaPortal.GUI.Library;
 using System.Threading;
@@ -39,30 +38,29 @@ namespace MediaPortal.Util
   /// it contains functions to connect to a remote ftp server and
   /// download a file
   /// </summary>
-
   public class FtpConnectionCache
   {
     /// <summary>
     /// Subclass handeling 1 ftp connection
     /// </summary>
-    class FtpConnection
+    private class FtpConnection
     {
-      public FTPClient Connection = null;				//current FTP connection
-      public string HostName = string.Empty;		//host name
-      public string LoginName = string.Empty;	  //loginname
-      public string Password = string.Empty;		//password
-      public int Port = 21;								    	//tcp/ip port of the server
-      public bool Busy = false;						      //Flag indicating if we are busy downloading a file
-      public bool PASV = false;                 //use passive mode
-      public string RemoteFileName = string.Empty;	//remote file we're downloading
-      public string LocalFileName = string.Empty;	 //local file where download is stored
-      public string OriginalRemoteFileName = string.Empty;	//original remote filename
-      public long BytesTransferred = 0;			    // bytes transferred
-      public long BytesOffset = 0;					  	// bytes offset when resuming an ftp download
+      public FTPClient Connection = null; //current FTP connection
+      public string HostName = string.Empty; //host name
+      public string LoginName = string.Empty; //loginname
+      public string Password = string.Empty; //password
+      public int Port = 21; //tcp/ip port of the server
+      public bool Busy = false; //Flag indicating if we are busy downloading a file
+      public bool PASV = false; //use passive mode
+      public string RemoteFileName = string.Empty; //remote file we're downloading
+      public string LocalFileName = string.Empty; //local file where download is stored
+      public string OriginalRemoteFileName = string.Empty; //original remote filename
+      public long BytesTransferred = 0; // bytes transferred
+      public long BytesOffset = 0; // bytes offset when resuming an ftp download
 
       public FtpConnection()
       {
-       // using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
+        // using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
       }
 
       /// <summary>
@@ -70,7 +68,7 @@ namespace MediaPortal.Util
       /// start an asynchronous download
       /// </summary>
       /// <param name="ftp"></param>
-      void StartDownLoad(object sender, DoWorkEventArgs e)
+      private void StartDownLoad(object sender, DoWorkEventArgs e)
       {
         try
         {
@@ -79,7 +77,7 @@ namespace MediaPortal.Util
           BytesTransferred = 0;
           BytesOffset = 0;
 
-          Connection.TransferNotifyInterval = 65535;//send notify after receiving 64KB
+          Connection.TransferNotifyInterval = 65535; //send notify after receiving 64KB
 
           Connection.CommandSent += new FTPMessageHandler(Connection_CommandSent);
           Connection.ReplyReceived += new FTPMessageHandler(Connection_ReplyReceived);
@@ -114,7 +112,6 @@ namespace MediaPortal.Util
         }
         finally
         {
-
           Connection.TransferStartedEx -= new TransferHandler(Connection_TransferStartedEx);
           Connection.CommandSent -= new FTPMessageHandler(Connection_CommandSent);
           Connection.ReplyReceived -= new FTPMessageHandler(Connection_ReplyReceived);
@@ -129,17 +126,17 @@ namespace MediaPortal.Util
         }
       }
 
-      void Connection_TransferStartedEx(object sender, TransferEventArgs e)
+      private void Connection_TransferStartedEx(object sender, TransferEventArgs e)
       {
-        Log.Debug("ftp: Transfer started {0}->{1}",e.RemoteFilename, e.LocalFilePath);
+        Log.Debug("ftp: Transfer started {0}->{1}", e.RemoteFilename, e.LocalFilePath);
       }
 
-      void Connection_ReplyReceived(object sender, FTPMessageEventArgs e)
+      private void Connection_ReplyReceived(object sender, FTPMessageEventArgs e)
       {
         Log.Debug("ftp:Cmd  :{0}", e.Message);
       }
 
-      void Connection_CommandSent(object sender, FTPMessageEventArgs e)
+      private void Connection_CommandSent(object sender, FTPMessageEventArgs e)
       {
         Log.Debug("ftp:reply:{0}", e.Message);
       }
@@ -156,7 +153,7 @@ namespace MediaPortal.Util
         string name = System.IO.Path.GetFileName(remotefile);
         string folder = orgremoteFile.Substring("remote:".Length);
         folder = folder.Substring(0, folder.Length - (name.Length + 1));
-        string[] subitems = folder.Split(new char[] { '?' });
+        string[] subitems = folder.Split(new char[] {'?'});
         if (subitems[4] == string.Empty) subitems[4] = "/";
         bool fileExists = false;
         string tmpDir = string.Empty;
@@ -164,7 +161,7 @@ namespace MediaPortal.Util
         try
         {
           tmpDir = subitems[4];
-          Connection.ChDir(tmpDir);          
+          Connection.ChDir(tmpDir);
           files = Connection.DirDetails(); //(tmpDir);
           for (int i = 0; i < files.Length; ++i)
           {
@@ -228,11 +225,9 @@ namespace MediaPortal.Util
     /// <summary>
     /// list containing all active ftp connections
     /// </summary>
-    static ArrayList ftpConnections = new ArrayList();
+    private static ArrayList ftpConnections = new ArrayList();
 
-    static FtpConnectionCache()
-    {
-    }
+    static FtpConnectionCache() {}
 
     /// <summary>
     /// Checks if we have a idle connection to the remote ftp server
@@ -247,7 +242,8 @@ namespace MediaPortal.Util
     /// true: found an idle connection, this is returned in ftpclient
     /// false: no idle connections found. ftpclient =null
     /// </returns>
-    public static bool InCache(string hostname, string login, string password, int port, bool active, out FTPClient ftpclient)
+    public static bool InCache(string hostname, string login, string password, int port, bool active,
+                               out FTPClient ftpclient)
     {
       ftpclient = null;
       foreach (FtpConnection client in ftpConnections)
@@ -383,7 +379,7 @@ namespace MediaPortal.Util
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    static void Connection_TransferCompleteEx(object sender, TransferEventArgs e)
+    private static void Connection_TransferCompleteEx(object sender, TransferEventArgs e)
     {
       Log.Info("FTPConnection: Transfer completed: {0}->{1}", e.RemoteFilename, e.LocalFilePath);
       try

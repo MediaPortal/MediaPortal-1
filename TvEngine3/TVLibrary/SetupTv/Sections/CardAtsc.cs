@@ -37,30 +37,26 @@ namespace SetupTv.Sections
     [Serializable]
     public class ATSCTuning
     {
-      public int frequency;		 // frequency
-      public ATSCTuning()
-      {
-      }
+      public int frequency; // frequency
+      public ATSCTuning() {}
+
       public ATSCTuning(int f)
       {
         frequency = f;
       }
     }
 
-    readonly int _cardNumber;
-    List<ATSCTuning> _atscChannels = new List<ATSCTuning>();
-    bool _isScanning;
-    bool _stopScanning;
-    FileFilters fileFilters;
+    private readonly int _cardNumber;
+    private List<ATSCTuning> _atscChannels = new List<ATSCTuning>();
+    private bool _isScanning;
+    private bool _stopScanning;
+    private FileFilters fileFilters;
 
     public CardAtsc()
-      : this("DVBC")
-    {
-    }
+      : this("DVBC") {}
+
     public CardAtsc(string name)
-      : base(name)
-    {
-    }
+      : base(name) {}
 
     public CardAtsc(string name, int cardNumber)
       : base(name)
@@ -71,9 +67,8 @@ namespace SetupTv.Sections
       Init();
     }
 
-    void Init()
+    private void Init()
     {
-
       if (checkBoxQAM.Enabled != true || checkBoxQAM.Checked == false)
       {
         mpComboBoxFrequencies.Enabled = false;
@@ -110,7 +105,7 @@ namespace SetupTv.Sections
       setting.Persist();
     }
 
-    void UpdateStatus()
+    private void UpdateStatus()
     {
       progressBarLevel.Value = Math.Min(100, RemoteControl.Instance.SignalLevel(_cardNumber));
       progressBarQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
@@ -138,11 +133,12 @@ namespace SetupTv.Sections
         User user;
         if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
         {
-          MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
+          MessageBox.Show(this,
+                          "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
           return;
         }
         SimpleFileName tuningFile = (SimpleFileName)mpComboBoxFrequencies.SelectedItem;
-        _atscChannels = (List<ATSCTuning>)fileFilters.LoadList(tuningFile.FileName, typeof(List<ATSCTuning>));
+        _atscChannels = (List<ATSCTuning>)fileFilters.LoadList(tuningFile.FileName, typeof (List<ATSCTuning>));
         if (_atscChannels == null)
         {
           return;
@@ -158,7 +154,7 @@ namespace SetupTv.Sections
       }
     }
 
-    void DoScan()
+    private void DoScan()
     {
       int tvChannelsNew = 0;
       int radioChannelsNew = 0;
@@ -216,8 +212,10 @@ namespace SetupTv.Sections
             tuneChannel.Frequency = -1;
             tuneChannel.ModulationType = ModulationType.Mod8Vsb;
           }
-          Log.WriteFile("ATSC tune: PhysicalChannel: {0} Frequency: {1} Modulation: {2}", tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
-          string line = String.Format("physical channel:{0} frequency:{1} modulation:{2}", tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
+          Log.WriteFile("ATSC tune: PhysicalChannel: {0} Frequency: {1} Modulation: {2}", tuneChannel.PhysicalChannel,
+                        tuneChannel.Frequency, tuneChannel.ModulationType);
+          string line = String.Format("physical channel:{0} frequency:{1} modulation:{2}", tuneChannel.PhysicalChannel,
+                                      tuneChannel.Frequency, tuneChannel.ModulationType);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
           if (index == minchan)
@@ -244,12 +242,14 @@ namespace SetupTv.Sections
           {
             if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
             {
-              line = String.Format("physical channel:{0} frequency:{1} modulation:{2}: No signal", tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
+              line = String.Format("physical channel:{0} frequency:{1} modulation:{2}: No signal",
+                                   tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
             }
-            line = String.Format("physical channel:{0} frequency:{1} modulation:{2}: Nothing found", tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
+            line = String.Format("physical channel:{0} frequency:{1} modulation:{2}: Nothing found",
+                                 tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType);
             item.Text = line;
             item.ForeColor = Color.Red;
             continue;
@@ -331,7 +331,9 @@ namespace SetupTv.Sections
               }
             }
             layer.MapChannelToCard(card, dbChannel, false);
-            line = String.Format("physical channel:{0} frequency:{1} modulation:{2} New:{3} Updated:{4}", tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType, newChannels, updatedChannels);
+            line = String.Format("physical channel:{0} frequency:{1} modulation:{2} New:{3} Updated:{4}",
+                                 tuneChannel.PhysicalChannel, tuneChannel.Frequency, tuneChannel.ModulationType,
+                                 newChannels, updatedChannels);
             item.Text = line;
           }
         }
@@ -353,8 +355,11 @@ namespace SetupTv.Sections
         mpButtonScanTv.Text = buttonText;
         _isScanning = false;
       }
-      listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
-      listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
+      listViewStatus.Items.Add(
+        new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew,
+                                       radioChannelsUpdated)));
+      listViewStatus.Items.Add(
+        new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
       ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
       lastItem.EnsureVisible();
     }

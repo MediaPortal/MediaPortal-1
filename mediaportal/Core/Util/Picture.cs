@@ -45,9 +45,7 @@ namespace MediaPortal.Util
     private static ThumbnailExtractor Extractor = new ThumbnailExtractor();
 
     // singleton. Dont allow any instance of this class
-    static Picture()
-    {
-    }
+    static Picture() {}
 
     /// <summary>
     /// This method will load a picture from file and return a DirectX Texture of it
@@ -70,12 +68,14 @@ namespace MediaPortal.Util
     /// <param name="iHeight">height of the returned texture</param>
     /// <returns>Texture with image or null if image could not be loaded</returns>
     /// 
-    public static Texture Load(string strPic, int iRotate, int iMaxWidth, int iMaxHeight, bool bRGB, bool bZoom, out int iWidth, out int iHeight)
+    public static Texture Load(string strPic, int iRotate, int iMaxWidth, int iMaxHeight, bool bRGB, bool bZoom,
+                               out int iWidth, out int iHeight)
     {
       return Load(strPic, iRotate, iMaxWidth, iMaxHeight, bRGB, bZoom, false, out iWidth, out iHeight);
     }
 
-    public static Texture Load(string strPic, int iRotate, int iMaxWidth, int iMaxHeight, bool bRGB, bool bZoom, bool bOversized, out int iWidth, out int iHeight)
+    public static Texture Load(string strPic, int iRotate, int iMaxWidth, int iMaxHeight, bool bRGB, bool bZoom,
+                               bool bOversized, out int iWidth, out int iHeight)
     {
       iWidth = 0;
       iHeight = 0;
@@ -192,8 +192,8 @@ namespace MediaPortal.Util
               if (bOversized)
               {
                 // Set picture at center position
-                int xpos = 1;// (iMaxWidth-iWidth)/2;
-                int ypos = 1;// (iMaxHeight-iHeight)/2;
+                int xpos = 1; // (iMaxWidth-iWidth)/2;
+                int ypos = 1; // (iMaxHeight-iHeight)/2;
                 g.DrawImage(theImage, new Rectangle(xpos, ypos, iWidth, iHeight));
               }
               else
@@ -253,9 +253,9 @@ namespace MediaPortal.Util
           texture = TextureLoader.FromStream(
             GUIGraphicsContext.DX9Device,
             stream,
-            0, 0,//width/height
-            1,//mipslevels
-            0,//Usage.Dynamic,
+            0, 0, //width/height
+            1, //mipslevels
+            0, //Usage.Dynamic,
             Format.X8R8G8B8,
             GUIGraphicsContext.GetTexturePoolType(),
             Filter.None,
@@ -267,13 +267,12 @@ namespace MediaPortal.Util
           iHeight = info2.Height;
         }
         return texture;
-
       }
       catch (Exception ex)
       {
         Log.Info("Picture.ConvertImageToTexture( {0}x{1} ) exception err:{2} stack:{3}",
-          iWidth, iHeight,
-          ex.Message, ex.StackTrace);
+                 iWidth, iHeight,
+                 ex.Message, ex.StackTrace);
       }
       return null;
     }
@@ -294,7 +293,8 @@ namespace MediaPortal.Util
     /// <param name="bHiQuality">true :render in hi quality but slow, 
     ///                          false:render in lo quality but fast,  </param>
     //public static void RenderImage(ref Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, bool bHiQuality)
-    public static void RenderImage(Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, bool bHiQuality)
+    public static void RenderImage(Texture texture, float x, float y, float nw, float nh, float iTextureWidth,
+                                   float iTextureHeight, float iTextureLeft, float iTextureTop, bool bHiQuality)
     {
       if (texture == null)
         return;
@@ -317,10 +317,10 @@ namespace MediaPortal.Util
       VertexBuffer m_vbBuffer = null;
       try
       {
-        m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
-          4, GUIGraphicsContext.DX9Device,
-          0, CustomVertex.TransformedColoredTextured.Format,
-          GUIGraphicsContext.GetTexturePoolType());
+        m_vbBuffer = new VertexBuffer(typeof (CustomVertex.TransformedColoredTextured),
+                                      4, GUIGraphicsContext.DX9Device,
+                                      0, CustomVertex.TransformedColoredTextured.Format,
+                                      GUIGraphicsContext.GetTexturePoolType());
 
         Direct3D.SurfaceDescription desc;
         desc = texture.GetLevelDescription(0);
@@ -364,7 +364,9 @@ namespace MediaPortal.Util
           nh = GUIGraphicsContext.Height - y;
         }
 
-        CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0, 0); // Lock the buffer (which will return our structs)
+        CustomVertex.TransformedColoredTextured[] verts =
+          (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0, 0);
+          // Lock the buffer (which will return our structs)
         verts[0].X = x - 0.5f;
         verts[0].Y = y + nh - 0.5f;
         verts[0].Z = 0.0f;
@@ -446,7 +448,8 @@ namespace MediaPortal.Util
     /// <param name="bHiQuality">true :render in hi quality but slow, 
     ///                          false:render in lo quality but fast,  </param>
     //public static void RenderImage(ref Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, bool bHiQuality)
-    public static void RenderImage(Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight, int iTextureLeft, int iTextureTop, bool bHiQuality)
+    public static void RenderImage(Texture texture, int x, int y, int nw, int nh, int iTextureWidth, int iTextureHeight,
+                                   int iTextureLeft, int iTextureTop, bool bHiQuality)
     {
       if (texture == null)
         return;
@@ -469,10 +472,10 @@ namespace MediaPortal.Util
       VertexBuffer m_vbBuffer = null;
       try
       {
-        m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
-          4, GUIGraphicsContext.DX9Device,
-          0, CustomVertex.TransformedColoredTextured.Format,
-          GUIGraphicsContext.GetTexturePoolType());
+        m_vbBuffer = new VertexBuffer(typeof (CustomVertex.TransformedColoredTextured),
+                                      4, GUIGraphicsContext.DX9Device,
+                                      0, CustomVertex.TransformedColoredTextured.Format,
+                                      GUIGraphicsContext.GetTexturePoolType());
 
         Direct3D.SurfaceDescription desc;
         desc = texture.GetLevelDescription(0);
@@ -516,7 +519,9 @@ namespace MediaPortal.Util
           nh = GUIGraphicsContext.Height - y;
         }
 
-        CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0, 0); // Lock the buffer (which will return our structs)
+        CustomVertex.TransformedColoredTextured[] verts =
+          (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0, 0);
+          // Lock the buffer (which will return our structs)
         verts[0].X = x - 0.5f;
         verts[0].Y = y + nh - 0.5f;
         verts[0].Z = 0.0f;
@@ -598,7 +603,8 @@ namespace MediaPortal.Util
     /// <param name="iTextureTop">y (top) offset in texture</param>
     /// <param name="lColorDiffuse">diffuse color</param>
     //public static void RenderImage(ref Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, long lColorDiffuse)
-    public static void RenderImage(Texture texture, float x, float y, float nw, float nh, float iTextureWidth, float iTextureHeight, float iTextureLeft, float iTextureTop, long lColorDiffuse)
+    public static void RenderImage(Texture texture, float x, float y, float nw, float nh, float iTextureWidth,
+                                   float iTextureHeight, float iTextureLeft, float iTextureTop, long lColorDiffuse)
     {
       if (texture == null)
         return;
@@ -621,10 +627,10 @@ namespace MediaPortal.Util
       VertexBuffer m_vbBuffer = null;
       try
       {
-        m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
-          4, GUIGraphicsContext.DX9Device,
-          0, CustomVertex.TransformedColoredTextured.Format,
-          GUIGraphicsContext.GetTexturePoolType());
+        m_vbBuffer = new VertexBuffer(typeof (CustomVertex.TransformedColoredTextured),
+                                      4, GUIGraphicsContext.DX9Device,
+                                      0, CustomVertex.TransformedColoredTextured.Format,
+                                      GUIGraphicsContext.GetTexturePoolType());
 
         Direct3D.SurfaceDescription desc;
         desc = texture.GetLevelDescription(0);
@@ -667,7 +673,9 @@ namespace MediaPortal.Util
           nh = GUIGraphicsContext.Height - y;
         }
 
-        CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0, 0); // Lock the buffer (which will return our structs)
+        CustomVertex.TransformedColoredTextured[] verts =
+          (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0, 0);
+          // Lock the buffer (which will return our structs)
         verts[0].X = x - 0.5f;
         verts[0].Y = y + nh - 0.5f;
         verts[0].Z = 0.0f;
@@ -762,9 +770,11 @@ namespace MediaPortal.Util
     /// </param>
     /// <param name="aFastMode">Use low quality resizing without interpolation suitable for small thumbnails</param>
     /// <returns>Whether the thumb has been successfully created</returns>
-    public static bool CreateThumbnail(string aInputFilename, string aThumbTargetPath, int iMaxWidth, int iMaxHeight, int iRotate, bool aFastMode)
+    public static bool CreateThumbnail(string aInputFilename, string aThumbTargetPath, int iMaxWidth, int iMaxHeight,
+                                       int iRotate, bool aFastMode)
     {
-      if (string.IsNullOrEmpty(aInputFilename) || string.IsNullOrEmpty(aThumbTargetPath) || iMaxHeight <= 0 || iMaxHeight <= 0) return false;
+      if (string.IsNullOrEmpty(aInputFilename) || string.IsNullOrEmpty(aThumbTargetPath) || iMaxHeight <= 0 ||
+          iMaxHeight <= 0) return false;
       if (!File.Exists(aInputFilename)) return false;
 
       Image myImage = null;
@@ -834,7 +844,8 @@ namespace MediaPortal.Util
     /// </param>
     /// <param name="aFastMode">Use low quality resizing without interpolation suitable for small thumbnails</param>
     /// <returns>Whether the thumb has been successfully created</returns>
-    public static bool CreateThumbnail(Image aDrawingImage, string aThumbTargetPath, int aThumbWidth, int aThumbHeight, int aRotation, bool aFastMode)
+    public static bool CreateThumbnail(Image aDrawingImage, string aThumbTargetPath, int aThumbWidth, int aThumbHeight,
+                                       int aRotation, bool aFastMode)
     {
       if (string.IsNullOrEmpty(aThumbTargetPath) || aThumbHeight <= 0 || aThumbHeight <= 0) return false;
 
@@ -845,10 +856,17 @@ namespace MediaPortal.Util
       {
         switch (aRotation)
         {
-          case 1: aDrawingImage.RotateFlip(RotateFlipType.Rotate90FlipNone); break;
-          case 2: aDrawingImage.RotateFlip(RotateFlipType.Rotate180FlipNone); break;
-          case 3: aDrawingImage.RotateFlip(RotateFlipType.Rotate270FlipNone); break;
-          default: break;
+          case 1:
+            aDrawingImage.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            break;
+          case 2:
+            aDrawingImage.RotateFlip(RotateFlipType.Rotate180FlipNone);
+            break;
+          case 3:
+            aDrawingImage.RotateFlip(RotateFlipType.Rotate270FlipNone);
+            break;
+          default:
+            break;
         }
 
         int iWidth = aThumbWidth;
@@ -893,7 +911,6 @@ namespace MediaPortal.Util
           Thread.Sleep(30);
 
         return SaveThumbnail(aThumbTargetPath, myTargetThumb);
-
       }
       catch (Exception)
       {
@@ -991,5 +1008,7 @@ namespace MediaPortal.Util
         }
       }
     }
-  }//public class Picture
+  }
+
+//public class Picture
 }

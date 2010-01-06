@@ -187,14 +187,10 @@ namespace MediaPortal.Player
     #region ctor
 
     public TSReaderPlayer()
-      : base()
-    {
-    }
+      : base() {}
 
     public TSReaderPlayer(g_Player.MediaType type)
-      : base(type)
-    {
-    }
+      : base(type) {}
 
     #endregion
 
@@ -251,7 +247,8 @@ namespace MediaPortal.Player
     protected void LoadMyTvFilterSettings(ref int intFilters, ref string strFilters, ref string strVideoCodec,
                                           ref string strAudioCodec, ref string strAACAudioCodec,
                                           ref string strH264VideoCodec, ref string strAudioRenderer,
-                                          ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles, ref int relaxTsReader)
+                                          ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles,
+                                          ref int relaxTsReader)
     {
       using (Settings xmlreader = new MPSettings())
       {
@@ -274,13 +271,14 @@ namespace MediaPortal.Player
         enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
         enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
         enableMPAudioSwitcher = xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
-        relaxTsReader = (xmlreader.GetValueAsBool("mytv", "relaxTsReader", false) == false ? 0 : 1); // as int for passing through interface
+        relaxTsReader = (xmlreader.GetValueAsBool("mytv", "relaxTsReader", false) == false ? 0 : 1);
+          // as int for passing through interface
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
         GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(strValue);
         _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", true);
       }
     }
-    
+
     protected override void OnInitialized()
     {
       Log.Info("TSReaderPlayer: OnInitialized");
@@ -316,7 +314,7 @@ namespace MediaPortal.Player
       //Log.Info("TSReaderPlayer: build graph");
       try
       {
-        _graphBuilder = (IGraphBuilder)new FilterGraph();       
+        _graphBuilder = (IGraphBuilder)new FilterGraph();
 
         #region add vmr9
 
@@ -341,10 +339,10 @@ namespace MediaPortal.Player
         string strH264VideoCodec = "";
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
-        
+
         LoadMyTvFilterSettings(ref intFilters, ref strFilters, ref strVideoCodec, ref strAudioCodec,
-                                 ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer,
-                                 ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles, ref relaxTsReader);        
+                               ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer,
+                               ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles, ref relaxTsReader);
 
         if (_isRadio == false)
         {
@@ -664,7 +662,7 @@ namespace MediaPortal.Player
       if (_graphBuilder == null)
       {
         return;
-      } 
+      }
       int hr;
       Log.Info("TSReaderPlayer: cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
       try
@@ -893,8 +891,6 @@ namespace MediaPortal.Player
         _ireader.OnZapping(info);
       }
       Log.Info("TSReaderPlayer: OnZapping :{0}", info);
-
     }
-
   }
 }

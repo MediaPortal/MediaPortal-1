@@ -35,6 +35,7 @@ namespace TvLibrary.Implementations.DVB
   public class Twinhan : IDiSEqCController, ICiMenuActions, IDisposable
   {
     #region guids and constants
+
     private readonly Guid THBDA_TUNER = new Guid("E5644CC4-17A1-4eed-BD90-74FDA1D65423");
     private readonly Guid GUID_THBDA_CMD = new Guid("255E0082-2017-4b03-90F8-856A62CB3D67");
 
@@ -57,7 +58,7 @@ namespace TvLibrary.Implementations.DVB
       /// MMI0_ClOSE		5
       MMI_STATUS_GET_MENU_CLOSE1_OLD,
       /// MMI1_ClOSE		6
-      MMI_STATUS_GET_MENU_CLOSE2_OLD,	
+      MMI_STATUS_GET_MENU_CLOSE2_OLD,
 
       /// New CI messages
       /// No CAM inserted
@@ -80,12 +81,13 @@ namespace TvLibrary.Implementations.DVB
       /// Close MMI
       MMI_STATUS_GET_MENU_CLOSE,
       /// MMI Closed
-      MMI_STATUS_GET_MENU_CLOSED, 
+      MMI_STATUS_GET_MENU_CLOSED,
     }
+
     /// <summary>
     /// Length of BDA command
     /// </summary>
-    const int thbdaLen = 0x28;
+    private const int thbdaLen = 0x28;
 
     private static uint THBDA_IO_INDEX = 0xAA00;
     private static uint METHOD_BUFFERED = 0x0000;
@@ -94,18 +96,18 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// creates control command
     /// </summary>
-    private static uint CTL_CODE(uint DeviceType, uint Function, uint Method, uint Access ) 
-    {                
+    private static uint CTL_CODE(uint DeviceType, uint Function, uint Method, uint Access)
+    {
       return ((DeviceType) << 16) | ((Access) << 14) | ((Function) << 2) | (Method);
     }
 
-    readonly uint THBDA_IOCTL_CI_SEND_PMT = CTL_CODE(THBDA_IO_INDEX, 206, METHOD_BUFFERED, FILE_ANY_ACCESS);
-    readonly uint THBDA_IOCTL_CHECK_INTERFACE = CTL_CODE(THBDA_IO_INDEX, 121, METHOD_BUFFERED, FILE_ANY_ACCESS);
-    readonly uint THBDA_IOCTL_CI_GET_STATE = CTL_CODE(THBDA_IO_INDEX, 200, METHOD_BUFFERED, FILE_ANY_ACCESS);
-    readonly uint THBDA_IOCTL_CI_GET_PMT_REPLY = CTL_CODE(THBDA_IO_INDEX, 210, METHOD_BUFFERED, FILE_ANY_ACCESS);
-    readonly uint THBDA_IOCTL_SET_DiSEqC = CTL_CODE(THBDA_IO_INDEX, 104, METHOD_BUFFERED, FILE_ANY_ACCESS);
-    readonly uint THBDA_IOCTL_GET_DiSEqC = CTL_CODE(THBDA_IO_INDEX, 105, METHOD_BUFFERED, FILE_ANY_ACCESS);
-    readonly uint THBDA_IOCTL_SET_LNB_DATA = CTL_CODE(THBDA_IO_INDEX, 128, METHOD_BUFFERED, FILE_ANY_ACCESS);
+    private readonly uint THBDA_IOCTL_CI_SEND_PMT = CTL_CODE(THBDA_IO_INDEX, 206, METHOD_BUFFERED, FILE_ANY_ACCESS);
+    private readonly uint THBDA_IOCTL_CHECK_INTERFACE = CTL_CODE(THBDA_IO_INDEX, 121, METHOD_BUFFERED, FILE_ANY_ACCESS);
+    private readonly uint THBDA_IOCTL_CI_GET_STATE = CTL_CODE(THBDA_IO_INDEX, 200, METHOD_BUFFERED, FILE_ANY_ACCESS);
+    private readonly uint THBDA_IOCTL_CI_GET_PMT_REPLY = CTL_CODE(THBDA_IO_INDEX, 210, METHOD_BUFFERED, FILE_ANY_ACCESS);
+    private readonly uint THBDA_IOCTL_SET_DiSEqC = CTL_CODE(THBDA_IO_INDEX, 104, METHOD_BUFFERED, FILE_ANY_ACCESS);
+    private readonly uint THBDA_IOCTL_GET_DiSEqC = CTL_CODE(THBDA_IO_INDEX, 105, METHOD_BUFFERED, FILE_ANY_ACCESS);
+    private readonly uint THBDA_IOCTL_SET_LNB_DATA = CTL_CODE(THBDA_IO_INDEX, 128, METHOD_BUFFERED, FILE_ANY_ACCESS);
 
     //*******************************************************************************************************
     //Functionality : Init MMI
@@ -114,7 +116,7 @@ namespace TvLibrary.Implementations.DVB
     //OutBuffer     : NULL
     //OutBufferSize : 0 bytes
     //*******************************************************************************************************
-    readonly uint THBDA_IOCTL_CI_INIT_MMI = CTL_CODE(THBDA_IO_INDEX, 202, METHOD_BUFFERED, FILE_ANY_ACCESS);
+    private readonly uint THBDA_IOCTL_CI_INIT_MMI = CTL_CODE(THBDA_IO_INDEX, 202, METHOD_BUFFERED, FILE_ANY_ACCESS);
 
     //*******************************************************************************************************
     //Functionality : Get MMI
@@ -123,8 +125,8 @@ namespace TvLibrary.Implementations.DVB
     //OutBuffer     : struct THMMIInfo
     //OutBufferSize : sizeof(THMMIInfo) bytes
     //*******************************************************************************************************
-    readonly uint THBDA_IOCTL_CI_GET_MMI = CTL_CODE(THBDA_IO_INDEX, 203, METHOD_BUFFERED, FILE_ANY_ACCESS);
-    
+    private readonly uint THBDA_IOCTL_CI_GET_MMI = CTL_CODE(THBDA_IO_INDEX, 203, METHOD_BUFFERED, FILE_ANY_ACCESS);
+
     //*******************************************************************************************************
     //Functionality : Answer
     //InBuffer      : NULL
@@ -132,7 +134,7 @@ namespace TvLibrary.Implementations.DVB
     //OutBuffer     : struct THMMIInfo
     //OutBufferSize : sizeof(THMMIInfo) bytes
     //*******************************************************************************************************
-    readonly uint THBDA_IOCTL_CI_ANSWER = CTL_CODE(THBDA_IO_INDEX, 204, METHOD_BUFFERED, FILE_ANY_ACCESS);
+    private readonly uint THBDA_IOCTL_CI_ANSWER = CTL_CODE(THBDA_IO_INDEX, 204, METHOD_BUFFERED, FILE_ANY_ACCESS);
 
     //*******************************************************************************************************
     //Functionality : Close MMI
@@ -141,28 +143,24 @@ namespace TvLibrary.Implementations.DVB
     //OutBuffer     : NULL
     //OutBufferSize : 0 bytes
     //*******************************************************************************************************
-    readonly uint THBDA_IOCTL_CI_CLOSE_MMI = CTL_CODE(THBDA_IO_INDEX, 205, METHOD_BUFFERED, FILE_ANY_ACCESS);
+    private readonly uint THBDA_IOCTL_CI_CLOSE_MMI = CTL_CODE(THBDA_IO_INDEX, 205, METHOD_BUFFERED, FILE_ANY_ACCESS);
 
     #endregion
 
     #region structs
 
-    struct MMIItem
+    private struct MMIItem
     {
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 42)]
-      public String MenuItem;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 42)] public String MenuItem;
     }
-    [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi), ComVisible(true)]
-    class MMIInfoStruct
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi), ComVisible(true)]
+    private class MMIInfoStruct
     {
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-	    public String Header;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public String SubHeader;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public String BottomLine;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
-      public MMIItem[] MenuItems;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public String Header;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public String SubHeader;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public String BottomLine;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)] public MMIItem[] MenuItems;
       //[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 42)]
       //public String MenuItem1;
       //[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 42)]
@@ -189,15 +187,13 @@ namespace TvLibrary.Implementations.DVB
       public Int32 Blind_Answer;
       public Int32 Answer_Text_Length;
 
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public String Prompt;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public String Prompt;
 
       public Int32 Answer;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public String AnswerStr;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public String AnswerStr;
 
       public Int32 Type;
-    };
+    } ;
 
     #endregion
 
@@ -211,9 +207,11 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="InBufferSize"></param>
     /// <param name="OutBuffer"></param>
     /// <param name="OutBufferSize"></param>
-    private void InitStructure(Int32 ControlCode, IntPtr InBuffer, Int32 InBufferSize, IntPtr OutBuffer, Int32 OutBufferSize)
+    private void InitStructure(Int32 ControlCode, IntPtr InBuffer, Int32 InBufferSize, IntPtr OutBuffer,
+                               Int32 OutBufferSize)
     {
-      Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
+      Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);
+        //GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
       Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
       Marshal.WriteInt16(_thbdaBuf, 6, 0x4b03);
       Marshal.WriteByte(_thbdaBuf, 8, 0x90);
@@ -224,35 +222,36 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteByte(_thbdaBuf, 13, 0xcb);
       Marshal.WriteByte(_thbdaBuf, 14, 0x3d);
       Marshal.WriteByte(_thbdaBuf, 15, 0x67);
-      Marshal.WriteInt32(_thbdaBuf, 16, ControlCode);//dwIoControlCode
-      Marshal.WriteInt32(_thbdaBuf, 20, InBuffer.ToInt32());//lpInBuffer
-      Marshal.WriteInt32(_thbdaBuf, 24, InBufferSize);//nInBufferSize
-      Marshal.WriteInt32(_thbdaBuf, 28, OutBuffer.ToInt32());//lpOutBuffer
-      Marshal.WriteInt32(_thbdaBuf, 32, OutBufferSize);//nOutBufferSize
-      Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned);//lpBytesReturned
+      Marshal.WriteInt32(_thbdaBuf, 16, ControlCode); //dwIoControlCode
+      Marshal.WriteInt32(_thbdaBuf, 20, InBuffer.ToInt32()); //lpInBuffer
+      Marshal.WriteInt32(_thbdaBuf, 24, InBufferSize); //nInBufferSize
+      Marshal.WriteInt32(_thbdaBuf, 28, OutBuffer.ToInt32()); //lpOutBuffer
+      Marshal.WriteInt32(_thbdaBuf, 32, OutBufferSize); //nOutBufferSize
+      Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned); //lpBytesReturned
     }
+
     #endregion
-    
+
     #region variables
 
-    readonly bool _initialized;
-    readonly bool _isTwinHanCard;
-    readonly bool _camPresent;
-    readonly IBaseFilter _captureFilter;
+    private readonly bool _initialized;
+    private readonly bool _isTwinHanCard;
+    private readonly bool _camPresent;
+    private readonly IBaseFilter _captureFilter;
     // TODO: reduce number of buffers
-    readonly IntPtr _ptrPmt;
-    readonly IntPtr _ptrDiseqc;
-    readonly IntPtr _ptrDwBytesReturned;
-    readonly IntPtr _thbdaBuf;
-    readonly IntPtr _ptrOutBuffer;
-    readonly IntPtr _ptrOutBuffer2;
-    readonly IntPtr _ptrMMIBuffer;
+    private readonly IntPtr _ptrPmt;
+    private readonly IntPtr _ptrDiseqc;
+    private readonly IntPtr _ptrDwBytesReturned;
+    private readonly IntPtr _thbdaBuf;
+    private readonly IntPtr _ptrOutBuffer;
+    private readonly IntPtr _ptrOutBuffer2;
+    private readonly IntPtr _ptrMMIBuffer;
 
     private IKsPropertySet propertySet;
 
     private bool StopThread;
     private ICiMenuCallbacks m_ciMenuCallback;
-    Thread CiMenuThread;
+    private Thread CiMenuThread;
 
     #endregion
 
@@ -287,6 +286,7 @@ namespace TvLibrary.Implementations.DVB
       }
       _initialized = true;
     }
+
     /// <summary>
     /// Reutns if the tuner specified in the constructor supports twinhan CI/CAM handling
     /// </summary>
@@ -320,6 +320,7 @@ namespace TvLibrary.Implementations.DVB
     {
       GetCAMStatus(out CIState, out MMIState, false);
     }
+
     /// <summary>
     /// Gets the status of the CAM and CI.
     /// </summary>
@@ -353,6 +354,7 @@ namespace TvLibrary.Implementations.DVB
         }
       }
     }
+
     /// <summary>
     /// Determines whether a cam is present or not
     /// </summary>
@@ -404,7 +406,7 @@ namespace TvLibrary.Implementations.DVB
           {
             success = true;
           }
-        }        
+        }
       }
       finally
       {
@@ -527,26 +529,30 @@ namespace TvLibrary.Implementations.DVB
       Int32 LNBLOFLowBand;
       Int32 LNBLOFHighBand;
       Int32 LNBLOFHiLoSW;
-      BandTypeConverter.GetDefaultLnbSetup(parameters, channel.BandType, out LNBLOFLowBand, out LNBLOFHighBand, out LNBLOFHiLoSW);
+      BandTypeConverter.GetDefaultLnbSetup(parameters, channel.BandType, out LNBLOFLowBand, out LNBLOFHighBand,
+                                           out LNBLOFHiLoSW);
       byte turnon22Khz = BandTypeConverter.IsHiBand(channel, parameters) ? (byte)2 : (byte)1;
       SetLnbData(true, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, turnon22Khz, disEqcPort);
       SendDiseqcCommandTest(parameters, channel);
     }
 
-    void SetLnbData(bool lnbPower, int LNBLOFLowBand, int LNBLOFHighBand, int LNBLOFHiLoSW, int turnon22Khz, int disEqcPort)
+    private void SetLnbData(bool lnbPower, int LNBLOFLowBand, int LNBLOFHighBand, int LNBLOFHiLoSW, int turnon22Khz,
+                            int disEqcPort)
     {
-      Log.Log.WriteFile("Twinhan:  SetLnb diseqc port:{0} 22khz:{1} low:{2} hi:{3} switch:{4} power:{5}", disEqcPort, turnon22Khz, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, lnbPower);
+      Log.Log.WriteFile("Twinhan:  SetLnb diseqc port:{0} 22khz:{1} low:{2} hi:{3} switch:{4} power:{5}", disEqcPort,
+                        turnon22Khz, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, lnbPower);
 
       const int disEqcLen = 20;
-      Marshal.WriteByte(_ptrDiseqc, 0, (byte)(lnbPower ? 1 : 0));              // 0: LNB_POWER
-      Marshal.WriteByte(_ptrDiseqc, 1, 0);              // 1: Tone_Data_Burst (Tone_Data_OFF:0 | Tone_Burst_ON:1 | Data_Burst_ON:2)
+      Marshal.WriteByte(_ptrDiseqc, 0, (byte)(lnbPower ? 1 : 0)); // 0: LNB_POWER
+      Marshal.WriteByte(_ptrDiseqc, 1, 0); // 1: Tone_Data_Burst (Tone_Data_OFF:0 | Tone_Burst_ON:1 | Data_Burst_ON:2)
       Marshal.WriteByte(_ptrDiseqc, 2, 0);
       Marshal.WriteByte(_ptrDiseqc, 3, 0);
       Marshal.WriteInt32(_ptrDiseqc, 4, LNBLOFLowBand); // 4: ulLNBLOFLowBand   LNBLOF LowBand MHz
-      Marshal.WriteInt32(_ptrDiseqc, 8, LNBLOFHighBand);// 8: ulLNBLOFHighBand  LNBLOF HighBand MHz
+      Marshal.WriteInt32(_ptrDiseqc, 8, LNBLOFHighBand); // 8: ulLNBLOFHighBand  LNBLOF HighBand MHz
       Marshal.WriteInt32(_ptrDiseqc, 12, LNBLOFHiLoSW); //12: ulLNBLOFHiLoSW   LNBLOF HiLoSW MHz
-      Marshal.WriteByte(_ptrDiseqc, 16, (byte)turnon22Khz);   //16: f22K_Output (F22K_Output_HiLo:0 | F22K_Output_Off:1 | F22K_Output_On:2
-      Marshal.WriteByte(_ptrDiseqc, 17, (byte)disEqcPort);    //17: DiSEqC_Port
+      Marshal.WriteByte(_ptrDiseqc, 16, (byte)turnon22Khz);
+        //16: f22K_Output (F22K_Output_HiLo:0 | F22K_Output_Off:1 | F22K_Output_On:2
+      Marshal.WriteByte(_ptrDiseqc, 17, (byte)disEqcPort); //17: DiSEqC_Port
       Marshal.WriteByte(_ptrDiseqc, 18, 0);
       Marshal.WriteByte(_ptrDiseqc, 19, 0);
 
@@ -563,9 +569,9 @@ namespace TvLibrary.Implementations.DVB
         //Marshal.ReleaseComObject(propertySet);
       }
     }
-    
 
     #region IDiSEqCController Members
+
     ///<summary>
     /// Send DiseqC Command test
     ///</summary>
@@ -575,7 +581,8 @@ namespace TvLibrary.Implementations.DVB
     {
       int antennaNr = BandTypeConverter.GetAntennaNr(channel);
       bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
-      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));
+      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
+                           (channel.Polarisation == Polarisation.CircularL));
       byte cmd = 0xf0;
       cmd |= (byte)(hiBand ? 1 : 0);
       cmd |= (byte)((isHorizontal) ? 2 : 0);
@@ -600,7 +607,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Marshal.WriteByte(_ptrDiseqc, 4 + i, 0);
       }
-      Marshal.WriteInt32(_ptrDiseqc, 0, diSEqC.Length);//command len
+      Marshal.WriteInt32(_ptrDiseqc, 0, diSEqC.Length); //command len
       for (int i = 0; i < diSEqC.Length; ++i)
       {
         Marshal.WriteByte(_ptrDiseqc, 4 + i, diSEqC[i]);
@@ -657,7 +664,7 @@ namespace TvLibrary.Implementations.DVB
         }
         Log.Log.Write("ReadDiSEqCCommand");
         DVB_MMI.DumpBinary(_ptrDiseqc, 0, 16);
-        
+
         success = true;
         int bytesReturned = Marshal.ReadInt32(_ptrDiseqc);
         if (bytesReturned > 0)
@@ -669,9 +676,10 @@ namespace TvLibrary.Implementations.DVB
           }
         }
         //Marshal.ReleaseComObject(propertySet);
-      } 
+      }
       return success;
     }
+
     #endregion
 
     #region ICiMenuActions Member
@@ -692,6 +700,7 @@ namespace TvLibrary.Implementations.DVB
         CiMenuThread.Start();
       }
     }
+
     /// <summary>
     /// Sets the callback handler
     /// </summary>
@@ -807,6 +816,7 @@ namespace TvLibrary.Implementations.DVB
       }
       return false;
     }
+
     /// <summary>
     /// Reads a MMI object
     /// </summary>
@@ -816,7 +826,7 @@ namespace TvLibrary.Implementations.DVB
       Int32 bytesReturned;
       MMIInfoStruct MMI;
       // clear buffer first
-      for (int i = 0; i < 8192; i+=4)
+      for (int i = 0; i < 8192; i += 4)
       {
         Marshal.WriteInt32(_ptrMMIBuffer, i, 0);
       }
@@ -831,12 +841,12 @@ namespace TvLibrary.Implementations.DVB
           DVB_MMI.DumpBinary(_ptrMMIBuffer, 0, bytesReturned);
           try
           {
-            MMI = (MMIInfoStruct)Marshal.PtrToStructure(_ptrMMIBuffer, typeof(MMIInfoStruct));
+            MMI = (MMIInfoStruct)Marshal.PtrToStructure(_ptrMMIBuffer, typeof (MMIInfoStruct));
           }
           catch (Exception e)
           {
             Log.Log.Write(e);
-            return null; 
+            return null;
           }
 
           return MMI;
@@ -846,6 +856,7 @@ namespace TvLibrary.Implementations.DVB
       }
       return null;
     }
+
     #endregion
 
     #region CiMenuHandlerThread for polling status and handling MMI
@@ -863,7 +874,7 @@ namespace TvLibrary.Implementations.DVB
           uint CIState;
           uint MMIState;
           GetCAMStatus(out CIState, out MMIState, true);
-          switch(MMIState)
+          switch (MMIState)
           {
             case 3: // TODO: find proper MMIState codings
               MMIInfoStruct MMI = ReadMMI();
@@ -913,22 +924,22 @@ namespace TvLibrary.Implementations.DVB
             default:
               Log.Log.Write("MMI State {0}", (CIState)MMIState);
               break;
-            }
+          }
           Thread.Sleep(500);
         }
       }
-      catch (ThreadAbortException) { }
+      catch (ThreadAbortException) {}
       catch (Exception ex)
       {
         Log.Log.Debug("TwinHan: error in CiMenuHandler thread\r\n{0}", ex.ToString());
         return;
       }
     }
-    
+
     #endregion
 
-
     #region IDisposable Member
+
     /// <summary>
     /// Disposes unmanaged resources
     /// </summary>
@@ -940,16 +951,15 @@ namespace TvLibrary.Implementations.DVB
         {
           CiMenuThread.Abort();
         }
-        catch
-        { }
-      } 
+        catch {}
+      }
       Marshal.FreeCoTaskMem(_ptrPmt);
       Marshal.FreeCoTaskMem(_ptrDwBytesReturned); // int32
       Marshal.FreeCoTaskMem(_thbdaBuf);
       Marshal.FreeCoTaskMem(_ptrOutBuffer);
       Marshal.FreeCoTaskMem(_ptrOutBuffer2);
       Marshal.FreeCoTaskMem(_ptrDiseqc);
-      Marshal.FreeCoTaskMem(_ptrMMIBuffer);      
+      Marshal.FreeCoTaskMem(_ptrMMIBuffer);
     }
 
     #endregion

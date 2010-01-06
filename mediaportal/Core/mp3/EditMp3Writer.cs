@@ -158,7 +158,7 @@ namespace Yeti.MMedia.Mp3
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();
       this.groupBoxVBR.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.trackBarVBRQuality)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarVBRQuality)).BeginInit();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -279,7 +279,7 @@ namespace Yeti.MMedia.Mp3
       // label8
       // 
       this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Bold,
-                                                 System.Drawing.GraphicsUnit.Point, ((System.Byte) (0)));
+                                                 System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.label8.Location = new System.Drawing.Point(256, 64);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(32, 16);
@@ -289,7 +289,7 @@ namespace Yeti.MMedia.Mp3
       // label7
       // 
       this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F, System.Drawing.FontStyle.Bold,
-                                                 System.Drawing.GraphicsUnit.Point, ((System.Byte) (0)));
+                                                 System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.label7.Location = new System.Drawing.Point(152, 64);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(56, 16);
@@ -418,7 +418,7 @@ namespace Yeti.MMedia.Mp3
       this.tabPage1.ResumeLayout(false);
       this.tabPage2.ResumeLayout(false);
       this.groupBoxVBR.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize) (this.trackBarVBRQuality)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarVBRQuality)).EndInit();
       this.ResumeLayout(false);
     }
 
@@ -440,7 +440,7 @@ namespace Yeti.MMedia.Mp3
           cfg.format.lhv1.bEnableVBR = 1;
           if (comboBoxVBRMethod.SelectedIndex > 0)
           {
-            cfg.format.lhv1.nVbrMethod = (VBRMETHOD) (comboBoxVBRMethod.SelectedIndex + 1);
+            cfg.format.lhv1.nVbrMethod = (VBRMETHOD)(comboBoxVBRMethod.SelectedIndex + 1);
           }
           else
           {
@@ -467,7 +467,7 @@ namespace Yeti.MMedia.Mp3
       set
       {
         editFormat1.Format = value.Format;
-        m_Config = ((Mp3WriterConfig) value).Mp3Config;
+        m_Config = ((Mp3WriterConfig)value).Mp3Config;
         DoSetInitialValues();
       }
     }
@@ -526,7 +526,7 @@ namespace Yeti.MMedia.Mp3
         checkBoxCRC.Checked = hv.bCRC != 0;
         checkBoxOriginal.Checked = hv.bOriginal != 0;
         checkBoxPrivate.Checked = hv.bPrivate != 0;
-        comboBoxVBRMethod.SelectedIndex = (int) hv.nVbrMethod + 1;
+        comboBoxVBRMethod.SelectedIndex = (int)hv.nVbrMethod + 1;
         if ((hv.nVBRQuality >= 0) && (hv.nVBRQuality <= 9))
         {
           trackBarVBRQuality.Value = hv.nVBRQuality;

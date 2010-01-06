@@ -40,11 +40,9 @@ using System.Runtime.InteropServices;
 
 namespace MediaPortal.Player
 {
-
   // http://forum.team-mediaportal.com/plugins-47/very-simple-refreshrate-changer-39790/
   public sealed class Win32
   {
-
     public const int CCHDEVICENAME = 32;
     public const int CCHFORMNAME = 32;
 
@@ -114,16 +112,12 @@ namespace MediaPortal.Player
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public class DISPLAY_DEVICE
     {
-      public uint cb = (uint)Marshal.SizeOf(typeof(DISPLAY_DEVICE));
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-      public string DeviceName = "";
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-      public string DeviceString = "";
+      public uint cb = (uint)Marshal.SizeOf(typeof (DISPLAY_DEVICE));
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)] public string DeviceName = "";
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string DeviceString = "";
       public DISPLAY_DEVICE_StateFlags StateFlags = 0;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-      public string DeviceID = "";
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-      public string DeviceKey = "";
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string DeviceID = "";
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string DeviceKey = "";
     }
 
 
@@ -135,6 +129,7 @@ namespace MediaPortal.Player
         this.x = x;
         this.y = y;
       }
+
       public int x;
       public int y;
     }
@@ -143,11 +138,10 @@ namespace MediaPortal.Player
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public class DEVMODE_Display
     {
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHDEVICENAME)]
-      public string dmDeviceName = null;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHDEVICENAME)] public string dmDeviceName = null;
       public ushort dmSpecVersion = 0;
       public ushort dmDriverVersion = 0;
-      public ushort dmSize = (ushort)Marshal.SizeOf(typeof(DEVMODE_Display));
+      public ushort dmSize = (ushort)Marshal.SizeOf(typeof (DEVMODE_Display));
       public ushort dmDriverExtra = 0;
       public DEVMODE_Fields dmFields = DEVMODE_Fields.None;
       public POINTL dmPosition = new POINTL();
@@ -158,8 +152,7 @@ namespace MediaPortal.Player
       public short dmYResolution = 0;
       public short dmTTOption = 0;
       public short dmCollate = 0;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHFORMNAME)]
-      public string dmFormName = null;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = CCHFORMNAME)] public string dmFormName = null;
       public ushort dmLogPixels = 0;
       public uint dmBitsPerPel = 0;
       public uint dmPelsWidth = 0;
@@ -178,19 +171,22 @@ namespace MediaPortal.Player
 
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    public extern static int EnumDisplayDevices([In] string lpDevice, [In]uint iDevNum, [In][Out] DISPLAY_DEVICE lpDisplayDevice, [In] uint dwFlags);
+    public static extern int EnumDisplayDevices([In] string lpDevice, [In] uint iDevNum,
+                                                [In] [Out] DISPLAY_DEVICE lpDisplayDevice, [In] uint dwFlags);
 
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    public extern static int EnumDisplaySettingsEx([In] string lpszDeviceName,
-    [In] EnumDisplaySettings_EnumMode iModeNum, [In][Out] DEVMODE_Display
-    lpDevMode, [In] uint dwFlags);
+    public static extern int EnumDisplaySettingsEx([In] string lpszDeviceName,
+                                                   [In] EnumDisplaySettings_EnumMode iModeNum,
+                                                   [In] [Out] DEVMODE_Display
+                                                     lpDevMode, [In] uint dwFlags);
 
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    public extern static ChangeDisplaySettings_Result
-    ChangeDisplaySettingsEx([In] string lpszDeviceName, [In] DEVMODE_Display
-    lpDevMode, [In] IntPtr hwnd, [In] ChangeDisplaySettings_Flags dwFlags, [In]IntPtr lParam);
+    public static extern ChangeDisplaySettings_Result
+      ChangeDisplaySettingsEx([In] string lpszDeviceName, [In] DEVMODE_Display
+                                                            lpDevMode, [In] IntPtr hwnd,
+                              [In] ChangeDisplaySettings_Flags dwFlags, [In] IntPtr lParam);
 
 
     public static void Win32_SetRefreshRate(uint monitorIndex, uint refreshRate)
@@ -203,7 +199,10 @@ namespace MediaPortal.Player
         Win32.DEVMODE_Display devMode = new Win32.DEVMODE_Display();
         devMode.dmFields = Win32.DEVMODE_Fields.DM_DISPLAYFREQUENCY;
         devMode.dmDisplayFrequency = refreshRate;
-        Win32.ChangeDisplaySettings_Result r = Win32.ChangeDisplaySettingsEx(displayDevice.DeviceName, devMode, IntPtr.Zero, Win32.ChangeDisplaySettings_Flags.None, IntPtr.Zero);
+        Win32.ChangeDisplaySettings_Result r = Win32.ChangeDisplaySettingsEx(displayDevice.DeviceName, devMode,
+                                                                             IntPtr.Zero,
+                                                                             Win32.ChangeDisplaySettings_Flags.None,
+                                                                             IntPtr.Zero);
         Log.Debug("CycleRefreshRate: result {0} for refresh rate change {1}Hz", r, refreshRate);
       }
       else
@@ -215,13 +214,14 @@ namespace MediaPortal.Player
 
     public static void CycleRefreshRate(uint monitorIndex, double refreshRate)
     {
-
-      if (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor == 1) // Are we running Windows 7?
+      if (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor == 1)
+        // Are we running Windows 7?
       {
         if (W7RefreshRateHelper.SetRefreshRate(monitorIndex, refreshRate))
         {
           double newRefreshRate = W7RefreshRateHelper.GetRefreshRate(monitorIndex);
-          Log.Debug("CycleRefreshRate: successfully changed refresh rate to {0}Hz ({1}Hz requested)", newRefreshRate.ToString("#.###"), refreshRate);
+          Log.Debug("CycleRefreshRate: successfully changed refresh rate to {0}Hz ({1}Hz requested)",
+                    newRefreshRate.ToString("#.###"), refreshRate);
         }
         else
         {
@@ -237,7 +237,6 @@ namespace MediaPortal.Player
 
   internal class RefreshRateSetting
   {
-
     #region private vars
 
     private string _name = null;
@@ -248,60 +247,35 @@ namespace MediaPortal.Player
     #endregion
 
     #region contructors
-    internal RefreshRateSetting()
-    {
 
-    }
+    internal RefreshRateSetting() {}
+
     #endregion
 
     #region public properties
 
     internal string Name
     {
-      get
-      {
-        return _name;
-      }
-      set
-      {
-        _name = value;
-      }
+      get { return _name; }
+      set { _name = value; }
     }
 
     internal List<double> Fps
     {
-      get
-      {
-        return _fps;
-      }
-      set
-      {
-        _fps = value;
-      }
+      get { return _fps; }
+      set { _fps = value; }
     }
 
     internal double Hz
     {
-      get
-      {
-        return _hz;
-      }
-      set
-      {
-        _hz = value;
-      }
+      get { return _hz; }
+      set { _hz = value; }
     }
 
     internal string ExtCmd
     {
-      get
-      {
-        return _extCmd;
-      }
-      set
-      {
-        _extCmd = value;
-      }
+      get { return _extCmd; }
+      set { _extCmd = value; }
     }
 
     #endregion
@@ -380,7 +354,7 @@ namespace MediaPortal.Player
 
 
       while (GUIGraphicsContext.IsFullScreenVideo != waitForFullScreen && ts.TotalSeconds < 10)
-      //lets wait 5sec for fullscreen video to occur.
+        //lets wait 5sec for fullscreen video to occur.
       {
         Thread.Sleep(50);
         ts = DateTime.Now - now;
@@ -456,7 +430,7 @@ namespace MediaPortal.Player
 
           setting.Name = name;
 
-          char[] splitter = { ';' };
+          char[] splitter = {';'};
           string[] fpsArray = fps.Split(splitter);
 
           List<double> fpsList = new List<double>();
@@ -576,9 +550,7 @@ namespace MediaPortal.Player
         Log.Info("RefreshRateChanger.RunExternalJob: running external job failed {0}", e.Message);
         return false;
       }
-      finally
-      {
-      }
+      finally {}
 
       if (changeRR != null)
       {
@@ -651,14 +623,16 @@ namespace MediaPortal.Player
       FindExtCmdfromSettings(fps, currentRR, deviceReset, out newRR, out newExtCmd, out newRRDescription);
 
       if (newRR > 0 && (currentRR != newRR || force_refresh_rate))
-      //run external command in order to change refresh rate.
+        //run external command in order to change refresh rate.
       {
         Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: current refreshrate is {0}hz - changing it to {1}hz",
                  currentRR, newRR);
 
         if (newExtCmd.Length == 0)
         {
-          Log.Info("RefreshRateChanger.SetRefreshRateBasedOnFPS: using internal win32 method for changing refreshrate. current is {0}hz, desired is {1}", currentRR, newRR);
+          Log.Info(
+            "RefreshRateChanger.SetRefreshRateBasedOnFPS: using internal win32 method for changing refreshrate. current is {0}hz, desired is {1}",
+            currentRR, newRR);
           Win32.CycleRefreshRate((uint)currentScreenNr, newRR);
           NotifyRefreshRateChanged(newRRDescription, (strFile.Length > 0));
         }
@@ -672,7 +646,8 @@ namespace MediaPortal.Player
         if (newRR == 0)
         {
           Log.Info(
-          "RefreshRateChanger.SetRefreshRateBasedOnFPS: could not find a matching refreshrate based on {0} fps (check config)", fps);
+            "RefreshRateChanger.SetRefreshRateBasedOnFPS: could not find a matching refreshrate based on {0} fps (check config)",
+            fps);
         }
         else
         {
@@ -787,7 +762,8 @@ namespace MediaPortal.Player
 
       if (setting == null)
       {
-        Log.Error("RefreshRateChanger.AdaptRefreshRate: TV section not found in mediaportal.xml, please delete file and reconfigure.");
+        Log.Error(
+          "RefreshRateChanger.AdaptRefreshRate: TV section not found in mediaportal.xml, please delete file and reconfigure.");
         return;
       }
 
@@ -805,7 +781,8 @@ namespace MediaPortal.Player
           StackTrace st = new StackTrace(true);
           StackFrame sf = st.GetFrame(0);
 
-          Log.Error("RefreshRateChanger.AdaptRefreshRate: g_Player.MediaInfo was null. file: {0} st: {1}", strFile, sf.GetMethod().Name);
+          Log.Error("RefreshRateChanger.AdaptRefreshRate: g_Player.MediaInfo was null. file: {0} st: {1}", strFile,
+                    sf.GetMethod().Name);
           return;
         }
       }

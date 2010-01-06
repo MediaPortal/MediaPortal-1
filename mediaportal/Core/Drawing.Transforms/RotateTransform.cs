@@ -29,9 +29,7 @@ namespace MediaPortal.Drawing.Transforms
   {
     #region Constructors
 
-    public RotateTransform()
-    {
-    }
+    public RotateTransform() {}
 
     public RotateTransform(double angle)
     {
@@ -50,10 +48,10 @@ namespace MediaPortal.Drawing.Transforms
 
     protected override Matrix PrepareValue()
     {
-      Matrix matrix = Matrix.Translation((float) -_center.X, (float) -_center.Y, 0);
+      Matrix matrix = Matrix.Translation((float)-_center.X, (float)-_center.Y, 0);
 
-      matrix *= Matrix.RotationZ(Microsoft.DirectX.Direct3D.Geometry.DegreeToRadian((float) _angle));
-      matrix *= Matrix.Translation((float) _center.X, (float) _center.Y, 0);
+      matrix *= Matrix.RotationZ(Microsoft.DirectX.Direct3D.Geometry.DegreeToRadian((float)_angle));
+      matrix *= Matrix.Translation((float)_center.X, (float)_center.Y, 0);
 
       return matrix;
     }

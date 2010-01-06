@@ -29,9 +29,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public RoutedEventArgs()
-    {
-    }
+    public RoutedEventArgs() {}
 
     public RoutedEventArgs(RoutedEvent routedEvent)
     {
@@ -70,9 +68,7 @@ namespace System.Windows
             return;
           }
         }
-        catch
-        {
-        }
+        catch {}
       }
     }
 

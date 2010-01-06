@@ -39,13 +39,13 @@ namespace MediaPortal.GUI.Video
 
     public GUIVideoTopOverlay()
     {
-      GetID = (int) Window.WINDOW_VIDEO_OVERLAY_TOP;
+      GetID = (int)Window.WINDOW_VIDEO_OVERLAY_TOP;
     }
 
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\videoOverlayTop.xml");
-      GetID = (int) Window.WINDOW_VIDEO_OVERLAY_TOP;
+      GetID = (int)Window.WINDOW_VIDEO_OVERLAY_TOP;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.TopOverlay);
       return bResult;
     }
@@ -61,9 +61,7 @@ namespace MediaPortal.GUI.Video
       AllocResources();
     }
 
-    public override void Render(float timePassed)
-    {
-    }
+    public override void Render(float timePassed) {}
 
     public override bool DoesPostRender()
     {

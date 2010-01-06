@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  *	Copyright (C) 2006-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
@@ -39,18 +39,15 @@ namespace SetupTv.Sections
 {
   public partial class CardDvbIP : SectionSettings
   {
-    int _cardNumber;
-    bool _isScanning = false;
-    bool _stopScanning = false;
+    private int _cardNumber;
+    private bool _isScanning = false;
+    private bool _stopScanning = false;
 
     public CardDvbIP()
-      : this("DvbIP")
-    {
-    }
+      : this("DvbIP") {}
+
     public CardDvbIP(string name)
-      : base(name)
-    {
-    }
+      : base(name) {}
 
     public CardDvbIP(string name, int cardNumber)
       : base(name)
@@ -61,7 +58,7 @@ namespace SetupTv.Sections
       Init();
     }
 
-    void Init()
+    private void Init()
     {
       mpComboBoxService.Items.Clear();
       mpComboBoxService.Items.Add("SAP Announcements");
@@ -77,12 +74,10 @@ namespace SetupTv.Sections
       mpComboBoxService.SelectedIndex = 0;
     }
 
-    void UpdateStatus()
+    private void UpdateStatus()
     {
       progressBarLevel.Value = Math.Min(100, RemoteControl.Instance.SignalLevel(_cardNumber));
       progressBarQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
-
-
     }
 
     public override void OnSectionActivated()
@@ -95,8 +90,8 @@ namespace SetupTv.Sections
 
 
       Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-      checkBoxCreateGroups.Checked = (layer.GetSetting("dvbip" + _cardNumber.ToString() + "creategroups", "false").Value == "true");
-
+      checkBoxCreateGroups.Checked =
+        (layer.GetSetting("dvbip" + _cardNumber.ToString() + "creategroups", "false").Value == "true");
     }
 
     public override void OnSectionDeActivated()
@@ -112,10 +107,7 @@ namespace SetupTv.Sections
       setting.Persist();
     }
 
-    private void CardDvbIP_Load(object sender, EventArgs e)
-    {
-
-    }
+    private void CardDvbIP_Load(object sender, EventArgs e) {}
 
     private void mpButtonScanTv_Click(object sender, EventArgs e)
     {
@@ -137,7 +129,8 @@ namespace SetupTv.Sections
         User user;
         if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
         {
-          MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning another part of a hybrid card.");
+          MessageBox.Show(this,
+                          "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning another part of a hybrid card.");
           return;
         }
         Thread scanThread = new Thread(new ThreadStart(DoScan));
@@ -150,7 +143,7 @@ namespace SetupTv.Sections
       }
     }
 
-    void DoScan()
+    private void DoScan()
     {
       int tvChannelsNew = 0;
       int radioChannelsNew = 0;
@@ -177,8 +170,11 @@ namespace SetupTv.Sections
         else
         {
           IPlayListIO playlistIO =
-            PlayListFactory.CreateIO(String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", Log.GetPathName(), mpComboBoxService.SelectedItem));
-          playlistIO.Load(playlist, String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", Log.GetPathName(), mpComboBoxService.SelectedItem));
+            PlayListFactory.CreateIO(String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", Log.GetPathName(),
+                                                   mpComboBoxService.SelectedItem));
+          playlistIO.Load(playlist,
+                          String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", Log.GetPathName(),
+                                        mpComboBoxService.SelectedItem));
         }
         if (playlist.Count == 0) return;
 
@@ -242,13 +238,14 @@ namespace SetupTv.Sections
 //            {
             if (channels.Length > 1)
             {
-                if (channel.Name.IndexOf("Unknown") == 0)
-                {
-                    channel.Name = name + (i + 1);
-                }
-            } else
+              if (channel.Name.IndexOf("Unknown") == 0)
+              {
+                channel.Name = name + (i + 1);
+              }
+            }
+            else
             {
-                channel.Name = name;
+              channel.Name = name;
             }
 //            }
             TuningDetail currentDetail = layer.GetChannel(channel.Provider, channel.Name, channel.ServiceId);
@@ -318,7 +315,8 @@ namespace SetupTv.Sections
               }
             }
             layer.MapChannelToCard(card, dbChannel, false);
-            line = String.Format("{0}- {1} :New:{2} Updated:{3}", 1 + index, tuneChannel.Name, newChannels, updatedChannels);
+            line = String.Format("{0}- {1} :New:{2} Updated:{3}", 1 + index, tuneChannel.Name, newChannels,
+                                 updatedChannels);
             item.Text = line;
           }
         }
@@ -338,8 +336,13 @@ namespace SetupTv.Sections
         _isScanning = false;
       }
       ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
-      lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew, radioChannelsUpdated)));
-      lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
+      lastItem =
+        listViewStatus.Items.Add(
+          new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", radioChannelsNew,
+                                         radioChannelsUpdated)));
+      lastItem =
+        listViewStatus.Items.Add(
+          new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", tvChannelsNew, tvChannelsUpdated)));
       lastItem.EnsureVisible();
     }
   }

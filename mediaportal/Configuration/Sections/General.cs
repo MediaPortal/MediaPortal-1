@@ -68,9 +68,7 @@ namespace MediaPortal.Configuration.Sections
     private const int HWND_BROADCAST = 0xFFFF;
 
     public General()
-      : this("General")
-    {
-    }
+      : this("General") {}
 
     public General(string name)
       : base(name)
@@ -263,8 +261,8 @@ namespace MediaPortal.Configuration.Sections
 
 
         IntPtr result = IntPtr.Zero;
-        SendMessageTimeout((IntPtr) HWND_BROADCAST, (IntPtr) WM_SETTINGCHANGE, IntPtr.Zero,
-                           Marshal.StringToBSTR(string.Empty), (IntPtr) SMTO_ABORTIFHUNG, (IntPtr) 3, out result);
+        SendMessageTimeout((IntPtr)HWND_BROADCAST, (IntPtr)WM_SETTINGCHANGE, IntPtr.Zero,
+                           Marshal.StringToBSTR(string.Empty), (IntPtr)SMTO_ABORTIFHUNG, (IntPtr)3, out result);
       }
       catch (Exception ex)
       {

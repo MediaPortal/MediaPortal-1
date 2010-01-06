@@ -34,6 +34,7 @@ namespace MediaPortal.Utils.Time
     private BasicTime _start;
     private BasicTime _end;
     private bool _overMidnight;
+
     #endregion
 
     #region Constructors/Destructors
@@ -49,7 +50,7 @@ namespace MediaPortal.Utils.Time
       _end = new BasicTime(end);
 
       _overMidnight = false;
-      if (_end.Hour < _start.Hour || 
+      if (_end.Hour < _start.Hour ||
           _end.Hour == _start.Hour && _end.Minute < _start.Minute)
       {
         _overMidnight = true;

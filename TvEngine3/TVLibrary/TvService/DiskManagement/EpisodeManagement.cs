@@ -61,15 +61,16 @@ namespace TvService
     }
 
     #region episode disk management
+
     public void OnScheduleEnded(string recordingFilename, Schedule recording, TvDatabase.Program program)
     {
       Log.Write("diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
-          program.Title, (ScheduleRecordingType)recording.ScheduleType, recording.MaxAirings);
+                program.Title, (ScheduleRecordingType)recording.ScheduleType, recording.MaxAirings);
 
       CheckEpsiodesForRecording(recording, program);
     }
 
-    void CheckEpsiodesForRecording(Schedule schedule, TvDatabase.Program program)
+    private void CheckEpsiodesForRecording(Schedule schedule, TvDatabase.Program program)
     {
       if (!schedule.DoesUseEpisodeManagement)
         return;
@@ -87,10 +88,10 @@ namespace TvService
         if (oldestEpisode == null)
           return;
         Log.Write("diskmanagement:   Delete episode {0} {1} {2} {3}",
-                             oldestEpisode.ReferencedChannel(),
-                             oldestEpisode.Title,
-                             oldestEpisode.StartTime.ToLongDateString(),
-                             oldestEpisode.StartTime.ToLongTimeString());
+                  oldestEpisode.ReferencedChannel(),
+                  oldestEpisode.Title,
+                  oldestEpisode.StartTime.ToLongDateString(),
+                  oldestEpisode.StartTime.ToLongTimeString());
 
         // Delete the file from disk and the recording entry from the database.
         RecordingFileHandler handler = new RecordingFileHandler();
@@ -101,8 +102,7 @@ namespace TvService
         }
       }
     }
+
     #endregion
-
-
   }
 }

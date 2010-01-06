@@ -60,8 +60,8 @@ namespace WindowPlugins.GUISettings
 
       public int Compare(object x, object y)
       {
-        CultureInfo info1 = (CultureInfo) x;
-        CultureInfo info2 = (CultureInfo) y;
+        CultureInfo info1 = (CultureInfo)x;
+        CultureInfo info2 = (CultureInfo)y;
         return String.Compare(info1.EnglishName, info2.EnglishName, true);
       }
 
@@ -70,7 +70,7 @@ namespace WindowPlugins.GUISettings
 
     public GUISettingsGeneral()
     {
-      GetID = (int) Window.WINDOW_SETTINGS_SKIN;
+      GetID = (int)Window.WINDOW_SETTINGS_SKIN;
     }
 
     public override bool Init()
@@ -83,7 +83,7 @@ namespace WindowPlugins.GUISettings
     {
       if (control == btnSkin)
       {
-        GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
         if (dlg == null)
         {
           return;

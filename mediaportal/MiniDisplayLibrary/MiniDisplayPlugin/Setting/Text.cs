@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using MediaPortal.GUI.Library;
 
@@ -7,9 +7,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
   [Serializable]
   public class Text : FixedValue
   {
-    public Text()
-    {
-    }
+    public Text() {}
 
     public Text(string _text)
     {

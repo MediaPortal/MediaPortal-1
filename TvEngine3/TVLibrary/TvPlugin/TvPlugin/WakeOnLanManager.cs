@@ -24,6 +24,7 @@
 #endregion
 
 #region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -32,6 +33,7 @@ using System.Net.Sockets;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
+
 #endregion
 
 namespace TvPlugin
@@ -39,31 +41,31 @@ namespace TvPlugin
   public class WakeOnLanManager
   {
     #region Constants
+
     // Maximum length of a physical address
     private const int PHYSADDR_MAXLEN = 8;
     // Insufficient buffer error
     private const int INSUFFICIENT_BUFFER = 122;
+
     #endregion
 
     #region Structs
+
     // Define the MIB_IPNETROW structure.
     [StructLayout(LayoutKind.Sequential)]
-    struct MIB_IPNETROW
+    private struct MIB_IPNETROW
     {
-      [MarshalAs(UnmanagedType.U4)]
-      public int dwIndex;
-      [MarshalAs(UnmanagedType.U4)]
-      public int dwPhysAddrLen;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = PHYSADDR_MAXLEN)]
-      public byte[] bPhysAddr;
-      [MarshalAs(UnmanagedType.U4)]
-      public int dwAddr;
-      [MarshalAs(UnmanagedType.U4)]
-      public int dwType;
+      [MarshalAs(UnmanagedType.U4)] public int dwIndex;
+      [MarshalAs(UnmanagedType.U4)] public int dwPhysAddrLen;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = PHYSADDR_MAXLEN)] public byte[] bPhysAddr;
+      [MarshalAs(UnmanagedType.U4)] public int dwAddr;
+      [MarshalAs(UnmanagedType.U4)] public int dwType;
     }
+
     #endregion
 
     #region External methods
+
     [DllImport("iphlpapi.dll")]
     [return: MarshalAs(UnmanagedType.U4)]
     private static extern int GetIpNetTable(IntPtr ipNetTable, [MarshalAs(UnmanagedType.U4)] ref int size, bool order);
@@ -71,9 +73,11 @@ namespace TvPlugin
     [DllImport("iphlpapi.dll")]
     [return: MarshalAs(UnmanagedType.U4)]
     private static extern int SendARP(int destIP, int srcIP, [Out] byte[] macAddr, ref int phyAddrLen);
+
     #endregion
 
     #region Private (lowlevel) methods
+
     private MIB_IPNETROW[] GetPhysicalAddressTable()
     {
       int bytesNeeded = 0;
@@ -99,14 +103,15 @@ namespace TvPlugin
         }
 
         int entries = Marshal.ReadInt32(buffer);
-        IntPtr currentBuffer = new IntPtr(buffer.ToInt64() + sizeof(int));
+        IntPtr currentBuffer = new IntPtr(buffer.ToInt64() + sizeof (int));
         table = new MIB_IPNETROW[entries];
 
         for (int i = 0; i < entries; i++)
         {
           table[i] = (MIB_IPNETROW)Marshal.PtrToStructure(
-            new IntPtr(currentBuffer.ToInt64() + (i * Marshal.SizeOf(typeof(MIB_IPNETROW)))), typeof(MIB_IPNETROW)
-            );
+                                     new IntPtr(currentBuffer.ToInt64() + (i * Marshal.SizeOf(typeof (MIB_IPNETROW)))),
+                                     typeof (MIB_IPNETROW)
+                                     );
         }
       }
       finally
@@ -198,9 +203,11 @@ namespace TvPlugin
 
       return false;
     }
+
     #endregion
 
     #region Public methods
+
     /// <summary>
     /// Gets the hardware ethernet address of the given IP address as an array of bytes. The address is searched
     /// for in the ARP table cache and (if not found there) and ARP request is transmitted to find out the address.
@@ -274,11 +281,11 @@ namespace TvPlugin
       // we have to make sure the remoting system knows that we have resumed the server by means of WOL.
       // this will make sure the connection timeout for the remoting framework is increased.
       Log.Debug("WOLMgr: Increasing timeout for RemoteControl");
-      TvControl.RemoteControl.UseIncreasedTimeoutForInitialConnection = true;      
+      TvControl.RemoteControl.UseIncreasedTimeoutForInitialConnection = true;
 
       Log.Debug("WOLMgr: Ping {0}", wakeupTarget);
       if (Ping(wakeupTarget, timeout))
-      {        
+      {
         Log.Debug("WOLMgr: {0} already started", wakeupTarget);
         return true;
       }
@@ -293,7 +300,7 @@ namespace TvPlugin
       {
         Log.Debug("WOLMgr: Ping {0}", wakeupTarget);
         if (Ping(wakeupTarget, 1000))
-        {         
+        {
           return true;
         }
         Log.Debug("WOLMgr: System {0} still not reachable, waiting...", wakeupTarget);
@@ -332,4 +339,5 @@ namespace TvPlugin
     }
   }
 }
+
 #endregion

@@ -37,9 +37,7 @@ namespace MediaPortal.MPInstaller
 
     private void button2_Click(object sender, EventArgs e)
     {
-      if (checkBox1.Checked)
-      {
-      }
+      if (checkBox1.Checked) {}
       this.Close();
     }
 

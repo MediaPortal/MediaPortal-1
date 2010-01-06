@@ -33,9 +33,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    private VisualUtility()
-    {
-    }
+    private VisualUtility() {}
 
     #endregion Constructors
 

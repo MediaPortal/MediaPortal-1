@@ -40,8 +40,8 @@ namespace MediaPortal.Ripper
 
     public void OnCdDataRead(object sender, DataReadEventArgs ea)
     {
-      Buffer.BlockCopy(ea.Data, 0, BufferArray, WritePosition, (int) ea.DataSize);
-      WritePosition += (int) ea.DataSize;
+      Buffer.BlockCopy(ea.Data, 0, BufferArray, WritePosition, (int)ea.DataSize);
+      WritePosition += (int)ea.DataSize;
     }
   }
 
@@ -78,8 +78,8 @@ namespace MediaPortal.Ripper
 
       while (n > 0)
       {
-        ret = ret + (n%10);
-        n = n/10;
+        ret = ret + (n % 10);
+        n = n / 10;
       }
 
       return (ret);
@@ -94,16 +94,16 @@ namespace MediaPortal.Ripper
 
       for (int i = 0; i < numTracks; i++)
       {
-        n = n + cddb_sum((Toc.TrackData[i].Address_1*60) + Toc.TrackData[i].Address_2);
+        n = n + cddb_sum((Toc.TrackData[i].Address_1 * 60) + Toc.TrackData[i].Address_2);
       }
 
       Win32Functions.TRACK_DATA last = Toc.TrackData[numTracks];
       Win32Functions.TRACK_DATA first = Toc.TrackData[0];
 
-      t = ((last.Address_1*60) + last.Address_2) -
-          ((first.Address_1*60) + first.Address_2);
+      t = ((last.Address_1 * 60) + last.Address_2) -
+          ((first.Address_1 * 60) + first.Address_2);
 
-      int lDiscId = ((n%0xff) << 24 | t << 8 | numTracks);
+      int lDiscId = ((n % 0xff) << 24 | t << 8 | numTracks);
 
       string sDiscId = String.Format("{0:X}", lDiscId);
 
@@ -136,7 +136,7 @@ namespace MediaPortal.Ripper
 
     public int GetFreeDBTime()
     {
-      return (GetEndSector(GetNumTracks()) + 150)/75;
+      return (GetEndSector(GetNumTracks()) + 150) / 75;
     }
 
     public bool Open(char Drive)
@@ -147,7 +147,7 @@ namespace MediaPortal.Ripper
         cdHandle = Win32Functions.CreateFile("\\\\.\\" + Drive + ':', Win32Functions.GENERIC_READ,
                                              Win32Functions.FILE_SHARE_READ, IntPtr.Zero, Win32Functions.OPEN_EXISTING,
                                              0, IntPtr.Zero);
-        if (((int) cdHandle != -1) && ((int) cdHandle != 0))
+        if (((int)cdHandle != -1) && ((int)cdHandle != 0))
         {
           m_Drive = Drive;
           NotWnd = new DeviceChangeNotificationWindow();
@@ -179,7 +179,7 @@ namespace MediaPortal.Ripper
         NotWnd.DestroyHandle();
         NotWnd = null;
       }
-      if (((int) cdHandle != -1) && ((int) cdHandle != 0))
+      if (((int)cdHandle != -1) && ((int)cdHandle != 0))
       {
         Win32Functions.CloseHandle(cdHandle);
       }
@@ -190,7 +190,7 @@ namespace MediaPortal.Ripper
 
     public bool IsOpened
     {
-      get { return ((int) cdHandle != -1) && ((int) cdHandle != 0); }
+      get { return ((int)cdHandle != -1) && ((int)cdHandle != 0); }
     }
 
     public void Dispose()
@@ -206,12 +206,12 @@ namespace MediaPortal.Ripper
 
     protected bool ReadTOC()
     {
-      if (((int) cdHandle != -1) && ((int) cdHandle != 0))
+      if (((int)cdHandle != -1) && ((int)cdHandle != 0))
       {
         uint BytesRead = 0;
         TocValid =
           Win32Functions.DeviceIoControl(cdHandle, Win32Functions.IOCTL_CDROM_READ_TOC, IntPtr.Zero, 0, Toc,
-                                         (uint) Marshal.SizeOf(Toc), ref BytesRead, IntPtr.Zero) != 0;
+                                         (uint)Marshal.SizeOf(Toc), ref BytesRead, IntPtr.Zero) != 0;
       }
       else
       {
@@ -225,7 +225,7 @@ namespace MediaPortal.Ripper
       if (TocValid && (track >= Toc.FirstTrack) && (track <= Toc.LastTrack))
       {
         Win32Functions.TRACK_DATA td = Toc.TrackData[track - 1];
-        return (td.Address_1*60*75);
+        return (td.Address_1 * 60 * 75);
       }
       else
       {
@@ -237,13 +237,13 @@ namespace MediaPortal.Ripper
     {
       if (TocValid && (track >= Toc.FirstTrack) && (track <= Toc.LastTrack))
       {
-        int start = (GetStartSector(track) + 150)/75;
-        int end = (GetEndSector(track) + 150)/75;
+        int start = (GetStartSector(track) + 150) / 75;
+        int end = (GetEndSector(track) + 150) / 75;
 
         int begin = 2;
         if (track > Toc.FirstTrack)
         {
-          begin = (GetEndSector2(track - 1) + 150)/75;
+          begin = (GetEndSector2(track - 1) + 150) / 75;
         }
 
         //return (end - begin);
@@ -275,7 +275,7 @@ namespace MediaPortal.Ripper
       if (TocValid && (track >= Toc.FirstTrack) && (track <= Toc.LastTrack))
       {
         Win32Functions.TRACK_DATA td = Toc.TrackData[track - 1];
-        return (td.Address_1*60*75 + td.Address_2*75 + td.Address_3) - 150;
+        return (td.Address_1 * 60 * 75 + td.Address_2 * 75 + td.Address_3) - 150;
       }
       else
       {
@@ -289,7 +289,7 @@ namespace MediaPortal.Ripper
       if (TocValid && (track >= Toc.FirstTrack) && (track <= Toc.LastTrack))
       {
         Win32Functions.TRACK_DATA td = Toc.TrackData[track - 1];
-        return (td.Address_1*60*75 + td.Address_2*75) - 150;
+        return (td.Address_1 * 60 * 75 + td.Address_2 * 75) - 150;
       }
       else
       {
@@ -303,7 +303,7 @@ namespace MediaPortal.Ripper
       if (TocValid && (track >= Toc.FirstTrack) && (track <= Toc.LastTrack))
       {
         Win32Functions.TRACK_DATA td = Toc.TrackData[track];
-        return (td.Address_1*60*75 + td.Address_2*75) - 151;
+        return (td.Address_1 * 60 * 75 + td.Address_2 * 75) - 151;
       }
       else
       {
@@ -317,7 +317,7 @@ namespace MediaPortal.Ripper
       if (TocValid && (track >= Toc.FirstTrack) && (track <= Toc.LastTrack))
       {
         Win32Functions.TRACK_DATA td = Toc.TrackData[track];
-        return (td.Address_1*60*75 + td.Address_2*75 + td.Address_3) - 151;
+        return (td.Address_1 * 60 * 75 + td.Address_2 * 75 + td.Address_3) - 151;
       }
       else
       {
@@ -341,17 +341,17 @@ namespace MediaPortal.Ripper
     /// <returns>True on success</returns>
     protected bool ReadSector(int sector, byte[] Buffer, int NumSectors)
     {
-      if (TocValid && ((sector + NumSectors) <= GetEndSector(Toc.LastTrack)) && (Buffer.Length >= CB_AUDIO*NumSectors))
+      if (TocValid && ((sector + NumSectors) <= GetEndSector(Toc.LastTrack)) && (Buffer.Length >= CB_AUDIO * NumSectors))
       {
         Win32Functions.RAW_READ_INFO rri = new Win32Functions.RAW_READ_INFO();
         rri.TrackMode = Win32Functions.TRACK_MODE_TYPE.CDDA;
-        rri.SectorCount = (uint) NumSectors;
-        rri.DiskOffset = sector*CB_CDROMSECTOR;
+        rri.SectorCount = (uint)NumSectors;
+        rri.DiskOffset = sector * CB_CDROMSECTOR;
 
         uint BytesRead = 0;
         if (
-          Win32Functions.DeviceIoControl(cdHandle, Win32Functions.IOCTL_CDROM_RAW_READ, rri, (uint) Marshal.SizeOf(rri),
-                                         Buffer, (uint) NumSectors*CB_AUDIO, ref BytesRead, IntPtr.Zero) != 0)
+          Win32Functions.DeviceIoControl(cdHandle, Win32Functions.IOCTL_CDROM_RAW_READ, rri, (uint)Marshal.SizeOf(rri),
+                                         Buffer, (uint)NumSectors * CB_AUDIO, ref BytesRead, IntPtr.Zero) != 0)
         {
           return true;
         }
@@ -372,14 +372,14 @@ namespace MediaPortal.Ripper
     /// <returns>True on success</returns>
     public bool LockCD()
     {
-      if (((int) cdHandle != -1) && ((int) cdHandle != 0))
+      if (((int)cdHandle != -1) && ((int)cdHandle != 0))
       {
         uint Dummy = 0;
         Win32Functions.PREVENT_MEDIA_REMOVAL pmr = new Win32Functions.PREVENT_MEDIA_REMOVAL();
         pmr.PreventMediaRemoval = 1;
         return
           Win32Functions.DeviceIoControl(cdHandle, Win32Functions.IOCTL_STORAGE_MEDIA_REMOVAL, pmr,
-                                         (uint) Marshal.SizeOf(pmr), IntPtr.Zero, 0, ref Dummy, IntPtr.Zero) != 0;
+                                         (uint)Marshal.SizeOf(pmr), IntPtr.Zero, 0, ref Dummy, IntPtr.Zero) != 0;
       }
       else
       {
@@ -393,14 +393,14 @@ namespace MediaPortal.Ripper
     /// <returns>True on success</returns>
     public bool UnLockCD()
     {
-      if (((int) cdHandle != -1) && ((int) cdHandle != 0))
+      if (((int)cdHandle != -1) && ((int)cdHandle != 0))
       {
         uint Dummy = 0;
         Win32Functions.PREVENT_MEDIA_REMOVAL pmr = new Win32Functions.PREVENT_MEDIA_REMOVAL();
         pmr.PreventMediaRemoval = 0;
         return
           Win32Functions.DeviceIoControl(cdHandle, Win32Functions.IOCTL_STORAGE_MEDIA_REMOVAL, pmr,
-                                         (uint) Marshal.SizeOf(pmr), IntPtr.Zero, 0, ref Dummy, IntPtr.Zero) != 0;
+                                         (uint)Marshal.SizeOf(pmr), IntPtr.Zero, 0, ref Dummy, IntPtr.Zero) != 0;
       }
       else
       {
@@ -415,7 +415,7 @@ namespace MediaPortal.Ripper
     public bool LoadCD()
     {
       TocValid = false;
-      if (((int) cdHandle != -1) && ((int) cdHandle != 0))
+      if (((int)cdHandle != -1) && ((int)cdHandle != 0))
       {
         uint Dummy = 0;
         return
@@ -435,7 +435,7 @@ namespace MediaPortal.Ripper
     public bool EjectCD()
     {
       TocValid = false;
-      if (((int) cdHandle != -1) && ((int) cdHandle != 0))
+      if (((int)cdHandle != -1) && ((int)cdHandle != 0))
       {
         uint Dummy = 0;
         return
@@ -454,7 +454,7 @@ namespace MediaPortal.Ripper
     /// <returns>True on success</returns>
     public bool IsCDReady()
     {
-      if (((int) cdHandle != -1) && ((int) cdHandle != 0))
+      if (((int)cdHandle != -1) && ((int)cdHandle != 0))
       {
         uint Dummy = 0;
         if (
@@ -549,15 +549,15 @@ namespace MediaPortal.Ripper
       {
         int StartSect = GetStartSector(track);
         int EndSect = GetEndSector(track);
-        if ((StartSect += (int) StartSecond*75) >= EndSect)
+        if ((StartSect += (int)StartSecond * 75) >= EndSect)
         {
-          StartSect -= (int) StartSecond*75;
+          StartSect -= (int)StartSecond * 75;
         }
-        if ((Seconds2Read > 0) && ((int) (StartSect + Seconds2Read*75) < EndSect))
+        if ((Seconds2Read > 0) && ((int)(StartSect + Seconds2Read * 75) < EndSect))
         {
-          EndSect = StartSect + (int) Seconds2Read*75;
+          EndSect = StartSect + (int)Seconds2Read * 75;
         }
-        DataSize = (uint) (EndSect - StartSect)*CB_AUDIO;
+        DataSize = (uint)(EndSect - StartSect) * CB_AUDIO;
         if (Data != null)
         {
           if (Data.Length >= DataSize)
@@ -611,17 +611,17 @@ namespace MediaPortal.Ripper
       {
         int StartSect = GetStartSector(track);
         int EndSect = GetEndSector(track);
-        if ((StartSect += (int) StartSecond*75) >= EndSect)
+        if ((StartSect += (int)StartSecond * 75) >= EndSect)
         {
-          StartSect -= (int) StartSecond*75;
+          StartSect -= (int)StartSecond * 75;
         }
-        if ((Seconds2Read > 0) && ((int) (StartSect + Seconds2Read*75) < EndSect))
+        if ((Seconds2Read > 0) && ((int)(StartSect + Seconds2Read * 75) < EndSect))
         {
-          EndSect = StartSect + (int) Seconds2Read*75;
+          EndSect = StartSect + (int)Seconds2Read * 75;
         }
-        uint Bytes2Read = (uint) (EndSect - StartSect)*CB_AUDIO;
+        uint Bytes2Read = (uint)(EndSect - StartSect) * CB_AUDIO;
         uint BytesRead = 0;
-        byte[] Data = new byte[CB_AUDIO*NSECTORS];
+        byte[] Data = new byte[CB_AUDIO * NSECTORS];
         bool Cont = true;
         bool ReadOk = true;
         if (ProgressEvent != null)
@@ -636,9 +636,9 @@ namespace MediaPortal.Ripper
           ReadOk = ReadSector(sector, Data, Sectors2Read);
           if (ReadOk)
           {
-            DataReadEventArgs dra = new DataReadEventArgs(Data, (uint) (CB_AUDIO*Sectors2Read));
+            DataReadEventArgs dra = new DataReadEventArgs(Data, (uint)(CB_AUDIO * Sectors2Read));
             DataReadEvent(this, dra);
-            BytesRead += (uint) (CB_AUDIO*Sectors2Read);
+            BytesRead += (uint)(CB_AUDIO * Sectors2Read);
             if (ProgressEvent != null)
             {
               ReadProgressEventArgs rpa = new ReadProgressEventArgs(Bytes2Read, BytesRead);
@@ -649,7 +649,7 @@ namespace MediaPortal.Ripper
         }
         if (ReadOk)
         {
-          return (int) BytesRead;
+          return (int)BytesRead;
         }
         else
         {

@@ -64,9 +64,7 @@ namespace Rss
     private Uri uri = RssDefault.Uri;
 
     /// <summary>Initialize a new instance of the RssSource class</summary>
-    public RssSource()
-    {
-    }
+    public RssSource() {}
 
     /// <summary>Name of the RSS channel that the item came from</summary>
     public string Name

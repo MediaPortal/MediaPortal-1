@@ -62,9 +62,7 @@ namespace MediaPortal.GUI.Library
     #region ctor
 
     public GUIGridControl(int parentId)
-      : base(parentId)
-    {
-    }
+      : base(parentId) {}
 
     #endregion
 
@@ -120,9 +118,7 @@ namespace MediaPortal.GUI.Library
 
     #region public methods
 
-    public override void FinalizeConstruction()
-    {
-    }
+    public override void FinalizeConstruction() {}
 
     public override void ScaleToScreenResolution()
     {
@@ -303,7 +299,7 @@ namespace MediaPortal.GUI.Library
         if (row.Count > 0)
         {
           SelectedGridItem = row.Columns[0];
-          _cursorPositionX = SelectedGridItem.Control.XPosition + (SelectedGridItem.RenderWidth/2);
+          _cursorPositionX = SelectedGridItem.Control.XPosition + (SelectedGridItem.RenderWidth / 2);
         }
       }
     }
@@ -318,7 +314,7 @@ namespace MediaPortal.GUI.Library
       SelectedGridItem.Focus = true;
       _scrollPositionX = 0;
       _scrollPositionY = 0;
-      _cursorPositionX = SelectedGridItem.Control.XPosition + (SelectedGridItem.RenderWidth/2);
+      _cursorPositionX = SelectedGridItem.Control.XPosition + (SelectedGridItem.RenderWidth / 2);
     }
 
     private void OnUp()
@@ -361,7 +357,7 @@ namespace MediaPortal.GUI.Library
       {
         SelectedGridItem.Focus = true;
       }
-      _cursorPositionX = SelectedGridItem.Control.XPosition + (SelectedGridItem.RenderWidth/2);
+      _cursorPositionX = SelectedGridItem.Control.XPosition + (SelectedGridItem.RenderWidth / 2);
     }
 
     private void OnRight()
@@ -376,7 +372,7 @@ namespace MediaPortal.GUI.Library
       {
         SelectedGridItem.Focus = true;
       }
-      _cursorPositionX = SelectedGridItem.Control.XPosition + (SelectedGridItem.RenderWidth/2);
+      _cursorPositionX = SelectedGridItem.Control.XPosition + (SelectedGridItem.RenderWidth / 2);
     }
 
     private GUIGridCell GetItemAt(int x, int y)
@@ -443,15 +439,15 @@ namespace MediaPortal.GUI.Library
       // 1 frame=20 msec;
       // scroll duration=400msec=20 frames
       float timeLeft = 0.4f - _scrollTimeElapsed;
-      int framesLeft = (int) (timeLeft/0.02f);
+      int framesLeft = (int)(timeLeft / 0.02f);
       if (framesLeft <= 0)
       {
         _scrollPositionX += xOffset;
         _scrollPositionY += yOffset;
         return;
       }
-      _scrollPositionX += (int) (((float) xOffset)/((float) framesLeft));
-      _scrollPositionY += (int) (((float) yOffset)/((float) framesLeft));
+      _scrollPositionX += (int)(((float)xOffset) / ((float)framesLeft));
+      _scrollPositionY += (int)(((float)yOffset) / ((float)framesLeft));
       _scrollTimeElapsed += timePassed;
     }
 

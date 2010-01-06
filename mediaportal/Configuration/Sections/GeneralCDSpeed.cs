@@ -71,7 +71,7 @@ namespace MediaPortal.Configuration.Sections
                 if (currentCell.RowNumber < ds.Rows.Count)
                 {
                   DataRow row = ds.Rows[currentCell.RowNumber];
-                  string currentValue = (string) row.ItemArray[Cell];
+                  string currentValue = (string)row.ItemArray[Cell];
                   if (currentValue == item)
                   {
                     SelectedItem = item;
@@ -83,9 +83,7 @@ namespace MediaPortal.Configuration.Sections
           }
           base.OnLayout(levent);
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
     }
 
@@ -118,7 +116,7 @@ namespace MediaPortal.Configuration.Sections
             if (currentCell.RowNumber < ds.Rows.Count)
             {
               DataRow row = ds.Rows[currentCell.RowNumber];
-              this.Checked = (bool) row.ItemArray[Cell];
+              this.Checked = (bool)row.ItemArray[Cell];
             }
           }
         }
@@ -149,9 +147,7 @@ namespace MediaPortal.Configuration.Sections
                                 };
 
     public GeneralCDSpeed()
-      : this("CD/DVD Speed")
-    {
-    }
+      : this("CD/DVD Speed") {}
 
     public GeneralCDSpeed(string name)
       : base(name)
@@ -257,11 +253,12 @@ namespace MediaPortal.Configuration.Sections
           bool disCD = (disableCD[i] == "Y");
           bool disDVD = (disableDVD[i] == "Y");
           datasetFilters.Rows.Add(
-              new object[] {
-                           BassCd.BASS_CD_GetInfo(i).DriveLetter, BassCd.BASS_CD_GetInfo(i).vendor,
-                           drivespeedCD[i], disCD, drivespeedDVD[i], disDVD
-												 }
-                                 );
+            new object[]
+              {
+                BassCd.BASS_CD_GetInfo(i).DriveLetter, BassCd.BASS_CD_GetInfo(i).vendor,
+                drivespeedCD[i], disCD, drivespeedDVD[i], disDVD
+              }
+            );
         }
 
         //Set the Data Grid Source as the Data Table created above
@@ -282,7 +279,7 @@ namespace MediaPortal.Configuration.Sections
           dgdtblStyle.HeaderBackColor = Color.FromArgb(8, 36, 107);
           dgdtblStyle.RowHeadersVisible = false;
           dgdtblStyle.HeaderForeColor = Color.White;
-          dgdtblStyle.HeaderFont = new Font("Microsoft Sans Serif", 9F, FontStyle.Bold, GraphicsUnit.Point, ((Byte) (0)));
+          dgdtblStyle.HeaderFont = new Font("Microsoft Sans Serif", 9F, FontStyle.Bold, GraphicsUnit.Point, ((Byte)(0)));
           dgdtblStyle.GridLineColor = Color.DarkGray;
           dgdtblStyle.PreferredRowHeight = 22;
           dataGrid1.BackgroundColor = Color.White;
@@ -300,10 +297,10 @@ namespace MediaPortal.Configuration.Sections
           colStyle[4].Width = 50;
           colStyle[5].Width = 15;
         }
-        DataGridTextBoxColumn dgtb = (DataGridTextBoxColumn) dataGrid1.TableStyles[0].GridColumnStyles[2];
+        DataGridTextBoxColumn dgtb = (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[2];
         //Add the combo box to the text box taken in the above step 
         dgtb.TextBox.Controls.Add(cbSpeed);
-        dgtb = (DataGridTextBoxColumn) dataGrid1.TableStyles[0].GridColumnStyles[4];
+        dgtb = (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[4];
         dgtb.TextBox.Controls.Add(cbSpeedDVD);
         updating = false;
       }
@@ -328,7 +325,7 @@ namespace MediaPortal.Configuration.Sections
       DataGridCell currentCell = dataGrid1.CurrentCell;
       DataTable table = dataGrid1.DataSource as DataTable;
 
-      table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string) box.SelectedItem;
+      table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
     }
 
 
@@ -362,7 +359,7 @@ namespace MediaPortal.Configuration.Sections
           }
 
           BassCd.BASS_CD_GetInfo(i, cdinfo);
-          int maxspeed = (int) (cdinfo.maxspeed/176.4);
+          int maxspeed = (int)(cdinfo.maxspeed / 176.4);
           builder.Append(Convert.ToString(maxspeed));
           builderDisable.Append("N");
         }
@@ -410,7 +407,7 @@ namespace MediaPortal.Configuration.Sections
           }
 
           BassCd.BASS_CD_GetInfo(i, cdinfo);
-          int maxspeed = (int) (cdinfo.maxspeed/176.4);
+          int maxspeed = (int)(cdinfo.maxspeed / 176.4);
           int selectedSpeedCD = int.Parse((row[2].ToString()));
           int selectedSpeedDVD = int.Parse((row[4].ToString()));
 
@@ -427,18 +424,16 @@ namespace MediaPortal.Configuration.Sections
           builderCD.Append(selectedSpeedCD.ToString());
           builderDVD.Append(selectedSpeedDVD.ToString());
 
-          string sel = (bool) row[3] ? "Y" : "N";
+          string sel = (bool)row[3] ? "Y" : "N";
           builderDisableCD.Append(sel);
 
-          sel = (bool) row[5] ? "Y" : "N";
+          sel = (bool)row[5] ? "Y" : "N";
           builderDisableDVD.Append(sel);
 
           i++;
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       using (Settings writer = new MPSettings())
       {
         writer.SetValueAsBool("cdspeed", "enabled", ckEnableCDSpeed.Checked);

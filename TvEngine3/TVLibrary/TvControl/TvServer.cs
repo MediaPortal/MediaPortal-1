@@ -169,7 +169,8 @@ namespace TvControl
       VirtualCard vc = card = null;
       try
       {
-        bool result = WaitFor<bool>.Run(VirtualCard.CommandTimeOut, () => RemoteControl.Instance.IsRecording(channelName, out vc));
+        bool result = WaitFor<bool>.Run(VirtualCard.CommandTimeOut,
+                                        () => RemoteControl.Instance.IsRecording(channelName, out vc));
         card = vc;
         return result;
       }
@@ -188,7 +189,7 @@ namespace TvControl
     {
       try
       {
-        return WaitFor<bool>.Run(VirtualCard.CommandTimeOut, () => RemoteControl.Instance.IsAnyCardRecording());        
+        return WaitFor<bool>.Run(VirtualCard.CommandTimeOut, () => RemoteControl.Instance.IsAnyCardRecording());
       }
       catch (Exception)
       {
@@ -310,7 +311,7 @@ namespace TvControl
       card = null;
       try
       {
-        TvResult result = RemoteControl.Instance.StartTimeShifting(ref user, idChannel, out card,forceCardId);
+        TvResult result = RemoteControl.Instance.StartTimeShifting(ref user, idChannel, out card, forceCardId);
         return result;
       }
       catch (Exception)

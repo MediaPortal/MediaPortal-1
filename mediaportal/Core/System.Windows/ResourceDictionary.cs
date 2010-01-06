@@ -33,9 +33,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public ResourceDictionary()
-    {
-    }
+    public ResourceDictionary() {}
 
     #endregion Constructors
 

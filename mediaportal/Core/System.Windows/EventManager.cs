@@ -33,9 +33,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    private EventManager()
-    {
-    }
+    private EventManager() {}
 
     #endregion Constructors
 
@@ -49,7 +47,7 @@ namespace System.Windows
         ownerType = typeof (Page);
       }
 
-      return (RoutedEvent) _registeredRoutedEvents[ownerType + name];
+      return (RoutedEvent)_registeredRoutedEvents[ownerType + name];
     }
 
     public static RoutedEvent[] GetRoutedEvents()

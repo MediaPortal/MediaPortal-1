@@ -47,12 +47,12 @@ namespace MediaPortal.Drawing
     {
       if (value is string)
       {
-        if (string.Compare("Empty", (string) value) == 0)
+        if (string.Compare("Empty", (string)value) == 0)
         {
           return Rect.Empty;
         }
 
-        string[] param = ((string) value).Split(' ');
+        string[] param = ((string)value).Split(' ');
 
         return new Rect(Convert.ToDouble(param[0], CultureInfo.CurrentCulture),
                         Convert.ToDouble(param[1], CultureInfo.CurrentCulture),

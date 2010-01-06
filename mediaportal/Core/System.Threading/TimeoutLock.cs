@@ -41,7 +41,7 @@ namespace System.Threading
       if (Monitor.TryEnter(o, timeout) == false)
       {
 #if DEBUG
-				System.GC.SuppressFinalize(tl.leakDetector);
+        System.GC.SuppressFinalize(tl.leakDetector);
 #endif
         Debug.Assert(false);
         throw new LockTimeoutException();
@@ -59,7 +59,7 @@ namespace System.Threading
     {
       target = o;
 #if DEBUG
-			leakDetector = new Sentinel();
+      leakDetector = new Sentinel();
 #endif
     }
 
@@ -74,32 +74,30 @@ namespace System.Threading
       // the error. If Dispose is called, we suppress the
       // finalizer.
 #if DEBUG
-			GC.SuppressFinalize(leakDetector);
+      GC.SuppressFinalize(leakDetector);
 #endif
     }
 
 #if DEBUG
-  // (In Debug mode, we make it a class so that we can add a finalizer
-  // in order to detect when the object is not freed.)
-		private class Sentinel
-		{
-			~Sentinel()
-			{
-				// If this finalizer runs, someone somewhere failed to
-				// call Dispose, which means we've failed to leave
-				// a monitor!
-				System.Diagnostics.Debug.Fail("Undisposed lock");
-			}
-		}
+    // (In Debug mode, we make it a class so that we can add a finalizer
+    // in order to detect when the object is not freed.)
+    private class Sentinel
+    {
+      ~Sentinel()
+      {
+        // If this finalizer runs, someone somewhere failed to
+        // call Dispose, which means we've failed to leave
+        // a monitor!
+        System.Diagnostics.Debug.Fail("Undisposed lock");
+      }
+    }
 
-		private Sentinel leakDetector;
+    private Sentinel leakDetector;
 #endif
   }
 
   public class LockTimeoutException : ApplicationException
   {
-    public LockTimeoutException() : base("Timeout waiting for lock")
-    {
-    }
+    public LockTimeoutException() : base("Timeout waiting for lock") {}
   }
 }

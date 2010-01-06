@@ -52,9 +52,7 @@ namespace MediaPortal.GUI.Library
     private bool _containsProperty = false;
 
     public GUIStatusbarControl(int dwParentID)
-      : base(dwParentID)
-    {
-    }
+      : base(dwParentID) {}
 
     /// <summary>
     /// Creates a GUIStatusbarControl.
@@ -159,9 +157,7 @@ namespace MediaPortal.GUI.Library
       {
         tb = Int32.Parse(GUIPropertyManager.Parse("#statusbarTB"));
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       if (_containsProperty)
       {
@@ -181,9 +177,7 @@ namespace MediaPortal.GUI.Library
               Percentage = 100;
             }
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
 
@@ -192,9 +186,7 @@ namespace MediaPortal.GUI.Library
       {
         yPosTop = Convert.ToInt16(_top);
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       // Render the background
       int iBkgHeight = _height;
@@ -218,9 +210,9 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleVertical(ref iHeightLeft);
       GUIGraphicsContext.ScaleVertical(ref iHeightRight);
       //iHeight=20;
-      float fWidth = (float) _percentage;
+      float fWidth = (float)_percentage;
       fWidth /= 100.0f;
-      fWidth *= (float) (_imageBackground.Width - 24 - iWidthLeft - iWidthRight);
+      fWidth *= (float)(_imageBackground.Width - 24 - iWidthLeft - iWidthRight);
 
       int off = 12;
       GUIGraphicsContext.ScaleHorizontal(ref off);
@@ -230,12 +222,12 @@ namespace MediaPortal.GUI.Library
       if (tb == 1)
       {
         // top
-        iYPos = yPosTop + (iBkgHeight - iHeightLeft)/2;
+        iYPos = yPosTop + (iBkgHeight - iHeightLeft) / 2;
       }
       else
       {
         // bottom
-        iYPos = _imageBackground.YPosition + (iBkgHeight - iHeightLeft)/2;
+        iYPos = _imageBackground.YPosition + (iBkgHeight - iHeightLeft) / 2;
       }
       //_imageLeft.SetHeight(iHeight);
       _imageLeft.SetPosition(iXPos, iYPos);
@@ -245,14 +237,14 @@ namespace MediaPortal.GUI.Library
       _imageLeft.Render(timePassed);
 
       iXPos += iWidthLeft;
-      if (_percentage > 0 && (int) fWidth > 1)
+      if (_percentage > 0 && (int)fWidth > 1)
       {
         _imageMid.SetPosition(iXPos, iYPos);
         _imageMid.Height = iHeightLeft; //_imageMid.TextureHeight;
-        _imageMid.Width = (int) fWidth;
+        _imageMid.Width = (int)fWidth;
         _imageMid.SetPosition(iXPos, iYPos);
         _imageMid.Render(timePassed);
-        iXPos += (int) fWidth;
+        iXPos += (int)fWidth;
       }
       //_imageRight.SetHeight(iHeight);
       _imageRight.SetPosition(iXPos, iYPos);

@@ -124,14 +124,14 @@ namespace MediaPortal.Ripper
 
       public byte Control
       {
-        get { return (byte) (BitMapped & 0x0F); }
-        set { BitMapped = (byte) ((BitMapped & 0xF0) | (value & (byte) 0x0F)); }
+        get { return (byte)(BitMapped & 0x0F); }
+        set { BitMapped = (byte)((BitMapped & 0xF0) | (value & (byte)0x0F)); }
       }
 
       public byte Adr
       {
-        get { return (byte) ((BitMapped & (byte) 0xF0) >> 4); }
-        set { BitMapped = (byte) ((BitMapped & (byte) 0x0F) | (value << 4)); }
+        get { return (byte)((BitMapped & (byte)0xF0) >> 4); }
+        set { BitMapped = (byte)((BitMapped & (byte)0x0F) | (value << 4)); }
       }
 
       public byte TrackNumber;
@@ -152,7 +152,7 @@ namespace MediaPortal.Ripper
     [StructLayout(LayoutKind.Sequential)]
     public class TrackDataList
     {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAXIMUM_NUMBER_TRACKS*8)] private byte[] Data;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAXIMUM_NUMBER_TRACKS * 8)] private byte[] Data;
 
       public TRACK_DATA this[int Index]
       {
@@ -167,8 +167,8 @@ namespace MediaPortal.Ripper
           try
           {
             IntPtr buffer = handle.AddrOfPinnedObject();
-            buffer = (IntPtr) (buffer.ToInt32() + (Index*Marshal.SizeOf(typeof (TRACK_DATA))));
-            res = (TRACK_DATA) Marshal.PtrToStructure(buffer, typeof (TRACK_DATA));
+            buffer = (IntPtr)(buffer.ToInt32() + (Index * Marshal.SizeOf(typeof (TRACK_DATA))));
+            res = (TRACK_DATA)Marshal.PtrToStructure(buffer, typeof (TRACK_DATA));
           }
           finally
           {
@@ -180,7 +180,7 @@ namespace MediaPortal.Ripper
 
       public TrackDataList()
       {
-        Data = new byte[MAXIMUM_NUMBER_TRACKS*Marshal.SizeOf(typeof (TRACK_DATA))];
+        Data = new byte[MAXIMUM_NUMBER_TRACKS * Marshal.SizeOf(typeof (TRACK_DATA))];
       }
     }
 
@@ -196,7 +196,7 @@ namespace MediaPortal.Ripper
       public CDROM_TOC()
       {
         TrackData = new TrackDataList();
-        Length = (ushort) Marshal.SizeOf(this);
+        Length = (ushort)Marshal.SizeOf(this);
       }
     }
 

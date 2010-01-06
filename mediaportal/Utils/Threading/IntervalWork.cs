@@ -27,7 +27,7 @@
 
 using System;
 
-  #endregion
+#endregion
 
 namespace MediaPortal.Threading
 {
@@ -75,9 +75,7 @@ namespace MediaPortal.Threading
       set { _running = value; }
     }
 
-    public void OnThreadPoolStopped()
-    {
-    }
+    public void OnThreadPoolStopped() {}
 
     public void ResetWorkState()
     {

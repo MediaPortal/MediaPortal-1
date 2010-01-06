@@ -36,8 +36,10 @@ using TvDatabase;
 
 namespace TvLibrary.Implementations.DVB
 {
+
   #region enums;
-  enum BdaDigitalModulator
+
+  internal enum BdaDigitalModulator
   {
     MODULATION_TYPE = 0,
     INNER_FEC_TYPE,
@@ -48,9 +50,9 @@ namespace TvLibrary.Implementations.DVB
     SPECTRAL_INVERSION,
     GUARD_INTERVAL,
     TRANSMISSION_MODE
-  };
+  } ;
 
-  enum BdaTunerExtension
+  internal enum BdaTunerExtension
   {
     KSPROPERTY_BDA_DISEQC = 0,
     KSPROPERTY_BDA_SCAN_FREQ,
@@ -58,27 +60,28 @@ namespace TvLibrary.Implementations.DVB
     KSPROPERTY_BDA_EFFECTIVE_FREQ,
     KSPROPERTY_BDA_PILOT = 0x20,
     KSPROPERTY_BDA_ROLL_OFF = 0x21
-  };
+  } ;
 
-  enum DisEqcVersion
+  internal enum DisEqcVersion
   {
     DISEQC_VER_1X = 1,
     DISEQC_VER_2X,
-  };
+  } ;
 
-  enum RxMode
+  internal enum RxMode
   {
     RXMODE_INTERROGATION = 1, // Expecting multiple devices attached
-    RXMODE_QUICKREPLY,      // Expecting 1 rx (rx is suspended after 1st rx received)
-    RXMODE_NOREPLY,         // Expecting to receive no Rx message(s)
-    RXMODE_DEFAULT = 0        // use current register setting
-  };
+    RXMODE_QUICKREPLY, // Expecting 1 rx (rx is suspended after 1st rx received)
+    RXMODE_NOREPLY, // Expecting to receive no Rx message(s)
+    RXMODE_DEFAULT = 0 // use current register setting
+  } ;
 
-  enum BurstModulationType
+  internal enum BurstModulationType
   {
     TONE_BURST_UNMODULATED = 0,
     TONE_BURST_MODULATED
-  };
+  } ;
+
   #endregion;
 
   /// <summary>
@@ -87,125 +90,155 @@ namespace TvLibrary.Implementations.DVB
   public class TvCardDvbBase : TvCardBase, IDisposable
   {
     #region constants
+
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
-    class MpTsAnalyzer { }
+    private class MpTsAnalyzer {}
 
     [ComImport, Guid("BC650178-0DE4-47DF-AF50-BBD9C7AEF5A9")]
-    class CyberLinkMuxer { }
+    private class CyberLinkMuxer {}
 
     [ComImport, Guid("7F2BBEAF-E11C-4D39-90E8-938FB5A86045")]
-    class PowerDirectorMuxer { }
+    private class PowerDirectorMuxer {}
 
     [ComImport, Guid("3E8868CB-5FE8-402C-AA90-CB1AC6AE3240")]
-    class CyberLinkDumpFilter { };
+    private class CyberLinkDumpFilter {} ;
+
     #endregion
 
     #region variables
+
     /// <summary>
     /// Capture graph builder
     /// </summary>
     protected ICaptureGraphBuilder2 _capBuilder;
+
     /// <summary>
     /// ROT entry
     /// </summary>
     protected DsROTEntry _rotEntry;
+
     /// <summary>
     /// Network provider filter
     /// </summary>
     protected IBaseFilter _filterNetworkProvider;
+
     /// <summary>
     /// MPEG2 Demux filter
     /// </summary>
     protected IBaseFilter _filterMpeg2DemuxTif;
+
     /// <summary>
     /// Main inf tee
     /// </summary>
     protected IBaseFilter _infTeeMain;
+
     /// <summary>
     /// Second inf tee
     /// </summary>
     protected IBaseFilter _infTeeSecond;
+
     /// <summary>
     /// Tuner filter
     /// </summary>
     protected IBaseFilter _filterTuner;
+
     /// <summary>
     /// Capture filter
     /// </summary>
     protected IBaseFilter _filterCapture;
+
     /// <summary>
     /// TIF filter
     /// </summary>
     protected IBaseFilter _filterTIF;
+
     /// <summary>
     /// WinTV CI filter
     /// </summary>
     protected IBaseFilter _filterWinTvUsb;
+
     /// <summary>
     /// Capture device
     /// </summary>
     protected DsDevice _captureDevice;
+
     /// <summary>
     /// WinTV CI device
     /// </summary>
     protected DsDevice _deviceWinTvUsb;
+
     /// <summary>
     /// EPG Grabber callback
     /// </summary>
     protected BaseEpgGrabber _epgGrabberCallback;
+
     /// <summary>
     /// MD plugs
     /// </summary>
     protected MDPlugs _mdplugs;
+
     /// <summary>
     /// Tuner statistics
     /// </summary>
     protected List<IBDA_SignalStatistics> _tunerStatistics = new List<IBDA_SignalStatistics>();
+
     /// <summary>
     /// TsWriter filter
     /// </summary>
     protected IBaseFilter _filterTsWriter;
+
     /// <summary>
     /// Managed Thread id
     /// </summary>
     protected int _managedThreadId = -1;
+
     /// <summary>
     /// Is ATSC indicator
     /// </summary>
     protected bool _isATSC;
+
     /// <summary>
     /// EPG Grabber interface
     /// </summary>
     protected ITsEpgScanner _interfaceEpgGrabber;
+
     /// <summary>
     /// Channel scan interface
     /// </summary>
     protected ITsChannelScan _interfaceChannelScan;
+
     /// <summary>
     /// Channel linkage scanner interface
     /// </summary>
     protected ITsChannelLinkageScanner _interfaceChannelLinkageScanner;
+
     /// <summary>
     /// Hauppauge inteface
     /// </summary>
     protected Hauppauge _hauppauge;
+
     /// <summary>
     /// Tuner only card indicator
     /// </summary>
     protected bool tunerOnly;
+
     /// <summary>
     /// Device paths are matching indicator
     /// </summary>
     protected bool matchDevicePath;
+
     private readonly TimeShiftingEPGGrabber _timeshiftingEPGGrabber;
-    WinTvCiModule winTvCiHandler;
+    private WinTvCiModule winTvCiHandler;
+
     /// <summary>
     /// The previous channel
     /// </summary>
     protected IChannel _previousChannel;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TvCardDvbBase"/> class.
     /// </summary>
@@ -221,10 +254,10 @@ namespace TvLibrary.Implementations.DVB
       _maxChannel = -1;
       _supportsSubChannels = true;
     }
+
     #endregion
 
     #region subchannel management
-
 
     /// <summary>
     /// Frees the sub channel.
@@ -294,12 +327,14 @@ namespace TvLibrary.Implementations.DVB
       int id = _subChannelId++;
       Log.Log.Info("dvb:GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
 
-      TvDvbChannel subChannel = new TvDvbChannel(_graphBuilder, _conditionalAccess, _mdplugs, _filterTIF, _filterTsWriter, id, channel);
+      TvDvbChannel subChannel = new TvDvbChannel(_graphBuilder, _conditionalAccess, _mdplugs, _filterTIF,
+                                                 _filterTsWriter, id, channel);
       subChannel.Parameters = Parameters;
       subChannel.CurrentChannel = channel;
       _mapSubChannels[id] = subChannel;
       return id;
     }
+
     #endregion
 
     #region graph building
@@ -307,9 +342,8 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Builds the graph.
     /// </summary>
-    public override void BuildGraph()
-    {
-    }
+    public override void BuildGraph() {}
+
     /// <summary>
     /// Checks the thread id.
     /// </summary>
@@ -328,7 +362,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tuneRequest">tune requests</param>
     /// <param name="performTune">Indicates if a tune is required</param>
     /// <returns></returns>
-    protected ITvSubChannel SubmitTuneRequest(int subChannelId, IChannel channel, ITuneRequest tuneRequest, bool performTune)
+    protected ITvSubChannel SubmitTuneRequest(int subChannelId, IChannel channel, ITuneRequest tuneRequest,
+                                              bool performTune)
     {
       Log.Log.Info("dvb:Submiting tunerequest Channel:{0} subChannel:{1} ", channel.Name, subChannelId);
       bool newSubChannel = false;
@@ -359,7 +394,8 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
           if (hr != 0)
           {
-            Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr), HResult.GetDXErrorDescription(hr));
+            Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),
+                              HResult.GetDXErrorDescription(hr));
             //remove subchannel.
             /*if (newSubChannel)
             {
@@ -630,22 +666,22 @@ namespace TvLibrary.Implementations.DVB
         {
           // it's not and we have it as default
           // change it per devtype.
-          if (networkProviderClsId == typeof(DVBTNetworkProvider).GUID)
+          if (networkProviderClsId == typeof (DVBTNetworkProvider).GUID)
           {
             c.netProvider = (int)TvDatabase.DbNetworkProvider.DVBT;
             c.Persist();
           }
-          else if (networkProviderClsId == typeof(DVBSNetworkProvider).GUID)
+          else if (networkProviderClsId == typeof (DVBSNetworkProvider).GUID)
           {
             c.netProvider = (int)TvDatabase.DbNetworkProvider.DVBS;
             c.Persist();
           }
-          else if (networkProviderClsId == typeof(ATSCNetworkProvider).GUID)
+          else if (networkProviderClsId == typeof (ATSCNetworkProvider).GUID)
           {
             c.netProvider = (int)TvDatabase.DbNetworkProvider.ATSC;
             c.Persist();
           }
-          else if (networkProviderClsId == typeof(DVBCNetworkProvider).GUID)
+          else if (networkProviderClsId == typeof (DVBCNetworkProvider).GUID)
           {
             c.netProvider = (int)TvDatabase.DbNetworkProvider.DVBC;
             c.Persist();
@@ -680,7 +716,8 @@ namespace TvLibrary.Implementations.DVB
           throw new TvException("This application doesn't support this Tuning Space");
       }
       Log.Log.WriteFile("dvb:Add {0}", NetworkProviderName);
-      _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graphBuilder, networkProviderClsId, NetworkProviderName);
+      _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graphBuilder, networkProviderClsId,
+                                                                   NetworkProviderName);
     }
 
     /// <summary>
@@ -959,11 +996,13 @@ namespace TvLibrary.Implementations.DVB
           {
             for (int i = 0; i < fetched; ++i)
             {
-              if (mediaTypes[i].majorType == MediaType.Stream && mediaTypes[i].subType == MediaSubType.Mpeg2Transport && mediaTypes[i].formatType != FormatType.None)
+              if (mediaTypes[i].majorType == MediaType.Stream && mediaTypes[i].subType == MediaSubType.Mpeg2Transport &&
+                  mediaTypes[i].formatType != FormatType.None)
               {
                 skipCaptureFilter = false;
               }
-              if (mediaTypes[i].majorType == MediaType.Stream && mediaTypes[i].subType == MediaSubType.BdaMpeg2Transport && mediaTypes[i].formatType == FormatType.None)
+              if (mediaTypes[i].majorType == MediaType.Stream && mediaTypes[i].subType == MediaSubType.BdaMpeg2Transport &&
+                  mediaTypes[i].formatType == FormatType.None)
               {
                 skipCaptureFilter = true;
               }
@@ -973,7 +1012,9 @@ namespace TvLibrary.Implementations.DVB
       }
 
       //Hauppauge Nova USB2 DVB-T & HDHomeRun workaround.
-      if (device.Name != null && (device.Name.Contains("Hauppauge Nova USB2 DVB-T TV Receiver") || device.Name.Contains("Silicondust HDHomeRun Tuner")))
+      if (device.Name != null &&
+          (device.Name.Contains("Hauppauge Nova USB2 DVB-T TV Receiver") ||
+           device.Name.Contains("Silicondust HDHomeRun Tuner")))
       {
         skipCaptureFilter = true;
       }
@@ -1010,7 +1051,8 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb:  using only tv tuner filter...");
         ConnectMpeg2DemuxToInfTee();
         AddTsWriterFilterToGraph();
-        _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this);//,_cardUsesRealCAM);
+        _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this);
+          //,_cardUsesRealCAM);
         return;
       }
       ConnectMpeg2DemuxToInfTee();
@@ -1419,6 +1461,7 @@ namespace TvLibrary.Implementations.DVB
         return;
       }
     }
+
     #region IDisposable
 
     /// <summary>
@@ -1428,6 +1471,7 @@ namespace TvLibrary.Implementations.DVB
     {
       Decompose();
     }
+
     /// <summary>
     /// destroys the graph and cleans up any resources
     /// </summary>
@@ -1587,7 +1631,9 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("  decompose done...");
       _graphState = GraphState.Idle;
     }
+
     #endregion
+
     #endregion
 
     #region signal quality, level etc
@@ -1726,7 +1772,6 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
           }
           //Log.Log.WriteFile("  dvb:#{0}  locked:{1} present:{2} quality:{3} strength:{4}", i, isLocked, isPresent, quality, strength);          
-
         }
         if (_tunerStatistics.Count > 0)
         {
@@ -1736,7 +1781,6 @@ namespace TvLibrary.Implementations.DVB
         _tunerLocked = isTunerLocked;
 
         _signalPresent = isTunerLocked;
-
       }
       finally
       {
@@ -1751,7 +1795,10 @@ namespace TvLibrary.Implementations.DVB
     protected override void UpdateSignalQuality()
     {
       UpdateSignalQuality(false);
-    }//public bool SignalPresent()
+    }
+
+//public bool SignalPresent()
+
     #endregion
 
     #region properties
@@ -1761,10 +1808,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public ITsChannelScan StreamAnalyzer
     {
-      get
-      {
-        return _interfaceChannelScan;
-      }
+      get { return _interfaceChannelScan; }
     }
 
     /// <summary>
@@ -1789,13 +1833,15 @@ namespace TvLibrary.Implementations.DVB
         _epgGrabberCallback.OnEpgCancelled();
       }
     }
+
     #endregion
 
     #region Channel linkage handling
 
     private static bool SameAsPortalChannel(PortalChannel pChannel, LinkedChannel lChannel)
     {
-      return ((pChannel.NetworkId == lChannel.NetworkId) && (pChannel.TransportId == lChannel.NetworkId) && (pChannel.ServiceId == lChannel.ServiceId));
+      return ((pChannel.NetworkId == lChannel.NetworkId) && (pChannel.TransportId == lChannel.NetworkId) &&
+              (pChannel.ServiceId == lChannel.ServiceId));
     }
 
     private static bool IsNewLinkedChannel(PortalChannel pChannel, LinkedChannel lChannel)
@@ -1803,7 +1849,8 @@ namespace TvLibrary.Implementations.DVB
       bool bRet = true;
       foreach (LinkedChannel lchan in pChannel.LinkedChannels)
       {
-        if ((lchan.NetworkId == lChannel.NetworkId) && (lchan.TransportId == lChannel.TransportId) && (lchan.ServiceId == lChannel.ServiceId))
+        if ((lchan.NetworkId == lChannel.NetworkId) && (lchan.TransportId == lChannel.TransportId) &&
+            (lchan.ServiceId == lChannel.ServiceId))
         {
           bRet = false;
           break;
@@ -1889,6 +1936,7 @@ namespace TvLibrary.Implementations.DVB
         }
       }
     }
+
     #endregion
 
     #region epg & scanning
@@ -1924,7 +1972,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="val">The val.</param>
     /// <returns></returns>
-    static int getUTC(int val)
+    private static int getUTC(int val)
     {
       if ((val & 0xF0) >= 0xA0)
         return 0;
@@ -1980,8 +2028,11 @@ namespace TvLibrary.Implementations.DVB
               uint tmp1 = 0, tmp2 = 0;
               IntPtr ptrTitle, ptrProgramName;
               IntPtr ptrChannelName, ptrSummary, ptrTheme;
-              _interfaceEpgGrabber.GetMHWTitle((ushort)i, ref id, ref tmp1, ref tmp2, ref channelnr, ref programid, ref themeid, ref PPV, ref summaries, ref duration, ref datestart, ref timestart, out ptrTitle, out ptrProgramName);
-              _interfaceEpgGrabber.GetMHWChannel(channelnr, ref channelid, ref networkid, ref transportid, out ptrChannelName);
+              _interfaceEpgGrabber.GetMHWTitle((ushort)i, ref id, ref tmp1, ref tmp2, ref channelnr, ref programid,
+                                               ref themeid, ref PPV, ref summaries, ref duration, ref datestart,
+                                               ref timestart, out ptrTitle, out ptrProgramName);
+              _interfaceEpgGrabber.GetMHWChannel(channelnr, ref channelid, ref networkid, ref transportid,
+                                                 out ptrChannelName);
               _interfaceEpgGrabber.GetMHWSummary(programid, out ptrSummary);
               _interfaceEpgGrabber.GetMHWTheme(themeid, out ptrTheme);
               string channelName = DvbTextConverter.Convert(ptrChannelName, "");
@@ -2004,7 +2055,8 @@ namespace TvLibrary.Implementations.DVB
               foreach (EpgChannel chan in epgChannels)
               {
                 DVBBaseChannel dvbChan = (DVBBaseChannel)chan.Channel;
-                if (dvbChan.NetworkId == networkid && dvbChan.TransportId == transportid && dvbChan.ServiceId == channelid)
+                if (dvbChan.NetworkId == networkid && dvbChan.TransportId == transportid &&
+                    dvbChan.ServiceId == channelid)
                 {
                   epgChannel = chan;
                   break;
@@ -2025,7 +2077,8 @@ namespace TvLibrary.Implementations.DVB
               uint m = timestart & 0xff;
               uint h1 = (timestart >> 16) & 0xff;
               DateTime dayStart = DateTime.Now;
-              dayStart = dayStart.Subtract(new TimeSpan(1, dayStart.Hour, dayStart.Minute, dayStart.Second, dayStart.Millisecond));
+              dayStart =
+                dayStart.Subtract(new TimeSpan(1, dayStart.Hour, dayStart.Minute, dayStart.Second, dayStart.Millisecond));
               int day = (int)dayStart.DayOfWeek;
               DateTime programStartTime = dayStart;
               int minVal = (int)((d1 - day) * 86400 + h1 * 3600 + m * 60);
@@ -2070,7 +2123,8 @@ namespace TvLibrary.Implementations.DVB
                 int starRating;
                 IntPtr ptrClassification;
 
-                _interfaceEpgGrabber.GetEPGEvent(x, i, out languageCount, out start_time_MJD, out start_time_UTC, out duration, out ptrGenre, out starRating, out ptrClassification);
+                _interfaceEpgGrabber.GetEPGEvent(x, i, out languageCount, out start_time_MJD, out start_time_UTC,
+                                                 out duration, out ptrGenre, out starRating, out ptrClassification);
                 string genre = DvbTextConverter.Convert(ptrGenre, "");
                 string classification = DvbTextConverter.Convert(ptrClassification, "");
 
@@ -2079,10 +2133,10 @@ namespace TvLibrary.Implementations.DVB
 
                 int duration_hh = getUTC((int)((duration >> 16)) & 255);
                 int duration_mm = getUTC((int)((duration >> 8)) & 255);
-                int duration_ss = 0;//getUTC((int) (duration )& 255);
+                int duration_ss = 0; //getUTC((int) (duration )& 255);
                 int starttime_hh = getUTC((int)((start_time_UTC >> 16)) & 255);
                 int starttime_mm = getUTC((int)((start_time_UTC >> 8)) & 255);
-                int starttime_ss = 0;//getUTC((int) (start_time_UTC )& 255);
+                int starttime_ss = 0; //getUTC((int) (start_time_UTC )& 255);
 
                 if (starttime_hh > 23)
                   starttime_hh = 23;
@@ -2113,7 +2167,8 @@ namespace TvLibrary.Implementations.DVB
 
                 try
                 {
-                  DateTime dtUTC = new DateTime(starttime_y, starttime_m, starttime_d, starttime_hh, starttime_mm, starttime_ss, 0);
+                  DateTime dtUTC = new DateTime(starttime_y, starttime_m, starttime_d, starttime_hh, starttime_mm,
+                                                starttime_ss, 0);
                   DateTime dtStart = dtUTC.ToLocalTime();
                   if (dtStart < DateTime.Now.AddDays(-1) || dtStart > DateTime.Now.AddMonths(2))
                     continue;
@@ -2128,7 +2183,8 @@ namespace TvLibrary.Implementations.DVB
                     IntPtr ptrTitle;
                     IntPtr ptrDesc;
                     int parentalRating;
-                    _interfaceEpgGrabber.GetEPGLanguage(x, i, (uint)z, out languageId, out ptrTitle, out ptrDesc, out parentalRating);
+                    _interfaceEpgGrabber.GetEPGLanguage(x, i, (uint)z, out languageId, out ptrTitle, out ptrDesc,
+                                                        out parentalRating);
                     //title = DvbTextConverter.Convert(ptrTitle,"");
                     //description = DvbTextConverter.Convert(ptrDesc,"");
                     string language = String.Empty;
@@ -2160,7 +2216,8 @@ namespace TvLibrary.Implementations.DVB
                     description = description.Trim();
                     language = language.Trim();
                     genre = genre.Trim();
-                    EpgLanguageText epgLangague = new EpgLanguageText(language, title, description, genre, starRating, classification, parentalRating);
+                    EpgLanguageText epgLangague = new EpgLanguageText(language, title, description, genre, starRating,
+                                                                      classification, parentalRating);
                     epgProgram.Text.Add(epgLangague);
                   }
                   epgChannel.Programs.Add(epgProgram);
@@ -2169,13 +2226,13 @@ namespace TvLibrary.Implementations.DVB
                 {
                   Log.Log.Write(ex);
                 }
-              }//for (uint i = 0; i < eventCount; ++i)
+              } //for (uint i = 0; i < eventCount; ++i)
               if (epgChannel.Programs.Count > 0)
               {
                 epgChannel.Sort();
                 epgChannels.Add(epgChannel);
               }
-            }//for (uint x = 0; x < channelCount; ++x)
+            } //for (uint x = 0; x < channelCount; ++x)
           }
           // free the epg infos in TsWriter so that the mem used gets released 
           _interfaceEpgGrabber.Reset();
@@ -2188,41 +2245,35 @@ namespace TvLibrary.Implementations.DVB
         }
       }
     }
+
     #endregion
 
     #region quality control
+
     /// <summary>
     /// Get/Set the quality
     /// </summary>
     /// <value></value>
     public IQuality Quality
     {
-      get
-      {
-        return null;
-      }
+      get { return null; }
       set { if (value == null) Log.Log.WriteFile("Setting null quality control"); }
     }
+
     /// <summary>
     /// Property which returns true if card supports quality control
     /// </summary>
     /// <value></value>
     public bool SupportsQualityControl
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     /// <summary>
     /// Reloads the card configuration
     /// </summary>
-    public void ReloadCardConfiguration()
-    {
-    }
+    public void ReloadCardConfiguration() {}
+
     #endregion
   }
 }
-
- 	  	 

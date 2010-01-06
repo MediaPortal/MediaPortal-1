@@ -155,17 +155,17 @@ namespace MediaPortal.Configuration
       this.groupBoxCityDetails.SuspendLayout();
       this.tabControlCityURLs.SuspendLayout();
       this.tabPageSatImg.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewSat)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewSat)).BeginInit();
       this.tabPageTempImg.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewTemp)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewTemp)).BeginInit();
       this.tabPageUVImg.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewUV)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewUV)).BeginInit();
       this.tabPageWindsImg.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewWinds)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewWinds)).BeginInit();
       this.tabPageHumImg.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewHumidity)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewHumidity)).BeginInit();
       this.tabPagePrecImg.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewPrecip)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewPrecip)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBoxNewCity
@@ -674,22 +674,22 @@ namespace MediaPortal.Configuration
       this.tabControlCityURLs.ResumeLayout(false);
       this.tabPageSatImg.ResumeLayout(false);
       this.tabPageSatImg.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewSat)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewSat)).EndInit();
       this.tabPageTempImg.ResumeLayout(false);
       this.tabPageTempImg.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewTemp)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewTemp)).EndInit();
       this.tabPageUVImg.ResumeLayout(false);
       this.tabPageUVImg.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewUV)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewUV)).EndInit();
       this.tabPageWindsImg.ResumeLayout(false);
       this.tabPageWindsImg.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewWinds)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewWinds)).EndInit();
       this.tabPageHumImg.ResumeLayout(false);
       this.tabPageHumImg.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewHumidity)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewHumidity)).EndInit();
       this.tabPagePrecImg.ResumeLayout(false);
       this.tabPagePrecImg.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBoxPreviewPrecip)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPreviewPrecip)).EndInit();
       this.ResumeLayout(false);
     }
 
@@ -843,9 +843,7 @@ namespace MediaPortal.Configuration
       {
         Process.Start("http://wiki.team-mediaportal.com/MediaPortalSetup_WeatherImages");
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
 
     private void SetPreviewImage(string aFilename, PictureBox aPreviewArea)

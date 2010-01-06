@@ -42,7 +42,7 @@ namespace MediaPortal.Tests.Core.Profile
     {
       XmlSettingsProvider doc = CreateDoc();
 
-      string ret = (string) doc.GetValue("capture", "country");
+      string ret = (string)doc.GetValue("capture", "country");
       Assert.AreEqual("31", ret);
     }
 

@@ -32,19 +32,24 @@ namespace TvLibrary.Implementations.DVB
   public class Hauppauge : IDiSEqCController
   {
     #region constants
+
 #pragma warning disable 169
-    const byte DISEQC_TX_BUFFER_SIZE = 150;	// 3 bytes per message * 50 messages
-    const byte DISEQC_RX_BUFFER_SIZE = 8;		// reply fifo size, do not increase
+    private const byte DISEQC_TX_BUFFER_SIZE = 150; // 3 bytes per message * 50 messages
+    private const byte DISEQC_RX_BUFFER_SIZE = 8; // reply fifo size, do not increase
 #pragma warning restore 169
-    readonly Guid BdaTunerExtentionProperties = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0x00, 0xa0, 0xc9, 0xf2, 0x1f, 0xc7);
+    private readonly Guid BdaTunerExtentionProperties = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0x00, 0xa0,
+                                                                 0xc9, 0xf2, 0x1f, 0xc7);
+
     #endregion
 
     #region variables
-    readonly bool _isHauppauge;
-    readonly IntPtr _ptrDiseqc = IntPtr.Zero;
-    readonly IntPtr _tempValue = IntPtr.Zero;
-    readonly IntPtr _tempInstance = IntPtr.Zero;
-    readonly IKsPropertySet _propertySet;
+
+    private readonly bool _isHauppauge;
+    private readonly IntPtr _ptrDiseqc = IntPtr.Zero;
+    private readonly IntPtr _tempValue = IntPtr.Zero;
+    private readonly IntPtr _tempInstance = IntPtr.Zero;
+    private readonly IKsPropertySet _propertySet;
+
     #endregion
 
     /// <summary>
@@ -60,7 +65,8 @@ namespace TvLibrary.Implementations.DVB
         if (_propertySet != null)
         {
           KSPropertySupport supported;
-          _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, out supported);
+          _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC,
+                                      out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
             Log.Log.Debug("Hauppauge: DVB-S card found!");
@@ -89,10 +95,7 @@ namespace TvLibrary.Implementations.DVB
     /// </value>
     public bool IsHauppauge
     {
-      get
-      {
-        return _isHauppauge;
-      }
+      get { return _isHauppauge; }
     }
 
     /// <summary>
@@ -122,34 +125,36 @@ namespace TvLibrary.Implementations.DVB
       // 2        A         B
       // 3        B         A
       // 4        B         B
-      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));
+      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
+                           (channel.Polarisation == Polarisation.CircularL));
       byte cmd = 0xf0;
       cmd |= (byte)(hiBand ? 1 : 0);
       cmd |= (byte)((isHorizontal) ? 2 : 0);
       cmd |= (byte)((antennaNr - 1) << 2);
 
       const int len = 188; //hauppauge diseqc message length
-      ulong diseqc = 0xE0103800;//currently committed switches only. i.e. ports 1-4
+      ulong diseqc = 0xE0103800; //currently committed switches only. i.e. ports 1-4
       diseqc += cmd;
 
-      Marshal.WriteByte(_ptrDiseqc, 0, (byte)((diseqc >> 24) & 0xff));//framing byte
-      Marshal.WriteByte(_ptrDiseqc, 1, (byte)((diseqc >> 16) & 0xff));//address byte
-      Marshal.WriteByte(_ptrDiseqc, 2, (byte)((diseqc >> 8) & 0xff));//command byte
-      Marshal.WriteByte(_ptrDiseqc, 3, (byte)(diseqc & 0xff));//data byte (port group 0)
-      Marshal.WriteInt32(_ptrDiseqc, 160, 4);//send_message_length
-      Marshal.WriteInt32(_ptrDiseqc, 164, 0);//receive_message_length
-      Marshal.WriteInt32(_ptrDiseqc, 168, 3);//amplitude_attenuation
-      if (antennaNr == 1)//for simple diseqc switches (i.e. 22KHz tone burst)
+      Marshal.WriteByte(_ptrDiseqc, 0, (byte)((diseqc >> 24) & 0xff)); //framing byte
+      Marshal.WriteByte(_ptrDiseqc, 1, (byte)((diseqc >> 16) & 0xff)); //address byte
+      Marshal.WriteByte(_ptrDiseqc, 2, (byte)((diseqc >> 8) & 0xff)); //command byte
+      Marshal.WriteByte(_ptrDiseqc, 3, (byte)(diseqc & 0xff)); //data byte (port group 0)
+      Marshal.WriteInt32(_ptrDiseqc, 160, 4); //send_message_length
+      Marshal.WriteInt32(_ptrDiseqc, 164, 0); //receive_message_length
+      Marshal.WriteInt32(_ptrDiseqc, 168, 3); //amplitude_attenuation
+      if (antennaNr == 1) //for simple diseqc switches (i.e. 22KHz tone burst)
       {
         Marshal.WriteByte(_ptrDiseqc, 172, (int)BurstModulationType.TONE_BURST_UNMODULATED);
       }
       else
       {
-        Marshal.WriteByte(_ptrDiseqc, 172, (int)BurstModulationType.TONE_BURST_MODULATED);//default to tone_burst_modulated
+        Marshal.WriteByte(_ptrDiseqc, 172, (int)BurstModulationType.TONE_BURST_MODULATED);
+          //default to tone_burst_modulated
       }
-      Marshal.WriteByte(_ptrDiseqc, 176, (int)DisEqcVersion.DISEQC_VER_1X);//default
-      Marshal.WriteByte(_ptrDiseqc, 180, (int)RxMode.RXMODE_NOREPLY);//default
-      Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message TRUE */
+      Marshal.WriteByte(_ptrDiseqc, 176, (int)DisEqcVersion.DISEQC_VER_1X); //default
+      Marshal.WriteByte(_ptrDiseqc, 180, (int)RxMode.RXMODE_NOREPLY); //default
+      Marshal.WriteByte(_ptrDiseqc, 184, 1); //last_message TRUE */
 
       string txt = "";
       for (int i = 0; i < 4; ++i)
@@ -157,7 +162,8 @@ namespace TvLibrary.Implementations.DVB
       for (int i = 160; i < 188; i = (i + 4))
         txt += String.Format("0x{0:X} ", Marshal.ReadInt32(_ptrDiseqc, i));
       Log.Log.Debug("Hauppauge: SendDiseq: {0}", txt);
-      int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
+      int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc,
+                                len, _ptrDiseqc, len);
       if (hr != 0)
       {
         Log.Log.Info("Hauppauge: SendDiseq returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
@@ -165,6 +171,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #region IDiSEqCController Members
+
     /// <summary>
     /// Sends the DiSEqC command.
     /// </summary>
@@ -175,15 +182,16 @@ namespace TvLibrary.Implementations.DVB
       const int len = 188;
       for (int i = 0; i < diSEqC.Length; ++i)
         Marshal.WriteByte(_ptrDiseqc, i, diSEqC[i]);
-      Marshal.WriteInt32(_ptrDiseqc, 160, diSEqC.Length);//send_message_length
-      Marshal.WriteInt32(_ptrDiseqc, 164, 0);//receive_message_length
-      Marshal.WriteInt32(_ptrDiseqc, 168, 3);//amplitude_attenuation
-      Marshal.WriteByte(_ptrDiseqc, 172, 1);//tone_burst_modulated
+      Marshal.WriteInt32(_ptrDiseqc, 160, diSEqC.Length); //send_message_length
+      Marshal.WriteInt32(_ptrDiseqc, 164, 0); //receive_message_length
+      Marshal.WriteInt32(_ptrDiseqc, 168, 3); //amplitude_attenuation
+      Marshal.WriteByte(_ptrDiseqc, 172, 1); //tone_burst_modulated
       Marshal.WriteByte(_ptrDiseqc, 176, (int)DisEqcVersion.DISEQC_VER_1X);
       Marshal.WriteByte(_ptrDiseqc, 180, (int)RxMode.RXMODE_NOREPLY);
-      Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message
+      Marshal.WriteByte(_ptrDiseqc, 184, 1); //last_message
 
-      int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
+      int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc,
+                                len, _ptrDiseqc, len);
       Log.Log.Info("hauppauge: setdiseqc returned:{0:X}", hr);
       return (hr == 0);
     }
@@ -198,6 +206,7 @@ namespace TvLibrary.Implementations.DVB
       reply = new byte[1];
       return false;
     }
+
     #endregion
 
     /// <summary>
@@ -208,24 +217,28 @@ namespace TvLibrary.Implementations.DVB
       //Set the Pilot
       int hr;
       KSPropertySupport supported;
-      _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, out supported);
+      _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT,
+                                  out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
         Log.Log.Debug("Hauppauge: Set Pilot: {0}", channel.Pilot);
         Marshal.WriteInt32(_tempValue, (Int32)channel.Pilot);
-        hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _tempInstance, 32, _tempValue, 4);
+        hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _tempInstance,
+                              32, _tempValue, 4);
         if (hr != 0)
         {
           Log.Log.Info("Hauppauge: Set Pilot returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
         }
       }
       //Set the Roll-off
-      _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, out supported);
+      _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF,
+                                  out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
         Log.Log.Debug("Hauppauge: Set Roll-Off: {0}", channel.Rolloff);
         Marshal.WriteInt32(_tempValue, (Int32)channel.Rolloff);
-        hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _tempInstance, 32, _tempValue, 4);
+        hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _tempInstance,
+                              32, _tempValue, 4);
         if (hr != 0)
         {
           Log.Log.Info("Hauppauge: Set Roll-Off returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));

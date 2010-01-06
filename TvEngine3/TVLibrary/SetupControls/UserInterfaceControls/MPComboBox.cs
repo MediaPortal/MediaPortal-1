@@ -28,7 +28,5 @@ namespace MediaPortal.UserInterface.Controls
   /// <summary>
   /// Summary description for MPComboBox.
   /// </summary>
-  public class MPComboBox : System.Windows.Forms.ComboBox
-  {
-  }
+  public class MPComboBox : System.Windows.Forms.ComboBox {}
 }

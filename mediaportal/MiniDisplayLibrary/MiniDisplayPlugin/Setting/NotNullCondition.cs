@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Xml.Serialization;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
@@ -6,9 +6,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
   [Serializable, XmlType("NotNull")]
   public class NotNullCondition : Condition
   {
-    public NotNullCondition()
-    {
-    }
+    public NotNullCondition() {}
 
     public NotNullCondition(string _value)
     {

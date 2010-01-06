@@ -44,17 +44,11 @@ namespace MediaPortal.Configuration
     }
 
 
-    public virtual void SaveSettings()
-    {
-    }
+    public virtual void SaveSettings() {}
 
-    public virtual void LoadSettings()
-    {
-    }
+    public virtual void LoadSettings() {}
 
-    public virtual void LoadWizardSettings(XmlNode node)
-    {
-    }
+    public virtual void LoadWizardSettings(XmlNode node) {}
 
 
     /// <summary>
@@ -114,13 +108,9 @@ namespace MediaPortal.Configuration
     }
 
 
-    public virtual void OnSectionActivated()
-    {
-    }
+    public virtual void OnSectionActivated() {}
 
-    public virtual void OnSectionDeActivated()
-    {
-    }
+    public virtual void OnSectionDeActivated() {}
 
     public virtual bool CanActivate
     {

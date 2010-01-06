@@ -41,9 +41,7 @@ namespace MediaPortal.InputDevices
     private InputHandler _inputHandler;
     private KeyboardHook _keyboardHook;
 
-    public HidListener()
-    {
-    }
+    public HidListener() {}
 
     public void Init(IntPtr hwnd)
     {
@@ -97,13 +95,13 @@ namespace MediaPortal.InputDevices
         if (appCommand != AppCommands.None)
         {
           int device = 0;
-          int keys = (((int) appCommand & ~0xF000) | (device & 0xF000));
-          int lParam = (((keys) << 16) | (((int) e.KeyCode)));
+          int keys = (((int)appCommand & ~0xF000) | (device & 0xF000));
+          int lParam = (((keys) << 16) | (((int)e.KeyCode)));
 
           // since the normal process involves geting polled via WndProc we have to get a tiny bit dirty 
           // and send a message back to the main form in order to get the key press handled without 
           // duplicating action mapping code from the main app
-          SendMessage(GUIGraphicsContext.form.Handle, 0x0319, (uint) GUIGraphicsContext.form.Handle, (uint) lParam);
+          SendMessage(GUIGraphicsContext.form.Handle, 0x0319, (uint)GUIGraphicsContext.form.Handle, (uint)lParam);
         }
       }
     }
@@ -134,7 +132,7 @@ namespace MediaPortal.InputDevices
     public bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
     {
       action = null;
-      key = (char) 0;
+      key = (char)0;
       keyCode = Keys.A;
 
       if (controlEnabled)
@@ -145,7 +143,7 @@ namespace MediaPortal.InputDevices
           return false;
         }
 
-        AppCommands appCommand = (AppCommands) ((msg.LParam.ToInt32() >> 16) & ~0xF000);
+        AppCommands appCommand = (AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000);
 
         // find out which request the MCE remote handled last
         if ((appCommand == InputDevices.LastHidRequest) && (appCommand != AppCommands.VolumeDown) &&

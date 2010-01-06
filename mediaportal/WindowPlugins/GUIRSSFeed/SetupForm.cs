@@ -111,7 +111,7 @@ namespace GUIRSSFeed
         using (Settings xmlreader = new MPSettings())
         {
           tempText = xmlreader.GetValueAsString("rss", "siteName" + i, "");
-          if (tempText == (string) listBox.Items[iItem])
+          if (tempText == (string)listBox.Items[iItem])
           {
             ID = i;
             break;
@@ -146,7 +146,7 @@ namespace GUIRSSFeed
         using (Settings xmlreader = new MPSettings())
         {
           tempText = xmlreader.GetValueAsString("rss", "siteName" + i, "");
-          if (tempText == (string) listBox.Items[iItem])
+          if (tempText == (string)listBox.Items[iItem])
           {
             ID = i;
             break;
@@ -169,11 +169,11 @@ namespace GUIRSSFeed
       listBox.Items.Clear();
       PopulateFields();
 
-      if (GUIWindowManager.ActiveWindow == (int) MediaPortal.GUI.RSS.GUIRSSFeed.WINDOW_RSS)
+      if (GUIWindowManager.ActiveWindow == (int)MediaPortal.GUI.RSS.GUIRSSFeed.WINDOW_RSS)
       {
         Console.WriteLine("RSS active window, need to somehow refresh");
         MediaPortal.GUI.RSS.GUIRSSFeed rss =
-          (MediaPortal.GUI.RSS.GUIRSSFeed) GUIWindowManager.GetWindow((int) MediaPortal.GUI.RSS.GUIRSSFeed.WINDOW_RSS);
+          (MediaPortal.GUI.RSS.GUIRSSFeed)GUIWindowManager.GetWindow((int)MediaPortal.GUI.RSS.GUIRSSFeed.WINDOW_RSS);
         rss.refreshFeeds();
       }
     }
@@ -266,7 +266,7 @@ namespace GUIRSSFeed
     /// </summary>
     public int GetWindowId()
     {
-      return (int) MediaPortal.GUI.RSS.GUIRSSFeed.WINDOW_RSS;
+      return (int)MediaPortal.GUI.RSS.GUIRSSFeed.WINDOW_RSS;
     }
 
     /// <summary>
@@ -350,7 +350,7 @@ namespace GUIRSSFeed
       // 
       // buttonDelete
       // 
-      this.buttonDelete.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.buttonDelete.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
       this.buttonDelete.Location = new Point(368, 185);
       this.buttonDelete.Name = "buttonDelete";
       this.buttonDelete.Size = new Size(88, 23);
@@ -361,7 +361,7 @@ namespace GUIRSSFeed
       // 
       // buttonEdit
       // 
-      this.buttonEdit.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.buttonEdit.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
       this.buttonEdit.Location = new Point(274, 185);
       this.buttonEdit.Name = "buttonEdit";
       this.buttonEdit.Size = new Size(88, 23);
@@ -372,9 +372,9 @@ namespace GUIRSSFeed
       // 
       // listBox
       // 
-      this.listBox.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                               | AnchorStyles.Left)
-                                              | AnchorStyles.Right)));
+      this.listBox.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                              | AnchorStyles.Left)
+                                             | AnchorStyles.Right)));
       this.listBox.Location = new Point(6, 19);
       this.listBox.Name = "listBox";
       this.listBox.Size = new Size(450, 147);
@@ -382,7 +382,7 @@ namespace GUIRSSFeed
       // 
       // buttonAdd
       // 
-      this.buttonAdd.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.buttonAdd.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
       this.buttonAdd.Location = new Point(180, 185);
       this.buttonAdd.Name = "buttonAdd";
       this.buttonAdd.Size = new Size(88, 23);
@@ -393,7 +393,7 @@ namespace GUIRSSFeed
       // 
       // button3
       // 
-      this.button3.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.button3.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
       this.button3.DialogResult = DialogResult.Cancel;
       this.button3.Location = new Point(402, 279);
       this.button3.Name = "button3";
@@ -436,9 +436,9 @@ namespace GUIRSSFeed
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                   | AnchorStyles.Left)
-                                                  | AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                  | AnchorStyles.Left)
+                                                 | AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.listBox);
       this.mpGroupBox1.Controls.Add(this.buttonAdd);
       this.mpGroupBox1.Controls.Add(this.buttonEdit);
@@ -453,7 +453,7 @@ namespace GUIRSSFeed
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Left)));
+      this.mpGroupBox2.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Left)));
       this.mpGroupBox2.Controls.Add(this.labelRefresh);
       this.mpGroupBox2.Controls.Add(this.checkAutoRefresh);
       this.mpGroupBox2.Controls.Add(this.textRefreshInterval);

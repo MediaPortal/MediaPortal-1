@@ -49,25 +49,13 @@ namespace SetupTv.Sections
 
     public RadioChannelGroup Group
     {
-      get
-      {
-        return _channelGroup;
-      }
-      set
-      {
-        _channelGroup = value;
-      }
+      get { return _channelGroup; }
+      set { _channelGroup = value; }
     }
 
-    private void listView1_SelectedIndexChanged(object sender, EventArgs e)
-    {
+    private void listView1_SelectedIndexChanged(object sender, EventArgs e) {}
 
-    }
-
-    private void ChannelsInGroupControl_Load(object sender, EventArgs e)
-    {
-
-    }
+    private void ChannelsInGroupControl_Load(object sender, EventArgs e) {}
 
     public void OnActivated()
     {
@@ -83,7 +71,7 @@ namespace SetupTv.Sections
 
         if (Group != null)
         {
-          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(RadioGroupMap));
+          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (RadioGroupMap));
 
           sb.AddConstraint(Operator.Equals, "idGroup", Group.IdGroup);
           sb.AddOrderByField(true, "sortOrder");
@@ -148,7 +136,7 @@ namespace SetupTv.Sections
       }
     }
 
-    void ReOrder()
+    private void ReOrder()
     {
       for (int i = 0; i < listView1.Items.Count; ++i)
       {
@@ -190,7 +178,7 @@ namespace SetupTv.Sections
         layer.AddChannelToRadioGroup(channel, _channelGroup);
 
         //get the new group map and set the listitem tag
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(RadioGroupMap));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (RadioGroupMap));
 
         sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
         sb.AddConstraint(Operator.Equals, "idGroup", _channelGroup.IdGroup);
@@ -276,7 +264,8 @@ namespace SetupTv.Sections
     {
       if (listView1.SelectedItems.Count > 0)
       {
-        string holder = String.Format("Are you sure you want to delete these {0:d} channels?", listView1.SelectedItems.Count);
+        string holder = String.Format("Are you sure you want to delete these {0:d} channels?",
+                                      listView1.SelectedItems.Count);
 
         if (MessageBox.Show(holder, "", MessageBoxButtons.YesNo) == DialogResult.No)
         {
@@ -288,7 +277,8 @@ namespace SetupTv.Sections
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
       if (indexes.Count == 0)
         return;
-      NotifyForm dlg = new NotifyForm("Deleting selected radio channels...", "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Deleting selected radio channels...",
+                                      "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
       for (int i = indexes.Count - 1; i >= 0; i--)
@@ -404,7 +394,8 @@ namespace SetupTv.Sections
     {
       if (listView1.SelectedItems.Count > 0)
       {
-        string holder = String.Format("Are you sure you want to delete these {0:d} channels?", listView1.SelectedItems.Count);
+        string holder = String.Format("Are you sure you want to delete these {0:d} channels?",
+                                      listView1.SelectedItems.Count);
 
         if (MessageBox.Show(holder, "", MessageBoxButtons.YesNo) == DialogResult.No)
         {
@@ -416,7 +407,8 @@ namespace SetupTv.Sections
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
       if (indexes.Count == 0)
         return;
-      NotifyForm dlg = new NotifyForm("Removing radio channels from group...", "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Removing radio channels from group...",
+                                      "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
       for (int i = indexes.Count - 1; i >= 0; i--)
@@ -441,8 +433,9 @@ namespace SetupTv.Sections
       {
         if (!_userConfirmedAutoReorder)
         {
-          if (MessageBox.Show("The current channel order will be overwritten after the sorting operation. Continue?", "Re-order channels?", MessageBoxButtons.YesNo)
-            == DialogResult.No)
+          if (MessageBox.Show("The current channel order will be overwritten after the sorting operation. Continue?",
+                              "Re-order channels?", MessageBoxButtons.YesNo)
+              == DialogResult.No)
           {
             return;
           }

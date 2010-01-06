@@ -20,6 +20,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
@@ -32,7 +33,6 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using Gentle.Framework;
-
 using TvDatabase;
 using TvControl;
 using SetupTv.Dialogs;
@@ -48,10 +48,12 @@ namespace SetupTv.Sections
     public class CardInfo
     {
       public Card card;
+
       public CardInfo(Card newcard)
       {
         card = newcard;
       }
+
       public override string ToString()
       {
         return card.Name;
@@ -78,7 +80,8 @@ namespace SetupTv.Sections
       public DateTime EndDate;
       public readonly string Genre;
 
-      public Example(string channel, string title, string episode, string seriesNum, string episodeNum, string episodePart, string genre, DateTime startDate, DateTime endDate)
+      public Example(string channel, string title, string episode, string seriesNum, string episodeNum,
+                     string episodePart, string genre, DateTime startDate, DateTime endDate)
       {
         Channel = channel;
         Title = title;
@@ -97,14 +100,17 @@ namespace SetupTv.Sections
       string strName = string.Empty;
       string strDirectory = string.Empty;
       Example[] example = new Example[2];
-      example[0] = new Example("ProSieben", "Philadelphia", "unknown", "unknown", "unknown", "unknown", "Drama", new DateTime(2005, 12, 23, 20, 15, 0), new DateTime(2005, 12, 23, 22, 45, 0));
-      example[1] = new Example("ABC", "Friends", "Joey's Birthday", "4", "32", "part 1 of 1", "Comedy", new DateTime(2005, 12, 23, 20, 15, 0), new DateTime(2005, 12, 23, 20, 45, 0));
+      example[0] = new Example("ProSieben", "Philadelphia", "unknown", "unknown", "unknown", "unknown", "Drama",
+                               new DateTime(2005, 12, 23, 20, 15, 0), new DateTime(2005, 12, 23, 22, 45, 0));
+      example[1] = new Example("ABC", "Friends", "Joey's Birthday", "4", "32", "part 1 of 1", "Comedy",
+                               new DateTime(2005, 12, 23, 20, 15, 0), new DateTime(2005, 12, 23, 20, 45, 0));
       string strDefaultName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
-                                  example[recType].Channel, example[recType].Title,
-                                  example[recType].StartDate.Year, example[recType].StartDate.Month, example[recType].StartDate.Day,
-                                  example[recType].StartDate.Hour,
-                                  example[recType].StartDate.Minute,
-                                  DateTime.Now.Minute, DateTime.Now.Second);
+                                            example[recType].Channel, example[recType].Title,
+                                            example[recType].StartDate.Year, example[recType].StartDate.Month,
+                                            example[recType].StartDate.Day,
+                                            example[recType].StartDate.Hour,
+                                            example[recType].StartDate.Minute,
+                                            DateTime.Now.Minute, DateTime.Now.Second);
       if (String.IsNullOrEmpty(strInput))
       {
         return string.Empty;
@@ -164,16 +170,14 @@ namespace SetupTv.Sections
 
     #region Vars
 
-    bool _needRestart;
+    private bool _needRestart;
 
     #endregion
 
     #region Constructors
 
     public TvRecording()
-      : this("Recording")
-    {
-    }
+      : this("Recording") {}
 
     public TvRecording(string name)
       : base(name)
@@ -192,8 +196,10 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       checkBoxAutoDelete.Checked = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
       checkBoxPreventDupes.Checked = (layer.GetSetting("PreventDuplicates", "no").Value == "yes");
-      comboBoxFirstWorkingDay.SelectedIndex = Convert.ToInt32(layer.GetSetting("FirstWorkingDay", "0").Value); //default is Monday=0       
-      comboBoxEpisodeKey.SelectedIndex = Convert.ToInt32(layer.GetSetting("EpisodeKey", "0").Value); // default EpisodeName
+      comboBoxFirstWorkingDay.SelectedIndex = Convert.ToInt32(layer.GetSetting("FirstWorkingDay", "0").Value);
+        //default is Monday=0       
+      comboBoxEpisodeKey.SelectedIndex = Convert.ToInt32(layer.GetSetting("EpisodeKey", "0").Value);
+        // default EpisodeName
       //checkBoxCreateTagInfoXML.Checked = true; // (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
       checkboxSchedulerPriority.Checked = (layer.GetSetting("scheduleroverlivetv", "yes").Value == "yes");
 
@@ -205,7 +211,7 @@ namespace SetupTv.Sections
       _formatString[0][0] = @"%title% - %channel% - %date%";
       _formatString[0][1] = @"%title% - %channel% - %date% - %start%";
       _formatString[0][2] = @"%title%\%title% - %channel% - %date% - %start%";
-      _formatString[0][3] = @"[User custom value]";   // Must be the last one in the array list
+      _formatString[0][3] = @"[User custom value]"; // Must be the last one in the array list
 
       // Series formats
       _formatString[1] = new string[5];
@@ -213,7 +219,7 @@ namespace SetupTv.Sections
       _formatString[1][1] = @"%channel%\%title% (%starthh%%startmm% - %endhh%%endmm% %date%)\%title%";
       _formatString[1][2] = @"%title%\%title% - S%series%E%episode% - %name%";
       _formatString[1][3] = @"%title% - %channel%\%title% - %date% - %start%";
-      _formatString[1][4] = @"[User custom value]";   // Must be the last one in the array list
+      _formatString[1][4] = @"[User custom value]"; // Must be the last one in the array list
 
       Int32.TryParse(layer.GetSetting("moviesformatindex", "0").Value, out _formatIndex[0]);
       Int32.TryParse(layer.GetSetting("seriesformatindex", "0").Value, out _formatIndex[1]);
@@ -260,7 +266,7 @@ namespace SetupTv.Sections
       setting.Value = checkBoxAutoDelete.Checked ? "yes" : "no";
       setting.Persist();
 
-      setting = layer.GetSetting("FirstWorkingDay", "0");  //default is Monday=0
+      setting = layer.GetSetting("FirstWorkingDay", "0"); //default is Monday=0
       setting.Value = comboBoxFirstWorkingDay.SelectedIndex.ToString();
       setting.Persist();
 
@@ -325,8 +331,8 @@ namespace SetupTv.Sections
     private void textBoxCustomFormat_KeyPress(object sender, KeyPressEventArgs e)
     {
       if ((e.KeyChar == '/') || (e.KeyChar == ':') || (e.KeyChar == '*') ||
-        (e.KeyChar == '?') || (e.KeyChar == '\"') || (e.KeyChar == '<') ||
-        (e.KeyChar == '>') || (e.KeyChar == '|'))
+          (e.KeyChar == '?') || (e.KeyChar == '\"') || (e.KeyChar == '<') ||
+          (e.KeyChar == '>') || (e.KeyChar == '|'))
       {
         e.Handled = true;
       }
@@ -338,15 +344,18 @@ namespace SetupTv.Sections
       textBoxFolder.Text = info.card.RecordingFolder;
       if (String.IsNullOrEmpty(textBoxFolder.Text))
       {
-        string recPath = Utils.ReturnRegistryValue(@"SOFTWARE\Microsoft\Windows\CurrentVersion\MediaCenter\Service\Recording", "RecordPath");
+        string recPath =
+          Utils.ReturnRegistryValue(@"SOFTWARE\Microsoft\Windows\CurrentVersion\MediaCenter\Service\Recording",
+                                    "RecordPath");
         if (String.IsNullOrEmpty(recPath))
         {
           int os = OSInfo.OSInfo.OSMajorVersion + OSInfo.OSInfo.OSMinorVersion;
           recPath = os >= 60
-            //Windows Vista and up
+                    //Windows Vista and up
                       ? Environment.GetEnvironmentVariable("PUBLIC") + "\\Recorded TV"
-            //Windows XP
-                      : Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\Shared Documents\\Recorded TV";
+                    //Windows XP
+                      : Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
+                        "\\Shared Documents\\Recorded TV";
         }
         if (!Directory.Exists(recPath))
         {
@@ -609,9 +618,7 @@ namespace SetupTv.Sections
         {
           result = string.Compare(tx.Text, ty.Text, StringComparison.CurrentCulture);
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
 
         return result;
       }
@@ -628,13 +635,11 @@ namespace SetupTv.Sections
     #region Fields
 
     private string fCurrentImportPath;
+
     public string CurrentImportPath
     {
       get { return fCurrentImportPath; }
-      set
-      {
-        fCurrentImportPath = value;
-      }
+      set { fCurrentImportPath = value; }
     }
 
     private readonly List<TreeNode> tvDbRecs = new List<TreeNode>();
@@ -760,9 +765,9 @@ namespace SetupTv.Sections
     {
       try
       {
-        Invoke(new MethodTreeViewTags(AddTagFiles), new object[] { FoundTags });
+        Invoke(new MethodTreeViewTags(AddTagFiles), new object[] {FoundTags});
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     /// <summary>
@@ -789,7 +794,8 @@ namespace SetupTv.Sections
                 Recording currentDbRec = dbRec.Tag as Recording;
                 if (currentDbRec != null)
                 {
-                  if (Path.GetFileNameWithoutExtension(currentDbRec.FileName) == Path.GetFileNameWithoutExtension(TagRec.FileName))
+                  if (Path.GetFileNameWithoutExtension(currentDbRec.FileName) ==
+                      Path.GetFileNameWithoutExtension(TagRec.FileName))
                   {
                     RecFileFound = true;
                     break;
@@ -854,9 +860,7 @@ namespace SetupTv.Sections
             lookupChannel.IdChannel.ToString();
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
 
         //TreeNode[] subitems = new TreeNode[] { 
         //                                       new TreeNode("Channel name: " + channelName), 
@@ -876,7 +880,8 @@ namespace SetupTv.Sections
 
         string NodeTitle;
         if (startTime != "unknown" && endTime != "unknown")
-          NodeTitle = string.Format("Title: {0} / Channel: {1} / Time: {2}-{3}", aRec.Title, channelName, startTime, endTime);
+          NodeTitle = string.Format("Title: {0} / Channel: {1} / Time: {2}-{3}", aRec.Title, channelName, startTime,
+                                    endTime);
         else
           NodeTitle = string.Format("Title: {0} / Channel: {1} / Time: {2}", aRec.Title, channelName, startTime);
 
@@ -902,7 +907,7 @@ namespace SetupTv.Sections
           e.Node.Checked = e.Node.IsSelected;
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     #endregion
@@ -924,23 +929,23 @@ namespace SetupTv.Sections
           aTag.endTime = GetRecordingEndTime(physicalFile);
         }
         tagRec = new Recording(GetChannelIdByDisplayName(aTag.channelName),
-                                         -1,
-                                         false,
-                                         aTag.startTime,
-                                         aTag.endTime,
-                                         aTag.title,
-                                         aTag.description,
-                                         aTag.genre,
-                                         physicalFile,
-                                         0,
-                                         SqlDateTime.MaxValue.Value,
-                                         0,
-                                         GetServerId(),
-                                         aTag.episodeName,
-                                         aTag.seriesNum,
-                                         aTag.episodeNum,
-                                         aTag.episodePart
-                                         );
+                               -1,
+                               false,
+                               aTag.startTime,
+                               aTag.endTime,
+                               aTag.title,
+                               aTag.description,
+                               aTag.genre,
+                               physicalFile,
+                               0,
+                               SqlDateTime.MaxValue.Value,
+                               0,
+                               GetServerId(),
+                               aTag.episodeName,
+                               aTag.seriesNum,
+                               aTag.episodeNum,
+                               aTag.episodePart
+          );
       }
       catch (Exception ex)
       {
@@ -975,15 +980,19 @@ namespace SetupTv.Sections
      * Mantis #0001991: disable mpg recording  (part I: force TS recording format)
      * edit: morpheus_xx: function still needed to get valid extension of EXISTING recordings
      */
+
     private static string GetRecordingFilename(string aTagFilename)
     {
       string recordingFile = Path.ChangeExtension(aTagFilename, ".ts");
       try
       {
-        string[] validExtensions = new string[] { ".ts", ".mpg" };
+        string[] validExtensions = new string[] {".ts", ".mpg"};
         foreach (string ext in validExtensions)
         {
-          string[] lookupFiles = Directory.GetFiles(Path.GetDirectoryName(aTagFilename), string.Format("{0}{1}", Path.GetFileNameWithoutExtension(aTagFilename), ext), SearchOption.TopDirectoryOnly);
+          string[] lookupFiles = Directory.GetFiles(Path.GetDirectoryName(aTagFilename),
+                                                    string.Format("{0}{1}",
+                                                                  Path.GetFileNameWithoutExtension(aTagFilename), ext),
+                                                    SearchOption.TopDirectoryOnly);
           if (lookupFiles.Length == 1)
           {
             recordingFile = lookupFiles[0];
@@ -991,9 +1000,7 @@ namespace SetupTv.Sections
           }
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return recordingFile;
     }
 
@@ -1003,7 +1010,8 @@ namespace SetupTv.Sections
       try
       {
         string localHost = System.Net.Dns.GetHostName();
-        string localDomainName = System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName.ToLowerInvariant();
+        string localDomainName =
+          System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName.ToLowerInvariant();
         IList<Server> dbsServers = Server.ListAll();
         foreach (Server computer in dbsServers)
         {
@@ -1026,7 +1034,7 @@ namespace SetupTv.Sections
         return channelId;
       try
       {
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
         sb.AddConstraint(Operator.Equals, "displayName", aChannelName);
         sb.SetRowLimit(1);
         SqlStatement stmt = sb.GetStatement(true);
@@ -1037,14 +1045,14 @@ namespace SetupTv.Sections
         }
         else
         {
-          sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+          sb = new SqlBuilder(StatementType.Select, typeof (Channel));
           sb.AddConstraint(Operator.Like, "displayName", "%" + aChannelName + "%");
           sb.SetRowLimit(1);
           stmt = sb.GetStatement(true);
           channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
           if (channels.Count > 0)
             channelId = (channels[0]).IdChannel;
-        }        
+        }
       }
       catch (Exception ex)
       {
@@ -1087,7 +1095,8 @@ namespace SetupTv.Sections
                 }
                 catch (Exception ex)
                 {
-                  MessageBox.Show(string.Format("Importing failed: \n{0}", ex.Message), "Could not import", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                  MessageBox.Show(string.Format("Importing failed: \n{0}", ex.Message), "Could not import",
+                                  MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
               }
             }
@@ -1096,7 +1105,8 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        MessageBox.Show(string.Format("Changing the recording's channel failed: \n{0}", ex.Message), "Change channel failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show(string.Format("Changing the recording's channel failed: \n{0}", ex.Message),
+                        "Change channel failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       // Refresh the view
       GetRecordingsFromDb();
@@ -1124,7 +1134,8 @@ namespace SetupTv.Sections
             }
             catch (Exception ex)
             {
-              MessageBox.Show(string.Format("Importing failed: \n{0}", ex.Message), "Could not import", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              MessageBox.Show(string.Format("Importing failed: \n{0}", ex.Message), "Could not import",
+                              MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             //}
           }
@@ -1148,7 +1159,11 @@ namespace SetupTv.Sections
         {
           if (!File.Exists(currentDbRec.FileName))
           {
-            if (MessageBox.Show(this, string.Format("Delete entry {0} now? \n{1}", currentDbRec.Title, currentDbRec.FileName), "Recording not found on disk!", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            if (
+              MessageBox.Show(this,
+                              string.Format("Delete entry {0} now? \n{1}", currentDbRec.Title, currentDbRec.FileName),
+                              "Recording not found on disk!", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                              MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
               try
               {
@@ -1156,7 +1171,8 @@ namespace SetupTv.Sections
               }
               catch (Exception ex)
               {
-                MessageBox.Show(string.Format("Cleanup failed: {0}", ex.Message), "Could not delete entry", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(string.Format("Cleanup failed: {0}", ex.Message), "Could not delete entry",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
               }
             }
           }

@@ -23,13 +23,12 @@ using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
 {
-
   ///<summary>
   /// Channel scanning callback
   ///</summary>
   [ComVisible(true), ComImport,
-  Guid("CE141670-1840-4188-8A40-618BA3A5A1C3"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("CE141670-1840-4188-8A40-618BA3A5A1C3"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IChannelScanCallback
   {
     /// <summary>
@@ -39,12 +38,13 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int OnScannerDone();
   }
+
   /// <summary>
   /// interface to the channel scan com object
   /// </summary>
   [ComVisible(true), ComImport,
-  Guid("1663DC42-D169-41da-BCE2-EEEC482CB9FB"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("1663DC42-D169-41da-BCE2-EEEC482CB9FB"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsChannelScan
   {
     /// <summary>
@@ -100,21 +100,22 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int GetChannel(short index,
-                       out int networkId,
-                       out int transportId,
-                       out int serviceId,
-                       out short majorChannel,
-                       out short minorChannel,
-                       out short frequency,
-                       out short lcn,
-                       out short freeCAMode,
-                       out short serviceType,
-                       out short modulation,
-                       out IntPtr providerName,
-                       out IntPtr serviceName,
-                       out short pmtPid,
-                       out short hasVideo,
-                       out short hasAudio);
+                   out int networkId,
+                   out int transportId,
+                   out int serviceId,
+                   out short majorChannel,
+                   out short minorChannel,
+                   out short frequency,
+                   out short lcn,
+                   out short freeCAMode,
+                   out short serviceType,
+                   out short modulation,
+                   out IntPtr providerName,
+                   out IntPtr serviceName,
+                   out short pmtPid,
+                   out short hasVideo,
+                   out short hasAudio);
+
     /// <summary>
     /// Sets the channel scan callback
     /// </summary>
@@ -161,7 +162,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="rollOff">rolloff (S2 specific)</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetNITChannel(int channel, out int chType, out int frequency, out int polarisation, out int modulation, out int symbolrate, out int bandwidth, out int fecInner, out int rollOff, out IntPtr networkName);
-
+    int GetNITChannel(int channel, out int chType, out int frequency, out int polarisation, out int modulation,
+                      out int symbolrate, out int bandwidth, out int fecInner, out int rollOff, out IntPtr networkName);
   }
 }

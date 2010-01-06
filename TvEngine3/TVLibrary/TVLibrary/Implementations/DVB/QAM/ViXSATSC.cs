@@ -26,16 +26,21 @@ using TvLibrary.Channels;
 
 namespace TvLibrary.Implementations.DVB
 {
-  class ViXSATSC
+  internal class ViXSATSC
   {
     #region constants
-    readonly Guid guidViXSTunerExtention = new Guid(0x02779308, 0x77d8, 0x4914, 0x9f, 0x15, 0x7f, 0xa6, 0xe1, 0x55, 0x84, 0xc7);
+
+    private readonly Guid guidViXSTunerExtention = new Guid(0x02779308, 0x77d8, 0x4914, 0x9f, 0x15, 0x7f, 0xa6, 0xe1,
+                                                            0x55, 0x84, 0xc7);
+
     #endregion
 
     #region variables
+
     private readonly bool _isViXSATSC;
-    readonly IntPtr _tempValue = IntPtr.Zero; //Marshal.AllocCoTaskMem(1024);
-    readonly IKsPropertySet _propertySet;
+    private readonly IntPtr _tempValue = IntPtr.Zero; //Marshal.AllocCoTaskMem(1024);
+    private readonly IKsPropertySet _propertySet;
+
     #endregion
 
     /// <summary>
@@ -51,10 +56,7 @@ namespace TvLibrary.Implementations.DVB
 
     public bool IsViXSATSC
     {
-      get
-      {
-        return _isViXSATSC;
-      }
+      get { return _isViXSATSC; }
     }
 
     /// <summary>
@@ -100,7 +102,8 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Debug("ViXS ATSC: Set ModulationType value: {0}", (Int32)channel.ModulationType);
         Marshal.WriteInt32(_tempValue, (Int32)channel.ModulationType);
-        int hr = _propertySet.Set(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempValue, 4, _tempValue, 4);
+        int hr = _propertySet.Set(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempValue, 4,
+                                  _tempValue, 4);
         if (hr != 0)
         {
           Log.Log.Info("ViXS ATSC: Set returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
@@ -119,7 +122,8 @@ namespace TvLibrary.Implementations.DVB
       {
         int length;
         Marshal.WriteInt32(_tempValue, 0);
-        int hr = _propertySet.Get(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempValue, 4, _tempValue, 4, out length);
+        int hr = _propertySet.Get(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempValue, 4,
+                                  _tempValue, 4, out length);
         if (hr != 0)
         {
           Log.Log.Info("ViXS ATSC: Get returned:{0:X}", hr);

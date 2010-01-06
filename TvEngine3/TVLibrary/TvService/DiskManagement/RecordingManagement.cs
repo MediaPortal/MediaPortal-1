@@ -31,7 +31,8 @@ namespace TvService
 {
   public class RecordingManagement
   {
-    readonly System.Timers.Timer _timer;
+    private readonly System.Timers.Timer _timer;
+
     public RecordingManagement()
     {
       _timer = new System.Timers.Timer();
@@ -40,7 +41,7 @@ namespace TvService
       _timer.Elapsed += _timer_Elapsed;
     }
 
-    static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    private static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       DeleteOldRecordings();
     }
@@ -53,7 +54,7 @@ namespace TvService
     /// </summary>
     /// <remarks>Note, this method will only work after a day-change has occured(and at startup)
     /// </remarks>
-    static void DeleteOldRecordings()
+    private static void DeleteOldRecordings()
     {
       IList<Recording> recordings = Recording.ListAll();
       foreach (Recording rec in recordings)
@@ -62,8 +63,8 @@ namespace TvService
           continue;
 
         Log.Write("Recorder: delete old recording:{0} date:{1}",
-                          rec.FileName,
-                          rec.StartTime.ToShortDateString());
+                  rec.FileName,
+                  rec.StartTime.ToShortDateString());
         recordings.Remove(rec);
         rec.Remove();
         break;

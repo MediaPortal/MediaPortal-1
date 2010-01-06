@@ -53,10 +53,10 @@ namespace SetupTv
   /// </summary>
   public class Startup
   {
-    static StartupMode startupMode = StartupMode.Normal;
-    static bool debugOptions = false;
+    private static StartupMode startupMode = StartupMode.Normal;
+    private static bool debugOptions = false;
 
-    readonly string sectionsConfiguration = String.Empty;
+    private readonly string sectionsConfiguration = String.Empty;
 
     /// <summary>
     /// 
@@ -105,7 +105,7 @@ namespace SetupTv
     public static void Main(string[] arguments)
     {
       Thread.CurrentThread.Name = "SetupTv";
-      
+
       Process[] p = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
       if (p.Length > 1)
       {
@@ -130,7 +130,8 @@ namespace SetupTv
       {
         ServicePack = " ( " + ServicePack + " )";
       }
-      Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSNameString() + ServicePack + " [" + OSInfo.OSInfo.OSVersion + "] ----");
+      Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSNameString() +
+               ServicePack + " [" + OSInfo.OSInfo.OSVersion + "] ----");
 
       //Check for unsupported operating systems
       if (OSInfo.OSInfo.GetOSSupported() != 1)
@@ -201,7 +202,8 @@ namespace SetupTv
         dlg.tbDatabaseName.Text = dlg.schemaNameDefault;
         dlg.schemaName = dlg.schemaNameDefault;
       }
-      if ((startupMode != StartupMode.Normal && startupMode != StartupMode.DeployMode) || (!dlg.TestConnection(startupMode)))
+      if ((startupMode != StartupMode.Normal && startupMode != StartupMode.DeployMode) ||
+          (!dlg.TestConnection(startupMode)))
       {
         Log.Info("---- ask user for connection details ----");
         dlg.ShowDialog();
@@ -220,7 +222,11 @@ namespace SetupTv
       {
         // Allow users to cancel DB recreation to backup their old DB
         if (currentSchemaVersion > 0)
-          if (MessageBox.Show("Your existing database cannot be upgraded and will be replaced by an empty database. Continue now?", "DB recreation needed", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Cancel)
+          if (
+            MessageBox.Show(
+              "Your existing database cannot be upgraded and will be replaced by an empty database. Continue now?",
+              "DB recreation needed", MessageBoxButtons.OKCancel, MessageBoxIcon.Question,
+              MessageBoxDefaultButton.Button2) == DialogResult.Cancel)
             return;
 
         Log.Info("---- create database ----");
@@ -320,7 +326,10 @@ namespace SetupTv
         return null;
       if (args.Name.Contains(".XmlSerializers"))
         return null;
-      MessageBox.Show("Failed to locate assembly '" + args.Name + "'." + Environment.NewLine + "Note that the configuration program must be executed from/reside in the MediaPortal folder, the execution will now end.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      MessageBox.Show(
+        "Failed to locate assembly '" + args.Name + "'." + Environment.NewLine +
+        "Note that the configuration program must be executed from/reside in the MediaPortal folder, the execution will now end.",
+        "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
       Application.Exit();
       return null;
     }

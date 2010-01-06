@@ -27,13 +27,13 @@ namespace SetupTv.Sections
 {
   public partial class Plugins : SectionSettings
   {
-    readonly PluginLoader _loader;
-    bool _needRestart;
-    bool _ignoreEvents;
+    private readonly PluginLoader _loader;
+    private bool _needRestart;
+    private bool _ignoreEvents;
+
     public delegate void ChangedEventHandler(object sender, EventArgs e);
 
     public event ChangedEventHandler ChangedActivePlugins;
-
 
 
     public Plugins(string name, PluginLoader loader)
@@ -52,7 +52,6 @@ namespace SetupTv.Sections
       listView1.Items.Clear();
       foreach (ITvServerPlugin plugin in _loader.Plugins)
       {
-
         ListViewItem item = listView1.Items.Add("");
         item.SubItems.Add(plugin.Name);
         item.SubItems.Add(plugin.Author);
@@ -60,7 +59,6 @@ namespace SetupTv.Sections
         Setting setting = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
         item.Checked = setting.Value == "true";
         item.Tag = setting;
-
       }
       listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
       _ignoreEvents = false;

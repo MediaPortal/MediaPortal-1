@@ -36,9 +36,7 @@ namespace MediaPortal.Configuration.Sections
     //private MediaPortal.UserInterface.Controls.MPLabel label4;
     //private System.ComponentModel.IContainer components = null;
 
-    public EncoderFiltersSection() : this("Encoder Filters")
-    {
-    }
+    public EncoderFiltersSection() : this("Encoder Filters") {}
 
     private void InitializeComponent()
     {
@@ -65,8 +63,6 @@ namespace MediaPortal.Configuration.Sections
       this.PerformLayout();
     }
 
-    public EncoderFiltersSection(string name) : base(name)
-    {
-    }
+    public EncoderFiltersSection(string name) : base(name) {}
   }
 }

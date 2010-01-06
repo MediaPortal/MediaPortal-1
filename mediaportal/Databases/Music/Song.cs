@@ -126,9 +126,7 @@ namespace MediaPortal.Music.Database
     private string _authToken = String.Empty;
     private SongAction _songAction = SongAction.N;
 
-    public Song()
-    {
-    }
+    public Song() {}
 
     public Song Clone()
     {

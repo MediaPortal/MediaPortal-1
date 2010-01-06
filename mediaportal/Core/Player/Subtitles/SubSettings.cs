@@ -7,21 +7,17 @@ using MediaPortal.Configuration;
 
 namespace MediaPortal.Player.Subtitles
 {
-  
   [StructLayout(LayoutKind.Sequential)]
   public struct SubtitleStyle
   {
-    [MarshalAs(UnmanagedType.LPWStr)]
-    public string fontName;
+    [MarshalAs(UnmanagedType.LPWStr)] public string fontName;
     public int fontColor;
-    [MarshalAs(UnmanagedType.Bool)]
-    public bool fontIsBold;
+    [MarshalAs(UnmanagedType.Bool)] public bool fontIsBold;
     public int fontSize;
     public int fontCharset;
     public int shadow;
     public int borderWidth;
-    [MarshalAs(UnmanagedType.Bool)]
-    public bool isBorderOutline;
+    [MarshalAs(UnmanagedType.Bool)] public bool isBorderOutline;
 
     public void Load(Settings xmlreader)
     {
@@ -34,8 +30,8 @@ namespace MediaPortal.Player.Subtitles
       int argb = Int32.Parse(strColor, System.Globalization.NumberStyles.HexNumber);
       //convert ARGB to BGR (COLORREF)
       fontColor = (int)((argb & 0x000000FF) << 16) |
-                    (int)(argb & 0x0000FF00) |
-                    (int)((argb & 0x00FF0000) >> 16);
+                  (int)(argb & 0x0000FF00) |
+                  (int)((argb & 0x00FF0000) >> 16);
       shadow = xmlreader.GetValueAsInt("subtitles", "shadow", 3);
       borderWidth = xmlreader.GetValueAsInt("subtitles", "borderWidth", 2);
       isBorderOutline = xmlreader.GetValueAsBool("subtitles", "borderOutline", true);
@@ -47,8 +43,8 @@ namespace MediaPortal.Player.Subtitles
     NEVER,
     ASK,
     ALWAYS
-  };
-  
+  } ;
+
   public class SubSettings
   {
     protected SubtitleStyle defStyle;
@@ -84,8 +80,6 @@ namespace MediaPortal.Player.Subtitles
       }
     }
 
-    protected virtual void LoadAdvancedSettings(Settings xmlreader)
-    {
-    }
+    protected virtual void LoadAdvancedSettings(Settings xmlreader) {}
   }
 }

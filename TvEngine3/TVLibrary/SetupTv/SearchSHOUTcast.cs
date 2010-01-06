@@ -40,6 +40,7 @@ namespace SetupTv
     public string url;
     public int bitrate;
   }
+
   /// <summary>
   /// Summary description for SearchSHOUTcast.
   /// </summary>
@@ -51,14 +52,16 @@ namespace SetupTv
     private ColumnHeader columnHeader2;
     private MediaPortal.UserInterface.Controls.MPListView ResultsBox;
     private MediaPortal.UserInterface.Controls.MPButton AddButton;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
+
     private MediaPortal.UserInterface.Controls.MPLabel WaitLabel;
     private ColumnHeader columnHeader3;
 
-    private SHOUTcastStation Selected_Radiostation;     //Our return station info
+    private SHOUTcastStation Selected_Radiostation; //Our return station info
 
     public SearchSHOUTcast()
     {
@@ -87,6 +90,7 @@ namespace SetupTv
     }
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -124,13 +128,17 @@ namespace SetupTv
       // 
       // ResultsBox
       // 
-      this.ResultsBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.ResultsBox.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                                                                                 this.columnHeader1,
-                                                                                 this.columnHeader2,
-                                                                                 this.columnHeader3});
+      this.ResultsBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.ResultsBox.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
+                                         {
+                                           this.columnHeader1,
+                                           this.columnHeader2,
+                                           this.columnHeader3
+                                         });
       this.ResultsBox.ForeColor = System.Drawing.Color.Black;
       this.ResultsBox.FullRowSelect = true;
       this.ResultsBox.HideSelection = false;
@@ -174,7 +182,8 @@ namespace SetupTv
       this.WaitLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.WaitLabel.Enabled = false;
       this.WaitLabel.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.WaitLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.WaitLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold,
+                                                    System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.WaitLabel.ForeColor = System.Drawing.Color.Black;
       this.WaitLabel.Location = new System.Drawing.Point(160, 104);
       this.WaitLabel.Name = "WaitLabel";
@@ -202,8 +211,8 @@ namespace SetupTv
       this.Text = "Search SHOUTcast for your favorite radio stations";
       this.Load += new System.EventHandler(this.SearchSHOUTcast_Load);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     public SHOUTcastStation Station
@@ -221,15 +230,15 @@ namespace SetupTv
     {
       //Create needed variables
       const int count = 100;
-      int total;										   // Used to keep track of file numbering
+      int total; // Used to keep track of file numbering
       const int counter = 1;
       int[] found = new int[count];
 
-      string[] SCstaindex = new string[count];                      //Index info
-      string[] SCstanum = new string[count];					       // Second part holds file number on Shoutcast
-      string[] SCstaname = new string[count];                       // Extracted station name
-      string[] SCstabr = new string[count];						   //Bitrate info
-      WebClient myWebClient = new WebClient();         			   // Create a new WebClient instance.	
+      string[] SCstaindex = new string[count]; //Index info
+      string[] SCstanum = new string[count]; // Second part holds file number on Shoutcast
+      string[] SCstaname = new string[count]; // Extracted station name
+      string[] SCstabr = new string[count]; //Bitrate info
+      WebClient myWebClient = new WebClient(); // Create a new WebClient instance.	
       myWebClient.Proxy.Credentials = CredentialCache.DefaultCredentials;
       // Create Regex objects and define the search criteria.
       Regex nterm = new Regex("Unfortunately, there weren't any SHOUTcast streams found containing the term");
@@ -264,14 +273,12 @@ namespace SetupTv
 
       try
       {
-
         //Build index numbers for stations
         int ind = 0;
         for (int i = counter; i < counter + count; i++)
         {
           if (i < 10)
           {
-
             SCstaindex[ind] = "0" + i;
           }
           else SCstaindex[ind] = i.ToString();
@@ -316,7 +323,6 @@ namespace SetupTv
           // Record the character position where the match was found.
           found[i] = mc[i].Index;
         }
-
       }
       catch (IndexOutOfRangeException)
       {
@@ -367,10 +373,12 @@ namespace SetupTv
         radiostation.name = station.name;
         radiostation.url = station.url;
         radiostation.bitrate = station.bitrate;
-        ListViewItem listItem = new ListViewItem(new string[] {   radiostation.bitrate.ToString(),
-																		  radiostation.name,
-																		  radiostation.url
-																	  });
+        ListViewItem listItem = new ListViewItem(new string[]
+                                                   {
+                                                     radiostation.bitrate.ToString(),
+                                                     radiostation.name,
+                                                     radiostation.url
+                                                   });
         listItem.Tag = radiostation;
         if (ResultsBox.Items != null) ResultsBox.Items.Add(listItem);
       }
@@ -384,7 +392,7 @@ namespace SetupTv
         WaitLabel.Focus();
         WaitLabel.Visible = true;
         WaitLabel.Enabled = true;
-        WebClient myWebClient = new WebClient();         			   // Create a new WebClient instance.	
+        WebClient myWebClient = new WebClient(); // Create a new WebClient instance.	
         myWebClient.Proxy.Credentials = CredentialCache.DefaultCredentials;
         string file_loc = "http://www.shoutcast.com/sbin/shoutcast-playlist.pls?rn=";
         //Get station file number to get the file
@@ -427,7 +435,6 @@ namespace SetupTv
         Close();
         return;
       }
-
     }
 
     private void SearchSHOUTcast_Load(object sender, EventArgs e)
@@ -460,7 +467,8 @@ namespace SetupTv
       if (!reged)
       {
         //Inform the user that they need to register the source to play streams
-        MessageBox.Show(this, "The SHOUTcast source needs to be registered in your system \nto play shoutcast streams with Media Player.\nCheck this link for additional info:\nhttp://www.maisenbachers.de/dokuw/howto:myradio:createshortcuts");
+        MessageBox.Show(this,
+                        "The SHOUTcast source needs to be registered in your system \nto play shoutcast streams with Media Player.\nCheck this link for additional info:\nhttp://www.maisenbachers.de/dokuw/howto:myradio:createshortcuts");
         Close();
         return;
       }

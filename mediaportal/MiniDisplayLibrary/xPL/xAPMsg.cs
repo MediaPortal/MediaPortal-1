@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -9,9 +9,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     private const int XAP_BASE_PORT = 0xe37;
     private string xAP_Raw;
 
-    public xAPMsg()
-    {
-    }
+    public xAPMsg() {}
 
     public xAPMsg(string xAPMsg)
     {

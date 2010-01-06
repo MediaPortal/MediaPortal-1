@@ -56,6 +56,7 @@ namespace TvLibrary.Teletext
         m_decode[dataP] = data;
       }
     }
+
     ///<summary>
     /// Encodes the given data
     ///</summary>
@@ -115,6 +116,7 @@ namespace TvLibrary.Teletext
         data &= 0x7f;
       }
     }
+
     /// <summary>
     /// Encodes the given data
     /// </summary>
@@ -126,6 +128,7 @@ namespace TvLibrary.Teletext
         Encode(ref data[index]);
       }
     }
+
     ///<summary>
     /// Decodes the given data
     ///</summary>

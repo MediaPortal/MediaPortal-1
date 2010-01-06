@@ -45,7 +45,6 @@ namespace SetupTv.Sections
 {
   public partial class WebEPGSetup : SectionSettings
   {
-
     private class CBChannelGroup
     {
       public string groupName;
@@ -62,7 +61,7 @@ namespace SetupTv.Sections
         return groupName;
       }
     }
-    
+
     private delegate void ShowStatusHandler(WebEPG.Stats status);
 
     private string _webepgFilesDir;
@@ -78,9 +77,7 @@ namespace SetupTv.Sections
     private bool _initialized = false;
 
     public WebEPGSetup()
-      : this("WebEPG")
-    {
-    }
+      : this("WebEPG") {}
 
     public WebEPGSetup(string name)
       : base(name)
@@ -123,7 +120,7 @@ namespace SetupTv.Sections
 
       base.OnSectionDeActivated();
     }
-    
+
     public override void LoadSettings()
     {
       base.LoadSettings();
@@ -184,7 +181,6 @@ namespace SetupTv.Sections
         }
       }
       grabTimeTextBox.Text = String.Format("{0:00}:{1:00}", config.Hour, config.Minutes);
-
     }
 
     public override void SaveSettings()
@@ -214,7 +210,7 @@ namespace SetupTv.Sections
         File.Move(confFile, confFile.Replace(".xml", ".bak"));
       }
 
-      XmlSerializer s = new XmlSerializer(typeof(WebepgConfigFile));
+      XmlSerializer s = new XmlSerializer(typeof (WebepgConfigFile));
       TextWriter w = new StreamWriter(confFile);
       s.Serialize(w, _configFile);
       w.Close();
@@ -270,7 +266,6 @@ namespace SetupTv.Sections
         setting.Value = newcfg.SerializeAsString();
         setting.Persist();
       }
-
     }
 
     private void CheckDay(EPGWakeupConfig cfg, EPGGrabDays day, bool enabled)
@@ -311,7 +306,6 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("webepgResultStatus", "");
       setting.Value = status.Status;
       setting.Persist();
-
     }
 
     private void ShowStatus()
@@ -340,9 +334,7 @@ namespace SetupTv.Sections
             cbCountry.Items.Add(region.EnglishName);
             _countryList.Add(region.EnglishName, country);
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
 
@@ -393,7 +385,7 @@ namespace SetupTv.Sections
       IDictionaryEnumerator Enumerator = hChannelConfigInfo.GetEnumerator();
       while (Enumerator.MoveNext())
       {
-        ChannelConfigInfo info = (ChannelConfigInfo) Enumerator.Value;
+        ChannelConfigInfo info = (ChannelConfigInfo)Enumerator.Value;
         if (info.ChannelID != null && info.FullName != null)
         {
           if (info.GrabberList != null)
@@ -401,8 +393,8 @@ namespace SetupTv.Sections
             IDictionaryEnumerator grabEnum = info.GrabberList.GetEnumerator();
             while (grabEnum.MoveNext())
             {
-              GrabberConfigInfo gInfo = (GrabberConfigInfo) grabEnum.Value;
-              SortedList chList = (SortedList) CountryList[gInfo.Country];
+              GrabberConfigInfo gInfo = (GrabberConfigInfo)grabEnum.Value;
+              SortedList chList = (SortedList)CountryList[gInfo.Country];
               if (chList[info.ChannelID] == null)
               {
                 chList.Add(info.ChannelID, gInfo.GrabberID);
@@ -426,7 +418,7 @@ namespace SetupTv.Sections
         try
         {
           r = new StreamReader(_configFileDir + "\\WebEPG.xml");
-          _configFile = (WebepgConfigFile) s.Deserialize(r);
+          _configFile = (WebepgConfigFile)s.Deserialize(r);
           r.Close();
         }
         catch (InvalidOperationException ex)
@@ -436,7 +428,7 @@ namespace SetupTv.Sections
             r.Close();
           }
           Log.Error("WebEPG: Error loading config {0}: {1}", _configFileDir + "\\WebEPG.xml",
-                     ex.Message);
+                    ex.Message);
           LoadOldConfigFile();
         }
       }
@@ -574,7 +566,7 @@ namespace SetupTv.Sections
 
           XmlSerializer s = new XmlSerializer(typeof (GrabberConfigFile));
           TextReader r = new StreamReader(file.FullName);
-          grabberXml = (GrabberConfigFile) s.Deserialize(r);
+          grabberXml = (GrabberConfigFile)s.Deserialize(r);
         }
         catch (Exception)
         {
@@ -605,7 +597,7 @@ namespace SetupTv.Sections
         {
           if (channel.id != null)
           {
-            ChannelConfigInfo info = (ChannelConfigInfo) hChannelConfigInfo[channel.id];
+            ChannelConfigInfo info = (ChannelConfigInfo)hChannelConfigInfo[channel.id];
             if (info != null) // && info.GrabberList[gInfo.GrabberID] != null)
             {
               TreeNode tNode = new TreeNode(info.FullName);
@@ -789,7 +781,7 @@ namespace SetupTv.Sections
 
     private void ShowImportProgress(WebEPG.Stats status)
     {
-      this.Invoke(new ShowStatusHandler(ShowStatus), new object[]{status});
+      this.Invoke(new ShowStatusHandler(ShowStatus), new object[] {status});
     }
 
     private void StatusTimer_Tick(object sender, EventArgs e)

@@ -45,9 +45,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Private constructor of the GUIPropertyManager. Singleton. Do not allow any instance of this class.
     /// </summary>
-    private GUIPropertyManager()
-    {
-    }
+    private GUIPropertyManager() {}
 
     static GUIPropertyManager()
     {
@@ -261,8 +259,8 @@ namespace MediaPortal.GUI.Library
 
       _properties["#facadeview.viewmode"] = string.Empty;
 
-      _properties["#VUMeterL"] = string.Empty;  // The name of the VUMeterfile Left
-      _properties["#VUMeterR"] = string.Empty;  // The name of the VUMeterfile Right
+      _properties["#VUMeterL"] = string.Empty; // The name of the VUMeterfile Left
+      _properties["#VUMeterR"] = string.Empty; // The name of the VUMeterfile Right
     }
 
     /// <summary>
@@ -300,9 +298,7 @@ namespace MediaPortal.GUI.Library
         {
           GUIGraphicsContext.form.Text = "MediaPortal - " + tagvalue;
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
       lock (_properties)
       {
@@ -342,7 +338,7 @@ namespace MediaPortal.GUI.Library
       {
         if (_properties.ContainsKey(tag))
         {
-          return (string) _properties[tag];
+          return (string)_properties[tag];
         }
       }
       return string.Empty;
@@ -434,7 +430,7 @@ namespace MediaPortal.GUI.Library
           myEnumerator.Reset();
           while (myEnumerator.MoveNext() && line.IndexOf('#') >= 0)
           {
-            line = line.Replace((string) myEnumerator.Key, (string) myEnumerator.Value);
+            line = line.Replace((string)myEnumerator.Key, (string)myEnumerator.Value);
           }
         }
         catch (Exception ex)

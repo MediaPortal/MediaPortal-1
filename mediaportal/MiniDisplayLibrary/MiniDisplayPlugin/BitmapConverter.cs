@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
@@ -11,9 +11,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private readonly bool m_ReuseBuffer;
 
     public BitmapConverter()
-      : this(false)
-    {
-    }
+      : this(false) {}
 
     public BitmapConverter(bool reuseBuffer)
     {
@@ -29,7 +27,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                                                 bitmap.PixelFormat);
         try
         {
-          int length = bitmapdata.Stride*bitmap.Height;
+          int length = bitmapdata.Stride * bitmap.Height;
           if (((this.m_Buffer == null) || (this.m_Buffer.Length != length)) || !this.m_ReuseBuffer)
           {
             this.m_Buffer = new byte[length];
@@ -52,7 +50,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                                                 bitmap.PixelFormat);
         try
         {
-          int length = bitmapdata.Stride*bitmap.Height;
+          int length = bitmapdata.Stride * bitmap.Height;
           if (((this.m_Buffer == null) || (this.m_Buffer.Length != length)) || !this.m_ReuseBuffer)
           {
             this.m_Buffer = new byte[length];

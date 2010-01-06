@@ -1,4 +1,5 @@
 #region Copyright (C) 2007-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2007-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,13 +20,16 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 using TvEngine.PowerScheduler.Interfaces;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Handlers
@@ -36,27 +40,34 @@ namespace TvEngine.PowerScheduler.Handlers
   public class GenericWakeupHandler : IWakeupHandler
   {
     #region Variables
+
     private DateTime _nextWakeupTime = DateTime.MaxValue;
     private string _handlerName = "GenericWakeupHandler";
+
     #endregion
 
     #region Public methods
+
     public void Update(DateTime nextWakeuptime, string handlerName)
     {
       _nextWakeupTime = nextWakeuptime;
       _handlerName = handlerName;
     }
+
     #endregion
 
     #region IWakeupHandler implementation
+
     public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
     {
       return _nextWakeupTime;
     }
+
     public string HandlerName
     {
       get { return _handlerName; }
     }
+
     #endregion
   }
 }

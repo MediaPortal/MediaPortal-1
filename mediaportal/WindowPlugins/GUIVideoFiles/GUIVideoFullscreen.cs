@@ -82,12 +82,9 @@ namespace MediaPortal.GUI.Video
       PANEL2 = 150
     } ;
 
-    [SkinControl(500)]
-    protected GUIImage imgVolumeMuteIcon;
-    [SkinControl(501)]
-    protected GUIVolumeBar imgVolumeBar;
-    [SkinControl(502)]
-    protected GUIImage imgActionForbiddenIcon;
+    [SkinControl(500)] protected GUIImage imgVolumeMuteIcon;
+    [SkinControl(501)] protected GUIVolumeBar imgVolumeBar;
+    [SkinControl(502)] protected GUIImage imgActionForbiddenIcon;
 
     private bool _isOsdVisible = false;
     private bool _showStep = false;
@@ -254,8 +251,6 @@ namespace MediaPortal.GUI.Video
     }
 
 
-
-
     private void OnOsdAction(Action action)
     {
       if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI) ||
@@ -417,14 +412,14 @@ namespace MediaPortal.GUI.Video
 
       switch (action.wID)
       {
-        // previous : play previous song from playlist
+          // previous : play previous song from playlist
         case Action.ActionType.ACTION_PREV_ITEM:
           {
             //g_playlistPlayer.PlayPrevious();
           }
           break;
 
-        // next : play next song from playlist
+          // next : play next song from playlist
         case Action.ActionType.ACTION_NEXT_ITEM:
           {
             //g_playlistPlayer.PlayNext();
@@ -518,8 +513,6 @@ namespace MediaPortal.GUI.Video
                                             0, 0, null);
             msg.Label = status;
             OnMessage(msg);
-
-
           }
           break;
 
@@ -625,14 +618,15 @@ namespace MediaPortal.GUI.Video
                   double dTime = (int)g_Player.CurrentPosition - _immediateSeekValue;
                   if (dTime > g_Player.Duration) dTime = g_Player.Duration - 5;
                   if (dTime < 0) dTime = 0d;
-                  Log.Debug("BIG_STEP_BACK - Preparing to seek to {0}:{1}:{2}", (int)(dTime / 3600d), (int)((dTime % 3600d) / 60d), (int)(dTime % 60d));
+                  Log.Debug("BIG_STEP_BACK - Preparing to seek to {0}:{1}:{2}", (int)(dTime / 3600d),
+                            (int)((dTime % 3600d) / 60d), (int)(dTime % 60d));
                   g_Player.SeekAbsolute(dTime);
                 }
               }
             }
             return;
           }
-        //break;
+          //break;
 
         case Action.ActionType.ACTION_MOVE_UP:
         case Action.ActionType.ACTION_BIG_STEP_FORWARD:
@@ -663,7 +657,6 @@ namespace MediaPortal.GUI.Video
                   if (percent > 99)
                   {
                     percent = 99;
-
                   }
                   g_Player.SeekAsolutePercentage((int)percent);
                 }
@@ -672,14 +665,15 @@ namespace MediaPortal.GUI.Video
                   double dTime = (int)g_Player.CurrentPosition + _immediateSeekValue;
                   if (dTime > g_Player.Duration) dTime = g_Player.Duration - 5;
                   if (dTime < 0) dTime = 0d;
-                  Log.Debug("BIG_STEP_FORWARD - Preparing to seek to {0}:{1}:{2}", (int)(dTime / 3600d), (int)((dTime % 3600d) / 60d), (int)(dTime % 60d));
+                  Log.Debug("BIG_STEP_FORWARD - Preparing to seek to {0}:{1}:{2}", (int)(dTime / 3600d),
+                            (int)((dTime % 3600d) / 60d), (int)(dTime % 60d));
                   g_Player.SeekAbsolute(dTime);
                 }
               }
             }
             return;
           }
-        //break;
+          //break;
 
         case Action.ActionType.ACTION_SHOW_MPLAYER_OSD:
           //g_application.m_pPlayer.ToggleOSD();
@@ -758,7 +752,7 @@ namespace MediaPortal.GUI.Video
           }
           break;
 
-        // PAUSE action is handled globally in the Application class
+          // PAUSE action is handled globally in the Application class
         case Action.ActionType.ACTION_PAUSE:
           g_Player.Pause();
           ScreenStateChanged();
@@ -966,7 +960,6 @@ namespace MediaPortal.GUI.Video
             break;
           }
       }
-
 
 
       base.OnAction(action);
@@ -1212,7 +1205,7 @@ namespace MediaPortal.GUI.Video
       }
       switch (dlg.SelectedId)
       {
-        // Add audio stream selection to be able to switch audio streams in .ts recordings
+          // Add audio stream selection to be able to switch audio streams in .ts recordings
         case 492:
           ShowAudioStreamsMenu();
           break;
@@ -1267,13 +1260,13 @@ namespace MediaPortal.GUI.Video
       for (int i = 0; i < count; i++)
       {
         string audioType = g_Player.AudioType(i);
-        if (audioType == Strings.Unknown || String.Equals(audioType,""))
+        if (audioType == Strings.Unknown || String.Equals(audioType, ""))
         {
           dlg.Add(g_Player.AudioLanguage(i));
         }
         else
         {
-          dlg.Add(String.Format("{0}:{1}", g_Player.AudioLanguage(i),audioType));
+          dlg.Add(String.Format("{0}:{1}", g_Player.AudioLanguage(i), audioType));
         }
       }
 

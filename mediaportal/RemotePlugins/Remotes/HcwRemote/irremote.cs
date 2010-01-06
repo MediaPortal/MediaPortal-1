@@ -93,7 +93,7 @@ namespace MediaPortal.InputDevices
 
     public static bool IRClose(IntPtr WindowHandle, uint Msg)
     {
-      return IR_Close((int) WindowHandle, Msg);
+      return IR_Close((int)WindowHandle, Msg);
     }
 
     public static bool IRGetSystemKeyCode(out int RepeatCount, out int RemoteCode, out int KeyCode)
@@ -106,9 +106,7 @@ namespace MediaPortal.InputDevices
       {
         result = IR_GetSystemKeyCode(out RepeatCount, out RemoteCode, out KeyCode);
       }
-      catch (AccessViolationException)
-      {
-      }
+      catch (AccessViolationException) {}
       catch (Exception ex)
       {
         Log.Info("HCW: Exception while querying remote: {0}", ex.Message);
@@ -118,7 +116,7 @@ namespace MediaPortal.InputDevices
 
     public static bool IROpen(IntPtr WindowHandle, uint Msg, bool Verbose, ushort IRPort)
     {
-      return IR_Open((int) WindowHandle, Msg, Verbose, IRPort);
+      return IR_Open((int)WindowHandle, Msg, Verbose, IRPort);
     }
 
     public static bool IRSetDllDirectory(string PathName)

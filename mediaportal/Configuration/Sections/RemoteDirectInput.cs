@@ -68,9 +68,7 @@ namespace MediaPortal.Configuration.Sections
     private MPTextBox lastEdit;
 
     public RemoteDirectInput()
-      : this("Direct Input")
-    {
-    }
+      : this("Direct Input") {}
 
 
     public RemoteDirectInput(string name)
@@ -134,7 +132,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.gbI.SuspendLayout();
       this.gbSettings.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.numDelay)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
       this.groupBox1.SuspendLayout();
       this.gbButtonCombos.SuspendLayout();
       this.tabPageDirectInputDevices.SuspendLayout();
@@ -174,7 +172,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.txtMonitor.AutoSize = true;
       this.txtMonitor.Font = new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Regular,
-                                                     System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+                                                     System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.txtMonitor.Location = new System.Drawing.Point(16, 24);
       this.txtMonitor.Name = "txtMonitor";
       this.txtMonitor.Size = new System.Drawing.Size(180, 12);
@@ -438,7 +436,7 @@ namespace MediaPortal.Configuration.Sections
       this.gbI.PerformLayout();
       this.gbSettings.ResumeLayout(false);
       this.gbSettings.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.numDelay)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numDelay)).EndInit();
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.gbButtonCombos.ResumeLayout(false);
@@ -522,12 +520,12 @@ namespace MediaPortal.Configuration.Sections
 
     private void buttonDefault_Click(object sender, EventArgs e)
     {
-      numDelay.Value = (decimal) 150;
+      numDelay.Value = (decimal)150;
     }
 
     private void numDelay_ValueChanged(object sender, EventArgs e)
     {
-      diHandler.Delay = (int) numDelay.Value;
+      diHandler.Delay = (int)numDelay.Value;
     }
 
     private void btnLearn_Click(object sender, EventArgs e)

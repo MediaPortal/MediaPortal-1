@@ -31,9 +31,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public ComponentResourceKey()
-    {
-    }
+    public ComponentResourceKey() {}
 
     public ComponentResourceKey(Type targetType, object id)
     {

@@ -84,7 +84,7 @@ namespace ProcessPlugins.AutoCropper
       {
         if (allowedModes[i] == mode)
         {
-          mode = allowedModes[(i + 1)%allowedModes.Count];
+          mode = allowedModes[(i + 1) % allowedModes.Count];
           break;
         }
       }
@@ -285,10 +285,10 @@ namespace ProcessPlugins.AutoCropper
       GUIGraphicsContext.autoCropper = this;
 
       lastSettings = new CropSettings(0, 0, 0, 0);
-      int topMemLengthInFrames = (int) (topMemLength/(sampleInterval/1000.0f));
-      int bottomMemLengthInFrames = (int) (bottomMemLength/(sampleInterval/1000.0f));
-      int leftMemLengthInFrames = (int) (leftMemLength/(sampleInterval/1000.0f));
-      int rightMemLengthInFrames = (int) (rightMemLength/(sampleInterval/1000.0f));
+      int topMemLengthInFrames = (int)(topMemLength / (sampleInterval / 1000.0f));
+      int bottomMemLengthInFrames = (int)(bottomMemLength / (sampleInterval / 1000.0f));
+      int leftMemLengthInFrames = (int)(leftMemLength / (sampleInterval / 1000.0f));
+      int rightMemLengthInFrames = (int)(rightMemLength / (sampleInterval / 1000.0f));
       Log.Debug("AutoCropper: Top memory is " + topMemLengthInFrames + " sampleinterval " + sampleInterval +
                 " mem length " + topMemLength);
       Log.Debug("AutoCropper: Bottom memory is " + bottomMemLengthInFrames + " sampleinterval " + sampleInterval +
@@ -436,10 +436,10 @@ namespace ProcessPlugins.AutoCropper
         rightCropAvg.Add(rightCrop);
       }
 
-      int topMin = (int) topCropAvg.GetMin();
-      int bottomMin = (int) bottomCropAvg.GetMin();
-      int leftMin = (int) leftCropAvg.GetMin();
-      int rightMin = (int) rightCropAvg.GetMin();
+      int topMin = (int)topCropAvg.GetMin();
+      int bottomMin = (int)bottomCropAvg.GetMin();
+      int leftMin = (int)leftCropAvg.GetMin();
+      int rightMin = (int)rightCropAvg.GetMin();
 
       if (verboseLog)
       {
@@ -558,22 +558,22 @@ namespace ProcessPlugins.AutoCropper
 
       if (topCropAvg.Average - lastSettings.Top > 4 && Math.Abs(topCropAvg.Average - topCrop) < 2)
       {
-        newSettings.Top = (int) topCropAvg.Average;
+        newSettings.Top = (int)topCropAvg.Average;
         update = true;
       }
       if (bottomCropAvg.Average - lastSettings.Bottom > 4 && Math.Abs(bottomCropAvg.Average - bottomCrop) < 2)
       {
-        newSettings.Bottom = (int) bottomCropAvg.Average;
+        newSettings.Bottom = (int)bottomCropAvg.Average;
         update = true;
       }
       if (leftCropAvg.Average - lastSettings.Left > 4 && Math.Abs(leftCropAvg.Average - leftCrop) < 2)
       {
-        newSettings.Left = (int) leftCropAvg.Average;
+        newSettings.Left = (int)leftCropAvg.Average;
         update = true;
       }
       if (rightCropAvg.Average - lastSettings.Right > 4 && Math.Abs(rightCropAvg.Average - rightCrop) < 2)
       {
-        newSettings.Right = (int) rightCropAvg.Average;
+        newSettings.Right = (int)rightCropAvg.Average;
         update = true;
       }
 

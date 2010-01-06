@@ -36,7 +36,8 @@ namespace MediaPortal.TagReader
   public class CueSheet
   {
     #region Private Variables
-    string[] cueLines;
+
+    private string[] cueLines;
 
     private string m_Catalog = "";
     private string m_CDTextFile = "";
@@ -52,7 +53,6 @@ namespace MediaPortal.TagReader
 
     #region Properties
 
-
     /// <summary>
     /// Returns/Sets track in this cuefile.
     /// </summary>
@@ -60,14 +60,8 @@ namespace MediaPortal.TagReader
     /// <returns>Track at the tracknumber.</returns>
     public Track this[int tracknumber]
     {
-      get
-      {
-        return m_Tracks[tracknumber];
-      }
-      set
-      {
-        m_Tracks[tracknumber] = value;
-      }
+      get { return m_Tracks[tracknumber]; }
+      set { m_Tracks[tracknumber] = value; }
     }
 
 
@@ -150,8 +144,7 @@ namespace MediaPortal.TagReader
     /// <summary>
     /// Create a cue sheet from scratch.
     /// </summary>
-    public CueSheet()
-    { }
+    public CueSheet() {}
 
     /// <summary>
     /// Parse a cue sheet string.
@@ -162,7 +155,7 @@ namespace MediaPortal.TagReader
     {
       if (lineDelims == null)
       {
-        lineDelims = new char[] { '\n' };
+        lineDelims = new char[] {'\n'};
       }
 
       cueLines = cueString.Split(lineDelims);
@@ -171,7 +164,7 @@ namespace MediaPortal.TagReader
       {
         ParseCue(cueLines);
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         Log.Error("Exception processing CUE File {0}: {1} {2}", cueString, ex.Message, ex.StackTrace);
       }
@@ -199,7 +192,7 @@ namespace MediaPortal.TagReader
     private void ReadCueSheet(string filename, Encoding encoding)
     {
       // array of delimiters to split the sentence with
-      char[] delimiters = new char[] { '\n' };
+      char[] delimiters = new char[] {'\n'};
 
       // read in the full cue file
       TextReader tr = new StreamReader(filename, encoding);
@@ -262,7 +255,8 @@ namespace MediaPortal.TagReader
       {
         file[i] = file[i].Trim();
         string prefix = "trash";
-        if (file[i].Length > 1 ) {
+        if (file[i].Length > 1)
+        {
           prefix = file[i].Substring(0, file[i].IndexOf(' ')).ToUpper();
         }
 
@@ -319,7 +313,6 @@ namespace MediaPortal.TagReader
             break;
         }
       }
-
     }
 
     private void ParseComment(string line, int trackOn)
@@ -376,7 +369,6 @@ namespace MediaPortal.TagReader
           catch (Exception)
           {
             temp = line.ToUpper();
-
           }
 
           switch (temp)
@@ -463,8 +455,12 @@ namespace MediaPortal.TagReader
 
       //extract the minutes, seconds, and frames
       minutes = Convert.ToInt32(tempString.Substring(0, tempString.IndexOf(':')));
-      seconds = Convert.ToInt32(tempString.Substring(tempString.IndexOf(':') + 1, tempString.LastIndexOf(':') - tempString.IndexOf(':') - 1));
-      frames = Convert.ToInt32(tempString.Substring(tempString.LastIndexOf(':') + 1, tempString.Length - tempString.LastIndexOf(':') - 1));
+      seconds =
+        Convert.ToInt32(tempString.Substring(tempString.IndexOf(':') + 1,
+                                             tempString.LastIndexOf(':') - tempString.IndexOf(':') - 1));
+      frames =
+        Convert.ToInt32(tempString.Substring(tempString.LastIndexOf(':') + 1,
+                                             tempString.Length - tempString.LastIndexOf(':') - 1));
 
       if (indexType == "INDEX")
       {
@@ -564,7 +560,9 @@ namespace MediaPortal.TagReader
         trackNumber = Convert.ToInt32(tempString.Substring(0, tempString.IndexOf(' ')));
       }
       catch (Exception)
-      { throw; }
+      {
+        throw;
+      }
 
       //find the data type.
       tempString = tempString.Substring(tempString.IndexOf(' '), tempString.Length - tempString.IndexOf(' ')).Trim();
@@ -769,7 +767,9 @@ namespace MediaPortal.TagReader
     #endregion
 
     //TODO: Fix calculation bugs; currently generates erroneous IDs.
+
     #region CalculateDiscIDs
+
     //For complete CDDB/freedb discID calculation, see:
     //http://www.freedb.org/modules.php?name=Sections&sop=viewarticle&artid=6
 
@@ -789,7 +789,8 @@ namespace MediaPortal.TagReader
 
       Console.WriteLine(n.ToString());
 
-      t = ((lastTrackIndex(m_Tracks[m_Tracks.Length - 1]).Minutes * 60) + lastTrackIndex(m_Tracks[m_Tracks.Length - 1]).Seconds) -
+      t = ((lastTrackIndex(m_Tracks[m_Tracks.Length - 1]).Minutes * 60) +
+           lastTrackIndex(m_Tracks[m_Tracks.Length - 1]).Seconds) -
           ((lastTrackIndex(m_Tracks[0]).Minutes * 60) + lastTrackIndex(m_Tracks[0]).Seconds);
 
       ulong lDiscId = (((uint)n % 0xff) << 24 | (uint)t << 8 | (uint)m_Tracks.Length);
@@ -819,8 +820,6 @@ namespace MediaPortal.TagReader
     }
 
     #endregion CalculateDiscIDS
-
-
   }
 
   /// <summary>
@@ -832,7 +831,12 @@ namespace MediaPortal.TagReader
   /// </summary>
   public enum Flags
   {
-    DCP, CH4, PRE, SCMS, DATA, NONE
+    DCP,
+    CH4,
+    PRE,
+    SCMS,
+    DATA,
+    NONE
   }
 
   /// <summary>
@@ -844,7 +848,11 @@ namespace MediaPortal.TagReader
   /// </summary>
   public enum FileType
   {
-    BINARY, MOTOROLA, AIFF, WAVE, MP3
+    BINARY,
+    MOTOROLA,
+    AIFF,
+    WAVE,
+    MP3
   }
 
   /// <summary>
@@ -861,7 +869,14 @@ namespace MediaPortal.TagReader
   /// </summary>
   public enum DataType
   {
-    AUDIO, CDG, MODE1_2048, MODE1_2352, MODE2_2336, MODE2_2352, CDI_2336, CDI_2352
+    AUDIO,
+    CDG,
+    MODE1_2048,
+    MODE1_2352,
+    MODE2_2336,
+    MODE2_2352,
+    CDI_2336,
+    CDI_2352
   }
 
   /// <summary>
@@ -872,11 +887,11 @@ namespace MediaPortal.TagReader
   public struct Index
   {
     //0-99
-    int m_number;
+    private int m_number;
 
-    int m_minutes;
-    int m_seconds;
-    int m_frames;
+    private int m_minutes;
+    private int m_seconds;
+    private int m_frames;
 
     /// <summary>
     /// Index number (0-99)
@@ -1056,6 +1071,7 @@ namespace MediaPortal.TagReader
   public struct Track
   {
     #region Private Variables
+
     private string[] m_Comments;
     // strings that don't belong or were mistyped in the global part of the cue
     private AudioFile m_DataFile;
@@ -1071,6 +1087,7 @@ namespace MediaPortal.TagReader
     private Flags[] m_TrackFlags;
     private DataType m_TrackDataType;
     private int m_TrackNumber;
+
     #endregion
 
     #region Properties
@@ -1082,14 +1099,8 @@ namespace MediaPortal.TagReader
     /// <returns>Index at indexnumber.</returns>
     public Index this[int indexnumber]
     {
-      get
-      {
-        return m_Indices[indexnumber];
-      }
-      set
-      {
-        m_Indices[indexnumber] = value;
-      }
+      get { return m_Indices[indexnumber]; }
+      set { m_Indices[indexnumber] = value; }
     }
 
 
@@ -1177,6 +1188,7 @@ namespace MediaPortal.TagReader
       get { return m_TrackNumber; }
       set { m_TrackNumber = value; }
     }
+
     #endregion
 
     #region Contructors
@@ -1250,6 +1262,7 @@ namespace MediaPortal.TagReader
     #endregion
 
     #region Methods
+
     public void AddFlag(Flags flag)
     {
       //if it's not a none tag
@@ -1343,10 +1356,12 @@ namespace MediaPortal.TagReader
       //write file
       if (m_DataFile.Filename != null && m_DataFile.Filename.Trim() != "")
       {
-        output.Append("FILE \"" + m_DataFile.Filename.Trim() + "\" " + m_DataFile.Filetype.ToString() + Environment.NewLine);
+        output.Append("FILE \"" + m_DataFile.Filename.Trim() + "\" " + m_DataFile.Filetype.ToString() +
+                      Environment.NewLine);
       }
 
-      output.Append("  TRACK " + m_TrackNumber.ToString().PadLeft(2, '0') + " " + m_TrackDataType.ToString().Replace('_', '/'));
+      output.Append("  TRACK " + m_TrackNumber.ToString().PadLeft(2, '0') + " " +
+                    m_TrackDataType.ToString().Replace('_', '/'));
 
       //write comments
       foreach (string comment in m_Comments)
@@ -1389,19 +1404,23 @@ namespace MediaPortal.TagReader
       //write pregap
       if (m_PreGap.Number != -1)
       {
-        output.Append(Environment.NewLine + "    PREGAP " + m_PreGap.Minutes.ToString().PadLeft(2, '0') + ":" + m_PreGap.Seconds.ToString().PadLeft(2, '0') + ":" + m_PreGap.Frames.ToString().PadLeft(2, '0'));
+        output.Append(Environment.NewLine + "    PREGAP " + m_PreGap.Minutes.ToString().PadLeft(2, '0') + ":" +
+                      m_PreGap.Seconds.ToString().PadLeft(2, '0') + ":" + m_PreGap.Frames.ToString().PadLeft(2, '0'));
       }
 
       //write Indices
       for (int j = 0; j < m_Indices.Length; j++)
       {
-        output.Append(Environment.NewLine + "    INDEX " + this[j].Number.ToString().PadLeft(2, '0') + " " + this[j].Minutes.ToString().PadLeft(2, '0') + ":" + this[j].Seconds.ToString().PadLeft(2, '0') + ":" + this[j].Frames.ToString().PadLeft(2, '0'));
+        output.Append(Environment.NewLine + "    INDEX " + this[j].Number.ToString().PadLeft(2, '0') + " " +
+                      this[j].Minutes.ToString().PadLeft(2, '0') + ":" + this[j].Seconds.ToString().PadLeft(2, '0') +
+                      ":" + this[j].Frames.ToString().PadLeft(2, '0'));
       }
 
       //write postgap
       if (m_PostGap.Number != -1)
       {
-        output.Append(Environment.NewLine + "    POSTGAP " + m_PostGap.Minutes.ToString().PadLeft(2, '0') + ":" + m_PostGap.Seconds.ToString().PadLeft(2, '0') + ":" + m_PostGap.Frames.ToString().PadLeft(2, '0'));
+        output.Append(Environment.NewLine + "    POSTGAP " + m_PostGap.Minutes.ToString().PadLeft(2, '0') + ":" +
+                      m_PostGap.Seconds.ToString().PadLeft(2, '0') + ":" + m_PostGap.Frames.ToString().PadLeft(2, '0'));
       }
 
       return output.ToString();

@@ -105,7 +105,7 @@ namespace MediaPortal.GUI.Library
 
     public GUIControl this[int index]
     {
-      get { return (GUIControl) List[index]; }
+      get { return (GUIControl)List[index]; }
       set { List[index] = value; }
     }
 

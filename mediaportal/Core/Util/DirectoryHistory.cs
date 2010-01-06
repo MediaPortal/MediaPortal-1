@@ -30,19 +30,19 @@ namespace MediaPortal.Util
 {
   public class DirectoryHistory
   {
-    class DirectoryItem
+    private class DirectoryItem
     {
-      string m_strItem = string.Empty;
-      string m_strDir = string.Empty;
-      public DirectoryItem()
-      {
-      }
+      private string m_strItem = string.Empty;
+      private string m_strDir = string.Empty;
+      public DirectoryItem() {}
+
       public DirectoryItem(string strItem, string strDir)
       {
         if (strItem == null || strDir == null) return;
         m_strItem = strItem;
         m_strDir = strDir;
       }
+
       public string Item
       {
         get { return m_strItem; }
@@ -52,6 +52,7 @@ namespace MediaPortal.Util
           m_strItem = value;
         }
       }
+
       public string Dir
       {
         get { return m_strDir; }
@@ -63,10 +64,8 @@ namespace MediaPortal.Util
       }
     }
 
-    ArrayList m_history = new ArrayList();
-    public DirectoryHistory()
-    {
-    }
+    private ArrayList m_history = new ArrayList();
+    public DirectoryHistory() {}
 
     public string Get(string strDir)
     {

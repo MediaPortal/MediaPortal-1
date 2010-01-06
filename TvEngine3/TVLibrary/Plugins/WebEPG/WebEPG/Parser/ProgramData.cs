@@ -63,9 +63,7 @@ namespace MediaPortal.WebEPG.Parser
 
     #region Constructors/Destructors
 
-    public ProgramData()
-    {
-    }
+    public ProgramData() {}
 
     public ProgramData(Dictionary<string, int> months) //string[] months)
     {
@@ -151,7 +149,7 @@ namespace MediaPortal.WebEPG.Parser
       get { return _episode; }
       set { _episode = value; }
     }
-    
+
     public int Season
     {
       get { return _season; }
@@ -309,9 +307,11 @@ namespace MediaPortal.WebEPG.Parser
 
     public Program ToTvProgram(int dbIdChannel)
     {
-      WorldDateTime endTime = (_endTime == null)? _startTime : _endTime;
-      Program program = new Program(dbIdChannel, _startTime.ToLocalTime(), endTime.ToLocalTime(), _title, _description, _genre, 
-                                    Program.ProgramState.None, System.Data.SqlTypes.SqlDateTime.MinValue.Value, String.Empty, String.Empty,
+      WorldDateTime endTime = (_endTime == null) ? _startTime : _endTime;
+      Program program = new Program(dbIdChannel, _startTime.ToLocalTime(), endTime.ToLocalTime(), _title, _description,
+                                    _genre,
+                                    Program.ProgramState.None, System.Data.SqlTypes.SqlDateTime.MinValue.Value,
+                                    String.Empty, String.Empty,
                                     _subTitle, String.Empty, -1, String.Empty, 0);
       if (_episode > 0)
       {

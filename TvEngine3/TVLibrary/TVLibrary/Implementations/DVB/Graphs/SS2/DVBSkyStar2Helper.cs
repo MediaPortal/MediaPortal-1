@@ -34,47 +34,65 @@ namespace TvLibrary.Implementations.DVB
   public class DVBSkyStar2Helper
   {
     #region technisat guids
+
     /// <summary>
     /// AVCTRL2 GUID
     /// </summary>
-    public static Guid IID_IB2C2AVCTRL2 = new Guid(0x9c0563ce, 0x2ef7, 0x4568, 0xa2, 0x97, 0x88, 0xc7, 0xbb, 0x82, 0x40, 0x75);
+    public static Guid IID_IB2C2AVCTRL2 = new Guid(0x9c0563ce, 0x2ef7, 0x4568, 0xa2, 0x97, 0x88, 0xc7, 0xbb, 0x82, 0x40,
+                                                   0x75);
+
     /// <summary>
     /// B2C2 Adapter GUID
     /// </summary>
-    public static Guid CLSID_B2C2Adapter = new Guid(0xe82536a0, 0x94da, 0x11d2, 0xa4, 0x63, 0x0, 0xa0, 0xc9, 0x5d, 0x30, 0x8d);
+    public static Guid CLSID_B2C2Adapter = new Guid(0xe82536a0, 0x94da, 0x11d2, 0xa4, 0x63, 0x0, 0xa0, 0xc9, 0x5d, 0x30,
+                                                    0x8d);
+
     /// <summary>
     /// Stream Buffer Sink GUID
     /// </summary>
-    public static Guid CLSID_StreamBufferSink = new Guid(0x2db47ae5, 0xcf39, 0x43c2, 0xb4, 0xd6, 0xc, 0xd8, 0xd9, 0x9, 0x46, 0xf4);
+    public static Guid CLSID_StreamBufferSink = new Guid(0x2db47ae5, 0xcf39, 0x43c2, 0xb4, 0xd6, 0xc, 0xd8, 0xd9, 0x9,
+                                                         0x46, 0xf4);
+
     /// <summary>
     /// Mpeg2VideoStreamAnalyzer GUID
     /// </summary>
-    public static Guid CLSID_Mpeg2VideoStreamAnalyzer = new Guid(0x6cfad761, 0x735d, 0x4aa5, 0x8a, 0xfc, 0xaf, 0x91, 0xa7, 0xd6, 0x1e, 0xba);
+    public static Guid CLSID_Mpeg2VideoStreamAnalyzer = new Guid(0x6cfad761, 0x735d, 0x4aa5, 0x8a, 0xfc, 0xaf, 0x91,
+                                                                 0xa7, 0xd6, 0x1e, 0xba);
+
     /// <summary>
     /// StreamBufferConfig GUID
     /// </summary>
-    public static Guid CLSID_StreamBufferConfig = new Guid(0xfa8a68b2, 0xc864, 0x4ba2, 0xad, 0x53, 0xd3, 0x87, 0x6a, 0x87, 0x49, 0x4b);
+    public static Guid CLSID_StreamBufferConfig = new Guid(0xfa8a68b2, 0xc864, 0x4ba2, 0xad, 0x53, 0xd3, 0x87, 0x6a,
+                                                           0x87, 0x49, 0x4b);
+
     /// <summary>
     /// Mpeg2Data GUID
     /// </summary>
-    public static Guid CLSID_Mpeg2Data = new Guid(0xC666E115, 0xBB62, 0x4027, 0xA1, 0x13, 0x82, 0xD6, 0x43, 0xFE, 0x2D, 0x99);
+    public static Guid CLSID_Mpeg2Data = new Guid(0xC666E115, 0xBB62, 0x4027, 0xA1, 0x13, 0x82, 0xD6, 0x43, 0xFE, 0x2D,
+                                                  0x99);
+
     /// <summary>
     /// Mediatype MPEG2 Sections GUID
     /// </summary>
-    public static Guid MEDIATYPE_MPEG2_SECTIONS = new Guid(0x455f176c, 0x4b06, 0x47ce, 0x9a, 0xef, 0x8c, 0xae, 0xf7, 0x3d, 0xf7, 0xb5);
+    public static Guid MEDIATYPE_MPEG2_SECTIONS = new Guid(0x455f176c, 0x4b06, 0x47ce, 0x9a, 0xef, 0x8c, 0xae, 0xf7,
+                                                           0x3d, 0xf7, 0xb5);
+
     /// <summary>
     /// Mediasubtype MPEG2 Data GUID
     /// </summary>
-    public static Guid MEDIASUBTYPE_MPEG2_DATA = new Guid(0xc892e55b, 0x252d, 0x42b5, 0xa3, 0x16, 0xd9, 0x97, 0xe7, 0xa5, 0xd9, 0x95);
+    public static Guid MEDIASUBTYPE_MPEG2_DATA = new Guid(0xc892e55b, 0x252d, 0x42b5, 0xa3, 0x16, 0xd9, 0x97, 0xe7, 0xa5,
+                                                          0xd9, 0x95);
+
     #endregion
 
     #region AVControl
+
     /// <summary>
     /// IB2C2MPEG2AVCtrl methods allow access to MPEG2 Audio and Video elementary streams by setting or deleting their PIDs. For Video in Windows, a Video callback structure can be configured to pass Video window size, aspect ratio, and frame rate when instructed by the application.
     /// </summary>
     [ComVisible(true), ComImport,
-      Guid("9C0563CE-2EF7-4568-A297-88C7BB824075"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+     Guid("9C0563CE-2EF7-4568-A297-88C7BB824075"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IB2C2MPEG2AVCtrl
     {
       /// <summary>
@@ -88,18 +106,20 @@ namespace TvLibrary.Implementations.DVB
         int pida,
         int pidb
         );
-    };
+    } ;
+
     #endregion
 
     #region AVControl2
+
     // setup interfaces
 
     /// <summary>
     /// IB2C2MPEG2AVCtrl2 methods allow access to MPEG2 Audio and Video elementary streams by setting or deleting their PIDs. For Video in Windows, a Video callback structure can be configured to pass Video window size, aspect ratio, and frame rate when instructed by the application.
     /// </summary>
     [ComVisible(true), ComImport,
-      Guid("295950B0-696D-4a04-9EE3-C031A0BFBEDE"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+     Guid("295950B0-696D-4a04-9EE3-C031A0BFBEDE"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IB2C2MPEG2AVCtrl2 : IB2C2MPEG2AVCtrl
     {
       /// <summary>
@@ -111,6 +131,7 @@ namespace TvLibrary.Implementations.DVB
       int SetCallbackForVideoMode(
         [MarshalAs(UnmanagedType.FunctionPtr)] Delegate vInfo
         );
+
       /// <summary>
       /// Deletes Audio and Video PIDs. 
       /// </summary>
@@ -122,6 +143,7 @@ namespace TvLibrary.Implementations.DVB
         int pida,
         int pidv
         );
+
       /// <summary>
       /// Returns current Audio and Video settings in terms of which streams are open or running and how many.
       /// </summary>
@@ -141,20 +163,21 @@ namespace TvLibrary.Implementations.DVB
         [Out] out int e,
         [Out] out int f
         );
-    };
+    } ;
+
     #endregion
 
     #region DataControl
+
     /// <summary>
     /// A channel typically contains multiple program streams of packeted information identified by PID (Program Identifier). An IP data stream is a stream carrying IP packets. A Raw TS stream is any stream (regardless of content) arbitrarily selected by its PID. After a channel is locked onto by a tuner, the desired program is selected by setting its PID. 
     /// IB2C2MPEG2DataCtrl supports all tuner types. IB2C2MPEG2DataCtrl methods enable an application to configure PID parameters for receiving IP data and Raw Transport Stream (Raw TS) data. Additionally, IB2C2MPEG2DataCtrl6 methods can set the broadband device's unicast MAC address and multicast groups and monitor IP data reception statistics.
     /// </summary>
     [ComVisible(true), ComImport,
-      Guid("7F35C560-08B9-11d5-A469-00D0D7B2C2D7"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+     Guid("7F35C560-08B9-11d5-A469-00D0D7B2C2D7"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IB2C2MPEG2DataCtrl
     {
-
       /// <summary>
       /// Retrieves count of maximum simultaneous raw transport stream PIDs allowed. This value is currently 39
       /// </summary>
@@ -281,18 +304,19 @@ namespace TvLibrary.Implementations.DVB
         [Out] out int ipQuality,
         [Out] out int tsQuality
         );
+    } ;
 
-    };
     #endregion // do NOT use data control interface !!!
 
     #region DataControl2
+
     /// <summary>
     /// A channel typically contains multiple program streams of packeted information identified by PID (Program Identifier). An IP data stream is a stream carrying IP packets. A Raw TS stream is any stream (regardless of content) arbitrarily selected by its PID. After a channel is locked onto by a tuner, the desired program is selected by setting its PID. 
     /// IB2C2MPEG2DataCtrl2 supports all tuner types. IB2C2MPEG2DataCtrl2 methods enable an application to configure PID parameters for receiving IP data and Raw Transport Stream (Raw TS) data. Additionally, IB2C2MPEG2DataCtrl6 methods can set the broadband device's unicast MAC address and multicast groups and monitor IP data reception statistics.
     /// </summary>
     [ComVisible(true), ComImport,
-      Guid("B0666B7C-8C7D-4c20-BB9B-4A7FE0F313A8"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+     Guid("B0666B7C-8C7D-4c20-BB9B-4A7FE0F313A8"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IB2C2MPEG2DataCtrl2 : IB2C2MPEG2DataCtrl
     {
       /// <summary>
@@ -322,17 +346,19 @@ namespace TvLibrary.Implementations.DVB
         [In, MarshalAs(UnmanagedType.LPArray, SizeConst = 39)] int[] pidsArray,
         int dataPin
         );
-    };
+    } ;
+
     #endregion// do NOT use data control interface !!!
 
     #region DataControl3
+
     /// <summary>
     /// A channel typically contains multiple program streams of packeted information identified by PID (Program Identifier). An IP data stream is a stream carrying IP packets. A Raw TS stream is any stream (regardless of content) arbitrarily selected by its PID. After a channel is locked onto by a tuner, the desired program is selected by setting its PID. 
     /// IB2C2MPEG2DataCtrl3 supports all tuner types. IB2C2MPEG2DataCtrl3 methods enable an application to configure PID parameters for receiving IP data and Raw Transport Stream (Raw TS) data. Additionally, IB2C2MPEG2DataCtrl6 methods can set the broadband device's unicast MAC address and multicast groups and monitor IP data reception statistics.
     /// </summary>
     [ComVisible(true), ComImport,
-      Guid("E2857B5B-84E7-48b7-B842-4EF5E175F315"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+     Guid("E2857B5B-84E7-48b7-B842-4EF5E175F315"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IB2C2MPEG2DataCtrl3 : IB2C2MPEG2DataCtrl2
     {
       /// <summary>
@@ -458,16 +484,18 @@ namespace TvLibrary.Implementations.DVB
       /// <returns></returns>
       [PreserveSig]
       int RestoreUnicastMacAddress();
-    };
+    } ;
+
     #endregion// do NOT use data control interface !!!
 
     #region TunerControl
+
     /// <summary>
     /// In order to receive programs, the broadband receiver must first lock onto a channel. This is accomplished by controlling the tuner. IB2C2MPEG2TunerCtrl3 supports satellite, cable, and terrestrial DVB and terrestrial ATSC tuners. IB2C2MPEG2TunerCtrl4 methods allow software to lock onto a channel, including the monitoring of receiver (tuner module) performance statistics such as BER and Uncorrected Blocks.
     /// </summary>
     [ComVisible(true), ComImport,
-      Guid("D875D4A9-0749-4fe8-ADB9-CC13F9B3DD45"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+     Guid("D875D4A9-0749-4fe8-ADB9-CC13F9B3DD45"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IB2C2MPEG2TunerCtrl
     {
       /// <summary>
@@ -719,16 +747,18 @@ namespace TvLibrary.Implementations.DVB
       int SetChannel(
         int channel
         );
-    };
+    } ;
+
     #endregion
 
     #region TunerControl2
+
     /// <summary>
     /// In order to receive programs, the broadband receiver must first lock onto a channel. This is accomplished by controlling the tuner. IB2C2MPEG2TunerCtrl3 supports satellite, cable, and terrestrial DVB and terrestrial ATSC tuners. IB2C2MPEG2TunerCtrl4 methods allow software to lock onto a channel, including the monitoring of receiver (tuner module) performance statistics such as BER and Uncorrected Blocks.
     /// </summary>
     [ComVisible(true), ComImport,
-      Guid("CD900832-50DF-4f8f-882D-1C358F90B3F2"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+     Guid("CD900832-50DF-4f8f-882D-1C358F90B3F2"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IB2C2MPEG2TunerCtrl2 : IB2C2MPEG2TunerCtrl
     {
       /// <summary>
@@ -800,7 +830,6 @@ namespace TvLibrary.Implementations.DVB
       /// POLARITY_VERTICAL </param>
       /// <returns></returns>
       int GetPolarity(
-
         [Out] out int plPolarity
         );
 
@@ -817,7 +846,6 @@ namespace TvLibrary.Implementations.DVB
       /// DISEQC_LEVEL_1_B_B</param>
       /// <returns></returns>
       int GetDiseqc(
-
         [Out] out int plDiseqc
         );
 
@@ -860,16 +888,18 @@ namespace TvLibrary.Implementations.DVB
       int GetSignalQuality(
         [Out] out int pdwSignalQuality
         );
-    };
+    } ;
+
     #endregion
 
     #region TunerControl3
+
     /// <summary>
     /// In order to receive programs, the broadband receiver must first lock onto a channel. This is accomplished by controlling the tuner. IB2C2MPEG2TunerCtrl3 supports satellite, cable, and terrestrial DVB and terrestrial ATSC tuners. IB2C2MPEG2TunerCtrl4 methods allow software to lock onto a channel, including the monitoring of receiver (tuner module) performance statistics such as BER and Uncorrected Blocks.
     /// </summary>
     [ComVisible(true), ComImport,
      Guid("4B39EB78-D3CD-4223-B682-46AE66968118"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IB2C2MPEG2TunerCtrl3 : IB2C2MPEG2TunerCtrl2
     {
       /// <summary>
@@ -895,16 +925,18 @@ namespace TvLibrary.Implementations.DVB
       int GetBandwidth(
         [Out] out int bandwidth
         );
-    };
+    } ;
+
     #endregion
 
     #region TunerControl4
+
     /// <summary>
     /// In order to receive programs, the broadband receiver must first lock onto a channel. This is accomplished by controlling the tuner. IB2C2MPEG2TunerCtrl3 supports satellite, cable, and terrestrial DVB and terrestrial ATSC tuners. IB2C2MPEG2TunerCtrl4 methods allow software to lock onto a channel, including the monitoring of receiver (tuner module) performance statistics such as BER and Uncorrected Blocks.
     /// </summary>
     [ComVisible(true), ComImport,
      Guid("61A9051F-04C4-435e-8742-9EDD2C543CE9"),
-      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IB2C2MPEG2TunerCtrl4 : IB2C2MPEG2TunerCtrl3
     {
       /// <summary>
@@ -916,7 +948,12 @@ namespace TvLibrary.Implementations.DVB
       int SendDiSEqCCommand(
         int length, IntPtr disEqcCommand
         );
-    };
+    } ;
+
     #endregion
-  }// class
-}//namespace
+  }
+
+// class
+}
+
+//namespace

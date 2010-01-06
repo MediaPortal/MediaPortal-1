@@ -165,9 +165,7 @@ namespace AMS.Profile
     ///   The new value for the entry or method/property, based on the value of changeType. </param>
     /// <seealso cref="ProfileChangeType" />
     public ProfileChangingArgs(ProfileChangeType changeType, string section, string entry, object value) :
-      base(changeType, section, entry, value)
-    {
-    }
+      base(changeType, section, entry, value) {}
 
     /// <summary>
     ///   Gets or sets whether the change about to the made should be canceled or not. </summary>

@@ -1,4 +1,5 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,14 +20,17 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region using
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
+
 #endregion
 
 namespace MediaPortal.Player
@@ -34,6 +38,7 @@ namespace MediaPortal.Player
   public class W7RefreshRateHelper
   {
     #region consts
+
     private const uint SIZE_OF_DISPLAYCONFIG_PATH_INFO = 72;
     private const uint SIZE_OF_DISPLAYCONFIG_MODE_INFO = 64;
 
@@ -45,20 +50,28 @@ namespace MediaPortal.Player
     private const uint SDC_VALIDATE = 0x00000040;
     private const uint SDC_APPLY = 0x00000080;
     private const uint SDC_ALLOW_CHANGES = 0x00000400;
+
     #endregion
 
     #region DLL imports
-    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    private extern static long GetDisplayConfigBufferSizes([In] uint flags, [Out] out uint numPathArrayElements, [Out] out uint numModeArrayElements);
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    private extern static long QueryDisplayConfig([In] uint flags, ref uint numPathArrayElements, IntPtr pathArray, ref uint numModeArrayElements, IntPtr modeArray, IntPtr currentTopologyId);
+    private static extern long GetDisplayConfigBufferSizes([In] uint flags, [Out] out uint numPathArrayElements,
+                                                           [Out] out uint numModeArrayElements);
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    private extern static long SetDisplayConfig(uint numPathArrayElements, IntPtr pathArray, uint numModeArrayElements, IntPtr modeArray, uint flags);
+    private static extern long QueryDisplayConfig([In] uint flags, ref uint numPathArrayElements, IntPtr pathArray,
+                                                  ref uint numModeArrayElements, IntPtr modeArray,
+                                                  IntPtr currentTopologyId);
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    private static extern long SetDisplayConfig(uint numPathArrayElements, IntPtr pathArray, uint numModeArrayElements,
+                                                IntPtr modeArray, uint flags);
+
     #endregion
 
     #region private members
+
     private static int GetModeInfoOffsetForDisplayId(uint displayIndex, IntPtr pModeArray, uint uNumModeArrayElements)
     {
       int offset;
@@ -68,7 +81,7 @@ namespace MediaPortal.Player
       offset = (int)(displayIndex * SIZE_OF_DISPLAYCONFIG_MODE_INFO * 2);
 
       // out of bounds sanity check
-      if (offset+SIZE_OF_DISPLAYCONFIG_MODE_INFO >= uNumModeArrayElements*SIZE_OF_DISPLAYCONFIG_MODE_INFO)
+      if (offset + SIZE_OF_DISPLAYCONFIG_MODE_INFO >= uNumModeArrayElements * SIZE_OF_DISPLAYCONFIG_MODE_INFO)
       {
         return -1;
       }
@@ -81,7 +94,7 @@ namespace MediaPortal.Player
       }
       else
       {
-         offset += (int)SIZE_OF_DISPLAYCONFIG_MODE_INFO;
+        offset += (int)SIZE_OF_DISPLAYCONFIG_MODE_INFO;
       }
 
       modeInfoType = Marshal.ReadInt32(pModeArray, offset);
@@ -89,15 +102,17 @@ namespace MediaPortal.Player
       {
         return offset;
       }
-      // no target mode info found, this should never happen
+        // no target mode info found, this should never happen
       else
       {
-         return -1;
+        return -1;
       }
     }
+
     #endregion
 
     #region public members
+
     public static double GetRefreshRate(uint displayIndex)
     {
       uint uNumPathArrayElements = 0;
@@ -123,13 +138,13 @@ namespace MediaPortal.Player
       pModeArray = Marshal.AllocHGlobal((Int32)(uNumModeArrayElements * SIZE_OF_DISPLAYCONFIG_MODE_INFO));
 
       // get display configuration
-      result = QueryDisplayConfig(QDC_ALL_PATHS, 
-                                  ref uNumPathArrayElements, pPathArray, 
+      result = QueryDisplayConfig(QDC_ALL_PATHS,
+                                  ref uNumPathArrayElements, pPathArray,
                                   ref uNumModeArrayElements, pModeArray,
                                   pCurrentTopologyId);
       // if failed log error message and free memory
-	    if (result != 0)
-	    {
+      if (result != 0)
+      {
         Log.Error("W7RefreshRateHelper.GetRefreshRate: QueryDisplayConfig(...) returned {0}", result);
         Marshal.FreeHGlobal(pPathArray);
         Marshal.FreeHGlobal(pModeArray);
@@ -146,10 +161,10 @@ namespace MediaPortal.Player
         Marshal.FreeHGlobal(pModeArray);
         return 0;
       }
- 
+
       // get refresh rate
-      numerator = (UInt32)Marshal.ReadInt32(pModeArray,offset+32);
-      denominator = (UInt32)Marshal.ReadInt32(pModeArray,offset+36);
+      numerator = (UInt32)Marshal.ReadInt32(pModeArray, offset + 32);
+      denominator = (UInt32)Marshal.ReadInt32(pModeArray, offset + 36);
       refreshRate = (double)numerator / (double)denominator;
       Log.Debug("W7RefreshRateHelper.GetRefreshRate: QueryDisplayConfig returned {0}/{1}", numerator, denominator);
 
@@ -209,7 +224,7 @@ namespace MediaPortal.Player
         Marshal.FreeHGlobal(pModeArray);
         return false;
       }
-  
+
       // TODO: refactor to private method
       // set proper numerator and denominator for refresh rate
       UInt32 newRefreshRate = (uint)(refreshRate * 1000);
@@ -219,82 +234,81 @@ namespace MediaPortal.Player
           numerator = 24000;
           denominator = 1001;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-        break;
+          break;
         case 24000:
           numerator = 24000;
           denominator = 1000;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-        break;
+          break;
         case 25000:
           numerator = 25000;
           denominator = 1000;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-        break;
+          break;
         case 30000:
           numerator = 30000;
           denominator = 1000;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-        break;
+          break;
         case 50000:
           numerator = 50000;
           denominator = 1000;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-        break;
+          break;
         case 59940:
           numerator = 60000;
           denominator = 1001;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-        break;
+          break;
         case 60000:
           numerator = 60000;
           denominator = 1000;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-        break;
+          break;
         default:
           numerator = (uint)refreshRate;
           denominator = 1;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-        break;
+          break;
       }
 
       // set refresh rate parameters in display config
-      Marshal.WriteInt32(pModeArray, offset+32, (int)numerator);
-      Marshal.WriteInt32(pModeArray, offset+36, (int)denominator);
-      Marshal.WriteInt32(pModeArray, offset+56, (int)scanLineOrdering);
-     
+      Marshal.WriteInt32(pModeArray, offset + 32, (int)numerator);
+      Marshal.WriteInt32(pModeArray, offset + 36, (int)denominator);
+      Marshal.WriteInt32(pModeArray, offset + 56, (int)scanLineOrdering);
+
       // validate new refresh rate
       flags = SDC_VALIDATE | SDC_USE_SUPPLIED_DISPLAY_CONFIG;
       result = SetDisplayConfig(uNumPathArrayElements, pPathArray, uNumModeArrayElements, pModeArray, flags);
       // adding SDC_ALLOW_CHANGES to flags if validation failed
       if (result != 0)
-	    {
+      {
         Log.Debug("W7RefreshRateHelper.SetDisplayConfig(...): SDC_VALIDATE of {0}/{1} failed", numerator, denominator);
         flags = SDC_APPLY | SDC_USE_SUPPLIED_DISPLAY_CONFIG | SDC_ALLOW_CHANGES;
-	    } 
+      }
       else
-	    {
+      {
         Log.Debug("W7RefreshRateHelper.SetDisplayConfig(...): SDC_VALIDATE of {0}/{1} succesful", numerator, denominator);
         flags = SDC_APPLY | SDC_USE_SUPPLIED_DISPLAY_CONFIG;
-	    } 
+      }
 
       // configuring display
       result = SetDisplayConfig(uNumPathArrayElements, pPathArray, uNumModeArrayElements, pModeArray, flags);
       // if failed log error message and free memory
       if (result != 0)
-	    {
-		    Log.Error("W7RefreshRateHelper.SetDisplayConfig(...): SDC_APPLY returned {0}", result);
+      {
+        Log.Error("W7RefreshRateHelper.SetDisplayConfig(...): SDC_APPLY returned {0}", result);
         Marshal.FreeHGlobal(pPathArray);
         Marshal.FreeHGlobal(pModeArray);
         return false;
-  	  }
- 
+      }
+
       // refresh rate change successful   
       Marshal.FreeHGlobal(pPathArray);
       Marshal.FreeHGlobal(pModeArray);
       return true;
-    }      
+    }
+
     #endregion
   }
 }
-
-

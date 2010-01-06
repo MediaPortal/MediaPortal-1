@@ -34,9 +34,7 @@ namespace MediaPortal.Database
   /// </summary>
   public class DatabaseUtility
   {
-    private DatabaseUtility()
-    {
-    }
+    private DatabaseUtility() {}
 
     public static void CompactDatabase(SQLiteClient m_db)
     {
@@ -82,7 +80,7 @@ namespace MediaPortal.Database
       {
         for (int i = 0; i < results.ColumnNames.Count; ++i)
         {
-          if ((string) results.ColumnNames[i] == column)
+          if ((string)results.ColumnNames[i] == column)
           {
             return true;
           }
@@ -113,7 +111,7 @@ namespace MediaPortal.Database
         return false;
       }
       results = m_db.Execute("SELECT name FROM sqlite_master WHERE name like '" + table + "' and type like 'table'");
-        // UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
+      // UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
       if (results != null)
       {
         if (results.Rows.Count == 1)
@@ -225,9 +223,7 @@ namespace MediaPortal.Database
         int intValue = Int32.Parse(result);
         return intValue;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return 0;
     }
 
@@ -239,9 +235,7 @@ namespace MediaPortal.Database
         long longValue = Int64.Parse(result);
         return longValue;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return 0;
     }
 
@@ -284,16 +278,14 @@ namespace MediaPortal.Database
         int iCol = 0;
         if (results.ColumnIndices.ContainsKey(aTimestampColum))
         {
-          iCol = (int) results.ColumnIndices[aTimestampColum];
+          iCol = (int)results.ColumnIndices[aTimestampColum];
           if (arr.fields[iCol] != null)
           {
             finalResult = Convert.ToDateTime((arr.fields[iCol]));
           }
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       return finalResult;
     }
@@ -342,7 +334,7 @@ namespace MediaPortal.Database
       int iCol = 0;
       if (results.ColumnIndices.ContainsKey(strColum))
       {
-        iCol = (int) results.ColumnIndices[strColum];
+        iCol = (int)results.ColumnIndices[strColum];
         if (arr.fields[iCol] == null)
         {
           return string.Empty;
@@ -359,7 +351,7 @@ namespace MediaPortal.Database
       strColum = strColum.Substring(pos + 1);
       if (results.ColumnIndices.ContainsKey(strColum))
       {
-        iCol = (int) results.ColumnIndices[strColum];
+        iCol = (int)results.ColumnIndices[strColum];
         if (arr.fields[iCol] == null)
         {
           return string.Empty;

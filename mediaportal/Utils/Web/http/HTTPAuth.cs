@@ -46,9 +46,7 @@ namespace MediaPortal.Utils.Web
     /// <summary>
     /// Initializes a new instance of the <see cref="HTTPAuth"/> class.
     /// </summary>
-    public HTTPAuth()
-    {
-    }
+    public HTTPAuth() {}
 
     #endregion
 

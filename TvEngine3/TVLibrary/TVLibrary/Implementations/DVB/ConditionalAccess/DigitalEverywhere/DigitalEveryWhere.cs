@@ -40,161 +40,115 @@ namespace TvLibrary.Implementations.DVB
     private const int CA_DATA_SIZE = 1036;
 
     #region structs
+
     [StructLayout(LayoutKind.Explicit, Size = 60), ComVisible(true)]
-    struct FIRESAT_SELECT_PIDS_DVBS //also for DVBC
+    private struct FIRESAT_SELECT_PIDS_DVBS //also for DVBC
     {
-      [FieldOffset(0)]
-      public bool bCurrentTransponder;
-      [FieldOffset(4)]
-      public bool bFullTransponder;
-      [FieldOffset(8)]
-      public bool uLnb;
-      [FieldOffset(12)]
-      public uint uFrequency;
-      [FieldOffset(16)]
-      public uint uSymbolRate;
-      [FieldOffset(20)]
-      public byte uFecInner;
-      [FieldOffset(21)]
-      public byte uPolarization;
-      [FieldOffset(22)]
-      public byte dummy1; // 1-16
-      [FieldOffset(23)]
-      public byte dummy2; // 
-      [FieldOffset(24)]
-      public byte uNumberOfValidPids; // 1-16
-      [FieldOffset(25)]
-      public byte dummy3; // 
-      [FieldOffset(26)]
-      public ushort uPid1;
-      [FieldOffset(28)]
-      public ushort uPid2;
-      [FieldOffset(30)]
-      public ushort uPid3;
-      [FieldOffset(32)]
-      public ushort uPid4;
-      [FieldOffset(34)]
-      public ushort uPid5;
-      [FieldOffset(36)]
-      public ushort uPid6;
-      [FieldOffset(38)]
-      public ushort uPid7;
-      [FieldOffset(40)]
-      public ushort uPid8;
-      [FieldOffset(42)]
-      public ushort uPid9;
-      [FieldOffset(44)]
-      public ushort uPid10;
-      [FieldOffset(46)]
-      public ushort uPid11;
-      [FieldOffset(48)]
-      public ushort uPid12;
-      [FieldOffset(50)]
-      public ushort uPid13;
-      [FieldOffset(52)]
-      public ushort uPid14;
-      [FieldOffset(54)]
-      public ushort uPid15;
-      [FieldOffset(56)]
-      public ushort uPid16;
-      [FieldOffset(58)]
-      public ushort dummy4;
+      [FieldOffset(0)] public bool bCurrentTransponder;
+      [FieldOffset(4)] public bool bFullTransponder;
+      [FieldOffset(8)] public bool uLnb;
+      [FieldOffset(12)] public uint uFrequency;
+      [FieldOffset(16)] public uint uSymbolRate;
+      [FieldOffset(20)] public byte uFecInner;
+      [FieldOffset(21)] public byte uPolarization;
+      [FieldOffset(22)] public byte dummy1; // 1-16
+      [FieldOffset(23)] public byte dummy2; // 
+      [FieldOffset(24)] public byte uNumberOfValidPids; // 1-16
+      [FieldOffset(25)] public byte dummy3; // 
+      [FieldOffset(26)] public ushort uPid1;
+      [FieldOffset(28)] public ushort uPid2;
+      [FieldOffset(30)] public ushort uPid3;
+      [FieldOffset(32)] public ushort uPid4;
+      [FieldOffset(34)] public ushort uPid5;
+      [FieldOffset(36)] public ushort uPid6;
+      [FieldOffset(38)] public ushort uPid7;
+      [FieldOffset(40)] public ushort uPid8;
+      [FieldOffset(42)] public ushort uPid9;
+      [FieldOffset(44)] public ushort uPid10;
+      [FieldOffset(46)] public ushort uPid11;
+      [FieldOffset(48)] public ushort uPid12;
+      [FieldOffset(50)] public ushort uPid13;
+      [FieldOffset(52)] public ushort uPid14;
+      [FieldOffset(54)] public ushort uPid15;
+      [FieldOffset(56)] public ushort uPid16;
+      [FieldOffset(58)] public ushort dummy4;
     }
+
     [StructLayout(LayoutKind.Explicit, Size = 56), ComVisible(true)]
-    struct FIRESAT_SELECT_PIDS_DVBT
+    private struct FIRESAT_SELECT_PIDS_DVBT
     {
-      [FieldOffset(0)]
-      public bool bCurrentTransponder;//Set TRUE
-      [FieldOffset(4)]
-      public bool bFullTransponder;   //Set FALSE when selecting PIDs
-      [FieldOffset(8)]
-      public uint uFrequency;    // kHz 47.000-860.000
-      [FieldOffset(12)]
-      public byte uBandwidth;    // BANDWIDTH_8_MHZ, BANDWIDTH_7_MHZ, BANDWIDTH_6_MHZ
-      [FieldOffset(13)]
-      public byte uConstellation;// CONSTELLATION_DVB_T_QPSK,CONSTELLATION_QAM_16,CONSTELLATION_QAM_64,OFDM_AUTO
-      [FieldOffset(14)]
-      public byte uCodeRateHP;   // CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
-      [FieldOffset(15)]
-      public byte uCodeRateLP;   // CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
-      [FieldOffset(16)]
-      public byte uGuardInterval;// GUARD_INTERVAL_1_32,GUARD_INTERVAL_1_16,GUARD_INTERVAL_1_8,GUARD_INTERVAL_1_4,OFDM_AUTO
-      [FieldOffset(17)]
-      public byte uTransmissionMode;// TRANSMISSION_MODE_2K, TRANSMISSION_MODE_8K, OFDM_AUTO
-      [FieldOffset(18)]
-      public byte uHierarchyInfo;// HIERARCHY_NONE,HIERARCHY_1,HIERARCHY_2,HIERARCHY_4,OFDM_AUTO
-      [FieldOffset(19)]
-      public byte dummy; // 
-      [FieldOffset(20)]
-      public byte uNumberOfValidPids; // 1-16
-      [FieldOffset(21)]
-      public byte dummy2; // 
-      [FieldOffset(22)]
-      public ushort uPid1;
-      [FieldOffset(24)]
-      public ushort uPid2;
-      [FieldOffset(26)]
-      public ushort uPid3;
-      [FieldOffset(28)]
-      public ushort uPid4;
-      [FieldOffset(30)]
-      public ushort uPid5;
-      [FieldOffset(32)]
-      public ushort uPid6;
-      [FieldOffset(34)]
-      public ushort uPid7;
-      [FieldOffset(36)]
-      public ushort uPid8;
-      [FieldOffset(38)]
-      public ushort uPid9;
-      [FieldOffset(40)]
-      public ushort uPid10;
-      [FieldOffset(42)]
-      public ushort uPid11;
-      [FieldOffset(44)]
-      public ushort uPid12;
-      [FieldOffset(46)]
-      public ushort uPid13;
-      [FieldOffset(48)]
-      public ushort uPid14;
-      [FieldOffset(50)]
-      public ushort uPid15;
-      [FieldOffset(52)]
-      public ushort uPid16;
-      [FieldOffset(54)]
-      public ushort dummy3;
+      [FieldOffset(0)] public bool bCurrentTransponder; //Set TRUE
+      [FieldOffset(4)] public bool bFullTransponder; //Set FALSE when selecting PIDs
+      [FieldOffset(8)] public uint uFrequency; // kHz 47.000-860.000
+      [FieldOffset(12)] public byte uBandwidth; // BANDWIDTH_8_MHZ, BANDWIDTH_7_MHZ, BANDWIDTH_6_MHZ
+
+      [FieldOffset(13)] public byte uConstellation;
+                                    // CONSTELLATION_DVB_T_QPSK,CONSTELLATION_QAM_16,CONSTELLATION_QAM_64,OFDM_AUTO
+
+      [FieldOffset(14)] public byte uCodeRateHP; // CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
+      [FieldOffset(15)] public byte uCodeRateLP; // CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
+
+      [FieldOffset(16)] public byte uGuardInterval;
+                                    // GUARD_INTERVAL_1_32,GUARD_INTERVAL_1_16,GUARD_INTERVAL_1_8,GUARD_INTERVAL_1_4,OFDM_AUTO
+
+      [FieldOffset(17)] public byte uTransmissionMode; // TRANSMISSION_MODE_2K, TRANSMISSION_MODE_8K, OFDM_AUTO
+      [FieldOffset(18)] public byte uHierarchyInfo; // HIERARCHY_NONE,HIERARCHY_1,HIERARCHY_2,HIERARCHY_4,OFDM_AUTO
+      [FieldOffset(19)] public byte dummy; // 
+      [FieldOffset(20)] public byte uNumberOfValidPids; // 1-16
+      [FieldOffset(21)] public byte dummy2; // 
+      [FieldOffset(22)] public ushort uPid1;
+      [FieldOffset(24)] public ushort uPid2;
+      [FieldOffset(26)] public ushort uPid3;
+      [FieldOffset(28)] public ushort uPid4;
+      [FieldOffset(30)] public ushort uPid5;
+      [FieldOffset(32)] public ushort uPid6;
+      [FieldOffset(34)] public ushort uPid7;
+      [FieldOffset(36)] public ushort uPid8;
+      [FieldOffset(38)] public ushort uPid9;
+      [FieldOffset(40)] public ushort uPid10;
+      [FieldOffset(42)] public ushort uPid11;
+      [FieldOffset(44)] public ushort uPid12;
+      [FieldOffset(46)] public ushort uPid13;
+      [FieldOffset(48)] public ushort uPid14;
+      [FieldOffset(50)] public ushort uPid15;
+      [FieldOffset(52)] public ushort uPid16;
+      [FieldOffset(54)] public ushort dummy3;
     }
+
     [StructLayout(LayoutKind.Sequential), ComVisible(true)]
-    struct FIRESAT_CA_DATA          //  CA_DATA_SIZE
+    private struct FIRESAT_CA_DATA //  CA_DATA_SIZE
     {
-      public byte uSlot;            //     1
-      public byte uTag;             //     2
-      public byte bMoreSpacer1;     //     3
-      public byte bMoreSpacer2;     //     4
-      public byte bMoreSpacer3;     //     5
-      public byte bMore;            //     6
-      public byte uLengthSpacer1;   //     7
-      public byte uLengthSpacer2;   //     8
-      public byte uLength1;         //     9
-      public byte uLength2;         //    10
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PMT_SIZE)]
-      public byte[] uData;          //  1034
-      public byte uDataSpacer1;     //  1035
-      public byte uDataSpacer2;     //  1036
+      public byte uSlot; //     1
+      public byte uTag; //     2
+      public byte bMoreSpacer1; //     3
+      public byte bMoreSpacer2; //     4
+      public byte bMoreSpacer3; //     5
+      public byte bMore; //     6
+      public byte uLengthSpacer1; //     7
+      public byte uLengthSpacer2; //     8
+      public byte uLength1; //     9
+      public byte uLength2; //    10
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_PMT_SIZE)] public byte[] uData; //  1034
+      public byte uDataSpacer1; //  1035
+      public byte uDataSpacer2; //  1036
     } ;
+
     #endregion
 
     #region helper
-    static FIRESAT_CA_DATA GET_FIRESAT_CA_DATA(byte tag, ushort length)
+
+    private static FIRESAT_CA_DATA GET_FIRESAT_CA_DATA(byte tag, ushort length)
     {
       FIRESAT_CA_DATA CA = new FIRESAT_CA_DATA
                              {
-                               uSlot = 0,                   //reserved for future implementations with multiple CI slots
+                               uSlot = 0,
+                               //reserved for future implementations with multiple CI slots
                                uTag = tag,
                                bMoreSpacer1 = 0,
                                bMoreSpacer2 = 0,
                                bMoreSpacer3 = 0,
-                               bMore = 0,                   //don’t care; set by driver
+                               bMore = 0,
+                               //don’t care; set by driver
                                uLengthSpacer1 = 0,
                                uLengthSpacer2 = 0,
                                uLength1 = ((byte)(length % 256)),
@@ -205,27 +159,32 @@ namespace TvLibrary.Implementations.DVB
                              };
       return CA;
     }
+
     #endregion
 
     /// <summary>
     /// FireDtv guid
     /// </summary>
-    static public readonly Guid KSPROPSETID_Firesat = new Guid(0xab132414, 0xd060, 0x11d0, 0x85, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0xba, 0xf3);
+    public static readonly Guid KSPROPSETID_Firesat = new Guid(0xab132414, 0xd060, 0x11d0, 0x85, 0x83, 0x00, 0xc0, 0x4f,
+                                                               0xd9, 0xba, 0xf3);
+
     #region property ids
+
 #pragma warning disable 169
-    const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_C = 8;
-    const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_T = 6;
-    const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_S = 2;
-    const int KSPROPERTY_FIRESAT_HOST2CA = 22;
-    const int KSPROPERTY_FIRESAT_CA2HOST = 23;
-    const int KSPROPERTY_FIRESAT_DRIVER_VERSION = 4;
-    const int KSPROPERTY_FIRESAT_GET_FIRMWARE_VERSION = 11;
-    const int KSPROPERTY_FIRESAT_GET_CI_STATUS = 28;
-    const int KSPROPERTY_FIRESAT_LNB_CONTROL = 12;
+    private const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_C = 8;
+    private const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_T = 6;
+    private const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_S = 2;
+    private const int KSPROPERTY_FIRESAT_HOST2CA = 22;
+    private const int KSPROPERTY_FIRESAT_CA2HOST = 23;
+    private const int KSPROPERTY_FIRESAT_DRIVER_VERSION = 4;
+    private const int KSPROPERTY_FIRESAT_GET_FIRMWARE_VERSION = 11;
+    private const int KSPROPERTY_FIRESAT_GET_CI_STATUS = 28;
+    private const int KSPROPERTY_FIRESAT_LNB_CONTROL = 12;
+
     #endregion
 
     #region CI STATUS bits
-    
+
     /// <summary>
     /// DE CI Status bits
     /// </summary>
@@ -233,45 +192,46 @@ namespace TvLibrary.Implementations.DVB
     public enum DE_CI_STATUS
     {
       /// CI_ERR_MSG_AVAILABLE
-      CI_ERR_MSG_AVAILABLE  = 0x01,
+      CI_ERR_MSG_AVAILABLE = 0x01,
       /// CI_MODULE_INIT_READY
-      CI_MODULE_INIT_READY  = 0x02,
+      CI_MODULE_INIT_READY = 0x02,
       /// CI_MODULE_ERROR
-      CI_MODULE_ERROR       = 0x04,
+      CI_MODULE_ERROR = 0x04,
       /// CI_MODULE_IS_DVB
-      CI_MODULE_IS_DVB      = 0x08,
+      CI_MODULE_IS_DVB = 0x08,
       /// CI_MODULE_PRESENT
-      CI_MODULE_PRESENT     = 0x10,
+      CI_MODULE_PRESENT = 0x10,
       /// CI_APP_INFO_AVAILABLE
       CI_APP_INFO_AVAILABLE = 0x20,
       /// CI_DATE_TIME_REQEST
-      CI_DATE_TIME_REQEST   = 0x40,
+      CI_DATE_TIME_REQEST = 0x40,
       /// CI_PMT_REPLY
-      CI_PMT_REPLY          = 0x80,
+      CI_PMT_REPLY = 0x80,
       /// CI_MMI_REQUEST
-      CI_MMI_REQUEST        = 0x100
+      CI_MMI_REQUEST = 0x100
     }
 #pragma warning restore 169
+
     #endregion
 
     #region variables
 
-    readonly bool _isDigitalEverywhere;
-    readonly bool _hasCAM;
-    readonly bool _isInitialized;
-    readonly IBaseFilter _filterTuner;
+    private readonly bool _isDigitalEverywhere;
+    private readonly bool _hasCAM;
+    private readonly bool _isInitialized;
+    private readonly IBaseFilter _filterTuner;
 
-    readonly IntPtr _ptrDataInstance;
-    readonly IntPtr _ptrDataReturned;
-    readonly IntPtr _ptrDataCiHandler;
+    private readonly IntPtr _ptrDataInstance;
+    private readonly IntPtr _ptrDataReturned;
+    private readonly IntPtr _ptrDataCiHandler;
 
-    DVBSChannel _previousChannel;
-    
+    private DVBSChannel _previousChannel;
+
     private bool _readCamName;
     // CI menu related handlers
     private bool StopThread;
     private ICiMenuCallbacks m_ciMenuCallback;
-    Thread CiMenuThread;
+    private Thread CiMenuThread;
 
     #endregion
 
@@ -307,7 +267,6 @@ namespace TvLibrary.Implementations.DVB
       }
       _readCamName = true;
       _isInitialized = true;
-
     }
 
     /// <summary>
@@ -398,19 +357,19 @@ namespace TvLibrary.Implementations.DVB
 
       string log = String.Format("FireDTV: #{0}/{1} pmt data:", current, max);
       log += String.Format("0x0 0x{0:X} 0x0 0x0 0x0 0x0 0x0 0x0 0x{1:X} 0x{2:X} ",
-                          caData.uTag, caData.uLength2, caData.uLength1);
+                           caData.uTag, caData.uLength2, caData.uLength1);
 
       if (current == 0 && max == 1)
-        caData.uData[0] = 3;     //      List Management = ONLY  (only=3, first=1, more=0, last=2)
+        caData.uData[0] = 3; //      List Management = ONLY  (only=3, first=1, more=0, last=2)
       else if (current == 0 && max > 1)
-        caData.uData[0] = 1;     //      List Management = FIRST (only=3, first=1, more=0, last=2)
+        caData.uData[0] = 1; //      List Management = FIRST (only=3, first=1, more=0, last=2)
       else if (current > 0 && current < max - 1)
-        caData.uData[0] = 0;     //      List Management = MORE  (only=3, first=1, more=0, last=2)
+        caData.uData[0] = 0; //      List Management = MORE  (only=3, first=1, more=0, last=2)
       else if (current == max - 1)
-        caData.uData[0] = 2;     //      List Management = LAST  (only=3, first=1, more=0, last=2)
+        caData.uData[0] = 2; //      List Management = LAST  (only=3, first=1, more=0, last=2)
       log += String.Format("0x{0:X} ", caData.uData[0]);
 
-      caData.uData[1] = 1;       //      pmt_cmd = OK DESCRAMBLING
+      caData.uData[1] = 1; //      pmt_cmd = OK DESCRAMBLING
       log += String.Format("0x{0:X} ", caData.uData[1]);
 
       for (int i = 0; i < pmtLength; i++)
@@ -457,7 +416,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(0, 1);
-      caData.uData[0] = 0;  // HW Reset of CI part
+      caData.uData[0] = 0; // HW Reset of CI part
 
       Marshal.StructureToPtr(caData, _ptrDataInstance, true);
       Marshal.StructureToPtr(caData, _ptrDataReturned, true);
@@ -469,7 +428,6 @@ namespace TvLibrary.Implementations.DVB
       }
       Log.Log.WriteFile("FireDTV:ResetCAM() cam has been reset");
       return;
-
     }
 
     /// <summary>
@@ -563,22 +521,86 @@ namespace TvLibrary.Implementations.DVB
           //get only specific pids
           dvbtStruct.uNumberOfValidPids = (byte)pidCount;
           dvbsStruct.uNumberOfValidPids = (byte)pidCount;
-          if (pids.Count >= 1) { dvbtStruct.uPid1 = pids[0]; dvbsStruct.uPid1 = pids[0]; }
-          if (pids.Count >= 2) { dvbtStruct.uPid2 = pids[1]; dvbsStruct.uPid2 = pids[1]; }
-          if (pids.Count >= 3) { dvbtStruct.uPid3 = pids[2]; dvbsStruct.uPid3 = pids[2]; }
-          if (pids.Count >= 4) { dvbtStruct.uPid4 = pids[3]; dvbsStruct.uPid4 = pids[3]; }
-          if (pids.Count >= 5) { dvbtStruct.uPid5 = pids[4]; dvbsStruct.uPid5 = pids[4]; }
-          if (pids.Count >= 6) { dvbtStruct.uPid6 = pids[5]; dvbsStruct.uPid6 = pids[5]; }
-          if (pids.Count >= 7) { dvbtStruct.uPid7 = pids[6]; dvbsStruct.uPid7 = pids[6]; }
-          if (pids.Count >= 8) { dvbtStruct.uPid8 = pids[7]; dvbsStruct.uPid8 = pids[7]; }
-          if (pids.Count >= 9) { dvbtStruct.uPid9 = pids[8]; dvbsStruct.uPid9 = pids[8]; }
-          if (pids.Count >= 10) { dvbtStruct.uPid10 = pids[9]; dvbsStruct.uPid10 = pids[9]; }
-          if (pids.Count >= 11) { dvbtStruct.uPid11 = pids[10]; dvbsStruct.uPid11 = pids[10]; }
-          if (pids.Count >= 12) { dvbtStruct.uPid12 = pids[11]; dvbsStruct.uPid12 = pids[11]; }
-          if (pids.Count >= 13) { dvbtStruct.uPid13 = pids[12]; dvbsStruct.uPid13 = pids[12]; }
-          if (pids.Count >= 14) { dvbtStruct.uPid14 = pids[13]; dvbsStruct.uPid14 = pids[13]; }
-          if (pids.Count >= 15) { dvbtStruct.uPid15 = pids[14]; dvbsStruct.uPid15 = pids[14]; }
-          if (pids.Count >= 16) { dvbtStruct.uPid16 = pids[15]; dvbsStruct.uPid16 = pids[15]; }
+          if (pids.Count >= 1)
+          {
+            dvbtStruct.uPid1 = pids[0];
+            dvbsStruct.uPid1 = pids[0];
+          }
+          if (pids.Count >= 2)
+          {
+            dvbtStruct.uPid2 = pids[1];
+            dvbsStruct.uPid2 = pids[1];
+          }
+          if (pids.Count >= 3)
+          {
+            dvbtStruct.uPid3 = pids[2];
+            dvbsStruct.uPid3 = pids[2];
+          }
+          if (pids.Count >= 4)
+          {
+            dvbtStruct.uPid4 = pids[3];
+            dvbsStruct.uPid4 = pids[3];
+          }
+          if (pids.Count >= 5)
+          {
+            dvbtStruct.uPid5 = pids[4];
+            dvbsStruct.uPid5 = pids[4];
+          }
+          if (pids.Count >= 6)
+          {
+            dvbtStruct.uPid6 = pids[5];
+            dvbsStruct.uPid6 = pids[5];
+          }
+          if (pids.Count >= 7)
+          {
+            dvbtStruct.uPid7 = pids[6];
+            dvbsStruct.uPid7 = pids[6];
+          }
+          if (pids.Count >= 8)
+          {
+            dvbtStruct.uPid8 = pids[7];
+            dvbsStruct.uPid8 = pids[7];
+          }
+          if (pids.Count >= 9)
+          {
+            dvbtStruct.uPid9 = pids[8];
+            dvbsStruct.uPid9 = pids[8];
+          }
+          if (pids.Count >= 10)
+          {
+            dvbtStruct.uPid10 = pids[9];
+            dvbsStruct.uPid10 = pids[9];
+          }
+          if (pids.Count >= 11)
+          {
+            dvbtStruct.uPid11 = pids[10];
+            dvbsStruct.uPid11 = pids[10];
+          }
+          if (pids.Count >= 12)
+          {
+            dvbtStruct.uPid12 = pids[11];
+            dvbsStruct.uPid12 = pids[11];
+          }
+          if (pids.Count >= 13)
+          {
+            dvbtStruct.uPid13 = pids[12];
+            dvbsStruct.uPid13 = pids[12];
+          }
+          if (pids.Count >= 14)
+          {
+            dvbtStruct.uPid14 = pids[13];
+            dvbsStruct.uPid14 = pids[13];
+          }
+          if (pids.Count >= 15)
+          {
+            dvbtStruct.uPid15 = pids[14];
+            dvbsStruct.uPid15 = pids[14];
+          }
+          if (pids.Count >= 16)
+          {
+            dvbtStruct.uPid16 = pids[15];
+            dvbsStruct.uPid16 = pids[15];
+          }
         }
         else
         {
@@ -656,7 +678,7 @@ namespace TvLibrary.Implementations.DVB
           return String.Empty;
         }
 
-        byte[] k = { 0, 0, 0, 0, 0, 0 };
+        byte[] k = {0, 0, 0, 0, 0, 0};
         Marshal.Copy(_ptrDataReturned, k, 0, 6);
 
         // HW in first 3 bytes of returned data ( 8 = 3bytes of 2 chars and 2 separators )
@@ -666,7 +688,8 @@ namespace TvLibrary.Implementations.DVB
         string fwrev = BitConverter.ToString(k).Replace("-", ".").Substring(9, 8);
 
         // SW firmware build in next 2 bytes
-        string fwbuild = ((Marshal.ReadByte(_ptrDataReturned, 6) * 256) + Marshal.ReadByte(_ptrDataReturned, 7)).ToString();
+        string fwbuild =
+          ((Marshal.ReadByte(_ptrDataReturned, 6) * 256) + Marshal.ReadByte(_ptrDataReturned, 7)).ToString();
 
         version = String.Format("HW: {0}, FW: {1} build {2}", hwrev, fwrev, fwbuild);
       }
@@ -807,8 +830,8 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("FireDTV: unable to set \"CA_APPLICATION_INFO\"");
       }
 
-      const int timeout = 250;              // at least 7 seconds for SamsungCAM - Italia (chemelli)
-      const int loops = 40;                 // timeout * loops =  250 * 40 = 10.000 milliseconds
+      const int timeout = 250; // at least 7 seconds for SamsungCAM - Italia (chemelli)
+      const int loops = 40; // timeout * loops =  250 * 40 = 10.000 milliseconds
 
       for (int j = 0; j < loops; j++)
       {
@@ -833,12 +856,12 @@ namespace TvLibrary.Implementations.DVB
 
       // cast ptr back to struct and handle it in c#
       FIRESAT_CA_DATA caDataReturned =
-        (FIRESAT_CA_DATA)Marshal.PtrToStructure(_ptrDataReturned, typeof(FIRESAT_CA_DATA));
+        (FIRESAT_CA_DATA)Marshal.PtrToStructure(_ptrDataReturned, typeof (FIRESAT_CA_DATA));
 
       short manufacturer_code = BitConverter.ToInt16(caDataReturned.uData, 0);
       short application_manufacturer = BitConverter.ToInt16(caDataReturned.uData, 2);
       Log.Log.WriteFile("FireDTV cam manufacturer_code={0}, application_manufacturer={1}",
-                         manufacturer_code, application_manufacturer);
+                        manufacturer_code, application_manufacturer);
 
       int Length = Convert.ToInt16(caDataReturned.uData[4]);
       if (Length > 0)
@@ -949,14 +972,14 @@ namespace TvLibrary.Implementations.DVB
         {
           _previousChannel = channel;
           Log.Log.WriteFile("FireDTV: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}",
-              channel.DisEqc, channel.Frequency, channel.Polarisation);
+                            channel.DisEqc, channel.Frequency, channel.Polarisation);
           return;
         }
         if (_previousChannel.DisEqc == DisEqcType.None && channel.DisEqc == DisEqcType.None)
         {
           _previousChannel = channel;
           Log.Log.WriteFile("FireDTV: already no diseqc used",
-              channel.DisEqc, channel.Frequency, channel.Polarisation);
+                            channel.DisEqc, channel.Frequency, channel.Polarisation);
           return;
         }
       }
@@ -964,7 +987,7 @@ namespace TvLibrary.Implementations.DVB
       {
         _previousChannel = channel;
         Log.Log.WriteFile("FireDTV: diseqc isn't used - skip it",
-            channel.DisEqc, channel.Frequency, channel.Polarisation);
+                          channel.DisEqc, channel.Frequency, channel.Polarisation);
         return;
       }
       _previousChannel = channel;
@@ -972,15 +995,15 @@ namespace TvLibrary.Implementations.DVB
 
       //"01,02,03,04,05,06,07,08,09,0a,0b,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,"	
 
-      Marshal.WriteByte(_ptrDataInstance, 0, 0xFF);//Voltage;
-      Marshal.WriteByte(_ptrDataInstance, 1, 0xFF);//ContTone;
-      Marshal.WriteByte(_ptrDataInstance, 2, 0xFF);//Burst;
-      Marshal.WriteByte(_ptrDataInstance, 3, 0x01);//NrDiseqcCmds;
+      Marshal.WriteByte(_ptrDataInstance, 0, 0xFF); //Voltage;
+      Marshal.WriteByte(_ptrDataInstance, 1, 0xFF); //ContTone;
+      Marshal.WriteByte(_ptrDataInstance, 2, 0xFF); //Burst;
+      Marshal.WriteByte(_ptrDataInstance, 3, 0x01); //NrDiseqcCmds;
 
-      Marshal.WriteByte(_ptrDataInstance, 4, 0x04);//diseqc command 1. length=4
-      Marshal.WriteByte(_ptrDataInstance, 5, 0xE0);//diseqc command 1. uFraming=0xe0
-      Marshal.WriteByte(_ptrDataInstance, 6, 0x10);//diseqc command 1. uAddress=0x10
-      Marshal.WriteByte(_ptrDataInstance, 7, 0x38);//diseqc command 1. uCommand=0x38
+      Marshal.WriteByte(_ptrDataInstance, 4, 0x04); //diseqc command 1. length=4
+      Marshal.WriteByte(_ptrDataInstance, 5, 0xE0); //diseqc command 1. uFraming=0xe0
+      Marshal.WriteByte(_ptrDataInstance, 6, 0x10); //diseqc command 1. uAddress=0x10
+      Marshal.WriteByte(_ptrDataInstance, 7, 0x38); //diseqc command 1. uCommand=0x38
 
 
       //bit 0	(1)	: 0=low band, 1 = hi band
@@ -993,10 +1016,12 @@ namespace TvLibrary.Implementations.DVB
       // 3        B         A
       // 4        B         B
       bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
-      Log.Log.WriteFile("FireDTV SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2},  polarisation:{3} hiband:{4}",
-              channel.DisEqc, antennaNr, channel.Frequency, channel.Polarisation, hiBand);
+      Log.Log.WriteFile(
+        "FireDTV SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2},  polarisation:{3} hiband:{4}",
+        channel.DisEqc, antennaNr, channel.Frequency, channel.Polarisation, hiBand);
 
-      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));
+      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
+                           (channel.Polarisation == Polarisation.CircularL));
       byte cmd = 0xf0;
       cmd |= (byte)(hiBand ? 1 : 0);
       cmd |= (byte)((isHorizontal) ? 2 : 0);
@@ -1041,10 +1066,10 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>true if succeeded, otherwise false</returns>
     public bool SendDiSEqCCommand(byte[] diSEqC)
     {
-      Marshal.WriteByte(_ptrDataInstance, 0, 0xFF);//Voltage;
-      Marshal.WriteByte(_ptrDataInstance, 1, 0xFF);//ContTone;
-      Marshal.WriteByte(_ptrDataInstance, 2, 0xFF);//Burst;
-      Marshal.WriteByte(_ptrDataInstance, 3, 0x01);//NrDiseqcCmds;
+      Marshal.WriteByte(_ptrDataInstance, 0, 0xFF); //Voltage;
+      Marshal.WriteByte(_ptrDataInstance, 1, 0xFF); //ContTone;
+      Marshal.WriteByte(_ptrDataInstance, 2, 0xFF); //Burst;
+      Marshal.WriteByte(_ptrDataInstance, 3, 0x01); //NrDiseqcCmds;
       Marshal.WriteByte(_ptrDataInstance, 4, (byte)diSEqC.Length);
       for (int i = 0; i < diSEqC.Length; ++i)
         Marshal.WriteByte(_ptrDataInstance, 5 + i, diSEqC[i]);
@@ -1100,6 +1125,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #region CiMenuHandlerThread start and stop
+
     /// <summary>
     /// Stops CiHandler thread
     /// </summary>
@@ -1128,6 +1154,7 @@ namespace TvLibrary.Implementations.DVB
         CiMenuThread.Start();
       }
     }
+
     #endregion
 
     #region ICiMenuActions Member
@@ -1141,7 +1168,7 @@ namespace TvLibrary.Implementations.DVB
       if (ciMenuHandler != null)
       {
         Log.Log.Debug("FireDTV: registering ci callbacks");
-        m_ciMenuCallback=ciMenuHandler;        
+        m_ciMenuCallback = ciMenuHandler;
         StartCiHandlerThread();
         return true;
       }
@@ -1167,7 +1194,8 @@ namespace TvLibrary.Implementations.DVB
 
       Marshal.StructureToPtr(caData, _ptrDataInstance, true);
       Marshal.StructureToPtr(caData, _ptrDataReturned, true);
-      int hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_HOST2CA, _ptrDataInstance, CA_DATA_SIZE, _ptrDataReturned, CA_DATA_SIZE);
+      int hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_HOST2CA, _ptrDataInstance, CA_DATA_SIZE,
+                               _ptrDataReturned, CA_DATA_SIZE);
       if (hr != 0)
       {
         Log.Log.Debug("FireDTV: unable to send CA_ENTER_MENU");
@@ -1194,7 +1222,8 @@ namespace TvLibrary.Implementations.DVB
       DVB_MMI.CreateMMIClose(ref caData.uData);
       Marshal.StructureToPtr(caData, _ptrDataInstance, true);
       Marshal.StructureToPtr(caData, _ptrDataReturned, true);
-      int hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_HOST2CA, _ptrDataInstance, CA_DATA_SIZE, _ptrDataReturned, CA_DATA_SIZE);
+      int hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_HOST2CA, _ptrDataInstance, CA_DATA_SIZE,
+                               _ptrDataReturned, CA_DATA_SIZE);
       if (hr != 0)
       {
         Log.Log.Debug("FireDTV: unable to send CA_MMI close");
@@ -1223,7 +1252,8 @@ namespace TvLibrary.Implementations.DVB
 
       Marshal.StructureToPtr(caData, _ptrDataInstance, true);
       Marshal.StructureToPtr(caData, _ptrDataReturned, true);
-      int hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_HOST2CA, _ptrDataInstance, CA_DATA_SIZE, _ptrDataReturned, CA_DATA_SIZE);
+      int hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_HOST2CA, _ptrDataInstance, CA_DATA_SIZE,
+                               _ptrDataReturned, CA_DATA_SIZE);
       if (hr != 0)
       {
         Log.Log.Debug("FireDTV: unable to select CI Menu entry");
@@ -1255,7 +1285,8 @@ namespace TvLibrary.Implementations.DVB
       //DVB_MMI.DumpBinary(caData.uData,0,caData.uLength1);
       Marshal.StructureToPtr(caData, _ptrDataInstance, true);
       Marshal.StructureToPtr(caData, _ptrDataReturned, true);
-      int hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_HOST2CA, _ptrDataInstance, CA_DATA_SIZE, _ptrDataReturned, CA_DATA_SIZE);
+      int hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_HOST2CA, _ptrDataInstance, CA_DATA_SIZE,
+                               _ptrDataReturned, CA_DATA_SIZE);
       if (hr != 0)
       {
         Log.Log.Debug("FireDTV: unable to send CI Menu answer");
@@ -1263,6 +1294,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.Debug("FireDTV: send CI Menu successful");
       return true;
     }
+
     #endregion
 
     #region CiMenuHandlerThread for polling status and handling MMI
@@ -1277,7 +1309,7 @@ namespace TvLibrary.Implementations.DVB
       int hr;
       DVB_MMI_Handler MMI = new DVB_MMI_Handler("FireDTV", ref m_ciMenuCallback);
       DE_CI_STATUS CiStatus;
-      
+
       // Init CiStatus word to 0
       Marshal.WriteInt16(_ptrDataCiHandler, 0);
       IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
@@ -1293,7 +1325,8 @@ namespace TvLibrary.Implementations.DVB
         try
         {
           // this code is equal to GetCAMStatus, but implemented separately to avoid memory / threading conflicts with used pointers!
-          hr = propertySet.Get(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_GET_CI_STATUS, _ptrDataCiHandler, CA_DATA_SIZE, _ptrDataCiHandler, CA_DATA_SIZE, out bytesReturned);
+          hr = propertySet.Get(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_GET_CI_STATUS, _ptrDataCiHandler, CA_DATA_SIZE,
+                               _ptrDataCiHandler, CA_DATA_SIZE, out bytesReturned);
           if (hr != 0)
           {
             Log.Log.Debug("FireDTV: error reading CI state.");
@@ -1302,7 +1335,7 @@ namespace TvLibrary.Implementations.DVB
           {
             CiStatus = (DE_CI_STATUS)Marshal.ReadInt16(_ptrDataCiHandler);
 #if DEBUG
-            Log.Log.Debug("FireDTV: CI iStatus:{0}" , CiStatus);
+            Log.Log.Debug("FireDTV: CI iStatus:{0}", CiStatus);
 #endif
             if ((CiStatus & DE_CI_STATUS.CI_MMI_REQUEST) != 0)
             {
@@ -1313,13 +1346,15 @@ namespace TvLibrary.Implementations.DVB
 
               Marshal.StructureToPtr(caData, _ptrDataInstance, true);
               Marshal.StructureToPtr(caData, _ptrDataCiHandler, true);
-              hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_CA2HOST, _ptrDataInstance, CA_DATA_SIZE, _ptrDataCiHandler, CA_DATA_SIZE);
+              hr = propertySet.Set(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_CA2HOST, _ptrDataInstance, CA_DATA_SIZE,
+                                   _ptrDataCiHandler, CA_DATA_SIZE);
               if (hr != 0)
               {
                 Log.Log.Debug("FireDTV: unable to set \"CA_MMI\"");
               }
 
-              hr = propertySet.Get(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_CA2HOST, _ptrDataInstance, CA_DATA_SIZE, _ptrDataCiHandler, CA_DATA_SIZE, out bytesReturned);
+              hr = propertySet.Get(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_CA2HOST, _ptrDataInstance, CA_DATA_SIZE,
+                                   _ptrDataCiHandler, CA_DATA_SIZE, out bytesReturned);
               if (hr != 0)
               {
                 Log.Log.Debug("FireDTV: unable to get \"CA_MMI\": hr {0:X}", hr);
@@ -1327,8 +1362,9 @@ namespace TvLibrary.Implementations.DVB
               else
               {
                 // cast ptr back to struct and handle it in c#
-                FIRESAT_CA_DATA caDataReturned = (FIRESAT_CA_DATA)Marshal.PtrToStructure(_ptrDataCiHandler, typeof(FIRESAT_CA_DATA));
-                
+                FIRESAT_CA_DATA caDataReturned =
+                  (FIRESAT_CA_DATA)Marshal.PtrToStructure(_ptrDataCiHandler, typeof (FIRESAT_CA_DATA));
+
                 Int32 caDataLength = caDataReturned.uLength2 << 8 | caDataReturned.uLength1;
                 MMI.HandleMMI(caDataReturned.uData, caDataLength);
               }
@@ -1336,7 +1372,7 @@ namespace TvLibrary.Implementations.DVB
           }
           Thread.Sleep(500);
         }
-        catch (ThreadAbortException) { }
+        catch (ThreadAbortException) {}
         catch (Exception ex)
         {
           Log.Log.Debug("FireDTV: error in CiMenuHandler thread\r\n{0}", ex.ToString());
@@ -1360,8 +1396,7 @@ namespace TvLibrary.Implementations.DVB
         {
           CiMenuThread.Abort();
         }
-        catch
-        {}
+        catch {}
       }
       Marshal.FreeCoTaskMem(_ptrDataInstance);
       Marshal.FreeCoTaskMem(_ptrDataReturned);

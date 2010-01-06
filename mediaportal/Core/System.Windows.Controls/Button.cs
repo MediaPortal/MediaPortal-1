@@ -41,9 +41,7 @@ namespace System.Windows.Controls
                                                       new PropertyMetadata(false));
     }
 
-    public Button()
-    {
-    }
+    public Button() {}
 
     #endregion Constructors
 
@@ -65,19 +63,19 @@ namespace System.Windows.Controls
 
     public bool IsCancel
     {
-      get { return (bool) GetValue(IsCancelProperty); }
+      get { return (bool)GetValue(IsCancelProperty); }
       set { SetValue(IsCancelProperty, value); }
     }
 
     public bool IsDefault
     {
-      get { return (bool) GetValue(IsDefaultProperty); }
+      get { return (bool)GetValue(IsDefaultProperty); }
       set { SetValue(IsDefaultProperty, value); }
     }
 
     public bool IsDefaulted
     {
-      get { return (bool) GetValue(IsDefaultedProperty); }
+      get { return (bool)GetValue(IsDefaultedProperty); }
       set { SetValue(IsDefaultedProperty, value); }
     }
 

@@ -32,14 +32,10 @@ namespace MediaPortal.Configuration.Sections
   public class MovieShares : BaseShares
   {
     public MovieShares()
-      : this("Video Folders")
-    {
-    }
+      : this("Video Folders") {}
 
     public MovieShares(string name)
-      : base(name)
-    {
-    }
+      : base(name) {}
 
     public override void LoadSettings()
     {

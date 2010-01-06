@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Windows.Forms;
 
-/// <summary>
-/// This class is an implementation of the 'IComparer' interface.
-/// </summary>
 namespace MediaPortal.Configuration
 {
+  /// <summary>
+  /// This class is an implementation of the 'IComparer' interface.
+  /// </summary>
   public class ListViewColumnSorter : IComparer
   {
     /// <summary>
@@ -49,8 +49,8 @@ namespace MediaPortal.Configuration
       int compareResult;
 
       // Cast the objects to be compared to ListViewItem objects
-      ListViewItem listviewX = (ListViewItem) x;
-      ListViewItem listviewY = (ListViewItem) y;
+      ListViewItem listviewX = (ListViewItem)x;
+      ListViewItem listviewY = (ListViewItem)y;
 
       if (_isColumnNumeric)
       {

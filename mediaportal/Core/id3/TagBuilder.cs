@@ -45,7 +45,7 @@ namespace Roger.ID3
 
     public void Append(object frameId, object frameValue)
     {
-      Append((string) frameId, frameValue);
+      Append((string)frameId, frameValue);
     }
 
     public void Append(string frameId, object frameValue)
@@ -80,7 +80,7 @@ namespace Roger.ID3
     {
       if (frameId[0] == 'T')
       {
-        string valueString = (string) frameValue;
+        string valueString = (string)frameValue;
 
         // For now we'll use Latin1.
         Encoding encoding = Encoding.GetEncoding(1252);
@@ -94,7 +94,7 @@ namespace Roger.ID3
       }
       else
       {
-        return (byte[]) frameValue;
+        return (byte[])frameValue;
       }
     }
 
@@ -104,7 +104,7 @@ namespace Roger.ID3
       WriteVersion(stream);
       WriteFlags(stream);
 
-      WriteInt28(stream, (int) memoryStream.Length);
+      WriteInt28(stream, (int)memoryStream.Length);
       memoryStream.WriteTo(stream);
     }
 
@@ -129,13 +129,13 @@ namespace Roger.ID3
     {
       byte[] buffer = new byte[4];
 
-      buffer[3] = (byte) (n & 0x7F);
+      buffer[3] = (byte)(n & 0x7F);
       n >>= 7;
-      buffer[2] = (byte) (n & 0x7F);
+      buffer[2] = (byte)(n & 0x7F);
       n >>= 7;
-      buffer[1] = (byte) (n & 0x7F);
+      buffer[1] = (byte)(n & 0x7F);
       n >>= 7;
-      buffer[0] = (byte) (n & 0x7F);
+      buffer[0] = (byte)(n & 0x7F);
 
       stream.Write(buffer, 0, 4);
     }

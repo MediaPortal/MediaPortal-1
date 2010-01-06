@@ -41,15 +41,14 @@ namespace MediaPortal.Core.Transcoding
     protected DsROTEntry _rotEntry = null;
     protected IGraphBuilder graphBuilder = null;
     protected IStreamBufferSource bufferSource = null;
-    protected IFileSinkFilter fileWriterFilter = null;			// DShow Filter: file writer
+    protected IFileSinkFilter fileWriterFilter = null; // DShow Filter: file writer
     protected IMediaControl mediaControl = null;
     protected IMediaSeeking mediaSeeking = null;
     protected IBaseFilter powerDvdMuxer = null;
     protected IMediaEventEx mediaEvt = null;
 
-    public Dvrms2Mpeg()
-    {
-    }
+    public Dvrms2Mpeg() {}
+
     #region ITranscode Members
 
     public bool Supports(MediaPortal.Core.Transcoding.VideoFormat format)
@@ -58,7 +57,8 @@ namespace MediaPortal.Core.Transcoding
       return false;
     }
 
-    public bool Transcode(TranscodeInfo info, MediaPortal.Core.Transcoding.VideoFormat format, MediaPortal.Core.Transcoding.Quality quality, Standard standard)
+    public bool Transcode(TranscodeInfo info, MediaPortal.Core.Transcoding.VideoFormat format,
+                          MediaPortal.Core.Transcoding.Quality quality, Standard standard)
     {
       if (!Supports(format)) return false;
       string ext = System.IO.Path.GetExtension(info.file);
@@ -86,7 +86,8 @@ namespace MediaPortal.Core.Transcoding
 
 
         Log.Info("DVR2MPG: Add Cyberlink MPEG2 multiplexer to graph");
-        string monikerPowerDvdMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7F2BBEAF-E11C-4D39-90E8-938FB5A86045}";
+        string monikerPowerDvdMuxer =
+          @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7F2BBEAF-E11C-4D39-90E8-938FB5A86045}";
         powerDvdMuxer = Marshal.BindToMoniker(monikerPowerDvdMuxer) as IBaseFilter;
         if (powerDvdMuxer == null)
         {
@@ -105,7 +106,8 @@ namespace MediaPortal.Core.Transcoding
 
         //add filewriter 
         Log.Info("DVR2MPG: Add FileWriter to graph");
-        string monikerFileWrite = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{3E8868CB-5FE8-402C-AA90-CB1AC6AE3240}";
+        string monikerFileWrite =
+          @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{3E8868CB-5FE8-402C-AA90-CB1AC6AE3240}";
         IBaseFilter fileWriterbase = Marshal.BindToMoniker(monikerFileWrite) as IBaseFilter;
         if (fileWriterbase == null)
         {
@@ -285,7 +287,7 @@ namespace MediaPortal.Core.Transcoding
       return true;
     }
 
-    void Cleanup()
+    private void Cleanup()
     {
       Log.Info("DVR2MPG: cleanup");
       if (_rotEntry != null)
@@ -318,7 +320,8 @@ namespace MediaPortal.Core.Transcoding
       DirectShowUtil.RemoveFilters(graphBuilder);
 
       if (graphBuilder != null)
-        DirectShowUtil.ReleaseComObject(graphBuilder); graphBuilder = null;
+        DirectShowUtil.ReleaseComObject(graphBuilder);
+      graphBuilder = null;
     }
 
 
@@ -330,6 +333,7 @@ namespace MediaPortal.Core.Transcoding
       }
       Cleanup();
     }
+
     #endregion
   }
 }

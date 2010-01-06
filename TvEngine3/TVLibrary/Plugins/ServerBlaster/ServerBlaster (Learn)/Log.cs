@@ -4,62 +4,63 @@ using System.Reflection;
 
 namespace MediaPortal.GUI.Library
 {
-	public class Log
-	{
-		private Log()
-		{
-		}
+  public class Log
+  {
+    private Log() {}
 
-		static Log()
-		{
-			try
-			{
-				Uri uri = new Uri(Assembly.GetExecutingAssembly().GetName().CodeBase);
-				
-				_logFilename = uri.LocalPath.Replace(".exe", ".log");
-			}
-			catch
-			{
-				_logFilename = "myblaster.log";
-			}
-		}
+    static Log()
+    {
+      try
+      {
+        Uri uri = new Uri(Assembly.GetExecutingAssembly().GetName().CodeBase);
 
-		public static void Delete()
-		{
-			lock(typeof(Log)) if(File.Exists(_logFilename)) File.Delete(_logFilename);
-		}
+        _logFilename = uri.LocalPath.Replace(".exe", ".log");
+      }
+      catch
+      {
+        _logFilename = "myblaster.log";
+      }
+    }
 
-		public static void Write(string strFormat, params object[] arg)
-		{
-			if(_logEnabled == false) return;
+    public static void Delete()
+    {
+      lock (typeof (Log)) if (File.Exists(_logFilename)) File.Delete(_logFilename);
+    }
 
-			lock(typeof(Log))
-			{
-				try
-				{
-					using(StreamWriter writer = new StreamWriter(_logFilename, true))
-					{
-						writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
-						writer.Write(DateTime.Now.ToShortDateString()+ " "+DateTime.Now.ToLongTimeString()+ " ");
-						writer.WriteLine(strFormat,arg);
-						writer.Close();
-					}
+    public static void Write(string strFormat, params object[] arg)
+    {
+      if (_logEnabled == false) return;
 
-					Console.WriteLine(string.Format(strFormat, arg));
-				}
-				catch(Exception)
-				{
-				}
-			}
-		}
+      lock (typeof (Log))
+      {
+        try
+        {
+          using (StreamWriter writer = new StreamWriter(_logFilename, true))
+          {
+            writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
+            writer.Write(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " ");
+            writer.WriteLine(strFormat, arg);
+            writer.Close();
+          }
 
-		static public string Filename
-		{ get { return _logFilename; } }
+          Console.WriteLine(string.Format(strFormat, arg));
+        }
+        catch (Exception) {}
+      }
+    }
 
-		static public bool Enabled
-		{ get { return _logEnabled; } set { _logEnabled = value; } }
+    public static string Filename
+    {
+      get { return _logFilename; }
+    }
 
-		static protected string		_logFilename;
-		static protected bool		_logEnabled = true;
-	}
+    public static bool Enabled
+    {
+      get { return _logEnabled; }
+      set { _logEnabled = value; }
+    }
+
+    protected static string _logFilename;
+    protected static bool _logEnabled = true;
+  }
 }

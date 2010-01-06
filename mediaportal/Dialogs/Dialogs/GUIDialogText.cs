@@ -41,7 +41,7 @@ namespace MediaPortal.Dialogs
 
     public GUIDialogText()
     {
-      GetID = (int) Window.WINDOW_DIALOG_TEXT;
+      GetID = (int)Window.WINDOW_DIALOG_TEXT;
     }
 
     public override bool Init()

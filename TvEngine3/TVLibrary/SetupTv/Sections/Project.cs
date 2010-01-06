@@ -33,7 +33,7 @@ namespace SetupTv.Sections
   public partial class Project : SectionSettings
   {
     public Project()
-      : this("Project") { }
+      : this("Project") {}
 
     public Project(string name)
       : base(name)
@@ -76,7 +76,8 @@ namespace SetupTv.Sections
         return;
       if (linkLabelOnlineDocumentation.Text.Length > 0)
       {
-        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelOnlineDocumentation.Text);
+        System.Diagnostics.ProcessStartInfo sInfo =
+          new System.Diagnostics.ProcessStartInfo(linkLabelOnlineDocumentation.Text);
         System.Diagnostics.Process.Start(sInfo);
       }
     }

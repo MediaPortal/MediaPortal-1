@@ -73,7 +73,7 @@ namespace MediaPortal.Player
       rect.right = GUIGraphicsContext.form.Width;
       try
       {
-        graphBuilder = (IGraphBuilder) new FilterGraph();
+        graphBuilder = (IGraphBuilder)new FilterGraph();
         // add preferred video & audio codecs
         int hr;
         bool bAutoDecoderSettings = false;
@@ -232,7 +232,7 @@ namespace MediaPortal.Player
               }
               graphBuilder = null;
             }
-            graphBuilder = (IGraphBuilder) new FilterGraph();
+            graphBuilder = (IGraphBuilder)new FilterGraph();
             // switch back to directx fullscreen mode
             Log.Info("VideoPlayerVMR9: Enabling DX9 exclusive mode");
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
@@ -259,7 +259,7 @@ namespace MediaPortal.Player
           //Set the filter setting to enable more than 2 audio channels
           const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
           object val = true;
-          IPropertyBag propBag = (IPropertyBag) baseFilter;
+          IPropertyBag propBag = (IPropertyBag)baseFilter;
           hr = propBag.Write(g_wszWMACHiResOutput, ref val);
           if (hr != 0)
           {
@@ -298,17 +298,19 @@ namespace MediaPortal.Player
           Log.Error("VideoPlayer9: Failed to render file -> vmr9");
           return false;
         }
-        mediaCtrl = (IMediaControl) graphBuilder;
-        mediaEvt = (IMediaEventEx) graphBuilder;
-        mediaSeek = (IMediaSeeking) graphBuilder;
-        mediaPos = (IMediaPosition) graphBuilder;
+        mediaCtrl = (IMediaControl)graphBuilder;
+        mediaEvt = (IMediaEventEx)graphBuilder;
+        mediaSeek = (IMediaSeeking)graphBuilder;
+        mediaPos = (IMediaPosition)graphBuilder;
         basicAudio = graphBuilder as IBasicAudio;
         DirectShowUtil.EnableDeInterlace(graphBuilder);
         m_iVideoWidth = Vmr9.VideoWidth;
         m_iVideoHeight = Vmr9.VideoHeight;
 
         #region Subtitles
+
         SubEngine.GetInstance().LoadSubtitles(graphBuilder, m_strCurrentFile);
+
         #endregion //Subtitles
 
         if (!Vmr9.IsVMR9Connected)
@@ -354,10 +356,10 @@ namespace MediaPortal.Player
       int hr = 0;
       Log.Info("VideoPlayer9: Cleanup DShow graph");
       try
-      { 
+      {
         if (mediaCtrl != null)
         {
-          int counter = 0;        
+          int counter = 0;
           FilterState state;
           hr = mediaCtrl.Stop();
           hr = mediaCtrl.GetState(10, out state);
@@ -365,7 +367,7 @@ namespace MediaPortal.Player
           {
             Log.Debug("VideoPlayer9: graph still running");
             Thread.Sleep(100);
-            hr = mediaCtrl.GetState(10, out state);          
+            hr = mediaCtrl.GetState(10, out state);
             counter++;
             if (counter >= 30)
             {
@@ -384,7 +386,7 @@ namespace MediaPortal.Player
           hr = mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
           mediaEvt = null;
         }
-        
+
         videoWin = graphBuilder as IVideoWindow;
         if (videoWin != null)
         {
@@ -407,7 +409,7 @@ namespace MediaPortal.Player
         }
 
         if (graphBuilder != null)
-        {          
+        {
           DirectShowUtil.RemoveFilters(graphBuilder);
           if (_rotEntry != null)
           {
@@ -420,7 +422,6 @@ namespace MediaPortal.Player
 
         GUIGraphicsContext.form.Invalidate(true);
         m_state = PlayState.Init;
-        
       }
       catch (Exception ex)
       {
@@ -430,6 +431,6 @@ namespace MediaPortal.Player
       Log.Info("VideoPlayerVMR9: Disabling DX9 exclusive mode");
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
       GUIWindowManager.SendMessage(msg);
-    }    
+    }
   }
 }

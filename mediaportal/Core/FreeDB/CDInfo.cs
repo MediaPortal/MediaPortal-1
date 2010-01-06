@@ -36,9 +36,7 @@ namespace MediaPortal.Freedb
     private string m_discid;
     private string m_title;
 
-    public CDInfo()
-    {
-    }
+    public CDInfo() {}
 
     public CDInfo(string discid, string category, string title)
     {

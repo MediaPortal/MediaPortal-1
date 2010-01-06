@@ -40,9 +40,7 @@ namespace System.Windows.Controls
                                                         new PropertyMetadata(false));
     }
 
-    public Panel()
-    {
-    }
+    public Panel() {}
 
     #endregion Constructors
 
@@ -60,25 +58,21 @@ namespace System.Windows.Controls
         throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof (UIElement)));
       }
 
-      Children.Add((UIElement) child);
+      Children.Add((UIElement)child);
     }
 
-    void IAddChild.AddText(string text)
-    {
-    }
+    void IAddChild.AddText(string text) {}
 
 //		protected virtual UIElementCollection CreateUIElementCollection(FrameworkElement logicalParent)
 
     public static Brush GetBackground(DependencyObject d)
     {
-      return (Brush) d.GetValue(BackgroundProperty);
+      return (Brush)d.GetValue(BackgroundProperty);
     }
 
 //		protected virtual void OnIsItemsHostChanged(bool oldIsItemsHost, bool newIsItemsHost)
 
-    protected override void OnRender(DrawingContext dc)
-    {
-    }
+    protected override void OnRender(DrawingContext dc) {}
 
     public static void SetBackground(DependencyObject d, Brush background)
     {
@@ -91,7 +85,7 @@ namespace System.Windows.Controls
 
     public Brush Background
     {
-      get { return (Brush) GetValue(BackgroundProperty); }
+      get { return (Brush)GetValue(BackgroundProperty); }
       set { SetValue(BackgroundProperty, value); }
     }
 
@@ -110,7 +104,7 @@ namespace System.Windows.Controls
     [Bindable(false)]
     public bool IsItemsHost
     {
-      get { return (bool) GetValue(IsItemsHostProperty); }
+      get { return (bool)GetValue(IsItemsHostProperty); }
       set { SetValue(IsItemsHostProperty, value); }
     }
 

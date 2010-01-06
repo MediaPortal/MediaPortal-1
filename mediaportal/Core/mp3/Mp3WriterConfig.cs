@@ -68,7 +68,7 @@ namespace Yeti.MMedia.Mp3
     protected Mp3WriterConfig(SerializationInfo info, StreamingContext context)
       : base(info, context)
     {
-      m_BeConfig = (BE_CONFIG) info.GetValue("BE_CONFIG", typeof (BE_CONFIG));
+      m_BeConfig = (BE_CONFIG)info.GetValue("BE_CONFIG", typeof (BE_CONFIG));
     }
 
     public Mp3WriterConfig(WaveFormat InFormat, BE_CONFIG beconfig)
@@ -78,14 +78,10 @@ namespace Yeti.MMedia.Mp3
     }
 
     public Mp3WriterConfig(WaveFormat InFormat)
-      : this(InFormat, new BE_CONFIG(InFormat))
-    {
-    }
+      : this(InFormat, new BE_CONFIG(InFormat)) {}
 
     public Mp3WriterConfig()
-      : this(new WaveFormat(44100, 16, 2))
-    {
-    }
+      : this(new WaveFormat(44100, 16, 2)) {}
 
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {

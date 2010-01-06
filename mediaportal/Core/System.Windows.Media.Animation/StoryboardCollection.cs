@@ -32,9 +32,7 @@ namespace System.Windows.Media.Animation
   {
     #region Constructors
 
-    public StoryboardCollection()
-    {
-    }
+    public StoryboardCollection() {}
 
     #endregion Constructors
 
@@ -87,12 +85,10 @@ namespace System.Windows.Media.Animation
         throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof (Timeline)));
       }
 
-      List.Add((Timeline) child);
+      List.Add((Timeline)child);
     }
 
-    void IAddChild.AddText(string text)
-    {
-    }
+    void IAddChild.AddText(string text) {}
 
     public int IndexOf(Timeline timeline)
     {
@@ -137,7 +133,7 @@ namespace System.Windows.Media.Animation
 
     public Timeline this[int index]
     {
-      get { return (Timeline) List[index]; }
+      get { return (Timeline)List[index]; }
       set { List[index] = value; }
     }
 

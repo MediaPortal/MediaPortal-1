@@ -48,9 +48,7 @@ namespace DShowNET.AudioMixer
     public class AudioMixerException : Exception
     {
       public AudioMixerException(string message) :
-        base(message)
-      {
-      }
+        base(message) {}
     }
 
     /// <summary>
@@ -400,7 +398,7 @@ namespace DShowNET.AudioMixer
         CheckErr(mixerGetLineControlsA(hmixer, ref mxlc,
                                        MIXER_GETLINECONTROLSF_ONEBYTYPE));
         // Copy the control into the destination structure 
-        mxc = (MIXERCONTROL) Marshal.PtrToStructure(mxlc.pamxctrl, typeof (MIXERCONTROL));
+        mxc = (MIXERCONTROL)Marshal.PtrToStructure(mxlc.pamxctrl, typeof (MIXERCONTROL));
       }
       catch (Exception e)
       {
@@ -427,7 +425,7 @@ namespace DShowNET.AudioMixer
         CheckErr(mixerGetControlDetailsA(hmixer, ref pmxcd,
                                          MIXER_GETCONTROLDETAILSF_VALUE));
         du =
-          (MIXERCONTROLDETAILS_UNSIGNED) Marshal.PtrToStructure(pmxcd.paDetails, typeof (MIXERCONTROLDETAILS_UNSIGNED));
+          (MIXERCONTROLDETAILS_UNSIGNED)Marshal.PtrToStructure(pmxcd.paDetails, typeof (MIXERCONTROLDETAILS_UNSIGNED));
       }
       catch (Exception e)
       {
@@ -510,8 +508,8 @@ namespace DShowNET.AudioMixer
       int diff = volCtrl.lMaximum - volCtrl.lMinimum;
       if (diff > 0)
       {
-        long normalized = 65535L*(long) (currentVol - volCtrl.lMinimum)/diff;
-        currentVol = (int) normalized;
+        long normalized = 65535L * (long)(currentVol - volCtrl.lMinimum) / diff;
+        currentVol = (int)normalized;
       }
       return currentVol;
     }
@@ -536,8 +534,8 @@ namespace DShowNET.AudioMixer
         int diff = volCtrl.lMaximum - volCtrl.lMinimum;
         if (diff > 0)
         {
-          long normalized = (long) vVolume*(long) diff/65535L;
-          vVolume = (int) normalized + volCtrl.lMinimum;
+          long normalized = (long)vVolume * (long)diff / 65535L;
+          vVolume = (int)normalized + volCtrl.lMinimum;
         }
 
         if (vVolume > volCtrl.lMaximum)

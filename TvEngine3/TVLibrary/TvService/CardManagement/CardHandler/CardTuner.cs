@@ -32,7 +32,8 @@ namespace TvService
 {
   public class CardTuner
   {
-    readonly ITvCardHandler _cardHandler;
+    private readonly ITvCardHandler _cardHandler;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="CardTuner"/> class.
     /// </summary>
@@ -66,9 +67,11 @@ namespace TvService
             {
               RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
               return RemoteControl.Instance.Tune(ref user, channel, idChannel);
-            } catch (Exception)
+            }
+            catch (Exception)
             {
-              Log.Error("card: unable to connect to slave controller at: {0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+              Log.Error("card: unable to connect to slave controller at: {0}",
+                        _cardHandler.DataBaseCard.ReferencedServer().HostName);
               return TvResult.ConnectionToSlaveFailed;
             }
           }
@@ -86,53 +89,55 @@ namespace TvService
           TvCardContext context = (TvCardContext)_cardHandler.Card.Context;
           if (_cardHandler.Card.SubChannels.Length > 0)
           {
-              if (IsTunedToTransponder(channel) == false)
+            if (IsTunedToTransponder(channel) == false)
+            {
+              if (context.IsOwner(user) || user.IsAdmin)
               {
-                  if (context.IsOwner(user) || user.IsAdmin)
-                  {
-                      Log.Debug("card: to different transponder");
+                Log.Debug("card: to different transponder");
 
-                      //remove all subchannels, except for this user...
-                      User[] users = context.Users;
-                      for (int i = 0; i < users.Length; ++i)
+                //remove all subchannels, except for this user...
+                User[] users = context.Users;
+                for (int i = 0; i < users.Length; ++i)
+                {
+                  if (users[i].Name != user.Name)
+                  {
+                    Log.Debug("  stop subchannel: {0} user: {1}", i, users[i].Name);
+
+                    //fix for b2b mantis; http://mantis.team-mediaportal.com/view.php?id=1112
+                    if (users[i].IsAdmin)
+                      // if we are stopping an on-going recording/schedule (=admin), we have to make sure that we remove the schedule also.
+                    {
+                      Log.Debug("user is scheduler: {0}", users[i].Name);
+                      int recScheduleId = RemoteControl.Instance.GetRecordingSchedule(users[i].CardId,
+                                                                                      users[i].IdChannel);
+
+                      if (recScheduleId > 0)
                       {
-                          if (users[i].Name != user.Name)
-                          {
-                              Log.Debug("  stop subchannel: {0} user: {1}", i, users[i].Name);
-
-                              //fix for b2b mantis; http://mantis.team-mediaportal.com/view.php?id=1112
-                              if (users[i].IsAdmin) // if we are stopping an on-going recording/schedule (=admin), we have to make sure that we remove the schedule also.
-                              {
-                                  Log.Debug("user is scheduler: {0}", users[i].Name);
-                                  int recScheduleId = RemoteControl.Instance.GetRecordingSchedule(users[i].CardId, users[i].IdChannel);
-
-                                  if (recScheduleId > 0)
-                                  {
-                                      Schedule schedule = Schedule.Retrieve(recScheduleId);
-                                      Log.Info("removing schedule with id: {0}", schedule.IdSchedule);
-                                      RemoteControl.Instance.StopRecordingSchedule(schedule.IdSchedule);
-                                      schedule.Delete();
-                                  }
-                              }
-                              else
-                              {
-                                  _cardHandler.Card.FreeSubChannel(users[i].SubChannel);
-                                  context.Remove(users[i]);
-                              }
-                          }
+                        Schedule schedule = Schedule.Retrieve(recScheduleId);
+                        Log.Info("removing schedule with id: {0}", schedule.IdSchedule);
+                        RemoteControl.Instance.StopRecordingSchedule(schedule.IdSchedule);
+                        schedule.Delete();
                       }
+                    }
+                    else
+                    {
+                      _cardHandler.Card.FreeSubChannel(users[i].SubChannel);
+                      context.Remove(users[i]);
+                    }
                   }
-                  else
-                  {
-                      Log.Debug("card: user: {0} is not the card owner. Cannot switch transponder", user.Name);
-                      return TvResult.NotTheOwner;
-                  }
+                }
               }
-              else // same transponder, free previous subchannel before tuning..
+              else
               {
-                  _cardHandler.Card.FreeSubChannel(user.SubChannel);
+                Log.Debug("card: user: {0} is not the card owner. Cannot switch transponder", user.Name);
+                return TvResult.NotTheOwner;
               }
-          }          
+            }
+            else // same transponder, free previous subchannel before tuning..
+            {
+              _cardHandler.Card.FreeSubChannel(user.SubChannel);
+            }
+          }
 
           result = _cardHandler.Card.Tune(user.SubChannel, channel);
 
@@ -140,7 +145,8 @@ namespace TvService
           Log.Debug("card: Tuner locked: {0}", isLocked);
 
           Log.Info("**************************************************");
-          Log.Info("***** SIGNAL LEVEL: {0}, SIGNAL QUALITY: {1} *****", _cardHandler.Card.SignalLevel, _cardHandler.Card.SignalQuality);
+          Log.Info("***** SIGNAL LEVEL: {0}, SIGNAL QUALITY: {1} *****", _cardHandler.Card.SignalLevel,
+                   _cardHandler.Card.SignalQuality);
           Log.Info("**************************************************");
 
           if (result != null)
@@ -149,7 +155,8 @@ namespace TvService
             user.SubChannel = result.SubChannelId;
             user.IdChannel = idChannel;
             context.Add(user);
-          } else
+          }
+          else
           {
             //_cardHandler.Card.FreeSubChannel(result.SubChannelId);
             return TvResult.AllCardsBusy;
@@ -169,14 +176,16 @@ namespace TvService
           }
           return TvResult.Succeeded;
         }
-      } catch (TvExceptionNoSignal)
+      }
+      catch (TvExceptionNoSignal)
       {
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
         }
         return TvResult.NoSignalDetected;
-      } catch (TvExceptionSWEncoderMissing ex)
+      }
+      catch (TvExceptionSWEncoderMissing ex)
       {
         Log.Write(ex);
         if (result != null)
@@ -184,7 +193,8 @@ namespace TvService
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
         }
         return TvResult.SWEncoderMissing;
-      } catch (TvExceptionGraphBuildingFailed ex2)
+      }
+      catch (TvExceptionGraphBuildingFailed ex2)
       {
         Log.Write(ex2);
         if (result != null)
@@ -192,7 +202,8 @@ namespace TvService
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
         }
         return TvResult.GraphBuildingFailed;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         if (result != null)
@@ -223,14 +234,17 @@ namespace TvService
           RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
           if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
             return TvResult.CardIsDisabled;
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return TvResult.UnknownError;
         }
 
         TvResult result;
-        Log.WriteFile("card: CardTune {0} {1} {2}:{3}:{4}", _cardHandler.DataBaseCard.IdCard, channel.Name, user.Name, user.CardId, user.SubChannel);
+        Log.WriteFile("card: CardTune {0} {1} {2}:{3}:{4}", _cardHandler.DataBaseCard.IdCard, channel.Name, user.Name,
+                      user.CardId, user.SubChannel);
         if (_cardHandler.IsScrambled(ref user))
         {
           result = Tune(ref user, channel, dbChannel.IdChannel);
@@ -254,7 +268,8 @@ namespace TvService
         result = Tune(ref user, channel, dbChannel.IdChannel);
         Log.Info("card2:{0} {1} {2}", user.Name, user.CardId, user.SubChannel);
         return result;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return TvResult.UnknownError;
@@ -276,9 +291,11 @@ namespace TvService
         {
           RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
           return RemoteControl.Instance.IsTunedToTransponder(_cardHandler.DataBaseCard.IdCard, transponder);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
       }
@@ -293,7 +310,6 @@ namespace TvService
     }
 
 
-
     /// <summary>
     /// Method to check if card can tune to the channel specified
     /// </summary>
@@ -301,7 +317,6 @@ namespace TvService
     /// <returns>true if card can tune to the channel otherwise false</returns>
     public bool CanTune(IChannel channel)
     {
-
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
@@ -317,18 +332,20 @@ namespace TvService
           {
             return RemoteControl.Instance.CanTune(_cardHandler.DataBaseCard.IdCard, channel);
           }
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
         return _cardHandler.Card.CanTune(channel);
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return false;
       }
     }
   }
-
 }

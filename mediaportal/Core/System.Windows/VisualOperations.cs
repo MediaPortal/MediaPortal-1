@@ -32,9 +32,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    private VisualOperations()
-    {
-    }
+    private VisualOperations() {}
 
     #endregion Constructors
 
@@ -96,7 +94,7 @@ namespace System.Windows
     {
       if (visual is UIElement)
       {
-        return ((UIElement) visual).Opacity;
+        return ((UIElement)visual).Opacity;
       }
 
       return 1;
@@ -106,7 +104,7 @@ namespace System.Windows
     {
       if (visual is UIElement)
       {
-        return ((UIElement) visual).OpacityMask;
+        return ((UIElement)visual).OpacityMask;
       }
 
       return null;
@@ -116,7 +114,7 @@ namespace System.Windows
     {
       if (reference is Visual)
       {
-        return ((Visual) reference).VisualParent;
+        return ((Visual)reference).VisualParent;
       }
 
       throw new NotImplementedException();

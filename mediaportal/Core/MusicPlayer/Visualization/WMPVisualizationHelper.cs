@@ -55,7 +55,7 @@ namespace MediaPortal.Visualization
 
         if (oCom != null)
         {
-          iWmpEffects = (IWMPEffects) oCom;
+          iWmpEffects = (IWMPEffects)oCom;
           isValidVizObject = true;
         }
       }
@@ -271,22 +271,22 @@ namespace MediaPortal.Visualization
 
     public bool CanGoFullScreen
     {
-      get { return (_Capabilities & (int) EffectsCapability.EFFECT_CANGOFULLSCREEN) > 0; }
+      get { return (_Capabilities & (int)EffectsCapability.EFFECT_CANGOFULLSCREEN) > 0; }
     }
 
     public bool HasPropertyPage
     {
-      get { return (_Capabilities & (int) EffectsCapability.EFFECT_HASPROPERTYPAGE) > 0; }
+      get { return (_Capabilities & (int)EffectsCapability.EFFECT_HASPROPERTYPAGE) > 0; }
     }
 
     public bool WindowedOnly
     {
-      get { return (_Capabilities & (int) EffectsCapability.EFFECT_WINDOWEDONLY) > 0; }
+      get { return (_Capabilities & (int)EffectsCapability.EFFECT_WINDOWEDONLY) > 0; }
     }
 
     public bool FullScreenExclusiveMode
     {
-      get { return (_Capabilities & (int) EffectsCapability.EFFECT2_FULLSCREENEXCLUSIVE) > 0; }
+      get { return (_Capabilities & (int)EffectsCapability.EFFECT2_FULLSCREENEXCLUSIVE) > 0; }
     }
 
     public WMPVisualizationInfo(string sClsid)

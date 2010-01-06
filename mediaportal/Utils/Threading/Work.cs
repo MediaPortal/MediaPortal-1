@@ -81,29 +81,19 @@ namespace MediaPortal.Threading
     }
 
     public Work(DoWorkHandler work)
-      : this(work, string.Empty, ThreadPriority.Normal, null)
-    {
-    }
+      : this(work, string.Empty, ThreadPriority.Normal, null) {}
 
     public Work(DoWorkHandler work, ThreadPriority threadPriority)
-      : this(work, string.Empty, threadPriority, null)
-    {
-    }
+      : this(work, string.Empty, threadPriority, null) {}
 
     public Work(DoWorkHandler work, WorkEventHandler workCompletedHandler)
-      : this(work, string.Empty, ThreadPriority.Normal, workCompletedHandler)
-    {
-    }
+      : this(work, string.Empty, ThreadPriority.Normal, workCompletedHandler) {}
 
     public Work(DoWorkHandler work, string description, ThreadPriority threadPriority)
-      : this(work, description, threadPriority, null)
-    {
-    }
+      : this(work, description, threadPriority, null) {}
 
     public Work(DoWorkHandler work, ThreadPriority threadPriority, WorkEventHandler workCompletedHandler)
-      : this(work, string.Empty, threadPriority, workCompletedHandler)
-    {
-    }
+      : this(work, string.Empty, threadPriority, workCompletedHandler) {}
 
     public Work(DoWorkHandler work, string description, ThreadPriority threadPriority,
                 WorkEventHandler workCompletedHandler)

@@ -125,7 +125,7 @@ namespace MediaPortal.Player.DSP
       {
         XmlSerializer serializer = new XmlSerializer(typeof (Settings));
         XmlTextReader reader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "musicdsp.xml"));
-        settings = (Settings) serializer.Deserialize(reader);
+        settings = (Settings)serializer.Deserialize(reader);
         reader.Close();
         return settings;
       }

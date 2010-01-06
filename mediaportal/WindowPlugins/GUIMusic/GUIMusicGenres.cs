@@ -83,7 +83,7 @@ namespace MediaPortal.GUI.Music
 
     public GUIMusicGenres()
     {
-      GetID = (int) Window.WINDOW_MUSIC_GENRE;
+      GetID = (int)Window.WINDOW_MUSIC_GENRE;
 
       m_directory.AddDrives();
       m_directory.SetExtensions(Util.Utils.AudioExtensions);
@@ -133,7 +133,7 @@ namespace MediaPortal.GUI.Music
           share.FtpPassword = xmlreader.GetValueAsString("music", sharePwd, string.Empty);
           share.FtpPort = xmlreader.GetValueAsInt("music", sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString("music", remoteFolder, "/");
-          share.DefaultView = (Share.Views) xmlreader.GetValueAsInt("music", shareViewPath, (int) Share.Views.List);
+          share.DefaultView = (Share.Views)xmlreader.GetValueAsInt("music", shareViewPath, (int)Share.Views.List);
 
           if (share.Name.Length > 0)
           {
@@ -214,7 +214,7 @@ namespace MediaPortal.GUI.Music
             {
               for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
               {
-                FilterDefinition def = (FilterDefinition) handler.Views[i].Filters[j];
+                FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
                 views[i, j] = GetViewNumber(def.DefaultView);
               }
             }
@@ -244,7 +244,7 @@ namespace MediaPortal.GUI.Music
             {
               for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
               {
-                FilterDefinition def = (FilterDefinition) handler.Views[i].Filters[j];
+                FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
                 sortasc[i, j] = def.SortAscending;
               }
             }
@@ -286,7 +286,7 @@ namespace MediaPortal.GUI.Music
             {
               for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
               {
-                FilterDefinition def = (FilterDefinition) handler.Views[i].Filters[j];
+                FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
                 // Convert sort string to sort enumeration
                 int defaultSort = sortStrings.IndexOf(def.DefaultSort);
 
@@ -298,7 +298,7 @@ namespace MediaPortal.GUI.Music
                   }
                   else
                   {
-                    sortby[i, j] = (MusicSort.SortMethod) defaultSort;
+                    sortby[i, j] = (MusicSort.SortMethod)defaultSort;
                   }
                 }
                 else
@@ -318,7 +318,7 @@ namespace MediaPortal.GUI.Music
       }
       set
       {
-        FilterDefinition def = (FilterDefinition) handler.View.Filters[handler.CurrentLevel];
+        FilterDefinition def = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
         if (def.DefaultSort.ToLower() == "year")
         {
           sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = MusicSort.SortMethod.Year;
@@ -381,7 +381,7 @@ namespace MediaPortal.GUI.Music
 
       if (view == string.Empty)
       {
-        view = ((ViewDefinition) handler.Views[0]).Name;
+        view = ((ViewDefinition)handler.Views[0]).Name;
       }
 
       if (_currentView != null && _currentView.Name == view)
@@ -445,8 +445,6 @@ namespace MediaPortal.GUI.Music
         msg.Label = item.FileName;
         GUIGraphicsContext.SendMessage(msg);
       }
-
-
     }
 
     protected override void OnPageDestroy(int newWindowId)
@@ -477,8 +475,8 @@ namespace MediaPortal.GUI.Music
         }
         else
         {
-          int activeWindow = (int) GUIWindowManager.ActiveWindow;
-          VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+          int activeWindow = (int)GUIWindowManager.ActiveWindow;
+          VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
           if (null == keyboard)
           {
             return;
@@ -489,18 +487,18 @@ namespace MediaPortal.GUI.Music
           //keyBoard.KindOfSearch=(int)MediaPortal.Dialogs.VirtualSearchKeyboard.SearchKinds.SEARCH_STARTS_WITH;
           keyboard_TextChanged(0, "");
           keyboard.TextChanged += new VirtualKeyboard.TextChangedEventHandler(keyboard_TextChanged);
-            // add the event handler
+          // add the event handler
           keyboard.DoModal(activeWindow); // show it...
           keyboard.TextChanged -= new VirtualKeyboard.TextChangedEventHandler(keyboard_TextChanged);
-            // remove the handler			
+          // remove the handler			
         }
       }
 
       if (control == btnPlayCd)
       {
-        GUIMusicFiles musicFilesWnd = (GUIMusicFiles) GUIWindowManager.GetWindow((int) Window.WINDOW_MUSIC_FILES);
+        GUIMusicFiles musicFilesWnd = (GUIMusicFiles)GUIWindowManager.GetWindow((int)Window.WINDOW_MUSIC_FILES);
         musicFilesWnd.PlayCD();
-        GUIWindowManager.ActivateWindow((int) Window.WINDOW_MUSIC_PLAYLIST);
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_MUSIC_PLAYLIST);
       }
 
       base.OnClicked(controlId, control, actionType);
@@ -526,7 +524,7 @@ namespace MediaPortal.GUI.Music
       }
 
       // Get Cover Art for Index display
-      FilterDefinition filter = (FilterDefinition) handler.View.Filters[handler.CurrentLevel];
+      FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
       if (filter.SqlOperator == "group")
       {
         // Add Code here if users want to add pics showing "A", "B" and "C" ;)
@@ -675,7 +673,7 @@ namespace MediaPortal.GUI.Music
         int nFolderCount = 0;
         playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
         playlistPlayer.Reset();
-        for (int i = 0; i < (int) facadeView.Count; i++)
+        for (int i = 0; i < (int)facadeView.Count; i++)
         {
           GUIListItem pItem = facadeView[i];
           if (pItem.IsFolder)
@@ -718,7 +716,7 @@ namespace MediaPortal.GUI.Music
 
       int itemNo = facadeView.SelectedListItemIndex;
 
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -778,7 +776,7 @@ namespace MediaPortal.GUI.Music
 
           //case 136: // show playlist
         case 4553: // show playlist
-          GUIWindowManager.ActivateWindow((int) Window.WINDOW_MUSIC_PLAYLIST);
+          GUIWindowManager.ActivateWindow((int)Window.WINDOW_MUSIC_PLAYLIST);
           break;
         case 930: // add to favorites
           AddSongToFavorites(item);
@@ -795,7 +793,7 @@ namespace MediaPortal.GUI.Music
 
     protected override void OnQueueItem(int iItem)
     {
-      CreatePlaylist((Song) ((GUIListItem) facadeView[iItem]).AlbumInfoTag);
+      CreatePlaylist((Song)((GUIListItem)facadeView[iItem]).AlbumInfoTag);
 
       //move to next item and start playing
       GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem + 1);
@@ -818,7 +816,7 @@ namespace MediaPortal.GUI.Music
 
 
         //if current view is albums, then queue items by track
-        FilterDefinition def = (FilterDefinition) handler.View.Filters[handler.CurrentLevel];
+        FilterDefinition def = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
         if (def.Where == "title")
         {
           songs.Sort(new TrackComparer());
@@ -904,9 +902,7 @@ namespace MediaPortal.GUI.Music
                 {
                   iPincode = Int32.Parse(msg.Label);
                 }
-                catch (Exception)
-                {
-                }
+                catch (Exception) {}
                 if (iPincode != share.Pincode)
                 {
                   songs.Clear();
@@ -1010,11 +1006,11 @@ namespace MediaPortal.GUI.Music
         for (int i = 0; i < facadeView.Count; ++i)
         {
           GUIListItem item = facadeView[i];
-          MusicTag tag = (MusicTag) item.MusicTag;
+          MusicTag tag = (MusicTag)item.MusicTag;
           if (tag != null)
           {
             int playCount = tag.TimesPlayed;
-            string duration = Util.Utils.SecondsToHMSString(playCount*tag.Duration);
+            string duration = Util.Utils.SecondsToHMSString(playCount * tag.Duration);
             item.Label = string.Format("{0:00}. {1} - {2}", playCount, tag.Artist, tag.Title);
             item.Label2 = duration;
           }
@@ -1144,9 +1140,9 @@ namespace MediaPortal.GUI.Music
         if (pItem.AlbumInfoTag != null)
         {
           List<Song> songs = new List<Song>();
-          Song s = (Song) pItem.AlbumInfoTag;
+          Song s = (Song)pItem.AlbumInfoTag;
 
-          FilterDefinition filter = (FilterDefinition) handler.View.Filters[handler.CurrentLevel];
+          FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
 
           switch (filter.Where)
           {
@@ -1200,7 +1196,7 @@ namespace MediaPortal.GUI.Music
       {
         if (pItem.AlbumInfoTag != null)
         {
-          Song song = (Song) pItem.AlbumInfoTag;
+          Song song = (Song)pItem.AlbumInfoTag;
           MusicTag tag = new MusicTag();
           tag = song.ToMusicTag();
 

@@ -7,13 +7,18 @@ using TvLibrary.Log; //Logging
 
 namespace TVEngine.Devices
 {
+
   #region Delegates
 
   public delegate void RemoteEventHandler(RemoteButton button);
+
   public delegate void LearntEventHandler(LearnState state, byte[] data);
+
   public delegate void LearnCallback(byte[] data);
+
   public delegate void DeviceEventHandler();
-  delegate void SettingsChanged();
+
+  internal delegate void SettingsChanged();
 
   #endregion Delegates
 
@@ -86,7 +91,7 @@ namespace TVEngine.Devices
   /// <summary>
   /// Summary description for Remote.
   /// </summary>
-  sealed class Remote : Device
+  internal sealed class Remote : Device
   {
     #region Constructor
 
@@ -100,7 +105,7 @@ namespace TVEngine.Devices
 
     #region Implementation
 
-    void Init()
+    private void Init()
     {
       try
       {
@@ -131,9 +136,11 @@ namespace TVEngine.Devices
 
       if (devicePath == null) return;
 
-      IntPtr deviceHandle = CreateFile(devicePath, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open, FileFlag.Overlapped, 0);
+      IntPtr deviceHandle = CreateFile(devicePath, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open,
+                                       FileFlag.Overlapped, 0);
 
-      if (deviceHandle.ToInt32() == -1) throw new Exception(string.Format("Failed to open remote ({0})", GetLastError()));
+      if (deviceHandle.ToInt32() == -1)
+        throw new Exception(string.Format("Failed to open remote ({0})", GetLastError()));
 
       _notifyWindow.RegisterDeviceRemoval(deviceHandle);
 
@@ -142,13 +149,14 @@ namespace TVEngine.Devices
       _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, OnReadComplete, null);
     }
 
-    void OnReadComplete(IAsyncResult asyncResult)
+    private void OnReadComplete(IAsyncResult asyncResult)
     {
       try
       {
         if (_deviceStream.EndRead(asyncResult) == 13)
         {
-          if (_deviceBuffer[5] == (int)_doubleClickButton && Environment.TickCount - _doubleClickTick <= _doubleClickTime)
+          if (_deviceBuffer[5] == (int)_doubleClickButton &&
+              Environment.TickCount - _doubleClickTick <= _doubleClickTime)
           {
             if (DoubleClick != null) DoubleClick(_doubleClickButton);
           }
@@ -164,12 +172,10 @@ namespace TVEngine.Devices
         // begin another asynchronous read from the device
         _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, OnReadComplete, null);
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
 
-    void OnSettingsChanged()
+    private void OnSettingsChanged()
     {
       _doubleClickTime = GetDoubleClickTime();
     }
@@ -179,7 +185,7 @@ namespace TVEngine.Devices
     #region Interop
 
     [DllImport("user32")]
-    static extern int GetDoubleClickTime();
+    private static extern int GetDoubleClickTime();
 
     #endregion Interop
 
@@ -192,10 +198,10 @@ namespace TVEngine.Devices
 
     #region Members
 
-    static readonly Remote _deviceSingleton;
-    int _doubleClickTime = -1;
-    int _doubleClickTick;
-    RemoteButton _doubleClickButton;
+    private static readonly Remote _deviceSingleton;
+    private int _doubleClickTime = -1;
+    private int _doubleClickTick;
+    private RemoteButton _doubleClickButton;
 
     #endregion Members
   }
@@ -207,7 +213,7 @@ namespace TVEngine.Devices
   /// <summary>
   /// Summary description for Blaster.
   /// </summary>
-  sealed class Blaster : Device
+  internal sealed class Blaster : Device
   {
     #region Constructor
 
@@ -232,34 +238,34 @@ namespace TVEngine.Devices
       if (debug) Log.Write("Blaster.Send: BlasterPort Done.");
       if (deviceType < 0 || deviceType > 1) throw new ArgumentException("blasterType must be 1, or 0 (0 - MS, 1- SMK)");
       if (debug) Log.Write("Blaster.Send: BlasterType Done.");
-      if (deviceSpeed < 0 || deviceSpeed > 2) throw new ArgumentException("blasterSpeed must be between 0 and 2 (0 - Fast, 2 - Slow)");
+      if (deviceSpeed < 0 || deviceSpeed > 2)
+        throw new ArgumentException("blasterSpeed must be between 0 and 2 (0 - Fast, 2 - Slow)");
       _currentSpeed = deviceSpeed;
       if (debug) Log.Write("Blaster.Send: BlasterSpeed Done.");
 
 
       byte[][] packetSpeed = new[]
                                {
-				new byte[] { 0x9F, 0x06, 0x01, 0x44 },	// fast
-				new byte[] { 0x9F, 0x06, 0x01, 0x4A },	// medium
-				new byte[] { 0x9F, 0x06, 0x01, 0x50 },	// slow???
-			};
+                                 new byte[] {0x9F, 0x06, 0x01, 0x44}, // fast
+                                 new byte[] {0x9F, 0x06, 0x01, 0x4A}, // medium
+                                 new byte[] {0x9F, 0x06, 0x01, 0x50}, // slow???
+                               };
 
       byte[][] MSpacketPorts = new[] //MS Device
-			{
-				new byte[] { 0x9F, 0x08, 0x06 },		// 0
-				new byte[] { 0x9F, 0x08, 0x04 },		// 1
-				new byte[] { 0x9F, 0x08, 0x02 },		// 2
-			};
+                                 {
+                                   new byte[] {0x9F, 0x08, 0x06}, // 0
+                                   new byte[] {0x9F, 0x08, 0x04}, // 1
+                                   new byte[] {0x9F, 0x08, 0x02}, // 2
+                                 };
 
       byte[][] SMKpacketPorts = new[] //SMK Device
-			{
-				new byte[] { 0x9F, 0x08, 0x00 },		// both
-				new byte[] { 0x9F, 0x08, 0x01 },		// 1
-				new byte[] { 0x9F, 0x08, 0x02 },        // 2
-			};
+                                  {
+                                    new byte[] {0x9F, 0x08, 0x00}, // both
+                                    new byte[] {0x9F, 0x08, 0x01}, // 1
+                                    new byte[] {0x9F, 0x08, 0x02}, // 2
+                                  };
 
-      byte[][] packetPorts = new byte[][] { };
-
+      byte[][] packetPorts = new byte[][] {};
 
 
       int s = Math.Max(0, Math.Min(2, _currentSpeed));
@@ -267,8 +273,12 @@ namespace TVEngine.Devices
 
       switch (deviceType)
       {
-        case 0: packetPorts = MSpacketPorts; break;
-        case 1: packetPorts = SMKpacketPorts; break;
+        case 0:
+          packetPorts = MSpacketPorts;
+          break;
+        case 1:
+          packetPorts = SMKpacketPorts;
+          break;
       }
 
 
@@ -289,15 +299,17 @@ namespace TVEngine.Devices
     {
       try
       {
-        byte[] packet1 = new byte[] { 0x9F, 0x0C, 0x0F, 0xA0 };
-        byte[] packet2 = new byte[] { 0x9F, 0x14, 0x01 };
+        byte[] packet1 = new byte[] {0x9F, 0x0C, 0x0F, 0xA0};
+        byte[] packet2 = new byte[] {0x9F, 0x14, 0x01};
 
         lock (_deviceSingleton) _deviceSingleton._packetArray = new ArrayList();
 
         _deviceSingleton._deviceStream.Write(packet1, 0, packet1.Length);
         _deviceSingleton._deviceStream.Write(packet2, 0, packet2.Length);
         _deviceSingleton._learnStartTick = Environment.TickCount;
-        _deviceSingleton._deviceStream.BeginRead(_deviceSingleton._deviceBuffer, 0, _deviceSingleton._deviceBuffer.Length, _deviceSingleton.OnReadComplete, learnCallback);
+        _deviceSingleton._deviceStream.BeginRead(_deviceSingleton._deviceBuffer, 0,
+                                                 _deviceSingleton._deviceBuffer.Length, _deviceSingleton.OnReadComplete,
+                                                 learnCallback);
       }
       catch
       {
@@ -309,7 +321,7 @@ namespace TVEngine.Devices
 
     #region Implementation
 
-    void Init()
+    private void Init()
     {
       _deviceClass = new Guid(0x7951772d, 0xcd50, 0x49b7, 0xb1, 0x03, 0x2b, 0xaa, 0xc4, 0x94, 0xfc, 0x57);
       _deviceBuffer = new byte[4096];
@@ -333,9 +345,11 @@ namespace TVEngine.Devices
 
       if (devicePath == null) return;
 
-      IntPtr deviceHandle = CreateFile(devicePath, FileAccess.ReadWrite, FileShare.ReadWrite, 0, FileMode.Open, FileFlag.Overlapped, 0);
+      IntPtr deviceHandle = CreateFile(devicePath, FileAccess.ReadWrite, FileShare.ReadWrite, 0, FileMode.Open,
+                                       FileFlag.Overlapped, 0);
 
-      if (deviceHandle.ToInt32() == -1) throw new Exception(string.Format("Failed to open blaster ({0})", GetLastError()));
+      if (deviceHandle.ToInt32() == -1)
+        throw new Exception(string.Format("Failed to open blaster ({0})", GetLastError()));
 
       _notifyWindow.RegisterDeviceRemoval(deviceHandle);
 
@@ -343,7 +357,7 @@ namespace TVEngine.Devices
       _deviceStream = new FileStream(deviceHandle, FileAccess.ReadWrite, true, _deviceBuffer.Length, true);
     }
 
-    void OnReadComplete(IAsyncResult asyncResult)
+    private void OnReadComplete(IAsyncResult asyncResult)
     {
       try
       {
@@ -387,12 +401,12 @@ namespace TVEngine.Devices
       }
     }
 
-    byte[] FinalizePacket()
+    private byte[] FinalizePacket()
     {
       return FinalizePacket3();
     }
 
-    byte[] FinalizePacket3()
+    private byte[] FinalizePacket3()
     {
       int packetLength = 0;
       int packetOffset = 0;
@@ -415,7 +429,8 @@ namespace TVEngine.Devices
         }
       }
 
-      Log.Write("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""), packetFinal.Length);
+      Log.Write("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
+                packetFinal.Length);
 
       _packetArray = new ArrayList();
 
@@ -426,17 +441,25 @@ namespace TVEngine.Devices
 
     #region Properties
 
-    public static int Speed { set { _currentSpeed = value; } get { return _currentSpeed; } }
-    public static bool Present { get { return _deviceSingleton._deviceStream != null; } }
+    public static int Speed
+    {
+      set { _currentSpeed = value; }
+      get { return _currentSpeed; }
+    }
+
+    public static bool Present
+    {
+      get { return _deviceSingleton._deviceStream != null; }
+    }
 
     #endregion Properties
 
     #region Members
 
-    static readonly Blaster _deviceSingleton;
-    ArrayList _packetArray;
-    int _learnStartTick = 0;
-    static int _currentSpeed;
+    private static readonly Blaster _deviceSingleton;
+    private ArrayList _packetArray;
+    private int _learnStartTick = 0;
+    private static int _currentSpeed;
 
     #endregion Members
   }
@@ -490,7 +513,7 @@ namespace TVEngine.Devices
         throw new Exception(string.Format("Failed in call to SetupDiGetClassDevs ({0})", GetLastError()));
       }
 
-      for (int deviceIndex = 0; ; deviceIndex++)
+      for (int deviceIndex = 0;; deviceIndex++)
       {
         DeviceInfoData deviceInfoData = new DeviceInfoData();
         deviceInfoData.Size = Marshal.SizeOf(deviceInfoData);
@@ -519,7 +542,8 @@ namespace TVEngine.Devices
 
         uint cbData = 0;
 
-        if (SetupDiGetDeviceInterfaceDetail(handle, ref deviceInterfaceData, 0, 0, ref cbData, 0) == false && cbData == 0)
+        if (SetupDiGetDeviceInterfaceDetail(handle, ref deviceInterfaceData, 0, 0, ref cbData, 0) == false &&
+            cbData == 0)
         {
           SetupDiDestroyDeviceInfoList(handle);
           throw new Exception(string.Format("Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError()));
@@ -528,7 +552,9 @@ namespace TVEngine.Devices
         DeviceInterfaceDetailData deviceInterfaceDetailData = new DeviceInterfaceDetailData();
         deviceInterfaceDetailData.Size = 5;
 
-        if (SetupDiGetDeviceInterfaceDetail(handle, ref deviceInterfaceData, ref deviceInterfaceDetailData, cbData, 0, 0) == false)
+        if (
+          SetupDiGetDeviceInterfaceDetail(handle, ref deviceInterfaceData, ref deviceInterfaceDetailData, cbData, 0, 0) ==
+          false)
         {
           SetupDiDestroyDeviceInfoList(handle);
           throw new Exception(string.Format("Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError()));
@@ -577,7 +603,10 @@ namespace TVEngine.Devices
     #region Interop
 
     [DllImport("kernel32", SetLastError = true)]
-    protected static extern IntPtr CreateFile(string FileName, [MarshalAs(UnmanagedType.U4)] FileAccess DesiredAccess, [MarshalAs(UnmanagedType.U4)] FileShare ShareMode, uint SecurityAttributes, [MarshalAs(UnmanagedType.U4)] FileMode CreationDisposition, FileFlag FlagsAndAttributes, int hTemplateFile);
+    protected static extern IntPtr CreateFile(string FileName, [MarshalAs(UnmanagedType.U4)] FileAccess DesiredAccess,
+                                              [MarshalAs(UnmanagedType.U4)] FileShare ShareMode, uint SecurityAttributes,
+                                              [MarshalAs(UnmanagedType.U4)] FileMode CreationDisposition,
+                                              FileFlag FlagsAndAttributes, int hTemplateFile);
 
     [DllImport("kernel32", SetLastError = true)]
     protected static extern bool CloseHandle(IntPtr hObject);
@@ -585,7 +614,10 @@ namespace TVEngine.Devices
     [DllImport("kernel32", SetLastError = true)]
     protected static extern int GetLastError();
 
-    protected enum FileFlag { Overlapped = 0x40000000, }
+    protected enum FileFlag
+    {
+      Overlapped = 0x40000000,
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     protected struct DeviceInfoData
@@ -610,8 +642,7 @@ namespace TVEngine.Devices
     {
       public int Size;
 
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public string DevicePath;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string DevicePath;
     }
 
     [DllImport("hid")]
@@ -624,13 +655,21 @@ namespace TVEngine.Devices
     protected static extern bool SetupDiEnumDeviceInfo(IntPtr handle, int Index, ref DeviceInfoData deviceInfoData);
 
     [DllImport("setupapi", SetLastError = true)]
-    protected static extern bool SetupDiEnumDeviceInterfaces(IntPtr handle, ref DeviceInfoData deviceInfoData, ref Guid guidClass, int MemberIndex, ref DeviceInterfaceData deviceInterfaceData);
+    protected static extern bool SetupDiEnumDeviceInterfaces(IntPtr handle, ref DeviceInfoData deviceInfoData,
+                                                             ref Guid guidClass, int MemberIndex,
+                                                             ref DeviceInterfaceData deviceInterfaceData);
 
     [DllImport("setupapi", SetLastError = true)]
-    protected static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr handle, ref DeviceInterfaceData deviceInterfaceData, int unused1, int unused2, ref uint requiredSize, int unused3);
+    protected static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr handle,
+                                                                 ref DeviceInterfaceData deviceInterfaceData,
+                                                                 int unused1, int unused2, ref uint requiredSize,
+                                                                 int unused3);
 
     [DllImport("setupapi", SetLastError = true)]
-    protected static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr handle, ref DeviceInterfaceData deviceInterfaceData, ref DeviceInterfaceDetailData deviceInterfaceDetailData, uint detailSize, int unused1, int unused2);
+    protected static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr handle,
+                                                                 ref DeviceInterfaceData deviceInterfaceData,
+                                                                 ref DeviceInterfaceDetailData deviceInterfaceDetailData,
+                                                                 uint detailSize, int unused1, int unused2);
 
     [DllImport("setupapi")]
     protected static extern bool SetupDiDestroyDeviceInfoList(IntPtr handle);
@@ -662,13 +701,13 @@ namespace TVEngine.Devices
   {
     #region Interop
 
-    const int WM_DEVICECHANGE = 0x0219;
-    const int WM_SETTINGSCHANGE = 0x001A;
-    const int DBT_DEVICEARRIVAL = 0x8000;
-    const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
+    private const int WM_DEVICECHANGE = 0x0219;
+    private const int WM_SETTINGSCHANGE = 0x001A;
+    private const int DBT_DEVICEARRIVAL = 0x8000;
+    private const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
 
     [StructLayout(LayoutKind.Sequential)]
-    struct DeviceBroadcastHeader
+    private struct DeviceBroadcastHeader
     {
       public int Size;
       public int DeviceType;
@@ -676,19 +715,18 @@ namespace TVEngine.Devices
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct DeviceBroadcastInterface
+    private struct DeviceBroadcastInterface
     {
       public int Size;
       public int DeviceType;
       public int Reserved;
       public Guid ClassGuid;
 
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      public string Name;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public string Name;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct DeviceBroadcastHandle
+    private struct DeviceBroadcastHandle
     {
       public int Size;
       public int DeviceType;
@@ -701,19 +739,20 @@ namespace TVEngine.Devices
     }
 
     [DllImport("user32", SetLastError = true)]
-    static extern IntPtr RegisterDeviceNotification(IntPtr handle, ref DeviceBroadcastHandle filter, int flags);
+    private static extern IntPtr RegisterDeviceNotification(IntPtr handle, ref DeviceBroadcastHandle filter, int flags);
 
     [DllImport("user32", SetLastError = true)]
-    static extern IntPtr RegisterDeviceNotification(IntPtr handle, ref DeviceBroadcastInterface filter, int flags);
+    private static extern IntPtr RegisterDeviceNotification(IntPtr handle, ref DeviceBroadcastInterface filter,
+                                                            int flags);
 
     [DllImport("user32")]
-    static extern IntPtr UnregisterDeviceNotification(IntPtr handle);
+    private static extern IntPtr UnregisterDeviceNotification(IntPtr handle);
 
     [DllImport("kernel32")]
-    static extern int GetLastError();
+    private static extern int GetLastError();
 
     [DllImport("kernel32", SetLastError = true)]
-    static extern bool CancelIo(IntPtr handle);
+    private static extern bool CancelIo(IntPtr handle);
 
     #endregion Interop
 
@@ -733,7 +772,11 @@ namespace TVEngine.Devices
 
     #region Properties
 
-    internal Guid Class { get { return _deviceClass; } set { _deviceClass = value; } }
+    internal Guid Class
+    {
+      get { return _deviceClass; }
+      set { _deviceClass = value; }
+    }
 
     #endregion Properties
 
@@ -746,10 +789,12 @@ namespace TVEngine.Devices
         switch (m.WParam.ToInt32())
         {
           case DBT_DEVICEARRIVAL:
-            OnDeviceArrival((DeviceBroadcastHeader)Marshal.PtrToStructure(m.LParam, typeof(DeviceBroadcastHeader)), m.LParam);
+            OnDeviceArrival((DeviceBroadcastHeader)Marshal.PtrToStructure(m.LParam, typeof (DeviceBroadcastHeader)),
+                            m.LParam);
             break;
           case DBT_DEVICEREMOVECOMPLETE:
-            OnDeviceRemoval((DeviceBroadcastHeader)Marshal.PtrToStructure(m.LParam, typeof(DeviceBroadcastHeader)), m.LParam);
+            OnDeviceRemoval((DeviceBroadcastHeader)Marshal.PtrToStructure(m.LParam, typeof (DeviceBroadcastHeader)),
+                            m.LParam);
             break;
         }
       }
@@ -775,7 +820,8 @@ namespace TVEngine.Devices
 
       _handleDeviceArrival = RegisterDeviceNotification(Handle, ref dbi, 0);
 
-      if (_handleDeviceArrival == IntPtr.Zero) throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
+      if (_handleDeviceArrival == IntPtr.Zero)
+        throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
     }
 
     internal void RegisterDeviceRemoval(IntPtr deviceHandle)
@@ -789,7 +835,8 @@ namespace TVEngine.Devices
       _deviceHandle = deviceHandle;
       _handleDeviceRemoval = RegisterDeviceNotification(Handle, ref dbh, 0);
 
-      if (_handleDeviceRemoval == IntPtr.Zero) throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
+      if (_handleDeviceRemoval == IntPtr.Zero)
+        throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
     }
 
     internal void UnregisterDeviceArrival()
@@ -809,21 +856,22 @@ namespace TVEngine.Devices
       _deviceHandle = IntPtr.Zero;
     }
 
-    void OnDeviceArrival(DeviceBroadcastHeader dbh, IntPtr ptr)
+    private void OnDeviceArrival(DeviceBroadcastHeader dbh, IntPtr ptr)
     {
       if (dbh.DeviceType == 0x05)
       {
-        DeviceBroadcastInterface dbi = (DeviceBroadcastInterface)Marshal.PtrToStructure(ptr, typeof(DeviceBroadcastInterface));
+        DeviceBroadcastInterface dbi =
+          (DeviceBroadcastInterface)Marshal.PtrToStructure(ptr, typeof (DeviceBroadcastInterface));
 
         if (dbi.ClassGuid == _deviceClass && DeviceArrival != null) DeviceArrival();
       }
     }
 
-    void OnDeviceRemoval(DeviceBroadcastHeader header, IntPtr ptr)
+    private void OnDeviceRemoval(DeviceBroadcastHeader header, IntPtr ptr)
     {
       if (header.DeviceType == 0x06)
       {
-        DeviceBroadcastHandle dbh = (DeviceBroadcastHandle)Marshal.PtrToStructure(ptr, typeof(DeviceBroadcastHandle));
+        DeviceBroadcastHandle dbh = (DeviceBroadcastHandle)Marshal.PtrToStructure(ptr, typeof (DeviceBroadcastHandle));
 
         if (dbh.Handle != _deviceHandle) return;
 
@@ -846,10 +894,10 @@ namespace TVEngine.Devices
 
     #region Members
 
-    IntPtr _handleDeviceArrival;
-    IntPtr _handleDeviceRemoval;
-    IntPtr _deviceHandle;
-    Guid _deviceClass;
+    private IntPtr _handleDeviceArrival;
+    private IntPtr _handleDeviceRemoval;
+    private IntPtr _deviceHandle;
+    private Guid _deviceClass;
 
     #endregion Members
   }

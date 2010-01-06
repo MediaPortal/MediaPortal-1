@@ -78,9 +78,7 @@ namespace System.Windows
       #endregion HasContent
     }
 
-    public ContentControl()
-    {
-    }
+    public ContentControl() {}
 
     #endregion Constructors
 
@@ -91,32 +89,28 @@ namespace System.Windows
       AddChild(child);
     }
 
-    protected virtual void AddChild(object child)
-    {
-    }
+    protected virtual void AddChild(object child) {}
 
     void IAddChild.AddText(string text)
     {
       AddText(text);
     }
 
-    protected virtual void AddText(string text)
-    {
-    }
+    protected virtual void AddText(string text) {}
 
     protected static void ContentChanged(DependencyObject d)
     {
-      ((ContentControl) d).OnContentChanged(null, null);
+      ((ContentControl)d).OnContentChanged(null, null);
     }
 
     protected static void ContentTemplateChanged(DependencyObject d)
     {
-      ((ContentControl) d).OnContentTemplateChanged(null, null);
+      ((ContentControl)d).OnContentTemplateChanged(null, null);
     }
 
     protected static void ContentTemplateSelectorChanged(DependencyObject d)
     {
-      ((ContentControl) d).OnContentTemplateChanged(null, null);
+      ((ContentControl)d).OnContentTemplateChanged(null, null);
     }
 
     public static object GetContent(DependencyObject d)
@@ -126,35 +120,29 @@ namespace System.Windows
 
     public static DataTemplateSelector GetContentTemplateSelector(DependencyObject d)
     {
-      return (DataTemplateSelector) d.GetValue(ContentTemplateProperty);
+      return (DataTemplateSelector)d.GetValue(ContentTemplateProperty);
     }
 
-    protected virtual void OnContentChanged(object oldContent, object newContent)
-    {
-    }
+    protected virtual void OnContentChanged(object oldContent, object newContent) {}
 
-    protected virtual void OnContentTemplateChanged(DataTemplate oldContentTemplate, DataTemplate newContentTemplate)
-    {
-    }
+    protected virtual void OnContentTemplateChanged(DataTemplate oldContentTemplate, DataTemplate newContentTemplate) {}
 
     protected virtual void OnContentTemplateSelectorChanged(DataTemplateSelector oldContentTemplateSelector,
-                                                            DataTemplateSelector newContentTemplateSelector)
-    {
-    }
+                                                            DataTemplateSelector newContentTemplateSelector) {}
 
     private static object OnContentPropertyGetValue(DependencyObject d)
     {
-      return ((ContentControl) d).Content;
+      return ((ContentControl)d).Content;
     }
 
     private static void OnContentPropertyInvalidated(DependencyObject d)
     {
-      ((ContentControl) d)._contentDirty = true;
+      ((ContentControl)d)._contentDirty = true;
     }
 
     private static object OnHasContentPropertyGetValue(DependencyObject d)
     {
-      return ((ContentControl) d).HasContent;
+      return ((ContentControl)d).HasContent;
     }
 
     public static void SetContent(DependencyObject d, object content)

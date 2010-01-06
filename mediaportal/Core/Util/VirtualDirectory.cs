@@ -27,12 +27,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using MediaPortal.Configuration;
 using MediaPortal.TagReader;
-
 using EnterpriseDT.Net.Ftp;
 using System.Threading;
 
@@ -43,23 +41,22 @@ namespace MediaPortal.Util
   /// A virtual directory holds one or more shares (see share.cs)
   /// 
   /// </summary>
-
   public class VirtualDirectory
   {
-    const int Removable = 2;
-    const int LocalDisk = 3;
-    const int Network = 4;
-    const int CD = 5;
-    const int MaximumShares = 128;
+    private const int Removable = 2;
+    private const int LocalDisk = 3;
+    private const int Network = 4;
+    private const int CD = 5;
+    private const int MaximumShares = 128;
 
-    List<Share> m_shares = new List<Share>();
-    List<string> m_extensions;
-    string m_strPreviousDir = string.Empty;
-    string currentShare = string.Empty;
-    string previousShare = string.Empty;
-    string m_strLocalFolder = string.Empty;
-    Share defaultshare;
-    bool showFilesWithoutExtension;
+    private List<Share> m_shares = new List<Share>();
+    private List<string> m_extensions;
+    private string m_strPreviousDir = string.Empty;
+    private string currentShare = string.Empty;
+    private string previousShare = string.Empty;
+    private string m_strLocalFolder = string.Empty;
+    private Share defaultshare;
+    private bool showFilesWithoutExtension;
 
     public void LoadSettings(string section)
     {
@@ -130,6 +127,7 @@ namespace MediaPortal.Util
         //Log.Debug("VirtualDirectory: Setting current share: {0} - Previous: {1}", currentShare, previousShare);
       }
     }
+
     public string PreviousShare
     {
       get { return previousShare; }
@@ -146,9 +144,7 @@ namespace MediaPortal.Util
       get { return MaximumShares; }
     }
 
-    public void AddDrives()
-    {
-    }
+    public void AddDrives() {}
 
     public void Reset()
     {
@@ -174,12 +170,11 @@ namespace MediaPortal.Util
             {
               iPincode = Int32.Parse(msgGetPassword.Label);
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
             if (iPincode != iPincodeCorrect)
             {
-              GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0, 0);
+              GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0,
+                                                           0);
               GUIWindowManager.SendMessage(msgWrongPassword);
 
               if (!(bool)msgWrongPassword.Object)
@@ -217,6 +212,7 @@ namespace MediaPortal.Util
         m_extensions[i] = m_extensions[i].ToLower();
       }
     }
+
     /// <summary>
     /// Method to add a new file extension to the file extensions list
     /// </summary>
@@ -255,8 +251,8 @@ namespace MediaPortal.Util
         share.RuntimeAdded = true;
         m_shares.Add(share);
       }
-
     }
+
     public void Remove(String path)
     {
       Share shareToRemove = null;
@@ -268,11 +264,12 @@ namespace MediaPortal.Util
           break;
         }
       }
-      if(shareToRemove != null)
+      if (shareToRemove != null)
       {
         m_shares.Remove(shareToRemove);
       }
     }
+
     /// <summary>
     /// This method removes all shares from the virtual directory
     /// </summary>
@@ -291,7 +288,6 @@ namespace MediaPortal.Util
     //public ArrayList GetRoot()
     //{
     //  previousShare = string.Empty;
-
     //  ArrayList items = new ArrayList();
     //  foreach (Share share in m_shares)
     //  {
@@ -309,7 +305,6 @@ namespace MediaPortal.Util
     //      item.DVDLabel = Utils.GetDriveName(item.Path);
     //      item.DVDLabel = item.DVDLabel.Replace('_', ' ');
     //    }
-
     //    if (item.DVDLabel != "")
     //    {
     //      item.Label = String.Format("({0}) {1}", item.Path, item.DVDLabel);
@@ -317,7 +312,6 @@ namespace MediaPortal.Util
     //    else
     //      item.Label = share.Name;
     //    item.IsFolder = true;
-
     //    if (share.IsFtpShare)
     //    {
     //      //item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
@@ -351,7 +345,6 @@ namespace MediaPortal.Util
     //    }
     //    items.Add(item);
     //  }
-
     //  // add removable drives with media
     //  string[] drives = Environment.GetLogicalDrives();
     //  foreach (string drive in drives)
@@ -362,7 +355,6 @@ namespace MediaPortal.Util
     //      string driveName = Util.Utils.GetDriveName(drive);
     //      string driveLetter = drive.Substring(0, 1).ToUpper() + ":";
     //      if (driveName == "") driveName = GUILocalizeStrings.Get(1061);
-
     //      //
     //      // Check if the share already exists
     //      //
@@ -374,29 +366,23 @@ namespace MediaPortal.Util
     //          break;
     //        }
     //      }
-
     //      if (driveFound == false)
     //      {
     //        GUIListItem item = new GUIListItem();
     //        item.Path = driveLetter;
     //        item.Label = String.Format("({0}) {1}", item.Path, driveName);
     //        item.IsFolder = true;
-
     //        Utils.SetDefaultIcons(item);
-
     //        // dont add removable shares without media
     //        // virtual cd/dvd drive (daemontools) without mounted image
     //        if (!Directory.Exists(item.Path))
     //          break;
-
     //        items.Add(item);
     //      }
     //    }
     //  }
-
     //  return items;
     //}
-
     /// <summary>
     /// Method which checks if the given folder is the root share folder or not
     /// </summary>
@@ -502,9 +488,7 @@ namespace MediaPortal.Util
           {
             strRoot = Path.GetFullPath(strDir);
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
       }
       Share foundShare = null;
       string foundFullPath = string.Empty;
@@ -569,9 +553,7 @@ namespace MediaPortal.Util
             }
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
       return foundShare;
     }
@@ -599,11 +581,11 @@ namespace MediaPortal.Util
     public string GetShareRemoteURL(Share shareName)
     {
       return String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-                shareName.FtpServer,
-                shareName.FtpPort,
-                shareName.FtpLoginName,
-                shareName.FtpPassword,
-                Utils.RemoveTrailingSlash(shareName.FtpFolder));
+                           shareName.FtpServer,
+                           shareName.FtpPort,
+                           shareName.FtpLoginName,
+                           shareName.FtpPassword,
+                           Utils.RemoveTrailingSlash(shareName.FtpFolder));
     }
 
     ///// <summary>
@@ -928,6 +910,7 @@ namespace MediaPortal.Util
       if (IsProtectedShare(strDir, out iPincodeCorrect))
       {
         #region Pin protected
+
         bool retry = true;
         {
           while (retry)
@@ -940,12 +923,11 @@ namespace MediaPortal.Util
             {
               iPincode = Int32.Parse(msgGetPassword.Label);
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
             if (iPincode != iPincodeCorrect)
             {
-              GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0, 0);
+              GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0,
+                                                           0);
               GUIWindowManager.SendMessage(msgWrongPassword);
 
               if (!(bool)msgWrongPassword.Object)
@@ -964,6 +946,7 @@ namespace MediaPortal.Util
               retry = false;
           }
         }
+
         #endregion
       }
       //Setting current share;
@@ -978,24 +961,26 @@ namespace MediaPortal.Util
         if (DaemonTools.IsEnabled)
         {
           #region DaemonTools
+
           string extension = Path.GetExtension(strDir);
           if (IsImageFile(extension))
           {
             if (!DaemonTools.IsMounted(strDir))
-            {              
+            {
               string virtualPath;
               if (DaemonTools.Mount(strDir, out virtualPath))
               {
                 strDir = virtualPath;
                 VirtualShare = true;
-              }              
+              }
             }
             else
             {
               strDir = DaemonTools.GetVirtualDrive();
               VirtualShare = true;
-            }            
+            }
           }
+
           #endregion
         }
       }
@@ -1026,11 +1011,12 @@ namespace MediaPortal.Util
       if (IsRemote(strDir))
       {
         #region Remote files
+
         FTPClient ftp = GetFtpClient(strDir);
         if (ftp == null) return items;
 
         string folder = strDir.Substring("remote:".Length);
-        string[] subitems = folder.Split(new char[] { '?' });
+        string[] subitems = folder.Split(new char[] {'?'});
         if (subitems[4] == string.Empty) subitems[4] = "/";
 
         FTPFile[] files;
@@ -1051,7 +1037,8 @@ namespace MediaPortal.Util
           }
           catch (Exception ex)
           {
-            Log.Info("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1} {2}", subitems[4], ex.Message, ex.StackTrace);
+            Log.Info("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1} {2}", subitems[4], ex.Message,
+                     ex.StackTrace);
             return items;
           }
           try
@@ -1060,7 +1047,8 @@ namespace MediaPortal.Util
           }
           catch (Exception ex)
           {
-            Log.Info("VirtualDirectory:unable to get remote folder:{0} reason:{1}  {2}", subitems[4], ex.Message, ex.StackTrace);
+            Log.Info("VirtualDirectory:unable to get remote folder:{0} reason:{1}  {2}", subitems[4], ex.Message,
+                     ex.StackTrace);
             return items;
           }
         }
@@ -1117,11 +1105,13 @@ namespace MediaPortal.Util
             }
           }
         }
+
         #endregion
       }
       else
       {
         #region CDDA comment
+
         /* Here is the trick to play Enhanced CD and not only CD-DA: 
          * we force the creation of GUIListItem of Red Book tracks.
          * Track names are made up on-the-fly, using naming conventions
@@ -1143,6 +1133,7 @@ namespace MediaPortal.Util
          * Seems to work with Winamp (didn't make more than one experiment)
          * Wasn't tested with other players
          */
+
         #endregion
 
         bool doesContainRedBookData = false;
@@ -1169,13 +1160,14 @@ namespace MediaPortal.Util
             }
             m_Drive.Close();
           }
-          catch (Exception) { }
+          catch (Exception) {}
         }
 
         HandleLocalFilesInDir(strDir, ref items, doesContainRedBookData);
-        
+
         // CUE Filter
-        items = (List<GUIListItem>)CueUtil.CUEFileListFilter<GUIListItem>(items, CueUtil.CUE_TRACK_FILE_GUI_LIST_ITEM_BUILDER);
+        items =
+          (List<GUIListItem>)CueUtil.CUEFileListFilter<GUIListItem>(items, CueUtil.CUE_TRACK_FILE_GUI_LIST_ITEM_BUILDER);
       }
       m_strPreviousDir = strDir;
       return items;
@@ -1216,11 +1208,12 @@ namespace MediaPortal.Util
       if (IsRemote(strDir))
       {
         #region Remote files
+
         FTPClient ftp = GetFtpClient(strDir);
         if (ftp == null) return items;
 
         string folder = strDir.Substring("remote:".Length);
-        string[] subitems = folder.Split(new char[] { '?' });
+        string[] subitems = folder.Split(new char[] {'?'});
         if (subitems[4] == string.Empty) subitems[4] = "/";
 
         FTPFile[] files;
@@ -1241,7 +1234,8 @@ namespace MediaPortal.Util
           }
           catch (Exception ex)
           {
-            Log.Info("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1} {2}", subitems[4], ex.Message, ex.StackTrace);
+            Log.Info("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1} {2}", subitems[4], ex.Message,
+                     ex.StackTrace);
             return items;
           }
           try
@@ -1250,7 +1244,8 @@ namespace MediaPortal.Util
           }
           catch (Exception ex)
           {
-            Log.Info("VirtualDirectory:unable to get remote folder:{0} reason:{1}  {2}", subitems[4], ex.Message, ex.StackTrace);
+            Log.Info("VirtualDirectory:unable to get remote folder:{0} reason:{1}  {2}", subitems[4], ex.Message,
+                     ex.StackTrace);
             return items;
           }
         }
@@ -1308,6 +1303,7 @@ namespace MediaPortal.Util
             }
           }
         }
+
         #endregion
       }
 
@@ -1315,11 +1311,12 @@ namespace MediaPortal.Util
       if (DaemonTools.IsEnabled)
       {
         #region DaemonTools
+
         string extension = Path.GetExtension(strDir);
         if (IsImageFile(extension))
         {
           if (!DaemonTools.IsMounted(strDir))
-          {            
+          {
             string virtualPath;
             if (DaemonTools.Mount(strDir, out virtualPath))
             {
@@ -1333,6 +1330,7 @@ namespace MediaPortal.Util
             VirtualShare = true;
           }
         }
+
         #endregion
       }
 
@@ -1428,7 +1426,7 @@ namespace MediaPortal.Util
           {
             item.IconImageBig = largeCoverArt;
           }
-          // Fix for Mantis issue 0001465: folder.jpg in main shares view only displayed when list view is used
+            // Fix for Mantis issue 0001465: folder.jpg in main shares view only displayed when list view is used
           else if (coverArtExists)
           {
             item.IconImageBig = coverArt;
@@ -1555,7 +1553,8 @@ namespace MediaPortal.Util
               if (IsValidExtension(FileName))
               {
                 // Skip hidden files
-                if (!aHasRedbookDetails && (File.GetAttributes(FileName) & FileAttributes.Hidden) == FileAttributes.Hidden)
+                if (!aHasRedbookDetails &&
+                    (File.GetAttributes(FileName) & FileAttributes.Hidden) == FileAttributes.Hidden)
                   continue;
 
                 if (!aHasRedbookDetails)
@@ -1579,8 +1578,7 @@ namespace MediaPortal.Util
           {
             Log.Error("VirtualDirectory: Could not fetch folder contents for {0}: {1}", aDirectory, exi.Message);
           }
-        }
-        while (Win32API.FindNextFile(handle, ref fd) != 0);
+        } while (Win32API.FindNextFile(handle, ref fd) != 0);
 
         Win32API.FindClose(handle);
       }
@@ -1679,7 +1677,7 @@ namespace MediaPortal.Util
 
     //  return items;
     //}
-    
+
     /// <summary>
     /// This method checks if the extension of the specified file is valid for the current virtual folder
     /// The virtual directory will only show files with valid extensions
@@ -1699,16 +1697,17 @@ namespace MediaPortal.Util
         // waeberd: allow searching for files without an extension
         if (!Path.HasExtension(strPath)) return showFilesWithoutExtension;
         string extensionFile = Path.GetExtension(strPath).ToLower();
-        if ((m_extensions[0] as string) == "*") return true;   // added for explorer modul by gucky
+        if ((m_extensions[0] as string) == "*") return true; // added for explorer modul by gucky
         for (int i = 0; i < m_extensions.Count; ++i)
         {
           if ((m_extensions[i] as string) == extensionFile) return true;
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       return false;
     }
+
     /// <summary>
     /// This method checks if the extension of the specified file is valid for the current virtual folder
     /// The virtual directory will only show files with valid extensions
@@ -1728,13 +1727,13 @@ namespace MediaPortal.Util
         // waeberd: allow searching for files without an extension
         if (!Path.HasExtension(strPath)) return filesWithoutExtension;
         string extensionFile = Path.GetExtension(strPath).ToLower();
-        if ((extensions[0] as string) == "*") return true;   // added for explorer modul by gucky
+        if ((extensions[0] as string) == "*") return true; // added for explorer modul by gucky
         for (int i = 0; i < extensions.Count; ++i)
         {
           if ((extensions[i] as string) == extensionFile) return true;
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       return false;
     }
@@ -1853,7 +1852,8 @@ namespace MediaPortal.Util
           return true;
         }
 
-        Log.Debug("VirtualDirectory: Downloading remote file {0} already got {1} bytes", singleFilename, Convert.ToString(info.Length));
+        Log.Debug("VirtualDirectory: Downloading remote file {0} already got {1} bytes", singleFilename,
+                  Convert.ToString(info.Length));
         // not completely downloaded yet
       }
 
@@ -1956,7 +1956,7 @@ namespace MediaPortal.Util
     {
       bool ActiveConnection = true;
       string folder = file.Substring("remote:".Length);
-      string[] subitems = folder.Split(new char[] { '?' });
+      string[] subitems = folder.Split(new char[] {'?'});
       if (subitems[4] == string.Empty) subitems[4] = "/";
       //if (subitems[5] == null) 
       ActiveConnection = true;
@@ -1976,6 +1976,7 @@ namespace MediaPortal.Util
         Log.Info("VirtualDirectory:unable to connect to remote share");
       return ftp;
     }
+
     #region generics    
 
     public static void SetInitialDefaultShares(bool addOptical, bool addMusic, bool addPictures, bool addVideos)
@@ -2055,7 +2056,7 @@ namespace MediaPortal.Util
       return name;
     }
 
-    static void SaveShare(IList sharesList, string mediaType)
+    private static void SaveShare(IList sharesList, string mediaType)
     {
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
@@ -2113,29 +2114,26 @@ namespace MediaPortal.Util
           xmlwriter.SetValue(mediaType, sharePort, sharePortData.ToString());
           xmlwriter.SetValue(mediaType, shareRemotePath, shareRemotePathData);
         }
-
       }
     }
   }
-    #endregion
+
+  #endregion
 
   /// <summary>
   /// Singleton class that returns instances to the diffrent kind
   /// of virtual directories music, movies ..
   /// Loads virtual directory information on demand
   /// </summary>
-
   public class VirtualDirectories
   {
     internal static VirtualDirectories _Instance;
 
-    VirtualDirectory _Music;
-    VirtualDirectory _Movies;
-    VirtualDirectory _Pictures;
+    private VirtualDirectory _Music;
+    private VirtualDirectory _Movies;
+    private VirtualDirectory _Pictures;
 
-    private VirtualDirectories()
-    {
-    }
+    private VirtualDirectories() {}
 
     public static VirtualDirectories Instance
     {
@@ -2188,6 +2186,5 @@ namespace MediaPortal.Util
         return _Pictures;
       }
     }
-
   }
 }

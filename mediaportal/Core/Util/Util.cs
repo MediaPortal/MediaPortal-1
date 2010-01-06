@@ -41,9 +41,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Windows.Forms;
-
 using Microsoft.Win32;
-
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using MediaPortal.Configuration;
@@ -55,7 +53,7 @@ namespace MediaPortal.Util
   {
     public string EnglishName;
     public string TwoLetterISO;
-  };
+  } ;
 
 
   /// <summary>
@@ -64,10 +62,11 @@ namespace MediaPortal.Util
   public class Utils
   {
     [DllImport("kernel32.dll")]
-    extern static bool GetDiskFreeSpaceEx(string lpDirectoryName, out UInt64 lpFreeBytesAvailable, out UInt64 lpTotalNumberOfBytes, out UInt64 lpTotalNumberOfFreeBytes);
+    private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out UInt64 lpFreeBytesAvailable,
+                                                  out UInt64 lpTotalNumberOfBytes, out UInt64 lpTotalNumberOfFreeBytes);
 
     [DllImport("Kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    extern static bool GetVolumeInformation(
+    private static extern bool GetVolumeInformation(
       string RootPathName,
       StringBuilder VolumeNameBuffer,
       int VolumeNameSize,
@@ -81,16 +80,17 @@ namespace MediaPortal.Util
     public static extern long GetDriveType(string driveLetter);
 
     [DllImport("winmm.dll", EntryPoint = "mciSendStringA", CharSet = CharSet.Ansi)]
-    protected static extern int mciSendString(string lpstrCommand, StringBuilder lpstrReturnString, int uReturnLength, IntPtr hwndCallback);
+    protected static extern int mciSendString(string lpstrCommand, StringBuilder lpstrReturnString, int uReturnLength,
+                                              IntPtr hwndCallback);
 
     [DllImport("kernel32.dll", ExactSpelling = true, SetLastError = true, CharSet = CharSet.Auto)]
-    static extern bool DeviceIoControl(IntPtr hDevice, uint dwIoControlCode,
-      IntPtr lpInBuffer, uint nInBufferSize,
-      IntPtr lpOutBuffer, uint nOutBufferSize,
-      out uint lpBytesReturned, IntPtr lpOverlapped);
+    private static extern bool DeviceIoControl(IntPtr hDevice, uint dwIoControlCode,
+                                               IntPtr lpInBuffer, uint nInBufferSize,
+                                               IntPtr lpOutBuffer, uint nOutBufferSize,
+                                               out uint lpBytesReturned, IntPtr lpOverlapped);
 
     [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern IntPtr CreateFile(
+    private static extern IntPtr CreateFile(
       string filename,
       [MarshalAs(UnmanagedType.U4)] FileAccess fileaccess,
       [MarshalAs(UnmanagedType.U4)] FileShare fileshare,
@@ -100,10 +100,11 @@ namespace MediaPortal.Util
 
 
     [DllImport("kernel32.dll", SetLastError = true)]
-    static extern bool CloseHandle(IntPtr hObject);
+    private static extern bool CloseHandle(IntPtr hObject);
 
     [DllImport("mpr.dll")]
-    static extern int WNetAddConnection2A(ref NetResource pstNetRes, string psPassword, string psUsername, int piFlags);
+    private static extern int WNetAddConnection2A(ref NetResource pstNetRes, string psPassword, string psUsername,
+                                                  int piFlags);
 
     private const int CONNECT_UPDATE_PROFILE = 0x00000001;
     private const int RESOURCETYPE_DISK = 0x1;
@@ -122,24 +123,23 @@ namespace MediaPortal.Util
     }
 
     public delegate void UtilEventHandler(Process proc, bool waitForExit);
-    public static event UtilEventHandler OnStartExternal = null;	// Event: Start external process / waeberd & mPod
-    public static event UtilEventHandler OnStopExternal = null;		// Event: Stop external process	/ waeberd & mPod
-    static ArrayList m_AudioExtensions = new ArrayList();
-    static ArrayList m_VideoExtensions = new ArrayList();
-    static ArrayList m_PictureExtensions = new ArrayList();
 
-    static string[] _artistNamePrefixes;
+    public static event UtilEventHandler OnStartExternal = null; // Event: Start external process / waeberd & mPod
+    public static event UtilEventHandler OnStopExternal = null; // Event: Stop external process	/ waeberd & mPod
+    private static ArrayList m_AudioExtensions = new ArrayList();
+    private static ArrayList m_VideoExtensions = new ArrayList();
+    private static ArrayList m_PictureExtensions = new ArrayList();
 
-    static bool m_bHideExtensions = false;
-    static bool enableGuiSounds;
+    private static string[] _artistNamePrefixes;
 
-    static char[] crypt = new char[10] { 'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q' };
+    private static bool m_bHideExtensions = false;
+    private static bool enableGuiSounds;
+
+    private static char[] crypt = new char[10] {'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q'};
 
 
     // singleton. Dont allow any instance of this class
-    private Utils()
-    {
-    }
+    private Utils() {}
 
     static Utils()
     {
@@ -149,22 +149,24 @@ namespace MediaPortal.Util
         string artistNamePrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         _artistNamePrefixes = artistNamePrefixes.Split(',');
 
-        string strTmp = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc");
-        Tokens tok = new Tokens(strTmp, new[] { ',' });
+        string strTmp = xmlreader.GetValueAsString("music", "extensions",
+                                                   ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc");
+        Tokens tok = new Tokens(strTmp, new[] {','});
         foreach (string extension in tok)
         {
           m_AudioExtensions.Add(extension.ToLower());
         }
 
-        strTmp = xmlreader.GetValueAsString("movies", "extensions", ".avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.sbe,.dvr-ms,.ts,.dat,.ifo,.iso");
-        tok = new Tokens(strTmp, new[] { ',' });
+        strTmp = xmlreader.GetValueAsString("movies", "extensions",
+                                            ".avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.sbe,.dvr-ms,.ts,.dat,.ifo,.iso");
+        tok = new Tokens(strTmp, new[] {','});
         foreach (string extension in tok)
         {
           m_VideoExtensions.Add(extension.ToLower());
         }
 
         strTmp = xmlreader.GetValueAsString("pictures", "extensions", ".jpg,.jpeg,.gif,.bmp,.png");
-        tok = new Tokens(strTmp, new[] { ',' });
+        tok = new Tokens(strTmp, new[] {','});
         foreach (string extension in tok)
         {
           m_PictureExtensions.Add(extension.ToLower());
@@ -197,12 +199,13 @@ namespace MediaPortal.Util
       StringBuilder volname = new StringBuilder(256);
       //receives serial number of drive,not in case of network drive(win95/98)
       uint sn;
-      uint maxcomplen;//receives maximum component length
-      uint sysflags;//receives file system flags
-      StringBuilder sysname = new StringBuilder(256);//receives the file system name
-      bool retval;//return value
+      uint maxcomplen; //receives maximum component length
+      uint sysflags; //receives file system flags
+      StringBuilder sysname = new StringBuilder(256); //receives the file system name
+      bool retval; //return value
 
-      retval = GetVolumeInformation(drive.Substring(0, 2), volname, 256, out sn, out maxcomplen, out sysflags, sysname, 256);
+      retval = GetVolumeInformation(drive.Substring(0, 2), volname, 256, out sn, out maxcomplen, out sysflags, sysname,
+                                    256);
 
       if (retval)
       {
@@ -218,10 +221,10 @@ namespace MediaPortal.Util
       StringBuilder volname = new StringBuilder(256);
       //receives serial number of drive,not in case of network drive(win95/98)
       uint sn;
-      uint maxcomplen;//receives maximum component length
-      uint sysflags;//receives file system flags
-      StringBuilder sysname = new StringBuilder(256);//receives the file system name
-      bool retval;//return value
+      uint maxcomplen; //receives maximum component length
+      uint sysflags; //receives file system flags
+      StringBuilder sysname = new StringBuilder(256); //receives the file system name
+      bool retval; //return value
 
       retval = GetVolumeInformation(drive, volname, 256, out sn, out maxcomplen, out sysflags, sysname, 256);
 
@@ -235,11 +238,11 @@ namespace MediaPortal.Util
     public static int getDriveType(string drive)
     {
       if (drive == null) return 2;
-      if ((GetDriveType(drive) & 5) == 5) return 5;//cd
-      if ((GetDriveType(drive) & 3) == 3) return 3;//fixed
-      if ((GetDriveType(drive) & 2) == 2) return 2;//removable
-      if ((GetDriveType(drive) & 4) == 4) return 4;//remote disk
-      if ((GetDriveType(drive) & 6) == 6) return 6;//ram disk
+      if ((GetDriveType(drive) & 5) == 5) return 5; //cd
+      if ((GetDriveType(drive) & 3) == 3) return 3; //fixed
+      if ((GetDriveType(drive) & 2) == 2) return 2; //removable
+      if ((GetDriveType(drive) & 4) == 4) return 4; //remote disk
+      if ((GetDriveType(drive) & 6) == 6) return 6; //ram disk
       return 0;
     }
 
@@ -257,7 +260,7 @@ namespace MediaPortal.Util
         if (Convert.ToUInt32(mo["DriveType"]) == 4)
           return Convert.ToString(mo["ProviderName"]);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return sFilePath;
     }
 
@@ -335,7 +338,7 @@ namespace MediaPortal.Util
         if (strPath.ToLower().IndexOf("live.ts") >= 0) return true;
         if (strPath.ToLower().IndexOf("ts.tsbuffer") >= 0) return true;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -346,7 +349,7 @@ namespace MediaPortal.Util
       {
         if (strPath.ToLower().IndexOf("rtsp:") >= 0) return true;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -357,9 +360,8 @@ namespace MediaPortal.Util
       {
         if (strPath.ToLower().IndexOf("radio.ts") >= 0) return true;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
-
     }
 
     public static bool IsVideo(string strPath)
@@ -368,7 +370,7 @@ namespace MediaPortal.Util
       if (IsLastFMStream(strPath)) return false;
       if (strPath.ToLower().StartsWith("rtsp:")) return true;
       if (strPath.ToLower().StartsWith("mms:")
-        && strPath.ToLower().EndsWith(".ymvp")) return true;
+          && strPath.ToLower().EndsWith(".ymvp")) return true;
       try
       {
         if (!Path.HasExtension(strPath))
@@ -392,9 +394,7 @@ namespace MediaPortal.Util
             return true;
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return false;
     }
 
@@ -440,9 +440,7 @@ namespace MediaPortal.Util
           if (extension == extensionFile) return true;
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return false;
     }
 
@@ -459,9 +457,7 @@ namespace MediaPortal.Util
           if (extension == extensionFile) return true;
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return false;
     }
 
@@ -477,11 +473,10 @@ namespace MediaPortal.Util
         if (extensionFile == ".b4s") return true;
         if (extensionFile == ".wpl") return true;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return false;
     }
+
     public static bool IsProgram(string strPath)
     {
       if (strPath == null) return false;
@@ -491,11 +486,10 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLower();
         if (extensionFile == ".exe") return true;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return false;
     }
+
     public static bool IsShortcut(string strPath)
     {
       if (strPath == null) return false;
@@ -505,9 +499,7 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLower();
         if (extensionFile == ".lnk") return true;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return false;
     }
 
@@ -566,35 +558,34 @@ namespace MediaPortal.Util
             item.IconImage = "defaultNetwork.png";
             item.IconImageBig = "defaultNetworkBig.png";
           }
-          else
-            if (item.Path.Length <= 3)
+          else if (item.Path.Length <= 3)
+          {
+            if (IsDVD(item.Path))
             {
-              if (IsDVD(item.Path))
-              {
-                item.IconImage = "defaultDVDRom.png";
-                item.IconImageBig = "defaultDVDRomBig.png";
-              }
-              else if (IsHD(item.Path))
-              {
-                item.IconImage = "defaultHardDisk.png";
-                item.IconImageBig = "defaultHardDiskBig.png";
-              }
-              else if (IsRemovable(item.Path))
-              {
-                item.IconImage = "defaultRemovable.png";
-                item.IconImageBig = "defaultRemovableBig.png";
-              }
-              else
-              {
-                item.IconImage = "defaultFolder.png";
-                item.IconImageBig = "defaultFolderBig.png";
-              }
+              item.IconImage = "defaultDVDRom.png";
+              item.IconImageBig = "defaultDVDRomBig.png";
+            }
+            else if (IsHD(item.Path))
+            {
+              item.IconImage = "defaultHardDisk.png";
+              item.IconImageBig = "defaultHardDiskBig.png";
+            }
+            else if (IsRemovable(item.Path))
+            {
+              item.IconImage = "defaultRemovable.png";
+              item.IconImageBig = "defaultRemovableBig.png";
             }
             else
             {
               item.IconImage = "defaultFolder.png";
               item.IconImageBig = "defaultFolderBig.png";
             }
+          }
+          else
+          {
+            item.IconImage = "defaultFolder.png";
+            item.IconImageBig = "defaultFolderBig.png";
+          }
         }
       }
     }
@@ -634,7 +625,8 @@ namespace MediaPortal.Util
                   {
                     try
                     {
-                      File.SetLastAccessTime(strThumb, DateTime.Now); //useful for later creating a process plugin that deletes old thumbnails
+                      File.SetLastAccessTime(strThumb, DateTime.Now);
+                        //useful for later creating a process plugin that deletes old thumbnails
                       if (!File.Exists(ConvertToLargeCoverArt(strThumb)))
                       {
                         File.Copy(strThumb, ConvertToLargeCoverArt(strThumb));
@@ -657,7 +649,6 @@ namespace MediaPortal.Util
                       item.ThumbnailImage = strThumb;
                       item.IconImageBig = strThumb;
                     }
-
                   }
                   else if (createVideoThumbs)
                   {
@@ -670,7 +661,6 @@ namespace MediaPortal.Util
                     extractVideoThumbThread.Start(item);
                   }
                 }
-
               }
               return;
             }
@@ -746,7 +736,8 @@ namespace MediaPortal.Util
             }
           }
           if (thumb != null)
-            if (Picture.CreateThumbnail(thumb, strThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false))
+            if (Picture.CreateThumbnail(thumb, strThumb, (int)Thumbs.ThumbLargeResolution,
+                                        (int)Thumbs.ThumbLargeResolution, 0, false))
               SetThumbnails(ref item);
         }
         else
@@ -919,19 +910,31 @@ namespace MediaPortal.Util
         string day;
         switch (dt.DayOfWeek)
         {
-          case DayOfWeek.Monday: day = GUILocalizeStrings.Get(657); break;
-          case DayOfWeek.Tuesday: day = GUILocalizeStrings.Get(658); break;
-          case DayOfWeek.Wednesday: day = GUILocalizeStrings.Get(659); break;
-          case DayOfWeek.Thursday: day = GUILocalizeStrings.Get(660); break;
-          case DayOfWeek.Friday: day = GUILocalizeStrings.Get(661); break;
-          case DayOfWeek.Saturday: day = GUILocalizeStrings.Get(662); break;
-          default: day = GUILocalizeStrings.Get(663); break;
+          case DayOfWeek.Monday:
+            day = GUILocalizeStrings.Get(657);
+            break;
+          case DayOfWeek.Tuesday:
+            day = GUILocalizeStrings.Get(658);
+            break;
+          case DayOfWeek.Wednesday:
+            day = GUILocalizeStrings.Get(659);
+            break;
+          case DayOfWeek.Thursday:
+            day = GUILocalizeStrings.Get(660);
+            break;
+          case DayOfWeek.Friday:
+            day = GUILocalizeStrings.Get(661);
+            break;
+          case DayOfWeek.Saturday:
+            day = GUILocalizeStrings.Get(662);
+            break;
+          default:
+            day = GUILocalizeStrings.Get(663);
+            break;
         }
         return String.Format("{0} {1}-{2}", day, dt.Day, dt.Month);
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return string.Empty;
     }
 
@@ -1011,9 +1014,7 @@ namespace MediaPortal.Util
         RegistryKey regKey = Registry.CurrentUser.OpenSubKey(string.Format(@"Network\{0}", strPath.Substring(0, 1)));
         return (regKey != null);
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return false;
     }
 
@@ -1191,10 +1192,10 @@ namespace MediaPortal.Util
 
       if (iTotalItems == 1)
         strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(179),
-          MediaPortal.Util.Utils.SecondsToHMSString(iTotalSeconds)); //Song
+                                   MediaPortal.Util.Utils.SecondsToHMSString(iTotalSeconds)); //Song
       else
         strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1052),
-          MediaPortal.Util.Utils.SecondsToHMSString(iTotalSeconds)); //Songs
+                                   MediaPortal.Util.Utils.SecondsToHMSString(iTotalSeconds)); //Songs
 
       return strObjects;
     }
@@ -1225,12 +1226,13 @@ namespace MediaPortal.Util
         for (int i = 0; i < pattern.Length; i++)
         {
           // See if we can find the special patterns in both filenames
-          if (Regex.IsMatch(strFileName1, pattern[i], RegexOptions.IgnoreCase) && Regex.IsMatch(strFileName2, pattern[i], RegexOptions.IgnoreCase))
+          if (Regex.IsMatch(strFileName1, pattern[i], RegexOptions.IgnoreCase) &&
+              Regex.IsMatch(strFileName2, pattern[i], RegexOptions.IgnoreCase))
           {
             // Both strings had the special pattern. Now see if the filenames are the same.
             // Do this by removing the special pattern and compare the remains.
             if (Regex.Replace(strFileName1, pattern[i], "", RegexOptions.IgnoreCase)
-              == Regex.Replace(strFileName2, pattern[i], "", RegexOptions.IgnoreCase))
+                == Regex.Replace(strFileName2, pattern[i], "", RegexOptions.IgnoreCase))
             {
               // It was a match so stack it
               return true;
@@ -1238,9 +1240,7 @@ namespace MediaPortal.Util
           }
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       // No matches were found, so no stacking
       return false;
@@ -1248,7 +1248,6 @@ namespace MediaPortal.Util
 
     public static void RemoveStackEndings(ref string strFileName)
     {
-
       if (strFileName == null) return;
       string[] pattern = StackExpression();
       for (int i = 0; i < pattern.Length; i++)
@@ -1270,8 +1269,10 @@ namespace MediaPortal.Util
       //
       // Chemelli: added "+" as separator to allow IMDB scripts usage of this function
       //
-      string[] pattern = {"\\[[0-9]{1,2}-[0-9]{1,2}\\]",
-                          "[-_+ ]\\({0,1}(cd|dis[ck]|part|dvd)[-_+ ]{0,1}[0-9]{1,2}\\){0,1}"};
+      string[] pattern = {
+                           "\\[[0-9]{1,2}-[0-9]{1,2}\\]",
+                           "[-_+ ]\\({0,1}(cd|dis[ck]|part|dvd)[-_+ ]{0,1}[0-9]{1,2}\\){0,1}"
+                         };
       return pattern;
     }
 
@@ -1288,9 +1289,7 @@ namespace MediaPortal.Util
         string strRet = Path.GetFullPath(String.Format("{0}{1}.jpg", Config.GetFolder(Config.Dir.Thumbs), dwcrc));
         return strRet;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return "000";
     }
 
@@ -1355,9 +1354,7 @@ namespace MediaPortal.Util
           CloseHandle(fHandle);
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       return result;
     }
@@ -1392,13 +1389,15 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        string ErrorString = String.Format("Utils: Error starting process!\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n  stack: {3} {4} {5}",
-          proc.StartInfo.FileName,
-          proc.StartInfo.Arguments,
-          proc.StartInfo.WorkingDirectory,
-          ex.Message,
-          ex.Source,
-          ex.StackTrace);
+        string ErrorString =
+          String.Format(
+            "Utils: Error starting process!\n  filename: {0}\n  arguments: {1}\n  WorkingDirectory: {2}\n  stack: {3} {4} {5}",
+            proc.StartInfo.FileName,
+            proc.StartInfo.Arguments,
+            proc.StartInfo.WorkingDirectory,
+            ex.Message,
+            ex.Source,
+            ex.StackTrace);
         Log.Info(ErrorString);
       }
       return proc;
@@ -1426,7 +1425,7 @@ namespace MediaPortal.Util
     }
 
     private static void OutputDataHandler(object sendingProcess,
-            DataReceivedEventArgs outLine)
+                                          DataReceivedEventArgs outLine)
     {
       if (!String.IsNullOrEmpty(outLine.Data))
       {
@@ -1435,7 +1434,7 @@ namespace MediaPortal.Util
     }
 
     private static void ErrorDataHandler(object sendingProcess,
-        DataReceivedEventArgs errLine)
+                                         DataReceivedEventArgs errLine)
     {
       if (!String.IsNullOrEmpty(errLine.Data))
       {
@@ -1445,24 +1444,25 @@ namespace MediaPortal.Util
 
 
     [MethodImpl(MethodImplOptions.Synchronized)]
-    public static bool StartProcess(string aAppName, string aArguments, string aWorkingDir, int aExpectedTimeoutMs, bool aLowerPriority, ProcessFailedConditions aFailConditions)
+    public static bool StartProcess(string aAppName, string aArguments, string aWorkingDir, int aExpectedTimeoutMs,
+                                    bool aLowerPriority, ProcessFailedConditions aFailConditions)
     {
       bool success = false;
       Process ExternalProc = new Process();
       ProcessStartInfo ProcOptions = new ProcessStartInfo(aAppName, aArguments);
 
-      ProcOptions.UseShellExecute = false;                                       // Important for WorkingDirectory behaviour
-      ProcOptions.RedirectStandardError = true;                                  // .NET bug? Some stdout reader abort to early without that!
-      ProcOptions.RedirectStandardOutput = true;                                 // The precious data we're after
+      ProcOptions.UseShellExecute = false; // Important for WorkingDirectory behaviour
+      ProcOptions.RedirectStandardError = true; // .NET bug? Some stdout reader abort to early without that!
+      ProcOptions.RedirectStandardOutput = true; // The precious data we're after
       //ProcOptions.StandardOutputEncoding = Encoding.GetEncoding("ISO-8859-1"); // the output contains "Umlaute", etc.
       //ProcOptions.StandardErrorEncoding = Encoding.GetEncoding("ISO-8859-1");
-      ProcOptions.WorkingDirectory = aWorkingDir;                                // set the dir because the binary might depend on cygwin.dll
-      ProcOptions.CreateNoWindow = true;                                         // Do not spawn a "Dos-Box"      
-      ProcOptions.ErrorDialog = false;                                           // Do not open an error box on failure        
+      ProcOptions.WorkingDirectory = aWorkingDir; // set the dir because the binary might depend on cygwin.dll
+      ProcOptions.CreateNoWindow = true; // Do not spawn a "Dos-Box"      
+      ProcOptions.ErrorDialog = false; // Do not open an error box on failure        
 
       ExternalProc.OutputDataReceived += new DataReceivedEventHandler(OutputDataHandler);
       ExternalProc.ErrorDataReceived += new DataReceivedEventHandler(ErrorDataHandler);
-      ExternalProc.EnableRaisingEvents = true;                                   // We want to know when and why the process died        
+      ExternalProc.EnableRaisingEvents = true; // We want to know when and why the process died        
       ExternalProc.StartInfo = ProcOptions;
       if (File.Exists(ProcOptions.FileName))
       {
@@ -1473,7 +1473,8 @@ namespace MediaPortal.Util
           {
             try
             {
-              ExternalProc.PriorityClass = ProcessPriorityClass.BelowNormal;            // Execute all processes in the background so movies, etc stay fluent
+              ExternalProc.PriorityClass = ProcessPriorityClass.BelowNormal;
+                // Execute all processes in the background so movies, etc stay fluent
             }
             catch (Exception ex2)
             {
@@ -1568,13 +1569,13 @@ namespace MediaPortal.Util
 
             if (OnStartExternal != null)
             {
-              OnStartExternal(dvdplayer, true);		// Event: Starting external process
+              OnStartExternal(dvdplayer, true); // Event: Starting external process
             }
             dvdplayer.Start();
             dvdplayer.WaitForExit();
             if (OnStopExternal != null)
             {
-              OnStopExternal(dvdplayer, true);		// Event: External process stopped
+              OnStopExternal(dvdplayer, true); // Event: External process stopped
             }
             Log.Info("{0} done", strPath);
           }
@@ -1605,8 +1606,8 @@ namespace MediaPortal.Util
         if (extension.Equals(".dvr-ms")) return false;
         if (extension.Equals(".radio")) return false;
         if (strFile.IndexOf("record0.") > 0 || strFile.IndexOf("record1.") > 0 ||
-          strFile.IndexOf("record2.") > 0 || strFile.IndexOf("record3.") > 0 ||
-          strFile.IndexOf("record4.") > 0 || strFile.IndexOf("record5.") > 0) return false;
+            strFile.IndexOf("record2.") > 0 || strFile.IndexOf("record3.") > 0 ||
+            strFile.IndexOf("record4.") > 0 || strFile.IndexOf("record5.") > 0) return false;
 
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
         {
@@ -1644,7 +1645,7 @@ namespace MediaPortal.Util
               Log.Info("start process {0} {1}", strPath, movieplayer.StartInfo.Arguments);
               if (OnStartExternal != null)
               {
-                OnStartExternal(movieplayer, true);		// Event: Starting external process
+                OnStartExternal(movieplayer, true); // Event: Starting external process
               }
               AutoPlay.StopListening();
               movieplayer.Start();
@@ -1652,7 +1653,7 @@ namespace MediaPortal.Util
               AutoPlay.StartListening();
               if (OnStopExternal != null)
               {
-                OnStopExternal(movieplayer, true);		// Event: External process stopped
+                OnStopExternal(movieplayer, true); // Event: External process stopped
               }
               Log.Debug("Util: External player stopped on {0}", strPath);
               return true;
@@ -1677,18 +1678,21 @@ namespace MediaPortal.Util
       {
         if (ldate < 0) return DateTime.MinValue;
         int year, month, day, hour, minute, sec;
-        sec = (int)(ldate % 100L); ldate /= 100L;
-        minute = (int)(ldate % 100L); ldate /= 100L;
-        hour = (int)(ldate % 100L); ldate /= 100L;
-        day = (int)(ldate % 100L); ldate /= 100L;
-        month = (int)(ldate % 100L); ldate /= 100L;
+        sec = (int)(ldate % 100L);
+        ldate /= 100L;
+        minute = (int)(ldate % 100L);
+        ldate /= 100L;
+        hour = (int)(ldate % 100L);
+        ldate /= 100L;
+        day = (int)(ldate % 100L);
+        ldate /= 100L;
+        month = (int)(ldate % 100L);
+        ldate /= 100L;
         year = (int)ldate;
         DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
         return dt;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return DateTime.Now;
     }
 
@@ -1696,7 +1700,7 @@ namespace MediaPortal.Util
     {
       try
       {
-        long iSec = 0;//(long)dt.Second;
+        long iSec = 0; //(long)dt.Second;
         long iMin = (long)dt.Minute;
         long iHour = (long)dt.Hour;
         long iDay = (long)dt.Day;
@@ -1711,9 +1715,7 @@ namespace MediaPortal.Util
         lRet = lRet * 100L + iSec;
         return lRet;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return 0;
     }
 
@@ -1754,7 +1756,6 @@ namespace MediaPortal.Util
               }
             }
         }
-
       }
       return strFName;
     }
@@ -1786,7 +1787,7 @@ namespace MediaPortal.Util
         File.Delete(strFile);
         return true;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -1803,7 +1804,7 @@ namespace MediaPortal.Util
         Directory.Delete(aDirectory, aRecursive);
         return true;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -1857,9 +1858,7 @@ namespace MediaPortal.Util
         {
           File.Copy(file, strFile, true);
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
         return;
       }
       DownLoadImage(strURL, file);
@@ -1878,7 +1877,6 @@ namespace MediaPortal.Util
           Log.Warn("Util: error after downloading thumbnail {0} - {1}", strFile, ex.Message);
         }
       }
-
     }
 
     public static void DownLoadImage(string strURL, string strFile)
@@ -1896,7 +1894,7 @@ namespace MediaPortal.Util
           // wr.Proxy = WebProxy.GetDefaultProxy();
           wr.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception) {}
         HttpWebResponse ws = (HttpWebResponse)wr.GetResponse();
 
         using (Stream str = ws.GetResponseStream())
@@ -1988,9 +1986,7 @@ namespace MediaPortal.Util
         else
           return Path.GetFileName(strPath);
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return strPath;
     }
 
@@ -2007,6 +2003,7 @@ namespace MediaPortal.Util
       if (audio == null) return 0;
       return PlaySound(audio, bSynchronous, bIgnoreErrors, false, false, false);
     }
+
     ///<summary>
     ///Plays a sound from a byte array. 
     ///Note: If distortion or corruption of 
@@ -2016,7 +2013,7 @@ namespace MediaPortal.Util
     ///use the file-based option.
     ///</summary>
     public static int PlaySound(byte[] audio, bool bSynchronous, bool bIgnoreErrors,
-      bool bNoDefault, bool bLoop, bool bNoStop)
+                                bool bNoDefault, bool bLoop, bool bNoStop)
     {
       if (audio == null) return 0;
       const int SND_ASYNC = 1;
@@ -2048,6 +2045,7 @@ namespace MediaPortal.Util
         }
       }
     }
+
     public static int PlaySound(string sSoundFile, bool bSynchronous, bool bIgnoreErrors)
     {
       if (sSoundFile == null) return 0;
@@ -2056,7 +2054,7 @@ namespace MediaPortal.Util
     }
 
     public static int PlaySound(string sSoundFile, bool bSynchronous, bool bIgnoreErrors,
-      bool bNoDefault, bool bLoop, bool bNoStop)
+                                bool bNoDefault, bool bLoop, bool bNoStop)
     {
       if (!enableGuiSounds)
         return 0;
@@ -2112,8 +2110,10 @@ namespace MediaPortal.Util
 
     [DllImport("winmm.dll")]
     private static extern int sndPlaySoundA(string lpszSoundName, int uFlags);
+
     [DllImport("winmm.dll")]
     private static extern int PlaySound(byte[] pszSound, Int16 hMod, long fdwSound);
+
     public static int GetNextForwardSpeed(int iCurSpeed)
     {
       switch (iCurSpeed)
@@ -2274,15 +2274,14 @@ namespace MediaPortal.Util
                 maxSize = fi.Length;
               }
               // prefer the front cover over booklets or cd prints
-              if (imageFiles[i].ToLowerInvariant().Contains(@"front") || imageFiles[i].ToLowerInvariant().Contains(@"vorne"))
+              if (imageFiles[i].ToLowerInvariant().Contains(@"front") ||
+                  imageFiles[i].ToLowerInvariant().Contains(@"vorne"))
               {
                 strRemoteFolderThumb = imageFiles[i];
                 break;
               }
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
           }
           if (File.Exists(strRemoteFolderThumb))
             return strRemoteFolderThumb;
@@ -2344,7 +2343,8 @@ namespace MediaPortal.Util
       if (string.IsNullOrEmpty(strDirPath))
         return string.Empty;
 
-      string strFolderJpg = String.Format(@"{0}\{1}{2}", Thumbs.MusicFolder, EncryptLine(strDirPath), GetThumbExtension());
+      string strFolderJpg = String.Format(@"{0}\{1}{2}", Thumbs.MusicFolder, EncryptLine(strDirPath),
+                                          GetThumbExtension());
 
       return strFolderJpg;
     }
@@ -2526,7 +2526,7 @@ namespace MediaPortal.Util
                     {
                       Log.Error("Utils: An exception occured creating folder preview thumb: {0}", ex.Message);
                     }
-                  }//using (Graphics g = Graphics.FromImage(bmp) )
+                  } //using (Graphics g = Graphics.FromImage(bmp) )
 
                   try
                   {
@@ -2542,14 +2542,16 @@ namespace MediaPortal.Util
                     // we do not want a folderL.jpg
                     if (aThumbPath.ToLowerInvariant().Contains(@"folder.jpg"))
                     {
-                      Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
+                      Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution,
+                                              (int)Thumbs.ThumbLargeResolution, 0, false);
                     }
-                    else
-                      if (Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
-                      {
-                        aThumbPath = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
-                        Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
-                      }
+                    else if (Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbResolution,
+                                                     (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                    {
+                      aThumbPath = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
+                      Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution,
+                                              (int)Thumbs.ThumbLargeResolution, 0, false);
+                    }
 
                     if (MediaPortal.Player.g_Player.Playing)
                       Thread.Sleep(100);
@@ -2561,15 +2563,15 @@ namespace MediaPortal.Util
                   }
                   catch (Exception ex2)
                   {
-                    Log.Error("Utils: An exception occured saving folder preview thumb: {0} - {1}", aThumbPath, ex2.Message);
+                    Log.Error("Utils: An exception occured saving folder preview thumb: {0} - {1}", aThumbPath,
+                              ex2.Message);
                   }
-                }//using (Bitmap bmp = new Bitmap(210,210))
+                } //using (Bitmap bmp = new Bitmap(210,210))
               }
             }
           }
           else
             Log.Warn("Utils: Your skin does not supply previewbackground.png to create folder preview thumbs!");
-
         }
         catch (Exception exm)
         {
@@ -2578,7 +2580,7 @@ namespace MediaPortal.Util
 
         benchClock.Stop();
         Log.Debug("Utils: CreateFolderPreviewThumb for {0} took {1} ms", aThumbPath, benchClock.ElapsedMilliseconds);
-      }  //if (pictureList.Count>0)
+      } //if (pictureList.Count>0)
       else
         result = false;
 
@@ -2656,10 +2658,10 @@ namespace MediaPortal.Util
           {
             File.Delete(strFile);
           }
-          catch (Exception) { }
+          catch (Exception) {}
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     public static bool UsingTvServer
@@ -2697,9 +2699,7 @@ namespace MediaPortal.Util
         sec = Int32.Parse(parts[5]);
         return new DateTime(year, month, day, hour, min, sec, 0);
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return DateTime.Now;
     }
 
@@ -2762,6 +2762,7 @@ namespace MediaPortal.Util
     {
       return ReplaceTag(line, tag, value, string.Empty);
     }
+
     public static ulong GetFreeDiskSpace(string drive)
     {
       ulong freeBytesAvailable = 0;
@@ -2777,10 +2778,10 @@ namespace MediaPortal.Util
         driveName = drive[0] + @":\";
 
       GetDiskFreeSpaceEx(
-         driveName,
-         out freeBytesAvailable,
-         out totalNumberOfBytes,
-         out totalNumberOfFreeBytes);
+        driveName,
+        out freeBytesAvailable,
+        out totalNumberOfBytes,
+        out totalNumberOfFreeBytes);
       return freeBytesAvailable;
     }
 
@@ -2807,11 +2808,11 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       // clean the TempSBE\ folder
       try
@@ -2826,11 +2827,11 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       // delete *.tv
       try
@@ -2845,12 +2846,14 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
         }
       }
-      catch (Exception) { }
-    }//void DeleteOldTimeShiftFiles(string path)
+      catch (Exception) {}
+    }
+
+//void DeleteOldTimeShiftFiles(string path)
 
     public static void DeleteRecording(string recordingFilename)
     {
@@ -2895,10 +2898,10 @@ namespace MediaPortal.Util
               }
             }
           }
-          catch (Exception) { }
+          catch (Exception) {}
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     /// <summary>
@@ -2931,9 +2934,8 @@ namespace MediaPortal.Util
         {
           result += crypt[(int)c - 48];
         }
-        catch { }
+        catch {}
       return result;
-
     }
 
     public static string DecryptPin(string code)
@@ -2947,7 +2949,7 @@ namespace MediaPortal.Util
             if (crypt[i] == c)
               result += (i).ToString();
         }
-        catch { }
+        catch {}
       }
       return result;
     }

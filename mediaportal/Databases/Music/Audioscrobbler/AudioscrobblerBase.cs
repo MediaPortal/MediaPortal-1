@@ -52,9 +52,7 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Empty constructor
     /// </summary>
-    private XmlRpcParams()
-    {
-    }
+    private XmlRpcParams() {}
 
     /// <summary>
     /// Default constructor
@@ -246,8 +244,8 @@ namespace MediaPortal.Music.Database
 
       lastHandshake = DateTime.MinValue;
       handshakeInterval = new TimeSpan(0, HANDSHAKE_INTERVAL, 0);
-      handshakeRadioInterval = new TimeSpan(0, 5*HANDSHAKE_INTERVAL, 0);
-        // Radio is session based - no need to re-handshake soon
+      handshakeRadioInterval = new TimeSpan(0, 5 * HANDSHAKE_INTERVAL, 0);
+      // Radio is session based - no need to re-handshake soon
       lastConnectAttempt = DateTime.MinValue;
       minConnectWaitTime = new TimeSpan(0, 0, CONNECT_WAIT_TIME);
       _cookies = new CookieContainer();
@@ -538,7 +536,7 @@ namespace MediaPortal.Music.Database
     private static void Worker_TryHandshake(object sender, DoWorkEventArgs e)
     {
       Thread.CurrentThread.Name = "Scrobbler handshake";
-      HandshakeType ReasonForHandshake = (HandshakeType) e.Argument;
+      HandshakeType ReasonForHandshake = (HandshakeType)e.Argument;
       Exception errorReason = null;
       bool success = false;
       string authTime = Convert.ToString(Util.Utils.GetUnixTime(DateTime.UtcNow));
@@ -730,7 +728,7 @@ namespace MediaPortal.Music.Database
       HttpWebRequest request = null;
       try
       {
-        request = (HttpWebRequest) WebRequest.Create(url_);
+        request = (HttpWebRequest)WebRequest.Create(url_);
         if (IsRpcRequest)
         {
           request.CookieContainer = _cookies;
@@ -744,9 +742,7 @@ namespace MediaPortal.Music.Database
           // request.Proxy = WebProxy.GetDefaultProxy();
           request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
       catch (Exception e)
       {
@@ -827,7 +823,7 @@ namespace MediaPortal.Music.Database
 
       try
       {
-        HttpWebResponse response = (HttpWebResponse) request.GetResponse();
+        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
         // Print the properties of each cookie.
         int i = 0;
         foreach (Cookie cook in response.Cookies)
@@ -1009,11 +1005,11 @@ namespace MediaPortal.Music.Database
           xmlrpcThread.IsBackground = false; // do not abort the announce action when MediaPortal closes
           xmlrpcThread.Name = "Scrobbler love";
           xmlrpcThread.Priority = ThreadPriority.BelowNormal;
-          xmlrpcThread.Start((object) new XmlRpcParams(
-                                        XmlRpcType.loveTrack,
-                                        CurrentSubmitSong.Artist,
-                                        CurrentSubmitSong.Title,
-                                        String.Empty));
+          xmlrpcThread.Start((object)new XmlRpcParams(
+                                       XmlRpcType.loveTrack,
+                                       CurrentSubmitSong.Artist,
+                                       CurrentSubmitSong.Title,
+                                       String.Empty));
         }
         catch (Exception aex)
         {
@@ -1037,11 +1033,11 @@ namespace MediaPortal.Music.Database
           xmlrpcThread.IsBackground = false; // do not abort the announce action when MediaPortal closes
           xmlrpcThread.Name = "Scrobbler unlove";
           xmlrpcThread.Priority = ThreadPriority.BelowNormal;
-          xmlrpcThread.Start((object) new XmlRpcParams(
-                                        XmlRpcType.unLoveTrack,
-                                        CurrentSubmitSong.Artist,
-                                        CurrentSubmitSong.Title,
-                                        String.Empty));
+          xmlrpcThread.Start((object)new XmlRpcParams(
+                                       XmlRpcType.unLoveTrack,
+                                       CurrentSubmitSong.Artist,
+                                       CurrentSubmitSong.Title,
+                                       String.Empty));
         }
         catch (Exception aex)
         {
@@ -1065,11 +1061,11 @@ namespace MediaPortal.Music.Database
           xmlrpcThread.IsBackground = false; // do not abort the announce action when MediaPortal closes
           xmlrpcThread.Name = "Scrobbler ban";
           xmlrpcThread.Priority = ThreadPriority.BelowNormal;
-          xmlrpcThread.Start((object) new XmlRpcParams(
-                                        XmlRpcType.banTrack,
-                                        CurrentSubmitSong.Artist,
-                                        CurrentSubmitSong.Title,
-                                        String.Empty));
+          xmlrpcThread.Start((object)new XmlRpcParams(
+                                       XmlRpcType.banTrack,
+                                       CurrentSubmitSong.Artist,
+                                       CurrentSubmitSong.Title,
+                                       String.Empty));
         }
         catch (Exception aex)
         {
@@ -1320,9 +1316,7 @@ namespace MediaPortal.Music.Database
         nowPlayingUrl = reader_.ReadLine().Trim();
         submitUrl = reader_.ReadLine().Trim();
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       Log.Info("AudioscrobblerBase: {0}", "Action successfully completed.");
       return true;
     }
@@ -1726,5 +1720,9 @@ namespace MediaPortal.Music.Database
     }
 
     #endregion
-  } // class AudioscrobblerBase
-} // namespace AudioscrobblerBase
+  }
+
+  // class AudioscrobblerBase
+}
+
+// namespace AudioscrobblerBase

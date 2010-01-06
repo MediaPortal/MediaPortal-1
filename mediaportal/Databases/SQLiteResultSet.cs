@@ -68,7 +68,7 @@ namespace SQLite.NET
     {
       if (this.columnIndexes.ContainsKey(columnName))
       {
-        return this.GetColumn((int) this.columnIndexes[columnName]);
+        return this.GetColumn((int)this.columnIndexes[columnName]);
       }
       return new ArrayList();
     }

@@ -26,6 +26,7 @@
 using System;
 using System.Collections;
 using System.IO;
+
 //using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Profile
@@ -37,8 +38,7 @@ namespace MediaPortal.Profile
   public class MPSettings : Settings
   {
     public MPSettings()
-      : base(Configuration.Config.GetFile(Configuration.Config.Dir.Config, "MediaPortal.xml"))
-    {}
+      : base(Configuration.Config.GetFile(Configuration.Config.Dir.Config, "MediaPortal.xml")) {}
   }
 
   /// <summary>
@@ -47,9 +47,7 @@ namespace MediaPortal.Profile
   public class Settings : IDisposable
   {
     public Settings(string fileName)
-      : this(fileName, true)
-    {
-    }
+      : this(fileName, true) {}
 
     public Settings(string fileName, bool isCached)
     {
@@ -118,7 +116,7 @@ namespace MediaPortal.Profile
 
     public bool GetValueAsBool(string section, string entry, bool bDefault)
     {
-      string strValue = (string) xmlDoc.GetValue(section, entry);
+      string strValue = (string)xmlDoc.GetValue(section, entry);
       if (strValue == null)
       {
         return bDefault;
@@ -155,9 +153,7 @@ namespace MediaPortal.Profile
         int iRet = Int32.Parse(strValue);
         return iRet;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return iDefault;
     }
 
@@ -222,9 +218,7 @@ namespace MediaPortal.Profile
       }
     }
 
-    public void Clear()
-    {
-    }
+    public void Clear() {}
 
     public static void SaveCache()
     {

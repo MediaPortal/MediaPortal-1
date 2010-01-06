@@ -29,12 +29,13 @@ using TvDatabase;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using DirectShowLib;
+
 namespace SetupTv.Sections
 {
   public partial class TvCards : SectionSettings
   {
     private bool _needRestart;
-    int cardId;
+    private int cardId;
     private readonly Dictionary<string, CardType> cardTypes = new Dictionary<string, CardType>();
     private TabPage usbWINTV_tabpage;
 
@@ -43,24 +44,26 @@ namespace SetupTv.Sections
     public event ChangedEventHandler TvCardsChanged;
 
     #region CardInfo class
+
     public class CardInfo
     {
       public Card card;
+
       public CardInfo(Card newcard)
       {
         card = newcard;
       }
+
       public override string ToString()
       {
         return card.Name;
       }
     }
+
     #endregion
 
     public TvCards()
-      : this("TV Cards")
-    {
-    }
+      : this("TV Cards") {}
 
     public TvCards(string name)
       : base(name)
@@ -68,7 +71,7 @@ namespace SetupTv.Sections
       InitializeComponent();
     }
 
-    void UpdateMenu()
+    private void UpdateMenu()
     {
       placeInHybridCardToolStripMenuItem.DropDownItems.Clear();
       IList<CardGroup> groups = CardGroup.ListAll();
@@ -84,7 +87,7 @@ namespace SetupTv.Sections
       placeInHybridCardToolStripMenuItem.DropDownItems.Add(itemNew);
     }
 
-    void placeInHybridCardToolStripMenuItem_Click(object sender, EventArgs e)
+    private void placeInHybridCardToolStripMenuItem_Click(object sender, EventArgs e)
     {
       ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
       CardGroup group;
@@ -136,7 +139,7 @@ namespace SetupTv.Sections
       base.OnSectionDeActivated();
     }
 
-    static void SaveWinTVSettings(int cardId, string name, string moniker)
+    private static void SaveWinTVSettings(int cardId, string name, string moniker)
     {
       String fileName = String.Format(@"{0}\WinTV-CI.xml", Log.GetPathName());
       XmlTextWriter writer = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
@@ -158,7 +161,7 @@ namespace SetupTv.Sections
       writer.Close();
     }
 
-    void LoadWinTVSettings()
+    private void LoadWinTVSettings()
     {
       string configfile = String.Format(@"{0}\WinTV-CI.xml", Log.GetPathName());
       XmlDocument doc = new XmlDocument();
@@ -180,7 +183,7 @@ namespace SetupTv.Sections
       _needRestart = false;
     }
 
-    void UpdateList()
+    private void UpdateList()
     {
       base.OnSectionActivated();
       mpListView1.Items.Clear();
@@ -194,12 +197,11 @@ namespace SetupTv.Sections
         }
         LoadWinTVSettings();
         mpComboBoxCard.SelectedIndex = cardId - 1;
-      } catch (Exception)
-      {
       }
+      catch (Exception) {}
       try
       {
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Card));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Card));
         sb.AddOrderByField(false, "priority");
         SqlStatement stmt = sb.GetStatement(true);
         IList<Card> cards = ObjectFactory.GetCollection<Card>(stmt.Execute());
@@ -235,7 +237,8 @@ namespace SetupTv.Sections
           {
             item.SubItems.Add("No");
           }
-          if (cardType.ToUpperInvariant().Contains("DVB") || cardType.ToUpperInvariant().Contains("ATSC"))//CAM limit doesn't apply to non-digital cards
+          if (cardType.ToUpperInvariant().Contains("DVB") || cardType.ToUpperInvariant().Contains("ATSC"))
+            //CAM limit doesn't apply to non-digital cards
             item.SubItems.Add(card.DecryptLimit.ToString());
           else
             item.SubItems.Add("");
@@ -250,7 +253,8 @@ namespace SetupTv.Sections
           {
             item.SubItems.Add("Yes");
           }
-          if (cardType.ToUpperInvariant().Contains("DVB") || cardType.ToUpperInvariant().Contains("ATSC"))//CAM limit doesn't apply to non-digital cards
+          if (cardType.ToUpperInvariant().Contains("DVB") || cardType.ToUpperInvariant().Contains("ATSC"))
+            //CAM limit doesn't apply to non-digital cards
           {
             if (!card.GrabEPG)
             {
@@ -267,7 +271,8 @@ namespace SetupTv.Sections
           }
           item.Tag = card;
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         MessageBox.Show(this, "Unable to access service. Is the TvService running??");
       }
@@ -278,7 +283,7 @@ namespace SetupTv.Sections
       mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
     }
 
-    void checkWinTVCI()
+    private void checkWinTVCI()
     {
       //check if the hauppauge wintv usb CI module is installed
       DsDevice[] capDevices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
@@ -352,7 +357,7 @@ namespace SetupTv.Sections
       _needRestart = true;
     }
 
-    void ReOrder()
+    private void ReOrder()
     {
       for (int i = 0; i < mpListView1.Items.Count; ++i)
       {
@@ -370,7 +375,9 @@ namespace SetupTv.Sections
 
     private void mpListView1_ItemChecked(object sender, ItemCheckedEventArgs e)
     {
-      e.Item.Font = e.Item.Checked ? new Font(e.Item.Font, FontStyle.Regular) : new Font(e.Item.Font, FontStyle.Strikeout);
+      e.Item.Font = e.Item.Checked
+                      ? new Font(e.Item.Font, FontStyle.Regular)
+                      : new Font(e.Item.Font, FontStyle.Strikeout);
       UpdateEditButtonState();
     }
 
@@ -391,17 +398,18 @@ namespace SetupTv.Sections
       if (mpListView1.SelectedItems.Count == 1)
       {
         string cardType = mpListView1.SelectedItems[0].SubItems[2].Text.ToLowerInvariant();
-        if (mpListView1.SelectedItems[0].Checked && (cardType.Contains("dvb") || cardType.Contains("atsc") || cardType.Contains("analog"))) // Only some cards can be edited
+        if (mpListView1.SelectedItems[0].Checked &&
+            (cardType.Contains("dvb") || cardType.Contains("atsc") || cardType.Contains("analog")))
+          // Only some cards can be edited
           buttonEdit.Enabled = true;
         else
           buttonEdit.Enabled = false;
       }
     }
-    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-    }
 
-    void UpdateHybrids()
+    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e) {}
+
+    private void UpdateHybrids()
     {
       treeView1.Nodes.Clear();
       IList<CardGroup> cardGroups = CardGroup.ListAll();
@@ -478,7 +486,9 @@ namespace SetupTv.Sections
     {
       Card card = (Card)mpListView1.SelectedItems[0].Tag;
 
-      DialogResult res = MessageBox.Show(this, "Are you sure you want to delete this card along with all the channel mappings ? (channels will not be deleted)", "Delete card ?", MessageBoxButtons.YesNo);
+      DialogResult res = MessageBox.Show(this,
+                                         "Are you sure you want to delete this card along with all the channel mappings ? (channels will not be deleted)",
+                                         "Delete card ?", MessageBoxButtons.YesNo);
 
       if (res == DialogResult.Yes)
       {
@@ -535,6 +545,5 @@ namespace SetupTv.Sections
     {
       _needRestart = true;
     }
-
   }
 }

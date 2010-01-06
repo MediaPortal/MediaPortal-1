@@ -37,9 +37,7 @@ namespace MediaPortal.Configuration.Sections
     //private MediaPortal.UserInterface.Controls.MPLabel label4;
     //private System.ComponentModel.IContainer components = null;
 
-    public FiltersSection() : this("Codecs and Renderer")
-    {
-    }
+    public FiltersSection() : this("Codecs and Renderer") {}
 
     private void InitializeComponent()
     {
@@ -61,12 +59,11 @@ namespace MediaPortal.Configuration.Sections
       this.Name = "FiltersSection";
       this.Size = new System.Drawing.Size(472, 408);
       this.ResumeLayout(false);
-
     }
 
     public override void SaveSettings()
     {
-      foreach(TabPage currentTab in mpTabControl1.TabPages)
+      foreach (TabPage currentTab in mpTabControl1.TabPages)
       {
         foreach (Control control in currentTab.Controls)
         {
@@ -77,11 +74,12 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
-    private void OnSectionActivatedWrapper(Object sender,EventArgs e)
+
+    private void OnSectionActivatedWrapper(Object sender, EventArgs e)
     {
       if (sender is TabPage)
       {
-        foreach(Control control in (sender as TabPage).Controls)
+        foreach (Control control in (sender as TabPage).Controls)
         {
           if (control is SectionSettings)
           {
@@ -110,7 +108,7 @@ namespace MediaPortal.Configuration.Sections
     public FiltersSection(string name) : base(name)
     {
       InitializeComponent();
-      
+
       Log.Info("  add Video codec section");
       TabPage videoTab = new TabPage("Video Codecs");
       MovieCodec mc = new MovieCodec();

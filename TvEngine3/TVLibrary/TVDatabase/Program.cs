@@ -60,17 +60,18 @@ namespace TvDatabase
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
     public Program(int idChannel, DateTime startTime, DateTime endTime, string title, string description, string genre,
-                   ProgramState state, DateTime originalAirDate, string seriesNum, string episodeNum, string episodeName, string episodePart, int starRating,
+                   ProgramState state, DateTime originalAirDate, string seriesNum, string episodeNum, string episodeName,
+                   string episodePart, int starRating,
                    string classification, int parentalRating)
     {
-      isChanged = true;      
+      isChanged = true;
       this.idChannel = idChannel;
       this.startTime = startTime;
       this.endTime = endTime;
       this.title = title;
       this.description = description;
-      this.genre = genre;      
-      this.state = (int) state;
+      this.genre = genre;
+      this.state = (int)state;
       this.originalAirDate = originalAirDate;
       this.seriesNum = seriesNum;
       this.episodeNum = episodeNum;
@@ -86,7 +87,8 @@ namespace TvDatabase
     /// construct objects from retrieved rows. 
     /// </summary> 
     public Program(int idProgram, int idChannel, DateTime startTime, DateTime endTime, string title, string description,
-                   string genre, ProgramState state, DateTime originalAirDate, string seriesNum, string episodeNum, string episodeName, string episodePart,
+                   string genre, ProgramState state, DateTime originalAirDate, string seriesNum, string episodeNum,
+                   string episodeName, string episodePart,
                    int starRating, string classification, int parentalRating)
     {
       this.idProgram = idProgram;
@@ -95,7 +97,7 @@ namespace TvDatabase
       this.endTime = endTime;
       this.title = title;
       this.description = description;
-      this.genre = genre;      
+      this.genre = genre;
       this.state = (int)state;
       this.originalAirDate = originalAirDate;
       this.seriesNum = seriesNum;
@@ -214,13 +216,14 @@ namespace TvDatabase
       set
       {
         ProgramState newState = (ProgramState)state;
-        if (!value && (state & (int)ProgramState.Notify) == (int)ProgramState.Notify) // remove the notify bit flag if present
+        if (!value && (state & (int)ProgramState.Notify) == (int)ProgramState.Notify)
+          // remove the notify bit flag if present
         {
-          newState ^= ProgramState.Notify;          
+          newState ^= ProgramState.Notify;
         }
         if (value) //add the notify bit flag
         {
-          newState |= ProgramState.Notify;          
+          newState |= ProgramState.Notify;
         }
 
         isChanged |= (int)state != (int)newState;
@@ -237,7 +240,8 @@ namespace TvDatabase
       set
       {
         ProgramState newState = (ProgramState)state;
-        if (!value && (state & (int)ProgramState.Conflict) == (int)ProgramState.Conflict) // remove the Conflict bit flag if present
+        if (!value && (state & (int)ProgramState.Conflict) == (int)ProgramState.Conflict)
+          // remove the Conflict bit flag if present
         {
           newState ^= ProgramState.Conflict;
         }
@@ -256,7 +260,7 @@ namespace TvDatabase
     /// </summary>
     public bool IsRecording
     {
-      get { return (IsRecordingSeries || IsRecordingManual || IsRecordingOnce); }     
+      get { return (IsRecordingSeries || IsRecordingManual || IsRecordingOnce); }
     }
 
     /// <summary>
@@ -268,7 +272,8 @@ namespace TvDatabase
       set
       {
         ProgramState newState = (ProgramState)state;
-        if (!value && (state & (int)ProgramState.RecordOnce) == (int)ProgramState.RecordOnce) // remove the Record bit flag if present                        
+        if (!value && (state & (int)ProgramState.RecordOnce) == (int)ProgramState.RecordOnce)
+          // remove the Record bit flag if present                        
         {
           newState ^= ProgramState.RecordOnce;
         }
@@ -292,7 +297,8 @@ namespace TvDatabase
       set
       {
         ProgramState newState = (ProgramState)state;
-        if (!value && (state & (int)ProgramState.RecordSeriesPending) == (int)ProgramState.RecordSeriesPending) // remove the Record bit flag if present                
+        if (!value && (state & (int)ProgramState.RecordSeriesPending) == (int)ProgramState.RecordSeriesPending)
+          // remove the Record bit flag if present                
         {
           newState ^= ProgramState.RecordSeriesPending;
         }
@@ -315,7 +321,8 @@ namespace TvDatabase
       set
       {
         ProgramState newState = (ProgramState)state;
-        if (!value && (state & (int)ProgramState.RecordOncePending) == (int)ProgramState.RecordOncePending) // remove the Record bit flag if present        
+        if (!value && (state & (int)ProgramState.RecordOncePending) == (int)ProgramState.RecordOncePending)
+          // remove the Record bit flag if present        
         {
           newState ^= ProgramState.RecordOncePending;
         }
@@ -328,7 +335,7 @@ namespace TvDatabase
         state = (int)newState;
       }
     }
-    
+
     /// <summary>
     /// Property relating to database column IsRecordingManual
     /// </summary>
@@ -338,7 +345,8 @@ namespace TvDatabase
       set
       {
         ProgramState newState = (ProgramState)state;
-        if (!value && (state & (int)ProgramState.RecordManual) == (int)ProgramState.RecordManual) // remove the Record bit flag if present
+        if (!value && (state & (int)ProgramState.RecordManual) == (int)ProgramState.RecordManual)
+          // remove the Record bit flag if present
         {
           newState ^= ProgramState.RecordManual;
         }
@@ -362,7 +370,8 @@ namespace TvDatabase
       set
       {
         ProgramState newState = (ProgramState)state;
-        if (!value && (state & (int)ProgramState.RecordSeries) == (int)ProgramState.RecordSeries) // remove the RecordSeries bit flag if present
+        if (!value && (state & (int)ProgramState.RecordSeries) == (int)ProgramState.RecordSeries)
+          // remove the RecordSeries bit flag if present
         {
           newState ^= ProgramState.RecordSeries;
         }
@@ -441,15 +450,13 @@ namespace TvDatabase
         episodePart = value;
       }
     }
+
     /// <summary>
     /// Property relating to database column seriesNum, episodeNum and episodePart (readonly)
     /// </summary>
     public string EpisodeNumber
     {
-      get
-      {
-        return TvDatabase.EpisodeFormatter.GetEpisodeNumber(seriesNum, episodeNum, episodePart);
-      }
+      get { return TvDatabase.EpisodeFormatter.GetEpisodeNumber(seriesNum, episodeNum, episodePart); }
     }
 
     /// <summary>
@@ -497,7 +504,8 @@ namespace TvDatabase
 
     #region SQL constraint helpers
 
-    private static void AddTimeRangeConstraint(SqlBuilder sb, string startField, string endField, string startParam, string endParam, bool crossMidnight)
+    private static void AddTimeRangeConstraint(SqlBuilder sb, string startField, string endField, string startParam,
+                                               string endParam, bool crossMidnight)
     {
       string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
       switch (provider)
@@ -508,24 +516,26 @@ namespace TvDatabase
             // If time range [s, e] crosses midnight (i.e. e<s), both startTime and endTime must not be in the range (e, s)
             sb.AddConstraint(
               string.Format(
-                  "(EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})" +
+                "(EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})" +
                 "OR EXTRACT(HOUR_SECOND FROM {0}) <= EXTRACT(HOUR_SECOND FROM ?{2}))",
                 startField, startParam, endParam));
             if (!string.IsNullOrEmpty(endField))
             {
               sb.AddConstraint(
                 string.Format(
-                    "(EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})" +
+                  "(EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})" +
                   "OR EXTRACT(HOUR_SECOND FROM {0}) <= EXTRACT(HOUR_SECOND FROM ?{2}))",
                   endField, startParam, endParam));
             }
           }
           else
           {
-            sb.AddConstraint(string.Format("EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})", startField, startParam));
+            sb.AddConstraint(string.Format("EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})", startField,
+                                           startParam));
             if (!string.IsNullOrEmpty(endField))
             {
-              sb.AddConstraint(string.Format("EXTRACT(HOUR_SECOND FROM {0}) <= EXTRACT(HOUR_SECOND FROM ?{1})", endField, endParam));
+              sb.AddConstraint(string.Format("EXTRACT(HOUR_SECOND FROM {0}) <= EXTRACT(HOUR_SECOND FROM ?{1})", endField,
+                                             endParam));
             }
           }
           break;
@@ -534,24 +544,30 @@ namespace TvDatabase
           {
             sb.AddConstraint(
               string.Format(
-                  "({0} >= CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)))" +
+                "({0} >= CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)))" +
                 "OR {0} <= CAST(FLOOR(CAST({0} AS float)) + CAST(@{2} AS float) - FLOOR(CAST(@{2} AS float))))",
                 startField, startParam, endParam));
             if (!string.IsNullOrEmpty(endField))
             {
               sb.AddConstraint(
                 string.Format(
-                    "({0} >= CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)))" +
+                  "({0} >= CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)))" +
                   "OR {0} <= CAST(FLOOR(CAST({0} AS float)) + CAST(@{2} AS float) - FLOOR(CAST(@{2} AS float))))",
                   endField, startParam, endParam));
             }
           }
           else
           {
-            sb.AddConstraint(string.Format("{0} >= CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)))", startField, startParam));
+            sb.AddConstraint(
+              string.Format(
+                "{0} >= CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)))", startField,
+                startParam));
             if (!string.IsNullOrEmpty(endField))
             {
-              sb.AddConstraint(string.Format("{0} <= CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)))", endField, endParam));
+              sb.AddConstraint(
+                string.Format(
+                  "{0} <= CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)))", endField,
+                  endParam));
             }
           }
           break;
@@ -572,7 +588,7 @@ namespace TvDatabase
       }
     }
 
-    #endregion 
+    #endregion
 
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
@@ -642,14 +658,14 @@ namespace TvDatabase
       //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
       //IList<Program> prgs = Program.RetrieveListByTitleTimesAndChannel(title, startTime, DateTime.MaxValue, channelId);
       //return prgs;            
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       // where foreigntable.foreignkey = ourprimarykey
       sb.AddConstraint(Operator.Equals, "Title", title);
       sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);
       sb.AddConstraint(Operator.Equals, "idChannel", channelId);
-      sb.AddParameter("pStartTime", typeof(DateTime));
-      sb.AddParameter("pEndTime", typeof(DateTime));
+      sb.AddParameter("pStartTime", typeof (DateTime));
+      sb.AddParameter("pEndTime", typeof (DateTime));
       AddTimeRangeConstraint(sb, "startTime", "endTime", "pStartTime", "pEndTime", (endTime.Day != startTime.Day));
       // passing true indicates that we'd like a list of elements, i.e. that no primary key
       // constraints from the type being retrieved should be added to the statement
@@ -657,22 +673,23 @@ namespace TvDatabase
       stmt.SetParameter("pStartTime", startTime);
       stmt.SetParameter("pEndTime", endTime);
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection<Program>(stmt.Execute());            
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
     public static IList<Program> RetrieveEveryTimeOnEveryChannel(string title, DateTime startTime, DateTime endTime)
     {
       //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
       IList<Program> prgs = Program.RetrieveByTitleAndTimesInterval(title, startTime, DateTime.MaxValue);
-      return prgs;            
+      return prgs;
     }
 
-    public static IList<Program> RetrieveEveryTimeOnThisChannel(string title, DateTime startTime, DateTime endTime, int channelId)
+    public static IList<Program> RetrieveEveryTimeOnThisChannel(string title, DateTime startTime, DateTime endTime,
+                                                                int channelId)
     {
       //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
 
       //select * from 'foreigntable'
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       // where foreigntable.foreignkey = ourprimarykey
       sb.AddConstraint(Operator.Equals, "Title", title);
@@ -684,7 +701,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection<Program>(stmt.Execute());            
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
     public static IList<Program> RetrieveWeekends(string title, DateTime startTime, DateTime endTime, int channelId)
@@ -692,15 +709,15 @@ namespace TvDatabase
       //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
       //IList<Program> prgs = Program.RetrieveListByTitleTimesAndChannel(title, startTime, DateTime.MaxValue, channelId);
       //return prgs;
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       // where foreigntable.foreignkey = ourprimarykey
       sb.AddConstraint(Operator.Equals, "Title", title);
       sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);
       //sb.AddConstraint(Operator.LessThanOrEquals, "endTime", endTime);
       sb.AddConstraint(Operator.Equals, "idChannel", channelId);
-      sb.AddParameter("pStartTime", typeof(DateTime));
-      sb.AddParameter("pEndTime", typeof(DateTime));
+      sb.AddParameter("pStartTime", typeof (DateTime));
+      sb.AddParameter("pEndTime", typeof (DateTime));
       AddTimeRangeConstraint(sb, "startTime", "endTime", "pStartTime", "pEndTime", (endTime.Day != startTime.Day));
       AddWeekdayConstraint(sb, "startTime", "1,7");
       // passing true indicates that we'd like a list of elements, i.e. that no primary key
@@ -717,17 +734,17 @@ namespace TvDatabase
       //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
       //IList<Program> prgs = Program.RetrieveListByTitleTimesAndChannel(title, startTime, DateTime.MaxValue, channelId);
       //return prgs;
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       // where foreigntable.foreignkey = ourprimarykey
       sb.AddConstraint(Operator.Equals, "Title", title);
       sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);
       //sb.AddConstraint(Operator.LessThanOrEquals, "endTime", endTime);
       sb.AddConstraint(Operator.Equals, "idChannel", channelId);
-      sb.AddParameter("pStartTime", typeof(DateTime));
-      sb.AddParameter("pEndTime", typeof(DateTime));
+      sb.AddParameter("pStartTime", typeof (DateTime));
+      sb.AddParameter("pEndTime", typeof (DateTime));
       AddTimeRangeConstraint(sb, "startTime", "endTime", "pStartTime", "pEndTime", (endTime.Day != startTime.Day));
-      AddWeekdayConstraint(sb, "startTime", ((int)startTime.DayOfWeek+1).ToString());
+      AddWeekdayConstraint(sb, "startTime", ((int)startTime.DayOfWeek + 1).ToString());
       // passing true indicates that we'd like a list of elements, i.e. that no primary key
       // constraints from the type being retrieved should be added to the statement
       SqlStatement stmt = sb.GetStatement(true);
@@ -742,15 +759,15 @@ namespace TvDatabase
       //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
       //IList<Program> prgs = Program.RetrieveListByTitleTimesAndChannel(title, startTime, DateTime.MaxValue, channelId);
       //return prgs;
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       // where foreigntable.foreignkey = ourprimarykey
       sb.AddConstraint(Operator.Equals, "Title", title);
       sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);
       //sb.AddConstraint(Operator.LessThanOrEquals, "endTime", endTime);
       sb.AddConstraint(Operator.Equals, "idChannel", channelId);
-      sb.AddParameter("pStartTime", typeof(DateTime));
-      sb.AddParameter("pEndTime", typeof(DateTime));
+      sb.AddParameter("pStartTime", typeof (DateTime));
+      sb.AddParameter("pEndTime", typeof (DateTime));
       AddTimeRangeConstraint(sb, "startTime", "endTime", "pStartTime", "pEndTime", (endTime.Day != startTime.Day));
       AddWeekdayConstraint(sb, "startTime", "2,3,4,5,6");
       // passing true indicates that we'd like a list of elements, i.e. that no primary key
@@ -761,7 +778,7 @@ namespace TvDatabase
       // execute the statement/query and create a collection of User instances from the result set
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
-                  
+
     /// <summary>
     /// Retreives the first found instance of a Program given its Title,Start and End Times and referenced channel
     /// </summary>
@@ -770,10 +787,11 @@ namespace TvDatabase
     /// <param name="endTime">EndTime</param>
     /// <param name="channelId">Referenced Channel id</param>
     /// <returns></returns>
-    public static Program RetrieveByTitleTimesAndChannel(string title, DateTime startTime, DateTime endTime, int channelId)
+    public static Program RetrieveByTitleTimesAndChannel(string title, DateTime startTime, DateTime endTime,
+                                                         int channelId)
     {
       //select * from 'foreigntable'
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       // where foreigntable.foreignkey = ourprimarykey
       sb.AddConstraint(Operator.Equals, "Title", title);
@@ -808,10 +826,11 @@ namespace TvDatabase
     /// <param name="endTime">EndTime</param>
     /// <param name="channelId">Referenced Channel id</param>
     /// <returns></returns>
-    public static IList<Program> RetrieveListByTitleTimesAndChannel(string title, DateTime startTime, DateTime endTime, int channelId)
+    public static IList<Program> RetrieveListByTitleTimesAndChannel(string title, DateTime startTime, DateTime endTime,
+                                                                    int channelId)
     {
       //select * from 'foreigntable'
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       // where foreigntable.foreignkey = ourprimarykey
       sb.AddConstraint(Operator.Equals, "Title", title);
@@ -823,7 +842,7 @@ namespace TvDatabase
       SqlStatement stmt = sb.GetStatement(true);
 
       // execute the statement/query and create a collection of User instances from the result set
-      return ObjectFactory.GetCollection<Program>(stmt.Execute());      
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
     public static void ResetPendingState(int idProgram)
@@ -841,7 +860,7 @@ namespace TvDatabase
     public static void SetSingleStateSeriesPending(DateTime startTime, int idChannel, string title)
     {
       //select * from 'foreigntable'
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       // where foreigntable.foreignkey = ourprimarykey
       sb.AddConstraint(Operator.Equals, "Title", title);
@@ -868,7 +887,7 @@ namespace TvDatabase
     public static void ResetSingleState(DateTime startTime, int idChannel, string title)
     {
       //select * from 'foreigntable'
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       // where foreigntable.foreignkey = ourprimarykey
       sb.AddConstraint(Operator.Equals, "Title", title);
@@ -891,6 +910,7 @@ namespace TvDatabase
       prg.IsRecordingSeriesPending = false;
       prg.Persist();
     }
+
     /*
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
@@ -916,12 +936,13 @@ namespace TvDatabase
       }      
     }
     */
+
     public static IList<Program> RetrieveAllNotifications()
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));      
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
       //sb.AddConstraint("state % 2 <> 0"); //odd state numbers are notifications      
       string notify = Convert.ToString((int)ProgramState.Notify);
-      sb.AddConstraint("state & " + notify + " = " + notify); 
+      sb.AddConstraint("state & " + notify + " = " + notify);
 
       SqlStatement stmt = sb.GetStatement(true);
 
@@ -1023,7 +1044,7 @@ namespace TvDatabase
       {
         try
         {
-          base.Persist();          
+          base.Persist();
         }
         catch (Exception ex)
         {
@@ -1109,8 +1130,10 @@ namespace TvDatabase
 
     public Program Clone()
     {
-      Program p = new Program(idProgram, idChannel, StartTime, EndTime, Title, Description, Genre, (ProgramState)state, OriginalAirDate,
-                              SeriesNum, EpisodeNum, EpisodeName, EpisodePart, StarRating, Classification, parentalRating);
+      Program p = new Program(idProgram, idChannel, StartTime, EndTime, Title, Description, Genre, (ProgramState)state,
+                              OriginalAirDate,
+                              SeriesNum, EpisodeNum, EpisodeName, EpisodePart, StarRating, Classification,
+                              parentalRating);
       return p;
     }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading;
 using TvLibrary.Log;
@@ -14,6 +14,7 @@ namespace TvService
     /// The folder
     /// </summary>
     private readonly string _folder;
+
     /// <summary>
     /// Name of the file
     /// </summary>
@@ -55,6 +56,7 @@ namespace TvService
         Thread.Sleep(_sleepIntervall);
       }
     }
+
     /// <summary>
     /// deletes time shifting files left in the specified folder.
     /// </summary>
@@ -73,13 +75,12 @@ namespace TvService
             Log.Write("card:   deleted file {0}", files[i]);
           }
         }
-      } catch 
+      }
+      catch
       {
         return false;
       }
       return true;
     }
-
-
   }
 }

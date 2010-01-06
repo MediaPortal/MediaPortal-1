@@ -104,7 +104,7 @@ namespace WatchDog
       // 
       // thanksLabel
       // 
-      this.thanksLabel.Font = new Font("Tahoma", 8.25F, FontStyle.Underline, GraphicsUnit.Point, ((byte) (0)));
+      this.thanksLabel.Font = new Font("Tahoma", 8.25F, FontStyle.Underline, GraphicsUnit.Point, ((byte)(0)));
       this.thanksLabel.ForeColor = SystemColors.ControlText;
       this.thanksLabel.Location = new Point(16, 126);
       this.thanksLabel.Name = "thanksLabel";
@@ -143,7 +143,7 @@ namespace WatchDog
       // 
       // aboutHeader
       // 
-      this.aboutHeader.Font = new Font("Tahoma", 8.25F, FontStyle.Underline, GraphicsUnit.Point, ((byte) (0)));
+      this.aboutHeader.Font = new Font("Tahoma", 8.25F, FontStyle.Underline, GraphicsUnit.Point, ((byte)(0)));
       this.aboutHeader.ForeColor = SystemColors.ControlText;
       this.aboutHeader.Location = new Point(16, 15);
       this.aboutHeader.Name = "aboutHeader";

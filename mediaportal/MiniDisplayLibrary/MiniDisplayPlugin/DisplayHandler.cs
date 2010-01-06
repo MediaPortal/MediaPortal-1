@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using MediaPortal.GUI.Library;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting;
-using Image=MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Image;
+using Image = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Image;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
@@ -52,7 +52,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.prevLines = new string[this.heightInChars];
       this.posSkips = new int[this.heightInChars];
       this.pos = new int[this.heightInChars];
-      font = new Font(Settings.Instance.Font, (float) Settings.Instance.FontSize);
+      font = new Font(Settings.Instance.Font, (float)Settings.Instance.FontSize);
       for (int i = 0; i < this.heightInCharsSim; i++)
       {
         this.lines[i] = new Line();
@@ -109,7 +109,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         if (bitmap != null)
         {
           graphics.DrawImage(bitmap,
-                             new RectangleF(new PointF((float) image.X, (float) image.Y), bitmap.PhysicalDimension));
+                             new RectangleF(new PointF((float)image.X, (float)image.Y), bitmap.PhysicalDimension));
         }
       }
     }
@@ -144,7 +144,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         }
       }
       Label_00E0:
-      return (Bitmap) this.emptyBitmap.Clone();
+      return (Bitmap)this.emptyBitmap.Clone();
     }
 
     protected string Process(int _line)
@@ -204,7 +204,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           case Alignment.Centered:
             {
-              int count = (this.widthInChars - str.Length)/2;
+              int count = (this.widthInChars - str.Length) / 2;
               return (new string(' ', count) + str + new string(' ', (this.widthInChars - str.Length) - count));
             }
           case Alignment.Right:
@@ -246,7 +246,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                     new object[] {Settings.Instance.FontSize});
         }
         font.Dispose();
-        font = new Font(Settings.Instance.Font, (float) Settings.Instance.FontSize);
+        font = new Font(Settings.Instance.Font, (float)Settings.Instance.FontSize);
       }
       Line line = this.lines[_line];
       string str = line.Process();
@@ -272,7 +272,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         SizeF ef = _graphics.MeasureString(str, font);
         if (ef.Height > this.graphicTextHeight)
         {
-          this.graphicTextHeight = (int) (ef.Height + 0.5f);
+          this.graphicTextHeight = (int)(ef.Height + 0.5f);
         }
         if (ef.Width >= this.widthInPixels)
         {
@@ -282,7 +282,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
           str = str + " - " + str;
           _graphics.DrawString(str, font, this.textBrush,
-                               new PointF((float) -this.pos[_line], (float) (_line*this.graphicTextHeight)));
+                               new PointF((float)-this.pos[_line], (float)(_line * this.graphicTextHeight)));
           if (this.posSkips[_line] > 2)
           {
             this.pos[_line] += this.pixelsToScroll;
@@ -314,8 +314,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               break;
           }
           _graphics.DrawString(str, font, this.textBrush,
-                               new RectangleF(new PointF(0f, (float) (_line*this.graphicTextHeight)),
-                                              new SizeF((float) this.widthInPixels, ef.Height)), format);
+                               new RectangleF(new PointF(0f, (float)(_line * this.graphicTextHeight)),
+                                              new SizeF((float)this.widthInPixels, ef.Height)), format);
         }
       }
     }
@@ -359,7 +359,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       if (font.SizeInPoints != Settings.Instance.FontSize)
       {
         font.Dispose();
-        font = new Font(Settings.Instance.Font, (float) Settings.Instance.FontSize);
+        font = new Font(Settings.Instance.Font, (float)Settings.Instance.FontSize);
         Log.Info("MiniDisplayPlugin.DisplayHandler.Start(): Forcing font size to {0}",
                  new object[] {Settings.Instance.FontSize});
       }

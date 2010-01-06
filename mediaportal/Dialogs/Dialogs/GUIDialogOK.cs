@@ -38,7 +38,7 @@ namespace MediaPortal.Dialogs
 
     public GUIDialogOK()
     {
-      GetID = (int) Window.WINDOW_DIALOG_OK;
+      GetID = (int)Window.WINDOW_DIALOG_OK;
     }
 
     public override bool Init()

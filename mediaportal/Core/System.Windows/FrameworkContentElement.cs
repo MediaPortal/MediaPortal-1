@@ -32,9 +32,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public FrameworkContentElement()
-    {
-    }
+    public FrameworkContentElement() {}
 
     #endregion Constructors
 

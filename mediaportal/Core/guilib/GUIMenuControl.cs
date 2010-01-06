@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Windows.Media.Animation;
 using MediaPortal.Profile;
 using Microsoft.DirectX.Direct3D;
+
 // used for Keys definition
 
 #endregion
@@ -167,9 +168,7 @@ namespace MediaPortal.GUI.Library
     #region Constructors/Destructors
 
     public GUIMenuControl(int dwParentID)
-      : base(dwParentID)
-    {
-    }
+      : base(dwParentID) {}
 
     #endregion
 
@@ -216,12 +215,14 @@ namespace MediaPortal.GUI.Library
           if (!_horizontal)
           {
             // Must use set position or else the images are not updated!
-            button.SetPosition(button._positionX, _buttonList[_buttonList.Count - 1]._positionY + _spaceBetweenButtons + _buttonHeight);
+            button.SetPosition(button._positionX,
+                               _buttonList[_buttonList.Count - 1]._positionY + _spaceBetweenButtons + _buttonHeight);
           }
           else
           {
             // Must use set position or else the images are not updated!
-            button.SetPosition(_buttonList[_buttonList.Count - 1]._positionX + _spaceBetweenButtons + _buttonWidth, button._positionY);
+            button.SetPosition(_buttonList[_buttonList.Count - 1]._positionX + _spaceBetweenButtons + _buttonWidth,
+                               button._positionY);
           }
           _buttonList.Add(button);
         }
@@ -326,53 +327,53 @@ namespace MediaPortal.GUI.Library
       switch (easing)
       {
         case Easing.Linear:
-          return c*t/d + b;
+          return c * t / d + b;
 
           ///////////// QUADRATIC EASING: t^2 ///////////////////
         case Easing.QuadraticEaseIn:
-          return c*(t /= d)*t + b;
+          return c * (t /= d) * t + b;
         case Easing.QuadraticEaseOut:
-          return -c*(t /= d)*(t - 2) + b;
+          return -c * (t /= d) * (t - 2) + b;
         case Easing.QuadraticEaseInOut:
-          return ((t /= d/2) < 1) ? c/2*t*t + b : -c/2*((--t)*(t - 2) - 1) + b;
+          return ((t /= d / 2) < 1) ? c / 2 * t * t + b : -c / 2 * ((--t) * (t - 2) - 1) + b;
 
           ///////////// CUBIC EASING: t^3 ///////////////////////
         case Easing.CubicEaseIn:
-          return c*(t /= d)*t*t + b;
+          return c * (t /= d) * t * t + b;
         case Easing.CubicEaseOut:
-          return c*((t = t/d - 1)*t*t + 1) + b;
+          return c * ((t = t / d - 1) * t * t + 1) + b;
         case Easing.CubicEaseInOut:
-          return ((t /= d/2) < 1) ? c/2*t*t*t + b : c/2*((t -= 2)*t*t + 2) + b;
+          return ((t /= d / 2) < 1) ? c / 2 * t * t * t + b : c / 2 * ((t -= 2) * t * t + 2) + b;
 
           ///////////// QUARTIC EASING: t^4 /////////////////////
         case Easing.QuarticEaseIn:
-          return c*(t /= d)*t*t*t + b;
+          return c * (t /= d) * t * t * t + b;
         case Easing.QuarticEaseOut:
-          return -c*((t = t/d - 1)*t*t*t - 1) + b;
+          return -c * ((t = t / d - 1) * t * t * t - 1) + b;
         case Easing.QuarticEaseInOut:
-          return ((t /= d/2) < 1) ? c/2*t*t*t*t + b : -c/2*((t -= 2)*t*t*t - 2) + b;
+          return ((t /= d / 2) < 1) ? c / 2 * t * t * t * t + b : -c / 2 * ((t -= 2) * t * t * t - 2) + b;
 
           ///////////// QUINTIC EASING: t^5 ////////////////////
         case Easing.QuinticEaseIn:
-          return c*(t /= d)*t*t*t*t + b;
+          return c * (t /= d) * t * t * t * t + b;
         case Easing.QuinticEaseOut:
-          return c*((t = t/d - 1)*t*t*t*t + 1) + b;
+          return c * ((t = t / d - 1) * t * t * t * t + 1) + b;
         case Easing.QuinticEaseInOut:
-          return ((t /= d/2) < 1) ? c/2*t*t*t*t*t + b : c/2*((t -= 2)*t*t*t*t + 2) + b;
+          return ((t /= d / 2) < 1) ? c / 2 * t * t * t * t * t + b : c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
 
           ///////////// SINUSOIDAL EASING: sin(t) ///////////////
         case Easing.SineEaseIn:
-          return -c*Math.Cos(t/d*(Math.PI/2)) + c + b;
+          return -c * Math.Cos(t / d * (Math.PI / 2)) + c + b;
         case Easing.SineEaseOut:
-          return c*Math.Sin(t/d*(Math.PI/2)) + b;
+          return c * Math.Sin(t / d * (Math.PI / 2)) + b;
         case Easing.SineEaseInOut:
-          return -c/2*(Math.Cos(Math.PI*t/d) - 1) + b;
+          return -c / 2 * (Math.Cos(Math.PI * t / d) - 1) + b;
 
           ///////////// EXPONENTIAL EASING: 2^t /////////////////
         case Easing.ExponentialEaseIn:
-          return (t == 0) ? b : c*Math.Pow(2, 10*(t/d - 1)) + b;
+          return (t == 0) ? b : c * Math.Pow(2, 10 * (t / d - 1)) + b;
         case Easing.ExponentialEaseOut:
-          return (t == d) ? b + c : c*(-Math.Pow(2, -10*t/d) + 1) + b;
+          return (t == d) ? b + c : c * (-Math.Pow(2, -10 * t / d) + 1) + b;
         case Easing.ExponentialEaseInOut:
           if (t == 0)
           {
@@ -382,19 +383,21 @@ namespace MediaPortal.GUI.Library
           {
             return b + c;
           }
-          if ((t /= d/2) < 1)
+          if ((t /= d / 2) < 1)
           {
-            return c/2*Math.Pow(2, 10*(t - 1)) + b;
+            return c / 2 * Math.Pow(2, 10 * (t - 1)) + b;
           }
-          return c/2*(-Math.Pow(2, -10*--t) + 2) + b;
+          return c / 2 * (-Math.Pow(2, -10 * --t) + 2) + b;
 
           /////////// CIRCULAR EASING: sqrt(1-t^2) //////////////
         case Easing.CircularEaseIn:
-          return -c*(Math.Sqrt(1 - (t /= d)*t) - 1) + b;
+          return -c * (Math.Sqrt(1 - (t /= d) * t) - 1) + b;
         case Easing.CircularEaseOut:
-          return c*Math.Sqrt(1 - (t = t/d - 1)*t) + b;
+          return c * Math.Sqrt(1 - (t = t / d - 1) * t) + b;
         case Easing.CircularEaseInOut:
-          return ((t /= d/2) < 1) ? -c/2*(Math.Sqrt(1 - t*t) - 1) + b : c/2*(Math.Sqrt(1 - (t -= 2)*t) + 1) + b;
+          return ((t /= d / 2) < 1)
+                   ? -c / 2 * (Math.Sqrt(1 - t * t) - 1) + b
+                   : c / 2 * (Math.Sqrt(1 - (t -= 2) * t) + 1) + b;
 
           /////////// ELASTIC EASING: exponentially decaying sine wave //////////////
         case Easing.ElasticEaseIn:
@@ -408,18 +411,18 @@ namespace MediaPortal.GUI.Library
           }
           if (p == 0)
           {
-            p = d*.3;
+            p = d * .3;
           }
           if (a < Math.Abs(c))
           {
             a = c;
-            s = p/4;
+            s = p / 4;
           }
           else
           {
-            s = p/(2*Math.PI)*Math.Asin(c/a);
+            s = p / (2 * Math.PI) * Math.Asin(c / a);
           }
-          return -(a*Math.Pow(2, 10*(t -= 1))*Math.Sin((t*d - s)*(2*Math.PI)/p)) + b;
+          return -(a * Math.Pow(2, 10 * (t -= 1)) * Math.Sin((t * d - s) * (2 * Math.PI) / p)) + b;
         case Easing.ElasticEaseOut:
           if (t == 0)
           {
@@ -431,45 +434,45 @@ namespace MediaPortal.GUI.Library
           }
           if (p == 0)
           {
-            p = d*.3;
+            p = d * .3;
           }
           if (a < Math.Abs(c))
           {
             a = c;
-            s = p/4;
+            s = p / 4;
           }
           else
           {
-            s = p/(2*Math.PI)*Math.Asin(c/a);
+            s = p / (2 * Math.PI) * Math.Asin(c / a);
           }
-          return a*Math.Pow(2, -10*t)*Math.Sin((t*d - s)*(2*Math.PI)/p) + c + b;
+          return a * Math.Pow(2, -10 * t) * Math.Sin((t * d - s) * (2 * Math.PI) / p) + c + b;
         case Easing.ElasticEaseInOut:
           if (t == 0)
           {
             return b;
           }
-          if ((t /= d/2) == 2)
+          if ((t /= d / 2) == 2)
           {
             return b + c;
           }
           if (p == 0)
           {
-            p = d*(.3*1.5);
+            p = d * (.3 * 1.5);
           }
           if (a < Math.Abs(c))
           {
             a = c;
-            s = p/4;
+            s = p / 4;
           }
           else
           {
-            s = p/(2*Math.PI)*Math.Asin(c/a);
+            s = p / (2 * Math.PI) * Math.Asin(c / a);
           }
           if (t < 1)
           {
-            return -.5*(a*Math.Pow(2, 10*(t -= 1))*Math.Sin((t*d - s)*(2*Math.PI)/p)) + b;
+            return -.5 * (a * Math.Pow(2, 10 * (t -= 1)) * Math.Sin((t * d - s) * (2 * Math.PI) / p)) + b;
           }
-          return a*Math.Pow(2, -10*(t -= 1))*Math.Sin((t*d - s)*(2*Math.PI)/p)*.5 + c + b;
+          return a * Math.Pow(2, -10 * (t -= 1)) * Math.Sin((t * d - s) * (2 * Math.PI) / p) * .5 + c + b;
 
 
           /////////// BACK EASING: overshooting cubic easing: (s+1)*t^3 - s*t^2 //////////////
@@ -478,41 +481,41 @@ namespace MediaPortal.GUI.Library
           {
             s = 1.70158;
           }
-          return c*(t /= d)*t*((s + 1)*t - s) + b;
+          return c * (t /= d) * t * ((s + 1) * t - s) + b;
         case Easing.BackEaseOut:
           if (s == 0)
           {
             s = 1.70158;
           }
-          return c*((t = t/d - 1)*t*((s + 1)*t + s) + 1) + b;
+          return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
         case Easing.BackEaseInOut:
           if (s == 0)
           {
             s = 1.70158;
           }
-          if ((t /= d/2) < 1)
+          if ((t /= d / 2) < 1)
           {
-            return c/2*(t*t*(((s *= (1.525)) + 1)*t - s)) + b;
+            return c / 2 * (t * t * (((s *= (1.525)) + 1) * t - s)) + b;
           }
-          return c/2*((t -= 2)*t*(((s *= (1.525)) + 1)*t + s) + 2) + b;
+          return c / 2 * ((t -= 2) * t * (((s *= (1.525)) + 1) * t + s) + 2) + b;
 
           /////////// BOUNCE EASING: exponentially decaying parabolic bounce //////////////
           // case Easing.BounceEaseIn:
           //   return c - Interpolate(Easing.BounceEaseOut, d - t, 0, c, d) + b;
         case Easing.BounceEaseOut:
-          if ((t /= d) < (1/2.75))
+          if ((t /= d) < (1 / 2.75))
           {
-            return c*(7.5625*t*t) + b;
+            return c * (7.5625 * t * t) + b;
           }
-          else if (t < (2/2.75))
+          else if (t < (2 / 2.75))
           {
-            return c*(7.5625*(t -= (1.5/2.75))*t + .75) + b;
+            return c * (7.5625 * (t -= (1.5 / 2.75)) * t + .75) + b;
           }
-          else if (t < (2.5/2.75))
+          else if (t < (2.5 / 2.75))
           {
-            return c*(7.5625*(t -= (2.25/2.75))*t + .9375) + b;
+            return c * (7.5625 * (t -= (2.25 / 2.75)) * t + .9375) + b;
           }
-          return c*(7.5625*(t -= (2.625/2.75))*t + .984375) + b;
+          return c * (7.5625 * (t -= (2.625 / 2.75)) * t + .984375) + b;
           // case Easing.BounceEaseInOut:
           //   if (t < d / 2) return Interpolate(Easing.BounceEaseIn, t * 2, 0, c, d) * .5 + b;
           //   return Interpolate(Easing.BounceEaseOut, t * 2 - d, 0, c, d) * .5 + c * .5 + b;
@@ -549,7 +552,7 @@ namespace MediaPortal.GUI.Library
           _scrollText.Add(new Animation(_animationTime, 0, _buttonWidth + _spaceBetweenButtons));
         }
         _scrollText.Begin();
-        _lastTextValue = (int) _scrollText.StartValue;
+        _lastTextValue = (int)_scrollText.StartValue;
       }
       else
       {
@@ -568,7 +571,7 @@ namespace MediaPortal.GUI.Library
             _scrollText.Add(new Animation(_animationTime, 0, _buttonWidth + _spaceBetweenButtons));
           }
           _scrollText.Begin();
-          _lastTextValue = (int) _scrollText.StartValue;
+          _lastTextValue = (int)_scrollText.StartValue;
           _reverseAnimation = true;
 
           /*  int delta = (_buttonHeight + _spaceBetweenButtons)*2/3;
@@ -591,7 +594,7 @@ namespace MediaPortal.GUI.Library
             _scrollText.Add(new Animation(_animationTime, 0, _buttonWidth + _spaceBetweenButtons));
           }
           _scrollButton.Begin();
-          _lastButtonValue = (int) _scrollButton.StartValue;
+          _lastButtonValue = (int)_scrollButton.StartValue;
         }
       }
     }
@@ -607,36 +610,36 @@ namespace MediaPortal.GUI.Library
         _scrollText.Clear();
       }
       int delta = 4;
-      int time = _scrollTimeMax/4;
+      int time = _scrollTimeMax / 4;
 
       _buttonList[FocusedButton].Focus = false;
       if (_fixedScroll) // we have a fixed scrollbar -> move the text
       {
-        _scrollText.Add(new Animation(2*time, 0, 2*delta));
-        _scrollText.Add(new Animation(3*time, 2*delta, -delta));
-        _scrollText.Add(new Animation(1*time, -delta, 0));
+        _scrollText.Add(new Animation(2 * time, 0, 2 * delta));
+        _scrollText.Add(new Animation(3 * time, 2 * delta, -delta));
+        _scrollText.Add(new Animation(1 * time, -delta, 0));
         _scrollText.Begin();
-        _lastTextValue = (int) _scrollText.StartValue;
+        _lastTextValue = (int)_scrollText.StartValue;
       }
       else
       {
         if (_reverseAnimation)
         {
-          _scrollText.Add(new Animation(2*time, 0, 2*delta));
-          _scrollText.Add(new Animation(3*time, 2*delta, -delta));
-          _scrollText.Add(new Animation(1*time, -delta, 0));
+          _scrollText.Add(new Animation(2 * time, 0, 2 * delta));
+          _scrollText.Add(new Animation(3 * time, 2 * delta, -delta));
+          _scrollText.Add(new Animation(1 * time, -delta, 0));
           _scrollText.Begin();
-          _lastTextValue = (int) _scrollText.StartValue;
+          _lastTextValue = (int)_scrollText.StartValue;
           delta = -delta;
           _reverseAnimation = false;
         }
         else
         {
-          _scrollButton.Add(new Animation(2*time, 0, 2*delta));
-          _scrollButton.Add(new Animation(3*time, 2*delta, -delta));
-          _scrollButton.Add(new Animation(1*time, -delta, 0));
+          _scrollButton.Add(new Animation(2 * time, 0, 2 * delta));
+          _scrollButton.Add(new Animation(3 * time, 2 * delta, -delta));
+          _scrollButton.Add(new Animation(1 * time, -delta, 0));
           _scrollButton.Begin();
-          _lastButtonValue = (int) _scrollButton.StartValue;
+          _lastButtonValue = (int)_scrollButton.StartValue;
         }
       }
     }
@@ -659,7 +662,7 @@ namespace MediaPortal.GUI.Library
       }
 
       int tmpValue = _lastButtonValue;
-      _lastButtonValue = (int) _scrollButton.Value;
+      _lastButtonValue = (int)_scrollButton.Value;
       int increment = _lastButtonValue - tmpValue;
       if ((_currentState == State.ScrollUp) || (_currentState == State.ScrollUpFinal))
       {
@@ -690,7 +693,7 @@ namespace MediaPortal.GUI.Library
       }
 
       int tmpValue = _lastTextValue;
-      _lastTextValue = (int) _scrollText.Value;
+      _lastTextValue = (int)_scrollText.Value;
       int increment = _lastTextValue - tmpValue;
       if ((_currentState == State.ScrollDown) || (_currentState == State.ScrollDownFinal))
       {
@@ -867,15 +870,15 @@ namespace MediaPortal.GUI.Library
 
     public override void FinalizeConstruction()
     {
-      _focusPosition = (_numberOfButtons/2) + 1; // +1, because of the hidden button for scrolling
+      _focusPosition = (_numberOfButtons / 2) + 1; // +1, because of the hidden button for scrolling
       if (!_horizontal)
       {
-        Height = ((_buttonHeight + _spaceBetweenButtons)*_numberOfButtons) + 2*_buttonOffset + _spaceAfterSelected;
-        _buttonWidth = Width - 2*_buttonOffset;
+        Height = ((_buttonHeight + _spaceBetweenButtons) * _numberOfButtons) + 2 * _buttonOffset + _spaceAfterSelected;
+        _buttonWidth = Width - 2 * _buttonOffset;
       }
       else
       {
-        Width = ((_buttonWidth + _spaceBetweenButtons)*_numberOfButtons) + 2*_buttonOffset + _spaceAfterSelected;
+        Width = ((_buttonWidth + _spaceBetweenButtons) * _numberOfButtons) + 2 * _buttonOffset + _spaceAfterSelected;
         Height = _buttonHeight;
       }
       base.FinalizeConstruction();
@@ -885,7 +888,7 @@ namespace MediaPortal.GUI.Library
     {
       _animationTime = _scrollTimeMax;
       LoadSetting();
-      for (int i = (_numberOfButtons/2); i < _buttonList.Count; i++)
+      for (int i = (_numberOfButtons / 2); i < _buttonList.Count; i++)
       {
         if (!_horizontal)
         {
@@ -1081,21 +1084,21 @@ namespace MediaPortal.GUI.Library
       {
         case Action.ActionType.ACTION_MOUSE_MOVE:
           {
-            int x = (int) action.fAmount1;
-            int y = (int) action.fAmount2;
+            int x = (int)action.fAmount1;
+            int y = (int)action.fAmount2;
             int controlID = 0;
             bool focused = false;
 
             _ignoreFirstUpDown = false;
             if (HitTest(x, y, out controlID, out focused))
             {
-              double middlePosY = YPosition + Height/2;
-              double middlePosX = XPosition + Width/2;
+              double middlePosY = YPosition + Height / 2;
+              double middlePosX = XPosition + Width / 2;
               if (_fixedScroll) // we can not move the scrollbar
               {
-                if (!_horizontal && y < middlePosY - _buttonHeight/2)
+                if (!_horizontal && y < middlePosY - _buttonHeight / 2)
                 {
-                  middlePosY -= _buttonHeight/2;
+                  middlePosY -= _buttonHeight / 2;
                   _animationTime =
                     (int)
                     Math.Abs(Interpolate(Easing.ExponentialEaseIn, _mouseScrollTimeMin, _mouseScrollTimeMax, YPosition,
@@ -1111,9 +1114,9 @@ namespace MediaPortal.GUI.Library
                     _mouseState = State.ScrollUp;
                   }
                 }
-                else if (!_horizontal && y > middlePosY + _buttonHeight/2)
+                else if (!_horizontal && y > middlePosY + _buttonHeight / 2)
                 {
-                  middlePosY += _buttonHeight/2;
+                  middlePosY += _buttonHeight / 2;
                   _animationTime =
                     (int)
                     Math.Abs(Interpolate(Easing.ExponentialEaseIn, _mouseScrollTimeMin, _mouseScrollTimeMax,
@@ -1129,9 +1132,9 @@ namespace MediaPortal.GUI.Library
                     _mouseState = State.ScrollDown;
                   }
                 }
-                else if (_horizontal && x < middlePosX - _buttonWidth/2)
+                else if (_horizontal && x < middlePosX - _buttonWidth / 2)
                 {
-                  middlePosY -= _buttonWidth/2;
+                  middlePosY -= _buttonWidth / 2;
                   _animationTime =
                     (int)
                     Math.Abs(Interpolate(Easing.ExponentialEaseOut, _mouseScrollTimeMax, _mouseScrollTimeMin, middlePosX,
@@ -1147,9 +1150,9 @@ namespace MediaPortal.GUI.Library
                     _mouseState = State.ScrollUp;
                   }
                 }
-                else if (_horizontal && x > middlePosX + _buttonWidth/2)
+                else if (_horizontal && x > middlePosX + _buttonWidth / 2)
                 {
-                  middlePosY += _buttonWidth/2;
+                  middlePosY += _buttonWidth / 2;
                   _animationTime =
                     (int)
                     Math.Abs(Interpolate(Easing.ExponentialEaseOut, _mouseScrollTimeMax, _mouseScrollTimeMin, middlePosX,
@@ -1183,7 +1186,7 @@ namespace MediaPortal.GUI.Library
                     _mouseState = State.ScrollUp;
                   }
                 }
-                else if (!_horizontal && y > YPosition + Height - _buttonOffset - 2*_spaceBetweenButtons - _buttonHeight)
+                else if (!_horizontal && y > YPosition + Height - _buttonOffset - 2 * _spaceBetweenButtons - _buttonHeight)
                 {
                   if (_currentState == State.Idle)
                   {
@@ -1205,7 +1208,7 @@ namespace MediaPortal.GUI.Library
                     _mouseState = State.ScrollUp;
                   }
                 }
-                else if (_horizontal && x > XPosition + Width - _buttonOffset - 2*_spaceBetweenButtons - _buttonWidth)
+                else if (_horizontal && x > XPosition + Width - _buttonOffset - 2 * _spaceBetweenButtons - _buttonWidth)
                 {
                   if (_currentState == State.Idle)
                   {
@@ -1223,7 +1226,7 @@ namespace MediaPortal.GUI.Library
                   {
                     // move scroll bar only when idle
                     double button = _buttonHeight + _spaceBetweenButtons;
-                    int position = 1 + (int) Math.Round(((double) y - YPosition - 2*_buttonOffset)/button);
+                    int position = 1 + (int)Math.Round(((double)y - YPosition - 2 * _buttonOffset) / button);
                     if (Math.Abs(FocusedButton - position) > 1)
                     {
                       FocusedButton = position;
@@ -1249,7 +1252,7 @@ namespace MediaPortal.GUI.Library
                   {
                     // move scroll bar only when idle
                     double button = _buttonWidth + _spaceBetweenButtons;
-                    int position = 1 + (int) Math.Round(((double) x - XPosition - 2*_buttonOffset)/button);
+                    int position = 1 + (int)Math.Round(((double)x - XPosition - 2 * _buttonOffset) / button);
                     if (Math.Abs(FocusedButton - position) > 1)
                     {
                       FocusedButton = position;
@@ -1399,13 +1402,13 @@ namespace MediaPortal.GUI.Library
         _newViewport.X = _positionX;
         _newViewport.Y = _positionY + _buttonOffset;
         _newViewport.Width = Width;
-        _newViewport.Height = Height - 2*_buttonOffset;
+        _newViewport.Height = Height - 2 * _buttonOffset;
       }
       else
       {
         _newViewport.X = _positionX + _buttonOffset;
         _newViewport.Y = _positionY;
-        _newViewport.Width = Width - 2*_buttonOffset;
+        _newViewport.Width = Width - 2 * _buttonOffset;
         _newViewport.Height = Height;
       }
       _newViewport.MinZ = 0.0f;

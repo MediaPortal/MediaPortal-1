@@ -82,7 +82,8 @@ namespace MediaPortal.Music.Database
       _createArtistPreviews = false;
       _createGenrePreviews = true;
       _createMissingFolderThumbs = false;
-      _supportedExtensions = ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc,.cue,.aif,.aiff";
+      _supportedExtensions =
+        ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc,.cue,.aif,.aiff";
       _stripArtistPrefixes = false;
       _currentDate = DateTime.Now;
 
@@ -90,15 +91,12 @@ namespace MediaPortal.Music.Database
       Open();
     }
 
-    ~MusicDatabase()
-    {
-    }
+    ~MusicDatabase() {}
 
     public static void ReOpen()
     {
       Dispose();
       Instance.Open();
-
     }
 
     public static void Dispose()
@@ -129,10 +127,7 @@ namespace MediaPortal.Music.Database
 
     public string DatabaseName
     {
-      get
-      {
-        return DbConnection.DatabaseName;
-      }
+      get { return DbConnection.DatabaseName; }
     }
 
     #endregion
@@ -184,20 +179,19 @@ namespace MediaPortal.Music.Database
         {
           Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
 
         if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3")))
         {
           if (File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV10.db3")))
           {
             Log.Info("MusicDatabase: Found older version of database. Upgrade to new layout.");
-            File.Copy(Config.GetFile(Config.Dir.Database, "MusicDatabaseV10.db3"), Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3"));
-            
+            File.Copy(Config.GetFile(Config.Dir.Database, "MusicDatabaseV10.db3"),
+                      Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3"));
+
             // Get the DB handle or create it if necessary
             MusicDbClient = DbConnection;
-            
+
             UpgradeDBV10_V11();
             return;
           }
@@ -242,7 +236,8 @@ namespace MediaPortal.Music.Database
         }
 
         // Now copy the content of the old V10 tracks table to the new V11 tracks table
-        strSQL = "insert into tracks select idTrack, strPath, strArtist, strAlbumArtist, strAlbum, strGenre, '|  |', '', " +
+        strSQL =
+          "insert into tracks select idTrack, strPath, strArtist, strAlbumArtist, strAlbum, strGenre, '|  |', '', " +
           "strTitle, iTRack, iNumTracks, iDuration, iYear, iTimesPlayed, iRating, iFavorite, iResumeAt, iDisc, iNumDisc, " +
           "strLyrics, dateLastPlayed, dateAdded from tracksV10";
 
@@ -310,9 +305,9 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.AddIndex(MusicDbClient, "idxgenre_strGenre",
                                  "CREATE INDEX idxgenre_strGenre ON tracks(strGenre ASC)");
         DatabaseUtility.AddIndex(MusicDbClient, "idxcomposer_strComposer",
-                         "CREATE INDEX idxcomposer_strComposer ON tracks(strComposer ASC)");
+                                 "CREATE INDEX idxcomposer_strComposer ON tracks(strComposer ASC)");
         DatabaseUtility.AddIndex(MusicDbClient, "idxconductor_strConductor",
-                         "CREATE INDEX idxconductor_strConductor ON tracks(strConductor ASC)");
+                                 "CREATE INDEX idxconductor_strConductor ON tracks(strConductor ASC)");
 
         // Artist 
         DatabaseUtility.AddTable(MusicDbClient, "artist",
@@ -409,7 +404,8 @@ namespace MediaPortal.Music.Database
 
     public void RollbackTransaction()
     {
-      Log.Debug("MusicDatabase: Rolling back transactions due to unrecoverable error. Effecting {0} rows", Instance.DbConnection.ChangedRows());
+      Log.Debug("MusicDatabase: Rolling back transactions due to unrecoverable error. Effecting {0} rows",
+                Instance.DbConnection.ChangedRows());
       try
       {
         DirectExecute("rollback");

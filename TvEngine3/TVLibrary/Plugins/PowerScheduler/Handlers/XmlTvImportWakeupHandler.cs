@@ -1,4 +1,5 @@
 #region Copyright (C) 2007-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2007-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,9 +20,11 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -29,6 +32,7 @@ using System.Text;
 using TvEngine.PowerScheduler.Interfaces;
 using TvDatabase;
 using TvLibrary.Log;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Handlers
@@ -39,16 +43,19 @@ namespace TvEngine.PowerScheduler.Handlers
   public class XmlTvImportWakeupHandler : IWakeupHandler
   {
     #region Variables    
+
     private string _handlerName = "XmlTvImportWakeupHandler";
+
     #endregion
 
     #region Events   
+
     #endregion
 
     #region Constructor
-    public XmlTvImportWakeupHandler()
-    {            
-    }
+
+    public XmlTvImportWakeupHandler() {}
+
     #endregion
 
     #region Private methods
@@ -60,6 +67,7 @@ namespace TvEngine.PowerScheduler.Handlers
     #endregion
 
     #region IWakeupHandler implementation
+
     [MethodImpl(MethodImplOptions.Synchronized)]
     public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
     {
@@ -70,11 +78,15 @@ namespace TvEngine.PowerScheduler.Handlers
         return DateTime.MaxValue;
       }
 
-      DateTime now = DateTime.Now;      
+      DateTime now = DateTime.Now;
       DateTime defaultRemoteScheduleTime = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
-      string remoteScheduleTimeStr = layer.GetSetting("xmlTvRemoteScheduleTime", defaultRemoteScheduleTime.ToString()).Value;
+      string remoteScheduleTimeStr =
+        layer.GetSetting("xmlTvRemoteScheduleTime", defaultRemoteScheduleTime.ToString()).Value;
 
-      DateTime remoteScheduleTime = (DateTime)(System.ComponentModel.TypeDescriptor.GetConverter(new DateTime(now.Year, now.Month, now.Day)).ConvertFrom(remoteScheduleTimeStr));
+      DateTime remoteScheduleTime =
+        (DateTime)
+        (System.ComponentModel.TypeDescriptor.GetConverter(new DateTime(now.Year, now.Month, now.Day)).ConvertFrom(
+          remoteScheduleTimeStr));
 
       if (remoteScheduleTime == DateTime.MinValue)
       {
@@ -92,10 +104,12 @@ namespace TvEngine.PowerScheduler.Handlers
 
       return remoteScheduleTime;
     }
+
     public string HandlerName
     {
       get { return _handlerName; }
     }
-    #endregion   
+
+    #endregion
   }
 }

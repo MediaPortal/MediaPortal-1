@@ -31,9 +31,7 @@ namespace MediaPortal.Drawing
   {
     #region Constructors
 
-    public GradientStop()
-    {
-    }
+    public GradientStop() {}
 
     public GradientStop(Color color, double offset)
     {

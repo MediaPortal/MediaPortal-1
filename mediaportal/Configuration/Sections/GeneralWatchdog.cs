@@ -7,9 +7,7 @@ namespace MediaPortal.Configuration.Sections
     #region ctor
 
     public GeneralWatchdog()
-      : this("Watchdog")
-    {
-    }
+      : this("Watchdog") {}
 
     public GeneralWatchdog(string name)
       : base("Watchdog")

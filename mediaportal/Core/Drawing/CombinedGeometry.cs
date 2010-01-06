@@ -33,9 +33,7 @@ namespace MediaPortal.Drawing
   {
     #region Constructors
 
-    public CombinedGeometry()
-    {
-    }
+    public CombinedGeometry() {}
 
     public CombinedGeometry(Geometry geometry1, Geometry geometry2)
     {
@@ -76,12 +74,12 @@ namespace MediaPortal.Drawing
 
       if (_geometryIndex == 0)
       {
-        _geometry1 = (Geometry) child;
+        _geometry1 = (Geometry)child;
       }
 
       if (_geometryIndex == 1)
       {
-        _geometry2 = (Geometry) child;
+        _geometry2 = (Geometry)child;
       }
 
       if (_geometryIndex++ == 1)
@@ -90,9 +88,7 @@ namespace MediaPortal.Drawing
       }
     }
 
-    void IAddChild.AddText(string text)
-    {
-    }
+    void IAddChild.AddText(string text) {}
 
     #endregion Methods
 

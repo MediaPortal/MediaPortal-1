@@ -30,7 +30,8 @@ namespace TvService
 {
   public class AudioStreams
   {
-    readonly ITvCardHandler _cardHandler;
+    private readonly ITvCardHandler _cardHandler;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DisEqcManagement"/> class.
     /// </summary>
@@ -40,9 +41,8 @@ namespace TvService
       _cardHandler = cardHandler;
     }
 
-
-
     #region audio streams
+
     /// <summary>
     /// Gets the available audio streams.
     /// </summary>
@@ -61,9 +61,11 @@ namespace TvService
         {
           return RemoteControl.Instance.AvailableAudioStreams(user);
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
-        Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+        Log.Error("card: unable to connect to slave controller at:{0}",
+                  _cardHandler.DataBaseCard.ReferencedServer().HostName);
         return null;
       }
 
@@ -95,9 +97,11 @@ namespace TvService
         {
           return RemoteControl.Instance.GetCurrentAudioStream(user);
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
-        Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+        Log.Error("card: unable to connect to slave controller at:{0}",
+                  _cardHandler.DataBaseCard.ReferencedServer().HostName);
         return null;
       }
 
@@ -134,9 +138,11 @@ namespace TvService
           Log.WriteFile("card: SetCurrentAudioStream: controlling remote instance {0}", RemoteControl.HostName);
           RemoteControl.Instance.SetCurrentAudioStream(user, stream);
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
-        Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+        Log.Error("card: unable to connect to slave controller at:{0}",
+                  _cardHandler.DataBaseCard.ReferencedServer().HostName);
         return;
       }
 
@@ -158,9 +164,6 @@ namespace TvService
       subchannel.CurrentAudioStream = stream;
     }
 
-
-
     #endregion
-
   }
 }

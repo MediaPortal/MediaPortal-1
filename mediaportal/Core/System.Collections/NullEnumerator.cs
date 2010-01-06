@@ -29,17 +29,13 @@ namespace System.Collections
   {
     #region Constructors
 
-    private NullEnumerator()
-    {
-    }
+    private NullEnumerator() {}
 
     #endregion Constructors
 
     #region Methods
 
-    public void Reset()
-    {
-    }
+    public void Reset() {}
 
     public bool MoveNext()
     {

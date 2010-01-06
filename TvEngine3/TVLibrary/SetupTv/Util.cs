@@ -32,9 +32,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-
 using Microsoft.Win32;
-
 
 
 namespace SetupTv
@@ -45,10 +43,11 @@ namespace SetupTv
   public class Utils
   {
     [DllImport("kernel32.dll")]
-    extern static bool GetDiskFreeSpaceEx(string lpDirectoryName, out UInt64 lpFreeBytesAvailable, out UInt64 lpTotalNumberOfBytes, out UInt64 lpTotalNumberOfFreeBytes);
+    private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out UInt64 lpFreeBytesAvailable,
+                                                  out UInt64 lpTotalNumberOfBytes, out UInt64 lpTotalNumberOfFreeBytes);
 
     [DllImport("Kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    extern static bool GetVolumeInformation(
+    private static extern bool GetVolumeInformation(
       string RootPathName,
       StringBuilder VolumeNameBuffer,
       int VolumeNameSize,
@@ -62,16 +61,17 @@ namespace SetupTv
     public static extern long GetDriveType(string driveLetter);
 
     [DllImport("winmm.dll", EntryPoint = "mciSendStringA", CharSet = CharSet.Ansi)]
-    protected static extern int mciSendString(string lpstrCommand, StringBuilder lpstrReturnString, int uReturnLength, IntPtr hwndCallback);
+    protected static extern int mciSendString(string lpstrCommand, StringBuilder lpstrReturnString, int uReturnLength,
+                                              IntPtr hwndCallback);
 
     [DllImport("kernel32.dll", ExactSpelling = true, SetLastError = true, CharSet = CharSet.Auto)]
-    static extern bool DeviceIoControl(IntPtr hDevice, uint dwIoControlCode,
-      IntPtr lpInBuffer, uint nInBufferSize,
-      IntPtr lpOutBuffer, uint nOutBufferSize,
-      out uint lpBytesReturned, IntPtr lpOverlapped);
+    private static extern bool DeviceIoControl(IntPtr hDevice, uint dwIoControlCode,
+                                               IntPtr lpInBuffer, uint nInBufferSize,
+                                               IntPtr lpOutBuffer, uint nOutBufferSize,
+                                               out uint lpBytesReturned, IntPtr lpOverlapped);
 
     [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern IntPtr CreateFile(
+    private static extern IntPtr CreateFile(
       string filename,
       [MarshalAs(UnmanagedType.U4)] FileAccess fileaccess,
       [MarshalAs(UnmanagedType.U4)] FileShare fileshare,
@@ -81,7 +81,7 @@ namespace SetupTv
 
 
     [DllImport("kernel32.dll", SetLastError = true)]
-    static extern bool CloseHandle(IntPtr hObject);
+    private static extern bool CloseHandle(IntPtr hObject);
 
     public static OSInfo.OSInfo.OSList _osver = OSInfo.OSInfo.GetOSName();
 
@@ -89,9 +89,7 @@ namespace SetupTv
 
 
     // singleton. Dont allow any instance of this class
-    private Utils()
-    {
-    }
+    private Utils() {}
 
     public static string GetDriveSerial(string drive)
     {
@@ -101,11 +99,12 @@ namespace SetupTv
       StringBuilder volname = new StringBuilder(256);
       //receives serial number of drive,not in case of network drive(win95/98)
       uint sn;
-      uint maxcomplen;//receives maximum component length
-      uint sysflags;//receives file system flags
-      StringBuilder sysname = new StringBuilder(256);//receives the file system name
+      uint maxcomplen; //receives maximum component length
+      uint sysflags; //receives file system flags
+      StringBuilder sysname = new StringBuilder(256); //receives the file system name
 
-      bool retval = GetVolumeInformation(drive.Substring(0, 2), volname, 256, out sn, out maxcomplen, out sysflags, sysname, 256);
+      bool retval = GetVolumeInformation(drive.Substring(0, 2), volname, 256, out sn, out maxcomplen, out sysflags,
+                                         sysname, 256);
 
       if (retval)
       {
@@ -122,9 +121,9 @@ namespace SetupTv
       StringBuilder volname = new StringBuilder(256);
       //receives serial number of drive,not in case of network drive(win95/98)
       uint sn;
-      uint maxcomplen;//receives maximum component length
-      uint sysflags;//receives file system flags
-      StringBuilder sysname = new StringBuilder(256);//receives the file system name
+      uint maxcomplen; //receives maximum component length
+      uint sysflags; //receives file system flags
+      StringBuilder sysname = new StringBuilder(256); //receives the file system name
 
       bool retval = GetVolumeInformation(drive, volname, 256, out sn, out maxcomplen, out sysflags, sysname, 256);
 
@@ -140,15 +139,15 @@ namespace SetupTv
       if (drive == null)
         return 2;
       if ((GetDriveType(drive) & 5) == 5)
-        return 5;//cd
+        return 5; //cd
       if ((GetDriveType(drive) & 3) == 3)
-        return 3;//fixed
+        return 3; //fixed
       if ((GetDriveType(drive) & 2) == 2)
-        return 2;//removable
+        return 2; //removable
       if ((GetDriveType(drive) & 4) == 4)
-        return 4;//remote disk
+        return 4; //remote disk
       if ((GetDriveType(drive) & 6) == 6)
-        return 6;//ram disk
+        return 6; //ram disk
       return 0;
     }
 
@@ -344,8 +343,10 @@ namespace SetupTv
         // 1st pattern matches [x-y] for example [1-2] which is disc 1 of 2 total
         // 2nd pattern matches ?cd?## and ?disc?## for example -cd2 which is cd 2.
         //     ? is -_ or space (second ? is optional), ## is 1 or 2 digits
-        string[] pattern = {"\\[[0-9]{1,2}-[0-9]{1,2}\\]",
-														 "[-_ ](CD|cd|DISC|disc)[-_ ]{0,1}[0-9]{1,2}"};
+        string[] pattern = {
+                             "\\[[0-9]{1,2}-[0-9]{1,2}\\]",
+                             "[-_ ](CD|cd|DISC|disc)[-_ ]{0,1}[0-9]{1,2}"
+                           };
 
         // Strip the extensions and make everything lowercase
         string strFileName1 = Path.GetFileNameWithoutExtension(strFile1).ToLowerInvariant();
@@ -360,7 +361,7 @@ namespace SetupTv
             // Both strings had the special pattern. Now see if the filenames are the same.
             // Do this by removing the special pattern and compare the remains.
             if (Regex.Replace(strFileName1, pattern[i], "")
-              == Regex.Replace(strFileName2, pattern[i], ""))
+                == Regex.Replace(strFileName2, pattern[i], ""))
             {
               // It was a match so stack it
               return true;
@@ -368,9 +369,7 @@ namespace SetupTv
           }
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       // No matches were found, so no stacking
       return false;
@@ -380,8 +379,10 @@ namespace SetupTv
     {
       if (strFileName == null)
         return;
-      string[] pattern = {"\\[[0-9]{1,2}-[0-9]{1,2}\\]",
-													 "[-_ ](CD|cd|DISC|disc)[-_ ]{0,1}[0-9]{1,2}"};
+      string[] pattern = {
+                           "\\[[0-9]{1,2}-[0-9]{1,2}\\]",
+                           "[-_ ](CD|cd|DISC|disc)[-_ ]{0,1}[0-9]{1,2}"
+                         };
       for (int i = 0; i < pattern.Length; i++)
       {
         // See if we can find the special patterns in both filenames
@@ -449,9 +450,7 @@ namespace SetupTv
           CloseHandle(fHandle);
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       return result;
     }
@@ -480,9 +479,7 @@ namespace SetupTv
         DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
         return dt;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return DateTime.Now;
     }
 
@@ -505,9 +502,7 @@ namespace SetupTv
         lRet = lRet * 100L + iSec;
         return lRet;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return 0;
     }
 
@@ -559,9 +554,7 @@ namespace SetupTv
         File.Delete(strFile);
         return true;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return false;
     }
 
@@ -576,9 +569,7 @@ namespace SetupTv
         Directory.Delete(strDir);
         return true;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return false;
     }
 
@@ -694,11 +685,10 @@ namespace SetupTv
           {
             File.Delete(strFile);
           }
-          catch (Exception) { }
+          catch (Exception) {}
         }
       }
-      catch (Exception) { }
-
+      catch (Exception) {}
     }
 
     public static DateTime ParseDateTimeString(string dateTime)
@@ -723,9 +713,7 @@ namespace SetupTv
         int sec = Int32.Parse(parts[5]);
         return new DateTime(year, month, day, hour, min, sec, 0);
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return DateTime.Now;
     }
 
@@ -776,10 +764,10 @@ namespace SetupTv
       ulong totalNumberOfFreeBytes;
 
       GetDiskFreeSpaceEx(
-         drive[0] + @":\",
-         out freeBytesAvailable,
-         out totalNumberOfBytes,
-         out totalNumberOfFreeBytes);
+        drive[0] + @":\",
+        out freeBytesAvailable,
+        out totalNumberOfBytes,
+        out totalNumberOfFreeBytes);
       return freeBytesAvailable;
     }
 
@@ -795,7 +783,6 @@ namespace SetupTv
 
     private static bool SetSuspendState(PowerState state, bool forceShutDown)
     {
-
       return (Application.SetSuspendState(state, forceShutDown, false));
     }
 
@@ -804,9 +791,12 @@ namespace SetupTv
     {
       DialogResult res;
 
-      const string MsgNotSupported = "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
-      const string MsgNotInstallable = "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
-      const string MsgBetaServicePack = "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
+      const string MsgNotSupported =
+        "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
+      const string MsgNotInstallable =
+        "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
+      const string MsgBetaServicePack =
+        "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
 
       string MsgVersion = OSInfo.OSInfo.GetOSNameString() + " ( " + OSInfo.OSInfo.GetOSServicePack() + " ) [" +
                           OSInfo.OSInfo.OSVersion + "]";
@@ -846,7 +836,8 @@ namespace SetupTv
         {
           if (CheckFileVersion(dllPath, "6.5.2710.2732", out aParamVersion))
             validDllFound = true;
-          TvLibrary.Log.Log.Info("Util: Version of installed Psisdecd.dll: {0} Path: {1}", aParamVersion.ToString(), dllPath);
+          TvLibrary.Log.Log.Info("Util: Version of installed Psisdecd.dll: {0} Path: {1}", aParamVersion.ToString(),
+                                 dllPath);
           if (aParamVersion > mostRecentVer)
             mostRecentVer = aParamVersion;
         }
@@ -859,17 +850,25 @@ namespace SetupTv
         {
           string ErrorMsg = string.Empty;
           if (dllPaths.Count == 1)
-            ErrorMsg = string.Format("Your version {0} of Psisdecd.dll has too many bugs! \nPlease check our Wiki's requirements page.", mostRecentVer);
+            ErrorMsg =
+              string.Format(
+                "Your version {0} of Psisdecd.dll has too many bugs! \nPlease check our Wiki's requirements page.",
+                mostRecentVer);
           if (dllPaths.Count > 1)
-            ErrorMsg = string.Format("Found {0} occurences of outdated Psisdecd.dll! \nMost recent installed version: {1} \nPlease clean up your system and check our Wiki's requirements page.", dllPaths.Count.ToString(), mostRecentVer.ToString());
+            ErrorMsg =
+              string.Format(
+                "Found {0} occurences of outdated Psisdecd.dll! \nMost recent installed version: {1} \nPlease clean up your system and check our Wiki's requirements page.",
+                dllPaths.Count.ToString(), mostRecentVer.ToString());
           if (dllPaths.Count < 1)
             ErrorMsg = "Psisdecd.dll may not be registered properly! \nPlease check our Wiki's requirements page.";
 
           TvLibrary.Log.Log.Info("Util: Psisdecd.dll error - {0}", ErrorMsg);
-          if (MessageBox.Show(ErrorMsg, "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK)
+          if (
+            MessageBox.Show(ErrorMsg, "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel,
+                            MessageBoxIcon.Exclamation) == DialogResult.OK)
             Process.Start(@"http://wiki.team-mediaportal.com/GeneralRequirements");
         }
-        catch (Exception) { }
+        catch (Exception) {}
       }
     }
 
@@ -927,8 +926,10 @@ namespace SetupTv
                     {
                       if (defaultkey != null)
                       {
-                        string friendlyName = (string)defaultkey.GetValue(null); // Gets the (Default) value from this key            
-                        if (!string.IsNullOrEmpty(friendlyName) && friendlyName.ToLowerInvariant().IndexOf(aFilename.ToLowerInvariant()) >= 0)
+                        string friendlyName = (string)defaultkey.GetValue(null);
+                          // Gets the (Default) value from this key            
+                        if (!string.IsNullOrEmpty(friendlyName) &&
+                            friendlyName.ToLowerInvariant().IndexOf(aFilename.ToLowerInvariant()) >= 0)
                         {
                           if (!resultPaths.Contains(friendlyName))
                             resultPaths.Add(friendlyName);
@@ -938,14 +939,15 @@ namespace SetupTv
                   }
                 }
               }
-              catch (Exception) { }
+              catch (Exception) {}
             }
           }
         }
       }
       catch (Exception ex)
       {
-        MessageBox.Show(string.Format("Error checking registry for registered Assembly: {0} - {1}", aFilename, ex.Message));
+        MessageBox.Show(string.Format("Error checking registry for registered Assembly: {0} - {1}", aFilename,
+                                      ex.Message));
       }
       return resultPaths;
     }

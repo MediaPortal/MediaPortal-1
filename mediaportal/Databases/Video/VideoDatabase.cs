@@ -366,7 +366,5 @@ namespace MediaPortal.Video.Database
     {
       _database.RemoveAllVideoThumbBlacklistEntries();
     }
-
-    
   }
 }

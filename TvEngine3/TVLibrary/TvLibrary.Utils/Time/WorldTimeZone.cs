@@ -121,7 +121,7 @@ namespace MediaPortal.Utils.Time
         throw new ArgumentException("TimeZone Not valid");
       }
 
-      _TimeZone = (TimeZoneInfo) _TimeZoneList[TimeZoneName];
+      _TimeZone = (TimeZoneInfo)_TimeZoneList[TimeZoneName];
 
       _bHasDlt = true;
       if (_TimeZone.DltDate.Month == 0)
@@ -210,8 +210,8 @@ namespace MediaPortal.Utils.Time
         int LastDay = DateTime.DaysInMonth(year, TimeChange.Month);
         ChangeDay = new DateTime(year, TimeChange.Month, LastDay);
 
-        int MonthEnd = (int) ChangeDay.DayOfWeek;
-        int WeekDay = (int) TimeChange.DayOfWeek;
+        int MonthEnd = (int)ChangeDay.DayOfWeek;
+        int WeekDay = (int)TimeChange.DayOfWeek;
 
         if (MonthEnd != WeekDay)
         {
@@ -229,8 +229,8 @@ namespace MediaPortal.Utils.Time
       {
         ChangeDay = new DateTime(year, TimeChange.Month, 1);
 
-        int MonthStart = (int) ChangeDay.DayOfWeek;
-        int WeekDay = (int) TimeChange.DayOfWeek;
+        int MonthStart = (int)ChangeDay.DayOfWeek;
+        int WeekDay = (int)TimeChange.DayOfWeek;
 
         if (MonthStart != WeekDay)
         {
@@ -243,7 +243,7 @@ namespace MediaPortal.Utils.Time
             MonthOffset = WeekDay + 7 - MonthStart;
           }
         }
-        MonthOffset += 7*TimeChange.WeekOfMonth;
+        MonthOffset += 7 * TimeChange.WeekOfMonth;
       }
       ChangeDay = ChangeDay.AddDays(MonthOffset);
       ChangeDay = ChangeDay.Add(TimeChange.TimeOfDay);
@@ -288,10 +288,10 @@ namespace MediaPortal.Utils.Time
                 TimeZoneInfo TZInfo = new TimeZoneInfo();
 
                 //TZInfo.Index = (int)TZKey.GetValue(VALUE_INDEX);
-                TZInfo.Display = (string) TZKey.GetValue(VALUE_DISPLAY_NAME);
-                TZInfo.StdName = (string) TZKey.GetValue(VALUE_STANDARD_NAME);
-                TZInfo.DltName = (string) TZKey.GetValue(VALUE_DAYLIGHT_NAME);
-                byte[] timeZoneData = (byte[]) TZKey.GetValue(VALUE_ZONE_INFO);
+                TZInfo.Display = (string)TZKey.GetValue(VALUE_DISPLAY_NAME);
+                TZInfo.StdName = (string)TZKey.GetValue(VALUE_STANDARD_NAME);
+                TZInfo.DltName = (string)TZKey.GetValue(VALUE_DAYLIGHT_NAME);
+                byte[] timeZoneData = (byte[])TZKey.GetValue(VALUE_ZONE_INFO);
 
                 if (timeZoneData != null)
                 {
@@ -316,9 +316,7 @@ namespace MediaPortal.Utils.Time
               }
             }
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
         RegKeyRoot.Close();
       }
@@ -339,7 +337,7 @@ namespace MediaPortal.Utils.Time
       TimeChange.Month = BitConverter.ToInt16(bytes, index);
 
       index += LENGTH_WORD;
-      TimeChange.DayOfWeek = (DayOfWeek) BitConverter.ToInt16(bytes, index);
+      TimeChange.DayOfWeek = (DayOfWeek)BitConverter.ToInt16(bytes, index);
 
       index += LENGTH_WORD;
       TimeChange.WeekOfMonth = BitConverter.ToInt16(bytes, index) - 1;

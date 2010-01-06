@@ -32,13 +32,18 @@ namespace TvLibrary.Implementations.DVB
   public class ConexantBDA : IDiSEqCController
   {
     #region constants
-    readonly Guid BdaTunerExtentionProperties = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0xd9, 0xeb, 0x71, 0x6f, 0x6e, 0xc9);
+
+    private readonly Guid BdaTunerExtentionProperties = new Guid(0xfaa8f3e5, 0x31d4, 0x4e41, 0x88, 0xef, 0xd9, 0xeb,
+                                                                 0x71, 0x6f, 0x6e, 0xc9);
+
     #endregion
 
     #region variables
-    readonly bool _isConexant;
-    readonly IntPtr _ptrDiseqc = IntPtr.Zero;
-    readonly IKsPropertySet _propertySet;
+
+    private readonly bool _isConexant;
+    private readonly IntPtr _ptrDiseqc = IntPtr.Zero;
+    private readonly IKsPropertySet _propertySet;
+
     #endregion
 
     /// <summary>
@@ -54,7 +59,8 @@ namespace TvLibrary.Implementations.DVB
         if (_propertySet != null)
         {
           KSPropertySupport supported;
-          _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, out supported);
+          _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC,
+                                      out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
             Log.Log.Debug("Conexant BDA: DVB-S card found!");
@@ -81,10 +87,7 @@ namespace TvLibrary.Implementations.DVB
     /// </value>
     public bool IsConexant
     {
-      get
-      {
-        return _isConexant;
-      }
+      get { return _isConexant; }
     }
 
     /// <summary>
@@ -117,34 +120,36 @@ namespace TvLibrary.Implementations.DVB
       // 3        B         A
       // 4        B         B
 
-      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));
+      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
+                           (channel.Polarisation == Polarisation.CircularL));
       byte cmd = 0xf0;
       cmd |= (byte)(hiBand ? 1 : 0);
       cmd |= (byte)((isHorizontal) ? 2 : 0);
       cmd |= (byte)((antennaNr - 1) << 2);
 
       const int len = 188;
-      ulong diseqc = 0xE0103800;//currently committed switches only. i.e. ports 1-4
+      ulong diseqc = 0xE0103800; //currently committed switches only. i.e. ports 1-4
       diseqc += cmd;
       //write the diseqc command to memory
-      Marshal.WriteByte(_ptrDiseqc, 0, (byte)((diseqc >> 24) & 0xff));//framing byte
-      Marshal.WriteByte(_ptrDiseqc, 1, (byte)((diseqc >> 16) & 0xff));//address byte
-      Marshal.WriteByte(_ptrDiseqc, 2, (byte)((diseqc >> 8) & 0xff));//command byte
-      Marshal.WriteByte(_ptrDiseqc, 3, (byte)(diseqc & 0xff));//data byte (port group 0)
-      Marshal.WriteInt32(_ptrDiseqc, 160, 4);//send_message_length
-      Marshal.WriteInt32(_ptrDiseqc, 164, 0);//receive_message_length
-      Marshal.WriteInt32(_ptrDiseqc, 168, 3);//amplitude_attenuation
-      if (antennaNr == 1)//for simple diseqc switches (i.e. 22KHz tone burst)
+      Marshal.WriteByte(_ptrDiseqc, 0, (byte)((diseqc >> 24) & 0xff)); //framing byte
+      Marshal.WriteByte(_ptrDiseqc, 1, (byte)((diseqc >> 16) & 0xff)); //address byte
+      Marshal.WriteByte(_ptrDiseqc, 2, (byte)((diseqc >> 8) & 0xff)); //command byte
+      Marshal.WriteByte(_ptrDiseqc, 3, (byte)(diseqc & 0xff)); //data byte (port group 0)
+      Marshal.WriteInt32(_ptrDiseqc, 160, 4); //send_message_length
+      Marshal.WriteInt32(_ptrDiseqc, 164, 0); //receive_message_length
+      Marshal.WriteInt32(_ptrDiseqc, 168, 3); //amplitude_attenuation
+      if (antennaNr == 1) //for simple diseqc switches (i.e. 22KHz tone burst)
       {
-        Marshal.WriteByte(_ptrDiseqc, 172, (int)BurstModulationType.TONE_BURST_UNMODULATED);//
+        Marshal.WriteByte(_ptrDiseqc, 172, (int)BurstModulationType.TONE_BURST_UNMODULATED); //
       }
       else
       {
-        Marshal.WriteByte(_ptrDiseqc, 172, (int)BurstModulationType.TONE_BURST_MODULATED);//default to tone_burst_modulated
+        Marshal.WriteByte(_ptrDiseqc, 172, (int)BurstModulationType.TONE_BURST_MODULATED);
+          //default to tone_burst_modulated
       }
-      Marshal.WriteByte(_ptrDiseqc, 176, (int)DisEqcVersion.DISEQC_VER_1X);//default
-      Marshal.WriteByte(_ptrDiseqc, 180, (int)RxMode.RXMODE_NOREPLY);//default
-      Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message TRUE */
+      Marshal.WriteByte(_ptrDiseqc, 176, (int)DisEqcVersion.DISEQC_VER_1X); //default
+      Marshal.WriteByte(_ptrDiseqc, 180, (int)RxMode.RXMODE_NOREPLY); //default
+      Marshal.WriteByte(_ptrDiseqc, 184, 1); //last_message TRUE */
 
       //check the command
       string txt = "";
@@ -154,7 +159,8 @@ namespace TvLibrary.Implementations.DVB
         txt += String.Format("0x{0:X} ", Marshal.ReadInt32(_ptrDiseqc, i));
       Log.Log.Debug("Conexant BDA: SendDiseqCommand: {0}", txt);
 
-      int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
+      int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc,
+                                len, _ptrDiseqc, len);
       if (hr != 0)
       {
         Log.Log.Info("Conexant BDA: SendDiseqCommand returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
@@ -162,6 +168,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #region IDiSEqCController Members
+
     /// <summary>
     /// Sends the DiSEqC command.
     /// </summary>
@@ -173,13 +180,13 @@ namespace TvLibrary.Implementations.DVB
       for (int i = 0; i < diSEqC.Length; ++i)
         Marshal.WriteByte(_ptrDiseqc, i, diSEqC[i]);
 
-      Marshal.WriteInt32(_ptrDiseqc, 160, diSEqC.Length);//send_message_length
-      Marshal.WriteInt32(_ptrDiseqc, 164, 0);//receive_message_length
-      Marshal.WriteInt32(_ptrDiseqc, 168, 3);//amplitude_attenuation
-      Marshal.WriteByte(_ptrDiseqc, 172, (int)BurstModulationType.TONE_BURST_MODULATED);//tone_burst_modulated
+      Marshal.WriteInt32(_ptrDiseqc, 160, diSEqC.Length); //send_message_length
+      Marshal.WriteInt32(_ptrDiseqc, 164, 0); //receive_message_length
+      Marshal.WriteInt32(_ptrDiseqc, 168, 3); //amplitude_attenuation
+      Marshal.WriteByte(_ptrDiseqc, 172, (int)BurstModulationType.TONE_BURST_MODULATED); //tone_burst_modulated
       Marshal.WriteByte(_ptrDiseqc, 176, (int)DisEqcVersion.DISEQC_VER_1X);
       Marshal.WriteByte(_ptrDiseqc, 180, (int)RxMode.RXMODE_NOREPLY);
-      Marshal.WriteByte(_ptrDiseqc, 184, 1);//last_message TRUE
+      Marshal.WriteByte(_ptrDiseqc, 184, 1); //last_message TRUE
 
       //check the command
       string txt = "";
@@ -189,7 +196,8 @@ namespace TvLibrary.Implementations.DVB
         txt += String.Format("0x{0:X} ", Marshal.ReadInt32(_ptrDiseqc, i));
       Log.Log.Debug("Conexant BDA: SendDiseqCCommand: {0}", txt);
 
-      int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc, len, _ptrDiseqc, len);
+      int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc,
+                                len, _ptrDiseqc, len);
       if (hr != 0)
       {
         Log.Log.Info("Conexant BDA: SendDiseqCCommand returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
@@ -207,6 +215,7 @@ namespace TvLibrary.Implementations.DVB
       reply = new byte[1];
       return false;
     }
+
     #endregion
 
     /// <summary>

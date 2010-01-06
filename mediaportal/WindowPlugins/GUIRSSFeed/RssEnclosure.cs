@@ -65,9 +65,7 @@ namespace Rss
     private string type = RssDefault.String;
 
     /// <summary>Initialize a new instance of the RssEnclosure class.</summary>
-    public RssEnclosure()
-    {
-    }
+    public RssEnclosure() {}
 
     /// <summary>Where the enclosure is located</summary>
     public Uri Url

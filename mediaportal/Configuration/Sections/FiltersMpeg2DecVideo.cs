@@ -59,9 +59,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public FiltersMPEG2DecVideo()
-      : this("MPC - MPEG-2 Decoder")
-    {
-    }
+      : this("MPC - MPEG-2 Decoder") {}
 
     /// <summary>
     /// 
@@ -114,10 +112,10 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarContrast = new System.Windows.Forms.TrackBar();
       this.trackBarBrightness = new System.Windows.Forms.TrackBar();
       this.groupBoxSettings.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.trackBarSaturation)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize) (this.trackBarHue)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize) (this.trackBarContrast)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize) (this.trackBarBrightness)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarSaturation)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarHue)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarContrast)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarBrightness)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBoxSettings
@@ -350,10 +348,10 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBoxSettings.ResumeLayout(false);
       this.groupBoxSettings.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.trackBarSaturation)).EndInit();
-      ((System.ComponentModel.ISupportInitialize) (this.trackBarHue)).EndInit();
-      ((System.ComponentModel.ISupportInitialize) (this.trackBarContrast)).EndInit();
-      ((System.ComponentModel.ISupportInitialize) (this.trackBarBrightness)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarSaturation)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarHue)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarContrast)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarBrightness)).EndInit();
       this.ResumeLayout(false);
     }
 
@@ -364,7 +362,7 @@ namespace MediaPortal.Configuration.Sections
       byte[] tempArray = new byte[4];
       for (int i = 0; i < 4; i++)
       {
-        tempArray[i] = (byte) ((regValue & (0xFF << 8*i)) >> 8*i);
+        tempArray[i] = (byte)((regValue & (0xFF << 8 * i)) >> 8 * i);
       }
       return tempArray;
     }
@@ -377,7 +375,7 @@ namespace MediaPortal.Configuration.Sections
         {
           try
           {
-            if ((int) subkey.GetValue("PlanarYUV") == 1)
+            if ((int)subkey.GetValue("PlanarYUV") == 1)
             {
               checkBoxPlanar.Checked = true;
             }
@@ -386,7 +384,7 @@ namespace MediaPortal.Configuration.Sections
               checkBoxPlanar.Checked = false;
             }
 
-            if ((int) subkey.GetValue("ForcedSubtitles") == 1)
+            if ((int)subkey.GetValue("ForcedSubtitles") == 1)
             {
               checkBoxForcedSubtitles.Checked = true;
             }
@@ -395,7 +393,7 @@ namespace MediaPortal.Configuration.Sections
               checkBoxForcedSubtitles.Checked = false;
             }
 
-            if ((int) subkey.GetValue("Interlaced") == 1)
+            if ((int)subkey.GetValue("Interlaced") == 1)
             {
               checkBoxOutputInterlaced.Checked = true;
             }
@@ -404,27 +402,27 @@ namespace MediaPortal.Configuration.Sections
               checkBoxOutputInterlaced.Checked = false;
             }
 
-            comboBoxDeinterlace.SelectedIndex = (int) subkey.GetValue("DeinterlaceMethod");
+            comboBoxDeinterlace.SelectedIndex = (int)subkey.GetValue("DeinterlaceMethod");
 
             byte[] convertedKey;
 
-            convertedKey = ConvertFromRegisty((int) subkey.GetValue("Brightness"));
+            convertedKey = ConvertFromRegisty((int)subkey.GetValue("Brightness"));
             trackBarBrightness.Value =
               (int)
               ((BitConverter.ToSingle(convertedKey, 0)) + ((BitConverter.ToSingle(convertedKey, 0)) >= 0 ? 0.5f : -0.5f)) +
               128;
 
-            convertedKey = ConvertFromRegisty((int) subkey.GetValue("Contrast"));
-            trackBarContrast.Value = (int) ((100*BitConverter.ToSingle(convertedKey, 0) + 0.5f));
+            convertedKey = ConvertFromRegisty((int)subkey.GetValue("Contrast"));
+            trackBarContrast.Value = (int)((100 * BitConverter.ToSingle(convertedKey, 0) + 0.5f));
 
-            convertedKey = ConvertFromRegisty((int) subkey.GetValue("Hue"));
+            convertedKey = ConvertFromRegisty((int)subkey.GetValue("Hue"));
             trackBarHue.Value =
               (int)
               ((BitConverter.ToSingle(convertedKey, 0)) + ((BitConverter.ToSingle(convertedKey, 0)) >= 0 ? 0.5f : -0.5f)) +
               180;
 
-            convertedKey = ConvertFromRegisty((int) subkey.GetValue("Saturation"));
-            trackBarSaturation.Value = (int) ((100*BitConverter.ToSingle(convertedKey, 0) + 0.5f));
+            convertedKey = ConvertFromRegisty((int)subkey.GetValue("Saturation"));
+            trackBarSaturation.Value = (int)((100 * BitConverter.ToSingle(convertedKey, 0) + 0.5f));
           }
           catch (Exception ex)
           {
@@ -476,23 +474,23 @@ namespace MediaPortal.Configuration.Sections
           }
           subkey.SetValue("Interlaced", regValue);
 
-          subkey.SetValue("DeinterlaceMethod", (int) comboBoxDeinterlace.SelectedIndex);
+          subkey.SetValue("DeinterlaceMethod", (int)comboBoxDeinterlace.SelectedIndex);
 
-          float brightness = Convert.ToSingle((UInt32) (trackBarBrightness.Value));
+          float brightness = Convert.ToSingle((UInt32)(trackBarBrightness.Value));
           brightness = (brightness - (brightness >= 0 ? 0.5f : -0.5f)) - 127.5f;
           subkey.SetValue("Brightness", BitConverter.ToInt32(BitConverter.GetBytes(brightness), 0),
                           RegistryValueKind.DWord);
 
-          float contrast = Convert.ToSingle((UInt32) (trackBarContrast.Value));
-          contrast = contrast/100;
+          float contrast = Convert.ToSingle((UInt32)(trackBarContrast.Value));
+          contrast = contrast / 100;
           subkey.SetValue("Contrast", BitConverter.ToInt32(BitConverter.GetBytes(contrast), 0), RegistryValueKind.DWord);
 
-          float hue = Convert.ToSingle((UInt32) (trackBarHue.Value));
+          float hue = Convert.ToSingle((UInt32)(trackBarHue.Value));
           hue = (hue - (hue >= 0 ? 0.5f : -0.5f)) - 179.5f;
           subkey.SetValue("Hue", BitConverter.ToInt32(BitConverter.GetBytes(hue), 0), RegistryValueKind.DWord);
 
-          float saturation = Convert.ToSingle((UInt32) (trackBarSaturation.Value));
-          saturation = saturation/100;
+          float saturation = Convert.ToSingle((UInt32)(trackBarSaturation.Value));
+          saturation = saturation / 100;
           subkey.SetValue("Saturation", BitConverter.ToInt32(BitConverter.GetBytes(saturation), 0),
                           RegistryValueKind.DWord);
 

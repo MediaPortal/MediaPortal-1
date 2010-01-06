@@ -122,7 +122,7 @@ namespace MediaPortal.Freedb
             retval[index] = new FreeDBSite();
             retval[index].Host = siteInfo[0];
             retval[index].Protocol =
-              (FreeDBSite.FreeDBProtocol) Enum.Parse(typeof (FreeDBSite.FreeDBProtocol), siteInfo[1], true);
+              (FreeDBSite.FreeDBProtocol)Enum.Parse(typeof (FreeDBSite.FreeDBProtocol), siteInfo[1], true);
             retval[index].Port = Convert.ToInt32(siteInfo[2]);
             retval[index].URI = siteInfo[3];
             retval[index].Latitude = siteInfo[4];
@@ -335,7 +335,7 @@ namespace MediaPortal.Freedb
       int code = GetCode(m_message);
       m_message = m_message.Substring(4); // remove the code...
 
-      switch (code/100)
+      switch (code / 100)
       {
         case 2: // no problem
           retval = ParseMultiLine(urlRdr);
@@ -364,7 +364,7 @@ namespace MediaPortal.Freedb
         // wr.Proxy = WebProxy.GetDefaultProxy();
         req.Proxy.Credentials = CredentialCache.DefaultCredentials;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       StreamReader urlRdr = new StreamReader(new StreamReader(req.GetResponse().GetResponseStream()).BaseStream,
                                              Encoding.GetEncoding(0));
 
@@ -395,7 +395,7 @@ namespace MediaPortal.Freedb
           strarray.Add(curLine);
         }
       }
-      return (string[]) strarray.ToArray(typeof (string));
+      return (string[])strarray.ToArray(typeof (string));
     }
 
     private int Drive2BassID(char driveLetter)

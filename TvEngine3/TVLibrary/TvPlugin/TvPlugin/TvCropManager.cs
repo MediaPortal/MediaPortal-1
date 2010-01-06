@@ -104,9 +104,7 @@ namespace TvPlugin
                                                               0, CropSettings));
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
     }
   }

@@ -29,9 +29,7 @@ namespace MediaPortal.Drawing
 {
   public class GradientFactory
   {
-    public GradientFactory()
-    {
-    }
+    public GradientFactory() {}
 
     public static GradientBrush CreateGradient(Point sp, Point ep, Color sc, Color ec, GradientStopCollection stops)
     {

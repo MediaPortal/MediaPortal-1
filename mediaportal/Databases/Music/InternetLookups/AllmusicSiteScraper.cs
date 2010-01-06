@@ -68,7 +68,7 @@ namespace MediaPortal.Music.Database
 
     public string[] GetItemsFound()
     {
-      return (string[]) m_values.ToArray(typeof (string));
+      return (string[])m_values.ToArray(typeof (string));
     }
 
     public string GetHtmlContent()
@@ -99,7 +99,7 @@ namespace MediaPortal.Music.Database
     {
       HTMLUtil util = new HTMLUtil();
       searchStr = searchStr.Replace(",", ""); // Remove Comma, as it causes problems with Search
-      string strPostData = String.Format("P=amg&opt1={0}&sql={1}&Image1.x=18&Image1.y=14", (int) searchBy,
+      string strPostData = String.Format("P=amg&opt1={0}&sql={1}&Image1.x=18&Image1.y=14", (int)searchBy,
                                          HttpUtility.UrlEncode(searchStr));
 
       string strHTML = PostHTTP(MAINURL + URLPROGRAM, strPostData);
@@ -180,8 +180,7 @@ namespace MediaPortal.Music.Database
         m_multiple = true;
       }
       else // found the right one
-      {
-      }
+      {}
       return true;
     }
 
@@ -192,18 +191,18 @@ namespace MediaPortal.Music.Database
         string strBody;
 
         string strUri = String.Format("{0}?{1}", strURL, strData);
-        HttpWebRequest req = (HttpWebRequest) WebRequest.Create(strUri);
+        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(strUri);
         try
         {
           // Use the current user in case an NTLM Proxy or similar is used.
           // request.Proxy = WebProxy.GetDefaultProxy();
           req.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception) {}
         req.ProtocolVersion = HttpVersion.Version11;
         req.UserAgent =
           "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; Maxthon; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04307.00";
-        HttpWebResponse result = (HttpWebResponse) req.GetResponse();
+        HttpWebResponse result = (HttpWebResponse)req.GetResponse();
         Stream ReceiveStream = result.GetResponseStream();
 
         // 1252 is encoding for Windows format
@@ -212,9 +211,7 @@ namespace MediaPortal.Music.Database
         strBody = sr.ReadToEnd();
         return strBody;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return "";
     }
 
@@ -230,7 +227,7 @@ namespace MediaPortal.Music.Database
         // wr.Proxy = WebProxy.GetDefaultProxy();
         myRequest.Proxy.Credentials = CredentialCache.DefaultCredentials;
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       // Return the response. 
       WebResponse myResponse = myRequest.GetResponse();

@@ -39,29 +39,32 @@ namespace TvEngine
   public interface ITvServerPlugin
   {
     #region properties
+
     /// <summary>
     /// returns the name of the plugin
     /// </summary>
-    string Name { get;}
+    string Name { get; }
 
     /// <summary>
     /// returns the version of the plugin
     /// </summary>
-    string Version { get;}
+    string Version { get; }
 
     /// <summary>
     /// returns the author of the plugin
     /// </summary>
-    string Author { get;}
+    string Author { get; }
 
     /// <summary>
     /// returns if the plugin should only run on the master server
     /// or also on slave servers
     /// </summary>
-    bool MasterOnly { get;}
+    bool MasterOnly { get; }
+
     #endregion
 
     #region  methods
+
     /// <summary>
     /// Starts the plugin
     /// </summary>
@@ -75,7 +78,8 @@ namespace TvEngine
     /// <summary>
     /// returns the setup sections for display in SetupTv
     /// </summary>
-    SetupTv.SectionSettings Setup { get;}
+    SetupTv.SectionSettings Setup { get; }
+
     #endregion
   }
 }

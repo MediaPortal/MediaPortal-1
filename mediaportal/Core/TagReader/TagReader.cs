@@ -47,9 +47,7 @@ namespace MediaPortal.TagReader
     /// Constructor
     /// This will load all tagreader plugins from plugins/tagreaders
     /// </summary>
-    static TagReader()
-    {
-    }
+    static TagReader() {}
 
     /// <summary>
     /// This method is called by mediaportal when it wants information for a music file
@@ -78,7 +76,7 @@ namespace MediaPortal.TagReader
         }
       }
 
-      char[] trimChars = { ' ', '\x00' };
+      char[] trimChars = {' ', '\x00'};
 
       try
       {
@@ -91,7 +89,7 @@ namespace MediaPortal.TagReader
           Log.Warn("Tagreader: No tag in file - {0}", strFile);
           return null;
         }
-        
+
         MusicTag musictag = new MusicTag();
         string[] artists = tag.Tag.Performers;
         if (artists.Length > 0)
@@ -125,7 +123,7 @@ namespace MediaPortal.TagReader
           musictag.Composer = string.Join(";", composer).Trim(trimChars);
         }
         musictag.Conductor = tag.Tag.Conductor;
-        IPicture[] pics = new IPicture[] { };
+        IPicture[] pics = new IPicture[] {};
         pics = tag.Tag.Pictures;
         if (pics.Length > 0)
           musictag.CoverArtImageBytes = pics[0].Data.Data;
@@ -141,7 +139,8 @@ namespace MediaPortal.TagReader
         else
           musictag.Lyrics = lyrics.Trim(trimChars);
 
-        musictag.Title = (tag.Tag.Title == null ? "" : tag.Tag.Title.Trim(trimChars)); // Prevent Null Ref execption, when Title is not set
+        musictag.Title = (tag.Tag.Title == null ? "" : tag.Tag.Title.Trim(trimChars));
+          // Prevent Null Ref execption, when Title is not set
         musictag.Track = (int)tag.Tag.Track;
         musictag.TrackTotal = (int)tag.Tag.TrackCount;
         musictag.DiscID = (int)tag.Tag.Disc;
@@ -163,7 +162,8 @@ namespace MediaPortal.TagReader
           if (id32_tag != null)
           {
             // Do we have a POPM frame written by MediaPortal or MPTagThat?
-            TagLib.Id3v2.PopularimeterFrame popmFrame = TagLib.Id3v2.PopularimeterFrame.Get(id32_tag, "MediaPortal", false);
+            TagLib.Id3v2.PopularimeterFrame popmFrame = TagLib.Id3v2.PopularimeterFrame.Get(id32_tag, "MediaPortal",
+                                                                                            false);
             if (popmFrame == null)
             {
               popmFrame = TagLib.Id3v2.PopularimeterFrame.Get(id32_tag, "MPTagThat", false);
@@ -177,7 +177,9 @@ namespace MediaPortal.TagReader
             // Now look for a POPM frame written by WMP
             if (!foundPopm)
             {
-              TagLib.Id3v2.PopularimeterFrame popm = TagLib.Id3v2.PopularimeterFrame.Get(id32_tag, "Windows Media Player 9 Series", false);
+              TagLib.Id3v2.PopularimeterFrame popm = TagLib.Id3v2.PopularimeterFrame.Get(id32_tag,
+                                                                                         "Windows Media Player 9 Series",
+                                                                                         false);
               if (popm != null)
               {
                 // Get the rating stored in the WMP POPM frame
@@ -219,7 +221,7 @@ namespace MediaPortal.TagReader
 
                 musictag.Rating = i;
                 foundPopm = true;
-                break;  // we only take the first popm frame
+                break; // we only take the first popm frame
               }
             }
 

@@ -38,7 +38,7 @@ namespace MediaPortal.Core.Transcoding
   public class Transcode2MP4 : ITranscode
   {
     [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]
-    protected class TsReader { }
+    protected class TsReader {}
 
     protected DsROTEntry _rotEntry = null;
     protected IGraphBuilder graphBuilder = null;
@@ -52,20 +52,19 @@ namespace MediaPortal.Core.Transcoding
     protected IBaseFilter AudioCodec = null; //Audio decoder, either Mpeg-2/AC3 or AAC
     protected IBaseFilter h264Encoder = null; //TBD currently Lead H264 Encoder (4.0)
     protected IBaseFilter aacEncoder = null; //TBD currently Lead AAC Encoder
-    protected IBaseFilter mp4Muxer = null;  //TBD currently Lead ISO multiplexer
-    protected IFileSinkFilter2 fileWriterFilter = null;			// DShow Filter: file writer
+    protected IBaseFilter mp4Muxer = null; //TBD currently Lead ISO multiplexer
+    protected IFileSinkFilter2 fileWriterFilter = null; // DShow Filter: file writer
     protected int bitrate;
     protected double fps;
     protected Size screenSize;
     protected long m_dDuration;
-    protected const int WS_CHILD = 0x40000000;	// attributes for video window
+    protected const int WS_CHILD = 0x40000000; // attributes for video window
     protected const int WS_CLIPCHILDREN = 0x02000000;
     protected const int WS_CLIPSIBLINGS = 0x04000000;
-    Guid AVC1 = new Guid("31435641-0000-0010-8000-00AA00389B71");
+    private Guid AVC1 = new Guid("31435641-0000-0010-8000-00AA00389B71");
 
-    public Transcode2MP4()
-    {
-    }
+    public Transcode2MP4() {}
+
     #region ITranscode Members
 
     public bool Supports(MediaPortal.Core.Transcoding.VideoFormat format)
@@ -81,7 +80,8 @@ namespace MediaPortal.Core.Transcoding
       fps = FPS;
     }
 
-    public bool Transcode(TranscodeInfo info, MediaPortal.Core.Transcoding.VideoFormat format, MediaPortal.Core.Transcoding.Quality quality, Standard standard)
+    public bool Transcode(TranscodeInfo info, MediaPortal.Core.Transcoding.VideoFormat format,
+                          MediaPortal.Core.Transcoding.Quality quality, Standard standard)
     {
       if (!Supports(format)) return false;
       string ext = System.IO.Path.GetExtension(info.file);
@@ -118,8 +118,8 @@ namespace MediaPortal.Core.Transcoding
         Log.Info("TSReader2MP4: find tsreader compatible audio/video decoders");
         IPin pinOut0, pinOut1;
         IPin pinIn0, pinIn1;
-        pinOut0 = DsFindPin.ByDirection((IBaseFilter)tsreaderSource, PinDirection.Output, 0);//audio
-        pinOut1 = DsFindPin.ByDirection((IBaseFilter)tsreaderSource, PinDirection.Output, 1);//video
+        pinOut0 = DsFindPin.ByDirection((IBaseFilter)tsreaderSource, PinDirection.Output, 0); //audio
+        pinOut1 = DsFindPin.ByDirection((IBaseFilter)tsreaderSource, PinDirection.Output, 1); //video
         if (pinOut0 == null || pinOut1 == null)
         {
           Log.Error("TSReader2MP4: FAILED: unable to get output pins of tsreader");
@@ -204,8 +204,8 @@ namespace MediaPortal.Core.Transcoding
         Log.Info("TSReader2MP4: connect tsreader->audio/video decoders");
         //connect output #0 (audio) of tsreader->audio decoder input pin 0
         //connect output #1 (video) of tsreader->video decoder input pin 0
-        pinIn0 = DsFindPin.ByDirection(AudioCodec, PinDirection.Input, 0);//audio
-        pinIn1 = DsFindPin.ByDirection(VideoCodec, PinDirection.Input, 0);//video
+        pinIn0 = DsFindPin.ByDirection(AudioCodec, PinDirection.Input, 0); //audio
+        pinIn1 = DsFindPin.ByDirection(VideoCodec, PinDirection.Input, 0); //video
         if (pinIn0 == null || pinIn1 == null)
         {
           Log.Error("TSReader2MP4: FAILED: unable to get pins of video/audio codecs");
@@ -238,14 +238,16 @@ namespace MediaPortal.Core.Transcoding
         long lTime = 5 * 60 * 60;
         lTime *= 10000000;
         long pStop = 0;
-        hr = mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+        hr = mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop),
+                                       AMSeekingSeekingFlags.NoPositioning);
         if (hr == 0)
         {
           long lStreamPos;
           mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
           m_dDuration = lStreamPos;
           lTime = 0;
-          mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+          mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop),
+                                    AMSeekingSeekingFlags.NoPositioning);
         }
         double duration = m_dDuration / 10000000d;
         Log.Info("TSReader2MP4: recording duration: {0}", MediaPortal.Util.Utils.SecondsToHMSString((int)duration));
@@ -272,7 +274,10 @@ namespace MediaPortal.Core.Transcoding
         mediaControl.Stop();
         FilterState state;
         mediaControl.GetState(500, out state);
-        GC.Collect(); GC.Collect(); GC.Collect(); GC.WaitForPendingFinalizers();
+        GC.Collect();
+        GC.Collect();
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
         graphBuilder.RemoveFilter(mp4Muxer);
         graphBuilder.RemoveFilter(h264Encoder);
         graphBuilder.RemoveFilter(aacEncoder);
@@ -344,7 +349,7 @@ namespace MediaPortal.Core.Transcoding
       return true;
     }
 
-    void Cleanup()
+    private void Cleanup()
     {
       Log.Info("TSReader2MP4: cleanup");
       if (_rotEntry != null)
@@ -382,15 +387,17 @@ namespace MediaPortal.Core.Transcoding
       tsreaderSource = null;
       DirectShowUtil.RemoveFilters(graphBuilder);
       if (graphBuilder != null)
-        DirectShowUtil.ReleaseComObject(graphBuilder); graphBuilder = null;
+        DirectShowUtil.ReleaseComObject(graphBuilder);
+      graphBuilder = null;
       GC.Collect();
       GC.Collect();
       GC.Collect();
       GC.WaitForPendingFinalizers();
     }
+
     #endregion
 
-    bool AddCodecs(IGraphBuilder graphBuilder, TranscodeInfo info)
+    private bool AddCodecs(IGraphBuilder graphBuilder, TranscodeInfo info)
     {
       //TODO: Add de-interlacing probably by filter
       int hr;
@@ -433,7 +440,8 @@ namespace MediaPortal.Core.Transcoding
       // dump filter ????
       //add filewriter 
       Log.Info("TSReader2MP4: add FileWriter to graph");
-      string monikerFileWrite = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{8596E5F0-0DA5-11D0-BD21-00A0C911CE86}";
+      string monikerFileWrite =
+        @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{8596E5F0-0DA5-11D0-BD21-00A0C911CE86}";
       IBaseFilter fileWriterbase = Marshal.BindToMoniker(monikerFileWrite) as IBaseFilter;
       if (fileWriterbase == null)
       {
@@ -469,7 +477,8 @@ namespace MediaPortal.Core.Transcoding
       // add mp4 muxer
       Log.Info("TSReader2MP4: add MP4 Muxer to graph");
       //Lead ISO Multiplexer
-      string monikermp4Muxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{990D1978-E48D-43AF-B12D-24A7456EC89F}";
+      string monikermp4Muxer =
+        @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{990D1978-E48D-43AF-B12D-24A7456EC89F}";
       mp4Muxer = Marshal.BindToMoniker(monikermp4Muxer) as IBaseFilter;
       if (mp4Muxer == null)
       {
@@ -604,7 +613,7 @@ namespace MediaPortal.Core.Transcoding
       return true;
     }
 
-    bool EncoderSet(IGraphBuilder graphBuilder, TranscodeInfo info)
+    private bool EncoderSet(IGraphBuilder graphBuilder, TranscodeInfo info)
     {
       //Add methods here to set encoder parameters
       return true;

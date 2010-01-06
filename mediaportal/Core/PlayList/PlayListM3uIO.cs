@@ -38,9 +38,7 @@ namespace MediaPortal.Playlists
     private StreamReader file;
     private string basePath;
 
-    public PlayListM3uIO()
-    {
-    }
+    public PlayListM3uIO() {}
 
     public bool Load(PlayList playlist, string fileName, string label)
     {
@@ -129,8 +127,8 @@ namespace MediaPortal.Playlists
     private static bool ExtractM3uInfo(string trimmedLine, ref string songName, ref int lDuration)
     {
       //bool successfull;
-      int iColon = (int) trimmedLine.IndexOf(":");
-      int iComma = (int) trimmedLine.IndexOf(",");
+      int iColon = (int)trimmedLine.IndexOf(":");
+      int iComma = (int)trimmedLine.IndexOf(",");
       if (iColon >= 0 && iComma >= 0 && iComma > iColon)
       {
         iColon++;

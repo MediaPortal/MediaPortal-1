@@ -25,7 +25,5 @@
 
 namespace MediaPortal.Drawing
 {
-  public class SolidColorBrushConverter : BrushConverter
-  {
-  }
+  public class SolidColorBrushConverter : BrushConverter {}
 }

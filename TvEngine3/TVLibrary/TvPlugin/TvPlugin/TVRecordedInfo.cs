@@ -47,7 +47,7 @@ namespace TvPlugin
 
     public TvRecordedInfo()
     {
-      GetID = (int) Window.WINDOW_TV_RECORDED_INFO; //759
+      GetID = (int)Window.WINDOW_TV_RECORDED_INFO; //759
     }
 
     public override bool IsTv
@@ -102,7 +102,7 @@ namespace TvPlugin
 
     private void OnKeep()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -113,7 +113,7 @@ namespace TvPlugin
       dlg.AddLocalizedString(1044); //Until space needed
       dlg.AddLocalizedString(1045); //Until date
       dlg.AddLocalizedString(1046); //Always
-      switch ((KeepMethodType) currentProgram.KeepUntil)
+      switch ((KeepMethodType)currentProgram.KeepUntil)
       {
         case KeepMethodType.UntilWatched:
           dlg.SelectedLabel = 0;
@@ -136,14 +136,14 @@ namespace TvPlugin
       switch (dlg.SelectedId)
       {
         case 1043:
-          currentProgram.KeepUntil = (int) KeepMethodType.UntilWatched;
+          currentProgram.KeepUntil = (int)KeepMethodType.UntilWatched;
           break;
         case 1044:
-          currentProgram.KeepUntil = (int) KeepMethodType.UntilSpaceNeeded;
+          currentProgram.KeepUntil = (int)KeepMethodType.UntilSpaceNeeded;
 
           break;
         case 1045:
-          currentProgram.KeepUntil = (int) KeepMethodType.TillDate;
+          currentProgram.KeepUntil = (int)KeepMethodType.TillDate;
           dlg.Reset();
           dlg.ShowQuickNumbers = false;
           dlg.SetHeading(1045);
@@ -162,7 +162,7 @@ namespace TvPlugin
           {
             ts = (currentProgram.KeepUntilDate - DateTime.Now);
           }
-          int days = (int) ts.TotalDays;
+          int days = (int)ts.TotalDays;
           if (days >= 100)
           {
             days = 30;
@@ -183,7 +183,7 @@ namespace TvPlugin
           }
           break;
         case 1046:
-          currentProgram.KeepUntil = (int) KeepMethodType.Always;
+          currentProgram.KeepUntil = (int)KeepMethodType.Always;
           break;
       }
       currentProgram.Persist();

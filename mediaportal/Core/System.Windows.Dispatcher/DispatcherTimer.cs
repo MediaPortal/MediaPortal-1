@@ -29,18 +29,12 @@ namespace System.Windows.Dispatcher
   {
     #region Constructors
 
-    public DispatcherTimer() : this(DispatcherPriority.Background)
-    {
-    }
+    public DispatcherTimer() : this(DispatcherPriority.Background) {}
 
-    public DispatcherTimer(DispatcherPriority priority) : this(priority, null)
-    {
-    }
+    public DispatcherTimer(DispatcherPriority priority) : this(priority, null) {}
 
     public DispatcherTimer(DispatcherPriority priority, Dispatcher dispatcher)
-      : this(TimeSpan.Zero, priority, null, dispatcher)
-    {
-    }
+      : this(TimeSpan.Zero, priority, null, dispatcher) {}
 
     public DispatcherTimer(TimeSpan interval, DispatcherPriority priority, EventHandler callback, Dispatcher dispatcher)
     {
@@ -65,13 +59,9 @@ namespace System.Windows.Dispatcher
 
     #region Methods
 
-    public void Start()
-    {
-    }
+    public void Start() {}
 
-    public void Stop()
-    {
-    }
+    public void Stop() {}
 
     #endregion Methods
 

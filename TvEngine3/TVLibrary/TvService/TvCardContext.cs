@@ -33,13 +33,18 @@ namespace TvService
   {
     #region variables
 
-    readonly List<User> _users;
-    readonly List<User> _usersOld; //holding a list of all the timeshifting users that have been stopped - mkaing it possible for the client to query the possible stop reason.
-    User _owner;
-    readonly System.Timers.Timer _timer = new System.Timers.Timer();
+    private readonly List<User> _users;
+
+    private readonly List<User> _usersOld;
+                                //holding a list of all the timeshifting users that have been stopped - mkaing it possible for the client to query the possible stop reason.
+
+    private User _owner;
+    private readonly System.Timers.Timer _timer = new System.Timers.Timer();
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TvCardContext"/> class.
     /// </summary>
@@ -56,6 +61,7 @@ namespace TvService
     #endregion
 
     #region public methods
+
     /// <summary>
     /// Locks the card for the user specifies
     /// </summary>
@@ -112,14 +118,8 @@ namespace TvService
     /// <value>The owner.</value>
     public User Owner
     {
-      get
-      {
-        return _owner;
-      }
-      set
-      {
-        _owner = value;
-      }
+      get { return _owner; }
+      set { _owner = value; }
     }
 
 
@@ -317,10 +317,7 @@ namespace TvService
     /// <value>The users.</value>
     public User[] Users
     {
-      get
-      {
-        return _users.ToArray();
-      }
+      get { return _users.ToArray(); }
     }
 
     /// <summary>
@@ -360,7 +357,6 @@ namespace TvService
     {
       if (!user.IsAdmin)
       {
-
         for (int i = 0; i < _usersOld.Count; i++)
         {
           User existingUser = _usersOld[i];
@@ -399,15 +395,17 @@ namespace TvService
             TvDatabase.Program p = channel.CurrentProgram;
             if (p != null)
             {
-              existingUser.History = new History(channel.IdChannel, p.StartTime, p.EndTime, p.Title, p.Description, p.Genre, false, 0);
+              existingUser.History = new History(channel.IdChannel, p.StartTime, p.EndTime, p.Title, p.Description,
+                                                 p.Genre, false, 0);
             }
           }
         }
       }
     }
+
     #endregion
 
-    void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    private void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       try
       {
@@ -423,12 +421,14 @@ namespace TvService
               if (p != null && p.StartTime != history.StartTime)
               {
                 history.Save();
-                existingUser.History = new History(channel.IdChannel, p.StartTime, p.EndTime, p.Title, p.Description, p.Genre, false, 0);
+                existingUser.History = new History(channel.IdChannel, p.StartTime, p.EndTime, p.Title, p.Description,
+                                                   p.Genre, false, 0);
               }
             }
           }
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
       }

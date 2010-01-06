@@ -87,9 +87,7 @@ namespace MediaPortal.GUI.Library
     private bool _keepLook = false;
 
     public GUIButtonControl(int dwParentID)
-      : base(dwParentID)
-    {
-    }
+      : base(dwParentID) {}
 
     /// <summary>
     /// The constructor of the GUIButtonControl class.
@@ -147,7 +145,8 @@ namespace MediaPortal.GUI.Library
       _imageFocused.Filtering = false;
       _imageFocused.DimColor = DimColor;
       _imageFocused.ColourDiffuse = ColourDiffuse;
-      _imageFocused.SetBorder(_strBorderTF, _strBorderPositionTF, _borderTextureRepeatTF, _borderTextureRotateTF, _borderTextureFileNameTF, _borderColorKeyTF);
+      _imageFocused.SetBorder(_strBorderTF, _strBorderPositionTF, _borderTextureRepeatTF, _borderTextureRotateTF,
+                              _borderTextureFileNameTF, _borderColorKeyTF);
 
       _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
                                               _nonFocusedTextureName);
@@ -155,7 +154,8 @@ namespace MediaPortal.GUI.Library
       _imageNonFocused.Filtering = false;
       _imageNonFocused.DimColor = DimColor;
       _imageNonFocused.ColourDiffuse = ColourDiffuse;
-      _imageNonFocused.SetBorder(_strBorderTNF, _strBorderPositionTNF, _borderTextureRepeatTNF, _borderTextureRotateTNF, _borderTextureFileNameTNF, _borderColorKeyTNF);
+      _imageNonFocused.SetBorder(_strBorderTNF, _strBorderPositionTNF, _borderTextureRepeatTNF, _borderTextureRotateTNF,
+                                 _borderTextureFileNameTNF, _borderColorKeyTNF);
 
       if (_hoverFilename != string.Empty)
       {
@@ -165,7 +165,8 @@ namespace MediaPortal.GUI.Library
         _hoverImage.ParentControl = this;
         _hoverImage.DimColor = DimColor;
         _hoverImage.ColourDiffuse = ColourDiffuse;
-        _hoverImage.SetBorder(_strBorderH, _strBorderPositionH, _borderTextureRepeatH, _borderTextureRotateH, _borderTextureFileNameH, _borderColorKeyH);
+        _hoverImage.SetBorder(_strBorderH, _strBorderPositionH, _borderTextureRepeatH, _borderTextureRotateH,
+                              _borderTextureFileNameH, _borderColorKeyH);
       }
 
       GUILocalizeStrings.LocalizeLabel(ref _label);
@@ -174,15 +175,16 @@ namespace MediaPortal.GUI.Library
       if (_scrollStartDelay < 0)
       {
         _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
-                                            _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false, _shadowAngle, _shadowDistance, _shadowColor);
+                                            _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false,
+                                            _shadowAngle, _shadowDistance, _shadowColor);
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
         ((GUILabelControl)_labelControl).TextVAlignment = _textVAlignment;
       }
-      else 
+      else
       {
         _labelControl = new GUIFadeLabel(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
                                          _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP,
-                                        _shadowAngle, _shadowDistance, _shadowColor,
+                                         _shadowAngle, _shadowDistance, _shadowColor,
                                          _userWrapString);
         ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
         ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
@@ -283,7 +285,7 @@ namespace MediaPortal.GUI.Library
         _imageNonFocused.Render(timePassed);
       }
 
-      int labelWidth = _width - 2*_textOffsetX;
+      int labelWidth = _width - 2 * _textOffsetX;
       if (labelWidth <= 0)
       {
         base.Render(timePassed);
@@ -320,7 +322,7 @@ namespace MediaPortal.GUI.Library
           break;
 
         case Alignment.ALIGN_CENTER:
-          x = _positionX + ((_width/2) - (labelWidth/2));
+          x = _positionX + ((_width / 2) - (labelWidth / 2));
           break;
       }
 
@@ -401,13 +403,13 @@ namespace MediaPortal.GUI.Library
           // If this links to another window go to the window.
           if (_hyperLinkWindowId >= 0)
           {
-            GUIWindowManager.ActivateWindow((int) _hyperLinkWindowId);
+            GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId);
             return;
           }
           // If this button corresponds to an action generate that action.
           if (ActionID >= 0)
           {
-            Action newaction = new Action((Action.ActionType) ActionID, 0, 0);
+            Action newaction = new Action((Action.ActionType)ActionID, 0, 0);
             GUIGraphicsContext.OnAction(newaction);
             return;
           }
@@ -422,7 +424,7 @@ namespace MediaPortal.GUI.Library
             {
               SelectedItem = 0;
             }
-            Label = (string) GetSubItem(SelectedItem);
+            Label = (string)GetSubItem(SelectedItem);
           }
 
           // send a message to anyone interested 
@@ -496,7 +498,7 @@ namespace MediaPortal.GUI.Library
 
       if (SubItemCount > 0)
       {
-        Label = (string) GetSubItem(SelectedItem);
+        Label = (string)GetSubItem(SelectedItem);
       }
       _labelControl.Width = _width;
       _labelControl.Height = _height;
@@ -905,7 +907,7 @@ namespace MediaPortal.GUI.Library
           {
             _selectedItem = 0;
           }
-          Label = (string) GetSubItem(_selectedItem);
+          Label = (string)GetSubItem(_selectedItem);
         }
         else
         {
@@ -916,7 +918,7 @@ namespace MediaPortal.GUI.Library
 
     private void DoContextMenu()
     {
-      IDialogbox dialog = (IDialogbox) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_MENU);
+      IDialogbox dialog = (IDialogbox)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 
       if (dialog == null)
       {
@@ -930,7 +932,7 @@ namespace MediaPortal.GUI.Library
       {
         if (item is MenuItem)
         {
-          dialog.Add(((MenuItem) item).Header as string);
+          dialog.Add(((MenuItem)item).Header as string);
         }
       }
 

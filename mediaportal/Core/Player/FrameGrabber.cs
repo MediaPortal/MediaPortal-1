@@ -48,9 +48,7 @@ namespace MediaPortal
 
     private static FrameGrabber instance = null;
 
-    private FrameGrabber()
-    {
-    }
+    private FrameGrabber() {}
 
     public static FrameGrabber GetInstance()
     {
@@ -169,8 +167,8 @@ namespace MediaPortal
           }
         }
       }
-      // The loss of the D3DX device or similar can cause exceptions, catch any such
-      // exception and report failure to GetCurrentImage
+        // The loss of the D3DX device or similar can cause exceptions, catch any such
+        // exception and report failure to GetCurrentImage
       catch (Exception e)
       {
         if (rgbSurface != null)

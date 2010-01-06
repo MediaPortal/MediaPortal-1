@@ -52,9 +52,7 @@ namespace SetupTv
     private bool showAdvancedSettings;
 
     public SetupTvSettingsForm()
-      : this(false)
-    {
-    }
+      : this(false) {}
 
     public SetupTvSettingsForm(bool ShowAdvancedSettings)
     {
@@ -149,7 +147,7 @@ namespace SetupTv
         AddSection(tvChannels);
         AddChildSection(tvChannels, new TvCombinations("TV Combinations"));
         AddChildSection(tvChannels, new TvChannelMapping());
-        
+
         RadioChannels radioChannels = new RadioChannels();
         AddSection(radioChannels);
         AddChildSection(radioChannels, new RadioCombinations("Radio Combinations"));
@@ -206,8 +204,10 @@ namespace SetupTv
       {
         int cardNo = 1;
         bool isLocal = (server.HostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() ||
-                        server.HostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() + "." 
-                            + System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName.ToLowerInvariant());
+                        server.HostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() + "."
+                        +
+                        System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName.
+                          ToLowerInvariant());
         bool DvbCheck = false;
         cardPage = new TvCards(server.HostName);
         cardPage.TvCardsChanged += OnTvCardsChanged;
@@ -252,7 +252,8 @@ namespace SetupTv
               case CardType.RadioWebStream:
                 cardName = String.Format("{0} {1}", cardNo, cardName);
                 InfoPage RadioWebStreamInfo = new InfoPage(cardName);
-                RadioWebStreamInfo.InfoText = "The RadioWebStream card does not have any options.\n\n\nYou can add your favourite radio webstreams under:\n\n --> 'Radio Channels', 'Add', 'Web-Stream' or by importing a playlist.";
+                RadioWebStreamInfo.InfoText =
+                  "The RadioWebStream card does not have any options.\n\n\nYou can add your favourite radio webstreams under:\n\n --> 'Radio Channels', 'Add', 'Web-Stream' or by importing a playlist.";
                 AddChildSection(cardPage, RadioWebStreamInfo, 1);
                 DvbCheck = true;
                 break;
@@ -289,7 +290,8 @@ namespace SetupTv
       bool isAnyUserTS;
       bool isRec;
       bool isUserTS;
-      bool isRecOrTS = RemoteControl.Instance.IsAnyCardRecordingOrTimeshifting(new User(), out isUserTS, out isAnyUserTS, out isRec);
+      bool isRecOrTS = RemoteControl.Instance.IsAnyCardRecordingOrTimeshifting(new User(), out isUserTS, out isAnyUserTS,
+                                                                               out isRec);
 
       if (!isAnyUserTS && !isRec && !isRecOrTS && !isUserTS)
       {
@@ -315,7 +317,8 @@ namespace SetupTv
       }
       else
       {
-        MessageBox.Show(this, "In order to apply new settings - please restart tvservice manually when done timeshifting / recording.");
+        MessageBox.Show(this,
+                        "In order to apply new settings - please restart tvservice manually when done timeshifting / recording.");
       }
     }
 
@@ -339,6 +342,7 @@ namespace SetupTv
         }
       }
     }
+
     public void RemoveAllChildSections(SectionSettings parentSection)
     {
       // Remove section from tree
@@ -412,7 +416,6 @@ namespace SetupTv
         treeNode.ImageIndex = imageIndex;
         treeNode.SelectedImageIndex = imageIndex;
         parentTreeNode.Nodes.Add(treeNode);
-
       }
 
       settingSections.Add(section.Text, treeNode);
@@ -447,7 +450,6 @@ namespace SetupTv
           {
             AddChildSection(pluginsRoot, settings);
             LoadChildSettingsFromNode(pluginsRoot, settings);
-
           }
           else
           {
@@ -517,9 +519,7 @@ namespace SetupTv
         {
           RemoteControl.Instance.EpgGrabberEnabled = false;
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
         //DatabaseManager.Instance.SaveChanges();
         //DatabaseManager.Instance.ClearQueryCache();
         Cursor = Cursors.WaitCursor;
@@ -556,9 +556,7 @@ namespace SetupTv
           RemoteControl.Instance.OnNewSchedule();
         }
       }
-      catch (Exception)
-      { }
-
+      catch (Exception) {}
     }
 
     public override void SettingsForm_Load(object sender, EventArgs e)
@@ -729,8 +727,8 @@ namespace SetupTv
       this.Name = "SetupTvSettingsForm";
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
+
     #endregion
   }
 }

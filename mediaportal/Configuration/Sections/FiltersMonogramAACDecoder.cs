@@ -50,9 +50,7 @@ namespace MediaPortal.Configuration.Sections
     /// Sets Monogram AAC decoder output & volume settings
     /// </summary>
     public FiltersMonogramAACDecoder()
-      : this("Monogram AAC Decoder")
-    {
-    }
+      : this("Monogram AAC Decoder") {}
 
     /// <summary>
     /// Will add configuration child to section tree
@@ -98,14 +96,14 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxSpeakerOutput = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.mpGroupBox1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.volumeTrackBar)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.volumeTrackBar)).BeginInit();
       this.SuspendLayout();
       // 
       // pictureBox1
       // 
-      this.pictureBox1.Image = ((System.Drawing.Image) (resources.GetObject("pictureBox1.Image")));
+      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
       this.pictureBox1.Location = new System.Drawing.Point(0, 2);
       this.pictureBox1.Name = "pictureBox1";
       this.pictureBox1.Size = new System.Drawing.Size(472, 60);
@@ -124,7 +122,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGradientLabel1.TextColor = System.Drawing.SystemColors.ControlText;
       this.mpGradientLabel1.TextFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
                                                                System.Drawing.FontStyle.Regular,
-                                                               System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+                                                               System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       // 
       // mpGroupBox1
       // 
@@ -216,10 +214,10 @@ namespace MediaPortal.Configuration.Sections
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "MonogramAACDecoderFilter";
       this.Size = new System.Drawing.Size(472, 408);
-      ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.volumeTrackBar)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.volumeTrackBar)).EndInit();
       this.ResumeLayout(false);
     }
 
@@ -238,14 +236,12 @@ namespace MediaPortal.Configuration.Sections
         {
           try
           {
-            regSpeakerOut = (Int32) subkey.GetValue("MixMode", 0);
-            regVolume = (Int32) subkey.GetValue("Volume", 0);
+            regSpeakerOut = (Int32)subkey.GetValue("MixMode", 0);
+            regVolume = (Int32)subkey.GetValue("Volume", 0);
             comboBoxSpeakerOutput.SelectedIndex = regSpeakerOut;
-            volumeTrackBar.Value = regVolume/100;
+            volumeTrackBar.Value = regVolume / 100;
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
     }
@@ -256,8 +252,8 @@ namespace MediaPortal.Configuration.Sections
       {
         if (subkey != null)
         {
-          subkey.SetValue("MixMode", (Int32) comboBoxSpeakerOutput.SelectedIndex);
-          subkey.SetValue("Volume", (Int32) volumeTrackBar.Value*100);
+          subkey.SetValue("MixMode", (Int32)comboBoxSpeakerOutput.SelectedIndex);
+          subkey.SetValue("Volume", (Int32)volumeTrackBar.Value * 100);
         }
       }
     }

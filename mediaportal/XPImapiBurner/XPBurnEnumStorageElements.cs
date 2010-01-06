@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 using XPBurn.COM;
-using STATSTG=XPBurn.COM.STATSTG;
+using STATSTG = XPBurn.COM.STATSTG;
 
 namespace XPBurn
 {
@@ -54,19 +54,19 @@ namespace XPBurn
 
       while ((returned < celt) && (fStreamEnumerator.MoveNext()))
       {
-        ((XPBurnIStream) fStreamEnumerator.Current).Stat(elt, CONSTS.STATFLAG_DEFAULT);
+        ((XPBurnIStream)fStreamEnumerator.Current).Stat(elt, CONSTS.STATFLAG_DEFAULT);
         returned++;
       }
 
       while ((returned < celt) && (fStorageEnumerator.MoveNext()))
       {
-        ((XPBurnIStorage) fStorageEnumerator.Current).Stat(elt, CONSTS.STATFLAG_DEFAULT);
+        ((XPBurnIStorage)fStorageEnumerator.Current).Stat(elt, CONSTS.STATFLAG_DEFAULT);
         returned++;
       }
 
       if (pceltFetched != null)
       {
-        *pceltFetched = (uint) returned;
+        *pceltFetched = (uint)returned;
       }
 
       if (returned == celt)
@@ -88,11 +88,11 @@ namespace XPBurn
     {
       if (fStreamEnumerator != null)
       {
-        ((IDisposable) fStreamEnumerator).Dispose();
+        ((IDisposable)fStreamEnumerator).Dispose();
       }
       if (fStorageEnumerator != null)
       {
-        ((IDisposable) fStorageEnumerator).Dispose();
+        ((IDisposable)fStorageEnumerator).Dispose();
       }
 
       fStreamEnumerator = fStorage.fStreams.Values.GetEnumerator();

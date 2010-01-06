@@ -46,7 +46,7 @@ namespace TvDatabase
       this.keywordName = keywordName;
       this.rating = rating;
       this.autoRecord = autoRecord;
-      this.searchIn = (int) searchIn;
+      this.searchIn = (int)searchIn;
     }
 
     /// <summary> 
@@ -126,11 +126,11 @@ namespace TvDatabase
     /// </summary>
     public SearchInType SearchIn
     {
-      get { return (SearchInType) searchIn; }
+      get { return (SearchInType)searchIn; }
       set
       {
-        isChanged |= (SearchInType) searchIn != value;
-        searchIn = (int) value;
+        isChanged |= (SearchInType)searchIn != value;
+        searchIn = (int)value;
       }
     }
 

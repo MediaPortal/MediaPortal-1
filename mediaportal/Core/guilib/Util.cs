@@ -33,9 +33,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// The (empty) constructor of the Util class.
     /// </summary>
-    public Util()
-    {
-    }
+    public Util() {}
 
     /// <summary>
     /// Takes a screenshot.

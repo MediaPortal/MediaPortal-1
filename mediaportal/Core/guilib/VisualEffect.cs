@@ -547,7 +547,7 @@ namespace MediaPortal.GUI.Library
       {
         if (_currentProcess == AnimationProcess.Reverse)
         {
-          _start = (uint) (time - (int) (_length*_amount)); // reverse direction of animation
+          _start = (uint)(time - (int)(_length * _amount)); // reverse direction of animation
         }
         else
         {
@@ -559,7 +559,7 @@ namespace MediaPortal.GUI.Library
       {
         if (_currentProcess == AnimationProcess.Normal)
         {
-          _start = (uint) (time - (int) (_length*(1 - _amount))); // turn around direction of animation
+          _start = (uint)(time - (int)(_length * (1 - _amount))); // turn around direction of animation
         }
         else if (_currentProcess == AnimationProcess.None)
         {
@@ -584,7 +584,7 @@ namespace MediaPortal.GUI.Library
         }
         else if (time - _start < _length + _delay)
         {
-          _amount = (float) (time - _start - _delay)/_length;
+          _amount = (float)(time - _start - _delay) / _length;
           _currentState = AnimationState.InProcess;
         }
         else
@@ -612,7 +612,7 @@ namespace MediaPortal.GUI.Library
       {
         if (time - _start < _length)
         {
-          _amount = 1.0f - (float) (time - _start)/_length;
+          _amount = 1.0f - (float)(time - _start) / _length;
           _currentState = AnimationState.InProcess;
         }
         else
@@ -671,29 +671,29 @@ namespace MediaPortal.GUI.Library
 
       if (_effect == EffectType.Fade)
       {
-        _matrix.SetFader(((float) (_endAlpha - _startAlpha)*offset + _startAlpha)*0.01f);
+        _matrix.SetFader(((float)(_endAlpha - _startAlpha) * offset + _startAlpha) * 0.01f);
       }
       else if (_effect == EffectType.Slide)
       {
-        _matrix.SetTranslation((_endX - _startX)*offset + _startX, (_endY - _startY)*offset + _startY, 0);
+        _matrix.SetTranslation((_endX - _startX) * offset + _startX, (_endY - _startY) * offset + _startY, 0);
       }
       else if (_effect == EffectType.RotateX)
       {
-        _matrix.SetXRotation(((_endX - _startX)*offset + _startX)*DEGREE_TO_RADIAN, _centerX, _centerY, 1.0f);
+        _matrix.SetXRotation(((_endX - _startX) * offset + _startX) * DEGREE_TO_RADIAN, _centerX, _centerY, 1.0f);
       }
       else if (_effect == EffectType.RotateY)
       {
-        _matrix.SetYRotation(((_endX - _startX)*offset + _startX)*DEGREE_TO_RADIAN, _centerX, _centerY, 1.0f);
+        _matrix.SetYRotation(((_endX - _startX) * offset + _startX) * DEGREE_TO_RADIAN, _centerX, _centerY, 1.0f);
       }
       else if (_effect == EffectType.RotateZ)
       {
-        _matrix.SetZRotation(((_endX - _startX)*offset + _startX)*DEGREE_TO_RADIAN, _centerX, _centerY,
+        _matrix.SetZRotation(((_endX - _startX) * offset + _startX) * DEGREE_TO_RADIAN, _centerX, _centerY,
                              GUIGraphicsContext.PixelRatio);
       }
       else if (_effect == EffectType.Zoom)
       {
-        float scaleX = ((_endX - _startX)*offset + _startX)*0.01f;
-        float scaleY = ((_endY - _startY)*offset + _startY)*0.01f;
+        float scaleX = ((_endX - _startX) * offset + _startX) * 0.01f;
+        float scaleY = ((_endY - _startY) * offset + _startY) * 0.01f;
         _matrix.SetScaler(scaleX, scaleY, _centerX, _centerY);
       }
     }
@@ -905,7 +905,7 @@ namespace MediaPortal.GUI.Library
       effect._length = _length;
       effect._delay = _delay;
       effect._isReversible = _isReversible;
-      effect._matrix = (TransformMatrix) _matrix.Clone();
+      effect._matrix = (TransformMatrix)_matrix.Clone();
       effect._tweener = _tweener;
       return effect;
     }

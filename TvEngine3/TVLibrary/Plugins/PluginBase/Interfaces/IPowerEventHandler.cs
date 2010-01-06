@@ -1,4 +1,5 @@
 #region Copyright (C) 2007-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2007-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,11 +20,10 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
-
-
 
 #endregion
 
@@ -33,9 +33,18 @@ namespace TvEngine.Interfaces
   //     Indicates the system's power status.
   public enum PowerEventType
   {
-    QuerySuspend, QueryStandBy, QuerySuspendFailed, QueryStandByFailed,
-    Suspend, StandBy, ResumeCritical, ResumeSuspend, ResumeStandBy, ResumeAutomatic
+    QuerySuspend,
+    QueryStandBy,
+    QuerySuspendFailed,
+    QueryStandByFailed,
+    Suspend,
+    StandBy,
+    ResumeCritical,
+    ResumeSuspend,
+    ResumeStandBy,
+    ResumeAutomatic
   }
+
   public delegate bool PowerEventHandler(PowerEventType powerStatus);
 
   public interface IPowerEventHandler

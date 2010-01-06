@@ -32,9 +32,7 @@ namespace MediaPortal.Hardware
   {
     #region Constructors
 
-    public DeviceCollection()
-    {
-    }
+    public DeviceCollection() {}
 
     #endregion Constructors
 
@@ -113,7 +111,7 @@ namespace MediaPortal.Hardware
 
     public Device this[int index]
     {
-      get { return (Device) List[index]; }
+      get { return (Device)List[index]; }
       set { List[index] = value; }
     }
 

@@ -64,9 +64,7 @@ namespace MediaPortal.Threading
 
     #region Constructors
 
-    public WorkQueue()
-    {
-    }
+    public WorkQueue() {}
 
     #endregion
 

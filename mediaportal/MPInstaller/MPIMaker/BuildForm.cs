@@ -73,9 +73,7 @@ namespace MediaPortal.MPInstaller
       }
     }
 
-    public void onbuild()
-    {
-    }
+    public void onbuild() {}
 
     private void Build_dialog_Load(object sender, EventArgs e)
     {
@@ -131,8 +129,6 @@ namespace MediaPortal.MPInstaller
       }
     }
 
-    private void button5_Click(object sender, EventArgs e)
-    {
-    }
+    private void button5_Click(object sender, EventArgs e) {}
   }
 }

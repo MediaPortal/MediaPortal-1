@@ -34,8 +34,7 @@ namespace MediaPortal.Dialogs
   /// </summary>
   public class GUIDialogCIMenu : GUIDialogMenu, IDialogbox, IRenderLayer
   {
-    [SkinControl(6)]
-    protected GUILabelControl lblBottom = null;
+    [SkinControl(6)] protected GUILabelControl lblBottom = null;
 
     public GUIDialogCIMenu()
     {
@@ -66,5 +65,4 @@ namespace MediaPortal.Dialogs
       listItems.Clear();
     }
   }
-
 }

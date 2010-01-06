@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.IO;
 using System.IO.Ports;
@@ -111,7 +111,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (this.DoDebug)
         {
           Log.Info("\nMODisplay.DisplayEQ(): Retrieved {0} samples of Equalizer data.",
-                   new object[] {this.EQSettings.EqFftData.Length/2});
+                   new object[] {this.EQSettings.EqFftData.Length / 2});
         }
         if (this.EQSettings.UseVUmeter || this.EQSettings.UseVUmeter2)
         {
@@ -200,9 +200,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.MOD.CloseDisplay(this._BackLightControl);
     }
 
-    public void DrawImage(Bitmap bitmap)
-    {
-    }
+    public void DrawImage(Bitmap bitmap) {}
 
     private void EQ_Update()
     {
@@ -311,8 +309,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.DisplaySettings.DisplayActionTime = settings.EnableDisplayActionTime;
       this.DisplaySettings.BlankDisplayWhenIdle = settings.BlankDisplayWhenIdle;
       this.DisplaySettings.BlankIdleDelay = settings.BlankIdleTime;
-      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay*0x989680;
-      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime*0x989680;
+      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay * 0x989680;
+      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime * 0x989680;
       this.DisplaySettings._Shutdown1 = Settings.Instance.Shutdown1;
       this.DisplaySettings._Shutdown2 = Settings.Instance.Shutdown2;
       this.EQSettings.UseVUmeter = settings.VUmeter;
@@ -330,8 +328,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.EQSettings._EQTitleShowTime = settings.EQTitleShowTime;
       this.EQSettings._EqUpdateDelay = (this.EQSettings._EQ_Restrict_FPS == 0)
                                          ? 0
-                                         : ((0x989680/this.EQSettings._EQ_Restrict_FPS) -
-                                            (0xf4240/this.EQSettings._EQ_Restrict_FPS));
+                                         : ((0x989680 / this.EQSettings._EQ_Restrict_FPS) -
+                                            (0xf4240 / this.EQSettings._EQ_Restrict_FPS));
       Log.Info("MatrixMX.LoadAdvancedSettings(): Extensive Logging: {0}",
                new object[] {Settings.Instance.ExtensiveLogging});
       Log.Info("MatrixMX.LoadAdvancedSettings(): Device Port: {0}", new object[] {Settings.Instance.Port});
@@ -378,7 +376,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options - Blank display when idle: {0}",
                new object[] {this.DisplaySettings.BlankDisplayWhenIdle});
       Log.Info("MatrixMX.LoadAdvancedSettings(): Advanced options -     blank display after: {0} seconds",
-               new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
+               new object[] {this.DisplaySettings._BlankIdleTimeout / 0xf4240L});
       Log.Info("MatrixMX.LoadAdvancedSettings(): Setting - Audio using ASIO: {0}",
                new object[] {this.EQSettings._AudioUseASIO});
       Log.Info("MatrixMX.LoadAdvancedSettings(): Completed");
@@ -490,9 +488,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters)
-    {
-    }
+    public void SetCustomCharacters(int[][] customCharacters) {}
 
     public void SetLine(int line, string message)
     {
@@ -945,7 +941,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("MatrixMX.AdvancedSettings.Load(): Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_MatrixMX.xml"));
-          settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
+          settings = (AdvancedSettings)serializer.Deserialize(xmlReader);
           xmlReader.Close();
         }
         else
@@ -979,7 +975,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                  Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 2;
-        serializer.Serialize((XmlWriter) writer, ToSave);
+        serializer.Serialize((XmlWriter)writer, ToSave);
         writer.Close();
         Log.Info("MatrixMX.AdvancedSettings.Save(): completed");
       }
@@ -1202,7 +1198,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!(!this._isOpen | !this.commPort.IsOpen))
         {
-          this.commPort.Write(new byte[] {0xfe, 0x42, (byte) MinutesTillOff}, 0, 3);
+          this.commPort.Write(new byte[] {0xfe, 0x42, (byte)MinutesTillOff}, 0, 3);
         }
       }
 
@@ -1248,7 +1244,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!(!this._isOpen | !this.commPort.IsOpen))
         {
-          this.commPort.Write(new byte[] {0xfe, 0x47, (byte) column, (byte) row}, 0, 4);
+          this.commPort.Write(new byte[] {0xfe, 0x47, (byte)column, (byte)row}, 0, 4);
         }
       }
 
@@ -1271,7 +1267,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff))
         {
-          this.commPort.Write(new byte[] {0xfe, 0x7c, (byte) column, (byte) row, (byte) direction, (byte) length}, 0, 6);
+          this.commPort.Write(new byte[] {0xfe, 0x7c, (byte)column, (byte)row, (byte)direction, (byte)length}, 0, 6);
         }
       }
 
@@ -1279,7 +1275,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff))
         {
-          this.commPort.Write(new byte[] {0xfe, 0x3d, (byte) column, (byte) height}, 0, 4);
+          this.commPort.Write(new byte[] {0xfe, 0x3d, (byte)column, (byte)height}, 0, 4);
         }
       }
 
@@ -1342,7 +1338,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!(!this._isOpen | !this.commPort.IsOpen))
         {
-          this.commPort.Write(new byte[] {0xfe, 0x7e, (byte) _mode}, 0, 3);
+          this.commPort.Write(new byte[] {0xfe, 0x7e, (byte)_mode}, 0, 3);
         }
       }
 
@@ -1366,7 +1362,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!(!this._isOpen | !this.commPort.IsOpen))
         {
-          this.commPort.Write(new byte[] {0xfe, 0x55, (byte) _time}, 0, 3);
+          this.commPort.Write(new byte[] {0xfe, 0x55, (byte)_time}, 0, 3);
         }
       }
 
@@ -1410,7 +1406,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!(((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff) | !this._UseBacklight))
         {
-          this.commPort.Write(new byte[] {0xfe, 0x99, (byte) brightness}, 0, 3);
+          this.commPort.Write(new byte[] {0xfe, 0x99, (byte)brightness}, 0, 3);
         }
       }
 
@@ -1418,7 +1414,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!(((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff) | !this._UseContrast))
         {
-          this.commPort.Write(new byte[] {0xfe, 80, (byte) contrast}, 0, 3);
+          this.commPort.Write(new byte[] {0xfe, 80, (byte)contrast}, 0, 3);
         }
       }
 
@@ -1441,7 +1437,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (i < _message.Length)
             {
-              this.commPort.Write(new byte[] {(byte) _message[i]}, 0, 1);
+              this.commPort.Write(new byte[] {(byte)_message[i]}, 0, 1);
             }
             else
             {
@@ -1538,7 +1534,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       private void WhenDataReceived(object sender, SerialDataReceivedEventArgs e)
       {
-        byte eventCode = (byte) this.commPort.ReadByte();
+        byte eventCode = (byte)this.commPort.ReadByte();
         if (!this._useCustomKeypadMapping)
         {
           Action action;

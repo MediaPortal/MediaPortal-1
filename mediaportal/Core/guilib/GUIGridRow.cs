@@ -100,9 +100,9 @@ namespace MediaPortal.GUI.Library
         }
         if (RelativeHeight > 0)
         {
-          float height = ((float) GridControl.Height)/((float) (GridControl.Count));
-          height *= (((float) RelativeHeight)/100.0f);
-          return (int) height;
+          float height = ((float)GridControl.Height) / ((float)(GridControl.Count));
+          height *= (((float)RelativeHeight) / 100.0f);
+          return (int)height;
         }
         return _calculatedHeight;
       }

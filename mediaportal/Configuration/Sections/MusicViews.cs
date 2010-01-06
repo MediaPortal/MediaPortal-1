@@ -86,14 +86,10 @@ namespace MediaPortal.Configuration.Sections
                                 };
 
     public MusicViews()
-      : this("Music Views")
-    {
-    }
+      : this("Music Views") {}
 
     public MusicViews(string name)
-      : base(name)
-    {
-    }
+      : base(name) {}
 
     public override void LoadSettings()
     {

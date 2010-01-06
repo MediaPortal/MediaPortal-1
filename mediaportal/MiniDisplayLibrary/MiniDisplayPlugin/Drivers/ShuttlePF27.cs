@@ -92,7 +92,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     public void Configure()
     {
       MessageBox.Show("No advanced configuration", "Information",
-        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                      MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     /// <summary>
@@ -115,9 +115,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void DrawImage(Bitmap bitmap)
-    {
-    }
+    public void DrawImage(Bitmap bitmap) {}
 
     public string ErrorMessage
     {
@@ -145,9 +143,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       get { return "Shuttle PF27"; }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters)
-    {
-    }
+    public void SetCustomCharacters(int[][] customCharacters) {}
 
     /// <summary>
     /// Displays the message on the indicated line.
@@ -179,8 +175,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
         // Show music icon if on any music screen
         if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC ||
-           (GUIWindowManager.ActiveWindow >= (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST &&
-            GUIWindowManager.ActiveWindow <= (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC))
+            (GUIWindowManager.ActiveWindow >= (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST &&
+             GUIWindowManager.ActiveWindow <= (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC))
         {
           icons += (uint)Icon.Music;
         }
@@ -193,8 +189,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
         // Show television icon if on any tv screen
         if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TV ||
-           (GUIWindowManager.ActiveWindow >= (int)GUIWindow.Window.WINDOW_TVGUIDE &&
-            GUIWindowManager.ActiveWindow <= (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS))
+            (GUIWindowManager.ActiveWindow >= (int)GUIWindow.Window.WINDOW_TVGUIDE &&
+             GUIWindowManager.ActiveWindow <= (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS))
         {
           icons += (uint)Icon.Television;
         }
@@ -255,7 +251,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         // TODO: Volume does not seem to be linear
         //       How is the volume calculated for the bar show in GUI?
         byte volume = (byte)(VolumeHandler.Instance.Volume * VolumeMaximum
-          / VolumeHandler.Instance.Maximum);
+                             / VolumeHandler.Instance.Maximum);
 
         SetIconsAndVolume(icons, volume);
       }
@@ -281,9 +277,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <param name="_contrastLevel">Contrast level</param>
     /// <param name="_blankOnExit">Blank on exit?</param>
     public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
-                      bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
-    {
-    }
+                      bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit) {}
 
     /// <summary>
     /// Shuttle PF27 display does not support graphics.
@@ -320,14 +314,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private void ClearScreen()
     {
       LogDebug("Clearing screen");
-      SendMessage(MessageType.ClearScreen, new byte[] { (byte)MessageType.ClearScreen });
+      SendMessage(MessageType.ClearScreen, new byte[] {(byte)MessageType.ClearScreen});
       LogDebug("Clearing screen finished");
     }
 
     private void ResetCursor()
     {
       LogDebug("Resetting cursor");
-      SendMessage(MessageType.ClearScreen, new byte[] { (byte)MessageType.ResetCursor });
+      SendMessage(MessageType.ClearScreen, new byte[] {(byte)MessageType.ResetCursor});
       LogDebug("Resetting cursor finished");
     }
 
@@ -373,18 +367,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       LogDebug("Setting and activating clock");
       DateTime now = DateTime.Now;
-      SendMessage(MessageType.SetClock, new byte[] {
-        CodeValue(now.Second),
-        CodeValue(now.Minute),
-        CodeValue(now.Hour),
-        CodeValue((int)now.DayOfWeek),
-        CodeValue(now.Day),
-        CodeValue(now.Month),
-        CodeValue(now.Year % 100)
-      });
+      SendMessage(MessageType.SetClock, new byte[]
+                                          {
+                                            CodeValue(now.Second),
+                                            CodeValue(now.Minute),
+                                            CodeValue(now.Hour),
+                                            CodeValue((int)now.DayOfWeek),
+                                            CodeValue(now.Day),
+                                            CodeValue(now.Month),
+                                            CodeValue(now.Year % 100)
+                                          });
       // Give display time to set clock
       Thread.Sleep(50);
-      SendMessage(MessageType.ActivateClock, new byte[] { (byte)MessageType.ActivateClock });
+      SendMessage(MessageType.ActivateClock, new byte[] {(byte)MessageType.ActivateClock});
       LogDebug("Setting and activating clock finished");
     }
 

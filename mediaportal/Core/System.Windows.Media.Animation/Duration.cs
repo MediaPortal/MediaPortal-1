@@ -32,9 +32,7 @@ namespace System.Windows.Media.Animation
   {
     #region Constructors
 
-    public Duration()
-    {
-    }
+    public Duration() {}
 
     public Duration(double duration)
     {

@@ -50,7 +50,10 @@ namespace MediaPortal.MPInstaller
     // for testing only 
     //public const string DEFAULT_UPDATE_SITE = "http://testbase001.team-mediaportal.com";
 
-    public static string[] CategoryListing ={ "Audio/Radio", "Automation", "EPG/TV", "Games", "Input", "Others", "PIM", "Skins", "Utilities", "Video/Movies", "Web", "TV Logos" };
+    public static string[] CategoryListing = {
+                                               "Audio/Radio", "Automation", "EPG/TV", "Games", "Input", "Others", "PIM",
+                                               "Skins", "Utilities", "Video/Movies", "Web", "TV Logos"
+                                             };
 
 
     public const string PLUGIN_TYPE = "Plugin";
@@ -75,25 +78,25 @@ namespace MediaPortal.MPInstaller
     public const string INTERNAL_TYPE = "Internal";
     public const string INTERNAL_PLUGIN_SUBTYPE = "Plugin";
 
-    string _builFileName = string.Empty;
-    string _projectFileName = string.Empty;
-    string _author = string.Empty;
-    string _update = DEFAULT_UPDATE_SITE;
-    string _name = string.Empty;
-    string _version = string.Empty;
-    string _description = string.Empty;
-    string _group = string.Empty;
-    string _release = string.Empty;
+    private string _builFileName = string.Empty;
+    private string _projectFileName = string.Empty;
+    private string _author = string.Empty;
+    private string _update = DEFAULT_UPDATE_SITE;
+    private string _name = string.Empty;
+    private string _version = string.Empty;
+    private string _description = string.Empty;
+    private string _group = string.Empty;
+    private string _release = string.Empty;
     private string script = string.Empty;
 
-    Image _image = null;
+    private Image _image = null;
     public ArrayList Uninstall = new ArrayList();
     public ArrayList FileList = new ArrayList();
     public List<LanguageString> Language;
     public List<ActionInfo> Actions;
     public List<GroupString> SetupGroups;
     public List<GroupStringMapping> SetupGroupsMappig;
-    
+
     public MPinstallerStruct()
     {
       Language = new List<LanguageString>();
@@ -101,7 +104,6 @@ namespace MediaPortal.MPInstaller
       ProjectProperties = new ProjectPropertiesClass();
       SetupGroups = new List<GroupString>();
       SetupGroupsMappig = new List<GroupStringMapping>();
-      
     }
 
     private ProjectPropertiesClass projectPropertise;
@@ -118,7 +120,8 @@ namespace MediaPortal.MPInstaller
       get { return _update; }
       set
       {
-        if (String.IsNullOrEmpty(value)) _update = DEFAULT_UPDATE_SITE; else _update = value.Trim();
+        if (String.IsNullOrEmpty(value)) _update = DEFAULT_UPDATE_SITE;
+        else _update = value.Trim();
       }
     }
 
@@ -134,7 +137,8 @@ namespace MediaPortal.MPInstaller
       get { return _version; }
       set
       {
-        if (value == null) _version = ""; else _version = value;
+        if (value == null) _version = "";
+        else _version = value;
       }
     }
 
@@ -161,21 +165,25 @@ namespace MediaPortal.MPInstaller
       get { return _group; }
       set { _group = value; }
     }
+
     public string Description
     {
       get { return _description; }
       set { _description = value; }
     }
+
     public string Name
     {
       get { return _name; }
       set { _name = value; }
     }
+
     public string BuildFileName
     {
       get { return _builFileName; }
       set { _builFileName = value; }
     }
+
     public string ProjectFileName
     {
       get { return _projectFileName; }
@@ -187,7 +195,9 @@ namespace MediaPortal.MPInstaller
       FileList.Clear();
       for (int i = 0; i < lst.Items.Count; i++)
       {
-        FileList.Add(new MPIFileList(lst.Items[i].SubItems[3].Text, lst.Items[i].SubItems[1].Text, lst.Items[i].SubItems[2].Text, lst.Items[i].SubItems[4].Text, lst.Items[i].SubItems[5].Text));
+        FileList.Add(new MPIFileList(lst.Items[i].SubItems[3].Text, lst.Items[i].SubItems[1].Text,
+                                     lst.Items[i].SubItems[2].Text, lst.Items[i].SubItems[4].Text,
+                                     lst.Items[i].SubItems[5].Text));
       }
     }
 
@@ -318,9 +328,9 @@ namespace MediaPortal.MPInstaller
           settings.OmitXmlDeclaration = true;
           // Create the XmlWriter object and write some content.
           writer = XmlWriter.Create(myStream, settings);
-					//writer.WriteStartElement("MPInstaller");  => this is causing mantis bug 2324: 1.1.0 MPI tool is not compatible with 1.0.x 
-        	writer.WriteStartElement("MPinstaler");
-					writer.WriteElementString("ver", "1.00.000");
+          //writer.WriteStartElement("MPInstaller");  => this is causing mantis bug 2324: 1.1.0 MPI tool is not compatible with 1.0.x 
+          writer.WriteStartElement("MPinstaler");
+          writer.WriteElementString("ver", "1.00.000");
           writer.WriteStartElement("FileList");
           for (int i = 0; i < this.FileList.Count; i++)
           {
@@ -339,10 +349,10 @@ namespace MediaPortal.MPInstaller
             writer.WriteElementString("FileName", Path.GetFileName(it.FileName));
             writer.WriteElementString("Type", it.Type);
             writer.WriteElementString("SubType", it.SubType);
-            writer.WriteElementString("Source", RelativePath(fil,it.FileName));
+            writer.WriteElementString("Source", RelativePath(fil, it.FileName));
             writer.WriteElementString("Id", it.ID);
             writer.WriteElementString("Option", it.Option);
-            writer.WriteElementString("Guid",it.GUID );
+            writer.WriteElementString("Guid", it.GUID);
             writer.WriteEndElement();
           }
           writer.WriteEndElement();
@@ -386,11 +396,11 @@ namespace MediaPortal.MPInstaller
           writer.WriteEndElement();
           writer.WriteStartElement("Option");
           writer.WriteElementString("BuildFileName", this.BuildFileName);
-					//this is causing mantis bug 2324: 1.1.0 MPI tool is not compatible with 1.0.x 
-					//writer.WriteElementString("ProjectFileName", Path.GetFullPath(this.ProjectFileName));
+          //this is causing mantis bug 2324: 1.1.0 MPI tool is not compatible with 1.0.x 
+          //writer.WriteElementString("ProjectFileName", Path.GetFullPath(this.ProjectFileName));
           //writer.WriteElementString("ProjectName", this.Name);
-					writer.WriteElementString("ProiectFileName", Path.GetFullPath(this.ProjectFileName));
-					writer.WriteElementString("ProiectName", this.Name);
+          writer.WriteElementString("ProiectFileName", Path.GetFullPath(this.ProjectFileName));
+          writer.WriteElementString("ProiectName", this.Name);
           writer.WriteElementString("Author", this.Author);
           writer.WriteElementString("UpdateURL", this.UpdateURL);
           writer.WriteElementString("Version", this.Version);
@@ -415,7 +425,6 @@ namespace MediaPortal.MPInstaller
             writer.Close();
         }
         myStream.Close();
-
       }
       return true;
     }
@@ -458,9 +467,9 @@ namespace MediaPortal.MPInstaller
           if (File.Exists(ProjectFileName))
           {
             sr = new StreamReader(Path.GetFullPath(ProjectFileName));
-						//this is causing mantis bug 2324: 1.1.0 MPI tool is not compatible with 1.0.x 
+            //this is causing mantis bug 2324: 1.1.0 MPI tool is not compatible with 1.0.x 
             //zip.AddFileStream("installer.xmp", "", sr.BaseStream);
-						zip.AddFileStream("instaler.xmp", "", sr.BaseStream);
+            zip.AddFileStream("instaler.xmp", "", sr.BaseStream);
           }
           else ls.Items.Add("Error : Project file not found !");
 
@@ -488,13 +497,13 @@ namespace MediaPortal.MPInstaller
         ls.Items.Add("exception: " + ex1); // Probably due to file access error
       }
     }
-    
-    string RelativePath(string refpath, string file)
+
+    private string RelativePath(string refpath, string file)
     {
       return Path.GetFullPath(file).Replace(Path.GetDirectoryName(refpath) + @"\", "");
     }
 
-    string AbsolutePath(string refpath, string file)
+    private string AbsolutePath(string refpath, string file)
     {
       if (!Path.IsPathRooted(file))
       {
@@ -524,12 +533,12 @@ namespace MediaPortal.MPInstaller
         if (node_guid != null)
           str_guid = nodefile.SelectSingleNode("Guid").InnerText;
         this.FileList.Add(new MPIFileList(
-               AbsolutePath(fil,t_path),
-               nodefile.SelectSingleNode("Type").InnerText,
-               nodefile.SelectSingleNode("SubType").InnerText,
-               nodefile.SelectSingleNode("Id").InnerText,
-               nodefile.SelectSingleNode("Option").InnerText,
-               str_guid));
+                            AbsolutePath(fil, t_path),
+                            nodefile.SelectSingleNode("Type").InnerText,
+                            nodefile.SelectSingleNode("SubType").InnerText,
+                            nodefile.SelectSingleNode("Id").InnerText,
+                            nodefile.SelectSingleNode("Option").InnerText,
+                            str_guid));
       }
       XmlNodeList langList = ver.SelectNodes("StringList/string");
       foreach (XmlNode langnode in langList)
@@ -555,7 +564,7 @@ namespace MediaPortal.MPInstaller
       foreach (XmlNode groupnode in groupmapList)
       {
         SetupGroupsMappig.Add(new GroupStringMapping(groupnode.Attributes["Id"].Value,
-                                        AbsolutePath(fil,groupnode.Attributes["FileName"].Value)));
+                                                     AbsolutePath(fil, groupnode.Attributes["FileName"].Value)));
       }
       XmlNode nodeoption = ver.SelectSingleNode("Option");
       this.BuildFileName = nodeoption.SelectSingleNode("BuildFileName").InnerText;
@@ -647,7 +656,6 @@ namespace MediaPortal.MPInstaller
 
     public bool FindFileInGroup(string group, string file)
     {
-
       for (int i = 0; i < SetupGroupsMappig.Count; i++)
       {
         if (SetupGroupsMappig[i].FileName == file && SetupGroupsMappig[i].Id == group)
@@ -686,28 +694,27 @@ namespace MediaPortal.MPInstaller
           case PLUGIN_TAGREADER_SUBTYPE:
             ret += "TagReaders";
             break;
-
         }
-        ret += @"\" ;
+        ret += @"\";
       }
 
       if (flst.Type == SKIN_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" ;
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\";
       }
       if (flst.Type == SKIN_MEDIA_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\" ;
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\";
       }
 
       if (flst.Type == SKIN_SOUNDS_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Sounds" + @"\" ;
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Sounds" + @"\";
       }
 
       if (flst.Type == SKIN_ANIMATIONS_TYPE)
       {
-        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\" + "Animations" + @"\" ;
+        ret = "Release" + @"\" + "Skin" + @"\" + flst.SubType + @"\" + "Media" + @"\" + "Animations" + @"\";
       }
 
       if (flst.Type == SKIN_TETRIS_TYPE)
@@ -717,23 +724,23 @@ namespace MediaPortal.MPInstaller
 
       if (flst.Type == TEXT_TYPE)
       {
-        ret = "Release" + @"\" + "Text" + @"\" + flst.SubType + @"\" ;
+        ret = "Release" + @"\" + "Text" + @"\" + flst.SubType + @"\";
       }
 
       if (flst.Type == THUMBS_TYPE)
       {
-        ret = "Release" + @"\" + "Thumbs" + @"\" + flst.SubType + @"\" ;
+        ret = "Release" + @"\" + "Thumbs" + @"\" + flst.SubType + @"\";
       }
       if (flst.Type == OTHER_TYPE)
       {
-        ret = "Release" + @"\" + "Other" + @"\" ;
+        ret = "Release" + @"\" + "Other" + @"\";
       }
 
       if (flst.Type == INTERNAL_TYPE)
       {
         ret = "Internal" + @"\" + flst.SubType + @"\";
       }
-      
+
       if (flst.Type == SKIN_SYSTEMFONT_TYPE)
       {
         ret = "System_Font" + @"\" + flst.SubType + @"\";
@@ -812,7 +819,6 @@ namespace MediaPortal.MPInstaller
           case PLUGIN_TAGREADER_SUBTYPE:
             ret += "TagReaders";
             break;
-
         }
         ret += @"\";
       }
@@ -849,20 +855,19 @@ namespace MediaPortal.MPInstaller
       {
         if (String.IsNullOrEmpty(flst.SubType.Trim()))
           ret = Config.GetFolder(Config.Dir.Base) + @"\";
+        else if (flst.SubType.StartsWith("%"))
+        {
+          ret = flst.SubType;
+          foreach (Config.Dir option in Enum.GetValues(typeof (Config.Dir)))
+          {
+            ret = ret.Replace("%" + option.ToString() + "%", Config.GetFolder(option));
+          }
+          ret += @"\";
+        }
         else
-          if (flst.SubType.StartsWith("%"))
-          {
-            ret = flst.SubType;
-            foreach (Config.Dir option in Enum.GetValues(typeof(Config.Dir)))
-            {
-              ret = ret.Replace("%" + option.ToString() + "%", Config.GetFolder(option));
-            }
-            ret += @"\";
-          }
-          else
-          {
-            ret = Config.GetFolder(Config.Dir.Base) + @"\" + flst.SubType + @"\";
-          }
+        {
+          ret = Config.GetFolder(Config.Dir.Base) + @"\" + flst.SubType + @"\";
+        }
       }
       if (flst.Type == TEXT_TYPE)
       {
@@ -879,22 +884,22 @@ namespace MediaPortal.MPInstaller
         ret += flst.FileProperties.OutputFileName;
       return ret;
     }
-
   }
 
   public class MPIFileList
   {
-    string _FileName = string.Empty;
-    string _Type = string.Empty;
-    string _SubType = string.Empty;
-    string _Id = string.Empty;
-    string _Op = string.Empty;
-    string _Guid = string.Empty;
+    private string _FileName = string.Empty;
+    private string _Type = string.Empty;
+    private string _SubType = string.Empty;
+    private string _Id = string.Empty;
+    private string _Op = string.Empty;
+    private string _Guid = string.Empty;
     public FilePropertiesClass FileProperties = new FilePropertiesClass();
 
     public MPIFileList()
     {
-      FileName = string.Empty; ;
+      FileName = string.Empty;
+      ;
       Type = string.Empty;
       SubType = string.Empty;
       ID = string.Empty;
@@ -912,7 +917,7 @@ namespace MediaPortal.MPInstaller
       FilePropertiesClass FileProperties = new FilePropertiesClass();
     }
 
-    public MPIFileList(string fn, string ty, string sty, string i,string o)
+    public MPIFileList(string fn, string ty, string sty, string i, string o)
     {
       FileName = fn;
       Type = ty;
@@ -921,7 +926,7 @@ namespace MediaPortal.MPInstaller
       Option = o;
       FilePropertiesClass FileProperties = new FilePropertiesClass();
     }
-    
+
     public MPIFileList(string fn, string ty, string sty, string i, string o, string g)
     {
       FileName = fn;
@@ -932,6 +937,7 @@ namespace MediaPortal.MPInstaller
       GUID = g;
       FilePropertiesClass FileProperties = new FilePropertiesClass();
     }
+
     public string FileName
     {
       get { return _FileName; }
@@ -951,7 +957,12 @@ namespace MediaPortal.MPInstaller
 
     public bool SkinType
     {
-      get { return this.Type == MPinstallerStruct.SKIN_TYPE || this.Type == MPinstallerStruct.SKIN_MEDIA_TYPE || this.Type == MPinstallerStruct.SKIN_SOUNDS_TYPE || this.Type == MPinstallerStruct.SKIN_ANIMATIONS_TYPE || this.Type == MPinstallerStruct.SKIN_TETRIS_TYPE; }
+      get
+      {
+        return this.Type == MPinstallerStruct.SKIN_TYPE || this.Type == MPinstallerStruct.SKIN_MEDIA_TYPE ||
+               this.Type == MPinstallerStruct.SKIN_SOUNDS_TYPE || this.Type == MPinstallerStruct.SKIN_ANIMATIONS_TYPE ||
+               this.Type == MPinstallerStruct.SKIN_TETRIS_TYPE;
+      }
     }
 
     public string SubType
@@ -959,6 +970,7 @@ namespace MediaPortal.MPInstaller
       get { return _SubType; }
       set { _SubType = value; }
     }
+
     public string ID
     {
       get { return _Id; }
@@ -967,10 +979,7 @@ namespace MediaPortal.MPInstaller
 
     public string GUID
     {
-      get
-      {
-        return _Guid;
-      }
+      get { return _Guid; }
       set { _Guid = value; }
     }
 
@@ -991,7 +1000,6 @@ namespace MediaPortal.MPInstaller
       else
         GUID = string.Empty;
     }
-
   }
 
   public class UninstallInfo
@@ -1004,11 +1012,13 @@ namespace MediaPortal.MPInstaller
       Path = System.IO.Path.GetFullPath(fil);
       Date = System.IO.File.GetCreationTime(fil);
     }
+
     public UninstallInfo(string fil, string dt)
     {
       Path = fil;
       Date = DateTime.FromFileTime(long.Parse(dt));
     }
+
     public DateTime Date
     {
       get { return _date; }
@@ -1020,7 +1030,6 @@ namespace MediaPortal.MPInstaller
       get { return _path; }
       set { _path = value; }
     }
-
   }
 
   public class LanguageString
@@ -1039,6 +1048,7 @@ namespace MediaPortal.MPInstaller
       prefix = string.Empty;
       sufix = string.Empty;
     }
+
     public LanguageString(string lang, string dc, string str, string pre, string su)
     {
       language = lang;
@@ -1047,6 +1057,7 @@ namespace MediaPortal.MPInstaller
       prefix = pre;
       sufix = su;
     }
+
     public LanguageString()
     {
       language = string.Empty;
@@ -1081,7 +1092,7 @@ namespace MediaPortal.MPInstaller
         // If x is not null...
         //
         if (y == null)
-        // ...and y is null, x is greater.
+          // ...and y is null, x is greater.
         {
           return 1;
         }
@@ -1099,7 +1110,6 @@ namespace MediaPortal.MPInstaller
           {
             return (x.language.CompareTo(y.language));
           }
-
         }
       }
     }
@@ -1110,12 +1120,14 @@ namespace MediaPortal.MPInstaller
     public String Place;
     public int Id;
     public String Command;
+
     public ActionInfo(string p, int i, string c)
     {
       Place = p;
       Id = i;
       Command = c;
     }
+
     public bool Equals(ActionInfo ac)
     {
       if (Place == ac.Place && Id == ac.Id)
@@ -1154,7 +1166,7 @@ namespace MediaPortal.MPInstaller
       }
     }
 
-    override public string ToString()
+    public override string ToString()
     {
       string x_ret = string.Empty;
       switch (Place)
@@ -1177,9 +1189,9 @@ namespace MediaPortal.MPInstaller
 
   public class GroupString
   {
-    string _id;
-    string _name;
-    bool _checked;
+    private string _id;
+    private string _name;
+    private bool _checked;
 
     public GroupString()
     {
@@ -1194,26 +1206,29 @@ namespace MediaPortal.MPInstaller
       Name = wname;
       Checked = false;
     }
-    [System.Xml.Serialization.XmlAttribute] 
+
+    [System.Xml.Serialization.XmlAttribute]
     public string Id
     {
       get { return _id; }
       set { _id = value; }
     }
-    [System.Xml.Serialization.XmlAttribute] 
+
+    [System.Xml.Serialization.XmlAttribute]
     public string Name
     {
       get { return _name; }
       set { _name = value; }
     }
-    [System.Xml.Serialization.XmlAttribute] 
+
+    [System.Xml.Serialization.XmlAttribute]
     public bool Checked
     {
       get { return _checked; }
       set { _checked = value; }
     }
 
-    override public string ToString()
+    public override string ToString()
     {
       return Id + " - " + Name;
     }
@@ -1221,23 +1236,25 @@ namespace MediaPortal.MPInstaller
 
   public class GroupStringMapping
   {
-    string _id;
-    string _filename;
+    private string _id;
+    private string _filename;
+
     public GroupStringMapping(string wid, string wname)
     {
       Id = wid;
       FileName = wname;
     }
+
     public string Id
     {
       get { return _id; }
       set { _id = value; }
     }
+
     public string FileName
     {
       get { return _filename; }
       set { _filename = value; }
     }
-
   }
 }

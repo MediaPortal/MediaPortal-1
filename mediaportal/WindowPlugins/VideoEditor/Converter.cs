@@ -133,9 +133,7 @@ namespace WindowPlugins.VideoEditor
                       }
                     }
                   }
-                  catch
-                  {
-                  }
+                  catch {}
                   Thread.Sleep(20);
                 }
               }
@@ -151,9 +149,7 @@ namespace WindowPlugins.VideoEditor
           OnProgress(100);
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
 
     public bool HasMencoder

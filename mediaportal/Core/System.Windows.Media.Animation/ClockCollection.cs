@@ -31,9 +31,7 @@ namespace System.Windows.Media.Animation
   {
     #region Constructors
 
-    public ClockCollection()
-    {
-    }
+    public ClockCollection() {}
 
     public ClockCollection(Clock parent)
     {
@@ -146,7 +144,7 @@ namespace System.Windows.Media.Animation
 
     public Clock this[int index]
     {
-      get { return (Clock) List[index]; }
+      get { return (Clock)List[index]; }
       set { List[index] = value; }
     }
 

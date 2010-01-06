@@ -47,6 +47,7 @@ namespace MediaPortal.WebEPG
     #endregion
 
     #region Constructors/Destructors
+
     public RequestBuilder(HTTPRequest baseRequest, WorldDateTime startTime, RequestData data)
     {
       _baseRequest = baseRequest;
@@ -134,20 +135,20 @@ namespace MediaPortal.WebEPG
     public bool HasDate()
     {
       if (
-      _baseRequest.HasTag("[DD]") ||
-      _baseRequest.HasTag("[_D]") ||
-      _baseRequest.HasTag("[MM]") ||
-      _baseRequest.HasTag("[_M]") ||
-      _baseRequest.HasTag("[YYYY]") ||
-      _baseRequest.HasTag("[MONTH]") ||
-      _baseRequest.HasTag("[DAY_OF_WEEK]") ||
-      _baseRequest.HasTag("[WEEKDAY]") ||
-      _baseRequest.HasTag("[DAY_NAME]") ||
-      _baseRequest.HasTag("[DAY_OFFSET]") ||
-      _baseRequest.HasTag("[EPOCH_TIME]") ||
-      _baseRequest.HasTag("[EPOCH_DATE]") ||
-      _baseRequest.HasTag("[DAYS_SINCE]") ||
-      _baseRequest.HasTag("[DAYOFYEAR]"))
+        _baseRequest.HasTag("[DD]") ||
+        _baseRequest.HasTag("[_D]") ||
+        _baseRequest.HasTag("[MM]") ||
+        _baseRequest.HasTag("[_M]") ||
+        _baseRequest.HasTag("[YYYY]") ||
+        _baseRequest.HasTag("[MONTH]") ||
+        _baseRequest.HasTag("[DAY_OF_WEEK]") ||
+        _baseRequest.HasTag("[WEEKDAY]") ||
+        _baseRequest.HasTag("[DAY_NAME]") ||
+        _baseRequest.HasTag("[DAY_OFFSET]") ||
+        _baseRequest.HasTag("[EPOCH_TIME]") ||
+        _baseRequest.HasTag("[EPOCH_DATE]") ||
+        _baseRequest.HasTag("[DAYS_SINCE]") ||
+        _baseRequest.HasTag("[DAYOFYEAR]"))
       {
         return true;
       }

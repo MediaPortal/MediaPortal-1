@@ -33,20 +33,20 @@ namespace TvService
 {
   public class TimeShifter
   {
-    readonly ITvCardHandler _cardHandler;
-    readonly bool _linkageScannerEnabled;
-    readonly bool _timeshiftingEpgGrabberEnabled;
-    readonly int _waitForTimeshifting = 15;
+    private readonly ITvCardHandler _cardHandler;
+    private readonly bool _linkageScannerEnabled;
+    private readonly bool _timeshiftingEpgGrabberEnabled;
+    private readonly int _waitForTimeshifting = 15;
 
-    ManualResetEvent _eventAudio; // gets signaled when audio PID is seen
-    ManualResetEvent _eventVideo; // gets signaled when video PID is seen
-    ITvSubChannel _subchannel; // the active sub channel to record
-    bool _eventsReady;
+    private ManualResetEvent _eventAudio; // gets signaled when audio PID is seen
+    private ManualResetEvent _eventVideo; // gets signaled when video PID is seen
+    private ITvSubChannel _subchannel; // the active sub channel to record
+    private bool _eventsReady;
 
-    readonly ChannelLinkageGrabber _linkageGrabber;
+    private readonly ChannelLinkageGrabber _linkageGrabber;
 
-    DateTime _timeAudioEvent;
-    DateTime _timeVideoEvent;
+    private DateTime _timeAudioEvent;
+    private DateTime _timeVideoEvent;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TimeShifter"/> class.
@@ -92,9 +92,11 @@ namespace TvService
           {
             return RemoteControl.Instance.TimeShiftFileName(ref user);
           }
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return "";
         }
         TvCardContext context = _cardHandler.Card.Context as TvCardContext;
@@ -105,7 +107,8 @@ namespace TvService
         if (subchannel == null)
           return null;
         return subchannel.TimeShiftFileName + ".tsbuffer";
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return "";
@@ -118,7 +121,7 @@ namespace TvService
     /// <param name="user">The user.</param>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    public bool GetCurrentFilePosition(ref User user,ref Int64 position,ref long bufferId)
+    public bool GetCurrentFilePosition(ref User user, ref Int64 position, ref long bufferId)
     {
       try
       {
@@ -132,12 +135,13 @@ namespace TvService
             return false;
           if (_cardHandler.IsLocal == false)
           {
-            return RemoteControl.Instance.TimeShiftGetCurrentFilePosition(ref user,ref position,ref bufferId);
+            return RemoteControl.Instance.TimeShiftGetCurrentFilePosition(ref user, ref position, ref bufferId);
           }
         }
         catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
         TvCardContext context = _cardHandler.Card.Context as TvCardContext;
@@ -202,9 +206,11 @@ namespace TvService
           {
             return RemoteControl.Instance.IsTimeShifting(ref user);
           }
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
         TvCardContext context = _cardHandler.Card.Context as TvCardContext;
@@ -218,7 +224,8 @@ namespace TvService
         if (subchannel == null)
           return false;
         return subchannel.IsTimeShifting;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return false;
@@ -246,9 +253,11 @@ namespace TvService
           {
             return RemoteControl.Instance.TimeShiftStarted(user);
           }
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return DateTime.MinValue;
         }
 
@@ -260,7 +269,8 @@ namespace TvService
         if (subchannel == null)
           return DateTime.MinValue;
         return subchannel.StartOfTimeShift;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return DateTime.MinValue;
@@ -271,7 +281,7 @@ namespace TvService
     {
       // we are only interested in video and audio PIDs
       if (pidType == PidType.Audio)
-      {                                                
+      {
         TimeSpan ts = DateTime.Now - _timeAudioEvent;
         if (ts.TotalMilliseconds > 1000)
         {
@@ -279,7 +289,7 @@ namespace TvService
           Log.Info("audioVideoEventHandler {0}", pidType);
           _eventAudio.Set();
         }
-        _timeAudioEvent = DateTime.Now; 
+        _timeAudioEvent = DateTime.Now;
       }
 
       if (pidType == PidType.Video)
@@ -301,7 +311,7 @@ namespace TvService
     /// <param name="user">User</param>
     /// <param name="fileName">Name of the timeshiftfile.</param>
     /// <returns>TvResult indicating whether method succeeded</returns>
-    public TvResult Start(ref User user, ref  string fileName)
+    public TvResult Start(ref User user, ref string fileName)
     {
       try
       {
@@ -326,7 +336,8 @@ namespace TvService
             UInt32 MaximumFileSize = UInt32.Parse(layer.GetSetting("timeshiftMaxFileSize", "256").Value); // in MB
             ulong DiskSpaceNeeded = Convert.ToUInt64(MaximumFileSize);
             DiskSpaceNeeded *= 1000000 * 2; // Convert to bytes; 2 times of timeshiftMaxFileSize
-            if (FreeDiskSpace < DiskSpaceNeeded) // TimeShifter need at least this free disk space otherwise, it will not start.
+            if (FreeDiskSpace < DiskSpaceNeeded)
+              // TimeShifter need at least this free disk space otherwise, it will not start.
             {
               return TvResult.NoFreeDiskSpace;
             }
@@ -337,9 +348,11 @@ namespace TvService
             {
               return RemoteControl.Instance.StartTimeShifting(ref user, ref fileName);
             }
-          } catch (Exception)
+          }
+          catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+            Log.Error("card: unable to connect to slave controller at:{0}",
+                      _cardHandler.DataBaseCard.ReferencedServer().HostName);
             return TvResult.UnknownError;
           }
 
@@ -438,7 +451,8 @@ namespace TvService
           }
           return TvResult.Succeeded;
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -476,7 +490,6 @@ namespace TvService
 
         lock (this)
         {
-
           try
           {
             RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
@@ -489,9 +502,11 @@ namespace TvService
             {
               return RemoteControl.Instance.StopTimeShifting(ref user);
             }
-          } catch (Exception)
+          }
+          catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+            Log.Error("card: unable to connect to slave controller at:{0}",
+                      _cardHandler.DataBaseCard.ReferencedServer().HostName);
             return false;
           }
 
@@ -528,7 +543,8 @@ namespace TvService
           context.Remove(user);
           return true;
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -553,9 +569,11 @@ namespace TvService
           RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
           if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
             return TvResult.CardIsDisabled;
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return TvResult.UnknownError;
         }
 
@@ -563,7 +581,8 @@ namespace TvService
         if (IsTimeShifting(ref user))
           return TvResult.Succeeded;
         return Start(ref user, ref fileName);
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return TvResult.UnknownError;
@@ -586,9 +605,11 @@ namespace TvService
         RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
         if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
           return false;
-      } catch (Exception)
+      }
+      catch (Exception)
       {
-        Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+        Log.Error("card: unable to connect to slave controller at:{0}",
+                  _cardHandler.DataBaseCard.ReferencedServer().HostName);
         return false;
       }
 
@@ -669,7 +690,8 @@ namespace TvService
             _eventVideo.Reset();
             _eventAudio.Reset();
             TimeSpan ts = DateTime.Now - timeStart;
-            Log.Write("card: WaitForTimeShiftFile - video was found, but audio was not found after {0} seconds", ts.TotalSeconds);
+            Log.Write("card: WaitForTimeShiftFile - video was found, but audio was not found after {0} seconds",
+                      ts.TotalSeconds);
             if (_cardHandler.IsScrambled(ref user))
             {
               Log.Write("card: WaitForTimeShiftFile - audio stream is scrambled");

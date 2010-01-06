@@ -66,9 +66,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public FiltersPureVideoDecoder()
-      : this("NVIDIA PureVideo Decoder")
-    {
-    }
+      : this("NVIDIA PureVideo Decoder") {}
 
     /// <summary>
     /// 
@@ -512,13 +510,13 @@ namespace MediaPortal.Configuration.Sections
         {
           try
           {
-            regValue = (Int32) subkey.GetValue("DisplayType", 0);
+            regValue = (Int32)subkey.GetValue("DisplayType", 0);
             radioButtonDTDefault.Checked = (regValue == 0);
             radioButtonDTLetterbox.Checked = (regValue == 1);
             radioButtonDTPan.Checked = (regValue == 2);
             radioButtonDTAnamorphic.Checked = (regValue == 3);
 
-            regValue = (Int32) subkey.GetValue("EnableDXVA", 1);
+            regValue = (Int32)subkey.GetValue("EnableDXVA", 1);
             if (regValue == 0)
             {
               checkBoxDxVA.Checked = false;
@@ -532,11 +530,11 @@ namespace MediaPortal.Configuration.Sections
               xmlwriter.SetValue("videocodec", "nvidia", regValue);
             }
 
-            regValue = (Int32) subkey.GetValue("DeinterlaceControl", 0);
+            regValue = (Int32)subkey.GetValue("DeinterlaceControl", 0);
             comboBoxDeInterlaceControl.SelectedIndex = regValue;
 
-            regValue = (Int32) subkey.GetValue("DeinterlaceMode", 0);
-            Int32 regAdaptive = (Int32) subkey.GetValue("VMRDeinterlace", 2);
+            regValue = (Int32)subkey.GetValue("DeinterlaceMode", 0);
+            Int32 regAdaptive = (Int32)subkey.GetValue("VMRDeinterlace", 2);
             if (regValue >= 0)
             {
               if (regValue == 0)
@@ -557,7 +555,7 @@ namespace MediaPortal.Configuration.Sections
               }
             }
 
-            regValue = (Int32) subkey.GetValue("Brightness", 0);
+            regValue = (Int32)subkey.GetValue("Brightness", 0);
             if (regValue == 0)
             {
               comboBoxColourScheme.SelectedIndex = 0;
@@ -579,9 +577,7 @@ namespace MediaPortal.Configuration.Sections
               comboBoxColourScheme.SelectedIndex = 4;
             }
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
 
           #endregion
         }
@@ -603,16 +599,16 @@ namespace MediaPortal.Configuration.Sections
       {
         if (subkey2 != null)
         {
-          regValue = (Int32) subkey2.GetValue("ConnectedDevicePropControl", 0);
-          regMaxOut = (Int32) subkey2.GetValue("MaxOutChannels", 2);
-          regAC3Output = (Int32) subkey2.GetValue("AC3OutputMode", -1);
-          regMonoOutput = (Int32) subkey2.GetValue("MonoOutput", -1);
-          regCenterPresent = (Int32) subkey2.GetValue("CenterPresent", -1);
-          regBackPresent = (Int32) subkey2.GetValue("BackPresent", -1);
-          regSubwooferPresent = (Int32) subkey2.GetValue("SubwooferPresent", -1);
-          regProLogic2Mode = (Int32) subkey2.GetValue("ProLogic2Mode", -1);
-          regDHProp = (Int32) subkey2.GetValue("DHPPropControl", -1);
-          regSPDIF = (Int32) subkey2.GetValue("EnableSPDIFPassThru", -1);
+          regValue = (Int32)subkey2.GetValue("ConnectedDevicePropControl", 0);
+          regMaxOut = (Int32)subkey2.GetValue("MaxOutChannels", 2);
+          regAC3Output = (Int32)subkey2.GetValue("AC3OutputMode", -1);
+          regMonoOutput = (Int32)subkey2.GetValue("MonoOutput", -1);
+          regCenterPresent = (Int32)subkey2.GetValue("CenterPresent", -1);
+          regBackPresent = (Int32)subkey2.GetValue("BackPresent", -1);
+          regSubwooferPresent = (Int32)subkey2.GetValue("SubwooferPresent", -1);
+          regProLogic2Mode = (Int32)subkey2.GetValue("ProLogic2Mode", -1);
+          regDHProp = (Int32)subkey2.GetValue("DHPPropControl", -1);
+          regSPDIF = (Int32)subkey2.GetValue("EnableSPDIFPassThru", -1);
           try
           {
             // Speakers Setup
@@ -694,8 +690,8 @@ namespace MediaPortal.Configuration.Sections
             }
             {
               // Dynamic Range Control
-              Int32 regDRC = (Int32) subkey2.GetValue("AC3CompressionMode", 2);
-              Int32 regAC3DRH = (Int32) subkey2.GetValue("AC3DynamicRangeHigh", 10000);
+              Int32 regDRC = (Int32)subkey2.GetValue("AC3CompressionMode", 2);
+              Int32 regAC3DRH = (Int32)subkey2.GetValue("AC3DynamicRangeHigh", 10000);
               if (regDRC == 2 && regAC3DRH == 10000)
               {
                 comboBoxDRC.SelectedIndex = 0;
@@ -710,13 +706,11 @@ namespace MediaPortal.Configuration.Sections
               }
 
               // Pro Logic II
-              Int32 regPL2Mode = (Int32) subkey2.GetValue("ProLogic2Mode", 0);
+              Int32 regPL2Mode = (Int32)subkey2.GetValue("ProLogic2Mode", 0);
               comboBoxProLogicII.SelectedIndex = regPL2Mode;
             }
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
 
           #endregion
         }

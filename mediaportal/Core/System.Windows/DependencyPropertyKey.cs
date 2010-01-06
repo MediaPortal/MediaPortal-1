@@ -29,9 +29,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    private DependencyPropertyKey()
-    {
-    }
+    private DependencyPropertyKey() {}
 
     internal DependencyPropertyKey(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata,
                                    ValidateValueCallback validateValueCallback)

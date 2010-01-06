@@ -5,9 +5,7 @@ namespace XPBurn.COM
 {
   [ComImport]
   [Guid("520CCA63-51A5-11D3-9144-00104BA11C5E")]
-  internal class MSDiscMasterObj
-  {
-  }
+  internal class MSDiscMasterObj {}
 
   // TODO: This should be a static class
   internal class GUIDS
@@ -86,9 +84,7 @@ namespace XPBurn.COM
   [ComImport]
   [Guid("00000000-0000-0000-c000-000000000046")]
   [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-  internal interface IUnknown
-  {
-  }
+  internal interface IUnknown {}
 
   [ComImport]
   [Guid("520CCA62-51A5-11D3-9144-00104BA11C5E")]

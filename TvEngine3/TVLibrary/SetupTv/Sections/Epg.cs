@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Specialized;
 using TvDatabase;
 using System.IO;
@@ -11,15 +11,12 @@ namespace SetupTv.Sections
     private string crcSettingsFile = DebugSettings.SettingPath("DisableCRCCheck");
 
     public Epg()
-      : this("DVB EPG")
-    {
-    }
+      : this("DVB EPG") {}
 
     public Epg(string name)
       : base(name)
     {
       InitializeComponent();
-
     }
 
     public override void OnSectionActivated()
@@ -34,7 +31,8 @@ namespace SetupTv.Sections
       checkBoxEnableCRCCheck.Checked = !DebugSettings.DisableCRCCheck;
       numericUpDownEpgTimeOut.Value = Convert.ToDecimal(layer.GetSetting("timeoutEPG", "10").Value);
       numericUpDownEpgRefresh.Value = Convert.ToDecimal(layer.GetSetting("timeoutEPGRefresh", "240").Value);
-      checkBoxEnableEpgWhileTimeshifting.Checked = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value == "yes");
+      checkBoxEnableEpgWhileTimeshifting.Checked = (layer.GetSetting("timeshiftingEpgGrabberEnabled", "no").Value ==
+                                                    "yes");
       numericUpDownTSEpgTimeout.Value = Convert.ToDecimal(layer.GetSetting("timeshiftingEpgGrabberTimeout", "2").Value);
 
       edTitleTemplate.Text = layer.GetSetting("epgTitleTemplate", "%TITLE%").Value;
@@ -83,7 +81,6 @@ namespace SetupTv.Sections
       s = layer.GetSetting("epgDescriptionTemplate", "%DESCRIPTION%");
       s.Value = edDescriptionTemplate.Text;
       s.Persist();
-
     }
 
     private static string EvalTemplate(string template, NameValueCollection values)
@@ -97,7 +94,8 @@ namespace SetupTv.Sections
     {
       NameValueCollection defaults = new NameValueCollection();
       defaults.Add("%TITLE%", "Over the hedge");
-      defaults.Add("%DESCRIPTION%", "A scheming raccoon fools a mismatched family of forest creatures into helping him repay a debt of food, by invading the new suburban sprawl that popped up while they were hibernating...and learns a lesson about family himself.");
+      defaults.Add("%DESCRIPTION%",
+                   "A scheming raccoon fools a mismatched family of forest creatures into helping him repay a debt of food, by invading the new suburban sprawl that popped up while they were hibernating...and learns a lesson about family himself.");
       defaults.Add("%GENRE%", "movie/drama (general)");
       defaults.Add("%STARRATING%", "6");
       defaults.Add("%STARRATING_STR%", "***+");

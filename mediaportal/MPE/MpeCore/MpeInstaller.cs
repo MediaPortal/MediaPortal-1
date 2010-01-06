@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using MediaPortal.Configuration;
 using MpeCore.Classes.ProviderHelpers;
@@ -13,133 +13,130 @@ using MpeCore.Classes.VersionProvider;
 
 namespace MpeCore
 {
-    public static class MpeInstaller
+  public static class MpeInstaller
+  {
+    public static Dictionary<string, IInstallerTypeProvider> InstallerTypeProviders { get; set; }
+    public static Dictionary<string, IPathProvider> PathProviders { get; set; }
+    public static SectionProviderHelper SectionPanels { get; set; }
+    public static Dictionary<string, IActionType> ActionProviders { get; set; }
+    public static Dictionary<string, IVersionProvider> VersionProviders { get; set; }
+    public static ZipProviderClass ZipProvider { get; set; }
+    public static ExtensionCollection InstalledExtensions { get; set; }
+    public static ExtensionCollection KnownExtensions { get; set; }
+
+    public static void Init()
     {
-        static public Dictionary<string,IInstallerTypeProvider> InstallerTypeProviders { get; set; }
-        static public Dictionary<string,IPathProvider> PathProviders { get; set; }
-        static public SectionProviderHelper SectionPanels { get; set; }
-        static public Dictionary<string, IActionType> ActionProviders { get; set; }
-        static public Dictionary<string, IVersionProvider> VersionProviders { get; set; }
-        static public ZipProviderClass ZipProvider { get; set; }
-        public static ExtensionCollection InstalledExtensions { get; set; }
-        public static ExtensionCollection KnownExtensions { get; set; }
-
-        static public void Init()
-        {
-            InstallerTypeProviders = new Dictionary<string, IInstallerTypeProvider>();
-            PathProviders = new Dictionary<string, IPathProvider>();
-            SectionPanels = new SectionProviderHelper();
-            ActionProviders = new Dictionary<string, IActionType>();
-            VersionProviders = new Dictionary<string, IVersionProvider>();
-            ZipProvider = new ZipProviderClass();
+      InstallerTypeProviders = new Dictionary<string, IInstallerTypeProvider>();
+      PathProviders = new Dictionary<string, IPathProvider>();
+      SectionPanels = new SectionProviderHelper();
+      ActionProviders = new Dictionary<string, IActionType>();
+      VersionProviders = new Dictionary<string, IVersionProvider>();
+      ZipProvider = new ZipProviderClass();
 
 
-            AddInstallType(new CopyFile());
-            AddInstallType(new CopyFont());
-            AddInstallType(new GenericSkinFile());
-            
-            PathProviders.Add("MediaPortalPaths", new MediaPortalPaths());
-            PathProviders.Add("TvServerPaths", new TvServerPaths());
-            PathProviders.Add("WindowsPaths", new WindowsPaths());
+      AddInstallType(new CopyFile());
+      AddInstallType(new CopyFont());
+      AddInstallType(new GenericSkinFile());
 
-            AddSection(new Welcome());
-            AddSection(new LicenseAgreement());
-            AddSection(new ReadmeInformation());
-            AddSection(new ImageRadioSelector());
-            AddSection(new TreeViewSelector());
-            AddSection(new InstallSection());
-            AddSection(new Finish());
-            AddSection(new GroupCheck());
-            AddSection(new GroupCheckScript());
+      PathProviders.Add("MediaPortalPaths", new MediaPortalPaths());
+      PathProviders.Add("TvServerPaths", new TvServerPaths());
+      PathProviders.Add("WindowsPaths", new WindowsPaths());
 
-            AddActionProvider(new InstallFiles());
-            AddActionProvider(new ShowMessageBox());
-            AddActionProvider(new ClearSkinCache());
-            AddActionProvider(new RunApplication());
-            AddActionProvider(new KillTask());
-            AddActionProvider(new CreateShortCut());
-            AddActionProvider(new CreateFolder());
-            AddActionProvider(new ExtensionInstaller());
-            AddActionProvider(new ConfigurePlugin());
-            AddActionProvider(new Script());
+      AddSection(new Welcome());
+      AddSection(new LicenseAgreement());
+      AddSection(new ReadmeInformation());
+      AddSection(new ImageRadioSelector());
+      AddSection(new TreeViewSelector());
+      AddSection(new InstallSection());
+      AddSection(new Finish());
+      AddSection(new GroupCheck());
+      AddSection(new GroupCheckScript());
 
-            AddVersion(new MediaPortalVersion());
-            AddVersion(new TvServerVersion());
-            AddVersion(new ExtensionVersion());
+      AddActionProvider(new InstallFiles());
+      AddActionProvider(new ShowMessageBox());
+      AddActionProvider(new ClearSkinCache());
+      AddActionProvider(new RunApplication());
+      AddActionProvider(new KillTask());
+      AddActionProvider(new CreateShortCut());
+      AddActionProvider(new CreateFolder());
+      AddActionProvider(new ExtensionInstaller());
+      AddActionProvider(new ConfigurePlugin());
+      AddActionProvider(new Script());
 
-            InstalledExtensions =
-                ExtensionCollection.Load(string.Format("{0}\\InstalledExtensions.xml", BaseFolder));
-            KnownExtensions =
-                ExtensionCollection.Load(string.Format("{0}\\KnownExtensions.xml", BaseFolder));
+      AddVersion(new MediaPortalVersion());
+      AddVersion(new TvServerVersion());
+      AddVersion(new ExtensionVersion());
 
-        }
-
-        public static void AddVersion(IVersionProvider provider)
-        {
-            VersionProviders.Add(provider.DisplayName, provider);
-        }
-
-        public static void AddSection(ISectionPanel sp)
-        {
-            SectionPanels.Add(sp.DisplayName, sp);
-        }
-
-        public static void AddInstallType(IInstallerTypeProvider provider)
-        {
-            InstallerTypeProviders.Add(provider.Name, provider);
-        }
-
-        public static void AddActionProvider(IActionType ac)
-        {
-            ActionProviders.Add(ac.DisplayName, ac);
-        }
-
-        public static void Save()
-        {
-            if (!Directory.Exists(BaseFolder))
-                Directory.CreateDirectory(BaseFolder);
-            InstalledExtensions.Save(string.Format("{0}\\InstalledExtensions.xml", BaseFolder));
-            KnownExtensions.Save(string.Format("{0}\\KnownExtensions.xml", BaseFolder));
-        }
-
-        /// <summary>
-        /// Gets the folder were the installation information are store .
-        /// Same like %Installer%
-        /// </summary>
-        /// <value>The base folder.</value>
-        public static string BaseFolder
-        {
-            get
-            {
-                return string.Format("{0}\\V2", Config.GetFolder(Config.Dir.Installer));
-            }
-        }
-        /// <summary>
-        /// Transfor a real path in a template path, based on providers
-        /// </summary>
-        /// <param name="localFile">The location of file.</param>
-        /// <returns></returns>
-        static public string TransformInTemplatePath(string localFile)
-        {
-            foreach (var pathProvider in PathProviders)
-            {
-                localFile = pathProvider.Value.Colapse(localFile);
-            }
-            return localFile;
-        }
-
-        /// <summary>
-        /// Transfor a template path in a real system path path, based on providers
-        /// </summary>
-        /// <param name="localFile">The template of file or path.</param>
-        /// <returns></returns>
-        static public string TransformInRealPath(string localFile)
-        {
-            foreach (var pathProvider in PathProviders)
-            {
-                localFile = pathProvider.Value.Expand(localFile);
-            }
-            return localFile;
-        }
+      InstalledExtensions =
+        ExtensionCollection.Load(string.Format("{0}\\InstalledExtensions.xml", BaseFolder));
+      KnownExtensions =
+        ExtensionCollection.Load(string.Format("{0}\\KnownExtensions.xml", BaseFolder));
     }
+
+    public static void AddVersion(IVersionProvider provider)
+    {
+      VersionProviders.Add(provider.DisplayName, provider);
+    }
+
+    public static void AddSection(ISectionPanel sp)
+    {
+      SectionPanels.Add(sp.DisplayName, sp);
+    }
+
+    public static void AddInstallType(IInstallerTypeProvider provider)
+    {
+      InstallerTypeProviders.Add(provider.Name, provider);
+    }
+
+    public static void AddActionProvider(IActionType ac)
+    {
+      ActionProviders.Add(ac.DisplayName, ac);
+    }
+
+    public static void Save()
+    {
+      if (!Directory.Exists(BaseFolder))
+        Directory.CreateDirectory(BaseFolder);
+      InstalledExtensions.Save(string.Format("{0}\\InstalledExtensions.xml", BaseFolder));
+      KnownExtensions.Save(string.Format("{0}\\KnownExtensions.xml", BaseFolder));
+    }
+
+    /// <summary>
+    /// Gets the folder were the installation information are store .
+    /// Same like %Installer%
+    /// </summary>
+    /// <value>The base folder.</value>
+    public static string BaseFolder
+    {
+      get { return string.Format("{0}\\V2", Config.GetFolder(Config.Dir.Installer)); }
+    }
+
+    /// <summary>
+    /// Transfor a real path in a template path, based on providers
+    /// </summary>
+    /// <param name="localFile">The location of file.</param>
+    /// <returns></returns>
+    public static string TransformInTemplatePath(string localFile)
+    {
+      foreach (var pathProvider in PathProviders)
+      {
+        localFile = pathProvider.Value.Colapse(localFile);
+      }
+      return localFile;
+    }
+
+    /// <summary>
+    /// Transfor a template path in a real system path path, based on providers
+    /// </summary>
+    /// <param name="localFile">The template of file or path.</param>
+    /// <returns></returns>
+    public static string TransformInRealPath(string localFile)
+    {
+      foreach (var pathProvider in PathProviders)
+      {
+        localFile = pathProvider.Value.Expand(localFile);
+      }
+      return localFile;
+    }
+  }
 }

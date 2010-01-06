@@ -28,7 +28,6 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
-
 using MediaPortal.MPInstaller;
 using MediaPortal.Configuration;
 
@@ -51,7 +50,7 @@ namespace MediaPortal.MPInstaller
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
       Thread.CurrentThread.Name = "MPInstaller";
-     
+
       if (fil == @"/queue")
       {
         QueueEnumerator queue = new QueueEnumerator();

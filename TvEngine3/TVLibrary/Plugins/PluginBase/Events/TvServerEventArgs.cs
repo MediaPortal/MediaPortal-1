@@ -84,31 +84,33 @@ namespace TvEngine.Events
     /// Event indicating that new EPG data is about to be imported
     /// </summary>
     ImportEpgPrograms,
-  };
+  } ;
 
   public class TvServerEventArgs : EventArgs
   {
     #region variables
 
-    readonly User _user;
-    readonly VirtualCard _card;
-    readonly IChannel _channel;
-    IController _controller = null;
+    private readonly User _user;
+    private readonly VirtualCard _card;
+    private readonly IChannel _channel;
+    private IController _controller = null;
     //Channel _databaseChannel = null;
     //TuningDetail _tuningDetail = null;
-    readonly Schedule _schedule;
-    readonly Recording _recording;
-    Conflict _conflict;
+    private readonly Schedule _schedule;
+    private readonly Recording _recording;
+    private Conflict _conflict;
     // Added by Broce for exchanges between TVPlugin & ConflictsManager
-    IList<Schedule> _schedules;
-    IList<Conflict> _conflicts;
-    object _argsUpdatedState;
+    private IList<Schedule> _schedules;
+    private IList<Conflict> _conflicts;
+    private object _argsUpdatedState;
     private EpgChannel _epgChannel;
     //
-    readonly TvServerEventType _eventType;
+    private readonly TvServerEventType _eventType;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TvServerEventArgs"/> class.
     /// </summary>
@@ -117,6 +119,7 @@ namespace TvEngine.Events
     {
       _eventType = eventType;
     }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TvServerEventArgs"/> class.
     /// </summary>
@@ -129,6 +132,7 @@ namespace TvEngine.Events
       _card = card;
       _user = user;
     }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TvServerEventArgs"/> class.
     /// </summary>
@@ -143,6 +147,7 @@ namespace TvEngine.Events
       _user = user;
       _channel = channel;
     }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TvServerEventArgs"/> class.
     /// </summary>
@@ -151,7 +156,8 @@ namespace TvEngine.Events
     /// <param name="user">The user.</param>
     /// <param name="schedule">The schedule.</param>
     /// <param name="recording">The recording.</param>
-    public TvServerEventArgs(TvServerEventType eventType, VirtualCard card, User user, Schedule schedule, Recording recording)
+    public TvServerEventArgs(TvServerEventType eventType, VirtualCard card, User user, Schedule schedule,
+                             Recording recording)
     {
       _eventType = eventType;
       _card = card;
@@ -160,6 +166,7 @@ namespace TvEngine.Events
       _schedule = schedule;
       _recording = recording;
     }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TvServerEventArgs"/> class.
     /// </summary>
@@ -175,6 +182,7 @@ namespace TvEngine.Events
       _channel = channel;
       _conflict = conflict;
     }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TvServerEventArgs"/> class.
     /// </summary>
@@ -182,13 +190,15 @@ namespace TvEngine.Events
     /// <param name="schedulesList">a IList of schedules</param>
     /// <param name="conflictsList">a IList of conflicts</param>
     /// <param name="argsUpdated">bool flag</param>
-    public TvServerEventArgs(TvServerEventType eventType, IList<Schedule> schedulesList, IList<Conflict> conflictsList, object argsUpdated)
+    public TvServerEventArgs(TvServerEventType eventType, IList<Schedule> schedulesList, IList<Conflict> conflictsList,
+                             object argsUpdated)
     {
       _eventType = eventType;
       _schedules = schedulesList;
       _conflicts = conflictsList;
       _argsUpdatedState = argsUpdated;
     }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TvServerEventArgs"/> class.
     /// </summary>
@@ -199,30 +209,27 @@ namespace TvEngine.Events
       _eventType = eventType;
       _epgChannel = epgChannel;
     }
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// Gets the controller.
     /// </summary>
     /// <value>The controller.</value>
     public IController Controller
     {
-      get
-      {
-        return _controller;
-      }
+      get { return _controller; }
     }
+
     /// <summary>
     /// Gets the user.
     /// </summary>
     /// <value>The user.</value>
     public User User
     {
-      get
-      {
-        return _user;
-      }
+      get { return _user; }
     }
 
     /// <summary>
@@ -231,10 +238,7 @@ namespace TvEngine.Events
     /// <value>The card.</value>
     public VirtualCard Card
     {
-      get
-      {
-        return _card;
-      }
+      get { return _card; }
     }
 
     /// <summary>
@@ -243,21 +247,16 @@ namespace TvEngine.Events
     /// <value>The channel.</value>
     public IChannel channel
     {
-      get
-      {
-        return _channel;
-      }
+      get { return _channel; }
     }
+
     /// <summary>
     /// Gets the recording.
     /// </summary>
     /// <value>The recording.</value>
     public Recording Recording
     {
-      get
-      {
-        return _recording;
-      }
+      get { return _recording; }
     }
 
     /// <summary>
@@ -266,14 +265,8 @@ namespace TvEngine.Events
     /// <value>The conflict.</value>
     public Conflict Conflict
     {
-      get
-      {
-        return _conflict;
-      }
-      set
-      {
-        _conflict = value;
-      }
+      get { return _conflict; }
+      set { _conflict = value; }
     }
 
     /// <summary>
@@ -282,27 +275,28 @@ namespace TvEngine.Events
     /// <value>The schedule.</value>
     public Schedule Schedule
     {
-      get
-      {
-        return _schedule;
-      }
+      get { return _schedule; }
     }
+
     // Added by Broce for exchanges between TVPlugin & ConflictsManager
     public IList<Schedule> Schedules
     {
       get { return _schedules; }
       set { _schedules = value; }
     }
+
     public IList<Conflict> Conflicts
     {
       get { return _conflicts; }
       set { _conflicts = value; }
     }
+
     public object ArgsUpdatedState
     {
       get { return _argsUpdatedState; }
       set { _argsUpdatedState = value; }
     }
+
     /// <summary>
     /// The received epgChannel
     /// </summary>
@@ -311,6 +305,7 @@ namespace TvEngine.Events
       get { return _epgChannel; }
       set { _epgChannel = value; }
     }
+
     //
     /// <summary>
     /// Gets the type of the event.
@@ -318,11 +313,9 @@ namespace TvEngine.Events
     /// <value>The type of the event.</value>
     public TvServerEventType EventType
     {
-      get
-      {
-        return _eventType;
-      }
+      get { return _eventType; }
     }
+
     #endregion
   }
 }

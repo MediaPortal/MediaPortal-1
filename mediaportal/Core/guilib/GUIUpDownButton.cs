@@ -42,9 +42,7 @@ namespace MediaPortal.GUI.Library
 
     private GUISpinControl _spinControl;
 
-    public GUIUpDownButton(int dwParentID) : base(dwParentID)
-    {
-    }
+    public GUIUpDownButton(int dwParentID) : base(dwParentID) {}
 
     public GUIUpDownButton(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
                            string strTextureFocus, string strTextureNoFocus,
@@ -171,8 +169,8 @@ namespace MediaPortal.GUI.Library
       {
         int off = 5;
         GUIGraphicsContext.ScaleHorizontal(ref off);
-        _spinControl.SetPosition(_imageNonFocused.XPosition + _imageNonFocused.Width - off - 2*_spinControlWidth,
-                                 _imageNonFocused.YPosition + (_imageNonFocused.Height - _spinControlHeight)/2);
+        _spinControl.SetPosition(_imageNonFocused.XPosition + _imageNonFocused.Width - off - 2 * _spinControlWidth,
+                                 _imageNonFocused.YPosition + (_imageNonFocused.Height - _spinControlHeight) / 2);
         _spinControl.Render(timePassed);
       }
       //base.Render(timePassed);

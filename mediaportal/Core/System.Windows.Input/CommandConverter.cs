@@ -53,7 +53,7 @@ namespace System.Windows
     {
       if (value is string)
       {
-        return Parse((string) value);
+        return Parse((string)value);
       }
 
       return base.ConvertFrom(context, culture, value);
@@ -106,10 +106,10 @@ namespace System.Windows
 
       if (memberInfo is PropertyInfo)
       {
-        return ((PropertyInfo) memberInfo).GetValue(null, null);
+        return ((PropertyInfo)memberInfo).GetValue(null, null);
       }
 
-      return ((FieldInfo) memberInfo).GetValue(null);
+      return ((FieldInfo)memberInfo).GetValue(null);
     }
 
     #endregion Methods

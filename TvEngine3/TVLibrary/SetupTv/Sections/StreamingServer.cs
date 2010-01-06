@@ -51,9 +51,7 @@ namespace SetupTv.Sections
     private Server _ourServer;
 
     public StreamingServer()
-      : this("Streaming Server")
-    {
-    }
+      : this("Streaming Server") {}
 
     public StreamingServer(string name)
       : base(name)
@@ -84,7 +82,7 @@ namespace SetupTv.Sections
       foreach (string ipAdress in ipAdresses)
       {
         IpAddressComboBox.Items.Add(new IpAddressOption(ipAdress, ipAdress));
-        if (String.Compare(ipAdress, _ourServer.HostName , true) == 0)
+        if (String.Compare(ipAdress, _ourServer.HostName, true) == 0)
         {
           selected = counter;
         }
@@ -136,7 +134,9 @@ namespace SetupTv.Sections
 
     private void ServiceNeedsToRestart()
     {
-      if (MessageBox.Show(this, "Changes made require TvService to restart. Restart it now?", "TvService", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+      if (
+        MessageBox.Show(this, "Changes made require TvService to restart. Restart it now?", "TvService",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
       {
         NotifyForm dlgNotify = new NotifyForm("Restart TvService...", "This can take some time\n\nPlease be patient...");
         dlgNotify.Show();

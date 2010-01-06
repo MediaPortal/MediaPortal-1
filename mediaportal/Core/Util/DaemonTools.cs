@@ -36,12 +36,12 @@ namespace MediaPortal.Util
   /// </summary>
   public class DaemonTools
   {
-    static string _Path;
-    static string _Drive;
-    static bool _Enabled;
-    static int _DriveNo;
-    static string _MountedIsoFile = string.Empty;
-    static List<string> _supportedExtensions;
+    private static string _Path;
+    private static string _Drive;
+    private static bool _Enabled;
+    private static int _DriveNo;
+    private static string _MountedIsoFile = string.Empty;
+    private static List<string> _supportedExtensions;
 
     static DaemonTools()
     {
@@ -63,10 +63,12 @@ namespace MediaPortal.Util
          * pdi (Instant CD/DVD)
          * b5t (BlindWrite 5)
         */
-        string[] extensions = xmlreader.GetValueAsString("daemon", "extensions", ".cue, .bin, .iso, .ccd, .bwt, .mds, .cdi, .nrg, .pdi, .b5t, .img").Split(',');
+        string[] extensions =
+          xmlreader.GetValueAsString("daemon", "extensions",
+                                     ".cue, .bin, .iso, .ccd, .bwt, .mds, .cdi, .nrg, .pdi, .b5t, .img").Split(',');
         _supportedExtensions = new List<string>();
         // Can't use an AddRange, as we need to trim the blanks  
-        foreach(string ext in extensions)
+        foreach (string ext in extensions)
           _supportedExtensions.Add(ext.Trim());
       }
     }
@@ -119,10 +121,10 @@ namespace MediaPortal.Util
       {
         Log.Error("Mounting failed (timed out). Recheck your settings.");
         return false;
-      } 
+      }
       VirtualDrive = _Drive;
       _MountedIsoFile = IsoFile;
-      Log.Debug("Mount time: {0}s", String.Format("{0:N}",(DateTime.Now - startTime).TotalSeconds));
+      Log.Debug("Mount time: {0}s", String.Format("{0:N}", (DateTime.Now - startTime).TotalSeconds));
       return true;
     }
 

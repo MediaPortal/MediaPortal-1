@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
@@ -43,7 +43,7 @@ using MediaPortal.EPG.config;
 namespace SetupTv.Sections.WebEPGConfig
 {
   public delegate fSelection GetGrabberSelectorCallback();
-  
+
   public partial class WebEPGMappingControl : UserControl
   {
     private class CBChannelGroup
@@ -71,7 +71,7 @@ namespace SetupTv.Sections.WebEPGConfig
 
     public event EventHandler SelectGrabberClick;
     public event EventHandler AutoMapChannels;
-    
+
     public WebEPGMappingControl()
     {
       InitializeComponent();
@@ -89,7 +89,8 @@ namespace SetupTv.Sections.WebEPGConfig
     public bool IsTvMapping
     {
       get { return _isTvMapping; }
-      set {
+      set
+      {
         if (_isTvMapping != value)
         {
           _isTvMapping = value;
@@ -222,7 +223,7 @@ namespace SetupTv.Sections.WebEPGConfig
         AutoMapChannels(this, EventArgs.Empty);
       }
     }
-    
+
     private void UpdateChannelsFrameTitle()
     {
       if (gbChannels != null)
@@ -238,16 +239,18 @@ namespace SetupTv.Sections.WebEPGConfig
       IList<Channel> Channels;
       if (chGroup != null && chGroup.idGroup != -1)
       {
-        SqlBuilder sb1 = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
+        SqlBuilder sb1 = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof (Channel));
         SqlStatement stmt1 = sb1.GetStatement(true);
-        SqlStatement ManualJoinSQL = new SqlStatement(stmt1.StatementType, stmt1.Command, 
-          String.Format("select c.* from Channel c join {0}GroupMap g on c.idChannel=g.idChannel where c.{1} = 1 and g.idGroup = '{2}' order by g.sortOrder", 
-                          IsTvMapping ? "" : "Radio", IsTvMapping ? "isTv" : "isRadio", chGroup.idGroup), typeof(Channel));
+        SqlStatement ManualJoinSQL = new SqlStatement(stmt1.StatementType, stmt1.Command,
+                                                      String.Format(
+                                                        "select c.* from Channel c join {0}GroupMap g on c.idChannel=g.idChannel where c.{1} = 1 and g.idGroup = '{2}' order by g.sortOrder",
+                                                        IsTvMapping ? "" : "Radio", IsTvMapping ? "isTv" : "isRadio",
+                                                        chGroup.idGroup), typeof (Channel));
         Channels = ObjectFactory.GetCollection<Channel>(ManualJoinSQL.Execute());
       }
       else
       {
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
         sb.AddOrderByField(true, "sortOrder");
         if (IsTvMapping)
         {
@@ -512,7 +515,7 @@ namespace SetupTv.Sections.WebEPGConfig
     {
       OnSelectGrabberClick();
     }
-    
+
 
     private void lvMapping_SelectedIndexChanged(object sender, EventArgs e)
     {

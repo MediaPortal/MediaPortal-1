@@ -33,7 +33,8 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Plugins.Process
 {
-  [PluginIcons("MediaPortal.Plugins.Process.PowerScheduler.gif", "MediaPortal.Plugins.Process.PowerScheduler_disabled.gif")]
+  [PluginIcons("MediaPortal.Plugins.Process.PowerScheduler.gif",
+    "MediaPortal.Plugins.Process.PowerScheduler_disabled.gif")]
   public class PowerSchedulerClientPlugin : IPlugin, ISetupForm, IPluginReceiver
   {
     #region Variables

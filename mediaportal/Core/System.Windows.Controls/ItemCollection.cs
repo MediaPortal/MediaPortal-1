@@ -33,9 +33,7 @@ namespace System.Windows.Controls
   {
     #region Constructors
 
-    public ItemCollection()
-    {
-    }
+    public ItemCollection() {}
 
     #endregion Constructors
 
@@ -114,7 +112,7 @@ namespace System.Windows.Controls
 
     public object this[int index]
     {
-      get { return (object) List[index]; }
+      get { return (object)List[index]; }
       set { List[index] = value; }
     }
 

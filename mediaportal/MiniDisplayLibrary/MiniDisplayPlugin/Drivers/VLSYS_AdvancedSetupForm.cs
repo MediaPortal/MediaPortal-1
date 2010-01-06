@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -458,9 +458,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.groupBoxEqualizer);
       this.groupBox1.Controls.Add(this.groupBoxDisplay);
       this.groupBox1.Controls.Add(this.label3);
@@ -478,8 +480,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBoxEqualizer
       // 
-      this.groupBoxEqualizer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxEqualizer.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxEqualizer.Controls.Add(this.groupEQstyle);
       this.groupBoxEqualizer.Controls.Add(this.cmbDelayEqTime);
       this.groupBoxEqualizer.Controls.Add(this.lblRestrictEQ);
@@ -501,8 +505,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupEQstyle
       // 
-      this.groupEQstyle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupEQstyle.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupEQstyle.Controls.Add(this.cbUseVUmeter2);
       this.groupEQstyle.Controls.Add(this.cbVUindicators);
       this.groupEQstyle.Controls.Add(this.cbUseVUmeter);
@@ -575,38 +581,40 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       this.cmbDelayEqTime.BorderColor = System.Drawing.Color.Empty;
       this.cmbDelayEqTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbDelayEqTime.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30"});
+      this.cmbDelayEqTime.Items.AddRange(new object[]
+                                           {
+                                             "0",
+                                             "1",
+                                             "2",
+                                             "3",
+                                             "4",
+                                             "5",
+                                             "6",
+                                             "7",
+                                             "8",
+                                             "9",
+                                             "10",
+                                             "11",
+                                             "12",
+                                             "13",
+                                             "14",
+                                             "15",
+                                             "16",
+                                             "17",
+                                             "18",
+                                             "19",
+                                             "20",
+                                             "21",
+                                             "22",
+                                             "23",
+                                             "24",
+                                             "25",
+                                             "26",
+                                             "27",
+                                             "28",
+                                             "29",
+                                             "30"
+                                           });
       this.cmbDelayEqTime.Location = new System.Drawing.Point(160, 143);
       this.cmbDelayEqTime.Name = "cmbDelayEqTime";
       this.cmbDelayEqTime.Size = new System.Drawing.Size(52, 21);
@@ -614,7 +622,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // lblRestrictEQ
       // 
-      this.lblRestrictEQ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblRestrictEQ.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.lblRestrictEQ.Location = new System.Drawing.Point(100, 124);
       this.lblRestrictEQ.Name = "lblRestrictEQ";
       this.lblRestrictEQ.Size = new System.Drawing.Size(116, 17);
@@ -626,38 +636,40 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       this.cmbEQTitleDisplayTime.BorderColor = System.Drawing.Color.Empty;
       this.cmbEQTitleDisplayTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbEQTitleDisplayTime.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30"});
+      this.cmbEQTitleDisplayTime.Items.AddRange(new object[]
+                                                  {
+                                                    "0",
+                                                    "1",
+                                                    "2",
+                                                    "3",
+                                                    "4",
+                                                    "5",
+                                                    "6",
+                                                    "7",
+                                                    "8",
+                                                    "9",
+                                                    "10",
+                                                    "11",
+                                                    "12",
+                                                    "13",
+                                                    "14",
+                                                    "15",
+                                                    "16",
+                                                    "17",
+                                                    "18",
+                                                    "19",
+                                                    "20",
+                                                    "21",
+                                                    "22",
+                                                    "23",
+                                                    "24",
+                                                    "25",
+                                                    "26",
+                                                    "27",
+                                                    "28",
+                                                    "29",
+                                                    "30"
+                                                  });
       this.cmbEQTitleDisplayTime.Location = new System.Drawing.Point(165, 207);
       this.cmbEQTitleDisplayTime.Name = "cmbEQTitleDisplayTime";
       this.cmbEQTitleDisplayTime.Size = new System.Drawing.Size(52, 21);
@@ -667,38 +679,40 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       this.cmbEQTitleShowTime.BorderColor = System.Drawing.Color.Empty;
       this.cmbEQTitleShowTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbEQTitleShowTime.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30"});
+      this.cmbEQTitleShowTime.Items.AddRange(new object[]
+                                               {
+                                                 "0",
+                                                 "1",
+                                                 "2",
+                                                 "3",
+                                                 "4",
+                                                 "5",
+                                                 "6",
+                                                 "7",
+                                                 "8",
+                                                 "9",
+                                                 "10",
+                                                 "11",
+                                                 "12",
+                                                 "13",
+                                                 "14",
+                                                 "15",
+                                                 "16",
+                                                 "17",
+                                                 "18",
+                                                 "19",
+                                                 "20",
+                                                 "21",
+                                                 "22",
+                                                 "23",
+                                                 "24",
+                                                 "25",
+                                                 "26",
+                                                 "27",
+                                                 "28",
+                                                 "29",
+                                                 "30"
+                                               });
       this.cmbEQTitleShowTime.Location = new System.Drawing.Point(32, 207);
       this.cmbEQTitleShowTime.Name = "cmbEQTitleShowTime";
       this.cmbEQTitleShowTime.Size = new System.Drawing.Size(52, 21);
@@ -749,72 +763,76 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cmbEqRate
       // 
-      this.cmbEqRate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cmbEqRate.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cmbEqRate.BorderColor = System.Drawing.Color.Empty;
       this.cmbEqRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbEqRate.Items.AddRange(new object[] {
-            "MAX",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30",
-            "31",
-            "32",
-            "33",
-            "34",
-            "35",
-            "36",
-            "37",
-            "38",
-            "39",
-            "40",
-            "41",
-            "42",
-            "43",
-            "44",
-            "45",
-            "46",
-            "47",
-            "48",
-            "49",
-            "50",
-            "51",
-            "52",
-            "53",
-            "54",
-            "55",
-            "56",
-            "57",
-            "58",
-            "59",
-            "60"});
+      this.cmbEqRate.Items.AddRange(new object[]
+                                      {
+                                        "MAX",
+                                        "1",
+                                        "2",
+                                        "3",
+                                        "4",
+                                        "5",
+                                        "6",
+                                        "7",
+                                        "8",
+                                        "9",
+                                        "10",
+                                        "11",
+                                        "12",
+                                        "13",
+                                        "14",
+                                        "15",
+                                        "16",
+                                        "17",
+                                        "18",
+                                        "19",
+                                        "20",
+                                        "21",
+                                        "22",
+                                        "23",
+                                        "24",
+                                        "25",
+                                        "26",
+                                        "27",
+                                        "28",
+                                        "29",
+                                        "30",
+                                        "31",
+                                        "32",
+                                        "33",
+                                        "34",
+                                        "35",
+                                        "36",
+                                        "37",
+                                        "38",
+                                        "39",
+                                        "40",
+                                        "41",
+                                        "42",
+                                        "43",
+                                        "44",
+                                        "45",
+                                        "46",
+                                        "47",
+                                        "48",
+                                        "49",
+                                        "50",
+                                        "51",
+                                        "52",
+                                        "53",
+                                        "54",
+                                        "55",
+                                        "56",
+                                        "57",
+                                        "58",
+                                        "59",
+                                        "60"
+                                      });
       this.cmbEqRate.Location = new System.Drawing.Point(32, 122);
       this.cmbEqRate.Name = "cmbEqRate";
       this.cmbEqRate.Size = new System.Drawing.Size(69, 21);
@@ -843,8 +861,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBoxDisplay
       // 
-      this.groupBoxDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxDisplay.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxDisplay.Controls.Add(this.cbUseClockOnShutdown);
       this.groupBoxDisplay.Controls.Add(this.mpEnableDisplayActionTime);
       this.groupBoxDisplay.Controls.Add(this.cmbBlankIdleTime);
@@ -872,28 +892,30 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       this.mpEnableDisplayActionTime.BorderColor = System.Drawing.Color.Empty;
       this.mpEnableDisplayActionTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpEnableDisplayActionTime.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20"});
+      this.mpEnableDisplayActionTime.Items.AddRange(new object[]
+                                                      {
+                                                        "0",
+                                                        "1",
+                                                        "2",
+                                                        "3",
+                                                        "4",
+                                                        "5",
+                                                        "6",
+                                                        "7",
+                                                        "8",
+                                                        "9",
+                                                        "10",
+                                                        "11",
+                                                        "12",
+                                                        "13",
+                                                        "14",
+                                                        "15",
+                                                        "16",
+                                                        "17",
+                                                        "18",
+                                                        "19",
+                                                        "20"
+                                                      });
       this.mpEnableDisplayActionTime.Location = new System.Drawing.Point(181, 36);
       this.mpEnableDisplayActionTime.Name = "mpEnableDisplayActionTime";
       this.mpEnableDisplayActionTime.Size = new System.Drawing.Size(42, 21);
@@ -903,38 +925,40 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       this.cmbBlankIdleTime.BorderColor = System.Drawing.Color.Empty;
       this.cmbBlankIdleTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbBlankIdleTime.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20",
-            "21",
-            "22",
-            "23",
-            "24",
-            "25",
-            "26",
-            "27",
-            "28",
-            "29",
-            "30"});
+      this.cmbBlankIdleTime.Items.AddRange(new object[]
+                                             {
+                                               "0",
+                                               "1",
+                                               "2",
+                                               "3",
+                                               "4",
+                                               "5",
+                                               "6",
+                                               "7",
+                                               "8",
+                                               "9",
+                                               "10",
+                                               "11",
+                                               "12",
+                                               "13",
+                                               "14",
+                                               "15",
+                                               "16",
+                                               "17",
+                                               "18",
+                                               "19",
+                                               "20",
+                                               "21",
+                                               "22",
+                                               "23",
+                                               "24",
+                                               "25",
+                                               "26",
+                                               "27",
+                                               "28",
+                                               "29",
+                                               "30"
+                                             });
       this.cmbBlankIdleTime.Location = new System.Drawing.Point(167, 58);
       this.cmbBlankIdleTime.Name = "cmbBlankIdleTime";
       this.cmbBlankIdleTime.Size = new System.Drawing.Size(42, 21);
@@ -984,22 +1008,26 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cmbDeviceType
       // 
-      this.cmbDeviceType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cmbDeviceType.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cmbDeviceType.FormattingEnabled = true;
-      this.cmbDeviceType.Items.AddRange(new object[] {
-            "AUTOMATIC",
-            "LE2 - M.Play 202",
-            "ME4 - M.Play 202 Plus",
-            "ME5 - M.Play 202 Plus R2",
-            "ME7 - M.Play MR300 / M.Play Blast",
-            "MP4 - M.Play 202",
-            "MP5 - M.Play 202 Plus",
-            "MP7 - M.Play Blast",
-            "MR2 - M.Play Blast",
-            "MZ4 - M.Play MR300",
-            "MZ5 - M.Play MR700 (RC ONLY)",
-            "LIS2 - VLSysytems LIS2 display"});
+      this.cmbDeviceType.Items.AddRange(new object[]
+                                          {
+                                            "AUTOMATIC",
+                                            "LE2 - M.Play 202",
+                                            "ME4 - M.Play 202 Plus",
+                                            "ME5 - M.Play 202 Plus R2",
+                                            "ME7 - M.Play MR300 / M.Play Blast",
+                                            "MP4 - M.Play 202",
+                                            "MP5 - M.Play 202 Plus",
+                                            "MP7 - M.Play Blast",
+                                            "MR2 - M.Play Blast",
+                                            "MZ4 - M.Play MR300",
+                                            "MZ5 - M.Play MR700 (RC ONLY)",
+                                            "LIS2 - VLSysytems LIS2 display"
+                                          });
       this.cmbDeviceType.Location = new System.Drawing.Point(89, 19);
       this.cmbDeviceType.Name = "cmbDeviceType";
       this.cmbDeviceType.Size = new System.Drawing.Size(197, 21);
@@ -1018,8 +1046,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBoxRemote
       // 
-      this.groupBoxRemote.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxRemote.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxRemote.Controls.Add(this.lblDelay);
       this.groupBoxRemote.Controls.Add(this.tbDelay);
       this.groupBoxRemote.Controls.Add(this.cbDisableRepeat);
@@ -1076,8 +1106,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBoxFan
       // 
-      this.groupBoxFan.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxFan.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxFan.BackColor = System.Drawing.SystemColors.Control;
       this.groupBoxFan.Controls.Add(this.cbFan1Auto);
       this.groupBoxFan.Controls.Add(this.groupBox3);
@@ -1106,9 +1138,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.cbFan1ShutdownManual);
       this.groupBox3.Controls.Add(this.cbFan1_SetOn);
       this.groupBox3.Controls.Add(this.cbFan1_SetOff);
@@ -1134,82 +1168,84 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // cbFan1_SetOn
       // 
       this.cbFan1_SetOn.FormattingEnabled = true;
-      this.cbFan1_SetOn.Items.AddRange(new object[] {
-            "26",
-            "27",
-            "28",
-            "29",
-            "30",
-            "31",
-            "32",
-            "33",
-            "34",
-            "35",
-            "36",
-            "37",
-            "38",
-            "39",
-            "40",
-            "41",
-            "42",
-            "43",
-            "44",
-            "45",
-            "46",
-            "47",
-            "48",
-            "49",
-            "50",
-            "51",
-            "52",
-            "53",
-            "54",
-            "55",
-            "56",
-            "57",
-            "58",
-            "59",
-            "60",
-            "61",
-            "62",
-            "63",
-            "64",
-            "65",
-            "66",
-            "67",
-            "68",
-            "69",
-            "70",
-            "71",
-            "72",
-            "73",
-            "74",
-            "75",
-            "76",
-            "77",
-            "78",
-            "79",
-            "80",
-            "81",
-            "82",
-            "83",
-            "84",
-            "85",
-            "86",
-            "87",
-            "88",
-            "89",
-            "90",
-            "91",
-            "92",
-            "93",
-            "94",
-            "95",
-            "96",
-            "97",
-            "98",
-            "99",
-            "100"});
+      this.cbFan1_SetOn.Items.AddRange(new object[]
+                                         {
+                                           "26",
+                                           "27",
+                                           "28",
+                                           "29",
+                                           "30",
+                                           "31",
+                                           "32",
+                                           "33",
+                                           "34",
+                                           "35",
+                                           "36",
+                                           "37",
+                                           "38",
+                                           "39",
+                                           "40",
+                                           "41",
+                                           "42",
+                                           "43",
+                                           "44",
+                                           "45",
+                                           "46",
+                                           "47",
+                                           "48",
+                                           "49",
+                                           "50",
+                                           "51",
+                                           "52",
+                                           "53",
+                                           "54",
+                                           "55",
+                                           "56",
+                                           "57",
+                                           "58",
+                                           "59",
+                                           "60",
+                                           "61",
+                                           "62",
+                                           "63",
+                                           "64",
+                                           "65",
+                                           "66",
+                                           "67",
+                                           "68",
+                                           "69",
+                                           "70",
+                                           "71",
+                                           "72",
+                                           "73",
+                                           "74",
+                                           "75",
+                                           "76",
+                                           "77",
+                                           "78",
+                                           "79",
+                                           "80",
+                                           "81",
+                                           "82",
+                                           "83",
+                                           "84",
+                                           "85",
+                                           "86",
+                                           "87",
+                                           "88",
+                                           "89",
+                                           "90",
+                                           "91",
+                                           "92",
+                                           "93",
+                                           "94",
+                                           "95",
+                                           "96",
+                                           "97",
+                                           "98",
+                                           "99",
+                                           "100"
+                                         });
       this.cbFan1_SetOn.Location = new System.Drawing.Point(78, 41);
       this.cbFan1_SetOn.Name = "cbFan1_SetOn";
       this.cbFan1_SetOn.Size = new System.Drawing.Size(44, 21);
@@ -1218,82 +1254,84 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // cbFan1_SetOff
       // 
       this.cbFan1_SetOff.FormattingEnabled = true;
-      this.cbFan1_SetOff.Items.AddRange(new object[] {
-            "26",
-            "27",
-            "28",
-            "29",
-            "30",
-            "31",
-            "32",
-            "33",
-            "34",
-            "35",
-            "36",
-            "37",
-            "38",
-            "39",
-            "40",
-            "41",
-            "42",
-            "43",
-            "44",
-            "45",
-            "46",
-            "47",
-            "48",
-            "49",
-            "50",
-            "51",
-            "52",
-            "53",
-            "54",
-            "55",
-            "56",
-            "57",
-            "58",
-            "59",
-            "60",
-            "61",
-            "62",
-            "63",
-            "64",
-            "65",
-            "66",
-            "67",
-            "68",
-            "69",
-            "70",
-            "71",
-            "72",
-            "73",
-            "74",
-            "75",
-            "76",
-            "77",
-            "78",
-            "79",
-            "80",
-            "81",
-            "82",
-            "83",
-            "84",
-            "85",
-            "86",
-            "87",
-            "88",
-            "89",
-            "90",
-            "91",
-            "92",
-            "93",
-            "94",
-            "95",
-            "96",
-            "97",
-            "98",
-            "99",
-            "100"});
+      this.cbFan1_SetOff.Items.AddRange(new object[]
+                                          {
+                                            "26",
+                                            "27",
+                                            "28",
+                                            "29",
+                                            "30",
+                                            "31",
+                                            "32",
+                                            "33",
+                                            "34",
+                                            "35",
+                                            "36",
+                                            "37",
+                                            "38",
+                                            "39",
+                                            "40",
+                                            "41",
+                                            "42",
+                                            "43",
+                                            "44",
+                                            "45",
+                                            "46",
+                                            "47",
+                                            "48",
+                                            "49",
+                                            "50",
+                                            "51",
+                                            "52",
+                                            "53",
+                                            "54",
+                                            "55",
+                                            "56",
+                                            "57",
+                                            "58",
+                                            "59",
+                                            "60",
+                                            "61",
+                                            "62",
+                                            "63",
+                                            "64",
+                                            "65",
+                                            "66",
+                                            "67",
+                                            "68",
+                                            "69",
+                                            "70",
+                                            "71",
+                                            "72",
+                                            "73",
+                                            "74",
+                                            "75",
+                                            "76",
+                                            "77",
+                                            "78",
+                                            "79",
+                                            "80",
+                                            "81",
+                                            "82",
+                                            "83",
+                                            "84",
+                                            "85",
+                                            "86",
+                                            "87",
+                                            "88",
+                                            "89",
+                                            "90",
+                                            "91",
+                                            "92",
+                                            "93",
+                                            "94",
+                                            "95",
+                                            "96",
+                                            "97",
+                                            "98",
+                                            "99",
+                                            "100"
+                                          });
       this.cbFan1_SetOff.Location = new System.Drawing.Point(78, 17);
       this.cbFan1_SetOff.Name = "cbFan1_SetOff";
       this.cbFan1_SetOff.Size = new System.Drawing.Size(44, 21);
@@ -1306,7 +1344,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.lblFan1_SetOn.Name = "lblFan1_SetOn";
       this.lblFan1_SetOn.Size = new System.Drawing.Size(133, 13);
       this.lblFan1_SetOn.TabIndex = 14;
-      this.lblFan1_SetOn.Text = "100% if above                Â°C";
+      this.lblFan1_SetOn.Text = "100% if above                °C";
       // 
       // lblFan1_SetOff
       // 
@@ -1315,7 +1353,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.lblFan1_SetOff.Name = "lblFan1_SetOff";
       this.lblFan1_SetOff.Size = new System.Drawing.Size(131, 13);
       this.lblFan1_SetOff.TabIndex = 13;
-      this.lblFan1_SetOff.Text = "OFF if below                  Â°C";
+      this.lblFan1_SetOff.Text = "OFF if below                  °C";
       // 
       // cbUseFans
       // 
@@ -1330,8 +1368,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // lblFan1
       // 
-      this.lblFan1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblFan1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.lblFan1.Location = new System.Drawing.Point(39, 54);
       this.lblFan1.Name = "lblFan1";
       this.lblFan1.Size = new System.Drawing.Size(90, 17);
@@ -1341,8 +1381,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // tbFan1
       // 
-      this.tbFan1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbFan1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.tbFan1.LargeChange = 1;
       this.tbFan1.Location = new System.Drawing.Point(31, 70);
       this.tbFan1.Name = "tbFan1";
@@ -1354,8 +1396,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // Fan1Box
       // 
-      this.Fan1Box.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.Fan1Box.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.Fan1Box.Location = new System.Drawing.Point(8, 38);
       this.Fan1Box.Name = "Fan1Box";
       this.Fan1Box.Size = new System.Drawing.Size(158, 216);
@@ -1365,8 +1409,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // Fan2Box
       // 
-      this.Fan2Box.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.Fan2Box.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.Fan2Box.Controls.Add(this.cbFan2Auto);
       this.Fan2Box.Controls.Add(this.groupBox6);
       this.Fan2Box.Controls.Add(this.tbFan2);
@@ -1391,9 +1437,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBox6
       // 
-      this.groupBox6.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox6.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox6.Controls.Add(this.cbFan2ShutdownManual);
       this.groupBox6.Controls.Add(this.cbFan2_SetOn);
       this.groupBox6.Controls.Add(this.cbFan2_SetOff);
@@ -1419,82 +1467,84 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // cbFan2_SetOn
       // 
       this.cbFan2_SetOn.FormattingEnabled = true;
-      this.cbFan2_SetOn.Items.AddRange(new object[] {
-            "26",
-            "27",
-            "28",
-            "29",
-            "30",
-            "31",
-            "32",
-            "33",
-            "34",
-            "35",
-            "36",
-            "37",
-            "38",
-            "39",
-            "40",
-            "41",
-            "42",
-            "43",
-            "44",
-            "45",
-            "46",
-            "47",
-            "48",
-            "49",
-            "50",
-            "51",
-            "52",
-            "53",
-            "54",
-            "55",
-            "56",
-            "57",
-            "58",
-            "59",
-            "60",
-            "61",
-            "62",
-            "63",
-            "64",
-            "65",
-            "66",
-            "67",
-            "68",
-            "69",
-            "70",
-            "71",
-            "72",
-            "73",
-            "74",
-            "75",
-            "76",
-            "77",
-            "78",
-            "79",
-            "80",
-            "81",
-            "82",
-            "83",
-            "84",
-            "85",
-            "86",
-            "87",
-            "88",
-            "89",
-            "90",
-            "91",
-            "92",
-            "93",
-            "94",
-            "95",
-            "96",
-            "97",
-            "98",
-            "99",
-            "100"});
+      this.cbFan2_SetOn.Items.AddRange(new object[]
+                                         {
+                                           "26",
+                                           "27",
+                                           "28",
+                                           "29",
+                                           "30",
+                                           "31",
+                                           "32",
+                                           "33",
+                                           "34",
+                                           "35",
+                                           "36",
+                                           "37",
+                                           "38",
+                                           "39",
+                                           "40",
+                                           "41",
+                                           "42",
+                                           "43",
+                                           "44",
+                                           "45",
+                                           "46",
+                                           "47",
+                                           "48",
+                                           "49",
+                                           "50",
+                                           "51",
+                                           "52",
+                                           "53",
+                                           "54",
+                                           "55",
+                                           "56",
+                                           "57",
+                                           "58",
+                                           "59",
+                                           "60",
+                                           "61",
+                                           "62",
+                                           "63",
+                                           "64",
+                                           "65",
+                                           "66",
+                                           "67",
+                                           "68",
+                                           "69",
+                                           "70",
+                                           "71",
+                                           "72",
+                                           "73",
+                                           "74",
+                                           "75",
+                                           "76",
+                                           "77",
+                                           "78",
+                                           "79",
+                                           "80",
+                                           "81",
+                                           "82",
+                                           "83",
+                                           "84",
+                                           "85",
+                                           "86",
+                                           "87",
+                                           "88",
+                                           "89",
+                                           "90",
+                                           "91",
+                                           "92",
+                                           "93",
+                                           "94",
+                                           "95",
+                                           "96",
+                                           "97",
+                                           "98",
+                                           "99",
+                                           "100"
+                                         });
       this.cbFan2_SetOn.Location = new System.Drawing.Point(78, 41);
       this.cbFan2_SetOn.Name = "cbFan2_SetOn";
       this.cbFan2_SetOn.Size = new System.Drawing.Size(44, 21);
@@ -1503,82 +1553,84 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // cbFan2_SetOff
       // 
       this.cbFan2_SetOff.FormattingEnabled = true;
-      this.cbFan2_SetOff.Items.AddRange(new object[] {
-            "26",
-            "27",
-            "28",
-            "29",
-            "30",
-            "31",
-            "32",
-            "33",
-            "34",
-            "35",
-            "36",
-            "37",
-            "38",
-            "39",
-            "40",
-            "41",
-            "42",
-            "43",
-            "44",
-            "45",
-            "46",
-            "47",
-            "48",
-            "49",
-            "50",
-            "51",
-            "52",
-            "53",
-            "54",
-            "55",
-            "56",
-            "57",
-            "58",
-            "59",
-            "60",
-            "61",
-            "62",
-            "63",
-            "64",
-            "65",
-            "66",
-            "67",
-            "68",
-            "69",
-            "70",
-            "71",
-            "72",
-            "73",
-            "74",
-            "75",
-            "76",
-            "77",
-            "78",
-            "79",
-            "80",
-            "81",
-            "82",
-            "83",
-            "84",
-            "85",
-            "86",
-            "87",
-            "88",
-            "89",
-            "90",
-            "91",
-            "92",
-            "93",
-            "94",
-            "95",
-            "96",
-            "97",
-            "98",
-            "99",
-            "100"});
+      this.cbFan2_SetOff.Items.AddRange(new object[]
+                                          {
+                                            "26",
+                                            "27",
+                                            "28",
+                                            "29",
+                                            "30",
+                                            "31",
+                                            "32",
+                                            "33",
+                                            "34",
+                                            "35",
+                                            "36",
+                                            "37",
+                                            "38",
+                                            "39",
+                                            "40",
+                                            "41",
+                                            "42",
+                                            "43",
+                                            "44",
+                                            "45",
+                                            "46",
+                                            "47",
+                                            "48",
+                                            "49",
+                                            "50",
+                                            "51",
+                                            "52",
+                                            "53",
+                                            "54",
+                                            "55",
+                                            "56",
+                                            "57",
+                                            "58",
+                                            "59",
+                                            "60",
+                                            "61",
+                                            "62",
+                                            "63",
+                                            "64",
+                                            "65",
+                                            "66",
+                                            "67",
+                                            "68",
+                                            "69",
+                                            "70",
+                                            "71",
+                                            "72",
+                                            "73",
+                                            "74",
+                                            "75",
+                                            "76",
+                                            "77",
+                                            "78",
+                                            "79",
+                                            "80",
+                                            "81",
+                                            "82",
+                                            "83",
+                                            "84",
+                                            "85",
+                                            "86",
+                                            "87",
+                                            "88",
+                                            "89",
+                                            "90",
+                                            "91",
+                                            "92",
+                                            "93",
+                                            "94",
+                                            "95",
+                                            "96",
+                                            "97",
+                                            "98",
+                                            "99",
+                                            "100"
+                                          });
       this.cbFan2_SetOff.Location = new System.Drawing.Point(78, 17);
       this.cbFan2_SetOff.Name = "cbFan2_SetOff";
       this.cbFan2_SetOff.Size = new System.Drawing.Size(44, 21);
@@ -1591,7 +1643,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.lblFan2_SetOn.Name = "lblFan2_SetOn";
       this.lblFan2_SetOn.Size = new System.Drawing.Size(133, 13);
       this.lblFan2_SetOn.TabIndex = 14;
-      this.lblFan2_SetOn.Text = "100% if above                Â°C";
+      this.lblFan2_SetOn.Text = "100% if above                °C";
       // 
       // lblFan2_SetOff
       // 
@@ -1600,12 +1652,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.lblFan2_SetOff.Name = "lblFan2_SetOff";
       this.lblFan2_SetOff.Size = new System.Drawing.Size(131, 13);
       this.lblFan2_SetOff.TabIndex = 13;
-      this.lblFan2_SetOff.Text = "OFF if below                  Â°C";
+      this.lblFan2_SetOff.Text = "OFF if below                  °C";
       // 
       // tbFan2
       // 
-      this.tbFan2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbFan2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.tbFan2.LargeChange = 1;
       this.tbFan2.Location = new System.Drawing.Point(26, 36);
       this.tbFan2.Name = "tbFan2";
@@ -1617,8 +1671,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // lblFan2
       // 
-      this.lblFan2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblFan2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.lblFan2.Location = new System.Drawing.Point(31, 16);
       this.lblFan2.Name = "lblFan2";
       this.lblFan2.Size = new System.Drawing.Size(90, 17);
@@ -1628,7 +1684,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnOK
       // 
-      this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnOK.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnOK.Location = new System.Drawing.Point(467, 511);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new System.Drawing.Size(88, 23);
@@ -1639,7 +1697,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnReset
       // 
-      this.btnReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnReset.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnReset.Location = new System.Drawing.Point(370, 511);
       this.btnReset.Name = "btnReset";
       this.btnReset.Size = new System.Drawing.Size(88, 23);
@@ -1650,7 +1710,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnRemoteSetup
       // 
-      this.btnRemoteSetup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.btnRemoteSetup.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.btnRemoteSetup.Location = new System.Drawing.Point(12, 511);
       this.btnRemoteSetup.Name = "btnRemoteSetup";
       this.btnRemoteSetup.Size = new System.Drawing.Size(106, 23);
@@ -1661,7 +1723,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnTest
       // 
-      this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.btnTest.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.btnTest.Enabled = false;
       this.btnTest.Location = new System.Drawing.Point(124, 511);
       this.btnTest.Name = "btnTest";
@@ -1707,12 +1771,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.groupBox6.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.tbFan2)).EndInit();
       this.ResumeLayout(false);
-
     }
 
-    private void lblDelay_Click(object sender, EventArgs e)
-    {
-    }
+    private void lblDelay_Click(object sender, EventArgs e) {}
 
     private void mpBlankDisplayWhenIdle_CheckedChanged(object sender, EventArgs e)
     {
@@ -1981,7 +2042,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void SetDelayLabel()
     {
-      this.lblDelay.Text = "Repeat Delay: " + ((this.tbDelay.Value*0x19)).ToString() + "ms";
+      this.lblDelay.Text = "Repeat Delay: " + ((this.tbDelay.Value * 0x19)).ToString() + "ms";
     }
 
     private void SetFanLabel(object sender)
@@ -1989,7 +2050,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       TrackBar bar;
       Label label;
       bool flag = false;
-      if (((TrackBar) sender) == this.tbFan1)
+      if (((TrackBar)sender) == this.tbFan1)
       {
         bar = this.tbFan1;
         label = this.lblFan1;

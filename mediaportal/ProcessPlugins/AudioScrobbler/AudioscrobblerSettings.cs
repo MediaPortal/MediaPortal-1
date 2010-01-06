@@ -199,9 +199,7 @@ namespace MediaPortal.AudioScrobbler
           lblProfPlaycount.Text = Convert.ToString(myProfile[0].TimesPlayed);
           lblProfRegistered.Text = myProfile[0].DateTimePlayed.ToShortDateString();
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
     }
 
@@ -260,13 +258,13 @@ namespace MediaPortal.AudioScrobbler
           }
           if (numericUpDownSimilarArtist != null)
           {
-            artisttoadd = (int) numericUpDownSimilarArtist.Value;
+            artisttoadd = (int)numericUpDownSimilarArtist.Value;
           }
           //if (numericUpDownTracksPerArtist != null)
           //  trackstoadd = (int)numericUpDownTracksPerArtist.Value;
           if (lastFmLookup != null)
           {
-            neighbourmode = (int) lastFmLookup.CurrentNeighbourMode;
+            neighbourmode = (int)lastFmLookup.CurrentNeighbourMode;
           }
           else
           {
@@ -325,8 +323,8 @@ namespace MediaPortal.AudioScrobbler
       {
         try
         {
-          double xval = Convert.ToDouble(((ListViewItem) x).SubItems[col].Text, NumberFormatInfo.InvariantInfo);
-          double yval = Convert.ToDouble(((ListViewItem) y).SubItems[col].Text, NumberFormatInfo.InvariantInfo);
+          double xval = Convert.ToDouble(((ListViewItem)x).SubItems[col].Text, NumberFormatInfo.InvariantInfo);
+          double yval = Convert.ToDouble(((ListViewItem)y).SubItems[col].Text, NumberFormatInfo.InvariantInfo);
 
           return -(xval.CompareTo(yval));
         }
@@ -369,9 +367,7 @@ namespace MediaPortal.AudioScrobbler
       {
         Help.ShowHelp(this, "http://www.last.fm/group/MediaPortal%2BUsers");
       }
-      catch
-      {
-      }
+      catch {}
     }
 
     private void linkLabelNewUser_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -381,9 +377,7 @@ namespace MediaPortal.AudioScrobbler
       {
         Help.ShowHelp(this, "https://www.last.fm/join/");
       }
-      catch
-      {
-      }
+      catch {}
     }
 
     private void trackBarArtistMatch_ValueChanged(object sender, EventArgs e)
@@ -966,7 +960,7 @@ namespace MediaPortal.AudioScrobbler
             string strThumb = Util.Utils.GetCoverArt(Thumbs.MusicArtists, curArtist);
             if (File.Exists(strThumb))
             {
-              listItem.SubItems.Add((new FileInfo(strThumb).Length/1024) + "KB");
+              listItem.SubItems.Add((new FileInfo(strThumb).Length / 1024) + "KB");
             }
             else
             {
@@ -978,7 +972,7 @@ namespace MediaPortal.AudioScrobbler
             strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
             if (File.Exists(strThumb))
             {
-              listItem.SubItems.Add((new FileInfo(strThumb).Length/1024) + "KB");
+              listItem.SubItems.Add((new FileInfo(strThumb).Length / 1024) + "KB");
             }
             else
             {
@@ -989,9 +983,7 @@ namespace MediaPortal.AudioScrobbler
 
             progressBarCoverArtists.Value = i + 1;
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
         progressBarCoverArtists.Visible = false;
       }
@@ -1029,7 +1021,7 @@ namespace MediaPortal.AudioScrobbler
             if (File.Exists(strThumb))
             {
               listViewCoverArtists.Items[i].ForeColor = Color.DarkGreen;
-              listViewCoverArtists.Items[i].SubItems[1].Text = ((new FileInfo(strThumb).Length/1024) + "KB");
+              listViewCoverArtists.Items[i].SubItems[1].Text = ((new FileInfo(strThumb).Length / 1024) + "KB");
             }
             else
             {
@@ -1040,7 +1032,7 @@ namespace MediaPortal.AudioScrobbler
             if (File.Exists(strThumb))
             {
               listViewCoverArtists.Items[i].ForeColor = Color.DarkGreen;
-              listViewCoverArtists.Items[i].SubItems[2].Text = ((new FileInfo(strThumb).Length/1024) + "KB");
+              listViewCoverArtists.Items[i].SubItems[2].Text = ((new FileInfo(strThumb).Length / 1024) + "KB");
             }
             else
             {
@@ -1098,7 +1090,7 @@ namespace MediaPortal.AudioScrobbler
             string strThumb = Util.Utils.GetAlbumThumbName(curArtist, curAlbum);
             if (File.Exists(strThumb))
             {
-              listItem.SubItems.Add((new FileInfo(strThumb).Length/1024) + "KB");
+              listItem.SubItems.Add((new FileInfo(strThumb).Length / 1024) + "KB");
             }
             else
             {
@@ -1110,7 +1102,7 @@ namespace MediaPortal.AudioScrobbler
             strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
             if (File.Exists(strThumb))
             {
-              listItem.SubItems.Add((new FileInfo(strThumb).Length/1024) + "KB");
+              listItem.SubItems.Add((new FileInfo(strThumb).Length / 1024) + "KB");
             }
             else
             {
@@ -1121,9 +1113,7 @@ namespace MediaPortal.AudioScrobbler
 
             progressBarCoverAlbums.Value = i + 1;
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
         progressBarCoverAlbums.Visible = false;
       }
@@ -1167,7 +1157,7 @@ namespace MediaPortal.AudioScrobbler
             if (File.Exists(strThumb))
             {
               listViewCoverAlbums.Items[i].ForeColor = Color.DarkGreen;
-              listViewCoverAlbums.Items[i].SubItems[2].Text = ((new FileInfo(strThumb).Length/1024) + "KB");
+              listViewCoverAlbums.Items[i].SubItems[2].Text = ((new FileInfo(strThumb).Length / 1024) + "KB");
             }
             else
             {
@@ -1178,7 +1168,7 @@ namespace MediaPortal.AudioScrobbler
             if (File.Exists(strThumb))
             {
               listViewCoverAlbums.Items[i].ForeColor = Color.DarkGreen;
-              listViewCoverAlbums.Items[i].SubItems[3].Text = ((new FileInfo(strThumb).Length/1024) + "KB");
+              listViewCoverAlbums.Items[i].SubItems[3].Text = ((new FileInfo(strThumb).Length / 1024) + "KB");
             }
             else
             {

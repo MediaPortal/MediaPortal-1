@@ -161,19 +161,19 @@ namespace ProcessPlugins.AutoCropper
       this.linkHelp = new System.Windows.Forms.LinkLabel();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.Parameters.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.maxBrightnessTresholdInput)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize) (this.minBrightnessTresholdInput)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize) (this.minSubtitleHeightInput)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize) (this.bottomScanEndInput)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize) (this.topScanEndInput)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize) (this.bottomScanStartInput)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize) (this.topScanStartInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.maxBrightnessTresholdInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.minBrightnessTresholdInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.minSubtitleHeightInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.bottomScanEndInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.topScanEndInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.bottomScanStartInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.topScanStartInput)).BeginInit();
       this.manualModeGroup.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.manualSampleLengthInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.manualSampleLengthInput)).BeginInit();
       this.automodeGroup.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.bottomMemLength)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize) (this.topMemLength)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize) (this.sampleIntervalInput)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.bottomMemLength)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.topMemLength)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.sampleIntervalInput)).BeginInit();
       this.groupDefaultMode.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -636,21 +636,21 @@ namespace ProcessPlugins.AutoCropper
       this.Text = "AutoCropper - Setup";
       this.Parameters.ResumeLayout(false);
       this.Parameters.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.maxBrightnessTresholdInput)).EndInit();
-      ((System.ComponentModel.ISupportInitialize) (this.minBrightnessTresholdInput)).EndInit();
-      ((System.ComponentModel.ISupportInitialize) (this.minSubtitleHeightInput)).EndInit();
-      ((System.ComponentModel.ISupportInitialize) (this.bottomScanEndInput)).EndInit();
-      ((System.ComponentModel.ISupportInitialize) (this.topScanEndInput)).EndInit();
-      ((System.ComponentModel.ISupportInitialize) (this.bottomScanStartInput)).EndInit();
-      ((System.ComponentModel.ISupportInitialize) (this.topScanStartInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.maxBrightnessTresholdInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.minBrightnessTresholdInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.minSubtitleHeightInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.bottomScanEndInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.topScanEndInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.bottomScanStartInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.topScanStartInput)).EndInit();
       this.manualModeGroup.ResumeLayout(false);
       this.manualModeGroup.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.manualSampleLengthInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.manualSampleLengthInput)).EndInit();
       this.automodeGroup.ResumeLayout(false);
       this.automodeGroup.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.bottomMemLength)).EndInit();
-      ((System.ComponentModel.ISupportInitialize) (this.topMemLength)).EndInit();
-      ((System.ComponentModel.ISupportInitialize) (this.sampleIntervalInput)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.bottomMemLength)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.topMemLength)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.sampleIntervalInput)).EndInit();
       this.groupDefaultMode.ResumeLayout(false);
       this.groupDefaultMode.PerformLayout();
       this.ResumeLayout(false);
@@ -773,9 +773,9 @@ namespace ProcessPlugins.AutoCropper
         //this.manualSampleLengthInput.Value = reader.GetValueAsInt(autoCropSectionName, parmManualSampleLength, 30);
         this.minSubtitleHeightInput.Value = reader.GetValueAsInt(autoCropSectionName, parmMinSubtitleHeight, 10);
         this.topMemLength.Value = reader.GetValueAsInt(autoCropSectionName, parmTopMemoryLength, 10);
-          // 10 seconds default
+        // 10 seconds default
         this.bottomMemLength.Value = reader.GetValueAsInt(autoCropSectionName, parmBottomMemoryLength, 60);
-          // 60 seconds default
+        // 60 seconds default
         this.rbDefaultManual.Checked = reader.GetValueAsBool(autoCropSectionName, parmDefaultModeIsManual, true);
         this.cbVerboseLog.Checked = reader.GetValueAsBool(autoCropSectionName, parmVerboseLog, false);
         this.rbDefaultAutomatic.Checked = !rbDefaultManual.Checked;
@@ -783,7 +783,7 @@ namespace ProcessPlugins.AutoCropper
         this.sampleIntervalInput.Maximum = 10000;
         this.sampleIntervalInput.Minimum = 0;
         this.sampleIntervalInput.Value = reader.GetValueAsInt(autoCropSectionName, parmSampleInterval, 500);
-          // 2 times a second default
+        // 2 times a second default
         this.minBrightnessTresholdInput.Value = reader.GetValueAsInt(autoCropSectionName, parmMinBrightnessTreshold, 4);
         this.maxBrightnessTresholdInput.Value = reader.GetValueAsInt(autoCropSectionName, parmMaxBrightnessTreshold, 40);
       }

@@ -31,8 +31,8 @@ namespace MediaPortal.Playlists
 {
   public class PlayListM3uIO : IPlayListIO
   {
-    const string M3U_START_MARKER = "#EXTM3U";
-    const string M3U_INFO_MARKER = "#EXTINF";
+    private const string M3U_START_MARKER = "#EXTM3U";
+    private const string M3U_INFO_MARKER = "#EXTINF";
     private PlayList playlist;
     private StreamReader file;
     private string basePath;
@@ -95,7 +95,8 @@ namespace MediaPortal.Playlists
             line = file.ReadLine();
           }
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         return false;
       }
@@ -159,9 +160,8 @@ namespace MediaPortal.Playlists
             writer.WriteLine("{0}", item.FileName);
           }
         }
-      } catch (Exception)
-      {
       }
+      catch (Exception) {}
     }
   }
 }

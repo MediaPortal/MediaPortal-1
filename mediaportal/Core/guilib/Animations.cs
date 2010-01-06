@@ -43,9 +43,7 @@ namespace MediaPortal.GUI.Library
 
     #region Constructors
 
-    public Animation()
-    {
-    }
+    public Animation() {}
 
     public Animation(double duration, int StartValue, int StopValue)
     {

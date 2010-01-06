@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
-
 using MediaPortal.Services;
 using MediaPortal.ServiceImplementations;
 using MediaPortal.TagReader;
@@ -42,9 +41,9 @@ namespace MediaPortal.Util
   /// </summary>
   public class FolderThumbCacher
   {
-    string _filename = string.Empty;
-    bool _overWrite = false;
-    Work work;
+    private string _filename = string.Empty;
+    private bool _overWrite = false;
+    private Work work;
 
     // aFilePath must only be the path of the directory
     public FolderThumbCacher(string aFilePath, bool aOverWriteExisting)
@@ -59,7 +58,7 @@ namespace MediaPortal.Util
       }
     }
 
-    void PerformRequest()
+    private void PerformRequest()
     {
       bool replace = _overWrite;
       string filename = _filename;
@@ -79,13 +78,15 @@ namespace MediaPortal.Util
           string localFolderLThumb = Util.Utils.ConvertToLargeCoverArt(strFolderThumb);
 
           if (!File.Exists(strFolderThumb) || replace)
-            Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, true);
-          if (!File.Exists(localFolderLThumb) || replace)          
-            Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
+            Util.Picture.CreateThumbnail(strRemoteFolderThumb, strFolderThumb, (int)Thumbs.ThumbResolution,
+                                         (int)Thumbs.ThumbResolution, 0, true);
+          if (!File.Exists(localFolderLThumb) || replace)
+            Util.Picture.CreateThumbnail(strRemoteFolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution,
+                                         (int)Thumbs.ThumbLargeResolution, 0, false);
         }
         catch (Exception ex)
         {
-          Log.Error("FolderThumbCacher: Error processing {0} - {1}", strRemoteFolderThumb, ex);          
+          Log.Error("FolderThumbCacher: Error processing {0} - {1}", strRemoteFolderThumb, ex);
         }
       }
       else

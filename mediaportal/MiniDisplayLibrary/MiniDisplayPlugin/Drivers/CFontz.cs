@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.IO;
 using System.IO.Ports;
@@ -112,20 +112,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (this.DoDebug)
         {
           Log.Info("\nCFDisplay.DisplayEQ(): Retrieved {0} samples of Equalizer data.",
-                   new object[] {this.EQSettings.EqFftData.Length/2});
+                   new object[] {this.EQSettings.EqFftData.Length / 2});
         }
         if (this.EQSettings.UseVUmeter || this.EQSettings.UseVUmeter2)
         {
-          this.EQSettings.Render_MaxValue = this.CFD.GetColumns()*6;
+          this.EQSettings.Render_MaxValue = this.CFD.GetColumns() * 6;
           this.EQSettings.Render_BANDS = 1;
           if (this.EQSettings._useVUindicators)
           {
-            this.EQSettings.Render_MaxValue = (this.CFD.GetColumns() - 1)*6;
+            this.EQSettings.Render_MaxValue = (this.CFD.GetColumns() - 1) * 6;
           }
         }
         else
         {
-          this.EQSettings.Render_MaxValue = this.CFD.GetRows()*8;
+          this.EQSettings.Render_MaxValue = this.CFD.GetRows() * 8;
           if (this.EQSettings.UseStereoEq)
           {
             this.EQSettings.Render_BANDS = 8;
@@ -201,9 +201,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.CFD.CloseDisplay(this._BackLightControl);
     }
 
-    public void DrawImage(Bitmap bitmap)
-    {
-    }
+    public void DrawImage(Bitmap bitmap) {}
 
     private void EQ_Update()
     {
@@ -313,8 +311,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.DisplaySettings.DisplayActionTime = settings.EnableDisplayActionTime;
       this.DisplaySettings.BlankDisplayWhenIdle = settings.BlankDisplayWhenIdle;
       this.DisplaySettings.BlankIdleDelay = settings.BlankIdleTime;
-      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay*0x989680;
-      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime*0x989680;
+      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay * 0x989680;
+      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime * 0x989680;
       this.DisplaySettings._Shutdown1 = Settings.Instance.Shutdown1;
       this.DisplaySettings._Shutdown2 = Settings.Instance.Shutdown2;
       this.EQSettings.UseVUmeter = settings.VUmeter;
@@ -332,8 +330,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.EQSettings._EQTitleShowTime = settings.EQTitleShowTime;
       this.EQSettings._EqUpdateDelay = (this.EQSettings._EQ_Restrict_FPS == 0)
                                          ? 0
-                                         : ((0x989680/this.EQSettings._EQ_Restrict_FPS) -
-                                            (0xf4240/this.EQSettings._EQ_Restrict_FPS));
+                                         : ((0x989680 / this.EQSettings._EQ_Restrict_FPS) -
+                                            (0xf4240 / this.EQSettings._EQ_Restrict_FPS));
       Log.Info("CFontz.LoadAdvancedSettings(): Extensive Logging: {0}",
                new object[] {Settings.Instance.ExtensiveLogging});
       Log.Info("CFontz.LoadAdvancedSettings(): Device Port: {0}", new object[] {Settings.Instance.Port});
@@ -380,7 +378,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Info("CFontz.LoadAdvancedSettings(): Advanced options - Blank display when idle: {0}",
                new object[] {this.DisplaySettings.BlankDisplayWhenIdle});
       Log.Info("CFontz.LoadAdvancedSettings(): Advanced options -     blank display after: {0} seconds",
-               new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
+               new object[] {this.DisplaySettings._BlankIdleTimeout / 0xf4240L});
       Log.Info("CFontz.LoadAdvancedSettings(): Setting - Audio using ASIO: {0}",
                new object[] {this.EQSettings._AudioUseASIO});
       Log.Info("CFontz.LoadAdvancedSettings(): Completed");
@@ -479,9 +477,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters)
-    {
-    }
+    public void SetCustomCharacters(int[][] customCharacters) {}
 
     public void SetLine(int line, string message)
     {
@@ -934,7 +930,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("CFontz.AdvancedSettings.Load(): Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_CFontz.xml"));
-          settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
+          settings = (AdvancedSettings)serializer.Deserialize(xmlReader);
           xmlReader.Close();
         }
         else
@@ -968,7 +964,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                  Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 2;
-        serializer.Serialize((XmlWriter) writer, ToSave);
+        serializer.Serialize((XmlWriter)writer, ToSave);
         writer.Close();
         Log.Info("CFontz.AdvancedSettings.Save(): completed");
       }
@@ -1263,9 +1259,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         uint num = 0xffff;
         for (int i = 0; i < (len - 1); i++)
         {
-          num = (num >> 8) ^ crcLookupTable[(int) ((IntPtr) ((num ^ Packet[i]) & 0xff))];
+          num = (num >> 8) ^ crcLookupTable[(int)((IntPtr)((num ^ Packet[i]) & 0xff))];
         }
-        Packet[len - 1] = (byte) ~num;
+        Packet[len - 1] = (byte)~num;
       }
 
       public void ClearDisplay()
@@ -1327,7 +1323,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this._CommandSet.WrapOff = null;
           this._CommandSet.SetCustomChar = new byte[] {9, 9, 0xff, 0, 0, 0, 0, 0, 0, 0, 0, 0xff};
           this._CommandSet.SetKeyReport = new byte[] {0x17, 2, 0, 60, 0xff};
-          if (Display_Parameters[(int) dType, 0] == 0x10)
+          if (Display_Parameters[(int)dType, 0] == 0x10)
           {
             this._CommandSet.SetLine = new byte[]
                                          {
@@ -1365,7 +1361,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           buffer9[0] = 0x19;
           this._CommandSet.SetCustomChar = buffer9;
           this._CommandSet.SetKeyReport = null;
-          if (Display_Parameters[(int) dType, 3] == 0x10)
+          if (Display_Parameters[(int)dType, 3] == 0x10)
           {
             this._CommandSet.SetLine = new byte[]
                                          {
@@ -1373,7 +1369,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                            0x20, 0x20, 0x20,
                                            0x20, 0x20, 0x20
                                          };
-            if (Display_Parameters[(int) dType, 2] == 2)
+            if (Display_Parameters[(int)dType, 2] == 2)
             {
               this._CommandSet.ClearDisplay = new byte[]
                                                 {
@@ -1408,7 +1404,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                            0x20, 0x20, 0x20,
                                            0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
                                          };
-            if (Display_Parameters[(int) dType, 2] == 2)
+            if (Display_Parameters[(int)dType, 2] == 2)
             {
               this._CommandSet.ClearDisplay = new byte[]
                                                 {
@@ -1466,22 +1462,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             setLine = this._CommandSet.SetLine;
             if (length > 0)
             {
-              setLine[3] = (byte) row;
+              setLine[3] = (byte)row;
               if (RightToLeft == 0)
               {
                 for (int i = 0; i < this.dSettings.Columns; i++)
                 {
-                  if (((i + 1)*6) < length)
+                  if (((i + 1) * 6) < length)
                   {
                     setLine[4] = 5;
                   }
-                  else if ((length - (i*6)) == 0)
+                  else if ((length - (i * 6)) == 0)
                   {
                     setLine[4 + i] = 0x20;
                   }
                   else
                   {
-                    setLine[4 + i] = (byte) (0xa5 - (length - (i*6)));
+                    setLine[4 + i] = (byte)(0xa5 - (length - (i * 6)));
                   }
                 }
               }
@@ -1489,17 +1485,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 for (int j = 0; j < this.dSettings.Columns; j++)
                 {
-                  if (((j + 1)*6) < length)
+                  if (((j + 1) * 6) < length)
                   {
                     setLine[(4 + (this.dSettings.Columns - 1)) - j] = 5;
                   }
-                  else if ((length - (j*6)) == 0)
+                  else if ((length - (j * 6)) == 0)
                   {
                     setLine[(4 + (this.dSettings.Columns - 1)) - j] = 0x20;
                   }
                   else
                   {
-                    setLine[(4 + (this.dSettings.Columns - 1)) - j] = (byte) (0xa5 - (length - (j*6)));
+                    setLine[(4 + (this.dSettings.Columns - 1)) - j] = (byte)(0xa5 - (length - (j * 6)));
                   }
                 }
               }
@@ -1509,9 +1505,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           else
           {
             setLine = this._CommandSet.HorizontalBar;
-            setLine[4] = (byte) (this.dSettings.Columns - 1);
-            setLine[5] = (RightToLeft == 0) ? ((byte) length) : ((byte) (0x100 - length));
-            setLine[6] = (byte) row;
+            setLine[4] = (byte)(this.dSettings.Columns - 1);
+            setLine[5] = (RightToLeft == 0) ? ((byte)length) : ((byte)(0x100 - length));
+            setLine[6] = (byte)row;
           }
           this.commPort.Write(setLine, 0, setLine.Length);
         }
@@ -1521,7 +1517,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff))
         {
-          int num = (this.dSettings.Columns - EQSettings.Render_BANDS)/2;
+          int num = (this.dSettings.Columns - EQSettings.Render_BANDS) / 2;
           if ((num > 0) & EQSettings.UseStereoEq)
           {
             num--;
@@ -1576,35 +1572,35 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 if (EqDataArray[1 + i] > 8)
                 {
-                  packet[index + i] = (byte) (EqDataArray[1 + i] - 9);
+                  packet[index + i] = (byte)(EqDataArray[1 + i] - 9);
                 }
                 else
                 {
                   packet[index + i] = 0x20;
-                  setLine[index + i] = (byte) (EqDataArray[1 + i] - 1);
+                  setLine[index + i] = (byte)(EqDataArray[1 + i] - 1);
                 }
               }
               else if (EqDataArray[1 + i] > 0x18)
               {
-                buffer4[index + i] = (byte) (EqDataArray[1 + i] - 0x19);
+                buffer4[index + i] = (byte)(EqDataArray[1 + i] - 0x19);
               }
               else if (EqDataArray[1 + i] > 0x10)
               {
                 buffer4[index + i] = 0x20;
-                buffer3[index + i] = (byte) (EqDataArray[1 + i] - 0x11);
+                buffer3[index + i] = (byte)(EqDataArray[1 + i] - 0x11);
               }
               else if (EqDataArray[1 + i] > 8)
               {
                 buffer4[index + i] = 0x20;
                 buffer3[index + i] = 0x20;
-                packet[index + i] = (byte) (EqDataArray[1 + i] - 9);
+                packet[index + i] = (byte)(EqDataArray[1 + i] - 9);
               }
               else
               {
                 buffer4[index + i] = 0x20;
                 buffer3[index + i] = 0x20;
                 packet[index + i] = 0x20;
-                setLine[index + i] = (byte) (EqDataArray[1 + i] - 1);
+                setLine[index + i] = (byte)(EqDataArray[1 + i] - 1);
               }
             }
           }
@@ -1708,12 +1704,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             byte[] setCustomChar = this._CommandSet.SetCustomChar;
             if (this.dSettings.PacketFormat)
             {
-              setCustomChar[2] = (byte) i;
+              setCustomChar[2] = (byte)i;
               num2 = 3;
             }
             else
             {
-              setCustomChar[1] = (byte) i;
+              setCustomChar[1] = (byte)i;
               num2 = 2;
             }
             for (int j = 0; j < 8; j++)
@@ -1747,12 +1743,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             byte[] setCustomChar = this._CommandSet.SetCustomChar;
             if (this.dSettings.PacketFormat)
             {
-              setCustomChar[2] = (byte) i;
+              setCustomChar[2] = (byte)i;
               num2 = 3;
             }
             else
             {
-              setCustomChar[1] = (byte) i;
+              setCustomChar[1] = (byte)i;
               num2 = 2;
             }
             for (int j = 0; j < 8; j++)
@@ -1822,12 +1818,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           byte[] backLight = this._CommandSet.BackLight;
           if (this.dSettings.PacketFormat)
           {
-            backLight[2] = (byte) brightness;
+            backLight[2] = (byte)brightness;
             this.Calc_CRC(ref backLight, backLight.Length);
           }
           else
           {
-            backLight[1] = (byte) brightness;
+            backLight[1] = (byte)brightness;
           }
           this._currentBrightness = brightness;
           this.commPort.Write(backLight, 0, backLight.Length);
@@ -1841,12 +1837,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           byte[] packet = this._CommandSet.Contrast;
           if (Display_Parameters[this._DisplayType, 0] == 1)
           {
-            packet[2] = (byte) contrast;
+            packet[2] = (byte)contrast;
             this.Calc_CRC(ref packet, packet.Length);
           }
           else
           {
-            packet[1] = (byte) contrast;
+            packet[1] = (byte)contrast;
           }
           this.commPort.Write(packet, 0, packet.Length);
         }
@@ -1867,17 +1863,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             _message = _message.Substring(0, this.dSettings.Columns);
             if (this.dSettings.PacketFormat)
             {
-              setLine[3] = (byte) _line;
+              setLine[3] = (byte)_line;
               num = 4;
             }
             else
             {
-              setLine[2] = (byte) _line;
+              setLine[2] = (byte)_line;
               num = 3;
             }
             for (int i = 0; i < this.dSettings.Columns; i++)
             {
-              setLine[num + i] = (byte) _message[i];
+              setLine[num + i] = (byte)_message[i];
             }
             if (this.dSettings.PacketFormat)
             {
@@ -1975,7 +1971,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       private void WhenDataReceived(object sender, SerialDataReceivedEventArgs e)
       {
-        byte eventCode = (byte) this.commPort.ReadByte();
+        byte eventCode = (byte)this.commPort.ReadByte();
         if (!this._useCustomKeypadMapping)
         {
           Action action;

@@ -57,9 +57,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public DVDCodec()
-      : this("DVD Codecs")
-    {
-    }
+      : this("DVD Codecs") {}
 
     /// <summary>
     /// 
@@ -156,7 +154,7 @@ namespace MediaPortal.Configuration.Sections
           {
             bool Mpeg2DecFilterFound = true;
             bool DScalerFilterFound = true;
-            audioCodec = (string) availableAudioFilters[0];
+            audioCodec = (string)availableAudioFilters[0];
             foreach (string filter in availableAudioFilters)
             {
               if (filter.Equals("MPC - MPA Decoder Filter"))
@@ -185,7 +183,7 @@ namespace MediaPortal.Configuration.Sections
           bool DScalerFilterFound = false;
           if (availableVideoFilters.Count > 0)
           {
-            videoCodec = (string) availableVideoFilters[0];
+            videoCodec = (string)availableVideoFilters[0];
             foreach (string filter in availableVideoFilters)
             {
               if (filter.Equals("MPC - MPEG-2 Video Decoder (Gabest)"))
@@ -273,8 +271,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.mpLabel1);
       this.groupBox1.Controls.Add(this.checkBoxDXVA);
       this.groupBox1.Controls.Add(this.audioRendererLabel);
@@ -324,8 +324,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioRendererComboBox
       // 
-      this.audioRendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioRendererComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.audioRendererComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioRendererComboBox.Location = new System.Drawing.Point(168, 120);
@@ -343,8 +345,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // videoCodecComboBox
       // 
-      this.videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.videoCodecComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.videoCodecComboBox.Location = new System.Drawing.Point(168, 72);
@@ -365,8 +369,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // dvdNavigatorComboBox
       // 
-      this.dvdNavigatorComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.dvdNavigatorComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.dvdNavigatorComboBox.BorderColor = System.Drawing.Color.Empty;
       this.dvdNavigatorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.dvdNavigatorComboBox.Location = new System.Drawing.Point(168, 24);
@@ -376,8 +382,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioCodecComboBox
       // 
-      this.audioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioCodecComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.audioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioCodecComboBox.Location = new System.Drawing.Point(168, 96);
@@ -409,7 +417,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

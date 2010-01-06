@@ -35,13 +35,16 @@ namespace TvLibrary.Implementations.Analog.QualityControl
   public class CodecAPIControl : BaseControl
   {
     #region variable
+
     /// <summary>
     /// Instance of the encoder that supports the ICodecAPI
     /// </summary>
     private readonly ICodecAPI _codecAPI;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="CodecAPIControl"/> class.
     /// </summary>
@@ -51,12 +54,15 @@ namespace TvLibrary.Implementations.Analog.QualityControl
       : base(configuration)
     {
       _codecAPI = codecAPI;
-      Log.Log.WriteFile("analog: ICodecAPI supported by: " + FilterGraphTools.GetFilterName(_codecAPI as IBaseFilter) + "; Checking capabilities ");
+      Log.Log.WriteFile("analog: ICodecAPI supported by: " + FilterGraphTools.GetFilterName(_codecAPI as IBaseFilter) +
+                        "; Checking capabilities ");
       CheckCapabilities();
     }
+
     #endregion
 
     #region protected override methods
+
     /// <summary>
     /// Checks if the encoder supports the given GUID
     /// </summary>
@@ -86,7 +92,8 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// <param name="valueMax">maximum out value</param>
     /// <param name="steppingDelta">stepping delta out value</param>
     /// <returns>HR result</returns>
-    protected override int GetParameterRange(Guid guid, out object valueMin, out object valueMax, out object steppingDelta)
+    protected override int GetParameterRange(Guid guid, out object valueMin, out object valueMax,
+                                             out object steppingDelta)
     {
       return _codecAPI.GetParameterRange(guid, out valueMin, out valueMax, out steppingDelta);
     }

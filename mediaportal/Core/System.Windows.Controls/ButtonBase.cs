@@ -46,9 +46,7 @@ namespace System.Windows.Controls
                                                       new PropertyMetadata(false));
     }
 
-    protected ButtonBase()
-    {
-    }
+    protected ButtonBase() {}
 
     #endregion Constructors
 
@@ -70,9 +68,7 @@ namespace System.Windows.Controls
 
     #region Methods
 
-    protected virtual void OnClick()
-    {
-    }
+    protected virtual void OnClick() {}
 
     #endregion Methods
 
@@ -81,14 +77,14 @@ namespace System.Windows.Controls
     [Bindable(true)]
     public ClickMode ClickMode
     {
-      get { return (ClickMode) GetValue(ClickModeProperty); }
+      get { return (ClickMode)GetValue(ClickModeProperty); }
       set { SetValue(ClickModeProperty, value); }
     }
 
     [Bindable(true)]
     public ICommand Command
     {
-      get { return (ICommand) GetValue(CommandProperty); }
+      get { return (ICommand)GetValue(CommandProperty); }
       set { SetValue(CommandProperty, value); }
     }
 
@@ -102,7 +98,7 @@ namespace System.Windows.Controls
     [Bindable(true)]
     public bool IsPressed
     {
-      get { return (bool) GetValue(IsPressedProperty); }
+      get { return (bool)GetValue(IsPressedProperty); }
       set { SetValue(IsPressedProperty, value); }
     }
 

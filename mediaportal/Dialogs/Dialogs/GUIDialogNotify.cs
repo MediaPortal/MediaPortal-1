@@ -48,7 +48,7 @@ namespace MediaPortal.Dialogs
 
     public GUIDialogNotify()
     {
-      GetID = (int) Window.WINDOW_DIALOG_NOTIFY;
+      GetID = (int)Window.WINDOW_DIALOG_NOTIFY;
     }
 
     public override bool Init()

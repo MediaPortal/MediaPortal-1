@@ -72,9 +72,7 @@ namespace MediaPortal.Threading
 
     #region Constructors
 
-    public ThreadPoolStartInfo()
-    {
-    }
+    public ThreadPoolStartInfo() {}
 
     public ThreadPoolStartInfo(string name)
     {

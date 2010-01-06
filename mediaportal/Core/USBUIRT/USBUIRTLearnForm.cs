@@ -37,142 +37,145 @@ namespace MediaPortal.IR
   /// </summary>
   public class USBUIRTLearnForm : System.Windows.Forms.Form
   {
-    public enum LearnType { SetTopBoxCommands, MediaPortalCommands };
+    public enum LearnType
+    {
+      SetTopBoxCommands,
+      MediaPortalCommands
+    } ;
+
     private System.Collections.ArrayList buttonNames = new ArrayList();
 
     #region Command Actions
-    object[] commands = {
-								Action.ActionType.ACTION_MOVE_LEFT,
-								Action.ActionType.ACTION_MOVE_RIGHT,             
-								Action.ActionType.ACTION_MOVE_UP,            
-								Action.ActionType.ACTION_MOVE_DOWN,              
-								Action.ActionType.ACTION_PAGE_UP,             
-								Action.ActionType.ACTION_PAGE_DOWN,              
-								Action.ActionType.ACTION_SELECT_ITEM,            
-								Action.ActionType.ACTION_PREVIOUS_MENU,          
-								Action.ActionType.ACTION_SHOW_INFO,
 
-								Action.ActionType.ACTION_PLAY,
-								Action.ActionType.ACTION_PAUSE,
-								Action.ActionType.ACTION_STOP,
-								Action.ActionType.ACTION_RECORD,
-								Action.ActionType.ACTION_FORWARD,
-								Action.ActionType.ACTION_REWIND,
+    private object[] commands = {
+                                  Action.ActionType.ACTION_MOVE_LEFT,
+                                  Action.ActionType.ACTION_MOVE_RIGHT,
+                                  Action.ActionType.ACTION_MOVE_UP,
+                                  Action.ActionType.ACTION_MOVE_DOWN,
+                                  Action.ActionType.ACTION_PAGE_UP,
+                                  Action.ActionType.ACTION_PAGE_DOWN,
+                                  Action.ActionType.ACTION_SELECT_ITEM,
+                                  Action.ActionType.ACTION_PREVIOUS_MENU,
+                                  Action.ActionType.ACTION_SHOW_INFO,
+                                  Action.ActionType.ACTION_PLAY,
+                                  Action.ActionType.ACTION_PAUSE,
+                                  Action.ActionType.ACTION_STOP,
+                                  Action.ActionType.ACTION_RECORD,
+                                  Action.ActionType.ACTION_FORWARD,
+                                  Action.ActionType.ACTION_REWIND,
+                                  Action.ActionType.ACTION_CONTEXT_MENU,
+                                  Action.ActionType.ACTION_SHOW_GUI,
+                                  Action.ActionType.ACTION_QUEUE_ITEM,
+                                  Action.ActionType.ACTION_EXIT,
+                                  Action.ActionType.ACTION_SHUTDOWN,
+                                  Action.ActionType.ACTION_REBOOT,
+                                  Action.ActionType.ACTION_ASPECT_RATIO,
+                                  Action.ActionType.ACTION_EJECTCD,
+                                  Action.ActionType.ACTION_PREV_CHANNEL,
+                                  Action.ActionType.ACTION_NEXT_CHANNEL,
+                                  Action.ActionType.ACTION_DVD_MENU,
+                                  Action.ActionType.ACTION_NEXT_CHAPTER,
+                                  Action.ActionType.ACTION_PREV_CHAPTER,
+                                  Action.ActionType.ACTION_VOLUME_DOWN,
+                                  Action.ActionType.ACTION_VOLUME_UP,
+                                  Action.ActionType.ACTION_VOLUME_MUTE,
+                                  Action.ActionType.ACTION_AUDIO_NEXT_LANGUAGE,
+                                  Action.ActionType.ACTION_SHOW_SUBTITLES,
+                                  Action.ActionType.ACTION_NEXT_AUDIO,
+                                  Action.ActionType.ACTION_HIGHLIGHT_ITEM,
+                                  Action.ActionType.ACTION_PARENT_DIR,
+                                  Action.ActionType.ACTION_NEXT_ITEM,
+                                  Action.ActionType.ACTION_PREV_ITEM,
+                                  Action.ActionType.ACTION_STEP_FORWARD,
+                                  Action.ActionType.ACTION_STEP_BACK,
+                                  Action.ActionType.ACTION_BIG_STEP_FORWARD,
+                                  Action.ActionType.ACTION_BIG_STEP_BACK,
+                                  Action.ActionType.ACTION_SHOW_OSD,
+                                  Action.ActionType.ACTION_SHOW_CODEC,
+                                  Action.ActionType.ACTION_NEXT_PICTURE,
+                                  Action.ActionType.ACTION_PREV_PICTURE,
+                                  Action.ActionType.ACTION_ZOOM_OUT,
+                                  Action.ActionType.ACTION_ZOOM_IN,
+                                  Action.ActionType.ACTION_TOGGLE_SOURCE_DEST,
+                                  Action.ActionType.ACTION_SHOW_PLAYLIST,
+                                  Action.ActionType.ACTION_REMOVE_ITEM,
+                                  Action.ActionType.ACTION_SHOW_FULLSCREEN,
+                                  Action.ActionType.ACTION_ZOOM_LEVEL_NORMAL,
+                                  Action.ActionType.ACTION_ZOOM_LEVEL_1,
+                                  Action.ActionType.ACTION_ZOOM_LEVEL_2,
+                                  Action.ActionType.ACTION_ZOOM_LEVEL_3,
+                                  Action.ActionType.ACTION_ZOOM_LEVEL_4,
+                                  Action.ActionType.ACTION_ZOOM_LEVEL_5,
+                                  Action.ActionType.ACTION_ZOOM_LEVEL_6,
+                                  Action.ActionType.ACTION_ZOOM_LEVEL_7,
+                                  Action.ActionType.ACTION_ZOOM_LEVEL_8,
+                                  Action.ActionType.ACTION_ZOOM_LEVEL_9,
+                                  Action.ActionType.ACTION_CALIBRATE_SWAP_ARROWS,
+                                  Action.ActionType.ACTION_CALIBRATE_RESET,
+                                  Action.ActionType.ACTION_ANALOG_MOVE,
+                                  Action.ActionType.ACTION_ROTATE_PICTURE,
+                                  Action.ActionType.ACTION_CLOSE_DIALOG,
+                                  Action.ActionType.ACTION_SUBTITLE_DELAY_MIN,
+                                  Action.ActionType.ACTION_SUBTITLE_DELAY_PLUS,
+                                  Action.ActionType.ACTION_AUDIO_DELAY_MIN,
+                                  Action.ActionType.ACTION_AUDIO_DELAY_PLUS,
+                                  Action.ActionType.ACTION_CHANGE_RESOLUTION,
+                                  Action.ActionType.REMOTE_0,
+                                  Action.ActionType.REMOTE_1,
+                                  Action.ActionType.REMOTE_2,
+                                  Action.ActionType.REMOTE_3,
+                                  Action.ActionType.REMOTE_4,
+                                  Action.ActionType.REMOTE_5,
+                                  Action.ActionType.REMOTE_6,
+                                  Action.ActionType.REMOTE_7,
+                                  Action.ActionType.REMOTE_8,
+                                  Action.ActionType.REMOTE_9,
+                                  Action.ActionType.ACTION_OSD_SHOW_LEFT,
+                                  Action.ActionType.ACTION_OSD_SHOW_RIGHT,
+                                  Action.ActionType.ACTION_OSD_SHOW_UP,
+                                  Action.ActionType.ACTION_OSD_SHOW_DOWN,
+                                  Action.ActionType.ACTION_OSD_SHOW_SELECT,
+                                  Action.ActionType.ACTION_OSD_SHOW_VALUE_PLUS,
+                                  Action.ActionType.ACTION_OSD_SHOW_VALUE_MIN,
+                                  Action.ActionType.ACTION_SMALL_STEP_BACK,
+                                  Action.ActionType.ACTION_MUSIC_FORWARD,
+                                  Action.ActionType.ACTION_MUSIC_REWIND,
+                                  Action.ActionType.ACTION_MUSIC_PLAY,
+                                  Action.ActionType.ACTION_DELETE_ITEM,
+                                  Action.ActionType.ACTION_COPY_ITEM,
+                                  Action.ActionType.ACTION_MOVE_ITEM,
+                                  Action.ActionType.ACTION_SHOW_MPLAYER_OSD,
+                                  Action.ActionType.ACTION_OSD_HIDESUBMENU,
+                                  Action.ActionType.ACTION_TAKE_SCREENSHOT,
+                                  Action.ActionType.ACTION_INCREASE_TIMEBLOCK,
+                                  Action.ActionType.ACTION_DECREASE_TIMEBLOCK,
+                                  Action.ActionType.ACTION_DEFAULT_TIMEBLOCK,
+                                  Action.ActionType.ACTION_TVGUIDE_RESET,
+                                  Action.ActionType.ACTION_BACKGROUND_TOGGLE,
+                                  Action.ActionType.ACTION_TOGGLE_WINDOWED_FULLSCREEN,
+                                  USBUIRT.JumpToActionType.JUMP_TO_HOME,
+                                  USBUIRT.JumpToActionType.JUMP_TO_TV_GUIDE,
+                                  USBUIRT.JumpToActionType.JUMP_TO_MY_TV,
+                                  USBUIRT.JumpToActionType.JUMP_TO_MY_TV_FULLSCREEN,
+                                  USBUIRT.JumpToActionType.JUMP_TO_MY_MOVIES,
+                                  USBUIRT.JumpToActionType.JUMP_TO_MY_MOVIES_FULLSCREEN,
+                                  USBUIRT.JumpToActionType.JUMP_TO_MY_MUSIC,
+                                  USBUIRT.JumpToActionType.JUMP_TO_MY_PICTURES,
+                                  USBUIRT.JumpToActionType.JUMP_TO_MY_RADIO,
+                                  USBUIRT.JumpToActionType.JUMP_TO_MY_WEATHER,
+                                  USBUIRT.JumpToActionType.JUMP_TO_TELETEXT,
+                                  USBUIRT.JumpToActionType.JUMP_TO_TELETEXT_FULLSCREEN,
+                                };
 
-                                Action.ActionType.ACTION_CONTEXT_MENU,
-								Action.ActionType.ACTION_SHOW_GUI,
-								Action.ActionType.ACTION_QUEUE_ITEM,
-								Action.ActionType.ACTION_EXIT,
-
-								Action.ActionType.ACTION_SHUTDOWN,
-								Action.ActionType.ACTION_REBOOT,
-
-								Action.ActionType.ACTION_ASPECT_RATIO,
-								Action.ActionType.ACTION_EJECTCD,
-								Action.ActionType.ACTION_PREV_CHANNEL,
-								Action.ActionType.ACTION_NEXT_CHANNEL,
-								Action.ActionType.ACTION_DVD_MENU,
-								Action.ActionType.ACTION_NEXT_CHAPTER,
-								Action.ActionType.ACTION_PREV_CHAPTER,
-								Action.ActionType.ACTION_VOLUME_DOWN,
-								Action.ActionType.ACTION_VOLUME_UP,
-								Action.ActionType.ACTION_VOLUME_MUTE,
-								Action.ActionType.ACTION_AUDIO_NEXT_LANGUAGE,
-								Action.ActionType.ACTION_SHOW_SUBTITLES,
-								Action.ActionType.ACTION_NEXT_AUDIO,
-
-								Action.ActionType.ACTION_HIGHLIGHT_ITEM,
-								Action.ActionType.ACTION_PARENT_DIR,
-								Action.ActionType.ACTION_NEXT_ITEM,
-								Action.ActionType.ACTION_PREV_ITEM,
-								Action.ActionType.ACTION_STEP_FORWARD,
-								Action.ActionType.ACTION_STEP_BACK,
-								Action.ActionType.ACTION_BIG_STEP_FORWARD,
-								Action.ActionType.ACTION_BIG_STEP_BACK,
-								Action.ActionType.ACTION_SHOW_OSD,
-								Action.ActionType.ACTION_SHOW_CODEC,    
-								Action.ActionType.ACTION_NEXT_PICTURE,  
-								Action.ActionType.ACTION_PREV_PICTURE, 
-								Action.ActionType.ACTION_ZOOM_OUT, 
-								Action.ActionType.ACTION_ZOOM_IN,     
-								Action.ActionType.ACTION_TOGGLE_SOURCE_DEST,
-								Action.ActionType.ACTION_SHOW_PLAYLIST,
-								Action.ActionType.ACTION_REMOVE_ITEM,
-								Action.ActionType.ACTION_SHOW_FULLSCREEN,
-								Action.ActionType.ACTION_ZOOM_LEVEL_NORMAL,
-								Action.ActionType.ACTION_ZOOM_LEVEL_1,
-								Action.ActionType.ACTION_ZOOM_LEVEL_2,    
-								Action.ActionType.ACTION_ZOOM_LEVEL_3,    
-								Action.ActionType.ACTION_ZOOM_LEVEL_4,    
-								Action.ActionType.ACTION_ZOOM_LEVEL_5,    
-								Action.ActionType.ACTION_ZOOM_LEVEL_6,    
-								Action.ActionType.ACTION_ZOOM_LEVEL_7,    
-								Action.ActionType.ACTION_ZOOM_LEVEL_8,    
-								Action.ActionType.ACTION_ZOOM_LEVEL_9,    
-								Action.ActionType.ACTION_CALIBRATE_SWAP_ARROWS,
-								Action.ActionType.ACTION_CALIBRATE_RESET,
-								Action.ActionType.ACTION_ANALOG_MOVE,      
-								Action.ActionType.ACTION_ROTATE_PICTURE,
-								Action.ActionType.ACTION_CLOSE_DIALOG,
-								Action.ActionType.ACTION_SUBTITLE_DELAY_MIN,
-								Action.ActionType.ACTION_SUBTITLE_DELAY_PLUS,
-								Action.ActionType.ACTION_AUDIO_DELAY_MIN,
-								Action.ActionType.ACTION_AUDIO_DELAY_PLUS,
-								Action.ActionType.ACTION_CHANGE_RESOLUTION,
-								Action.ActionType.REMOTE_0,
-								Action.ActionType.REMOTE_1,
-								Action.ActionType.REMOTE_2,
-								Action.ActionType.REMOTE_3,
-								Action.ActionType.REMOTE_4,
-								Action.ActionType.REMOTE_5,
-								Action.ActionType.REMOTE_6,
-								Action.ActionType.REMOTE_7,
-								Action.ActionType.REMOTE_8,
-								Action.ActionType.REMOTE_9,
-								Action.ActionType.ACTION_OSD_SHOW_LEFT,
-								Action.ActionType.ACTION_OSD_SHOW_RIGHT,
-								Action.ActionType.ACTION_OSD_SHOW_UP,
-								Action.ActionType.ACTION_OSD_SHOW_DOWN,
-								Action.ActionType.ACTION_OSD_SHOW_SELECT,
-								Action.ActionType.ACTION_OSD_SHOW_VALUE_PLUS,
-								Action.ActionType.ACTION_OSD_SHOW_VALUE_MIN,
-								Action.ActionType.ACTION_SMALL_STEP_BACK,
-								Action.ActionType.ACTION_MUSIC_FORWARD,
-								Action.ActionType.ACTION_MUSIC_REWIND,
-								Action.ActionType.ACTION_MUSIC_PLAY,
-								Action.ActionType.ACTION_DELETE_ITEM,
-								Action.ActionType.ACTION_COPY_ITEM,
-								Action.ActionType.ACTION_MOVE_ITEM,
-								Action.ActionType.ACTION_SHOW_MPLAYER_OSD,
-								Action.ActionType.ACTION_OSD_HIDESUBMENU,
-								Action.ActionType.ACTION_TAKE_SCREENSHOT,
-								Action.ActionType.ACTION_INCREASE_TIMEBLOCK,
-								Action.ActionType.ACTION_DECREASE_TIMEBLOCK,
-								Action.ActionType.ACTION_DEFAULT_TIMEBLOCK,
-								Action.ActionType.ACTION_TVGUIDE_RESET,
-								Action.ActionType.ACTION_BACKGROUND_TOGGLE,
-								Action.ActionType.ACTION_TOGGLE_WINDOWED_FULLSCREEN,
-
-								USBUIRT.JumpToActionType.JUMP_TO_HOME,
-								USBUIRT.JumpToActionType.JUMP_TO_TV_GUIDE,
-								USBUIRT.JumpToActionType.JUMP_TO_MY_TV, 
-								USBUIRT.JumpToActionType.JUMP_TO_MY_TV_FULLSCREEN, 
-								USBUIRT.JumpToActionType.JUMP_TO_MY_MOVIES, 
-								USBUIRT.JumpToActionType.JUMP_TO_MY_MOVIES_FULLSCREEN, 
-								USBUIRT.JumpToActionType.JUMP_TO_MY_MUSIC, 
-								USBUIRT.JumpToActionType.JUMP_TO_MY_PICTURES,
-								USBUIRT.JumpToActionType.JUMP_TO_MY_RADIO,
-								USBUIRT.JumpToActionType.JUMP_TO_MY_WEATHER,
-								USBUIRT.JumpToActionType.JUMP_TO_TELETEXT,
-								USBUIRT.JumpToActionType.JUMP_TO_TELETEXT_FULLSCREEN,
-		};
     #endregion
 
     #region delegates
 
-    delegate void SetStatusTextCallback(string text);
-    delegate void SetLearningStatusCallback(LearningEventArgs e);
-    delegate void SetEndLearningCallback(EventArgs e);
+    private delegate void SetStatusTextCallback(string text);
+
+    private delegate void SetLearningStatusCallback(LearningEventArgs e);
+
+    private delegate void SetEndLearningCallback(EventArgs e);
 
     #endregion
 
@@ -209,6 +212,7 @@ namespace MediaPortal.IR
     private MediaPortal.UserInterface.Controls.MPButton CloseSTBCmdsLearnFormBtn;
     private MediaPortal.UserInterface.Controls.MPButton ClearSingleLearnedSTBCmdBtn;
     private MediaPortal.UserInterface.Controls.MPButton ClearAllLearnedSTBCmdsBtn;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -217,11 +221,13 @@ namespace MediaPortal.IR
     #endregion
 
     #region ctor and disposal
+
     public USBUIRTLearnForm(LearnType learnType)
     {
       InitializeComponent();
 
-      MediaPortal.IR.USBUIRT.Instance.OnRemoteCommandFeedback += new MediaPortal.IR.USBUIRT.RemoteCommandFeedbackHandler(Instance_OnRemoteCommandFeedback);
+      MediaPortal.IR.USBUIRT.Instance.OnRemoteCommandFeedback +=
+        new MediaPortal.IR.USBUIRT.RemoteCommandFeedbackHandler(Instance_OnRemoteCommandFeedback);
 
       if (learnType == LearnType.MediaPortalCommands)
       {
@@ -252,9 +258,11 @@ namespace MediaPortal.IR
       }
       base.Dispose(disposing);
     }
+
     #endregion
 
     #region Windows Form Designer generated code
+
     /// <summary>
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
@@ -302,8 +310,10 @@ namespace MediaPortal.IR
       // 
       // ActionsCheckList
       // 
-      this.ActionsCheckList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.ActionsCheckList.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.ActionsCheckList.CheckOnClick = true;
       this.ActionsCheckList.Location = new System.Drawing.Point(14, 24);
       this.ActionsCheckList.Name = "ActionsCheckList";
@@ -313,9 +323,11 @@ namespace MediaPortal.IR
       // 
       // MPCommandsPnl
       // 
-      this.MPCommandsPnl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.MPCommandsPnl.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.MPCommandsPnl.Controls.Add(this.label1);
       this.MPCommandsPnl.Controls.Add(this.groupBox2);
       this.MPCommandsPnl.Controls.Add(this.LearnEnabledMPCmdsBtn);
@@ -332,7 +344,8 @@ namespace MediaPortal.IR
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label1.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold,
+                                                 System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.label1.Location = new System.Drawing.Point(14, 6);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(123, 13);
@@ -341,9 +354,11 @@ namespace MediaPortal.IR
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.MPCode1ValueLbl);
       this.groupBox2.Controls.Add(this.MPCode2ValueLbl);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -356,8 +371,10 @@ namespace MediaPortal.IR
       // 
       // MPCode1ValueLbl
       // 
-      this.MPCode1ValueLbl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.MPCode1ValueLbl.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.MPCode1ValueLbl.Location = new System.Drawing.Point(15, 22);
       this.MPCode1ValueLbl.Name = "MPCode1ValueLbl";
       this.MPCode1ValueLbl.Size = new System.Drawing.Size(411, 21);
@@ -365,8 +382,10 @@ namespace MediaPortal.IR
       // 
       // MPCode2ValueLbl
       // 
-      this.MPCode2ValueLbl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.MPCode2ValueLbl.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.MPCode2ValueLbl.ForeColor = System.Drawing.Color.DarkBlue;
       this.MPCode2ValueLbl.Location = new System.Drawing.Point(15, 43);
       this.MPCode2ValueLbl.Name = "MPCode2ValueLbl";
@@ -375,7 +394,9 @@ namespace MediaPortal.IR
       // 
       // LearnEnabledMPCmdsBtn
       // 
-      this.LearnEnabledMPCmdsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.LearnEnabledMPCmdsBtn.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.LearnEnabledMPCmdsBtn.Location = new System.Drawing.Point(287, 24);
       this.LearnEnabledMPCmdsBtn.Name = "LearnEnabledMPCmdsBtn";
       this.LearnEnabledMPCmdsBtn.Size = new System.Drawing.Size(168, 23);
@@ -386,7 +407,9 @@ namespace MediaPortal.IR
       // 
       // LearnSingleMPCmdBtn
       // 
-      this.LearnSingleMPCmdBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.LearnSingleMPCmdBtn.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.LearnSingleMPCmdBtn.Enabled = false;
       this.LearnSingleMPCmdBtn.Location = new System.Drawing.Point(287, 51);
       this.LearnSingleMPCmdBtn.Name = "LearnSingleMPCmdBtn";
@@ -398,7 +421,9 @@ namespace MediaPortal.IR
       // 
       // CloseMPCmdsLearnFormBtn
       // 
-      this.CloseMPCmdsLearnFormBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.CloseMPCmdsLearnFormBtn.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.CloseMPCmdsLearnFormBtn.Location = new System.Drawing.Point(287, 170);
       this.CloseMPCmdsLearnFormBtn.Name = "CloseMPCmdsLearnFormBtn";
       this.CloseMPCmdsLearnFormBtn.Size = new System.Drawing.Size(168, 23);
@@ -409,7 +434,9 @@ namespace MediaPortal.IR
       // 
       // ClearSingleLearnedMPCmdBtn
       // 
-      this.ClearSingleLearnedMPCmdBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.ClearSingleLearnedMPCmdBtn.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.ClearSingleLearnedMPCmdBtn.Enabled = false;
       this.ClearSingleLearnedMPCmdBtn.Location = new System.Drawing.Point(287, 124);
       this.ClearSingleLearnedMPCmdBtn.Name = "ClearSingleLearnedMPCmdBtn";
@@ -421,7 +448,9 @@ namespace MediaPortal.IR
       // 
       // ClearAllLearnedMPCmdsBtn
       // 
-      this.ClearAllLearnedMPCmdsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.ClearAllLearnedMPCmdsBtn.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.ClearAllLearnedMPCmdsBtn.Location = new System.Drawing.Point(287, 96);
       this.ClearAllLearnedMPCmdsBtn.Name = "ClearAllLearnedMPCmdsBtn";
       this.ClearAllLearnedMPCmdsBtn.Size = new System.Drawing.Size(168, 23);
@@ -432,8 +461,10 @@ namespace MediaPortal.IR
       // 
       // LearnPrgBar
       // 
-      this.LearnPrgBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.LearnPrgBar.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.LearnPrgBar.Location = new System.Drawing.Point(24, 224);
       this.LearnPrgBar.Name = "LearnPrgBar";
       this.LearnPrgBar.Size = new System.Drawing.Size(421, 12);
@@ -441,9 +472,11 @@ namespace MediaPortal.IR
       // 
       // panel2
       // 
-      this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.panel2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.panel2.BackColor = System.Drawing.SystemColors.Window;
       this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       this.panel2.Controls.Add(this.receivedIrLbl);
@@ -456,8 +489,10 @@ namespace MediaPortal.IR
       // 
       // receivedIrLbl
       // 
-      this.receivedIrLbl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.receivedIrLbl.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.receivedIrLbl.ForeColor = System.Drawing.SystemColors.ControlDark;
       this.receivedIrLbl.Location = new System.Drawing.Point(20, 152);
       this.receivedIrLbl.Name = "receivedIrLbl";
@@ -466,10 +501,13 @@ namespace MediaPortal.IR
       // 
       // statusLabel
       // 
-      this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.statusLabel.Font = new System.Drawing.Font("Verdana", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.statusLabel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.statusLabel.Font = new System.Drawing.Font("Verdana", 18F, System.Drawing.FontStyle.Regular,
+                                                      System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.statusLabel.Location = new System.Drawing.Point(20, 20);
       this.statusLabel.Name = "statusLabel";
       this.statusLabel.Size = new System.Drawing.Size(379, 128);
@@ -477,9 +515,11 @@ namespace MediaPortal.IR
       // 
       // LearnStatusPnl
       // 
-      this.LearnStatusPnl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.LearnStatusPnl.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.LearnStatusPnl.Controls.Add(this.CancelLearnBtn);
       this.LearnStatusPnl.Controls.Add(this.LearnPrgBar);
       this.LearnStatusPnl.Controls.Add(this.LearnStatusLbl);
@@ -492,7 +532,9 @@ namespace MediaPortal.IR
       // 
       // CancelLearnBtn
       // 
-      this.CancelLearnBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.CancelLearnBtn.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.CancelLearnBtn.Location = new System.Drawing.Point(357, 244);
       this.CancelLearnBtn.Name = "CancelLearnBtn";
       this.CancelLearnBtn.Size = new System.Drawing.Size(88, 23);
@@ -503,7 +545,8 @@ namespace MediaPortal.IR
       // 
       // LearnStatusLbl
       // 
-      this.LearnStatusLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.LearnStatusLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold,
+                                                         System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.LearnStatusLbl.Location = new System.Drawing.Point(24, 16);
       this.LearnStatusLbl.Name = "LearnStatusLbl";
       this.LearnStatusLbl.Size = new System.Drawing.Size(408, 16);
@@ -512,7 +555,9 @@ namespace MediaPortal.IR
       // 
       // SkipCodeBtn
       // 
-      this.SkipCodeBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.SkipCodeBtn.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.SkipCodeBtn.Location = new System.Drawing.Point(24, 244);
       this.SkipCodeBtn.Name = "SkipCodeBtn";
       this.SkipCodeBtn.Size = new System.Drawing.Size(88, 23);
@@ -530,9 +575,11 @@ namespace MediaPortal.IR
       // 
       // STBComandsPnl
       // 
-      this.STBComandsPnl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.STBComandsPnl.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.STBComandsPnl.Controls.Add(this.label2);
       this.STBComandsPnl.Controls.Add(this.groupBox1);
       this.STBComandsPnl.Controls.Add(this.LearnEnabledSTBCmdsBtn);
@@ -549,7 +596,8 @@ namespace MediaPortal.IR
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.label2.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold,
+                                                 System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.label2.Location = new System.Drawing.Point(14, 6);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(186, 13);
@@ -558,9 +606,11 @@ namespace MediaPortal.IR
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.STBCode1ValueLbl);
       this.groupBox1.Controls.Add(this.STBCode2ValueLbl);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -573,8 +623,10 @@ namespace MediaPortal.IR
       // 
       // STBCode1ValueLbl
       // 
-      this.STBCode1ValueLbl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.STBCode1ValueLbl.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.STBCode1ValueLbl.Location = new System.Drawing.Point(8, 18);
       this.STBCode1ValueLbl.Name = "STBCode1ValueLbl";
       this.STBCode1ValueLbl.Size = new System.Drawing.Size(425, 25);
@@ -583,8 +635,10 @@ namespace MediaPortal.IR
       // 
       // STBCode2ValueLbl
       // 
-      this.STBCode2ValueLbl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.STBCode2ValueLbl.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.STBCode2ValueLbl.ForeColor = System.Drawing.Color.DarkBlue;
       this.STBCode2ValueLbl.Location = new System.Drawing.Point(8, 44);
       this.STBCode2ValueLbl.Name = "STBCode2ValueLbl";
@@ -593,7 +647,9 @@ namespace MediaPortal.IR
       // 
       // LearnEnabledSTBCmdsBtn
       // 
-      this.LearnEnabledSTBCmdsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.LearnEnabledSTBCmdsBtn.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.LearnEnabledSTBCmdsBtn.Location = new System.Drawing.Point(287, 24);
       this.LearnEnabledSTBCmdsBtn.Name = "LearnEnabledSTBCmdsBtn";
       this.LearnEnabledSTBCmdsBtn.Size = new System.Drawing.Size(168, 23);
@@ -604,20 +660,24 @@ namespace MediaPortal.IR
       // 
       // StbCommandsChkLst
       // 
-      this.StbCommandsChkLst.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.StbCommandsChkLst.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "Enter"});
+      this.StbCommandsChkLst.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.StbCommandsChkLst.Items.AddRange(new object[]
+                                              {
+                                                "0",
+                                                "1",
+                                                "2",
+                                                "3",
+                                                "4",
+                                                "5",
+                                                "6",
+                                                "7",
+                                                "8",
+                                                "9",
+                                                "Enter"
+                                              });
       this.StbCommandsChkLst.Location = new System.Drawing.Point(14, 24);
       this.StbCommandsChkLst.Name = "StbCommandsChkLst";
       this.StbCommandsChkLst.Size = new System.Drawing.Size(267, 169);
@@ -626,7 +686,9 @@ namespace MediaPortal.IR
       // 
       // LearnSingleSTBCmdBtn
       // 
-      this.LearnSingleSTBCmdBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.LearnSingleSTBCmdBtn.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.LearnSingleSTBCmdBtn.Location = new System.Drawing.Point(287, 51);
       this.LearnSingleSTBCmdBtn.Name = "LearnSingleSTBCmdBtn";
       this.LearnSingleSTBCmdBtn.Size = new System.Drawing.Size(168, 23);
@@ -637,7 +699,9 @@ namespace MediaPortal.IR
       // 
       // CloseSTBCmdsLearnFormBtn
       // 
-      this.CloseSTBCmdsLearnFormBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.CloseSTBCmdsLearnFormBtn.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.CloseSTBCmdsLearnFormBtn.Location = new System.Drawing.Point(287, 170);
       this.CloseSTBCmdsLearnFormBtn.Name = "CloseSTBCmdsLearnFormBtn";
       this.CloseSTBCmdsLearnFormBtn.Size = new System.Drawing.Size(168, 23);
@@ -648,7 +712,9 @@ namespace MediaPortal.IR
       // 
       // ClearSingleLearnedSTBCmdBtn
       // 
-      this.ClearSingleLearnedSTBCmdBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.ClearSingleLearnedSTBCmdBtn.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.ClearSingleLearnedSTBCmdBtn.Location = new System.Drawing.Point(287, 124);
       this.ClearSingleLearnedSTBCmdBtn.Name = "ClearSingleLearnedSTBCmdBtn";
       this.ClearSingleLearnedSTBCmdBtn.Size = new System.Drawing.Size(168, 23);
@@ -659,7 +725,9 @@ namespace MediaPortal.IR
       // 
       // ClearAllLearnedSTBCmdsBtn
       // 
-      this.ClearAllLearnedSTBCmdsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.ClearAllLearnedSTBCmdsBtn.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.ClearAllLearnedSTBCmdsBtn.Location = new System.Drawing.Point(287, 96);
       this.ClearAllLearnedSTBCmdsBtn.Name = "ClearAllLearnedSTBCmdsBtn";
       this.ClearAllLearnedSTBCmdsBtn.Size = new System.Drawing.Size(168, 23);
@@ -691,8 +759,8 @@ namespace MediaPortal.IR
       this.STBComandsPnl.PerformLayout();
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
+
     #endregion
 
     protected override void OnLoad(EventArgs e)
@@ -761,6 +829,7 @@ namespace MediaPortal.IR
     }
 
     #region Misc
+
     private void CreateButtonNames()
     {
       this.buttonNames.Clear();
@@ -793,9 +862,11 @@ namespace MediaPortal.IR
         buttonNames.Add(curCmd);
       }
     }
+
     #endregion
 
     #region Media Portal learn methods
+
     private void DoMediaPortalCommandLearn()
     {
       int count = ActionsCheckList.CheckedItems.Count;
@@ -814,9 +885,12 @@ namespace MediaPortal.IR
         }
       }
 
-      MediaPortal.IR.USBUIRT.Instance.StartLearning += new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartRxLearning);
-      MediaPortal.IR.USBUIRT.Instance.OnEventLearned += new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnRxEventLearned);
-      MediaPortal.IR.USBUIRT.Instance.OnEndLearning += new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnEndRxLearning);
+      MediaPortal.IR.USBUIRT.Instance.StartLearning +=
+        new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartRxLearning);
+      MediaPortal.IR.USBUIRT.Instance.OnEventLearned +=
+        new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnRxEventLearned);
+      MediaPortal.IR.USBUIRT.Instance.OnEndLearning +=
+        new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnEndRxLearning);
       MediaPortal.IR.USBUIRT.Instance.BulkLearn(learncommands, learnbuttons);
     }
 
@@ -826,7 +900,8 @@ namespace MediaPortal.IR
 
       if (selIndex == -1 || !ActionsCheckList.GetItemChecked(selIndex))
       {
-        MessageBox.Show(this, "No commands selected.  Please select a command.\t", "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        MessageBox.Show(this, "No commands selected.  Please select a command.\t", "USBUIRT", MessageBoxButtons.OK,
+                        MessageBoxIcon.Exclamation);
         return;
       }
 
@@ -842,19 +917,27 @@ namespace MediaPortal.IR
       learncommands[0] = commands[selIndex];
       learnbuttons[0] = (string)buttonNames[selIndex];
 
-      MediaPortal.IR.USBUIRT.Instance.StartLearning += new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartRxLearning);
-      MediaPortal.IR.USBUIRT.Instance.OnEventLearned += new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnRxEventLearned);
-      MediaPortal.IR.USBUIRT.Instance.OnEndLearning += new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnEndRxSingleCommandLearning);
+      MediaPortal.IR.USBUIRT.Instance.StartLearning +=
+        new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartRxLearning);
+      MediaPortal.IR.USBUIRT.Instance.OnEventLearned +=
+        new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnRxEventLearned);
+      MediaPortal.IR.USBUIRT.Instance.OnEndLearning +=
+        new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnEndRxSingleCommandLearning);
       MediaPortal.IR.USBUIRT.Instance.BulkLearn(learncommands, learnbuttons);
     }
+
     #endregion
 
     #region STB learn methods
+
     private void DoSetTopBoxCommandLearn()
     {
-      MediaPortal.IR.USBUIRT.Instance.StartLearning += new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartTxLearning);
-      MediaPortal.IR.USBUIRT.Instance.OnEventLearned += new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnTxEventLearned);
-      MediaPortal.IR.USBUIRT.Instance.OnEndLearning += new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnTxEndLearning);
+      MediaPortal.IR.USBUIRT.Instance.StartLearning +=
+        new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartTxLearning);
+      MediaPortal.IR.USBUIRT.Instance.OnEventLearned +=
+        new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnTxEventLearned);
+      MediaPortal.IR.USBUIRT.Instance.OnEndLearning +=
+        new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnTxEndLearning);
 
       ArrayList cmdList = new ArrayList();
 
@@ -866,7 +949,7 @@ namespace MediaPortal.IR
 
       if (cmdList.Count > 0)
       {
-        int[] cmds = (int[])cmdList.ToArray(typeof(int));
+        int[] cmds = (int[])cmdList.ToArray(typeof (int));
         MediaPortal.IR.USBUIRT.Instance.LearnTunerCodes(cmds);
       }
     }
@@ -877,19 +960,24 @@ namespace MediaPortal.IR
 
       if (selIndex == -1 || !StbCommandsChkLst.GetItemChecked(selIndex))
       {
-        MessageBox.Show(this, "No commands selected.  Please select a command.\t", "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        MessageBox.Show(this, "No commands selected.  Please select a command.\t", "USBUIRT", MessageBoxButtons.OK,
+                        MessageBoxIcon.Exclamation);
         return;
       }
 
       int[] cmds = new int[1];
       cmds[0] = selIndex;
 
-      MediaPortal.IR.USBUIRT.Instance.StartLearning += new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartTxLearning);
-      MediaPortal.IR.USBUIRT.Instance.OnEventLearned += new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnTxEventLearned);
-      MediaPortal.IR.USBUIRT.Instance.OnEndLearning += new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnTxEndSingleCommandLearning);
+      MediaPortal.IR.USBUIRT.Instance.StartLearning +=
+        new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartTxLearning);
+      MediaPortal.IR.USBUIRT.Instance.OnEventLearned +=
+        new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnTxEventLearned);
+      MediaPortal.IR.USBUIRT.Instance.OnEndLearning +=
+        new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnTxEndSingleCommandLearning);
 
       MediaPortal.IR.USBUIRT.Instance.LearnTunerCodes(cmds);
     }
+
     #endregion
 
     #region MP Commands Learn button click handlers
@@ -903,7 +991,8 @@ namespace MediaPortal.IR
     {
       if (MediaPortal.IR.USBUIRT.Instance.LearnedMediaPortalCodesTable.Count == 0)
       {
-        MessageBox.Show(this, "No Media Portal control IR codes loaded.  Nothing to clear.\t", "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show(this, "No Media Portal control IR codes loaded.  Nothing to clear.\t", "USBUIRT",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
         return;
       }
 
@@ -914,7 +1003,8 @@ namespace MediaPortal.IR
         if (MediaPortal.IR.USBUIRT.Instance.ClearAllLearnedCommands())
         {
           ActionsCheckList_SelectedIndexChanged(null, null);
-          MessageBox.Show(this, "All learned Media Portal control IR codes cleared.\t", "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Information);
+          MessageBox.Show(this, "All learned Media Portal control IR codes cleared.\t", "USBUIRT", MessageBoxButtons.OK,
+                          MessageBoxIcon.Information);
         }
       }
     }
@@ -975,7 +1065,8 @@ namespace MediaPortal.IR
     {
       if (MediaPortal.IR.USBUIRT.Instance.LearnedSTBCodesTable.Count == 0)
       {
-        MessageBox.Show(this, "No Set-top box control IR codes loaded.  Nothing to clear.\t", "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show(this, "No Set-top box control IR codes loaded.  Nothing to clear.\t", "USBUIRT",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
         return;
       }
 
@@ -986,7 +1077,8 @@ namespace MediaPortal.IR
         if (MediaPortal.IR.USBUIRT.Instance.ClearAllLearnedSTBCommands())
         {
           StbCommandsChkLst_SelectedIndexChanged(null, null);
-          MessageBox.Show(this, "All learned Set-top box control IR codes cleared.\t", "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Information);
+          MessageBox.Show(this, "All learned Set-top box control IR codes cleared.\t", "USBUIRT", MessageBoxButtons.OK,
+                          MessageBoxIcon.Information);
         }
       }
     }
@@ -1001,13 +1093,15 @@ namespace MediaPortal.IR
         {
           StbCommandsChkLst.SetItemChecked(selIndex, false);
           StbCommandsChkLst_SelectedIndexChanged(null, null);
-          string msg = string.Format("Learned IR for Set-top box control [{0}] button cleared.\t", (selIndex < 10 ? selIndex.ToString() : "Enter"));
+          string msg = string.Format("Learned IR for Set-top box control [{0}] button cleared.\t",
+                                     (selIndex < 10 ? selIndex.ToString() : "Enter"));
           MessageBox.Show(this, msg, "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         else
         {
-          string msg = string.Format("Learned IR not found for Set-top box control [{0}] button.\t", (selIndex < 10 ? selIndex.ToString() : "Enter"));
+          string msg = string.Format("Learned IR not found for Set-top box control [{0}] button.\t",
+                                     (selIndex < 10 ? selIndex.ToString() : "Enter"));
           MessageBox.Show(this, msg, "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
       }
@@ -1017,9 +1111,11 @@ namespace MediaPortal.IR
     {
       this.Close();
     }
+
     #endregion
 
     #region CheckedList SelectedIndexChanged event handlers
+
     private void StbCommandsChkLst_SelectedIndexChanged(object sender, EventArgs e)
     {
       int selIndex = StbCommandsChkLst.SelectedIndex;
@@ -1073,7 +1169,8 @@ namespace MediaPortal.IR
         string irCmd1 = string.Empty;
         string irCmd2 = string.Empty;
 
-        if (MediaPortal.IR.USBUIRT.Instance.GetCommandIrStrings((Action.ActionType)commands[selIndex], ref irCmd1, ref irCmd2))
+        if (MediaPortal.IR.USBUIRT.Instance.GetCommandIrStrings((Action.ActionType)commands[selIndex], ref irCmd1,
+                                                                ref irCmd2))
         {
           MPCode1ValueLbl.ForeColor = SystemColors.ControlText;
           MPCode1ValueLbl.Text = irCmd1;
@@ -1103,9 +1200,11 @@ namespace MediaPortal.IR
         ClearSingleLearnedMPCmdBtn.Enabled = false;
       }
     }
+
     #endregion
 
     #region RxLearningEvents
+
     private void Instance_StartRxLearning(object sender, LearningEventArgs e)
     {
       SetStartRxLearningStatus(e);
@@ -1117,13 +1216,14 @@ namespace MediaPortal.IR
       if (receivedIrLbl.InvokeRequired)
       {
         SetLearningStatusCallback d = new SetLearningStatusCallback(SetStartRxLearningStatus);
-        this.Invoke(d, new object[] { e });
+        this.Invoke(d, new object[] {e});
       }
 
       else
       {
         receivedIrLbl.Text = e.IrCode;
-        LearnStatusLbl.Text = string.Format("Learning Media Portal Control Command: {0} of {1}", e.CurrentCodeCount + 1, e.TotalCodeCount);
+        LearnStatusLbl.Text = string.Format("Learning Media Portal Control Command: {0} of {1}", e.CurrentCodeCount + 1,
+                                            e.TotalCodeCount);
 
         LearnPrgBar.Maximum = e.TotalCodeCount;
         LearnPrgBar.Value = e.CurrentCodeCount;
@@ -1156,7 +1256,7 @@ namespace MediaPortal.IR
       if (receivedIrLbl.InvokeRequired)
       {
         SetLearningStatusCallback d = new SetLearningStatusCallback(SetRxEventLearnedStatus);
-        this.Invoke(d, new object[] { e });
+        this.Invoke(d, new object[] {e});
       }
 
       else
@@ -1199,7 +1299,7 @@ namespace MediaPortal.IR
       if (receivedIrLbl.InvokeRequired)
       {
         SetEndLearningCallback d = new SetEndLearningCallback(SetEndRxLearningStatus);
-        this.Invoke(d, new object[] { e });
+        this.Invoke(d, new object[] {e});
       }
 
       else
@@ -1209,9 +1309,12 @@ namespace MediaPortal.IR
         string msg = "";
         MessageBoxIcon mbIcon = MessageBoxIcon.Information;
 
-        MediaPortal.IR.USBUIRT.Instance.StartLearning -= new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartRxLearning);
-        MediaPortal.IR.USBUIRT.Instance.OnEventLearned -= new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnRxEventLearned);
-        MediaPortal.IR.USBUIRT.Instance.OnEndLearning -= new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnEndRxLearning);
+        MediaPortal.IR.USBUIRT.Instance.StartLearning -=
+          new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartRxLearning);
+        MediaPortal.IR.USBUIRT.Instance.OnEventLearned -=
+          new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnRxEventLearned);
+        MediaPortal.IR.USBUIRT.Instance.OnEndLearning -=
+          new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnEndRxLearning);
 
         if (MediaPortal.IR.USBUIRT.Instance.AbortLearn)
         {
@@ -1253,7 +1356,7 @@ namespace MediaPortal.IR
       if (receivedIrLbl.InvokeRequired)
       {
         SetEndLearningCallback d = new SetEndLearningCallback(SetEndRxSingleCommandLearningStatus);
-        this.Invoke(d, new object[] { e });
+        this.Invoke(d, new object[] {e});
       }
 
       else
@@ -1264,9 +1367,12 @@ namespace MediaPortal.IR
         string msg = "";
         MessageBoxIcon mbIcon = MessageBoxIcon.Information;
 
-        MediaPortal.IR.USBUIRT.Instance.StartLearning -= new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartRxLearning);
-        MediaPortal.IR.USBUIRT.Instance.OnEventLearned -= new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnRxEventLearned);
-        MediaPortal.IR.USBUIRT.Instance.OnEndLearning -= new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnEndRxSingleCommandLearning);
+        MediaPortal.IR.USBUIRT.Instance.StartLearning -=
+          new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartRxLearning);
+        MediaPortal.IR.USBUIRT.Instance.OnEventLearned -=
+          new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnRxEventLearned);
+        MediaPortal.IR.USBUIRT.Instance.OnEndLearning -=
+          new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnEndRxSingleCommandLearning);
 
         if (MediaPortal.IR.USBUIRT.Instance.AbortLearn)
         {
@@ -1300,6 +1406,7 @@ namespace MediaPortal.IR
     #endregion
 
     #region TxLearningEvents
+
     private void Instance_StartTxLearning(object sender, MediaPortal.IR.LearningEventArgs e)
     {
       SetStartTxLearningStatus(e);
@@ -1311,13 +1418,14 @@ namespace MediaPortal.IR
       if (receivedIrLbl.InvokeRequired)
       {
         SetLearningStatusCallback d = new SetLearningStatusCallback(SetStartTxLearningStatus);
-        this.Invoke(d, new object[] { e });
+        this.Invoke(d, new object[] {e});
       }
 
       else
       {
         receivedIrLbl.Text = e.IrCode;
-        LearnStatusLbl.Text = string.Format("Learning Set-top Box Codes: {0} of {1}", e.CurrentCodeCount + 1, e.TotalCodeCount);
+        LearnStatusLbl.Text = string.Format("Learning Set-top Box Codes: {0} of {1}", e.CurrentCodeCount + 1,
+                                            e.TotalCodeCount);
 
         LearnPrgBar.Maximum = e.TotalCodeCount;
         LearnStatusPnl.BringToFront();
@@ -1349,7 +1457,7 @@ namespace MediaPortal.IR
       if (receivedIrLbl.InvokeRequired)
       {
         SetLearningStatusCallback d = new SetLearningStatusCallback(SetTxEventLearnedStatus);
-        this.Invoke(d, new object[] { e });
+        this.Invoke(d, new object[] {e});
       }
 
       else
@@ -1396,7 +1504,7 @@ namespace MediaPortal.IR
       if (receivedIrLbl.InvokeRequired)
       {
         SetEndLearningCallback d = new SetEndLearningCallback(SetEndTxEndLearningStatus);
-        this.Invoke(d, new object[] { e });
+        this.Invoke(d, new object[] {e});
       }
 
       else
@@ -1406,9 +1514,12 @@ namespace MediaPortal.IR
         string msg = "";
         MessageBoxIcon mbIcon = MessageBoxIcon.Information;
 
-        MediaPortal.IR.USBUIRT.Instance.StartLearning -= new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartTxLearning);
-        MediaPortal.IR.USBUIRT.Instance.OnEventLearned -= new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnTxEventLearned);
-        MediaPortal.IR.USBUIRT.Instance.OnEndLearning -= new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnTxEndLearning);
+        MediaPortal.IR.USBUIRT.Instance.StartLearning -=
+          new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartTxLearning);
+        MediaPortal.IR.USBUIRT.Instance.OnEventLearned -=
+          new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnTxEventLearned);
+        MediaPortal.IR.USBUIRT.Instance.OnEndLearning -=
+          new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnTxEndLearning);
 
         if (MediaPortal.IR.USBUIRT.Instance.AbortLearn)
         {
@@ -1451,7 +1562,7 @@ namespace MediaPortal.IR
       if (receivedIrLbl.InvokeRequired)
       {
         SetEndLearningCallback d = new SetEndLearningCallback(SetTxEndSingleCommandLearningStatus);
-        this.Invoke(d, new object[] { e });
+        this.Invoke(d, new object[] {e});
       }
 
       else
@@ -1461,9 +1572,12 @@ namespace MediaPortal.IR
         string msg = "";
         MessageBoxIcon mbIcon = MessageBoxIcon.Information;
 
-        MediaPortal.IR.USBUIRT.Instance.StartLearning -= new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartTxLearning);
-        MediaPortal.IR.USBUIRT.Instance.OnEventLearned -= new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnTxEventLearned);
-        MediaPortal.IR.USBUIRT.Instance.OnEndLearning -= new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnTxEndSingleCommandLearning);
+        MediaPortal.IR.USBUIRT.Instance.StartLearning -=
+          new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartTxLearning);
+        MediaPortal.IR.USBUIRT.Instance.OnEventLearned -=
+          new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnTxEventLearned);
+        MediaPortal.IR.USBUIRT.Instance.OnEndLearning -=
+          new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnTxEndSingleCommandLearning);
 
         if (MediaPortal.IR.USBUIRT.Instance.AbortLearn)
         {
@@ -1497,6 +1611,7 @@ namespace MediaPortal.IR
     #endregion
 
     #region StatusBar text display methods
+
     private void Instance_OnRemoteCommandFeedback(object command, string irCode)
     {
       string actionDesc = "Unknown";
@@ -1524,16 +1639,18 @@ namespace MediaPortal.IR
       if (statusBar1.InvokeRequired)
       {
         SetStatusTextCallback d = new SetStatusTextCallback(SetStatusText);
-        this.Invoke(d, new object[] { text });
+        this.Invoke(d, new object[] {text});
       }
       else
       {
         statusBar1.Text = text;
       }
     }
+
     #endregion
 
     #region Learn progress button click handlers
+
     private void SkipCodeBtn_Click(object sender, System.EventArgs e)
     {
       MediaPortal.IR.USBUIRT.Instance.SkipLearnForCurrentCode = true;
@@ -1543,9 +1660,11 @@ namespace MediaPortal.IR
     {
       MediaPortal.IR.USBUIRT.Instance.AbortLearn = true;
     }
+
     #endregion
 
     #region MP command set presets
+
     private void LoadDefaultSTBCommandSet()
     {
       for (int i = 0; i < StbCommandsChkLst.Items.Count; i++)
@@ -1580,7 +1699,7 @@ namespace MediaPortal.IR
         ActionsCheckList.SetItemChecked(i, true);
       }
     }
-    #endregion
 
+    #endregion
   }
 }

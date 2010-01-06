@@ -113,9 +113,7 @@ namespace MediaPortal.GUI.Video
             AmazonImagesDownloaded(thumbUrls);
           }
         }
-        catch (ThreadAbortException)
-        {
-        }
+        catch (ThreadAbortException) {}
       }
     }
 
@@ -154,7 +152,7 @@ namespace MediaPortal.GUI.Video
 
     public GUIVideoInfo()
     {
-      GetID = (int) Window.WINDOW_VIDEO_INFO;
+      GetID = (int)Window.WINDOW_VIDEO_INFO;
     }
 
     public override bool Init()
@@ -163,15 +161,13 @@ namespace MediaPortal.GUI.Video
       return Load(GUIGraphicsContext.Skin + @"\DialogVideoInfo.xml");
     }
 
-    public override void PreInit()
-    {
-    }
+    public override void PreInit() {}
 
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
       this._isOverlayAllowed = true;
-      GUIVideoOverlay videoOverlay = (GUIVideoOverlay) GUIWindowManager.GetWindow((int) Window.WINDOW_VIDEO_OVERLAY);
+      GUIVideoOverlay videoOverlay = (GUIVideoOverlay)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_OVERLAY);
       if ((videoOverlay != null) && (videoOverlay.Focused))
       {
         videoOverlay.Focused = false;
@@ -452,7 +448,7 @@ namespace MediaPortal.GUI.Video
         {
           coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
           largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
-            //added by BoelShit
+          //added by BoelShit
           string largeCoverArtImageConvert = Util.Utils.ConvertToLargeCoverArt(coverArtImage); //edited by Boelshit
 
           if (!File.Exists(coverArtImage))
@@ -502,14 +498,14 @@ namespace MediaPortal.GUI.Video
               Log.Info("image has no extension:{0}", imageUrl);
             }
           }
-          if(!File.Exists(coverArtImage))
+          if (!File.Exists(coverArtImage))
           {
             int idMovie = currentMovie.ID;
             System.Collections.ArrayList movies = new System.Collections.ArrayList();
             VideoDatabase.GetFiles(idMovie, ref movies);
             if (movies.Count > 0)
             {
-              for(int i =0; i < movies.Count; i++)
+              for (int i = 0; i < movies.Count; i++)
               {
                 string thumbFile = Util.Utils.EncryptLine((string)movies[i]);
                 coverArtImage = Util.Utils.GetCoverArtName(Thumbs.Videos, thumbFile);
@@ -614,7 +610,7 @@ namespace MediaPortal.GUI.Video
     public bool OnDisableCancel(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       if (pDlgProgress.IsInstance(fetcher))
       {
         pDlgProgress.DisableCancel(true);
@@ -629,7 +625,7 @@ namespace MediaPortal.GUI.Video
         return;
       }
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       pDlgProgress.ShowProgressBar(true);
       pDlgProgress.SetLine(1, line1);
       pDlgProgress.SetLine(2, line2);
@@ -643,7 +639,7 @@ namespace MediaPortal.GUI.Video
     public bool OnSearchStarting(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       // show dialog that we're busy querying www.imdb.com
       pDlgProgress.Reset();
       pDlgProgress.SetHeading(197);
@@ -657,7 +653,7 @@ namespace MediaPortal.GUI.Video
     public bool OnSearchStarted(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       pDlgProgress.SetObject(fetcher);
       pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
       if (pDlgProgress.IsCanceled)
@@ -670,7 +666,7 @@ namespace MediaPortal.GUI.Video
     public bool OnSearchEnd(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       if ((pDlgProgress != null) && (pDlgProgress.IsInstance(fetcher)))
       {
         pDlgProgress.Close();
@@ -681,7 +677,7 @@ namespace MediaPortal.GUI.Video
     public bool OnMovieNotFound(IMDBFetcher fetcher)
     {
       // show dialog...
-      GUIDialogOK pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       pDlgOK.SetHeading(195);
       pDlgOK.SetLine(1, fetcher.MovieName);
       pDlgOK.SetLine(2, string.Empty);
@@ -692,7 +688,7 @@ namespace MediaPortal.GUI.Video
     public bool OnDetailsStarted(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       pDlgProgress.SetObject(fetcher);
       pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
       if (pDlgProgress.IsCanceled)
@@ -705,7 +701,7 @@ namespace MediaPortal.GUI.Video
     public bool OnDetailsStarting(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       // show dialog that we're downloading the movie info
       pDlgProgress.Reset();
       pDlgProgress.SetHeading(198);
@@ -719,7 +715,7 @@ namespace MediaPortal.GUI.Video
     public bool OnDetailsEnd(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       if ((pDlgProgress != null) && (pDlgProgress.IsInstance(fetcher)))
       {
         pDlgProgress.Close();
@@ -730,7 +726,7 @@ namespace MediaPortal.GUI.Video
     public bool OnActorsStarted(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       pDlgProgress.SetObject(fetcher);
       pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
       if (pDlgProgress.IsCanceled)
@@ -743,7 +739,7 @@ namespace MediaPortal.GUI.Video
     public bool OnActorsStarting(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       // show dialog that we're downloading the actor info
       pDlgProgress.Reset();
       pDlgProgress.SetHeading(986);
@@ -762,7 +758,7 @@ namespace MediaPortal.GUI.Video
     public bool OnDetailsNotFound(IMDBFetcher fetcher)
     {
       // show dialog...
-      GUIDialogOK pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       // show dialog...
       pDlgOK.SetHeading(195);
       pDlgOK.SetLine(1, fetcher.MovieName);
@@ -785,7 +781,7 @@ namespace MediaPortal.GUI.Video
 
     public bool OnSelectMovie(IMDBFetcher fetcher, out int selectedMovie)
     {
-      GUIDialogSelect pDlgSelect = (GUIDialogSelect) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_SELECT);
+      GUIDialogSelect pDlgSelect = (GUIDialogSelect)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT);
       // more then 1 movie found
       // ask user to select 1
       pDlgSelect.SetHeading(196); //select movie
@@ -838,7 +834,7 @@ namespace MediaPortal.GUI.Video
 
     public static void GetStringFromKeyboard(ref string strLine)
     {
-      VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
       if (null == keyboard)
       {
         return;

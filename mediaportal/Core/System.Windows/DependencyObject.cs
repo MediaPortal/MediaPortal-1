@@ -32,9 +32,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public DependencyObject()
-    {
-    }
+    public DependencyObject() {}
 
     public DependencyObject(bool canBeUnbound)
     {

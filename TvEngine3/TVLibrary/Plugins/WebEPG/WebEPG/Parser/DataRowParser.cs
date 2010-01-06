@@ -59,11 +59,11 @@ namespace MediaPortal.WebEPG.Parser
 
       for (int i = 0; i < _templateData.Count && i < sourceData.Count; i++)
       {
-        string template = (string) _templateData[i];
+        string template = (string)_templateData[i];
 
         if (template.IndexOf("#") != -1)
         {
-          string rowSource = (string) sourceData[i];
+          string rowSource = (string)sourceData[i];
           data.SetElement(template, rowSource);
         }
       }

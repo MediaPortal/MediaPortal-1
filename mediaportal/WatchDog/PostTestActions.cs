@@ -50,8 +50,8 @@ namespace WatchDog
 
     private void updateProgress(int subActions)
     {
-      int actionAmount = 100/totalActions;
-      int subActionAmount = actionAmount/subActions;
+      int actionAmount = 100 / totalActions;
+      int subActionAmount = actionAmount / subActions;
       base.setProgress(base.getProgress() + subActionAmount);
     }
 
@@ -132,7 +132,7 @@ namespace WatchDog
       }
 
       CreateHTMLIndexFile();
-      
+
       base.setAction("Creating ZIP Archive with gathered information...");
       try
       {

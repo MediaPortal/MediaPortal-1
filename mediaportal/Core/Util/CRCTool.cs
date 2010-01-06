@@ -72,7 +72,12 @@ namespace MediaPortal.Util
     private ulong[] crctab = new ulong[256];
 
     // Enumeration used in the init function to specify which CRC algorithm to use
-    public enum CRCCode { CRC_CCITT, CRC16, CRC32 };
+    public enum CRCCode
+    {
+      CRC_CCITT,
+      CRC16,
+      CRC32
+    } ;
 
     public CRCTool()
     {
@@ -86,13 +91,31 @@ namespace MediaPortal.Util
       switch (CodingType)
       {
         case CRCCode.CRC_CCITT:
-          order = 16; direct = 1; polynom = 0x1021; crcinit = 0xFFFF; crcxor = 0; refin = 0; refout = 0;
+          order = 16;
+          direct = 1;
+          polynom = 0x1021;
+          crcinit = 0xFFFF;
+          crcxor = 0;
+          refin = 0;
+          refout = 0;
           break;
         case CRCCode.CRC16:
-          order = 16; direct = 1; polynom = 0x8005; crcinit = 0x0; crcxor = 0x0; refin = 1; refout = 1;
+          order = 16;
+          direct = 1;
+          polynom = 0x8005;
+          crcinit = 0x0;
+          crcxor = 0x0;
+          refin = 1;
+          refout = 1;
           break;
         case CRCCode.CRC32:
-          order = 32; direct = 1; polynom = 0x4c11db7; crcinit = 0xFFFFFFFF; crcxor = 0xFFFFFFFF; refin = 1; refout = 1;
+          order = 32;
+          direct = 1;
+          polynom = 0x4c11db7;
+          crcinit = 0xFFFFFFFF;
+          crcxor = 0xFFFFFFFF;
+          refin = 1;
+          refout = 1;
           break;
       }
 
@@ -178,7 +201,7 @@ namespace MediaPortal.Util
     /// you should use the table functions. Since they use precalculated values, which 
     /// saves some calculating.
     /// </summary>.
-    ulong crctablefast(byte[] p)
+    private ulong crctablefast(byte[] p)
     {
       // fast lookup table algorithm without augmented zero bytes, e.g. used in pkzip.
       // only usable with polynom orders of 8, 16, 24 or 32.
@@ -210,7 +233,7 @@ namespace MediaPortal.Util
       return (crc);
     }
 
-    ulong crctable(byte[] p)
+    private ulong crctable(byte[] p)
     {
       // normal lookup table algorithm with augmented zero bytes.
       // only usable with polynom orders of 8, 16, 24 or 32.
@@ -258,7 +281,7 @@ namespace MediaPortal.Util
       return (crc);
     }
 
-    ulong crcbitbybit(byte[] p)
+    private ulong crcbitbybit(byte[] p)
     {
       // bit by bit algorithm with augmented zero bytes.
       // does not use lookup table, suited for polynom orders between 1...32.
@@ -291,7 +314,6 @@ namespace MediaPortal.Util
 
       for (i = 0; (int)i < order; i++)
       {
-
         bit = crc & crchighbit;
         crc <<= 1;
         if (bit != 0) crc ^= polynom;
@@ -307,7 +329,7 @@ namespace MediaPortal.Util
       return (crc);
     }
 
-    ulong crcbitbybitfast(byte[] p)
+    private ulong crcbitbybitfast(byte[] p)
     {
       // fast bit by bit algorithm without augmented zero bytes.
       // does not use lookup table, suited for polynom orders between 1...32.
@@ -348,7 +370,7 @@ namespace MediaPortal.Util
     /// It is included to demonstrate that although it looks different it is the same 
     /// routine as the crcbitbybit* functions. But it is optimized and preconfigured for CRCITT.
     /// </summary>
-    ushort CalcCRCITT(byte[] p)
+    private ushort CalcCRCITT(byte[] p)
     {
       uint uiCRCITTSum = 0xFFFF;
       uint uiByteValue;
@@ -372,11 +394,10 @@ namespace MediaPortal.Util
       return (ushort)uiCRCITTSum;
     }
 
-
     #region subroutines
+
     private ulong reflect(ulong crc, int bitnum)
     {
-
       // reflects the lower 'bitnum' bits of 'crc'
 
       ulong i, j = 1, crcout = 0;
@@ -423,6 +444,7 @@ namespace MediaPortal.Util
         crctab[i] = crc;
       }
     }
+
     #endregion
   }
 }

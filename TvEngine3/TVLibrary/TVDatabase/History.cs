@@ -284,7 +284,7 @@ namespace TvDatabase
     public void Save()
     {
       TimeSpan ts = DateTime.Now - _timeStart;
-      watched = (int) ts.TotalMinutes;
+      watched = (int)ts.TotalMinutes;
       if (watched >= 10)
       {
         Persist();

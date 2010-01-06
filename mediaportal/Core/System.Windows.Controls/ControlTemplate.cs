@@ -29,9 +29,7 @@ namespace System.Windows.Controls
   {
     #region Constructors
 
-    public ControlTemplate()
-    {
-    }
+    public ControlTemplate() {}
 
     public ControlTemplate(Type targetType)
     {

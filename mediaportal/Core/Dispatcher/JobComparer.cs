@@ -44,7 +44,7 @@ namespace MediaPortal.Dispatcher
         throw new ArgumentException("argument r is not of type Job.");
       }
 
-      return Compare((Job) l, (Job) r);
+      return Compare((Job)l, (Job)r);
     }
 
     public int Compare(Job l, Job r)

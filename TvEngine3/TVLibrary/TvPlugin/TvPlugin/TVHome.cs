@@ -146,24 +146,15 @@ namespace TvPlugin
 
     private static BitHelper<LiveTvStatus> _status = new BitHelper<LiveTvStatus>();
 
-    [SkinControl(2)]
-    protected GUIButtonControl btnTvGuide = null;
-    [SkinControl(3)]
-    protected GUIButtonControl btnRecord = null;
-    [SkinControl(7)]
-    protected GUIButtonControl btnChannel = null;
-    [SkinControl(8)]
-    protected GUIToggleButtonControl btnTvOnOff = null;
-    [SkinControl(13)]
-    protected GUIButtonControl btnTeletext = null;
-    [SkinControl(24)]
-    protected GUIImage imgRecordingIcon = null;
-    [SkinControl(99)]
-    protected GUIVideoControl videoWindow = null;
-    [SkinControl(9)]
-    protected GUIButtonControl btnActiveStreams = null;
-    [SkinControl(14)]
-    protected GUIButtonControl btnActiveRecordings = null;   
+    [SkinControl(2)] protected GUIButtonControl btnTvGuide = null;
+    [SkinControl(3)] protected GUIButtonControl btnRecord = null;
+    [SkinControl(7)] protected GUIButtonControl btnChannel = null;
+    [SkinControl(8)] protected GUIToggleButtonControl btnTvOnOff = null;
+    [SkinControl(13)] protected GUIButtonControl btnTeletext = null;
+    [SkinControl(24)] protected GUIImage imgRecordingIcon = null;
+    [SkinControl(99)] protected GUIVideoControl videoWindow = null;
+    [SkinControl(9)] protected GUIButtonControl btnActiveStreams = null;
+    [SkinControl(14)] protected GUIButtonControl btnActiveRecordings = null;
 
     // error handling
     public class ChannelErrorInfo
@@ -172,6 +163,7 @@ namespace TvPlugin
       public TvResult Result;
       public List<String> Messages = new List<string>();
     }
+
     public static ChannelErrorInfo _lastError = new ChannelErrorInfo();
 
     // CI Menu
@@ -191,7 +183,7 @@ namespace TvPlugin
 
     #region delegates
 
-    private delegate void StopPlayerMainThreadDelegate();    
+    private delegate void StopPlayerMainThreadDelegate();
 
     #endregion
 
@@ -243,9 +235,7 @@ namespace TvPlugin
       return false;
     }
 
-    public void ShowPlugin()
-    {
-    }
+    public void ShowPlugin() {}
 
     #endregion
 
@@ -256,24 +246,26 @@ namespace TvPlugin
       return true;
     }
 
-    #endregion    
-    
+    #endregion
+
     public TVHome()
     {
       GetID = (int)Window.WINDOW_TV;
     }
-    
+
     #region Overrides      
 
     public override bool Init()
-    {      
-      return Load(GUIGraphicsContext.Skin + @"\mytvhomeServer.xml"); ;
+    {
+      return Load(GUIGraphicsContext.Skin + @"\mytvhomeServer.xml");
+      ;
     }
 
     public override void OnAdded()
     {
       Log.Info("TVHome:OnAdded");
-      RemoteControl.OnRemotingDisconnected += new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
+      RemoteControl.OnRemotingDisconnected +=
+        new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
       RemoteControl.OnRemotingConnected += new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
 
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
@@ -303,8 +295,8 @@ namespace TvPlugin
 
         //Wake up the TV server, if required
         HandleWakeUpTvServer();
-        startHeartBeatThread();      
-        
+        startHeartBeatThread();
+
         m_navigator = new ChannelNavigator();
         LoadSettings();
 
@@ -325,9 +317,9 @@ namespace TvPlugin
       {
         Log.Error("TVHome: Error occured in Init(): {0}, st {1}", ex.Message, Environment.StackTrace);
       }
-      
-      _notifyManager.Start();            
-    }  
+
+      _notifyManager.Start();
+    }
 
     /// <summary>
     /// Gets called by the runtime when a  window will be destroyed
@@ -633,7 +625,7 @@ namespace TvPlugin
           ViewChannelAndCheck(Navigator.Channel);
         }
         else
-        // current channel seems to be non-tv (radio ?), get latest known tv channel from xml config and use this instead
+          // current channel seems to be non-tv (radio ?), get latest known tv channel from xml config and use this instead
         {
           Settings xmlreader = new MPSettings();
           string currentchannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
@@ -675,7 +667,7 @@ namespace TvPlugin
         case GUIMessage.MessageType.GUI_MSG_RESUME_TV:
           {
             if (_autoTurnOnTv && !wasPrevWinTVplugin())
-            // we only want to resume TV if previous window is NOT a tvplugin based one. (ex. tvguide.)
+              // we only want to resume TV if previous window is NOT a tvplugin based one. (ex. tvguide.)
             {
               //restart viewing...  
               Log.Info("tv home msg resume tv:{0}", Navigator.CurrentChannel);
@@ -717,7 +709,8 @@ namespace TvPlugin
 
       if (!Card.IsTimeShifting)
       {
-        UpdateProgressPercentageBar(); // mantis #2218 : TV guide information in TV home screen does not update when program changes if TV is not playing 
+        UpdateProgressPercentageBar();
+          // mantis #2218 : TV guide information in TV home screen does not update when program changes if TV is not playing 
         return;
       }
 
@@ -739,7 +732,7 @@ namespace TvPlugin
       doProcess();
 
       _updateTimer = DateTime.Now;
-    } 
+    }
 
     public override bool IsTv
     {
@@ -865,7 +858,6 @@ namespace TvPlugin
 
       if (confirmed)
       {
-
         //create the cancelled schedule to prevent the schedule from restarting again.
         // we only create cancelled recordings on series type schedules
         if (!isOnce)
@@ -924,7 +916,7 @@ namespace TvPlugin
     public static bool DoingChannelChange()
     {
       return _doingChannelChange;
-    }    
+    }
 
     private static void ShowDlgGUI(object Dialogue)
     {
@@ -973,9 +965,10 @@ namespace TvPlugin
     }
 
     private delegate void ShowDlgAsynchDelegate();
+
     private delegate void ShowDlgMessageAsynchDelegate(String Message);
 
-    private static void ShowDlgAsynch ()
+    private static void ShowDlgAsynch()
     {
       //show dialogue only on main thread.
       if (GUIGraphicsContext.form.InvokeRequired)
@@ -999,9 +992,9 @@ namespace TvPlugin
         pDlgOK.SetLine(1, "");
       }
       pDlgOK.SetLine(2, GUILocalizeStrings.Get(1510)); //Connection to TV server lost
-      pDlgOK.DoModal(GUIWindowManager.ActiveWindow);            
+      pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
     }
-    
+
     public static void ShowDlgThread()
     {
       GUIWindow guiWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
@@ -1019,11 +1012,11 @@ namespace TvPlugin
           Thread.Sleep(100);
         }
         count++;
-      }      
-      
+      }
+
       if (guiWindow.WindowLoaded)
       {
-        ShowDlgAsynch();        
+        ShowDlgAsynch();
       }
     }
 
@@ -1044,7 +1037,7 @@ namespace TvPlugin
 
       if (_doingHandleServerNotConnected)
       {
-        return false;//we assume we are still not connected
+        return false; //we assume we are still not connected
       }
 
       _doingHandleServerNotConnected = true;
@@ -1052,7 +1045,7 @@ namespace TvPlugin
       try
       {
         if (!Connected)
-        {          
+        {
           //Card.User.Name = new User().Name;
           if (g_Player.Playing)
             TVHome.StopPlayerMainThread();
@@ -1064,12 +1057,12 @@ namespace TvPlugin
                                        null);
             GUIWindowManager.SendThreadMessage(initMsgTV);
             return true;
-          }          
+          }
           Thread showDlgThread = new Thread(ShowDlgThread);
           showDlgThread.IsBackground = true;
           // show the dialog asynch.
           // this fixes a hang situation that would happen when resuming TV with showlastactivemodule
-          showDlgThread.Start();          
+          showDlgThread.Start();
           return true;
         }
         else
@@ -1221,7 +1214,7 @@ namespace TvPlugin
       {
         return;
       }
-      
+
       using (Settings xmlreader = new MPSettings())
       {
         m_navigator.LoadSettings(xmlreader);
@@ -1279,6 +1272,7 @@ namespace TvPlugin
     #endregion
 
     #region Private methods
+
     private static void SetRemoteControlHostName()
     {
       string hostName;
@@ -1311,7 +1305,6 @@ namespace TvPlugin
 
     private static void HandleWakeUpTvServer()
     {
-
       bool isWakeOnLanEnabled;
       bool isAutoMacAddressEnabled;
       String macAddress;
@@ -1357,7 +1350,6 @@ namespace TvPlugin
 
                 //Use first valid IP address
                 ipAddress = ips[0];
-
               }
               catch (Exception ex)
               {
@@ -1374,14 +1366,16 @@ namespace TvPlugin
               if (wakeOnLanManager.IsValidEthernetAddress(hwAddress))
               {
                 Log.Debug("TVHome: WOL - Valid auto MAC address: {0:x}:{1:x}:{2:x}:{3:x}:{4:x}:{5:x}"
-                  , hwAddress[0], hwAddress[1], hwAddress[2], hwAddress[3], hwAddress[4], hwAddress[5]);
+                          , hwAddress[0], hwAddress[1], hwAddress[2], hwAddress[3], hwAddress[4], hwAddress[5]);
 
                 //Store MAC address
                 macAddress = BitConverter.ToString(hwAddress).Replace("-", ":");
 
                 Log.Debug("TVHome: WOL - Store MAC address: {0}", macAddress);
 
-                using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+                using (
+                  MediaPortal.Profile.Settings xmlwriter =
+                    new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
                 {
                   xmlwriter.SetValue("tvservice", "macAddress", macAddress);
                 }
@@ -1448,7 +1442,8 @@ namespace TvPlugin
       {
         _recoverTV = false;
         GUIMessage initMsg = null;
-        initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)Window.WINDOW_TV_OVERLAY, 0, 0, 0, 0, null);
+        initMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)Window.WINDOW_TV_OVERLAY, 0, 0, 0, 0,
+                                 null);
         GUIWindowManager.SendThreadMessage(initMsg);
       }
     }
@@ -1457,7 +1452,7 @@ namespace TvPlugin
     {
       if (Connected)
         Log.Info("TVHome: OnRemotingDisconnected");
-      Connected = false;      
+      Connected = false;
       HandleServerNotConnected();
     }
 
@@ -1473,15 +1468,13 @@ namespace TvPlugin
         _notifyManager.Stop();
         stopHeartBeatThread();
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
 
     private void HeartBeatTransmitter()
     {
       while (true)
-      {                
+      {
         if (!Connected) // is this needed to update connection status
           RefreshConnectionState();
         if (Connected && !_suspended)
@@ -1684,7 +1677,7 @@ namespace TvPlugin
       }
 
       if (!_playbackStopped)
-     {      
+      {
         g_Player.ShowFullScreenWindow();
       }
     }
@@ -1693,7 +1686,8 @@ namespace TvPlugin
     {
       Log.Debug("TVHome.OnSuspend()");
 
-      RemoteControl.OnRemotingDisconnected -= new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
+      RemoteControl.OnRemotingDisconnected -=
+        new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
       RemoteControl.OnRemotingConnected -= new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
 
       try
@@ -1708,9 +1702,7 @@ namespace TvPlugin
         //Connected = false;
         _ServerNotConnectedHandled = false;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       finally
       {
         _suspended = true;
@@ -1721,7 +1713,8 @@ namespace TvPlugin
     {
       Log.Debug("TVHome.OnResume()");
       Connected = false;
-      RemoteControl.OnRemotingDisconnected += new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
+      RemoteControl.OnRemotingDisconnected +=
+        new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
       RemoteControl.OnRemotingConnected += new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
       HandleWakeUpTvServer();
       startHeartBeatThread();
@@ -2095,9 +2088,7 @@ namespace TvPlugin
       return (bool)_isSingleSeat;
     }
 
-    public static void UpdateTimeShift()
-    {
-    }
+    public static void UpdateTimeShift() {}
 
     private void OnActiveRecordings()
     {
@@ -2492,7 +2483,8 @@ namespace TvPlugin
           else
           {
             GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(736)); // no epg for this channel
-            GUIPropertyManager.SetProperty("#TV.View.compositetitle", GUILocalizeStrings.Get(736)); // no epg for this channel
+            GUIPropertyManager.SetProperty("#TV.View.compositetitle", GUILocalizeStrings.Get(736));
+              // no epg for this channel
             GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
             GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
             GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
@@ -2519,7 +2511,8 @@ namespace TvPlugin
           else
           {
             GUIPropertyManager.SetProperty("#TV.Next.title", GUILocalizeStrings.Get(736)); // no epg for this channel
-            GUIPropertyManager.SetProperty("#TV.View.compositetitle", GUILocalizeStrings.Get(736)); // no epg for this channel
+            GUIPropertyManager.SetProperty("#TV.View.compositetitle", GUILocalizeStrings.Get(736));
+              // no epg for this channel
             GUIPropertyManager.SetProperty("#TV.Next.start", String.Empty);
             GUIPropertyManager.SetProperty("#TV.Next.stop", String.Empty);
             GUIPropertyManager.SetProperty("#TV.Next.description", String.Empty);
@@ -2664,7 +2657,8 @@ namespace TvPlugin
     /// unit test enabled method. please respect this.
     /// run and/or modify the unit tests accordingly.
     /// </summary>
-    public static int GetPreferedAudioStreamIndex(out eAudioDualMonoMode dualMonoMode) // also used from tvrecorded class
+    public static int GetPreferedAudioStreamIndex(out eAudioDualMonoMode dualMonoMode)
+      // also used from tvrecorded class
     {
       int idxFirstAc3 = -1; // the index of the first avail. ac3 found
       int idxFirstmpeg = -1; // the index of the first avail. mpg found
@@ -2675,7 +2669,8 @@ namespace TvPlugin
       int idxLangPrimpeg = -1; // the lang priority of mpg found based on lang. pref   
       string langSel = ""; // find audio based on this language.
       string ac3BasedOnLang = ""; // for debugging, what lang. in prefs. where used to choose the ac3 audio track ?
-      string mpegBasedOnLang = ""; // for debugging, what lang. in prefs. where used to choose the mpeg audio track ?      
+      string mpegBasedOnLang = "";
+        // for debugging, what lang. in prefs. where used to choose the mpeg audio track ?      
 
       dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
 
@@ -2695,8 +2690,8 @@ namespace TvPlugin
       }
       Log.Debug("Audio streams avail: {0}", streams.Length);
       bool dualMonoModeEnabled = (g_Player.GetAudioDualMonoMode() != eAudioDualMonoMode.UNSUPPORTED);
-      
-      if (streams.Length == 1 && !ShouldApplyDualMonoMode(streams[0].Language))                  
+
+      if (streams.Length == 1 && !ShouldApplyDualMonoMode(streams[0].Language))
       {
         Log.Info("Audio stream: switching to preferred AC3/MPEG audio stream 0 (only 1 track avail.)");
         return 0;
@@ -2706,7 +2701,9 @@ namespace TvPlugin
       idxFirstAc3 = GetFirstAC3Index(streams);
       idxFirstmpeg = GetFirstMpegIndex(streams);
 
-      UpdateAudioStreamIndexesAndPrioritiesBasedOnLanguage(streams, priority, ref idxStreamIndexmpeg, ref mpegBasedOnLang, ref idxStreamIndexAc3, idxLangPriAc3, idxLangPrimpeg, ref ac3BasedOnLang, out dualMonoMode);
+      UpdateAudioStreamIndexesAndPrioritiesBasedOnLanguage(streams, priority, ref idxStreamIndexmpeg,
+                                                           ref mpegBasedOnLang, ref idxStreamIndexAc3, idxLangPriAc3,
+                                                           idxLangPrimpeg, ref ac3BasedOnLang, out dualMonoMode);
       idx = GetAC3AudioStreamIndex(idxStreamIndexmpeg, idxStreamIndexAc3, ac3BasedOnLang, idx, idxFirstAc3);
 
       if (idx == -1 && _preferAC3)
@@ -2715,12 +2712,13 @@ namespace TvPlugin
       }
 
       if (idx == -1 || !_preferAC3)
-      // we end up here if ac3 selection didnt happen (no ac3 avail.) or if preferac3 is disabled.
+        // we end up here if ac3 selection didnt happen (no ac3 avail.) or if preferac3 is disabled.
       {
         if (IsPreferredAudioLanguageAvailable())
         {
           //did we find a mpeg track that matches our LANG prefs ?
-          idx = GetMpegAudioStreamIndexBasedOnLanguage(idxStreamIndexmpeg, mpegBasedOnLang, idxStreamIndexAc3, idx, idxFirstmpeg);
+          idx = GetMpegAudioStreamIndexBasedOnLanguage(idxStreamIndexmpeg, mpegBasedOnLang, idxStreamIndexAc3, idx,
+                                                       idxFirstmpeg);
         }
         else
         {
@@ -2738,14 +2736,16 @@ namespace TvPlugin
       return idx;
     }
 
-    private static int GetAC3AudioStreamIndex(int idxStreamIndexmpeg, int idxStreamIndexAc3, string ac3BasedOnLang, int idx, int idxFirstAc3)
+    private static int GetAC3AudioStreamIndex(int idxStreamIndexmpeg, int idxStreamIndexAc3, string ac3BasedOnLang,
+                                              int idx, int idxFirstAc3)
     {
       if (_preferAC3)
       {
         if (IsPreferredAudioLanguageAvailable())
         {
           //did we find an ac3 track that matches our LANG prefs ?
-          idx = GetAC3AudioStreamIndexBasedOnLanguage(idxStreamIndexmpeg, idxStreamIndexAc3, ac3BasedOnLang, idx, idxFirstAc3);
+          idx = GetAC3AudioStreamIndexBasedOnLanguage(idxStreamIndexmpeg, idxStreamIndexAc3, ac3BasedOnLang, idx,
+                                                      idxFirstAc3);
           //if not then proceed with mpeg lang. selection below.
         }
         else
@@ -2762,7 +2762,13 @@ namespace TvPlugin
       return idx;
     }
 
-    private static void UpdateAudioStreamIndexesAndPrioritiesBasedOnLanguage(IAudioStream[] streams, int priority, ref int idxStreamIndexmpeg, ref string mpegBasedOnLang, ref int idxStreamIndexAc3, int idxLangPriAc3, int idxLangPrimpeg, ref string ac3BasedOnLang, out eAudioDualMonoMode dualMonoMode)
+    private static void UpdateAudioStreamIndexesAndPrioritiesBasedOnLanguage(IAudioStream[] streams, int priority,
+                                                                             ref int idxStreamIndexmpeg,
+                                                                             ref string mpegBasedOnLang,
+                                                                             ref int idxStreamIndexAc3,
+                                                                             int idxLangPriAc3, int idxLangPrimpeg,
+                                                                             ref string ac3BasedOnLang,
+                                                                             out eAudioDualMonoMode dualMonoMode)
     {
       dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       if (IsPreferredAudioLanguageAvailable())
@@ -2784,7 +2790,8 @@ namespace TvPlugin
       }
     }
 
-    private static int GetMpegAudioStreamIndexBasedOnLanguage(int idxStreamIndexmpeg, string mpegBasedOnLang, int idxStreamIndexAc3, int idx, int idxFirstmpeg)
+    private static int GetMpegAudioStreamIndexBasedOnLanguage(int idxStreamIndexmpeg, string mpegBasedOnLang,
+                                                              int idxStreamIndexAc3, int idx, int idxFirstmpeg)
     {
       if (idxStreamIndexmpeg > -1)
       {
@@ -2812,7 +2819,8 @@ namespace TvPlugin
       return idx;
     }
 
-    private static int GetAC3AudioStreamIndexBasedOnLanguage(int idxStreamIndexmpeg, int idxStreamIndexAc3, string ac3BasedOnLang, int idx, int idxFirstAc3)
+    private static int GetAC3AudioStreamIndexBasedOnLanguage(int idxStreamIndexmpeg, int idxStreamIndexAc3,
+                                                             string ac3BasedOnLang, int idx, int idxFirstAc3)
     {
       if (idxStreamIndexAc3 > -1)
       {
@@ -2838,7 +2846,10 @@ namespace TvPlugin
       return idx;
     }
 
-    private static void UpdateAudioStreamIndexesBasedOnLang(IAudioStream[] streams, int i, ref int idxStreamIndexmpeg, ref int idxStreamIndexAc3, ref string mpegBasedOnLang, int idxLangPriAc3, int idxLangPrimpeg, ref string ac3BasedOnLang)
+    private static void UpdateAudioStreamIndexesBasedOnLang(IAudioStream[] streams, int i, ref int idxStreamIndexmpeg,
+                                                            ref int idxStreamIndexAc3, ref string mpegBasedOnLang,
+                                                            int idxLangPriAc3, int idxLangPrimpeg,
+                                                            ref string ac3BasedOnLang)
     {
       int langPriority = _preferredLanguages.IndexOf(streams[i].Language);
       string langSel = streams[i].Language;
@@ -2872,10 +2883,10 @@ namespace TvPlugin
               stream.StreamType == AudioStreamType.EAC3);
     }
 
-    private static bool ShouldApplyDualMonoMode (string language)
+    private static bool ShouldApplyDualMonoMode(string language)
     {
       bool dualMonoModeEnabled = (g_Player.GetAudioDualMonoMode() != eAudioDualMonoMode.UNSUPPORTED);
-      return (dualMonoModeEnabled && language.Length == 6);      
+      return (dualMonoModeEnabled && language.Length == 6);
     }
 
     private static int GetFirstAC3Index(IAudioStream[] streams)
@@ -2884,11 +2895,11 @@ namespace TvPlugin
 
       for (int i = 0; i < streams.Length; i++)
       {
-        if (IsStreamAC3(streams[i]))        
-        {          
-            idxFirstAc3 = i;
-            break;
-        }        
+        if (IsStreamAC3(streams[i]))
+        {
+          idxFirstAc3 = i;
+          break;
+        }
       }
       return idxFirstAc3;
     }
@@ -2899,7 +2910,7 @@ namespace TvPlugin
 
       for (int i = 0; i < streams.Length; i++)
       {
-        if (!IsStreamAC3(streams[i]))        
+        if (!IsStreamAC3(streams[i]))
         {
           idxFirstMpeg = i;
           break;
@@ -2908,7 +2919,8 @@ namespace TvPlugin
       return idxFirstMpeg;
     }
 
-    private static eAudioDualMonoMode GetDualMonoMode(IAudioStream[] streams, int currentIndex, ref int priority, ref int idxStreamIndexmpeg, ref string mpegBasedOnLang)
+    private static eAudioDualMonoMode GetDualMonoMode(IAudioStream[] streams, int currentIndex, ref int priority,
+                                                      ref int idxStreamIndexmpeg, ref string mpegBasedOnLang)
     {
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       string leftAudioLang = streams[currentIndex].Language.Substring(0, 3);
@@ -3016,7 +3028,7 @@ namespace TvPlugin
           break;
         case TvResult.UnknownError:
           // this error can also happen if we have no connection to the server.
-          if (!Connected)// || !IsRemotingConnected())
+          if (!Connected) // || !IsRemotingConnected())
           {
             TextID = 1510;
           }
@@ -3045,7 +3057,7 @@ namespace TvPlugin
           break;
         default:
           // this error can also happen if we have no connection to the server.
-          if (!Connected)// || !IsRemotingConnected())
+          if (!Connected) // || !IsRemotingConnected())
           {
             TextID = 1510;
           }
@@ -3062,7 +3074,8 @@ namespace TvPlugin
       }
 
       GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
-      string caption = GUILocalizeStrings.Get(605) + " - " + channel.Name; // +GUILocalizeStrings.Get(1512); ("tune last?")
+      string caption = GUILocalizeStrings.Get(605) + " - " + channel.Name;
+        // +GUILocalizeStrings.Get(1512); ("tune last?")
       pDlgNotify.SetHeading(caption); //my tv
       StringBuilder sbMessage = new StringBuilder();
       // ignore the "unable to start timeshift" line to avoid scrolling, because NotifyDLG has very few space available.
@@ -3077,7 +3090,8 @@ namespace TvPlugin
       {
         // If failed and wasPlaying TV, left screen as it is and show osd with error message 
         Log.Info("send message to fullscreen tv");
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_TV_ERROR_NOTIFY, GUIWindowManager.ActiveWindow, 0, 0, 0, 0,
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_TV_ERROR_NOTIFY, GUIWindowManager.ActiveWindow, 0,
+                                        0, 0, 0,
                                         null);
         msg.SendToTargetWindow = true;
         msg.TargetWindowId = (int)(int)Window.WINDOW_TVFULLSCREEN;
@@ -3152,7 +3166,8 @@ namespace TvPlugin
       doContinue = false;
       if (_suspended && _waitonresume > 0)
       {
-        Log.Info("TVHome.ViewChannelAndCheck(): system just woke up...waiting {0} ms., suspended {2}", _waitonresume, _suspended);
+        Log.Info("TVHome.ViewChannelAndCheck(): system just woke up...waiting {0} ms., suspended {2}", _waitonresume,
+                 _suspended);
         Thread.Sleep(_waitonresume);
       }
 
@@ -3203,7 +3218,7 @@ namespace TvPlugin
         }
       }
       else if (g_Player.IsTVRecording && _userChannelChanged)
-      //we are watching a recording, we have now issued a ch. change..stop the player.
+        //we are watching a recording, we have now issued a ch. change..stop the player.
       {
         _userChannelChanged = false;
         g_Player.Stop(true);
@@ -3217,7 +3232,7 @@ namespace TvPlugin
       if (Card != null)
       {
         if (g_Player.Playing && g_Player.IsTV && !g_Player.IsTVRecording)
-        //modified by joboehl. Avoids other video being played instead of TV. 
+          //modified by joboehl. Avoids other video being played instead of TV. 
         {
           //if we're already watching this channel, then simply return
           if (Card.IsTimeShifting == true && Card.IdChannel == channel.IdChannel)
@@ -3290,7 +3305,8 @@ namespace TvPlugin
         // we need to stop player HERE if card has changed.        
         if (_status.AllSet(LiveTvStatus.WasPlaying | LiveTvStatus.CardChange))
         {
-          Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}", Card.Id, newCardId, Card.RTSPUrl);
+          Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. CardId:{0}/{1}, RTSP:{2}", Card.Id, newCardId,
+                    Card.RTSPUrl);
           Log.Debug("TVHome.ViewChannelAndCheck(): Stopping player. Timeshifting:{0}", Card.TimeShiftFileName);
           Log.Debug("TVHome.ViewChannelAndCheck(): rebuilding graph (card changed) - timeshifting continueing.");
         }
@@ -3303,7 +3319,7 @@ namespace TvPlugin
         // if card was not changed
         if (_status.IsNotSet(LiveTvStatus.CardChange))
         {
-          g_Player.OnZapping(0x80);           // Setup Zapping for TsReader, requesting new PAT from stream
+          g_Player.OnZapping(0x80); // Setup Zapping for TsReader, requesting new PAT from stream
         }
 
         succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
@@ -3348,7 +3364,8 @@ namespace TvPlugin
         }
 
         // Update channel navigator
-        if (Navigator.Channel != null && (channel.IdChannel != Navigator.Channel.IdChannel || (Navigator.LastViewedChannel == null)))
+        if (Navigator.Channel != null &&
+            (channel.IdChannel != Navigator.Channel.IdChannel || (Navigator.LastViewedChannel == null)))
         {
           Navigator.LastViewedChannel = Navigator.Channel;
         }
@@ -3447,7 +3464,7 @@ namespace TvPlugin
     public static ChannelNavigator Navigator
     {
       get { return m_navigator; }
-    }    
+    }
 
     private static void StartPlay()
     {
@@ -3477,7 +3494,7 @@ namespace TvPlugin
       if (channel.IsRadio)
       {
         mediaType = g_Player.MediaType.Radio;
-      }      
+      }
 
       benchClock.Stop();
       Log.Warn("tvhome:startplay.  Phase 1 - {0} ms - Done method initialization",
@@ -3592,6 +3609,7 @@ namespace TvPlugin
         currentCiMenu = Menu;
       }
     }
+
     /// <summary>
     /// Handles all CiMenu actions from callback
     /// </summary>
@@ -3603,17 +3621,19 @@ namespace TvPlugin
         {
           return;
         }
-        
+
         CiMenuActive = true; // avoid re-entrance from process()
 
         if (dlgCiMenu == null)
         {
-          dlgCiMenu = (GUIDialogCIMenu)GUIWindowManager.GetWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_DIALOG_CIMENU);
+          dlgCiMenu =
+            (GUIDialogCIMenu)
+            GUIWindowManager.GetWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_DIALOG_CIMENU);
         }
 
         switch (currentCiMenu.State)
         {
-          // choices available, so show them
+            // choices available, so show them
           case TvLibrary.Interfaces.CiMenuState.Ready:
             dlgCiMenu.Reset();
             dlgCiMenu.SetHeading(currentCiMenu.Title, currentCiMenu.Subtitle, currentCiMenu.BottomText); // CI Menu
@@ -3641,7 +3661,7 @@ namespace TvPlugin
             }
             break;
 
-          // errors and menu options with no choices
+            // errors and menu options with no choices
           case TvLibrary.Interfaces.CiMenuState.Error:
           case TvLibrary.Interfaces.CiMenuState.NoChoices:
 
@@ -3662,10 +3682,12 @@ namespace TvPlugin
             }
             break;
 
-          // requests require users input so open keyboard
+            // requests require users input so open keyboard
           case TvLibrary.Interfaces.CiMenuState.Request:
             String result = "";
-            if (GetKeyboard(currentCiMenu.RequestText, currentCiMenu.AnswerLength, currentCiMenu.Password, ref result) == true)
+            if (
+              GetKeyboard(currentCiMenu.RequestText, currentCiMenu.AnswerLength, currentCiMenu.Password, ref result) ==
+              true)
             {
               TVHome.Card.SendMenuAnswer(false, result); // send answer, cancel=false
             }
@@ -3686,6 +3708,7 @@ namespace TvPlugin
 }
 
 #region CI Menu
+
 /// <summary>
 /// Handler class for gui interactions of ci menu
 /// </summary>
@@ -3706,11 +3729,12 @@ public class CiMenuHandler : CiMenuCallbackSink
     }
     catch
     {
-      Menu = new CiMenu("Remoting Exception", "Communication with server failed", null, TvLibrary.Interfaces.CiMenuState.Error);
+      Menu = new CiMenu("Remoting Exception", "Communication with server failed", null,
+                        TvLibrary.Interfaces.CiMenuState.Error);
       // pass menu to calling dialog
       TvPlugin.TVHome.ProcessCiMenu(Menu);
     }
   }
 }
-#endregion
 
+#endregion

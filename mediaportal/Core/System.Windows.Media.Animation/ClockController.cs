@@ -38,13 +38,9 @@ namespace System.Windows.Media.Animation
 
     #region Methods
 
-    public void Begin()
-    {
-    }
+    public void Begin() {}
 
-    public void Pause()
-    {
-    }
+    public void Pause() {}
 
     public void Resume()
     {
@@ -61,9 +57,7 @@ namespace System.Windows.Media.Animation
       throw new NotImplementedException();
     }
 
-    public void SeekAlignedToLastTick(TimeSpan offset, TimeSeekOrigin origin)
-    {
-    }
+    public void SeekAlignedToLastTick(TimeSpan offset, TimeSeekOrigin origin) {}
 
     public void SkipToFill()
     {
@@ -71,9 +65,7 @@ namespace System.Windows.Media.Animation
 //				throw new InvalidOperationException();
     }
 
-    public void Stop()
-    {
-    }
+    public void Stop() {}
 
     #endregion Methods
 

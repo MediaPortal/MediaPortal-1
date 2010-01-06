@@ -35,9 +35,7 @@ namespace System.Windows.Controls
 //			SharedSizeGroupProperty.ValidateValueCallback = new ValidateValueCallback(ValidateSharedSizeGroup);
     }
 
-    public DefinitionBase()
-    {
-    }
+    public DefinitionBase() {}
 
     #endregion Constructors
 
@@ -84,7 +82,7 @@ namespace System.Windows.Controls
 
     public string SharedSizeGroup
     {
-      get { return (string) GetValue(SharedSizeGroupProperty); }
+      get { return (string)GetValue(SharedSizeGroupProperty); }
       set { SetValue(SharedSizeGroupProperty, value); }
     }
 

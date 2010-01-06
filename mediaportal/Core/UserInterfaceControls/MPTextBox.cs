@@ -34,17 +34,15 @@ namespace MediaPortal.UserInterface.Controls
   /// </summary>
   public class MPTextBox : System.Windows.Forms.TextBox
   {
-    Color _borderColor = Color.Empty;
+    private Color _borderColor = Color.Empty;
 
     public Color BorderColor
     {
       get { return _borderColor; }
       set { _borderColor = value; }
     }
-    
-    public MPTextBox()
-    {
-    }
+
+    public MPTextBox() {}
 
     protected override void WndProc(ref Message msg)
     {
@@ -52,15 +50,14 @@ namespace MediaPortal.UserInterface.Controls
       {
         Graphics graphics = Graphics.FromHwnd(this.Parent.Handle);
         Rectangle rectangle = new Rectangle(
-             this.Left - 1,
-             this.Top - 1,
-             this.Width + 1,
-             this.Height + 1);
+          this.Left - 1,
+          this.Top - 1,
+          this.Width + 1,
+          this.Height + 1);
         graphics.DrawRectangle(new Pen(_borderColor), rectangle);
         graphics.Dispose();
       }
       base.WndProc(ref msg);
     }
   }
-
 }

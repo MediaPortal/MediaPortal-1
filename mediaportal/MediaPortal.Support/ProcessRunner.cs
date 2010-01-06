@@ -52,9 +52,7 @@ namespace MediaPortal.Support
       get { return lastExitCode; }
     }
 
-    public ProcessRunner()
-    {
-    }
+    public ProcessRunner() {}
 
     public virtual void Run()
     {

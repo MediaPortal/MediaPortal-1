@@ -42,18 +42,22 @@ namespace TvLibrary.Channels
       ModulationType = p_ModulationType;
       SymbolRate = p_SymbolRate;
     }
+
     /// <summary>
     /// Frequency
     /// </summary>
     public long Frequency;
+
     /// <summary>
     /// ModulationType
     /// </summary>
     public ModulationType ModulationType;
+
     /// <summary>
     /// SymbolRate
     /// </summary>
     public int SymbolRate;
+
     /// <summary>
     /// ToString
     /// </summary>
@@ -63,6 +67,7 @@ namespace TvLibrary.Channels
       return String.Format("freq:{0} mod:{1} symbolrate:{2}", Frequency, ModulationType, SymbolRate);
     }
   }
+
   /// <summary>
   /// class holding all tuning details for DVBC
   /// </summary>
@@ -76,10 +81,7 @@ namespace TvLibrary.Channels
     /// </summary>
     public DVBCTuning TuningInfo
     {
-      get
-      {
-        return new DVBCTuning(Frequency, ModulationType, SymbolRate);
-      }
+      get { return new DVBCTuning(Frequency, ModulationType, SymbolRate); }
       set
       {
         Frequency = value.Frequency;

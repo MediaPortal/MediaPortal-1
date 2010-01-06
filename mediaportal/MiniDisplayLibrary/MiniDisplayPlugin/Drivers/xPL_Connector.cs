@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -60,9 +60,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.Listener.Dispose();
     }
 
-    private void Clear()
-    {
-    }
+    private void Clear() {}
 
     public void Configure()
     {
@@ -71,13 +69,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       form.Dispose();
     }
 
-    public void Dispose()
-    {
-    }
+    public void Dispose() {}
 
-    public void DrawImage(Bitmap bitmap)
-    {
-    }
+    public void DrawImage(Bitmap bitmap) {}
 
     public void Initialize()
     {
@@ -200,7 +194,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                new object[0]);
                     }
                     this.XPL_Send_Remote_Confirm_Message(e);
-                    int num8 = (int) Enum.Parse(typeof (GUIWindow.Window), str9.ToUpper());
+                    int num8 = (int)Enum.Parse(typeof (GUIWindow.Window), str9.ToUpper());
                     if (!GUIWindowManager.ActiveWindow.Equals(num8))
                     {
                       GUIWindowManager.SendThreadCallbackAndWait(
@@ -217,7 +211,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                new object[0]);
                     }
                     this.XPL_Send_Remote_Confirm_Message(e);
-                    Key key = new Key(0, (int) Enum.Parse(typeof (Keys), str9));
+                    Key key = new Key(0, (int)Enum.Parse(typeof (Keys), str9));
                     Action action3 = new Action();
                     if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindow, key, ref action3))
                     {
@@ -236,7 +230,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                           new object[] {str9});
                       }
                       this.XPL_Send_Remote_Confirm_Message(e);
-                      if (!this.rHandler.MapAction((int) Enum.Parse(typeof (RemoteButton), str10)) && this.DoDebug)
+                      if (!this.rHandler.MapAction((int)Enum.Parse(typeof (RemoteButton), str10)) && this.DoDebug)
                       {
                         Log.Info(
                           "xPL_Connector.Listener_XplMessageReceived(): COULD NOT FIRE REMOTE ACTION (isLoaded = {0})",
@@ -404,7 +398,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                     num = int.Parse(str4.Replace("x", ""));
                     break;
                   }
-                  num = g_Player.Speed*2;
+                  num = g_Player.Speed * 2;
                   break;
                 }
               case "rewind":
@@ -417,7 +411,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                   }
                   else
                   {
-                    num2 = Math.Abs(g_Player.Speed)*2;
+                    num2 = Math.Abs(g_Player.Speed) * 2;
                   }
                   if (num2 > 0x20)
                   {
@@ -493,7 +487,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                   if (((str13 = s.Substring(0, 1)) == null) || (!(str13 == "+") && !(str13 == "-")))
                   {
                     int num7 = int.Parse(s);
-                    VolumeHandler.Instance.Volume = (VolumeHandler.Instance.Maximum/100)*num7;
+                    VolumeHandler.Instance.Volume = (VolumeHandler.Instance.Maximum / 100) * num7;
                     if (this.DoDebug)
                     {
                       Log.Info("xPLConnector_Listener_XplMessageReceived: Received media.basic volume command",
@@ -502,7 +496,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                     return;
                   }
                   int volume = VolumeHandler.Instance.Volume;
-                  int num5 = int.Parse(s)*0x28f;
+                  int num5 = int.Parse(s) * 0x28f;
                   int num6 = volume + num5;
                   if (num6 < 0)
                   {
@@ -551,9 +545,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.LastSettingsCheck = DateTime.Now;
     }
 
-    public void SetCustomCharacters(int[][] customCharacters)
-    {
-    }
+    public void SetCustomCharacters(int[][] customCharacters) {}
 
     public void SetLine(int line, string message)
     {
@@ -790,7 +782,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       object obj2 = (string.Empty + "power=on" + '\n') + "connected=true" + '\n';
       object obj3 =
         string.Concat(new object[]
-                        {obj2, "volume=", Math.Floor((double) ((this.MPStatus.SystemVolumeLevel/0xffff)*100)), '\n'});
+                        {obj2, "volume=", Math.Floor((double)((this.MPStatus.SystemVolumeLevel / 0xffff) * 100)), '\n'});
       string strMessage = string.Concat(new object[] {obj3, "mute=", this.MPStatus.IsMuted.ToString().ToLower(), '\n'});
       this.Listener.SendMessage(msgType, "*", "media.devstate", strMessage);
       strMessage = string.Empty;
@@ -802,7 +794,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                     "connected=true" + '\n';
       object obj3 =
         string.Concat(new object[]
-                        {obj2, "volume=", Math.Floor((double) ((this.MPStatus.SystemVolumeLevel/0xffff)*100)), '\n'});
+                        {obj2, "volume=", Math.Floor((double)((this.MPStatus.SystemVolumeLevel / 0xffff) * 100)), '\n'});
       string strMessage = string.Concat(new object[] {obj3, "mute=", this.MPStatus.IsMuted.ToString().ToLower(), '\n'});
       this.Listener.SendMessage(msgType, "*", "media.mpconfig", strMessage);
       strMessage = string.Empty;
@@ -938,7 +930,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("xPL_Connector.AdvancedSettings.Load(): Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_xPL_Connector.xml"));
-          settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
+          settings = (AdvancedSettings)serializer.Deserialize(xmlReader);
           xmlReader.Close();
         }
         else
@@ -972,7 +964,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                  Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 2;
-        serializer.Serialize((XmlWriter) writer, ToSave);
+        serializer.Serialize((XmlWriter)writer, ToSave);
         writer.Close();
         Log.Info("xPL_Connector.AdvancedSettings.Save(): completed");
       }

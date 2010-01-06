@@ -34,9 +34,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    private DependencyProperty()
-    {
-    }
+    private DependencyProperty() {}
 
     private DependencyProperty(DependencyProperty property, PropertyMetadata defaultMetadata)
     {
@@ -82,10 +80,10 @@ namespace System.Windows
       // MPSPECIFIC
       if (ownerType == typeof (GUIControl))
       {
-        return (DependencyProperty) _properties[name + typeof (FrameworkElement)];
+        return (DependencyProperty)_properties[name + typeof (FrameworkElement)];
       }
 
-      return (DependencyProperty) _properties[name + ownerType];
+      return (DependencyProperty)_properties[name + ownerType];
     }
 
     public override int GetHashCode()

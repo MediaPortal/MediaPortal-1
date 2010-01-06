@@ -36,29 +36,19 @@ namespace System.Windows.Controls
       IsMainMenuProperty = DependencyProperty.Register("IsMainMenu", typeof (bool), typeof (Menu));
     }
 
-    public Menu()
-    {
-    }
+    public Menu() {}
 
     #endregion Constructors
 
     #region Methods
 
-    protected override void HandleMouseButton(MouseButtonEventArgs e)
-    {
-    }
+    protected override void HandleMouseButton(MouseButtonEventArgs e) {}
 
-    protected override void OnInitialized(EventArgs e)
-    {
-    }
+    protected override void OnInitialized(EventArgs e) {}
 
-    protected override void OnKeyDown(KeyEventArgs e)
-    {
-    }
+    protected override void OnKeyDown(KeyEventArgs e) {}
 
-    protected override void PrepareContainerForItemOverride(DependencyObject element, Object item)
-    {
-    }
+    protected override void PrepareContainerForItemOverride(DependencyObject element, Object item) {}
 
     #endregion Methods
 
@@ -72,7 +62,7 @@ namespace System.Windows.Controls
 
     public bool IsMainMenu
     {
-      get { return (bool) GetValue(IsMainMenuProperty); }
+      get { return (bool)GetValue(IsMainMenuProperty); }
       set { SetValue(IsMainMenuProperty, value); }
     }
 

@@ -37,12 +37,12 @@ namespace MediaPortal.Util
 {
   public class VideoThumbCreator
   {
-    static string ExtractApp = "mtn.exe";
-    static string ExtractorPath = Config.GetFile(Config.Dir.Base, "MovieThumbnailer", ExtractApp);
-    static int PreviewColumns = 2;
-    static int PreviewRows = 2;
-    static bool LeaveShareThumb = false;
-    static bool NeedsConfigRefresh = true;
+    private static string ExtractApp = "mtn.exe";
+    private static string ExtractorPath = Config.GetFile(Config.Dir.Base, "MovieThumbnailer", ExtractApp);
+    private static int PreviewColumns = 2;
+    private static int PreviewRows = 2;
+    private static bool LeaveShareThumb = false;
+    private static bool NeedsConfigRefresh = true;
 
     #region Serialisation
 
@@ -53,7 +53,8 @@ namespace MediaPortal.Util
         PreviewColumns = xmlreader.GetValueAsInt("thumbnails", "tvthumbcols", 2);
         PreviewRows = xmlreader.GetValueAsInt("thumbnails", "tvthumbrows", 2);
         LeaveShareThumb = xmlreader.GetValueAsBool("thumbnails", "tvrecordedsharepreview", false);
-        Log.Debug("VideoThumbCreator: Settings loaded - using {0} columns and {1} rows. Share thumb = {2}", PreviewColumns, PreviewRows, LeaveShareThumb);
+        Log.Debug("VideoThumbCreator: Settings loaded - using {0} columns and {1} rows. Share thumb = {2}",
+                  PreviewColumns, PreviewRows, LeaveShareThumb);
         NeedsConfigRefresh = false;
       }
     }
@@ -97,7 +98,8 @@ namespace MediaPortal.Util
       }
       if (!LeaveShareThumb && !aCacheThumb)
       {
-        Log.Warn("VideoThumbCreator: No share thumbs wanted by config option AND no caching wanted - where should the thumb go then? Aborting..");
+        Log.Warn(
+          "VideoThumbCreator: No share thumbs wanted by config option AND no caching wanted - where should the thumb go then? Aborting..");
         return false;
       }
 
@@ -134,8 +136,12 @@ namespace MediaPortal.Util
         postGapSec = 600;
       }
       bool Success = false;
-      string ExtractorArgs = string.Format(" -D 6 -B {0} -E {1} -c {2} -r {3} -s {4} -t -i -w {5} -n -P \"{6}\"", preGapSec, postGapSec, PreviewColumns, PreviewRows, "300", /*(int)Thumbs.ThumbLargeResolution*/ "0", aVideoPath);
-      string ExtractorFallbackArgs = string.Format(" -D 8 -B {0} -E {1} -c {2} -r {3} -s {4} -t -i -w {5} -n -P \"{6}\"", 0, 0, PreviewColumns, PreviewRows, "60", /*(int)Thumbs.ThumbLargeResolution*/ "0", aVideoPath);
+      string ExtractorArgs = string.Format(" -D 6 -B {0} -E {1} -c {2} -r {3} -s {4} -t -i -w {5} -n -P \"{6}\"",
+                                           preGapSec, postGapSec, PreviewColumns, PreviewRows, "300",
+                                           /*(int)Thumbs.ThumbLargeResolution*/ "0", aVideoPath);
+      string ExtractorFallbackArgs = string.Format(
+        " -D 8 -B {0} -E {1} -c {2} -r {3} -s {4} -t -i -w {5} -n -P \"{6}\"", 0, 0, PreviewColumns, PreviewRows, "60",
+        /*(int)Thumbs.ThumbLargeResolution*/ "0", aVideoPath);
       // Honour we are using a unix app
       ExtractorArgs = ExtractorArgs.Replace('\\', '/');
       try
@@ -145,8 +151,8 @@ namespace MediaPortal.Util
         string OutputThumb = string.Format("{0}_s{1}", Path.ChangeExtension(aVideoPath, null), ".jpg");
         string ShareThumb = OutputThumb.Replace("_s.jpg", ".jpg");
 
-        if ((LeaveShareThumb && !File.Exists(ShareThumb))    // No thumb in share although it should be there
-        || (!LeaveShareThumb && !File.Exists(aThumbPath))) // No thumb cached and no chance to find it in share
+        if ((LeaveShareThumb && !File.Exists(ShareThumb)) // No thumb in share although it should be there
+            || (!LeaveShareThumb && !File.Exists(aThumbPath))) // No thumb cached and no chance to find it in share
         {
           //Log.Debug("VideoThumbCreator: No thumb in share {0} - trying to create one with arguments: {1}", ShareThumb, ExtractorArgs);
           Success = Utils.StartProcess(ExtractorPath, ExtractorArgs, TempPath, 15000, true, GetMtnConditions());
@@ -156,7 +162,8 @@ namespace MediaPortal.Util
             Thread.Sleep(100);
             Success = Utils.StartProcess(ExtractorPath, ExtractorFallbackArgs, TempPath, 30000, true, GetMtnConditions());
             if (!Success)
-              Log.Info("VideoThumbCreator: {0} has not been executed successfully with arguments: {1}", ExtractApp, ExtractorFallbackArgs);
+              Log.Info("VideoThumbCreator: {0} has not been executed successfully with arguments: {1}", ExtractApp,
+                       ExtractorFallbackArgs);
           }
           // give the system a few IO cycles
           Thread.Sleep(100);
@@ -179,7 +186,7 @@ namespace MediaPortal.Util
               File.Delete(OutputThumb);
               Thread.Sleep(50);
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
         }
         else
@@ -193,8 +200,10 @@ namespace MediaPortal.Util
 
         if (aCacheThumb && Success)
         {
-          if (Picture.CreateThumbnail(ShareThumb, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, false))
-            Picture.CreateThumbnail(ShareThumb, Utils.ConvertToLargeCoverArt(aThumbPath), (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
+          if (Picture.CreateThumbnail(ShareThumb, aThumbPath, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution,
+                                      0, false))
+            Picture.CreateThumbnail(ShareThumb, Utils.ConvertToLargeCoverArt(aThumbPath),
+                                    (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false);
         }
 
         if (!LeaveShareThumb)
@@ -204,7 +213,7 @@ namespace MediaPortal.Util
             File.Delete(ShareThumb);
             Thread.Sleep(30);
           }
-          catch (Exception) { }
+          catch (Exception) {}
         }
       }
       catch (Exception ex)

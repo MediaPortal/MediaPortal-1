@@ -32,9 +32,7 @@ namespace MediaPortal.Tests.Core.Playlists
   public class PlayListTest
   {
     [SetUp]
-    public void Init()
-    {
-    }
+    public void Init() {}
 
     [Test]
     public void NewlyAddedSongsAreNotMarkedPlayed()

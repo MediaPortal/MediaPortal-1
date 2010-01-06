@@ -153,8 +153,9 @@ namespace TvDatabase
       SqlBuilder sb;
       try
       {
-        sb = new SqlBuilder(StatementType.Select, typeof(Setting));
-      } catch (TypeInitializationException ex)
+        sb = new SqlBuilder(StatementType.Select, typeof (Setting));
+      }
+      catch (TypeInitializationException ex)
       {
         Log.Error("Exception in Setting.GetWeekendTool() with Message {0}", ex.Message);
         return new WeekEndTool(false);
@@ -167,8 +168,9 @@ namespace TvDatabase
       {
         return new WeekEndTool(false);
       }
-      return new WeekEndTool(Convert.ToInt32(settingsFound[0].value)!=0);
+      return new WeekEndTool(Convert.ToInt32(settingsFound[0].value) != 0);
     }
+
     #endregion
   }
 }

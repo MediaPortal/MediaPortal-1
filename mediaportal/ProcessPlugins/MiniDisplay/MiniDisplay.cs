@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
@@ -32,7 +32,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using Microsoft.Win32;
-using Message=MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Message;
+using Message = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Message;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
@@ -54,9 +54,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     #region ctor
 
-    public MiniDisplay()
-    {
-    }
+    public MiniDisplay() {}
 
     #endregion
 
@@ -256,7 +254,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         Log.Error(exception);
       }
     }
-    
+
     private void DoWork()
     {
       try
@@ -265,7 +263,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           Log.Debug("MiniDisplay Processing status.");
         }
-        GUIWindow.Window activeWindow = (GUIWindow.Window) GUIWindowManager.ActiveWindow;
+        GUIWindow.Window activeWindow = (GUIWindow.Window)GUIWindowManager.ActiveWindow;
         if (Settings.Instance.ExtensiveLogging)
         {
           Log.Debug("Active window is {0}", activeWindow.ToString());
@@ -292,28 +290,28 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
           else if (g_Player.IsTimeShifting)
           {
-            this.status = Status.Timeshifting;            
+            this.status = Status.Timeshifting;
           }
           else if (g_Player.IsTVRecording)
           {
-            this.status = Status.PlayingRecording;            
+            this.status = Status.PlayingRecording;
           }
           else if (g_Player.IsTV)
           {
-            this.status = Status.PlayingTV;            
+            this.status = Status.PlayingTV;
           }
           else if (g_Player.IsVideo)
           {
-            this.status = Status.PlayingVideo;            
-          }          
+            this.status = Status.PlayingVideo;
+          }
         }
         else
         {
           GUIPropertyManager.SetProperty("#paused", string.Empty);
-          if (this.IsTVWindow((int) activeWindow))
+          if (this.IsTVWindow((int)activeWindow))
           {
             this.status = Status.PlayingTV;
-          }          
+          }
         }
         if ((DateTime.Now - this.lastAction) < new TimeSpan(0, 0, MiniDisplayHelper.GetIdleTimeout()))
         {
@@ -323,7 +321,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           string dialogTitle = string.Empty;
           string dialogHighlightedItem = string.Empty;
-          GUIWindow.Window activeWindowEx = (GUIWindow.Window) GUIWindowManager.ActiveWindowEx;
+          GUIWindow.Window activeWindowEx = (GUIWindow.Window)GUIWindowManager.ActiveWindowEx;
           if (this.GetDialogInfo(activeWindowEx, ref dialogTitle, ref dialogHighlightedItem))
           {
             this.status = Status.Dialog;
@@ -332,7 +330,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             GUIPropertyManager.SetProperty("#DialogItem", dialogHighlightedItem);
             if (Settings.Instance.ExtensiveLogging)
             {
-              Log.Debug("DIALOG window is {0}: \"{1}\", \"{2}\"", activeWindowEx.ToString(), dialogTitle, dialogHighlightedItem);
+              Log.Debug("DIALOG window is {0}: \"{1}\", \"{2}\"", activeWindowEx.ToString(), dialogTitle,
+                        dialogHighlightedItem);
             }
           }
         }
@@ -394,11 +393,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         foreach (Message message in Settings.Instance.Messages)
         {
           if (((message.Status == Status.Any) || (message.Status == this.status)) &&
-              ((message.Windows.Count == 0) || message.Windows.Contains((int) activeWindow)))
+              ((message.Windows.Count == 0) || message.Windows.Contains((int)activeWindow)))
           {
-            if (!message.Process(this.handler))
-            {
-            }
+            if (!message.Process(this.handler)) {}
             return;
           }
         }
@@ -521,7 +518,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         case GUIWindow.Window.WINDOW_DIALOG_YES_NO:
           {
-            GUIDialogYesNo window = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) dialogWindow);
+            GUIDialogYesNo window = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)dialogWindow);
             DialogTitle = string.Empty;
             foreach (object obj16 in window.controlList)
             {
@@ -569,7 +566,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
         case GUIWindow.Window.WINDOW_DIALOG_PROGRESS:
           {
-            GUIDialogProgress progress = (GUIDialogProgress) GUIWindowManager.GetWindow((int) dialogWindow);
+            GUIDialogProgress progress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)dialogWindow);
             foreach (object obj6 in progress.controlList)
             {
               if (obj6.GetType() == typeof (GUILabelControl))
@@ -593,7 +590,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
         case GUIWindow.Window.WINDOW_DIALOG_SELECT:
           {
-            GUIDialogSelect select = (GUIDialogSelect) GUIWindowManager.GetWindow((int) dialogWindow);
+            GUIDialogSelect select = (GUIDialogSelect)GUIWindowManager.GetWindow((int)dialogWindow);
             control = null;
             focus = false;
             foreach (object obj9 in select.controlList)
@@ -631,7 +628,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
         case GUIWindow.Window.WINDOW_DIALOG_OK:
           {
-            GUIDialogOK gok = (GUIDialogOK) GUIWindowManager.GetWindow((int) dialogWindow);
+            GUIDialogOK gok = (GUIDialogOK)GUIWindowManager.GetWindow((int)dialogWindow);
             foreach (object obj5 in gok.controlList)
             {
               if (obj5.GetType() == typeof (GUIButtonControl))
@@ -684,7 +681,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
         case GUIWindow.Window.WINDOW_DIALOG_SELECT2:
           {
-            GUIDialogSelect2 select2 = (GUIDialogSelect2) GUIWindowManager.GetWindow((int) dialogWindow);
+            GUIDialogSelect2 select2 = (GUIDialogSelect2)GUIWindowManager.GetWindow((int)dialogWindow);
             control = null;
             focus = false;
             foreach (object obj11 in select2.controlList)
@@ -722,7 +719,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
         case GUIWindow.Window.WINDOW_DIALOG_MENU:
           {
-            GUIDialogMenu menu = (GUIDialogMenu) GUIWindowManager.GetWindow((int) dialogWindow);
+            GUIDialogMenu menu = (GUIDialogMenu)GUIWindowManager.GetWindow((int)dialogWindow);
             foreach (object obj13 in menu.controlList)
             {
               if (obj13.GetType() == typeof (GUILabelControl))
@@ -771,7 +768,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
         case GUIWindow.Window.WINDOW_DIALOG_RATING:
           {
-            GUIDialogSetRating rating = (GUIDialogSetRating) GUIWindowManager.GetWindow((int) dialogWindow);
+            GUIDialogSetRating rating = (GUIDialogSetRating)GUIWindowManager.GetWindow((int)dialogWindow);
             DialogTitle = string.Empty;
             foreach (object obj8 in rating.controlList)
             {
@@ -819,7 +816,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           }
         case GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT:
           {
-            GUIDialogMenuBottomRight right = (GUIDialogMenuBottomRight) GUIWindowManager.GetWindow((int) dialogWindow);
+            GUIDialogMenuBottomRight right = (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)dialogWindow);
             DialogTitle = string.Empty;
             foreach (object obj2 in right.controlList)
             {
@@ -923,6 +920,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     #endregion
 
     #region Event handling
+
     private void GUIWindowManager_OnNewAction(Action action)
     {
       this.lastAction = DateTime.Now;

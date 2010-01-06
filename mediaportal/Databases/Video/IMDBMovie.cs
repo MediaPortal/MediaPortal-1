@@ -63,9 +63,7 @@ namespace MediaPortal.Video.Database
     private string m_strActor = string.Empty;
     private string m_strgenre = string.Empty;
 
-    public IMDBMovie()
-    {
-    }
+    public IMDBMovie() {}
 
     public int ID
     {

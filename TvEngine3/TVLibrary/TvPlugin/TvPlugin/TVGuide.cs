@@ -41,7 +41,7 @@ namespace TvPlugin
     public TVGuide()
       : base()
     {
-      GetID = (int) Window.WINDOW_TVGUIDE;
+      GetID = (int)Window.WINDOW_TVGUIDE;
     }
 
     #endregion
@@ -51,7 +51,7 @@ namespace TvPlugin
     public override bool Init()
     {
       bool result = Load(GUIGraphicsContext.Skin + @"\mytvguide.xml");
-      GetID = (int) Window.WINDOW_TVGUIDE;
+      GetID = (int)Window.WINDOW_TVGUIDE;
       Initialize();
       return result;
     }

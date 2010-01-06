@@ -123,7 +123,7 @@ namespace MediaPortal.WebEPG.Parser
     {
       string rowSource = _rows.GetSource(index);
 
-      IParserData rowData = (IParserData) Activator.CreateInstance(_dataType);
+      IParserData rowData = (IParserData)Activator.CreateInstance(_dataType);
 
       _parser.ParseRow(rowSource, ref rowData);
 

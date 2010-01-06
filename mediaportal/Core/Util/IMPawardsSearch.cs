@@ -38,11 +38,9 @@ namespace MediaPortal.Util
   /// </summary>
   public class IMPawardsSearch
   {
-    ArrayList imageList = new ArrayList();
+    private ArrayList imageList = new ArrayList();
 
-    public IMPawardsSearch()
-    {
-    }
+    public IMPawardsSearch() {}
 
     public int Count
     {
@@ -66,7 +64,8 @@ namespace MediaPortal.Util
       searchtag = searchtag.Replace(" ", "+");
       string result = string.Empty;
 
-      string url = "http://www.google.com/custom?domains=www.impawards.com&q=" + searchtag + "&sa=Google+Search&sitesearch=www.impawards.com";
+      string url = "http://www.google.com/custom?domains=www.impawards.com&q=" + searchtag +
+                   "&sa=Google+Search&sitesearch=www.impawards.com";
       WebClient wc = new WebClient();
       try
       {
@@ -122,8 +121,6 @@ namespace MediaPortal.Util
       }
       else
         return;
-
     }
   }
 }
-

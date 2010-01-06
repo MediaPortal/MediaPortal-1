@@ -43,19 +43,19 @@ namespace MediaPortal.Mixer
       CreateParams createParams = new CreateParams();
 
       createParams.ExStyle = 0x08000000;
-      createParams.Style = unchecked((int) 0x80000000);
+      createParams.Style = unchecked((int)0x80000000);
 
       CreateHandle(createParams);
     }
 
     protected override void WndProc(ref Message m)
     {
-      if (m.Msg == (int) MixerMessages.LineChanged && LineChanged != null)
+      if (m.Msg == (int)MixerMessages.LineChanged && LineChanged != null)
       {
         LineChanged(this, new MixerEventArgs(m.WParam, m.LParam.ToInt32()));
       }
 
-      if (m.Msg == (int) MixerMessages.ControlChanged && ControlChanged != null)
+      if (m.Msg == (int)MixerMessages.ControlChanged && ControlChanged != null)
       {
         ControlChanged(this, new MixerEventArgs(m.WParam, m.LParam.ToInt32()));
       }

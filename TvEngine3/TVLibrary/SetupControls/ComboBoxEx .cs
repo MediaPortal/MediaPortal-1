@@ -59,17 +59,20 @@ namespace SetupControls
         if (item.ImageIndex != -1)
         {
           imageList.Draw(ea.Graphics, bounds.Left, bounds.Top, item.ImageIndex);
-          ea.Graphics.DrawString(item.Text, ea.Font, new SolidBrush(ea.ForeColor), bounds.Left + imageSize.Width, bounds.Top);
+          ea.Graphics.DrawString(item.Text, ea.Font, new SolidBrush(ea.ForeColor), bounds.Left + imageSize.Width,
+                                 bounds.Top);
         }
         else
         {
           ea.Graphics.DrawString(item.Text, ea.Font, new SolidBrush(ea.ForeColor), bounds.Left, bounds.Top);
         }
-      } catch
+      }
+      catch
       {
         if (ea.Index != -1)
         {
-          ea.Graphics.DrawString(Items[ea.Index].ToString(), ea.Font, new SolidBrush(ea.ForeColor), bounds.Left, bounds.Top);
+          ea.Graphics.DrawString(Items[ea.Index].ToString(), ea.Font, new SolidBrush(ea.ForeColor), bounds.Left,
+                                 bounds.Top);
         }
         else
         {
@@ -85,6 +88,7 @@ namespace SetupControls
   {
     private string _text;
     private readonly int _id;
+
     public string Text
     {
       get { return _text; }
@@ -92,6 +96,7 @@ namespace SetupControls
     }
 
     private int _imageIndex;
+
     public int ImageIndex
     {
       get { return _imageIndex; }
@@ -99,14 +104,10 @@ namespace SetupControls
     }
 
     public ComboBoxExItem()
-      : this("")
-    {
-    }
+      : this("") {}
 
     public ComboBoxExItem(string text)
-      : this(text, -1, -1)
-    {
-    }
+      : this(text, -1, -1) {}
 
     public ComboBoxExItem(string text, int imageIndex, int id)
     {
@@ -117,17 +118,12 @@ namespace SetupControls
 
     public int Id
     {
-      get
-      {
-        return _id;
-      }
+      get { return _id; }
     }
+
     public override string ToString()
     {
       return _text;
     }
   }
 }
-
-
-

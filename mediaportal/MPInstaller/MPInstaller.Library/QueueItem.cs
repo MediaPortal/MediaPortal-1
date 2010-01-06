@@ -16,6 +16,7 @@ namespace MediaPortal.MPInstaller
   public class QueueItem
   {
     private string name;
+
     [System.Xml.Serialization.XmlAttribute]
     public string Name
     {
@@ -25,6 +26,7 @@ namespace MediaPortal.MPInstaller
 
 
     private string version;
+
     [System.Xml.Serialization.XmlAttribute]
     public string Version
     {
@@ -33,6 +35,7 @@ namespace MediaPortal.MPInstaller
     }
 
     private QueueAction action;
+
     [System.Xml.Serialization.XmlAttribute]
     public QueueAction Action
     {
@@ -41,6 +44,7 @@ namespace MediaPortal.MPInstaller
     }
 
     private string localFile;
+
     [System.Xml.Serialization.XmlAttribute]
     public string LocalFile
     {
@@ -49,7 +53,8 @@ namespace MediaPortal.MPInstaller
     }
 
     private string downloadUrl;
-    [System.Xml.Serialization.XmlAttribute]    
+
+    [System.Xml.Serialization.XmlAttribute]
     public string DownloadUrl
     {
       get { return downloadUrl; }

@@ -30,7 +30,7 @@ namespace SetupTv
 {
   public partial class NotifyForm : SetupControls.MPForm
   {
-    public NotifyForm(string caption,string message)
+    public NotifyForm(string caption, string message)
     {
       InitializeComponent();
       Init(caption, message);

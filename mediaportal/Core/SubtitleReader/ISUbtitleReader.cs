@@ -30,9 +30,7 @@ namespace MediaPortal.Subtitle
   /// </summary>
   public class ISubtitleReader
   {
-    public ISubtitleReader()
-    {
-    }
+    public ISubtitleReader() {}
 
     public virtual bool SupportsFile(string strFileName)
     {

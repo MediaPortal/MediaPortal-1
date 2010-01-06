@@ -67,7 +67,8 @@ namespace TvDatabase
                         int countryId, bool isRadio, bool isTv, int networkId, int transportId, int serviceId,
                         int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc,
                         int switchingFrequency, int bandwidth, int majorChannel, int minorChannel, int pcrPid,
-                        int videoSource, int audioSource, bool isVCRSignal, int tuningSource, int videoPid, int audioPid, int band,
+                        int videoSource, int audioSource, bool isVCRSignal, int tuningSource, int videoPid, int audioPid,
+                        int band,
                         int satIndex, int innerFecRate, int pilot, int rollOff, string url, int bitrate)
     {
       isChanged = true;
@@ -117,7 +118,8 @@ namespace TvDatabase
                         int frequency, int countryId, bool isRadio, bool isTv, int networkId, int transportId,
                         int serviceId, int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate,
                         int diseqc, int switchingFrequency, int bandwidth, int majorChannel, int minorChannel,
-                        int pcrPid, int videoSource, int audioSource, bool isVCRSignal, int tuningSource, int videoPid, int audioPid,
+                        int pcrPid, int videoSource, int audioSource, bool isVCRSignal, int tuningSource, int videoPid,
+                        int audioPid,
                         int band, int satIndex, int innerFecRate, int pilot, int rollOff, string url, int bitrate)
     {
       this.idTuning = idTuning;

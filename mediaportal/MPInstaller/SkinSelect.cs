@@ -47,8 +47,6 @@ namespace MediaPortal.MPInstaller
       Close();
     }
 
-    private void SkinSelect_Load(object sender, EventArgs e)
-    {
-    }
+    private void SkinSelect_Load(object sender, EventArgs e) {}
   }
 }

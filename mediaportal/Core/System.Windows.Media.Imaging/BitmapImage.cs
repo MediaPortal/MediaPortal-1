@@ -32,124 +32,120 @@ using System.Windows;
 
 namespace System.Windows.Media.Imaging
 {
-	public sealed class BitmapImage : BitmapSource, ISupportInitialize
-	{
-		#region Constructors
+  public sealed class BitmapImage : BitmapSource, ISupportInitialize
+  {
+    #region Constructors
 
-		public BitmapImage()
-		{
-		}
+    public BitmapImage() {}
 
-		public BitmapImage(Uri uriSource)
-		{
-			_uriSource = uriSource;
-		}
+    public BitmapImage(Uri uriSource)
+    {
+      _uriSource = uriSource;
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Events
+    #region Events
 
-		public override event EventHandler					DownloadCompleted;
-		public override event DownloadProgressEventHandler	DownloadProgress;
+    public override event EventHandler DownloadCompleted;
+    public override event DownloadProgressEventHandler DownloadProgress;
 
-		#endregion Events
+    #endregion Events
 
-		#region Methods
+    #region Methods
 
-		public void BeginInit()
-		{
-		}
+    public void BeginInit() {}
 
-		public new BitmapImage Copy()
-		{
-			return (BitmapImage)base.Copy();
-		}
+    public new BitmapImage Copy()
+    {
+      return (BitmapImage)base.Copy();
+    }
 
-		protected override Freezable CreateInstanceCore()
-		{
-			return new BitmapImage();
-		}
+    protected override Freezable CreateInstanceCore()
+    {
+      return new BitmapImage();
+    }
 
-		private void DownloadWorker(object sender, DoWorkEventArgs e)
-		{
-          Thread.CurrentThread.Name = "BitmapImage-Downloader";
-          using (WebClient client = new WebClient())
-          {
-            client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-            client.DownloadData((string)e.Argument);
-          }
-		}
+    private void DownloadWorker(object sender, DoWorkEventArgs e)
+    {
+      Thread.CurrentThread.Name = "BitmapImage-Downloader";
+      using (WebClient client = new WebClient())
+      {
+        client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        client.DownloadData((string)e.Argument);
+      }
+    }
 
-		private void DownloadWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
-		{
-			if(DownloadProgress != null)
-				DownloadProgress(this, new DownloadProgressEventArgs(e.ProgressPercentage));
-		}
-		
-		private void DownloadWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			if(DownloadCompleted != null)
-				DownloadCompleted(this, EventArgs.Empty);
-		}
+    private void DownloadWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
+    {
+      if (DownloadProgress != null)
+        DownloadProgress(this, new DownloadProgressEventArgs(e.ProgressPercentage));
+    }
 
-		public void EndInit()
-		{
-			if(_uriSource.IsFile == false)
-			{
-                BackgroundWorker worker = new BackgroundWorker();
+    private void DownloadWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    {
+      if (DownloadCompleted != null)
+        DownloadCompleted(this, EventArgs.Empty);
+    }
 
-				worker.DoWork += new DoWorkEventHandler(DownloadWorker);
-				worker.ProgressChanged += new ProgressChangedEventHandler(DownloadWorkerProgressChanged);
-				worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(DownloadWorkerCompleted);
-				worker.WorkerReportsProgress = true;
-				worker.WorkerSupportsCancellation = true;
-				worker.RunWorkerAsync(_uriSource.ToString());
-			}
-		}
+    public void EndInit()
+    {
+      if (_uriSource.IsFile == false)
+      {
+        BackgroundWorker worker = new BackgroundWorker();
 
-		public new BitmapImage GetCurrentValue()
-		{
-			return this;
-		}
+        worker.DoWork += new DoWorkEventHandler(DownloadWorker);
+        worker.ProgressChanged += new ProgressChangedEventHandler(DownloadWorkerProgressChanged);
+        worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(DownloadWorkerCompleted);
+        worker.WorkerReportsProgress = true;
+        worker.WorkerSupportsCancellation = true;
+        worker.RunWorkerAsync(_uriSource.ToString());
+      }
+    }
 
-		#endregion Methods
+    public new BitmapImage GetCurrentValue()
+    {
+      return this;
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public BitmapCacheOption CacheOption
-		{
-			get { return _cacheOption; }
-			set { _cacheOption = value; }
-		}
+    #region Properties
 
-		public BitmapCreateOptions CreateOptions
-		{
-			get { return _createOptions; }
-			set { _createOptions = value; }
-		}
+    public BitmapCacheOption CacheOption
+    {
+      get { return _cacheOption; }
+      set { _cacheOption = value; }
+    }
 
-		public int DecodePixelHeight
-		{
-			get { return _decodePixelHeight; }
-			set { _decodePixelHeight = value; }
-		}
+    public BitmapCreateOptions CreateOptions
+    {
+      get { return _createOptions; }
+      set { _createOptions = value; }
+    }
 
-		public int DecodePixelWidth
-		{
-			get { return _decodePixelWidth; }
-			set { _decodePixelWidth = value; }
-		}
+    public int DecodePixelHeight
+    {
+      get { return _decodePixelHeight; }
+      set { _decodePixelHeight = value; }
+    }
 
-		public override bool IsDownloading
-		{
-			get { return _isDownloading; }
-		}
+    public int DecodePixelWidth
+    {
+      get { return _decodePixelWidth; }
+      set { _decodePixelWidth = value; }
+    }
 
-		public Rotation Rotation
-		{
-			get { return _rotation; }
-			set { _rotation = value; }
-		}
+    public override bool IsDownloading
+    {
+      get { return _isDownloading; }
+    }
+
+    public Rotation Rotation
+    {
+      get { return _rotation; }
+      set { _rotation = value; }
+    }
 
 //		public Int32Rect SourceRect
 //		{
@@ -157,31 +153,31 @@ namespace System.Windows.Media.Imaging
 //			set { throw new NotImplementedException(); }
 //		}
 
-		public Stream StreamSource
-		{
-			get { return _streamSource; }
-			set { _streamSource = value; }
-		}
+    public Stream StreamSource
+    {
+      get { return _streamSource; }
+      set { _streamSource = value; }
+    }
 
-		public Uri UriSource
-		{
-			get { return _uriSource; }
-			set { _uriSource = value; }
-		}
+    public Uri UriSource
+    {
+      get { return _uriSource; }
+      set { _uriSource = value; }
+    }
 
-		#endregion Properties
-		
-		#region Fields
+    #endregion Properties
 
-		BitmapCacheOption			_cacheOption;
-		BitmapCreateOptions			_createOptions;
-		int							_decodePixelHeight;
-		int							_decodePixelWidth;
-		bool						_isDownloading = false;
-		Rotation					_rotation;
-		Stream						_streamSource;
-		Uri							_uriSource;
+    #region Fields
 
-		#endregion Fields
-	}
+    private BitmapCacheOption _cacheOption;
+    private BitmapCreateOptions _createOptions;
+    private int _decodePixelHeight;
+    private int _decodePixelWidth;
+    private bool _isDownloading = false;
+    private Rotation _rotation;
+    private Stream _streamSource;
+    private Uri _uriSource;
+
+    #endregion Fields
+  }
 }

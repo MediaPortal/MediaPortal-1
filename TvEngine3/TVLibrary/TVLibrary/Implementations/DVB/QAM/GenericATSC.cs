@@ -29,17 +29,22 @@ namespace TvLibrary.Implementations.DVB
   ///<summary>
   /// Generic ATSC devices BDA calls
   ///</summary>
-  class GenericATSC
+  internal class GenericATSC
   {
     #region constants
-    readonly Guid guidBdaDigitalDemodulator = new Guid(0xef30f379, 0x985b, 0x4d10, 0xb6, 0x40, 0xa7, 0x9d, 0x5e, 0x4, 0xe1, 0xe0);
+
+    private readonly Guid guidBdaDigitalDemodulator = new Guid(0xef30f379, 0x985b, 0x4d10, 0xb6, 0x40, 0xa7, 0x9d, 0x5e,
+                                                               0x4, 0xe1, 0xe0);
+
     #endregion
 
     #region variables
-    readonly bool _isGenericATSC;
-    readonly IntPtr _tempValue = IntPtr.Zero;
-    readonly IntPtr _tempInstance = IntPtr.Zero;
-    readonly IKsPropertySet _propertySet;
+
+    private readonly bool _isGenericATSC;
+    private readonly IntPtr _tempValue = IntPtr.Zero;
+    private readonly IntPtr _tempInstance = IntPtr.Zero;
+    private readonly IKsPropertySet _propertySet;
+
     #endregion
 
     /// <summary>
@@ -83,10 +88,7 @@ namespace TvLibrary.Implementations.DVB
     /// </value>
     public bool IsGenericATSC
     {
-      get
-      {
-        return _isGenericATSC;
-      }
+      get { return _isGenericATSC; }
     }
 
     /// <summary>
@@ -113,7 +115,8 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Info("GenericATSC: Set ModulationType: {0}", channel.ModulationType);
         Marshal.WriteInt32(_tempValue, (Int32)channel.ModulationType);
-        int hr = _propertySet.Set(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4);
+        int hr = _propertySet.Set(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32,
+                                  _tempValue, 4);
         if (hr != 0)
         {
           Log.Log.Info("GenericATSC: Set returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorString(hr));

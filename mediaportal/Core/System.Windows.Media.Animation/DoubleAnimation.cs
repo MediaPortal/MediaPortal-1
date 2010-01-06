@@ -36,9 +36,7 @@ namespace System.Windows.Media.Animation
       ToProperty = DependencyProperty.Register("To", typeof (double), typeof (DoubleAnimation));
     }
 
-    public DoubleAnimation()
-    {
-    }
+    public DoubleAnimation() {}
 
     public DoubleAnimation(double to, Duration duration)
     {
@@ -74,7 +72,7 @@ namespace System.Windows.Media.Animation
 
     public new DoubleAnimation Copy()
     {
-      return (DoubleAnimation) base.Copy();
+      return (DoubleAnimation)base.Copy();
     }
 
     protected override void CopyCore(Freezable sourceFreezable)
@@ -130,31 +128,31 @@ namespace System.Windows.Media.Animation
 
     public double By
     {
-      get { return (double) GetValue(ByProperty); }
+      get { return (double)GetValue(ByProperty); }
       set { SetValue(ByProperty, value); }
     }
 
     public double From
     {
-      get { return (double) GetValue(FromProperty); }
+      get { return (double)GetValue(FromProperty); }
       set { SetValue(FromProperty, value); }
     }
 
     public bool IsAdditive
     {
-      get { return (bool) GetValue(IsAdditiveProperty); }
+      get { return (bool)GetValue(IsAdditiveProperty); }
       set { SetValue(IsAdditiveProperty, value); }
     }
 
     public bool IsCumulative
     {
-      get { return (bool) GetValue(IsCumulativeProperty); }
+      get { return (bool)GetValue(IsCumulativeProperty); }
       set { SetValue(IsCumulativeProperty, value); }
     }
 
     public double To
     {
-      get { return (double) GetValue(ToProperty); }
+      get { return (double)GetValue(ToProperty); }
       set { SetValue(ToProperty, value); }
     }
 

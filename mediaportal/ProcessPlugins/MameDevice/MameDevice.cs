@@ -39,9 +39,7 @@ namespace MediaPortal.InputDevices
 
     private InputHandler _inputHandler;
 
-    public MameDevice()
-    {
-    }
+    public MameDevice() {}
 
     #region ISetupForm Members
 
@@ -112,10 +110,10 @@ namespace MediaPortal.InputDevices
         //disabled: following code produces a stack overflow exception
         //when i start MP and simply press the cursor up arrow
 
-        Log.Info("WM_KEYDOWN: wParam {0}", (int) msg.WParam);
+        Log.Info("WM_KEYDOWN: wParam {0}", (int)msg.WParam);
         try
         {
-          _inputHandler.MapAction((int) msg.WParam);
+          _inputHandler.MapAction((int)msg.WParam);
         }
         catch (ApplicationException)
         {

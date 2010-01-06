@@ -27,7 +27,7 @@ using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using Microsoft.Office.Interop.Outlook;
-using Exception=System.Exception;
+using Exception = System.Exception;
 
 namespace ProcessPlugins.CallerId
 {
@@ -52,7 +52,7 @@ namespace ProcessPlugins.CallerId
         Application olApplication = new Application();
         NameSpace olNamespace = olApplication.GetNamespace("mapi");
         MAPIFolder olContacts = olNamespace.GetDefaultFolder(OlDefaultFolders.olFolderContacts);
-        Items olItems = (Items) olContacts.Items;
+        Items olItems = (Items)olContacts.Items;
 
         string sFilter
           = "[AssistantTelephoneNumber] = '" + outlookQuery + "' Or "
@@ -75,7 +75,7 @@ namespace ProcessPlugins.CallerId
             + "[HomeTelephoneNumber] = '" + outlookQuery + "' Or "
             + "[TTYTDDTelephoneNumber] = '" + outlookQuery + "'";
 
-        ContactItem olContactItem = (ContactItem) olItems.Find(sFilter);
+        ContactItem olContactItem = (ContactItem)olItems.Find(sFilter);
 
         if (olContactItem != null)
         {

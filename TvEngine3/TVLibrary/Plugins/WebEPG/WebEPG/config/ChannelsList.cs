@@ -338,7 +338,7 @@ namespace MediaPortal.EPG.config
       GrabberConfigFile grabber;
       try
       {
-        XmlSerializer s = new XmlSerializer(typeof(GrabberConfigFile));
+        XmlSerializer s = new XmlSerializer(typeof (GrabberConfigFile));
         TextReader r = new StreamReader(file.FullName);
         grabber = (GrabberConfigFile)s.Deserialize(r);
       }

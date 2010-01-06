@@ -39,9 +39,7 @@ namespace MediaPortal.Player
     private VMR9Util _vmr9 = null;
     private IPin _pinVmr9ConnectedTo = null;
 
-    public StreamBufferPlayer9()
-    {
-    }
+    public StreamBufferPlayer9() {}
 
     protected override void OnInitialized()
     {
@@ -87,7 +85,7 @@ namespace MediaPortal.Player
 
       try
       {
-        _graphBuilder = (IGraphBuilder) new FilterGraph();
+        _graphBuilder = (IGraphBuilder)new FilterGraph();
         //Log.Info("StreamBufferPlayer9: add _vmr9");
 
         _vmr9 = new VMR9Util();
@@ -101,8 +99,8 @@ namespace MediaPortal.Player
         if (streamConfig2 != null)
         {
           // setting the StreamBufferEngine registry key
-          IntPtr HKEY = (IntPtr) unchecked((int) 0x80000002L);
-          IStreamBufferInitialize pTemp = (IStreamBufferInitialize) streamConfig2;
+          IntPtr HKEY = (IntPtr)unchecked((int)0x80000002L);
+          IStreamBufferInitialize pTemp = (IStreamBufferInitialize)streamConfig2;
           IntPtr subKey = IntPtr.Zero;
 
           RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
@@ -119,7 +117,7 @@ namespace MediaPortal.Player
         //Log.Info("StreamBufferPlayer9: add sbe");
 
         // create SBE source
-        _bufferSource = (IStreamBufferSource) new StreamBufferSource();
+        _bufferSource = (IStreamBufferSource)new StreamBufferSource();
         if (_bufferSource == null)
         {
           Log.Error("StreamBufferPlayer9:Failed to create instance of SBE (do you have WinXp SP1?)");
@@ -127,7 +125,7 @@ namespace MediaPortal.Player
         }
 
 
-        IBaseFilter filter = (IBaseFilter) _bufferSource;
+        IBaseFilter filter = (IBaseFilter)_bufferSource;
         hr = _graphBuilder.AddFilter(filter, "SBE SOURCE");
         if (hr != 0)
         {
@@ -135,7 +133,7 @@ namespace MediaPortal.Player
           return false;
         }
 
-        IFileSourceFilter fileSource = (IFileSourceFilter) _bufferSource;
+        IFileSourceFilter fileSource = (IFileSourceFilter)_bufferSource;
         if (fileSource == null)
         {
           Log.Error("StreamBufferPlayer9:Failed to get IFileSourceFilter");
@@ -199,10 +197,10 @@ namespace MediaPortal.Player
         }
 
         // render output pins of SBE
-        DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter) fileSource);
+        DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)fileSource);
 
-        _mediaCtrl = (IMediaControl) _graphBuilder;
-        _mediaEvt = (IMediaEventEx) _graphBuilder;
+        _mediaCtrl = (IMediaControl)_graphBuilder;
+        _mediaEvt = (IMediaEventEx)_graphBuilder;
         _mediaSeeking = _bufferSource as IStreamBufferMediaSeeking;
         _mediaSeeking2 = _bufferSource as IStreamBufferMediaSeeking2;
         if (_mediaSeeking == null)
@@ -222,7 +220,7 @@ namespace MediaPortal.Player
 
         // Set the IBasicAudioInterface
 
-        _basicAudio = (IBasicAudio) _graphBuilder;
+        _basicAudio = (IBasicAudio)_graphBuilder;
 
         //        Log.Info("StreamBufferPlayer9:SetARMode");
         //        DirectShowUtil.SetARMode(_graphBuilder,AspectRatioMode.Stretched);
@@ -289,13 +287,13 @@ namespace MediaPortal.Player
           }
           _mediaCtrl = null;
         }
-        
+
         if (_vmr9 != null)
         {
           Log.Info("StreamBufferPlayer9: vmr9 disable");
           _vmr9.Enable(false);
         }
-        
+
         _mediaEvt = null;
         _mediaSeeking = null;
         _mediaSeeking2 = null;
@@ -327,7 +325,7 @@ namespace MediaPortal.Player
           Log.Info("StreamBufferPlayer9: vmr9 dispose");
           _vmr9.Dispose();
           _vmr9 = null;
-        }    
+        }
 
         if (_graphBuilder != null)
         {
@@ -342,7 +340,7 @@ namespace MediaPortal.Player
         }
 
         GUIGraphicsContext.form.Invalidate(true);
-        _state = PlayState.Init;       
+        _state = PlayState.Init;
       }
       catch (Exception ex)
       {
@@ -410,7 +408,7 @@ namespace MediaPortal.Player
           fContentEnd = lContentEnd;
 
           dTimeInSecs += fContentStart;
-          long lTime = (long) dTimeInSecs;
+          long lTime = (long)dTimeInSecs;
           int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning,
                                               new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
           if (hr != 0)

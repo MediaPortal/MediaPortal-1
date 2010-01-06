@@ -28,10 +28,10 @@ namespace api
     public long getSimilarityTimingActual(String string1, String string2)
     {
       //UPGRADE_TODO: Method 'java.lang.System.currentTimeMillis' was converted to 'System.DateTime.Now' which has a different behavior. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1073_javalangSystemcurrentTimeMillis"'
-      long timeBefore = (DateTime.Now.Ticks - 621355968000000000)/10000;
+      long timeBefore = (DateTime.Now.Ticks - 621355968000000000) / 10000;
       getSimilarity(string1, string2);
       //UPGRADE_TODO: Method 'java.lang.System.currentTimeMillis' was converted to 'System.DateTime.Now' which has a different behavior. 'ms-help://MS.VSCC.2003/commoner/redir/redirect.htm?keyword="jlca1073_javalangSystemcurrentTimeMillis"'
-      long timeAfter = (DateTime.Now.Ticks - 621355968000000000)/10000;
+      long timeAfter = (DateTime.Now.Ticks - 621355968000000000) / 10000;
       return timeAfter - timeBefore;
     }
 

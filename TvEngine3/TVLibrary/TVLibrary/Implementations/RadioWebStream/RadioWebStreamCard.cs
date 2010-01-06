@@ -36,11 +36,13 @@ namespace TvLibrary.Implementations.RadioWebStream
   public class RadioWebStreamCard : ITVCard
   {
     #region variables
+
     private string _name;
     private DateTime _dateRecordingStarted = DateTime.MinValue;
     private object m_context;
     private ScanParameters _parameters;
     private bool _cardPresent = true;
+
     #endregion
 
     #region ctor
@@ -53,22 +55,17 @@ namespace TvLibrary.Implementations.RadioWebStream
       _name = "RadioWebStream Card (builtin)";
       _parameters = new ScanParameters();
     }
+
     #endregion
 
-		/// <summary>
-		/// returns true if card is currently present
-		/// </summary>
-		public bool CardPresent
-		{
-			get
-			{
-				return _cardPresent;
-			}
-			set
-			{
-				_cardPresent = value;
-			}
-		}
+    /// <summary>
+    /// returns true if card is currently present
+    /// </summary>
+    public bool CardPresent
+    {
+      get { return _cardPresent; }
+      set { _cardPresent = value; }
+    }
 
     /// <summary>
     /// Does the card have a CA module.
@@ -76,10 +73,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <value>The number of channels decrypting.</value>
     public bool HasCA
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     /// <summary>
@@ -88,14 +82,8 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <value>The parameters.</value>
     public ScanParameters Parameters
     {
-      get
-      {
-        return _parameters;
-      }
-      set
-      {
-        _parameters = value;
-      }
+      get { return _parameters; }
+      set { _parameters = value; }
     }
 
     /// <summary>
@@ -112,10 +100,11 @@ namespace TvLibrary.Implementations.RadioWebStream
         return false;
       }
       return true;
-      */ 
+      */
     }
 
     #region recording
+
     /// <summary>
     /// Starts recording
     /// </summary>
@@ -135,58 +124,53 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// </summary>
     /// <returns></returns>
     protected static void StopRecord()
-    { 
+    {
       if (!CheckThreadId()) return;
       Log.Log.WriteFile("RadioWebStream:StopRecord()");
     }
+
     #endregion
 
     #region Channel linkage handling
+
     /// <summary>
     /// Starts scanning for linkage info
     /// </summary>
-    public void StartLinkageScanner(BaseChannelLinkageScanner callback)
-    {
-    }
+    public void StartLinkageScanner(BaseChannelLinkageScanner callback) {}
+
     /// <summary>
     /// Stops/Resets the linkage scanner
     /// </summary>
-    public void ResetLinkageScanner()
-    {
-    }
+    public void ResetLinkageScanner() {}
+
     /// <summary>
     /// Returns the channel linkages grabbed
     /// </summary>
     public List<PortalChannel> ChannelLinkages
     {
-      get
-      {
-        return null;
-      }
+      get { return null; }
     }
+
     #endregion
 
     #region epg & scanning
+
     /// <summary>
     /// returns the ITVScanning interface used for scanning channels
     /// </summary>
     public ITVScanning ScanningInterface
     {
-      get
-      {
-        return null;
-      }
+      get { return null; }
     }
+
     /// <summary>
     /// returns the ITVEPG interface used for grabbing the epg
     /// </summary>
     public ITVEPG EpgInterface
     {
-      get
-      {
-        return null;
-      }
+      get { return null; }
     }
+
     /// <summary>
     /// Aborts grabbing the epg
     /// </summary>
@@ -194,19 +178,19 @@ namespace TvLibrary.Implementations.RadioWebStream
     {
       return;
     }
+
     /// <summary>
     /// Returns the EPG grabbed or null if epg grabbing is still busy
     /// </summary>
     public List<EpgChannel> Epg
     {
-      get
-      {
-        return null;
-      }
+      get { return null; }
     }
+
     #endregion
 
     #region tuning & recording
+
     /// <summary>
     /// Method to check if card can tune to the channel specified
     /// </summary>
@@ -229,21 +213,18 @@ namespace TvLibrary.Implementations.RadioWebStream
       Log.Log.WriteFile("RadioWebStream:  Tune:{0}", channel);
       return null;
     }
+
     #endregion
 
     #region quality control
+
     /// <summary>
     /// Get/Set the quality
     /// </summary>
     public IQuality Quality
     {
-      get
-      {
-        return null;
-      }
-      set
-      {
-      }
+      get { return null; }
+      set { }
     }
 
     /// <summary>
@@ -251,62 +232,49 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// </summary>
     public bool SupportsQualityControl
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// Gets the number of channels the card is currently decrypting.
     /// </summary>
     /// <value>The number of channels decrypting.</value>
     public int NumberOfChannelsDecrypting
     {
-      get
-      {
-        return 0;
-      }
+      get { return 0; }
     }
+
     /// <summary>
     /// Gets a value indicating whether card supports subchannels
     /// </summary>
     /// <value><c>true</c> if card supports sub channels; otherwise, <c>false</c>.</value>
     public bool SupportsSubChannels
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
+
     /// <summary>
     /// Frees the sub channel.
     /// </summary>
     /// <param name="id">The id.</param>
-    public void FreeSubChannel(int id)
-    {
-    }
+    public void FreeSubChannel(int id) {}
 
     /// <summary>
     /// Frees the sub channel.
     /// </summary>
     /// <param name="id">The id.</param>
     /// <param name="subchannelBusy">is the subcannel busy with other users.</param>
-    public void FreeSubChannelContinueGraph(int id, bool subchannelBusy)
-    {
-     
-    }
+    public void FreeSubChannelContinueGraph(int id, bool subchannelBusy) {}
 
     /// <summary>
     /// Frees the sub channel.
     /// </summary>
     /// <param name="id">The id.</param>
-    public void FreeSubChannelContinueGraph(int id)
-    {
-      
-    }
+    public void FreeSubChannelContinueGraph(int id) {}
 
     /// <summary>
     /// Gets the sub channel.
@@ -317,16 +285,14 @@ namespace TvLibrary.Implementations.RadioWebStream
     {
       return null;
     }
+
     /// <summary>
     /// Gets the sub channels.
     /// </summary>
     /// <value>The sub channels.</value>
     public ITvSubChannel[] SubChannels
     {
-      get
-      {
-        return new ITvSubChannel[0];
-      }
+      get { return new ITvSubChannel[0]; }
     }
 
     /// <summary>
@@ -334,25 +300,18 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// </summary>
     public string Name
     {
-      get
-      {
-        return _name;
-      }
-      set
-      {
-        _name = value;
-      }
+      get { return _name; }
+      set { _name = value; }
     }
+
     /// <summary>
     /// Gets/sets the card cardType
     /// </summary>
     public CardType CardType
     {
-      get
-      {
-        return CardType.RadioWebStream;
-      }
+      get { return CardType.RadioWebStream; }
     }
+
     /// <summary>
     /// Stops the current graph
     /// </summary>
@@ -361,29 +320,23 @@ namespace TvLibrary.Implementations.RadioWebStream
     {
       if (!CheckThreadId()) return;
     }
+
     /// <summary>
     /// Returns if the tuner belongs to a hybrid card
     /// </summary>
     public bool IsHybrid
     {
-      get
-      {
-        return false;
-      }
-      set
-      {
-      }
+      get { return false; }
+      set { }
     }
+
     /// <summary>
     /// When the tuner is locked onto a signal this property will return true
     /// otherwise false
     /// </summary>
     public bool IsTunerLocked
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
 
     /// <summary>
@@ -413,17 +366,20 @@ namespace TvLibrary.Implementations.RadioWebStream
         return 0;
       }
     }
+
     #endregion
 
     #region IDisposable Members
+
     /// <summary>
     /// Disposes this instance.
     /// </summary>
-    virtual public void Dispose()
+    public virtual void Dispose()
     {
       Log.Log.WriteFile("RadioWebStream:Dispose()");
       if (!CheckThreadId()) return;
     }
+
     #endregion
 
     /// <summary>
@@ -436,25 +392,21 @@ namespace TvLibrary.Implementations.RadioWebStream
     {
       return _name;
     }
+
     /// <summary>
     /// Gets/sets the card device
     /// </summary>
     public string DevicePath
     {
-      get
-      {
-        return "(builtin)";
-      }
+      get { return "(builtin)"; }
     }
+
     /// <summary>
     /// gets the current filename used for timeshifting
     /// </summary>
     public string TimeShiftFileName
     {
-      get
-      {
-        return "";
-      }
+      get { return ""; }
     }
 
     /// <summary>
@@ -462,13 +414,8 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// </summary>
     public bool IsEpgGrabbing
     {
-      get
-      {
-        return false;
-      }
-      set
-      {
-      }
+      get { return false; }
+      set { }
     }
 
     /// <summary>
@@ -478,10 +425,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <value>true for transport stream, false for program stream.</value>
     public bool IsTimeshiftingTransportStream
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     /// <summary>
@@ -491,10 +435,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <value>true for transport stream, false for program stream.</value>
     public bool IsRecordingTransportStream
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     /// <summary>
@@ -502,34 +443,25 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// </summary>
     public bool IsScanning
     {
-      get
-      {
-        return false;
-      }
-      set
-      {
-      }
+      get { return false; }
+      set { }
     }
+
     /// <summary>
     /// returns the max. channel numbers for RadioWebStreamCards
     /// </summary>
     public int MaxChannel
     {
-      get
-      {
-        return 99999;
-      }
+      get { return 99999; }
     }
+
     /// <summary>
     /// returns the min. channel numbers for RadioWebStreamCards
     /// </summary>
     /// <value>The min channel.</value>
     public int MinChannel
     {
-      get
-      {
-        return 1;
-      }
+      get { return 1; }
     }
 
     /// <summary>
@@ -538,24 +470,20 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <returns>DateTime containg the date/time when timeshifting was started</returns>
     public DateTime StartOfTimeShift
     {
-      get
-      {
-        return DateTime.MaxValue;
-      }
+      get { return DateTime.MaxValue; }
     }
+
     /// <summary>
     /// returns the date/time when recording has been started for the card specified
     /// </summary>
     /// <returns>DateTime containg the date/time when recording was started</returns>
     public DateTime RecordingStarted
     {
-      get
-      {
-        return _dateRecordingStarted;
-      }
+      get { return _dateRecordingStarted; }
     }
 
     #region audio streams
+
     /// <summary>
     /// returns the list of available audio streams
     /// </summary>
@@ -577,11 +505,9 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// </summary>
     public IAudioStream CurrentAudioStream
     {
-      get
-      {
-        return AvailableAudioStreams[0];
-      }
+      get { return AvailableAudioStreams[0]; }
     }
+
     #endregion
 
     /// <summary>
@@ -590,10 +516,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <returns>true of false</returns>
     public bool IsReceivingAudioVideo
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
 
     /// <summary>
@@ -602,13 +525,8 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <value>The type of the cam.</value>
     public CamType CamType
     {
-      get
-      {
-        return CamType.Default;
-      }
-      set
-      {
-      }
+      get { return CamType.Default; }
+      set { }
     }
 
     /// <summary>
@@ -617,53 +535,38 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <value>The context.</value>
     public object Context
     {
-      get
-      {
-        return m_context;
-      }
-      set
-      {
-        m_context = value;
-      }
+      get { return m_context; }
+      set { m_context = value; }
     }
 
     /// <summary>
     /// Grabs the epg.
     /// </summary>
     /// <param name="callback">The callback which gets called when epg is received or canceled.</param>
-    public void GrabEpg(BaseEpgGrabber callback)
-    {
-    }
+    public void GrabEpg(BaseEpgGrabber callback) {}
+
     /// <summary>
     /// Start grabbing the epg while timeshifting
     /// </summary>
-    public void GrabEpg()
-    {
-    }
+    public void GrabEpg() {}
+
     /// <summary>
     /// Gets the interface for controlling the diseqc motor
     /// </summary>
     /// <value>Theinterface for controlling the diseqc motor.</value>
     public IDiSEqCMotor DiSEqCMotor
     {
-      get
-      {
-        return null;
-      }
+      get { return null; }
     }
+
     /// <summary>
     /// Updates the signal state for a card.
     /// </summary>
-    public void ResetSignalUpdate()
-    {
-    }
+    public void ResetSignalUpdate() {}
 
     /// <summary>
     /// Reloads the card configuration
     /// </summary>
-    public void ReloadCardConfiguration()
-    {
-    }
-
+    public void ReloadCardConfiguration() {}
   }
 }

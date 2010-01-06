@@ -62,9 +62,7 @@ namespace CustomUIControls
 
     #region Constructor
 
-    public ImageListPanel()
-    {
-    }
+    public ImageListPanel() {}
 
     #endregion
 
@@ -93,8 +91,8 @@ namespace CustomUIControls
       }
 
 
-      nRows = imageList.Images.Count/_nColumns;
-      if (imageList.Images.Count%_nColumns > 0)
+      nRows = imageList.Images.Count / _nColumns;
+      if (imageList.Images.Count % _nColumns > 0)
       {
         nRows++;
       }
@@ -104,8 +102,8 @@ namespace CustomUIControls
       _nVSpace = nVSpace;
       _nItemWidth = _imageList.ImageSize.Width + nHSpace;
       _nItemHeight = _imageList.ImageSize.Height + nVSpace;
-      _nBitmapWidth = _nColumns*_nItemWidth + 1;
-      _nBitmapHeight = _nRows*_nItemHeight + 1;
+      _nBitmapWidth = _nColumns * _nItemWidth + 1;
+      _nBitmapHeight = _nRows * _nItemHeight + 1;
       this.Width = _nBitmapWidth;
       this.Height = _nBitmapHeight;
 
@@ -115,11 +113,11 @@ namespace CustomUIControls
       grfx.FillRectangle(bgBrush, 0, 0, _nBitmapWidth, _nBitmapHeight);
       for (int i = 0; i < _nColumns; i++)
       {
-        grfx.DrawLine(vPen, i*_nItemWidth, 0, i*_nItemWidth, _nBitmapHeight - 1);
+        grfx.DrawLine(vPen, i * _nItemWidth, 0, i * _nItemWidth, _nBitmapHeight - 1);
       }
       for (int i = 0; i < _nRows; i++)
       {
-        grfx.DrawLine(hPen, 0, i*_nItemHeight, _nBitmapWidth - 1, i*_nItemHeight);
+        grfx.DrawLine(hPen, 0, i * _nItemHeight, _nBitmapWidth - 1, i * _nItemHeight);
       }
 
       grfx.DrawRectangle(borderPen, 0, 0, _nBitmapWidth - 1, _nBitmapHeight - 1);
@@ -128,14 +126,14 @@ namespace CustomUIControls
       {
         for (int j = 0; j < _nRows; j++)
         {
-          if ((j*_nColumns + i) < imageList.Images.Count)
+          if ((j * _nColumns + i) < imageList.Images.Count)
           {
             imageList.Draw(grfx,
-                           i*_nItemWidth + _nHSpace/2,
-                           j*_nItemHeight + nVSpace/2,
+                           i * _nItemWidth + _nHSpace / 2,
+                           j * _nItemHeight + nVSpace / 2,
                            imageList.ImageSize.Width,
                            imageList.ImageSize.Height,
-                           j*_nColumns + i);
+                           j * _nColumns + i);
           }
         }
       }
@@ -226,7 +224,7 @@ namespace CustomUIControls
           case Keys.Enter:
           case Keys.Space:
             // We fire the event only when the mouse is released
-            int nImageId = _nCoordY*_nColumns + _nCoordX;
+            int nImageId = _nCoordY * _nColumns + _nCoordX;
             if (ItemClick != null && nImageId >= 0 && nImageId < _imageList.Images.Count)
             {
               ItemClick(this, new ImageListPanelEventArgs(nImageId));
@@ -251,7 +249,7 @@ namespace CustomUIControls
       {
         if (EnableDragDrop && _bIsMouseDown)
         {
-          int nImage = _nCoordY*_nColumns + _nCoordX;
+          int nImage = _nCoordY * _nColumns + _nCoordX;
           if (nImage <= _imageList.Images.Count - 1)
           {
             DataObject data = new DataObject();
@@ -261,17 +259,15 @@ namespace CustomUIControls
             {
               DragDropEffects dde = DoDragDrop(data, DragDropEffects.Copy | DragDropEffects.Move);
             }
-            catch
-            {
-            }
+            catch {}
             _bIsMouseDown = false;
           }
         }
 
-        if (((mea.X/_nItemWidth) != _nCoordX) || ((mea.Y/_nItemHeight) != _nCoordY))
+        if (((mea.X / _nItemWidth) != _nCoordX) || ((mea.Y / _nItemHeight) != _nCoordY))
         {
-          _nCoordX = mea.X/_nItemWidth;
-          _nCoordY = mea.Y/_nItemHeight;
+          _nCoordX = mea.X / _nItemWidth;
+          _nCoordY = mea.Y / _nItemHeight;
           Invalidate();
         }
       }
@@ -297,7 +293,7 @@ namespace CustomUIControls
       _bIsMouseDown = false;
 
       // We fire the event only when the mouse is released
-      int nImageId = _nCoordY*_nColumns + _nCoordX;
+      int nImageId = _nCoordY * _nColumns + _nCoordX;
       // check that imageID is a valid image
       if (ItemClick != null && nImageId >= 0 && nImageId < _imageList.Images.Count)
       {
@@ -318,33 +314,33 @@ namespace CustomUIControls
       // We blit the precalculated bitmap on the offscreen Graphics
       offscreenGrfx.DrawImage(_Bitmap, 0, 0);
 
-      if (_nCoordX != -1 && _nCoordY != -1 && (_nCoordY*_nColumns + _nCoordX) < _imageList.Images.Count)
+      if (_nCoordX != -1 && _nCoordY != -1 && (_nCoordY * _nColumns + _nCoordX) < _imageList.Images.Count)
       {
         // We draw the selection rectangle
-        offscreenGrfx.FillRectangle(new SolidBrush(BackgroundOverColor), _nCoordX*_nItemWidth + 1,
-                                    _nCoordY*_nItemHeight + 1, _nItemWidth - 1, _nItemHeight - 1);
+        offscreenGrfx.FillRectangle(new SolidBrush(BackgroundOverColor), _nCoordX * _nItemWidth + 1,
+                                    _nCoordY * _nItemHeight + 1, _nItemWidth - 1, _nItemHeight - 1);
         if (_bIsMouseDown)
         {
           // Mouse Down aspect for the image
           _imageList.Draw(offscreenGrfx,
-                          _nCoordX*_nItemWidth + _nHSpace/2 + 1,
-                          _nCoordY*_nItemHeight + _nVSpace/2 + 1,
+                          _nCoordX * _nItemWidth + _nHSpace / 2 + 1,
+                          _nCoordY * _nItemHeight + _nVSpace / 2 + 1,
                           _imageList.ImageSize.Width,
                           _imageList.ImageSize.Height,
-                          _nCoordY*_nColumns + _nCoordX);
+                          _nCoordY * _nColumns + _nCoordX);
         }
         else
         {
           // Normal aspect for the image
           _imageList.Draw(offscreenGrfx,
-                          _nCoordX*_nItemWidth + _nHSpace/2,
-                          _nCoordY*_nItemHeight + _nVSpace/2,
+                          _nCoordX * _nItemWidth + _nHSpace / 2,
+                          _nCoordY * _nItemHeight + _nVSpace / 2,
                           _imageList.ImageSize.Width,
                           _imageList.ImageSize.Height,
-                          _nCoordY*_nColumns + _nCoordX);
+                          _nCoordY * _nColumns + _nCoordX);
         }
         // Border selection Rectangle
-        offscreenGrfx.DrawRectangle(new Pen(BorderColor), _nCoordX*_nItemWidth, _nCoordY*_nItemHeight, _nItemWidth,
+        offscreenGrfx.DrawRectangle(new Pen(BorderColor), _nCoordX * _nItemWidth, _nCoordY * _nItemHeight, _nItemWidth,
                                     _nItemHeight);
       }
 

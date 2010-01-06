@@ -43,13 +43,14 @@ namespace TvLibrary.Helper
       try
       {
         FileSecurity security = System.IO.File.GetAccessControl(fileName);
-        FileSystemAccessRule newRule = new FileSystemAccessRule("EveryOne", FileSystemRights.FullControl, AccessControlType.Allow);
+        FileSystemAccessRule newRule = new FileSystemAccessRule("EveryOne", FileSystemRights.FullControl,
+                                                                AccessControlType.Allow);
         security.AddAccessRule(newRule);
         System.IO.File.SetAccessControl(fileName, security);
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Error while setting full write access to everyone for file: {0} : {1}",fileName,ex);
+        Log.Log.WriteFile("Error while setting full write access to everyone for file: {0} : {1}", fileName, ex);
       }
     }
   }

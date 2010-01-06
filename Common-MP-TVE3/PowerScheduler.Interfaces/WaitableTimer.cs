@@ -136,9 +136,7 @@ namespace TvEngine.PowerScheduler
       {
         m_Waiting.Abort();
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       // Detach
       m_Waiting = null;

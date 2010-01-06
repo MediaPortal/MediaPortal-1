@@ -177,7 +177,7 @@ namespace MediaPortal.Player
       try
       {
         _vmr9 = new VMR9Util();
-        _dvdGraph = (IDvdGraphBuilder) new DvdGraphBuilder();
+        _dvdGraph = (IDvdGraphBuilder)new DvdGraphBuilder();
 
         hr = _dvdGraph.GetFiltergraph(out _graphBuilder);
         if (hr != 0)
@@ -185,7 +185,7 @@ namespace MediaPortal.Player
           Marshal.ThrowExceptionForHR(hr);
         }
 
-        _rotEntry = new DsROTEntry((IFilterGraph) _graphBuilder);
+        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
         _vmr9.AddVMR9(_graphBuilder);
 
@@ -203,7 +203,7 @@ namespace MediaPortal.Player
               if (path != null)
               {
                 if (path.Length != 0)
-                {                  
+                {
                   hr = _dvdCtrl.SetDVDDirectory(path);
                 }
               }
@@ -231,7 +231,7 @@ namespace MediaPortal.Player
           {
             Marshal.ThrowExceptionForHR(hr);
           }
-          _dvdInfo = (IDvdInfo2) comobj;
+          _dvdInfo = (IDvdInfo2)comobj;
           comobj = null;
         }
 
@@ -244,7 +244,7 @@ namespace MediaPortal.Player
           {
             Marshal.ThrowExceptionForHR(hr);
           }
-          _dvdCtrl = (IDvdControl2) comobj;
+          _dvdCtrl = (IDvdControl2)comobj;
           comobj = null;
           if (_dvdCtrl != null)
           {
@@ -256,10 +256,10 @@ namespace MediaPortal.Player
           }
         }
 
-        _mediaCtrl = (IMediaControl) _graphBuilder;
-        _mediaEvt = (IMediaEventEx) _graphBuilder;
+        _mediaCtrl = (IMediaControl)_graphBuilder;
+        _mediaEvt = (IMediaEventEx)_graphBuilder;
         _basicAudio = _graphBuilder as IBasicAudio;
-        _mediaPos = (IMediaPosition) _graphBuilder;
+        _mediaPos = (IMediaPosition)_graphBuilder;
         _basicVideo = _graphBuilder as IBasicVideo2;
 
         Log.Info("Dvdplayer9:disabling Line21 Decoder (Closed Captions)");
@@ -272,7 +272,7 @@ namespace MediaPortal.Player
         }
         if (basefilter != null)
         {
-          _line21Decoder = (IAMLine21Decoder) basefilter;
+          _line21Decoder = (IAMLine21Decoder)basefilter;
           if (_line21Decoder != null)
           {
             AMLine21CCState state = AMLine21CCState.Off;
@@ -314,9 +314,7 @@ namespace MediaPortal.Player
         CloseInterfaces();
         return false;
       }
-      finally
-      {
-      }
+      finally {}
     }
 
     /// <summary> do cleanup and release DirectShow. </summary>
@@ -383,7 +381,7 @@ namespace MediaPortal.Player
             counter++;
             if (counter >= 30)
             {
-              if(state != FilterState.Stopped)
+              if (state != FilterState.Stopped)
                 Log.Debug("DVDPlayer9: graph still running");
               if (GUIGraphicsContext.InVmr9Render)
                 Log.Debug("DVDPlayer9: in renderer");
@@ -509,8 +507,8 @@ namespace MediaPortal.Player
         foreach (Message m in _mouseMsg)
         {
           long lParam = m.LParam.ToInt32();
-          double x = (double) (lParam & 0xffff);
-          double y = (double) (lParam >> 16);
+          double x = (double)(lParam & 0xffff);
+          double y = (double)(lParam >> 16);
           double arx, ary;
 
           Rectangle src, dst;
@@ -521,12 +519,12 @@ namespace MediaPortal.Player
 
           x -= dst.X;
           y -= dst.Y;
-          arx = (double) dst.Width/(double) src.Width;
-          ary = (double) dst.Height/(double) src.Height;
+          arx = (double)dst.Width / (double)src.Width;
+          ary = (double)dst.Height / (double)src.Height;
           x /= arx;
           y /= ary;
 
-          pt = new Point((int) x, (int) y);
+          pt = new Point((int)x, (int)y);
 
           if (m.Msg == WM_MOUSEMOVE)
           {

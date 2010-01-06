@@ -751,8 +751,8 @@ namespace Pabo.MozBar
       // Check if message is KEY_DOWN
       if (msg.Msg == WM_KEYDOWN)
       {
-        Keys keyData = ((Keys) (int) msg.WParam) | ModifierKeys;
-        Keys keyCode = ((Keys) (int) msg.WParam);
+        Keys keyData = ((Keys)(int)msg.WParam) | ModifierKeys;
+        Keys keyCode = ((Keys)(int)msg.WParam);
         // Make sure we handle certain keys
         switch (keyCode)
         {
@@ -897,7 +897,7 @@ namespace Pabo.MozBar
     {
       if (sender != this.Parent)
       {
-        ((Control) sender).VisibleChanged -= new EventHandler(this.OnParentVisibleChanged);
+        ((Control)sender).VisibleChanged -= new EventHandler(this.OnParentVisibleChanged);
 
         return;
       }
@@ -987,10 +987,10 @@ namespace Pabo.MozBar
       base.OnControlAdded(e);
 
       // Check if item exists in collection
-      if (!this.Items.Contains((MozItem) e.Control))
+      if (!this.Items.Contains((MozItem)e.Control))
       {
         // if not add it
-        this.Items.Add((MozItem) e.Control);
+        this.Items.Add((MozItem)e.Control);
       }
 
       // Refresh
@@ -1005,7 +1005,7 @@ namespace Pabo.MozBar
       if (this.Items.Contains(e.Control))
       {
         // If it is , remove it
-        this.Items.Remove((MozItem) e.Control);
+        this.Items.Remove((MozItem)e.Control);
       }
 
       // Refresh
@@ -1117,7 +1117,7 @@ namespace Pabo.MozBar
             // work out how wide to make the controls, and where
             // the top of the first control should be
             int y = this.DisplayRectangle.Y + m_padding.Vertical;
-            int width = this.ClientRectangle.Width - (2*m_padding.Horizontal);
+            int width = this.ClientRectangle.Width - (2 * m_padding.Horizontal);
             // for each control in our list...
             for (int i = 0; i < this.Items.Count; i++)
             {
@@ -1140,7 +1140,7 @@ namespace Pabo.MozBar
         case MozPaneStyle.Horizontal: // Horizontal
           {
             int x = this.DisplayRectangle.X + m_padding.Horizontal;
-            int height = this.ClientRectangle.Height - (2*m_padding.Vertical);
+            int height = this.ClientRectangle.Height - (2 * m_padding.Vertical);
             for (int i = 0; i < this.Items.Count; i++)
             {
               e = this.Items[i];
@@ -1199,7 +1199,7 @@ namespace Pabo.MozBar
 
         while (i < this.Controls.Count)
         {
-          mozItem = (MozItem) this.Controls[i];
+          mozItem = (MozItem)this.Controls[i];
 
           if (!this.Items.Contains(mozItem))
           {
@@ -1497,7 +1497,7 @@ namespace Pabo.MozBar
           return false;
         }
 
-        return this.Contains((MozItem) control);
+        return this.Contains((MozItem)control);
       }
 
       public int IndexOf(MozItem mozItem)
@@ -1611,13 +1611,11 @@ namespace Pabo.MozBar
     /// </summary>
     internal class MozItemCollectionEditor : CollectionEditor
     {
-      public MozItemCollectionEditor(Type type) : base(type)
-      {
-      }
+      public MozItemCollectionEditor(Type type) : base(type) {}
 
       public override object EditValue(ITypeDescriptorContext context, IServiceProvider isp, object value)
       {
-        MozPane originalControl = (MozPane) context.Instance;
+        MozPane originalControl = (MozPane)context.Instance;
 
         object returnObject = base.EditValue(context, isp, value);
 
@@ -1631,7 +1629,7 @@ namespace Pabo.MozBar
       {
         object mozItem = base.CreateInstance(itemType);
 
-        ((MozItem) mozItem).Name = "MozItem";
+        ((MozItem)mozItem).Name = "MozItem";
 
         return mozItem;
       }
@@ -1740,7 +1738,7 @@ namespace Pabo.MozBar
           if (ss.Length == 2)
           {
             // Create new PaddingCollection
-            PaddingCollection item = new PaddingCollection((MozPane) context.Instance);
+            PaddingCollection item = new PaddingCollection((MozPane)context.Instance);
             // Set properties
             item.Horizontal = int.Parse(ss[0]);
             item.Vertical = int.Parse(ss[1]);
@@ -1756,7 +1754,7 @@ namespace Pabo.MozBar
         if (destinationType == typeof (string) && (value is PaddingCollection))
         {
           // cast value to paddingCollection
-          PaddingCollection dest = (PaddingCollection) value;
+          PaddingCollection dest = (PaddingCollection)value;
           // create property string
           return dest.Horizontal.ToString() + "; " + dest.Vertical.ToString();
         }
@@ -1800,9 +1798,7 @@ namespace Pabo.MozBar
         m_divider = Color.FromArgb(127, 157, 185);
       }
 
-      public void Dispose()
-      {
-      }
+      public void Dispose() {}
 
       private void UpdateItems()
       {
@@ -2028,9 +2024,7 @@ namespace Pabo.MozBar
         m_selectedBorderStyle = ButtonBorderStyle.Solid;
       }
 
-      public void Dispose()
-      {
-      }
+      public void Dispose() {}
 
       private void UpdateItems()
       {
@@ -2109,9 +2103,7 @@ namespace Pabo.MozBar
 
   public class MozPaneDesigner : ScrollableControlDesigner
   {
-    public MozPaneDesigner()
-    {
-    }
+    public MozPaneDesigner() {}
 
     public override SelectionRules SelectionRules
     {

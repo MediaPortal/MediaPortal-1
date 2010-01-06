@@ -32,35 +32,37 @@ namespace TvLibrary.Helper
   public class SidHelper
   {
     #region imports
+
     [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     private static extern bool LookupAccountSid(
-        [In, MarshalAs(UnmanagedType.LPTStr)] string systemName,
-        IntPtr sid,
-        [Out, MarshalAs(UnmanagedType.LPTStr)] StringBuilder name,
-        ref int cbName,
-        StringBuilder referencedDomainName,
-        ref int cbReferencedDomainName,
-        out int use);
+      [In, MarshalAs(UnmanagedType.LPTStr)] string systemName,
+      IntPtr sid,
+      [Out, MarshalAs(UnmanagedType.LPTStr)] StringBuilder name,
+      ref int cbName,
+      StringBuilder referencedDomainName,
+      ref int cbReferencedDomainName,
+      out int use);
 
     [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     private static extern bool LookupAccountName(
-        [In, MarshalAs(UnmanagedType.LPTStr)] string systemName,
-        [In, MarshalAs(UnmanagedType.LPTStr)] string accountName,
-        IntPtr sid,
-        ref int cbSid,
-        StringBuilder referencedDomainName,
-        ref int cbReferencedDomainName,
-        out int use);
+      [In, MarshalAs(UnmanagedType.LPTStr)] string systemName,
+      [In, MarshalAs(UnmanagedType.LPTStr)] string accountName,
+      IntPtr sid,
+      ref int cbSid,
+      StringBuilder referencedDomainName,
+      ref int cbReferencedDomainName,
+      out int use);
 
     [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     internal static extern bool ConvertSidToStringSid(
-        IntPtr sid,
-        [In, Out, MarshalAs(UnmanagedType.LPTStr)] ref string pStringSid);
+      IntPtr sid,
+      [In, Out, MarshalAs(UnmanagedType.LPTStr)] ref string pStringSid);
 
     [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     internal static extern bool ConvertStringSidToSid(
-        [In, MarshalAs(UnmanagedType.LPTStr)] string pStringSid,
-        ref IntPtr sid);
+      [In, MarshalAs(UnmanagedType.LPTStr)] string pStringSid,
+      ref IntPtr sid);
+
     #endregion
 
     ///<summary>
@@ -70,17 +72,17 @@ namespace TvLibrary.Helper
     ///<returns>Pointer to the SID</returns>
     public static IntPtr GetSidPtr(string name)
     {
-      IntPtr _sid = IntPtr.Zero;    //pointer to binary form of SID string.
-      int _sidLength = 0;            //size of SID buffer.
-      int _domainLength = 0;        //size of domain name buffer.
-      int _use;                    //type of object.
+      IntPtr _sid = IntPtr.Zero; //pointer to binary form of SID string.
+      int _sidLength = 0; //size of SID buffer.
+      int _domainLength = 0; //size of domain name buffer.
+      int _use; //type of object.
       //stringBuilder for domain name.
       StringBuilder _domain = new StringBuilder();
 
       //first call of the function only returns the size 
       //of buffers (SID, domain name)
       LookupAccountName(null, name, _sid, ref _sidLength, _domain,
-                         ref _domainLength, out _use);
+                        ref _domainLength, out _use);
       int _error = Marshal.GetLastWin32Error();
 
       //error 122 (The data area passed to a system call is too small) 
@@ -112,10 +114,10 @@ namespace TvLibrary.Helper
     /// <returns>SID</returns>
     public static string GetSid(string name)
     {
-      IntPtr _sid = IntPtr.Zero;    //pointer to binary form of SID string.
-      int _sidLength = 0;            //size of SID buffer.
-      int _domainLength = 0;        //size of domain name buffer.
-      int _use;                    //type of object.
+      IntPtr _sid = IntPtr.Zero; //pointer to binary form of SID string.
+      int _sidLength = 0; //size of SID buffer.
+      int _domainLength = 0; //size of domain name buffer.
+      int _use; //type of object.
       //stringBuilder for domain name.
       StringBuilder _domain = new StringBuilder();
       string _sidString = "";
@@ -123,7 +125,7 @@ namespace TvLibrary.Helper
       //first call of the function only returns the size 
       //of buffers (SID, domain name)
       LookupAccountName(null, name, _sid, ref _sidLength, _domain,
-                         ref _domainLength, out _use);
+                        ref _domainLength, out _use);
       int _error = Marshal.GetLastWin32Error();
 
       //error 122 (The data area passed to a system call is too small) 
@@ -157,7 +159,7 @@ namespace TvLibrary.Helper
       Marshal.FreeHGlobal(_sid);
       return _sidString;
     }
-    
+
     /// <summary>
     /// Gets the name to the given sid
     /// </summary>
@@ -165,12 +167,12 @@ namespace TvLibrary.Helper
     /// <returns>Name to the SID</returns>
     public static string GetName(string sid)
     {
-      IntPtr _sid = IntPtr.Zero;    //pointer to binary form of SID string.
-      int _nameLength = 0;        //size of object name buffer
-      int _domainLength = 0;        //size of domain name buffer
-      int _use;                    //type of object
-      StringBuilder _domain = new StringBuilder();    //domain name variable
-      StringBuilder _name = new StringBuilder();        //object name variable
+      IntPtr _sid = IntPtr.Zero; //pointer to binary form of SID string.
+      int _nameLength = 0; //size of object name buffer
+      int _domainLength = 0; //size of domain name buffer
+      int _use; //type of object
+      StringBuilder _domain = new StringBuilder(); //domain name variable
+      StringBuilder _name = new StringBuilder(); //object name variable
 
       //converts SID string into the binary form
       bool _rc0 = ConvertStringSidToSid(sid, ref _sid);
@@ -186,8 +188,8 @@ namespace TvLibrary.Helper
       //and object name buffers
       LookupAccountSid(null, _sid, _name, ref _nameLength, _domain,
                        ref _domainLength, out _use);
-      _domain = new StringBuilder(_domainLength);    //allocates memory for domain name
-      _name = new StringBuilder(_nameLength);        //allocates memory for object name
+      _domain = new StringBuilder(_domainLength); //allocates memory for domain name
+      _name = new StringBuilder(_nameLength); //allocates memory for object name
       bool _rc = LookupAccountSid(null, _sid, _name, ref _nameLength, _domain,
                                   ref _domainLength, out _use);
 

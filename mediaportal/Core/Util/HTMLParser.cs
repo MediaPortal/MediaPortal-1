@@ -29,38 +29,36 @@ using System.Web;
 
 namespace MediaPortal.Util
 {
-    /// Developed by Ravi Bhavnani and published in CodeProject.com
-    /// <summary>
-	/// A class that helps you to extract HTML information from a string.
-	/// </summary>
-	public class HTMLParser
-	{
+  /// Developed by Ravi Bhavnani and published in CodeProject.com
+  /// <summary>
+  /// A class that helps you to extract HTML information from a string.
+  /// </summary>
+  public class HTMLParser
+  {
     /// <summary>
     /// Default constructor.
     /// </summary>
-		public HTMLParser()
-		{
-		}
+    public HTMLParser() {}
 
     /// <summary>
     /// Constructs a HTMLParser with specific content.
     /// </summary>
     /// <param name="strContent">The parser's content.</param>
-		public HTMLParser
-		  (string strContent)
-		{
-		  Content = strContent;
-		}
+    public HTMLParser
+      (string strContent)
+    {
+      Content = strContent;
+    }
 
     /////////////
     // Properties
 
     /// <summary>Gets and sets the content to be parsed.</summary>
-    public string Content {
-      get {
-        return m_strContent;
-      }
-      set {
+    public string Content
+    {
+      get { return m_strContent; }
+      set
+      {
         m_strContent = value;
         m_strContentLC = m_strContent.ToLower();
         resetPosition();
@@ -68,10 +66,9 @@ namespace MediaPortal.Util
     }
 
     /// <summary>Gets the parser's current position.</summary>
-    public int Position {
-      get {
-        return m_nIndex;
-      }
+    public int Position
+    {
+      get { return m_nIndex; }
     }
 
     /////////////////
@@ -91,69 +88,82 @@ namespace MediaPortal.Util
        ref ArrayList images)
     {
       // Remove comments and JavaScript and fix links
-      strString = HTMLParser.removeComments (strString);
-      strString = HTMLParser.removeScripts (strString);
-      HTMLParser parser = new HTMLParser (strString);
-      parser.replaceEvery ("\'", "\"");
+      strString = HTMLParser.removeComments(strString);
+      strString = HTMLParser.removeScripts(strString);
+      HTMLParser parser = new HTMLParser(strString);
+      parser.replaceEvery("\'", "\"");
 
       // Set root url
       string rootUrl = "";
       if (strRootUrl != null)
-         rootUrl = strRootUrl.Trim();
-      if ((rootUrl.Length > 0) && !rootUrl.EndsWith ("/"))
-         rootUrl += "/";
+        rootUrl = strRootUrl.Trim();
+      if ((rootUrl.Length > 0) && !rootUrl.EndsWith("/"))
+        rootUrl += "/";
 
       // Extract HREF targets
       string strUrl = "";
       parser.resetPosition();
-      while (parser.skipToEndOfNoCase ("href=\"")) {
-            if (parser.extractTo ("\"", ref strUrl)) {
-                strUrl = strUrl.Trim();
-                if (strUrl.Length > 0) {
-                    if (strUrl.IndexOf ("mailto:") == -1) {
-
-                        // Get fully qualified url (best guess)
-                        if (!strUrl.StartsWith ("http://") && !strUrl.StartsWith ("ftp://")) {
-                            try {
-                              UriBuilder uriBuilder = new UriBuilder (rootUrl);
-                              uriBuilder.Path = strUrl;
-                              strUrl = uriBuilder.Uri.ToString();
-                            } catch (Exception) {
-                              strUrl = "http://" + strUrl;
-                            }
-                        }
-
-                        // Add url to document list if not already present
-                        if (!documents.Contains (strUrl))
-                           documents.Add (strUrl);
-                    }
+      while (parser.skipToEndOfNoCase("href=\""))
+      {
+        if (parser.extractTo("\"", ref strUrl))
+        {
+          strUrl = strUrl.Trim();
+          if (strUrl.Length > 0)
+          {
+            if (strUrl.IndexOf("mailto:") == -1)
+            {
+              // Get fully qualified url (best guess)
+              if (!strUrl.StartsWith("http://") && !strUrl.StartsWith("ftp://"))
+              {
+                try
+                {
+                  UriBuilder uriBuilder = new UriBuilder(rootUrl);
+                  uriBuilder.Path = strUrl;
+                  strUrl = uriBuilder.Uri.ToString();
                 }
+                catch (Exception)
+                {
+                  strUrl = "http://" + strUrl;
+                }
+              }
+
+              // Add url to document list if not already present
+              if (!documents.Contains(strUrl))
+                documents.Add(strUrl);
             }
+          }
+        }
       }
 
       // Extract SRC targets
       parser.resetPosition();
-      while (parser.skipToEndOfNoCase ("src=\"")) {
-            if (parser.extractTo ("\"", ref strUrl)) {
-                strUrl = strUrl.Trim();
-                if (strUrl.Length > 0) {
-
-                    // Get fully qualified url (best guess)
-                    if (!strUrl.StartsWith ("http://") && !strUrl.StartsWith ("ftp://")) {
-                        try {
-                          UriBuilder uriBuilder = new UriBuilder (rootUrl);
-                          uriBuilder.Path = strUrl;
-                          strUrl = uriBuilder.Uri.ToString();
-                        } catch (Exception) {
-                          strUrl = "http://" + strUrl;
-                        }
-                    }
-
-                    // Add url to images list if not already present
-                    if (!images.Contains (strUrl))
-                       images.Add (strUrl);
-                }
+      while (parser.skipToEndOfNoCase("src=\""))
+      {
+        if (parser.extractTo("\"", ref strUrl))
+        {
+          strUrl = strUrl.Trim();
+          if (strUrl.Length > 0)
+          {
+            // Get fully qualified url (best guess)
+            if (!strUrl.StartsWith("http://") && !strUrl.StartsWith("ftp://"))
+            {
+              try
+              {
+                UriBuilder uriBuilder = new UriBuilder(rootUrl);
+                uriBuilder.Path = strUrl;
+                strUrl = uriBuilder.Uri.ToString();
+              }
+              catch (Exception)
+              {
+                strUrl = "http://" + strUrl;
+              }
             }
+
+            // Add url to images list if not already present
+            if (!images.Contains(strUrl))
+              images.Add(strUrl);
+          }
+        }
       }
     }
 
@@ -168,15 +178,16 @@ namespace MediaPortal.Util
       // Return comment-free version of string
       string strCommentFreeString = "";
       string strSegment = "";
-      HTMLParser parser = new HTMLParser (strString);
+      HTMLParser parser = new HTMLParser(strString);
 
-      while (parser.extractTo ("<!--", ref strSegment)) {
-          strCommentFreeString += strSegment;
-          if (!parser.skipToEndOf ("-->"))
-             return strString;
+      while (parser.extractTo("<!--", ref strSegment))
+      {
+        strCommentFreeString += strSegment;
+        if (!parser.skipToEndOf("-->"))
+          return strString;
       }
 
-      parser.extractToEnd (ref strSegment);
+      parser.extractToEnd(ref strSegment);
       strCommentFreeString += strSegment;
       return strCommentFreeString;
     }
@@ -191,18 +202,21 @@ namespace MediaPortal.Util
       (string strString)
     {
       string strStringLC = strString.ToLower();
-      int nStart = strStringLC.IndexOf ("<a");
-      if (nStart != -1) {
+      int nStart = strStringLC.IndexOf("<a");
+      if (nStart != -1)
+      {
+        nStart++;
+        nStart = strStringLC.IndexOf(">", nStart);
+        if (nStart != -1)
+        {
           nStart++;
-          nStart = strStringLC.IndexOf (">", nStart);
-          if (nStart != -1) {
-              nStart++;
-              int nEnd = strStringLC.LastIndexOf ("</a>");
-              if (nEnd != -1) {
-                  string strRet = strString.Substring (nStart, nEnd - nStart);
-                  return strRet;
-              }
+          int nEnd = strStringLC.LastIndexOf("</a>");
+          if (nEnd != -1)
+          {
+            string strRet = strString.Substring(nStart, nEnd - nStart);
+            return strRet;
           }
+        }
       }
       return strString;
     }
@@ -216,11 +230,12 @@ namespace MediaPortal.Util
     public static string removeEnclosingQuotes
       (string strString)
     {
-      int nStart = strString.IndexOf ("\"");
-      if (nStart != -1) {
-          int nEnd = strString.LastIndexOf ("\"");
-          if (nEnd > nStart)
-             return strString.Substring (nStart, nEnd - nStart - 1);
+      int nStart = strString.IndexOf("\"");
+      if (nStart != -1)
+      {
+        int nEnd = strString.LastIndexOf("\"");
+        if (nEnd > nStart)
+          return strString.Substring(nStart, nEnd - nStart - 1);
       }
       return strString;
     }
@@ -235,33 +250,34 @@ namespace MediaPortal.Util
     {
       // Do some common case-sensitive replacements
       Hashtable replacements = new Hashtable();
-      replacements.Add ("&nbsp;", " ");
-      replacements.Add ("&amp;", "&");
-      replacements.Add ("&aring;", "");
-      replacements.Add ("&auml;", "");
-      replacements.Add ("&eacute;", "");
-      replacements.Add ("&iacute;", "");
-      replacements.Add ("&igrave;", "");
-      replacements.Add ("&ograve;", "");
-      replacements.Add ("&ouml;", "");
-      replacements.Add ("&quot;", "\"");
-      replacements.Add ("&szlig;", "");
-      HTMLParser parser = new HTMLParser (strString);
-      foreach (string key in replacements.Keys) {
-        string val = replacements [key] as string;
-        if (strString.IndexOf (key) != -1)
-           parser.replaceEveryExact (key, val);
+      replacements.Add("&nbsp;", " ");
+      replacements.Add("&amp;", "&");
+      replacements.Add("&aring;", "");
+      replacements.Add("&auml;", "");
+      replacements.Add("&eacute;", "");
+      replacements.Add("&iacute;", "");
+      replacements.Add("&igrave;", "");
+      replacements.Add("&ograve;", "");
+      replacements.Add("&ouml;", "");
+      replacements.Add("&quot;", "\"");
+      replacements.Add("&szlig;", "");
+      HTMLParser parser = new HTMLParser(strString);
+      foreach (string key in replacements.Keys)
+      {
+        string val = replacements[key] as string;
+        if (strString.IndexOf(key) != -1)
+          parser.replaceEveryExact(key, val);
       }
 
       // Do some sequential replacements
-      parser.replaceEveryExact ("&#0", "&#");
-      parser.replaceEveryExact ("&#39;", "'");
-      parser.replaceEveryExact ("</", " <~/");
-      parser.replaceEveryExact ("<~/", "</");
+      parser.replaceEveryExact("&#0", "&#");
+      parser.replaceEveryExact("&#39;", "'");
+      parser.replaceEveryExact("</", " <~/");
+      parser.replaceEveryExact("<~/", "</");
 
       // Case-insensitive replacements
       replacements.Clear();
-      replacements.Add ("<br>", " ");
+      replacements.Add("<br>", " ");
       replacements.Add("<br />", " ");
       replacements.Add("<br/>", " ");
       replacements.Add("<p>", " ");
@@ -269,9 +285,9 @@ namespace MediaPortal.Util
       replacements.Add("<p/>", " ");
       foreach (string key in replacements.Keys)
       {
-        string val = replacements [key] as string;
-        if (strString.IndexOf (key) != -1)
-           parser.replaceEvery (key, val);
+        string val = replacements[key] as string;
+        if (strString.IndexOf(key) != -1)
+          parser.replaceEvery(key, val);
       }
       strString = parser.Content;
 
@@ -279,29 +295,29 @@ namespace MediaPortal.Util
       string strClean = "";
       int nIndex = 0;
       int nStartTag = 0;
-      while ((nStartTag = strString.IndexOf ("<", nIndex)) != -1) {
+      while ((nStartTag = strString.IndexOf("<", nIndex)) != -1)
+      {
+        // Extract to start of tag
+        string strSubstring = strString.Substring(nIndex, (nStartTag - nIndex));
+        strClean += strSubstring;
+        nIndex = nStartTag + 1;
 
-          // Extract to start of tag
-          string strSubstring = strString.Substring (nIndex, (nStartTag - nIndex));
-          strClean += strSubstring;
-          nIndex = nStartTag + 1;
-
-          // Skip over tag
-          int nEndTag = strString.IndexOf (">", nIndex);
-          if (nEndTag == (-1))
-             break;
-          nIndex = nEndTag + 1;
+        // Skip over tag
+        int nEndTag = strString.IndexOf(">", nIndex);
+        if (nEndTag == (-1))
+          break;
+        nIndex = nEndTag + 1;
       }
 
       // Gather remaining text
       if (nIndex < strString.Length)
-         strClean += strString.Substring (nIndex, strString.Length - nIndex);
+        strClean += strString.Substring(nIndex, strString.Length - nIndex);
       strString = strClean;
       strClean = "";
 
       // Finally, reduce spaces
       parser.Content = strString;
-      parser.replaceEveryExact ("  ", " ");
+      parser.replaceEveryExact("  ", " ");
       strString = parser.Content.Trim();
 
       // Return the de-HTMLized string
@@ -319,17 +335,19 @@ namespace MediaPortal.Util
       // Get script-free version of content
       string strStringSansScripts = "";
       string strSegment = "";
-      HTMLParser parser = new HTMLParser (strString);
+      HTMLParser parser = new HTMLParser(strString);
 
-      while (parser.extractToNoCase ("<script", ref strSegment)) {
-          strStringSansScripts += strSegment;
-          if (!parser.skipToEndOfNoCase ("</script>")) {
-              parser.Content = strStringSansScripts;
-              return strString;
-          }
+      while (parser.extractToNoCase("<script", ref strSegment))
+      {
+        strStringSansScripts += strSegment;
+        if (!parser.skipToEndOfNoCase("</script>"))
+        {
+          parser.Content = strStringSansScripts;
+          return strString;
+        }
       }
 
-      parser.extractToEnd (ref strSegment);
+      parser.extractToEnd(ref strSegment);
       strStringSansScripts += strSegment;
       return (strStringSansScripts);
     }
@@ -349,8 +367,8 @@ namespace MediaPortal.Util
     public bool at
       (string strString)
     {
-      if (m_strContent.IndexOf (strString, Position) == Position)
-         return (true);
+      if (m_strContent.IndexOf(strString, Position) == Position)
+        return (true);
       return (false);
     }
 
@@ -367,8 +385,8 @@ namespace MediaPortal.Util
       (string strString)
     {
       strString = strString.ToLower();
-      if (m_strContentLC.IndexOf (strString, Position) == Position)
-         return (true);
+      if (m_strContentLC.IndexOf(strString, Position) == Position)
+        return (true);
       return (false);
     }
 
@@ -384,11 +402,12 @@ namespace MediaPortal.Util
       (string strString,
        ref string strExtract)
     {
-      int nPos = m_strContent.IndexOf (strString, Position);
-      if (nPos != -1) {
-          strExtract = m_strContent.Substring (m_nIndex, nPos - m_nIndex);
-          m_nIndex = nPos + strString.Length;
-          return (true);
+      int nPos = m_strContent.IndexOf(strString, Position);
+      if (nPos != -1)
+      {
+        strExtract = m_strContent.Substring(m_nIndex, nPos - m_nIndex);
+        m_nIndex = nPos + strString.Length;
+        return (true);
       }
       return (false);
     }
@@ -406,11 +425,12 @@ namespace MediaPortal.Util
        ref string strExtract)
     {
       strString = strString.ToLower();
-      int nPos = m_strContentLC.IndexOf (strString, Position);
-      if (nPos != -1) {
-          strExtract = m_strContent.Substring (m_nIndex, nPos - m_nIndex);
-          m_nIndex = nPos + strString.Length;
-          return (true);
+      int nPos = m_strContentLC.IndexOf(strString, Position);
+      if (nPos != -1)
+      {
+        strExtract = m_strContent.Substring(m_nIndex, nPos - m_nIndex);
+        m_nIndex = nPos + strString.Length;
+        return (true);
       }
       return (false);
     }
@@ -427,11 +447,12 @@ namespace MediaPortal.Util
       (string strString,
        ref string strExtract)
     {
-      int nPos = m_strContent.IndexOf (strString, Position);
-      if (nPos != -1) {
-          strExtract = m_strContent.Substring (m_nIndex, nPos - m_nIndex);
-          m_nIndex = nPos;
-          return (true);
+      int nPos = m_strContent.IndexOf(strString, Position);
+      if (nPos != -1)
+      {
+        strExtract = m_strContent.Substring(m_nIndex, nPos - m_nIndex);
+        m_nIndex = nPos;
+        return (true);
       }
       return (false);
     }
@@ -449,11 +470,12 @@ namespace MediaPortal.Util
        ref string strExtract)
     {
       strString = strString.ToLower();
-      int nPos = m_strContentLC.IndexOf (strString, Position);
-      if (nPos != -1) {
-          strExtract = m_strContent.Substring (m_nIndex, nPos - m_nIndex);
-          m_nIndex = nPos;
-          return (true);
+      int nPos = m_strContentLC.IndexOf(strString, Position);
+      if (nPos != -1)
+      {
+        strExtract = m_strContent.Substring(m_nIndex, nPos - m_nIndex);
+        m_nIndex = nPos;
+        return (true);
       }
       return (false);
     }
@@ -467,9 +489,10 @@ namespace MediaPortal.Util
       (ref string strExtract)
     {
       strExtract = "";
-      if (Position < m_strContent.Length) {
-          int nRemainLen = m_strContent.Length - Position;
-          strExtract = m_strContent.Substring (Position, nRemainLen);
+      if (Position < m_strContent.Length)
+      {
+        int nRemainLen = m_strContent.Length - Position;
+        strExtract = m_strContent.Substring(Position, nRemainLen);
       }
     }
 
@@ -489,28 +512,30 @@ namespace MediaPortal.Util
       strOccurrence = strOccurrence.ToLower();
 
       // For every occurence...
-      int nOccurrence = m_strContentLC.IndexOf (strOccurrence);
-      while (nOccurrence != -1) {
+      int nOccurrence = m_strContentLC.IndexOf(strOccurrence);
+      while (nOccurrence != -1)
+      {
+        // Create replaced substring
+        string strReplacedString = m_strContent.Substring(0, nOccurrence) + strReplacement;
 
-            // Create replaced substring
-            string strReplacedString = m_strContent.Substring (0, nOccurrence) + strReplacement;
+        // Add remaining substring (if any)
+        int nStartOfRemainingSubstring = nOccurrence + strOccurrence.Length;
+        if (nStartOfRemainingSubstring < m_strContent.Length)
+        {
+          string strSecondPart = m_strContent.Substring(nStartOfRemainingSubstring,
+                                                        m_strContent.Length - nStartOfRemainingSubstring);
+          strReplacedString += strSecondPart;
+        }
 
-            // Add remaining substring (if any)
-            int nStartOfRemainingSubstring = nOccurrence + strOccurrence.Length;
-            if (nStartOfRemainingSubstring < m_strContent.Length) {
-                string strSecondPart = m_strContent.Substring (nStartOfRemainingSubstring, m_strContent.Length - nStartOfRemainingSubstring);
-                strReplacedString += strSecondPart;
-            }
+        // Update the original string
+        m_strContent = strReplacedString;
+        m_strContentLC = m_strContent.ToLower();
+        nReplacements++;
 
-            // Update the original string
-            m_strContent = strReplacedString;
-            m_strContentLC = m_strContent.ToLower();
-            nReplacements++;
-
-            // Find the next occurence
-            nOccurrence = m_strContentLC.IndexOf (strOccurrence);
-       }
-       return (nReplacements);
+        // Find the next occurence
+        nOccurrence = m_strContentLC.IndexOf(strOccurrence);
+      }
+      return (nReplacements);
     }
 
     /// <summary>
@@ -524,9 +549,10 @@ namespace MediaPortal.Util
        string strReplacement)
     {
       int nReplacements = 0;
-      while (m_strContent.IndexOf (strOccurrence) != -1) {
-            m_strContent = m_strContent.Replace (strOccurrence, strReplacement);
-            nReplacements++;
+      while (m_strContent.IndexOf(strOccurrence) != -1)
+      {
+        m_strContent = m_strContent.Replace(strOccurrence, strReplacement);
+        nReplacements++;
       }
       m_strContentLC = m_strContent.ToLower();
       return (nReplacements);
@@ -535,7 +561,8 @@ namespace MediaPortal.Util
     /// <summary>
     /// Resets the parser's position to the start of the content.
     /// </summary>
-    public void resetPosition() {
+    public void resetPosition()
+    {
       m_nIndex = 0;
     }
 
@@ -548,7 +575,7 @@ namespace MediaPortal.Util
     public bool skipToStartOf
       (string strString)
     {
-      bool bStatus = seekTo (strString, false, false);
+      bool bStatus = seekTo(strString, false, false);
       return (bStatus);
     }
 
@@ -561,7 +588,7 @@ namespace MediaPortal.Util
     public bool skipToStartOfNoCase
       (string strText)
     {
-      bool bStatus = seekTo (strText, true, false);
+      bool bStatus = seekTo(strText, true, false);
       return (bStatus);
     }
 
@@ -574,7 +601,7 @@ namespace MediaPortal.Util
     public bool skipToEndOf
       (string strString)
     {
-      bool bStatus = seekTo (strString, false, true);
+      bool bStatus = seekTo(strString, false, true);
       return (bStatus);
     }
 
@@ -587,7 +614,7 @@ namespace MediaPortal.Util
     public bool skipToEndOfNoCase
       (string strText)
     {
-      bool bStatus = seekTo (strText, true, true);
+      bool bStatus = seekTo(strText, true, true);
       return (bStatus);
     }
 
@@ -595,13 +622,13 @@ namespace MediaPortal.Util
     // Implementation (members)
 
     /// <summary>Content to be parsed.</summary>
-    string  m_strContent = "";
+    private string m_strContent = "";
 
     /// <summary>Lower-cased version of content to be parsed.</summary>
-    string  m_strContentLC = "";
+    private string m_strContentLC = "";
 
     /// <summary>Current position in content.</summary>
-    int m_nIndex = 0;
+    private int m_nIndex = 0;
 
     ///////////////////////////
     // Implementation (methods)
@@ -613,31 +640,34 @@ namespace MediaPortal.Util
     /// <param name="bNoCase">Flag: perform a case-insensitive search.</param>
     /// <param name="bPositionAfter">Flag: position parser just after string.</param>
     /// <returns></returns>
-    bool seekTo
+    private bool seekTo
       (string strString,
        bool bNoCase,
        bool bPositionAfter)
     {
-      if (Position < m_strContent.Length) {
+      if (Position < m_strContent.Length)
+      {
+        // Find the start of the string - return if not found
+        int nNewIndex = 0;
+        if (bNoCase)
+        {
+          strString = strString.ToLower();
+          nNewIndex = m_strContentLC.IndexOf(strString, Position);
+        }
+        else
+        {
+          nNewIndex = m_strContent.IndexOf(strString, Position);
+        }
+        if (nNewIndex == -1)
+          return (false);
 
-          // Find the start of the string - return if not found
-          int nNewIndex = 0;
-          if (bNoCase) {
-              strString = strString.ToLower();
-              nNewIndex = m_strContentLC.IndexOf (strString, Position);
-          } else {
-              nNewIndex = m_strContent.IndexOf (strString, Position);
-          }
-          if (nNewIndex == -1)
-             return (false);
-
-          // Position the parser
-          m_nIndex = nNewIndex;
-          if (bPositionAfter)
-             m_nIndex += strString.Length;
-          return (true);
+        // Position the parser
+        m_nIndex = nNewIndex;
+        if (bPositionAfter)
+          m_nIndex += strString.Length;
+        return (true);
       }
       return (false);
     }
-	}
+  }
 }

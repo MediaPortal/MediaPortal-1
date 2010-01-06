@@ -45,7 +45,7 @@ using MediaPortal.Services;
 using MediaPortal.Util;
 using TvEngine.PowerScheduler;
 using TvEngine.PowerScheduler.Interfaces;
-using Timer=System.Timers.Timer;
+using Timer = System.Timers.Timer;
 
 #endregion
 
@@ -137,7 +137,7 @@ namespace MediaPortal.Plugins.Process
         return;
       }
 
-      if (GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED) == null)
+      if (GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED) == null)
       {
         GUIWindow win = new UnattendedWindow();
         try
@@ -250,7 +250,8 @@ namespace MediaPortal.Plugins.Process
 
     public bool IsSuspendInProgress()
     {
-      return _isSuspendInProgress; // || RemotePowerControl.Isconnected && RemotePowerControl.Instance.IsSuspendInProgress();
+      return _isSuspendInProgress;
+        // || RemotePowerControl.Isconnected && RemotePowerControl.Instance.IsSuspendInProgress();
     }
 
     public void SuspendSystem(string source, bool force)
@@ -259,11 +260,11 @@ namespace MediaPortal.Plugins.Process
       {
         case ShutdownMode.Suspend:
           Log.Debug("locally suspending system (force={0})", force);
-          SuspendSystem(source, (int) RestartOptions.Suspend, force);
+          SuspendSystem(source, (int)RestartOptions.Suspend, force);
           break;
         case ShutdownMode.Hibernate:
           Log.Debug("locally hibernating system (force={0})", force);
-          SuspendSystem(source, (int) RestartOptions.Hibernate, force);
+          SuspendSystem(source, (int)RestartOptions.Hibernate, force);
           break;
         case ShutdownMode.StayOn:
           Log.Debug("standby requested but system is configured to stay on");
@@ -276,7 +277,7 @@ namespace MediaPortal.Plugins.Process
 
     public void SuspendSystem(string source, int how, bool force)
     {
-      SafeExitWindows((RestartOptions) how, force, null);
+      SafeExitWindows((RestartOptions)how, force, null);
     }
 
     /// <summary>
@@ -323,7 +324,7 @@ namespace MediaPortal.Plugins.Process
 
           if (RemotePowerControl.Isconnected)
           {
-            RemotePowerControl.Instance.SuspendSystem("PowerSchedulerClientPlugin", (int) how, force);
+            RemotePowerControl.Instance.SuspendSystem("PowerSchedulerClientPlugin", (int)how, force);
           }
         }
         catch (Exception e)
@@ -360,7 +361,7 @@ namespace MediaPortal.Plugins.Process
 
     protected static void SafeExitWindowsThread(object _data)
     {
-      SafeExitWindowsThreadEnv data = (SafeExitWindowsThreadEnv) _data;
+      SafeExitWindowsThreadEnv data = (SafeExitWindowsThreadEnv)_data;
       data.that.SafeExitWindowsThread(data.how, data.force, data.after);
     }
 
@@ -411,12 +412,12 @@ namespace MediaPortal.Plugins.Process
 
       // activate standby
       _denySuspendQuery = false;
-      Log.Info("PSClientPlugin: Entering shutdown {0} ; forced: {1}", (RestartOptions) how, force);
+      Log.Info("PSClientPlugin: Entering shutdown {0} ; forced: {1}", (RestartOptions)how, force);
 
       SafeExitWindowsThreadAfterProxy env = new SafeExitWindowsThreadAfterProxy();
       env.that = this;
       env.after = after;
-      _defaultExitWindows((RestartOptions) how, force, env.SafeExitWindowsThreadAfter);
+      _defaultExitWindows((RestartOptions)how, force, env.SafeExitWindowsThreadAfter);
     }
 
     protected void SafeExitWindowsThreadAfter(RestartOptions how, bool force, bool result,
@@ -667,7 +668,7 @@ namespace MediaPortal.Plugins.Process
         {
           // could not find any previous window that allows to stop the player, we go home
           LogVerbose("PSClientPlugin.UserShutdownNow: player is still playing, activating home window");
-          GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_HOME);
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
           g_Player.Stop();
         }
         LogVerbose("PSClientPlugin.UserShutdownNow: stopped player: {0}", !g_Player.Playing);
@@ -682,9 +683,9 @@ namespace MediaPortal.Plugins.Process
           basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
         }
 
-        int homeWindow = basicHome ? (int) GUIWindow.Window.WINDOW_SECOND_HOME : (int) GUIWindow.Window.WINDOW_HOME;
+        int homeWindow = basicHome ? (int)GUIWindow.Window.WINDOW_SECOND_HOME : (int)GUIWindow.Window.WINDOW_HOME;
         int activeWindow = GUIWindowManager.ActiveWindow;
-        if (activeWindow != homeWindow && activeWindow != (int) GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)
+        if (activeWindow != homeWindow && activeWindow != (int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)
         {
           //LogVerbose("PSClientPlugin.UserShutdownNow: going to home screen");
           //GUIWindowManager.ActivateWindow(homeWindow);
@@ -838,14 +839,14 @@ namespace MediaPortal.Plugins.Process
         {
           _settings.CheckInterval = intSetting;
           LogVerbose("Check interval is set to {0} seconds", intSetting);
-          _timer.Interval = intSetting*1000;
+          _timer.Interval = intSetting * 1000;
           changed = true;
         }
         // Check configured shutdown mode
         intSetting = reader.GetValueAsInt("psclientplugin", "shutdownmode", 2);
-        if ((int) _settings.ShutdownMode != intSetting)
+        if ((int)_settings.ShutdownMode != intSetting)
         {
-          _settings.ShutdownMode = (ShutdownMode) intSetting;
+          _settings.ShutdownMode = (ShutdownMode)intSetting;
           LogVerbose("Shutdown mode set to {0}", _settings.ShutdownMode);
           changed = true;
         }
@@ -968,9 +969,9 @@ namespace MediaPortal.Plugins.Process
           if (_settings.GetSetting("HomeOnly").Get<bool>() && !_shutdownInitiated)
           {
             int activeWindow = GUIWindowManager.ActiveWindow;
-            if (activeWindow == (int) GUIWindow.Window.WINDOW_HOME ||
-                activeWindow == (int) GUIWindow.Window.WINDOW_SECOND_HOME ||
-                activeWindow == (int) GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)
+            if (activeWindow == (int)GUIWindow.Window.WINDOW_HOME ||
+                activeWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME ||
+                activeWindow == (int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)
             {
               return true;
             }
@@ -1025,7 +1026,7 @@ namespace MediaPortal.Plugins.Process
     private DateTime GetLastInputTime()
     {
       LASTINPUTINFO lastInputInfo = new LASTINPUTINFO();
-      lastInputInfo.cbSize = (uint) Marshal.SizeOf(lastInputInfo);
+      lastInputInfo.cbSize = (uint)Marshal.SizeOf(lastInputInfo);
 
       if (!GetLastInputInfo(ref lastInputInfo))
       {
@@ -1172,7 +1173,7 @@ namespace MediaPortal.Plugins.Process
             delta = 60;
           }
           _wakeupTimer.SecondsToWait = delta;
-          Log.Debug("PSClientPlugin: Set wakeup timer to wakeup system in {0} minutes", delta/60);
+          Log.Debug("PSClientPlugin: Set wakeup timer to wakeup system in {0} minutes", delta / 60);
         }
         else
         {
@@ -1306,7 +1307,7 @@ namespace MediaPortal.Plugins.Process
       if (_settings.GetSetting("SingleSeat").Get<bool>())
       {
         // sync problem => give the TV-Server time to run SetWakeupTimer(); before client disconnects
-        System.Threading.Thread.Sleep(200);  
+        System.Threading.Thread.Sleep(200);
         if (_remotingTag != 0)
         {
           LogVerbose("PSClientPlugin: unregister handlers with tvservice with tag {0}", _remotingTag);

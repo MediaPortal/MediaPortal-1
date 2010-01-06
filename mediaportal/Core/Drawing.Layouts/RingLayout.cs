@@ -33,13 +33,9 @@ namespace MediaPortal.Drawing.Layouts
   {
     #region Constructors
 
-    public RingLayout() : this(0, 0)
-    {
-    }
+    public RingLayout() : this(0, 0) {}
 
-    public RingLayout(int spacing) : this(spacing, spacing)
-    {
-    }
+    public RingLayout(int spacing) : this(spacing, spacing) {}
 
     public RingLayout(int horizontalSpacing, int verticalSpacing)
     {
@@ -58,7 +54,7 @@ namespace MediaPortal.Drawing.Layouts
       switch (element.HorizontalAlignment)
       {
         case HorizontalAlignment.Center:
-          rect.X = x + w/2 - element.Width/2;
+          rect.X = x + w / 2 - element.Width / 2;
           break;
         case HorizontalAlignment.Right:
           rect.X = x + w - element.Width;
@@ -71,7 +67,7 @@ namespace MediaPortal.Drawing.Layouts
       switch (element.VerticalAlignment)
       {
         case VerticalAlignment.Center:
-          rect.Y = y + h/2 - element.Height/2;
+          rect.Y = y + h / 2 - element.Height / 2;
           break;
         case VerticalAlignment.Bottom:
           rect.Y = h - element.Height;
@@ -99,14 +95,14 @@ namespace MediaPortal.Drawing.Layouts
           continue;
         }
 
-        double angle = (++index*2*Math.PI)/element.Children.Count;
+        double angle = (++index * 2 * Math.PI) / element.Children.Count;
 
         r.Width = child.Width;
         r.Height = child.Height;
-        r.X = t.Left + _spacing.Width + ((_size.Width - t.Width - (_spacing.Width*2))/2) +
-              (int) (Math.Sin(angle)*_radius) - (r.Width/2);
-        r.Y = t.Top + _spacing.Height + ((_size.Height - t.Height - (_spacing.Height*2))/2) -
-              (int) (Math.Cos(angle)*_radius) - (r.Height/2);
+        r.X = t.Left + _spacing.Width + ((_size.Width - t.Width - (_spacing.Width * 2)) / 2) +
+              (int)(Math.Sin(angle) * _radius) - (r.Width / 2);
+        r.Y = t.Top + _spacing.Height + ((_size.Height - t.Height - (_spacing.Height * 2)) / 2) -
+              (int)(Math.Cos(angle) * _radius) - (r.Height / 2);
 
         child.Arrange(r);
       }
@@ -132,10 +128,10 @@ namespace MediaPortal.Drawing.Layouts
 
       Thickness t = element.Margin;
 
-      _radius = (Math.Min(w + _spacing.Width*element.Children.Count, h + _spacing.Height*element.Children.Count)/2);
-      _radius -= Math.Max(w, h)/2;
-      _size.Width = (int) (2*_radius) - w + t.Width;
-      _size.Height = (int) (2*_radius) - h + t.Height;
+      _radius = (Math.Min(w + _spacing.Width * element.Children.Count, h + _spacing.Height * element.Children.Count) / 2);
+      _radius -= Math.Max(w, h) / 2;
+      _size.Width = (int)(2 * _radius) - w + t.Width;
+      _size.Height = (int)(2 * _radius) - h + t.Height;
 
       return _size;
     }

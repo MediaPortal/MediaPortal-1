@@ -97,17 +97,17 @@ namespace MediaPortal.Configuration
         }
 
         Application.DoEvents();
-        HttpWebRequest request = (HttpWebRequest) WebRequest.Create(helpReferencesURL);
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(helpReferencesURL);
         try
         {
           // Use the current user in case an NTLM Proxy or similar is used.
           // request.Proxy = WebProxy.GetDefaultProxy();
           request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception) {}
         Application.DoEvents();
 
-        using (HttpWebResponse response = (HttpWebResponse) request.GetResponse())
+        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
         {
           Application.DoEvents();
           using (Stream resStream = response.GetResponseStream())

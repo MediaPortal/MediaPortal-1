@@ -44,9 +44,7 @@ namespace MediaPortal.Drawing
       TransformProperty = DependencyProperty.Register("Transform", typeof (Transform), typeof (Brush));
     }
 
-    protected Brush()
-    {
-    }
+    protected Brush() {}
 
     #endregion Constructors
 
@@ -54,16 +52,12 @@ namespace MediaPortal.Drawing
 
     public new Brush Copy()
     {
-      return (Brush) base.Copy();
+      return (Brush)base.Copy();
     }
 
-    protected override void CopyCore(Freezable sourceFreezable)
-    {
-    }
+    protected override void CopyCore(Freezable sourceFreezable) {}
 
-    protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
-    {
-    }
+    protected override void CopyCurrentValueCore(Animatable sourceAnimatable) {}
 
     protected override bool FreezeCore(bool isChecking)
     {
@@ -75,9 +69,7 @@ namespace MediaPortal.Drawing
       throw new NotImplementedException();
     }
 
-    protected override void PropagateChangedHandlersCore(EventHandler handler, bool adding)
-    {
-    }
+    protected override void PropagateChangedHandlersCore(EventHandler handler, bool adding) {}
 
     string IFormattable.ToString(string format, IFormatProvider provider)
     {
@@ -100,19 +92,19 @@ namespace MediaPortal.Drawing
 
     public double Opacity
     {
-      get { return (double) GetValue(OpacityProperty); }
+      get { return (double)GetValue(OpacityProperty); }
       set { SetValue(OpacityProperty, value); }
     }
 
     public Transform RelativeTransform
     {
-      get { return (Transform) GetValue(RelativeTransformProperty); }
+      get { return (Transform)GetValue(RelativeTransformProperty); }
       set { SetValue(RelativeTransformProperty, value); }
     }
 
     public Transform Transform
     {
-      get { return (Transform) GetValue(TransformProperty); }
+      get { return (Transform)GetValue(TransformProperty); }
       set { SetValue(TransformProperty, value); }
     }
 

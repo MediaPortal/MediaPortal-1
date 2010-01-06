@@ -34,7 +34,7 @@ namespace MediaPortal.GUI.Music
   {
     private static int m_iTempPlaylistWindow = 0;
     private static string m_strTempPlaylistDirectory = "";
-    private static int m_iStartWindow = (int) GUIWindow.Window.WINDOW_MUSIC_FILES;
+    private static int m_iStartWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FILES;
     private static string view = "";
 
     public MusicState()

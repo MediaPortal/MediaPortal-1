@@ -93,13 +93,9 @@ namespace MediaPortal.ControlDevices
       OnSelectionChanged();
     }
 
-    private void ctrlVerbose_CheckedChanged(object sender, EventArgs e)
-    {
-    }
+    private void ctrlVerbose_CheckedChanged(object sender, EventArgs e) {}
 
-    private void ctrlMapping_Click(object sender, EventArgs e)
-    {
-    }
+    private void ctrlMapping_Click(object sender, EventArgs e) {}
 
     private void ctrlAdvanced_Click(object sender, EventArgs e)
     {
@@ -112,8 +108,6 @@ namespace MediaPortal.ControlDevices
       settings.ShowAdvancedSettings();
     }
 
-    private void ctrlDefaults_Click(object sender, EventArgs e)
-    {
-    }
+    private void ctrlDefaults_Click(object sender, EventArgs e) {}
   }
 }

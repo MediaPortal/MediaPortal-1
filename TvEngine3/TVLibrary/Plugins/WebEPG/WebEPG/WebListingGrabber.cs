@@ -99,7 +99,7 @@ namespace MediaPortal.WebEPG
       {
         //_grabber = new GrabberConfig(_strBaseDir + File);
 
-        XmlSerializer s = new XmlSerializer(typeof(GrabberConfigFile));
+        XmlSerializer s = new XmlSerializer(typeof (GrabberConfigFile));
 
         TextReader r = new StreamReader(_strBaseDir + File);
         _grabber = (GrabberConfigFile)s.Deserialize(r);
@@ -169,8 +169,8 @@ namespace MediaPortal.WebEPG
         case ListingInfo.Type.Html:
           HtmlParserTemplate defaultTemplate = _grabber.Listing.HtmlTemplate.GetTemplate("default");
           if (defaultTemplate == null ||
-            defaultTemplate.SectionTemplate == null ||
-            defaultTemplate.SectionTemplate.Template == null)
+              defaultTemplate.SectionTemplate == null ||
+              defaultTemplate.SectionTemplate.Template == null)
           {
             Log.Error("WebEPG: {0}: No Template", File);
             return false;
@@ -179,7 +179,7 @@ namespace MediaPortal.WebEPG
           if (_grabber.Info.GrabDays < _maxGrabDays)
           {
             Log.Info("WebEPG: Grab days ({0}) more than Guide days ({1}), limiting grab to {1} days",
-                      _maxGrabDays, _grabber.Info.GrabDays);
+                     _maxGrabDays, _grabber.Info.GrabDays);
             _maxGrabDays = _grabber.Info.GrabDays;
           }
 
@@ -212,7 +212,8 @@ namespace MediaPortal.WebEPG
     /// <param name="linkEnd">The end time to get linked pages.</param>
     /// <param name="startDateTime">The start date time for grabbing.</param>
     /// <returns>list of programs</returns>
-    public List<ProgramData> GetGuide(string strChannelID, string displayName, bool Linked, TimeRange linkTime, DateTime startDateTime)
+    public List<ProgramData> GetGuide(string strChannelID, string displayName, bool Linked, TimeRange linkTime,
+                                      DateTime startDateTime)
     {
       _strID = strChannelID;
       _grabLinked = Linked;
@@ -242,7 +243,7 @@ namespace MediaPortal.WebEPG
       _grabStart = startDateTime;
 
       Log.Debug("WebEPG: Grab Start {0} {1}", startDateTime.ToShortTimeString(),
-                 startDateTime.ToShortDateString());
+                startDateTime.ToShortDateString());
       int requestedStartDay = startDateTime.Subtract(DateTime.Now).Days;
       if (requestedStartDay > 0)
       {
@@ -277,7 +278,7 @@ namespace MediaPortal.WebEPG
       {
         Key epgMapKey = new Key(false, "displayName", displayName);
         IList<Channel> epgChannels = Broker.RetrieveList<Channel>(epgMapKey);
-        if (epgChannels.Count >0)
+        if (epgChannels.Count > 0)
         {
           _dbPrograms = epgChannels[0].ReferringProgram();
         }
@@ -377,7 +378,7 @@ namespace MediaPortal.WebEPG
       ProgramData guideData = (ProgramData)_parser.GetData(index);
 
       if (guideData == null ||
-        guideData.StartTime == null || guideData.Title == string.Empty)
+          guideData.StartTime == null || guideData.Title == string.Empty)
       {
         return null;
       }
@@ -414,12 +415,12 @@ namespace MediaPortal.WebEPG
       {
         guideData.EndTime.TimeZone = _siteTimeZone;
         Log.Info("WebEPG: Guide, Program Info: {0} / {1} - {2}",
-                  guideData.StartTime.ToLocalLongDateTime(), guideData.EndTime.ToLocalLongDateTime(), guideData.Title);
+                 guideData.StartTime.ToLocalLongDateTime(), guideData.EndTime.ToLocalLongDateTime(), guideData.Title);
       }
       else
       {
         Log.Info("WebEPG: Guide, Program Info: {0} - {1}", guideData.StartTime.ToLocalLongDateTime(),
-                  guideData.Title);
+                 guideData.Title);
       }
 
       if (guideData.StartTime.ToLocalTime() < _grabStart.AddHours(-2))
@@ -472,7 +473,7 @@ namespace MediaPortal.WebEPG
         guideData.Replace(_grabber.Actions);
       }
 
-      return guideData/*.ToTvProgram()*/;
+      return guideData /*.ToTvProgram()*/;
     }
 
     /// <summary>
@@ -530,11 +531,11 @@ namespace MediaPortal.WebEPG
         }
 
         Log.Debug("WebEPG: Program Count ({0}), Listing Count ({1}), Discard Count ({2})", programCount,
-                   listingCount, _discarded);
+                  listingCount, _discarded);
         if (programCount < (listingCount - _discarded))
         {
           Log.Info("WebEPG: Program Count ({0}) < Listing Count ({1}) - Discard Count ({2}), possible template error",
-                    programCount, listingCount, _discarded);
+                   programCount, listingCount, _discarded);
         }
 
         if (_timeControl.GrabDay > _maxGrabDays)

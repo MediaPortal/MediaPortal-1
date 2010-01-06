@@ -62,9 +62,7 @@ namespace Rss
     private string domain = RssDefault.String;
 
     /// <summary>Initialize a new instance of the RssCategory class</summary>
-    public RssCategory()
-    {
-    }
+    public RssCategory() {}
 
     /// <summary>Actual categorization given for this item, within the chosen taxonomy</summary>
     public string Name

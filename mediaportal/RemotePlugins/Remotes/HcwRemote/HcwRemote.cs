@@ -48,7 +48,7 @@ namespace MediaPortal.InputDevices
     private DateTime _lastTime = DateTime.Now; // Timestamp of last recieved keycode from remote
 
     private int _sameCommandCount = 0;
-                // Counts how many times a button has been pressed (used to get progressive repetition delay, first time, long delay, then short delay)
+    // Counts how many times a button has been pressed (used to get progressive repetition delay, first time, long delay, then short delay)
 
     private int _lastExecutedCommandCount = 0;
     private int _lastCommand = 0; // Last executed command
@@ -93,9 +93,7 @@ namespace MediaPortal.InputDevices
     /// <summary>
     /// Constructor
     /// </summary>
-    public HcwRemote()
-    {
-    }
+    public HcwRemote() {}
 
 
     public void Init(IntPtr hwnd)
@@ -284,7 +282,7 @@ namespace MediaPortal.InputDevices
 
             if (_logVerbose)
             {
-              Log.Info("HCW: elapsed time: {0}", ((TimeSpan) (sentTime - _lastTime)).Milliseconds);
+              Log.Info("HCW: elapsed time: {0}", ((TimeSpan)(sentTime - _lastTime)).Milliseconds);
             }
             if (_logVerbose)
             {
@@ -468,7 +466,7 @@ namespace MediaPortal.InputDevices
           case WM_ACTIVATE:
             if (_allowExternal && !_keepControl)
             {
-              switch ((int) msg.WParam)
+              switch ((int)msg.WParam)
               {
                 case WA_INACTIVE:
                   if (_logVerbose)

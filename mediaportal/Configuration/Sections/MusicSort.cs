@@ -56,7 +56,8 @@ namespace MediaPortal.Configuration.Sections
                                         };
 
     private string[] defaultSortTags2 = {
-                                          "%duration%", "%year%", "%filesize%", "%duration%", "%duration%", "%duration%",
+                                          "%duration%", "%year%", "%filesize%", "%duration%", "%duration%", "%duration%"
+                                          ,
                                           "%duration%", "%duration%", "%filesize%", "%rating%"
                                         };
 
@@ -81,9 +82,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public MusicSort()
-      : this("Music Sort")
-    {
-    }
+      : this("Music Sort") {}
 
     /// <summary>
     /// 

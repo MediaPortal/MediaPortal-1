@@ -41,24 +41,15 @@ namespace MediaPortal.GUI.Video
     private string _fileName = "";
     private string _program = "";
 
-    [SkinControl(0)]
-    protected GUIImage _videoRectangle = null;
-    [SkinControl(1)]
-    protected GUIVideoControl _videoWindow = null;
-    [SkinControl(2)]
-    protected GUILabelControl _labelPlayTime = null;
-    [SkinControl(3)]
-    protected GUIImage _imagePlayLogo = null;
-    [SkinControl(4)]
-    protected GUIImage _imagePauseLogo = null;
-    [SkinControl(5)]
-    protected GUIFadeLabel _labelInfo = null;
-    [SkinControl(6)]
-    protected GUIImage _labelBigPlayTime = null;
-    [SkinControl(7)]
-    protected GUIImage _imageFastForward = null;
-    [SkinControl(8)]
-    protected GUIImage _imageRewind = null;
+    [SkinControl(0)] protected GUIImage _videoRectangle = null;
+    [SkinControl(1)] protected GUIVideoControl _videoWindow = null;
+    [SkinControl(2)] protected GUILabelControl _labelPlayTime = null;
+    [SkinControl(3)] protected GUIImage _imagePlayLogo = null;
+    [SkinControl(4)] protected GUIImage _imagePauseLogo = null;
+    [SkinControl(5)] protected GUIFadeLabel _labelInfo = null;
+    [SkinControl(6)] protected GUIImage _labelBigPlayTime = null;
+    [SkinControl(7)] protected GUIImage _imageFastForward = null;
+    [SkinControl(8)] protected GUIImage _imageRewind = null;
 
     private string _thumbLogo = "";
     private bool _didRenderLastTime = false;
@@ -93,9 +84,7 @@ namespace MediaPortal.GUI.Video
       AllocResources();
     }
 
-    public override void Render(float timePassed)
-    {
-    }
+    public override void Render(float timePassed) {}
 
     private void OnUpdateState(bool render)
     {
@@ -237,7 +226,7 @@ namespace MediaPortal.GUI.Video
       }
 
       if (GUIGraphicsContext.Overlay == true && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsPlaying)
-      //&& GUIGraphicsContext.IsPlayingVideo && !GUIGraphicsContext.IsFullScreenVideo && !g_Player.FullScreen)
+        //&& GUIGraphicsContext.IsPlayingVideo && !GUIGraphicsContext.IsFullScreenVideo && !g_Player.FullScreen)
       {
         if (_videoWindow.Visible == false)
         {
@@ -246,7 +235,7 @@ namespace MediaPortal.GUI.Video
         return;
       }
       if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.IsPlaying)
-      // && GUIGraphicsContext.IsPlayingVideo && !GUIGraphicsContext.IsFullScreenVideo && !g_Player.FullScreen)
+        // && GUIGraphicsContext.IsPlayingVideo && !GUIGraphicsContext.IsFullScreenVideo && !g_Player.FullScreen)
       {
         if (_videoWindow.Visible == true)
         {
@@ -291,7 +280,6 @@ namespace MediaPortal.GUI.Video
         GUIPropertyManager.SetProperty("#Play.Current.AudioChannels", g_Player.MediaInfo.AudioChannelsFriendly);
         GUIPropertyManager.SetProperty("#Play.Current.HasSubtitles", g_Player.MediaInfo.HasSubtitles.ToString());
         GUIPropertyManager.SetProperty("#Play.Current.AspectRatio", g_Player.MediaInfo.AspectRatio);
-
       }
 
       if (g_Player.IsDVD)
@@ -311,7 +299,7 @@ namespace MediaPortal.GUI.Video
 
           // get the name by stripping the first part : c:\media\movies
           string strName = fileName;
-          int pos = fileName.LastIndexOfAny(new char[] { '\\', '/' });
+          int pos = fileName.LastIndexOfAny(new char[] {'\\', '/'});
           if (pos >= 0 && pos + 1 < fileName.Length - 1)
           {
             strName = fileName.Substring(pos + 1);

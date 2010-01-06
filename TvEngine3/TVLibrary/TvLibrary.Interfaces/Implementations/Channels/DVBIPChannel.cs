@@ -31,23 +31,19 @@ namespace TvLibrary.Channels
   {
     #region variables
 
-    string _url;
+    private string _url;
 
     #endregion
+
     /// <summary>
     /// URL of channel
     /// </summary>
     public string Url
     {
-      get
-      {
-        return _url;
-      }
-      set
-      {
-        _url = value;
-      }
+      get { return _url; }
+      set { _url = value; }
     }
+
     /// <summary>
     /// ToString
     /// </summary>
@@ -56,6 +52,7 @@ namespace TvLibrary.Channels
     {
       return String.Format("DVBIP:{0} Url:{1}", base.ToString(), Url);
     }
+
     /// <summary>
     /// Comparision of channels
     /// </summary>
@@ -70,6 +67,7 @@ namespace TvLibrary.Channels
 
       return true;
     }
+
     /// <summary>
     /// returns hashcode
     /// </summary>

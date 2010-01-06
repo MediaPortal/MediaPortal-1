@@ -29,17 +29,13 @@ namespace MediaPortal.ControlDevices.USBUIRT
 {
   public class USBUIRTSettings : AbstractControlSettings
   {
-    public USBUIRTSettings(IControlPlugin plugin) : base(plugin, "usbuirt")
-    {
-    }
+    public USBUIRTSettings(IControlPlugin plugin) : base(plugin, "usbuirt") {}
 
     public override UserControl SettingsPanel
     {
-      get { return (UserControl) new ControlDevicePanel(_plugin); }
+      get { return (UserControl)new ControlDevicePanel(_plugin); }
     }
 
-    public override void ShowAdvancedSettings()
-    {
-    }
+    public override void ShowAdvancedSettings() {}
   }
 }

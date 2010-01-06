@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -212,9 +212,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.GSD.CloseDisplay(this._BackLightControl);
     }
 
-    public void DrawImage(Bitmap bitmap)
-    {
-    }
+    public void DrawImage(Bitmap bitmap) {}
 
     private void InitCommandSet(ref CommandStrings CommandSet)
     {
@@ -268,8 +266,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.DisplaySettings.DisplayActionTime = settings.EnableDisplayActionTime;
       this.DisplaySettings.BlankDisplayWhenIdle = settings.BlankDisplayWhenIdle;
       this.DisplaySettings.BlankIdleDelay = settings.BlankIdleTime;
-      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay*0x989680;
-      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime*0x989680;
+      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay * 0x989680;
+      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime * 0x989680;
       this.DisplaySettings._Shutdown1 = Settings.Instance.Shutdown1;
       this.DisplaySettings._Shutdown2 = Settings.Instance.Shutdown2;
       Log.Info("GenericSerial.LoadAdvancedSettings(): Extensive Logging: {0}",
@@ -298,7 +296,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Info("GenericSerial.LoadAdvancedSettings(): Advanced options - Blank display when idle: {0}",
                new object[] {this.DisplaySettings.BlankDisplayWhenIdle});
       Log.Info("GenericSerial.LoadAdvancedSettings(): Advanced options -     blank display after: {0} seconds",
-               new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
+               new object[] {this.DisplaySettings._BlankIdleTimeout / 0xf4240L});
       Log.Info("GenericSerial.LoadAdvancedSettings(): Completed");
       FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_GenericSerial.xml"));
       this.SettingsLastModTime = info.LastWriteTime;
@@ -354,9 +352,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters)
-    {
-    }
+    public void SetCustomCharacters(int[][] customCharacters) {}
 
     public void SetLine(int line, string message)
     {
@@ -616,7 +612,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("GenericSerial.AdvancedSettings.Load(): Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_GenericSerial.xml"));
-          settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
+          settings = (AdvancedSettings)serializer.Deserialize(xmlReader);
           xmlReader.Close();
         }
         else
@@ -650,7 +646,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                  Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 2;
-        serializer.Serialize((XmlWriter) writer, ToSave);
+        serializer.Serialize((XmlWriter)writer, ToSave);
         writer.Close();
         Log.Info("GenericSerial.AdvancedSettings.Save(): completed");
       }
@@ -1717,7 +1713,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff))
         {
-          this.commPort.Write(new byte[] {(byte) charToSend}, 0, 1);
+          this.commPort.Write(new byte[] {(byte)charToSend}, 0, 1);
           this._CurrentColumn++;
           if (this._CurrentColumn > (this._DisplayColumns - 1))
           {
@@ -1749,7 +1745,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           switch (SendThisData[i])
           {
             case 0xfb:
-              buffer = new byte[] {(byte) ((this._CurrentLine + this.Commands.PositionBase) + 0x30)};
+              buffer = new byte[] {(byte)((this._CurrentLine + this.Commands.PositionBase) + 0x30)};
               goto Label_01DB;
 
             case 0xfc:
@@ -1758,22 +1754,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 break;
               }
-              buffer = new byte[] {(byte) (this._CurrentColumn + 0x30)};
+              buffer = new byte[] {(byte)(this._CurrentColumn + 0x30)};
               goto Label_0132;
 
             case 0xfd:
-              buffer = new byte[] {(byte) (this._CurrentLine + this.Commands.PositionBase)};
+              buffer = new byte[] {(byte)(this._CurrentLine + this.Commands.PositionBase)};
               goto Label_01DB;
 
             case 0xfe:
-              buffer = new byte[] {(byte) (this._CurrentColumn + this.Commands.PositionBase)};
+              buffer = new byte[] {(byte)(this._CurrentColumn + this.Commands.PositionBase)};
               goto Label_01DB;
 
             case 0xff:
               buffer = new byte[]
                          {
                            (byte)
-                           (((this._CurrentLine*this._DisplayColumns) + this._CurrentColumn) +
+                           (((this._CurrentLine * this._DisplayColumns) + this._CurrentColumn) +
                             this.Commands.PositionBase)
                          };
               goto Label_01DB;
@@ -1782,9 +1778,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               buffer = new byte[] {SendThisData[i]};
               goto Label_01DB;
           }
-          double num2 = Math.Floor((double) (((double) this._CurrentColumn)/10.0));
-          double num3 = this._CurrentColumn - (num2*10.0);
-          buffer = new byte[] {(byte) (num2 + 48.0), (byte) num3};
+          double num2 = Math.Floor((double)(((double)this._CurrentColumn) / 10.0));
+          double num3 = this._CurrentColumn - (num2 * 10.0);
+          buffer = new byte[] {(byte)(num2 + 48.0), (byte)num3};
           Label_0132:
           this._CurrentColumn -= this.Commands.PositionBase;
           Label_01DB:

@@ -35,6 +35,7 @@ namespace TvLibrary.Implementations.Analog
   public class HDPVRChannel : BaseSubChannel, ITvSubChannel, IVideoAudioObserver, IPMTCallback
   {
     #region variables
+
     private readonly TvCardHDPVR _card;
     private readonly IBaseFilter _filterTsWriter;
     private readonly ITsFilter _tsFilterInterface;
@@ -44,6 +45,7 @@ namespace TvLibrary.Implementations.Analog
     private int _pmtLength;
     private byte[] _pmtData;
     private bool _graphRunning;
+
     #endregion
 
     /// <summary>
@@ -179,9 +181,7 @@ namespace TvLibrary.Implementations.Analog
     /// should be called when graph has been stopped
     /// Resets the graph state
     /// </summary>
-    public override void OnGraphStopped()
-    {
-    }
+    public override void OnGraphStopped() {}
 
     #endregion
 
@@ -197,7 +197,8 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("HDPVR: SetTimeShiftFileName:{0}", fileName);
       Log.Log.WriteFile("HDPVR: SetTimeShiftFileName: _subChannelId {0}", _subChannelId);
       ScanParameters parameters = _card.Parameters;
-      _tsFilterInterface.TimeShiftSetParams(_subChannelId, parameters.MinimumFiles, parameters.MaximumFiles, parameters.MaximumFileSize);
+      _tsFilterInterface.TimeShiftSetParams(_subChannelId, parameters.MinimumFiles, parameters.MaximumFiles,
+                                            parameters.MaximumFileSize);
       _tsFilterInterface.TimeShiftSetTimeShiftingFileName(_subChannelId, fileName);
 
       _tsFilterInterface.TimeShiftPause(_subChannelId, 1);
@@ -258,15 +259,17 @@ namespace TvLibrary.Implementations.Analog
         _card.Quality.StartPlayback();
       }
     }
+
     /// <summary>
     /// Returns the position in the current timeshift file and the id of the current timeshift file
     /// </summary>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    protected override void OnGetTimeShiftFilePosition(ref Int64 position,ref long bufferId)
+    protected override void OnGetTimeShiftFilePosition(ref Int64 position, ref long bufferId)
     {
-      _tsFilterInterface.TimeShiftGetCurrentFilePosition(_subChannelId,out position,out bufferId);
+      _tsFilterInterface.TimeShiftGetCurrentFilePosition(_subChannelId, out position, out bufferId);
     }
+
     #endregion
 
     #region audio streams
@@ -276,10 +279,7 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override List<IAudioStream> AvailableAudioStreams
     {
-      get
-      {
-        return null;
-      }
+      get { return null; }
     }
 
     /// <summary>
@@ -287,13 +287,8 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override IAudioStream CurrentAudioStream
     {
-      get
-      {
-        return null;
-      }
-      set
-      {
-      }
+      get { return null; }
+      set { }
     }
 
     #endregion
@@ -306,10 +301,7 @@ namespace TvLibrary.Implementations.Analog
     /// <returns>true of false</returns>
     public override bool IsReceivingAudioVideo
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
 
     /// <summary>
@@ -318,10 +310,7 @@ namespace TvLibrary.Implementations.Analog
     /// <value>The number of channels decrypting.</value>
     public override int GetCurrentVideoStream
     {
-      get
-      {
-        return 2;
-      }
+      get { return 2; }
     }
 
     #endregion
@@ -331,9 +320,7 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// A derrived class should activate or deactivate the teletext grabbing on the tv card.
     /// </summary>
-    protected override void OnGrabTeletext()
-    {
-    }
+    protected override void OnGrabTeletext() {}
 
     #endregion
 
@@ -358,7 +345,7 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     public int OnPMTReceived(int pmtPid)
     {
-      IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
+      IntPtr pmtMem = Marshal.AllocCoTaskMem(4096); // max. size for pmt
       _pmtLength = _tsFilterInterface.PmtGetPMTData(_subChannelId, pmtMem);
       if (_pmtLength > 6)
       {
@@ -376,7 +363,8 @@ namespace TvLibrary.Implementations.Analog
         if (_graphRunning == false)
           return 0;
         _pmtVersion++;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -399,4 +387,3 @@ namespace TvLibrary.Implementations.Analog
     }
   }
 }
-

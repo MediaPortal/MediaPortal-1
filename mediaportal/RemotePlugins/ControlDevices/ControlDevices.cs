@@ -81,7 +81,7 @@ namespace MediaPortal.ControlDevices
         IControlSettings settings = plugin.Settings;
         if (null == settings)
         {
-          Log.Error("ControlDevices: Error getting IControlSettings of {0} in {1}", ((Type) plugin).FullName,
+          Log.Error("ControlDevices: Error getting IControlSettings of {0} in {1}", ((Type)plugin).FullName,
                     plugin.LibraryName);
           continue;
         }
@@ -95,7 +95,7 @@ namespace MediaPortal.ControlDevices
             IControlInput input = plugin.InputInterface;
             if (null == input)
             {
-              Log.Error("ControlDevices: Error getting IControlInput Interface of {0} in {1}", ((Type) plugin).FullName,
+              Log.Error("ControlDevices: Error getting IControlInput Interface of {0} in {1}", ((Type)plugin).FullName,
                         plugin.LibraryName);
               continue;
             }
@@ -106,7 +106,7 @@ namespace MediaPortal.ControlDevices
             IControlOutput output = plugin.OutputInterface;
             if (null == output)
             {
-              Log.Error("ControlDevices: Error getting IControlOutput Interface of {0} in {1}", ((Type) plugin).FullName,
+              Log.Error("ControlDevices: Error getting IControlOutput Interface of {0} in {1}", ((Type)plugin).FullName,
                         plugin.LibraryName);
               continue;
             }
@@ -175,7 +175,7 @@ namespace MediaPortal.ControlDevices
       IEnumerator<IControlInput> inputIterator = _input.GetEnumerator();
 
       action = null;
-      key = (char) 0;
+      key = (char)0;
       keyCode = Keys.Escape;
 
       while (inputIterator.MoveNext())

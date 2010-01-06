@@ -39,14 +39,12 @@ namespace WatchDog
 
     private static string[] logNames = {"Application", "System"};
 
-    public PreTestActions()
-    {
-    }
+    public PreTestActions() {}
 
     private void updateProgress(int subActions)
     {
-      int actionAmount = 100/totalActions;
-      int subActionAmount = actionAmount/subActions;
+      int actionAmount = 100 / totalActions;
+      int subActionAmount = actionAmount / subActions;
       base.setProgress(base.getProgress() + subActionAmount);
     }
 
@@ -70,9 +68,7 @@ namespace WatchDog
         {
           e.Clear();
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
         updateProgress(subActions);
       }
       if (subActions == 0)

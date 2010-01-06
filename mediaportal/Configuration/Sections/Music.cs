@@ -124,6 +124,7 @@ namespace MediaPortal.Configuration.Sections
     private bool SuppressVisualizationRestart = false;
     private bool EnqueueNext = true;
     private BASS_VIS_PARAM _visParam = null;
+
     #endregion
 
     #region Controls
@@ -200,9 +201,7 @@ namespace MediaPortal.Configuration.Sections
     #endregion
 
     public Music()
-      : this("Music")
-    {
-    }
+      : this("Music") {}
 
     public Music(string name)
       : base(name)
@@ -363,9 +362,7 @@ namespace MediaPortal.Configuration.Sections
             {
               Directory.CreateDirectory(playListFolder);
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
           }
         }
 
@@ -518,7 +515,7 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", true);
         }
         else if (VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)
-        // This is the case, when we started Config without activating the Vis Tab
+          // This is the case, when we started Config without activating the Vis Tab
         {
           xmlwriter.SetValue("musicvisualization", "name", VizPluginInfo.Name);
           xmlwriter.SetValue("musicvisualization", "vizType", ((int)VizPluginInfo.VisualizationType).ToString());
@@ -808,7 +805,8 @@ namespace MediaPortal.Configuration.Sections
       this.MusicSettingsTabCtl.SelectedIndex = 0;
       this.MusicSettingsTabCtl.Size = new System.Drawing.Size(472, 400);
       this.MusicSettingsTabCtl.TabIndex = 1;
-      this.MusicSettingsTabCtl.SelectedIndexChanged += new System.EventHandler(this.MusicSettingsTabCtl_SelectedIndexChanged);
+      this.MusicSettingsTabCtl.SelectedIndexChanged +=
+        new System.EventHandler(this.MusicSettingsTabCtl_SelectedIndexChanged);
       // 
       // PlayerTabPg
       // 
@@ -857,8 +855,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarBuffering
       // 
-      this.hScrollBarBuffering.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.hScrollBarBuffering.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarBuffering.LargeChange = 500;
       this.hScrollBarBuffering.Location = new System.Drawing.Point(91, 161);
       this.hScrollBarBuffering.Maximum = 8499;
@@ -872,8 +872,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarCrossFade
       // 
-      this.hScrollBarCrossFade.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.hScrollBarCrossFade.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarCrossFade.LargeChange = 500;
       this.hScrollBarCrossFade.Location = new System.Drawing.Point(91, 137);
       this.hScrollBarCrossFade.Maximum = 16499;
@@ -920,11 +922,13 @@ namespace MediaPortal.Configuration.Sections
       this.StreamOutputLevelNud.Name = "StreamOutputLevelNud";
       this.StreamOutputLevelNud.Size = new System.Drawing.Size(52, 20);
       this.StreamOutputLevelNud.TabIndex = 1;
-      this.StreamOutputLevelNud.Value = new decimal(new int[] {
-            85,
-            0,
-            0,
-            0});
+      this.StreamOutputLevelNud.Value = new decimal(new int[]
+                                                      {
+                                                        85,
+                                                        0,
+                                                        0,
+                                                        0
+                                                      });
       // 
       // FadeOnStartStopChkbox
       // 
@@ -966,8 +970,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.mpLabel2);
       this.mpGroupBox1.Controls.Add(this.soundDeviceComboBox);
       this.mpGroupBox1.Controls.Add(this.label2);
@@ -992,8 +998,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // soundDeviceComboBox
       // 
-      this.soundDeviceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.soundDeviceComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.soundDeviceComboBox.BorderColor = System.Drawing.Color.Empty;
       this.soundDeviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.soundDeviceComboBox.Location = new System.Drawing.Point(91, 51);
@@ -1023,18 +1031,23 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioPlayerComboBox
       // 
-      this.audioPlayerComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioPlayerComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.audioPlayerComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioPlayerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioPlayerComboBox.Items.AddRange(new object[] {
-            "Internal dshow player",
-            "BASS engine"});
+      this.audioPlayerComboBox.Items.AddRange(new object[]
+                                                {
+                                                  "Internal dshow player",
+                                                  "BASS engine"
+                                                });
       this.audioPlayerComboBox.Location = new System.Drawing.Point(91, 24);
       this.audioPlayerComboBox.Name = "audioPlayerComboBox";
       this.audioPlayerComboBox.Size = new System.Drawing.Size(289, 21);
       this.audioPlayerComboBox.TabIndex = 1;
-      this.audioPlayerComboBox.SelectedIndexChanged += new System.EventHandler(this.audioPlayerComboBox_SelectedIndexChanged);
+      this.audioPlayerComboBox.SelectedIndexChanged +=
+        new System.EventHandler(this.audioPlayerComboBox_SelectedIndexChanged);
       // 
       // VisualizationsTabPg
       // 
@@ -1097,7 +1110,8 @@ namespace MediaPortal.Configuration.Sections
       this.EnableStatusOverlaysChkBox.TabIndex = 9;
       this.EnableStatusOverlaysChkBox.Text = "Enable status display in fullscreen mode (fast systems only)";
       this.EnableStatusOverlaysChkBox.UseVisualStyleBackColor = true;
-      this.EnableStatusOverlaysChkBox.CheckedChanged += new System.EventHandler(this.EnableStatusOverlaysChkBox_CheckedChanged);
+      this.EnableStatusOverlaysChkBox.CheckedChanged +=
+        new System.EventHandler(this.EnableStatusOverlaysChkBox_CheckedChanged);
       // 
       // ShowTrackInfoChkBox
       // 
@@ -1146,7 +1160,8 @@ namespace MediaPortal.Configuration.Sections
       this.VisualizationsCmbBox.Name = "VisualizationsCmbBox";
       this.VisualizationsCmbBox.Size = new System.Drawing.Size(289, 21);
       this.VisualizationsCmbBox.TabIndex = 1;
-      this.VisualizationsCmbBox.SelectedIndexChanged += new System.EventHandler(this.VisualizationsCmbBox_SelectedIndexChanged);
+      this.VisualizationsCmbBox.SelectedIndexChanged +=
+        new System.EventHandler(this.VisualizationsCmbBox_SelectedIndexChanged);
       // 
       // label7
       // 
@@ -1169,24 +1184,30 @@ namespace MediaPortal.Configuration.Sections
       // VisualizationFpsNud
       // 
       this.VisualizationFpsNud.Location = new System.Drawing.Point(91, 218);
-      this.VisualizationFpsNud.Maximum = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-      this.VisualizationFpsNud.Minimum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
+      this.VisualizationFpsNud.Maximum = new decimal(new int[]
+                                                       {
+                                                         50,
+                                                         0,
+                                                         0,
+                                                         0
+                                                       });
+      this.VisualizationFpsNud.Minimum = new decimal(new int[]
+                                                       {
+                                                         5,
+                                                         0,
+                                                         0,
+                                                         0
+                                                       });
       this.VisualizationFpsNud.Name = "VisualizationFpsNud";
       this.VisualizationFpsNud.Size = new System.Drawing.Size(52, 20);
       this.VisualizationFpsNud.TabIndex = 7;
-      this.VisualizationFpsNud.Value = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
+      this.VisualizationFpsNud.Value = new decimal(new int[]
+                                                     {
+                                                       30,
+                                                       0,
+                                                       0,
+                                                       0
+                                                     });
       this.VisualizationFpsNud.ValueChanged += new System.EventHandler(this.VisualizationFpsNud_ValueChanged);
       // 
       // PlaylistTabPg
@@ -1201,8 +1222,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.autoShuffleCheckBox);
       this.groupBox1.Controls.Add(this.ResumePlaylistChkBox);
       this.groupBox1.Controls.Add(this.SavePlaylistOnExitChkBox);
@@ -1264,7 +1287,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // playlistButton
       // 
-      this.playlistButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.playlistButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.playlistButton.Location = new System.Drawing.Point(365, 22);
       this.playlistButton.Name = "playlistButton";
       this.playlistButton.Size = new System.Drawing.Size(61, 22);
@@ -1275,8 +1300,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // playlistFolderTextBox
       // 
-      this.playlistFolderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.playlistFolderTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.playlistFolderTextBox.BorderColor = System.Drawing.Color.Empty;
       this.playlistFolderTextBox.Location = new System.Drawing.Point(91, 24);
       this.playlistFolderTextBox.Name = "playlistFolderTextBox";
@@ -1525,8 +1552,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.labelAutoPlay);
       this.mpGroupBox2.Controls.Add(this.autoPlayComboBox);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -1597,7 +1626,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion
@@ -1872,7 +1900,8 @@ namespace MediaPortal.Configuration.Sections
         BassVis.BASS_VIS_Quit(_visParam);
       }
       _visParam = new BASS_VIS_PARAM(BASSVISPlugin.BASSVISKIND_WINAMP);
-      BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_WINAMP, System.Diagnostics.Process.GetCurrentProcess().Handle, MediaPortal.GUI.Library.GUIGraphicsContext.form.Handle);
+      BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_WINAMP, System.Diagnostics.Process.GetCurrentProcess().Handle,
+                            MediaPortal.GUI.Library.GUIGraphicsContext.form.Handle);
       int tmpVis = BassVis.BASS_VIS_GetPluginHandle(BASSVISPlugin.BASSVISKIND_WINAMP, VizPluginInfo.FilePath);
       if (tmpVis != 0)
       {

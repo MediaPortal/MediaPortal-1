@@ -36,8 +36,10 @@ namespace TvPlugin
   public class TVUtil
   {
     #region vars
+
     private int _days;
     private static int _showEpisodeInfo = -1;
+
     private static int ShowEpisodeInfo
     {
       get
@@ -52,6 +54,7 @@ namespace TvPlugin
         return _showEpisodeInfo;
       }
     }
+
     #endregion
 
     public TVUtil()
@@ -236,14 +239,17 @@ namespace TvPlugin
       }
       return recordings;
     }
+
     public static string GetDisplayTitle(Recording rec)
     {
       return TitleDisplay(rec.Title, rec.EpisodeName, rec.SeriesNum, rec.EpisodeNum, rec.EpisodePart);
     }
+
     public static string GetDisplayTitle(Program prog)
     {
       return TitleDisplay(prog.Title, prog.EpisodeName, prog.SeriesNum, prog.EpisodeNum, prog.EpisodePart);
     }
+
     ///
     /// Get Episode info
     /// Builds string by the following rules set by ShowEpisodeInfo
@@ -299,6 +305,7 @@ namespace TvPlugin
       }
       return episodeInfo;
     }
+
     /// <summary>
     ///  Create Display Title
     /// </summary>
@@ -308,7 +315,8 @@ namespace TvPlugin
     /// <param name="episodeNum"></param>
     /// <param name="episodePart"></param>
     /// <returns></returns>
-    public static string TitleDisplay(string title, string episodeName, string seriesNum, string episodeNum, string episodePart)
+    public static string TitleDisplay(string title, string episodeName, string seriesNum, string episodeNum,
+                                      string episodePart)
     {
       string titleDisplay = GetEpisodeInfo(episodeName, seriesNum, episodeNum, episodePart);
       if (!String.IsNullOrEmpty(titleDisplay))
@@ -336,7 +344,8 @@ namespace TvPlugin
       if (!useRTSP) //SMB mode
       {
         bool fileExists = File.Exists(TVHome.Card.TimeShiftFileName);
-        if (!fileExists) // fileName does not exist b/c it points to the local folder on the tvserver, which is ofcourse invalid on the tv client.
+        if (!fileExists)
+          // fileName does not exist b/c it points to the local folder on the tvserver, which is ofcourse invalid on the tv client.
         {
           if (TVHome.TimeshiftingPath().Length > 0)
           {
@@ -353,7 +362,7 @@ namespace TvPlugin
         else
         {
           fileName = TVHome.Card.TimeShiftFileName;
-        }      
+        }
       }
       else //RTSP mode, get RTSP url
       {
@@ -369,14 +378,15 @@ namespace TvPlugin
     /// <param name="fileName"></param>
     /// <returns></returns>
     public static string GetFileNameForRecording(Recording rec)
-    {      
+    {
       bool useRTSP = TVHome.UseRTSP();
       string fileName = "";
-      
+
       if (!useRTSP) //SMB mode
       {
         bool fileExists = File.Exists(rec.FileName);
-        if (!fileExists) // fileName does not exist b/c it points to the local folder on the tvserver, which is ofcourse invalid on the tv client.
+        if (!fileExists)
+          // fileName does not exist b/c it points to the local folder on the tvserver, which is ofcourse invalid on the tv client.
         {
           if (TVHome.RecordingPath().Length > 0)
           {
@@ -386,7 +396,8 @@ namespace TvPlugin
 
             fileExists = File.Exists(fileNameSimple);
 
-            if (!fileExists) //maybe file exist in folder, schedules recs often appear in folders, no way to intelligently determine this.
+            if (!fileExists)
+              //maybe file exist in folder, schedules recs often appear in folders, no way to intelligently determine this.
             {
               DirectoryInfo dirInfo = Directory.GetParent(rec.FileName);
 
@@ -394,13 +405,12 @@ namespace TvPlugin
               {
                 string parentFolderName = dirInfo.Name;
                 fileName = TVHome.RecordingPath() + "\\" + parentFolderName + "\\" + fileName;
-              }                            
+              }
             }
             else
             {
               fileName = fileNameSimple;
             }
-
           }
           else // use automatic UNC path
           {
@@ -410,7 +420,7 @@ namespace TvPlugin
         }
         else //file exists, return it.
         {
-          fileName = rec.FileName;          
+          fileName = rec.FileName;
         }
       }
       else //RTSP mode, get RTSP url for file.

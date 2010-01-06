@@ -35,13 +35,14 @@ namespace UdpHelper
 {
   public class Connection
   {
-    bool logVerbose;
-    UdpClient udpClient;
+    private bool logVerbose;
+    private UdpClient udpClient;
 
-    Socket socket;
-    IPAddress hostIP = IPAddress.Parse("127.0.0.1");
+    private Socket socket;
+    private IPAddress hostIP = IPAddress.Parse("127.0.0.1");
 
     public delegate void ReceiveEventHandler(string strReceive);
+
     public event ReceiveEventHandler ReceiveEvent;
 
 
@@ -54,7 +55,7 @@ namespace UdpHelper
     }
 
 
-    class UdpState
+    private class UdpState
     {
       public IPEndPoint EndPoint;
       public UdpClient UdpClient;
@@ -62,7 +63,6 @@ namespace UdpHelper
 
     public Connection(bool log)
     {
-
       logVerbose = log;
     }
 
@@ -73,8 +73,7 @@ namespace UdpHelper
       {
         udpClient.Close();
       }
-      catch (System.NullReferenceException)
-      { }
+      catch (System.NullReferenceException) {}
       udpClient = null;
       socket = null;
     }
@@ -146,13 +145,8 @@ namespace UdpHelper
         OnReceive(strReceived);
         udpClientLoc.BeginReceive(new AsyncCallback(ReceiveCallback), (UdpState)(ar.AsyncState));
       }
-      catch (System.ObjectDisposedException)
-      {
-      }
-      catch (SocketException)
-      {
-      }
+      catch (System.ObjectDisposedException) {}
+      catch (SocketException) {}
     }
-
   }
 }

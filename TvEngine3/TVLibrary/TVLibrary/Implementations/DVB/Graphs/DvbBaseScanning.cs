@@ -37,6 +37,7 @@ namespace TvLibrary.Implementations.DVB
   public class DvbBaseScanning : IHardwarePidFiltering, IChannelScanCallback
   {
     #region enums
+
     /// <summary>
     /// Different stream service type
     /// </summary>
@@ -67,19 +68,24 @@ namespace TvLibrary.Implementations.DVB
       /// </summary>
       Mpeg4OrH264Stream = 134
     }
+
     #endregion
 
     #region variables
-    ITsChannelScan _analyzer;
-    readonly ITVCard _card;
-    ManualResetEvent _event;
+
+    private ITsChannelScan _analyzer;
+    private readonly ITVCard _card;
+    private ManualResetEvent _event;
+
     /// <summary>
     /// Enable wait for VCT indicator
     /// </summary>
     protected bool _enableWaitForVCT;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DvbBaseScanning"/> class.
     /// </summary>
@@ -88,16 +94,17 @@ namespace TvLibrary.Implementations.DVB
     {
       _card = card;
     }
+
     #endregion
 
     #region virtual members
+
     /// <summary>
     /// Sets the hw pids.
     /// </summary>
     /// <param name="pids">The pids.</param>
-    protected virtual void SetHwPids(List<ushort> pids)
-    {
-    }
+    protected virtual void SetHwPids(List<ushort> pids) {}
+
     /// <summary>
     /// Gets the analyzer.
     /// </summary>
@@ -106,17 +113,16 @@ namespace TvLibrary.Implementations.DVB
     {
       return null;
     }
+
     /// <summary>
     /// Gets the pin analyzer SI.
     /// </summary>
     /// <value>The pin analyzer SI.</value>
     protected virtual IPin PinAnalyzerSI
     {
-      get
-      {
-        return null;
-      }
+      get { return null; }
     }
+
     /// <summary>
     /// Creates the new channel.
     /// </summary>
@@ -126,22 +132,21 @@ namespace TvLibrary.Implementations.DVB
     {
       return null;
     }
+
     /// <summary>
     /// Resets the signal update.
     /// </summary>
-    protected virtual void ResetSignalUpdate()
-    {
+    protected virtual void ResetSignalUpdate() {}
 
-    }
     /// <summary>
     /// Resets this instance.
     /// </summary>
-    public void Reset()
-    {
-    }
+    public void Reset() {}
+
     #endregion
 
     #region IDisposable
+
     /// <summary>
     /// Disposes this instance.
     /// </summary>
@@ -151,9 +156,11 @@ namespace TvLibrary.Implementations.DVB
         return;
       //_analyzer.SetPidFilterCallback(null);
     }
+
     #endregion
 
     #region channel scanning
+
     /// <summary>
     /// Scans the specified transponder.
     /// </summary>
@@ -178,7 +185,8 @@ namespace TvLibrary.Implementations.DVB
           Thread.Sleep(settings.TimeOutTune * 1000);
           ResetSignalUpdate();
         }
-        Log.Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
+        Log.Log.WriteFile("Scan: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel,
+                          _card.SignalQuality);
         if (_card.IsTunerLocked || _card.SignalLevel > 0 || _card.SignalQuality > 0)
         {
           try
@@ -211,14 +219,17 @@ namespace TvLibrary.Implementations.DVB
               short hasAudio;
               short lcn;
               _analyzer.GetChannel((short)i,
-                    out networkId, out transportId, out serviceId, out majorChannel, out minorChannel,
-                    out frequency, out lcn, out freeCAMode, out serviceType, out modulation, out providerName, out serviceName,
-                    out pmtPid, out hasVideo, out hasAudio);
+                                   out networkId, out transportId, out serviceId, out majorChannel, out minorChannel,
+                                   out frequency, out lcn, out freeCAMode, out serviceType, out modulation,
+                                   out providerName, out serviceName,
+                                   out pmtPid, out hasVideo, out hasAudio);
               bool isValid = ((networkId != 0 || transportId != 0 || serviceId != 0) && pmtPid > -1);
               string name = DvbTextConverter.Convert(serviceName, "");
-              Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} type:{9:X}", i, networkId, transportId, serviceId, pmtPid, name, serviceType);
+              Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} type:{9:X}", i, networkId, transportId, serviceId,
+                            pmtPid, name, serviceType);
               ServiceType eServiceType = (ServiceType)serviceType;
-              if (eServiceType == ServiceType.Mpeg2HDStream || eServiceType == ServiceType.H264Stream || eServiceType == ServiceType.AdvancedCodecHDVideoStream)
+              if (eServiceType == ServiceType.Mpeg2HDStream || eServiceType == ServiceType.H264Stream ||
+                  eServiceType == ServiceType.AdvancedCodecHDVideoStream)
                 Log.Log.WriteFile("HD Video ({0})!", eServiceType.ToString());
 
               if ((channel as ATSCChannel) != null)
@@ -251,9 +262,8 @@ namespace TvLibrary.Implementations.DVB
                 {
                   if (hasVideo == 1)
                     info.serviceType = (int)ServiceType.Video;
-                  else
-                    if (hasAudio == 1)
-                      info.serviceType = (int)ServiceType.Audio;
+                  else if (hasAudio == 1)
+                    info.serviceType = (int)ServiceType.Audio;
                 }
 
                 if (IsKnownServiceType(info.serviceType))
@@ -264,13 +274,17 @@ namespace TvLibrary.Implementations.DVB
                     {
                       if (((ATSCChannel)channel).Frequency > 0)
                       {
-                        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}", ((ATSCChannel)channel).Frequency, info.network_pmt_PID.ToString());
-                        info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).Frequency, info.network_pmt_PID);
+                        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
+                                     ((ATSCChannel)channel).Frequency, info.network_pmt_PID.ToString());
+                        info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).Frequency,
+                                                          info.network_pmt_PID);
                       }
                       else
                       {
-                        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}", ((ATSCChannel)channel).PhysicalChannel, info.network_pmt_PID.ToString());
-                        info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).PhysicalChannel, info.network_pmt_PID);
+                        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
+                                     ((ATSCChannel)channel).PhysicalChannel, info.network_pmt_PID.ToString());
+                        info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).PhysicalChannel,
+                                                          info.network_pmt_PID);
                       }
                     }
                     else
@@ -283,7 +297,10 @@ namespace TvLibrary.Implementations.DVB
                   }
                 }
                 else
-                  Log.Log.Write("Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X} pmt:{6:X} hasVideo:{7} hasAudio:{8}", info.service_provider_name, info.service_name, info.serviceType, info.networkID, info.transportStreamID, info.serviceID, info.network_pmt_PID, hasVideo, hasAudio);
+                  Log.Log.Write(
+                    "Found Unknown: {0} {1} type:{2} onid:{3:X} tsid:{4:X} sid:{5:X} pmt:{6:X} hasVideo:{7} hasAudio:{8}",
+                    info.service_provider_name, info.service_name, info.serviceType, info.networkID,
+                    info.transportStreamID, info.serviceID, info.network_pmt_PID, hasVideo, hasAudio);
               }
             }
             if (found != channelCount)
@@ -313,6 +330,7 @@ namespace TvLibrary.Implementations.DVB
         _card.IsScanning = false;
       }
     }
+
     /// <summary>
     /// Filters the pids.
     /// </summary>
@@ -341,6 +359,7 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region NIT scanning
+
     ///<summary>
     /// Scan NIT channel
     ///</summary>
@@ -363,7 +382,8 @@ namespace TvLibrary.Implementations.DVB
         _analyzer.ScanNIT();
         Thread.Sleep(settings.TimeOutTune * 1000);
         ResetSignalUpdate();
-        Log.Log.WriteFile("ScanNIT: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel, _card.SignalQuality);
+        Log.Log.WriteFile("ScanNIT: tuner locked:{0} signal:{1} quality:{2}", _card.IsTunerLocked, _card.SignalLevel,
+                          _card.SignalQuality);
         if (_card.IsTunerLocked || _card.SignalLevel > 0 || _card.SignalQuality > 0)
         {
           int count;
@@ -377,7 +397,8 @@ namespace TvLibrary.Implementations.DVB
           {
             int freq, pol, mod, symbolrate, bandwidth, innerfec, rollOff, chType;
             IntPtr ptrName;
-            _analyzer.GetNITChannel((short)i, out chType, out freq, out pol, out mod, out symbolrate, out bandwidth, out innerfec, out rollOff, out ptrName);
+            _analyzer.GetNITChannel((short)i, out chType, out freq, out pol, out mod, out symbolrate, out bandwidth,
+                                    out innerfec, out rollOff, out ptrName);
             string name = DvbTextConverter.Convert(ptrName, "");
             if (chType == 0)
             {
@@ -388,11 +409,17 @@ namespace TvLibrary.Implementations.DVB
               switch (mod)
               {
                 default:
-                case 0: ch.ModulationType = ModulationType.ModNotSet; break;
-                //case 1: ch.ModulationType = ModulationType.ModQpsk; break;
-                case 2: ch.ModulationType = ModulationType.Mod8Psk; break;
-                case 3: ch.ModulationType = ModulationType.Mod16Qam; break;
-              }              
+                case 0:
+                  ch.ModulationType = ModulationType.ModNotSet;
+                  break;
+                  //case 1: ch.ModulationType = ModulationType.ModQpsk; break;
+                case 2:
+                  ch.ModulationType = ModulationType.Mod8Psk;
+                  break;
+                case 3:
+                  ch.ModulationType = ModulationType.Mod16Qam;
+                  break;
+              }
               ch.SymbolRate = symbolrate;
               ch.InnerFecRate = (BinaryConvolutionCodeRate)innerfec;
               ch.Polarisation = (Polarisation)pol;
@@ -419,7 +446,6 @@ namespace TvLibrary.Implementations.DVB
           }
           _analyzer.StopNIT();
           return channelsFound;
-
         }
         else
         {
@@ -436,17 +462,22 @@ namespace TvLibrary.Implementations.DVB
         _card.IsScanning = false;
       }
     }
+
     #endregion
 
     #region Helper
+
     private static bool IsKnownServiceType(int serviceType)
     {
       return (serviceType == (int)ServiceType.Video || serviceType == (int)ServiceType.Mpeg2HDStream ||
               serviceType == (int)ServiceType.Audio || serviceType == (int)ServiceType.H264Stream ||
-              serviceType == (int)ServiceType.AdvancedCodecHDVideoStream || // =advanced codec HD digital television service
-              serviceType == 0x8D || // = User private. his is needed to have the transponder for the 9 day dish epg guide discovered by the scan and to add the channel as TV Channel so that we can grab EPG from it
+              serviceType == (int)ServiceType.AdvancedCodecHDVideoStream ||
+              // =advanced codec HD digital television service
+              serviceType == 0x8D ||
+              // = User private. his is needed to have the transponder for the 9 day dish epg guide discovered by the scan and to add the channel as TV Channel so that we can grab EPG from it
               serviceType == (int)ServiceType.Mpeg4OrH264Stream);
     }
+
     #endregion
   }
 }

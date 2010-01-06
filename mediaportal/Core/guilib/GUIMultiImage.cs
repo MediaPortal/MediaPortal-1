@@ -62,14 +62,10 @@ namespace MediaPortal.GUI.Library
 
     #region ctor
 
-    private GUIMultiImage()
-    {
-    }
+    private GUIMultiImage() {}
 
     public GUIMultiImage(int dwParentID)
-      : base(dwParentID)
-    {
-    }
+      : base(dwParentID) {}
 
 
     /// <summary>
@@ -89,7 +85,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="randomized">indicates if the images should be randomized.</param>
     /// <param name="loop">indicates if the image rotation should be looped.</param>
     public GUIMultiImage(int dwParentID, int dwControlId, int iPosX, int iPosY, int dwWidth, int dwHeight,
-                         string strTexturePath, bool keepAspectRatio, uint timePerImage, uint fadeTime, bool randomized, bool loop)
+                         string strTexturePath, bool keepAspectRatio, uint timePerImage, uint fadeTime, bool randomized,
+                         bool loop)
       : base(dwParentID, dwControlId, iPosX, iPosY, dwWidth, dwHeight)
     {
       _keepAspectRatio = keepAspectRatio;
@@ -167,7 +164,6 @@ namespace MediaPortal.GUI.Library
 
     #endregion
 
-
     public override void ScaleToScreenResolution()
     {
       foreach (GUIImage image in _imageList)
@@ -198,7 +194,6 @@ namespace MediaPortal.GUI.Library
             _newPath = "";
           }
           _cachedPath = _newPath;
-
         }
         if (_cachedPath == null)
         {
@@ -292,7 +287,7 @@ namespace MediaPortal.GUI.Library
         }
         if (_registeredForEvent == false)
         {
-          GUIPropertyManager.OnPropertyChanged += GUIPropertyManager_OnPropertyChanged; 
+          GUIPropertyManager.OnPropertyChanged += GUIPropertyManager_OnPropertyChanged;
           _registeredForEvent = true;
         }
         _currentImage = 0;
@@ -454,7 +449,7 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
-        // If there was some other error accessing the folder, exit
+          // If there was some other error accessing the folder, exit
         catch (UnauthorizedAccessException)
         {
           return;
@@ -491,7 +486,6 @@ namespace MediaPortal.GUI.Library
       }
       //LoadImage(_currentImage);
       _isAllocated = true;
-
     }
 
     // Shuffles inplace

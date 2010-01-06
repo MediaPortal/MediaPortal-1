@@ -31,14 +31,10 @@ namespace MediaPortal.Configuration.Sections
   public class TVPostProcessing : BasePostProcessing
   {
     public TVPostProcessing()
-      : this("TV Post Processing")
-    {
-    }
+      : this("TV Post Processing") {}
 
     public TVPostProcessing(string name)
-      : base(name)
-    {
-    }
+      : base(name) {}
 
     public override void LoadSettings()
     {

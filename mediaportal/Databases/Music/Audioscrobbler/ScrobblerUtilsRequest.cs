@@ -33,9 +33,7 @@ namespace MediaPortal.Music.Database
 {
   public class ScrobblerRequestException : ApplicationException
   {
-    public ScrobblerRequestException(string message) : base(message)
-    {
-    }
+    public ScrobblerRequestException(string message) : base(message) {}
   }
 
   public class ScrobblerUtilsRequest
@@ -88,7 +86,7 @@ namespace MediaPortal.Music.Database
 
     public override bool Equals(object o)
     {
-      return o is ScrobblerUtilsRequest && ((ScrobblerUtilsRequest) o).ID == ID;
+      return o is ScrobblerUtilsRequest && ((ScrobblerUtilsRequest)o).ID == ID;
     }
 
     public override int GetHashCode()

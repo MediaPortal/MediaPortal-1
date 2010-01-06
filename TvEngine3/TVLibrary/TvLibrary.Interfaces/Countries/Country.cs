@@ -39,9 +39,7 @@ namespace TvLibrary
     /// <summary>
     /// Initializes a new instance of the <see cref="Country"/> class.
     /// </summary>
-    public Country()
-    {
-    }
+    public Country() {}
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Country"/> class.

@@ -109,7 +109,7 @@ namespace ProcessPlugins.CallerId
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxIncomingCall.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.numericUpDownTimeOut)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeOut)).BeginInit();
       this.SuspendLayout();
       // 
       // checkBoxStopMedia
@@ -247,7 +247,7 @@ namespace ProcessPlugins.CallerId
       this.Text = "ISDN Caller-ID - Setup";
       this.groupBoxIncomingCall.ResumeLayout(false);
       this.groupBoxIncomingCall.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.numericUpDownTimeOut)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeOut)).EndInit();
       this.ResumeLayout(false);
     }
 

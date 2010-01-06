@@ -349,7 +349,7 @@ namespace MediaPortal.WinampPlayer
     public void AppendToPlayList(string filename)
     {
       COPYDATASTRUCT cds;
-      cds.dwData = (IntPtr) WA_FILETOPLAYLIST;
+      cds.dwData = (IntPtr)WA_FILETOPLAYLIST;
       cds.lpData = filename;
       cds.cbData = filename.Length + 1;
 
@@ -377,12 +377,12 @@ namespace MediaPortal.WinampPlayer
       set
       {
         //IntPtr hwnd = FindWindow(m_windowName, null);	
-        SendMessageA(m_hwnd, WM_USER, (int) value, WA_SEEKPOS);
+        SendMessageA(m_hwnd, WM_USER, (int)value, WA_SEEKPOS);
       }
       get
       {
         //IntPtr hwnd = FindWindow(m_windowName, null);			
-        int position = SendMessageA(m_hwnd, WM_USER, 0, WA_POSITION)/1000;
+        int position = SendMessageA(m_hwnd, WM_USER, 0, WA_POSITION) / 1000;
         return position;
       }
     }

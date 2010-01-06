@@ -38,10 +38,7 @@ namespace SetupTv.Sections
 
       public Card Card
       {
-        get
-        {
-          return _card;
-        }
+        get { return _card; }
       }
 
       public CardInfo(Card card)
@@ -58,8 +55,8 @@ namespace SetupTv.Sections
     private readonly MPListViewStringColumnSorter lvwColumnSorter2;
     private readonly MPListViewStringColumnSorter lvwColumnSorter3;
 
-    bool _redrawTab1;
-    
+    private bool _redrawTab1;
+
     public TvCombinations(string name)
       : base(name)
     {
@@ -71,12 +68,10 @@ namespace SetupTv.Sections
       lvwColumnSorter2.OrderType = MPListViewStringColumnSorter.OrderTypes.AsValue;
       mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
       mpListViewChannels.ListViewItemSorter = lvwColumnSorter3;
-
     }
 
     public override void OnSectionDeActivated()
     {
-
       //DatabaseManager.Instance.SaveChanges();
       RemoteControl.Instance.OnNewSchedule();
       base.OnSectionDeActivated();
@@ -100,15 +95,10 @@ namespace SetupTv.Sections
         cards[card.IdCard] = RemoteControl.Instance.Type(card.IdCard);
       }
       base.OnSectionActivated();
-
-
     }
 
 
-    private void TvCombinations_Load(object sender, EventArgs e)
-    {
-
-    }
+    private void TvCombinations_Load(object sender, EventArgs e) {}
 
     private void mpComboBoxCard_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -116,7 +106,7 @@ namespace SetupTv.Sections
       mpListViewChannels.Items.Clear();
       mpListViewMapped.Items.Clear();
 
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
       sb.AddOrderByField(true, "sortOrder");
 
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
@@ -130,9 +120,8 @@ namespace SetupTv.Sections
         try
         {
           channel = map.ReferencedChannel();
-        } catch (Exception)
-        {
         }
+        catch (Exception) {}
         if (channel == null)
           continue;
         if (channel.IsTv == false)
@@ -161,7 +150,8 @@ namespace SetupTv.Sections
       Channel selectedChannel = (Channel)selectedItem.Tag;
       IList<Channel> allChannels = Channel.ListAll();
       List<ListViewItem> items = new List<ListViewItem>();
-      NotifyForm dlg = new NotifyForm("Searching for Similar Channels...", "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Searching for Similar Channels...",
+                                      "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
       foreach (Channel channel in allChannels)
@@ -296,17 +286,16 @@ namespace SetupTv.Sections
       }
     }
 
-    private void mpListViewMapped_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
+    private void mpListViewMapped_SelectedIndexChanged(object sender, EventArgs e) {}
 
     private void mpListViewChannels_ColumnClick(object sender, ColumnClickEventArgs e)
     {
       if (e.Column == lvwColumnSorter3.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        lvwColumnSorter3.Order = lvwColumnSorter3.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+        lvwColumnSorter3.Order = lvwColumnSorter3.Order == SortOrder.Ascending
+                                   ? SortOrder.Descending
+                                   : SortOrder.Ascending;
       }
       else
       {
@@ -324,7 +313,9 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter2.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        lvwColumnSorter2.Order = lvwColumnSorter2.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+        lvwColumnSorter2.Order = lvwColumnSorter2.Order == SortOrder.Ascending
+                                   ? SortOrder.Descending
+                                   : SortOrder.Ascending;
       }
       else
       {
@@ -338,5 +329,3 @@ namespace SetupTv.Sections
     }
   }
 }
-
-

@@ -125,7 +125,7 @@ namespace MediaPortal.Utils.Web
       int s = 0;
       for (int t = 0; t < _templateData.dataFields.Count; t++)
       {
-        DataField templateField = (DataField) _templateData.dataFields[t];
+        DataField templateField = (DataField)_templateData.dataFields[t];
 
         if (templateField.optional)
         {
@@ -137,7 +137,7 @@ namespace MediaPortal.Utils.Web
 
         if (s < sourceData.dataFields.Count)
         {
-          DataField sourceField = (DataField) sourceData.dataFields[s];
+          DataField sourceField = (DataField)sourceData.dataFields[s];
 
           if (!templateField.hasData &&
               templateField.htmlTag != null &&
@@ -156,7 +156,7 @@ namespace MediaPortal.Utils.Web
               int index = 0;
               for (int i = 0; i < templateField.dataElements.Count; i++)
               {
-                ElementData element = (ElementData) templateField.dataElements[i];
+                ElementData element = (ElementData)templateField.dataElements[i];
 
                 int startPos;
                 if (index < sourceField.source.Length)

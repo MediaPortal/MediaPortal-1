@@ -38,65 +38,81 @@ namespace TvLibrary.Implementations.Analog.Components
   internal class Tuner : IDisposable
   {
     #region variables
+
     /// <summary>
     /// The tuner device
     /// </summary>
     private readonly DsDevice _tunerDevice;
+
     /// <summary>
     /// The tuner filter
     /// </summary>
     private IBaseFilter _filterTvTuner;
+
     /// <summary>
     /// The current minimum channel number
     /// </summary>
     private int _minChannel;
+
     /// <summary>
     /// The current maximum channel number
     /// </summary>
     private int _maxChannel;
+
     /// <summary>
     /// Indicates if the tuner supports FM radio
     /// </summary>
     private bool _supportsFMRadio;
+
     /// <summary>
     /// Indicates if the tuner supports AM radio
     /// </summary>
     private bool _supportsAMRadio;
+
     /// <summary>
     /// The current analog channel
     /// </summary>
     private AnalogChannel _currentChannel;
+
     /// <summary>
     /// The tuner interface
     /// </summary>
     private IAMTVTuner _tuner;
+
     /// <summary>
     /// The current video frequency
     /// </summary>
     private int _videoFrequency;
+
     /// <summary>
     /// The current audio frequency
     /// </summary>
     private int _audioFrequency;
+
     /// <summary>
     /// Indicates if the tuner is locked
     /// </summary>
     private bool _tunerLocked;
+
     /// <summary>
     /// The current signal level
     /// </summary>
     private int _signalLevel;
+
     /// <summary>
     /// The current signal quality
     /// </summary>
     private int _signalQuality;
+
     /// <summary>
     /// The audio output pin
     /// </summary>
     private IPin _audioPin;
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// Gets the TvTuner filter
     /// </summary>
@@ -192,9 +208,11 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       get { return _minChannel; }
     }
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -203,9 +221,11 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       _tunerDevice = tunerDevice;
     }
+
     #endregion
 
     #region Dispose
+
     /// <summary>
     /// Diposes the tuner component
     /// </summary>
@@ -218,16 +238,16 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       if (_filterTvTuner != null)
       {
-        while (Marshal.ReleaseComObject(_filterTvTuner) > 0)
-        {
-        }
+        while (Marshal.ReleaseComObject(_filterTvTuner) > 0) {}
         _filterTvTuner = null;
       }
       DevicesInUse.Instance.Remove(_tunerDevice);
     }
+
     #endregion
 
     #region CreateFilterInstance method
+
     /// <summary>
     /// Creates the tuner filter instance
     /// </summary>
@@ -259,12 +279,13 @@ namespace TvLibrary.Implementations.Analog.Components
       DevicesInUse.Instance.Add(_tunerDevice);
       _tuner = _filterTvTuner as IAMTVTuner;
       if (string.IsNullOrEmpty(graph.Tuner.Name) || !_tunerDevice.Name.Equals(
-        graph.Tuner.Name))
+                                                       graph.Tuner.Name))
       {
         Log.Log.WriteFile("analog: Detecting capabilities of the tuner");
         graph.Tuner.Name = _tunerDevice.Name;
         int index;
-        _audioPin = FilterGraphTools.FindMediaPin(_filterTvTuner, MediaType.AnalogAudio, MediaSubType.Null, PinDirection.Output, out index);
+        _audioPin = FilterGraphTools.FindMediaPin(_filterTvTuner, MediaType.AnalogAudio, MediaSubType.Null,
+                                                  PinDirection.Output, out index);
         graph.Tuner.AudioPin = index;
         return CheckCapabilities(graph);
       }
@@ -274,9 +295,11 @@ namespace TvLibrary.Implementations.Analog.Components
       _supportsAMRadio = (graph.Tuner.RadioMode & RadioMode.AM) != 0;
       return true;
     }
+
     #endregion
 
     #region private helper methods
+
     /// <summary>
     /// Stores a frequency override in the registry
     /// </summary>
@@ -284,10 +307,15 @@ namespace TvLibrary.Implementations.Analog.Components
     private static void SetFrequencyOverride(AnalogChannel channel)
     {
       int countryCode = channel.Country.Id;
-      string[] registryLocations = new string[] { String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-1", countryCode),
-																  String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-0", countryCode),
-																  String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS0-1"),
-																  String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS0-0")};
+      string[] registryLocations = new string[]
+                                     {
+                                       String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-1",
+                                                     countryCode),
+                                       String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-0",
+                                                     countryCode),
+                                       String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS0-1"),
+                                       String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS0-0")
+                                     };
       if (channel.Frequency == 0)
       {
         //remove the frequency override in 
@@ -370,9 +398,11 @@ namespace TvLibrary.Implementations.Analog.Components
         _maxChannel = 128;
       }
     }
+
     #endregion
 
     #region public methods
+
     /// <summary>
     /// Indicates if it is a special plextor card
     /// </summary>
@@ -403,7 +433,8 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         AMTunerSignalStrength signalStrength;
         _tuner.SignalPresent(out signalStrength);
-        _tunerLocked = (signalStrength == AMTunerSignalStrength.SignalPresent || signalStrength == AMTunerSignalStrength.HasNoSignalStrength);
+        _tunerLocked = (signalStrength == AMTunerSignalStrength.SignalPresent ||
+                        signalStrength == AMTunerSignalStrength.HasNoSignalStrength);
       }
       catch (TvExceptionSWEncoderMissing)
       {
@@ -505,9 +536,10 @@ namespace TvLibrary.Implementations.Analog.Components
       _currentChannel = analogChannel;
       UpdateSignalQuality();
       UpdateMinMaxChannel();
-      Log.Log.WriteFile("Analog: Tuned to country:{0} video:{1} Hz audio:{2} Hz locked:{3}", analogChannel.Country.Id, _videoFrequency, _audioFrequency, _tunerLocked);
+      Log.Log.WriteFile("Analog: Tuned to country:{0} video:{1} Hz audio:{2} Hz locked:{3}", analogChannel.Country.Id,
+                        _videoFrequency, _audioFrequency, _tunerLocked);
     }
-    #endregion
 
+    #endregion
   }
 }

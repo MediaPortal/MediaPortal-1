@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
@@ -55,13 +55,9 @@ namespace MediaPortal.GUI.Library
     #region Constructors
 
     // singleton. Dont allow any instance of this class
-    private GUIFontManager()
-    {
-    }
+    private GUIFontManager() {}
 
-    static GUIFontManager()
-    {
-    }
+    static GUIFontManager() {}
 
     #endregion
 
@@ -355,7 +351,8 @@ namespace MediaPortal.GUI.Library
       draw.viewport = GUIGraphicsContext.DX9Device.Viewport;
       if (maxWidth >= 0)
       {
-        draw.viewport.Width = ((int)GUIGraphicsContext.GetFinalTransform().TransformXCoord(xpos + maxWidth, 0, 0)) - draw.viewport.X;
+        draw.viewport.Width = ((int)GUIGraphicsContext.GetFinalTransform().TransformXCoord(xpos + maxWidth, 0, 0)) -
+                              draw.viewport.X;
       }
       _listDrawText.Add(draw);
       _d3dxSpriteUsed = true;
@@ -567,7 +564,7 @@ namespace MediaPortal.GUI.Library
         string fontCache = String.Format(@"{0}\fonts", GUIGraphicsContext.SkinCacheFolder);
         MediaPortal.Util.Utils.DirectoryDelete(fontCache, true);
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     /// <summary>

@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.Music
 
     public GUIMusicOverlay()
     {
-      GetID = (int) Window.WINDOW_MUSIC_OVERLAY;
+      GetID = (int)Window.WINDOW_MUSIC_OVERLAY;
       playlistPlayer = PlayListPlayer.SingletonPlayer;
       _useBassEngine = BassMusicPlayer.IsDefaultMusicPlayer;
       using (Profile.Settings xmlreader = new Profile.MPSettings())
@@ -104,7 +104,7 @@ namespace MediaPortal.GUI.Music
     public override bool Init()
     {
       bool result = Load(GUIGraphicsContext.Skin + @"\musicOverlay.xml");
-      GetID = (int) Window.WINDOW_MUSIC_OVERLAY;
+      GetID = (int)Window.WINDOW_MUSIC_OVERLAY;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MusicOverlay);
       return result;
     }
@@ -120,9 +120,7 @@ namespace MediaPortal.GUI.Music
       AllocResources();
     }
 
-    public override void Render(float timePassed)
-    {
-    }
+    public override void Render(float timePassed) {}
 
     private void OnUpdateState(bool render)
     {
@@ -212,7 +210,7 @@ namespace MediaPortal.GUI.Music
           }
         }
         return false;
-          // no final animation when the video window has changed, this happens most likely when a new window opens
+        // no final animation when the video window has changed, this happens most likely when a new window opens
       }
       OnUpdateState(true);
       return true;
@@ -236,10 +234,10 @@ namespace MediaPortal.GUI.Music
           SetCurrentFile(_fileName);
         }
 
-        long lPTS1 = (long) (g_Player.CurrentPosition);
-        int hh = (int) (lPTS1/3600)%100;
-        int mm = (int) ((lPTS1/60)%60);
-        int ss = (int) ((lPTS1/1)%60);
+        long lPTS1 = (long)(g_Player.CurrentPosition);
+        int hh = (int)(lPTS1 / 3600) % 100;
+        int mm = (int)((lPTS1 / 60) % 60);
+        int ss = (int)((lPTS1 / 1) % 60);
 
         int iSpeed = g_Player.Speed;
         if (hh == 0 && mm == 0 && ss < 5)
@@ -274,17 +272,17 @@ namespace MediaPortal.GUI.Music
 
         if (_imageNormal != null)
         {
-          _imageNormal.Visible = (g_Player.PlaybackType == (int) PlayBackType.NORMAL);
+          _imageNormal.Visible = (g_Player.PlaybackType == (int)PlayBackType.NORMAL);
         }
 
         if (_imageGapless != null)
         {
-          _imageGapless.Visible = (g_Player.PlaybackType == (int) PlayBackType.GAPLESS);
+          _imageGapless.Visible = (g_Player.PlaybackType == (int)PlayBackType.GAPLESS);
         }
 
         if (_imageCrossfade != null)
         {
-          _imageCrossfade.Visible = (g_Player.PlaybackType == (int) PlayBackType.CROSSFADE);
+          _imageCrossfade.Visible = (g_Player.PlaybackType == (int)PlayBackType.CROSSFADE);
         }
 
         if (_videoWindow != null)
@@ -429,9 +427,7 @@ namespace MediaPortal.GUI.Music
         GUIPropertyManager.SetProperty("#Play.Next.File", Path.GetFileName(fileName));
         GUIPropertyManager.SetProperty("#Play.Next.Title", Util.Utils.GetFilename(fileName));
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       if (tag != null)
       {
@@ -477,7 +473,7 @@ namespace MediaPortal.GUI.Music
         {
           if (_videoWindow != null)
           {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, (int) _videoWindow.GetID,
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, (int)_videoWindow.GetID,
                                             0, 0, null);
             OnMessage(msg);
           }
@@ -560,7 +556,7 @@ namespace MediaPortal.GUI.Music
 
         if (item != null)
         {
-          tag = (MusicTag) item.MusicTag;
+          tag = (MusicTag)item.MusicTag;
         }
       }
 

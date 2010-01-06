@@ -87,14 +87,15 @@ namespace ProcessPlugins.AutoCropper
         verboseLog = reader.GetValueAsBool(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmVerboseLog,
                                            false);
         topScanStartFraction =
-          reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmTopStartSetting, 35)/100.0f;
+          reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmTopStartSetting, 35) /
+          100.0f;
         topScanEndFraction =
-          reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmTopEndSetting, 80)/100.0f;
+          reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmTopEndSetting, 80) / 100.0f;
         bottomScanStartFraction =
-          reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmBottomStartSetting, 0)/
+          reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmBottomStartSetting, 0) /
           100.0f;
         bottomScanEndFraction =
-          reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmBottomEndSetting, 100)/
+          reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName, AutoCropperConfig.parmBottomEndSetting, 100) /
           100.0f;
         maxBrightnessTreshold = reader.GetValueAsInt(AutoCropperConfig.autoCropSectionName,
                                                      AutoCropperConfig.parmMaxBrightnessTreshold, 40);
@@ -141,29 +142,29 @@ namespace ProcessPlugins.AutoCropper
       bool foundLeft = false;
       bool foundRight = false;
 
-      topStart = (int) (topScanStartFraction*frame.Width);
-      topEnd = (int) (topScanEndFraction*frame.Width);
+      topStart = (int)(topScanStartFraction * frame.Width);
+      topEnd = (int)(topScanEndFraction * frame.Width);
       if (topEnd >= frame.Width)
       {
         topEnd--;
       }
 
-      bottomStart = (int) (bottomScanStartFraction*frame.Width);
-      bottomEnd = (int) (bottomScanEndFraction*frame.Width);
+      bottomStart = (int)(bottomScanStartFraction * frame.Width);
+      bottomEnd = (int)(bottomScanEndFraction * frame.Width);
       if (bottomEnd >= frame.Width)
       {
         bottomEnd--;
       }
 
-      leftStart = (int) (leftScanStartFraction*frame.Height);
-      leftEnd = (int) (leftScanEndFraction*frame.Height);
+      leftStart = (int)(leftScanStartFraction * frame.Height);
+      leftEnd = (int)(leftScanEndFraction * frame.Height);
       if (leftEnd >= frame.Height)
       {
         leftEnd--;
       }
 
-      rightStart = (int) (rightScanStartFraction*frame.Height);
-      rightEnd = (int) (rightScanEndFraction*frame.Height);
+      rightStart = (int)(rightScanStartFraction * frame.Height);
+      rightEnd = (int)(rightScanEndFraction * frame.Height);
       if (rightEnd >= frame.Height)
       {
         rightEnd--;
@@ -180,11 +181,11 @@ namespace ProcessPlugins.AutoCropper
       //Top black bar binary search scan
       int mid = 0;
       int low = 0;
-      int high = frame.Height/2;
+      int high = frame.Height / 2;
 
       while (low <= high)
       {
-        mid = (low + high)/2;
+        mid = (low + high) / 2;
         ScanLine(mid, topStart, topEnd, true);
         if (IsContent(topStart, topEnd))
         {
@@ -204,12 +205,12 @@ namespace ProcessPlugins.AutoCropper
       }
 
       //Bottom black bar binary search scan
-      low = frame.Height/2;
+      low = frame.Height / 2;
       high = frame.Height - 1;
 
       while (low <= high)
       {
-        mid = (low + high)/2;
+        mid = (low + high) / 2;
         ScanLine(mid, bottomStart, bottomEnd, true);
         if (IsContent(bottomStart, bottomEnd))
         {
@@ -229,7 +230,7 @@ namespace ProcessPlugins.AutoCropper
       }
 
       // vertical scan of left half of screen
-      for (int line = 0; line < frame.Width/2; line++)
+      for (int line = 0; line < frame.Width / 2; line++)
       {
         ScanLine(line, leftStart, leftEnd, false);
         if (IsContent(leftStart, leftEnd))
@@ -246,7 +247,7 @@ namespace ProcessPlugins.AutoCropper
       }
 
       // vertical scan of right half of screen
-      for (int line = frame.Width - 1; line > frame.Width/2; line--)
+      for (int line = frame.Width - 1; line > frame.Width / 2; line--)
       {
         ScanLine(line, rightStart, rightEnd, false);
         if (IsContent(rightStart, rightEnd))
@@ -264,8 +265,8 @@ namespace ProcessPlugins.AutoCropper
 
       //frame.Save("C:\\analyzed_frame.bmp", ImageFormat.Bmp); // for debug purposes
 
-      if (!foundTop || !foundBottom || !foundLeft || !foundRight || bottomLine - topLine + 1 < frame.Height*0.25f ||
-          rightLine - leftLine + 1 < frame.Width*0.25f)
+      if (!foundTop || !foundBottom || !foundLeft || !foundRight || bottomLine - topLine + 1 < frame.Height * 0.25f ||
+          rightLine - leftLine + 1 < frame.Width * 0.25f)
       {
         if (verboseLog)
         {
@@ -404,7 +405,7 @@ namespace ProcessPlugins.AutoCropper
       //if (verboseLog) Log.Debug("Number of pixel above treshold : {0}, {1}, {2}", sumR, sumG, sumB);
 
       //Over half of the number of pixels are above the brightness treshold
-      if (sumR > ((end - start)/2) || sumG > ((end - start)/2) || sumB > ((end - start)/2))
+      if (sumR > ((end - start) / 2) || sumG > ((end - start) / 2) || sumB > ((end - start) / 2))
       {
         return true;
       }

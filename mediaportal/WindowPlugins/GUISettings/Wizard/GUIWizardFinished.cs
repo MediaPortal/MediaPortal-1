@@ -34,7 +34,7 @@ namespace MediaPortal.GUI.Settings
   {
     public GUIWizardFinished()
     {
-      GetID = (int) Window.WINDOW_WIZARD_FINISHED;
+      GetID = (int)Window.WINDOW_WIZARD_FINISHED;
     }
 
     public override bool Init()

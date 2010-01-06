@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using TvDatabase;
 using TvLibrary.Log;
+
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -27,7 +28,7 @@ using TvLibrary.Log;
 
 namespace TvService
 {
-  class TsCopier
+  internal class TsCopier
   {
     private Int64 _posStart;
     private string _fileStart;
@@ -42,13 +43,16 @@ namespace TvService
       _posEnd = posEnd;
       _fileEnd = fileEnd;
       _recording = recording;
-      Log.Info("TsCopier: dtor() pos1: {0}, file1: {1}, pos2: {2}, file2: {3}, rec: {4}",posStart , fileStart, posEnd, fileEnd, recording);
+      Log.Info("TsCopier: dtor() pos1: {0}, file1: {1}, pos2: {2}, file2: {3}, rec: {4}", posStart, fileStart, posEnd,
+               fileEnd, recording);
     }
+
     public void DoCopy()
     {
       try
       {
-        string baseTs = Path.GetDirectoryName(_fileStart) + "\\" + Path.GetFileNameWithoutExtension(_fileStart).Substring(0, 19);
+        string baseTs = Path.GetDirectoryName(_fileStart) + "\\" +
+                        Path.GetFileNameWithoutExtension(_fileStart).Substring(0, 19);
         Log.Info("TsCopier: baseTs: {0}", baseTs);
         int idCurrent = Int32.Parse(Path.GetFileNameWithoutExtension(_fileStart).Remove(0, 19));
         int idStart = idCurrent;
@@ -93,7 +97,6 @@ namespace TvService
           idCurrent++;
           if (idCurrent > maxFiles)
             idCurrent = 1;
-
         }
         Log.Info("TsCopier: processed all timeshift buffer files for recording.");
       }

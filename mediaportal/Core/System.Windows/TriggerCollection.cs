@@ -32,9 +32,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public TriggerCollection()
-    {
-    }
+    public TriggerCollection() {}
 
     #endregion Constructors
 
@@ -87,12 +85,10 @@ namespace System.Windows
         throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof (TriggerBase)));
       }
 
-      List.Add((TriggerBase) child);
+      List.Add((TriggerBase)child);
     }
 
-    void IAddChild.AddText(string text)
-    {
-    }
+    void IAddChild.AddText(string text) {}
 
     public int IndexOf(Trigger trigger)
     {
@@ -137,7 +133,7 @@ namespace System.Windows
 
     public Trigger this[int index]
     {
-      get { return (Trigger) List[index]; }
+      get { return (Trigger)List[index]; }
       set { List[index] = value; }
     }
 

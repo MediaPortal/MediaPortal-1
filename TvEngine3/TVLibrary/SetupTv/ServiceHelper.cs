@@ -1,4 +1,5 @@
 #region Copyright (C) 2006-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,6 +20,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 using System;
@@ -71,7 +73,9 @@ namespace SetupTv
         {
           if (!(ex is System.Runtime.Remoting.RemotingException || ex is System.Net.Sockets.SocketException))
           {
-            Log.Error("ServiceHelper: Could not check whether the tvservice is running. Please check your network as well. \nError: {0}", ex.ToString());
+            Log.Error(
+              "ServiceHelper: Could not check whether the tvservice is running. Please check your network as well. \nError: {0}",
+              ex.ToString());
           }
 
           try
@@ -91,7 +95,9 @@ namespace SetupTv
           }
           catch (Exception ex2)
           {
-            Log.Error("ServiceHelper: Fallback to check whether the tvservice is running failed as well. Please check your installation. \nError: {0}", ex2.ToString());
+            Log.Error(
+              "ServiceHelper: Fallback to check whether the tvservice is running failed as well. Please check your installation. \nError: {0}",
+              ex2.ToString());
           }
           return false;
         }
@@ -239,7 +245,9 @@ namespace SetupTv
     {
       try
       {
-        using (RegistryKey rKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\" + aServiceName, true))
+        using (
+          RegistryKey rKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\" + aServiceName, true)
+          )
         {
           if (rKey != null)
           {
@@ -271,11 +279,12 @@ namespace SetupTv
     {
       try
       {
-        using (RegistryKey rKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\TVService", true))
+        using (RegistryKey rKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\TVService", true)
+          )
         {
           if (rKey != null)
           {
-            rKey.SetValue("DependOnService", new string[] { dependsOnService, "Netman" }, RegistryValueKind.MultiString);
+            rKey.SetValue("DependOnService", new string[] {dependsOnService, "Netman"}, RegistryValueKind.MultiString);
             rKey.SetValue("Start", 2, RegistryValueKind.DWord); // Set TVService to autostart
           }
         }
@@ -288,6 +297,5 @@ namespace SetupTv
         return false;
       }
     }
-
   }
 }

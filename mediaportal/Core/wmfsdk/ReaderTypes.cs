@@ -24,61 +24,41 @@
 #endregion
 
 using System;
-
 using System.Text;
-
 using System.Runtime.InteropServices;
-
 
 
 namespace Yeti.WMFSdk
 
 {
-
-  [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
-
+  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
   public struct WM_READER_CLIENTINFO
 
   {
-
     public uint cbSize;
 
-    [MarshalAs(UnmanagedType.LPWStr)]
+    [MarshalAs(UnmanagedType.LPWStr)] public string wszLang;
 
-    public string wszLang;
+    [MarshalAs(UnmanagedType.LPWStr)] public string wszBrowserUserAgent;
 
-    [MarshalAs(UnmanagedType.LPWStr)]
+    [MarshalAs(UnmanagedType.LPWStr)] public string wszBrowserWebPage;
 
-    public string wszBrowserUserAgent;  
+    private ulong qwReserved;
 
-    [MarshalAs(UnmanagedType.LPWStr)]
+    public IntPtr pReserved;
 
-    public string wszBrowserWebPage;    
+    [MarshalAs(UnmanagedType.LPWStr)] public string wszHostExe;
 
-    ulong  qwReserved;            
+    public ulong qwHostVersion;
 
-    public IntPtr pReserved;            
-
-    [MarshalAs(UnmanagedType.LPWStr)]
-
-    public string wszHostExe;           
-
-    public ulong  qwHostVersion;         
-
-    [MarshalAs(UnmanagedType.LPWStr)]
-
-    public string wszPlayerUserAgent;   
-
-  };
-
+    [MarshalAs(UnmanagedType.LPWStr)] public string wszPlayerUserAgent;
+  } ;
 
 
   [StructLayout(LayoutKind.Sequential)]
-
   public struct WM_READER_STATISTICS
 
   {
-
     public uint cbSize;
 
     public uint dwBandwidth;
@@ -90,881 +70,685 @@ namespace Yeti.WMFSdk
     public uint cPacketsLost;
 
     public uint wQuality;
-
-  };
-
+  } ;
 
 
   [ComImport]
-
   [Guid("9F762FA7-A22E-428d-93C9-AC82F3AAFE5A")]
-
   [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-
   public interface IWMReaderAllocatorEx
 
   {
-
-    void AllocateForStreamEx( [In] ushort wStreamNum,
-
-                              [In] uint cbBuffer,
-
-                              [Out] out INSSBuffer ppBuffer,
-
-                              [In] uint dwFlags,
-
-                              [In] ulong cnsSampleTime,
-
-                              [In] ulong cnsSampleDuration,
-
-                              [In] IntPtr pvContext);
+    void AllocateForStreamEx([In] ushort wStreamNum,
+                             [In] uint cbBuffer,
+                             [Out] out INSSBuffer ppBuffer,
+                             [In] uint dwFlags,
+                             [In] ulong cnsSampleTime,
+                             [In] ulong cnsSampleDuration,
+                             [In] IntPtr pvContext);
 
 
-
-    void AllocateForOutputEx( [In] uint dwOutputNum,
-
-                                 [In] uint cbBuffer,
-
-                                 [Out] out INSSBuffer ppBuffer,
-
-                                 [In] uint dwFlags,
-
-                                 [In] ulong cnsSampleTime,
-
-                                 [In] ulong cnsSampleDuration,
-
-                                 [In] IntPtr pvContext );
-
+    void AllocateForOutputEx([In] uint dwOutputNum,
+                             [In] uint cbBuffer,
+                             [Out] out INSSBuffer ppBuffer,
+                             [In] uint dwFlags,
+                             [In] ulong cnsSampleTime,
+                             [In] ulong cnsSampleDuration,
+                             [In] IntPtr pvContext);
   }
 
 
-
   [ComImport]
-
   [Guid("9397F121-7705-4dc9-B049-98B698188414")]
-
   [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-
-  public interface IWMSyncReader 
+  public interface IWMSyncReader
 
   {
-
-    void Open( [In, MarshalAs(UnmanagedType.LPWStr)] string pwszFilename );
+    void Open([In, MarshalAs(UnmanagedType.LPWStr)] string pwszFilename);
 
     void Close();
 
-    void SetRange([In] ulong cnsStartTime, [In] long cnsDuration );
+    void SetRange([In] ulong cnsStartTime, [In] long cnsDuration);
 
-    void SetRangeByFrame([In] ushort wStreamNum, [In] ulong qwFrameNumber, [In]long cFramesToRead );
+    void SetRangeByFrame([In] ushort wStreamNum, [In] ulong qwFrameNumber, [In] long cFramesToRead);
 
     void GetNextSample([In] ushort wStreamNum,
-
                        [Out] out INSSBuffer ppSample,
-
                        [Out] out ulong pcnsSampleTime,
-
                        [Out] out ulong pcnsDuration,
-
                        [Out] out uint pdwFlags,
-
                        [Out] out uint pdwOutputNum,
+                       [Out] out ushort pwStreamNum);
 
-                       [Out] out ushort pwStreamNum );
+    void SetStreamsSelected([In] ushort cStreamCount,
+                            [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] ushort[] pwStreamNumbers,
+                            [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] WMT_STREAM_SELECTION[]
+                              pSelections);
 
-    void SetStreamsSelected( [In] ushort cStreamCount,
+    void GetStreamSelected([In] ushort wStreamNum,
+                           [Out] out WMT_STREAM_SELECTION pSelection);
 
-                             [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] ushort[] pwStreamNumbers,
+    void SetReadStreamSamples([In] ushort wStreamNum,
+                              [In, MarshalAs(UnmanagedType.Bool)] bool fCompressed);
 
-                             [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] WMT_STREAM_SELECTION[] pSelections  );
+    void GetReadStreamSamples([In] ushort wStreamNum,
+                              [Out, MarshalAs(UnmanagedType.Bool)] out bool pfCompressed);
 
-    void GetStreamSelected( [In]ushort wStreamNum,
+    void GetOutputSetting([In] uint dwOutputNum,
+                          [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
+                          [Out] out WMT_ATTR_DATATYPE pType,
+                          /*[out, size_is( *pcbLength )]*/ IntPtr pValue,
+                          [In, Out] ref uint pcbLength);
 
-                            [Out] out WMT_STREAM_SELECTION  pSelection );
+    void SetOutputSetting([In] uint dwOutputNum,
+                          [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
+                          [In] WMT_ATTR_DATATYPE Type,
+                          [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 4)] byte[] pValue,
+                          [In] uint cbLength);
 
-    void SetReadStreamSamples( [In] ushort wStreamNum,
+    void GetOutputCount([Out] out uint pcOutputs);
 
-                               [In, MarshalAs(UnmanagedType.Bool)] bool fCompressed );
+    void GetOutputProps([In] uint dwOutputNum,
+                        [Out, MarshalAs(UnmanagedType.Interface)] out IWMOutputMediaProps ppOutput);
 
-    void GetReadStreamSamples( [In] ushort wStreamNum,
+    void SetOutputProps([In] uint dwOutputNum, [In, MarshalAs(UnmanagedType.Interface)] IWMOutputMediaProps pOutput);
 
-                               [Out, MarshalAs(UnmanagedType.Bool)] out bool pfCompressed );
+    void GetOutputFormatCount([In] uint dwOutputNum, [Out] out uint pcFormats);
 
-    void GetOutputSetting( [In] uint dwOutputNum,
+    void GetOutputFormat([In] uint dwOutputNum,
+                         [In] uint dwFormatNum,
+                         [Out, MarshalAs(UnmanagedType.Interface)] out IWMOutputMediaProps ppProps);
 
-                           [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
+    void GetOutputNumberForStream([In] ushort wStreamNum, [Out] out uint pdwOutputNum);
 
-                           [Out] out WMT_ATTR_DATATYPE pType,
+    void GetStreamNumberForOutput([In] uint dwOutputNum, [Out] out ushort pwStreamNum);
 
-                           /*[out, size_is( *pcbLength )]*/ IntPtr pValue,
+    void GetMaxOutputSampleSize([In] uint dwOutput, [Out] out uint pcbMax);
 
-                           [In, Out] ref uint pcbLength );
+    void GetMaxStreamSampleSize([In] ushort wStream, [Out] out uint pcbMax);
 
-    void SetOutputSetting( [In] uint dwOutputNum,
-
-                           [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
-
-                           [In] WMT_ATTR_DATATYPE  Type,
-
-                           [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=4)] byte[] pValue,
-
-                           [In] uint cbLength );
-
-    void GetOutputCount( [Out] out uint pcOutputs );
-
-    void GetOutputProps( [In] uint dwOutputNum, [Out, MarshalAs(UnmanagedType.Interface)] out IWMOutputMediaProps ppOutput );
-
-    void SetOutputProps( [In] uint dwOutputNum, [In, MarshalAs(UnmanagedType.Interface)] IWMOutputMediaProps pOutput );
-
-    void GetOutputFormatCount( [In] uint dwOutputNum, [Out] out uint pcFormats );
-
-    void GetOutputFormat( [In] uint dwOutputNum,
-
-                          [In] uint dwFormatNum,
-
-                          [Out, MarshalAs(UnmanagedType.Interface)] out IWMOutputMediaProps ppProps );
-
-    void GetOutputNumberForStream( [In] ushort wStreamNum, [Out] out uint pdwOutputNum );
-
-    void GetStreamNumberForOutput( [In] uint dwOutputNum, [Out] out ushort pwStreamNum );
-
-    void GetMaxOutputSampleSize( [In] uint dwOutput, [Out] out uint pcbMax );
-
-    void GetMaxStreamSampleSize( [In] ushort wStream, [Out] out uint pcbMax );
-
-    void OpenStream( [In, MarshalAs(UnmanagedType.Interface)] System.Runtime.InteropServices.ComTypes.IStream pStream );
-
+    void OpenStream([In, MarshalAs(UnmanagedType.Interface)] System.Runtime.InteropServices.ComTypes.IStream pStream);
   }
 
 
-
   [ComImport]
-
   [Guid("faed3d21-1b6b-4af7-8cb6-3e189bbc187b")]
-
   [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-
   public interface IWMSyncReader2 : IWMSyncReader
 
   {
-
     //IWMSyncReader
 
-    new void Open( [In, MarshalAs(UnmanagedType.LPWStr)] string pwszFilename );
+    new void Open([In, MarshalAs(UnmanagedType.LPWStr)] string pwszFilename);
 
     new void Close();
 
-    new void SetRange([In] ulong cnsStartTime, [In] long cnsDuration );
+    new void SetRange([In] ulong cnsStartTime, [In] long cnsDuration);
 
-    new void SetRangeByFrame([In] ushort wStreamNum, [In] ulong qwFrameNumber, [In]long cFramesToRead );
+    new void SetRangeByFrame([In] ushort wStreamNum, [In] ulong qwFrameNumber, [In] long cFramesToRead);
 
     new void GetNextSample([In] ushort wStreamNum,
+                           [Out] out INSSBuffer ppSample,
+                           [Out] out ulong pcnsSampleTime,
+                           [Out] out ulong pcnsDuration,
+                           [Out] out uint pdwFlags,
+                           [Out] out uint pdwOutputNum,
+                           [Out] out ushort pwStreamNum);
 
-      [Out] out INSSBuffer ppSample,
+    new void SetStreamsSelected([In] ushort cStreamCount,
+                                [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] ushort[] pwStreamNumbers,
+                                [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] WMT_STREAM_SELECTION[]
+                                  pSelections);
 
-      [Out] out ulong pcnsSampleTime,
+    new void GetStreamSelected([In] ushort wStreamNum,
+                               [Out] out WMT_STREAM_SELECTION pSelection);
 
-      [Out] out ulong pcnsDuration,
+    new void SetReadStreamSamples([In] ushort wStreamNum,
+                                  [In, MarshalAs(UnmanagedType.Bool)] bool fCompressed);
 
-      [Out] out uint pdwFlags,
+    new void GetReadStreamSamples([In] ushort wStreamNum,
+                                  [Out, MarshalAs(UnmanagedType.Bool)] out bool pfCompressed);
 
-      [Out] out uint pdwOutputNum,
+    new void GetOutputSetting([In] uint dwOutputNum,
+                              [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
+                              [Out] out WMT_ATTR_DATATYPE pType,
+                              /*[out, size_is( *pcbLength )]*/ IntPtr pValue,
+                              [In, Out] ref uint pcbLength);
 
-      [Out] out ushort pwStreamNum );
+    new void SetOutputSetting([In] uint dwOutputNum,
+                              [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
+                              [In] WMT_ATTR_DATATYPE Type,
+                              [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 4)] byte[] pValue,
+                              [In] uint cbLength);
 
-    new void SetStreamsSelected( [In] ushort cStreamCount,
+    new void GetOutputCount([Out] out uint pcOutputs);
 
-      [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] ushort[] pwStreamNumbers,
+    new void GetOutputProps([In] uint dwOutputNum,
+                            [Out, MarshalAs(UnmanagedType.Interface)] out IWMOutputMediaProps ppOutput);
 
-      [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] WMT_STREAM_SELECTION[] pSelections  );
+    new void SetOutputProps([In] uint dwOutputNum, [In, MarshalAs(UnmanagedType.Interface)] IWMOutputMediaProps pOutput);
 
-    new void GetStreamSelected( [In]ushort wStreamNum,
+    new void GetOutputFormatCount([In] uint dwOutputNum, [Out] out uint pcFormats);
 
-      [Out] out WMT_STREAM_SELECTION  pSelection );
+    new void GetOutputFormat([In] uint dwOutputNum,
+                             [In] uint dwFormatNum,
+                             [Out, MarshalAs(UnmanagedType.Interface)] out IWMOutputMediaProps ppProps);
 
-    new void SetReadStreamSamples( [In] ushort wStreamNum,
+    new void GetOutputNumberForStream([In] ushort wStreamNum, [Out] out uint pdwOutputNum);
 
-      [In, MarshalAs(UnmanagedType.Bool)] bool fCompressed );
+    new void GetStreamNumberForOutput([In] uint dwOutputNum, [Out] out ushort pwStreamNum);
 
-    new void GetReadStreamSamples( [In] ushort wStreamNum,
+    new void GetMaxOutputSampleSize([In] uint dwOutput, [Out] out uint pcbMax);
 
-      [Out, MarshalAs(UnmanagedType.Bool)] out bool pfCompressed );
+    new void GetMaxStreamSampleSize([In] ushort wStream, [Out] out uint pcbMax);
 
-    new void GetOutputSetting( [In] uint dwOutputNum,
-
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
-
-      [Out] out WMT_ATTR_DATATYPE pType,
-
-      /*[out, size_is( *pcbLength )]*/ IntPtr pValue,
-
-      [In, Out] ref uint pcbLength );
-
-    new void SetOutputSetting( [In] uint dwOutputNum,
-
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
-
-      [In] WMT_ATTR_DATATYPE  Type,
-
-      [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=4)] byte[] pValue,
-
-      [In] uint cbLength );
-
-    new void GetOutputCount( [Out] out uint pcOutputs );
-
-    new void GetOutputProps( [In] uint dwOutputNum, [Out, MarshalAs(UnmanagedType.Interface)] out IWMOutputMediaProps ppOutput );
-
-    new void SetOutputProps( [In] uint dwOutputNum, [In, MarshalAs(UnmanagedType.Interface)] IWMOutputMediaProps pOutput );
-
-    new void GetOutputFormatCount( [In] uint dwOutputNum, [Out] out uint pcFormats );
-
-    new void GetOutputFormat( [In] uint dwOutputNum,
-
-      [In] uint dwFormatNum,
-
-      [Out, MarshalAs(UnmanagedType.Interface)] out IWMOutputMediaProps ppProps );
-
-    new void GetOutputNumberForStream( [In] ushort wStreamNum, [Out] out uint pdwOutputNum );
-
-    new void GetStreamNumberForOutput( [In] uint dwOutputNum, [Out] out ushort pwStreamNum );
-
-    new void GetMaxOutputSampleSize( [In] uint dwOutput, [Out] out uint pcbMax );
-
-    new void GetMaxStreamSampleSize( [In] ushort wStream, [Out] out uint pcbMax );
-
-    new void OpenStream( [In, MarshalAs(UnmanagedType.Interface)] System.Runtime.InteropServices.ComTypes.IStream pStream );
+    new void OpenStream([In, MarshalAs(UnmanagedType.Interface)] System.Runtime.InteropServices.ComTypes.IStream pStream);
 
     //IWMSyncReader2
 
-    void SetRangeByTimecode( [In] ushort wStreamNum,
-
-                             [In] ref WMT_TIMECODE_EXTENSION_DATA pStart,
-
-                             [In] ref WMT_TIMECODE_EXTENSION_DATA pEnd );
+    void SetRangeByTimecode([In] ushort wStreamNum,
+                            [In] ref WMT_TIMECODE_EXTENSION_DATA pStart,
+                            [In] ref WMT_TIMECODE_EXTENSION_DATA pEnd);
 
 
+    void SetRangeByFrameEx([In] ushort wStreamNum,
+                           [In] ulong qwFrameNumber,
+                           [In] long cFramesToRead,
+                           [Out] out ulong pcnsStartTime);
 
-    void SetRangeByFrameEx( [In] ushort wStreamNum,
+    void SetAllocateForOutput([In] uint dwOutputNum,
+                              [In, MarshalAs(UnmanagedType.Interface)] IWMReaderAllocatorEx pAllocator);
 
-                            [In] ulong qwFrameNumber,
+    void GetAllocateForOutput([In] uint dwOutputNum,
+                              [Out, MarshalAs(UnmanagedType.Interface)] out IWMReaderAllocatorEx ppAllocator);
 
-                            [In] long cFramesToRead,
+    void SetAllocateForStream([In] ushort wStreamNum,
+                              [In, MarshalAs(UnmanagedType.Interface)] IWMReaderAllocatorEx pAllocator);
 
-                            [Out] out ulong pcnsStartTime );
-
-    void SetAllocateForOutput( [In] uint dwOutputNum, [In, MarshalAs(UnmanagedType.Interface)] IWMReaderAllocatorEx pAllocator );
-
-    void GetAllocateForOutput( [In] uint dwOutputNum, [Out, MarshalAs(UnmanagedType.Interface)] out IWMReaderAllocatorEx ppAllocator );
-
-    void SetAllocateForStream( [In] ushort wStreamNum, [In, MarshalAs(UnmanagedType.Interface)] IWMReaderAllocatorEx pAllocator );
-
-    void GetAllocateForStream( [In] ushort dwSreamNum, [Out, MarshalAs(UnmanagedType.Interface)] out IWMReaderAllocatorEx ppAllocator );
-
+    void GetAllocateForStream([In] ushort dwSreamNum,
+                              [Out, MarshalAs(UnmanagedType.Interface)] out IWMReaderAllocatorEx ppAllocator);
   }
 
-  
 
   [ComImport]
-
   [Guid("96406BD8-2B2B-11d3-B36B-00C04F6108FF")]
-
   [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-
   public interface IWMReaderCallback : IWMStatusCallback
 
   {
-
     //IWMStatusCallback
 
-    new void OnStatus( [In] WMT_STATUS Status,
-
-      [In] IntPtr hr,
-
-      [In] WMT_ATTR_DATATYPE dwType,
-
-      [In] IntPtr pValue,
-
-      [In] IntPtr pvContext );
+    new void OnStatus([In] WMT_STATUS Status,
+                      [In] IntPtr hr,
+                      [In] WMT_ATTR_DATATYPE dwType,
+                      [In] IntPtr pValue,
+                      [In] IntPtr pvContext);
 
     //IWMReaderCallback
 
-    void OnSample( [In] uint dwOutputNum,
-
-                   [In] ulong cnsSampleTime,
-
-                   [In] ulong cnsSampleDuration,
-
-                   [In] uint dwFlags,
-
-                   [In, MarshalAs(UnmanagedType.Interface)] INSSBuffer pSample,
-
-                   [In] IntPtr pvContext );
-
+    void OnSample([In] uint dwOutputNum,
+                  [In] ulong cnsSampleTime,
+                  [In] ulong cnsSampleDuration,
+                  [In] uint dwFlags,
+                  [In, MarshalAs(UnmanagedType.Interface)] INSSBuffer pSample,
+                  [In] IntPtr pvContext);
   }
 
 
-
   [ComImport]
-
   [Guid("96406BD6-2B2B-11d3-B36B-00C04F6108FF")]
-
   [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-
   public interface IWMReader
 
   {
-
-    void Open( [In, MarshalAs(UnmanagedType.LPWStr)] string pwszURL,
-
-               [In, MarshalAs(UnmanagedType.Interface)] IWMReaderCallback pCallback,
-
-               [In] IntPtr pvContext );
+    void Open([In, MarshalAs(UnmanagedType.LPWStr)] string pwszURL,
+              [In, MarshalAs(UnmanagedType.Interface)] IWMReaderCallback pCallback,
+              [In] IntPtr pvContext);
 
     void Close();
 
-    void GetOutputCount( [Out] out uint pcOutputs );
+    void GetOutputCount([Out] out uint pcOutputs);
 
-    void GetOutputProps( [In] uint dwOutputNum,
+    void GetOutputProps([In] uint dwOutputNum,
+                        [Out, MarshalAs(UnmanagedType.Interface)] out IWMOutputMediaProps ppOutput);
 
-                         [Out, MarshalAs(UnmanagedType.Interface)] out IWMOutputMediaProps ppOutput );
+    void SetOutputProps([In] uint dwOutputNum,
+                        [In, MarshalAs(UnmanagedType.Interface)] IWMOutputMediaProps pOutput);
 
-    void SetOutputProps( [In] uint dwOutputNum,
+    void GetOutputFormatCount([In] uint dwOutputNumber, [Out] out uint pcFormats);
 
-                         [In, MarshalAs(UnmanagedType.Interface)] IWMOutputMediaProps pOutput );
+    void GetOutputFormat([In] uint dwOutputNumber,
+                         [In] uint dwFormatNumber,
+                         [Out, MarshalAs(UnmanagedType.Interface)] out IWMOutputMediaProps ppProps);
 
-    void GetOutputFormatCount( [In] uint dwOutputNumber, [Out] out uint pcFormats );
-
-    void GetOutputFormat( [In] uint dwOutputNumber,
-
-                          [In] uint dwFormatNumber,
-
-                          [Out, MarshalAs(UnmanagedType.Interface)] out IWMOutputMediaProps ppProps );
-
-    void Start( [In] ulong cnsStart,
-
-                [In] ulong cnsDuration,
-
-                [In] float fRate,
-
-                [In] IntPtr pvContext );
+    void Start([In] ulong cnsStart,
+               [In] ulong cnsDuration,
+               [In] float fRate,
+               [In] IntPtr pvContext);
 
     void Stop();
 
     void Pause();
 
     void Resume();
-
   }
 
 
-
   [ComImport]
-
   [Guid("96406BEA-2B2B-11d3-B36B-00C04F6108FF")]
-
   [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-
-  public interface IWMReaderAdvanced 
+  public interface IWMReaderAdvanced
 
   {
+    void SetUserProvidedClock([In, MarshalAs(UnmanagedType.Bool)] bool fUserClock);
 
-    void SetUserProvidedClock( [In, MarshalAs(UnmanagedType.Bool)] bool fUserClock );
+    void GetUserProvidedClock([Out, MarshalAs(UnmanagedType.Bool)] out bool pfUserClock);
 
-    void GetUserProvidedClock( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfUserClock );
+    void DeliverTime([In] ulong cnsTime);
 
-    void DeliverTime( [In] ulong cnsTime );
+    void SetManualStreamSelection([In, MarshalAs(UnmanagedType.Bool)] bool fSelection);
 
-    void SetManualStreamSelection( [In, MarshalAs(UnmanagedType.Bool)] bool fSelection );
+    void GetManualStreamSelection([Out, MarshalAs(UnmanagedType.Bool)] out bool pfSelection);
 
-    void GetManualStreamSelection( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfSelection );
+    void SetStreamsSelected([In] ushort cStreamCount,
+                            [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] ushort[] pwStreamNumbers,
+                            [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] WMT_STREAM_SELECTION[]
+                              pSelections);
 
-    void SetStreamsSelected( [In] ushort cStreamCount,
+    void GetStreamSelected([In] ushort wStreamNum, [Out] out WMT_STREAM_SELECTION pSelection);
 
-                             [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] ushort[] pwStreamNumbers,
+    void SetReceiveSelectionCallbacks([In, MarshalAs(UnmanagedType.Bool)] bool fGetCallbacks);
 
-                             [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] WMT_STREAM_SELECTION[] pSelections );
+    void GetReceiveSelectionCallbacks([Out, MarshalAs(UnmanagedType.Bool)] out bool pfGetCallbacks);
 
-    void GetStreamSelected( [In] ushort wStreamNum, [Out] out WMT_STREAM_SELECTION pSelection );
+    void SetReceiveStreamSamples([In] ushort wStreamNum, [In, MarshalAs(UnmanagedType.Bool)] bool fReceiveStreamSamples);
 
-    void SetReceiveSelectionCallbacks( [In, MarshalAs(UnmanagedType.Bool)] bool fGetCallbacks );
+    void GetReceiveStreamSamples([In] ushort wStreamNum,
+                                 [Out, MarshalAs(UnmanagedType.Bool)] out bool pfReceiveStreamSamples);
 
-    void GetReceiveSelectionCallbacks( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfGetCallbacks );
+    void SetAllocateForOutput([In] uint dwOutputNum, [In, MarshalAs(UnmanagedType.Bool)] bool fAllocate);
 
-    void SetReceiveStreamSamples( [In] ushort wStreamNum, [In, MarshalAs(UnmanagedType.Bool)] bool fReceiveStreamSamples );
+    void GetAllocateForOutput([In] uint dwOutputNum, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfAllocate);
 
-    void GetReceiveStreamSamples( [In] ushort wStreamNum,[Out, MarshalAs(UnmanagedType.Bool)] out bool pfReceiveStreamSamples );
+    void SetAllocateForStream([In] ushort wStreamNum, [In, MarshalAs(UnmanagedType.Bool)] bool fAllocate);
 
-    void SetAllocateForOutput( [In] uint dwOutputNum, [In, MarshalAs(UnmanagedType.Bool)] bool fAllocate );
+    void GetAllocateForStream([In] ushort dwSreamNum, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfAllocate);
 
-    void GetAllocateForOutput( [In] uint dwOutputNum, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfAllocate );
+    void GetStatistics([In, Out] ref WM_READER_STATISTICS pStatistics);
 
-    void SetAllocateForStream( [In] ushort wStreamNum, [In, MarshalAs(UnmanagedType.Bool)] bool fAllocate );
+    void SetClientInfo([In] ref WM_READER_CLIENTINFO pClientInfo);
 
-    void GetAllocateForStream( [In] ushort dwSreamNum, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfAllocate );
+    void GetMaxOutputSampleSize([In] uint dwOutput, [Out] out uint pcbMax);
 
-    void GetStatistics( [In, Out] ref WM_READER_STATISTICS pStatistics );
+    void GetMaxStreamSampleSize([In] ushort wStream, [Out] out uint pcbMax);
 
-    void SetClientInfo( [In] ref WM_READER_CLIENTINFO pClientInfo );
-
-    void GetMaxOutputSampleSize( [In] uint dwOutput, [Out] out uint pcbMax );
-
-    void GetMaxStreamSampleSize( [In] ushort wStream, [Out] out uint pcbMax );
-
-    void NotifyLateDelivery( ulong cnsLateness );
-
+    void NotifyLateDelivery(ulong cnsLateness);
   }
 
 
-
   [ComImport]
-
   [Guid("ae14a945-b90c-4d0d-9127-80d665f7d73e")]
-
   [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-
   public interface IWMReaderAdvanced2 : IWMReaderAdvanced
 
   {
-
     //IWMReaderAdvanced
 
-    new void SetUserProvidedClock( [In, MarshalAs(UnmanagedType.Bool)] bool fUserClock );
+    new void SetUserProvidedClock([In, MarshalAs(UnmanagedType.Bool)] bool fUserClock);
 
-    new void GetUserProvidedClock( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfUserClock );
+    new void GetUserProvidedClock([Out, MarshalAs(UnmanagedType.Bool)] out bool pfUserClock);
 
-    new void DeliverTime( [In] ulong cnsTime );
+    new void DeliverTime([In] ulong cnsTime);
 
-    new void SetManualStreamSelection( [In, MarshalAs(UnmanagedType.Bool)] bool fSelection );
+    new void SetManualStreamSelection([In, MarshalAs(UnmanagedType.Bool)] bool fSelection);
 
-    new void GetManualStreamSelection( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfSelection );
+    new void GetManualStreamSelection([Out, MarshalAs(UnmanagedType.Bool)] out bool pfSelection);
 
-    new void SetStreamsSelected( [In] ushort cStreamCount,
+    new void SetStreamsSelected([In] ushort cStreamCount,
+                                [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] ushort[] pwStreamNumbers,
+                                [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] WMT_STREAM_SELECTION[]
+                                  pSelections);
 
-      [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] ushort[] pwStreamNumbers,
+    new void GetStreamSelected([In] ushort wStreamNum, [Out] out WMT_STREAM_SELECTION pSelection);
 
-      [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] WMT_STREAM_SELECTION[] pSelections );
+    new void SetReceiveSelectionCallbacks([In, MarshalAs(UnmanagedType.Bool)] bool fGetCallbacks);
 
-    new void GetStreamSelected( [In] ushort wStreamNum, [Out] out WMT_STREAM_SELECTION pSelection );
+    new void GetReceiveSelectionCallbacks([Out, MarshalAs(UnmanagedType.Bool)] out bool pfGetCallbacks);
 
-    new void SetReceiveSelectionCallbacks( [In, MarshalAs(UnmanagedType.Bool)] bool fGetCallbacks );
+    new void SetReceiveStreamSamples([In] ushort wStreamNum,
+                                     [In, MarshalAs(UnmanagedType.Bool)] bool fReceiveStreamSamples);
 
-    new void GetReceiveSelectionCallbacks( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfGetCallbacks );
+    new void GetReceiveStreamSamples([In] ushort wStreamNum,
+                                     [Out, MarshalAs(UnmanagedType.Bool)] out bool pfReceiveStreamSamples);
 
-    new void SetReceiveStreamSamples( [In] ushort wStreamNum, [In, MarshalAs(UnmanagedType.Bool)] bool fReceiveStreamSamples );
+    new void SetAllocateForOutput([In] uint dwOutputNum, [In, MarshalAs(UnmanagedType.Bool)] bool fAllocate);
 
-    new void GetReceiveStreamSamples( [In] ushort wStreamNum,[Out, MarshalAs(UnmanagedType.Bool)] out bool pfReceiveStreamSamples );
+    new void GetAllocateForOutput([In] uint dwOutputNum, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfAllocate);
 
-    new void SetAllocateForOutput( [In] uint dwOutputNum, [In, MarshalAs(UnmanagedType.Bool)] bool fAllocate );
+    new void SetAllocateForStream([In] ushort wStreamNum, [In, MarshalAs(UnmanagedType.Bool)] bool fAllocate);
 
-    new void GetAllocateForOutput( [In] uint dwOutputNum, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfAllocate );
+    new void GetAllocateForStream([In] ushort dwSreamNum, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfAllocate);
 
-    new void SetAllocateForStream( [In] ushort wStreamNum, [In, MarshalAs(UnmanagedType.Bool)] bool fAllocate );
+    new void GetStatistics([In, Out] ref WM_READER_STATISTICS pStatistics);
 
-    new void GetAllocateForStream( [In] ushort dwSreamNum, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfAllocate );
+    new void SetClientInfo([In] ref WM_READER_CLIENTINFO pClientInfo);
 
-    new void GetStatistics( [In, Out] ref WM_READER_STATISTICS pStatistics );
+    new void GetMaxOutputSampleSize([In] uint dwOutput, [Out] out uint pcbMax);
 
-    new void SetClientInfo( [In] ref WM_READER_CLIENTINFO pClientInfo );
+    new void GetMaxStreamSampleSize([In] ushort wStream, [Out] out uint pcbMax);
 
-    new void GetMaxOutputSampleSize( [In] uint dwOutput, [Out] out uint pcbMax );
-
-    new void GetMaxStreamSampleSize( [In] ushort wStream, [Out] out uint pcbMax );
-
-    new void NotifyLateDelivery( ulong cnsLateness );
+    new void NotifyLateDelivery(ulong cnsLateness);
 
     //IWMReaderAdvanced2
 
-    void SetPlayMode( [In] WMT_PLAY_MODE Mode );
+    void SetPlayMode([In] WMT_PLAY_MODE Mode);
 
-    void GetPlayMode( [Out] out WMT_PLAY_MODE pMode );
+    void GetPlayMode([Out] out WMT_PLAY_MODE pMode);
 
-    void GetBufferProgress( [Out] out uint pdwPercent, [Out] out ulong pcnsBuffering );
+    void GetBufferProgress([Out] out uint pdwPercent, [Out] out ulong pcnsBuffering);
 
-    void GetDownloadProgress( [Out] out uint pdwPercent,
+    void GetDownloadProgress([Out] out uint pdwPercent,
+                             [Out] out ulong pqwBytesDownloaded,
+                             [Out] out ulong pcnsDownload);
 
-                              [Out] out ulong pqwBytesDownloaded,
+    void GetSaveAsProgress([Out] out uint pdwPercent);
 
-                              [Out] out ulong pcnsDownload );
+    void SaveFileAs([In, MarshalAs(UnmanagedType.LPWStr)] string pwszFilename);
 
-    void GetSaveAsProgress( [Out] out uint pdwPercent );
+    void GetProtocolName([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszProtocol,
+                         [In, Out] ref uint pcchProtocol);
 
-    void SaveFileAs( [In, MarshalAs(UnmanagedType.LPWStr)] string pwszFilename );
+    void StartAtMarker([In] ushort wMarkerIndex,
+                       [In] ulong cnsDuration,
+                       [In] float fRate,
+                       [In] IntPtr pvContext);
 
-    void GetProtocolName( [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszProtocol,
-
-                          [In, Out] ref uint pcchProtocol );
-
-    void StartAtMarker( [In] ushort wMarkerIndex,
-
-                        [In] ulong cnsDuration,
-
-                        [In] float fRate,
-
-                        [In] IntPtr pvContext );
-
-    void GetOutputSetting( [In] uint dwOutputNum,
-
-                           [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
-
-                           [Out] out WMT_ATTR_DATATYPE pType,
-
-                           [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pValue,
-
-                           [In, Out] ref ushort pcbLength );
+    void GetOutputSetting([In] uint dwOutputNum,
+                          [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
+                          [Out] out WMT_ATTR_DATATYPE pType,
+                          [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pValue,
+                          [In, Out] ref ushort pcbLength);
 
 
+    void SetOutputSetting([In] uint dwOutputNum,
+                          [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
+                          [In] WMT_ATTR_DATATYPE Type,
+                          [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 4)] byte[] pValue,
+                          [In] ushort cbLength);
 
-    void SetOutputSetting( [In] uint dwOutputNum,
+    void Preroll([In] ulong cnsStart,
+                 [In] ulong cnsDuration,
+                 [In] float fRate);
 
-                           [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
+    void SetLogClientID([In, MarshalAs(UnmanagedType.Bool)] bool fLogClientID);
 
-                           [In] WMT_ATTR_DATATYPE Type,
+    void GetLogClientID([Out, MarshalAs(UnmanagedType.Bool)] out bool pfLogClientID);
 
-                           [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=4)] byte[] pValue,
+    void StopBuffering();
 
-                           [In] ushort cbLength );
-
-    void Preroll( [In] ulong cnsStart,
-
-                  [In] ulong cnsDuration,
-
-                  [In] float fRate );
-
-    void SetLogClientID( [In, MarshalAs(UnmanagedType.Bool)] bool fLogClientID );
-
-    void GetLogClientID( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfLogClientID );
-
-    void StopBuffering( );
-
-    void OpenStream( [In, MarshalAs(UnmanagedType.Interface)] System.Runtime.InteropServices.ComTypes.IStream pStream,
-
-                     [In, MarshalAs(UnmanagedType.Interface)] IWMReaderCallback pCallback,
-
-                     [In] IntPtr pvContext );
-
+    void OpenStream([In, MarshalAs(UnmanagedType.Interface)] System.Runtime.InteropServices.ComTypes.IStream pStream,
+                    [In, MarshalAs(UnmanagedType.Interface)] IWMReaderCallback pCallback,
+                    [In] IntPtr pvContext);
   }
 
 
-
   [ComImport]
-
   [Guid("5DC0674B-F04B-4a4e-9F2A-B1AFDE2C8100")]
-
   [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-
   public interface IWMReaderAdvanced3 : IWMReaderAdvanced2
 
   {
-
     //IWMReaderAdvanced
 
-    new void SetUserProvidedClock( [In, MarshalAs(UnmanagedType.Bool)] bool fUserClock );
+    new void SetUserProvidedClock([In, MarshalAs(UnmanagedType.Bool)] bool fUserClock);
 
-    new void GetUserProvidedClock( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfUserClock );
+    new void GetUserProvidedClock([Out, MarshalAs(UnmanagedType.Bool)] out bool pfUserClock);
 
-    new void DeliverTime( [In] ulong cnsTime );
+    new void DeliverTime([In] ulong cnsTime);
 
-    new void SetManualStreamSelection( [In, MarshalAs(UnmanagedType.Bool)] bool fSelection );
+    new void SetManualStreamSelection([In, MarshalAs(UnmanagedType.Bool)] bool fSelection);
 
-    new void GetManualStreamSelection( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfSelection );
+    new void GetManualStreamSelection([Out, MarshalAs(UnmanagedType.Bool)] out bool pfSelection);
 
-    new void SetStreamsSelected( [In] ushort cStreamCount,
+    new void SetStreamsSelected([In] ushort cStreamCount,
+                                [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] ushort[] pwStreamNumbers,
+                                [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] WMT_STREAM_SELECTION[]
+                                  pSelections);
 
-      [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] ushort[] pwStreamNumbers,
+    new void GetStreamSelected([In] ushort wStreamNum, [Out] out WMT_STREAM_SELECTION pSelection);
 
-      [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] WMT_STREAM_SELECTION[] pSelections );
+    new void SetReceiveSelectionCallbacks([In, MarshalAs(UnmanagedType.Bool)] bool fGetCallbacks);
 
-    new void GetStreamSelected( [In] ushort wStreamNum, [Out] out WMT_STREAM_SELECTION pSelection );
+    new void GetReceiveSelectionCallbacks([Out, MarshalAs(UnmanagedType.Bool)] out bool pfGetCallbacks);
 
-    new void SetReceiveSelectionCallbacks( [In, MarshalAs(UnmanagedType.Bool)] bool fGetCallbacks );
+    new void SetReceiveStreamSamples([In] ushort wStreamNum,
+                                     [In, MarshalAs(UnmanagedType.Bool)] bool fReceiveStreamSamples);
 
-    new void GetReceiveSelectionCallbacks( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfGetCallbacks );
+    new void GetReceiveStreamSamples([In] ushort wStreamNum,
+                                     [Out, MarshalAs(UnmanagedType.Bool)] out bool pfReceiveStreamSamples);
 
-    new void SetReceiveStreamSamples( [In] ushort wStreamNum, [In, MarshalAs(UnmanagedType.Bool)] bool fReceiveStreamSamples );
+    new void SetAllocateForOutput([In] uint dwOutputNum, [In, MarshalAs(UnmanagedType.Bool)] bool fAllocate);
 
-    new void GetReceiveStreamSamples( [In] ushort wStreamNum,[Out, MarshalAs(UnmanagedType.Bool)] out bool pfReceiveStreamSamples );
+    new void GetAllocateForOutput([In] uint dwOutputNum, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfAllocate);
 
-    new void SetAllocateForOutput( [In] uint dwOutputNum, [In, MarshalAs(UnmanagedType.Bool)] bool fAllocate );
+    new void SetAllocateForStream([In] ushort wStreamNum, [In, MarshalAs(UnmanagedType.Bool)] bool fAllocate);
 
-    new void GetAllocateForOutput( [In] uint dwOutputNum, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfAllocate );
+    new void GetAllocateForStream([In] ushort dwSreamNum, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfAllocate);
 
-    new void SetAllocateForStream( [In] ushort wStreamNum, [In, MarshalAs(UnmanagedType.Bool)] bool fAllocate );
+    new void GetStatistics([In, Out] ref WM_READER_STATISTICS pStatistics);
 
-    new void GetAllocateForStream( [In] ushort dwSreamNum, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfAllocate );
+    new void SetClientInfo([In] ref WM_READER_CLIENTINFO pClientInfo);
 
-    new void GetStatistics( [In, Out] ref WM_READER_STATISTICS pStatistics );
+    new void GetMaxOutputSampleSize([In] uint dwOutput, [Out] out uint pcbMax);
 
-    new void SetClientInfo( [In] ref WM_READER_CLIENTINFO pClientInfo );
+    new void GetMaxStreamSampleSize([In] ushort wStream, [Out] out uint pcbMax);
 
-    new void GetMaxOutputSampleSize( [In] uint dwOutput, [Out] out uint pcbMax );
-
-    new void GetMaxStreamSampleSize( [In] ushort wStream, [Out] out uint pcbMax );
-
-    new void NotifyLateDelivery( ulong cnsLateness );
+    new void NotifyLateDelivery(ulong cnsLateness);
 
     //IWMReaderAdvanced2
 
-    new void SetPlayMode( [In] WMT_PLAY_MODE Mode );
+    new void SetPlayMode([In] WMT_PLAY_MODE Mode);
 
-    new void GetPlayMode( [Out] out WMT_PLAY_MODE pMode );
+    new void GetPlayMode([Out] out WMT_PLAY_MODE pMode);
 
-    new void GetBufferProgress( [Out] out uint pdwPercent, [Out] out ulong pcnsBuffering );
+    new void GetBufferProgress([Out] out uint pdwPercent, [Out] out ulong pcnsBuffering);
 
-    new void GetDownloadProgress( [Out] out uint pdwPercent,
+    new void GetDownloadProgress([Out] out uint pdwPercent,
+                                 [Out] out ulong pqwBytesDownloaded,
+                                 [Out] out ulong pcnsDownload);
 
-      [Out] out ulong pqwBytesDownloaded,
+    new void GetSaveAsProgress([Out] out uint pdwPercent);
 
-      [Out] out ulong pcnsDownload );
+    new void SaveFileAs([In, MarshalAs(UnmanagedType.LPWStr)] string pwszFilename);
 
-    new void GetSaveAsProgress( [Out] out uint pdwPercent );
+    new void GetProtocolName([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszProtocol,
+                             [In, Out] ref uint pcchProtocol);
 
-    new void SaveFileAs( [In, MarshalAs(UnmanagedType.LPWStr)] string pwszFilename );
+    new void StartAtMarker([In] ushort wMarkerIndex,
+                           [In] ulong cnsDuration,
+                           [In] float fRate,
+                           [In] IntPtr pvContext);
 
-    new void GetProtocolName( [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszProtocol,
+    new void GetOutputSetting([In] uint dwOutputNum,
+                              [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
+                              [Out] out WMT_ATTR_DATATYPE pType,
+                              [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pValue,
+                              [In, Out] ref ushort pcbLength);
 
-      [In, Out] ref uint pcchProtocol );
+    new void SetOutputSetting([In] uint dwOutputNum,
+                              [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
+                              [In] WMT_ATTR_DATATYPE Type,
+                              [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 4)] byte[] pValue,
+                              [In] ushort cbLength);
 
-    new void StartAtMarker( [In] ushort wMarkerIndex,
+    new void Preroll([In] ulong cnsStart,
+                     [In] ulong cnsDuration,
+                     [In] float fRate);
 
-      [In] ulong cnsDuration,
+    new void SetLogClientID([In, MarshalAs(UnmanagedType.Bool)] bool fLogClientID);
 
-      [In] float fRate,
+    new void GetLogClientID([Out, MarshalAs(UnmanagedType.Bool)] out bool pfLogClientID);
 
-      [In] IntPtr pvContext );
+    new void StopBuffering();
 
-    new void GetOutputSetting( [In] uint dwOutputNum,
-
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
-
-      [Out] out WMT_ATTR_DATATYPE pType,
-
-      [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pValue,
-
-      [In, Out] ref ushort pcbLength );
-
-    new void SetOutputSetting( [In] uint dwOutputNum,
-
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
-
-      [In] WMT_ATTR_DATATYPE Type,
-
-      [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=4)] byte[] pValue,
-
-      [In] ushort cbLength );
-
-    new void Preroll( [In] ulong cnsStart,
-
-      [In] ulong cnsDuration,
-
-      [In] float fRate );
-
-    new void SetLogClientID( [In, MarshalAs(UnmanagedType.Bool)] bool fLogClientID );
-
-    new void GetLogClientID( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfLogClientID );
-
-    new void StopBuffering( );
-
-    new void OpenStream([In, MarshalAs(UnmanagedType.Interface)] System.Runtime.InteropServices.ComTypes.IStream pStream,
-
+    new void OpenStream(
+      [In, MarshalAs(UnmanagedType.Interface)] System.Runtime.InteropServices.ComTypes.IStream pStream,
       [In, MarshalAs(UnmanagedType.Interface)] IWMReaderCallback pCallback,
-
-      [In] IntPtr pvContext );
+      [In] IntPtr pvContext);
 
     //IWMReaderAdvanced3
 
-    void StopNetStreaming( );
+    void StopNetStreaming();
 
-    void StartAtPosition(  [In] ushort wStreamNum,
-
-                           [In] IntPtr pvOffsetStart,
-
-                           [In] IntPtr pvDuration,
-
-                           [In] WMT_OFFSET_FORMAT dwOffsetFormat,
-
-                           [In] float fRate,
-
-                           [In] IntPtr pvContext );
-
+    void StartAtPosition([In] ushort wStreamNum,
+                         [In] IntPtr pvOffsetStart,
+                         [In] IntPtr pvDuration,
+                         [In] WMT_OFFSET_FORMAT dwOffsetFormat,
+                         [In] float fRate,
+                         [In] IntPtr pvContext);
   }
-
 
 
   [ComImport]
-
   [Guid("945A76A2-12AE-4d48-BD3C-CD1D90399B85")]
-
   [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-
   public interface IWMReaderAdvanced4 : IWMReaderAdvanced3
 
   {
-
     //IWMReaderAdvanced
 
-    new void SetUserProvidedClock( [In, MarshalAs(UnmanagedType.Bool)] bool fUserClock );
+    new void SetUserProvidedClock([In, MarshalAs(UnmanagedType.Bool)] bool fUserClock);
 
-    new void GetUserProvidedClock( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfUserClock );
+    new void GetUserProvidedClock([Out, MarshalAs(UnmanagedType.Bool)] out bool pfUserClock);
 
-    new void DeliverTime( [In] ulong cnsTime );
+    new void DeliverTime([In] ulong cnsTime);
 
-    new void SetManualStreamSelection( [In, MarshalAs(UnmanagedType.Bool)] bool fSelection );
+    new void SetManualStreamSelection([In, MarshalAs(UnmanagedType.Bool)] bool fSelection);
 
-    new void GetManualStreamSelection( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfSelection );
+    new void GetManualStreamSelection([Out, MarshalAs(UnmanagedType.Bool)] out bool pfSelection);
 
-    new void SetStreamsSelected( [In] ushort cStreamCount,
+    new void SetStreamsSelected([In] ushort cStreamCount,
+                                [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] ushort[] pwStreamNumbers,
+                                [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] WMT_STREAM_SELECTION[]
+                                  pSelections);
 
-      [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] ushort[] pwStreamNumbers,
+    new void GetStreamSelected([In] ushort wStreamNum, [Out] out WMT_STREAM_SELECTION pSelection);
 
-      [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)] WMT_STREAM_SELECTION[] pSelections );
+    new void SetReceiveSelectionCallbacks([In, MarshalAs(UnmanagedType.Bool)] bool fGetCallbacks);
 
-    new void GetStreamSelected( [In] ushort wStreamNum, [Out] out WMT_STREAM_SELECTION pSelection );
+    new void GetReceiveSelectionCallbacks([Out, MarshalAs(UnmanagedType.Bool)] out bool pfGetCallbacks);
 
-    new void SetReceiveSelectionCallbacks( [In, MarshalAs(UnmanagedType.Bool)] bool fGetCallbacks );
+    new void SetReceiveStreamSamples([In] ushort wStreamNum,
+                                     [In, MarshalAs(UnmanagedType.Bool)] bool fReceiveStreamSamples);
 
-    new void GetReceiveSelectionCallbacks( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfGetCallbacks );
+    new void GetReceiveStreamSamples([In] ushort wStreamNum,
+                                     [Out, MarshalAs(UnmanagedType.Bool)] out bool pfReceiveStreamSamples);
 
-    new void SetReceiveStreamSamples( [In] ushort wStreamNum, [In, MarshalAs(UnmanagedType.Bool)] bool fReceiveStreamSamples );
+    new void SetAllocateForOutput([In] uint dwOutputNum, [In, MarshalAs(UnmanagedType.Bool)] bool fAllocate);
 
-    new void GetReceiveStreamSamples( [In] ushort wStreamNum,[Out, MarshalAs(UnmanagedType.Bool)] out bool pfReceiveStreamSamples );
+    new void GetAllocateForOutput([In] uint dwOutputNum, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfAllocate);
 
-    new void SetAllocateForOutput( [In] uint dwOutputNum, [In, MarshalAs(UnmanagedType.Bool)] bool fAllocate );
+    new void SetAllocateForStream([In] ushort wStreamNum, [In, MarshalAs(UnmanagedType.Bool)] bool fAllocate);
 
-    new void GetAllocateForOutput( [In] uint dwOutputNum, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfAllocate );
+    new void GetAllocateForStream([In] ushort dwSreamNum, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfAllocate);
 
-    new void SetAllocateForStream( [In] ushort wStreamNum, [In, MarshalAs(UnmanagedType.Bool)] bool fAllocate );
+    new void GetStatistics([In, Out] ref WM_READER_STATISTICS pStatistics);
 
-    new void GetAllocateForStream( [In] ushort dwSreamNum, [Out, MarshalAs(UnmanagedType.Bool)] out bool pfAllocate );
+    new void SetClientInfo([In] ref WM_READER_CLIENTINFO pClientInfo);
 
-    new void GetStatistics( [In, Out] ref WM_READER_STATISTICS pStatistics );
+    new void GetMaxOutputSampleSize([In] uint dwOutput, [Out] out uint pcbMax);
 
-    new void SetClientInfo( [In] ref WM_READER_CLIENTINFO pClientInfo );
+    new void GetMaxStreamSampleSize([In] ushort wStream, [Out] out uint pcbMax);
 
-    new void GetMaxOutputSampleSize( [In] uint dwOutput, [Out] out uint pcbMax );
-
-    new void GetMaxStreamSampleSize( [In] ushort wStream, [Out] out uint pcbMax );
-
-    new void NotifyLateDelivery( ulong cnsLateness );
+    new void NotifyLateDelivery(ulong cnsLateness);
 
     //IWMReaderAdvanced2
 
-    new void SetPlayMode( [In] WMT_PLAY_MODE Mode );
+    new void SetPlayMode([In] WMT_PLAY_MODE Mode);
 
-    new void GetPlayMode( [Out] out WMT_PLAY_MODE pMode );
+    new void GetPlayMode([Out] out WMT_PLAY_MODE pMode);
 
-    new void GetBufferProgress( [Out] out uint pdwPercent, [Out] out ulong pcnsBuffering );
+    new void GetBufferProgress([Out] out uint pdwPercent, [Out] out ulong pcnsBuffering);
 
-    new void GetDownloadProgress( [Out] out uint pdwPercent,
+    new void GetDownloadProgress([Out] out uint pdwPercent,
+                                 [Out] out ulong pqwBytesDownloaded,
+                                 [Out] out ulong pcnsDownload);
 
-      [Out] out ulong pqwBytesDownloaded,
+    new void GetSaveAsProgress([Out] out uint pdwPercent);
 
-      [Out] out ulong pcnsDownload );
+    new void SaveFileAs([In, MarshalAs(UnmanagedType.LPWStr)] string pwszFilename);
 
-    new void GetSaveAsProgress( [Out] out uint pdwPercent );
+    new void GetProtocolName([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszProtocol,
+                             [In, Out] ref uint pcchProtocol);
 
-    new void SaveFileAs( [In, MarshalAs(UnmanagedType.LPWStr)] string pwszFilename );
+    new void StartAtMarker([In] ushort wMarkerIndex,
+                           [In] ulong cnsDuration,
+                           [In] float fRate,
+                           [In] IntPtr pvContext);
 
-    new void GetProtocolName( [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszProtocol,
+    new void GetOutputSetting([In] uint dwOutputNum,
+                              [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
+                              [Out] out WMT_ATTR_DATATYPE pType,
+                              [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pValue,
+                              [In, Out] ref ushort pcbLength);
 
-      [In, Out] ref uint pcchProtocol );
+    new void SetOutputSetting([In] uint dwOutputNum,
+                              [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
+                              [In] WMT_ATTR_DATATYPE Type,
+                              [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 4)] byte[] pValue,
+                              [In] ushort cbLength);
 
-    new void StartAtMarker( [In] ushort wMarkerIndex,
+    new void Preroll([In] ulong cnsStart,
+                     [In] ulong cnsDuration,
+                     [In] float fRate);
 
-      [In] ulong cnsDuration,
+    new void SetLogClientID([In, MarshalAs(UnmanagedType.Bool)] bool fLogClientID);
 
-      [In] float fRate,
+    new void GetLogClientID([Out, MarshalAs(UnmanagedType.Bool)] out bool pfLogClientID);
 
-      [In] IntPtr pvContext );
+    new void StopBuffering();
 
-    new void GetOutputSetting( [In] uint dwOutputNum,
-
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
-
-      [Out] out WMT_ATTR_DATATYPE pType,
-
-      [Out, MarshalAs(UnmanagedType.LPArray)] byte[] pValue,
-
-      [In, Out] ref ushort pcbLength );
-
-    new void SetOutputSetting( [In] uint dwOutputNum,
-
-      [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
-
-      [In] WMT_ATTR_DATATYPE Type,
-
-      [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex=4)] byte[] pValue,
-
-      [In] ushort cbLength );
-
-    new void Preroll( [In] ulong cnsStart,
-
-      [In] ulong cnsDuration,
-
-      [In] float fRate );
-
-    new void SetLogClientID( [In, MarshalAs(UnmanagedType.Bool)] bool fLogClientID );
-
-    new void GetLogClientID( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfLogClientID );
-
-    new void StopBuffering( );
-
-    new void OpenStream( [In, MarshalAs(UnmanagedType.Interface)] System.Runtime.InteropServices.ComTypes.IStream pStream,
-
+    new void OpenStream(
+      [In, MarshalAs(UnmanagedType.Interface)] System.Runtime.InteropServices.ComTypes.IStream pStream,
       [In, MarshalAs(UnmanagedType.Interface)] IWMReaderCallback pCallback,
-
-      [In] IntPtr pvContext );
+      [In] IntPtr pvContext);
 
     //IWMReaderAdvanced3
 
-    new void StopNetStreaming( );
+    new void StopNetStreaming();
 
-    new void StartAtPosition(  [In] ushort wStreamNum,
-
-      [In] IntPtr pvOffsetStart,
-
-      [In] IntPtr pvDuration,
-
-      [In] WMT_OFFSET_FORMAT dwOffsetFormat,
-
-      [In] float fRate,
-
-      [In] IntPtr pvContext );
+    new void StartAtPosition([In] ushort wStreamNum,
+                             [In] IntPtr pvOffsetStart,
+                             [In] IntPtr pvDuration,
+                             [In] WMT_OFFSET_FORMAT dwOffsetFormat,
+                             [In] float fRate,
+                             [In] IntPtr pvContext);
 
     //IWMReaderAdvanced4
 
-    void GetLanguageCount( [In] uint dwOutputNum,
+    void GetLanguageCount([In] uint dwOutputNum,
+                          [Out] out ushort pwLanguageCount);
 
-                           [Out] out ushort pwLanguageCount );
+    void GetLanguage([In] uint dwOutputNum,
+                     [In] ushort wLanguage,
+                     [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszLanguageString,
+                     [In, Out] ref ushort pcchLanguageStringLength);
 
-    void GetLanguage( [In] uint dwOutputNum,
+    void GetMaxSpeedFactor([Out] out double pdblFactor);
 
-                      [In] ushort wLanguage,
+    void IsUsingFastCache([Out, MarshalAs(UnmanagedType.Bool)] out bool pfUsingFastCache);
 
-                      [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszLanguageString,
+    void AddLogParam([In, MarshalAs(UnmanagedType.LPWStr)] string wszNameSpace,
+                     [In, MarshalAs(UnmanagedType.LPWStr)] string wszName,
+                     [In, MarshalAs(UnmanagedType.LPWStr)] string wszValue);
 
-                      [In, Out] ref ushort pcchLanguageStringLength );
+    void SendLogParams();
 
-    void GetMaxSpeedFactor( [Out] out double pdblFactor );
+    void CanSaveFileAs([Out, MarshalAs(UnmanagedType.Bool)] out bool pfCanSave);
 
-    void IsUsingFastCache( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfUsingFastCache );
+    void CancelSaveFileAs();
 
-    void AddLogParam( [In, MarshalAs(UnmanagedType.LPWStr)] string wszNameSpace,
-
-                      [In, MarshalAs(UnmanagedType.LPWStr)] string wszName,
-
-                      [In, MarshalAs(UnmanagedType.LPWStr)] string wszValue );
-
-    void SendLogParams( );
-
-    void CanSaveFileAs( [Out, MarshalAs(UnmanagedType.Bool)] out bool pfCanSave );
-
-    void CancelSaveFileAs( );
-
-    void GetURL( [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszURL,
-
-                 [In, Out] ref uint pcchURL );
-
+    void GetURL([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszURL,
+                [In, Out] ref uint pcchURL);
   }
-
-
-
 }

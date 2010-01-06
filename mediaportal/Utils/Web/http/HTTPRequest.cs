@@ -39,9 +39,7 @@ namespace MediaPortal.Utils.Web
     private string _encoding = string.Empty;
     private int _delay = 0;
 
-    public HTTPRequest()
-    {
-    }
+    public HTTPRequest() {}
 
     public HTTPRequest(string baseUrl, string getQuery)
     {
@@ -226,6 +224,7 @@ namespace MediaPortal.Utils.Web
     {
       return (_host + _getQuery + _scheme + _postQuery).GetHashCode();
     }
+
     #endregion
   }
 }

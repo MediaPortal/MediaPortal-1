@@ -29,9 +29,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public Setter()
-    {
-    }
+    public Setter() {}
 
     public Setter(DependencyProperty property, object value)
     {

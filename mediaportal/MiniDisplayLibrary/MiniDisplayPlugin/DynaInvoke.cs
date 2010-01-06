@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Reflection;
 
@@ -14,7 +14,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       Assembly assembly;
       if (ClassReferences.ContainsKey(AssemblyName))
       {
-        return (DynaClassInfo) ClassReferences[AssemblyName];
+        return (DynaClassInfo)ClassReferences[AssemblyName];
       }
       if (!AssemblyReferences.ContainsKey(AssemblyName))
       {
@@ -22,7 +22,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       else
       {
-        assembly = (Assembly) AssemblyReferences[AssemblyName];
+        assembly = (Assembly)AssemblyReferences[AssemblyName];
       }
       foreach (Type type in assembly.GetTypes())
       {
@@ -64,9 +64,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       public object ClassObject;
       public Type type;
 
-      public DynaClassInfo()
-      {
-      }
+      public DynaClassInfo() {}
 
       public DynaClassInfo(Type t, object c)
       {

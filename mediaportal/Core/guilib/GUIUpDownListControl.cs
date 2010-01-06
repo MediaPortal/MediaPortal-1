@@ -42,9 +42,7 @@ namespace MediaPortal.GUI.Library
 
     private Selection currentSelection = Selection.Button;
 
-    public GUIUpDownListControl(int dwParentID) : base(dwParentID)
-    {
-    }
+    public GUIUpDownListControl(int dwParentID) : base(dwParentID) {}
 
     /// <summary>
     /// The constructor of the GUIUpDownListControl.
@@ -147,8 +145,8 @@ namespace MediaPortal.GUI.Library
         return false;
       }
       _listType = ListType.CONTROL_LIST;
-      int posy = y - (int) _positionY;
-      _cursorX = (posy/(_itemHeight + _spaceBetweenItems));
+      int posy = y - (int)_positionY;
+      _cursorX = (posy / (_itemHeight + _spaceBetweenItems));
       while (_offset + _cursorX >= _listItems.Count)
       {
         _cursorX--;
@@ -166,7 +164,7 @@ namespace MediaPortal.GUI.Library
         bool gotFocus;
         for (int i = 0; i < _itemsPerPage; ++i)
         {
-          GUIUpDownButton btn = (GUIUpDownButton) _listButtons[i];
+          GUIUpDownButton btn = (GUIUpDownButton)_listButtons[i];
           btn.HitTest(x, y, out cntlId, out gotFocus);
           if (i == _cursorX)
           {
@@ -267,7 +265,7 @@ namespace MediaPortal.GUI.Library
     {
       for (int i = 0; i < _itemsPerPage; ++i)
       {
-        GUIUpDownButton btn = (GUIUpDownButton) _listButtons[i];
+        GUIUpDownButton btn = (GUIUpDownButton)_listButtons[i];
         if (i == _cursorX)
         {
           switch (currentSelection)
@@ -300,7 +298,7 @@ namespace MediaPortal.GUI.Library
       if (currentSelection == Selection.Down || currentSelection == Selection.Up)
       {
         // don't send the messages to a dialog menu
-        if ((WindowId != (int) GUIWindow.Window.WINDOW_DIALOG_MENU) ||
+        if ((WindowId != (int)GUIWindow.Window.WINDOW_DIALOG_MENU) ||
             (action.wID == Action.ActionType.ACTION_SELECT_ITEM))
         {
           GUIMessage.MessageType msgType = GUIMessage.MessageType.GUI_MSG_CLICKED_UP;
@@ -309,7 +307,7 @@ namespace MediaPortal.GUI.Library
             msgType = GUIMessage.MessageType.GUI_MSG_CLICKED_DOWN;
           }
 
-          GUIMessage msg = new GUIMessage(msgType, WindowId, GetID, ParentID, (int) action.wID, 0, null);
+          GUIMessage msg = new GUIMessage(msgType, WindowId, GetID, ParentID, (int)action.wID, 0, null);
           GUIGraphicsContext.SendMessage(msg);
         }
       }
@@ -324,7 +322,7 @@ namespace MediaPortal.GUI.Library
       if (currentSelection == Selection.Down || currentSelection == Selection.Up)
       {
         // don't send the messages to a dialog menu
-        if ((WindowId != (int) GUIWindow.Window.WINDOW_DIALOG_MENU) ||
+        if ((WindowId != (int)GUIWindow.Window.WINDOW_DIALOG_MENU) ||
             (action.wID == Action.ActionType.ACTION_SELECT_ITEM))
         {
           GUIMessage.MessageType msgType = GUIMessage.MessageType.GUI_MSG_CLICKED_UP;
@@ -333,7 +331,7 @@ namespace MediaPortal.GUI.Library
             msgType = GUIMessage.MessageType.GUI_MSG_CLICKED_DOWN;
           }
 
-          GUIMessage msg = new GUIMessage(msgType, WindowId, GetID, ParentID, (int) action.wID, 0, null);
+          GUIMessage msg = new GUIMessage(msgType, WindowId, GetID, ParentID, (int)action.wID, 0, null);
           GUIGraphicsContext.SendMessage(msg);
         }
       }

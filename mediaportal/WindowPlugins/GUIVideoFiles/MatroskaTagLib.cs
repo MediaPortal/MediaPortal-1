@@ -101,9 +101,7 @@ namespace MediaPortal.GUI.Video
           }
         }
       }
-      catch (Exception)
-      {
-      } // loading the XML doc could fail
+      catch (Exception) {} // loading the XML doc could fail
       return info;
     }
 
@@ -132,9 +130,7 @@ namespace MediaPortal.GUI.Video
         doc.InsertBefore(xmldecl, tagsNode);
         doc.Save(filename);
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
 
     #endregion

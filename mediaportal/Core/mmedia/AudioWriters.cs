@@ -46,10 +46,7 @@ namespace Yeti.MMedia
 
 
     public AudioWriter(Stream Output, AudioWriterConfig Config)
-      : this(Output, Config.Format)
-
-    {
-    }
+      : this(Output, Config.Format) {}
 
 
     protected abstract int GetOptimalBufferSize();

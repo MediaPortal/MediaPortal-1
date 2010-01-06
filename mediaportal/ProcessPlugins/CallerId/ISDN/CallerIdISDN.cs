@@ -88,7 +88,7 @@ namespace ProcessPlugins.CallerId
             for (int i = 0; i < areaCodeNodes.Count; i++) // Loop through, pulling areacode and location
             {
               areaCodeNode = areaCodeNodes[i];
-              if (areaCodeNode.Attributes["iso"].Value == (string) CountryCodeLookup[myCountryCode])
+              if (areaCodeNode.Attributes["iso"].Value == (string)CountryCodeLookup[myCountryCode])
               {
                 areaCode = areaCodeNode.Attributes["areacode"].Value;
                 location = areaCodeNode.Attributes["location"].Value;
@@ -202,9 +202,7 @@ namespace ProcessPlugins.CallerId
       }
     }
 
-    public CallerIdISDN()
-    {
-    }
+    public CallerIdISDN() {}
 
     #region ISetupForm Members
 
@@ -270,19 +268,19 @@ namespace ProcessPlugins.CallerId
         if (useOutlook)
         {
           OutlookHelper.Caller dummy = OutlookHelper.OutlookLookup("dummy");
-            // First Outlook-lookup might take some time, so let's do this here
+          // First Outlook-lookup might take some time, so let's do this here
         }
 
         ISDNWatch.LocationInfo locationInfo = ISDNWatch.GetLocationInfo();
         myCountryCode = "+" + locationInfo.CountryCode;
-        string myCountry = (string) CountryCodeLookup[myCountryCode];
+        string myCountry = (string)CountryCodeLookup[myCountryCode];
         if (myCountry == null)
         {
           myCountry = Strings.Unknown;
         }
-        string myCountryLong = (string) CountryTranslator[myCountry];
+        string myCountryLong = (string)CountryTranslator[myCountry];
         myAreaCode = locationInfo.AreaCode;
-        string myArea = (string) AreaCodeLookup[myAreaCode];
+        string myArea = (string)AreaCodeLookup[myAreaCode];
         if (myArea == null)
         {
           myArea = Strings.Unknown;
@@ -345,7 +343,7 @@ namespace ProcessPlugins.CallerId
           while (country == null)
           {
             posCountryCode++;
-            country = (string) CountryCodeLookup[callerId.Substring(0, posCountryCode)];
+            country = (string)CountryCodeLookup[callerId.Substring(0, posCountryCode)];
           }
           countryCode = callerId.Substring(0, posCountryCode);
           callerId = callerId.Remove(0, posCountryCode);
@@ -353,7 +351,7 @@ namespace ProcessPlugins.CallerId
         else
         {
           // Home country caller
-          country = (string) CountryCodeLookup[myCountryCode];
+          country = (string)CountryCodeLookup[myCountryCode];
           countryCode = myCountryCode;
         }
         if (country == null)
@@ -366,7 +364,7 @@ namespace ProcessPlugins.CallerId
         string location = null;
         while (location == null)
         {
-          location = (string) AreaCodeLookup[callerId.Substring(0, posAreaCode)];
+          location = (string)AreaCodeLookup[callerId.Substring(0, posAreaCode)];
           if (location == null)
           {
             posAreaCode--;
@@ -392,18 +390,18 @@ namespace ProcessPlugins.CallerId
         if (caller.Name != string.Empty)
         {
           Log.Info("ISDN: Incoming call from {0} ({1}, {2} / {3})", caller.Name, location,
-                   (string) CountryTranslator[country], outlookQuery);
+                   (string)CountryTranslator[country], outlookQuery);
         }
         else
         {
-          Log.Info("ISDN: Incoming call ({0}, {1} / {2})", location, (string) CountryTranslator[country], outlookQuery);
+          Log.Info("ISDN: Incoming call ({0}, {1} / {2})", location, (string)CountryTranslator[country], outlookQuery);
         }
 
 
         if (country != Strings.Unknown)
         {
           notifyHeading = notifyHeading + " " + GUILocalizeStrings.Get(1024) + " " + location + ", " +
-                          (string) CountryTranslator[country]; // 1024 from
+                          (string)CountryTranslator[country]; // 1024 from
           if (caller.Name != null)
           {
             notifyText = caller.Name + "\n\n(" + caller.Type + ")";
@@ -424,7 +422,7 @@ namespace ProcessPlugins.CallerId
         else
         {
           notifyText = callerId + "\n\n" + GUILocalizeStrings.Get(1025) + "\n" + GUILocalizeStrings.Get(1026);
-            // 1025 An error occurred. 1026 See the log files for details.
+          // 1025 An error occurred. 1026 See the log files for details.
         }
       }
       else
@@ -435,7 +433,7 @@ namespace ProcessPlugins.CallerId
 
       // Notify window popup
       GUIDialogNotify dialogNotify =
-        (GUIDialogNotify) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
       if (dialogNotify != null)
       {
         if (g_Player.Playing && !g_Player.Paused && stopMedia)

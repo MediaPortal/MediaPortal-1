@@ -56,8 +56,9 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
     private bool _runSaturdays = false;
     private bool _runSundays = false;
     private MusicDatabase mDB = null;
-    
+
     private ArrayList m_Shares = new ArrayList();
+
     #endregion
 
     #region Ctor
@@ -118,6 +119,7 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
     #endregion
 
     #region Implementation
+
     /// <summary>
     /// Load the Shares
     /// </summary>

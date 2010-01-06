@@ -48,26 +48,26 @@ internal class SlideCache
 
   private SlidePicture NeededSlide
   {
-    get { return _slides[(int) _neededSlideRelativeIndex]; }
-    set { _slides[(int) _neededSlideRelativeIndex] = value; }
+    get { return _slides[(int)_neededSlideRelativeIndex]; }
+    set { _slides[(int)_neededSlideRelativeIndex] = value; }
   }
 
   private SlidePicture PrevSlide
   {
-    get { return _slides[(int) RelativeIndex.Prev]; }
-    set { _slides[(int) RelativeIndex.Prev] = value; }
+    get { return _slides[(int)RelativeIndex.Prev]; }
+    set { _slides[(int)RelativeIndex.Prev] = value; }
   }
 
   private SlidePicture CurrentSlide
   {
-    get { return _slides[(int) RelativeIndex.Curr]; }
-    set { _slides[(int) RelativeIndex.Curr] = value; }
+    get { return _slides[(int)RelativeIndex.Curr]; }
+    set { _slides[(int)RelativeIndex.Curr] = value; }
   }
 
   private SlidePicture NextSlide
   {
-    get { return _slides[(int) RelativeIndex.Next]; }
-    set { _slides[(int) RelativeIndex.Next] = value; }
+    get { return _slides[(int)RelativeIndex.Next]; }
+    set { _slides[(int)RelativeIndex.Next] = value; }
   }
 
   public SlidePicture GetCurrentSlide(string slideFilePath)
@@ -196,9 +196,7 @@ internal class SlideCache
       // abort is expected when slide changes outpace prefetch, ignore
       // Trace.WriteLine(String.Format("  ...aborted {0} slide {1}", _neededSlideRelativeIndex.ToString("G"), System.IO.Path.GetFileNameWithoutExtension(_neededSlideFilePath)));
     }
-    catch (Exception)
-    {
-    }
+    catch (Exception) {}
   }
 
   public void InvalidateSlide(string slideFilePath)

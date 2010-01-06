@@ -29,9 +29,7 @@ namespace System.Windows.Media.Animation
   {
     #region Constructors
 
-    public SkipToFillAction()
-    {
-    }
+    public SkipToFillAction() {}
 
     #endregion Constructors
   }

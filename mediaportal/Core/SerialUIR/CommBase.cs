@@ -376,7 +376,7 @@ namespace JH.CommBase
         XmlSerializer sr = new XmlSerializer(t);
         try
         {
-          return (CommBaseSettings) sr.Deserialize(s);
+          return (CommBaseSettings)sr.Deserialize(s);
         }
         catch
         {
@@ -479,7 +479,7 @@ namespace JH.CommBase
 
       h = Win32Com.CreateFile(s, Win32Com.GENERIC_READ | Win32Com.GENERIC_WRITE, 0, IntPtr.Zero,
                               Win32Com.OPEN_EXISTING, Win32Com.FILE_FLAG_OVERLAPPED, IntPtr.Zero);
-      if (h == (IntPtr) Win32Com.INVALID_HANDLE_VALUE)
+      if (h == (IntPtr)Win32Com.INVALID_HANDLE_VALUE)
       {
         if (Marshal.GetLastWin32Error() == Win32Com.ERROR_ACCESS_DENIED)
         {
@@ -490,7 +490,7 @@ namespace JH.CommBase
           //JH 1.3: Automatically try AltName if supplied name fails:
           h = Win32Com.CreateFile(AltName(s), Win32Com.GENERIC_READ | Win32Com.GENERIC_WRITE, 0, IntPtr.Zero,
                                   Win32Com.OPEN_EXISTING, Win32Com.FILE_FLAG_OVERLAPPED, IntPtr.Zero);
-          if (h == (IntPtr) Win32Com.INVALID_HANDLE_VALUE)
+          if (h == (IntPtr)Win32Com.INVALID_HANDLE_VALUE)
           {
             if (Marshal.GetLastWin32Error() == Win32Com.ERROR_ACCESS_DENIED)
             {
@@ -527,7 +527,7 @@ namespace JH.CommBase
 
       hPort = Win32Com.CreateFile(cs.port, Win32Com.GENERIC_READ | Win32Com.GENERIC_WRITE, 0, IntPtr.Zero,
                                   Win32Com.OPEN_EXISTING, Win32Com.FILE_FLAG_OVERLAPPED, IntPtr.Zero);
-      if (hPort == (IntPtr) Win32Com.INVALID_HANDLE_VALUE)
+      if (hPort == (IntPtr)Win32Com.INVALID_HANDLE_VALUE)
       {
         if (Marshal.GetLastWin32Error() == Win32Com.ERROR_ACCESS_DENIED)
         {
@@ -538,7 +538,7 @@ namespace JH.CommBase
           //JH 1.3: Try alternative name form if main one fails:
           hPort = Win32Com.CreateFile(AltName(cs.port), Win32Com.GENERIC_READ | Win32Com.GENERIC_WRITE, 0, IntPtr.Zero,
                                       Win32Com.OPEN_EXISTING, Win32Com.FILE_FLAG_OVERLAPPED, IntPtr.Zero);
-          if (hPort == (IntPtr) Win32Com.INVALID_HANDLE_VALUE)
+          if (hPort == (IntPtr)Win32Com.INVALID_HANDLE_VALUE)
           {
             if (Marshal.GetLastWin32Error() == Win32Com.ERROR_ACCESS_DENIED)
             {
@@ -579,16 +579,16 @@ namespace JH.CommBase
       CommTimeouts.WriteTotalTimeoutConstant = cs.sendTimeoutConstant;
 
       PortDCB.init(((cs.parity == Parity.odd) || (cs.parity == Parity.even)), cs.txFlowCTS, cs.txFlowDSR,
-                   (int) cs.useDTR, cs.rxGateDSR, !cs.txWhenRxXoff, cs.txFlowX, cs.rxFlowX, (int) cs.useRTS);
+                   (int)cs.useDTR, cs.rxGateDSR, !cs.txWhenRxXoff, cs.txFlowX, cs.rxFlowX, (int)cs.useRTS);
       PortDCB.BaudRate = cs.baudRate;
-      PortDCB.ByteSize = (byte) cs.dataBits;
-      PortDCB.Parity = (byte) cs.parity;
-      PortDCB.StopBits = (byte) cs.stopBits;
-      PortDCB.XoffChar = (byte) cs.XoffChar;
-      PortDCB.XonChar = (byte) cs.XonChar;
+      PortDCB.ByteSize = (byte)cs.dataBits;
+      PortDCB.Parity = (byte)cs.parity;
+      PortDCB.StopBits = (byte)cs.stopBits;
+      PortDCB.XoffChar = (byte)cs.XoffChar;
+      PortDCB.XonChar = (byte)cs.XonChar;
       if ((cs.rxQueue != 0) || (cs.txQueue != 0))
       {
-        if (!Win32Com.SetupComm(hPort, (uint) cs.rxQueue, (uint) cs.txQueue))
+        if (!Win32Com.SetupComm(hPort, (uint)cs.rxQueue, (uint)cs.txQueue))
         {
           ThrowException("Bad queue settings");
         }
@@ -607,7 +607,7 @@ namespace JH.CommBase
         {
           //If we can determine the queue size, default to 1/10th, 8/10ths, 1/10th.
           //Note that HighWater is measured from top of queue.
-          PortDCB.XoffLim = PortDCB.XonLim = (short) ((int) cp.dwCurrentRxQueue/10);
+          PortDCB.XoffLim = PortDCB.XonLim = (short)((int)cp.dwCurrentRxQueue / 10);
         }
         else
         {
@@ -617,8 +617,8 @@ namespace JH.CommBase
       }
       else
       {
-        PortDCB.XoffLim = (short) cs.rxHighWater;
-        PortDCB.XonLim = (short) cs.rxLowWater;
+        PortDCB.XoffLim = (short)cs.rxHighWater;
+        PortDCB.XonLim = (short)cs.rxLowWater;
       }
 
       if (!Win32Com.SetCommState(hPort, ref PortDCB))
@@ -811,9 +811,9 @@ namespace JH.CommBase
       CheckOnline();
       CheckResult();
       writeCount = tosend.GetLength(0);
-      if (Win32Com.WriteFile(hPort, tosend, (uint) writeCount, out sent, ptrUWO))
+      if (Win32Com.WriteFile(hPort, tosend, (uint)writeCount, out sent, ptrUWO))
       {
-        writeCount -= (int) sent;
+        writeCount -= (int)sent;
       }
       else
       {
@@ -851,7 +851,7 @@ namespace JH.CommBase
         {
           if (checkSends)
           {
-            writeCount -= (int) sent;
+            writeCount -= (int)sent;
             if (writeCount != 0)
             {
               ThrowException("Send Timeout");
@@ -1025,7 +1025,7 @@ namespace JH.CommBase
       /// </summary>
       public long InQueue
       {
-        get { return (long) inQueue; }
+        get { return (long)inQueue; }
       }
 
       /// <summary>
@@ -1033,7 +1033,7 @@ namespace JH.CommBase
       /// </summary>
       public long OutQueue
       {
-        get { return (long) outQueue; }
+        get { return (long)outQueue; }
       }
 
       /// <summary>
@@ -1041,7 +1041,7 @@ namespace JH.CommBase
       /// </summary>
       public long InQueueSize
       {
-        get { return (long) inQueueSize; }
+        get { return (long)inQueueSize; }
       }
 
       /// <summary>
@@ -1049,7 +1049,7 @@ namespace JH.CommBase
       /// </summary>
       public long OutQueueSize
       {
-        get { return (long) outQueueSize; }
+        get { return (long)outQueueSize; }
       }
 
       public override string ToString()
@@ -1344,32 +1344,24 @@ namespace JH.CommBase
     /// Override this to provide processing prior to port closure.
     /// </summary>
     /// <param name="error">True if closing due to an error</param>
-    protected virtual void BeforeClose(bool error)
-    {
-    }
+    protected virtual void BeforeClose(bool error) {}
 
     /// <summary>
     /// Override this to process received bytes.
     /// </summary>
     /// <param name="ch">The byte that was received</param>
-    protected virtual void OnRxChar(byte ch)
-    {
-    }
+    protected virtual void OnRxChar(byte ch) {}
 
     /// <summary>
     /// Override this to take action when transmission is complete (i.e. all bytes have actually
     /// been sent, not just queued).
     /// </summary>
-    protected virtual void OnTxDone()
-    {
-    }
+    protected virtual void OnTxDone() {}
 
     /// <summary>
     /// Override this to take action when a break condition is detected on the input line.
     /// </summary>
-    protected virtual void OnBreak()
-    {
-    }
+    protected virtual void OnBreak() {}
 
     //JH 1.3: Deleted OnRing() which was never called: use OnStatusChange instead (Thanks Jim Foster)
 
@@ -1378,17 +1370,13 @@ namespace JH.CommBase
     /// </summary>
     /// <param name="mask">The status inputs that have changed state</param>
     /// <param name="state">The state of the status inputs</param>
-    protected virtual void OnStatusChange(ModemStatus mask, ModemStatus state)
-    {
-    }
+    protected virtual void OnStatusChange(ModemStatus mask, ModemStatus state) {}
 
     /// <summary>
     /// Override this to take action when the reception thread closes due to an exception being thrown.
     /// </summary>
     /// <param name="e">The exception which was thrown</param>
-    protected virtual void OnRxException(Exception e)
-    {
-    }
+    protected virtual void OnRxException(Exception e) {}
 
     private void ReceiveThread()
     {
@@ -1438,7 +1426,7 @@ namespace JH.CommBase
               throw new CommPortException("IO Error [002]");
             }
           }
-          eventMask = (uint) Marshal.ReadInt32(uMask);
+          eventMask = (uint)Marshal.ReadInt32(uMask);
           if ((eventMask & Win32Com.EV_ERR) != 0)
           {
             UInt32 errs;
@@ -1594,7 +1582,7 @@ namespace JH.CommBase
       if (online)
       {
         //JH 1.1: Avoid use of GetHandleInformation for W98 compatability.
-        if (hPort != (IntPtr) Win32Com.INVALID_HANDLE_VALUE)
+        if (hPort != (IntPtr)Win32Com.INVALID_HANDLE_VALUE)
         {
           return true;
         }
@@ -1664,7 +1652,7 @@ namespace JH.CommBase
 
       public new static CommLineSettings LoadFromXML(Stream s)
       {
-        return (CommLineSettings) LoadFromXML(s, typeof (CommLineSettings));
+        return (CommLineSettings)LoadFromXML(s, typeof (CommLineSettings));
       }
     }
 
@@ -1675,10 +1663,10 @@ namespace JH.CommBase
     protected void Send(string toSend)
     {
       //JH 1.1: Use static encoder for efficiency. Thanks to Prof. Dr. Peter Jesorsky!
-      uint l = (uint) Encoding.ASCII.GetByteCount(toSend);
+      uint l = (uint)Encoding.ASCII.GetByteCount(toSend);
       if (TxTerm != null)
       {
-        l += (uint) TxTerm.GetLength(0);
+        l += (uint)TxTerm.GetLength(0);
       }
       byte[] b = new byte[l];
       byte[] s = Encoding.ASCII.GetBytes(toSend);
@@ -1691,7 +1679,7 @@ namespace JH.CommBase
       {
         for (int j = 0; (j <= TxTerm.GetUpperBound(0)); j++, i++)
         {
-          b[i] = (byte) TxTerm[j];
+          b[i] = (byte)TxTerm[j];
         }
       }
       Send(b);
@@ -1707,7 +1695,7 @@ namespace JH.CommBase
     {
       Send(toSend);
       TransFlag.Reset();
-      if (!TransFlag.WaitOne((int) TransTimeout, false))
+      if (!TransFlag.WaitOne((int)TransTimeout, false))
       {
         ThrowException("Timeout");
       }
@@ -1729,7 +1717,7 @@ namespace JH.CommBase
       RxBuffer = new byte[s.rxStringBufferSize];
       RxTerm = s.rxTerminator;
       RxFilter = s.rxFilter;
-      TransTimeout = (uint) s.transactTimeout;
+      TransTimeout = (uint)s.transactTimeout;
       TxTerm = s.txTerminator;
     }
 
@@ -1737,19 +1725,17 @@ namespace JH.CommBase
     /// Override this to process unsolicited input lines (not a result of Transact).
     /// </summary>
     /// <param name="s">String containing the received ASCII text.</param>
-    protected virtual void OnRxLine(string s)
-    {
-    }
+    protected virtual void OnRxLine(string s) {}
 
     protected override void OnRxChar(byte ch)
     {
-      ASCII ca = (ASCII) ch;
+      ASCII ca = (ASCII)ch;
       if ((ca == RxTerm) || (RxBufferP > RxBuffer.GetUpperBound(0)))
       {
         //JH 1.1: Use static encoder for efficiency. Thanks to Prof. Dr. Peter Jesorsky!
         lock (RxString)
         {
-          RxString = Encoding.ASCII.GetString(RxBuffer, 0, (int) RxBufferP);
+          RxString = Encoding.ASCII.GetString(RxBuffer, 0, (int)RxBufferP);
         }
         RxBufferP = 0;
         if (TransFlag.WaitOne(0, false))
@@ -1792,17 +1778,13 @@ namespace JH.CommBase
     /// Constructor for raising direct exceptions
     /// </summary>
     /// <param name="desc">Description of error</param>
-    public CommPortException(string desc) : base(desc)
-    {
-    }
+    public CommPortException(string desc) : base(desc) {}
 
     /// <summary>
     /// Constructor for re-raising exceptions from receive thread
     /// </summary>
     /// <param name="e">Inner exception raised on receive thread</param>
-    public CommPortException(Exception e) : base("Receive Thread Exception", e)
-    {
-    }
+    public CommPortException(Exception e) : base("Receive Thread Exception", e) {}
   }
 
   internal class Win32Com

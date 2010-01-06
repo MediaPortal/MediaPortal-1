@@ -168,15 +168,15 @@ namespace MediaPortal.Utils.Web
           // request.Proxy = WebProxy.GetDefaultProxy();
           request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception) {}
         request.UserAgent = _agent;
         request.AllowAutoRedirect = false;
         if (pageRequest.Cookies != string.Empty)
         {
-          string[] cookiesArray = pageRequest.Cookies.Split(new Char[] { ';' });
+          string[] cookiesArray = pageRequest.Cookies.Split(new Char[] {';'});
           foreach (string cookie in cookiesArray)
           {
-            string[] cookieParts = cookie.Split(new Char[] { '=' });
+            string[] cookieParts = cookie.Split(new Char[] {'='});
             if (cookieParts.Length >= 2)
             {
               if (_cookies == null)
@@ -241,7 +241,7 @@ namespace MediaPortal.Utils.Web
             // request.Proxy = WebProxy.GetDefaultProxy();
             redirect.Proxy.Credentials = CredentialCache.DefaultCredentials;
           }
-          catch (Exception) { }
+          catch (Exception) {}
           redirect.UserAgent = _agent;
           redirect.AllowAutoRedirect = false;
           redirect.Referer = _response.ResponseUri.ToString();

@@ -37,7 +37,9 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// <summary>
     /// Creates the object that implements the IQuality interface
     /// </summary>
-    public static IQuality createQualityControl(Configuration configuration, IBaseFilter filterVideoEncoder, IBaseFilter filterCapture, IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
+    public static IQuality createQualityControl(Configuration configuration, IBaseFilter filterVideoEncoder,
+                                                IBaseFilter filterCapture, IBaseFilter filterMultiplexer,
+                                                IBaseFilter filterVideoCompressor)
     {
       ICodecAPI codecAPI = checkCodecAPI(filterVideoEncoder, filterCapture, filterMultiplexer, filterVideoCompressor);
 
@@ -46,14 +48,16 @@ namespace TvLibrary.Implementations.Analog.QualityControl
         return new CodecAPIControl(configuration, codecAPI);
       }
 
-      IVideoEncoder videoEncoder = checkVideoEncoder(filterVideoEncoder, filterCapture, filterMultiplexer, filterVideoCompressor);
+      IVideoEncoder videoEncoder = checkVideoEncoder(filterVideoEncoder, filterCapture, filterMultiplexer,
+                                                     filterVideoCompressor);
       if (videoEncoder != null)
       {
         return new VideoEncoderControl(configuration, videoEncoder);
       }
 
 #pragma warning disable 618,612
-      IEncoderAPI encoderAPI = checkEncoderAPI(filterVideoEncoder, filterCapture, filterMultiplexer, filterVideoCompressor);
+      IEncoderAPI encoderAPI = checkEncoderAPI(filterVideoEncoder, filterCapture, filterMultiplexer,
+                                               filterVideoCompressor);
       if (encoderAPI != null)
       {
         return new EncoderAPIControl(configuration, encoderAPI);
@@ -64,7 +68,8 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     }
 
 #pragma warning disable 618,612
-    private static IEncoderAPI checkEncoderAPI(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture, IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
+    private static IEncoderAPI checkEncoderAPI(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture,
+                                               IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
     {
       IEncoderAPI videoEncoder = null;
 
@@ -92,7 +97,8 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     }
 #pragma warning restore 618,612
 
-    private static IVideoEncoder checkVideoEncoder(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture, IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
+    private static IVideoEncoder checkVideoEncoder(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture,
+                                                   IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
     {
       IVideoEncoder videoEncoder = null;
 
@@ -119,7 +125,8 @@ namespace TvLibrary.Implementations.Analog.QualityControl
       return videoEncoder;
     }
 
-    private static ICodecAPI checkCodecAPI(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture, IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
+    private static ICodecAPI checkCodecAPI(IBaseFilter filterVideoEncoder, IBaseFilter filterCapture,
+                                           IBaseFilter filterMultiplexer, IBaseFilter filterVideoCompressor)
     {
       ICodecAPI videoEncoder = null;
 
@@ -145,6 +152,5 @@ namespace TvLibrary.Implementations.Analog.QualityControl
 
       return videoEncoder;
     }
-
   }
 }

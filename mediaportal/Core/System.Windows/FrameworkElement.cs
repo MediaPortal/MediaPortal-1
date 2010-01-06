@@ -126,9 +126,7 @@ namespace System.Windows
                                                        typeof (FrameworkElement));
     }
 
-    public FrameworkElement()
-    {
-    }
+    public FrameworkElement() {}
 
     #endregion Constructors
 
@@ -173,9 +171,7 @@ namespace System.Windows
 
     #region Methods
 
-    protected internal void AddLogicalChild(object child)
-    {
-    }
+    protected internal void AddLogicalChild(object child) {}
 
     protected internal override object AdjustEventSource(RoutedEventArgs args)
     {
@@ -185,14 +181,14 @@ namespace System.Windows
 
     private static void ActualHeightPropertyInvalidated(DependencyObject d)
     {
-      FrameworkElement element = (FrameworkElement) d;
+      FrameworkElement element = (FrameworkElement)d;
 
       element.RaiseEvent(new RoutedEventArgs(SizeChangedEvent, d));
     }
 
     private static void ActualWidthPropertyInvalidated(DependencyObject d)
     {
-      FrameworkElement element = (FrameworkElement) d;
+      FrameworkElement element = (FrameworkElement)d;
 
       element.RaiseEvent(new RoutedEventArgs(SizeChangedEvent, d));
     }
@@ -310,7 +306,7 @@ namespace System.Windows
 
       if (resource == null)
       {
-        resource = LogicalTreeHelper.FindLogicalNode(this, (string) key);
+        resource = LogicalTreeHelper.FindLogicalNode(this, (string)key);
       }
 
       return resource;
@@ -326,7 +322,7 @@ namespace System.Windows
 
     public static FlowDirection GetFlowDirection(DependencyObject d)
     {
-      return (FlowDirection) d.GetValue(FlowDirectionProperty);
+      return (FlowDirection)d.GetValue(FlowDirectionProperty);
     }
 
     protected override Geometry GetLayoutClip(Size layoutSlotSize)
@@ -367,12 +363,12 @@ namespace System.Windows
 
     private static object OnHeightPropertyGetValue(DependencyObject d)
     {
-      return ((FrameworkElement) d).Height;
+      return ((FrameworkElement)d).Height;
     }
 
     private static void OnHeightPropertyInvalidated(DependencyObject d)
     {
-      ((FrameworkElement) d)._heightDirty = true;
+      ((FrameworkElement)d)._heightDirty = true;
     }
 
     protected virtual void OnInitialized(EventArgs e)
@@ -387,21 +383,17 @@ namespace System.Windows
 
     private static object OnFocusablePropertyGetValue(DependencyObject d)
     {
-      return ((FrameworkElement) d)._focusableCache;
+      return ((FrameworkElement)d)._focusableCache;
     }
 
     private static void OnFocusablePropertyInvalidated(DependencyObject d)
     {
-      ((FrameworkElement) d)._focusableDirty = true;
+      ((FrameworkElement)d)._focusableDirty = true;
     }
 
-    protected override void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata)
-    {
-    }
+    protected override void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata) {}
 
-    protected internal override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
-    {
-    }
+    protected internal override void OnRenderSizeChanged(SizeChangedInfo sizeInfo) {}
 
     protected internal override void OnVisualParentChanged(Visual oldParent)
     {
@@ -414,30 +406,24 @@ namespace System.Windows
 
     private static object OnWidthPropertyGetValue(DependencyObject d)
     {
-      return ((FrameworkElement) d).Width;
+      return ((FrameworkElement)d).Width;
     }
 
     private static void OnWidthPropertyInvalidated(DependencyObject d)
     {
-      ((FrameworkElement) d)._widthDirty = true;
+      ((FrameworkElement)d)._widthDirty = true;
     }
 
-    protected internal virtual void ParentLayoutInvalidated(UIElement child)
-    {
-    }
+    protected internal virtual void ParentLayoutInvalidated(UIElement child) {}
 
-    protected internal void RemoveLogicalChild(object child)
-    {
-    }
+    protected internal void RemoveLogicalChild(object child) {}
 
     public static void SetFlowDirection(DependencyObject d, FlowDirection flowDirection)
     {
       d.SetValue(FlowDirectionProperty, flowDirection);
     }
 
-    public void SetResourceReference(DependencyProperty property, object name)
-    {
-    }
+    public void SetResourceReference(DependencyProperty property, object name) {}
 
     #endregion Methods
 
@@ -446,13 +432,13 @@ namespace System.Windows
     // TODO: should not be virtual and must be double
     public virtual int ActualHeight
     {
-      get { return (int) (double) GetValue(ActualHeightProperty); }
+      get { return (int)(double)GetValue(ActualHeightProperty); }
     }
 
     // TODO: should not be virtual and must be double
     public virtual int ActualWidth
     {
-      get { return (int) (double) GetValue(ActualWidthProperty); }
+      get { return (int)(double)GetValue(ActualWidthProperty); }
     }
 
     public ContextMenu ContextMenu
@@ -481,7 +467,7 @@ namespace System.Windows
 
     public FlowDirection FlowDirection
     {
-      get { return (FlowDirection) GetValue(FlowDirectionProperty); }
+      get { return (FlowDirection)GetValue(FlowDirectionProperty); }
       set { SetValue(FlowDirectionProperty, value); }
     }
 
@@ -491,7 +477,7 @@ namespace System.Windows
       {
         if (_focusableDirty)
         {
-          _focusableCache = (bool) GetValueBase(FocusableProperty);
+          _focusableCache = (bool)GetValueBase(FocusableProperty);
           _focusableDirty = false;
         }
         return _focusableCache;
@@ -506,17 +492,17 @@ namespace System.Windows
       {
         if (_heightDirty)
         {
-          _heightCache = (double) GetValueBase(HeightProperty);
+          _heightCache = (double)GetValueBase(HeightProperty);
           _heightDirty = false;
         }
-        return (int) _heightCache;
+        return (int)_heightCache;
       }
-      set { SetValue(HeightProperty, (double) value); }
+      set { SetValue(HeightProperty, (double)value); }
     }
 
     public HorizontalAlignment HorizontalAlignment
     {
-      get { return (HorizontalAlignment) GetValue(HorizontalAlignmentProperty); }
+      get { return (HorizontalAlignment)GetValue(HorizontalAlignmentProperty); }
       set { SetValue(HorizontalAlignmentProperty, value); }
     }
 
@@ -557,13 +543,13 @@ namespace System.Windows
 
     public Thickness Margin
     {
-      get { return (Thickness) GetValue(MarginProperty); }
+      get { return (Thickness)GetValue(MarginProperty); }
       set { SetValue(MarginProperty, value); }
     }
 
     public string Name
     {
-      get { return (string) GetValue(NameProperty); }
+      get { return (string)GetValue(NameProperty); }
       set { SetValue(NameProperty, value); }
     }
 
@@ -592,7 +578,7 @@ namespace System.Windows
 
     public Style Style
     {
-      get { return (Style) GetValue(StyleProperty); }
+      get { return (Style)GetValue(StyleProperty); }
       set { SetValue(StyleProperty, value); }
     }
 
@@ -615,7 +601,7 @@ namespace System.Windows
 
     public VerticalAlignment VerticalAlignment
     {
-      get { return (VerticalAlignment) GetValue(VerticalAlignmentProperty); }
+      get { return (VerticalAlignment)GetValue(VerticalAlignmentProperty); }
       set { SetValue(VerticalAlignmentProperty, value); }
     }
 
@@ -626,12 +612,12 @@ namespace System.Windows
       {
         if (_widthDirty)
         {
-          _widthCache = (double) GetValueBase(WidthProperty);
+          _widthCache = (double)GetValueBase(WidthProperty);
           _widthDirty = false;
         }
-        return (int) _widthCache;
+        return (int)_widthCache;
       }
-      set { SetValue(WidthProperty, (double) value); }
+      set { SetValue(WidthProperty, (double)value); }
     }
 
     #endregion Properties

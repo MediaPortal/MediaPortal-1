@@ -37,9 +37,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// The (empty) constructor of the CPosition class.
     /// </summary>
-    public CPosition()
-    {
-    }
+    public CPosition() {}
 
     /// <summary>
     /// Constructs a CPosition class.

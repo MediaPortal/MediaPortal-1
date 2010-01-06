@@ -105,7 +105,7 @@ namespace MediaPortal.Drawing
 
     public GradientStop this[int index]
     {
-      get { return (GradientStop) List[index]; }
+      get { return (GradientStop)List[index]; }
       set { List[index] = value; }
     }
 

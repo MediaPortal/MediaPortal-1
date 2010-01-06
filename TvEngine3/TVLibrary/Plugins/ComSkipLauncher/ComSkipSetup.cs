@@ -6,7 +6,6 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-
 using TvLibrary.Log;
 using TvEngine;
 using TvControl;
@@ -19,8 +18,8 @@ namespace SetupTv.Sections
   {
     #region Constants
 
-    const string ParametersMessage =
-@"{0} = Recorded filename (includes path)
+    private const string ParametersMessage =
+      @"{0} = Recorded filename (includes path)
 {1} = Recorded filename (w/o path)
 {2} = Recorded filename (w/o path or extension)
 {3} = Recorded file path
@@ -34,21 +33,20 @@ namespace SetupTv.Sections
 
     public bool RunAtStart
     {
-      get
-      {
-        return radioButtonStart.Checked;
-      }
+      get { return radioButtonStart.Checked; }
       set
       {
         radioButtonStart.Checked = value;
         radioButtonEnd.Checked = !value;
       }
     }
+
     public string Program
     {
       get { return textBoxProgram.Text; }
       set { textBoxProgram.Text = value; }
     }
+
     public string Parameters
     {
       get { return textBoxParameters.Text; }
@@ -80,15 +78,16 @@ namespace SetupTv.Sections
 
       base.OnSectionDeActivated();
     }
+
     public override void OnSectionActivated()
     {
       Log.Info("ComSkipLauncher: Configuration activated");
 
       ComSkipLauncher.LoadSettings();
 
-      RunAtStart  = ComSkipLauncher.RunAtStart;
-      Program     = ComSkipLauncher.Program;
-      Parameters  = ComSkipLauncher.Parameters;
+      RunAtStart = ComSkipLauncher.RunAtStart;
+      Program = ComSkipLauncher.Program;
+      Parameters = ComSkipLauncher.Parameters;
 
       base.OnSectionActivated();
     }
@@ -99,6 +98,7 @@ namespace SetupTv.Sections
     {
       MessageBox.Show(this, ParametersMessage, "Parameters", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
+
     private void buttonTest_Click(object sender, EventArgs e)
     {
       string program = textBoxProgram.Text.Trim();
@@ -106,7 +106,8 @@ namespace SetupTv.Sections
 
       if (program.Length == 0)
       {
-        MessageBox.Show(this, "You must specify a program to run", "Missing program name", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        MessageBox.Show(this, "You must specify a program to run", "Missing program name", MessageBoxButtons.OK,
+                        MessageBoxIcon.Exclamation);
         return;
       }
 
@@ -121,12 +122,14 @@ namespace SetupTv.Sections
         Log.Error("ComSkipLauncher - Config Test: {0}", ex.Message);
       }
     }
+
     private void buttonFindTestFile_Click(object sender, EventArgs e)
     {
       openFileDialog.Title = "Select Test File";
       if (openFileDialog.ShowDialog(this) == DialogResult.OK)
         textBoxTest.Text = openFileDialog.FileName;
     }
+
     private void buttonProgram_Click(object sender, EventArgs e)
     {
       openFileDialog.Title = "Select Program To Execute";
@@ -138,7 +141,5 @@ namespace SetupTv.Sections
     {
       Process.Start("http://www.kaashoek.com/comskip/");
     }
-
   }
-
 }

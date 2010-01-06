@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -238,7 +238,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\VFD.exe", false);
         if (key != null)
         {
-          str4 = (string) key.GetValue("Path", string.Empty);
+          str4 = (string)key.GetValue("Path", string.Empty);
         }
         else
         {
@@ -257,7 +257,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\iMON.exe", false);
         if (key != null)
         {
-          str5 = (string) key.GetValue("Path", string.Empty);
+          str5 = (string)key.GetValue("Path", string.Empty);
         }
         else
         {

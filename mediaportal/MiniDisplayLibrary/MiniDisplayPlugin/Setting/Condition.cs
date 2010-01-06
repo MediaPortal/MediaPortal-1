@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
 
@@ -10,9 +10,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
   {
     [XmlIgnore] protected Property Property;
 
-    protected Condition()
-    {
-    }
+    protected Condition() {}
 
     public abstract bool Evaluate();
 

@@ -29,17 +29,13 @@ namespace System.Windows
   {
     #region Constructors
 
-    public EventRoute(RoutedEvent routedEvent)
-    {
-    }
+    public EventRoute(RoutedEvent routedEvent) {}
 
     #endregion Constructors
 
     #region Methods
 
-    public void Add(object target, Delegate handler, bool handledEventsToo)
-    {
-    }
+    public void Add(object target, Delegate handler, bool handledEventsToo) {}
 
     public object PeekBranchNode()
     {
@@ -51,9 +47,7 @@ namespace System.Windows
       throw new NotImplementedException();
     }
 
-    public void PushBranchNode(object node, object source)
-    {
-    }
+    public void PushBranchNode(object node, object source) {}
 
     #endregion Methods
   }

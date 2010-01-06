@@ -74,9 +74,7 @@ namespace MediaPortal.Configuration.Sections
     #region Constructors/Destructors
 
     public MusicDSP()
-      : this("Music DSP")
-    {
-    }
+      : this("Music DSP") {}
 
     public MusicDSP(string name)
       : base(name)
@@ -148,7 +146,9 @@ namespace MediaPortal.Configuration.Sections
           bassEngine.InitBass();
         }
 
-        _stream = Bass.BASS_StreamCreateFile(textBoxMusicFile.Text, 0, 0, BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_AUTOFREE | BASSFlag.BASS_SAMPLE_SOFTWARE);
+        _stream = Bass.BASS_StreamCreateFile(textBoxMusicFile.Text, 0, 0,
+                                             BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_AUTOFREE |
+                                             BASSFlag.BASS_SAMPLE_SOFTWARE);
         if (_stream != 0)
         {
           // Attach the BASS DSP Effects to the stream
@@ -260,7 +260,7 @@ namespace MediaPortal.Configuration.Sections
             double gainDB = double.Parse(value);
             SetDSPGain(gainDB);
             textBoxGainDBValue.Text = value;
-            trackBarGain.Value = (int) (gainDB*1000d);
+            trackBarGain.Value = (int)(gainDB * 1000d);
           }
           break;
 
@@ -292,7 +292,7 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void buttonPluginAdd_Click(object sender, EventArgs e)
     {
-      DSPPluginInfo pluginInfo = (DSPPluginInfo) listBoxFoundPlugins.SelectedItem;
+      DSPPluginInfo pluginInfo = (DSPPluginInfo)listBoxFoundPlugins.SelectedItem;
 
       if (pluginInfo == null)
       {
@@ -340,7 +340,7 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void buttonPluginRemove_Click(object sender, EventArgs e)
     {
-      DSPPluginInfo pluginInfo = (DSPPluginInfo) listBoxSelectedPlugins.SelectedItem;
+      DSPPluginInfo pluginInfo = (DSPPluginInfo)listBoxSelectedPlugins.SelectedItem;
 
       if (pluginInfo == null)
       {
@@ -370,7 +370,7 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void ShowConfigWindow()
     {
-      DSPPluginInfo pluginInfo = (DSPPluginInfo) listBoxSelectedPlugins.SelectedItem;
+      DSPPluginInfo pluginInfo = (DSPPluginInfo)listBoxSelectedPlugins.SelectedItem;
 
       if (pluginInfo == null)
       {
@@ -479,12 +479,10 @@ namespace MediaPortal.Configuration.Sections
       try
       {
         double gainDB = double.Parse(this.textBoxGainDBValue.Text);
-        trackBarGain.Value = (int) (gainDB*1000d);
+        trackBarGain.Value = (int)(gainDB * 1000d);
         SetDSPGain(gainDB);
       }
-      catch
-      {
-      }
+      catch {}
     }
 
     private void trackBarGain_ValueChanged(object sender, EventArgs e)
@@ -494,7 +492,7 @@ namespace MediaPortal.Configuration.Sections
         _gain = new DSP_Gain();
       }
 
-      this.textBoxGainDBValue.Text = Convert.ToString(trackBarGain.Value/1000d);
+      this.textBoxGainDBValue.Text = Convert.ToString(trackBarGain.Value / 1000d);
       buttonSetGain_Click(this, EventArgs.Empty);
     }
 
@@ -596,14 +594,14 @@ namespace MediaPortal.Configuration.Sections
 
     private void trackBarCompressor_ValueChanged(object sender, EventArgs e)
     {
-      labelCompThreshold.Text = String.Format("Threshold: {0:#0.0} dB", trackBarCompressor.Value/10d);
+      labelCompThreshold.Text = String.Format("Threshold: {0:#0.0} dB", trackBarCompressor.Value / 10d);
 
       if (_stream == 0)
       {
         return;
       }
 
-      _comp.fThreshold = (float) Un4seen.Bass.Utils.DBToLevel(trackBarCompressor.Value/10d, 1.0);
+      _comp.fThreshold = (float)Un4seen.Bass.Utils.DBToLevel(trackBarCompressor.Value / 10d, 1.0);
       Bass.BASS_FXSetParameters(_stream, _comp);
     }
 
@@ -622,7 +620,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (section != null)
       {
-        string player = (string) section.GetSetting("audioPlayer");
+        string player = (string)section.GetSetting("audioPlayer");
         if (player.IndexOf("BASS") == -1)
         {
           MusicDSPTabCtl.Enabled = false;
@@ -702,9 +700,7 @@ namespace MediaPortal.Configuration.Sections
             {
               BassVst.BASS_VST_SetParam(_vstHandle, paramter.Index, float.Parse(paramter.Value));
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
           }
         }
         else
@@ -717,7 +713,7 @@ namespace MediaPortal.Configuration.Sections
       {
         for (int i = 0; i < listBoxFoundPlugins.Items.Count; i++)
         {
-          DSPPluginInfo dsp = (DSPPluginInfo) listBoxFoundPlugins.Items[i];
+          DSPPluginInfo dsp = (DSPPluginInfo)listBoxFoundPlugins.Items[i];
           if (dsp.DSPPluginType == DSPPluginInfo.PluginType.VST && dsp.Name == plugins.PluginDll)
           {
             listBoxFoundPlugins.Items.RemoveAt(i);
@@ -747,7 +743,7 @@ namespace MediaPortal.Configuration.Sections
       {
         for (int i = 0; i < listBoxFoundPlugins.Items.Count; i++)
         {
-          DSPPluginInfo dsp = (DSPPluginInfo) listBoxFoundPlugins.Items[i];
+          DSPPluginInfo dsp = (DSPPluginInfo)listBoxFoundPlugins.Items[i];
           if (dsp.DSPPluginType == DSPPluginInfo.PluginType.Winamp && dsp.FilePath == plugins.PluginDll)
           {
             listBoxFoundPlugins.Items.RemoveAt(i);
@@ -857,9 +853,7 @@ namespace MediaPortal.Configuration.Sections
         // Some Winamp dsps might raise an exception when closing
         BassWaDsp.BASS_WADSP_Free();
       }
-      catch
-      {
-      }
+      catch {}
       Bass.BASS_Stop();
       Bass.BASS_Free();
 

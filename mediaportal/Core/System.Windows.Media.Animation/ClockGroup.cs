@@ -29,9 +29,7 @@ namespace System.Windows.Media.Animation
   {
     #region Constructors
 
-    protected internal ClockGroup(TimelineGroup group) : base(group)
-    {
-    }
+    protected internal ClockGroup(TimelineGroup group) : base(group) {}
 
     #endregion Constructors
 
@@ -39,7 +37,7 @@ namespace System.Windows.Media.Animation
 
     public new TimelineGroup Timeline
     {
-      get { return (TimelineGroup) base.Timeline; }
+      get { return (TimelineGroup)base.Timeline; }
     }
 
     #endregion Properties

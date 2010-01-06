@@ -34,7 +34,7 @@ namespace MediaPortal.Core.Transcoding
     Wmv,
     Divx,
     MP4
-  };
+  } ;
 
   public enum Quality
   {
@@ -52,23 +52,23 @@ namespace MediaPortal.Core.Transcoding
     Film,
     NTSC,
     PAL
-  };
+  } ;
 
   /// <summary>
   /// Class giving all information for a file
   /// </summary>
   public class TranscodeInfo
   {
-    public string file = string.Empty;					//local filename+path
-    public string Author = string.Empty;				//author of file
-    public string Copyright = string.Empty;			//copyright notice
-    public string Description = string.Empty;		//description of file
-    public string Rating = string.Empty;				//rating for file
-    public string Title = string.Empty;					//title of file
-    public string Channel = string.Empty;				//TVChannel name
-    public int Duration = -1;								//duration in secs
-    public DateTime Start;											//Start time&date of recording
-    public DateTime End;												//end time&date of recording
+    public string file = string.Empty; //local filename+path
+    public string Author = string.Empty; //author of file
+    public string Copyright = string.Empty; //copyright notice
+    public string Description = string.Empty; //description of file
+    public string Rating = string.Empty; //rating for file
+    public string Title = string.Empty; //title of file
+    public string Channel = string.Empty; //TVChannel name
+    public int Duration = -1; //duration in secs
+    public DateTime Start; //Start time&date of recording
+    public DateTime End; //end time&date of recording
   }
 
   /// <summary>

@@ -33,9 +33,10 @@ namespace MediaPortal.TagReader
   /// Simpliest ICueTrackFileBuilder implementation.
   /// Builds string Cue fake track file name from Cue track
   /// </summary>
-  class CueTrackFileStringBuilder : ICueTrackFileBuilder<string>
+  internal class CueTrackFileStringBuilder : ICueTrackFileBuilder<string>
   {
     #region Public Methods
+
     public string getFileName(string fobj)
     {
       return fobj;
@@ -45,6 +46,7 @@ namespace MediaPortal.TagReader
     {
       return CueUtil.buildCueFakeTrackFileName(cueFileName, track);
     }
+
     #endregion
   }
 }

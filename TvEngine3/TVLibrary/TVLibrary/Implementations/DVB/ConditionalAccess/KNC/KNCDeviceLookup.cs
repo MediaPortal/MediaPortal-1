@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
@@ -33,6 +33,7 @@ using TvDatabase;
  * The device index counts from 0...n for all KNC1 cards.
  * 
  */
+
 namespace TvLibrary.Implementations.DVB
 {
   /// <summary>
@@ -74,7 +75,11 @@ namespace TvLibrary.Implementations.DVB
         foreach (String curId in deviceids)
         {
           idx++;
-          if (TvCard.DevicePath == curId) { found = idx; break; }
+          if (TvCard.DevicePath == curId)
+          {
+            found = idx;
+            break;
+          }
         }
       }
       return found;

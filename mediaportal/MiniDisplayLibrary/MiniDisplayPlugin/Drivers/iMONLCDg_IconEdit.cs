@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -14,7 +14,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
   public class iMONLCDg_IconEdit : MPConfigForm
   {
-    private static readonly byte[,] _IconBuffer = new byte[10, 0x20];
+    private static readonly byte[,] _IconBuffer = new byte[10,0x20];
 
     private readonly string[] IconFunction = new[]
                                                {
@@ -446,71 +446,71 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         var column31 = new DataColumn("IData29");
         var column32 = new DataColumn("IData30");
         var column33 = new DataColumn("IData31");
-        column.DataType = typeof(byte);
+        column.DataType = typeof (byte);
         o.Columns.Add(column);
-        column2.DataType = typeof(byte);
+        column2.DataType = typeof (byte);
         o.Columns.Add(column2);
-        column3.DataType = typeof(byte);
+        column3.DataType = typeof (byte);
         o.Columns.Add(column3);
-        column4.DataType = typeof(byte);
+        column4.DataType = typeof (byte);
         o.Columns.Add(column4);
-        column5.DataType = typeof(byte);
+        column5.DataType = typeof (byte);
         o.Columns.Add(column5);
-        column6.DataType = typeof(byte);
+        column6.DataType = typeof (byte);
         o.Columns.Add(column6);
-        column7.DataType = typeof(byte);
+        column7.DataType = typeof (byte);
         o.Columns.Add(column7);
-        column8.DataType = typeof(byte);
+        column8.DataType = typeof (byte);
         o.Columns.Add(column8);
-        column9.DataType = typeof(byte);
+        column9.DataType = typeof (byte);
         o.Columns.Add(column9);
-        column10.DataType = typeof(byte);
+        column10.DataType = typeof (byte);
         o.Columns.Add(column10);
-        column11.DataType = typeof(byte);
+        column11.DataType = typeof (byte);
         o.Columns.Add(column11);
-        column12.DataType = typeof(byte);
+        column12.DataType = typeof (byte);
         o.Columns.Add(column12);
-        column13.DataType = typeof(byte);
+        column13.DataType = typeof (byte);
         o.Columns.Add(column13);
-        column14.DataType = typeof(byte);
+        column14.DataType = typeof (byte);
         o.Columns.Add(column14);
-        column15.DataType = typeof(byte);
+        column15.DataType = typeof (byte);
         o.Columns.Add(column15);
-        column16.DataType = typeof(byte);
+        column16.DataType = typeof (byte);
         o.Columns.Add(column16);
-        column17.DataType = typeof(byte);
+        column17.DataType = typeof (byte);
         o.Columns.Add(column17);
-        column18.DataType = typeof(byte);
+        column18.DataType = typeof (byte);
         o.Columns.Add(column18);
-        column19.DataType = typeof(byte);
+        column19.DataType = typeof (byte);
         o.Columns.Add(column19);
-        column20.DataType = typeof(byte);
+        column20.DataType = typeof (byte);
         o.Columns.Add(column20);
-        column21.DataType = typeof(byte);
+        column21.DataType = typeof (byte);
         o.Columns.Add(column21);
-        column22.DataType = typeof(byte);
+        column22.DataType = typeof (byte);
         o.Columns.Add(column22);
-        column23.DataType = typeof(byte);
+        column23.DataType = typeof (byte);
         o.Columns.Add(column23);
-        column24.DataType = typeof(byte);
+        column24.DataType = typeof (byte);
         o.Columns.Add(column24);
-        column25.DataType = typeof(byte);
+        column25.DataType = typeof (byte);
         o.Columns.Add(column25);
-        column26.DataType = typeof(byte);
+        column26.DataType = typeof (byte);
         o.Columns.Add(column26);
-        column27.DataType = typeof(byte);
+        column27.DataType = typeof (byte);
         o.Columns.Add(column27);
-        column28.DataType = typeof(byte);
+        column28.DataType = typeof (byte);
         o.Columns.Add(column28);
-        column29.DataType = typeof(byte);
+        column29.DataType = typeof (byte);
         o.Columns.Add(column29);
-        column30.DataType = typeof(byte);
+        column30.DataType = typeof (byte);
         o.Columns.Add(column30);
-        column31.DataType = typeof(byte);
+        column31.DataType = typeof (byte);
         o.Columns.Add(column31);
-        column32.DataType = typeof(byte);
+        column32.DataType = typeof (byte);
         o.Columns.Add(column32);
-        column33.DataType = typeof(byte);
+        column33.DataType = typeof (byte);
         o.Columns.Add(column33);
         o.Clear();
         o.Rows.Clear();
@@ -524,7 +524,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           o.Rows.Add(row);
         }
-        var serializer = new XmlSerializer(typeof(DataTable));
+        var serializer = new XmlSerializer(typeof (DataTable));
         TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml"));
         serializer.Serialize(textWriter, o);
         textWriter.Close();
@@ -590,7 +590,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         for (int j = 0; j < 0x10; j++)
         {
-          var buffer = new[] { _IconBuffer[i, j], _IconBuffer[i, j + 0x10] };
+          var buffer = new[] {_IconBuffer[i, j], _IconBuffer[i, j + 0x10]};
           for (int k = 0; k < 0x10; k++)
           {
             int index = (k < 8) ? 1 : 0;
@@ -655,7 +655,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       for (int i = 0; i < 0x10; i++)
       {
-        var buffer = new[] { _IconBuffer[IconIndex, i], _IconBuffer[IconIndex, i + 0x10] };
+        var buffer = new[] {_IconBuffer[IconIndex, i], _IconBuffer[IconIndex, i + 0x10]};
         for (int j = 0; j < 0x10; j++)
         {
           int index = (j < 8) ? 1 : 0;
@@ -732,7 +732,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       catch (Exception exception)
       {
-        Log.Debug("CAUGHT EXCEPTION: {0}", new object[] { exception });
+        Log.Debug("CAUGHT EXCEPTION: {0}", new object[] {exception});
       }
     }
 
@@ -4933,77 +4933,77 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       var column31 = new DataColumn("IData29");
       var column32 = new DataColumn("IData30");
       var column33 = new DataColumn("IData31");
-      column.DataType = typeof(byte);
+      column.DataType = typeof (byte);
       table.Columns.Add(column);
-      column2.DataType = typeof(byte);
+      column2.DataType = typeof (byte);
       table.Columns.Add(column2);
-      column3.DataType = typeof(byte);
+      column3.DataType = typeof (byte);
       table.Columns.Add(column3);
-      column4.DataType = typeof(byte);
+      column4.DataType = typeof (byte);
       table.Columns.Add(column4);
-      column5.DataType = typeof(byte);
+      column5.DataType = typeof (byte);
       table.Columns.Add(column5);
-      column6.DataType = typeof(byte);
+      column6.DataType = typeof (byte);
       table.Columns.Add(column6);
-      column7.DataType = typeof(byte);
+      column7.DataType = typeof (byte);
       table.Columns.Add(column7);
-      column8.DataType = typeof(byte);
+      column8.DataType = typeof (byte);
       table.Columns.Add(column8);
-      column9.DataType = typeof(byte);
+      column9.DataType = typeof (byte);
       table.Columns.Add(column9);
-      column10.DataType = typeof(byte);
+      column10.DataType = typeof (byte);
       table.Columns.Add(column10);
-      column11.DataType = typeof(byte);
+      column11.DataType = typeof (byte);
       table.Columns.Add(column11);
-      column12.DataType = typeof(byte);
+      column12.DataType = typeof (byte);
       table.Columns.Add(column12);
-      column13.DataType = typeof(byte);
+      column13.DataType = typeof (byte);
       table.Columns.Add(column13);
-      column14.DataType = typeof(byte);
+      column14.DataType = typeof (byte);
       table.Columns.Add(column14);
-      column15.DataType = typeof(byte);
+      column15.DataType = typeof (byte);
       table.Columns.Add(column15);
-      column16.DataType = typeof(byte);
+      column16.DataType = typeof (byte);
       table.Columns.Add(column16);
-      column17.DataType = typeof(byte);
+      column17.DataType = typeof (byte);
       table.Columns.Add(column17);
-      column18.DataType = typeof(byte);
+      column18.DataType = typeof (byte);
       table.Columns.Add(column18);
-      column19.DataType = typeof(byte);
+      column19.DataType = typeof (byte);
       table.Columns.Add(column19);
-      column20.DataType = typeof(byte);
+      column20.DataType = typeof (byte);
       table.Columns.Add(column20);
-      column21.DataType = typeof(byte);
+      column21.DataType = typeof (byte);
       table.Columns.Add(column21);
-      column22.DataType = typeof(byte);
+      column22.DataType = typeof (byte);
       table.Columns.Add(column22);
-      column23.DataType = typeof(byte);
+      column23.DataType = typeof (byte);
       table.Columns.Add(column23);
-      column24.DataType = typeof(byte);
+      column24.DataType = typeof (byte);
       table.Columns.Add(column24);
-      column25.DataType = typeof(byte);
+      column25.DataType = typeof (byte);
       table.Columns.Add(column25);
-      column26.DataType = typeof(byte);
+      column26.DataType = typeof (byte);
       table.Columns.Add(column26);
-      column27.DataType = typeof(byte);
+      column27.DataType = typeof (byte);
       table.Columns.Add(column27);
-      column28.DataType = typeof(byte);
+      column28.DataType = typeof (byte);
       table.Columns.Add(column28);
-      column29.DataType = typeof(byte);
+      column29.DataType = typeof (byte);
       table.Columns.Add(column29);
-      column30.DataType = typeof(byte);
+      column30.DataType = typeof (byte);
       table.Columns.Add(column30);
-      column31.DataType = typeof(byte);
+      column31.DataType = typeof (byte);
       table.Columns.Add(column31);
-      column32.DataType = typeof(byte);
+      column32.DataType = typeof (byte);
       table.Columns.Add(column32);
-      column33.DataType = typeof(byte);
+      column33.DataType = typeof (byte);
       table.Columns.Add(column33);
       table.Clear();
       if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml")))
       {
         table.Rows.Clear();
-        var serializer = new XmlSerializer(typeof(DataTable));
+        var serializer = new XmlSerializer(typeof (DataTable));
         var xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml"));
         table = (DataTable)serializer.Deserialize(xmlReader);
         xmlReader.Close();
@@ -5048,7 +5048,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       catch (Exception exception)
       {
-        Log.Debug("CAUGHT EXCEPTION: {0}", new object[] { exception });
+        Log.Debug("CAUGHT EXCEPTION: {0}", new object[] {exception});
       }
     }
 

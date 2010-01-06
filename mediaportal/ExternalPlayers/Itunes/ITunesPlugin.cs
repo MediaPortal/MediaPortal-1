@@ -51,9 +51,7 @@ namespace MediaPortal.ITunesPlayer
     private string[] m_supportedExtensions = new string[0];
     private bool _notifyPlaying = false;
 
-    public ITunesPlugin()
-    {
-    }
+    public ITunesPlugin() {}
 
     public override string Description()
     {
@@ -180,11 +178,11 @@ namespace MediaPortal.ITunesPlayer
           }
           if (playList == null)
           {
-            _playList = (IITUserPlaylist) _iTunesApplication.CreatePlaylist("MediaPortalTemporaryPlaylist");
+            _playList = (IITUserPlaylist)_iTunesApplication.CreatePlaylist("MediaPortalTemporaryPlaylist");
           }
           else
           {
-            _playList = (IITUserPlaylist) playList;
+            _playList = (IITUserPlaylist)playList;
           }
           _playList.SongRepeat = ITPlaylistRepeatMode.ITPlaylistRepeatModeOff;
         }
@@ -497,9 +495,7 @@ namespace MediaPortal.ITunesPlayer
           return;
         }
         _iTunesApplication.SoundVolume = value;
-        try
-        {
-        }
+        try {}
         catch (Exception)
         {
           _iTunesApplication = null;
@@ -536,11 +532,9 @@ namespace MediaPortal.ITunesPlayer
         }
         try
         {
-          _iTunesApplication.PlayerPosition = (int) dTime;
+          _iTunesApplication.PlayerPosition = (int)dTime;
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
     }
 
@@ -549,9 +543,9 @@ namespace MediaPortal.ITunesPlayer
       double dCurrentPos = CurrentPosition;
       double dDuration = Duration;
 
-      double fCurPercent = (dCurrentPos/Duration)*100.0d;
-      double fOnePercent = Duration/100.0d;
-      fCurPercent = fCurPercent + (double) iPercentage;
+      double fCurPercent = (dCurrentPos / Duration) * 100.0d;
+      double fOnePercent = Duration / 100.0d;
+      fCurPercent = fCurPercent + (double)iPercentage;
       fCurPercent *= fOnePercent;
       if (fCurPercent < 0.0d)
       {
@@ -573,8 +567,8 @@ namespace MediaPortal.ITunesPlayer
       {
         iPercentage = 100;
       }
-      double fPercent = Duration/100.0f;
-      fPercent *= (double) iPercentage;
+      double fPercent = Duration / 100.0f;
+      fPercent *= (double)iPercentage;
       SeekAbsolute(fPercent);
     }
 
@@ -595,7 +589,7 @@ namespace MediaPortal.ITunesPlayer
       {
         _playerState = _iTunesApplication.PlayerState;
         _duration = _iTunesApplication.CurrentTrack.Duration;
-        _currentPosition = (double) _iTunesApplication.PlayerPosition;
+        _currentPosition = (double)_iTunesApplication.PlayerPosition;
         _updateTimer = DateTime.Now;
       }
     }

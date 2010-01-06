@@ -95,38 +95,35 @@ namespace MediaPortal.GUI.NumberPlace
     }
 
     public CellControl(int dwParentID)
-      : base(dwParentID)
-    {
-    }
+      : base(dwParentID) {}
 
     public CellControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
                        string strTextureFocus, string strTextureNoFocus,
                        int dwShadowAngle, int dwShadowDistance, long dwShadowColor)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureFocus, strTextureNoFocus,
-             dwShadowAngle, dwShadowDistance, dwShadowColor)
-    {
-    }
+             dwShadowAngle, dwShadowDistance, dwShadowColor) {}
 
     public override void AllocResources()
     {
       base.AllocResources();
 
-      m_imgFocus = new GUIImage(GetID, GetID*10, _positionX, _positionY, this.Width, this.Height, "icon_empty_focus.png",
+      m_imgFocus = new GUIImage(GetID, GetID * 10, _positionX, _positionY, this.Width, this.Height,
+                                "icon_empty_focus.png",
                                 0xFFFFFFFF);
       m_imgFocus.AllocResources();
-      m_imgNoFocus = new GUIImage(GetID, GetID*100, _positionX, _positionY, this.Width, this.Height,
+      m_imgNoFocus = new GUIImage(GetID, GetID * 100, _positionX, _positionY, this.Width, this.Height,
                                   "icon_empty_nofocus.png", 0xFFFFFFFF);
       m_imgNoFocus.AllocResources();
       for (int i = 0; i < 9; i++)
       {
-        m_imgOverlay[i] = new GUIImage(GetID, GetID*1000 + i, _positionX, _positionY, this.Width, this.Height,
+        m_imgOverlay[i] = new GUIImage(GetID, GetID * 1000 + i, _positionX, _positionY, this.Width, this.Height,
                                        string.Format("icon_numberplace_overlay_{0}.png", i + 1), 0xFFFFFFFF);
         m_imgOverlay[i].AllocResources();
       }
-      m_label = new GUILabelControl(GetID, GetID*1000, _positionX, _positionY, this.Width, this.Height, "font18",
+      m_label = new GUILabelControl(GetID, GetID * 1000, _positionX, _positionY, this.Width, this.Height, "font18",
                                     string.Empty, 0xFFFFFFFF, Alignment.ALIGN_CENTER, VAlignment.ALIGN_MIDDLE, false,
                                     _shadowAngle, _shadowDistance, _shadowColor);
-      _colorOverlay = new GUIImage(GetID, GetID*10, _positionX, _positionY, this.Width, this.Height,
+      _colorOverlay = new GUIImage(GetID, GetID * 10, _positionX, _positionY, this.Width, this.Height,
                                    "icon_numberplace_colouroverlay.png", 0xFFFFFFFF);
       _colorOverlay.AllocResources();
     }

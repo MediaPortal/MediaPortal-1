@@ -220,7 +220,7 @@ namespace MediaPortal.Configuration.Sections
         StringBuilder builder = new StringBuilder();
         ArrayList valueArray = new ArrayList();
 
-        foreach (string token in ((TextBox)sender).Text.Split(new char[] { ',', ';', ' ' }))
+        foreach (string token in ((TextBox)sender).Text.Split(new char[] {',', ';', ' '}))
         {
           if (token == string.Empty)
           {

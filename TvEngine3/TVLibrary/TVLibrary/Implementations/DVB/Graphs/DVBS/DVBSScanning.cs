@@ -32,7 +32,8 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class DVBSScanning : DvbBaseScanning, ITVScanning, IDisposable
   {
-    readonly TvCardDVBS _card;
+    private readonly TvCardDVBS _card;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DVBSScanning"/> class.
     /// </summary>
@@ -49,10 +50,7 @@ namespace TvLibrary.Implementations.DVB
     /// <value></value>
     public ITVCard TvCard
     {
-      get
-      {
-        return _card;
-      }
+      get { return _card; }
     }
 
     /// <summary>
@@ -72,6 +70,7 @@ namespace TvLibrary.Implementations.DVB
     {
       _card.SendHwPids(pids);
     }
+
     /// <summary>
     /// Resets the signal update.
     /// </summary>
@@ -79,6 +78,7 @@ namespace TvLibrary.Implementations.DVB
     {
       _card.ResetSignalUpdate();
     }
+
     /// <summary>
     /// Creates the new channel.
     /// </summary>
@@ -95,7 +95,11 @@ namespace TvLibrary.Implementations.DVB
       dvbsChannel.Polarisation = tuningChannel.Polarisation;
       dvbsChannel.SwitchingFrequency = tuningChannel.SwitchingFrequency;
       dvbsChannel.Frequency = tuningChannel.Frequency;
-      dvbsChannel.IsTv = (info.serviceType == (int)ServiceType.Video || info.serviceType == (int)ServiceType.Mpeg2HDStream || info.serviceType == (int)ServiceType.H264Stream || info.serviceType == (int)ServiceType.AdvancedCodecHDVideoStream || info.serviceType == (int)ServiceType.Mpeg4OrH264Stream);
+      dvbsChannel.IsTv = (info.serviceType == (int)ServiceType.Video ||
+                          info.serviceType == (int)ServiceType.Mpeg2HDStream ||
+                          info.serviceType == (int)ServiceType.H264Stream ||
+                          info.serviceType == (int)ServiceType.AdvancedCodecHDVideoStream ||
+                          info.serviceType == (int)ServiceType.Mpeg4OrH264Stream);
       dvbsChannel.IsRadio = (info.serviceType == (int)ServiceType.Audio);
       dvbsChannel.NetworkId = info.networkID;
       dvbsChannel.ServiceId = info.serviceID;

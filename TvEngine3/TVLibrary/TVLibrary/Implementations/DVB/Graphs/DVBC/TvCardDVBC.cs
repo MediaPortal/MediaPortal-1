@@ -33,10 +33,12 @@ namespace TvLibrary.Implementations.DVB
   public class TvCardDVBC : TvCardDvbBase, IDisposable, ITVCard
   {
     #region variables
+
     /// <summary>
     /// holds the the DVB-C tuning space
     /// </summary>
     protected IDVBTuningSpace _tuningSpace;
+
     /// <summary>
     /// holds the current DVB-C tuning request
     /// </summary>
@@ -53,10 +55,10 @@ namespace TvLibrary.Implementations.DVB
       : base(epgEvents, device)
     {
       _cardType = CardType.DvbC;
-
     }
 
     #region graphbuilding
+
     /// <summary>
     /// Builds the graph.
     /// </summary>
@@ -74,7 +76,7 @@ namespace TvLibrary.Implementations.DVB
         _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
-        AddNetworkProviderFilter(typeof(DVBCNetworkProvider).GUID);
+        AddNetworkProviderFilter(typeof (DVBCNetworkProvider).GUID);
         CreateTuningSpace();
         AddMpeg2DemuxerToGraph();
         AddAndConnectBDABoardFilters(_device);
@@ -146,7 +148,7 @@ namespace TvLibrary.Implementations.DVB
       _tuningSpace = (IDVBTuningSpace)new DVBTuningSpace();
       _tuningSpace.put_UniqueName("MediaPortal DVBC TuningSpace");
       _tuningSpace.put_FriendlyName("MediaPortal DVBC TuningSpace");
-      _tuningSpace.put__NetworkType(typeof(DVBCNetworkProvider).GUID);
+      _tuningSpace.put__NetworkType(typeof (DVBCNetworkProvider).GUID);
       _tuningSpace.put_SystemType(DVBSystemType.Cable);
       IDVBCLocator locator = (IDVBCLocator)new DVBCLocator();
       locator.put_CarrierFrequency(-1);
@@ -164,9 +166,11 @@ namespace TvLibrary.Implementations.DVB
       _tuningSpace.CreateTuneRequest(out request);
       _tuneRequest = (IDVBTuneRequest)request;
     }
+
     #endregion
 
     #region tuning & recording
+
     /// <summary>
     /// Tunes the specified channel.
     /// </summary>
@@ -196,12 +200,12 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       ITvSubChannel ch;
-      if (_previousChannel == null ||  _previousChannel.IsDifferentTransponder(dvbcChannel))
+      if (_previousChannel == null || _previousChannel.IsDifferentTransponder(dvbcChannel))
       {
         //_pmtPid = -1; 
         ILocator locator;
         _tuningSpace.get_DefaultLocator(out locator);
-        IDVBCLocator dvbcLocator = (IDVBCLocator) locator;
+        IDVBCLocator dvbcLocator = (IDVBCLocator)locator;
         dvbcLocator.put_InnerFEC(FECMethod.MethodNotSet);
         dvbcLocator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
         dvbcLocator.put_OuterFEC(FECMethod.MethodNotSet);
@@ -211,14 +215,14 @@ namespace TvLibrary.Implementations.DVB
         _tuneRequest.put_ONID(dvbcChannel.NetworkId);
         _tuneRequest.put_SID(dvbcChannel.ServiceId);
         _tuneRequest.put_TSID(dvbcChannel.TransportId);
-        locator.put_CarrierFrequency((int) dvbcChannel.Frequency);
+        locator.put_CarrierFrequency((int)dvbcChannel.Frequency);
         _tuneRequest.put_Locator(locator);
-        ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest,true);
+        ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, true);
         _previousChannel = dvbcChannel;
       }
       else
       {
-        ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest,false);
+        ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, false);
       }
       try
       {
@@ -231,9 +235,11 @@ namespace TvLibrary.Implementations.DVB
       }
       return ch;
     }
+
     #endregion
 
     #region epg & scanning
+
     /// <summary>
     /// returns the ITVScanning interface used for scanning channels
     /// </summary>
@@ -247,6 +253,7 @@ namespace TvLibrary.Implementations.DVB
         return new DVBCScanning(this);
       }
     }
+
     #endregion
 
     /// <summary>

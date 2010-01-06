@@ -28,37 +28,37 @@ namespace TvService
 {
   public interface ITvCardHandler
   {
-    UserManagement Users { get;}
-    DisEqcManagement DisEqC { get;}
-    TeletextManagement Teletext { get;}
-    ChannelScanning Scanner { get;}
-    EpgGrabbing Epg { get;}
-    AudioStreams Audio { get;}
-    Recorder Recorder { get;}
-    TimeShifter TimeShifter { get;}
-    CardTuner Tuner { get;}
-    ICiMenuActions CiMenuActions { get;}
+    UserManagement Users { get; }
+    DisEqcManagement DisEqC { get; }
+    TeletextManagement Teletext { get; }
+    ChannelScanning Scanner { get; }
+    EpgGrabbing Epg { get; }
+    AudioStreams Audio { get; }
+    Recorder Recorder { get; }
+    TimeShifter TimeShifter { get; }
+    CardTuner Tuner { get; }
+    ICiMenuActions CiMenuActions { get; }
 
     bool CiMenuSupported { get; }
 
-    ITVCard Card { get;}
-    bool IsLocal { get;set;}
-    bool IsIdle { get;}
-    Card DataBaseCard { get;set;}
-    CardType Type { get;}
-    string CardName { get;}
+    ITVCard Card { get; }
+    bool IsLocal { get; set; }
+    bool IsIdle { get; }
+    Card DataBaseCard { get; set; }
+    CardType Type { get; }
+    string CardName { get; }
     string CardDevice();
-    int NumberOfChannelsDecrypting { get;}
-    bool HasCA { get;}
+    int NumberOfChannelsDecrypting { get; }
+    bool HasCA { get; }
 
-    bool SupportsSubChannels { get;}
+    bool SupportsSubChannels { get; }
 
     void UpdateSignalSate();
-    bool TunerLocked { get;}
-    int SignalQuality { get;}
-    int SignalLevel { get;}
-    int MinChannel { get;}
-    int MaxChannel { get;}
+    bool TunerLocked { get; }
+    int SignalQuality { get; }
+    int SignalLevel { get; }
+    int MinChannel { get; }
+    int MaxChannel { get; }
 
     IChannel CurrentChannel(ref User user);
     int CurrentDbChannel(ref User user);

@@ -37,9 +37,7 @@ namespace System.Windows.Controls
                                                         new PropertyMetadata(Orientation.Vertical));
     }
 
-    public StackPanel()
-    {
-    }
+    public StackPanel() {}
 
     #endregion Constructors
 
@@ -52,7 +50,7 @@ namespace System.Windows.Controls
       switch (element.HorizontalAlignment)
       {
         case HorizontalAlignment.Center:
-          rect.X = x + ((w - element.Width)/2);
+          rect.X = x + ((w - element.Width) / 2);
           break;
         case HorizontalAlignment.Right:
           rect.X = x + w - element.Width;
@@ -65,7 +63,7 @@ namespace System.Windows.Controls
       switch (element.VerticalAlignment)
       {
         case VerticalAlignment.Center:
-          rect.Y = y + ((h - element.Height)/2);
+          rect.Y = y + ((h - element.Height) / 2);
           break;
         case VerticalAlignment.Bottom:
           rect.Y = y + h - element.Height;
@@ -112,21 +110,13 @@ namespace System.Windows.Controls
       return Size.Empty;
     }
 
-    public void LineDown()
-    {
-    }
+    public void LineDown() {}
 
-    public void LineLeft()
-    {
-    }
+    public void LineLeft() {}
 
-    public void LineRight()
-    {
-    }
+    public void LineRight() {}
 
-    public void LineUp()
-    {
-    }
+    public void LineUp() {}
 
 //		public Rect MakeVisible(Visual visual, Rect rectangle)
 //		{
@@ -159,46 +149,26 @@ namespace System.Windows.Controls
       return _size;
     }
 
-    public void MouseWheelDown()
-    {
-    }
+    public void MouseWheelDown() {}
 
-    public void MouseWheelLeft()
-    {
-    }
+    public void MouseWheelLeft() {}
 
-    public void MouseWheelRight()
-    {
-    }
+    public void MouseWheelRight() {}
 
-    public void MouseWheelUp()
-    {
-    }
+    public void MouseWheelUp() {}
 
-    public void PageDown()
-    {
-    }
+    public void PageDown() {}
 
-    public void PageLeft()
-    {
-    }
+    public void PageLeft() {}
 
-    public void PageRight()
-    {
-    }
+    public void PageRight() {}
 
-    public void PageUp()
-    {
-    }
+    public void PageUp() {}
 
     // are these documented incorrectly?
-    public void SetHorizontalOffset(double offset)
-    {
-    }
+    public void SetHorizontalOffset(double offset) {}
 
-    public void SetVerticalOffset(double offset)
-    {
-    }
+    public void SetVerticalOffset(double offset) {}
 
     #endregion Methods
 
@@ -233,7 +203,7 @@ namespace System.Windows.Controls
 
     public Orientation Orientation
     {
-      get { return (Orientation) GetValue(OrientationProperty); }
+      get { return (Orientation)GetValue(OrientationProperty); }
       set { SetValue(OrientationProperty, value); }
     }
 

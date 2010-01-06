@@ -46,8 +46,6 @@ namespace MediaPortal.ControlDevices
       get { return _libraryName; }
     }
 
-    public void Initialize()
-    {
-    }
+    public void Initialize() {}
   }
 }

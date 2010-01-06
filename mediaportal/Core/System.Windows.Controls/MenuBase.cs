@@ -31,9 +31,7 @@ namespace System.Windows.Controls
   {
     #region Constructors
 
-    protected MenuBase()
-    {
-    }
+    protected MenuBase() {}
 
     #endregion Constructors
 

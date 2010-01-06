@@ -33,9 +33,7 @@ namespace MediaPortal.Tests.Core.Playlists
   public class PlayListPlayerTest : PlayListPlayer.IPlayer
   {
     [SetUp]
-    public void Init()
-    {
-    }
+    public void Init() {}
 
     [Test]
     public void InsertItemButNotStartPlayingGivesNull()

@@ -31,17 +31,21 @@ namespace TvService
   {
     #region variables
 
-    readonly ITVCard _card;
+    private readonly ITVCard _card;
+
     #endregion
 
     #region ctor
+
     public ChannelLinkageGrabber(ITVCard card)
     {
       _card = card;
     }
+
     #endregion
 
     #region callback
+
     public override int OnLinkageReceived()
     {
       Log.Info("OnLinkageReceived()");
@@ -51,25 +55,31 @@ namespace TvService
       workerThread.Start();
       return 0;
     }
+
     #endregion
 
     #region private methods
+
     private static void PersistPortalChannel(PortalChannel pChannel)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      Channel dbPortalChannel = layer.GetChannelByTuningDetail(pChannel.NetworkId, pChannel.TransportId, pChannel.ServiceId);
+      Channel dbPortalChannel = layer.GetChannelByTuningDetail(pChannel.NetworkId, pChannel.TransportId,
+                                                               pChannel.ServiceId);
       if (dbPortalChannel == null)
       {
-        Log.Info("Portal channel with networkId={0}, transportId={1}, serviceId={2} not found", pChannel.NetworkId, pChannel.TransportId, pChannel.ServiceId);
+        Log.Info("Portal channel with networkId={0}, transportId={1}, serviceId={2} not found", pChannel.NetworkId,
+                 pChannel.TransportId, pChannel.ServiceId);
         return;
       }
       Gentle.Framework.Broker.Execute("delete from ChannelLinkageMap WHERE idPortalChannel=" + dbPortalChannel.IdChannel);
       foreach (LinkedChannel lChannel in pChannel.LinkedChannels)
       {
-        Channel dbLinkedChannnel = layer.GetChannelByTuningDetail(lChannel.NetworkId, lChannel.TransportId, lChannel.ServiceId);
+        Channel dbLinkedChannnel = layer.GetChannelByTuningDetail(lChannel.NetworkId, lChannel.TransportId,
+                                                                  lChannel.ServiceId);
         if (dbLinkedChannnel == null)
         {
-          Log.Info("Linked channel with name={0}, networkId={1}, transportId={2}, serviceId={3} not found", lChannel.Name, lChannel.NetworkId, lChannel.TransportId, lChannel.ServiceId);
+          Log.Info("Linked channel with name={0}, networkId={1}, transportId={2}, serviceId={3} not found",
+                   lChannel.Name, lChannel.NetworkId, lChannel.TransportId, lChannel.ServiceId);
           continue;
         }
         dbLinkedChannnel.DisplayName = lChannel.Name;
@@ -78,6 +88,7 @@ namespace TvService
         map.Persist();
       }
     }
+
     private void UpdateDatabaseThread()
     {
       Thread.CurrentThread.Priority = ThreadPriority.Lowest;
@@ -86,12 +97,14 @@ namespace TvService
       Log.Info("ChannelLinkage received. {0} portal channels read", linkages.Count);
       foreach (PortalChannel pChannel in linkages)
       {
-        Log.Info("[Linkage Scanner] New portal channel {0} {1} {2}", pChannel.NetworkId, pChannel.ServiceId, pChannel.TransportId);
+        Log.Info("[Linkage Scanner] New portal channel {0} {1} {2}", pChannel.NetworkId, pChannel.ServiceId,
+                 pChannel.TransportId);
         foreach (LinkedChannel lchan in pChannel.LinkedChannels)
           Log.Info("[Linkage Scanner] - {0}", lchan.Name);
         PersistPortalChannel(pChannel);
       }
     }
+
     #endregion
   }
 }

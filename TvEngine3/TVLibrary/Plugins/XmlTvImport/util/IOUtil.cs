@@ -23,36 +23,35 @@ using System.Text;
 
 namespace TvEngine
 {
-  class IOUtil
+  internal class IOUtil
   {
+    public static void CheckFileAccessRights(string fileName, ref bool canRead, ref bool canWrite)
+    {
+      canRead = false;
+      canWrite = false;
+      FileStream fs = null;
 
-		public static void CheckFileAccessRights(string fileName, ref bool canRead, ref bool canWrite)
-		{
-			canRead = false;
-			canWrite = false;
-			FileStream fs = null;
+      try
+      {
+        fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+        canRead = fs.CanRead;
+      }
+      finally
+      {
+        if (fs != null) fs.Close();
+      }
 
-			try
-			{
-				fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-				canRead = fs.CanRead;
-			}
-			finally
-			{
-				if (fs != null) fs.Close();
-			}
+      try
+      {
+        fs = new FileStream(fileName, FileMode.Open, FileAccess.Write);
+        canWrite = fs.CanWrite;
+      }
+      finally
+      {
+        if (fs != null) fs.Close();
+      }
+    }
 
-			try
-			{
-				fs = new FileStream(fileName, FileMode.Open, FileAccess.Write);
-				canWrite = fs.CanWrite;
-			}
-			finally
-			{
-				if (fs != null) fs.Close();
-			}
-
-		}
     /// <summary>
     /// Check's if the file has the accessrights specified in the input parameters
     /// </summary>
@@ -60,35 +59,32 @@ namespace TvEngine
     /// <param name="fa">Read,Write,ReadWrite</param>
     /// <param name="fs">Read,ReadWrite...</param>
     /// <returns></returns>
-    public static void CheckFileAccessRights(string fileName,FileMode fm,FileAccess fa,FileShare fs)
+    public static void CheckFileAccessRights(string fileName, FileMode fm, FileAccess fa, FileShare fs)
     {
       FileStream fileStream = null;
-      StreamReader streamReader = null;			
+      StreamReader streamReader = null;
       try
       {
         Encoding fileEncoding = Encoding.Default;
         fileStream = File.Open(fileName, fm, fa, fs);
-        streamReader = new StreamReader(fileStream, fileEncoding, true);				
+        streamReader = new StreamReader(fileStream, fileEncoding, true);
       }
       finally
       {
-				try
-				{
-					if (fileStream != null)
-					{
-						fileStream.Close();
-						fileStream.Dispose();
-
-					}
-					if (streamReader != null)
-					{
-						streamReader.Close();
-						streamReader.Dispose();
-					}
-				}
-				finally
-				{
-				}
+        try
+        {
+          if (fileStream != null)
+          {
+            fileStream.Close();
+            fileStream.Dispose();
+          }
+          if (streamReader != null)
+          {
+            streamReader.Close();
+            streamReader.Dispose();
+          }
+        }
+        finally {}
       }
     }
   }

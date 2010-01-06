@@ -37,7 +37,7 @@ namespace MediaPortal.UserInterface.Controls
   public class MPListView : ListView
   {
     [DllImport("user32")]
-    static extern int GetDoubleClickTime();
+    private static extern int GetDoubleClickTime();
 
     private const string REORDER = "Reorder";
     private bool allowRowReorder;
@@ -47,10 +47,7 @@ namespace MediaPortal.UserInterface.Controls
 
     public bool AllowRowReorder
     {
-      get
-      {
-        return allowRowReorder;
-      }
+      get { return allowRowReorder; }
       set
       {
         allowRowReorder = value;
@@ -60,26 +57,14 @@ namespace MediaPortal.UserInterface.Controls
 
     public bool IsChannelListView
     {
-      get
-      {
-        return isChannelListView;
-      }
-      set
-      {
-        isChannelListView = value;
-      }
+      get { return isChannelListView; }
+      set { isChannelListView = value; }
     }
 
     public new SortOrder Sorting
     {
-      get
-      {
-        return SortOrder.None;
-      }
-      set
-      {
-        base.Sorting = SortOrder.None;
-      }
+      get { return SortOrder.None; }
+      set { base.Sorting = SortOrder.None; }
     }
 
     public MPListView()
@@ -153,11 +138,13 @@ namespace MediaPortal.UserInterface.Controls
 
       if (!isChannelListView)
       {
-        e.Effect = (e.Data.GetData(REORDER.GetType()) as string) == REORDER ? DragDropEffects.Move : DragDropEffects.None;
+        e.Effect = (e.Data.GetData(REORDER.GetType()) as string) == REORDER
+                     ? DragDropEffects.Move
+                     : DragDropEffects.None;
       }
       else
       {
-        MPListView lv = e.Data.GetData(typeof(MPListView)) as MPListView;
+        MPListView lv = e.Data.GetData(typeof (MPListView)) as MPListView;
         if (lv != null)
         {
           if (lv == this)
@@ -207,7 +194,7 @@ namespace MediaPortal.UserInterface.Controls
       else
       {
         //channel group assignment is going on
-        sourceListView = e.Data.GetData(typeof(MPListView)) as MPListView;
+        sourceListView = e.Data.GetData(typeof (MPListView)) as MPListView;
         if (sourceListView == null)
         {
           e.Effect = DragDropEffects.None;
@@ -268,28 +255,32 @@ namespace MediaPortal.UserInterface.Controls
               }
 
               g.DrawLine(new Pen(lineColor, 2),
-              new Point(hoverItem.Bounds.X,
-                hoverItem.Bounds.Y + hoverItem.Bounds.Height),
-              new Point(hoverItem.Bounds.X + totalColWidth,
-                hoverItem.Bounds.Y + hoverItem.Bounds.Height));
+                         new Point(hoverItem.Bounds.X,
+                                   hoverItem.Bounds.Y + hoverItem.Bounds.Height),
+                         new Point(hoverItem.Bounds.X + totalColWidth,
+                                   hoverItem.Bounds.Y + hoverItem.Bounds.Height));
 
               g.FillPolygon(new SolidBrush(lineColor),
-                new Point[] {
-              new Point(hoverItem.Bounds.X, 
-                hoverItem.Bounds.Y + hoverItem.Bounds.Height - 7), 
-              new Point(hoverItem.Bounds.X + 6, 
-                hoverItem.Bounds.Y + hoverItem.Bounds.Height - 1), 
-              new Point(hoverItem.Bounds.X, 
-                hoverItem.Bounds.Y + hoverItem.Bounds.Height + 6)});
+                            new Point[]
+                              {
+                                new Point(hoverItem.Bounds.X,
+                                          hoverItem.Bounds.Y + hoverItem.Bounds.Height - 7),
+                                new Point(hoverItem.Bounds.X + 6,
+                                          hoverItem.Bounds.Y + hoverItem.Bounds.Height - 1),
+                                new Point(hoverItem.Bounds.X,
+                                          hoverItem.Bounds.Y + hoverItem.Bounds.Height + 6)
+                              });
 
               g.FillPolygon(new SolidBrush(lineColor),
-                new Point[] {
-              new Point(totalColWidth, 
-                hoverItem.Bounds.Y + hoverItem.Bounds.Height - 7), 
-              new Point(totalColWidth - 7, 
-                hoverItem.Bounds.Y + hoverItem.Bounds.Height - 1), 
-              new Point(totalColWidth, 
-                hoverItem.Bounds.Y + hoverItem.Bounds.Height + 7)});
+                            new Point[]
+                              {
+                                new Point(totalColWidth,
+                                          hoverItem.Bounds.Y + hoverItem.Bounds.Height - 7),
+                                new Point(totalColWidth - 7,
+                                          hoverItem.Bounds.Y + hoverItem.Bounds.Height - 1),
+                                new Point(totalColWidth,
+                                          hoverItem.Bounds.Y + hoverItem.Bounds.Height + 7)
+                              });
             }
           }
         } //if (hoverItem != null)
@@ -307,7 +298,9 @@ namespace MediaPortal.UserInterface.Controls
 
       if (!isChannelListView)
       {
-        e.Effect = (e.Data.GetData(REORDER.GetType()) as string) == REORDER ? DragDropEffects.Move : DragDropEffects.None;
+        e.Effect = (e.Data.GetData(REORDER.GetType()) as string) == REORDER
+                     ? DragDropEffects.Move
+                     : DragDropEffects.None;
       }
       else
       {
@@ -341,7 +334,7 @@ namespace MediaPortal.UserInterface.Controls
         return;
       }
 
-      MPListView sourceListView = e.Data.GetData(typeof(MPListView)) as MPListView;
+      MPListView sourceListView = e.Data.GetData(typeof (MPListView)) as MPListView;
       bool isGroupMapping = (sourceListView != this);
 
       if (SelectedItems.Count == 0 && !isChannelListView && !isGroupMapping)
@@ -392,7 +385,7 @@ namespace MediaPortal.UserInterface.Controls
       for (int i = insertItems.Count - 1; i >= 0; i--)
       {
         ListViewItem insertItem = (ListViewItem)insertItems[i];
-        
+
         //delete old items first
         for (int j = Items.Count - 1; j >= 0; j--)
         {
@@ -402,8 +395,14 @@ namespace MediaPortal.UserInterface.Controls
           try
           {
             //we can have Channel and ChannelMap here, thats why we use late-binding here to be able to compare them without need for referencing the classes
-            idChannelThis = (int)Items[j].Tag.GetType().InvokeMember("IdChannel", System.Reflection.BindingFlags.GetProperty, null, Items[j].Tag, null);
-            idChannelTarget = (int)insertItem.Tag.GetType().InvokeMember("IdChannel", System.Reflection.BindingFlags.GetProperty, null, insertItem.Tag, null);
+            idChannelThis =
+              (int)
+              Items[j].Tag.GetType().InvokeMember("IdChannel", System.Reflection.BindingFlags.GetProperty, null,
+                                                  Items[j].Tag, null);
+            idChannelTarget =
+              (int)
+              insertItem.Tag.GetType().InvokeMember("IdChannel", System.Reflection.BindingFlags.GetProperty, null,
+                                                    insertItem.Tag, null);
           }
           catch
           {
@@ -471,9 +470,7 @@ namespace MediaPortal.UserInterface.Controls
       base.OnDoubleClick(e);
     }
 
-    protected override void OnPaintBackground(PaintEventArgs pevent)
-    {
-    }
+    protected override void OnPaintBackground(PaintEventArgs pevent) {}
 
     protected override void OnNotifyMessage(Message m)
     {

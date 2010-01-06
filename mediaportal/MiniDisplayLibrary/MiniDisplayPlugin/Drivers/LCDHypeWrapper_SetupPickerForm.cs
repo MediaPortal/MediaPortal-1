@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -59,9 +59,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                 | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.btnMiniDisplay);
       this.groupBox1.Controls.Add(this.btnLCDHype);
       this.groupBox1.FlatStyle = FlatStyle.Popup;

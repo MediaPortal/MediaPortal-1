@@ -1,4 +1,5 @@
 #region Copyright (C) 2007-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2007-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,14 +20,17 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 using TvControl;
 using SetupTv;
+
 #endregion
 
 namespace TvEngine.PowerScheduler
@@ -34,22 +38,25 @@ namespace TvEngine.PowerScheduler
   public class PowerSchedulerPlugin : ITvServerPlugin
   {
     #region Variables
+
     /// <summary>
     /// Reference to the tvservice's TVcontroller
     /// </summary>
-    IController _controller;
+    private IController _controller;
+
     #endregion
 
     #region Constructor
+
     /// <summary>
     /// Creates a new PowerSchedulerPlugin
     /// </summary>
-    public PowerSchedulerPlugin()
-    {
-    }
+    public PowerSchedulerPlugin() {}
+
     #endregion
 
     #region ITvServerPlugin implementation
+
     /// <summary>
     /// Called by the tvservice PluginLoader to start the PowerScheduler plugin
     /// </summary>
@@ -67,6 +74,7 @@ namespace TvEngine.PowerScheduler
     {
       PowerScheduler.Instance.Stop();
     }
+
     /// <summary>
     /// Author of this plugin
     /// </summary>
@@ -74,6 +82,7 @@ namespace TvEngine.PowerScheduler
     {
       get { return "micheloe"; }
     }
+
     /// <summary>
     /// Should this plugin run only on a master tvserver?
     /// </summary>
@@ -81,6 +90,7 @@ namespace TvEngine.PowerScheduler
     {
       get { return false; }
     }
+
     /// <summary>
     /// Name of this plugin
     /// </summary>
@@ -88,12 +98,12 @@ namespace TvEngine.PowerScheduler
     {
       get { return "Power Scheduler"; }
     }
+
     /// <summary>
     /// Returns the SectionSettings setup part of this plugin
     /// </summary>
     public SectionSettings Setup
     {
-
       get
       {
         return new PowerSchedulerMasterSetup();
@@ -103,9 +113,10 @@ namespace TvEngine.PowerScheduler
         else
           // return new PowerSchedulerSlaveSetup();
           return new PowerSchedulerMasterSetup();
-        */ 
+        */
       }
     }
+
     /// <summary>
     /// Plugin version
     /// </summary>
@@ -113,6 +124,7 @@ namespace TvEngine.PowerScheduler
     {
       get { return "0.1.0.0"; }
     }
+
     #endregion
   }
 }

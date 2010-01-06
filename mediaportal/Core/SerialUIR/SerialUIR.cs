@@ -178,9 +178,7 @@ namespace MediaPortal.SerialIR
           instance = new SerialUIR(remoteCommandCallback);
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return instance;
     }
 
@@ -257,7 +255,7 @@ namespace MediaPortal.SerialIR
           handshake = xmlreader.GetValueAsString("SerialUIR", "handshake", "None");
           irbytes = xmlreader.GetValueAsInt("SerialUIR", "irbytes", 6);
           uirirmaninit = xmlreader.GetValueAsString("SerialUIR", "uirirmaninit", "true") == "true";
-          LearningTimeOut = 1000*xmlreader.GetValueAsInt("SerialUIR", "timeout", 4);
+          LearningTimeOut = 1000 * xmlreader.GetValueAsInt("SerialUIR", "timeout", 4);
           CommandDelay = xmlreader.GetValueAsInt("SerialUIR", "delay", 300);
         }
         this.remoteCommandCallback = remoteCommandCallback;
@@ -319,7 +317,7 @@ namespace MediaPortal.SerialIR
         foreach (string key in commandsLearned.Keys)
         {
           writer.WriteStartElement("entry");
-          writer.WriteAttributeString("actionInt", ((int) commandsLearned[key]).ToString());
+          writer.WriteAttributeString("actionInt", ((int)commandsLearned[key]).ToString());
           writer.WriteAttributeString("actionDescription", (commandsLearned[key]).ToString());
           writer.WriteString(key);
           writer.WriteEndElement();
@@ -327,9 +325,7 @@ namespace MediaPortal.SerialIR
         writer.WriteEndElement();
         writer.Close();
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
 
     public string GetVersions()
@@ -451,7 +447,7 @@ namespace MediaPortal.SerialIR
         return;
       }
 
-      if ((DateTime.Now - bytetimestamp) > new TimeSpan(0, 0, 0, 0, 5*CommandDelay))
+      if ((DateTime.Now - bytetimestamp) > new TimeSpan(0, 0, 0, 0, 5 * CommandDelay))
       {
         Trace.WriteLine("IR byte train timeout");
         charcount = 0;
@@ -459,7 +455,7 @@ namespace MediaPortal.SerialIR
       }
       bytetimestamp = DateTime.Now;
 
-      charcount = (charcount + 1)%irbytes;
+      charcount = (charcount + 1) % irbytes;
 
       if (charcount == 0)
       {
@@ -490,7 +486,7 @@ namespace MediaPortal.SerialIR
             {
               if (command != null)
               {
-                OnStartListening(lastcommand + " => " + ((Action.ActionType) command).ToString());
+                OnStartListening(lastcommand + " => " + ((Action.ActionType)command).ToString());
                 this.remoteCommandCallback(command);
                 timestamp = DateTime.Now;
               }
@@ -514,9 +510,9 @@ namespace MediaPortal.SerialIR
       ignore = false;
       if (uirirmaninit)
       {
-        base.SendImmediate((byte) 'I');
+        base.SendImmediate((byte)'I');
         Sleep(10);
-        base.SendImmediate((byte) 'R');
+        base.SendImmediate((byte)'R');
       }
       return true;
     }

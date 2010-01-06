@@ -46,9 +46,7 @@ namespace System.Windows
       return _handlers.ContainsKey(routedEvent);
     }
 
-    public void RemoveHandler(RoutedEvent routedEvent, Delegate handler)
-    {
-    }
+    public void RemoveHandler(RoutedEvent routedEvent, Delegate handler) {}
 
     public RoutedEventHandlerInfoList this[RoutedEvent routedEvent]
     {

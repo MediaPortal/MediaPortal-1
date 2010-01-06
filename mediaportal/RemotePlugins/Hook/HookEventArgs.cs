@@ -31,9 +31,7 @@ namespace MediaPortal.Hooks
   {
     #region Constructors
 
-    public HookEventArgs()
-    {
-    }
+    public HookEventArgs() {}
 
     public HookEventArgs(int code, int WParam, IntPtr LParam)
     {

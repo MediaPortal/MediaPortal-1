@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
@@ -67,7 +67,6 @@ namespace Mediaportal.Util
               }
             }
         }
-
       }
       return strFName;
     }

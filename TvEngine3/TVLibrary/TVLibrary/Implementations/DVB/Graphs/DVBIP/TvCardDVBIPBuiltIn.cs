@@ -31,14 +31,11 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class TvCardDVBIPBuiltIn : TvCardDVBIP
   {
-
     /// <summary>
     /// CLSID_MPIPTVSource
     /// </summary>
     [ComImport, Guid("D3DD4C59-D3A7-4b82-9727-7B9203EB67C0")]
-    public class MPIPTVSource
-    {
-    }
+    public class MPIPTVSource {}
 
     /// <summary>
     /// Constructor
@@ -58,7 +55,8 @@ namespace TvLibrary.Implementations.DVB
     protected override void AddStreamSourceFilter(string url)
     {
       Log.Log.WriteFile("dvbip:Add MediaPortal IPTV Source Filter");
-      _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, typeof(MPIPTVSource).GUID, "MediaPortal IPTV Source Filter");
+      _filterStreamSource = FilterGraphTools.AddFilterFromClsid(_graphBuilder, typeof (MPIPTVSource).GUID,
+                                                                "MediaPortal IPTV Source Filter");
       AMMediaType mpeg2ProgramStream = new AMMediaType();
       mpeg2ProgramStream.majorType = MediaType.Stream;
       mpeg2ProgramStream.subType = MediaSubType.Mpeg2Transport;

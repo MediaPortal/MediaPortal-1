@@ -383,7 +383,7 @@ namespace PostSetup
       }
     }
 
-    void zip_ReadProgress(object sender, ReadProgressEventArgs e)
+    private void zip_ReadProgress(object sender, ReadProgressEventArgs e)
     {
       progressBar.Value = Convert.ToInt32(e.BytesTransferred);
       Application.DoEvents();
@@ -416,7 +416,7 @@ namespace PostSetup
       set
       {
         description = value;
-        txtDescription.Lines = description.Split(new char[] { '\n' });
+        txtDescription.Lines = description.Split(new char[] {'\n'});
       }
     }
 
@@ -712,9 +712,7 @@ namespace PostSetup
         {
           Directory.CreateDirectory(targetDirectory);
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
         //write byte to disk.
         FileStream fs = new FileStream(@targetDirectory + "/" + filename, FileMode.CreateNew);
         for (int i = 0; i < indata.Length; i++)

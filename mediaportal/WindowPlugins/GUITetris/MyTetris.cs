@@ -41,12 +41,10 @@ namespace MediaPortal.Games.Tetris
 
     public MyTetris()
     {
-      GetID = (int) Window.WINDOW_TETRIS;
+      GetID = (int)Window.WINDOW_TETRIS;
     }
 
-    ~MyTetris()
-    {
-    }
+    ~MyTetris() {}
 
     #endregion Construction, initialization & cleanup
 
@@ -193,23 +191,23 @@ namespace MediaPortal.Games.Tetris
 
       if (_Settings.Music)
       {
-        GUIControl.SelectControl(GetID, (int) Controls.ToggleMusic);
+        GUIControl.SelectControl(GetID, (int)Controls.ToggleMusic);
       }
       else
       {
-        GUIControl.DeSelectControl(GetID, (int) Controls.ToggleMusic);
+        GUIControl.DeSelectControl(GetID, (int)Controls.ToggleMusic);
       }
 
       if (_Settings.Sound)
       {
-        GUIControl.SelectControl(GetID, (int) Controls.ToggleSound);
+        GUIControl.SelectControl(GetID, (int)Controls.ToggleSound);
       }
       else
       {
-        GUIControl.DeSelectControl(GetID, (int) Controls.ToggleSound);
+        GUIControl.DeSelectControl(GetID, (int)Controls.ToggleSound);
       }
 
-      m_wndTetris = GetControl((int) Controls.Tetris) as MyTetrisControl;
+      m_wndTetris = GetControl((int)Controls.Tetris) as MyTetrisControl;
 
       int nScore = 0;
       int nLines = 0;
@@ -236,14 +234,12 @@ namespace MediaPortal.Games.Tetris
       GUIPropertyManager.SetProperty("#tetris_lines", nLines.ToString());
       GUIPropertyManager.SetProperty("#tetris_level", nLevel.ToString());
       GUIPropertyManager.SetProperty("#tetris_highscore", _Settings.Highscore.ToString());
-      GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get((int) Strings.MyTetris));
+      GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get((int)Strings.MyTetris));
 
       return true;
     }
 
-    private void OnDeinit()
-    {
-    }
+    private void OnDeinit() {}
 
     private void OnItemClicked(int nControl, bool bOn)
     {
@@ -252,7 +248,7 @@ namespace MediaPortal.Games.Tetris
         return;
       }
 
-      switch ((Controls) nControl)
+      switch ((Controls)nControl)
       {
         case Controls.New:
           m_wndTetris.Start();
@@ -331,7 +327,7 @@ namespace MediaPortal.Games.Tetris
                         out string strPictureImage)
     {
       // TODO:  Add GUITetris.GetHome implementation
-      strButtonText = GUILocalizeStrings.Get((int) Strings.MyTetris);
+      strButtonText = GUILocalizeStrings.Get((int)Strings.MyTetris);
       strButtonImage = "";
       strButtonImageFocus = "";
       strPictureImage = @"hover_tetris.png";
@@ -348,9 +344,7 @@ namespace MediaPortal.Games.Tetris
       return "Play the famous Tetris game in MediaPortal";
     }
 
-    public void ShowPlugin()
-    {
-    }
+    public void ShowPlugin() {}
 
     #endregion
 

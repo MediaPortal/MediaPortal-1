@@ -31,9 +31,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public SizeChangedEventArgs()
-    {
-    }
+    public SizeChangedEventArgs() {}
 
     #endregion Constructors
 

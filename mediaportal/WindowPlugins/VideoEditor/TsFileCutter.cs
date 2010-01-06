@@ -8,10 +8,10 @@ namespace TsCutterPackage
 {
   internal class clPids
   {
-    public bool IsPrevPacket ;
-    public int  HeaderSize_1;
-    public byte[] PayLoad ;
-    public byte[] Header_1 ;
+    public bool IsPrevPacket;
+    public int HeaderSize_1;
+    public byte[] PayLoad;
+    public byte[] Header_1;
   }
 
   internal class TsFileCutter
@@ -67,11 +67,11 @@ namespace TsCutterPackage
 
     private void CopyBuf(byte[] dest, int idest, byte[] src, int isrc, int size)
     {
-      int i=0 ;
-      while (i<size)
+      int i = 0;
+      while (i < size)
       {
-        dest[idest+i] = src[isrc+i] ;
-        i++ ;
+        dest[idest + i] = src[isrc + i];
+        i++;
       }
     }
 
@@ -79,20 +79,24 @@ namespace TsCutterPackage
     {
       return ((tsPacket[1] & 0x40) == 0x40);
     }
-    
-    
+
+
     private int GetPayloadStart(byte[] tsPacket)
     {
       int payloadStart = 4;
       int adaptionControl = (tsPacket[3] >> 4) & 0x3;
       switch (adaptionControl)
       {
-        case 0: payloadStart = -1;
+        case 0:
+          payloadStart = -1;
           break;
-        case 1: break;
-        case 2: payloadStart = -2;
+        case 1:
           break;
-        case 3: payloadStart = tsPacket[4] + 5;
+        case 2:
+          payloadStart = -2;
+          break;
+        case 3:
+          payloadStart = tsPacket[4] + 5;
           break;
       }
       return payloadStart;
@@ -109,7 +113,7 @@ namespace TsCutterPackage
       int adaptionControl = (tsPacket[3] >> 4) & 0x3;
       if (adaptionControl > 1)
       {
-        payloadStart = (int) tsPacket[4] + 5;
+        payloadStart = (int)tsPacket[4] + 5;
       }
       else
       {
@@ -119,7 +123,7 @@ namespace TsCutterPackage
         }
         else
         {
-          payloadStart = (int) tsPacket[4] + 5;
+          payloadStart = (int)tsPacket[4] + 5;
         }
       }
       if (tsPacket[payloadStart] != 0 || tsPacket[payloadStart + 1] != 0 || tsPacket[payloadStart + 2] != 1)
@@ -182,7 +186,7 @@ namespace TsCutterPackage
       Log.Info("TsFileCutter: Done. Creating output file...");
       try
       {
-        writer = new BufferedStream(new FileStream(outputFile, FileMode.Create), (int) WRITER_PACKETS_TO_BUFFER);
+        writer = new BufferedStream(new FileStream(outputFile, FileMode.Create), (int)WRITER_PACKETS_TO_BUFFER);
       }
       catch (Exception ex)
       {
@@ -227,7 +231,7 @@ namespace TsCutterPackage
           writePacket = EvalCutPoints(pcr.ToDateTime() - startPcr.ToDateTime());
           if (writePacket)
           {
-            PcrUtils.PatchPcr(ref tsPacket, pcr.ToDateTime().AddMilliseconds(pcrDiff.TotalMilliseconds*-1).TimeOfDay);
+            PcrUtils.PatchPcr(ref tsPacket, pcr.ToDateTime().AddMilliseconds(pcrDiff.TotalMilliseconds * -1).TimeOfDay);
           }
         }
         if (writePacket)
@@ -237,15 +241,15 @@ namespace TsCutterPackage
           {
             if (!pids.ContainsKey(pid))
             {
-              clPids clPid = new clPids() ;
-              pids.Add(pid, clPid) ;
-              pids[pid].PayLoad = new byte[188*2] ;
-              Log.Info("TsFileCutter: Add pid {0}",pid);
+              clPids clPid = new clPids();
+              pids.Add(pid, clPid);
+              pids[pid].PayLoad = new byte[188 * 2];
+              Log.Info("TsFileCutter: Add pid {0}", pid);
             }
-            int payloadStart = (int)GetPayloadStart(tsPacket) ;
+            int payloadStart = (int)GetPayloadStart(tsPacket);
             if (payloadStart <= 0)
             {
-              pids[pid].IsPrevPacket=false ;
+              pids[pid].IsPrevPacket = false;
               writer.Write(tsPacket, 0, tsPacket.Length);
             }
             else
@@ -258,20 +262,20 @@ namespace TsCutterPackage
                 if (pts.isValid)
                 {
                   PcrUtils.PatchPts(ref tsPacket, (ulong)payloadStart,
-                              pts.ToDateTime().AddMilliseconds(pcrDiff.TotalMilliseconds * -1).TimeOfDay);
+                                    pts.ToDateTime().AddMilliseconds(pcrDiff.TotalMilliseconds * -1).TimeOfDay);
                 }
                 if (dts.isValid)
                 {
                   PcrUtils.PatchDts(ref tsPacket, (ulong)payloadStart,
-                              dts.ToDateTime().AddMilliseconds(pcrDiff.TotalMilliseconds * -1).TimeOfDay);
+                                    dts.ToDateTime().AddMilliseconds(pcrDiff.TotalMilliseconds * -1).TimeOfDay);
                 }
                 writer.Write(tsPacket, 0, tsPacket.Length);
-                pids[pid].IsPrevPacket = false ;
+                pids[pid].IsPrevPacket = false;
               }
               else
               {
                 Log.Info(" tsCutter : pts/dts in 2nd Pkt {0}", payloadStart);
-                pids[pid].IsPrevPacket = true ;
+                pids[pid].IsPrevPacket = true;
                 CopyBuf(pids[pid].PayLoad, 0, tsPacket, 0, 188);
               }
             }
@@ -282,7 +286,8 @@ namespace TsCutterPackage
             {
               pids[pid].HeaderSize_1 = (int)GetPayloadStart(tsPacket);
               if (pids[pid].HeaderSize_1 > 0)
-              { // Copy new payload after previous packet...
+              {
+                // Copy new payload after previous packet...
                 CopyBuf(pids[pid].PayLoad, 188, tsPacket, pids[pid].HeaderSize_1, 188 - pids[pid].HeaderSize_1);
                 int payloadStart = PacketContainsPtsDts(pids[pid].PayLoad);
                 if (payloadStart > 0)
@@ -291,19 +296,20 @@ namespace TsCutterPackage
                   Pcr dts;
                   if ((2 * 188 - payloadStart - pids[pid].HeaderSize_1) < 18)
                   {
-                    Log.Info(" tsCutter : patch pts/dts at offset will fail, incomplete PES - header {0},{1}", payloadStart, pids[pid].HeaderSize_1);
+                    Log.Info(" tsCutter : patch pts/dts at offset will fail, incomplete PES - header {0},{1}",
+                             payloadStart, pids[pid].HeaderSize_1);
                   }
 
                   PcrUtils.DecodePtsDts(pids[pid].PayLoad, (ulong)payloadStart, out pts, out dts);
                   if (pts.isValid)
                   {
                     PcrUtils.PatchPts(ref pids[pid].PayLoad, (ulong)payloadStart,
-                              pts.ToDateTime().AddMilliseconds(pcrDiff.TotalMilliseconds * -1).TimeOfDay);
+                                      pts.ToDateTime().AddMilliseconds(pcrDiff.TotalMilliseconds * -1).TimeOfDay);
                   }
                   if (dts.isValid)
                   {
                     PcrUtils.PatchDts(ref pids[pid].PayLoad, (ulong)payloadStart,
-                              dts.ToDateTime().AddMilliseconds(pcrDiff.TotalMilliseconds * -1).TimeOfDay);
+                                      dts.ToDateTime().AddMilliseconds(pcrDiff.TotalMilliseconds * -1).TimeOfDay);
                   }
                   // Moved patched 2nd packet payload to "tsPacket"
                   CopyBuf(tsPacket, pids[pid].HeaderSize_1, pids[pid].PayLoad, 188, 188 - pids[pid].HeaderSize_1);

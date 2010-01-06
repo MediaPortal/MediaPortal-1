@@ -64,9 +64,7 @@ namespace MediaPortal.Music.Database
     private string m_singles = "";
     private string m_misc = "";
 
-    public MusicArtistInfo()
-    {
-    }
+    public MusicArtistInfo() {}
 
     public bool isLoaded()
     {
@@ -172,7 +170,7 @@ namespace MediaPortal.Music.Database
         list = DiscographyAlbums;
         for (int i = 0; i < list.Count; ++i)
         {
-          string[] listInfo = (string[]) list[i];
+          string[] listInfo = (string[])list[i];
           strTmp = String.Format("{0} - {1} ({2})\n",
                                  listInfo[0], // year 
                                  listInfo[1], // title
@@ -202,7 +200,7 @@ namespace MediaPortal.Music.Database
         list = DiscographyCompilations;
         for (int i = 0; i < list.Count; ++i)
         {
-          string[] listInfo = (string[]) list[i];
+          string[] listInfo = (string[])list[i];
           strTmp = String.Format("{0} - {1} ({2})\n",
                                  listInfo[0], // year 
                                  listInfo[1], // title
@@ -232,7 +230,7 @@ namespace MediaPortal.Music.Database
         list = DiscographySingles;
         for (int i = 0; i < list.Count; ++i)
         {
-          string[] listInfo = (string[]) list[i];
+          string[] listInfo = (string[])list[i];
           strTmp = String.Format("{0} - {1} ({2})\n",
                                  listInfo[0], // year 
                                  listInfo[1], // title
@@ -262,7 +260,7 @@ namespace MediaPortal.Music.Database
         list = DiscographyMisc;
         for (int i = 0; i < list.Count; ++i)
         {
-          string[] listInfo = (string[]) list[i];
+          string[] listInfo = (string[])list[i];
           strTmp = String.Format("{0} - {1} ({2})\n",
                                  listInfo[0], // year 
                                  listInfo[1], // title
@@ -309,7 +307,7 @@ namespace MediaPortal.Music.Database
       if (begIndex != -1)
       {
         iStartOfTable = strHTMLLow.LastIndexOf("<table", begIndex);
-          // look for the table that is holding the artist name to get more data
+        // look for the table that is holding the artist name to get more data
         if (iStartOfTable != -1)
         {
           string data;
@@ -505,9 +503,7 @@ namespace MediaPortal.Music.Database
             m_strAMGBiography = data.Trim();
           }
         }
-        catch
-        {
-        }
+        catch {}
       }
 
       // picture URL
@@ -667,15 +663,11 @@ namespace MediaPortal.Music.Database
                 string[] dAlbumInfo = {year.Trim(), albumTitle.Trim(), label.Trim()};
                 m_discographyAlbum.Add(dAlbumInfo);
               }
-              catch
-              {
-              }
+              catch {}
             }
           }
         }
-        catch
-        {
-        }
+        catch {}
       }
 
       // discography (compilations, boxes[x])
@@ -750,16 +742,12 @@ namespace MediaPortal.Music.Database
                         m_discographyMisc.Add(dAlbumInfo);
                       }
                     }
-                    catch
-                    {
-                    }
+                    catch {}
                   } // end of for loop 
                 } // end of if(begIndex != -1)
               } // end of if(href.IndexOf(">") == -1)
             } // end of try
-            catch
-            {
-            }
+            catch {}
           } // end of if(begIndex != -1 && endIndex != -1)         
         } // end foreach
       } // end of if (discographyPageContent != null && discographyPageContent.Length > 0)

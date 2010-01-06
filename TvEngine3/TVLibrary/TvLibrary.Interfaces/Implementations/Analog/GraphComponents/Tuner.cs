@@ -24,7 +24,9 @@ using System.Xml;
 
 namespace TvLibrary.Implementations.Analog.GraphComponents
 {
+
   #region enum
+
   /// <summary>
   /// Enumeration of all possible radio modes of a tuner device
   /// </summary>
@@ -44,6 +46,7 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
     /// </summary>
     AM
   }
+
   #endregion
 
   /// <summary>
@@ -52,31 +55,37 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
   public class Tuner
   {
     #region variables
+
     /// <summary>
     /// Name of the tuner device
     /// </summary>
     private string _name;
+
     /// <summary>
     /// Index of the video output pin
     /// </summary>
     private int _videoPin;
+
     /// <summary>
     /// Index of the audio output pin
     /// </summary>
     private int _audioPin;
+
     /// <summary>
     /// The supported radio mode
     /// </summary>
     private RadioMode _radioMode;
+
     #endregion
 
     #region cotr
-    private Tuner()
-    {
-    }
+
+    private Tuner() {}
+
     #endregion
 
     #region Static CreateInstance method
+
     /// <summary>
     /// Creates the instance by parsing the Tuner node in the configuration file
     /// </summary>
@@ -96,7 +105,8 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
           tuner.VideoPin = Int32.Parse(videoPinNode.InnerText);
           tuner.AudioPin = Int32.Parse(audioPinNode.InnerText);
           tuner.RadioMode = (RadioMode)Int32.Parse(radioModeNode.InnerText);
-        } catch
+        }
+        catch
         {
           tuner.RadioMode = RadioMode.None;
           return tuner;
@@ -105,25 +115,29 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       }
       return tuner;
     }
+
     #endregion
 
     #region WriteGraph method
+
     /// <summary>
     /// Writes the tuner part of the graph to the configuration
     /// </summary>
     /// <param name="writer">Writer</param>
     public void WriteGraph(XmlWriter writer)
     {
-      writer.WriteStartElement("tuner");//<tuner>
+      writer.WriteStartElement("tuner"); //<tuner>
       writer.WriteElementString("name", _name ?? "");
       writer.WriteElementString("videoPin", _videoPin.ToString());
       writer.WriteElementString("audioPin", _audioPin.ToString());
       writer.WriteElementString("radioMode", ((Int32)_radioMode).ToString());
-      writer.WriteEndElement();//</tuner>
+      writer.WriteEndElement(); //</tuner>
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Name of the tuner device
     /// </summary>
@@ -159,6 +173,7 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       get { return _radioMode; }
       set { _radioMode = value; }
     }
+
     #endregion
   }
 }

@@ -44,18 +44,26 @@ namespace MediaPortal.Core.Transcoding
   public class DVRMS2WMV : ITranscode
   {
     #region imports
+
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern int SetWmvProfile(DirectShowLib.IBaseFilter filter, int bitrate, int fps, int screenX, int screenY);
+    private static extern int SetWmvProfile(DirectShowLib.IBaseFilter filter, int bitrate, int fps, int screenX,
+                                            int screenY);
+
     #endregion
 
     #region constants
+
     private const WMVersion DefaultWMversion = WMVersion.V8_0;
     private const int MAXLENPROFNAME = 100;
     private const int MAXLENPROFDESC = 512;
+
     #endregion
 
     #region Guids
-    Guid IID_IWMWriterAdvanced2 = new Guid(0x962dc1ec, 0xc046, 0x4db8, 0x9c, 0xc7, 0x26, 0xce, 0xae, 0x50, 0x08, 0x17);
+
+    private Guid IID_IWMWriterAdvanced2 = new Guid(0x962dc1ec, 0xc046, 0x4db8, 0x9c, 0xc7, 0x26, 0xce, 0xae, 0x50, 0x08,
+                                                   0x17);
+
     #endregion
 
     protected DsROTEntry _rotEntry = null;
@@ -72,13 +80,11 @@ namespace MediaPortal.Core.Transcoding
     protected int bitrate;
     protected double fps;
     protected Size screenSize;
-    protected const int WS_CHILD = 0x40000000;	// attributes for video window
+    protected const int WS_CHILD = 0x40000000; // attributes for video window
     protected const int WS_CLIPCHILDREN = 0x02000000;
     protected const int WS_CLIPSIBLINGS = 0x04000000;
 
-    public DVRMS2WMV()
-    {
-    }
+    public DVRMS2WMV() {}
 
     public void CreateProfile(Size videoSize, int bitRate, double FPS)
     {
@@ -143,16 +149,16 @@ namespace MediaPortal.Core.Transcoding
         //connect output #1 of streambuffer source->mpeg2 video codec pin 1
         IPin pinOut0, pinOut1;
         IPin pinIn0, pinIn1;
-        pinOut0 = DsFindPin.ByDirection((IBaseFilter)bufferSource, PinDirection.Output, 0);//audio
-        pinOut1 = DsFindPin.ByDirection((IBaseFilter)bufferSource, PinDirection.Output, 1);//video
+        pinOut0 = DsFindPin.ByDirection((IBaseFilter)bufferSource, PinDirection.Output, 0); //audio
+        pinOut1 = DsFindPin.ByDirection((IBaseFilter)bufferSource, PinDirection.Output, 1); //video
         if (pinOut0 == null || pinOut1 == null)
         {
           Log.Error("DVRMS2WMV:FAILED:unable to get pins of source");
           Cleanup();
           return false;
         }
-        pinIn0 = DsFindPin.ByDirection(Mpeg2VideoCodec, PinDirection.Input, 0);//video
-        pinIn1 = DsFindPin.ByDirection(Mpeg2AudioCodec, PinDirection.Input, 0);//audio
+        pinIn0 = DsFindPin.ByDirection(Mpeg2VideoCodec, PinDirection.Input, 0); //video
+        pinIn1 = DsFindPin.ByDirection(Mpeg2AudioCodec, PinDirection.Input, 0); //audio
         if (pinIn0 == null || pinIn1 == null)
         {
           Log.Error("DVRMS2WMV:FAILED:unable to get pins of mpeg2 video/audio codec");
@@ -184,14 +190,16 @@ namespace MediaPortal.Core.Transcoding
         long lTime = 5 * 60 * 60;
         lTime *= 10000000;
         long pStop = 0;
-        hr = mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+        hr = mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop),
+                                       AMSeekingSeekingFlags.NoPositioning);
         if (hr == 0)
         {
           long lStreamPos;
           mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
           m_dDuration = lStreamPos;
           lTime = 0;
-          mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+          mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop),
+                                    AMSeekingSeekingFlags.NoPositioning);
         }
         double duration = m_dDuration / 10000000d;
         Log.Info("DVRMS2WMV: movie duration:{0}", Util.Utils.SecondsToHMSString((int)duration));
@@ -219,7 +227,10 @@ namespace MediaPortal.Core.Transcoding
         mediaControl.Stop();
         FilterState state;
         mediaControl.GetState(500, out state);
-        GC.Collect(); GC.Collect(); GC.Collect(); GC.WaitForPendingFinalizers();
+        GC.Collect();
+        GC.Collect();
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
         Log.Info("DVRMS2WMV: reconnect mpeg2 video codec->ASF WM Writer");
         graphBuilder.RemoveFilter(fileWriterbase);
         if (!AddWmAsfWriter(outputFilename, quality, standard)) return false;
@@ -280,7 +291,7 @@ namespace MediaPortal.Core.Transcoding
       return true;
     }
 
-    void Cleanup()
+    private void Cleanup()
     {
       Log.Info("DVRMS2WMV: cleanup");
       if (mediaControl != null)
@@ -308,7 +319,8 @@ namespace MediaPortal.Core.Transcoding
       }
       _rotEntry = null;
       if (graphBuilder != null)
-        DirectShowUtil.ReleaseComObject(graphBuilder); graphBuilder = null;
+        DirectShowUtil.ReleaseComObject(graphBuilder);
+      graphBuilder = null;
       GC.Collect();
       GC.Collect();
       GC.Collect();
@@ -324,13 +336,14 @@ namespace MediaPortal.Core.Transcoding
       Cleanup();
     }
 
-    bool AddWmAsfWriter(string fileName, Quality quality, Standard standard)
+    private bool AddWmAsfWriter(string fileName, Quality quality, Standard standard)
     {
       //add asf file writer
       IPin pinOut0, pinOut1;
       IPin pinIn0, pinIn1;
       Log.Info("DVRMS2WMV: add WM ASF Writer to graph");
-      string monikerAsfWriter = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7C23220E-55BB-11D3-8B16-00C04FB6BD3D}";
+      string monikerAsfWriter =
+        @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{7C23220E-55BB-11D3-8B16-00C04FB6BD3D}";
       fileWriterbase = Marshal.BindToMoniker(monikerAsfWriter) as IBaseFilter;
       if (fileWriterbase == null)
       {
@@ -507,7 +520,8 @@ namespace MediaPortal.Core.Transcoding
             case 1:
               customBitrate = "256Kbs";
               break;
-            case 2: customBitrate = "384Kbs";
+            case 2:
+              customBitrate = "384Kbs";
               break;
             case 3:
               customBitrate = "768Kbs";
@@ -570,7 +584,7 @@ namespace MediaPortal.Core.Transcoding
       return true;
     }
 
-    void SetCutomProfile(int vidbitrate, int audbitrate, int vidheight, int vidwidth, double fps)
+    private void SetCutomProfile(int vidbitrate, int audbitrate, int vidheight, int vidwidth, double fps)
     {
       //seperate method atm braindump for adjusting an existing profile (prx file)
       //method call is not enabled yet
@@ -658,7 +672,7 @@ namespace MediaPortal.Core.Transcoding
           videoInfoHeader.BmiHeader.Height = videoHeight;
           videoInfoHeader.BitRate = videoBitrate;
           videoInfoHeader.AvgTimePerFrame = singleFramePeriod; //Need to check how this is to be calculated
-          IntPtr vidInfoPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(WMVIDEOINFOHEADER)));
+          IntPtr vidInfoPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof (WMVIDEOINFOHEADER)));
           Marshal.StructureToPtr(videoInfoHeader, vidInfoPtr, false);
           videoMediaType.pbFormat = vidInfoPtr;
           hr = streamMediaProps.SetMediaType(videoMediaType);

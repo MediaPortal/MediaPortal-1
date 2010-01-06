@@ -29,9 +29,7 @@ namespace MediaPortal.Drawing.Transforms
   {
     #region Constructors
 
-    public ScaleTransform()
-    {
-    }
+    public ScaleTransform() {}
 
     public ScaleTransform(double scaleX, double scaleY)
     {
@@ -52,10 +50,10 @@ namespace MediaPortal.Drawing.Transforms
 
     protected override Matrix PrepareValue()
     {
-      Matrix matrix = Matrix.Translation((float) -_center.X, (float) -_center.Y, 0);
+      Matrix matrix = Matrix.Translation((float)-_center.X, (float)-_center.Y, 0);
 
-      matrix *= Matrix.Scaling((float) _scaleX, (float) _scaleY, 1);
-      matrix *= Matrix.Translation((float) _center.X, (float) _center.Y, 0);
+      matrix *= Matrix.Scaling((float)_scaleX, (float)_scaleY, 1);
+      matrix *= Matrix.Translation((float)_center.X, (float)_center.Y, 0);
 
       return matrix;
     }

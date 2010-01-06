@@ -76,7 +76,7 @@ namespace MediaPortal.Drawing
 
     public Point this[int index]
     {
-      get { return (Point) List[index]; }
+      get { return (Point)List[index]; }
       set { List[index] = value; }
     }
 

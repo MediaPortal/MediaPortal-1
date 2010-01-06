@@ -29,9 +29,7 @@ namespace System.Windows.Media.Animation
   {
     #region Constructors
 
-    protected DoubleAnimationBase()
-    {
-    }
+    protected DoubleAnimationBase() {}
 
     #endregion Constructors
 
@@ -39,7 +37,7 @@ namespace System.Windows.Media.Animation
 
     public new DoubleAnimationBase Copy()
     {
-      return (DoubleAnimationBase) base.Copy();
+      return (DoubleAnimationBase)base.Copy();
     }
 
     public double GetCurrentValue(double defaultOriginValue, double defaultDestinationValue,

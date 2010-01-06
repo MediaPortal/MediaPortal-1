@@ -81,9 +81,9 @@ namespace MediaPortal.InputDevices
         {
           newParameter = "";
         }
-        type = (string) newType;
+        type = (string)newType;
         value = newValue.ToString();
-        parameter = (string) newParameter;
+        parameter = (string)newParameter;
       }
 
       public string Type
@@ -623,7 +623,7 @@ namespace MediaPortal.InputDevices
         XmlNodeList listButtons = nodeRemote.SelectNodes("button");
         foreach (XmlNode nodeButton in listButtons)
         {
-          TreeNode buttonNode = new TreeNode((string) nodeButton.Attributes["name"].Value);
+          TreeNode buttonNode = new TreeNode((string)nodeButton.Attributes["name"].Value);
           buttonNode.Tag = new Data("BUTTON", nodeButton.Attributes["name"].Value, nodeButton.Attributes["code"].Value);
           remoteNode.Nodes.Add(buttonNode);
 
@@ -811,19 +811,19 @@ namespace MediaPortal.InputDevices
         XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile), Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 1;
-        writer.IndentChar = (char) 9;
+        writer.IndentChar = (char)9;
         writer.WriteStartDocument(true);
         writer.WriteStartElement("mappings"); // <mappings>
         writer.WriteAttributeString("version", "2");
         foreach (TreeNode remoteNode in treeMapping.Nodes)
         {
           writer.WriteStartElement("remote"); // <remote>
-          writer.WriteAttributeString("family", ((Data) remoteNode.Tag).Value);
+          writer.WriteAttributeString("family", ((Data)remoteNode.Tag).Value);
           foreach (TreeNode buttonNode in remoteNode.Nodes)
           {
             writer.WriteStartElement("button"); // <button>
-            writer.WriteAttributeString("name", ((Data) buttonNode.Tag).Parameter);
-            writer.WriteAttributeString("code", ((Data) buttonNode.Tag).Value);
+            writer.WriteAttributeString("name", ((Data)buttonNode.Tag).Parameter);
+            writer.WriteAttributeString("code", ((Data)buttonNode.Tag).Value);
 
             foreach (TreeNode layerNode in buttonNode.Nodes)
             {
@@ -837,19 +837,19 @@ namespace MediaPortal.InputDevices
                 string sound = "";
                 foreach (TreeNode commandNode in conditionNode.Nodes)
                 {
-                  if (((Data) commandNode.Tag).Type == "COMMAND")
+                  if (((Data)commandNode.Tag).Type == "COMMAND")
                   {
-                    command = ((Data) commandNode.Tag).Parameter;
-                    cmdProperty = ((Data) commandNode.Tag).Value;
+                    command = ((Data)commandNode.Tag).Parameter;
+                    cmdProperty = ((Data)commandNode.Tag).Value;
                   }
                   else
                   {
-                    sound = ((Data) commandNode.Tag).Value;
+                    sound = ((Data)commandNode.Tag).Value;
                   }
                 }
-                condition = ((Data) conditionNode.Tag).Parameter;
-                conProperty = ((Data) conditionNode.Tag).Value;
-                layer = ((Data) layerNode.Tag).Value;
+                condition = ((Data)conditionNode.Tag).Parameter;
+                conProperty = ((Data)conditionNode.Tag).Value;
+                layer = ((Data)layerNode.Tag).Value;
                 writer.WriteStartElement("action"); // <action>
                 writer.WriteAttributeString("layer", layer);
                 writer.WriteAttributeString("condition", condition);
@@ -879,7 +879,7 @@ namespace MediaPortal.InputDevices
     private TreeNode getNode(string type)
     {
       TreeNode node = treeMapping.SelectedNode;
-      Data data = (Data) node.Tag;
+      Data data = (Data)node.Tag;
       if (data.Type == type)
       {
         return node;
@@ -895,7 +895,7 @@ namespace MediaPortal.InputDevices
             node = node.Parent;
             foreach (TreeNode subNode in node.Nodes)
             {
-              data = (Data) subNode.Tag;
+              data = (Data)subNode.Tag;
               if (data.Type == type)
               {
                 return subNode;
@@ -906,7 +906,7 @@ namespace MediaPortal.InputDevices
           {
             foreach (TreeNode subNode in node.Nodes)
             {
-              data = (Data) subNode.Tag;
+              data = (Data)subNode.Tag;
               if (data.Type == type)
               {
                 return subNode;
@@ -920,7 +920,7 @@ namespace MediaPortal.InputDevices
             node = node.Parent;
             foreach (TreeNode subNode in node.Nodes)
             {
-              data = (Data) subNode.Tag;
+              data = (Data)subNode.Tag;
               if (data.Type == type)
               {
                 return subNode;
@@ -931,7 +931,7 @@ namespace MediaPortal.InputDevices
           {
             foreach (TreeNode subNode in node.Nodes)
             {
-              data = (Data) subNode.Tag;
+              data = (Data)subNode.Tag;
               if (data.Type == type)
               {
                 return subNode;
@@ -1002,7 +1002,7 @@ namespace MediaPortal.InputDevices
       }
 
       TreeNode node = e.Node;
-      Data data = (Data) node.Tag;
+      Data data = (Data)node.Tag;
       switch (data.Type)
       {
         case "REMOTE":
@@ -1033,13 +1033,13 @@ namespace MediaPortal.InputDevices
             groupBoxLayer.Enabled = true;
             if ((data.Type == "COMMAND") || (data.Type == "SOUND"))
             {
-              comboBoxLayer.SelectedIndex = Convert.ToInt32(((Data) node.Parent.Parent.Tag).Value);
+              comboBoxLayer.SelectedIndex = Convert.ToInt32(((Data)node.Parent.Parent.Tag).Value);
               node = node.Parent;
-              data = (Data) node.Tag;
+              data = (Data)node.Tag;
             }
             else
             {
-              comboBoxLayer.SelectedIndex = Convert.ToInt32(((Data) node.Parent.Tag).Value);
+              comboBoxLayer.SelectedIndex = Convert.ToInt32(((Data)node.Parent.Tag).Value);
             }
 
             switch (data.Parameter)
@@ -1076,7 +1076,7 @@ namespace MediaPortal.InputDevices
             }
             foreach (TreeNode typeNode in node.Nodes)
             {
-              data = (Data) typeNode.Tag;
+              data = (Data)typeNode.Tag;
               switch (data.Type)
               {
                 case "SOUND":
@@ -1308,14 +1308,14 @@ namespace MediaPortal.InputDevices
       if (comboBoxSound.Enabled)
       {
         TreeNode node = getNode("SOUND");
-        node.Text = (string) comboBoxSound.SelectedItem;
+        node.Text = (string)comboBoxSound.SelectedItem;
         if (node.Text == "No Sound")
         {
           node.Tag = new Data("SOUND", null, "");
         }
         else
         {
-          node.Tag = new Data("SOUND", null, (string) comboBoxSound.SelectedItem);
+          node.Tag = new Data("SOUND", null, (string)comboBoxSound.SelectedItem);
         }
       }
     }
@@ -1323,27 +1323,27 @@ namespace MediaPortal.InputDevices
     private void comboBoxCmdProperty_SelectedIndexChanged(object sender, EventArgs e)
     {
       TreeNode node = getNode("COMMAND");
-      Data data = (Data) node.Tag;
+      Data data = (Data)node.Tag;
       switch (data.Parameter)
       {
         case "ACTION":
           node.Tag = new Data("COMMAND", "ACTION",
-                              (int) Enum.Parse(typeof (Action.ActionType), (string) comboBoxCmdProperty.SelectedItem));
-          node.Text = (string) comboBoxCmdProperty.SelectedItem;
+                              (int)Enum.Parse(typeof (Action.ActionType), (string)comboBoxCmdProperty.SelectedItem));
+          node.Text = (string)comboBoxCmdProperty.SelectedItem;
           break;
         case "WINDOW":
           node.Tag = new Data("COMMAND", "WINDOW",
-                              (int) Enum.Parse(typeof (GUIWindow.Window), (string) comboBoxCmdProperty.SelectedItem));
-          node.Text = (string) comboBoxCmdProperty.SelectedItem;
+                              (int)Enum.Parse(typeof (GUIWindow.Window), (string)comboBoxCmdProperty.SelectedItem));
+          node.Text = (string)comboBoxCmdProperty.SelectedItem;
           break;
         case "KEY":
-          node.Tag = new Data("COMMAND", "KEY", (string) comboBoxCmdProperty.SelectedItem);
-          node.Text = "Key \"" + (string) comboBoxCmdProperty.SelectedItem + "\"";
+          node.Tag = new Data("COMMAND", "KEY", (string)comboBoxCmdProperty.SelectedItem);
+          node.Text = "Key \"" + (string)comboBoxCmdProperty.SelectedItem + "\"";
           break;
         case "POWER":
           {
-            node.Tag = new Data("COMMAND", "POWER", (string) comboBoxCmdProperty.SelectedItem);
-            switch ((string) comboBoxCmdProperty.SelectedItem)
+            node.Tag = new Data("COMMAND", "POWER", (string)comboBoxCmdProperty.SelectedItem);
+            switch ((string)comboBoxCmdProperty.SelectedItem)
             {
               case "EXIT":
                 node.Text = "Exit MediaPortal";
@@ -1365,7 +1365,7 @@ namespace MediaPortal.InputDevices
           }
         case "PROCESS":
           {
-            switch ((string) comboBoxCmdProperty.SelectedItem)
+            switch ((string)comboBoxCmdProperty.SelectedItem)
             {
               case "CLOSE":
                 node.Tag = new Data("COMMAND", "PROCESS", "CLOSE");
@@ -1384,16 +1384,16 @@ namespace MediaPortal.InputDevices
     private void comboBoxCondProperty_SelectedIndexChanged(object sender, EventArgs e)
     {
       TreeNode node = getNode("CONDITION");
-      Data data = (Data) node.Tag;
+      Data data = (Data)node.Tag;
       switch (data.Parameter)
       {
         case "WINDOW":
           node.Tag = new Data("CONDITION", "WINDOW",
-                              (int) Enum.Parse(typeof (GUIWindow.Window), (string) comboBoxCondProperty.SelectedItem));
-          node.Text = (string) comboBoxCondProperty.SelectedItem;
+                              (int)Enum.Parse(typeof (GUIWindow.Window), (string)comboBoxCondProperty.SelectedItem));
+          node.Text = (string)comboBoxCondProperty.SelectedItem;
           break;
         case "FULLSCREEN":
-          if ((string) comboBoxCondProperty.SelectedItem == "Fullscreen")
+          if ((string)comboBoxCondProperty.SelectedItem == "Fullscreen")
           {
             node.Tag = new Data("CONDITION", "FULLSCREEN", "true");
           }
@@ -1401,12 +1401,12 @@ namespace MediaPortal.InputDevices
           {
             node.Tag = new Data("CONDITION", "FULLSCREEN", "false");
           }
-          node.Text = (string) comboBoxCondProperty.SelectedItem;
+          node.Text = (string)comboBoxCondProperty.SelectedItem;
           break;
         case "PLAYER":
           {
-            node.Tag = new Data("CONDITION", "PLAYER", (string) comboBoxCondProperty.SelectedItem);
-            switch ((string) comboBoxCondProperty.SelectedItem)
+            node.Tag = new Data("CONDITION", "PLAYER", (string)comboBoxCondProperty.SelectedItem);
+            switch ((string)comboBoxCondProperty.SelectedItem)
             {
               case "TV":
                 node.Text = "TV Playing";
@@ -1448,23 +1448,23 @@ namespace MediaPortal.InputDevices
     {
       bool expanded = false;
       TreeNode node = treeMapping.SelectedNode;
-      if (((Data) node.Tag).Type != "BUTTON")
+      if (((Data)node.Tag).Type != "BUTTON")
       {
         expanded = node.IsExpanded;
       }
-      if ((((Data) node.Tag).Type == "COMMAND") || (((Data) node.Tag).Type == "SOUND"))
+      if ((((Data)node.Tag).Type == "COMMAND") || (((Data)node.Tag).Type == "SOUND"))
       {
         node = node.Parent;
         expanded = true;
       }
-      if ((((Data) node.Tag).Type != "BUTTON") && (((Data) node.Tag).Type != "CONDITION"))
+      if ((((Data)node.Tag).Type != "BUTTON") && (((Data)node.Tag).Type != "CONDITION"))
       {
         return;
       }
       if (node.Index > 0)
       {
         int index = node.Index - 1;
-        TreeNode tmpNode = (TreeNode) node.Clone();
+        TreeNode tmpNode = (TreeNode)node.Clone();
         TreeNode parentNode = node.Parent;
         node.Remove();
         if (expanded)
@@ -1480,23 +1480,23 @@ namespace MediaPortal.InputDevices
     {
       bool expanded = false;
       TreeNode node = treeMapping.SelectedNode;
-      if (((Data) node.Tag).Type != "BUTTON")
+      if (((Data)node.Tag).Type != "BUTTON")
       {
         expanded = node.IsExpanded;
       }
-      if ((((Data) node.Tag).Type == "COMMAND") || (((Data) node.Tag).Type == "SOUND"))
+      if ((((Data)node.Tag).Type == "COMMAND") || (((Data)node.Tag).Type == "SOUND"))
       {
         node = node.Parent;
         expanded = true;
       }
-      if ((((Data) node.Tag).Type != "BUTTON") && (((Data) node.Tag).Type != "CONDITION"))
+      if ((((Data)node.Tag).Type != "BUTTON") && (((Data)node.Tag).Type != "CONDITION"))
       {
         return;
       }
       if (node.Index < node.Parent.Nodes.Count - 1)
       {
         int index = node.Index + 1;
-        TreeNode tmpNode = (TreeNode) node.Clone();
+        TreeNode tmpNode = (TreeNode)node.Clone();
         TreeNode parentNode = node.Parent;
         node.Remove();
         if (expanded)
@@ -1511,7 +1511,7 @@ namespace MediaPortal.InputDevices
     private void buttonRemove_Click(object sender, EventArgs e)
     {
       TreeNode node = treeMapping.SelectedNode;
-      Data data = (Data) node.Tag;
+      Data data = (Data)node.Tag;
       DialogResult result = MessageBox.Show(this, "Are you sure you want to remove this " + data.Type.ToLower() + "?",
                                             "Remove " + data.Type.ToLower(),
                                             MessageBoxButtons.YesNo, MessageBoxIcon.Question,
@@ -1525,7 +1525,7 @@ namespace MediaPortal.InputDevices
     private void buttonNew_Click(object sender, EventArgs e)
     {
       TreeNode node = treeMapping.SelectedNode;
-      Data data = (Data) node.Tag;
+      Data data = (Data)node.Tag;
 
       TreeNode newLayer = new TreeNode("All Layers");
       newLayer.Tag = new Data("LAYER", null, "0");

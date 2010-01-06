@@ -30,7 +30,7 @@ using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
-using FilterCategory=DirectShowLib.FilterCategory;
+using FilterCategory = DirectShowLib.FilterCategory;
 
 #pragma warning disable 108
 
@@ -48,9 +48,7 @@ namespace MediaPortal.Configuration.Sections
     private IContainer components = null;
 
     public BasePostProcessing()
-      : this("Post Processing")
-    {
-    }
+      : this("Post Processing") {}
 
     public BasePostProcessing(string name)
       : base(name)
@@ -188,7 +186,7 @@ namespace MediaPortal.Configuration.Sections
          (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
            | System.Windows.Forms.AnchorStyles.Right)));
       this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold,
-                                                       System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+                                                       System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelWarning.ForeColor = System.Drawing.Color.Red;
       this.labelWarning.Location = new System.Drawing.Point(0, 0);
       this.labelWarning.Name = "labelWarning";
@@ -239,7 +237,7 @@ namespace MediaPortal.Configuration.Sections
     {
       if (cLBDSFilter.SelectedIndex != -1)
       {
-        DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice) cLBDSFilter.SelectedItem);
+        DirectShowPropertyPage page = new DirectShowPropertyPage((DsDevice)cLBDSFilter.SelectedItem);
         page.Show(this);
       }
     }
@@ -262,9 +260,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void cLBDSFilter_SelectedIndexChanged(object sender, EventArgs e)
-    {
-    }
+    private void cLBDSFilter_SelectedIndexChanged(object sender, EventArgs e) {}
 
     protected void LoadSettings(string section)
     {
@@ -305,9 +301,7 @@ namespace MediaPortal.Configuration.Sections
             }
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
       cLBDSFilter.Sorted = true;
       lBDSFilter.Sorted = true;
@@ -328,7 +322,7 @@ namespace MediaPortal.Configuration.Sections
       {
         for (int i = 0; i < cLBDSFilter.Items.Count; i++)
         {
-          tmpDevice = (DsDevice) cLBDSFilter.Items[i];
+          tmpDevice = (DsDevice)cLBDSFilter.Items[i];
           xmlwriter.SetValue(section, "filter" + i.ToString(), tmpDevice.Name);
           xmlwriter.SetValueAsBool(section, "usefilter" + i.ToString(), cLBDSFilter.GetItemChecked(i));
         }

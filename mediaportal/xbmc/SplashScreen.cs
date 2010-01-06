@@ -53,9 +53,7 @@ namespace MediaPortal
     private Form OutDatedSkinForm = null;
     private string info;
 
-    public SplashScreen()
-    {
-    }
+    public SplashScreen() {}
 
 
     /// <summary>
@@ -208,7 +206,7 @@ namespace MediaPortal
       bool delayedStopAllowed = false;
       int stopRequestTime = 0;
       while (!delayedStopAllowed && (frmFull.Focused || OutDatedSkinForm != null))
-      //run until stop of splashscreen is requested
+        //run until stop of splashscreen is requested
       {
         if (stopRequested && stopRequestTime == 0) // store the current time when stop of the splashscreen is requested
         {
@@ -216,7 +214,7 @@ namespace MediaPortal
           frmFull.TopMost = false; // allow the splashscreen to be overlayed by other windows (like the mp main screen)
         }
         if (AllowWindowOverlayRequested == true && OutDatedSkinForm != null)
-        // Allow other Windows to Overlay the splashscreen
+          // Allow other Windows to Overlay the splashscreen
         {
           if (OutDatedSkinForm.Visible) // prepare everything to let the Outdated skin message appear
           {
@@ -253,6 +251,7 @@ namespace MediaPortal
       frmFull.Close();
       frmFull = null;
     }
+
     /// <summary>
     /// Summary description for SplashScreen.
     /// </summary>
@@ -369,10 +368,13 @@ namespace MediaPortal
         // 
         // informationLabel
         // 
-        this.informationLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.informationLabel.Anchor =
+          ((System.Windows.Forms.AnchorStyles)
+           (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+             | System.Windows.Forms.AnchorStyles.Right)));
         this.informationLabel.BackColor = System.Drawing.Color.Transparent;
-        this.informationLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.informationLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold,
+                                                             System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.informationLabel.ForeColor = System.Drawing.Color.White;
         this.informationLabel.Location = new System.Drawing.Point(11, 138);
         this.informationLabel.Name = "informationLabel";
@@ -383,10 +385,13 @@ namespace MediaPortal
         // 
         // versionLabel
         // 
-        this.versionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.versionLabel.Anchor =
+          ((System.Windows.Forms.AnchorStyles)
+           (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+             | System.Windows.Forms.AnchorStyles.Right)));
         this.versionLabel.BackColor = System.Drawing.Color.Transparent;
-        this.versionLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.versionLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular,
+                                                         System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.versionLabel.ForeColor = System.Drawing.Color.White;
         this.versionLabel.Location = new System.Drawing.Point(277, 113);
         this.versionLabel.Name = "versionLabel";
@@ -396,10 +401,13 @@ namespace MediaPortal
         // 
         // cvsLabel
         // 
-        this.cvsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.cvsLabel.Anchor =
+          ((System.Windows.Forms.AnchorStyles)
+           (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+             | System.Windows.Forms.AnchorStyles.Right)));
         this.cvsLabel.BackColor = System.Drawing.Color.Transparent;
-        this.cvsLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.cvsLabel.Font = new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular,
+                                                     System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         this.cvsLabel.Location = new System.Drawing.Point(24, 113);
         this.cvsLabel.Name = "cvsLabel";
         this.cvsLabel.Size = new System.Drawing.Size(211, 16);
@@ -421,14 +429,12 @@ namespace MediaPortal
         this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
         this.Text = "SplashScreen";
         this.TopMost = true;
-        this.TransparencyKey = System.Drawing.Color.FromArgb(0,0,0,0);
+        this.TransparencyKey = System.Drawing.Color.FromArgb(0, 0, 0, 0);
         this.panel1.ResumeLayout(false);
         this.ResumeLayout(false);
-
       }
 
       #endregion
     }
   }
-
 }

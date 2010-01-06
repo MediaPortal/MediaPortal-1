@@ -105,7 +105,7 @@ namespace MediaPortal.Drawing
 
     public Geometry this[int index]
     {
-      get { return (Geometry) List[index]; }
+      get { return (Geometry)List[index]; }
       set { List[index] = value; }
     }
 

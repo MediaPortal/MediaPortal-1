@@ -64,9 +64,7 @@ namespace Rss
     private RssModuleItemCollection _rssSubElements = new RssModuleItemCollection();
 
     /// <summary>Initialize a new instance of the RssModuleItem class</summary>
-    public RssModuleItem()
-    {
-    }
+    public RssModuleItem() {}
 
     /// <summary>Initialize a new instance of the RssModuleItem class</summary>
     /// <param name="name">The name of this RssModuleItem.</param>

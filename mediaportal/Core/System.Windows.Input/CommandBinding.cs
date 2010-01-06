@@ -29,18 +29,12 @@ namespace System.Windows.Input
   {
     #region Constructors
 
-    public CommandBinding()
-    {
-    }
+    public CommandBinding() {}
 
-    public CommandBinding(RoutedCommand command) : this(command, null)
-    {
-    }
+    public CommandBinding(RoutedCommand command) : this(command, null) {}
 
     public CommandBinding(RoutedCommand command, ExecuteEventHandler executeEventHandler)
-      : this(command, executeEventHandler, null)
-    {
-    }
+      : this(command, executeEventHandler, null) {}
 
     public CommandBinding(RoutedCommand command, ExecuteEventHandler executeEventHandler,
                           QueryEnabledEventHandler queryEnabledEventHandler)

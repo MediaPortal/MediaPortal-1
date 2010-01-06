@@ -126,6 +126,7 @@ namespace MediaPortal.GUI.Video
     private bool _eachFolderIsMovie = false;
     private ArrayList _conflictFiles = new ArrayList();
     private bool _switchRemovableDrives;
+
     #endregion
 
     #region constructors
@@ -343,7 +344,7 @@ namespace MediaPortal.GUI.Video
         case GUIMessage.MessageType.GUI_MSG_CD_REMOVED:
           if (g_Player.Playing && g_Player.IsDVD &&
               message.Label.Equals(g_Player.CurrentFile.Substring(0, 2), StringComparison.InvariantCultureIgnoreCase))
-          // test if it is our drive
+            // test if it is our drive
           {
             Log.Info("GUIVideoFiles: Stop dvd since DVD is ejected");
             g_Player.Stop();
@@ -422,7 +423,7 @@ namespace MediaPortal.GUI.Video
         folderName = "root";
       }
       object o;
-      FolderSettings.GetFolderSetting(folderName, "VideoFiles", typeof(MapSettings), out o);
+      FolderSettings.GetFolderSetting(folderName, "VideoFiles", typeof (MapSettings), out o);
       if (o != null)
       {
         _mapSettings = o as MapSettings;
@@ -468,7 +469,7 @@ namespace MediaPortal.GUI.Video
       {
         folderName = "root";
       }
-      FolderSettings.AddFolderSetting(folderName, "VideoFiles", typeof(MapSettings), _mapSettings);
+      FolderSettings.AddFolderSetting(folderName, "VideoFiles", typeof (MapSettings), _mapSettings);
     }
 
     protected override void LoadDirectory(string newFolderName)
@@ -648,7 +649,7 @@ namespace MediaPortal.GUI.Video
       }
 
       if ((item.IsFolder && !isFolderAMovie))
-      //-- Mars Warrior @ 03-sep-2004
+        //-- Mars Warrior @ 03-sep-2004
       {
         _currentSelectedItem = -1;
         LoadDirectory(path);
@@ -1287,9 +1288,7 @@ namespace MediaPortal.GUI.Video
         }
         info.SetProperties();
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
 
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
@@ -2090,7 +2089,7 @@ namespace MediaPortal.GUI.Video
 
     private static void DownloadActors(IMDBMovie movieDetails)
     {
-      char[] splitter = { '\n', ',' };
+      char[] splitter = {'\n', ','};
       string[] actors = movieDetails.Cast.Split(splitter);
       if (actors.Length > 0)
       {
@@ -2197,9 +2196,7 @@ namespace MediaPortal.GUI.Video
           }
         }
       }
-      catch (ThreadAbortException)
-      {
-      }
+      catch (ThreadAbortException) {}
     }
 
     public static void Reset()

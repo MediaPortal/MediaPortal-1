@@ -25,7 +25,5 @@
 
 namespace System.Windows
 {
-  public class ContentElement : DependencyObject
-  {
-  }
+  public class ContentElement : DependencyObject {}
 }

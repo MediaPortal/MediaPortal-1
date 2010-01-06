@@ -63,7 +63,7 @@ namespace MediaPortal.Configuration.Sections
       }
       set
       {
-        string[] extensions = ((string) value).Split(',');
+        string[] extensions = ((string)value).Split(',');
         extensionsListBox.Items.AddRange(extensions);
       }
     }

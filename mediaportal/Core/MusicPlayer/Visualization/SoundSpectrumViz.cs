@@ -48,7 +48,7 @@ namespace MediaPortal.Visualization
       public float inScale; // Scales what gets returned in outSamples[];
 
       public IntPtr outSamples;
-                    // IntPtr to a float[] -- Caller should set to an array to be written to (or NULL if not desired)
+      // IntPtr to a float[] -- Caller should set to an array to be written to (or NULL if not desired)
 
       public int outN; // Number of elements of outSamples filled/returned by the SSVisualAPI host.
 
@@ -57,13 +57,13 @@ namespace MediaPortal.Visualization
       public int inStepsPerBin; // The freq span of the spectrum -- this is used when an FFT array is already available.
 
       public int inStartBin;
-                 // The bin num the spectrum starts at -- this is used when an FFT array is already available.
+      // The bin num the spectrum starts at -- this is used when an FFT array is already available.
 
       public IntPtr inFFTParams;
-                    // SSFFTParams* - Params to use for an FFT -- this is used when only a PCM array is available.
+      // SSFFTParams* - Params to use for an FFT -- this is used when only a PCM array is available.
 
       public IntPtr outFFT;
-                    // IntPtr to a float[] -- Caller should set to an array to be written to (or NULL if not desired)
+      // IntPtr to a float[] -- Caller should set to an array to be written to (or NULL if not desired)
 
       public int outNumBins; // Number of elements of outFT filled/returned by the SSVisualAPI host.
     } ;
@@ -363,7 +363,7 @@ namespace MediaPortal.Visualization
         SoundSpectrumInterop.SS_GetSoundData_Params soundDataParams;
         soundDataParams =
           (SoundSpectrumInterop.SS_GetSoundData_Params)
-          Marshal.PtrToStructure((IntPtr) inParam1, typeof (SoundSpectrumInterop.SS_GetSoundData_Params));
+          Marshal.PtrToStructure((IntPtr)inParam1, typeof (SoundSpectrumInterop.SS_GetSoundData_Params));
 
         if (!IsPreviewVisualization && Bass.State != BassAudioEngine.PlayState.Playing)
         {
@@ -378,14 +378,14 @@ namespace MediaPortal.Visualization
 
         if (!_IsPreviewVisualization)
         {
-          stream = (int) Bass.GetCurrentVizStream();
+          stream = (int)Bass.GetCurrentVizStream();
         }
 
         if (soundDataParams.inN > 0)
         {
           // Set the PCM data
 
-          int reqDataLen = soundDataParams.inN*multiplier;
+          int reqDataLen = soundDataParams.inN * multiplier;
           float[] pcm = new float[reqDataLen];
           int len = 0;
 
@@ -399,7 +399,7 @@ namespace MediaPortal.Visualization
               return 0;
             }
 
-            fDataLen = len/multiplier;
+            fDataLen = len / multiplier;
           }
 
             // We're in preview mode so we'll generate dummy FFT data so the viz
@@ -410,10 +410,10 @@ namespace MediaPortal.Visualization
 
             for (int i = 0; i < pcm.Length; i++)
             {
-              float val = 1.0f/(float) rand.Next(0, 32768);
+              float val = 1.0f / (float)rand.Next(0, 32768);
 
               // Left Channel
-              if (i%2 == 0)
+              if (i % 2 == 0)
               {
                 //pcm[i] = (short)rand.Next(-32767, 1);
                 pcm[i] = val;
@@ -431,7 +431,7 @@ namespace MediaPortal.Visualization
           }
 
           // Copy the PCM data to the SS_GetSoundData_Params object
-          IntPtr pPCMData = (IntPtr) soundDataParams.outSamples;
+          IntPtr pPCMData = (IntPtr)soundDataParams.outSamples;
           Marshal.Copy(pcm, 0, pPCMData, fDataLen);
           soundDataParams.outN = fDataLen;
           hasData = true;
@@ -479,7 +479,7 @@ namespace MediaPortal.Visualization
             actualFFTSize = 2048;
           }
 
-          float[] fft = new float[actualFFTSize*2];
+          float[] fft = new float[actualFFTSize * 2];
           float[] outFFT = null;
 
           fDataLen = requestedFFTBins;
@@ -492,13 +492,13 @@ namespace MediaPortal.Visualization
             // The number of "bins" requested is likely to be smaller than the number we get
             // from BASS so we'll need to average some of the bins...
             outFFT = new float[totalRequestedBins];
-            float fStep = (float) actualFFTSize/(float) totalRequestedBins;
+            float fStep = (float)actualFFTSize / (float)totalRequestedBins;
             int lastBin = 0;
 
             for (int i = 0; i < outFFT.Length; i++)
             {
               int startBin = lastBin;
-              int stopBin = (int) (((float) (i + 1)*fStep) + .5f);
+              int stopBin = (int)(((float)(i + 1) * fStep) + .5f);
               int totalBins = stopBin - startBin;
               float tempBinValTotal = 0;
               float avgBinVal = 0;
@@ -509,11 +509,11 @@ namespace MediaPortal.Visualization
                 tempBinValTotal += curFftVal;
               }
 
-              avgBinVal = tempBinValTotal/totalBins;
+              avgBinVal = tempBinValTotal / totalBins;
               lastBin = stopBin;
 
               // Scale the output to it's large enough to be visible
-              outFFT[i] = avgBinVal*fftScalingFactor;
+              outFFT[i] = avgBinVal * fftScalingFactor;
             }
           }
 
@@ -526,13 +526,13 @@ namespace MediaPortal.Visualization
 
             for (int i = 0; i < outFFT.Length; i++)
             {
-              float val = (float) rand.Next(100, fftScalingFactor);
+              float val = (float)rand.Next(100, fftScalingFactor);
               outFFT[i] = val;
             }
           }
 
           // Copy the FFT data to the SS_GetSoundData_Params object
-          Marshal.Copy(outFFT, soundDataParams.inStartBin, (IntPtr) soundDataParams.outFFT, fDataLen);
+          Marshal.Copy(outFFT, soundDataParams.inStartBin, (IntPtr)soundDataParams.outFFT, fDataLen);
           soundDataParams.outNumBins = fDataLen;
           hasData = true;
         }
@@ -546,7 +546,7 @@ namespace MediaPortal.Visualization
         if (hasData)
         {
           soundDataParams.mSize = Marshal.SizeOf(soundDataParams);
-          Marshal.StructureToPtr(soundDataParams, (IntPtr) inParam1, false);
+          Marshal.StructureToPtr(soundDataParams, (IntPtr)inParam1, false);
         }
       }
 

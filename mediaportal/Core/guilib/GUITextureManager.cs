@@ -47,13 +47,9 @@ namespace MediaPortal.GUI.Library
     private static TexturePacker _packer = new TexturePacker();
 
     // singleton. Dont allow any instance of this class
-    private GUITextureManager()
-    {
-    }
+    private GUITextureManager() {}
 
-    static GUITextureManager()
-    {
-    }
+    static GUITextureManager() {}
 
     ~GUITextureManager()
     {
@@ -86,7 +82,7 @@ namespace MediaPortal.GUI.Library
       {
         files = Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "MPTemp*.*");
       }
-      catch { }
+      catch {}
 
       if (files != null)
       {
@@ -96,7 +92,7 @@ namespace MediaPortal.GUI.Library
           {
             File.Delete(file);
           }
-          catch (Exception) { }
+          catch (Exception) {}
         }
       }
     }
@@ -265,7 +261,7 @@ namespace MediaPortal.GUI.Library
                 }
               }
             }
-            catch (Exception) { }
+            catch (Exception) {}
 
             for (int i = 0; i < newCache.Frames; ++i)
             {
@@ -303,7 +299,6 @@ namespace MediaPortal.GUI.Library
             {
               _persistentTextures.Add(newCache.Name, true);
               _cache.Add(newCache);
-
             }
             _cache.Add(newCache);
             _textureCacheLookup[fileName] = newCache;
@@ -412,7 +407,7 @@ namespace MediaPortal.GUI.Library
         _textureCacheLookup[cacheName] = newCache;
 
         Log.Debug("TextureManager: added: memoryImage  " + " total: " + _cache.Count + " mem left: " +
-                 GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+                  GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
         return newCache.Frames;
       }
       catch (Exception ex)
@@ -479,7 +474,7 @@ namespace MediaPortal.GUI.Library
         _textureCacheLookup[cacheName] = newCache;
 
         Log.Debug("TextureManager: added: memoryImage  " + " total: " + _cache.Count + " mem left: " +
-                 GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+                  GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
         return newCache.Frames;
       }
       catch (Exception ex)
@@ -507,7 +502,8 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    private static Texture LoadGraphic(string fileName, long lColorKey, int iMaxWidth, int iMaxHeight, out int width, out int height)
+    private static Texture LoadGraphic(string fileName, long lColorKey, int iMaxWidth, int iMaxHeight, out int width,
+                                       out int height)
     {
       width = 0;
       height = 0;
@@ -675,7 +671,8 @@ namespace MediaPortal.GUI.Library
     //  return null;
     //}
 
-    public static CachedTexture.Frame GetTexture(string fileNameOrg, int iImage, out int iTextureWidth, out int iTextureHeight)
+    public static CachedTexture.Frame GetTexture(string fileNameOrg, int iImage, out int iTextureWidth,
+                                                 out int iTextureHeight)
     {
       iTextureWidth = 0;
       iTextureHeight = 0;

@@ -197,7 +197,7 @@ namespace MediaPortal
             if (tmpscreen.DeviceName.Contains("DISPLAY" + ScreenNumber)) // if the selected Display is found
             {
               this.Location = new Point(tmpscreen.Bounds.X, tmpscreen.Bounds.Y);
-                // set the form position into this screen
+              // set the form position into this screen
               this.Size = new Size(tmpscreen.Bounds.Width + 1, tmpscreen.Bounds.Height + 1);
             }
           }

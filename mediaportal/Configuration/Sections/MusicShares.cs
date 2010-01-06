@@ -32,14 +32,10 @@ namespace MediaPortal.Configuration.Sections
   public class MusicShares : BaseShares
   {
     public MusicShares()
-      : this("Music Folders")
-    {
-    }
+      : this("Music Folders") {}
 
     public MusicShares(string name)
-      : base(name)
-    {
-    }
+      : base(name) {}
 
     public override void LoadSettings()
     {

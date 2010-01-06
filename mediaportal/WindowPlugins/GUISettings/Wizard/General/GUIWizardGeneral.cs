@@ -47,7 +47,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 
     public GUIWizardGeneral()
     {
-      GetID = (int) Window.WINDOW_WIZARD_GENERAL;
+      GetID = (int)Window.WINDOW_WIZARD_GENERAL;
     }
 
     public override bool Init()
@@ -182,7 +182,7 @@ namespace MediaPortal.GUI.Settings.Wizard
       GUIPropertyManager.SetProperty("#Wizard.General.Done", "yes");
       GUIPropertyManager.SetProperty("#InternetAccess", cmInternetYes.Selected.ToString());
 
-      GUIWindowManager.ActivateWindow((int) Window.WINDOW_WIZARD_REMOTE);
+      GUIWindowManager.ActivateWindow((int)Window.WINDOW_WIZARD_REMOTE);
     }
   }
 }

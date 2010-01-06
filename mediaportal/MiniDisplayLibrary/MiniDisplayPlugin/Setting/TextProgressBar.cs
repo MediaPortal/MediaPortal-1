@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Xml.Serialization;
 
@@ -65,7 +65,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
         {
           return 0.0;
         }
-        return (double) (((num2*0xe10) + (num3*60)) + num4);
+        return (double)(((num2 * 0xe10) + (num3 * 60)) + num4);
       }
       if (!double.TryParse(stringValue, out num))
       {
@@ -85,7 +85,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
         num3 = 0;
         return "[TextProgressBar Error]";
       }
-      num3 = (num <= 0.0) ? ((int) 0.0) : ((int) ((num/num2)*(this.length - 2)));
+      num3 = (num <= 0.0) ? ((int)0.0) : ((int)((num / num2) * (this.length - 2)));
       builder.Append(this.startChar);
       builder.Append(this.valueChar, num3);
       builder.Append(this.fillChar, (this.length - 2) - num3);

@@ -27,12 +27,8 @@ namespace MediaPortal.Drawing
 {
   public class PenBase
   {
-    public PenBase()
-    {
-    }
+    public PenBase() {}
 
-    protected void RaiseChanged()
-    {
-    }
+    protected void RaiseChanged() {}
   }
 }

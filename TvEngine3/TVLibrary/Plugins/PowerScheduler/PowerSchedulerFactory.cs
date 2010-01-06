@@ -1,4 +1,5 @@
 #region Copyright (C) 2007-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2007-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,6 +20,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
@@ -40,21 +42,26 @@ namespace TvEngine.PowerScheduler
   public class PowerSchedulerFactory
   {
     #region Variables
+
     /// <summary>
     /// List of all standby handlers
     /// </summary>
-    List<IStandbyHandler> _standbyHandlers;
+    private List<IStandbyHandler> _standbyHandlers;
+
     /// <summary>
     /// List of all wakeup handlers
     /// </summary>
-    List<IWakeupHandler> _wakeupHandlers;
+    private List<IWakeupHandler> _wakeupHandlers;
+
     /// <summary>
     /// Controls standby/wakeup of system for EPG grabbing
     /// </summary>
-    EpgGrabbingHandler _epgHandler;
+    private EpgGrabbingHandler _epgHandler;
+
     #endregion
 
     #region Constructor
+
     /// <summary>
     /// Creates a new PowerSchedulerFactory
     /// </summary>
@@ -83,14 +90,16 @@ namespace TvEngine.PowerScheduler
 
       // Add handlers for resuming from standby
       _wakeupHandlers.Add(recHandler);
-      _wakeupHandlers.Add(xmltvHandler);      
+      _wakeupHandlers.Add(xmltvHandler);
 
       // Activate the EPG grabbing handler
       _epgHandler = new EpgGrabbingHandler(controller);
     }
+
     #endregion
 
     #region Public methods
+
     /// <summary>
     /// Create/register the default set of standby/wakeup handlers
     /// </summary>
@@ -114,7 +123,7 @@ namespace TvEngine.PowerScheduler
       foreach (IWakeupHandler handler in _wakeupHandlers)
         powerScheduler.Unregister(handler);
     }
-    #endregion
 
+    #endregion
   }
 }

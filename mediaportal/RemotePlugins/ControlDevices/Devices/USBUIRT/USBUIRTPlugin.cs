@@ -268,9 +268,7 @@ namespace MediaPortal.ControlDevices.USBUIRT
       return false;
     }
 
-    protected void DisconnectDevice()
-    {
-    }
+    protected void DisconnectDevice() {}
 
     protected void UnloadDrivers()
     {

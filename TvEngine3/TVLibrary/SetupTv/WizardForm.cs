@@ -62,16 +62,19 @@ namespace SetupTv
     {
       get { return wizardPages; }
     }
-    static readonly ArrayList wizardPages = new ArrayList();
+
+    private static readonly ArrayList wizardPages = new ArrayList();
+
     public static WizardForm Form
     {
       get { return wizardForm; }
     }
-    static WizardForm wizardForm;
 
-    string wizardCaption = String.Empty;
+    private static WizardForm wizardForm;
 
-    int visiblePageIndex = -1;
+    private string wizardCaption = String.Empty;
+
+    private int visiblePageIndex = -1;
 
     public void AddSection(SectionSettings settings, string topic, string information)
     {
@@ -182,11 +185,13 @@ namespace SetupTv
                   //
                   if (dependencyNode == null)
                   {
-                    AddSection(section, topicNode != null ? topicNode.InnerText : String.Empty, infoNode != null ? infoNode.InnerText : String.Empty);
+                    AddSection(section, topicNode != null ? topicNode.InnerText : String.Empty,
+                               infoNode != null ? infoNode.InnerText : String.Empty);
                   }
                   else
                   {
-                    AddSection(section, topicNode != null ? topicNode.InnerText : String.Empty, infoNode != null ? infoNode.InnerText : String.Empty, dependencyNode.InnerText);
+                    AddSection(section, topicNode != null ? topicNode.InnerText : String.Empty,
+                               infoNode != null ? infoNode.InnerText : String.Empty, dependencyNode.InnerText);
                   }
                 }
               }
@@ -214,7 +219,7 @@ namespace SetupTv
         // Create the instance of the section settings class, pass the section name as argument
         // to the constructor. We do this to be able to use the same name on <name> as in the <dependency> tag.
         //
-        SectionSettings section = (SectionSettings)Activator.CreateInstance(sectionType, new object[] { sectionName });
+        SectionSettings section = (SectionSettings)Activator.CreateInstance(sectionType, new object[] {sectionName});
         return section;
       }
 
@@ -435,7 +440,6 @@ namespace SetupTv
 
     private void cancelButton_Click(object sender, EventArgs e)
     {
-
       Close();
     }
 
@@ -477,7 +481,6 @@ namespace SetupTv
       {
         holder.Section.SaveSettings();
       }
-
     }
   }
 }

@@ -71,9 +71,7 @@ namespace MediaPortal.Configuration.Sections
     private IContainer components = null;
 
     public Weather()
-      : this("Weather")
-    {
-    }
+      : this("Weather") {}
 
     public Weather(string name)
       : base(name)
@@ -194,7 +192,7 @@ namespace MediaPortal.Configuration.Sections
           selectedWindUnit = WindUnit.Bft;
         }
         // Write the speed units
-        xmlwriter.SetValue("weather", "speed", (int) selectedWindUnit);
+        xmlwriter.SetValue("weather", "speed", (int)selectedWindUnit);
         // Define the temperature measurement
         string temperature = string.Empty;
         if (temperatureComboBox.Text.Equals("Celsius"))

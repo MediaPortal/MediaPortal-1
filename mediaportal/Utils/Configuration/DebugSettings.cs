@@ -32,14 +32,15 @@ namespace MediaPortal.Configuration
   /// </summary>
   public class DebugSettings
   {
-    private static string SettingsPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Team MediaPortal\MediaPortal\debug\";
+    private static string SettingsPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
+                                         @"\Team MediaPortal\MediaPortal\debug\";
 
     /// <summary>
     /// Get the path and filename of the requested debug setting
     /// </summary>
     /// <param name="setting">the name of the setting</param>
     /// <returns>the path</returns>
-    static public string SettingPath(string setting)
+    public static string SettingPath(string setting)
     {
       return SettingsPath + setting + ".txt";
     }
@@ -49,7 +50,7 @@ namespace MediaPortal.Configuration
     /// </summary>
     /// <param name="setting">the name of the setting</param>
     /// <returns>true if the setting is enabled, otherwise false</returns>
-    static public bool GetSetting(string setting)
+    public static bool GetSetting(string setting)
     {
       return File.Exists(SettingPath(setting));
     }
@@ -59,7 +60,7 @@ namespace MediaPortal.Configuration
     /// </summary>
     /// <param name="setting">the name of the setting</param>
     /// <param name="enabled">true to enable the setting, otherwise false</param>
-    static public void SetSetting(string setting, bool enabled)
+    public static void SetSetting(string setting, bool enabled)
     {
       string settingPath = SettingPath(setting);
       try
@@ -93,7 +94,7 @@ namespace MediaPortal.Configuration
     /// Returns true if existing timeshifted video should be
     /// prepended to a "Record Now" recording
     /// </summary>
-    static public bool EnableRecordingFromTimeshift
+    public static bool EnableRecordingFromTimeshift
     {
       get { return GetSetting("EnableRecordingFromTimeshift"); }
       set { SetSetting("EnableRecordingFromTimeshift", value); }
@@ -104,7 +105,7 @@ namespace MediaPortal.Configuration
     /// just wait for video to sync to audio instead of using 
     /// slow motion video
     /// </summary>
-    static public bool DoNotAllowSlowMotionDuringZapping
+    public static bool DoNotAllowSlowMotionDuringZapping
     {
       get { return GetSetting("DoNotAllowSlowMotionDuringZapping"); }
       set { SetSetting("DoNotAllowSlowMotionDuringZapping", value); }

@@ -42,9 +42,7 @@ namespace System.Windows.Controls
       VerticalOffsetProperty = ContextMenuService.VerticalOffsetProperty.AddOwner(typeof (ContextMenu));
     }
 
-    public ContextMenu()
-    {
-    }
+    public ContextMenu() {}
 
     #endregion Constructors
 
@@ -85,21 +83,15 @@ namespace System.Windows.Controls
 		}
 */
 
-    protected virtual void OnClosed(RoutedEventArgs e)
-    {
-    }
+    protected virtual void OnClosed(RoutedEventArgs e) {}
 
 //		protected override void OnKeyDown(KeyEventArgs e)
 //		{
 //		}
 
-    protected virtual void OnOpened(RoutedEventArgs e)
-    {
-    }
+    protected virtual void OnOpened(RoutedEventArgs e) {}
 
-    protected internal override void OnVisualParentChanged(Visual oldParent)
-    {
-    }
+    protected internal override void OnVisualParentChanged(Visual oldParent) {}
 
 //		protected override void PrepareContainerForItemOverride(DependencyObject element, Object item)
 //		{
@@ -118,56 +110,56 @@ namespace System.Windows.Controls
 
     public bool HasDropShadow
     {
-      get { return (bool) GetValue(HasDropShadowProperty); }
+      get { return (bool)GetValue(HasDropShadowProperty); }
       set { SetValue(HasDropShadowProperty, value); }
     }
 
     [Bindable(true)]
     public double HorizontalOffset
     {
-      get { return (double) GetValue(HorizontalOffsetProperty); }
+      get { return (double)GetValue(HorizontalOffsetProperty); }
       set { SetValue(HorizontalOffsetProperty, value); }
     }
 
     [Bindable(true)]
     public bool IsOpen
     {
-      get { return (bool) GetValue(IsOpenProperty); }
+      get { return (bool)GetValue(IsOpenProperty); }
       set { SetValue(IsOpenProperty, value); }
     }
 
     [Bindable(true)]
     public PlacementMode Placement
     {
-      get { return (PlacementMode) GetValue(PlacementProperty); }
+      get { return (PlacementMode)GetValue(PlacementProperty); }
       set { SetValue(PlacementProperty, value); }
     }
 
     [Bindable(true)]
     public Rect PlacementRectangle
     {
-      get { return (Rect) GetValue(PlacementRectangleProperty); }
+      get { return (Rect)GetValue(PlacementRectangleProperty); }
       set { SetValue(PlacementRectangleProperty, value); }
     }
 
     [Bindable(true)]
     public UIElement PlacementTarget
     {
-      get { return (UIElement) GetValue(PlacementTargetProperty); }
+      get { return (UIElement)GetValue(PlacementTargetProperty); }
       set { SetValue(PlacementTargetProperty, value); }
     }
 
     [Bindable(true)]
     public bool StaysOpen
     {
-      get { return (bool) GetValue(StaysOpenProperty); }
+      get { return (bool)GetValue(StaysOpenProperty); }
       set { SetValue(StaysOpenProperty, value); }
     }
 
     [Bindable(true)]
     public double VerticalOffset
     {
-      get { return (double) GetValue(VerticalOffsetProperty); }
+      get { return (double)GetValue(VerticalOffsetProperty); }
       set { SetValue(VerticalOffsetProperty, value); }
     }
 

@@ -9,9 +9,7 @@ namespace MediaPortal.Configuration.Sections
     private bool _init = false;
 
     public MovieZoom()
-      : this("Video Zoom")
-    {
-    }
+      : this("Video Zoom") {}
 
     public MovieZoom(string name)
       : base(name)
@@ -31,7 +29,7 @@ namespace MediaPortal.Configuration.Sections
         // Load all available aspect ratio
         //
         defaultZoomModeComboBox.Items.Clear();
-        foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
+        foreach (Geometry.Type item in Enum.GetValues(typeof (Geometry.Type)))
         {
           defaultZoomModeComboBox.Items.Add(Util.Utils.GetAspectRatio(item));
         }
@@ -69,8 +67,9 @@ namespace MediaPortal.Configuration.Sections
         //
         // Set default aspect ratio
         //
-        string defaultAspectRatio = xmlreader.GetValueAsString("movieplayer", "defaultar", defaultZoomModeComboBox.Items[0].ToString());
-        foreach (Geometry.Type item in Enum.GetValues(typeof(Geometry.Type)))
+        string defaultAspectRatio = xmlreader.GetValueAsString("movieplayer", "defaultar",
+                                                               defaultZoomModeComboBox.Items[0].ToString());
+        foreach (Geometry.Type item in Enum.GetValues(typeof (Geometry.Type)))
         {
           string currentAspectRatio = Util.Utils.GetAspectRatio(item);
           if (defaultAspectRatio == currentAspectRatio)

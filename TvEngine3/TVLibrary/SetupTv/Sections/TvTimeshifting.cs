@@ -20,6 +20,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
@@ -42,10 +43,12 @@ namespace SetupTv.Sections
     public class CardInfo
     {
       public Card card;
+
       public CardInfo(Card newcard)
       {
         card = newcard;
       }
+
       public override string ToString()
       {
         return card.Name;
@@ -56,16 +59,14 @@ namespace SetupTv.Sections
 
     #region Vars
 
-    bool _needRestart;
+    private bool _needRestart;
 
     #endregion
 
     #region Constructors
 
     public TvTimeshifting()
-      : this("Timeshifting")
-    {
-    }
+      : this("Timeshifting") {}
 
     public TvTimeshifting(string name)
       : base(name)
@@ -81,11 +82,16 @@ namespace SetupTv.Sections
     {
       TvBusinessLayer layer = new TvBusinessLayer();
 
-      numericUpDownMinFiles.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftMinFiles", "6").Value), 3, 100);
-      numericUpDownMaxFiles.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftMaxFiles", "20").Value), 3, 100);
-      numericUpDownMaxFileSize.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftMaxFileSize", "256").Value), 20, 1024);
-      numericUpDownWaitUnscrambled.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftWaitForUnscrambled", "5").Value), 1, 30);
-      numericUpDownWaitTimeshifting.Value = ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value), 1, 30);
+      numericUpDownMinFiles.Value = ValueSanityCheck(
+        Convert.ToDecimal(layer.GetSetting("timeshiftMinFiles", "6").Value), 3, 100);
+      numericUpDownMaxFiles.Value =
+        ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftMaxFiles", "20").Value), 3, 100);
+      numericUpDownMaxFileSize.Value =
+        ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftMaxFileSize", "256").Value), 20, 1024);
+      numericUpDownWaitUnscrambled.Value =
+        ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftWaitForUnscrambled", "5").Value), 1, 30);
+      numericUpDownWaitTimeshifting.Value =
+        ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value), 1, 30);
     }
 
     public override void SaveSettings()
@@ -123,7 +129,9 @@ namespace SetupTv.Sections
 
       if (String.IsNullOrEmpty(textBoxTimeShiftFolder.Text))
       {
-        textBoxTimeShiftFolder.Text = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer", Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
+        textBoxTimeShiftFolder.Text = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\timeshiftbuffer",
+                                                    Environment.GetFolderPath(
+                                                      Environment.SpecialFolder.CommonApplicationData));
         if (!Directory.Exists(textBoxTimeShiftFolder.Text))
         {
           Directory.CreateDirectory(textBoxTimeShiftFolder.Text);
@@ -215,15 +223,10 @@ namespace SetupTv.Sections
       return Value;
     }
 
-    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-    }
+    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e) {}
 
     #endregion
 
-    private void groupBoxTimeshiftSettings_Enter(object sender, EventArgs e)
-    {
-
-    }
+    private void groupBoxTimeshiftSettings_Enter(object sender, EventArgs e) {}
   }
 }

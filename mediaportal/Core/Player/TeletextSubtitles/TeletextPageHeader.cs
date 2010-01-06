@@ -14,7 +14,7 @@ namespace MediaPortal.Player.Subtitles
 
       if (!timefiller)
       {
-        pageNum = (mag*100 + 10*(pageByte >> 4) + (pageByte & 0x0F));
+        pageNum = (mag * 100 + 10 * (pageByte >> 4) + (pageByte & 0x0F));
         if (pageNum < 100 || pageNum > 966)
         {
           throw new Exception("PageNumber out of range " + pageNum);
@@ -104,8 +104,8 @@ namespace MediaPortal.Player.Subtitles
     private bool magazineSerial;
     // Table to inver bit order of the 3-bit national languange subset code 
     private byte[] invtab3bit =
-    {
-      0x00, 0x04, 0x02, 0x06, 0x01, 0x05, 0x03, 0x07
-    };
+      {
+        0x00, 0x04, 0x02, 0x06, 0x01, 0x05, 0x03, 0x07
+      };
   }
 }

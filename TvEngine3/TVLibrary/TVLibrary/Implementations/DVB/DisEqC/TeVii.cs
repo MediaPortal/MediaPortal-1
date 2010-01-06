@@ -48,7 +48,8 @@ namespace TvLibrary.Hardware
     /// Can be used to check if API is not lower than originally used.
     /// </summary>
     /// <returns>API Version</returns>
-    [DllImport("TeVii.dll", EntryPoint = "GetAPIVersion", CharSet=CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("TeVii.dll", EntryPoint = "GetAPIVersion", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern int GetAPIVersion();
 
     /// <summary>
@@ -58,7 +59,8 @@ namespace TvLibrary.Hardware
     /// calls will just return number of previously found devices.
     /// </summary>
     /// <returns>number of found devices</returns>
-    [DllImport("TeVii.dll", EntryPoint = "FindDevices", CharSet=CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("TeVii.dll", EntryPoint = "FindDevices", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern int FindDevices();
 
     /// <summary>
@@ -66,7 +68,8 @@ namespace TvLibrary.Hardware
     /// </summary>
     /// <param name="idx">idx - device index (0 &lt;= idx &lt; FindDevices())</param>
     /// <returns>string with device name or NULL (on failure). Do not modify or free memory used by this string!</returns>
-    [DllImport("TeVii.dll", EntryPoint = "GetDeviceName", CharSet=CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("TeVii.dll", EntryPoint = "GetDeviceName", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr GetDeviceName(int idx);
 
     /// <summary>
@@ -74,13 +77,14 @@ namespace TvLibrary.Hardware
     /// </summary>
     /// <param name="idx">idx - device index (0 lt;= idx &lt; FindDevices())</param>
     /// <returns>string with device path or NULL (on failure). Do not modify or free memory used by this string!</returns>
-    [DllImport("TeVii.dll", EntryPoint = "GetDevicePath", CharSet=CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("TeVii.dll", EntryPoint = "GetDevicePath", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr GetDevicePath(int idx);
 
     //////////////////////////////////////////////////////////////////////////
     // Following functions work only after call OpenDevice()
     //
- 
+
     /// <summary>
     /// Open device. Application may open several devices simultaneously. 
     /// They will be distinguished by idx parameter.
@@ -89,7 +93,8 @@ namespace TvLibrary.Hardware
     /// <param name="func">func - capture function which will receive stream.</param>
     /// <param name="lParam">lParam - application defined parameter which will be passed to capture function</param>
     /// <returns>non-zero on success</returns>
-    [DllImport("TeVii.dll", EntryPoint = "OpenDevice", CharSet=CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("TeVii.dll", EntryPoint = "OpenDevice", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern Int32 OpenDevice(int idx, IntPtr func, IntPtr lParam);
 
     /// <summary>
@@ -97,7 +102,8 @@ namespace TvLibrary.Hardware
     /// </summary>
     /// <param name="idx">idx - device index of previously opened device (0 &lt;= idx &lt; FindDevices())</param>
     /// <returns> non-zero on success</returns>
-    [DllImport("TeVii.dll", EntryPoint = "CloseDevice", CharSet=CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("TeVii.dll", EntryPoint = "CloseDevice", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern Int32 CloseDevice(int idx);
 
     /// <summary>
@@ -112,8 +118,10 @@ namespace TvLibrary.Hardware
     /// <param name="MOD">MOD - modulation, see TMOD above. Note: it's better to avoid use AUTO for DVBS2 signal, otherwise locking time will be long</param>
     /// <param name="FEC">FEC - see TFEC above. Note: it's better to avoid use AUTO for DVBS2 signal, otherwise locking time will be long</param>
     /// <returns>non-zero if signal is locked</returns>
-    [DllImport("TeVii.dll", EntryPoint = "TuneTransponder", CharSet=CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-    public static extern Int32 TuneTransponder(int idx, Int32 Freq, Int32 SymbRate, Int32 LOF, TPolarization Pol, Int32 F22KHz, TMOD MOD, TFEC FEC);
+    [DllImport("TeVii.dll", EntryPoint = "TuneTransponder", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
+    public static extern Int32 TuneTransponder(int idx, Int32 Freq, Int32 SymbRate, Int32 LOF, TPolarization Pol,
+                                               Int32 F22KHz, TMOD MOD, TFEC FEC);
 
     /// <summary>
     /// Get signal status
@@ -123,9 +131,10 @@ namespace TvLibrary.Hardware
     /// <param name="Strength">Strength - 0..100 signal strength</param>
     /// <param name="Quality">Quality - 0..100 signal quality</param>
     /// <returns>non-zero on success</returns>
-    [DllImport("TeVii.dll", EntryPoint = "GetSignalStatus", CharSet=CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("TeVii.dll", EntryPoint = "GetSignalStatus", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern Int32 GetSignalStatus(int idx, out bool IsLocked, out Int32 Strength, out Int32 Quality);
- 
+
     /// <summary>
     /// Send DiSEqC message
     /// </summary>
@@ -135,7 +144,8 @@ namespace TvLibrary.Hardware
     /// <param name="Repeats">Repeats - repeat DiSEqC message n times. 0 means send one time</param>
     /// <param name="Flg">Flg - non-zero means replace first byte (0xE0) of DiSEqC message with 0xE1 on second and following repeats.</param>
     /// <returns>non-zero on success</returns>
-    [DllImport("TeVii.dll", EntryPoint = "SendDiSEqC", CharSet=CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("TeVii.dll", EntryPoint = "SendDiSEqC", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern Int32 SendDiSEqC(int idx, byte[] Data, Int32 Len, Int32 Repeats, Int32 Flg);
 
     /// <summary>
@@ -145,8 +155,10 @@ namespace TvLibrary.Hardware
     /// <param name="lpCallback">lpCallback - application defined procedure to receive keys. NULL to disable RC.</param>
     /// <param name="lParam">lParam - application defined parameter which will be passed to callback function</param>
     /// <returns>non-zero on success</returns>
-    [DllImport("TeVii.dll", EntryPoint = "SetRemoteControl", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("TeVii.dll", EntryPoint = "SetRemoteControl", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern Int32 SetRemoteControl(int idx, IntPtr lpCallback, IntPtr lParam);
+
     #endregion
 
     #region enums
@@ -158,81 +170,78 @@ namespace TvLibrary.Hardware
     /// </summary>
     public enum TFEC
     {
-	    TFEC_AUTO,
-	    TFEC_1_2,
-	    TFEC_1_3,
-	    TFEC_1_4,
-	    TFEC_2_3,
-	    TFEC_2_5,
-	    TFEC_3_4,
-	    TFEC_3_5,
-	    TFEC_4_5,
-	    TFEC_5_6,
-	    TFEC_5_11,
-	    TFEC_6_7,
-	    TFEC_7_8,
-	    TFEC_8_9,
-	    TFEC_9_10
-    };
+      TFEC_AUTO,
+      TFEC_1_2,
+      TFEC_1_3,
+      TFEC_1_4,
+      TFEC_2_3,
+      TFEC_2_5,
+      TFEC_3_4,
+      TFEC_3_5,
+      TFEC_4_5,
+      TFEC_5_6,
+      TFEC_5_11,
+      TFEC_6_7,
+      TFEC_7_8,
+      TFEC_8_9,
+      TFEC_9_10
+    } ;
 
     /// <summary>
     /// Enum for modulations
     /// </summary>
     public enum TMOD
     {
-	    TMOD_AUTO,
-	    TMOD_QPSK,
-	    TMOD_BPSK,
-	    TMOD_16QAM,
-	    TMOD_32QAM,
-	    TMOD_64QAM,
-	    TMOD_128QAM,
-	    TMOD_256QAM,
-	    TMOD_8VSB,
-	    TMOD_DVBS2_QPSK,
-	    TMOD_DVBS2_8PSK,
-	    TMOD_DVBS2_16PSK,
-	    TMOD_DVBS2_32PSK,
-	    TMOD_TURBO_QPSK,
-	    TMOD_TURBO_8PSK,
-	    TMOD_TURBO_16PSK
-    };
+      TMOD_AUTO,
+      TMOD_QPSK,
+      TMOD_BPSK,
+      TMOD_16QAM,
+      TMOD_32QAM,
+      TMOD_64QAM,
+      TMOD_128QAM,
+      TMOD_256QAM,
+      TMOD_8VSB,
+      TMOD_DVBS2_QPSK,
+      TMOD_DVBS2_8PSK,
+      TMOD_DVBS2_16PSK,
+      TMOD_DVBS2_32PSK,
+      TMOD_TURBO_QPSK,
+      TMOD_TURBO_8PSK,
+      TMOD_TURBO_16PSK
+    } ;
 
     /// <summary>
     /// Enum for Polarization
     /// </summary>
     public enum TPolarization
     {
-	    TPol_None,
-	    TPol_Vertical,
-	    TPol_Horizontal
-    };
+      TPol_None,
+      TPol_Vertical,
+      TPol_Horizontal
+    } ;
 
 #pragma warning restore 1591
+
     #endregion
 
     #region variables
 
-    int m_iDeviceIndex;
-    bool m_bIsTeVii = false;
-    string m_devicePath;
+    private int m_iDeviceIndex;
+    private bool m_bIsTeVii = false;
+    private string m_devicePath;
 
-    #endregion  
+    #endregion
 
     /// <summary>
     ///  Initializes a new instance of the <see cref="TeVii"/> class.
     /// </summary>
-    public TeVii()
-    {
-    }
+    public TeVii() {}
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TeVii"/> class.
     /// </summary>
     /// <param name="tunerFilter">The tuner filter.</param>
-    public TeVii(IBaseFilter tunerFilter)
-    {
-    }
+    public TeVii(IBaseFilter tunerFilter) {}
 
     /// <summary>
     /// Helper function to get managed string from return value
@@ -252,7 +261,7 @@ namespace TvLibrary.Hardware
       Log.Log.Debug("TeVii: Closing card {0} ", m_iDeviceIndex);
       CloseDevice(m_iDeviceIndex);
     }
- 
+
     /// <summary>
     /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
     /// </summary>
@@ -280,24 +289,16 @@ namespace TvLibrary.Hardware
     /// </summary>
     public int DeviceIndex
     {
-      get
-      {
-        return (int)m_iDeviceIndex;
-      }
-      set
-      {
-        m_iDeviceIndex = value;
-      }
+      get { return (int)m_iDeviceIndex; }
+      set { m_iDeviceIndex = value; }
     }
+
     /// <summary>
     /// Provider Name
     /// </summary>
     public String Provider
     {
-      get
-      {
-        return "TeVii";
-      }
+      get { return "TeVii"; }
     }
 
     /// <summary>
@@ -305,14 +306,8 @@ namespace TvLibrary.Hardware
     /// </summary>
     public String DevicePath
     {
-      get
-      {
-        return m_devicePath;
-      }
-      set
-      {
-        m_devicePath = value;
-      }
+      get { return m_devicePath; }
+      set { m_devicePath = value; }
     }
 
     /// <summary>
@@ -328,8 +323,8 @@ namespace TvLibrary.Hardware
     /// </summary>
     public void CheckAndOpen()
     {
-      Int32 numberDevices=FindDevices();
-      
+      Int32 numberDevices = FindDevices();
+
       // no devices found
       if (numberDevices == 0)
       {
@@ -381,10 +376,7 @@ namespace TvLibrary.Hardware
     /// </summary>
     public CapabilitiesType Capabilities
     {
-      get
-      {
-        return CapabilitiesType.None;
-      }
+      get { return CapabilitiesType.None; }
     }
 
     /// <summary>
@@ -394,21 +386,16 @@ namespace TvLibrary.Hardware
     /// <param name="channel">The current tv/radio channel.</param>
     /// <param name="HwPids">The pids.</param>
     /// <remarks>when the pids array is empty, pid filtering is disabled and all pids are received</remarks>
-    public void SendPids(int subChannel, TvLibrary.Channels.DVBBaseChannel channel, List<ushort> HwPids)
-    {
-    }
+    public void SendPids(int subChannel, TvLibrary.Channels.DVBBaseChannel channel, List<ushort> HwPids) {}
 
     /// <summary>
     /// Set parameter to null when stopping the Graph.
     /// </summary>
-    public void OnStopGraph()
-    {
-    }
+    public void OnStopGraph() {}
 
     #endregion
 
     #region IDiSEqCController Member
-
 
     /// <summary>
     /// Sets the DVB s2 modulation.
@@ -442,17 +429,18 @@ namespace TvLibrary.Hardware
       // 4        B         B
       int antennaNr = BandTypeConverter.GetAntennaNr(channel);
       bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
-      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));
+      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
+                           (channel.Polarisation == Polarisation.CircularL));
       byte cmd = 0xf0;
       cmd |= (byte)(hiBand ? 1 : 0);
       cmd |= (byte)((isHorizontal) ? 2 : 0);
       cmd |= (byte)((antennaNr - 1) << 2);
 
       byte[] ucMessage = new byte[4];
-      ucMessage[0] = 0xE0;//framing byte
-      ucMessage[1] = 0x10;//address byte
-      ucMessage[2] = 0x38;//command byte
-      ucMessage[3] = cmd;//data byte (port group 0)
+      ucMessage[0] = 0xE0; //framing byte
+      ucMessage[1] = 0x10; //address byte
+      ucMessage[2] = 0x38; //command byte
+      ucMessage[3] = cmd; //data byte (port group 0)
       //byte[] ucMessage = DiSEqC_Helper.ChannelToDiSEqC(parameters, channel);
       SendDiSEqCCommand(ucMessage);
     }
@@ -470,7 +458,7 @@ namespace TvLibrary.Hardware
         Log.Log.Debug("TeVii: Send DiSEqC failed");
         return false;
       }
-      
+
       Log.Log.Debug("TeVii: Send DiSEqC successful.");
       return true;
     }
@@ -486,6 +474,7 @@ namespace TvLibrary.Hardware
       reply = new byte[0];
       return true;
     }
+
     #endregion
   }
 }

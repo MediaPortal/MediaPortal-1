@@ -30,7 +30,7 @@ namespace SetupTv
       get { return section; }
     }
 
-    readonly SectionSettings section;
+    private readonly SectionSettings section;
 
     public SectionTreeNode(SectionSettings section)
     {
@@ -43,5 +43,4 @@ namespace SetupTv
       return section.ToString();
     }
   }
-
 }

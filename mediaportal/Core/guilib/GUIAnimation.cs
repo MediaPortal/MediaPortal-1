@@ -36,9 +36,13 @@ namespace MediaPortal.GUI.Library
   public class GUIAnimation : GUIControl
   {
     #region Properties (Skin)
+
     [XMLSkinElement("Easing")] protected Easing _easing = Easing.Linear;
     [XMLSkinElement("FillBehavior")] protected FillBehavior _fillBehavior = FillBehavior.HoldEnd;
-    [XMLSkinElement("HorizontalAlignment")] protected HorizontalAlignment _horizontalAlignment = HorizontalAlignment.Left;
+
+    [XMLSkinElement("HorizontalAlignment")] protected HorizontalAlignment _horizontalAlignment =
+      HorizontalAlignment.Left;
+
     [XMLSkinElement("textures")] protected string _textureNames = string.Empty;
     [XMLSkinElement("rate")] protected double _rate = 1;
     [XMLSkinElement("Duration")] protected Duration _duration = Duration.Automatic;
@@ -46,9 +50,11 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("VerticalAlignment")] protected VerticalAlignment _verticalAlignment = VerticalAlignment.Top;
     [XMLSkinElement("Triggers")] protected string _triggerNames = "init";
     [XMLSkinElement("keepaspectratio")] private bool _keepAspectRatio = false;
+
     #endregion Properties (Skin)
 
     #region Fields
+
     private ArrayList _filenames;
     private GUIImage[] _images;
     private bool _animating = false;
@@ -72,6 +78,7 @@ namespace MediaPortal.GUI.Library
     private bool _borderTextureRotate = false;
     private string _borderTextureFileName = "";
     private long _borderColorKey = 0;
+
     #endregion Fields
 
     #region Properties
@@ -156,9 +163,7 @@ namespace MediaPortal.GUI.Library
 
     #region Constructors
 
-    public GUIAnimation()
-    {
-    }
+    public GUIAnimation() {}
 
     public GUIAnimation(int parentId)
       : base(parentId)
@@ -267,7 +272,7 @@ namespace MediaPortal.GUI.Library
       for (int index = 0; index < _images.Length; index++)
       {
         _imageId++;
-        _images[index] = new GUIImage(ParentID, _imageId + index, 0, 0, Width, Height, (string) _filenames[index], 0);
+        _images[index] = new GUIImage(ParentID, _imageId + index, 0, 0, Width, Height, (string)_filenames[index], 0);
         _images[index].ParentControl = this;
         _images[index].ColourDiffuse = ColourDiffuse;
         _images[index].DimColor = DimColor;
@@ -277,7 +282,8 @@ namespace MediaPortal.GUI.Library
         _images[index].DiffuseFileName = _diffuseFileName;
         _images[index].FlipY = _flipX;
         _images[index].FlipY = _flipY;
-        _images[index].SetBorder(_strBorder, _strBorderPosition, _borderTextureRepeat, _borderTextureRotate, _borderTextureFileName, _borderColorKey);
+        _images[index].SetBorder(_strBorder, _strBorderPosition, _borderTextureRepeat, _borderTextureRotate,
+                                 _borderTextureFileName, _borderColorKey);
         _images[index].AllocResources();
         //_images[index].ScaleToScreenResolution(); -> causes too big images in fullscreen
 
@@ -294,7 +300,7 @@ namespace MediaPortal.GUI.Library
 
       if (_horizontalAlignment == HorizontalAlignment.Center)
       {
-        x = x - (w/2);
+        x = x - (w / 2);
       }
       else if (_horizontalAlignment == HorizontalAlignment.Right)
       {
@@ -303,7 +309,7 @@ namespace MediaPortal.GUI.Library
 
       if (_verticalAlignment == VerticalAlignment.Center)
       {
-        y = y - (h/2);
+        y = y - (h / 2);
       }
       else if (_verticalAlignment == VerticalAlignment.Bottom)
       {
@@ -370,7 +376,8 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public void SetBorder(string border, string position, bool textureRepeat, bool textureRotate, string textureFilename, long colorKey)
+    public void SetBorder(string border, string position, bool textureRepeat, bool textureRotate, string textureFilename,
+                          long colorKey)
     {
       _strBorder = border;
       _strBorderPosition = position;
@@ -623,7 +630,7 @@ namespace MediaPortal.GUI.Library
 
       if (_animating && progress <= 1)
       {
-        index = (int) (progress*_images.Length);
+        index = (int)(progress * _images.Length);
       }
 
       if (index >= _images.Length)

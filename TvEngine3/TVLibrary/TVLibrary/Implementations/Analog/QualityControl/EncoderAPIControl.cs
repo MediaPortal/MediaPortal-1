@@ -35,14 +35,17 @@ namespace TvLibrary.Implementations.Analog.QualityControl
   public class EncoderAPIControl : BaseControl
   {
     #region variable
+
 #pragma warning disable 618,612
     /// <summary>
     /// Instance of the encoder that supports the IEncoderAPI
     /// </summary>
     private readonly IEncoderAPI _encoderAPI;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="EncoderAPIControl"/> class.
     /// </summary>
@@ -52,13 +55,17 @@ namespace TvLibrary.Implementations.Analog.QualityControl
       : base(configuration)
     {
       _encoderAPI = encoderAPI;
-      Log.Log.WriteFile("analog: IEncoderAPI supported by: " + FilterGraphTools.GetFilterName(_encoderAPI as IBaseFilter) + "; Checking capabilities ");
+      Log.Log.WriteFile("analog: IEncoderAPI supported by: " +
+                        FilterGraphTools.GetFilterName(_encoderAPI as IBaseFilter) + "; Checking capabilities ");
       CheckCapabilities();
     }
+
     #endregion
+
 #pragma warning restore 618,612
 
     #region protected method
+
     /// <summary>
     /// Checks if the encoder supports the given GUID
     /// </summary>
@@ -88,7 +95,8 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// <param name="valueMax">maximum out value</param>
     /// <param name="steppingDelta">stepping delta out value</param>
     /// <returns>HR result</returns>
-    protected override int GetParameterRange(Guid guid, out object valueMin, out object valueMax, out object steppingDelta)
+    protected override int GetParameterRange(Guid guid, out object valueMin, out object valueMax,
+                                             out object steppingDelta)
     {
       return _encoderAPI.GetParameterRange(guid, out valueMin, out valueMax, out steppingDelta);
     }
@@ -103,6 +111,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     {
       return _encoderAPI.GetDefaultValue(guid, out qualityObject);
     }
+
     #endregion
   }
 }

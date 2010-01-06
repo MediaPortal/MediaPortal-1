@@ -31,9 +31,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public EventHandlersStore()
-    {
-    }
+    public EventHandlersStore() {}
 
     #endregion Constructors
 

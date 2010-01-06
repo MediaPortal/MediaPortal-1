@@ -36,6 +36,7 @@
 /// </summary>
 namespace MWCommon
 {
+
   #region TextDir Enum
 
   /// <summary>
@@ -52,8 +53,6 @@ namespace MWCommon
 
   #endregion TextDir Enum
 
-
-
   #region StringFormatEnum
 
   /// <summary>
@@ -66,8 +65,6 @@ namespace MWCommon
   }
 
   #endregion StringFormatEnum
-
-
 
   #region TreeViewMultiSelect Enum
 
@@ -90,8 +87,6 @@ namespace MWCommon
 
   #endregion TreeViewMultiSelect Enum
 
-
-
   #region MWCheckBoxPaintOrder
 
   /// <summary>
@@ -108,5 +103,4 @@ namespace MWCommon
   }
 
   #endregion MWCheckBoxPaintOrder
-
 }

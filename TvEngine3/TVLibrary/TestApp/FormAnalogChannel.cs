@@ -4,12 +4,14 @@ using TvLibrary;
 using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
 using DirectShowLib;
+
 namespace TestApp
 {
   public partial class FormAnalogChannel : Form
   {
-    AnalogChannel _channel = new AnalogChannel();
-    readonly CountryCollection countries = new CountryCollection();
+    private AnalogChannel _channel = new AnalogChannel();
+    private readonly CountryCollection countries = new CountryCollection();
+
     public FormAnalogChannel()
     {
       _channel.Country = countries.GetTunerCountryFromID(31);
@@ -26,10 +28,7 @@ namespace TestApp
 
     public IChannel Channel
     {
-      get
-      {
-        return _channel;
-      }
+      get { return _channel; }
       set
       {
         _channel = (AnalogChannel)value;
@@ -51,7 +50,6 @@ namespace TestApp
           }
         }
         textBoxChannel.Text = _channel.ChannelNumber.ToString();
-
       }
     }
 

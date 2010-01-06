@@ -119,7 +119,7 @@ namespace MediaPortal.WebEPG.Parser
         if (count > 0)
         {
           // get first match -> only the first match is supported for sublink templates
-          ProgramData subdata = (ProgramData) _sublinkParser.GetData(0);
+          ProgramData subdata = (ProgramData)_sublinkParser.GetData(0);
           if (subdata != null)
           {
             subdata.Preference = _sublinkPreference;
@@ -177,7 +177,7 @@ namespace MediaPortal.WebEPG.Parser
       }
 
       // Get the parsed data at index
-      ProgramData data = ((ProgramData) _listingParser.GetData(index));
+      ProgramData data = ((ProgramData)_listingParser.GetData(index));
       if (data != null)
       {
         // Set the data preference -> important for merging data (eg data from sublink page)

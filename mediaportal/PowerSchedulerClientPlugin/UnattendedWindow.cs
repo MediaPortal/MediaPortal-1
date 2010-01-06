@@ -6,7 +6,7 @@ namespace MediaPortal.Plugins.Process
   {
     public UnattendedWindow()
     {
-      GetID = (int) Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED;
+      GetID = (int)Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED;
     }
 
     public override bool Init()

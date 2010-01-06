@@ -68,9 +68,7 @@ namespace Rss
     private int height = RssDefault.Int;
 
     /// <summary>Initialize a new instance of the RssImage class.</summary>
-    public RssImage()
-    {
-    }
+    public RssImage() {}
 
     /// <summary>The URL of a GIF, JPEG or PNG image that represents the channel.</summary>
     /// <remarks>Maximum length is 500 (For RSS 0.91).</remarks>

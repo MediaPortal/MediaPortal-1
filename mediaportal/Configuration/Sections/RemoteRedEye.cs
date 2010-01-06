@@ -57,9 +57,7 @@ namespace MediaPortal.Configuration.Sections
 
 
     public RemoteRedEye()
-      : this("RedEye")
-    {
-    }
+      : this("RedEye") {}
 
     public RemoteRedEye(string name)
       : base(name)
@@ -499,8 +497,6 @@ namespace MediaPortal.Configuration.Sections
       RedEye.Instance.CommandDelay = int.Parse(CommandDelayCombo.Text);
     }
 
-    private void statusLabel_Click(object sender, EventArgs e)
-    {
-    }
+    private void statusLabel_Click(object sender, EventArgs e) {}
   }
 }

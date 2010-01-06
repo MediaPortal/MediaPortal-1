@@ -30,13 +30,13 @@ namespace TvLibrary.Implementations.DVB
   ///</summary>
   public class ConditionalAccessContext
   {
-    CamType _camType;
-    DVBBaseChannel _channel;
-    byte[] _PMT;
-    int _pmtLength;
-    int _audioPid;
-    int _serviceId;
-    List<ushort> _HwPids;
+    private CamType _camType;
+    private DVBBaseChannel _channel;
+    private byte[] _PMT;
+    private int _pmtLength;
+    private int _audioPid;
+    private int _serviceId;
+    private List<ushort> _HwPids;
 
     /// <summary>
     /// Gets or sets the type of the cam.
@@ -44,105 +44,68 @@ namespace TvLibrary.Implementations.DVB
     /// <value>The type of the cam.</value>
     public CamType CamType
     {
-      get
-      {
-        return _camType;
-      }
-      set
-      {
-        _camType = value;
-      }
+      get { return _camType; }
+      set { _camType = value; }
     }
+
     /// <summary>
     /// Gets or sets the channel.
     /// </summary>
     /// <value>The channel.</value>
     public DVBBaseChannel Channel
     {
-      get
-      {
-        return _channel;
-      }
-      set
-      {
-        _channel = value;
-      }
+      get { return _channel; }
+      set { _channel = value; }
     }
+
     /// <summary>
     /// Gets or sets the PMT.
     /// </summary>
     /// <value>The PMT.</value>
     public byte[] PMT
     {
-      get
-      {
-        return _PMT;
-      }
-      set
-      {
-        _PMT = value;
-      }
+      get { return _PMT; }
+      set { _PMT = value; }
     }
+
     /// <summary>
     /// Gets or sets the length of the PMT.
     /// </summary>
     /// <value>The length of the PMT.</value>
     public int PMTLength
     {
-      get
-      {
-        return _pmtLength;
-      }
-      set
-      {
-        _pmtLength = value;
-      }
+      get { return _pmtLength; }
+      set { _pmtLength = value; }
     }
+
     /// <summary>
     /// Gets or sets the audio pid.
     /// </summary>
     /// <value>The audio pid.</value>
     public int AudioPid
     {
-      get
-      {
-        return _audioPid;
-      }
-      set
-      {
-        _audioPid = value;
-      }
+      get { return _audioPid; }
+      set { _audioPid = value; }
     }
+
     /// <summary>
     /// Gets or sets the service id.
     /// </summary>
     /// <value>The service id.</value>
     public int ServiceId
     {
-      get
-      {
-        return _serviceId;
-      }
-      set
-      {
-        _serviceId = value;
-      }
+      get { return _serviceId; }
+      set { _serviceId = value; }
     }
+
     /// <summary>
     /// Gets or sets the Pid list for hardware filtering.
     /// </summary>
     /// <value>The Pid list.</value>
     public List<ushort> HwPids
     {
-      get
-      {
-        return _HwPids;
-      }
-      set
-      {
-        _HwPids = value;
-      }
+      get { return _HwPids; }
+      set { _HwPids = value; }
     }
-
   }
 }

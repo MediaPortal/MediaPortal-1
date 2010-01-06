@@ -78,9 +78,7 @@ namespace MediaPortal.Player.Subtitles
 
   public class TeletextPageEntry
   {
-    public TeletextPageEntry()
-    {
-    }
+    public TeletextPageEntry() {}
 
     public TeletextPageEntry(TeletextPageEntry e)
     {
@@ -439,7 +437,7 @@ namespace MediaPortal.Player.Subtitles
           Log.Debug("Content: ");
           if (content.Trim().Length > 0) // debug log subtitles
           {
-            StringTokenizer st = new StringTokenizer(content, new char[] { '\n' });
+            StringTokenizer st = new StringTokenizer(content, new char[] {'\n'});
             while (st.HasMore)
             {
               Log.Debug(st.NextToken());
@@ -517,7 +515,7 @@ namespace MediaPortal.Player.Subtitles
             for (int i = 0; i < lc.Length; i++)
             {
               using (Font fnt = new Font("Courier", (lc[i].doubleHeight ? 22 : 15), FontStyle.Bold))
-              // fixed width font!
+                // fixed width font!
               {
                 int vertOffset = (h / lc.Length) * i;
 
@@ -707,7 +705,7 @@ namespace MediaPortal.Player.Subtitles
                 break;
               }
             }
-            // next wants to be displayed in the future so break
+              // next wants to be displayed in the future so break
             else
             {
               //Log.Debug("-next is in the future");
@@ -807,7 +805,7 @@ namespace MediaPortal.Player.Subtitles
       if (vertexBuffer == null)
       {
         Log.Debug("Subtitle: Creating vertex buffer");
-        vertexBuffer = new VertexBuffer(typeof(CustomVertex.TransformedTextured),
+        vertexBuffer = new VertexBuffer(typeof (CustomVertex.TransformedTextured),
                                         4, GUIGraphicsContext.DX9Device,
                                         0, CustomVertex.TransformedTextured.Format,
                                         GUIGraphicsContext.GetTexturePoolType());

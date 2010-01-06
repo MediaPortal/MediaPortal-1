@@ -44,7 +44,7 @@ using MediaPortal.Video.Database;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
-using Timer=System.Timers.Timer;
+using Timer = System.Timers.Timer;
 using System.Runtime.Remoting;
 
 #endregion
@@ -137,6 +137,7 @@ namespace TvPlugin
 
     // Tv error handling
     private TvPlugin.TVHome.ChannelErrorInfo _gotTvErrorMessage = null;
+
     ///@
     ///VMR9OSD _vmr9OSD = null;
     private FullScreenState _screenState = new FullScreenState();
@@ -188,7 +189,7 @@ namespace TvPlugin
     public TvFullScreen()
     {
       Log.Debug("TvFullScreen:ctor");
-      GetID = (int) Window.WINDOW_TVFULLSCREEN;
+      GetID = (int)Window.WINDOW_TVFULLSCREEN;
     }
 
     public override bool SupportsDelayedLoad
@@ -221,10 +222,9 @@ namespace TvPlugin
         _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
         _immediateSeekIsRelative = xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true);
         _immediateSeekValue = xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10);
-        
       }
       Load(GUIGraphicsContext.Skin + @"\mytvFullScreen.xml");
-      GetID = (int) Window.WINDOW_TVFULLSCREEN;
+      GetID = (int)Window.WINDOW_TVFULLSCREEN;
 
       Log.Debug("TvFullScreen:Init");
       return true;
@@ -237,9 +237,9 @@ namespace TvPlugin
       using (Settings xmlreader = new MPSettings())
       {
         //_isMsnChatPopup = (xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1);       // msn related can be removed
-        _timeOsdOnscreen = 1000*xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
+        _timeOsdOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
         //				m_iZapDelay = 1000*xmlreader.GetValueAsInt("movieplayer","zapdelay",2);
-        _zapTimeOutValue = 1000*xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5);
+        _zapTimeOutValue = 1000 * xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5);
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
         if (xmlreader.GetValueAsBool("mytv", "allowarzoom", true))
         {
@@ -289,59 +289,55 @@ namespace TvPlugin
     //			}
     //		}
 
-   
-
     #endregion
 
-		public override void ResetAllControls()
-		{
-			//reset all
+    public override void ResetAllControls()
+    {
+      //reset all
 
-			bool bOffScreen = false;
-			int iCalibrationY = GUIGraphicsContext.OSDOffset;
-			int iTop = GUIGraphicsContext.OverScanTop;
-			int iMin = 0;
+      bool bOffScreen = false;
+      int iCalibrationY = GUIGraphicsContext.OSDOffset;
+      int iTop = GUIGraphicsContext.OverScanTop;
+      int iMin = 0;
 
-			foreach (CPosition pos in _listPositions)
-			{
-				pos.control.SetPosition((int)pos.XPos, (int)pos.YPos + iCalibrationY);
-			}
-			foreach (CPosition pos in _listPositions)
-			{
-				GUIControl pControl = pos.control;
+      foreach (CPosition pos in _listPositions)
+      {
+        pos.control.SetPosition((int)pos.XPos, (int)pos.YPos + iCalibrationY);
+      }
+      foreach (CPosition pos in _listPositions)
+      {
+        GUIControl pControl = pos.control;
 
-				int dwPosY = pControl.YPosition;
-				if (pControl.IsVisible)
-				{
-					if (dwPosY < iTop)
-					{
-						int iSize = iTop - dwPosY;
-						if (iSize > iMin)
-						{
-							iMin = iSize;
-						}
-						bOffScreen = true;
-					}
-				}
-			}
-			if (bOffScreen)
-			{
-				foreach (CPosition pos in _listPositions)
-				{
-					GUIControl pControl = pos.control;
-					int dwPosX = pControl.XPosition;
-					int dwPosY = pControl.YPosition;
-					if (dwPosY < (int)100)
-					{
-						dwPosY += Math.Abs(iMin);
-						pControl.SetPosition(dwPosX, dwPosY);
-					}
-				}
-			}
-			base.ResetAllControls();
-		}
-
-
+        int dwPosY = pControl.YPosition;
+        if (pControl.IsVisible)
+        {
+          if (dwPosY < iTop)
+          {
+            int iSize = iTop - dwPosY;
+            if (iSize > iMin)
+            {
+              iMin = iSize;
+            }
+            bOffScreen = true;
+          }
+        }
+      }
+      if (bOffScreen)
+      {
+        foreach (CPosition pos in _listPositions)
+        {
+          GUIControl pControl = pos.control;
+          int dwPosX = pControl.XPosition;
+          int dwPosY = pControl.YPosition;
+          if (dwPosY < (int)100)
+          {
+            dwPosY += Math.Abs(iMin);
+            pControl.SetPosition(dwPosX, dwPosY);
+          }
+        }
+      }
+      base.ResetAllControls();
+    }
 
 
     public override void OnAction(Action action)
@@ -393,8 +389,8 @@ namespace TvPlugin
           _osdTimeoutTimer = DateTime.Now;
           if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE || action.wID == Action.ActionType.ACTION_MOUSE_CLICK)
           {
-            int x = (int) action.fAmount1;
-            int y = (int) action.fAmount2;
+            int x = (int)action.fAmount1;
+            int y = (int)action.fAmount2;
             if (!GUIGraphicsContext.MouseSupport)
             {
               _osdWindow.OnAction(action); // route keys to OSD window
@@ -457,7 +453,7 @@ namespace TvPlugin
 
       else if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE && GUIGraphicsContext.MouseSupport)
       {
-        int y = (int) action.fAmount2;
+        int y = (int)action.fAmount2;
         if (y > GUIGraphicsContext.Height - 100)
         {
           _osdTimeoutTimer = DateTime.Now;
@@ -498,7 +494,7 @@ namespace TvPlugin
               }
               else
               {
-                TvMiniGuide miniGuide = (TvMiniGuide) GUIWindowManager.GetWindow((int) Window.WINDOW_MINI_GUIDE);
+                TvMiniGuide miniGuide = (TvMiniGuide)GUIWindowManager.GetWindow((int)Window.WINDOW_MINI_GUIDE);
                 _isDialogVisible = true;
                 miniGuide.AutoZap = true;
                 miniGuide.DoModal(GetID);
@@ -574,7 +570,7 @@ namespace TvPlugin
             _statusVisible = true;
             _statusTimeOutTimer = DateTime.Now;
 
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.LABEL_ROW1,
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1,
                                             0, 0, null);
             IAutoCrop cropper = GUIGraphicsContext.autoCropper;
             if (cropper != null)
@@ -601,7 +597,7 @@ namespace TvPlugin
             _statusTimeOutTimer = DateTime.Now;
             IAutoCrop cropper = GUIGraphicsContext.autoCropper;
 
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.LABEL_ROW1,
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1,
                                             0, 0, null);
             msg.Label = "N/A";
 
@@ -627,7 +623,7 @@ namespace TvPlugin
             {
               if (_allowedArModes[i] == arMode)
               {
-                arMode = _allowedArModes[(i + 1)%_allowedArModes.Count]; // select next allowed mode
+                arMode = _allowedArModes[(i + 1) % _allowedArModes.Count]; // select next allowed mode
                 foundMode = true;
                 break;
               }
@@ -639,12 +635,10 @@ namespace TvPlugin
 
             GUIGraphicsContext.ARType = arMode;
             status = Utils.GetAspectRatioLocalizedString(arMode);
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.LABEL_ROW1,
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1,
                                             0, 0, null);
             msg.Label = status;
             OnMessage(msg);
-
-
           }
           break;
 
@@ -654,7 +648,7 @@ namespace TvPlugin
             _statusVisible = true;
             _statusTimeOutTimer = DateTime.Now;
 
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.LABEL_ROW1,
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1,
                                             0, 0, null);
             g_Player.SwitchToNextSubtitle();
             if (g_Player.EnableSubtitle)
@@ -689,7 +683,7 @@ namespace TvPlugin
             //if ((action.m_key != null) && (!_msnWindowVisible))
             if (action.m_key != null)
             {
-              OnKeyCode((char) action.m_key.KeyChar);
+              OnKeyCode((char)action.m_key.KeyChar);
             }
 
             _messageBoxVisible = false;
@@ -767,7 +761,7 @@ namespace TvPlugin
               g_Player.SeekStep(false);
               string strStatus = g_Player.GetStepDescription();
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
-                                              (int) Control.LABEL_ROW1, 0, 0, null);
+                                              (int)Control.LABEL_ROW1, 0, 0, null);
               msg.Label = strStatus;
               OnMessage(msg);
             }
@@ -791,7 +785,7 @@ namespace TvPlugin
               g_Player.SeekStep(true);
               string strStatus = g_Player.GetStepDescription();
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
-                                              (int) Control.LABEL_ROW1, 0, 0, null);
+                                              (int)Control.LABEL_ROW1, 0, 0, null);
               msg.Label = strStatus;
               OnMessage(msg);
             }
@@ -918,7 +912,7 @@ namespace TvPlugin
               _statusVisible = true;
               _statusTimeOutTimer = DateTime.Now;
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
-                                              (int) Control.LABEL_ROW1, 0, 0, null);
+                                              (int)Control.LABEL_ROW1, 0, 0, null);
               //msg.Label = string.Format("{0}:{1} ({2}/{3})", streams[newIndex].StreamType, streams[newIndex].Language, newIndex + 1, streams.Length);
               msg.Label = string.Format("{0}:{1} ({2}/{3})", g_Player.AudioType(newIndex),
                                         g_Player.AudioLanguage(newIndex), newIndex + 1, g_Player.AudioStreams);
@@ -938,7 +932,7 @@ namespace TvPlugin
           {
             Log.Debug("TVFullscreen: user request to stop");
             GUIDialogPlayStop dlgPlayStop =
-              (GUIDialogPlayStop) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PLAY_STOP);
+              (GUIDialogPlayStop)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PLAY_STOP);
             if (dlgPlayStop != null)
             {
               dlgPlayStop.SetHeading(GUILocalizeStrings.Get(605));
@@ -997,7 +991,7 @@ namespace TvPlugin
         TvServer server = new TvServer();
         if (server.IsRecording(channel.Name, out card))
         {
-          _dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+          _dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
           _dlgYesNo.SetHeading(1449); // stop recording
           _dlgYesNo.SetLine(1, 1450); // are you sure to stop recording?
           if (prog != null)
@@ -1013,10 +1007,10 @@ namespace TvPlugin
             return true;
           }
 
-          Schedule s = Schedule.Retrieve(card.RecordingScheduleId);          
+          Schedule s = Schedule.Retrieve(card.RecordingScheduleId);
           TVHome.PromptAndDeleteRecordingSchedule(s.IdSchedule, false, true);
 
-          GUIDialogNotify dlgNotify = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
+          GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
           if (dlgNotify == null)
           {
             return true;
@@ -1050,7 +1044,7 @@ namespace TvPlugin
           if (prog != null)
           {
             _dialogBottomMenu =
-              (GUIDialogMenuBottomRight) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
+              (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
             if (_dialogBottomMenu != null)
             {
               _dialogBottomMenu.Reset();
@@ -1098,7 +1092,7 @@ namespace TvPlugin
             _isStartingTSForRecording = false;
           }
 
-          GUIDialogNotify dlgNotify = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
+          GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
           if (dlgNotify == null)
           {
             return true;
@@ -1137,7 +1131,7 @@ namespace TvPlugin
 
       if (message.Message == GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
       {
-        _dialogNotify = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
+        _dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
         ///@
         /*
         Program notify = message.Object as Program;
@@ -1232,7 +1226,7 @@ namespace TvPlugin
 
       if (message.Message == GUIMessage.MessageType.GUI_MSG_NOTIFY)
       {
-        GUIDialogNotify dlgNotify = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
+        GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
         if (dlgNotify == null)
         {
           return true;
@@ -1253,6 +1247,7 @@ namespace TvPlugin
       }
 
       #endregion
+
       #region case GUI_MSG_NOTIFY_TV_PROGRAM
 
       // TEST for TV error handling
@@ -1263,6 +1258,7 @@ namespace TvPlugin
       }
 
       #endregion
+
       #region case GUI_MSG_WINDOW_DEINIT
 
       if (_isOsdVisible)
@@ -1302,21 +1298,21 @@ namespace TvPlugin
         case GUIMessage.MessageType.GUI_MSG_SHOW_MESSAGE:
           {
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
-                                            (int) Control.MSG_BOX_LABEL1, 0, 0, null);
+                                            (int)Control.MSG_BOX_LABEL1, 0, 0, null);
             msg.Label = message.Label;
             OnMessage(msg);
 
-            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.MSG_BOX_LABEL2, 0, 0,
+            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.MSG_BOX_LABEL2, 0, 0,
                                  null);
             msg.Label = message.Label2;
             OnMessage(msg);
 
-            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.MSG_BOX_LABEL3, 0, 0,
+            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.MSG_BOX_LABEL3, 0, 0,
                                  null);
             msg.Label = message.Label3;
             OnMessage(msg);
 
-            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.MSG_BOX_LABEL4, 0, 0,
+            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.MSG_BOX_LABEL4, 0, 0,
                                  null);
             msg.Label = message.Label4;
             OnMessage(msg);
@@ -1471,8 +1467,8 @@ namespace TvPlugin
                                                            GUIGraphicsContext.OverScanTop,
                                                            GUIGraphicsContext.OverScanWidth,
                                                            GUIGraphicsContext.OverScanHeight);
-            _osdWindow = (TvOsd) GUIWindowManager.GetWindow((int) Window.WINDOW_TVOSD);
-            _zapWindow = (TvZapOsd) GUIWindowManager.GetWindow((int) Window.WINDOW_TVZAPOSD);
+            _osdWindow = (TvOsd)GUIWindowManager.GetWindow((int)Window.WINDOW_TVOSD);
+            _zapWindow = (TvZapOsd)GUIWindowManager.GetWindow((int)Window.WINDOW_TVZAPOSD);
             ///_msnWindow = (GUITVMSNOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVMSNOSD);     // msn related can be removed
 
             _lastPause = g_Player.Paused;
@@ -1502,11 +1498,11 @@ namespace TvPlugin
             _bottomDialogMenuVisible = false;
             _statusTimeOutTimer = DateTime.Now;
             //imgVolumeBar.Current = VolumeHandler.Instance.Step;
-						//imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
-						
-						ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
-						
-						RenderVolume(false);
+            //imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
+
+            ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
+
+            RenderVolume(false);
             ScreenStateChanged();
             UpdateGUI();
 
@@ -1542,7 +1538,7 @@ namespace TvPlugin
             return true;
           }
           //if (_msnWindowVisible) return true;     // msn related can be removed
-          if (message.SenderControlId != (int) Window.WINDOW_TVFULLSCREEN)
+          if (message.SenderControlId != (int)Window.WINDOW_TVFULLSCREEN)
           {
             return true;
           }
@@ -1564,7 +1560,7 @@ namespace TvPlugin
     {
       if (dlg == null)
       {
-        dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+        dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       }
       if (dlg == null)
       {
@@ -1598,7 +1594,7 @@ namespace TvPlugin
         }
       }
 
-    /*if (TVHome.Navigator.Groups.Count > 1)
+      /*if (TVHome.Navigator.Groups.Count > 1)
         dlg.AddLocalizedString(971); // Group*/
       if (!g_Player.IsTVRecording && TVHome.Card.HasTeletext)
       {
@@ -1636,7 +1632,7 @@ namespace TvPlugin
       {
         dlg.AddLocalizedString(200041); // tuning details
       }
-      
+
       TvServer server = new TvServer();
       if (!g_Player.IsTVRecording)
       {
@@ -1649,14 +1645,15 @@ namespace TvPlugin
         {
           dlg.AddLocalizedString(601); //Record Now        
         }
-      }      
+      }
 
       if (TVHome.Card.CiMenuSupported() && !g_Player.IsTVRecording)
         dlg.AddLocalizedString(2700); // CI Menu supported
 
       //dlg.AddLocalizedString(6008); // Sort TvChannel
 
-      if (!g_Player.IsTVRecording && TVHome.Card.IsOwner() && !TVHome.Card.IsRecording && TVHome.Card.SupportsQualityControl())
+      if (!g_Player.IsTVRecording && TVHome.Card.IsOwner() && !TVHome.Card.IsRecording &&
+          TVHome.Card.SupportsQualityControl())
       {
         dlg.AddLocalizedString(882);
       }
@@ -1678,11 +1675,12 @@ namespace TvPlugin
       {
         case 4: //TVGuide
           {
-            TVGuideDialog dlgTvGuide = (TVGuideDialog) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_TVGUIDE);
+            TVGuideDialog dlgTvGuide = (TVGuideDialog)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_TVGUIDE);
 
             dlgTvGuide.GroupChanged = false;
             // do this in loop to reopen guide after change
-            do {
+            do
+            {
               _isDialogVisible = true;
               dlgTvGuide.DoModal(GetID);
               _isDialogVisible = false;
@@ -1693,7 +1691,7 @@ namespace TvPlugin
         case 10104: // MiniEPG
           {
             Log.Debug("get miniguide");
-            TvMiniGuide miniGuide = (TvMiniGuide) GUIWindowManager.GetWindow((int) Window.WINDOW_MINI_GUIDE);
+            TvMiniGuide miniGuide = (TvMiniGuide)GUIWindowManager.GetWindow((int)Window.WINDOW_MINI_GUIDE);
             _isDialogVisible = true;
             Log.Debug("show miniguide");
             miniGuide.DoModal(GetID);
@@ -1770,9 +1768,9 @@ namespace TvPlugin
           PrepareCiMenu();
           break;
 
-        //case 6008: // TvChannel sort
-        //  SortChannels();
-        //  break;
+          //case 6008: // TvChannel sort
+          //  SortChannels();
+          //  break;
 
         case 492: // Show audio language menu
           ShowAudioLanguageMenu();
@@ -1798,7 +1796,7 @@ namespace TvPlugin
           //  break;
 
         case 1441: // Fullscreen teletext
-          GUIWindowManager.ActivateWindow((int) Window.WINDOW_FULLSCREEN_TELETEXT);
+          GUIWindowManager.ActivateWindow((int)Window.WINDOW_FULLSCREEN_TELETEXT);
           break;
 
         case 970:
@@ -1812,7 +1810,7 @@ namespace TvPlugin
 
         case 11000:
           TvCropSettings cropSettings =
-            (TvCropSettings) GUIWindowManager.GetWindow((int) Window.WINDOW_TV_CROP_SETTINGS);
+            (TvCropSettings)GUIWindowManager.GetWindow((int)Window.WINDOW_TV_CROP_SETTINGS);
           _isDialogVisible = true;
           cropSettings.DoModal(GetID);
           _isDialogVisible = false;
@@ -1834,7 +1832,7 @@ namespace TvPlugin
           break;
 
         case 200041: // tuning details
-          GUIWindowManager.ActivateWindow((int) Window.WINDOW_TV_TUNING_DETAILS);
+          GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_TUNING_DETAILS);
           break;
 
         case 882: // Quality settings
@@ -1853,11 +1851,11 @@ namespace TvPlugin
       movieDetails.SearchString = GUIPropertyManager.GetProperty("#TV.View.title");
       if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, true, false))
       {
-        GUIVideoInfo videoInfo = (GUIVideoInfo) GUIWindowManager.GetWindow((int) Window.WINDOW_VIDEO_INFO);
+        GUIVideoInfo videoInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_INFO);
         videoInfo.Movie = movieDetails;
-        GUIButtonControl btnPlay = (GUIButtonControl) videoInfo.GetControl(2);
+        GUIButtonControl btnPlay = (GUIButtonControl)videoInfo.GetControl(2);
         btnPlay.Visible = false;
-        GUIWindowManager.ActivateWindow((int) Window.WINDOW_VIDEO_INFO);
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_VIDEO_INFO);
       }
       else
       {
@@ -2010,7 +2008,7 @@ namespace TvPlugin
       }
 
       TVProgramInfo.CurrentProgram = currentProgram;
-      GUIWindowManager.ActivateWindow((int) Window.WINDOW_TV_PROGRAM_INFO);
+      GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_PROGRAM_INFO);
     }
 
     private void ShowAspectRatioMenu()
@@ -2071,13 +2069,14 @@ namespace TvPlugin
       strStatus = GUILocalizeStrings.Get(dlg.SelectedId);
 
 
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.LABEL_ROW1, 0, 0,
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0,
                                       null);
       msg.Label = strStatus;
       OnMessage(msg);
     }
 
     #region CI Menu 
+
     /// <summary>
     /// Sets callbacks and calls EnterCiMenu; Actions are done from callbacks and handled in TVHome globally
     /// </summary>
@@ -2086,6 +2085,7 @@ namespace TvPlugin
       TVHome.RegisterCiMenu(TVHome.Card.Id); // Ensure listener attached
       TVHome.Card.EnterCiMenu(); // Enter menu. Dialog shows up on callback
     }
+
     #endregion
 
     private void SortChannels()
@@ -2157,7 +2157,7 @@ namespace TvPlugin
       dlg.AddLocalizedString(200062); //Right channel to the left and right speakers
       dlg.AddLocalizedString(200063); //Mix both
 
-      dlg.SelectedLabel = (int) dualMonoMode;
+      dlg.SelectedLabel = (int)dualMonoMode;
 
       dlg.DoModal(GetID);
 
@@ -2165,7 +2165,7 @@ namespace TvPlugin
       {
         return;
       }
-      g_Player.SetAudioDualMonoMode((eAudioDualMonoMode) dlg.SelectedLabel);
+      g_Player.SetAudioDualMonoMode((eAudioDualMonoMode)dlg.SelectedLabel);
     }
 
     private void ShowLinkedChannelsMenu(IList<ChannelLinkageMap> linkages)
@@ -2197,7 +2197,7 @@ namespace TvPlugin
       {
         return;
       }
-      ChannelLinkageMap lmap = (ChannelLinkageMap) linkages[dlg.SelectedLabel];
+      ChannelLinkageMap lmap = (ChannelLinkageMap)linkages[dlg.SelectedLabel];
       TVHome.Navigator.ZapToChannel(lmap.ReferringLinkedChannel(), false);
     }
 
@@ -2272,8 +2272,8 @@ namespace TvPlugin
       //check if the tv recording has reached the end ...if so, stop it.
       if (g_Player.IsTVRecording && !TvRecorded.IsLiveRecording())
       {
-        double currentPosition = (double) (g_Player.CurrentPosition);
-        double duration = (double) (g_Player.Duration);
+        double currentPosition = (double)(g_Player.CurrentPosition);
+        double duration = (double)(g_Player.Duration);
 
         if (currentPosition > duration)
         {
@@ -2393,7 +2393,7 @@ namespace TvPlugin
       {
         if (!_isOsdVisible)
         {
-          for (int i = (int) Control.OSD_VIDEOPROGRESS; i < (int) Control.OSD_VIDEOPROGRESS + 50; ++i)
+          for (int i = (int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS + 50; ++i)
           {
             ShowControl(GetID, i);
           }
@@ -2403,7 +2403,7 @@ namespace TvPlugin
           TvServer server = new TvServer();
           if (server.IsRecording(TVHome.Navigator.CurrentChannel, out card))
           {
-            ShowControl(GetID, (int) Control.REC_LOGO);
+            ShowControl(GetID, (int)Control.REC_LOGO);
           }
           else
           {
@@ -2412,111 +2412,111 @@ namespace TvPlugin
         }
         else
         {
-          for (int i = (int) Control.OSD_VIDEOPROGRESS; i < (int) Control.OSD_VIDEOPROGRESS + 50; ++i)
+          for (int i = (int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS + 50; ++i)
           {
             HideControl(GetID, i);
           }
-          HideControl(GetID, (int) Control.REC_LOGO);
+          HideControl(GetID, (int)Control.REC_LOGO);
         }
       }
       else
       {
-        for (int i = (int) Control.OSD_VIDEOPROGRESS; i < (int) Control.OSD_VIDEOPROGRESS + 50; ++i)
+        for (int i = (int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS + 50; ++i)
         {
           HideControl(GetID, i);
         }
-        HideControl(GetID, (int) Control.REC_LOGO);
+        HideControl(GetID, (int)Control.REC_LOGO);
       }
 
 
       if (g_Player.Paused)
       {
-        ShowControl(GetID, (int) Control.IMG_PAUSE);
+        ShowControl(GetID, (int)Control.IMG_PAUSE);
       }
       else
       {
-        HideControl(GetID, (int) Control.IMG_PAUSE);
+        HideControl(GetID, (int)Control.IMG_PAUSE);
       }
 
 
       int speed = g_Player.Speed;
-      HideControl(GetID, (int) Control.IMG_2X);
-      HideControl(GetID, (int) Control.IMG_4X);
-      HideControl(GetID, (int) Control.IMG_8X);
-      HideControl(GetID, (int) Control.IMG_16X);
-      HideControl(GetID, (int) Control.IMG_32X);
-      HideControl(GetID, (int) Control.IMG_MIN2X);
-      HideControl(GetID, (int) Control.IMG_MIN4X);
-      HideControl(GetID, (int) Control.IMG_MIN8X);
-      HideControl(GetID, (int) Control.IMG_MIN16X);
-      HideControl(GetID, (int) Control.IMG_MIN32X);
+      HideControl(GetID, (int)Control.IMG_2X);
+      HideControl(GetID, (int)Control.IMG_4X);
+      HideControl(GetID, (int)Control.IMG_8X);
+      HideControl(GetID, (int)Control.IMG_16X);
+      HideControl(GetID, (int)Control.IMG_32X);
+      HideControl(GetID, (int)Control.IMG_MIN2X);
+      HideControl(GetID, (int)Control.IMG_MIN4X);
+      HideControl(GetID, (int)Control.IMG_MIN8X);
+      HideControl(GetID, (int)Control.IMG_MIN16X);
+      HideControl(GetID, (int)Control.IMG_MIN32X);
 
       switch (speed)
       {
         case 2:
-          ShowControl(GetID, (int) Control.IMG_2X);
+          ShowControl(GetID, (int)Control.IMG_2X);
           break;
         case 4:
-          ShowControl(GetID, (int) Control.IMG_4X);
+          ShowControl(GetID, (int)Control.IMG_4X);
           break;
         case 8:
-          ShowControl(GetID, (int) Control.IMG_8X);
+          ShowControl(GetID, (int)Control.IMG_8X);
           break;
         case 16:
-          ShowControl(GetID, (int) Control.IMG_16X);
+          ShowControl(GetID, (int)Control.IMG_16X);
           break;
         case 32:
-          ShowControl(GetID, (int) Control.IMG_32X);
+          ShowControl(GetID, (int)Control.IMG_32X);
           break;
         case -2:
-          ShowControl(GetID, (int) Control.IMG_MIN2X);
+          ShowControl(GetID, (int)Control.IMG_MIN2X);
           break;
         case -4:
-          ShowControl(GetID, (int) Control.IMG_MIN4X);
+          ShowControl(GetID, (int)Control.IMG_MIN4X);
           break;
         case -8:
-          ShowControl(GetID, (int) Control.IMG_MIN8X);
+          ShowControl(GetID, (int)Control.IMG_MIN8X);
           break;
         case -16:
-          ShowControl(GetID, (int) Control.IMG_MIN16X);
+          ShowControl(GetID, (int)Control.IMG_MIN16X);
           break;
         case -32:
-          ShowControl(GetID, (int) Control.IMG_MIN32X);
+          ShowControl(GetID, (int)Control.IMG_MIN32X);
           break;
       }
 
-      HideControl(GetID, (int) Control.LABEL_ROW1);
-      HideControl(GetID, (int) Control.LABEL_ROW2);
-      HideControl(GetID, (int) Control.LABEL_ROW3);
-      HideControl(GetID, (int) Control.BLUE_BAR);
+      HideControl(GetID, (int)Control.LABEL_ROW1);
+      HideControl(GetID, (int)Control.LABEL_ROW2);
+      HideControl(GetID, (int)Control.LABEL_ROW3);
+      HideControl(GetID, (int)Control.BLUE_BAR);
       if (_screenState.SeekStep != 0)
       {
-        ShowControl(GetID, (int) Control.BLUE_BAR);
-        ShowControl(GetID, (int) Control.LABEL_ROW1);
+        ShowControl(GetID, (int)Control.BLUE_BAR);
+        ShowControl(GetID, (int)Control.LABEL_ROW1);
       }
       if (_statusVisible)
       {
-        ShowControl(GetID, (int) Control.BLUE_BAR);
-        ShowControl(GetID, (int) Control.LABEL_ROW1);
+        ShowControl(GetID, (int)Control.BLUE_BAR);
+        ShowControl(GetID, (int)Control.LABEL_ROW1);
       }
       if (_groupVisible || _channelInputVisible)
       {
-        ShowControl(GetID, (int) Control.BLUE_BAR);
-        ShowControl(GetID, (int) Control.LABEL_ROW1);
+        ShowControl(GetID, (int)Control.BLUE_BAR);
+        ShowControl(GetID, (int)Control.LABEL_ROW1);
       }
-      HideControl(GetID, (int) Control.MSG_BOX);
-      HideControl(GetID, (int) Control.MSG_BOX_LABEL1);
-      HideControl(GetID, (int) Control.MSG_BOX_LABEL2);
-      HideControl(GetID, (int) Control.MSG_BOX_LABEL3);
-      HideControl(GetID, (int) Control.MSG_BOX_LABEL4);
+      HideControl(GetID, (int)Control.MSG_BOX);
+      HideControl(GetID, (int)Control.MSG_BOX_LABEL1);
+      HideControl(GetID, (int)Control.MSG_BOX_LABEL2);
+      HideControl(GetID, (int)Control.MSG_BOX_LABEL3);
+      HideControl(GetID, (int)Control.MSG_BOX_LABEL4);
 
       if (_messageBoxVisible)
       {
-        ShowControl(GetID, (int) Control.MSG_BOX);
-        ShowControl(GetID, (int) Control.MSG_BOX_LABEL1);
-        ShowControl(GetID, (int) Control.MSG_BOX_LABEL2);
-        ShowControl(GetID, (int) Control.MSG_BOX_LABEL3);
-        ShowControl(GetID, (int) Control.MSG_BOX_LABEL4);
+        ShowControl(GetID, (int)Control.MSG_BOX);
+        ShowControl(GetID, (int)Control.MSG_BOX_LABEL1);
+        ShowControl(GetID, (int)Control.MSG_BOX_LABEL2);
+        ShowControl(GetID, (int)Control.MSG_BOX_LABEL3);
+        ShowControl(GetID, (int)Control.MSG_BOX_LABEL4);
       }
 
       RenderVolume(_isVolumeVisible);
@@ -2717,6 +2717,7 @@ namespace TvPlugin
     {
       UpdateOSD(null);
     }
+
     public void UpdateOSD(TvPlugin.TVHome.ChannelErrorInfo message)
     {
       if (GUIWindowManager.ActiveWindow != GetID)
@@ -2863,7 +2864,7 @@ namespace TvPlugin
         _channelInputVisible = true;
         _keyPressedTimer = DateTime.Now;
         _channelName += chKey;
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.LABEL_ROW1, 0,
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0,
                                         0, null);
 
         string displayedChannelName = string.Empty;
@@ -2879,7 +2880,7 @@ namespace TvPlugin
           {
             return;
           }
-          GroupMap map = (GroupMap) TVHome.Navigator.CurrentGroup.ReferringGroupMap()[channelNr - 1];
+          GroupMap map = (GroupMap)TVHome.Navigator.CurrentGroup.ReferringGroupMap()[channelNr - 1];
           displayedChannelName = map.ReferencedChannel().DisplayName;
         }
         /*else
@@ -2905,7 +2906,7 @@ namespace TvPlugin
           msg.Label = String.Format("{0} {1}", "", _channelName); // Channel
         }
 
-        GUIControl cntTarget = base.GetControl((int) Control.LABEL_ROW1);
+        GUIControl cntTarget = base.GetControl((int)Control.LABEL_ROW1);
         if (cntTarget != null)
         {
           cntTarget.OnMessage(msg);
@@ -2971,7 +2972,7 @@ namespace TvPlugin
       TVHome.Navigator.ZapToPreviousGroup(true);
       _groupVisible = true;
       _groupTimeOutTimer = DateTime.Now;
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.LABEL_ROW1, 0, 0,
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0,
                                       null);
       msg.Label = String.Format("{0}:{1}", GUILocalizeStrings.Get(971), TVHome.Navigator.ZapGroupName);
       OnMessage(msg);
@@ -2980,15 +2981,15 @@ namespace TvPlugin
     private void OnPageUp()
     {
       if (g_Player.IsTVRecording)
-      {     
+      {
         return;
       }
 
-    // Switch to the next channel group and tune to the first channel in the group
+      // Switch to the next channel group and tune to the first channel in the group
       TVHome.Navigator.ZapToNextGroup(true);
       _groupVisible = true;
       _groupTimeOutTimer = DateTime.Now;
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int) Control.LABEL_ROW1, 0, 0,
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0,
                                       null);
       msg.Label = String.Format("{0}:{1}", GUILocalizeStrings.Get(971), TVHome.Navigator.ZapGroupName);
       OnMessage(msg);
@@ -2996,7 +2997,6 @@ namespace TvPlugin
 
     private void ChangeChannelNr(int channelNr)
     {
-
       if (g_Player.IsTVRecording)
       {
         return;
@@ -3018,7 +3018,6 @@ namespace TvPlugin
 
     public void ZapPreviousChannel()
     {
-
       if (g_Player.IsTVRecording)
       {
         return;
@@ -3036,7 +3035,6 @@ namespace TvPlugin
 
     public void ZapNextChannel()
     {
-
       if (g_Player.IsTVRecording)
       {
         return;
@@ -3055,7 +3053,6 @@ namespace TvPlugin
 
     public void StartAutoZap()
     {
-
       if (g_Player.IsTVRecording)
       {
         return;
@@ -3143,7 +3140,7 @@ namespace TvPlugin
           }
         }
       }*/
- 
+
       base.OnPageDestroy(newWindowId);
     }
 
@@ -3207,7 +3204,7 @@ namespace TvPlugin
     public bool OnDisableCancel(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       if (pDlgProgress.IsInstance(fetcher))
       {
         pDlgProgress.DisableCancel(true);
@@ -3222,7 +3219,7 @@ namespace TvPlugin
         return;
       }
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       pDlgProgress.ShowProgressBar(true);
       pDlgProgress.SetLine(1, line1);
       pDlgProgress.SetLine(2, line2);
@@ -3236,7 +3233,7 @@ namespace TvPlugin
     public bool OnSearchStarting(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       // show dialog that we're busy querying www.imdb.com
       pDlgProgress.Reset();
       pDlgProgress.SetHeading(GUILocalizeStrings.Get(197));
@@ -3250,7 +3247,7 @@ namespace TvPlugin
     public bool OnSearchStarted(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       pDlgProgress.SetObject(fetcher);
       pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
       if (pDlgProgress.IsCanceled)
@@ -3263,7 +3260,7 @@ namespace TvPlugin
     public bool OnSearchEnd(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       if ((pDlgProgress != null) && (pDlgProgress.IsInstance(fetcher)))
       {
         pDlgProgress.Close();
@@ -3275,7 +3272,7 @@ namespace TvPlugin
     {
       Log.Info("IMDB Fetcher: OnMovieNotFound");
       // show dialog...
-      GUIDialogOK pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       pDlgOK.SetHeading(195);
       pDlgOK.SetLine(1, fetcher.MovieName);
       pDlgOK.SetLine(2, string.Empty);
@@ -3286,7 +3283,7 @@ namespace TvPlugin
     public bool OnDetailsStarting(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       // show dialog that we're downloading the movie info
       pDlgProgress.Reset();
       pDlgProgress.SetHeading(GUILocalizeStrings.Get(198));
@@ -3301,7 +3298,7 @@ namespace TvPlugin
     public bool OnDetailsStarted(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       pDlgProgress.SetObject(fetcher);
       pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
       if (pDlgProgress.IsCanceled)
@@ -3314,7 +3311,7 @@ namespace TvPlugin
     public bool OnDetailsEnd(IMDBFetcher fetcher)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       if ((pDlgProgress != null) && (pDlgProgress.IsInstance(fetcher)))
       {
         pDlgProgress.Close();
@@ -3344,7 +3341,7 @@ namespace TvPlugin
     {
       Log.Info("IMDB Fetcher: OnDetailsNotFound");
       // show dialog...
-      GUIDialogOK pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       // show dialog...
       pDlgOK.SetHeading(195);
       pDlgOK.SetLine(1, fetcher.MovieName);
@@ -3395,7 +3392,7 @@ namespace TvPlugin
 
     protected bool GetKeyboard(ref string strLine)
     {
-      VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
       if (null == keyboard)
       {
         return false;

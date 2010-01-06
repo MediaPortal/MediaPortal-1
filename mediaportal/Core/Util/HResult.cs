@@ -60,6 +60,7 @@ namespace MediaPortal.Util
   public class HResult
   {
     #region Enums
+
     public enum Serverity
     {
       Unknown = -1,
@@ -101,18 +102,22 @@ namespace MediaPortal.Util
       MetaDirectory = 35,
       D3DX = 0x877
     }
+
     #endregion
 
     #region Variables
+
     private uint _hresult;
     private int _facilityCode;
     private Facility _facility = Facility.Unknown;
     private int _serverityCode;
     private Serverity _serverity = Serverity.Unknown;
     private int _code;
+
     #endregion
 
     #region Constructors/Destructors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="HResult"/> class.
     /// </summary>
@@ -121,9 +126,11 @@ namespace MediaPortal.Util
     {
       Set(hresult);
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Gets the facility type.
     /// </summary>
@@ -177,9 +184,11 @@ namespace MediaPortal.Util
     {
       get { return GetDXErrorDescription((int)_hresult); }
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Sets the specified hresult.
     /// </summary>
@@ -194,13 +203,12 @@ namespace MediaPortal.Util
       _facilityCode = (int)(_hresult >> 16);
       _facilityCode = _facilityCode & 0x0FFF;
 
-      if (Enum.IsDefined(typeof(Facility), _facilityCode))
+      if (Enum.IsDefined(typeof (Facility), _facilityCode))
         _facility = (Facility)_facilityCode;
       else
         _facility = Facility.Unknown;
 
       _code = (int)_hresult & 0x0000FFFF;
-
     }
 
     /// <summary>
@@ -208,7 +216,8 @@ namespace MediaPortal.Util
     /// </summary>
     /// <param name="hresult">The hresult.</param>
     /// <returns>the DX error string</returns>
-    [DllImport("Dxerr9.dll", EntryPoint = "GetDXErrorString", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    [DllImport("Dxerr9.dll", EntryPoint = "GetDXErrorString", ExactSpelling = false,
+      CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public static extern string GetDXErrorString(int hresult);
 
     /// <summary>
@@ -216,7 +225,8 @@ namespace MediaPortal.Util
     /// </summary>
     /// <param name="hresult">The hresult.</param>
     /// <returns>the DX error description</returns>
-    [DllImport("Dxerr9.dll", EntryPoint = "GetDXErrorDescription", ExactSpelling = false, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+    [DllImport("Dxerr9.dll", EntryPoint = "GetDXErrorDescription", ExactSpelling = false,
+      CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public static extern string GetDXErrorDescription(int hresult);
 
     /// <summary>
@@ -228,9 +238,11 @@ namespace MediaPortal.Util
     public override string ToString()
     {
       if (_facility == Facility.Unknown)
-        return String.Format("0x{0} - {1}:Unknown(0x{2}):0x{3}", _hresult.ToString("X").PadLeft(8, '0'), _serverity, _facilityCode.ToString("X").PadLeft(3, '0'), _code.ToString("X").PadLeft(4, '0'));
+        return String.Format("0x{0} - {1}:Unknown(0x{2}):0x{3}", _hresult.ToString("X").PadLeft(8, '0'), _serverity,
+                             _facilityCode.ToString("X").PadLeft(3, '0'), _code.ToString("X").PadLeft(4, '0'));
       else
-        return String.Format("0x{0} - {1}:{2}:0x{3}", _hresult.ToString("X").PadLeft(8, '0'), _serverity, _facility, _code.ToString("X").PadLeft(4, '0'));
+        return String.Format("0x{0} - {1}:{2}:0x{3}", _hresult.ToString("X").PadLeft(8, '0'), _serverity, _facility,
+                             _code.ToString("X").PadLeft(4, '0'));
     }
 
     /// <summary>
@@ -241,10 +253,11 @@ namespace MediaPortal.Util
     /// </returns>
     public string ToDXString()
     {
-      if(_hresult == 0)
+      if (_hresult == 0)
         return String.Format("No DX Error");
       else
-        return String.Format("DX Error: {0} - Error: {1}, Description:{2}", this.ToString(), DXErrorString, DXErrorDescription);
+        return String.Format("DX Error: {0} - Error: {1}, Description:{2}", this.ToString(), DXErrorString,
+                             DXErrorDescription);
     }
 
     /// <summary>
@@ -261,25 +274,25 @@ namespace MediaPortal.Util
         return false;
       else
         return false;
-
     }
 
     public static bool operator <(HResult a, int b)
     {
       if (a._hresult < b)
         return true;
-      else 
+      else
         return false;
     }
 
-    public static bool operator > (HResult a, int b)
+    public static bool operator >(HResult a, int b)
     {
       if (a._hresult > b)
         return true;
       else
         return false;
     }
-    public static bool operator <= (HResult a, int b)
+
+    public static bool operator <=(HResult a, int b)
     {
       if (a._hresult <= b)
         return true;
@@ -287,14 +300,13 @@ namespace MediaPortal.Util
         return false;
     }
 
-    public static bool operator >= (HResult a, int b)
+    public static bool operator >=(HResult a, int b)
     {
       if (a._hresult >= b)
         return true;
       else
         return false;
     }
-
 
 
     /// <summary>
@@ -333,6 +345,7 @@ namespace MediaPortal.Util
     {
       return _hresult.GetHashCode();
     }
+
     #endregion
   }
 }

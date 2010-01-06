@@ -4,7 +4,6 @@ using MediaPortal.WebEPG.Config;
 
 namespace SetupTv.Sections.WebEPGConfig
 {
-
   public partial class MergedChannelDetails : Form
   {
     //private fSelection _selection;
@@ -12,7 +11,8 @@ namespace SetupTv.Sections.WebEPGConfig
     //private TreeNode _tGrabbers;
 
 
-    public MergedChannelDetails(MergedChannel channel, GetGrabberSelectorCallback getGrabberSelectorCallback, EventHandler ok_click)
+    public MergedChannelDetails(MergedChannel channel, GetGrabberSelectorCallback getGrabberSelectorCallback,
+                                EventHandler ok_click)
     {
       InitializeComponent();
 
@@ -38,7 +38,7 @@ namespace SetupTv.Sections.WebEPGConfig
     //      channel.grabber = dlg.tbGrabSite.Text;
     //      channel.start = dlg.tbStart.Text;
     //      channel.end = dlg.tbEnd.Text;
-          
+
     //      return true;
     //    }
     //    else

@@ -52,9 +52,7 @@ namespace MediaPortal.Configuration.Sections
     private IContainer components = null;
 
     public GeneralDaemonTools()
-      : this("Virtual Drive")
-    {
-    }
+      : this("Virtual Drive") {}
 
     public GeneralDaemonTools(string name)
       : base(name)
@@ -72,8 +70,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
       }
-      catch (Exception)
-      { }
+      catch (Exception) {}
     }
 
 
@@ -145,8 +142,7 @@ namespace MediaPortal.Configuration.Sections
               break;
             }
           }
-          catch (Exception)
-          { }
+          catch (Exception) {}
         }
         rk.Close();
       }
@@ -192,8 +188,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.mpLabel2);
       this.groupBox2.Controls.Add(this.textBoxExtensions);
       this.groupBox2.Controls.Add(this.mpLabel1);
@@ -216,8 +214,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxExtensions
       // 
-      this.textBoxExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxExtensions.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxExtensions.BorderColor = System.Drawing.Color.Empty;
       this.textBoxExtensions.Location = new System.Drawing.Point(168, 118);
       this.textBoxExtensions.Name = "textBoxExtensions";
@@ -235,7 +235,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonSelectFolder
       // 
-      this.buttonSelectFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonSelectFolder.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonSelectFolder.Location = new System.Drawing.Point(384, 43);
       this.buttonSelectFolder.Name = "buttonSelectFolder";
       this.buttonSelectFolder.Size = new System.Drawing.Size(72, 22);
@@ -246,15 +248,19 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboDriveNo
       // 
-      this.comboDriveNo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboDriveNo.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboDriveNo.BorderColor = System.Drawing.Color.Empty;
       this.comboDriveNo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboDriveNo.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3"});
+      this.comboDriveNo.Items.AddRange(new object[]
+                                         {
+                                           "0",
+                                           "1",
+                                           "2",
+                                           "3"
+                                         });
       this.comboDriveNo.Location = new System.Drawing.Point(168, 92);
       this.comboDriveNo.Name = "comboDriveNo";
       this.comboDriveNo.Size = new System.Drawing.Size(288, 21);
@@ -262,8 +268,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxDrive
       // 
-      this.comboBoxDrive.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxDrive.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxDrive.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDrive.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDrive.Location = new System.Drawing.Point(168, 68);
@@ -273,8 +281,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxDaemonTools
       // 
-      this.textBoxDaemonTools.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxDaemonTools.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxDaemonTools.BorderColor = System.Drawing.Color.Empty;
       this.textBoxDaemonTools.Location = new System.Drawing.Point(168, 44);
       this.textBoxDaemonTools.Name = "textBoxDaemonTools";
@@ -350,7 +360,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

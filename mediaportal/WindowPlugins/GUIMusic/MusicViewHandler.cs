@@ -66,7 +66,7 @@ namespace MediaPortal.GUI.Music
         using (FileStream fileStream = new FileInfo(customMusicViews).OpenRead())
         {
           SoapFormatter formatter = new SoapFormatter();
-          ArrayList viewlist = (ArrayList) formatter.Deserialize(fileStream);
+          ArrayList viewlist = (ArrayList)formatter.Deserialize(fileStream);
           foreach (ViewDefinition view in viewlist)
           {
             views.Add(view);
@@ -74,9 +74,7 @@ namespace MediaPortal.GUI.Music
           fileStream.Close();
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       database = MusicDatabase.Instance;
     }
@@ -133,7 +131,7 @@ namespace MediaPortal.GUI.Music
         {
           if (views.Count > 0)
           {
-            currentView = (ViewDefinition) views[0];
+            currentView = (ViewDefinition)views[0];
           }
         }
       }
@@ -177,7 +175,7 @@ namespace MediaPortal.GUI.Music
 
     public void Select(Song song)
     {
-      FilterDefinition definition = (FilterDefinition) currentView.Filters[CurrentLevel];
+      FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
       definition.SelectedValue = GetFieldValue(song, definition.Where).ToString();
       if (currentLevel + 1 < currentView.Filters.Count)
       {
@@ -192,16 +190,16 @@ namespace MediaPortal.GUI.Music
       List<Song> songs = new List<Song>();
       string whereClause = string.Empty;
       string orderClause = string.Empty;
-      FilterDefinition definition = (FilterDefinition) currentView.Filters[CurrentLevel];
+      FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
 
       restrictionLength = 0;
       for (int i = 0; i < CurrentLevel; ++i)
       {
-        BuildSelect((FilterDefinition) currentView.Filters[i], ref whereClause, i);
+        BuildSelect((FilterDefinition)currentView.Filters[i], ref whereClause, i);
       }
-      BuildWhere((FilterDefinition) currentView.Filters[CurrentLevel], ref whereClause);
-      BuildRestriction((FilterDefinition) currentView.Filters[CurrentLevel], ref whereClause);
-      BuildOrder((FilterDefinition) currentView.Filters[CurrentLevel], ref orderClause);
+      BuildWhere((FilterDefinition)currentView.Filters[CurrentLevel], ref whereClause);
+      BuildRestriction((FilterDefinition)currentView.Filters[CurrentLevel], ref whereClause);
+      BuildOrder((FilterDefinition)currentView.Filters[CurrentLevel], ref orderClause);
 
       if (CurrentLevel > 0)
       {
@@ -216,7 +214,7 @@ namespace MediaPortal.GUI.Music
       string sql = "";
       if (CurrentLevel == 0)
       {
-        FilterDefinition defRoot = (FilterDefinition) currentView.Filters[0];
+        FilterDefinition defRoot = (FilterDefinition)currentView.Filters[0];
         string table = GetTable(defRoot.Where);
         string searchField = GetField(defRoot.Where);
 
@@ -261,7 +259,8 @@ namespace MediaPortal.GUI.Music
             {
               sql += "where " + whereClause;
             }
-            sql += " group by strAlbum, strAlbumArtist ";  // We need to group on AlbumArtist, to show Albums with same name for different artists
+            sql += " group by strAlbum, strAlbumArtist ";
+              // We need to group on AlbumArtist, to show Albums with same name for different artists
             if (orderClause != string.Empty)
             {
               sql += orderClause;
@@ -279,7 +278,7 @@ namespace MediaPortal.GUI.Music
                 Song song = new Song();
                 try
                 {
-                  song.Year = (int) Math.Floor(0.5d + Double.Parse(DatabaseUtility.Get(results, i, "iYear")));
+                  song.Year = (int)Math.Floor(0.5d + Double.Parse(DatabaseUtility.Get(results, i, "iYear")));
                 }
                 catch (Exception)
                 {
@@ -303,9 +302,7 @@ namespace MediaPortal.GUI.Music
                 whereClause = String.Format("where {0} > '{1}'", searchField, searchDate.ToString("yyyy-MM-dd hh:mm:ss"));
                 sql = String.Format("select * from tracks {0} {1}", whereClause, orderClause);
               }
-              catch (Exception)
-              {
-              }
+              catch (Exception) {}
             }
             else if (defRoot.Where == "conductor")
             {
@@ -333,13 +330,13 @@ namespace MediaPortal.GUI.Music
       }
       else if (CurrentLevel < MaxLevels - 1)
       {
-        FilterDefinition defCurrent = (FilterDefinition) currentView.Filters[CurrentLevel];
+        FilterDefinition defCurrent = (FilterDefinition)currentView.Filters[CurrentLevel];
         string table = GetTable(defCurrent.Where);
 
         if (defCurrent.SqlOperator == "group")
         {
           // get previous filter to find out the length of the substr search
-          FilterDefinition defPrevious = (FilterDefinition) currentView.Filters[CurrentLevel - 1];
+          FilterDefinition defPrevious = (FilterDefinition)currentView.Filters[CurrentLevel - 1];
           int previousRestriction = 0;
           if (defPrevious.SqlOperator == "group")
           {
@@ -369,7 +366,7 @@ namespace MediaPortal.GUI.Music
           string from = String.Format("{1} from {0}", table, GetField(defCurrent.Where));
           for (int i = CurrentLevel; i > -1; i--)
           {
-            FilterDefinition filter = (FilterDefinition) currentView.Filters[i];
+            FilterDefinition filter = (FilterDefinition)currentView.Filters[i];
             if (filter.Where != table)
             {
               from = String.Format("{0} from tracks", GetField(defCurrent.Where));
@@ -394,7 +391,7 @@ namespace MediaPortal.GUI.Music
       else
       {
         // get previous filter to see, if we had an album 
-        FilterDefinition defPrevious = (FilterDefinition) currentView.Filters[CurrentLevel - 1];
+        FilterDefinition defPrevious = (FilterDefinition)currentView.Filters[CurrentLevel - 1];
         if (defPrevious.Where == "album")
         {
           if (whereClause != "")
@@ -422,7 +419,7 @@ namespace MediaPortal.GUI.Music
       {
         if (filterLevel > 0)
         {
-          FilterDefinition filterPrevious = (FilterDefinition) currentView.Filters[filterLevel - 1];
+          FilterDefinition filterPrevious = (FilterDefinition)currentView.Filters[filterLevel - 1];
           if (filterPrevious.SqlOperator == "group")
           {
             whereClause = "";
@@ -762,7 +759,8 @@ namespace MediaPortal.GUI.Music
     private string GetSortField(FilterDefinition filter)
     {
       // Don't allow anything else but the fieldnames itself on Multiple Fields
-      if (filter.Where == "artist" || filter.Where == "albumartist" || filter.Where == "genre" || filter.Where == "composer")
+      if (filter.Where == "artist" || filter.Where == "albumartist" || filter.Where == "genre" ||
+          filter.Where == "composer")
       {
         return GetField(filter.Where);
       }
@@ -793,7 +791,7 @@ namespace MediaPortal.GUI.Music
       {
         return;
       }
-      FilterDefinition definition = (FilterDefinition) currentView.Filters[CurrentLevel];
+      FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
       if (definition.Where == "genre")
       {
         item.Label = song.Genre;

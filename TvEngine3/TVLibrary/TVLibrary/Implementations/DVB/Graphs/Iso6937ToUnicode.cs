@@ -54,7 +54,7 @@ namespace MediaPortal.TV.Epg
         char ch;
         switch (b)
         {
-          // at first single byte characters
+            // at first single byte characters
           case 0xA8:
             ch = (char)0x00A4;
             break;
@@ -217,7 +217,7 @@ namespace MediaPortal.TV.Epg
           case 0xFF:
             ch = (char)0xAD;
             break;
-          // multibyte
+            // multibyte
           case 0xC1:
             i++;
             b = Marshal.ReadByte(ptr, i);
@@ -253,7 +253,7 @@ namespace MediaPortal.TV.Epg
               case 0x75:
                 ch = (char)0xF9;
                 break;
-              // unknown character --> fallback
+                // unknown character --> fallback
               default:
                 ch = (char)b;
                 break;
@@ -339,7 +339,7 @@ namespace MediaPortal.TV.Epg
               case 0x7A:
                 ch = (char)0x017A;
                 break;
-              // unknown character --> fallback
+                // unknown character --> fallback
               default:
                 ch = (char)b;
                 break;
@@ -423,7 +423,7 @@ namespace MediaPortal.TV.Epg
               case 0x79:
                 ch = (char)0x177;
                 break;
-              // unknown character --> fallback
+                // unknown character --> fallback
               default:
                 ch = (char)b;
                 break;
@@ -464,7 +464,7 @@ namespace MediaPortal.TV.Epg
               case 0x75:
                 ch = (char)0x169;
                 break;
-              // unknown character --> fallback
+                // unknown character --> fallback
               default:
                 ch = (char)b;
                 break;
@@ -508,7 +508,7 @@ namespace MediaPortal.TV.Epg
               case 0x75:
                 ch = (char)0x016B;
                 break;
-              // unknown character --> fallback
+                // unknown character --> fallback
               default:
                 ch = (char)b;
                 break;
@@ -540,7 +540,7 @@ namespace MediaPortal.TV.Epg
               case 0x75:
                 ch = (char)0x016D;
                 break;
-              // unknown character --> fallback
+                // unknown character --> fallback
               default:
                 ch = (char)b;
                 break;
@@ -581,7 +581,7 @@ namespace MediaPortal.TV.Epg
               case 0x7A:
                 ch = (char)0x017C;
                 break;
-              // unknown character --> fallback
+                // unknown character --> fallback
               default:
                 ch = (char)b;
                 break;
@@ -631,7 +631,7 @@ namespace MediaPortal.TV.Epg
               case 0x79:
                 ch = (char)0xFF;
                 break;
-              // unknown character --> fallback
+                // unknown character --> fallback
               default:
                 ch = (char)b;
                 break;
@@ -657,7 +657,7 @@ namespace MediaPortal.TV.Epg
               case 0x75:
                 ch = (char)0x016F;
                 break;
-              // unknown character --> fallback
+                // unknown character --> fallback
               default:
                 ch = (char)b;
                 break;
@@ -719,7 +719,7 @@ namespace MediaPortal.TV.Epg
               case 0x74:
                 ch = (char)0x163;
                 break;
-              // unknown character --> fallback
+                // unknown character --> fallback
               default:
                 ch = (char)b;
                 break;
@@ -745,7 +745,7 @@ namespace MediaPortal.TV.Epg
               case 0x75:
                 ch = (char)0x171;
                 break;
-              // unknown character --> fallback
+                // unknown character --> fallback
               default:
                 ch = (char)b;
                 break;
@@ -783,7 +783,7 @@ namespace MediaPortal.TV.Epg
               case 0x75:
                 ch = (char)0x173;
                 break;
-              // unknown character --> fallback
+                // unknown character --> fallback
               default:
                 ch = (char)b;
                 break;
@@ -851,13 +851,13 @@ namespace MediaPortal.TV.Epg
               case 0x7A:
                 ch = (char)0x017E;
                 break;
-              // unknown character --> fallback
+                // unknown character --> fallback
               default:
                 ch = (char)b;
                 break;
             }
             break;
-          // rest is the same
+            // rest is the same
           default:
             ch = (char)b;
             break;

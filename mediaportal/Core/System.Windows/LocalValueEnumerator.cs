@@ -67,7 +67,7 @@ namespace System.Windows
 
     public LocalValueEntry Current
     {
-      get { return new LocalValueEntry((DependencyProperty) _enumerator.Key, _enumerator.Value); }
+      get { return new LocalValueEntry((DependencyProperty)_enumerator.Key, _enumerator.Value); }
     }
 
     object IEnumerator.Current

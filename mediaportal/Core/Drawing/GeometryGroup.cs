@@ -32,21 +32,15 @@ namespace MediaPortal.Drawing
   {
     #region Constructors
 
-    public GeometryGroup()
-    {
-    }
+    public GeometryGroup() {}
 
     #endregion Constructors
 
     #region Methods
 
-    void IAddChild.AddChild(object child)
-    {
-    }
+    void IAddChild.AddChild(object child) {}
 
-    void IAddChild.AddText(string text)
-    {
-    }
+    void IAddChild.AddText(string text) {}
 
     #endregion Methods
 

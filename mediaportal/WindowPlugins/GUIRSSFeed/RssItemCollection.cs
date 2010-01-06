@@ -71,7 +71,7 @@ namespace Rss
     /// <exception cref="ArgumentOutOfRangeException">index is not a valid index.</exception>
     public RssItem this[int index]
     {
-      get { return ((RssItem) (List[index])); }
+      get { return ((RssItem)(List[index])); }
       set
       {
         pubDateChanged = true;

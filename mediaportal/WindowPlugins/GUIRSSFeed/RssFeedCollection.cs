@@ -68,7 +68,7 @@ namespace Rss
     /// <exception cref="ArgumentOutOfRangeException">index is not a valid index.</exception>
     public RssFeed this[int index]
     {
-      get { return ((RssFeed) (List[index])); }
+      get { return ((RssFeed)(List[index])); }
       set { List[index] = value; }
     }
 
@@ -82,7 +82,7 @@ namespace Rss
       {
         for (int i = 0; i < List.Count; i++)
         {
-          if (((RssFeed) List[i]).Url == url)
+          if (((RssFeed)List[i]).Url == url)
           {
             return this[i];
           }

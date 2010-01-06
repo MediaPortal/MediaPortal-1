@@ -23,7 +23,6 @@ using TvLibrary.Interfaces;
 using TvLibrary.Channels;
 using TvDatabase;
 using TvControl;
-
 using System;
 using System.Collections.Generic;
 
@@ -33,7 +32,8 @@ namespace TvService
   {
     #region protected members
 
-    protected static bool IsCamAbleToDecrypChannel(User user, ITvCardHandler tvcard, Channel ch, int decryptLimit, out bool isRec)
+    protected static bool IsCamAbleToDecrypChannel(User user, ITvCardHandler tvcard, Channel ch, int decryptLimit,
+                                                   out bool isRec)
     {
       bool IsCamAbleToDecrypChannel = false;
       int camDecrypting = tvcard.NumberOfChannelsDecrypting;
@@ -57,7 +57,7 @@ namespace TvService
         IsCamAbleToDecrypChannel = (camDecrypting < decryptLimit);
       }
 
-      return (IsCamAbleToDecrypChannel || ch.FreeToAir);                    
+      return (IsCamAbleToDecrypChannel || ch.FreeToAir);
     }
 
     protected static bool IsCamAlreadyDecodingChannel(ITvCardHandler tvcard, Channel dbChannel)
@@ -110,9 +110,10 @@ namespace TvService
         }
       }
       return fta;
-    }     
+    }
 
-    protected static bool IsChannelMappedToCard(Channel dbChannel, KeyValuePair<int, ITvCardHandler> keyPair, out ChannelMap channelMap)
+    protected static bool IsChannelMappedToCard(Channel dbChannel, KeyValuePair<int, ITvCardHandler> keyPair,
+                                                out ChannelMap channelMap)
     {
       //check if channel is mapped to this card and that the mapping is not for "Epg Only"
       bool isChannelMappedToCard = false;
@@ -151,8 +152,6 @@ namespace TvService
       return isValid;
     }
 
-
     #endregion
-
   }
 }

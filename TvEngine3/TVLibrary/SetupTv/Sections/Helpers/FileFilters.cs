@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
@@ -29,27 +29,33 @@ using System.Windows.Forms;
 
 namespace SetupTv.Sections
 {
+
   #region CustomFileName class
+
   /// <summary>
   /// Container class for filename handling of tuning details
   /// </summary>
-  class CustomFileName
+  internal class CustomFileName
   {
-    String m_fileName;
-    String m_filter;
+    private String m_fileName;
+    private String m_filter;
+
     public String FileName
     {
       get { return m_fileName; }
     }
+
     public String DisplayName
     {
       get { return this.ToString(); }
     }
+
     public CustomFileName(String fileName, String filter)
     {
       m_fileName = fileName;
       m_filter = filter;
     }
+
     /// <summary>
     /// Returns the "region" name of file
     /// </summary>
@@ -59,31 +65,31 @@ namespace SetupTv.Sections
       return System.IO.Path.GetFileNameWithoutExtension(m_fileName).Replace(m_filter + ".", "");
     }
   }
+
   #endregion
+
   /// <summary>
   /// Container class for filename handling of tuning details
   /// </summary>
-  class SimpleFileName
+  internal class SimpleFileName
   {
-    String m_fileName;
+    private String m_fileName;
+
     public String FileName
     {
-      get 
-      {
-        return m_fileName; 
-      }
+      get { return m_fileName; }
     }
+
     public String DisplayName
     {
-      get 
-      {
-        return System.IO.Path.GetFileNameWithoutExtension(m_fileName);
-      }
+      get { return System.IO.Path.GetFileNameWithoutExtension(m_fileName); }
     }
+
     public SimpleFileName(String fileName)
     {
       m_fileName = fileName;
     }
+
     /// <summary>
     /// Returns the "region" name of file
     /// </summary>
@@ -93,19 +99,21 @@ namespace SetupTv.Sections
       return DisplayName;
     }
   }
+
   #region
 
   #endregion
 
   #region FileFilter class
+
   /// <summary>
   /// Helper class to fill master/detail comboboxes with filtered tuning files
   /// </summary>
-  class FileFilters
+  internal class FileFilters
   {
-    String[] files;
-    MPComboBox m_cbxCountries;
-    MPComboBox m_cbxRegions;
+    private String[] files;
+    private MPComboBox m_cbxCountries;
+    private MPComboBox m_cbxRegions;
 
     /// <summary>
     /// Load existing list from xml file 
@@ -117,7 +125,7 @@ namespace SetupTv.Sections
       {
         XmlReader parFileXML = XmlReader.Create(fileName);
         XmlSerializer xmlSerializer = new XmlSerializer(ListType);
-        object result=xmlSerializer.Deserialize(parFileXML);
+        object result = xmlSerializer.Deserialize(parFileXML);
         parFileXML.Close();
         return result;
       }
@@ -128,6 +136,7 @@ namespace SetupTv.Sections
         return null;
       }
     }
+
     /// <summary>
     /// CTOR
     /// </summary>
@@ -139,7 +148,8 @@ namespace SetupTv.Sections
       m_cbxCountries = cbxCountries;
       m_cbxRegions = cbxRegions;
 
-      files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\{1}", Log.GetPathName(), TuningType), "*.xml");
+      files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\{1}", Log.GetPathName(), TuningType),
+                                           "*.xml");
       List<String> countries = CountryList(files);
       for (int i = 0; i < countries.Count; ++i)
       {
@@ -156,7 +166,8 @@ namespace SetupTv.Sections
     /// <param name="TuningType">Tuning type (subfolder name)</param>
     public FileFilters(String TuningType)
     {
-      files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\{1}", Log.GetPathName(), TuningType), "*.xml");
+      files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\{1}", Log.GetPathName(), TuningType),
+                                           "*.xml");
     }
 
     public List<SimpleFileName> AllFiles
@@ -193,6 +204,7 @@ namespace SetupTv.Sections
       }
       return filtered;
     }
+
     /// <summary>
     /// Returns the distinct country names
     /// 
@@ -225,5 +237,6 @@ namespace SetupTv.Sections
       m_cbxRegions.DataSource = FilteredList(files, m_cbxCountries.SelectedItem.ToString());
     }
   }
+
   #endregion
 }

@@ -1,4 +1,4 @@
-﻿using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
+using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
@@ -338,9 +338,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               layout.IconEditor = true;
             }
           }
-          else if ((type == "VLSYS_Mplay") || (type == "MatrixMX"))
-          {
-          }
+          else if ((type == "VLSYS_Mplay") || (type == "MatrixMX")) {}
         }
         else
         {
@@ -627,9 +625,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         if (!(type == "CFontz") && !(type == "MatrixMX"))
         {
-          if (((type == "VLSYS_Mplay") || (type == "MatrixGX")) || (type == "iMONLCDg"))
-          {
-          }
+          if (((type == "VLSYS_Mplay") || (type == "MatrixGX")) || (type == "iMONLCDg")) {}
         }
         else
         {
@@ -689,9 +685,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         if (!(type == "VLSYS_Mplay"))
         {
-          if (((type == "MatrixMX") || (type == "MatrixGX")) || (type == "iMONLCDg"))
-          {
-          }
+          if (((type == "MatrixMX") || (type == "MatrixGX")) || (type == "iMONLCDg")) {}
         }
         else
         {

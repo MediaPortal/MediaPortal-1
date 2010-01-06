@@ -63,17 +63,13 @@ namespace MediaPortal
     /// <param name="source">The Source String.</param>
     /// <param name="delimiter">The Delimiter String as a char[].  Note that this is converted into a single String and
     /// expects Unicode encoded chars.</param>
-    public StringTokenizer(string source, char[] delimiter) : this(source, new string(delimiter))
-    {
-    }
+    public StringTokenizer(string source, char[] delimiter) : this(source, new string(delimiter)) {}
 
     /// <summary>
     /// Constructor for StringTokenizer Class.  The default delimiter of " " (space) is used.
     /// </summary>
     /// <param name="source">The Source String.</param>
-    public StringTokenizer(string source) : this(source, "")
-    {
-    }
+    public StringTokenizer(string source) : this(source, "") {}
 
     /// <summary>
     /// Empty Constructor.  Will create an empty StringTokenizer with no source, no delimiter, and no tokens.
@@ -81,9 +77,7 @@ namespace MediaPortal
     /// optionally call the NewDelim(string d) or NewDelim(char[] d) methods if you don't with to use the default
     /// delimiter of " " (space).
     /// </summary>
-    public StringTokenizer() : this("", "")
-    {
-    }
+    public StringTokenizer() : this("", "") {}
 
     private void Tokenize()
     {
@@ -221,7 +215,7 @@ namespace MediaPortal
       String RetString = "";
       if (this.CurrIndex <= (this.tokens.Count - 1))
       {
-        RetString = (string) tokens[CurrIndex];
+        RetString = (string)tokens[CurrIndex];
         this.CurrIndex ++;
         return RetString;
       }
@@ -239,7 +233,7 @@ namespace MediaPortal
         {
           throw new ArgumentOutOfRangeException();
         }
-        return (string) tokens[index];
+        return (string)tokens[index];
       }
     }
 

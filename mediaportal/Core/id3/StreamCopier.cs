@@ -33,12 +33,12 @@ namespace Roger.ID3
     public static void Copy(Stream source, Stream destination, long byteCount)
     {
       long bytesRemaining = byteCount;
-      int bufferLength = 1024*1024;
+      int bufferLength = 1024 * 1024;
       byte[] buffer = new byte[bufferLength];
 
       for (;;)
       {
-        int bytesToRead = (int) Math.Min(bytesRemaining, bufferLength);
+        int bytesToRead = (int)Math.Min(bytesRemaining, bufferLength);
         int bytesRead = source.Read(buffer, 0, bytesToRead);
         if (bytesRead == 0)
         {
@@ -52,7 +52,7 @@ namespace Roger.ID3
 
     public static void Copy(Stream source, Stream destination)
     {
-      int bufferLength = 1024*1024;
+      int bufferLength = 1024 * 1024;
       byte[] buffer = new byte[bufferLength];
 
       for (;;)

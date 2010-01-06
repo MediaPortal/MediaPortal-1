@@ -1,4 +1,5 @@
 #region Copyright (C) 2007-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2007-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,14 +20,17 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Handlers
@@ -37,27 +41,32 @@ namespace TvEngine.PowerScheduler.Handlers
   public class GenericStandbyHandler : IStandbyHandler
   {
     #region Variables
+
     private int _timeout = 5;
     private bool _disAllowShutdown = false;
     private DateTime _lastUpdate = DateTime.MinValue;
     private string _handlerName = "GenericStandbyHandler";
+
     #endregion
 
     #region Constructor
+
     /// <summary>
     /// Create a new instance of a generic standby handler
     /// </summary>
     public GenericStandbyHandler()
     {
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
-        GlobalServiceProvider.Instance.Get<IPowerScheduler>().OnPowerSchedulerEvent += new PowerSchedulerEventHandler(GenericStandbyHandler_OnPowerSchedulerEvent);
+        GlobalServiceProvider.Instance.Get<IPowerScheduler>().OnPowerSchedulerEvent +=
+          new PowerSchedulerEventHandler(GenericStandbyHandler_OnPowerSchedulerEvent);
     }
+
     /// <summary>
     /// Handles PowerScheduler event messages.
     /// Used to keep track of changes to the idle timeout
     /// </summary>
     /// <param name="args">PowerSchedulerEventArgs for a specific message</param>
-    void GenericStandbyHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
+    private void GenericStandbyHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
     {
       switch (args.EventType)
       {
@@ -68,9 +77,11 @@ namespace TvEngine.PowerScheduler.Handlers
           break;
       }
     }
+
     #endregion
 
     #region IStandbyHandler implementation
+
     public bool DisAllowShutdown
     {
       get
@@ -92,14 +103,15 @@ namespace TvEngine.PowerScheduler.Handlers
         _disAllowShutdown = value;
       }
     }
-    public void UserShutdownNow()
-    {
-    }
+
+    public void UserShutdownNow() {}
+
     public string HandlerName
     {
       get { return _handlerName; }
       set { _handlerName = value; }
     }
+
     #endregion
   }
 }

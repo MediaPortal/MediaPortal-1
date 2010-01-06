@@ -60,7 +60,7 @@ namespace MediaPortal.Dialogs
 
     public GUIDialogTVConflict()
     {
-      GetID = (int) Window.WINDOW_DIALOG_TVCONFLICT;
+      GetID = (int)Window.WINDOW_DIALOG_TVCONFLICT;
     }
 
     #endregion
@@ -79,7 +79,7 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(string HeadingText)
     {
-      SetControlLabel(GetID, (int) Controls.HEADING, HeadingText);
+      SetControlLabel(GetID, (int)Controls.HEADING, HeadingText);
     }
 
     public void AddConflictRecording(GUIListItem item)
@@ -94,7 +94,7 @@ namespace MediaPortal.Dialogs
       item.IconImage = logo;
       item.OnItemSelected += OnListItemSelected;
 
-      GUIListControl list = (GUIListControl) GetControl((int) Controls.LIST);
+      GUIListControl list = (GUIListControl)GetControl((int)Controls.LIST);
       if (list != null)
       {
         list.Add(item);
@@ -135,7 +135,7 @@ namespace MediaPortal.Dialogs
     {
       base.Reset();
       ConflictingEpisodes = false;
-      GUIListControl list = (GUIListControl) GetControl((int) Controls.LIST);
+      GUIListControl list = (GUIListControl)GetControl((int)Controls.LIST);
       if (list != null)
       {
         list.Clear();
@@ -148,22 +148,22 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           int iControl = message.SenderControlId;
-          if ((int) Controls.BUTTON_NEW_REC == iControl)
+          if ((int)Controls.BUTTON_NEW_REC == iControl)
           {
             SelectedLabel = 0;
             PageDestroy();
           }
-          else if ((int) Controls.BUTTON_CONFLICT_REC == iControl)
+          else if ((int)Controls.BUTTON_CONFLICT_REC == iControl)
           {
             SelectedLabel = 1;
             PageDestroy();
           }
-          else if ((int) Controls.BUTTON_KEEP_CONFLICT == iControl)
+          else if ((int)Controls.BUTTON_KEEP_CONFLICT == iControl)
           {
             SelectedLabel = 2;
             PageDestroy();
           }
-          else if ((int) Controls.BUTTON_CONFLICT_EPISODE == iControl)
+          else if ((int)Controls.BUTTON_CONFLICT_EPISODE == iControl)
           {
             SelectedLabel = 3;
             PageDestroy();
@@ -177,11 +177,11 @@ namespace MediaPortal.Dialogs
     {
       if (_conflictingEpisodes)
       {
-        ShowControl(GetID, (int) Controls.BUTTON_CONFLICT_EPISODE);
+        ShowControl(GetID, (int)Controls.BUTTON_CONFLICT_EPISODE);
       }
       else
       {
-        HideControl(GetID, (int) Controls.BUTTON_CONFLICT_EPISODE);
+        HideControl(GetID, (int)Controls.BUTTON_CONFLICT_EPISODE);
       }
 
       base.DoModal(ParentID);

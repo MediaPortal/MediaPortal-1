@@ -61,21 +61,17 @@ namespace MediaPortal.Subtitle
                   if (t.IsSubclassOf(typeof (ISubtitleReader)))
                   {
                     Log.Info("  found plugin:{0} in {1}", t.ToString(), strFile);
-                    object newObj = (object) Activator.CreateInstance(t);
-                    ISubtitleReader reader = (ISubtitleReader) newObj;
+                    object newObj = (object)Activator.CreateInstance(t);
+                    ISubtitleReader reader = (ISubtitleReader)newObj;
                     m_readers.Add(reader);
                   }
                 }
               }
-              catch (NullReferenceException)
-              {
-              }
+              catch (NullReferenceException) {}
             }
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
     }
 

@@ -69,10 +69,7 @@ namespace Yeti.MMedia
 
 
     public AudioWriterConfig()
-      : this(new WaveFormat(44100, 16, 2))
-
-    {
-    }
+      : this(new WaveFormat(44100, 16, 2)) {}
 
 
     [Browsable(false)]

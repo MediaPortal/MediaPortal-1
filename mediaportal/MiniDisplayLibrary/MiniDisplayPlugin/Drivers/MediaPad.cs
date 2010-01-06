@@ -71,13 +71,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       get { return errorMessage; }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters)
-    {
-    }
+    public void SetCustomCharacters(int[][] customCharacters) {}
 
-    public void DrawImage(Bitmap bitmap)
-    {
-    }
+    public void DrawImage(Bitmap bitmap) {}
 
 
     /// <summary>
@@ -91,7 +87,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         return;
       }
-      Status res = SetLine(mediaPadLcdId, (short) line, ref message, DisplayMode.Static);
+      Status res = SetLine(mediaPadLcdId, (short)line, ref message, DisplayMode.Static);
       if (res != Status.Success)
       {
         Log.Warn("MiniDisplay: Could not send text to Mediapad LCD ({0})", res.ToString());
@@ -133,9 +129,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     /// <summary>
     /// Does nothing
     /// </summary>
-    public void Configure()
-    {
-    }
+    public void Configure() {}
 
     /// <summary>
     /// Initializes the display

@@ -68,7 +68,7 @@ namespace Rss
     /// <exception cref="ArgumentOutOfRangeException">index is not a valid index.</exception>
     public RssCategory this[int index]
     {
-      get { return ((RssCategory) (List[index])); }
+      get { return ((RssCategory)(List[index])); }
       set { List[index] = value; }
     }
 

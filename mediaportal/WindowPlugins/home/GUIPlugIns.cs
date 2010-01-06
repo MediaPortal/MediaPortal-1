@@ -43,7 +43,7 @@ namespace MediaPortal.GUI.Home
 
     public GUIPlugIns()
     {
-      GetID = (int) Window.WINDOW_MYPLUGINS;
+      GetID = (int)Window.WINDOW_MYPLUGINS;
     }
 
     #endregion

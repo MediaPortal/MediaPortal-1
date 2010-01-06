@@ -159,8 +159,10 @@ public class MediaPortalApp : D3DApp, IRender
 
   [DllImport("user32")]
   private static extern bool SystemParametersInfo(int uAction, int uParam, ref bool lpvParam, int fuWinIni);
+
   [DllImport("user32")]
   private static extern bool SystemParametersInfo(int uAction, int uParam, int lpvParam, int fuWinIni);
+
   [DllImport("Kernel32.DLL")]
   private static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE state);
 
@@ -300,8 +302,8 @@ public class MediaPortalApp : D3DApp, IRender
       {
         ServicePack = " ( " + ServicePack + " )";
       }
-      Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSNameString() + ServicePack + " [" + OSInfo.OSInfo.OSVersion + "]");
-
+      Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSNameString() +
+               ServicePack + " [" + OSInfo.OSInfo.OSVersion + "]");
 
 
       //Check for unsupported operating systems
@@ -326,7 +328,9 @@ public class MediaPortalApp : D3DApp, IRender
       }
       UIntPtr rKey = new UIntPtr(Convert.ToUInt32(Reg.RegistryRoot.HKLM));
       int lastError = 0;
-      int retval = Reg.RegOpenKeyEx(rKey, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\Results\\Install", 0, options, out res);
+      int retval = Reg.RegOpenKeyEx(rKey,
+                                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\Results\\Install",
+                                    0, options, out res);
       if (retval == 0)
       {
         uint tKey;
@@ -359,7 +363,7 @@ public class MediaPortalApp : D3DApp, IRender
 
       //Start MediaPortal
       Log.Info("Main: Using Directories:");
-      foreach (Config.Dir option in Enum.GetValues(typeof(Config.Dir)))
+      foreach (Config.Dir option in Enum.GetValues(typeof (Config.Dir)))
       {
         Log.Info("{0} - {1}", option, Config.GetFolder(option));
       }
@@ -432,9 +436,7 @@ public class MediaPortalApp : D3DApp, IRender
               {
                 ctrl.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 45));
               }
-              catch (Exception)
-              {
-              }
+              catch (Exception) {}
               if (ctrl.Status == ServiceControllerStatus.Running)
               {
                 Log.Info("Main: The TV service has started successfully.");
@@ -456,7 +458,8 @@ public class MediaPortalApp : D3DApp, IRender
           {
             if (splashScreen != null)
             {
-              splashScreen.SetInformation(String.Format(GUILocalizeStrings.Get(61), i.ToString())); // Waiting {0} second(s) before startup...
+              splashScreen.SetInformation(String.Format(GUILocalizeStrings.Get(61), i.ToString()));
+                // Waiting {0} second(s) before startup...
             }
             Application.DoEvents();
             Thread.Sleep(1000);
@@ -510,7 +513,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
 
 #if !DEBUG
-          // Check TvPlugin version
+  // Check TvPlugin version
           string MpExe = Assembly.GetExecutingAssembly().Location;
           string tvPlugin = Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll";
           if (File.Exists(tvPlugin) && !_avoidVersionChecking)
@@ -534,11 +537,8 @@ public class MediaPortalApp : D3DApp, IRender
             }
           }
 #endif
-
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
         //following crashes on some pc's, dunno why
         //Log.Info("  Stop any known recording processes");
         //Utils.KillExternalTVProcesses();
@@ -573,14 +573,14 @@ public class MediaPortalApp : D3DApp, IRender
             app.Focus();
             Debug.WriteLine("after Application.Run");
           }
-          //#if !DEBUG
+            //#if !DEBUG
           catch (Exception ex)
           {
             Log.Error(ex);
             Log.Error("MediaPortal stopped due to an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
             _mpCrashed = true;
           }
-          //#endif
+            //#endif
           finally
           {
             Application.RemoveMessageFilter(filter);
@@ -762,7 +762,8 @@ public class MediaPortalApp : D3DApp, IRender
         m_strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
         _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", true);
         GUIGraphicsContext.MouseSupport = xmlreader.GetValueAsBool("general", "mousesupport", false);
-        GUIGraphicsContext.AllowRememberLastFocusedItem = xmlreader.GetValueAsBool("general", "allowRememberLastFocusedItem", false);
+        GUIGraphicsContext.AllowRememberLastFocusedItem = xmlreader.GetValueAsBool("general",
+                                                                                   "allowRememberLastFocusedItem", false);
         GUIGraphicsContext.DBLClickAsRightClick =
           xmlreader.GetValueAsBool("general", "dblclickasrightclick", false);
         _minimizeOnStartup = xmlreader.GetValueAsBool("general", "minimizeonstartup", false);
@@ -866,23 +867,23 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Info("Main: WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
         switch (msg.WParam.ToInt32())
         {
-          //The PBT_APMQUERYSUSPEND message is sent to request permission to suspend the computer.
-          //An application that grants permission should carry out preparations for the suspension before returning.
-          //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
+            //The PBT_APMQUERYSUSPEND message is sent to request permission to suspend the computer.
+            //An application that grants permission should carry out preparations for the suspension before returning.
+            //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
           case PBT_APMQUERYSUSPEND:
             Log.Info("Main: Windows is requesting hibernate mode - UI bit: {0}", msg.LParam.ToInt32());
             break;
 
-          //The PBT_APMQUERYSTANDBY message is sent to request permission to suspend the computer.
-          //An application that grants permission should carry out preparations for the suspension before returning.
-          //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
+            //The PBT_APMQUERYSTANDBY message is sent to request permission to suspend the computer.
+            //An application that grants permission should carry out preparations for the suspension before returning.
+            //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
           case PBT_APMQUERYSTANDBY:
             // Stop all media before suspending or hibernating
             Log.Info("Main: Windows is requesting standby mode - UI bit: {0}", msg.LParam.ToInt32());
             break;
 
-          //The PBT_APMQUERYSUSPENDFAILED message is sent to notify the application that suspension was denied
-          //by some other application. However, this message is only sent when we receive PBT_APMQUERY* before.
+            //The PBT_APMQUERYSUSPENDFAILED message is sent to notify the application that suspension was denied
+            //by some other application. However, this message is only sent when we receive PBT_APMQUERY* before.
           case PBT_APMQUERYSUSPENDFAILED:
             Log.Info("Main: Windows is denied to go to suspended mode");
             // dero: IT IS NOT SAFE to rely on this message being sent! Sometimes it is not sent even if we
@@ -890,8 +891,8 @@ public class MediaPortalApp : D3DApp, IRender
             // I observed this using TVService.PowerScheduler
             break;
 
-          //The PBT_APMQUERYSTANDBYFAILED message is sent to notify the application that suspension was denied
-          //by some other application. However, this message is only sent when we receive PBT_APMQUERY* before.
+            //The PBT_APMQUERYSTANDBYFAILED message is sent to notify the application that suspension was denied
+            //by some other application. However, this message is only sent when we receive PBT_APMQUERY* before.
           case PBT_APMQUERYSTANDBYFAILED:
             Log.Info("Main: Windows is denied to go to standby mode");
             // dero: IT IS NOT SAFE to rely on this message being sent! Sometimes it is not sent even if we
@@ -909,28 +910,28 @@ public class MediaPortalApp : D3DApp, IRender
             OnSuspend(ref msg);
             break;
 
-          //The PBT_APMRESUMECRITICAL event is broadcast as a notification that the system has resumed operation. 
-          //this event can indicate that some or all applications did not receive a PBT_APMSUSPEND event. 
-          //For example, this event can be broadcast after a critical suspension caused by a failing battery.
+            //The PBT_APMRESUMECRITICAL event is broadcast as a notification that the system has resumed operation. 
+            //this event can indicate that some or all applications did not receive a PBT_APMSUSPEND event. 
+            //For example, this event can be broadcast after a critical suspension caused by a failing battery.
           case PBT_APMRESUMECRITICAL:
             Log.Info("Main: Windows has resumed from critical hibernate mode");
             OnResume();
             break;
 
-          //The PBT_APMRESUMESUSPEND event is broadcast as a notification that the system has resumed operation after being suspended.
+            //The PBT_APMRESUMESUSPEND event is broadcast as a notification that the system has resumed operation after being suspended.
           case PBT_APMRESUMESUSPEND:
             Log.Info("Main: Windows has resumed from hibernate mode");
             OnResume();
             break;
 
-          //The PBT_APMRESUMESTANDBY event is broadcast as a notification that the system has resumed operation after being standby.
+            //The PBT_APMRESUMESTANDBY event is broadcast as a notification that the system has resumed operation after being standby.
           case PBT_APMRESUMESTANDBY:
             Log.Info("Main: Windows has resumed from standby mode");
             OnResume();
             break;
 
-          //The PBT_APMRESUMEAUTOMATIC event is broadcast when the computer wakes up automatically to
-          //handle an event. An application will not generally respond unless it is handling the event, because the user is not present.
+            //The PBT_APMRESUMEAUTOMATIC event is broadcast when the computer wakes up automatically to
+            //handle an event. An application will not generally respond unless it is handling the event, because the user is not present.
           case PBT_APMRESUMEAUTOMATIC:
             Log.Info("Main: Windows has resumed from standby or hibernate mode to handle a requested event");
             OnResumeAutomatic();
@@ -957,7 +958,7 @@ public class MediaPortalApp : D3DApp, IRender
         _shuttingDown = true;
         msg.Result = (IntPtr)1; //tell windows we are ready to shutdown          
       }
-      // gibman - http://mantis.team-mediaportal.com/view.php?id=1073     
+        // gibman - http://mantis.team-mediaportal.com/view.php?id=1073     
       else if (msg.Msg == WM_ENDSESSION) // && msg.WParam == ((IntPtr)1))
       {
         base.WndProc(ref msg);
@@ -1121,10 +1122,10 @@ public class MediaPortalApp : D3DApp, IRender
   private bool Currentmodulefullscreen()
   {
     bool currentmodulefullscreen = (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
-                                      GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC ||
-                                      GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO ||
-                                      GUIWindowManager.ActiveWindow ==
-                                      (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+                                    GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC ||
+                                    GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO ||
+                                    GUIWindowManager.ActiveWindow ==
+                                    (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
     return currentmodulefullscreen;
   }
 
@@ -1651,7 +1652,9 @@ public class MediaPortalApp : D3DApp, IRender
     }
     catch (Exception exl)
     {
-      MessageBox.Show(String.Format("Failed to load your language! Aborting startup...\n\n{0}\nstack:{1}", exl.Message, exl.StackTrace), "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+      MessageBox.Show(
+        String.Format("Failed to load your language! Aborting startup...\n\n{0}\nstack:{1}", exl.Message, exl.StackTrace),
+        "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
       Close();
     }
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(67)); // Caching graphics...
@@ -1661,7 +1664,8 @@ public class MediaPortalApp : D3DApp, IRender
     }
     catch (Exception exs)
     {
-      MessageBox.Show(String.Format("Failed to load your skin! Aborting startup...\n\n{0}", exs.Message), "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+      MessageBox.Show(String.Format("Failed to load your skin! Aborting startup...\n\n{0}", exs.Message),
+                      "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
       Close();
     }
     GUIGraphicsContext.Load();
@@ -1920,7 +1924,7 @@ public class MediaPortalApp : D3DApp, IRender
     catch (DirectXException dex)
     {
       if (dex.ErrorCode == -2005530508 || // GPU_HUNG
-        dex.ErrorCode == -2005530512) // GPU_REMOVED
+          dex.ErrorCode == -2005530512) // GPU_REMOVED
       {
         Log.Info("Main: GPU_HUNG - {0}", dex.ToString());
         if (!RefreshRateChanger.RefreshRateChangePending)
@@ -2106,7 +2110,8 @@ public class MediaPortalApp : D3DApp, IRender
                 {
                   if (!GUIGraphicsContext.BlankScreen)
                   {
-                    Log.Debug("Main: Idle timer is blanking the screen after {0} seconds of inactivity", ts.TotalSeconds.ToString("n0"));
+                    Log.Debug("Main: Idle timer is blanking the screen after {0} seconds of inactivity",
+                              ts.TotalSeconds.ToString("n0"));
                   }
                   GUIGraphicsContext.BlankScreen = true;
                 }
@@ -2120,7 +2125,8 @@ public class MediaPortalApp : D3DApp, IRender
                   {
                     if (!GUIGraphicsContext.SaveRenderCycles)
                     {
-                      Log.Debug("Main: Idle timer is entering power save mode after {0} seconds of inactivity", ts.TotalSeconds.ToString("n0"));
+                      Log.Debug("Main: Idle timer is entering power save mode after {0} seconds of inactivity",
+                                ts.TotalSeconds.ToString("n0"));
                     }
                     GUIGraphicsContext.SaveRenderCycles = true;
                   }
@@ -2189,9 +2195,10 @@ public class MediaPortalApp : D3DApp, IRender
       }
       switch (action.wID)
       {
-        // record current tv program
+          // record current tv program
         case Action.ActionType.ACTION_RECORD:
-          if ((GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindowEx) && GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_TVGUIDE) &&
+          if ((GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindowEx) &&
+               GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_TVGUIDE) &&
               (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE))
           {
             GUIWindow tvHome = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
@@ -2206,7 +2213,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
           break;
 
-        //TV: zap to previous channel
+          //TV: zap to previous channel
         case Action.ActionType.ACTION_PREV_CHANNEL:
           if (!GUIWindowManager.IsRouted)
           {
@@ -2216,7 +2223,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
           break;
 
-        //TV: zap to next channel
+          //TV: zap to next channel
         case Action.ActionType.ACTION_NEXT_CHANNEL:
           if (!GUIWindowManager.IsRouted)
           {
@@ -2226,7 +2233,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
           break;
 
-        //TV: zap to last channel viewed
+          //TV: zap to last channel viewed
         case Action.ActionType.ACTION_LAST_VIEWED_CHANNEL: // mPod
           if (!GUIWindowManager.IsRouted)
           {
@@ -2236,28 +2243,28 @@ public class MediaPortalApp : D3DApp, IRender
           }
           break;
 
-        //toggle between directx windowed and exclusive mode
+          //toggle between directx windowed and exclusive mode
         case Action.ActionType.ACTION_TOGGLE_WINDOWED_FULLSCREEN:
           ToggleFullWindowed();
           return;
-        //break;
+          //break;
 
-        //mute or unmute audio
+          //mute or unmute audio
         case Action.ActionType.ACTION_VOLUME_MUTE:
           VolumeHandler.Instance.IsMuted = !VolumeHandler.Instance.IsMuted;
           break;
 
-        //decrease volume 
+          //decrease volume 
         case Action.ActionType.ACTION_VOLUME_DOWN:
           VolumeHandler.Instance.Volume = VolumeHandler.Instance.Previous;
           return;
 
-        //increase volume 
+          //increase volume 
         case Action.ActionType.ACTION_VOLUME_UP:
           VolumeHandler.Instance.Volume = VolumeHandler.Instance.Next;
           break;
 
-        //toggle live tv in background
+          //toggle live tv in background
         case Action.ActionType.ACTION_BACKGROUND_TOGGLE:
           //show livetv or video as background instead of the static GUI background
           // toggle livetv/video in background on/pff
@@ -2289,7 +2296,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
           return;
 
-        //switch between several home windows
+          //switch between several home windows
         case Action.ActionType.ACTION_SWITCH_HOME:
           GUIMessage homeMsg;
           if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_HOME)
@@ -2319,7 +2326,7 @@ public class MediaPortalApp : D3DApp, IRender
           GUIWindowManager.SendThreadMessage(homeMsg);
           return;
 
-        //exit mediaportal
+          //exit mediaportal
         case Action.ActionType.ACTION_EXIT:
           Log.Info("Main: Exit requested");
           // is the minimize on gui option set?  If so, minimize to tray...
@@ -2370,7 +2377,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
           return;
 
-        //reboot pc
+          //reboot pc
         case Action.ActionType.ACTION_POWER_OFF:
         case Action.ActionType.ACTION_SUSPEND:
         case Action.ActionType.ACTION_HIBERNATE:
@@ -2431,12 +2438,12 @@ public class MediaPortalApp : D3DApp, IRender
           }
           return;
 
-        //eject cd
+          //eject cd
         case Action.ActionType.ACTION_EJECTCD:
           Utils.EjectCDROM();
           return;
 
-        //shutdown pc
+          //shutdown pc
         case Action.ActionType.ACTION_SHUTDOWN:
           {
             Log.Info("Main: Shutdown dialog");
@@ -2497,11 +2504,11 @@ public class MediaPortalApp : D3DApp, IRender
             break;
           }
 
-        //stop radio
+          //stop radio
         case Action.ActionType.ACTION_STOP:
           break;
 
-        // Take Screenshot
+          // Take Screenshot
         case Action.ActionType.ACTION_TAKE_SCREENSHOT:
           {
             try
@@ -2546,7 +2553,7 @@ public class MediaPortalApp : D3DApp, IRender
       {
         switch (action.wID)
         {
-          //show DVD menu
+            //show DVD menu
           case Action.ActionType.ACTION_DVD_MENU:
             if (g_Player.IsDVD)
             {
@@ -2555,8 +2562,8 @@ public class MediaPortalApp : D3DApp, IRender
             }
             break;
 
-          //DVD: goto previous chapter
-          //play previous item from playlist;
+            //DVD: goto previous chapter
+            //play previous item from playlist;
           case Action.ActionType.ACTION_PREV_ITEM:
           case Action.ActionType.ACTION_PREV_CHAPTER:
             if (g_Player.IsDVD || g_Player.HasChapters)
@@ -2572,8 +2579,8 @@ public class MediaPortalApp : D3DApp, IRender
             }
             break;
 
-          //play next item from playlist;
-          //DVD: goto next chapter
+            //play next item from playlist;
+            //DVD: goto next chapter
           case Action.ActionType.ACTION_NEXT_CHAPTER:
           case Action.ActionType.ACTION_NEXT_ITEM:
             if (g_Player.IsDVD || g_Player.HasChapters)
@@ -2589,7 +2596,7 @@ public class MediaPortalApp : D3DApp, IRender
             }
             break;
 
-          //stop playback
+            //stop playback
           case Action.ActionType.ACTION_STOP:
             if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
             {
@@ -2599,8 +2606,8 @@ public class MediaPortalApp : D3DApp, IRender
             }
             break;
 
-          //play music
-          //resume playback
+            //play music
+            //resume playback
           case Action.ActionType.ACTION_PLAY:
           case Action.ActionType.ACTION_MUSIC_PLAY:
             if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
@@ -2610,7 +2617,7 @@ public class MediaPortalApp : D3DApp, IRender
               {
                 // Attention: GUIMusicGenre / GUIMusicFiles need to be handled differently. we reset the speed there
                 if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_FILES ||
-                  GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_GENRE)
+                    GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_GENRE)
                 {
                   return;
                 }
@@ -2629,18 +2636,18 @@ public class MediaPortalApp : D3DApp, IRender
             }
             break;
 
-          //pause (or resume playback)
+            //pause (or resume playback)
           case Action.ActionType.ACTION_PAUSE:
             g_Player.Pause();
             return;
 
-          //fast forward...
+            //fast forward...
           case Action.ActionType.ACTION_FORWARD:
           case Action.ActionType.ACTION_MUSIC_FORWARD:
             g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
             return;
 
-          //fast rewind...
+            //fast rewind...
           case Action.ActionType.ACTION_REWIND:
           case Action.ActionType.ACTION_MUSIC_REWIND:
             g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
@@ -2674,7 +2681,7 @@ public class MediaPortalApp : D3DApp, IRender
     Key key = new Key(e.KeyChar, 0);
     Action action = new Action();
     if (GUIWindowManager.IsRouted || GUIWindowManager.ActiveWindowEx == (int)GUIWindow.Window.WINDOW_TV_SEARCH)
-    // is a dialog open or maybe the tv schedule search (GUISMSInputControl)?
+      // is a dialog open or maybe the tv schedule search (GUISMSInputControl)?
     {
       GUIGraphicsContext.ResetLastActivity();
       if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action) &&
@@ -3221,16 +3228,12 @@ public class MediaPortalApp : D3DApp, IRender
             usbuirtdevice.ChangeTunerChannel(message.Label);
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
         try
         {
           winlircdevice.ChangeTunerChannel(message.Label);
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
         try
         {
           if (bIsInteger)
@@ -3238,9 +3241,7 @@ public class MediaPortalApp : D3DApp, IRender
             redeyedevice.ChangeTunerChannel(message.Label);
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
         break;
 
       case GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED:
@@ -3250,7 +3251,7 @@ public class MediaPortalApp : D3DApp, IRender
         }
         bool fullscreen = (message.Param1 != 0);
         Log.Debug("Main: Received DX exclusive mode switch message. Fullscreen && maximized == {0}",
-                 fullscreen && isMaximized);
+                  fullscreen && isMaximized);
         if (isMaximized == false || GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
         {
           return;
@@ -3311,7 +3312,8 @@ public class MediaPortalApp : D3DApp, IRender
 
       case GUIMessage.MessageType.GUI_MSG_REFRESHRATE_CHANGED:
 
-        GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        GUIDialogNotify dlgNotify =
+          (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
         if (dlgNotify != null)
         {
           dlgNotify.Reset();
@@ -3808,9 +3810,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
       doc.Save("MediaPortal.exe.config");
     }
-    catch (Exception)
-    {
-    }
+    catch (Exception) {}
     Thumbs.CreateFolders();
     try
     {
@@ -3848,9 +3848,7 @@ public class MediaPortalApp : D3DApp, IRender
 #endif
 #endif
     }
-    catch (Exception)
-    {
-    }
+    catch (Exception) {}
     using (Settings xmlreader = new MPSettings())
     {
       m_iDateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);

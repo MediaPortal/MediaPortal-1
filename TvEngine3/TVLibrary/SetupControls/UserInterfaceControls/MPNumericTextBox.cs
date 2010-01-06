@@ -69,7 +69,8 @@ namespace MediaPortal.UserInterface.Controls
       {
         int.Parse(Text, NumberStyles.Integer);
         OnFormatValid(e);
-      } catch
+      }
+      catch
       {
         OnFormatError(e);
       }
@@ -78,15 +79,8 @@ namespace MediaPortal.UserInterface.Controls
 
     public int Value
     {
-      get
-      {
-        return int.Parse(Text, NumberStyles.Integer);
-      }
-      set
-      {
-        Text = value.ToString();
-      }
+      get { return int.Parse(Text, NumberStyles.Integer); }
+      set { Text = value.ToString(); }
     }
   }
 }
-

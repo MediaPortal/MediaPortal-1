@@ -89,9 +89,7 @@ namespace MediaPortal.Configuration.Sections
       public string language;
       public string limit;
 
-      public ComboBoxItemDatabase()
-      {
-      }
+      public ComboBoxItemDatabase() {}
 
       public override string ToString()
       {
@@ -165,9 +163,7 @@ namespace MediaPortal.Configuration.Sections
     #region ctor
 
     public MovieDatabase()
-      : this("Video Database")
-    {
-    }
+      : this("Video Database") {}
 
     public MovieDatabase(string name)
       : base("Video Database")
@@ -186,7 +182,7 @@ namespace MediaPortal.Configuration.Sections
       set { extensions = value; }
     }
 
-    private string[] extensions = new string[] { ".avi" };
+    private string[] extensions = new string[] {".avi"};
 
     /// <summary> 
     /// Required designer variable.
@@ -228,7 +224,7 @@ namespace MediaPortal.Configuration.Sections
       if (section != null)
       {
         string extensions = (string)section.GetSetting("extensions");
-        Extensions = extensions.Split(new char[] { ',' });
+        Extensions = extensions.Split(new char[] {','});
       }
 
       UpdateControlStatus();
@@ -679,7 +675,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-        char[] splitter = { '\n', ',' };
+        char[] splitter = {'\n', ','};
         string[] actors = movie.Cast.Split(splitter);
 
         if (actors.Length > 0)
@@ -721,7 +717,7 @@ namespace MediaPortal.Configuration.Sections
         ArrayList vecGenres = new ArrayList();
         if (szGenres.IndexOf("/") >= 0)
         {
-          Tokens f = new Tokens(szGenres, new char[] { '/' });
+          Tokens f = new Tokens(szGenres, new char[] {'/'});
           foreach (string strGenre in f)
           {
             String strCurrentGenre = strGenre.Trim();
@@ -1524,9 +1520,8 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region Persistance
-    public override void LoadSettings()
-    {
-    }
+
+    public override void LoadSettings() {}
 
     private void Load()
     {
@@ -2031,7 +2026,7 @@ namespace MediaPortal.Configuration.Sections
           // request.Proxy = WebProxy.GetDefaultProxy();
           request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception) {}
         Application.DoEvents();
 
         using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
@@ -2232,9 +2227,7 @@ namespace MediaPortal.Configuration.Sections
                                        (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       string file = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, tbTitle.Text);
       if (File.Exists(file))
@@ -2254,9 +2247,7 @@ namespace MediaPortal.Configuration.Sections
             pictureBox1.Image = result;
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
 
       if (!bIsURL)

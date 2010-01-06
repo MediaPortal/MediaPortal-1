@@ -27,8 +27,8 @@ namespace TvLibrary.Interfaces.Analyzer
   /// The tswriter ca callback
   ///</summary>
   [ComVisible(true), ComImport,
- Guid("38536AB6-7A41-404f-917F-C47DD8B639C7"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("38536AB6-7A41-404f-917F-C47DD8B639C7"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ICACallback
   {
     /// <summary>
@@ -37,14 +37,14 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int OnCaReceived();
-  };
+  } ;
 
   /// <summary>
   /// interface to the pmt grabber com object
   /// </summary>
   [ComVisible(true), ComImport,
- Guid("F9AA3910-7818-452a-94D1-72E039DF50EF"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("F9AA3910-7818-452a-94D1-72E039DF50EF"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsCaGrabber
   {
     /// <summary>
@@ -62,6 +62,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int GetCaData(IntPtr caData);
+
     /// <summary>
     /// Resets the ca grabber.
     /// </summary>

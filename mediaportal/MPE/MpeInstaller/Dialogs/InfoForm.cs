@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,11 +8,11 @@ using System.Windows.Forms;
 
 namespace MpeInstaller.Dialogs
 {
-    public partial class InfoForm : Form
+  public partial class InfoForm : Form
+  {
+    public InfoForm()
     {
-        public InfoForm()
-        {
-            InitializeComponent();
-        }
+      InitializeComponent();
     }
+  }
 }

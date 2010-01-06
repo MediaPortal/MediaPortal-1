@@ -55,7 +55,7 @@ namespace MediaPortal.Drawing
         PointCollection points = new PointCollection();
 
         // TODO: this should be improved upon
-        foreach (string token in ((string) value).Split(' '))
+        foreach (string token in ((string)value).Split(' '))
         {
           if (token == string.Empty)
           {

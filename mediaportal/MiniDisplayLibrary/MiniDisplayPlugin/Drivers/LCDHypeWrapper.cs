@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -167,7 +167,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       string tag = string.Empty;
       Form form = new LCDHypeWrapper_SetupPickerForm();
       form.ShowDialog();
-      tag = (string) form.Tag;
+      tag = (string)form.Tag;
       form.Dispose();
       if (tag != string.Empty)
       {
@@ -283,7 +283,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                               CallingConventions.Standard, typeof (void),
                                               new Type[]
                                                 {
-                                                  typeof (byte[]), typeof (int), typeof (int), typeof (int), typeof (int)
+                                                  typeof (byte[]), typeof (int), typeof (int), typeof (int),
+                                                  typeof (int)
                                                   , typeof (bool)
                                                 }, CallingConvention.StdCall, CharSet.Auto);
       builder3.SetImplementationFlags(MethodImplAttributes.PreserveSig | builder3.GetMethodImplementationFlags());
@@ -300,7 +301,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                               CallingConventions.Standard, typeof (void),
                                               new Type[]
                                                 {
-                                                  typeof (string), typeof (int), typeof (int), typeof (int), typeof (int)
+                                                  typeof (string), typeof (int), typeof (int), typeof (int),
+                                                  typeof (int)
                                                   , typeof (int), typeof (int), typeof (bool), typeof (byte),
                                                   typeof (bool), typeof (byte), typeof (int), typeof (bool),
                                                   typeof (bool)
@@ -393,7 +395,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (this.DoDebug)
         {
           Log.Info("\nLCDHypeWrapper.DisplayEQ(): Retrieved {0} samples of Equalizer data.",
-                   new object[] {this.EQSettings.EqFftData.Length/2});
+                   new object[] {this.EQSettings.EqFftData.Length / 2});
         }
         if (this.info.SupportGfxLCD)
         {
@@ -430,7 +432,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          this.EQSettings.Render_MaxValue = Settings.Instance.TextHeight*8;
+          this.EQSettings.Render_MaxValue = Settings.Instance.TextHeight * 8;
           if (this.EQSettings.UseStereoEq)
           {
             this.EQSettings.Render_BANDS = 8;
@@ -513,9 +515,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void Dispose()
-    {
-    }
+    public void Dispose() {}
 
     public void DrawImage(Bitmap bitmap)
     {
@@ -524,19 +524,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Array.Clear(this.bytes, 0, this.bytes.Length);
         Rectangle rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
         BitmapData bitmapdata = bitmap.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-        int num = bitmapdata.Stride/bitmapdata.Width;
-        byte[] destination = new byte[bitmapdata.Stride*rect.Height];
+        int num = bitmapdata.Stride / bitmapdata.Width;
+        byte[] destination = new byte[bitmapdata.Stride * rect.Height];
         Marshal.Copy(bitmapdata.Scan0, destination, 0, destination.Length);
         bitmap.UnlockBits(bitmapdata);
         for (int i = 0; i < rect.Height; i++)
         {
           for (int j = 0; j < rect.Width; j++)
           {
-            int index = (j*num) + (i*bitmapdata.Stride);
+            int index = (j * num) + (i * bitmapdata.Stride);
             if (Color.FromArgb(destination[index + 2], destination[index + 1], destination[index]).GetBrightness() <
                 0.5f)
             {
-              this.bytes[j + (i*rect.Width)] = 1;
+              this.bytes[j + (i * rect.Width)] = 1;
             }
           }
         }
@@ -555,7 +555,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       object[] args = new object[1];
       this.m_tDllReg.InvokeMember("DLL_GetInfo", BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static,
                                   null, null, args);
-      this.info = (DLLInfo) args[0];
+      this.info = (DLLInfo)args[0];
     }
 
     private void GetEQ()
@@ -565,7 +565,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         long Now = DateTime.Now.Ticks;
         if (this.DisplaySettings.EnableDisplayAction &&
             ((Now - this.DisplaySettings._DisplayControlLastAction) <=
-             (this.DisplaySettings.DisplayActionTime*1000*1000*10)))
+             (this.DisplaySettings.DisplayActionTime * 1000 * 1000 * 10)))
         {
           this.EQSettings._EqDataAvailable = false;
         }
@@ -667,12 +667,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                       {
                                         Port, DelayText, DelayGraphics, ColumnsText, RowsText, ColumnsGraphics,
                                         RowsGraphics, BacklightControl, BacklightLevel, ContrastControl, ContrastLevel,
-                                        (int) OutPortsMask, UnderLineMode, UnderlineOutput
+                                        (int)OutPortsMask, UnderLineMode, UnderlineOutput
                                       });
       }
-      catch
-      {
-      }
+      catch {}
     }
 
     public void LCDHypeWrapper_SetLine(int _line, string _message)
@@ -696,8 +694,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.DisplaySettings.DisplayActionTime = settings.EnableDisplayActionTime;
       this.DisplaySettings.BlankDisplayWhenIdle = settings.BlankDisplayWhenIdle;
       this.DisplaySettings.BlankIdleDelay = settings.BlankIdleTime;
-      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay*0x989680;
-      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime*0x989680;
+      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay * 0x989680;
+      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime * 0x989680;
       this.DisplaySettings._Shutdown1 = Settings.Instance.Shutdown1;
       this.DisplaySettings._Shutdown2 = Settings.Instance.Shutdown2;
       this.EQSettings.UseVUmeter = settings.VUmeter;
@@ -715,8 +713,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.EQSettings._EQTitleShowTime = settings.EQTitleShowTime;
       this.EQSettings._EqUpdateDelay = (this.EQSettings._EQ_Restrict_FPS == 0)
                                          ? 0
-                                         : ((0x989680/this.EQSettings._EQ_Restrict_FPS) -
-                                            (0xf4240/this.EQSettings._EQ_Restrict_FPS));
+                                         : ((0x989680 / this.EQSettings._EQ_Restrict_FPS) -
+                                            (0xf4240 / this.EQSettings._EQ_Restrict_FPS));
       Log.Info("LCDHypeWrapper.LoadAdvancedSettings(): Extensive Logging: {0}",
                new object[] {Settings.Instance.ExtensiveLogging});
       Log.Info("LCDHypeWrapper.LoadAdvancedSettings(): Device Port: {0}", new object[] {Settings.Instance.Port});
@@ -762,7 +760,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Info("LCDHypeWrapper.LoadAdvancedSettings(): Advanced options - Blank display when idle: {0}",
                new object[] {this.DisplaySettings.BlankDisplayWhenIdle});
       Log.Info("LCDHypeWrapper.LoadAdvancedSettings(): Advanced options -     blank display after: {0} seconds",
-               new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
+               new object[] {this.DisplaySettings._BlankIdleTimeout / 0xf4240L});
       Log.Info("LCDHypeWrapper.LoadAdvancedSettings(): Setting - Audio using ASIO: {0}",
                new object[] {this.EQSettings._AudioUseASIO});
       Log.Info("LCDHypeWrapper.LoadAdvancedSettings(): Completed");
@@ -840,10 +838,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (this.EQSettings.UseNormalEq)
             {
-              ef2 = new RectangleF((bounds.X + (i*(((int) bounds.Width)/this.EQSettings.Render_BANDS))) + 1f,
-                                   bounds.Y + (((int) bounds.Height) - this.EQSettings.EqArray[1 + i]),
-                                   (float) ((((int) bounds.Width)/this.EQSettings.Render_BANDS) - 2),
-                                   (float) this.EQSettings.EqArray[1 + i]);
+              ef2 = new RectangleF((bounds.X + (i * (((int)bounds.Width) / this.EQSettings.Render_BANDS))) + 1f,
+                                   bounds.Y + (((int)bounds.Height) - this.EQSettings.EqArray[1 + i]),
+                                   (float)((((int)bounds.Width) / this.EQSettings.Render_BANDS) - 2),
+                                   (float)this.EQSettings.EqArray[1 + i]);
               graphics.FillRectangle(Brushes.Black, ef2);
             }
             else
@@ -852,25 +850,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               RectangleF ef3;
               if (this.EQSettings.UseStereoEq)
               {
-                int num4 = (((int) bounds.Width)/2)/this.EQSettings.Render_BANDS;
-                num2 = i*num4;
-                int num3 = (i + this.EQSettings.Render_BANDS)*num4;
+                int num4 = (((int)bounds.Width) / 2) / this.EQSettings.Render_BANDS;
+                num2 = i * num4;
+                int num3 = (i + this.EQSettings.Render_BANDS) * num4;
                 ef2 = new RectangleF((bounds.X + num2) + 1f,
-                                     bounds.Y + (((int) bounds.Height) - this.EQSettings.EqArray[1 + i]),
-                                     (float) (num4 - 2), (float) this.EQSettings.EqArray[1 + i]);
+                                     bounds.Y + (((int)bounds.Height) - this.EQSettings.EqArray[1 + i]),
+                                     (float)(num4 - 2), (float)this.EQSettings.EqArray[1 + i]);
                 ef3 = new RectangleF((bounds.X + num3) + 1f,
-                                     bounds.Y + (((int) bounds.Height) - this.EQSettings.EqArray[9 + i]),
-                                     (float) (num4 - 2), (float) this.EQSettings.EqArray[9 + i]);
+                                     bounds.Y + (((int)bounds.Height) - this.EQSettings.EqArray[9 + i]),
+                                     (float)(num4 - 2), (float)this.EQSettings.EqArray[9 + i]);
                 graphics.FillRectangle(Brushes.Black, ef2);
                 graphics.FillRectangle(Brushes.Black, ef3);
               }
               else if (this.EQSettings.UseVUmeter | this.EQSettings.UseVUmeter2)
               {
-                ef2 = new RectangleF(bounds.X + 1f, bounds.Y + 1f, (float) this.EQSettings.EqArray[1 + i],
-                                     (float) (((int) (bounds.Height/2f)) - 2));
-                num2 = this.EQSettings.UseVUmeter ? 0 : (((int) bounds.Width) - this.EQSettings.EqArray[2 + i]);
-                ef3 = new RectangleF((bounds.X + num2) + 1f, (bounds.Y + (bounds.Height/2f)) + 1f,
-                                     (float) this.EQSettings.EqArray[2 + i], (float) (((int) (bounds.Height/2f)) - 2));
+                ef2 = new RectangleF(bounds.X + 1f, bounds.Y + 1f, (float)this.EQSettings.EqArray[1 + i],
+                                     (float)(((int)(bounds.Height / 2f)) - 2));
+                num2 = this.EQSettings.UseVUmeter ? 0 : (((int)bounds.Width) - this.EQSettings.EqArray[2 + i]);
+                ef3 = new RectangleF((bounds.X + num2) + 1f, (bounds.Y + (bounds.Height / 2f)) + 1f,
+                                     (float)this.EQSettings.EqArray[2 + i], (float)(((int)(bounds.Height / 2f)) - 2));
                 graphics.FillRectangle(Brushes.Black, ef2);
                 graphics.FillRectangle(Brushes.Black, ef3);
               }
@@ -882,9 +880,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         catch (Exception exception)
         {
           Log.Info("LCDHypeWrapper.DisplayEQ(): CAUGHT EXCEPTION {0}", new object[] {exception});
-          if (exception.Message.Contains("ThreadAbortException"))
-          {
-          }
+          if (exception.Message.Contains("ThreadAbortException")) {}
           return;
         }
         finally
@@ -972,7 +968,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       for (int i = 0; i < _text.Length; i++)
       {
-        byte num2 = (byte) _text[i];
+        byte num2 = (byte)_text[i];
         if (num2 < 0x20)
         {
           num2 =
@@ -992,7 +988,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       for (int i = 0; i < customCharacters.GetLength(0); i++)
       {
         CharacterData data = new CharacterData();
-        data.Position = (byte) i;
+        data.Position = (byte)i;
         data.SetData(customCharacters[i]);
         this.m_tDllReg.InvokeMember("LCD_SetCGRAMChar",
                                     BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static, null, null,
@@ -1095,8 +1091,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.LCD_CONFIG.RowsText = _lines;
       this.LCD_CONFIG.ColumnsGraphics = _colsG;
       this.LCD_CONFIG.RowsGraphics = _linesG;
-      this.LCD_CONFIG.BacklightLevel = (byte) _backlightSetting;
-      this.LCD_CONFIG.ContrastLevel = (byte) _contrastSetting;
+      this.LCD_CONFIG.BacklightLevel = (byte)_backlightSetting;
+      this.LCD_CONFIG.ContrastLevel = (byte)_contrastSetting;
       this.LCD_CONFIG.ContrastControl = this.info.SupportContrastSlider;
       this.LCD_CONFIG.OutPortsMask = 0;
       this.LCD_CONFIG.UnderLineMode = false;
@@ -1252,7 +1248,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader =
             new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_LCDHypeWrapper.xml"));
-          settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
+          settings = (AdvancedSettings)serializer.Deserialize(xmlReader);
           xmlReader.Close();
         }
         else
@@ -1286,7 +1282,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                  Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 2;
-        serializer.Serialize((XmlWriter) writer, ToSave);
+        serializer.Serialize((XmlWriter)writer, ToSave);
         writer.Close();
         Log.Info("LCDHypeWrapper.AdvancedSettings.Save(): completed");
       }
@@ -1465,7 +1461,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           for (int j = 0; j < 8; j++)
           {
-            this.Data[7 - i, j] = ((data[j] & ((int) Math.Pow(2.0, (double) i))) > 0) ? ((byte) 1) : ((byte) 0);
+            this.Data[7 - i, j] = ((data[j] & ((int)Math.Pow(2.0, (double)i))) > 0) ? ((byte)1) : ((byte)0);
           }
         }
       }

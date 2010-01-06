@@ -27,7 +27,9 @@ using DirectShowLib;
 
 namespace TvLibrary.Implementations.Analog.GraphComponents
 {
+
   #region VideoQuality class
+
   /// <summary>
   /// Bean class for storing one video quality setting default settings like brightness, gamma etc.
   /// </summary>
@@ -37,22 +39,27 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
     /// The minimum value
     /// </summary>
     private readonly int _minValue;
+
     /// <summary>
     /// The maximum value
     /// </summary>
     private readonly int _maxValue;
+
     /// <summary>
     /// The stepping delta
     /// </summary>
     private readonly int _steppingDelta;
+
     /// <summary>
     /// The default value
     /// </summary>
     private readonly int _defaultValue;
+
     /// <summary>
     /// Value can be adjusted manualyy
     /// </summary>
     private readonly bool _manual;
+
     /// <summary>
     /// The current value
     /// </summary>
@@ -75,10 +82,12 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       if (defaultValue > maxValue)
       {
         _defaultValue = maxValue;
-      } else if (defaultValue < minValue)
+      }
+      else if (defaultValue < minValue)
       {
         _defaultValue = minValue;
-      } else
+      }
+      else
       {
         _defaultValue = defaultValue;
       }
@@ -86,10 +95,12 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       if (value > maxValue)
       {
         _value = maxValue;
-      } else if (defaultValue < minValue)
+      }
+      else if (defaultValue < minValue)
       {
         _value = minValue;
-      } else
+      }
+      else
       {
         _value = value;
       }
@@ -155,6 +166,7 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
         _steppingDelta, _manual);
     }
   }
+
   #endregion
 
   /// <summary>
@@ -163,53 +175,66 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
   public class Capture
   {
     #region variables
+
     /// <summary>
     /// Name of the capture file
     /// </summary>
     private string _name;
+
     /// <summary>
     /// Bitmask of the available video standards
     /// </summary>
     private AnalogVideoStandard _availableVideoStandard;
+
     /// <summary>
     /// The current video standard
     /// </summary>
     private AnalogVideoStandard _currentVideoStandard;
+
     /// <summary>
     /// Index of the teletext pin
     /// </summary>
     private int _teletextPin;
+
     /// <summary>
     /// The current frame rate
     /// </summary>
     private double _frameRate;
+
     /// <summary>
     /// The current image height
     /// </summary>
     private int _imageHeight;
+
     /// <summary>
     /// The current image width
     /// </summary>
     private int _imageWidth;
+
     /// <summary>
     /// Dictionary of the VideoProcAmp values
     /// </summary>
     private Dictionary<VideoProcAmpProperty, VideoQuality> _videoProcAmpValues;
+
     /// <summary>
     /// Index of the video input pin
     /// </summary>
     private int _videoIn;
+
     /// <summary>
     /// Index of the audio input pin
     /// </summary>
     private int _audioIn;
+
     /// <summary>
     /// Name of the optional audio capture device
     /// </summary>
     private string _audioCaptureName;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// private constructor
     /// </summary>
@@ -220,9 +245,11 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       _availableVideoStandard = AnalogVideoStandard.None;
       _currentVideoStandard = AnalogVideoStandard.None;
     }
+
     #endregion
 
     #region Static CreateInstance method
+
     /// <summary>
     /// Creates the instance by parsing the Capture node in the configuration file
     /// </summary>
@@ -231,7 +258,8 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
     public static Capture CreateInstance(XmlNode xmlNode)
     {
       Capture capture = new Capture();
-      Dictionary<VideoProcAmpProperty, VideoQuality> videoProcAmpValues = new Dictionary<VideoProcAmpProperty, VideoQuality>();
+      Dictionary<VideoProcAmpProperty, VideoQuality> videoProcAmpValues =
+        new Dictionary<VideoProcAmpProperty, VideoQuality>();
       capture.VideoProcAmpValues = videoProcAmpValues;
       if (xmlNode != null)
       {
@@ -253,7 +281,8 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
           if (audioInNode != null)
           {
             capture.AudioCaptureName = nameNode.InnerText;
-          } else
+          }
+          else
           {
             XmlNode audioCaptureNode = xmlNode.SelectSingleNode("audioCapture");
             XmlNode audioCaptureNameNode = audioCaptureNode.SelectSingleNode("audioIn");
@@ -286,7 +315,8 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
               videoProcAmpValues.Add(property, quality);
             }
           }
-        } catch
+        }
+        catch
         {
           return capture;
         }
@@ -294,31 +324,33 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       }
       return capture;
     }
+
     #endregion
 
     #region WriteGraph method
+
     /// <summary>
     /// Writes the Capture part of the graph to the configuration
     /// </summary>
     /// <param name="writer">Writer</param>
     public void WriteGraph(XmlWriter writer)
     {
-      writer.WriteStartElement("capture");//<capture>
-      writer.WriteStartElement("videoCapture");//<videoCapture>
+      writer.WriteStartElement("capture"); //<capture>
+      writer.WriteStartElement("videoCapture"); //<videoCapture>
       writer.WriteElementString("name", _name ?? "");
       writer.WriteElementString("videoIn", _videoIn.ToString());
       if (_name != null && _name.Equals(_audioCaptureName))
       {
         writer.WriteElementString("audioIn", _audioIn.ToString());
       }
-      writer.WriteStartElement("videoStandard");//<videoStandard>
+      writer.WriteStartElement("videoStandard"); //<videoStandard>
       writer.WriteElementString("available", ((Int32)_availableVideoStandard).ToString());
       writer.WriteElementString("selected", ((Int32)_currentVideoStandard).ToString());
-      writer.WriteEndElement();//</videoStandard>
-      writer.WriteStartElement("videoProcAmp");//<videoProcAmp>
+      writer.WriteEndElement(); //</videoStandard>
+      writer.WriteStartElement("videoProcAmp"); //<videoProcAmp>
       foreach (VideoProcAmpProperty property in _videoProcAmpValues.Keys)
       {
-        writer.WriteStartElement("videoQuality");//<videoQuality>
+        writer.WriteStartElement("videoQuality"); //<videoQuality>
         writer.WriteAttributeString("minValue", _videoProcAmpValues[property].MinValue.ToString());
         writer.WriteAttributeString("maxValue", _videoProcAmpValues[property].MaxValue.ToString());
         writer.WriteAttributeString("defaultValue", _videoProcAmpValues[property].DefaultValue.ToString());
@@ -329,25 +361,27 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
         writer.WriteAttributeString("flags", ((Int32)prop).ToString());
         writer.WriteAttributeString("value", _videoProcAmpValues[property].Value.ToString());
         writer.WriteValue((Int32)property);
-        writer.WriteEndElement();//<</videoQuality>
+        writer.WriteEndElement(); //<</videoQuality>
       }
-      writer.WriteEndElement();//</videoProcAmp>
+      writer.WriteEndElement(); //</videoProcAmp>
       writer.WriteElementString("imageResolution", _imageWidth + "x" + _imageHeight);
       writer.WriteElementString("frameRate", _frameRate.ToString(CultureInfo.GetCultureInfo("en-GB")));
       writer.WriteElementString("teletextPin", _teletextPin.ToString());
-      writer.WriteEndElement();//</videoCapture>
+      writer.WriteEndElement(); //</videoCapture>
       if (_name != null && !_name.Equals(_audioCaptureName))
       {
-        writer.WriteStartElement("audioCapture");//<audioCapture>
+        writer.WriteStartElement("audioCapture"); //<audioCapture>
         writer.WriteElementString("name", _audioCaptureName);
         writer.WriteElementString("audioIn", _audioIn.ToString());
-        writer.WriteEndElement();//</audioCapture>
+        writer.WriteEndElement(); //</audioCapture>
       }
-      writer.WriteEndElement();//</capture>
+      writer.WriteEndElement(); //</capture>
     }
+
     #endregion
 
     #region Poperties
+
     /// <summary>
     /// Name of the tuner device
     /// </summary>
@@ -446,6 +480,7 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       get { return _audioCaptureName; }
       set { _audioCaptureName = value; }
     }
+
     #endregion
   }
 }

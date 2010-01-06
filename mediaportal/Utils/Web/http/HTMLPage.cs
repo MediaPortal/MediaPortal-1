@@ -189,7 +189,7 @@ namespace MediaPortal.Utils.Web
         _IE = new InternetExplorer();
       }
 
-      IWebBrowser2 webBrowser = (IWebBrowser2) _IE;
+      IWebBrowser2 webBrowser = (IWebBrowser2)_IE;
 
       object empty = Missing.Value;
 
@@ -197,8 +197,8 @@ namespace MediaPortal.Utils.Web
       if (page.PostQuery != null)
       {
         ASCIIEncoding encoding = new ASCIIEncoding();
-        object postData = (object) encoding.GetBytes(page.PostQuery);
-        object header = (object) "Content-Type: application/x-www-form-urlencoded\n\r";
+        object postData = (object)encoding.GetBytes(page.PostQuery);
+        object header = (object)"Content-Type: application/x-www-form-urlencoded\n\r";
         webBrowser.Navigate(page.Url, ref empty, ref empty, ref postData, ref header);
       }
       else
@@ -210,7 +210,7 @@ namespace MediaPortal.Utils.Web
       {
         Thread.Sleep(500);
       }
-      HTMLDocumentClass doc = (HTMLDocumentClass) webBrowser.Document;
+      HTMLDocumentClass doc = (HTMLDocumentClass)webBrowser.Document;
 
       _strPageSource = doc.body.innerHTML;
 

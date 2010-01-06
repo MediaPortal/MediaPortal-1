@@ -77,9 +77,9 @@ namespace TvPlugin
       OSD_CREATEBOOKMARK = 600,
       OSD_BOOKMARKS_LIST = 601,
       OSD_CLEARBOOKMARKS = 602,
-      OSD_BOOKMARKS_LIST_LABEL = 650,      
-      OSD_VIDEOPOS = 700,      
-      OSD_SHARPNESS = 701,      
+      OSD_BOOKMARKS_LIST_LABEL = 650,
+      OSD_VIDEOPOS = 700,
+      OSD_SHARPNESS = 701,
       OSD_SATURATIONLABEL = 702,
       OSD_SATURATION = 703,
       OSD_BRIGHTNESS = 704,
@@ -90,7 +90,7 @@ namespace TvPlugin
       OSD_BRIGHTNESSLABEL = 752,
       OSD_CONTRASTLABEL = 753,
       OSD_GAMMALABEL = 754,
-      OSD_SUBTITLE_DELAY = 800,      
+      OSD_SUBTITLE_DELAY = 800,
       OSD_SUBTITLE_ONOFF = 801,
       OSD_SUBTITLE_LIST = 802,
       OSD_SUBTITLE_DELAY_LABEL = 850,
@@ -187,7 +187,7 @@ namespace TvPlugin
     {
       switch (action.wID)
       {
-        // translate movements (up, down, left right) back
+          // translate movements (up, down, left right) back
         case Action.ActionType.ACTION_STEP_BACK:
           action.wID = Action.ActionType.ACTION_MOVE_LEFT;
           break;
@@ -360,11 +360,11 @@ namespace TvPlugin
           {
             // following line should stay. Problems with OSD not
             // appearing are already fixed elsewhere
-            SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+            SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
             sb.AddConstraint(Operator.Equals, "istv", 1);
             sb.AddOrderByField(true, "sortOrder");
             SqlStatement stmt = sb.GetStatement(true);
-            listTvChannels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+            listTvChannels = ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
 
             GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
             previousProgram = null;
@@ -386,7 +386,7 @@ namespace TvPlugin
             }
             m_delayInterval = MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayInterval;
             if (m_delayInterval > 0)
-              m_subtitleDelay = MediaPortal.Player.Subtitles.SubEngine.GetInstance().Delay / m_delayInterval;            
+              m_subtitleDelay = MediaPortal.Player.Subtitles.SubEngine.GetInstance().Delay / m_delayInterval;
             return true;
           }
 
@@ -459,7 +459,7 @@ namespace TvPlugin
             }
 
             if (iControl >= (int)Controls.OSD_VOLUMESLIDER)
-            // one of the settings (sub menu) controls is sending us a message
+              // one of the settings (sub menu) controls is sending us a message
             {
               Handle_ControlSetting(iControl, message.Param1);
             }
@@ -644,7 +644,8 @@ namespace TvPlugin
                 pControl.SpinType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
                 pControl.FloatInterval = 1;
                 pControl.SetRange(-10, 10);
-                SetSliderValue(-10, 10, m_subtitleDelay, (int)Controls.OSD_SUBTITLE_DELAY); SetCheckmarkValue(g_Player.EnableSubtitle, (int)Controls.OSD_SUBTITLE_ONOFF);
+                SetSliderValue(-10, 10, m_subtitleDelay, (int)Controls.OSD_SUBTITLE_DELAY);
+                SetCheckmarkValue(g_Player.EnableSubtitle, (int)Controls.OSD_SUBTITLE_ONOFF);
                 // show the controls on this sub menu
                 ShowControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY);
                 ShowControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY_LABEL);
@@ -1054,7 +1055,7 @@ namespace TvPlugin
           }
           break;
 
-        /*
+          /*
               case Controls.OSD_AVDELAY:
               {
                 GUISliderControl pControl=(GUISliderControl)GetControl(iControlID);
@@ -1421,7 +1422,7 @@ namespace TvPlugin
       if (g_Player.IsTVRecording)
       {
         Recording rec = TvRecorded.ActiveRecording();
-        return TvRecorded.GetRecordingDisplayName(rec);        
+        return TvRecorded.GetRecordingDisplayName(rec);
       }
       else
       {
@@ -1604,7 +1605,7 @@ namespace TvPlugin
           Log.Info("OSD.SetRecorderStatus = {0}", imgRecIcon.Visible);
         }
       }
-    }    
+    }
 
     private void UpdateProgressBar()
     {
@@ -1705,7 +1706,6 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.View.description", rec.Description);
           GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.EpisodeName);
           GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNumber);
-
         }
       }
     }

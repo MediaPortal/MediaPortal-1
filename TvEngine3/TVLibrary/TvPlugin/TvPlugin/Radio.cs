@@ -44,6 +44,7 @@ namespace TvPlugin
   public class Radio : GUIInternalWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
     #region constants    
+
     #endregion
 
     #region enums
@@ -93,11 +94,11 @@ namespace TvPlugin
 
     public Radio()
     {
-      GetID = (int) Window.WINDOW_RADIO;
+      GetID = (int)Window.WINDOW_RADIO;
     }
 
     public override bool Init()
-    {      
+    {
       return Load(GUIGraphicsContext.Skin + @"\MyRadio.xml");
     }
 
@@ -519,7 +520,8 @@ namespace TvPlugin
         IList<RadioChannelGroup> groups = RadioChannelGroup.ListAll();
         foreach (RadioChannelGroup group in groups)
         {
-          if (hideAllChannelsGroup && group.GroupName.Equals(TvConstants.RadioGroupNames.AllChannels) && groups.Count > 1)
+          if (hideAllChannelsGroup && group.GroupName.Equals(TvConstants.RadioGroupNames.AllChannels) &&
+              groups.Count > 1)
           {
             continue;
           }
@@ -841,7 +843,7 @@ namespace TvPlugin
 
     private void OnShowSort()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -855,7 +857,7 @@ namespace TvPlugin
       dlg.AddLocalizedString(670); // bitrate
       dlg.AddLocalizedString(620); // number
 
-      dlg.SelectedLabel = (int) currentSortMethod;
+      dlg.SelectedLabel = (int)currentSortMethod;
 
       // show dialog and wait for result
       dlg.DoModal(GetID);
@@ -917,7 +919,7 @@ namespace TvPlugin
       {
         return;
       }
-      Channel channel = (Channel) item.MusicTag;
+      Channel channel = (Channel)item.MusicTag;
       if (g_Player.Playing)
       {
         if (!g_Player.IsTimeShifting || (g_Player.IsTimeShifting && channel.IsWebstream()))
@@ -944,7 +946,7 @@ namespace TvPlugin
       OnSort();
       UpdateButtonStates();
 
-      GUIControl.FocusControl(GetID, ((GUIControl) sender).GetID);
+      GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
     }
 
     #region ISetupForm Members

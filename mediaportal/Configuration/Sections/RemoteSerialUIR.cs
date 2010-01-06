@@ -70,9 +70,7 @@ namespace MediaPortal.Configuration.Sections
     private bool initialize = false;
 
     public RemoteSerialUIR()
-      : this("SerialUIR")
-    {
-    }
+      : this("SerialUIR") {}
 
     public RemoteSerialUIR(string name)
       : base(name)
@@ -959,7 +957,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void LearningTimeoutCombo_SelectedIndexChanged(object sender, EventArgs e)
     {
-      SerialUIR.Instance.LearningTimeOut = 1000*int.Parse(LearningTimeoutCombo.Text);
+      SerialUIR.Instance.LearningTimeOut = 1000 * int.Parse(LearningTimeoutCombo.Text);
     }
 
     private void buttonAllCodes_Click(object sender, EventArgs e)

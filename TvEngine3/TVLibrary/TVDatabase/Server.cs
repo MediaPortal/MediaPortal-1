@@ -128,7 +128,7 @@ namespace TvDatabase
       set
       {
         isChanged |= rtspPort != value;
-        rtspPort = value == 0? DEFAULT_RTSP_PORT : value;
+        rtspPort = value == 0 ? DEFAULT_RTSP_PORT : value;
       }
     }
 

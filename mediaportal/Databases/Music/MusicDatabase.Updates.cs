@@ -39,9 +39,8 @@ using SQLite.NET;
 
 namespace MediaPortal.Music.Database
 {
-  #region Usings
 
-  
+  #region Usings
 
   #endregion
 
@@ -478,7 +477,7 @@ namespace MediaPortal.Music.Database
       }
       else
       {
-        _shares = (ArrayList) shares.Clone();
+        _shares = (ArrayList)shares.Clone();
       }
       DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
 
@@ -546,7 +545,7 @@ namespace MediaPortal.Music.Database
                   ex.StackTrace);
 
         RollbackTransaction();
-        return (int) Errors.ERROR_CANCEL;
+        return (int)Errors.ERROR_CANCEL;
       }
       finally
       {
@@ -566,7 +565,7 @@ namespace MediaPortal.Music.Database
 
         DateTime stopTime = DateTime.Now;
         TimeSpan ts = stopTime - startTime;
-        float fSecsPerTrack = ((float) ts.TotalSeconds/(float) fileCount);
+        float fSecsPerTrack = ((float)ts.TotalSeconds / (float)fileCount);
         string trackPerSecSummary = "";
 
         if (fileCount > 0)
@@ -587,7 +586,7 @@ namespace MediaPortal.Music.Database
 
         GC.Collect();
       }
-      return (int) Errors.ERROR_OK;
+      return (int)Errors.ERROR_OK;
     }
 
     /// <summary>
@@ -603,10 +602,10 @@ namespace MediaPortal.Music.Database
       catch (Exception)
       {
         Log.Error("Musicdatabasereorg: vacuum failed");
-        return (int) Errors.ERROR_COMPRESSING;
+        return (int)Errors.ERROR_COMPRESSING;
       }
       Log.Info("Musicdatabasereorg: Compress completed");
-      return (int) Errors.ERROR_OK;
+      return (int)Errors.ERROR_OK;
     }
 
     /// <summary>
@@ -663,17 +662,17 @@ namespace MediaPortal.Music.Database
         results = DirectExecute(strSQL);
         if (results == null)
         {
-          return (int) Errors.ERROR_REORG_SONGS;
+          return (int)Errors.ERROR_REORG_SONGS;
         }
       }
       catch (Exception ex)
       {
         Log.Error("Musicdatabasereorg: Unable to retrieve songs from database in DeleteNonExistingSongs() {0}",
                   ex.Message);
-        return (int) Errors.ERROR_REORG_SONGS;
+        return (int)Errors.ERROR_REORG_SONGS;
       }
       int removed = 0;
-      Log.Info("Musicdatabasereorg: starting song cleanup for {0} songs", (int) results.Rows.Count);
+      Log.Info("Musicdatabasereorg: starting song cleanup for {0} songs", (int)results.Rows.Count);
       for (int i = 0; i < results.Rows.Count; ++i)
       {
         string strFileName = DatabaseUtility.Get(results, i, "tracks.strPath");
@@ -685,7 +684,7 @@ namespace MediaPortal.Music.Database
           removed++;
           DeleteSong(strFileName, false);
         }
-        if ((i%10) == 0)
+        if ((i % 10) == 0)
         {
           DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
           MyArgs.progress = 4;
@@ -695,7 +694,7 @@ namespace MediaPortal.Music.Database
         }
       } //for (int i=0; i < results.Rows.Count;++i)
       Log.Info("Musicdatabasereorg: DeleteNonExistingSongs completed. Removed {0} non-existing songs", removed);
-      return (int) Errors.ERROR_OK;
+      return (int)Errors.ERROR_OK;
     }
 
     /// <summary>
@@ -836,11 +835,12 @@ namespace MediaPortal.Music.Database
         }
       }
       TotalSongs = totalFiles;
-      Log.Info("Musicdatabasereorg: Found {0} files.", (int) totalFiles);
+      Log.Info("Musicdatabasereorg: Found {0} files.", (int)totalFiles);
       Log.Info("Musicdatabasereorg: Now check for new / updated files.");
 
       // Apply CUE Filter
-      availableFiles = (List<string>)CueUtil.CUEFileListFilterList<string>(availableFiles, CueUtil.CUE_TRACK_FILE_STRING_BUILDER);
+      availableFiles =
+        (List<string>)CueUtil.CUEFileListFilterList<string>(availableFiles, CueUtil.CUE_TRACK_FILE_STRING_BUILDER);
 
       // Update TotalSongs after appolying the CUE Filter
       TotalSongs = availableFiles.Count;
@@ -860,13 +860,13 @@ namespace MediaPortal.Music.Database
           if (results == null)
           {
             Log.Info("Musicdatabasereorg: AddMissingFiles finished with error (results == null)");
-            return (int) Errors.ERROR_REORG_SONGS;
+            return (int)Errors.ERROR_REORG_SONGS;
           }
         }
         catch (Exception)
         {
           Log.Error("Musicdatabasereorg: AddMissingFiles finished with error (exception for select)");
-          return (int) Errors.ERROR_REORG_SONGS;
+          return (int)Errors.ERROR_REORG_SONGS;
         }
 
         if (results.Rows.Count == 0)
@@ -880,9 +880,9 @@ namespace MediaPortal.Music.Database
         }
         AddedCounter++;
 
-        if ((SongCounter%10) == 0)
+        if ((SongCounter % 10) == 0)
         {
-          NewProgress = StartProgress + ((ProgressRange*SongCounter)/TotalSongs);
+          NewProgress = StartProgress + ((ProgressRange * SongCounter) / TotalSongs);
           MyArgs.progress = Convert.ToInt32(NewProgress);
           MyArgs.phase = String.Format("Adding new files {0}/{1}", SongCounter, availableFiles.Count);
           OnDatabaseReorgChanged(MyArgs);
@@ -912,7 +912,7 @@ namespace MediaPortal.Music.Database
             foreach (string file in Directory.GetFiles(dir, "*.*"))
             {
               CheckFileForInclusion(aCheckForNewFiles, aExcludeHiddenFiles, file, ref totalFiles);
-              if ((totalFiles%10) == 0)
+              if ((totalFiles % 10) == 0)
               {
                 DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
                 MyArgs.progress = 4;
@@ -1115,7 +1115,7 @@ namespace MediaPortal.Music.Database
           if (results == null)
           {
             Log.Info("Insert of song {0} failed", strFileName);
-            return (int) Errors.ERROR_REORG_SONGS;
+            return (int)Errors.ERROR_REORG_SONGS;
           }
 
           // Now add the Multiple Value Fields to their tables
@@ -1129,11 +1129,11 @@ namespace MediaPortal.Music.Database
         catch (Exception)
         {
           Log.Error("Insert of song {0} failed", strFileName);
-          return (int) Errors.ERROR_REORG_SONGS;
+          return (int)Errors.ERROR_REORG_SONGS;
         }
-        return (int) Errors.ERROR_OK;
+        return (int)Errors.ERROR_OK;
       }
-      return (int) Errors.ERROR_OK;
+      return (int)Errors.ERROR_OK;
     }
 
 
@@ -1147,16 +1147,18 @@ namespace MediaPortal.Music.Database
         foreach (string field in _multipleValueFields)
         {
           // split up the multiple value field
-          strMultiValueFieldValue = GetMultipleValueFieldValue(tag, field).Trim(new char[] { '|', ' ' });
-          string[] splittedFields = strMultiValueFieldValue.Split(new char[] { ';', '|' });
+          strMultiValueFieldValue = GetMultipleValueFieldValue(tag, field).Trim(new char[] {'|', ' '});
+          string[] splittedFields = strMultiValueFieldValue.Split(new char[] {';', '|'});
           foreach (string s in splittedFields)
           {
             // ATTENTION: We need to use the 'like' operator instead of '=' to have case insensitive searching
-            strSQL = String.Format("select {0} from {1} where {0} like '{2}'", GetMultipleValueField(field), GetMultipleValueTable(field), s == "" ? " " : s.Trim());
+            strSQL = String.Format("select {0} from {1} where {0} like '{2}'", GetMultipleValueField(field),
+                                   GetMultipleValueTable(field), s == "" ? " " : s.Trim());
             if (DirectExecute(strSQL).Rows.Count < 1)
             {
               // Insert the Artist
-              strSQL = String.Format("insert into {1} ({0}) values ('{2}')", GetMultipleValueField(field), GetMultipleValueTable(field), s == "" ? " " : s.Trim());
+              strSQL = String.Format("insert into {1} ({0}) values ('{2}')", GetMultipleValueField(field),
+                                     GetMultipleValueTable(field), s == "" ? " " : s.Trim());
               DirectExecute(strSQL);
             }
           }
@@ -1279,14 +1281,14 @@ namespace MediaPortal.Music.Database
                 if (!String.IsNullOrEmpty(mp3TagImage))
                 {
                   if (
-                    !Util.Picture.CreateThumbnail(mp3TagImage, smallThumbPath, (int) Thumbs.ThumbResolution,
-                                                  (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                    !Util.Picture.CreateThumbnail(mp3TagImage, smallThumbPath, (int)Thumbs.ThumbResolution,
+                                                  (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
                   {
                     Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
                   }
                   if (
-                    !Util.Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int) Thumbs.ThumbLargeResolution,
-                                                  (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+                    !Util.Picture.CreateThumbnail(mp3TagImage, largeThumbPath, (int)Thumbs.ThumbLargeResolution,
+                                                  (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
                   {
                     Log.Info("MusicDatabase: Could not extract thumbnail from {0}", tag.FileName);
                   }
@@ -1302,9 +1304,7 @@ namespace MediaPortal.Music.Database
             }
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
 
       // Scan folders only one time per song
@@ -1346,14 +1346,14 @@ namespace MediaPortal.Music.Database
             if (foundThumb)
             {
               if (
-                !Util.Picture.CreateThumbnail(sharefolderThumb, smallThumbPath, (int) Thumbs.ThumbResolution,
-                                              (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                !Util.Picture.CreateThumbnail(sharefolderThumb, smallThumbPath, (int)Thumbs.ThumbResolution,
+                                              (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
               {
                 Log.Info("MusicDatabase: Could not create album thumb from folder {0}", tag.FileName);
               }
               if (
-                !Util.Picture.CreateThumbnail(sharefolderThumb, largeThumbPath, (int) Thumbs.ThumbLargeResolution,
-                                              (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+                !Util.Picture.CreateThumbnail(sharefolderThumb, largeThumbPath, (int)Thumbs.ThumbLargeResolution,
+                                              (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
               {
                 Log.Info("MusicDatabase: Could not create large album thumb from folder {0}", tag.FileName);
               }
@@ -1383,8 +1383,8 @@ namespace MediaPortal.Music.Database
                 _previousPosHitDir = Path.GetDirectoryName(tag.FileName);
                 //FolderThumbCreator newThumb = new FolderThumbCreator(tag.FileName, tag);
                 if (
-                  !Util.Picture.CreateThumbnail(sourceCover, sharefolderThumb, (int) Thumbs.ThumbLargeResolution,
-                                                (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+                  !Util.Picture.CreateThumbnail(sourceCover, sharefolderThumb, (int)Thumbs.ThumbLargeResolution,
+                                                (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
                 {
                   Log.Info("MusicDatabase: Could not create missing folder thumb in share path {0}", sharefolderThumb);
                 }
@@ -1415,7 +1415,7 @@ namespace MediaPortal.Music.Database
               MyFolderArgs.phase = string.Format("Caching folder thumbs: {0}/{1}", Convert.ToString(i + 1),
                                                  Convert.ToString(checkDirs.Length));
               // range = 80-89
-              int folderProgress = aProgressStart + (((i + 1)/checkDirs.Length)*(aProgressEnd - aProgressStart));
+              int folderProgress = aProgressStart + (((i + 1) / checkDirs.Length) * (aProgressEnd - aProgressStart));
               MyFolderArgs.progress = folderProgress;
               OnDatabaseReorgChanged(MyFolderArgs);
 
@@ -1450,14 +1450,14 @@ namespace MediaPortal.Music.Database
               if (foundCover)
               {
                 if (
-                  !Util.Picture.CreateThumbnail(sharefolderThumb, localFolderThumb, (int) Thumbs.ThumbResolution,
-                                                (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+                  !Util.Picture.CreateThumbnail(sharefolderThumb, localFolderThumb, (int)Thumbs.ThumbResolution,
+                                                (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
                 {
                   Log.Info("MusicDatabase: Could not cache folder thumb from folder {0}", sharePath);
                 }
                 if (
-                  !Util.Picture.CreateThumbnail(sharefolderThumb, localFolderLThumb, (int) Thumbs.ThumbLargeResolution,
-                                                (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
+                  !Util.Picture.CreateThumbnail(sharefolderThumb, localFolderLThumb, (int)Thumbs.ThumbLargeResolution,
+                                                (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge))
                 {
                   Log.Info("MusicDatabase: Could not cache large folder thumb from folder {0}", sharePath);
                 }
@@ -1493,7 +1493,7 @@ namespace MediaPortal.Music.Database
             MyArtistArgs.phase = string.Format("Creating artist preview thumbs: {1}/{2} - {0}", curArtist,
                                                Convert.ToString(i + 1), Convert.ToString(allArtists.Count));
             // range = 80-89
-            int artistProgress = aProgressStart + (((i + 1)/allArtists.Count)*(aProgressEnd - aProgressStart));
+            int artistProgress = aProgressStart + (((i + 1) / allArtists.Count) * (aProgressEnd - aProgressStart));
             MyArtistArgs.progress = artistProgress;
             OnDatabaseReorgChanged(MyArtistArgs);
 
@@ -1559,7 +1559,7 @@ namespace MediaPortal.Music.Database
           {
             MyGenreArgs.phase = string.Format("Creating genre preview thumbs: {1}/{2} - {0}", curGenre,
                                               Convert.ToString(i + 1), Convert.ToString(allGenres.Count));
-            int genreProgress = aProgressStart + (((i + 1)/allGenres.Count)*(aProgressEnd - aProgressStart));
+            int genreProgress = aProgressStart + (((i + 1) / allGenres.Count) * (aProgressEnd - aProgressStart));
             MyGenreArgs.progress = genreProgress;
             OnDatabaseReorgChanged(MyGenreArgs);
 
@@ -1708,7 +1708,8 @@ namespace MediaPortal.Music.Database
           strSQL = "create table tbltmp (strMultiField text)";
           MusicDbClient.Execute(strSQL);
 
-          strSQL = String.Format("select distinct rtrim(ltrim({0}, '| '), ' |') from tracks", GetMultipleValueField(field));
+          strSQL = String.Format("select distinct rtrim(ltrim({0}, '| '), ' |') from tracks",
+                                 GetMultipleValueField(field));
           SQLiteResultSet results = DirectExecute(strSQL);
           for (int i = 0; i < results.Rows.Count; i++)
           {
@@ -1717,7 +1718,7 @@ namespace MediaPortal.Music.Database
             {
               string strTmp = s;
               DatabaseUtility.RemoveInvalidChars(ref strTmp);
-              if (strTmp == "unknown") 
+              if (strTmp == "unknown")
               {
                 strTmp = " ";
               }
@@ -1727,7 +1728,8 @@ namespace MediaPortal.Music.Database
             }
           }
 
-          strSQL = String.Format("delete from {0} where {1} not in (select distinct strMultiField from tbltmp)", GetMultipleValueTable(field), GetMultipleValueField(field));
+          strSQL = String.Format("delete from {0} where {1} not in (select distinct strMultiField from tbltmp)",
+                                 GetMultipleValueTable(field), GetMultipleValueField(field));
           MusicDbClient.Execute(strSQL);
 
           MusicDbClient.Execute("drop table tbltmp");
@@ -1762,11 +1764,11 @@ namespace MediaPortal.Music.Database
       catch (Exception)
       {
         Log.Error("Musicdatabasereorg: CleanupForeignKeys failed");
-        return (int) Errors.ERROR_REORG_ARTIST;
+        return (int)Errors.ERROR_REORG_ARTIST;
       }
 
       Log.Info("Musicdatabasereorg: CleanupForeignKeys completed");
-      return (int) Errors.ERROR_OK;
+      return (int)Errors.ERROR_OK;
     }
 
     /// <summary>

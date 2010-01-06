@@ -32,7 +32,7 @@ namespace TvPlugin
       {
         if (item.Checked)
         {
-          prefLangs += (string) item.Tag + ";";
+          prefLangs += (string)item.Tag + ";";
         }
       }
       return prefLangs;

@@ -127,7 +127,7 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_CALLBACK = 91, // dero: callback in MPMain thread
       GUI_MSG_BLURAY_DISK_INSERTED = 92,
       GUI_MSG_HDDVD_DISK_INSERTED = 93,
-      GUI_MSG_CODEC_MISSING = 94,   // chemelli
+      GUI_MSG_CODEC_MISSING = 94, // chemelli
       GUI_MSG_ADD_REMOVABLE_DRIVE = 95,
       GUI_MSG_REMOVE_REMOVABLE_DRIVE = 96,
       GUI_MSG_REFRESHRATE_CHANGED = 97,
@@ -284,9 +284,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// The (empty) contstructor of the GUIMessage class.
     /// </summary>
-    public GUIMessage()
-    {
-    }
+    public GUIMessage() {}
 
     /// <summary>
     /// The constructor of the GUIMessage class.

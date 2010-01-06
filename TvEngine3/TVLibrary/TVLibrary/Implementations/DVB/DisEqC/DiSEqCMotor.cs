@@ -29,6 +29,7 @@ namespace TvLibrary.Implementations.DVB
   public class DiSEqCMotor : IDiSEqCMotor
   {
     #region enums
+
     /// <summary>
     /// DisEqC motor commands
     /// </summary>
@@ -62,19 +63,19 @@ namespace TvLibrary.Implementations.DVB
       /// <summary>
       /// halt motor
       /// </summary>
-      Halt = 0x60,                    //  3 bytes
+      Halt = 0x60, //  3 bytes
       /// <summary>
       /// turn soft limits off
       /// </summary>
-      LimitsOff = 0x63,               //  3 bytes
+      LimitsOff = 0x63, //  3 bytes
       /// <summary>
       /// read current position (requires diseqc 2.2)
       /// </summary>
-      ReadPosition = 0x64,            //  3 bytes
+      ReadPosition = 0x64, //  3 bytes
       /// <summary>
       /// sets the east limit
       /// </summary>
-      SetEastLimit = 0x66,            //  3 bytes  
+      SetEastLimit = 0x66, //  3 bytes  
       /// <summary>
       /// sets the west limit
       /// </summary>
@@ -82,27 +83,27 @@ namespace TvLibrary.Implementations.DVB
       /// <summary>
       /// move east
       /// </summary>
-      DriveEast = 0x68,               //  4 bytes  
+      DriveEast = 0x68, //  4 bytes  
       /// <summary>
       /// move west
       /// </summary>
-      DriveWest = 0x69,               //  4 bytes  
+      DriveWest = 0x69, //  4 bytes  
       /// <summary>
       /// store current position
       /// </summary>
-      StorePositions = 0x6a,          //  4 bytes  
+      StorePositions = 0x6a, //  4 bytes  
       /// <summary>
       /// goto stored position
       /// </summary>
-      GotoPosition = 0x6b,            //  4 bytes  
+      GotoPosition = 0x6b, //  4 bytes  
       /// <summary>
       /// goto angular position
       /// </summary>
-      GotoAngularPosition = 0x6e,     //  5 bytes  
+      GotoAngularPosition = 0x6e, //  5 bytes  
       /// <summary>
       /// recalcuate positions
       /// </summary>
-      RecalculatePositions = 0x6f     //  4/6 bytes  
+      RecalculatePositions = 0x6f //  4/6 bytes  
     }
 
     ///<summary>
@@ -201,15 +202,16 @@ namespace TvLibrary.Implementations.DVB
       /// </summary>
       Elivation = 0x32
     }
-    #endregion
 
+    #endregion
 
     #region variables
 
-    readonly IDiSEqCController _controller;
-    int _currentPosition = -1;
-    int _currentStepsAzimuth;
-    int _currentStepsElevation;
+    private readonly IDiSEqCController _controller;
+    private int _currentPosition = -1;
+    private int _currentStepsAzimuth;
+    private int _currentStepsElevation;
+
     #endregion
 
     /// <summary>
@@ -219,8 +221,8 @@ namespace TvLibrary.Implementations.DVB
     public DiSEqCMotor(IDiSEqCController controller)
     {
       _controller = controller;
-
     }
+
     /// <summary>
     /// Reset.
     /// </summary>
@@ -260,7 +262,6 @@ namespace TvLibrary.Implementations.DVB
       cmd[1] = 0x10;
       cmd[2] = (byte)DiSEqCCommands.PowerOn;
       _controller.SendDiSEqCCommand(cmd);
-
     }
 
     /// <summary>

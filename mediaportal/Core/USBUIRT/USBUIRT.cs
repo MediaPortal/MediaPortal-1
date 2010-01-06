@@ -31,12 +31,12 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
-
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
 
 namespace MediaPortal.IR
 {
+
   #region LearningEventArgs
 
   /// <summary>
@@ -185,8 +185,8 @@ namespace MediaPortal.IR
     #region constants
 
     private static int UUIRTDRV_IRFMT_UUIRT = 0x0000;
-    static readonly string remotefile = Config.GetFile(Config.Dir.Config, "UIRTUSB-remote.xml");
-    static readonly string tunerfile  = Config.GetFile(Config.Dir.Config, "UIRTUSB-tuner.xml");
+    private static readonly string remotefile = Config.GetFile(Config.Dir.Config, "UIRTUSB-remote.xml");
+    private static readonly string tunerfile = Config.GetFile(Config.Dir.Config, "UIRTUSB-tuner.xml");
     //private const string    USBUIRT_PLUGINVER = "1.1 (December 23, 2005)";
 
     #endregion
@@ -402,9 +402,7 @@ namespace MediaPortal.IR
           isUsbUirtLoaded = UUIRTGetUUIRTConfig(UsbUirtHandle, ref puConfig);
         }
 
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
 
         return isUsbUirtLoaded;
       }
@@ -563,15 +561,15 @@ namespace MediaPortal.IR
             if (sActionID.Length > 0)
             {
               int nActionID = int.Parse(sActionID);
-              if (nActionID < (int) JumpToActionType.JUMP_TO_INVALID)
+              if (nActionID < (int)JumpToActionType.JUMP_TO_INVALID)
               {
-                commandsLearned[irCode] = (Action.ActionType) nActionID;
+                commandsLearned[irCode] = (Action.ActionType)nActionID;
               }
 
-              else if (nActionID > (int) JumpToActionType.JUMP_TO_INVALID &&
-                       nActionID < (int) JumpToActionType.JUMP_TO_LASTINVALID)
+              else if (nActionID > (int)JumpToActionType.JUMP_TO_INVALID &&
+                       nActionID < (int)JumpToActionType.JUMP_TO_LASTINVALID)
               {
-                commandsLearned[irCode] = (JumpToActionType) nActionID;
+                commandsLearned[irCode] = (JumpToActionType)nActionID;
               }
             }
           }
@@ -685,7 +683,7 @@ namespace MediaPortal.IR
         {
           // Key:		IR Code String
           // Value:	Action.ActionType
-          DictionaryEntry entry = (DictionaryEntry) commandsArr[i];
+          DictionaryEntry entry = (DictionaryEntry)commandsArr[i];
 
           string irCode = entry.Key.ToString();
           object command = entry.Value;
@@ -739,7 +737,7 @@ namespace MediaPortal.IR
           if (stbCommandsLearned.ContainsKey(i))
           {
             writer.WriteAttributeString("istoggle", false.ToString());
-            irTxCode = (string) stbCommandsLearned[i];
+            irTxCode = (string)stbCommandsLearned[i];
           }
 
           writer.WriteString(irTxCode);
@@ -754,7 +752,7 @@ namespace MediaPortal.IR
           if (stbToggleCommandsLearned.ContainsKey(i))
           {
             writer.WriteAttributeString("istoggle", true.ToString());
-            irTxCode = (string) stbToggleCommandsLearned[i];
+            irTxCode = (string)stbToggleCommandsLearned[i];
           }
 
           writer.WriteString(irTxCode);
@@ -765,9 +763,7 @@ namespace MediaPortal.IR
         result = true;
       }
 
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       finally
       {
@@ -847,27 +843,27 @@ namespace MediaPortal.IR
         {
           int cmdVal = Convert.ToInt32(command);
 
-          if (cmdVal < (int) JumpToActionType.JUMP_TO_INVALID)
+          if (cmdVal < (int)JumpToActionType.JUMP_TO_INVALID)
           {
             // If one of the romote numeric keys was presses, mimic a keyboard keydown message...
-            if (cmdVal >= (int) Action.ActionType.REMOTE_0 && cmdVal <= (int) Action.ActionType.REMOTE_9)
+            if (cmdVal >= (int)Action.ActionType.REMOTE_0 && cmdVal <= (int)Action.ActionType.REMOTE_9)
             {
-              int digit = cmdVal - (int) Action.ActionType.REMOTE_0;
-              Keys keyVal = (Keys) ((int) Keys.D0 + digit);
+              int digit = cmdVal - (int)Action.ActionType.REMOTE_0;
+              Keys keyVal = (Keys)((int)Keys.D0 + digit);
 
-              ThreadSafeSendMessage(WM_KEYDOWN, (int) keyVal, 0);
+              ThreadSafeSendMessage(WM_KEYDOWN, (int)keyVal, 0);
             }
 
               //else if (remoteCommandCallback != null)
               //        remoteCommandCallback(command);
             else
             {
-              Action.ActionType action = (Action.ActionType) command;
+              Action.ActionType action = (Action.ActionType)command;
 
               if (action == Action.ActionType.ACTION_PREVIOUS_MENU)
               {
                 //GUIWindowManager.ShowPreviousWindow();
-                ThreadSafeSendMessage(WM_KEYDOWN, (int) Keys.Escape, 0);
+                ThreadSafeSendMessage(WM_KEYDOWN, (int)Keys.Escape, 0);
               }
 
               else if (remoteCommandCallback != null)
@@ -877,15 +873,15 @@ namespace MediaPortal.IR
             }
           }
 
-          else if (cmdVal > (int) JumpToActionType.JUMP_TO_INVALID && cmdVal < (int) JumpToActionType.JUMP_TO_LASTINVALID)
+          else if (cmdVal > (int)JumpToActionType.JUMP_TO_INVALID && cmdVal < (int)JumpToActionType.JUMP_TO_LASTINVALID)
           {
-            object windowID = jumpToCommands[(int) command];
-            command = (JumpToActionType) command;
+            object windowID = jumpToCommands[(int)command];
+            command = (JumpToActionType)command;
 
             if (windowID != null)
             {
               GUIMessage msg =
-                new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int) windowID, 0, null);
+                new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)windowID, 0, null);
               GUIWindowManager.SendThreadMessage(msg);
             }
           }
@@ -914,9 +910,7 @@ namespace MediaPortal.IR
         }
       }
 
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       return instance;
     }
@@ -1018,14 +1012,14 @@ namespace MediaPortal.IR
       {
         UUIRTGetUUIRTConfig(UsbUirtHandle, ref config);
       }
-      return (int) config;
+      return (int)config;
     }
 
     public void SetPreferences(int pref)
     {
       if (isUsbUirtLoaded)
       {
-        UUIRTSetUUIRTConfig(UsbUirtHandle, (uint) pref);
+        UUIRTSetUUIRTConfig(UsbUirtHandle, (uint)pref);
       }
     }
 
@@ -1187,7 +1181,7 @@ namespace MediaPortal.IR
           break;
         }
 
-        for (int retry = 0; retry < retries*2; retry++)
+        for (int retry = 0; retry < retries * 2; retry++)
         {
           NotifyStartLearn(btnName, totCodeCount, (capturingToggledIrCode ? i + 1 : i));
           result = IRLearn();
@@ -1437,18 +1431,18 @@ namespace MediaPortal.IR
 
     private void CreateJumpToCommands()
     {
-      jumpToCommands[(int) JumpToActionType.JUMP_TO_HOME] = GUIWindow.Window.WINDOW_HOME;
-      jumpToCommands[(int) JumpToActionType.JUMP_TO_MY_TV] = GUIWindow.Window.WINDOW_TV;
-      jumpToCommands[(int) JumpToActionType.JUMP_TO_MY_TV_FULLSCREEN] = GUIWindow.Window.WINDOW_TVFULLSCREEN;
-      jumpToCommands[(int) JumpToActionType.JUMP_TO_MY_MOVIES] = GUIWindow.Window.WINDOW_VIDEOS;
-      jumpToCommands[(int) JumpToActionType.JUMP_TO_MY_MOVIES_FULLSCREEN] = GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO;
-      jumpToCommands[(int) JumpToActionType.JUMP_TO_MY_MUSIC] = GUIWindow.Window.WINDOW_MUSIC_FILES;
-      jumpToCommands[(int) JumpToActionType.JUMP_TO_MY_PICTURES] = GUIWindow.Window.WINDOW_PICTURES;
-      jumpToCommands[(int) JumpToActionType.JUMP_TO_TV_GUIDE] = GUIWindow.Window.WINDOW_TVGUIDE;
-      jumpToCommands[(int) JumpToActionType.JUMP_TO_MY_RADIO] = GUIWindow.Window.WINDOW_RADIO;
-      jumpToCommands[(int) JumpToActionType.JUMP_TO_TELETEXT] = GUIWindow.Window.WINDOW_TELETEXT;
-      jumpToCommands[(int) JumpToActionType.JUMP_TO_TELETEXT_FULLSCREEN] = GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT;
-      jumpToCommands[(int) JumpToActionType.JUMP_TO_MY_WEATHER] = GUIWindow.Window.WINDOW_WEATHER;
+      jumpToCommands[(int)JumpToActionType.JUMP_TO_HOME] = GUIWindow.Window.WINDOW_HOME;
+      jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_TV] = GUIWindow.Window.WINDOW_TV;
+      jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_TV_FULLSCREEN] = GUIWindow.Window.WINDOW_TVFULLSCREEN;
+      jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_MOVIES] = GUIWindow.Window.WINDOW_VIDEOS;
+      jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_MOVIES_FULLSCREEN] = GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO;
+      jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_MUSIC] = GUIWindow.Window.WINDOW_MUSIC_FILES;
+      jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_PICTURES] = GUIWindow.Window.WINDOW_PICTURES;
+      jumpToCommands[(int)JumpToActionType.JUMP_TO_TV_GUIDE] = GUIWindow.Window.WINDOW_TVGUIDE;
+      jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_RADIO] = GUIWindow.Window.WINDOW_RADIO;
+      jumpToCommands[(int)JumpToActionType.JUMP_TO_TELETEXT] = GUIWindow.Window.WINDOW_TELETEXT;
+      jumpToCommands[(int)JumpToActionType.JUMP_TO_TELETEXT_FULLSCREEN] = GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT;
+      jumpToCommands[(int)JumpToActionType.JUMP_TO_MY_WEATHER] = GUIWindow.Window.WINDOW_WEATHER;
     }
 
     public bool GetCommandIrStrings(Action.ActionType actionType, ref string irCmd1, ref string irCmd2)
@@ -1462,7 +1456,7 @@ namespace MediaPortal.IR
         string irCode = entry.ToString();
         object command = commandsLearned[irCode];
 
-        if ((Action.ActionType) command == actionType)
+        if ((Action.ActionType)command == actionType)
         {
           if (!irCmd1Found)
           {
@@ -1506,9 +1500,9 @@ namespace MediaPortal.IR
       {
         // Key:		IR Code String
         // Value:	Action.ActionType
-        DictionaryEntry entry = (DictionaryEntry) commandsArr[i];
+        DictionaryEntry entry = (DictionaryEntry)commandsArr[i];
 
-        if ((int) entry.Value == (int) command)
+        if ((int)entry.Value == (int)command)
         {
           commandsLearned.Remove(entry.Key);
           result = true;
@@ -1600,13 +1594,13 @@ namespace MediaPortal.IR
       if (stbCommandsLearned.ContainsKey(cmdNumber))
       {
         result = true;
-        irCmd1 = (string) stbCommandsLearned[cmdNumber];
+        irCmd1 = (string)stbCommandsLearned[cmdNumber];
       }
 
       if (stbToggleCommandsLearned.ContainsKey(cmdNumber))
       {
         result = true;
-        irCmd2 = (string) stbToggleCommandsLearned[cmdNumber];
+        irCmd2 = (string)stbToggleCommandsLearned[cmdNumber];
       }
 
       return result;
@@ -1635,11 +1629,11 @@ namespace MediaPortal.IR
       // Key is the IR Code String
       // Value is the Action.ActionType
 
-      DictionaryEntry dictX = (DictionaryEntry) x;
-      DictionaryEntry dictY = (DictionaryEntry) y;
+      DictionaryEntry dictX = (DictionaryEntry)x;
+      DictionaryEntry dictY = (DictionaryEntry)y;
 
-      int actionValX = (int) dictX.Value;
-      int actionValY = (int) dictY.Value;
+      int actionValX = (int)dictX.Value;
+      int actionValY = (int)dictY.Value;
 
       return actionValX.CompareTo(actionValY);
     }

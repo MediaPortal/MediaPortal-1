@@ -63,7 +63,7 @@ namespace MediaPortal.Playlists
     public bool Insert(PlayListItem item, int currentSong)
     {
       if (item == null)
-        return false;  
+        return false;
 
       if (currentSong < _listPlayListItems.Count)
       {
@@ -80,13 +80,13 @@ namespace MediaPortal.Playlists
     {
       bool success = false;
       if (item == null)
-        return false;      
+        return false;
 
       for (int i = 0; i < _listPlayListItems.Count; ++i)
       {
         if (afterThisItem.FileName == _listPlayListItems[i].FileName)
         {
-          _listPlayListItems.Insert(i+1, item);
+          _listPlayListItems.Insert(i + 1, item);
           success = true;
         }
       }
@@ -159,7 +159,6 @@ namespace MediaPortal.Playlists
     public IEnumerator<PlayListItem> GetEnumerator()
     {
       return _listPlayListItems.GetEnumerator();
-
     }
 
     IEnumerator IEnumerable.GetEnumerator()

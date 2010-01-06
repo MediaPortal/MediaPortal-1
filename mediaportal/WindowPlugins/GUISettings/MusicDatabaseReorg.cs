@@ -72,9 +72,7 @@ namespace MediaPortal.GUI.Settings
 
     #region CTOR
 
-    public MusicDatabaseReorg()
-    {
-    }
+    public MusicDatabaseReorg() {}
 
     public MusicDatabaseReorg(int Id)
     {
@@ -95,7 +93,7 @@ namespace MediaPortal.GUI.Settings
     private void SetPercentDonebyEvent(object sender, DatabaseReorgEventArgs e)
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       if (null == pDlgProgress)
       {
         return;
@@ -108,7 +106,7 @@ namespace MediaPortal.GUI.Settings
     private bool IsCanceled()
     {
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       if (null == pDlgProgress)
       {
         return false;
@@ -121,9 +119,7 @@ namespace MediaPortal.GUI.Settings
         {
           MusicDatabase.DirectExecute("rollback");
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
         return true;
       }
       return false;
@@ -136,10 +132,10 @@ namespace MediaPortal.GUI.Settings
       /// 
 
       GUIDialogProgress pDlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       if (null == pDlgProgress)
       {
-        return (int) Errors.ERROR_REORG_SONGS;
+        return (int)Errors.ERROR_REORG_SONGS;
       }
 
       pDlgProgress.SetHeading(313);
@@ -160,7 +156,7 @@ namespace MediaPortal.GUI.Settings
 
       pDlgProgress.SetLine(2, "Klaar");
 
-      return (int) Errors.ERROR_OK;
+      return (int)Errors.ERROR_OK;
     }
 
     /// <summary>
@@ -170,7 +166,7 @@ namespace MediaPortal.GUI.Settings
     {
       m_dbs.MusicDatabaseReorg(null);
       GUIDialogNotify dlgNotify =
-        (GUIDialogNotify) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
       if (null != dlgNotify)
       {
         dlgNotify.SetHeading(GUILocalizeStrings.Get(313));
@@ -194,7 +190,7 @@ namespace MediaPortal.GUI.Settings
       int iRowsFound = results.Rows.Count;
       if (iRowsFound == 0)
       {
-        GUIDialogOK pDlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_OK);
+        GUIDialogOK pDlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
         if (pDlg != null)
         {
           pDlg.SetHeading(313);
@@ -218,7 +214,7 @@ namespace MediaPortal.GUI.Settings
       //	Show a selectdialog that the user can select the albuminfo to delete 
       string szText = GUILocalizeStrings.Get(181);
       GUIDialogSelect pDlgSelect =
-        (GUIDialogSelect) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_SELECT);
+        (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
       if (pDlgSelect != null)
       {
         pDlgSelect.SetHeading(szText);
@@ -237,7 +233,7 @@ namespace MediaPortal.GUI.Settings
           return;
         }
 
-        AlbumInfoCache albumDel = (AlbumInfoCache) vecAlbums[iSelectedAlbum];
+        AlbumInfoCache albumDel = (AlbumInfoCache)vecAlbums[iSelectedAlbum];
         strSQL = String.Format("delete from albuminfo where idAlbumInfo={0}", albumDel.idAlbumInfo);
         MusicDatabase.DirectExecute(strSQL);
 
@@ -262,7 +258,7 @@ namespace MediaPortal.GUI.Settings
       int iRowsFound = results.Rows.Count;
       if (iRowsFound == 0)
       {
-        GUIDialogOK pDlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_OK);
+        GUIDialogOK pDlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
         if (null != pDlg)
         {
           pDlg.SetHeading(313);
@@ -285,7 +281,7 @@ namespace MediaPortal.GUI.Settings
       //	Show a selectdialog that the user can select the album to delete 
       string szText = GUILocalizeStrings.Get(181);
       GUIDialogSelect pDlgSelect =
-        (GUIDialogSelect) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_SELECT);
+        (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
       if (null != pDlgSelect)
       {
         pDlgSelect.SetHeading(szText);
@@ -304,7 +300,7 @@ namespace MediaPortal.GUI.Settings
           return;
         }
 
-        AlbumInfoCache albumDel = (AlbumInfoCache) vecAlbums[iSelectedAlbum];
+        AlbumInfoCache albumDel = (AlbumInfoCache)vecAlbums[iSelectedAlbum];
         //	Delete album
         strSQL = String.Format("delete from tracks where strAlbum='{0}' and strAlbumArtist like '%{1}'", albumDel.Album,
                                albumDel.Artist);

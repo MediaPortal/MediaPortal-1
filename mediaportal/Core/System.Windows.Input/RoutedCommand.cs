@@ -39,9 +39,7 @@ namespace System.Windows.Input
       _name = string.Empty;
     }
 
-    public RoutedCommand(string name, Type declaringType) : this(name, declaringType, null)
-    {
-    }
+    public RoutedCommand(string name, Type declaringType) : this(name, declaringType, null) {}
 
     public RoutedCommand(string name, Type declaringType, InputGestureCollection inputGestures)
     {
@@ -77,7 +75,7 @@ namespace System.Windows.Input
 
     public static IInputElement GetTarget(DependencyObject d)
     {
-      return (IInputElement) d.GetValue(TargetProperty);
+      return (IInputElement)d.GetValue(TargetProperty);
     }
 
     public bool QueryEnabled(IInputElement target)

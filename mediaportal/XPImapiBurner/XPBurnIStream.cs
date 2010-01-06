@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using XPBurn.COM;
-using STATSTG=XPBurn.COM.STATSTG;
+using STATSTG = XPBurn.COM.STATSTG;
 
 namespace XPBurn
 {
@@ -37,12 +37,12 @@ namespace XPBurn
         try
         {
           byte[] buffer = new byte[cb];
-          int numberRead = fFileStream.Read(buffer, 0, (int) cb);
-          Marshal.Copy(buffer, 0, new IntPtr(pv), (int) cb);
+          int numberRead = fFileStream.Read(buffer, 0, (int)cb);
+          Marshal.Copy(buffer, 0, new IntPtr(pv), (int)cb);
 
           if (pcbRead != null)
           {
-            *pcbRead = (uint) numberRead;
+            *pcbRead = (uint)numberRead;
           }
 
           return CONSTS.S_OK;
@@ -65,8 +65,8 @@ namespace XPBurn
         try
         {
           byte[] buffer = new byte[cb];
-          Marshal.Copy(new IntPtr(pv), buffer, 0, (int) cb);
-          fFileStream.Write(buffer, 0, (int) cb);
+          Marshal.Copy(new IntPtr(pv), buffer, 0, (int)cb);
+          fFileStream.Write(buffer, 0, (int)cb);
 
           if (pcbWritten != null)
           {
@@ -111,7 +111,7 @@ namespace XPBurn
         position = fFileStream.Seek(dlibMove, origin);
         if (libNewPosition != null)
         {
-          *libNewPosition = (ulong) position;
+          *libNewPosition = (ulong)position;
         }
 
         return CONSTS.S_OK;
@@ -126,8 +126,8 @@ namespace XPBurn
     {
       try
       {
-        fFileStream.SetLength((long) libNewSize);
-        if (libNewSize == (ulong) fFileStream.Length)
+        fFileStream.SetLength((long)libNewSize);
+        if (libNewSize == (ulong)fFileStream.Length)
         {
           return CONSTS.S_OK;
         }
@@ -160,21 +160,21 @@ namespace XPBurn
 
       if (stm != null)
       {
-        count = Math.Min((long) cb, fFileStream.Length - fFileStream.Position);
+        count = Math.Min((long)cb, fFileStream.Length - fFileStream.Position);
 
         if (count > 0)
         {
           byte[] buffer = new byte[count];
-          bytesRead = fFileStream.Read(buffer, 0, (int) count);
+          bytesRead = fFileStream.Read(buffer, 0, (int)count);
 
           if (cbRead != null)
           {
-            *cbRead = (ulong) bytesRead;
+            *cbRead = (ulong)bytesRead;
           }
 
           fixed (byte* bufferPtr = buffer)
           {
-            result = stm.Write(bufferPtr, (uint) bytesRead, &bytesWritten);
+            result = stm.Write(bufferPtr, (uint)bytesRead, &bytesWritten);
           }
           if ((result == CONSTS.S_OK) && (cbWritten != null))
           {
@@ -224,25 +224,25 @@ namespace XPBurn
           {
             for (int index = 0; index < sizeof (STATSTG); index++)
             {
-              ((byte*) statstg)[index] = 0;
+              ((byte*)statstg)[index] = 0;
             }
 
             statstg->type = CONSTS.STGTY_STREAM;
-            statstg->cbSize = (ulong) fFileStream.Length;
+            statstg->cbSize = (ulong)fFileStream.Length;
 
             long mtime = File.GetLastWriteTime(fFilename).ToFileTime();
-            statstg->mtime.dwHighDateTime = (uint) (mtime >> 32);
-            statstg->mtime.dwLowDateTime = (uint) (mtime & ((long) 0x00000000FFFFFFFF));
+            statstg->mtime.dwHighDateTime = (uint)(mtime >> 32);
+            statstg->mtime.dwLowDateTime = (uint)(mtime & ((long)0x00000000FFFFFFFF));
             long ctime = File.GetCreationTime(fFilename).ToFileTime();
-            statstg->ctime.dwHighDateTime = (uint) (ctime >> 32);
-            statstg->ctime.dwLowDateTime = (uint) (ctime & ((long) 0x00000000FFFFFFFF));
+            statstg->ctime.dwHighDateTime = (uint)(ctime >> 32);
+            statstg->ctime.dwLowDateTime = (uint)(ctime & ((long)0x00000000FFFFFFFF));
             long atime = File.GetLastAccessTime(fFilename).ToFileTime();
-            statstg->atime.dwHighDateTime = (uint) (atime >> 32);
-            statstg->atime.dwLowDateTime = (uint) (atime & ((long) 0x00000000FFFFFFFF));
+            statstg->atime.dwHighDateTime = (uint)(atime >> 32);
+            statstg->atime.dwLowDateTime = (uint)(atime & ((long)0x00000000FFFFFFFF));
 
             if (grfStatFlag != CONSTS.STATFLAG_NONAME)
             {
-              statstg->pwcsName = (char*) Marshal.StringToCoTaskMemUni(fStreamName);
+              statstg->pwcsName = (char*)Marshal.StringToCoTaskMemUni(fStreamName);
             }
 
             return CONSTS.S_OK;

@@ -40,9 +40,7 @@ namespace MediaPortal.Player
     private bool _isPlaying = false;
     private bool _isPaused = false;
 
-    public DummyPlayer(string filename)
-    {
-    }
+    public DummyPlayer(string filename) {}
 
     public override bool Play(string strFile)
     {

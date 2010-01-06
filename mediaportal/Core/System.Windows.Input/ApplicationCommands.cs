@@ -55,9 +55,7 @@ namespace System.Windows.Input
       Undo = new UICommand("Undo", typeof (ApplicationCommands));
     }
 
-    private ApplicationCommands()
-    {
-    }
+    private ApplicationCommands() {}
 
     #endregion Constructors
 

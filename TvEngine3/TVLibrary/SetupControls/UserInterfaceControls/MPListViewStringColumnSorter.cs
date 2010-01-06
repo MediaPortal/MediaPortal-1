@@ -10,7 +10,8 @@ namespace MediaPortal.UserInterface.Controls
     {
       AsString,
       AsValue
-    };
+    } ;
+
     public int SortColumn;
     public SortOrder Order = SortOrder.Ascending;
     public OrderTypes OrderType = OrderTypes.AsString;
@@ -24,7 +25,9 @@ namespace MediaPortal.UserInterface.Controls
       switch (OrderType)
       {
         case OrderTypes.AsString:
-          compareResult = SortColumn == 0 ? String.Compare(listviewX.Text, listviewY.Text) : String.Compare(listviewX.SubItems[SortColumn].Text, listviewY.SubItems[SortColumn].Text);
+          compareResult = SortColumn == 0
+                            ? String.Compare(listviewX.Text, listviewY.Text)
+                            : String.Compare(listviewX.SubItems[SortColumn].Text, listviewY.SubItems[SortColumn].Text);
           break;
         case OrderTypes.AsValue:
           string line1 = SortColumn == 0 ? listviewX.Text : listviewX.SubItems[SortColumn].Text;

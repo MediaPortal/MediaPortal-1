@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
@@ -34,12 +34,12 @@ using MediaPortal.Utils.Time;
 
 namespace MediaPortal.WebEPG
 {
-  class DatabaseEPGDataSink
+  internal class DatabaseEPGDataSink
     : IEpgDataSink
   {
     #region Types
-    
-    struct DateTimeRange
+
+    private struct DateTimeRange
     {
       public DateTime Start;
       public DateTime End;
@@ -53,24 +53,21 @@ namespace MediaPortal.WebEPG
 
     #endregion
 
-
     #region Variables
 
-    bool _deleteExisting;
-    Dictionary<string, List<Channel>> _channels;
-    List<Channel> _currentChannels;
-    ProgramList _channelPrograms;
-    TimeRange _timeWindow;
+    private bool _deleteExisting;
+    private Dictionary<string, List<Channel>> _channels;
+    private List<Channel> _currentChannels;
+    private ProgramList _channelPrograms;
+    private TimeRange _timeWindow;
 
-    TvBusinessLayer layer = new TvBusinessLayer();
+    private TvBusinessLayer layer = new TvBusinessLayer();
 
     #endregion
 
     #region ctor
 
-    public DatabaseEPGDataSink()
-    {
-    }
+    public DatabaseEPGDataSink() {}
 
     public DatabaseEPGDataSink(bool deleteExisting)
     {
@@ -99,7 +96,8 @@ namespace MediaPortal.WebEPG
       for (int i = 0; i < _channelPrograms.Count; ++i)
       {
         Program prog = _channelPrograms[i];
-        DateTime windowEnd = new DateTime(prog.StartTime.Year, prog.StartTime.Month, prog.StartTime.Day, _timeWindow.End.Hour, _timeWindow.End.Minute, 0);
+        DateTime windowEnd = new DateTime(prog.StartTime.Year, prog.StartTime.Month, prog.StartTime.Day,
+                                          _timeWindow.End.Hour, _timeWindow.End.Minute, 0);
         if (windowEnd < prog.StartTime)
         {
           windowEnd = windowEnd.AddDays(1);
@@ -232,7 +230,7 @@ namespace MediaPortal.WebEPG
     {
       if (_currentChannels != null)
       {
-        foreach(Channel chan in _currentChannels)
+        foreach (Channel chan in _currentChannels)
         {
           _channelPrograms.Add(programData.ToTvProgram(chan.IdChannel));
         }
@@ -259,7 +257,7 @@ namespace MediaPortal.WebEPG
       {
         // Remove programs overlapping ones in DB:
         // First retrieve all programs for current channels 
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
         sb.AddConstraint(Operator.In, "idChannel", _currentChannels, "IdChannel");
         //sb.AddConstraint(Operator.Equals, "idChannel", _currentChannels.IdChannel);
         //sb.AddOrderByField(false, "starttime");
@@ -277,7 +275,7 @@ namespace MediaPortal.WebEPG
                                                     ? DeleteBeforeImportOption.OverlappingPrograms
                                                     : DeleteBeforeImportOption.None;
       layer.InsertPrograms(_channelPrograms, programsToDelete, ThreadPriority.BelowNormal);
-      
+
       //_channelPrograms.Clear();
       _channelPrograms = null;
       _currentChannels = null;

@@ -630,13 +630,14 @@ namespace TvControl
     /// timeshifting filename null when not timeshifting
     /// </returns>
     string TimeShiftFileName(ref User user);
+
     /// <summary>
     /// Returns the position in the current timeshift file and the id of the current timeshift file
     /// </summary>
     /// <param name="user">The user.</param>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    bool TimeShiftGetCurrentFilePosition(ref User user,ref Int64 position,ref long bufferId);
+    bool TimeShiftGetCurrentFilePosition(ref User user, ref Int64 position, ref long bufferId);
 
     /// <summary>
     /// Returns if the card is currently timeshifting or not
@@ -772,7 +773,8 @@ namespace TvControl
     /// </returns>
     DateTime RecordingStarted(User user);
 
-    void CopyTimeShiftFile(Int64 position1, string bufferFile1, Int64 position2, string bufferFile2,string recordingFile);
+    void CopyTimeShiftFile(Int64 position1, string bufferFile1, Int64 position2, string bufferFile2,
+                           string recordingFile);
 
     #region audio stream selection
 
@@ -1106,7 +1108,7 @@ namespace TvControl
     /// Add or remove callback destinations on the client
     /// </summary>
     event CiMenuCallback OnCiMenu;
-    
+
     #endregion
   }
 }

@@ -33,9 +33,7 @@ namespace MediaPortal.Configuration.Sections
   public partial class Project : SectionSettings
   {
     public Project()
-      : this("Project")
-    {
-    }
+      : this("Project") {}
 
     public Project(string name)
       : base(name)

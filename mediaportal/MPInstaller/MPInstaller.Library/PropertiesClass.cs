@@ -22,6 +22,7 @@
  */
 
 #endregion
+
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System;
@@ -50,139 +51,77 @@ namespace MediaPortal.MPInstaller
     {
       Clear();
     }
+
     [Description("Minimum version of MediaPortal")]
     public string MPMinVersion
     {
-      set
-      {
-        mpminversion = value;
-      }
-      get
-      {
-        return new VersionPharser(mpminversion).ToString();
-      }
+      set { mpminversion = value; }
+      get { return new VersionPharser(mpminversion).ToString(); }
     }
+
     [Description("Maximum version of MediaPortal")]
     public string MPMaxVersion
     {
-      set
-      {
-        mpmaxversion = value;
-      }
-      get
-      {
-        return new VersionPharser(mpmaxversion).ToString();
-      }
+      set { mpmaxversion = value; }
+      get { return new VersionPharser(mpmaxversion).ToString(); }
     }
 
     public string MinExtensionVersion
     {
-      set
-      {
-        minextensionversion = value;
-      }
-      get
-      {
-        return minextensionversion;
-      }
+      set { minextensionversion = value; }
+      get { return minextensionversion; }
     }
 
     public string MaxExtensionVersion
     {
-      set
-      {
-        maxextensionversion = value;
-      }
-      get
-      {
-        return maxextensionversion;
-      }
+      set { maxextensionversion = value; }
+      get { return maxextensionversion; }
     }
 
     public string ForumURL
     {
-      set
-      {
-        forumurl = value;
-      }
-      get
-      {
-        return forumurl;
-      }
+      set { forumurl = value; }
+      get { return forumurl; }
     }
 
     public string WebURL
     {
-      set
-      {
-        weburl = value;
-      }
-      get
-      {
-        return weburl;
-      }
+      set { weburl = value; }
+      get { return weburl; }
     }
 
     public string WikiURL
     {
-      set
-      {
-        wikiurl = value;
-      }
-      get
-      {
-        return wikiurl;
-      }
+      set { wikiurl = value; }
+      get { return wikiurl; }
     }
 
     public DateTime CreationDate
     {
-      set
-      {
-        creationdate = value;
-      }
-      get
-      {
-        return creationdate;
-      }
+      set { creationdate = value; }
+      get { return creationdate; }
     }
+
     [Description("Used only when a grouping is specified. If is True alove select only one group")]
     public bool SingleGroupSelect
     {
-      set
-      {
-        singlegroupselect = value;
-      }
-      get
-      {
-        return singlegroupselect;
-      }
+      set { singlegroupselect = value; }
+      get { return singlegroupselect; }
     }
 
     [Description("If true clear the skin cache ")]
     public bool ClearSkinCache
     {
-      get
-      {
-        return clarskincache;
-      }
-      set
-      {
-        clarskincache = value;
-      }
+      get { return clarskincache; }
+      set { clarskincache = value; }
     }
 
-    [Description("If true in package the names are stored like installed one not GUID's, but some case the installation may fail")]
+    [Description(
+      "If true in package the names are stored like installed one not GUID's, but some case the installation may fail")]
     public bool UseRealPathInPackage
     {
-      get
-      {
-        return useRealPathInPackage;
-      }
-      set
-      {
-        useRealPathInPackage = value;
-      }
+      get { return useRealPathInPackage; }
+      set { useRealPathInPackage = value; }
     }
 
     public void Save(XmlWriter writer)
@@ -254,7 +193,6 @@ namespace MediaPortal.MPInstaller
             UseRealPathInPackage = true;
           else UseRealPathInPackage = false;
       }
-
     }
 
     public void Clear()
@@ -274,55 +212,40 @@ namespace MediaPortal.MPInstaller
   {
     private string outputfilename;
     private bool defaultfile;
-    public FilePropertiesClass()
-    {
-
-    }
+    public FilePropertiesClass() {}
 
     public string OutputFileName
     {
-      set
-      {
-        outputfilename = value;
-      }
-      get
-      {
-        return outputfilename;
-      }
+      set { outputfilename = value; }
+      get { return outputfilename; }
     }
 
-    public bool  DefaultFile
+    public bool DefaultFile
     {
-      set
-      {
-        defaultfile = value;
-      }
-      get
-      {
-        return defaultfile;
-      }
-
+      set { defaultfile = value; }
+      get { return defaultfile; }
     }
-    
+
     public void Clear()
     {
       OutputFileName = string.Empty;
       DefaultFile = false;
     }
-    
-    override public string ToString()
+
+    public override string ToString()
     {
-      string x_ret=string.Empty;;
-      x_ret += "OutputFileName" + "=" + OutputFileName+"|";
+      string x_ret = string.Empty;
+      ;
+      x_ret += "OutputFileName" + "=" + OutputFileName + "|";
       x_ret += "DefaultFile" + "=" + DefaultFile.ToString() + "|";
       return x_ret;
     }
-    
+
     public FilePropertiesClass Parse(string fullstring)
     {
       this.Clear();
       string[] temparray = fullstring.Split('|');
-      foreach(string s in temparray)
+      foreach (string s in temparray)
       {
         if (s.Contains("="))
         {
@@ -332,7 +255,7 @@ namespace MediaPortal.MPInstaller
               OutputFileName = s.Substring(s.IndexOf('=') + 1);
               break;
             case "DefaultFile":
-              DefaultFile = s.Substring(s.IndexOf('=') + 1).ToUpper()=="TRUE"?true :false;
+              DefaultFile = s.Substring(s.IndexOf('=') + 1).ToUpper() == "TRUE" ? true : false;
               break;
           }
         }

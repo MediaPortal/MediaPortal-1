@@ -31,41 +31,40 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Util
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class GoogleImageSearch
-	{
-    ArrayList m_imageList = new ArrayList();
+  /// <summary>
+  /// 
+  /// </summary>
+  public class GoogleImageSearch
+  {
+    private ArrayList m_imageList = new ArrayList();
 
-		public GoogleImageSearch()
-		{
-		}
+    public GoogleImageSearch() {}
 
     public int Count
     {
-      get { return m_imageList.Count;}
+      get { return m_imageList.Count; }
     }
 
     public string this[int index]
     {
-      get { 
-				if (index<0 || index>m_imageList.Count) return string.Empty;
-				return (string)m_imageList[index];
-			}
+      get
+      {
+        if (index < 0 || index > m_imageList.Count) return string.Empty;
+        return (string)m_imageList[index];
+      }
     }
-    
+
     public void Search(string searchtag)
     {
-			if (searchtag==null) return;
-			if (searchtag==string.Empty) return;
+      if (searchtag == null) return;
+      if (searchtag == string.Empty) return;
       m_imageList.Clear();
       try
       {
-        UriBuilder builder=new UriBuilder();
-        builder.Host="images.google.nl";
-        builder.Path="/images";
-        builder.Query=String.Format("q={0}", searchtag);
+        UriBuilder builder = new UriBuilder();
+        builder.Host = "images.google.nl";
+        builder.Path = "/images";
+        builder.Query = String.Format("q={0}", searchtag);
 
         // Make the Webrequest
         WebRequest req = WebRequest.Create(builder.Uri.AbsoluteUri);
@@ -75,41 +74,40 @@ namespace MediaPortal.Util
           // wr.Proxy = WebProxy.GetDefaultProxy();
           req.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception) {}
         WebResponse result = req.GetResponse();
         using (Stream ReceiveStream = result.GetResponseStream())
         {
-          StreamReader sr = new StreamReader( ReceiveStream);
+          StreamReader sr = new StreamReader(ReceiveStream);
           string strBody = sr.ReadToEnd();
           Parse(strBody);
         }
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         Log.Warn("get failed:{0}", ex.Message);
       }
     }
 
-    void Parse(string body)
-		{
-			if (body==null) return;
-			if (body==string.Empty) return;
-      int pos=body.IndexOf("imgurl=");
-      while (pos>=0)
+    private void Parse(string body)
+    {
+      if (body == null) return;
+      if (body == string.Empty) return;
+      int pos = body.IndexOf("imgurl=");
+      while (pos >= 0)
       {
-        int endpos1=body.IndexOf("&imgrefurl=",pos);
-        int endpos2=body.IndexOf(">",pos);
-        if (endpos1 >=0 && endpos2 >=0)
+        int endpos1 = body.IndexOf("&imgrefurl=", pos);
+        int endpos2 = body.IndexOf(">", pos);
+        if (endpos1 >= 0 && endpos2 >= 0)
         {
-          if (endpos2 < endpos1) endpos1=endpos2;
+          if (endpos2 < endpos1) endpos1 = endpos2;
         }
         if (endpos1 < 0) return;
-        pos+="imgurl=".Length;
-        string url=body.Substring(pos,endpos1-pos);
+        pos += "imgurl=".Length;
+        string url = body.Substring(pos, endpos1 - pos);
         m_imageList.Add(url);
-        pos=body.IndexOf("imgurl=",endpos1);
+        pos = body.IndexOf("imgurl=", endpos1);
       }
     }
-
-	}
+  }
 }

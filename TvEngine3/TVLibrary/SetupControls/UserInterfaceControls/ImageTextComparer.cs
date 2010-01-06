@@ -25,7 +25,6 @@
 
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
-
 using System.Collections;
 
 namespace MediaPortal.UserInterface.Controls
@@ -40,6 +39,7 @@ namespace MediaPortal.UserInterface.Controls
       // Initialize the CaseInsensitiveComparer object
       ObjectCompare = new NumberCaseInsensitiveComparer();
     }
+
     public int Compare(object x, object y)
     {
       //int compareResult;
@@ -67,19 +67,19 @@ namespace MediaPortal.UserInterface.Controls
       // in case x,y are strings and actually number,
       // convert them to int and use the base.Compare for comparison
       if ((x is System.String) && IsWholeNumber((string)x)
-         && (y is System.String) && IsWholeNumber((string)y))
+          && (y is System.String) && IsWholeNumber((string)y))
       {
         return base.Compare(System.Convert.ToInt32(x),
-                               System.Convert.ToInt32(y));
+                            System.Convert.ToInt32(y));
       }
       return base.Compare(x, y);
     }
 
     private static bool IsWholeNumber(string strNumber)
-    { // use a regular expression to find out if string is actually a number
+    {
+      // use a regular expression to find out if string is actually a number
       Regex objNotWholePattern = new Regex("[^0-9]");
       return !objNotWholePattern.IsMatch(strNumber);
     }
   }
 }
-

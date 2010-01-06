@@ -66,7 +66,7 @@ namespace MediaPortal.ServiceImplementations
       using (Settings xmlreader = new MPSettings())
       {
         _minLevel =
-          (Level) Enum.Parse(typeof (Level), xmlreader.GetValueAsString("general", "loglevel", "3"));
+          (Level)Enum.Parse(typeof (Level), xmlreader.GetValueAsString("general", "loglevel", "3"));
       }
       bConfiguration = false;
     }
@@ -239,6 +239,7 @@ namespace MediaPortal.ServiceImplementations
     {
       Write(ex);
     }
+
     /// <summary>
     /// Replaces a password inside the string by stars
     /// </summary>
@@ -248,6 +249,7 @@ namespace MediaPortal.ServiceImplementations
     {
       return new Regex(@"Password=[^;]*;", RegexOptions.IgnoreCase).Replace(Logtext, "Password=***;");
     }
+
     /// <summary>
     /// Write a string to the logfile.
     /// </summary>
@@ -346,9 +348,7 @@ namespace MediaPortal.ServiceImplementations
             }
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
 
       //
@@ -357,7 +357,9 @@ namespace MediaPortal.ServiceImplementations
       {
         WriteFile(LogType.Log, format, arg);
       }
-    } //public static void WriteFile(LogType type, string format, params object[] arg)
+    }
+
+    //public static void WriteFile(LogType type, string format, params object[] arg)
 
     public void SetLogLevel(Level logLevel)
     {

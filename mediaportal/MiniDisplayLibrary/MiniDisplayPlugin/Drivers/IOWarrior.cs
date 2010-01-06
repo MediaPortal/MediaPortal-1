@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -96,7 +96,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (ReceivedBitmapData == null)
             {
-              ReceivedBitmapData = new byte[bitmapdata.Stride*_Grows];
+              ReceivedBitmapData = new byte[bitmapdata.Stride * _Grows];
             }
             Marshal.Copy(bitmapdata.Scan0, ReceivedBitmapData, 0, ReceivedBitmapData.Length);
           }
@@ -159,13 +159,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       LastSettingsCheck = DateTime.Now;
     }
 
-    public void SetCustomCharacters(int[][] customCharacters)
-    {
-    }
+    public void SetCustomCharacters(int[][] customCharacters) {}
 
-    public void SetLine(int line, string message)
-    {
-    }
+    public void SetLine(int line, string message) {}
 
     public void Setup(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
                       bool _backLight, int _backLightLevel, bool _contrast, int _contrastLevel, bool _blankOnExit)
@@ -342,7 +338,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Debug("IOWarrior.AdvancedSettings.Load() Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_IOWarrior.xml"));
-          settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
+          settings = (AdvancedSettings)serializer.Deserialize(xmlReader);
           xmlReader.Close();
         }
         else
@@ -376,7 +372,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                  Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 2;
-        serializer.Serialize((XmlWriter) writer, ToSave);
+        serializer.Serialize((XmlWriter)writer, ToSave);
         writer.Close();
         Log.Debug("IOWarrior.AdvancedSettings.Save() completed");
       }
@@ -771,8 +767,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Log.Info("MatrixGX.MOGXDisplay.DisplayEQ(): called");
             }
             EQSettings.Render_MaxValue = (EQSettings.UseNormalEq | EQSettings.UseStereoEq)
-                                           ? ((int) textBounds.Height)
-                                           : ((int) textBounds.Width);
+                                           ? ((int)textBounds.Height)
+                                           : ((int)textBounds.Width);
             EQSettings.Render_BANDS = EQSettings.UseNormalEq ? 0x10 : (EQSettings.UseStereoEq ? 8 : 1);
             MiniDisplayHelper.ProcessEqData(ref EQSettings);
             Monitor.Enter(obj3 = DWriteMutex);
@@ -804,10 +800,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 if (EQSettings.UseNormalEq)
                 {
                   ef2 = new RectangleF(
-                    (textBounds.X + (i*(((int) textBounds.Width)/EQSettings.Render_BANDS))) + 1f,
-                    textBounds.Y + (((int) textBounds.Height) - EQSettings.EqArray[1 + i]),
-                    (float) ((((int) textBounds.Width)/EQSettings.Render_BANDS) - 2),
-                    (float) EQSettings.EqArray[1 + i]);
+                    (textBounds.X + (i * (((int)textBounds.Width) / EQSettings.Render_BANDS))) + 1f,
+                    textBounds.Y + (((int)textBounds.Height) - EQSettings.EqArray[1 + i]),
+                    (float)((((int)textBounds.Width) / EQSettings.Render_BANDS) - 2),
+                    (float)EQSettings.EqArray[1 + i]);
                   IOW_Graphics.FillRectangle(Brushes.Black, ef2);
                 }
                 else
@@ -816,26 +812,26 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                   RectangleF ef3;
                   if (EQSettings.UseStereoEq)
                   {
-                    int num4 = (((int) textBounds.Width)/2)/EQSettings.Render_BANDS;
-                    num2 = i*num4;
-                    int num3 = (i + EQSettings.Render_BANDS)*num4;
+                    int num4 = (((int)textBounds.Width) / 2) / EQSettings.Render_BANDS;
+                    num2 = i * num4;
+                    int num3 = (i + EQSettings.Render_BANDS) * num4;
                     ef2 = new RectangleF((textBounds.X + num2) + 1f,
-                                         textBounds.Y + (((int) textBounds.Height) - EQSettings.EqArray[1 + i]),
-                                         (float) (num4 - 2), (float) EQSettings.EqArray[1 + i]);
+                                         textBounds.Y + (((int)textBounds.Height) - EQSettings.EqArray[1 + i]),
+                                         (float)(num4 - 2), (float)EQSettings.EqArray[1 + i]);
                     ef3 = new RectangleF((textBounds.X + num3) + 1f,
-                                         textBounds.Y + (((int) textBounds.Height) - EQSettings.EqArray[9 + i]),
-                                         (float) (num4 - 2), (float) EQSettings.EqArray[9 + i]);
+                                         textBounds.Y + (((int)textBounds.Height) - EQSettings.EqArray[9 + i]),
+                                         (float)(num4 - 2), (float)EQSettings.EqArray[9 + i]);
                     IOW_Graphics.FillRectangle(Brushes.Black, ef2);
                     IOW_Graphics.FillRectangle(Brushes.Black, ef3);
                   }
                   else if (EQSettings.UseVUmeter | EQSettings.UseVUmeter2)
                   {
-                    ef2 = new RectangleF(textBounds.X + 1f, textBounds.Y + 1f, (float) EQSettings.EqArray[1 + i],
-                                         (float) (((int) (textBounds.Height/2f)) - 2));
-                    num2 = EQSettings.UseVUmeter ? 0 : (((int) textBounds.Width) - EQSettings.EqArray[2 + i]);
-                    ef3 = new RectangleF((textBounds.X + num2) + 1f, (textBounds.Y + (textBounds.Height/2f)) + 1f,
-                                         (float) EQSettings.EqArray[2 + i],
-                                         (float) (((int) (textBounds.Height/2f)) - 2));
+                    ef2 = new RectangleF(textBounds.X + 1f, textBounds.Y + 1f, (float)EQSettings.EqArray[1 + i],
+                                         (float)(((int)(textBounds.Height / 2f)) - 2));
+                    num2 = EQSettings.UseVUmeter ? 0 : (((int)textBounds.Width) - EQSettings.EqArray[2 + i]);
+                    ef3 = new RectangleF((textBounds.X + num2) + 1f, (textBounds.Y + (textBounds.Height / 2f)) + 1f,
+                                         (float)EQSettings.EqArray[2 + i],
+                                         (float)(((int)(textBounds.Height / 2f)) - 2));
                     IOW_Graphics.FillRectangle(Brushes.Black, ef2);
                     IOW_Graphics.FillRectangle(Brushes.Black, ef3);
                   }
@@ -845,9 +841,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             catch (Exception exception)
             {
               Log.Info("MatrixGX.MOGXDisplay.DisplayEQ(): CAUGHT EXCEPTION {0}", new object[] {exception});
-              if (exception.Message.Contains("ThreadAbortException"))
-              {
-              }
+              if (exception.Message.Contains("ThreadAbortException")) {}
             }
             finally
             {
@@ -1069,7 +1063,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           for (int j = 0; j < 0x80; j++)
           {
-            int ofs = (i*bitmapdata.Stride) + (j*4);
+            int ofs = (i * bitmapdata.Stride) + (j * 4);
             if (Marshal.ReadByte(bitmapdata.Scan0, ofs) != 0xff)
             {
               IOW_Bitmap_SetIndexedPixel(j, i, bmd, true);
@@ -1083,29 +1077,29 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       private void IOW_Bitmap_SetIndexedPixel(int x, int y, BitmapData bmd, bool pixel)
       {
-        int ofs = (y*bmd.Stride) + (x >> 3);
+        int ofs = (y * bmd.Stride) + (x >> 3);
         byte val = Marshal.ReadByte(bmd.Scan0, ofs);
-        byte num3 = (byte) (((int) 0x80) >> (x & 7));
+        byte num3 = (byte)(((int)0x80) >> (x & 7));
         if (pixel)
         {
-          val = (byte) (val | num3);
+          val = (byte)(val | num3);
         }
         else
         {
-          val = (byte) (val & ((byte) (num3 ^ 0xff)));
+          val = (byte)(val & ((byte)(num3 ^ 0xff)));
         }
         Marshal.WriteByte(bmd.Scan0, ofs, val);
       }
 
       public byte[] IOW_BitMap_ToByteArray(Bitmap bitmap)
       {
-        for(int i=0; i < byLocal.Length; i++)
+        for (int i = 0; i < byLocal.Length; i++)
         {
           byLocal[i] = 0;
         }
         BitmapData bitmapdata = bitmap.LockBits(new Rectangle(new Point(0, 0), bitmap.Size), ImageLockMode.ReadOnly,
                                                 bitmap.PixelFormat);
-        int length = bitmapdata.Stride*bitmap.Height;
+        int length = bitmapdata.Stride * bitmap.Height;
         m_Buffer = new byte[length];
         Marshal.Copy(bitmapdata.Scan0, m_Buffer, 0, length);
         for (int i = 0; i < 8; i++)
@@ -1116,16 +1110,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               for (int m = 0; m < 8; m++)
               {
-                if (m_Buffer[((i*0x80) + j) + (k*0x10)] == 0)
+                if (m_Buffer[((i * 0x80) + j) + (k * 0x10)] == 0)
                 {
                   break;
                 }
-                if (m_Buffer[((k*0x10) + j) + (i*0x80)] >= Math.Pow(2.0, (double) (7 - m)))
+                if (m_Buffer[((k * 0x10) + j) + (i * 0x80)] >= Math.Pow(2.0, (double)(7 - m)))
                 {
-                  byLocal[(m + (j*8)) + (i*0x80)] =
-                    (byte) (byLocal[(m + (j*8)) + (i*0x80)] + Math.Pow(2.0, (double) k));
-                  m_Buffer[((i*0x80) + j) + (k*0x10)] =
-                    (byte) (m_Buffer[((i*0x80) + j) + (k*0x10)] - Math.Pow(2.0, (double) (7 - m)));
+                  byLocal[(m + (j * 8)) + (i * 0x80)] =
+                    (byte)(byLocal[(m + (j * 8)) + (i * 0x80)] + Math.Pow(2.0, (double)k));
+                  m_Buffer[((i * 0x80) + j) + (k * 0x10)] =
+                    (byte)(m_Buffer[((i * 0x80) + j) + (k * 0x10)] - Math.Pow(2.0, (double)(7 - m)));
                 }
               }
             }
@@ -1166,9 +1160,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             for (int k = 0; k < 0x40; k++)
             {
               int num5 = 0;
-              while (buffer[(((j*0x40) + k) + num5) + (i*0x80)] != byOldImage[(((j*0x40) + k) + num5) + (i*0x80)])
+              while (buffer[(((j * 0x40) + k) + num5) + (i * 0x80)] !=
+                     byOldImage[(((j * 0x40) + k) + num5) + (i * 0x80)])
               {
-                byOldImage[(((j*0x40) + k) + num5) + (i*0x80)] = buffer[(((j*0x40) + k) + num5) + (i*0x80)];
+                byOldImage[(((j * 0x40) + k) + num5) + (i * 0x80)] = buffer[(((j * 0x40) + k) + num5) + (i * 0x80)];
                 num5++;
                 if ((k + num5) >= 0x40)
                 {
@@ -1182,49 +1177,49 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                   IOW_SwitchPanel(j);
                   num = j;
                 }
-                IOW_SendBits(5, 3, 0xc0, (byte) (0x40 + k), (byte) (0xb8 + i), 0, 0, 0);
+                IOW_SendBits(5, 3, 0xc0, (byte)(0x40 + k), (byte)(0xb8 + i), 0, 0, 0);
                 int num6 = 0;
                 while (num5 >= 6)
                 {
-                  IOW_SendBits(5, 0x86, buffer[(((j*0x40) + k) + num6) + (i*0x80)],
-                               buffer[((((j*0x40) + k) + num6) + 1) + (i*0x80)],
-                               buffer[((((j*0x40) + k) + num6) + 2) + (i*0x80)],
-                               buffer[((((j*0x40) + k) + num6) + 3) + (i*0x80)],
-                               buffer[((((j*0x40) + k) + num6) + 4) + (i*0x80)],
-                               buffer[((((j*0x40) + k) + num6) + 5) + (i*0x80)]);
+                  IOW_SendBits(5, 0x86, buffer[(((j * 0x40) + k) + num6) + (i * 0x80)],
+                               buffer[((((j * 0x40) + k) + num6) + 1) + (i * 0x80)],
+                               buffer[((((j * 0x40) + k) + num6) + 2) + (i * 0x80)],
+                               buffer[((((j * 0x40) + k) + num6) + 3) + (i * 0x80)],
+                               buffer[((((j * 0x40) + k) + num6) + 4) + (i * 0x80)],
+                               buffer[((((j * 0x40) + k) + num6) + 5) + (i * 0x80)]);
                   num5 -= 6;
                   num6 += 6;
                 }
                 switch (num5)
                 {
                   case 1:
-                    IOW_SendBits(5, 0x81, buffer[(((j*0x40) + k) + num6) + (i*0x80)], 0, 0, 0, 0, 0);
+                    IOW_SendBits(5, 0x81, buffer[(((j * 0x40) + k) + num6) + (i * 0x80)], 0, 0, 0, 0, 0);
                     break;
 
                   case 2:
-                    IOW_SendBits(5, 130, buffer[(((j*0x40) + k) + num6) + (i*0x80)],
-                                 buffer[((((j*0x40) + k) + num6) + 1) + (i*0x80)], 0, 0, 0, 0);
+                    IOW_SendBits(5, 130, buffer[(((j * 0x40) + k) + num6) + (i * 0x80)],
+                                 buffer[((((j * 0x40) + k) + num6) + 1) + (i * 0x80)], 0, 0, 0, 0);
                     break;
 
                   case 3:
-                    IOW_SendBits(5, 0x83, buffer[(((j*0x40) + k) + num6) + (i*0x80)],
-                                 buffer[((((j*0x40) + k) + num6) + 1) + (i*0x80)],
-                                 buffer[((((j*0x40) + k) + num6) + 2) + (i*0x80)], 0, 0, 0);
+                    IOW_SendBits(5, 0x83, buffer[(((j * 0x40) + k) + num6) + (i * 0x80)],
+                                 buffer[((((j * 0x40) + k) + num6) + 1) + (i * 0x80)],
+                                 buffer[((((j * 0x40) + k) + num6) + 2) + (i * 0x80)], 0, 0, 0);
                     break;
 
                   case 4:
-                    IOW_SendBits(5, 0x84, buffer[(((j*0x40) + k) + num6) + (i*0x80)],
-                                 buffer[((((j*0x40) + k) + num6) + 1) + (i*0x80)],
-                                 buffer[((((j*0x40) + k) + num6) + 2) + (i*0x80)],
-                                 buffer[((((j*0x40) + k) + num6) + 3) + (i*0x80)], 0, 0);
+                    IOW_SendBits(5, 0x84, buffer[(((j * 0x40) + k) + num6) + (i * 0x80)],
+                                 buffer[((((j * 0x40) + k) + num6) + 1) + (i * 0x80)],
+                                 buffer[((((j * 0x40) + k) + num6) + 2) + (i * 0x80)],
+                                 buffer[((((j * 0x40) + k) + num6) + 3) + (i * 0x80)], 0, 0);
                     break;
 
                   case 5:
-                    IOW_SendBits(5, 0x85, buffer[(((j*0x40) + k) + num6) + (i*0x80)],
-                                 buffer[((((j*0x40) + k) + num6) + 1) + (i*0x80)],
-                                 buffer[((((j*0x40) + k) + num6) + 2) + (i*0x80)],
-                                 buffer[((((j*0x40) + k) + num6) + 3) + (i*0x80)],
-                                 buffer[((((j*0x40) + k) + num6) + 4) + (i*0x80)], 0);
+                    IOW_SendBits(5, 0x85, buffer[(((j * 0x40) + k) + num6) + (i * 0x80)],
+                                 buffer[((((j * 0x40) + k) + num6) + 1) + (i * 0x80)],
+                                 buffer[((((j * 0x40) + k) + num6) + 2) + (i * 0x80)],
+                                 buffer[((((j * 0x40) + k) + num6) + 3) + (i * 0x80)],
+                                 buffer[((((j * 0x40) + k) + num6) + 4) + (i * 0x80)], 0);
                     break;
                 }
                 k += (num5 + num6) - 1;
@@ -1443,15 +1438,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         EQSettings._EQTitleShowTime = AdvSettings.EQTitleShowTime;
         EQSettings._EqUpdateDelay = (EQSettings._EQ_Restrict_FPS == 0)
                                       ? 0
-                                      : ((0x989680/EQSettings._EQ_Restrict_FPS) -
-                                         (0xf4240/EQSettings._EQ_Restrict_FPS));
+                                      : ((0x989680 / EQSettings._EQ_Restrict_FPS) -
+                                         (0xf4240 / EQSettings._EQ_Restrict_FPS));
         DisplaySettings.BlankDisplayWithVideo = AdvSettings.BlankDisplayWithVideo;
         DisplaySettings.EnableDisplayAction = AdvSettings.EnableDisplayAction;
         DisplaySettings.DisplayActionTime = AdvSettings.EnableDisplayActionTime;
-        DisplaySettings._DisplayControlTimeout = DisplaySettings.DisplayActionTime*0x989680;
+        DisplaySettings._DisplayControlTimeout = DisplaySettings.DisplayActionTime * 0x989680;
         DisplaySettings.BlankDisplayWhenIdle = AdvSettings.BlankDisplayWhenIdle;
         DisplaySettings.BlankIdleDelay = AdvSettings.BlankIdleTime;
-        DisplaySettings._BlankIdleTimeout = DisplaySettings.BlankIdleDelay*0x989680;
+        DisplaySettings._BlankIdleTimeout = DisplaySettings.BlankIdleDelay * 0x989680;
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Logging Options - Extensive Logging = {0}",
                  new object[] {DoDebug});
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options - Equalizer Display: {0}",
@@ -1498,7 +1493,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                  new object[] {DisplaySettings.BlankDisplayWhenIdle});
         Log.Info(
           "IOWarrior.IOWDisplay.ParseAdvancedSettings(): Advanced options -     blank display after: {0} seconds",
-          new object[] {DisplaySettings._BlankIdleTimeout/0xf4240L});
+          new object[] {DisplaySettings._BlankIdleTimeout / 0xf4240L});
         Log.Info("IOWarrior.IOWDisplay.ParseAdvancedSettings(): Completed");
       }
 
@@ -1532,7 +1527,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Log.Debug("IOWarrior.IOWDisplay.SendImage() - called");
               if ((_Bitmap.Height == IOW_Surface.Height) & (_Bitmap.Width == IOW_Surface.Width))
               {
-                IOW_Surface = (Bitmap) _Bitmap.Clone();
+                IOW_Surface = (Bitmap)_Bitmap.Clone();
               }
               else
               {
@@ -1575,7 +1570,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             IOW_Graphics.SmoothingMode = SmoothingMode.None;
             IOW_Graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
             IOW_Graphics.Clear(Color.White);
-            Font font = new Font(Settings.Instance.Font, (float) Settings.Instance.FontSize);
+            Font font = new Font(Settings.Instance.Font, (float)Settings.Instance.FontSize);
             int length = _line1.Length;
             while (IOW_Graphics.MeasureString(_line1.Substring(0, length), font).Width > textBounds.Width)
             {

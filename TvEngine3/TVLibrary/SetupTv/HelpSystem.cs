@@ -28,21 +28,21 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Net;
 using System.IO;
-
 using TvLibrary.Log;
 
 namespace SetupTv
 {
   public static class HelpSystem
   {
-    static readonly string helpReferencesFile = String.Format(@"{0}\HelpReferences.xml", Log.GetPathName());
+    private static readonly string helpReferencesFile = String.Format(@"{0}\HelpReferences.xml", Log.GetPathName());
     private const string helpReferencesURL = @"http://install.team-mediaportal.com/MP1/HelpReferences_TVServer.xml";
 
     public static void ShowHelp(string sectionName)
     {
       if (!File.Exists(helpReferencesFile))
       {
-        MessageBox.Show("No help reference found.\r\nPlease update your help references by pressing 'Update Help' on Project Section.");
+        MessageBox.Show(
+          "No help reference found.\r\nPlease update your help references by pressing 'Update Help' on Project Section.");
         return;
       }
 
@@ -69,7 +69,10 @@ namespace SetupTv
       }
 
       Log.Error("No help reference found for section: {0}", sectionName);
-      MessageBox.Show(String.Format("No help reference found for section:\r\n       {0}\r\n\r\nPlease update your help references by pressing 'Update Help' on Project Section.", sectionName));
+      MessageBox.Show(
+        String.Format(
+          "No help reference found for section:\r\n       {0}\r\n\r\nPlease update your help references by pressing 'Update Help' on Project Section.",
+          sectionName));
     }
 
     public static void UpdateHelpReferences()
@@ -90,7 +93,7 @@ namespace SetupTv
           // wr.Proxy = WebProxy.GetDefaultProxy();
           request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception) {}
         Application.DoEvents();
 
         using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
@@ -118,7 +121,8 @@ namespace SetupTv
         File.Move(helpReferencesTemp, helpReferencesFile);
 
         MessageBox.Show("HelpReferences update succeeded.");
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Error("EXCEPTION in UpdateHelpReferences | {0}\r\n{1}", ex.Message, ex.Source);
         MessageBox.Show("HelpReferences update failed.");

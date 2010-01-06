@@ -59,9 +59,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("label2")] protected string _tagLabel2 = "";
     [XMLSkinElement("font1")] protected string _fontName1 = string.Empty;
     [XMLSkinElement("font2")] protected string _fontName2 = string.Empty;
-    [XMLSkinElement("textcolor1")] protected long _textColor1 = (long) 0xFFFFFFFF;
-    [XMLSkinElement("textcolor2")] protected long _textColor2 = (long) 0xFFFFFFFF;
-    [XMLSkinElement("disabledColor")] protected long _disabledColor = (long) 0xFF606060;
+    [XMLSkinElement("textcolor1")] protected long _textColor1 = (long)0xFFFFFFFF;
+    [XMLSkinElement("textcolor2")] protected long _textColor2 = (long)0xFFFFFFFF;
+    [XMLSkinElement("disabledColor")] protected long _disabledColor = (long)0xFF606060;
     protected int _hyperLinkWindowId = -1;
     protected int _actionId = -1;
     protected string _scriptAction = "";
@@ -95,9 +95,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// empty constructor
     /// </summary>
-    public GUIButton3PartControl()
-    {
-    }
+    public GUIButton3PartControl() {}
 
     /// <summary>
     /// The basic constructur of the GUIControl class.
@@ -299,7 +297,7 @@ namespace MediaPortal.GUI.Library
       if (_imageNonFocusedMid.IsVisible && _cachedTextLabel1.Length > 0)
       {
         int widthLeft =
-          (int) ((float) _imageFocusedLeft.TextureWidth*((float) _height/(float) _imageFocusedLeft.TextureHeight));
+          (int)((float)_imageFocusedLeft.TextureWidth * ((float)_height / (float)_imageFocusedLeft.TextureHeight));
         int xoff = _textOffsetX1 + widthLeft;
 
         if (Disabled)
@@ -322,7 +320,7 @@ namespace MediaPortal.GUI.Library
       if (_imageNonFocusedMid.IsVisible && _cachedTextLabel2.Length > 0)
       {
         int widthLeft =
-          (int) ((float) _imageFocusedLeft.TextureWidth*((float) _height/(float) _imageFocusedLeft.TextureHeight));
+          (int)((float)_imageFocusedLeft.TextureWidth * ((float)_height / (float)_imageFocusedLeft.TextureHeight));
         int xoff = _textOffsetX2 + widthLeft;
 
         if (Disabled)
@@ -380,14 +378,14 @@ namespace MediaPortal.GUI.Library
           if (_hyperLinkWindowId >= 0)
           {
             //then switch to the other window
-            GUIWindowManager.ActivateWindow((int) _hyperLinkWindowId);
+            GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId);
             return;
           }
 
           // If this button corresponds to an action generate that action.
           if (ActionID >= 0)
           {
-            Action newaction = new Action((Action.ActionType) ActionID, 0, 0);
+            Action newaction = new Action((Action.ActionType)ActionID, 0, 0);
             GUIGraphicsContext.OnAction(newaction);
             return;
           }
@@ -903,9 +901,9 @@ namespace MediaPortal.GUI.Library
       int width;
 
       int widthLeft =
-        (int) ((float) _imageFocusedLeft.TextureWidth*((float) _height/(float) _imageFocusedLeft.TextureHeight));
+        (int)((float)_imageFocusedLeft.TextureWidth * ((float)_height / (float)_imageFocusedLeft.TextureHeight));
       int widthRight =
-        (int) ((float) _imageFocusedRight.TextureWidth*((float) _height/(float) _imageFocusedRight.TextureHeight));
+        (int)((float)_imageFocusedRight.TextureWidth * ((float)_height / (float)_imageFocusedRight.TextureHeight));
       int widthMid = _width - widthLeft - widthRight;
       if (widthMid < 0)
       {
@@ -1023,13 +1021,13 @@ namespace MediaPortal.GUI.Library
             _imageIcon.Width = _width;
             iWidth = _width;
           }
-          int offset = (iWidth + iWidth/2);
+          int offset = (iWidth + iWidth / 2);
           if (offset > _width)
           {
             offset = _width;
           }
           _imageIcon.SetPosition(_positionX + (_width) - offset,
-                                 _positionY + (_height/2) - (_imageIcon.TextureHeight/2));
+                                 _positionY + (_height / 2) - (_imageIcon.TextureHeight / 2));
         }
         else
         {

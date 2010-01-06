@@ -194,7 +194,7 @@ namespace TvEngine
     #region Import methods
 
     private void ImportThread()
-    {      
+    {
       try
       {
         _isImporting = true;

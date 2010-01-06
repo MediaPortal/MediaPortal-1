@@ -20,8 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#endregion
 
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -64,6 +64,7 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     Hibernate = -2,
   }
+
   /// <summary>
   /// An LUID is a 64-bit value guaranteed to be unique only on the system on which it was generated. The uniqueness of a locally unique identifier (LUID) is guaranteed only until the system is restarted.
   /// </summary>
@@ -74,11 +75,13 @@ namespace TvEngine.PowerScheduler
     /// The low order part of the 64 bit value.
     /// </summary>
     public int LowPart;
+
     /// <summary>
     /// The high order part of the 64 bit value.
     /// </summary>
     public int HighPart;
   }
+
   /// <summary>
   /// The LUID_AND_ATTRIBUTES structure represents a locally unique identifier (LUID) and its attributes.
   /// </summary>
@@ -89,11 +92,13 @@ namespace TvEngine.PowerScheduler
     /// Specifies an LUID value.
     /// </summary>
     public LUID pLuid;
+
     /// <summary>
     /// Specifies attributes of the LUID. This value contains up to 32 one-bit flags. Its meaning is dependent on the definition and use of the LUID.
     /// </summary>
     public int Attributes;
   }
+
   /// <summary>
   /// The TOKEN_PRIVILEGES structure contains information about a set of privileges for an access token.
   /// </summary>
@@ -104,21 +109,25 @@ namespace TvEngine.PowerScheduler
     /// Specifies the number of entries in the Privileges array.
     /// </summary>
     public int PrivilegeCount;
+
     /// <summary>
     /// Specifies an array of LUID_AND_ATTRIBUTES structures. Each structure contains the LUID and attributes of a privilege.
     /// </summary>
     public LUID_AND_ATTRIBUTES Privileges;
   }
+
   /// <summary>
   /// Implements methods to exit Windows.
   /// </summary>
   public class WindowsController
   {
     public delegate void AfterExitWindowsHandler(RestartOptions how, bool force, bool result);
+
     public delegate void ExitWindowsHandler(RestartOptions how, bool force, AfterExitWindowsHandler after);
+
     private static ExitWindowsHandler _exitWindows = ExitWindowsDefault;
 
-    public static ExitWindowsHandler HookExitWindows( ExitWindowsHandler handler )
+    public static ExitWindowsHandler HookExitWindows(ExitWindowsHandler handler)
     {
       Log.Debug("WindowsController: Setting ExitWindows to {0}.{1}", handler.Target, handler.Method);
 
@@ -167,7 +176,7 @@ namespace TvEngine.PowerScheduler
     /// <returns></returns>
     protected static void ExitWindowsDefault(RestartOptions how, bool force, AfterExitWindowsHandler after)
     {
-      ExitWindowsDefaultEnv env= new ExitWindowsDefaultEnv();
+      ExitWindowsDefaultEnv env = new ExitWindowsDefaultEnv();
       env.how = how;
       env.force = force;
       env.after = after;
@@ -178,7 +187,7 @@ namespace TvEngine.PowerScheduler
 
     protected static void ExitWindowsDefaultThread(object _data)
     {
-      ExitWindowsDefaultEnv env = (ExitWindowsDefaultEnv) _data;
+      ExitWindowsDefaultEnv env = (ExitWindowsDefaultEnv)_data;
       RestartOptions how = env.how;
       bool force = env.force;
       Log.Debug("WindowsController: Performing ExitWindows {0}, force: {1}", how, force);
@@ -202,14 +211,19 @@ namespace TvEngine.PowerScheduler
 
     /// <summary>Required to enable or disable the privileges in an access token.</summary>
     private const int TOKEN_ADJUST_PRIVILEGES = 0x20;
+
     /// <summary>Required to query an access token.</summary>
     private const int TOKEN_QUERY = 0x8;
+
     /// <summary>The privilege is enabled.</summary>
     private const int SE_PRIVILEGE_ENABLED = 0x2;
+
     /// <summary>Specifies that the function should search the system message-table resource(s) for the requested message.</summary>
     private const int FORMAT_MESSAGE_FROM_SYSTEM = 0x1000;
+
     /// <summary>Forces processes to terminate. When this flag is set, the system does not send the WM_QUERYENDSESSION and WM_ENDSESSION messages. This can cause the applications to lose data. Therefore, you should only use this flag in an emergency.</summary>
     private const int EWX_FORCE = 4;
+
     /// <summary>
     /// The LoadLibrary function maps the specified executable module into the address space of the calling process.
     /// </summary>
@@ -217,6 +231,7 @@ namespace TvEngine.PowerScheduler
     /// <returns>If the function succeeds, the return value is a handle to the module.<br></br><br>If the function fails, the return value is NULL. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
     [DllImport("kernel32.dll", EntryPoint = "LoadLibraryA", CharSet = CharSet.Ansi)]
     private static extern IntPtr LoadLibrary(string lpLibFileName);
+
     /// <summary>
     /// The FreeLibrary function decrements the reference count of the loaded dynamic-link library (DLL). When the reference count reaches zero, the module is unmapped from the address space of the calling process and the handle is no longer valid.
     /// </summary>
@@ -224,6 +239,7 @@ namespace TvEngine.PowerScheduler
     /// <returns>If the function succeeds, the return value is nonzero.<br></br><br>If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
     [DllImport("kernel32.dll", EntryPoint = "FreeLibrary", CharSet = CharSet.Ansi)]
     private static extern int FreeLibrary(IntPtr hLibModule);
+
     /// <summary>
     /// The GetProcAddress function retrieves the address of an exported function or variable from the specified dynamic-link library (DLL).
     /// </summary>
@@ -232,6 +248,7 @@ namespace TvEngine.PowerScheduler
     /// <returns>If the function succeeds, the return value is the address of the exported function or variable.<br></br><br>If the function fails, the return value is NULL. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
     [DllImport("kernel32.dll", EntryPoint = "GetProcAddress", CharSet = CharSet.Ansi)]
     private static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
+
     /// <summary>
     /// The SetSuspendState function suspends the system by shutting power down. Depending on the Hibernate parameter, the system either enters a suspend (sleep) state or hibernation (S4). If the ForceFlag parameter is TRUE, the system suspends operation immediately; if it is FALSE, the system requests permission from all applications and device drivers before doing so.
     /// </summary>
@@ -241,6 +258,7 @@ namespace TvEngine.PowerScheduler
     /// <returns>If the function succeeds, the return value is nonzero.<br></br><br>If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
     [DllImport("powrprof.dll", EntryPoint = "SetSuspendState", CharSet = CharSet.Ansi)]
     private static extern int SetSuspendState(int Hibernate, int ForceCritical, int DisableWakeEvent);
+
     /// <summary>
     /// The OpenProcessToken function opens the access token associated with a process.
     /// </summary>
@@ -250,6 +268,7 @@ namespace TvEngine.PowerScheduler
     /// <returns>If the function succeeds, the return value is nonzero.<br></br><br>If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
     [DllImport("advapi32.dll", EntryPoint = "OpenProcessToken", CharSet = CharSet.Ansi)]
     private static extern int OpenProcessToken(IntPtr ProcessHandle, int DesiredAccess, ref IntPtr TokenHandle);
+
     /// <summary>
     /// The LookupPrivilegeValue function retrieves the locally unique identifier (LUID) used on a specified system to locally represent the specified privilege name.
     /// </summary>
@@ -259,6 +278,7 @@ namespace TvEngine.PowerScheduler
     /// <returns>If the function succeeds, the return value is nonzero.<br></br><br>If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
     [DllImport("advapi32.dll", EntryPoint = "LookupPrivilegeValueA", CharSet = CharSet.Ansi)]
     private static extern int LookupPrivilegeValue(string lpSystemName, string lpName, ref LUID lpLuid);
+
     /// <summary>
     /// The AdjustTokenPrivileges function enables or disables privileges in the specified access token. Enabling or disabling privileges in an access token requires TOKEN_ADJUST_PRIVILEGES access.
     /// </summary>
@@ -270,7 +290,10 @@ namespace TvEngine.PowerScheduler
     /// <param name="ReturnLength">Pointer to a variable that receives the required size, in bytes, of the buffer pointed to by the PreviousState parameter. This parameter can be NULL if PreviousState is NULL.</param>
     /// <returns>If the function succeeds, the return value is nonzero. To determine whether the function adjusted all of the specified privileges, call Marshal.GetLastWin32Error.</returns>
     [DllImport("advapi32.dll", EntryPoint = "AdjustTokenPrivileges", CharSet = CharSet.Ansi)]
-    private static extern int AdjustTokenPrivileges(IntPtr TokenHandle, int DisableAllPrivileges, ref TOKEN_PRIVILEGES NewState, int BufferLength, ref TOKEN_PRIVILEGES PreviousState, ref int ReturnLength);
+    private static extern int AdjustTokenPrivileges(IntPtr TokenHandle, int DisableAllPrivileges,
+                                                    ref TOKEN_PRIVILEGES NewState, int BufferLength,
+                                                    ref TOKEN_PRIVILEGES PreviousState, ref int ReturnLength);
+
     /// <summary>
     /// The ExitWindowsEx function either logs off the current user, shuts down the system, or shuts down and restarts the system. It sends the WM_QUERYENDSESSION message to all applications to determine if they can be terminated.
     /// </summary>
@@ -279,6 +302,7 @@ namespace TvEngine.PowerScheduler
     /// <returns>If the function succeeds, the return value is nonzero.<br></br><br>If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
     [DllImport("user32.dll", EntryPoint = "ExitWindowsEx", CharSet = CharSet.Ansi)]
     private static extern int ExitWindowsEx(int uFlags, int dwReserved);
+
     /// <summary>
     /// The FormatMessage function formats a message string. The function requires a message definition as input. The message definition can come from a buffer passed into the function. It can come from a message table resource in an already-loaded module. Or the caller can ask the function to search the system's message table resource(s) for the message definition. The function finds the message definition in a message table resource based on a message identifier and a language identifier. The function copies the formatted message text to an output buffer, processing any embedded insert sequences if requested.
     /// </summary>
@@ -291,7 +315,9 @@ namespace TvEngine.PowerScheduler
     /// <param name="Arguments">Pointer to an array of values that are used as insert values in the formatted message. A %1 in the format string indicates the first value in the Arguments array; a %2 indicates the second argument; and so on.</param>
     /// <returns>If the function succeeds, the return value is the number of TCHARs stored in the output buffer, excluding the terminating null character.<br></br><br>If the function fails, the return value is zero. To get extended error information, call Marshal.GetLastWin32Error.</br></returns>
     [DllImport("user32.dll", EntryPoint = "FormatMessageA", CharSet = CharSet.Ansi)]
-    private static extern int FormatMessage(int dwFlags, IntPtr lpSource, int dwMessageId, int dwLanguageId, StringBuilder lpBuffer, int nSize, int Arguments);
+    private static extern int FormatMessage(int dwFlags, IntPtr lpSource, int dwMessageId, int dwLanguageId,
+                                            StringBuilder lpBuffer, int nSize, int Arguments);
+
     /// <summary>
     /// Exits windows (and tries to enable any required access rights, if necesarry).
     /// </summary>
@@ -307,6 +333,7 @@ namespace TvEngine.PowerScheduler
         how = how | EWX_FORCE;
       return ExitWindowsEx(how, 0) != 0;
     }
+
     /// <summary>
     /// Tries to enable the specified privilege.
     /// </summary>
@@ -315,13 +342,16 @@ namespace TvEngine.PowerScheduler
     /// <remarks>Thanks to Michael S. Muegel for notifying us about a bug in this code.</remarks>
     protected static void EnableToken(string privilege)
     {
-      if (Environment.OSVersion.Platform != PlatformID.Win32NT || !CheckEntryPoint("advapi32.dll", "AdjustTokenPrivileges"))
+      if (Environment.OSVersion.Platform != PlatformID.Win32NT ||
+          !CheckEntryPoint("advapi32.dll", "AdjustTokenPrivileges"))
         return;
       IntPtr tokenHandle = IntPtr.Zero;
       LUID privilegeLUID = new LUID();
       TOKEN_PRIVILEGES newPrivileges = new TOKEN_PRIVILEGES();
       TOKEN_PRIVILEGES tokenPrivileges;
-      if (OpenProcessToken(Process.GetCurrentProcess().Handle, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, ref tokenHandle) == 0)
+      if (
+        OpenProcessToken(Process.GetCurrentProcess().Handle, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, ref tokenHandle) ==
+        0)
         throw new PrivilegeException(FormatError(Marshal.GetLastWin32Error()));
       if (LookupPrivilegeValue("", privilege, ref privilegeLUID) == 0)
         throw new PrivilegeException(FormatError(Marshal.GetLastWin32Error()));
@@ -329,9 +359,12 @@ namespace TvEngine.PowerScheduler
       tokenPrivileges.Privileges.Attributes = SE_PRIVILEGE_ENABLED;
       tokenPrivileges.Privileges.pLuid = privilegeLUID;
       int size = 4;
-      if (AdjustTokenPrivileges(tokenHandle, 0, ref tokenPrivileges, 4 + (12 * tokenPrivileges.PrivilegeCount), ref newPrivileges, ref size) == 0)
+      if (
+        AdjustTokenPrivileges(tokenHandle, 0, ref tokenPrivileges, 4 + (12 * tokenPrivileges.PrivilegeCount),
+                              ref newPrivileges, ref size) == 0)
         throw new PrivilegeException(FormatError(Marshal.GetLastWin32Error()));
     }
+
     /// <summary>
     /// Checks whether a specified method exists on the local computer.
     /// </summary>
@@ -352,6 +385,7 @@ namespace TvEngine.PowerScheduler
       }
       return false;
     }
+
     /// <summary>
     /// Formats an error number into an error message.
     /// </summary>
@@ -371,6 +405,7 @@ namespace TvEngine.PowerScheduler
       }
     }
   }
+
   /// <summary>
   /// The exception that is thrown when an error occures when requesting a specific privilege.
   /// </summary>
@@ -379,11 +414,12 @@ namespace TvEngine.PowerScheduler
     /// <summary>
     /// Initializes a new instance of the PrivilegeException class.
     /// </summary>
-    public PrivilegeException() : base() { }
+    public PrivilegeException() : base() {}
+
     /// <summary>
     /// Initializes a new instance of the PrivilegeException class with a specified error message.
     /// </summary>
     /// <param name="message">The message that describes the error.</param>
-    public PrivilegeException(string message) : base(message) { }
+    public PrivilegeException(string message) : base(message) {}
   }
 }

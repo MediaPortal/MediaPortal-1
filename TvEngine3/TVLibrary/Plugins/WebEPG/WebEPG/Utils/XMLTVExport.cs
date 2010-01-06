@@ -41,12 +41,12 @@ namespace MediaPortal.WebEPG
     : IEpgDataSink
   {
     #region Variables
-    
+
     private XmlTextWriter _writer;
     private string _xmltvTempFile;
     private string _xmltvFile;
     private string _currentChannelName;
-    
+
     #endregion
 
     #region ctor
@@ -70,7 +70,6 @@ namespace MediaPortal.WebEPG
       }
       return 0;
     }
-
 
     #endregion
 
@@ -112,9 +111,7 @@ namespace MediaPortal.WebEPG
       return true;
     }
 
-    void IEpgDataSink.SetTimeWindow(TimeRange window)
-    {
-    }
+    void IEpgDataSink.SetTimeWindow(TimeRange window) {}
 
     void IEpgDataSink.WriteProgram(ProgramData programData, bool merged)
     {
@@ -124,7 +121,7 @@ namespace MediaPortal.WebEPG
         channelId = "[Merged]";
       }
 
-      if (programData.StartTime != null && 
+      if (programData.StartTime != null &&
           programData.ChannelId != string.Empty &&
           programData.Title != string.Empty)
       {
@@ -205,9 +202,7 @@ namespace MediaPortal.WebEPG
       }
     }
 
-    void IEpgDataSink.EndChannelPrograms(string id, string name)
-    {
-    }
+    void IEpgDataSink.EndChannelPrograms(string id, string name) {}
 
     #endregion
   }

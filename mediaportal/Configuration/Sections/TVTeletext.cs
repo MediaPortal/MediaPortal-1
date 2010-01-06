@@ -46,9 +46,7 @@ namespace MediaPortal.Configuration.Sections
     public int pluginVersion;
 
     public TVTeletext()
-      : this("TV Teletext")
-    {
-    }
+      : this("TV Teletext") {}
 
     public TVTeletext(string name)
       : base(name)
@@ -99,7 +97,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButton1 = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.nudFontSize = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
       this.groupBox1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.nudFontSize)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.nudFontSize)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBox1
@@ -124,7 +122,7 @@ namespace MediaPortal.Configuration.Sections
       this.FontSizeValueLbl.AutoSize = true;
       this.FontSizeValueLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
                                                            System.Drawing.FontStyle.Regular,
-                                                           System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+                                                           System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.FontSizeValueLbl.Location = new System.Drawing.Point(134, 99);
       this.FontSizeValueLbl.Name = "FontSizeValueLbl";
       this.FontSizeValueLbl.Size = new System.Drawing.Size(105, 13);
@@ -209,7 +207,7 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.nudFontSize)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.nudFontSize)).EndInit();
       this.ResumeLayout(false);
     }
 

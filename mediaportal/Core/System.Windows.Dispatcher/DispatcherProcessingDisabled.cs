@@ -29,9 +29,7 @@ namespace System.Windows.Dispatcher
   {
     #region Methods
 
-    public void Dispose()
-    {
-    }
+    public void Dispose() {}
 
     public override bool Equals(object obj)
     {

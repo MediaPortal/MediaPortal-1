@@ -290,7 +290,7 @@ namespace Rss
                     break;
                   case "category":
                     category = new RssCategory();
-                    if ((string) xmlNodeStack.Peek() == "channel")
+                    if ((string)xmlNodeStack.Peek() == "channel")
                     {
                       channel.Categories.Add(category);
                     }
@@ -435,8 +435,8 @@ namespace Rss
                 {
                   break;
                 }
-                string childElementName = (string) xmlNodeStack.Pop();
-                string parentElementName = (string) xmlNodeStack.Peek();
+                string childElementName = (string)xmlNodeStack.Pop();
+                string parentElementName = (string)xmlNodeStack.Peek();
                 switch (childElementName) // current element
                 {
                     // item classes

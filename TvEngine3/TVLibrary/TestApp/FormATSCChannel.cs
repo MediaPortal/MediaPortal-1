@@ -7,7 +7,8 @@ namespace TestApp
 {
   public partial class FormATSCChannel : Form
   {
-    ATSCChannel _channel = new ATSCChannel();
+    private ATSCChannel _channel = new ATSCChannel();
+
     public FormATSCChannel()
     {
       InitializeComponent();
@@ -15,10 +16,7 @@ namespace TestApp
 
     public IChannel Channel
     {
-      get
-      {
-        return _channel;
-      }
+      get { return _channel; }
       set
       {
         _channel = (ATSCChannel)value;

@@ -39,9 +39,7 @@ namespace System.Windows.Controls
       TopProperty = DependencyProperty.Register("Top", typeof (double), typeof (Canvas));
     }
 
-    public Canvas()
-    {
-    }
+    public Canvas() {}
 
     #endregion Contructors
 
@@ -54,7 +52,7 @@ namespace System.Windows.Controls
 
     public static double GetBottom(UIElement element)
     {
-      return (double) element.GetValue(BottomProperty);
+      return (double)element.GetValue(BottomProperty);
     }
 
 //		protected override Geometry GetLayoutClip(Size layoutSlotSize)
@@ -63,17 +61,17 @@ namespace System.Windows.Controls
 
     public static double GetLeft(UIElement element)
     {
-      return (double) element.GetValue(LeftProperty);
+      return (double)element.GetValue(LeftProperty);
     }
 
     public static double GetRight(UIElement element)
     {
-      return (double) element.GetValue(RightProperty);
+      return (double)element.GetValue(RightProperty);
     }
 
     public static double GetTop(UIElement element)
     {
-      return (double) element.GetValue(TopProperty);
+      return (double)element.GetValue(TopProperty);
     }
 
     protected override Size MeasureOverride(Size availableSize)

@@ -31,7 +31,6 @@ using MediaPortal.UserInterface.Controls;
 
 namespace SetupTv.Sections.WebEPGConfig
 {
-
   public class GrabberSelectionInfo
   {
     private string channelId;
@@ -45,26 +44,14 @@ namespace SetupTv.Sections.WebEPGConfig
 
     public string ChannelId
     {
-      get
-      {
-        return channelId;
-      }
-      set
-      {
-        channelId = value;
-      }
+      get { return channelId; }
+      set { channelId = value; }
     }
 
     public string GrabberId
     {
-      get
-      {
-        return grabberId;
-      }
-      set
-      {
-        grabberId = value;
-      }
+      get { return grabberId; }
+      set { grabberId = value; }
     }
   }
 
@@ -119,19 +106,19 @@ namespace SetupTv.Sections.WebEPGConfig
       tGrabbers = grabbers;
 
       treeView1.Nodes.Clear();
-      treeView1.Nodes.Add((TreeNode) tGrabbers.Clone());
+      treeView1.Nodes.Add((TreeNode)tGrabbers.Clone());
 
       treeView1.TreeViewNodeSorter = new NodeSorter();
 
       handler = new EventHandler(DoEvent);
-      bSelect.Click += DoSelect;// select_click;
+      bSelect.Click += DoSelect; // select_click;
       bClose.Click += handler;
-      treeView1.DoubleClick += DoSelect;//select_click;
+      treeView1.DoubleClick += DoSelect; //select_click;
     }
 
     public GrabberSelectionInfo Selected
     {
-      get { return (GrabberSelectionInfo) treeView1.SelectedNode.Tag; }
+      get { return (GrabberSelectionInfo)treeView1.SelectedNode.Tag; }
     }
 
     /// <summary>
@@ -258,7 +245,7 @@ namespace SetupTv.Sections.WebEPGConfig
     {
       //			TreeNode sNode = treeView1.SelectedNode;
       this.treeView1.Nodes.Clear();
-      this.treeView1.Nodes.Add((TreeNode) tGrabbers.Clone());
+      this.treeView1.Nodes.Add((TreeNode)tGrabbers.Clone());
     }
 
     private TreeNode FindNode(TreeNode tNode, GrabberSelectionInfo tag)

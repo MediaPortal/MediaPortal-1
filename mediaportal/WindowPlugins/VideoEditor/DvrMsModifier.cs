@@ -33,7 +33,7 @@ using DirectShowLib.SBE;
 using DShowNET.Helper;
 using MediaPortal.Core.Transcoding;
 using MediaPortal.GUI.Library;
-using Timer=System.Timers.Timer;
+using Timer = System.Timers.Timer;
 
 namespace WindowPlugins.VideoEditor
 {
@@ -84,7 +84,7 @@ namespace WindowPlugins.VideoEditor
       {
         cutProgresstime = new Timer(1000);
         cutProgresstime.Elapsed += new ElapsedEventHandler(CutProgresstime_Elapsed);
-        recCompcut = (IStreamBufferRecComp) ClassId.CoCreateInstance(ClassId.RecComp);
+        recCompcut = (IStreamBufferRecComp)ClassId.CoCreateInstance(ClassId.RecComp);
         if (recCompcut != null)
         {
           FileInfo outFilename;
@@ -112,8 +112,8 @@ namespace WindowPlugins.VideoEditor
             //startCut = cutPoints[i].StartTime;
             //endCut = cutPoints[i].EndTime;
 
-            recCompcut.AppendEx(inFilename.FullName, (long) (cutPoints[i].StartTime*10000000),
-                                (long) (cutPoints[i].EndTime*10000000));
+            recCompcut.AppendEx(inFilename.FullName, (long)(cutPoints[i].StartTime * 10000000),
+                                (long)(cutPoints[i].EndTime * 10000000));
           }
           cutProgresstime.Stop();
           recCompcut.Close();
@@ -144,7 +144,7 @@ namespace WindowPlugins.VideoEditor
       }
       finally
       {
-        DirectShowUtil.ReleaseComObject((object) recCompcut);
+        DirectShowUtil.ReleaseComObject((object)recCompcut);
         recCompcut = null;
         cutPoints = null;
         percent = 0;
@@ -221,7 +221,7 @@ namespace WindowPlugins.VideoEditor
       {
         joinProgresstime = new Timer(1000);
         joinProgresstime.Elapsed += new ElapsedEventHandler(JoinProgresstime_Elapsed);
-        recCompcut = (IStreamBufferRecComp) ClassId.CoCreateInstance(ClassId.RecComp);
+        recCompcut = (IStreamBufferRecComp)ClassId.CoCreateInstance(ClassId.RecComp);
         if (recCompcut != null)
         {
           FileInfo outFilename;
@@ -261,7 +261,7 @@ namespace WindowPlugins.VideoEditor
       }
       finally
       {
-        DirectShowUtil.ReleaseComObject((object) recCompcut);
+        DirectShowUtil.ReleaseComObject((object)recCompcut);
         recCompcut = null;
         cutPoints = null;
         percent = 0;
@@ -282,7 +282,7 @@ namespace WindowPlugins.VideoEditor
     {
       if (fileList.Count > 0)
       {
-        percent = (100/fileList.Count)*joinedFiles;
+        percent = (100 / fileList.Count) * joinedFiles;
       }
       if (OnProgress != null)
       {
@@ -303,7 +303,7 @@ namespace WindowPlugins.VideoEditor
       {
         recCompcut.GetCurrentLength(out progress);
       }
-      percent = Convert.ToInt32((progress*100)/newDuration);
+      percent = Convert.ToInt32((progress * 100) / newDuration);
       if (OnProgress != null)
       {
         OnProgress(percent);
@@ -379,7 +379,7 @@ namespace WindowPlugins.VideoEditor
         mpegInfo.Channel = "none";
         mpegInfo.Description = "none";
         //MediaPortal.Player.g_Player.Play(inFilename.FullName);
-        mpegInfo.Duration = (int) newDuration; //(int)MediaPortal.Player.g_Player.Duration;
+        mpegInfo.Duration = (int)newDuration; //(int)MediaPortal.Player.g_Player.Duration;
         //MediaPortal.Player.g_Player.Stop();
         mpegInfo.file = inFilename.FullName;
         mpegInfo.Start = DateTime.Now;
@@ -431,7 +431,7 @@ namespace WindowPlugins.VideoEditor
         divxInfo.Channel = "none";
         divxInfo.Description = "none";
         //MediaPortal.Player.g_Player.Play(inFilename.FullName);
-        divxInfo.Duration = (int) newDuration; //(int)MediaPortal.Player.g_Player.Duration;
+        divxInfo.Duration = (int)newDuration; //(int)MediaPortal.Player.g_Player.Duration;
         //MediaPortal.Player.g_Player.Stop();
         divxInfo.file = inFilename.FullName;
         divxInfo.Start = DateTime.Now;

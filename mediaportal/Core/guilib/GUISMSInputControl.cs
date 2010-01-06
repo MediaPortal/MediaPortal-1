@@ -31,18 +31,24 @@ namespace MediaPortal.GUI.Library
   /// <summary>
   /// Summary description for GUISMSInputControl.
   /// </summary>
-  public class GUISMSInputControl :GUIControl
+  public class GUISMSInputControl : GUIControl
   {
     #region Delegates
+
     public delegate void OnTextChangedHandler();
+
     #endregion
 
     #region Events
+
     public event OnTextChangedHandler OnTextChanged;
+
     #endregion
 
     #region Variables
+
     #region Const
+
     // How often (per second) the caret blinks
     private const float fCARET_BLINK_RATE = 1.0f;
 
@@ -53,22 +59,25 @@ namespace MediaPortal.GUI.Library
     #endregion
 
     #region Skin variables
-    [XMLSkinElement("font")]  protected string _fontName = "font14";
+
+    [XMLSkinElement("font")] protected string _fontName = "font14";
     [XMLSkinElement("font2")] protected string _fontName2 = "font13";
 
-    [XMLSkinElement("textcolor")]  protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
     [XMLSkinElement("textcolor2")] protected long _textColor2 = 0xFFFFFFFF;
 
-    [XMLSkinElement("textboxFont")]    protected string _textBoxFontName = "font13";
-    [XMLSkinElement("textboxXpos")]    protected int _xPositionTextBox = 200;
-    [XMLSkinElement("textboxYpos")]    protected int _yPositionTextBox = 300;
-    [XMLSkinElement("textboxWidth")]   protected int _widthTextBox = 100;
-    [XMLSkinElement("textboxHeight")]  protected int _heightTextBox = 30;
-    [XMLSkinElement("textboxColor")]   protected long _textBoxColor = 0xFFFFFFFF;
+    [XMLSkinElement("textboxFont")] protected string _textBoxFontName = "font13";
+    [XMLSkinElement("textboxXpos")] protected int _xPositionTextBox = 200;
+    [XMLSkinElement("textboxYpos")] protected int _yPositionTextBox = 300;
+    [XMLSkinElement("textboxWidth")] protected int _widthTextBox = 100;
+    [XMLSkinElement("textboxHeight")] protected int _heightTextBox = 30;
+    [XMLSkinElement("textboxColor")] protected long _textBoxColor = 0xFFFFFFFF;
     [XMLSkinElement("textboxBgColor")] protected long _textBoxBackgroundColor = 0xFFFFFFFF;
+
     #endregion
 
     #region Private Variables
+
     private GUIFont _font = null;
     private GUIFont _font2 = null;
     private GUIFont _fontTextBox = null;
@@ -80,22 +89,27 @@ namespace MediaPortal.GUI.Library
     private bool _needRefresh = false;
     private GUIImage _image;
     private DateTime _caretTimer = DateTime.Now;
+
     #endregion
 
     #region Protected Variables
+
     protected string _lineData = "";
     protected int _position = 0;
+
     #endregion
+
     #endregion
 
     #region Constructors/Destructors
+
     public GUISMSInputControl(int dwParentID)
-      : base(dwParentID)
-    {
-    }
+      : base(dwParentID) {}
+
     #endregion
 
     #region Properties
+
     public string Text
     {
       get { return _lineData; }
@@ -251,6 +265,7 @@ namespace MediaPortal.GUI.Library
     #endregion
 
     #region Private Methods
+
     private void CheckTimer()
     {
       TimeSpan ts = DateTime.Now - _timerKey;
@@ -716,7 +731,7 @@ namespace MediaPortal.GUI.Library
           float caretWidth = 0.0f;
           float caretHeight = 0.0f;
           _fontTextBox.GetTextExtent(line, ref caretWidth, ref caretHeight);
-          int x = _xPositionTextBox + (int) caretWidth;
+          int x = _xPositionTextBox + (int)caretWidth;
           _fontTextBox.DrawText(x, _yPositionTextBox, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT, -1);
         }
       }
@@ -735,15 +750,15 @@ namespace MediaPortal.GUI.Library
           _lineData = _lineData.Insert(_position, toAdd.ToString());
         }
         _position++;
-        
+
 
         if (OnTextChanged != null)
         {
           OnTextChanged();
         }
 
-        _previousKey = (char) 0;
-        _currentKey = (char) 0;
+        _previousKey = (char)0;
+        _currentKey = (char)0;
         _timerKey = DateTime.Now;
       }
     }
@@ -767,6 +782,7 @@ namespace MediaPortal.GUI.Library
     #endregion
 
     #region <Base class> Overloads
+
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
@@ -844,13 +860,10 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-          for (int i = 0; i < 10; i++) i++;
-          return base.Focus;
+        for (int i = 0; i < 10; i++) i++;
+        return base.Focus;
       }
-      set
-      {
-         base.Focus = _image.Focus = value;
-      }
+      set { base.Focus = _image.Focus = value; }
     }
 
     public override void OnAction(Action action)
@@ -889,7 +902,7 @@ namespace MediaPortal.GUI.Library
             if (action.m_key != null)
             {
               // Enter key or OK button
-              if (action.m_key.KeyChar == (int) Keys.Enter)
+              if (action.m_key.KeyChar == (int)Keys.Enter)
               {
                 InsertChar(_currentKey);
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED, WindowId, GetID,
@@ -901,9 +914,9 @@ namespace MediaPortal.GUI.Library
                 return;
               }
 
-              if ((action.m_key.KeyChar >= 32) || (action.m_key.KeyChar == (int) Keys.Back))
+              if ((action.m_key.KeyChar >= 32) || (action.m_key.KeyChar == (int)Keys.Back))
               {
-                Press((char) action.m_key.KeyChar);
+                Press((char)action.m_key.KeyChar);
                 return;
               }
             }
@@ -942,6 +955,5 @@ namespace MediaPortal.GUI.Library
     }
 
     #endregion
-
   }
 }

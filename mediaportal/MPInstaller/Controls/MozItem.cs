@@ -185,9 +185,7 @@ namespace Pabo.MozBar
     /// Required method for Designer support - do not modify 
     /// the contents of this method with the code editor.
     /// </summary>
-    private void InitializeComponent()
-    {
-    }
+    private void InitializeComponent() {}
 
     #endregion
 
@@ -576,11 +574,11 @@ namespace Pabo.MozBar
             {
               if (!m_mozPane.IsVerticalScrollBarVisible())
               {
-                this.Width = m_mozPane.Width - (2*m_mozPane.Padding.Horizontal);
+                this.Width = m_mozPane.Width - (2 * m_mozPane.Padding.Horizontal);
               }
               else
               {
-                this.Width = m_mozPane.Width - (2*m_mozPane.Padding.Horizontal) - 3 -
+                this.Width = m_mozPane.Width - (2 * m_mozPane.Padding.Horizontal) - 3 -
                              (SystemInformation.VerticalScrollBarWidth - 2);
               }
             }
@@ -593,18 +591,18 @@ namespace Pabo.MozBar
             {
               case MozItemStyle.Divider:
                 {
-                  this.Height = 2*4;
+                  this.Height = 2 * 4;
                   break;
                 }
 
               case MozItemStyle.Picture:
                 {
-                  this.Height = imageHeight + (2*4);
+                  this.Height = imageHeight + (2 * 4);
                   break;
                 }
               case MozItemStyle.Text:
                 {
-                  this.Height = base.Font.Height + (2*4);
+                  this.Height = base.Font.Height + (2 * 4);
                   break;
                 }
               case MozItemStyle.TextAndPicture:
@@ -614,13 +612,13 @@ namespace Pabo.MozBar
                     case MozTextAlign.Bottom:
                     case MozTextAlign.Top:
                       {
-                        this.Height = imageHeight + (3*4) + base.Font.Height;
+                        this.Height = imageHeight + (3 * 4) + base.Font.Height;
                         break;
                       }
                     case MozTextAlign.Right:
                     case MozTextAlign.Left:
                       {
-                        this.Height = imageHeight + (2*4);
+                        this.Height = imageHeight + (2 * 4);
                         break;
                       }
                   }
@@ -635,11 +633,11 @@ namespace Pabo.MozBar
             {
               if (!m_mozPane.IsHorizontalScrollBarVisible())
               {
-                this.Height = m_mozPane.Height - (2*m_mozPane.Padding.Vertical);
+                this.Height = m_mozPane.Height - (2 * m_mozPane.Padding.Vertical);
               }
               else
               {
-                this.Height = m_mozPane.Height - (2*m_mozPane.Padding.Vertical) - 3 -
+                this.Height = m_mozPane.Height - (2 * m_mozPane.Padding.Vertical) - 3 -
                               (SystemInformation.HorizontalScrollBarHeight - 2);
               }
             }
@@ -653,17 +651,17 @@ namespace Pabo.MozBar
             {
               case MozItemStyle.Divider:
                 {
-                  this.Width = 2*4;
+                  this.Width = 2 * 4;
                   break;
                 }
               case MozItemStyle.Picture:
                 {
-                  this.Width = imageWidth + (2*4);
+                  this.Width = imageWidth + (2 * 4);
                   break;
                 }
               case MozItemStyle.Text:
                 {
-                  this.Width = (2*4) + (int) MeasureString(this.Text);
+                  this.Width = (2 * 4) + (int)MeasureString(this.Text);
                   break;
                 }
               case MozItemStyle.TextAndPicture:
@@ -673,8 +671,8 @@ namespace Pabo.MozBar
                     case MozTextAlign.Bottom:
                     case MozTextAlign.Top:
                       {
-                        int minWidth = 2*4 + imageWidth;
-                        int stringWidth = (2*4) + (int) MeasureString(this.Text);
+                        int minWidth = 2 * 4 + imageWidth;
+                        int stringWidth = (2 * 4) + (int)MeasureString(this.Text);
                         if (stringWidth > minWidth)
                         {
                           this.Width = stringWidth;
@@ -688,7 +686,7 @@ namespace Pabo.MozBar
                     case MozTextAlign.Right:
                     case MozTextAlign.Left:
                       {
-                        this.Width = (3*4) + (int) MeasureString(this.Text) + imageWidth;
+                        this.Width = (3 * 4) + (int)MeasureString(this.Text) + imageWidth;
                         break;
                       }
                   }
@@ -952,18 +950,18 @@ namespace Pabo.MozBar
               // Check MozPane orientation
               if (m_mozPane.Style == MozPaneStyle.Vertical)
               {
-                ptY = borderRect.Top + (borderRect.Height/2);
+                ptY = borderRect.Top + (borderRect.Height / 2);
                 e.Graphics.DrawLine(dividerPen, borderRect.Left, ptY, borderRect.Right, ptY);
               }
               else
               {
-                ptX = borderRect.Left + (borderRect.Width/2);
+                ptX = borderRect.Left + (borderRect.Width / 2);
                 e.Graphics.DrawLine(dividerPen, ptX, borderRect.Top, ptX, borderRect.Bottom);
               }
             }
             else
             {
-              ptY = borderRect.Top + (borderRect.Height/2);
+              ptY = borderRect.Top + (borderRect.Height / 2);
               e.Graphics.DrawLine(dividerPen, borderRect.Left, ptY, borderRect.Right, ptY);
             }
 
@@ -994,8 +992,8 @@ namespace Pabo.MozBar
             if (image != null)
             {
               // center image
-              imageRect.X = ((borderRect.Width/2) - (imageRect.Width/2));
-              imageRect.Y = ((borderRect.Height/2) - (imageRect.Height/2));
+              imageRect.X = ((borderRect.Width / 2) - (imageRect.Width / 2));
+              imageRect.Y = ((borderRect.Height / 2) - (imageRect.Height / 2));
               if (m_state == MozItemState.Selected)
               {
                 imageRect.X += 1;
@@ -1025,49 +1023,49 @@ namespace Pabo.MozBar
               case MozTextAlign.Bottom:
                 {
                   f.Alignment = StringAlignment.Center;
-                  textRect.Height = this.Font.Height + (2*4);
+                  textRect.Height = this.Font.Height + (2 * 4);
                   textRect.Y = borderRect.Bottom - textRect.Height;
                   textRect.X = borderRect.X;
                   textRect.Width = borderRect.Width;
 
                   imageRect.Y = borderRect.Top + 2;
-                  imageRect.X = ((borderRect.Width/2) - imageRect.Width/2);
+                  imageRect.X = ((borderRect.Width / 2) - imageRect.Width / 2);
                   break;
                 }
               case MozTextAlign.Top:
                 {
                   f.Alignment = StringAlignment.Center;
-                  textRect.Height = this.Font.Height + (2*4);
+                  textRect.Height = this.Font.Height + (2 * 4);
                   textRect.Y = borderRect.Top;
                   textRect.X = borderRect.X;
                   textRect.Width = borderRect.Width;
 
                   imageRect.Y = borderRect.Bottom - 2 - imageRect.Height;
-                  imageRect.X = ((borderRect.Width/2) - imageRect.Width/2);
+                  imageRect.X = ((borderRect.Width / 2) - imageRect.Width / 2);
                   break;
                 }
               case MozTextAlign.Right:
                 {
                   f.Alignment = StringAlignment.Near;
-                  textRect.Height = borderRect.Height - 2*4;
+                  textRect.Height = borderRect.Height - 2 * 4;
                   textRect.Y = borderRect.Top + 4;
                   textRect.X = borderRect.X + 4 + imageRect.Width + 4;
                   textRect.Width = borderRect.Width - 4 - imageRect.Width;
 
                   imageRect.X = 4;
-                  imageRect.Y = ((borderRect.Height/2) - (imageRect.Height/2));
+                  imageRect.Y = ((borderRect.Height / 2) - (imageRect.Height / 2));
                   break;
                 }
               case MozTextAlign.Left:
                 {
                   f.Alignment = StringAlignment.Near;
-                  textRect.Height = borderRect.Height - 2*4;
+                  textRect.Height = borderRect.Height - 2 * 4;
                   textRect.Y = borderRect.Top + 4;
                   textRect.X = borderRect.X + 4;
                   textRect.Width = borderRect.Width - 4 - imageRect.Width;
 
                   imageRect.X = borderRect.Right - 4 - imageRect.Width;
-                  imageRect.Y = ((borderRect.Height/2) - (imageRect.Height/2));
+                  imageRect.Y = ((borderRect.Height / 2) - (imageRect.Height / 2));
                   break;
                 }
             }
@@ -1447,9 +1445,7 @@ namespace Pabo.MozBar
 
   public class MozItemDesigner : ControlDesigner
   {
-    public MozItemDesigner()
-    {
-    }
+    public MozItemDesigner() {}
 
     protected override void OnPaintAdornments(PaintEventArgs pe)
     {

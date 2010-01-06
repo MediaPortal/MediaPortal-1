@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
@@ -167,7 +167,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         if (window.ToString().IndexOf("DIALOG") == -1)
         {
-          switch (((int) Enum.Parse(typeof (GUIWindow.Window), window.ToString())))
+          switch (((int)Enum.Parse(typeof (GUIWindow.Window), window.ToString())))
           {
             case 100:
             case 0x65:
@@ -473,14 +473,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       bool isExpanded = false;
       TreeNode selectedNode = this.treeMapping.SelectedNode;
       isExpanded = selectedNode.IsExpanded;
-      if ((((((Data) selectedNode.Tag).Type == "MESSAGE") || (((Data) selectedNode.Tag).Type == "LINE")) ||
-           ((((Data) selectedNode.Tag).Type == "IMAGE") || (((Data) selectedNode.Tag).Type == "PROCESS"))) ||
-          ((((Data) selectedNode.Tag).Type == "CONDITION") || (((Data) selectedNode.Tag).Type == "SUBCONDITION")))
+      if ((((((Data)selectedNode.Tag).Type == "MESSAGE") || (((Data)selectedNode.Tag).Type == "LINE")) ||
+           ((((Data)selectedNode.Tag).Type == "IMAGE") || (((Data)selectedNode.Tag).Type == "PROCESS"))) ||
+          ((((Data)selectedNode.Tag).Type == "CONDITION") || (((Data)selectedNode.Tag).Type == "SUBCONDITION")))
       {
         if (selectedNode.Index < (selectedNode.Parent.Nodes.Count - 1))
         {
           int index = selectedNode.Index + 1;
-          TreeNode node = (TreeNode) selectedNode.Clone();
+          TreeNode node = (TreeNode)selectedNode.Clone();
           TreeNode parent = selectedNode.Parent;
           selectedNode.Remove();
           if (isExpanded)
@@ -502,7 +502,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       TreeNode node3;
       Log.Info("buttonNew_Click(): ADDING NEW NODE");
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data) selectedNode.Tag;
+      Data tag = (Data)selectedNode.Tag;
       TreeNode node = new TreeNode("Idle (NEW MESSAGE)");
       node.Tag = new Data("MESSAGE", "STATUS", "Idle");
       TreeNode node5 = new TreeNode("WINDOWS");
@@ -522,7 +522,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       switch (tag.Type)
       {
         case "SECTION":
-          switch (((string) tag.Parameter))
+          switch (((string)tag.Parameter))
           {
             case "STATUSMESSAGES":
               {
@@ -553,7 +553,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                 for (int i = 0; i < 8; i++)
                 {
                   TreeNode node13 = new TreeNode("Byte #" + i.ToString());
-                  node13.Tag = new Data("BYTE", i, (byte) 0);
+                  node13.Tag = new Data("BYTE", i, (byte)0);
                   node3.Nodes.Add(node13);
                 }
                 node3.ExpandAll();
@@ -584,7 +584,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             for (int j = 0; j < 8; j++)
             {
               TreeNode node14 = new TreeNode("Byte #" + j.ToString());
-              node14.Tag = new Data("BYTE", j, (byte) 0);
+              node14.Tag = new Data("BYTE", j, (byte)0);
               node3.Nodes.Add(node14);
             }
             node3.ExpandAll();
@@ -632,7 +632,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
         case "CONDITION":
           string str3;
-          if (((str3 = (string) tag.Parameter) == null) || (!(str3 == "And") && !(str3 == "Or")))
+          if (((str3 = (string)tag.Parameter) == null) || (!(str3 == "And") && !(str3 == "Or")))
           {
             Log.Info("buttonNew_Click(): adding new CONDITION node");
             selectedNode.Parent.Nodes.Add(node9);
@@ -670,11 +670,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void buttonRemove_Click(object sender, EventArgs e)
     {
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data) selectedNode.Tag;
+      Data tag = (Data)selectedNode.Tag;
       if (((tag.Type == "COMMAND") || (tag.Type == "SOUND")) || (tag.Type == "CONDITION"))
       {
         selectedNode = this.getNode("CONDITION");
-        tag = (Data) selectedNode.Tag;
+        tag = (Data)selectedNode.Tag;
       }
       if (
         MessageBox.Show(this, "Are you sure you want to remove this " + tag.Type.ToLower() + "?",
@@ -691,16 +691,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       bool isExpanded = false;
       TreeNode selectedNode = this.treeMapping.SelectedNode;
       isExpanded = selectedNode.IsExpanded;
-      if ((((((Data) selectedNode.Tag).Type == "MESSAGE") || (((Data) selectedNode.Tag).Type == "LINE")) ||
-           ((((Data) selectedNode.Tag).Type == "IMAGE") || (((Data) selectedNode.Tag).Type == "PROCESS"))) ||
-          ((((Data) selectedNode.Tag).Type == "CONDITION") || (((Data) selectedNode.Tag).Type == "SUBCONDITION")))
+      if ((((((Data)selectedNode.Tag).Type == "MESSAGE") || (((Data)selectedNode.Tag).Type == "LINE")) ||
+           ((((Data)selectedNode.Tag).Type == "IMAGE") || (((Data)selectedNode.Tag).Type == "PROCESS"))) ||
+          ((((Data)selectedNode.Tag).Type == "CONDITION") || (((Data)selectedNode.Tag).Type == "SUBCONDITION")))
       {
         if (selectedNode.Index > 0)
         {
           int index = selectedNode.Index - 1;
-          TreeNode node = (TreeNode) selectedNode.Clone();
+          TreeNode node = (TreeNode)selectedNode.Clone();
           TreeNode parent = selectedNode.Parent;
-          if (((Data) selectedNode.Parent.Nodes[index].Tag).Type == "WINDOWLIST")
+          if (((Data)selectedNode.Parent.Nodes[index].Tag).Type == "WINDOWLIST")
           {
             return;
           }
@@ -722,12 +722,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       if (!this._CharacterDrawMode)
       {
-        string name = ((CheckBox) sender).Name;
+        string name = ((CheckBox)sender).Name;
         int row = int.Parse(name.Substring(3, 1));
         int num2 = int.Parse(name.Substring(5, 1));
-        if (((CheckBox) sender).CheckState == CheckState.Checked)
+        if (((CheckBox)sender).CheckState == CheckState.Checked)
         {
-          ((CheckBox) sender).CheckState = CheckState.Indeterminate;
+          ((CheckBox)sender).CheckState = CheckState.Indeterminate;
         }
         Log.Info("CharBitmap_CheckedChanged(): bit changed - row = {0}, bit = {1}", new object[] {row, num2});
         byte newValue = 0;
@@ -736,9 +736,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           if (this.GetCharacterPixel(row, i))
           {
-            newValue = (byte) (newValue + num4);
+            newValue = (byte)(newValue + num4);
           }
-          num4 = (byte) (num4 >> 1);
+          num4 = (byte)(num4 >> 1);
         }
         if (this.CharacterEditNode != null)
         {
@@ -775,13 +775,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void comboBoxAlignment_SelectionChangeCommitted(object sender, EventArgs e)
     {
       TreeNode node = this.getNode("LINE");
-      Data tag = (Data) node.Tag;
+      Data tag = (Data)node.Tag;
       Log.Info(
         "comboBoxAlignment_SelectionChangeCommitted(): DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}",
         new object[] {tag.Type, tag.Parameter, tag.Value, this.comboBoxAlignment.SelectedItem.ToString()});
       node.Tag = new Data("LINE", "ALIGNMENT", this.comboBoxAlignment.SelectedItem);
-      node.Text = "LINE Alignment = " + ((string) this.comboBoxAlignment.SelectedItem);
-      Data data2 = (Data) node.Tag;
+      node.Text = "LINE Alignment = " + ((string)this.comboBoxAlignment.SelectedItem);
+      Data data2 = (Data)node.Tag;
       Log.Info("comboBoxAlignment_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}",
                new object[] {data2.Type, data2.Parameter, data2.Value});
       this.changedSettings = true;
@@ -790,22 +790,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void ComboBoxCondType_SelectionChangeCommitted(object sender, EventArgs e)
     {
       TreeNode node = this.getNode("CONDITION");
-      Data tag = (Data) node.Tag;
-      string parameter = (string) tag.Parameter;
+      Data tag = (Data)node.Tag;
+      string parameter = (string)tag.Parameter;
       if (parameter != null)
       {
         if (!(parameter == "AND") && !(parameter == "OR"))
         {
           if ((parameter == "ISNULL") || (parameter == "NOTNULL"))
           {
-            node.Tag = new Data("CONDITION", (string) this.ComboBoxCondType.SelectedItem, this.textBoxCondValue.Text);
-            node.Text = (string) this.ComboBoxCondType.SelectedItem;
+            node.Tag = new Data("CONDITION", (string)this.ComboBoxCondType.SelectedItem, this.textBoxCondValue.Text);
+            node.Text = (string)this.ComboBoxCondType.SelectedItem;
           }
         }
         else
         {
-          node.Tag = new Data("CONDITION", (string) this.ComboBoxCondType.SelectedItem, string.Empty);
-          node.Text = (string) this.comboBoxWindowProperty.SelectedItem;
+          node.Tag = new Data("CONDITION", (string)this.ComboBoxCondType.SelectedItem, string.Empty);
+          node.Text = (string)this.comboBoxWindowProperty.SelectedItem;
           this.textBoxCondValue.Text = string.Empty;
         }
       }
@@ -815,7 +815,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void comboBoxMessageType_SelectedIndexChanged(object sender, EventArgs e)
     {
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data) selectedNode.Tag;
+      Data tag = (Data)selectedNode.Tag;
       Log.Info(
         "comboBoxMessageType_SelectionChangeCommitted(): EXISTING TYPE = {0}, Parameter = {1}, Value = {2} - New Window = {3}",
         new object[] {tag.Type});
@@ -833,10 +833,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         else if (tag.Type.ToLower() != "line")
         {
           selectedNode.Tag = new Data("LINE", "ALIGNMENT", this.comboBoxAlignment.SelectedItem);
-          selectedNode.Text = "LINE Alignment = " + ((string) this.comboBoxAlignment.SelectedItem);
+          selectedNode.Text = "LINE Alignment = " + ((string)this.comboBoxAlignment.SelectedItem);
         }
       }
-      Data data2 = (Data) selectedNode.Tag;
+      Data data2 = (Data)selectedNode.Tag;
       Log.Info("comboBoxMessageType_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}",
                new object[] {data2.Type, data2.Parameter, data2.Value});
       this.changedSettings = true;
@@ -851,16 +851,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.groupBoxTextProgressBar.Enabled = false;
       this.groupBoxTextProgressBar.Visible = false;
       TreeNode node = this.getNode("PROCESS");
-      Data tag = (Data) node.Tag;
-      if (((str = (string) tag.Parameter) != null) && ((str == "AND") || (str == "OR")))
+      Data tag = (Data)node.Tag;
+      if (((str = (string)tag.Parameter) != null) && ((str == "AND") || (str == "OR")))
       {
         Log.Info(
           "comboBoxProcessType_SelectionChangeCommitted():     DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}",
           new object[] {tag.Type, tag.Parameter, tag.Value, this.ComboBoxStatusProperty.SelectedItem.ToString()});
         node.Tag = new Data("PROCESS", this.comboBoxProcessType.SelectedItem, string.Empty);
-        node.Text = (string) this.comboBoxProcessType.SelectedItem;
+        node.Text = (string)this.comboBoxProcessType.SelectedItem;
         this.textBoxProcessValue.Text = string.Empty;
-        data2 = (Data) node.Tag;
+        data2 = (Data)node.Tag;
         Log.Info("comboBoxProcessType_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}",
                  new object[] {data2.Type, data2.Parameter, data2.Value});
       }
@@ -879,8 +879,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         this.mpTPBlength.Text = "8";
         this.mpTextBoxValueProperty.Text = "#currentplaytime";
         this.mpTextBoxTargetProperty.Text = "#duration";
-        node.Text = (string) this.comboBoxProcessType.SelectedItem;
-        data2 = (Data) node.Tag;
+        node.Text = (string)this.comboBoxProcessType.SelectedItem;
+        data2 = (Data)node.Tag;
         Log.Info("comboBoxProcessType_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}",
                  new object[] {data2.Type, data2.Parameter, data2.Value});
       }
@@ -890,8 +890,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           "comboBoxProcessType_SelectionChangeCommitted():     DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}",
           new object[] {tag.Type, tag.Parameter, tag.Value, this.ComboBoxStatusProperty.SelectedItem.ToString()});
         node.Tag = new Data("PROCESS", this.comboBoxProcessType.SelectedItem, this.textBoxProcessValue.Text);
-        node.Text = ((string) this.comboBoxProcessType.SelectedItem) + " - " + this.textBoxProcessValue.Text;
-        data2 = (Data) node.Tag;
+        node.Text = ((string)this.comboBoxProcessType.SelectedItem) + " - " + this.textBoxProcessValue.Text;
+        data2 = (Data)node.Tag;
         Log.Info("comboBoxProcessType_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}",
                  new object[] {data2.Type, data2.Parameter, data2.Value});
       }
@@ -901,13 +901,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void ComboBoxStatusProperty_SelectionChangeCommitted(object sender, EventArgs e)
     {
       TreeNode node = this.getNode("MESSAGE");
-      Data tag = (Data) node.Tag;
+      Data tag = (Data)node.Tag;
       Log.Info(
         "ComboBoxStatusProperty_SelectionChangeCommitted(): DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}",
         new object[] {tag.Type, tag.Parameter, tag.Value, this.ComboBoxStatusProperty.SelectedItem.ToString()});
       node.Tag = new Data("MESSAGE", "STATUS", this.ComboBoxStatusProperty.SelectedItem);
-      node.Text = (string) this.ComboBoxStatusProperty.SelectedItem;
-      Data data2 = (Data) node.Tag;
+      node.Text = (string)this.ComboBoxStatusProperty.SelectedItem;
+      Data data2 = (Data)node.Tag;
       Log.Info(
         "ComboBoxStatusProperty_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2}",
         new object[] {data2.Type, data2.Parameter, data2.Value});
@@ -918,7 +918,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       string str;
       TreeNode node = this.getNode("WINDOW");
-      Data tag = (Data) node.Tag;
+      Data tag = (Data)node.Tag;
       Log.Info(
         "comboBoxWindowProperty_SelectionChangeCommitted(): DATA - Type = {0}, Parameter = {1}, Value = {2} - New Window = {3}",
         new object[] {tag.Type, tag.Parameter, tag.Value, this.comboBoxWindowProperty.SelectedItem.ToString()});
@@ -943,7 +943,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                             Enum.Parse(typeof (GUIWindow.Window),
                                        this.GetWindowName(this.comboBoxWindowProperty.SelectedItem.ToString())));
         node.Text = num.ToString();
-        Data data2 = (Data) node.Tag;
+        Data data2 = (Data)node.Tag;
         Log.Info(
           "comboBoxWindowProperty_SelectionChangeCommitted(): NEW DATA - Type = {0}, Parameter = {1}, Value = {2} ({3})",
           new object[] {data2.Type, data2.Parameter, data2.Value, num});
@@ -971,8 +971,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       for (int i = 0; i < 8; i++)
       {
         TreeNode node = CharBaseNode.Nodes[i];
-        Data tag = (Data) node.Tag;
-        byte num2 = (byte) tag.Value;
+        Data tag = (Data)node.Tag;
+        byte num2 = (byte)tag.Value;
         byte num3 = 0x80;
         for (int j = 7; j >= 0; j--)
         {
@@ -984,7 +984,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           {
             this.SetCharacterPixel(i, j, false);
           }
-          num3 = (byte) (num3 >> 1);
+          num3 = (byte)(num3 >> 1);
         }
       }
       Log.Info("DrawCustomCharacter(): completed");
@@ -1025,7 +1025,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       Control[] controlArray = this.groupboxCharacterEdit.Controls.Find(key, false);
       if (controlArray.Length > 0)
       {
-        CheckBox box = (CheckBox) controlArray[0];
+        CheckBox box = (CheckBox)controlArray[0];
         if (box.CheckState == CheckState.Unchecked)
         {
           return false;
@@ -1078,7 +1078,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private TreeNode getNode(string type)
     {
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data) selectedNode.Tag;
+      Data tag = (Data)selectedNode.Tag;
       if (tag.Type == type)
       {
         return selectedNode;
@@ -1095,7 +1095,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               selectedNode = selectedNode.Parent;
               foreach (TreeNode node4 in selectedNode.Nodes)
               {
-                tag = (Data) node4.Tag;
+                tag = (Data)node4.Tag;
                 if (tag.Type == type)
                 {
                   return node4;
@@ -1106,7 +1106,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             {
               foreach (TreeNode node5 in selectedNode.Nodes)
               {
-                tag = (Data) node5.Tag;
+                tag = (Data)node5.Tag;
                 if (tag.Type == type)
                 {
                   return node5;
@@ -1172,7 +1172,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           selectedNode = selectedNode.Parent;
           foreach (TreeNode node2 in selectedNode.Nodes)
           {
-            tag = (Data) node2.Tag;
+            tag = (Data)node2.Tag;
             if (tag.Type == type)
             {
               return node2;
@@ -1183,7 +1183,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           foreach (TreeNode node3 in selectedNode.Nodes)
           {
-            tag = (Data) node3.Tag;
+            tag = (Data)node3.Tag;
             if (tag.Type == type)
             {
               return node3;
@@ -1196,7 +1196,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
     private string GetWindowName(int WindowID)
     {
-      return this.GetWindowName(this.GetFriendlyName((string) this.windowsList[WindowID]));
+      return this.GetWindowName(this.GetFriendlyName((string)this.windowsList[WindowID]));
     }
 
     private string GetWindowName(string friendlyName)
@@ -1338,8 +1338,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // treeMapping
       // 
       this.treeMapping.AllowDrop = true;
-      this.treeMapping.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.treeMapping.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+           | System.Windows.Forms.AnchorStyles.Left)));
       this.treeMapping.FullRowSelect = true;
       this.treeMapping.HideSelection = false;
       this.treeMapping.Location = new System.Drawing.Point(16, 56);
@@ -1350,7 +1352,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // labelExpand
       // 
-      this.labelExpand.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelExpand.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelExpand.AutoSize = true;
       this.labelExpand.Location = new System.Drawing.Point(328, 374);
       this.labelExpand.Name = "labelExpand";
@@ -1361,7 +1365,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // buttonDefault
       // 
-      this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonDefault.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonDefault.Location = new System.Drawing.Point(345, 442);
       this.buttonDefault.Name = "buttonDefault";
       this.buttonDefault.Size = new System.Drawing.Size(75, 23);
@@ -1372,7 +1378,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // buttonRemove
       // 
-      this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonRemove.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonRemove.Enabled = false;
       this.buttonRemove.Location = new System.Drawing.Point(272, 397);
       this.buttonRemove.Name = "buttonRemove";
@@ -1384,7 +1392,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // buttonDown
       // 
-      this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonDown.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonDown.Enabled = false;
       this.buttonDown.Location = new System.Drawing.Point(97, 397);
       this.buttonDown.Name = "buttonDown";
@@ -1396,7 +1406,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // buttonUp
       // 
-      this.buttonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonUp.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonUp.Enabled = false;
       this.buttonUp.Location = new System.Drawing.Point(16, 397);
       this.buttonUp.Name = "buttonUp";
@@ -1408,8 +1420,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // beveledLine1
       // 
-      this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.beveledLine1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.beveledLine1.Location = new System.Drawing.Point(8, 432);
       this.beveledLine1.Name = "beveledLine1";
       this.beveledLine1.Size = new System.Drawing.Size(572, 2);
@@ -1417,7 +1431,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // buttonOk
       // 
-      this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOk.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonOk.Location = new System.Drawing.Point(426, 442);
       this.buttonOk.Name = "buttonOk";
       this.buttonOk.Size = new System.Drawing.Size(75, 23);
@@ -1428,7 +1444,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // buttonCancel
       // 
-      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCancel.Location = new System.Drawing.Point(505, 442);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
@@ -1439,11 +1457,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // headerLabel
       // 
-      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.headerLabel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.headerLabel.Caption = "MiniDisplay.xml";
       this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
-      this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular,
+                                                      System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.Location = new System.Drawing.Point(16, 16);
       this.headerLabel.Name = "headerLabel";
@@ -1451,11 +1472,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.headerLabel.Size = new System.Drawing.Size(558, 24);
       this.headerLabel.TabIndex = 17;
       this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
-      this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular,
+                                                          System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       // 
       // buttonNew
       // 
-      this.buttonNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.buttonNew.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonNew.Enabled = false;
       this.buttonNew.Location = new System.Drawing.Point(189, 397);
       this.buttonNew.Name = "buttonNew";
@@ -1467,9 +1491,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // groupBoxMessageEdit
       // 
-      this.groupBoxMessageEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxMessageEdit.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxProcess);
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxMessageType);
       this.groupBoxMessageEdit.Controls.Add(this.groupBoxStatus);
@@ -1485,9 +1511,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // groupBoxProcess
       // 
-      this.groupBoxProcess.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxProcess.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxProcess.Controls.Add(this.groupBoxTextProgressBar);
       this.groupBoxProcess.Controls.Add(this.GroupBoxCondition);
       this.groupBoxProcess.Controls.Add(this.mpLabel1);
@@ -1505,9 +1533,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // groupBoxTextProgressBar
       // 
-      this.groupBoxTextProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxTextProgressBar.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxTextProgressBar.Controls.Add(this.mpTPBlength);
       this.groupBoxTextProgressBar.Controls.Add(this.mpLabel12);
       this.groupBoxTextProgressBar.Controls.Add(this.mpTPBFillChar);
@@ -1629,8 +1659,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // mpTextBoxValueProperty
       // 
-      this.mpTextBoxValueProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpTextBoxValueProperty.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpTextBoxValueProperty.BorderColor = System.Drawing.Color.Empty;
       this.mpTextBoxValueProperty.Location = new System.Drawing.Point(92, 85);
       this.mpTextBoxValueProperty.MaxLength = 100;
@@ -1659,8 +1691,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // mpTextBoxTargetProperty
       // 
-      this.mpTextBoxTargetProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpTextBoxTargetProperty.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpTextBoxTargetProperty.BorderColor = System.Drawing.Color.Empty;
       this.mpTextBoxTargetProperty.Location = new System.Drawing.Point(92, 108);
       this.mpTextBoxTargetProperty.MaxLength = 100;
@@ -1671,9 +1705,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // GroupBoxCondition
       // 
-      this.GroupBoxCondition.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.GroupBoxCondition.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.GroupBoxCondition.Controls.Add(this.mpLabel2);
       this.GroupBoxCondition.Controls.Add(this.mpLabel3);
       this.GroupBoxCondition.Controls.Add(this.textBoxCondValue);
@@ -1707,8 +1743,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // textBoxCondValue
       // 
-      this.textBoxCondValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxCondValue.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxCondValue.BorderColor = System.Drawing.Color.Empty;
       this.textBoxCondValue.Enabled = false;
       this.textBoxCondValue.Location = new System.Drawing.Point(56, 52);
@@ -1720,8 +1758,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // ComboBoxCondType
       // 
-      this.ComboBoxCondType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.ComboBoxCondType.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.ComboBoxCondType.BorderColor = System.Drawing.Color.Empty;
       this.ComboBoxCondType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.ComboBoxCondType.ForeColor = System.Drawing.Color.DarkGreen;
@@ -1730,7 +1770,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.ComboBoxCondType.Size = new System.Drawing.Size(136, 21);
       this.ComboBoxCondType.Sorted = true;
       this.ComboBoxCondType.TabIndex = 14;
-      this.ComboBoxCondType.SelectionChangeCommitted += new System.EventHandler(this.ComboBoxCondType_SelectionChangeCommitted);
+      this.ComboBoxCondType.SelectionChangeCommitted +=
+        new System.EventHandler(this.ComboBoxCondType_SelectionChangeCommitted);
       // 
       // mpLabel1
       // 
@@ -1752,8 +1793,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // textBoxProcessValue
       // 
-      this.textBoxProcessValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxProcessValue.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxProcessValue.BorderColor = System.Drawing.Color.Empty;
       this.textBoxProcessValue.Enabled = false;
       this.textBoxProcessValue.Location = new System.Drawing.Point(67, 52);
@@ -1765,8 +1808,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // comboBoxProcessType
       // 
-      this.comboBoxProcessType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxProcessType.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxProcessType.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxProcessType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxProcessType.ForeColor = System.Drawing.Color.DarkGreen;
@@ -1775,12 +1820,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.comboBoxProcessType.Size = new System.Drawing.Size(136, 21);
       this.comboBoxProcessType.Sorted = true;
       this.comboBoxProcessType.TabIndex = 14;
-      this.comboBoxProcessType.SelectionChangeCommitted += new System.EventHandler(this.comboBoxProcessType_SelectionChangeCommitted);
+      this.comboBoxProcessType.SelectionChangeCommitted +=
+        new System.EventHandler(this.comboBoxProcessType_SelectionChangeCommitted);
       // 
       // groupBoxMessageType
       // 
-      this.groupBoxMessageType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxMessageType.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxMessageType.Controls.Add(this.comboBoxMessageType);
       this.groupBoxMessageType.Controls.Add(this.mpLabel13);
       this.groupBoxMessageType.Enabled = false;
@@ -1794,15 +1842,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // comboBoxMessageType
       // 
-      this.comboBoxMessageType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxMessageType.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxMessageType.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxMessageType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxMessageType.Location = new System.Drawing.Point(80, 13);
       this.comboBoxMessageType.Name = "comboBoxMessageType";
       this.comboBoxMessageType.Size = new System.Drawing.Size(121, 21);
       this.comboBoxMessageType.TabIndex = 25;
-      this.comboBoxMessageType.SelectedIndexChanged += new System.EventHandler(this.comboBoxMessageType_SelectedIndexChanged);
+      this.comboBoxMessageType.SelectedIndexChanged +=
+        new System.EventHandler(this.comboBoxMessageType_SelectedIndexChanged);
       // 
       // mpLabel13
       // 
@@ -1815,8 +1866,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // groupBoxStatus
       // 
-      this.groupBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxStatus.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxStatus.Controls.Add(this.ComboBoxStatusProperty);
       this.groupBoxStatus.Enabled = false;
       this.groupBoxStatus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -1829,20 +1882,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // ComboBoxStatusProperty
       // 
-      this.ComboBoxStatusProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.ComboBoxStatusProperty.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.ComboBoxStatusProperty.BorderColor = System.Drawing.Color.Empty;
       this.ComboBoxStatusProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.ComboBoxStatusProperty.Location = new System.Drawing.Point(24, 15);
       this.ComboBoxStatusProperty.Name = "ComboBoxStatusProperty";
       this.ComboBoxStatusProperty.Size = new System.Drawing.Size(176, 21);
       this.ComboBoxStatusProperty.TabIndex = 25;
-      this.ComboBoxStatusProperty.SelectionChangeCommitted += new System.EventHandler(this.ComboBoxStatusProperty_SelectionChangeCommitted);
+      this.ComboBoxStatusProperty.SelectionChangeCommitted +=
+        new System.EventHandler(this.ComboBoxStatusProperty_SelectionChangeCommitted);
       // 
       // groupBoxWindow
       // 
-      this.groupBoxWindow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxWindow.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxWindow.Controls.Add(this.comboBoxWindowProperty);
       this.groupBoxWindow.Enabled = false;
       this.groupBoxWindow.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -1855,8 +1913,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // comboBoxWindowProperty
       // 
-      this.comboBoxWindowProperty.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxWindowProperty.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxWindowProperty.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxWindowProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxWindowProperty.ForeColor = System.Drawing.Color.Blue;
@@ -1865,12 +1925,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.comboBoxWindowProperty.Size = new System.Drawing.Size(176, 21);
       this.comboBoxWindowProperty.Sorted = true;
       this.comboBoxWindowProperty.TabIndex = 13;
-      this.comboBoxWindowProperty.SelectionChangeCommitted += new System.EventHandler(this.comboBoxWindowProperty_SelectionChangeCommitted);
+      this.comboBoxWindowProperty.SelectionChangeCommitted +=
+        new System.EventHandler(this.comboBoxWindowProperty_SelectionChangeCommitted);
       // 
       // groupBoxLine
       // 
-      this.groupBoxLine.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxLine.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxLine.Controls.Add(this.comboBoxAlignment);
       this.groupBoxLine.Controls.Add(this.labelLine);
       this.groupBoxLine.Enabled = false;
@@ -1884,15 +1947,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // comboBoxAlignment
       // 
-      this.comboBoxAlignment.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxAlignment.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxAlignment.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxAlignment.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxAlignment.Location = new System.Drawing.Point(80, 13);
       this.comboBoxAlignment.Name = "comboBoxAlignment";
       this.comboBoxAlignment.Size = new System.Drawing.Size(121, 21);
       this.comboBoxAlignment.TabIndex = 25;
-      this.comboBoxAlignment.SelectionChangeCommitted += new System.EventHandler(this.comboBoxAlignment_SelectionChangeCommitted);
+      this.comboBoxAlignment.SelectionChangeCommitted +=
+        new System.EventHandler(this.comboBoxAlignment_SelectionChangeCommitted);
       // 
       // labelLine
       // 
@@ -2711,7 +2777,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.groupboxTranslationEdit.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
 
     private void labelExpand_Click(object sender, EventArgs e)
@@ -2726,7 +2791,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void LoadMessages(bool defaults)
     {
       try
-      {        
+      {
         string fileName = "MiniDisplay.xml";
         this.groupBoxStatus.Enabled = false;
         this.groupBoxLine.Enabled = false;
@@ -2943,7 +3008,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                                       {
                                         node20.Attributes["StartChar"].Value[0], "|",
                                         node20.Attributes["EndChar"].Value[0], "|",
-                                        node20.Attributes["ValueChar"].Value[0], "|", node20.Attributes["FillChar"].Value
+                                        node20.Attributes["ValueChar"].Value[0], "|",
+                                        node20.Attributes["FillChar"].Value
                                         , "|", node20.Attributes["Length"].Value, "|"
                                       });
                     if (node20.ChildNodes[0].LocalName.Equals("ValueProperty"))
@@ -3112,14 +3178,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         foreach (TreeNode node in this.treeMapping.Nodes)
         {
           writer.WriteStartElement("remote");
-          writer.WriteAttributeString("family", (string) ((Data) node.Tag).Value);
+          writer.WriteAttributeString("family", (string)((Data)node.Tag).Value);
           if (node.Nodes.Count > 0)
           {
             foreach (TreeNode node2 in node.Nodes)
             {
               writer.WriteStartElement("button");
-              writer.WriteAttributeString("name", (string) ((Data) node2.Tag).Parameter);
-              writer.WriteAttributeString("code", (string) ((Data) node2.Tag).Value);
+              writer.WriteAttributeString("name", (string)((Data)node2.Tag).Parameter);
+              writer.WriteAttributeString("code", (string)((Data)node2.Tag).Value);
               if (node2.Nodes.Count > 0)
               {
                 foreach (TreeNode node3 in node2.Nodes)
@@ -3134,7 +3200,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                     bool focus = false;
                     foreach (TreeNode node5 in node4.Nodes)
                     {
-                      string type = ((Data) node5.Tag).Type;
+                      string type = ((Data)node5.Tag).Type;
                       if (type != null)
                       {
                         if (!(type == "COMMAND"))
@@ -3146,16 +3212,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                         }
                         else
                         {
-                          str4 = (string) ((Data) node5.Tag).Parameter;
-                          focus = ((Data) node5.Tag).Focus;
+                          str4 = (string)((Data)node5.Tag).Parameter;
+                          focus = ((Data)node5.Tag).Focus;
                           if (str4 != "KEY")
                           {
-                            str5 = ((Data) node5.Tag).Value.ToString();
+                            str5 = ((Data)node5.Tag).Value.ToString();
                           }
                           else
                           {
                             str4 = "ACTION";
-                            Key key = (Key) ((Data) node5.Tag).Value;
+                            Key key = (Key)((Data)node5.Tag).Value;
                             str5 = "93";
                             str6 = key.KeyChar.ToString();
                             str7 = key.KeyCode.ToString();
@@ -3164,11 +3230,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
                       }
                       continue;
                       Label_02C0:
-                      str8 = (string) ((Data) node5.Tag).Value;
+                      str8 = (string)((Data)node5.Tag).Value;
                     }
-                    string parameter = (string) ((Data) node4.Tag).Parameter;
-                    string str3 = ((Data) node4.Tag).Value.ToString();
-                    string str = Convert.ToString(((Data) node3.Tag).Value);
+                    string parameter = (string)((Data)node4.Tag).Parameter;
+                    string str3 = ((Data)node4.Tag).Value.ToString();
+                    string str = Convert.ToString(((Data)node3.Tag).Value);
                     writer.WriteStartElement("action");
                     writer.WriteAttributeString("layer", str);
                     writer.WriteAttributeString("condition", parameter);
@@ -3226,9 +3292,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         Directory.CreateDirectory(Config.GetFolder(Config.Dir.Config));
       }
-      catch
-      {
-      }
+      catch {}
       XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, fileName), Encoding.UTF8);
       writer.Formatting = Formatting.Indented;
       writer.Indentation = 2;
@@ -3237,22 +3301,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       writer.WriteStartElement("Settings");
       for (int i = 0; i < this.SettingsNode.Nodes.Count; i++)
       {
-        Data tag = (Data) this.SettingsNode.Nodes[i].Tag;
-        writer.WriteAttributeString((string) tag.Parameter, (string) tag.Value);
+        Data tag = (Data)this.SettingsNode.Nodes[i].Tag;
+        writer.WriteAttributeString((string)tag.Parameter, (string)tag.Value);
       }
       foreach (TreeNode node in this.treeMapping.Nodes[0].Nodes)
       {
-        Data data2 = (Data) node.Tag;
+        Data data2 = (Data)node.Tag;
         Log.Info("processing DATA: Type = {0}, parameter = {1}, value = {2}",
                  new object[] {data2.Type, data2.Parameter, data2.Value});
         writer.WriteStartElement("Message");
-        if (((string) data2.Value) != "ALL STATES")
+        if (((string)data2.Value) != "ALL STATES")
         {
-          writer.WriteAttributeString("Status", (string) data2.Value);
+          writer.WriteAttributeString("Status", (string)data2.Value);
         }
         foreach (TreeNode node2 in node.Nodes)
         {
-          Data data3 = (Data) node2.Tag;
+          Data data3 = (Data)node2.Tag;
           string type = data3.Type;
           if (type != null)
           {
@@ -3272,10 +3336,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               Log.Info("processing WINDOWLIST");
               foreach (TreeNode node3 in node2.Nodes)
               {
-                Data data4 = (Data) node3.Tag;
+                Data data4 = (Data)node3.Tag;
                 Log.Info("processing WINDOW: Type = {0}, parameter = {1}, value = {2}",
                          new object[] {data4.Type, data4.Parameter, data4.Value});
-                if (((string) data4.Parameter) == "ID")
+                if (((string)data4.Parameter) == "ID")
                 {
                   writer.WriteElementString("Window", data4.Value.ToString());
                 }
@@ -3285,17 +3349,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           continue;
           Label_028F:
           writer.WriteStartElement("Line");
-          writer.WriteAttributeString("Alignment", (string) data3.Value);
+          writer.WriteAttributeString("Alignment", (string)data3.Value);
           Log.Info("processing LINE: Alignment = {0}", new object[] {data3.Type});
           foreach (TreeNode node4 in node2.Nodes)
           {
-            Data data5 = (Data) node4.Tag;
+            Data data5 = (Data)node4.Tag;
             Log.Info("processing pData: Type = {0}, parameter = {1}, value = {2}",
                      new object[] {data5.Type, data5.Parameter, data5.Value});
             if (data5.Parameter.Equals("TextProgressBar"))
             {
-              string[] strArray = ((string) data5.Value).Split(new char[] {'|'});
-              writer.WriteStartElement((string) data5.Parameter);
+              string[] strArray = ((string)data5.Value).Split(new char[] {'|'});
+              writer.WriteStartElement((string)data5.Parameter);
               writer.WriteAttributeString("StartChar", strArray[0]);
               writer.WriteAttributeString("EndChar", strArray[1]);
               writer.WriteAttributeString("ValueChar", strArray[2]);
@@ -3310,29 +3374,29 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             }
             else
             {
-              writer.WriteStartElement((string) data5.Parameter);
-              writer.WriteAttributeString("Value", (string) data5.Value);
+              writer.WriteStartElement((string)data5.Parameter);
+              writer.WriteAttributeString("Value", (string)data5.Value);
               foreach (TreeNode node5 in node4.Nodes)
               {
                 string str4;
-                Data data6 = (Data) node5.Tag;
+                Data data6 = (Data)node5.Tag;
                 Log.Info("processing cData: Type = {0}, parameter = {1}, value = {2}",
                          new object[] {data6.Type, data6.Parameter, data6.Value});
-                if (((str4 = (string) data6.Parameter) != null) && ((str4 == "And") || (str4 == "Or")))
+                if (((str4 = (string)data6.Parameter) != null) && ((str4 == "And") || (str4 == "Or")))
                 {
-                  writer.WriteStartElement((string) data6.Parameter);
+                  writer.WriteStartElement((string)data6.Parameter);
                   foreach (TreeNode node6 in node5.Nodes)
                   {
-                    Data data7 = (Data) node6.Tag;
-                    writer.WriteStartElement((string) data7.Parameter);
-                    writer.WriteAttributeString("Value", (string) data7.Value);
+                    Data data7 = (Data)node6.Tag;
+                    writer.WriteStartElement((string)data7.Parameter);
+                    writer.WriteAttributeString("Value", (string)data7.Value);
                     writer.WriteEndElement();
                   }
                   writer.WriteEndElement();
                   continue;
                 }
-                writer.WriteStartElement((string) data6.Parameter);
-                writer.WriteAttributeString("Value", (string) data6.Value);
+                writer.WriteStartElement((string)data6.Parameter);
+                writer.WriteAttributeString("Value", (string)data6.Value);
                 writer.WriteEndElement();
               }
             }
@@ -3345,32 +3409,32 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           Log.Info("processing IMAGE");
           foreach (TreeNode node7 in node2.Nodes)
           {
-            Data data8 = (Data) node7.Tag;
+            Data data8 = (Data)node7.Tag;
             Log.Info("processing pData: Type = {0}, parameter = {1}, value = {2}",
                      new object[] {data8.Type, data8.Parameter, data8.Value});
-            writer.WriteStartElement((string) data8.Parameter);
-            writer.WriteAttributeString("Value", (string) data8.Value);
+            writer.WriteStartElement((string)data8.Parameter);
+            writer.WriteAttributeString("Value", (string)data8.Value);
             foreach (TreeNode node8 in node7.Nodes)
             {
               string str5;
-              Data data9 = (Data) node8.Tag;
+              Data data9 = (Data)node8.Tag;
               Log.Info("processing cData: Type = {0}, parameter = {1}, value = {2}",
                        new object[] {data9.Type, data9.Parameter, data9.Value});
-              if (((str5 = (string) data9.Parameter) != null) && ((str5 == "And") || (str5 == "Or")))
+              if (((str5 = (string)data9.Parameter) != null) && ((str5 == "And") || (str5 == "Or")))
               {
-                writer.WriteStartElement((string) data9.Parameter);
+                writer.WriteStartElement((string)data9.Parameter);
                 foreach (TreeNode node9 in node8.Nodes)
                 {
-                  Data data10 = (Data) node9.Tag;
-                  writer.WriteStartElement((string) data10.Parameter);
-                  writer.WriteAttributeString("Value", (string) data10.Value);
+                  Data data10 = (Data)node9.Tag;
+                  writer.WriteStartElement((string)data10.Parameter);
+                  writer.WriteAttributeString("Value", (string)data10.Value);
                   writer.WriteEndElement();
                 }
                 writer.WriteEndElement();
                 continue;
               }
-              writer.WriteStartElement((string) data9.Parameter);
-              writer.WriteAttributeString("Value", (string) data9.Value);
+              writer.WriteStartElement((string)data9.Parameter);
+              writer.WriteAttributeString("Value", (string)data9.Value);
               writer.WriteEndElement();
             }
             writer.WriteEndElement();
@@ -3384,19 +3448,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       writer.WriteStartElement("TranslateFrom");
       foreach (TreeNode node10 in this.treeMapping.Nodes[1].Nodes)
       {
-        Data data11 = (Data) node10.Tag;
+        Data data11 = (Data)node10.Tag;
         Log.Info("processing nodeFrom: Type = {0}, parameter = {1}, value = {2}",
                  new object[] {data11.Type, data11.Parameter, data11.Value});
-        writer.WriteElementString("string", (string) data11.Parameter);
+        writer.WriteElementString("string", (string)data11.Parameter);
       }
       writer.WriteEndElement();
       writer.WriteStartElement("TranslateTo");
       foreach (TreeNode node11 in this.treeMapping.Nodes[1].Nodes)
       {
-        Data data12 = (Data) node11.Tag;
+        Data data12 = (Data)node11.Tag;
         Log.Info("processing nodeTo: Type = {0}, parameter = {1}, value = {2}",
                  new object[] {data12.Type, data12.Parameter, data12.Value});
-        writer.WriteElementString("string", (string) data12.Value);
+        writer.WriteElementString("string", (string)data12.Value);
       }
       writer.WriteEndElement();
       Log.Info("PROCESSING TRANSLATIONS COMPLETED");
@@ -3407,7 +3471,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         writer.WriteStartElement("CustomCharacter");
         foreach (TreeNode node13 in node12.Nodes)
         {
-          Data data13 = (Data) node13.Tag;
+          Data data13 = (Data)node13.Tag;
           Log.Info("processing CustomCharacter: Type = {0}, parameter = {1}, value = {2}",
                    new object[] {data13.Type, data13.Parameter, data13.Value});
           writer.WriteElementString("int", data13.Value.ToString());
@@ -3418,7 +3482,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       Log.Info("PROCESSING CHARACTERS COMPLETED");
       writer.WriteEndElement();
       writer.WriteEndDocument();
-      writer.Close();      
+      writer.Close();
       this.changedSettings = false;
       return true;
     }
@@ -3429,7 +3493,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       Control[] controlArray = this.groupboxCharacterEdit.Controls.Find(key, false);
       if (controlArray.Length > 0)
       {
-        CheckBox box = (CheckBox) controlArray[0];
+        CheckBox box = (CheckBox)controlArray[0];
         if (SetOn)
         {
           box.CheckState = CheckState.Indeterminate;
@@ -3448,7 +3512,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void textBoxCondValue_LostFocus(object sender, EventArgs e)
     {
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data) selectedNode.Tag;
+      Data tag = (Data)selectedNode.Tag;
       selectedNode.Tag = new Data(tag.Type, tag.Parameter, this.textBoxCondValue.Text);
       selectedNode.Text = tag.Parameter + ": " + this.textBoxCondValue.Text;
       this.changedSettings = true;
@@ -3457,7 +3521,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void textBoxProcessValue_LostFocus(object sender, EventArgs e)
     {
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data) selectedNode.Tag;
+      Data tag = (Data)selectedNode.Tag;
       selectedNode.Tag = new Data(tag.Type, tag.Parameter, this.textBoxProcessValue.Text);
       selectedNode.Text = tag.Parameter + ": " + this.textBoxProcessValue.Text;
       this.changedSettings = true;
@@ -3466,7 +3530,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void TextBoxTranslateFrom_LostFocus(object sender, EventArgs e)
     {
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data) selectedNode.Tag;
+      Data tag = (Data)selectedNode.Tag;
       if (tag.Type.Equals("TRANSLATION"))
       {
         selectedNode.Tag = new Data("TRANSLATION", this.TextBoxTranslateFrom.Text, tag.Value);
@@ -3479,7 +3543,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void TextBoxTranslateTo_LostFocus(object sender, EventArgs e)
     {
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data) selectedNode.Tag;
+      Data tag = (Data)selectedNode.Tag;
       if (tag.Type.Equals("TRANSLATION"))
       {
         selectedNode.Tag = new Data("TRANSLATION", tag.Parameter, this.TextBoxTranslateTo.Text);
@@ -3492,7 +3556,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void TextProgressBar_LostFocus(object sender, EventArgs e)
     {
       TreeNode selectedNode = this.treeMapping.SelectedNode;
-      Data tag = (Data) selectedNode.Tag;
+      Data tag = (Data)selectedNode.Tag;
       string newValue = this.mpTPBStartChar.Text.Substring(0, 1) + "|" + this.mpTPBEndChar.Text.Substring(0, 1) + "|" +
                         this.mpTPBValueChar.Text.Substring(0, 1) + "|" + this.mpTPBFillChar.Text.Substring(0, 1) + "|" +
                         this.mpTPBlength.Text + "|" + this.mpTextBoxValueProperty.Text + "|" +
@@ -3515,7 +3579,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         Log.Info("treeMapping_AfterSelect: SELECTED NODE DOES NOT HAVE A DATA TAG");
         return;
       }
-      Data tag = (Data) charBaseNode.Tag;
+      Data tag = (Data)charBaseNode.Tag;
       Log.Info("treeMapping_AfterSelect: data - Type = {0}, Parameter = {1}, Value = {2}",
                new object[] {tag.Type, tag.Parameter, tag.Value});
       this.groupboxTranslationEdit.Visible = false;
@@ -3554,8 +3618,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         case "TRANSLATION":
           this.groupboxTranslationEdit.Visible = true;
-          this.TextBoxTranslateFrom.Text = (string) tag.Parameter;
-          this.TextBoxTranslateTo.Text = (string) tag.Value;
+          this.TextBoxTranslateFrom.Text = (string)tag.Parameter;
+          this.TextBoxTranslateTo.Text = (string)tag.Value;
           this.buttonNew.Enabled = true;
           this.buttonRemove.Enabled = true;
           goto Label_0C73;
@@ -3583,7 +3647,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         case "SECTION":
           string str3;
           Log.Info("treeMapping_AfterSelect: Processing SECTION message.");
-          if (((str3 = (string) tag.Parameter) != null) &&
+          if (((str3 = (string)tag.Parameter) != null) &&
               (((str3 == "STATUSMESSAGES") || (str3 == "CHARACTERTRANSLATIONS")) || (str3 == "CUSTOMCHARACTERS")))
           {
             this.buttonNew.Enabled = true;
@@ -3594,7 +3658,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           Log.Info("treeMapping_AfterSelect: Processing {0} message.", new object[] {tag.Type});
           this.groupBoxStatus.Enabled = true;
           this.ComboBoxStatusProperty.Enabled = true;
-          this.UpdateCombo(ref this.ComboBoxStatusProperty, this.StatusList, (string) tag.Value);
+          this.UpdateCombo(ref this.ComboBoxStatusProperty, this.StatusList, (string)tag.Value);
           this.buttonNew.Enabled = true;
           this.buttonRemove.Enabled = true;
           this.groupBoxMessageEdit.Visible = true;
@@ -3619,7 +3683,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           Log.Info("treeMapping_AfterSelect: Processing WINDOW {0} message.", new object[] {tag.Parameter});
           this.groupBoxWindow.Enabled = true;
           this.comboBoxWindowProperty.Enabled = true;
-          switch (((string) tag.Parameter))
+          switch (((string)tag.Parameter))
           {
             case "ALL":
               this.UpdateCombo(ref this.comboBoxWindowProperty, this.windowsList, "ALL WINDOWS");
@@ -3640,12 +3704,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           this.UpdateCombo(ref this.comboBoxMessageType, this.MessageTypeList, tag.Type);
           this.groupBoxLine.Enabled = true;
           this.comboBoxAlignment.Enabled = true;
-          this.UpdateCombo(ref this.comboBoxAlignment, this.AlignmentList, (string) tag.Value);
+          this.UpdateCombo(ref this.comboBoxAlignment, this.AlignmentList, (string)tag.Value);
           this.groupBoxMessageType.Enabled = true;
           this.comboBoxMessageType.Enabled = true;
           this.UpdateCombo(ref this.comboBoxMessageType, this.MessageTypeList, tag.Type);
           if ((charBaseNode.Index > 0) &&
-              (((Data) charBaseNode.Parent.Nodes[charBaseNode.Index - 1].Tag).Type != "WINDOWLIST"))
+              (((Data)charBaseNode.Parent.Nodes[charBaseNode.Index - 1].Tag).Type != "WINDOWLIST"))
           {
             Log.Info("treeMapping_AfterSelect: Processing LINE message. Enabling buttonUp");
             this.buttonUp.Enabled = true;
@@ -3666,9 +3730,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           this.groupBoxMessageType.Enabled = true;
           this.comboBoxMessageType.Enabled = true;
           this.UpdateCombo(ref this.comboBoxMessageType, this.MessageTypeList, tag.Type);
-          this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessListImage, (string) tag.Parameter);
+          this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessListImage, (string)tag.Parameter);
           if ((charBaseNode.Index > 0) &&
-              (((Data) charBaseNode.Parent.Nodes[charBaseNode.Index - 1].Tag).Type != "WINDOWLIST"))
+              (((Data)charBaseNode.Parent.Nodes[charBaseNode.Index - 1].Tag).Type != "WINDOWLIST"))
           {
             Log.Info("treeMapping_AfterSelect: Processing IMAGE message. Enabling buttonUp");
             this.buttonUp.Enabled = true;
@@ -3692,12 +3756,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             if (!tag.Parameter.Equals("TextProgressBar"))
             {
               this.textBoxProcessValue.Enabled = true;
-              this.textBoxProcessValue.Text = (string) tag.Value;
+              this.textBoxProcessValue.Text = (string)tag.Value;
             }
             else
             {
               Log.Info("treeMapping_AfterSelect: Processing TextProgressBar message.");
-              string[] strArray = ((string) tag.Value).Split(new char[] {'|'});
+              string[] strArray = ((string)tag.Value).Split(new char[] {'|'});
               if (strArray.Length >= 7)
               {
                 this.mpTPBStartChar.Text = strArray[0];
@@ -3722,14 +3786,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
               this.groupBoxTextProgressBar.Enabled = true;
               Log.Info("treeMapping_AfterSelect: Processed TextProgressBar message.");
             }
-            Data data2 = (Data) charBaseNode.Parent.Tag;
+            Data data2 = (Data)charBaseNode.Parent.Tag;
             if (data2.Type.Equals("IMAGE"))
             {
-              this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessListImage, (string) tag.Parameter);
+              this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessListImage, (string)tag.Parameter);
             }
             else
             {
-              this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessList, (string) tag.Parameter);
+              this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessList, (string)tag.Parameter);
             }
             if (charBaseNode.Index > 0)
             {
@@ -3752,8 +3816,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           this.textBoxProcessValue.Enabled = false;
           this.textBoxCondValue.Enabled = true;
           this.GroupBoxCondition.Enabled = true;
-          this.UpdateCombo(ref this.ComboBoxCondType, this.ConditionList, (string) tag.Parameter);
-          this.textBoxCondValue.Text = (string) tag.Value;
+          this.UpdateCombo(ref this.ComboBoxCondType, this.ConditionList, (string)tag.Parameter);
+          this.textBoxCondValue.Text = (string)tag.Value;
           if (charBaseNode.Index > 0)
           {
             this.buttonUp.Enabled = true;
@@ -3782,7 +3846,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       TreeNode parent = charBaseNode.Parent;
       if (parent != null)
       {
-        tag = (Data) parent.Tag;
+        tag = (Data)parent.Tag;
         Log.Info("treeMapping_AfterSelect: First parent node: Type = {0}, Parameter = {1}, Value = {2}",
                  new object[] {tag.Type, tag.Parameter, tag.Value});
         while (!flag)
@@ -3806,7 +3870,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
             case "MESSAGE":
               Log.Info("treeMapping_AfterSelect: Processing {0} message for display.", new object[] {tag.Type});
-              this.UpdateCombo(ref this.ComboBoxStatusProperty, this.StatusList, (string) tag.Value);
+              this.UpdateCombo(ref this.ComboBoxStatusProperty, this.StatusList, (string)tag.Value);
               this.ComboBoxStatusProperty.Enabled = false;
               flag = true;
               goto Label_1044;
@@ -3814,7 +3878,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
             case "WINDOW":
               Log.Info("treeMapping_AfterSelect: Processing WINDOW {0} message for display.",
                        new object[] {tag.Parameter});
-              switch (((string) tag.Parameter))
+              switch (((string)tag.Parameter))
               {
                 case "ID":
                   goto Label_0EFB;
@@ -3823,7 +3887,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
             case "LINE":
               Log.Info("treeMapping_AfterSelect: Processing LINE message for display.");
-              this.UpdateCombo(ref this.comboBoxAlignment, this.AlignmentList, (string) tag.Value);
+              this.UpdateCombo(ref this.comboBoxAlignment, this.AlignmentList, (string)tag.Value);
               this.comboBoxAlignment.Enabled = false;
               goto Label_1044;
 
@@ -3833,16 +3897,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
             case "PROCESS":
               Log.Info("treeMapping_AfterSelect: Processing PROCESS message for display.");
-              this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessList, (string) tag.Parameter);
-              this.textBoxProcessValue.Text = (string) tag.Value;
+              this.UpdateCombo(ref this.comboBoxProcessType, this.ProcessList, (string)tag.Parameter);
+              this.textBoxProcessValue.Text = (string)tag.Value;
               this.comboBoxProcessType.Enabled = false;
               goto Label_1044;
 
             case "CONDITION":
             case "SUBCONDITION":
               Log.Info("treeMapping_AfterSelect: Processing {0} message for display.", new object[] {tag.Parameter});
-              this.UpdateCombo(ref this.ComboBoxCondType, this.ConditionList, (string) tag.Parameter);
-              this.textBoxCondValue.Text = (string) tag.Value;
+              this.UpdateCombo(ref this.ComboBoxCondType, this.ConditionList, (string)tag.Parameter);
+              this.textBoxCondValue.Text = (string)tag.Value;
               this.ComboBoxCondType.Enabled = false;
               goto Label_1044;
 
@@ -3858,7 +3922,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           if (!flag)
           {
             parent = parent.Parent;
-            tag = (Data) parent.Tag;
+            tag = (Data)parent.Tag;
           }
         }
       }
@@ -3898,7 +3962,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           newParameter = string.Empty;
         }
-        this.type = (string) newType;
+        this.type = (string)newType;
         this.dataValue = newValue;
         this.parameter = newParameter;
       }
@@ -3913,7 +3977,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           newParameter = string.Empty;
         }
-        this.type = (string) newType;
+        this.type = (string)newType;
         this.dataValue = newValue;
         this.parameter = newParameter;
         this.focus = newFocus;

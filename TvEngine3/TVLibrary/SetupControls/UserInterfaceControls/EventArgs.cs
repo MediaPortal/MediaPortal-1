@@ -36,6 +36,7 @@
 /// </summary>
 namespace MWCommon
 {
+
   #region TextDirEventArgs & TextDirEventHandler
 
   /// <summary>
@@ -67,10 +68,7 @@ namespace MWCommon
     /// </summary>
     public TextDir OldTextDir
     {
-      get
-      {
-        return tdOldTextDir;
-      }
+      get { return tdOldTextDir; }
     }
 
     /// <summary>
@@ -78,18 +76,11 @@ namespace MWCommon
     /// </summary>
     public TextDir NewTextDir
     {
-      get
-      {
-        return tdNewTextDir;
-      }
+      get { return tdNewTextDir; }
     }
   }
 
   #endregion TextDirEventArgs & TextDirEventHandler
-
-
-
-
 
   #region StringFormatEnumEventArgs & StringFormatEnumEventHandler
 
@@ -122,10 +113,7 @@ namespace MWCommon
     /// </summary>
     public StringFormatEnum OldStringFormatEnum
     {
-      get
-      {
-        return sfeOldStringFormatEnum;
-      }
+      get { return sfeOldStringFormatEnum; }
     }
 
     /// <summary>
@@ -133,18 +121,11 @@ namespace MWCommon
     /// </summary>
     public StringFormatEnum NewStringFormatEnum
     {
-      get
-      {
-        return sfeNewStringFormatEnum;
-      }
+      get { return sfeNewStringFormatEnum; }
     }
   }
 
   #endregion StringFormatEnumEventArgs & StringFormatEnumEventHandler
-
-
-
-
 
   #region MWCancelEventArgs & MWCancelEventHandler
 
@@ -176,16 +157,12 @@ namespace MWCommon
 
     #endregion Variables
 
-
-
     #region Constructors
 
     /// <summary>
     /// Standard constructor.
     /// </summary>
-    public MWCancelEventArgs()
-    {
-    }
+    public MWCancelEventArgs() {}
 
     /// <summary>
     /// Standard Constructor taking the current value of the property and the proposed value of the property as arguments.
@@ -200,8 +177,6 @@ namespace MWCommon
 
     #endregion Constructors
 
-
-
     #region Properties
 
     /// <summary>
@@ -209,10 +184,7 @@ namespace MWCommon
     /// </summary>
     public object Current
     {
-      get
-      {
-        return oCurrent;
-      }
+      get { return oCurrent; }
     }
 
     /// <summary>
@@ -220,16 +192,11 @@ namespace MWCommon
     /// </summary>
     public object Proposed
     {
-      get
-      {
-        return oProposed;
-      }
+      get { return oProposed; }
     }
 
     #endregion Properties
-
   }
 
   #endregion MWCancelEventArgs & MWCancelEventHandler
-
 }

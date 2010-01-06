@@ -53,7 +53,8 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// Update
     /// </summary>
     Update = 5
-  };
+  } ;
+
   /// <summary>
   /// Command Id Type enum
   /// </summary>
@@ -75,7 +76,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// Not selected
     /// </summary>
     NotSelected = 4
-  };
+  } ;
 
   /// <summary>
   /// ECMEMM
@@ -86,19 +87,23 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// ECMEMM Number
     /// </summary>
     public int Number;
+
     /// <summary>
     /// Pid
     /// </summary>
     public int Pid;
+
     /// <summary>
     /// CA Id
     /// </summary>
     public int CaId;
+
     /// <summary>
     /// Provider id
     /// </summary>
     public int ProviderId;
   }
+
   ///<summary>
   /// CA PMT Es class
   ///</summary>
@@ -107,31 +112,38 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// <summary>
     /// CA PMT ES Stream type
     /// </summary>
-    public int StreamType;                          // 8 bit      0
+    public int StreamType; // 8 bit      0
+
     /// <summary>
     /// CA PMT ES reserved
     /// </summary>
-    public int reserved2;                           // 3 bit      +1 3bit 
+    public int reserved2; // 3 bit      +1 3bit 
+
     /// <summary>
     /// CA PMT ES elementary stream PID
     /// </summary>
-    public int ElementaryStreamPID;                 // 13 bit     +1 5bit, +2=8bit
+    public int ElementaryStreamPID; // 13 bit     +1 5bit, +2=8bit
+
     /// <summary>
     /// CA PMT ES reserved3
     /// </summary>
-    public int reserved3;                           // 4  bit
+    public int reserved3; // 4  bit
+
     /// <summary>
     /// CA PMT ES elementary stream info length
     /// </summary>
-    public int ElementaryStreamInfoLength;          // 12 bit
+    public int ElementaryStreamInfoLength; // 12 bit
+
     /// <summary>
     /// CA PMT ES command id
     /// </summary>
-    public CommandIdType CommandId;                  // 8 bit
+    public CommandIdType CommandId; // 8 bit
+
     /// <summary>
     /// CA PMT ES descriptors
     /// </summary>
     public List<byte[]> Descriptors;
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -139,7 +151,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     {
       Descriptors = new List<byte[]>();
     }
-  };
+  } ;
 
   ///<summary>
   /// CA PMT class
@@ -150,46 +162,56 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// CA PMT listmanagement
     /// </summary>
     public ListManagementType CAPmt_Listmanagement; //  8 bit   0
+
     /// <summary>
     /// CA PMT program number
     /// </summary>
-    public int ProgramNumber;                       // 16 bit   1..2
+    public int ProgramNumber; // 16 bit   1..2
+
     /// <summary>
     /// CA PMT reserved 0
     /// </summary>
-    public int reserved0;                           //  2 bit   3
+    public int reserved0; //  2 bit   3
+
     /// <summary>
     /// CA PMT version number
     /// </summary>
-    public int VersionNumber;                       //  5 bit   3
+    public int VersionNumber; //  5 bit   3
+
     /// <summary>
     /// CA PMT current next indicator
     /// </summary>
-    public int CurrentNextIndicator;                //  1 bit   3
+    public int CurrentNextIndicator; //  1 bit   3
+
     /// <summary>
     /// CA PMT reserved 1
     /// </summary>
-    public int reserved1;                           //  4 bit   4
+    public int reserved1; //  4 bit   4
+
     /// <summary>
     /// CA PMT  program info length
     /// </summary>
-    public int ProgramInfoLength;                   // 12 bit   4..5
+    public int ProgramInfoLength; // 12 bit   4..5
+
     /// <summary>
     /// CA PMT  command id
     /// </summary>
-    public CommandIdType CommandId;       // 8  bit   6
+    public CommandIdType CommandId; // 8  bit   6
+
     /// <summary>
     /// CA PMT descriptors
     /// </summary>
-    public List<byte[]> Descriptors;             // x  bit
+    public List<byte[]> Descriptors; // x  bit
+
     /// <summary>
     /// CA PMT  es list
     /// </summary>
     public List<CaPmtEs> CaPmtEsList;
+
     /// <summary>
     /// CA PMT descriptors cat
     /// </summary>
-    public List<byte[]> DescriptorsCat;             // x  bit
+    public List<byte[]> DescriptorsCat; // x  bit
 
     ///<summary>
     /// Constructor
@@ -222,7 +244,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       return emms;
     }
 
-    static void Add(IList<ECMEMM> list, ECMEMM newEcm)
+    private static void Add(IList<ECMEMM> list, ECMEMM newEcm)
     {
       for (int i = 0; i < list.Count; ++i)
       {
@@ -233,11 +255,12 @@ namespace TvLibrary.Implementations.DVB.Structures
       }
       list.Add(newEcm);
     }
+
     /// <summary>
     /// Returns the ECM's found in the PMT.
     /// </summary>
     /// <returns></returns>
-    static void Parse(byte[] descriptor, IList<ECMEMM> newEcms)
+    private static void Parse(byte[] descriptor, IList<ECMEMM> newEcms)
     {
       ECMEMM ecm = new ECMEMM();
       int off = 0;
@@ -303,7 +326,8 @@ namespace TvLibrary.Implementations.DVB.Structures
               {
                 if (tagInd == 0x14)
                 {
-                  ecm.ProviderId = (descriptor[offset + 2] << 16) + (descriptor[offset + 3] << 8) + descriptor[offset + 4];
+                  ecm.ProviderId = (descriptor[offset + 2] << 16) + (descriptor[offset + 3] << 8) +
+                                   descriptor[offset + 4];
                   // Some providers sends wrong information in provider id (Boxer),
                   // so reset lower 4 bits for Via Access
                   if (ecm.CaId == 0x500)
@@ -413,6 +437,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       length = offset;
       return data;
     }
+
     /// <summary>
     /// Dumps ca pmt to the log file.
     /// </summary>
@@ -428,10 +453,10 @@ namespace TvLibrary.Implementations.DVB.Structures
       {
         Log.Log.Write("  StreamType                :{0}", pmtes.StreamType);
         Log.Log.Write("  ElementaryStreamPID       :{0:X}", pmtes.ElementaryStreamPID);
-        Log.Log.Write("  ElementaryStreamInfoLength:{0:X} {1}", pmtes.ElementaryStreamInfoLength, pmtes.Descriptors.Count);
+        Log.Log.Write("  ElementaryStreamInfoLength:{0:X} {1}", pmtes.ElementaryStreamInfoLength,
+                      pmtes.Descriptors.Count);
         Log.Log.Write("  CAPmt_CommandID_ES        :{0}", pmtes.CommandId);
       }
     }
   }
-
 }

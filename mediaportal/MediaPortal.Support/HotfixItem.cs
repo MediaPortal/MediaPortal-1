@@ -110,9 +110,7 @@ namespace MediaPortal.Support
       set { uninstallString = value.Replace("\"", ""); }
     }
 
-    public HotfixItem()
-    {
-    }
+    public HotfixItem() {}
 
     public HotfixItem(
       string Name,

@@ -63,7 +63,7 @@ namespace WindowPlugins.GUISettings
 
     public GUISettingsSkipSteps()
     {
-      GetID = (int) Window.WINDOW_SETTINGS_SKIPSTEPS;
+      GetID = (int)Window.WINDOW_SETTINGS_SKIPSTEPS;
     }
 
     public override bool Init()
@@ -232,7 +232,7 @@ namespace WindowPlugins.GUISettings
       }
       else if (control == buttonAdd)
       {
-        VirtualKeyboard vk = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+        VirtualKeyboard vk = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
         vk.Reset();
         vk.DoModal(GetID);
         string newStep = vk.Text;
@@ -243,7 +243,7 @@ namespace WindowPlugins.GUISettings
         string error = verifySkipStep(newStep);
         if (error != null)
         {
-          GUIDialogOK errDialog = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+          GUIDialogOK errDialog = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
           errDialog.SetHeading(257);
           errDialog.SetLine(1, error);
           errDialog.DoModal(GetID);
@@ -255,7 +255,7 @@ namespace WindowPlugins.GUISettings
       }
       else if (control == buttonRemove)
       {
-        GUIDialogSelect2 dlgSel = (GUIDialogSelect2) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_SELECT2);
+        GUIDialogSelect2 dlgSel = (GUIDialogSelect2)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT2);
         dlgSel.Reset();
 
         foreach (string token in labelCurrent.Label.Split(new char[] {',', ';', ' '}))
@@ -349,7 +349,7 @@ namespace WindowPlugins.GUISettings
           stepSize = 10800;
         }
 
-        if (!((GUICheckMarkControl) control).Selected)
+        if (!((GUICheckMarkControl)control).Selected)
         {
           RemoveStep(stepSize);
         }
@@ -412,7 +412,7 @@ namespace WindowPlugins.GUISettings
       else
       {
         // Check that whole minutes are entered
-        if (step > 60 && (step%60) != 0)
+        if (step > 60 && (step % 60) != 0)
         {
           return "Enter whole minutes only!";
         }

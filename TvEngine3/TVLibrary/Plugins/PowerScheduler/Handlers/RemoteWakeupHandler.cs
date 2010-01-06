@@ -1,14 +1,16 @@
 #region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Handlers
 {
-  class RemoteWakeupHandler : IWakeupHandler
+  internal class RemoteWakeupHandler : IWakeupHandler
   {
     private IWakeupHandler remote;
     private int tag;
@@ -16,7 +18,7 @@ namespace TvEngine.PowerScheduler.Handlers
 
     public RemoteWakeupHandler(String URL, int tag)
     {
-      remote = (IWakeupHandler)Activator.GetObject(typeof(IWakeupHandler), URL);
+      remote = (IWakeupHandler)Activator.GetObject(typeof (IWakeupHandler), URL);
       this.tag = tag;
       this.Url = URL;
     }
@@ -63,6 +65,5 @@ namespace TvEngine.PowerScheduler.Handlers
     }
 
     #endregion
-
   }
 }

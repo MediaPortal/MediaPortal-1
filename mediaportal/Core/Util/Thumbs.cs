@@ -27,7 +27,6 @@ using System;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 
@@ -176,7 +175,7 @@ namespace MediaPortal.Util
         Directory.CreateDirectory(News);
         Directory.CreateDirectory(Trailers);
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     #region Public getters and setters
@@ -230,8 +229,7 @@ namespace MediaPortal.Util
     /// </summary>
     public static ThumbQuality Quality
     {
-      get
-      { return _currentThumbQuality; }
+      get { return _currentThumbQuality; }
       set
       {
         if (value != _currentThumbQuality)
@@ -244,38 +242,32 @@ namespace MediaPortal.Util
 
     public static CompositingQuality Compositing
     {
-      get
-      { return _currentCompositingQuality; }
+      get { return _currentCompositingQuality; }
     }
 
     public static InterpolationMode Interpolation
     {
-      get
-      { return _currentInterpolationMode; }
+      get { return _currentInterpolationMode; }
     }
 
     public static SmoothingMode Smoothing
     {
-      get
-      { return _currentSmoothingMode; }
+      get { return _currentSmoothingMode; }
     }
 
     public static ThumbSize ThumbResolution
     {
-      get
-      { return _currentThumbSize; }
+      get { return _currentThumbSize; }
     }
 
     public static LargeThumbSize ThumbLargeResolution
     {
-      get
-      { return _currentLargeThumbSize; }
+      get { return _currentLargeThumbSize; }
     }
 
     public static ImageFormat ThumbFormat
     {
-      get
-      { return _currentThumbFormat; }
+      get { return _currentThumbFormat; }
     }
 
     public static ImageCodecInfo ThumbCodecInfo
@@ -307,7 +299,8 @@ namespace MediaPortal.Util
       for (int i = 0; i < ImgEncoders.Length; i++)
       {
         // Until the one that we are interested in is found, which might be "*.JPG;*.JPEG;*.JPE;*.JFIF"
-        string[] possibleExtensions = ImgEncoders[i].FilenameExtension.Split(new [] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] possibleExtensions = ImgEncoders[i].FilenameExtension.Split(new[] {';'},
+                                                                             StringSplitOptions.RemoveEmptyEntries);
         foreach (string ext in possibleExtensions)
         {
           // .jpg in *.JPG ?

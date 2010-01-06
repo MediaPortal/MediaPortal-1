@@ -45,7 +45,7 @@ namespace MediaPortal.Music.Database
         this.start_time = track.getQueueTime(true);
         this.source = track.getSourceParam();
         this.rating = track.getRateActionParam();
-        this.duration = (int) track.Duration;
+        this.duration = (int)track.Duration;
         this.album = track.Album;
         this.tracknr = track.Track;
         this.auth = track.AuthToken;
@@ -245,9 +245,7 @@ namespace MediaPortal.Music.Database
           queue.Add(new QueuedTrack(artist, title, start_time, source, rating, duration, album, tracknr, auth));
         }
       }
-      catch
-      {
-      }
+      catch {}
     }
 
     public string GetTransmitInfo(out int num_tracks)
@@ -263,7 +261,7 @@ namespace MediaPortal.Music.Database
           break;
         }
 
-        QueuedTrack track = (QueuedTrack) queue[i];
+        QueuedTrack track = (QueuedTrack)queue[i];
 
         //s=<sessionID>
         //a[0]=<artist>
@@ -288,7 +286,7 @@ namespace MediaPortal.Music.Database
           track.Rating, // rating = 5
           track.Duration.ToString(), // secs = 6
           AudioscrobblerBase.getValidURLLastFMString(track.Album), // album = 7
-          trackNr,  // tracknumber = 8
+          trackNr, // tracknumber = 8
           String.Empty // The MusicBrainz Track ID, or empty if not known.
           );
       }

@@ -1,4 +1,5 @@
 #region Copyright (C) 2007-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2007-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,14 +20,17 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
+
 using System;
 using System.Management;
 using System.Collections.Generic;
 using System.Text;
 using TvEngine.PowerScheduler.Interfaces;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Handlers
@@ -37,23 +41,27 @@ namespace TvEngine.PowerScheduler.Handlers
   public class ActiveSharesHandler : IStandbyHandler
   {
     #region Structs
-    struct HostUserCombo
+
+    private struct HostUserCombo
     {
       public string Host;
       public string User;
-      public HostUserCombo(string host) : this(host, String.Empty) { }
+      public HostUserCombo(string host) : this(host, String.Empty) {}
+
       public HostUserCombo(string host, string user)
       {
         User = user;
         Host = host;
       }
     }
-    struct ServerConnection
+
+    private struct ServerConnection
     {
       public string ShareName;
       public string ComputerName;
       public string UserName;
       public int NumberOfFiles;
+
       public ServerConnection(string shareName, string computerName, string userName, int numFiles)
       {
         ShareName = shareName;
@@ -62,16 +70,21 @@ namespace TvEngine.PowerScheduler.Handlers
         NumberOfFiles = numFiles;
       }
     }
+
     #endregion
 
     #region Variables
-    List<string> _shares = new List<string>();
-    List<HostUserCombo> _combos = new List<HostUserCombo>();
-    ManagementObjectSearcher _searcher = new ManagementObjectSearcher(
+
+    private List<string> _shares = new List<string>();
+    private List<HostUserCombo> _combos = new List<HostUserCombo>();
+
+    private ManagementObjectSearcher _searcher = new ManagementObjectSearcher(
       "SELECT ShareName, UserName, ComputerName, NumberOfFiles  FROM Win32_ServerConnection WHERE NumberOfFiles > 0");
+
     #endregion
 
     #region Public methods
+
     /// <summary>
     /// Adds a valid sharename to watch. If no shares have been added, all shares will be monitored.
     /// </summary>
@@ -81,6 +94,7 @@ namespace TvEngine.PowerScheduler.Handlers
       if (!_shares.Contains(shareName))
         _shares.Add(shareName);
     }
+
     /// <summary>
     /// Adds a host which can keep the server alive when it has open files on the server.
     /// If no hosts or host/user combinations have been added, all users can keep the server alive
@@ -91,6 +105,7 @@ namespace TvEngine.PowerScheduler.Handlers
     {
       AddHostUserCombo(host, String.Empty);
     }
+
     /// <summary>
     /// Adds a host/user combination which can keep the server alive if it has open files on the
     /// server. For example: if you do AddHostUserCombo("Bar", "Foo"); then only user "Foo" on
@@ -103,6 +118,7 @@ namespace TvEngine.PowerScheduler.Handlers
     {
       _combos.Add(new HostUserCombo(host, user));
     }
+
     /// <summary>
     /// Clears both the share list and host/user list. After this call all sessions which have
     /// open files can keep the server from entering standby.
@@ -112,9 +128,11 @@ namespace TvEngine.PowerScheduler.Handlers
       _shares.Clear();
       _combos.Clear();
     }
+
     #endregion
 
     #region private methods
+
     private List<ServerConnection> GetConnections(ManagementObjectCollection col)
     {
       List<ServerConnection> connections = new List<ServerConnection>();
@@ -131,9 +149,11 @@ namespace TvEngine.PowerScheduler.Handlers
       }
       return connections;
     }
+
     #endregion
 
     #region IStandbyHandler implementation
+
     public bool DisAllowShutdown
     {
       get
@@ -185,13 +205,14 @@ namespace TvEngine.PowerScheduler.Handlers
         return activeServerConnections;
       }
     }
-    public void UserShutdownNow()
-    {
-    }
+
+    public void UserShutdownNow() {}
+
     public string HandlerName
     {
       get { return "ActiveSharesHandler"; }
     }
+
     #endregion
   }
 }

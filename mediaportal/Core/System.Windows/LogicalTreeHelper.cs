@@ -32,9 +32,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    private LogicalTreeHelper()
-    {
-    }
+    private LogicalTreeHelper() {}
 
     #endregion Constructors
 
@@ -44,7 +42,7 @@ namespace System.Windows
     {
       if (current is FrameworkElement)
       {
-        FrameworkElement element = (FrameworkElement) current;
+        FrameworkElement element = (FrameworkElement)current;
 
         RequestBringIntoViewEventArgs args = new RequestBringIntoViewEventArgs(current);
 
@@ -52,7 +50,7 @@ namespace System.Windows
         args.Handled = false;
         args.RoutedEvent = FrameworkElement.RequestBringIntoViewEvent;
 
-        ((IInputElement) element).RaiseEvent(args);
+        ((IInputElement)element).RaiseEvent(args);
 
         if (args.Handled)
         {
@@ -92,7 +90,7 @@ namespace System.Windows
     {
       if (current is FrameworkElement)
       {
-        FrameworkElement element = (FrameworkElement) current;
+        FrameworkElement element = (FrameworkElement)current;
 
         object node = element.FindName(name);
 
@@ -106,7 +104,7 @@ namespace System.Windows
 
       if (current is FrameworkContentElement)
       {
-        FrameworkContentElement element = (FrameworkContentElement) current;
+        FrameworkContentElement element = (FrameworkContentElement)current;
 
         object node = element.FindName(name);
 
@@ -125,12 +123,12 @@ namespace System.Windows
     {
       if (parent is FrameworkElement)
       {
-        return ((FrameworkElement) parent).LogicalChildren;
+        return ((FrameworkElement)parent).LogicalChildren;
       }
 
       if (parent is FrameworkContentElement)
       {
-        return ((FrameworkContentElement) parent).LogicalChildren;
+        return ((FrameworkContentElement)parent).LogicalChildren;
       }
 
       return NullEnumerator.Instance;
@@ -160,12 +158,12 @@ namespace System.Windows
     {
       if (child is FrameworkElement)
       {
-        return ((FrameworkElement) child).Parent;
+        return ((FrameworkElement)child).Parent;
       }
 
       if (child is FrameworkContentElement)
       {
-        return ((FrameworkContentElement) child).Parent;
+        return ((FrameworkContentElement)child).Parent;
       }
 
       return null;

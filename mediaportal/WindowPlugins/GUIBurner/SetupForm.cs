@@ -235,9 +235,7 @@ namespace MediaPortal.GUI.GUIBurner
           {
             Directory.CreateDirectory(textBoxTempPath.Text);
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
 
         if (!Directory.Exists(@"C:\Windows\Fonts"))
@@ -291,9 +289,7 @@ namespace MediaPortal.GUI.GUIBurner
         Help.ShowHelp(this,
                       @"http://www.microsoft.com/downloads/details.aspx?FamilyID=9D467A69-57FF-4AE7-96EE-B18C4790CFFD&displaylang=en");
       }
-      catch
-      {
-      }
+      catch {}
     }
 
     private void linkLabelCygwinDownload_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -303,9 +299,7 @@ namespace MediaPortal.GUI.GUIBurner
         Help.ShowHelp(this, @"http://www.team-mediaportal.com/files/Download/SystemUtilities/MyBurnerSupportFiles/");
         //Help.ShowHelp(this, @"http://www.team-mediaportal.com/files/Download/SystemUtilities/BurnerSupportFiles.rar/");
       }
-      catch
-      {
-      }
+      catch {}
     }
 
     private void buttonCancel_Click(object sender, EventArgs e)
@@ -426,7 +420,7 @@ namespace MediaPortal.GUI.GUIBurner
       this.linkLabelCygwinDownload.AutoSize = true;
       this.linkLabelCygwinDownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
                                                                   System.Drawing.FontStyle.Bold,
-                                                                  System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+                                                                  System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.linkLabelCygwinDownload.LinkArea = new System.Windows.Forms.LinkArea(16, 19);
       this.linkLabelCygwinDownload.Location = new System.Drawing.Point(18, 28);
       this.linkLabelCygwinDownload.Name = "linkLabelCygwinDownload";
@@ -445,7 +439,7 @@ namespace MediaPortal.GUI.GUIBurner
       this.linkLabelDVDBurnDownload.AutoSize = true;
       this.linkLabelDVDBurnDownload.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
                                                                    System.Drawing.FontStyle.Bold,
-                                                                   System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+                                                                   System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.linkLabelDVDBurnDownload.LinkArea = new System.Windows.Forms.LinkArea(28, 9);
       this.linkLabelDVDBurnDownload.Location = new System.Drawing.Point(18, 53);
       this.linkLabelDVDBurnDownload.Name = "linkLabelDVDBurnDownload";
@@ -623,7 +617,7 @@ namespace MediaPortal.GUI.GUIBurner
       // 
       this.labelTempHint.AutoSize = true;
       this.labelTempHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular,
-                                                        System.Drawing.GraphicsUnit.Point, ((byte) (0)));
+                                                        System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelTempHint.Location = new System.Drawing.Point(117, 62);
       this.labelTempHint.Name = "labelTempHint";
       this.labelTempHint.Size = new System.Drawing.Size(466, 13);

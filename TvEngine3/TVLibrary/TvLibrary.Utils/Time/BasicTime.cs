@@ -78,9 +78,9 @@ namespace MediaPortal.Utils.Time
     public BasicTime(long time)
     {
       time /= 100L;
-      _minute = (int) (time%100L);
+      _minute = (int)(time % 100L);
       time /= 100L;
-      _hour = (int) (time%100L);
+      _hour = (int)(time % 100L);
     }
 
     #endregion
@@ -337,8 +337,8 @@ namespace MediaPortal.Utils.Time
 
         if (time > 0 && time < 2400)
         {
-          _minute = time%100;
-          _hour = time/100;
+          _minute = time % 100;
+          _hour = time / 100;
         }
       }
 

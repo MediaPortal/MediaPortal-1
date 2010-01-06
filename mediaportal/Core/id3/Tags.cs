@@ -117,7 +117,7 @@ namespace Roger.ID3
       {
         if (e.frameId == index)
         {
-          return (string) e.frameValue;
+          return (string)e.frameValue;
         }
       }
 
@@ -129,7 +129,7 @@ namespace Roger.ID3
       // Replace any existing frame
       for (int i = 0; i < frames.Count; ++i)
       {
-        if (((FrameEntry) frames[i]).frameId == index)
+        if (((FrameEntry)frames[i]).frameId == index)
         {
           frames[i] = new FrameEntry(index, value);
           return;

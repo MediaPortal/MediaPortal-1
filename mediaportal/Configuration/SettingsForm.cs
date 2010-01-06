@@ -194,9 +194,7 @@ namespace MediaPortal.Configuration
     #endregion
 
     public SettingsForm()
-      : this(false)
-    {
-    }
+      : this(false) {}
 
     public SettingsForm(bool showDebugOptions)
     {
@@ -415,7 +413,7 @@ namespace MediaPortal.Configuration
       //AddSection(new ConfigPage(filterSection, renderConfig, true));
 
       //Look for Audio Encoders, if exist assume encoders are installed & present config option
-      string[] audioEncoders = new string[] { "InterVideo Audio Encoder" };
+      string[] audioEncoders = new string[] {"InterVideo Audio Encoder"};
       FilterCollection legacyFilters = Filters.LegacyFilters;
       foreach (Filter audioCodec in legacyFilters)
       {
@@ -478,13 +476,12 @@ namespace MediaPortal.Configuration
         AddSection(new ConfigPage(television, new TVPostProcessing(), true));
         Log.Info("  add tv teletext section");
         AddSection(new ConfigPage(television, new TVTeletext(), true));
-        if(ShowDebugOptions)
+        if (ShowDebugOptions)
         {
           Log.Info("  add tv debug options section");
           AddSection(new ConfigPage(television, new TVDebugOptions(), true));
         }
       }
-
     }
 
     private void AddTabPictures()
@@ -754,7 +751,7 @@ namespace MediaPortal.Configuration
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources =
-        new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
+        new System.ComponentModel.ComponentResourceManager(typeof (SettingsForm));
       this.sectionTree = new System.Windows.Forms.TreeView();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -1157,7 +1154,7 @@ namespace MediaPortal.Configuration
         SectionTreeNode treeNode = currentNode as SectionTreeNode;
         if (treeNode != null)
         {
-          Log.Info("SaveSectionSettings() - {0}", treeNode.Text);      
+          Log.Info("SaveSectionSettings() - {0}", treeNode.Text);
           treeNode.Section.SaveSettings();
         }
         // Load settings for all child nodes
@@ -1368,9 +1365,7 @@ namespace MediaPortal.Configuration
               {
                 process.Kill();
               }
-              catch (Exception)
-              {
-              }
+              catch (Exception) {}
             }
 
             mpRunning = CheckForRunningProcess(aProcessName, false);
@@ -1403,9 +1398,7 @@ namespace MediaPortal.Configuration
           }
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       SaveAllSettings();
     }

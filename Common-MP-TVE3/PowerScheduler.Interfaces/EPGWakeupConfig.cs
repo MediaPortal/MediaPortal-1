@@ -58,9 +58,7 @@ namespace TvEngine.PowerScheduler
     public int Hour;
     public int Minutes;
 
-    public EPGWakeupConfig()
-    {
-    }
+    public EPGWakeupConfig() {}
 
     public EPGWakeupConfig(string serializedConfig)
     {
@@ -71,12 +69,10 @@ namespace TvEngine.PowerScheduler
         byte[] buffer = Convert.FromBase64String(serializedConfig);
         using (MemoryStream stream = new MemoryStream(buffer, 0, buffer.Length))
         {
-          cfg = (EPGWakeupConfig) formatter.Deserialize(stream);
+          cfg = (EPGWakeupConfig)formatter.Deserialize(stream);
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       Hour = cfg.Hour;
       Minutes = cfg.Minutes;
       Days = cfg.Days;
@@ -103,7 +99,7 @@ namespace TvEngine.PowerScheduler
     {
       if (obj is EPGWakeupConfig)
       {
-        EPGWakeupConfig cfg = (EPGWakeupConfig) obj;
+        EPGWakeupConfig cfg = (EPGWakeupConfig)obj;
         if (cfg.Hour == Hour && cfg.Minutes == Minutes)
         {
           foreach (EPGGrabDays day in cfg.Days)

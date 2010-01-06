@@ -26,7 +26,8 @@ namespace TvService
     {
       try
       {
-        using (RegistryKey tveKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\TVService", true))
+        using (
+          RegistryKey tveKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\TVService", true))
         {
           if (tveKey != null)
           {
@@ -35,7 +36,8 @@ namespace TvService
               tveKey.SetValue("Type", ((int)tveKey.GetValue("Type") | 256));
           }
         }
-      } catch (Exception) { }
+      }
+      catch (Exception) {}
     }
   }
 }

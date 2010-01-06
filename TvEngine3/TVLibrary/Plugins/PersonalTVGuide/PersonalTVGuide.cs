@@ -36,10 +36,12 @@ namespace TvEngine
   public class PersonalTVGuide : ITvServerPlugin, IStandbyHandler
   {
     #region variables
+
     //private TvBusinessLayer cmLayer = new TvBusinessLayer();
     private bool _stopService = false;
     private bool _isUpdating = false;
     private bool _debugMode = true;
+
     #endregion
 
     #region public members
@@ -49,7 +51,7 @@ namespace TvEngine
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="eventArgs">The <see cref="System.EventArgs"/> the event data.</param>
-    void events_OnTvServerEvent(object sender, EventArgs eventArgs)
+    private void events_OnTvServerEvent(object sender, EventArgs eventArgs)
     {
       TvServerEventArgs tvEvent = (TvServerEventArgs)eventArgs;
       if (tvEvent.EventType == TvServerEventType.ProgramUpdated)
@@ -90,6 +92,7 @@ namespace TvEngine
     #endregion
 
     #region private members
+
     /// <summary>
     /// Parses the keyword table
     /// and updates the PersonalTVGuideMap
@@ -164,8 +167,8 @@ namespace TvEngine
     /// </summary>
     private IList<Program> ContainsInTitle(string Token)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
-      sb.AddConstraint(Operator.Like, "title", "%"+Token+"%");
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
+      sb.AddConstraint(Operator.Like, "title", "%" + Token + "%");
       SqlStatement stmt = sb.GetStatement(true);
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
@@ -175,8 +178,8 @@ namespace TvEngine
     /// </summary>
     private IList<Program> ContainsInDescription(string Token)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
-      sb.AddConstraint(Operator.Like, "description", "%"+Token+"%");
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
+      sb.AddConstraint(Operator.Like, "description", "%" + Token + "%");
       SqlStatement stmt = sb.GetStatement(true);
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
@@ -186,8 +189,8 @@ namespace TvEngine
     /// </summary>
     private IList<Program> ContainsInGenre(string Token)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
-      sb.AddConstraint(Operator.Like, "genre", "%"+Token+"%");
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
+      sb.AddConstraint(Operator.Like, "genre", "%" + Token + "%");
       SqlStatement stmt = sb.GetStatement(true);
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
@@ -197,9 +200,11 @@ namespace TvEngine
       //_debugMode = (cmLayer.GetSetting("PTVGDebugMode", "true").Value == "true");
       if (_debugMode) Log.Debug("PersonalTVGuide: Extensive Logging switched on");
     }
+
     #endregion
 
     #region ITvServerPlugin Members
+
     /// <summary>
     /// returns the name of the plugin
     /// </summary>
@@ -251,7 +256,7 @@ namespace TvEngine
       _stopService = false;
       ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
       events.OnTvServerEvent += new TvServerEventHandler(events_OnTvServerEvent);
-      if (_debugMode) UpdatePersonalTVGuide();  // Only for testing !!!!
+      if (_debugMode) UpdatePersonalTVGuide(); // Only for testing !!!!
     }
 
     /// <summary>
@@ -272,9 +277,7 @@ namespace TvEngine
 
     #region IStandbyHandler
 
-    public void UserShutdownNow()
-    {
-    }
+    public void UserShutdownNow() {}
 
     public bool DisAllowShutdown
     {
@@ -285,7 +288,7 @@ namespace TvEngine
     {
       get { return this.Name; }
     }
-    #endregion
 
+    #endregion
   }
 }

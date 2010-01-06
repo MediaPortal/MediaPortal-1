@@ -113,7 +113,7 @@ namespace DShowNET.Helper
       {
         Guid bagId = typeof (IPropertyBag).GUID;
         moniker.BindToStorage(null, null, ref bagId, out bagObj);
-        bag = (IPropertyBag) bagObj;
+        bag = (IPropertyBag)bagObj;
         object val = "";
         int hr = bag.Read("FriendlyName", out val, null);
         if (hr != 0)
@@ -202,7 +202,7 @@ namespace DShowNET.Helper
           throw new NotImplementedException("System Device Enumerator");
         }
         comObj = Activator.CreateInstance(srvType);
-        enumDev = (ICreateDevEnum) comObj;
+        enumDev = (ICreateDevEnum)comObj;
 
         // Create an enumerator to find filters in category
         hr = enumDev.CreateClassEnumerator(category, out enumMon, 0);
@@ -247,7 +247,7 @@ namespace DShowNET.Helper
       {
         return (1);
       }
-      Filter f = (Filter) obj;
+      Filter f = (Filter)obj;
       return (this.Name.CompareTo(f.Name));
     }
   }

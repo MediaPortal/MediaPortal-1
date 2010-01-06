@@ -32,7 +32,8 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class DVBCScanning : DvbBaseScanning, ITVScanning, IDisposable
   {
-    readonly TvCardDVBC _card;
+    private readonly TvCardDVBC _card;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DVBCScanning"/> class.
     /// </summary>
@@ -49,10 +50,7 @@ namespace TvLibrary.Implementations.DVB
     /// <value></value>
     public ITVCard TvCard
     {
-      get
-      {
-        return _card;
-      }
+      get { return _card; }
     }
 
     /// <summary>
@@ -63,6 +61,7 @@ namespace TvLibrary.Implementations.DVB
     {
       return _card.StreamAnalyzer;
     }
+
     /// <summary>
     /// Sets the hw pids.
     /// </summary>
@@ -79,6 +78,7 @@ namespace TvLibrary.Implementations.DVB
     {
       _card.ResetSignalUpdate();
     }
+
     /// <summary>
     /// Creates the new channel.
     /// </summary>
@@ -94,7 +94,11 @@ namespace TvLibrary.Implementations.DVB
       dvbcChannel.SymbolRate = tuningChannel.SymbolRate;
       dvbcChannel.ModulationType = tuningChannel.ModulationType;
       dvbcChannel.Frequency = tuningChannel.Frequency;
-      dvbcChannel.IsTv = (info.serviceType == (int)ServiceType.Video || info.serviceType == (int)ServiceType.Mpeg2HDStream || info.serviceType == (int)ServiceType.H264Stream || info.serviceType == (int)ServiceType.AdvancedCodecHDVideoStream || info.serviceType == (int)ServiceType.Mpeg4OrH264Stream);
+      dvbcChannel.IsTv = (info.serviceType == (int)ServiceType.Video ||
+                          info.serviceType == (int)ServiceType.Mpeg2HDStream ||
+                          info.serviceType == (int)ServiceType.H264Stream ||
+                          info.serviceType == (int)ServiceType.AdvancedCodecHDVideoStream ||
+                          info.serviceType == (int)ServiceType.Mpeg4OrH264Stream);
       dvbcChannel.IsRadio = (info.serviceType == (int)ServiceType.Audio);
       dvbcChannel.NetworkId = info.networkID;
       dvbcChannel.ServiceId = info.serviceID;

@@ -14,6 +14,7 @@ namespace TestApp
   public partial class Form1 : Form
   {
     #region imports
+
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
     protected static extern void StreamSetup();
 
@@ -25,13 +26,14 @@ namespace TestApp
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
     protected static extern void StreamRemove(string streamName);
+
     #endregion
 
-    readonly TvCardCollection _tvcards = new TvCardCollection();
-    ITVCard _currentCard;
-    bool _stopStreaming;
-    bool _streamingRunning;
-    int _currentPageNumber=0x600;
+    private readonly TvCardCollection _tvcards = new TvCardCollection();
+    private ITVCard _currentCard;
+    private bool _stopStreaming;
+    private bool _streamingRunning;
+    private int _currentPageNumber = 0x600;
     //Player _player;
 
     public Form1()
@@ -55,7 +57,7 @@ namespace TestApp
       timer1.Enabled = true;
     }
 
-    void timer1_Tick(object sender, EventArgs e)
+    private void timer1_Tick(object sender, EventArgs e)
     {
       lock (this)
       {
@@ -73,31 +75,37 @@ namespace TestApp
         if (quality > 100) quality = 100;
         if (_currentCard.SubChannels.Length > 0)
         {
-          labelChannel.Text = _currentCard.SubChannels[0].CurrentChannel != null ? _currentCard.SubChannels[0].CurrentChannel.ToString() : "";
+          labelChannel.Text = _currentCard.SubChannels[0].CurrentChannel != null
+                                ? _currentCard.SubChannels[0].CurrentChannel.ToString()
+                                : "";
           progressBarQuality.Value = quality;
-          buttonScan.Enabled = true;// (_currentCard.IsTunerLocked);
+          buttonScan.Enabled = true; // (_currentCard.IsTunerLocked);
           buttonTimeShift.Enabled = (_currentCard.IsTunerLocked && (_currentCard.SubChannels[0].IsRecording == false));
           buttonRecord.Enabled = (_currentCard.SubChannels[0].IsTimeShifting || _currentCard.SubChannels[0].IsRecording);
           buttonTimeShiftTS.Enabled = (_currentCard.IsTunerLocked && (_currentCard.SubChannels[0].IsRecording == false));
-          buttonRecordMpg.Enabled = (_currentCard.SubChannels[0].IsTimeShifting || _currentCard.SubChannels[0].IsRecording);
+          buttonRecordMpg.Enabled = (_currentCard.SubChannels[0].IsTimeShifting ||
+                                     _currentCard.SubChannels[0].IsRecording);
           btnEPG.Enabled = _currentCard.IsTunerLocked;
           buttonRecord.Text = _currentCard.SubChannels[0].IsRecording ? "Stop recording" : "Record";
 
           buttonTimeShift.Text = _currentCard.SubChannels[0].IsTimeShifting ? "Stop timeshifting" : "Timeshift";
 
           labelScrambled.Text = _currentCard.SubChannels[0].IsReceivingAudioVideo ? "no" : "yes";
-        } else {
+        }
+        else
+        {
           buttonTimeShift.Enabled = _currentCard.IsTunerLocked;
           buttonTimeShiftTS.Enabled = _currentCard.IsTunerLocked;
           buttonRecord.Enabled = false;
           buttonRecordMpg.Enabled = false;
         }
-      } 
+      }
     }
 
     private void buttonTune_Click(object sender, EventArgs e)
     {
-      timer1.Enabled = false;/*
+      timer1.Enabled = false;
+        /*
       DVBCChannel ch = new DVBCChannel();
       ch.Frequency = 340000;
       ch.NetworkId = 500;
@@ -192,7 +200,9 @@ namespace TestApp
     {
       if ((_currentCard as TvCardAnalog) != null)
       {
-        if (MessageBox.Show(this, "Scanning is not possible for analog tv cards. (try it anyway ?:) )", "Not posible, Try anyway ?", MessageBoxButtons.YesNo) != DialogResult.Yes)
+        if (
+          MessageBox.Show(this, "Scanning is not possible for analog tv cards. (try it anyway ?:) )",
+                          "Not posible, Try anyway ?", MessageBoxButtons.YesNo) != DialogResult.Yes)
           return;
       }
       timer1.Enabled = false;
@@ -219,8 +229,8 @@ namespace TestApp
       buttonTune.Enabled = true;
       btnEPG.Enabled = true;
       timer1.Enabled = true;
-
     }
+
     private void btnEPG_Click(object sender, EventArgs e)
     {
       if ((_currentCard as TvCardAnalog) != null)
@@ -287,6 +297,7 @@ namespace TestApp
       _currentCard = _tvcards.Cards[comboBoxCards.SelectedIndex];
       listViewChannels.Items.Clear();
     }
+
     protected override void OnClosed(EventArgs e)
     {
       _stopStreaming = true;
@@ -312,13 +323,11 @@ namespace TestApp
       _currentCard.SubChannels[0].TeletextDecoder.OnPageUpdated += TeletextDecoder_OnPageUpdated;
     }
 
-    static void TeletextDecoder_OnPageDeleted(int pageNumber, int subPageNumber)
-    {
-    }
+    private static void TeletextDecoder_OnPageDeleted(int pageNumber, int subPageNumber) {}
 
-    void UpdatePage(int pageNumber, int subPageNumber)
+    private void UpdatePage(int pageNumber, int subPageNumber)
     {
-      if (pageNumber ==_currentPageNumber) return;
+      if (pageNumber == _currentPageNumber) return;
       /*
       if (pageNumber == 0x600)
       {
@@ -332,20 +341,19 @@ namespace TestApp
       //if (pageNumber == 0x600)
       //  pictureBox1.Image = _currentCard.TeletextDecoder.GetPage(pageNumber, subPageNumber);
       // if (pageNumber == 0x601)
-     //   pictureBox2.Image = _currentCard.TeletextDecoder.GetPage(pageNumber, subPageNumber);
+      //   pictureBox2.Image = _currentCard.TeletextDecoder.GetPage(pageNumber, subPageNumber);
       if (pageNumber == 0x602)
         pictureBox3.Image = _currentCard.SubChannels[0].TeletextDecoder.GetPage(pageNumber, subPageNumber);
-     // if (pageNumber == 0x603)
-     //   pictureBox4.Image = _currentCard.TeletextDecoder.GetPage(pageNumber, subPageNumber);
-
+      // if (pageNumber == 0x603)
+      //   pictureBox4.Image = _currentCard.TeletextDecoder.GetPage(pageNumber, subPageNumber);
     }
 
-    void TeletextDecoder_OnPageUpdated(int pageNumber, int subPageNumber)
+    private void TeletextDecoder_OnPageUpdated(int pageNumber, int subPageNumber)
     {
-        UpdatePage(pageNumber, subPageNumber);
+      UpdatePage(pageNumber, subPageNumber);
     }
 
-    void TeletextDecoder_OnPageAdded(int pageNumber, int subPageNumber)
+    private void TeletextDecoder_OnPageAdded(int pageNumber, int subPageNumber)
     {
       UpdatePage(pageNumber, subPageNumber);
     }
@@ -406,27 +414,21 @@ namespace TestApp
           StreamRun();
         }
       }
-      catch (Exception)
-      {
-
-      }
+      catch (Exception) {}
       _streamingRunning = false;
     }
 
-    private void pictureBox3_Click(object sender, EventArgs e)
-    {
-
-    }
+    private void pictureBox3_Click(object sender, EventArgs e) {}
 
     private void textBoxPageNr_TextChanged(object sender, EventArgs e)
     {
       try
       {
-          int pageNumber=Convert.ToInt32(textBoxPageNr.Text,16);
-          _currentPageNumber = pageNumber;
-          pictureBox3.Image = _currentCard.SubChannels[0].TeletextDecoder.GetPage(_currentPageNumber, 0);
-      }catch(Exception){}
-      
+        int pageNumber = Convert.ToInt32(textBoxPageNr.Text, 16);
+        _currentPageNumber = pageNumber;
+        pictureBox3.Image = _currentCard.SubChannels[0].TeletextDecoder.GetPage(_currentPageNumber, 0);
+      }
+      catch (Exception) {}
     }
   }
 }

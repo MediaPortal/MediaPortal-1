@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
@@ -205,7 +205,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         Log.Info("MiniDisplay.Settings.Load() - Loading settings from configuration file");
         XmlSerializer serializer = new XmlSerializer(typeof (Settings));
         XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml"));
-        settings = (Settings) serializer.Deserialize(xmlReader);
+        settings = (Settings)serializer.Deserialize(xmlReader);
         xmlReader.Close();
         settings.IdleMessage = FindIdleMessage(settings);
         return settings;
@@ -335,7 +335,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       try
       {
-        XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+        XmlSerializer serializer = new XmlSerializer(typeof (Settings));
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay.xml")))
         {
           XmlDocument xmldoc = new XmlDocument();
@@ -355,7 +355,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         serializer.Serialize((XmlWriter)writer, m_Instance);
         writer.Close();
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         Log.Error("MiniDisplay.Settings.Save() exception: {0}", ex.Message);
       }
@@ -402,7 +402,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       get { return this.m_ContrastControl; }
       set { this.m_ContrastControl = value; }
     }
-    
+
     [XmlArrayItem("CustomCharacter"), XmlArray]
     public int[][] CustomCharacters
     {
@@ -450,7 +450,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       get { return this.m_Font; }
       set
       {
-        Font font = new Font(value, (float) this.FontSize);
+        Font font = new Font(value, (float)this.FontSize);
         this.m_Font = font.Name;
         font.Dispose();
       }
@@ -462,7 +462,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       get { return this.m_FontSize; }
       set
       {
-        new Font(this.Font, (float) value).Dispose();
+        new Font(this.Font, (float)value).Dispose();
         this.m_FontSize = value;
       }
     }

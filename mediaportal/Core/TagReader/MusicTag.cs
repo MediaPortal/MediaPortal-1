@@ -35,6 +35,7 @@ namespace MediaPortal.TagReader
   public class MusicTag
   {
     #region Variables
+
     internal string m_strArtist = "";
     internal string m_strAlbum = "";
     internal string m_strGenre = "";
@@ -59,15 +60,15 @@ namespace MediaPortal.TagReader
     internal bool m_hasAlbumArtist = false;
     internal DateTime m_dateTimeModified = DateTime.MinValue;
     internal DateTime m_dateTimePlayed = DateTime.MinValue;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// empty constructor
     /// </summary>
-    public MusicTag()
-    {
-    }
+    public MusicTag() {}
 
     /// <summary>
     /// copy constructor
@@ -94,9 +95,11 @@ namespace MediaPortal.TagReader
       DateTimePlayed = tag.DateTimePlayed;
       DateTimeModified = tag.DateTimeModified;
     }
+
     #endregion
 
     #region Methods
+
     /// <summary>
     /// Method to clear the current item
     /// </summary>
@@ -130,17 +133,19 @@ namespace MediaPortal.TagReader
       get
       {
         return Artist.Length == 0
-            || Album.Length == 0
-            || Title.Length == 0
-            || Artist.Length == 0
-            || Genre.Length == 0
-            || Track == 0
-            || Duration == 0;
+               || Album.Length == 0
+               || Title.Length == 0
+               || Artist.Length == 0
+               || Genre.Length == 0
+               || Track == 0
+               || Duration == 0;
       }
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Property to get/set the comment field of the music file
     /// </summary>
@@ -351,6 +356,7 @@ namespace MediaPortal.TagReader
     {
       get { return Utils.GetImageFile(m_CoverArtImageBytes, String.Empty); }
     }
+
     #endregion
   }
 }

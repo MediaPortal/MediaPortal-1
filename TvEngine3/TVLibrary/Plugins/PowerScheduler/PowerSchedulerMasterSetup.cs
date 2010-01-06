@@ -1,4 +1,5 @@
 #region Copyright (C) 2007-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2007-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,9 +20,11 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 #region Usings
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,13 +35,14 @@ using System.Windows.Forms;
 using TvEngine.PowerScheduler.Interfaces;
 using SetupTv;
 using TvDatabase;
+
 #endregion
 
 namespace TvEngine.PowerScheduler
 {
   public partial class PowerSchedulerMasterSetup : SetupTv.SectionSettings
   {
-    TvBusinessLayer _layer;
+    private TvBusinessLayer _layer;
 
     public PowerSchedulerMasterSetup()
     {
@@ -95,7 +99,6 @@ namespace TvEngine.PowerScheduler
       checkBox7.Checked = Convert.ToBoolean(setting.Value);
 
 
-
       EPGWakeupConfig config = new EPGWakeupConfig(_layer.GetSetting("EPGWakeupConfig", String.Empty).Value);
       foreach (EPGGrabDays day in config.Days)
       {
@@ -146,7 +149,6 @@ namespace TvEngine.PowerScheduler
 
       setting = _layer.GetSetting("NetworkMonitorIdleLimit", "2");
       numericUpDown5.Value = Convert.ToDecimal(setting.Value);
-
     }
 
     public override void SaveSettings()

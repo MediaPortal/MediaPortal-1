@@ -24,10 +24,12 @@
 #endregion
 
 #region Usings
+
 using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+
 #endregion
 
 namespace MediaPortal.Util

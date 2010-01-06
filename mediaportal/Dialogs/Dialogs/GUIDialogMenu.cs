@@ -49,7 +49,7 @@ namespace MediaPortal.Dialogs
 
     public GUIDialogMenu()
     {
-      GetID = (int) Window.WINDOW_DIALOG_MENU;
+      GetID = (int)Window.WINDOW_DIALOG_MENU;
     }
 
     public override bool Init()
@@ -59,7 +59,7 @@ namespace MediaPortal.Dialogs
 
     public override void OnAction(Action action)
     {
-      char key = (char) 0;
+      char key = (char)0;
 
       // if we have a keypress or a remote button press
       if ((action.wID == Action.ActionType.ACTION_KEY_PRESSED) ||
@@ -70,14 +70,14 @@ namespace MediaPortal.Dialogs
           if (action.m_key.KeyChar >= '0' && action.m_key.KeyChar <= '9')
           {
             // Get offset to item
-            key = (char) action.m_key.KeyChar;
+            key = (char)action.m_key.KeyChar;
           }
         }
         else
         {
-          key = ((char) ('0' + action.wID - Action.ActionType.REMOTE_0));
+          key = ((char)('0' + action.wID - Action.ActionType.REMOTE_0));
         }
-        if (key == (char) 0)
+        if (key == (char)0)
         {
           return;
         }
@@ -178,7 +178,7 @@ namespace MediaPortal.Dialogs
             listView.Clear();
             for (int i = 0; i < listItems.Count; i++)
             {
-              GUIListItem pItem = (GUIListItem) listItems[i];
+              GUIListItem pItem = (GUIListItem)listItems[i];
               listView.Add(pItem);
             }
 

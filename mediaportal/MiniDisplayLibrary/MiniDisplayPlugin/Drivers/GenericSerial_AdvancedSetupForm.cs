@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -194,9 +194,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBoxConfiguration
       // 
-      this.groupBoxConfiguration.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                             | AnchorStyles.Left)
-                                                            | AnchorStyles.Right)));
+      this.groupBoxConfiguration.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                            | AnchorStyles.Left)
+                                                           | AnchorStyles.Right)));
       this.groupBoxConfiguration.Controls.Add(this.groupBoxPortParameters);
       this.groupBoxConfiguration.Controls.Add(this.groupBoxDisplayCommands);
       this.groupBoxConfiguration.Controls.Add(this.groupBoxDisplayControl);
@@ -210,8 +210,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBoxPortParameters
       // 
-      this.groupBoxPortParameters.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                             | AnchorStyles.Right)));
+      this.groupBoxPortParameters.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                            | AnchorStyles.Right)));
       this.groupBoxPortParameters.Controls.Add(this.cbAssertDTR);
       this.groupBoxPortParameters.Controls.Add(this.cbAssertRTS);
       this.groupBoxPortParameters.Controls.Add(this.lblDataBits);
@@ -260,8 +260,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cbDataBits
       // 
-      this.cbDataBits.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                 | AnchorStyles.Right)));
+      this.cbDataBits.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                | AnchorStyles.Right)));
       this.cbDataBits.BorderColor = Color.Empty;
       this.cbDataBits.DropDownStyle = ComboBoxStyle.DropDownList;
       this.cbDataBits.Items.AddRange(new object[]
@@ -287,8 +287,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cbStopBits
       // 
-      this.cbStopBits.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                 | AnchorStyles.Right)));
+      this.cbStopBits.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                | AnchorStyles.Right)));
       this.cbStopBits.BorderColor = Color.Empty;
       this.cbStopBits.DropDownStyle = ComboBoxStyle.DropDownList;
       this.cbStopBits.Items.AddRange(new object[]
@@ -359,9 +359,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBoxDisplayCommands
       // 
-      this.groupBoxDisplayCommands.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                               | AnchorStyles.Left)
-                                                              | AnchorStyles.Right)));
+      this.groupBoxDisplayCommands.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                              | AnchorStyles.Left)
+                                                             | AnchorStyles.Right)));
       this.groupBoxDisplayCommands.Controls.Add(this.cbToggleDTR);
       this.groupBoxDisplayCommands.Controls.Add(this.cbToggleRTS);
       this.groupBoxDisplayCommands.Controls.Add(this.cbPositionBase1);
@@ -434,8 +434,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // tbCmdCursorSet
       // 
-      this.tbCmdCursorSet.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                     | AnchorStyles.Right)));
+      this.tbCmdCursorSet.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                    | AnchorStyles.Right)));
       this.tbCmdCursorSet.Location = new Point(88, 169);
       this.tbCmdCursorSet.Name = "tbCmdCursorSet";
       this.tbCmdCursorSet.Size = new Size(244, 20);
@@ -452,8 +452,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // tbCmdDisplayClose
       // 
-      this.tbCmdDisplayClose.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                        | AnchorStyles.Right)));
+      this.tbCmdDisplayClose.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                       | AnchorStyles.Right)));
       this.tbCmdDisplayClose.Location = new Point(88, 213);
       this.tbCmdDisplayClose.Name = "tbCmdDisplayClose";
       this.tbCmdDisplayClose.Size = new Size(244, 20);
@@ -488,8 +488,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // tbCmdCursorHome
       // 
-      this.tbCmdCursorHome.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                      | AnchorStyles.Right)));
+      this.tbCmdCursorHome.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                     | AnchorStyles.Right)));
       this.tbCmdCursorHome.Location = new Point(88, 147);
       this.tbCmdCursorHome.Name = "tbCmdCursorHome";
       this.tbCmdCursorHome.Size = new Size(244, 20);
@@ -497,8 +497,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // tbCmdCursorDown
       // 
-      this.tbCmdCursorDown.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                      | AnchorStyles.Right)));
+      this.tbCmdCursorDown.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                     | AnchorStyles.Right)));
       this.tbCmdCursorDown.Location = new Point(88, 125);
       this.tbCmdCursorDown.Name = "tbCmdCursorDown";
       this.tbCmdCursorDown.Size = new Size(244, 20);
@@ -506,8 +506,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // tbCmdCursorUp
       // 
-      this.tbCmdCursorUp.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                    | AnchorStyles.Right)));
+      this.tbCmdCursorUp.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                   | AnchorStyles.Right)));
       this.tbCmdCursorUp.Location = new Point(88, 103);
       this.tbCmdCursorUp.Name = "tbCmdCursorUp";
       this.tbCmdCursorUp.Size = new Size(244, 20);
@@ -515,8 +515,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // tbCmdCursorRight
       // 
-      this.tbCmdCursorRight.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                       | AnchorStyles.Right)));
+      this.tbCmdCursorRight.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                      | AnchorStyles.Right)));
       this.tbCmdCursorRight.Location = new Point(88, 81);
       this.tbCmdCursorRight.Name = "tbCmdCursorRight";
       this.tbCmdCursorRight.Size = new Size(244, 20);
@@ -524,8 +524,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // tbCmdCursorLeft
       // 
-      this.tbCmdCursorLeft.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                      | AnchorStyles.Right)));
+      this.tbCmdCursorLeft.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                     | AnchorStyles.Right)));
       this.tbCmdCursorLeft.Location = new Point(88, 59);
       this.tbCmdCursorLeft.Name = "tbCmdCursorLeft";
       this.tbCmdCursorLeft.Size = new Size(244, 20);
@@ -533,8 +533,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // tbCmdClearDisplay
       // 
-      this.tbCmdClearDisplay.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                        | AnchorStyles.Right)));
+      this.tbCmdClearDisplay.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                       | AnchorStyles.Right)));
       this.tbCmdClearDisplay.Location = new Point(88, 37);
       this.tbCmdClearDisplay.Name = "tbCmdClearDisplay";
       this.tbCmdClearDisplay.Size = new Size(244, 20);
@@ -542,8 +542,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // tbCmdDisplayInit
       // 
-      this.tbCmdDisplayInit.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                       | AnchorStyles.Right)));
+      this.tbCmdDisplayInit.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                      | AnchorStyles.Right)));
       this.tbCmdDisplayInit.Location = new Point(88, 15);
       this.tbCmdDisplayInit.Name = "tbCmdDisplayInit";
       this.tbCmdDisplayInit.Size = new Size(244, 20);
@@ -614,8 +614,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBoxDisplayControl
       // 
-      this.groupBoxDisplayControl.Anchor = ((AnchorStyles) (((AnchorStyles.Bottom | AnchorStyles.Left)
-                                                             | AnchorStyles.Right)));
+      this.groupBoxDisplayControl.Anchor = ((AnchorStyles)(((AnchorStyles.Bottom | AnchorStyles.Left)
+                                                            | AnchorStyles.Right)));
       this.groupBoxDisplayControl.Controls.Add(this.mpEnableDisplayActionTime);
       this.groupBoxDisplayControl.Controls.Add(this.cmbBlankIdleTime);
       this.groupBoxDisplayControl.Controls.Add(this.mpEnableDisplayAction);
@@ -739,7 +739,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnOK
       // 
-      this.btnOK.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.btnOK.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
       this.btnOK.Location = new Point(286, 544);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new Size(80, 23);
@@ -750,7 +750,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnReset
       // 
-      this.btnReset.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.btnReset.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
       this.btnReset.Location = new Point(200, 544);
       this.btnReset.Name = "btnReset";
       this.btnReset.Size = new Size(80, 23);

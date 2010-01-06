@@ -88,7 +88,7 @@ namespace WatchDog
       // 
       // descLabel
       // 
-      this.descLabel.Font = new Font("Tahoma", 8.25F, FontStyle.Underline, GraphicsUnit.Point, ((byte) (0)));
+      this.descLabel.Font = new Font("Tahoma", 8.25F, FontStyle.Underline, GraphicsUnit.Point, ((byte)(0)));
       this.descLabel.Location = new Point(16, 8);
       this.descLabel.Name = "descLabel";
       this.descLabel.Size = new Size(88, 16);

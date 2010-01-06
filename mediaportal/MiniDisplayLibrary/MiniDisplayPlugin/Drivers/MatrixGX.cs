@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -102,7 +102,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             if (this.ReceivedBitmapData == null)
             {
-              this.ReceivedBitmapData = new byte[bitmapdata.Stride*this._Grows];
+              this.ReceivedBitmapData = new byte[bitmapdata.Stride * this._Grows];
             }
             Marshal.Copy(bitmapdata.Scan0, this.ReceivedBitmapData, 0, this.ReceivedBitmapData.Length);
           }
@@ -165,9 +165,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.LastSettingsCheck = DateTime.Now;
     }
 
-    public void SetCustomCharacters(int[][] customCharacters)
-    {
-    }
+    public void SetCustomCharacters(int[][] customCharacters) {}
 
     public void SetLine(int line, string message)
     {
@@ -400,7 +398,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Debug("MatrixGX.AdvancedSettings.Load() Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_MatrixGX.xml"));
-          settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
+          settings = (AdvancedSettings)serializer.Deserialize(xmlReader);
           xmlReader.Close();
         }
         else
@@ -434,7 +432,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                  Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 2;
-        serializer.Serialize((XmlWriter) writer, ToSave);
+        serializer.Serialize((XmlWriter)writer, ToSave);
         writer.Close();
         Log.Debug("MatrixGX.AdvancedSettings.Save() completed");
       }
@@ -705,9 +703,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           lock (this.DWriteMutex)
           {
-            this.GX_Session.SetRGBBacklight((byte) this.MOGX_Control.BackLightRed,
-                                            (byte) this.MOGX_Control.BackLightGreen,
-                                            (byte) this.MOGX_Control.BackLightBlue);
+            this.GX_Session.SetRGBBacklight((byte)this.MOGX_Control.BackLightRed,
+                                            (byte)this.MOGX_Control.BackLightGreen,
+                                            (byte)this.MOGX_Control.BackLightBlue);
           }
         }
       }
@@ -780,7 +778,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Debug("MatrixGX.MOGXDisplay.ClearIconArea() - called");
           RectangleF textBounds = this.GetTextBounds();
           this.GX_Graphics.FillRectangle(Brushes.White, textBounds.Width, 0f, this.GX_Surface.Width - textBounds.Width,
-                                         (float) this.GX_Surface.Height);
+                                         (float)this.GX_Surface.Height);
           Log.Debug("MatrixGX.MOGXDisplay.ClearIconArea() - completed");
         }
       }
@@ -839,8 +837,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Log.Info("MatrixGX.MOGXDisplay.DisplayEQ(): called");
             }
             this.EQSettings.Render_MaxValue = (this.EQSettings.UseNormalEq | this.EQSettings.UseStereoEq)
-                                                ? ((int) textBounds.Height)
-                                                : ((int) textBounds.Width);
+                                                ? ((int)textBounds.Height)
+                                                : ((int)textBounds.Width);
             this.EQSettings.Render_BANDS = this.EQSettings.UseNormalEq ? 0x10 : (this.EQSettings.UseStereoEq ? 8 : 1);
             MiniDisplayHelper.ProcessEqData(ref this.EQSettings);
             Monitor.Enter(obj3 = this.DWriteMutex);
@@ -872,10 +870,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 if (this.EQSettings.UseNormalEq)
                 {
                   ef2 = new RectangleF(
-                    (textBounds.X + (i*(((int) textBounds.Width)/this.EQSettings.Render_BANDS))) + 1f,
-                    textBounds.Y + (((int) textBounds.Height) - this.EQSettings.EqArray[1 + i]),
-                    (float) ((((int) textBounds.Width)/this.EQSettings.Render_BANDS) - 2),
-                    (float) this.EQSettings.EqArray[1 + i]);
+                    (textBounds.X + (i * (((int)textBounds.Width) / this.EQSettings.Render_BANDS))) + 1f,
+                    textBounds.Y + (((int)textBounds.Height) - this.EQSettings.EqArray[1 + i]),
+                    (float)((((int)textBounds.Width) / this.EQSettings.Render_BANDS) - 2),
+                    (float)this.EQSettings.EqArray[1 + i]);
                   this.GX_Graphics.FillRectangle(Brushes.Black, ef2);
                 }
                 else
@@ -884,26 +882,26 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                   RectangleF ef3;
                   if (this.EQSettings.UseStereoEq)
                   {
-                    int num4 = (((int) textBounds.Width)/2)/this.EQSettings.Render_BANDS;
-                    num2 = i*num4;
-                    int num3 = (i + this.EQSettings.Render_BANDS)*num4;
+                    int num4 = (((int)textBounds.Width) / 2) / this.EQSettings.Render_BANDS;
+                    num2 = i * num4;
+                    int num3 = (i + this.EQSettings.Render_BANDS) * num4;
                     ef2 = new RectangleF((textBounds.X + num2) + 1f,
-                                         textBounds.Y + (((int) textBounds.Height) - this.EQSettings.EqArray[1 + i]),
-                                         (float) (num4 - 2), (float) this.EQSettings.EqArray[1 + i]);
+                                         textBounds.Y + (((int)textBounds.Height) - this.EQSettings.EqArray[1 + i]),
+                                         (float)(num4 - 2), (float)this.EQSettings.EqArray[1 + i]);
                     ef3 = new RectangleF((textBounds.X + num3) + 1f,
-                                         textBounds.Y + (((int) textBounds.Height) - this.EQSettings.EqArray[9 + i]),
-                                         (float) (num4 - 2), (float) this.EQSettings.EqArray[9 + i]);
+                                         textBounds.Y + (((int)textBounds.Height) - this.EQSettings.EqArray[9 + i]),
+                                         (float)(num4 - 2), (float)this.EQSettings.EqArray[9 + i]);
                     this.GX_Graphics.FillRectangle(Brushes.Black, ef2);
                     this.GX_Graphics.FillRectangle(Brushes.Black, ef3);
                   }
                   else if (this.EQSettings.UseVUmeter | this.EQSettings.UseVUmeter2)
                   {
-                    ef2 = new RectangleF(textBounds.X + 1f, textBounds.Y + 1f, (float) this.EQSettings.EqArray[1 + i],
-                                         (float) (((int) (textBounds.Height/2f)) - 2));
-                    num2 = this.EQSettings.UseVUmeter ? 0 : (((int) textBounds.Width) - this.EQSettings.EqArray[2 + i]);
-                    ef3 = new RectangleF((textBounds.X + num2) + 1f, (textBounds.Y + (textBounds.Height/2f)) + 1f,
-                                         (float) this.EQSettings.EqArray[2 + i],
-                                         (float) (((int) (textBounds.Height/2f)) - 2));
+                    ef2 = new RectangleF(textBounds.X + 1f, textBounds.Y + 1f, (float)this.EQSettings.EqArray[1 + i],
+                                         (float)(((int)(textBounds.Height / 2f)) - 2));
+                    num2 = this.EQSettings.UseVUmeter ? 0 : (((int)textBounds.Width) - this.EQSettings.EqArray[2 + i]);
+                    ef3 = new RectangleF((textBounds.X + num2) + 1f, (textBounds.Y + (textBounds.Height / 2f)) + 1f,
+                                         (float)this.EQSettings.EqArray[2 + i],
+                                         (float)(((int)(textBounds.Height / 2f)) - 2));
                     this.GX_Graphics.FillRectangle(Brushes.Black, ef2);
                     this.GX_Graphics.FillRectangle(Brushes.Black, ef3);
                   }
@@ -913,9 +911,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             catch (Exception exception)
             {
               Log.Info("MatrixGX.MOGXDisplay.DisplayEQ(): CAUGHT EXCEPTION {0}", new object[] {exception});
-              if (exception.Message.Contains("ThreadAbortException"))
-              {
-              }
+              if (exception.Message.Contains("ThreadAbortException")) {}
             }
             finally
             {
@@ -1394,9 +1390,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             for (int i = 0; i < 8; i++)
             {
-              if ((segments & (((int) 1) << i)) > 0L)
+              if ((segments & (((int)1) << i)) > 0L)
               {
-                this.GX_Graphics.FillPie(Brushes.Black, 0xdf, 0, 0x10, 0x10, i*0x2d, 0x2d);
+                this.GX_Graphics.FillPie(Brushes.Black, 0xdf, 0, 0x10, 0x10, i * 0x2d, 0x2d);
               }
             }
           }
@@ -1432,11 +1428,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           Log.Debug("MatrixGX.MOGXDisplay.DrawProgressBars() - called");
           MiniDisplayHelper.GetSystemStatus(ref this.MPStatus);
-          int num = ((int) this.GetTextBounds().Width) - 1;
+          int num = ((int)this.GetTextBounds().Width) - 1;
           if ((this.MPStatus.MediaPlayer_Playing & _useVolumeDisplay) && !this.MPStatus.IsMuted)
           {
-            float num2 = (0xffff/num) - 6;
-            int width = ((int) ((((float) this.MPStatus.SystemVolumeLevel)/num2) - 0.01)) + 1;
+            float num2 = (0xffff / num) - 6;
+            int width = ((int)((((float)this.MPStatus.SystemVolumeLevel) / num2) - 0.01)) + 1;
             this.GX_Graphics.FillRectangle(Brushes.Black, 0, 0, 3, 5);
             this.GX_Graphics.FillRectangle(Brushes.Black, num - 2, 0, 3, 5);
             this.GX_Graphics.DrawLine(Pens.Black, 0, 2, num, 2);
@@ -1446,7 +1442,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             int num4 =
               ((int)
-               (((((float) this.MPStatus.Media_CurrentPosition)/((float) this.MPStatus.Media_Duration)) - 0.01)*
+               (((((float)this.MPStatus.Media_CurrentPosition) / ((float)this.MPStatus.Media_Duration)) - 0.01) *
                 (num - 6))) + 1;
             this.GX_Graphics.FillRectangle(Brushes.Black, 0, 0x3b, 3, 5);
             this.GX_Graphics.FillRectangle(Brushes.Black, num - 2, 0x3b, 3, 5);
@@ -1629,15 +1625,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this.EQSettings._EQTitleShowTime = this.AdvSettings.EQTitleShowTime;
         this.EQSettings._EqUpdateDelay = (this.EQSettings._EQ_Restrict_FPS == 0)
                                            ? 0
-                                           : ((0x989680/this.EQSettings._EQ_Restrict_FPS) -
-                                              (0xf4240/this.EQSettings._EQ_Restrict_FPS));
+                                           : ((0x989680 / this.EQSettings._EQ_Restrict_FPS) -
+                                              (0xf4240 / this.EQSettings._EQ_Restrict_FPS));
         this.DisplaySettings.BlankDisplayWithVideo = this.AdvSettings.BlankDisplayWithVideo;
         this.DisplaySettings.EnableDisplayAction = this.AdvSettings.EnableDisplayAction;
         this.DisplaySettings.DisplayActionTime = this.AdvSettings.EnableDisplayActionTime;
-        this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime*0x989680;
+        this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime * 0x989680;
         this.DisplaySettings.BlankDisplayWhenIdle = this.AdvSettings.BlankDisplayWhenIdle;
         this.DisplaySettings.BlankIdleDelay = this.AdvSettings.BlankIdleTime;
-        this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay*0x989680;
+        this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay * 0x989680;
         Log.Info("MatrixGX.ParseAdvancedSettings(): Logging Options - Extensive Logging = {0}",
                  new object[] {this.DoDebug});
         Log.Info("MatrixGX.ParseAdvancedSettings(): Advanced Options - Volume Display = {0}",
@@ -1694,7 +1690,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Log.Info("MatrixGX.ParseAdvancedSettings(): Advanced options - Blank display when idle: {0}",
                  new object[] {this.DisplaySettings.BlankDisplayWhenIdle});
         Log.Info("MatrixGX.ParseAdvancedSettings(): Advanced options -     blank display after: {0} seconds",
-                 new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
+                 new object[] {this.DisplaySettings._BlankIdleTimeout / 0xf4240L});
         Log.Info("MatrixGX.ParseAdvancedSettings(): Completed");
       }
 
@@ -1728,7 +1724,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Log.Debug("MatrixGX.MOGXDisplay.SendImage() - called");
               if ((_Bitmap.Height == this.GX_Surface.Height) & (_Bitmap.Width == this.GX_Surface.Width))
               {
-                this.GX_Surface = (Bitmap) _Bitmap.Clone();
+                this.GX_Surface = (Bitmap)_Bitmap.Clone();
               }
               else
               {
@@ -1765,7 +1761,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             this.GX_Graphics.SmoothingMode = SmoothingMode.None;
             this.GX_Graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
             this.GX_Graphics.Clear(Color.White);
-            Font font = new Font(Settings.Instance.Font, (float) Settings.Instance.FontSize);
+            Font font = new Font(Settings.Instance.Font, (float)Settings.Instance.FontSize);
             int length = _line1.Length;
             while (this.GX_Graphics.MeasureString(_line1.Substring(0, length), font).Width > textBounds.Width)
             {
@@ -1787,9 +1783,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public void SetContrast()
       {
-        if (!this._isOpen)
-        {
-        }
+        if (!this._isOpen) {}
       }
 
       public bool IsOpen

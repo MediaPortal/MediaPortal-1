@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.IO;
 using System.IO.Ports;
@@ -279,9 +279,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.MD.CloseDisplay(this._BlankDisplayOnExit);
     }
 
-    public void DrawImage(Bitmap bitmap)
-    {
-    }
+    public void DrawImage(Bitmap bitmap) {}
 
     public void Initialize()
     {
@@ -329,8 +327,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.DisplaySettings.DisplayActionTime = settings.EnableDisplayActionTime;
       this.DisplaySettings.BlankDisplayWhenIdle = settings.BlankDisplayWhenIdle;
       this.DisplaySettings.BlankIdleDelay = settings.BlankIdleTime;
-      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay*0x989680;
-      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime*0x989680;
+      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay * 0x989680;
+      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime * 0x989680;
       this.DisplaySettings._Shutdown1 = Settings.Instance.Shutdown1;
       this.DisplaySettings._Shutdown2 = Settings.Instance.Shutdown2;
       Log.Info("MD8800.LoadAdvancedSettings(): Extensive Logging: {0}",
@@ -353,7 +351,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Info("MD8800.LoadAdvancedSettings(): Advanced options - Blank display when idle: {0}",
                new object[] {this.DisplaySettings.BlankDisplayWhenIdle});
       Log.Info("MD8800.LoadAdvancedSettings(): Advanced options -     blank display after: {0} seconds",
-               new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
+               new object[] {this.DisplaySettings._BlankIdleTimeout / 0xf4240L});
       Log.Info("MD8800.LoadAdvancedSettings(): Completed");
       FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_MD8800.xml"));
       this.SettingsLastModTime = info.LastWriteTime;
@@ -409,9 +407,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters)
-    {
-    }
+    public void SetCustomCharacters(int[][] customCharacters) {}
 
     public void SetLine(int line, string message)
     {
@@ -554,7 +550,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (!this.MPStatus.IsMuted)
           {
-            this.volLevel = this.MPStatus.SystemVolumeLevel/0x2000;
+            this.volLevel = this.MPStatus.SystemVolumeLevel / 0x2000;
           }
         }
         catch (Exception exception)
@@ -665,7 +661,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("MD8800.AdvancedSettings.Load(): Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_MD8800.xml"));
-          settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
+          settings = (AdvancedSettings)serializer.Deserialize(xmlReader);
           xmlReader.Close();
         }
         else
@@ -699,7 +695,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                  Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 2;
-        serializer.Serialize((XmlWriter) writer, ToSave);
+        serializer.Serialize((XmlWriter)writer, ToSave);
         writer.Close();
         Log.Info("MD8800.AdvancedSettings.Save(): completed");
       }
@@ -801,12 +797,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               Thread.Sleep(50);
               byte[] buffer = new byte[8];
               buffer[0] = 0x1b;
-              buffer[2] = (byte) now.Minute;
-              buffer[3] = (byte) now.Hour;
-              buffer[4] = (byte) now.Month;
-              buffer[5] = (byte) now.Day;
-              buffer[6] = (byte) Math.Floor((double) (now.Year/100));
-              buffer[7] = (byte) (now.Year - (Math.Floor((double) (now.Year/100))*100.0));
+              buffer[2] = (byte)now.Minute;
+              buffer[3] = (byte)now.Hour;
+              buffer[4] = (byte)now.Month;
+              buffer[5] = (byte)now.Day;
+              buffer[6] = (byte)Math.Floor((double)(now.Year / 100));
+              buffer[7] = (byte)(now.Year - (Math.Floor((double)(now.Year / 100)) * 100.0));
               this.commPort.Write(buffer, 0, 3);
               Thread.Sleep(50);
               this.commPort.Write(new byte[] {0x1b, 5}, 0, 2);
@@ -827,47 +823,47 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       public static uint ConvertPluginIconsToDisplayIcons(ulong PluginIconMask)
       {
         uint num = 0;
-        if ((PluginIconMask & ((ulong) 0x10L)) > 0L)
+        if ((PluginIconMask & ((ulong)0x10L)) > 0L)
         {
           num += 4;
         }
-        if ((PluginIconMask & ((ulong) 0x40L)) > 0L)
+        if ((PluginIconMask & ((ulong)0x40L)) > 0L)
         {
           num += 0x10;
         }
-        if ((PluginIconMask & ((ulong) 8L)) > 0L)
+        if ((PluginIconMask & ((ulong)8L)) > 0L)
         {
           num += 0x20;
         }
-        if ((PluginIconMask & ((ulong) 0x80L)) > 0L)
+        if ((PluginIconMask & ((ulong)0x80L)) > 0L)
         {
           num += 0x40;
         }
-        if ((PluginIconMask & ((ulong) 0x20L)) > 0L)
+        if ((PluginIconMask & ((ulong)0x20L)) > 0L)
         {
           num += 0x80;
         }
-        if ((PluginIconMask & ((ulong) 0x400000000L)) > 0L)
+        if ((PluginIconMask & ((ulong)0x400000000L)) > 0L)
         {
           num += 0x100;
         }
-        if ((PluginIconMask & ((ulong) 0x100000000000L)) > 0L)
+        if ((PluginIconMask & ((ulong)0x100000000000L)) > 0L)
         {
           num += 0x200;
         }
-        if ((PluginIconMask & ((ulong) 0x40000000000L)) > 0L)
+        if ((PluginIconMask & ((ulong)0x40000000000L)) > 0L)
         {
           num += 0x400;
         }
-        if ((PluginIconMask & ((ulong) 0x80000000000L)) > 0L)
+        if ((PluginIconMask & ((ulong)0x80000000000L)) > 0L)
         {
           num += 0x800;
         }
-        if ((PluginIconMask & ((ulong) 0x20000000000L)) > 0L)
+        if ((PluginIconMask & ((ulong)0x20000000000L)) > 0L)
         {
           num += 0x1000;
         }
-        if ((PluginIconMask & ((ulong) 0x10000000000L)) > 0L)
+        if ((PluginIconMask & ((ulong)0x10000000000L)) > 0L)
         {
           num += 0x2000;
         }
@@ -920,14 +916,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         if (!((!this._isOpen | !this.commPort.IsOpen) | this._IsDisplayOff))
         {
-          brightness = (int) Math.Floor((double) (brightness/0x2a));
-          this.commPort.Write(new byte[] {0x1b, 0x40, (byte) brightness}, 0, 3);
+          brightness = (int)Math.Floor((double)(brightness / 0x2a));
+          this.commPort.Write(new byte[] {0x1b, 0x40, (byte)brightness}, 0, 3);
         }
       }
 
-      public void SetContrast(int contrast)
-      {
-      }
+      public void SetContrast(int contrast) {}
 
       public void SetIcons(uint IconBitmap)
       {
@@ -936,31 +930,31 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           byte[] buffer = new byte[4];
           buffer[0] = 0x1b;
           buffer[1] = 0x30;
-          buffer[3] = ((IconBitmap & 1) > 0) ? ((byte) this._currentBrightness) : ((byte) 0);
+          buffer[3] = ((IconBitmap & 1) > 0) ? ((byte)this._currentBrightness) : ((byte)0);
           this.commPort.Write(buffer, 0, 3);
           byte[] buffer2 = new byte[] {0x1b, 0x30, 1, 0};
-          buffer2[3] = ((IconBitmap & 2) > 0) ? ((byte) this._currentBrightness) : ((byte) 0);
+          buffer2[3] = ((IconBitmap & 2) > 0) ? ((byte)this._currentBrightness) : ((byte)0);
           this.commPort.Write(buffer2, 0, 3);
           byte[] buffer3 = new byte[] {0x1b, 0x30, 2, 0};
-          buffer3[3] = ((IconBitmap & 4) > 0) ? ((byte) this._currentBrightness) : ((byte) 0);
+          buffer3[3] = ((IconBitmap & 4) > 0) ? ((byte)this._currentBrightness) : ((byte)0);
           this.commPort.Write(buffer3, 0, 3);
           byte[] buffer4 = new byte[] {0x1b, 0x30, 3, 0};
-          buffer4[3] = ((IconBitmap & 8) > 0) ? ((byte) this._currentBrightness) : ((byte) 0);
+          buffer4[3] = ((IconBitmap & 8) > 0) ? ((byte)this._currentBrightness) : ((byte)0);
           this.commPort.Write(buffer4, 0, 3);
           byte[] buffer5 = new byte[] {0x1b, 0x30, 4, 0};
-          buffer5[3] = ((IconBitmap & 0x10) > 0) ? ((byte) this._currentBrightness) : ((byte) 0);
+          buffer5[3] = ((IconBitmap & 0x10) > 0) ? ((byte)this._currentBrightness) : ((byte)0);
           this.commPort.Write(buffer5, 0, 3);
           byte[] buffer6 = new byte[] {0x1b, 0x30, 5, 0};
-          buffer6[3] = ((IconBitmap & 0x20) > 0) ? ((byte) this._currentBrightness) : ((byte) 0);
+          buffer6[3] = ((IconBitmap & 0x20) > 0) ? ((byte)this._currentBrightness) : ((byte)0);
           this.commPort.Write(buffer6, 0, 3);
           byte[] buffer7 = new byte[] {0x1b, 0x30, 6, 0};
-          buffer7[3] = ((IconBitmap & 0x40) > 0) ? ((byte) this._currentBrightness) : ((byte) 0);
+          buffer7[3] = ((IconBitmap & 0x40) > 0) ? ((byte)this._currentBrightness) : ((byte)0);
           this.commPort.Write(buffer7, 0, 3);
           byte[] buffer8 = new byte[] {0x1b, 0x30, 7, 0};
-          buffer8[3] = ((IconBitmap & 0x80) > 0) ? ((byte) this._currentBrightness) : ((byte) 0);
+          buffer8[3] = ((IconBitmap & 0x80) > 0) ? ((byte)this._currentBrightness) : ((byte)0);
           this.commPort.Write(buffer8, 0, 3);
           byte[] buffer9 = new byte[] {0x1b, 0x30, 8, 0};
-          buffer9[3] = ((IconBitmap & 0x100) > 0) ? ((byte) this._currentBrightness) : ((byte) 0);
+          buffer9[3] = ((IconBitmap & 0x100) > 0) ? ((byte)this._currentBrightness) : ((byte)0);
           this.commPort.Write(buffer9, 0, 3);
           if ((IconBitmap & 0x200) > 0)
           {
@@ -1065,11 +1059,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           this.commPort.Write(_Line2);
           for (int i = 0; i < 0x10; i++)
           {
-            this.commPort.Write(new byte[] {(byte) _Line1[i]}, 0, 1);
+            this.commPort.Write(new byte[] {(byte)_Line1[i]}, 0, 1);
           }
           for (int j = 0; j < 0x10; j++)
           {
-            this.commPort.Write(new byte[] {(byte) _Line2[j]}, 0, 1);
+            this.commPort.Write(new byte[] {(byte)_Line2[j]}, 0, 1);
           }
         }
       }

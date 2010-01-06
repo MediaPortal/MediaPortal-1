@@ -31,18 +31,14 @@ namespace TvLibrary
     /// <summary>
     /// Initializes a new instance of the <see cref="TvException"/> class.
     /// </summary>
-    public TvExceptionNoSignal()
-    {
-    }
+    public TvExceptionNoSignal() {}
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TvException"/> class.
     /// </summary>
     /// <param name="message">The message.</param>
     public TvExceptionNoSignal(string message)
-      : base(message)
-    {
-    }
+      : base(message) {}
 
 
     /// <summary>
@@ -51,9 +47,7 @@ namespace TvLibrary
     /// <param name="message">The message.</param>
     /// <param name="innerException">The inner exception.</param>
     public TvExceptionNoSignal(string message, Exception innerException)
-      : base(message, innerException)
-    {
-    }
+      : base(message, innerException) {}
   }
 
   /// <summary>
@@ -65,18 +59,14 @@ namespace TvLibrary
     /// <summary>
     /// Initializes a new instance of the <see cref="TvException"/> class.
     /// </summary>
-    public TvExceptionGraphBuildingFailed()
-    {
-    }
+    public TvExceptionGraphBuildingFailed() {}
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TvException"/> class.
     /// </summary>
     /// <param name="message">The message.</param>
     public TvExceptionGraphBuildingFailed(string message)
-      : base(message)
-    {
-    }
+      : base(message) {}
 
 
     /// <summary>
@@ -85,9 +75,7 @@ namespace TvLibrary
     /// <param name="message">The message.</param>
     /// <param name="innerException">The inner exception.</param>
     public TvExceptionGraphBuildingFailed(string message, Exception innerException)
-      : base(message, innerException)
-    {
-    }
+      : base(message, innerException) {}
   }
 
 
@@ -100,18 +88,14 @@ namespace TvLibrary
     /// <summary>
     /// Initializes a new instance of the <see cref="TvException"/> class.
     /// </summary>
-    public TvExceptionSWEncoderMissing()
-    {
-    }
+    public TvExceptionSWEncoderMissing() {}
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TvException"/> class.
     /// </summary>
     /// <param name="message">The message.</param>
     public TvExceptionSWEncoderMissing(string message)
-      : base(message)
-    {
-    }
+      : base(message) {}
 
 
     /// <summary>
@@ -120,9 +104,7 @@ namespace TvLibrary
     /// <param name="message">The message.</param>
     /// <param name="innerException">The inner exception.</param>
     public TvExceptionSWEncoderMissing(string message, Exception innerException)
-      : base(message, innerException)
-    {
-    }
+      : base(message, innerException) {}
   }
 
   /// <summary>
@@ -134,18 +116,14 @@ namespace TvLibrary
     /// <summary>
     /// Initializes a new instance of the <see cref="TvException"/> class.
     /// </summary>
-    public TvException()
-    {
-    }
+    public TvException() {}
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TvException"/> class.
     /// </summary>
     /// <param name="message">The message.</param>
     public TvException(string message)
-      : base(message)
-    {
-    }
+      : base(message) {}
 
 
     /// <summary>
@@ -154,8 +132,6 @@ namespace TvLibrary
     /// <param name="message">The message.</param>
     /// <param name="innerException">The inner exception.</param>
     public TvException(string message, Exception innerException)
-      : base(message, innerException)
-    {
-    }
+      : base(message, innerException) {}
   }
 }

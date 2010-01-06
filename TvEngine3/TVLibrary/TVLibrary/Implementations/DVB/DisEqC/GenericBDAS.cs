@@ -26,16 +26,21 @@ using TvLibrary.Channels;
 
 namespace TvLibrary.Implementations.DVB
 {
-  class GenericBDAS
+  internal class GenericBDAS
   {
     #region variables
+
     private readonly IKsPropertySet _propertySet;
     protected IBDA_Topology _TunerDevice;
     protected bool _isGenericBDAS;
+
     #endregion
 
     #region constants
-    readonly Guid guidBdaDigitalDemodulator = new Guid(0xef30f379, 0x985b, 0x4d10, 0xb6, 0x40, 0xa7, 0x9d, 0x5e, 0x4, 0xe1, 0xe0);
+
+    private readonly Guid guidBdaDigitalDemodulator = new Guid(0xef30f379, 0x985b, 0x4d10, 0xb6, 0x40, 0xa7, 0x9d, 0x5e,
+                                                               0x4, 0xe1, 0xe0);
+
     #endregion
 
     /// <summary>
@@ -115,7 +120,7 @@ namespace TvLibrary.Implementations.DVB
       object ControlNode;
       int hr = _TunerDevice.GetControlNode(0, 1, 0, out ControlNode);
       if (hr == 0)
-      // retrieve the BDA_DeviceControl interface 
+        // retrieve the BDA_DeviceControl interface 
       {
         IBDA_DeviceControl DecviceControl = (IBDA_DeviceControl)_TunerDevice;
         if (DecviceControl != null)
@@ -173,7 +178,7 @@ namespace TvLibrary.Implementations.DVB
       object ControlNode;
       int hr = _TunerDevice.GetControlNode(0, 1, 0, out ControlNode);
       if (hr == 0)
-      // retrieve the BDA_DeviceControl interface 
+        // retrieve the BDA_DeviceControl interface 
       {
         IBDA_DeviceControl DecviceControl = (IBDA_DeviceControl)_TunerDevice;
         if (DecviceControl != null)
@@ -223,10 +228,7 @@ namespace TvLibrary.Implementations.DVB
     /// </value>
     public bool IsGenericBDAS
     {
-      get
-      {
-        return _isGenericBDAS;
-      }
+      get { return _isGenericBDAS; }
     }
   }
 }

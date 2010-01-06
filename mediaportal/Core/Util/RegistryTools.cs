@@ -37,11 +37,11 @@ namespace MediaPortal.Util
   public class RegistryTools
   {
     public RegistryTools()
-		{
-			// 
-			// TODO: Add constructor logic here
-			//
-		}
+    {
+      // 
+      // TODO: Add constructor logic here
+      //
+    }
 
     /// <summary>
     /// Searches the registry to get the location of registered dlls by their name.
@@ -68,8 +68,10 @@ namespace MediaPortal.Util
                   {
                     if (defaultkey != null)
                     {
-                      string friendlyName = (string)defaultkey.GetValue(null); // Gets the (Default) value from this key            
-                      if (!string.IsNullOrEmpty(friendlyName) && friendlyName.ToLower().IndexOf(aFilename.ToLower()) >= 0)
+                      string friendlyName = (string)defaultkey.GetValue(null);
+                        // Gets the (Default) value from this key            
+                      if (!string.IsNullOrEmpty(friendlyName) &&
+                          friendlyName.ToLower().IndexOf(aFilename.ToLower()) >= 0)
                       {
                         if (!resultPaths.Contains(friendlyName))
                           resultPaths.Add(friendlyName);
@@ -79,7 +81,7 @@ namespace MediaPortal.Util
                 }
               }
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
         }
       }
@@ -122,7 +124,5 @@ namespace MediaPortal.Util
       }
       return AppFound;
     }
-
   }
-
 }

@@ -31,10 +31,10 @@ using TvLibrary.Implementations.Analog.Components;
 using TvLibrary.Implementations.Analog.QualityControl;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.Helper;
-using Capture=TvLibrary.Implementations.Analog.Components.Capture;
-using Crossbar=TvLibrary.Implementations.Analog.Components.Crossbar;
-using Tuner=TvLibrary.Implementations.Analog.Components.Tuner;
-using TvAudio=TvLibrary.Implementations.Analog.Components.TvAudio;
+using Capture = TvLibrary.Implementations.Analog.Components.Capture;
+using Crossbar = TvLibrary.Implementations.Analog.Components.Crossbar;
+using Tuner = TvLibrary.Implementations.Analog.Components.Tuner;
+using TvAudio = TvLibrary.Implementations.Analog.Components.TvAudio;
 
 namespace TvLibrary.Implementations.Analog
 {
@@ -44,8 +44,10 @@ namespace TvLibrary.Implementations.Analog
   public class TvCardAnalog : TvCardBase, ITVCard
   {
     #region imports
+
     [ComImport, Guid("DB35F5ED-26B2-4A2A-92D3-852E145BF32D")]
-    private class MpFileWriter { }
+    private class MpFileWriter {}
+
     #endregion
 
     #region variables
@@ -62,9 +64,11 @@ namespace TvLibrary.Implementations.Analog
     private Hauppauge _haupPauge;
     private IQuality _qualityControl;
     private Configuration _configuration;
+
     #endregion
 
     #region ctor
+
     ///<summary>
     /// Constrcutor for the analog
     ///</summary>
@@ -84,6 +88,7 @@ namespace TvLibrary.Implementations.Analog
       _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
       Configuration.writeConfiguration(_configuration);
     }
+
     #endregion
 
     #region public methods
@@ -98,7 +103,7 @@ namespace TvLibrary.Implementations.Analog
         return false;
       if (channel.IsRadio)
       {
-        if(_tuner == null)
+        if (_tuner == null)
         {
           BuildGraph();
         }
@@ -154,57 +159,48 @@ namespace TvLibrary.Implementations.Analog
       }
       Log.Log.WriteFile("analog: Graph stopped");
     }
+
     #endregion
 
     #region Channel linkage handling
+
     /// <summary>
     /// Starts scanning for linkage info
     /// </summary>
-    public void StartLinkageScanner(BaseChannelLinkageScanner callback)
-    {
-    }
+    public void StartLinkageScanner(BaseChannelLinkageScanner callback) {}
 
     /// <summary>
     /// Stops/Resets the linkage scanner
     /// </summary>
-    public void ResetLinkageScanner()
-    {
-    }
+    public void ResetLinkageScanner() {}
 
     /// <summary>
     /// Returns the channel linkages grabbed
     /// </summary>
     public List<PortalChannel> ChannelLinkages
     {
-      get
-      {
-        return null;
-      }
+      get { return null; }
     }
+
     #endregion
 
     #region epg & scanning
+
     /// <summary>
     /// Grabs the epg.
     /// </summary>
     /// <param name="callback">The callback which gets called when epg is received or canceled.</param>
-    public void GrabEpg(BaseEpgGrabber callback)
-    {
-    }
+    public void GrabEpg(BaseEpgGrabber callback) {}
 
     /// <summary>
     /// Start grabbing the epg while timeshifting
     /// </summary>
-    public void GrabEpg()
-    {
-    }
+    public void GrabEpg() {}
 
     /// <summary>
     /// Aborts grabbing the epg. This also triggers the OnEpgReceived callback.
     /// </summary>
-    public void AbortGrabbing()
-    {
-    }
+    public void AbortGrabbing() {}
 
     /// <summary>
     /// returns a list of all epg data for each channel found.
@@ -212,10 +208,7 @@ namespace TvLibrary.Implementations.Analog
     /// <value>The epg.</value>
     public List<EpgChannel> Epg
     {
-      get
-      {
-        return null;
-      }
+      get { return null; }
     }
 
     /// <summary>
@@ -230,9 +223,11 @@ namespace TvLibrary.Implementations.Analog
         return new AnalogScanning(this);
       }
     }
+
     #endregion
 
     #region tuning & recording
+
     /// <summary>
     /// Tunes the specified channel.
     /// </summary>
@@ -263,7 +258,8 @@ namespace TvLibrary.Implementations.Analog
       try
       {
         RunGraph(subChannel.SubChannelId);
-      } catch (TvExceptionNoSignal)
+      }
+      catch (TvExceptionNoSignal)
       {
         FreeSubChannel(subChannel.SubChannelId);
         throw;
@@ -271,9 +267,11 @@ namespace TvLibrary.Implementations.Analog
       _encoder.UpdatePinVideo(channel.IsTv, _graphBuilder);
       return subChannel;
     }
+
     #endregion
 
     #region subchannel management
+
     /// <summary>
     /// Allocates a new instance of TvDvbChannel which handles the new subchannel
     /// </summary>
@@ -287,22 +285,18 @@ namespace TvLibrary.Implementations.Analog
       _mapSubChannels[id] = subChannel;
       return id;
     }
+
     #endregion
 
-
     #region quality control
+
     /// <summary>
     /// Get/Set the quality
     /// </summary>
     public IQuality Quality
     {
-      get
-      {
-        return _qualityControl;
-      }
-      set
-      {
-      }
+      get { return _qualityControl; }
+      set { }
     }
 
     /// <summary>
@@ -420,10 +414,11 @@ namespace TvLibrary.Implementations.Analog
     #endregion
 
     #region Disposable
+
     /// <summary>
     /// Disposes this instance.
     /// </summary>
-    virtual public void Dispose()
+    public virtual void Dispose()
     {
       if (_graphBuilder == null)
         return;
@@ -464,15 +459,17 @@ namespace TvLibrary.Implementations.Analog
       _graphState = GraphState.Idle;
       Log.Log.WriteFile("analog: dispose completed");
     }
+
     #endregion
 
     #region graph handling
+
     /// <summary>
     /// Builds the directshow graph for this analog tvcard
     /// </summary>
     public override void BuildGraph()
     {
-      if(_cardId==0)
+      if (_cardId == 0)
       {
         GetPreloadBitAndCardId();
         _configuration = Configuration.readConfiguration(_cardId, _name, _devicePath);
@@ -527,7 +524,7 @@ namespace TvLibrary.Implementations.Analog
         _teletext = new TeletextComponent();
         if (_capture.SupportsTeletext)
         {
-          if (!_teletext.CreateFilterInstance(graph,_graphBuilder, _capture))
+          if (!_teletext.CreateFilterInstance(graph, _graphBuilder, _capture))
           {
             Log.Log.Error("analog: unable to setup teletext filters");
             throw new TvException("Analog: unable to setup teletext filters");
@@ -535,13 +532,15 @@ namespace TvLibrary.Implementations.Analog
         }
         Configuration.writeConfiguration(_configuration);
         _encoder = new Encoder();
-        if(!_encoder.CreateFilterInstance(_graphBuilder,_tuner,_tvAudio,_crossbar,_capture))
+        if (!_encoder.CreateFilterInstance(_graphBuilder, _tuner, _tvAudio, _crossbar, _capture))
         {
           Log.Log.Error("analog: unable to add encoding filter");
           throw new TvException("Analog: unable to add capture filter");
         }
         Log.Log.WriteFile("analog: Check quality control");
-        _qualityControl = QualityControlFactory.createQualityControl(_configuration, _encoder.VideoEncoderFilter, _capture.VideoFilter, _encoder.MultiplexerFilter, _encoder.VideoCompressorFilter);
+        _qualityControl = QualityControlFactory.createQualityControl(_configuration, _encoder.VideoEncoderFilter,
+                                                                     _capture.VideoFilter, _encoder.MultiplexerFilter,
+                                                                     _encoder.VideoCompressorFilter);
         if (_qualityControl == null)
         {
           Log.Log.WriteFile("analog: No quality control support found");
@@ -574,7 +573,8 @@ namespace TvLibrary.Implementations.Analog
         FilterGraphTools.SaveGraphFile(_graphBuilder, "analog.grf");
         ReloadCardConfiguration();
         _graphState = GraphState.Created;
-      } catch(TvExceptionSWEncoderMissing ex)
+      }
+      catch (TvExceptionSWEncoderMissing ex)
       {
         Log.Log.Write(ex);
         Dispose();
@@ -684,6 +684,7 @@ namespace TvLibrary.Implementations.Analog
     #endregion
 
     #region private helper
+
     /// <summary>
     /// Checks the thread id.
     /// </summary>
@@ -711,6 +712,7 @@ namespace TvLibrary.Implementations.Analog
     #endregion
 
     #region scanning interface
+
     ///<summary>
     /// Returns the channel scanner interface
     ///</summary>
@@ -731,10 +733,7 @@ namespace TvLibrary.Implementations.Analog
     /// <value>The video frequency.</value>
     public int VideoFrequency
     {
-      get
-      {
-        return _tuner.VideoFrequency;
-      }
+      get { return _tuner.VideoFrequency; }
     }
 
     /// <summary>
@@ -743,27 +742,24 @@ namespace TvLibrary.Implementations.Analog
     /// <value>The audio frequency.</value>
     public int AudioFrequency
     {
-      get
-      {
-        return _tuner.AudioFrequency;
-      }
+      get { return _tuner.AudioFrequency; }
     }
+
     #endregion
 
     #region abstract implemented Methods
+
     /// <summary>
     /// A derrived class should activate / deactivate the scanning
     /// </summary>
-    protected override void OnScanning()
-    {
-    }
+    protected override void OnScanning() {}
+
     /// <summary>
     /// A derrived class should activate / deactivate the epg grabber
     /// </summary>
     /// <param name="value">Mode</param>
-    protected override void UpdateEpgGrabber(bool value)
-    {
-    }
+    protected override void UpdateEpgGrabber(bool value) {}
+
     #endregion
   }
 }

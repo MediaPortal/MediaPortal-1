@@ -77,8 +77,7 @@ namespace MediaPortal.GUI.Library
     {
       public PackedTextureNode root;
       public int textureNo;
-      [NonSerialized]
-      public Texture texture;
+      [NonSerialized] public Texture texture;
     } ;
 
     #endregion
@@ -214,9 +213,7 @@ namespace MediaPortal.GUI.Library
 
     #region ctor/dtor
 
-    public TexturePacker()
-    {
-    }
+    public TexturePacker() {}
 
     #endregion
 
@@ -241,8 +238,10 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          Log.Info("TexturePacker: Cache from {0} is outdated and will be recreated including current tv ({1}) and radio ({2}) thumbs",
-            cacheCreationTime.ToShortDateString(), tvLogoChangeTime.ToShortDateString(), radioLogoChangeTime.ToShortDateString());
+          Log.Info(
+            "TexturePacker: Cache from {0} is outdated and will be recreated including current tv ({1}) and radio ({2}) thumbs",
+            cacheCreationTime.ToShortDateString(), tvLogoChangeTime.ToShortDateString(),
+            radioLogoChangeTime.ToShortDateString());
         }
       }
 
@@ -257,13 +256,14 @@ namespace MediaPortal.GUI.Library
 
         try
         {
-          string[] cacheFiles = Directory.GetFiles(GUIGraphicsContext.SkinCacheFolder, "packedgfx*", SearchOption.TopDirectoryOnly);
+          string[] cacheFiles = Directory.GetFiles(GUIGraphicsContext.SkinCacheFolder, "packedgfx*",
+                                                   SearchOption.TopDirectoryOnly);
           for (int i = 0; i < cacheFiles.Length; i++)
           {
             File.Delete(cacheFiles[i]);
           }
         }
-        catch (Exception) { }
+        catch (Exception) {}
       }
     }
 
@@ -322,7 +322,7 @@ namespace MediaPortal.GUI.Library
               fileStream.Close();
               return true;
             }
-            catch { }
+            catch {}
           }
         }
       }
@@ -346,7 +346,7 @@ namespace MediaPortal.GUI.Library
           string[] skinFiles = Directory.GetFiles(String.Format(@"{0}\media", skinName), "*.png");
           files.AddRange(skinFiles);
         }
-        // workaround for uncommon rendering implementation of volume osd - it won't show up without packedtextures
+          // workaround for uncommon rendering implementation of volume osd - it won't show up without packedtextures
         else
         {
           string[] skinFiles = Directory.GetFiles(String.Format(@"{0}\media", skinName), "volume*.png");
@@ -357,14 +357,16 @@ namespace MediaPortal.GUI.Library
         }
         if (xmlreader.GetValueAsBool("debug", "packLogoGfx", true))
         {
-          string[] logoFiles = Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "*.png", SearchOption.AllDirectories);
+          string[] logoFiles = Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "*.png",
+                                                  SearchOption.AllDirectories);
           //string[] thumbFiles = Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "*.jpg", SearchOption.AllDirectories);
           files.AddRange(logoFiles);
           //files.AddRange(thumbFiles);
         }
         if (xmlreader.GetValueAsBool("debug", "packPluginGfx", true))
         {
-          string[] weatherFiles = Directory.GetFiles(Config.GetFolder(Config.Dir.Weather), "*.png", SearchOption.AllDirectories);
+          string[] weatherFiles = Directory.GetFiles(Config.GetFolder(Config.Dir.Weather), "*.png",
+                                                     SearchOption.AllDirectories);
           string[] tetrisFiles = Directory.GetFiles(String.Format(@"{0}\media\tetris", skinName), "*.png");
           files.AddRange(weatherFiles);
           files.AddRange(tetrisFiles);
@@ -379,8 +381,8 @@ namespace MediaPortal.GUI.Library
         _maxTextureHeight = d3dcaps.MaxTextureHeight;
         Log.Info("TexturePacker: D3D device does support {0}x{1} textures", _maxTextureWidth, _maxTextureHeight);
       }
-      catch (Exception) 
-      { 
+      catch (Exception)
+      {
         _maxTextureWidth = 2048;
         _maxTextureHeight = 2048;
       }
@@ -395,7 +397,7 @@ namespace MediaPortal.GUI.Library
       }
 
       Log.Info("TexturePacker: using {0}x{1} as packed textures limit", _maxTextureWidth, _maxTextureHeight);
-      Log.Info("TexturePacker: using {0}x{1} as single texture limit", _maxTextureWidth/2, _maxTextureHeight/2);
+      Log.Info("TexturePacker: using {0}x{1} as single texture limit", _maxTextureWidth / 2, _maxTextureHeight / 2);
 
       while (true)
       {
@@ -546,7 +548,7 @@ namespace MediaPortal.GUI.Library
       if (bmp.Width > (_maxTextureHeight / 2) || bmp.Height > (_maxTextureWidth / 2))
       {
         Log.Warn("TexturePacker: Texture {0} is too large to be cached. Texture {1}x{2} - limit {3}x{4}",
-          file, bmp.Width, bmp.Height, _maxTextureHeight, _maxTextureWidth);
+                 file, bmp.Width, bmp.Height, _maxTextureHeight, _maxTextureWidth);
         dontAdd = true;
         return false;
       }
@@ -650,9 +652,7 @@ namespace MediaPortal.GUI.Library
                 bigOne.texture.Disposing -= new EventHandler(texture_Disposing);
                 bigOne.texture.Dispose();
               }
-              catch (Exception)
-              {
-              }
+              catch (Exception) {}
             }
             bigOne.texture = null;
           }

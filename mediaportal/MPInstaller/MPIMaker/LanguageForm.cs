@@ -67,9 +67,7 @@ namespace MediaPortal.MPInstaller
             languageComboBox.Items.Add(cultInfo.EnglishName);
             languageComboBox2.Items.Add(cultInfo.EnglishName);
           }
-          catch (ArgumentException)
-          {
-          }
+          catch (ArgumentException) {}
         }
       }
       else
@@ -416,8 +414,8 @@ namespace MediaPortal.MPInstaller
     public int Compare(object x, object y)
     {
       // Convert the items that must be compared into ListViewItem objects.
-      string listX = ((ListViewItem) x).SubItems[this.col].Text;
-      string listY = ((ListViewItem) y).SubItems[this.col].Text;
+      string listX = ((ListViewItem)x).SubItems[this.col].Text;
+      string listY = ((ListViewItem)y).SubItems[this.col].Text;
       int val;
       // Sort using the specified column and specified sorting type.
       if (Alphabetic)
@@ -445,7 +443,7 @@ namespace MediaPortal.MPInstaller
       }
       else
       {
-        return val*-1;
+        return val * -1;
       }
     }
   }

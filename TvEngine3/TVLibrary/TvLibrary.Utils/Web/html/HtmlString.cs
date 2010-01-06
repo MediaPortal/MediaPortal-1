@@ -37,9 +37,7 @@ namespace MediaPortal.Utils.Web
     /// <summary>
     /// Private constructor
     /// </summary>
-    private HtmlString()
-    {
-    }
+    private HtmlString() {}
 
     #endregion
 
@@ -105,11 +103,11 @@ namespace MediaPortal.Utils.Web
       stripped = HttpUtility.HtmlDecode(stripped);
 
       // replace unicode characters
-      stripped = stripped.Replace((char) 145, '’');
-      stripped = stripped.Replace((char) 146, '’');
-      stripped = stripped.Replace((char) 148, '\"');
-      stripped = stripped.Replace((char) 150, '-');
-      stripped = stripped.Replace((char) 160, ' ');
+      stripped = stripped.Replace((char)145, '’');
+      stripped = stripped.Replace((char)146, '’');
+      stripped = stripped.Replace((char)148, '\"');
+      stripped = stripped.Replace((char)150, '-');
+      stripped = stripped.Replace((char)160, ' ');
 
       return stripped;
     }

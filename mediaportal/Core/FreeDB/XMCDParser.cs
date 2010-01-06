@@ -53,9 +53,7 @@ namespace MediaPortal.Freedb
     private int[] m_playorder = null;
     private CDTrackDetail[] m_cdTrackDetail = null;
 
-    public XMCDParser()
-    {
-    }
+    public XMCDParser() {}
 
     public XMCDParser(string xmcdContent)
     {
@@ -75,7 +73,7 @@ namespace MediaPortal.Freedb
 
     public CDInfoDetail parse(string content)
     {
-      m_content = (string) content.Clone();
+      m_content = (string)content.Clone();
       if (m_content.IndexOf("# xmcd") != 0)
       {
         return null;
@@ -224,13 +222,13 @@ namespace MediaPortal.Freedb
     private void InitVariables(ArrayList offsets, Hashtable comments, Hashtable fields)
     {
       // all the song offsets
-      m_offsets = (int[]) offsets.ToArray(typeof (int));
+      m_offsets = (int[])offsets.ToArray(typeof (int));
       m_cdTrackDetail = new CDTrackDetail[m_offsets.Length];
 
       foreach (DictionaryEntry dict in comments)
       {
-        string key = (string) dict.Key;
-        string val = (string) dict.Value;
+        string key = (string)dict.Key;
+        string val = (string)dict.Value;
         switch (key)
         {
           case "Disc length":
@@ -250,8 +248,8 @@ namespace MediaPortal.Freedb
 
       foreach (DictionaryEntry dict in fields)
       {
-        string key = (string) dict.Key;
-        string val = (string) dict.Value;
+        string key = (string)dict.Key;
+        string val = (string)dict.Value;
 
         if (key.StartsWith("TTITLE") || key.StartsWith("EXTT")) // a track
         {
@@ -334,9 +332,7 @@ namespace MediaPortal.Freedb
                     ai[i] = Convert.ToInt32(tokens[i]);
                   }
                 }
-                catch
-                {
-                }
+                catch {}
                 m_playorder = ai;
               }
               break;
@@ -382,8 +378,8 @@ namespace MediaPortal.Freedb
 
       for (int i = 0; i < offsets.Count; i++)
       {
-        string title = (string) fields["TTITLE" + i];
-        string extt = (string) fields["EXTT" + i];
+        string title = (string)fields["TTITLE" + i];
+        string extt = (string)fields["EXTT" + i];
         m_cdTrackDetail[i] = new CDTrackDetail();
         // Log.Debug("MediaPortal.Freedb.XMCDParser.InitVariables: BEFORE TAG PRE-PROCESSING Artist: \"{0}\" & Title: \"{1}\"", m_artist, title);
         string trackArtist = extendedParseTrackArtist(title, isALegitimateCompilation);
@@ -406,9 +402,9 @@ namespace MediaPortal.Freedb
 
       for (i = 1; i < offsets.Length; i++)
       {
-        durations[i - 1] = (offsets[i] - offsets[i - 1])/75;
+        durations[i - 1] = (offsets[i] - offsets[i - 1]) / 75;
       }
-      durations[i - 1] = totalDuration - (offsets[i - 1]/75);
+      durations[i - 1] = totalDuration - (offsets[i - 1] / 75);
 
       return durations;
     }
@@ -436,11 +432,9 @@ namespace MediaPortal.Freedb
           }
         }
       }
-      catch
-      {
-      }
+      catch {}
 
-      return (int[]) list.ToArray(typeof (int));
+      return (int[])list.ToArray(typeof (int));
     }
 
     private int parseLength()
@@ -451,9 +445,7 @@ namespace MediaPortal.Freedb
       {
         return Convert.ToInt32(val);
       }
-      catch
-      {
-      }
+      catch {}
       return 0;
     }
 
@@ -465,9 +457,7 @@ namespace MediaPortal.Freedb
       {
         return Convert.ToInt32(val);
       }
-      catch
-      {
-      }
+      catch {}
       return 0;
     }
 
@@ -531,9 +521,7 @@ namespace MediaPortal.Freedb
       {
         retval = Convert.ToInt32(parseTag(@"\s*DYEAR\s*=\s*(.*)\s*\n"));
       }
-      catch
-      {
-      }
+      catch {}
 
       return retval;
     }
@@ -651,9 +639,7 @@ namespace MediaPortal.Freedb
           ai[i] = Convert.ToInt32(tokens[i]);
         }
       }
-      catch
-      {
-      }
+      catch {}
       return ai;
     }
 
@@ -706,7 +692,7 @@ namespace MediaPortal.Freedb
         list.Add(m.Groups[1].ToString().Trim());
       }
 
-      return (string[]) list.ToArray(typeof (string));
+      return (string[])list.ToArray(typeof (string));
     }
 
     private string parseTag(string pattern)

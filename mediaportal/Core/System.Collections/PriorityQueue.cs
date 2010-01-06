@@ -61,7 +61,7 @@ namespace System.Collections
 
     private PriorityQueue(ArrayList array, IComparer comparer, bool copy)
     {
-      _innerList = copy ? (ArrayList) array.Clone() : array;
+      _innerList = copy ? (ArrayList)array.Clone() : array;
       _comparer = comparer;
     }
 
@@ -95,7 +95,7 @@ namespace System.Collections
           break;
         }
 
-        p2 = (p - 1)/2;
+        p2 = (p - 1) / 2;
 
         if (_comparer.Compare(_innerList[p], _innerList[p2]) < 0)
         {
@@ -123,8 +123,8 @@ namespace System.Collections
       do
       {
         pn = p;
-        p1 = 2*p + 1;
-        p2 = 2*p + 2;
+        p1 = 2 * p + 1;
+        p2 = 2 * p + 2;
         if (_innerList.Count > p1 && _comparer.Compare(_innerList[p], _innerList[p1]) > 0)
         {
           p = p1;
@@ -161,7 +161,7 @@ namespace System.Collections
         {
           break;
         }
-        p2 = (p - 1)/2;
+        p2 = (p - 1) / 2;
         if (_comparer.Compare(_innerList[p], _innerList[p2]) < 0)
         {
           Swap(p, p2);
@@ -179,8 +179,8 @@ namespace System.Collections
       do
       {
         pn = p;
-        p1 = 2*p + 1;
-        p2 = 2*p + 2;
+        p1 = 2 * p + 1;
+        p2 = 2 * p + 2;
         if (_innerList.Count > p1 && _comparer.Compare(_innerList[p], _innerList[p1]) > 0)
         {
           p = p1;

@@ -104,7 +104,7 @@ namespace System.Windows
 
     public Visual this[int index]
     {
-      get { return (Visual) List[index]; }
+      get { return (Visual)List[index]; }
       set { List[index] = value; }
     }
 

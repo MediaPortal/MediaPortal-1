@@ -69,9 +69,7 @@ namespace MediaPortal.InputDevices
 
     #region Constructor
 
-    public X10Remote()
-    {
-    }
+    public X10Remote() {}
 
     #endregion
 
@@ -109,7 +107,7 @@ namespace MediaPortal.InputDevices
 
           //Bind the interface using a connection point
 
-          icpc = (IConnectionPointContainer) X10Inter;
+          icpc = (IConnectionPointContainer)X10Inter;
           Guid IID_InterfaceEvents = typeof (_DIX10InterfaceEvents).GUID;
           icpc.FindConnectionPoint(ref IID_InterfaceEvents, out icp);
           icp.Advise(this, out cookie);
@@ -184,12 +182,12 @@ namespace MediaPortal.InputDevices
     {
       if ((EKeyState == EX10Key.X10KEY_ON || EKeyState == EX10Key.X10KEY_REPEAT) && lSequence != 2)
       {
-        if (_x10UseChannelControl && (lAddress != ((_x10Channel - 1)*16)))
+        if (_x10UseChannelControl && (lAddress != ((_x10Channel - 1) * 16)))
         {
           return;
         }
 
-        int keypress = (int) Enum.Parse(typeof (EX10Command), eCommand.ToString());
+        int keypress = (int)Enum.Parse(typeof (EX10Command), eCommand.ToString());
         if (X10KeyPressed != null)
         {
           X10KeyPressed(keypress);

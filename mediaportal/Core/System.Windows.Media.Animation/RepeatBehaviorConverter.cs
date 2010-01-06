@@ -41,7 +41,7 @@ namespace System.Windows.Media.Animation
     {
       if (value is string)
       {
-        return RepeatBehavior.Parse((string) value);
+        return RepeatBehavior.Parse((string)value);
       }
 
       return base.ConvertFrom(context, culture, value);

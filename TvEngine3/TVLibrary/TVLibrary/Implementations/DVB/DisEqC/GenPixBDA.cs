@@ -32,35 +32,43 @@ namespace TvLibrary.Implementations.DVB
   public class GenPixBDA
   {
     #region constants
+
     //Guid used to extend the feature of the BDA driver - {0B5221EB-F4C4-4976-B959-EF74427464D9}
-    readonly Guid BdaTunerExtentionProperties = new Guid(0x0B5221EB, 0xF4C4, 0x4976, 0xB9, 0x59, 0xEF, 0x74, 0x42, 0x74, 0x64, 0xD9);
+    private readonly Guid BdaTunerExtentionProperties = new Guid(0x0B5221EB, 0xF4C4, 0x4976, 0xB9, 0x59, 0xEF, 0x74,
+                                                                 0x42, 0x74, 0x64, 0xD9);
+
     #endregion
 
     #region variables
-    readonly bool _isGenPix;
-    readonly IntPtr _ptrDiseqc = IntPtr.Zero;
-    readonly IntPtr _ptrTempInstance = IntPtr.Zero;
-    readonly IKsPropertySet _propertySet;
+
+    private readonly bool _isGenPix;
+    private readonly IntPtr _ptrDiseqc = IntPtr.Zero;
+    private readonly IntPtr _ptrTempInstance = IntPtr.Zero;
+    private readonly IKsPropertySet _propertySet;
+
     #endregion
 
     #region enums
-    enum enSimpleToneBurst
+
+    private enum enSimpleToneBurst
     {
       SEC_MINI_A = 0x00,
       SEC_MINI_B = 0x01
     }
+
     #endregion
 
     #region structs
+
     /// <summary>
     /// Sets up the DiSEqC struct for GenPix DVB-S cards.
     /// </summary>
     [StructLayout(LayoutKind.Sequential), ComVisible(true)]
     private unsafe class DISEQC_COMMAND
     {
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-      public byte[] ucMessage;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)] public byte[] ucMessage;
       public byte ucMessageLength;
+
       public DISEQC_COMMAND()
       {
         ucMessage = new byte[6];
@@ -90,7 +98,8 @@ namespace TvLibrary.Implementations.DVB
         if (_propertySet != null)
         {
           KSPropertySupport supported;
-          _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, out supported);
+          _propertySet.QuerySupported(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC,
+                                      out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
             Log.Log.Debug("GenPix BDA: DVB-S card found!");
@@ -118,10 +127,7 @@ namespace TvLibrary.Implementations.DVB
     /// </value>
     public bool IsGenPix
     {
-      get
-      {
-        return _isGenPix;
-      }
+      get { return _isGenPix; }
     }
 
     /// <summary>
@@ -146,21 +152,22 @@ namespace TvLibrary.Implementations.DVB
       // 4        B         B
       int antennaNr = BandTypeConverter.GetAntennaNr(channel);
       bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
-      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) || (channel.Polarisation == Polarisation.CircularL));
+      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
+                           (channel.Polarisation == Polarisation.CircularL));
       byte cmd = 0xf0;
       cmd |= (byte)(hiBand ? 1 : 0);
       cmd |= (byte)((isHorizontal) ? 2 : 0);
       cmd |= (byte)((antennaNr - 1) << 2);
-      
+
       DISEQC_COMMAND DiseqcCommand = new DISEQC_COMMAND();
-      DiseqcCommand.ucMessage[0] = 0xE0;//framing byte
-      DiseqcCommand.ucMessage[1] = 0x10;//address byte
-      DiseqcCommand.ucMessage[2] = 0x38;//command byte
-      DiseqcCommand.ucMessage[3] = cmd;//data byte (port group 0)
-      DiseqcCommand.ucMessage[4] = 0;//Need not fill this up
-      DiseqcCommand.ucMessage[5] = 0;//Need not fill this up
-      DiseqcCommand.ucMessageLength = 4;//Number of Valid bytes in the Command.
-      
+      DiseqcCommand.ucMessage[0] = 0xE0; //framing byte
+      DiseqcCommand.ucMessage[1] = 0x10; //address byte
+      DiseqcCommand.ucMessage[2] = 0x38; //command byte
+      DiseqcCommand.ucMessage[3] = cmd; //data byte (port group 0)
+      DiseqcCommand.ucMessage[4] = 0; //Need not fill this up
+      DiseqcCommand.ucMessage[5] = 0; //Need not fill this up
+      DiseqcCommand.ucMessageLength = 4; //Number of Valid bytes in the Command.
+
       Marshal.StructureToPtr(DiseqcCommand, _ptrDiseqc, false);
       //get the length of the structure command - usually 7 bytes.
       int len = Marshal.SizeOf(DiseqcCommand);
@@ -170,10 +177,12 @@ namespace TvLibrary.Implementations.DVB
         txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
       Log.Log.Debug("GenPix: SendDiseqCommand: {0} with length {1}", txt, len);
       //set the DisEqC command to the tuner pin
-      int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrTempInstance, 32, _ptrDiseqc, len);
+      int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC,
+                                _ptrTempInstance, 32, _ptrDiseqc, len);
       if (hr != 0)
       {
-        Log.Log.Info("GenPix: SendDiseqCommand returned: 0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),HResult.GetDXErrorDescription(hr));
+        Log.Log.Info("GenPix: SendDiseqCommand returned: 0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),
+                     HResult.GetDXErrorDescription(hr));
       }
     }
 

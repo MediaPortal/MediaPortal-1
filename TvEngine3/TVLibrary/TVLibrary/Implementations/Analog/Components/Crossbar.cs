@@ -37,57 +37,71 @@ namespace TvLibrary.Implementations.Analog.Components
   internal class Crossbar : IDisposable
   {
     #region variables
+
     /// <summary>
     /// The crossbar filter
     /// </summary>
     private IBaseFilter _filterCrossBar;
+
     /// <summary>
     /// The crossbar device
     /// </summary>
     private DsDevice _crossBarDevice;
+
     /// <summary>
     /// The crossbar interface
     /// </summary>
     private IAMCrossbar _crossBarFilter;
+
     /// <summary>
     /// The mapping of the video input sources to their pin index
     /// </summary>
     private Dictionary<AnalogChannel.VideoInputType, int> _videoPinMap;
+
     /// <summary>
     /// The mapping of the video input sources to their related audio pin index
     /// </summary>
     private Dictionary<AnalogChannel.VideoInputType, int> _videoPinRelatedAudioMap;
+
     /// <summary>
     /// The mapping of the audio input sources to their pin index
     /// </summary>
     private Dictionary<AnalogChannel.AudioInputType, int> _audioPinMap;
+
     /// <summary>
     /// The audio tuner in pin
     /// </summary>
     private IPin _audioTunerIn;
+
     /// <summary>
     /// The video output pin index 
     /// </summary>
     private int _videoOutPinIndex;
+
     /// <summary>
     /// The audio output pin index
     /// </summary>
     private int _audioOutPinIndex;
+
     /// <summary>
     /// The video output pin
     /// </summary>
     private IPin _videoOut;
+
     /// <summary>
     /// The audio output pin
     /// </summary>
     private IPin _audioOut;
+
     /// <summary>
     /// The current analog channel
     /// </summary>
     private AnalogChannel _currentChannel;
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// Gets the video output pin
     /// </summary>
@@ -103,7 +117,7 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       get { return _audioOut; }
     }
-    
+
     /// <summary>
     /// Gets the name of the crossbar device
     /// </summary>
@@ -127,9 +141,11 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       get { return _audioTunerIn; }
     }
+
     #endregion
 
     #region Dispose
+
     /// <summary>
     /// Disposes the crossbar component
     /// </summary>
@@ -158,9 +174,11 @@ namespace TvLibrary.Implementations.Analog.Components
         _crossBarDevice = null;
       }
     }
+
     #endregion
 
     #region CreateFilterInstance method
+
     /// <summary>
     /// Adds the cross bar filter to the graph and connects the tv tuner to the crossbar.
     /// at the end of this method the graph looks like:
@@ -184,9 +202,11 @@ namespace TvLibrary.Implementations.Analog.Components
       Log.Log.WriteFile("analog: No stored or invalid graph for Crossbar component - Trying to detect");
       return CreateAutomaticFilterInstance(graph, graphBuilder, tuner);
     }
+
     #endregion
 
     #region private helper methods
+
     /// <summary>
     /// Creates the filter based on the configuration file
     /// </summary>
@@ -204,7 +224,8 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCrossbar);
         devices = DeviceSorter.Sort(devices, graph.Tuner.Name);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         Log.Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
         return false;
@@ -229,7 +250,8 @@ namespace TvLibrary.Implementations.Analog.Components
         {
           //add the crossbar to the graph
           hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
@@ -260,8 +282,9 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         //connect tv tuner->crossbar
         IPin tunerOut = DsFindPin.ByDirection(tuner.Filter, PinDirection.Output,
-                                                  graph.Tuner.VideoPin);
-        if (tunerOut != null && FilterGraphTools.ConnectPin(graphBuilder,tunerOut,tmp,_videoPinMap[AnalogChannel.VideoInputType.Tuner]))
+                                              graph.Tuner.VideoPin);
+        if (tunerOut != null &&
+            FilterGraphTools.ConnectPin(graphBuilder, tunerOut, tmp, _videoPinMap[AnalogChannel.VideoInputType.Tuner]))
         {
           // Got it, we're done
           _filterCrossBar = tmp;
@@ -311,7 +334,8 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCrossbar);
         devices = DeviceSorter.Sort(devices, graph.Tuner.Name);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         Log.Log.WriteFile("analog: AddCrossBarFilter no crossbar devices found");
         return false;
@@ -334,7 +358,8 @@ namespace TvLibrary.Implementations.Analog.Components
         {
           //add the crossbar to the graph
           hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-        } catch (Exception)
+        }
+        catch (Exception)
         {
           Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
@@ -447,7 +472,7 @@ namespace TvLibrary.Implementations.Analog.Components
       for (int i = 0; i < inputs; ++i)
       {
         _crossBarFilter.get_CrossbarPinInfo(true, i, out relatedPinIndex, out connectorType);
-        Log.Log.WriteFile(" crossbar pin:{0} type:{1}, related:{2}", i, connectorType,relatedPinIndex);
+        Log.Log.WriteFile(" crossbar pin:{0} type:{1}, related:{2}", i, connectorType, relatedPinIndex);
         switch (connectorType)
         {
           case PhysicalConnectorType.Audio_Tuner:
@@ -577,9 +602,11 @@ namespace TvLibrary.Implementations.Analog.Components
         }
       }
     }
+
     #endregion
 
     #region public methods
+
     /// <summary>
     /// Indicates if it is a special plextor card
     /// </summary>
@@ -589,7 +616,8 @@ namespace TvLibrary.Implementations.Analog.Components
       if (_currentChannel != null)
       {
         bool updateRequired = _currentChannel.IsTv == channel.IsTv;
-        if(updateRequired || (_currentChannel.VideoSource != channel.VideoSource && _videoPinMap.ContainsKey(channel.VideoSource)))
+        if (updateRequired ||
+            (_currentChannel.VideoSource != channel.VideoSource && _videoPinMap.ContainsKey(channel.VideoSource)))
         {
           _crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[channel.VideoSource]);
           updateRequired = true;
@@ -600,7 +628,8 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         if (updateRequired || _currentChannel.AudioSource != channel.AudioSource)
         {
-          if (channel.AudioSource == AnalogChannel.AudioInputType.Automatic && _videoPinRelatedAudioMap.ContainsKey(channel.VideoSource))
+          if (channel.AudioSource == AnalogChannel.AudioInputType.Automatic &&
+              _videoPinRelatedAudioMap.ContainsKey(channel.VideoSource))
           {
             _crossBarFilter.Route(_audioOutPinIndex, _videoPinRelatedAudioMap[channel.VideoSource]);
           }
@@ -609,7 +638,8 @@ namespace TvLibrary.Implementations.Analog.Components
             _crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[channel.AudioSource]);
           }
         }
-      } else
+      }
+      else
       {
         if (_videoPinMap.ContainsKey(channel.VideoSource))
         {
@@ -619,7 +649,8 @@ namespace TvLibrary.Implementations.Analog.Components
         {
           return;
         }
-        if (channel.AudioSource == AnalogChannel.AudioInputType.Automatic && _videoPinRelatedAudioMap.ContainsKey(channel.VideoSource))
+        if (channel.AudioSource == AnalogChannel.AudioInputType.Automatic &&
+            _videoPinRelatedAudioMap.ContainsKey(channel.VideoSource))
         {
           _crossBarFilter.Route(_audioOutPinIndex, _videoPinRelatedAudioMap[channel.VideoSource]);
         }
@@ -630,6 +661,7 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       _currentChannel = channel;
     }
+
     #endregion
   }
 }

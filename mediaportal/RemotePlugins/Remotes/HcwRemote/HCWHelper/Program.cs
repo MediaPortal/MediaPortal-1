@@ -55,9 +55,7 @@ namespace MediaPortal.InputDevices.HcwHelper
         {
           hcwHelper.ShowDialog();
         }
-        catch (ObjectDisposedException)
-        {
-        }
+        catch (ObjectDisposedException) {}
       }
       else if (Process.GetProcessesByName("HcwHelper").Length != 1)
       {

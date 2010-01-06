@@ -31,14 +31,10 @@ namespace MediaPortal.Configuration.Sections
   public class DVDPostProcessing : BasePostProcessing
   {
     public DVDPostProcessing()
-      : this("DVD Post Processing")
-    {
-    }
+      : this("DVD Post Processing") {}
 
     public DVDPostProcessing(string name)
-      : base(name)
-    {
-    }
+      : base(name) {}
 
     public override void LoadSettings()
     {

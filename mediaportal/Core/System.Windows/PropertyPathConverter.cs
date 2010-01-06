@@ -54,7 +54,7 @@ namespace System.Windows
     {
       if (value is string)
       {
-        return Parse((string) value);
+        return Parse((string)value);
       }
 
       return base.ConvertFrom(context, culture, value);

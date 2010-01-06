@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Xml.Serialization;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
@@ -12,9 +12,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     private string format;
     private string instanceName;
 
-    public PerformanceCounter()
-    {
-    }
+    public PerformanceCounter() {}
 
     public PerformanceCounter(string categoryName, string counterName, string instanceName)
     {

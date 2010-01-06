@@ -41,12 +41,13 @@ namespace MediaPortal.MPInstaller
   {
     public int step = 0;
     public MPpackageStruct package;
-    MPInstallHelper inst = new MPInstallHelper();
-    List<ActionInfo> actions = new List<ActionInfo>();
+    private MPInstallHelper inst = new MPInstallHelper();
+    private List<ActionInfo> actions = new List<ActionInfo>();
 
-    string InstallDir = Config.GetFolder(Config.Dir.Installer);
-    bool update = false;
-    bool working = false;
+    private string InstallDir = Config.GetFolder(Config.Dir.Installer);
+    private bool update = false;
+    private bool working = false;
+
     public InstallWizard()
     {
       package = new MPpackageStruct();
@@ -62,9 +63,9 @@ namespace MediaPortal.MPInstaller
       {
         if (inst.IndexOf(package) < 0)
           nextStep(1);
-        else
-          if (MessageBox.Show("Extension already installed. Do you want to continue ?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            nextStep(1);
+        else if (MessageBox.Show("Extension already installed. Do you want to continue ?", "", MessageBoxButtons.YesNo) ==
+                 DialogResult.Yes)
+          nextStep(1);
       }
       else
       {
@@ -104,9 +105,7 @@ namespace MediaPortal.MPInstaller
                 package.InstallPlugin.OnStartInstall(ref package);
               package.InstallerScript.OnInstallStart();
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
             this.Text = "MediaPortal extension installer";
             skinlister.Items.Clear();
             Customize_list.Visible = false;
@@ -129,7 +128,10 @@ namespace MediaPortal.MPInstaller
             {
               pictureBox2.Visible = false;
             }
-            richTextBox1.Text = String.Format("  Name : {0} \n\n  Author : {1} \n\n  Version : {2} \n\n  Description :\n {3} \n", package.InstallerInfo.Name, package.InstallerInfo.Author, package.InstallerInfo.Version, package.InstallerInfo.Description);
+            richTextBox1.Text =
+              String.Format("  Name : {0} \n\n  Author : {1} \n\n  Version : {2} \n\n  Description :\n {3} \n",
+                            package.InstallerInfo.Name, package.InstallerInfo.Author, package.InstallerInfo.Version,
+                            package.InstallerInfo.Description);
             foreach (string sk in package.SkinList)
             {
               if (package.InstalledSkinList.Contains(sk))
@@ -205,9 +207,9 @@ namespace MediaPortal.MPInstaller
             foreach (string sk in package.SkinList)
             {
               if (package.InstalledSkinList.Contains(sk))
-                  skinlister.Items.Add(sk, true);
+                skinlister.Items.Add(sk, true);
               else
-                  skinlister.Items.Add(sk, false);
+                skinlister.Items.Add(sk, false);
             }
             foreach (string sk in package.InstalledSkinList)
             {
@@ -252,9 +254,9 @@ namespace MediaPortal.MPInstaller
             button_back.Visible = true;
             richTextBox1.Visible = true;
             richTextBox1.Text = String.Format("Install paths : \n");
-            foreach (Config.Dir option in Enum.GetValues(typeof(Config.Dir)))
+            foreach (Config.Dir option in Enum.GetValues(typeof (Config.Dir)))
             {
-                richTextBox1.Text += String.Format("{0} - {1}\n", option, Config.GetFolder(option));
+              richTextBox1.Text += String.Format("{0} - {1}\n", option, Config.GetFolder(option));
             }
             break;
           }
@@ -285,7 +287,8 @@ namespace MediaPortal.MPInstaller
             Customize_list.Visible = false;
             progressBar1.Visible = true;
             progressBar2.Visible = true;
-            listBox1.Visible = true; ;
+            listBox1.Visible = true;
+            ;
             label2.Text = "Instaling ...";
             button_next.Visible = false;
             button_back.Visible = true;
@@ -294,7 +297,6 @@ namespace MediaPortal.MPInstaller
             install();
             break;
           }
-
       }
     }
 
@@ -306,7 +308,7 @@ namespace MediaPortal.MPInstaller
       if (progressBar1 != null)
       {
         progressBar1.Minimum = 0;
-        progressBar1.Maximum = package.InstallerInfo.FileList.Count+1;
+        progressBar1.Maximum = package.InstallerInfo.FileList.Count + 1;
       }
 
       package.InstallerScript.Install(progressBar2, progressBar1, listBox1);
@@ -334,13 +336,10 @@ namespace MediaPortal.MPInstaller
           package.InstallPlugin.OnEndInstall(ref package);
         if (package.InstallerInfo.ProjectProperties.ClearSkinCache)
         {
-          Directory.Delete(Config.GetFolder(Config.Dir.Cache),true);
+          Directory.Delete(Config.GetFolder(Config.Dir.Cache), true);
         }
       }
-      catch (Exception)
-      {
-        
-      }
+      catch (Exception) {}
       package.InstallerScript.OnInstallDone();
     }
 
@@ -391,7 +390,7 @@ namespace MediaPortal.MPInstaller
           }
           break;
         case 7:
-            step += m;
+          step += m;
           break;
         default:
           break;
@@ -455,7 +454,9 @@ namespace MediaPortal.MPInstaller
         {
           if (((MPpackageStruct)inst.Items[index]).InstallerInfo.Uninstall.Count > 0)
           {
-            if (MessageBox.Show("Uninstalling extension." + tit + "\nDo you want continue ?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (
+              MessageBox.Show("Uninstalling extension." + tit + "\nDo you want continue ?", "", MessageBoxButtons.YesNo) ==
+              DialogResult.Yes)
             {
               if (!this.Visible) this.Show();
               MPpackageStruct p = (MPpackageStruct)inst.Items[index];
@@ -467,9 +468,7 @@ namespace MediaPortal.MPInstaller
                 if (p_temp.InstallPlugin != null)
                   p_temp.InstallPlugin.OnStartUnInstall(ref p);
               }
-              catch (Exception)
-              {
-              }
+              catch (Exception) {}
               label2.Visible = true;
               progressBar1.Visible = true;
               progressBar2.Visible = false;
@@ -501,9 +500,7 @@ namespace MediaPortal.MPInstaller
                       this.Refresh();
                       this.Update();
                     }
-                    catch (Exception)
-                    {
-                    }
+                    catch (Exception) {}
                   }
                   else
                     listBox1.Items.Add("File date changed :" + u.Path);
@@ -519,10 +516,7 @@ namespace MediaPortal.MPInstaller
                   if (p_temp.InstallPlugin != null)
                     p_temp.InstallPlugin.OnEndUnInstall(ref p);
                 }
-                catch (Exception)
-                {
-
-                }
+                catch (Exception) {}
               }
             }
           }
@@ -548,6 +542,5 @@ namespace MediaPortal.MPInstaller
       Customize_list.SetItemChecked(e.Index, true);
       working = false;
     }
-
   }
 }

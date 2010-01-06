@@ -77,7 +77,7 @@ namespace MediaPortal.Dispatcher
 
     private void InvokeDelegate(Delegate handler, object[] e)
     {
-      ISynchronizeInvoke synchronizer = (ISynchronizeInvoke) handler.Target;
+      ISynchronizeInvoke synchronizer = (ISynchronizeInvoke)handler.Target;
 
       if (synchronizer == null)
       {
@@ -104,10 +104,10 @@ namespace MediaPortal.Dispatcher
 
     private void ReportCompletion(IAsyncResult asyncResult)
     {
-      AsyncResult ar = (AsyncResult) asyncResult;
+      AsyncResult ar = (AsyncResult)asyncResult;
 
-      DoWorkEventHandler handler = (DoWorkEventHandler) ar.AsyncDelegate;
-      DoWorkEventArgs args = (DoWorkEventArgs) ar.AsyncState;
+      DoWorkEventHandler handler = (DoWorkEventHandler)ar.AsyncDelegate;
+      DoWorkEventArgs args = (DoWorkEventArgs)ar.AsyncState;
 
       object result = null;
 

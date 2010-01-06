@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2007 Team MediaPortal
+﻿#region Copyright (C) 2005-2007 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
@@ -185,7 +185,7 @@ namespace MediaPortal.Player
     protected IVideoWindow videoWin;
 
     /// <summary> interface to get information and control video. </summary>
-    protected IBasicVideo2 basicVideo;    
+    protected IBasicVideo2 basicVideo;
 
     /// <summary> audio interface used to control volume. </summary>
     protected IBasicAudio basicAudio;
@@ -327,7 +327,9 @@ namespace MediaPortal.Player
         catch (Exception ex)
         {
           ci = new CultureInfo(defaultLanguageCulture);
-          Log.Error("SelectSubtitleLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}", ex);
+          Log.Error(
+            "SelectSubtitleLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}",
+            ex);
         }
       }
       for (int i = 0; i < SubtitleStreams; i++)
@@ -357,7 +359,8 @@ namespace MediaPortal.Player
         catch (Exception ex)
         {
           ci = new CultureInfo(defaultLanguageCulture);
-          Log.Error("SelectAudioLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}", ex);
+          Log.Error(
+            "SelectAudioLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}", ex);
         }
       }
       for (int i = 0; i < AudioStreams; i++)
@@ -936,7 +939,7 @@ namespace MediaPortal.Player
           }
           if (dTime < Duration)
           {
-            mediaPos.put_CurrentPosition(dTime);                    
+            mediaPos.put_CurrentPosition(dTime);
           }
         }
       }
@@ -1121,9 +1124,7 @@ namespace MediaPortal.Player
       mediaCtrl.StopWhenReady();
     }
 
-    protected virtual void OnInitialized()
-    {
-    }
+    protected virtual void OnInitialized() {}
 
     #region subtitle/audio stream selection
 
@@ -1198,7 +1199,7 @@ namespace MediaPortal.Player
       return streamName;
     }
 
-     /// <summary>
+    /// <summary>
     /// Property to get the name for an audio stream
     /// </summary>
     public override string AudioType(int iStream)
@@ -1224,10 +1225,7 @@ namespace MediaPortal.Player
     /// </summary>
     public override int SubtitleStreams
     {
-      get
-      {
-        return SubEngine.GetInstance().GetCount();
-      }
+      get { return SubEngine.GetInstance().GetCount(); }
     }
 
     /// <summary>
@@ -1235,14 +1233,8 @@ namespace MediaPortal.Player
     /// </summary>
     public override int CurrentSubtitleStream
     {
-      get
-      {
-        return SubEngine.GetInstance().Current;
-      }
-      set
-      {
-        SubEngine.GetInstance().Current = value;
-      }
+      get { return SubEngine.GetInstance().Current; }
+      set { SubEngine.GetInstance().Current = value; }
     }
 
     /// <summary>
@@ -1268,14 +1260,8 @@ namespace MediaPortal.Player
 
     public override bool EnableSubtitle
     {
-      get
-      {
-        return SubEngine.GetInstance().Enable;
-      }
-      set
-      {
-        SubEngine.GetInstance().Enable = value;
-      }
+      get { return SubEngine.GetInstance().Enable; }
+      set { SubEngine.GetInstance().Enable = value; }
     }
 
     public bool AnalyseStreams()
@@ -1352,29 +1338,29 @@ namespace MediaPortal.Player
                   {
                     FSInfos.Type = StreamType.Unknown;
                   }
-                  //VIDEO
+                    //VIDEO
                   else if (sPDWGroup == 0)
                   {
                     FSInfos.Type = StreamType.Video;
                   }
-                  //AUDIO
+                    //AUDIO
                   else if (sPDWGroup == 1)
                   {
                     FSInfos.Type = StreamType.Audio;
                   }
-                  //SUBTITLE
+                    //SUBTITLE
                   else if (sPDWGroup == 2 && sName.LastIndexOf("off") == -1 && sName.LastIndexOf("Hide ") == -1 &&
                            sName.LastIndexOf("No ") == -1 && sName.LastIndexOf("Miscellaneous ") == -1)
                   {
                     FSInfos.Type = StreamType.Subtitle;
                   }
-                  //NO SUBTITILE TAG
+                    //NO SUBTITILE TAG
                   else if ((sPDWGroup == 2 && (sName.LastIndexOf("off") != -1 || sName.LastIndexOf("No ") != -1)) ||
                            (sPDWGroup == 6590033 && sName.LastIndexOf("Hide ") != -1))
                   {
                     FSInfos.Type = StreamType.Subtitle_hidden;
                   }
-                  //DirectVobSub SHOW SUBTITLE TAG
+                    //DirectVobSub SHOW SUBTITLE TAG
                   else if (sPDWGroup == 6590033 && sName.LastIndexOf("Show ") != -1)
                   {
                     FSInfos.Type = StreamType.Subtitle_shown;
@@ -1409,9 +1395,7 @@ namespace MediaPortal.Player
           DirectShowUtil.ReleaseComObject(enumFilters);
         }
       }
-      catch
-      {
-      }
+      catch {}
       return true;
     }
 
@@ -1431,9 +1415,7 @@ namespace MediaPortal.Player
           DirectShowUtil.ReleaseComObject(foundfilter);
         }
       }
-      catch
-      {
-      }
+      catch {}
       return true;
     }
 

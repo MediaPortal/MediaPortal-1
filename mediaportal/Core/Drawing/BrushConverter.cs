@@ -58,7 +58,7 @@ namespace MediaPortal.Drawing
 
       if (value is string)
       {
-        StringTokenizer tokens = new StringTokenizer((string) value);
+        StringTokenizer tokens = new StringTokenizer((string)value);
 
         if (tokens.Count == 1)
         {

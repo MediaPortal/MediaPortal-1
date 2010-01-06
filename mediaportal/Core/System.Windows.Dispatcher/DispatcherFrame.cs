@@ -34,13 +34,9 @@ namespace System.Windows.Dispatcher
 
     #region Constructors
 
-    public DispatcherFrame()
-    {
-    }
+    public DispatcherFrame() {}
 
-    public DispatcherFrame(bool exitWhenRequested)
-    {
-    }
+    public DispatcherFrame(bool exitWhenRequested) {}
 
     #endregion Constructors
 

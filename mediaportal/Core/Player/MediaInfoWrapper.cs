@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
-
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 
@@ -53,10 +52,10 @@ namespace MediaPortal.Player
       }
       bool isTV = Util.Utils.IsLiveTv(strFile);
       bool isRadio = Util.Utils.IsLiveRadio(strFile);
-      bool isRTSP = Util.Utils.IsRTSP(strFile);                //rtsp for live TV and recordings.
+      bool isRTSP = Util.Utils.IsRTSP(strFile); //rtsp for live TV and recordings.
       bool isDVD = Util.Utils.IsDVD(strFile);
       bool isVideo = Util.Utils.IsVideo(strFile);
-      bool isAVStream = Util.Utils.IsAVStream(strFile);        //other AV streams
+      bool isAVStream = Util.Utils.IsAVStream(strFile); //other AV streams
 
       //currently disabled for all tv/radio/streaming video
       if (isTV || isRadio || isRTSP || isAVStream)
@@ -103,7 +102,8 @@ namespace MediaPortal.Player
         providerNumber.NumberDecimalSeparator = ".";
 
         //Video
-        double.TryParse(_mI.Get(StreamKind.Video, 0, "FrameRate"), NumberStyles.AllowDecimalPoint, providerNumber, out _framerate);
+        double.TryParse(_mI.Get(StreamKind.Video, 0, "FrameRate"), NumberStyles.AllowDecimalPoint, providerNumber,
+                        out _framerate);
         int.TryParse(_mI.Get(StreamKind.Video, 0, "Width"), out _width);
         int.TryParse(_mI.Get(StreamKind.Video, 0, "Height"), out _height);
         _aspectRatio = _mI.Get(StreamKind.Video, 0, "AspectRatio/String") == "4/3" ? "fullscreen" : "widescreen";
@@ -116,10 +116,12 @@ namespace MediaPortal.Player
         if ((_width == 1280 || _height == 720) && !_isInterlaced)
         {
           _videoResolution = "720P";
-        } if ((_width == 1920 || _height == 1080) && !_isInterlaced)
+        }
+        if ((_width == 1920 || _height == 1080) && !_isInterlaced)
         {
           _videoResolution = "1080P";
-        } if ((_width == 1920 || _height == 1080) && _isInterlaced)
+        }
+        if ((_width == 1920 || _height == 1080) && _isInterlaced)
         {
           _videoResolution = "1080I";
         }
@@ -271,7 +273,6 @@ namespace MediaPortal.Player
         _subTitleExtensions.Add(".vkt");
         _subTitleExtensions.Add(".vsf");
         _subTitleExtensions.Add(".zeg");
-
       }
       string filenameNoExt = Path.GetFileNameWithoutExtension(strFile);
       try

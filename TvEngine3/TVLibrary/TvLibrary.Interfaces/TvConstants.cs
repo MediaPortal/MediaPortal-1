@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -18,18 +18,22 @@ namespace TvLibrary.Interfaces
       /// Name of group where all (new) channels are stored
       /// </summary>
       public static string AllChannels = "All Channels";
+
       /// <summary>
       /// Name of group where all analog channels are stored
       /// </summary>
       public static string Analog = "Analog";
+
       /// <summary>
       /// Name of group where all DVB-T channels are stored
       /// </summary>
       public static string DVBT = "Digital terrestrial";
+
       /// <summary>
       /// Name of group where all DVB-C channels are stored
       /// </summary>
       public static string DVBC = "Digital cable";
+
       /// <summary>
       /// Name of group where all DVB-S channels are stored
       /// </summary>
@@ -45,18 +49,22 @@ namespace TvLibrary.Interfaces
       /// Name of group where all (new) channels are stored
       /// </summary>
       public static string AllChannels = "All Channels";
+
       /// <summary>
       /// Name of group where all analog channels are stored
       /// </summary>
       public static string Analog = "Analog";
+
       /// <summary>
       /// Name of group where all DVB-T channels are stored
       /// </summary>
       public static string DVBT = "Digital terrestrial";
+
       /// <summary>
       /// Name of group where all DVB-C channels are stored
       /// </summary>
       public static string DVBC = "Digital cable";
+
       /// <summary>
       /// Name of group where all DVB-S channels are stored
       /// </summary>

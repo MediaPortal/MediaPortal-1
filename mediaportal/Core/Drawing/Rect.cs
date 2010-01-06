@@ -32,9 +32,7 @@ namespace MediaPortal.Drawing
   {
     #region Constructors
 
-    public Rect(Point location, Size size) : this(location.X, location.Y, size.Width, size.Height)
-    {
-    }
+    public Rect(Point location, Size size) : this(location.X, location.Y, size.Width, size.Height) {}
 
     public Rect(double x, double y, double w, double h)
     {
@@ -109,13 +107,13 @@ namespace MediaPortal.Drawing
 
     public override bool Equals(object o)
     {
-      return o is Rect && ((Rect) o)._location.X == _location.X && ((Rect) o)._location.Y == _location.Y &&
-             ((Rect) o)._size.Width == _size.Width && ((Rect) o)._size.Height == _size.Height;
+      return o is Rect && ((Rect)o)._location.X == _location.X && ((Rect)o)._location.Y == _location.Y &&
+             ((Rect)o)._size.Width == _size.Width && ((Rect)o)._size.Height == _size.Height;
     }
 
     public override int GetHashCode()
     {
-      return (int) ((uint) _location.X ^ (uint) _location.Y ^ (uint) _size.Width ^ (uint) _size.Height);
+      return (int)((uint)_location.X ^ (uint)_location.Y ^ (uint)_size.Width ^ (uint)_size.Height);
     }
 
     public override string ToString()

@@ -31,15 +31,17 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class WinTvCiModule : WinTv_CI_Wrapper, IDisposable, ICiMenuActions
   {
-    readonly IBaseFilter _winTvUsbCIFilter;
+    private readonly IBaseFilter _winTvUsbCIFilter;
 
-    readonly APDU_Callback cbOnAPDU;
-    readonly Status_Callback cbOnStatus;
-    readonly CamInfo_Callback cbOnCamInfo;
-    readonly CloseMMI_Callback cbOnCloseMMI;
+    private readonly APDU_Callback cbOnAPDU;
+    private readonly Status_Callback cbOnStatus;
+    private readonly CamInfo_Callback cbOnCamInfo;
+    private readonly CloseMMI_Callback cbOnCloseMMI;
     private ICiMenuCallbacks m_ciMenuCallback;
     private DVB_MMI_Handler MMI;
+
     #region Constructor
+
     ///<summary>
     /// WinTV CI control
     ///</summary>
@@ -53,6 +55,7 @@ namespace TvLibrary.Implementations.DVB
       cbOnCloseMMI = OnMMIClosed;
       MMI = new DVB_MMI_Handler("WinTvCI"); // callbacks are set on first access
     }
+
     #endregion
 
     #region Callbacks
@@ -115,6 +118,7 @@ namespace TvLibrary.Implementations.DVB
       }
       return 0;
     }
+
     /// <summary>
     /// On Status callback
     /// </summary>
@@ -130,6 +134,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Info("WinTvCI: Module installed & CAM inserted");
       return 0;
     }
+
     /// <summary>
     /// On CAM Info callback
     /// </summary>
@@ -141,9 +146,11 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public Int32 OnCamInfo(IntPtr Context, byte appType, ushort appManuf, ushort manufCode, StringBuilder Info)
     {
-      Log.Log.Info("WinTvCi OnCamInfo: appType={0} appManuf={1} manufCode={2} info={3}", appType, appManuf, manufCode, Info.ToString());
+      Log.Log.Info("WinTvCi OnCamInfo: appType={0} appManuf={1} manufCode={2} info={3}", appType, appManuf, manufCode,
+                   Info.ToString());
       return 0;
     }
+
     /// <summary>
     /// On MMI Closed callback
     /// </summary>
@@ -158,9 +165,11 @@ namespace TvLibrary.Implementations.DVB
       }
       return 0;
     }
+
     #endregion
 
     #region Public functions
+
     /// <summary>
     /// Initiliases the WinTV CI
     /// </summary>
@@ -201,6 +210,7 @@ namespace TvLibrary.Implementations.DVB
     {
       return WinTVCI_EnableTrayIcon(_winTvUsbCIFilter);
     }
+
     /// <summary>
     /// Shut the WinTV ci down
     /// </summary>
@@ -209,6 +219,7 @@ namespace TvLibrary.Implementations.DVB
     {
       return WinTVCI_Shutdown(_winTvUsbCIFilter);
     }
+
     #endregion
 
     #region ICiMenuActions Member
@@ -284,8 +295,8 @@ namespace TvLibrary.Implementations.DVB
       SendAPDU(uData, uLength1); // send to cam
       return true;
     }
-    #endregion
 
+    #endregion
 
     #region IDisposable Member
 

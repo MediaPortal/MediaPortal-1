@@ -37,9 +37,7 @@ namespace System.Windows.Controls
                                                   new PropertyMetadata(new GridLength(GridUnitType.Star)));
     }
 
-    public ColumnDefinition()
-    {
-    }
+    public ColumnDefinition() {}
 
     #endregion Constructors
 
@@ -47,18 +45,18 @@ namespace System.Windows.Controls
 
     public double ActualWidth
     {
-      get { return ((GridLength) GetValue(WidthProperty)).Value; }
+      get { return ((GridLength)GetValue(WidthProperty)).Value; }
     }
 
     public double MaxWidth
     {
-      get { return (double) GetValue(MaxWidthProperty); }
+      get { return (double)GetValue(MaxWidthProperty); }
       set { SetValue(MaxWidthProperty, value); }
     }
 
     public double MinWidth
     {
-      get { return (double) GetValue(MinWidthProperty); }
+      get { return (double)GetValue(MinWidthProperty); }
       set { SetValue(MinWidthProperty, value); }
     }
 
@@ -69,7 +67,7 @@ namespace System.Windows.Controls
 
     public GridLength Width
     {
-      get { return (GridLength) GetValue(WidthProperty); }
+      get { return (GridLength)GetValue(WidthProperty); }
       set { SetValue(WidthProperty, value); }
     }
 

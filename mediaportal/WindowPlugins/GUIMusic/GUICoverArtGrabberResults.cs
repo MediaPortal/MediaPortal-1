@@ -69,25 +69,25 @@ namespace MediaPortal.GUI.Music
       IMG_AMAZON = 30,
     }
 
-    [SkinControl((int) ControlIDs.LIST_ALBUM)] protected GUIListControl listView = null;
+    [SkinControl((int)ControlIDs.LIST_ALBUM)] protected GUIListControl listView = null;
 
-    [SkinControl((int) ControlIDs.IMG_COVERART)] protected GUIImage imgCoverArt = null;
+    [SkinControl((int)ControlIDs.IMG_COVERART)] protected GUIImage imgCoverArt = null;
 
-    [SkinControl((int) ControlIDs.LBL_COVER)] protected GUILabelControl lblCoverLabel = null;
+    [SkinControl((int)ControlIDs.LBL_COVER)] protected GUILabelControl lblCoverLabel = null;
 
-    [SkinControl((int) ControlIDs.LBL_ARTIST_NAME)] protected GUIFadeLabel lblArtistName = null;
+    [SkinControl((int)ControlIDs.LBL_ARTIST_NAME)] protected GUIFadeLabel lblArtistName = null;
 
-    [SkinControl((int) ControlIDs.LBL_ALBUM_NAME)] protected GUIFadeLabel lblAlbumName = null;
+    [SkinControl((int)ControlIDs.LBL_ALBUM_NAME)] protected GUIFadeLabel lblAlbumName = null;
 
-    [SkinControl((int) ControlIDs.LBL_RELEASE_YEAR)] protected GUILabelControl lblReleaseYear = null;
+    [SkinControl((int)ControlIDs.LBL_RELEASE_YEAR)] protected GUILabelControl lblReleaseYear = null;
 
-    [SkinControl((int) ControlIDs.LBL_NO_MATCHES_FOUND)] protected GUILabelControl lblNoMatches = null;
+    [SkinControl((int)ControlIDs.LBL_NO_MATCHES_FOUND)] protected GUILabelControl lblNoMatches = null;
 
-    [SkinControl((int) ControlIDs.BTN_SKIP)] protected GUIButtonControl btnSkip = null;
+    [SkinControl((int)ControlIDs.BTN_SKIP)] protected GUIButtonControl btnSkip = null;
 
-    [SkinControl((int) ControlIDs.BTN_CANCEL)] protected GUIButtonControl btnCancel = null;
+    [SkinControl((int)ControlIDs.BTN_CANCEL)] protected GUIButtonControl btnCancel = null;
 
-    [SkinControl((int) ControlIDs.IMG_AMAZON)] protected GUIImage imgAmazon = null;
+    [SkinControl((int)ControlIDs.IMG_AMAZON)] protected GUIImage imgAmazon = null;
 
     #region Base Dialog Variables
 
@@ -166,7 +166,7 @@ namespace MediaPortal.GUI.Music
 
     public GUICoverArtGrabberResults()
     {
-      GetID = (int) Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS;
+      GetID = (int)Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS;
     }
 
     public override bool Init()
@@ -257,18 +257,18 @@ namespace MediaPortal.GUI.Music
       coverArtTexture = null;
       Reset();
 
-      listView.NavigateRight = (int) ControlIDs.LIST_ALBUM;
+      listView.NavigateRight = (int)ControlIDs.LIST_ALBUM;
 
       if (_SearchMode == SearchDepthMode.Album)
       {
-        btnCancel.NavigateUp = (int) ControlIDs.BTN_CANCEL;
-        listView.NavigateLeft = (int) ControlIDs.BTN_CANCEL;
+        btnCancel.NavigateUp = (int)ControlIDs.BTN_CANCEL;
+        listView.NavigateLeft = (int)ControlIDs.BTN_CANCEL;
       }
 
       else
       {
-        btnCancel.NavigateUp = (int) ControlIDs.BTN_SKIP;
-        listView.NavigateLeft = (int) ControlIDs.BTN_SKIP;
+        btnCancel.NavigateUp = (int)ControlIDs.BTN_SKIP;
+        listView.NavigateLeft = (int)ControlIDs.BTN_SKIP;
       }
       GUIPropertyManager.SetProperty("#currentmodule",
                                      String.Format("{0}/{1}", GUILocalizeStrings.Get(100005),
@@ -281,7 +281,7 @@ namespace MediaPortal.GUI.Music
 
       switch (controlId)
       {
-        case (int) ControlIDs.LIST_ALBUM:
+        case (int)ControlIDs.LIST_ALBUM:
           {
             int selectedItem = listView.SelectedListItemIndex;
 
@@ -295,12 +295,12 @@ namespace MediaPortal.GUI.Music
               return;
             }
 
-            _SelectedAlbum = (AlbumInfo) amazonWS.AlbumInfoList[selectedItem];
+            _SelectedAlbum = (AlbumInfo)amazonWS.AlbumInfoList[selectedItem];
             this.Close();
             break;
           }
 
-        case (int) ControlIDs.BTN_SKIP:
+        case (int)ControlIDs.BTN_SKIP:
           {
             Log.Info("Cover art grabber:[{0}-{1}] skipped by user", _Artist, _Album);
 
@@ -310,7 +310,7 @@ namespace MediaPortal.GUI.Music
             break;
           }
 
-        case (int) ControlIDs.BTN_CANCEL:
+        case (int)ControlIDs.BTN_CANCEL:
           {
             Log.Info("Cover art grabber:user cancelled out of grab results");
 
@@ -476,7 +476,7 @@ namespace MediaPortal.GUI.Music
       if (SearchMode == SearchDepthMode.Album)
       {
         GUIDialogProgress dlgProgress =
-          (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+          (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
         if (dlgProgress != null)
         {
           dlgProgress.SetPercentage(100);
@@ -618,7 +618,7 @@ namespace MediaPortal.GUI.Music
       if (SearchMode == SearchDepthMode.Album)
       {
         GUIDialogProgress dlgProgress =
-          (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+          (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
         if (dlgProgress != null)
         {
           dlgProgress.SetHeading(185);
@@ -648,7 +648,7 @@ namespace MediaPortal.GUI.Music
       if (SearchMode == SearchDepthMode.Album)
       {
         GUIDialogProgress dlgProgress =
-          (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+          (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
 
         if (dlgProgress != null)
         {
@@ -694,7 +694,7 @@ namespace MediaPortal.GUI.Music
       {
         for (int i = 0; i < amazonWS.AlbumCount; i++)
         {
-          AlbumInfo albuminfo = (AlbumInfo) amazonWS.AlbumInfoList[i];
+          AlbumInfo albuminfo = (AlbumInfo)amazonWS.AlbumInfoList[i];
           GUIListItem item = new GUIListItem(albuminfo.Album);
           item.Label2 = albuminfo.Artist;
           item.IconImageBig = albuminfo.Image;

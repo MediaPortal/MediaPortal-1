@@ -31,9 +31,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public EventTrigger()
-    {
-    }
+    public EventTrigger() {}
 
     public EventTrigger(RoutedEvent routedEvent)
     {
@@ -61,12 +59,10 @@ namespace System.Windows
         _actions = new TriggerActionCollection();
       }
 
-      _actions.Add((TriggerAction) child);
+      _actions.Add((TriggerAction)child);
     }
 
-    protected virtual void AddText(string text)
-    {
-    }
+    protected virtual void AddText(string text) {}
 
     void IAddChild.AddChild(object child)
     {

@@ -56,7 +56,7 @@ namespace TvPlugin
 
     private const int MaxDaysInGuide = 30;
     private const int RowID = 1000;
-    private const int ColID = 10;    
+    private const int ColID = 10;
 
     private const int GUIDE_COMPONENTID_START = 50000;
     // Start for numbering IDs of automaticaly generated TVguide components for channels and programs
@@ -204,7 +204,7 @@ namespace TvPlugin
       _colorList.Add(Color.OldLace);
       _colorList.Add(Color.PowderBlue);
       _colorList.Add(Color.SpringGreen);
-      _colorList.Add(Color.LightSalmon);      
+      _colorList.Add(Color.LightSalmon);
     }
 
     #endregion
@@ -455,7 +455,7 @@ namespace TvPlugin
             }
             return;
           }
-        //break;
+          //break;
         case Action.ActionType.ACTION_SHOW_INFO:
           {
             ShowContextMenu();
@@ -518,7 +518,7 @@ namespace TvPlugin
         case Action.ActionType.ACTION_TVGUIDE_DECREASE_DAY:
           OnPreviousDay();
           break;
-        // TV group changing actions
+          // TV group changing actions
         case Action.ActionType.ACTION_TVGUIDE_NEXT_GROUP:
           OnChangeTvGroup(1);
           break;
@@ -544,8 +544,8 @@ namespace TvPlugin
 
       newIndex = oldIndex = TVHome.Navigator.CurrentGroupIndex;
       if (
-         (newIndex >= 1 && Direction < 0) ||
-         (newIndex < countGroups - 1 && Direction > 0)
+        (newIndex >= 1 && Direction < 0) ||
+        (newIndex < countGroups - 1 && Direction > 0)
         )
       {
         newIndex += Direction; // change group
@@ -555,11 +555,10 @@ namespace TvPlugin
         {
           newIndex = 0;
         }
-        else
-          if (newIndex == 0 && Direction < 0)
-          {
-            newIndex = countGroups - 1;
-          }
+        else if (newIndex == 0 && Direction < 0)
+        {
+          newIndex = countGroups - 1;
+        }
 
       if (oldIndex != newIndex)
       {
@@ -572,7 +571,8 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
         }
         _cursorY = 1; // cursor should be on the program guide item
-        _channelOffset = 0; // reset to top; otherwise focus could be out of screen if new group has less then old position
+        _channelOffset = 0;
+          // reset to top; otherwise focus could be out of screen if new group has less then old position
         _cursorX = 0; // first channel
         GetChannels(true);
         Update(false);
@@ -661,7 +661,7 @@ namespace TvPlugin
             }
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-            {              
+            {
               TVHome.WaitForGentleConnection();
 
               GUIPropertyManager.SetProperty("#itemcount", string.Empty);
@@ -815,7 +815,7 @@ namespace TvPlugin
               */
               return true;
             }
-          //break;
+            //break;
 
           case GUIMessage.MessageType.GUI_MSG_CLICKED:
             int iControl = message.SenderControlId;
@@ -891,7 +891,8 @@ namespace TvPlugin
           //if (_cursorY == -1)
           //	_cursorY = 0;
           _cursorY = 1; // cursor should be on the program guide item
-          _channelOffset = 0; // reset to top; otherwise focus could be out of screen if new group has less then old position
+          _channelOffset = 0;
+            // reset to top; otherwise focus could be out of screen if new group has less then old position
           _cursorX = 0; // set to top, otherwise index could be out of range in new group
 
           // group has been changed
@@ -918,7 +919,7 @@ namespace TvPlugin
         if (ts.TotalMilliseconds > 1000)
         {
           _updateTimerRecExpected = DateTime.Now;
-          VirtualCard card;          
+          VirtualCard card;
           if (_server.IsRecording(_recordingExpected.Name, out card))
           {
             _recordingExpected = null;
@@ -1477,7 +1478,9 @@ namespace TvPlugin
           _currentRecOrNotify = true;
         }
       }
-    } //void SetProperties()
+    }
+
+    //void SetProperties()
 
     private void RenderSingleChannel(Channel channel)
     {
@@ -1560,7 +1563,8 @@ namespace TvPlugin
         channelLabel = new GUILabelControl(GetID, (int)Controls.SINGLE_CHANNEL_LABEL,
                                            channelImage.XPosition + 44,
                                            channelImage.YPosition + 10,
-                                           300, 40, "font16", channel.DisplayName, 4294967295, GUIControl.Alignment.Left, GUIControl.VAlignment.Top,
+                                           300, 40, "font16", channel.DisplayName, 4294967295, GUIControl.Alignment.Left,
+                                           GUIControl.VAlignment.Top,
                                            true, 0, 0, 0xFF000000);
         channelLabel.AllocResources();
         GUIControl temp = channelLabel;
@@ -1654,21 +1658,27 @@ namespace TvPlugin
           // bugfix for 0 items
           if (programs.Count == 0)
           {
-            program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", string.Empty, string.Empty, Program.ProgramState.None,
-                                  DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
+            program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", string.Empty, string.Empty,
+                                  Program.ProgramState.None,
+                                  DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1,
+                                  string.Empty, -1);
           }
           else
           {
             program = (Program)programs[programs.Count - 1];
             if (program.EndTime.DayOfYear == _viewingTime.DayOfYear)
             {
-              program = new Program(channel.IdChannel, program.EndTime, program.EndTime, "-", "-", "-", Program.ProgramState.None,
-                                    DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
+              program = new Program(channel.IdChannel, program.EndTime, program.EndTime, "-", "-", "-",
+                                    Program.ProgramState.None,
+                                    DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1,
+                                    string.Empty, -1);
             }
             else
             {
-              program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", "-", "-", Program.ProgramState.None,
-                                    DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
+              program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", "-", "-",
+                                    Program.ProgramState.None,
+                                    DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1,
+                                    string.Empty, -1);
             }
           }
         }
@@ -1712,7 +1722,7 @@ namespace TvPlugin
 
         bool bSeries = (program.IsRecordingSeries || program.IsRecordingSeriesPending);
         bool bConflict = program.HasConflict;
-        bool bRecording = bSeries || (program.IsRecording || program.IsRecordingOncePending);               
+        bool bRecording = bSeries || (program.IsRecording || program.IsRecordingOncePending);
 
         img.Data = program;
         img.ColourDiffuse = GetColorForGenre(program.Genre);
@@ -1738,11 +1748,12 @@ namespace TvPlugin
         img.Label1 = TVUtil.GetDisplayTitle(program);
 
         string strTimeSingle = String.Format("{0}",
-                                      program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                             program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
         if (program.StartTime.DayOfYear != _viewingTime.DayOfYear)
         {
-          img.Label1 = String.Format("{0} {1}", Utils.GetShortDayString(program.StartTime), TVUtil.GetDisplayTitle(program));
+          img.Label1 = String.Format("{0} {1}", Utils.GetShortDayString(program.StartTime),
+                                     TVUtil.GetDisplayTitle(program));
         }
 
         GUILabelControl labelTemplate;
@@ -1838,7 +1849,9 @@ namespace TvPlugin
           }
         }
       }
-    } //void RenderSingleChannel(Channel channel)
+    }
+
+    //void RenderSingleChannel(Channel channel)
 
     private bool IsRecordingNoEPG(string channelName)
     {
@@ -1918,7 +1931,8 @@ namespace TvPlugin
         //dt=dt.AddMinutes(_timePerBlock);
         long iProgEnd = Utils.datetolong(dt);
         Program prog = new Program(channel.IdChannel, Utils.longtodate(iStart), Utils.longtodate(iProgEnd),
-                                   GUILocalizeStrings.Get(736), "", "", Program.ProgramState.None, DateTime.MinValue, string.Empty,
+                                   GUILocalizeStrings.Get(736), "", "", Program.ProgramState.None, DateTime.MinValue,
+                                   string.Empty,
                                    string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
         if (programs == null)
         {
@@ -1941,7 +1955,7 @@ namespace TvPlugin
 
           string strTitle = TVUtil.GetDisplayTitle(program);
           bool bStartsBefore = false;
-          bool bEndsAfter = false;          
+          bool bEndsAfter = false;
           if (Utils.datetolong(program.StartTime) < iStart)
           {
             bStartsBefore = true;
@@ -1980,7 +1994,7 @@ namespace TvPlugin
           {
             bRecording = IsRecordingNoEPG(channel.Name);
           }
-          
+
           int iStartXPos = 0;
           int iEndXPos = 0;
           for (int iBlok = 0; iBlok < _numberOfBlocks; iBlok++)
@@ -2231,7 +2245,9 @@ namespace TvPlugin
           iPreviousEndXPos = iEndXPos;
         }
       }
-    } //void RenderChannel(int iChannel,Channel channel, long iStart, long iEnd, bool selectCurrentShow)
+    }
+
+    //void RenderChannel(int iChannel,Channel channel, long iStart, long iEnd, bool selectCurrentShow)
 
     private int ProgramCount(int iChannel)
     {
@@ -2449,7 +2465,7 @@ namespace TvPlugin
     /// </summary>
     /// <param name="updateScreen"></param>
     private void SetBestMatchingProgram(bool updateScreen, bool DirectionIsDown)
-    {      
+    {
       // if cursor is on a program in guide, try to find the "best time matching" program in new channel
       int iCurY = _cursorX;
       int iCurOff = _channelOffset;
@@ -2562,10 +2578,10 @@ namespace TvPlugin
       {
         Correct();
         if (iCurOff == _channelOffset)
-        {          
+        {
           UpdateCurrentProgram();
           return;
-        }                
+        }
         SetFocus();
       }
     }
@@ -2645,7 +2661,8 @@ namespace TvPlugin
         return;
       }
       int iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (_cursorY - 1) * ColID;
-      GUIButton3PartControl img = GetControl(iControlId) as GUIButton3PartControl; ;
+      GUIButton3PartControl img = GetControl(iControlId) as GUIButton3PartControl;
+      ;
       if (null != img)
       {
         SetFocus();
@@ -2738,7 +2755,8 @@ namespace TvPlugin
           _singleChannelNumber -= _channelList.Count;
         }
         // instead of direct casting us "as"; else it fails for other controls!
-        GUIButton3PartControl img = GetControl(_cursorX + (int)Controls.IMG_CHAN1) as GUIButton3PartControl; ;
+        GUIButton3PartControl img = GetControl(_cursorX + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
+        ;
         if (null != img)
         {
           _currentChannel = img.Label1;
@@ -2879,7 +2897,7 @@ namespace TvPlugin
 
         if (_currentProgram != null && _currentChannel.Length > 0 && _currentTitle.Length > 0)
         {
-          if  (_currentProgram.IdProgram == 0) // no EPG program recording., only allow to stop it.
+          if (_currentProgram.IdProgram == 0) // no EPG program recording., only allow to stop it.
           {
             isRecordingNoEPG = IsRecordingNoEPG(_currentProgram.ReferencedChannel().Name);
             if (isRecordingNoEPG)
@@ -2889,13 +2907,13 @@ namespace TvPlugin
             else
             {
               dlg.AddLocalizedString(264); // start non EPG Recording                        
-            }            
+            }
           }
           else if (!_currentRecOrNotify)
           {
             dlg.AddLocalizedString(264); // Record
           }
-          
+
           else
           {
             dlg.AddLocalizedString(637); // Edit Recording
@@ -2937,11 +2955,11 @@ namespace TvPlugin
 
           case 939: // switch mode
             OnSwitchMode();
-            break;          
+            break;
           case 629: //stop recording
             Schedule schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel().Name);
             TVHome.PromptAndDeleteRecordingSchedule(schedule.IdSchedule, true, false);
-            Update(true);//remove RED marker
+            Update(true); //remove RED marker
             break;
 
           case 637: // edit recording
@@ -2950,7 +2968,7 @@ namespace TvPlugin
             {
               TVHome.StartRecordingSchedule(_currentProgram.ReferencedChannel(), true);
               _currentProgram.IsRecordingOncePending = true;
-              Update(true);//remove RED marker
+              Update(true); //remove RED marker
             }
             else
             {
@@ -3057,7 +3075,8 @@ namespace TvPlugin
             {
               // If you select the program which is currently recording open a dialog to ask if you want to see it from the beginning
               // imagine a sports event where you do not want to see the live point to be spoiled           
-              schedule = Schedule.RetrieveOnce(_currentProgram.ReferencedChannel().IdChannel, _currentProgram.Title, _currentProgram.StartTime, _currentProgram.EndTime);
+              schedule = Schedule.RetrieveOnce(_currentProgram.ReferencedChannel().IdChannel, _currentProgram.Title,
+                                               _currentProgram.StartTime, _currentProgram.EndTime);
             }
 
             if (schedule != null)
@@ -3070,9 +3089,8 @@ namespace TvPlugin
               }
             }
 
-            if (!string.IsNullOrEmpty (fileName)) //are we really recording ?
-            {                                          
-              
+            if (!string.IsNullOrEmpty(fileName)) //are we really recording ?
+            {
               Log.Info("TVGuide: clicked on a currently running recording");
               GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
               if (dlg == null)
@@ -3136,7 +3154,7 @@ namespace TvPlugin
                       if (g_Player.Playing)
                       {
                         g_Player.ShowFullScreenWindow();
-                      }                      
+                      }
                     }
                     return;
                 }
@@ -3146,9 +3164,8 @@ namespace TvPlugin
                 Log.Info("EPG: _recordingList was not available");
               }
 
-            
 
-              if (string.IsNullOrEmpty (fileName))
+              if (string.IsNullOrEmpty(fileName))
               {
                 TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
                 if (g_Player.Playing)
@@ -3215,7 +3232,7 @@ namespace TvPlugin
                 {
                   if (isPlayingTV) GUIWindowManager.CloseCurrentWindow();
                   g_Player.ShowFullScreenWindow();
-                }              
+                }
               }
             } //end of not recording
           }
@@ -3281,9 +3298,7 @@ namespace TvPlugin
       ShowProgramInfo();
     }
 
-    private void CheckRecordingConflicts()
-    {
-    }
+    private void CheckRecordingConflicts() {}
 
     private void OnPageUp()
     {
@@ -3303,7 +3318,8 @@ namespace TvPlugin
       if (_singleChannelView)
         Steps = _channelCount; // all available rows
       else
-        Steps = Math.Min(_channelList.Count - _channelOffset - _cursorX - 1, _channelCount); // only number of additional avail channels
+        Steps = Math.Min(_channelList.Count - _channelOffset - _cursorX - 1, _channelCount);
+          // only number of additional avail channels
 
       UnFocus();
       for (int i = 0; i < Steps; ++i)
@@ -3438,7 +3454,8 @@ namespace TvPlugin
         _cursorX = 0;
 
         // Last page adjust (To get a full page channel listing)
-        if (iChannelNr > _channelList.Count - Math.Min(_channelList.Count, _channelCount) + 1) // minimum of available channel/max visible channels
+        if (iChannelNr > _channelList.Count - Math.Min(_channelList.Count, _channelCount) + 1)
+          // minimum of available channel/max visible channels
         {
           _channelOffset = _channelList.Count - _channelCount;
           iChannelNr = iChannelNr - _channelOffset;
@@ -3491,9 +3508,7 @@ namespace TvPlugin
             }
           }
         }
-        catch
-        {
-        }
+        catch {}
 
         if (_channelList.Count == 0)
         {

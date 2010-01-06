@@ -34,9 +34,7 @@ namespace MediaPortal.GUI.Library
   {
     #region Constructors
 
-    private GUIWaitCursor()
-    {
-    }
+    private GUIWaitCursor() {}
 
     #endregion Constructors
 
@@ -82,8 +80,8 @@ namespace MediaPortal.GUI.Library
       }
 
       // dirty hack because the files are 96x96 - unfortunately no property gives the correct size at runtime when init is called :S
-      int scaleWidth = (GUIGraphicsContext.Width/2) - 48;
-      int scaleHeigth = (GUIGraphicsContext.Height/2) - 48;
+      int scaleWidth = (GUIGraphicsContext.Width / 2) - 48;
+      int scaleHeigth = (GUIGraphicsContext.Height / 2) - 48;
 
       _animation.SetPosition(scaleWidth, scaleHeigth);
 
@@ -97,9 +95,7 @@ namespace MediaPortal.GUI.Library
       _animation.RepeatBehavior = RepeatBehavior.Forever;
     }
 
-    public override void Render(float timePassed)
-    {
-    }
+    public override void Render(float timePassed) {}
 
     public static void Render()
     {

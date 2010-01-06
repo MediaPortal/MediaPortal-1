@@ -36,8 +36,8 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
-using Filter=Microsoft.DirectX.Direct3D.Filter;
-using Geometry=MediaPortal.GUI.Library.Geometry;
+using Filter = Microsoft.DirectX.Direct3D.Filter;
+using Geometry = MediaPortal.GUI.Library.Geometry;
 
 namespace MediaPortal.Player
 {
@@ -91,7 +91,9 @@ namespace MediaPortal.Player
 
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe bool EvrInit(IVMR9PresentCallback callback, uint dwD3DDevice, IBaseFilter vmr9Filter,
-                                              uint monitor); //, uint dwWindow);
+                                              uint monitor);
+
+    //, uint dwWindow);
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void EvrDeinit();
 
@@ -331,7 +333,9 @@ namespace MediaPortal.Player
         }
         return false;
       } //get {
-    } //public bool IsVMR9Connected
+    }
+
+    //public bool IsVMR9Connected
 
     #endregion
 
@@ -364,12 +368,12 @@ namespace MediaPortal.Player
 
       if (_useEvr)
       {
-        _vmr9Filter = (IBaseFilter) new EnhancedVideoRenderer();
+        _vmr9Filter = (IBaseFilter)new EnhancedVideoRenderer();
         Log.Info("VMR9: added EVR Renderer to graph");
       }
       else
       {
-        _vmr9Filter = (IBaseFilter) new VideoMixingRenderer9();
+        _vmr9Filter = (IBaseFilter)new VideoMixingRenderer9();
         Log.Info("VMR9: added Video Mixing Renderer 9 to graph");
       }
 
@@ -391,13 +395,13 @@ namespace MediaPortal.Player
       HResult hr;
       if (_useEvr)
       {
-        EvrInit(_scene, (uint) upDevice.ToInt32(), _vmr9Filter, (uint) hMonitor.ToInt32());
+        EvrInit(_scene, (uint)upDevice.ToInt32(), _vmr9Filter, (uint)hMonitor.ToInt32());
         //(uint)GUIGraphicsContext.ActiveForm);
         hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Enhanced Video Renderer"));
       }
       else
       {
-        Vmr9Init(_scene, (uint) upDevice.ToInt32(), _vmr9Filter, (uint) hMonitor.ToInt32());
+        Vmr9Init(_scene, (uint)upDevice.ToInt32(), _vmr9Filter, (uint)hMonitor.ToInt32());
         hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Video Mixing Renderer 9"));
       }
 
@@ -433,7 +437,7 @@ namespace MediaPortal.Player
         OperatingSystem os = Environment.OSVersion;
         if (os.Platform == PlatformID.Win32NT)
         {
-          long version = os.Version.Major*10000000 + os.Version.Minor*10000 + os.Version.Build;
+          long version = os.Version.Major * 10000000 + os.Version.Minor * 10000 + os.Version.Build;
           if (version >= 50012600) // we need at least win xp sp2 for VMR9 YUV mixing mode
           {
             IVMRMixerControl9 mixer = _vmr9Filter as IVMRMixerControl9;
@@ -444,7 +448,7 @@ namespace MediaPortal.Player
               dwPrefs &= ~VMR9MixerPrefs.RenderTargetMask;
 
               dwPrefs |= VMR9MixerPrefs.RenderTargetYUV;
-                // YUV saves graphics bandwith  http://msdn2.microsoft.com/en-us/library/ms788177(VS.85).aspx
+              // YUV saves graphics bandwith  http://msdn2.microsoft.com/en-us/library/ms788177(VS.85).aspx
               hr.Set(mixer.SetMixingPrefs(dwPrefs));
               Log.Debug("VMR9: Enabled YUV mixing - " + hr.ToDXString());
 
@@ -608,12 +612,12 @@ namespace MediaPortal.Player
 
       TimeSpan ts = DateTime.Now - _repaintTimer;
       int frames = FrameCounter;
-      if (ts.TotalMilliseconds >= 1750 
-        || (currentVmr9State == Vmr9PlayState.Repaint && FrameCounter > 0)
-        || g_Player.Paused ) // in paused state frames aren't rendered so we need "force" the GUI drawing here
+      if (ts.TotalMilliseconds >= 1750
+          || (currentVmr9State == Vmr9PlayState.Repaint && FrameCounter > 0)
+          || g_Player.Paused) // in paused state frames aren't rendered so we need "force" the GUI drawing here
       {
         _repaintTimer = DateTime.Now;
-        GUIGraphicsContext.Vmr9FPS = ((float) (frames*1000))/((float) ts.TotalMilliseconds);
+        GUIGraphicsContext.Vmr9FPS = ((float)(frames * 1000)) / ((float)ts.TotalMilliseconds);
         //Log.Info("VMR9Helper:frames:{0} fps:{1} time:{2}", frames, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
         FrameCounter = 0;
 
@@ -680,7 +684,7 @@ namespace MediaPortal.Player
           DeInterlaceMode = 1; //NextBest = 0x01
         }
       }
-      Vmr9SetDeinterlacePrefs((uint) DeInterlaceMode);
+      Vmr9SetDeinterlacePrefs((uint)DeInterlaceMode);
     }
 
     public void SetDeinterlaceMode()
@@ -692,7 +696,7 @@ namespace MediaPortal.Player
           return;
         }
         Log.Debug("VMR9: SetDeinterlaceMode()");
-        IVMRDeinterlaceControl9 deinterlace = (IVMRDeinterlaceControl9) _vmr9Filter;
+        IVMRDeinterlaceControl9 deinterlace = (IVMRDeinterlaceControl9)_vmr9Filter;
         IPin InPin = null;
         int hr = _vmr9Filter.FindPin("VMR Input0", out InPin);
         AMMediaType mediatype = new AMMediaType();
@@ -715,7 +719,7 @@ namespace MediaPortal.Player
             VideoDesc.dwSize = Marshal.SizeOf(VideoDesc); // dwSize: Set this field to sizeof(VMR9VideoDesc).
             VideoDesc.dwSampleWidth = VideoHeader2.BmiHeader.Width; // dwSampleWidth: Set this field to pBMI->biWidth. 
             VideoDesc.dwSampleHeight = VideoHeader2.BmiHeader.Height;
-              // dwSampleHeight: Set this field to abs(pBMI->biHeight). 
+            // dwSampleHeight: Set this field to abs(pBMI->biHeight). 
             //SampleFormat: This field describes the interlace characteristics of the media type.
             //Check the dwInterlaceFlags field in the VIDEOINFOHEADER2 structure, and set SampleFormat equal to the equivalent VMR9_SampleFormat flag.
             if ((VideoHeader2.InterlaceFlags & AMInterlace.IsInterlaced) != 0)
@@ -747,13 +751,13 @@ namespace MediaPortal.Player
             //InputSampleFreq: This field gives the input frequency, which can be calculated from the AvgTimePerFrame field in the VIDEOINFOHEADER2 structure.
             //In the general case, set dwNumerator to 10000000, and set dwDenominator to AvgTimePerFrame. 
             VideoDesc.InputSampleFreq.dwDenominator = 10000000;
-            VideoDesc.InputSampleFreq.dwNumerator = (int) VideoHeader2.AvgTimePerFrame;
+            VideoDesc.InputSampleFreq.dwNumerator = (int)VideoHeader2.AvgTimePerFrame;
             //OutputFrameFreq: This field gives the output frequency, which can be calculated from the InputSampleFreq value and the interleaving characteristics of the input stream:
             //Set OutputFrameFreq.dwDenominator equal to InputSampleFreq.dwDenominator.
             //If the input video is interleaved, set OutputFrameFreq.dwNumerator to 2 x InputSampleFreq.dwNumerator. (After deinterlacing, the frame rate is doubled.)
             //Otherwise, set the value to InputSampleFreq.dwNumerator.
             VideoDesc.OutputFrameFreq.dwDenominator = 10000000;
-            VideoDesc.OutputFrameFreq.dwNumerator = (int) VideoHeader2.AvgTimePerFrame*2;
+            VideoDesc.OutputFrameFreq.dwNumerator = (int)VideoHeader2.AvgTimePerFrame * 2;
             VideoDesc.dwFourCC = VideoHeader2.BmiHeader.Compression; //dwFourCC: Set this field to pBMI->biCompression.
             //Pass the structure to the IVMRDeinterlaceControl9::GetNumberOfDeinterlaceModes method.
             //Call the method twice. The first call returns the number of deinterlace modes the hardware supports for the specified format.
@@ -992,10 +996,10 @@ namespace MediaPortal.Player
           int width = g_vmr9.VideoWidth;
           int height = g_vmr9.VideoHeight;
 
-          float xx = (float) src.X/width;
-          float yy = (float) src.Y/height;
-          float fx = (float) (src.X + src.Width)/width;
-          float fy = (float) (src.Y + src.Height)/height;
+          float xx = (float)src.X / width;
+          float yy = (float)src.Y / height;
+          float fx = (float)(src.X + src.Width) / width;
+          float fy = (float)(src.Y + src.Height) / height;
           //
 
           using (
@@ -1005,11 +1009,11 @@ namespace MediaPortal.Player
                                                                                        Pool.SystemMemory))
           {
             SurfaceLoader.FromStream(surface, mStr, Filter.None, 0);
-            bmp.dwFlags = (VMR9AlphaBitmapFlags) (4 | 8);
+            bmp.dwFlags = (VMR9AlphaBitmapFlags)(4 | 8);
             bmp.clrSrcKey = 0;
             unsafe
             {
-              bmp.pDDS = (IntPtr) surface.UnmanagedComPointer;
+              bmp.pDDS = (IntPtr)surface.UnmanagedComPointer;
             }
             bmp.rDest = new NormalizedRect();
             bmp.rDest.top = yy;
@@ -1028,7 +1032,7 @@ namespace MediaPortal.Player
         }
         else
         {
-          bmp.dwFlags = (VMR9AlphaBitmapFlags) 1;
+          bmp.dwFlags = (VMR9AlphaBitmapFlags)1;
           bmp.clrSrcKey = 0;
           bmp.rDest = new NormalizedRect();
           bmp.rDest.top = 0.0f;
@@ -1045,7 +1049,9 @@ namespace MediaPortal.Player
       }
       // dispose
       return true;
-    } // savevmr9bitmap
+    }
+
+    // savevmr9bitmap
 
     public void GetVideoWindows(out Rectangle rSource, out Rectangle rDest)
     {
@@ -1079,17 +1085,17 @@ namespace MediaPortal.Player
       }
 
       //calculate the video window according to the current aspect ratio settings
-      float fVideoWidth = (float) VideoWidth;
-      float fVideoHeight = (float) VideoHeight;
-      m_geometry.ImageWidth = (int) fVideoWidth;
-      m_geometry.ImageHeight = (int) fVideoHeight;
-      m_geometry.ScreenWidth = (int) nw;
-      m_geometry.ScreenHeight = (int) nh;
+      float fVideoWidth = (float)VideoWidth;
+      float fVideoHeight = (float)VideoHeight;
+      m_geometry.ImageWidth = (int)fVideoWidth;
+      m_geometry.ImageHeight = (int)fVideoHeight;
+      m_geometry.ScreenWidth = (int)nw;
+      m_geometry.ScreenHeight = (int)nh;
       m_geometry.ARType = GUIGraphicsContext.ARType;
       m_geometry.PixelRatio = GUIGraphicsContext.PixelRatio;
       m_geometry.GetWindow(VideoAspectRatioX, VideoAspectRatioY, out rSource, out rDest);
-      rDest.X += (int) x;
-      rDest.Y += (int) y;
+      rDest.X += (int)x;
+      rDest.Y += (int)y;
       m_geometry = null;
     }
 
@@ -1148,7 +1154,7 @@ namespace MediaPortal.Player
       {
         Vmr9Deinit();
       }
-      
+
       _vmr9Filter = null;
       _graphBuilderInterface = null;
       _scene = null;

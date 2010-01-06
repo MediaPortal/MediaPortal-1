@@ -36,9 +36,7 @@ namespace MediaPortal.Configuration.Sections
     #region Constructors/Destructors
 
     public MusicASIO()
-      : this("Music ASIO")
-    {
-    }
+      : this("Music ASIO") {}
 
     public MusicASIO(string name)
       : base(name)
@@ -61,7 +59,7 @@ namespace MediaPortal.Configuration.Sections
 
         if (section != null)
         {
-          bool mixing = (bool) section.GetSetting("mixing");
+          bool mixing = (bool)section.GetSetting("mixing");
           if (mixing)
           {
             useASIOCheckBox.Checked = false;
@@ -114,7 +112,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void hScrollBarBalance_ValueChanged(object sender, EventArgs e)
     {
-      double balance = (double) hScrollBarBalance.Value/100.0;
+      double balance = (double)hScrollBarBalance.Value / 100.0;
       lbBalance.Text = String.Format("{0}", balance);
     }
 
@@ -140,7 +138,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (section != null)
       {
-        string player = (string) section.GetSetting("audioPlayer");
+        string player = (string)section.GetSetting("audioPlayer");
         if (player.IndexOf("BASS") == -1)
         {
           this.Enabled = false;

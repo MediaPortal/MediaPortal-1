@@ -373,18 +373,18 @@ namespace MediaPortal.GUI.Home
       bool updated = false;
       foreach (TreeNode node in tvMenu.Nodes)
       {
-        if (((PluginInfo) node.Tag).Index == Int32.MaxValue)
+        if (((PluginInfo)node.Tag).Index == Int32.MaxValue)
         {
-          ((PluginInfo) node.Tag).Index = node.Index;
+          ((PluginInfo)node.Tag).Index = node.Index;
           updated = true;
         }
         if (node.Nodes != null)
         {
           foreach (TreeNode subNode in node.Nodes)
           {
-            if (((PluginInfo) subNode.Tag).Index == Int32.MaxValue)
+            if (((PluginInfo)subNode.Tag).Index == Int32.MaxValue)
             {
-              ((PluginInfo) subNode.Tag).Index = subNode.Index;
+              ((PluginInfo)subNode.Tag).Index = subNode.Index;
               updated = true;
             }
           }
@@ -415,10 +415,10 @@ namespace MediaPortal.GUI.Home
       }
 
       tvMenu.BeginUpdate();
-      if (((PluginInfo) tnSelected.Tag).Index > 0)
+      if (((PluginInfo)tnSelected.Tag).Index > 0)
       {
-        ((PluginInfo) tnSelected.Tag).Index--;
-        ((PluginInfo) tnSelected.PrevNode.Tag).Index++;
+        ((PluginInfo)tnSelected.Tag).Index--;
+        ((PluginInfo)tnSelected.PrevNode.Tag).Index++;
         tvMenu.Sort();
         tvMenu.SelectedNode = tnSelected;
       }
@@ -440,10 +440,10 @@ namespace MediaPortal.GUI.Home
         nodeColl = tnSelected.Parent.Nodes;
       }
 
-      if (((PluginInfo) tnSelected.Tag).Index + 1 < nodeColl.Count)
+      if (((PluginInfo)tnSelected.Tag).Index + 1 < nodeColl.Count)
       {
-        ((PluginInfo) tnSelected.Tag).Index++;
-        ((PluginInfo) tnSelected.NextNode.Tag).Index--;
+        ((PluginInfo)tnSelected.Tag).Index++;
+        ((PluginInfo)tnSelected.NextNode.Tag).Index--;
         tvMenu.Sort();
 
         tvMenu.SelectedNode = tnSelected;
@@ -494,7 +494,7 @@ namespace MediaPortal.GUI.Home
 
     public int GetWindowId()
     {
-      return (int) GUIWindow.Window.WINDOW_HOME;
+      return (int)GUIWindow.Window.WINDOW_HOME;
     }
 
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
@@ -515,7 +515,7 @@ namespace MediaPortal.GUI.Home
     {
       TreeNode tx = x as TreeNode;
       TreeNode ty = y as TreeNode;
-      return ((PluginInfo) tx.Tag).Index - ((PluginInfo) ty.Tag).Index;
+      return ((PluginInfo)tx.Tag).Index - ((PluginInfo)ty.Tag).Index;
     }
 
     #endregion

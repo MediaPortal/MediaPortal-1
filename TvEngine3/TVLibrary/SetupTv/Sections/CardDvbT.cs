@@ -23,7 +23,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Threading;
 using TvDatabase;
-
 using TvControl;
 using TvLibrary.Log;
 using TvLibrary.Channels;
@@ -38,28 +37,27 @@ namespace SetupTv.Sections
   public partial class CardDvbT : SectionSettings
   {
     #region Member variables
-    readonly int _cardNumber;
+
+    private readonly int _cardNumber;
 
     private List<DVBTTuning> _dvbtChannels = new List<DVBTTuning>();
     private String buttonText;
 
-    FileFilters fileFilters;
+    private FileFilters fileFilters;
 
-    CI_Menu_Dialog ciMenuDialog; // ci menu dialog object
+    private CI_Menu_Dialog ciMenuDialog; // ci menu dialog object
 
-    ScanState scanState; // scan state
+    private ScanState scanState; // scan state
 
-    bool _isScanning
+    private bool _isScanning
     {
-      get 
-      {
-        return scanState == ScanState.Scanning || scanState == ScanState.Cancel; 
-      }
+      get { return scanState == ScanState.Scanning || scanState == ScanState.Cancel; }
     }
 
-    #endregion 
+    #endregion
 
     #region Properties
+
     /// <summary>
     /// Returns active scan type
     /// </summary>
@@ -86,23 +84,18 @@ namespace SetupTv.Sections
         return ScanTypes.Predefined;
       }
     }
+
     #endregion
 
     #region Constructors
-    private void EnableSections()
-    {
- 
-    }
-    
+
+    private void EnableSections() {}
+
     public CardDvbT()
-      : this("DVBT")
-    {
-    }
+      : this("DVBT") {}
 
     public CardDvbT(string name)
-      : base(name)
-    {
-    }
+      : base(name) {}
 
     public CardDvbT(string name, int cardNumber)
       : base(name)
@@ -123,10 +116,12 @@ namespace SetupTv.Sections
       base.Text = name;
       Init();
     }
+
     #endregion
 
     #region Init and Section (de-)Activate
-    void Init()
+
+    private void Init()
     {
       // set to same positions as progress
       mpGrpAdvancedTuning.Top = mpGrpScanProgress.Top;
@@ -172,6 +167,7 @@ namespace SetupTv.Sections
         ciMenuDialog.OnSectionDeActivated();
       }
     }
+
     #endregion
 
     #region Loading and Saving functions
@@ -183,22 +179,24 @@ namespace SetupTv.Sections
     {
       if (_dvbtChannels.Count != 0)
       {
-        String filePath = String.Format(@"{0}\TuningParameters\dvbt\Manual_Scans.{1}.xml", Log.GetPathName(), DateTime.Now.ToString("yyyy-MM-dd"));
+        String filePath = String.Format(@"{0}\TuningParameters\dvbt\Manual_Scans.{1}.xml", Log.GetPathName(),
+                                        DateTime.Now.ToString("yyyy-MM-dd"));
         SaveList(filePath);
         PersistState();
         Init(); // refresh list
       }
     }
+
     /// <summary>
     /// Saves a new list with found transponders
     /// </summary>
     /// <param name="fileName">Path for output filename</param>
-    void SaveList(string fileName)
+    private void SaveList(string fileName)
     {
       try
       {
         System.IO.TextWriter parFileXML = System.IO.File.CreateText(fileName);
-        XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<DVBTTuning>));
+        XmlSerializer xmlSerializer = new XmlSerializer(typeof (List<DVBTTuning>));
         xmlSerializer.Serialize(parFileXML, _dvbtChannels);
         parFileXML.Close();
       }
@@ -213,12 +211,12 @@ namespace SetupTv.Sections
     /// Load existing list from xml file 
     /// </summary>
     /// <param name="fileName">Path for input filen</param>
-    void LoadList(string fileName)
+    private void LoadList(string fileName)
     {
       try
       {
         XmlReader parFileXML = XmlReader.Create(fileName);
-        XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<DVBTTuning>));
+        XmlSerializer xmlSerializer = new XmlSerializer(typeof (List<DVBTTuning>));
         _dvbtChannels = (List<DVBTTuning>)xmlSerializer.Deserialize(parFileXML);
         parFileXML.Close();
       }
@@ -235,7 +233,8 @@ namespace SetupTv.Sections
     private void SetDefaults()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      int index = Math.Max(Int32.Parse(layer.GetSetting("dvbt" + _cardNumber + "Country", "0").Value), 0); // limit to >= 0
+      int index = Math.Max(Int32.Parse(layer.GetSetting("dvbt" + _cardNumber + "Country", "0").Value), 0);
+        // limit to >= 0
       if (index < mpComboBoxCountry.Items.Count)
       {
         mpComboBoxCountry.SelectedIndex = index;
@@ -251,7 +250,8 @@ namespace SetupTv.Sections
       textBoxBandwidth.Text = layer.GetSetting("dvbt" + _cardNumber + "Bandwidth", "8").Value;
 
       checkBoxCreateGroups.Checked = (layer.GetSetting("dvbt" + _cardNumber + "creategroups", "false").Value == "true");
-      checkBoxCreateSignalGroup.Checked = (layer.GetSetting("dvbt" + _cardNumber + "createsignalgroup", "false").Value == "true");
+      checkBoxCreateSignalGroup.Checked =
+        (layer.GetSetting("dvbt" + _cardNumber + "createsignalgroup", "false").Value == "true");
     }
 
     /// <summary>
@@ -300,6 +300,7 @@ namespace SetupTv.Sections
     #endregion
 
     #region Scan handling
+
     private void InitScanProcess()
     {
       // once completed reset to new beginning
@@ -329,7 +330,8 @@ namespace SetupTv.Sections
           User user;
           if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
           {
-            MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
+            MessageBox.Show(this,
+                            "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
             return;
           }
           SetButtonState();
@@ -342,23 +344,24 @@ namespace SetupTv.Sections
           _dvbtChannels.Clear();
           switch (ActiveScanType)
           {
-            // use tuning details from file
+              // use tuning details from file
             case ScanTypes.Predefined:
               CustomFileName tuningFile = (CustomFileName)mpComboBoxRegion.SelectedItem;
-              _dvbtChannels = (List<DVBTTuning>)fileFilters.LoadList(tuningFile.FileName, typeof(List<DVBTTuning>));
+              _dvbtChannels = (List<DVBTTuning>)fileFilters.LoadList(tuningFile.FileName, typeof (List<DVBTTuning>));
               if (_dvbtChannels == null)
               {
                 _dvbtChannels = new List<DVBTTuning>();
               }
               break;
 
-            // scan Network Information Table for transponder info
+              // scan Network Information Table for transponder info
             case ScanTypes.NIT:
               _dvbtChannels.Clear();
               DVBTChannel tuneChannel = GetManualTuning();
 
               listViewStatus.Items.Clear();
-              string line = String.Format("Scan freq:{0} bandwidth:{1} ...", tuneChannel.Frequency, tuneChannel.BandWidth);
+              string line = String.Format("Scan freq:{0} bandwidth:{1} ...", tuneChannel.Frequency,
+                                          tuneChannel.BandWidth);
               ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
               item.EnsureVisible();
 
@@ -374,14 +377,16 @@ namespace SetupTv.Sections
                 }
               }
 
-              ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem(String.Format("Scan done, found {0} transponders...", _dvbtChannels.Count)));
+              ListViewItem lastItem =
+                listViewStatus.Items.Add(
+                  new ListViewItem(String.Format("Scan done, found {0} transponders...", _dvbtChannels.Count)));
               lastItem.EnsureVisible();
 
               // automatically save list for re-use
               SaveTransponderList();
               break;
 
-            // scan only single inputted transponder
+              // scan only single inputted transponder
             case ScanTypes.SingleTransponder:
               DVBTChannel singleTuneChannel = GetManualTuning();
               _dvbtChannels.Add(singleTuneChannel.TuningInfo);
@@ -418,17 +423,18 @@ namespace SetupTv.Sections
     /// <summary>
     /// Updates signal level info
     /// </summary>
-    void UpdateStatus()
+    private void UpdateStatus()
     {
       progressBarLevel.Value = Math.Min(100, RemoteControl.Instance.SignalLevel(_cardNumber));
       progressBarQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
     }
 
     #region Scan Thread
+
     /// <summary>
     /// Scan Thread
     /// </summary>
-    void DoScan()
+    private void DoScan()
     {
       suminfo tv = new suminfo();
       suminfo radio = new suminfo();
@@ -460,7 +466,7 @@ namespace SetupTv.Sections
           Application.DoEvents();
 
           DVBTTuning curTuning = _dvbtChannels[index];
-          DVBTChannel tuneChannel = new DVBTChannel(curTuning); 
+          DVBTChannel tuneChannel = new DVBTChannel(curTuning);
           string line = String.Format("{0}tp- {1}", 1 + index, tuneChannel.TuningInfo.ToString());
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
@@ -484,7 +490,7 @@ namespace SetupTv.Sections
               item.Text = String.Format("{0}tp- {1} {2}MHz ", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth);
               channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
             }
-          } 
+          }
 
           UpdateStatus();
 
@@ -597,7 +603,9 @@ namespace SetupTv.Sections
               }
             }
             layer.MapChannelToCard(card, dbChannel, false);
-            line = String.Format("{0}tp- {1} {2}:New TV/Radio:{3}/{4} Updated TV/Radio:{5}/{6}", 1 + index, tuneChannel.Frequency, tuneChannel.BandWidth, tv.newChannel, radio.newChannel, tv.updChannel, radio.updChannel);
+            line = String.Format("{0}tp- {1} {2}:New TV/Radio:{3}/{4} Updated TV/Radio:{5}/{6}", 1 + index,
+                                 tuneChannel.Frequency, tuneChannel.BandWidth, tv.newChannel, radio.newChannel,
+                                 tv.updChannel, radio.updChannel);
             item.Text = line;
           }
           tv.updChannelSum += tv.updChannel;
@@ -617,13 +625,16 @@ namespace SetupTv.Sections
         scanState = ScanState.Done;
         SetButtonState();
       }
-      listViewStatus.Items.Add(new ListViewItem(String.Format("Total radio channels updated:{0}, new:{1}", radio.updChannelSum, radio.newChannelSum)));
+      listViewStatus.Items.Add(
+        new ListViewItem(String.Format("Total radio channels updated:{0}, new:{1}", radio.updChannelSum,
+                                       radio.newChannelSum)));
       foreach (IChannel newChannel in radio.newChannels)
       {
-        listViewStatus.Items.Add(new ListViewItem(String.Format("  -> new channel: {0}",newChannel.Name)));
+        listViewStatus.Items.Add(new ListViewItem(String.Format("  -> new channel: {0}", newChannel.Name)));
       }
 
-      listViewStatus.Items.Add(new ListViewItem(String.Format("Total tv channels updated:{0}, new:{1}", tv.updChannelSum, tv.newChannelSum)));
+      listViewStatus.Items.Add(
+        new ListViewItem(String.Format("Total tv channels updated:{0}, new:{1}", tv.updChannelSum, tv.newChannelSum)));
       foreach (IChannel newChannel in tv.newChannels)
       {
         listViewStatus.Items.Add(new ListViewItem(String.Format("  -> new channel: {0}", newChannel.Name)));
@@ -631,11 +642,13 @@ namespace SetupTv.Sections
       ListViewItem lastItem = listViewStatus.Items.Add(new ListViewItem("Scan done..."));
       lastItem.EnsureVisible();
     }
+
     #endregion
 
     #endregion
 
     #region GUI handling
+
     /// <summary>
     /// Sets correct button state 
     /// </summary>
@@ -643,7 +656,7 @@ namespace SetupTv.Sections
     {
       mpComboBoxCountry.Enabled = !_isScanning && ActiveScanType == ScanTypes.Predefined;
       mpComboBoxRegion.Enabled = !_isScanning && ActiveScanType == ScanTypes.Predefined;
-   
+
       textBoxFreq.Enabled = ActiveScanType != ScanTypes.Predefined;
       textBoxBandwidth.Enabled = ActiveScanType != ScanTypes.Predefined;
 
@@ -703,9 +716,11 @@ namespace SetupTv.Sections
       Application.DoEvents();
       Thread.Sleep(100);
     }
+
     #endregion
 
     #region GUI event handlers
+
     private void mpButtonScanTv_Click_1(object sender, EventArgs e)
     {
       InitScanProcess();
@@ -715,6 +730,7 @@ namespace SetupTv.Sections
     {
       SetButtonState();
     }
+
     #endregion
   }
 }

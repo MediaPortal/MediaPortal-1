@@ -49,9 +49,7 @@ namespace MediaPortal.Configuration.Sections
     private IContainer components = null;
 
     public RemoteWinLirc()
-      : this("WINLIRC")
-    {
-    }
+      : this("WINLIRC") {}
 
     public RemoteWinLirc(string name)
       : base(name)
@@ -278,9 +276,7 @@ namespace MediaPortal.Configuration.Sections
       //remoteNameTextBox.Enabled  = inputCheckBox.Checked;
     }
 
-    private void WINLIRC_Load(object sender, EventArgs e)
-    {
-    }
+    private void WINLIRC_Load(object sender, EventArgs e) {}
 
     private void browsePathToWinlircButton_Click(object sender, EventArgs e)
     {

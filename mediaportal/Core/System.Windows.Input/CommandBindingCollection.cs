@@ -31,9 +31,7 @@ namespace System.Windows.Input
   {
     #region Constructors
 
-    public CommandBindingCollection()
-    {
-    }
+    public CommandBindingCollection() {}
 
     public CommandBindingCollection(IList commandBindings)
     {
@@ -117,7 +115,7 @@ namespace System.Windows.Input
 
     public CommandBinding this[int index]
     {
-      get { return (CommandBinding) List[index]; }
+      get { return (CommandBinding)List[index]; }
       set { List[index] = value; }
     }
 

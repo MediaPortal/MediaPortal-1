@@ -35,10 +35,8 @@ namespace MediaPortal.GUI.Settings
   [PluginIcons("WindowPlugins.GUISettings.Settings.gif", "WindowPlugins.GUISettings.SettingsDisabled.gif")]
   public class GUISettings : GUIInternalWindow, ISetupForm, IShowPlugin
   {
-    [SkinControl(11)]
-    protected GUIButtonControl btnMiniDisplay = null;
-    [SkinControl(10)]
-    protected GUIButtonControl btnTV = null;
+    [SkinControl(11)] protected GUIButtonControl btnMiniDisplay = null;
+    [SkinControl(10)] protected GUIButtonControl btnTV = null;
 
     public GUISettings()
     {
@@ -75,9 +73,7 @@ namespace MediaPortal.GUI.Settings
             return true;
           }
 
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          {
-          }
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT: {}
           break;
       }
       return base.OnMessage(message);
@@ -130,9 +126,7 @@ namespace MediaPortal.GUI.Settings
       return "Configure MediaPortal with wizards and a graphical user interface";
     }
 
-    public void ShowPlugin()
-    {
-    }
+    public void ShowPlugin() {}
 
     #endregion
 

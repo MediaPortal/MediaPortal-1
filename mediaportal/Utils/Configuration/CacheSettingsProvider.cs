@@ -67,7 +67,7 @@ namespace MediaPortal.Profile
 
       public override bool Equals(object obj)
       {
-        SettingKey other = (SettingKey) obj;
+        SettingKey other = (SettingKey)obj;
         if (this.entry == other.entry && this.section == other.section)
         {
           return true;
@@ -87,7 +87,7 @@ namespace MediaPortal.Profile
 
       if (provider is ISettingsPrefetchable)
       {
-        ISettingsPrefetchable prefetcher = (ISettingsPrefetchable) provider;
+        ISettingsPrefetchable prefetcher = (ISettingsPrefetchable)provider;
         prefetcher.Prefetch(Remember);
       }
     }

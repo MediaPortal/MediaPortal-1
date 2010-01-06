@@ -27,51 +27,50 @@ using System;
 
 namespace MediaPortal.Util
 {
-	// http://www.merriampark.com/ld.htm
-	// http://www.merriampark.com/ldcsharp.htm
-	public class Levenshtein
-	{
-		/// <summary>
-		/// Compute Levenshtein distance
-		/// </summary>
-		/// <param name="s">String 1</param>
-		/// <param name="t">String 2</param>
-		/// <returns>Distance between the two strings. The larger the number, the bigger the difference.</returns>
+  // http://www.merriampark.com/ld.htm
+  // http://www.merriampark.com/ldcsharp.htm
+  public class Levenshtein
+  {
+    /// <summary>
+    /// Compute Levenshtein distance
+    /// </summary>
+    /// <param name="s">String 1</param>
+    /// <param name="t">String 2</param>
+    /// <returns>Distance between the two strings. The larger the number, the bigger the difference.</returns>
+    public static int Match(string s, string t)
+    {
+      // Step 1
+      if (s.Length == 0)
+        return t.Length;
 
-		public static int Match(string s, string t) 
-		{
-			// Step 1
-			if(s.Length == 0)
-				return t.Length;
+      if (t.Length == 0)
+        return s.Length;
 
-			if(t.Length == 0)
-				return s.Length;
+      int n = s.Length; //length of s
+      int m = t.Length; //length of t
+      int[,] d = new int[n + 1,m + 1]; // matrix
+      int cost; // cost
 
-			int n = s.Length; //length of s
-			int m = t.Length; //length of t
-			int[,] d = new int[n + 1, m + 1]; // matrix
-			int cost; // cost
+      // Step 2
+      for (int i = 0; i <= n; d[i, 0] = i++) ;
+      for (int j = 0; j <= m; d[0, j] = j++) ;
 
-			// Step 2
-			for(int i = 0; i <= n; d[i, 0] = i++);
-			for(int j = 0; j <= m; d[0, j] = j++);
+      // Step 3
+      for (int i = 1; i <= n; i++)
+      {
+        //Step 4
+        for (int j = 1; j <= m; j++)
+        {
+          // Step 5
+          cost = (t.Substring(j - 1, 1) == s.Substring(i - 1, 1) ? 0 : 1);
 
-			// Step 3
-			for(int i = 1; i <= n;i++) 
-			{
-				//Step 4
-				for(int j = 1; j <= m;j++) 
-				{
-					// Step 5
-					cost = (t.Substring(j - 1, 1) == s.Substring(i - 1, 1) ? 0 : 1);
+          // Step 6
+          d[i, j] = System.Math.Min(System.Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1), d[i - 1, j - 1] + cost);
+        }
+      }
 
-					// Step 6
-					d[i, j] = System.Math.Min(System.Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1), d[i - 1, j - 1] + cost);
-				}
-			}
-
-			// Step 7
-			return d[n, m];
-		}
-	}
+      // Step 7
+      return d[n, m];
+    }
+  }
 }

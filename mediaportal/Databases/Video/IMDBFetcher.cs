@@ -47,9 +47,7 @@ namespace MediaPortal.Video.Database
     private bool disableCancel = false;
     private bool getActors;
 
-    static IMDBFetcher()
-    {
-    }
+    static IMDBFetcher() {}
 
     public IMDBFetcher(IMDB.IProgress progress)
     {
@@ -91,9 +89,7 @@ namespace MediaPortal.Video.Database
         }
         _imdb.Find(this.movieName);
       }
-      catch (ThreadAbortException)
-      {
-      }
+      catch (ThreadAbortException) {}
       finally
       {
         OnSearchEnd(this);
@@ -193,9 +189,7 @@ namespace MediaPortal.Video.Database
           movieDetails = null;
         }
       }
-      catch (ThreadAbortException)
-      {
-      }
+      catch (ThreadAbortException) {}
       finally
       {
         OnDetailsEnd(this);
@@ -229,9 +223,7 @@ namespace MediaPortal.Video.Database
       {
         _fetchActorsInMovie();
       }
-      catch (ThreadAbortException)
-      {
-      }
+      catch (ThreadAbortException) {}
       finally
       {
         OnActorsEnd(this);
@@ -264,7 +256,7 @@ namespace MediaPortal.Video.Database
         int percent = 0;
         for (int i = 0; i < actors.Count; ++i)
         {
-          string actor = (string) actors[i];
+          string actor = (string)actors[i];
           string role = string.Empty;
           int pos = actor.IndexOf(" as ");
           if (pos >= 0)
@@ -327,7 +319,7 @@ namespace MediaPortal.Video.Database
             VideoDatabase.SetActorInfo(actorId, imdbActor);
             VideoDatabase.AddActorToMovie(movieDetails.ID, actorId);
           }
-          percent += 100/actors.Count;
+          percent += 100 / actors.Count;
         }
       }
     }
@@ -376,29 +368,39 @@ namespace MediaPortal.Video.Database
     {
       get { return this.movieName; }
       set { this.movieName = value; }
-    } // END MovieName
+    }
+
+    // END MovieName
     // count the elements
     public int Count
     {
       get { return _imdb.Count; }
-    } // END Count
+    }
+
+    // END Count
     // URL for the details
     public IMDB.IMDBUrl URL
     {
       get { return url; }
       set { this.url = value; }
-    } // END URL
+    }
+
+    // END URL
     // Movie the elements
     public IMDBMovie Movie
     {
       get { return movieDetails; }
       set { this.movieDetails = value; }
-    } // END Count
+    }
+
+    // END Count
 
     public IMDB.IMDBUrl this[int index]
     {
       get { return _imdb[index]; }
-    } // END IMDB.IMDBUrl this[int index]
+    }
+
+    // END IMDB.IMDBUrl this[int index]
 
     public int FuzzyMatch(string name)
     {
@@ -807,11 +809,11 @@ namespace MediaPortal.Video.Database
             Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
             if (File.Exists(temporaryFilename))
             {
-              if (Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int) Thumbs.ThumbLargeResolution,
-                                               (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall))
+              if (Util.Picture.CreateThumbnail(temporaryFilename, largeCoverArtImage, (int)Thumbs.ThumbLargeResolution,
+                                               (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsSmall))
               {
-                Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int) Thumbs.ThumbResolution,
-                                             (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
+                Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution,
+                                             (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsLarge);
               }
             }
 
@@ -819,9 +821,7 @@ namespace MediaPortal.Video.Database
           }
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
 
     /// <summary>

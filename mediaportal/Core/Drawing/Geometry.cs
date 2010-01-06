@@ -34,9 +34,7 @@ namespace MediaPortal.Drawing
   {
     #region Constructors
 
-    public Geometry()
-    {
-    }
+    public Geometry() {}
 
     internal Geometry(Type vertexType, int vertexCount, int primitiveCount)
     {

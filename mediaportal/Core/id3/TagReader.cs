@@ -55,8 +55,8 @@ namespace Roger.ID3
       string magic = ReadMagic();
       if (magic == "ID3")
       {
-        majorVersion = (byte) stream.ReadByte();
-        minorVersion = (byte) stream.ReadByte();
+        majorVersion = (byte)stream.ReadByte();
+        minorVersion = (byte)stream.ReadByte();
 
         // Get the flags
         int tagFlags = stream.ReadByte();
@@ -191,7 +191,7 @@ namespace Roger.ID3
       int flagsH = stream.ReadByte();
       int flagsL = stream.ReadByte();
 
-      short frameFlags = (short) ((flagsH << 8) | flagsL);
+      short frameFlags = (short)((flagsH << 8) | flagsL);
       return frameFlags;
     }
 

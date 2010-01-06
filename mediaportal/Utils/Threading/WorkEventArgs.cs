@@ -63,7 +63,7 @@ namespace MediaPortal.Threading
       Type t = typeof (T);
       if (t == resultType)
       {
-        return (T) result;
+        return (T)result;
       }
       return default(T);
     }

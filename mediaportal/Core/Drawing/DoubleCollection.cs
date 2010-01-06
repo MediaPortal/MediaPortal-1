@@ -80,7 +80,7 @@ namespace MediaPortal.Drawing
 
     public Double this[int index]
     {
-      get { return (double) List[index]; }
+      get { return (double)List[index]; }
       set { List[index] = value; }
     }
 

@@ -245,7 +245,7 @@ namespace TvDatabase
 
     private Channel IsInsertAllowed(EpgChannel epgChannel)
     {
-      DVBBaseChannel dvbChannel = (DVBBaseChannel) epgChannel.Channel;
+      DVBBaseChannel dvbChannel = (DVBBaseChannel)epgChannel.Channel;
       //are there any epg infos for this channel?
       if (epgChannel.Programs.Count == 0)
       {
@@ -427,8 +427,10 @@ namespace TvDatabase
       description = EvalTemplate(_descriptionTemplate, values);
       if (dbProg == null)
       {
-        dbProg = new Program(dbChannel.IdChannel, ep.StartTime, ep.EndTime, title, description, genre, Program.ProgramState.None, 
-                             SqlDateTime.MinValue.Value, string.Empty, string.Empty, string.Empty, string.Empty, starRating, classification,
+        dbProg = new Program(dbChannel.IdChannel, ep.StartTime, ep.EndTime, title, description, genre,
+                             Program.ProgramState.None,
+                             SqlDateTime.MinValue.Value, string.Empty, string.Empty, string.Empty, string.Empty,
+                             starRating, classification,
                              parentRating);
       }
       else

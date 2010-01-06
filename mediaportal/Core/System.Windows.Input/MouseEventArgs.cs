@@ -25,7 +25,5 @@
 
 namespace System.Windows.Input
 {
-  public class MouseEventArgs
-  {
-  }
+  public class MouseEventArgs {}
 }

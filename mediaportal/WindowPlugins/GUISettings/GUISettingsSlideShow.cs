@@ -56,7 +56,7 @@ namespace MediaPortal.GUI.Settings
 
     public GUISettingsSlideshow()
     {
-      GetID = (int) Window.WINDOW_SETTINGS_SLIDESHOW;
+      GetID = (int)Window.WINDOW_SETTINGS_SLIDESHOW;
     }
 
     public override bool Init()
@@ -85,39 +85,39 @@ namespace MediaPortal.GUI.Settings
           {
             base.OnMessage(message);
             LoadSettings();
-            GUIControl.ClearControl(GetID, (int) Controls.CONTROL_SPEED);
+            GUIControl.ClearControl(GetID, (int)Controls.CONTROL_SPEED);
             for (int i = 1; i <= 10; ++i)
             {
-              GUIControl.AddItemLabelControl(GetID, (int) Controls.CONTROL_SPEED, i.ToString());
+              GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_SPEED, i.ToString());
             }
 
-            GUIControl.ClearControl(GetID, (int) Controls.CONTROL_TRANSITION);
+            GUIControl.ClearControl(GetID, (int)Controls.CONTROL_TRANSITION);
             for (int i = 1; i <= 50; ++i)
             {
-              GUIControl.AddItemLabelControl(GetID, (int) Controls.CONTROL_TRANSITION, i.ToString());
+              GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_TRANSITION, i.ToString());
             }
 
-            GUIControl.ClearControl(GetID, (int) Controls.CONTROL_KENBURNS_SPEED);
+            GUIControl.ClearControl(GetID, (int)Controls.CONTROL_KENBURNS_SPEED);
             for (int i = 1; i <= 50; ++i)
             {
-              GUIControl.AddItemLabelControl(GetID, (int) Controls.CONTROL_KENBURNS_SPEED, i.ToString());
+              GUIControl.AddItemLabelControl(GetID, (int)Controls.CONTROL_KENBURNS_SPEED, i.ToString());
             }
 
-            GUIControl.SelectItemControl(GetID, (int) Controls.CONTROL_SPEED, m_iSpeed - 1);
-            GUIControl.SelectItemControl(GetID, (int) Controls.CONTROL_TRANSITION, m_iTransistion - 1);
-            GUIControl.SelectItemControl(GetID, (int) Controls.CONTROL_KENBURNS_SPEED, m_iKenBurnsSpeed - 1);
+            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_SPEED, m_iSpeed - 1);
+            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_TRANSITION, m_iTransistion - 1);
+            GUIControl.SelectItemControl(GetID, (int)Controls.CONTROL_KENBURNS_SPEED, m_iKenBurnsSpeed - 1);
 
             if (m_bXFade)
             {
-              GUIControl.SelectControl(GetID, (int) Controls.CONTROL_XFADE);
+              GUIControl.SelectControl(GetID, (int)Controls.CONTROL_XFADE);
             }
             if (m_bKenBurns)
             {
-              GUIControl.SelectControl(GetID, (int) Controls.CONTROL_KENBURNS);
+              GUIControl.SelectControl(GetID, (int)Controls.CONTROL_KENBURNS);
             }
             if (m_bRandom)
             {
-              GUIControl.SelectControl(GetID, (int) Controls.CONTROL_RANDOM);
+              GUIControl.SelectControl(GetID, (int)Controls.CONTROL_RANDOM);
             }
 
             return true;
@@ -132,22 +132,22 @@ namespace MediaPortal.GUI.Settings
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
             int iControl = message.SenderControlId;
-            if (iControl == (int) Controls.CONTROL_SPEED)
+            if (iControl == (int)Controls.CONTROL_SPEED)
             {
               string strLabel = message.Label;
               m_iSpeed = Int32.Parse(strLabel);
             }
-            if (iControl == (int) Controls.CONTROL_TRANSITION)
+            if (iControl == (int)Controls.CONTROL_TRANSITION)
             {
               string strLabel = message.Label;
               m_iTransistion = Int32.Parse(strLabel);
             }
-            if (iControl == (int) Controls.CONTROL_KENBURNS_SPEED)
+            if (iControl == (int)Controls.CONTROL_KENBURNS_SPEED)
             {
               string strLabel = message.Label;
               m_iKenBurnsSpeed = Int32.Parse(strLabel);
             }
-            if (iControl == (int) Controls.CONTROL_XFADE)
+            if (iControl == (int)Controls.CONTROL_XFADE)
             {
               m_bXFade = true;
               m_bKenBurns = false;
@@ -155,7 +155,7 @@ namespace MediaPortal.GUI.Settings
               UpdateButtons();
               return true;
             }
-            if (iControl == (int) Controls.CONTROL_KENBURNS)
+            if (iControl == (int)Controls.CONTROL_KENBURNS)
             {
               m_bXFade = false;
               m_bKenBurns = true;
@@ -163,7 +163,7 @@ namespace MediaPortal.GUI.Settings
               UpdateButtons();
               return true;
             }
-            if (iControl == (int) Controls.CONTROL_RANDOM)
+            if (iControl == (int)Controls.CONTROL_RANDOM)
             {
               m_bXFade = false;
               m_bKenBurns = false;
@@ -181,29 +181,29 @@ namespace MediaPortal.GUI.Settings
     {
       if (m_bRandom)
       {
-        GUIControl.SelectControl(GetID, (int) Controls.CONTROL_RANDOM);
+        GUIControl.SelectControl(GetID, (int)Controls.CONTROL_RANDOM);
       }
       else
       {
-        GUIControl.DeSelectControl(GetID, (int) Controls.CONTROL_RANDOM);
+        GUIControl.DeSelectControl(GetID, (int)Controls.CONTROL_RANDOM);
       }
 
       if (m_bXFade)
       {
-        GUIControl.SelectControl(GetID, (int) Controls.CONTROL_XFADE);
+        GUIControl.SelectControl(GetID, (int)Controls.CONTROL_XFADE);
       }
       else
       {
-        GUIControl.DeSelectControl(GetID, (int) Controls.CONTROL_XFADE);
+        GUIControl.DeSelectControl(GetID, (int)Controls.CONTROL_XFADE);
       }
 
       if (m_bKenBurns)
       {
-        GUIControl.SelectControl(GetID, (int) Controls.CONTROL_KENBURNS);
+        GUIControl.SelectControl(GetID, (int)Controls.CONTROL_KENBURNS);
       }
       else
       {
-        GUIControl.DeSelectControl(GetID, (int) Controls.CONTROL_KENBURNS);
+        GUIControl.DeSelectControl(GetID, (int)Controls.CONTROL_KENBURNS);
       }
     }
 

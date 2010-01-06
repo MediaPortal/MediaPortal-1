@@ -108,9 +108,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void DrawImage(Bitmap bitmap)
-    {
-    }
+    public void DrawImage(Bitmap bitmap) {}
 
     public string ErrorMessage
     {
@@ -138,9 +136,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       get { return "DM-140GINK"; }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters)
-    {
-    }
+    public void SetCustomCharacters(int[][] customCharacters) {}
 
     /// <summary>
     /// Displays the message on the indicated line
@@ -160,7 +156,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         vfd.writeLine(line, RemoveDiacritics(message));
 
         //Volume calculation
-        int vol = VolumeHandler.Instance.Volume/2730;
+        int vol = VolumeHandler.Instance.Volume / 2730;
 
         // Display symbols
         // LiveTV, LiveRadio

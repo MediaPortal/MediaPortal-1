@@ -52,5 +52,4 @@ namespace MediaPortal.TagReader
     /// <returns>object T constructed from cueSheet and Track</returns>
     T build(string cueFileName, CueSheet cueSheet, Track track);
   }
-
 }

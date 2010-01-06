@@ -46,6 +46,7 @@ namespace MediaPortal.Util
       Albums = 3,
       FilmStrip = 4
     }
+
     private string m_strPath = string.Empty;
     private string m_strName = string.Empty;
     private bool m_bDefault = false;
@@ -58,12 +59,11 @@ namespace MediaPortal.Util
     private int remotePort = 21;
     private bool runtimeAdded;
     public Views DefaultView = Views.List;
+
     /// <summary>
     /// empty constructor
     /// </summary>
-    public Share()
-    {
-    }
+    public Share() {}
 
     /// <summary>
     /// Constructor
@@ -79,7 +79,6 @@ namespace MediaPortal.Util
       m_strName = strName;
       m_strPath = Utils.RemoveTrailingSlash(strPath);
     }
-
 
 
     /// <summary>
@@ -134,7 +133,6 @@ namespace MediaPortal.Util
         if (value == null)
           return;
         m_strPath = Utils.RemoveTrailingSlash(value);
-
       }
     }
 
@@ -160,6 +158,7 @@ namespace MediaPortal.Util
         remoteServer = value;
       }
     }
+
     /// <summary>
     /// Property to get/set the ftp login name
     /// </summary>
@@ -173,6 +172,7 @@ namespace MediaPortal.Util
         remoteLogin = value;
       }
     }
+
     /// <summary>
     /// Property to get/set the ftp folder
     /// </summary>

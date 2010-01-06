@@ -118,8 +118,8 @@ namespace MediaPortal
     /// </summary>
     public int Compare(object x, object y)
     {
-      DisplayMode dx = (DisplayMode) x;
-      DisplayMode dy = (DisplayMode) y;
+      DisplayMode dx = (DisplayMode)x;
+      DisplayMode dy = (DisplayMode)y;
 
       if (dx.Width > dy.Width)
       {
@@ -452,7 +452,7 @@ namespace MediaPortal
         foreach (MultiSampleType msType in deviceCombo.MultiSampleTypeList)
         {
           if (!Manager.CheckDeviceMultiSampleType(deviceCombo.AdapterOrdinal,
-                                                  deviceCombo.DevType, (Format) dsFmt, deviceCombo.IsWindowed, msType))
+                                                  deviceCombo.DevType, (Format)dsFmt, deviceCombo.IsWindowed, msType))
           {
             DSMSConflict = new DepthStencilMultiSampleConflict();
             DSMSConflict.DepthStencilFormat = dsFmt;
@@ -533,7 +533,7 @@ namespace MediaPortal
         // Note that PresentInterval.Default is zero, so you
         // can't do a caps check for it -- it is always available.
         if (pi == PresentInterval.Default ||
-            (deviceInfo.Caps.PresentationIntervals & pi) != (PresentInterval) 0)
+            (deviceInfo.Caps.PresentationIntervals & pi) != (PresentInterval)0)
         {
           deviceCombo.PresentIntervalList.Add(pi);
         }

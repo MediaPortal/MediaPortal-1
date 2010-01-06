@@ -33,9 +33,7 @@ namespace MediaPortal.Drawing.Transforms
   {
     #region Constructors
 
-    public TransformCollection()
-    {
-    }
+    public TransformCollection() {}
 
     #endregion Constructors
 
@@ -78,12 +76,10 @@ namespace MediaPortal.Drawing.Transforms
 
     void IAddChild.AddChild(object child)
     {
-      Add((Transform) child);
+      Add((Transform)child);
     }
 
-    void IAddChild.AddText(string text)
-    {
-    }
+    void IAddChild.AddText(string text) {}
 
     public int IndexOf(Transform transform)
     {
@@ -137,7 +133,7 @@ namespace MediaPortal.Drawing.Transforms
 
     public Transform this[int index]
     {
-      get { return (Transform) List[index]; }
+      get { return (Transform)List[index]; }
       set { List[index] = value; }
     }
 

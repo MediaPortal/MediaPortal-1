@@ -39,8 +39,8 @@ namespace WindowPlugins.VideoEditor
     {
       this.startTime = startTime;
       this.endTime = endTime;
-      startTimeSp = new TimeSpan((long) (startTime*10e6));
-      endTimeSp = new TimeSpan((long) (endTime*10e6));
+      startTimeSp = new TimeSpan((long)(startTime * 10e6));
+      endTimeSp = new TimeSpan((long)(endTime * 10e6));
       durationSp = new TimeSpan();
       if (endTime > startTime)
       {
@@ -58,8 +58,8 @@ namespace WindowPlugins.VideoEditor
     {
       this.startTime = startTime;
       this.endTime = endTime;
-      startTimeSp = new TimeSpan((long) (startTime*10e6));
-      endTimeSp = new TimeSpan((long) (endTime*10e6));
+      startTimeSp = new TimeSpan((long)(startTime * 10e6));
+      endTimeSp = new TimeSpan((long)(endTime * 10e6));
       durationSp = new TimeSpan();
       if (endTime > startTime)
       {

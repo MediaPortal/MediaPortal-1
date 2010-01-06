@@ -105,9 +105,9 @@ namespace MediaPortal.GUI.Library
         }
         if (RelativeWidth > 0)
         {
-          float width = (float) Row.GridControl.TotalWidth;
-          width *= (((float) RelativeWidth)/100.0f);
-          return (int) width;
+          float width = (float)Row.GridControl.TotalWidth;
+          width *= (((float)RelativeWidth) / 100.0f);
+          return (int)width;
         }
         return _calculatedWidth;
       }

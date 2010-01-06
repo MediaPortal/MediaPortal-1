@@ -29,7 +29,6 @@ using System.Drawing.Text;
 using System.Drawing.Imaging;
 using System.Drawing;
 using System.Threading;
-
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using DShowNET;
@@ -48,7 +47,7 @@ namespace MediaPortal.Util
   public class DvrMsImageGrabber
   {
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
-    unsafe private static extern void GrabBitmaps(string fileName);
+    private static extern unsafe void GrabBitmaps(string fileName);
 
     //public static bool GrabFrame(string fileName, string imageFileName, System.Drawing.Imaging.ImageFormat format, int width, int height)
     public static bool GrabFrame(string fileName, string imageFileName)
@@ -57,17 +56,18 @@ namespace MediaPortal.Util
       {
         if (!System.IO.File.Exists(fileName))
         {
-        
-          Log.Warn("DvrMsImageGrabber: failed to create thumbnail for {0} because the file was not found! (bogus DB entry?)", fileName);
+          Log.Warn(
+            "DvrMsImageGrabber: failed to create thumbnail for {0} because the file was not found! (bogus DB entry?)",
+            fileName);
           return false;
         }
 
         System.IO.FileInfo file = new System.IO.FileInfo(fileName);
-       if(file.Length < 1000000)
-       {
-         Log.Info("DVRMSImageGrabber, file is too small to grab - {0} bytes. Skipping", file.Length);
-         return false;
-       }
+        if (file.Length < 1000000)
+        {
+          Log.Info("DVRMSImageGrabber, file is too small to grab - {0} bytes. Skipping", file.Length);
+          return false;
+        }
 
         Utils.FileDelete("temp.bmp");
         Log.Info("DvrMsImageGrabber: create thumbnails for recorded tv - {0}", fileName);
@@ -81,11 +81,14 @@ namespace MediaPortal.Util
           return false;
         }
 
-        Util.Picture.CreateThumbnail("temp.bmp", imageFileName, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution, 0, true);
+        Util.Picture.CreateThumbnail("temp.bmp", imageFileName, (int)Thumbs.ThumbResolution, (int)Thumbs.ThumbResolution,
+                                     0, true);
         string imageFileNameL = Util.Utils.ConvertToLargeCoverArt(imageFileName);
-        if (!Util.Picture.CreateThumbnail("temp.bmp", imageFileNameL, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, false))
+        if (
+          !Util.Picture.CreateThumbnail("temp.bmp", imageFileNameL, (int)Thumbs.ThumbLargeResolution,
+                                        (int)Thumbs.ThumbLargeResolution, 0, false))
           return false;
-        
+
         return true;
 
         //using (Image bmp = Image.FromFile("temp.bmp"))
@@ -111,7 +114,8 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("DvrMsImageGrabber: failed to create thumbnail for {0} {1} {2} {3}", fileName, ex.Message, ex.Source, ex.StackTrace);
+        Log.Error("DvrMsImageGrabber: failed to create thumbnail for {0} {1} {2} {3}", fileName, ex.Message, ex.Source,
+                  ex.StackTrace);
         return false;
       }
     }

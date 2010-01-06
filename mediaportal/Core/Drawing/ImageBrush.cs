@@ -49,13 +49,9 @@ namespace MediaPortal.Drawing
 
     #endregion Methods
 
-    void ISupportInitialize.BeginInit()
-    {
-    }
+    void ISupportInitialize.BeginInit() {}
 
-    void ISupportInitialize.EndInit()
-    {
-    }
+    void ISupportInitialize.EndInit() {}
 
     #region Fields
 

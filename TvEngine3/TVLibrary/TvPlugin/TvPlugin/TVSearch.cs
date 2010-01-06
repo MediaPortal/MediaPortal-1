@@ -59,7 +59,7 @@ namespace TvPlugin
     [SkinControl(18)] protected GUIImage imgTvLogo = null;
     [SkinControl(20)] protected GUIButtonControl btnViewBy = null; // is replacing btnSearchByTitle, btnSearchByGenre
     [SkinControl(21)] protected GUIButtonControl btnSearchDescription = null; // is replacing btnSearchByDescription 
-    
+
     private DirectoryHistory history = new DirectoryHistory();
 
     private enum SearchMode
@@ -97,7 +97,7 @@ namespace TvPlugin
 
     public TvSearch()
     {
-      GetID = (int) Window.WINDOW_SEARCHTV;
+      GetID = (int)Window.WINDOW_SEARCHTV;
     }
 
     public override bool IsTv
@@ -137,13 +137,11 @@ namespace TvPlugin
       base.OnPageDestroy(newWindowId);
       listRecordings.Clear();
       listRecordings = null;
-      if (!GUIGraphicsContext.IsTvWindow(newWindowId))
-      {
-      }
+      if (!GUIGraphicsContext.IsTvWindow(newWindowId)) {}
     }
 
     protected override void OnPageLoad()
-    {      
+    {
       TVHome.WaitForGentleConnection();
 
       base.OnPageLoad();
@@ -265,8 +263,8 @@ namespace TvPlugin
             Update();
           }
           else
-          {  
-            filterLetter = "A";   // do a [Starts with] search
+          {
+            filterLetter = "A"; // do a [Starts with] search
             Update();
           }
         }
@@ -289,7 +287,8 @@ namespace TvPlugin
       }
       else if (control == listView || control == titleView)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0, null);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0,
+                                        null);
         OnMessage(msg);
         int iItem = (int)msg.Param1;
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
@@ -429,7 +428,7 @@ namespace TvPlugin
             }
             if (titleView.SubItemCount == 2)
             {
-              string subItem = (string) titleView.GetSubItem(1);
+              string subItem = (string)titleView.GetSubItem(1);
               int h = Int32.Parse(subItem.Substring(1));
               GUIGraphicsContext.ScaleVertical(ref h);
               titleView.Height = h;
@@ -460,7 +459,7 @@ namespace TvPlugin
             }
             if (titleView.SubItemCount == 2)
             {
-              string subItem = (string) titleView.GetSubItem(0);
+              string subItem = (string)titleView.GetSubItem(0);
               int h = Int32.Parse(subItem.Substring(1));
               GUIGraphicsContext.ScaleVertical(ref h);
               titleView.Height = h;
@@ -668,7 +667,7 @@ namespace TvPlugin
               }
               else
               {
-                titles = layer.SearchPrograms("%"+filterShow);
+                titles = layer.SearchPrograms("%" + filterShow);
               }
             }
             else
@@ -679,7 +678,7 @@ namespace TvPlugin
               }
               else
               {
-                titles = layer.SearchPrograms("%"+filterShow);
+                titles = layer.SearchPrograms("%" + filterShow);
               }
             }
             foreach (Program program in titles)
@@ -901,9 +900,7 @@ namespace TvPlugin
       {
         programs.Sort();
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       int selItem = 0;
       int count = 0;
       if (btnShow != null)
@@ -971,7 +968,7 @@ namespace TvPlugin
         return;
       }
       string currentFolder = String.Format("{0}.{1}.{2}.{3}.{4}.{5}",
-                                           (int) prevcurrentSearchMode, prevcurrentLevel, prevcurrentGenre,
+                                           (int)prevcurrentSearchMode, prevcurrentLevel, prevcurrentGenre,
                                            prevfilterLetter, prevfilterShow, prevfilterEpisode);
       prevcurrentSearchMode = currentSearchMode;
       prevcurrentLevel = currentLevel;
@@ -991,7 +988,7 @@ namespace TvPlugin
     private void RestoreHistory()
     {
       string currentFolder = String.Format("{0}.{1}.{2}.{3}.{4}.{5}",
-                                           (int) currentSearchMode, currentLevel, currentGenre,
+                                           (int)currentSearchMode, currentLevel, currentGenre,
                                            filterLetter, filterShow, filterEpisode);
       //Log.Info("history.Get({0})", currentFolder);
       string selectedItemLabel = history.Get(currentFolder);
@@ -1168,7 +1165,7 @@ namespace TvPlugin
           }
           break;
         case SearchMode.Title:
-        {
+          {
             if (item.Label == ".." && item.IsFolder)
             {
               filterShow = String.Empty;
@@ -1233,7 +1230,7 @@ namespace TvPlugin
       {
         return;
       }
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
         dlg.Reset();
@@ -1269,11 +1266,12 @@ namespace TvPlugin
             {
               if (rec1.IsRecordingProgram(program, true))
               {
-                if (rec1.ScheduleType != (int) ScheduleRecordingType.Once)
+                if (rec1.ScheduleType != (int)ScheduleRecordingType.Once)
                 {
                   //delete specific series
                   Schedule sched = Schedule.Retrieve(rec1.IdSchedule);
-                  TVHome.PromptAndDeleteRecordingSchedule(sched.IdSchedule, /*sched.ReferencedChannel().CurrentProgram,*/
+                  TVHome.PromptAndDeleteRecordingSchedule(sched.IdSchedule,
+                                                          /*sched.ReferencedChannel().CurrentProgram,*/
                                                           false, false);
 
                   //TVHome.DeleteRecordingSchedule(Schedule.Retrieve(rec1.IdSchedule));
@@ -1298,25 +1296,25 @@ namespace TvPlugin
             Update();
             return;
           case 1: //once
-            rec.ScheduleType = (int) ScheduleRecordingType.Once;
+            rec.ScheduleType = (int)ScheduleRecordingType.Once;
             break;
           case 2: //everytime, this channel
-            rec.ScheduleType = (int) ScheduleRecordingType.EveryTimeOnThisChannel;
+            rec.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnThisChannel;
             break;
           case 3: //everytime, all channels
-            rec.ScheduleType = (int) ScheduleRecordingType.EveryTimeOnEveryChannel;
+            rec.ScheduleType = (int)ScheduleRecordingType.EveryTimeOnEveryChannel;
             break;
           case 4: //weekly
-            rec.ScheduleType = (int) ScheduleRecordingType.Weekly;
+            rec.ScheduleType = (int)ScheduleRecordingType.Weekly;
             break;
           case 5: //daily
-            rec.ScheduleType = (int) ScheduleRecordingType.Daily;
+            rec.ScheduleType = (int)ScheduleRecordingType.Daily;
             break;
           case 6: //WorkingDays
-            rec.ScheduleType = (int) ScheduleRecordingType.WorkingDays;
+            rec.ScheduleType = (int)ScheduleRecordingType.WorkingDays;
             break;
           case 7: //Weekends
-            rec.ScheduleType = (int) ScheduleRecordingType.Weekends;
+            rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
             break;
         }
         rec.Persist();
@@ -1334,7 +1332,7 @@ namespace TvPlugin
       {
         if (record.IsRecordingProgram(program, true))
         {
-          if (record.ScheduleType != (int) ScheduleRecordingType.Once)
+          if (record.ScheduleType != (int)ScheduleRecordingType.Once)
           {
             isSerie = true;
           }
@@ -1458,7 +1456,7 @@ namespace TvPlugin
       sortAscending = e.Order != SortOrder.Descending;
 
       Update();
-      GUIControl.FocusControl(GetID, ((GUIControl) sender).GetID);
+      GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
     }
 
     public override void Process()

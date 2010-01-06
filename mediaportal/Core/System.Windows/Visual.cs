@@ -29,22 +29,16 @@ namespace System.Windows
   {
     #region Constructors
 
-    protected Visual()
-    {
-    }
+    protected Visual() {}
 
     #endregion Constructors
 
     #region Methods
 
     protected internal virtual void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved,
-                                                            int indexAffected)
-    {
-    }
+                                                            int indexAffected) {}
 
-    protected internal virtual void OnVisualParentChanged(Visual oldParent)
-    {
-    }
+    protected internal virtual void OnVisualParentChanged(Visual oldParent) {}
 
     #endregion Methods
 

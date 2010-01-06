@@ -38,8 +38,8 @@ namespace MediaPortal.Util
   /// </summary>
   public class RemovableDriveHelper
   {
-
     #region public methods
+
     /// <summary>
     /// Handles the window message when a drive change is in progress or finished
     /// </summary>
@@ -72,7 +72,8 @@ namespace MediaPortal.Util
             return DeviceRemoved(vol);
           }
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Error("Error in handling device changed message: {0}", ex);
       }
@@ -123,6 +124,7 @@ namespace MediaPortal.Util
       }
       return true;
     }
+
     #endregion
 
     #region private methods
@@ -187,7 +189,7 @@ namespace MediaPortal.Util
       }
       return false;
     }
-    
+
     /// <summary>
     /// Determins the device number 
     /// </summary>
@@ -207,7 +209,7 @@ namespace MediaPortal.Util
         if (DeviceIoControl(h, IOCTL_STORAGE_GET_DEVICE_NUMBER, null, 0, ptrSdn, nBytes, out requiredSize,
                             IntPtr.Zero))
         {
-          Sdn = (STORAGE_DEVICE_NUMBER)Marshal.PtrToStructure(ptrSdn, typeof(STORAGE_DEVICE_NUMBER));
+          Sdn = (STORAGE_DEVICE_NUMBER)Marshal.PtrToStructure(ptrSdn, typeof (STORAGE_DEVICE_NUMBER));
           // just my way of combining the relevant parts of the
           // STORAGE_DEVICE_NUMBER into a single number
           ans = (Sdn.DeviceType << 8) + Sdn.DeviceNumber;
@@ -251,7 +253,6 @@ namespace MediaPortal.Util
         int size = 0;
         if (!SetupDiGetDeviceInterfaceDetail(_deviceInfoSet, interfaceData, IntPtr.Zero, 0, ref size, devData))
         {
-
           int error = Marshal.GetLastWin32Error();
           if (error != ERROR_INSUFFICIENT_BUFFER)
             throw new Win32Exception(error);
@@ -259,7 +260,7 @@ namespace MediaPortal.Util
 
         IntPtr buffer = Marshal.AllocHGlobal(size);
         SP_DEVICE_INTERFACE_DETAIL_DATA detailData = new SP_DEVICE_INTERFACE_DETAIL_DATA();
-        detailData.cbSize = Marshal.SizeOf(typeof(SP_DEVICE_INTERFACE_DETAIL_DATA));
+        detailData.cbSize = Marshal.SizeOf(typeof (SP_DEVICE_INTERFACE_DETAIL_DATA));
         Marshal.StructureToPtr(detailData, buffer, false);
 
         if (!SetupDiGetDeviceInterfaceDetail(_deviceInfoSet, interfaceData, buffer, size, ref size, devData))
@@ -268,7 +269,7 @@ namespace MediaPortal.Util
           throw new Win32Exception(Marshal.GetLastWin32Error());
         }
 
-        IntPtr pDevicePath = (IntPtr)((int)buffer + Marshal.SizeOf(typeof(int)));
+        IntPtr pDevicePath = (IntPtr)((int)buffer + Marshal.SizeOf(typeof (int)));
         string devicePath = Marshal.PtrToStringAuto(pDevicePath);
         Marshal.FreeHGlobal(buffer);
         if (GetDeviceNumber(devicePath) == DeviceNumber)
@@ -282,9 +283,11 @@ namespace MediaPortal.Util
 
       return result;
     }
+
     #endregion
 
     #region struct
+
     [StructLayout(LayoutKind.Sequential)]
     private struct DEV_BROADCAST_HDR
     {
@@ -316,11 +319,11 @@ namespace MediaPortal.Util
       public int cbSize;
       public short devicePath;
     }
-    
+
     [StructLayout(LayoutKind.Sequential)]
     private class SP_DEVICE_INTERFACE_DATA
     {
-      public int cbSize = Marshal.SizeOf(typeof(SP_DEVICE_INTERFACE_DATA));
+      public int cbSize = Marshal.SizeOf(typeof (SP_DEVICE_INTERFACE_DATA));
       public Guid interfaceClassGuid = Guid.Empty; // temp
       public int flags;
       public int reserved;
@@ -329,14 +332,16 @@ namespace MediaPortal.Util
     [StructLayout(LayoutKind.Sequential)]
     private class SP_DEVINFO_DATA
     {
-      public int cbSize = Marshal.SizeOf(typeof(SP_DEVINFO_DATA));
+      public int cbSize = Marshal.SizeOf(typeof (SP_DEVINFO_DATA));
       public Guid classGuid = Guid.Empty; // temp
       public int devInst; // dumy
       public int reserved;
     }
+
     #endregion
 
     #region const
+
     private const int ERROR_NO_MORE_ITEMS = 259;
     private const int ERROR_INSUFFICIENT_BUFFER = 122;
     private const int DIGCF_PRESENT = (0x00000002);
@@ -348,9 +353,11 @@ namespace MediaPortal.Util
     private const int DBT_DEVICEARRIVAL = 0x8000;
     private const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
     private const int DBT_DEVTYPE_VOLUME = 2;
+
     #endregion
 
     #region enums
+
     internal enum PNP_VETO_TYPE
     {
       Ok,
@@ -367,79 +374,81 @@ namespace MediaPortal.Util
       NonDisableable,
       LegacyDriver,
     }
+
     #endregion
 
     #region Native methods
+
     [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
     private static extern bool SetupDiEnumDeviceInterfaces(
-        IntPtr deviceInfoSet,
-        SP_DEVINFO_DATA deviceInfoData,
-        ref Guid interfaceClassGuid,
-        int memberIndex,
-        SP_DEVICE_INTERFACE_DATA deviceInterfaceData);
+      IntPtr deviceInfoSet,
+      SP_DEVINFO_DATA deviceInfoData,
+      ref Guid interfaceClassGuid,
+      int memberIndex,
+      SP_DEVICE_INTERFACE_DATA deviceInterfaceData);
 
     [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
     private static extern IntPtr SetupDiGetClassDevs(ref Guid classGuid,
-      int enumerator,
-      IntPtr hwndParent,
-      int flags);
+                                                     int enumerator,
+                                                     IntPtr hwndParent,
+                                                     int flags);
 
     [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
     private static extern bool SetupDiGetDeviceInterfaceDetail(
-        IntPtr deviceInfoSet,
-        SP_DEVICE_INTERFACE_DATA deviceInterfaceData,
-        IntPtr deviceInterfaceDetailData,
-        int deviceInterfaceDetailDataSize,
-        ref int requiredSize,
-        SP_DEVINFO_DATA deviceInfoData);
+      IntPtr deviceInfoSet,
+      SP_DEVICE_INTERFACE_DATA deviceInterfaceData,
+      IntPtr deviceInterfaceDetailData,
+      int deviceInterfaceDetailDataSize,
+      ref int requiredSize,
+      SP_DEVINFO_DATA deviceInfoData);
 
     // from cfgmgr32.h
     [DllImport("setupapi.dll")]
     private static extern int CM_Get_Parent(
-        ref int pdnDevInst,
-        int dnDevInst,
-        int ulFlags);
+      ref int pdnDevInst,
+      int dnDevInst,
+      int ulFlags);
 
     [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
     private static extern int CM_Get_Device_ID(
-       IntPtr dnDevInst,
-       IntPtr Buffer,
-       int BufferLen,
-       int ulFlags
-    );
+      IntPtr dnDevInst,
+      IntPtr Buffer,
+      int BufferLen,
+      int ulFlags
+      );
 
     [DllImport("setupapi.dll")]
     private static extern int CM_Request_Device_Eject(
-        int dnDevInst,
-        out PNP_VETO_TYPE pVetoType,
-        StringBuilder pszVetoName,
-        int ulNameLength,
-        int ulFlags
-        );
+      int dnDevInst,
+      out PNP_VETO_TYPE pVetoType,
+      StringBuilder pszVetoName,
+      int ulNameLength,
+      int ulFlags
+      );
 
     [DllImport("kernel32.dll", EntryPoint = "CreateFileW", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern IntPtr CreateFile(
-    string lpFileName,
-    int dwDesiredAccess,
-    int dwShareMode,
-    IntPtr lpSecurityAttributes,
-    int dwCreationDisposition,
-    int dwFlagsAndAttributes,
-    IntPtr hTemplateFile);
+      string lpFileName,
+      int dwDesiredAccess,
+      int dwShareMode,
+      IntPtr lpSecurityAttributes,
+      int dwCreationDisposition,
+      int dwFlagsAndAttributes,
+      IntPtr hTemplateFile);
 
     [DllImport("kernel32.dll", ExactSpelling = true, SetLastError = true)]
     private static extern bool CloseHandle(IntPtr handle);
 
     [DllImport("kernel32.dll", ExactSpelling = true, SetLastError = true)]
     private static extern bool DeviceIoControl(
-    IntPtr hDevice,
-    int dwIoControlCode,
-    byte[] lpInBuffer,
-    int nInBufferSize,
-    IntPtr lpOutBuffer,
-    int nOutBufferSize,
-    out int lpBytesReturned,
-    IntPtr lpOverlapped);
+      IntPtr hDevice,
+      int dwIoControlCode,
+      byte[] lpInBuffer,
+      int nInBufferSize,
+      IntPtr lpOutBuffer,
+      int nOutBufferSize,
+      out int lpBytesReturned,
+      IntPtr lpOverlapped);
 
     #endregion
   }

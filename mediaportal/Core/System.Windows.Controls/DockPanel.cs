@@ -38,9 +38,7 @@ namespace System.Windows.Controls
                                                           new PropertyMetadata(true));
     }
 
-    public DockPanel()
-    {
-    }
+    public DockPanel() {}
 
     #endregion Constructors
 
@@ -127,7 +125,7 @@ namespace System.Windows.Controls
 
     public static Dock GetDock(UIElement element)
     {
-      return (Dock) element.GetValue(DockProperty);
+      return (Dock)element.GetValue(DockProperty);
     }
 
     protected override Size MeasureOverride(Size availableSize)
@@ -226,7 +224,7 @@ namespace System.Windows.Controls
 
     public bool LastChildFill
     {
-      get { return (bool) GetValue(LastChildFillProperty); }
+      get { return (bool)GetValue(LastChildFillProperty); }
     }
 
     #endregion Properties

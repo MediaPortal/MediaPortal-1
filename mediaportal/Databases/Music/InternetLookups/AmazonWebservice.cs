@@ -32,13 +32,14 @@ using System.Xml;
 using BassRegistration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
-using Image=System.Drawing.Image;
+using Image = System.Drawing.Image;
 
 namespace MediaPortal.Music.Amazon
 {
   public class AmazonWebservice
   {
     #region delegates
+
     public delegate void FindCoverArtProgressHandler(AmazonWebservice aws, int progressPercent);
 
     public event FindCoverArtProgressHandler FindCoverArtProgress;
@@ -46,17 +47,22 @@ namespace MediaPortal.Music.Amazon
     public delegate void FindCoverArtDoneHandler(AmazonWebservice aws, EventArgs e);
 
     public event FindCoverArtDoneHandler FindCoverArtDone;
+
     #endregion
 
     #region Variables
+
     private int _MaxSearchResultItems = 8; // The max number of matching results we want to grab (-1 = unlimited)
     private bool _AbortGrab = false;
 
     private string _ArtistName = string.Empty;
     private string _AlbumName = string.Empty;
-    private const string itemSearch = "&Operation=ItemSearch&Artist={0}&Title={1}&SearchIndex=Music&ResponseGroup=Images,ItemAttributes,Tracks";
+
+    private const string itemSearch =
+      "&Operation=ItemSearch&Artist={0}&Title={1}&SearchIndex=Music&ResponseGroup=Images,ItemAttributes,Tracks";
 
     protected List<AlbumInfo> _AlbumInfoList = new List<AlbumInfo>();
+
     #endregion
 
     #region Properties
@@ -111,18 +117,19 @@ namespace MediaPortal.Music.Amazon
     #endregion
 
     #region ctor
-    public AmazonWebservice()
-    {
-    }
+
+    public AmazonWebservice() {}
 
     public AmazonWebservice(string artistName, string albumName) : this()
     {
       _ArtistName = artistName;
       _AlbumName = albumName;
     }
+
     #endregion
 
     #region Public Methods
+
     /// <summary>
     /// Start the Grabber
     /// </summary>
@@ -161,20 +168,20 @@ namespace MediaPortal.Music.Amazon
           // wr.Proxy = WebProxy.GetDefaultProxy();
           webReq.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception) {}
         WebResponse webResp = webReq.GetResponse();
         img = Image.FromStream(webResp.GetResponseStream());
       }
 
-      catch
-      {
-      }
+      catch {}
 
       return img;
     }
+
     #endregion
 
     #region Private Methods
+
     /// <summary>
     /// Invoke the ALbum Retrieval
     /// </summary>
@@ -214,9 +221,12 @@ namespace MediaPortal.Music.Amazon
         DateTime startTime = DateTime.Now;
 
         // Build up a valid request
-        BassRegistration.SignedRequestHelper helper = new SignedRequestHelper("com");  // Use "US" site for cover art search
-        string requestString = helper.Sign(string.Format(itemSearch, System.Web.HttpUtility.UrlEncode(_ArtistName), System.Web.HttpUtility.UrlEncode(_AlbumName)));
-        
+        BassRegistration.SignedRequestHelper helper = new SignedRequestHelper("com");
+          // Use "US" site for cover art search
+        string requestString =
+          helper.Sign(string.Format(itemSearch, System.Web.HttpUtility.UrlEncode(_ArtistName),
+                                    System.Web.HttpUtility.UrlEncode(_AlbumName)));
+
         // Connect to AWS
         HttpWebRequest request = null;
         try
@@ -227,9 +237,7 @@ namespace MediaPortal.Music.Amazon
             // Use the current user in case an NTLM Proxy or similar is used.
             request.Proxy.Credentials = CredentialCache.DefaultCredentials;
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
         catch (Exception e)
         {
@@ -330,7 +338,7 @@ namespace MediaPortal.Music.Amazon
         DateTime stopTime = DateTime.Now;
         TimeSpan elapsedTime = stopTime - startTime;
         double totSeconds = elapsedTime.TotalSeconds;
-        float secondsPerImage = (float) totSeconds/(float) imgCount;
+        float secondsPerImage = (float)totSeconds / (float)imgCount;
         string et = "";
 
         if (imgCount > 0)
@@ -379,7 +387,7 @@ namespace MediaPortal.Music.Amazon
           totalCovers = Math.Min(itemCount, _MaxSearchResultItems);
         }
 
-        int progressPercent = (int) (((float) imgCount/(float) totalCovers)*100f);
+        int progressPercent = (int)(((float)imgCount / (float)totalCovers) * 100f);
         FindCoverArtProgress(this, progressPercent);
       }
     }
@@ -448,10 +456,11 @@ namespace MediaPortal.Music.Amazon
           {
             foreach (XmlNode trackNode in discNode)
             {
-              tracks += string.Format("{0}@{1}@{2}|", Convert.ToInt32(trackNode.Attributes["Number"].Value), trackNode.InnerText, 99);
+              tracks += string.Format("{0}@{1}@{2}|", Convert.ToInt32(trackNode.Attributes["Number"].Value),
+                                      trackNode.InnerText, 99);
             }
           }
-          album.Tracks = tracks.Trim(new char[] { '|' }).Trim();
+          album.Tracks = tracks.Trim(new char[] {'|'}).Trim();
         }
       }
 
@@ -478,6 +487,7 @@ namespace MediaPortal.Music.Amazon
       }
       return "";
     }
+
     #endregion
   }
 }

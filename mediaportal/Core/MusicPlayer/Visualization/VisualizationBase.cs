@@ -96,11 +96,10 @@ namespace MediaPortal.Visualization
       get { return _IsPreviewVisualization; }
       set { _IsPreviewVisualization = value; }
     }
+
     #endregion
 
-    public VisualizationBase()
-    {
-    }
+    public VisualizationBase() {}
 
     public VisualizationBase(VisualizationInfo vizPluginInfo, VisualizationWindow vizCtrl)
       : this()
@@ -112,12 +111,16 @@ namespace MediaPortal.Visualization
       switch (VizPluginInfo.VisualizationType)
       {
         case VisualizationInfo.PluginType.Sonique:
-          BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_SONIQUE, BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE), GUIGraphicsContext.form.Handle);
+          BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_SONIQUE,
+                                BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE),
+                                GUIGraphicsContext.form.Handle);
           _visParam = new BASS_VIS_PARAM(BASSVISPlugin.BASSVISKIND_SONIQUE);
           break;
 
         case VisualizationInfo.PluginType.Winamp:
-          BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_WINAMP, BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE), GUIGraphicsContext.form.Handle);
+          BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_WINAMP,
+                                BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE),
+                                GUIGraphicsContext.form.Handle);
           _visParam = new BASS_VIS_PARAM(BASSVISPlugin.BASSVISKIND_WINAMP);
           break;
       }
@@ -125,9 +128,7 @@ namespace MediaPortal.Visualization
 
     #region IDisposable Members
 
-    public virtual void Dispose()
-    {
-    }
+    public virtual void Dispose() {}
 
     #endregion
 
@@ -215,7 +216,6 @@ namespace MediaPortal.Visualization
 
     public virtual bool Close()
     {
-
       try
       {
         if (_visParam.VisHandle != 0)
@@ -233,8 +233,7 @@ namespace MediaPortal.Visualization
               System.Threading.Thread.Sleep(20);
             }
           }
-          catch (AccessViolationException)
-          { }
+          catch (AccessViolationException) {}
 
           _visParam.VisHandle = 0;
         }
@@ -246,8 +245,7 @@ namespace MediaPortal.Visualization
         }
         return true;
       }
-      catch (Exception)
-      { }
+      catch (Exception) {}
       return false;
     }
 

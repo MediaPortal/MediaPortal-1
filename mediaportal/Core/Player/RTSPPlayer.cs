@@ -40,9 +40,7 @@ namespace MediaPortal.Player
   public class RTSPPlayer : IPlayer
   {
     [ComImport, Guid("DF5ACC0A-5612-44ba-963B-C757298F4030")]
-    protected class RtpSourceFilter
-    {
-    }
+    protected class RtpSourceFilter {}
 
     public enum PlayState
     {
@@ -100,6 +98,7 @@ namespace MediaPortal.Player
 
     /// <summary> interface to single-step video. </summary>
     protected IBaseFilter audioRendererFilter = null;
+
     protected IBaseFilter _subtitleFilter = null;
     protected SubtitleRenderer dvbSubRenderer = null;
     protected IBaseFilter _mpegDemux;
@@ -166,7 +165,7 @@ namespace MediaPortal.Player
 
       try
       {
-        graphBuilder = (IGraphBuilder) new FilterGraph();
+        graphBuilder = (IGraphBuilder)new FilterGraph();
 
         Log.Info("RTSPPlayer: add source filter");
         if (IsRadio == false)
@@ -175,11 +174,11 @@ namespace MediaPortal.Player
           Vmr9.Enable(false);
         }
 
-        _mpegDemux = (IBaseFilter) new MPEG2Demultiplexer();
+        _mpegDemux = (IBaseFilter)new MPEG2Demultiplexer();
         graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
 
-        _rtspSource = (IBaseFilter) new RtpSourceFilter();
-        int hr = graphBuilder.AddFilter((IBaseFilter) _rtspSource, "RTSP Source Filter");
+        _rtspSource = (IBaseFilter)new RtpSourceFilter();
+        int hr = graphBuilder.AddFilter((IBaseFilter)_rtspSource, "RTSP Source Filter");
         if (hr != 0)
         {
           Log.Error("RTSPPlayer:unable to add RTSP source filter:{0:X}", hr);
@@ -266,7 +265,7 @@ namespace MediaPortal.Player
         }
 
         Log.Info("RTSPPlayer: load:{0}", m_strCurrentFile);
-        IFileSourceFilter interfaceFile = (IFileSourceFilter) _rtspSource;
+        IFileSourceFilter interfaceFile = (IFileSourceFilter)_rtspSource;
         if (interfaceFile == null)
         {
           Log.Error("RTSPPlayer:Failed to get IFileSourceFilter");
@@ -284,7 +283,7 @@ namespace MediaPortal.Player
         #region connect rtspsource->demux
 
         Log.Info("RTSPPlayer:connect rtspsource->mpeg2 demux");
-        IPin pinTsOut = DsFindPin.ByDirection((IBaseFilter) _rtspSource, PinDirection.Output, 0);
+        IPin pinTsOut = DsFindPin.ByDirection((IBaseFilter)_rtspSource, PinDirection.Output, 0);
         if (pinTsOut == null)
         {
           Log.Info("RTSPPlayer:failed to find output pin of tsfilesource");
@@ -431,10 +430,10 @@ namespace MediaPortal.Player
           Vmr9.SetDeinterlaceMode();
         }
 
-        _mediaCtrl = (IMediaControl) graphBuilder;
-        mediaEvt = (IMediaEventEx) graphBuilder;
-        _mediaSeeking = (IMediaSeeking) graphBuilder;
-        mediaPos = (IMediaPosition) graphBuilder;
+        _mediaCtrl = (IMediaControl)graphBuilder;
+        mediaEvt = (IMediaEventEx)graphBuilder;
+        _mediaSeeking = (IMediaSeeking)graphBuilder;
+        mediaPos = (IMediaPosition)graphBuilder;
         basicAudio = graphBuilder as IBasicAudio;
         //DirectShowUtil.SetARMode(graphBuilder,AspectRatioMode.Stretched);
         DirectShowUtil.EnableDeInterlace(graphBuilder);
@@ -553,7 +552,7 @@ namespace MediaPortal.Player
 
         GUIGraphicsContext.form.Invalidate(true);
         _state = PlayState.Init;
-        
+
         if (_mpegDemux != null)
         {
           Log.Info("cleanup mpegdemux");
@@ -586,7 +585,7 @@ namespace MediaPortal.Player
           this.dvbSubRenderer = null;
         }
 
-       
+
         if (vobSub != null)
         {
           Log.Info("cleanup vobSub");
@@ -596,7 +595,7 @@ namespace MediaPortal.Player
           }
           vobSub = null;
         }
-       }
+      }
       catch (Exception ex)
       {
         Log.Error("RTSPPlayer: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
@@ -657,7 +656,7 @@ namespace MediaPortal.Player
         }
 
         DirectShowUtil.SetARMode(graphBuilder, AspectRatioMode.Stretched);
-        _rotEntry = new DsROTEntry((IFilterGraph) graphBuilder);
+        _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
 
         // DsUtils.DumpFilters(graphBuilder);
         hr = _mediaCtrl.Run();
@@ -1041,7 +1040,7 @@ namespace MediaPortal.Player
         {
           if (_mediaSeeking != null)
           {
-            switch ((int) value)
+            switch ((int)value)
             {
               case -1:
                 m_speedRate = -10000;
@@ -1102,8 +1101,8 @@ namespace MediaPortal.Player
             if (basicAudio != null)
             {
               // Divide by 100 to get equivalent decibel value. For example, –10,000 is –100 dB. 
-              float fPercent = (float) m_iVolume/100.0f;
-              int iVolume = (int) ((DirectShowVolume.VOLUME_MAX - DirectShowVolume.VOLUME_MIN)*fPercent);
+              float fPercent = (float)m_iVolume / 100.0f;
+              int iVolume = (int)((DirectShowVolume.VOLUME_MAX - DirectShowVolume.VOLUME_MIN) * fPercent);
               basicAudio.put_Volume((iVolume - DirectShowVolume.VOLUME_MIN));
             }
           }
@@ -1177,7 +1176,7 @@ namespace MediaPortal.Player
           fContentEnd = lContentEnd;
 
           dTimeInSecs += fContentStart;
-          long lTime = (long) dTimeInSecs;
+          long lTime = (long)dTimeInSecs;
           Log.Info("set positions");
           if (VMR9Util.g_vmr9 != null)
           {
@@ -1214,9 +1213,9 @@ namespace MediaPortal.Player
           double dCurrentPos = this.CurrentPosition;
           double dDuration = Duration;
 
-          double fCurPercent = (dCurrentPos/Duration)*100.0d;
-          double fOnePercent = Duration/100.0d;
-          fCurPercent = fCurPercent + (double) iPercentage;
+          double fCurPercent = (dCurrentPos / Duration) * 100.0d;
+          double fOnePercent = Duration / 100.0d;
+          fCurPercent = fCurPercent + (double)iPercentage;
           fCurPercent *= fOnePercent;
           if (fCurPercent < 0.0d)
           {
@@ -1245,8 +1244,8 @@ namespace MediaPortal.Player
           {
             iPercentage = 100;
           }
-          double fPercent = Duration/100.0f;
-          fPercent *= (double) iPercentage;
+          double fPercent = Duration / 100.0f;
+          fPercent *= (double)iPercentage;
           mediaPos.put_CurrentPosition(fPercent);
         }
       }
@@ -1329,13 +1328,13 @@ namespace MediaPortal.Player
       //earliest += + 30 * 10000000;
 
       // new time = current time + 2*timerinterval* (speed)
-      long lTimerInterval = (long) ts.TotalMilliseconds;
+      long lTimerInterval = (long)ts.TotalMilliseconds;
       if (lTimerInterval > 300)
       {
         lTimerInterval = 300;
       }
       lTimerInterval = 300;
-      rewind = (long) (current + (2*(long) (lTimerInterval)*m_speedRate));
+      rewind = (long)(current + (2 * (long)(lTimerInterval) * m_speedRate));
 
       int hr;
       pStop = 0;

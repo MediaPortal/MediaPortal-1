@@ -452,9 +452,7 @@ namespace MediaPortal.FoobarPlugin
       {
         Help.ShowHelp(this, "http://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Commandline_Guide");
       }
-      catch
-      {
-      }
+      catch {}
     }
 
     /// <summary>
@@ -470,9 +468,7 @@ namespace MediaPortal.FoobarPlugin
       {
         Help.ShowHelp(this, "http://sourceforge.net/projects/foohttpserver");
       }
-      catch
-      {
-      }
+      catch {}
     }
 
     private void btnOK_Click(object sender, EventArgs e)

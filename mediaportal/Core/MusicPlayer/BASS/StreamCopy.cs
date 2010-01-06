@@ -12,14 +12,10 @@ namespace MediaPortal.Player
     private BASSFlag _streamFlags;
 
     public StreamCopy()
-      : base()
-    {
-    }
+      : base() {}
 
     public StreamCopy(int channel, int priority)
-      : base(channel, priority, IntPtr.Zero)
-    {
-    }
+      : base(channel, priority, IntPtr.Zero) {}
 
     public override void OnChannelChanged()
     {
@@ -54,7 +50,8 @@ namespace MediaPortal.Player
           break;
       }
       this._streamBuffer = new BASSBuffer(2f, base.ChannelSampleRate, base.ChannelNumChans, channelBitwidth);
-      this._stream = Un4seen.Bass.Bass.BASS_StreamCreate(base.ChannelSampleRate, base.ChannelNumChans, this._streamFlags, null, IntPtr.Zero);
+      this._stream = Un4seen.Bass.Bass.BASS_StreamCreate(base.ChannelSampleRate, base.ChannelNumChans, this._streamFlags,
+                                                         null, IntPtr.Zero);
       Un4seen.Bass.Bass.BASS_ChannelSetLink(base.ChannelHandle, this._stream);
       if (Un4seen.Bass.Bass.BASS_ChannelIsActive(base.ChannelHandle) == BASSActive.BASS_ACTIVE_PLAYING)
       {

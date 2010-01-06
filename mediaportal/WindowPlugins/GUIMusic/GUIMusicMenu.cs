@@ -31,7 +31,7 @@ namespace WindowPlugins.GUIMusic
   {
     public GUIMusicMenu()
     {
-      GetID = (int) Window.WINDOW_MUSIC_MENU; // 8888
+      GetID = (int)Window.WINDOW_MUSIC_MENU; // 8888
     }
 
     public override bool Init()

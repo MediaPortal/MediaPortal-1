@@ -34,26 +34,16 @@ namespace MediaPortal.Drawing.Layouts
   {
     #region Constructors
 
-    public GridLayout() : this(1, 0, 0, 0)
-    {
-    }
+    public GridLayout() : this(1, 0, 0, 0) {}
 
-    public GridLayout(int columns) : this(columns, 0, 0, 0)
-    {
-    }
+    public GridLayout(int columns) : this(columns, 0, 0, 0) {}
 
-    public GridLayout(int columns, int rows) : this(columns, rows, 0, 0)
-    {
-    }
+    public GridLayout(int columns, int rows) : this(columns, rows, 0, 0) {}
 
-    public GridLayout(int columns, int rows, double spacing) : this(columns, rows, spacing, spacing)
-    {
-    }
+    public GridLayout(int columns, int rows, double spacing) : this(columns, rows, spacing, spacing) {}
 
     public GridLayout(int columns, int rows, double horizontalSpacing, double verticalSpacing)
-      : this(columns, rows, horizontalSpacing, verticalSpacing, Orientation.Horizontal)
-    {
-    }
+      : this(columns, rows, horizontalSpacing, verticalSpacing, Orientation.Horizontal) {}
 
     public GridLayout(int columns, int rows, double horizontalSpacing, double verticalSpacing, Orientation orientation)
     {
@@ -90,7 +80,7 @@ namespace MediaPortal.Drawing.Layouts
       switch (element.HorizontalAlignment)
       {
         case HorizontalAlignment.Center:
-          rect.X = x + ((w - element.Width)/2);
+          rect.X = x + ((w - element.Width) / 2);
           break;
         case HorizontalAlignment.Right:
           rect.X = x + w - element.Width;
@@ -103,7 +93,7 @@ namespace MediaPortal.Drawing.Layouts
       switch (element.VerticalAlignment)
       {
         case VerticalAlignment.Center:
-          rect.Y = y + ((h - element.Height)/2);
+          rect.Y = y + ((h - element.Height) / 2);
           break;
         case VerticalAlignment.Bottom:
           rect.Y = y + h - element.Height;
@@ -126,15 +116,15 @@ namespace MediaPortal.Drawing.Layouts
 
       if (rows > 0)
       {
-        cols = (element.Children.Count + rows - 1)/rows;
+        cols = (element.Children.Count + rows - 1) / rows;
       }
       else
       {
-        rows = (element.Children.Count + cols - 1)/cols;
+        rows = (element.Children.Count + cols - 1) / cols;
       }
 
-      double w = (element.Width - t.Width - (cols - 1)*_spacing.Width)/cols;
-      double h = (element.Height - t.Height - (rows - 1)*_spacing.Height)/rows;
+      double w = (element.Width - t.Width - (cols - 1) * _spacing.Width) / cols;
+      double h = (element.Height - t.Height - (rows - 1) * _spacing.Height) / rows;
       double y = element.Location.Y + t.Top;
 
       for (int row = 0; row < rows; row++)
@@ -143,11 +133,11 @@ namespace MediaPortal.Drawing.Layouts
 
         for (int col = 0; col < cols; col++)
         {
-          int index = _orientation == Orientation.Vertical ? col*rows + row : row*cols + col;
+          int index = _orientation == Orientation.Vertical ? col * rows + row : row * cols + col;
 
           if (index < element.Children.Count)
           {
-            FrameworkElement component = (FrameworkElement) element.Children[index];
+            FrameworkElement component = (FrameworkElement)element.Children[index];
 
             if (component.Visibility == Visibility.Collapsed)
             {
@@ -174,11 +164,11 @@ namespace MediaPortal.Drawing.Layouts
 
       if (rows > 0)
       {
-        cols = (element.Children.Count + rows - 1)/rows;
+        cols = (element.Children.Count + rows - 1) / rows;
       }
       else
       {
-        rows = (element.Children.Count + cols - 1)/cols;
+        rows = (element.Children.Count + cols - 1) / cols;
       }
 
       foreach (FrameworkElement child in element.Children)
@@ -196,8 +186,8 @@ namespace MediaPortal.Drawing.Layouts
 
       Thickness t = element.Margin;
 
-      _size.Width = (w*cols + _spacing.Width*(cols - 1)) + t.Width;
-      _size.Height = (h*rows + _spacing.Height*(rows - 1)) + t.Height;
+      _size.Width = (w * cols + _spacing.Width * (cols - 1)) + t.Width;
+      _size.Height = (h * rows + _spacing.Height * (rows - 1)) + t.Height;
 
       return _size;
     }

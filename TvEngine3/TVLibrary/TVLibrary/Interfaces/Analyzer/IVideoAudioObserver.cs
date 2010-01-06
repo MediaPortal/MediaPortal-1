@@ -44,7 +44,8 @@ namespace TvLibrary.Interfaces.Analyzer
   ///<summary>
   /// TsWriter video/audio observer
   ///</summary>
-  [ComVisible(true), ComImport, Guid("08177EB2-65D6-4d0a-A2A8-E7B7280A95A3"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComVisible(true), ComImport, Guid("08177EB2-65D6-4d0a-A2A8-E7B7280A95A3"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IVideoAudioObserver
   {
     ///<summary>
@@ -59,7 +60,8 @@ namespace TvLibrary.Interfaces.Analyzer
   /// <summary>
   /// MPFileWiter video/audio observer
   /// </summary>
-  [ComVisible(true), ComImport, Guid("F94D89B5-C888-4da1-9782-15C1C0CBFE4D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  [ComVisible(true), ComImport, Guid("F94D89B5-C888-4da1-9782-15C1C0CBFE4D"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAnalogVideoAudioObserver
   {
     ///<summary>
@@ -70,5 +72,4 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int OnNotify(PidType pidType);
   }
-
 }

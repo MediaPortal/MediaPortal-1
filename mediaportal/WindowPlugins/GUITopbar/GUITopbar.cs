@@ -55,10 +55,10 @@ namespace MediaPortal.Topbar
       // 
       // TODO: Add constructor logic here
       //
-      GetID = (int) Window.WINDOW_TOPBAR;
+      GetID = (int)Window.WINDOW_TOPBAR;
     }
 
-    public bool UseTopBarSub	// Use top Bar in Submenu. 
+    public bool UseTopBarSub // Use top Bar in Submenu. 
     {
       get { return useTopBarSub; }
       set { useTopBarSub = value; }
@@ -67,7 +67,7 @@ namespace MediaPortal.Topbar
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\topbar.xml");
-      GetID = (int) Window.WINDOW_TOPBAR;
+      GetID = (int)Window.WINDOW_TOPBAR;
       m_bEnabled = PluginManager.IsPluginNameEnabled("Topbar");
 
       using (Settings xmlreader = new MPSettings())
@@ -101,7 +101,7 @@ namespace MediaPortal.Topbar
         if ((pos.YPos + pos.control.Height) > m_iTopbarRegion)
         {
           m_iTopbarRegion = pos.YPos + pos.control.Height;
-      }
+        }
       }
 
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Topbar2);
@@ -119,9 +119,7 @@ namespace MediaPortal.Topbar
       AllocResources();
     }
 
-    public override void Render(float timePassed)
-    {
-    }
+    public override void Render(float timePassed) {}
 
     protected override bool ShouldFocus(Action action)
     {
@@ -141,12 +139,13 @@ namespace MediaPortal.Topbar
 
     public override bool DoesPostRender()
     {
-      if (!m_bEnabled || 
-        GUIGraphicsContext.DisableTopBar ||
-        GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_WEBBROWSER ||
-        GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MOVIE_CALIBRATION ||
-        GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_UI_CALIBRATION ||
-        MediaPortal.Player.g_Player.IsDVDMenu) // Enabling top bar while in DVD menu could cause issues with the navigation
+      if (!m_bEnabled ||
+          GUIGraphicsContext.DisableTopBar ||
+          GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_WEBBROWSER ||
+          GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MOVIE_CALIBRATION ||
+          GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_UI_CALIBRATION ||
+          MediaPortal.Player.g_Player.IsDVDMenu)
+        // Enabling top bar while in DVD menu could cause issues with the navigation
       {
         return false;
       }

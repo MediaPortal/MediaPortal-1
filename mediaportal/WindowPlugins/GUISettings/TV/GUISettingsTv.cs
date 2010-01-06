@@ -40,22 +40,14 @@ namespace WindowPlugins.GUISettings.TV
   /// </summary>
   public class GUISettingsTv : GUIInternalWindow
   {
-    [SkinControl(24)]
-    protected GUIButtonControl btnVideoCodec = null;
-    [SkinControl(25)]
-    protected GUIButtonControl btnAudioCodec = null;
-    [SkinControl(27)]
-    protected GUIButtonControl btnDeinterlace = null;
-    [SkinControl(28)]
-    protected GUIButtonControl btnAspectRatio = null;
-    [SkinControl(30)]
-    protected GUIButtonControl btnAutoTurnOnTv = null;
-    [SkinControl(33)]
-    protected GUIButtonControl btnAudioRenderer = null;
-    [SkinControl(35)]
-    protected GUIButtonControl btnH264VideoCodec = null;
-    [SkinControl(36)]
-    protected GUIButtonControl btnAACAudioCodec = null;
+    [SkinControl(24)] protected GUIButtonControl btnVideoCodec = null;
+    [SkinControl(25)] protected GUIButtonControl btnAudioCodec = null;
+    [SkinControl(27)] protected GUIButtonControl btnDeinterlace = null;
+    [SkinControl(28)] protected GUIButtonControl btnAspectRatio = null;
+    [SkinControl(30)] protected GUIButtonControl btnAutoTurnOnTv = null;
+    [SkinControl(33)] protected GUIButtonControl btnAudioRenderer = null;
+    [SkinControl(35)] protected GUIButtonControl btnH264VideoCodec = null;
+    [SkinControl(36)] protected GUIButtonControl btnAACAudioCodec = null;
 
     public GUISettingsTv()
     {
@@ -334,7 +326,7 @@ namespace WindowPlugins.GUISettings.TV
 
     private void OnDeinterlace()
     {
-      string[] deinterlaceModes = { "None", "Bob", "Weave", "Best" };
+      string[] deinterlaceModes = {"None", "Bob", "Weave", "Best"};
       int deInterlaceMode = 1;
       using (Settings xmlreader = new MPSettings())
       {

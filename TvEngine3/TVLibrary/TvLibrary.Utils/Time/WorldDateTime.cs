@@ -158,9 +158,7 @@ namespace MediaPortal.Utils.Time
     /// </summary>
     /// <param name="dateTimeGmt">The date time GMT.</param>
     public WorldDateTime(string dateTimeGmt)
-      : this(dateTimeGmt, true)
-    {
-    }
+      : this(dateTimeGmt, true) {}
 
     #endregion
 
@@ -513,9 +511,7 @@ namespace MediaPortal.Utils.Time
             ts = tsOff;
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
       return ts;
     }

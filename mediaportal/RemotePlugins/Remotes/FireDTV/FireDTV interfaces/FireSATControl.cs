@@ -104,9 +104,7 @@ namespace MediaPortal.InputDevices.FireDTV
     /// <summary>
     /// Default contructer should not be called.
     /// </summary>
-    private FireDTVControl()
-    {
-    }
+    private FireDTVControl() {}
 
 
     ~FireDTVControl()
@@ -178,9 +176,7 @@ namespace MediaPortal.InputDevices.FireDTV
           throw new FireDTVException((FireDTVConstants.FireDTVStatusCodes)returnCode, "Device Close Failure");
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
 
     internal int getWDMCount()
@@ -254,9 +250,7 @@ namespace MediaPortal.InputDevices.FireDTV
           }
           NotificationsRegistered = true;
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
     }
 

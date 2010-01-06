@@ -29,7 +29,7 @@ using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
-using Log=MediaPortal.ServiceImplementations.Log;
+using Log = MediaPortal.ServiceImplementations.Log;
 
 namespace MediaPortal.InputDevices
 {
@@ -65,9 +65,7 @@ namespace MediaPortal.InputDevices
     /// <summary>
     /// Constructor
     /// </summary>
-    public CentareaRemote()
-    {
-    }
+    public CentareaRemote() {}
 
     #endregion
 
@@ -133,7 +131,7 @@ namespace MediaPortal.InputDevices
         if (msg.Msg == WM_KEYDOWN || msg.Msg == WM_SYSKEYDOWN || msg.Msg == WM_APPCOMMAND || msg.Msg == WM_LBUTTONDOWN ||
             msg.Msg == WM_RBUTTONDOWN || msg.Msg == WM_MOUSEMOVE)
         {
-          switch ((Keys) msg.WParam)
+          switch ((Keys)msg.WParam)
           {
             case Keys.ControlKey:
               break;
@@ -142,9 +140,9 @@ namespace MediaPortal.InputDevices
             case Keys.Menu:
               break;
             default:
-              int keycode = (int) msg.WParam;
+              int keycode = (int)msg.WParam;
 
-              AppCommands appCommand = (AppCommands) ((msg.LParam.ToInt32() >> 16) & ~0xF000);
+              AppCommands appCommand = (AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000);
               // find out which request the MCE remote handled last
               if ((appCommand == InputDevices.LastHidRequest) && (appCommand != AppCommands.VolumeDown) &&
                   (appCommand != AppCommands.VolumeUp))
@@ -188,7 +186,7 @@ namespace MediaPortal.InputDevices
                   Point p = new Point(msg.LParam.ToInt32());
                   _ignoreDupMsg++;
                   // since our ResetCursor() triggers a mouse move MSG as well we ignore every second event
-                  if (_ignoreDupMsg%2 == 0)
+                  if (_ignoreDupMsg % 2 == 0)
                   {
                     GUIGraphicsContext.ResetCursor(false);
                   }
@@ -288,7 +286,7 @@ namespace MediaPortal.InputDevices
       int OldPos = aVerticalMove ? GUIGraphicsContext.OutputScreenCenter.Y : GUIGraphicsContext.OutputScreenCenter.X;
       if (OldPos > aNewPosition)
       {
-        return (OldPos - aNewPosition)*-1;
+        return (OldPos - aNewPosition) * -1;
       }
       else
       {
@@ -308,7 +306,7 @@ namespace MediaPortal.InputDevices
       int yMove = GetPointDeviation(true, p.Y);
       // using the pythagoras theorem to get the total movement length
       double TotalWay =
-        Math.Sqrt(((double) ((Math.Abs(xMove)*Math.Abs(xMove))) + (double) ((Math.Abs(yMove)*Math.Abs(yMove)))));
+        Math.Sqrt(((double)((Math.Abs(xMove) * Math.Abs(xMove))) + (double)((Math.Abs(yMove) * Math.Abs(yMove)))));
       // set a direction only if movement exceeds a minimum limit
       // usually pushing the joystick knob once results in a one pixel movement.      
       if (TotalWay > 0.9)

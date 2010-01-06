@@ -6,12 +6,10 @@ namespace MediaPortal.Configuration.Sections
 {
   public partial class FiltersVideoRenderer : SectionSettings
   {
-    bool _init = false;
+    private bool _init = false;
 
     public FiltersVideoRenderer()
-      : this("Video Renderer Settings")
-    {
-    }
+      : this("Video Renderer Settings") {}
 
     public FiltersVideoRenderer(string name)
       : base(name)

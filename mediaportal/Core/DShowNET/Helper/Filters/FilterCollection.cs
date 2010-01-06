@@ -74,7 +74,7 @@ namespace DShowNET.Helper
           throw new NotImplementedException("System Device Enumerator");
         }
         comObj = Activator.CreateInstance(srvType);
-        enumDev = (ICreateDevEnum) comObj;
+        enumDev = (ICreateDevEnum)comObj;
 
         // Create an enumerator to find filters in category
         hr = enumDev.CreateClassEnumerator(category, out enumMon, 0);
@@ -135,7 +135,7 @@ namespace DShowNET.Helper
         {
           return null;
         }
-        return ((Filter) InnerList[index]);
+        return ((Filter)InnerList[index]);
       }
     }
   }

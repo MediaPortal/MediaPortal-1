@@ -23,14 +23,13 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using TvControl;
 using TvDatabase;
+
 namespace SetupTv.Sections
 {
   public partial class Servers : SectionSettings
   {
     public Servers()
-      : this("TV Servers")
-    {
-    }
+      : this("TV Servers") {}
 
     public Servers(string name)
       : base(name)
@@ -59,14 +58,10 @@ namespace SetupTv.Sections
       mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
     }
 
-    private void Servers_Load(object sender, EventArgs e)
-    {
-
-    }
+    private void Servers_Load(object sender, EventArgs e) {}
 
     private void buttonDelete_Click(object sender, EventArgs e)
     {
-
       if (mpListView1.SelectedIndices.Count < 1)
         return;
       int index = mpListView1.SelectedIndices[0];
@@ -127,12 +122,13 @@ namespace SetupTv.Sections
           ServiceNeedsToRestart();
         }
       }
-
     }
 
     private void ServiceNeedsToRestart()
     {
-      if (MessageBox.Show(this, "Changes made require TvService to restart. Restart it now?", "TvService", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+      if (
+        MessageBox.Show(this, "Changes made require TvService to restart. Restart it now?", "TvService",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
       {
         NotifyForm dlgNotify = new NotifyForm("Restart TvService...", "This can take some time\n\nPlease be patient...");
         dlgNotify.Show();
@@ -142,7 +138,6 @@ namespace SetupTv.Sections
 
         dlgNotify.Close();
       }
-
     }
 
     private void mpListView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -153,7 +148,7 @@ namespace SetupTv.Sections
       }
       else
       {
-        buttonChooseIp.Enabled = true ;
+        buttonChooseIp.Enabled = true;
       }
     }
 
@@ -171,8 +166,7 @@ namespace SetupTv.Sections
 
     private void chooseIPForStreamingToolStripMenuItem_Click(object sender, EventArgs e)
     {
-       buttonChooseIp_Click(null , null);
+      buttonChooseIp_Click(null, null);
     }
-
   }
 }

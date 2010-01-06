@@ -47,9 +47,7 @@ namespace MediaPortal.Music.Database
     private int m_iYear = 0;
 
 
-    public AlbumInfo()
-    {
-    }
+    public AlbumInfo() {}
 
     public AlbumInfo Clone()
     {

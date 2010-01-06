@@ -37,10 +37,7 @@ namespace SetupTv.Sections
 
       public Card Card
       {
-        get
-        {
-          return _card;
-        }
+        get { return _card; }
       }
 
       public CardInfo(Card card)
@@ -58,9 +55,7 @@ namespace SetupTv.Sections
     private readonly MPListViewStringColumnSorter lvwColumnSorter2;
 
     public RadioChannelMapping()
-      : this("Radio Mapping")
-    {
-    }
+      : this("Radio Mapping") {}
 
     public RadioChannelMapping(string name)
       : base(name)
@@ -98,7 +93,8 @@ namespace SetupTv.Sections
 
     private void mpButtonMap_Click_1(object sender, EventArgs e)
     {
-      NotifyForm dlg = new NotifyForm("Mapping selected channels to TV-Card...", "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Mapping selected channels to TV-Card...",
+                                      "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
@@ -122,13 +118,13 @@ namespace SetupTv.Sections
       dlg.Close();
       mpListViewChannels.EndUpdate();
       mpListViewMapped.EndUpdate();
-
     }
 
 
     private void mpButtonUnmap_Click_1(object sender, EventArgs e)
     {
-      NotifyForm dlg = new NotifyForm("Unmapping selected channels from TV-Card...", "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Unmapping selected channels from TV-Card...",
+                                      "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
       mpListViewChannels.BeginUpdate();
@@ -154,19 +150,17 @@ namespace SetupTv.Sections
       dlg.Close();
       mpListViewChannels.EndUpdate();
       mpListViewMapped.EndUpdate();
-
     }
 
 
     private void mpComboBoxCard_SelectedIndexChanged_1(object sender, EventArgs e)
     {
-
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
       mpListViewMapped.Items.Clear();
       mpListViewChannels.Items.Clear();
 
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
       IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
@@ -178,7 +172,7 @@ namespace SetupTv.Sections
       CardType cardType = RemoteControl.Instance.Type(card.IdCard);
       TvBusinessLayer layer = new TvBusinessLayer();
       bool enableDVBS2 = (layer.GetSetting("dvbs" + card.IdCard + "enabledvbs2", "false").Value == "true");
-     
+
       List<ListViewItem> items = new List<ListViewItem>();
       foreach (ChannelMap map in maps)
       {
@@ -273,17 +267,16 @@ namespace SetupTv.Sections
       mpListViewMapped.EndUpdate();
     }
 
-    private void mpListViewChannels_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
+    private void mpListViewChannels_SelectedIndexChanged(object sender, EventArgs e) {}
 
     private void mpListViewChannels_ColumnClick(object sender, ColumnClickEventArgs e)
     {
       if (e.Column == lvwColumnSorter1.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        lvwColumnSorter1.Order = lvwColumnSorter1.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+        lvwColumnSorter1.Order = lvwColumnSorter1.Order == SortOrder.Ascending
+                                   ? SortOrder.Descending
+                                   : SortOrder.Ascending;
       }
       else
       {
@@ -301,7 +294,9 @@ namespace SetupTv.Sections
       if (e.Column == lvwColumnSorter2.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        lvwColumnSorter2.Order = lvwColumnSorter2.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+        lvwColumnSorter2.Order = lvwColumnSorter2.Order == SortOrder.Ascending
+                                   ? SortOrder.Descending
+                                   : SortOrder.Ascending;
       }
       else
       {
@@ -313,6 +308,5 @@ namespace SetupTv.Sections
       // Perform the sort with these new sort options.
       mpListViewMapped.Sort();
     }
-
   }
 }

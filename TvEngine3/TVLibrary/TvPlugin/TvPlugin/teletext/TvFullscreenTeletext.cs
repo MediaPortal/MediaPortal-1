@@ -42,7 +42,7 @@ namespace TvPlugin
 
     public TVTeletextFullScreen()
     {
-      GetID = (int) Window.WINDOW_FULLSCREEN_TELETEXT;
+      GetID = (int)Window.WINDOW_FULLSCREEN_TELETEXT;
     }
 
     #endregion
@@ -109,7 +109,6 @@ namespace TvPlugin
       {
         imgTeletextBackground.Render(timePassed);
       }
-      
     }
 
     #endregion
@@ -128,5 +127,9 @@ namespace TvPlugin
     }
 
     #endregion
-  } // class
-} // namespace
+  }
+
+  // class
+}
+
+// namespace

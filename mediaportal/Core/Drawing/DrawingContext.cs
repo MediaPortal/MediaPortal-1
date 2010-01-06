@@ -83,9 +83,7 @@ namespace MediaPortal.Drawing
 
     public abstract void PushTransform(Transform transform);
 
-    protected virtual void VerifyApiNonstructuralChange()
-    {
-    }
+    protected virtual void VerifyApiNonstructuralChange() {}
 
     #endregion Methods
   }

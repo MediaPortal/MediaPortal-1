@@ -29,9 +29,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    private DependencySource()
-    {
-    }
+    private DependencySource() {}
 
     public DependencySource(DependencyObject dependencyObject, DependencyProperty dependencyProperty)
     {

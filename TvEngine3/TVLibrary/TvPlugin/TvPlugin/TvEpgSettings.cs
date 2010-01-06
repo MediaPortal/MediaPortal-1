@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using TvDatabase;
+
 //using MediaPortal.Utils.Services;
 
 namespace TvPlugin
@@ -39,7 +40,7 @@ namespace TvPlugin
 
     public TvEpgSettings()
     {
-      GetID = (int) Window.WINDOW_SETTINGS_TV_EPG;
+      GetID = (int)Window.WINDOW_SETTINGS_TV_EPG;
     }
 
     public override bool Init()

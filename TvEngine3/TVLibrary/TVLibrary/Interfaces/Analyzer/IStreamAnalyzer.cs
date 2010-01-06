@@ -27,8 +27,8 @@ namespace TvLibrary.Interfaces.Analyzer
   /// Interface to the PMT callback 
   /// </summary>
   [ComVisible(true), ComImport,
-  Guid("37A1C1E3-4760-49fe-AB59-6688ADA54923"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("37A1C1E3-4760-49fe-AB59-6688ADA54923"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IPMTCallback
   {
     /// <summary>
@@ -37,14 +37,14 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int OnPMTReceived(int pmtPid);
-  };
+  } ;
 
   /// <summary>
   /// Interface for h/w pid filtering 
   /// </summary>
   [ComVisible(true), ComImport,
-  Guid("1F4566CD-61A1-4bf9-9544-9D4C4D120DB6"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("1F4566CD-61A1-4bf9-9544-9D4C4D120DB6"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IHardwarePidFiltering
   {
     /// <summary>
@@ -55,5 +55,5 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int FilterPids(short count, IntPtr pids);
-  };
+  } ;
 }

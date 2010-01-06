@@ -74,14 +74,10 @@ namespace MediaPortal.Configuration.Sections
                                 };
 
     public MovieViews()
-      : this("Video Views")
-    {
-    }
+      : this("Video Views") {}
 
     public MovieViews(string name)
-      : base(name)
-    {
-    }
+      : base(name) {}
 
     public override void LoadSettings()
     {

@@ -34,7 +34,7 @@ using MediaPortal.Music.Database;
 using MediaPortal.Profile;
 using MediaPortal.Services;
 using MediaPortal.Util;
-using Timer=System.Timers.Timer;
+using Timer = System.Timers.Timer;
 
 namespace MediaPortal.MusicShareWatcher
 {
@@ -328,7 +328,7 @@ namespace MediaPortal.MusicShareWatcher
     private int LoadShares()
     {
       Settings xmlreader = new MPSettings();
-      
+
       for (int i = 0; i < VirtualDirectory.MaxSharesCount; i++)
       {
         string strSharePath = String.Format("sharepath{0}", i);

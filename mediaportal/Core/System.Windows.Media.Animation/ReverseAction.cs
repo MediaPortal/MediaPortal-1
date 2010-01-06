@@ -29,9 +29,7 @@ namespace System.Windows.Media.Animation
   {
     #region Constructors
 
-    public ReverseAction()
-    {
-    }
+    public ReverseAction() {}
 
     #endregion Constructors
   }

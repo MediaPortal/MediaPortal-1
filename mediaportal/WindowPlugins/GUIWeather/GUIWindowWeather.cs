@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
@@ -144,7 +144,7 @@ namespace MediaPortal.GUI.Weather
     #region variables
 
     private const int NUM_DAYS = 5;
-    private const char DEGREE_CHARACTER = (char) 176; //the degree 'o' character
+    private const char DEGREE_CHARACTER = (char)176; //the degree 'o' character
     private const string PARTNER_ID = "1004124588"; //weather.com partner id
     private const string PARTNER_KEY = "079f24145f208494"; //weather.com partner key
 
@@ -206,7 +206,7 @@ namespace MediaPortal.GUI.Weather
         _forecast[i].Low = string.Empty;
       }
 
-      GetID = (int) Window.WINDOW_WEATHER;
+      GetID = (int)Window.WINDOW_WEATHER;
       _downloadLock = new object();
     }
 
@@ -296,7 +296,7 @@ namespace MediaPortal.GUI.Weather
         {
           if (_listLocations.Count > 0)
           {
-            _locationCode = ((LocationInfo) _listLocations[0]).CityCode;
+            _locationCode = ((LocationInfo)_listLocations[0]).CityCode;
           }
         }
       }
@@ -308,22 +308,19 @@ namespace MediaPortal.GUI.Weather
       {
         xmlwriter.SetValue("weather", "location", _locationCode);
         xmlwriter.SetValue("weather", "temperature", _temperatureFarenheit);
-        xmlwriter.SetValue("weather", "speed", (int) _currentWindUnit);
+        xmlwriter.SetValue("weather", "speed", (int)_currentWindUnit);
       }
     }
 
     #endregion
 
     #region Properties
-        
-    public bool IsRefreshing 
+
+    public bool IsRefreshing
     {
       get { return _workerActive; }
       [MethodImpl(MethodImplOptions.Synchronized)]
-      private set
-      {
-        _workerActive = value;
-      }
+      private set { _workerActive = value; }
     }
 
     #endregion
@@ -387,7 +384,7 @@ namespace MediaPortal.GUI.Weather
 
       //do image id to control stuff so we can use them later
       //do image id to control stuff so we can use them later
-      _nowImage = (GUIImage) GetControl((int) Controls.CONTROL_IMAGENOWICON);
+      _nowImage = (GUIImage)GetControl((int)Controls.CONTROL_IMAGENOWICON);
       RefreshNewMode();
 
       int i = 0;
@@ -417,7 +414,7 @@ namespace MediaPortal.GUI.Weather
       // Init Daylight clock _geochronGenerator
       _geochronGenerator = new Geochron(GUIGraphicsContext.Skin + @"\Media");
       int width, height;
-      GUIImage clockImage = (GUIImage) GetControl((int) Controls.CONTROL_IMAGE_SUNCLOCK);
+      GUIImage clockImage = (GUIImage)GetControl((int)Controls.CONTROL_IMAGE_SUNCLOCK);
       _geochronGenerator.getWidthHeight(out width, out height);
       clockImage.SetMemoryImageSize(width, height);
       clockImage.FileName = "[weatherImage]";
@@ -445,28 +442,28 @@ namespace MediaPortal.GUI.Weather
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
             int iControl = message.SenderControlId;
-            if (iControl == (int) Controls.CONTROL_BTNREFRESH)
+            if (iControl == (int)Controls.CONTROL_BTNREFRESH)
             {
               if (CityAvailable())
               {
                 OnRefresh();
               }
             }
-            if (iControl == (int) Controls.CONTROL_BTNVIEW)
+            if (iControl == (int)Controls.CONTROL_BTNVIEW)
             {
               if (CityAvailable())
               {
                 OnChangeView();
               }
             }
-            if (iControl == (int) Controls.CONTROL_LOCATIONSELECT)
+            if (iControl == (int)Controls.CONTROL_LOCATIONSELECT)
             {
               if (CityAvailable())
               {
                 OnSelectLocation();
               }
             }
-            if (iControl == (int) Controls.CONTROL_BTNSWITCH)
+            if (iControl == (int)Controls.CONTROL_BTNSWITCH)
             {
               OnSwitchMode();
             }
@@ -483,7 +480,7 @@ namespace MediaPortal.GUI.Weather
         return true;
       }
 
-      GUIDialogOK dialogOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK dialogOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       if (dialogOK != null)
       {
         dialogOK.Reset();
@@ -509,7 +506,7 @@ namespace MediaPortal.GUI.Weather
           break;
         case Mode.DetailImages:
           _currentMode = Mode.GeoClock;
-          _lastTimeSunClockRendered = 0;          
+          _lastTimeSunClockRendered = 0;
           break;
         case Mode.GeoClock:
           _currentMode = Mode.Weather;
@@ -568,7 +565,8 @@ namespace MediaPortal.GUI.Weather
 
     private bool GetKeyboard(ref string strLine)
     {
-      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+      VirtualKeyboard keyboard =
+        (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
       if (null == keyboard) return false;
       keyboard.IsSearchKeyboard = true;
       keyboard.Reset();
@@ -605,11 +603,12 @@ namespace MediaPortal.GUI.Weather
           return;
         }
 
-        GUIDialogMenu dialogCitySelect = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        GUIDialogMenu dialogCitySelect =
+          (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
         if (dialogCitySelect != null)
         {
           dialogCitySelect.Reset();
-          dialogCitySelect.SetHeading(8);//my weather
+          dialogCitySelect.SetHeading(8); //my weather
           foreach (WeatherChannel.City _city in cities)
           {
             dialogCitySelect.Add(_city.Name + " (" + _city.Id + ")");
@@ -670,7 +669,7 @@ namespace MediaPortal.GUI.Weather
       // How many URLs do we have?
       int enumValues = Enum.GetValues(typeof (ImageView)).Length;
       // position on current Enum member
-      int enumIndex = (int) _imageView;
+      int enumIndex = (int)_imageView;
       for (int i = 0; i < enumValues; i++)
       {
         // try the next ImageView
@@ -683,16 +682,14 @@ namespace MediaPortal.GUI.Weather
 
         try
         {
-          ImageView checkMember = (ImageView) Enum.ToObject(typeof (ImageView), enumIndex);
+          ImageView checkMember = (ImageView)Enum.ToObject(typeof (ImageView), enumIndex);
           if (ViewTypeHasUrl(checkMember))
           {
             _imageView = checkMember;
             return;
           }
         }
-        catch (ArgumentException)
-        {
-        }
+        catch (ArgumentException) {}
       }
     }
 
@@ -814,7 +811,7 @@ namespace MediaPortal.GUI.Weather
 
     private void updateSunClock()
     {
-      GUIImage clockImage = (GUIImage) GetControl((int) Controls.CONTROL_IMAGE_SUNCLOCK);
+      GUIImage clockImage = (GUIImage)GetControl((int)Controls.CONTROL_IMAGE_SUNCLOCK);
       lock (clockImage)
       {
         Bitmap bitmap;
@@ -824,19 +821,19 @@ namespace MediaPortal.GUI.Weather
         _geochronGenerator.update(ref bitmap, DateTime.UtcNow);
 
         clockImage.UnLockMemoryImageTexture();
-     
-        
+
+
         clockImage.IsVisible = true;
       }
     }
 
     private void SetGeoClockControls()
     {
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BTNSWITCH, GUILocalizeStrings.Get(717));
-      GUIControl.HideControl(GetID, (int) Controls.CONTROL_BTNVIEW);
-      GUIControl.HideControl(GetID, (int) Controls.CONTROL_LOCATIONSELECT);
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSWITCH, GUILocalizeStrings.Get(717));
+      GUIControl.HideControl(GetID, (int)Controls.CONTROL_BTNVIEW);
+      GUIControl.HideControl(GetID, (int)Controls.CONTROL_LOCATIONSELECT);
 
-      for (int i = (int) Controls.CONTROL_IMAGE_SAT; i < (int) Controls.CONTROL_IMAGE_SAT_END; ++i)
+      for (int i = (int)Controls.CONTROL_IMAGE_SAT; i < (int)Controls.CONTROL_IMAGE_SAT_END; ++i)
       {
         GUIControl.HideControl(GetID, i);
       }
@@ -845,46 +842,46 @@ namespace MediaPortal.GUI.Weather
         GUIControl.HideControl(GetID, i);
       }
 
-      GUIControl.ShowControl(GetID, (int) Controls.CONTROL_IMAGE_SUNCLOCK);
+      GUIControl.ShowControl(GetID, (int)Controls.CONTROL_IMAGE_SUNCLOCK);
     }
 
     private void SetDetailImagesModeControls()
     {
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BTNSWITCH, GUILocalizeStrings.Get(19100));
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSWITCH, GUILocalizeStrings.Get(19100));
 
       for (int i = 10; i < 900; ++i)
       {
         GUIControl.HideControl(GetID, i);
       }
-      GUIControl.HideControl(GetID, (int) Controls.CONTROL_IMAGE_SUNCLOCK);
+      GUIControl.HideControl(GetID, (int)Controls.CONTROL_IMAGE_SUNCLOCK);
 
-      for (int i = (int) Controls.CONTROL_IMAGE_SAT; i < (int) Controls.CONTROL_IMAGE_SAT_END; ++i)
+      for (int i = (int)Controls.CONTROL_IMAGE_SAT; i < (int)Controls.CONTROL_IMAGE_SAT_END; ++i)
       {
         GUIControl.ShowControl(GetID, i);
       }
 
-      GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BTNVIEW);
-      GUIControl.ShowControl(GetID, (int) Controls.CONTROL_LOCATIONSELECT);
+      GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BTNVIEW);
+      GUIControl.ShowControl(GetID, (int)Controls.CONTROL_LOCATIONSELECT);
 
       switch (_imageView)
       {
         case ImageView.Satellite:
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(737));
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(737));
           break;
         case ImageView.Temperature:
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(738));
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(738));
           break;
         case ImageView.UVIndex:
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(739));
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(739));
           break;
         case ImageView.Winds:
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(740));
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(740));
           break;
         case ImageView.Humidity:
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(741));
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(741));
           break;
         case ImageView.Precipitation:
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(742));
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(742));
           break;
       }
     }
@@ -895,21 +892,21 @@ namespace MediaPortal.GUI.Weather
       {
         GUIControl.ShowControl(GetID, i);
       }
-      GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BTNVIEW);
-      GUIControl.ShowControl(GetID, (int) Controls.CONTROL_LOCATIONSELECT);
+      GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BTNVIEW);
+      GUIControl.ShowControl(GetID, (int)Controls.CONTROL_LOCATIONSELECT);
 
 
-      for (int i = (int) Controls.CONTROL_IMAGE_SAT; i < (int) Controls.CONTROL_IMAGE_SAT_END; ++i)
+      for (int i = (int)Controls.CONTROL_IMAGE_SAT; i < (int)Controls.CONTROL_IMAGE_SAT_END; ++i)
       {
         GUIControl.HideControl(GetID, i);
       }
-      GUIControl.HideControl(GetID, (int) Controls.CONTROL_IMAGE_SUNCLOCK);
+      GUIControl.HideControl(GetID, (int)Controls.CONTROL_IMAGE_SUNCLOCK);
 
 
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BTNSWITCH, GUILocalizeStrings.Get(750));
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BTNREFRESH, GUILocalizeStrings.Get(184)); //Refresh
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELLOCATION, _nowLabelLocation);
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELUPDATED, _nowLabelUpdateTime);
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSWITCH, GUILocalizeStrings.Get(750));
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNREFRESH, GUILocalizeStrings.Get(184)); //Refresh
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELLOCATION, _nowLabelLocation);
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELUPDATED, _nowLabelUpdateTime);
 
       //urgh, remove, create then add image each refresh to update nicely
       //Remove(_nowImage.GetID);
@@ -921,40 +918,40 @@ namespace MediaPortal.GUI.Weather
       _nowImage.ColourDiffuse = 0xffffffff;
       _nowImage.SetFileName(_nowIcon);
 
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELNOWCOND, _nowLabelCondition);
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELNOWTEMP, _nowLabelTemp);
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELNOWFEEL, _nowLabelFeelLike);
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELNOWUVID, _nowLabelUVId);
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELNOWWIND, _nowLabelWind);
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELNOWDEWP, _nowLabelDewPoint);
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTORL_LABELNOWHUMI, _nowLabelHumidity);
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELNOWCOND, _nowLabelCondition);
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELNOWTEMP, _nowLabelTemp);
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELNOWFEEL, _nowLabelFeelLike);
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELNOWUVID, _nowLabelUVId);
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELNOWWIND, _nowLabelWind);
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELNOWDEWP, _nowLabelDewPoint);
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTORL_LABELNOWHUMI, _nowLabelHumidity);
 
       //static labels
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_STATICTEMP, GUILocalizeStrings.Get(401)); //Temperature
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_STATICFEEL, GUILocalizeStrings.Get(402)); //Feels Like
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_STATICUVID, GUILocalizeStrings.Get(403)); //UV Index
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_STATICWIND, GUILocalizeStrings.Get(404)); //Wind
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_STATICDEWP, GUILocalizeStrings.Get(405)); //Dew Point
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_STATICHUMI, GUILocalizeStrings.Get(406)); //Humidity
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STATICTEMP, GUILocalizeStrings.Get(401)); //Temperature
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STATICFEEL, GUILocalizeStrings.Get(402)); //Feels Like
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STATICUVID, GUILocalizeStrings.Get(403)); //UV Index
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STATICWIND, GUILocalizeStrings.Get(404)); //Wind
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STATICDEWP, GUILocalizeStrings.Get(405)); //Dew Point
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STATICHUMI, GUILocalizeStrings.Get(406)); //Humidity
 
       if (_dayNum == -1 || _dayNum == -2)
       {
-        GUIControl.HideControl(GetID, (int) Controls.CONTROL_STATICSUNR);
-        GUIControl.HideControl(GetID, (int) Controls.CONTROL_STATICSUNS);
-        GUIControl.HideControl(GetID, (int) Controls.CONTROL_LABELSUNR);
-        GUIControl.HideControl(GetID, (int) Controls.CONTROL_LABELSUNS);
+        GUIControl.HideControl(GetID, (int)Controls.CONTROL_STATICSUNR);
+        GUIControl.HideControl(GetID, (int)Controls.CONTROL_STATICSUNS);
+        GUIControl.HideControl(GetID, (int)Controls.CONTROL_LABELSUNR);
+        GUIControl.HideControl(GetID, (int)Controls.CONTROL_LABELSUNS);
         for (int i = 0; i < NUM_DAYS; i++)
         {
           try
           {
-            GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELD0DAY + (i*10), _forecast[i].Day);
-            GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELD0HI + (i*10), _forecast[i].High);
-            GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELD0LOW + (i*10), _forecast[i].Low);
-            GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELD0GEN + (i*10), _forecast[i].Overview);
+            GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELD0DAY + (i * 10), _forecast[i].Day);
+            GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELD0HI + (i * 10), _forecast[i].High);
+            GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELD0LOW + (i * 10), _forecast[i].Low);
+            GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELD0GEN + (i * 10), _forecast[i].Overview);
 
             //Seems a bit messy, but works. Remove, Create and then Add the image to update nicely
             //Remove(_forecast[i].m_pImage.GetID);
-            GUIImage image = (GUIImage) GetControl((int) Controls.CONTROL_IMAGED0IMG + (i*10));
+            GUIImage image = (GUIImage)GetControl((int)Controls.CONTROL_IMAGED0IMG + (i * 10));
             image.ColourDiffuse = 0xffffffff;
             if (GUIGraphicsContext.SkinSize.Height >= 720)
               image.SetFileName(_forecast[i].iconImageNameHigh);
@@ -963,7 +960,8 @@ namespace MediaPortal.GUI.Weather
           }
           catch (NullReferenceException)
           {
-            Log.Warn("GUIWindowWeather: Error assigning controls for day {0}/{1} - your skin might be outdated!", i, NUM_DAYS);
+            Log.Warn("GUIWindowWeather: Error assigning controls for day {0}/{1} - your skin might be outdated!", i,
+                     NUM_DAYS);
           }
         }
       }
@@ -971,46 +969,46 @@ namespace MediaPortal.GUI.Weather
       {
         for (int i = 0; i < NUM_DAYS; i++)
         {
-          GUIControl.HideControl(GetID, (int) Controls.CONTROL_LABELD0DAY + (i*10));
-          GUIControl.HideControl(GetID, (int) Controls.CONTROL_LABELD0HI + (i*10));
-          GUIControl.HideControl(GetID, (int) Controls.CONTROL_LABELD0LOW + (i*10));
-          GUIControl.HideControl(GetID, (int) Controls.CONTROL_LABELD0GEN + (i*10));
-          GUIControl.HideControl(GetID, (int) Controls.CONTROL_IMAGED0IMG + (i*10));
+          GUIControl.HideControl(GetID, (int)Controls.CONTROL_LABELD0DAY + (i * 10));
+          GUIControl.HideControl(GetID, (int)Controls.CONTROL_LABELD0HI + (i * 10));
+          GUIControl.HideControl(GetID, (int)Controls.CONTROL_LABELD0LOW + (i * 10));
+          GUIControl.HideControl(GetID, (int)Controls.CONTROL_LABELD0GEN + (i * 10));
+          GUIControl.HideControl(GetID, (int)Controls.CONTROL_IMAGED0IMG + (i * 10));
         }
         int currentDayNum = _dayNum;
 
-        GUIControl.HideControl(GetID, (int) Controls.CONTROL_STATICUVID);
-        GUIControl.HideControl(GetID, (int) Controls.CONTROL_LABELNOWUVID);
+        GUIControl.HideControl(GetID, (int)Controls.CONTROL_STATICUVID);
+        GUIControl.HideControl(GetID, (int)Controls.CONTROL_LABELNOWUVID);
 
-        GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_STATICSUNR, GUILocalizeStrings.Get(744));
-        GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_STATICSUNS, GUILocalizeStrings.Get(745));
-        GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_STATICTEMP, GUILocalizeStrings.Get(746)); //High
-        GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_STATICFEEL, GUILocalizeStrings.Get(747)); //Low
-        GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_STATICDEWP, GUILocalizeStrings.Get(748));
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STATICSUNR, GUILocalizeStrings.Get(744));
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STATICSUNS, GUILocalizeStrings.Get(745));
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STATICTEMP, GUILocalizeStrings.Get(746)); //High
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STATICFEEL, GUILocalizeStrings.Get(747)); //Low
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STATICDEWP, GUILocalizeStrings.Get(748));
 
-        GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELSUNR, _forecast[_dayNum].SunRise);
-        GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELSUNS, _forecast[_dayNum].SunSet);
-        GUIControl.SetControlLabel(GetID, (int) Controls.CONTORL_LABELNOWHUMI, _forecast[_dayNum].Humidity);
-        GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELNOWTEMP, _forecast[_dayNum].High);
-        GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELNOWFEEL, _forecast[_dayNum].Low);
-        GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELNOWCOND, _forecast[_dayNum].Overview);
-        GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELNOWDEWP, _forecast[_dayNum].Precipitation);
-        GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELNOWWIND, _forecast[_dayNum].Wind);
-        GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_LABELUPDATED, _forcastLabelUpdated);
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELSUNR, _forecast[_dayNum].SunRise);
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELSUNS, _forecast[_dayNum].SunSet);
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTORL_LABELNOWHUMI, _forecast[_dayNum].Humidity);
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELNOWTEMP, _forecast[_dayNum].High);
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELNOWFEEL, _forecast[_dayNum].Low);
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELNOWCOND, _forecast[_dayNum].Overview);
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELNOWDEWP, _forecast[_dayNum].Precipitation);
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELNOWWIND, _forecast[_dayNum].Wind);
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELUPDATED, _forcastLabelUpdated);
 
-        GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BTNVIEW);
-        GUIControl.ShowControl(GetID, (int) Controls.CONTROL_LOCATIONSELECT);
+        GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BTNVIEW);
+        GUIControl.ShowControl(GetID, (int)Controls.CONTROL_LOCATIONSELECT);
 
         _nowImage.SetFileName(_forecast[currentDayNum].iconImageNameHigh);
       }
 
       if (_selectedDayName == "All")
       {
-        GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(743));
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, GUILocalizeStrings.Get(743));
       }
       else
       {
-        GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BTNVIEW, _selectedDayName);
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, _selectedDayName);
       }
     }
 
@@ -1046,7 +1044,7 @@ namespace MediaPortal.GUI.Weather
           if ((!dlRes || !ldRes) && !autoUpdate) //this will probably crash on an autoupdate as well, but not tested
           {
             // show failed dialog...
-            GUIDialogOK errorDialog = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+            GUIDialogOK errorDialog = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
             errorDialog.SetHeading(412); //"Unable to get weather data"
             errorDialog.SetLine(1, _nowLabelLocation);
             errorDialog.SetLine(2, string.Empty);
@@ -1089,7 +1087,10 @@ namespace MediaPortal.GUI.Weather
       //we'll convert the speed later depending on what thats set to
       c_units = (c_units == 'F') ? 's' : 'm';
 
-      string url = String.Format("http://xoap.weather.com/weather/local/{0}?cc=*&dayf=5&link=xoap&prod=xoap&par={1}&key={2}&unit={3}", _locationCode, PARTNER_ID, PARTNER_KEY, c_units);
+      string url =
+        String.Format(
+          "http://xoap.weather.com/weather/local/{0}?cc=*&dayf=5&link=xoap&prod=xoap&par={1}&key={2}&unit={3}",
+          _locationCode, PARTNER_ID, PARTNER_KEY, c_units);
 
       using (WebClient client = new WebClient())
       {
@@ -1110,7 +1111,7 @@ namespace MediaPortal.GUI.Weather
     #endregion
 
     #region Background updaters
-    
+
     private void BackgroundUpdate(bool isAuto)
     {
       Thread updateThread = new Thread(new ParameterizedThreadStart(DownloadWorker));
@@ -1128,7 +1129,7 @@ namespace MediaPortal.GUI.Weather
     [MethodImpl(MethodImplOptions.Synchronized)]
     private void DownloadWorker(object data)
     {
-      RefreshMe((bool) data); //do an autoUpdate refresh
+      RefreshMe((bool)data); //do an autoUpdate refresh
       IsRefreshing = false;
     }
 
@@ -1215,7 +1216,7 @@ namespace MediaPortal.GUI.Weather
       {
         string szCheckError;
 
-        GUIDialogOK dialogOk = (GUIDialogOK) GUIWindowManager.GetWindow(2002);
+        GUIDialogOK dialogOk = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
 
         GetString(xmlElement, "err", out szCheckError, "Unknown Error"); //grab the error string
 
@@ -1352,7 +1353,7 @@ namespace MediaPortal.GUI.Weather
               _forecast[i].SunSet = String.Format("{0}", tempString);
             }
             XmlNode pDayTimeElement = pOneDayElement.SelectSingleNode("part");
-              //grab the first day/night part (should be day)
+            //grab the first day/night part (should be day)
             if (null != pDayTimeElement && i == 0)
             {
               GetString(pDayTimeElement, "t", out tempString, string.Empty);
@@ -1402,7 +1403,7 @@ namespace MediaPortal.GUI.Weather
     {
       //search chars 10 to 15 for a space
       //if we find one, replace it with a newline
-      for (int i = splitStart; i < splitEnd && i < (int) lineString.Length; i++)
+      for (int i = splitStart; i < splitEnd && i < (int)lineString.Length; i++)
       {
         if (lineString[i] == ' ')
         {
@@ -1445,9 +1446,7 @@ namespace MediaPortal.GUI.Weather
           {
             intValue = Int32.Parse(node.InnerText);
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
     }
@@ -1461,7 +1460,7 @@ namespace MediaPortal.GUI.Weather
       // only calculate in the metric system
       if (_temperatureFarenheit[0] == 'F')
       {
-        curSpeed = Convert.ToInt32(curSpeed/1.6093);
+        curSpeed = Convert.ToInt32(curSpeed / 1.6093);
       }
 
       switch (_currentWindUnit)
@@ -1470,16 +1469,16 @@ namespace MediaPortal.GUI.Weather
           return curSpeed;
 
         case WindUnit.mph:
-          return (int) (curSpeed*1.6093);
+          return (int)(curSpeed * 1.6093);
 
         case WindUnit.ms:
-          return (int) (curSpeed*(1000.0/3600.0) + 0.5);
+          return (int)(curSpeed * (1000.0 / 3600.0) + 0.5);
 
         case WindUnit.Kn:
-          return (int) (curSpeed/1.852);
+          return (int)(curSpeed / 1.852);
 
         case WindUnit.Bft:
-          return (int) ((curSpeed + 10)/6);
+          return (int)((curSpeed + 10) / 6);
       }
 
       return curSpeed;

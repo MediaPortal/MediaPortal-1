@@ -36,7 +36,7 @@ namespace SetupTv.Sections
     private static bool _userConfirmedAutoReorder = false;
     private SortOrder _lastSortOrder = SortOrder.None;
 
-    private ChannelGroup _channelGroup; 
+    private ChannelGroup _channelGroup;
 
     public ChannelsInGroupControl()
     {
@@ -50,25 +50,13 @@ namespace SetupTv.Sections
 
     public ChannelGroup Group
     {
-      get
-      {
-        return _channelGroup;
-      }
-      set
-      {
-        _channelGroup = value;
-      }
+      get { return _channelGroup; }
+      set { _channelGroup = value; }
     }
 
-    private void listView1_SelectedIndexChanged(object sender, EventArgs e)
-    {
+    private void listView1_SelectedIndexChanged(object sender, EventArgs e) {}
 
-    }
-
-    private void ChannelsInGroupControl_Load(object sender, EventArgs e)
-    {
-
-    }
+    private void ChannelsInGroupControl_Load(object sender, EventArgs e) {}
 
     public void OnActivated()
     {
@@ -84,7 +72,7 @@ namespace SetupTv.Sections
 
         if (Group != null)
         {
-          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(GroupMap));
+          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (GroupMap));
 
           sb.AddConstraint(Operator.Equals, "idGroup", Group.IdGroup);
           sb.AddOrderByField(true, "sortOrder");
@@ -194,7 +182,7 @@ namespace SetupTv.Sections
         layer.AddChannelToGroup(channel, _channelGroup);
 
         //get the new group map and set the listitem tag
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(GroupMap));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (GroupMap));
 
         sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
         sb.AddConstraint(Operator.Equals, "idGroup", _channelGroup.IdGroup);
@@ -273,7 +261,8 @@ namespace SetupTv.Sections
     {
       if (listView1.SelectedItems.Count > 0)
       {
-        string holder = String.Format("Are you sure you want to delete these {0:d} channels?", listView1.SelectedItems.Count);
+        string holder = String.Format("Are you sure you want to delete these {0:d} channels?",
+                                      listView1.SelectedItems.Count);
 
         if (MessageBox.Show(holder, "", MessageBoxButtons.YesNo) == DialogResult.No)
         {
@@ -285,7 +274,8 @@ namespace SetupTv.Sections
       if (indexes.Count == 0)
         return;
 
-      NotifyForm dlg = new NotifyForm("Deleting selected tv channels...", "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Deleting selected tv channels...",
+                                      "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
       for (int i = indexes.Count - 1; i >= 0; i--)
@@ -400,7 +390,8 @@ namespace SetupTv.Sections
     {
       if (listView1.SelectedItems.Count > 0)
       {
-        string holder = String.Format("Are you sure you want to remove these {0:d} channels?", listView1.SelectedItems.Count);
+        string holder = String.Format("Are you sure you want to remove these {0:d} channels?",
+                                      listView1.SelectedItems.Count);
 
         if (MessageBox.Show(holder, "", MessageBoxButtons.YesNo) == DialogResult.No)
         {
@@ -411,7 +402,8 @@ namespace SetupTv.Sections
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
       if (indexes.Count == 0)
         return;
-      NotifyForm dlg = new NotifyForm("Removing tv channels from group...", "This can take some time\n\nPlease be patient...");
+      NotifyForm dlg = new NotifyForm("Removing tv channels from group...",
+                                      "This can take some time\n\nPlease be patient...");
       dlg.Show();
       dlg.WaitForDisplay();
       for (int i = indexes.Count - 1; i >= 0; i--)
@@ -435,8 +427,9 @@ namespace SetupTv.Sections
       {
         if (!_userConfirmedAutoReorder)
         {
-          if (MessageBox.Show("The current channel order will be overwritten after the sorting operation. Continue?", "Re-order channels?", MessageBoxButtons.YesNo)
-            == DialogResult.No)
+          if (MessageBox.Show("The current channel order will be overwritten after the sorting operation. Continue?",
+                              "Re-order channels?", MessageBoxButtons.YesNo)
+              == DialogResult.No)
           {
             return;
           }
@@ -460,7 +453,7 @@ namespace SetupTv.Sections
           buttonOther = mpButtonOrderByName;
           break;
       }
-      
+
       if (e.Column == lvwColumnSorter.SortColumn)
       {
         // Reverse the current sort direction for this column.

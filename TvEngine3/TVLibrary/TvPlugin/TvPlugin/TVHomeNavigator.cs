@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
@@ -22,6 +22,7 @@
  */
 
 #endregion
+
 #region Usings
 
 using System;
@@ -36,7 +37,6 @@ using MediaPortal.Profile;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
-
 
 #endregion
 
@@ -146,17 +146,18 @@ namespace TvPlugin
       {
         SetupDatabaseConnection();
         Log.Info("get channels from database");
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
         sb.AddConstraint(Operator.Equals, "isTv", 1);
         sb.AddOrderByField(true, "sortOrder");
         SqlStatement stmt = sb.GetStatement(true);
-        channels = ObjectFactory.GetCollection(typeof(Channel), stmt.Execute());
+        channels = ObjectFactory.GetCollection(typeof (Channel), stmt.Execute());
         Log.Info("found:{0} tv channels", channels.Count);
         TvNotifyManager.OnNotifiesChanged();
         m_groups.Clear();
 
         TvBusinessLayer layer = new TvBusinessLayer();
-        RadioChannelGroup allRadioChannelsGroup = layer.GetRadioChannelGroupByName(TvConstants.RadioGroupNames.AllChannels);
+        RadioChannelGroup allRadioChannelsGroup =
+          layer.GetRadioChannelGroupByName(TvConstants.RadioGroupNames.AllChannels);
         IList<Channel> radioChannels = layer.GetAllRadioChannels();
         if (radioChannels != null)
         {
@@ -171,7 +172,7 @@ namespace TvPlugin
         Log.Info("Done.");
 
         Log.Info("get all groups from database");
-        sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
+        sb = new SqlBuilder(StatementType.Select, typeof (ChannelGroup));
         sb.AddOrderByField(true, "groupName");
         stmt = sb.GetStatement(true);
         IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
@@ -289,16 +290,15 @@ namespace TvPlugin
         return (ChannelGroup)m_groups[m_currentgroup];
       }
     }
+
     /// <summary>
     /// Gets the index of currently active tv channel group.
     /// </summary>
     public int CurrentGroupIndex
     {
-      get
-      {
-        return m_currentgroup;
-      }
+      get { return m_currentgroup; }
     }
+
     /// <summary>
     /// Gets the list of tv channel groups.
     /// </summary>
@@ -460,7 +460,7 @@ namespace TvPlugin
     {
       Channel newChannel = null;
       //if current card is watching tv then use that channel
-      int id;      
+      int id;
       if (TVHome.Connected)
       {
         if (TVHome.Card.IsTimeShifting || TVHome.Card.IsRecording)
@@ -567,9 +567,7 @@ namespace TvPlugin
             }
           }
         }
-        catch
-        {
-        }
+        catch {}
 
         if (_channelList.Count == 0)
         {
@@ -991,9 +989,7 @@ namespace TvPlugin
             }
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
 
       if (m_currentChannel != null)
@@ -1017,7 +1013,7 @@ namespace TvPlugin
               xmlwriter.SetValue("mytv", "channel", m_currentChannel.DisplayName);
             }
             else
-            //the channel did not belong to the group, then pick the first channel avail in the group and set this as the last channel.
+              //the channel did not belong to the group, then pick the first channel avail in the group and set this as the last channel.
             {
               if (m_currentgroup > -1)
               {
@@ -1031,9 +1027,7 @@ namespace TvPlugin
             }
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
     }
 

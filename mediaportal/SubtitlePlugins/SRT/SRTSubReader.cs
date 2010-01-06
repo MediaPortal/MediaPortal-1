@@ -108,9 +108,7 @@ namespace MediaPortal.Subtitle
           return false;
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       return false;
     }
@@ -143,7 +141,7 @@ namespace MediaPortal.Subtitle
         Mil = Convert.ToInt32(HHMMSSmmm.Substring(6));
       }
 
-      Int32 SamiTime = (((H*3600) + (M*60) + S)*1000) + Mil;
+      Int32 SamiTime = (((H * 3600) + (M * 60) + S) * 1000) + Mil;
       return SamiTime;
     }
 

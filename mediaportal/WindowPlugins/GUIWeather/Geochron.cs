@@ -43,8 +43,8 @@ namespace MediaPortal.GUI.Weather
 {
   public class Geochron
   {
-    private const double DtoR = Math.PI/180;
-    private const double RtoD = 180/Math.PI;
+    private const double DtoR = Math.PI / 180;
+    private const double RtoD = 180 / Math.PI;
 
     private const double dayAltMin = 0; // Minimum solar altitude for daytime
     private const double nightAltMax = -9; // Maximum solar altitude for nighttime
@@ -71,7 +71,6 @@ namespace MediaPortal.GUI.Weather
       // Store the images
       day = new ImageHandler(dayImage);
       night = new ImageHandler(nightImage);
-
     }
 
     public void getWidthHeight(out int width, out int height)
@@ -104,15 +103,15 @@ namespace MediaPortal.GUI.Weather
       for (i_x = 0; i_x < this.n_x; i_x++)
       {
         // Calculate the longitude
-        double longitude = 180 - (i_x + 0.5)/this.n_x*360;
+        double longitude = 180 - (i_x + 0.5) / this.n_x * 360;
 
         // Calculate the solar hour angle
-        double HA = GST*360/24 - longitude - alpha;
+        double HA = GST * 360 / 24 - longitude - alpha;
 
         for (i_y = 0; i_y < this.n_y; i_y++)
         {
           // Calculate the latitude
-          double latitude = 90 - (i_y + 0.5)/this.n_y*180;
+          double latitude = 90 - (i_y + 0.5) / this.n_y * 180;
 
           // Calculate the altitude of the sun
           double alt = getAltitude(HA, delta, latitude, longitude);
@@ -130,12 +129,12 @@ namespace MediaPortal.GUI.Weather
           }
           else
           {
-            intFactor = (alt - nightAltMax)/(dayAltMin - nightAltMax);
+            intFactor = (alt - nightAltMax) / (dayAltMin - nightAltMax);
           }
 
           // Get the RGB pixels of the day and night images
-          int dayRGB = (int) this.day.getPixel(i_x, i_y);
-          int nightRGB = (int) this.night.getPixel(i_x, i_y);
+          int dayRGB = (int)this.day.getPixel(i_x, i_y);
+          int nightRGB = (int)this.night.getPixel(i_x, i_y);
 
           int dayR = dayRGB >> 16 & 0xFF;
           int dayG = dayRGB >> 8 & 0xFF;
@@ -146,9 +145,9 @@ namespace MediaPortal.GUI.Weather
           int nightB = nightRGB & 0xFF;
 
           // Calculate the interpolated value of the blended pixel
-          int blendedRGB = (int) (dayR*intFactor + nightR*(1 - intFactor)) << 16 |
-                           (int) (dayG*intFactor + nightG*(1 - intFactor)) << 8 |
-                           (int) (dayB*intFactor + nightB*(1 - intFactor));
+          int blendedRGB = (int)(dayR * intFactor + nightR * (1 - intFactor)) << 16 |
+                           (int)(dayG * intFactor + nightG * (1 - intFactor)) << 8 |
+                           (int)(dayB * intFactor + nightB * (1 - intFactor));
 
           blend.setPixel(i_x, i_y, blendedRGB);
         }
@@ -167,8 +166,8 @@ namespace MediaPortal.GUI.Weather
       int month = calendar.Month;
       int day = calendar.Day;
 
-      double D0 = 367*year - 7*(year + (month + 9)/12)/4 + 275*month/9 + day - 730531.5;
-      double D = D0 + getGreenwichMeanTime(calendar)/24;
+      double D0 = 367 * year - 7 * (year + (month + 9) / 12) / 4 + 275 * month / 9 + day - 730531.5;
+      double D = D0 + getGreenwichMeanTime(calendar) / 24;
 
       return D;
     }
@@ -180,7 +179,7 @@ namespace MediaPortal.GUI.Weather
       int minute = calendar.Minute;
       int second = calendar.Second;
 
-      double GMT = hour + minute/60 + second/3600;
+      double GMT = hour + minute / 60 + second / 3600;
       return GMT;
     }
 
@@ -191,8 +190,8 @@ namespace MediaPortal.GUI.Weather
       double D = getDaysSinceJ2000(calendar);
 
       // Calculate the GST
-      double T = D/36525;
-      double GST = (280.46061837 + 360.98564736629*D + 0.000388*T*T)*24/360;
+      double T = D / 36525;
+      double GST = (280.46061837 + 360.98564736629 * D + 0.000388 * T * T) * 24 / 360;
 
       // Phase it to within 24 hours
       while (GST < 0)
@@ -214,20 +213,20 @@ namespace MediaPortal.GUI.Weather
       double D = getDaysSinceJ2000(calendar);
 
       // Convert this into centuries
-      double T = D/36525;
+      double T = D / 36525;
 
       // Calculate the mean longitude and anomaly
-      double L = 279.697 + 36000.769*T;
-      double M = 358.476 + 35999.050*T;
+      double L = 279.697 + 36000.769 * T;
+      double M = 358.476 + 35999.050 * T;
 
       // Calculate the true longitude
-      double lambda = L + (1.919 - 0.005*T)*Math.Sin(M*DtoR) + 0.020*Math.Sin(2*M*DtoR);
+      double lambda = L + (1.919 - 0.005 * T) * Math.Sin(M * DtoR) + 0.020 * Math.Sin(2 * M * DtoR);
 
       // Calculate the obliquity
-      double epsilon = 23.452 - 0.013*T;
+      double epsilon = 23.452 - 0.013 * T;
 
       // Calculate the right ascension, in degrees
-      double alpha = Math.Atan2(Math.Sin(lambda*DtoR)*Math.Cos(epsilon*DtoR), Math.Cos(lambda*DtoR))*RtoD;
+      double alpha = Math.Atan2(Math.Sin(lambda * DtoR) * Math.Cos(epsilon * DtoR), Math.Cos(lambda * DtoR)) * RtoD;
 
       return alpha;
     }
@@ -236,16 +235,16 @@ namespace MediaPortal.GUI.Weather
     private double getSolarDeclination(DateTime calendar)
     {
       // Calculate the number of days from the epoch J2000.0
-      double D = getDaysSinceJ2000(calendar) + getGreenwichMeanTime(calendar)/24;
+      double D = getDaysSinceJ2000(calendar) + getGreenwichMeanTime(calendar) / 24;
 
       // Convert this into centuries
-      double T = D/36525;
+      double T = D / 36525;
 
       // Calculate the obliquity
-      double epsilon = 23.452 - 0.013*T;
+      double epsilon = 23.452 - 0.013 * T;
 
       // Calculate the declination, in degrees
-      double delta = Math.Asin(Math.Sin(getSolarRightAscension(calendar)*DtoR)*Math.Sin(epsilon*DtoR))*RtoD;
+      double delta = Math.Asin(Math.Sin(getSolarRightAscension(calendar) * DtoR) * Math.Sin(epsilon * DtoR)) * RtoD;
 
       return delta;
     }
@@ -253,8 +252,8 @@ namespace MediaPortal.GUI.Weather
     private double getAltitude(double HA, double delta, double latitude, double longitude)
     {
       // Calculate the altitude, in degrees
-      double alt = Math.Asin(Math.Sin(latitude*DtoR)*Math.Sin(delta*DtoR) +
-                             Math.Cos(latitude*DtoR)*Math.Cos(delta*DtoR)*Math.Cos(HA*DtoR))*RtoD;
+      double alt = Math.Asin(Math.Sin(latitude * DtoR) * Math.Sin(delta * DtoR) +
+                             Math.Cos(latitude * DtoR) * Math.Cos(delta * DtoR) * Math.Cos(HA * DtoR)) * RtoD;
 
       return alt;
     }

@@ -47,9 +47,7 @@ namespace ProcessPlugins.CallerId
     private const string SUCCESS_LOADED_AREACODE_XML = "xml file loaded";
     private Hashtable areaCodeLookup;
 
-    public CallerIdPlugin()
-    {
-    }
+    public CallerIdPlugin() {}
 
     private Hashtable AreaCodeToLocationMap
     {
@@ -104,14 +102,14 @@ namespace ProcessPlugins.CallerId
         if ((path.StartsWith("http")))
           // based on http://cephas.net/blog/2003/10/25/failsafe_amazon_image_using_java_c_coldfusion.html
         {
-          HttpWebRequest webreq = (HttpWebRequest) WebRequest.Create(path);
+          HttpWebRequest webreq = (HttpWebRequest)WebRequest.Create(path);
           try
           {
             // Use the current user in case an NTLM Proxy or similar is used.
             // request.Proxy = WebProxy.GetDefaultProxy();
             webreq.Proxy.Credentials = CredentialCache.DefaultCredentials;
           }
-          catch (Exception) { }
+          catch (Exception) {}
           WebResponse response = webreq.GetResponse();
           if (response.ContentType.StartsWith("image"))
           {
@@ -124,9 +122,7 @@ namespace ProcessPlugins.CallerId
           result = File.Exists(path);
         }
       }
-      catch
-      {
-      }
+      catch {}
       return result;
     }
 
@@ -134,8 +130,8 @@ namespace ProcessPlugins.CallerId
 
     public void Start()
     {
-      string location = (string) AreaCodeToLocationMap["206"];
-        //for improved perf, preload the hashtable for areacodes xml file now
+      string location = (string)AreaCodeToLocationMap["206"];
+      //for improved perf, preload the hashtable for areacodes xml file now
       Thread workerThread = new Thread(new ThreadStart(YACListen));
       workerThread.IsBackground = true;
       workerThread.Name = "YAC Listener";
@@ -315,7 +311,7 @@ namespace ProcessPlugins.CallerId
                           // assume that the 11 digits include a bogus first digit (that it's really a 3+7 US-style number)
                           numericOnlyPhoneNumber = numericOnlyPhoneNumber.Substring(1, 10);
                           goto case 10;
-                            // msdn says "Unlike the C++ switch statement, C# does not support an explicit fall through from one case label to another. If you want, you can use goto a switch-case, or goto default."
+                          // msdn says "Unlike the C++ switch statement, C# does not support an explicit fall through from one case label to another. If you want, you can use goto a switch-case, or goto default."
 
                         case 10: // default logic for original version
                           {
@@ -329,7 +325,7 @@ namespace ProcessPlugins.CallerId
                             else
                             {
                               // try to find a picture for the areacode's location (state, province, etc.)
-                              string location = (string) AreaCodeToLocationMap[targetareacodeStr];
+                              string location = (string)AreaCodeToLocationMap[targetareacodeStr];
 
                               if (location == null)
                               {
@@ -384,7 +380,7 @@ namespace ProcessPlugins.CallerId
           bodyStr = inboundRawYACData + " at " + currentTime.ToLower();
 
           targetPicturePath = String.Format(@"{0}\{1}.jpg", Thumbs.Yac, inboundRawYACData.Trim());
-            // a picture for the text message payload?
+          // a picture for the text message payload?
           if (HasImage(targetPicturePath))
           {
             imagepathStr = targetPicturePath;

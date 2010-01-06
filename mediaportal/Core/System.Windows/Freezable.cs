@@ -29,9 +29,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    protected Freezable()
-    {
-    }
+    protected Freezable() {}
 
     #endregion Constructors
 
@@ -137,12 +135,12 @@ namespace System.Windows
     {
       foreach (Delegate handler in oldValue.Changed.GetInvocationList())
       {
-        newValue.PropagateChangedHandlersCore((EventHandler) handler, true);
+        newValue.PropagateChangedHandlersCore((EventHandler)handler, true);
       }
 
       foreach (Delegate handler in newValue.Changed.GetInvocationList())
       {
-        oldValue.PropagateChangedHandlersCore((EventHandler) handler, false);
+        oldValue.PropagateChangedHandlersCore((EventHandler)handler, false);
       }
     }
 

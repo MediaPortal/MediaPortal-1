@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -63,15 +63,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.label2 = new MPLabel();
       this.txtActiveWindow = new MPTextBox();
       this.label1 = new MPLabel();
-      ((ISupportInitialize) (this.dataGrid1)).BeginInit();
+      ((ISupportInitialize)(this.dataGrid1)).BeginInit();
       this.panel1.SuspendLayout();
       this.SuspendLayout();
       // 
       // dataGrid1
       // 
-      this.dataGrid1.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                 | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.dataGrid1.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.dataGrid1.DataMember = "";
       this.dataGrid1.HeaderForeColor = SystemColors.ControlText;
       this.dataGrid1.Location = new Point(0, 0);
@@ -94,8 +94,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // txtStatus
       // 
-      this.txtStatus.Anchor = ((AnchorStyles) (((AnchorStyles.Bottom | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.txtStatus.Anchor = ((AnchorStyles)(((AnchorStyles.Bottom | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.txtStatus.BorderColor = Color.Empty;
       this.txtStatus.Location = new Point(96, 32);
       this.txtStatus.Name = "txtStatus";
@@ -105,7 +105,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // label2
       // 
-      this.label2.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Left)));
+      this.label2.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Left)));
       this.label2.Location = new Point(8, 32);
       this.label2.Name = "label2";
       this.label2.Size = new Size(80, 23);
@@ -115,8 +115,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // txtActiveWindow
       // 
-      this.txtActiveWindow.Anchor = ((AnchorStyles) (((AnchorStyles.Bottom | AnchorStyles.Left)
-                                                      | AnchorStyles.Right)));
+      this.txtActiveWindow.Anchor = ((AnchorStyles)(((AnchorStyles.Bottom | AnchorStyles.Left)
+                                                     | AnchorStyles.Right)));
       this.txtActiveWindow.BorderColor = Color.Empty;
       this.txtActiveWindow.Location = new Point(96, 8);
       this.txtActiveWindow.Name = "txtActiveWindow";
@@ -126,7 +126,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       // 
       // label1
       // 
-      this.label1.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Left)));
+      this.label1.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Left)));
       this.label1.Location = new Point(8, 8);
       this.label1.Name = "label1";
       this.label1.Size = new Size(80, 23);
@@ -144,7 +144,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.Text = "MiniDisplay - Property Browser";
       this.TopMost = true;
       this.Load += new EventHandler(this.PropertyBrowser_Load);
-      ((ISupportInitialize) (this.dataGrid1)).EndInit();
+      ((ISupportInitialize)(this.dataGrid1)).EndInit();
       this.panel1.ResumeLayout(false);
       this.panel1.PerformLayout();
       this.ResumeLayout(false);

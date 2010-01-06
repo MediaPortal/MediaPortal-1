@@ -46,8 +46,8 @@ namespace MediaPortal.Drawing
     public static Matrix AffineTransformation2D(double scaling, Point rotationCenter, double rotation, Point translation)
     {
       return
-        new Matrix(Microsoft.DirectX.Matrix.AffineTransformation2D((float) scaling, rotationCenter.ToVector2(),
-                                                                   (float) rotation, translation.ToVector2()));
+        new Matrix(Microsoft.DirectX.Matrix.AffineTransformation2D((float)scaling, rotationCenter.ToVector2(),
+                                                                   (float)rotation, translation.ToVector2()));
     }
 
     public override bool Equals(object compare)
@@ -72,7 +72,7 @@ namespace MediaPortal.Drawing
 
     public static Matrix Invert(ref double determinant, Matrix source)
     {
-      float innerDeterminant = (float) determinant;
+      float innerDeterminant = (float)determinant;
       Matrix matrix = new Matrix(Microsoft.DirectX.Matrix.Invert(ref innerDeterminant, source._matrix));
 
       determinant = innerDeterminant;
@@ -113,73 +113,73 @@ namespace MediaPortal.Drawing
     public static Matrix OrthoLH(double width, double height, double znearPlane, double zfarPlane)
     {
       return
-        new Matrix(Microsoft.DirectX.Matrix.OrthoLH((float) width, (float) height, (float) znearPlane, (float) zfarPlane));
+        new Matrix(Microsoft.DirectX.Matrix.OrthoLH((float)width, (float)height, (float)znearPlane, (float)zfarPlane));
     }
 
     public static Matrix OrthoOffCenterLH(double left, double right, double bottom, double top, double znearPlane,
                                           double zfarPlane)
     {
       return
-        new Matrix(Microsoft.DirectX.Matrix.OrthoOffCenterLH((float) left, (float) right, (float) bottom, (float) top,
-                                                             (float) znearPlane, (float) zfarPlane));
+        new Matrix(Microsoft.DirectX.Matrix.OrthoOffCenterLH((float)left, (float)right, (float)bottom, (float)top,
+                                                             (float)znearPlane, (float)zfarPlane));
     }
 
     public static Matrix OrthoOffCenterRH(double left, double right, double bottom, double top, double znearPlane,
                                           double zfarPlane)
     {
       return
-        new Matrix(Microsoft.DirectX.Matrix.OrthoOffCenterRH((float) left, (float) right, (float) bottom, (float) top,
-                                                             (float) znearPlane, (float) zfarPlane));
+        new Matrix(Microsoft.DirectX.Matrix.OrthoOffCenterRH((float)left, (float)right, (float)bottom, (float)top,
+                                                             (float)znearPlane, (float)zfarPlane));
     }
 
     public static Matrix OrthoRH(double width, double height, double znearPlane, double zfarPlane)
     {
       return
-        new Matrix(Microsoft.DirectX.Matrix.OrthoRH((float) width, (float) height, (float) znearPlane, (float) zfarPlane));
+        new Matrix(Microsoft.DirectX.Matrix.OrthoRH((float)width, (float)height, (float)znearPlane, (float)zfarPlane));
     }
 
     public static Matrix PerspectiveFovLH(float fieldOfViewY, float aspectRatio, float znearPlane, float zfarPlane)
     {
       return
-        new Matrix(Microsoft.DirectX.Matrix.PerspectiveFovLH((float) fieldOfViewY, (float) aspectRatio,
-                                                             (float) znearPlane, (float) zfarPlane));
+        new Matrix(Microsoft.DirectX.Matrix.PerspectiveFovLH((float)fieldOfViewY, (float)aspectRatio,
+                                                             (float)znearPlane, (float)zfarPlane));
     }
 
     public static Matrix PerspectiveFovRH(double fieldOfViewY, double aspectRatio, double znearPlane, double zfarPlane)
     {
       return
-        new Matrix(Microsoft.DirectX.Matrix.PerspectiveFovRH((float) fieldOfViewY, (float) aspectRatio,
-                                                             (float) znearPlane, (float) zfarPlane));
+        new Matrix(Microsoft.DirectX.Matrix.PerspectiveFovRH((float)fieldOfViewY, (float)aspectRatio,
+                                                             (float)znearPlane, (float)zfarPlane));
     }
 
     public static Matrix PerspectiveLH(double width, double height, double znearPlane, double zfarPlane)
     {
       return
-        new Matrix(Microsoft.DirectX.Matrix.PerspectiveLH((float) width, (float) height, (float) znearPlane,
-                                                          (float) zfarPlane));
+        new Matrix(Microsoft.DirectX.Matrix.PerspectiveLH((float)width, (float)height, (float)znearPlane,
+                                                          (float)zfarPlane));
     }
 
     public static Matrix PerspectiveOffCenterLH(double left, double right, double bottom, double top, double znearPlane,
                                                 double zfarPlane)
     {
       return
-        new Matrix(Microsoft.DirectX.Matrix.PerspectiveOffCenterLH((float) left, (float) right, (float) bottom,
-                                                                   (float) top, (float) znearPlane, (float) zfarPlane));
+        new Matrix(Microsoft.DirectX.Matrix.PerspectiveOffCenterLH((float)left, (float)right, (float)bottom,
+                                                                   (float)top, (float)znearPlane, (float)zfarPlane));
     }
 
     public static Matrix PerspectiveOffCenterRH(double left, double right, double bottom, double top, double znearPlane,
                                                 double zfarPlane)
     {
       return
-        new Matrix(Microsoft.DirectX.Matrix.PerspectiveOffCenterRH((float) left, (float) right, (float) bottom,
-                                                                   (float) top, (float) znearPlane, (float) zfarPlane));
+        new Matrix(Microsoft.DirectX.Matrix.PerspectiveOffCenterRH((float)left, (float)right, (float)bottom,
+                                                                   (float)top, (float)znearPlane, (float)zfarPlane));
     }
 
     public static Matrix PerspectiveRH(double width, double height, double znearPlane, double zfarPlane)
     {
       return
-        new Matrix(Microsoft.DirectX.Matrix.PerspectiveFovRH((float) width, (float) height, (float) znearPlane,
-                                                             (float) zfarPlane));
+        new Matrix(Microsoft.DirectX.Matrix.PerspectiveFovRH((float)width, (float)height, (float)znearPlane,
+                                                             (float)zfarPlane));
     }
 
 //		public void Reflect(Plane plane)
@@ -188,7 +188,7 @@ namespace MediaPortal.Drawing
 
     public void RotateAxis(Point axisRotation, double angle)
     {
-      _matrix.RotateAxis(axisRotation, (float) angle);
+      _matrix.RotateAxis(axisRotation, (float)angle);
     }
 
 //		public void RotateQuaternion(Quaternion quat)
@@ -197,27 +197,27 @@ namespace MediaPortal.Drawing
 
     public void RotateX(double angle)
     {
-      _matrix.RotateX((float) angle);
+      _matrix.RotateX((float)angle);
     }
 
     public void RotateY(double angle)
     {
-      _matrix.RotateY((float) angle);
+      _matrix.RotateY((float)angle);
     }
 
     public void RotateYawPitchRoll(double yaw, double pitch, double roll)
     {
-      _matrix.RotateYawPitchRoll((float) yaw, (float) pitch, (float) roll);
+      _matrix.RotateYawPitchRoll((float)yaw, (float)pitch, (float)roll);
     }
 
     public void RotateZ(double angle)
     {
-      _matrix.RotateZ((float) angle);
+      _matrix.RotateZ((float)angle);
     }
 
     public static Matrix RotationAxis(Point axisRotation, double angle)
     {
-      return new Matrix(Microsoft.DirectX.Matrix.RotationAxis(axisRotation, (float) angle));
+      return new Matrix(Microsoft.DirectX.Matrix.RotationAxis(axisRotation, (float)angle));
     }
 
 //		public static Matrix RotationQuaternion(Quaternion quat)
@@ -226,47 +226,47 @@ namespace MediaPortal.Drawing
 
     public static Matrix RotationX(double angle)
     {
-      return new Matrix(Microsoft.DirectX.Matrix.RotationX((float) angle));
+      return new Matrix(Microsoft.DirectX.Matrix.RotationX((float)angle));
     }
 
     public static Matrix RotationY(double angle)
     {
-      return new Matrix(Microsoft.DirectX.Matrix.RotationY((float) angle));
+      return new Matrix(Microsoft.DirectX.Matrix.RotationY((float)angle));
     }
 
     public static Matrix RotationYawPitchRoll(double yaw, double pitch, double roll)
     {
-      return new Matrix(Microsoft.DirectX.Matrix.RotationYawPitchRoll((float) yaw, (float) pitch, (float) roll));
+      return new Matrix(Microsoft.DirectX.Matrix.RotationYawPitchRoll((float)yaw, (float)pitch, (float)roll));
     }
 
     public static Matrix RotationZ(double angle)
     {
-      return new Matrix(Microsoft.DirectX.Matrix.RotationZ((float) angle));
+      return new Matrix(Microsoft.DirectX.Matrix.RotationZ((float)angle));
     }
 
     public void Scale(double x, double y)
     {
-      _matrix.Scale((float) x, (float) y, 1f);
+      _matrix.Scale((float)x, (float)y, 1f);
     }
 
     public void Scale(double x, double y, double z)
     {
-      _matrix.Scale((float) x, (float) y, (float) z);
+      _matrix.Scale((float)x, (float)y, (float)z);
     }
 
     public static Matrix Scaling(Point p)
     {
-      return new Matrix(Microsoft.DirectX.Matrix.Scaling((float) p.X, (float) p.Y, 1f));
+      return new Matrix(Microsoft.DirectX.Matrix.Scaling((float)p.X, (float)p.Y, 1f));
     }
 
     public static Matrix Scaling(double x, double y)
     {
-      return new Matrix(Microsoft.DirectX.Matrix.Scaling((float) x, (float) y, 1f));
+      return new Matrix(Microsoft.DirectX.Matrix.Scaling((float)x, (float)y, 1f));
     }
 
     public static Matrix Scaling(double x, double y, double z)
     {
-      return new Matrix(Microsoft.DirectX.Matrix.Scaling((float) x, (float) y, (float) z));
+      return new Matrix(Microsoft.DirectX.Matrix.Scaling((float)x, (float)y, (float)z));
     }
 
 //		public void Shadow(Vector4 light, Plane plane)
@@ -295,33 +295,33 @@ namespace MediaPortal.Drawing
                                           Point rotationCenter, double rotation, Point translation)
     {
       return
-        new Matrix(Microsoft.DirectX.Matrix.Transformation2D(scalingCenter, (float) scalingRotation, scaling,
-                                                             rotationCenter, (float) rotation, translation));
+        new Matrix(Microsoft.DirectX.Matrix.Transformation2D(scalingCenter, (float)scalingRotation, scaling,
+                                                             rotationCenter, (float)rotation, translation));
     }
 
     public void Translate(Point p)
     {
-      _matrix.Translate((float) p.X, (float) p.Y, 0f);
+      _matrix.Translate((float)p.X, (float)p.Y, 0f);
     }
 
     public void Translate(double x, double y)
     {
-      _matrix.Translate((float) x, (float) y, 0f);
+      _matrix.Translate((float)x, (float)y, 0f);
     }
 
     public void Translate(double x, double y, double z)
     {
-      _matrix.Translate((float) x, (float) y, (float) z);
+      _matrix.Translate((float)x, (float)y, (float)z);
     }
 
     public static Matrix Translation(Point p)
     {
-      return new Matrix(Microsoft.DirectX.Matrix.Translation((float) p.X, (float) p.Y, 0f));
+      return new Matrix(Microsoft.DirectX.Matrix.Translation((float)p.X, (float)p.Y, 0f));
     }
 
     public static Matrix Translation(double x, double y, double z)
     {
-      return new Matrix(Microsoft.DirectX.Matrix.Translation((float) x, (float) y, 0f));
+      return new Matrix(Microsoft.DirectX.Matrix.Translation((float)x, (float)y, 0f));
     }
 
     public void Transpose(Matrix source)
@@ -360,7 +360,7 @@ namespace MediaPortal.Drawing
 
     public static Matrix operator *(Matrix l, Matrix r)
     {
-      return new Matrix(l._matrix*r._matrix);
+      return new Matrix(l._matrix * r._matrix);
     }
 
     public static Matrix operator -(Matrix l, Matrix r)
@@ -380,97 +380,97 @@ namespace MediaPortal.Drawing
     public double M11
     {
       get { return _matrix.M11; }
-      set { _matrix.M11 = (float) value; }
+      set { _matrix.M11 = (float)value; }
     }
 
     public double M12
     {
       get { return _matrix.M12; }
-      set { _matrix.M12 = (float) value; }
+      set { _matrix.M12 = (float)value; }
     }
 
     public double M13
     {
       get { return _matrix.M13; }
-      set { _matrix.M13 = (float) value; }
+      set { _matrix.M13 = (float)value; }
     }
 
     public double M14
     {
       get { return _matrix.M14; }
-      set { _matrix.M14 = (float) value; }
+      set { _matrix.M14 = (float)value; }
     }
 
     public double M21
     {
       get { return _matrix.M21; }
-      set { _matrix.M21 = (float) value; }
+      set { _matrix.M21 = (float)value; }
     }
 
     public double M22
     {
       get { return _matrix.M22; }
-      set { _matrix.M22 = (float) value; }
+      set { _matrix.M22 = (float)value; }
     }
 
     public double M23
     {
       get { return _matrix.M23; }
-      set { _matrix.M23 = (float) value; }
+      set { _matrix.M23 = (float)value; }
     }
 
     public double M24
     {
       get { return _matrix.M24; }
-      set { _matrix.M24 = (float) value; }
+      set { _matrix.M24 = (float)value; }
     }
 
     public double M31
     {
       get { return _matrix.M31; }
-      set { _matrix.M31 = (float) value; }
+      set { _matrix.M31 = (float)value; }
     }
 
     public double M32
     {
       get { return _matrix.M32; }
-      set { _matrix.M32 = (float) value; }
+      set { _matrix.M32 = (float)value; }
     }
 
     public double M33
     {
       get { return _matrix.M33; }
-      set { _matrix.M33 = (float) value; }
+      set { _matrix.M33 = (float)value; }
     }
 
     public double M34
     {
       get { return _matrix.M34; }
-      set { _matrix.M34 = (float) value; }
+      set { _matrix.M34 = (float)value; }
     }
 
     public double M41
     {
       get { return _matrix.M41; }
-      set { _matrix.M41 = (float) value; }
+      set { _matrix.M41 = (float)value; }
     }
 
     public double M42
     {
       get { return _matrix.M42; }
-      set { _matrix.M42 = (float) value; }
+      set { _matrix.M42 = (float)value; }
     }
 
     public double M43
     {
       get { return _matrix.M43; }
-      set { _matrix.M43 = (float) value; }
+      set { _matrix.M43 = (float)value; }
     }
 
     public double M44
     {
       get { return _matrix.M44; }
-      set { _matrix.M44 = (float) value; }
+      set { _matrix.M44 = (float)value; }
     }
 
     #endregion Properties

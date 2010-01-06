@@ -36,6 +36,7 @@ using TvLibrary.Log;
 
 namespace TvEngine
 {
+
   #region TVMChannel struct
 
   public struct TVMChannel
@@ -47,7 +48,8 @@ namespace TvEngine
     private string fSortNrTVMovie;
     private string fZeichen;
 
-    public TVMChannel(string aID, string aSenderKennung, string aBezeichnung, string aWebseite, string aSortNrTVMovie, string aZeichen)
+    public TVMChannel(string aID, string aSenderKennung, string aBezeichnung, string aWebseite, string aSortNrTVMovie,
+                      string aZeichen)
     {
       fID = aID;
       fSenderKennung = aSenderKennung;
@@ -90,7 +92,7 @@ namespace TvEngine
 
   #endregion
 
-  class TvMovieDatabase
+  internal class TvMovieDatabase
   {
     #region Members
 
@@ -117,8 +119,10 @@ namespace TvEngine
     #region Events
 
     public delegate void ProgramsChanged(int value, int maximum, string text);
+
     //public event ProgramsChanged OnProgramsChanged;
     public delegate void StationsChanged(int value, int maximum, string text);
+
     public event StationsChanged OnStationsChanged;
 
     #endregion
@@ -249,7 +253,8 @@ namespace TvEngine
     {
       LoadMemberSettings();
 
-      string dataProviderString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0};Mode=Share Deny None;Jet OLEDB:Engine Type=5;Jet OLEDB:Database Locking Mode=1;";
+      string dataProviderString =
+        "Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0};Mode=Share Deny None;Jet OLEDB:Engine Type=5;Jet OLEDB:Database Locking Mode=1;";
       if (TvMovie.DatabasePath != String.Empty)
         dataProviderString = string.Format(dataProviderString, TvMovie.DatabasePath);
       else
@@ -265,7 +270,8 @@ namespace TvEngine
         return false;
       }
 
-      string sqlSelect = "SELECT * FROM Sender WHERE (Favorit = true) AND (GueltigBis >=Now()) ORDER BY Bezeichnung ASC;";
+      string sqlSelect =
+        "SELECT * FROM Sender WHERE (Favorit = true) AND (GueltigBis >=Now()) ORDER BY Bezeichnung ASC;";
 
       DataSet tvMovieTable = new DataSet("Sender");
       try
@@ -323,17 +329,17 @@ namespace TvEngine
           {
             senderUrl = sender["Webseite"].ToString();
           }
-          catch (Exception) { }
+          catch (Exception) {}
           try
           {
             senderSort = sender["SortNrTVMovie"].ToString();
           }
-          catch (Exception) { }
+          catch (Exception) {}
           try
           {
             senderZeichen = sender["Zeichen"].ToString();
           }
-          catch (Exception) { }
+          catch (Exception) {}
 
           TVMChannel current = new TVMChannel(senderId,
                                               senderKennung,
@@ -341,7 +347,7 @@ namespace TvEngine
                                               senderUrl,
                                               senderSort,
                                               senderZeichen
-                                              );
+            );
           _tvmEpgChannels.Add(current);
         }
       }
@@ -467,7 +473,8 @@ namespace TvEngine
             {
               // make a copy of this list because Insert it done in syncronized threads - therefore the object reference would cause multiple/missing entries
               List<Program> InsertCopy = new List<Program>(_tvmEpgProgs);
-              int debugCount = TvBLayer.InsertPrograms(InsertCopy, DeleteBeforeImportOption.OverlappingPrograms, importPrio);
+              int debugCount = TvBLayer.InsertPrograms(InsertCopy, DeleteBeforeImportOption.OverlappingPrograms,
+                                                       importPrio);
               Log.Info("TVMovie: Inserted {0} programs", debugCount);
             }
           }
@@ -496,7 +503,8 @@ namespace TvEngine
           setting.Persist();
 
           TimeSpan ImportDuration = (DateTime.Now - ImportStartTime);
-          Log.Debug("TVMovie: Imported {0} database entries for {1} stations in {2} seconds", _programsCounter, counter, Convert.ToString(ImportDuration.TotalSeconds));
+          Log.Debug("TVMovie: Imported {0} database entries for {1} stations in {2} seconds", _programsCounter, counter,
+                    Convert.ToString(ImportDuration.TotalSeconds));
         }
         catch (Exception)
         {
@@ -505,9 +513,11 @@ namespace TvEngine
       }
       GC.Collect();
     }
+
     #endregion
 
     #region Private functions
+
     private void LoadMemberSettings()
     {
       _useShortProgramDesc = TvBLayer.GetSetting("TvMovieShortProgramDesc", "false").Value == "true";
@@ -529,15 +539,19 @@ namespace TvEngine
 
       // UNUSED: F16zu9 , live , untertitel , Dauer , Wiederholung
       //sqlb.Append("SELECT * "); // need for saver schema filling
-      sqlb.Append("SELECT TVDaten.SenderKennung, TVDaten.Beginn, TVDaten.Ende, TVDaten.Sendung, TVDaten.Genre, TVDaten.Kurzkritik, TVDaten.KurzBeschreibung, TVDaten.Beschreibung");
-      sqlb.Append(", TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton");
+      sqlb.Append(
+        "SELECT TVDaten.SenderKennung, TVDaten.Beginn, TVDaten.Ende, TVDaten.Sendung, TVDaten.Genre, TVDaten.Kurzkritik, TVDaten.KurzBeschreibung, TVDaten.Beschreibung");
+      sqlb.Append(
+        ", TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton");
       sqlb.Append(", TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Originaltitel, TVDaten.Regie, TVDaten.Darsteller");
       sqlb.Append(", TVDaten.Interessant, TVDaten.Bewertungen");
       sqlb.Append(", TVDaten.live, TVDaten.Dauer, TVDaten.Herstellungsland,TVDaten.Wiederholung");
-      sqlb.Append(" FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ((TVDaten.Ende)>= #{1}#)) ORDER BY TVDaten.Beginn;");
+      sqlb.Append(
+        " FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ((TVDaten.Ende)>= #{1}#)) ORDER BY TVDaten.Beginn;");
 
       DateTime importTime = DateTime.Now.Subtract(TimeSpan.FromHours(4));
-      sqlSelect = string.Format(sqlb.ToString(), stationName, importTime.ToString("yyyy-MM-dd HH:mm:ss")); //("dd-MM-yyyy HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture));
+      sqlSelect = string.Format(sqlb.ToString(), stationName, importTime.ToString("yyyy-MM-dd HH:mm:ss"));
+        //("dd-MM-yyyy HH:mm:ss", System.Globalization.CultureInfo.CurrentCulture));
       OleDbTransaction databaseTransaction = null;
       using (OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection))
       {
@@ -563,11 +577,17 @@ namespace TvEngine
             while (reader.Read())
             {
               ImportSingleChannelData(channelNames, allChannels, useGentle, counter,
-                                        reader[0].ToString(), reader[1].ToString(), reader[2].ToString(), reader[3].ToString(), reader[4].ToString(), reader[5].ToString(), reader[6].ToString(), reader[7].ToString(),
-                                        reader[8].ToString(), reader[9].ToString(), reader[10].ToString(), reader[11].ToString(), reader[12].ToString(), reader[13].ToString(),
-                                        reader[14].ToString(), reader[15].ToString(), reader[16].ToString(), reader[17].ToString(), reader[18].ToString(), reader[19].ToString(), reader[20].ToString(),
-                                        reader[21].ToString(), reader[22].ToString(), reader[23].ToString(), reader[24].ToString()
-                                      );
+                                      reader[0].ToString(), reader[1].ToString(), reader[2].ToString(),
+                                      reader[3].ToString(), reader[4].ToString(), reader[5].ToString(),
+                                      reader[6].ToString(), reader[7].ToString(),
+                                      reader[8].ToString(), reader[9].ToString(), reader[10].ToString(),
+                                      reader[11].ToString(), reader[12].ToString(), reader[13].ToString(),
+                                      reader[14].ToString(), reader[15].ToString(), reader[16].ToString(),
+                                      reader[17].ToString(), reader[18].ToString(), reader[19].ToString(),
+                                      reader[20].ToString(),
+                                      reader[21].ToString(), reader[22].ToString(), reader[23].ToString(),
+                                      reader[24].ToString()
+                );
               counter++;
             }
             databaseTransaction.Commit();
@@ -587,9 +607,7 @@ namespace TvEngine
           {
             databaseTransaction.Rollback();
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
           Log.Info("TVMovie: Exception: {0}", ex1);
           return 0;
         }
@@ -601,14 +619,19 @@ namespace TvEngine
 
       return counter;
     }
+
     // sqlb.Append(", TVDaten.live, TVDaten.Dauer, TVDaten.Herstellungsland,TVDaten.Wiederholung");
     /// <summary>
     /// Takes a DataRow worth of EPG Details to persist them in MP's program table
     /// </summary>
-    private void ImportSingleChannelData(List<Mapping> channelNames, IList<Channel> allChannels, bool useGentlePersist, int aCounter,
-                                         string SenderKennung, string Beginn, string Ende, string Sendung, string Genre, string Kurzkritik, string KurzBeschreibung, string Beschreibung,
-                                         string Audiodescription, string DolbySuround, string Stereo, string DolbyDigital, string Dolby, string Zweikanalton,
-                                         string FSK, string Herstellungsjahr, string Originaltitel, string Regie, string Darsteller, string Interessant, string Bewertungen,
+    private void ImportSingleChannelData(List<Mapping> channelNames, IList<Channel> allChannels, bool useGentlePersist,
+                                         int aCounter,
+                                         string SenderKennung, string Beginn, string Ende, string Sendung, string Genre,
+                                         string Kurzkritik, string KurzBeschreibung, string Beschreibung,
+                                         string Audiodescription, string DolbySuround, string Stereo,
+                                         string DolbyDigital, string Dolby, string Zweikanalton,
+                                         string FSK, string Herstellungsjahr, string Originaltitel, string Regie,
+                                         string Darsteller, string Interessant, string Bewertungen,
                                          string Live, string Dauer, string Herstellungsland, string Wiederholung)
     {
       string channel = SenderKennung;
@@ -628,7 +651,7 @@ namespace TvEngine
       bool repeating = false;
       try
       {
-        end = DateTime.Parse(Ende);     // iEndTime ==> Ende  (15.06.2006 22:45:00 ==> 20060615224500)
+        end = DateTime.Parse(Ende); // iEndTime ==> Ende  (15.06.2006 22:45:00 ==> 20060615224500)
         start = DateTime.Parse(Beginn); // iStartTime ==> Beginn (15.06.2006 22:45:00 ==> 20060615224500)
         live = Convert.ToBoolean(Live);
         repeating = Convert.ToBoolean(Wiederholung);
@@ -641,13 +664,13 @@ namespace TvEngine
       string title = Sendung;
       // indicate live programs
       if (_showLive)
-      {        
+      {
         if (live)
           title += " (LIVE)";
       }
       // indicate repeatings
       if (_showRepeat)
-      {        
+      {
         if (repeating)
           title += " (Wdh.)";
       }
@@ -688,14 +711,30 @@ namespace TvEngine
       short EPGStarRating = -1;
       switch (starRating)
       {
-        case 0: EPGStarRating = 2; break;
-        case 1: EPGStarRating = 4; break;
-        case 2: EPGStarRating = 6; break;
-        case 3: EPGStarRating = 8; break;
-        case 4: EPGStarRating = 10; break;
-        case 5: EPGStarRating = 8; break;
-        case 6: EPGStarRating = 10; break;
-        default: EPGStarRating = -1; break;
+        case 0:
+          EPGStarRating = 2;
+          break;
+        case 1:
+          EPGStarRating = 4;
+          break;
+        case 2:
+          EPGStarRating = 6;
+          break;
+        case 3:
+          EPGStarRating = 8;
+          break;
+        case 4:
+          EPGStarRating = 10;
+          break;
+        case 5:
+          EPGStarRating = 8;
+          break;
+        case 6:
+          EPGStarRating = 10;
+          break;
+        default:
+          EPGStarRating = -1;
+          break;
       }
 
       foreach (Mapping channelMap in channelNames)
@@ -796,7 +835,9 @@ namespace TvEngine
               description += "Ton: " + audioFormat;
           }
 
-          Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre, Program.ProgramState.None, OnAirDate, String.Empty, String.Empty, episode, String.Empty, EPGStarRating, classification, Convert.ToInt32(classification));
+          Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre,
+                                     Program.ProgramState.None, OnAirDate, String.Empty, String.Empty, episode,
+                                     String.Empty, EPGStarRating, classification, Convert.ToInt32(classification));
           if (useGentlePersist)
             prog.Persist();
 
@@ -832,7 +873,8 @@ namespace TvEngine
           }
           catch (Exception)
           {
-            Log.Info("TVMovie: Error loading mappings - make sure tv channel: {0} (ID: {1}) still exists!", mapping.StationName, mapping.IdChannel);
+            Log.Info("TVMovie: Error loading mappings - make sure tv channel: {0} (ID: {1}) still exists!",
+                     mapping.StationName, mapping.IdChannel);
           }
         }
       }
@@ -846,7 +888,8 @@ namespace TvEngine
     /// <summary>
     /// Determines whether an entry is valid for a timesharing station 
     /// </summary>
-    private bool CheckTimesharing(ref DateTime progStart, ref DateTime progEnd, TimeSpan timeSharingStart, TimeSpan timeSharingEnd)
+    private bool CheckTimesharing(ref DateTime progStart, ref DateTime progEnd, TimeSpan timeSharingStart,
+                                  TimeSpan timeSharingEnd)
     {
       if (timeSharingStart == timeSharingEnd)
         return false;
@@ -881,7 +924,8 @@ namespace TvEngine
     /// <param name="stereo"></param>
     /// <param name="dualAudio"></param>
     /// <returns>plain text audio format</returns>
-    private string BuildAudioDescription(bool audioDesc, bool dolbyDigital, bool dolbySurround, bool dolby, bool stereo, bool dualAudio)
+    private string BuildAudioDescription(bool audioDesc, bool dolbyDigital, bool dolbySurround, bool dolby, bool stereo,
+                                         bool dualAudio)
     {
       StringBuilder sb = new StringBuilder();
       if (dolbyDigital)
@@ -1056,7 +1100,7 @@ namespace TvEngine
     {
       try
       {
-        long iSec = 0;//(long)dt.Second;
+        long iSec = 0; //(long)dt.Second;
         long iMin = (long)dt.Minute;
         long iHour = (long)dt.Hour;
         long iDay = (long)dt.Day;
@@ -1071,9 +1115,7 @@ namespace TvEngine
         lRet = lRet * 100L + iSec;
         return lRet;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return 0;
     }
 
@@ -1126,7 +1168,8 @@ namespace TvEngine
             processes[0].WaitForExit(1200000);
             BenchClock.Stop();
             UpdateDuration = (BenchClock.ElapsedMilliseconds / 1000);
-            Log.Info("TVMovie: tvuptodate was already running - waited {0} seconds for internet update to finish", Convert.ToString(UpdateDuration));
+            Log.Info("TVMovie: tvuptodate was already running - waited {0} seconds for internet update to finish",
+                     Convert.ToString(UpdateDuration));
             return UpdateDuration;
           }
 
@@ -1161,7 +1204,9 @@ namespace TvEngine
 
       return UpdateDuration;
     }
-    #endregion
 
-  } // class
+    #endregion
+  }
+
+  // class
 }

@@ -66,14 +66,10 @@ namespace MediaPortal.GUI.Library
     private List<GUIListItem> _itemList = new List<GUIListItem>(); // unfiltered itemlist
 
     public GUIFacadeControl(int dwParentID)
-      : base(dwParentID)
-    {
-    }
+      : base(dwParentID) {}
 
     public GUIFacadeControl(int dwParentID, int dwControlId)
-      : base(dwParentID, dwControlId, 0, 0, 0, 0)
-    {
-    }
+      : base(dwParentID, dwControlId, 0, 0, 0, 0) {}
 
     /////<summary>
     ///// Property to get/set the type if listview that will be displayed; GUIListControl or GUIPlayListItemListControl
@@ -403,7 +399,7 @@ namespace MediaPortal.GUI.Library
       {
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
         {
-          GUIListItem pItem = (GUIListItem) message.Object;
+          GUIListItem pItem = (GUIListItem)message.Object;
           Add(pItem);
           return true;
         }
@@ -533,9 +529,7 @@ namespace MediaPortal.GUI.Library
       {
         _itemList.Sort(comparer);
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
 
     public void Add(GUIListItem item)
@@ -656,7 +650,7 @@ namespace MediaPortal.GUI.Library
       {
         validItem = false;
         GUIListItem item = _itemList[i];
-        switch ((SearchKinds) searchKind)
+        switch ((SearchKinds)searchKind)
         {
           case SearchKinds.SEARCH_STARTS_WITH:
             if (item.Label.ToLower().StartsWith(searchString.ToLower()))

@@ -29,9 +29,7 @@ namespace System.Windows.Media.Animation
   {
     #region Constructors
 
-    protected internal AnimationClock(AnimationTimeline timeline) : base(timeline)
-    {
-    }
+    protected internal AnimationClock(AnimationTimeline timeline) : base(timeline) {}
 
     #endregion Constructors
 
@@ -49,7 +47,7 @@ namespace System.Windows.Media.Animation
 
     public new AnimationTimeline Timeline
     {
-      get { return (AnimationTimeline) base.Timeline; }
+      get { return (AnimationTimeline)base.Timeline; }
     }
 
     #endregion Properties

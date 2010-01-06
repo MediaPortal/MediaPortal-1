@@ -28,12 +28,12 @@ using TvLibrary.Log;
 
 namespace TvService
 {
-  static class Program
+  internal static class Program
   {
     /// <summary>
     /// The main entry point for the application.
     /// </summary>
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
       NameValueCollection appSettings = ConfigurationManager.AppSettings;
       appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", Log.GetPathName()));
@@ -51,8 +51,8 @@ namespace TvService
         ProjectInstaller mi = new ProjectInstaller();
         ti.Installers.Add(mi);
         String path = String.Format("/assemblypath={0}",
-          System.Reflection.Assembly.GetExecutingAssembly().Location);
-        String[] cmdline = { path };
+                                    System.Reflection.Assembly.GetExecutingAssembly().Location);
+        String[] cmdline = {path};
         InstallContext ctx = new InstallContext("", cmdline);
         ti.Context = ctx;
         ti.Install(new Hashtable());
@@ -65,7 +65,7 @@ namespace TvService
         ti.Installers.Add(mi);
         String path = String.Format("/assemblypath={0}",
                                     System.Reflection.Assembly.GetExecutingAssembly().Location);
-        String[] cmdline = { path };
+        String[] cmdline = {path};
         InstallContext ctx = new InstallContext("", cmdline);
         ti.Context = ctx;
         ti.Uninstall(null);
@@ -87,7 +87,7 @@ namespace TvService
       //
       //   ServicesToRun = new ServiceBase[] {new Service1(), new MySecondUserService()};
       //
-      ServiceBase[] ServicesToRun = new ServiceBase[] { new Service1() };
+      ServiceBase[] ServicesToRun = new ServiceBase[] {new Service1()};
 
       ServiceBase.Run(ServicesToRun);
     }

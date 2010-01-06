@@ -29,13 +29,9 @@ namespace System.Windows.Dispatcher
   {
     #region Constructors
 
-    public DispatcherSynchronizationContext()
-    {
-    }
+    public DispatcherSynchronizationContext() {}
 
-    public DispatcherSynchronizationContext(Dispatcher dispatcher)
-    {
-    }
+    public DispatcherSynchronizationContext(Dispatcher dispatcher) {}
 
     #endregion Constructors
 

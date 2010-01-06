@@ -141,9 +141,7 @@ namespace MediaPortal.Hardware
         // begin another asynchronous read from the device
         _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), null);
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
 
     private void OnSettingsChanged()

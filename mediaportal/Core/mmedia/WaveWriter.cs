@@ -79,7 +79,7 @@ namespace Yeti.MMedia
       for (int i = 0; i < 4; i++)
 
       {
-        res[i] = (byte) (val >> (i*8));
+        res[i] = (byte)(val >> (i * 8));
       }
 
       return res;
@@ -94,7 +94,7 @@ namespace Yeti.MMedia
       for (int i = 0; i < 2; i++)
 
       {
-        res[i] = (byte) (val >> (i*8));
+        res[i] = (byte)(val >> (i * 8));
       }
 
       return res;
@@ -104,13 +104,13 @@ namespace Yeti.MMedia
     protected void WriteWaveHeader()
 
     {
-      Write(new byte[] {(byte) 'R', (byte) 'I', (byte) 'F', (byte) 'F'});
+      Write(new byte[] {(byte)'R', (byte)'I', (byte)'F', (byte)'F'});
 
       Write(Int2ByteArr(m_AudioDataSize + WaveHeaderSize));
 
-      Write(new byte[] {(byte) 'W', (byte) 'A', (byte) 'V', (byte) 'E'});
+      Write(new byte[] {(byte)'W', (byte)'A', (byte)'V', (byte)'E'});
 
-      Write(new byte[] {(byte) 'f', (byte) 'm', (byte) 't', (byte) ' '});
+      Write(new byte[] {(byte)'f', (byte)'m', (byte)'t', (byte)' '});
 
       Write(Int2ByteArr(WaveFormatSize));
 
@@ -118,9 +118,9 @@ namespace Yeti.MMedia
 
       Write(Int2ByteArr(m_InputDataFormat.nChannels));
 
-      Write(Int2ByteArr((uint) m_InputDataFormat.nSamplesPerSec));
+      Write(Int2ByteArr((uint)m_InputDataFormat.nSamplesPerSec));
 
-      Write(Int2ByteArr((uint) m_InputDataFormat.nAvgBytesPerSec));
+      Write(Int2ByteArr((uint)m_InputDataFormat.nAvgBytesPerSec));
 
       Write(Int2ByteArr(m_InputDataFormat.nBlockAlign));
 
@@ -128,7 +128,7 @@ namespace Yeti.MMedia
 
       Write(Int2ByteArr(m_InputDataFormat.cbSize));
 
-      Write(new byte[] {(byte) 'd', (byte) 'a', (byte) 't', (byte) 'a'});
+      Write(new byte[] {(byte)'d', (byte)'a', (byte)'t', (byte)'a'});
 
       Write(Int2ByteArr(m_AudioDataSize));
 
@@ -145,7 +145,7 @@ namespace Yeti.MMedia
         if (m_AudioDataSize == 0)
 
         {
-          Seek(-(int) m_WrittenBytes - (int) WaveHeaderSize - 8, SeekOrigin.Current);
+          Seek(-(int)m_WrittenBytes - (int)WaveHeaderSize - 8, SeekOrigin.Current);
 
           m_AudioDataSize = m_WrittenBytes;
 
@@ -164,7 +164,7 @@ namespace Yeti.MMedia
     {
       base.Write(buffer, index, count);
 
-      m_WrittenBytes += (uint) count;
+      m_WrittenBytes += (uint)count;
     }
 
 
@@ -173,14 +173,14 @@ namespace Yeti.MMedia
     {
       base.Write(buffer);
 
-      m_WrittenBytes += (uint) buffer.Length;
+      m_WrittenBytes += (uint)buffer.Length;
     }
 
 
     protected override int GetOptimalBufferSize()
 
     {
-      return m_InputDataFormat.nAvgBytesPerSec/10;
+      return m_InputDataFormat.nAvgBytesPerSec / 10;
     }
 
 

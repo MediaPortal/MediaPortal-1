@@ -37,7 +37,7 @@ namespace WindowPlugins.home
 
     public GUIBasicHome()
     {
-      GetID = (int) Window.WINDOW_SECOND_HOME;
+      GetID = (int)Window.WINDOW_SECOND_HOME;
     }
 
     public override bool Init()

@@ -31,9 +31,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public ResourceDictionaryCollection()
-    {
-    }
+    public ResourceDictionaryCollection() {}
 
     #endregion Constructors
 
@@ -117,7 +115,7 @@ namespace System.Windows
 
     public ResourceDictionary this[int index]
     {
-      get { return (ResourceDictionary) List[index]; }
+      get { return (ResourceDictionary)List[index]; }
       set { List[index] = value; }
     }
 

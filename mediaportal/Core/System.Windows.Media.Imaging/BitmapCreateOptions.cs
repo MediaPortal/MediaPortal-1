@@ -25,16 +25,16 @@
 
 namespace System.Windows.Media.Imaging
 {
-	[FlagsAttribute] 
-	public enum BitmapCreateOptions
-	{
-		#region Values
-		
-		DelayCreation,
-		IgnoreColorProfile,
-		None = 0,
-		PreservePixelFormat,
+  [FlagsAttribute]
+  public enum BitmapCreateOptions
+  {
+    #region Values
 
-		#endregion Values
-	}
+    DelayCreation,
+    IgnoreColorProfile,
+    None = 0,
+    PreservePixelFormat,
+
+    #endregion Values
+  }
 }

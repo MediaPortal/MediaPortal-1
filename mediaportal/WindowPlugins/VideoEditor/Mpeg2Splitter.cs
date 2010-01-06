@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Timers;
 using MediaPortal.GUI.Library;
+
 #if (!STAND_ALONE)
 
 #endif
@@ -132,13 +133,14 @@ namespace Mpeg2SplitterPackage
     private BinaryWriter bwOut;
     private Int64 iSourceBitAddress;
 
-    private const int SEEK_FIFO_SIZE = 10*0x800;
-                      // read a few pack-headers (pack-length 0x800), 3 consecutive timestamps need to be read 
+    private const int SEEK_FIFO_SIZE = 10 * 0x800;
+    // read a few pack-headers (pack-length 0x800), 3 consecutive timestamps need to be read 
 
-    private const int READ_FIFO_SIZE = 1024*1024*10;
+    private const int READ_FIFO_SIZE = 1024 * 1024 * 10;
 
 #if (STAND_ALONE)
-        public byte[] ptBuffers = new byte[READ_FIFO_SIZE]; // made public to do some hacks from outside this class
+        public byte[] ptBuffers = new byte[READ_FIFO_SIZE];
+    // made public to do some hacks from outside this class
 #else
     private byte[] ptBuffers = new byte[READ_FIFO_SIZE];
 #endif
@@ -171,12 +173,12 @@ namespace Mpeg2SplitterPackage
     private DateTime NewTimeStamp;
 
     private TimeSpan SeekHysteresis = new TimeSpan(0, 0, 10);
-                     // Make Hysteresis not to small, the seek algo: big steps forward, small steps backwards
+    // Make Hysteresis not to small, the seek algo: big steps forward, small steps backwards
 
-    private const long SeekStepForward = 1024*1024*20;
-                       // Parameters are hard dependent on mpeg bit-rate, so need calibration algorithm
+    private const long SeekStepForward = 1024 * 1024 * 20;
+    // Parameters are hard dependent on mpeg bit-rate, so need calibration algorithm
 
-    private const long SeekStepBackward = 1024*1024*5;
+    private const long SeekStepBackward = 1024 * 1024 * 5;
 
     private DateTime zeroTime = new DateTime(1900, 1, 1, 0, 0, 0, 0);
 
@@ -186,19 +188,17 @@ namespace Mpeg2SplitterPackage
       progressTime.Elapsed += new ElapsedEventHandler(progressTime_Elapsed);
     }
 
-    ~Mpeg2Splitter()
-    {
-    }
+    ~Mpeg2Splitter() {}
 
     private void progressTime_Elapsed(object sender, ElapsedEventArgs e)
     {
       if (splitMode == SplitMode.E_MODE_JOIN)
       {
-        percent = (int) (lBlockRead*100/lTotalBlockRead);
+        percent = (int)(lBlockRead * 100 / lTotalBlockRead);
       }
       else
       {
-        percent = (int) ((TimeReadTemp.TotalSeconds + TimeRead.TotalSeconds)*100/TotalTimeRead.TotalSeconds);
+        percent = (int)((TimeReadTemp.TotalSeconds + TimeRead.TotalSeconds) * 100 / TotalTimeRead.TotalSeconds);
       }
       if (percent > 100)
       {
@@ -265,9 +265,7 @@ namespace Mpeg2SplitterPackage
 #endif
     }
 
-    public void Split(string sInFilename, string sOutFilename, ref SPLITTER_TIME_STAMP tSplitTime)
-    {
-    }
+    public void Split(string sInFilename, string sOutFilename, ref SPLITTER_TIME_STAMP tSplitTime) {}
 
     public void Join(List<FileInfo> fileList, string sOutFilename)
     {
@@ -280,7 +278,7 @@ namespace Mpeg2SplitterPackage
       {
         if (OpenInOutFile(file.FullName, sOutFilename, FileMode.Create))
         {
-          lTotalBlockRead += (fsIn.Length/READ_FIFO_SIZE);
+          lTotalBlockRead += (fsIn.Length / READ_FIFO_SIZE);
           CloseInOutFile();
         }
         i++;
@@ -384,10 +382,10 @@ namespace Mpeg2SplitterPackage
 
       while (bits != 0)
       {
-        offset = (int) (iBitAddress & 7);
+        offset = (int)(iBitAddress & 7);
         b = Math.Min(bits, 8 - offset);
         data <<= b;
-        data |= ShiftAndMask(ptBuffers[g_iReadCounter + iBitAddress/8], 7 - offset, b);
+        data |= ShiftAndMask(ptBuffers[g_iReadCounter + iBitAddress / 8], 7 - offset, b);
         iBitAddress += b;
         bits -= b;
       }
@@ -459,40 +457,40 @@ namespace Mpeg2SplitterPackage
       //system_clock_reference_base [14..0]	15
       pes_base_2 = Getbits(15);
 
-      old_pes_base = ((long) pes_base_0 << 30) |
-                     ((long) pes_base_1 << 15) |
-                     (uint) pes_base_2;
+      old_pes_base = ((long)pes_base_0 << 30) |
+                     ((long)pes_base_1 << 15) |
+                     (uint)pes_base_2;
 
-      new_pes_base = (Int64) tTimeSpan.TotalSeconds*90000;
+      new_pes_base = (Int64)tTimeSpan.TotalSeconds * 90000;
 
       new_pes_base = old_pes_base - new_pes_base;
 
-      pes_base_0 = (int) ((new_pes_base >> 30) & 0x3);
-      pes_base_1 = (int) ((new_pes_base >> 15) & 0x7FFF);
-      pes_base_2 = (int) (new_pes_base & 0x7FFF);
+      pes_base_0 = (int)((new_pes_base >> 30) & 0x3);
+      pes_base_1 = (int)((new_pes_base >> 15) & 0x7FFF);
+      pes_base_2 = (int)(new_pes_base & 0x7FFF);
 
 #if (STAND_ALONE)
             DebugLogging("~~~PES1 " + ptBuffers[g_iReadCounter + 0].ToString("X2") + ptBuffers[g_iReadCounter + 1].ToString("X2") + ptBuffers[g_iReadCounter + 2].ToString("X2") + ptBuffers[g_iReadCounter + 3].ToString("X2") + ptBuffers[g_iReadCounter + 4].ToString("X2"));
 #endif
 
       // Clear the values to be changed
-      ptBuffers[g_iReadCounter + 0] = (byte) (ptBuffers[g_iReadCounter + 0] & ~0x0E);
-      ptBuffers[g_iReadCounter + 1] = (byte) (ptBuffers[g_iReadCounter + 1] & ~0xFF);
-      ptBuffers[g_iReadCounter + 2] = (byte) (ptBuffers[g_iReadCounter + 2] & ~0xFE);
-      ptBuffers[g_iReadCounter + 3] = (byte) (ptBuffers[g_iReadCounter + 3] & ~0xFF);
-      ptBuffers[g_iReadCounter + 4] = (byte) (ptBuffers[g_iReadCounter + 4] & ~0xFE);
+      ptBuffers[g_iReadCounter + 0] = (byte)(ptBuffers[g_iReadCounter + 0] & ~0x0E);
+      ptBuffers[g_iReadCounter + 1] = (byte)(ptBuffers[g_iReadCounter + 1] & ~0xFF);
+      ptBuffers[g_iReadCounter + 2] = (byte)(ptBuffers[g_iReadCounter + 2] & ~0xFE);
+      ptBuffers[g_iReadCounter + 3] = (byte)(ptBuffers[g_iReadCounter + 3] & ~0xFF);
+      ptBuffers[g_iReadCounter + 4] = (byte)(ptBuffers[g_iReadCounter + 4] & ~0xFE);
 
-      ptBuffers[g_iReadCounter + 0] = (byte) (ptBuffers[g_iReadCounter + 0] | (pes_base_0) << 1);
-      ptBuffers[g_iReadCounter + 1] = (byte) (ptBuffers[g_iReadCounter + 1] | (pes_base_1 >> 7) & 0xFF);
-      ptBuffers[g_iReadCounter + 2] = (byte) (ptBuffers[g_iReadCounter + 2] | (pes_base_1 & 0x7F) << 1);
-      ptBuffers[g_iReadCounter + 3] = (byte) (ptBuffers[g_iReadCounter + 3] | (pes_base_2 >> 7) & 0xFF);
-      ptBuffers[g_iReadCounter + 4] = (byte) (ptBuffers[g_iReadCounter + 4] | (pes_base_2 & 0x7F) << 1);
+      ptBuffers[g_iReadCounter + 0] = (byte)(ptBuffers[g_iReadCounter + 0] | (pes_base_0) << 1);
+      ptBuffers[g_iReadCounter + 1] = (byte)(ptBuffers[g_iReadCounter + 1] | (pes_base_1 >> 7) & 0xFF);
+      ptBuffers[g_iReadCounter + 2] = (byte)(ptBuffers[g_iReadCounter + 2] | (pes_base_1 & 0x7F) << 1);
+      ptBuffers[g_iReadCounter + 3] = (byte)(ptBuffers[g_iReadCounter + 3] | (pes_base_2 >> 7) & 0xFF);
+      ptBuffers[g_iReadCounter + 4] = (byte)(ptBuffers[g_iReadCounter + 4] | (pes_base_2 & 0x7F) << 1);
 
-      time_in_sec = (Int64) new_pes_base;
-      time_in_sec = time_in_sec/(Int64) 90000;
+      time_in_sec = (Int64)new_pes_base;
+      time_in_sec = time_in_sec / (Int64)90000;
 
       tTimeStamp = zeroTime;
-      tTimeStamp = tTimeStamp.AddSeconds((int) time_in_sec);
+      tTimeStamp = tTimeStamp.AddSeconds((int)time_in_sec);
 
 #if (STAND_ALONE)
             DebugLogging("~~~PES2 " + ptBuffers[g_iReadCounter + 0].ToString("X2") + ptBuffers[g_iReadCounter + 1].ToString("X2") + ptBuffers[g_iReadCounter + 2].ToString("X2") + ptBuffers[g_iReadCounter + 3].ToString("X2") + ptBuffers[g_iReadCounter + 4].ToString("X2") +
@@ -542,45 +540,45 @@ namespace Mpeg2SplitterPackage
       //system_clock_reference_base [14..0]	15
       system_clock_reference_base_2 = Getbits(15);
 
-      old_scr_base = ((long) system_clock_reference_base_0 << 30) |
-                     ((long) system_clock_reference_base_1 << 15) |
-                     (uint) system_clock_reference_base_2;
+      old_scr_base = ((long)system_clock_reference_base_0 << 30) |
+                     ((long)system_clock_reference_base_1 << 15) |
+                     (uint)system_clock_reference_base_2;
 
-      new_scr_base = (Int64) tTimeSpan.TotalSeconds*27000000/300;
+      new_scr_base = (Int64)tTimeSpan.TotalSeconds * 27000000 / 300;
 
       new_scr_base = old_scr_base - new_scr_base;
 
-      system_clock_reference_base_0 = (int) ((new_scr_base >> 30) & 0x3);
-      system_clock_reference_base_1 = (int) ((new_scr_base >> 15) & 0x7FFF);
-      system_clock_reference_base_2 = (int) (new_scr_base & 0x7FFF);
+      system_clock_reference_base_0 = (int)((new_scr_base >> 30) & 0x3);
+      system_clock_reference_base_1 = (int)((new_scr_base >> 15) & 0x7FFF);
+      system_clock_reference_base_2 = (int)(new_scr_base & 0x7FFF);
 
       // Clear the values to be changed
-      ptBuffers[g_iReadCounter + 4] = (byte) (ptBuffers[g_iReadCounter + 4] & ~0x3B);
-      ptBuffers[g_iReadCounter + 5] = (byte) (ptBuffers[g_iReadCounter + 5] & ~0xFF);
-      ptBuffers[g_iReadCounter + 6] = (byte) (ptBuffers[g_iReadCounter + 6] & ~0xFB);
-      ptBuffers[g_iReadCounter + 7] = (byte) (ptBuffers[g_iReadCounter + 7] & ~0xFF);
-      ptBuffers[g_iReadCounter + 8] = (byte) (ptBuffers[g_iReadCounter + 8] & ~0xF8);
+      ptBuffers[g_iReadCounter + 4] = (byte)(ptBuffers[g_iReadCounter + 4] & ~0x3B);
+      ptBuffers[g_iReadCounter + 5] = (byte)(ptBuffers[g_iReadCounter + 5] & ~0xFF);
+      ptBuffers[g_iReadCounter + 6] = (byte)(ptBuffers[g_iReadCounter + 6] & ~0xFB);
+      ptBuffers[g_iReadCounter + 7] = (byte)(ptBuffers[g_iReadCounter + 7] & ~0xFF);
+      ptBuffers[g_iReadCounter + 8] = (byte)(ptBuffers[g_iReadCounter + 8] & ~0xF8);
 
       ptBuffers[g_iReadCounter + 4] =
         (byte)
         (ptBuffers[g_iReadCounter + 4] |
          ((system_clock_reference_base_0) << 3) + ((system_clock_reference_base_1 >> 13) & 0x03));
       ptBuffers[g_iReadCounter + 5] =
-        (byte) (ptBuffers[g_iReadCounter + 5] | ((system_clock_reference_base_1 >> 5) & 0xFF));
+        (byte)(ptBuffers[g_iReadCounter + 5] | ((system_clock_reference_base_1 >> 5) & 0xFF));
       ptBuffers[g_iReadCounter + 6] =
         (byte)
         (ptBuffers[g_iReadCounter + 6] |
          (((system_clock_reference_base_1 & 0x1F) << 3) + ((system_clock_reference_base_2 >> 13) & 0x03)));
       ptBuffers[g_iReadCounter + 7] =
-        (byte) (ptBuffers[g_iReadCounter + 7] | ((system_clock_reference_base_2 >> 5) & 0xFF));
+        (byte)(ptBuffers[g_iReadCounter + 7] | ((system_clock_reference_base_2 >> 5) & 0xFF));
       ptBuffers[g_iReadCounter + 8] =
-        (byte) (ptBuffers[g_iReadCounter + 8] | ((system_clock_reference_base_2 & 0x1F) << 3));
+        (byte)(ptBuffers[g_iReadCounter + 8] | ((system_clock_reference_base_2 & 0x1F) << 3));
 
-      time_in_sec = (Int64) new_scr_base*300;
-      time_in_sec = time_in_sec/(Int64) 27000000;
+      time_in_sec = (Int64)new_scr_base * 300;
+      time_in_sec = time_in_sec / (Int64)27000000;
 
       tTimeStamp = zeroTime;
-      tTimeStamp = tTimeStamp.AddSeconds((int) time_in_sec);
+      tTimeStamp = tTimeStamp.AddSeconds((int)time_in_sec);
 
 #if (STAND_ALONE)
       //DebugLogging("$$$SCR " + ptBuffers[g_iReadCounter + 4].ToString("X2") + ptBuffers[g_iReadCounter + 5].ToString("X2") + ptBuffers[g_iReadCounter + 6].ToString("X2") + ptBuffers[g_iReadCounter + 7].ToString("X2") + ptBuffers[g_iReadCounter + 8].ToString("X2") + ptBuffers[g_iReadCounter + 9].ToString("X2") +
@@ -628,15 +626,15 @@ namespace Mpeg2SplitterPackage
       //system_clock_reference_base [14..0]	15
       system_clock_reference_base_2 = Getbits(15);
 
-      scr_base = ((long) system_clock_reference_base_0 << 30) |
-                 ((long) system_clock_reference_base_1 << 15) |
-                 (uint) system_clock_reference_base_2;
+      scr_base = ((long)system_clock_reference_base_0 << 30) |
+                 ((long)system_clock_reference_base_1 << 15) |
+                 (uint)system_clock_reference_base_2;
 
-      time_in_sec = (Int64) scr_base*300;
-      time_in_sec = time_in_sec/(Int64) 27000000;
+      time_in_sec = (Int64)scr_base * 300;
+      time_in_sec = time_in_sec / (Int64)27000000;
 
       tTimeStamp = zeroTime;
-      tTimeStamp = tTimeStamp.AddSeconds((int) time_in_sec);
+      tTimeStamp = tTimeStamp.AddSeconds((int)time_in_sec);
 
 #if (STAND_ALONE)
             DebugLogging("###SCR " + ptBuffers[g_iReadCounter + 4].ToString("X2") + ptBuffers[g_iReadCounter + 5].ToString("X2") + ptBuffers[g_iReadCounter + 6].ToString("X2") + ptBuffers[g_iReadCounter + 7].ToString("X2") + ptBuffers[g_iReadCounter + 8].ToString("X2") + ptBuffers[g_iReadCounter + 9].ToString("X2") +
@@ -721,9 +719,9 @@ namespace Mpeg2SplitterPackage
         {
           if (splitMode == SplitMode.E_MODE_CUT)
           {
-            fsOut.Write(ptBuffers, (int) iWriteCounter, (int) (iReadCounter - iWriteCounter));
+            fsOut.Write(ptBuffers, (int)iWriteCounter, (int)(iReadCounter - iWriteCounter));
           }
-          iBufferSize = iLeftBufferSize = (int) Math.Min(lFileSizeSaved, SEEK_FIFO_SIZE);
+          iBufferSize = iLeftBufferSize = (int)Math.Min(lFileSizeSaved, SEEK_FIFO_SIZE);
           if (fsIn.Read(ptBuffers, 0, iBufferSize) != iBufferSize)
           {
             return false; //ERROR_READING_FROM_INPUT_FILE
@@ -746,7 +744,7 @@ namespace Mpeg2SplitterPackage
             {
               x = (ptBuffers[iReadCounter + 0] << 24) + (ptBuffers[iReadCounter + 1] << 16) +
                   (ptBuffers[iReadCounter + 2] << 8) + (ptBuffers[iReadCounter + 3] << 0);
-                //*(DWORD *)(ptBuffers + counter); 
+              //*(DWORD *)(ptBuffers + counter); 
               if (x == PACKET_HEADER_START_CODE)
               {
                 GetScrTimeStamp(iReadCounter, ref tStamp);
@@ -776,7 +774,7 @@ namespace Mpeg2SplitterPackage
                 }
                 else
                 {
-                  iBufferSize = iLeftBufferSize = (int) Math.Min(lFileSizeSaved, SEEK_FIFO_SIZE);
+                  iBufferSize = iLeftBufferSize = (int)Math.Min(lFileSizeSaved, SEEK_FIFO_SIZE);
                   if (tStamp < tSplitterTime[c_times].start)
                   {
                     if ((fsIn.Position + SeekStepForward) < fsIn.Length)
@@ -874,13 +872,13 @@ namespace Mpeg2SplitterPackage
                 if (splitMode == SplitMode.E_MODE_SCENE)
                 {
                   iWriteCounter = iReadCounter - PACKET_HEADER_INCR;
-                    // From here we start writing, write only the pack-header
+                  // From here we start writing, write only the pack-header
                 }
                 else
                 {
                   iReadCounter -= PACKET_HEADER_INCR;
                 }
-                fsOut.Write(ptBuffers, (int) iWriteCounter, (int) (iReadCounter - iWriteCounter));
+                fsOut.Write(ptBuffers, (int)iWriteCounter, (int)(iReadCounter - iWriteCounter));
                 iWriteCounter = iReadCounter;
                 DebugLogging("Start-point found Time " + tStamp.ToLongTimeString());
                 break;
@@ -889,7 +887,7 @@ namespace Mpeg2SplitterPackage
               {
                 if (splitMode == SplitMode.E_MODE_CUT)
                 {
-                  fsOut.Write(ptBuffers, (int) iWriteCounter, (int) (iReadCounter - iWriteCounter));
+                  fsOut.Write(ptBuffers, (int)iWriteCounter, (int)(iReadCounter - iWriteCounter));
                   iWriteCounter = iReadCounter;
                 }
               }
@@ -904,7 +902,7 @@ namespace Mpeg2SplitterPackage
               //             + " " + ptBuffers[iReadCounter + 10].ToString("X2") + " " + ptBuffers[iReadCounter + 11].ToString("X2") + " " + ptBuffers[iReadCounter + 12].ToString("X2") + " " + ptBuffers[iReadCounter + 13].ToString("X2") + " " + ptBuffers[iReadCounter + 14].ToString("X2")
               //             + " " + ptBuffers[iReadCounter + 15].ToString("X2") + " " + ptBuffers[iReadCounter + 16].ToString("X2") + " " + ptBuffers[iReadCounter + 17].ToString("X2") + " " + ptBuffers[iReadCounter + 18].ToString("X2") + " " + ptBuffers[iReadCounter + 19].ToString("X2"));
 #endif
-              PtsDtsFlags ePtsDtsFlag = (PtsDtsFlags) ((ptBuffers[iReadCounter + 7] >> 6) & 0x03);
+              PtsDtsFlags ePtsDtsFlag = (PtsDtsFlags)((ptBuffers[iReadCounter + 7] >> 6) & 0x03);
               int iEScrFlag = (ptBuffers[iReadCounter + 7] >> 5) & 0x01;
               if (iEScrFlag == 1)
               {
@@ -943,7 +941,7 @@ namespace Mpeg2SplitterPackage
           {
             if (splitMode == SplitMode.E_MODE_CUT)
             {
-              fsOut.Write(ptBuffers, (int) iWriteCounter, (int) (iReadCounter - iWriteCounter));
+              fsOut.Write(ptBuffers, (int)iWriteCounter, (int)(iReadCounter - iWriteCounter));
             }
             DebugLogging("Buffer ends in the middle of the READ_BUF_INCR, size left " + iLeftBufferSize);
             // Copy the unhandled data from the end to the beginning of the buffer, and then append new data
@@ -951,7 +949,7 @@ namespace Mpeg2SplitterPackage
             {
               ptBuffers[i] = ptBuffers[iReadCounter + i];
             }
-            iBufferSize = (int) Math.Min(lFileSizeSaved, READ_FIFO_SIZE);
+            iBufferSize = (int)Math.Min(lFileSizeSaved, READ_FIFO_SIZE);
             if (iBufferSize == READ_FIFO_SIZE) // prevent out-of-bound
             {
               iBufferSize -= iLeftBufferSize; // iLeftBufferSize is the unhandled data
@@ -974,7 +972,7 @@ namespace Mpeg2SplitterPackage
         if (iLeftBufferSize == 0)
         {
           // In Cut mode we don't need to write the buffer, and in scene mode the buffer is already written
-          iBufferSize = iLeftBufferSize = (int) Math.Min(lFileSizeSaved, READ_FIFO_SIZE);
+          iBufferSize = iLeftBufferSize = (int)Math.Min(lFileSizeSaved, READ_FIFO_SIZE);
           if (fsIn.Read(ptBuffers, 0, iBufferSize) != iBufferSize)
           {
             return false; //ERROR_READING_FROM_INPUT_FILE
@@ -998,7 +996,7 @@ namespace Mpeg2SplitterPackage
             {
               x = (ptBuffers[iReadCounter + 0] << 24) + (ptBuffers[iReadCounter + 1] << 16) +
                   (ptBuffers[iReadCounter + 2] << 8) + (ptBuffers[iReadCounter + 3] << 0);
-                //*(DWORD *)(ptBuffers + counter); 
+              //*(DWORD *)(ptBuffers + counter); 
               if (x == PACKET_HEADER_START_CODE) // start of pack header
               {
                 GetScrTimeStamp(iReadCounter, ref tStamp);
@@ -1017,7 +1015,7 @@ namespace Mpeg2SplitterPackage
                 }
                 else
                 {
-                  iBufferSize = iLeftBufferSize = (int) Math.Min(lFileSizeSaved, SEEK_FIFO_SIZE);
+                  iBufferSize = iLeftBufferSize = (int)Math.Min(lFileSizeSaved, SEEK_FIFO_SIZE);
                   if (tStamp < tSplitterTime[c_times].start)
                   {
                     if ((fsIn.Position + SeekStepForward) < fsIn.Length)
@@ -1104,13 +1102,13 @@ namespace Mpeg2SplitterPackage
                 if (splitMode == SplitMode.E_MODE_CUT)
                 {
                   iWriteCounter = iReadCounter - PACKET_HEADER_INCR;
-                    // From here we start writing, write only the pack-header
+                  // From here we start writing, write only the pack-header
                 }
                 else
                 {
                   iReadCounter -= PACKET_HEADER_INCR;
                 }
-                fsOut.Write(ptBuffers, (int) iWriteCounter, (int) (iReadCounter - iWriteCounter));
+                fsOut.Write(ptBuffers, (int)iWriteCounter, (int)(iReadCounter - iWriteCounter));
                 iWriteCounter = iReadCounter;
                 DebugLogging("End-point found Time " + tStamp.ToLongTimeString());
                 break;
@@ -1119,7 +1117,7 @@ namespace Mpeg2SplitterPackage
               {
                 if (splitMode == SplitMode.E_MODE_SCENE)
                 {
-                  fsOut.Write(ptBuffers, (int) iWriteCounter, (int) (iReadCounter - iWriteCounter));
+                  fsOut.Write(ptBuffers, (int)iWriteCounter, (int)(iReadCounter - iWriteCounter));
                   iWriteCounter = iReadCounter;
                 }
               }
@@ -1134,7 +1132,7 @@ namespace Mpeg2SplitterPackage
               //             + " " + ptBuffers[iReadCounter + 10].ToString("X2") + " " + ptBuffers[iReadCounter + 11].ToString("X2") + " " + ptBuffers[iReadCounter + 12].ToString("X2") + " " + ptBuffers[iReadCounter + 13].ToString("X2") + " " + ptBuffers[iReadCounter + 14].ToString("X2")
               //             + " " + ptBuffers[iReadCounter + 15].ToString("X2") + " " + ptBuffers[iReadCounter + 16].ToString("X2") + " " + ptBuffers[iReadCounter + 17].ToString("X2") + " " + ptBuffers[iReadCounter + 18].ToString("X2") + " " + ptBuffers[iReadCounter + 19].ToString("X2"));
 #endif
-              PtsDtsFlags ePtsDtsFlag = (PtsDtsFlags) ((ptBuffers[iReadCounter + 7] >> 6) & 0x03);
+              PtsDtsFlags ePtsDtsFlag = (PtsDtsFlags)((ptBuffers[iReadCounter + 7] >> 6) & 0x03);
               int iEScrFlag = (ptBuffers[iReadCounter + 7] >> 5) & 0x01;
               if (iEScrFlag == 1)
               {
@@ -1171,7 +1169,7 @@ namespace Mpeg2SplitterPackage
           {
             if (splitMode == SplitMode.E_MODE_SCENE)
             {
-              fsOut.Write(ptBuffers, (int) iWriteCounter, (int) (iReadCounter - iWriteCounter));
+              fsOut.Write(ptBuffers, (int)iWriteCounter, (int)(iReadCounter - iWriteCounter));
             }
             DebugLogging("Buffer ends in the middle of the READ_BUF_INCR, size left " + iLeftBufferSize);
             // Copy the unhandled data from the end to the beginning of the buffer, and then append new data
@@ -1179,7 +1177,7 @@ namespace Mpeg2SplitterPackage
             {
               ptBuffers[i] = ptBuffers[iReadCounter + i];
             }
-            iBufferSize = (int) Math.Min(lFileSizeSaved, READ_FIFO_SIZE);
+            iBufferSize = (int)Math.Min(lFileSizeSaved, READ_FIFO_SIZE);
             if (iBufferSize == READ_FIFO_SIZE) // prevent out-of-bound
             {
               iBufferSize -= iLeftBufferSize; // iLeftBufferSize is the unhandled data
@@ -1212,10 +1210,10 @@ namespace Mpeg2SplitterPackage
       if (splitMode == SplitMode.E_MODE_CUT)
       {
         /* now copy the entire file to output */
-        fsOut.Write(ptBuffers, (int) iReadCounter, iLeftBufferSize);
+        fsOut.Write(ptBuffers, (int)iReadCounter, iLeftBufferSize);
         while (lFileSizeSaved != 0)
         {
-          iBufferSize = (int) Math.Min(lFileSizeSaved, READ_FIFO_SIZE);
+          iBufferSize = (int)Math.Min(lFileSizeSaved, READ_FIFO_SIZE);
           lFileSizeSaved -= iBufferSize;
           if (fsIn.Read(ptBuffers, 0, iBufferSize) != iBufferSize)
           {
@@ -1248,7 +1246,7 @@ namespace Mpeg2SplitterPackage
 
       while (lFileSizeSaved != 0)
       {
-        iBufferSize = (int) Math.Min(lFileSizeSaved, READ_FIFO_SIZE);
+        iBufferSize = (int)Math.Min(lFileSizeSaved, READ_FIFO_SIZE);
         lFileSizeSaved -= iBufferSize;
         if (fsIn.Read(ptBuffers, 0, iBufferSize) != iBufferSize)
         {

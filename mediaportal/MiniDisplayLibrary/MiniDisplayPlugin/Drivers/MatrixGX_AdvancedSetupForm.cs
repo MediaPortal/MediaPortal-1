@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -264,16 +264,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.groupEqualizerOptions.SuspendLayout();
       this.groupEQstyle.SuspendLayout();
       this.groupBox2.SuspendLayout();
-      ((ISupportInitialize) (this.tbBacklightBLUE)).BeginInit();
-      ((ISupportInitialize) (this.tbBacklightGREEN)).BeginInit();
-      ((ISupportInitialize) (this.tbBacklightRED)).BeginInit();
+      ((ISupportInitialize)(this.tbBacklightBLUE)).BeginInit();
+      ((ISupportInitialize)(this.tbBacklightGREEN)).BeginInit();
+      ((ISupportInitialize)(this.tbBacklightRED)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                 | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.groupBox5);
       this.groupBox1.Controls.Add(this.groupEqualizerOptions);
       this.groupBox1.Controls.Add(this.groupBox2);
@@ -292,8 +292,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBox5
       // 
-      this.groupBox5.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.groupBox5.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.groupBox5.Controls.Add(this.cbUseClockOnShutdown);
       this.groupBox5.Controls.Add(this.mpEnableDisplayActionTime);
       this.groupBox5.Controls.Add(this.cmbBlankIdleTime);
@@ -429,9 +429,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupEqualizerOptions
       // 
-      this.groupEqualizerOptions.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                             | AnchorStyles.Left)
-                                                            | AnchorStyles.Right)));
+      this.groupEqualizerOptions.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                            | AnchorStyles.Left)
+                                                           | AnchorStyles.Right)));
       this.groupEqualizerOptions.Controls.Add(this.groupEQstyle);
       this.groupEqualizerOptions.Controls.Add(this.cmbDelayEqTime);
       this.groupEqualizerOptions.Controls.Add(this.lblRestrictEQ);
@@ -453,8 +453,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupEQstyle
       // 
-      this.groupEQstyle.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                   | AnchorStyles.Right)));
+      this.groupEQstyle.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                  | AnchorStyles.Right)));
       this.groupEQstyle.Controls.Add(this.cbUseVUmeter2);
       this.groupEQstyle.Controls.Add(this.cbVUindicators);
       this.groupEQstyle.Controls.Add(this.cbUseVUmeter);
@@ -568,7 +568,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // lblRestrictEQ
       // 
-      this.lblRestrictEQ.Anchor = ((AnchorStyles) ((AnchorStyles.Top | AnchorStyles.Right)));
+      this.lblRestrictEQ.Anchor = ((AnchorStyles)((AnchorStyles.Top | AnchorStyles.Right)));
       this.lblRestrictEQ.Location = new Point(102, 124);
       this.lblRestrictEQ.Name = "lblRestrictEQ";
       this.lblRestrictEQ.Size = new Size(116, 17);
@@ -707,8 +707,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cmbEqRate
       // 
-      this.cmbEqRate.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.cmbEqRate.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.cmbEqRate.BorderColor = Color.Empty;
       this.cmbEqRate.DropDownStyle = ComboBoxStyle.DropDownList;
       this.cmbEqRate.Items.AddRange(new object[]
@@ -802,8 +802,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.groupBox2.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.mpLabel1);
       this.groupBox2.Controls.Add(this.tbBacklightBLUE);
       this.groupBox2.Controls.Add(this.mpLabel2);
@@ -829,8 +829,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // tbBacklightBLUE
       // 
-      this.tbBacklightBLUE.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                      | AnchorStyles.Right)));
+      this.tbBacklightBLUE.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                     | AnchorStyles.Right)));
       this.tbBacklightBLUE.Location = new Point(50, 70);
       this.tbBacklightBLUE.Maximum = 255;
       this.tbBacklightBLUE.Name = "tbBacklightBLUE";
@@ -851,8 +851,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // tbBacklightGREEN
       // 
-      this.tbBacklightGREEN.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                       | AnchorStyles.Right)));
+      this.tbBacklightGREEN.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                      | AnchorStyles.Right)));
       this.tbBacklightGREEN.AutoSize = false;
       this.tbBacklightGREEN.Location = new Point(50, 45);
       this.tbBacklightGREEN.Maximum = 255;
@@ -874,8 +874,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // tbBacklightRED
       // 
-      this.tbBacklightRED.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                     | AnchorStyles.Right)));
+      this.tbBacklightRED.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                    | AnchorStyles.Right)));
       this.tbBacklightRED.AutoSize = false;
       this.tbBacklightRED.Location = new Point(50, 20);
       this.tbBacklightRED.Maximum = 255;
@@ -943,7 +943,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnOK
       // 
-      this.btnOK.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.btnOK.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
       this.btnOK.Location = new Point(316, 515);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new Size(88, 23);
@@ -954,7 +954,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnReset
       // 
-      this.btnReset.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.btnReset.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
       this.btnReset.Location = new Point(222, 515);
       this.btnReset.Name = "btnReset";
       this.btnReset.Size = new Size(88, 23);
@@ -983,9 +983,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.groupEQstyle.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
-      ((ISupportInitialize) (this.tbBacklightBLUE)).EndInit();
-      ((ISupportInitialize) (this.tbBacklightGREEN)).EndInit();
-      ((ISupportInitialize) (this.tbBacklightRED)).EndInit();
+      ((ISupportInitialize)(this.tbBacklightBLUE)).EndInit();
+      ((ISupportInitialize)(this.tbBacklightGREEN)).EndInit();
+      ((ISupportInitialize)(this.tbBacklightRED)).EndInit();
       this.ResumeLayout(false);
     }
 

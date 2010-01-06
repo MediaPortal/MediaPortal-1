@@ -34,7 +34,7 @@ namespace MediaPortal.GUI.Settings
   {
     public GUISettingsScreen()
     {
-      GetID = (int) Window.WINDOW_SETTINGS_SCREEN;
+      GetID = (int)Window.WINDOW_SETTINGS_SCREEN;
     }
 
     public override bool Init()
@@ -65,9 +65,7 @@ namespace MediaPortal.GUI.Settings
             return true;
           }
 
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          {
-          }
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT: {}
           break;
       }
       return base.OnMessage(message);

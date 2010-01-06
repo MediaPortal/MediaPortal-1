@@ -36,9 +36,7 @@ namespace System.Windows.Media.Animation
       StoryboardProperty = DependencyProperty.Register("Storyboard", typeof (Storyboard), typeof (BeginStoryboard));
     }
 
-    public BeginStoryboard()
-    {
-    }
+    public BeginStoryboard() {}
 
     #endregion Constructors
 
@@ -59,9 +57,7 @@ namespace System.Windows.Media.Animation
       SetValue(StoryboardProperty, child);
     }
 
-    void IAddChild.AddText(string text)
-    {
-    }
+    void IAddChild.AddText(string text) {}
 
     #endregion Methods
 
@@ -75,7 +71,7 @@ namespace System.Windows.Media.Animation
 
     public Storyboard Storyboard
     {
-      get { return (Storyboard) GetValue(StoryboardProperty); }
+      get { return (Storyboard)GetValue(StoryboardProperty); }
       set { SetValue(StoryboardProperty, value); }
     }
 

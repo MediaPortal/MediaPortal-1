@@ -30,22 +30,26 @@ namespace TvLibrary.Teletext
   public class TeletextPage : IDisposable
   {
     #region constants
-    const int MAX_SUB_PAGES = 0x80;
-    const int MAX_ROWS = 50;
+
+    private const int MAX_SUB_PAGES = 0x80;
+    private const int MAX_ROWS = 50;
+
     #endregion
 
     #region variables
 
-    readonly int _pageNumber = -1;
-    int _numberOfSubPages = -1;
-    readonly IntPtr[] _pageCache = new IntPtr[MAX_SUB_PAGES];
-    DateTime _lastTimeRoulated = DateTime.MinValue;
-    DateTime _lastTimeReceived = DateTime.MinValue;
-    int _previousSubPageNumber = -1;
-    TimeSpan _rotationTime = new TimeSpan(0, 0, 15);
+    private readonly int _pageNumber = -1;
+    private int _numberOfSubPages = -1;
+    private readonly IntPtr[] _pageCache = new IntPtr[MAX_SUB_PAGES];
+    private DateTime _lastTimeRoulated = DateTime.MinValue;
+    private DateTime _lastTimeReceived = DateTime.MinValue;
+    private int _previousSubPageNumber = -1;
+    private TimeSpan _rotationTime = new TimeSpan(0, 0, 15);
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TeletextPage"/> class.
     /// </summary>
@@ -54,6 +58,7 @@ namespace TvLibrary.Teletext
     {
       _pageNumber = pageNumber;
     }
+
     #endregion
 
     #region properties
@@ -72,32 +77,25 @@ namespace TvLibrary.Teletext
     /// <value>The sub page count.</value>
     public int SubPageCount
     {
-      get
-      {
-        return _numberOfSubPages;
-      }
+      get { return _numberOfSubPages; }
     }
+
     /// <summary>
     /// Gets the rotation time.
     /// </summary>
     /// <value>The rotation time.</value>
     public TimeSpan RotationTime
     {
-      get
-      {
-        return _rotationTime;
-      }
+      get { return _rotationTime; }
     }
+
     /// <summary>
     /// Gets the last time received.
     /// </summary>
     /// <value>The last time received.</value>
     public DateTime LastTimeReceived
     {
-      get
-      {
-        return _lastTimeReceived;
-      }
+      get { return _lastTimeReceived; }
     }
 
     /// <summary>
@@ -106,14 +104,13 @@ namespace TvLibrary.Teletext
     /// <value>The last time roulated.</value>
     public DateTime LastTimeRoulated
     {
-      get
-      {
-        return _lastTimeRoulated;
-      }
+      get { return _lastTimeRoulated; }
     }
+
     #endregion
 
     #region public methods
+
     /// <summary>
     /// Gets the sub page.
     /// </summary>
@@ -165,7 +162,8 @@ namespace TvLibrary.Teletext
     /// <param name="isNew">if set to <c>true</c> [is new].</param>
     /// <param name="isDeleted">if set to <c>true</c> [is deleted].</param>
     /// <param name="vbiLines">VBI lines</param>
-    public void SubPageReceived(int pageNumber, ref int subPageNumber, ref byte[] pageData, out bool isUpdate, out bool isNew, out bool isDeleted, string vbiLines)
+    public void SubPageReceived(int pageNumber, ref int subPageNumber, ref byte[] pageData, out bool isUpdate,
+                                out bool isNew, out bool isDeleted, string vbiLines)
     {
       isDeleted = false;
       isUpdate = false;
@@ -185,7 +183,6 @@ namespace TvLibrary.Teletext
           UpdatePage(subPageNumber, pageData);
         }
       }
-
 
 
       if (_numberOfSubPages > 0 && subPageNumber != _numberOfSubPages)
@@ -291,11 +288,12 @@ namespace TvLibrary.Teletext
       _previousSubPageNumber = subPageNumber;
       _lastTimeReceived = DateTime.Now;
     }
+
     #endregion
 
     #region private members
 
-    bool PageDiffers(byte[] pageData, int subPageNumber)
+    private bool PageDiffers(byte[] pageData, int subPageNumber)
     {
       if (subPageNumber < 0 || subPageNumber > _numberOfSubPages)
       {
@@ -306,7 +304,6 @@ namespace TvLibrary.Teletext
         return false;
       unsafe
       {
-
         byte* ptr = (byte*)pagePtr.ToPointer();
         bool isSet = Hamming.IsEraseBitSet(0, ref pageData);
         for (int row = 0; row < 31; row++)
@@ -379,7 +376,7 @@ namespace TvLibrary.Teletext
     /// <param name="subPageNumber">The sub page number.</param>
     /// <param name="pageData">The page data.</param>
     /// <returns></returns>
-    void UpdatePage(int subPageNumber, byte[] pageData)
+    private void UpdatePage(int subPageNumber, byte[] pageData)
     {
       if (subPageNumber < 0 || subPageNumber > _numberOfSubPages)
       {
@@ -458,7 +455,7 @@ namespace TvLibrary.Teletext
     /// Frees the page.
     /// </summary>
     /// <param name="subPageNumber">The sub page number.</param>
-    void FreePage(int subPageNumber)
+    private void FreePage(int subPageNumber)
     {
       if (subPageNumber < 0 || subPageNumber >= 0x80)
       {
@@ -477,7 +474,7 @@ namespace TvLibrary.Teletext
     /// </summary>
     /// <param name="subPageNumber">The sub page number.</param>
     /// <param name="page">Page data</param>
-    void AllocPage(int subPageNumber, byte[] page)
+    private void AllocPage(int subPageNumber, byte[] page)
     {
       if (subPageNumber < 0 || subPageNumber >= 0x80)
       {
@@ -492,12 +489,13 @@ namespace TvLibrary.Teletext
       _pageCache[subPageNumber] = Marshal.AllocHGlobal(size);
       Marshal.Copy(page, 0, _pageCache[subPageNumber], size);
     }
+
     /// <summary>
     /// Subs the page exists.
     /// </summary>
     /// <param name="subPageNumber">The sub page number.</param>
     /// <returns></returns>
-    bool SubPageExists(int subPageNumber)
+    private bool SubPageExists(int subPageNumber)
     {
       if (subPageNumber < 0 || subPageNumber >= 0x80)
       {
@@ -508,6 +506,7 @@ namespace TvLibrary.Teletext
         return false;
       return true;
     }
+
     #endregion
 
     #region IDisposable Members

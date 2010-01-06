@@ -125,7 +125,7 @@ namespace MediaPortal.GUI.Library
           quality.get_FramesDrawn(out framesDrawn);
           quality.get_FramesDroppedInRenderer(out framesDropped);
           quality.get_Jitter(out jitter);
-          AverageFrameRate = ((float) avgFrameRate)/100.0f;
+          AverageFrameRate = ((float)avgFrameRate) / 100.0f;
           AverageSyncOffset = avgSyncOffset;
           AverageDeviationSyncOffset = avgDevSyncOffset;
           FramesDrawn = framesDrawn;
@@ -133,9 +133,7 @@ namespace MediaPortal.GUI.Library
           Jitter = jitter;
         }
       }
-      catch
-      {
-      }
+      catch {}
     }
   }
 }

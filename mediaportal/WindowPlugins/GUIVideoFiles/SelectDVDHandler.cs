@@ -55,11 +55,13 @@ namespace MediaPortal.GUI.Video
 
       for (int i = rootDrives.Count - 1; i >= 0; i--)
       {
-        GUIListItem item = (GUIListItem) rootDrives[i];
+        GUIListItem item = (GUIListItem)rootDrives[i];
         if (Util.Utils.getDriveType(item.Path) == 5) //cd or dvd drive
         {
           string driverLetter = item.Path.Substring(0, 1);
-          string fileName = DVDonly ? String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter) : String.Format(@"{0}:\", driverLetter);
+          string fileName = DVDonly
+                              ? String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter)
+                              : String.Format(@"{0}:\", driverLetter);
           if (DVDonly && !File.Exists(fileName))
           {
             rootDrives.RemoveAt(i);
@@ -81,17 +83,17 @@ namespace MediaPortal.GUI.Video
         {
           if (rootDrives.Count == 1)
           {
-            GUIListItem ritem = (GUIListItem) rootDrives[0];
+            GUIListItem ritem = (GUIListItem)rootDrives[0];
             return ritem.Path; // Only one DVD available, play it!
           }
           SetIMDBThumbs(rootDrives, false, true);
           // Display a dialog with all drives to select from
           GUIDialogSelect2 dlgSel =
-            (GUIDialogSelect2) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_SELECT2);
+            (GUIDialogSelect2)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT2);
           if (null == dlgSel)
           {
             Log.Info("SelectDVDHandler: Could not open dialog, defaulting to first drive found");
-            GUIListItem ritem = (GUIListItem) rootDrives[0];
+            GUIListItem ritem = (GUIListItem)rootDrives[0];
             return ritem.Path;
           }
           dlgSel.Reset();
@@ -99,7 +101,7 @@ namespace MediaPortal.GUI.Video
           for (int i = 0; i < rootDrives.Count; i++)
           {
             GUIListItem dlgItem = new GUIListItem();
-            dlgItem = (GUIListItem) rootDrives[i];
+            dlgItem = (GUIListItem)rootDrives[i];
             Log.Debug("SelectDVDHandler: adding list item of possible playback location - {0}", dlgItem.Path);
             dlgSel.Add(dlgItem);
           }
@@ -121,7 +123,7 @@ namespace MediaPortal.GUI.Video
         }
       }
       //no disc in drive...
-      GUIDialogOK dlgOk = (GUIDialogOK) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_OK);
+      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
       dlgOk.SetHeading(1020); //information
       dlgOk.SetLine(1, 219); //no disc
       dlgOk.DoModal(parentId);
@@ -177,7 +179,7 @@ namespace MediaPortal.GUI.Video
               }
 
               GUIDialogYesNo dlgYesNo =
-                (GUIDialogYesNo) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+                (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
               if (null == dlgYesNo)
               {
                 return false;
@@ -213,7 +215,7 @@ namespace MediaPortal.GUI.Video
         }
       }
       //no disc in drive...
-      GUIDialogOK dlgOk = (GUIDialogOK) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_OK);
+      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
       dlgOk.SetHeading(3); //my videos
       dlgOk.SetLine(1, 219); //no disc
       dlgOk.DoModal(parentId);
@@ -229,7 +231,7 @@ namespace MediaPortal.GUI.Video
       {
         string strThumb = string.Empty;
         string strLargeThumb = string.Empty;
-        pItem = (GUIListItem) items[x];
+        pItem = (GUIListItem)items[x];
         string file = string.Empty;
         bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
 
@@ -364,9 +366,7 @@ namespace MediaPortal.GUI.Video
         {
           strDirs = Directory.GetDirectories(path, "video_ts");
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
         if (strDirs != null)
         {
           if (strDirs.Length == 1)
@@ -380,9 +380,7 @@ namespace MediaPortal.GUI.Video
         {
           strFiles = Directory.GetFiles(path);
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
         if (strFiles != null)
         {
           for (int i = 0; i < strFiles.Length; ++i)

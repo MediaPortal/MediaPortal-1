@@ -52,17 +52,13 @@ namespace TvLibrary.Implementations.Analog
     /// <value></value>
     public ITVCard TvCard
     {
-      get
-      {
-        return _card;
-      }
+      get { return _card; }
     }
+
     /// <summary>
     /// Disposes this instance.
     /// </summary>
-    public void Dispose()
-    {
-    }
+    public void Dispose() {}
 
     /// <summary>
     /// resets the scanner
@@ -78,14 +74,8 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public int RadioSensitivity
     {
-      get
-      {
-        return _radioSensitivity;
-      }
-      set
-      {
-        _radioSensitivity = value;
-      }
+      get { return _radioSensitivity; }
+      set { _radioSensitivity = value; }
     }
 
     /// <summary>
@@ -133,7 +123,7 @@ namespace TvLibrary.Implementations.Analog
             {
               channelName = channelName.Substring(0, pos);
             }
-            channelName = channelName.TrimEnd(new char[] { '\'', '\"', '´', '`' });
+            channelName = channelName.TrimEnd(new char[] {'\'', '\"', '´', '`'});
             channelName = channelName.Trim();
             if (channelName != "")
             {
@@ -183,6 +173,7 @@ namespace TvLibrary.Implementations.Analog
     }
 
     #region IAnalogChannelScanCallback Members
+
     /// <summary>
     /// Called when [scanner done].
     /// </summary>
@@ -192,6 +183,7 @@ namespace TvLibrary.Implementations.Analog
       _event.Set();
       return 0;
     }
+
     #endregion
   }
 }

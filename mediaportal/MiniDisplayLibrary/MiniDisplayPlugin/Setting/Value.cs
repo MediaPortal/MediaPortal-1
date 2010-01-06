@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
 
@@ -8,13 +8,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
    XmlInclude(typeof (Property)), XmlInclude(typeof (Text)), XmlInclude(typeof (Parse))]
   public abstract class Value
   {
-    [XmlElement("Or", typeof (OrCondition)), XmlElement("IsNull", typeof (IsNullCondition)), DefaultValue((string) null)
+    [XmlElement("Or", typeof (OrCondition)), XmlElement("IsNull", typeof (IsNullCondition)), DefaultValue((string)null)
     , XmlElement("NotNull", typeof (NotNullCondition)), XmlElement("And", typeof (AndCondition))] public Condition
       Condition;
 
-    protected Value()
-    {
-    }
+    protected Value() {}
 
     protected abstract string DoEvaluate();
 

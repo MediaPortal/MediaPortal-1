@@ -26,8 +26,8 @@ namespace TvLibrary.Interfaces.Analyzer
   /// Interface to the video analyzer com object
   /// </summary>
   [ComVisible(true), ComImport,
-  Guid("59f8d617-92fd-48d5-8f6d-a97bfd95c448"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("59f8d617-92fd-48d5-8f6d-a97bfd95c448"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsVideoAnalyzer
   {
     /// <summary>

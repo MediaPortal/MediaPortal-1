@@ -27,8 +27,8 @@ namespace TvLibrary.Interfaces.Analyzer
   /// Interface to the epg grabber com object
   /// </summary>
   [ComVisible(true), ComImport,
-  Guid("5CDAC655-D9FB-4c71-8119-DD07FE86A9CE"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("5CDAC655-D9FB-4c71-8119-DD07FE86A9CE"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsEpgScanner
   {
     /// <summary>
@@ -72,7 +72,8 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="service_id">The service_id.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetEPGChannel([In] uint channel, [In, Out] ref UInt16 networkId, [In, Out] ref UInt16 transportid, [In, Out] ref UInt16 service_id);
+    int GetEPGChannel([In] uint channel, [In, Out] ref UInt16 networkId, [In, Out] ref UInt16 transportid,
+                      [In, Out] ref UInt16 service_id);
 
     /// <summary>
     /// Gets the EPG event details.
@@ -88,7 +89,9 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="classification">The classification</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetEPGEvent([In] uint channel, [In] uint eventid, [Out] out uint languageCount, [Out] out uint date, [Out] out uint time, [Out] out uint duration, out IntPtr genre, [Out] out int starRating, out IntPtr classification);
+    int GetEPGEvent([In] uint channel, [In] uint eventid, [Out] out uint languageCount, [Out] out uint date,
+                    [Out] out uint time, [Out] out uint duration, out IntPtr genre, [Out] out int starRating,
+                    out IntPtr classification);
 
     /// <summary>
     /// Gets the EPG language.
@@ -102,7 +105,8 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="parentalRating">The parental rating</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetEPGLanguage([In] uint channel, [In] uint eventid, [In]uint languageIndex, [Out] out uint language, [Out] out IntPtr eventText, [Out] out IntPtr eventDescription, [Out] out int parentalRating);
+    int GetEPGLanguage([In] uint channel, [In] uint eventid, [In] uint languageIndex, [Out] out uint language,
+                       [Out] out IntPtr eventText, [Out] out IntPtr eventDescription, [Out] out int parentalRating);
 
     /// <summary>
     /// Start grabbing MGW
@@ -146,7 +150,9 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="programName">Name of the program.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetMHWTitle(uint program, ref uint id, ref uint transportId, ref uint networkId, ref uint channelId, ref UInt32 programId, ref uint themeId, ref uint PPV, ref byte Summaries, ref uint duration, ref uint dateStart, ref uint timeStart, out IntPtr title, out IntPtr programName);
+    int GetMHWTitle(uint program, ref uint id, ref uint transportId, ref uint networkId, ref uint channelId,
+                    ref UInt32 programId, ref uint themeId, ref uint PPV, ref byte Summaries, ref uint duration,
+                    ref uint dateStart, ref uint timeStart, out IntPtr title, out IntPtr programName);
 
     /// <summary>
     /// Gets the details for a MHW channel.
@@ -158,7 +164,8 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="channelName">Name of the channel.</param>
     /// <returns></returns>
     [PreserveSig]
-    int GetMHWChannel(uint channelNr, ref uint channelId, ref uint networkId, ref uint transportId, out IntPtr channelName);
+    int GetMHWChannel(uint channelNr, ref uint channelId, ref uint networkId, ref uint transportId,
+                      out IntPtr channelName);
 
     /// <summary>
     /// Gets the MHW summary.

@@ -102,7 +102,7 @@ namespace Databases.Folders
         return;
       }
       string strReturn = "";
-      for (int i = 0; i < (int) strTxt.Length; ++i)
+      for (int i = 0; i < (int)strTxt.Length; ++i)
       {
         char k = strTxt[i];
         if (k == '\'')
@@ -331,9 +331,7 @@ namespace Databases.Folders
               XmlSerializer serializer = new XmlSerializer(type);
               Value = serializer.Deserialize(r);
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
           }
         }
       }

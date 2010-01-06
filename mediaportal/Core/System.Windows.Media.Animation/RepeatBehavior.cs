@@ -65,7 +65,7 @@ namespace System.Windows.Media.Animation
         return Forever;
       }
 
-      return new RepeatBehavior(double.Parse((string) text));
+      return new RepeatBehavior(double.Parse((string)text));
     }
 
     #endregion Methods

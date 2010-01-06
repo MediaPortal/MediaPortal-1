@@ -31,9 +31,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public FrameworkElementFactory()
-    {
-    }
+    public FrameworkElementFactory() {}
 
     public FrameworkElementFactory(string text)
     {
@@ -55,33 +53,19 @@ namespace System.Windows
 
     #region Methods
 
-    public void AddHandler(RoutedEvent routedEvent, Delegate handler)
-    {
-    }
+    public void AddHandler(RoutedEvent routedEvent, Delegate handler) {}
 
-    public void AddHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
-    {
-    }
+    public void AddHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo) {}
 
-    public void AppendChild(FrameworkElementFactory child)
-    {
-    }
+    public void AppendChild(FrameworkElementFactory child) {}
 
-    public void RemoveHandler(RoutedEvent routedEvent, Delegate handler)
-    {
-    }
+    public void RemoveHandler(RoutedEvent routedEvent, Delegate handler) {}
 
-    public void SetBinding(DependencyProperty dp, Binding binding)
-    {
-    }
+    public void SetBinding(DependencyProperty dp, Binding binding) {}
 
-    public void SetResourceReference(DependencyProperty dp, object name)
-    {
-    }
+    public void SetResourceReference(DependencyProperty dp, object name) {}
 
-    public void SetValue(DependencyProperty dp, object value)
-    {
-    }
+    public void SetValue(DependencyProperty dp, object value) {}
 
     #endregion Methods
 

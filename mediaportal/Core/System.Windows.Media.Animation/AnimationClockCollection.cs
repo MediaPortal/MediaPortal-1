@@ -31,9 +31,7 @@ namespace System.Windows.Media.Animation
   {
     #region Constructors
 
-    public AnimationClockCollection()
-    {
-    }
+    public AnimationClockCollection() {}
 
     #endregion Constructors
 
@@ -112,7 +110,7 @@ namespace System.Windows.Media.Animation
 
     public AnimationClock this[int index]
     {
-      get { return (AnimationClock) List[index]; }
+      get { return (AnimationClock)List[index]; }
       set { List[index] = value; }
     }
 

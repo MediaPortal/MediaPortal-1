@@ -61,7 +61,7 @@ namespace MediaPortal.Dispatcher
               break;
             }
 
-            job = (Job) _jobs.Peek();
+            job = (Job)_jobs.Peek();
 
             if (job.IsReady == false)
             {

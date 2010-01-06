@@ -36,32 +36,28 @@ namespace MediaPortal.UserInterface.Controls
   /// Summary description for MPTabControl.
   /// </summary>
   public class MPTabControl : System.Windows.Forms.TabControl
-	{
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+  {
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
     private int dragMoveCounter = 0;
     private bool allowReorderTabs = false;
     private int lastHoverTabIndex = -1;
 
     public MPTabControl()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
-			AllowDrop = true;
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
+      AllowDrop = true;
 
-			// TODO: Add any initialization after the InitForm call
-
-		}
+      // TODO: Add any initialization after the InitForm call
+    }
 
     public bool AllowReorderTabs
     {
-      get
-      {
-        return allowReorderTabs;
-      }
+      get { return allowReorderTabs; }
       set
       {
         allowReorderTabs = value;
@@ -69,41 +65,41 @@ namespace MediaPortal.UserInterface.Controls
       }
     }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-		}
-		#endregion
+    #region Component Designer generated code
 
-		protected override void OnDragOver(System.Windows.Forms.DragEventArgs e)
-		{
-			base.OnDragOver(e);
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent() {}
 
-			Point pt = new Point(e.X, e.Y);
-			//We need client coordinates.
-			pt = PointToClient(pt);
-			
-			//Get the tab we are hovering over.
-			TabPage hoverTab = GetTabPageByTab(pt);
+    #endregion
+
+    protected override void OnDragOver(System.Windows.Forms.DragEventArgs e)
+    {
+      base.OnDragOver(e);
+
+      Point pt = new Point(e.X, e.Y);
+      //We need client coordinates.
+      pt = PointToClient(pt);
+
+      //Get the tab we are hovering over.
+      TabPage hoverTab = GetTabPageByTab(pt);
       if (hoverTab == null)
       {
         if (lastHoverTabIndex != -1)
@@ -127,14 +123,14 @@ namespace MediaPortal.UserInterface.Controls
 
         return;
       }
-      
-			//Make sure we are on a tab.
-			if(hoverTab != null)
-			{
-				//Make sure there is a TabPage being dragged.
-				if(e.Data.GetDataPresent(typeof(TabPage)))
-				{
-					e.Effect = DragDropEffects.Move;
+
+      //Make sure we are on a tab.
+      if (hoverTab != null)
+      {
+        //Make sure there is a TabPage being dragged.
+        if (e.Data.GetDataPresent(typeof (TabPage)))
+        {
+          e.Effect = DragDropEffects.Move;
 
           if (hoverTabIndex != lastHoverTabIndex)
           {
@@ -160,23 +156,24 @@ namespace MediaPortal.UserInterface.Controls
               }
 
               g.DrawLine(new Pen(lineColor, 2),
-                new Point(x + 1, tabRect.Y),
-                new Point(x + 1, tabRect.Y + tabRect.Height));
+                         new Point(x + 1, tabRect.Y),
+                         new Point(x + 1, tabRect.Y + tabRect.Height));
 
               g.FillPolygon(new SolidBrush(lineColor),
-                new Point[] {
-              new Point(x - 6, 
-                tabRect.Y), 
-              new Point(x + 7, 
-                tabRect.Y), 
-              new Point(x, 
-                tabRect.Y + 7)});
-
+                            new Point[]
+                              {
+                                new Point(x - 6,
+                                          tabRect.Y),
+                                new Point(x + 7,
+                                          tabRect.Y),
+                                new Point(x,
+                                          tabRect.Y + 7)
+                              });
             }
           }
-				}
-			}
-		}
+        }
+      }
+    }
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
@@ -225,41 +222,41 @@ namespace MediaPortal.UserInterface.Controls
       base.OnMouseUp(e);
     }
 
-		/// <summary>
-		/// Finds the TabPage whose tab is contains the given point.
-		/// </summary>
-		/// <param name="pt">The point (given in client coordinates) to look for a TabPage.</param>
-		/// <returns>The TabPage whose tab is at the given point (null if there isn't one).</returns>
-		private TabPage GetTabPageByTab(Point pt)
-		{
-			TabPage tp = null;
+    /// <summary>
+    /// Finds the TabPage whose tab is contains the given point.
+    /// </summary>
+    /// <param name="pt">The point (given in client coordinates) to look for a TabPage.</param>
+    /// <returns>The TabPage whose tab is at the given point (null if there isn't one).</returns>
+    private TabPage GetTabPageByTab(Point pt)
+    {
+      TabPage tp = null;
 
-			for(int i = 0; i < TabPages.Count; i++)
-			{
-				if(GetTabRect(i).Contains(pt))
-				{
-					tp = TabPages[i];
-					break;
-				}
-			}
-			
-			return tp;
-		}
+      for (int i = 0; i < TabPages.Count; i++)
+      {
+        if (GetTabRect(i).Contains(pt))
+        {
+          tp = TabPages[i];
+          break;
+        }
+      }
 
-		/// <summary>
-		/// Loops over all the TabPages to find the index of the given TabPage.
-		/// </summary>
-		/// <param name="page">The TabPage we want the index for.</param>
-		/// <returns>The index of the given TabPage(-1 if it isn't found.)</returns>
-		private int FindIndex(TabPage page)
-		{
-			for(int i = 0; i < TabPages.Count; i++)
-			{
-				if(TabPages[i] == page)
-					return i;
-			}
+      return tp;
+    }
 
-			return -1;
-		}
-	}
+    /// <summary>
+    /// Loops over all the TabPages to find the index of the given TabPage.
+    /// </summary>
+    /// <param name="page">The TabPage we want the index for.</param>
+    /// <returns>The index of the given TabPage(-1 if it isn't found.)</returns>
+    private int FindIndex(TabPage page)
+    {
+      for (int i = 0; i < TabPages.Count; i++)
+      {
+        if (TabPages[i] == page)
+          return i;
+      }
+
+      return -1;
+    }
+  }
 }

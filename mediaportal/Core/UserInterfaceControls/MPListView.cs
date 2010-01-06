@@ -37,7 +37,7 @@ namespace MediaPortal.UserInterface.Controls
   public class MPListView : System.Windows.Forms.ListView
   {
     [DllImport("user32")]
-    static extern int GetDoubleClickTime();
+    private static extern int GetDoubleClickTime();
 
     private const string REORDER = "Reorder";
     private bool allowRowReorder = false;
@@ -45,10 +45,7 @@ namespace MediaPortal.UserInterface.Controls
 
     public bool AllowRowReorder
     {
-      get
-      {
-        return this.allowRowReorder;
-      }
+      get { return this.allowRowReorder; }
       set
       {
         this.allowRowReorder = value;
@@ -58,14 +55,8 @@ namespace MediaPortal.UserInterface.Controls
 
     public new SortOrder Sorting
     {
-      get
-      {
-        return SortOrder.None;
-      }
-      set
-      {
-        base.Sorting = SortOrder.None;
-      }
+      get { return SortOrder.None; }
+      set { base.Sorting = SortOrder.None; }
     }
 
     public MPListView()
@@ -197,7 +188,7 @@ namespace MediaPortal.UserInterface.Controls
       for (int i = insertItems.Count - 1; i >= 0; i--)
       {
         ListViewItem insertItem =
-         (ListViewItem)insertItems[i];
+          (ListViewItem)insertItems[i];
         base.Items.Insert(dropIndex, insertItem);
       }
       foreach (ListViewItem removeItem in base.SelectedItems)
@@ -231,6 +222,5 @@ namespace MediaPortal.UserInterface.Controls
       lastClick = DateTime.MinValue;
       base.OnDoubleClick(e);
     }
-
   }
 }

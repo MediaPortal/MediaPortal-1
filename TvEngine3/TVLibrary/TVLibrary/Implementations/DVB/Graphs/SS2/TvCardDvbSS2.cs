@@ -31,8 +31,10 @@ using TvDatabase;
 
 namespace TvLibrary.Implementations.DVB
 {
+
   #region enums
-  enum TunerType
+
+  internal enum TunerType
   {
     ttSat = 0,
     ttCable = 1,
@@ -40,7 +42,8 @@ namespace TvLibrary.Implementations.DVB
     ttATSC = 3,
     ttUnknown = -1
   }
-  enum eModulationTAG
+
+  internal enum eModulationTAG
   {
     QAM_4 = 2,
     QAM_16,
@@ -50,7 +53,8 @@ namespace TvLibrary.Implementations.DVB
     QAM_256,
     MODE_UNKNOWN = -1
   }
-  enum GuardIntervalType
+
+  internal enum GuardIntervalType
   {
     Interval_1_32 = 0,
     Interval_1_16,
@@ -58,13 +62,15 @@ namespace TvLibrary.Implementations.DVB
     Interval_1_4,
     Interval_Auto
   }
-  enum BandWidthType
+
+  internal enum BandWidthType
   {
     MHz_6 = 6,
     MHz_7 = 7,
     MHz_8 = 8,
   }
-  enum SS2DisEqcType
+
+  internal enum SS2DisEqcType
   {
     None = 0,
     Simple_A,
@@ -74,7 +80,8 @@ namespace TvLibrary.Implementations.DVB
     Level_1_B_A,
     Level_1_B_B
   }
-  enum FecType
+
+  internal enum FecType
   {
     Fec_1_2 = 1,
     Fec_2_3,
@@ -83,18 +90,21 @@ namespace TvLibrary.Implementations.DVB
     Fec_7_8,
     Fec_Auto
   }
-  enum LNBSelectionType
+
+  internal enum LNBSelectionType
   {
     Lnb0 = 0,
     Lnb22kHz,
     Lnb33kHz,
     Lnb44kHz,
   }
-  enum PolarityType
+
+  internal enum PolarityType
   {
     Horizontal = 0,
     Vertical,
   }
+
   #endregion
 
   /// <summary>
@@ -102,7 +112,6 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class TvCardDvbSS2 : TvCardDvbBase, IDisposable, ITVCard, IDiSEqCController
   {
-
     #region private consts
 
     //private const string DEVICE_DRIVER_NAME = "TechniSat DVB-PC TV Star PCI";
@@ -110,11 +119,14 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region imports
+
     [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
-    class MpTsAnalyzer { }
+    private class MpTsAnalyzer {}
+
     #endregion
 
     #region Structs
+
     //
     //	Structure completedy by GetTunerCapabilities() to return tuner capabilities
     //
@@ -123,49 +135,54 @@ namespace TvLibrary.Implementations.DVB
     {
 #pragma warning disable 649 // All fields are used by the Marshal.PtrToStructure function
       public TunerType eModulation;
-      public int dwConstellationSupported;       // Show if SetModulation() is supported
-      public int dwFECSupported;                 // Show if SetFec() is suppoted
+      public int dwConstellationSupported; // Show if SetModulation() is supported
+      public int dwFECSupported; // Show if SetFec() is suppoted
       public int dwMinTransponderFreqInKHz;
       public int dwMaxTransponderFreqInKHz;
       public int dwMinTunerFreqInKHz;
       public int dwMaxTunerFreqInKHz;
       public int dwMinSymbolRateInBaud;
       public int dwMaxSymbolRateInBaud;
-      public int bAutoSymbolRate;				// Obsolte		
-      public int dwPerformanceMonitoring;        // See bitmask definitions below
-      public int dwLockTimeInMilliSecond;		// lock time in millisecond
-      public int dwKernelLockTimeInMilliSecond;	// lock time for kernel
+      public int bAutoSymbolRate; // Obsolte		
+      public int dwPerformanceMonitoring; // See bitmask definitions below
+      public int dwLockTimeInMilliSecond; // lock time in millisecond
+      public int dwKernelLockTimeInMilliSecond; // lock time for kernel
       public int dwAcquisitionCapabilities;
 #pragma warning restore 649
     }
 #pragma warning restore 169,649
+
     #endregion
 
     #region variables
-    IBaseFilter _filterB2C2Adapter;
-    DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 _interfaceB2C2DataCtrl;
-    DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 _interfaceB2C2TunerCtrl;
-    readonly IntPtr _ptrDisEqc;
-    readonly DiSEqCMotor _disEqcMotor;
-    readonly bool _useDISEqCMotor;
+
+    private IBaseFilter _filterB2C2Adapter;
+    private DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 _interfaceB2C2DataCtrl;
+    private DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 _interfaceB2C2TunerCtrl;
+    private readonly IntPtr _ptrDisEqc;
+    private readonly DiSEqCMotor _disEqcMotor;
+    private readonly bool _useDISEqCMotor;
 
     #endregion
 
     #region imports
+
     [DllImport("advapi32", CharSet = CharSet.Auto)]
-    static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
+    private static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
 
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    static extern int SetPidToPin(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl, UInt16 pin, UInt16 pid);
+    private static extern int SetPidToPin(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl, UInt16 pin, UInt16 pid);
 
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    static extern bool DeleteAllPIDs(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl, UInt16 pin);
+    private static extern bool DeleteAllPIDs(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl, UInt16 pin);
 
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    static extern int GetSNR(DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 tunerCtrl, [Out] out int a, [Out] out int b);
+    private static extern int GetSNR(DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 tunerCtrl, [Out] out int a, [Out] out int b);
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TvCardDvbSS2"/> class.
     /// </summary>
@@ -188,9 +205,11 @@ namespace TvLibrary.Implementations.DVB
       _disEqcMotor = new DiSEqCMotor(this);
       GetTunerCapabilities();
     }
+
     #endregion
 
     #region tuning & recording
+
     /// <summary>
     /// Tunes the specified channel.
     /// </summary>
@@ -296,7 +315,7 @@ namespace TvLibrary.Implementations.DVB
               disType = SS2DisEqcType.Level_1_B_B;
               break;
           }
-          switchFreq = lnbFrequency / 1000;//in MHz
+          switchFreq = lnbFrequency / 1000; //in MHz
           pmtPid = dvbsChannel.PmtPid;
           break;
         case CardType.DvbT:
@@ -379,7 +398,8 @@ namespace TvLibrary.Implementations.DVB
           //if modulation = 256QAM assume ATSC QAM for HD5000
           if (dvbaChannel.ModulationType == ModulationType.Mod256Qam)
           {
-            Log.Log.WriteFile("DVBGraphB2C2:  ATSC Channel:{0} Frequency:{1}", dvbaChannel.PhysicalChannel, dvbaChannel.Frequency);
+            Log.Log.WriteFile("DVBGraphB2C2:  ATSC Channel:{0} Frequency:{1}", dvbaChannel.PhysicalChannel,
+                              dvbaChannel.Frequency);
             frequency = (int)dvbaChannel.Frequency;
             pmtPid = dvbaChannel.PmtPid;
           }
@@ -516,7 +536,7 @@ namespace TvLibrary.Implementations.DVB
       hr = -1;
       int lockRetries = 0;
       while
-          (((uint)hr == 0x90010115 || hr == -1) && lockRetries < 5)
+        (((uint)hr == 0x90010115 || hr == -1) && lockRetries < 5)
       {
         hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
         _interfaceB2C2TunerCtrl.CheckLock();
@@ -556,7 +576,8 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         RunGraph(subChannelId);
-      } catch (TvExceptionNoSignal)
+      }
+      catch (TvExceptionNoSignal)
       {
         FreeSubChannel(subChannelId);
         throw;
@@ -564,9 +585,11 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("ss2:tune done:{0:X}", pmtPid);
       return _mapSubChannels[subChannelId];
     }
+
     #endregion
 
     #region epg & scanning
+
     /// <summary>
     /// returns the ITVScanning interface used for scanning channels
     /// </summary>
@@ -579,6 +602,7 @@ namespace TvLibrary.Implementations.DVB
         return new DVBSS2canning(this);
       }
     }
+
     #endregion
 
     /// <summary>
@@ -678,16 +702,16 @@ namespace TvLibrary.Implementations.DVB
         }
         DevicesInUse.Instance.Add(_tunerDevice);
         _managedThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
-        _graphBuilder = (IFilterGraph2) new FilterGraph();
+        _graphBuilder = (IFilterGraph2)new FilterGraph();
         _rotEntry = new DsROTEntry(_graphBuilder);
-        _capBuilder = (ICaptureGraphBuilder2) new CaptureGraphBuilder2();
+        _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
         _capBuilder.SetFiltergraph(_graphBuilder);
         //=========================================================================================================
         // add the skystar 2 specific filters
         //=========================================================================================================
         Log.Log.WriteFile("ss2:CreateGraph() create B2C2 adapter");
         _filterB2C2Adapter =
-          (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(DVBSkyStar2Helper.CLSID_B2C2Adapter, false));
+          (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(DVBSkyStar2Helper.CLSID_B2C2Adapter, false));
         if (_filterB2C2Adapter == null)
         {
           Log.Log.Error("ss2:creategraph() _filterB2C2Adapter not found");
@@ -728,7 +752,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Error("ss2: Tuner initialize failed:0x{0:X}", hr);
           // if the skystar2 card is detected as analogue, it needs a device reset 
 
-          ((IMediaControl) _graphBuilder).Stop();
+          ((IMediaControl)_graphBuilder).Stop();
           FreeAllSubChannels();
           FilterGraphTools.RemoveAllFilters(_graphBuilder);
 
@@ -776,7 +800,8 @@ namespace TvLibrary.Implementations.DVB
         AddTsWriterFilterToGraph();
         SendHwPids(new List<ushort>());
         _graphState = GraphState.Created;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
         Dispose();
@@ -788,7 +813,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Connects the SS2 filter to the infTee
     /// </summary>
-    void ConnectInfTeeToSS2()
+    private void ConnectInfTeeToSS2()
     {
       Log.Log.WriteFile("ss2:ConnectMainTee()");
       IPin pinOut = DsFindPin.ByDirection(_filterB2C2Adapter, PinDirection.Output, 2);
@@ -812,13 +837,15 @@ namespace TvLibrary.Implementations.DVB
         throw new TvException("unable to connect b2c2->_infTeeMain");
       }
     }
+
     /// <summary>
     /// Sends the HW pids.
     /// </summary>
     /// <param name="pids">The pids.</param>
     public override void SendHwPids(List<ushort> pids)
     {
-      const int PID_CAPTURE_ALL_INCLUDING_NULLS = 0x2000;//Enables reception of all PIDs in the transport stream including the NULL PID
+      const int PID_CAPTURE_ALL_INCLUDING_NULLS = 0x2000;
+        //Enables reception of all PIDs in the transport stream including the NULL PID
       //const int PID_CAPTURE_ALL_EXCLUDING_NULLS = 0x2001;//Enables reception of all PIDs in the transport stream excluding the NULL PID.
 
       if (!DeleteAllPIDs(_interfaceB2C2DataCtrl, 0))
@@ -833,7 +860,8 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.Error("ss2:SetPidToPin() failed pid:0x2000");
         }
-      }/* unreachable
+      }
+        /* unreachable
       else
       {
         int maxPids;
@@ -914,7 +942,8 @@ namespace TvLibrary.Implementations.DVB
       // add the skystar 2 specific filters
       //=========================================================================================================
       Log.Log.WriteFile("ss2:GetTunerCapabilities() create B2C2 adapter");
-      _filterB2C2Adapter = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(DVBSkyStar2Helper.CLSID_B2C2Adapter, false));
+      _filterB2C2Adapter =
+        (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(DVBSkyStar2Helper.CLSID_B2C2Adapter, false));
       if (_filterB2C2Adapter == null)
       {
         Log.Log.Error("ss2:GetTunerCapabilities() _filterB2C2Adapter not found");
@@ -941,7 +970,7 @@ namespace TvLibrary.Implementations.DVB
       //=========================================================================================================
       // Get tuner type (DVBS, DVBC, DVBT, ATSC)
       //=========================================================================================================
-      int lTunerCapSize = Marshal.SizeOf(typeof(tTunerCapabilities));
+      int lTunerCapSize = Marshal.SizeOf(typeof (tTunerCapabilities));
       IntPtr ptCaps = Marshal.AllocHGlobal(lTunerCapSize);
       int hr = _interfaceB2C2TunerCtrl.GetTunerCapabilities(ptCaps, ref lTunerCapSize);
       if (hr != 0)
@@ -949,7 +978,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Error("ss2: Tuner Type failed:0x{0:X}", hr);
         return;
       }
-      tTunerCapabilities tc = (tTunerCapabilities)Marshal.PtrToStructure(ptCaps, typeof(tTunerCapabilities));
+      tTunerCapabilities tc = (tTunerCapabilities)Marshal.PtrToStructure(ptCaps, typeof (tTunerCapabilities));
       switch (tc.eModulation)
       {
         case TunerType.ttSat:
@@ -992,6 +1021,7 @@ namespace TvLibrary.Implementations.DVB
         _graphBuilder = null;
       }
     }
+
     /// <summary>
     /// Disposes this instance.
     /// </summary>
@@ -1066,22 +1096,22 @@ namespace TvLibrary.Implementations.DVB
         _tunerDevice = null;
       }
     }
+
     #endregion
 
     #region IDiSEqCController Members
-    void DisEqcGotoPosition(byte position)
+
+    private void DisEqcGotoPosition(byte position)
     {
       _disEqcMotor.GotoPosition(position);
     }
+
     /// <summary>
     /// Handles DiSEqC motor operations
     /// </summary>
     public override IDiSEqCMotor DiSEqCMotor
     {
-      get
-      {
-        return _disEqcMotor;
-      }
+      get { return _disEqcMotor; }
     }
 
     /// <summary>
@@ -1112,6 +1142,7 @@ namespace TvLibrary.Implementations.DVB
       reply = new byte[1];
       return false;
     }
+
     #endregion
   }
 }

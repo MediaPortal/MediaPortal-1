@@ -63,13 +63,13 @@ namespace MediaPortal.Player.Subtitles
       byte reserved_parity_offset = data[0]; // parity/offset etc
 
       //LogDebug("first data_field byte: %s", ToBinary(reserved_parity_offset).c_str()); 
-      byte reserved_future_use = (byte) (data[0] & 0xC0); // first two bits
+      byte reserved_future_use = (byte)(data[0] & 0xC0); // first two bits
       assert(reserved_future_use == 0xC0, "Reserved future use unexpected value");
 
-      byte field_parity = (byte) ((data[0] & 0x20) >> 5); // 3rd bit
+      byte field_parity = (byte)((data[0] & 0x20) >> 5); // 3rd bit
       //LogDebug("field parity %i", field_parity);
 
-      byte line_offset = (byte) (data[0] & 0x1F); // last 5 bits
+      byte line_offset = (byte)(data[0] & 0x1F); // last 5 bits
       assert(line_offset == 0x00 || (line_offset >= 0x07 && line_offset <= 0x16), "Line offset wrong!");
 
       byte framing_code = data[1];
@@ -85,7 +85,7 @@ namespace MediaPortal.Player.Subtitles
       byte magazine_and_packet_address2 = data[3];
       byte magazine_and_packet_address = Hamming.unham(magazine_and_packet_address1, magazine_and_packet_address2);
 
-      byte mag = (byte) (magazine_and_packet_address & 7);
+      byte mag = (byte)(magazine_and_packet_address & 7);
 
       // mag == 0 means page is 8nn
       if (mag == 0)
@@ -97,7 +97,7 @@ namespace MediaPortal.Player.Subtitles
 
       assert(magIndex >= 0 && magIndex <= 7, "Magindex out of range " + magIndex);
 
-      byte Y = (byte) ((magazine_and_packet_address >> 3) & 0x1f); // Y is the packet number
+      byte Y = (byte)((magazine_and_packet_address >> 3) & 0x1f); // Y is the packet number
 
       int offset = 4; // start of data differs between packet types
 
@@ -123,7 +123,7 @@ namespace MediaPortal.Player.Subtitles
             magazines[i].EndPage();
           }
           assert(inProgress <= 1, "Serial mode: too many pages in progress : " + inProgress);
-            // at most one page should be in progress
+          // at most one page should be in progress
           if (inProgress > 1)
           {
             Log.Debug("Pages in progress at same time exceeds one ! (%i)", inProgress);
@@ -150,13 +150,9 @@ namespace MediaPortal.Player.Subtitles
       }
     }
 
-    public void OnSubPageInfo()
-    {
-    }
+    public void OnSubPageInfo() {}
 
-    public void OnInitialPageInfo()
-    {
-    }
+    public void OnInitialPageInfo() {}
 
     public bool AcceptsDataUnitID(byte id)
     {

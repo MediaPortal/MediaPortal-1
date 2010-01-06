@@ -26,6 +26,7 @@
 using System;
 using System.Runtime.InteropServices;
 using TvLibrary.Log;
+
 //using MediaPortal.GUI.Library;
 
 namespace TvEngine
@@ -56,20 +57,20 @@ namespace TvEngine
     [StructLayout(LayoutKind.Sequential, Pack = 8)]
     public struct UIR_CFG
     {
-      public int a;   // 0x38;
+      public int a; // 0x38;
       public int b;
-      public int c;   //Region 
-      public int d;   //Device
-      public int e;   //Vendor
-      public int f;   //Code Set
+      public int c; //Region 
+      public int d; //Device
+      public int e; //Vendor
+      public int f; //Code Set
       public int g;
       public int h;
-      public int i;   //Minimum Digits
-      public int j;   //Digit Delay
-      public int k;   //Need Enter
-      public int l;   //Enter Delay
-      public int m;   //Tune Delay
-      public int n;   //One Digit Delay
+      public int i; //Minimum Digits
+      public int j; //Digit Delay
+      public int k; //Need Enter
+      public int l; //Enter Delay
+      public int m; //Tune Delay
+      public int n; //One Digit Delay
     }
 
 
@@ -89,7 +90,6 @@ namespace TvEngine
 
       if (HCWRetVal == 0)
       {
-
         HCWRetVal = UIR_Open(0, 0);
         if (HCWRetVal == 0)
         {
@@ -115,8 +115,8 @@ namespace TvEngine
             Log.Info("HCWBlaster: " + devset4);
             Log.Info("HCWBlaster: " + devset5);
           }
-
-        } else
+        }
+        else
         {
           UIR_Close();
           HCWRetVal = 0;
@@ -130,6 +130,5 @@ namespace TvEngine
       if (ExLogging)
         Log.Info("HCWBlaster: Finished Changing channels: {0}", channel_data);
     }
-
   }
 }

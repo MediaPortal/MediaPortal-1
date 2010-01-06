@@ -16,9 +16,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public MovieCodec()
-      : this("Video Codecs")
-    {
-    }
+      : this("Video Codecs") {}
 
     /// <summary>
     /// 
@@ -309,6 +307,5 @@ namespace MediaPortal.Configuration.Sections
       }
       videoCodecComboBox.SelectedIndexChanged += videoCodecComboBox_SelectedIndexChanged;
     }
-
   }
 }

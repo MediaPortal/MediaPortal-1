@@ -486,6 +486,7 @@ namespace MediaPortal.Visualization
     #endregion
 
     #region ctor
+
     public VisualizationWindow(BassAudioEngine bass)
     {
       Bass = bass;
@@ -496,9 +497,11 @@ namespace MediaPortal.Visualization
     {
       Dispose();
     }
+
     #endregion
 
     #region Init ReInit
+
     /// <summary>
     /// Initialise The Viz Window
     /// </summary>
@@ -543,9 +546,11 @@ namespace MediaPortal.Visualization
       Init();
       Run = running;
     }
+
     #endregion
 
     #region Event Handler
+
     private void OnNewAction(Action action)
     {
       if (!Visible)
@@ -685,7 +690,9 @@ namespace MediaPortal.Visualization
             }
           }
 
-          CurrentTrackTag = curPlaylistItem.MusicTag != null ? (MusicTag)curPlaylistItem.MusicTag : TagReader.TagReader.ReadTag(curPlaylistItem.FileName);
+          CurrentTrackTag = curPlaylistItem.MusicTag != null
+                              ? (MusicTag)curPlaylistItem.MusicTag
+                              : TagReader.TagReader.ReadTag(curPlaylistItem.FileName);
 
           // Make sure that Status Overlay gets displayed for new tracks
           CurrentFrame = 0;
@@ -751,9 +758,11 @@ namespace MediaPortal.Visualization
         Log.Info("Visualization Window: OnPlayBackStarted caused an exception: {0}", ex.Message);
       }
     }
+
     #endregion
 
     #region Load Settings
+
     private void LoadSettings()
     {
       Log.Info("Visualization Window: Loading skin settings...");
@@ -1414,6 +1423,7 @@ namespace MediaPortal.Visualization
 
       return (float)alphaVal / 255f;
     }
+
     #endregion
 
     private string GetPropertyStringValue(string propertyString, bool IsInternetStream)
@@ -1566,7 +1576,8 @@ namespace MediaPortal.Visualization
         if (IsCursorMovedBottomRight)
         {
           // Set the cursor back to the old position
-          Cursor.Position = new Point(GUIGraphicsContext.form.Bounds.Width / 2, GUIGraphicsContext.form.Bounds.Height / 2);
+          Cursor.Position = new Point(GUIGraphicsContext.form.Bounds.Width / 2,
+                                      GUIGraphicsContext.form.Bounds.Height / 2);
           IsCursorMovedBottomRight = false;
         }
       }
@@ -2127,9 +2138,7 @@ namespace MediaPortal.Visualization
               }
             }
 
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
           }
 
           return sleepMS;
@@ -2140,9 +2149,7 @@ namespace MediaPortal.Visualization
         }
       }
 
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       return sleepMS;
     }
@@ -2580,11 +2587,11 @@ namespace MediaPortal.Visualization
                                               LinearGradientMode.Horizontal);
 
         Blend fadeBlend = new Blend(4);
-        fadeBlend.Factors = new float[] { 0, 0, .85f, 1 };
+        fadeBlend.Factors = new float[] {0, 0, .85f, 1};
         float fadeStart = Math.Max(1, rect.Width - 50) / (float)rect.Width;
         float fadeMiddle = Math.Max(1, rect.Width - 15) / (float)rect.Width;
         float fadeEnd = 1;
-        fadeBlend.Positions = new float[] { 0, fadeStart, fadeMiddle, fadeEnd };
+        fadeBlend.Positions = new float[] {0, fadeStart, fadeMiddle, fadeEnd};
         fadingBrush.Blend = fadeBlend;
 
         g.DrawString(text, font, fadingBrush, rect, TextStringFormat);

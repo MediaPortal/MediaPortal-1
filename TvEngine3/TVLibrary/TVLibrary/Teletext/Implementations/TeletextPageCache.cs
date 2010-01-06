@@ -28,30 +28,37 @@ namespace TvLibrary.Teletext
   public class TeletextPageCache : IDisposable
   {
     #region constants
-    const int MIN_PAGE = 0x100;
-    const int MAX_PAGE = 0x900;
+
+    private const int MIN_PAGE = 0x100;
+    private const int MAX_PAGE = 0x900;
+
     #endregion
 
     #region delegates
+
     /// <summary>
     /// On Page updated event
     /// </summary>
     public event PageEventHandler OnPageUpdated;
+
     /// <summary>
     /// On page added event
     /// </summary>
     public event PageEventHandler OnPageAdded;
+
     /// <summary>
     /// On Page deleted event
     /// </summary>
     public event PageEventHandler OnPageDeleted;
+
     #endregion
 
     #region variables
 
-    readonly TeletextPage[] _pageCache = new TeletextPage[MAX_PAGE];
-    string _channelName = "";
-    DateTime _checkTimer = DateTime.MinValue;
+    private readonly TeletextPage[] _pageCache = new TeletextPage[MAX_PAGE];
+    private string _channelName = "";
+    private DateTime _checkTimer = DateTime.MinValue;
+
     #endregion
 
     /// <summary>
@@ -59,14 +66,8 @@ namespace TvLibrary.Teletext
     /// </summary>
     public string ChannelName
     {
-      get
-      {
-        return _channelName;
-      }
-      set
-      {
-        _channelName = value;
-      }
+      get { return _channelName; }
+      set { _channelName = value; }
     }
 
     /// <summary>
@@ -129,7 +130,9 @@ namespace TvLibrary.Teletext
 
       if (_pageCache[pageNumber] == null)
         return null;
-      return subPageNumber > _pageCache[pageNumber].SubPageCount ? null : _pageCache[pageNumber].GetSubPage(subPageNumber);
+      return subPageNumber > _pageCache[pageNumber].SubPageCount
+               ? null
+               : _pageCache[pageNumber].GetSubPage(subPageNumber);
     }
 
 
@@ -217,7 +220,6 @@ namespace TvLibrary.Teletext
         {
           for (int i = 1; i <= _pageCache[pageNumber].SubPageCount; ++i)
           {
-
             _pageCache[pageNumber].Delete(pageNumber, i);
             if (OnPageDeleted != null)
             {
@@ -232,7 +234,8 @@ namespace TvLibrary.Teletext
         subPageNumber--;
       }
       bool isUpdate, isNew, isDeleted;
-      _pageCache[pageNumber].SubPageReceived(pageNumber, ref subPageNumber, ref pageData, out isUpdate, out isNew, out isDeleted, vbiLines);
+      _pageCache[pageNumber].SubPageReceived(pageNumber, ref subPageNumber, ref pageData, out isUpdate, out isNew,
+                                             out isDeleted, vbiLines);
       if (isNew)
       {
         if (OnPageAdded != null)
@@ -280,6 +283,7 @@ namespace TvLibrary.Teletext
     }
 
     #region IDisposable Members
+
     /// <summary>
     /// Destructor
     /// </summary>

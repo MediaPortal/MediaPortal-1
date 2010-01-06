@@ -18,7 +18,8 @@ namespace TvEngine.PowerScheduler
       InitializeComponent();
       LoadProcesses();
     }
-    void LoadProcesses()
+
+    private void LoadProcesses()
     {
       comboBox1.Items.Clear();
       foreach (System.Diagnostics.Process p in System.Diagnostics.Process.GetProcesses())
@@ -26,6 +27,7 @@ namespace TvEngine.PowerScheduler
         comboBox1.Items.Add(p.ProcessName);
       }
     }
+
     public String SelectedProcess
     {
       get { return _selectedProcess; }
@@ -34,7 +36,7 @@ namespace TvEngine.PowerScheduler
     private void button1_Click(object sender, EventArgs e)
     {
       if (comboBox1.SelectedIndex != -1)
-        _selectedProcess = (string) comboBox1.Items[comboBox1.SelectedIndex];
+        _selectedProcess = (string)comboBox1.Items[comboBox1.SelectedIndex];
       DialogResult = DialogResult.OK;
       Close();
     }

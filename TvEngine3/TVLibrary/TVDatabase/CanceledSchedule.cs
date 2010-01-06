@@ -138,7 +138,8 @@ namespace TvDatabase
         try
         {
           base.Persist();
-          Program.ResetSingleState(this.cancelDateTime, this.ReferencedSchedule().ReferencedChannel().IdChannel, this.ReferencedSchedule().ProgramName);          
+          Program.ResetSingleState(this.cancelDateTime, this.ReferencedSchedule().ReferencedChannel().IdChannel,
+                                   this.ReferencedSchedule().ProgramName);
         }
         catch (Exception ex)
         {

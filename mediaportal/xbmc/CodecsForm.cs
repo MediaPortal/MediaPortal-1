@@ -267,9 +267,7 @@ namespace MediaPortal
       this.Close();
     }
 
-    private void CodecsForm_Load(object sender, EventArgs e)
-    {
-    }
+    private void CodecsForm_Load(object sender, EventArgs e) {}
 
     private void ShowMPEG2Warning(bool bOn)
     {
@@ -338,9 +336,7 @@ namespace MediaPortal
           }
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       ShowMPEG2Warning(!MPEG2CodecsInstalled);
       ShowFFDShowWarning(!FFDShowInstalled);
       ShowVobSUBWarning(!VobSubInstalled);
@@ -353,7 +349,7 @@ namespace MediaPortal
 
     private void LinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      Process.Start(((LinkLabel) sender).Text);
+      Process.Start(((LinkLabel)sender).Text);
     }
   }
 }

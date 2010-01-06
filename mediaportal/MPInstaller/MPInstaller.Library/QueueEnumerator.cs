@@ -26,7 +26,7 @@ namespace MediaPortal.MPInstaller
     {
       if (Items.Count > 0)
       {
-        XmlSerializer serializer = new XmlSerializer(typeof(QueueEnumerator));
+        XmlSerializer serializer = new XmlSerializer(typeof (QueueEnumerator));
         TextWriter writer = new StreamWriter(filename);
         serializer.Serialize(writer, this);
         writer.Close();
@@ -44,16 +44,13 @@ namespace MediaPortal.MPInstaller
       {
         if (File.Exists(filename))
         {
-          XmlSerializer serializer = new XmlSerializer(typeof(QueueEnumerator));
+          XmlSerializer serializer = new XmlSerializer(typeof (QueueEnumerator));
           FileStream fs = new FileStream(filename, FileMode.Open);
           en = (QueueEnumerator)serializer.Deserialize(fs);
           fs.Close();
         }
       }
-      catch
-      {
-        
-      }
+      catch {}
       return en;
     }
 

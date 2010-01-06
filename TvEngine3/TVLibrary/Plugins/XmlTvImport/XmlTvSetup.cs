@@ -22,32 +22,29 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Drawing;
-using System.Text;
-using System.Xml;
 using System.Globalization;
+using System.IO;
+using System.Text;
 using System.Windows.Forms;
+using System.Xml;
+using Gentle.Framework;
+using Tst;
 using TvDatabase;
 using TvEngine;
 using TvLibrary.Log;
-using Gentle.Framework;
-using Tst;
 
 namespace SetupTv.Sections
 {
   public partial class XmlTvSetup : SectionSettings
   {
     public XmlTvSetup()
-      : this("XmlTv")
-    {
-    }
+      : this("XmlTv") {}
 
     public XmlTvSetup(string name)
       : base(name)
     {
       InitializeComponent();
-
     }
 
     public override void OnSectionDeActivated()
@@ -133,9 +130,9 @@ namespace SetupTv.Sections
       chkScheduler.Checked = (layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
       txtRemoteURL.Text = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml").Value;
 
-      DateTime dt = DateTime.Now;            
+      DateTime dt = DateTime.Now;
       DateTimeFormatInfo DTFI = new DateTimeFormatInfo();
-      DTFI.ShortDatePattern = "HH:mm";            
+      DTFI.ShortDatePattern = "HH:mm";
 
       try
       {
@@ -146,7 +143,7 @@ namespace SetupTv.Sections
         // maybe 12 hr time (us) instead. lets re-parse it.
         try
         {
-          DTFI.ShortDatePattern = "hh:mm";      
+          DTFI.ShortDatePattern = "hh:mm";
           dt = DateTime.Parse(layer.GetSetting("xmlTvRemoteScheduleTime", "06:30").Value, DTFI);
         }
         catch
@@ -179,10 +176,7 @@ namespace SetupTv.Sections
       }
     }
 
-    private void XmlSetup_Load(object sender, EventArgs e)
-    {
-
-    }
+    private void XmlSetup_Load(object sender, EventArgs e) {}
 
     private void buttonBrowse_Click(object sender, EventArgs e)
     {
@@ -198,7 +192,6 @@ namespace SetupTv.Sections
 
     private void buttonRefresh_Click(object sender, EventArgs e)
     {
-
       String name = null;
 
 
@@ -246,14 +239,19 @@ namespace SetupTv.Sections
 
         if (chGroup != null && chGroup.idGroup != -1)
         {
-          SqlBuilder sb1 = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Channel));
+          SqlBuilder sb1 = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof (Channel));
           SqlStatement stmt1 = sb1.GetStatement(true);
-          SqlStatement ManualJoinSQL = new SqlStatement(stmt1.StatementType, stmt1.Command, String.Format("select c.* from Channel c join GroupMap g on c.idChannel=g.idChannel where " + (loadRadio ? "" : " c.isTv = 1 and ") + " g.idGroup = '{0}' order by g.sortOrder", chGroup.idGroup), typeof(Channel));
+          SqlStatement ManualJoinSQL = new SqlStatement(stmt1.StatementType, stmt1.Command,
+                                                        String.Format(
+                                                          "select c.* from Channel c join GroupMap g on c.idChannel=g.idChannel where " +
+                                                          (loadRadio ? "" : " c.isTv = 1 and ") +
+                                                          " g.idGroup = '{0}' order by g.sortOrder", chGroup.idGroup),
+                                                        typeof (Channel));
           channels = ObjectFactory.GetCollection<Channel>(ManualJoinSQL.Execute());
         }
         else
         {
-          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
           sb.AddOrderByField(true, "sortOrder");
           if (!loadRadio)
             sb.AddConstraint(" isTv = 1");
@@ -577,7 +575,7 @@ namespace SetupTv.Sections
               if (streamIn != null)
                 streamIn.Close();
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
         }
       }
@@ -616,7 +614,7 @@ namespace SetupTv.Sections
                 // String displayName = null;
 
                 XmlReader xmlChannel = xmlReader.ReadSubtree();
-                xmlChannel.ReadStartElement();  // read channel
+                xmlChannel.ReadStartElement(); // read channel
                 // now, xmlChannel is positioned on the first sub-element of <channel>
                 List<string> displayNames = new List<string>();
 
@@ -631,7 +629,7 @@ namespace SetupTv.Sections
                         displayNames.Add(xmlChannel.ReadString());
                         //else xmlChannel.Skip();
                         break;
-                      // could read more stuff here, like icon...
+                        // could read more stuff here, like icon...
                       default:
                         // unknown, skip entire node
                         xmlChannel.Skip();
@@ -645,21 +643,18 @@ namespace SetupTv.Sections
                 {
                   if (displayName != null)
                   {
-                    Channel channel = new Channel(displayName, false, false, -1, new DateTime(), false, new DateTime(), -1, false, id, false, displayName);
+                    Channel channel = new Channel(displayName, false, false, -1, new DateTime(), false, new DateTime(),
+                                                  -1, false, id, false, displayName);
                     channels.Add(channel);
                   }
                 }
               }
               iChannel++;
-            }
-            while (xmlReader.ReadToNextSibling("channel"));
-
+            } while (xmlReader.ReadToNextSibling("channel"));
           }
         }
       }
-      catch
-      {
-      }
+      catch {}
       finally
       {
         if (xmlReader != null)
@@ -721,7 +716,6 @@ namespace SetupTv.Sections
         Log.Error("Error while saving channelmappings : {0}", ex.Message);
         Log.Error(ex.StackTrace);
       }
-
     }
 
     private void buttonManualImport_Click(object sender, EventArgs e)
@@ -741,10 +735,7 @@ namespace SetupTv.Sections
       labelStatus.Text = layer.GetSetting("xmlTvResultStatus", "").Value;
     }
 
-    private void panel1_Paint(object sender, PaintEventArgs e)
-    {
-
-    }
+    private void panel1_Paint(object sender, PaintEventArgs e) {}
 
     private void buttonExport_Click(object sender, EventArgs e)
     {
@@ -840,7 +831,5 @@ namespace SetupTv.Sections
       //load settings
       this.OnSectionActivated();
     }
-
-
   }
 }

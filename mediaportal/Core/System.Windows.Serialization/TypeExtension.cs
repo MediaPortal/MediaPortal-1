@@ -28,36 +28,36 @@ using System.Windows;
 
 namespace System.Windows.Serialization
 {
-	public class TypeExtension : MarkupExtension, ICanAddNamespaceEntries
-	{
-		#region Methods
+  public class TypeExtension : MarkupExtension, ICanAddNamespaceEntries
+  {
+    #region Methods
 
-		void ICanAddNamespaceEntries.AddNamespaceEntries(string[] namespaces)
-		{
-			_namespaces = namespaces;
-		}
+    void ICanAddNamespaceEntries.AddNamespaceEntries(string[] namespaces)
+    {
+      _namespaces = namespaces;
+    }
 
-		public override object ProvideValue(object target, object value)
-		{
-			Type t = null;
+    public override object ProvideValue(object target, object value)
+    {
+      Type t = null;
 
-			foreach(string ns in _namespaces)
-			{
-				t = Type.GetType(ns + "." + (string)value);
+      foreach (string ns in _namespaces)
+      {
+        t = Type.GetType(ns + "." + (string)value);
 
-				if(t != null)
-					return t;
-			}
+        if (t != null)
+          return t;
+      }
 
-			return null;
-		}
+      return null;
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Fields
+    #region Fields
 
-		string[]					_namespaces;
+    private string[] _namespaces;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

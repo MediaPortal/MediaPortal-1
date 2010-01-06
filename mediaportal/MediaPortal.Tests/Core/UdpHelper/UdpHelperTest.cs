@@ -36,9 +36,7 @@ namespace MediaPortal.Tests.Plugins.HCWHelper.NetHelper
     private int udpPort = 2110;
 
     [SetUp]
-    public void Init()
-    {
-    }
+    public void Init() {}
 
     [Test]
     public void SendMessage()

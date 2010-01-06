@@ -42,21 +42,18 @@ namespace MediaPortal.Playlists
       TV,
       Pictures
     }
+
     protected string _fileName = "";
     protected string _description = "";
     protected int _duration;
     protected object _musicTag;
-    bool _isPlayed;
-    PlayListItemType _itemType = PlayListItemType.Unknown;
+    private bool _isPlayed;
+    private PlayListItemType _itemType = PlayListItemType.Unknown;
 
-    public PlayListItem()
-    {
-    }
+    public PlayListItem() {}
 
     public PlayListItem(string description, string fileName)
-      : this(description, fileName, 0)
-    {
-    }
+      : this(description, fileName, 0) {}
 
     public PlayListItem(string description, string fileName, int duration)
     {
@@ -85,6 +82,7 @@ namespace MediaPortal.Playlists
         _fileName = value;
       }
     }
+
     public string Description
     {
       get { return _description; }
@@ -95,11 +93,13 @@ namespace MediaPortal.Playlists
         _description = value;
       }
     }
+
     public int Duration
     {
       get { return _duration; }
       set { _duration = value; }
     }
+
     public bool Played
     {
       get { return _isPlayed; }
@@ -111,6 +111,5 @@ namespace MediaPortal.Playlists
       get { return _musicTag; }
       set { _musicTag = value; }
     }
-  };
-
+  } ;
 }

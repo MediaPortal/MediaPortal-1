@@ -39,6 +39,7 @@ namespace MediaPortal.Configuration.Sections
   public partial class BaseViews : SectionSettings
   {
     #region Variables
+
     private DataGridView dataGrid;
     private DataTable datasetFilters;
     private ViewDefinition currentView;
@@ -50,9 +51,11 @@ namespace MediaPortal.Configuration.Sections
     private List<string> _sqloperators = new List<string>();
     private List<string> _viewsAs = new List<string>();
     private List<string> _sortBy = new List<string>();
+
     #endregion
 
     #region Properties
+
     public string[] Selections
     {
       get { return _selections.ToArray(); }
@@ -92,6 +95,7 @@ namespace MediaPortal.Configuration.Sections
         _sortBy.AddRange(value);
       }
     }
+
     #endregion
 
     #region ctor
@@ -113,6 +117,7 @@ namespace MediaPortal.Configuration.Sections
     #endregion
 
     #region Initialisation
+
     /// <summary>
     /// Set up the Datagrid column and the DataTable to which the grid is bound
     /// </summary>
@@ -214,11 +219,12 @@ namespace MediaPortal.Configuration.Sections
     #endregion
 
     #region Private Methods
+
     private void UpdateView()
     {
       updating = true;
       datasetFilters.Clear();
-      currentView = (ViewDefinition) cbViews.SelectedItem;
+      currentView = (ViewDefinition)cbViews.SelectedItem;
       if (currentView == null)
       {
         return;
@@ -229,7 +235,7 @@ namespace MediaPortal.Configuration.Sections
       //fill in all rows...
       for (int i = 0; i < currentView.Filters.Count; ++i)
       {
-        FilterDefinition def = (FilterDefinition) currentView.Filters[i];
+        FilterDefinition def = (FilterDefinition)currentView.Filters[i];
         string limit = def.Limit.ToString();
         if (def.Limit < 0)
         {
@@ -251,9 +257,11 @@ namespace MediaPortal.Configuration.Sections
 
       updating = false;
     }
+
     #endregion
 
     #region Event Handler
+
     /// <summary>
     /// A new View has selected. 
     /// Store the changes of the current one and fill the grid with the data of the selected one
@@ -350,7 +358,7 @@ namespace MediaPortal.Configuration.Sections
         }
         def.DefaultView = row[4].ToString();
         def.DefaultSort = row[5].ToString();
-        def.SortAscending = (bool) row[6];
+        def.SortAscending = (bool)row[6];
         view.Filters.Add(def);
       }
     }
@@ -390,8 +398,8 @@ namespace MediaPortal.Configuration.Sections
 
       // If the user-specified value is invalid, cancel the change 
       if ((e.Context & DataGridViewDataErrorContexts.Commit) != 0 &&
-          (typeof(FormatException).IsAssignableFrom(e.Exception.GetType()) ||
-          typeof(ArgumentException).IsAssignableFrom(e.Exception.GetType())))
+          (typeof (FormatException).IsAssignableFrom(e.Exception.GetType()) ||
+           typeof (ArgumentException).IsAssignableFrom(e.Exception.GetType())))
       {
         e.Cancel = true;
       }
@@ -411,7 +419,7 @@ namespace MediaPortal.Configuration.Sections
     {
       // For combo box and check box cells, commit any value change as soon
       // as it is made rather than waiting for the focus to leave the cell.
-      if (!dataGrid.CurrentCell.OwningColumn.GetType().Equals(typeof(DataGridViewTextBoxColumn)))
+      if (!dataGrid.CurrentCell.OwningColumn.GetType().Equals(typeof (DataGridViewTextBoxColumn)))
       {
         dataGrid.CommitEdit(DataGridViewDataErrorContexts.Commit);
       }
@@ -470,9 +478,11 @@ namespace MediaPortal.Configuration.Sections
           break;
       }
     }
+
     #endregion
 
     #region Overridden Methods
+
     /// <summary>
     /// Load the Views
     /// </summary>
@@ -508,13 +518,11 @@ namespace MediaPortal.Configuration.Sections
         using (FileStream fileStream = new FileInfo(customViews).OpenRead())
         {
           SoapFormatter formatter = new SoapFormatter();
-          views = (ArrayList) formatter.Deserialize(fileStream);
+          views = (ArrayList)formatter.Deserialize(fileStream);
           fileStream.Close();
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       SetupGrid();
       LoadViews();
@@ -538,11 +546,10 @@ namespace MediaPortal.Configuration.Sections
             fileStream.Close();
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
     }
+
     #endregion
   }
 }

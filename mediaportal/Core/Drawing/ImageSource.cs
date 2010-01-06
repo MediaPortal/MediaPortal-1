@@ -48,16 +48,12 @@ namespace MediaPortal.Drawing
 
     public new ImageSource Copy()
     {
-      return (ImageSource) base.Copy();
+      return (ImageSource)base.Copy();
     }
 
-    protected override void CopyCore(Freezable sourceFreezable)
-    {
-    }
+    protected override void CopyCore(Freezable sourceFreezable) {}
 
-    protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
-    {
-    }
+    protected override void CopyCurrentValueCore(Animatable sourceAnimatable) {}
 
     protected override bool FreezeCore(bool isChecking)
     {
@@ -90,13 +86,13 @@ namespace MediaPortal.Drawing
 
     public Rect AreaOfInterest
     {
-      get { return (Rect) GetValue(AreaOfInterestProperty); }
+      get { return (Rect)GetValue(AreaOfInterestProperty); }
       set { SetValue(AreaOfInterestProperty, value); }
     }
 
     public BrushMappingMode AreaOfInterestUnits
     {
-      get { return (BrushMappingMode) GetValue(AreaOfInterestUnitsProperty); }
+      get { return (BrushMappingMode)GetValue(AreaOfInterestUnitsProperty); }
       set { SetValue(AreaOfInterestUnitsProperty, value); }
     }
 

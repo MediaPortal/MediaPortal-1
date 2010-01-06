@@ -300,7 +300,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
 
     public void updateFICSymbol(FICSymbols vfdsymbol, bool visible)
     {
-      if (FICIconStatus[(int) vfdsymbol] != visible)
+      if (FICIconStatus[(int)vfdsymbol] != visible)
       {
         int i;
         // FIC Spectra Symbol
@@ -314,7 +314,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
         WriteBuffer[1] = 0x85;
         WriteBuffer[2] = 0x02;
         WriteBuffer[3] = 0x01;
-        WriteBuffer[4] = (byte) vfdsymbol;
+        WriteBuffer[4] = (byte)vfdsymbol;
         if (visible)
         {
           WriteBuffer[5] = 0x01;
@@ -324,7 +324,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
           WriteBuffer[5] = 0x00;
         }
         myOutputReport.Write(WriteBuffer, _HIDHandle);
-        FICIconStatus[(int) vfdsymbol] = visible;
+        FICIconStatus[(int)vfdsymbol] = visible;
       }
     }
 
@@ -336,7 +336,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
     public void updateSymbol(VFDSymbols vfdsymbol, bool visible)
     {
       // scaleo symbol update
-      _SymbolsVisible[(int) vfdsymbol] = visible;
+      _SymbolsVisible[(int)vfdsymbol] = visible;
       _updateSymbols();
     }
 
@@ -345,21 +345,21 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       byte[] WriteBuffer = new byte[9];
       int tmp = _SymbolsVisible.Data;
 
-      WriteBuffer[2] = (byte) (tmp >> 8);
-      WriteBuffer[3] = (byte) (tmp & 0xff);
+      WriteBuffer[2] = (byte)(tmp >> 8);
+      WriteBuffer[3] = (byte)(tmp & 0xff);
 
       if (_Volume >= 0) // for Volume<0 don't show Volume symbols
       {
         WriteBuffer[3] |= 0x04;
         for (int j = 3; j < 9; j++)
         {
-          if ((float) _Volume/4 > j - 3)
+          if ((float)_Volume / 4 > j - 3)
           {
-            WriteBuffer[j] = (byte) (WriteBuffer[j] | 0x08);
+            WriteBuffer[j] = (byte)(WriteBuffer[j] | 0x08);
           }
-          if ((float) _Volume/4 - 0.5 > j - 3)
+          if ((float)_Volume / 4 - 0.5 > j - 3)
           {
-            WriteBuffer[j] = (byte) (WriteBuffer[j] | 0x80);
+            WriteBuffer[j] = (byte)(WriteBuffer[j] | 0x80);
           }
         }
       }
@@ -399,14 +399,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
           WriteBuffer[3] = 0x0B;
           for (i = 1; i < 12; i++)
           {
-            WriteBuffer[4 + (i - 1)*2] = (byte) (i + 1);
+            WriteBuffer[4 + (i - 1) * 2] = (byte)(i + 1);
             if (volume >= i)
             {
-              WriteBuffer[5 + (i - 1)*2] = 1;
+              WriteBuffer[5 + (i - 1) * 2] = 1;
             }
             else
             {
-              WriteBuffer[5 + (i - 1)*2] = 0;
+              WriteBuffer[5 + (i - 1) * 2] = 0;
             }
           }
           myOutputReport.Write(WriteBuffer, _HIDHandle);
@@ -442,7 +442,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
         }
         for (int i = 0; i < text.Length; i++)
         {
-          WriteBuffer[i + 1] = (byte) (text[i]);
+          WriteBuffer[i + 1] = (byte)(text[i]);
         }
         for (int i = 1; i < 9; i++)
         {
@@ -473,10 +473,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
         WriteBuffer[1] = 0x8B;
         WriteBuffer[2] = 0x04;
         WriteBuffer[3] = 0x01;
-        WriteBuffer[4] = (byte) text.Length;
+        WriteBuffer[4] = (byte)text.Length;
         for (int i = 0; i < text.Length; i++)
         {
-          WriteBuffer[i + 5] = (byte) (text[i]);
+          WriteBuffer[i + 5] = (byte)(text[i]);
         }
         Hid.OutputReport myOutputReport = new Hid.OutputReport();
         myOutputReport.Write(WriteBuffer, _HIDHandle);
@@ -497,7 +497,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
         }
         for (int i = 0; i < text.Length; i++)
         {
-          WriteBuffer[i + 1] = (byte) (text[i]);
+          WriteBuffer[i + 1] = (byte)(text[i]);
         }
         for (int i = 1; i < 9; i++)
         {
@@ -523,7 +523,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
           // erase line 1               
           myOutputReport.Write(new byte[] {0x00, 0x04, 0x04, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
           // init line 1
-          myOutputReport.Write(new byte[] {0x00, 0x06, 0x03, 0x01, (byte) text.Length, 0x00, 0x00, 0x00, 0x00},
+          myOutputReport.Write(new byte[] {0x00, 0x06, 0x03, 0x01, (byte)text.Length, 0x00, 0x00, 0x00, 0x00},
                                _HIDHandle);
         }
         else
@@ -531,7 +531,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
           // erase line 2               
           myOutputReport.Write(new byte[] {0x00, 0x04, 0x04, 0x01, 0x03, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
           // init line 2                
-          myOutputReport.Write(new byte[] {0x00, 0x06, 0x03, 0x03, (byte) text.Length, 0x00, 0x00, 0x00, 0x00},
+          myOutputReport.Write(new byte[] {0x00, 0x06, 0x03, 0x03, (byte)text.Length, 0x00, 0x00, 0x00, 0x00},
                                _HIDHandle);
         }
         // write text

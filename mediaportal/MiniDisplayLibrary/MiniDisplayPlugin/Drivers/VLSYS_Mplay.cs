@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -19,6 +19,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
   public class VLSYS_Mplay : BaseDisplay, IDisplay, IDisposable
   {
     #region variables
+
     private int _Brightness = 0x3a;
     private bool _EnableDisplay;
     private Thread _EqThread;
@@ -98,6 +99,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private object ThreadMutex = new object();
     private const int WM_CLOSE = 0x10;
     private const int WM_SYSCOMMAND = 0x112;
+
     #endregion
 
     private void AdjustSettingForDetectedDisplay()
@@ -106,10 +108,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         TempCount = 1;
       }
-      
+
       switch (MPlay_Model)
       {
-        case "MZ5":  //remote only
+        case "MZ5": //remote only
           {
             _UseFans = false;
             DisplaySettings.BlankDisplayWithVideo = false;
@@ -120,7 +122,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             _EnableDisplay = false;
             break;
           }
-        case "LIS2":  //display only
+        case "LIS2": //display only
           {
             Clear();
             Brightness(_Brightness);
@@ -136,7 +138,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             if (_UseFans)
             {
               Log.Info("VLSYS_Mplay.Initialize(): configuring fan support");
-              commPort.Write(new byte[] { 0xa4, 0x7d }, 0, 2);
+              commPort.Write(new byte[] {0xa4, 0x7d}, 0, 2);
               Log.Info("VLSYS_Mplay.Initialize(): setting initial fan speed");
               SetFanSpeed();
             }
@@ -156,9 +158,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       CleanUp();
       Thread.Sleep(100);
       Setup(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth,
-                 Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth,
-                 Settings.Instance.GraphicComDelay, Settings.Instance.BackLightControl, Settings.Instance.Backlight,
-                 Settings.Instance.ContrastControl, Settings.Instance.Contrast, Settings.Instance.BlankOnExit);
+            Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth,
+            Settings.Instance.GraphicComDelay, Settings.Instance.BackLightControl, Settings.Instance.Backlight,
+            Settings.Instance.ContrastControl, Settings.Instance.Contrast, Settings.Instance.BlankOnExit);
       Initialize();
     }
 
@@ -213,7 +215,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           level = 0x38;
         }
-        commPort.Write(new byte[] {0xa5, (byte) level}, 0, 2);
+        commPort.Write(new byte[] {0xa5, (byte)level}, 0, 2);
         SerialWriteDelay(50);
         if (DoDebug)
         {
@@ -338,7 +340,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (DoDebug)
         {
           Log.Info("\nVLSYS_Mplay.DisplayEQ(): Retrieved {0} samples of Equalizer data.",
-                   new object[] {EQSettings.EqFftData.Length/2});
+                   new object[] {EQSettings.EqFftData.Length / 2});
         }
         if (EQSettings.UseVUmeter || EQSettings.UseVUmeter2)
         {
@@ -468,9 +470,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Info("VLSYS_Mplay.Dispose() completed");
     }
 
-    public void DrawImage(Bitmap bitmap)
-    {
-    }
+    public void DrawImage(Bitmap bitmap) {}
 
     private void EQ_Update()
     {
@@ -725,7 +725,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (_ProcessReceivedData)
           {
-            commPort.Write(new byte[] { 0xaf }, 0, 1);
+            commPort.Write(new byte[] {0xaf}, 0, 1);
             _TempCmdSent = true;
             _TempCmdSentTime = DateTime.Now;
             SerialWriteDelay(60);
@@ -798,7 +798,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           commPort.ReceivedBytesThreshold = 1;
           commPort.Open();
           SerialWriteDelay(40);
-                    
+
           if (MPlay_Model.Equals("AUTOMATIC"))
           {
             int num = 0;
@@ -807,8 +807,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             commPort.DataReceived += new SerialDataReceivedEventHandler(WhenDataReceived);
             while (MPlay_Model == string.Empty && num < 2500)
             {
-              commPort.Write(new byte[] { 170, 170 }, 0, 2);
-              Log.Info("VLSYS_Mplay.Initialize(): Waiting for device identification ({0}ms)", new object[] { num });
+              commPort.Write(new byte[] {170, 170}, 0, 2);
+              Log.Info("VLSYS_Mplay.Initialize(): Waiting for device identification ({0}ms)", new object[] {num});
               SerialWriteDelay(250);
               num += 250;
             }
@@ -829,22 +829,22 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                   "VLSYS_Mplay.Initialize(): Device detected is not an explicitly supported device - using default device type (MZ4 - M.Play MR300)",
                   new object[0]);
                 MPlay_Model = "MZ4";
-              } 
+              }
             }
           }
-          AdjustSettingForDetectedDisplay();          
-          
+          AdjustSettingForDetectedDisplay();
+
           commPort.DiscardInBuffer();
           commPort.DiscardOutBuffer();
           Log.Info("VLSYS_Mplay.Initialize(): Enabling serial receive data processing");
-          _FlushDataBuffers = true;              
-          
+          _FlushDataBuffers = true;
+
           if (_UseRemote || (_UseFans && (_Fan1Auto || _Fan2Auto)))
           {
             Log.Info("VLSYS_Mplay.Initialize(): configuring serial data receive support");
             commPort.DataReceived += new SerialDataReceivedEventHandler(WhenDataReceived);
             _ProcessReceivedData = true;
-          }          
+          }
         }
         catch (Exception exception)
         {
@@ -983,7 +983,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       _ManageMHC = settings.ManageMHC;
       RemoteSettings.DisableRemote = settings.DisableRemote;
       RemoteSettings.DisableRepeat = settings.DisableRepeat;
-      RemoteSettings.RepeatDelay = settings.RepeatDelay*0x19;
+      RemoteSettings.RepeatDelay = settings.RepeatDelay * 0x19;
       _UseFans = settings.UseFans;
       _Fan1Speed = settings.Fan1;
       _Fan2Speed = settings.Fan2;
@@ -993,7 +993,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       _Fan1_AutoMS = settings.Fan1_AutoMS;
       if (_Fan1Auto)
       {
-        int num = (_Fan1SetOn - _Fan1SetOff)/10;
+        int num = (_Fan1SetOn - _Fan1SetOff) / 10;
         _Fan1Set20 = _Fan1SetOff + num;
         _Fan1Set30 = _Fan1Set20 + num;
         _Fan1Set40 = _Fan1Set30 + num;
@@ -1009,7 +1009,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       _Fan2_AutoMS = settings.Fan2_AutoMS;
       if (_Fan2Auto)
       {
-        int num2 = (_Fan2SetOn - _Fan2SetOff)/10;
+        int num2 = (_Fan2SetOn - _Fan2SetOff) / 10;
         _Fan2Set20 = _Fan2SetOff + num2;
         _Fan2Set30 = _Fan2Set20 + num2;
         _Fan2Set40 = _Fan2Set30 + num2;
@@ -1024,8 +1024,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       DisplaySettings.DisplayActionTime = settings.EnableDisplayActionTime;
       DisplaySettings.BlankDisplayWhenIdle = settings.BlankDisplayWhenIdle;
       DisplaySettings.BlankIdleDelay = settings.BlankIdleTime;
-      DisplaySettings._BlankIdleTimeout = DisplaySettings.BlankIdleDelay*0x989680;
-      DisplaySettings._DisplayControlTimeout = DisplaySettings.DisplayActionTime*0x989680;
+      DisplaySettings._BlankIdleTimeout = DisplaySettings.BlankIdleDelay * 0x989680;
+      DisplaySettings._DisplayControlTimeout = DisplaySettings.DisplayActionTime * 0x989680;
       DisplaySettings._Shutdown1 = Settings.Instance.Shutdown1;
       DisplaySettings._Shutdown2 = Settings.Instance.Shutdown2;
       EQSettings.UseVUmeter = settings.VUmeter;
@@ -1042,9 +1042,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       EQSettings._EQTitleDisplayTime = settings.EQTitleDisplayTime;
       EQSettings._EQTitleShowTime = settings.EQTitleShowTime;
       EQSettings._EqUpdateDelay = (EQSettings._EQ_Restrict_FPS == 0)
-                                         ? 0
-                                         : ((0x989680/EQSettings._EQ_Restrict_FPS) -
-                                            (0xf4240/EQSettings._EQ_Restrict_FPS));
+                                    ? 0
+                                    : ((0x989680 / EQSettings._EQ_Restrict_FPS) -
+                                       (0xf4240 / EQSettings._EQ_Restrict_FPS));
       _UseClockOnShutdown = settings.UseClockOnShutdown;
       Log.Info("VLSYS_Mplay.LoadAdvancedSettings(): Device Type: {0}", new object[] {MPlay_Model});
       Log.Info("VLSYS_Mplay.LoadAdvancedSettings(): Device Port: {0}", new object[] {Settings.Instance.Port});
@@ -1147,7 +1147,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Info("VLSYS_Mplay.LoadAdvancedSettings(): Advanced options - Blank display when idle: {0}",
                new object[] {DisplaySettings.BlankDisplayWhenIdle});
       Log.Info("VLSYS_Mplay.LoadAdvancedSettings(): Advanced options -     blank display after: {0} seconds",
-               new object[] {DisplaySettings._BlankIdleTimeout/0xf4240L});
+               new object[] {DisplaySettings._BlankIdleTimeout / 0xf4240L});
       Log.Info("VLSYS_Mplay.LoadAdvancedSettings(): Advanced options - Use Clock on shutdown: {0}",
                new object[] {_UseClockOnShutdown});
       Log.Info("VLSYS_Mplay.LoadAdvancedSettings(): Setting - Audio using ASIO: {0}",
@@ -1234,21 +1234,21 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         for (int i = 0; i < num4; i++)
         {
-          if (num > ((i + 1)*5))
+          if (num > ((i + 1) * 5))
           {
             buffer[num3 + i] = 5;
           }
-          else if (num > (i*5))
+          else if (num > (i * 5))
           {
-            buffer[num3 + i] = (byte) (num - (i*5));
+            buffer[num3 + i] = (byte)(num - (i * 5));
           }
-          if (num2 > ((i + 1)*5))
+          if (num2 > ((i + 1) * 5))
           {
             buffer2[num3 + i] = 5;
           }
-          else if (num2 > (i*5))
+          else if (num2 > (i * 5))
           {
-            buffer2[num3 + i] = (byte) (num2 - (i*5));
+            buffer2[num3 + i] = (byte)(num2 - (i * 5));
           }
         }
       }
@@ -1289,8 +1289,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           byte num17 = EqDataArray[1 + j];
           if (num17 > 0)
           {
-            byte num18 = (num17 > 8) ? ((byte) (num17 - 8)) : ((byte) 0x20);
-            byte num19 = (num17 < 9) ? num17 : ((byte) 8);
+            byte num18 = (num17 > 8) ? ((byte)(num17 - 8)) : ((byte)0x20);
+            byte num19 = (num17 < 9) ? num17 : ((byte)8);
             buffer[(num14 + j) + num16] = num18;
             buffer2[(num14 + j) + num16] = num19;
           }
@@ -1319,25 +1319,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         for (int k = 0; k < num11; k++)
         {
-          if (num8 > ((k + 1)*5))
+          if (num8 > ((k + 1) * 5))
           {
             buffer[num10 + k] = 3;
           }
-          else if (num8 > (k*5))
+          else if (num8 > (k * 5))
           {
-            num6 = num8 - (k*5);
+            num6 = num8 - (k * 5);
             buffer[num10 + k] = 1;
           }
         }
         for (int m = num11 - 1; m > -1; m--)
         {
-          if (num9 > ((num11 - m)*5))
+          if (num9 > ((num11 - m) * 5))
           {
             buffer2[3 + m] = 3;
           }
-          else if (num9 > ((num11 - (m + 1))*5))
+          else if (num9 > ((num11 - (m + 1)) * 5))
           {
-            num7 = num9 - (m*5);
+            num7 = num9 - (m * 5);
             buffer2[3 + m] = 2;
           }
         }
@@ -1503,19 +1503,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       else if ((DisplaySettings._Shutdown1 != string.Empty) || (DisplaySettings._Shutdown2 != string.Empty))
       {
-        commPort.Write(new byte[] { 0xa1, 0, 0xa7 }, 0, 3);
+        commPort.Write(new byte[] {0xa1, 0, 0xa7}, 0, 3);
         commPort.Write(DisplaySettings._Shutdown1);
-        commPort.Write(new byte[] {0, 0xa2, 0, 0xa7 }, 0, 4);
+        commPort.Write(new byte[] {0, 0xa2, 0, 0xa7}, 0, 4);
         commPort.Write(DisplaySettings._Shutdown2);
-        commPort.Write(new byte[] { 0 }, 0, 1);
+        commPort.Write(new byte[] {0}, 0, 1);
       }
       else
       {
-        commPort.Write(new byte[] { 0xa1, 0, 0xa7 }, 0, 3);
+        commPort.Write(new byte[] {0xa1, 0, 0xa7}, 0, 3);
         commPort.Write("     MediaPortal    ");
-        commPort.Write(new byte[] { 0, 0xa2, 0, 0xa7 }, 0, 4);
+        commPort.Write(new byte[] {0, 0xa2, 0, 0xa7}, 0, 4);
         commPort.Write("     Not Active     ");
-        commPort.Write(new byte[] { 0 }, 0, 1);
+        commPort.Write(new byte[] {0}, 0, 1);
       }
     }
 
@@ -1544,7 +1544,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         for (int j = 0; j < customCharacters[i].Length; j++)
         {
-          DefaultCustomCharacters[i][j] = (byte) customCharacters[i][j];
+          DefaultCustomCharacters[i][j] = (byte)customCharacters[i][j];
         }
       }
       _LastCustomCharacterData = -1;
@@ -1581,7 +1581,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           Log.Info(
             "VLSYS_Mplay.SetFanSpeed() Using automatic setting for Fan1: temp = {0}, speed = {1} (Temp data not yet valid)",
-            new object[] { _Temp1, num });
+            new object[] {_Temp1, num});
         }
       }
 
@@ -1596,11 +1596,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           Log.Info(
             "VLSYS_Mplay.SetFanSpeed() Using automatic setting for Fan2: temp = {0}, speed = {1} (Temp data not yet valid)",
-            new object[] { _Temp2, num2 });
+            new object[] {_Temp2, num2});
         }
       }
 
-      commPort.Write(new byte[] { 0xac, num, num2 }, 0, 3);
+      commPort.Write(new byte[] {0xac, num, num2}, 0, 3);
 
       if (DoDebug)
       {
@@ -1628,17 +1628,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (DoDebug)
           {
-            Log.Info("VLSYS_Mplay.SetLine(): Line {0} - Message = \"{1}\"", new object[] { line, message });
+            Log.Info("VLSYS_Mplay.SetLine(): Line {0} - Message = \"{1}\"", new object[] {line, message});
           }
           //SendCustomCharactersToDisplay();
-          commPort.Write(new byte[] { 0 }, 0, 1);
+          commPort.Write(new byte[] {0}, 0, 1);
           if (line == 0)
           {
-            commPort.Write(new byte[] { 0xa1, 0, 0xa7 }, 0, 3);
+            commPort.Write(new byte[] {0xa1, 0, 0xa7}, 0, 3);
           }
           else if (line == 1)
           {
-            commPort.Write(new byte[] { 0xa2, 0, 0xa7 }, 0, 3);
+            commPort.Write(new byte[] {0xa2, 0, 0xa7}, 0, 3);
           }
           else
           {
@@ -1661,7 +1661,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           else
           {
             commPort.Write(message);
-            commPort.Write(new byte[] { 0 }, 0, 1);
+            commPort.Write(new byte[] {0}, 0, 1);
           }
           if (DoDebug)
           {
@@ -1867,7 +1867,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("VLSYS_Mplay.ShutdownFans() Setting fan speed - Fan #1 = {0}, Fan #2 = {1}",
                    new object[] {num.ToString("x00"), num2.ToString("x00")});
         }
-        commPort.Write(new byte[] {0xac, (byte) num, (byte) num2}, 0, 3);
+        commPort.Write(new byte[] {0xac, (byte)num, (byte)num2}, 0, 3);
         if (DoDebug)
         {
           Log.Info("VLSYS_Mplay.ShutdownFans() completed");
@@ -1989,71 +1989,102 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       switch (ch32)
       {
-        case 0x410: // Ð_Ð°
-        case 0x430: return (byte)('A');
-        case 0x411: // Ð'Ð+;
-        case 0x431: return 128;
-        case 0x412: // Ð'Ð_;
-        case 0x432: return (byte)('B');
-        case 0x413: // Ð"Ð_;
-        case 0x433: return 146;
-        case 0x414: // Ð"Ð_;
-        case 0x434: return 129;
-        case 0x415: // ÐÐ÷;
-        case 0x435: return (byte)('E');
-        case 0x416: // Ð-Ð¶;
-        case 0x436: return 130;
-        case 0x417: // Ð-Ð·;
-        case 0x437: return 131;
-        case 0x418: // Ð_Ð¸;
-        case 0x438: return 132;
-        case 0x419: // ÐTÐ¹;
-        case 0x439: return 133;
-        case 0x41a: // Ð_Ðº;
-        case 0x43a: return (byte)('K');
-        case 0x41b: // Ð>Ð>;
-        case 0x43b: return 134;
-        case 0x41c: // Ð_Ð_;
-        case 0x43c: return (byte)('M');
-        case 0x41d: // Ð_Ð_;
-        case 0x43d: return (byte)('H');
-        case 0x41e: // Ð_Ð_;
-        case 0x43e: return (byte)('O');
-        case 0x41f: // Ð_Ð¿;
-        case 0x43f: return 135;
-        case 0x420: // Ð Ñ_;
-        case 0x440: return (byte)('P');
-        case 0x421: // Ð¡Ñ_;
-        case 0x441: return (byte)('C');
-        case 0x422: // Ð¢Ñ';
-        case 0x442: return (byte)('T');
-        case 0x423: // Ð_Ñ_;
-        case 0x443: return 136;
-        case 0x424: // Ð¤Ñ";
-        case 0x444: return 216;
-        case 0x425: // Ð_Ñ:;
-        case 0x445: return (byte)('X');
-        case 0x426: // Ð¦Ñ+;
-        case 0x446: return 137;
-        case 0x427: // Ð§Ñ+;
-        case 0x447: return 138;
-        case 0x428: // Ð¨Ñ_;
-        case 0x448: return 139;
-        case 0x429: // ÐcÑ%;
-        case 0x449: return 140;
-        case 0x42a: // ÐªÑ_;
-        case 0x44a: return 141;
-        case 0x42b: // Ð<Ñ<;
-        case 0x44b: return 142;
-        case 0x42c: // Ð¬Ñ_;
-        case 0x44c: return (byte)('b');
-        case 0x42d: // Ð-Ñ_;
-        case 0x44d: return 143;
-        case 0x42e: // ÐRÑ_;
-        case 0x44e: return 172;
-        case 0x42f: // Ð¯Ñ_;
-        case 0x44f: return 173;
-
+        case 0x410: // �_а
+        case 0x430:
+          return (byte)('A');
+        case 0x411: // �'�+;
+        case 0x431:
+          return 128;
+        case 0x412: // �'�_;
+        case 0x432:
+          return (byte)('B');
+        case 0x413: // �"�_;
+        case 0x433:
+          return 146;
+        case 0x414: // �"�_;
+        case 0x434:
+          return 129;
+        case 0x415: // ���;
+        case 0x435:
+          return (byte)('E');
+        case 0x416: // �-ж;
+        case 0x436:
+          return 130;
+        case 0x417: // �-з;
+        case 0x437:
+          return 131;
+        case 0x418: // �_и;
+        case 0x438:
+          return 132;
+        case 0x419: // �Tй;
+        case 0x439:
+          return 133;
+        case 0x41a: // �_к;
+        case 0x43a:
+          return (byte)('K');
+        case 0x41b: // �>�>;
+        case 0x43b:
+          return 134;
+        case 0x41c: // �_�_;
+        case 0x43c:
+          return (byte)('M');
+        case 0x41d: // �_�_;
+        case 0x43d:
+          return (byte)('H');
+        case 0x41e: // �_�_;
+        case 0x43e:
+          return (byte)('O');
+        case 0x41f: // �_п;
+        case 0x43f:
+          return 135;
+        case 0x420: // Р�_;
+        case 0x440:
+          return (byte)('P');
+        case 0x421: // С�_;
+        case 0x441:
+          return (byte)('C');
+        case 0x422: // Т�';
+        case 0x442:
+          return (byte)('T');
+        case 0x423: // �_�_;
+        case 0x443:
+          return 136;
+        case 0x424: // Ф�";
+        case 0x444:
+          return 216;
+        case 0x425: // �_�:;
+        case 0x445:
+          return (byte)('X');
+        case 0x426: // Ц�+;
+        case 0x446:
+          return 137;
+        case 0x427: // Ч�+;
+        case 0x447:
+          return 138;
+        case 0x428: // Ш�_;
+        case 0x448:
+          return 139;
+        case 0x429: // �c�%;
+        case 0x449:
+          return 140;
+        case 0x42a: // Ъ�_;
+        case 0x44a:
+          return 141;
+        case 0x42b: // �<�<;
+        case 0x44b:
+          return 142;
+        case 0x42c: // Ь�_;
+        case 0x44c:
+          return (byte)('b');
+        case 0x42d: // �-�_;
+        case 0x44d:
+          return 143;
+        case 0x42e: // �R�_;
+        case 0x44e:
+          return 172;
+        case 0x42f: // Я�_;
+        case 0x44f:
+          return 173;
       }
       return 32; // For unknown characters
     }
@@ -2099,18 +2130,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (IsValidModel(cModel))
         {
           MPlay_Model = cModel;
-          Log.Info("VLSYS_Mplay.WhenDataReceived(): Received Model ID = \"{0}\"", new object[] { MPlay_Model });
+          Log.Info("VLSYS_Mplay.WhenDataReceived(): Received Model ID = \"{0}\"", new object[] {MPlay_Model});
         }
         else
         {
           Log.Info("VLSYS_Mplay.WhenDataReceived(): received invalid Model ID \"{0}\"- ignored",
-                   new object[] { cModel.ToString() });
+                   new object[] {cModel.ToString()});
         }
       }
       else
       {
         Log.Info("VLSYS_Mplay.WhenDataReceived(): Not processing data - ignored {0} bytes",
-                 new object[] { bytesToRead });
+                 new object[] {bytesToRead});
       }
     }
 
@@ -2138,7 +2169,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               _FlushDataBuffers = false;
               Log.Info("VLSYS_Mplay.WhenDataReceived(): flushing data buffers - finished");
               return;
-            }            
+            }
             if (DoDebug)
             {
               Log.Info("VLSYS_Mplay.WhenDataReceived(): Got DataReceived event");
@@ -2168,11 +2199,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               }
               isDisabled = true;
               return;
-            }            
+            }
 
             if (DoDebug)
             {
-              Log.Info("VLSYS_Mplay: Got DataReceived event - {0} bytes of data", new object[] { byteCount });
+              Log.Info("VLSYS_Mplay: Got DataReceived event - {0} bytes of data", new object[] {byteCount});
             }
             try
             {
@@ -2180,7 +2211,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 if (DoDebug)
                 {
-                  Log.Info("VLSYS_Mplay.WhenDataReceived(): Unable to process incoming data - NO REMOTE MAPPING", new object[] { byteCount });
+                  Log.Info("VLSYS_Mplay.WhenDataReceived(): Unable to process incoming data - NO REMOTE MAPPING",
+                           new object[] {byteCount});
                 }
                 commPort.DiscardInBuffer();
                 isDisabled = true;
@@ -2189,24 +2221,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             catch
             {
-              Log.Info("VLSYS_Mplay.WhenDataReceived(): CAUGHT EXCEPTION - NO REMOTE MAPPING", new object[] { byteCount });
+              Log.Info("VLSYS_Mplay.WhenDataReceived(): CAUGHT EXCEPTION - NO REMOTE MAPPING", new object[] {byteCount});
               isDisabled = true;
               return;
-            }            
-            
+            }
+
             if ((commPort.BytesToRead > 0) && DoDebug)
             {
-              Log.Info("VLSYS_Mplay.WhenDataReceived(): new data arrived after notification... leaving for next read cycle");
+              Log.Info(
+                "VLSYS_Mplay.WhenDataReceived(): new data arrived after notification... leaving for next read cycle");
             }
-            
+
             if (DoDebug)
             {
               string str2 = string.Empty;
               for (int count = 0; count < byteCount; count++)
               {
-               str2 = str2 + "0x" + ((byte)receivedBytes[count]).ToString("x00") + " ";
+                str2 = str2 + "0x" + ((byte)receivedBytes[count]).ToString("x00") + " ";
               }
-              Log.Info("VLSYS_Mplay.WhenDataReceived(): Received RAW DATA: {0}", new object[] { str2 });
+              Log.Info("VLSYS_Mplay.WhenDataReceived(): Received RAW DATA: {0}", new object[] {str2});
             }
 
             for (int count = 0; count < byteCount; count++)
@@ -2216,7 +2249,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               if (DoDebug)
               {
                 Log.Info("VLSYS_Mplay.WhenDataReceived(): Received RAW REMOTE DATA: 0x{0} 0x{1}",
-                         new object[] { num12.ToString("x00") });
+                         new object[] {num12.ToString("x00")});
               }
               if (IsRemoteKeyCode(num12) && (num12 != 0x7e))
               {
@@ -2233,7 +2266,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                   if (DoDebug)
                   {
                     Log.Info("VLSYS_Mplay.WhenDataReceived(): Received Remote Button : code = {0}",
-                             new object[] { num12.ToString("x00") });
+                             new object[] {num12.ToString("x00")});
                   }
                   _RemoteButtonPending = num12;
                 }
@@ -2273,7 +2306,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                       {
                         Log.Info(
                           "VLSYS_Mplay.WhenDataReceived(): Received Remote Button : REPEAT - using code = 0x{0}",
-                          new object[] { _LastRemoteButton.ToString("x00") });
+                          new object[] {_LastRemoteButton.ToString("x00")});
                       }
                       try
                       {
@@ -2286,7 +2319,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                       {
                         Log.Info(
                           "VLSYS_Mplay.WhenDataReceived(): CAUGHT EXCEPTION: Unable to process Remote Button 0x{0}",
-                          new object[] { num12.ToString("x00") });
+                          new object[] {num12.ToString("x00")});
                       }
                     }
                   }
@@ -2294,7 +2327,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                   {
                     Log.Info(
                       "VLSYS_Mplay.WhenDataReceived(): discarding REPEAT event - event received before repeat timeout ({0}ms) elapsed",
-                      new object[] { RemoteSettings.RepeatDelay });
+                      new object[] {RemoteSettings.RepeatDelay});
                   }
                 }
               }
@@ -3486,7 +3519,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info("VLSYS_Mplay.AdvancedSettings.Load(): Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_vlsys_mplay.xml"));
-          settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
+          settings = (AdvancedSettings)serializer.Deserialize(xmlReader);
           xmlReader.Close();
         }
         else
@@ -3520,7 +3553,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                  Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 2;
-        serializer.Serialize((XmlWriter) writer, ToSave);
+        serializer.Serialize((XmlWriter)writer, ToSave);
         writer.Close();
         Log.Info("VLSYS_Mplay.AdvancedSettings.Save(): completed");
       }

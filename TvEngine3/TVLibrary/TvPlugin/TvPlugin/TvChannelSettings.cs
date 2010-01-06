@@ -39,14 +39,14 @@ namespace TvPlugin
     [SkinControl(24)] protected GUIButtonControl btnTvGroup = null;
     [SkinControl(10)] protected GUIUpDownListControl listChannels = null;
 
-    private ChannelGroup _currentGroup 
+    private ChannelGroup _currentGroup
     {
-      get { return TVHome.Navigator.CurrentGroup;}
+      get { return TVHome.Navigator.CurrentGroup; }
     }
 
     public ChannelSettings()
     {
-      GetID = (int) Window.WINDOW_SETTINGS_SORT_CHANNELS;
+      GetID = (int)Window.WINDOW_SETTINGS_SORT_CHANNELS;
     }
 
     public override bool Init()
@@ -103,7 +103,7 @@ namespace TvPlugin
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0,
                                         null);
         OnMessage(msg);
-        int iItem = (int) msg.Param1;
+        int iItem = (int)msg.Param1;
         OnMoveUp(iItem);
       }
     }
@@ -115,7 +115,7 @@ namespace TvPlugin
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0,
                                         null);
         OnMessage(msg);
-        int iItem = (int) msg.Param1;
+        int iItem = (int)msg.Param1;
         OnMoveDown(iItem);
       }
     }
@@ -138,10 +138,10 @@ namespace TvPlugin
         return;
       }
       GUIListItem item1 = listChannels[item];
-      Channel chan1 = (Channel) item1.MusicTag;
+      Channel chan1 = (Channel)item1.MusicTag;
 
       GUIListItem item2 = listChannels[item + 1];
-      Channel chan2 = (Channel) item2.MusicTag;
+      Channel chan2 = (Channel)item2.MusicTag;
 
       int prio = chan1.SortOrder;
       chan1.SortOrder = chan2.SortOrder;
@@ -175,10 +175,10 @@ namespace TvPlugin
         return;
       }
       GUIListItem item1 = listChannels[item];
-      Channel chan1 = (Channel) item1.MusicTag;
+      Channel chan1 = (Channel)item1.MusicTag;
 
       GUIListItem item2 = listChannels[item - 1];
-      Channel chan2 = (Channel) item2.MusicTag;
+      Channel chan2 = (Channel)item2.MusicTag;
 
       int prio = chan1.SortOrder;
       chan1.SortOrder = chan2.SortOrder;
@@ -207,7 +207,7 @@ namespace TvPlugin
     private void OnTvGroup()
     {
       List<ChannelGroup> tvGroups = TVHome.Navigator.Groups;
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
         TVHome.OnSelectGroup();
@@ -233,8 +233,8 @@ namespace TvPlugin
 
     public int Compare(Channel x, Channel y)
     {
-      Channel ch1 = (Channel) x;
-      Channel ch2 = (Channel) y;
+      Channel ch1 = (Channel)x;
+      Channel ch2 = (Channel)y;
       if (ch1.SortOrder < ch2.SortOrder)
       {
         return -1;

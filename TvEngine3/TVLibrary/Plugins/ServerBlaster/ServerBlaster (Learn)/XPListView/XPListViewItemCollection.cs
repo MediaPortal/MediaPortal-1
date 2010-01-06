@@ -1,97 +1,108 @@
 using System;
 using System.Collections;
-using System.Windows.Forms; 
+using System.Windows.Forms;
 
 namespace XPListview
 {
-	public class XPListViewItemCollection : System.Windows.Forms.ListView.ListViewItemCollection{
+  public class XPListViewItemCollection : System.Windows.Forms.ListView.ListViewItemCollection
+  {
+    public delegate void ItemAddedEventHandler(object sender, ListViewItemEventArgs e);
 
-		public delegate void ItemAddedEventHandler(object sender, ListViewItemEventArgs e);
-		public delegate void ItemRemovedEventHandler(object sender, ListViewItemEventArgs e);
-		public event ItemAddedEventHandler ItemAdded; 
-		public event ItemRemovedEventHandler ItemRemoved; 
+    public delegate void ItemRemovedEventHandler(object sender, ListViewItemEventArgs e);
 
-		public XPListViewItemCollection(XPListView owner) : base(((ListView)owner)) { 
-		} 
+    public event ItemAddedEventHandler ItemAdded;
+    public event ItemRemovedEventHandler ItemRemoved;
 
-		public XPListViewItem Add(XPListViewItem item) { 
-			XPListViewItem itm; 
-			itm = ((XPListViewItem)base.Add(item)); 
-			ListViewAPI.AddItemToGroup(((XPListView)itm.ListView), itm.Index, itm.GroupIndex); 
-			if (ItemAdded != null) { 
-				ItemAdded(this, new ListViewItemEventArgs(itm)); 
-			} 
-			return itm; 
-		} 
+    public XPListViewItemCollection(XPListView owner) : base(((ListView)owner)) {}
 
-		public new XPListViewItem Add(string text) { 
-			XPListViewItem itm = new XPListViewItem(text); 
-			return Add(itm); 
-		} 
+    public XPListViewItem Add(XPListViewItem item)
+    {
+      XPListViewItem itm;
+      itm = ((XPListViewItem)base.Add(item));
+      ListViewAPI.AddItemToGroup(((XPListView)itm.ListView), itm.Index, itm.GroupIndex);
+      if (ItemAdded != null)
+      {
+        ItemAdded(this, new ListViewItemEventArgs(itm));
+      }
+      return itm;
+    }
 
-		public XPListViewItem Add(string text, int imageIndex, int groupindex) { 
-			XPListViewItem itm = new XPListViewItem(text, imageIndex, groupindex); 
-			return Add(itm); 
-		} 
+    public new XPListViewItem Add(string text)
+    {
+      XPListViewItem itm = new XPListViewItem(text);
+      return Add(itm);
+    }
 
-		public void AddRange(XPListViewItem[] values) { 
-			base.AddRange(values); 
-			foreach (XPListViewItem itm in values) { 
-				ListViewAPI.AddItemToGroup(((XPListView)itm.ListView), itm.Index, itm.GroupIndex); 
-				if (ItemAdded != null) { 
-					ItemAdded(this, new ListViewItemEventArgs(itm)); 
-				} 
-			} 
-		} 
+    public XPListViewItem Add(string text, int imageIndex, int groupindex)
+    {
+      XPListViewItem itm = new XPListViewItem(text, imageIndex, groupindex);
+      return Add(itm);
+    }
 
-		public bool Contains(XPListViewItem item) { 
-			return base.Contains(item); 
-		} 
+    public void AddRange(XPListViewItem[] values)
+    {
+      base.AddRange(values);
+      foreach (XPListViewItem itm in values)
+      {
+        ListViewAPI.AddItemToGroup(((XPListView)itm.ListView), itm.Index, itm.GroupIndex);
+        if (ItemAdded != null)
+        {
+          ItemAdded(this, new ListViewItemEventArgs(itm));
+        }
+      }
+    }
 
-		public int IndexOf(XPListViewItem item) { 
-			return base.IndexOf(item); 
-		} 
+    public bool Contains(XPListViewItem item)
+    {
+      return base.Contains(item);
+    }
 
-		public XPListViewItem Insert(int index, XPListViewItem item) { 
-			return ((XPListViewItem)base.Insert(index, item)); 
-		} 
+    public int IndexOf(XPListViewItem item)
+    {
+      return base.IndexOf(item);
+    }
 
-		public XPListViewItem this[int displayIndex] { 
-			get { 
-				return ((XPListViewItem)base[displayIndex]);  //((XPListViewItem)this[displayIndex])
-			} 
-			set {
-				this[displayIndex] = value; 
-			} 
-		} 
+    public XPListViewItem Insert(int index, XPListViewItem item)
+    {
+      return ((XPListViewItem)base.Insert(index, item));
+    }
 
-		public void Remove(XPListViewItem item) { 
-			if (ItemRemoved != null) { 
-				ItemRemoved(this, new ListViewItemEventArgs(item)); 
-			} 
-			base.Remove(item); 
-		} 
+    public XPListViewItem this[int displayIndex]
+    {
+      get { return ((XPListViewItem)base[displayIndex]); //((XPListViewItem)this[displayIndex])
+      }
+      set { this[displayIndex] = value; }
+    }
 
-		public void CopyTo(XPListViewItem[] array, int index) { 
-			base.CopyTo(array, index); 
-		} 
-	}
+    public void Remove(XPListViewItem item)
+    {
+      if (ItemRemoved != null)
+      {
+        ItemRemoved(this, new ListViewItemEventArgs(item));
+      }
+      base.Remove(item);
+    }
+
+    public void CopyTo(XPListViewItem[] array, int index)
+    {
+      base.CopyTo(array, index);
+    }
+  }
 
 
-	public class ListViewItemEventArgs : EventArgs { 
-		private XPListViewItem mItem = new XPListViewItem(); 
+  public class ListViewItemEventArgs : EventArgs
+  {
+    private XPListViewItem mItem = new XPListViewItem();
 
-		public ListViewItemEventArgs(XPListViewItem item) { 
-			mItem = item; 
-		} 
+    public ListViewItemEventArgs(XPListViewItem item)
+    {
+      mItem = item;
+    }
 
-		public XPListViewItem Item { 
-			get { 
-				return mItem; 
-			} 
-			set { 
-				mItem = value; 
-			} 
-		} 
-	} 
+    public XPListViewItem Item
+    {
+      get { return mItem; }
+      set { mItem = value; }
+    }
+  }
 }

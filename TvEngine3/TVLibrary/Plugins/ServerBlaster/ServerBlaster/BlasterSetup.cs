@@ -38,8 +38,6 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
-
-
       TvBusinessLayer layer = new TvBusinessLayer();
       comboBoxType.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlasterType", "0").Value);
       comboBoxSpeed.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlasterSpeed", "0").Value);
@@ -53,14 +51,16 @@ namespace SetupTv.Sections
         comboBoxBlaster1.Items.Add(card.Name);
         comboBoxBlaster2.Items.Add(card.Name);
       }
-      Log.WriteFile("CB1Size {0}, CB2Size {1}, BT1 {2}, BT2 {3}", comboBoxBlaster1.Items.Count, comboBoxBlaster1.Items.Count, Convert.ToInt16(layer.GetSetting("SrvBlaster1Card", "0").Value), Convert.ToInt16(layer.GetSetting("SrvBlaster2Card", "0").Value));
+      Log.WriteFile("CB1Size {0}, CB2Size {1}, BT1 {2}, BT2 {3}", comboBoxBlaster1.Items.Count,
+                    comboBoxBlaster1.Items.Count, Convert.ToInt16(layer.GetSetting("SrvBlaster1Card", "0").Value),
+                    Convert.ToInt16(layer.GetSetting("SrvBlaster2Card", "0").Value));
       comboBoxBlaster1.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlaster1Card", "0").Value);
       comboBoxBlaster2.SelectedIndex = Convert.ToInt16(layer.GetSetting("SrvBlaster2Card", "0").Value);
       checkBoxExtLog.Checked = (layer.GetSetting("SrvBlasterLog").Value == "True");
       checkSendSelect.Checked = (layer.GetSetting("SrvBlasterSendSelect").Value == "True");
     }
 
-    void ComboBox1SelectedIndexChanged(object sender, EventArgs e)
+    private void ComboBox1SelectedIndexChanged(object sender, EventArgs e)
     {
       bool enabled;
 
@@ -88,7 +88,8 @@ namespace SetupTv.Sections
         case 2: // Hauppauge blasting
           enabled = false;
           checkBoxExtLog.Visible = true;
-          mpLabelAdditionalNotes.Text = "To configure the Hauppauge IR Blaster, use the original Hauppauge IR configuration software.";
+          mpLabelAdditionalNotes.Text =
+            "To configure the Hauppauge IR Blaster, use the original Hauppauge IR configuration software.";
           break;
         default:
           enabled = false;

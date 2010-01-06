@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
@@ -27,11 +27,8 @@ namespace SetupTv.Sections
 {
   public partial class DebugOptions : SectionSettings
   {
-
     public DebugOptions()
-      : this("Debug Options")
-    {
-    }
+      : this("Debug Options") {}
 
     public DebugOptions(string name)
       : base(name)

@@ -36,11 +36,11 @@ namespace MediaPortal.GUI.Video
   /// </summary>
   [PluginIcons("WindowPlugins.GUIDisc.DVD.gif", "WindowPlugins.GUIDisc.DVDDisabled.gif")]
   public class GUIDisc : GUIInternalWindow, ISetupForm, IShowPlugin
-  {    
+  {
     public GUIDisc()
       : base()
     {
-      GetID = (int) Window.WINDOW_DVD;
+      GetID = (int)Window.WINDOW_DVD;
     }
 
     public override bool Init()
@@ -63,12 +63,12 @@ namespace MediaPortal.GUI.Video
         GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
       }
 
-      string dvdToPlay = selectDVDHandler.ShowSelectDriveDialog(GetID, false);      
+      string dvdToPlay = selectDVDHandler.ShowSelectDriveDialog(GetID, false);
       if (!String.IsNullOrEmpty(dvdToPlay) && !g_Player.CurrentFile.StartsWith(dvdToPlay) && !g_Player.Playing)
       {
         MediaPortal.Ripper.AutoPlay.ExamineCD(dvdToPlay, true);
-      }     
-    }    
+      }
+    }
 
     #region ISetupForm Members
 

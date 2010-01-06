@@ -1,4 +1,4 @@
-﻿using System.CodeDom.Compiler;
+using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -14,9 +14,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Properties
     private static CultureInfo resourceCulture;
     private static ResourceManager resourceMan;
 
-    internal Resources()
-    {
-    }
+    internal Resources() {}
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     internal static CultureInfo Culture

@@ -25,6 +25,7 @@
 
 using System.Diagnostics;
 using MediaPortal.ServiceImplementations;
+
 namespace System.Windows.Media.Animation
 {
   public sealed class AnimationTimer
@@ -44,9 +45,7 @@ namespace System.Windows.Media.Animation
       }
     }
 
-    private AnimationTimer()
-    {
-    }
+    private AnimationTimer() {}
 
     #endregion Constructors
 
@@ -56,7 +55,8 @@ namespace System.Windows.Media.Animation
     {
       get
       {
-        return TweenHelper.TickCount = ((double)clockWatch.ElapsedTicks / Stopwatch.Frequency) * 1000; // ((double) tick/_frequency)*1000;
+        return TweenHelper.TickCount = ((double)clockWatch.ElapsedTicks / Stopwatch.Frequency) * 1000;
+          // ((double) tick/_frequency)*1000;
       }
     }
 

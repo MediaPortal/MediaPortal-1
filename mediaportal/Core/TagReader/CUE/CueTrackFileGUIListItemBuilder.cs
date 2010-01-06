@@ -33,7 +33,7 @@ namespace MediaPortal.TagReader
   /// <summary>
   /// Builds GUIListItem from a Cue track
   /// </summary>
-  class CueTrackFileGUIListItemBuilder : ICueTrackFileBuilder<GUIListItem>
+  internal class CueTrackFileGUIListItemBuilder : ICueTrackFileBuilder<GUIListItem>
   {
     #region Public Methods
 

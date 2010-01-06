@@ -53,7 +53,7 @@ namespace MediaPortal.Drawing
     {
       if (value is string)
       {
-        return ConvertFromString(context, culture, (string) value);
+        return ConvertFromString(context, culture, (string)value);
       }
 
       if (value is Geometry)

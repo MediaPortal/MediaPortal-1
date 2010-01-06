@@ -10,17 +10,13 @@ namespace MediaPortal.Player.Subtitles
 {
   public interface ISubEngine
   {
-
     bool LoadSubtitles(IGraphBuilder graphBuilder, string filename);
     void FreeSubtitles();
 
     void SaveToDisk();
     bool IsModified();
 
-    AutoSaveTypeEnum AutoSaveType
-    {
-      get;
-    }
+    AutoSaveTypeEnum AutoSaveType { get; }
 
     void Render(Rectangle subsRect, Rectangle frameRect);
     void SetTime(long nsSampleTime);
@@ -28,47 +24,30 @@ namespace MediaPortal.Player.Subtitles
     ////
     //subs management functions
     ///
-
     int GetCount();
 
     string GetLanguage(int i);
 
-    int Current
-    {
-      get;
-      set;
-    }
+    int Current { get; set; }
 
-    bool Enable
-    {
-      get;
-      set;
-    }
-    
-    int Delay 
-    {
-      get;
-      set;
-    }
+    bool Enable { get; set; }
 
-    int DelayInterval
-    {
-      get;
-    }
+    int Delay { get; set; }
+
+    int DelayInterval { get; }
 
     void DelayPlus();
     void DelayMinus();
-
   }
 
   public class SubEngine
-  {    
+  {
     private static ISubEngine engine;
 
     public static ISubEngine GetInstance()
     {
       if (engine == null)
-      {        
+      {
         using (Settings xmlreader = new MPSettings())
         {
           string engineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
@@ -83,7 +62,7 @@ namespace MediaPortal.Player.Subtitles
       return engine;
     }
 
-    class DummyEngine : ISubEngine
+    private class DummyEngine : ISubEngine
     {
       #region ISubEngine Members
 
@@ -93,13 +72,9 @@ namespace MediaPortal.Player.Subtitles
         return false;
       }
 
-      public void FreeSubtitles()
-      {
-      }
+      public void FreeSubtitles() {}
 
-      public void SaveToDisk()
-      {
-      }
+      public void SaveToDisk() {}
 
       public bool IsModified()
       {
@@ -111,13 +86,9 @@ namespace MediaPortal.Player.Subtitles
         get { return AutoSaveTypeEnum.NEVER; }
       }
 
-      public void Render(Rectangle subsRect, Rectangle frameRect)
-      {
-      }
+      public void Render(Rectangle subsRect, Rectangle frameRect) {}
 
-      public void SetTime(long nsSampleTime)
-      {
-      }
+      public void SetTime(long nsSampleTime) {}
 
       public int GetCount()
       {
@@ -131,55 +102,32 @@ namespace MediaPortal.Player.Subtitles
 
       public int Current
       {
-        get
-        {
-          return -1;
-        }
-        set
-        {
-        }
+        get { return -1; }
+        set { }
       }
 
       public bool Enable
       {
-        get
-        {
-          return false;
-        }
-        set
-        {
-        }
+        get { return false; }
+        set { }
       }
 
       public int Delay
       {
-        get
-        {
-          return 0;
-        }
-        set
-        {
-        }
+        get { return 0; }
+        set { }
       }
 
       public int DelayInterval
       {
-        get
-        {
-          return 0;
-        }
+        get { return 0; }
       }
 
-      public void DelayPlus()
-      {
-      }
+      public void DelayPlus() {}
 
-      public void DelayMinus()
-      {
-      }
+      public void DelayMinus() {}
 
       #endregion
     }
   }
-
 }

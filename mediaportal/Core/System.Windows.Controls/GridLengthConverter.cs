@@ -46,17 +46,17 @@ namespace System.Windows.Controls
     {
       if (value is string)
       {
-        if (string.Compare((string) value, "*") == 0)
+        if (string.Compare((string)value, "*") == 0)
         {
           return new GridLength(GridUnitType.Star);
         }
 
-        if (string.Compare((string) value, "Auto", true) == 0)
+        if (string.Compare((string)value, "Auto", true) == 0)
         {
           return new GridLength(GridUnitType.Auto);
         }
 
-        return new GridLength(double.Parse((string) value));
+        return new GridLength(double.Parse((string)value));
       }
 
       return base.ConvertFrom(context, culture, value);

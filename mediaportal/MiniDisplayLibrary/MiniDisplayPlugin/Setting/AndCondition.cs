@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Xml.Serialization;
 
@@ -23,7 +23,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting
     {
       for (int i = 0; i < this.m_Conditions.Count; i++)
       {
-        if (!((Condition) this.m_Conditions[i]).Evaluate())
+        if (!((Condition)this.m_Conditions[i]).Evaluate())
         {
           return false;
         }

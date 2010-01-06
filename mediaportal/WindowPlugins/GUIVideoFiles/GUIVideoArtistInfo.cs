@@ -63,7 +63,7 @@ namespace MediaPortal.GUI.Video
 
     public GUIVideoArtistInfo()
     {
-      GetID = (int) Window.WINDOW_VIDEO_ARTIST_INFO;
+      GetID = (int)Window.WINDOW_VIDEO_ARTIST_INFO;
     }
 
     public override bool Init()
@@ -71,9 +71,7 @@ namespace MediaPortal.GUI.Video
       return Load(GUIGraphicsContext.Skin + @"\DialogVideoArtistInfo.xml");
     }
 
-    public override void PreInit()
-    {
-    }
+    public override void PreInit() {}
 
     public override void OnAction(Action action)
     {

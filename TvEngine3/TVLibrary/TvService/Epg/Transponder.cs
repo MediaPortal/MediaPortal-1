@@ -31,13 +31,16 @@ namespace TvService
   public class Transponder
   {
     #region variables
-    TuningDetail _detail;
-    List<Channel> _channels;
-    int _currentChannelIndex;
-    bool _inUse;
+
+    private TuningDetail _detail;
+    private List<Channel> _channels;
+    private int _currentChannelIndex;
+    private bool _inUse;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Transponder"/> class.
     /// </summary>
@@ -49,23 +52,19 @@ namespace TvService
       _currentChannelIndex = -1;
       _inUse = false;
     }
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// Gets or sets a value indicating whether the transponder is in use or not
     /// </summary>
     /// <value><c>true</c> if in use; otherwise, <c>false</c>.</value>
     public bool InUse
     {
-      get
-      {
-        return _inUse;
-      }
-      set
-      {
-        _inUse = value;
-      }
+      get { return _inUse; }
+      set { _inUse = value; }
     }
 
     /// <summary>
@@ -74,18 +73,12 @@ namespace TvService
     /// <value>The channel index.</value>
     public int Index
     {
-      get
-      {
-        return _currentChannelIndex;
-      }
+      get { return _currentChannelIndex; }
     }
 
     public Channel CurrentChannel
     {
-      get
-      {
-        return Channels[_currentChannelIndex];
-      }
+      get { return Channels[_currentChannelIndex]; }
     }
 
     public Channel GetNextChannel()
@@ -98,20 +91,15 @@ namespace TvService
       }
       return Channels[_currentChannelIndex];
     }
+
     /// <summary>
     /// Gets or sets the channels for this transponder
     /// </summary>
     /// <value>The channels.</value>
     public List<Channel> Channels
     {
-      get
-      {
-        return _channels;
-      }
-      set
-      {
-        _channels = value;
-      }
+      get { return _channels; }
+      set { _channels = value; }
     }
 
     /// <summary>
@@ -120,14 +108,8 @@ namespace TvService
     /// <value>The tuning detail.</value>
     public TuningDetail TuningDetail
     {
-      get
-      {
-        return _detail;
-      }
-      set
-      {
-        _detail = value;
-      }
+      get { return _detail; }
+      set { _detail = value; }
     }
 
     /// <summary>
@@ -147,9 +129,11 @@ namespace TvService
         return layer.GetTuningChannelByType(Channels[Index], TuningDetail.ChannelType);
       }
     }
+
     #endregion
 
     #region public members
+
     /// <summary>
     /// Called when epg times out, simply sets the lastgrabtime for the current channel
     /// </summary>
@@ -160,7 +144,6 @@ namespace TvService
       Channels[Index].LastGrabTime = DateTime.Now;
       Channels[Index].Persist();
       Log.Write("EPG: database updated for #{0} {1}", Index, Channels[Index].Name);
-
     }
 
     /// <summary>
@@ -201,7 +184,9 @@ namespace TvService
     /// </summary>
     public void Dump()
     {
-      Log.Write("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.ChannelType, TuningDetail.Frequency, TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth, TuningDetail.Polarisation);
+      Log.Write("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.ChannelType,
+                TuningDetail.Frequency, TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth,
+                TuningDetail.Polarisation);
       foreach (Channel c in _channels)
       {
         Log.Write(" {0}", c.Name);
@@ -217,25 +202,25 @@ namespace TvService
     public override string ToString()
     {
       return string.Format("type:{0} freq:{1} mod:{2} sr:{3} bw:{4} pol:{5}",
-        TuningDetail.ChannelType, TuningDetail.Frequency,
-        TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth, TuningDetail.Polarisation);
+                           TuningDetail.ChannelType, TuningDetail.Frequency,
+                           TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth,
+                           TuningDetail.Polarisation);
     }
-    #endregion
 
+    #endregion
   }
 
   public class TransponderList : List<Transponder>
   {
     #region Singleton implementation
-    static readonly TransponderList _instance = new TransponderList();
+
+    private static readonly TransponderList _instance = new TransponderList();
 
     public static TransponderList Instance
     {
-      get
-      {
-        return _instance;
-      }
+      get { return _instance; }
     }
+
     #endregion
 
     private Transponder _currentTransponder;
@@ -243,17 +228,12 @@ namespace TvService
 
     public Transponder CurrentTransponder
     {
-      get
-      {
-        return _currentTransponder;
-      }
+      get { return _currentTransponder; }
     }
+
     public int CurrentIndex
     {
-      get
-      {
-        return _currentTransponderIndex;
-      }
+      get { return _currentTransponderIndex; }
     }
 
     /// <summary>
@@ -333,5 +313,4 @@ namespace TvService
       return CurrentTransponder;
     }
   }
-
 }

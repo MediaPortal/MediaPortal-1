@@ -41,11 +41,13 @@ using TvLibrary.Interfaces;
 
 namespace TvPlugin
 {
+
   #region ScheduleInfo class
 
   public class ScheduleInfo
   {
-    public ScheduleInfo(int aIdChannel, string aTitle, string aDescription, string aGenre, DateTime aStartTime, DateTime aEndTime)
+    public ScheduleInfo(int aIdChannel, string aTitle, string aDescription, string aGenre, DateTime aStartTime,
+                        DateTime aEndTime)
     {
       idChannel = aIdChannel;
       title = aTitle;
@@ -56,36 +58,42 @@ namespace TvPlugin
     }
 
     private int idChannel;
+
     public int IdChannel
     {
       get { return idChannel; }
     }
 
     private string title;
+
     public string Title
     {
       get { return title; }
     }
 
     private string description;
+
     public string Description
     {
       get { return description; }
     }
 
     private string genre;
+
     public string Genre
     {
       get { return genre; }
     }
 
     private DateTime startTime;
+
     public DateTime StartTime
     {
       get { return startTime; }
     }
 
     private DateTime endTime;
+
     public DateTime EndTime
     {
       get { return endTime; }
@@ -107,20 +115,20 @@ namespace TvPlugin
 
     #region Variables
 
-    [SkinControl(17)]    protected GUILabelControl lblProgramGenre = null;
-    [SkinControl(15)]    protected GUITextScrollUpControl lblProgramDescription = null;
-    [SkinControl(14)]    protected GUILabelControl lblProgramTime = null;
-    [SkinControl(13)]    protected GUIFadeLabel lblProgramTitle = null;
-    [SkinControl(16)]    protected GUIFadeLabel lblProgramChannel = null;
-    [SkinControl(2)]     protected GUIButtonControl btnRecord = null;
-    [SkinControl(3)]     protected GUIButtonControl btnAdvancedRecord = null;
-    [SkinControl(4)]     protected GUIButtonControl btnKeep = null;
-    [SkinControl(5)]     protected GUIToggleButtonControl btnNotify = null;
-    [SkinControl(10)]    protected GUIListControl lstUpcomingEpsiodes = null;
-    [SkinControl(6)]     protected GUIButtonControl btnQuality = null;
-    [SkinControl(7)]     protected GUIButtonControl btnEpisodes = null;
-    [SkinControl(8)]     protected GUIButtonControl btnPreRecord = null;
-    [SkinControl(9)]     protected GUIButtonControl btnPostRecord = null;
+    [SkinControl(17)] protected GUILabelControl lblProgramGenre = null;
+    [SkinControl(15)] protected GUITextScrollUpControl lblProgramDescription = null;
+    [SkinControl(14)] protected GUILabelControl lblProgramTime = null;
+    [SkinControl(13)] protected GUIFadeLabel lblProgramTitle = null;
+    [SkinControl(16)] protected GUIFadeLabel lblProgramChannel = null;
+    [SkinControl(2)] protected GUIButtonControl btnRecord = null;
+    [SkinControl(3)] protected GUIButtonControl btnAdvancedRecord = null;
+    [SkinControl(4)] protected GUIButtonControl btnKeep = null;
+    [SkinControl(5)] protected GUIToggleButtonControl btnNotify = null;
+    [SkinControl(10)] protected GUIListControl lstUpcomingEpsiodes = null;
+    [SkinControl(6)] protected GUIButtonControl btnQuality = null;
+    [SkinControl(7)] protected GUIButtonControl btnEpisodes = null;
+    [SkinControl(8)] protected GUIButtonControl btnPreRecord = null;
+    [SkinControl(9)] protected GUIButtonControl btnPostRecord = null;
 
     private bool _notificationEnabled;
     private static Program currentProgram;
@@ -151,7 +159,7 @@ namespace TvPlugin
       using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
       {
         _notificationEnabled = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
-      }      
+      }
     }
 
     #endregion
@@ -309,7 +317,7 @@ namespace TvPlugin
         if (CurrentProgram == null)
         {
           CurrentProgram = new Program(value.IdChannel, value.StartTime, value.EndTime, value.ProgramName, "",
-            "", Program.ProgramState.None, DateTime.MinValue, "", "", "", "", 0, "", 0);
+                                       "", Program.ProgramState.None, DateTime.MinValue, "", "", "", "", 0, "", 0);
         }
       }
     }
@@ -326,8 +334,9 @@ namespace TvPlugin
                            rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
     }
 
-    private static bool IsRecordingProgram(Program program, out Schedule recordingSchedule, bool filterCanceledRecordings)
-    {      
+    private static bool IsRecordingProgram(Program program, out Schedule recordingSchedule,
+                                           bool filterCanceledRecordings)
+    {
       recordingSchedule = null;
       IList<Schedule> schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
@@ -354,7 +363,7 @@ namespace TvPlugin
           return true;
         }
       }
-      return false;     
+      return false;
     }
 
     #endregion
@@ -372,14 +381,14 @@ namespace TvPlugin
           if (lstProg != null)
           {
             ScheduleInfo refEpisode = new ScheduleInfo(
-                                                       lstProg.IdChannel,
-                                                       TVUtil.GetDisplayTitle(lstProg),
-                                                       lstProg.Description,
-                                                       lstProg.Genre,
-                                                       lstProg.StartTime,
-                                                       lstProg.EndTime
-                                                       );
-            GUIGraphicsContext.form.Invoke(new UpdateCurrentItem(UpdateProgramDescription), new object[] { refEpisode });
+              lstProg.IdChannel,
+              TVUtil.GetDisplayTitle(lstProg),
+              lstProg.Description,
+              lstProg.Genre,
+              lstProg.StartTime,
+              lstProg.EndTime
+              );
+            GUIGraphicsContext.form.Invoke(new UpdateCurrentItem(UpdateProgramDescription), new object[] {refEpisode});
           }
         }
         else
@@ -416,7 +425,6 @@ namespace TvPlugin
         lblProgramTime.Label = strTime;
         lblProgramDescription.Label = episode.Description;
         lblProgramTitle.Label = episode.Title;
-        
       }
       catch (Exception ex)
       {
@@ -439,7 +447,7 @@ namespace TvPlugin
         {
           lastSelectedProgram = CurrentProgram;
         }
-        
+
         lstUpcomingEpsiodes.Clear();
         if (CurrentProgram == null)
         {
@@ -504,7 +512,9 @@ namespace TvPlugin
         {
           if (!recordingSchedule.IsSerieIsCanceled(episode.StartTime))
           {
-            item.PinImage = recordingSchedule.ReferringConflicts().Count > 0 ? Thumbs.TvConflictRecordingIcon : Thumbs.TvRecordingIcon;
+            item.PinImage = recordingSchedule.ReferringConflicts().Count > 0
+                              ? Thumbs.TvConflictRecordingIcon
+                              : Thumbs.TvRecordingIcon;
           }
           item.TVTag = recordingSchedule;
         }
@@ -585,7 +595,8 @@ namespace TvPlugin
       {
         btnRecord.Label = GUILocalizeStrings.Get(264); //record
         btnAdvancedRecord.Disabled = false;
-        btnKeep.Disabled = btnQuality.Disabled = btnEpisodes.Disabled = btnPreRecord.Disabled = btnPostRecord.Disabled = true;
+        btnKeep.Disabled =
+          btnQuality.Disabled = btnEpisodes.Disabled = btnPreRecord.Disabled = btnPostRecord.Disabled = true;
       }
     }
 
@@ -947,7 +958,7 @@ namespace TvPlugin
       if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
       {
         TVHome.PromptAndDeleteRecordingSchedule(schedule.IdSchedule, false, false);
-        Program.ResetPendingState(program.IdProgram);        
+        Program.ResetPendingState(program.IdProgram);
         return;
       }
 
@@ -987,7 +998,7 @@ namespace TvPlugin
 
         schedule.StartTime = program.StartTime;
         TVHome.PromptAndDeleteRecordingSchedule(schedule.IdSchedule, deleteEntireSched, false);
-        Program.ResetPendingState(program.IdProgram);        
+        Program.ResetPendingState(program.IdProgram);
       }
     }
 
@@ -1007,8 +1018,8 @@ namespace TvPlugin
         {
           //lets delete the cancelled schedule.
 
-          saveSchedule = schedule;          
-          schedule = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);          
+          saveSchedule = schedule;
+          schedule = new Schedule(program.IdChannel, program.Title, program.StartTime, program.EndTime);
 
           schedule.PreRecordInterval = saveSchedule.PreRecordInterval;
           schedule.PostRecordInterval = saveSchedule.PostRecordInterval;
@@ -1065,7 +1076,8 @@ namespace TvPlugin
                   Program prog =
                     new Program(conflict.IdChannel, conflict.StartTime, conflict.EndTime, conflict.ProgramName, "-", "-",
                                 Program.ProgramState.None,
-                                DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
+                                DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1,
+                                string.Empty, -1);
                   CancelProgram(prog, Schedule.Retrieve(conflict.IdSchedule));
                 }
                 break;
@@ -1125,7 +1137,7 @@ namespace TvPlugin
             }
           }
         }
-      }      
+      }
       server.OnNewSchedule();
     }
 
@@ -1162,7 +1174,7 @@ namespace TvPlugin
         }
 
         int scheduleType = (int)ScheduleRecordingType.Once;
-        switch (dlg.SelectedLabel)    
+        switch (dlg.SelectedLabel)
         {
           case 0: //once
             scheduleType = (int)ScheduleRecordingType.Once;
@@ -1236,7 +1248,7 @@ namespace TvPlugin
       // get the right db instance of current prog before we store it
       // currentProgram is not a ref to the real entity
       Program modifiedProg = Program.RetrieveByTitleTimesAndChannel(CurrentProgram.Title, CurrentProgram.StartTime,
-                                                             CurrentProgram.EndTime, CurrentProgram.IdChannel);
+                                                                    CurrentProgram.EndTime, CurrentProgram.IdChannel);
       modifiedProg.Notify = CurrentProgram.Notify;
       modifiedProg.Persist();
       Update();

@@ -31,9 +31,7 @@ namespace MediaPortal.Hardware
   {
     #region Constructors
 
-    public RemoteEventArgs()
-    {
-    }
+    public RemoteEventArgs() {}
 
     public RemoteEventArgs(RemoteButton button)
     {

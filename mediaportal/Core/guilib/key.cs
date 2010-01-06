@@ -36,9 +36,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// empty constructor
     /// </summary>
-    public Key()
-    {
-    }
+    public Key() {}
 
     /// <summary>
     /// copy constructor

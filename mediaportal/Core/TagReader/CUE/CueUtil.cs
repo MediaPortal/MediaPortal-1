@@ -40,13 +40,15 @@ namespace MediaPortal.TagReader
   /// </summary>
   public class CueUtil
   {
-
     #region Variables
 
     public const string CUE_FILE_EXT = "cue";
     public const string WAV_CUE_FILE_EXT = "wav.cue";
     public const string CUE_FAKE_TRACK_FILE_EXT = "cue.fake.track";
-    public static ICueTrackFileBuilder<GUIListItem> CUE_TRACK_FILE_GUI_LIST_ITEM_BUILDER = new CueTrackFileGUIListItemBuilder();
+
+    public static ICueTrackFileBuilder<GUIListItem> CUE_TRACK_FILE_GUI_LIST_ITEM_BUILDER =
+      new CueTrackFileGUIListItemBuilder();
+
     public static ICueTrackFileBuilder<string> CUE_TRACK_FILE_STRING_BUILDER = new CueTrackFileStringBuilder();
 
     private static string cueFakeTrackFileNameCache = null;
@@ -70,7 +72,7 @@ namespace MediaPortal.TagReader
     {
       return fileName.ToLower().EndsWith("." + WAV_CUE_FILE_EXT);
     }
-    
+
     /// <summary>
     /// Check if file is Cue file
     /// </summary>
@@ -79,15 +81,15 @@ namespace MediaPortal.TagReader
     public static Boolean isCueFile(string fileName)
     {
       if (!isWavCueFile(fileName) && fileName.ToLower().EndsWith("." + CUE_FILE_EXT) && !isCueFakeTrackFile(fileName))
-	  {
-		// Do the File Exists check only here, otherwise we will recheck the existence of all non-cue files as well.
-		// This causes an unnecessary check of ALL files when scanning the shares
-		if (System.IO.File.Exists(fileName))
-		{
-			return true;
-		}
-	  }
-	  return false;
+      {
+        // Do the File Exists check only here, otherwise we will recheck the existence of all non-cue files as well.
+        // This causes an unnecessary check of ALL files when scanning the shares
+        if (System.IO.File.Exists(fileName))
+        {
+          return true;
+        }
+      }
+      return false;
     }
 
     /// <summary>
@@ -99,7 +101,7 @@ namespace MediaPortal.TagReader
     {
       return fileName.ToLower().Contains("." + CUE_FAKE_TRACK_FILE_EXT);
     }
-    
+
     /// <summary>
     /// Builds Cue fake track file name
     /// </summary>
@@ -108,7 +110,8 @@ namespace MediaPortal.TagReader
     /// <returns>Cue fake track file name</returns>
     public static string buildCueFakeTrackFileName(string cueFileName, Track track)
     {
-      string res = cueFileName.Substring(0, cueFileName.Length - CUE_FILE_EXT.Length - 1) + "." + CueUtil.CUE_FAKE_TRACK_FILE_EXT + "." + track.TrackNumber.ToString("00");
+      string res = cueFileName.Substring(0, cueFileName.Length - CUE_FILE_EXT.Length - 1) + "." +
+                   CueUtil.CUE_FAKE_TRACK_FILE_EXT + "." + track.TrackNumber.ToString("00");
 
       if (System.IO.Path.HasExtension(track.DataFile.Filename))
       {
@@ -165,7 +168,6 @@ namespace MediaPortal.TagReader
     /// <returns></returns>
     public static IList<T> CUEFileListFilter<T>(IList<T> fileList, ICueTrackFileBuilder<T> builder)
     {
-
       if (fileList == null || fileList.Count == 0)
       {
         return fileList;
@@ -249,14 +251,15 @@ namespace MediaPortal.TagReader
         Track track = cueSheetCache.Tracks[trackPosition];
 
         musicTagCache = new MusicTag();
-        if (track.TrackNumber < cueSheetCache.Tracks[cueSheetCache.Tracks.Length-1].TrackNumber)
+        if (track.TrackNumber < cueSheetCache.Tracks[cueSheetCache.Tracks.Length - 1].TrackNumber)
         {
           Track nextTrack = cueSheetCache.Tracks[trackPosition + 1];
           musicTagCache.Duration = cueIndexToIntTime(nextTrack.Indices[0]) - cueIndexToIntTime(track.Indices[0]);
         }
 
-        string fname = System.IO.Path.GetDirectoryName(cueFakeTrack.CueFileName) + System.IO.Path.DirectorySeparatorChar + track.DataFile.Filename;
-        
+        string fname = System.IO.Path.GetDirectoryName(cueFakeTrack.CueFileName) + System.IO.Path.DirectorySeparatorChar +
+                       track.DataFile.Filename;
+
         try
         {
           if (fname != cacheFName)
@@ -269,11 +272,13 @@ namespace MediaPortal.TagReader
           musicTagCache.Year = (int)tagCache.Tag.Year;
           musicTagCache.BitRate = tagCache.Properties.AudioBitrate;
           musicTagCache.DiscID = (int)tagCache.Tag.Disc;
-          musicTagCache.DiscTotal = (int)tagCache.Tag.DiscCount; ;
+          musicTagCache.DiscTotal = (int)tagCache.Tag.DiscCount;
+          ;
 
           if (musicTagCache.Duration == 0)
           {
-            musicTagCache.Duration = (int)tagCache.Properties.Duration.TotalSeconds - cueIndexToIntTime(track.Indices[0]);
+            musicTagCache.Duration = (int)tagCache.Properties.Duration.TotalSeconds -
+                                     cueIndexToIntTime(track.Indices[0]);
           }
         }
         catch (Exception ex)
@@ -332,8 +337,6 @@ namespace MediaPortal.TagReader
       return index.Minutes * 60 + index.Seconds;
     }
 
-
     #endregion
-
   }
 }

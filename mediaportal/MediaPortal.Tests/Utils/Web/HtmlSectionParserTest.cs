@@ -42,7 +42,7 @@ namespace MediaPortal.Tests.Utils.Web
         "<table><tr><td><#TITLE></td><td><#START></td><td><#DESCRIPTION></td><Z(><td><#GENRE></td></Z)?></tr></table>";
       HtmlSectionParser elements = new HtmlSectionParser(template);
       ParserData data = new ParserData();
-      IParserData idata = (IParserData) data;
+      IParserData idata = (IParserData)data;
       string source = "<table><tr><td>Test</td><td>123</td><td>blah blah</td></tr></table>";
       elements.ParseSection(source, ref idata);
 
@@ -63,7 +63,7 @@ namespace MediaPortal.Tests.Utils.Web
       HtmlSectionParser elements = new HtmlSectionParser(template);
 
       ParserData data = new ParserData();
-      IParserData idata = (IParserData) data;
+      IParserData idata = (IParserData)data;
       string source = "<table><tr><td>Test</td><td>123</td><td>blah blah</td></tr></table>";
       elements.ParseSection(source, ref idata);
 
@@ -72,7 +72,7 @@ namespace MediaPortal.Tests.Utils.Web
       Assert.IsTrue(data.GetElement("#DESCRIPTION") == "blah blah");
 
       data = new ParserData();
-      idata = (IParserData) data;
+      idata = (IParserData)data;
       source = "<table><tr><td>Title:Test(1:2)</td><td>123</td><td>blah blah</td></tr></table>";
       elements.ParseSection(source, ref idata);
 
@@ -92,7 +92,7 @@ namespace MediaPortal.Tests.Utils.Web
 
       HtmlSectionParser elements = new HtmlSectionParser(template);
       ParserData data = new ParserData();
-      IParserData idata = (IParserData) data;
+      IParserData idata = (IParserData)data;
       string source = "<table><tr><td>Test-Sub</td><td>123</td><td>blah blah</td></tr></table>";
       elements.ParseSection(source, ref idata);
 
@@ -113,7 +113,7 @@ namespace MediaPortal.Tests.Utils.Web
 
       HtmlSectionParser elements = new HtmlSectionParser(template);
       ParserData data = new ParserData();
-      IParserData idata = (IParserData) data;
+      IParserData idata = (IParserData)data;
       string source = "<table><tr><td>Test</td><td>123</td><td>blah blah</td><td>regex</td></tr></table>";
       elements.ParseSection(source, ref idata);
 
@@ -136,7 +136,7 @@ namespace MediaPortal.Tests.Utils.Web
 
       HtmlSectionParser elements = new HtmlSectionParser(template);
       ParserData data = new ParserData();
-      IParserData idata = (IParserData) data;
+      IParserData idata = (IParserData)data;
       string source = "<table><tr><td>Test-Sub</td><td>123</td><td>blah blah</td><td>regex</td></tr></table>";
       elements.ParseSection(source, ref idata);
 

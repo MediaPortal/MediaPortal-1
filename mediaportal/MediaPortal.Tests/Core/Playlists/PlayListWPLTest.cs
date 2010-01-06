@@ -32,9 +32,7 @@ namespace MediaPortal.Tests.Core.Playlists
   public class PlayListWPLTest
   {
     [SetUp]
-    public void Init()
-    {
-    }
+    public void Init() {}
 
     [Test]
     public void LoadTest()

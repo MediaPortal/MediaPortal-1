@@ -53,7 +53,7 @@ namespace MediaPortal.Dialogs
 
     public GUIDialogSelect()
     {
-      GetID = (int) Window.WINDOW_DIALOG_SELECT;
+      GetID = (int)Window.WINDOW_DIALOG_SELECT;
     }
 
     public override bool Init()
@@ -68,7 +68,7 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
-            SetControlLabel(GetID, (int) Controls.CONTROL_HEADING, string.Empty);
+            SetControlLabel(GetID, (int)Controls.CONTROL_HEADING, string.Empty);
             base.OnMessage(message);
             FreeResources();
             DeInitControls();
@@ -80,25 +80,25 @@ namespace MediaPortal.Dialogs
             m_bButtonPressed = false;
             base.OnMessage(message);
             _selectedLabel = -1;
-            ClearControl(GetID, (int) Controls.CONTROL_LIST);
+            ClearControl(GetID, (int)Controls.CONTROL_LIST);
 
             for (int i = 0; i < m_vecList.Count; i++)
             {
-              GUIListItem pItem = (GUIListItem) m_vecList[i];
-              AddListItemControl(GetID, (int) Controls.CONTROL_LIST, pItem);
+              GUIListItem pItem = (GUIListItem)m_vecList[i];
+              AddListItemControl(GetID, (int)Controls.CONTROL_LIST, pItem);
             }
 
             string wszText = String.Format("{0} {1}", m_vecList.Count, GUILocalizeStrings.Get(127));
 
-            SetControlLabel(GetID, (int) Controls.CONTROL_NUMBEROFFILES, wszText);
+            SetControlLabel(GetID, (int)Controls.CONTROL_NUMBEROFFILES, wszText);
 
             if (m_bButtonEnabled)
             {
-              EnableControl(GetID, (int) Controls.CONTROL_BUTTON);
+              EnableControl(GetID, (int)Controls.CONTROL_BUTTON);
             }
             else
             {
-              DisableControl(GetID, (int) Controls.CONTROL_BUTTON);
+              DisableControl(GetID, (int)Controls.CONTROL_BUTTON);
             }
           }
           return true;
@@ -106,17 +106,17 @@ namespace MediaPortal.Dialogs
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
             int iControl = message.SenderControlId;
-            if ((int) Controls.CONTROL_LIST == iControl)
+            if ((int)Controls.CONTROL_LIST == iControl)
             {
               int iAction = message.Param1;
-              if ((int) Action.ActionType.ACTION_SELECT_ITEM == iAction)
+              if ((int)Action.ActionType.ACTION_SELECT_ITEM == iAction)
               {
                 _selectedLabel = GetSelectedItemNo();
                 m_strSelected = GetSelectedItem().Label;
                 PageDestroy();
               }
             }
-            if ((int) Controls.CONTROL_BUTTON == iControl)
+            if ((int)Controls.CONTROL_BUTTON == iControl)
             {
               _selectedLabel = -1;
               m_bButtonPressed = true;
@@ -154,12 +154,12 @@ namespace MediaPortal.Dialogs
       AllocResources();
       InitControls();
 
-      SetControlLabel(GetID, (int) Controls.CONTROL_HEADING, strLine);
+      SetControlLabel(GetID, (int)Controls.CONTROL_HEADING, strLine);
     }
 
     public void SetButtonLabel(string strLine)
     {
-      SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON, strLine);
+      SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON, strLine);
     }
 
     public void SetHeading(int iString)
@@ -185,7 +185,7 @@ namespace MediaPortal.Dialogs
     private void Sort(bool bSortAscending /*=true*/)
     {
       m_bSortAscending = bSortAscending;
-      GUIListControl list = (GUIListControl) GetControl((int) Controls.CONTROL_LIST);
+      GUIListControl list = (GUIListControl)GetControl((int)Controls.CONTROL_LIST);
       list.Sort(this);
     }
 
@@ -247,23 +247,23 @@ namespace MediaPortal.Dialogs
     private GUIListItem GetSelectedItem()
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_SELECTED_ITEM, GetID, 0,
-                                      (int) Controls.CONTROL_LIST, 0, 0, null);
+                                      (int)Controls.CONTROL_LIST, 0, 0, null);
       OnMessage(msg);
-      return (GUIListItem) msg.Object;
+      return (GUIListItem)msg.Object;
     }
 
     private GUIListItem GetItem(int iItem)
     {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_ITEM, GetID, 0, (int) Controls.CONTROL_LIST,
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_ITEM, GetID, 0, (int)Controls.CONTROL_LIST,
                                       iItem, 0, null);
       OnMessage(msg);
-      return (GUIListItem) msg.Object;
+      return (GUIListItem)msg.Object;
     }
 
     private int GetSelectedItemNo()
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0,
-                                      (int) Controls.CONTROL_LIST, 0, 0, null);
+                                      (int)Controls.CONTROL_LIST, 0, 0, null);
       OnMessage(msg);
       int iItem = msg.Param1;
       return iItem;
@@ -271,7 +271,7 @@ namespace MediaPortal.Dialogs
 
     private int GetItemCount()
     {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEMS, GetID, 0, (int) Controls.CONTROL_LIST, 0, 0,
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEMS, GetID, 0, (int)Controls.CONTROL_LIST, 0, 0,
                                       null);
       OnMessage(msg);
       return msg.Param1;

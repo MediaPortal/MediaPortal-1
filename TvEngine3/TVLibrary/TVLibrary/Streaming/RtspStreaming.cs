@@ -34,6 +34,7 @@ namespace TvLibrary.Streaming
   public class RtspStreaming
   {
     #region imports
+
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
     private static extern void StreamSetup(string ipAdress);
 
@@ -57,7 +58,9 @@ namespace TvLibrary.Streaming
     private static extern void StreamGetClientCount(ref short clients);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    private static extern void StreamGetClientDetail(short clientNr, out IntPtr ipAdres, out IntPtr streamName, ref short isActive, out long ticks);
+    private static extern void StreamGetClientDetail(short clientNr, out IntPtr ipAdres, out IntPtr streamName,
+                                                     ref short isActive, out long ticks);
+
     #endregion
 
     #region constants
@@ -67,21 +70,22 @@ namespace TvLibrary.Streaming
     #endregion
 
     #region variables
-    int _port;
-    bool _running;
-    readonly bool _initialized;
-    readonly Dictionary<string, RtspStream> _streams;
+
+    private int _port;
+    private bool _running;
+    private readonly bool _initialized;
+    private readonly Dictionary<string, RtspStream> _streams;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="RtspStreaming"/> class.
     /// </summary>
     /// <param name="hostName">ipadress to use for streaming.</param>
     public RtspStreaming(string hostName)
-      : this(hostName, DefaultPort)
-    { 
-    }
+      : this(hostName, DefaultPort) {}
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RtspStreaming"/> class.
@@ -128,14 +132,17 @@ namespace TvLibrary.Streaming
         {
           throw new Exception("RtspStreaming: Could not find an ip address to listen on.");
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
     }
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// Gets the streaming clients.
     /// </summary>
@@ -192,14 +199,13 @@ namespace TvLibrary.Streaming
 
     public int Port
     {
-      get 
-      {
-        return _initialized? _port : 0;
-      }
+      get { return _initialized ? _port : 0; }
     }
 
     #endregion
+
     #region public members
+
     /// <summary>
     /// Starts RTSP Streaming.
     /// </summary>
@@ -288,6 +294,7 @@ namespace TvLibrary.Streaming
         _streams.Remove(streamName);
       }
     }
+
     /// <summary>
     /// Stops streaming the file
     /// </summary>
@@ -304,6 +311,7 @@ namespace TvLibrary.Streaming
         }
       }
     }
+
     #endregion
 
     #region streaming thread
@@ -320,16 +328,19 @@ namespace TvLibrary.Streaming
         {
           StreamRun();
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
       Log.Log.WriteFile("RTSP: Streamer stopped");
       _running = false;
     }
+
     #endregion
 
     #region properties
+
     ///<summary>
     /// Number of active rtsp streams
     ///</summary>
@@ -337,23 +348,23 @@ namespace TvLibrary.Streaming
     {
       get { return _streams.Count; }
     }
+
     #endregion
 
     #region private members
 
-    IList<IPAddress> GetDefGatewayNetAddresses()
+    private IList<IPAddress> GetDefGatewayNetAddresses()
     {
       List<IPAddress> addresses = new List<IPAddress>();
       try
       {
-
-        ManagementObjectSearcher searcher = 
-          new ManagementObjectSearcher("root\\CIMV2", 
-          "SELECT DefaultIPGateway, IPAddress FROM Win32_NetworkAdapterConfiguration"); 
+        ManagementObjectSearcher searcher =
+          new ManagementObjectSearcher("root\\CIMV2",
+                                       "SELECT DefaultIPGateway, IPAddress FROM Win32_NetworkAdapterConfiguration");
 
         foreach (ManagementObject queryObj in searcher.Get())
         {
-          if(queryObj["DefaultIPGateway"] != null && queryObj["IPAddress"] != null)
+          if (queryObj["DefaultIPGateway"] != null && queryObj["IPAddress"] != null)
           {
             String[] arrDefaultIPGateway = (String[])(queryObj["DefaultIPGateway"]);
             String[] arrIPAddress = (String[])(queryObj["IPAddress"]);

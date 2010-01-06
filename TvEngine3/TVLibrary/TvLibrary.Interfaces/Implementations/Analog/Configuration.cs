@@ -45,6 +45,7 @@ namespace TvLibrary.Implementations.Analog
     private VIDEOENCODER_BITRATE_MODE _recordQualityMode;
     private int _cardId;
     private Graph _graph;
+
     #endregion
 
     #region ctor
@@ -248,7 +249,7 @@ namespace TvLibrary.Implementations.Analog
             _configuration.Graph = Graph.CreateInstance(cardNode.SelectSingleNode("graph"));
           }
         }
-        catch 
+        catch
         {
           Log.Log.WriteFile("Error while reading analog card configuration file");
           _configuration = new Configuration();
@@ -257,7 +258,8 @@ namespace TvLibrary.Implementations.Analog
           _configuration.CardId = cardId;
           _configuration.Graph = Graph.CreateInstance(null);
         }
-      }else
+      }
+      else
       {
         _configuration.Graph = Graph.CreateInstance(null);
       }
@@ -276,7 +278,7 @@ namespace TvLibrary.Implementations.Analog
         XmlTextWriter writer = new XmlTextWriter(fileName, Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 1;
-        writer.IndentChar = (char) 9;
+        writer.IndentChar = (char)9;
         writer.WriteStartDocument(true);
         writer.WriteStartElement("configuration"); //<configuration>
         writer.WriteAttributeString("version", "2");
@@ -293,12 +295,12 @@ namespace TvLibrary.Implementations.Analog
         writer.WriteAttributeString("peakValue", XmlConvert.ToString(configuration.CustomPeakQualityValue));
         writer.WriteEndElement(); //</customSettings>
         writer.WriteStartElement("playback"); //<playback>
-        writer.WriteAttributeString("mode", XmlConvert.ToString((int) configuration.PlaybackQualityMode));
-        writer.WriteAttributeString("type", XmlConvert.ToString((int) configuration.PlaybackQualityType));
+        writer.WriteAttributeString("mode", XmlConvert.ToString((int)configuration.PlaybackQualityMode));
+        writer.WriteAttributeString("type", XmlConvert.ToString((int)configuration.PlaybackQualityType));
         writer.WriteEndElement(); //</playback>
         writer.WriteStartElement("record"); //<record>
-        writer.WriteAttributeString("mode", XmlConvert.ToString((int) configuration.RecordQualityMode));
-        writer.WriteAttributeString("type", XmlConvert.ToString((int) configuration.RecordQualityType));
+        writer.WriteAttributeString("mode", XmlConvert.ToString((int)configuration.RecordQualityMode));
+        writer.WriteAttributeString("type", XmlConvert.ToString((int)configuration.RecordQualityType));
         writer.WriteEndElement(); //</record>
         writer.WriteEndElement(); //</qualityControl>
         writer.WriteEndElement(); //</card>

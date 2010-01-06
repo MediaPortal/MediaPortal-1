@@ -40,7 +40,7 @@ namespace MediaPortal.GUI.NumberPlace
     public static bool ValidNumberPlace(Grid grid)
     {
       // Check only one solution exists
-      IList solutions = Solve((Grid) grid.Clone(), 2);
+      IList solutions = Solve((Grid)grid.Clone(), 2);
 
       if (solutions.Count == 1)
       {
@@ -53,20 +53,20 @@ namespace MediaPortal.GUI.NumberPlace
 
     public static Grid Solve(Grid grid)
     {
-      IList solutions = Solve((Grid) grid.Clone(), 1);
+      IList solutions = Solve((Grid)grid.Clone(), 1);
       if (solutions.Count == 0)
       {
         return null;
       }
       else
       {
-        return (Grid) solutions[0];
+        return (Grid)solutions[0];
       }
     }
 
     public static bool CheckMinimality(Grid grid)
     {
-      Grid temp = (Grid) grid.Clone();
+      Grid temp = (Grid)grid.Clone();
 
       for (int row = 0; row < temp.CellsInRow; row++)
       {
@@ -93,8 +93,8 @@ namespace MediaPortal.GUI.NumberPlace
       IList removeCandidates = new ArrayList();
       for (int cellNumber = 0; cellNumber < 81; cellNumber++)
       {
-        int row = cellNumber/9;
-        int column = cellNumber%9;
+        int row = cellNumber / 9;
+        int column = cellNumber % 9;
         if (grid.cells[row, column] != 0)
         {
           removeCandidates.Add(cellNumber);
@@ -104,9 +104,9 @@ namespace MediaPortal.GUI.NumberPlace
       while (removeCandidates.Count > 0)
       {
         int removeIndex = random.Next(removeCandidates.Count);
-        int removeCellNumber = (int) removeCandidates[removeIndex];
-        int row = removeCellNumber/9;
-        int column = removeCellNumber%9;
+        int removeCellNumber = (int)removeCandidates[removeIndex];
+        int row = removeCellNumber / 9;
+        int column = removeCellNumber % 9;
 
         int value = grid.cells[row, column];
         grid.cells[row, column] = 0;
@@ -129,7 +129,7 @@ namespace MediaPortal.GUI.NumberPlace
       // First generate a random completed grid that is valid
       Grid empty = new Grid(blocksAcross);
       Grid solution = Solve(empty);
-      Grid puzzle = (Grid) solution.Clone();
+      Grid puzzle = (Grid)solution.Clone();
       return Minimize(puzzle);
       /*
             Random random = new Random(DateTime.Now.Millisecond);
@@ -186,7 +186,7 @@ namespace MediaPortal.GUI.NumberPlace
 
             if (candidates.Count == 1)
             {
-              grid.cells[row, column] = (int) candidates[0];
+              grid.cells[row, column] = (int)candidates[0];
 
               // Restart search from top left
               row = 0;
@@ -256,7 +256,7 @@ namespace MediaPortal.GUI.NumberPlace
     {
       ArrayList solutions = new ArrayList();
       // If grid is solved then return as solution
-      if (grid.CountFilledCells() == (grid.CellsInRow*grid.CellsInRow))
+      if (grid.CountFilledCells() == (grid.CellsInRow * grid.CellsInRow))
       {
         solutions.Add(grid.Clone());
         return solutions;
@@ -300,10 +300,10 @@ namespace MediaPortal.GUI.NumberPlace
         {
           // Set candidate
           int candidateIndex = random.Next(leastCandidates.Count);
-          grid.cells[leastCandidatesRow, leastCandidatesColumn] = (int) leastCandidates[candidateIndex];
+          grid.cells[leastCandidatesRow, leastCandidatesColumn] = (int)leastCandidates[candidateIndex];
           leastCandidates.RemoveAt(candidateIndex);
 
-          Grid nextLevelGrid = (Grid) grid.Clone();
+          Grid nextLevelGrid = (Grid)grid.Clone();
 
           IList nextLevelSolutions = Solve(nextLevelGrid, maxSolutions);
 
@@ -333,14 +333,14 @@ namespace MediaPortal.GUI.NumberPlace
     /// <returns></returns>
     public static int Rate(Grid gridOrg)
     {
-      Grid grid = (Grid) gridOrg.Clone();
+      Grid grid = (Grid)gridOrg.Clone();
       int rate = 0;
       rateAll = 0;
       //			for(int trys = 0; trys<10;trys++)
       //			{
       //			grid = (Grid)gridOrg.Clone();
       //      		rate = 0;
-      while (grid.CountFilledCells() < (grid.CellsInRow*grid.CellsInRow))
+      while (grid.CountFilledCells() < (grid.CellsInRow * grid.CellsInRow))
       {
         int cand = FindUniqueCandidates(grid);
 
@@ -410,7 +410,7 @@ namespace MediaPortal.GUI.NumberPlace
           {
             for (int cand = 0; cand < candidates.Count; cand++)
             {
-              if (FindCandidateInRow(grid, searchRow, searchCol, (int) candidates[cand]))
+              if (FindCandidateInRow(grid, searchRow, searchCol, (int)candidates[cand]))
               {
                 candidates2.Remove(candidates[cand]);
               }
@@ -419,7 +419,7 @@ namespace MediaPortal.GUI.NumberPlace
 
           if (candidates2.Count == 1)
           {
-            grid.uniqueCandidates[searchRow, searchCol] = (int) candidates2[0];
+            grid.uniqueCandidates[searchRow, searchCol] = (int)candidates2[0];
           }
         }
       }
@@ -439,7 +439,7 @@ namespace MediaPortal.GUI.NumberPlace
           {
             for (int cand = 0; cand < candidates.Count; cand++)
             {
-              if (FindCandidateInCol(grid, searchRow, searchCol, (int) candidates[cand]))
+              if (FindCandidateInCol(grid, searchRow, searchCol, (int)candidates[cand]))
               {
                 candidates2.Remove(candidates[cand]);
               }
@@ -447,7 +447,7 @@ namespace MediaPortal.GUI.NumberPlace
           }
           if (candidates2.Count == 1)
           {
-            grid.uniqueCandidates[searchRow, searchCol] = (int) candidates2[0];
+            grid.uniqueCandidates[searchRow, searchCol] = (int)candidates2[0];
           }
         }
       }
@@ -467,7 +467,7 @@ namespace MediaPortal.GUI.NumberPlace
           {
             for (int cand = 0; cand < candidates.Count; cand++)
             {
-              if (FindCandidateInBox(grid, searchRow, searchCol, (int) candidates[cand]))
+              if (FindCandidateInBox(grid, searchRow, searchCol, (int)candidates[cand]))
               {
                 candidates2.Remove(candidates[cand]);
               }
@@ -486,7 +486,7 @@ namespace MediaPortal.GUI.NumberPlace
           }
           if (candidates2.Count == 1)
           {
-            grid.uniqueCandidates[searchRow, searchCol] = (int) candidates2[0];
+            grid.uniqueCandidates[searchRow, searchCol] = (int)candidates2[0];
           }
         }
       }
@@ -501,7 +501,7 @@ namespace MediaPortal.GUI.NumberPlace
           }
         }
       }
-      nodes = nodes + (uniquesCand/2);
+      nodes = nodes + (uniquesCand / 2);
       return nodes;
     }
 
@@ -531,8 +531,8 @@ namespace MediaPortal.GUI.NumberPlace
 
     public static bool FindCandidateInBox(Grid grid, int row, int col, int Num)
     {
-      int firstRow = (row/3)*3;
-      int firstCol = (col/3)*3;
+      int firstRow = (row / 3) * 3;
+      int firstCol = (col / 3) * 3;
       for (int i = 0; i < 3; i++)
       {
         for (int j = 0; j < 3; j++)

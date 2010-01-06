@@ -58,7 +58,7 @@ namespace MediaPortal.GUI.Settings
 
     public GUISettingsMusic()
     {
-      GetID = (int) Window.WINDOW_SETTINGS_MUSIC;
+      GetID = (int)Window.WINDOW_SETTINGS_MUSIC;
     }
 
     private void LoadSettings()
@@ -108,11 +108,11 @@ namespace MediaPortal.GUI.Settings
 
             if (m_bAutoShuffle)
             {
-              GUIControl.SelectControl(GetID, (int) Controls.CONTROL_AUTOSHUFFLE);
+              GUIControl.SelectControl(GetID, (int)Controls.CONTROL_AUTOSHUFFLE);
             }
             if (m_bUseID3)
             {
-              GUIControl.SelectControl(GetID, (int) Controls.CONTROL_ENABLEID3);
+              GUIControl.SelectControl(GetID, (int)Controls.CONTROL_ENABLEID3);
             }
             return true;
           }
@@ -127,29 +127,29 @@ namespace MediaPortal.GUI.Settings
           {
             int iControl = message.SenderControlId;
 
-            if (iControl == (int) Controls.CONTROL_AUTOSHUFFLE)
+            if (iControl == (int)Controls.CONTROL_AUTOSHUFFLE)
             {
               m_bAutoShuffle = !m_bAutoShuffle;
             }
-            if (iControl == (int) Controls.CONTROL_ENABLEID3)
+            if (iControl == (int)Controls.CONTROL_ENABLEID3)
             {
               m_bUseID3 = !m_bUseID3;
             }
 
-            if (iControl == (int) Controls.CONTROL_BTNDELALBUMINFO)
+            if (iControl == (int)Controls.CONTROL_BTNDELALBUMINFO)
             {
               MusicDatabaseReorg dbreorg = new MusicDatabaseReorg();
               dbreorg.DeleteAlbumInfo();
             }
-            if (iControl == (int) Controls.CONTROL_BTNDELALBUM)
+            if (iControl == (int)Controls.CONTROL_BTNDELALBUM)
             {
               MusicDatabaseReorg dbreorg = new MusicDatabaseReorg();
               dbreorg.DeleteSingleAlbum();
             }
 
-            if (iControl == (int) Controls.CONTROL_BTNREORGDB)
+            if (iControl == (int)Controls.CONTROL_BTNREORGDB)
             {
-              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
               if (null != dlgYesNo)
               {
                 dlgYesNo.SetHeading(333);

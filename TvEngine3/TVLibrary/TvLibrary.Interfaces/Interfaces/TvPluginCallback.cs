@@ -1,4 +1,5 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,6 +20,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 using System;
@@ -62,18 +64,26 @@ namespace TvLibrary.Interfaces
   /// CiMenuEntry class to store a single entry
   /// </summary>
   [Serializable]
-  public class CiMenuEntry 
+  public class CiMenuEntry
   {
-    private Int32   m_Index;
-    private String  m_Message;
+    private Int32 m_Index;
+    private String m_Message;
+
     /// <summary>
     /// Index of menu entry
     /// </summary>
-    public  int     Index   { get { return m_Index; } }
+    public int Index
+    {
+      get { return m_Index; }
+    }
+
     /// <summary>
     /// Message of menu entry
     /// </summary>
-    public  String  Message { get { return m_Message; } }
+    public String Message
+    {
+      get { return m_Message; }
+    }
 
     /// <summary>
     /// CTOR
@@ -82,9 +92,10 @@ namespace TvLibrary.Interfaces
     /// <param name="Message">Message</param>
     public CiMenuEntry(Int32 Index, String Message)
     {
-      m_Index   = Index;
+      m_Index = Index;
       m_Message = Message;
     }
+
     /// <summary>
     /// Formatted choice text
     /// </summary>
@@ -94,7 +105,7 @@ namespace TvLibrary.Interfaces
       return String.Format("{0}) {1}", m_Index, m_Message);
     }
   }
-  
+
   /// <summary>
   /// CiMenu class contains all information of a menu
   /// derived from MarshalByRefObject for passing through remoting
@@ -103,115 +114,94 @@ namespace TvLibrary.Interfaces
   public class CiMenu : MarshalByRefObject
   {
     #region private vars
-    private string        _title;
-    private string        _subtitle;
-    private string        _bottomText;
-    private int           _numChoices;
-    private CiMenuState   _menuState;
+
+    private string _title;
+    private string _subtitle;
+    private string _bottomText;
+    private int _numChoices;
+    private CiMenuState _menuState;
     private List<CiMenuEntry> _ciMenuEntries = new List<CiMenuEntry>();
 
-    private int           _answerLength;
-    private string        _requestText;
-    private bool          _bPassword = false;
+    private int _answerLength;
+    private string _requestText;
+    private bool _bPassword = false;
+
     #endregion
-    
+
     #region properties
+
     /// <summary>
     /// Title of menu
     /// </summary>
-    public String Title       
-    { 
-      get 
-      { 
-        return _title;      
-      } 
+    public String Title
+    {
+      get { return _title; }
     }
+
     /// <summary>
     /// Subtitle of menu
     /// </summary>
-    public String Subtitle    
-    { 
-      get 
-      { 
-        return _subtitle;   
-      } 
+    public String Subtitle
+    {
+      get { return _subtitle; }
     }
+
     /// <summary>
     /// Bottom text
     /// </summary>
-    public String BottomText  
-    { 
-      get { 
-        return _bottomText; 
-      } 
+    public String BottomText
+    {
+      get { return _bottomText; }
     }
+
     /// <summary>
     /// Number of choices
     /// </summary>
-    public int    NumChoices  
-    { 
-      get 
-      { 
-        return _numChoices; 
-      }   
-      set 
-      { 
-        _numChoices = value; 
-      } 
+    public int NumChoices
+    {
+      get { return _numChoices; }
+      set { _numChoices = value; }
     }
+
     /// <summary>
     /// Menu state
     /// </summary>
-    public CiMenuState State  
-    { 
-      get 
-      { 
-        return _menuState;  
-      }   
-      set 
-      { 
-        _menuState  = value; 
-      } 
+    public CiMenuState State
+    {
+      get { return _menuState; }
+      set { _menuState = value; }
     }
+
     /// <summary>
     /// Menu entries
     /// </summary>
-    public List<CiMenuEntry> MenuEntries 
+    public List<CiMenuEntry> MenuEntries
     {
-      get
-      { 
-        return _ciMenuEntries; 
-      } 
+      get { return _ciMenuEntries; }
     }
+
     /// <summary>
     /// RequestText 
     /// </summary>
     public String RequestText
     {
-      get
-      {
-        return _requestText;
-      }
-    }    
+      get { return _requestText; }
+    }
+
     /// <summary>
     /// AnswerLength 
     /// </summary>
     public int AnswerLength
     {
-      get
-      {
-        return _answerLength;
-      }
+      get { return _answerLength; }
     }
+
     /// <summary>
     /// Request input as password?
     /// </summary>
     public bool Password
     {
-      get
-      {
-        return _bPassword;
-      }
+      get { return _bPassword; }
     }
 
     #endregion
@@ -225,24 +215,26 @@ namespace TvLibrary.Interfaces
     /// <param name="State">Menu state</param>
     public CiMenu(String Title, String Subtitle, String BottomText, CiMenuState State)
     {
-      _title      = Title;
-      _subtitle   = Subtitle;
+      _title = Title;
+      _subtitle = Subtitle;
       _bottomText = BottomText;
-      _menuState  = State;
+      _menuState = State;
 
       // clear entries before filling later
       _ciMenuEntries.Clear();
     }
+
     /// <summary>
     /// Add an entry to ci menu object
     /// </summary>
     /// <param name="Index">index</param>
     /// <param name="Message">message</param>
-    public void AddEntry (Int32 Index, String Message)
+    public void AddEntry(Int32 Index, String Message)
     {
       // add to list of entries
       _ciMenuEntries.Add(new CiMenuEntry(Index, Message));
     }
+
     /// <summary>
     /// Sets information from a CAM request 
     /// </summary>
@@ -251,11 +243,12 @@ namespace TvLibrary.Interfaces
     /// <param name="bPassword">Show as password input</param>
     public void Request(string sRequest, int nAnswerLength, bool bPassword)
     {
-      _requestText  = sRequest;
+      _requestText = sRequest;
       _answerLength = nAnswerLength;
-      _bPassword    = bPassword; 
-      _menuState    = CiMenuState.Request;
+      _bPassword = bPassword;
+      _menuState = CiMenuState.Request;
     }
+
     /// <summary>
     /// override to avoid timeout ?
     /// </summary>
@@ -265,6 +258,4 @@ namespace TvLibrary.Interfaces
       return null;
     }
   }
-
-
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -84,9 +84,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                 | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.groupBox5);
       this.groupBox1.FlatStyle = FlatStyle.Popup;
       this.groupBox1.Location = new Point(9, 6);
@@ -98,9 +98,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBox5
       // 
-      this.groupBox5.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                 | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.groupBox5.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.groupBox5.Controls.Add(this.mpEnableDisplayActionTime);
       this.groupBox5.Controls.Add(this.cmbBlankIdleTime);
       this.groupBox5.Controls.Add(this.mpEnableDisplayAction);
@@ -224,7 +224,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnOK
       // 
-      this.btnOK.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.btnOK.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
       this.btnOK.Location = new Point(286, 136);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new Size(80, 23);
@@ -235,7 +235,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnReset
       // 
-      this.btnReset.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.btnReset.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
       this.btnReset.Location = new Point(200, 136);
       this.btnReset.Name = "btnReset";
       this.btnReset.Size = new Size(80, 23);

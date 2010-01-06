@@ -52,6 +52,7 @@ namespace MediaPortal.Visualization
     #endregion
 
     #region Variables
+
     private BASS_VIS_INFO _mediaInfo = null;
 
     private bool RenderStarted = false;
@@ -67,9 +68,7 @@ namespace MediaPortal.Visualization
     #region Constructors/Destructors
 
     public WinampViz(VisualizationInfo vizPluginInfo, VisualizationWindow vizCtrl)
-      : base(vizPluginInfo, vizCtrl)
-    {
-    }
+      : base(vizPluginInfo, vizCtrl) {}
 
     #endregion
 
@@ -136,17 +135,15 @@ namespace MediaPortal.Visualization
 
         BassVis.BASS_VIS_SetPlayState(_visParam, BASSVISPlayState.Play);
       }
-      else
-        if (newState == BassAudioEngine.PlayState.Paused)
-        {
-          BassVis.BASS_VIS_SetPlayState(_visParam, BASSVISPlayState.Pause);
-        }
-        else
-          if (newState == BassAudioEngine.PlayState.Ended)
-          {
-            BassVis.BASS_VIS_SetPlayState(_visParam, BASSVISPlayState.Stop);
-            RenderStarted = false;
-          }
+      else if (newState == BassAudioEngine.PlayState.Paused)
+      {
+        BassVis.BASS_VIS_SetPlayState(_visParam, BASSVISPlayState.Pause);
+      }
+      else if (newState == BassAudioEngine.PlayState.Ended)
+      {
+        BassVis.BASS_VIS_SetPlayState(_visParam, BASSVISPlayState.Stop);
+        RenderStarted = false;
+      }
     }
 
     #endregion
@@ -211,9 +208,7 @@ namespace MediaPortal.Visualization
         RenderStarted = BassVis.BASS_VIS_RenderChannel(_visParam, stream);
       }
 
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       return 1;
     }

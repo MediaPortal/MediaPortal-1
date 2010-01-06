@@ -28,7 +28,5 @@ namespace MediaPortal.UserInterface.Controls
   /// <summary>
   /// Summary description for MPContextMenuStrip.
   /// </summary>
-  public class MPContextMenuStrip : System.Windows.Forms.ContextMenuStrip
-  {
-  }
+  public class MPContextMenuStrip : System.Windows.Forms.ContextMenuStrip {}
 }

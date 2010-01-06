@@ -73,7 +73,7 @@ namespace DShowNET.Helper
         if (l_Source != null)
         {
           Name = dev.Name;
-          IBaseFilter filter = (IBaseFilter) l_Source;
+          IBaseFilter filter = (IBaseFilter)l_Source;
           SupportsPersisting = false;
           this.specifyPropertyPages = filter as ISpecifyPropertyPages;
         }

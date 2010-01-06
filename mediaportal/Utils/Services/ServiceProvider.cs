@@ -115,7 +115,7 @@ namespace MediaPortal.Services
         {
           return s(this);
         }
-        return (T) services[t];
+        return (T)services[t];
       }
       return default(T);
     }

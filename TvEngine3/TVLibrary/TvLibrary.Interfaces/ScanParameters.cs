@@ -40,7 +40,7 @@ namespace TvLibrary
     private bool _useDefaultLnbFrequencies = true;
     private int _minFiles = 6;
     private int _maxFiles = 20;
-    private UInt32 _maxFileSize = (256*1000*1000);
+    private UInt32 _maxFileSize = (256 * 1000 * 1000);
 
     /// <summary>
     /// Gets or sets the minimium number of timeshifting files.

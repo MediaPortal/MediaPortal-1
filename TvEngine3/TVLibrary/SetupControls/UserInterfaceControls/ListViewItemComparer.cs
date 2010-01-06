@@ -26,6 +26,7 @@
 using System;
 using System.Collections;
 using System.Windows.Forms;
+
 namespace MediaPortal.Configuration.Controls
 {
   /// <summary>
@@ -34,14 +35,17 @@ namespace MediaPortal.Configuration.Controls
   public class ListViewItemComparer : IComparer
   {
     private readonly int col;
+
     public ListViewItemComparer()
     {
       col = 0;
     }
+
     public ListViewItemComparer(int column)
     {
       col = column;
     }
+
     public int Compare(object x, object y)
     {
       int sortCol = col;
@@ -56,14 +60,17 @@ namespace MediaPortal.Configuration.Controls
   public class ListViewItemComparerInt : IComparer
   {
     private readonly int col;
+
     public ListViewItemComparerInt()
     {
       col = 0;
     }
+
     public ListViewItemComparerInt(int column)
     {
       col = column;
     }
+
     public int Compare(object x, object y)
     {
       int sortCol = col;

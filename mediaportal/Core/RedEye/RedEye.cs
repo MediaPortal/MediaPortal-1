@@ -67,9 +67,7 @@ namespace MediaPortal.RedEyeIR
     /// Private constructor disables the user from creating an instance of the class. All access
     /// to methods should be done through the singleton property "Instance".
     /// </summary>
-    private RedEye()
-    {
-    }
+    private RedEye() {}
 
     public delegate void OnRemoteCommand(object command);
 
@@ -162,9 +160,7 @@ namespace MediaPortal.RedEyeIR
           instance = new RedEye(remoteCommandCallback);
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return instance;
     }
 
@@ -241,7 +237,7 @@ namespace MediaPortal.RedEyeIR
           handshake = xmlreader.GetValueAsString("RedEye", "handshake", "none");
           irbytes = xmlreader.GetValueAsInt("RedEye", "irbytes", 6);
           uirirmaninit = xmlreader.GetValueAsString("RedEye", "uirirmaninit", "true") == "true";
-          LearningTimeOut = 1000*xmlreader.GetValueAsInt("RedEye", "timeout", 4);
+          LearningTimeOut = 1000 * xmlreader.GetValueAsInt("RedEye", "timeout", 4);
           CommandDelay = xmlreader.GetValueAsInt("RedEye", "delay", 300);
         }
         this.remoteCommandCallback = remoteCommandCallback;
@@ -290,7 +286,7 @@ namespace MediaPortal.RedEyeIR
     {
       if (base.Online)
       {
-        base.SendImmediate((byte) '%');
+        base.SendImmediate((byte)'%');
         Log.Info("RedEye IRDA set");
         Sleep(500);
       }
@@ -306,7 +302,7 @@ namespace MediaPortal.RedEyeIR
     {
       if (base.Online)
       {
-        base.SendImmediate((byte) '&');
+        base.SendImmediate((byte)'&');
         Log.Info("RedEye RC5 Set");
         Sleep(500);
       }
@@ -322,7 +318,7 @@ namespace MediaPortal.RedEyeIR
     {
       if (base.Online)
       {
-        base.SendImmediate((byte) '$');
+        base.SendImmediate((byte)'$');
         Log.Info("RedEye SkY set");
         Sleep(500);
       }
@@ -361,12 +357,12 @@ namespace MediaPortal.RedEyeIR
           }
           else
           {
-            int channelchr = (int) channel[i];
+            int channelchr = (int)channel[i];
             if (base.Online)
             {
-              base.SendImmediate((byte) '=');
-              base.SendImmediate((byte) (char) channelchr);
-              base.SendImmediate((byte) '\x002A');
+              base.SendImmediate((byte)'=');
+              base.SendImmediate((byte)(char)channelchr);
+              base.SendImmediate((byte)'\x002A');
             }
             else
             {

@@ -107,8 +107,8 @@ namespace TvDatabase
 
     public string EpisodeName
     {
-      get { return _episodeName;}
-      set { _episodeName = value;}
+      get { return _episodeName; }
+      set { _episodeName = value; }
     }
 
     public string EpisodeNameNext
@@ -152,7 +152,5 @@ namespace TvDatabase
       get { return _episodePartNext; }
       set { _episodePartNext = value; }
     }
-
-
   }
 }

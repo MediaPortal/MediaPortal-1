@@ -34,114 +34,142 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// program number (service id)
     /// </summary>
     public int program_number;
+
     /// <summary>
     /// reserved
     /// </summary>
     public int reserved;
+
     /// <summary>
     /// pid of the PMT
     /// </summary>
     public int network_pmt_PID;
+
     /// <summary>
     /// transport stream id
     /// </summary>
     public int transportStreamID;
+
     /// <summary>
     /// name of the provider
     /// </summary>
     public string service_provider_name;
+
     /// <summary>
     /// name of the service
     /// </summary>
     public string service_name;
+
     /// <summary>
     /// service type
     /// </summary>
     public int serviceType;
+
     /// <summary>
     /// eit schedule flag
     /// </summary>
     public bool eitSchedule;
+
     /// <summary>
     /// eit prefollow flag
     /// </summary>
     public bool eitPreFollow;
+
     /// <summary>
     /// indicates if channel is scrambled
     /// </summary>
     public bool scrambled;
+
     /// <summary>
     /// carrier frequency
     /// </summary>
-    public int freq;// 12188
+    public int freq; // 12188
+
     /// <summary>
     /// symbol rate
     /// </summary>
-    public int symb;// 27500
+    public int symb; // 27500
+
     /// <summary>
     /// fec
     /// </summary>
-    public int fec;// 6
+    public int fec; // 6
+
     /// <summary>
     /// diseqc type
     /// </summary>
-    public int diseqc;// 1
+    public int diseqc; // 1
+
     /// <summary>
     /// LNB low oscilator frequency
     /// </summary>
-    public int lnb01;// 10600
+    public int lnb01; // 10600
+
     /// <summary>
     /// LNB frequency
     /// </summary>
-    public int lnbkhz;// 1 = 22
+    public int lnbkhz; // 1 = 22
+
     /// <summary>
     /// Polarisation
     /// </summary>
     public int pol; // 0 - h
+
     /// <summary>
     /// pid of the PCR
     /// </summary>
     public int pcr_pid;
+
     /// <summary>
     /// ArrayList of PidInfo containing all pids
     /// </summary>
     public List<PidInfo> pids;
+
     /// <summary>
     /// Service Id
     /// </summary>
     public int serviceID;
+
     /// <summary>
     /// Network Id
     /// </summary>
     public int networkID;
+
     /// <summary>
     /// pidcache?
     /// </summary>
     public string pidCache;
+
     /// <summary>
     /// Atsc minor channel number
     /// </summary>
     public int minorChannel;
+
     /// <summary>
     /// atsc major channel number
     /// </summary>
     public int majorChannel;
+
     /// <summary>
     /// Modulation
     /// </summary>
     public int modulation;
+
     /// <summary>
     /// CaPmt
     /// </summary>
     public CaPMT caPMT;
+
     /// <summary>
     /// Logical channel number
     /// </summary>
     public int LCN;
+
     /// <summary>
     /// Video PID
     /// </summary>
     public int videoPid;
+
     /// <summary>
     /// Audio PID
     /// </summary>
@@ -155,6 +183,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     {
       pids = new List<PidInfo>();
     }
+
     /// <summary>
     /// Adds a pid to the pidtable
     /// </summary>
@@ -163,6 +192,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     {
       pids.Add(info);
     }
+
     /// <summary>
     /// Decodes the pmt specified in data.
     /// </summary>
@@ -219,7 +249,8 @@ namespace TvLibrary.Implementations.DVB.Structures
       pmt.pid = Marshal.ReadInt16(data, 18);
       pmt.isAudio = true;
       pmt.stream_type = 3;
-      pmt.language = "" + (char)Marshal.ReadByte(data, 20) + (char)Marshal.ReadByte(data, 21) + (char)Marshal.ReadByte(data, 22);
+      pmt.language = "" + (char)Marshal.ReadByte(data, 20) + (char)Marshal.ReadByte(data, 21) +
+                     (char)Marshal.ReadByte(data, 22);
       RemoveInvalidChars(ref pmt.language);
       pids.Add(pmt);
       pmt = new PidInfo();
@@ -228,7 +259,8 @@ namespace TvLibrary.Implementations.DVB.Structures
       pmt.pid = Marshal.ReadInt16(data, 24);
       pmt.isAudio = true;
       pmt.stream_type = 3;
-      pmt.language = "" + (char)Marshal.ReadByte(data, 26) + (char)Marshal.ReadByte(data, 27) + (char)Marshal.ReadByte(data, 28);
+      pmt.language = "" + (char)Marshal.ReadByte(data, 26) + (char)Marshal.ReadByte(data, 27) +
+                     (char)Marshal.ReadByte(data, 28);
       RemoveInvalidChars(ref pmt.language);
       pids.Add(pmt);
       pmt = new PidInfo();
@@ -237,7 +269,8 @@ namespace TvLibrary.Implementations.DVB.Structures
       pmt.pid = Marshal.ReadInt16(data, 30);
       pmt.isAudio = true;
       pmt.stream_type = 3;
-      pmt.language = "" + (char)Marshal.ReadByte(data, 32) + (char)Marshal.ReadByte(data, 33) + (char)Marshal.ReadByte(data, 34);
+      pmt.language = "" + (char)Marshal.ReadByte(data, 32) + (char)Marshal.ReadByte(data, 33) +
+                     (char)Marshal.ReadByte(data, 34);
       RemoveInvalidChars(ref pmt.language);
       pids.Add(pmt);
       pmt = new PidInfo();
@@ -285,10 +318,9 @@ namespace TvLibrary.Implementations.DVB.Structures
       LCN = Marshal.ReadInt32(data, 580);
       RemoveInvalidChars(ref service_name);
       RemoveInvalidChars(ref service_provider_name);
-
     }
 
-    static void RemoveInvalidChars(ref string strTxt)
+    private static void RemoveInvalidChars(ref string strTxt)
     {
       if (strTxt == null)
       {
@@ -308,7 +340,7 @@ namespace TvLibrary.Implementations.DVB.Structures
         {
           strReturn += "'";
         }
-        if ((byte)k == 0)// remove 0-bytes from the string
+        if ((byte)k == 0) // remove 0-bytes from the string
           k = (char)32;
 
         strReturn += k;
@@ -316,6 +348,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       strReturn = strReturn.Trim();
       strTxt = strReturn;
     }
+
     /// <summary>
     /// Decodes the PMT supplied in buf and fills the pid table with all pids found
     /// </summary>
@@ -331,7 +364,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       int programNumber = (buf[3] << 8) + buf[4];
       int version_number = ((buf[5] >> 1) & 0x1F);
       int current_next_indicator = buf[5] & 1;
-      pcr_pid = ((buf[8] & 0x1F) << 8) + buf[9];   // ! really set pcr_pid ! ( ambass )
+      pcr_pid = ((buf[8] & 0x1F) << 8) + buf[9]; // ! really set pcr_pid ! ( ambass )
       int program_info_length = ((buf[10] & 0xF) << 8) + buf[11];
 
 
@@ -406,45 +439,47 @@ namespace TvLibrary.Implementations.DVB.Structures
           pidInfo.pid = ((buf[pointer + 1] & 0x1F) << 8) + buf[pointer + 2];
           pidInfo.reserved_2 = (buf[pointer + 3] >> 4) & 0xF;
           pidInfo.ES_info_length = ((buf[pointer + 3] & 0xF) << 8) + buf[pointer + 4];
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
           Log.Log.WriteFile("Error while decoding pmt: ", ex);
         }
 
         switch (pidInfo.stream_type)
         {
-          case 0x1b://H.264
+          case 0x1b: //H.264
             pidInfo.isVideo = true;
             break;
-          case 0x10://MPEG4 ISO/IEC 14496-2
+          case 0x10: //MPEG4 ISO/IEC 14496-2
             pidInfo.isVideo = true;
             break;
-          case 0x1://MPEG-1 VIDEO ISO/IEC 11172 
+          case 0x1: //MPEG-1 VIDEO ISO/IEC 11172 
             pidInfo.isVideo = true;
             break;
-          case 0x2://MPEG-2 VIDEO ITU-T Rec. H.262 | ISO/IEC 13818-2 Video or ISO/IEC 11172-2 constrained parameter video stream
+          case 0x2:
+            //MPEG-2 VIDEO ITU-T Rec. H.262 | ISO/IEC 13818-2 Video or ISO/IEC 11172-2 constrained parameter video stream
             pidInfo.isVideo = true;
             break;
-          case 0x3://MPEG-1 AUDIO ISO/IEC 11172 
+          case 0x3: //MPEG-1 AUDIO ISO/IEC 11172 
             pidInfo.isAudio = true;
             pidInfo.isAC3Audio = false;
             pidInfo.isEAC3Audio = false;
             break;
-          case 0x4://MPEG-3 AUDIO ISO/IEC 13818-3 
+          case 0x4: //MPEG-3 AUDIO ISO/IEC 13818-3 
             pidInfo.isAudio = true;
             pidInfo.isAC3Audio = false;
             pidInfo.isEAC3Audio = false;
             break;
-          case 0x81://AC3 AUDIO
+          case 0x81: //AC3 AUDIO
             pidInfo.isAudio = false;
             pidInfo.isAC3Audio = true;
             break;
-          case 0x0f://AAC AUDIO
+          case 0x0f: //AAC AUDIO
             pidInfo.isAudio = true;
             pidInfo.isAC3Audio = false;
             pidInfo.isEAC3Audio = false;
             break;
-          case 0x11://LATM AAC AUDIO
+          case 0x11: //LATM AAC AUDIO
             pidInfo.isAudio = true;
             pidInfo.isAC3Audio = false;
             pidInfo.isEAC3Audio = false;
@@ -529,7 +564,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                     pidInfo.isEAC3Audio = true;
                     pidInfo.stream_type = 0x84;
                     break;
-                  case 0x56://teletext
+                  case 0x56: //teletext
                     pidInfo.isAC3Audio = false;
                     pidInfo.isEAC3Audio = false;
                     pidInfo.isAudio = false;
@@ -540,7 +575,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                     pidInfo.AddDescriptorData(data); // remember the original descriptor
                     pidInfo.teletextLANG = DVB_GetTeletextDescriptor(data);
                     break;
-                  //case 0xc2:
+                    //case 0xc2:
                   case 0x59: // DVB ssubtitle
                     if (pidInfo.stream_type == 0x05 || pidInfo.stream_type == 0x06)
                     {
@@ -611,7 +646,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       return ISO_639_language_code;
     }
 
-    static string DVB_SubtitleDescriptior(byte[] buf)
+    private static string DVB_SubtitleDescriptior(byte[] buf)
     {
       string ISO_639_language_code = "";
 
@@ -691,6 +726,5 @@ namespace TvLibrary.Implementations.DVB.Structures
         pos += (descriptorLen + 2);
       }
     }
-
   }
 }

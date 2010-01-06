@@ -104,7 +104,7 @@ namespace System.Windows.Media.Animation
 
     public Timeline this[int index]
     {
-      get { return (Timeline) List[index]; }
+      get { return (Timeline)List[index]; }
       set { List[index] = value; }
     }
 

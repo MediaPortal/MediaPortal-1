@@ -32,17 +32,11 @@ namespace MediaPortal.Drawing
   {
     #region Constructors
 
-    public Size(System.Drawing.Size size) : this(size.Width, size.Height)
-    {
-    }
+    public Size(System.Drawing.Size size) : this(size.Width, size.Height) {}
 
-    public Size(Point location) : this(location.X, location.Y)
-    {
-    }
+    public Size(Point location) : this(location.X, location.Y) {}
 
-    public Size(System.Drawing.Point location) : this(location.X, location.Y)
-    {
-    }
+    public Size(System.Drawing.Point location) : this(location.X, location.Y) {}
 
     public Size(double w, double h)
     {
@@ -80,12 +74,12 @@ namespace MediaPortal.Drawing
 
     public override bool Equals(object o)
     {
-      return o is Size && ((Size) o)._w == _h && ((Size) o)._w == _h;
+      return o is Size && ((Size)o)._w == _h && ((Size)o)._w == _h;
     }
 
     public override int GetHashCode()
     {
-      return (int) ((uint) _w ^ (uint) _h);
+      return (int)((uint)_w ^ (uint)_h);
     }
 
     public override string ToString()

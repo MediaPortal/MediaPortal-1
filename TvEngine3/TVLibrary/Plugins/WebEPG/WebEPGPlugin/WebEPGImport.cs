@@ -32,7 +32,6 @@ using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
 using MediaPortal.WebEPG;
 using System.Runtime.CompilerServices;
-
 using Gentle.Common;
 using Gentle.Framework;
 using MediaPortal.EPG;
@@ -40,10 +39,12 @@ using TvEngine.PowerScheduler;
 
 namespace TvEngine
 {
-  public class WebEPGImport : ITvServerPlugin, ITvServerPluginStartedAll, IWakeupHandler//, IStandbyHandler
+  public class WebEPGImport : ITvServerPlugin, ITvServerPluginStartedAll, IWakeupHandler //, IStandbyHandler
   {
     #region constants
+
     private const string _wakeupHandlerName = "WebEPGWakeupHandler";
+
     #endregion
 
     #region variables
@@ -51,16 +52,15 @@ namespace TvEngine
     private bool _workerThreadRunning = false;
     private System.Timers.Timer _scheduleTimer;
 
-
     #endregion
-    
+
     #region Constructor
+
     /// <summary>
     /// Create a new instance of a generic standby handler
     /// </summary>
-    public WebEPGImport()
-    {          
-    }
+    public WebEPGImport() {}
+
     #endregion
 
     #region properties
@@ -70,10 +70,7 @@ namespace TvEngine
     /// </summary>
     public string Name
     {
-      get
-      {
-        return "WebEPG";
-      }
+      get { return "WebEPG"; }
     }
 
     /// <summary>
@@ -81,10 +78,7 @@ namespace TvEngine
     /// </summary>
     public string Version
     {
-      get
-      {
-        return "1.0.0.0";
-      }
+      get { return "1.0.0.0"; }
     }
 
     /// <summary>
@@ -92,10 +86,7 @@ namespace TvEngine
     /// </summary>
     public string Author
     {
-      get
-      {
-        return "Arion_p - James";
-      }
+      get { return "Arion_p - James"; }
     }
 
     /// <summary>
@@ -104,21 +95,20 @@ namespace TvEngine
     /// </summary>
     public bool MasterOnly
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
-    #endregion    
+
+    #endregion
 
     #region public methods
+
     /// <summary>
     /// Starts the plugin
     /// </summary>
     public void Start(IController controller)
-    {      
-      Log.WriteFile("plugin: webepg started");      
-      
+    {
+      Log.WriteFile("plugin: webepg started");
+
       //CheckNewTVGuide();
       _scheduleTimer = new System.Timers.Timer();
       _scheduleTimer.Interval = 60000;
@@ -146,11 +136,8 @@ namespace TvEngine
     /// </summary>
     public SetupTv.SectionSettings Setup
     {
-      get
-      {
-        return new SetupTv.Sections.WebEPGSetup();
-      }
-    }   
+      get { return new SetupTv.Sections.WebEPGSetup(); }
+    }
 
     /// <summary>
     /// Forces the import of the tvguide. Usable when testing the grabber
@@ -178,7 +165,7 @@ namespace TvEngine
       if (_workerThreadRunning)
         return;
 
-      
+
       _workerThreadRunning = true;
       ThreadParams param = new ThreadParams();
       param.showProgress = showProgress;
@@ -192,9 +179,9 @@ namespace TvEngine
     private class ThreadParams
     {
       public WebEPG.ShowProgressHandler showProgress;
-    };
+    } ;
 
-    void ThreadFunctionImportTVGuide(object aparam)
+    private void ThreadFunctionImportTVGuide(object aparam)
     {
       SetStandbyAllowed(false);
 
@@ -280,7 +267,6 @@ namespace TvEngine
           setting.Value = epg.ImportStats.Status;
           setting.Persist();
           //Log.Write("Xmltv: imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
-
         }
         catch (Exception ex)
         {
@@ -300,7 +286,7 @@ namespace TvEngine
       }
     }
 
-    void _scheduleTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    private void _scheduleTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       bool scheduleEnabled = Convert.ToBoolean(layer.GetSetting("webepgScheduleEnabled", "true").Value);
@@ -311,7 +297,7 @@ namespace TvEngine
         if (ShouldRunNow())
         {
           Log.Info("WebEPGImporter: WebEPG schedule {0}:{1} is due: {2}:{3}",
-                    config.Hour, config.Minutes, DateTime.Now.Hour, DateTime.Now.Minute);
+                   config.Hour, config.Minutes, DateTime.Now.Hour, DateTime.Now.Minute);
           StartImport(null);
           config.LastRun = DateTime.Now;
           configSetting.Value = config.SerializeAsString();
@@ -426,7 +412,7 @@ namespace TvEngine
       TvBusinessLayer layer = new TvBusinessLayer();
 
       EPGWakeupConfig cfg = new EPGWakeupConfig(layer.GetSetting("webepgSchedule", String.Empty).Value);
-      
+
       // Start by thinking we should run today
       DateTime nextRun = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, cfg.Hour, cfg.Minutes, 0);
       // check if we should run today or some other day in the future
@@ -460,9 +446,10 @@ namespace TvEngine
       RegisterWakeupHandler();
     }
 
-    #endregion   
+    #endregion
 
     #region IWakeupHandler implementation
+
     [MethodImpl(MethodImplOptions.Synchronized)]
     public DateTime GetNextWakeupTime(DateTime earliestWakeupTime)
     {
@@ -480,7 +467,7 @@ namespace TvEngine
     {
       get { return _wakeupHandlerName; }
     }
-    #endregion   
-   
+
+    #endregion
   }
 }

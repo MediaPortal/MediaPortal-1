@@ -62,7 +62,7 @@ namespace MediaPortal.Player
 
           array.Sort();
 
-          this.Table = (int[]) array.ToArray(typeof (int));
+          this.Table = (int[])array.ToArray(typeof (int));
         }
         catch
         {

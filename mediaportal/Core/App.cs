@@ -33,9 +33,7 @@ namespace MediaPortal
   {
     #region Constructors
 
-    protected App()
-    {
-    }
+    protected App() {}
 
     #endregion Constructors
 

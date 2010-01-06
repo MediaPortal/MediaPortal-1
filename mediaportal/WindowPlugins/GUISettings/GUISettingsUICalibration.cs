@@ -59,12 +59,12 @@ namespace MediaPortal.GUI.Settings
       int iCurrHeight = m_iLogHeight;
 
       m_iLogWidth = (int)
-                    Math.Max((float) GUIGraphicsContext.Width*ZOOM_MIN,
-                             Math.Min((float) GUIGraphicsContext.Width*ZOOM_MAX, (float) m_iLogWidth));
+                    Math.Max((float)GUIGraphicsContext.Width * ZOOM_MIN,
+                             Math.Min((float)GUIGraphicsContext.Width * ZOOM_MAX, (float)m_iLogWidth));
 
       m_iLogHeight = (int)
-                     Math.Max((float) GUIGraphicsContext.Height*ZOOM_MIN,
-                              Math.Min((float) GUIGraphicsContext.Height*ZOOM_MAX, (float) m_iLogHeight));
+                     Math.Max((float)GUIGraphicsContext.Height * ZOOM_MIN,
+                              Math.Min((float)GUIGraphicsContext.Height * ZOOM_MAX, (float)m_iLogHeight));
 
       bClamped = (m_iLogWidth != iCurrWidth) || (m_iLogHeight != iCurrHeight);
 
@@ -78,10 +78,10 @@ namespace MediaPortal.GUI.Settings
 
       int iX1 = GUIGraphicsContext.OffsetX;
       int iY1 = GUIGraphicsContext.OffsetY;
-      int iX2 = iX1 + (int) Math.Round(GUIGraphicsContext.ZoomHorizontal
-                                       *(float) GUIGraphicsContext.Width);
-      int iY2 = iY1 + (int) Math.Round(GUIGraphicsContext.ZoomVertical
-                                       *(float) GUIGraphicsContext.Height);
+      int iX2 = iX1 + (int)Math.Round(GUIGraphicsContext.ZoomHorizontal
+                                      * (float)GUIGraphicsContext.Width);
+      int iY2 = iY1 + (int)Math.Round(GUIGraphicsContext.ZoomVertical
+                                      * (float)GUIGraphicsContext.Height);
 
       if (m_iMode == 1)
       {
@@ -101,7 +101,7 @@ namespace MediaPortal.GUI.Settings
 
     public GUISettingsUICalibration()
     {
-      GetID = (int) Window.WINDOW_UI_CALIBRATION;
+      GetID = (int)Window.WINDOW_UI_CALIBRATION;
     }
 
     public override bool Init()
@@ -116,7 +116,7 @@ namespace MediaPortal.GUI.Settings
 
     public override void OnAction(Action action)
     {
-      if ((DateTime.Now.Ticks/10000) - m_dwLastTime > 500)
+      if ((DateTime.Now.Ticks / 10000) - m_dwLastTime > 500)
       {
         m_iSpeed = 1;
         m_iCountU = 0;
@@ -125,16 +125,16 @@ namespace MediaPortal.GUI.Settings
         m_iCountR = 0;
         m_bModeLocked = false;
       }
-      m_dwLastTime = (DateTime.Now.Ticks/10000);
+      m_dwLastTime = (DateTime.Now.Ticks / 10000);
 
       bool bChanged = false;
       int iXOff = GUIGraphicsContext.OffsetX;
       int iYOff = GUIGraphicsContext.OffsetY;
 
-      int iLogWidthMin = (int) ((float) GUIGraphicsContext.Width*ZOOM_MIN);
-      int iLogWidthMax = (int) ((float) GUIGraphicsContext.Width*ZOOM_MAX);
-      int iLogHeightMin = (int) ((float) GUIGraphicsContext.Height*ZOOM_MIN);
-      int iLogHeightMax = (int) ((float) GUIGraphicsContext.Height*ZOOM_MAX);
+      int iLogWidthMin = (int)((float)GUIGraphicsContext.Width * ZOOM_MIN);
+      int iLogWidthMax = (int)((float)GUIGraphicsContext.Width * ZOOM_MAX);
+      int iLogHeightMin = (int)((float)GUIGraphicsContext.Height * ZOOM_MIN);
+      int iLogHeightMax = (int)((float)GUIGraphicsContext.Height * ZOOM_MAX);
 
       // Check if screen res change has invalidated
       // the current sizes.
@@ -361,19 +361,19 @@ namespace MediaPortal.GUI.Settings
           break;
 
         case Action.ActionType.ACTION_ANALOG_MOVE:
-          float fX = 2*action.fAmount1;
-          float fY = 2*action.fAmount2;
+          float fX = 2 * action.fAmount1;
+          float fY = 2 * action.fAmount2;
           if (fX != 0.0 || fY != 0.0)
           {
             bChanged = true;
             if (m_iMode == 1)
             {
-              m_iLogWidth += (int) fX;
-              m_iLogHeight -= (int) fY;
+              m_iLogWidth += (int)fX;
+              m_iLogHeight -= (int)fY;
             }
             else
             {
-              iXOff += (int) fX;
+              iXOff += (int)fX;
               if (iXOff < -128)
               {
                 iXOff = -128;
@@ -383,7 +383,7 @@ namespace MediaPortal.GUI.Settings
                 iXOff = 128;
               }
 
-              iYOff -= (int) fY;
+              iYOff -= (int)fY;
               if (iYOff < -128)
               {
                 iYOff = -128;
@@ -403,8 +403,8 @@ namespace MediaPortal.GUI.Settings
         GUIGraphicsContext.OffsetX = iXOff;
         GUIGraphicsContext.OffsetY = iYOff;
 
-        float fZoomHorz = (float) m_iLogWidth/(float) GUIGraphicsContext.Width;
-        float fZoomVert = (float) m_iLogHeight/(float) GUIGraphicsContext.Height;
+        float fZoomHorz = (float)m_iLogWidth / (float)GUIGraphicsContext.Width;
+        float fZoomVert = (float)m_iLogHeight / (float)GUIGraphicsContext.Height;
 
         GUIGraphicsContext.ZoomHorizontal = fZoomHorz;
         GUIGraphicsContext.ZoomVertical = fZoomVert;
@@ -435,7 +435,8 @@ namespace MediaPortal.GUI.Settings
             GUIGraphicsContext.Save();
             if (m_orgZoomVertical != GUIGraphicsContext.ZoomVertical) // only vertical zoom affects font sizes
             {
-              GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+              GUIDialogNotify dlgNotify =
+                (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
               if (dlgNotify != null)
               {
                 dlgNotify.Reset();
@@ -462,8 +463,8 @@ namespace MediaPortal.GUI.Settings
             m_iMode = 0;
             m_bModeLocked = true;
             m_orgZoomVertical = GUIGraphicsContext.ZoomVertical;
-            m_iLogWidth = (int) Math.Round((float) GUIGraphicsContext.Width*(float) GUIGraphicsContext.ZoomHorizontal);
-            m_iLogHeight = (int) Math.Round((float) GUIGraphicsContext.Height*(float) GUIGraphicsContext.ZoomVertical);
+            m_iLogWidth = (int)Math.Round((float)GUIGraphicsContext.Width * (float)GUIGraphicsContext.ZoomHorizontal);
+            m_iLogHeight = (int)Math.Round((float)GUIGraphicsContext.Height * (float)GUIGraphicsContext.ZoomVertical);
             ClampLogicalScreenSize();
             UpdateControlLabel();
             return true;

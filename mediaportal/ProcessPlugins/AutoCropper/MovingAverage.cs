@@ -42,7 +42,7 @@ namespace WindowPlugins.AutoCropper
 
     public float Average
     {
-      get { return sum/((float) length); }
+      get { return sum / ((float)length); }
     }
 
     public MovingAverage(int length, int startValue)
@@ -55,14 +55,14 @@ namespace WindowPlugins.AutoCropper
       {
         list[i] = startValue;
       }
-      sum = startValue*length;
+      sum = startValue * length;
     }
 
     public void Add(int v)
     {
       int outValue = list[next];
       list[next] = v;
-      next = (next + 1)%length;
+      next = (next + 1) % length;
       sum += v - outValue;
     }
 
@@ -90,7 +90,7 @@ namespace WindowPlugins.AutoCropper
       {
         list[i] = startValue;
       }
-      sum = startValue*length;
+      sum = startValue * length;
     }
   }
 }

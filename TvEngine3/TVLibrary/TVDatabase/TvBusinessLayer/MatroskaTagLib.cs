@@ -91,7 +91,7 @@ namespace TvDatabase
         }
         catch (Exception)
         {
-          importDirs = new string[] { aDirectory };
+          importDirs = new string[] {aDirectory};
         }
         List<string> searchDirs = new List<string>(importDirs);
         if (!searchDirs.Contains(aDirectory))

@@ -50,7 +50,7 @@ namespace similaritymetrics
     {
       float str1Length = s.Length;
       float str2Length = s1.Length;
-      return str1Length*str2Length*0.00018F;
+      return str1Length * str2Length * 0.00018F;
     }
 
     /// <summary>
@@ -80,7 +80,7 @@ namespace similaritymetrics
       {
         return 1.0F;
       }
-      return 1.0F - levensteinDistance/maxLen;
+      return 1.0F - levensteinDistance / maxLen;
     }
 
     private float calcLevenDistance(String s, String t)

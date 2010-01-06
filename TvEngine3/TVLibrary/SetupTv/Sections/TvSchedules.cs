@@ -20,7 +20,6 @@
  */
 using System;
 using System.Collections.Generic;
-
 using System.Drawing;
 using System.Windows.Forms;
 using System.Globalization;
@@ -32,21 +31,21 @@ namespace SetupTv.Sections
   public partial class TvSchedules : SectionSettings
   {
     public TvSchedules()
-      : this("Schedules")
-    {
-    }
+      : this("Schedules") {}
 
     public TvSchedules(string name)
       : base(name)
     {
       InitializeComponent();
     }
+
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
       LoadSchedules();
     }
-    void LoadSchedules()
+
+    private void LoadSchedules()
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       listView1.Items.Clear();
@@ -66,7 +65,8 @@ namespace SetupTv.Sections
           case ScheduleRecordingType.Weekly:
             item.ImageIndex = 0;
             item.SubItems.Add("Weekly");
-            item.SubItems.Add(String.Format("{0} {1}", schedule.StartTime.DayOfWeek, schedule.StartTime.ToString("HH:mm:ss", mmddFormat)));
+            item.SubItems.Add(String.Format("{0} {1}", schedule.StartTime.DayOfWeek,
+                                            schedule.StartTime.ToString("HH:mm:ss", mmddFormat)));
             break;
           case ScheduleRecordingType.Weekends:
             item.ImageIndex = 0;
@@ -131,6 +131,5 @@ namespace SetupTv.Sections
       }
       listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
     }
-
   }
 }

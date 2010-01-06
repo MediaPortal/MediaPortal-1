@@ -32,13 +32,9 @@ namespace MediaPortal.Picture.Database
   {
     public static IPictureDatabase _database = DatabaseFactory.GetPictureDatabase();
 
-    private PictureDatabase()
-    {
-    }
+    private PictureDatabase() {}
 
-    static PictureDatabase()
-    {
-    }
+    static PictureDatabase() {}
 
     public static void ReOpen()
     {
@@ -51,7 +47,7 @@ namespace MediaPortal.Picture.Database
       if (_database != null)
       {
         _database.Dispose();
-      }      
+      }
       //_database = null;
     }
 

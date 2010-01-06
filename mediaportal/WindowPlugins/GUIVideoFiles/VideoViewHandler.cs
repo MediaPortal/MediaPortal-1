@@ -61,7 +61,7 @@ namespace MediaPortal.GUI.Video
         using (FileStream fileStream = new FileInfo(customVideoViews).OpenRead())
         {
           SoapFormatter formatter = new SoapFormatter();
-          ArrayList viewlist = (ArrayList) formatter.Deserialize(fileStream);
+          ArrayList viewlist = (ArrayList)formatter.Deserialize(fileStream);
           foreach (ViewDefinition view in viewlist)
           {
             views.Add(view);
@@ -69,9 +69,7 @@ namespace MediaPortal.GUI.Video
           fileStream.Close();
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
 
     public ViewDefinition View
@@ -125,7 +123,7 @@ namespace MediaPortal.GUI.Video
         {
           if (views.Count > 0)
           {
-            currentView = (ViewDefinition) views[0];
+            currentView = (ViewDefinition)views[0];
           }
         }
       }
@@ -140,7 +138,7 @@ namespace MediaPortal.GUI.Video
     {
       get
       {
-        FilterDefinition definition = (FilterDefinition) currentView.Filters[CurrentLevel];
+        FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
         if (definition == null)
         {
           return string.Empty;
@@ -169,7 +167,7 @@ namespace MediaPortal.GUI.Video
 
     public void Select(IMDBMovie movie)
     {
-      FilterDefinition definition = (FilterDefinition) currentView.Filters[CurrentLevel];
+      FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
       definition.SelectedValue = GetFieldIdValue(movie, definition.Where).ToString();
       if (currentLevel + 1 < currentView.Filters.Count)
       {
@@ -192,11 +190,11 @@ namespace MediaPortal.GUI.Video
 
       for (int i = 0; i < CurrentLevel; ++i)
       {
-        BuildSelect((FilterDefinition) currentView.Filters[i], ref whereClause, ref fromClause);
+        BuildSelect((FilterDefinition)currentView.Filters[i], ref whereClause, ref fromClause);
       }
-      BuildWhere((FilterDefinition) currentView.Filters[CurrentLevel], ref whereClause);
-      BuildRestriction((FilterDefinition) currentView.Filters[CurrentLevel], ref whereClause);
-      BuildOrder((FilterDefinition) currentView.Filters[CurrentLevel], ref orderClause);
+      BuildWhere((FilterDefinition)currentView.Filters[CurrentLevel], ref whereClause);
+      BuildRestriction((FilterDefinition)currentView.Filters[CurrentLevel], ref whereClause);
+      BuildOrder((FilterDefinition)currentView.Filters[CurrentLevel], ref orderClause);
 
       //execute the query
       string sql;
@@ -206,7 +204,7 @@ namespace MediaPortal.GUI.Video
         bool useAlbumTable = false;
         bool useActorsTable = false;
         bool useGenreTable = false;
-        FilterDefinition defRoot = (FilterDefinition) currentView.Filters[0];
+        FilterDefinition defRoot = (FilterDefinition)currentView.Filters[0];
         string table = GetTable(defRoot.Where, ref useMovieInfoTable, ref useAlbumTable, ref useActorsTable,
                                 ref useGenreTable);
 
@@ -244,7 +242,7 @@ namespace MediaPortal.GUI.Video
           for (int i = 0; i < results.Rows.Count; i++)
           {
             IMDBMovie movie = new IMDBMovie();
-            movie.Year = (int) Math.Floor(0.5d + Double.Parse(DatabaseUtility.Get(results, i, "iYear")));
+            movie.Year = (int)Math.Floor(0.5d + Double.Parse(DatabaseUtility.Get(results, i, "iYear")));
             movies.Add(movie);
           }
         }
@@ -264,7 +262,7 @@ namespace MediaPortal.GUI.Video
         bool useAlbumTable = false;
         bool useActorsTable = false;
         bool useGenreTable = false;
-        FilterDefinition defCurrent = (FilterDefinition) currentView.Filters[CurrentLevel];
+        FilterDefinition defCurrent = (FilterDefinition)currentView.Filters[CurrentLevel];
         string table = GetTable(defCurrent.Where, ref useMovieInfoTable, ref useAlbumTable, ref useActorsTable,
                                 ref useGenreTable);
         sql = String.Format("select distinct {0}.* {1} {2} {3}",
@@ -490,7 +488,7 @@ namespace MediaPortal.GUI.Video
     {
       if (where == "watched")
       {
-        return (int) movie.Watched;
+        return (int)movie.Watched;
       }
       if (where == "actor")
       {
@@ -510,7 +508,7 @@ namespace MediaPortal.GUI.Video
       }
       if (where == "rating")
       {
-        return (int) movie.Rating;
+        return (int)movie.Rating;
       }
       return -1;
     }
@@ -521,7 +519,7 @@ namespace MediaPortal.GUI.Video
       {
         return;
       }
-      FilterDefinition definition = (FilterDefinition) currentView.Filters[CurrentLevel];
+      FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
       if (definition.Where == "genre")
       {
         item.Label = movie.SingleGenre;

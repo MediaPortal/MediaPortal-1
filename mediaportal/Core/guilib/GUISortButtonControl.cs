@@ -33,10 +33,7 @@ namespace MediaPortal.GUI.Library
     #region Constructors
 
     public GUISortButtonControl(int parentId)
-      : base(parentId)
-    {
-
-    }
+      : base(parentId) {}
 
     #endregion Constructors
 
@@ -67,10 +64,14 @@ namespace MediaPortal.GUI.Library
       int w = _sortButtonWidth;
       int h = _sortButtonHeight;
 
-      _sortImages[0] = LoadAnimationControl(this.GetID, this.GetID + 25000, x, y, w, h, _ascendingTextureFilename); //, 0xFFFFFFFF);
-      _sortImages[1] = LoadAnimationControl(this.GetID, this.GetID + 25001, x, y, w, h, _ascendingTextureFocusedFilename); //, 0xFFFFFFFF);
-      _sortImages[2] = LoadAnimationControl(this.GetID, this.GetID + 25002, x, y, w, h, _descendingTextureFilename); //, 0xFFFFFFFF);
-      _sortImages[3] = LoadAnimationControl(this.GetID, this.GetID + 25003, x, y, w, h, _descendingTextureFocusedFilename); //, 0xFFFFFFFF);
+      _sortImages[0] = LoadAnimationControl(this.GetID, this.GetID + 25000, x, y, w, h, _ascendingTextureFilename);
+        //, 0xFFFFFFFF);
+      _sortImages[1] = LoadAnimationControl(this.GetID, this.GetID + 25001, x, y, w, h, _ascendingTextureFocusedFilename);
+        //, 0xFFFFFFFF);
+      _sortImages[2] = LoadAnimationControl(this.GetID, this.GetID + 25002, x, y, w, h, _descendingTextureFilename);
+        //, 0xFFFFFFFF);
+      _sortImages[3] = LoadAnimationControl(this.GetID, this.GetID + 25003, x, y, w, h,
+                                            _descendingTextureFocusedFilename); //, 0xFFFFFFFF);
       _sortImages[0].ParentControl = this;
       _sortImages[1].ParentControl = this;
       _sortImages[2].ParentControl = this;
@@ -80,6 +81,7 @@ namespace MediaPortal.GUI.Library
       _sortImages[2].DimColor = DimColor;
       _sortImages[3].DimColor = DimColor;
     }
+
     public override void ScaleToScreenResolution()
     {
       base.ScaleToScreenResolution();

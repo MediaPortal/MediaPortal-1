@@ -46,12 +46,9 @@ namespace MediaPortal.GUI.Library
     #region Constructors
 
     private GUIControlFactory() // NON-CREATABLE
-    {
-    }
+    {}
 
-    static GUIControlFactory()
-    {
-    }
+    static GUIControlFactory() {}
 
     #endregion Constructors
 
@@ -133,8 +130,7 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.SkinSize = new Size(iWidth, iHeight);
         }
         catch (FormatException) // Size values were invalid.
-        {
-        }
+        {}
       }
     }
 
@@ -149,7 +145,7 @@ namespace MediaPortal.GUI.Library
       // Lazy Initializiation...
       if (m_reflectionCacheByControlType.ContainsKey(guiControlType))
       {
-        return (Hashtable) m_reflectionCacheByControlType[guiControlType];
+        return (Hashtable)m_reflectionCacheByControlType[guiControlType];
       }
 
       Hashtable membersTable = new Hashtable();
@@ -185,7 +181,7 @@ namespace MediaPortal.GUI.Library
       // Lazy Initializiation...
       if (m_reflectionCacheByControlTypeAttr.ContainsKey(guiControlType))
       {
-        return (Hashtable) m_reflectionCacheByControlTypeAttr[guiControlType];
+        return (Hashtable)m_reflectionCacheByControlTypeAttr[guiControlType];
       }
 
       Hashtable membersTable = new Hashtable();
@@ -377,10 +373,10 @@ namespace MediaPortal.GUI.Library
       try
       {
         //				if(control is ISupportInitialize)
-        ((ISupportInitialize) control).BeginInit();
+        ((ISupportInitialize)control).BeginInit();
 
         XmlNode referenceNode =
-          (XmlNode) m_referenceNodesByControlType[typeOfControlToCreate];
+          (XmlNode)m_referenceNodesByControlType[typeOfControlToCreate];
 
         if (referenceNode != null)
         {
@@ -409,13 +405,13 @@ namespace MediaPortal.GUI.Library
         {
           foreach (XmlNode subControlNode in pControlNode.SelectNodes("control"))
           {
-            ((IAddChild) control).AddChild(Create(dwParentId, subControlNode, defines));
+            ((IAddChild)control).AddChild(Create(dwParentId, subControlNode, defines));
           }
         }
 
         if (typeOfControlToCreate == typeof (GUIFacadeControl))
         {
-          GUIFacadeControl facade = (GUIFacadeControl) control;
+          GUIFacadeControl facade = (GUIFacadeControl)control;
           XmlNodeList nodeList = pControlNode.SelectNodes("control");
           foreach (XmlNode subControlNode in nodeList)
           {
@@ -452,7 +448,7 @@ namespace MediaPortal.GUI.Library
         }
 
         //				if(control is ISupportInitialize)
-        ((ISupportInitialize) control).EndInit();
+        ((ISupportInitialize)control).EndInit();
       }
       catch (Exception e)
       {
@@ -472,11 +468,11 @@ namespace MediaPortal.GUI.Library
       XmlNode nodeAttribute = element.Attributes.GetNamedItem("allowhiddenfocus");
       if (nodeAttribute != null)
       {
-          string allow = nodeAttribute.Value;
-          if (String.Compare(allow, "true") == 0)
-          {
-              allowHiddenFocus = true;
-          }
+        string allow = nodeAttribute.Value;
+        if (String.Compare(allow, "true") == 0)
+        {
+          allowHiddenFocus = true;
+        }
       }
 
       return (condition != 0);
@@ -492,7 +488,7 @@ namespace MediaPortal.GUI.Library
         IDictionaryEnumerator en = attributesThatCanBeUpdates.GetEnumerator();
         while (en.MoveNext())
         {
-          XMLSkinAttribute xmlAttr = (XMLSkinAttribute) en.Key;
+          XMLSkinAttribute xmlAttr = (XMLSkinAttribute)en.Key;
           MemberInfo correspondingMemberAttr = en.Value as MemberInfo;
           XmlNode elementNode = pControlNode.SelectSingleNode(xmlAttr.XmlElementName);
           if (elementNode != null)
@@ -506,7 +502,7 @@ namespace MediaPortal.GUI.Library
 
                 if (text.Length > 0 && text[0] == '#' && defines.Contains(text))
                 {
-                  text = (string) defines[text];
+                  text = (string)defines[text];
                 }
 
                 object newValue = null;
@@ -514,23 +510,23 @@ namespace MediaPortal.GUI.Library
                 if (correspondingMemberAttr.MemberType == MemberTypes.Field)
                 {
                   newValue = ConvertXmlStringToObject(xmlAttr.XmlAttributeName, text,
-                                                      ((FieldInfo) correspondingMemberAttr).FieldType);
+                                                      ((FieldInfo)correspondingMemberAttr).FieldType);
                 }
                 else if (correspondingMemberAttr.MemberType == MemberTypes.Property)
                 {
                   newValue = ConvertXmlStringToObject(xmlAttr.XmlAttributeName, text,
-                                                      ((PropertyInfo) correspondingMemberAttr).PropertyType);
+                                                      ((PropertyInfo)correspondingMemberAttr).PropertyType);
                 }
 
                 try
                 {
                   if (correspondingMemberAttr.MemberType == MemberTypes.Field)
                   {
-                    ((FieldInfo) correspondingMemberAttr).SetValue(control, newValue);
+                    ((FieldInfo)correspondingMemberAttr).SetValue(control, newValue);
                   }
                   else if (correspondingMemberAttr.MemberType == MemberTypes.Property)
                   {
-                    ((PropertyInfo) correspondingMemberAttr).SetValue(control, newValue, null);
+                    ((PropertyInfo)correspondingMemberAttr).SetValue(control, newValue, null);
                   }
                 }
                 catch (Exception e)
@@ -633,29 +629,29 @@ namespace MediaPortal.GUI.Library
 
           if (text.Length > 0 && text[0] == '#' && defines.Contains(text))
           {
-            text = (string) defines[text];
+            text = (string)defines[text];
           }
 
           object newValue = null;
 
           if (correspondingMember.MemberType == MemberTypes.Field)
           {
-            newValue = ConvertXmlStringToObject(element.Name, text, ((FieldInfo) correspondingMember).FieldType);
+            newValue = ConvertXmlStringToObject(element.Name, text, ((FieldInfo)correspondingMember).FieldType);
           }
           else if (correspondingMember.MemberType == MemberTypes.Property)
           {
-            newValue = ConvertXmlStringToObject(element.Name, text, ((PropertyInfo) correspondingMember).PropertyType);
+            newValue = ConvertXmlStringToObject(element.Name, text, ((PropertyInfo)correspondingMember).PropertyType);
           }
 
           try
           {
             if (correspondingMember.MemberType == MemberTypes.Field)
             {
-              ((FieldInfo) correspondingMember).SetValue(control, newValue);
+              ((FieldInfo)correspondingMember).SetValue(control, newValue);
             }
             else if (correspondingMember.MemberType == MemberTypes.Property)
             {
-              ((PropertyInfo) correspondingMember).SetValue(control, newValue, null);
+              ((PropertyInfo)correspondingMember).SetValue(control, newValue, null);
             }
           }
           catch (Exception e)
@@ -770,11 +766,11 @@ namespace MediaPortal.GUI.Library
         case ("spincontrol"):
           return typeof (GUISpinControl);
         case ("spinbutton"):
-          return typeof(GUISpinButton);
+          return typeof (GUISpinButton);
         case ("checkmark"):
-          return typeof(GUICheckMarkControl);
+          return typeof (GUICheckMarkControl);
         case ("checkbutton"):
-          return typeof(GUICheckButton);
+          return typeof (GUICheckButton);
         case ("selectbutton"):
           return typeof (GUISelectButtonControl);
         case ("listcontrol"):
@@ -814,7 +810,7 @@ namespace MediaPortal.GUI.Library
         case ("menu"):
           return typeof (GUIMenuControl);
         default:
-          Type t = (Type) m_hashCustomControls[xmlTypeName];
+          Type t = (Type)m_hashCustomControls[xmlTypeName];
 
           if (t == null)
           {
@@ -853,7 +849,7 @@ namespace MediaPortal.GUI.Library
         if (valueParameters.Length >= 5)
         {
           return new GridLayout(valueParameters[0], valueParameters[1], valueParameters[2], valueParameters[3],
-                                (Orientation) valueParameters[4]);
+                                (Orientation)valueParameters[4]);
         }
 
         if (valueParameters.Length >= 4)
@@ -883,7 +879,7 @@ namespace MediaPortal.GUI.Library
       {
         if (valueParameters.Length >= 2)
         {
-          return new StackLayout(valueParameters[0], (Orientation) valueParameters[1]);
+          return new StackLayout(valueParameters[0], (Orientation)valueParameters[1]);
         }
 
         if (valueParameters.Length >= 1)
@@ -944,11 +940,11 @@ namespace MediaPortal.GUI.Library
 
           if (string.Compare(token, "Horizontal") == 0)
           {
-            valuesTemp.Add((int) Orientation.Horizontal);
+            valuesTemp.Add((int)Orientation.Horizontal);
           }
           else if (string.Compare(token, "Vertical") == 0)
           {
-            valuesTemp.Add((int) Orientation.Vertical);
+            valuesTemp.Add((int)Orientation.Vertical);
           }
           else
           {
@@ -962,9 +958,7 @@ namespace MediaPortal.GUI.Library
 
         return values;
       }
-      catch
-      {
-      }
+      catch {}
 
       return new int[0];
     }

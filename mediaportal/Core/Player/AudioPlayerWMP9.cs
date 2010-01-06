@@ -34,8 +34,8 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Microsoft.Win32;
 using WMPLib;
-using _WMPOCXEvents_BufferingEventHandler=AxWMPLib._WMPOCXEvents_BufferingEventHandler;
-using _WMPOCXEvents_PlayStateChangeEventHandler=AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler;
+using _WMPOCXEvents_BufferingEventHandler = AxWMPLib._WMPOCXEvents_BufferingEventHandler;
+using _WMPOCXEvents_PlayStateChangeEventHandler = AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler;
 
 namespace MediaPortal.Player
 {
@@ -61,9 +61,7 @@ namespace MediaPortal.Player
     private bool _notifyPlaying = true;
     private bool _bufferCompleted = true;
 
-    public AudioPlayerWMP9()
-    {
-    }
+    public AudioPlayerWMP9() {}
 
     private static void CreateInstance()
     {
@@ -74,21 +72,19 @@ namespace MediaPortal.Player
       }
       try
       {
-        UInt32 dwValue = (UInt32) 0;
+        UInt32 dwValue = (UInt32)0;
         using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\MediaPlayer\Preferences", true)
           )
         {
-          subkey.SetValue("CDAutoPlay", (Int32) dwValue);
+          subkey.SetValue("CDAutoPlay", (Int32)dwValue);
 
           // enable metadata lookup for CD's
-          dwValue = (UInt32) Convert.ToInt32(subkey.GetValue("MetadataRetrieval"));
+          dwValue = (UInt32)Convert.ToInt32(subkey.GetValue("MetadataRetrieval"));
           dwValue |= 1;
-          subkey.SetValue("MetadataRetrieval", (Int32) dwValue);
+          subkey.SetValue("MetadataRetrieval", (Int32)dwValue);
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       _wmp10Player = new AxWindowsMediaPlayer();
 
@@ -100,7 +96,7 @@ namespace MediaPortal.Player
       ComponentResourceManager resources = new ComponentResourceManager(typeof (Resource1));
       _wmp10Player.Location = new Point(8, 16);
       _wmp10Player.Name = "axWindowsMediaPlayer1";
-      _wmp10Player.OcxState = ((AxHost.State) (resources.GetObject("axWindowsMediaPlayer1.OcxState")));
+      _wmp10Player.OcxState = ((AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
       _wmp10Player.Size = new Size(264, 240);
       _wmp10Player.TabIndex = 0;
 
@@ -110,9 +106,7 @@ namespace MediaPortal.Player
       {
         _wmp10Player.EndInit();
       }
-      catch (COMException)
-      {
-      }
+      catch (COMException) {}
 
       _wmp10Player.uiMode = "none";
       _wmp10Player.windowlessVideo = true;
@@ -386,9 +380,7 @@ namespace MediaPortal.Player
           {
             return _wmp10Player.currentMedia.duration;
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
         return 0.0d;
       }
@@ -402,9 +394,7 @@ namespace MediaPortal.Player
         {
           return _wmp10Player.Ctlcontrols.currentPosition;
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
         return 0.0d;
       }
     }
@@ -783,9 +773,9 @@ namespace MediaPortal.Player
         double dCurrentPos = CurrentPosition;
         double dDuration = Duration;
 
-        double fCurPercent = (dCurrentPos/Duration)*100.0d;
-        double fOnePercent = Duration/100.0d;
-        fCurPercent = fCurPercent + (double) iPercentage;
+        double fCurPercent = (dCurrentPos / Duration) * 100.0d;
+        double fOnePercent = Duration / 100.0d;
+        fCurPercent = fCurPercent + (double)iPercentage;
         fCurPercent *= fOnePercent;
         if (fCurPercent < 0.0d)
         {
@@ -815,8 +805,8 @@ namespace MediaPortal.Player
         {
           iPercentage = 100;
         }
-        double fPercent = Duration/100.0f;
-        fPercent *= (double) iPercentage;
+        double fPercent = Duration / 100.0f;
+        fPercent *= (double)iPercentage;
         _wmp10Player.Ctlcontrols.currentPosition = fPercent;
       }
     }
@@ -833,7 +823,7 @@ namespace MediaPortal.Player
         {
           return 1;
         }
-        return (int) _wmp10Player.settings.rate;
+        return (int)_wmp10Player.settings.rate;
       }
       set
       {
@@ -845,18 +835,16 @@ namespace MediaPortal.Player
         {
           if (value < 0)
           {
-            _wmp10Player.Ctlcontrols.currentPosition += (double) value;
+            _wmp10Player.Ctlcontrols.currentPosition += (double)value;
             VMR9Util.g_vmr9.EVRProvidePlaybackRate(1.0);
           }
           else
           {
             try
             {
-              _wmp10Player.settings.rate = (double) value;
+              _wmp10Player.settings.rate = (double)value;
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
             VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
           }
         }

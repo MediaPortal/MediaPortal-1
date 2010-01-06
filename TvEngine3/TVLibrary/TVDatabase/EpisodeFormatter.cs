@@ -65,8 +65,6 @@ namespace TvDatabase
         }
       }
       return episodeInfo;
-
     }
-
   }
 }

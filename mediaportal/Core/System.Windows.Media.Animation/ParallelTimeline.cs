@@ -29,22 +29,14 @@ namespace System.Windows.Media.Animation
   {
     #region Constructors
 
-    public ParallelTimeline()
-    {
-    }
+    public ParallelTimeline() {}
 
-    public ParallelTimeline(Nullable<TimeSpan> beginTime) : base(beginTime)
-    {
-    }
+    public ParallelTimeline(Nullable<TimeSpan> beginTime) : base(beginTime) {}
 
-    public ParallelTimeline(Nullable<TimeSpan> beginTime, Duration duration) : base(beginTime, duration)
-    {
-    }
+    public ParallelTimeline(Nullable<TimeSpan> beginTime, Duration duration) : base(beginTime, duration) {}
 
     public ParallelTimeline(Nullable<TimeSpan> beginTime, Duration duration, RepeatBehavior repeatBehavior)
-      : base(beginTime, duration, repeatBehavior)
-    {
-    }
+      : base(beginTime, duration, repeatBehavior) {}
 
     #endregion Constructors
 
@@ -52,7 +44,7 @@ namespace System.Windows.Media.Animation
 
     public new ParallelTimeline Copy()
     {
-      return (ParallelTimeline) base.Copy();
+      return (ParallelTimeline)base.Copy();
     }
 
     protected override Freezable CreateInstanceCore()

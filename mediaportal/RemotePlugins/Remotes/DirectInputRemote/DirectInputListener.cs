@@ -85,7 +85,7 @@ namespace MediaPortal
       // Enumerate axes
       foreach (DeviceObjectInstance doi in device.Objects)
       {
-        if ((doi.ObjectId & (int) DeviceObjectTypeFlags.Axis) != 0)
+        if ((doi.ObjectId & (int)DeviceObjectTypeFlags.Axis) != 0)
         {
           // We found an axis, set the range to a max of 10,000
           device.Properties.SetRange(ParameterHow.ById,
@@ -106,9 +106,7 @@ namespace MediaPortal
         {
           device.Unacquire();
         }
-        catch (NullReferenceException)
-        {
-        }
+        catch (NullReferenceException) {}
         device.Dispose();
         device = null;
       }

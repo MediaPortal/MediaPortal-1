@@ -9,9 +9,7 @@ namespace MediaPortal.MPInstaller
 {
   public class MPIutils
   {
-    public MPIutils()
-    {
-    }
+    public MPIutils() {}
 
     public static void LoadPlugins(string pluginFile)
     {

@@ -29,9 +29,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public EventSetter()
-    {
-    }
+    public EventSetter() {}
 
     public EventSetter(RoutedEvent routedEvent, Delegate handler)
     {

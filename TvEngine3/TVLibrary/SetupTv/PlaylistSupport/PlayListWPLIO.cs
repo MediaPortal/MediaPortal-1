@@ -69,9 +69,8 @@ namespace MediaPortal.Playlists
             }
           }
         return true;
-      } catch (Exception)
-      {
       }
+      catch (Exception) {}
       return false;
     }
 

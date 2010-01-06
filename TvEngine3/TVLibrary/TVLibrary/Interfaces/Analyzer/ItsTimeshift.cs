@@ -22,12 +22,12 @@ using System.Runtime.InteropServices;
 
 namespace TvLibrary.Interfaces.Analyzer
 {
-   /// <summary>
+  /// <summary>
   /// interface to the timeshift com object
   /// </summary>
   [ComVisible(true), ComImport,
-Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsTimeShift
   {
     ///<summary>
@@ -36,25 +36,29 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     ///<param name="fileName">Filename</param>
     ///<returns>Error code</returns>
     [PreserveSig]
-    int SetTimeShiftingFileName([In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
+    int SetTimeShiftingFileName([In, MarshalAs(UnmanagedType.LPStr)] string fileName);
+
     /// <summary>
     /// Starts timeshifting.
     /// </summary>
     /// <returns></returns>
     [PreserveSig]
     int Start();
+
     /// <summary>
     /// Stops timeshifting.
     /// </summary>
     /// <returns></returns>
     [PreserveSig]
     int Stop();
+
     /// <summary>
     /// Resets the timeshifting .
     /// </summary>
     /// <returns></returns>
     [PreserveSig]
     int Reset();
+
     /// <summary>
     /// Gets the size of the buffer.
     /// </summary>
@@ -62,6 +66,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int GetBufferSize(out uint size);
+
     /// <summary>
     /// Gets the number of timeshifting files added.
     /// </summary>
@@ -69,6 +74,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int GetNumbFilesAdded(out ushort numbAdd);
+
     /// <summary>
     /// Gets the number of timeshifting  removed.
     /// </summary>
@@ -76,6 +82,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int GetNumbFilesRemoved(out ushort numbRem);
+
     /// <summary>
     /// Gets the current file id.
     /// </summary>
@@ -83,6 +90,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int GetCurrentFileId(out ushort fileID);
+
     /// <summary>
     /// Gets the mininium number of .TS files.
     /// </summary>
@@ -90,6 +98,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int GetMinTSFiles(out ushort minFiles);
+
     /// <summary>
     /// Sets the mininium number of .TS files.
     /// </summary>
@@ -97,6 +106,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int SetMinTSFiles(ushort minFiles);
+
     /// <summary>
     /// Gets the max number of .TS files.
     /// </summary>
@@ -104,6 +114,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int GetMaxTSFiles(out ushort maxFiles);
+
     /// <summary>
     /// Sets the max number of .TS files..
     /// </summary>
@@ -111,6 +122,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int SetMaxTSFiles(ushort maxFiles);
+
     /// <summary>
     /// Gets the maxium filesize for each .ts file
     /// </summary>
@@ -118,6 +130,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int GetMaxTSFileSize(out long maxSize);
+
     /// <summary>
     /// Sets the maxium filesize for each .ts file
     /// </summary>
@@ -125,6 +138,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int SetMaxTSFileSize(long maxSize);
+
     /// <summary>
     /// Gets the chunk reserve for each .ts file.
     /// </summary>
@@ -132,6 +146,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int GetChunkReserve(out long chunkSize);
+
     /// <summary>
     /// Sets the chunk reserve for each .ts file.
     /// </summary>
@@ -139,6 +154,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int SetChunkReserve(long chunkSize);
+
     /// <summary>
     /// Gets the size of the file buffer.
     /// </summary>
@@ -146,6 +162,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int GetFileBufferSize(out long lpllsize);
+
     /// <summary>
     /// Sets the PMT pid.
     /// </summary>
@@ -154,6 +171,7 @@ Guid("89459BF6-D00E-4d28-928E-9DA8F76B6D3A"),
     /// <returns></returns>
     [PreserveSig]
     int SetPmtPid(int pmtPid, int serviceId);
+
     /// <summary>
     /// pauses or continues writing to the timeshifting file.
     /// </summary>

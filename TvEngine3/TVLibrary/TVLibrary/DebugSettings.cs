@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
@@ -31,24 +31,25 @@ namespace TvLibrary
   /// </summary>
   public class DebugSettings
   {
-    private static string SettingsPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Team MediaPortal\MediaPortal TV Server\debug\";
+    private static string SettingsPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) +
+                                         @"\Team MediaPortal\MediaPortal TV Server\debug\";
 
     /// <summary>
     /// Get the path and filename of the requested debug setting
     /// </summary>
     /// <param name="setting">the name of the setting</param>
     /// <returns>the path</returns>
-    static public string SettingPath(string setting)
+    public static string SettingPath(string setting)
     {
       return SettingsPath + setting + ".txt";
     }
-    
+
     /// <summary>
     /// Get the value of a debug setting
     /// </summary>
     /// <param name="setting">the name of the setting</param>
     /// <returns>true if the setting is enabled, otherwise false</returns>
-    static public bool GetSetting(string setting)
+    public static bool GetSetting(string setting)
     {
       return File.Exists(SettingPath(setting));
     }
@@ -58,7 +59,7 @@ namespace TvLibrary
     /// </summary>
     /// <param name="setting">the name of the setting</param>
     /// <param name="enabled">true to enable the setting, otherwise false</param>
-    static public void SetSetting(string setting, bool enabled)
+    public static void SetSetting(string setting, bool enabled)
     {
       string settingPath = SettingPath(setting);
       try
@@ -91,7 +92,7 @@ namespace TvLibrary
     /// <summary>
     /// When true, the graph should be reset after it is stopped
     /// </summary>
-    static public bool ResetGraph
+    public static bool ResetGraph
     {
       get { return GetSetting("ResetGraph"); }
       set { SetSetting("ResetGraph", value); }
@@ -100,7 +101,7 @@ namespace TvLibrary
     /// <summary>
     /// When true, TSWriter should always use PAT lookup
     /// </summary>
-    static public bool UsePATLookup
+    public static bool UsePATLookup
     {
       get { return GetSetting("UsePATLookup"); }
       set { SetSetting("UsePATLookup", value); }
@@ -109,7 +110,7 @@ namespace TvLibrary
     /// <summary>
     /// When true, the raw timeshifted TS will be dumped to a file
     /// </summary>
-    static public bool DumpRawTS
+    public static bool DumpRawTS
     {
       get { return GetSetting("DisableCRCCheck"); }
       set { SetSetting("DisableCRCCheck", value); }
@@ -118,7 +119,7 @@ namespace TvLibrary
     /// <summary>
     /// When true, CRC checks should be disabled for DVB TS packets
     /// </summary>
-    static public bool DisableCRCCheck
+    public static bool DisableCRCCheck
     {
       get { return GetSetting("DisableCRCCheck"); }
       set { SetSetting("DisableCRCCheck", value); }

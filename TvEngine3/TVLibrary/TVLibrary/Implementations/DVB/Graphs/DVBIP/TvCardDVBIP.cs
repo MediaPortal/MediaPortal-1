@@ -29,9 +29,8 @@ using TvLibrary.Interfaces.Analyzer;
 
 namespace TvLibrary.Implementations.DVB
 {
-
   [ComImport, Guid("fc50bed6-fe38-42d3-b831-771690091a6e")]
-  class MpTsAnalyzer { }
+  internal class MpTsAnalyzer {}
 
   /// <summary>
   /// Constructor if TvCardDVBIP
@@ -40,10 +39,12 @@ namespace TvLibrary.Implementations.DVB
   {
     /// Stream source filter
     protected IBaseFilter _filterStreamSource;
+
     /// default url
     protected string _defaultUrl;
+
     /// sequence
-    protected int _sequence; 
+    protected int _sequence;
 
     /// <summary>
     /// Contstructor
@@ -88,7 +89,6 @@ namespace TvLibrary.Implementations.DVB
         AddTsWriterFilterToGraph();
         _conditionalAccess = new ConditionalAccess(_filterStreamSource, _filterTsWriter, null, this);
         _graphState = GraphState.Created;
-
       }
       catch (Exception ex)
       {
@@ -98,6 +98,7 @@ namespace TvLibrary.Implementations.DVB
         throw ex;
       }
     }
+
     /// <summary>
     /// AddStreamSourceFilter
     /// </summary>
@@ -170,7 +171,9 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Info("dvbip: tune: Current Channel != null {0}", CurrentChannel.ToString());
         }
         else
-        { Log.Log.Info("dvbip: tune: Current channel is null"); }
+        {
+          Log.Log.Info("dvbip: tune: Current channel is null");
+        }
         if (_graphState == GraphState.Idle)
         {
           Log.Log.Info("dvbip: tune: Building graph");
@@ -181,7 +184,9 @@ namespace TvLibrary.Implementations.DVB
           }
         }
         else
-        { Log.Log.Info("dvbip: tune: Graph is running"); }
+        {
+          Log.Log.Info("dvbip: tune: Graph is running");
+        }
 
         //_pmtPid = -1;
 
@@ -191,9 +196,7 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Info("dvb:Getting new subchannel");
           subChannelId = GetNewSubChannel(channel);
         }
-        else
-        {
-        }
+        else {}
         Log.Log.Info("dvb:Submit tunerequest size:{0} new:{1}", _mapSubChannels.Count, subChannelId);
         _mapSubChannels[subChannelId].CurrentChannel = channel;
 

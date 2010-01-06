@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
@@ -55,7 +55,7 @@ namespace TvDatabase
   {
     #region variables
 
-    bool _alreadySorted;
+    private bool _alreadySorted;
 
     #endregion
 
@@ -81,7 +81,7 @@ namespace TvDatabase
     #endregion
 
     #region public properties
-    
+
     /// <summary>
     /// Indicates whether the <see cref="ProgramList"/> is already sorted or not.
     /// </summary>
@@ -90,19 +90,13 @@ namespace TvDatabase
     /// need the list to be sorted, will assume it is already sorted
     /// and will not sort it again
     /// </remarks>
-    public bool AlreadySorted 
+    public bool AlreadySorted
     {
-      get
-      {
-        return _alreadySorted;
-      }
-      set
-      {
-        _alreadySorted = value;
-      }
+      get { return _alreadySorted; }
+      set { _alreadySorted = value; }
     }
 
-    #endregion 
+    #endregion
 
     #region public methods
 
@@ -128,13 +122,13 @@ namespace TvDatabase
       for (int i = 1; i < Count; i++)
       {
         Program newProg = this[i];
-        if (newProg.StartTime < prevProg.EndTime)   // we have an overlap here
+        if (newProg.StartTime < prevProg.EndTime) // we have an overlap here
         {
           // let us find out which one is the correct one
-          if (newProg.StartTime > prevProg.StartTime)  // newProg will create hole -> delete it
+          if (newProg.StartTime > prevProg.StartTime) // newProg will create hole -> delete it
           {
             Remove(newProg);
-            i--;                              // stay at the same position
+            i--; // stay at the same position
             continue;
           }
 
@@ -218,7 +212,7 @@ namespace TvDatabase
     /// </remarks>
     public void RemoveOverlappingPrograms(List<Program> existingPrograms, bool alreadySorted)
     {
-      if (Count ==0 || existingPrograms.Count == 0) return;
+      if (Count == 0 || existingPrograms.Count == 0) return;
 
       if (!alreadySorted)
       {
@@ -230,7 +224,7 @@ namespace TvDatabase
       // Traverse both lists in parallel in a "Merge Join" style.
       int i = 0;
       int j = 0;
-      for (; i < Count && j < existingPrograms.Count; )
+      for (; i < Count && j < existingPrograms.Count;)
       {
         Program prog = this[i];
         Program existProg = existingPrograms[j];
@@ -266,7 +260,6 @@ namespace TvDatabase
           }
         }
       }
-
     }
 
     /// <summary>
@@ -298,7 +291,7 @@ namespace TvDatabase
       for (int i = 1; i < Count; i++)
       {
         Program newProg = this[i];
-        if (newProg.StartTime > prevProg.EndTime)   // we have a gap here
+        if (newProg.StartTime > prevProg.EndTime) // we have a gap here
         {
           // try to find data in the database
           foreach (Program dbProg in sourceList)
@@ -402,48 +395,48 @@ namespace TvDatabase
 
     #region Base overrides
 
-    new public void Add(Program item)
+    public new void Add(Program item)
     {
       _alreadySorted = false;
       base.Add(item);
     }
 
-    new public void AddRange(IEnumerable<Program> collection)
+    public new void AddRange(IEnumerable<Program> collection)
     {
       _alreadySorted = false;
       base.AddRange(collection);
     }
 
-    new public void Insert(int index, Program item)
+    public new void Insert(int index, Program item)
     {
       _alreadySorted = false;
       base.Insert(index, item);
     }
 
-    new public void InsertRange(int index, IEnumerable<Program> collection)
+    public new void InsertRange(int index, IEnumerable<Program> collection)
     {
       _alreadySorted = false;
       base.InsertRange(index, collection);
     }
 
-    new public void Reverse(int index, int count)
+    public new void Reverse(int index, int count)
     {
       _alreadySorted = false;
       base.Reverse(index, count);
     }
 
-    new public void Reverse()
+    public new void Reverse()
     {
       _alreadySorted = false;
       base.Reverse();
     }
 
-    new public void Sort()
+    public new void Sort()
     {
       Sort(this);
       _alreadySorted = true;
     }
-    
+
     #endregion
 
     #region IComparer<Program> Members

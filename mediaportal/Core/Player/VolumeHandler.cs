@@ -41,9 +41,7 @@ namespace MediaPortal.Player
     #region Constructors
 
     public VolumeHandler()
-      : this(LoadFromRegistry())
-    {
-    }
+      : this(LoadFromRegistry()) {}
 
     public VolumeHandler(int[] volumeTable)
     {
@@ -103,13 +101,14 @@ namespace MediaPortal.Player
             return
               new VolumeHandler(new int[]
                                   {
-                                    0, 1039, 1234, 1467, 1744, 2072, 2463, 2927, 3479, 4135, 4914, 5841, 6942, 8250, 9806
+                                    0, 1039, 1234, 1467, 1744, 2072, 2463, 2927, 3479, 4135, 4914, 5841, 6942, 8250,
+                                    9806
                                     , 11654, 13851, 16462, 19565, 23253, 27636, 32845, 39037, 46395, 55141, 65535
                                   });
             // custom user setting
           case 3:
             return new VolumeHandlerCustom();
-              // defaults to vista safe "0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535"
+            // defaults to vista safe "0, 4095, 8191, 12287, 16383, 20479, 24575, 28671, 32767, 36863, 40959, 45055, 49151, 53247, 57343, 61439, 65535"
             // Vista recommended values
           case 4:
             return
@@ -157,7 +156,7 @@ namespace MediaPortal.Player
           return _systemTable;
         }
 
-        byte[] buffer = (byte[]) key.GetValue("VolumeTable", null);
+        byte[] buffer = (byte[])key.GetValue("VolumeTable", null);
 
         if (buffer == null)
         {
@@ -165,13 +164,13 @@ namespace MediaPortal.Player
         }
 
         // Windows documentation states that a volume table must consist of between 11 and 201 entries
-        if ((buffer.Length/4) < 11 || (buffer.Length/4) > 201)
+        if ((buffer.Length / 4) < 11 || (buffer.Length / 4) > 201)
         {
           return _systemTable;
         }
 
         // create an array large enough to hold the system's volume table
-        int[] volumeTable = new int[buffer.Length/4];
+        int[] volumeTable = new int[buffer.Length / 4];
 
         for (int index = 0, offset = 0; index < volumeTable.Length; index++, offset += 4)
         {
@@ -199,8 +198,8 @@ namespace MediaPortal.Player
         msg.Label3 = Instance.IsMuted.ToString();
         GUIGraphicsContext.SendMessage(msg);
 
-        if (GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_TVFULLSCREEN ||
-            GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && _showVolumeOSD)
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+            GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && _showVolumeOSD)
         {
           Action showVolume = new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0);
           GUIWindowManager.OnAction(showVolume);
@@ -226,8 +225,8 @@ namespace MediaPortal.Player
         GUIGraphicsContext.SendMessage(msg);
 
 
-        if (GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_TVFULLSCREEN ||
-            GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && _showVolumeOSD)
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+            GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && _showVolumeOSD)
         {
           Action showVolume = new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0);
           GUIWindowManager.OnAction(showVolume);

@@ -27,10 +27,10 @@ using System;
 
 namespace System.Windows.Serialization
 {
-	public interface ICanAddNamespaceEntries
-	{
-		// TODO:
+  public interface ICanAddNamespaceEntries
+  {
+    // TODO:
 //		void AddNamespaceEntries(XamlDesignerSerializationManager manager, object value);
-		void AddNamespaceEntries(string[] namespaces);
-	}
+    void AddNamespaceEntries(string[] namespaces);
+  }
 }

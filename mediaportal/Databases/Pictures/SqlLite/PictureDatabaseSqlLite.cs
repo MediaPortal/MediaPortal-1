@@ -67,9 +67,7 @@ namespace MediaPortal.Picture.Database
             m_db.Dispose();
             Log.Warn("PictureDatabaseSqlLite: Disposing current instance..");
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
 
         // Open database
@@ -77,9 +75,7 @@ namespace MediaPortal.Picture.Database
         {
           Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
         m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "PictureDatabase.db3"));
         // Retry 10 times on busy (DB in use or system resources exhausted)
         m_db.BusyRetries = 10;
@@ -114,7 +110,8 @@ namespace MediaPortal.Picture.Database
       {
         return false;
       }
-      DatabaseUtility.AddTable(m_db, "picture", "CREATE TABLE picture ( idPicture integer primary key, strFile text, iRotation integer, strDateTaken text)");
+      DatabaseUtility.AddTable(m_db, "picture",
+                               "CREATE TABLE picture ( idPicture integer primary key, strFile text, iRotation integer, strDateTaken text)");
       return true;
     }
 
@@ -334,7 +331,7 @@ namespace MediaPortal.Picture.Database
         }
 
         AddPicture(strPicture, iRotation);
-        
+
         return iRotation;
       }
       catch (Exception ex)
@@ -548,7 +545,6 @@ namespace MediaPortal.Picture.Database
     {
       get
       {
-
         if (m_db != null)
         {
           return m_db.DatabaseName;
@@ -571,9 +567,7 @@ namespace MediaPortal.Picture.Database
             m_db.Close();
             m_db.Dispose();
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
           m_db = null;
         }
       }

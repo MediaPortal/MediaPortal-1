@@ -52,9 +52,7 @@ namespace MediaPortal.GUI.Library
 
 
     public GUIProgressControl(int dwParentID)
-      : base(dwParentID)
-    {
-    }
+      : base(dwParentID) {}
 
     /// <summary>
     /// Creates a GUIProgressControl.
@@ -185,9 +183,7 @@ namespace MediaPortal.GUI.Library
           {
             Percentage = Int32.Parse(m_strText);
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
 
@@ -215,13 +211,13 @@ namespace MediaPortal.GUI.Library
       {
         percent = 100;
       }
-      float fWidth = (float) percent;
+      float fWidth = (float)percent;
       fWidth /= 100.0f;
-      fWidth *= (float) (_imageBackGround.Width - 2*off - iWidthLeft - iWidthRight);
+      fWidth *= (float)(_imageBackGround.Width - 2 * off - iWidthLeft - iWidthRight);
 
       int iXPos = off + _imageBackGround.XPosition;
 
-      int iYPos = _imageBackGround.YPosition + (iBkgHeight - iHeightLeft)/2;
+      int iYPos = _imageBackGround.YPosition + (iBkgHeight - iHeightLeft) / 2;
       //_imageLeft.SetHeight(iHeight);
       _imageLeft.SetPosition(iXPos, iYPos);
       _imageLeft.Height = iHeightLeft;
@@ -230,14 +226,14 @@ namespace MediaPortal.GUI.Library
       _imageLeft.Render(timePassed);
 
       iXPos += iWidthLeft;
-      if (percent > 0 && (int) fWidth > 1)
+      if (percent > 0 && (int)fWidth > 1)
       {
         _imageMid.SetPosition(iXPos, iYPos);
         _imageMid.Height = iHeightLeft; //_imageMid.TextureHeight;
-        _imageMid.Width = (int) Math.Abs(fWidth);
+        _imageMid.Width = (int)Math.Abs(fWidth);
         _imageMid.SetPosition(iXPos, iYPos);
         _imageMid.Render(timePassed);
-        iXPos += (int) fWidth;
+        iXPos += (int)fWidth;
       }
       //_imageRight.SetHeight(iHeight);
       _imageRight.SetPosition(iXPos, iYPos);

@@ -29,9 +29,7 @@ namespace System.Windows.Controls
   {
     #region Constructors
 
-    public DataTemplate()
-    {
-    }
+    public DataTemplate() {}
 
     public DataTemplate(object dataType)
     {

@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
@@ -37,22 +37,26 @@ namespace TvLibrary.Interfaces
     /// <param name="ciMenuHandler">callback handler</param>
     /// <returns>true</returns>
     bool SetCiMenuHandler(ICiMenuCallbacks ciMenuHandler);
+
     /// <summary>
     /// Enter CI menu
     /// </summary>
     /// <returns>true is successful</returns>
     bool EnterCIMenu();
+
     /// <summary>
     /// Closes CI menu
     /// </summary>
     /// <returns>true is successful</returns>
     bool CloseCIMenu();
+
     /// <summary>
     /// Selects a menu choice
     /// </summary>
     /// <param name="choice">choice (0 means back)</param>
     /// <returns>true if successful</returns>
     bool SelectMenu(byte choice);
+
     /// <summary>
     /// Send a menu answer after CAM inquiry
     /// </summary>

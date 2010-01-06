@@ -95,16 +95,14 @@ namespace MediaPortal.Util
     private static extern int GdipGetImageType(IntPtr image, out GdipImageTypeEnum type);
 
     private static IntPtr gdipToken = IntPtr.Zero;
-    private static Type bmpType = typeof(System.Drawing.Bitmap);
-    private static Type emfType = typeof(System.Drawing.Imaging.Metafile);
+    private static Type bmpType = typeof (System.Drawing.Bitmap);
+    private static Type emfType = typeof (System.Drawing.Imaging.Metafile);
 
     #endregion
 
     #region Constructors
 
-    private ImageFast()
-    { 
-    }
+    private ImageFast() {}
 
     static ImageFast()
     {
@@ -128,7 +126,7 @@ namespace MediaPortal.Util
         Log.Debug("FastImage: Cleaning up GDI+ before shutting down");
         GdiplusShutdown(gdipToken);
       }
-    }    
+    }
 
     public static Image FromFile(string filename)
     {
@@ -150,13 +148,18 @@ namespace MediaPortal.Util
       switch (imageType)
       {
         case GdipImageTypeEnum.Bitmap:
-          return (Bitmap)bmpType.InvokeMember("FromGDIplus", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { loadingImage });
+          return
+            (Bitmap)
+            bmpType.InvokeMember("FromGDIplus", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
+                                 null, null, new object[] {loadingImage});
         case GdipImageTypeEnum.Metafile:
-          return (Metafile)emfType.InvokeMember("FromGDIplus", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { loadingImage });
+          return
+            (Metafile)
+            emfType.InvokeMember("FromGDIplus", BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
+                                 null, null, new object[] {loadingImage});
       }
 
       throw new ArgumentException("Couldn't convert underlying GDI+ object to managed object");
     }
   }
-
 }

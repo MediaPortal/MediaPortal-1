@@ -66,7 +66,7 @@ namespace MediaPortal.Utils.Web
     private void RequestWorker_DoWork(object sender, DoWorkEventArgs e)
     {
       Thread.CurrentThread.Name = "HTTP Async request";
-      SendWorkerRequest((string) e.Argument, _requestDelay);
+      SendWorkerRequest((string)e.Argument, _requestDelay);
     }
 
     private void SendWorkerRequest(String targetURL, int delayMSecs)
@@ -78,16 +78,14 @@ namespace MediaPortal.Utils.Web
         // send the command
         try
         {
-          request = (HttpWebRequest) WebRequest.Create(targetURL);
+          request = (HttpWebRequest)WebRequest.Create(targetURL);
           try
           {
             // Use the current user in case an NTLM Proxy or similar is used.
             // request.Proxy = WebProxy.GetDefaultProxy();
             request.Proxy.Credentials = CredentialCache.DefaultCredentials;
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
 
           //request.Timeout = 20000;
           request.Pipelined = false;
@@ -121,7 +119,7 @@ namespace MediaPortal.Utils.Web
         // get the response
         try
         {
-          response = (HttpWebResponse) request.GetResponse();
+          response = (HttpWebResponse)request.GetResponse();
           // most likely timed out..
           if (response == null)
           {

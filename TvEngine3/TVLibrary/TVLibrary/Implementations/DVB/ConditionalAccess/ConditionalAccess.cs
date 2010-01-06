@@ -34,40 +34,46 @@ namespace TvLibrary.Implementations.DVB
   /// Class which handles the conditional access modules for a tv card
   /// (CI and CAM)
   /// </summary>
-  public class ConditionalAccess: IDisposable
+  public class ConditionalAccess : IDisposable
   {
     #region variables
-    readonly bool _useCam;
+
+    private readonly bool _useCam;
+
     /// <summary>
     /// CA decryption limit, 0 for disable CA
     /// </summary>
-    readonly int _decryptLimit;
-    readonly CamType _CamType = CamType.Default;
-    readonly DigitalEverywhere _digitalEveryWhere;
-    readonly TechnoTrendAPI _technoTrend;
-    readonly Twinhan _twinhan;
-    readonly KNCAPI _knc;
-    readonly Hauppauge _hauppauge;
-    readonly ProfRed _profred;
-    readonly DiSEqCMotor _diSEqCMotor;
-    readonly Dictionary<int, ConditionalAccessContext> _mapSubChannels;
-    readonly GenericBDAS _genericbdas;
-    readonly WinTvCiModule _winTvCiModule;
-    readonly GenericATSC _isgenericatsc;
-    readonly ViXSATSC _isvixsatsc;
-    readonly ConexantBDA _conexant;
-    readonly GenPixBDA _genpix;
-    readonly TeVii _TeVii;
+    private readonly int _decryptLimit;
+
+    private readonly CamType _CamType = CamType.Default;
+    private readonly DigitalEverywhere _digitalEveryWhere;
+    private readonly TechnoTrendAPI _technoTrend;
+    private readonly Twinhan _twinhan;
+    private readonly KNCAPI _knc;
+    private readonly Hauppauge _hauppauge;
+    private readonly ProfRed _profred;
+    private readonly DiSEqCMotor _diSEqCMotor;
+    private readonly Dictionary<int, ConditionalAccessContext> _mapSubChannels;
+    private readonly GenericBDAS _genericbdas;
+    private readonly WinTvCiModule _winTvCiModule;
+    private readonly GenericATSC _isgenericatsc;
+    private readonly ViXSATSC _isvixsatsc;
+    private readonly ConexantBDA _conexant;
+    private readonly GenPixBDA _genpix;
+    private readonly TeVii _TeVii;
 
     private readonly ICiMenuActions _ciMenu;
+
     /// <summary>
     /// Accessor for CI Menu handler
     /// </summary>
-    public  ICiMenuActions CiMenu 
-    { 
-      get { return _ciMenu; } 
+    public ICiMenuActions CiMenu
+    {
+      get { return _ciMenu; }
     }
+
     //anysee _anysee = null;
+
     #endregion
 
     //ctor
@@ -78,7 +84,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="analyzerFilter">The capture filter.</param>
     /// <param name="winTvUsbCiFilter">The WinTV CI filter.</param>
     /// <param name="card">Determines the type of TV card</param>    
-    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter, TvCardBase card)
+    public ConditionalAccess(IBaseFilter tunerFilter, IBaseFilter analyzerFilter, IBaseFilter winTvUsbCiFilter,
+                             TvCardBase card)
     {
       try
       {
@@ -189,9 +196,9 @@ namespace TvLibrary.Implementations.DVB
           _profred = new ProfRed(tunerFilter);
           if (_profred.IsProfRed)
           {
-              Log.Log.WriteFile("ProfRed card detected");
-              _diSEqCMotor = new DiSEqCMotor(_profred);
-              return;
+            Log.Log.WriteFile("ProfRed card detected");
+            _diSEqCMotor = new DiSEqCMotor(_profred);
+            return;
           }
           _profred = null;
 
@@ -298,7 +305,8 @@ namespace TvLibrary.Implementations.DVB
           }
           _isgenericatsc = null;
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -360,16 +368,14 @@ namespace TvLibrary.Implementations.DVB
         return true;
       }
     }
+
     /// <summary>
     /// Gets the interface for controlling the DiSeQC motor.
     /// </summary>
     /// <value>IDiSEqCMotor.</value>
     public IDiSEqCMotor DiSEqCMotor
     {
-      get
-      {
-        return _diSEqCMotor;
-      }
+      get { return _diSEqCMotor; }
     }
 
     /// <summary>
@@ -396,7 +402,8 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_technoTrend != null)
         {
-          Log.Log.WriteFile("TechnoTrend IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _technoTrend.IsCamPresent(), _technoTrend.IsCamReady());
+          Log.Log.WriteFile("TechnoTrend IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _technoTrend.IsCamPresent(),
+                            _technoTrend.IsCamReady());
           if (_technoTrend.IsCamPresent() == false)
           {
             return _technoTrend.IsCamPresent();
@@ -415,7 +422,8 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Info("WinTVCI:  CAM initialized");
           return true;
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -478,10 +486,7 @@ namespace TvLibrary.Implementations.DVB
     /// <value>Is CA enabled or disabled</value>
     public bool UseCA
     {
-      get
-      {
-        return _useCam;
-      }
+      get { return _useCam; }
     }
 
     /// <summary>
@@ -490,10 +495,7 @@ namespace TvLibrary.Implementations.DVB
     /// <value>The number of channels decrypting that are able to decrypt.</value>
     public int DecryptLimit
     {
-      get
-      {
-        return _decryptLimit;
-      }
+      get { return _decryptLimit; }
     }
 
     /// <summary>
@@ -554,7 +556,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     private static byte[] PatchPMT_AstonCrypt2(byte[] PMT, int pmtLength, out int newPmtLength)
     {
-      byte[] newPMT = new byte[1024];  // create a new array.
+      byte[] newPMT = new byte[1024]; // create a new array.
 
       int ps = 0;
       int pd = 0;
@@ -572,7 +574,11 @@ namespace TvLibrary.Implementations.DVB
         {
           if (pd >= 1024)
             break;
-          if ((i == 0) && (PMT[ps] == 0x06) && (PMT[ps + 5] == 0x6A)) { newPMT[pd++] = 0x81; ps++; }
+          if ((i == 0) && (PMT[ps] == 0x06) && (PMT[ps + 5] == 0x6A))
+          {
+            newPMT[pd++] = 0x81;
+            ps++;
+          }
           else
             newPMT[pd++] = PMT[ps++];
         }
@@ -598,7 +604,7 @@ namespace TvLibrary.Implementations.DVB
         if (!_useCam)
           return true;
         if (channel.FreeToAir)
-          return true;//no need to descramble this one...
+          return true; //no need to descramble this one...
 
         AddSubChannel(subChannel, channel);
         ConditionalAccessContext context = _mapSubChannels[subChannel];
@@ -717,7 +723,7 @@ namespace TvLibrary.Implementations.DVB
           _genpix.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
-        if (_TeVii!= null)
+        if (_TeVii != null)
         {
           _TeVii.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
@@ -728,6 +734,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Write(ex);
       }
     }
+
     /// <summary>
     /// Instructs the cam/ci module to use hardware filter and only send the pids listed in pids to the pc
     /// </summary>
@@ -735,7 +742,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The current tv/radio channel.</param>
     /// <param name="pids">The pids.</param>
     /// <remarks>when the pids array is empty, pid filtering is disabled and all pids are received</remarks>
-    public void SendPids(int subChannel, DVBBaseChannel channel, List<ushort >pids)
+    public void SendPids(int subChannel, DVBBaseChannel channel, List<ushort> pids)
     {
       try
       {
@@ -746,7 +753,6 @@ namespace TvLibrary.Implementations.DVB
         Dictionary<int, ConditionalAccessContext>.Enumerator enSubch = _mapSubChannels.GetEnumerator();
         while (enSubch.MoveNext())
         {
-
           List<ushort> enPid = enSubch.Current.Value.HwPids;
           if (enPid != null)
           {
@@ -782,11 +788,13 @@ namespace TvLibrary.Implementations.DVB
             _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, isDvbs, isAtsc, pids);
           }
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
     }
+
     /// <summary>
     /// Sets the DVB s2 modulation.
     /// </summary>
@@ -835,7 +843,9 @@ namespace TvLibrary.Implementations.DVB
               {
                 channel.ModulationType = ModulationType.Mod32Qam;
               }
-              channel.ModulationType = channel.InnerFecRate == BinaryConvolutionCodeRate.Rate8_9 ? ModulationType.Mod16Qam : ModulationType.ModBpsk;
+              channel.ModulationType = channel.InnerFecRate == BinaryConvolutionCodeRate.Rate8_9
+                                         ? ModulationType.Mod16Qam
+                                         : ModulationType.ModBpsk;
             }
             //Set the Hauppauge Modulation type
             /*if (channel.ModulationType == ModulationType.ModQpsk)
@@ -860,21 +870,21 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_profred != null)
         {
-            //Set ProfRed pilot, roll-off settings
-            if (channel.ModulationType == ModulationType.ModNotSet)
-            {
-                channel.ModulationType = ModulationType.ModNotDefined;
-            }
-            if (channel.ModulationType == ModulationType.Mod8Psk)
-            {
-                channel.ModulationType = ModulationType.ModBpsk;
-            }
-            Log.Log.WriteFile("ProfRed DVB-S2 modulation set to:{0}", channel.ModulationType);
-            Log.Log.WriteFile("ProfRed DVB-S2 Pilot set to:{0}", channel.Pilot);
-            Log.Log.WriteFile("ProfRed DVB-S2 RollOff set to:{0}", channel.Rolloff);
-            Log.Log.WriteFile("ProfRed DVB-S2 fec set to:{0}", channel.InnerFecRate);
-            //}
-            return channel;
+          //Set ProfRed pilot, roll-off settings
+          if (channel.ModulationType == ModulationType.ModNotSet)
+          {
+            channel.ModulationType = ModulationType.ModNotDefined;
+          }
+          if (channel.ModulationType == ModulationType.Mod8Psk)
+          {
+            channel.ModulationType = ModulationType.ModBpsk;
+          }
+          Log.Log.WriteFile("ProfRed DVB-S2 modulation set to:{0}", channel.ModulationType);
+          Log.Log.WriteFile("ProfRed DVB-S2 Pilot set to:{0}", channel.Pilot);
+          Log.Log.WriteFile("ProfRed DVB-S2 RollOff set to:{0}", channel.Rolloff);
+          Log.Log.WriteFile("ProfRed DVB-S2 fec set to:{0}", channel.InnerFecRate);
+          //}
+          return channel;
         }
         if (_technoTrend != null)
         {
@@ -969,7 +979,8 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("DigitalEverywhere fec set to:{0}", (int)tuneChannel.InnerFecRate);
           return tuneChannel;
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
@@ -1029,15 +1040,17 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public ICiMenuCallbacks CiMenuHandler
     {
-      set {
+      set
+      {
         if (_ciMenu != null)
         {
           _ciMenu.SetCiMenuHandler(value);
         }
-      }    
+      }
     }
 
     #region IDisposable Member
+
     /// <summary>
     /// Disposing CI and API resources
     /// </summary>
@@ -1088,6 +1101,7 @@ namespace TvLibrary.Implementations.DVB
         _TeVii.Dispose();
       }
     }
+
     #endregion
   }
 }

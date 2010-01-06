@@ -38,7 +38,8 @@ namespace MediaPortal.Configuration.Controls
 
     //used to fire an event to retrieve formatting info
     //and then draw the cell with this formatting info
-    protected override void Paint(Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight)
+    protected override void Paint(Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush,
+                                  Brush foreBrush, bool alignToRight)
     {
       DataGridFormatCellEventArgs e = null;
 
@@ -66,7 +67,8 @@ namespace MediaPortal.Configuration.Controls
           using (Region newRegion = new Region(rect))
           {
             g.Clip = newRegion;
-            int charWidth = (int)Math.Ceiling(g.MeasureString("c", e.TextFont, 20, StringFormat.GenericTypographic).Width);
+            int charWidth =
+              (int)Math.Ceiling(g.MeasureString("c", e.TextFont, 20, StringFormat.GenericTypographic).Width);
 
             string s = GetColumnValueAtRow(source, rowNum).ToString();
             int maxChars = Math.Min(s.Length, (bounds.Width / charWidth));
@@ -74,7 +76,8 @@ namespace MediaPortal.Configuration.Controls
             try
             {
               g.DrawString(s.Substring(0, maxChars), e.TextFont, e.ForeBrush, bounds.X, bounds.Y + 2);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
               Console.WriteLine(ex.Message);
             } //empty catch
@@ -122,8 +125,10 @@ namespace MediaPortal.Configuration.Controls
     {
       AllowNull = false;
     }
+
     //overridden to fire BoolChange event and Formatting event
-    protected override void Paint(Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush, Brush foreBrush, bool alignToRight)
+    protected override void Paint(Graphics g, Rectangle bounds, CurrencyManager source, int rowNum, Brush backBrush,
+                                  Brush foreBrush, bool alignToRight)
     {
       int colNum = DataGridTableStyle.GridColumnStyles.IndexOf(this);
 
@@ -160,18 +165,19 @@ namespace MediaPortal.Configuration.Controls
     //changed event
     public event BoolValueChangedEventHandler BoolValueChanged;
 
-    bool saveValue;
-    int saveRow = -1;
-    bool lockValue;
-    bool beingEdited;
-    public const int VK_SPACE = 32;// 0x20
+    private bool saveValue;
+    private int saveRow = -1;
+    private bool lockValue;
+    private bool beingEdited;
+    public const int VK_SPACE = 32; // 0x20
 
     //needed to get the space bar changing of the bool value
     [System.Runtime.InteropServices.DllImport("user32.dll")]
-    static extern short GetKeyState(int nVirtKey);
+    private static extern short GetKeyState(int nVirtKey);
 
     //set variables to start tracking bool changes
-    protected override void Edit(CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText, bool cellIsVisible)
+    protected override void Edit(CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText,
+                                 bool cellIsVisible)
     {
       lockValue = true;
       beingEdited = true;
@@ -194,10 +200,10 @@ namespace MediaPortal.Configuration.Controls
       Point mousePos = DataGridTableStyle.DataGrid.PointToClient(Control.MousePosition);
       DataGrid dg = DataGridTableStyle.DataGrid;
       bool isClickInCell = ((Control.MouseButtons == MouseButtons.Left) &&
-        dg.GetCellBounds(dg.CurrentCell).Contains(mousePos));
+                            dg.GetCellBounds(dg.CurrentCell).Contains(mousePos));
 
       bool changing = dg.Focused && (isClickInCell
-        || GetKeyState(VK_SPACE) < 0); // or spacebar
+                                     || GetKeyState(VK_SPACE) < 0); // or spacebar
 
       if (!lockValue && beingEdited && changing && saveRow == rowNum)
       {
@@ -319,9 +325,11 @@ namespace MediaPortal.Configuration.Controls
       get { return currentCellValue; }
     }
   }
+
   #endregion
 
   #region BoolValueChanging Event
+
   public delegate void BoolValueChangedEventHandler(object sender, BoolValueChangedEventArgs e);
 
   public class BoolValueChangedEventArgs : EventArgs
@@ -357,5 +365,6 @@ namespace MediaPortal.Configuration.Controls
       get { return boolVal; }
     }
   }
+
   #endregion
 }

@@ -48,9 +48,9 @@ namespace VistaToolbelt.Interop.Native
   public interface IShellItem
   {
     void BindToHandler(IntPtr pbc,
-        [MarshalAs(UnmanagedType.LPStruct)]Guid bhid,
-        [MarshalAs(UnmanagedType.LPStruct)]Guid riid,
-        out IntPtr ppv);
+                       [MarshalAs(UnmanagedType.LPStruct)] Guid bhid,
+                       [MarshalAs(UnmanagedType.LPStruct)] Guid riid,
+                       out IntPtr ppv);
 
     void GetParent(out IShellItem ppsi);
 
@@ -59,7 +59,7 @@ namespace VistaToolbelt.Interop.Native
     void GetAttributes(uint sfgaoMask, out uint psfgaoAttribs);
 
     void Compare(IShellItem psi, uint hint, out int piOrder);
-  };
+  } ;
 
   [ComImportAttribute]
   [GuidAttribute("bcc18b79-ba16-442f-80c4-8a59c30c463b")]
@@ -67,24 +67,22 @@ namespace VistaToolbelt.Interop.Native
   public interface IShellItemImageFactory
   {
     void GetImage(
-        [In, MarshalAs(UnmanagedType.Struct)] SIZE size,
-        [In] SIIGBF flags,
-        [Out] out IntPtr phbm);
+      [In, MarshalAs(UnmanagedType.Struct)] SIZE size,
+      [In] SIIGBF flags,
+      [Out] out IntPtr phbm);
   }
 
   [SuppressUnmanagedCodeSecurity]
-  public static class SafeNativeMethods
-  {
-  }
+  public static class SafeNativeMethods {}
 
   [SuppressUnmanagedCodeSecurity]
   public static class UnsafeNativeMethods
   {
     [DllImport("shell32.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
     public static extern void SHCreateItemFromParsingName(
-        [In][MarshalAs(UnmanagedType.LPWStr)] string pszPath,
-        [In] IntPtr pbc,
-        [In][MarshalAs(UnmanagedType.LPStruct)] Guid riid,
-        [Out][MarshalAs(UnmanagedType.Interface, IidParameterIndex = 2)] out IShellItem ppv);
+      [In] [MarshalAs(UnmanagedType.LPWStr)] string pszPath,
+      [In] IntPtr pbc,
+      [In] [MarshalAs(UnmanagedType.LPStruct)] Guid riid,
+      [Out] [MarshalAs(UnmanagedType.Interface, IidParameterIndex = 2)] out IShellItem ppv);
   }
 }

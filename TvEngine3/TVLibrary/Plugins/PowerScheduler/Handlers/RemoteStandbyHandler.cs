@@ -1,22 +1,24 @@
 #region Usings
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Handlers
 {
-  class RemoteStandbyHandler : IStandbyHandler
+  internal class RemoteStandbyHandler : IStandbyHandler
   {
     private IStandbyHandler remote;
     private int tag;
     public readonly string Url;
 
-    public RemoteStandbyHandler( String URL, int tag )
+    public RemoteStandbyHandler(String URL, int tag)
     {
-      remote = (IStandbyHandler)Activator.GetObject(typeof(IStandbyHandler), URL);
+      remote = (IStandbyHandler)Activator.GetObject(typeof (IStandbyHandler), URL);
       this.tag = tag;
       this.Url = URL;
     }
@@ -30,7 +32,7 @@ namespace TvEngine.PowerScheduler.Handlers
 
     public bool DisAllowShutdown
     {
-      get 
+      get
       {
         if (remote == null) return false;
         try
@@ -45,6 +47,7 @@ namespace TvEngine.PowerScheduler.Handlers
         }
       }
     }
+
     public void UserShutdownNow()
     {
       if (remote == null) return;
@@ -61,7 +64,8 @@ namespace TvEngine.PowerScheduler.Handlers
 
     public string HandlerName
     {
-      get {
+      get
+      {
         if (remote == null) return "<dead#" + tag + ">";
         try
         {

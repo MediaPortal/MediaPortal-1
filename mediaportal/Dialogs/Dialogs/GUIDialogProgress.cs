@@ -59,7 +59,7 @@ namespace MediaPortal.Dialogs
 
     public GUIDialogProgress()
     {
-      GetID = (int) Window.WINDOW_DIALOG_PROGRESS;
+      GetID = (int)Window.WINDOW_DIALOG_PROGRESS;
     }
 
     #endregion
@@ -76,7 +76,7 @@ namespace MediaPortal.Dialogs
         {
           _percentage = value;
         }
-        GUIProgressControl progress = (GUIProgressControl) GetControl((int) Controls.ProgressBar);
+        GUIProgressControl progress = (GUIProgressControl)GetControl((int)Controls.ProgressBar);
         if (progress != null)
         {
           progress.Percentage = _percentage;
@@ -92,7 +92,7 @@ namespace MediaPortal.Dialogs
         if (_showProgressBar != value)
         {
           _showProgressBar = value;
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE, GetID, 0, (int) Controls.ProgressBar,
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE, GetID, 0, (int)Controls.ProgressBar,
                                           0, 0, null);
           if (!_showProgressBar)
           {
@@ -180,9 +180,7 @@ namespace MediaPortal.Dialogs
       Percentage = NewPercentage;
     }
 
-    public void Progress()
-    {
-    }
+    public void Progress() {}
 
     public void StartModal(int ParentId)
     {
@@ -195,21 +193,19 @@ namespace MediaPortal.Dialogs
       DisplayProgressBar = DisplayBar;
     }
 
-    public void ProgressKeys()
-    {
-    }
+    public void ProgressKeys() {}
 
     public void DisableCancel(bool bOnOff)
     {
       if (bOnOff)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, GetID, 0, (int) Controls.CancelButton,
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, GetID, 0, (int)Controls.CancelButton,
                                         0, 0, null);
         OnMessage(msg);
       }
       else
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, GetID, 0, (int) Controls.CancelButton, 0,
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, GetID, 0, (int)Controls.CancelButton, 0,
                                         0, null);
         OnMessage(msg);
       }
@@ -265,7 +261,7 @@ namespace MediaPortal.Dialogs
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
           {
-            if (message.SenderControlId == (int) Controls.CancelButton)
+            if (message.SenderControlId == (int)Controls.CancelButton)
             {
               _canceled = true;
               PageDestroy();

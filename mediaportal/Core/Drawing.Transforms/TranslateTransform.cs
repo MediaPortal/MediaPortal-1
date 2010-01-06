@@ -29,9 +29,7 @@ namespace MediaPortal.Drawing.Transforms
   {
     #region Constructors
 
-    public TranslateTransform()
-    {
-    }
+    public TranslateTransform() {}
 
     public TranslateTransform(double x, double y)
     {
@@ -45,7 +43,7 @@ namespace MediaPortal.Drawing.Transforms
 
     protected override Matrix PrepareValue()
     {
-      return Matrix.Translation((float) _location.X, (float) _location.Y, 0);
+      return Matrix.Translation((float)_location.X, (float)_location.Y, 0);
     }
 
     #endregion Methods

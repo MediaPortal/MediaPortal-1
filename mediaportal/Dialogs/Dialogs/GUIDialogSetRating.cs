@@ -60,7 +60,7 @@ namespace MediaPortal.Dialogs
 
     public GUIDialogSetRating()
     {
-      GetID = (int) Window.WINDOW_DIALOG_RATING;
+      GetID = (int)Window.WINDOW_DIALOG_RATING;
     }
 
     public override bool Init()
@@ -165,7 +165,7 @@ namespace MediaPortal.Dialogs
       GUIImage[] imgStars = new GUIImage[5] {imgStar1, imgStar2, imgStar3, imgStar4, imgStar5};
       for (int i = 0; i < 5; ++i)
       {
-        if ((i + 1) > (int) (Rating))
+        if ((i + 1) > (int)(Rating))
         {
           imgStars[i].IsVisible = false;
         }

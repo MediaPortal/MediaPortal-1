@@ -32,9 +32,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public RoutedEvent()
-    {
-    }
+    public RoutedEvent() {}
 
     internal RoutedEvent(string name, RoutingStrategy routingStrategy, Type handlerType, Type ownerType)
     {

@@ -54,9 +54,7 @@ namespace MediaPortal.Support
           }
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
 
     private void ParseHotfixKey(RegistryKey rk)
@@ -128,7 +126,7 @@ namespace MediaPortal.Support
 
     public IEnumerator<HotfixItem> GetEnumerator()
     {
-      IEnumerator<HotfixItem> enumerator = ((IEnumerable<HotfixItem>) hotfixes.Values).GetEnumerator();
+      IEnumerator<HotfixItem> enumerator = ((IEnumerable<HotfixItem>)hotfixes.Values).GetEnumerator();
       return enumerator;
     }
 

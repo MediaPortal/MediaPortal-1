@@ -46,9 +46,7 @@ namespace DShowNET.Helper
   {
     private const int magicConstant = -759872593;
 
-    static DirectShowUtil()
-    {
-    }
+    static DirectShowUtil() {}
 
     public static IBaseFilter AddFilterToGraph(IGraphBuilder graphBuilder, string strFilterName)
     {
@@ -59,7 +57,7 @@ namespace DShowNET.Helper
         {
           if (String.Compare(filter.Name, strFilterName, true) == 0)
           {
-            NewFilter = (IBaseFilter) Marshal.BindToMoniker(filter.MonikerString);
+            NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
 
             int hr = graphBuilder.AddFilter(NewFilter, strFilterName);
             if (hr < 0)
@@ -103,7 +101,7 @@ namespace DShowNET.Helper
           if (String.Compare(filter.Name, strFilterName, true) == 0)
           {
             Log.Info("DirectShowUtils: Found audio renderer");
-            NewFilter = (IBaseFilter) Marshal.BindToMoniker(filter.MonikerString);
+            NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
             hr.Set(graphBuilder.AddFilter(NewFilter, strFilterName));
             if (hr < 0)
             {
@@ -139,9 +137,7 @@ namespace DShowNET.Helper
           Log.Error("DirectShowUtils: failed filter {0} not found", strFilterName);
         }
       }
-      catch
-      {
-      }
+      catch {}
       Log.Info("DirectShowUtils: First try to insert new audio renderer {0} failed ", strFilterName);
 
       try
@@ -201,7 +197,7 @@ namespace DShowNET.Helper
 
               try
               {
-                NewFilter = (IBaseFilter) Marshal.BindToMoniker(filter.MonikerString);
+                NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
                 if (NewFilter == null)
                 {
                   Log.Info("NewFilter = null");
@@ -261,7 +257,7 @@ namespace DShowNET.Helper
           if (String.Compare(filter.Name, strFilterName, true) == 0)
           {
             Log.Info("DirectShowUtils: Passed finding Audio Renderer");
-            NewFilter = (IBaseFilter) Marshal.BindToMoniker(filter.MonikerString);
+            NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
             hr.Set(graphBuilder.AddFilter(NewFilter, strFilterName));
             if (hr < 0)
             {
@@ -518,7 +514,7 @@ namespace DShowNET.Helper
     private static uint ReverseByteArrayToDWORD(Byte[] ba)
     {
       //Log.Info("Reversing: {0:x}{1:x}{2:x}{3:x}", ba[0], ba[1], ba[2], ba[3]);
-      return (uint) (((uint) ba[3] << 24) | ((uint) ba[2] << 16) | ((uint) ba[1] << 8) | ba[0]);
+      return (uint)(((uint)ba[3] << 24) | ((uint)ba[2] << 16) | ((uint)ba[1] << 8) | ba[0]);
     }
 
     /// <summary>
@@ -601,7 +597,7 @@ namespace DShowNET.Helper
           _meritCache[clsid] = Merit.DoNotUse;
           return Merit.DoNotUse;
         }
-        Byte[] filterData = (Byte[]) filterKey.GetValue("FilterData", 0x0);
+        Byte[] filterData = (Byte[])filterKey.GetValue("FilterData", 0x0);
         if (filterData == null || filterData.Length < 8)
         {
           return Merit.DoNotUse;
@@ -610,8 +606,8 @@ namespace DShowNET.Helper
         //merit is 2nd DWORD, reverse byte order
         Array.Copy(filterData, 4, merit, 0, 4);
         uint dwMerit = ReverseByteArrayToDWORD(merit);
-        _meritCache[clsid] = (Merit) dwMerit;
-        return (Merit) dwMerit;
+        _meritCache[clsid] = (Merit)dwMerit;
+        return (Merit)dwMerit;
       }
       catch (Exception e)
       {
@@ -657,7 +653,7 @@ namespace DShowNET.Helper
         int hr = enumFilters.Next(1, filters, out ffetched);
         if (hr == 0 && ffetched > 0)
         {
-          uint m = (uint) GetMerit(filters[0]);
+          uint m = (uint)GetMerit(filters[0]);
           //substract merit from uint.maxvalue to get reverse ordering from highest merit to lowest merit
           if (IsRenderer(filters[0]))
           {
@@ -746,10 +742,10 @@ namespace DShowNET.Helper
         }
         ReleaseComObject(enumTypes);
         Log.Debug("Found {0} media types", major.Count);
-        Guid[] majorTypes = (Guid[]) major.ToArray(typeof (Guid));
-        Guid[] subTypes = (Guid[]) sub.ToArray(typeof (Guid));
+        Guid[] majorTypes = (Guid[])major.ToArray(typeof (Guid));
+        Guid[] subTypes = (Guid[])sub.ToArray(typeof (Guid));
         Log.Debug("Loading filters");
-        ArrayList filters = FilterHelper.GetFilters(majorTypes, subTypes, (Merit) 0x00400000);
+        ArrayList filters = FilterHelper.GetFilters(majorTypes, subTypes, (Merit)0x00400000);
         Log.Debug("Loaded {0} filters", filters.Count);
         foreach (string name in filters)
         {
@@ -1292,17 +1288,17 @@ namespace DShowNET.Helper
 
     private static bool IsInterlaced(uint x)
     {
-      return ((x) & ((uint) AMInterlace.IsInterlaced)) != 0;
+      return ((x) & ((uint)AMInterlace.IsInterlaced)) != 0;
     }
 
     private static bool IsSingleField(uint x)
     {
-      return ((x) & ((uint) AMInterlace.OneFieldPerSample)) != 0;
+      return ((x) & ((uint)AMInterlace.OneFieldPerSample)) != 0;
     }
 
     private static bool IsField1First(uint x)
     {
-      return ((x) & ((uint) AMInterlace.Field1First)) != 0;
+      return ((x) & ((uint)AMInterlace.Field1First)) != 0;
     }
 
     private static VMR9SampleFormat ConvertInterlaceFlags(uint dwInterlaceFlags)
@@ -1427,9 +1423,7 @@ namespace DShowNET.Helper
           ienumFilt = null;
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       finally
       {
         if (ienumFilt != null)
@@ -1472,11 +1466,12 @@ namespace DShowNET.Helper
           try
           {
             hr = graphBuilder.RemoveFilter(filter);
-            DsError.ThrowExceptionForHR(hr);            
+            DsError.ThrowExceptionForHR(hr);
           }
           catch (Exception error)
           {
-            Log.Error("Remove of filter: {0}, failed with code (HR): {1}, explanation: {2}", info.achName, hr.ToString(), error.Message); 
+            Log.Error("Remove of filter: {0}, failed with code (HR): {1}, explanation: {2}", info.achName, hr.ToString(),
+                      error.Message);
           }
         }
         // Release after the filter has been removed from the graph
@@ -1486,12 +1481,11 @@ namespace DShowNET.Helper
           {
             hr = ReleaseComObject(filter);
             //Log.Debug("ReleaseComObject: {0}", hr);
-          }
-          while (hr > 0);
+          } while (hr > 0);
         }
       }
       catch (Exception)
-      {       
+      {
         return;
       }
       finally
@@ -1501,7 +1495,7 @@ namespace DShowNET.Helper
           ReleaseComObject(enumFilters);
         }
       }
-    }    
+    }
 
     public static IntPtr GetUnmanagedSurface(Surface surface)
     {
@@ -1558,9 +1552,7 @@ namespace DShowNET.Helper
           ienumFilt = null;
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       finally
       {
         if (ienumFilt != null)
@@ -1584,7 +1576,7 @@ namespace DShowNET.Helper
         IErrorLog errorLog = null;
         Guid bagId = typeof (IPropertyBag).GUID;
         mon.BindToStorage(null, null, ref bagId, out bagObj);
-        bag = (IPropertyBag) bagObj;
+        bag = (IPropertyBag)bagObj;
         object val = "";
         int hr = bag.Read("FriendlyName", out val, errorLog);
         if (hr != 0)

@@ -109,9 +109,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void DrawImage(Bitmap bitmap)
-    {
-    }
+    public void DrawImage(Bitmap bitmap) {}
 
     public string ErrorMessage
     {
@@ -139,9 +137,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       get { return "FICSpectra"; }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters)
-    {
-    }
+    public void SetCustomCharacters(int[][] customCharacters) {}
 
     /// <summary>
     /// Displays the message on the indicated line
@@ -163,10 +159,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
 
         //Volume calculation
-        int vol = VolumeHandler.Instance.Volume/6553;
+        int vol = VolumeHandler.Instance.Volume / 6553;
 
-        if (GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_TV ||
-            GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_TVFULLSCREEN)
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TV ||
+            GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
         {
           Log.Debug("FICSpectra.SetLine: TV ON");
           vfd.updateFICSymbol(control.FICSymbols.TV, true);
@@ -176,7 +172,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Debug("FICSpectra.SetLine: TV OFF");
           vfd.updateFICSymbol(control.FICSymbols.TV, false);
         }
-        if (GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_RADIO)
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_RADIO)
         {
           Log.Debug("FICSpectra.SetLine: RADIO ON");
           vfd.updateFICSymbol(control.FICSymbols.Radio, true);
@@ -186,7 +182,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Debug("FICSpectra.SetLine: RADIO OFF");
           vfd.updateFICSymbol(control.FICSymbols.Radio, false);
         }
-        if (GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_PICTURES)
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_PICTURES)
         {
           Log.Debug("FICSpectra.SetLine: PHOTO ON");
           vfd.updateFICSymbol(control.FICSymbols.Photo, true);
@@ -196,7 +192,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Debug("FICSpectra.SetLine: Photo OFF");
           vfd.updateFICSymbol(control.FICSymbols.Photo, false);
         }
-        if (GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_MUSIC)
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC)
         {
           Log.Debug("FICSpectra.SetLine: Music ON");
           vfd.updateFICSymbol(control.FICSymbols.Music, true);
@@ -206,7 +202,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Debug("FICSpectra.SetLine: Music OFF");
           vfd.updateFICSymbol(control.FICSymbols.Music, false);
         }
-        if (GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_TVGUIDE)
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVGUIDE)
         {
           Log.Debug("FICSpectra.SetLine: GUIDE ON");
           vfd.updateFICSymbol(control.FICSymbols.Guide1, true);
@@ -308,7 +304,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
         Log.Debug("FICSpectra.SetLine: REC OFF");
         vfd.updateFICSymbol(control.FICSymbols.REC, false);
-        if (GUIWindowManager.ActiveWindow == (int) GUIWindow.Window.WINDOW_HOME)
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_HOME)
         {
           Log.Debug("FICSpectra.SetLine: HOME ON");
           vfd.updateFICSymbol(control.FICSymbols.Home, true);

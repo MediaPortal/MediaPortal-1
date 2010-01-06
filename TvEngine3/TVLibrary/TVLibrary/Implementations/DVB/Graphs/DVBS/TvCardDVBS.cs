@@ -33,17 +33,21 @@ namespace TvLibrary.Implementations.DVB
   public class TvCardDVBS : TvCardDvbBase, IDisposable, ITVCard
   {
     #region variables
+
     /// <summary>
     /// holds the DVB-S tuning space
     /// </summary>
     protected IDVBSTuningSpace _tuningSpace;
+
     /// <summary>
     /// holds the current DVB-S tuning request
     /// </summary>
     protected IDVBTuneRequest _tuneRequest;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TvCardDVBS"/> class.
     /// </summary>
@@ -53,11 +57,12 @@ namespace TvLibrary.Implementations.DVB
       : base(epgEvents, device)
     {
       _cardType = CardType.DvbS;
-
     }
+
     #endregion
 
     #region graphbuilding
+
     /// <summary>
     /// Builds the graph.
     /// </summary>
@@ -76,7 +81,7 @@ namespace TvLibrary.Implementations.DVB
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
         // Method names should be self explanatory
-        AddNetworkProviderFilter(typeof(DVBSNetworkProvider).GUID);
+        AddNetworkProviderFilter(typeof (DVBSNetworkProvider).GUID);
         CreateTuningSpace();
         AddMpeg2DemuxerToGraph();
         AddAndConnectBDABoardFilters(_device);
@@ -156,7 +161,7 @@ namespace TvLibrary.Implementations.DVB
       _tuningSpace = (IDVBSTuningSpace)new DVBSTuningSpace();
       _tuningSpace.put_UniqueName("MediaPortal DVBS TuningSpace");
       _tuningSpace.put_FriendlyName("MediaPortal DVBS TuningSpace");
-      _tuningSpace.put__NetworkType(typeof(DVBSNetworkProvider).GUID);
+      _tuningSpace.put__NetworkType(typeof (DVBSNetworkProvider).GUID);
       _tuningSpace.put_SystemType(DVBSystemType.Satellite);
       _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
       _tuningSpace.put_LowOscillator(lowOsc * 1000);
@@ -177,9 +182,11 @@ namespace TvLibrary.Implementations.DVB
       _tuningSpace.CreateTuneRequest(out request);
       _tuneRequest = (IDVBTuneRequest)request;
     }
+
     #endregion
 
     #region tuning & recording
+
     /// <summary>
     /// Tunes the specified channel.
     /// </summary>
@@ -213,7 +220,7 @@ namespace TvLibrary.Implementations.DVB
         subChannelId = GetNewSubChannel(channel);
       }
       ITvSubChannel ch;
-      if (_previousChannel == null ||  _previousChannel.IsDifferentTransponder(dvbsChannel))
+      if (_previousChannel == null || _previousChannel.IsDifferentTransponder(dvbsChannel))
       {
         //_pmtPid = -1;
         ILocator locator;
@@ -224,18 +231,18 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Info("LNB low:{0} hi:{1} switch:{2}", lowOsc, hiOsc, lnbSwitch);
         if (lnbSwitch == 0)
           lnbSwitch = 18000;
-        _tuningSpace.put_LNBSwitch(lnbSwitch*1000);
-        _tuningSpace.put_LowOscillator(lowOsc*1000);
-        _tuningSpace.put_HighOscillator(hiOsc*1000);
+        _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
+        _tuningSpace.put_LowOscillator(lowOsc * 1000);
+        _tuningSpace.put_HighOscillator(hiOsc * 1000);
         ITuneRequest request;
         _tuningSpace.CreateTuneRequest(out request);
-        _tuneRequest = (IDVBTuneRequest) request;
+        _tuneRequest = (IDVBTuneRequest)request;
         _tuningSpace.get_DefaultLocator(out locator);
-        IDVBSLocator dvbsLocator = (IDVBSLocator) locator;
+        IDVBSLocator dvbsLocator = (IDVBSLocator)locator;
         _tuneRequest.put_ONID(dvbsChannel.NetworkId);
         _tuneRequest.put_SID(dvbsChannel.ServiceId);
         _tuneRequest.put_TSID(dvbsChannel.TransportId);
-        locator.put_CarrierFrequency((int) dvbsChannel.Frequency);
+        locator.put_CarrierFrequency((int)dvbsChannel.Frequency);
         dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
         dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
         //DVB-S2 specific modulation class call here if DVB-S2 card detected
@@ -260,7 +267,7 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
-        ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest,false);
+        ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, false);
       }
       //move diseqc motor to correct satellite
       if (_conditionalAccess != null)
@@ -283,9 +290,11 @@ namespace TvLibrary.Implementations.DVB
         _filterTIF.Stop();
       return ch;
     }
+
     #endregion
 
     #region epg & scanning
+
     /// <summary>
     /// returns the ITVScanning interface used for scanning channels
     /// </summary>
@@ -299,6 +308,7 @@ namespace TvLibrary.Implementations.DVB
         return new DVBSScanning(this);
       }
     }
+
     #endregion
 
     /// <summary>

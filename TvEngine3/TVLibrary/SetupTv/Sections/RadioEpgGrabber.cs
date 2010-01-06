@@ -31,12 +31,11 @@ namespace SetupTv.Sections
 {
   public partial class RadioEpgGrabber : SectionSettings
   {
-    bool _loaded;
+    private bool _loaded;
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
+
     public RadioEpgGrabber()
-      : this("Radio Epg grabber")
-    {
-    }
+      : this("Radio Epg grabber") {}
 
     public RadioEpgGrabber(string name)
       : base(name)
@@ -48,7 +47,7 @@ namespace SetupTv.Sections
     }
 
 
-    void LoadLanguages()
+    private void LoadLanguages()
     {
       _loaded = true;
       mpListView2.BeginUpdate();
@@ -63,7 +62,7 @@ namespace SetupTv.Sections
       string values = "";
       for (int j = 0; j < list.Count; j++)
       {
-        ListViewItem item = new ListViewItem(new string[] { list[j], codes[j] });
+        ListViewItem item = new ListViewItem(new string[] {list[j], codes[j]});
         mpListView2.Items.Add(item);
         item.Tag = codes[j];
         if (setting.Value == "")
@@ -89,6 +88,7 @@ namespace SetupTv.Sections
         //DatabaseManager.Instance.SaveChanges();
       }
     }
+
     public override void OnSectionDeActivated()
     {
       SaveSettings();
@@ -109,7 +109,7 @@ namespace SetupTv.Sections
       base.OnSectionActivated();
       mpListView1.Items.Clear();
 
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
       IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
@@ -152,7 +152,9 @@ namespace SetupTv.Sections
               case CardType.Atsc:
                 atsc = true;
                 break;
-              case CardType.DvbIP: dvbip = true; break;
+              case CardType.DvbIP:
+                dvbip = true;
+                break;
             }
           }
         }
@@ -193,7 +195,6 @@ namespace SetupTv.Sections
         item.SubItems.Add(line);
         item.Checked = ch.GrabEpg;
         item.Tag = ch;
-
       }
       mpListView1.EndUpdate();
     }
@@ -233,14 +234,14 @@ namespace SetupTv.Sections
       for (int i = 0; i < mpListView1.Items.Count; ++i)
       {
         Channel ch = (Channel)mpListView1.Items[i].Tag;
-        mpListView1.Items[i].Checked = (ch.ReferringRadioGroupMap().Count > 1); // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
+        mpListView1.Items[i].Checked = (ch.ReferringRadioGroupMap().Count > 1);
+          // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
       }
       mpListView1.EndUpdate();
     }
 
     private void mpButtonNone_Click(object sender, EventArgs e)
     {
-
       mpListView1.BeginUpdate();
       for (int i = 0; i < mpListView2.Items.Count; ++i)
       {
@@ -268,7 +269,6 @@ namespace SetupTv.Sections
           string code = (string)mpListView2.Items[i].Tag;
           setting.Value += code;
           setting.Value += ",";
-
         }
       }
       setting.Persist();
@@ -287,7 +287,6 @@ namespace SetupTv.Sections
 
     private void mpButtonClearChannels_Click(object sender, EventArgs e)
     {
-
       mpListView1.BeginUpdate();
       for (int i = 0; i < mpListView1.Items.Count; ++i)
       {
@@ -296,27 +295,20 @@ namespace SetupTv.Sections
       mpListView1.EndUpdate();
     }
 
-    private void mpLabel2_Click(object sender, EventArgs e)
-    {
+    private void mpLabel2_Click(object sender, EventArgs e) {}
 
-    }
+    private void mpListView1_SelectedIndexChanged(object sender, EventArgs e) {}
 
-    private void mpListView1_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void mpListView2_ItemChecked(object sender, ItemCheckedEventArgs e)
-    {
-
-    }
+    private void mpListView2_ItemChecked(object sender, ItemCheckedEventArgs e) {}
 
     private void mpListView1_ColumnClick(object sender, ColumnClickEventArgs e)
     {
       if (e.Column == lvwColumnSorter.SortColumn)
       {
         // Reverse the current sort direction for this column.
-        lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+        lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending
+                                  ? SortOrder.Descending
+                                  : SortOrder.Ascending;
       }
       else
       {

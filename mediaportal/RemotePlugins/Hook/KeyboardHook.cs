@@ -54,12 +54,12 @@ namespace MediaPortal.Hooks
       if (e.WParam == 256 && KeyDown != null)
       {
         KeyboardHookStruct khs = new KeyboardHookStruct(e);
-        KeyDown(sender, new KeyEventArgs((Keys) khs.virtualKey | Control.ModifierKeys));
+        KeyDown(sender, new KeyEventArgs((Keys)khs.virtualKey | Control.ModifierKeys));
       }
       else if (e.WParam == 257 && KeyUp != null)
       {
         KeyboardHookStruct khs = new KeyboardHookStruct(e);
-        KeyUp(sender, new KeyEventArgs((Keys) khs.virtualKey | Control.ModifierKeys));
+        KeyUp(sender, new KeyEventArgs((Keys)khs.virtualKey | Control.ModifierKeys));
       }
     }
 
@@ -71,7 +71,7 @@ namespace MediaPortal.Hooks
     {
       public KeyboardHookStruct(HookEventArgs e)
       {
-        KeyboardHookStruct khs = (KeyboardHookStruct) Marshal.PtrToStructure(e.LParam, typeof (KeyboardHookStruct));
+        KeyboardHookStruct khs = (KeyboardHookStruct)Marshal.PtrToStructure(e.LParam, typeof (KeyboardHookStruct));
 
         virtualKey = khs.virtualKey;
         scanCode = khs.scanCode;

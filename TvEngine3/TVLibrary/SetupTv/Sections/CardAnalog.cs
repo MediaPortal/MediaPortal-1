@@ -38,22 +38,18 @@ namespace SetupTv.Sections
 {
   public partial class CardAnalog : SectionSettings
   {
-    readonly int _cardNumber;
-    bool _isScanning;
-    bool _stopScanning;
-    string _cardName;
-    string _devicePath;
-    Configuration _configuration;
+    private readonly int _cardNumber;
+    private bool _isScanning;
+    private bool _stopScanning;
+    private string _cardName;
+    private string _devicePath;
+    private Configuration _configuration;
 
     public CardAnalog()
-      : this("Analog")
-    {
-    }
+      : this("Analog") {}
 
     public CardAnalog(string name)
-      : base(name)
-    {
-    }
+      : base(name) {}
 
     public CardAnalog(string name, int cardNumber)
       : base(name)
@@ -62,10 +58,9 @@ namespace SetupTv.Sections
       InitializeComponent();
       base.Text = name;
       Init();
-
     }
 
-    void Init()
+    private void Init()
     {
       CountryCollection countries = new CountryCollection();
       for (int i = 0; i < countries.Countries.Length; ++i)
@@ -78,7 +73,7 @@ namespace SetupTv.Sections
       mpComboBoxSource.SelectedIndex = 0;
     }
 
-    void UpdateStatus()
+    private void UpdateStatus()
     {
       progressBarLevel.Value = Math.Min(100, RemoteControl.Instance.SignalLevel(_cardNumber));
       progressBarQuality.Value = Math.Min(100, RemoteControl.Instance.SignalQuality(_cardNumber));
@@ -92,7 +87,8 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       mpComboBoxCountry.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber + "Country", "0").Value);
       mpComboBoxSource.SelectedIndex = Int32.Parse(layer.GetSetting("analog" + _cardNumber + "Source", "0").Value);
-      checkBoxCreateSignalGroup.Checked = (layer.GetSetting("analog" + _cardNumber + "createsignalgroup", "false").Value == "true");
+      checkBoxCreateSignalGroup.Checked =
+        (layer.GetSetting("analog" + _cardNumber + "createsignalgroup", "false").Value == "true");
       checkBoxCreateSignalGroup.Text = "Create \"" + TvConstants.TvGroupNames.Analog + "\" group";
 
       _cardName = RemoteControl.Instance.CardName(_cardNumber);
@@ -156,7 +152,6 @@ namespace SetupTv.Sections
           }
         }
       }
-
     }
 
     private void SetVideoDecoder()
@@ -729,7 +724,8 @@ namespace SetupTv.Sections
         UpdateVideoProcAmp(_configuration.Graph.Capture.VideoProcAmpValues);
         if (videoStandardComboBox.Enabled)
         {
-          if (videoStandardComboBox.SelectedIndex != -1 && !videoStandardComboBox.SelectedItem.Equals(AnalogVideoStandard.None))
+          if (videoStandardComboBox.SelectedIndex != -1 &&
+              !videoStandardComboBox.SelectedItem.Equals(AnalogVideoStandard.None))
           {
             _configuration.Graph.Capture.CurrentVideoStandard = (AnalogVideoStandard)videoStandardComboBox.SelectedItem;
           }
@@ -742,7 +738,8 @@ namespace SetupTv.Sections
         {
           string item = frameRateComboBox.SelectedItem.ToString();
           string frameRate = item.Substring(0, item.IndexOf(" fps"));
-          _configuration.Graph.Capture.FrameRate = Double.Parse(frameRate, CultureInfo.GetCultureInfo("en-GB").NumberFormat);
+          _configuration.Graph.Capture.FrameRate = Double.Parse(frameRate,
+                                                                CultureInfo.GetCultureInfo("en-GB").NumberFormat);
         }
         if (resolutionComboBox.Enabled)
         {
@@ -813,7 +810,8 @@ namespace SetupTv.Sections
         User user;
         if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
         {
-          MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
+          MessageBox.Show(this,
+                          "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
           return;
         }
         Thread scanThread = new Thread(DoTvScan);
@@ -826,7 +824,7 @@ namespace SetupTv.Sections
       }
     }
 
-    void DoTvScan()
+    private void DoTvScan()
     {
       int channelsNew = 0;
       int channelsUpdated = 0;
@@ -861,13 +859,15 @@ namespace SetupTv.Sections
         if (tuneResult == TvResult.SWEncoderMissing)
         {
           Log.Error("analog: DoTvScan error (missing software encoder)");
-          MessageBox.Show("Please install a supported audio/video encoder for your software analog card", "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show("Please install a supported audio/video encoder for your software analog card",
+                          "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
         if (tuneResult == TvResult.GraphBuildingFailed)
         {
           Log.Error("analog: DoTvScan error (missing software encoder)");
-          MessageBox.Show("The graph building. Mostly your card is not supported by TvServer. Please create a report in our forum",
+          MessageBox.Show(
+            "The graph building. Mostly your card is not supported by TvServer. Please create a report in our forum",
             "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
@@ -914,12 +914,14 @@ namespace SetupTv.Sections
           {
             if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
             {
-              line = String.Format("channel:{0} source:{1} : No Signal", channel.ChannelNumber, mpComboBoxSource.SelectedItem);
+              line = String.Format("channel:{0} source:{1} : No Signal", channel.ChannelNumber,
+                                   mpComboBoxSource.SelectedItem);
               item.Text = line;
               item.ForeColor = Color.Red;
               continue;
             }
-            line = String.Format("channel:{0} source:{1} : Nothing found", channel.ChannelNumber, mpComboBoxSource.SelectedItem);
+            line = String.Format("channel:{0} source:{1} : Nothing found", channel.ChannelNumber,
+                                 mpComboBoxSource.SelectedItem);
             item.Text = line;
             item.ForeColor = Color.Red;
             continue;
@@ -931,7 +933,8 @@ namespace SetupTv.Sections
           Channel dbChannel;
           if (checkBoxNoMerge.Checked)
           {
-            dbChannel = new Channel(channel.Name, false, false, 0, new DateTime(2000, 1, 1), false, new DateTime(2000, 1, 1), -1, true, "", true, channel.Name);
+            dbChannel = new Channel(channel.Name, false, false, 0, new DateTime(2000, 1, 1), false,
+                                    new DateTime(2000, 1, 1), -1, true, "", true, channel.Name);
           }
           else
           {
@@ -972,12 +975,14 @@ namespace SetupTv.Sections
 
           if (exists)
           {
-            line = String.Format("channel:{0} source:{1} : Channel update found - {2}", channel.ChannelNumber, mpComboBoxSource.SelectedItem, channel.Name);
+            line = String.Format("channel:{0} source:{1} : Channel update found - {2}", channel.ChannelNumber,
+                                 mpComboBoxSource.SelectedItem, channel.Name);
             channelsUpdated++;
           }
           else
           {
-            line = String.Format("channel:{0} source:{1} : New channel found - {2}", channel.ChannelNumber, mpComboBoxSource.SelectedItem, channel.Name);
+            line = String.Format("channel:{0} source:{1} : New channel found - {2}", channel.ChannelNumber,
+                                 mpComboBoxSource.SelectedItem, channel.Name);
             channelsNew++;
           }
           item.Text = line;
@@ -986,17 +991,21 @@ namespace SetupTv.Sections
       catch (TvExceptionSWEncoderMissing)
       {
         Log.Error("analog: DoTvScan error (missing software encoder)");
-        MessageBox.Show("Please install a supported audio/video encoder for your software analog card", "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("Please install a supported audio/video encoder for your software analog card", "Unable to scan",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       catch (TvExceptionGraphBuildingFailed)
       {
         Log.Error("analog: DoTvScan error (missing software encoder)");
-        MessageBox.Show("The graph building. Mostly your card is not supported by TvServer. Please create a report in our forum", "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show(
+          "The graph building. Mostly your card is not supported by TvServer. Please create a report in our forum",
+          "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       catch (Exception ex)
       {
         Log.Error("analog: DoTvScan error ({0})", ex.StackTrace);
-        MessageBox.Show(string.Format("Generic error: {0}", ex.Message), "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show(string.Format("Generic error: {0}", ex.Message), "Unable to scan", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
       }
       finally
       {
@@ -1014,9 +1023,10 @@ namespace SetupTv.Sections
         _isScanning = false;
         checkButton.Enabled = true;
       }
-      ListViewItem lastItem = mpListView1.Items.Add(new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", channelsNew, channelsUpdated)));
+      ListViewItem lastItem =
+        mpListView1.Items.Add(
+          new ListViewItem(String.Format("Total tv channels new:{0} updated:{1}", channelsNew, channelsUpdated)));
       lastItem.EnsureVisible();
-
     }
 
     private void mpButtonScanRadio_Click(object sender, EventArgs e)
@@ -1039,7 +1049,8 @@ namespace SetupTv.Sections
         User user;
         if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
         {
-          MessageBox.Show(this, "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
+          MessageBox.Show(this,
+                          "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
           return;
         }
         AnalogChannel radioChannel = new AnalogChannel();
@@ -1067,7 +1078,7 @@ namespace SetupTv.Sections
       }
     }
 
-    int SignalStrength(int sensitivity)
+    private int SignalStrength(int sensitivity)
     {
       int i;
       for (i = 0; i < sensitivity * 2; i++)
@@ -1081,7 +1092,7 @@ namespace SetupTv.Sections
       return ((i * 50) / sensitivity);
     }
 
-    void DoRadioScan()
+    private void DoRadioScan()
     {
       int channelsNew = 0;
       int channelsUpdated = 0;
@@ -1146,13 +1157,15 @@ namespace SetupTv.Sections
           if (tuneResult == TvResult.SWEncoderMissing)
           {
             Log.Error("analog: DoTvScan error (missing software encoder)");
-            MessageBox.Show("Please install a supported audio/video encoder for your software analog card", "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Please install a supported audio/video encoder for your software analog card",
+                            "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
             break;
           }
           if (tuneResult == TvResult.GraphBuildingFailed)
           {
             Log.Error("analog: DoTvScan error (missing software encoder)");
-            MessageBox.Show("The graph building. Mostly your card is not supported by TvServer. Please create a report in our forum",
+            MessageBox.Show(
+              "The graph building. Mostly your card is not supported by TvServer. Please create a report in our forum",
               "Unable to scan", MessageBoxButtons.OK, MessageBoxIcon.Error);
             break;
           }
@@ -1165,7 +1178,8 @@ namespace SetupTv.Sections
             if (dbChannel != null)
             {
               dbChannel.Name = channel.Name;
-              line = String.Format("frequence:{0} MHz : Channel update found - {1}", freqMHz.ToString("f2"), channel.Name);
+              line = String.Format("frequence:{0} MHz : Channel update found - {1}", freqMHz.ToString("f2"),
+                                   channel.Name);
               channelsUpdated++;
             }
             else
@@ -1222,9 +1236,10 @@ namespace SetupTv.Sections
         mpButton1.Enabled = true;
         _isScanning = false;
       }
-      ListViewItem lastItem = mpListView1.Items.Add(new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", channelsNew, channelsUpdated)));
+      ListViewItem lastItem =
+        mpListView1.Items.Add(
+          new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", channelsNew, channelsUpdated)));
       lastItem.EnsureVisible();
-
     }
 
     private void mpButton1_Click(object sender, EventArgs e)
@@ -1452,7 +1467,8 @@ namespace SetupTv.Sections
         // Check if the card is locked for scanning.
         if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
         {
-          MessageBox.Show(this, "Card is locked. Checking quality control not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
+          MessageBox.Show(this,
+                          "Card is locked. Checking quality control not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
           return;
         }
         user = new User();
@@ -1502,7 +1518,8 @@ namespace SetupTv.Sections
         else
         {
           Log.WriteFile("Card doesn't support quality control");
-          MessageBox.Show("The used encoder doesn't support quality control.", "MediaPortal - TV Server management console", MessageBoxButtons.OK, MessageBoxIcon.Information);
+          MessageBox.Show("The used encoder doesn't support quality control.",
+                          "MediaPortal - TV Server management console", MessageBoxButtons.OK, MessageBoxIcon.Information);
           if (string.IsNullOrEmpty(_configuration.Graph.Capture.Name))
           {
             _configuration = Configuration.readConfiguration(_cardNumber, _cardName, _devicePath);

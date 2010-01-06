@@ -48,9 +48,7 @@ namespace MediaPortal.WebEPG.Profile
 
     /// <summary>
     ///   Initializes a new instance of the Xml class by setting the <see cref="Profile.Name" /> to <see cref="Profile.DefaultName" />. </summary>
-    public Xml()
-    {
-    }
+    public Xml() {}
 
     /// <summary>
     ///   Initializes a new instance of the Xml class by setting the <see cref="Profile.Name" /> to the given file name. </summary>
@@ -175,9 +173,7 @@ namespace MediaPortal.WebEPG.Profile
               File.Delete(_strFileName + ".bak");
               File.Move(_strFileName, _strFileName + ".bak");
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
 
             using (StreamWriter stream = new StreamWriter(_strFileName, false))
             {
@@ -278,7 +274,7 @@ namespace MediaPortal.WebEPG.Profile
 
     public string GetValueAsString(string section, string entry, string strDefault)
     {
-      string strValue = (string) GetValue(section, entry);
+      string strValue = (string)GetValue(section, entry);
       if (strValue == null)
       {
         return strDefault;
@@ -292,7 +288,7 @@ namespace MediaPortal.WebEPG.Profile
 
     public bool GetValueAsBool(string section, string entry, bool bDefault)
     {
-      string strValue = (string) GetValue(section, entry);
+      string strValue = (string)GetValue(section, entry);
       if (strValue == null)
       {
         return bDefault;
@@ -310,7 +306,7 @@ namespace MediaPortal.WebEPG.Profile
 
     public int GetValueAsInt(string section, string entry, int iDefault)
     {
-      string strValue = (string) GetValue(section, entry);
+      string strValue = (string)GetValue(section, entry);
       if (strValue == null)
       {
         return iDefault;
@@ -324,15 +320,13 @@ namespace MediaPortal.WebEPG.Profile
         int iRet = Int32.Parse(strValue);
         return iRet;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return iDefault;
     }
 
     public float GetValueAsFloat(string section, string entry, float fDefault)
     {
-      string strValue = (string) GetValue(section, entry);
+      string strValue = (string)GetValue(section, entry);
       if (strValue == null)
       {
         return fDefault;
@@ -343,12 +337,10 @@ namespace MediaPortal.WebEPG.Profile
       }
       try
       {
-        float fRet = (float) Double.Parse(strValue);
+        float fRet = (float)Double.Parse(strValue);
         return fRet;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return fDefault;
     }
 

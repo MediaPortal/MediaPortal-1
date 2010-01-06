@@ -39,8 +39,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("font")] protected string _valueFont = "";
     [XMLSkinElement("showrange")] protected bool _showValue = true;
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
+
     [XMLSkinElement("spintype")] private GUISpinControl.SpinType _spinType =
       GUISpinControl.SpinType.SPIN_CONTROL_TYPE_TEXT;
+
     protected int _percentage = 0;
     protected int _intStartValue = 0;
     protected int _intEndValue = 100;
@@ -51,12 +53,10 @@ namespace MediaPortal.GUI.Library
     protected float _floatInterval = 0.1f;
     protected GUIAnimation _imageBackGround = null;
     protected GUIAnimation _imageMid = null;
-    protected GUIAnimation _imageMidFocus = null;    
+    protected GUIAnimation _imageMidFocus = null;
 
     public GUISliderControl(int dwParentID)
-      : base(dwParentID)
-    {
-    }
+      : base(dwParentID) {}
 
     /// <summary>
     /// The constructor of the GUISliderControl.
@@ -115,7 +115,7 @@ namespace MediaPortal.GUI.Library
           base.Render(timePassed);
           return;
         }
-      }      
+      }
       string strValue = "";
       float fRange = 0.0f;
       float fPos = 0.0f;
@@ -125,36 +125,36 @@ namespace MediaPortal.GUI.Library
       switch (_spinType)
       {
           // Float based slider
-        case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:          
+        case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
           if (null != _font && _showValue)
           {
             strValue = String.Format("{0}", _floatValue);
             _font.DrawText((float)_positionX, (float)_positionY,
-                             _textColor, strValue, Alignment.ALIGN_LEFT, -1);            
+                           _textColor, strValue, Alignment.ALIGN_LEFT, -1);
             _font.GetTextExtent(strValue, ref fTextWidth, ref fTextHeight);
             _imageBackGround.SetPosition(_positionX + (int)fTextWidth + 10, _positionY);
-          }          
+          }
 
-          fRange = (float) (_floatEndValue - _floatStartValue);
-          fPos = (float) (_floatValue - _floatStartValue);
-          fPercent = (fPos/fRange)*100.0f;
-          _percentage = (int) fPercent;
+          fRange = (float)(_floatEndValue - _floatStartValue);
+          fPos = (float)(_floatValue - _floatStartValue);
+          fPercent = (fPos / fRange) * 100.0f;
+          _percentage = (int)fPercent;
           break;
 
           // Integer based slider
-        case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT:          
+        case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT:
           if (null != _font && _showValue)
           {
             strValue = String.Format("{0}/{1}", _intValue, _intEndValue);
             _font.DrawText((float)_positionX, (float)_positionY,
-                             _textColor, strValue, Alignment.ALIGN_LEFT, -1);
+                           _textColor, strValue, Alignment.ALIGN_LEFT, -1);
             _font.GetTextExtent(strValue, ref fTextWidth, ref fTextHeight);
             _imageBackGround.SetPosition(_positionX + (int)fTextWidth + 10, _positionY);
-          }          
+          }
 
-          fRange = (float) (_intEndValue - _intStartValue);
-          fPos = (float) (_intValue - _intStartValue);
-          _percentage = (int) ((fPos/fRange)*100.0f);
+          fRange = (float)(_intEndValue - _intStartValue);
+          fPos = (float)(_intValue - _intStartValue);
+          _percentage = (int)((fPos / fRange) * 100.0f);
           break;
       }
 
@@ -164,14 +164,14 @@ namespace MediaPortal.GUI.Library
       //_height = _imageBackGround.Height;
       //_width = _imageBackGround.Width + (int)fTextWidth + 10;
 
-      float fWidth = (float) (_imageBackGround.TextureWidth - _imageMid.TextureWidth); //-20.0f;
+      float fWidth = (float)(_imageBackGround.TextureWidth - _imageMid.TextureWidth); //-20.0f;
 
-      fPos = (float) _percentage;
+      fPos = (float)_percentage;
       fPos /= 100.0f;
       fPos *= fWidth;
       fPos += (float)_imageBackGround.XPosition;
       //fPos += 10.0f;
-      if ((int) fWidth > 1)
+      if ((int)fWidth > 1)
       {
         if (Focus)
         {
@@ -183,7 +183,7 @@ namespace MediaPortal.GUI.Library
           _imageMid.SetPosition((int)fPos, _imageBackGround.YPosition);
           _imageMid.Render(timePassed);
         }
-      }      
+      }
       base.Render(timePassed);
     }
 
@@ -199,7 +199,7 @@ namespace MediaPortal.GUI.Library
 
       switch (action.wID)
       {
-        /* mouse handling not working
+          /* mouse handling not working
         case Action.ActionType.ACTION_MOUSE_CLICK:
           float x = (float)action.fAmount1 - _imageBackGround.XPosition;
           if (x < 0)
@@ -239,7 +239,7 @@ namespace MediaPortal.GUI.Library
           break;
         */
 
-        // decrease the slider value
+          // decrease the slider value
         case Action.ActionType.ACTION_MOVE_LEFT:
           switch (_spinType)
           {
@@ -269,7 +269,7 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.SendMessage(message);
           break;
 
-        // increase the slider value
+          // increase the slider value
         case Action.ActionType.ACTION_MOVE_RIGHT:
           switch (_spinType)
           {
@@ -319,7 +319,7 @@ namespace MediaPortal.GUI.Library
         switch (message.Message)
         {
             // Move the slider to a certain position
-          case GUIMessage.MessageType.GUI_MSG_ITEM_SELECT:            
+          case GUIMessage.MessageType.GUI_MSG_ITEM_SELECT:
             Percentage = message.Param1;
             return true;
 
@@ -338,7 +338,7 @@ namespace MediaPortal.GUI.Library
       }
       return base.OnMessage(message);
     }
-    
+
     public override bool Focus
     {
       get { return IsFocused; }
@@ -367,10 +367,10 @@ namespace MediaPortal.GUI.Library
       if (x >= _imageBackGround.XPosition && x <= _imageBackGround.XPosition + _imageBackGround.TextureWidth)
       {
         if (y >= _imageBackGround.YPosition && y <= _imageBackGround.YPosition + _imageBackGround.TextureHeight)
-        {          
+        {
           return true;
         }
-      }      
+      }
       return false;
     }
 
@@ -384,7 +384,7 @@ namespace MediaPortal.GUI.Library
         {
           return true;
         }
-      }      
+      }
       Focus = false;
       return false;
     }
@@ -398,7 +398,7 @@ namespace MediaPortal.GUI.Library
       if (Disabled)
       {
         return false;
-      }      
+      }
       return true;
     }
 

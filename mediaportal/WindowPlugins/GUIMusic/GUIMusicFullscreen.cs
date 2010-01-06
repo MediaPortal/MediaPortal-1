@@ -47,7 +47,7 @@ namespace MediaPortal.GUI.Video
 
     public GUIMusicFullscreen()
     {
-      GetID = (int) Window.WINDOW_FULLSCREEN_MUSIC;
+      GetID = (int)Window.WINDOW_FULLSCREEN_MUSIC;
       playlistPlayer = PlayListPlayer.SingletonPlayer;
     }
 
@@ -56,7 +56,7 @@ namespace MediaPortal.GUI.Video
       bool bResult = Load(Path.Combine(Application.StartupPath,
                                        GUIGraphicsContext.Skin + @"\musicFullScreen.xml"));
 
-      GetID = (int) Window.WINDOW_FULLSCREEN_MUSIC;
+      GetID = (int)Window.WINDOW_FULLSCREEN_MUSIC;
       return bResult;
     }
 
@@ -90,7 +90,7 @@ namespace MediaPortal.GUI.Video
           {
             double currentpos = g_Player.CurrentPosition;
             double duration = g_Player.Duration;
-            double percent = (currentpos/duration)*100d;
+            double percent = (currentpos / duration) * 100d;
             percent -= 10d;
 
             if (percent < 0)
@@ -98,7 +98,7 @@ namespace MediaPortal.GUI.Video
               percent = 0;
             }
 
-            g_Player.SeekAsolutePercentage((int) percent);
+            g_Player.SeekAsolutePercentage((int)percent);
             return;
           }
 
@@ -107,7 +107,7 @@ namespace MediaPortal.GUI.Video
           {
             double currentpos = g_Player.CurrentPosition;
             double duration = g_Player.Duration;
-            double percent = (currentpos/duration)*100d;
+            double percent = (currentpos / duration) * 100d;
             percent += 10d;
 
             if (percent > 100d)
@@ -115,7 +115,7 @@ namespace MediaPortal.GUI.Video
               percent = 100d;
             }
 
-            g_Player.SeekAsolutePercentage((int) percent);
+            g_Player.SeekAsolutePercentage((int)percent);
             return;
           }
 

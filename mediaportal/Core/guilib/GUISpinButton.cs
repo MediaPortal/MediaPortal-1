@@ -60,7 +60,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("digits")] protected int _digits = -1;
     [XMLSkinElement("reverse")] protected bool _reverse = false;
     [XMLSkinElement("cycleItems")] protected bool _cycleItems = false;
-    [XMLSkinElement("spintype")] protected GUISpinControl.SpinType _spinType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_TEXT;
+
+    [XMLSkinElement("spintype")] protected GUISpinControl.SpinType _spinType =
+      GUISpinControl.SpinType.SPIN_CONTROL_TYPE_TEXT;
+
     [XMLSkinElement("orientation")] protected eOrientation _orientation = eOrientation.Horizontal;
     [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
     [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
@@ -75,7 +78,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("textureFocus", "colorKey")] protected long _borderColorKeyTF = 0xFFFFFFFF;
     [XMLSkin("textureNoFocus", "border")] protected string _strBorderTNF = "";
     [XMLSkin("textureNoFocus", "position")] protected string _strBorderPositionTNF = "outside";
-    [XMLSkin("textureNoFocus", "textureRepeat")]protected bool _borderTextureRepeatTNF = false;
+    [XMLSkin("textureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatTNF = false;
     [XMLSkin("textureNoFocus", "textureRotate")] protected bool _borderTextureRotateTNF = false;
     [XMLSkin("textureNoFocus", "texture")] protected string _borderTextureFileNameTNF = "image_border.png";
     [XMLSkin("textureNoFocus", "colorKey")] protected long _borderColorKeyTNF = 0xFFFFFFFF;
@@ -86,9 +89,7 @@ namespace MediaPortal.GUI.Library
     protected GUILabelControl _labelControl = null;
     protected GUISpinControl _spinControl = null;
 
-    public GUISpinButton(int dwParentID) : base(dwParentID)
-    {
-    }
+    public GUISpinButton(int dwParentID) : base(dwParentID) {}
 
     /// <summary>
     /// The constructor of the GUISpinButton class.
@@ -144,14 +145,16 @@ namespace MediaPortal.GUI.Library
       _imageFocused.ParentControl = this;
       _imageFocused.Filtering = false;
       _imageFocused.DimColor = DimColor;
-      _imageFocused.SetBorder(_strBorderTF, _strBorderPositionTF, _borderTextureRepeatTF, _borderTextureRotateTF, _borderTextureFileNameTF, _borderColorKeyTF);
+      _imageFocused.SetBorder(_strBorderTF, _strBorderPositionTF, _borderTextureRepeatTF, _borderTextureRotateTF,
+                              _borderTextureFileNameTF, _borderColorKeyTF);
 
       _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
                                               _nonFocusedTextureName);
       _imageNonFocused.ParentControl = this;
       _imageNonFocused.Filtering = false;
       _imageNonFocused.DimColor = DimColor;
-      _imageNonFocused.SetBorder(_strBorderTNF, _strBorderPositionTNF, _borderTextureRepeatTNF, _borderTextureRotateTNF, _borderTextureFileNameTNF, _borderColorKeyTNF);
+      _imageNonFocused.SetBorder(_strBorderTNF, _strBorderPositionTNF, _borderTextureRepeatTNF, _borderTextureRotateTNF,
+                                 _borderTextureFileNameTNF, _borderColorKeyTNF);
       GUILocalizeStrings.LocalizeLabel(ref _label);
 
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
@@ -163,9 +166,9 @@ namespace MediaPortal.GUI.Library
       _labelControl.TextVAlignment = _textVAlignment;
 
       _spinControl = new GUISpinControl(0, 0, _positionX + _width - _spinWidth, _positionY, _spinWidth,
-                                          _spinHeight, _upTextureName, _downTextureName,
-                                          _upTextureNameFocus, _downTextureNameFocus,
-                                          _fontName, _textColor, _spinType, _spinAlignment);
+                                        _spinHeight, _upTextureName, _downTextureName,
+                                        _upTextureNameFocus, _downTextureNameFocus,
+                                        _fontName, _textColor, _spinType, _spinAlignment);
       _spinControl.ParentControl = this;
       _spinControl.DimColor = DimColor;
       _spinControl.ShowRange = _showRange;
@@ -371,7 +374,6 @@ namespace MediaPortal.GUI.Library
           // send a message to anyone interested 
           message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
           GUIGraphicsContext.SendMessage(message);
-
         }
       }
 
@@ -686,6 +688,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 */
+
     public override int DimColor
     {
       get { return base.DimColor; }
@@ -713,12 +716,8 @@ namespace MediaPortal.GUI.Library
 
     public GUISpinControl SpinControl
     {
-      get
-      {
-        return _spinControl;
-      }
+      get { return _spinControl; }
       set { _spinControl = value; }
     }
-
   }
 }

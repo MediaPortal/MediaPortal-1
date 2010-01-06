@@ -57,9 +57,7 @@ namespace MediaPortal.Configuration.Sections
 
 
     public TVDebugOptions()
-      : this("Debug Options")
-    {
-    }
+      : this("Debug Options") {}
 
     public TVDebugOptions(string name)
       : base(name)
@@ -101,7 +99,8 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TVDebugOptions));
+      System.ComponentModel.ComponentResourceManager resources =
+        new System.ComponentModel.ComponentResourceManager(typeof (TVDebugOptions));
       this.groupBoxSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpDoNotAllowSlowMotionDuringZappingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpEnableRecordingFromTimeshiftCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -124,8 +123,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxSettings
       // 
-      this.groupBoxSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxSettings.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxSettings.Controls.Add(this.mpDoNotAllowSlowMotionDuringZappingCheckBox);
       this.groupBoxSettings.Controls.Add(this.mpEnableRecordingFromTimeshiftCheckBox);
       this.groupBoxSettings.Controls.Add(this.mpUseRtspCheckBox);
@@ -146,9 +147,11 @@ namespace MediaPortal.Configuration.Sections
       this.mpDoNotAllowSlowMotionDuringZappingCheckBox.Name = "mpDoNotAllowSlowMotionDuringZappingCheckBox";
       this.mpDoNotAllowSlowMotionDuringZappingCheckBox.Size = new System.Drawing.Size(336, 17);
       this.mpDoNotAllowSlowMotionDuringZappingCheckBox.TabIndex = 4;
-      this.mpDoNotAllowSlowMotionDuringZappingCheckBox.Text = "Do not use slow motion to sync video to audio on channel change";
-      this.mpMainToolTip.SetToolTip(this.mpDoNotAllowSlowMotionDuringZappingCheckBox, "Selecting this will prevent live TV from playing video until video is in sync wit" +
-              "h the audio, instead of playing video in slow motion");
+      this.mpDoNotAllowSlowMotionDuringZappingCheckBox.Text =
+        "Do not use slow motion to sync video to audio on channel change";
+      this.mpMainToolTip.SetToolTip(this.mpDoNotAllowSlowMotionDuringZappingCheckBox,
+                                    "Selecting this will prevent live TV from playing video until video is in sync wit" +
+                                    "h the audio, instead of playing video in slow motion");
       this.mpDoNotAllowSlowMotionDuringZappingCheckBox.UseVisualStyleBackColor = true;
       // 
       // mpEnableRecordingFromTimeshiftCheckBox
@@ -160,9 +163,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpEnableRecordingFromTimeshiftCheckBox.Size = new System.Drawing.Size(269, 17);
       this.mpEnableRecordingFromTimeshiftCheckBox.TabIndex = 3;
       this.mpEnableRecordingFromTimeshiftCheckBox.Text = "Include timeshift buffer in \"Record Now\" recordings ";
-      this.mpMainToolTip.SetToolTip(this.mpEnableRecordingFromTimeshiftCheckBox, "When enabled, \"Record Now\" will include in the recording the part of the current " +
-              "program that has already been timeshifted, instead of starting the recording fro" +
-              "m the live point.");
+      this.mpMainToolTip.SetToolTip(this.mpEnableRecordingFromTimeshiftCheckBox,
+                                    "When enabled, \"Record Now\" will include in the recording the part of the current " +
+                                    "program that has already been timeshifted, instead of starting the recording fro" +
+                                    "m the live point.");
       this.mpEnableRecordingFromTimeshiftCheckBox.UseVisualStyleBackColor = true;
       // 
       // mpUseRtspCheckBox
@@ -179,16 +183,18 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpWarningLabel
       // 
-      this.mpWarningLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpWarningLabel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpWarningLabel.ForeColor = System.Drawing.Color.Red;
       this.mpWarningLabel.Location = new System.Drawing.Point(6, 16);
       this.mpWarningLabel.Name = "mpWarningLabel";
       this.mpWarningLabel.Size = new System.Drawing.Size(460, 51);
       this.mpWarningLabel.TabIndex = 0;
       this.mpWarningLabel.Text = "This section provides special/debugging settings that are not supported by the Te" +
-          "am. Some of these settings are experimental. Do not alter any of the settings be" +
-          "low unless you know what you are doing.";
+                                 "am. Some of these settings are experimental. Do not alter any of the settings be" +
+                                 "low unless you know what you are doing.";
       // 
       // radioButton1
       // 
@@ -202,8 +208,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpRtspPathsGroupBox
       // 
-      this.mpRtspPathsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpRtspPathsGroupBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpRtspPathsGroupBox.Controls.Add(this.buttonTimeshiftingPath);
       this.mpRtspPathsGroupBox.Controls.Add(this.buttonRecordingPath);
       this.mpRtspPathsGroupBox.Controls.Add(this.mpLabel1);
@@ -296,7 +304,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpRtspPathsGroupBox.ResumeLayout(false);
       this.mpRtspPathsGroupBox.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

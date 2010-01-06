@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using TvControl;
@@ -9,7 +9,7 @@ using MediaPortal.Configuration;
 
 namespace TvPlugin
 {
-  class TvTimeShiftPositionWatcher
+  internal class TvTimeShiftPositionWatcher
   {
     private static Decimal idLastProgramEndsSoon = -1;
     private static Int64 programTimeShiftStart = -1;
@@ -19,7 +19,7 @@ namespace TvPlugin
 
     private static bool IsEnabled()
     {
-      if (isEnabled==0)
+      if (isEnabled == 0)
       {
         if (DebugSettings.EnableRecordingFromTimeshift)
           isEnabled = 1;
@@ -28,6 +28,7 @@ namespace TvPlugin
       }
       return (isEnabled == 1);
     }
+
     public static void CheckOrUpdateTimeShiftPosition(bool invalidate)
     {
       if (!IsEnabled())
@@ -36,8 +37,6 @@ namespace TvPlugin
         return;
       try
       {
-
-
         if (preRecordInterval == -1)
         {
           TvBusinessLayer layer = new TvBusinessLayer();
@@ -47,7 +46,7 @@ namespace TvPlugin
           return;
         if (TVHome.Navigator.Channel.CurrentProgram == null)
           return;
-        if ((DateTime.Now.AddMinutes((double) preRecordInterval) >= TVHome.Navigator.Channel.CurrentProgram.EndTime &&
+        if ((DateTime.Now.AddMinutes((double)preRecordInterval) >= TVHome.Navigator.Channel.CurrentProgram.EndTime &&
              idLastProgramEndsSoon != TVHome.Navigator.Channel.CurrentProgram.IdProgram) || invalidate)
         {
           User u = TVHome.Card.User;
@@ -72,11 +71,12 @@ namespace TvPlugin
           }
         }
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         Log.Error("TvTimeShiftPositionWatcher.CheckOrUpdateTimeShiftPosition exception : {0}", ex);
       }
     }
+
     public static void InitiateBufferFilesCopyProcess(string recordingFilename)
     {
       if (!IsEnabled())
@@ -96,7 +96,8 @@ namespace TvPlugin
           Log.Info("**");
           Log.Info("**");
           Log.Info("**");
-          RemoteControl.Instance.CopyTimeShiftFile(programTimeShiftStart, programTimeShiftFile, currentPosition, currentFile, recordingFilename);
+          RemoteControl.Instance.CopyTimeShiftFile(programTimeShiftStart, programTimeShiftFile, currentPosition,
+                                                   currentFile, recordingFilename);
         }
       }
     }

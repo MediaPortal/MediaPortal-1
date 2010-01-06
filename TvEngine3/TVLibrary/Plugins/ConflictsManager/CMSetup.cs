@@ -12,15 +12,16 @@ namespace SetupTv.Sections
   public partial class CMSetup : SetupTv.SectionSettings
   {
     #region constructors
+
     public CMSetup()
-      : this("Conflicts Manager Setup")
-    {
-    }
+      : this("Conflicts Manager Setup") {}
+
     public CMSetup(string name)
       : base(name)
     {
       InitializeComponent();
     }
+
     #endregion
 
     #region Public Members
@@ -43,6 +44,7 @@ namespace SetupTv.Sections
       setting.Persist();
       base.OnSectionDeActivated();
     }
+
     #endregion
   }
 }

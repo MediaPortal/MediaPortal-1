@@ -30,23 +30,27 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
   public class Teletext
   {
     #region variables
+
     /// <summary>
     /// Name of the teletext device
     /// </summary>
     private string _name;
+
     /// <summary>
     /// GUID of the category of the teletext device
     /// </summary>
     private Guid _category;
+
     #endregion
 
     #region ctor
-    private Teletext()
-    {
-    }
+
+    private Teletext() {}
+
     #endregion
 
     #region Static CreateInstance method
+
     /// <summary>
     /// Creates the instance by parsing the Teletext node in the configuration file
     /// </summary>
@@ -72,23 +76,27 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       }
       return teletext;
     }
+
     #endregion
 
     #region WriteGraph method
+
     /// <summary>
     /// Writes the Teletext part of the graph to the configuration
     /// </summary>
     /// <param name="writer">Writer</param>
     public void WriteGraph(XmlWriter writer)
     {
-      writer.WriteStartElement("teletext");//<teletext>
-      writer.WriteElementString("name", _name??"");
+      writer.WriteStartElement("teletext"); //<teletext>
+      writer.WriteElementString("name", _name ?? "");
       writer.WriteElementString("category", _category.ToString());
-      writer.WriteEndElement();//</teletext>
+      writer.WriteEndElement(); //</teletext>
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Name of the tuner device
     /// </summary>
@@ -106,6 +114,7 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       get { return _category; }
       set { _category = value; }
     }
+
     #endregion
   }
 }

@@ -111,16 +111,10 @@ namespace MediaPortal.ControlDevices
     //     return (ControlCode)new USBUIRTControlCode(id);
     //   }
 
-    private void mpGroupBox1_Enter(object sender, EventArgs e)
-    {
-    }
+    private void mpGroupBox1_Enter(object sender, EventArgs e) {}
 
-    private void USBUIRTLearnControl_Load(object sender, EventArgs e)
-    {
-    }
+    private void USBUIRTLearnControl_Load(object sender, EventArgs e) {}
 
-    private void mpCheckBox1_CheckedChanged(object sender, EventArgs e)
-    {
-    }
+    private void mpCheckBox1_CheckedChanged(object sender, EventArgs e) {}
   }
 }

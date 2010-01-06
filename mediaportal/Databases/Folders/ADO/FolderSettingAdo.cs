@@ -95,7 +95,7 @@ namespace Databases.Folders.SqlServer
           {
             if (reader.Read())
             {
-              int id = (int) reader["idPath"];
+              int id = (int)reader["idPath"];
               reader.Close();
               return id;
             }
@@ -286,9 +286,7 @@ namespace Databases.Folders.SqlServer
               XmlSerializer serializer = new XmlSerializer(type);
               valueObject = serializer.Deserialize(r);
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
           }
         }
       }
@@ -297,10 +295,10 @@ namespace Databases.Folders.SqlServer
         Log.Error(ex);
       }
     }
+
     public string DatabaseName
     {
       get { return _connection.ConnectionString; }
     }
-
   }
 }

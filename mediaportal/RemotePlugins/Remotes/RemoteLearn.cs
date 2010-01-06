@@ -79,8 +79,8 @@ namespace MediaPortal.InputDevices
         {
           try
           {
-            RemoteInterface = (X10Remote) Remote;
-            ((X10Remote) RemoteInterface).X10KeyPressed += new X10Remote.X10Event(CatchKeyPress);
+            RemoteInterface = (X10Remote)Remote;
+            ((X10Remote)RemoteInterface).X10KeyPressed += new X10Remote.X10Event(CatchKeyPress);
             this.Text = "Teach " + Remotemodel + " Remote Control";
             m_bInitialized = true;
           }
@@ -93,8 +93,8 @@ namespace MediaPortal.InputDevices
         {
           try
           {
-            RemoteInterface = (HcwRemote) Remote;
-            ((HcwRemote) RemoteInterface).HCWKeyPressed += new HcwRemote.HCWEvent(CatchKeyPress);
+            RemoteInterface = (HcwRemote)Remote;
+            ((HcwRemote)RemoteInterface).HCWKeyPressed += new HcwRemote.HCWEvent(CatchKeyPress);
             this.Text = "Teach " + Remotemodel + " Remote Control";
             m_bInitialized = true;
           }

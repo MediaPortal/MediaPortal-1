@@ -67,9 +67,7 @@ namespace MediaPortal.GUI.Library
 
     #region Constructors
 
-    public GUIActionGroup(int parentId) : base(parentId)
-    {
-    }
+    public GUIActionGroup(int parentId) : base(parentId) {}
 
     #endregion Constructors
 

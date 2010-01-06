@@ -25,7 +25,9 @@ using DirectShowLib;
 
 namespace TvLibrary.Implementations.Analog.GraphComponents
 {
+
   #region enum
+
   /// <summary>
   /// Enumeration for all possible variants of TvAudio devices
   /// </summary>
@@ -48,6 +50,7 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
     /// </summary>
     Unavailable
   }
+
   #endregion
 
   /// <summary>
@@ -56,30 +59,35 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
   public class TvAudio
   {
     #region variables
+
     /// <summary>
     /// The current TvAudio variant of the found filter
     /// </summary>
     private TvAudioVariant _mode;
+
     /// <summary>
     /// The name of the TvAudio device
     /// </summary>
     private string _name;
+
     /// <summary>
     /// The bitmask of the supported audio mode
     /// </summary>
     private TVAudioMode _audioModes;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Private constructor
     /// </summary>
-    private TvAudio()
-    {
-    }
+    private TvAudio() {}
+
     #endregion
 
     #region Static CreateInstance method
+
     /// <summary>
     /// Creates the instance by parsing the TvAudio node in the configuration file
     /// </summary>
@@ -94,7 +102,7 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
         TvAudioVariant mode;
         try
         {
-          mode = (TvAudioVariant) Int32.Parse(modeNode.InnerText);
+          mode = (TvAudioVariant)Int32.Parse(modeNode.InnerText);
         }
         catch
         {
@@ -108,7 +116,7 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
           tvAudio.Name = nameNode.InnerText;
           try
           {
-            tvAudio.AudioModes = (TVAudioMode) Int32.Parse(audioModeNode.InnerText);
+            tvAudio.AudioModes = (TVAudioMode)Int32.Parse(audioModeNode.InnerText);
           }
           catch
           {
@@ -118,27 +126,31 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       }
       return tvAudio;
     }
+
     #endregion
 
     #region WriteGraph method
+
     /// <summary>
     /// Writes the TvAudio part of the graph to the configuration
     /// </summary>
     /// <param name="writer">Writer</param>
     public void WriteGraph(XmlWriter writer)
     {
-      writer.WriteStartElement("tvAudio");//<tvAudio>
+      writer.WriteStartElement("tvAudio"); //<tvAudio>
       writer.WriteElementString("mode", ((Int32)_mode).ToString());
       if (_mode == TvAudioVariant.Normal)
       {
         writer.WriteElementString("name", _name ?? "");
         writer.WriteElementString("audioModes", ((Int32)_audioModes).ToString());
       }
-      writer.WriteEndElement();//</tvAudio>
+      writer.WriteEndElement(); //</tvAudio>
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Mode of the TvAudio device
     /// </summary>
@@ -165,6 +177,7 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       get { return _audioModes; }
       set { _audioModes = value; }
     }
+
     #endregion
   }
 }

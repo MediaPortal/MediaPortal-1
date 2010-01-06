@@ -23,13 +23,10 @@
 
 #endregion
 
-
 namespace MediaPortal.UserInterface.Controls
 {
   /// <summary>
   /// Summary description for MPLabel.
   /// </summary>
-  public class MPLabel : System.Windows.Forms.Label
-  {
-  }
+  public class MPLabel : System.Windows.Forms.Label {}
 }

@@ -32,16 +32,17 @@ namespace SetupTv.Sections
 {
   public partial class FormEditChannel : Form
   {
-    bool _analog;
-    bool _dvbt;
-    bool _dvbc;
-    bool _dvbs;
-    bool _atsc;
-    bool _dvbip;
-    bool _newChannel;
-    bool _isTv = true;
-    bool _webstream;
-    Channel _channel;
+    private bool _analog;
+    private bool _dvbt;
+    private bool _dvbc;
+    private bool _dvbs;
+    private bool _atsc;
+    private bool _dvbip;
+    private bool _newChannel;
+    private bool _isTv = true;
+    private bool _webstream;
+    private Channel _channel;
+
     public FormEditChannel()
     {
       InitializeComponent();
@@ -49,26 +50,14 @@ namespace SetupTv.Sections
 
     public bool IsTv
     {
-      get
-      {
-        return _isTv;
-      }
-      set
-      {
-        _isTv = value;
-      }
+      get { return _isTv; }
+      set { _isTv = value; }
     }
 
     public Channel Channel
     {
-      get
-      {
-        return _channel;
-      }
-      set
-      {
-        _channel = value;
-      }
+      get { return _channel; }
+      set { _channel = value; }
     }
 
     private void buttonOk_Click(object sender, EventArgs e)
@@ -117,7 +106,9 @@ namespace SetupTv.Sections
               analogChannel.Name = _channel.Name;
               analogChannel.ChannelNumber = channelNumber;
               analogChannel.Country = countries.Countries[comboBoxCountry.SelectedIndex];
-              analogChannel.TunerSource = comboBoxInput.SelectedIndex == 1 ? TunerInputType.Cable : TunerInputType.Antenna;
+              analogChannel.TunerSource = comboBoxInput.SelectedIndex == 1
+                                            ? TunerInputType.Cable
+                                            : TunerInputType.Antenna;
               analogChannel.VideoSource = (AnalogChannel.VideoInputType)comboBoxVideoSource.SelectedIndex;
               analogChannel.AudioSource = (AnalogChannel.AudioInputType)comboBoxAudioSource.SelectedIndex;
               analogChannel.Frequency = (int)GetFrequency(textBoxAnalogFrequency.Text, "2");
@@ -263,7 +254,8 @@ namespace SetupTv.Sections
                             dvbsChannel.ServiceId = sid;
                             dvbsChannel.SymbolRate = symbolrate;
                             dvbsChannel.SwitchingFrequency = switchfreq;
-                            dvbsChannel.InnerFecRate = (BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
+                            dvbsChannel.InnerFecRate =
+                              (BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
                             dvbsChannel.Pilot = (Pilot)(comboBoxPilot.SelectedIndex - 1);
                             dvbsChannel.Rolloff = (RollOff)(comboBoxRollOff.SelectedIndex - 1);
                             dvbsChannel.ModulationType = (ModulationType)(comboBoxModulation.SelectedIndex - 1);
@@ -569,7 +561,8 @@ namespace SetupTv.Sections
       if (_channel == null)
       {
         _newChannel = true;
-        Channel = new Channel("", false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "", true, "");
+        Channel = new Channel("", false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "",
+                              true, "");
       }
       CountryCollection countries = new CountryCollection();
       for (int i = 0; i < countries.Countries.Length; ++i)
@@ -578,7 +571,7 @@ namespace SetupTv.Sections
       }
 
       comboBoxDvbCModulation.Items.Clear();
-      foreach (ModulationType modValue in Enum.GetValues(typeof(ModulationType)))
+      foreach (ModulationType modValue in Enum.GetValues(typeof (ModulationType)))
       {
         comboBoxDvbCModulation.Items.Add(modValue);
       }
@@ -776,7 +769,6 @@ namespace SetupTv.Sections
             edStreamURL.Text = detail.Url;
             nudStreamBitrate.Value = detail.Bitrate;
           }
-
         }
     }
 
@@ -836,12 +828,9 @@ namespace SetupTv.Sections
       }
     }
 
-    private void comboBoxCountry_SelectedIndexChanged(object sender, EventArgs e)
-    {
+    private void comboBoxCountry_SelectedIndexChanged(object sender, EventArgs e) {}
 
-    }
-
-    static long GetFrequency(string text, string precision)
+    private static long GetFrequency(string text, string precision)
     {
       float tmp = 123.25f;
       if (tmp.ToString("f" + precision).IndexOf(',') > 0)
@@ -857,7 +846,7 @@ namespace SetupTv.Sections
       return (long)freq;
     }
 
-    static string SetFrequency(long frequency, string precision)
+    private static string SetFrequency(long frequency, string precision)
     {
       float freq = frequency;
       freq /= 1000000f;

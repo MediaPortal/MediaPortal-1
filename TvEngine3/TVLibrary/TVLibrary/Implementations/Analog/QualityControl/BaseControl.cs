@@ -36,33 +36,41 @@ namespace TvLibrary.Implementations.Analog.QualityControl
   public abstract class BaseControl : IQuality
   {
     #region variables
+
     /// <summary>
     /// Current Quality type
     /// </summary>
     protected QualityType _qualityType;
+
     /// <summary>
     /// Indicates if the encoder supports to set a bit rate mode
     /// </summary>
     protected bool _supported_BitRateMode;
+
     /// <summary>
     /// Indicates if the encoder supports to set a bit rate
     /// </summary>
     protected bool _supported_BitRate;
+
     /// <summary>
     /// Indicates if the encoder supports to set the peak bit rate mode
     /// </summary>
     protected bool _supported_PeakBitRate;
+
     /// <summary>
     /// The current bit rate mode
     /// </summary>
     protected VIDEOENCODER_BITRATE_MODE _bitRateMode;
+
     /// <summary>
     /// The standard configuration for this encoder
     /// </summary>
     protected Configuration _configuration;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Base constructor
     /// </summary>
@@ -71,6 +79,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     {
       _configuration = configuration;
     }
+
     #endregion
 
     #region IQuality Members
@@ -80,10 +89,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// </summary>
     public QualityType QualityType
     {
-      get
-      {
-        return _qualityType;
-      }
+      get { return _qualityType; }
       set
       {
         if (_supported_BitRate)
@@ -126,10 +132,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// </summary>
     public VIDEOENCODER_BITRATE_MODE BitRateMode
     {
-      get
-      {
-        return _bitRateMode;
-      }
+      get { return _bitRateMode; }
       set
       {
         if (_supported_BitRateMode)
@@ -187,6 +190,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     #endregion
 
     #region private methods
+
     /// <summary>
     /// Calculate the bitrate for the specified quality percentage
     /// </summary>
@@ -243,8 +247,8 @@ namespace TvLibrary.Implementations.Analog.QualityControl
             Log.Log.Debug("analog: Encoder mode setTo FAILresult: {0}", hr);
           }
         }
-
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Error("analog: BitRate Mode ERROR: " + ex.Message);
       }
@@ -259,7 +263,6 @@ namespace TvLibrary.Implementations.Analog.QualityControl
       {
         if (_supported_BitRate)
         {
-
           Log.Log.Info("analog: Encoder BitRate setting to {0}", _qualityType);
           object valueMin, valueMax, steppingDelta;
           int hr = GetParameterRange(PropSetID.ENCAPIPARAM_BitRate, out valueMin, out valueMax, out steppingDelta);
@@ -381,17 +384,19 @@ namespace TvLibrary.Implementations.Analog.QualityControl
             {
               Log.Log.Debug("analog: Range GetParameterRange(BitRatePeak) FAILresult: 0x{0:x}", hr);
             }
-
           }
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Error("analog: BitRate ERROR: " + ex.Message);
       }
     }
+
     #endregion
 
     #region protected methods
+
     /// <summary>
     /// Checks the capabilities of the given encoder
     /// </summary>
@@ -419,15 +424,18 @@ namespace TvLibrary.Implementations.Analog.QualityControl
         _supported_PeakBitRate = hr == 0;
         if (_supported_PeakBitRate)
           Log.Log.Debug("analog: Encoder supports ENCAPIPARAM_PeakBitRate");
-      } catch (Exception e)
+      }
+      catch (Exception e)
       {
         Log.Log.WriteFile("analog: Encoder CheckCapabilities", e);
         Log.Log.Write(e);
       }
     }
+
     #endregion
 
     #region protected abstract methods
+
     /// <summary>
     /// Sets the value for the give GUID
     /// </summary>
@@ -444,7 +452,8 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// <param name="valueMax">maximum out value</param>
     /// <param name="steppingDelta">stepping delta out value</param>
     /// <returns>HR result</returns>
-    protected abstract int GetParameterRange(Guid guid, out object valueMin, out object valueMax, out object steppingDelta);
+    protected abstract int GetParameterRange(Guid guid, out object valueMin, out object valueMax,
+                                             out object steppingDelta);
 
     /// <summary>
     /// Returns the Default value for the given GUID
@@ -460,7 +469,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
     /// <param name="guid">GUID</param>
     /// <returns>HR return value</returns>
     protected abstract int IsSupported(Guid guid);
-    #endregion
 
+    #endregion
   }
 }

@@ -41,7 +41,7 @@ namespace MediaPortal.Player.Teletext
     // unham 2 bytes into 1
     public static byte unham(byte low, byte high)
     {
-      return (byte) ((unhamtab[high] << 4) | (unhamtab[low] & 0x0F));
+      return (byte)((unhamtab[high] << 4) | (unhamtab[low] & 0x0F));
     }
   }
 }

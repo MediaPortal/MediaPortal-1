@@ -40,7 +40,7 @@ namespace MediaPortal.Dialogs
 
     public GUIDialogPlayStop()
     {
-      GetID = (int) Window.WINDOW_DIALOG_PLAY_STOP;
+      GetID = (int)Window.WINDOW_DIALOG_PLAY_STOP;
     }
 
     public override bool Init()

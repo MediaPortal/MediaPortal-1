@@ -29,21 +29,15 @@ namespace MediaPortal.Drawing
   {
     #region Constructors
 
-    public GeometryDrawing()
-    {
-    }
+    public GeometryDrawing() {}
 
-    public GeometryDrawing(Brush brush, Pen pen, Geometry geometry)
-    {
-    }
+    public GeometryDrawing(Brush brush, Pen pen, Geometry geometry) {}
 
     #endregion Constructors
 
     #region Methods
 
-    private void RaiseChanged()
-    {
-    }
+    private void RaiseChanged() {}
 
     #endregion Methods
 

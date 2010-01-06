@@ -31,7 +31,7 @@ namespace MediaPortal.Playlists
 {
   public class PlayListPLSIO : IPlayListIO
   {
-    const string START_PLAYLIST_MARKER = "[playlist]";
+    private const string START_PLAYLIST_MARKER = "[playlist]";
 
     public bool Load(PlayList playlist, string fileName)
     {
@@ -57,8 +57,8 @@ namespace MediaPortal.Playlists
       if (strLine != START_PLAYLIST_MARKER)
       {
         if (strLine.StartsWith("http") || strLine.StartsWith("HTTP") ||
-              strLine.StartsWith("mms") || strLine.StartsWith("MMS") ||
-              strLine.StartsWith("rtp") || strLine.StartsWith("RTP"))
+            strLine.StartsWith("mms") || strLine.StartsWith("MMS") ||
+            strLine.StartsWith("rtp") || strLine.StartsWith("RTP"))
         {
           PlayListItem newItem = new PlayListItem(strLine, strLine, 0);
           newItem.Type = PlayListItem.PlayListItemType.AudioStream;

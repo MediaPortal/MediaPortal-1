@@ -79,7 +79,7 @@ namespace MediaPortal.Tests.Core.Threading
       {
         Assert.IsTrue(e.ParamName == "MinimumThreads");
         Assert.IsTrue(e.ActualValue is int, "ArgumentOutOfRangeException ActualValue is not of expected type");
-        Assert.AreEqual(-1, (int) e.ActualValue);
+        Assert.AreEqual(-1, (int)e.ActualValue);
       }
     }
 
@@ -96,7 +96,7 @@ namespace MediaPortal.Tests.Core.Threading
       {
         Assert.IsTrue(e.ParamName == "MinimumThreads");
         Assert.IsTrue(e.ActualValue is int, "ArgumentOutOfRangeException ActualValue is not of expected type");
-        Assert.AreEqual(10, (int) e.ActualValue);
+        Assert.AreEqual(10, (int)e.ActualValue);
       }
     }
 
@@ -113,7 +113,7 @@ namespace MediaPortal.Tests.Core.Threading
       {
         Assert.IsTrue(e.ParamName == "MaximumThreads");
         Assert.IsTrue(e.ActualValue is int, "ArgumentOutOfRangeException ActualValue is not of expected type");
-        Assert.AreEqual(0, (int) e.ActualValue);
+        Assert.AreEqual(0, (int)e.ActualValue);
       }
     }
 
@@ -130,7 +130,7 @@ namespace MediaPortal.Tests.Core.Threading
       {
         Assert.IsTrue(e.ParamName == "ThreadIdleTimeout");
         Assert.IsTrue(e.ActualValue is int, "ArgumentOutOfRangeException ActualValue is not of expected type");
-        Assert.AreEqual(-1, (int) e.ActualValue);
+        Assert.AreEqual(-1, (int)e.ActualValue);
       }
     }
 

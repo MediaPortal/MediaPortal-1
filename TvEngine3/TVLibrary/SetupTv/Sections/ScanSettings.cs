@@ -28,14 +28,14 @@ namespace SetupTv.Sections
   public partial class ScanSettings : SectionSettings
   {
     public ScanSettings()
-      : this("General")
-    {
-    }
+      : this("General") {}
+
     public ScanSettings(string name)
       : base(name)
     {
       InitializeComponent();
     }
+
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
@@ -62,12 +62,13 @@ namespace SetupTv.Sections
 
       try
       {
-        mpComboBoxPrio.SelectedIndex = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value); //default is normal=3       
-      } catch (Exception)
+        mpComboBoxPrio.SelectedIndex = Convert.ToInt32(layer.GetSetting("processPriority", "3").Value);
+          //default is normal=3       
+      }
+      catch (Exception)
       {
         mpComboBoxPrio.SelectedIndex = 3; //fall back to default which is normal=3
       }
-
     }
 
     public override void OnSectionDeActivated()
@@ -117,7 +118,8 @@ namespace SetupTv.Sections
       try
       {
         process = System.Diagnostics.Process.GetProcessesByName("TVService")[0];
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write("could not set priority on tvservice - the process might be terminated : " + ex.Message);
         return;
@@ -152,7 +154,8 @@ namespace SetupTv.Sections
       }
       catch (Exception exp)
       {
-        Log.Write(string.Format("Could not set priority on tvservice. Error on setting process.PriorityClass: {0}", exp.Message));
+        Log.Write(string.Format("Could not set priority on tvservice. Error on setting process.PriorityClass: {0}",
+                                exp.Message));
         return;
       }
     }

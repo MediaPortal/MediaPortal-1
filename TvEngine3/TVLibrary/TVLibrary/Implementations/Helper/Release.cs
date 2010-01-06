@@ -12,7 +12,7 @@ namespace TvLibrary
     /// </summary>
     /// <param name="line">Log line input</param>
     /// <param name="o">Object to release</param>
-    static public void ComObject(string line,object o)
+    public static void ComObject(string line, object o)
     {
       if (o != null)
       {

@@ -29,9 +29,7 @@ namespace System.Windows.Media.Animation
   {
     #region Constructors
 
-    public StopAction()
-    {
-    }
+    public StopAction() {}
 
     #endregion Constructors
   }

@@ -102,7 +102,7 @@ public class DXUtil
         string sReg = string.Empty;
         if (rKey != null)
         {
-          sReg = (string) rKey.GetValue(sdkKey);
+          sReg = (string)rKey.GetValue(sdkKey);
         }
 
         if (sReg != null)
@@ -163,16 +163,16 @@ public class DXUtil
       // Return the elapsed time
       if (command == DirectXTimer.GetElapsedTime)
       {
-        fElapsedTime = (double) (qwTime - m_llLastElapsedTime)/(double) m_llQPFTicksPerSec;
+        fElapsedTime = (double)(qwTime - m_llLastElapsedTime) / (double)m_llQPFTicksPerSec;
         m_llLastElapsedTime = qwTime;
-        return (float) fElapsedTime;
+        return (float)fElapsedTime;
       }
 
       // Return the current time
       if (command == DirectXTimer.GetApplicationTime)
       {
-        double fAppTime = (double) (qwTime - m_llBaseTime)/(double) m_llQPFTicksPerSec;
-        return (float) fAppTime;
+        double fAppTime = (double)(qwTime - m_llBaseTime) / (double)m_llQPFTicksPerSec;
+        return (float)fAppTime;
       }
 
       // Reset the timer
@@ -213,14 +213,14 @@ public class DXUtil
       // Advance the timer by 1/10th second
       if (command == DirectXTimer.Advance)
       {
-        m_llStopTime += m_llQPFTicksPerSec/10;
+        m_llStopTime += m_llQPFTicksPerSec / 10;
         return 0.0f;
       }
 
       if (command == DirectXTimer.GetAbsoluteTime)
       {
-        time = qwTime/(double) m_llQPFTicksPerSec;
-        return (float) time;
+        time = qwTime / (double)m_llQPFTicksPerSec;
+        return (float)time;
       }
 
       return -1.0f; // Invalid command specified
@@ -239,21 +239,21 @@ public class DXUtil
       }
       else
       {
-        time = timeGetTime()*0.001;
+        time = timeGetTime() * 0.001;
       }
 
       // Return the elapsed time
       if (command == DirectXTimer.GetElapsedTime)
       {
-        fElapsedTime = (double) (time - m_fLastElapsedTime);
+        fElapsedTime = (double)(time - m_fLastElapsedTime);
         m_fLastElapsedTime = time;
-        return (float) fElapsedTime;
+        return (float)fElapsedTime;
       }
 
       // Return the current time
       if (command == DirectXTimer.GetApplicationTime)
       {
-        return (float) (time - m_fBaseTime);
+        return (float)(time - m_fBaseTime);
       }
 
       // Reset the timer
@@ -300,7 +300,7 @@ public class DXUtil
 
       if (command == DirectXTimer.GetAbsoluteTime)
       {
-        return (float) time;
+        return (float)time;
       }
 
       return -1.0f; // Invalid command specified

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Drawing;
 using System.Globalization;
@@ -29,17 +29,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Info("MCEDisplay.Cleanup(): completed");
     }
 
-    public void Configure()
-    {
-    }
+    public void Configure() {}
 
-    public virtual void Dispose()
-    {
-    }
+    public virtual void Dispose() {}
 
-    public void DrawImage(Bitmap bitmap)
-    {
-    }
+    public void DrawImage(Bitmap bitmap) {}
 
     private void GUIPropertyManager_OnPropertyChanged(string tag, string tagValue)
     {
@@ -146,15 +140,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters)
-    {
-    }
+    public void SetCustomCharacters(int[][] customCharacters) {}
 
     public void SetLine(int line, string message)
     {
-      if (!this.IDisplayToMCE)
-      {
-      }
+      if (!this.IDisplayToMCE) {}
     }
 
     public void Setup(string _port, int _lines, int _cols, int _time, int _linesG, int _colsG, int _timeG,
@@ -360,14 +350,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                       string.Compare(subKeyNames[k], "{FCB0C2A3-9747-4C95-9D02-820AFEDEF13F}", true,
                                      CultureInfo.InvariantCulture) == 0)
                     {
-                      string str2 = (string) key2.OpenSubKey("InprocServer32").GetValue("");
+                      string str2 = (string)key2.OpenSubKey("InprocServer32").GetValue("");
                       Log.Info(
                         "MCESession: Trying to start an instance of a COM component with GUID {0}... Server = \"{1}\"",
                         new object[] {str, str2});
                       try
                       {
                         object obj2 = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid(str)));
-                        list.Add((IMediaStatusSink) obj2);
+                        list.Add((IMediaStatusSink)obj2);
                       }
                       catch (Exception exception)
                       {
@@ -384,7 +374,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         sinks = new IMediaStatusSink[list.Count];
         for (int i = 0; i < list.Count; i++)
         {
-          sinks[i] = (IMediaStatusSink) list[i];
+          sinks[i] = (IMediaStatusSink)list[i];
         }
         for (int j = 0; j < sinks.Length; j++)
         {
@@ -462,7 +452,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           dur = "00:" + dur;
         }
-        return (int) TimeSpan.Parse(dur).TotalSeconds;
+        return (int)TimeSpan.Parse(dur).TotalSeconds;
       }
 
       protected int GetDuration2Int(string _property)
@@ -500,7 +490,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         string property = GUIPropertyManager.GetProperty(_property);
         if (property.Length > 0)
         {
-          totalSeconds = (int) DateTime.Parse(property).TimeOfDay.TotalSeconds;
+          totalSeconds = (int)DateTime.Parse(property).TimeOfDay.TotalSeconds;
         }
         return totalSeconds;
       }
@@ -521,7 +511,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         string str4 = GUIPropertyManager.GetProperty("#Play.Current.Title");
         MediaStatusPropertyTag[] tags = new MediaStatusPropertyTag[]
                                           {
-                                            MediaStatusPropertyTag.StreamingContentAudio, MediaStatusPropertyTag.Shuffle,
+                                            MediaStatusPropertyTag.StreamingContentAudio, MediaStatusPropertyTag.Shuffle
+                                            ,
                                             MediaStatusPropertyTag.RepeatSet, MediaStatusPropertyTag.MediaName,
                                             MediaStatusPropertyTag.ArtistName, MediaStatusPropertyTag.TrackName,
                                             MediaStatusPropertyTag.TrackDuration, MediaStatusPropertyTag.TrackTime
@@ -639,13 +630,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private class NullSession : ISession, IDisposable
     {
-      public void Dispose()
-      {
-      }
+      public void Dispose() {}
 
-      public void Process()
-      {
-      }
+      public void Process() {}
     }
 
     public class RadioSession : MCESession
@@ -863,7 +850,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             if (((this.program != this.oldProgram) || (this.end != this.oldEnd)) || (this.start != this.oldStart))
             {
-              num3 = ((int) DateTime.Now.TimeOfDay.TotalSeconds) - this.start;
+              num3 = ((int)DateTime.Now.TimeOfDay.TotalSeconds) - this.start;
               tagArray = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.TrackTime};
               objArray = new object[] {num3};
               base.SetStatus(tagArray, objArray);
@@ -882,7 +869,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               this.oldEnd = this.end;
               this.oldStart = this.start;
             }
-            num3 = ((int) DateTime.Now.TimeOfDay.TotalSeconds) - this.start;
+            num3 = ((int)DateTime.Now.TimeOfDay.TotalSeconds) - this.start;
             if (num3 != this.oldTime)
             {
               tagArray = new MediaStatusPropertyTag[] {MediaStatusPropertyTag.TrackTime};

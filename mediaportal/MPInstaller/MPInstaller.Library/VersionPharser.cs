@@ -23,8 +23,8 @@ namespace MediaPortal.MPInstaller
 
     public override string ToString()
     {
-      return intMajor + strMajor + "." + intMinor + strMinor + "." + intBuild + strBuild + "." + intRevision + strRevision;
-
+      return intMajor + strMajor + "." + intMinor + strMinor + "." + intBuild + strBuild + "." + intRevision +
+             strRevision;
     }
 
     public string PharseVersion(String version)
@@ -53,7 +53,8 @@ namespace MediaPortal.MPInstaller
         strBuild = splitVersion[2];
         strRevision = splitVersion[3];
 
-        Regex numerals = new Regex("^[0-9]*", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+        Regex numerals = new Regex("^[0-9]*",
+                                   RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
         if (numerals.IsMatch(strMajor))
         {
@@ -64,7 +65,6 @@ namespace MediaPortal.MPInstaller
         {
           intMinor = Int32.Parse(numerals.Match(strMinor).Value);
           strMinor = strMinor.Substring(intMinor.ToString().Length);
-
         }
         if (numerals.IsMatch(strBuild))
         {
@@ -76,11 +76,8 @@ namespace MediaPortal.MPInstaller
           intRevision = Int32.Parse(numerals.Match(strRevision).Value);
           strRevision = strRevision.Substring(intRevision.ToString().Length);
         }
-
       }
-      catch
-      {
-      }
+      catch {}
       return ToString();
     }
 
@@ -97,8 +94,10 @@ namespace MediaPortal.MPInstaller
 
       Version numV1 = new Version(version1.intMajor, version1.intMinor, version1.intBuild, version1.intRevision);
       Version numV2 = new Version(version2.intMajor, version2.intMinor, version2.intBuild, version2.intRevision);
-      Version alphaV1 = new Version(StringToInt32(version1.strMajor), StringToInt32(version1.strMinor), StringToInt32(version1.strBuild), StringToInt32(version1.strRevision));
-      Version alphaV2 = new Version(StringToInt32(version2.strMajor), StringToInt32(version2.strMinor), StringToInt32(version2.strBuild), StringToInt32(version2.strRevision));
+      Version alphaV1 = new Version(StringToInt32(version1.strMajor), StringToInt32(version1.strMinor),
+                                    StringToInt32(version1.strBuild), StringToInt32(version1.strRevision));
+      Version alphaV2 = new Version(StringToInt32(version2.strMajor), StringToInt32(version2.strMinor),
+                                    StringToInt32(version2.strBuild), StringToInt32(version2.strRevision));
 
       if (numV1.CompareTo(numV2) == 0)
       {
@@ -119,7 +118,5 @@ namespace MediaPortal.MPInstaller
       }
       return returnValue;
     }
-
-
   }
 }

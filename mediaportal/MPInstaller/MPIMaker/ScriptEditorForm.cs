@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-
 using MediaPortal.Configuration;
 using CSScriptLibrary;
 
@@ -52,7 +51,6 @@ namespace MediaPortal.MPInstaller
       // the keywords to a regular expression.
       textBox_code.CompileKeywords();
       textBox_code.ProcessAllLines();
-
     }
 
     private void testToolStripMenuItem_Click(object sender, EventArgs e)
@@ -60,7 +58,8 @@ namespace MediaPortal.MPInstaller
       try
       {
         Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
-        AsmHelper script = new AsmHelper(CSScriptLibrary.CSScript.LoadCode(textBox_code.Text, Path.GetTempFileName(), true));
+        AsmHelper script =
+          new AsmHelper(CSScriptLibrary.CSScript.LoadCode(textBox_code.Text, Path.GetTempFileName(), true));
         MPInstallerScript scr = (MPInstallerScript)script.CreateObject("InstallScript");
         textBox_erro.Text = "";
         textBox_code.ProcessAllLines();
@@ -77,10 +76,7 @@ namespace MediaPortal.MPInstaller
       this.Hide();
     }
 
-    private void textBox_erro_TextChanged(object sender, EventArgs e)
-    {
-
-    }
+    private void textBox_erro_TextChanged(object sender, EventArgs e) {}
 
     private void resetToolStripMenuItem_Click(object sender, EventArgs e)
     {

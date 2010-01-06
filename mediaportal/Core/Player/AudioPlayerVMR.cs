@@ -73,9 +73,7 @@ namespace MediaPortal.Player
     private const int WS_CLIPCHILDREN = 0x02000000;
     private const int WS_CLIPSIBLINGS = 0x04000000;
 
-    public AudioPlayerVMR7()
-    {
-    }
+    public AudioPlayerVMR7() {}
 
     public override bool Play(string strFile)
     {
@@ -104,7 +102,7 @@ namespace MediaPortal.Player
 
         GetFrameStepInterface();
 
-        _rotEntry = new DsROTEntry((IFilterGraph) graphBuilder);
+        _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
 
 
         hr = mediaCtrl.Run();
@@ -231,7 +229,7 @@ namespace MediaPortal.Player
         }
         double rate = 0;
         mediaPos.get_Rate(out rate);
-        return (int) rate;
+        return (int)rate;
       }
       set
       {
@@ -255,11 +253,9 @@ namespace MediaPortal.Player
           {
             try
             {
-              mediaPos.put_Rate((double) value);
+              mediaPos.put_Rate((double)value);
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
           }
         }
       }
@@ -278,8 +274,8 @@ namespace MediaPortal.Player
             if (basicAudio != null)
             {
               // Divide by 100 to get equivalent decibel value. For example, –10,000 is –100 dB. 
-              float fPercent = (float) m_iVolume/100.0f;
-              int iVolume = (int) ((DirectShowVolume.VOLUME_MAX - DirectShowVolume.VOLUME_MIN)*fPercent);
+              float fPercent = (float)m_iVolume / 100.0f;
+              int iVolume = (int)((DirectShowVolume.VOLUME_MAX - DirectShowVolume.VOLUME_MIN) * fPercent);
               basicAudio.put_Volume((iVolume - DirectShowVolume.VOLUME_MIN));
             }
           }
@@ -337,9 +333,9 @@ namespace MediaPortal.Player
           mediaPos.get_CurrentPosition(out dCurrentPos);
           double dDuration = Duration;
 
-          double fCurPercent = (dCurrentPos/Duration)*100.0d;
-          double fOnePercent = Duration/100.0d;
-          fCurPercent = fCurPercent + (double) iPercentage;
+          double fCurPercent = (dCurrentPos / Duration) * 100.0d;
+          double fOnePercent = Duration / 100.0d;
+          fCurPercent = fCurPercent + (double)iPercentage;
           fCurPercent *= fOnePercent;
           if (fCurPercent < 0.0d)
           {
@@ -368,8 +364,8 @@ namespace MediaPortal.Player
           {
             iPercentage = 100;
           }
-          double fPercent = Duration/100.0f;
-          fPercent *= (double) iPercentage;
+          double fPercent = Duration / 100.0f;
+          fPercent *= (double)iPercentage;
           mediaPos.put_CurrentPosition(fPercent);
         }
       }
@@ -394,7 +390,7 @@ namespace MediaPortal.Player
       //object comobj = null;
       try
       {
-        graphBuilder = (IGraphBuilder) new FilterGraph();
+        graphBuilder = (IGraphBuilder)new FilterGraph();
         iStage = 5;
         DirectShowUtil.AddAudioRendererToGraph(graphBuilder, audioDevice, false);
         int hr = graphBuilder.RenderFile(m_strCurrentFile, null);
@@ -404,14 +400,14 @@ namespace MediaPortal.Player
           return false;
         }
         iStage = 6;
-        mediaCtrl = (IMediaControl) graphBuilder;
+        mediaCtrl = (IMediaControl)graphBuilder;
 
         iStage = 7;
-        mediaEvt = (IMediaEventEx) graphBuilder;
+        mediaEvt = (IMediaEventEx)graphBuilder;
         iStage = 8;
-        mediaSeek = (IMediaSeeking) graphBuilder;
+        mediaSeek = (IMediaSeeking)graphBuilder;
         iStage = 9;
-        mediaPos = (IMediaPosition) graphBuilder;
+        mediaPos = (IMediaPosition)graphBuilder;
         iStage = 10;
         basicAudio = graphBuilder as IBasicAudio;
         iStage = 11;
@@ -440,7 +436,6 @@ namespace MediaPortal.Player
       int hr;
       try
       {
-
         if (mediaCtrl != null)
         {
           int counter = 0;
@@ -489,9 +484,7 @@ namespace MediaPortal.Player
 
         m_state = PlayState.Init;
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
 
     public override void WndProc(ref Message m)

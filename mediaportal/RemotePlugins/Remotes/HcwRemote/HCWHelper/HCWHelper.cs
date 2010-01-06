@@ -331,9 +331,7 @@ namespace MediaPortal.InputDevices.HcwHelper
           }
         }
       }
-      catch (NullReferenceException)
-      {
-      }
+      catch (NullReferenceException) {}
       return dllPath;
     }
 

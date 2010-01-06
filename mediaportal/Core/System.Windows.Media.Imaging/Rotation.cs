@@ -25,15 +25,15 @@
 
 namespace System.Windows.Media.Imaging
 {
-	public enum  Rotation
-	{
-		#region Values
+  public enum Rotation
+  {
+    #region Values
 
-		Rotate0,
-		Rotate180,
-		Rotate270,
-		Rotate90,
+    Rotate0,
+    Rotate180,
+    Rotate270,
+    Rotate90,
 
-		#endregion Values
-	}
+    #endregion Values
+  }
 }

@@ -31,9 +31,7 @@ namespace System.Windows.Controls
   {
     #region Constructors
 
-    public RowDefinitionCollection()
-    {
-    }
+    public RowDefinitionCollection() {}
 
     #endregion Constructors
 
@@ -112,7 +110,7 @@ namespace System.Windows.Controls
 
     public RowDefinition this[int index]
     {
-      get { return (RowDefinition) List[index]; }
+      get { return (RowDefinition)List[index]; }
       set { List[index] = value; }
     }
 

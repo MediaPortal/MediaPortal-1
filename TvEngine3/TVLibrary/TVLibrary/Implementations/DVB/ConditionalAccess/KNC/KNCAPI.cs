@@ -43,37 +43,47 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tunerFilter">tuner filter</param>
     /// <param name="callbacks">callback pointer struct</param>
     /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_Enable", CharSet=CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-    public static extern uint KNCBDA_CI_Enable(uint m_iDeviceIndex, IBaseFilter tunerFilter,  IntPtr callbacks);
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_Enable", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
+    public static extern uint KNCBDA_CI_Enable(uint m_iDeviceIndex, IBaseFilter tunerFilter, IntPtr callbacks);
+
     /// <summary>
     /// KNC: Disable CI
     /// </summary>
     /// <param name="m_iDeviceIndex">device index 0..n</param>
     /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_Disable", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_Disable", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern uint KNCBDA_CI_Disable(uint m_iDeviceIndex);
+
     /// <summary>
     /// KNC: Detect if CI is available
     /// </summary>
     /// <param name="m_iDeviceIndex"></param>
     /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_IsAvailable", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_IsAvailable", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern uint KNCBDA_CI_IsAvailable(uint m_iDeviceIndex);
+
     /// <summary>
     /// KNC: Detect if CI is ready
     /// </summary>
     /// <param name="m_iDeviceIndex"></param>
     /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_IsReady", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_IsReady", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern uint KNCBDA_CI_IsReady(uint m_iDeviceIndex);
+
     /// <summary>
     /// KNC: Enable CI Hardware ???
     /// </summary>
     /// <param name="m_iDeviceIndex"></param>
     /// <param name="param"></param>
     /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_HW_Enable", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_HW_Enable", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern uint KNCBDA_CI_HW_Enable(uint m_iDeviceIndex, bool param);
+
     /// <summary>
     /// KNC: Query CAM name
     /// </summary>
@@ -81,8 +91,11 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="Name"></param>
     /// <param name="BufferSize"></param>
     /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_GetName", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-    public static extern uint KNCBDA_CI_GetName(uint m_iDeviceIndex, [MarshalAs(UnmanagedType.LPStr)] StringBuilder Name, uint BufferSize);
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_GetName", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
+    public static extern uint KNCBDA_CI_GetName(uint m_iDeviceIndex, [MarshalAs(UnmanagedType.LPStr)] StringBuilder Name,
+                                                uint BufferSize);
+
     /// <summary>
     /// KNC: Send caPMT to CAM
     /// </summary>
@@ -90,16 +103,20 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="caPMT"></param>
     /// <param name="caPmtLen"></param>
     /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SendPMTCommand", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SendPMTCommand", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern uint KNCBDA_CI_SendPMTCommand(uint m_iDeviceIndex, IntPtr caPMT, uint caPmtLen);
+
     /// <summary>
     /// KNC: Enter CI menu
     /// </summary>
     /// <param name="m_iDeviceIndex"></param>
     /// <param name="nSlot"></param>
     /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_EnterMenu", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_EnterMenu", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern uint KNCBDA_CI_EnterMenu(uint m_iDeviceIndex, byte nSlot);
+
     /// <summary>
     /// KNC: Select CI menu choice
     /// </summary>
@@ -107,16 +124,20 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nSlot"></param>
     /// <param name="nChoice"></param>
     /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SelectMenu", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SelectMenu", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern uint KNCBDA_CI_SelectMenu(uint m_iDeviceIndex, byte nSlot, byte nChoice);
+
     /// <summary>
     /// KNC: Close CI menu
     /// </summary>
     /// <param name="m_iDeviceIndex"></param>
     /// <param name="nSlot"></param>
     /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_CloseMenu", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_CloseMenu", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
     public static extern uint KNCBDA_CI_CloseMenu(uint m_iDeviceIndex, byte nSlot);
+
     /// <summary>
     /// KNC: Send CI menu answer
     /// </summary>
@@ -125,76 +146,81 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="cancel"></param>
     /// <param name="MenuAnswer"></param>
     /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SendMenuAnswer", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-    public static extern uint KNCBDA_CI_SendMenuAnswer(uint m_iDeviceIndex, byte nSlot, bool cancel, [In, MarshalAs(UnmanagedType.LPStr)] String MenuAnswer);
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_CI_SendMenuAnswer", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.Cdecl)]
+    public static extern uint KNCBDA_CI_SendMenuAnswer(uint m_iDeviceIndex, byte nSlot, bool cancel,
+                                                       [In, MarshalAs(UnmanagedType.LPStr)] String MenuAnswer);
+
     /// <summary>
     /// KNC: Enable hardware ???
     /// </summary>
     /// <param name="m_iDeviceIndex"></param>
     /// <param name="tunerFilter"></param>
     /// <returns></returns>
-    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_HW_Enable", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+    [DllImport("KNCBDACTRL.dll", EntryPoint = "KNCBDA_HW_Enable", CharSet = CharSet.Auto,
+      CallingConvention = CallingConvention.StdCall)]
     public static extern uint KNCBDA_HW_Enable(uint m_iDeviceIndex, IBaseFilter tunerFilter);
 
     #endregion
 
     #region enums
+
     /// <summary>
     /// Status for CI Slot
     /// </summary>
-    public enum KNCCiSlotStatus 
+    public enum KNCCiSlotStatus
     {
       /// Initializing
-      Initializing      = 0,
+      Initializing = 0,
       /// Transport
-      Transport         = 1,
+      Transport = 1,
       /// Resource
-      Resource          = 2,
+      Resource = 2,
       /// Application
-      Application       = 3,
+      Application = 3,
       /// ConditionalAccess
-      ConditionalAccess =	4,
+      ConditionalAccess = 4,
       /// Ready
-      Ready             = 5,
+      Ready = 5,
       /// OpenService
-      OpenService       = 6,
+      OpenService = 6,
       /// Releasing
-      Releasing         = 7,
+      Releasing = 7,
       /// CloseMMI
-      CloseMMI          = 8,
+      CloseMMI = 8,
       /// Request
-      Request           = 9,
+      Request = 9,
       /// Menu
-      Menu              = 10,
+      Menu = 10,
       /// MenuChoice
-      MenuChoice        = 11,
+      MenuChoice = 11,
       /// OpenDisplay
-      OpenDisplay       = 12,
+      OpenDisplay = 12,
       /// CloseDisplay
-      CloseDisplay      = 13,
+      CloseDisplay = 13,
       /// None
-      None              = 99
+      None = 99
     }
+
     #endregion
 
     #region constants
 
-    private string[] ValidTuners = new string[] { 
-      "KNC BDA DVB-S", 
-      "KNC BDA DVB-S2", 
-      "KNC BDA DVB-C", 
-      "KNC BDA DVB-T",
-
-      "Mystique SaTiX DVB-S",
-      "Mystique SaTiX DVB-S2",
-      "Mystique CaBiX DVB-C2",
-      "Mystique TeRiX DVB-T2",
-
-      "Mystique SaTiX-S",
-      "Mystique SaTiX-S2",
-      "Mystique CaBiX-C2",
-      "Mystique TeRiX-T2"
-    };
+    private string[] ValidTuners = new string[]
+                                     {
+                                       "KNC BDA DVB-S",
+                                       "KNC BDA DVB-S2",
+                                       "KNC BDA DVB-C",
+                                       "KNC BDA DVB-T",
+                                       "Mystique SaTiX DVB-S",
+                                       "Mystique SaTiX DVB-S2",
+                                       "Mystique CaBiX DVB-C2",
+                                       "Mystique TeRiX DVB-T2",
+                                       "Mystique SaTiX-S",
+                                       "Mystique SaTiX-S2",
+                                       "Mystique CaBiX-C2",
+                                       "Mystique TeRiX-T2"
+                                     };
 
     #endregion
 
@@ -203,24 +229,31 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// CI MENU CALLBACK STRUCT 
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack=1)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public unsafe struct KNCCiCallbacks
     {
       /// context 
       public UInt32 pParam;
+
       /// delegate for CI state callback
-      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiState         onCiState;
+      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiState onCiState;
+
       /// delegate for opening display
-      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiOpenDisplay   onOpenDisplay;
+      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiOpenDisplay onOpenDisplay;
+
       /// delegate for CI menu
-      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiMenu          onCiMenu;
+      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiMenu onCiMenu;
+
       /// delegate for CI menu choices
-      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiMenuChoice    onCiMenuChoice;
+      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiMenuChoice onCiMenuChoice;
+
       /// deletgate for CI requests
-      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiRequest       onRequest;
+      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiRequest onRequest;
+
       /// delegate for closing CI
-      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiCloseDisplay  onCloseDisplay;	
-    };
+      [MarshalAs(UnmanagedType.FunctionPtr)] public OnKncCiCloseDisplay onCloseDisplay;
+    } ;
+
     /// <summary>
     /// KNC: Callbacks from CI
     /// </summary>
@@ -229,8 +262,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="lpszMessage"></param>
     /// <param name="pParam"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnKncCiState(byte slot, KNCCiSlotStatus State, [MarshalAs(UnmanagedType.LPStr)] String lpszMessage, IntPtr pParam);
-    
+    public unsafe delegate void OnKncCiState(
+      byte slot, KNCCiSlotStatus State, [MarshalAs(UnmanagedType.LPStr)] String lpszMessage, IntPtr pParam);
+
     /// <summary>
     /// KNC: Callbacks from CI
     /// </summary>
@@ -238,7 +272,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pParam"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     public unsafe delegate void OnKncCiOpenDisplay(byte slot, IntPtr pParam);
-    
+
     /// <summary>
     /// KNC: Callbacks from CI
     /// </summary>
@@ -250,9 +284,10 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pParam"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     public unsafe delegate void OnKncCiMenu(byte slot, [MarshalAs(UnmanagedType.LPStr)] String lpszTitle,
-      [MarshalAs(UnmanagedType.LPStr)] String lpszSubTitle,
-      [MarshalAs(UnmanagedType.LPStr)] String lpszBottom, 
-      uint nNumChoices, IntPtr pParam);
+                                            [MarshalAs(UnmanagedType.LPStr)] String lpszSubTitle,
+                                            [MarshalAs(UnmanagedType.LPStr)] String lpszBottom,
+                                            uint nNumChoices, IntPtr pParam);
+
     /// <summary>
     /// KNC: Callbacks from CI
     /// </summary>
@@ -261,8 +296,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="lpszText"></param>
     /// <param name="pParam"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnKncCiMenuChoice(byte slot, uint nChoice, [MarshalAs(UnmanagedType.LPStr)] String lpszText, IntPtr pParam);
-    
+    public unsafe delegate void OnKncCiMenuChoice(
+      byte slot, uint nChoice, [MarshalAs(UnmanagedType.LPStr)] String lpszText, IntPtr pParam);
+
     /// <summary>
     /// KNC: Callbacks from CI
     /// </summary>
@@ -272,8 +308,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="lpszText"></param>
     /// <param name="pParam"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    public unsafe delegate void OnKncCiRequest(byte slot, bool bBlind, uint nAnswerLength, [MarshalAs(UnmanagedType.LPStr)] String lpszText, IntPtr pParam);
-    
+    public unsafe delegate void OnKncCiRequest(
+      byte slot, bool bBlind, uint nAnswerLength, [MarshalAs(UnmanagedType.LPStr)] String lpszText, IntPtr pParam);
+
     /// <summary>
     /// KNC: Callbacks from CI
     /// </summary>
@@ -282,24 +319,26 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pParam"></param>
     [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     public unsafe delegate void OnKncCiCloseDisplay(byte slot, uint nDelay, IntPtr pParam);
+
     #endregion
 
     #region variables
 
-    readonly IntPtr ptrPmt;
-    readonly IntPtr ptrCallback;
-    readonly IntPtr _ptrDataInstance;
-    private   IBaseFilter   m_tunerFilter;
-    uint m_iDeviceIndex;
-    bool m_bIsKNC           = false;
-    bool m_bCAM_present     = false;
-    byte m_nSlot            = 0;
-    int  m_waitTimeout      = 0;
-    private KNCCiSlotStatus  m_ciState;
-    private KNCCiCallbacks   m_callbacks;
+    private readonly IntPtr ptrPmt;
+    private readonly IntPtr ptrCallback;
+    private readonly IntPtr _ptrDataInstance;
+    private IBaseFilter m_tunerFilter;
+    private uint m_iDeviceIndex;
+    private bool m_bIsKNC = false;
+    private bool m_bCAM_present = false;
+    private byte m_nSlot = 0;
+    private int m_waitTimeout = 0;
+    private KNCCiSlotStatus m_ciState;
+    private KNCCiCallbacks m_callbacks;
     private ICiMenuCallbacks m_ciMenuCallback;
 
-    #endregion  
+    #endregion
+
     /// <summary>
     /// Initializes a new instance of the <see cref="KNCAPI"/> class.
     /// </summary>
@@ -307,12 +346,11 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="DeviceIndex">The KNC1 card hardware index (0 based)</param>
     public KNCAPI(IBaseFilter tunerFilter, uint DeviceIndex)
     {
+      ptrPmt = Marshal.AllocCoTaskMem(1024);
+      ptrCallback = Marshal.AllocCoTaskMem(7 * 4); // 7*Int32
+      _ptrDataInstance = Marshal.AllocCoTaskMem(1024);
 
-      ptrPmt            = Marshal.AllocCoTaskMem(1024);
-      ptrCallback       = Marshal.AllocCoTaskMem(7*4); // 7*Int32
-      _ptrDataInstance  = Marshal.AllocCoTaskMem(1024);
-
-      m_tunerFilter     = tunerFilter;
+      m_tunerFilter = tunerFilter;
 
       FilterInfo info;
       tunerFilter.QueryFilterInfo(out info);
@@ -347,14 +385,14 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("KNC: card {0} HW Enable failed", m_iDeviceIndex);
       }
 
-      m_callbacks                 = new KNCCiCallbacks();
-      m_callbacks.onCiMenu        = OnCiMenu;
-      m_callbacks.onCiMenuChoice  = OnCiMenuChoice;
-      m_callbacks.onCiState       = OnCiState;
-      m_callbacks.onCloseDisplay  = OnCiCloseDisplay;
-      m_callbacks.onOpenDisplay   = OnCiOpenDisplay;
-      m_callbacks.onRequest       = OnCiRequest;
-      m_callbacks.pParam          = 0;
+      m_callbacks = new KNCCiCallbacks();
+      m_callbacks.onCiMenu = OnCiMenu;
+      m_callbacks.onCiMenuChoice = OnCiMenuChoice;
+      m_callbacks.onCiState = OnCiState;
+      m_callbacks.onCloseDisplay = OnCiCloseDisplay;
+      m_callbacks.onOpenDisplay = OnCiOpenDisplay;
+      m_callbacks.onRequest = OnCiRequest;
+      m_callbacks.pParam = 0;
 
       unsafe
       {
@@ -461,14 +499,15 @@ namespace TvLibrary.Implementations.DVB
       {
         Marshal.WriteByte(ptrPmt, i, pmt[i]);
       }
-      succeeded = KNCBDA_CI_SendPMTCommand(m_iDeviceIndex, ptrPmt, (uint) PMTlength) != 0;
+      succeeded = KNCBDA_CI_SendPMTCommand(m_iDeviceIndex, ptrPmt, (uint)PMTlength) != 0;
       Log.Log.Info("KNC: SendPMT success = {0}", succeeded);
-      
+
       if (!succeeded && m_ciState != KNCCiSlotStatus.Ready)
       {
         if (m_waitTimeout != 0)
         {
-          succeeded = true; // if there is no CAM inserted, don't try to resend, as it would lead to "cannot run graph" after timeout
+          succeeded = true;
+            // if there is no CAM inserted, don't try to resend, as it would lead to "cannot run graph" after timeout
         }
         else
         {
@@ -529,7 +568,7 @@ namespace TvLibrary.Implementations.DVB
       object ControlNode;
       int hr = ((IBDA_Topology)m_tunerFilter).GetControlNode(0, 1, 0, out ControlNode);
       if (hr == 0)
-      // retrieve the BDA_DeviceControl interface 
+        // retrieve the BDA_DeviceControl interface 
       {
         IBDA_DeviceControl DecviceControl = (IBDA_DeviceControl)m_tunerFilter;
         if (DecviceControl != null)
@@ -574,7 +613,9 @@ namespace TvLibrary.Implementations.DVB
       }
       Log.Log.Info("KNC:  GetControlNode Failed!");
       return false;
-    } //end SendDiSEqCCommand
+    }
+
+    //end SendDiSEqCCommand
 
     /// <summary>
     /// Determines whether [is cam present].
@@ -597,6 +638,7 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #region Callback handler 
+
     /// <summary>
     /// Callback from driver when CI status changes
     /// </summary>
@@ -616,6 +658,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("KNC: card {0} CI State: {1} {2}", m_iDeviceIndex, lpszMessage, State);
       }
     }
+
     /// <summary>
     /// Callback from driver on opening CI menu
     /// </summary>
@@ -628,6 +671,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("OnKncCiOpenDisplay slot: {0}", slot);
       }
     }
+
     /// <summary>
     /// Callback from driver, returning CI menu headers
     /// </summary>
@@ -637,7 +681,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="lpszBottom">Bottom text</param>
     /// <param name="nNumChoices">Number of choices</param>
     /// <param name="pParam">Context pointer</param>
-    public void OnCiMenu(byte slot, String lpszTitle, String lpszSubTitle, String lpszBottom, uint nNumChoices, IntPtr pParam)
+    public void OnCiMenu(byte slot, String lpszTitle, String lpszSubTitle, String lpszBottom, uint nNumChoices,
+                         IntPtr pParam)
     {
       try
       {
@@ -651,7 +696,8 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Debug("OnKncCiMenu nNumChoices:{0}", nNumChoices);
           if (m_ciMenuCallback != null)
           {
-            m_ciMenuCallback.OnCiMenu(lpszTitle.ToString(), lpszSubTitle.ToString(), lpszBottom.ToString(), (int)nNumChoices);
+            m_ciMenuCallback.OnCiMenu(lpszTitle.ToString(), lpszSubTitle.ToString(), lpszBottom.ToString(),
+                                      (int)nNumChoices);
           }
         }
       }
@@ -660,6 +706,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("OnKncCiMenu exception: {0}", ex.ToString());
       }
     }
+
     /// <summary>
     /// Callback from driver for every choice in menu
     /// </summary>
@@ -685,6 +732,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("OnKncCiMenuChoice exception: {0}", ex.ToString());
       }
     }
+
     /// <summary>
     /// Callback from driver for requesting user input
     /// </summary>
@@ -699,7 +747,8 @@ namespace TvLibrary.Implementations.DVB
       {
         lock (this)
         {
-          Log.Log.Debug("OnKncCiRequest slot:{0} bBlind:{1} nAnswerLength:{2} text:{3}", slot, bBlind, nAnswerLength, lpszText);
+          Log.Log.Debug("OnKncCiRequest slot:{0} bBlind:{1} nAnswerLength:{2} text:{3}", slot, bBlind, nAnswerLength,
+                        lpszText);
           if (m_ciMenuCallback != null)
           {
             m_ciMenuCallback.OnCiRequest(bBlind, nAnswerLength, lpszText.ToString());
@@ -737,7 +786,7 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    #endregion  
+    #endregion
 
     #region ICiMenuActions Member
 
@@ -749,7 +798,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (ciMenuHandler != null)
       {
-        m_ciMenuCallback=ciMenuHandler;
+        m_ciMenuCallback = ciMenuHandler;
         return true;
       }
       return false;
@@ -811,6 +860,7 @@ namespace TvLibrary.Implementations.DVB
       KNCBDA_CI_SendMenuAnswer(m_iDeviceIndex, m_nSlot, Cancel, Answer);
       return true;
     }
+
     #endregion
   }
 }

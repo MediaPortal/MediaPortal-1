@@ -31,25 +31,25 @@ namespace MediaPortal.Util
 {
   public class StopWatch
   {
-    bool _isRunning=false;
-    uint _startTime;
+    private bool _isRunning = false;
+    private uint _startTime;
 
     public void Stop()
     {
       _isRunning = false;
     }
+
     public void StartZero()
     {
       _isRunning = true;
       _startTime = (uint)(DXUtil.Timer(DirectXTimer.GetAbsoluteTime) * 1000.0);
     }
+
     public bool IsRunning
     {
-      get
-      {
-        return _isRunning;
-      }
+      get { return _isRunning; }
     }
+
     public uint ElapsedMilliseconds
     {
       get

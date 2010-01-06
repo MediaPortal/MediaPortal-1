@@ -78,7 +78,7 @@ namespace WindowPlugins.VideoEditor
 
     public GUIVideoEditor()
     {
-      GetID = (int) Window.WINDOW_VIDEO_EDITOR;
+      GetID = (int)Window.WINDOW_VIDEO_EDITOR;
     }
 
     #region Overrides
@@ -192,7 +192,7 @@ namespace WindowPlugins.VideoEditor
             progressBar.Visible = true;
             int duration;
             g_Player.Play(item.Path);
-            duration = (int) g_Player.Duration;
+            duration = (int)g_Player.Duration;
             g_Player.Stop();
             dvrmsMod = new DvrMsModifier();
             dvrmsMod.OnProgress += new DvrMsModifier.Progress(OnProgress);
@@ -203,7 +203,7 @@ namespace WindowPlugins.VideoEditor
           {
             CompressionSettings comprSettings = new CompressionSettings();
             CompressSettings settingWindow =
-              (CompressSettings) GUIWindowManager.GetWindow((int) Window.WINDOW_VIDEO_EDITOR_COMPRESSSETTINGS);
+              (CompressSettings)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_EDITOR_COMPRESSSETTINGS);
             if (settingWindow == null)
             {
               return;
@@ -238,7 +238,7 @@ namespace WindowPlugins.VideoEditor
             progressBar.Visible = true;
             int duration;
             g_Player.Play(item.Path);
-            duration = (int) g_Player.Duration;
+            duration = (int)g_Player.Duration;
             g_Player.Stop();
             g_Player.Release();
             Thread.Sleep(1000);
@@ -324,7 +324,7 @@ namespace WindowPlugins.VideoEditor
           startJoinBtn.IsEnabled = false;
           //startJoinBtn.Label = GUILocalizeStrings.Get(2072);    //Start converting
           titelLbl.Label = GUILocalizeStrings.Get(2065);
-            //"Please, choose the mpeg file you would like to convert to divx:";
+          //"Please, choose the mpeg file you would like to convert to divx:";
           extensions.Clear();
           extensions.Add(".mpeg");
           extensions.Add(".mpg");
@@ -336,7 +336,7 @@ namespace WindowPlugins.VideoEditor
           startJoinBtn.IsEnabled = false;
           //startJoinBtn.Label = GUILocalizeStrings.Get(2072);    //Start converting
           titelLbl.Label = GUILocalizeStrings.Get(2067);
-            //"Please, choose the dvr-ms file you would like to convert to divx:";
+          //"Please, choose the dvr-ms file you would like to convert to divx:";
         }
       }
 
@@ -370,7 +370,7 @@ namespace WindowPlugins.VideoEditor
     {
       progressBar.Percentage = 100;
       progressPercent.Label = "100";
-      GUIDialogYesNo yesnoDialog = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+      GUIDialogYesNo yesnoDialog = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
       yesnoDialog.SetHeading(2111); // Finished !
       yesnoDialog.SetLine(1, 2070); // //Finished to convert the video file
       yesnoDialog.SetLine(2, 2083); // Would you like to delete the original file?
@@ -381,9 +381,7 @@ namespace WindowPlugins.VideoEditor
         {
           File.Delete(filetoConvert);
         }
-        catch
-        {
-        }
+        catch {}
       }
       working = false;
       progressBar.Visible = false;
@@ -426,7 +424,7 @@ namespace WindowPlugins.VideoEditor
     {
       progressBar.Percentage = 100;
       progressPercent.Label = "100";
-      GUIDialogYesNo yesnoDialog = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+      GUIDialogYesNo yesnoDialog = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
       yesnoDialog.SetHeading(2111); // Finished !
       yesnoDialog.SetLine(1, 2069); // //Finished to convert the video file
       yesnoDialog.SetLine(2, 2083); // Would you like to delete the original file?
@@ -454,7 +452,7 @@ namespace WindowPlugins.VideoEditor
     {
       progressBar.Percentage = 100;
       progressPercent.Label = "100";
-      GUIDialogYesNo yesnoDialog = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+      GUIDialogYesNo yesnoDialog = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
       yesnoDialog.SetHeading(2111); // Finished !
       yesnoDialog.SetLine(1, 2070); // //Finished to convert the video file
       yesnoDialog.SetLine(2, 2083); // Would you like to delete the original file?
@@ -531,7 +529,7 @@ namespace WindowPlugins.VideoEditor
       cntDrives = 0;
       foreach (string drive in Environment.GetLogicalDrives())
       {
-        switch ((DriveType) Utils.getDriveType(drive))
+        switch ((DriveType)Utils.getDriveType(drive))
         {
           case DriveType.Removable:
           case DriveType.CD:
@@ -700,7 +698,7 @@ namespace WindowPlugins.VideoEditor
           share.FtpPassword = xmlreader.GetValueAsString("movies", sharePwd, string.Empty);
           share.FtpPort = xmlreader.GetValueAsInt("movies", sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString("movies", remoteFolder, "/");
-          share.DefaultView = (Share.Views) xmlreader.GetValueAsInt("movies", shareViewPath, (int) Share.Views.List);
+          share.DefaultView = (Share.Views)xmlreader.GetValueAsInt("movies", shareViewPath, (int)Share.Views.List);
 
           if (share.Name.Length > 0)
           {
@@ -748,7 +746,7 @@ namespace WindowPlugins.VideoEditor
           cutScr.Init();
           if (GUIWindowManager.GetWindow(cutScr.GetID) == null)
           {
-            GUIWindow win = (GUIWindow) cutScr;
+            GUIWindow win = (GUIWindow)cutScr;
             GUIWindowManager.Add(ref win);
           }
         }

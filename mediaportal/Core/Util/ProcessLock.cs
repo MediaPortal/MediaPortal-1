@@ -34,7 +34,6 @@ namespace MediaPortal.Util
   /// </summary>
   public class ProcessLock : IDisposable
   {
-
     #region Fields
 
     private string name;
@@ -84,10 +83,7 @@ namespace MediaPortal.Util
     /// </summary>
     public bool AlreadyExists
     {
-      get
-      {
-        return !isCreated;
-      }
+      get { return !isCreated; }
     }
 
     /// <summary>
@@ -95,10 +91,7 @@ namespace MediaPortal.Util
     /// </summary>
     public bool Disposed
     {
-      get
-      {
-        return isDisposed;
-      }
+      get { return isDisposed; }
     }
 
     #endregion

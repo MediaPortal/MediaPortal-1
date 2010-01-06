@@ -25,35 +25,35 @@
 
 namespace System.Windows.Threading
 {
-	public abstract class DispatcherObject
-	{
-		#region Methods
+  public abstract class DispatcherObject
+  {
+    #region Methods
 
-		public bool CheckAccess()
-		{
-			return true;
-		}
+    public bool CheckAccess()
+    {
+      return true;
+    }
 
-		public void VerifyAccess()
-		{
-			// should throw when called from incorrect thread
-		}
+    public void VerifyAccess()
+    {
+      // should throw when called from incorrect thread
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		public System.Windows.Dispatcher.Dispatcher Dispatcher
-		{
-			get { return _dispatcher; }
-		}
+    public System.Windows.Dispatcher.Dispatcher Dispatcher
+    {
+      get { return _dispatcher; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		System.Windows.Dispatcher.Dispatcher _dispatcher = null;
+    private System.Windows.Dispatcher.Dispatcher _dispatcher = null;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }

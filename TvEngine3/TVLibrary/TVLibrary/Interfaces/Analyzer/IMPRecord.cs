@@ -27,8 +27,8 @@ namespace TvLibrary.Interfaces.Analyzer
   /// Interface to the File recorder com object
   /// </summary>
   [ComVisible(true), ComImport,
-  Guid("d5ff805e-a98b-4d56-bede-3f1b8ef72533"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("d5ff805e-a98b-4d56-bede-3f1b8ef72533"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IMPRecord
   {
     /// <summary>
@@ -38,7 +38,8 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="fileName">Name of the file.</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetRecordingFileName(int subChannelId, [In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
+    int SetRecordingFileName(int subChannelId, [In, MarshalAs(UnmanagedType.LPStr)] string fileName);
+
     /// <summary>
     /// Starts recording.
     /// </summary>
@@ -46,6 +47,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int StartRecord(int subChannelId);
+
     /// <summary>
     /// Stops the recording.
     /// </summary>
@@ -53,6 +55,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int StopRecord(int subChannelId);
+
     /// <summary>
     /// Determines whether the we are receiving audio and video.
     /// </summary>
@@ -67,6 +70,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int Reset();
+
     /// <summary>
     /// Sets the name of the time shift file.
     /// </summary>
@@ -74,7 +78,8 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="fileName">Name of the file.</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetTimeShiftFileName(int subChannelId, [In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
+    int SetTimeShiftFileName(int subChannelId, [In, MarshalAs(UnmanagedType.LPStr)] string fileName);
+
     /// <summary>
     /// Starts  time shifting.
     /// </summary>
@@ -82,6 +87,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int StartTimeShifting(int subChannelId);
+
     /// <summary>
     /// Stops  time shifting.
     /// </summary>
@@ -89,6 +95,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int StopTimeShifting(int subChannelId);
+
     /// <summary>
     /// Pauses/Continues timeshifting.
     /// </summary>
@@ -158,15 +165,14 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int DeleteAllChannels();
-
   }
 
   /// <summary>
   /// Interface to the Teletext callback 
   /// </summary>
   [ComVisible(true), ComImport,
-  Guid("14639355-4BA4-471c-BA91-8B4AF51F3A0D"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("14639355-4BA4-471c-BA91-8B4AF51F3A0D"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAnalogTeletextCallBack
   {
     /// <summary>
@@ -177,14 +183,14 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int OnTeletextReceived(IntPtr data, short packetCount);
-  };
+  } ;
 
   /// <summary>
   /// Interface to the analog channel scan interface
   /// </summary>
   [ComVisible(true), ComImport,
-  Guid("D44ABA24-57B2-44de-8D56-7B95CBF8527A"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("D44ABA24-57B2-44de-8D56-7B95CBF8527A"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAnalogChanelScan
   {
     /// <summary>
@@ -224,15 +230,14 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int SetCallBack(IAnalogChannelScanCallback callback);
-
-  };
+  } ;
 
   /// <summary>
   /// Interface to the analog channel callback
   /// </summary>
   [ComVisible(true), ComImport,
- Guid("9C9B9E27-A9EA-4ac9-B2FB-FC9FCACECA82"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("9C9B9E27-A9EA-4ac9-B2FB-FC9FCACECA82"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IAnalogChannelScanCallback
   {
     /// <summary>
@@ -242,5 +247,4 @@ namespace TvLibrary.Interfaces.Analyzer
     [PreserveSig]
     int OnScannerDone();
   }
-
 }

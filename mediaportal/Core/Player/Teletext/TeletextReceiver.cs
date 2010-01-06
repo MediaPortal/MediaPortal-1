@@ -104,7 +104,7 @@ namespace MediaPortal.Player.Teletext
 
     public void OnEvent(int eventCode, UInt64 eventValue)
     {
-      TeletextEvent e = (TeletextEvent) eventCode;
+      TeletextEvent e = (TeletextEvent)eventCode;
 
       lock (this)
       {
@@ -156,12 +156,12 @@ namespace MediaPortal.Player.Teletext
     {
       lock (this)
       {
-        Log.Debug("Page {0} is of type {1} and in lang {2}{3}{4}", page, type, (char) langb1, (char) langb2,
-                  (char) langb3);
+        Log.Debug("Page {0} is of type {1} and in lang {2}{3}{4}", page, type, (char)langb1, (char)langb2,
+                  (char)langb3);
         StringBuilder sbuf = new StringBuilder();
-        sbuf.Append((char) langb1);
-        sbuf.Append((char) langb2);
-        sbuf.Append((char) langb3);
+        sbuf.Append((char)langb1);
+        sbuf.Append((char)langb2);
+        sbuf.Append((char)langb3);
         ttxtDecoder.OnServiceInfo(page, type, sbuf.ToString());
       }
     }
@@ -170,13 +170,13 @@ namespace MediaPortal.Player.Teletext
     public UInt64 DecodePTS(byte[] header_PTS, byte PTS_DTS_flag)
     {
       assert(header_PTS.Length == 5, "Input to DecodePTS is of incorrect length!");
-      byte mark = (byte) (header_PTS[0] & 0xF0);
+      byte mark = (byte)(header_PTS[0] & 0xF0);
       assert(mark == PTS_DTS_flag, "Header extension starts incorrectly! " + mark + " vs. " + PTS_DTS_flag);
 
 
       UInt64 PTS = 0;
       Log.Debug("TEST: " + (1 << 60));
-      PTS &= ((UInt64) (header_PTS[0] & 0x0E)) << 32;
+      PTS &= ((UInt64)(header_PTS[0] & 0x0E)) << 32;
       return PTS;
     }
 
@@ -208,9 +208,9 @@ namespace MediaPortal.Player.Teletext
       assert(data_alignment_indicator, "Data alignment bit not set");
 
       assert((header[6] & 0xC0) == 0x80, "First two bits of 6th byte wrong");
-        // the first two bits of the 6th header byte MUST be 10
+      // the first two bits of the 6th header byte MUST be 10
 
-      byte PTS_DTS_flag = (byte) ((header[7] & 0xC0) >> 6);
+      byte PTS_DTS_flag = (byte)((header[7] & 0xC0) >> 6);
       assert(PTS_DTS_flag != 0x01, "PTS_DTS_flag != 0x01");
 
       //Log.Debug("Header len:" + headerlen);
@@ -230,7 +230,7 @@ namespace MediaPortal.Player.Teletext
       byte PES_HEADER_DATA_LENGTH = header[8];
       assert(PES_HEADER_DATA_LENGTH == 0x24, "PES header length incorrect");
 
-      assert((PES_PACKET_LEN + 6)%184 == 0, "PES PACKET LEN invalid");
+      assert((PES_PACKET_LEN + 6) % 184 == 0, "PES PACKET LEN invalid");
 
       int dataBlockLen = PES_PACKET_LEN + 6 - headerlen;
       assert(dataBlockLen == datalen, "Datalen and datablock len mismatch");

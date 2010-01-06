@@ -33,13 +33,9 @@ namespace MediaPortal.Drawing
   {
     #region Constructors
 
-    public Thickness(double thickness) : this(thickness, thickness, thickness, thickness)
-    {
-    }
+    public Thickness(double thickness) : this(thickness, thickness, thickness, thickness) {}
 
-    public Thickness(double w, double h) : this(w, h, w, h)
-    {
-    }
+    public Thickness(double w, double h) : this(w, h, w, h) {}
 
     public Thickness(double l, double t, double r, double b)
     {
@@ -69,13 +65,13 @@ namespace MediaPortal.Drawing
 
     public override bool Equals(object o)
     {
-      return o is Thickness && ((Thickness) o)._l == _l && ((Thickness) o)._t == _t && ((Thickness) o)._r == _r &&
-             ((Thickness) o)._b == _b;
+      return o is Thickness && ((Thickness)o)._l == _l && ((Thickness)o)._t == _t && ((Thickness)o)._r == _r &&
+             ((Thickness)o)._b == _b;
     }
 
     public override int GetHashCode()
     {
-      return (int) ((uint) _l ^ (uint) _t ^ (uint) _r ^ (uint) _b);
+      return (int)((uint)_l ^ (uint)_t ^ (uint)_r ^ (uint)_b);
     }
 
     public static Thickness Parse(string source)

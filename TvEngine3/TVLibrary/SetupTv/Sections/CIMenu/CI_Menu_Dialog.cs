@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
@@ -34,11 +34,11 @@ namespace SetupTv.Sections
   /// </summary>
   public partial class CI_Menu_Dialog : SetupTv.SectionSettings
   {
-    CiMenuHandler ciMenuHandler;
-    CiMenuState ciMenuState = CiMenuState.Closed;
-    int ciMenuChoices = 0;
-    int cardNumber = 0;
-    bool InitSuccess = false;
+    private CiMenuHandler ciMenuHandler;
+    private CiMenuState ciMenuState = CiMenuState.Closed;
+    private int ciMenuChoices = 0;
+    private int cardNumber = 0;
+    private bool InitSuccess = false;
 
     /// <summary>
     /// CTOR
@@ -48,6 +48,7 @@ namespace SetupTv.Sections
     {
       cardNumber = p_cardNumber;
     }
+
     /// <summary>
     /// CTOR
     /// </summary>
@@ -96,13 +97,15 @@ namespace SetupTv.Sections
       {
         if (!RemoteControl.Instance.CiMenuSupported(cardNumber))
         {
-          MessageBox.Show("The selected card doesn't support CI menu or CAM is not ready yet\r\n(Inititialization of CAM may require >10 seconds)");
+          MessageBox.Show(
+            "The selected card doesn't support CI menu or CAM is not ready yet\r\n(Inititialization of CAM may require >10 seconds)");
           return false;
         }
         InitSuccess = true;
       }
       return InitSuccess;
     }
+
     private void btnOk_Click(object sender, EventArgs e)
     {
       try
@@ -111,7 +114,7 @@ namespace SetupTv.Sections
         {
           RemoteControl.Instance.SetCiMenuHandler(cardNumber, null);
           RemoteControl.Instance.EnterCiMenu(cardNumber);
-        }        
+        }
       }
       catch (Exception ex)
       {
@@ -172,7 +175,7 @@ namespace SetupTv.Sections
 
       switch (ciMenuState)
       {
-        // choices available, so show them
+          // choices available, so show them
         case TvLibrary.Interfaces.CiMenuState.Ready:
           //ciMenuState = CiMenuState.Opened;
           Title.Text = Menu.Title;
@@ -197,7 +200,7 @@ namespace SetupTv.Sections
           }
           break;
 
-        // errors and menu options with no choices
+          // errors and menu options with no choices
         case TvLibrary.Interfaces.CiMenuState.Error:
         case TvLibrary.Interfaces.CiMenuState.NoChoices:
           Title.Text = Menu.Title;
@@ -206,7 +209,7 @@ namespace SetupTv.Sections
           ciMenuChoices = Menu.NumChoices;
           break;
 
-        // requests require users input so open keyboard
+          // requests require users input so open keyboard
         case TvLibrary.Interfaces.CiMenuState.Request:
           ciMenuState = CiMenuState.Request;
           SetButtonState();
@@ -222,13 +225,13 @@ namespace SetupTv.Sections
     private void SetButtonState()
     {
       btnOk.Enabled = ciMenuState == CiMenuState.Closed;
-      btnCloseMenu.Enabled = (ciMenuState == CiMenuState.Ready || ciMenuState == CiMenuState.Request || ciMenuState == CiMenuState.NoChoices);
+      btnCloseMenu.Enabled = (ciMenuState == CiMenuState.Ready || ciMenuState == CiMenuState.Request ||
+                              ciMenuState == CiMenuState.NoChoices);
       btnSendAnswer.Enabled = (ciMenuState == CiMenuState.Ready || ciMenuState == CiMenuState.Request);
       grpCIMenu.Enabled = ciMenuState != CiMenuState.Closed;
       CiRequest.Visible = ciMenuState == CiMenuState.Request;
       CiAnswer.Visible = ciMenuState == CiMenuState.Request;
       if (ciMenuState == CiMenuState.Closed) InitMenu();
     }
-
   }
 }

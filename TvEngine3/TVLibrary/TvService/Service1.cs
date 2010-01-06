@@ -50,12 +50,13 @@ namespace TvService
   public partial class Service1 : ServiceBase, IPowerEventHandler
   {
     #region variables
-    bool _started;
-    bool _priorityApplied;
-    TVController _controller;
-    readonly List<PowerEventHandler> _powerEventHandlers;
-    PluginLoader _plugins;
-    List<ITvServerPlugin> _pluginsStarted = new List<ITvServerPlugin>();
+
+    private bool _started;
+    private bool _priorityApplied;
+    private TVController _controller;
+    private readonly List<PowerEventHandler> _powerEventHandlers;
+    private PluginLoader _plugins;
+    private List<ITvServerPlugin> _pluginsStarted = new List<ITvServerPlugin>();
 
     #endregion
 
@@ -92,6 +93,7 @@ namespace TvService
     {
       OnStart(args);
     }
+
     /// <summary>
     /// When implemented in a derived class, executes when a Start command is sent to the service by the Service Control Manager (SCM) or when the operating system starts (for a service that starts automatically). Specifies actions to take when the service starts.
     /// </summary>
@@ -107,7 +109,7 @@ namespace TvService
       {
         try
         {
-          RequestAdditionalTime(60000);  // starting database can be slow so increase default timeout
+          RequestAdditionalTime(60000); // starting database can be slow so increase default timeout
           applyProcessPriority();
           _priorityApplied = true;
         }
@@ -126,7 +128,8 @@ namespace TvService
       {
         ServicePack = " ( " + ServicePack + " )";
       }
-      Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSNameString() + ServicePack + " [" + OSInfo.OSInfo.OSVersion + "]");
+      Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSNameString() +
+                    ServicePack + " [" + OSInfo.OSInfo.OSVersion + "]");
 
       //Check for unsupported operating systems
       if (OSInfo.OSInfo.GetOSSupported() != 1)
@@ -264,8 +267,8 @@ namespace TvService
 
     #region PowerEvent window handling
 
-    Thread _powerEventThread;
-    uint _powerEventThreadId;
+    private Thread _powerEventThread;
+    private uint _powerEventThreadId;
 
     [StructLayout(LayoutKind.Sequential)]
     private struct MSG
@@ -289,19 +292,21 @@ namespace TvService
     private static extern IntPtr DispatchMessageA([In] ref MSG msg);
 
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern IntPtr CreateWindowEx(uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle, int x, int y,
-      int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lpParam);
+    private static extern IntPtr CreateWindowEx(uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle,
+                                                int x, int y,
+                                                int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu,
+                                                IntPtr hInstance, IntPtr lpParam);
 
     [DllImport("user32.dll")]
     private static extern bool PostThreadMessage(uint idThread, uint Msg, IntPtr wParam, IntPtr lParam);
 
     [DllImport("kernel32.dll")]
-    static extern uint GetCurrentThreadId();
+    private static extern uint GetCurrentThreadId();
 
     private delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    struct WNDCLASS
+    private struct WNDCLASS
     {
       public uint style;
       public WndProc lpfnWndProc;
@@ -322,6 +327,7 @@ namespace TvService
     private static extern IntPtr DefWindowProc(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
     #region WndProc message constants
+
     private const int WM_QUIT = 0x0012;
     private const int WM_POWERBROADCAST = 0x0218;
     private const int PBT_APMQUERYSUSPEND = 0x0000;
@@ -335,10 +341,10 @@ namespace TvService
     private const int PBT_APMRESUMESTANDBY = 0x0008;
     private const int PBT_APMRESUMEAUTOMATIC = 0x0012;
     private const int BROADCAST_QUERY_DENY = 0x424D5144;
+
     #endregion
 
-
-    IntPtr PowerEventThreadWndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    private IntPtr PowerEventThreadWndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
       if (msg == WM_POWERBROADCAST)
       {
@@ -405,7 +411,8 @@ namespace TvService
 
         RegisterClass(ref wndclass);
 
-        IntPtr handle = CreateWindowEx(0x80, wndclass.lpszClassName, "", 0x80000000, 0, 0, 0, 0, IntPtr.Zero, IntPtr.Zero, wndclass.hInstance, IntPtr.Zero);
+        IntPtr handle = CreateWindowEx(0x80, wndclass.lpszClassName, "", 0x80000000, 0, 0, 0, 0, IntPtr.Zero,
+                                       IntPtr.Zero, wndclass.hInstance, IntPtr.Zero);
 
         if (handle.Equals(IntPtr.Zero))
         {
@@ -443,8 +450,8 @@ namespace TvService
         Log.Debug("TV service PowerEventThread finished");
       }
     }
-    #endregion
 
+    #endregion
 
     /// <summary>
     /// Handles the power event.
@@ -494,14 +501,16 @@ namespace TvService
       {
         foreach (PowerEventHandler handler in powerEventAllowers)
         {
-          handler(powerStatus == PowerEventType.QuerySuspend ? PowerEventType.QuerySuspendFailed : PowerEventType.QueryStandByFailed);
+          handler(powerStatus == PowerEventType.QuerySuspend
+                    ? PowerEventType.QuerySuspendFailed
+                    : PowerEventType.QueryStandByFailed);
         }
       }
 
       return false;
     }
 
-    static void GetDatabaseConnectionString(out string connectionString, out string provider)
+    private static void GetDatabaseConnectionString(out string connectionString, out string provider)
     {
       connectionString = "";
       provider = "";
@@ -561,7 +570,6 @@ namespace TvService
       {
         Log.Error("applyProcessPriority: exception is {0}", ex.StackTrace);
       }
-
     }
 
     private bool OnPowerEventHandler(PowerEventType powerStatus)
@@ -606,14 +614,13 @@ namespace TvService
     /// <summary>
     /// Starts the remoting interface
     /// </summary>
-    void StartRemoting()
+    private void StartRemoting()
     {
       try
       {
         // create the object reference and make the singleton instance available
-        RemotingServices.Marshal(_controller, "TvControl", typeof(IController));
+        RemotingServices.Marshal(_controller, "TvControl", typeof (IController));
         RemoteControl.Clear();
-
       }
       catch (Exception ex)
       {
@@ -624,7 +631,7 @@ namespace TvService
     /// <summary>
     /// Stops the remoting interface
     /// </summary>
-    void StopRemoting()
+    private void StopRemoting()
     {
       Log.WriteFile("TV service StopRemoting");
       try
@@ -640,6 +647,7 @@ namespace TvService
       }
       Log.WriteFile("Remoting stopped");
     }
+
     public static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
     {
       Log.WriteFile("Tvservice stopped due to a thread exception");
@@ -651,24 +659,26 @@ namespace TvService
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.UnhandledExceptionEventArgs"/> instance containing the event data.</param>
-    static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
       Log.WriteFile("Tvservice stopped due to a app domain exception {0}", e.ExceptionObject);
     }
 
     #region IPowerEventHandler implementation
+
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void AddPowerEventHandler(PowerEventHandler handler)
     {
       _powerEventHandlers.Add(handler);
     }
+
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void RemovePowerEventHandler(PowerEventHandler handler)
     {
       lock (_powerEventHandlers)
         _powerEventHandlers.Remove(handler);
     }
-    #endregion
 
+    #endregion
   }
 }

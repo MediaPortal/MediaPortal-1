@@ -42,7 +42,9 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// IPowerController singleton
     /// </summary>
     private static IPowerController _powerController;
-    static string _hostName = "localhost";
+
+    private static string _hostName = "localhost";
+
     #endregion
 
     #region Public Properties
@@ -53,10 +55,7 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// <value>The name of the host.</value>
     public static string HostName
     {
-      get
-      {
-        return _hostName;
-      }
+      get { return _hostName; }
       set
       {
         if (_hostName != value)
@@ -80,7 +79,9 @@ namespace TvEngine.PowerScheduler.Interfaces
           {
             return _powerController;
           }
-          _powerController = (IPowerController)Activator.GetObject(typeof(IPowerController), String.Format("http://{0}:31457/PowerControl", _hostName));
+          _powerController =
+            (IPowerController)
+            Activator.GetObject(typeof (IPowerController), String.Format("http://{0}:31457/PowerControl", _hostName));
           bool connected = _powerController.IsConnected;
           return _powerController;
         }

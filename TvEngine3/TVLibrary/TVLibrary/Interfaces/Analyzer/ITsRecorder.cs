@@ -26,8 +26,8 @@ namespace TvLibrary.Interfaces.Analyzer
   /// interface to the file recorder comobject
   /// </summary>
   [ComVisible(true), ComImport,
- Guid("B45662E3-2749-4a34-993A-0C1659E86E83"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("B45662E3-2749-4a34-993A-0C1659E86E83"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsRecorder
   {
     /// <summary>
@@ -35,19 +35,22 @@ namespace TvLibrary.Interfaces.Analyzer
     /// </summary>
     /// <returns></returns>
     [PreserveSig]
-    int SetRecordingFileName([In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
+    int SetRecordingFileName([In, MarshalAs(UnmanagedType.LPStr)] string fileName);
+
     /// <summary>
     /// Starts recording.
     /// </summary>
     /// <returns></returns>
     [PreserveSig]
     int StartRecord();
+
     /// <summary>
     /// Stops the recording.
     /// </summary>
     /// <returns></returns>
     [PreserveSig]
     int StopRecord();
+
     /// <summary>
     /// Sets the pmt pid
     /// </summary>

@@ -64,15 +64,11 @@ namespace Wikipedia
     /// <summary>This constructor creates a new WikipediaArticle.</summary>
     /// <summary>Only called with a title string, language set to default.</summary>
     /// <param name="title">The article's title</param>
-    public WikipediaImage(string imagename) : this(imagename, "Default")
-    {
-    }
+    public WikipediaImage(string imagename) : this(imagename, "Default") {}
 
     /// <summary>This constructor creates a new WikipediaArticle if no parameter is given.</summary>
     /// <summary>Uses an empty searchterm and the default language.</summary>
-    public WikipediaImage() : this(string.Empty, "Default")
-    {
-    }
+    public WikipediaImage() : this(string.Empty, "Default") {}
 
     #endregion
 

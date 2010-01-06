@@ -29,9 +29,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public TriggerAction()
-    {
-    }
+    public TriggerAction() {}
 
     #endregion Constructors
   }

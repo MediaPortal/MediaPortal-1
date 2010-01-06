@@ -113,7 +113,7 @@ namespace TvEngine.PowerScheduler.Interfaces
       Type dataType = typeof (T);
       if (_dataType == dataType)
       {
-        return (T) _data;
+        return (T)_data;
       }
       return default(T);
     }

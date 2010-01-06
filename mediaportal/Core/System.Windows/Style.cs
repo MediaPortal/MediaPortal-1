@@ -32,9 +32,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public Style()
-    {
-    }
+    public Style() {}
 
     public Style(Type targetType)
     {
@@ -78,12 +76,10 @@ namespace System.Windows
         throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof (SetterBase)));
       }
 
-      Setters.Add((SetterBase) child);
+      Setters.Add((SetterBase)child);
     }
 
-    void IAddChild.AddText(string text)
-    {
-    }
+    void IAddChild.AddText(string text) {}
 
     object INameScope.FindName(string name)
     {

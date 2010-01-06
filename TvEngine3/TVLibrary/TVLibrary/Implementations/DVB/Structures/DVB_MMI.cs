@@ -1,4 +1,5 @@
-﻿#region Copyright
+#region Copyright
+
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,7 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -39,9 +42,9 @@ namespace TvLibrary.Implementations.DVB
     public enum MMI_TAGS
     {
       /// Close menu
-      CLOSE     = 0x9F8800,
+      CLOSE = 0x9F8800,
       /// Enquiry from CAM
-      ENQUIRY   = 0x9F8807, 
+      ENQUIRY = 0x9F8807,
       /// More menu entries
       MENU_MORE = 0x9F880A,
       /// Last menu entry
@@ -54,7 +57,7 @@ namespace TvLibrary.Implementations.DVB
       TEXT_MORE = 0x9F8804,
       /// Last text
       TEXT_LAST = 0x9F8803
-    };
+    } ;
 
     /// <summary>
     /// interpretes parts of an byte[] as status int
@@ -64,7 +67,9 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public static MMI_TAGS ToMMITag(byte[] sourceData, int offset)
     {
-      return (MMI_TAGS)(((Int32)sourceData[offset] << 16) | ((Int32)sourceData[offset + 1] << 8) | ((Int32)sourceData[offset + 2]));
+      return
+        (MMI_TAGS)
+        (((Int32)sourceData[offset] << 16) | ((Int32)sourceData[offset + 1] << 8) | ((Int32)sourceData[offset + 2]));
     }
 
     /// <summary>
@@ -85,14 +90,16 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
-        bLen &= 0x7f; // clear 8th bit; remaining 7 bit tell the number of following bytes to interpret (most probably 2)
+        bLen &= 0x7f;
+          // clear 8th bit; remaining 7 bit tell the number of following bytes to interpret (most probably 2)
         bytesRead = 1 + bLen;
         Int32 shiftBy;
         Int32 iLen = 0;
         for (Int32 p = 0; p < bLen; p++)
         {
           shiftBy = (Int32)(bLen - p - 1) * 8; // number of bits to shift up, i.e. 2 bytes -> 1st byte <<8, 2nd byte <<0
-          iLen = iLen | (sourceData[offset + 1 + p] << shiftBy); // shift byte to right position, concat by "or" operation
+          iLen = iLen | (sourceData[offset + 1 + p] << shiftBy);
+            // shift byte to right position, concat by "or" operation
         }
         return iLen;
       }
@@ -204,7 +211,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="uLength1">length byte1</param>
     /// <param name="uLength2">length byte2</param>
     /// <returns>byte array</returns>
-    public static void CreateMMIAnswer(bool Cancel, String Answer, ref byte[] uData, ref byte uLength1, ref byte uLength2)
+    public static void CreateMMIAnswer(bool Cancel, String Answer, ref byte[] uData, ref byte uLength1,
+                                       ref byte uLength2)
     {
       if (Cancel == true)
       {
@@ -214,7 +222,7 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
-        uData[3] = (byte)(Answer.Length +1); // length field + 1 byte answ_id
+        uData[3] = (byte)(Answer.Length + 1); // length field + 1 byte answ_id
         uData[4] = 1; // answ_id "answer"
         char[] answerChars = Answer.ToCharArray();
         for (int p = 0; p < answerChars.Length; p++)
@@ -242,6 +250,7 @@ namespace TvLibrary.Implementations.DVB
       }
       return '_';
     }
+
     /// <summary>
     /// Output binary buffer to log for debugging
     /// </summary>
@@ -259,7 +268,8 @@ namespace TvLibrary.Implementations.DVB
         {
           if (row.Length > 0)
           {
-            Log.Log.WriteFile(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '), rowText.ToString().PadRight(16, ' ')));
+            Log.Log.WriteFile(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '),
+                                            rowText.ToString().PadRight(16, ' ')));
           }
           rowText.Length = 0;
           row.Length = 0;
@@ -270,9 +280,11 @@ namespace TvLibrary.Implementations.DVB
       }
       if (row.Length > 0)
       {
-        Log.Log.WriteFile(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '), rowText.ToString().PadRight(16, ' ')));
+        Log.Log.WriteFile(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '),
+                                        rowText.ToString().PadRight(16, ' ')));
       }
     }
+
     /// <summary>
     /// Output binary buffer to log for debugging (Wrapper for IntPtr)
     /// </summary>
@@ -323,6 +335,7 @@ namespace TvLibrary.Implementations.DVB
       }
       return false;
     }
+
     /// <summary>
     /// Constructor for an APDU based MMI parser
     /// </summary>
@@ -333,14 +346,12 @@ namespace TvLibrary.Implementations.DVB
       m_ciMenuCallback = CiMenuCallbacks;
       m_cardName = CardName;
     }
+
     /// <summary>
     /// Constructor for an APDU based MMI parser
     /// </summary>
     /// <param name="CardName">Card type for logging</param>
-    public DVB_MMI_Handler(String CardName)
-    {
-
-    }
+    public DVB_MMI_Handler(String CardName) {}
 
     /// <summary>
     /// Handles APDU (MMI) objects and perform callbacks
@@ -355,7 +366,7 @@ namespace TvLibrary.Implementations.DVB
       // dumping binary APDU
 #if DEBUG
       DVB_MMI.DumpBinary(MMI, 0, MMI_length);
-#endif 
+#endif
 
       // calculate length and offset
       int countLengthBytes;
@@ -363,7 +374,8 @@ namespace TvLibrary.Implementations.DVB
       int mmiOffset = 3 + countLengthBytes; // 3 bytes mmi tag + 1 byte length field ?
 
 #if DEBUG
-      Log.Log.Debug("{0}: MMITag:{1}, MMIObjectLength: {2} ({2:X2}), mmiOffset: {3}", m_cardName, uMMITag, mmiLength, mmiOffset);
+      Log.Log.Debug("{0}: MMITag:{1}, MMIObjectLength: {2} ({2:X2}), mmiOffset: {3}", m_cardName, uMMITag, mmiLength,
+                    mmiOffset);
 #endif
       int offset = 0; // starting with 0; reading whole struct from start
       if (uMMITag == DVB_MMI.MMI_TAGS.CLOSE)
@@ -402,7 +414,8 @@ namespace TvLibrary.Implementations.DVB
         strText = DVB_MMI.BytesToString(MMI, mmiOffset + 4, mmiLength - mmiOffset - 2);
         if (m_ciMenuCallback != null)
         {
-          Log.Log.Debug("{0}: OnCiRequest: bPasswordMode:{1}, answer_text_length:{2}, strText:{3}", m_cardName, bPasswordMode, answer_text_length, strText);
+          Log.Log.Debug("{0}: OnCiRequest: bPasswordMode:{1}, answer_text_length:{2}, strText:{3}", m_cardName,
+                        bPasswordMode, answer_text_length, strText);
           m_ciMenuCallback.OnCiRequest(bPasswordMode, answer_text_length, strText);
         }
         else
@@ -422,7 +435,8 @@ namespace TvLibrary.Implementations.DVB
           offset++;
         }
         uMMITag = DVB_MMI.ToMMITag(MMI, offset); // get next MMI tag
-        Log.Log.Debug("{0}: MMI Parse: Got MENU_LAST, skipped to next block on index: {1}; new Tag {2}", m_cardName, offset, uMMITag);
+        Log.Log.Debug("{0}: MMI Parse: Got MENU_LAST, skipped to next block on index: {1}; new Tag {2}", m_cardName,
+                      offset, uMMITag);
 
         int nChoices = 0;
         List<string> Choices = new List<string>();

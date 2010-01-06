@@ -77,7 +77,7 @@ namespace TvPlugin
       _dummyuser.Name = "Free channel checker";
       _timer.Interval = 15000;
       _timer.Enabled = true;
-      _timer.Tick += new EventHandler(_timer_Tick);      
+      _timer.Tick += new EventHandler(_timer_Tick);
 
       _notifiedRecordings = new ArrayList();
     }
@@ -336,17 +336,19 @@ namespace TvPlugin
             if (parentSchedule != null)
             {
               endTime = parentSchedule.EndTime.AddMinutes(parentSchedule.PostRecordInterval).ToString("t",
-                                                                                          CultureInfo.CurrentCulture.
-                                                                                            DateTimeFormat);
+                                                                                                      CultureInfo.
+                                                                                                        CurrentCulture.
+                                                                                                        DateTimeFormat);
             }
             string text = String.Format("{0} {1}-{2}",
-                                 newRecording.Title,
-                                 newRecording.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                 endTime);
+                                        newRecording.Title,
+                                        newRecording.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                        endTime);
             //Recording started            
             TvTimeShiftPositionWatcher.InitiateBufferFilesCopyProcess(newRecording.FileName);
 
-            TimeSpan tsStart = DateTime.Now - newRecording.StartTime; // do not show rec. that have been started a while ago.
+            TimeSpan tsStart = DateTime.Now - newRecording.StartTime;
+              // do not show rec. that have been started a while ago.
             if (tsStart.TotalSeconds < 60)
             {
               Notify(GUILocalizeStrings.Get(1446), text, newRecording.ReferencedChannel().DisplayName);
@@ -380,16 +382,16 @@ namespace TvPlugin
         if (prg != null)
         {
           textPrg = String.Format("{0} {1}-{2}",
-                               prg.Title,
-                               prg.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                               prg.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                  prg.Title,
+                                  prg.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                  prg.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         }
         else
         {
           textPrg = String.Format("{0} {1}-{2}",
-                               stoppedRec.Title,
-                               stoppedRec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                               DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                  stoppedRec.Title,
+                                  stoppedRec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                  DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         }
         //Recording stopped:                            
         Notify(GUILocalizeStrings.Get(1447), textPrg, TvRecorded.GetRecordingDisplayName(stoppedRec));

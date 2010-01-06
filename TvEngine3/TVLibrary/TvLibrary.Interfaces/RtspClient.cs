@@ -43,9 +43,7 @@ namespace TvLibrary.Streaming
     /// <summary>
     /// Initializes a new instance of the <see cref="RtspClient"/> class.
     /// </summary>
-    public RtspClient()
-    {
-    }
+    public RtspClient() {}
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RtspClient"/> class.

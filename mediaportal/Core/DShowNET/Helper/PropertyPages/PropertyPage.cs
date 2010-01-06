@@ -83,9 +83,7 @@ namespace DShowNET.Helper
     // ---------------- Constructors --------------------
 
     /// <summary> Constructor </summary>
-    public PropertyPage()
-    {
-    }
+    public PropertyPage() {}
 
 
     // ---------------- Public Methods --------------------
@@ -101,8 +99,6 @@ namespace DShowNET.Helper
     }
 
     /// <summary> Release unmanaged resources </summary>
-    public void Dispose()
-    {
-    }
+    public void Dispose() {}
   }
 }

@@ -127,11 +127,11 @@ namespace MediaPortal.GUI.Music
             DateTime time2 = DateTime.MinValue;
             if (item1.MusicTag != null)
             {
-              time1 = ((MusicTag) item1.MusicTag).DateTimeModified;
+              time1 = ((MusicTag)item1.MusicTag).DateTimeModified;
             }
             if (item2.MusicTag != null)
             {
-              time2 = ((MusicTag) item2.MusicTag).DateTimeModified;
+              time2 = ((MusicTag)item2.MusicTag).DateTimeModified;
             }
 
             item1.Label2 = time1.ToShortDateString();
@@ -167,11 +167,11 @@ namespace MediaPortal.GUI.Music
           item2.Label2 = item2.Year.ToString();
           if (bAscending)
           {
-            return (int) (item1.Year - item2.Year);
+            return (int)(item1.Year - item2.Year);
           }
           else
           {
-            return (int) (item2.Year - item1.Year);
+            return (int)(item2.Year - item1.Year);
           }
 
         case SortMethod.Rating:
@@ -179,19 +179,19 @@ namespace MediaPortal.GUI.Music
           int iRating2 = 0;
           if (item1.MusicTag != null)
           {
-            iRating1 = ((MusicTag) item1.MusicTag).Rating;
+            iRating1 = ((MusicTag)item1.MusicTag).Rating;
           }
           if (item2.MusicTag != null)
           {
-            iRating2 = ((MusicTag) item2.MusicTag).Rating;
+            iRating2 = ((MusicTag)item2.MusicTag).Rating;
           }
           if (bAscending)
           {
-            return (int) (iRating1 - iRating2);
+            return (int)(iRating1 - iRating2);
           }
           else
           {
-            return (int) (iRating2 - iRating1);
+            return (int)(iRating2 - iRating1);
           }
 
         case SortMethod.Size:
@@ -205,11 +205,11 @@ namespace MediaPortal.GUI.Music
           }
           if (bAscending)
           {
-            return (int) (item1.FileInfo.Length - item2.FileInfo.Length);
+            return (int)(item1.FileInfo.Length - item2.FileInfo.Length);
           }
           else
           {
-            return (int) (item2.FileInfo.Length - item1.FileInfo.Length);
+            return (int)(item2.FileInfo.Length - item1.FileInfo.Length);
           }
 
         case SortMethod.Track:
@@ -217,19 +217,19 @@ namespace MediaPortal.GUI.Music
           int iTrack2 = 0;
           if (item1.MusicTag != null)
           {
-            iTrack1 = ((MusicTag) item1.MusicTag).Track;
+            iTrack1 = ((MusicTag)item1.MusicTag).Track;
           }
           if (item2.MusicTag != null)
           {
-            iTrack2 = ((MusicTag) item2.MusicTag).Track;
+            iTrack2 = ((MusicTag)item2.MusicTag).Track;
           }
           if (bAscending)
           {
-            return (int) (iTrack1 - iTrack2);
+            return (int)(iTrack1 - iTrack2);
           }
           else
           {
-            return (int) (iTrack2 - iTrack1);
+            return (int)(iTrack2 - iTrack1);
           }
 
         case SortMethod.Duration:
@@ -237,19 +237,19 @@ namespace MediaPortal.GUI.Music
           int iDuration2 = 0;
           if (item1.MusicTag != null)
           {
-            iDuration1 = ((MusicTag) item1.MusicTag).Duration;
+            iDuration1 = ((MusicTag)item1.MusicTag).Duration;
           }
           if (item2.MusicTag != null)
           {
-            iDuration2 = ((MusicTag) item2.MusicTag).Duration;
+            iDuration2 = ((MusicTag)item2.MusicTag).Duration;
           }
           if (bAscending)
           {
-            return (int) (iDuration1 - iDuration2);
+            return (int)(iDuration1 - iDuration2);
           }
           else
           {
-            return (int) (iDuration2 - iDuration1);
+            return (int)(iDuration2 - iDuration1);
           }
 
         case SortMethod.Title:
@@ -257,11 +257,11 @@ namespace MediaPortal.GUI.Music
           string strTitle2 = item2.Label;
           if (item1.MusicTag != null)
           {
-            strTitle1 = ((MusicTag) item1.MusicTag).Title;
+            strTitle1 = ((MusicTag)item1.MusicTag).Title;
           }
           if (item2.MusicTag != null)
           {
-            strTitle2 = ((MusicTag) item2.MusicTag).Title;
+            strTitle2 = ((MusicTag)item2.MusicTag).Title;
           }
           if (bAscending)
           {
@@ -277,11 +277,11 @@ namespace MediaPortal.GUI.Music
           string artist2 = "";
           if (item1.MusicTag != null)
           {
-            artist1 = ((MusicTag) item1.MusicTag).Artist;
+            artist1 = ((MusicTag)item1.MusicTag).Artist;
           }
           if (item2.MusicTag != null)
           {
-            artist2 = ((MusicTag) item2.MusicTag).Artist;
+            artist2 = ((MusicTag)item2.MusicTag).Artist;
           }
           if (bAscending)
           {
@@ -297,11 +297,11 @@ namespace MediaPortal.GUI.Music
           string albumartist2 = "";
           if (item1.MusicTag != null)
           {
-            albumartist1 = ((MusicTag) item1.MusicTag).AlbumArtist;
+            albumartist1 = ((MusicTag)item1.MusicTag).AlbumArtist;
           }
           if (item2.MusicTag != null)
           {
-            albumartist2 = ((MusicTag) item2.MusicTag).AlbumArtist;
+            albumartist2 = ((MusicTag)item2.MusicTag).AlbumArtist;
           }
           if (bAscending)
           {
@@ -317,11 +317,11 @@ namespace MediaPortal.GUI.Music
           string strAlbum2 = "";
           if (item1.MusicTag != null)
           {
-            strAlbum1 = ((MusicTag) item1.MusicTag).Album;
+            strAlbum1 = ((MusicTag)item1.MusicTag).Album;
           }
           if (item2.MusicTag != null)
           {
-            strAlbum2 = ((MusicTag) item2.MusicTag).Album;
+            strAlbum2 = ((MusicTag)item2.MusicTag).Album;
           }
           if (bAscending)
           {

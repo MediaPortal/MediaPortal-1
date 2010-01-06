@@ -31,8 +31,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
 using MediaPortal.Drawing;
-using Point=System.Drawing.Point;
-using Size=MediaPortal.Drawing.Size;
+using Point = System.Drawing.Point;
+using Size = MediaPortal.Drawing.Size;
 
 namespace MediaPortal.GUI.Library
 {
@@ -123,9 +123,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// empty constructor
     /// </summary>
-    public GUIControl()
-    {
-    }
+    public GUIControl() {}
 
     /// <summary>
     /// The basic constructur of the GUIControl class.
@@ -305,12 +303,12 @@ namespace MediaPortal.GUI.Library
 
             if (controlId == 0)
             {
-              controlId = Navigate((Direction) action.wID);
+              controlId = Navigate((Direction)action.wID);
             }
 
             if (controlId != -1 && controlId != GetID)
             {
-              FocusControl(WindowId, controlId, (Direction) action.wID);
+              FocusControl(WindowId, controlId, (Direction)action.wID);
             }
 
             break;
@@ -325,7 +323,7 @@ namespace MediaPortal.GUI.Library
 
       if (this is GUIListControl)
       {
-        Rectangle rect = ((GUIListControl) this).SelectedRectangle;
+        Rectangle rect = ((GUIListControl)this).SelectedRectangle;
 
         currentX = rect.X;
         currentY = rect.Y;
@@ -392,10 +390,10 @@ namespace MediaPortal.GUI.Library
       double vertDelta = p2.Y - p1.Y;
 
       // arctan gives us the bearing, just need to convert -pi..+pi to 0..360 deg
-      double bearing = Math.Round(90 - Math.Atan2(vertDelta, horzDelta)/Math.PI*180 + 360)%360;
+      double bearing = Math.Round(90 - Math.Atan2(vertDelta, horzDelta) / Math.PI * 180 + 360) % 360;
 
       // normalize
-      bearing = bearing > 180 ? ((bearing + 180)%360) - 180 : bearing < -180 ? ((bearing - 180)%360) + 180 : bearing;
+      bearing = bearing > 180 ? ((bearing + 180) % 360) - 180 : bearing < -180 ? ((bearing - 180) % 360) + 180 : bearing;
 
       return bearing >= 0 ? bearing - 180 : 180 - bearing;
     }
@@ -405,7 +403,7 @@ namespace MediaPortal.GUI.Library
       double horzDelta = p2.X - p1.X;
       double vertDelta = p2.Y - p1.Y;
 
-      return Math.Round(Math.Sqrt((horzDelta*horzDelta) + (vertDelta*vertDelta)));
+      return Math.Round(Math.Sqrt((horzDelta * horzDelta) + (vertDelta * vertDelta)));
     }
 
     private ArrayList FlattenHierarchy(UIElementCollection elements)
@@ -428,13 +426,13 @@ namespace MediaPortal.GUI.Library
 
         if (control is GUIGroup)
         {
-          FlattenHierarchy(((GUIGroup) control).Children, targetList);
+          FlattenHierarchy(((GUIGroup)control).Children, targetList);
           continue;
         }
 
         if (control is GUIFacadeControl)
         {
-          GUIFacadeControl facade = (GUIFacadeControl) control;
+          GUIFacadeControl facade = (GUIFacadeControl)control;
 
           switch (facade.View)
           {
@@ -479,7 +477,7 @@ namespace MediaPortal.GUI.Library
             {
               int controlId = 0;
 
-              switch ((Action.ActionType) message.Param1)
+              switch ((Action.ActionType)message.Param1)
               {
                 case Action.ActionType.ACTION_MOVE_DOWN:
                   controlId = _downControlId;
@@ -497,12 +495,12 @@ namespace MediaPortal.GUI.Library
 
               if (controlId == 0)
               {
-                controlId = Navigate((Direction) message.Param1);
+                controlId = Navigate((Direction)message.Param1);
               }
 
               if (controlId != -1 && controlId != GetID)
               {
-                FocusControl(WindowId, controlId, (Direction) message.Param1);
+                FocusControl(WindowId, controlId, (Direction)message.Param1);
               }
 
               return true;
@@ -598,9 +596,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Preallocates the control its DirectX resources.
     /// </summary>
-    public virtual void PreAllocResources()
-    {
-    }
+    public virtual void PreAllocResources() {}
 
     /// <summary>
     /// Allocates the control its DirectX resources.
@@ -685,9 +681,7 @@ namespace MediaPortal.GUI.Library
     /// Changes the alpha transparency component of the colordiffuse.
     /// </summary>
     /// <param name="dwAlpha"></param>
-    public virtual void SetAlpha(int dwAlpha)
-    {
-    }
+    public virtual void SetAlpha(int dwAlpha) {}
 
     /// <summary>
     /// ColourDiffuse allows you to mix a color & a graphics texture.
@@ -862,9 +856,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Perform an update after a change has occured. E.g. change to a new position.
     /// </summary>
-    protected virtual void Update()
-    {
-    }
+    protected virtual void Update() {}
 
     /// <summary>
     /// Sends a GUI_MSG_HIDDEN message to a control (Hide a control).
@@ -939,7 +931,7 @@ namespace MediaPortal.GUI.Library
 
     public static void FocusControl(int iWindowId, int iControlId, Direction direction)
     {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, iWindowId, 0, iControlId, (int) direction,
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, iWindowId, 0, iControlId, (int)direction,
                                       0, null);
       GUIWindow window = GUIWindowManager.GetWindow(iWindowId);
       if (window != null)
@@ -1289,17 +1281,13 @@ namespace MediaPortal.GUI.Library
     /// Virtual method. This method gets called when the control is initialized
     /// and allows it to do any initalization
     /// </summary>
-    public virtual void OnInit()
-    {
-    }
+    public virtual void OnInit() {}
 
     /// <summary>
     /// Virtual method. This method gets called when the control is de-initialized
     /// and allows it to do any de-initalization
     /// </summary>
-    public virtual void OnDeInit()
-    {
-    }
+    public virtual void OnDeInit() {}
 
     /// <summary>
     /// Description (from xml skin file) for control
@@ -1485,14 +1473,14 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("posX")]
     public int _positionX
     {
-      get { return (int) base.Location.X; }
+      get { return (int)base.Location.X; }
       set { base.Location = new Drawing.Point(value, base.Location.Y); }
     }
 
     [XMLSkinElement("posY")]
     public int _positionY
     {
-      get { return (int) base.Location.Y; }
+      get { return (int)base.Location.Y; }
       set { base.Location = new Drawing.Point(base.Location.X, value); }
     }
 
@@ -1554,8 +1542,8 @@ namespace MediaPortal.GUI.Library
 
     public override double Opacity
     {
-      get { return 255.0/Color.FromArgb((int) _diffuseColor).A; }
-      set { _diffuseColor = Color.FromArgb((int) (255*value), Color.FromArgb((int) _diffuseColor)).ToArgb(); }
+      get { return 255.0 / Color.FromArgb((int)_diffuseColor).A; }
+      set { _diffuseColor = Color.FromArgb((int)(255 * value), Color.FromArgb((int)_diffuseColor)).ToArgb(); }
     }
 
     public Size Size
@@ -1563,8 +1551,8 @@ namespace MediaPortal.GUI.Library
       get { return new Size(base.Width, base.Height); }
       set
       {
-        base.Width = (int) value.Width;
-        base.Height = (int) value.Height;
+        base.Width = (int)value.Width;
+        base.Height = (int)value.Height;
         Update();
       }
     }
@@ -1586,7 +1574,7 @@ namespace MediaPortal.GUI.Library
       _animations = new List<VisualEffect>();
       foreach (VisualEffect effect in animations)
       {
-        _animations.Add((VisualEffect) effect.Clone());
+        _animations.Add((VisualEffect)effect.Clone());
       }
     }
 
@@ -1603,7 +1591,7 @@ namespace MediaPortal.GUI.Library
       }
       foreach (VisualEffect effect in animations)
       {
-        _animations.Add((VisualEffect) effect.Clone());
+        _animations.Add((VisualEffect)effect.Clone());
       }
     }
 
@@ -1612,7 +1600,7 @@ namespace MediaPortal.GUI.Library
       _thumbAnimations = new List<VisualEffect>();
       foreach (VisualEffect effect in animations)
       {
-        _thumbAnimations.Add((VisualEffect) effect.Clone());
+        _thumbAnimations.Add((VisualEffect)effect.Clone());
       }
     }
 
@@ -1643,7 +1631,7 @@ namespace MediaPortal.GUI.Library
           return;
         }
       }
-      List<VisualEffect> reverseAnims = GetAnimations((AnimationType) (-(int) animType), false);
+      List<VisualEffect> reverseAnims = GetAnimations((AnimationType)(-(int)animType), false);
       List<VisualEffect> forwardAnims = GetAnimations(animType, false);
       bool done = false;
       foreach (VisualEffect reverseAnim in reverseAnims)
@@ -1824,8 +1812,8 @@ namespace MediaPortal.GUI.Library
 
     public virtual void GetCenter(ref float centerX, ref float centerY)
     {
-      centerX = (float) (XPosition + (Width/2));
-      centerY = (float) (YPosition + (Height/2));
+      centerX = (float)(XPosition + (Width / 2));
+      centerY = (float)(YPosition + (Height / 2));
     }
 
     public TransformMatrix getTransformMatrix(uint currentTime)
@@ -1875,7 +1863,7 @@ namespace MediaPortal.GUI.Library
             return true;
           }
         }
-        else if (anim.AnimationType == (AnimationType) (-(int) animType))
+        else if (anim.AnimationType == (AnimationType)(-(int)animType))
         {
           if (anim.QueuedProcess == AnimationProcess.Reverse)
           {
@@ -1946,9 +1934,7 @@ namespace MediaPortal.GUI.Library
       _allowHiddenFocus = allowHiddenFocus;
     }
 
-    protected virtual void OnFocus()
-    {
-    }
+    protected virtual void OnFocus() {}
 
     public Point Camera
     {

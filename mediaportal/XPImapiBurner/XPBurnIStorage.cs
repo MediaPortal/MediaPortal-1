@@ -3,8 +3,8 @@ using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
 using XPBurn.COM;
-using FILETIME=XPBurn.COM.FILETIME;
-using STATSTG=XPBurn.COM.STATSTG;
+using FILETIME = XPBurn.COM.FILETIME;
+using STATSTG = XPBurn.COM.STATSTG;
 
 namespace XPBurn
 {
@@ -34,7 +34,7 @@ namespace XPBurn
       fSubStorages = new Hashtable();
       fStatstg = new STATSTG();
 
-      fStatstg.pwcsName = (char*) Marshal.StringToCoTaskMemUni(name);
+      fStatstg.pwcsName = (char*)Marshal.StringToCoTaskMemUni(name);
       fStatstg.type = CONSTS.STGTY_STORAGE;
     }
 
@@ -84,7 +84,7 @@ namespace XPBurn
       {
         if (fStreams.Contains(pwcsName))
         {
-          stm = (IStream) fStreams[pwcsName];
+          stm = (IStream)fStreams[pwcsName];
 
           return CONSTS.S_OK;
         }
@@ -113,7 +113,7 @@ namespace XPBurn
       {
         if (fSubStorages.Contains(pwcsName))
         {
-          stg = (IStorage) fSubStorages[pwcsName];
+          stg = (IStorage)fSubStorages[pwcsName];
 
           return CONSTS.S_OK;
         }
@@ -187,7 +187,7 @@ namespace XPBurn
         if (grfStatFlag != CONSTS.STATFLAG_NONAME)
         {
           string tempString = Marshal.PtrToStringUni(new IntPtr(fStatstg.pwcsName));
-          statstg->pwcsName = (char*) Marshal.StringToCoTaskMemUni(tempString);
+          statstg->pwcsName = (char*)Marshal.StringToCoTaskMemUni(tempString);
         }
         else
         {

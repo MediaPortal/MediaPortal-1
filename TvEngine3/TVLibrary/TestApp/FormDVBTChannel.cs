@@ -7,7 +7,8 @@ namespace TestApp
 {
   public partial class FormDVBTChannel : Form
   {
-    DVBTChannel _channel = new DVBTChannel();
+    private DVBTChannel _channel = new DVBTChannel();
+
     public FormDVBTChannel()
     {
       InitializeComponent();
@@ -16,10 +17,7 @@ namespace TestApp
 
     public IChannel Channel
     {
-      get
-      {
-        return _channel;
-      }
+      get { return _channel; }
       set
       {
         _channel = (DVBTChannel)value;
@@ -40,6 +38,5 @@ namespace TestApp
       _channel.BandWidth = comboBoxBandWidth.SelectedIndex == 0 ? 7 : 8;
       Close();
     }
-
   }
 }

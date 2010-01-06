@@ -25,21 +25,21 @@
 
 using System.Collections.Generic;
 using DirectShowLib;
+
 namespace TvLibrary.Implementations
 {
-
   /// <summary>
   /// class which is used to remember which devices are currently in use
   /// </summary>
   public class DevicesInUse
   {
-    static DevicesInUse _instance;
-    readonly List<DsDevice> _devicesInUse;
+    private static DevicesInUse _instance;
+    private readonly List<DsDevice> _devicesInUse;
 
     /// <summary>
     /// static method to access this class
     /// </summary>
-    static public DevicesInUse Instance
+    public static DevicesInUse Instance
     {
       get
       {
@@ -50,6 +50,7 @@ namespace TvLibrary.Implementations
         return _instance;
       }
     }
+
     /// <summary>
     /// ctor
     /// </summary>
@@ -83,6 +84,7 @@ namespace TvLibrary.Implementations
         }
       }
     }
+
     /// <summary>
     /// returns true when the device specified is in use otherwise false
     /// </summary>
@@ -92,7 +94,8 @@ namespace TvLibrary.Implementations
     {
       for (int i = 0; i < _devicesInUse.Count; ++i)
       {
-        if (_devicesInUse[i].Mon == device.Mon && _devicesInUse[i].Name == device.Name && _devicesInUse[i].DevicePath == device.DevicePath)
+        if (_devicesInUse[i].Mon == device.Mon && _devicesInUse[i].Name == device.Name &&
+            _devicesInUse[i].DevicePath == device.DevicePath)
         {
           Log.Log.WriteFile("device in use", device.Name);
           Log.Log.WriteFile("  moniker   :{0} ", device.Mon);

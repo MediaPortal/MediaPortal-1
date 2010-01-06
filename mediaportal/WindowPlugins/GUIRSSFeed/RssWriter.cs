@@ -452,11 +452,9 @@ namespace Rss
           writer.WriteStartElement("guid");
           try
           {
-            WriteAttribute("isPermaLink", (bool) item.Guid.PermaLink, false);
+            WriteAttribute("isPermaLink", (bool)item.Guid.PermaLink, false);
           }
-          catch
-          {
-          }
+          catch {}
           writer.WriteString(item.Guid.Name);
           writer.WriteEndElement();
         }

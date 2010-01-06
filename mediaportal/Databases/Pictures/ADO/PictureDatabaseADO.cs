@@ -100,7 +100,7 @@ namespace MediaPortal.Picture.Database
             {
               if (reader.Read())
               {
-                int id = (int) reader["idPicture"];
+                int id = (int)reader["idPicture"];
                 reader.Close();
                 return id;
               }
@@ -120,9 +120,7 @@ namespace MediaPortal.Picture.Database
 
               dateTaken = DateTime.ParseExact(metaData.DatePictureTaken.DisplayValue, "d", dateTimeFormat);
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
             // Smirnoff: Query the orientation information
             //						if(iRotation == -1)
             iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
@@ -174,7 +172,7 @@ namespace MediaPortal.Picture.Database
           {
             if (reader.Read())
             {
-              iRotation = (int) reader["iRotation"];
+              iRotation = (int)reader["iRotation"];
               reader.Close();
               return iRotation;
             }
@@ -234,7 +232,7 @@ namespace MediaPortal.Picture.Database
           {
             if (reader.Read())
             {
-              DateTime dtDateTime = (DateTime) reader["strDateTaken"];
+              DateTime dtDateTime = (DateTime)reader["strDateTaken"];
               reader.Close();
               return dtDateTime;
             }

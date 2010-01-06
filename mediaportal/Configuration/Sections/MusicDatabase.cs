@@ -79,9 +79,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.Music.Database.MusicDatabase m_dbs = MediaPortal.Music.Database.MusicDatabase.Instance;
 
     public MusicDatabase()
-      : this("Music Database")
-    {
-    }
+      : this("Music Database") {}
 
     public MusicDatabase(string name)
       : base(name)
@@ -132,7 +130,7 @@ namespace MediaPortal.Configuration.Sections
 
       if (section != null)
       {
-        string extensions = (string) section.GetSetting("extensions");
+        string extensions = (string)section.GetSetting("extensions");
         Extensions = extensions.Split(new char[] {','});
       }
 
@@ -237,9 +235,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.groupBoxUseAlbumThumbs);
       this.groupBox1.Controls.Add(this.groupBoxUseForThumbs);
       this.groupBox1.Controls.Add(this.tbPrefixes);
@@ -415,7 +415,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // startButton
       // 
-      this.startButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.startButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.startButton.Location = new System.Drawing.Point(246, 307);
       this.startButton.Name = "startButton";
       this.startButton.Size = new System.Drawing.Size(210, 22);
@@ -437,8 +439,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.fileLabel);
       this.groupBox2.Controls.Add(this.progressBar);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -451,8 +455,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileLabel
       // 
-      this.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileLabel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.fileLabel.Location = new System.Drawing.Point(16, 23);
       this.fileLabel.Name = "fileLabel";
       this.fileLabel.Size = new System.Drawing.Size(440, 16);
@@ -460,8 +466,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBar
       // 
-      this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBar.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar.Location = new System.Drawing.Point(16, 23);
       this.progressBar.Name = "progressBar";
       this.progressBar.Size = new System.Drawing.Size(440, 16);
@@ -481,7 +489,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxUseForThumbs.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
 
     #endregion
@@ -533,7 +540,7 @@ namespace MediaPortal.Configuration.Sections
       ArrayList shares = new ArrayList();
       for (int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
       {
-        string path = sharesListBox.Items[(int) sharesListBox.CheckedIndices[index]].ToString();
+        string path = sharesListBox.Items[(int)sharesListBox.CheckedIndices[index]].ToString();
         if (Directory.Exists(path))
         {
           try
@@ -549,7 +556,7 @@ namespace MediaPortal.Configuration.Sections
 
             if (FreeBytesAvailable > 0)
             {
-              ulong DiskSpace = FreeBytesAvailable/1048576;
+              ulong DiskSpace = FreeBytesAvailable / 1048576;
               if (DiskSpace > 100) // > 100MB left for creation of thumbs, etc
               {
                 Log.Info("MusicDatabase: adding share {0} for scanning - available disk space: {1} MB", path,

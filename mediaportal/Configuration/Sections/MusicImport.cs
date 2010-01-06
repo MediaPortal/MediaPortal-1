@@ -125,9 +125,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public MusicImport()
-      : this("Music Import")
-    {
-    }
+      : this("Music Import") {}
 
     /// <summary>
     /// 
@@ -328,7 +326,7 @@ namespace MediaPortal.Configuration.Sections
       // tabPageEncoderSettings
       // 
       this.tabPageEncoderSettings.BackgroundImage =
-        ((System.Drawing.Image) (resources.GetObject("tabPageEncoderSettings.BackgroundImage")));
+        ((System.Drawing.Image)(resources.GetObject("tabPageEncoderSettings.BackgroundImage")));
       this.tabPageEncoderSettings.Controls.Add(this.groupBoxQuality);
       this.tabPageEncoderSettings.Controls.Add(this.groupBoxBitrate);
       this.tabPageEncoderSettings.Controls.Add(this.groupBoxTarget);
@@ -796,7 +794,7 @@ namespace MediaPortal.Configuration.Sections
       // tabPageMissing
       // 
       this.tabPageMissing.BackgroundImage =
-        ((System.Drawing.Image) (resources.GetObject("tabPageMissing.BackgroundImage")));
+        ((System.Drawing.Image)(resources.GetObject("tabPageMissing.BackgroundImage")));
       this.tabPageMissing.Controls.Add(this.groupBoxMissing);
       this.tabPageMissing.Location = new System.Drawing.Point(4, 22);
       this.tabPageMissing.Name = "tabPageMissing";
@@ -994,9 +992,7 @@ namespace MediaPortal.Configuration.Sections
               buttonDefault.Visible = true;
             }
           }
-          catch
-          {
-          }
+          catch {}
         }
       }
       Directory.SetCurrentDirectory(currDir);

@@ -65,9 +65,7 @@ namespace System.Windows.Controls
                                                                    new FrameworkPropertyMetadata(0.0));
     }
 
-    private ContextMenuService()
-    {
-    }
+    private ContextMenuService() {}
 
     #endregion Constructors
 

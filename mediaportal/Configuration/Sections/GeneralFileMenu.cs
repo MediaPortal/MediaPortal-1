@@ -43,9 +43,7 @@ namespace MediaPortal.Configuration.Sections
     private IContainer components = null;
 
     public GeneralFileMenu()
-      : this("File Menu")
-    {
-    }
+      : this("File Menu") {}
 
     public GeneralFileMenu(string name)
       : base(name)

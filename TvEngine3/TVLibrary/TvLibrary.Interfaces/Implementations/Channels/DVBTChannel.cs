@@ -41,18 +41,22 @@ namespace TvLibrary.Channels
       BandWidth = p_BandWidth;
       Offset = p_Offset;
     }
+
     /// <summary>
     /// Frequency
     /// </summary>
     public long Frequency;
+
     /// <summary>
     /// BandWidth
     /// </summary>
     public int BandWidth;
+
     /// <summary>
     /// Offset
     /// </summary>
     public int Offset;
+
     /// <summary>
     /// ToString
     /// </summary>
@@ -62,6 +66,7 @@ namespace TvLibrary.Channels
       return String.Format("freq:{0}/{2} bandwidth:{1}", Frequency, BandWidth, Offset);
     }
   }
+
   /// <summary>
   /// class holding all tuning details for DVBT
   /// </summary>
@@ -82,7 +87,8 @@ namespace TvLibrary.Channels
     {
       BandWidth = 8;
     }
-        /// <summary>
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="DVBTChannel"/> class.
     /// </summary>
     /// <param name="tuning">Tuning detail</param>
@@ -96,10 +102,7 @@ namespace TvLibrary.Channels
     /// </summary>
     public DVBTTuning TuningInfo
     {
-      get
-      {
-        return new DVBTTuning(Frequency, BandWidth, Offset);
-      }
+      get { return new DVBTTuning(Frequency, BandWidth, Offset); }
       set
       {
         Frequency = value.Frequency;
@@ -107,6 +110,7 @@ namespace TvLibrary.Channels
         Offset = value.Offset;
       }
     }
+
     /// <summary>
     /// gets/sets the bandwidth for this channel
     /// </summary>

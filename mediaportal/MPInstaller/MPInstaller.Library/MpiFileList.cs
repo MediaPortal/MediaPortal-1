@@ -11,7 +11,7 @@ namespace MediaPortal.MPInstaller
   public static class MpiFileList
   {
     public static string LOCAL_LISTING = Config.GetFolder(Config.Dir.Installer) + @"\config.xml";
-    public static string ONLINE_LISTING = Config.GetFolder(Config.Dir.Installer) +  @"\online.xml";
+    public static string ONLINE_LISTING = Config.GetFolder(Config.Dir.Installer) + @"\online.xml";
     public static string QUEUE_LISTING = Config.GetFolder(Config.Dir.Installer) + @"\queue.xml";
   }
 }

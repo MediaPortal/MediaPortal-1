@@ -18,7 +18,7 @@ namespace MediaPortal.Player.Subtitles
       bool pow2textures = xmlreader.GetValueAsBool("subtitles", "pow2tex", false);
       string textureSize = xmlreader.GetValueAsString("subtitles", "textureSize", "Medium");
       bool disableAnimation = xmlreader.GetValueAsBool("subtitles", "disableAnimation", true);
-     
+
       int w, h;
       int screenW = GUIGraphicsContext.Width;
       int screenH = GUIGraphicsContext.Height;
@@ -80,7 +80,8 @@ namespace MediaPortal.Player.Subtitles
 
       //remove DirectVobSub
       DirectVobSubUtil.RemoveFromGraph(graphBuilder);
-      {//remove InternalScriptRenderer as it takes subtitle pin
+      {
+//remove InternalScriptRenderer as it takes subtitle pin
         IBaseFilter isr = null;
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.InternalScriptRenderer, out isr);
         if (isr != null)
@@ -135,46 +136,25 @@ namespace MediaPortal.Player.Subtitles
 
     public int Current
     {
-      get
-      {
-        return MpcSubtitles.GetCurrent();
-      }
-      set
-      {
-        MpcSubtitles.SetCurrent(value);
-      }
+      get { return MpcSubtitles.GetCurrent(); }
+      set { MpcSubtitles.SetCurrent(value); }
     }
 
     public bool Enable
     {
-      get
-      {
-        return MpcSubtitles.GetEnable();
-      }
-      set
-      {
-        MpcSubtitles.SetEnable(value);
-      }
+      get { return MpcSubtitles.GetEnable(); }
+      set { MpcSubtitles.SetEnable(value); }
     }
 
     public int DelayInterval
     {
-      get 
-      {
-        return delayInterval;
-      }
+      get { return delayInterval; }
     }
 
     public int Delay
     {
-      get
-      {
-        return MpcSubtitles.GetDelay();
-      }
-      set
-      {
-        MpcSubtitles.SetDelay(value);
-      }
+      get { return MpcSubtitles.GetDelay(); }
+      set { MpcSubtitles.SetDelay(value); }
     }
 
     public void DelayPlus()
@@ -194,8 +174,7 @@ namespace MediaPortal.Player.Subtitles
 
     #endregion
 
-
-    class MpcSubtitles
+    private class MpcSubtitles
     {
       //set default subtitle's style (call before LoadSubtitles to take effect)
       [DllImport("mpcSubs.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
@@ -203,7 +182,8 @@ namespace MediaPortal.Player.Subtitles
 
       //load subtitles for video file filename, with given (rendered) graph 
       [DllImport("mpcSubs.dll", ExactSpelling = true, CharSet = CharSet.Unicode)]
-      public static extern bool LoadSubtitles(IntPtr d3DDev, Size size, string filename, IGraphBuilder graphBuilder, string paths);
+      public static extern bool LoadSubtitles(IntPtr d3DDev, Size size, string filename, IGraphBuilder graphBuilder,
+                                              string paths);
 
       //set sample time (set from EVR presenter, not used in case of vmr9)
       [DllImport("mpcSubs.dll", ExactSpelling = true)]
@@ -218,7 +198,6 @@ namespace MediaPortal.Player.Subtitles
       ////
       //subs management functions
       ///
-
       [DllImport("mpcSubs.dll", ExactSpelling = true)]
       public static extern int GetCount();
 
@@ -242,16 +221,21 @@ namespace MediaPortal.Player.Subtitles
       public static extern void Render(int x, int y, int width, int height);
 
       [DllImport("mpcSubs.dll", ExactSpelling = true)]
-      public static extern int GetDelay(); //in milliseconds
+      public static extern int GetDelay();
+
+      //in milliseconds
 
       [DllImport("mpcSubs.dll", ExactSpelling = true)]
-      public static extern void SetDelay(int delay_ms); //in milliseconds
+      public static extern void SetDelay(int delay_ms);
+
+      //in milliseconds
 
       [DllImport("mpcSubs.dll", ExactSpelling = true)]
       public static extern void FreeSubtitles();
 
       [DllImport("mpcSubs.dll", ExactSpelling = true)]
-      public static extern void SetAdvancedOptions(int subPicsBufferAhead, Size textureSize, bool pow2tex, bool disableAnimation);
+      public static extern void SetAdvancedOptions(int subPicsBufferAhead, Size textureSize, bool pow2tex,
+                                                   bool disableAnimation);
     }
   }
 }

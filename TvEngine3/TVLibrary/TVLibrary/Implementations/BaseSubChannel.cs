@@ -37,6 +37,7 @@ namespace TvLibrary.Implementations
   public abstract class BaseSubChannel : ITvSubChannel
   {
     #region Audio/Video Observer event and method
+
     /// <summary>
     /// Delegate for the audio video oberserver events
     /// </summary>
@@ -59,69 +60,86 @@ namespace TvLibrary.Implementations
         AudioVideoEvent(pidType);
       }
     }
+
     #endregion
 
     #region variables    
+
     /// <summary>
     /// Indicates, if the channel has teletext
     /// </summary>
     protected bool _hasTeletext;
+
     /// <summary>
     /// Indicates, if teletext grabbing is activated
     /// </summary>
     protected bool _grabTeletext;
+
     /// <summary>
     /// Instance of the teletext decoder
     /// </summary>
     protected DVBTeletext _teletextDecoder;
+
     /// <summary>
     /// Struct of a ts header
     /// </summary>
     protected TSHelperTools.TSHeader _packetHeader;
+
     /// <summary>
     /// Instance of ts helper class
     /// </summary>
     protected TSHelperTools _tsHelper;
+
     /// <summary>
     /// Instance of the current channel
     /// </summary>
     protected IChannel _currentChannel;
+
     /// <summary>
     /// Name of the timeshift file
     /// </summary>
     protected string _timeshiftFileName;
+
     /// <summary>
     /// Name of the recording file
     /// </summary>
     protected string _recordingFileName;
+
     /// <summary>
     /// Date and time when timeshifting started
     /// </summary>
     protected DateTime _dateTimeShiftStarted;
+
     /// <summary>
     /// Date  and time when recording started
     /// </summary>
     protected DateTime _dateRecordingStarted;
+
     /// <summary>
     /// ID of this subchannel
     /// </summary>
     protected int _subChannelId;
+
     /// <summary>
     /// Current state of the graph
     /// </summary>
-    protected GraphState _graphState;    
+    protected GraphState _graphState;
+
     /// <summary>
     /// Scanning parameters
     /// </summary>
     protected ScanParameters _parameters;
+
     /// <summary>
     /// Indicates, if timeshifting is started
     /// </summary>
     protected bool _startTimeShifting;
+
     /// <summary>
     /// Indicates, if recording is started
     /// </summary>
     protected bool _startRecording;
+
     #endregion
 
     #region ctor
@@ -130,7 +148,7 @@ namespace TvLibrary.Implementations
     /// Initializes a new instance of the <see cref="BaseSubChannel"/> class.
     /// </summary>
     protected BaseSubChannel()
-    {      
+    {
       _teletextDecoder = new DVBTeletext();
       _timeshiftFileName = String.Empty;
       _recordingFileName = String.Empty;
@@ -140,19 +158,18 @@ namespace TvLibrary.Implementations
       _graphState = GraphState.Created;
       _tsHelper = new TSHelperTools();
     }
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// Gets the sub channel id.
     /// </summary>
     /// <value>The sub channel id.</value>
     public int SubChannelId
     {
-      get
-      {
-        return _subChannelId;
-      }
+      get { return _subChannelId; }
     }
 
     /// <summary>
@@ -160,10 +177,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     public string TimeShiftFileName
     {
-      get
-      {
-        return _timeshiftFileName;
-      }
+      get { return _timeshiftFileName; }
     }
 
     /// <summary>
@@ -172,10 +186,7 @@ namespace TvLibrary.Implementations
     /// <returns>DateTime containg the date/time when timeshifting was started</returns>
     public DateTime StartOfTimeShift
     {
-      get
-      {
-        return _dateTimeShiftStarted;
-      }
+      get { return _dateTimeShiftStarted; }
     }
 
     /// <summary>
@@ -184,10 +195,7 @@ namespace TvLibrary.Implementations
     /// <returns>DateTime containg the date/time when recording was started</returns>
     public DateTime RecordingStarted
     {
-      get
-      {
-        return _dateRecordingStarted;
-      }
+      get { return _dateRecordingStarted; }
     }
 
     /// <summary>
@@ -195,10 +203,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     public string RecordingFileName
     {
-      get
-      {
-        return _recordingFileName;
-      }
+      get { return _recordingFileName; }
     }
 
     /// <summary>
@@ -206,10 +211,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     public bool IsRecording
     {
-      get
-      {
-        return (_recordingFileName.Length > 0);
-      }
+      get { return (_recordingFileName.Length > 0); }
     }
 
     /// <summary>
@@ -217,24 +219,16 @@ namespace TvLibrary.Implementations
     /// </summary>
     public bool IsTimeShifting
     {
-      get
-      {
-        return (_timeshiftFileName.Length > 0);
-      }
+      get { return (_timeshiftFileName.Length > 0); }
     }
+
     /// <summary>
     /// returns the IChannel to which the card is currently tuned
     /// </summary>
     public IChannel CurrentChannel
     {
-      get
-      {
-        return _currentChannel;
-      }
-      set
-      {
-        _currentChannel = value;
-      }
+      get { return _currentChannel; }
+      set { _currentChannel = value; }
     }
 
     /// <summary>
@@ -243,29 +237,21 @@ namespace TvLibrary.Implementations
     /// <value>The parameters.</value>
     public ScanParameters Parameters
     {
-      get
-      {
-        return _parameters;
-      }
-      set
-      {
-        _parameters = value;
-      }
+      get { return _parameters; }
+      set { _parameters = value; }
     }
 
     #endregion
 
     #region teletext
+
     /// <summary>
     /// Property which returns true when the current channel contains teletext
     /// </summary>
     /// <value></value>
     public bool HasTeletext
     {
-      get
-      {
-        return _hasTeletext;
-      }
+      get { return _hasTeletext; }
     }
 
     /// <summary>
@@ -273,10 +259,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     public bool GrabTeletext
     {
-      get
-      {
-        return _grabTeletext;
-      }
+      get { return _grabTeletext; }
       set
       {
         _grabTeletext = value;
@@ -299,6 +282,7 @@ namespace TvLibrary.Implementations
     #endregion
 
     #region timeshifting and recording
+
     /// <summary>
     /// Starts timeshifting. Note card has to be tuned first
     /// </summary>
@@ -326,10 +310,10 @@ namespace TvLibrary.Implementations
     public bool StopTimeShifting()
     {
       OnStopTimeShifting();
-      _startTimeShifting = false;      
+      _startTimeShifting = false;
       _graphState = GraphState.Created;
 
-      _timeshiftFileName = "";      
+      _timeshiftFileName = "";
       _dateTimeShiftStarted = DateTime.MinValue;
 
       return true;
@@ -363,13 +347,13 @@ namespace TvLibrary.Implementations
         else
         {
           Log.Log.Info("Unknown subch:{0} Started recording", _subChannelId);
-        }                
+        }
 
         _graphState = GraphState.Recording;
       }
       catch (Exception e)
       {
-        Log.Log.WriteFile("StartRecording failed, cleaning up {0}", e.Message );
+        Log.Log.WriteFile("StartRecording failed, cleaning up {0}", e.Message);
         //cleanup
         StopRecording();
         return false;
@@ -391,6 +375,7 @@ namespace TvLibrary.Implementations
       _dateRecordingStarted = DateTime.MinValue;
       return true;
     }
+
     /// <summary>
     /// Returns the position in the current timeshift file and the id of the current timeshift file
     /// </summary>
@@ -400,6 +385,7 @@ namespace TvLibrary.Implementations
     {
       OnGetTimeShiftFilePosition(ref position, ref bufferId);
     }
+
     #endregion
 
     #region IAnalogTeletextCallBack and ITeletextCallBack Members
@@ -419,7 +405,8 @@ namespace TvLibrary.Implementations
           IntPtr packetPtr = new IntPtr(data.ToInt32() + i * 188);
           ProcessPacket(packetPtr);
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.WriteFile(ex.ToString());
       }
@@ -459,6 +446,7 @@ namespace TvLibrary.Implementations
     #endregion
 
     #region IAnalogVideoAudioObserver
+
     /// <summary>
     /// Called when tswriter.ax has seen the video / audio data for the first time
     /// </summary>
@@ -469,15 +457,18 @@ namespace TvLibrary.Implementations
       {
         Log.Log.WriteFile("PID seen - type = {0}", pidType);
         OnAudioVideoEvent(pidType);
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Log.Write(ex);
       }
       return 0;
     }
+
     #endregion
 
     #region public helper
+
     /// <summary>
     /// Decomposes the sub channel
     /// </summary>
@@ -497,7 +488,7 @@ namespace TvLibrary.Implementations
       }
       else
       {
-        Log.Log.Info("Unknown subch:{0} Decompose()", _subChannelId);        
+        Log.Log.Info("Unknown subch:{0} Decompose()", _subChannelId);
       }
 
       if (IsRecording)
@@ -516,12 +507,14 @@ namespace TvLibrary.Implementations
       {
         _teletextDecoder.ClearBuffer();
       }
-      _graphState = GraphState.Created;    
+      _graphState = GraphState.Created;
       OnDecompose();
     }
+
     #endregion
 
     #region public abstract methods
+
     /// <summary>
     /// Should be called before tuning to a new channel
     /// resets the state
@@ -563,6 +556,7 @@ namespace TvLibrary.Implementations
     #endregion
 
     #region protected abstract methods
+
     /// <summary>
     /// A derrived class should do it's specific cleanup here. It will be called from called from Decompose()
     /// </summary>
@@ -593,12 +587,13 @@ namespace TvLibrary.Implementations
     /// </summary>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    protected abstract void OnGetTimeShiftFilePosition(ref Int64 position,ref long bufferId);
+    protected abstract void OnGetTimeShiftFilePosition(ref Int64 position, ref long bufferId);
 
     /// <summary>
     /// A derrived class should activate or deactivate the teletext grabbing on the tv card.
     /// </summary>
     protected abstract void OnGrabTeletext();
+
     #endregion
 
     #region abstract ITvSubChannel Member
@@ -607,37 +602,24 @@ namespace TvLibrary.Implementations
     /// Returns true when unscrambled audio/video is received otherwise false
     /// </summary>
     /// <returns>true of false</returns>
-    public abstract bool IsReceivingAudioVideo
-    {
-      get;
-    }
+    public abstract bool IsReceivingAudioVideo { get; }
 
     /// <summary>
     /// returns true if we record in transport stream mode
     /// false we record in program stream mode
     /// </summary>
     /// <value>true for transport stream, false for program stream.</value>
-    public abstract int GetCurrentVideoStream
-    {
-      get;
-    }
+    public abstract int GetCurrentVideoStream { get; }
 
     /// <summary>
     /// returns the list of available audio streams
     /// </summary>
-    public abstract List<IAudioStream> AvailableAudioStreams
-    {
-      get;
-    }
+    public abstract List<IAudioStream> AvailableAudioStreams { get; }
 
     /// <summary>
     /// get/set the current selected audio stream
     /// </summary>
-    public abstract IAudioStream CurrentAudioStream
-    {
-      get;
-      set;
-    }
+    public abstract IAudioStream CurrentAudioStream { get; set; }
 
     #endregion
   }

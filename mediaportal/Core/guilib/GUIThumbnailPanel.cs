@@ -30,6 +30,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Media.Animation;
 using Microsoft.DirectX.Direct3D;
+
 // used for Keys definition
 // used for loopDelay
 
@@ -51,6 +52,7 @@ namespace MediaPortal.GUI.Library
     } ;
 
     #region Skin Elements
+
     [XMLSkinElement("remoteColor")] protected long _remoteColor = 0xffff0000;
     [XMLSkinElement("playedColor")] protected long _playedColor = 0xffa0d0ff;
     [XMLSkinElement("downloadColor")] protected long _downloadColor = 0xff00ff00;
@@ -104,7 +106,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textureDownFocus")] protected string _downTextureNameFocus = "";
     [XMLSkinElement("imageFolder")] protected string _imageFolderName = "";
     [XMLSkinElement("imageFolderFocus")] protected string _imageFolderNameFocus = "";
-    
+
     [XMLSkinElement("thumbPosXBig")] protected int _positionXThumbBig = 0;
     [XMLSkinElement("thumbPosYBig")] protected int _positionYThumbBig = 0;
     [XMLSkinElement("thumbWidthBig")] protected int _widthThumbBig = 0;
@@ -129,6 +131,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("frameFocus")] protected string _frameFocusName = "";
     [XMLSkinElement("showFrame")] protected bool _showFrame = true;
     [XMLSkinElement("keepaspectratio")] protected bool _keepAspectRatio = true;
+
     #endregion
 
     protected int _lowItemHeight;
@@ -189,9 +192,7 @@ namespace MediaPortal.GUI.Library
     protected GUIAnimation _frameFocusControl = null;
 
     public GUIThumbnailPanel(int dwParentID)
-      : base(dwParentID)
-    {
-    }
+      : base(dwParentID) {}
 
     public GUIThumbnailPanel(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
                              string strImageIcon,
@@ -267,15 +268,17 @@ namespace MediaPortal.GUI.Library
       SetTextureDimensions(_textureWidth, _textureHeight);
       SetThumbDimensionsLow(_xPositionThumbNail, _yPositionThumbNail, _thumbNailWidth, _thumbNailHeight);
 
-      _frameNoFocusControl = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight,
-                              _frameNoFocusName);
+      _frameNoFocusControl = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth,
+                                                  _itemHeight,
+                                                  _frameNoFocusName);
       _frameNoFocusControl.ParentControl = this;
       _frameNoFocusControl.DimColor = DimColor;
       _frameNoFocusControl.SetAnimations(ThumbAnimations);
 
 
-      _frameFocusControl = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight,
-                            _frameFocusName);
+      _frameFocusControl = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth,
+                                                _itemHeight,
+                                                _frameFocusName);
       _frameFocusControl.ParentControl = this;
       _frameFocusControl.DimColor = DimColor;
       _frameFocusControl.SetAnimations(ThumbAnimations);
@@ -285,11 +288,14 @@ namespace MediaPortal.GUI.Library
     {
       base.ScaleToScreenResolution();
 
-      GUIGraphicsContext.ScaleRectToScreenResolution(ref _spinControlPositionX, ref _spinControlPositionY, ref _spinControlWidth, ref _spinControlHeight);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _spinControlPositionX, ref _spinControlPositionY,
+                                                     ref _spinControlWidth, ref _spinControlHeight);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _textureWidth, ref _textureHeight);
-      GUIGraphicsContext.ScaleRectToScreenResolution(ref _xPositionThumbNail, ref _yPositionThumbNail, ref _thumbNailWidth, ref _thumbNailHeight);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _xPositionThumbNail, ref _yPositionThumbNail,
+                                                     ref _thumbNailWidth, ref _thumbNailHeight);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _bigTextureWidth, ref _bigTextureHeight);
-      GUIGraphicsContext.ScaleRectToScreenResolution(ref _positionXThumbBig, ref _positionYThumbBig, ref _widthThumbBig, ref _heightThumbBig);
+      GUIGraphicsContext.ScaleRectToScreenResolution(ref _positionXThumbBig, ref _positionYThumbBig, ref _widthThumbBig,
+                                                     ref _heightThumbBig);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _bigItemWidth, ref _bigItemHeight);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _itemWidth, ref _itemHeight);
     }
@@ -2038,7 +2044,6 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-
           _controlUpDown.OnAction(action);
         }
 
@@ -2844,9 +2849,8 @@ namespace MediaPortal.GUI.Library
       try
       {
         _listItems.Sort(comparer);
-      } catch (Exception)
-      {
       }
+      catch (Exception) {}
       _refresh = true;
     }
 
@@ -3047,7 +3051,8 @@ namespace MediaPortal.GUI.Library
         _listItems[iItem] = item2;
         _listItems[iNextItem] = item1;
         selectedItemIndex = iNextItem;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Info("GUIListControl.MoveItemDown caused an exception: {0}", ex.Message);
         selectedItemIndex = -1;
@@ -3092,7 +3097,8 @@ namespace MediaPortal.GUI.Library
         _listItems[iItem] = item2;
         _listItems[iPreviousItem] = item1;
         selectedItemIndex = iPreviousItem;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Info("GUIListControl.MoveItemUp caused an exception: {0}", ex.Message);
         selectedItemIndex = -1;

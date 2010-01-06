@@ -38,7 +38,7 @@ namespace MediaPortal.GUI.Library
     private string _fileName;
     private string _url;
     private DateTime _dateDownloaded = DateTime.MinValue;
-    private int _cacheMinutes = 60*30; //30minutes
+    private int _cacheMinutes = 60 * 30; //30minutes
 
     public DownloadedImage(string url)
     {
@@ -112,7 +112,7 @@ namespace MediaPortal.GUI.Library
           {
             Log.Info("DownloadedImage:Download() Delete failed:{0}", FileName);
           }
-          
+
           client.Proxy.Credentials = CredentialCache.DefaultCredentials;
           client.DownloadFile(URL, FileName);
           try

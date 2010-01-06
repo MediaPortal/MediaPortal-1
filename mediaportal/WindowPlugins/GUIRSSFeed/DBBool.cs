@@ -79,7 +79,7 @@ namespace Rss
     /// <summary>Private instance constructor. The value parameter must be –1, 0, or 1.</summary>
     private DBBool(int value)
     {
-      this.value = (sbyte) value;
+      this.value = (sbyte)value;
     }
 
     /// <summary>Properties to examine the value of a DBBool.</summary>
@@ -198,7 +198,7 @@ namespace Rss
     {
       try
       {
-        return (bool) (this == (DBBool) o);
+        return (bool)(this == (DBBool)o);
       }
       catch
       {

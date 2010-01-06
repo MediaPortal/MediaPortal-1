@@ -39,36 +39,45 @@ namespace TvLibrary.Implementations.Analog.Components
   internal class TvAudio : IDisposable
   {
     #region variables
+
     /// <summary>
     /// The TvAudio filter
     /// </summary>
     private IBaseFilter _filterTvAudioTuner;
+
     /// <summary>
     /// The TvAudio interface for changing the audio stream
     /// </summary>
     private IAMTVAudio _tvAudioTunerInterface;
+
     /// <summary>
     /// The TvAudio device
     /// </summary>
     private DsDevice _audioDevice;
+
     /// <summary>
     /// The mode of the TvAudio component in the graph
     /// </summary>
     private TvAudioVariant mode;
+
     /// <summary>
     /// List of available streams
     /// </summary>
     private List<IAudioStream> streams;
+
     #endregion
 
     #region properties
+
     public String TvAudioName
     {
       get { return _audioDevice.Name; }
     }
+
     #endregion
 
     #region Dispose
+
     /// <summary>
     /// Disposes the TvAudio component
     /// </summary>
@@ -78,9 +87,7 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         if (_filterTvAudioTuner != null)
         {
-          while (Marshal.ReleaseComObject(_filterTvAudioTuner) > 0)
-          {
-          }
+          while (Marshal.ReleaseComObject(_filterTvAudioTuner) > 0) {}
           _filterTvAudioTuner = null;
         }
         if (_audioDevice != null)
@@ -90,9 +97,11 @@ namespace TvLibrary.Implementations.Analog.Components
         }
       }
     }
+
     #endregion
 
     #region CreateFlterInstance method
+
     /// <summary>
     /// Adds the tv audio tuner to the graph and connects it to the crossbar.
     /// At the end of this method the graph looks like:
@@ -125,11 +134,13 @@ namespace TvLibrary.Implementations.Analog.Components
         return true;
       }
       Log.Log.WriteFile("analog: No stored graph for TvAudio component - Trying to detect");
-      return CreateAutomaticFilterInstance(graph,tuner, crossbar, graphBuilder);
+      return CreateAutomaticFilterInstance(graph, tuner, crossbar, graphBuilder);
     }
+
     #endregion
 
     #region private helper methods
+
     /// <summary>
     /// Creates the filter based on the configuration file
     /// </summary>
@@ -138,7 +149,8 @@ namespace TvLibrary.Implementations.Analog.Components
     /// <param name="graph">The stored graph</param>
     /// <param name="graphBuilder">The graphBuilder</param>
     /// <returns>true, if the graph building was successful</returns>
-    private bool CreateConfigurationBasedFilterInstance(Graph graph, Tuner tuner, Crossbar crossbar, IFilterGraph2 graphBuilder)
+    private bool CreateConfigurationBasedFilterInstance(Graph graph, Tuner tuner, Crossbar crossbar,
+                                                        IFilterGraph2 graphBuilder)
     {
       if (graph.TvAudio.Mode == TvAudioVariant.TvTuner || graph.TvAudio.Mode == TvAudioVariant.TvTunerConnection)
       {
@@ -172,7 +184,8 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSTVAudio);
         devices = DeviceSorter.Sort(devices, tuner.TunerName, crossbar.CrossBarName);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         Log.Log.WriteFile("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
       }
@@ -193,7 +206,8 @@ namespace TvLibrary.Implementations.Analog.Components
           {
             //add tv audio tuner to graph
             hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-          } catch (Exception)
+          }
+          catch (Exception)
           {
             Log.Log.WriteFile("analog: cannot add filter to graph");
             continue;
@@ -268,7 +282,8 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSTVAudio);
         devices = DeviceSorter.Sort(devices, tuner.TunerName, crossbar.CrossBarName);
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         Log.Log.WriteFile("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
       }
@@ -287,7 +302,8 @@ namespace TvLibrary.Implementations.Analog.Components
           {
             //add tv audio tuner to graph
             hr = graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out tmp);
-          } catch (Exception)
+          }
+          catch (Exception)
           {
             Log.Log.WriteFile("analog: cannot add filter to graph");
             continue;
@@ -365,7 +381,8 @@ namespace TvLibrary.Implementations.Analog.Components
         mode = TvAudioVariant.Normal;
         graph.TvAudio.Name = _audioDevice.Name;
       }
-      if (mode != TvAudioVariant.Unavailable && mode != TvAudioVariant.TvTunerConnection && _tvAudioTunerInterface != null)
+      if (mode != TvAudioVariant.Unavailable && mode != TvAudioVariant.TvTunerConnection &&
+          _tvAudioTunerInterface != null)
       {
         streams = new List<IAudioStream>();
         CheckCapabilities(graph);
@@ -417,9 +434,11 @@ namespace TvLibrary.Implementations.Analog.Components
         streams.Add(stream);
       }
     }
+
     #endregion
 
     #region public methods
+
     /// <summary>
     /// Gets the available audio streams
     /// </summary>
@@ -469,6 +488,7 @@ namespace TvLibrary.Implementations.Analog.Components
         }
       }
     }
+
     #endregion
   }
 }

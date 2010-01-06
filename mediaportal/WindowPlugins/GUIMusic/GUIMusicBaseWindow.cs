@@ -114,7 +114,8 @@ namespace MediaPortal.GUI.Music
                                          };
 
     private string[] _defaultSortTags2 = {
-                                           "%duration%", "%year%", "%filesize%", "%duration%", "%duration%", "%duration%"
+                                           "%duration%", "%year%", "%filesize%", "%duration%", "%duration%",
+                                           "%duration%"
                                            , "%duration%", "%duration%", "%filesize%", "%rating%"
                                          };
 
@@ -198,6 +199,7 @@ namespace MediaPortal.GUI.Music
 
       UsingInternalMusicPlayer = BassMusicPlayer.IsDefaultMusicPlayer;
     }
+
     #endregion
 
     #region Serialisation
@@ -212,23 +214,23 @@ namespace MediaPortal.GUI.Music
         _showSortButton = xmlreader.GetValueAsBool("musicfiles", "showSortButton", true);
 
 
-        int defaultView = (int) View.List;
-        int defaultSort = (int) MusicSort.SortMethod.Name;
+        int defaultView = (int)View.List;
+        int defaultSort = (int)MusicSort.SortMethod.Name;
         bool defaultAscending = true;
         if ((handler != null) && (handler.View != null) && (handler.View.Filters != null) &&
             (handler.View.Filters.Count > 0))
         {
-          FilterDefinition def = (FilterDefinition) handler.View.Filters[0];
-          defaultView = (int) GetViewNumber(def.DefaultView);
-          defaultSort = (int) GetSortMethod(def.DefaultSort);
+          FilterDefinition def = (FilterDefinition)handler.View.Filters[0];
+          defaultView = (int)GetViewNumber(def.DefaultView);
+          defaultSort = (int)GetSortMethod(def.DefaultSort);
           defaultAscending = def.SortAscending;
         }
-        currentView = (View) xmlreader.GetValueAsInt(SerializeName, "view", defaultView);
-        currentViewRoot = (View) xmlreader.GetValueAsInt(SerializeName, "viewroot", defaultView);
+        currentView = (View)xmlreader.GetValueAsInt(SerializeName, "view", defaultView);
+        currentViewRoot = (View)xmlreader.GetValueAsInt(SerializeName, "viewroot", defaultView);
 
-        currentSortMethod = (MusicSort.SortMethod) xmlreader.GetValueAsInt(SerializeName, "sortmethod", defaultSort);
+        currentSortMethod = (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", defaultSort);
         currentSortMethodRoot =
-          (MusicSort.SortMethod) xmlreader.GetValueAsInt(SerializeName, "sortmethodroot", defaultSort);
+          (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethodroot", defaultSort);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", defaultAscending);
         m_bSortAscendingRoot = xmlreader.GetValueAsBool(SerializeName, "sortascroot", defaultAscending);
         m_bUseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
@@ -314,10 +316,10 @@ namespace MediaPortal.GUI.Music
     {
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
-        xmlwriter.SetValue(SerializeName, "view", (int) currentView);
-        xmlwriter.SetValue(SerializeName, "viewroot", (int) currentViewRoot);
-        xmlwriter.SetValue(SerializeName, "sortmethod", (int) currentSortMethod);
-        xmlwriter.SetValue(SerializeName, "sortmethodroot", (int) currentSortMethodRoot);
+        xmlwriter.SetValue(SerializeName, "view", (int)currentView);
+        xmlwriter.SetValue(SerializeName, "viewroot", (int)currentViewRoot);
+        xmlwriter.SetValue(SerializeName, "sortmethod", (int)currentSortMethod);
+        xmlwriter.SetValue(SerializeName, "sortmethodroot", (int)currentSortMethodRoot);
         xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
         xmlwriter.SetValueAsBool(SerializeName, "sortascroot", m_bSortAscendingRoot);
       }
@@ -396,7 +398,7 @@ namespace MediaPortal.GUI.Music
     {
       if (action.wID == Action.ActionType.ACTION_SHOW_PLAYLIST)
       {
-        GUIWindowManager.ActivateWindow((int) Window.WINDOW_MUSIC_PLAYLIST);
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_MUSIC_PLAYLIST);
         return;
       }
       else if (action.wID == Action.ActionType.ACTION_IMPORT_TRACK)
@@ -538,7 +540,7 @@ namespace MediaPortal.GUI.Music
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
         OnMessage(msg);
-        int iItem = (int) msg.Param1;
+        int iItem = (int)msg.Param1;
         if (actionType == Action.ActionType.ACTION_SHOW_INFO)
         {
           OnInfo(iItem);
@@ -567,7 +569,7 @@ namespace MediaPortal.GUI.Music
     protected virtual void UpdateButtonStates()
     {
       GUIPropertyManager.SetProperty("#view", handler.LocalizedCurrentView);
-      if (GetID == (int) Window.WINDOW_MUSIC_GENRE)
+      if (GetID == (int)Window.WINDOW_MUSIC_GENRE)
       {
         GUIPropertyManager.SetProperty("#currentmodule",
                                        String.Format("{0}/{1}", GUILocalizeStrings.Get(100005),
@@ -654,13 +656,9 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    protected virtual void OnClick(int item)
-    {
-    }
+    protected virtual void OnClick(int item) {}
 
-    protected virtual void OnQueueItem(int item)
-    {
-    }
+    protected virtual void OnQueueItem(int item) {}
 
     protected void OnSetRating(int itemNumber)
     {
@@ -670,7 +668,7 @@ namespace MediaPortal.GUI.Music
         return;
       }
       MusicTag tag = item.MusicTag as MusicTag;
-      GUIDialogSetRating dialog = (GUIDialogSetRating) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_RATING);
+      GUIDialogSetRating dialog = (GUIDialogSetRating)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_RATING);
       if (tag != null)
       {
         dialog.Rating = tag.Rating;
@@ -834,14 +832,14 @@ namespace MediaPortal.GUI.Music
         // and activate the playlist window if its not activated yet
         if (GetID == GUIWindowManager.ActiveWindow)
         {
-          GUIWindowManager.ActivateWindow((int) Window.WINDOW_MUSIC_PLAYLIST);
+          GUIWindowManager.ActivateWindow((int)Window.WINDOW_MUSIC_PLAYLIST);
         }
       }
     }
 
     private void TellUserSomethingWentWrong()
     {
-      GUIDialogOK dlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       if (dlgOK != null)
       {
         dlgOK.SetHeading(6);
@@ -867,7 +865,7 @@ namespace MediaPortal.GUI.Music
       for (int i = 0; i < facadeView.Count; ++i)
       {
         GUIListItem item = facadeView[i];
-        MusicTag tag = (MusicTag) item.MusicTag;
+        MusicTag tag = (MusicTag)item.MusicTag;
         if (tag != null)
         {
           string trackNr = String.Format("{0:##00}", tag.Track);
@@ -884,7 +882,7 @@ namespace MediaPortal.GUI.Music
           // so it is not possible to check if shares view is selected
           if ((handler.View != null) && (MusicState.StartWindow != 501))
           {
-            FilterDefinition filter = (FilterDefinition) handler.View.Filters[handler.CurrentLevel];
+            FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
             if (filter.SqlOperator != "group")
             {
               switch (CurrentSortMethod)
@@ -965,13 +963,13 @@ namespace MediaPortal.GUI.Music
           string line1, line2;
           if (method == MusicSort.SortMethod.AlbumArtist)
           {
-            line1 = _sortTags1[(int) MusicSort.SortMethod.Artist]; // Use Artist sort string for AlbumArtist
-            line2 = _sortTags2[(int) MusicSort.SortMethod.Artist];
+            line1 = _sortTags1[(int)MusicSort.SortMethod.Artist]; // Use Artist sort string for AlbumArtist
+            line2 = _sortTags2[(int)MusicSort.SortMethod.Artist];
           }
           else
           {
-            line1 = _sortTags1[(int) method];
-            line2 = _sortTags2[(int) method];
+            line1 = _sortTags1[(int)method];
+            line2 = _sortTags2[(int)method];
           }
           line1 = Util.Utils.ReplaceTag(line1, "%track%", trackNr);
           line2 = Util.Utils.ReplaceTag(line2, "%track%", trackNr);
@@ -979,7 +977,7 @@ namespace MediaPortal.GUI.Music
           line2 = Util.Utils.ReplaceTag(line2, "%filesize%", fileSize);
           if (handler.View != null)
           {
-            FilterDefinition tempfilter = (FilterDefinition) handler.View.Filters[handler.CurrentLevel];
+            FilterDefinition tempfilter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
             if (tempfilter.Where == "albumartist")
             {
               line1 = Util.Utils.ReplaceTag(line1, "%artist%", tag.AlbumArtist);
@@ -1091,10 +1089,10 @@ namespace MediaPortal.GUI.Music
       }
 
       //set object count label
-      if (totalPlayingTime.TotalSeconds > 0 && method !=  MusicSort.SortMethod.Album)
+      if (totalPlayingTime.TotalSeconds > 0 && method != MusicSort.SortMethod.Album)
       {
         GUIPropertyManager.SetProperty("#itemcount",
-                                       Util.Utils.GetSongCountLabel(iTotalItems, (int) totalPlayingTime.TotalSeconds));
+                                       Util.Utils.GetSongCountLabel(iTotalItems, (int)totalPlayingTime.TotalSeconds));
       }
       else
       {
@@ -1131,7 +1129,7 @@ namespace MediaPortal.GUI.Music
 
     protected bool GetKeyboard(ref string strLine)
     {
-      VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
       if (null == keyboard)
       {
         return false;
@@ -1155,7 +1153,7 @@ namespace MediaPortal.GUI.Music
       {
         return;
       }
-      MusicTag tag = (MusicTag) item.MusicTag;
+      MusicTag tag = (MusicTag)item.MusicTag;
       string strThumb = GUIMusicFiles.GetCoverArt(item.IsFolder, item.Path, tag);
       if (strThumb != string.Empty)
       {
@@ -1174,7 +1172,7 @@ namespace MediaPortal.GUI.Music
 
     protected void OnShowSort()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -1252,7 +1250,7 @@ namespace MediaPortal.GUI.Music
 
     protected void OnShowViews()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -1269,11 +1267,11 @@ namespace MediaPortal.GUI.Music
       //dlg.AddLocalizedString(4540); // Now playing
 
       // set the focus to currently used view
-      if (this.GetID == (int) Window.WINDOW_MUSIC_FILES)
+      if (this.GetID == (int)Window.WINDOW_MUSIC_FILES)
       {
         dlg.SelectedLabel = 0;
       }
-      else if (this.GetID == (int) Window.WINDOW_MUSIC_GENRE)
+      else if (this.GetID == (int)Window.WINDOW_MUSIC_GENRE)
       {
         dlg.SelectedLabel = handler.CurrentViewIndex + 1;
       }
@@ -1292,7 +1290,7 @@ namespace MediaPortal.GUI.Music
             //ViewDefinition selectedView = (ViewDefinition)handler.Views[dlg.SelectedLabel - 1];
             //handler.CurrentView = selectedView.Name;
             //MusicState.View = selectedView.Name;
-            int nNewWindow = (int) Window.WINDOW_MUSIC_FILES;
+            int nNewWindow = (int)Window.WINDOW_MUSIC_FILES;
             MusicState.StartWindow = nNewWindow;
             if (nNewWindow != GetID)
             {
@@ -1303,9 +1301,9 @@ namespace MediaPortal.GUI.Music
 
         case 4540: // Now playing
           {
-            int nPlayingNowWindow = (int) Window.WINDOW_MUSIC_PLAYING_NOW;
+            int nPlayingNowWindow = (int)Window.WINDOW_MUSIC_PLAYING_NOW;
 
-            GUIMusicPlayingNow guiPlayingNow = (GUIMusicPlayingNow) GUIWindowManager.GetWindow(nPlayingNowWindow);
+            GUIMusicPlayingNow guiPlayingNow = (GUIMusicPlayingNow)GUIWindowManager.GetWindow(nPlayingNowWindow);
 
             if (guiPlayingNow != null)
             {
@@ -1317,10 +1315,10 @@ namespace MediaPortal.GUI.Music
 
         default: // a db view
           {
-            ViewDefinition selectedView = (ViewDefinition) handler.Views[dlg.SelectedLabel - 1];
+            ViewDefinition selectedView = (ViewDefinition)handler.Views[dlg.SelectedLabel - 1];
             handler.CurrentView = selectedView.Name;
             MusicState.View = selectedView.Name;
-            int nNewWindow = (int) Window.WINDOW_MUSIC_GENRE;
+            int nNewWindow = (int)Window.WINDOW_MUSIC_GENRE;
             if (GetID != nNewWindow)
             {
               MusicState.StartWindow = nNewWindow;
@@ -1356,7 +1354,7 @@ namespace MediaPortal.GUI.Music
         itemlist.RemoveAt(0);
       }
 
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -1389,26 +1387,18 @@ namespace MediaPortal.GUI.Music
       GUIWaitCursor.Hide();
     }
 
-    protected virtual void LoadDirectory(string path)
-    {
-    }
+    protected virtual void LoadDirectory(string path) {}
 
     public static string GetArtistCoverArtName(string artist)
     {
       return Util.Utils.GetCoverArtName(Thumbs.MusicArtists, artist);
     }
 
-    private void OnInfoFile(GUIListItem item)
-    {
-    }
+    private void OnInfoFile(GUIListItem item) {}
 
-    private void OnInfoFolder(GUIListItem item)
-    {
-    }
+    private void OnInfoFolder(GUIListItem item) {}
 
-    protected virtual void OnFindCoverArt(int iItem)
-    {
-    }
+    protected virtual void OnFindCoverArt(int iItem) {}
 
     protected virtual void OnInfo(int iItem)
     {
@@ -1454,9 +1444,9 @@ namespace MediaPortal.GUI.Music
 
     protected virtual void ShowArtistInfo(string artistName, string albumName)
     {
-      GUIDialogOK pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       GUIDialogProgress dlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
 
       // check cache
       bool bSaveDb = true;
@@ -1469,7 +1459,7 @@ namespace MediaPortal.GUI.Music
 
         // ok, show Artist info
         GUIMusicArtistInfo pDlgArtistInfo =
-          (GUIMusicArtistInfo) GUIWindowManager.GetWindow((int) Window.WINDOW_ARTIST_INFO);
+          (GUIMusicArtistInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_ARTIST_INFO);
         if (null != pDlgArtistInfo)
         {
           pDlgArtistInfo.Artist = artist;
@@ -1530,7 +1520,7 @@ namespace MediaPortal.GUI.Music
           string[] artistsFound = scraper.GetItemsFound();
           //show dialog with all albums found
           string szText = GUILocalizeStrings.Get(181);
-          GUIDialogSelect pDlg = (GUIDialogSelect) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_SELECT);
+          GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT);
           if (null != pDlg)
           {
             pDlg.Reset();
@@ -1601,7 +1591,7 @@ namespace MediaPortal.GUI.Music
 
               // ok, show Artist info
               GUIMusicArtistInfo pDlgArtistInfo =
-                (GUIMusicArtistInfo) GUIWindowManager.GetWindow((int) Window.WINDOW_ARTIST_INFO);
+                (GUIMusicArtistInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_ARTIST_INFO);
               if (null != pDlgArtistInfo)
               {
                 pDlgArtistInfo.Artist = artistInfo;
@@ -1661,7 +1651,7 @@ namespace MediaPortal.GUI.Music
             }
             // ok, show Artist info
             GUIMusicArtistInfo pDlgArtistInfo =
-              (GUIMusicArtistInfo) GUIWindowManager.GetWindow((int) Window.WINDOW_ARTIST_INFO);
+              (GUIMusicArtistInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_ARTIST_INFO);
             if (null != pDlgArtistInfo)
             {
               pDlgArtistInfo.Artist = artistInfo;
@@ -1702,7 +1692,7 @@ namespace MediaPortal.GUI.Music
     public void FindCoverArt(bool isFolder, string artistName, string albumName, string strPath, MusicTag tag,
                              int albumId)
     {
-      GUIDialogOK pDlgOK = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
 
       if (null != pDlgOK && !Win32API.IsConnectedToInternet())
       {
@@ -1722,18 +1712,18 @@ namespace MediaPortal.GUI.Music
       }
 
       bool bDisplayErr = false;
-      GUIDialogOK dlgOk = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       AlbumInfo albuminfo = new AlbumInfo();
       MusicAlbumInfo album = new MusicAlbumInfo();
 
       GUICoverArtGrabberResults guiCoverGrabberResults =
-        (GUICoverArtGrabberResults) GUIWindowManager.GetWindow((int) Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS);
+        (GUICoverArtGrabberResults)GUIWindowManager.GetWindow((int)Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS);
 
       if (null != guiCoverGrabberResults)
       {
         guiCoverGrabberResults.SearchMode = GUICoverArtGrabberResults.SearchDepthMode.Album;
         GUIDialogProgress dlgProgress =
-          (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+          (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
 
         if (dlgProgress != null)
         {
@@ -1814,9 +1804,9 @@ namespace MediaPortal.GUI.Music
                               MusicTag tag)
     {
       // check cache
-      GUIDialogOK dlgOk = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       GUIDialogProgress dlgProgress =
-        (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
       AlbumInfo albuminfo = new AlbumInfo();
       if (m_database.GetAlbumInfo(albumName, artistName, ref albuminfo))
       {
@@ -1824,7 +1814,7 @@ namespace MediaPortal.GUI.Music
         MusicAlbumInfo album = new MusicAlbumInfo();
         album.Set(albuminfo);
 
-        GUIMusicInfo pDlgAlbumInfo = (GUIMusicInfo) GUIWindowManager.GetWindow((int) Window.WINDOW_MUSIC_INFO);
+        GUIMusicInfo pDlgAlbumInfo = (GUIMusicInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_MUSIC_INFO);
         if (null != pDlgAlbumInfo)
         {
           pDlgAlbumInfo.Album = album;
@@ -1878,7 +1868,7 @@ namespace MediaPortal.GUI.Music
           {
             //show dialog with all albums found
             string szText = GUILocalizeStrings.Get(181);
-            GUIDialogSelect pDlg = (GUIDialogSelect) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_SELECT);
+            GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT);
             if (null != pDlg)
             {
               pDlg.Reset();
@@ -1946,9 +1936,7 @@ namespace MediaPortal.GUI.Music
             {
               albuminfo.Year = Int32.Parse(album.DateOfRelease);
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) {}
             //albuminfo.Path   = album.AlbumPath;
             // save to database
             m_database.AddAlbumInfo(albuminfo);
@@ -1960,7 +1948,7 @@ namespace MediaPortal.GUI.Music
             }
 
             // ok, show album info
-            GUIMusicInfo pDlgAlbumInfo = (GUIMusicInfo) GUIWindowManager.GetWindow((int) Window.WINDOW_MUSIC_INFO);
+            GUIMusicInfo pDlgAlbumInfo = (GUIMusicInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_MUSIC_INFO);
             if (null != pDlgAlbumInfo)
             {
               pDlgAlbumInfo.Album = album;
@@ -1986,15 +1974,13 @@ namespace MediaPortal.GUI.Music
                   try
                   {
                     string folderjpg = Util.Utils.GetFolderThumbForDir(strPath);
-                      // String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(strPath));
+                    // String.Format(@"{0}\folder.jpg", MediaPortal.Util.Utils.RemoveTrailingSlash(strPath));
                     Util.Utils.FileDelete(folderjpg);
                     File.Copy(thumb, folderjpg);
                     // cache the new folder.jpg so the user does not have to rescan the collection
                     FolderThumbCacher thumbworker = new FolderThumbCacher(strPath, true);
                   }
-                  catch (Exception)
-                  {
-                  }
+                  catch (Exception) {}
                 }
               }
             }
@@ -2075,12 +2061,12 @@ namespace MediaPortal.GUI.Music
             File.Delete(thumbPath);
           }
 
-          if (Util.Picture.CreateThumbnail(coverImg, thumbPath, (int) Thumbs.ThumbResolution,
-                                           (int) Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+          if (Util.Picture.CreateThumbnail(coverImg, thumbPath, (int)Thumbs.ThumbResolution,
+                                           (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
           {
             result = true;
-            Util.Picture.CreateThumbnail(coverImg, thumbPath, (int) Thumbs.ThumbLargeResolution,
-                                         (int) Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+            Util.Picture.CreateThumbnail(coverImg, thumbPath, (int)Thumbs.ThumbLargeResolution,
+                                         (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
           }
         }
       }
@@ -2143,7 +2129,7 @@ namespace MediaPortal.GUI.Music
         return false;
       }
 
-      string sWhere = ((FilterDefinition) view.Filters[viewLevel]).Where;
+      string sWhere = ((FilterDefinition)view.Filters[viewLevel]).Where;
 
       if (sWhere.Length == 0)
       {
@@ -2172,7 +2158,7 @@ namespace MediaPortal.GUI.Music
               return false;
             }
 
-            GUIWindowManager.ActivateWindow((int) Window.WINDOW_MUSIC_PLAYING_NOW);
+            GUIWindowManager.ActivateWindow((int)Window.WINDOW_MUSIC_PLAYING_NOW);
             return true;
           }
 
@@ -2183,7 +2169,7 @@ namespace MediaPortal.GUI.Music
               return false;
             }
 
-            GUIWindowManager.ActivateWindow((int) Window.WINDOW_MUSIC_PLAYING_NOW);
+            GUIWindowManager.ActivateWindow((int)Window.WINDOW_MUSIC_PLAYING_NOW);
             return true;
           }
 
@@ -2194,7 +2180,7 @@ namespace MediaPortal.GUI.Music
               return false;
             }
 
-            GUIWindowManager.ActivateWindow((int) Window.WINDOW_MUSIC_PLAYLIST);
+            GUIWindowManager.ActivateWindow((int)Window.WINDOW_MUSIC_PLAYLIST);
             return true;
           }
 
@@ -2205,7 +2191,7 @@ namespace MediaPortal.GUI.Music
               return false;
             }
 
-            GUIWindowManager.ActivateWindow((int) Window.WINDOW_MUSIC_PLAYLIST);
+            GUIWindowManager.ActivateWindow((int)Window.WINDOW_MUSIC_PLAYLIST);
             return true;
           }
 
@@ -2221,7 +2207,7 @@ namespace MediaPortal.GUI.Music
               return false;
             }
 
-            GUIWindowManager.ActivateWindow((int) Window.WINDOW_FULLSCREEN_MUSIC);
+            GUIWindowManager.ActivateWindow((int)Window.WINDOW_FULLSCREEN_MUSIC);
             GUIGraphicsContext.IsFullScreenVideo = true;
             return true;
           }
@@ -2238,7 +2224,7 @@ namespace MediaPortal.GUI.Music
               return false;
             }
 
-            GUIWindowManager.ActivateWindow((int) Window.WINDOW_FULLSCREEN_MUSIC);
+            GUIWindowManager.ActivateWindow((int)Window.WINDOW_FULLSCREEN_MUSIC);
             GUIGraphicsContext.IsFullScreenVideo = true;
             return true;
           }

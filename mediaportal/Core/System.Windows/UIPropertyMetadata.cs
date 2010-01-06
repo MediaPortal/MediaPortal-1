@@ -29,54 +29,34 @@ namespace System.Windows
   {
     #region Constructors
 
-    public UIPropertyMetadata()
-    {
-    }
+    public UIPropertyMetadata() {}
 
-    public UIPropertyMetadata(GetValueOverride getValueOverride) : base(getValueOverride)
-    {
-    }
+    public UIPropertyMetadata(GetValueOverride getValueOverride) : base(getValueOverride) {}
 
-    public UIPropertyMetadata(object defaultValue) : base(defaultValue)
-    {
-    }
+    public UIPropertyMetadata(object defaultValue) : base(defaultValue) {}
 
     public UIPropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback)
-      : base(propertyInvalidatedCallback)
-    {
-    }
+      : base(propertyInvalidatedCallback) {}
 
-    public UIPropertyMetadata(SetValueOverride setValueOverride) : base(setValueOverride)
-    {
-    }
+    public UIPropertyMetadata(SetValueOverride setValueOverride) : base(setValueOverride) {}
 
     public UIPropertyMetadata(GetValueOverride getValueOverride, SetValueOverride setValueOverride)
-      : base(getValueOverride, setValueOverride)
-    {
-    }
+      : base(getValueOverride, setValueOverride) {}
 
     public UIPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback)
-      : base(defaultValue, propertyInvalidatedCallback)
-    {
-    }
+      : base(defaultValue, propertyInvalidatedCallback) {}
 
     public UIPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback,
                               GetValueOverride getValueOverride)
-      : base(defaultValue, propertyInvalidatedCallback, getValueOverride)
-    {
-    }
+      : base(defaultValue, propertyInvalidatedCallback, getValueOverride) {}
 
     public UIPropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride,
                               SetValueOverride setValueOverride)
-      : base(propertyInvalidatedCallback, getValueOverride, setValueOverride)
-    {
-    }
+      : base(propertyInvalidatedCallback, getValueOverride, setValueOverride) {}
 
     public UIPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback,
                               GetValueOverride getValueOverride, SetValueOverride setValueOverride)
-      : base(defaultValue, propertyInvalidatedCallback, getValueOverride, setValueOverride)
-    {
-    }
+      : base(defaultValue, propertyInvalidatedCallback, getValueOverride, setValueOverride) {}
 
     public UIPropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback,
                               GetValueOverride getValueOverride, SetValueOverride setValueOverride,

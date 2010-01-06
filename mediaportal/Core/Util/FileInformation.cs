@@ -28,23 +28,21 @@ using System.IO;
 
 namespace MediaPortal.Util
 {
-	/// <summary>
-	/// Summary description for FileInformation.
-	/// </summary>
+  /// <summary>
+  /// Summary description for FileInformation.
+  /// </summary>
   public class FileInformation
   {
-    long      length=0;
-    DateTime  creationTime=DateTime.MinValue;
-		DateTime  modificationTime=DateTime.MinValue;
-    string    name=string.Empty;
+    private long length = 0;
+    private DateTime creationTime = DateTime.MinValue;
+    private DateTime modificationTime = DateTime.MinValue;
+    private string name = string.Empty;
 
-    public FileInformation()
-    {
-    }
+    public FileInformation() {}
 
     public FileInformation(string file, bool isFolder)
     {
-      if(isFolder)
+      if (isFolder)
       {
         System.IO.DirectoryInfo info = new System.IO.DirectoryInfo(file);
         Length = 0;
@@ -54,7 +52,7 @@ namespace MediaPortal.Util
           CreationTime = info.CreationTime;
           ModificationTime = info.LastWriteTime;
         }
-        catch (Exception) { }
+        catch (Exception) {}
       }
       else
       {
@@ -63,32 +61,35 @@ namespace MediaPortal.Util
         Name = info.Name;
         try
         {
-            CreationTime = info.CreationTime;
-            ModificationTime = info.LastWriteTime;
+          CreationTime = info.CreationTime;
+          ModificationTime = info.LastWriteTime;
         }
-        catch (Exception) { }
+        catch (Exception) {}
       }
     }
+
     public long Length
     {
-      get { return length;}
-      set { length=value;}
+      get { return length; }
+      set { length = value; }
     }
-    
+
     public string Name
     {
-      get { return name;}
-      set { name=value;}
+      get { return name; }
+      set { name = value; }
     }
+
     public DateTime CreationTime
     {
-      get { return creationTime;}
-      set { creationTime=value;}
-		}
-		public DateTime ModificationTime
-		{
-			get { return modificationTime;}
-			set { modificationTime=value;}
-		}
- 	}
+      get { return creationTime; }
+      set { creationTime = value; }
+    }
+
+    public DateTime ModificationTime
+    {
+      get { return modificationTime; }
+      set { modificationTime = value; }
+    }
+  }
 }

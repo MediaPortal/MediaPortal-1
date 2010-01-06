@@ -202,7 +202,7 @@ namespace PostSetup
       // 
       // pictureBox2
       // 
-      this.pictureBox2.Image = ((System.Drawing.Image) (resources.GetObject("pictureBox2.Image")));
+      this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
       this.pictureBox2.Location = new System.Drawing.Point(16, 16);
       this.pictureBox2.Name = "pictureBox2";
       this.pictureBox2.Size = new System.Drawing.Size(264, 40);
@@ -211,7 +211,7 @@ namespace PostSetup
       // 
       // pictureBox1
       // 
-      this.pictureBox1.Image = ((System.Drawing.Image) (resources.GetObject("pictureBox1.Image")));
+      this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
       this.pictureBox1.Location = new System.Drawing.Point(440, 0);
       this.pictureBox1.Name = "pictureBox1";
       this.pictureBox1.Size = new System.Drawing.Size(88, 64);
@@ -289,12 +289,12 @@ namespace PostSetup
       }
       else if (buttonAction == MP3PartInstaller.BUTTONACTION_INSTALL)
       {
-        MP3PartInstaller mp3PartInstaller = (MP3PartInstaller) MP3PartPanel.Controls[0];
+        MP3PartInstaller mp3PartInstaller = (MP3PartInstaller)MP3PartPanel.Controls[0];
         mp3PartInstaller.Install();
       }
       else if (buttonAction == MP3PartInstaller.BUTTONACTION_CANCEL)
       {
-        MP3PartInstaller mp3PartInstaller = (MP3PartInstaller) MP3PartPanel.Controls[0];
+        MP3PartInstaller mp3PartInstaller = (MP3PartInstaller)MP3PartPanel.Controls[0];
         mp3PartInstaller.Abort();
       }
       else if (buttonAction == MP3PartInstaller.BUTTONACTION_CLOSE)

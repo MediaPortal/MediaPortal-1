@@ -43,9 +43,7 @@ namespace Win32.Utils.Cd
   /// </summary>
   public class DeviceVolumeMonitorException : ApplicationException
   {
-    public DeviceVolumeMonitorException(string aMessage) : base(aMessage)
-    {
-    }
+    public DeviceVolumeMonitorException(string aMessage) : base(aMessage) {}
   }
 
   internal class _DeviceVolumeMonitor : NativeWindow
@@ -132,14 +130,14 @@ namespace Win32.Utils.Cd
       base.WndProc(ref aMessage);
       if (aMessage.Msg == WM_DEVICECHANGE && fMonitor.Enabled)
       {
-        lEvent = (DeviceEvent) aMessage.WParam.ToInt32();
+        lEvent = (DeviceEvent)aMessage.WParam.ToInt32();
         if (lEvent == DeviceEvent.Arrival || lEvent == DeviceEvent.RemoveComplete)
         {
-          lBroadcastHeader = (BroadcastHeader) Marshal.PtrToStructure(aMessage.LParam, typeof (BroadcastHeader));
+          lBroadcastHeader = (BroadcastHeader)Marshal.PtrToStructure(aMessage.LParam, typeof (BroadcastHeader));
           if (lBroadcastHeader.Type == DeviceType.Volume)
           {
-            lVolume = (Volume) Marshal.PtrToStructure(aMessage.LParam, typeof (Volume));
-            if ((lVolume.Flags & (int) VolumeFlags.Media) != 0)
+            lVolume = (Volume)Marshal.PtrToStructure(aMessage.LParam, typeof (Volume));
+            if ((lVolume.Flags & (int)VolumeFlags.Media) != 0)
             {
               fMonitor.TriggerEvents(lEvent == DeviceEvent.Arrival, lVolume.Mask);
             }
@@ -317,7 +315,7 @@ namespace Win32.Utils.Cd
           {
             if ((lMask & 1) != 0)
             {
-              lReturn.Append((char) (65 + lValue));
+              lReturn.Append((char)(65 + lValue));
               lReturn.Append(":,");
             }
             lValue ++;

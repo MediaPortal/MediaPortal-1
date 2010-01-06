@@ -29,9 +29,7 @@ namespace System.Windows.Media.Animation
   {
     #region Constructors
 
-    protected Animatable()
-    {
-    }
+    protected Animatable() {}
 
     #endregion Constructors
 
@@ -42,22 +40,18 @@ namespace System.Windows.Media.Animation
       ApplyAnimationClock(property, clock, HandoffBehavior.SnapshotAndReplace);
     }
 
-    public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock, HandoffBehavior handoffBehavior)
-    {
-    }
+    public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock, HandoffBehavior handoffBehavior) {}
 
     public void BeginAnimation(DependencyProperty property, AnimationTimeline animation)
     {
       BeginAnimation(property, animation, HandoffBehavior.SnapshotAndReplace);
     }
 
-    public void BeginAnimation(DependencyProperty property, AnimationTimeline animation, HandoffBehavior handoffBehavior)
-    {
-    }
+    public void BeginAnimation(DependencyProperty property, AnimationTimeline animation, HandoffBehavior handoffBehavior) {}
 
     public new Animatable Copy()
     {
-      return (Animatable) base.Copy();
+      return (Animatable)base.Copy();
     }
 
     protected virtual void CopyCurrentValueCore(Animatable sourceAnimatable)

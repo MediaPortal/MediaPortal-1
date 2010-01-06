@@ -172,7 +172,7 @@ namespace TvEngine.PowerScheduler.Interfaces
       get { return _reinitializeController; }
       set { _reinitializeController = value; }
     }
-    
+
     /// <summary>
     /// Should PowerScheduler actively try to put the system into standby?
     /// </summary>
@@ -355,7 +355,7 @@ namespace TvEngine.PowerScheduler.Interfaces
       Type type = typeof (T);
       if (_type == type)
       {
-        return (T) _object;
+        return (T)_object;
       }
       return default(T);
     }

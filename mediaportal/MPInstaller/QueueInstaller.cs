@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Threading;
-
 using MediaPortal.Configuration;
 
 namespace MediaPortal.MPInstaller
@@ -9,9 +8,11 @@ namespace MediaPortal.MPInstaller
   public partial class QueueInstaller : MPInstallerForm
   {
     #region local vars
+
     public QueueEnumerator queue = new QueueEnumerator();
-    MPInstallHelper inst = new MPInstallHelper();
-    int time_to_close = 10;
+    private MPInstallHelper inst = new MPInstallHelper();
+    private int time_to_close = 10;
+
     #endregion
 
     public QueueInstaller()
@@ -111,9 +112,7 @@ namespace MediaPortal.MPInstaller
                         this.Refresh();
                         this.Update();
                       }
-                      catch (Exception)
-                      {
-                      }
+                      catch (Exception) {}
                     }
                     else
                     {
@@ -149,27 +148,23 @@ namespace MediaPortal.MPInstaller
       timer1.Enabled = true;
     }
 
-    void ClearSkinCashe()
+    private void ClearSkinCashe()
     {
       try
       {
         Directory.Delete(Config.GetFolder(Config.Dir.Cache), true);
       }
-      catch (Exception)
-      {
-
-      }
+      catch (Exception) {}
     }
 
     private void timer1_Tick(object sender, EventArgs e)
     {
       time_to_close--;
-      button_close.Text = string.Format("Close ({0})", time_to_close.ToString()); 
+      button_close.Text = string.Format("Close ({0})", time_to_close.ToString());
       if (time_to_close == 0)
       {
         this.Close();
       }
     }
-
   }
 }

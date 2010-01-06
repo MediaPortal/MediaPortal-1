@@ -49,9 +49,7 @@ namespace WindowPlugins.VideoEditor
       {
         diag.InitialDirectory = Path.GetDirectoryName(mencoderPath.Text);
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
 
       if (diag.ShowDialog() == DialogResult.OK)
       {
@@ -98,9 +96,7 @@ namespace WindowPlugins.VideoEditor
       {
         Process.Start("http://www.mplayerhq.hu");
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
     }
   }
 }

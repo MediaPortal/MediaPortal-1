@@ -27,8 +27,8 @@ namespace TvLibrary.Interfaces.Analyzer
   /// interface to the pmt grabber com object
   /// </summary>
   [ComVisible(true), ComImport,
-  Guid("6E714740-803D-4175-BEF6-67246BDF1855"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("6E714740-803D-4175-BEF6-67246BDF1855"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsPmtGrabber
   {
     /// <summary>

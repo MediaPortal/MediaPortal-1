@@ -1,27 +1,25 @@
-
-
 using MpeCore.Classes;
 using MpeCore.Classes.Events;
 using MpeCore.Classes.SectionPanel;
 
 namespace MpeCore.Interfaces
 {
-    public interface IActionType
-    {
-        event FileInstalledEventHandler ItemProcessed;
+  public interface IActionType
+  {
+    event FileInstalledEventHandler ItemProcessed;
 
-        int ItemsCount(PackageClass packageClass, ActionItem actionItem);
-        
-        string DisplayName { get; }
+    int ItemsCount(PackageClass packageClass, ActionItem actionItem);
 
-        string Description { get; }
-        
-        SectionParamCollection GetDefaultParams();
+    string DisplayName { get; }
 
-        SectionResponseEnum Execute(PackageClass packageClass, ActionItem actionItem);
-        
-        ValidationResponse Validate(PackageClass packageClass, ActionItem actionItem);
+    string Description { get; }
 
-        SectionResponseEnum UnInstall(PackageClass packageClass, UnInstallItem item);
-    }
+    SectionParamCollection GetDefaultParams();
+
+    SectionResponseEnum Execute(PackageClass packageClass, ActionItem actionItem);
+
+    ValidationResponse Validate(PackageClass packageClass, ActionItem actionItem);
+
+    SectionResponseEnum UnInstall(PackageClass packageClass, UnInstallItem item);
+  }
 }

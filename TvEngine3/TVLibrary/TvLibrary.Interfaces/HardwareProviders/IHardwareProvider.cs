@@ -1,4 +1,5 @@
-﻿#region Copyright
+#region Copyright
+
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,6 +20,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 #endregion
 
 using System;
@@ -31,7 +33,6 @@ using TvLibrary.Implementations.DVB;
 
 namespace TvLibrary.Hardware
 {
-
   /// <summary>
   /// Capabilities definitions; Bitwise combinations allowed
   /// </summary>
@@ -49,7 +50,7 @@ namespace TvLibrary.Hardware
     /// use the 2nd passed filter, not the tuner filter (WinTV CI)
     HW_UseExtraFilter = 8,
     /// device is additional, like WinTV CI USB; there can be more than one devices in current TvCard instance
-    HW_MultipleDevice = 16 
+    HW_MultipleDevice = 16
   }
 
   /// <summary>

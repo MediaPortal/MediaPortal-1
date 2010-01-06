@@ -59,9 +59,7 @@ namespace MediaPortal.GUI.Library
     private bool _shadow = false;
 
     public GUIToggleButtonControl(int parentId)
-      : base(parentId)
-    {
-    }
+      : base(parentId) {}
 
     public GUIToggleButtonControl(int parentId, int controlid, int posX, int posY, int width, int height,
                                   string textureFocusName, string textureNoFocusName, string textureAltFocusName,
@@ -132,13 +130,13 @@ namespace MediaPortal.GUI.Library
       {
         int dwAlphaCounter = _frameCounter + 2;
         int dwAlphaChannel;
-        if ((dwAlphaCounter%128) >= 64)
+        if ((dwAlphaCounter % 128) >= 64)
         {
-          dwAlphaChannel = dwAlphaCounter%64;
+          dwAlphaChannel = dwAlphaCounter % 64;
         }
         else
         {
-          dwAlphaChannel = 63 - (dwAlphaCounter%64);
+          dwAlphaChannel = 63 - (dwAlphaCounter % 64);
         }
 
         dwAlphaChannel += 192;
@@ -196,11 +194,12 @@ namespace MediaPortal.GUI.Library
             x = _positionX + _width - _textOffsetX;
             break;
         }
-        uint c = (uint) color;
+        uint c = (uint)color;
         c = GUIGraphicsContext.MergeAlpha(c);
         if (_shadow)
         {
-          _font.DrawShadowText(x, (float)_textOffsetY + _positionY, c, _label, _textAlignment, _shadowAngle, _shadowDistance, _shadowColor);
+          _font.DrawShadowText(x, (float)_textOffsetY + _positionY, c, _label, _textAlignment, _shadowAngle,
+                               _shadowDistance, _shadowColor);
         }
         else
         {

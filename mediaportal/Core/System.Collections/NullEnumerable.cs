@@ -29,9 +29,7 @@ namespace System.Collections
   {
     #region Constructors
 
-    private NullEnumerable()
-    {
-    }
+    private NullEnumerable() {}
 
     #endregion Constructors
 

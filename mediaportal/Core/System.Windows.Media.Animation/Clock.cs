@@ -51,17 +51,11 @@ namespace System.Windows.Media.Animation
 
     #region Methods
 
-    protected virtual void DiscontinuousTimeMovement()
-    {
-    }
+    protected virtual void DiscontinuousTimeMovement() {}
 
-    protected virtual void SpeedChanged()
-    {
-    }
+    protected virtual void SpeedChanged() {}
 
-    protected virtual void Stopped()
-    {
-    }
+    protected virtual void Stopped() {}
 
     private void TimelineCurrentGlobalSpeedInvalidated(object sender, EventArgs e)
     {

@@ -35,7 +35,7 @@ namespace WindowPlugins.VideoEditor
       settings.resolutionY = 576;
       settings.videoQuality = 2200;
       settings.audioQuality = 192;
-      GetID = (int) Window.WINDOW_VIDEO_EDITOR_COMPRESSSETTINGS;
+      GetID = (int)Window.WINDOW_VIDEO_EDITOR_COMPRESSSETTINGS;
     }
 
     public CompressionSettings Settings
@@ -215,7 +215,7 @@ namespace WindowPlugins.VideoEditor
       }
       for (int i = 0; i < spinControl.SubItemCount; i++)
       {
-        string subItem = (string) spinControl.GetSubItem(i);
+        string subItem = (string)spinControl.GetSubItem(i);
         if (subItem == text)
         {
           int j = 0;
@@ -224,7 +224,7 @@ namespace WindowPlugins.VideoEditor
             //spinControl.Value = i;
             spinControl.MoveDown();
             // prevent for endless loop
-            if (j > (spinControl.SubItemCount*2))
+            if (j > (spinControl.SubItemCount * 2))
             {
               break;
             }

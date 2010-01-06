@@ -31,9 +31,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    protected FrameworkTemplate()
-    {
-    }
+    protected FrameworkTemplate() {}
 
     #endregion Constructors
 
@@ -51,7 +49,7 @@ namespace System.Windows
         return null;
       }
 
-      return (DependencyObject) _names[name];
+      return (DependencyObject)_names[name];
     }
 
     object IResourceHost.GetResource(object key)
@@ -61,7 +59,7 @@ namespace System.Windows
         return null;
       }
 
-      return (DependencyObject) _names[key];
+      return (DependencyObject)_names[key];
     }
 
     public void RegisterName(string name, object context)

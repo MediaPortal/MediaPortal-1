@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-
 using MediaPortal.Configuration;
 using MediaPortal.ServiceImplementations;
 
@@ -42,9 +41,7 @@ namespace MediaPortal.Util
     private static bool fUseDvbSubtitles = false;
     private static Thread fFilterCheckThread = null;
 
-    FilterChecker()
-    {
-    }
+    private FilterChecker() {}
 
     public static void CheckInstalledVersions()
     {
@@ -77,7 +74,8 @@ namespace MediaPortal.Util
             found = fi.Exists;
             if (found)
             {
-              Log.Info("FilterChecker: Found {0} from {1} located at {2}", aFilterName, fi.LastWriteTimeUtc.ToShortDateString(), fullPath);
+              Log.Info("FilterChecker: Found {0} from {1} located at {2}", aFilterName,
+                       fi.LastWriteTimeUtc.ToShortDateString(), fullPath);
 
               if (aDoVersionCheck)
               {
@@ -90,12 +88,11 @@ namespace MediaPortal.Util
             else
               Log.Debug("FilterChecker: Invalid path info for {0}", aFilterName);
           }
-          catch (Exception) { }
+          catch (Exception) {}
         }
       }
-      else
-        if (aLogMissing)
-          Log.Error("TVHome: *** WARNING *** Unable to detect registered filter: {0}!", aFilterName);
+      else if (aLogMissing)
+        Log.Error("TVHome: *** WARNING *** Unable to detect registered filter: {0}!", aFilterName);
 
       return found;
     }
@@ -121,7 +118,7 @@ namespace MediaPortal.Util
             aCurrentVersion = new System.Version(fileVersion.ProductVersion.Replace(',', '.'));
             return true;
           }
-          catch (Exception) { }
+          catch (Exception) {}
         }
 
         if (!string.IsNullOrEmpty(fileVersion.FileVersion))
@@ -133,7 +130,7 @@ namespace MediaPortal.Util
             aCurrentVersion = new System.Version(fileVersion.FileVersion.Replace(',', '.'));
             return true;
           }
-          catch (Exception) { }
+          catch (Exception) {}
         }
 
         return false;

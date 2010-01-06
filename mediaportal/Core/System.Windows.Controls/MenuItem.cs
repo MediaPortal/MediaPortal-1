@@ -35,9 +35,7 @@ namespace System.Windows.Controls
   {
     #region Constructors
 
-    public MenuItem()
-    {
-    }
+    public MenuItem() {}
 
     #endregion Constructors
 
@@ -75,14 +73,14 @@ namespace System.Windows.Controls
     [Bindable(true)]
     public ICommand Command
     {
-      get { return (ICommand) GetValue(CommandProperty); }
+      get { return (ICommand)GetValue(CommandProperty); }
       set { SetValue(CommandProperty, value); }
     }
 
     [Bindable(true)]
     public object CommandParameter
     {
-      get { return (object) GetValue(CommandParameterProperty); }
+      get { return (object)GetValue(CommandParameterProperty); }
       set { SetValue(CommandParameterProperty, value); }
     }
 

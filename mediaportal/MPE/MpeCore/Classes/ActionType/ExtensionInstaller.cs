@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -8,88 +8,89 @@ using MpeCore.Interfaces;
 
 namespace MpeCore.Classes.ActionType
 {
-    public class ExtensionInstaller : IActionType
+  public class ExtensionInstaller : IActionType
+  {
+    public event FileInstalledEventHandler ItemProcessed;
+
+    private const string Const_Loc = "Extension package";
+    private const string Const_Silent = "Silent Install";
+    //private const string Const_Remove = "Remove on Uninstall";
+
+    public int ItemsCount(PackageClass packageClass, ActionItem actionItem)
     {
-        public event FileInstalledEventHandler ItemProcessed;
-
-        private const string Const_Loc = "Extension package";
-        private const string Const_Silent = "Silent Install";
-        //private const string Const_Remove = "Remove on Uninstall";
-
-        public int ItemsCount(PackageClass packageClass, ActionItem actionItem)
-        {
-            return 1;
-        }
-
-        public string DisplayName
-        {
-            get { return "Extension Installer"; }
-        }
-
-        public string Description
-        {
-            get { return "Install a extension.\n If the extension is installed and it is older, first will be uninstalled \n"; }
-        }
-
-        public SectionParamCollection GetDefaultParams()
-        {
-            var Params = new SectionParamCollection();
-            Params.Add(new SectionParam(Const_Loc, "", ValueTypeEnum.File,
-                                       "Location of the extension package"));
-            Params.Add(new SectionParam(Const_Silent, "", ValueTypeEnum.Bool,
-                           "Silent install, No wizard screen will be displayed "));
-            return Params;
-        }
-
-        public SectionResponseEnum Execute(PackageClass packageClass, ActionItem actionItem)
-        {
-            PackageClass pak = new PackageClass();
-            pak = pak.ZipProvider.Load(actionItem.Params[Const_Loc].Value);
-            if (pak == null)
-                return SectionResponseEnum.Ok;
-
-            if (ItemProcessed != null)
-                ItemProcessed(this, new InstallEventArgs("Install extension " + pak.GeneralInfo.Name));
-            
-            PackageClass installedPak = MpeInstaller.InstalledExtensions.Get(pak.GeneralInfo.Id);
-            if (installedPak != null)
-            {
-                int i = installedPak.GeneralInfo.Version.CompareTo(pak.GeneralInfo.Version);
-                if (installedPak.GeneralInfo.Version.CompareTo(pak.GeneralInfo.Version) >= 0)
-                    return SectionResponseEnum.Ok;
-                installedPak.Silent = true;
-                installedPak.UnInstallInfo = new UnInstallInfoCollection(installedPak);
-                installedPak.UnInstallInfo = installedPak.UnInstallInfo.Load();
-                if (installedPak.UnInstallInfo == null)
-                    installedPak.UnInstallInfo = new UnInstallInfoCollection();
-                installedPak.UnInstall();
-                pak.CopyGroupCheck(installedPak);
-            }
-            if (actionItem.Params[Const_Silent].GetValueAsBool())
-            {
-                pak.Silent = true;
-            }
-            pak.StartInstallWizard();
-            return SectionResponseEnum.Ok;
-        }
-
-        public ValidationResponse Validate(PackageClass packageClass, ActionItem actionItem)
-        {
-            if (!File.Exists(actionItem.Params[Const_Loc].Value))
-                return new ValidationResponse() { Valid = false, Message = " [Install Extension] File not found " + actionItem.Params[Const_Loc].Value };
-            if (!string.IsNullOrEmpty(actionItem.ConditionGroup) && packageClass.Groups[actionItem.ConditionGroup] == null)
-                return new ValidationResponse()
-                {
-                    Message = actionItem.Name + " condition group not found " + actionItem.ConditionGroup,
-                    Valid = false
-                }; 
-
-            return new ValidationResponse();
-        }
-
-        public SectionResponseEnum UnInstall(PackageClass packageClass, UnInstallItem item)
-        {
-            return SectionResponseEnum.Ok;
-        }
+      return 1;
     }
+
+    public string DisplayName
+    {
+      get { return "Extension Installer"; }
+    }
+
+    public string Description
+    {
+      get { return "Install a extension.\n If the extension is installed and it is older, first will be uninstalled \n"; }
+    }
+
+    public SectionParamCollection GetDefaultParams()
+    {
+      var Params = new SectionParamCollection();
+      Params.Add(new SectionParam(Const_Loc, "", ValueTypeEnum.File,
+                                  "Location of the extension package"));
+      Params.Add(new SectionParam(Const_Silent, "", ValueTypeEnum.Bool,
+                                  "Silent install, No wizard screen will be displayed "));
+      return Params;
+    }
+
+    public SectionResponseEnum Execute(PackageClass packageClass, ActionItem actionItem)
+    {
+      PackageClass pak = new PackageClass();
+      pak = pak.ZipProvider.Load(actionItem.Params[Const_Loc].Value);
+      if (pak == null)
+        return SectionResponseEnum.Ok;
+
+      if (ItemProcessed != null)
+        ItemProcessed(this, new InstallEventArgs("Install extension " + pak.GeneralInfo.Name));
+
+      PackageClass installedPak = MpeInstaller.InstalledExtensions.Get(pak.GeneralInfo.Id);
+      if (installedPak != null)
+      {
+        int i = installedPak.GeneralInfo.Version.CompareTo(pak.GeneralInfo.Version);
+        if (installedPak.GeneralInfo.Version.CompareTo(pak.GeneralInfo.Version) >= 0)
+          return SectionResponseEnum.Ok;
+        installedPak.Silent = true;
+        installedPak.UnInstallInfo = new UnInstallInfoCollection(installedPak);
+        installedPak.UnInstallInfo = installedPak.UnInstallInfo.Load();
+        if (installedPak.UnInstallInfo == null)
+          installedPak.UnInstallInfo = new UnInstallInfoCollection();
+        installedPak.UnInstall();
+        pak.CopyGroupCheck(installedPak);
+      }
+      if (actionItem.Params[Const_Silent].GetValueAsBool())
+      {
+        pak.Silent = true;
+      }
+      pak.StartInstallWizard();
+      return SectionResponseEnum.Ok;
+    }
+
+    public ValidationResponse Validate(PackageClass packageClass, ActionItem actionItem)
+    {
+      if (!File.Exists(actionItem.Params[Const_Loc].Value))
+        return new ValidationResponse()
+                 {Valid = false, Message = " [Install Extension] File not found " + actionItem.Params[Const_Loc].Value};
+      if (!string.IsNullOrEmpty(actionItem.ConditionGroup) && packageClass.Groups[actionItem.ConditionGroup] == null)
+        return new ValidationResponse()
+                 {
+                   Message = actionItem.Name + " condition group not found " + actionItem.ConditionGroup,
+                   Valid = false
+                 };
+
+      return new ValidationResponse();
+    }
+
+    public SectionResponseEnum UnInstall(PackageClass packageClass, UnInstallItem item)
+    {
+      return SectionResponseEnum.Ok;
+    }
+  }
 }

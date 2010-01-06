@@ -51,7 +51,7 @@ namespace SetupTv
       MySql,
     }
 
-    readonly StartupMode _dialogMode = StartupMode.Normal;
+    private readonly StartupMode _dialogMode = StartupMode.Normal;
     private ProviderType _provider = ProviderType.MySql;
     private static string _schemaNameDefault = "MpTvDb";
     private static string _schemaName = _schemaNameDefault;
@@ -190,7 +190,8 @@ namespace SetupTv
       }
     }
 
-    private string ComposeConnectionString(string server, string userid, string password, string database, bool pooling, int timeout)
+    private string ComposeConnectionString(string server, string userid, string password, string database, bool pooling,
+                                           int timeout)
     {
       schemaName = database;
       switch (provider)
@@ -198,12 +199,19 @@ namespace SetupTv
         case ProviderType.SqlServer:
           if (database == "") database = "master";
           if (pooling)
-            return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};Connection Timeout={4};", password, userid, server, database, timeout);
-          return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};Pooling=false;Connection Timeout={4};", password, userid, server, database, timeout);
+            return
+              String.Format(
+                "Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};Connection Timeout={4};",
+                password, userid, server, database, timeout);
+          return
+            String.Format(
+              "Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};Pooling=false;Connection Timeout={4};",
+              password, userid, server, database, timeout);
 
         case ProviderType.MySql:
           if (database == "") database = "mysql";
-          return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};", server, userid, password, database, timeout);
+          return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};",
+                               server, userid, password, database, timeout);
       }
       return "";
     }
@@ -220,7 +228,8 @@ namespace SetupTv
         if (string.IsNullOrEmpty(tbServerHostName.Text) || string.IsNullOrEmpty(tbPassword.Text))
           return false;
 
-        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false, 15);
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "",
+                                                          false, 15);
 
         switch (provider)
         {
@@ -293,7 +302,8 @@ namespace SetupTv
         }
 
         // As the connection string sets the DB schema name we need to compose it after cleaning the statement.
-        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", true, 300);
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "",
+                                                          true, 300);
         switch (provider)
         {
           case ProviderType.SqlServer:
@@ -318,11 +328,13 @@ namespace SetupTv
                     {
                       Log.Write("  ********* SQL statement failed! *********");
                       Log.Write("  ********* Error reason: {0}", ex.Message);
-                      Log.Write("  ********* Error code: {0}, Line: {1} *********", ex.Number.ToString(), ex.LineNumber.ToString());
+                      Log.Write("  ********* Error code: {0}, Line: {1} *********", ex.Number.ToString(),
+                                ex.LineNumber.ToString());
                       succeeded = false;
                       if (connect.State != ConnectionState.Open)
                       {
-                        Log.Write("  ********* Connection status = {0} - aborting further command execution..", connect.State.ToString());
+                        Log.Write("  ********* Connection status = {0} - aborting further command execution..",
+                                  connect.State.ToString());
                         break;
                       }
                     }
@@ -356,7 +368,8 @@ namespace SetupTv
                       succeeded = false;
                       if (connect.State != ConnectionState.Open)
                       {
-                        Log.Write("  ********* Connection status = {0} - aborting further command execution..", connect.State.ToString());
+                        Log.Write("  ********* Connection status = {0} - aborting further command execution..",
+                                  connect.State.ToString());
                         break;
                       }
                     }
@@ -418,26 +431,32 @@ namespace SetupTv
         if (string.IsNullOrEmpty(tbUserID.Text))
         {
           tbUserID.BackColor = Color.Red;
-          MessageBox.Show("Please specify a valid database user!", "Specify user", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show("Please specify a valid database user!", "Specify user", MessageBoxButtons.OK,
+                          MessageBoxIcon.Error);
           return;
         }
         if (string.IsNullOrEmpty(tbPassword.Text))
         {
           tbPassword.BackColor = Color.Red;
-          MessageBox.Show("Please specify a valid password for the database user!", "Specify password", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show("Please specify a valid password for the database user!", "Specify password",
+                          MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
-        if (string.IsNullOrEmpty(tbDatabaseName.Text) || tbDatabaseName.Text.ToLowerInvariant() == "mysql" || tbDatabaseName.Text.ToLowerInvariant() == "master")
+        if (string.IsNullOrEmpty(tbDatabaseName.Text) || tbDatabaseName.Text.ToLowerInvariant() == "mysql" ||
+            tbDatabaseName.Text.ToLowerInvariant() == "master")
         {
           tbDatabaseName.BackColor = Color.Red;
-          MessageBox.Show("Please specify a valid schema name!", "Specify schema name", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show("Please specify a valid schema name!", "Specify schema name", MessageBoxButtons.OK,
+                          MessageBoxIcon.Error);
           return;
         }
 
-        if (tbServerHostName.Text.ToLowerInvariant().IndexOf("localhost") >= 0 || tbServerHostName.Text.ToLowerInvariant().IndexOf("127.0.0.1") >= 0)
+        if (tbServerHostName.Text.ToLowerInvariant().IndexOf("localhost") >= 0 ||
+            tbServerHostName.Text.ToLowerInvariant().IndexOf("127.0.0.1") >= 0)
         {
           tbServerHostName.BackColor = Color.Red;
-          MessageBox.Show("Please specify a valid hostname or IP address for the server!", "Specify server name", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show("Please specify a valid hostname or IP address for the server!", "Specify server name",
+                          MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
 
@@ -461,7 +480,8 @@ namespace SetupTv
     private bool AttemptMySqlTestConnect(string aTestDb)
     {
       provider = ProviderType.MySql;
-      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, aTestDb, false, 5);
+      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, aTestDb,
+                                                        false, 5);
 
       try
       {
@@ -497,7 +517,8 @@ namespace SetupTv
     private bool AttemptMsSqlTestConnect(string aTestDb)
     {
       provider = ProviderType.SqlServer;
-      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, aTestDb, false, 5);
+      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, aTestDb,
+                                                        false, 5);
 
       try
       {
@@ -526,13 +547,15 @@ namespace SetupTv
             else
             {
               tbServerHostName.BackColor = Color.Yellow;
-              MessageBox.Show(string.Format("Test failed: {0}", sqlex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+              MessageBox.Show(string.Format("Test failed: {0}", sqlex.Message), "Warning", MessageBoxButtons.OK,
+                              MessageBoxIcon.Warning);
             }
           }
           else
           {
             tbServerHostName.BackColor = Color.Red;
-            MessageBox.Show(string.Format("Connection error: {0}", sqlex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(string.Format("Connection error: {0}", sqlex.Message), "Error", MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
           }
         }
         MessageBox.Show(this, "Connection failed!\n" + sqlex.Message);
@@ -570,7 +593,8 @@ namespace SetupTv
 
     public void SaveGentleConfig()
     {
-      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, tbDatabaseName.Text, true, 300);
+      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text,
+                                                        tbDatabaseName.Text, true, 300);
       XmlDocument doc = new XmlDocument();
       try
       {
@@ -578,7 +602,8 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        MessageBox.Show(string.Format("Could not load generic gentle config to insert matching connection string: {0}", ex.Message));
+        MessageBox.Show(string.Format("Could not load generic gentle config to insert matching connection string: {0}",
+                                      ex.Message));
         return;
       }
 
@@ -608,7 +633,8 @@ namespace SetupTv
     private void btnDrop_Click(object sender, EventArgs e)
     {
       if (ExecuteSQLScript("delete"))
-        MessageBox.Show("Your old database has been dropped.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show("Your old database has been dropped.", "Success", MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
       else
         MessageBox.Show("Failed to drop the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
@@ -630,7 +656,8 @@ namespace SetupTv
       }
       try
       {
-        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, tbDatabaseName.Text, false, 15);
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text,
+                                                          tbDatabaseName.Text, false, 15);
         switch (provider)
         {
           case ProviderType.SqlServer:
@@ -798,7 +825,9 @@ namespace SetupTv
           if (!ServiceHelper.IsServiceEnabled(DBSearchPattern, false))
           {
             if (MessageBox.Show(this,
-                                string.Format("The tv service depends on {0} but this service does not autostart - enable now?", DBSearchPattern),
+                                string.Format(
+                                  "The tv service depends on {0} but this service does not autostart - enable now?",
+                                  DBSearchPattern),
                                 "Dependency avoids autostart",
                                 MessageBoxButtons.YesNo,
                                 MessageBoxIcon.Warning,
@@ -806,11 +835,13 @@ namespace SetupTv
             {
               // enable the dependency now
               if (!ServiceHelper.IsServiceEnabled(DBSearchPattern, true))
-                MessageBox.Show("Failed to change the startup behaviour", "Dependency error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Failed to change the startup behaviour", "Dependency error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
             }
             // start the service right now
             if (!ServiceHelper.Start(DBSearchPattern))
-              MessageBox.Show(string.Format("Failed to start the dependency service: {0}", DBSearchPattern), "Dependency start error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+              MessageBox.Show(string.Format("Failed to start the dependency service: {0}", DBSearchPattern),
+                              "Dependency start error", MessageBoxButtons.OK, MessageBoxIcon.Error);
           }
         }
         else
@@ -867,7 +898,7 @@ namespace SetupTv
       {
         Process.Start("http://wiki.team-mediaportal.com/TV-Engine_0.3");
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     private void tbPassword_KeyUp(object sender, KeyEventArgs e)

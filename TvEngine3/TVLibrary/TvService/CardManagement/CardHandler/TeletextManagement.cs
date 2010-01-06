@@ -28,7 +28,8 @@ namespace TvService
 {
   public class TeletextManagement
   {
-    readonly ITvCardHandler _cardHandler;
+    private readonly ITvCardHandler _cardHandler;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DisEqcManagement"/> class.
     /// </summary>
@@ -58,9 +59,11 @@ namespace TvService
           {
             return RemoteControl.Instance.IsGrabbingTeletext(user);
           }
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
 
@@ -72,7 +75,8 @@ namespace TvService
         if (subchannel == null)
           return false;
         return subchannel.GrabTeletext;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return false;
@@ -99,9 +103,11 @@ namespace TvService
         {
           return RemoteControl.Instance.HasTeletext(user);
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
-        Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+        Log.Error("card: unable to connect to slave controller at:{0}",
+                  _cardHandler.DataBaseCard.ReferencedServer().HostName);
         return false;
       }
 
@@ -136,9 +142,11 @@ namespace TvService
           {
             return RemoteControl.Instance.TeletextRotation(user, pageNumber);
           }
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return new TimeSpan(0, 0, 0, 15);
         }
 
@@ -150,7 +158,8 @@ namespace TvService
         if (subchannel == null)
           return new TimeSpan(0, 0, 0, 15);
         return subchannel.TeletextDecoder.RotationTime(pageNumber);
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return new TimeSpan(0, 0, 0, 15);
@@ -177,9 +186,11 @@ namespace TvService
           {
             RemoteControl.Instance.GrabTeletext(user, onOff);
           }
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return;
         }
 
@@ -191,7 +202,8 @@ namespace TvService
         if (subchannel == null)
           return;
         subchannel.GrabTeletext = onOff;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return;
@@ -210,36 +222,39 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
-          return new byte[] { 1 };
+          return new byte[] {1};
         try
         {
           RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
           if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-            return new byte[] { 1 };
+            return new byte[] {1};
           if (_cardHandler.IsLocal == false)
           {
             return RemoteControl.Instance.GetTeletextPage(user, pageNumber, subPageNumber);
           }
-        } catch (Exception)
+        }
+        catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return new byte[] { 1 };
+          Log.Error("card: unable to connect to slave controller at:{0}",
+                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
+          return new byte[] {1};
         }
 
         TvCardContext context = _cardHandler.Card.Context as TvCardContext;
         if (context == null)
-          return new byte[] { 1 };
+          return new byte[] {1};
         context.GetUser(ref user);
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
         if (subchannel == null)
-          return new byte[] { 1 };
+          return new byte[] {1};
         if (subchannel.TeletextDecoder == null)
-          return new byte[] { 1 };
+          return new byte[] {1};
         return subchannel.TeletextDecoder.GetRawPage(pageNumber, subPageNumber);
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
-        return new byte[] { 1 };
+        return new byte[] {1};
       }
     }
 
@@ -261,9 +276,11 @@ namespace TvService
           {
             RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
             return RemoteControl.Instance.SubPageCount(user, pageNumber);
-          } catch (Exception)
+          }
+          catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+            Log.Error("card: unable to connect to slave controller at:{0}",
+                      _cardHandler.DataBaseCard.ReferencedServer().HostName);
             return -1;
           }
         }
@@ -277,7 +294,8 @@ namespace TvService
         if (subchannel.TeletextDecoder == null)
           return -1;
         return subchannel.TeletextDecoder.NumberOfSubpages(pageNumber) + 1;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return -1;
@@ -301,9 +319,11 @@ namespace TvService
           {
             RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
             return RemoteControl.Instance.GetTeletextRedPageNumber(user);
-          } catch (Exception)
+          }
+          catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+            Log.Error("card: unable to connect to slave controller at:{0}",
+                      _cardHandler.DataBaseCard.ReferencedServer().HostName);
             return -1;
           }
         }
@@ -317,7 +337,8 @@ namespace TvService
         if (subchannel.TeletextDecoder == null)
           return -1;
         return subchannel.TeletextDecoder.PageRed;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return -1;
@@ -341,9 +362,11 @@ namespace TvService
           {
             RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
             return RemoteControl.Instance.GetTeletextGreenPageNumber(user);
-          } catch (Exception)
+          }
+          catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+            Log.Error("card: unable to connect to slave controller at:{0}",
+                      _cardHandler.DataBaseCard.ReferencedServer().HostName);
             return -1;
           }
         }
@@ -357,7 +380,8 @@ namespace TvService
         if (subchannel.TeletextDecoder == null)
           return -1;
         return subchannel.TeletextDecoder.PageGreen;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return -1;
@@ -381,9 +405,11 @@ namespace TvService
           {
             RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
             return RemoteControl.Instance.GetTeletextYellowPageNumber(user);
-          } catch (Exception)
+          }
+          catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+            Log.Error("card: unable to connect to slave controller at:{0}",
+                      _cardHandler.DataBaseCard.ReferencedServer().HostName);
             return -1;
           }
         }
@@ -397,7 +423,8 @@ namespace TvService
         if (subchannel.TeletextDecoder == null)
           return -1;
         return subchannel.TeletextDecoder.PageYellow;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return -1;
@@ -421,9 +448,11 @@ namespace TvService
           {
             RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
             return RemoteControl.Instance.GetTeletextBluePageNumber(user);
-          } catch (Exception)
+          }
+          catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _cardHandler.DataBaseCard.ReferencedServer().HostName);
+            Log.Error("card: unable to connect to slave controller at:{0}",
+                      _cardHandler.DataBaseCard.ReferencedServer().HostName);
             return -1;
           }
         }
@@ -437,12 +466,12 @@ namespace TvService
         if (subchannel.TeletextDecoder == null)
           return -1;
         return subchannel.TeletextDecoder.PageBlue;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Write(ex);
         return -1;
       }
     }
-
   }
 }

@@ -156,7 +156,7 @@ namespace TvPlugin
         using (BinaryReader reader = new BinaryReader(stream))
         {
           receivedPage = new byte[stream.Length];
-          reader.Read(receivedPage, 0, (int) stream.Length);
+          reader.Read(receivedPage, 0, (int)stream.Length);
           receivedPageNumber = 0;
           receivedSubPageNumber = 0;
         }
@@ -170,7 +170,7 @@ namespace TvPlugin
     public override void OnAction(Action action)
     {
       // if we have a keypress or a remote button press then check if it is a number and add it to the inputLine
-      char key = (char) 0;
+      char key = (char)0;
       if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
       {
         if (action.m_key != null)
@@ -178,10 +178,10 @@ namespace TvPlugin
           if (action.m_key.KeyChar >= '0' && action.m_key.KeyChar <= '9')
           {
             // Get offset to item
-            key = (char) action.m_key.KeyChar;
+            key = (char)action.m_key.KeyChar;
           }
         }
-        if (key == (char) 0)
+        if (key == (char)0)
         {
           return;
         }
@@ -269,7 +269,7 @@ namespace TvPlugin
       if (currentSubPageNumber > 0)
       {
         currentSubPageNumber--;
-        while ((currentSubPageNumber%0x0F) > 9)
+        while ((currentSubPageNumber % 0x0F) > 9)
         {
           currentSubPageNumber--;
         }
@@ -540,7 +540,6 @@ namespace TvPlugin
         Log.Error(ex);
       }
     }*/
-
     protected void Redraw()
     {
       Bitmap bitmap;
@@ -580,7 +579,7 @@ namespace TvPlugin
           Redraw();
           Log.Info("dvb-teletext: received page {0:X} / subpage {1:X}", receivedPageNumber, receivedSubPageNumber);
         }
-        return;                                                                      
+        return;
       }
       if (sub >= maxSubs)
       {

@@ -48,9 +48,7 @@ namespace System.Windows.Controls
       LoadedEvent.AddOwner(typeof (Page));
     }
 
-    public Page()
-    {
-    }
+    public Page() {}
 
     #endregion Constructors
 
@@ -71,9 +69,7 @@ namespace System.Windows.Controls
 //			_child = (UIElement)child;
     }
 
-    void IAddChild.AddText(string text)
-    {
-    }
+    void IAddChild.AddText(string text) {}
 
     protected override Size ArrangeOverride(Rect finalRect)
     {
@@ -85,9 +81,7 @@ namespace System.Windows.Controls
       return base.MeasureOverride(availableSize);
     }
 
-    protected virtual void OnTemplateChanged(ControlTemplate oldTemplate, ControlTemplate newTemplate)
-    {
-    }
+    protected virtual void OnTemplateChanged(ControlTemplate oldTemplate, ControlTemplate newTemplate) {}
 
     protected internal override void OnVisualParentChanged(Visual oldParent)
     {
@@ -130,7 +124,7 @@ namespace System.Windows.Controls
 
     public Brush Background
     {
-      get { return (Brush) GetValue(BackgroundProperty); }
+      get { return (Brush)GetValue(BackgroundProperty); }
       set { SetValue(BackgroundProperty, value); }
     }
 
@@ -150,20 +144,20 @@ namespace System.Windows.Controls
     [Bindable(true)]
     public double FontSize
     {
-      get { return (double) GetValue(FontSizeProperty); }
+      get { return (double)GetValue(FontSizeProperty); }
       set { SetValue(FontSizeProperty, value); }
     }
 
     [Bindable(true)]
     public Brush Foreground
     {
-      get { return (Brush) GetValue(ForegroundProperty); }
+      get { return (Brush)GetValue(ForegroundProperty); }
       set { SetValue(ForegroundProperty, value); }
     }
 
     public bool KeepAlive
     {
-      get { return (bool) GetValue(KeepAliveProperty); }
+      get { return (bool)GetValue(KeepAliveProperty); }
       set { SetValue(KeepAliveProperty, value); }
     }
 
@@ -186,13 +180,13 @@ namespace System.Windows.Controls
 
     public ControlTemplate Template
     {
-      get { return (ControlTemplate) GetValue(TemplateProperty); }
+      get { return (ControlTemplate)GetValue(TemplateProperty); }
       set { SetValue(TemplateProperty, value); }
     }
 
     public string Title
     {
-      get { return (string) GetValue(TitleProperty); }
+      get { return (string)GetValue(TitleProperty); }
       set { SetValue(TitleProperty, value); }
     }
 

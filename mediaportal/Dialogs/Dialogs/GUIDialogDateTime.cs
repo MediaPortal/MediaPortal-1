@@ -60,7 +60,7 @@ namespace MediaPortal.Dialogs
 
     public GUIDialogDateTime()
     {
-      GetID = (int) Window.WINDOW_DIALOG_DATETIME;
+      GetID = (int)Window.WINDOW_DIALOG_DATETIME;
     }
 
     public override bool Init()

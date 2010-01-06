@@ -68,9 +68,7 @@ namespace Rss
     private Uri _uriNamespaceURL = RssDefault.Uri;
 
     /// <summary>Initialize a new instance of the RssModule class</summary>
-    public RssModule()
-    {
-    }
+    public RssModule() {}
 
     /// <summary>Collection of RSSModuleItem that are to be placed in the channel</summary>
     internal RssModuleItemCollection ChannelExtensions

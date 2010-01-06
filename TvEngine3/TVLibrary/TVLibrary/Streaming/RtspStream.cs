@@ -29,13 +29,15 @@ namespace TvLibrary.Streaming
   {
     #region variables
 
-    readonly string _fileName;
-    readonly string _streamName;
-    readonly ITVCard _card;
-    readonly string _recording;
+    private readonly string _fileName;
+    private readonly string _streamName;
+    private readonly ITVCard _card;
+    private readonly string _recording;
+
     #endregion
 
     #region ctors
+
     /// <summary>
     /// Initializes a new instance of the <see cref="RtspStream"/> class.
     /// </summary>
@@ -63,53 +65,47 @@ namespace TvLibrary.Streaming
       _recording = recording;
       _card = null;
     }
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// Gets the stream name.
     /// </summary>
     /// <value>The name.</value>
     public string Name
     {
-      get
-      {
-        return _streamName;
-      }
+      get { return _streamName; }
     }
+
     /// <summary>
     /// Gets the name of the file.
     /// </summary>
     /// <value>The name of the file.</value>
     public string FileName
     {
-      get
-      {
-        return _fileName;
-      }
+      get { return _fileName; }
     }
+
     /// <summary>
     /// Gets the recording.
     /// </summary>
     /// <value>The recording.</value>
     public string Recording
     {
-      get
-      {
-        return _recording;
-      }
+      get { return _recording; }
     }
+
     /// <summary>
     /// Gets the card.
     /// </summary>
     /// <value>The card.</value>
     public ITVCard Card
     {
-      get
-      {
-        return _card;
-      }
+      get { return _card; }
     }
+
     #endregion
   }
 }

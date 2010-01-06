@@ -91,15 +91,15 @@ namespace MediaPortal.MPInstaller
 
     private void label1_MouseEnter(object sender, EventArgs e)
     {
-      ((Label) sender).Font = new Font("Verdana", 9.75F, ((FontStyle) ((FontStyle.Bold | FontStyle.Underline))),
-                                       GraphicsUnit.Point, ((byte) (0)));
-      ((Label) sender).ForeColor = Color.FromArgb(0x879996);
+      ((Label)sender).Font = new Font("Verdana", 9.75F, ((FontStyle)((FontStyle.Bold | FontStyle.Underline))),
+                                      GraphicsUnit.Point, ((byte)(0)));
+      ((Label)sender).ForeColor = Color.FromArgb(0x879996);
     }
 
     private void label1_MouseLeave(object sender, EventArgs e)
     {
-      ((Label) sender).Font = new Font("Verdana", 9.75F, FontStyle.Bold, GraphicsUnit.Point, ((byte) (0)));
-      ((Label) sender).ForeColor = Color.White;
+      ((Label)sender).Font = new Font("Verdana", 9.75F, FontStyle.Bold, GraphicsUnit.Point, ((byte)(0)));
+      ((Label)sender).ForeColor = Color.White;
     }
   }
 }

@@ -166,7 +166,7 @@ namespace MediaPortal.GUI.GUIBurner
 
     public GUIBurner()
     {
-      GetID = (int) Window.WINDOW_MY_BURNER;
+      GetID = (int)Window.WINDOW_MY_BURNER;
     }
 
     #endregion
@@ -267,7 +267,7 @@ namespace MediaPortal.GUI.GUIBurner
 
           int iControl = message.SenderControlId;
 
-          if (iControl == (int) Controls.CONTROL_BUTTON1)
+          if (iControl == (int)Controls.CONTROL_BUTTON1)
           {
             #region Button 1
 
@@ -287,7 +287,7 @@ namespace MediaPortal.GUI.GUIBurner
 
             #endregion
           }
-          if (iControl == (int) Controls.CONTROL_BUTTON2) // Button 2
+          if (iControl == (int)Controls.CONTROL_BUTTON2) // Button 2
           {
             #region Button 2
 
@@ -346,7 +346,7 @@ namespace MediaPortal.GUI.GUIBurner
             #endregion
           }
 
-          if (iControl == (int) Controls.CONTROL_BUTTON3)
+          if (iControl == (int)Controls.CONTROL_BUTTON3)
           {
             #region Button 3
 
@@ -375,7 +375,7 @@ namespace MediaPortal.GUI.GUIBurner
             #endregion
           }
 
-          if (iControl == (int) Controls.CONTROL_BUTTON4)
+          if (iControl == (int)Controls.CONTROL_BUTTON4)
           {
             #region Button 4
 
@@ -392,7 +392,7 @@ namespace MediaPortal.GUI.GUIBurner
             #endregion
           }
 
-          if (iControl == (int) Controls.CONTROL_BUTTON5)
+          if (iControl == (int)Controls.CONTROL_BUTTON5)
           {
             #region Button 5
 
@@ -407,7 +407,7 @@ namespace MediaPortal.GUI.GUIBurner
             #endregion
           }
 
-          if (iControl == (int) Controls.CONTROL_BUTTON6)
+          if (iControl == (int)Controls.CONTROL_BUTTON6)
           {
             #region Button6
 
@@ -422,25 +422,25 @@ namespace MediaPortal.GUI.GUIBurner
             #endregion
           }
 
-          if (iControl == (int) Controls.CONTROL_LIST_COPY)
+          if (iControl == (int)Controls.CONTROL_LIST_COPY)
             // User click on one of the files in the BurnList. Which will remove that file
           {
             #region CONTROL_LIST_COPY
 
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
             OnMessage(msg);
-            int iItem = (int) msg.Param1;
-            int iAction = (int) message.Param1;
+            int iItem = (int)msg.Param1;
+            int iAction = (int)message.Param1;
             files.Clear();
 
-            if (iAction == (int) Action.ActionType.ACTION_SELECT_ITEM)
+            if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
             {
               bool sel = true;
-              GUIListItem item = GUIControl.GetSelectedListItem(GetID, (int) Controls.CONTROL_LIST_COPY);
-              int count = GUIControl.GetItemCount(GetID, (int) Controls.CONTROL_LIST_COPY);
+              GUIListItem item = GUIControl.GetSelectedListItem(GetID, (int)Controls.CONTROL_LIST_COPY);
+              int count = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_COPY);
               for (int i = 0; i < count; i++)
               {
-                GUIListItem cItem = GUIControl.GetListItem(GetID, (int) Controls.CONTROL_LIST_COPY, i);
+                GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY, i);
                 if (cItem.Label == item.Label)
                 {
                   if (cItem.Path == item.Path)
@@ -461,7 +461,7 @@ namespace MediaPortal.GUI.GUIBurner
               totalSize = 0;
               totalTime = 0;
 
-              GUIControl.ClearControl(GetID, (int) Controls.CONTROL_LIST_COPY);
+              GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST_COPY);
               foreach (file f in files)
               {
                 GUIListItem pItem = new GUIListItem(f.name);
@@ -469,8 +469,8 @@ namespace MediaPortal.GUI.GUIBurner
                 fi.Length = f.size;
                 fi.Name = f.name;
                 pItem.Path = f.path;
-                pItem.FileInfo = (FileInformation) fi;
-                GUIControl.AddListItemControl(GetID, (int) Controls.CONTROL_LIST_COPY, pItem);
+                pItem.FileInfo = (FileInformation)fi;
+                GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST_COPY, pItem);
 
                 totalSize = totalSize + f.size;
 
@@ -484,18 +484,18 @@ namespace MediaPortal.GUI.GUIBurner
 
             #endregion
           }
-          if (iControl == (int) Controls.CONTROL_LIST_DIR) // User clicked on the Dir Browser window to locate a file
+          if (iControl == (int)Controls.CONTROL_LIST_DIR) // User clicked on the Dir Browser window to locate a file
           {
             #region CONTROL_LIST_DIR
 
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
             OnMessage(msg);
 
-            int iItem = (int) msg.Param1;
-            int iAction = (int) message.Param1;
-            if (iAction == (int) Action.ActionType.ACTION_SELECT_ITEM)
+            int iItem = (int)msg.Param1;
+            int iAction = (int)message.Param1;
+            if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
             {
-              GUIListItem item = GUIControl.GetSelectedListItem(GetID, (int) Controls.CONTROL_LIST_DIR);
+              GUIListItem item = GUIControl.GetSelectedListItem(GetID, (int)Controls.CONTROL_LIST_DIR);
               if (item.Label.StartsWith("..")) // go back folder
               {
                 #region Parent
@@ -607,7 +607,7 @@ namespace MediaPortal.GUI.GUIBurner
 
                 if (SpaceOnMedia() == true) // Check if there is enough room on the CD/DVD (depending on currentState)
                 {
-                  GUIControl.AddListItemControl(GetID, (int) Controls.CONTROL_LIST_COPY, pItem);
+                  GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST_COPY, pItem);
                 }
                 else
                 {
@@ -637,8 +637,8 @@ namespace MediaPortal.GUI.GUIBurner
 
     private static bool ReportStatusMad(uint frameCount, uint byteCount, ref MadlldlibWrapper.mad_header mh, bool kill)
     {
-      int perc = (int) (((float) byteCount/(float) soundFileSize)*100);
-      long lDiff = (DateTime.Now.Ticks - lStartTime)/10000;
+      int perc = (int)(((float)byteCount / (float)soundFileSize) * 100);
+      long lDiff = (DateTime.Now.Ticks - lStartTime) / 10000;
       if (lDiff > 500)
       {
         lStartTime = DateTime.Now.Ticks;
@@ -678,7 +678,7 @@ namespace MediaPortal.GUI.GUIBurner
       // Determine file size
       FileInfo wavFileInfo = null;
       FileInfo srcFileInfo = new FileInfo(inputFile);
-      soundFileSize = (int) srcFileInfo.Length;
+      soundFileSize = (int)srcFileInfo.Length;
 
       // status/error message reporting. 
       // String length must be set 
@@ -717,14 +717,14 @@ namespace MediaPortal.GUI.GUIBurner
           {
             if (totalTime > 0)
             {
-              perc = Convert.ToInt16(totalTime/(max/100d));
+              perc = Convert.ToInt16(totalTime / (max / 100d));
             }
             else
             {
               perc = 0;
             }
 
-            tmpStr = Util.Utils.SecondsToHMSString(totalTime) + "  of " + Util.Utils.SecondsToHMSString((int) max);
+            tmpStr = Util.Utils.SecondsToHMSString(totalTime) + "  of " + Util.Utils.SecondsToHMSString((int)max);
           }
           break;
 
@@ -733,7 +733,7 @@ namespace MediaPortal.GUI.GUIBurner
           {
             if (totalSize > 0)
             {
-              perc = Convert.ToInt16(totalSize/(max/100d));
+              perc = Convert.ToInt16(totalSize / (max / 100d));
             }
             else
             {
@@ -759,7 +759,7 @@ namespace MediaPortal.GUI.GUIBurner
         case States.STATE_MAKE_AUDIO_CD:
           if (totalTime > max)
           {
-            GUIDialogNotify dlgNotify = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
+            GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
             if (null != dlgNotify)
             {
               dlgNotify.SetHeading(GUILocalizeStrings.Get(2100)); // Burner
@@ -773,7 +773,7 @@ namespace MediaPortal.GUI.GUIBurner
         case States.STATE_MAKE_VIDEO_DVD:
           if (totalTime > max)
           {
-            GUIDialogNotify dlgNotify = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
+            GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
             if (null != dlgNotify)
             {
               dlgNotify.SetHeading(GUILocalizeStrings.Get(2100)); // Burner
@@ -787,7 +787,7 @@ namespace MediaPortal.GUI.GUIBurner
         case States.STATE_MAKE_DATA_CD:
           if (totalTime > max)
           {
-            GUIDialogNotify dlgNotify = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
+            GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
             if (null != dlgNotify)
             {
               dlgNotify.SetHeading(GUILocalizeStrings.Get(2100)); // Burner
@@ -801,7 +801,7 @@ namespace MediaPortal.GUI.GUIBurner
         case States.STATE_MAKE_DATA_DVD:
           if (totalSize > max)
           {
-            GUIDialogNotify dlgNotify = (GUIDialogNotify) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_NOTIFY);
+            GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
             if (null != dlgNotify)
             {
               dlgNotify.SetHeading(GUILocalizeStrings.Get(2100)); // Burner
@@ -820,7 +820,7 @@ namespace MediaPortal.GUI.GUIBurner
       //clear the list
       folder = Util.Utils.RemoveTrailingSlash(folder);
       file f = new file();
-      GUIControl.ClearControl(GetID, (int) Controls.CONTROL_LIST_DIR);
+      GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST_DIR);
       VirtualDirectory Directory;
       List<GUIListItem> itemlist;
       Directory = new VirtualDirectory();
@@ -835,7 +835,7 @@ namespace MediaPortal.GUI.GUIBurner
           pItem.FileInfo = item.FileInfo;
           pItem.IsFolder = false;
           pItem.Path = String.Format(@"{0}\{1}", folder, item.FileInfo.Name);
-          GUIControl.AddListItemControl(GetID, (int) Controls.CONTROL_LIST_DIR, pItem);
+          GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST_DIR, pItem);
           f.name = item.FileInfo.Name;
           f.size = item.FileInfo.Length;
           files.Add(f);
@@ -856,12 +856,12 @@ namespace MediaPortal.GUI.GUIBurner
             pItem.Path = prevFolder;
           }
           Util.Utils.SetDefaultIcons(pItem);
-          GUIControl.AddListItemControl(GetID, (int) Controls.CONTROL_LIST_DIR, pItem);
+          GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST_DIR, pItem);
         }
       }
 
       //set object count label
-      int iTotalItems = GUIControl.GetItemCount(GetID, (int) Controls.CONTROL_LIST_DIR);
+      int iTotalItems = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_DIR);
       GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
 
       currentFolder = folder;
@@ -871,34 +871,34 @@ namespace MediaPortal.GUI.GUIBurner
     {
       currentFolder = "";
       //clear the list
-      GUIControl.ClearControl(GetID, (int) Controls.CONTROL_LIST_DIR);
+      GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST_DIR);
       for (int i = 0; i < driveCount; i++)
       {
         GUIListItem pItem = new GUIListItem(drives[i]);
         pItem.Path = drives[i];
         pItem.IsFolder = true;
         Util.Utils.SetDefaultIcons(pItem);
-        GUIControl.AddListItemControl(GetID, (int) Controls.CONTROL_LIST_DIR, pItem);
+        GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST_DIR, pItem);
       }
 
       //set object count label
-      int iTotalItems = GUIControl.GetItemCount(GetID, (int) Controls.CONTROL_LIST_DIR);
+      int iTotalItems = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_DIR);
       GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
     }
 
     private void DisableButtons()
     {
-      GUIControl.DisableControl(GetID, (int) Controls.CONTROL_BUTTON1);
-      GUIControl.DisableControl(GetID, (int) Controls.CONTROL_BUTTON2);
-      GUIControl.DisableControl(GetID, (int) Controls.CONTROL_BUTTON3);
-      GUIControl.DisableControl(GetID, (int) Controls.CONTROL_BUTTON4);
-      GUIControl.DisableControl(GetID, (int) Controls.CONTROL_BUTTON5);
-      GUIControl.DisableControl(GetID, (int) Controls.CONTROL_BUTTON6);
+      GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BUTTON1);
+      GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BUTTON2);
+      GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BUTTON3);
+      GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BUTTON4);
+      GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BUTTON5);
+      GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BUTTON6);
     }
 
     private void ShowList()
     {
-      GUIControl.ClearControl(GetID, (int) Controls.CONTROL_LIST_COPY);
+      GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST_COPY);
 
       switch (currentState)
       {
@@ -958,22 +958,22 @@ namespace MediaPortal.GUI.GUIBurner
 
           GUIPropertyManager.SetProperty("#burner_title", GUILocalizeStrings.Get(2143));
 
-          GUIControl.ClearControl(GetID, (int) Controls.CONTROL_LIST_DIR);
-          GUIControl.ClearControl(GetID, (int) Controls.CONTROL_LIST_COPY);
+          GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST_DIR);
+          GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST_COPY);
 
           AllButtonsDisabledAndHidden();
 
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(2134)); //Video
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON1);
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON1);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(2134)); //Video
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON1);
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON1);
 
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2135)); //Audio
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON2);
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON2);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2135)); //Audio
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON2);
 
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON3, GUILocalizeStrings.Get(2136)); //Data
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON3);
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON3);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON3, GUILocalizeStrings.Get(2136)); //Data
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON3);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON3);
 
           //GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON4, GUILocalizeStrings.Get(2123)); //Disk info
           //GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON4);
@@ -991,28 +991,28 @@ namespace MediaPortal.GUI.GUIBurner
         case States.STATE_VIDEO: // Video Menu
           AllButtonsDisabledAndHidden();
 
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON1);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712)); // Back
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON1);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON1);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712)); // Back
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON1);
 
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON2);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2104));
-            // Create Video-DVD
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON2);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2104));
+          // Create Video-DVD
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON2);
 
           break;
 
         case States.STATE_AUDIO: // Audio Menu
           AllButtonsDisabledAndHidden();
 
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON1);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712)); //Back
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON1);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON1);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712)); //Back
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON1);
 
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON2);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2102));
-            //Create Audio-CD
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON2);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2102));
+          //Create Audio-CD
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON2);
 
           break;
 
@@ -1020,19 +1020,19 @@ namespace MediaPortal.GUI.GUIBurner
         case States.STATE_DATA: // Data Menu
           AllButtonsDisabledAndHidden();
 
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON1);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712)); //Back
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON1);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON1);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712)); //Back
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON1);
 
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON2);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2105));
-            //Create Data-CD
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON2);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2105));
+          //Create Data-CD
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON2);
 
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON3);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON3, GUILocalizeStrings.Get(2106));
-            //Create Data-DVD
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON3);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON3);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON3, GUILocalizeStrings.Get(2106));
+          //Create Data-DVD
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON3);
 
           break;
 
@@ -1040,50 +1040,50 @@ namespace MediaPortal.GUI.GUIBurner
         case States.STATE_DISK_INFO:
           AllButtonsDisabledAndHidden();
 
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON1);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712)); //Back
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON1);
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON1);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712)); //Back
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON1);
 
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_CD_DETAILS);
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_CD_DETAILS);
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_CD_DETAILS);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_CD_DETAILS);
           break;
 
 
         case States.STATE_MAKE_AUDIO_CD:
           AllButtonsDisabledAndHidden();
 
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON1);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712)); // Back
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON1);
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON1);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712)); // Back
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON1);
 
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON2);
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON2);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2144));
-            // Start Burning
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2144));
+          // Start Burning
 
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON3);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON3, GUILocalizeStrings.Get(2145));
-            // Import Current Playlist
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON3);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON3);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON3, GUILocalizeStrings.Get(2145));
+          // Import Current Playlist
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON3);
 
           break;
 
         case States.STATE_MAKE_VIDEO_DVD:
           AllButtonsDisabledAndHidden();
 
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON1);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712)); // Back
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON1);
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON1);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712)); // Back
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON1);
 
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON2);
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON2);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2144));
-            // Start Burning
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2144));
+          // Start Burning
 
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON3);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON3, GUILocalizeStrings.Get(2145));
-            // Import Current Playlist
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON3);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON3);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON3, GUILocalizeStrings.Get(2145));
+          // Import Current Playlist
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON3);
 
           break;
 
@@ -1091,14 +1091,14 @@ namespace MediaPortal.GUI.GUIBurner
         case States.STATE_MAKE_DATA_CD:
           AllButtonsDisabledAndHidden();
 
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON1);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712)); // Back
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON1);
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON1);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712)); // Back
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON1);
 
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON2);
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON2);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2144));
-            // Start Burning
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2144));
+          // Start Burning
 
           break;
 
@@ -1106,14 +1106,14 @@ namespace MediaPortal.GUI.GUIBurner
         case States.STATE_MAKE_DATA_DVD:
           AllButtonsDisabledAndHidden();
 
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON1);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712)); // Back
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON1);
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON1);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON1, GUILocalizeStrings.Get(712)); // Back
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON1);
 
-          GUIControl.ShowControl(GetID, (int) Controls.CONTROL_BUTTON2);
-          GUIControl.EnableControl(GetID, (int) Controls.CONTROL_BUTTON2);
-          GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2144));
-            // Start Burning
+          GUIControl.ShowControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.EnableControl(GetID, (int)Controls.CONTROL_BUTTON2);
+          GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BUTTON2, GUILocalizeStrings.Get(2144));
+          // Start Burning
 
           break;
       }
@@ -1121,18 +1121,18 @@ namespace MediaPortal.GUI.GUIBurner
 
     private void AllButtonsDisabledAndHidden()
     {
-      GUIControl.HideControl(GetID, (int) Controls.CONTROL_BUTTON1);
-      GUIControl.HideControl(GetID, (int) Controls.CONTROL_BUTTON2);
-      GUIControl.HideControl(GetID, (int) Controls.CONTROL_BUTTON3);
-      GUIControl.HideControl(GetID, (int) Controls.CONTROL_BUTTON4);
-      GUIControl.HideControl(GetID, (int) Controls.CONTROL_BUTTON5);
-      GUIControl.HideControl(GetID, (int) Controls.CONTROL_BUTTON6);
-      GUIControl.DisableControl(GetID, (int) Controls.CONTROL_BUTTON1);
-      GUIControl.DisableControl(GetID, (int) Controls.CONTROL_BUTTON2);
-      GUIControl.DisableControl(GetID, (int) Controls.CONTROL_BUTTON3);
-      GUIControl.DisableControl(GetID, (int) Controls.CONTROL_BUTTON4);
-      GUIControl.DisableControl(GetID, (int) Controls.CONTROL_BUTTON5);
-      GUIControl.DisableControl(GetID, (int) Controls.CONTROL_BUTTON6);
+      GUIControl.HideControl(GetID, (int)Controls.CONTROL_BUTTON1);
+      GUIControl.HideControl(GetID, (int)Controls.CONTROL_BUTTON2);
+      GUIControl.HideControl(GetID, (int)Controls.CONTROL_BUTTON3);
+      GUIControl.HideControl(GetID, (int)Controls.CONTROL_BUTTON4);
+      GUIControl.HideControl(GetID, (int)Controls.CONTROL_BUTTON5);
+      GUIControl.HideControl(GetID, (int)Controls.CONTROL_BUTTON6);
+      GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BUTTON1);
+      GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BUTTON2);
+      GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BUTTON3);
+      GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BUTTON4);
+      GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BUTTON5);
+      GUIControl.DisableControl(GetID, (int)Controls.CONTROL_BUTTON6);
     }
 
     private enum DriveType
@@ -1152,7 +1152,7 @@ namespace MediaPortal.GUI.GUIBurner
     {
       foreach (string drive in Environment.GetLogicalDrives())
       {
-        switch ((DriveType) Util.Utils.getDriveType(drive))
+        switch ((DriveType)Util.Utils.getDriveType(drive))
         {
           case DriveType.Removable:
           case DriveType.Fixed:
@@ -1167,7 +1167,7 @@ namespace MediaPortal.GUI.GUIBurner
 
     private void okDialog(string header, string text2)
     {
-      GUIDialogOK dlgOk = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       dlgOk.SetHeading(header);
       dlgOk.SetLine(2, text2);
       dlgOk.DoModal(GetID);
@@ -1223,7 +1223,7 @@ namespace MediaPortal.GUI.GUIBurner
         Item.Path = Path.GetDirectoryName(FileName);
         Item.Label = Path.GetFileName(FileName);
 
-        GUIControl.AddListItemControl(GetID, (int) Controls.CONTROL_LIST_COPY, Item);
+        GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST_COPY, Item);
 
         Log.Info("MyBurner Added Video File From Video Playlist: {0}", FileName);
       }
@@ -1246,7 +1246,7 @@ namespace MediaPortal.GUI.GUIBurner
         Item.Path = Path.GetDirectoryName(FileName);
         Item.Label = Path.GetFileName(FileName);
 
-        GUIControl.AddListItemControl(GetID, (int) Controls.CONTROL_LIST_COPY, Item);
+        GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST_COPY, Item);
 
         Log.Info("MyBurner Added Audio File From Audio Playlist: {0}", FileName);
       }
@@ -1264,7 +1264,7 @@ namespace MediaPortal.GUI.GUIBurner
       GUIPropertyManager.SetProperty("#burner_size", "");
       GUIPropertyManager.SetProperty("#convert_info", "");
 
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
       if (null != dlgYesNo)
       {
         dlgYesNo.SetHeading(GUILocalizeStrings.Get(2100)); // Burner
@@ -1276,10 +1276,10 @@ namespace MediaPortal.GUI.GUIBurner
         dlgYesNo.DoModal(GetID);
         if (dlgYesNo.IsConfirmed)
         {
-          int NumberOfFiles = GUIControl.GetItemCount(GetID, (int) Controls.CONTROL_LIST_COPY);
+          int NumberOfFiles = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_COPY);
           for (int i = 0; i < NumberOfFiles; i++)
           {
-            GUIListItem cItem = GUIControl.GetListItem(GetID, (int) Controls.CONTROL_LIST_COPY, i);
+            GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY, i);
             try
             {
               FilePathsToBurn.Add(cItem.Path);
@@ -1361,7 +1361,7 @@ namespace MediaPortal.GUI.GUIBurner
       GUIPropertyManager.SetProperty("#burner_size", "");
       GUIPropertyManager.SetProperty("#convert_info", "");
 
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
       if (dlgYesNo != null)
       {
         dlgYesNo.SetHeading(GUILocalizeStrings.Get(2100));
@@ -1379,11 +1379,11 @@ namespace MediaPortal.GUI.GUIBurner
         dlgYesNo.DoModal(GetID);
         if (dlgYesNo.IsConfirmed) // Burn the CD
         {
-          int count = GUIControl.GetItemCount(GetID, (int) Controls.CONTROL_LIST_COPY);
+          int count = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_COPY);
 
           for (int i = 0; i < count; i++)
           {
-            GUIListItem cItem = GUIControl.GetListItem(GetID, (int) Controls.CONTROL_LIST_COPY, i);
+            GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY, i);
 
             bool FileCanBeUsed = File.Exists(cItem.Path);
             if (bTyp == BurnTypes.AUDIO_CD)
@@ -1398,7 +1398,7 @@ namespace MediaPortal.GUI.GUIBurner
                 cItem.FileInfo.Name = outName;
 
                 FileInfo fi = new FileInfo(strTempFolder + "\\" + outName);
-                cItem.FileInfo.Length = (int) fi.Length;
+                cItem.FileInfo.Length = (int)fi.Length;
 
                 cItem.Path = fi.FullName;
               }
@@ -1462,8 +1462,8 @@ namespace MediaPortal.GUI.GUIBurner
             }
           }
 
-          GUIControl.ClearControl(GetID, (int) Controls.CONTROL_LIST_DIR);
-          GUIControl.ClearControl(GetID, (int) Controls.CONTROL_LIST_COPY);
+          GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST_DIR);
+          GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST_COPY);
         }
       }
       currentState = States.STATE_MAIN;
@@ -1473,11 +1473,11 @@ namespace MediaPortal.GUI.GUIBurner
 
     private void DeleteTemporaryWavFiles()
     {
-      int count = GUIControl.GetItemCount(GetID, (int) Controls.CONTROL_LIST_COPY);
+      int count = GUIControl.GetItemCount(GetID, (int)Controls.CONTROL_LIST_COPY);
 
       for (int i = 0; i < count; i++)
       {
-        GUIListItem cItem = GUIControl.GetListItem(GetID, (int) Controls.CONTROL_LIST_COPY, i);
+        GUIListItem cItem = GUIControl.GetListItem(GetID, (int)Controls.CONTROL_LIST_COPY, i);
 
         try
         {
@@ -1494,7 +1494,7 @@ namespace MediaPortal.GUI.GUIBurner
 
     private void CdRwFormat()
     {
-      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_YES_NO);
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
       if (dlgYesNo != null)
       {
         dlgYesNo.SetHeading(GUILocalizeStrings.Get(2100)); // Burner
@@ -1571,7 +1571,7 @@ namespace MediaPortal.GUI.GUIBurner
       {
         Log.Info("MyBurner:Error CD Info", ex.Message);
       }
-      GUIControl.SetControlLabel(GetID, (int) Controls.CONTROL_CD_DETAILS, info);
+      GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_CD_DETAILS, info);
     }
 
     private void EraseFinished(UInt32 status)
@@ -1590,7 +1590,7 @@ namespace MediaPortal.GUI.GUIBurner
       GUIPropertyManager.SetProperty("#convert_info", GUILocalizeStrings.Get(2129));
       if (nCompletedSteps > 0)
       {
-        perc = Convert.ToInt16(nCompletedSteps/(nTotalSteps/100d));
+        perc = Convert.ToInt16(nCompletedSteps / (nTotalSteps / 100d));
       }
       else
       {
@@ -1606,7 +1606,7 @@ namespace MediaPortal.GUI.GUIBurner
                                      GUILocalizeStrings.Get(2131) + " " + nTotalSteps.ToString());
       if (nCompletedSteps > 0)
       {
-        perc = Convert.ToInt16(nCompletedSteps/(nTotalSteps/100d));
+        perc = Convert.ToInt16(nCompletedSteps / (nTotalSteps / 100d));
       }
       else
       {

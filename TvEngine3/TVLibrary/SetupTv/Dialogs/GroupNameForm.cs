@@ -27,8 +27,8 @@ namespace SetupTv.Sections
 {
   public partial class GroupNameForm : Form
   {
-    string _groupName="new group";
-    List<string> _groupNames;
+    private string _groupName = "new group";
+    private List<string> _groupNames;
 
     private bool _isRadio = false;
 
@@ -38,8 +38,8 @@ namespace SetupTv.Sections
     public bool IsRadio
     {
       get { return _isRadio; }
-      set 
-      { 
+      set
+      {
         _isRadio = value;
         GetGroupNames();
       }
@@ -57,6 +57,7 @@ namespace SetupTv.Sections
       InitializeComponent();
       InitNew();
     }
+
     private void InitNew()
     {
       Text = "Enter name for new group";
@@ -127,14 +128,8 @@ namespace SetupTv.Sections
 
     public string GroupName
     {
-      get
-      {
-        return _groupName;
-      }
-      set
-      {
-        _groupName = value;
-      }
+      get { return _groupName; }
+      set { _groupName = value; }
     }
 
     private void mpTextBox1_KeyUp(object sender, KeyEventArgs e)

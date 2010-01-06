@@ -29,9 +29,7 @@ namespace MediaPortal.Drawing
   {
     #region Constructors
 
-    public Pen()
-    {
-    }
+    public Pen() {}
 
     public Pen(Brush brush, double thickness)
     {

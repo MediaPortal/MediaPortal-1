@@ -35,20 +35,19 @@ namespace MediaPortal.GUI.Pictures
 {
   /// Thanks to Doug Hanhart http://www.dotnet247.com/247reference/msgs/28/144569.aspx for the following code:
   /// 
+
   #region Exif Read Routines
 
   public class ExifMetadata : IDisposable
   {
-    DateTimeFormatInfo m_dateTimeFormat = new DateTimeFormatInfo();
+    private DateTimeFormatInfo m_dateTimeFormat = new DateTimeFormatInfo();
 
     public ExifMetadata()
     {
       m_dateTimeFormat.ShortDatePattern = "yyyy:MM:dd HH:mm:ss";
     }
 
-    public void Dispose()
-    {
-    }
+    public void Dispose() {}
 
     public struct MetadataItem
     {
@@ -73,13 +72,12 @@ namespace MediaPortal.GUI.Pictures
       public MetadataItem Resolution;
       public MetadataItem ImageDimensions;
       public MetadataItem Orientation;
-
     }
 
 
     public int Count()
     {
-      return 13;// TODO fix hard code later
+      return 13; // TODO fix hard code later
     }
 
     public string LookupExifValue(string Description, string Value)
@@ -90,7 +88,9 @@ namespace MediaPortal.GUI.Pictures
       {
         switch (Value)
         {
-          case "0": DescriptionValue = Strings.Unknown; break;
+          case "0":
+            DescriptionValue = Strings.Unknown;
+            break;
           case "1":
             DescriptionValue = "Average";
             break;
@@ -200,8 +200,7 @@ namespace MediaPortal.GUI.Pictures
           item.DisplayValue = Value.GetString(propItem.Value);
         }
       }
-      catch (Exception)
-      { }
+      catch (Exception) {}
     }
 
 
@@ -266,9 +265,11 @@ namespace MediaPortal.GUI.Pictures
                   {
                     dtstr = dtstr.Substring(0, m_dateTimeFormat.ShortDatePattern.Length);
                     DateTime dat = DateTime.ParseExact(dtstr, "d", m_dateTimeFormat);
-                    MyMetadata.DatePictureTaken.DisplayValue = Convert.ToString(dat, System.Threading.Thread.CurrentThread.CurrentCulture);
+                    MyMetadata.DatePictureTaken.DisplayValue = Convert.ToString(dat,
+                                                                                System.Threading.Thread.CurrentThread.
+                                                                                  CurrentCulture);
                   }
-                  catch (Exception) { }
+                  catch (Exception) {}
                 }
               }
 
@@ -276,14 +277,16 @@ namespace MediaPortal.GUI.Pictures
               MyMetadata.MeteringMode.Caption = "Metering Mode";
               if (proptext == "9207")
               {
-                MyMetadata.MeteringMode.DisplayValue = LookupExifValue("MeteringMode", BitConverter.ToInt16(propItem.Value, 0).ToString());
+                MyMetadata.MeteringMode.DisplayValue = LookupExifValue("MeteringMode",
+                                                                       BitConverter.ToInt16(propItem.Value, 0).ToString());
               }
 
 
               MyMetadata.Flash.Caption = "Flash";
               if (proptext == "9209")
               {
-                MyMetadata.Flash.DisplayValue = LookupExifValue("Flash", BitConverter.ToInt16(propItem.Value, 0).ToString());
+                MyMetadata.Flash.DisplayValue = LookupExifValue("Flash",
+                                                                BitConverter.ToInt16(propItem.Value, 0).ToString());
               }
 
 
@@ -321,13 +324,14 @@ namespace MediaPortal.GUI.Pictures
               if (proptext == "9204")
               {
                 string StringValue = BitConverter.ToString(propItem.Value).Substring(0, 1);
-                MyMetadata.ExposureCompensation.DisplayValue = StringValue;// + " (Needs work to confirm accuracy)";
+                MyMetadata.ExposureCompensation.DisplayValue = StringValue; // + " (Needs work to confirm accuracy)";
               }
 
               MyMetadata.Orientation.Caption = "Orientation";
               if (proptext == "112")
               {
-                MyMetadata.Orientation.DisplayValue = LookupExifValue("Orientation", BitConverter.ToInt16(propItem.Value, 0).ToString());
+                MyMetadata.Orientation.DisplayValue = LookupExifValue("Orientation",
+                                                                      BitConverter.ToInt16(propItem.Value, 0).ToString());
                 MyMetadata.Orientation.Hex = BitConverter.ToInt16(propItem.Value, 0).ToString();
               }
             }
@@ -335,9 +339,7 @@ namespace MediaPortal.GUI.Pictures
             catch (Exception exc)
             {
               // if it is the	expected error, do nothing
-              if (exc.GetType().ToString() != "System.ArgumentNullException")
-              {
-              }
+              if (exc.GetType().ToString() != "System.ArgumentNullException") {}
             }
             finally
             {
@@ -356,9 +358,7 @@ namespace MediaPortal.GUI.Pictures
           MyMetadata.ImageDimensions.Caption = "Dimensions";
         }
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return MyMetadata;
     }
   }

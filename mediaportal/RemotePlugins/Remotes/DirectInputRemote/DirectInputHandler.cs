@@ -118,9 +118,7 @@ namespace MediaPortal.InputDevices
     public event diStateChangeText OnStateChangeText = null;
 
 
-    public DirectInputHandler()
-    {
-    }
+    public DirectInputHandler() {}
 
     ~DirectInputHandler()
     {
@@ -373,7 +371,7 @@ namespace MediaPortal.InputDevices
       {
         if (null != _lastProc)
         {
-          actionCode = (int) joyButton.comboKillProcess;
+          actionCode = (int)joyButton.comboKillProcess;
           actionParam = _lastProc.Id;
         }
       }
@@ -381,7 +379,7 @@ namespace MediaPortal.InputDevices
       {
         if (null != _lastProc)
         {
-          actionCode = (int) joyButton.comboCloseProcess;
+          actionCode = (int)joyButton.comboCloseProcess;
           actionParam = _lastProc.Id;
         }
       }
@@ -418,22 +416,22 @@ namespace MediaPortal.InputDevices
         {
           case 0:
             {
-              actionCode = (int) joyButton.povN;
+              actionCode = (int)joyButton.povN;
               break;
             }
           case 9000:
             {
-              actionCode = (int) joyButton.povE;
+              actionCode = (int)joyButton.povE;
               break;
             }
           case 18000:
             {
-              actionCode = (int) joyButton.povS;
+              actionCode = (int)joyButton.povS;
               break;
             }
           case 27000:
             {
-              actionCode = (int) joyButton.povW;
+              actionCode = (int)joyButton.povW;
               break;
             }
         }
@@ -447,11 +445,11 @@ namespace MediaPortal.InputDevices
           curAxisValue = state.X;
           if (state.X > 0)
           {
-            actionCode = (int) joyButton.axisXUp; // right
+            actionCode = (int)joyButton.axisXUp; // right
           }
           else
           {
-            actionCode = (int) joyButton.axisXDown; // left
+            actionCode = (int)joyButton.axisXDown; // left
           }
         }
         else if (Math.Abs(state.Y) > _axisLimit)
@@ -460,12 +458,12 @@ namespace MediaPortal.InputDevices
           if (state.Y > 0)
           {
             // down
-            actionCode = (int) joyButton.axisYUp;
+            actionCode = (int)joyButton.axisYUp;
           }
           else
           {
             // up
-            actionCode = (int) joyButton.axisYDown;
+            actionCode = (int)joyButton.axisYDown;
           }
         }
         else if (Math.Abs(state.Z) > _axisLimit)
@@ -473,11 +471,11 @@ namespace MediaPortal.InputDevices
           curAxisValue = state.Z;
           if (state.Z > 0)
           {
-            actionCode = (int) joyButton.axisZUp;
+            actionCode = (int)joyButton.axisZUp;
           }
           else
           {
-            actionCode = (int) joyButton.axisZDown;
+            actionCode = (int)joyButton.axisZDown;
           }
         }
       }
@@ -490,11 +488,11 @@ namespace MediaPortal.InputDevices
           curAxisValue = state.Rx;
           if (state.Rx > 0)
           {
-            actionCode = (int) joyButton.rotationXUp;
+            actionCode = (int)joyButton.rotationXUp;
           }
           else
           {
-            actionCode = (int) joyButton.rotationXDown;
+            actionCode = (int)joyButton.rotationXDown;
           }
         }
         else if (Math.Abs(state.Ry) > _axisLimit)
@@ -502,11 +500,11 @@ namespace MediaPortal.InputDevices
           curAxisValue = state.Ry;
           if (state.Ry > 0)
           {
-            actionCode = (int) joyButton.rotationYUp;
+            actionCode = (int)joyButton.rotationYUp;
           }
           else
           {
-            actionCode = (int) joyButton.rotationYDown;
+            actionCode = (int)joyButton.rotationYDown;
           }
         }
         else if (Math.Abs(state.Rz) > _axisLimit)
@@ -514,11 +512,11 @@ namespace MediaPortal.InputDevices
           curAxisValue = state.Rz;
           if (state.Rz > 0)
           {
-            actionCode = (int) joyButton.rotationZUp;
+            actionCode = (int)joyButton.rotationZUp;
           }
           else
           {
-            actionCode = (int) joyButton.rotationZDown;
+            actionCode = (int)joyButton.rotationZDown;
           }
         }
       }

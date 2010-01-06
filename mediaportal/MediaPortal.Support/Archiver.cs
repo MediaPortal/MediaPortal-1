@@ -64,7 +64,7 @@ namespace MediaPortal.Support
       zip.Save(zipfile);
     }
 
-   public void Dispose()
+    public void Dispose()
     {
       zip.Dispose();
     }

@@ -45,7 +45,7 @@ namespace MediaPortal.Dialogs
 
     public GUIDialogYesNo()
     {
-      GetID = (int) Window.WINDOW_DIALOG_YES_NO;
+      GetID = (int)Window.WINDOW_DIALOG_YES_NO;
     }
 
     public override bool Init()
@@ -109,8 +109,8 @@ namespace MediaPortal.Dialogs
             {
               GUIControl.FocusControl(GetID, btnYes.GetID);
             }
-            iYesKey = (int) btnYes.Label.ToLower()[0];
-            iNoKey = (int) btnNo.Label.ToLower()[0];
+            iYesKey = (int)btnYes.Label.ToLower()[0];
+            iNoKey = (int)btnNo.Label.ToLower()[0];
           }
           return true;
 

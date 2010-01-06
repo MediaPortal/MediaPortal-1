@@ -47,26 +47,18 @@ namespace System.Windows.Controls
                                                                    new FrameworkPropertyMetadata());
     }
 
-    public HeaderedItemsControl()
-    {
-    }
+    public HeaderedItemsControl() {}
 
     #endregion Constructors
 
     #region Methods
 
-    protected virtual void OnHeaderChanged(object oldHeader, object newHeader)
-    {
-    }
+    protected virtual void OnHeaderChanged(object oldHeader, object newHeader) {}
 
-    protected virtual void OnHeaderTemplateChanged(DataTemplate oldHeaderTemplate, DataTemplate newHeaderTemplate)
-    {
-    }
+    protected virtual void OnHeaderTemplateChanged(DataTemplate oldHeaderTemplate, DataTemplate newHeaderTemplate) {}
 
     protected virtual void OnHeaderTemplateSelectorChanged(DataTemplateSelector oldHeaderTemplateSelector,
-                                                           DataTemplateSelector newHeaderTemplateSelector)
-    {
-    }
+                                                           DataTemplateSelector newHeaderTemplateSelector) {}
 
     public override string ToString()
     {
@@ -80,7 +72,7 @@ namespace System.Windows.Controls
     [Bindable(false)]
     public bool HasHeader
     {
-      get { return (bool) GetValue(HasHeaderProperty); }
+      get { return (bool)GetValue(HasHeaderProperty); }
     }
 
     [Bindable(true)]
@@ -93,14 +85,14 @@ namespace System.Windows.Controls
     [Bindable(true)]
     public DataTemplate HeaderTemplate
     {
-      get { return (DataTemplate) GetValue(HeaderTemplateProperty); }
+      get { return (DataTemplate)GetValue(HeaderTemplateProperty); }
       set { SetValue(HeaderTemplateProperty, value); }
     }
 
     [Bindable(true)]
     public DataTemplateSelector HeaderTemplateSelector
     {
-      get { return (DataTemplateSelector) GetValue(HeaderTemplateSelectorProperty); }
+      get { return (DataTemplateSelector)GetValue(HeaderTemplateSelectorProperty); }
       set { SetValue(HeaderTemplateSelectorProperty, value); }
     }
 

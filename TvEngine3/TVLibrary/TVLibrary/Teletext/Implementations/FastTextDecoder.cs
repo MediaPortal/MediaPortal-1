@@ -26,14 +26,17 @@ namespace TvLibrary.Teletext
   public class FastTextDecoder
   {
     #region variables
-    int _redPage = -1;
-    int _greenPage = -1;
-    int _yellowPage = -1;
-    int _bluePage = -1;
-    int _whitePage = -1;
+
+    private int _redPage = -1;
+    private int _greenPage = -1;
+    private int _yellowPage = -1;
+    private int _bluePage = -1;
+    private int _whitePage = -1;
+
     #endregion
 
     #region public members
+
     ///<summary>
     /// Decodes the fast text data
     ///</summary>
@@ -63,10 +66,12 @@ namespace TvLibrary.Teletext
         }
       }
     }
+
     #endregion
 
     #region private members
-    void DecodePacket27(int pageNumber, int offset, byte[] pageData)
+
+    private void DecodePacket27(int pageNumber, int offset, byte[] pageData)
     {
       offset += 3;
       // Links 0 through 5
@@ -126,9 +131,11 @@ namespace TvLibrary.Teletext
         }
       }
     }
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// Gets the pagenumber for the red button.
     /// </summary>
@@ -173,6 +180,7 @@ namespace TvLibrary.Teletext
     {
       get { return _whitePage; }
     }
+
     /// <summary>
     /// Determines whether the page is a decimal page or hexadecimal page
     /// </summary>
@@ -180,10 +188,11 @@ namespace TvLibrary.Teletext
     /// <returns>
     /// 	<c>true</c> if the page is a decimal page; otherwise, <c>false</c>.
     /// </returns>
-    static bool IsDecimalPage(int i)
+    private static bool IsDecimalPage(int i)
     {
       return ((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90);
     }
+
     #endregion
   }
 }

@@ -31,42 +31,50 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
   public class Crossbar
   {
     #region variables
+
     /// <summary>
     /// Name of the crossbar device
     /// </summary>
     private string _name;
+
     /// <summary>
     /// Index of the video output pin
     /// </summary>
     private int _videoOut;
+
     /// <summary>
     /// Index of the audio output pin
     /// </summary>
     private int _audioOut;
+
     /// <summary>
     /// Mapping of the available video sources and their pin index
     /// </summary>
     private Dictionary<AnalogChannel.VideoInputType, int> _videoPinMap;
+
     /// <summary>
     /// Mapping of the available video source to the related audio pin index
     /// </summary>
     private Dictionary<AnalogChannel.VideoInputType, int> _videoPinRelatedAudioMap;
+
     /// <summary>
     /// Mapping of the available audio source and their pin index
     /// </summary>
     private Dictionary<AnalogChannel.AudioInputType, int> _audioPinMap;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Private constructor
     /// </summary>
-    private Crossbar()
-    {
-    }
+    private Crossbar() {}
+
     #endregion
 
     #region Static CreateInstance method
+
     /// <summary>
     /// Creates the instance by parsing the Crossbar node in the configuration file
     /// </summary>
@@ -76,7 +84,8 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
     {
       Crossbar crossbar = new Crossbar();
       Dictionary<AnalogChannel.VideoInputType, int> videoPinMap = new Dictionary<AnalogChannel.VideoInputType, int>();
-      Dictionary<AnalogChannel.VideoInputType, int> videoPinRelatedAudioMap = new Dictionary<AnalogChannel.VideoInputType, int>();
+      Dictionary<AnalogChannel.VideoInputType, int> videoPinRelatedAudioMap =
+        new Dictionary<AnalogChannel.VideoInputType, int>();
       Dictionary<AnalogChannel.AudioInputType, int> audioPinMap = new Dictionary<AnalogChannel.AudioInputType, int>();
       crossbar.AudioPinMap = audioPinMap;
       crossbar.VideoPinMap = videoPinMap;
@@ -115,7 +124,8 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
               audioPinMap.Add(type, index);
             }
           }
-        } catch
+        }
+        catch
         {
           return crossbar;
         }
@@ -123,39 +133,43 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       }
       return crossbar;
     }
+
     #endregion
 
     #region WriteGraph method
+
     /// <summary>
     /// Writes the Crossbar part of the graph to the configuration
     /// </summary>
     /// <param name="writer">Writer</param>
     public void WriteGraph(XmlWriter writer)
     {
-      writer.WriteStartElement("crossbar");//<crossbar>
+      writer.WriteStartElement("crossbar"); //<crossbar>
       writer.WriteElementString("name", _name ?? "");
       writer.WriteElementString("videoOut", _videoOut.ToString());
       writer.WriteElementString("audioOut", _audioOut.ToString());
       foreach (AnalogChannel.VideoInputType type in _videoPinMap.Keys)
       {
-        writer.WriteStartElement("videoPin");//<videoPin>
+        writer.WriteStartElement("videoPin"); //<videoPin>
         writer.WriteAttributeString("type", ((Int32)type).ToString());
         writer.WriteAttributeString("index", _videoPinMap[type].ToString());
         writer.WriteAttributeString("related", _videoPinRelatedAudioMap[type].ToString());
-        writer.WriteEndElement();//<</videoPin>
+        writer.WriteEndElement(); //<</videoPin>
       }
       foreach (AnalogChannel.AudioInputType type in _audioPinMap.Keys)
       {
-        writer.WriteStartElement("audioPin");//<audioPin>
+        writer.WriteStartElement("audioPin"); //<audioPin>
         writer.WriteAttributeString("type", ((Int32)type).ToString());
         writer.WriteAttributeString("index", _audioPinMap[type].ToString());
-        writer.WriteEndElement();//</audioPin>
+        writer.WriteEndElement(); //</audioPin>
       }
-      writer.WriteEndElement();//</crossbar>
+      writer.WriteEndElement(); //</crossbar>
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// Name of the tuner device
     /// </summary>
@@ -209,6 +223,7 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       get { return _audioPinMap; }
       set { _audioPinMap = value; }
     }
+
     #endregion
   }
 }

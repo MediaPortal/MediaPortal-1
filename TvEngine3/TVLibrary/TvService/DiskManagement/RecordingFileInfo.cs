@@ -20,7 +20,6 @@
  */
 using System;
 using System.IO;
-
 using TvDatabase;
 
 namespace TvService
@@ -30,6 +29,7 @@ namespace TvService
     public string filename;
     public FileInfo info;
     public Recording record;
+
     #region IComparable Members
 
     public int CompareTo(RecordingFileInfo fi)

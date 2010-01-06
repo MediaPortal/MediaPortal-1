@@ -62,9 +62,7 @@ namespace Rss
     private string name = RssDefault.String;
 
     /// <summary>Initialize a new instance of the RssGuid class.</summary>
-    public RssGuid()
-    {
-    }
+    public RssGuid() {}
 
     /// <summary>If true, a url that can be opened in a web browser that points to the item</summary>
     public DBBool PermaLink

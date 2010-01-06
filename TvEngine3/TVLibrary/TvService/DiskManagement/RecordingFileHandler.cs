@@ -21,7 +21,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-
 using TvDatabase;
 using TvLibrary.Log;
 
@@ -63,8 +62,8 @@ namespace TvService
 
           CleanRecordingFolders(rec.FileName);
         }
-
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Error("RecordingFileHandler: Error while deleting a recording from disk: {0}", ex.Message);
         return false; // files not deleted, return failure
@@ -78,7 +77,7 @@ namespace TvService
     /// A folder must not be deleted, if there are still files or subfolders in it.
     /// </summary>
     /// <param name="fileName">The recording file which is deleted.</param>
-    static void CleanRecordingFolders(string fileName)
+    private static void CleanRecordingFolders(string fileName)
     {
       try
       {
@@ -102,7 +101,8 @@ namespace TvService
             // make sure we're only deleting directories which are "recording dirs" from a tv card
             if (fileName.Contains(checkPath))
             {
-              Log.Debug("RecordingFileHandler: Origin for recording {0} found: {1}", Path.GetFileName(fileName), checkPath);
+              Log.Debug("RecordingFileHandler: Origin for recording {0} found: {1}", Path.GetFileName(fileName),
+                        checkPath);
               string deleteDir = recfolder;
               // do not attempt to step higher than the recording base path
               while (deleteDir != Path.GetDirectoryName(checkPath) && deleteDir.Length > checkPath.Length)
@@ -123,16 +123,20 @@ namespace TvService
                     }
                     else
                     {
-                      Log.Debug("RecordingFileHandler: Found {0} sub-directory(s) in recording path - not cleaning {1}", Convert.ToString(subdirs.Length), deleteDir);
+                      Log.Debug(
+                        "RecordingFileHandler: Found {0} sub-directory(s) in recording path - not cleaning {1}",
+                        Convert.ToString(subdirs.Length), deleteDir);
                       return;
                     }
                   }
                   else
                   {
-                    Log.Debug("RecordingFileHandler: Found {0} file(s) in recording path - not cleaning {1}", Convert.ToString(files.Length), deleteDir);
+                    Log.Debug("RecordingFileHandler: Found {0} file(s) in recording path - not cleaning {1}",
+                              Convert.ToString(files.Length), deleteDir);
                     return;
                   }
-                } catch (Exception ex1)
+                }
+                catch (Exception ex1)
                 {
                   Log.Info("RecordingFileHandler: Could not delete directory {0} - {1}", deleteDir, ex1.Message);
                   // bail out to avoid i-loop
@@ -144,11 +148,11 @@ namespace TvService
           else
             Log.Debug("RecordingFileHandler: Path not valid for removal - {1}", checkPath);
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Error("RecordingFileHandler: Error cleaning the recording folders - {0},{1}", ex.Message, ex.StackTrace);
       }
     }
-
   }
 }

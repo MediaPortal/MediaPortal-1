@@ -26,5 +26,5 @@ namespace TvLibrary.Interfaces.Analyzer
   /// TsWriter channel name
   /// </summary>
   [ComImport, Guid("C564CEB9-FC77-4776-8CB8-96DD87624161")]
-  public class ITsChannel { }
+  public class ITsChannel {}
 }

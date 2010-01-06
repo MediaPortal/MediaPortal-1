@@ -47,9 +47,7 @@ namespace MediaPortal.Player
 
     #region Ctor
 
-    public CropSettings() : this(0, 0, 0, 0)
-    {
-    }
+    public CropSettings() : this(0, 0, 0, 0) {}
 
     public CropSettings(int top, int bottom, int left, int right)
     {

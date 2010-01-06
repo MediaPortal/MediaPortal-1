@@ -23,21 +23,20 @@ using DirectShowLib;
 //using DShowNET.TsFileSink;
 using TvLibrary.Log;
 using System.Windows.Forms;
+
 namespace SetupTv.Sections
 {
-  class Player
+  internal class Player
   {
     [ComImport, Guid("b9559486-E1BB-45D3-A2A2-9A7AFE49B23F")]
-    protected class TsReader
-    {
-    }
+    protected class TsReader {}
 
     protected IFilterGraph2 _graphBuilder;
     protected DsROTEntry _rotEntry;
     protected IBaseFilter _tsReader;
     protected IPin _pinVideo;
     protected IPin _pinAudio;
-    IMediaControl _mediaCtrl;
+    private IMediaControl _mediaCtrl;
     protected IVideoWindow _videoWin;
     protected Form _form;
 
@@ -54,6 +53,7 @@ namespace SetupTv.Sections
       _graphBuilder.AddFilter(_tsReader, "TsReader");
 
       #region load file in TsReader
+
       Log.WriteFile("load file in Ts");
       IFileSourceFilter interfaceFile = (IFileSourceFilter)_tsReader;
       if (interfaceFile == null)
@@ -68,10 +68,11 @@ namespace SetupTv.Sections
         Log.WriteFile("TSReaderPlayer:Failed to load file");
         return false;
       }
+
       #endregion
 
-
       #region render pin
+
       Log.Info("TSReaderPlayer:render TsReader outputs");
       IEnumPins enumPins;
       _tsReader.EnumPins(out enumPins);
@@ -90,20 +91,21 @@ namespace SetupTv.Sections
         _graphBuilder.Render(pins[0]);
         Marshal.ReleaseComObject(pins[0]);
       }
-       Marshal.ReleaseComObject(enumPins);
-	  
-      #endregion
+      Marshal.ReleaseComObject(enumPins);
 
+      #endregion
 
       _videoWin = _graphBuilder as IVideoWindow;
       if (_videoWin != null)
       {
         _videoWin.put_Visible(OABool.True);
         _videoWin.put_Owner(form.Handle);
-        _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
+        _videoWin.put_WindowStyle(
+          (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
         _videoWin.put_MessageDrain(form.Handle);
 
-        _videoWin.SetWindowPosition(form.ClientRectangle.X, form.ClientRectangle.Y, form.ClientRectangle.Width, form.ClientRectangle.Height);
+        _videoWin.SetWindowPosition(form.ClientRectangle.X, form.ClientRectangle.Y, form.ClientRectangle.Width,
+                                    form.ClientRectangle.Height);
       }
 
       Log.WriteFile("run graph");
@@ -113,6 +115,7 @@ namespace SetupTv.Sections
 
       return true;
     }
+
     public void Stop()
     {
       if (_videoWin != null)
@@ -125,30 +128,36 @@ namespace SetupTv.Sections
       }
       if (_pinAudio != null)
       {
-        Marshal.ReleaseComObject(_pinAudio); _pinAudio = null;
+        Marshal.ReleaseComObject(_pinAudio);
+        _pinAudio = null;
       }
       if (_pinVideo != null)
       {
-        Marshal.ReleaseComObject(_pinVideo); _pinVideo = null;
+        Marshal.ReleaseComObject(_pinVideo);
+        _pinVideo = null;
       }
       if (_tsReader != null)
       {
-        Marshal.ReleaseComObject(_tsReader); _tsReader = null;
+        Marshal.ReleaseComObject(_tsReader);
+        _tsReader = null;
       }
       if (_rotEntry != null)
       {
-        _rotEntry.Dispose(); _rotEntry = null;
+        _rotEntry.Dispose();
+        _rotEntry = null;
       }
-      
+
       if (_graphBuilder != null)
       {
-        Marshal.ReleaseComObject(_graphBuilder); _graphBuilder = null;
+        Marshal.ReleaseComObject(_graphBuilder);
+        _graphBuilder = null;
       }
     }
 
     public void ResizeToParent()
     {
-      _videoWin.SetWindowPosition(_form.ClientRectangle.X, _form.ClientRectangle.Y, _form.ClientRectangle.Width, _form.ClientRectangle.Height);
+      _videoWin.SetWindowPosition(_form.ClientRectangle.X, _form.ClientRectangle.Y, _form.ClientRectangle.Width,
+                                  _form.ClientRectangle.Height);
     }
   }
 }

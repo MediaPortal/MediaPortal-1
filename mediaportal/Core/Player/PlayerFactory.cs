@@ -42,9 +42,7 @@ namespace MediaPortal.Player
     private static ArrayList _externalPlayerList = new ArrayList();
     private static bool _externalPlayersLoaded = false;
 
-    public PlayerFactory()
-    {
-    }
+    public PlayerFactory() {}
 
     public enum StreamingPlayers : int
     {
@@ -133,10 +131,10 @@ namespace MediaPortal.Player
                 {
                   if (t.IsSubclassOf(typeof (IExternalPlayer)))
                   {
-                    object newObj = (object) Activator.CreateInstance(t);
+                    object newObj = (object)Activator.CreateInstance(t);
                     Log.Info("  found plugin:{0} in {1}", t.ToString(), fileName);
 
-                    IExternalPlayer player = (IExternalPlayer) newObj;
+                    IExternalPlayer player = (IExternalPlayer)newObj;
                     Log.Info("  player:{0}.  author: {1}", player.PlayerName, player.AuthorName);
                     _externalPlayerList.Add(player);
                   }
@@ -226,7 +224,7 @@ namespace MediaPortal.Player
         g_Player.MediaType localType = g_Player.MediaType.Video;
         if (aMediaType != null && aMediaType != g_Player.MediaType.Unknown)
         {
-          localType = (g_Player.MediaType) aMediaType;
+          localType = (g_Player.MediaType)aMediaType;
         }
 
         // Get settings only once
@@ -301,7 +299,8 @@ namespace MediaPortal.Player
           }
 
           // Use TsReader for timeshift buffer file for TvEngine3 & .ts recordings etc.
-          if (extension == ".tsbuffer" || extension == ".ts" || extension == ".rec") //new support for Topfield recordings
+          if (extension == ".tsbuffer" || extension == ".ts" || extension == ".rec")
+            //new support for Topfield recordings
           {
             if (aFileName.ToLower().IndexOf("radio.tsbuffer") >= 0)
             {

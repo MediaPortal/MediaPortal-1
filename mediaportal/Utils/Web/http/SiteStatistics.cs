@@ -129,11 +129,11 @@ namespace MediaPortal.Utils.Web
     /// </returns>
     public new string ToString()
     {
-      float rate = _bytes/(float) _totalTime.TotalSeconds;
+      float rate = _bytes / (float)_totalTime.TotalSeconds;
       if (rate > 1000)
       {
         return String.Format("Site {0} : Pages {1} : Bytes {2} : Total Time {3} : Av. Rate {4} KBps", _site, _pages,
-                             _bytes, _totalTime.ToString(), rate/1000);
+                             _bytes, _totalTime.ToString(), rate / 1000);
       }
       else
       {

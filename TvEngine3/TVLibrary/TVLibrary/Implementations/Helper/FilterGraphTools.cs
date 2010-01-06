@@ -11,9 +11,9 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using Mediaportal.Util;
 using DirectShowLib;
-
 #if !USING_NET11
 using System.Runtime.InteropServices.ComTypes;
+
 #endif
 
 namespace TvLibrary.Implementations.DVB
@@ -21,192 +21,193 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// A collection of methods to do common DirectShow tasks.
   /// </summary>
-
   public static class FilterGraphTools
   {
     #region structs
-    static readonly byte[] Mpeg2ProgramVideo = 
-    {
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.rcSource.left
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.rcSource.top
-          0xd0, 0x02, 0x00, 0x00,							//  .hdr.rcSource.right
-          0x40, 0x02, 0x00, 0x00,							//  .hdr.rcSource.bottom
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.rcTarget.left
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.rcTarget.top
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.rcTarget.right
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.rcTarget.bottom
-          0xc0, 0xe1, 0xe4, 0x00,							//  .hdr.dwBitRate
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.dwBitErrorRate
-          0x80, 0x1a, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, //  .hdr.AvgTimePerFrame
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.dwInterlaceFlags
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.dwCopyProtectFlags
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.dwPictAspectRatioX
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.dwPictAspectRatioY
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.dwReserved1
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.dwReserved2
-          0x28, 0x00, 0x00, 0x00,							//  .hdr.bmiHeader.biSize
-          0xd0, 0x02, 0x00, 0x00,							//  .hdr.bmiHeader.biWidth
-          0x40, 0x02, 0x00, 0x00,							//  .hdr.bmiHeader.biHeight
-          0x00, 0x00,										//  .hdr.bmiHeader.biPlanes
-          0x00, 0x00,										//  .hdr.bmiHeader.biBitCount
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.bmiHeader.biCompression
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.bmiHeader.biSizeImage
-          0xd0, 0x07, 0x00, 0x00,							//  .hdr.bmiHeader.biXPelsPerMeter
-          0x42, 0xd8, 0x00, 0x00,							//  .hdr.bmiHeader.biYPelsPerMeter
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.bmiHeader.biClrUsed
-          0x00, 0x00, 0x00, 0x00,							//  .hdr.bmiHeader.biClrImportant
-          0x00, 0x00, 0x00, 0x00,							//  .dwStartTimeCode
-          0x4c, 0x00, 0x00, 0x00,							//  .cbSequenceHeader
-          0x00, 0x00, 0x00, 0x00,							//  .dwProfile
-          0x00, 0x00, 0x00, 0x00,							//  .dwLevel
-          0x00, 0x00, 0x00, 0x00,							//  .Flags
-					                        //  .dwSequenceHeader [1]
-          0x00, 0x00, 0x01, 0xb3, 0x2d, 0x02, 0x40, 0x33, 
-          0x24, 0x9f, 0x23, 0x81, 0x10, 0x11, 0x11, 0x12, 
-          0x12, 0x12, 0x13, 0x13, 0x13, 0x13, 0x14, 0x14, 
-          0x14, 0x14, 0x14, 0x15, 0x15, 0x15, 0x15, 0x15, 
-          0x15, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 
-          0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 
-          0x18, 0x18, 0x18, 0x19, 0x18, 0x18, 0x18, 0x19, 
-          0x1a, 0x1a, 0x1a, 0x1a, 0x19, 0x1b, 0x1b, 0x1b, 
-          0x1b, 0x1b, 0x1c, 0x1c, 0x1c, 0x1c, 0x1e, 0x1e, 
-          0x1e, 0x1f, 0x1f, 0x21, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-    };
 
-#pragma warning disable 169
-    static byte[] H264VideoFormat = {
-	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.rcSource.left              = 0x00000000
-	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.rcSource.top               = 0x00000000
-	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.rcSource.right             = 0x00000000
-	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.rcSource.bottom            = 0x00000000
-	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.rcTarget.left              = 0x00000000
-	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.rcTarget.top               = 0x00000000
-	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.rcTarget.right             = 0x00000000
-	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.rcTarget.bottom            = 0x00000000
-	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.dwBitRate                  = 0x00000000
-	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.dwBitErrorRate             = 0x00000000
-    //	0x80, 0x1a, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, //  .hdr.AvgTimePerFrame            = 0x0000000000061a80
-	    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //  .hdr.AvgTimePerFrame            = 0x0000000000061a80
-	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.bmiHeader.biSize           = 0x00000028
-	    0xD0, 0x02, 0x00, 0x00,                         //  .hdr.bmiHeader.biWidth          = 0x000002d0
-	    0x40, 0x02, 0x00, 0x00,                         //  .hdr.bmiHeader.biHeight         = 0x00000240
-	    0x00, 0x00,                                     //  .hdr.bmiHeader.biPlanes         = 0x0001
-	    0x00, 0x00,                                     //  .hdr.bmiHeader.biBitCount       = 0x0018
-	    0x48, 0x32, 0x36, 0x34,                         //  .hdr.bmiHeader.biCompression    = "H264"
-	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.bmiHeader.biSizeImage      = 0x00000000
-	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.bmiHeader.biXPelsPerMeter  = 0x00000000
-	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.bmiHeader.biYPelsPerMeter  = 0x00000000
-	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.bmiHeader.biClrUsed        = 0x00000000
-	    0x00, 0x00, 0x00, 0x00,                         //  .hdr.bmiHeader.biClrImportant   = 0x00000000
-    };
-#pragma warning restore 169
-
-    static readonly byte[] MPEG2AudioFormat =
-      {	
-        0x50, 0x00,				//wFormatTag
-	      0x02, 0x00,				//nChannels
-	      0x80, 0xbb, 0x00, 0x00, //nSamplesPerSec
-	      0x00, 0x7d, 0x00, 0x00, //nAvgBytesPerSec
-	      0x01, 0x00,				//nBlockAlign
-	      0x00, 0x00,				//wBitsPerSample
-	      0x16, 0x00,				//cbSize
-	      0x02, 0x00,				//wValidBitsPerSample
-	      0x00, 0xe8,				//wSamplesPerBlock
-	      0x03, 0x00,				//wReserved
-	      0x01, 0x00, 0x01, 0x00, //dwChannelMask
-	      0x01, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-      };
-
-
-    static readonly byte[] MPEG1AudioFormat = 
+    private static readonly byte[] Mpeg2ProgramVideo =
       {
-	      0x50, 0x00,				//wFormatTag
-	      0x02, 0x00,				//nChannels
-	      0x80, 0xBB,	0x00, 0x00, //nSamplesPerSec
-	      0x00, 0x7D,	0x00, 0x00, //nAvgBytesPerSec
-	      0x00, 0x03,				//nBlockAlign
-	      0x00, 0x00,				//wBitsPerSample
-	      0x16, 0x00,				//cbSize
-	      0x02, 0x00,				//wValidBitsPerSample
-	      0x00, 0xE8,				//wSamplesPerBlock
-	      0x03, 0x00,				//wReserved
-	      0x01, 0x00,	0x01,0x00,  //dwChannelMask
-	      0x01, 0x00,	0x1C, 0x00, 0x00, 0x00,	0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-
+        0x00, 0x00, 0x00, 0x00, //  .hdr.rcSource.left
+        0x00, 0x00, 0x00, 0x00, //  .hdr.rcSource.top
+        0xd0, 0x02, 0x00, 0x00, //  .hdr.rcSource.right
+        0x40, 0x02, 0x00, 0x00, //  .hdr.rcSource.bottom
+        0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.left
+        0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.top
+        0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.right
+        0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.bottom
+        0xc0, 0xe1, 0xe4, 0x00, //  .hdr.dwBitRate
+        0x00, 0x00, 0x00, 0x00, //  .hdr.dwBitErrorRate
+        0x80, 0x1a, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, //  .hdr.AvgTimePerFrame
+        0x00, 0x00, 0x00, 0x00, //  .hdr.dwInterlaceFlags
+        0x00, 0x00, 0x00, 0x00, //  .hdr.dwCopyProtectFlags
+        0x00, 0x00, 0x00, 0x00, //  .hdr.dwPictAspectRatioX
+        0x00, 0x00, 0x00, 0x00, //  .hdr.dwPictAspectRatioY
+        0x00, 0x00, 0x00, 0x00, //  .hdr.dwReserved1
+        0x00, 0x00, 0x00, 0x00, //  .hdr.dwReserved2
+        0x28, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biSize
+        0xd0, 0x02, 0x00, 0x00, //  .hdr.bmiHeader.biWidth
+        0x40, 0x02, 0x00, 0x00, //  .hdr.bmiHeader.biHeight
+        0x00, 0x00, //  .hdr.bmiHeader.biPlanes
+        0x00, 0x00, //  .hdr.bmiHeader.biBitCount
+        0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biCompression
+        0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biSizeImage
+        0xd0, 0x07, 0x00, 0x00, //  .hdr.bmiHeader.biXPelsPerMeter
+        0x42, 0xd8, 0x00, 0x00, //  .hdr.bmiHeader.biYPelsPerMeter
+        0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biClrUsed
+        0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biClrImportant
+        0x00, 0x00, 0x00, 0x00, //  .dwStartTimeCode
+        0x4c, 0x00, 0x00, 0x00, //  .cbSequenceHeader
+        0x00, 0x00, 0x00, 0x00, //  .dwProfile
+        0x00, 0x00, 0x00, 0x00, //  .dwLevel
+        0x00, 0x00, 0x00, 0x00, //  .Flags
+        //  .dwSequenceHeader [1]
+        0x00, 0x00, 0x01, 0xb3, 0x2d, 0x02, 0x40, 0x33,
+        0x24, 0x9f, 0x23, 0x81, 0x10, 0x11, 0x11, 0x12,
+        0x12, 0x12, 0x13, 0x13, 0x13, 0x13, 0x14, 0x14,
+        0x14, 0x14, 0x14, 0x15, 0x15, 0x15, 0x15, 0x15,
+        0x15, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16,
+        0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17,
+        0x18, 0x18, 0x18, 0x19, 0x18, 0x18, 0x18, 0x19,
+        0x1a, 0x1a, 0x1a, 0x1a, 0x19, 0x1b, 0x1b, 0x1b,
+        0x1b, 0x1b, 0x1c, 0x1c, 0x1c, 0x1c, 0x1e, 0x1e,
+        0x1e, 0x1f, 0x1f, 0x21, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
       };
-    static readonly byte[] LPCMAudioFormat =
-        {
-          0x00, 0x00,             // format type      = 0x0000=WAVE_FORMAT_UNKNOWN
-          0x02, 0x00,             // channels
-          0x80, 0xBB, 0x00, 0x00, // samplerate       = 0x0000bb80=48000
-          0x00, 0x7D, 0x00, 0x00, // nAvgBytesPerSec  = 0x00007d00=32000
-          0x00, 0x03,             // nBlockAlign      = 0x0300 = 768
-          0x10, 0x00,             // wBitsPerSample   = 16
-          0x16, 0x00,             // extra size       = 0x0016 = 22 bytes
-          };
 
 #pragma warning disable 169
-    static byte[] AC3AudioFormat = {
-      0x00, 0x20,				//wFormatTag
-      0x06, 0x00,				//nChannels
-      0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
-      0xC0, 0x5D, 0x00, 0x00, //nAvgBytesPerSec
-      0x00, 0x03,				//nBlockAlign
-      0x00, 0x00,				//wBitsPerSample
-      0x00, 0x00				//cbSize
-    };
+    private static byte[] H264VideoFormat = {
+                                              0x00, 0x00, 0x00, 0x00, //  .hdr.rcSource.left              = 0x00000000
+                                              0x00, 0x00, 0x00, 0x00, //  .hdr.rcSource.top               = 0x00000000
+                                              0x00, 0x00, 0x00, 0x00, //  .hdr.rcSource.right             = 0x00000000
+                                              0x00, 0x00, 0x00, 0x00, //  .hdr.rcSource.bottom            = 0x00000000
+                                              0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.left              = 0x00000000
+                                              0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.top               = 0x00000000
+                                              0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.right             = 0x00000000
+                                              0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.bottom            = 0x00000000
+                                              0x00, 0x00, 0x00, 0x00, //  .hdr.dwBitRate                  = 0x00000000
+                                              0x00, 0x00, 0x00, 0x00, //  .hdr.dwBitErrorRate             = 0x00000000
+                                              //	0x80, 0x1a, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, //  .hdr.AvgTimePerFrame            = 0x0000000000061a80
+                                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                              //  .hdr.AvgTimePerFrame            = 0x0000000000061a80
+                                              0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biSize           = 0x00000028
+                                              0xD0, 0x02, 0x00, 0x00, //  .hdr.bmiHeader.biWidth          = 0x000002d0
+                                              0x40, 0x02, 0x00, 0x00, //  .hdr.bmiHeader.biHeight         = 0x00000240
+                                              0x00, 0x00, //  .hdr.bmiHeader.biPlanes         = 0x0001
+                                              0x00, 0x00, //  .hdr.bmiHeader.biBitCount       = 0x0018
+                                              0x48, 0x32, 0x36, 0x34, //  .hdr.bmiHeader.biCompression    = "H264"
+                                              0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biSizeImage      = 0x00000000
+                                              0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biXPelsPerMeter  = 0x00000000
+                                              0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biYPelsPerMeter  = 0x00000000
+                                              0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biClrUsed        = 0x00000000
+                                              0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biClrImportant   = 0x00000000
+                                            };
 #pragma warning restore 169
 
-    static readonly byte[] AACAudioFormat = {
-      0xFF, 0x00,				//wFormatTag
-      0x02, 0x00,				//nChannels
-      0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
-      0xCE, 0x3E, 0x00, 0x00, //nAvgBytesPerSec
-      0xAE, 0x02,				//nBlockAlign
-      0x00, 0x00,				//wBitsPerSample
-      0x02, 0x00,				//cbSize
-      0x11, 0x90
-    };
+    private static readonly byte[] MPEG2AudioFormat =
+      {
+        0x50, 0x00, //wFormatTag
+        0x02, 0x00, //nChannels
+        0x80, 0xbb, 0x00, 0x00, //nSamplesPerSec
+        0x00, 0x7d, 0x00, 0x00, //nAvgBytesPerSec
+        0x01, 0x00, //nBlockAlign
+        0x00, 0x00, //wBitsPerSample
+        0x16, 0x00, //cbSize
+        0x02, 0x00, //wValidBitsPerSample
+        0x00, 0xe8, //wSamplesPerBlock
+        0x03, 0x00, //wReserved
+        0x01, 0x00, 0x01, 0x00, //dwChannelMask
+        0x01, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+      };
+
+
+    private static readonly byte[] MPEG1AudioFormat =
+      {
+        0x50, 0x00, //wFormatTag
+        0x02, 0x00, //nChannels
+        0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
+        0x00, 0x7D, 0x00, 0x00, //nAvgBytesPerSec
+        0x00, 0x03, //nBlockAlign
+        0x00, 0x00, //wBitsPerSample
+        0x16, 0x00, //cbSize
+        0x02, 0x00, //wValidBitsPerSample
+        0x00, 0xE8, //wSamplesPerBlock
+        0x03, 0x00, //wReserved
+        0x01, 0x00, 0x01, 0x00, //dwChannelMask
+        0x01, 0x00, 0x1C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+      };
+
+    private static readonly byte[] LPCMAudioFormat =
+      {
+        0x00, 0x00, // format type      = 0x0000=WAVE_FORMAT_UNKNOWN
+        0x02, 0x00, // channels
+        0x80, 0xBB, 0x00, 0x00, // samplerate       = 0x0000bb80=48000
+        0x00, 0x7D, 0x00, 0x00, // nAvgBytesPerSec  = 0x00007d00=32000
+        0x00, 0x03, // nBlockAlign      = 0x0300 = 768
+        0x10, 0x00, // wBitsPerSample   = 16
+        0x16, 0x00, // extra size       = 0x0016 = 22 bytes
+      };
 
 #pragma warning disable 169
-    static byte[] AACAudioFormat2 = {
-	    0xFF, 0x00,				//wFormatTag
-	    0x02, 0x00,				//nChannels
-	    0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
-	    0x9F, 0x24, 0x00, 0x00, //nAvgBytesPerSec
-	    0x90, 0x01,				//nBlockAlign
-	    0x00, 0x00,				//wBitsPerSample
-	    0x02, 0x00,				//cbSize
-	    0x11, 0x90
-    };
+    private static byte[] AC3AudioFormat = {
+                                             0x00, 0x20, //wFormatTag
+                                             0x06, 0x00, //nChannels
+                                             0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
+                                             0xC0, 0x5D, 0x00, 0x00, //nAvgBytesPerSec
+                                             0x00, 0x03, //nBlockAlign
+                                             0x00, 0x00, //wBitsPerSample
+                                             0x00, 0x00 //cbSize
+                                           };
+#pragma warning restore 169
+
+    private static readonly byte[] AACAudioFormat = {
+                                                      0xFF, 0x00, //wFormatTag
+                                                      0x02, 0x00, //nChannels
+                                                      0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
+                                                      0xCE, 0x3E, 0x00, 0x00, //nAvgBytesPerSec
+                                                      0xAE, 0x02, //nBlockAlign
+                                                      0x00, 0x00, //wBitsPerSample
+                                                      0x02, 0x00, //cbSize
+                                                      0x11, 0x90
+                                                    };
+
+#pragma warning disable 169
+    private static byte[] AACAudioFormat2 = {
+                                              0xFF, 0x00, //wFormatTag
+                                              0x02, 0x00, //nChannels
+                                              0x80, 0xBB, 0x00, 0x00, //nSamplesPerSec
+                                              0x9F, 0x24, 0x00, 0x00, //nAvgBytesPerSec
+                                              0x90, 0x01, //nBlockAlign
+                                              0x00, 0x00, //wBitsPerSample
+                                              0x02, 0x00, //cbSize
+                                              0x11, 0x90
+                                            };
 #pragma warning restore 169
 
     #endregion
@@ -372,7 +373,6 @@ namespace TvLibrary.Implementations.DVB
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static IBaseFilter FindFilterByName(IGraphBuilder graphBuilder, string filterName)
     {
-
       IBaseFilter filter = null;
       IEnumFilters enumFilters;
 
@@ -465,7 +465,6 @@ namespace TvLibrary.Implementations.DVB
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static bool RenderPin(IGraphBuilder graphBuilder, IBaseFilter source, string pinName)
     {
-
       if (graphBuilder == null)
         throw new ArgumentNullException("graphBuilder");
 
@@ -495,9 +494,9 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="mediaSubtype">The media subtype.</param>
     /// <param name="direction">The direction of the pin</param>
     /// <param name="index">Index of the pin</param>
-    public static IPin FindMediaPin(IBaseFilter filter, Guid mediaType, Guid mediaSubtype, PinDirection direction, out int index)
+    public static IPin FindMediaPin(IBaseFilter filter, Guid mediaType, Guid mediaSubtype, PinDirection direction,
+                                    out int index)
     {
-
       IEnumPins enumPins;
       filter.EnumPins(out enumPins);
       // loop through all pins
@@ -612,7 +611,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="vDir">The direction of the pin</param>
     /// <param name="pinIndex">The index of the pin</param>
     /// <returns>The matching pin, or null if not found</returns>
-    public static IPin GetPinByCategoryAndDirection(IBaseFilter vSource, Guid PinCategory, int iIndex, PinDirection vDir, out int pinIndex)
+    public static IPin GetPinByCategoryAndDirection(IBaseFilter vSource, Guid PinCategory, int iIndex, PinDirection vDir,
+                                                    out int pinIndex)
     {
       IEnumPins ppEnum;
       IPin pRet = null;
@@ -674,7 +674,6 @@ namespace TvLibrary.Implementations.DVB
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static void DisconnectPins(IBaseFilter filter)
     {
-
       if (filter == null)
         throw new ArgumentNullException("filter");
 
@@ -734,7 +733,10 @@ namespace TvLibrary.Implementations.DVB
           {
             DisconnectPins(filters[0]);
           }
-          catch (Exception ex) { Log.Log.WriteFile("Error while disconnecting all pins: ", ex); }
+          catch (Exception ex)
+          {
+            Log.Log.WriteFile("Error while disconnecting all pins: ", ex);
+          }
           Marshal.ReleaseComObject(filters[0]);
         }
       }
@@ -819,21 +821,21 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         int hr = NativeMethods.StgCreateDocfile(
-            Path.Combine(Log.Log.GetPathName(), FileUtils.MakeFileName(fileName)),
-            STGM.Create | STGM.Transacted | STGM.ReadWrite | STGM.ShareExclusive,
-            0,
-            out storage
-            );
+          Path.Combine(Log.Log.GetPathName(), FileUtils.MakeFileName(fileName)),
+          STGM.Create | STGM.Transacted | STGM.ReadWrite | STGM.ShareExclusive,
+          0,
+          out storage
+          );
 
         Marshal.ThrowExceptionForHR(hr);
 
         hr = storage.CreateStream(
-            @"ActiveMovieGraph",
-            STGM.Write | STGM.Create | STGM.ShareExclusive,
-            0,
-            0,
-            out stream
-            );
+          @"ActiveMovieGraph",
+          STGM.Write | STGM.Create | STGM.ShareExclusive,
+          0,
+          0,
+          out stream
+          );
 
         Marshal.ThrowExceptionForHR(hr);
 
@@ -880,23 +882,23 @@ namespace TvLibrary.Implementations.DVB
           throw new ArgumentException();
 
         int hr = NativeMethods.StgOpenStorage(
-            fileName,
-            null,
-            STGM.Transacted | STGM.Read | STGM.ShareDenyWrite,
-            IntPtr.Zero,
-            0,
-            out storage
-            );
+          fileName,
+          null,
+          STGM.Transacted | STGM.Read | STGM.ShareDenyWrite,
+          IntPtr.Zero,
+          0,
+          out storage
+          );
 
         Marshal.ThrowExceptionForHR(hr);
 
         hr = storage.OpenStream(
-            @"ActiveMovieGraph",
-            IntPtr.Zero,
-            STGM.Read | STGM.ShareExclusive,
-            0,
-            out stream
-            );
+          @"ActiveMovieGraph",
+          IntPtr.Zero,
+          STGM.Read | STGM.ShareExclusive,
+          0,
+          out stream
+          );
 
         Marshal.ThrowExceptionForHR(hr);
 
@@ -976,13 +978,13 @@ namespace TvLibrary.Implementations.DVB
           objs[0] = filter;
 
           NativeMethods.OleCreatePropertyFrame(
-              parent, 0, 0,
-              filterInfo.achName,
-              objs.Length, objs,
-              caGuid.cElems, caGuid.pElems,
-              0, 0,
-              IntPtr.Zero
-              );
+            parent, 0, 0,
+            filterInfo.achName,
+            objs.Length, objs,
+            caGuid.cElems, caGuid.pElems,
+            0, 0,
+            IntPtr.Zero
+            );
         }
         finally
         {
@@ -1016,7 +1018,7 @@ namespace TvLibrary.Implementations.DVB
         retval = true;
         Marshal.ReleaseComObject(o);
       }
-      catch { }
+      catch {}
       return retval;
     }
 
@@ -1031,7 +1033,7 @@ namespace TvLibrary.Implementations.DVB
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static bool IsVMR9Present()
     {
-      return IsThisComObjectInstalled(typeof(VideoMixingRenderer9).GUID);
+      return IsThisComObjectInstalled(typeof (VideoMixingRenderer9).GUID);
     }
 
     /// <summary>
@@ -1045,7 +1047,7 @@ namespace TvLibrary.Implementations.DVB
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
     public static bool IsVMR7Present()
     {
-      return IsThisComObjectInstalled(typeof(VideoMixingRenderer).GUID);
+      return IsThisComObjectInstalled(typeof (VideoMixingRenderer).GUID);
     }
 
     /// <summary>
@@ -1064,7 +1066,8 @@ namespace TvLibrary.Implementations.DVB
     /// If useIntelligentConnect is true, this method can add missing filters between the two pins.<br/>
     /// If useIntelligentConnect is false, this method works only if the two media types are compatible.
     /// </remarks>
-    public static void ConnectFilters(IGraphBuilder graphBuilder, IBaseFilter upFilter, string sourcePinName, IBaseFilter downFilter, string destPinName, bool useIntelligentConnect)
+    public static void ConnectFilters(IGraphBuilder graphBuilder, IBaseFilter upFilter, string sourcePinName,
+                                      IBaseFilter downFilter, string destPinName, bool useIntelligentConnect)
     {
       if (graphBuilder == null)
         throw new ArgumentNullException("graphBuilder");
@@ -1108,7 +1111,8 @@ namespace TvLibrary.Implementations.DVB
     /// If useIntelligentConnect is false, this method works only if the two media types are compatible.
     /// </remarks>
     [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
-    public static void ConnectFilters(IGraphBuilder graphBuilder, IPin sourcePin, IPin destPin, bool useIntelligentConnect)
+    public static void ConnectFilters(IGraphBuilder graphBuilder, IPin sourcePin, IPin destPin,
+                                      bool useIntelligentConnect)
     {
       int hr;
 
@@ -1170,7 +1174,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pinSource">The ping source.</param>
     /// <param name="destinationFilter">The destination filter.</param>
     /// <returns></returns>
-    static public bool ConnectFilter(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter destinationFilter)
+    public static bool ConnectFilter(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter destinationFilter)
     {
       //Log.Log.WriteFile("analog: ConnectFilter()");
       Log.Log.WriteFile("analog:  PinSource:{0}", LogPinInfo(pinSource));
@@ -1211,7 +1215,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="destinationFilter">The destination filter.</param>
     /// <param name="destinationPinIndex">The index of the destination pin</param>
     /// <returns></returns>
-    static public bool ConnectFilter(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter destinationFilter, out int destinationPinIndex)
+    public static bool ConnectFilter(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter destinationFilter,
+                                     out int destinationPinIndex)
     {
       //Log.Log.WriteFile("analog: ConnectFilter()");
       Log.Log.WriteFile("analog:  PinSource:{0}", LogPinInfo(pinSource));
@@ -1253,7 +1258,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="sourceFilter">The source filter.</param>
     /// <param name="pinDestination">The pin destination.</param>
     /// <returns></returns>
-    static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IPin pinDestination)
+    public static bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IPin pinDestination)
     {
       //Log.Log.WriteFile("analog: ConnectFilter()");
       Log.Log.WriteFile("analog:  PinDest:{0}", LogPinInfo(pinDestination));
@@ -1283,7 +1288,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pinDestination">The pin destination.</param>
     /// <param name="sourcePinIndex">The determined output index of the source filter</param>
     /// <returns></returns>
-    static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IPin pinDestination, out int sourcePinIndex)
+    public static bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IPin pinDestination,
+                                     out int sourcePinIndex)
     {
       //Log.Log.WriteFile("analog: ConnectFilter()");
       Log.Log.WriteFile("analog:  PinDest:{0}", LogPinInfo(pinDestination));
@@ -1314,7 +1320,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="sourceFilter">The source filter.</param>
     /// <param name="destinationFilter">The destination filter.</param>
     /// <returns></returns>
-    static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter)
+    public static bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter)
     {
       //Log.Log.WriteFile("analog: ConnectFilter()");
       IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, 0);
@@ -1345,7 +1351,8 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="destinationFilter">destination filetr</param>
     /// <param name="deviceName">filter name</param>
     /// <returns></returns>
-    static public bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter, string deviceName)
+    public static bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter,
+                                     string deviceName)
     {
       //Log.Log.WriteFile("analog: ConnectFilter()");
       IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, 0);
@@ -1366,7 +1373,10 @@ namespace TvLibrary.Implementations.DVB
         {
           pinOut.ConnectedTo(out testPin);
         }
-        catch (Exception ex) { Log.Log.WriteFile("Error while connecting a filter: ", ex); }
+        catch (Exception ex)
+        {
+          Log.Log.WriteFile("Error while connecting a filter: ", ex);
+        }
         if (testPin != null)
         {
           Release.ComObject("outPin", pinOut);
@@ -1375,7 +1385,7 @@ namespace TvLibrary.Implementations.DVB
           continue;
         }
         if (deviceName.Contains("Hauppauge") &&
-          (LogPinInfo(pinOut).Contains("Audio") || LogPinInfo(pinIn).Contains("Audio")))
+            (LogPinInfo(pinOut).Contains("Audio") || LogPinInfo(pinIn).Contains("Audio")))
         {
           if (LogPinInfo(pinOut).Contains("Audio") && LogPinInfo(pinIn).Contains("Audio"))
             hr = graphBuilder.Connect(pinOut, pinIn);
@@ -1401,7 +1411,7 @@ namespace TvLibrary.Implementations.DVB
     /// increment the ComObject referencecount of the object.
     /// </summary>
     /// <param name="o">The object.</param>
-    static private object incRefCountCOM(object o)
+    private static object incRefCountCOM(object o)
     {
       IntPtr pUnk = Marshal.GetIUnknownForObject(o);
       object oCom = Marshal.GetObjectForIUnknown(pUnk);
@@ -1414,7 +1424,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="o">The object.</param>
     /// <returns>referencecount</returns>
-    static public int getRefCount(object o)
+    public static int getRefCount(object o)
     {
       if (o == null)
         return -1;
@@ -1427,7 +1437,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="filter">The filter.</param>
     /// <returns>referencecount</returns>
-    static public int getRefCountCOM(object filter)
+    public static int getRefCountCOM(object filter)
     {
       if (filter == null)
         return -1;
@@ -1441,7 +1451,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="pin">The pin.</param>
     /// <returns></returns>
-    static public string LogPinInfo(IPin pin)
+    public static string LogPinInfo(IPin pin)
     {
       if (pin == null)
         return " pin==null ";
@@ -1460,7 +1470,8 @@ namespace TvLibrary.Implementations.DVB
         if (pinInfo.filter != null)
           Marshal.ReleaseComObject(pinInfo.filter);
       }
-      return String.Format("name:{0} [{3}/{4}] Direction:{1} Connected:{2}", pinInfo.name, pinInfo.dir, connected, getRefCount(pin), getRefCountCOM(pin));
+      return String.Format("name:{0} [{3}/{4}] Direction:{1} Connected:{2}", pinInfo.name, pinInfo.dir, connected,
+                           getRefCount(pin), getRefCountCOM(pin));
     }
 
     /// <summary>
@@ -1468,7 +1479,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="filter">The filter.</param>
     /// <returns></returns>
-    static public string LogFilterInfo(IBaseFilter filter)
+    public static string LogFilterInfo(IBaseFilter filter)
     {
       if (filter == null)
         return " filter==null ";
@@ -1480,7 +1491,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="filter">The filter.</param>
     /// <returns>FilterName</returns>
-    static public string GetFilterName(IBaseFilter filter)
+    public static string GetFilterName(IBaseFilter filter)
     {
       FilterInfo filterInfo;
       int hr = filter.QueryFilterInfo(out filterInfo);
@@ -1497,7 +1508,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="pin">The pin.</param>
     /// <returns>PinName</returns>
-    static public string GetPinName(IPin pin)
+    public static string GetPinName(IPin pin)
     {
       if (pin == null)
         return "";
@@ -1515,7 +1526,7 @@ namespace TvLibrary.Implementations.DVB
     /// Gets the audio MPG2 media.
     /// </summary>
     /// <returns></returns>
-    static public AMMediaType GetAudioMpg2Media()
+    public static AMMediaType GetAudioMpg2Media()
     {
       AMMediaType mediaAudio = new AMMediaType();
       mediaAudio.majorType = MediaType.Audio;
@@ -1537,7 +1548,7 @@ namespace TvLibrary.Implementations.DVB
     /// Gets the audio MPG1 media.
     /// </summary>
     /// <returns></returns>
-    static public AMMediaType GetAudioMpg1Media()
+    public static AMMediaType GetAudioMpg1Media()
     {
       AMMediaType mediaAudio = new AMMediaType();
       mediaAudio.majorType = MediaType.Audio;
@@ -1559,7 +1570,7 @@ namespace TvLibrary.Implementations.DVB
     /// Gets the video MPG2 media.
     /// </summary>
     /// <returns></returns>
-    static public AMMediaType GetVideoMpg2Media()
+    public static AMMediaType GetVideoMpg2Media()
     {
       AMMediaType mediaVideo = new AMMediaType();
       mediaVideo.majorType = MediaType.Video;
@@ -1579,7 +1590,7 @@ namespace TvLibrary.Implementations.DVB
     /// Gets the audio ac3 media type
     /// </summary>
     /// <returns></returns>
-    static public AMMediaType GetAudioAc3()
+    public static AMMediaType GetAudioAc3()
     {
       AMMediaType mediaAc3 = new AMMediaType();
       mediaAc3.majorType = MediaType.Audio;
@@ -1599,7 +1610,7 @@ namespace TvLibrary.Implementations.DVB
     /// Gets the audio AAC media type
     /// </summary>
     /// <returns></returns>
-    static public AMMediaType GetAudioAAC()
+    public static AMMediaType GetAudioAAC()
     {
       AMMediaType mediaAac = new AMMediaType();
       mediaAac.majorType = MediaType.Audio;
@@ -1619,7 +1630,7 @@ namespace TvLibrary.Implementations.DVB
     /// Gets the audio LATM AAC media type
     /// </summary>
     /// <returns></returns>
-    static public AMMediaType GetAudioLATMAAC()
+    public static AMMediaType GetAudioLATMAAC()
     {
       AMMediaType mediaLATMAAC = new AMMediaType();
       mediaLATMAAC.majorType = MediaType.Audio;
@@ -1639,7 +1650,7 @@ namespace TvLibrary.Implementations.DVB
     /// Gets the audio LPCM media type
     /// </summary>
     /// <returns></returns>
-    static public AMMediaType GetAudioLPCMMedia()
+    public static AMMediaType GetAudioLPCMMedia()
     {
       AMMediaType mediaLPCM = new AMMediaType();
       mediaLPCM.majorType = MediaType.Audio;
@@ -1659,7 +1670,7 @@ namespace TvLibrary.Implementations.DVB
     /// Gets the transport stream media type
     /// </summary>
     /// <returns></returns>
-    static public AMMediaType GetTransportStreamMedia()
+    public static AMMediaType GetTransportStreamMedia()
     {
       AMMediaType mediaTS = new AMMediaType();
       mediaTS.majorType = MediaType.Stream;
@@ -1707,69 +1718,69 @@ namespace TvLibrary.Implementations.DVB
   }
 
   [Guid("0000000b-0000-0000-C000-000000000046"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   internal interface IStorage
   {
     [PreserveSig]
     int CreateStream(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
-        [In] STGM grfMode,
-        [In] int reserved1,
-        [In] int reserved2,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
+      [In] STGM grfMode,
+      [In] int reserved1,
+      [In] int reserved2,
 #if USING_NET11
 			[Out] out UCOMIStream ppstm
 #else
- [Out] out IStream ppstm
+      [Out] out IStream ppstm
 #endif
-);
+      );
 
     [PreserveSig]
     int OpenStream(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
-        [In] IntPtr reserved1,
-        [In] STGM grfMode,
-        [In] int reserved2,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
+      [In] IntPtr reserved1,
+      [In] STGM grfMode,
+      [In] int reserved2,
 #if USING_NET11
 			[Out] out UCOMIStream ppstm
 #else
- [Out] out IStream ppstm
+      [Out] out IStream ppstm
 #endif
-);
+      );
 
     [PreserveSig]
     int CreateStorage(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
-        [In] STGM grfMode,
-        [In] int reserved1,
-        [In] int reserved2,
-        [Out] out IStorage ppstg
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
+      [In] STGM grfMode,
+      [In] int reserved1,
+      [In] int reserved2,
+      [Out] out IStorage ppstg
+      );
 
     [PreserveSig]
     int OpenStorage(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
-        [In] IStorage pstgPriority,
-        [In] STGM grfMode,
-        [In] int snbExclude,
-        [In] int reserved,
-        [Out] out IStorage ppstg
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
+      [In] IStorage pstgPriority,
+      [In] STGM grfMode,
+      [In] int snbExclude,
+      [In] int reserved,
+      [Out] out IStorage ppstg
+      );
 
     [PreserveSig]
     int CopyTo(
-        [In] int ciidExclude,
-        [In] Guid[] rgiidExclude,
-        [In] string[] snbExclude,
-        [In] IStorage pstgDest
-        );
+      [In] int ciidExclude,
+      [In] Guid[] rgiidExclude,
+      [In] string[] snbExclude,
+      [In] IStorage pstgDest
+      );
 
     [PreserveSig]
     int MoveElementTo(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
-        [In] IStorage pstgDest,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsNewName,
-        [In] STGM grfFlags
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
+      [In] IStorage pstgDest,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsNewName,
+      [In] STGM grfFlags
+      );
 
     [PreserveSig]
     int Commit([In] STGC grfCommitFlags);
@@ -1779,53 +1790,53 @@ namespace TvLibrary.Implementations.DVB
 
     [PreserveSig]
     int EnumElements(
-        [In] int reserved1,
-        [In] IntPtr reserved2,
-        [In] int reserved3,
-        [Out, MarshalAs(UnmanagedType.Interface)] out object ppenum
-        );
+      [In] int reserved1,
+      [In] IntPtr reserved2,
+      [In] int reserved3,
+      [Out, MarshalAs(UnmanagedType.Interface)] out object ppenum
+      );
 
     [PreserveSig]
     int DestroyElement([In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName);
 
     [PreserveSig]
     int RenameElement(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsOldName,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsNewName
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsOldName,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsNewName
+      );
 
     [PreserveSig]
     int SetElementTimes(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
 #if USING_NET11
 			[In] FILETIME pctime,
 			[In] FILETIME patime,
 			[In] FILETIME pmtime
 #else
- [In] System.Runtime.InteropServices.ComTypes.FILETIME pctime,
-       [In] System.Runtime.InteropServices.ComTypes.FILETIME patime,
-       [In] System.Runtime.InteropServices.ComTypes.FILETIME pmtime
+      [In] System.Runtime.InteropServices.ComTypes.FILETIME pctime,
+      [In] System.Runtime.InteropServices.ComTypes.FILETIME patime,
+      [In] System.Runtime.InteropServices.ComTypes.FILETIME pmtime
 #endif
-);
+      );
 
     [PreserveSig]
     int SetClass([In, MarshalAs(UnmanagedType.LPStruct)] Guid clsid);
 
     [PreserveSig]
     int SetStateBits(
-        [In] int grfStateBits,
-        [In] int grfMask
-        );
+      [In] int grfStateBits,
+      [In] int grfMask
+      );
 
     [PreserveSig]
     int Stat(
 #if USING_NET11
-			[Out] out STATSTG pStatStg, 
+			[Out] out STATSTG pStatStg,
 #else
-[Out] out System.Runtime.InteropServices.ComTypes.STATSTG pStatStg,
+      [Out] out System.Runtime.InteropServices.ComTypes.STATSTG pStatStg,
 #endif
- [In] int grfStatFlag
-       );
+      [In] int grfStatFlag
+      );
   }
 
   internal static class NativeMethods
@@ -1841,46 +1852,46 @@ namespace TvLibrary.Implementations.DVB
 #if USING_NET11
 		public static extern int MkParseDisplayName(UCOMIBindCtx pcb, [MarshalAs(UnmanagedType.LPWStr)] string szUserName, out int pchEaten, out UCOMIMoniker ppmk);
 #else
-    public static extern int MkParseDisplayName(IBindCtx pcb, [MarshalAs(UnmanagedType.LPWStr)] string szUserName, out int pchEaten, out IMoniker ppmk);
+    public static extern int MkParseDisplayName(IBindCtx pcb, [MarshalAs(UnmanagedType.LPWStr)] string szUserName,
+                                                out int pchEaten, out IMoniker ppmk);
 #endif
 
     [DllImport("olepro32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
     public static extern int OleCreatePropertyFrame(
-        [In] IntPtr hwndOwner,
-        [In] int x,
-        [In] int y,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string lpszCaption,
-        [In] int cObjects,
-        [In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.IUnknown)] object[] ppUnk,
-        [In] int cPages,
-        [In] IntPtr pPageClsID,
-        [In] int lcid,
-        [In] int dwReserved,
-        [In] IntPtr pvReserved
-        );
+      [In] IntPtr hwndOwner,
+      [In] int x,
+      [In] int y,
+      [In, MarshalAs(UnmanagedType.LPWStr)] string lpszCaption,
+      [In] int cObjects,
+      [In, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.IUnknown)] object[] ppUnk,
+      [In] int cPages,
+      [In] IntPtr pPageClsID,
+      [In] int lcid,
+      [In] int dwReserved,
+      [In] IntPtr pvReserved
+      );
 
     [DllImport("ole32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
     public static extern int StgCreateDocfile(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
-        [In] STGM grfMode,
-        [In] int reserved,
-        [Out] out IStorage ppstgOpen
-        );
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
+      [In] STGM grfMode,
+      [In] int reserved,
+      [Out] out IStorage ppstgOpen
+      );
 
     [DllImport("ole32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
     public static extern int StgIsStorageFile([In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName);
 
     [DllImport("ole32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
     public static extern int StgOpenStorage(
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
-        [In] IStorage pstgPriority,
-        [In] STGM grfMode,
-        [In] IntPtr snbExclude,
-        [In] int reserved,
-        [Out] out IStorage ppstgOpen
-        );
-
+      [In, MarshalAs(UnmanagedType.LPWStr)] string pwcsName,
+      [In] IStorage pstgPriority,
+      [In] STGM grfMode,
+      [In] IntPtr snbExclude,
+      [In] int reserved,
+      [Out] out IStorage ppstgOpen
+      );
   }
-  #endregion
 
+  #endregion
 }

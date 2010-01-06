@@ -39,9 +39,7 @@ namespace System.Windows.Controls
       StretchProperty = DependencyProperty.Register("Stretch", typeof (Stretch), typeof (Image));
     }
 
-    public Image()
-    {
-    }
+    public Image() {}
 
     #endregion Constructors
 
@@ -68,19 +66,19 @@ namespace System.Windows.Controls
 
     public ImageSource Source
     {
-      get { return (ImageSource) GetValue(SourceProperty); }
+      get { return (ImageSource)GetValue(SourceProperty); }
       set { SetValue(SourceProperty, value); }
     }
 
     public Stretch Stretch
     {
-      get { return (Stretch) GetValue(StretchProperty); }
+      get { return (Stretch)GetValue(StretchProperty); }
       set { SetValue(StretchProperty, value); }
     }
 
     public StretchDirection StretchDirection
     {
-      get { return (StretchDirection) GetValue(StretchDirectionProperty); }
+      get { return (StretchDirection)GetValue(StretchDirectionProperty); }
       set { SetValue(StretchDirectionProperty, value); }
     }
 

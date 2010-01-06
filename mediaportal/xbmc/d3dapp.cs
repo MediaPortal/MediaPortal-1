@@ -248,13 +248,9 @@ namespace MediaPortal
 
     //protected virtual void OnDeviceDisposing(System.Object sender, System.EventArgs e) { /* Do Nothing */ }
 
-    protected virtual void OnStartup()
-    {
-    }
+    protected virtual void OnStartup() {}
 
-    protected virtual void OnExit()
-    {
-    }
+    protected virtual void OnExit() {}
 
     private bool _wasPlayingVideo = false;
     private int _iActiveWindow = -1;
@@ -295,7 +291,8 @@ namespace MediaPortal
         {
           UseMillisecondTiming = false;
         }
-      } catch (Exception)
+      }
+      catch (Exception)
       {
         UseMillisecondTiming = false;
         Log.Info("Exception");
@@ -454,11 +451,13 @@ namespace MediaPortal
         InitializeEnvironment();
         // Initialize the app's custom scene stuff
         OneTimeSceneInitialization();
-      } catch (SampleException d3de)
+      }
+      catch (SampleException d3de)
       {
         HandleSampleException(d3de, ApplicationMessage.ApplicationMustExit);
         return false;
-      } catch
+      }
+      catch
       {
         HandleSampleException(new SampleException(), ApplicationMessage.ApplicationMustExit);
         return false;
@@ -568,7 +567,7 @@ namespace MediaPortal
         }
       }
 
-    EndWindowedDeviceComboSearch:
+      EndWindowedDeviceComboSearch:
       if (bestDeviceCombo == null)
       {
         return false;
@@ -680,7 +679,7 @@ namespace MediaPortal
         }
       }
 
-    EndFullscreenDeviceComboSearch:
+      EndFullscreenDeviceComboSearch:
       if (bestDeviceCombo == null)
       {
         return false;
@@ -867,7 +866,8 @@ namespace MediaPortal
         {
           Log.Debug("D3D: Switched to exclusive mode successfully");
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         if (windowed)
         {
@@ -898,7 +898,8 @@ namespace MediaPortal
             GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
             GUIFontManager.InitializeDeviceObjects();
           }
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
           Log.Warn("D3D: mode failed - {0}", e.ToString());
         }
@@ -929,7 +930,8 @@ namespace MediaPortal
         Log.Info("d3dapp: Pixel shaders supported: {0} (Version: {1}), Vertex shaders supported: {2} (Version: {3})",
                  deviceInfo.Caps.PixelShaderCaps.NumberInstructionSlots, deviceInfo.Caps.PixelShaderVersion.ToString(),
                  deviceInfo.Caps.VertexShaderCaps.NumberTemps, deviceInfo.Caps.VertexShaderVersion.ToString());
-      } catch (Exception lex)
+      }
+      catch (Exception lex)
       {
         Log.Warn("d3dapp: Error logging graphic device details - {0}", lex.Message);
       }
@@ -1106,7 +1108,8 @@ namespace MediaPortal
           InitializeDeviceObjects();
           //OnDeviceReset(null, null);
           active = true;
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
           Log.Error("D3D: InitializeDeviceObjects - Exception: {0}", ex.ToString());
           // Cleanup before we try again
@@ -1119,7 +1122,8 @@ namespace MediaPortal
             return;
           }
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Error(ex);
         // If that failed, fall back to the reference rasterizer
@@ -1217,9 +1221,8 @@ namespace MediaPortal
         {
           timeEndPeriod(MILLI_SECONDS_TIMER);
         }
-      } catch (Exception)
-      {
       }
+      catch (Exception) {}
 
       UseMillisecondTiming = false;
       // Build a message to display to the user
@@ -1308,7 +1311,7 @@ namespace MediaPortal
         _wasPlayingVideo = true;
         _fullscreen = g_Player.FullScreen;
 
-        
+
         // Some Audio/video is playing
         _currentPlayerPos = g_Player.CurrentPosition;
         _currentPlayListType = playlistPlayer.CurrentPlaylistType;
@@ -1342,7 +1345,7 @@ namespace MediaPortal
           "D3D: Form resized - Stopping media - Current playlist: Type: {0} / Size: {1} / Current item: {2} / Filename: {3} / Position: {4}",
           _currentPlayListType, _currentPlayList.Count, playlistPlayer.CurrentSong, _strCurrentFile, _currentPlayerPos);
         g_Player.Stop();
-        
+
         _iActiveWindow = GUIWindowManager.ActiveWindow;
       }
     }
@@ -1356,7 +1359,7 @@ namespace MediaPortal
       {
         _wasPlayingVideo = false;
 
-        
+
         // we were watching some audio/video
         Log.Info("D3D: RestorePlayers - Resuming: {0}", _strCurrentFile);
         playlistPlayer.Init();
@@ -1404,7 +1407,6 @@ namespace MediaPortal
 
         GUIGraphicsContext.IsFullScreenVideo = _fullscreen;
         GUIWindowManager.ReplaceWindow(_iActiveWindow);
-        
       }
     }
 
@@ -1441,14 +1443,15 @@ namespace MediaPortal
         try
         {
 #endif
-          if ((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this) || (GUIGraphicsContext.SaveRenderCycles))
-          {
-            // Yield some CPU time to other processes
+        if ((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this) ||
+            (GUIGraphicsContext.SaveRenderCycles))
+        {
+          // Yield some CPU time to other processes
 #if !PROFILING
-            Thread.Sleep(100); // 100 milliseconds
+          Thread.Sleep(100); // 100 milliseconds
 #endif
-          }
-          Render3DEnvironment();
+        }
+        Render3DEnvironment();
 #if DEBUG
 #else
         } catch (Exception ee)
@@ -1513,7 +1516,8 @@ namespace MediaPortal
             Log.Debug("d3dapp: RecoverDevice called");
             // Test the cooperative level to see if it's okay to render
             GUIGraphicsContext.DX9Device.TestCooperativeLevel();
-          } catch (DeviceLostException)
+          }
+          catch (DeviceLostException)
           {
             // If the device was lost, do not render until we get it back
             isHandlingSizeChanges = false;
@@ -1521,7 +1525,8 @@ namespace MediaPortal
             Log.Debug("d3dapp: DeviceLostException");
 
             return;
-          } catch (DeviceNotResetException)
+          }
+          catch (DeviceNotResetException)
           {
             Log.Debug("d3dapp: DeviceNotResetException");
             m_bNeedReset = true;
@@ -1572,7 +1577,8 @@ namespace MediaPortal
               Log.Warn("d3dapp: DirectX9Ex is lost or gpu hung --> Reinit of DX9Ex is needed.");
               InitializeEnvironment();
             }
-          } catch (Exception ex)
+          }
+          catch (Exception ex)
           {
             Log.Error("d3dapp: Reset failed - {0}", ex.ToString());
             GUIGraphicsContext.DX9Device.DeviceLost -= OnDeviceLost;
@@ -1625,7 +1631,8 @@ namespace MediaPortal
         {
           Render(GUIGraphicsContext.TimePassed);
         }
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         Log.Error("d3dapp: Exception: {0}", ex);
       }
@@ -1982,9 +1989,8 @@ namespace MediaPortal
 
         handle.Set();
         handle.Close();
-      } catch
-      {
       }
+      catch {}
       if (GUIGraphicsContext.UseSeparateRenderThread)
       {
         Thread processThread = new Thread(ProcessLoop);
@@ -2093,7 +2099,8 @@ namespace MediaPortal
             }
 
             return true;
-          } catch (Exception e)
+          }
+          catch (Exception e)
           {
             Log.Error("Error recalling last active module '{0}' - {1}", lastActiveModule, e.Message);
             //otherwise ignore.
@@ -2217,12 +2224,12 @@ namespace MediaPortal
         e.Handled = true;
         return;
       }
-	  else if (e.Control == true && e.Alt == true && e.KeyCode == Keys.Return)
-	  {
-		  ToggleMiniTv();
-		  e.Handled = true;
-		  return;
-	  }
+      else if (e.Control == true && e.Alt == true && e.KeyCode == Keys.Return)
+      {
+        ToggleMiniTv();
+        e.Handled = true;
+        return;
+      }
       else if (e.KeyCode == Keys.F2)
       {
         OnSetup(null, null);
@@ -2239,7 +2246,7 @@ namespace MediaPortal
     private void InitializeComponent()
     {
       this.components = new Container();
-      ComponentResourceManager resources = new ComponentResourceManager(typeof(D3DApp));
+      ComponentResourceManager resources = new ComponentResourceManager(typeof (D3DApp));
       this.menuStripMain = new MainMenu(this.components);
       this.menuItemFile = new MenuItem();
       this.menuItemExit = new MenuItem();
@@ -2594,13 +2601,9 @@ namespace MediaPortal
 
     #endregion
 
-    protected virtual void keypressed(KeyPressEventArgs e)
-    {
-    }
+    protected virtual void keypressed(KeyPressEventArgs e) {}
 
-    protected virtual void keydown(KeyEventArgs e)
-    {
-    }
+    protected virtual void keydown(KeyEventArgs e) {}
 
     protected virtual void mousemove(MouseEventArgs e)
     {
@@ -2930,37 +2933,37 @@ namespace MediaPortal
     /// <param name="e"></param>
     private void menuItemMiniTv_Click(object sender, EventArgs e)
     {
-		this.ToggleMiniTv();
+      this.ToggleMiniTv();
     }
 
-	private void ToggleMiniTv()
-	{
-		if (!windowed) return; // only affection window mode
+    private void ToggleMiniTv()
+    {
+      if (!windowed) return; // only affection window mode
 
-		miniTvMode = !miniTvMode; // toggle
+      miniTvMode = !miniTvMode; // toggle
 
-		if (miniTvMode)
-		{
-			MinimumSize = new Size(720 / 2, 576 / 2);
-			alwaysOnTop = true;
-			this.FormBorderStyle = FormBorderStyle.SizableToolWindow;
-			this.Menu = null;
-		}
-		else
-		{
-			MinimumSize = new Size(720, 576);
-			alwaysOnTop = alwaysOnTopConfig;
-			this.FormBorderStyle = FormBorderStyle.Sizable;
-			this.Menu = menuStripMain;
+      if (miniTvMode)
+      {
+        MinimumSize = new Size(720 / 2, 576 / 2);
+        alwaysOnTop = true;
+        this.FormBorderStyle = FormBorderStyle.SizableToolWindow;
+        this.Menu = null;
+      }
+      else
+      {
+        MinimumSize = new Size(720, 576);
+        alwaysOnTop = alwaysOnTopConfig;
+        this.FormBorderStyle = FormBorderStyle.Sizable;
+        this.Menu = menuStripMain;
 
-			this.SwitchFullScreenOrWindowed(true);
-		}
+        this.SwitchFullScreenOrWindowed(true);
+      }
 
-		Size = MinimumSize;
-		TopMost = alwaysOnTop;
+      Size = MinimumSize;
+      TopMost = alwaysOnTop;
 
-		menuItemMiniTv.Checked = miniTvMode;
-	}
+      menuItemMiniTv.Checked = miniTvMode;
+    }
   }
 
   #region Enums for D3D Applications
@@ -3280,18 +3283,15 @@ namespace MediaPortal
     public struct WindowClass
     {
       public int Styles;
-      [MarshalAs(UnmanagedType.FunctionPtr)]
-      public WndProcDelegate WindowsProc;
+      [MarshalAs(UnmanagedType.FunctionPtr)] public WndProcDelegate WindowsProc;
       private int ExtraClassData;
       private int ExtraWindowData;
       public IntPtr InstanceHandle;
       public IntPtr IconHandle;
       public IntPtr CursorHandle;
       public IntPtr backgroundBrush;
-      [MarshalAs(UnmanagedType.LPTStr)]
-      public string MenuName;
-      [MarshalAs(UnmanagedType.LPTStr)]
-      public string ClassName;
+      [MarshalAs(UnmanagedType.LPTStr)] public string MenuName;
+      [MarshalAs(UnmanagedType.LPTStr)] public string ClassName;
     }
 
     #endregion
@@ -3450,9 +3450,7 @@ namespace MediaPortal
 
     #region Class Methods
 
-    private NativeMethods()
-    {
-    } // No creation
+    private NativeMethods() {} // No creation
     /// <summary>Hooks window messages to go through this new callback</summary>
     public static void HookWindowsMessages(IntPtr window, WndProcDelegate callback)
     {

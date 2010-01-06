@@ -116,63 +116,34 @@ namespace SetupControls
     }
 
 
-    public virtual void SettingsForm_Closed(object sender, EventArgs e)
-    {
+    public virtual void SettingsForm_Closed(object sender, EventArgs e) {}
 
-    }
+    public virtual void SettingsForm_Load(object sender, EventArgs e) {}
 
-    public virtual void SettingsForm_Load(object sender, EventArgs e)
-    {
-    }
+    public virtual void LoadSectionSettings(TreeNode currentNode) {}
 
-    public virtual void LoadSectionSettings(TreeNode currentNode)
-    {
-    }
+    public virtual void SaveSectionSettings(TreeNode currentNode) {}
 
-    public virtual void SaveSectionSettings(TreeNode currentNode)
-    {
-    }
-
-    public virtual void SaveAllSettings()
-    {
-    }
+    public virtual void SaveAllSettings() {}
 
 
-    public virtual void cancelButton_Click(object sender, EventArgs e)
-    {
-    }
+    public virtual void cancelButton_Click(object sender, EventArgs e) {}
 
-    public virtual void okButton_Click(object sender, EventArgs e)
-    {
-    }
+    public virtual void okButton_Click(object sender, EventArgs e) {}
 
-    public virtual void applyButton_Click(object sender, EventArgs e)
-    {
-    }
+    public virtual void applyButton_Click(object sender, EventArgs e) {}
 
-    private void holderPanel_Paint(object sender, PaintEventArgs e)
-    {
-
-    }
+    private void holderPanel_Paint(object sender, PaintEventArgs e) {}
 
     private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       System.Diagnostics.Process.Start((string)e.Link.LinkData);
     }
 
-    public virtual void helpToolStripSplitButton_ButtonClick(object sender, EventArgs e)
-    {
+    public virtual void helpToolStripSplitButton_ButtonClick(object sender, EventArgs e) {}
 
-    }
+    public virtual void updateHelpToolStripMenuItem_Click(object sender, EventArgs e) {}
 
-    public virtual void updateHelpToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-
-    }
-
-    public virtual void configToolStripSplitButton_ButtonClick(object sender, EventArgs e)
-    {
-
-    }
+    public virtual void configToolStripSplitButton_ButtonClick(object sender, EventArgs e) {}
   }
 }

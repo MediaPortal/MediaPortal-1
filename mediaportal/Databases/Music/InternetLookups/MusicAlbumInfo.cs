@@ -53,9 +53,7 @@ namespace MediaPortal.Music.Database
     private ArrayList m_songs = new ArrayList();
     private bool m_bLoaded = false;
 
-    public MusicAlbumInfo()
-    {
-    }
+    public MusicAlbumInfo() {}
 
 
     public string Artist
@@ -148,7 +146,7 @@ namespace MediaPortal.Music.Database
 
     public MusicSong GetSong(int iSong)
     {
-      return (MusicSong) m_songs[iSong];
+      return (MusicSong)m_songs[iSong];
     }
 
     public bool Load()
@@ -163,7 +161,7 @@ namespace MediaPortal.Music.Database
           // wr.Proxy = WebProxy.GetDefaultProxy();
           req.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception) {}
         WebResponse result = req.GetResponse();
         Stream ReceiveStream = result.GetResponseStream();
         Encoding encode = Encoding.GetEncoding("utf-8");
@@ -171,9 +169,7 @@ namespace MediaPortal.Music.Database
         body = sr.ReadToEnd();
         return Parse(body);
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       return false;
     }
 
@@ -284,7 +280,7 @@ namespace MediaPortal.Music.Database
           int nPos = m_strDateOfRelease.IndexOf("19");
           if (nPos > -1)
           {
-            if ((int) m_strDateOfRelease.Length >= nPos + 3 && Char.IsDigit(m_strDateOfRelease[nPos + 2]) &&
+            if ((int)m_strDateOfRelease.Length >= nPos + 3 && Char.IsDigit(m_strDateOfRelease[nPos + 2]) &&
                 Char.IsDigit(m_strDateOfRelease[nPos + 3]))
             {
               string strYear = m_strDateOfRelease.Substring(nPos, 4);
@@ -295,7 +291,7 @@ namespace MediaPortal.Music.Database
               nPos = m_strDateOfRelease.IndexOf("19", nPos + 2);
               if (nPos > -1)
               {
-                if ((int) m_strDateOfRelease.Length >= nPos + 3 && Char.IsDigit(m_strDateOfRelease[nPos + 2]) &&
+                if ((int)m_strDateOfRelease.Length >= nPos + 3 && Char.IsDigit(m_strDateOfRelease[nPos + 2]) &&
                     Char.IsDigit(m_strDateOfRelease[nPos + 3]))
                 {
                   string strYear = m_strDateOfRelease.Substring(nPos, 4);
@@ -308,7 +304,7 @@ namespace MediaPortal.Music.Database
           nPos = m_strDateOfRelease.IndexOf("20");
           if (nPos > -1)
           {
-            if ((int) m_strDateOfRelease.Length > nPos + 3 && Char.IsDigit(m_strDateOfRelease[nPos + 2]) &&
+            if ((int)m_strDateOfRelease.Length > nPos + 3 && Char.IsDigit(m_strDateOfRelease[nPos + 2]) &&
                 Char.IsDigit(m_strDateOfRelease[nPos + 3]))
             {
               string strYear = m_strDateOfRelease.Substring(nPos, 4);
@@ -319,7 +315,7 @@ namespace MediaPortal.Music.Database
               nPos = m_strDateOfRelease.IndexOf("20", nPos + 1);
               if (nPos > -1)
               {
-                if ((int) m_strDateOfRelease.Length > nPos + 3 && Char.IsDigit(m_strDateOfRelease[nPos + 2]) &&
+                if ((int)m_strDateOfRelease.Length > nPos + 3 && Char.IsDigit(m_strDateOfRelease[nPos + 2]) &&
                     Char.IsDigit(m_strDateOfRelease[nPos + 3]))
                 {
                   string strYear = m_strDateOfRelease.Substring(nPos, 4);
@@ -336,11 +332,11 @@ namespace MediaPortal.Music.Database
           int iStartOfGenre = util.FindTag(html, "<li", ref strTag, 0);
           if (iStartOfGenre >= 0)
           {
-            iStartOfGenre += (int) strTag.Length;
+            iStartOfGenre += (int)strTag.Length;
             int iEndOfGenre = util.FindClosingTag(html, "li", ref strTag, iStartOfGenre) - 1;
             if (iEndOfGenre < 0)
             {
-              iEndOfGenre = (int) html.Length;
+              iEndOfGenre = (int)html.Length;
             }
 
             string strValue = html.Substring(iStartOfGenre, 1 + iEndOfGenre - iStartOfGenre);
@@ -365,7 +361,7 @@ namespace MediaPortal.Music.Database
                 {
                   break;
                 }
-                iStartOfStyle += (int) strTag.Length;
+                iStartOfStyle += (int)strTag.Length;
                 int iEndOfStyle = util.FindClosingTag(html, "li", ref strTag, iStartOfStyle) - 1;
                 if (iEndOfStyle < 0)
                 {
@@ -393,7 +389,7 @@ namespace MediaPortal.Music.Database
             {
               break;
             }
-            iStartOfMoods += (int) strTag.Length;
+            iStartOfMoods += (int)strTag.Length;
             int iEndOfMoods = util.FindClosingTag(html, "li", ref strTag, iStartOfMoods) - 1;
             if (iEndOfMoods < 0)
             {
@@ -418,9 +414,7 @@ namespace MediaPortal.Music.Database
           {
             m_iRating = Int32.Parse(strRating);
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
 
@@ -473,9 +467,7 @@ namespace MediaPortal.Music.Database
               {
                 iTrack = Int32.Parse(row.GetColumValue(2));
               }
-              catch (Exception)
-              {
-              }
+              catch (Exception) {}
 
               //	Songname
               string strValue, strName;
@@ -504,10 +496,8 @@ namespace MediaPortal.Music.Database
                   iMin = Int32.Parse(strMin);
                   iSec = Int32.Parse(strSec);
                 }
-                catch (Exception)
-                {
-                }
-                iDuration = iMin*60 + iSec;
+                catch (Exception) {}
+                iDuration = iMin * 60 + iSec;
               }
 
               //	Create new song object
@@ -603,9 +593,7 @@ namespace MediaPortal.Music.Database
                 {
                   song.Track = Int32.Parse(strCol);
                 }
-                catch (Exception)
-                {
-                }
+                catch (Exception) {}
                 break;
               case 1:
                 song.SongName = strCol;
@@ -616,9 +604,7 @@ namespace MediaPortal.Music.Database
                 {
                   song.Duration = Int32.Parse(strCol);
                 }
-                catch (Exception)
-                {
-                }
+                catch (Exception) {}
                 break;
             }
             iTok++;

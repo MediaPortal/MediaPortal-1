@@ -50,10 +50,11 @@ namespace MediaPortal
       else
       {
         ex = new Exception(string.Format(
-                @"A crash occured, but no Exception object was found. 
+                             @"A crash occured, but no Exception object was found. 
                 Type of exception: {0}
-                object.ToString {1}", eventArgs.ExceptionObject.GetType(), eventArgs.ExceptionObject.ToString())
-                );
+                object.ToString {1}",
+                             eventArgs.ExceptionObject.GetType(), eventArgs.ExceptionObject.ToString())
+          );
         Log.Error(ex);
       }
 

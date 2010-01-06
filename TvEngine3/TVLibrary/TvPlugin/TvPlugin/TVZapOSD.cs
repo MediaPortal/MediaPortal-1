@@ -61,11 +61,11 @@ namespace TvPlugin
 
     private TvPlugin.TVHome.ChannelErrorInfo m_lastError = null;
 
-    public TvPlugin.TVHome.ChannelErrorInfo LastError 
+    public TvPlugin.TVHome.ChannelErrorInfo LastError
     {
       get { return m_lastError; }
       set
-      { 
+      {
         m_lastError = value;
         TVHome.Navigator.SetFailingChannel(m_lastError.FailingChannel);
       }
@@ -73,7 +73,7 @@ namespace TvPlugin
 
     public TvZapOsd()
     {
-      GetID = (int) Window.WINDOW_TVZAPOSD;
+      GetID = (int)Window.WINDOW_TVZAPOSD;
     }
 
     public override bool IsTv
@@ -84,7 +84,7 @@ namespace TvPlugin
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\tvZAPOSD.xml");
-      GetID = (int) Window.WINDOW_TVZAPOSD;
+      GetID = (int)Window.WINDOW_TVZAPOSD;
       return bResult;
     }
 
@@ -126,7 +126,7 @@ namespace TvPlugin
           {
             if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
             {
-              TvFullScreen tvWindow = (TvFullScreen) GUIWindowManager.GetWindow((int) Window.WINDOW_TVFULLSCREEN);
+              TvFullScreen tvWindow = (TvFullScreen)GUIWindowManager.GetWindow((int)Window.WINDOW_TVFULLSCREEN);
               tvWindow.OnAction(new Action(Action.ActionType.ACTION_SHOW_OSD, 0, 0));
               tvWindow.OnAction(action);
             }
@@ -208,7 +208,7 @@ namespace TvPlugin
 
       foreach (CPosition pos in _listPositions)
       {
-        pos.control.SetPosition((int) pos.XPos, (int) pos.YPos + iCalibrationY);
+        pos.control.SetPosition((int)pos.XPos, (int)pos.YPos + iCalibrationY);
       }
       foreach (CPosition pos in _listPositions)
       {
@@ -235,7 +235,7 @@ namespace TvPlugin
           GUIControl pControl = pos.control;
           int dwPosX = pControl.XPosition;
           int dwPosY = pControl.YPosition;
-          if (dwPosY < (int) 100)
+          if (dwPosY < (int)100)
           {
             dwPosY += Math.Abs(iMin);
             pControl.SetPosition(dwPosX, dwPosY);
@@ -358,7 +358,8 @@ namespace TvPlugin
           lblOnTvNow.Label = LastError.Messages[0]; // first line in "NOW"
           if (LastError.Messages.Count > 1)
           {
-            lblOnTvNext.Label = String.Join(", ", LastError.Messages.ToArray(), 1, LastError.Messages.Count - 1); // 2nd and later in "NEXT"
+            lblOnTvNext.Label = String.Join(", ", LastError.Messages.ToArray(), 1, LastError.Messages.Count - 1);
+              // 2nd and later in "NEXT"
           }
         }
         m_lastError = null; // reset member only, not the failing channel info in Navigator
@@ -440,9 +441,9 @@ namespace TvPlugin
       double iTotalSecs = ts.TotalSeconds;
       ts = DateTime.Now - prog.StartTime;
       double iCurSecs = ts.TotalSeconds;
-      fPercent = ((double) iCurSecs)/((double) iTotalSecs);
+      fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
       fPercent *= 100.0d;
-      GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int) fPercent).ToString());
+      GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
     }
   }
 }

@@ -36,9 +36,7 @@ public class MyTetrisControl : GUIControl, IHostTetris
   #region Construction
 
   public MyTetrisControl(int nParentID)
-    : base(nParentID)
-  {
-  }
+    : base(nParentID) {}
 
   #endregion Construction
 
@@ -91,8 +89,8 @@ public class MyTetrisControl : GUIControl, IHostTetris
   {
     if (nHint != 2)
     {
-      int nX = m_nBoardX + (int) (x*m_cxBlock);
-      int nY = m_nBoardY + (int) (y*m_cyBlock);
+      int nX = m_nBoardX + (int)(x * m_cxBlock);
+      int nY = m_nBoardY + (int)(y * m_cyBlock);
 
       int nImage = ColorToBlock(color);
 
@@ -172,12 +170,12 @@ public class MyTetrisControl : GUIControl, IHostTetris
 
           m_Font.GetTextExtent(m_strPaused, ref fW, ref fH);
 
-          m_cxPaused = (int) fW;
-          m_cyPaused = (int) fH;
+          m_cxPaused = (int)fW;
+          m_cyPaused = (int)fH;
         }
 
-        int x = _positionX + ((_width - m_cxPaused)/2);
-        int y = _positionY + ((_height - m_cyPaused)/2);
+        int x = _positionX + ((_width - m_cxPaused) / 2);
+        int y = _positionY + ((_height - m_cyPaused) / 2);
 
         m_Font.DrawText(x, y - m_cyPaused, m_dwTextColor, m_strPaused, Alignment.ALIGN_LEFT, -1);
       }
@@ -190,12 +188,12 @@ public class MyTetrisControl : GUIControl, IHostTetris
 
           m_Font.GetTextExtent(m_strGameOver, ref fW, ref fH);
 
-          m_cxGameOver = (int) fW;
-          m_cyGameOver = (int) fH;
+          m_cxGameOver = (int)fW;
+          m_cyGameOver = (int)fH;
         }
 
-        int x = _positionX + ((_width - m_cxGameOver)/2);
-        int y = _positionY + ((_height - m_cyGameOver)/2);
+        int x = _positionX + ((_width - m_cxGameOver) / 2);
+        int y = _positionY + ((_height - m_cyGameOver) / 2);
 
         m_Font.DrawText(x, y - m_cyGameOver, m_dwTextColor, m_strGameOver, Alignment.ALIGN_LEFT, -1);
       }
@@ -209,12 +207,12 @@ public class MyTetrisControl : GUIControl, IHostTetris
 
         m_Font.GetTextExtent(m_strStart, ref fW, ref fH);
 
-        m_cxPressToStart = (int) fW;
-        m_cyPressToStart = (int) fH;
+        m_cxPressToStart = (int)fW;
+        m_cyPressToStart = (int)fH;
       }
 
-      int x = _positionX + ((_width - m_cxPressToStart)/2);
-      int y = _positionY + ((_height - m_cyPressToStart)/2);
+      int x = _positionX + ((_width - m_cxPressToStart) / 2);
+      int y = _positionY + ((_height - m_cyPressToStart) / 2);
 
       m_Font.DrawText(x, y - m_cyPressToStart, m_dwTextColor, m_strStart, Alignment.ALIGN_LEFT, -1);
     }
@@ -308,12 +306,12 @@ public class MyTetrisControl : GUIControl, IHostTetris
     m_nBoardWidth = (m_nBoardWidth == -99999) ? this.Width : m_nBoardWidth;
     m_nBoardHeight = (m_nBoardHeight == -99999) ? this.Height : m_nBoardHeight;
 
-    m_cyBlock = m_nBoardHeight/(Game.Height + 2);
+    m_cyBlock = m_nBoardHeight / (Game.Height + 2);
     m_cxBlock = m_cyBlock;
-    m_nBoardWidth = m_cxBlock*Game.Width;
+    m_nBoardWidth = m_cxBlock * Game.Width;
 
-    m_nBoardX = (m_nBoardX == -99999) ? _positionX + ((this.Width - (m_cxBlock*Game.Width))/2) : m_nBoardX;
-    m_nBoardY = (m_nBoardY == -99999) ? _positionY + ((this.Height - (m_cyBlock*Game.Height))/2) : m_nBoardY;
+    m_nBoardX = (m_nBoardX == -99999) ? _positionX + ((this.Width - (m_cxBlock * Game.Width)) / 2) : m_nBoardX;
+    m_nBoardY = (m_nBoardY == -99999) ? _positionY + ((this.Height - (m_cyBlock * Game.Height)) / 2) : m_nBoardY;
     m_nBoardY = m_nBoardY - m_cyBlock;
 
     m_imgBlocks = new GUIImage[]
@@ -469,16 +467,16 @@ public class MyTetrisControl : GUIControl, IHostTetris
 
     if (m_imgGuide[0] != null)
     {
-      m_imgGuide[0].Height = m_nBoardHeight - (m_cyBlock*2);
+      m_imgGuide[0].Height = m_nBoardHeight - (m_cyBlock * 2);
       m_imgGuide[0].SetPosition(m_nBoardX - (m_imgGuide[0].Width + 2),
-                                ((m_nBoardY + m_cyBlock) + (Game.Height*m_cyBlock)) - m_imgGuide[0].Height);
+                                ((m_nBoardY + m_cyBlock) + (Game.Height * m_cyBlock)) - m_imgGuide[0].Height);
     }
 
     if (m_imgGuide[1] != null)
     {
-      m_imgGuide[1].Height = m_nBoardHeight - (m_cyBlock*2);
+      m_imgGuide[1].Height = m_nBoardHeight - (m_cyBlock * 2);
       m_imgGuide[1].SetPosition(m_nBoardX + m_nBoardWidth + 2,
-                                ((m_nBoardY + m_cyBlock) + (Game.Height*m_cyBlock)) - m_imgGuide[1].Height);
+                                ((m_nBoardY + m_cyBlock) + (Game.Height * m_cyBlock)) - m_imgGuide[1].Height);
     }
 
     if (m_imgBlocksGlow != null)
@@ -504,15 +502,15 @@ public class MyTetrisControl : GUIControl, IHostTetris
 
         if (m_nNextBlockAlign == Alignment.ALIGN_LEFT)
         {
-          image.SetPosition(nNextBlockX, nNextBlockY - (image.Height/2));
+          image.SetPosition(nNextBlockX, nNextBlockY - (image.Height / 2));
         }
         else if (m_nNextBlockAlign == Alignment.ALIGN_CENTER)
         {
-          image.SetPosition(nNextBlockX - (image.Width/2), nNextBlockY - (image.Height/2));
+          image.SetPosition(nNextBlockX - (image.Width / 2), nNextBlockY - (image.Height / 2));
         }
         else if (m_nNextBlockAlign == Alignment.ALIGN_RIGHT)
         {
-          image.SetPosition(nNextBlockX - image.Width, nNextBlockY - (image.Height/2));
+          image.SetPosition(nNextBlockX - image.Width, nNextBlockY - (image.Height / 2));
         }
       }
     }

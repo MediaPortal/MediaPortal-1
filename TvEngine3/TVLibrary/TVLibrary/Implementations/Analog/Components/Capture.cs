@@ -38,8 +38,9 @@ namespace TvLibrary.Implementations.Analog.Components
   internal class Capture : IDisposable
   {
     #region struct
+
 #pragma warning disable 649,169,0649 // All fields are used by the Marshal.PtrToStructure function
-    private struct MPEG2VideoInfo		//  MPEG2VideoInfo
+    private struct MPEG2VideoInfo //  MPEG2VideoInfo
     {
       internal VideoInfoHeader2 hdr;
       internal UInt32 dwStartTimeCode;
@@ -50,72 +51,90 @@ namespace TvLibrary.Implementations.Analog.Components
       internal UInt32 dwSequenceHeader;
     }
 #pragma warning restore 649,169, 0649
+
     #endregion
 
     #region variables
+
     /// <summary>
     /// The video capture filter
     /// </summary>
     private IBaseFilter _filterVideoCapture;
+
     /// <summary>
     /// The audio capture filter
     /// </summary>
     private IBaseFilter _filterAudioCapture;
+
     /// <summary>
     /// The analog video decoder interface, needed for the VCR signal and video format
     /// </summary>
     private IAMAnalogVideoDecoder _analogVideoDecoder;
+
     /// <summary>
     /// A bitmask of available video formats
     /// </summary>
     private AnalogVideoStandard _videoFormats;
+
     /// <summary>
     /// The current video format
     /// </summary>
     private AnalogVideoStandard _currentVideoFormat;
+
     /// <summary>
     /// The video proc amp interface for the vide quality
     /// </summary>
     private IAMVideoProcAmp _videoProcAmp;
+
     /// <summary>
     /// A map of the default and current video proc amp
     /// </summary>
     private Dictionary<VideoProcAmpProperty, VideoQuality> _defaultVideoProcAmpValues;
+
     /// <summary>
     /// The stream config interface for setting the frame rate and frame size
     /// </summary>
     private IAMStreamConfig _streamConfig;
+
     /// <summary>
     /// The video capture device
     /// </summary>
     private DsDevice _videoCaptureDevice;
+
     /// <summary>
     /// The audio capture device
     /// </summary>
     private DsDevice _audioCaptureDevice;
+
     /// <summary>
     /// List of bad capture device
     /// </summary>
     private readonly List<String> _badCaptureDevices;
+
     /// <summary>
     /// The teletext output pin
     /// </summary>
     private IPin _pinVBI;
+
     /// <summary>
     /// The current image width
     /// </summary>
     private int _imageWidth = 720;
+
     /// <summary>
     /// The current image height
     /// </summary>
     private int _imageHeight = 576;
+
     /// <summary>
     /// The current frame rate
     /// </summary>
     private double _frameRate = 25.0;
+
     #endregion
 
     #region properties
+
     /// <summary>
     /// Gets the video capture name
     /// </summary>
@@ -179,9 +198,11 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       get { return _pinVBI != null; }
     }
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Constructor, which set the list of bad capture devices
     /// </summary>
@@ -192,9 +213,11 @@ namespace TvLibrary.Implementations.Analog.Components
       _badCaptureDevices.Add("NVIDIA DualTV YUV Capture");
       _badCaptureDevices.Add("NVIDIA DualTV YUV Capture 2");
     }
+
     #endregion
 
     #region Dispose
+
     /// <summary>
     /// Disposes the capture component
     /// </summary>
@@ -226,9 +249,11 @@ namespace TvLibrary.Implementations.Analog.Components
         _videoCaptureDevice = null;
       }
     }
+
     #endregion
 
     #region CreateFilterInstance method
+
     /// <summary>
     /// Adds the tv capture to the graph and connects it to the crossbar.
     /// At the end of this method the graph looks like:
@@ -245,7 +270,8 @@ namespace TvLibrary.Implementations.Analog.Components
     /// <param name="graphBuilder">The graphBuilder</param>
     /// <param name="capBuilder">The Capture graph builder</param>
     /// <returns>true, if the graph building was successful</returns>
-    public bool CreateFilterInstance(Graph graph, ICaptureGraphBuilder2 capBuilder, IFilterGraph2 graphBuilder, Tuner tuner, Crossbar crossbar, TvAudio tvAudio)
+    public bool CreateFilterInstance(Graph graph, ICaptureGraphBuilder2 capBuilder, IFilterGraph2 graphBuilder,
+                                     Tuner tuner, Crossbar crossbar, TvAudio tvAudio)
     {
       if (!string.IsNullOrEmpty(graph.Capture.Name))
       {
@@ -259,9 +285,11 @@ namespace TvLibrary.Implementations.Analog.Components
       Log.Log.WriteFile("analog: No stored or invalid graph for Capture component - Trying to detect");
       return CreateAutomaticFilterInstance(graph, capBuilder, graphBuilder, tuner, crossbar, tvAudio);
     }
+
     #endregion
 
     #region private helper methods
+
     /// <summary>
     /// Creates the filter based on the configuration file
     /// </summary>
@@ -272,7 +300,9 @@ namespace TvLibrary.Implementations.Analog.Components
     /// <param name="graphBuilder">The graphBuilder</param>
     /// <param name="capBuilder">The Capture graph builder</param>
     /// <returns>true, if the graph building was successful</returns>
-    private bool CreateConfigurationBasedFilterInstance(Graph graph, ICaptureGraphBuilder2 capBuilder, IFilterGraph2 graphBuilder, Tuner tuner, Crossbar crossbar, TvAudio tvAudio)
+    private bool CreateConfigurationBasedFilterInstance(Graph graph, ICaptureGraphBuilder2 capBuilder,
+                                                        IFilterGraph2 graphBuilder, Tuner tuner, Crossbar crossbar,
+                                                        TvAudio tvAudio)
     {
       string videoDeviceName = graph.Capture.AudioCaptureName;
       string audioDeviceName = graph.Capture.Name;
@@ -320,7 +350,8 @@ namespace TvLibrary.Implementations.Analog.Components
           Log.Log.WriteFile("analog: Device: {0} in use?", devices[i].Name);
           continue;
         }
-        if (!videoDeviceName.Equals(devices[i].Name) && (audioDeviceName == null || !audioDeviceName.Equals(devices[i].Name)))
+        if (!videoDeviceName.Equals(devices[i].Name) &&
+            (audioDeviceName == null || !audioDeviceName.Equals(devices[i].Name)))
           continue;
         int hr;
         try
@@ -345,7 +376,8 @@ namespace TvLibrary.Implementations.Analog.Components
           continue;
         }
         // connect crossbar->video capture filter
-        if (videoDeviceName.Equals(devices[i].Name) && FilterGraphTools.ConnectPin(graphBuilder, crossbar.VideoOut, tmp, graph.Capture.VideoIn))
+        if (videoDeviceName.Equals(devices[i].Name) &&
+            FilterGraphTools.ConnectPin(graphBuilder, crossbar.VideoOut, tmp, graph.Capture.VideoIn))
         {
           _filterVideoCapture = tmp;
           _videoCaptureDevice = devices[i];
@@ -359,7 +391,8 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         // crossbar->audio capture filter
         // Many video capture are also the audio capture filter, so we can always try it again
-        if (audioDeviceName.Equals(devices[i].Name) && FilterGraphTools.ConnectPin(graphBuilder, crossbar.AudioOut, tmp, graph.Capture.AudioIn))
+        if (audioDeviceName.Equals(devices[i].Name) &&
+            FilterGraphTools.ConnectPin(graphBuilder, crossbar.AudioOut, tmp, graph.Capture.AudioIn))
         {
           _filterAudioCapture = tmp;
           _audioCaptureDevice = devices[i];
@@ -371,7 +404,7 @@ namespace TvLibrary.Implementations.Analog.Components
           audioConnected = true;
           filterUsed = true;
         }
-        // _audioCaptureDevice should never be null - avoids null exception crashes with Encoder.cs
+          // _audioCaptureDevice should never be null - avoids null exception crashes with Encoder.cs
         else
         {
           _audioCaptureDevice = devices[i];
@@ -425,7 +458,8 @@ namespace TvLibrary.Implementations.Analog.Components
     /// <param name="graphBuilder">The graphBuilder</param>
     /// <param name="capBuilder">The Capture graph builder</param>
     /// <returns>true, if the graph building was successful</returns>
-    private bool CreateAutomaticFilterInstance(Graph graph, ICaptureGraphBuilder2 capBuilder, IFilterGraph2 graphBuilder, Tuner tuner, Crossbar crossbar, TvAudio tvAudio)
+    private bool CreateAutomaticFilterInstance(Graph graph, ICaptureGraphBuilder2 capBuilder, IFilterGraph2 graphBuilder,
+                                               Tuner tuner, Crossbar crossbar, TvAudio tvAudio)
     {
       DsDevice[] devices;
       bool videoConnected = false;
@@ -492,7 +526,8 @@ namespace TvLibrary.Implementations.Analog.Components
 
         int destinationIndex;
         // connect crossbar->video capture filter
-        if (!videoConnected && FilterGraphTools.ConnectFilter(graphBuilder, crossbar.VideoOut, tmp, out destinationIndex))
+        if (!videoConnected &&
+            FilterGraphTools.ConnectFilter(graphBuilder, crossbar.VideoOut, tmp, out destinationIndex))
         {
           _filterVideoCapture = tmp;
           _videoCaptureDevice = devices[i];
@@ -522,7 +557,7 @@ namespace TvLibrary.Implementations.Analog.Components
           audioConnected = true;
           filterUsed = true;
         }
-        // _audioCaptureDevice should never be null - avoids null exception crashes with Encoder.cs
+          // _audioCaptureDevice should never be null - avoids null exception crashes with Encoder.cs
         else
         {
           _audioCaptureDevice = devices[i];
@@ -564,14 +599,16 @@ namespace TvLibrary.Implementations.Analog.Components
       int pinIndex;
       try
       {
-        IPin pinVBI = FilterGraphTools.GetPinByCategoryAndDirection(_filterVideoCapture, PinCategory.VideoPortVBI, 0, PinDirection.Output, out pinIndex);
+        IPin pinVBI = FilterGraphTools.GetPinByCategoryAndDirection(_filterVideoCapture, PinCategory.VideoPortVBI, 0,
+                                                                    PinDirection.Output, out pinIndex);
         if (pinVBI != null)
         {
           Log.Log.WriteFile("analog: VideoPortVBI pin found");
           Marshal.ReleaseComObject(pinVBI);
           return;
         }
-        pinVBI = FilterGraphTools.GetPinByCategoryAndDirection(_filterVideoCapture, PinCategory.VBI, 0, PinDirection.Output, out pinIndex);
+        pinVBI = FilterGraphTools.GetPinByCategoryAndDirection(_filterVideoCapture, PinCategory.VBI, 0,
+                                                               PinDirection.Output, out pinIndex);
         if (pinVBI != null)
         {
           Log.Log.WriteFile("analog: VBI pin found");
@@ -585,7 +622,8 @@ namespace TvLibrary.Implementations.Analog.Components
         if (ex.ErrorCode.Equals(unchecked((Int32)0x80070490)))
         {
           // pin on a NVTV capture filter is named VBI..
-          Log.Log.WriteFile("analog: getCategory not supported by collection ? ERROR:0x{0:x} :" + ex.Message, ex.ErrorCode);
+          Log.Log.WriteFile("analog: getCategory not supported by collection ? ERROR:0x{0:x} :" + ex.Message,
+                            ex.ErrorCode);
 
           if (_filterVideoCapture == null)
             return;
@@ -651,74 +689,90 @@ namespace TvLibrary.Implementations.Analog.Components
         int min, max, steppingDelta, defaultValue;
         VideoProcAmpFlags flags;
         VideoQuality tempValue;
-        int hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Brightness, out min, out max, out steppingDelta, out defaultValue,
+        int hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Brightness, out min, out max, out steppingDelta,
+                                        out defaultValue,
                                         out flags);
         if (hr == 0)
         {
-          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual, defaultValue);
+          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
+                                       defaultValue);
           _defaultVideoProcAmpValues.Add(VideoProcAmpProperty.Brightness, tempValue);
         }
         hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Contrast, out min, out max, out steppingDelta, out defaultValue,
-                               out flags);
+                                    out flags);
         if (hr == 0)
         {
-          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual, defaultValue);
+          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
+                                       defaultValue);
           _defaultVideoProcAmpValues.Add(VideoProcAmpProperty.Contrast, tempValue);
         }
         hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Hue, out min, out max, out steppingDelta, out defaultValue,
-                               out flags);
+                                    out flags);
         if (hr == 0)
         {
-          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual, defaultValue);
+          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
+                                       defaultValue);
           _defaultVideoProcAmpValues.Add(VideoProcAmpProperty.Hue, tempValue);
         }
-        hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Saturation, out min, out max, out steppingDelta, out defaultValue,
-                               out flags);
+        hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Saturation, out min, out max, out steppingDelta,
+                                    out defaultValue,
+                                    out flags);
         if (hr == 0)
         {
-          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual, defaultValue);
+          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
+                                       defaultValue);
           _defaultVideoProcAmpValues.Add(VideoProcAmpProperty.Saturation, tempValue);
         }
-        hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Sharpness, out min, out max, out steppingDelta, out defaultValue,
-                               out flags);
+        hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Sharpness, out min, out max, out steppingDelta,
+                                    out defaultValue,
+                                    out flags);
         if (hr == 0)
         {
-          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual, defaultValue);
+          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
+                                       defaultValue);
           _defaultVideoProcAmpValues.Add(VideoProcAmpProperty.Sharpness, tempValue);
         }
         hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Gamma, out min, out max, out steppingDelta, out defaultValue,
-                               out flags);
+                                    out flags);
         if (hr == 0)
         {
-          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual, defaultValue);
+          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
+                                       defaultValue);
           _defaultVideoProcAmpValues.Add(VideoProcAmpProperty.Gamma, tempValue);
         }
-        hr = _videoProcAmp.GetRange(VideoProcAmpProperty.ColorEnable, out min, out max, out steppingDelta, out defaultValue,
-                               out flags);
+        hr = _videoProcAmp.GetRange(VideoProcAmpProperty.ColorEnable, out min, out max, out steppingDelta,
+                                    out defaultValue,
+                                    out flags);
         if (hr == 0)
         {
-          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual, defaultValue);
+          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
+                                       defaultValue);
           _defaultVideoProcAmpValues.Add(VideoProcAmpProperty.ColorEnable, tempValue);
         }
-        hr = _videoProcAmp.GetRange(VideoProcAmpProperty.WhiteBalance, out min, out max, out steppingDelta, out defaultValue,
-                               out flags);
+        hr = _videoProcAmp.GetRange(VideoProcAmpProperty.WhiteBalance, out min, out max, out steppingDelta,
+                                    out defaultValue,
+                                    out flags);
         if (hr == 0)
         {
-          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual, defaultValue);
+          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
+                                       defaultValue);
           _defaultVideoProcAmpValues.Add(VideoProcAmpProperty.WhiteBalance, tempValue);
         }
-        hr = _videoProcAmp.GetRange(VideoProcAmpProperty.BacklightCompensation, out min, out max, out steppingDelta, out defaultValue,
-                               out flags);
+        hr = _videoProcAmp.GetRange(VideoProcAmpProperty.BacklightCompensation, out min, out max, out steppingDelta,
+                                    out defaultValue,
+                                    out flags);
         if (hr == 0)
         {
-          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual, defaultValue);
+          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
+                                       defaultValue);
           _defaultVideoProcAmpValues.Add(VideoProcAmpProperty.BacklightCompensation, tempValue);
         }
         hr = _videoProcAmp.GetRange(VideoProcAmpProperty.Gain, out min, out max, out steppingDelta, out defaultValue,
-                               out flags);
+                                    out flags);
         if (hr == 0)
         {
-          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual, defaultValue);
+          tempValue = new VideoQuality(min, max, steppingDelta, defaultValue, flags == VideoProcAmpFlags.Manual,
+                                       defaultValue);
           _defaultVideoProcAmpValues.Add(VideoProcAmpProperty.Gain, tempValue);
         }
         graph.Capture.VideoProcAmpValues = _defaultVideoProcAmpValues;
@@ -733,7 +787,7 @@ namespace TvLibrary.Implementations.Analog.Components
     private void CheckCapabilitiesStreamConfig(Graph graph, ICaptureGraphBuilder2 capBuilder)
     {
       DsGuid cat = new DsGuid(PinCategory.Capture);
-      Guid iid = typeof(IAMStreamConfig).GUID;
+      Guid iid = typeof (IAMStreamConfig).GUID;
       object o;
       int hr = capBuilder.FindInterface(cat, null, _filterVideoCapture, iid, out o);
       if (hr == 0)
@@ -1047,9 +1101,11 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       return bmiHeader;
     }
+
     #endregion
 
     #region public methods
+
     /// <summary>
     /// Sets the new capture component configurations
     /// </summary>
@@ -1071,8 +1127,8 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         _analogVideoDecoder.put_VCRHorizontalLocking(analogChannel.IsVCRSignal);
       }
-
     }
+
     #endregion
   }
 }

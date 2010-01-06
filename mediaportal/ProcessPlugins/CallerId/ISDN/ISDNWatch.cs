@@ -122,9 +122,7 @@ namespace ProcessPlugins.CallerId
     private const int CAPI_CONNECT = 0x02;
     private const int CAPI_IND = 0x82;
 
-    public ISDNWatch()
-    {
-    }
+    public ISDNWatch() {}
 
     public class LocationInfo
     {
@@ -147,9 +145,7 @@ namespace ProcessPlugins.CallerId
         {
           result = CAPI_INSTALLED();
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
 
         if (result == 0)
         {
@@ -191,7 +187,7 @@ namespace ProcessPlugins.CallerId
 
         capiRequest capiRequest = new capiRequest();
         capiRequest.Length = 26;
-        capiRequest.ApplicationId = (short) applicationId;
+        capiRequest.ApplicationId = (short)applicationId;
         capiRequest.Command = 0x0005;
         capiRequest.SubCommand = 0x0080;
         capiRequest.MessageNumber = 1;
@@ -230,7 +226,7 @@ namespace ProcessPlugins.CallerId
               if ((messageHeader.Command == CAPI_CONNECT) && (messageHeader.SubCommand == CAPI_IND))
               {
                 capiConnectInd ConnectInd = new capiConnectInd();
-                RtlMoveMemory(ref ConnectInd, (IntPtr) (capiBufferPointer.ToInt32() + HeaderLength),
+                RtlMoveMemory(ref ConnectInd, (IntPtr)(capiBufferPointer.ToInt32() + HeaderLength),
                               (messageHeader.Length - HeaderLength));
 
                 for (int i = 99; i >= 0; i--)
@@ -243,7 +239,7 @@ namespace ProcessPlugins.CallerId
                     }
                     else
                     {
-                      logBuffer = (char) ConnectInd.buffer[i] + logBuffer;
+                      logBuffer = (char)ConnectInd.buffer[i] + logBuffer;
                     }
                   }
                 }
@@ -255,11 +251,11 @@ namespace ProcessPlugins.CallerId
 
                 for (int i = 2; i < (lengthCalledId + 1); i++)
                 {
-                  calledId = calledId + (char) ConnectInd.buffer[i];
+                  calledId = calledId + (char)ConnectInd.buffer[i];
                 }
                 for (int i = (lengthCalledId + 4); i < (lengthCallerId + lengthCalledId + 2); i++)
                 {
-                  callerId = callerId + (char) ConnectInd.buffer[i];
+                  callerId = callerId + (char)ConnectInd.buffer[i];
                 }
 
                 if (callerId != null)

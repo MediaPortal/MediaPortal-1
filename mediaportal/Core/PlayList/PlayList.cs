@@ -40,9 +40,7 @@ namespace MediaPortal.Playlists
     protected string _playListName = "";
     protected List<PlayListItem> _listPlayListItems = new List<PlayListItem>();
 
-    public PlayList()
-    {
-    }
+    public PlayList() {}
 
     public bool AllPlayed()
     {
@@ -161,7 +159,7 @@ namespace MediaPortal.Playlists
     public PlayListItem this[int iItem]
     {
       get { return _listPlayListItems[iItem]; }
-      set { _listPlayListItems[iItem] = value;  }
+      set { _listPlayListItems[iItem] = value; }
     }
 
 
@@ -196,7 +194,7 @@ namespace MediaPortal.Playlists
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      IEnumerable enumerable = (IEnumerable) _listPlayListItems;
+      IEnumerable enumerable = (IEnumerable)_listPlayListItems;
       return enumerable.GetEnumerator();
     }
 
@@ -318,9 +316,7 @@ namespace MediaPortal.Playlists
       set { _SortBy = value; }
     }
 
-    public PlayListItemComparer()
-    {
-    }
+    public PlayListItemComparer() {}
 
     public PlayListItemComparer(SortMethod sortBy)
     {
@@ -334,8 +330,8 @@ namespace MediaPortal.Playlists
         return 0;
       }
 
-      MusicTag tag1 = (MusicTag) item1.MusicTag;
-      MusicTag tag2 = (MusicTag) item2.MusicTag;
+      MusicTag tag1 = (MusicTag)item1.MusicTag;
+      MusicTag tag2 = (MusicTag)item2.MusicTag;
 
       int stringCompareResults = tag1.Album.CompareTo(tag2.Album);
 

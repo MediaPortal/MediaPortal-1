@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
@@ -10,23 +10,24 @@ namespace MediaPortal.Configuration
     [SuppressUnmanagedCodeSecurity] // We won't use this maliciously
     [DllImport("advapi32.dll", CharSet = CharSet.Unicode, EntryPoint = "RegOpenKeyEx", SetLastError = true)]
     public static extern int RegOpenKeyEx(
-        UIntPtr hKey,
-        string subKey,
-        uint options,
-        int sam,
-        out UIntPtr phkResult);
+      UIntPtr hKey,
+      string subKey,
+      uint options,
+      int sam,
+      out UIntPtr phkResult);
 
     [SuppressUnmanagedCodeSecurity] // We won't use this maliciously
     [DllImport("advapi32.dll", CharSet = CharSet.Unicode, EntryPoint = "RegQueryValueExW", SetLastError = true)]
     public static extern int RegQueryValueEx(
-        UIntPtr hKey,
-        string lpValueName,
-        int lpReserved,
-        out uint lpType,
-        StringBuilder lpData,
-        ref uint lpcbData);
+      UIntPtr hKey,
+      string lpValueName,
+      int lpReserved,
+      out uint lpType,
+      StringBuilder lpData,
+      ref uint lpcbData);
 
     #region RegistyrFlags
+
     [Flags]
     public enum RegWow64Options
     {
@@ -48,6 +49,7 @@ namespace MediaPortal.Configuration
       HKCU = 0x80000001,
       HKLM = 0x80000002
     }
+
     #endregion
   }
 }

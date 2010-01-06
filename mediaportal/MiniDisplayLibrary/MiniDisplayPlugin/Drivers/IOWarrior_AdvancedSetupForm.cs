@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -228,9 +228,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                 | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.groupBox5);
       this.groupBox1.Controls.Add(this.groupEqualizerOptions);
       this.groupBox1.FlatStyle = FlatStyle.Popup;
@@ -243,8 +243,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBox5
       // 
-      this.groupBox5.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.groupBox5.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.groupBox5.Controls.Add(this.cbUseClockOnShutdown);
       this.groupBox5.Controls.Add(this.mpEnableDisplayActionTime);
       this.groupBox5.Controls.Add(this.cmbBlankIdleTime);
@@ -380,9 +380,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupEqualizerOptions
       // 
-      this.groupEqualizerOptions.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                             | AnchorStyles.Left)
-                                                            | AnchorStyles.Right)));
+      this.groupEqualizerOptions.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                            | AnchorStyles.Left)
+                                                           | AnchorStyles.Right)));
       this.groupEqualizerOptions.Controls.Add(this.groupEQstyle);
       this.groupEqualizerOptions.Controls.Add(this.cmbDelayEqTime);
       this.groupEqualizerOptions.Controls.Add(this.lblRestrictEQ);
@@ -404,8 +404,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupEQstyle
       // 
-      this.groupEQstyle.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                   | AnchorStyles.Right)));
+      this.groupEQstyle.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                  | AnchorStyles.Right)));
       this.groupEQstyle.Controls.Add(this.cbUseVUmeter2);
       this.groupEQstyle.Controls.Add(this.cbVUindicators);
       this.groupEQstyle.Controls.Add(this.cbUseVUmeter);
@@ -519,7 +519,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // lblRestrictEQ
       // 
-      this.lblRestrictEQ.Anchor = ((AnchorStyles) ((AnchorStyles.Top | AnchorStyles.Right)));
+      this.lblRestrictEQ.Anchor = ((AnchorStyles)((AnchorStyles.Top | AnchorStyles.Right)));
       this.lblRestrictEQ.Location = new Point(102, 124);
       this.lblRestrictEQ.Name = "lblRestrictEQ";
       this.lblRestrictEQ.Size = new Size(116, 17);
@@ -658,8 +658,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cmbEqRate
       // 
-      this.cmbEqRate.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.cmbEqRate.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.cmbEqRate.BorderColor = Color.Empty;
       this.cmbEqRate.DropDownStyle = ComboBoxStyle.DropDownList;
       this.cmbEqRate.Items.AddRange(new object[]
@@ -753,7 +753,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnOK
       // 
-      this.btnOK.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.btnOK.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
       this.btnOK.Location = new Point(316, 380);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new Size(88, 23);
@@ -764,7 +764,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnReset
       // 
-      this.btnReset.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.btnReset.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
       this.btnReset.Location = new Point(222, 380);
       this.btnReset.Name = "btnReset";
       this.btnReset.Size = new Size(88, 23);

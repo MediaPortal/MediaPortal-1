@@ -40,9 +40,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("MarkOffsetY")] protected int markOffsetY;
 
 
-    public GUICheckListControl(int dwParentID) : base(dwParentID)
-    {
-    }
+    public GUICheckListControl(int dwParentID) : base(dwParentID) {}
 
     /// <summary>
     /// The constructor of the GUICheckListControl.
@@ -147,13 +145,13 @@ namespace MediaPortal.GUI.Library
         bool selected = false;
         if (i < _listItems.Count)
         {
-          GUIListItem item = (GUIListItem) _listItems[i + _offset];
+          GUIListItem item = (GUIListItem)_listItems[i + _offset];
           if (item.Selected)
           {
             selected = true;
           }
         }
-        GUIControl btn = (GUIControl) _listButtons[i];
+        GUIControl btn = (GUIControl)_listButtons[i];
         btn.Focus = false;
         btn.Selected = selected;
         if (i == _cursorX)
@@ -167,8 +165,8 @@ namespace MediaPortal.GUI.Library
     {
       if (buttonNr + _offset >= 0 && buttonNr + _offset < _listItems.Count)
       {
-        GUIListItem item = (GUIListItem) _listItems[buttonNr + _offset];
-        GUICheckButton cntl = (GUICheckButton) _listButtons[buttonNr];
+        GUIListItem item = (GUIListItem)_listItems[buttonNr + _offset];
+        GUICheckButton cntl = (GUICheckButton)_listButtons[buttonNr];
         cntl.Selected = item.Selected;
       }
       base.RenderButton(timePassed, buttonNr, x, y, gotFocus);

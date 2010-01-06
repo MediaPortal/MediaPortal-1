@@ -23,7 +23,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Runtime.CompilerServices;
-
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using TvControl;
@@ -34,7 +33,6 @@ namespace TvService
 {
   public class AdvancedCardAllocation : CardAllocationBase, ICardAllocation
   {
-
     #region private members    
 
     private static bool IsCardFoundEnabled(List<CardDetail> cardsAvailable, KeyValuePair<int, ITvCardHandler> keyPair)
@@ -74,28 +72,32 @@ namespace TvService
         isCardPresent = true;
       }
       return isCardPresent;
-    }               
-   
-    private bool CheckTransponder(Channel dbChannel, User user, ITvCardHandler tvcard, int decryptLimit, int cardId, IChannel tuningDetail, bool checkTransponders, out bool isSameTransponder, out bool canDecrypt)
+    }
+
+    private bool CheckTransponder(Channel dbChannel, User user, ITvCardHandler tvcard, int decryptLimit, int cardId,
+                                  IChannel tuningDetail, bool checkTransponders, out bool isSameTransponder,
+                                  out bool canDecrypt)
     {
-      bool checkTransponder = true;      
-      isSameTransponder = (tvcard.Tuner.IsTunedToTransponder(tuningDetail) && (tvcard.SupportsSubChannels || (!checkTransponders)));
+      bool checkTransponder = true;
+      isSameTransponder = (tvcard.Tuner.IsTunedToTransponder(tuningDetail) &&
+                           (tvcard.SupportsSubChannels || (!checkTransponders)));
       canDecrypt = false;
 
-      bool isOwnerOfCard = tvcard.Users.IsOwner(user);      
+      bool isOwnerOfCard = tvcard.Users.IsOwner(user);
 
       if (isSameTransponder)
-      {        
+      {
         if (!isOwnerOfCard)
         {
-            //card is in use, but it is tuned to the same transponder.
+          //card is in use, but it is tuned to the same transponder.
           //meaning.. we can use it.
-          if (tvcard.HasCA && decryptLimit > 0) //does the card have a CA module and a CA limit, if yes then proceed to check cam decrypt limit.
+          if (tvcard.HasCA && decryptLimit > 0)
+            //does the card have a CA module and a CA limit, if yes then proceed to check cam decrypt limit.
           {
             //but we must check if cam can decode the extra channel as well
             //first check if cam is already decrypting this channel          
             bool isCamAlreadyDecodingChannel = IsCamAlreadyDecodingChannel(tvcard, dbChannel);
-                      
+
             //if the user is already using this card
             //and is watching a scrambled signal
             //then we must the CAM will always be able to watch the requested channel
@@ -108,19 +110,20 @@ namespace TvService
             if (isCamAbleToDecrypChannel || isCamAlreadyDecodingChannel)
             {
               Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
-                  cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, decryptLimit);
+                       cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, decryptLimit);
               isSameTransponder = true;
-            }                   
+            }
             else
             {
               //it is not, skip this card
-              Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
-                     cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, decryptLimit);
+              Log.Info(
+                "Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
+                cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, decryptLimit);
 
               //allow admin users like the scheduler to use this card anyway       
-              checkTransponder = (!user.IsAdmin || (user.IsAdmin && isRec));              
-            }         
-          }        
+              checkTransponder = (!user.IsAdmin || (user.IsAdmin && isRec));
+            }
+          }
         } //end of cam present block              
         else // no cam present
         {
@@ -133,9 +136,9 @@ namespace TvService
         //different transponder, are we the owner of this card?
         //allow admin users like the scheduler to use this card anyway
         if (!isOwnerOfCard && !user.IsAdmin)
-        {          
-          Log.Info("Controller:    card:{0} type:{1} is tuned to different transponder", cardId, tvcard.Type);                    
-          checkTransponder = false;                                
+        {
+          Log.Info("Controller:    card:{0} type:{1} is tuned to different transponder", cardId, tvcard.Type);
+          checkTransponder = false;
         }
       }
       return checkTransponder;
@@ -157,8 +160,9 @@ namespace TvService
       return nrOfOtherUsers;
     }
 
-    private int CardPriority(int priority, int nrOfOtherUsers, bool sameTransponder, bool canDecrypt, int cardId, int recommendedCardId)
-    {      
+    private int CardPriority(int priority, int nrOfOtherUsers, bool sameTransponder, bool canDecrypt, int cardId,
+                             int recommendedCardId)
+    {
       //if there are other users on this card and we want to switch to another transponder
       //then set this cards priority as very low...
       if (nrOfOtherUsers > 0 && !sameTransponder)
@@ -185,12 +189,15 @@ namespace TvService
     #endregion
 
     #region ICardAllocation Members
+
     /// <summary>
     /// Gets a list of all free cards which can receive the channel specified
     /// List is sorted by priority
     /// </summary>
     /// <returns>list containg all free cards which can receive the channel</returns>
-    public List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref User user, bool checkTransponders, out TvResult result, int recommendedCardId)
+    public List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel,
+                                                        ref User user, bool checkTransponders, out TvResult result,
+                                                        int recommendedCardId)
     {
       try
       {
@@ -211,7 +218,7 @@ namespace TvService
           result = TvResult.NoTuningDetails;
           return cardsAvailable;
         }
-                
+
         Log.Info("Controller:   got {0} tuning details for {1}", tuningDetails.Count, dbChannel.Name);
 
         int cardsFound = 0;
@@ -241,9 +248,10 @@ namespace TvService
             bool isCardPresent = IsCardPresent(cardId, keyPair.Value.DataBaseCard.ReferencedServer().HostName);
             if (!isCardPresent)
             {
-              Log.Error("card: unable to connect to slave controller at:{0}", keyPair.Value.DataBaseCard.ReferencedServer().HostName);
+              Log.Error("card: unable to connect to slave controller at:{0}",
+                        keyPair.Value.DataBaseCard.ReferencedServer().HostName);
               continue;
-            }            
+            }
 
             if (!tvcard.Tuner.CanTune(tuningDetail))
             {
@@ -259,7 +267,7 @@ namespace TvService
             {
               Log.Info("Controller:    card:{0} type:{1} channel not mapped", cardId, tvcard.Type);
               continue;
-            }            
+            }
 
             //ok card could be used to tune to this channel
             //now we check if its free...
@@ -268,20 +276,22 @@ namespace TvService
             bool canDecrypt = true;
             int decryptLimit = keyPair.Value.DataBaseCard.DecryptLimit;
 
-            bool checkTransponder = CheckTransponder(dbChannel, user, tvcard, decryptLimit, cardId, tuningDetail, checkTransponders, out isSameTransponder, out canDecrypt);
+            bool checkTransponder = CheckTransponder(dbChannel, user, tvcard, decryptLimit, cardId, tuningDetail,
+                                                     checkTransponders, out isSameTransponder, out canDecrypt);
             if (!checkTransponder)
             {
               continue;
-            }                            
-            
+            }
+
             CardDetail cardInfo = new CardDetail(cardId, channelMap.ReferencedCard(), tuningDetail);
 
             //determine how many other users are using this card            
             int nrOfOtherUsers = NumberOfUsersOnCard(cards, user, cardInfo);
-            cardInfo.Priority = CardPriority(cardInfo.Priority, nrOfOtherUsers, isSameTransponder, canDecrypt, cardId, recommendedCardId);            
+            cardInfo.Priority = CardPriority(cardInfo.Priority, nrOfOtherUsers, isSameTransponder, canDecrypt, cardId,
+                                             recommendedCardId);
 
             Log.Info("Controller:    card:{0} type:{1} is available priority:{2} #users:{3} same transponder:{4}",
-                          cardInfo.Id, tvcard.Type, cardInfo.Priority, nrOfOtherUsers, isSameTransponder);
+                     cardInfo.Id, tvcard.Type, cardInfo.Priority, nrOfOtherUsers, isSameTransponder);
 
             cardsAvailable.Add(cardInfo);
           }
@@ -302,7 +312,8 @@ namespace TvService
         Log.Info("Controller: found {0} available", cardsAvailable.Count);
 
         return cardsAvailable;
-      } catch (Exception ex)
+      }
+      catch (Exception ex)
       {
         result = TvResult.UnknownError;
         Log.Write(ex);

@@ -31,7 +31,8 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public class DVBIPScanning : DvbBaseScanning, ITVScanning
   {
-    TvCardDVBIP _card;
+    private TvCardDVBIP _card;
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -66,7 +67,7 @@ namespace TvLibrary.Implementations.DVB
     /// SetHwPids
     /// </summary>
     /// <param name="pids"></param>
-    protected override void  SetHwPids(System.Collections.Generic.List<ushort> pids)
+    protected override void SetHwPids(System.Collections.Generic.List<ushort> pids)
     {
       _card.SendHwPids(pids);
     }
@@ -86,13 +87,17 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     protected override IChannel CreateNewChannel(ChannelInfo info)
     {
-      DVBIPChannel tunningChannel = (DVBIPChannel) _card.CurrentChannel;
+      DVBIPChannel tunningChannel = (DVBIPChannel)_card.CurrentChannel;
       DVBIPChannel dvbipChannel = new DVBIPChannel();
       dvbipChannel.Name = info.service_name;
       dvbipChannel.LogicalChannelNumber = info.LCN;
       dvbipChannel.Provider = info.service_provider_name;
       dvbipChannel.Url = tunningChannel.Url;
-      dvbipChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Video || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg2HDStream || info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream || info.serviceType == (int)DvbBaseScanning.ServiceType.AdvancedCodecHDVideoStream || info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
+      dvbipChannel.IsTv = (info.serviceType == (int)DvbBaseScanning.ServiceType.Video ||
+                           info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg2HDStream ||
+                           info.serviceType == (int)DvbBaseScanning.ServiceType.H264Stream ||
+                           info.serviceType == (int)DvbBaseScanning.ServiceType.AdvancedCodecHDVideoStream ||
+                           info.serviceType == (int)DvbBaseScanning.ServiceType.Mpeg4OrH264Stream);
       dvbipChannel.IsRadio = (info.serviceType == (int)DvbBaseScanning.ServiceType.Audio);
       dvbipChannel.NetworkId = info.networkID;
       dvbipChannel.ServiceId = info.serviceID;

@@ -78,7 +78,7 @@ namespace MediaPortal.Player
         return;
       }
 
-      VMR7Filter = (IBaseFilter) new VideoMixingRenderer();
+      VMR7Filter = (IBaseFilter)new VideoMixingRenderer();
       if (VMR7Filter == null)
       {
         Error.SetError("Unable to play movie", "VMR7 is not installed");
@@ -144,9 +144,7 @@ namespace MediaPortal.Player
               Log.Info("VMR7Helper:RemoveFilter():{0}", result);
             }
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
           while ((result = DirectShowUtil.ReleaseComObject(VMR7Filter)) > 0)
           {
             ;
@@ -236,7 +234,9 @@ namespace MediaPortal.Player
         //all is ok, VMR7 is working
         return true;
       } //get {
-    } //public bool IsVMR7Connected
+    }
+
+    //public bool IsVMR7Connected
 
     public bool SaveBitmap(Bitmap bitmap, bool show, bool transparent, float alphaValue)
     {
@@ -282,7 +282,7 @@ namespace MediaPortal.Player
                 IntPtr handle1 = g.GetHdc();
                 IntPtr hdc = Win32API.CreateCompatibleDC(handle1);
                 IntPtr oldBitmap = Win32API.SelectObject(hdc, n.GetHbitmap());
-                bmp.dwFlags = (VMRBitmap) ((int) VMRBitmap.Hdc + (int) VMRBitmap.SRCColorKey);
+                bmp.dwFlags = (VMRBitmap)((int)VMRBitmap.Hdc + (int)VMRBitmap.SRCColorKey);
                 bmp.clrSrcKey = 0;
                 bmp.pDDS = IntPtr.Zero;
                 bmp.hdc = hdc;
@@ -335,6 +335,12 @@ namespace MediaPortal.Player
         return true;
       }
       return false;
-    } // savevmr7bitmap
-  } //public class VMR7Util
-} //namespace MediaPortal.Player 
+    }
+
+    // savevmr7bitmap
+  }
+
+  //public class VMR7Util
+}
+
+//namespace MediaPortal.Player 

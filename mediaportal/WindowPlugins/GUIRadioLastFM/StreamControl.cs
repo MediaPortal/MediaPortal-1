@@ -599,10 +599,8 @@ namespace MediaPortal.GUI.RADIOLASTFM
           Thread.Sleep(waittime);
         }
       }
-      // While debugging you might get a waittime which is no longer a valid integer.
-      catch (Exception)
-      {
-      }
+        // While debugging you might get a waittime which is no longer a valid integer.
+      catch (Exception) {}
 
       _lastConnectAttempt = DateTime.Now;
 

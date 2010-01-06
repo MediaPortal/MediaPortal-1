@@ -126,7 +126,8 @@ namespace MediaPortal.Player
     //TODO: Maybe get these from Geometry class.
     //The horizontal percentage of the source each partition represents (Should be symmetrical and sum up to 100.0)
     private float[] nlsSourcePartitioning = {
-                                              6.25f, 9.375f, 12.50f, 6.25f, 12.50f, 6.25f, 12.50f, 6.25f, 12.50f, 9.375f,
+                                              6.25f, 9.375f, 12.50f, 6.25f, 12.50f, 6.25f, 12.50f, 6.25f, 12.50f, 9.375f
+                                              ,
                                               6.25f
                                             };
 
@@ -152,13 +153,12 @@ namespace MediaPortal.Player
       _vertexBuffers = new VertexBuffer[nlsSourcePartitioning.Length];
       for (int i = 0; i < _vertexBuffers.Length; i++)
       {
-        _vertexBuffers[i] = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
-                                            4,
-                                            GUIGraphicsContext.DX9Device,
-                                            0,
-                                            CustomVertex.TransformedColoredTextured.Format,
-                                            GUIGraphicsContext.GetTexturePoolType());
-
+        _vertexBuffers[i] = new VertexBuffer(typeof (CustomVertex.TransformedColoredTextured),
+                                             4,
+                                             GUIGraphicsContext.DX9Device,
+                                             0,
+                                             CustomVertex.TransformedColoredTextured.Format,
+                                             GUIGraphicsContext.GetTexturePoolType());
       }
 
       _blackImage = new GUIImage(0);
@@ -569,7 +569,7 @@ namespace MediaPortal.Player
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
         {
           return 0;
-        } 
+        }
 
         _vmr9Util.FreeFrameCounter++;
 
@@ -591,7 +591,6 @@ namespace MediaPortal.Player
       }
       return 0;
     }
-
 
 
     private void InternalPresentImage(int width, int height, int arWidth, int arHeight, bool isRepaint)
@@ -719,7 +718,7 @@ namespace MediaPortal.Player
       catch (DirectXException dex)
       {
         if (dex.ErrorCode == -2005530508 || // GPU_HUNG
-        dex.ErrorCode == -2005530512) // GPU_REMOVED
+            dex.ErrorCode == -2005530512) // GPU_REMOVED
         {
           Log.Info("Planescene caught GPU_HUNG in InternalPresentImage");
           GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
@@ -740,12 +739,11 @@ namespace MediaPortal.Player
     }
 
 
-
-
-    private void DrawTextureSegment(VertexBuffer vertexBuffer, float srcX, float srcY, float srcWidth, float srcHeight, float dstX, float dstY, float dstWidth, float dstHeight, long lColorDiffuse)
+    private void DrawTextureSegment(VertexBuffer vertexBuffer, float srcX, float srcY, float srcWidth, float srcHeight,
+                                    float dstX, float dstY, float dstWidth, float dstHeight, long lColorDiffuse)
     {
       CustomVertex.TransformedColoredTextured[] verts =
-      (CustomVertex.TransformedColoredTextured[])vertexBuffer.Lock(0, 0);
+        (CustomVertex.TransformedColoredTextured[])vertexBuffer.Lock(0, 0);
 
       float fVideoWidth = (float)GUIGraphicsContext.VideoSize.Width;
       float fVideoHeight = (float)GUIGraphicsContext.VideoSize.Height;
@@ -797,7 +795,6 @@ namespace MediaPortal.Player
         GUIGraphicsContext.DX9Device.SetStreamSource(0, vertexBuffer, 0);
         GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
       }
-
     }
 
 
@@ -866,15 +863,15 @@ namespace MediaPortal.Player
         else
         {
           DrawTextureSegment(_vertexBuffers[0],
-                                _sourceRect.Left,
-                                _sourceRect.Top,
-                                _sourceRect.Width,
-                                _sourceRect.Height,
-                                _destinationRect.Left,
-                                _destinationRect.Top,
-                                _destinationRect.Width,
-                                _destinationRect.Height,
-                                lColorDiffuse);
+                             _sourceRect.Left,
+                             _sourceRect.Top,
+                             _sourceRect.Width,
+                             _sourceRect.Height,
+                             _destinationRect.Left,
+                             _destinationRect.Top,
+                             _destinationRect.Width,
+                             _destinationRect.Height,
+                             lColorDiffuse);
         }
 
         GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, true);
@@ -897,7 +894,7 @@ namespace MediaPortal.Player
           //_blackImage.Height = (int)_destinationRect.Height;
           if (GUIGraphicsContext.IsFullScreenVideo)
           {
-            _blackImage.SetPosition(0,0);
+            _blackImage.SetPosition(0, 0);
             _blackImage.Width = _geometry.ScreenWidth;
             _blackImage.Height = _geometry.ScreenHeight;
           }
@@ -907,7 +904,8 @@ namespace MediaPortal.Player
             _blackImage.Width = GUIGraphicsContext.VideoWindow.Width;
             _blackImage.Height = GUIGraphicsContext.VideoWindow.Height;
           }
-          Log.Debug("RenderBlack: x:{0}, y:{1}, w:{2}, h:{3}", _blackImage.XPosition, _blackImage.YPosition, _blackImage.Width, _blackImage.Height);
+          Log.Debug("RenderBlack: x:{0}, y:{1}, w:{2}, h:{3}", _blackImage.XPosition, _blackImage.YPosition,
+                    _blackImage.Width, _blackImage.Height);
           if (!GUIGraphicsContext.RenderBlackImage)
           {
             return;
@@ -922,11 +920,10 @@ namespace MediaPortal.Player
       }
     }
 
-        public void SetSampleTime(long nsSampleTime)
-        {
-          SubEngine.GetInstance().SetTime(nsSampleTime);
-        }
-
+    public void SetSampleTime(long nsSampleTime)
+    {
+      SubEngine.GetInstance().SetTime(nsSampleTime);
+    }
 
     #endregion
 
@@ -972,5 +969,9 @@ namespace MediaPortal.Player
     }
 
     #endregion
-  } //public class PlaneScene 
-} //namespace MediaPortal.Player 
+  }
+
+  //public class PlaneScene 
+}
+
+//namespace MediaPortal.Player 

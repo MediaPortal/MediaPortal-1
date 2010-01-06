@@ -41,7 +41,7 @@ namespace MediaPortal.Dialogs
 
     public GUIDialogMenuBottomRight()
     {
-      GetID = (int) Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT;
+      GetID = (int)Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT;
     }
 
     public override bool Init()

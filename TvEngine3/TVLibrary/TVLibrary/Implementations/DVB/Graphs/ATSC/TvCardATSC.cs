@@ -33,14 +33,17 @@ namespace TvLibrary.Implementations.DVB
   public class TvCardATSC : TvCardDvbBase, IDisposable, ITVCard
   {
     #region variables
+
     /// <summary>
     /// Hold the ATSC tuning space
     /// </summary>
     protected IATSCTuningSpace _tuningSpace;
+
     /// <summary>
     /// Holds the current ATSC tuning request
     /// </summary>
     protected IATSCChannelTuneRequest _tuneRequest;
+
     #endregion
 
     /// <summary>
@@ -52,10 +55,10 @@ namespace TvLibrary.Implementations.DVB
       : base(epgEvents, device)
     {
       _cardType = CardType.Atsc;
-
     }
 
     #region graphbuilding
+
     /// <summary>
     /// Builds the graph.
     /// </summary>
@@ -73,7 +76,7 @@ namespace TvLibrary.Implementations.DVB
         _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
-        AddNetworkProviderFilter(typeof(ATSCNetworkProvider).GUID);
+        AddNetworkProviderFilter(typeof (ATSCNetworkProvider).GUID);
         CreateTuningSpace();
         AddMpeg2DemuxerToGraph();
         AddAndConnectBDABoardFilters(_device);
@@ -134,20 +137,20 @@ namespace TvLibrary.Implementations.DVB
       _tuningSpace = (IATSCTuningSpace)new ATSCTuningSpace();
       _tuningSpace.put_UniqueName("MediaPortal ATSC TuningSpace");
       _tuningSpace.put_FriendlyName("MediaPortal ATSC TuningSpace");
-      _tuningSpace.put__NetworkType(typeof(ATSCNetworkProvider).GUID);
+      _tuningSpace.put__NetworkType(typeof (ATSCNetworkProvider).GUID);
       _tuningSpace.put_CountryCode(0);
       _tuningSpace.put_InputType(TunerInputType.Antenna);
-      _tuningSpace.put_MaxMinorChannel(999);//minor channels per major
-      _tuningSpace.put_MaxPhysicalChannel(158);//69 for OTA 158 for QAM
-      _tuningSpace.put_MaxChannel(99);//major channels
+      _tuningSpace.put_MaxMinorChannel(999); //minor channels per major
+      _tuningSpace.put_MaxPhysicalChannel(158); //69 for OTA 158 for QAM
+      _tuningSpace.put_MaxChannel(99); //major channels
       _tuningSpace.put_MinMinorChannel(0);
-      _tuningSpace.put_MinPhysicalChannel(1);//OTA 1, QAM 2
+      _tuningSpace.put_MinPhysicalChannel(1); //OTA 1, QAM 2
       _tuningSpace.put_MinChannel(1);
       IATSCLocator locator = (IATSCLocator)new ATSCLocator();
       locator.put_CarrierFrequency(-1);
       locator.put_InnerFEC(FECMethod.MethodNotSet);
       locator.put_InnerFECRate(BinaryConvolutionCodeRate.RateNotSet);
-      locator.put_Modulation(ModulationType.Mod8Vsb);//OTA modultation, QAM = .Mod256Qam
+      locator.put_Modulation(ModulationType.Mod8Vsb); //OTA modultation, QAM = .Mod256Qam
       locator.put_OuterFEC(FECMethod.MethodNotSet);
       locator.put_OuterFECRate(BinaryConvolutionCodeRate.RateNotSet);
       locator.put_PhysicalChannel(-1);
@@ -161,9 +164,11 @@ namespace TvLibrary.Implementations.DVB
       _tuningSpace.CreateTuneRequest(out request);
       _tuneRequest = (IATSCChannelTuneRequest)request;
     }
+
     #endregion
 
     #region tuning & recording
+
     /// <summary>
     /// Tunes the specified channel.
     /// </summary>
@@ -186,7 +191,7 @@ namespace TvLibrary.Implementations.DVB
           BuildGraph();
         }
         ITvSubChannel ch;
-        if (_previousChannel == null ||  _previousChannel.IsDifferentTransponder(atscChannel))
+        if (_previousChannel == null || _previousChannel.IsDifferentTransponder(atscChannel))
         {
           Log.Log.WriteFile("atsc:using new channel tuning settings");
           ITuneRequest request;
@@ -250,20 +255,20 @@ namespace TvLibrary.Implementations.DVB
         throw;
       }
     }
+
     #endregion
 
     #region epg & scanning
+
     /// <summary>
     /// returns the ITVScanning interface used for scanning channels
     /// </summary>
     /// <value></value>
     public ITVScanning ScanningInterface
     {
-      get
-      {
-        return new ATSCScanning(this);
-      }
+      get { return new ATSCScanning(this); }
     }
+
     #endregion
 
     /// <summary>

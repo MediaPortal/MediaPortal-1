@@ -8,7 +8,6 @@ using System.Xml;
 using System.Windows.Forms;
 using System.Text;
 using System.Text.RegularExpressions;
-
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -19,7 +18,7 @@ namespace MediaPortal.MPInstaller
   public class MPInstallHelper
   {
     public List<MPpackageStruct> items = new List<MPpackageStruct>();
-    string InstallDir = Config.GetFolder(Config.Dir.Installer);
+    private string InstallDir = Config.GetFolder(Config.Dir.Installer);
     public string FileName = "";
 
     public List<MPpackageStruct> Items
@@ -72,7 +71,6 @@ namespace MediaPortal.MPInstaller
           if (((MPpackageStruct)this.Items[idx]).InstallerInfo.Version.CompareTo(pk.InstallerInfo.Version) > 0)
             ((MPpackageStruct)this.Items[idx]).isUpdated = true;
           ((MPpackageStruct)this.Items[idx]).isNew = false;
-
         }
       }
     }
@@ -192,7 +190,9 @@ namespace MediaPortal.MPInstaller
             {
               writer.WriteStartElement("FileInfo");
               writer.WriteElementString("FileName", ((UninstallInfo)it.InstallerInfo.Uninstall[j]).Path);
-              writer.WriteElementString("Date", Path.GetFileName(((UninstallInfo)it.InstallerInfo.Uninstall[j]).Date.ToFileTime().ToString()));
+              writer.WriteElementString("Date",
+                                        Path.GetFileName(
+                                          ((UninstallInfo)it.InstallerInfo.Uninstall[j]).Date.ToFileTime().ToString()));
               writer.WriteEndElement();
             }
             writer.WriteEndElement();
@@ -295,16 +295,14 @@ namespace MediaPortal.MPInstaller
               {
                 File.Delete(t);
               }
-              catch (Exception)
-              {
-
-              }
+              catch (Exception) {}
             }
             XmlNode node_des = nodefile.SelectSingleNode("Description");
             XmlNodeList uninstallList = nodefile.SelectNodes("Uninstall/FileInfo");
             foreach (XmlNode un in uninstallList)
             {
-              pkg.InstallerInfo.Uninstall.Add(new UninstallInfo(un.SelectSingleNode("FileName").InnerText, un.SelectSingleNode("Date").InnerText));
+              pkg.InstallerInfo.Uninstall.Add(new UninstallInfo(un.SelectSingleNode("FileName").InnerText,
+                                                                un.SelectSingleNode("Date").InnerText));
             }
             if (node_des != null)
               pkg.InstallerInfo.Description = node_des.InnerText;
@@ -315,11 +313,10 @@ namespace MediaPortal.MPInstaller
             {
               try
               {
-                pkg.InstallerInfo.ProjectProperties.CreationDate = DateTime.ParseExact(updateDate.Substring(0, 10), "yyyy-MM-dd", null);
+                pkg.InstallerInfo.ProjectProperties.CreationDate = DateTime.ParseExact(updateDate.Substring(0, 10),
+                                                                                       "yyyy-MM-dd", null);
               }
-              catch (Exception)
-              {
-              }
+              catch (Exception) {}
             }
             this.Items.Add(pkg);
           }
@@ -330,7 +327,6 @@ namespace MediaPortal.MPInstaller
         catch (Exception)
         {
           //MessageBox.Show("List loading error", "Error");
-         
         }
       }
     }
@@ -356,7 +352,7 @@ namespace MediaPortal.MPInstaller
           return defaultValue;
         }
       }
-      catch (Exception )
+      catch (Exception)
       {
         return defaultValue;
       }

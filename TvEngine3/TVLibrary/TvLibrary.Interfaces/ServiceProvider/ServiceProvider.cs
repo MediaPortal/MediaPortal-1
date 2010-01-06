@@ -71,7 +71,7 @@ namespace TvLibrary.Interfaces
       Type t = typeof (T);
       if (services.ContainsKey(t))
       {
-        return (T) services[t];
+        return (T)services[t];
       }
       throw new ArgumentException(String.Format("Service {0} is not registered", t));
     }
@@ -84,7 +84,7 @@ namespace TvLibrary.Interfaces
     /// <remarks>if service is not registered a suitable default is returned</remarks>
     public T TryGet<T>()
     {
-      Type t = typeof(T);
+      Type t = typeof (T);
       if (services.ContainsKey(t))
       {
         return (T)services[t];

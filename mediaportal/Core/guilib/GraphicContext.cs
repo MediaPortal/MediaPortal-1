@@ -47,11 +47,9 @@ namespace MediaPortal.GUI.Library
   public delegate void VideoGammaContrastBrightnessHandler();
 
   public delegate void BlackImageRenderedHandler();
-  public delegate void VideoReceivedHandler(); 
-    
 
+  public delegate void VideoReceivedHandler();
 
-  
 
   /// <summary>
   /// Singleton class which holds all GFX related settings
@@ -59,7 +57,7 @@ namespace MediaPortal.GUI.Library
   public class GUIGraphicsContext
   {
     public static event BlackImageRenderedHandler OnBlackImageRendered;
-    public static event VideoReceivedHandler OnVideoReceived;    
+    public static event VideoReceivedHandler OnVideoReceived;
 
     private static bool _renderBlackImage = false;
     private static List<Point> _cameras = new List<Point>();
@@ -187,13 +185,9 @@ namespace MediaPortal.GUI.Library
     private static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, IntPtr lParam);
 
     // singleton. Dont allow any instance of this class
-    private GUIGraphicsContext()
-    {
-    }
+    private GUIGraphicsContext() {}
 
-    static GUIGraphicsContext()
-    {
-    }
+    static GUIGraphicsContext() {}
 
     /// <summary>
     /// Set/get last User Activity
@@ -206,7 +200,7 @@ namespace MediaPortal.GUI.Library
     public static bool SaveRenderCycles
     {
       get { return idleTimePowerSaving; }
-      set 
+      set
       {
         // Since every action (like keypresses) resets the Blankscreen field we certainly want to check
         // whether we really need to reload the "old" FPS.
@@ -221,7 +215,7 @@ namespace MediaPortal.GUI.Library
           else
           {
             using (Settings xmlReader = new MPSettings())
-            {       
+            {
               MaxFPS = xmlReader.GetValueAsInt("screen", "GuiRenderFps", 50);
             }
           }
@@ -801,7 +795,7 @@ namespace MediaPortal.GUI.Library
       get { return _renderBlackImage; }
       set { _renderBlackImage = value; }
     }
-        
+
     /// <summary>
     /// Get/set current Aspect Ratio Mode
     /// </summary>
@@ -1570,7 +1564,7 @@ namespace MediaPortal.GUI.Library
     public static TransformMatrix ControlTransform
     {
       get { return _finalTransform; }
-      set 
+      set
       {
         _finalTransform = value;
         _finalTransformCalibrated = GetOffsetCorrectionTransform().multiply(_finalTransform);
@@ -1593,7 +1587,7 @@ namespace MediaPortal.GUI.Library
           _bypassUICalibration = 0;
       }
     }
-    
+
     public static void SetScalingResolution( /*RESOLUTION res,*/ int posX, int posY, bool needsScaling)
     {
       //m_windowResolution = res;

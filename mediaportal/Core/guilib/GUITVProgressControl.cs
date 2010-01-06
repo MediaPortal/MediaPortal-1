@@ -81,9 +81,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("logotexture")] protected string _logoTextureName;
 
     public GUITVProgressControl(int dwParentID)
-      : base(dwParentID)
-    {
-    }
+      : base(dwParentID) {}
 
     public GUITVProgressControl(int dwParentID, int dwControlId, int dwPosX,
                                 int dwPosY, int dwWidth, int dwHeight,
@@ -278,9 +276,7 @@ namespace MediaPortal.GUI.Library
           {
             Percentage1 = Int32.Parse(m_strText);
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
           if (Percentage1 < 0 || Percentage1 > 100)
           {
             Percentage1 = 0;
@@ -296,9 +292,7 @@ namespace MediaPortal.GUI.Library
           {
             Percentage1 = Int32.Parse(strText);
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
           if (Percentage1 < 0 || Percentage1 > 100)
           {
             Percentage1 = 0;
@@ -315,9 +309,7 @@ namespace MediaPortal.GUI.Library
           {
             Percentage2 = Int32.Parse(strText);
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
           if (Percentage2 < 0 || Percentage2 > 100)
           {
             Percentage2 = 0;
@@ -333,9 +325,7 @@ namespace MediaPortal.GUI.Library
           {
             Percentage3 = Int32.Parse(strText);
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
           if (Percentage3 < 0 || Percentage3 > 100)
           {
             Percentage3 = 0;
@@ -361,14 +351,14 @@ namespace MediaPortal.GUI.Library
 
       int iWidth1 = 0, iWidth2 = 0, iWidth3 = 0;
 
-      iWidth -= 2*_fillBackgroundOffsetX;
+      iWidth -= 2 * _fillBackgroundOffsetX;
       float fWidth = iWidth;
       int iCurPos = 0;
       // render fillbkg
 
       xPos = _positionX + _imageLeft.TextureWidth + _fillBackgroundOffsetX;
       _imageFillBackground.Width = iWidth;
-      _imageFillBackground.Height = _imageMid.TextureHeight - _fillBackgroundOffsetY*2;
+      _imageFillBackground.Height = _imageMid.TextureHeight - _fillBackgroundOffsetY * 2;
       _imageFillBackground.SetPosition(xPos, _positionY + _fillBackgroundOffsetY);
       _imageFillBackground.Render(timePassed);
 
@@ -376,15 +366,15 @@ namespace MediaPortal.GUI.Library
       int xoff = GUIGraphicsContext.ScaleHorizontal(3);
 
       xPos = _positionX + _imageLeft.TextureWidth + _fillBackgroundOffsetX + xoff;
-      int yPos = _imageFillBackground.YPosition + (_imageFillBackground.Height/2) - (_fillBackgroundHeight/2);
+      int yPos = _imageFillBackground.YPosition + (_imageFillBackground.Height / 2) - (_fillBackgroundHeight / 2);
       if (yPos < _positionY)
       {
         yPos = _positionY;
       }
-      fWidth = (float) iWidth;
+      fWidth = (float)iWidth;
       fWidth /= 100.0f;
-      fWidth *= (float) Percentage1;
-      iWidth1 = (int) Math.Floor(fWidth);
+      fWidth *= (float)Percentage1;
+      iWidth1 = (int)Math.Floor(fWidth);
       if (iWidth1 > 0)
       {
         _imageFill1.Height = _fillBackgroundHeight;
@@ -404,10 +394,10 @@ namespace MediaPortal.GUI.Library
       {
         iPercent = 0;
       }
-      fWidth = (float) iWidth;
+      fWidth = (float)iWidth;
       fWidth /= 100.0f;
-      fWidth *= (float) iPercent;
-      iWidth2 = (int) Math.Floor(fWidth);
+      fWidth *= (float)iPercent;
+      iWidth2 = (int)Math.Floor(fWidth);
       if (iWidth2 > 0)
       {
         _imageFill2.Width = iWidth2;
@@ -426,10 +416,10 @@ namespace MediaPortal.GUI.Library
       {
         iPercent = 0;
       }
-      fWidth = (float) iWidth;
+      fWidth = (float)iWidth;
       fWidth /= 100.0f;
-      fWidth *= (float) iPercent;
-      iWidth3 = (int) Math.Floor(fWidth);
+      fWidth *= (float)iPercent;
+      iWidth3 = (int)Math.Floor(fWidth);
       if (iWidth3 > 0)
       {
         _imageFill3.Width = iWidth3;
@@ -449,11 +439,11 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleVertical(ref posy1);
       for (int i = 0; i <= 100; i += 10)
       {
-        float fpos = (float) _positionX + _imageLeft.TextureWidth + posx1;
-        fWidth = (float) (iWidth - posx2);
+        float fpos = (float)_positionX + _imageLeft.TextureWidth + posx1;
+        fWidth = (float)(iWidth - posx2);
         fWidth /= 100.0f;
-        fWidth *= (float) i;
-        _imageTick.SetPosition((int) (fpos + fWidth), (int) _positionY + posy1);
+        fWidth *= (float)i;
+        _imageTick.SetPosition((int)(fpos + fWidth), (int)_positionY + posy1);
         _imageTick.Render(timePassed);
       }
 
@@ -461,33 +451,33 @@ namespace MediaPortal.GUI.Library
       _imageTop.Height = GUIGraphicsContext.ScaleVertical(_imageTop.TextureHeight);
       _imageTop.Width = GUIGraphicsContext.ScaleHorizontal(_imageTop.TextureWidth);
 
-      xPos = iCurPos - (_imageTop.Width/2);
+      xPos = iCurPos - (_imageTop.Width / 2);
       _imageTop.SetPosition(xPos,
                             _positionY - _imageTop.Height + _topTextureOffsetY - GUIGraphicsContext.ScaleVertical(1));
       _imageTop.Render(timePassed);
 
       //render tick @ current position
       _imageTick.Height = _imageFillBackground.TextureHeight;
-      _imageTick.Width = _imageTick.TextureWidth*2;
-      _imageTick.SetPosition((int) (_imageTop.XPosition + (_imageTop.TextureWidth/2) - (_imageTick.Width/2)),
-                             (int) _imageFillBackground.YPosition);
+      _imageTick.Width = _imageTick.TextureWidth * 2;
+      _imageTick.SetPosition((int)(_imageTop.XPosition + (_imageTop.TextureWidth / 2) - (_imageTick.Width / 2)),
+                             (int)_imageFillBackground.YPosition);
       _imageTick.Render(timePassed);
 
       // render bottom
-      xPos = _imageTop.XPosition + (_imageTop.TextureWidth/2) - (_imageBottom.TextureWidth/2);
+      xPos = _imageTop.XPosition + (_imageTop.TextureWidth / 2) - (_imageBottom.TextureWidth / 2);
       _imageBottom.SetPosition(xPos, _positionY + _imageMid.TextureHeight);
       _imageBottom.Render(timePassed);
 
 
       //render logo
-      float fx = (float) _imageBottom.XPosition;
-      fx += (((float) _imageBottom.TextureWidth)/2f);
-      fx -= (((float) _imageLogo.TextureWidth)/2f);
+      float fx = (float)_imageBottom.XPosition;
+      fx += (((float)_imageBottom.TextureWidth) / 2f);
+      fx -= (((float)_imageLogo.TextureWidth) / 2f);
 
-      float fy = (float) _imageBottom.YPosition;
-      fy += (((float) _imageBottom.TextureHeight)/2f);
-      fy -= (((float) _imageLogo.TextureHeight)/2f);
-      _imageLogo.SetPosition((int) fx, (int) fy);
+      float fy = (float)_imageBottom.YPosition;
+      fy += (((float)_imageBottom.TextureHeight) / 2f);
+      fy -= (((float)_imageLogo.TextureHeight) / 2f);
+      _imageLogo.SetPosition((int)fx, (int)fy);
       _imageLogo.Render(timePassed);
 
       if (_font != null)
@@ -503,11 +493,11 @@ namespace MediaPortal.GUI.Library
           _font.GetTextExtent(strText, ref fW, ref fH);
           fW /= 2.0f;
           fH /= 2.0f;
-          fWidth = ((float) _imageTop.TextureWidth)/2.0f;
-          fHeight = ((float) _imageTop.TextureHeight)/2.0f;
+          fWidth = ((float)_imageTop.TextureWidth) / 2.0f;
+          fHeight = ((float)_imageTop.TextureHeight) / 2.0f;
           fWidth -= fW;
           fHeight -= fH;
-          _font.DrawText((float) _imageTop.XPosition + fWidth, (float) 2 + _imageTop.YPosition + fHeight, _textColor,
+          _font.DrawText((float)_imageTop.XPosition + fWidth, (float)2 + _imageTop.YPosition + fHeight, _textColor,
                          strText, Alignment.ALIGN_LEFT, -1);
         }
 
@@ -519,11 +509,11 @@ namespace MediaPortal.GUI.Library
           _font.GetTextExtent(strText, ref fW, ref fH);
           fW /= 2.0f;
           fH /= 2.0f;
-          fWidth = ((float) _imageLeft.TextureWidth)/2.0f;
-          fHeight = ((float) _imageLeft.TextureHeight)/2.0f;
+          fWidth = ((float)_imageLeft.TextureWidth) / 2.0f;
+          fHeight = ((float)_imageLeft.TextureHeight) / 2.0f;
           fWidth -= fW;
           fHeight -= fH;
-          _font.DrawText((float) _positionX + fWidth, (float) _positionY + fHeight, _textColor, strText,
+          _font.DrawText((float)_positionX + fWidth, (float)_positionY + fHeight, _textColor, strText,
                          Alignment.ALIGN_LEFT, -1);
         }
 
@@ -534,11 +524,11 @@ namespace MediaPortal.GUI.Library
           _font.GetTextExtent(strText, ref fW, ref fH);
           fW /= 2.0f;
           fH /= 2.0f;
-          fWidth = ((float) _imageRight.TextureWidth)/2.0f;
-          fHeight = ((float) _imageRight.TextureHeight)/2.0f;
+          fWidth = ((float)_imageRight.TextureWidth) / 2.0f;
+          fHeight = ((float)_imageRight.TextureHeight) / 2.0f;
           fWidth -= fW;
           fHeight -= fH;
-          _font.DrawText((float) _imageRight.XPosition + fWidth, (float) _imageRight.YPosition + fHeight, _textColor,
+          _font.DrawText((float)_imageRight.XPosition + fWidth, (float)_imageRight.YPosition + fHeight, _textColor,
                          strText, Alignment.ALIGN_LEFT, -1);
         }
       }

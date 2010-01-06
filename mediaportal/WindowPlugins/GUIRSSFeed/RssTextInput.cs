@@ -67,9 +67,7 @@ namespace Rss
     private Uri link = RssDefault.Uri;
 
     /// <summary>Initialize a new instance of the RssTextInput class</summary>
-    public RssTextInput()
-    {
-    }
+    public RssTextInput() {}
 
     /// <summary>The label of the submit button in the text input area</summary>
     ///	<remarks>Maximum length is 100 (For RSS 0.91)</remarks>

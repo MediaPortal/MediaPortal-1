@@ -22,8 +22,8 @@
  */
 
 #endregion
-using System.Windows.Forms;
 
+using System.Windows.Forms;
 using System.Collections;
 
 
@@ -35,15 +35,19 @@ namespace MediaPortal.UserInterface.Controls
     /// Specifies the column to be sorted
     /// </summary>
     private int ColumnToSort;
+
     /// <summary>
     /// Specifies the order in which to sort (i.e. 'Ascending').
     /// </summary>
     private SortOrder OrderOfSort;
+
     /// <summary>
     /// Case insensitive comparer object
     /// </summary>  
     private readonly NumberCaseInsensitiveComparer ObjectCompare;
+
     private readonly ImageTextComparer FirstObjectCompare;
+
     /// <summary>
     /// Class constructor.  Initializes various elements
     /// </summary>
@@ -58,6 +62,7 @@ namespace MediaPortal.UserInterface.Controls
       ObjectCompare = new NumberCaseInsensitiveComparer();
       FirstObjectCompare = new ImageTextComparer();
     }
+
     public MPListViewSortOnColumn(int column)
     {
       // Initialize the column to '0'
@@ -69,6 +74,7 @@ namespace MediaPortal.UserInterface.Controls
       ObjectCompare = new NumberCaseInsensitiveComparer();
       FirstObjectCompare = new ImageTextComparer();
     }
+
     public MPListViewSortOnColumn(int column, SortOrder order)
     {
       // Initialize the column to '0'
@@ -106,7 +112,7 @@ namespace MediaPortal.UserInterface.Controls
         // Compare the two items
         compareResult =
           ObjectCompare.Compare(listviewX.SubItems[ColumnToSort].Text,
-          listviewY.SubItems[ColumnToSort].Text);
+                                listviewY.SubItems[ColumnToSort].Text);
       }
       // Calculate correct return value based on object comparison
       if (OrderOfSort == SortOrder.Ascending)
@@ -124,36 +130,25 @@ namespace MediaPortal.UserInterface.Controls
       // Return '0' to indicate they are equal
       return 0;
     }
+
     /// <summary>
     /// Gets or sets the number of the column to which
     /// to apply the sorting operation (Defaults to '0').
     /// </summary>
     public int SortColumn
     {
-      set
-      {
-        ColumnToSort = value;
-      }
-      get
-      {
-        return ColumnToSort;
-      }
+      set { ColumnToSort = value; }
+      get { return ColumnToSort; }
     }
+
     /// <summary>
     /// Gets or sets the order of sorting to apply
     /// (for example, 'Ascending' or 'Descending').
     /// </summary>
     public SortOrder Order
     {
-      set
-      {
-        OrderOfSort = value;
-      }
-      get
-      {
-        return OrderOfSort;
-      }
+      set { OrderOfSort = value; }
+      get { return OrderOfSort; }
     }
-
   }
 }

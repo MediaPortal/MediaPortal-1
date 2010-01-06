@@ -65,9 +65,7 @@ namespace MediaPortal.Video.Database
         {
           Directory.CreateDirectory(strPath);
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
         m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, @"VideoDatabaseV5.db3"));
         DatabaseUtility.SetPragmas(m_db);
         CreateTables();
@@ -85,7 +83,7 @@ namespace MediaPortal.Video.Database
       if (m_db != null)
       {
         m_db.Close();
-        m_db.Dispose();        
+        m_db.Dispose();
         m_db = null;
       }
     }
@@ -120,7 +118,7 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddTable(m_db, "actorinfomovies",
                                "CREATE TABLE actorinfomovies ( idActor integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, role text)");
       DatabaseUtility.AddTable(m_db, "VideoThumbBList",
-                                     "CREATE TABLE VideoThumbBList ( idVideoThumbBList integer primary key, strPath text, strExpires text, strFileDate text, strFileSize text)");
+                               "CREATE TABLE VideoThumbBList ( idVideoThumbBList integer primary key, strPath text, strExpires text, strFileDate text, strFileSize text)");
 
       DatabaseUtility.AddIndex(m_db, "idxactorinfo_idActor",
                                "CREATE INDEX idxactorinfo_idActor ON actorinfo(idActor ASC)");
@@ -231,8 +229,8 @@ namespace MediaPortal.Video.Database
                 // was just returning 'true' here, but this caused problems with
                 // the bookmarks as these are stored by fileid. forza.
                 int lFileId;
-                Int32.TryParse(DatabaseUtility.Get(results, iRow, "idFile"), out  lFileId);
-                Int32.TryParse(DatabaseUtility.Get(results, iRow, "idMovie"), out  lMovieId);
+                Int32.TryParse(DatabaseUtility.Get(results, iRow, "idFile"), out lFileId);
+                Int32.TryParse(DatabaseUtility.Get(results, iRow, "idMovie"), out lMovieId);
                 return lFileId;
               }
             }
@@ -948,7 +946,7 @@ namespace MediaPortal.Video.Database
         {
           if (szGenres.IndexOf("/") >= 0)
           {
-            Tokens f = new Tokens(szGenres, new char[] { '/' });
+            Tokens f = new Tokens(szGenres, new char[] {'/'});
             foreach (string strGenre in f)
             {
               strGenre.Trim();
@@ -968,7 +966,7 @@ namespace MediaPortal.Video.Database
         ArrayList vecActors = new ArrayList();
         if (details.Cast != Strings.Unknown)
         {
-          char[] splitter = { '\n', ',' };
+          char[] splitter = {'\n', ','};
           string[] actors = details.Cast.Split(splitter);
           for (int i = 0; i < actors.Length; ++i)
           {
@@ -1296,7 +1294,7 @@ namespace MediaPortal.Video.Database
 
     private string ToHexString(byte[] bytes)
     {
-      char[] hexDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+      char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
       char[] chars = new char[bytes.Length * 2];
       for (int i = 0; i < bytes.Length; i++)
       {
@@ -2301,13 +2299,16 @@ namespace MediaPortal.Video.Database
         if (fileInfo == null || !fileInfo.Exists)
         {
           return false;
-        }      
+        }
 
         path = path.Trim();
         DatabaseUtility.RemoveInvalidChars(ref path);
 
         SQLiteResultSet results;
-        strSQL = String.Format("select idVideoThumbBList from VideoThumbBList where strPath = '{0}' and strExpires > '{1:yyyyMMdd}' and strFileDate = '{2:s}' and strFileSize = '{3}'", path, DateTime.Now, fileInfo.LastWriteTimeUtc, fileInfo.Length);
+        strSQL =
+          String.Format(
+            "select idVideoThumbBList from VideoThumbBList where strPath = '{0}' and strExpires > '{1:yyyyMMdd}' and strFileDate = '{2:s}' and strFileSize = '{3}'",
+            path, DateTime.Now, fileInfo.LastWriteTimeUtc, fileInfo.Length);
         results = m_db.Execute(strSQL);
         if (results.Rows.Count != 0)
         {
@@ -2345,7 +2346,7 @@ namespace MediaPortal.Video.Database
         if (fileInfo == null || !fileInfo.Exists)
         {
           return -1;
-        }          
+        }
 
         path = path.Trim();
         DatabaseUtility.RemoveInvalidChars(ref path);
@@ -2356,8 +2357,10 @@ namespace MediaPortal.Video.Database
         if (results.Rows.Count == 0)
         {
           // doesnt exists, add it
-          strSQL = String.Format("insert into VideoThumbBList (idVideoThumbBList, strPath, strExpires, strFileDate, strFileSize) values( NULL, '{0}', '{1:yyyyMMdd}', '{2:s}', '{3}')",
-                                 path, expiresOn, fileInfo.LastWriteTimeUtc, fileInfo.Length);
+          strSQL =
+            String.Format(
+              "insert into VideoThumbBList (idVideoThumbBList, strPath, strExpires, strFileDate, strFileSize) values( NULL, '{0}', '{1:yyyyMMdd}', '{2:s}', '{3}')",
+              path, expiresOn, fileInfo.LastWriteTimeUtc, fileInfo.Length);
           m_db.Execute(strSQL);
           int Id = m_db.LastInsertID();
           RemoveExpiredVideoThumbBlacklistEntries();
@@ -2369,8 +2372,10 @@ namespace MediaPortal.Video.Database
           Int32.TryParse(DatabaseUtility.Get(results, 0, "idVideoThumbBList"), out Id);
           if (Id != -1)
           {
-            strSQL = String.Format("update VideoThumbBList set strExpires='{1:yyyyMMdd}', strFileDate='{2:s}', strFileSize='{3}' where idVideoThumbBList={0}",
-                                   Id, expiresOn, fileInfo.LastWriteTimeUtc, fileInfo.Length);
+            strSQL =
+              String.Format(
+                "update VideoThumbBList set strExpires='{1:yyyyMMdd}', strFileDate='{2:s}', strFileSize='{3}' where idVideoThumbBList={0}",
+                Id, expiresOn, fileInfo.LastWriteTimeUtc, fileInfo.Length);
             m_db.Execute(strSQL);
           }
           return Id;

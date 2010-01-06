@@ -37,19 +37,17 @@ namespace System.Windows.Controls
     {
       ColumnProperty = DependencyProperty.RegisterAttached("Column", typeof (int), typeof (Grid));
       ColumnSpanProperty = DependencyProperty.RegisterAttached("ColumnSpan", typeof (int), typeof (Grid),
-                                                               new PropertyMetadata((int) 1));
+                                                               new PropertyMetadata((int)1));
       IsSharedSizeScopeProperty = DependencyProperty.RegisterAttached("IsSharedSizeScope", typeof (bool), typeof (Grid),
                                                                       new PropertyMetadata(false));
       RowProperty = DependencyProperty.RegisterAttached("Row", typeof (int), typeof (Grid));
       RowSpanProperty = DependencyProperty.RegisterAttached("RowSpan", typeof (int), typeof (Grid),
-                                                            new PropertyMetadata((int) 1));
+                                                            new PropertyMetadata((int)1));
       ShowGridLinesProperty = DependencyProperty.Register("ShowGridLines", typeof (bool), typeof (Grid),
                                                           new PropertyMetadata(false));
     }
 
-    public Grid()
-    {
-    }
+    public Grid() {}
 
     #endregion Constructors
 
@@ -59,15 +57,15 @@ namespace System.Windows.Controls
     {
       if (child is ColumnDefinition)
       {
-        ColumnDefinitions.Add((ColumnDefinition) child);
+        ColumnDefinitions.Add((ColumnDefinition)child);
       }
       else if (child is RowDefinition)
       {
-        RowDefinitions.Add((RowDefinition) child);
+        RowDefinitions.Add((RowDefinition)child);
       }
       else if (child is UIElement)
       {
-        Children.Add((UIElement) child);
+        Children.Add((UIElement)child);
       }
       else
       {
@@ -82,7 +80,7 @@ namespace System.Windows.Controls
       switch (element.HorizontalAlignment)
       {
         case HorizontalAlignment.Center:
-          rect.X = x + ((w - element.Width)/2);
+          rect.X = x + ((w - element.Width) / 2);
           break;
         case HorizontalAlignment.Right:
           rect.X = x + w - element.Width;
@@ -95,7 +93,7 @@ namespace System.Windows.Controls
       switch (element.VerticalAlignment)
       {
         case VerticalAlignment.Center:
-          rect.Y = y + ((h - element.Height)/2);
+          rect.Y = y + ((h - element.Height) / 2);
           break;
         case VerticalAlignment.Bottom:
           rect.Y = y + h - element.Height;
@@ -115,15 +113,15 @@ namespace System.Windows.Controls
 
       if (rows > 0)
       {
-        cols = (Children.Count + rows - 1)/rows;
+        cols = (Children.Count + rows - 1) / rows;
       }
       else
       {
-        rows = (Children.Count + cols - 1)/cols;
+        rows = (Children.Count + cols - 1) / cols;
       }
 
-      double w = (Width - Margin.Width - (cols - 1)*_spacing.Width)/cols;
-      double h = (Height - Margin.Height - (rows - 1)*_spacing.Height)/rows;
+      double w = (Width - Margin.Width - (cols - 1) * _spacing.Width) / cols;
+      double h = (Height - Margin.Height - (rows - 1) * _spacing.Height) / rows;
       double y = Location.Y + Margin.Top;
 
       for (int row = 0; row < rows; row++)
@@ -132,11 +130,11 @@ namespace System.Windows.Controls
 
         for (int col = 0; col < cols; col++)
         {
-          int index = _orientation == Orientation.Vertical ? col*rows + row : row*cols + col;
+          int index = _orientation == Orientation.Vertical ? col * rows + row : row * cols + col;
 
           if (index < Children.Count)
           {
-            FrameworkElement element = (FrameworkElement) Children[index];
+            FrameworkElement element = (FrameworkElement)Children[index];
 
             if (element.Visibility == Visibility.Collapsed)
             {
@@ -165,11 +163,11 @@ namespace System.Windows.Controls
 
       if (rows > 0)
       {
-        cols = (Children.Count + rows - 1)/rows;
+        cols = (Children.Count + rows - 1) / rows;
       }
       else
       {
-        rows = (Children.Count + cols - 1)/cols;
+        rows = (Children.Count + cols - 1) / cols;
       }
 
       foreach (FrameworkElement element in Children)
@@ -185,8 +183,8 @@ namespace System.Windows.Controls
         h = Math.Max(h, element.Height);
       }
 
-      w = (w*cols + _spacing.Width*(cols - 1)) + Margin.Width;
-      h = (h*rows + _spacing.Height*(rows - 1)) + Margin.Height;
+      w = (w * cols + _spacing.Width * (cols - 1)) + Margin.Width;
+      h = (h * rows + _spacing.Height * (rows - 1)) + Margin.Height;
 
       return new Size(w, h);
     }
@@ -212,7 +210,7 @@ namespace System.Windows.Controls
 
     public bool ShowGridLines
     {
-      get { return (bool) GetValue(ShowGridLinesProperty); }
+      get { return (bool)GetValue(ShowGridLinesProperty); }
       set { SetValue(ShowGridLinesProperty, value); }
     }
 

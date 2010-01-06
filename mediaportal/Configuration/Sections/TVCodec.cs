@@ -8,16 +8,13 @@ namespace MediaPortal.Configuration.Sections
 {
   public partial class TVCodec : SectionSettings
   {
-
     private bool _init = false;
 
     /// <summary>
     /// 
     /// </summary>
     public TVCodec()
-      : this("TV Codecs")
-    {
-    }
+      : this("TV Codecs") {}
 
     /// <summary>
     /// 
@@ -281,6 +278,5 @@ namespace MediaPortal.Configuration.Sections
       }
       videoCodecComboBox.SelectedIndexChanged += videoCodecComboBox_SelectedIndexChanged;
     }
-
   }
 }

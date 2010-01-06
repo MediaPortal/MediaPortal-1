@@ -310,7 +310,7 @@ namespace MediaPortal.InputDevices.FireDTV
       public byte uCodeRateLP; // CODE_RATE_12,CODE_RATE_23,CODE_RATE_34,CODE_RATE_56,CODE_RATE_78,OFDM_AUTO
 
       public byte uGuardInterval;
-                  // GUARD_INTERVAL_1_32,GUARD_INTERVAL_1_16,GUARD_INTERVAL_1_8,GUARD_INTERVAL_1_4,OFDM_AUTO
+      // GUARD_INTERVAL_1_32,GUARD_INTERVAL_1_16,GUARD_INTERVAL_1_8,GUARD_INTERVAL_1_4,OFDM_AUTO
 
       public byte uTransmissionMode; // TRANSMISSION_MODE_2K, TRANSMISSION_MODE_8K, OFDM_AUTO
       public byte uHierarchyInfo; // HIERARCHY_NONE,HIERARCHY_1,HIERARCHY_2,HIERARCHY_4,OFDM_AUTO
@@ -371,7 +371,7 @@ namespace MediaPortal.InputDevices.FireDTV
         public byte uCodeRateLP; // CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
 
         public byte uGuardInterval;
-                    // GUARD_INTERVAL_1_32,GUARD_INTERVAL_1_16,GUARD_INTERVAL_1_8,GUARD_INTERVAL_1_4,OFDM_AUTO
+        // GUARD_INTERVAL_1_32,GUARD_INTERVAL_1_16,GUARD_INTERVAL_1_8,GUARD_INTERVAL_1_4,OFDM_AUTO
 
         public byte uTransmissionMode; // TRANSMISSION_MODE_2K, TRANSMISSION_MODE_8K, OFDM_AUTO
         public byte uHierarchyInfo; // HIERARCHY_NONE,HIERARCHY_1,HIERARCHY_2,HIERARCHY_4,OFDM_AUTO
@@ -501,19 +501,13 @@ namespace MediaPortal.InputDevices.FireDTV
   public class FireDTVException : Exception
   {
     public FireDTVException()
-      : base()
-    {
-    }
+      : base() {}
 
     public FireDTVException(string message)
-      : base(message)
-    {
-    }
+      : base(message) {}
 
     public FireDTVException(SerializationInfo info, StreamingContext context)
-      : base(info, context)
-    {
-    }
+      : base(info, context) {}
 
     public FireDTVException(FireDTVConstants.FireDTVStatusCodes status, string message)
       : base()
@@ -574,42 +568,28 @@ namespace MediaPortal.InputDevices.FireDTV
   public class FireDTVInitializationException : FireDTVException
   {
     public FireDTVInitializationException()
-      : base()
-    {
-    }
+      : base() {}
 
     public FireDTVInitializationException(string message)
-      : base(message)
-    {
-    }
+      : base(message) {}
 
     public FireDTVInitializationException(SerializationInfo info, StreamingContext context)
-      : base(info, context)
-    {
-    }
+      : base(info, context) {}
   }
 
   public class FireDTVDeviceOpenException : FireDTVException
   {
     public FireDTVDeviceOpenException()
-      : base()
-    {
-    }
+      : base() {}
 
     public FireDTVDeviceOpenException(string message)
-      : base(message)
-    {
-    }
+      : base(message) {}
 
     public FireDTVDeviceOpenException(SerializationInfo info, StreamingContext context)
-      : base(info, context)
-    {
-    }
+      : base(info, context) {}
 
     public FireDTVDeviceOpenException(FireDTVConstants.FireDTVStatusCodes status, string message)
-      : base(status, message)
-    {
-    }
+      : base(status, message) {}
   }
 
   #endregion
@@ -643,7 +623,7 @@ namespace MediaPortal.InputDevices.FireDTV
     public FireDTVRemoteControlEventArgs(FireDTVSourceFilterInfo sourceFilter, IntPtr KeyValue)
       : base(sourceFilter)
     {
-      keyValue = (FireDTVConstants.FireDTVRemoteControlKeyCodes) KeyValue.ToInt32();
+      keyValue = (FireDTVConstants.FireDTVRemoteControlKeyCodes)KeyValue.ToInt32();
     }
 
     public FireDTVConstants.FireDTVRemoteControlKeyCodes RemoteKey

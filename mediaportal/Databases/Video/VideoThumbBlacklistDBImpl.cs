@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
@@ -32,7 +32,7 @@ namespace MediaPortal.Video.Database
   {
     #region Constants
 
-    const int BlacklistDurationInDays = 30;
+    private const int BlacklistDurationInDays = 30;
 
     #endregion
 
@@ -55,10 +55,9 @@ namespace MediaPortal.Video.Database
 
     public void Clear()
     {
-      VideoDatabase.RemoveAllVideoThumbBlacklistEntries(); 
+      VideoDatabase.RemoveAllVideoThumbBlacklistEntries();
     }
 
     #endregion
   }
 }
-

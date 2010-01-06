@@ -29,24 +29,28 @@ namespace TvLibrary.Teletext
   public class TeletextDecoder
   {
     #region constants
-    const int MAX_MAGAZINE = 8;
+
+    private const int MAX_MAGAZINE = 8;
+
     #endregion
 
     #region variables
 
-    readonly int[] _magazineCurrentSubPage = new int[MAX_MAGAZINE + 2];
-    readonly int[] _magazineCurrentPageNr = new int[MAX_MAGAZINE + 2];
-    readonly int[] _magazineLastRow = new int[MAX_MAGAZINE + 2];
-    readonly string[] _vbiLine = new string[MAX_MAGAZINE + 2];
-    readonly List<byte[]> _workingPage = new List<byte[]>();
-    readonly TeletextPageCache _pageCache;
+    private readonly int[] _magazineCurrentSubPage = new int[MAX_MAGAZINE + 2];
+    private readonly int[] _magazineCurrentPageNr = new int[MAX_MAGAZINE + 2];
+    private readonly int[] _magazineLastRow = new int[MAX_MAGAZINE + 2];
+    private readonly string[] _vbiLine = new string[MAX_MAGAZINE + 2];
+    private readonly List<byte[]> _workingPage = new List<byte[]>();
+    private readonly TeletextPageCache _pageCache;
     //bool[,] _rowsReceived = new bool[MAX_MAGAZINE + 2, 32];
-    string _line = String.Empty;
-    bool _isSerial = true;
-    int _prevMagazine;
+    private string _line = String.Empty;
+    private bool _isSerial = true;
+    private int _prevMagazine;
+
     #endregion
 
     #region ctor
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TeletextDecoder"/> class.
     /// </summary>
@@ -63,9 +67,11 @@ namespace TvLibrary.Teletext
       }
       Clear();
     }
+
     #endregion
 
     #region public members
+
     /// <summary>
     /// Clears this instance.
     /// </summary>
@@ -162,7 +168,7 @@ namespace TvLibrary.Teletext
             {
               channelName = channelName.Substring(0, pos);
             }
-            channelName = channelName.TrimEnd(new char[] { '\'', '\"', '´', '`' });
+            channelName = channelName.TrimEnd(new char[] {'\'', '\"', '´', '`'});
             channelName = channelName.Trim();
             _pageCache.ChannelName = channelName;
             continue;
@@ -249,7 +255,8 @@ namespace TvLibrary.Teletext
               continue;
             }
             if (_magazineLastRow[magazine] != 27)
-            {/*
+            {
+/*
               if (packetNumber <= _magazineLastRow[magazine])
               {
                 if (_magazineLastRow[magazine] >= 23)
@@ -282,7 +289,6 @@ namespace TvLibrary.Teletext
           }
           else if (packetNumber == 27)
           {
-
             if (_magazineCurrentPageNr[magazine] == -1)
             {
               continue;
@@ -332,12 +338,12 @@ namespace TvLibrary.Teletext
               for (int c = 0; c < 42; ++c)
               {
                 _workingPage[magazine][offwp + c] = rowData[off + c];
-
               }
             }
           }
-        }// for (line = 0; line < rows; line++)
-      } catch (Exception)
+        } // for (line = 0; line < rows; line++)
+      }
+      catch (Exception)
       {
         System.Diagnostics.Trace.WriteLine("EXCEPTION");
         //        Log.WriteFile(Log.LogType.Error,true,"Exception while decoding teletext");
@@ -345,19 +351,21 @@ namespace TvLibrary.Teletext
       }
       //System.Diagnostics.Trace.WriteLine(_line);
       //Log.Log.WriteFile(_line);
-    }//void Decode(byte[] rowData)
-    #endregion
+    }
 
+//void Decode(byte[] rowData)
+
+    #endregion
 
     #region private members
 
-    void UpdatePage(int magazine)
+    private void UpdatePage(int magazine)
     {
-
       //page header
       if (_magazineCurrentPageNr[magazine] != -1 && _magazineCurrentSubPage[magazine] != -1)
       {
-        _pageCache.PageReceived(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine], _workingPage[magazine], _vbiLine[magazine]);
+        _pageCache.PageReceived(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine],
+                                _workingPage[magazine], _vbiLine[magazine]);
       }
       _vbiLine[magazine] = "";
       _magazineCurrentPageNr[magazine] = -1;
@@ -371,19 +379,21 @@ namespace TvLibrary.Teletext
       }
     }
 
-    static bool IsDecimalPage(int i)
+    private static bool IsDecimalPage(int i)
     {
       return ((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90);
     }
 
-    static bool IsDecimalSubPage(int i)
+    private static bool IsDecimalSubPage(int i)
     {
       if (i >= 0x80)
         return false;
 
       return ((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x70);
     }
-    #endregion
 
-  }//class TeletextDecoder
+    #endregion
+  }
+
+//class TeletextDecoder
 }

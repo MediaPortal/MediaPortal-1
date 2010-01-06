@@ -34,9 +34,7 @@ namespace System.Windows.Media.Animation
   {
     #region Constructors
 
-    private NativeMethods()
-    {
-    }
+    private NativeMethods() {}
 
     #endregion Constructors
 

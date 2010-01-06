@@ -67,12 +67,10 @@ namespace System.Windows
         _setters = new SetterBaseCollection();
       }
 
-      _setters.Add((SetterBase) child);
+      _setters.Add((SetterBase)child);
     }
 
-    void IAddChild.AddText(string text)
-    {
-    }
+    void IAddChild.AddText(string text) {}
 
     #endregion Methods
 

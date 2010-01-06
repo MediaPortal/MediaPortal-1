@@ -48,9 +48,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public FiltersDScalerAudio()
-      : this("DScaler Audio Decoder")
-    {
-    }
+      : this("DScaler Audio Decoder") {}
 
     /// <summary>
     /// 
@@ -208,7 +206,7 @@ namespace MediaPortal.Configuration.Sections
         {
           try
           {
-            Int32 regValue = (Int32) subkey.GetValue("Dynamic Range Control");
+            Int32 regValue = (Int32)subkey.GetValue("Dynamic Range Control");
             if (regValue == 1)
             {
               checkBoxDynamicRange.Checked = true;
@@ -218,7 +216,7 @@ namespace MediaPortal.Configuration.Sections
               checkBoxDynamicRange.Checked = false;
             }
 
-            regValue = (Int32) subkey.GetValue("MPEG Audio over SPDIF");
+            regValue = (Int32)subkey.GetValue("MPEG Audio over SPDIF");
             if (regValue == 1)
             {
               checkBoxMPEGOverSPDIF.Checked = true;
@@ -228,7 +226,7 @@ namespace MediaPortal.Configuration.Sections
               checkBoxMPEGOverSPDIF.Checked = false;
             }
 
-            regValue = (Int32) subkey.GetValue("Use SPDIF for AC3 & DTS");
+            regValue = (Int32)subkey.GetValue("Use SPDIF for AC3 & DTS");
             if (regValue == 1)
             {
               checkBoxSPDIF.Checked = true;
@@ -238,15 +236,13 @@ namespace MediaPortal.Configuration.Sections
               checkBoxSPDIF.Checked = false;
             }
 
-            regValue = (Int32) subkey.GetValue("SPDIF Audio Time Offset");
+            regValue = (Int32)subkey.GetValue("SPDIF Audio Time Offset");
             textBoxAudioOffset.Text = regValue.ToString();
 
-            regValue = (Int32) subkey.GetValue("Speaker Config");
+            regValue = (Int32)subkey.GetValue("Speaker Config");
             comboBoxSpeakerConfig.SelectedIndex = regValue;
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
     }

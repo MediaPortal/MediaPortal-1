@@ -38,22 +38,13 @@ namespace SetupTv.Sections
 
     public Card Card
     {
-      get
-      {
-        return _card;
-      }
-      set
-      {
-        _card = value;
-      }
+      get { return _card; }
+      set { _card = value; }
     }
 
     public String CardType
     {
-      set
-      {
-        _cardType = value;
-      }
+      set { _cardType = value; }
     }
 
     private void FormEditCard_Load(object sender, EventArgs e)
@@ -84,7 +75,7 @@ namespace SetupTv.Sections
 
       checkBoxPreloadCard.Checked = _card.PreloadCard;
       checkBoxCAMenabled.Checked = _card.CAM;
-      
+
       setCAMLimitVisibility();
       Text += " " + _card.Name;
 
@@ -98,7 +89,7 @@ namespace SetupTv.Sections
       Guid genProviderClsId = new Guid("{B2F3A67C-29DA-4C78-8831-091ED509A475}");
       // First test if the Generic Network Provider is available (only on Xp MCE 2005 + Update Rollup 2 & Vista Home Premium and Ultimate & Windows 7 Home Premium, Ultimate, Professional, and Enterprise)
       if (FilterGraphTools.IsThisComObjectInstalled(genProviderClsId))
-      { 
+      {
         // Generic Network provider is available, so add it to selection box.
         comboBoxNetProvider.Items.Add((TvDatabase.DbNetworkProvider.Generic));
       }

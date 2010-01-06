@@ -56,7 +56,7 @@ public class EncryptDecrypt
       keyArray = UTF8Encoding.BigEndianUnicode.GetBytes(key);
 
     TripleDESCryptoServiceProvider tdes =
-             new TripleDESCryptoServiceProvider();
+      new TripleDESCryptoServiceProvider();
     //set the secret key for the tripleDES algorithm
     tdes.Key = keyArray;
     //mode of operation. there are other 4 modes.
@@ -70,7 +70,7 @@ public class EncryptDecrypt
     //transform the specified region of bytes array to resultArray
     byte[] resultArray =
       cTransform.TransformFinalBlock(toEncryptArray, 0,
-      toEncryptArray.Length);
+                                     toEncryptArray.Length);
     //Release resources held by TripleDes Encryptor
     tdes.Clear();
     //Return the encrypted data into unreadable string format
@@ -106,7 +106,7 @@ public class EncryptDecrypt
     }
 
     TripleDESCryptoServiceProvider tdes =
-                new TripleDESCryptoServiceProvider();
+      new TripleDESCryptoServiceProvider();
     //set the secret key for the tripleDES algorithm
     tdes.Key = keyArray;
     //mode of operation. there are other 4 modes. 
@@ -118,7 +118,7 @@ public class EncryptDecrypt
 
     ICryptoTransform cTransform = tdes.CreateDecryptor();
     byte[] resultArray = cTransform.TransformFinalBlock(
-                         toEncryptArray, 0, toEncryptArray.Length);
+      toEncryptArray, 0, toEncryptArray.Length);
     //Release resources held by TripleDes Encryptor                
     tdes.Clear();
     //return the Clear decrypted TEXT

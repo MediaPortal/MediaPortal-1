@@ -25,7 +25,5 @@
 
 namespace MediaPortal.Drawing
 {
-  public class FormattedText
-  {
-  }
+  public class FormattedText {}
 }

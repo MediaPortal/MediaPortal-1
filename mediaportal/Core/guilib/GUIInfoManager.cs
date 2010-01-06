@@ -76,7 +76,7 @@ namespace MediaPortal.GUI.Library
 
       public override bool Equals(object r)
       {
-        GUIInfo right = (GUIInfo) r;
+        GUIInfo right = (GUIInfo)r;
         return (m_info == right.m_info && m_data1 == right.m_data1 && m_data2 == right.m_data2 &&
                 m_stringData == right.m_stringData);
       }
@@ -93,9 +93,7 @@ namespace MediaPortal.GUI.Library
       public int m_id; // the id used to identify this expression
       public List<int> m_postfix = new List<int>(); // the postfix binary expression
 
-      public CCombinedValue()
-      {
-      }
+      public CCombinedValue() {}
 
       public CCombinedValue(CCombinedValue mSrc)
       {
@@ -172,10 +170,10 @@ namespace MediaPortal.GUI.Library
     public const int SYSTEM_KAI_CONNECTED = 124;
 
     public const int SYSTEM_ALWAYS_TRUE = 125;
-                     // useful for <visible fade="10" start="hidden">true</visible>, to fade in a control
+    // useful for <visible fade="10" start="hidden">true</visible>, to fade in a control
 
     public const int SYSTEM_ALWAYS_FALSE = 126;
-                     // used for <visible fade="10">false</visible>, to fade out a control (ie not particularly useful!)
+    // used for <visible fade="10">false</visible>, to fade out a control (ie not particularly useful!)
 
     public const int SYSTEM_MEDIA_DVD = 127;
     public const int SYSTEM_DVDREADY = 128;
@@ -397,10 +395,10 @@ namespace MediaPortal.GUI.Library
 
     static GUIInfoManager()
     {
-      m_nextWindowID = (int) GUIWindow.Window.WINDOW_INVALID;
-      m_prevWindowID = (int) GUIWindow.Window.WINDOW_INVALID;
+      m_nextWindowID = (int)GUIWindow.Window.WINDOW_INVALID;
+      m_prevWindowID = (int)GUIWindow.Window.WINDOW_INVALID;
       m_stringParameters.Add("__ZZZZ__");
-        // to offset the string parameters by 1 to assure that all entries are non-zero
+      // to offset the string parameters by 1 to assure that all entries are non-zero
     }
 
     #endregion
@@ -1221,14 +1219,14 @@ namespace MediaPortal.GUI.Library
         {
           ret = SKIN_THEME;
         }
-        // string.equals(val1, val2) will check the equality of val1 to val2.
-        // string.equals(val1)       will return true if val1 has a length > 0
+          // string.equals(val1, val2) will check the equality of val1 to val2.
+          // string.equals(val1)       will return true if val1 has a length > 0
         else if (strTest.Substring(0, 14) == "string.equals(")
         {
           // this condition uses GUIPropertyManager.Parse, which is case sensitive.
           string strTestKeepCase = strCondition;
-          strTestKeepCase = strTestKeepCase.TrimStart(new char[] { ' ' });
-          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] { ' ' });
+          strTestKeepCase = strTestKeepCase.TrimStart(new char[] {' '});
+          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] {' '});
           if (bNegate)
           {
             strTestKeepCase = strTestKeepCase.Remove(0, 1);
@@ -1239,7 +1237,8 @@ namespace MediaPortal.GUI.Library
           if (pos >= 0)
           {
             skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(14, pos - 14));
-            int compareString = ConditionalStringParameter(strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2)));
+            int compareString =
+              ConditionalStringParameter(strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2)));
             return AddMultiInfo(new GUIInfo(bNegate ? -STRING_EQUALS : STRING_EQUALS, skinOffset, compareString));
           }
           skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(14, strTestKeepCase.Length - 15));
@@ -1249,8 +1248,8 @@ namespace MediaPortal.GUI.Library
         {
           // this condition uses GUIPropertyManager.Parse, which is case sensitive.
           string strTestKeepCase = strCondition;
-          strTestKeepCase = strTestKeepCase.TrimStart(new char[] { ' ' });
-          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] { ' ' });
+          strTestKeepCase = strTestKeepCase.TrimStart(new char[] {' '});
+          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] {' '});
           if (bNegate)
           {
             strTestKeepCase = strTestKeepCase.Remove(0, 1);
@@ -1261,7 +1260,8 @@ namespace MediaPortal.GUI.Library
           if (pos >= 0)
           {
             skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(16, pos - 16));
-            int compareString = ConditionalStringParameter(strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2)));
+            int compareString =
+              ConditionalStringParameter(strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2)));
             return AddMultiInfo(new GUIInfo(bNegate ? -STRING_CONTAINS : STRING_CONTAINS, skinOffset, compareString));
           }
           skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(16, strTestKeepCase.Length - 17));
@@ -1271,8 +1271,8 @@ namespace MediaPortal.GUI.Library
         {
           // this condition uses GUIPropertyManager.Parse, which is case sensitive.
           string strTestKeepCase = strCondition;
-          strTestKeepCase = strTestKeepCase.TrimStart(new char[] { ' ' });
-          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] { ' ' });
+          strTestKeepCase = strTestKeepCase.TrimStart(new char[] {' '});
+          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] {' '});
           if (bNegate)
           {
             strTestKeepCase = strTestKeepCase.Remove(0, 1);
@@ -1283,7 +1283,8 @@ namespace MediaPortal.GUI.Library
           if (pos >= 0)
           {
             skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(14, pos - 14));
-            int compareString = ConditionalStringParameter(strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2)));
+            int compareString =
+              ConditionalStringParameter(strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2)));
             return AddMultiInfo(new GUIInfo(bNegate ? -STRING_STARTS : STRING_STARTS, skinOffset, compareString));
           }
           skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(14, strTestKeepCase.Length - 15));
@@ -1308,7 +1309,7 @@ namespace MediaPortal.GUI.Library
         else if (strTest.Substring(0, 16) == "window.isactive(")
         {
           int winID = TranslateWindowString(strTest.Substring(16, strTest.Length - 17));
-          if (winID != (int) GUIWindow.Window.WINDOW_INVALID)
+          if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
           {
             ret = winID;
           }
@@ -1320,7 +1321,7 @@ namespace MediaPortal.GUI.Library
         else if (strTest.Substring(0, 17) == "window.istopmost(")
         {
           int winID = TranslateWindowString(strTest.Substring(17, strTest.Length - 18));
-          if (winID != (int) GUIWindow.Window.WINDOW_INVALID)
+          if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
           {
             return AddMultiInfo(new GUIInfo(bNegate ? -WINDOW_IS_TOPMOST : WINDOW_IS_TOPMOST, winID, 0));
           }
@@ -1328,7 +1329,7 @@ namespace MediaPortal.GUI.Library
         else if (strTest.Substring(0, 17) == "window.isvisible(")
         {
           int winID = TranslateWindowString(strTest.Substring(17, strTest.Length - 18));
-          if (winID != (int) GUIWindow.Window.WINDOW_INVALID)
+          if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
           {
             return AddMultiInfo(new GUIInfo(bNegate ? -WINDOW_IS_VISIBLE : WINDOW_IS_VISIBLE, winID, 0));
           }
@@ -1336,7 +1337,7 @@ namespace MediaPortal.GUI.Library
         else if (strTest.Substring(0, 16) == "window.previous(")
         {
           int winID = TranslateWindowString(strTest.Substring(16, strTest.Length - 17));
-          if (winID != (int) GUIWindow.Window.WINDOW_INVALID)
+          if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
           {
             return AddMultiInfo(new GUIInfo(bNegate ? -WINDOW_PREVIOUS : WINDOW_PREVIOUS, winID, 0));
           }
@@ -1344,7 +1345,7 @@ namespace MediaPortal.GUI.Library
         else if (strTest.Substring(0, 12) == "window.next(")
         {
           int winID = TranslateWindowString(strTest.Substring(12, strTest.Length - 13));
-          if (winID != (int) GUIWindow.Window.WINDOW_INVALID)
+          if (winID != (int)GUIWindow.Window.WINDOW_INVALID)
           {
             return AddMultiInfo(new GUIInfo(bNegate ? -WINDOW_NEXT : WINDOW_NEXT, winID, 0));
           }
@@ -1483,12 +1484,12 @@ namespace MediaPortal.GUI.Library
       {
         if (parameter == m_stringParameters[i])
         {
-          return (int) i;
+          return (int)i;
         }
       }
       // return the new offset
       m_stringParameters.Add(parameter);
-      return (int) m_stringParameters.Count - 1;
+      return (int)m_stringParameters.Count - 1;
     }
 
     public static void Clear()
@@ -1578,7 +1579,7 @@ namespace MediaPortal.GUI.Library
 
       // test evaluate
       bool test = false;
-      if (!EvaluateBooleanExpression(comb, ref test, (int) GUIWindow.Window.WINDOW_INVALID))
+      if (!EvaluateBooleanExpression(comb, ref test, (int)GUIWindow.Window.WINDOW_INVALID))
       {
         //Log(LOGERROR, "Error evaluating boolean expression %s", expression.c_str());
       }
@@ -1675,7 +1676,7 @@ namespace MediaPortal.GUI.Library
 
     public static int TranslateWindowString(string strWindow)
     {
-      int wWindowID = (int) GUIWindow.Window.WINDOW_INVALID;
+      int wWindowID = (int)GUIWindow.Window.WINDOW_INVALID;
       if (int.TryParse(strWindow, out wWindowID))
       {
         return wWindowID;
@@ -1683,54 +1684,54 @@ namespace MediaPortal.GUI.Library
 
       if (strWindow.Equals("home"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_HOME;
+        wWindowID = (int)GUIWindow.Window.WINDOW_HOME;
       }
       else if (strWindow.Equals("myprograms"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_FILES;
+        wWindowID = (int)GUIWindow.Window.WINDOW_FILES;
       }
       else if (strWindow.Equals("mypictures"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_PICTURES;
+        wWindowID = (int)GUIWindow.Window.WINDOW_PICTURES;
       }
       else if (strWindow.Equals("myfiles"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_FILES;
+        wWindowID = (int)GUIWindow.Window.WINDOW_FILES;
       }
       else if (strWindow.Equals("settings"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_SETTINGS;
+        wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS;
       }
       else if (strWindow.Equals("mymusic"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_MUSIC;
+        wWindowID = (int)GUIWindow.Window.WINDOW_MUSIC;
       }
       else if (strWindow.Equals("mymusicfiles"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_MUSIC_FILES;
+        wWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_FILES;
       }
       else if (strWindow.Equals("myvideos"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_VIDEOS;
+        wWindowID = (int)GUIWindow.Window.WINDOW_VIDEOS;
       }
       else if (strWindow.Equals("systeminfo"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_SYSTEM_INFORMATION;
+        wWindowID = (int)GUIWindow.Window.WINDOW_SYSTEM_INFORMATION;
       }
         //else if (strWindow.Equals("guicalibration")) wWindowID = (int)GUIWindow.Window.WINDOW_SCREEN_CALIBRATION;
       else if (strWindow.Equals("screencalibration"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_UI_CALIBRATION;
+        wWindowID = (int)GUIWindow.Window.WINDOW_UI_CALIBRATION;
       }
       else if (strWindow.Equals("mypicturessettings"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_SETTINGS_SLIDESHOW;
+        wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS_SLIDESHOW;
       }
         //else if (strWindow.Equals("myprogramssettings")) wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS_MYPROGRAMS;
         //else if (strWindow.Equals("myweathersettings")) wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS_MYWEATHER;
       else if (strWindow.Equals("mymusicsettings"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_SETTINGS_MUSIC;
+        wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS_MUSIC;
       }
         //else if (strWindow.Equals("systemsettings")) wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS_SYSTEM;
         //else if (strWindow.Equals("myvideossettings")) wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS_MYVIDEOS;
@@ -1738,45 +1739,45 @@ namespace MediaPortal.GUI.Library
         //else if (strWindow.Equals("appearancesettings")) wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS_APPEARANCE;
       else if (strWindow.Equals("scripts"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_SCRIPTS;
+        wWindowID = (int)GUIWindow.Window.WINDOW_SCRIPTS;
       }
       else if (strWindow.Equals("myvideofiles"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_VIDEOS;
+        wWindowID = (int)GUIWindow.Window.WINDOW_VIDEOS;
       }
       else if (strWindow.Equals("myvideogenres"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_VIDEO_GENRE;
+        wWindowID = (int)GUIWindow.Window.WINDOW_VIDEO_GENRE;
       }
       else if (strWindow.Equals("myvideoactors"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_VIDEO_ACTOR;
+        wWindowID = (int)GUIWindow.Window.WINDOW_VIDEO_ACTOR;
       }
       else if (strWindow.Equals("myvideoyears"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_VIDEO_YEAR;
+        wWindowID = (int)GUIWindow.Window.WINDOW_VIDEO_YEAR;
       }
       else if (strWindow.Equals("myvideotitles"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_VIDEO_TITLE;
+        wWindowID = (int)GUIWindow.Window.WINDOW_VIDEO_TITLE;
       }
       else if (strWindow.Equals("myvideoplaylist"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_VIDEO_PLAYLIST;
+        wWindowID = (int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST;
       }
         //else if (strWindow.Equals("profiles")) wWindowID = (int)GUIWindow.Window.WINDOW_SETTINGS_PROFILES;
       else if (strWindow.Equals("yesnodialog"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_DIALOG_YES_NO;
+        wWindowID = (int)GUIWindow.Window.WINDOW_DIALOG_YES_NO;
       }
       else if (strWindow.Equals("progressdialog"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_DIALOG_PROGRESS;
+        wWindowID = (int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS;
       }
         //else if (strWindow.Equals("invitedialog")) wWindowID = (int)GUIWindow.Window.WINDOW_DIALOG_INVITE;
       else if (strWindow.Equals("virtualkeyboard"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD;
+        wWindowID = (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD;
       }
         //else if (strWindow.Equals("volumebar")) wWindowID = (int)GUIWindow.Window.WINDOW_DIALOG_VOLUME_BAR;
         //else if (strWindow.Equals("submenu")) wWindowID = (int)GUIWindow.Window.WINDOW_DIALOG_SUB_MENU;
@@ -1803,67 +1804,67 @@ namespace MediaPortal.GUI.Library
         //else if (strWindow.Equals("mediasource")) wWindowID = (int)GUIWindow.Window.WINDOW_DIALOG_MEDIA_SOURCE;
       else if (strWindow.Equals("mymusicplaylist"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_MUSIC_PLAYLIST;
+        wWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST;
       }
       else if (strWindow.Equals("mymusicfiles"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_MUSIC_FILES;
+        wWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_FILES;
       }
         //else if (strWindow.Equals("mymusiclibrary")) wWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_NAV;
         //else if (strWindow.Equals("mymusictop100")) wWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_TOP100;
         //  else if (strWindow.Equals("virtualkeyboard")) wWindowID = (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD;
       else if (strWindow.Equals("selectdialog"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_DIALOG_SELECT;
+        wWindowID = (int)GUIWindow.Window.WINDOW_DIALOG_SELECT;
       }
       else if (strWindow.Equals("musicinformation"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_MUSIC_INFO;
+        wWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_INFO;
       }
       else if (strWindow.Equals("okdialog"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_DIALOG_OK;
+        wWindowID = (int)GUIWindow.Window.WINDOW_DIALOG_OK;
       }
       else if (strWindow.Equals("movieinformation"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_VIDEO_INFO;
+        wWindowID = (int)GUIWindow.Window.WINDOW_VIDEO_INFO;
       }
         //else if (strWindow.Equals("scriptsdebuginfo")) wWindowID = (int)GUIWindow.Window.WINDOW_SCRIPTS_INFO;
       else if (strWindow.Equals("fullscreenvideo"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO;
+        wWindowID = (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO;
       }
       else if (strWindow.Equals("visualisation"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_VISUALISATION;
+        wWindowID = (int)GUIWindow.Window.WINDOW_VISUALISATION;
       }
       else if (strWindow.Equals("slideshow"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_SLIDESHOW;
+        wWindowID = (int)GUIWindow.Window.WINDOW_SLIDESHOW;
       }
       else if (strWindow.Equals("filestackingdialog"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_DIALOG_FILESTACKING;
+        wWindowID = (int)GUIWindow.Window.WINDOW_DIALOG_FILESTACKING;
       }
       else if (strWindow.Equals("weather"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_WEATHER;
+        wWindowID = (int)GUIWindow.Window.WINDOW_WEATHER;
       }
         //else if (strWindow.Equals("xlinkkai")) wWindowID = (int)GUIWindow.Window.WINDOW_BUDDIES;
       else if (strWindow.Equals("screensaver"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_SCREENSAVER;
+        wWindowID = (int)GUIWindow.Window.WINDOW_SCREENSAVER;
       }
       else if (strWindow.Equals("videoosd"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_OSD;
+        wWindowID = (int)GUIWindow.Window.WINDOW_OSD;
       }
         //else if (strWindow.Equals("videomenu")) wWindowID = (int)GUIWindow.Window.WINDOW_VIDEO_MENU;
         //else if (strWindow.Equals("filebrowser")) wWindowID = (int)GUIWindow.Window.WINDOW_DIALOG_FILE_BROWSER;
         //else if (strWindow.Equals("startup")) wWindowID = (int)GUIWindow.Window.WINDOW_STARTUP;
       else if (strWindow.Equals("startwindow"))
       {
-        wWindowID = (int) GUIWindow.Window.WINDOW_HOME;
+        wWindowID = (int)GUIWindow.Window.WINDOW_HOME;
       }
         //else if (strWindow.Equals("loginscreen")) wWindowID = (int)GUIWindow.Window.WINDOW_LOGIN_SCREEN;
       else
@@ -1886,7 +1887,7 @@ namespace MediaPortal.GUI.Library
         return result;
       }
 
-      if (condition1 >= COMBINED_VALUES_START && (condition1 - COMBINED_VALUES_START) < (int) (m_CombinedValues.Count))
+      if (condition1 >= COMBINED_VALUES_START && (condition1 - COMBINED_VALUES_START) < (int)(m_CombinedValues.Count))
       {
         CCombinedValue comb = m_CombinedValues[condition1 - COMBINED_VALUES_START];
 
@@ -1980,7 +1981,7 @@ namespace MediaPortal.GUI.Library
       else if (condition == SYSTEM_ISMASTER)
       {
         bReturn = false;
-          // bReturn = g_settings.m_vecProfiles[0].getLockMode() != LOCK_MODE_EVERYONE && g_passwordManager.bMasterUser;
+        // bReturn = g_settings.m_vecProfiles[0].getLockMode() != LOCK_MODE_EVERYONE && g_passwordManager.bMasterUser;
       }
       else if (condition == SYSTEM_LOGGEDON)
       {

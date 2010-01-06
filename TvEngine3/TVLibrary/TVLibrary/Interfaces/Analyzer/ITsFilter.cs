@@ -27,8 +27,8 @@ namespace TvLibrary.Interfaces.Analyzer
   /// The main TsWriter interface
   /// </summary>
   [ComVisible(true), ComImport,
-Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface ITsFilter
   {
     /// <summary>
@@ -38,6 +38,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int AddChannel(ref int handle);
+
     /// <summary>
     /// Deletes the given sub channel
     /// </summary>
@@ -45,6 +46,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int DeleteChannel(int handle);
+
     /// <summary>
     /// Deletes all sub channels
     /// </summary>
@@ -60,6 +62,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int AnalyzerSetVideoPid(int handle, int videoPid);
+
     /// <summary>
     /// Gets the video pid of the analyzer for the given sub channel
     /// </summary>
@@ -68,6 +71,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int AnalyzerGetVideoPid(int handle, out int videoPid);
+
     /// <summary>
     /// Sets the audio pid on the analyzer for the given sub channel
     /// </summary>
@@ -76,6 +80,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int AnalyzerSetAudioPid(int handle, int audioPid);
+
     /// <summary>
     /// Gets the audio pid on the analyzer for the given sub channel
     /// </summary>
@@ -84,6 +89,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int AnalyzerGetAudioPid(int handle, out int audioPid);
+
     /// <summary>
     /// Checks if video of the channel is encrypted for the given sub channel
     /// </summary>
@@ -92,6 +98,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int AnalyzerIsVideoEncrypted(int handle, out int yesNo);
+
     /// <summary>
     /// Checks if audioof the channel is encrypted for the given sub channel
     /// </summary>
@@ -100,6 +107,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int AnalyzerIsAudioEncrypted(int handle, out int yesNo);
+
     /// <summary>
     /// Resets the analyzer of the given sub channel
     /// </summary>
@@ -117,6 +125,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int PmtSetPmtPid(int handle, int pmtPid, long serviceId);
+
     /// <summary>
     /// Sets the pmt callback for the given sub channel
     /// </summary>
@@ -125,6 +134,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int PmtSetCallBack(int handle, IPMTCallback callback);
+
     /// <summary>
     /// Gets the pmt data of the given sub channel
     /// </summary>
@@ -133,6 +143,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int PmtGetPMTData(int handle, IntPtr pmtData);
+
     /// <summary>
     /// Sets the recorder filename for the given sub channel
     /// </summary>
@@ -140,7 +151,8 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <param name="fileName">Filename for the reocrding</param>
     /// <returns></returns>
     [PreserveSig]
-    int RecordSetRecordingFileName(int handle, [In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
+    int RecordSetRecordingFileName(int handle, [In, MarshalAs(UnmanagedType.LPStr)] string fileName);
+
     /// <summary>
     /// Starts recording on the given sub channel
     /// </summary>
@@ -148,6 +160,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int RecordStartRecord(int handle);
+
     /// <summary>
     /// Stops recording on the given sub channel
     /// </summary>
@@ -155,6 +168,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int RecordStopRecord(int handle);
+
     /// <summary>
     /// Sets the pmt pid for recording on the sub channel
     /// </summary>
@@ -165,7 +179,9 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <param name="pmtLength">The length of the PMT</param>
     /// <returns></returns>
     [PreserveSig]
-    int RecordSetPmtPid(int handle, int pmtPid, int serviceId, [In, MarshalAs(UnmanagedType.LPArray)] byte[] pmtData, int pmtLength);
+    int RecordSetPmtPid(int handle, int pmtPid, int serviceId, [In, MarshalAs(UnmanagedType.LPArray)] byte[] pmtData,
+                        int pmtLength);
+
     /// <summary>
     /// Sets the video/audio observer callback for recorder
     /// </summary>
@@ -182,7 +198,8 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <param name="fileName">Filename</param>
     /// <returns></returns>
     [PreserveSig]
-    int TimeShiftSetTimeShiftingFileName(int handle, [In, MarshalAs(UnmanagedType.LPStr)]			string fileName);
+    int TimeShiftSetTimeShiftingFileName(int handle, [In, MarshalAs(UnmanagedType.LPStr)] string fileName);
+
     /// <summary>
     /// Starts timeshifting on the given sub channel
     /// </summary>
@@ -190,6 +207,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int TimeShiftStart(int handle);
+
     /// <summary>
     /// Stops timeshifting on the given sub channel
     /// </summary>
@@ -197,6 +215,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int TimeShiftStop(int handle);
+
     /// <summary>
     /// Resets timeshifting on the given sub channel
     /// </summary>
@@ -204,6 +223,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int TimeShiftReset(int handle);
+
     /// <summary>
     /// Gets the timeshifting buffer size of the given sub channel
     /// </summary>
@@ -212,6 +232,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int TimeShiftGetBufferSize(int handle, out long size);
+
     /// <summary>
     /// Sets the PMT pid on the given sub channel
     /// </summary>
@@ -222,7 +243,9 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <param name="pmtLength">The length of the PMT</param>
     /// <returns></returns>
     [PreserveSig]
-    int TimeShiftSetPmtPid(int handle, int pmtPid, int serviceId, [In, MarshalAs(UnmanagedType.LPArray)]  byte[] pmtData, int pmtLength);
+    int TimeShiftSetPmtPid(int handle, int pmtPid, int serviceId, [In, MarshalAs(UnmanagedType.LPArray)] byte[] pmtData,
+                           int pmtLength);
+
     /// <summary>
     /// Pauses/Continues timeshifting on the given sub channel
     /// </summary>
@@ -231,6 +254,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int TimeShiftPause(int handle, byte onOff);
+
     /// <summary>
     /// Sets the timeshifting parameters on the given subchannel
     /// </summary>
@@ -241,6 +265,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int TimeShiftSetParams(int handle, int minFiles, int maxFiles, UInt32 chunkSize);
+
     /// <summary>
     /// Returns the position in the current timeshift file and the id of the current timeshift file
     /// </summary>
@@ -249,6 +274,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
     [PreserveSig]
     int TimeShiftGetCurrentFilePosition(int handle, [Out] out Int64 position, [Out] out long bufferId);
+
     /// <summary>
     /// Sets the video/audio observer callback
     /// </summary>
@@ -265,6 +291,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int TTxStart(int handle);
+
     /// <summary>
     /// Stops collecting teletext data for the given sub channel
     /// </summary>
@@ -272,6 +299,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int TTxStop(int handle);
+
     /// <summary>
     /// Sets the teletext pid on the given sub channel
     /// </summary>
@@ -280,6 +308,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int TTxSetTeletextPid(int handle, int teletextPid);
+
     /// <summary>
     /// Sets the teletext callback on the given sub channel
     /// </summary>
@@ -288,6 +317,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int TTxSetCallBack(int handle, ITeletextCallBack callback);
+
     /// <summary>
     /// Set the CA callback
     /// </summary>
@@ -296,6 +326,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int CaSetCallBack(int handle, ICACallback callback);
+
     /// <summary>
     /// Gets the ca data of the given sub channel
     /// </summary>
@@ -304,6 +335,7 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int CaGetCaData(int handle, IntPtr caData);
+
     /// <summary>
     /// Resets the ca for the given sub channel
     /// </summary>
@@ -311,6 +343,5 @@ Guid("5EB9F392-E7FD-4071-8E44-3590E5E767BA"),
     /// <returns></returns>
     [PreserveSig]
     int CaReset(int handle);
-
   }
 }

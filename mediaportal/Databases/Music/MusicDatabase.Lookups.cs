@@ -34,9 +34,8 @@ using SQLite.NET;
 
 namespace MediaPortal.Music.Database
 {
-  #region Usings
 
-  
+  #region Usings
 
   #endregion
 
@@ -209,12 +208,12 @@ namespace MediaPortal.Music.Database
           int columnIndex = 0;
           if (filter == "artist")
           {
-            columnIndex = (int) results.ColumnIndices["strArtist"];
+            columnIndex = (int)results.ColumnIndices["strArtist"];
             song.Artist = fields.fields[columnIndex].Trim(trimChars);
           }
           if (filter == "albumartist")
           {
-            columnIndex = (int) results.ColumnIndices["strAlbumArtist"];
+            columnIndex = (int)results.ColumnIndices["strAlbumArtist"];
             song.AlbumArtist = fields.fields[columnIndex].Trim(trimChars);
           }
           if (filter == "album")
@@ -224,7 +223,7 @@ namespace MediaPortal.Music.Database
           if (filter == "genre")
           {
             AssignAllSongFieldsFromResultSet(ref song, results, i);
-            columnIndex = (int) results.ColumnIndices["strGenre"];
+            columnIndex = (int)results.ColumnIndices["strGenre"];
             song.Genre = fields.fields[columnIndex].Trim(trimChars);
           }
           if (filter == "composer")
@@ -1436,6 +1435,5 @@ namespace MediaPortal.Music.Database
       }
       return false;
     }
-
   }
 }

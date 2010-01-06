@@ -6,13 +6,13 @@ using MediaPortal.MPInstaller;
 
 namespace MPIMaker
 {
-  static class Program
+  internal static class Program
   {
     /// <summary>
     /// The main entry point for the application.
     /// </summary>
     [STAThread]
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
       string fil = string.Empty;
       if (args.Length > 0)

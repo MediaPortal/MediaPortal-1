@@ -31,22 +31,14 @@ namespace System.Windows.Media.Animation
   {
     #region Constructors
 
-    protected TimelineGroup()
-    {
-    }
+    protected TimelineGroup() {}
 
-    protected TimelineGroup(Nullable<TimeSpan> beginTime) : base(beginTime)
-    {
-    }
+    protected TimelineGroup(Nullable<TimeSpan> beginTime) : base(beginTime) {}
 
-    protected TimelineGroup(Nullable<TimeSpan> beginTime, Duration duration) : base(beginTime, duration)
-    {
-    }
+    protected TimelineGroup(Nullable<TimeSpan> beginTime, Duration duration) : base(beginTime, duration) {}
 
     protected TimelineGroup(Nullable<TimeSpan> beginTime, Duration duration, RepeatBehavior repeatBehavior)
-      : base(beginTime, duration, repeatBehavior)
-    {
-    }
+      : base(beginTime, duration, repeatBehavior) {}
 
     #endregion Constructors
 
@@ -57,18 +49,14 @@ namespace System.Windows.Media.Animation
       AddChild(child);
     }
 
-    protected virtual void AddChild(object child)
-    {
-    }
+    protected virtual void AddChild(object child) {}
 
     void IAddChild.AddText(string text)
     {
       AddText(text);
     }
 
-    protected virtual void AddText(string text)
-    {
-    }
+    protected virtual void AddText(string text) {}
 
     protected internal override Clock AllocateClock()
     {
@@ -77,7 +65,7 @@ namespace System.Windows.Media.Animation
 
     public new TimelineGroup Copy()
     {
-      return (TimelineGroup) base.Copy();
+      return (TimelineGroup)base.Copy();
     }
 
     protected override void CopyCore(Freezable sourceFreezable)
@@ -91,7 +79,7 @@ namespace System.Windows.Media.Animation
 
       foreach (Timeline childTimeline in _children)
       {
-        ((TimelineGroup) sourceFreezable).Children.Add(childTimeline.Copy());
+        ((TimelineGroup)sourceFreezable).Children.Add(childTimeline.Copy());
       }
     }
 
@@ -127,9 +115,7 @@ namespace System.Windows.Media.Animation
       return base.FreezeCore(isChecking);
     }
 
-    protected override void PropagateChangedHandlersCore(EventHandler handler, bool isAdding)
-    {
-    }
+    protected override void PropagateChangedHandlersCore(EventHandler handler, bool isAdding) {}
 
     #endregion Methods
 

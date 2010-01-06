@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2009 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2009 Team MediaPortal
@@ -30,7 +30,7 @@ using MediaPortal.Profile;
 
 namespace MediaPortal.Configuration
 {
-  class Common
+  internal class Common
   {
     public static bool IsSingleSeat()
     {
@@ -57,8 +57,9 @@ namespace MediaPortal.Configuration
           {
             if (addr[i].ToString().Equals(servername))
             {
-              Log.Debug("Configuration: IsSingleSeat - MPSettings.HostName = {0} / Dns.GetHostEntry(Environment.MachineName) = {1}",
-                        servername, addr[i]);
+              Log.Debug(
+                "Configuration: IsSingleSeat - MPSettings.HostName = {0} / Dns.GetHostEntry(Environment.MachineName) = {1}",
+                servername, addr[i]);
               singleSeat = true;
               break;
             }

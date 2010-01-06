@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -208,7 +208,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
           try
           {
             key = Registry.LocalMachine.OpenSubKey(@"Software\xPL");
-            this.pBroadcastAddress = IPAddress.Parse((string) key.GetValue("BroadcastAddress", "255.255.255.255"));
+            this.pBroadcastAddress = IPAddress.Parse((string)key.GetValue("BroadcastAddress", "255.255.255.255"));
           }
           catch
           {

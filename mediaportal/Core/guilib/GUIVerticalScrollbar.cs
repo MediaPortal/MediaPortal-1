@@ -45,9 +45,7 @@ namespace MediaPortal.GUI.Library
     private int _knobPositionY = 0;
     private bool _sendNotifies = true;
 
-    public GUIVerticalScrollbar(int dwParentID) : base(dwParentID)
-    {
-    }
+    public GUIVerticalScrollbar(int dwParentID) : base(dwParentID) {}
 
     /// <summary>
     /// The constructor of the GUIverticalScrollbar class.
@@ -121,17 +119,17 @@ namespace MediaPortal.GUI.Library
       _imageBackground.Height = iHeight;
       _imageBackground.Render(timePassed);
 
-      float fPercent = (float) _percentage;
-      float fPosYOff = (fPercent/100.0f);
+      float fPercent = (float)_percentage;
+      float fPosYOff = (fPercent / 100.0f);
 
       _startPositionY = _imageBackground.YPosition;
       _endPositionY = _startPositionY + _imageBackground.Height;
 
-      int iKnobHeight = (int) (_imageTop.TextureHeight);
-      fPosYOff *= (float) (_endPositionY - _startPositionY - iKnobHeight);
+      int iKnobHeight = (int)(_imageTop.TextureHeight);
+      fPosYOff *= (float)(_endPositionY - _startPositionY - iKnobHeight);
 
-      _knobPositionY = _startPositionY + (int) fPosYOff;
-      int iXPos = _imageBackground.XPosition + ((_imageBackground.Width/2) - (_imageTop.TextureWidth));
+      _knobPositionY = _startPositionY + (int)fPosYOff;
+      int iXPos = _imageBackground.XPosition + ((_imageBackground.Width / 2) - (_imageTop.TextureWidth));
       int iYPos = _knobPositionY;
 
       _imageTop.SetPosition(iXPos, iYPos);
@@ -265,19 +263,19 @@ namespace MediaPortal.GUI.Library
       {
         int id;
         bool focus;
-        if (HitTest((int) action.fAmount1, (int) action.fAmount2, out id, out focus))
+        if (HitTest((int)action.fAmount1, (int)action.fAmount2, out id, out focus))
         {
           if (action.MouseButton == MouseButtons.Left)
           {
-            float fHeight = (float) (_endPositionY - _startPositionY);
-            _percentage = (action.fAmount2 - (float) _startPositionY);
+            float fHeight = (float)(_endPositionY - _startPositionY);
+            _percentage = (action.fAmount2 - (float)_startPositionY);
             _percentage /= fHeight;
             _percentage *= 100.0f;
 
             if (_sendNotifies)
             {
               GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PERCENTAGE_CHANGED, WindowId, GetID,
-                                                  GetID, (int) _percentage, 0, null);
+                                                  GetID, (int)_percentage, 0, null);
               GUIGraphicsContext.SendMessage(message);
             }
           }
@@ -288,14 +286,14 @@ namespace MediaPortal.GUI.Library
       {
         if (action.MouseButton == MouseButtons.Left)
         {
-          float fHeight = (float) (_endPositionY - _startPositionY);
-          _percentage = (action.fAmount2 - (float) _startPositionY);
+          float fHeight = (float)(_endPositionY - _startPositionY);
+          _percentage = (action.fAmount2 - (float)_startPositionY);
           _percentage /= fHeight;
           _percentage *= 100.0f;
           if (_sendNotifies)
           {
             GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PERCENTAGE_CHANGED, WindowId, GetID,
-                                                GetID, (int) _percentage, 0, null);
+                                                GetID, (int)_percentage, 0, null);
             GUIGraphicsContext.SendMessage(message);
           }
         }

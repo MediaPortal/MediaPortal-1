@@ -29,9 +29,7 @@ namespace System.Windows
   {
     #region Constructors
 
-    public PropertyMetadata()
-    {
-    }
+    public PropertyMetadata() {}
 
     public PropertyMetadata(GetValueOverride getValueOverride)
     {
@@ -112,9 +110,7 @@ namespace System.Windows
       return new PropertyMetadata();
     }
 
-    protected virtual void Merge(PropertyMetadata baseMetadata, DependencyProperty property)
-    {
-    }
+    protected virtual void Merge(PropertyMetadata baseMetadata, DependencyProperty property) {}
 
     protected virtual void OnApply(DependencyProperty dp, Type targetType)
     {

@@ -58,7 +58,7 @@ namespace MediaPortal.Dialogs
 
     public GUIDialogExif()
     {
-      GetID = (int) Window.WINDOW_DIALOG_EXIF;
+      GetID = (int)Window.WINDOW_DIALOG_EXIF;
     }
 
     public override bool Init()
@@ -183,7 +183,7 @@ namespace MediaPortal.Dialogs
       GUIFontManager.Present();
       GUIGraphicsContext.GetOutputRect(m_iTextureWidth, m_iTextureHeight, imgPicture.Width, imgPicture.Height, out width,
                                        out height);
-      Util.Picture.RenderImage(m_pTexture, (int) x, (int) y, width, height, m_iTextureWidth, m_iTextureHeight, 0, 0,
+      Util.Picture.RenderImage(m_pTexture, (int)x, (int)y, width, height, m_iTextureWidth, m_iTextureHeight, 0, 0,
                                true);
     }
   }

@@ -218,14 +218,14 @@ namespace MediaPortal.Player.Subtitles
         for (int i = 0; i < count; i++)
         {
           Log.Debug("Bitmap index " + i);
-          SUBTITLESTREAM bOpt = (SUBTITLESTREAM) Marshal.PtrToStructure(current, typeof (SUBTITLESTREAM));
+          SUBTITLESTREAM bOpt = (SUBTITLESTREAM)Marshal.PtrToStructure(current, typeof (SUBTITLESTREAM));
           SubtitleOption opt = new SubtitleOption();
           opt.bitmapIndex = i;
           opt.type = SubtitleType.Bitmap;
-          opt.language = "" + (char) bOpt.lang0 + (char) bOpt.lang1 + (char) bOpt.lang2;
+          opt.language = "" + (char)bOpt.lang0 + (char)bOpt.lang1 + (char)bOpt.lang2;
           Log.Debug(opt.ToString());
           bitmapSubtitleCache.Add(opt);
-          current = (IntPtr) (((int) current) + Marshal.SizeOf(bOpt));
+          current = (IntPtr)(((int)current) + Marshal.SizeOf(bOpt));
         }
 
         selected_bitmap_index = -1; // we didnt select a bitmap index

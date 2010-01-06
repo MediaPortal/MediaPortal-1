@@ -50,7 +50,6 @@ namespace MediaPortal.Util
     /// <para>The system deletes the file immediately after it is closed or the <see cref="FileStream"/> is finalized.</para>
     /// </remarks>
     /// <returns>The opened <see cref="FileStream"/> object.</returns>
-
     public static FileStream GetSecureDeleteOnCloseTempFileStream()
     {
       return GetSecureDeleteOnCloseTempFileStream(defaultBufferSize, FileOptions.DeleteOnClose);
@@ -116,7 +115,8 @@ namespace MediaPortal.Util
     public static FileStream GetSecureTempFileStream(int bufferSize, FileOptions options)
     {
       FileStream fs = GetSecureFileStream(Path.GetTempPath(), bufferSize, options);
-      File.SetAttributes(fs.Name, File.GetAttributes(fs.Name) | FileAttributes.NotContentIndexed | FileAttributes.Temporary);
+      File.SetAttributes(fs.Name,
+                         File.GetAttributes(fs.Name) | FileAttributes.NotContentIndexed | FileAttributes.Temporary);
 
       return fs;
     }
@@ -132,9 +132,12 @@ namespace MediaPortal.Util
 
     public static string GetSecureTempFileName(bool encrypted)
     {
-      using (FileStream fs = GetSecureFileStream(Path.GetTempPath(), defaultBufferSize, encrypted ? FileOptions.Encrypted : FileOptions.None))
+      using (
+        FileStream fs = GetSecureFileStream(Path.GetTempPath(), defaultBufferSize,
+                                            encrypted ? FileOptions.Encrypted : FileOptions.None))
       {
-        File.SetAttributes(fs.Name, File.GetAttributes(fs.Name) | FileAttributes.NotContentIndexed | FileAttributes.Temporary);
+        File.SetAttributes(fs.Name,
+                           File.GetAttributes(fs.Name) | FileAttributes.NotContentIndexed | FileAttributes.Temporary);
         return fs.Name;
       }
     }
@@ -150,7 +153,9 @@ namespace MediaPortal.Util
 
     public static string GetSecureFileName(string path, bool encrypted)
     {
-      using (FileStream fs = GetSecureFileStream(path, defaultBufferSize, encrypted ? FileOptions.Encrypted : FileOptions.None))
+      using (
+        FileStream fs = GetSecureFileStream(path, defaultBufferSize,
+                                            encrypted ? FileOptions.Encrypted : FileOptions.None))
       {
         return fs.Name;
       }
@@ -178,7 +183,9 @@ namespace MediaPortal.Util
       if (bufferSize <= 0)
         throw new ArgumentOutOfRangeException("bufferSize");
 
-      if ((options & ~(FileOptions.Asynchronous | FileOptions.DeleteOnClose | FileOptions.Encrypted | FileOptions.RandomAccess | FileOptions.SequentialScan | FileOptions.WriteThrough)) != FileOptions.None)
+      if ((options &
+           ~(FileOptions.Asynchronous | FileOptions.DeleteOnClose | FileOptions.Encrypted | FileOptions.RandomAccess |
+             FileOptions.SequentialScan | FileOptions.WriteThrough)) != FileOptions.None)
         throw new ArgumentOutOfRangeException("options");
 
       new FileIOPermission(FileIOPermissionAccess.Write, path).Demand();
@@ -193,11 +200,12 @@ namespace MediaPortal.Util
       // Attempt to create a unique file three times before giving up.
       // It is highly improbable that there will ever be a name clash,
       // therefore we do not check to see if the file first exists.
-      for (int attempt = 0 ; attempt < 3 ; attempt++)
+      for (int attempt = 0; attempt < 3; attempt++)
       {
         try
         {
-          return new FileStream(Path.Combine(path, Path.GetRandomFileName()), FileMode.CreateNew, FileSystemRights.FullControl, FileShare.None, bufferSize, options, fileSecurity);
+          return new FileStream(Path.Combine(path, Path.GetRandomFileName()), FileMode.CreateNew,
+                                FileSystemRights.FullControl, FileShare.None, bufferSize, options, fileSecurity);
         }
         catch (IOException)
         {
@@ -211,6 +219,5 @@ namespace MediaPortal.Util
     }
 
     #endregion
-
   }
 }

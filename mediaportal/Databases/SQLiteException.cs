@@ -35,9 +35,7 @@ namespace SQLite.NET
     private SQLiteClient.SqliteError errorCode;
 
     // Methods
-    public SQLiteException(string message) : base(message)
-    {
-    }
+    public SQLiteException(string message) : base(message) {}
 
 
     // Properties

@@ -298,7 +298,7 @@ namespace TvDatabase
 
         if (this.IsTv)
         {
-          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(GroupMap));
+          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (GroupMap));
           sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
 
           SqlStatement stmt = sb.GetStatement(true);
@@ -307,7 +307,7 @@ namespace TvDatabase
 
           foreach (GroupMap groupMap in groupMaps)
           {
-            sb = new SqlBuilder(StatementType.Select, typeof(ChannelGroup));
+            sb = new SqlBuilder(StatementType.Select, typeof (ChannelGroup));
             sb.AddConstraint(Operator.Equals, "idGroup", groupMap.IdGroup);
 
             stmt = sb.GetStatement();
@@ -319,7 +319,7 @@ namespace TvDatabase
         }
         else if (this.IsRadio)
         {
-          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(RadioGroupMap));
+          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (RadioGroupMap));
           sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
 
           SqlStatement stmt = sb.GetStatement(true);
@@ -328,7 +328,7 @@ namespace TvDatabase
 
           foreach (RadioGroupMap groupMap in groupMaps)
           {
-            sb = new SqlBuilder(StatementType.Select, typeof(RadioChannelGroup));
+            sb = new SqlBuilder(StatementType.Select, typeof (RadioChannelGroup));
             sb.AddConstraint(Operator.Equals, "idGroup", groupMap.IdGroup);
 
             stmt = sb.GetStatement();
@@ -342,6 +342,7 @@ namespace TvDatabase
         return groupNames;
       }
     }
+
     #endregion
 
     #region Storage and Retrieval
@@ -643,7 +644,6 @@ namespace TvDatabase
 
     public static IList<Channel> ListAllByName(string name)
     {
-           
       //select * from 'foreigntable'
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
 
@@ -659,7 +659,6 @@ namespace TvDatabase
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(CanceledSchedule), this );
-    
     }
 
     public Program GetProgramAt(DateTime date)
@@ -788,7 +787,5 @@ namespace TvDatabase
       }
       return false;
     }
-
-   
   }
 }

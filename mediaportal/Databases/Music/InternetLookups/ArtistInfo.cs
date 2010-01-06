@@ -47,9 +47,7 @@ namespace MediaPortal.Music.Database
     private string m_strSingles = "";
     private string m_strMisc = "";
 
-    public ArtistInfo()
-    {
-    }
+    public ArtistInfo() {}
 
     public ArtistInfo Clone()
     {

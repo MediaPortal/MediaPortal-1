@@ -32,9 +32,6 @@ namespace MediaPortal.UserInterface.Controls
   /// </summary>
   public class MPTabControl : System.Windows.Forms.TabControl
   {
-    public MPTabControl()
-    {
-      
-    }
+    public MPTabControl() {}
   }
 }

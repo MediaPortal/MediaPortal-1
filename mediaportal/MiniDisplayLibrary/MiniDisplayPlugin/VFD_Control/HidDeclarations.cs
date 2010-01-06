@@ -145,7 +145,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.VFD_Control
       public int IsStringRange; // If IsStringRange is false, StringMin is the string index and StringMax is unused.
 
       public int IsDesignatorRange;
-                 // If IsDesignatorRange is false, DesignatorMin is the designator index and DesignatorMax is unused.
+      // If IsDesignatorRange is false, DesignatorMin is the designator index and DesignatorMax is unused.
 
       public int IsAbsolute;
       public int HasNull;

@@ -34,9 +34,7 @@ namespace MediaPortal.Drawing.Layouts
   {
     #region Constructors
 
-    public StackLayout()
-    {
-    }
+    public StackLayout() {}
 
     public StackLayout(int spacing)
     {
@@ -60,7 +58,7 @@ namespace MediaPortal.Drawing.Layouts
       switch (element.HorizontalAlignment)
       {
         case HorizontalAlignment.Center:
-          rect.X = x + ((w - element.Width)/2);
+          rect.X = x + ((w - element.Width) / 2);
           break;
         case HorizontalAlignment.Right:
           rect.X = x + w - element.Width;
@@ -73,7 +71,7 @@ namespace MediaPortal.Drawing.Layouts
       switch (element.VerticalAlignment)
       {
         case VerticalAlignment.Center:
-          rect.Y = y + ((h - element.Height)/2);
+          rect.Y = y + ((h - element.Height) / 2);
           break;
         case VerticalAlignment.Bottom:
           rect.Y = y + h - element.Height;

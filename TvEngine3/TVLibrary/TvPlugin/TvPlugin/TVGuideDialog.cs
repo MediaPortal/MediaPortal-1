@@ -39,7 +39,7 @@ namespace TvPlugin
     public TVGuideDialog()
       : base()
     {
-      GetID = (int) Window.WINDOW_DIALOG_TVGUIDE;
+      GetID = (int)Window.WINDOW_DIALOG_TVGUIDE;
     }
 
     public override bool IsTv
@@ -48,24 +48,20 @@ namespace TvPlugin
     }
 
     private bool _groupChanged;
-    public bool GroupChanged 
+
+    public bool GroupChanged
     {
-      get 
-      { 
-        return _groupChanged; 
-      }
-      set 
-      { 
-        _groupChanged = value; 
-      }
+      get { return _groupChanged; }
+      set { _groupChanged = value; }
     }
+
     public override bool Init()
     {
       Initialize();
 
       Load(GUIGraphicsContext.Skin + @"\dialogTvGuide.xml");
-      GetID = (int) Window.WINDOW_DIALOG_TVGUIDE;
-      GUIWindowManager.Replace((int) Window.WINDOW_DIALOG_TVGUIDE, this);
+      GetID = (int)Window.WINDOW_DIALOG_TVGUIDE;
+      GUIWindowManager.Replace((int)Window.WINDOW_DIALOG_TVGUIDE, this);
       Restore();
       PreInit();
       ResetAllControls();
@@ -101,6 +97,7 @@ namespace TvPlugin
       base.OnSelectGroup();
       _groupChanged = true;
     }
+
     public override void OnAction(Action action)
     {
       switch (action.wID)

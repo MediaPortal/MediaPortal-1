@@ -171,7 +171,7 @@ namespace MediaPortal.Ripper
     public event DeviceChangeEventHandler DeviceChange;
 
     private const int WS_EX_TOOLWINDOW = 0x80;
-    private const int WS_POPUP = unchecked((int) 0x80000000);
+    private const int WS_POPUP = unchecked((int)0x80000000);
 
     private const int WM_DEVICECHANGE = 0x0219;
 
@@ -238,11 +238,11 @@ namespace MediaPortal.Ripper
           case DBT_CONFIGCHANGED :
             break;*/
           case DBT_DEVICEARRIVAL:
-            head = (DEV_BROADCAST_HDR) Marshal.PtrToStructure(m.LParam, typeof (DEV_BROADCAST_HDR));
+            head = (DEV_BROADCAST_HDR)Marshal.PtrToStructure(m.LParam, typeof (DEV_BROADCAST_HDR));
             if (head.dbch_devicetype == DeviceType.DBT_DEVTYP_VOLUME)
             {
               DEV_BROADCAST_VOLUME DevDesc =
-                (DEV_BROADCAST_VOLUME) Marshal.PtrToStructure(m.LParam, typeof (DEV_BROADCAST_VOLUME));
+                (DEV_BROADCAST_VOLUME)Marshal.PtrToStructure(m.LParam, typeof (DEV_BROADCAST_VOLUME));
               switch (DevDesc.dbcv_flags)
               {
                 case VolumeChangeFlags.DBTF_MEDIA:
@@ -265,11 +265,11 @@ namespace MediaPortal.Ripper
           case DBT_DEVICEREMOVEPENDING :
             break;*/
           case DBT_DEVICEREMOVECOMPLETE:
-            head = (DEV_BROADCAST_HDR) Marshal.PtrToStructure(m.LParam, typeof (DEV_BROADCAST_HDR));
+            head = (DEV_BROADCAST_HDR)Marshal.PtrToStructure(m.LParam, typeof (DEV_BROADCAST_HDR));
             if (head.dbch_devicetype == DeviceType.DBT_DEVTYP_VOLUME)
             {
               DEV_BROADCAST_VOLUME DevDesc =
-                (DEV_BROADCAST_VOLUME) Marshal.PtrToStructure(m.LParam, typeof (DEV_BROADCAST_VOLUME));
+                (DEV_BROADCAST_VOLUME)Marshal.PtrToStructure(m.LParam, typeof (DEV_BROADCAST_VOLUME));
               switch (DevDesc.dbcv_flags)
               {
                 case VolumeChangeFlags.DBTF_MEDIA:

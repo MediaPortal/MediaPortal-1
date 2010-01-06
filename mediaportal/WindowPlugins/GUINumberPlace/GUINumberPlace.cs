@@ -34,7 +34,7 @@ using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using Timer=System.Timers.Timer;
+using Timer = System.Timers.Timer;
 
 namespace MediaPortal.GUI.NumberPlace
 {
@@ -111,7 +111,7 @@ namespace MediaPortal.GUI.NumberPlace
       {
         m_bShow = false;
         m_bBlock = false;
-        m_bLevel = (int) LevelName.Easy;
+        m_bLevel = (int)LevelName.Easy;
         _filter = -1;
         _showCandidates = false;
       }
@@ -202,19 +202,19 @@ namespace MediaPortal.GUI.NumberPlace
     private Grid grid = new Grid(3);
     private static Random random = new Random(DateTime.Now.Millisecond);
 
-    [SkinControl((int) SkinControlIDs.BTN_NEW_GAME)] protected GUIButtonControl btnNewGame = null;
-    [SkinControl((int) SkinControlIDs.BTN_HELP_ONCE)] protected GUIButtonControl btnHelpOnce = null;
-    [SkinControl((int) SkinControlIDs.BTN_RESET_GAME)] protected GUIButtonControl btnResetGame = null;
-    [SkinControl((int) SkinControlIDs.BTN_SOLVE)] protected GUIButtonControl btnSolve = null;
+    [SkinControl((int)SkinControlIDs.BTN_NEW_GAME)] protected GUIButtonControl btnNewGame = null;
+    [SkinControl((int)SkinControlIDs.BTN_HELP_ONCE)] protected GUIButtonControl btnHelpOnce = null;
+    [SkinControl((int)SkinControlIDs.BTN_RESET_GAME)] protected GUIButtonControl btnResetGame = null;
+    [SkinControl((int)SkinControlIDs.BTN_SOLVE)] protected GUIButtonControl btnSolve = null;
 
-    [SkinControl((int) SkinControlIDs.BTN_BLOCK_INVALID_MOVES)] protected GUIToggleButtonControl btnBlockInvalidMoves =
+    [SkinControl((int)SkinControlIDs.BTN_BLOCK_INVALID_MOVES)] protected GUIToggleButtonControl btnBlockInvalidMoves =
       null;
 
-    [SkinControl((int) SkinControlIDs.BTN_SHOW_INVALID_MOVES)] protected GUIToggleButtonControl btnShowInvalidMoves =
+    [SkinControl((int)SkinControlIDs.BTN_SHOW_INVALID_MOVES)] protected GUIToggleButtonControl btnShowInvalidMoves =
       null;
 
-    [SkinControl((int) SkinControlIDs.BTN_LEVEL)] protected GUIButtonControl btnLevel = null;
-    [SkinControl((int) SkinControlIDs.BTN_CLEAR)] protected GUIButtonControl btnClear = null;
+    [SkinControl((int)SkinControlIDs.BTN_LEVEL)] protected GUIButtonControl btnLevel = null;
+    [SkinControl((int)SkinControlIDs.BTN_CLEAR)] protected GUIButtonControl btnClear = null;
 
 
     private static readonly string pluginConfigFileName = "mynumberplace";
@@ -238,7 +238,7 @@ namespace MediaPortal.GUI.NumberPlace
 
     public GUINumberPlace()
     {
-      GetID = (int) Window.WINDOW_NUMBERPLACE;
+      GetID = (int)Window.WINDOW_NUMBERPLACE;
     }
 
 
@@ -296,7 +296,7 @@ namespace MediaPortal.GUI.NumberPlace
             int data = reader.ReadByte();
             while (data != -1)
             {
-              writer.WriteByte((byte) data);
+              writer.WriteByte((byte)data);
               data = reader.ReadByte();
             }
             writer.Flush();
@@ -316,20 +316,20 @@ namespace MediaPortal.GUI.NumberPlace
 
         if (_Settings.Show)
         {
-          GUIControl.SelectControl(GetID, ((int) SkinControlIDs.BTN_SHOW_INVALID_MOVES));
+          GUIControl.SelectControl(GetID, ((int)SkinControlIDs.BTN_SHOW_INVALID_MOVES));
         }
         else
         {
-          GUIControl.DeSelectControl(GetID, ((int) SkinControlIDs.BTN_SHOW_INVALID_MOVES));
+          GUIControl.DeSelectControl(GetID, ((int)SkinControlIDs.BTN_SHOW_INVALID_MOVES));
         }
 
         if (_Settings.Block)
         {
-          GUIControl.SelectControl(GetID, ((int) SkinControlIDs.BTN_BLOCK_INVALID_MOVES));
+          GUIControl.SelectControl(GetID, ((int)SkinControlIDs.BTN_BLOCK_INVALID_MOVES));
         }
         else
         {
-          GUIControl.DeSelectControl(GetID, ((int) SkinControlIDs.BTN_BLOCK_INVALID_MOVES));
+          GUIControl.DeSelectControl(GetID, ((int)SkinControlIDs.BTN_BLOCK_INVALID_MOVES));
         }
 
         for (int i = 1; i < 4; i++)
@@ -361,8 +361,8 @@ namespace MediaPortal.GUI.NumberPlace
       {
         for (int column = 0; column < grid.CellsInRow; column++)
         {
-          int cellControlId = (1000*(row + 1)) + column;
-          CellControl cntlFoc = (CellControl) GetControl(cellControlId);
+          int cellControlId = (1000 * (row + 1)) + column;
+          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
           cntlFoc.editable = true;
           cntlFoc.CellValue = 0;
           cntlFoc.SolutionValue = 0;
@@ -377,8 +377,8 @@ namespace MediaPortal.GUI.NumberPlace
       {
         for (int column = 0; column < grid.CellsInRow; column++)
         {
-          int cellControlId = (1000*(row + 1)) + column;
-          CellControl cntlFoc = (CellControl) GetControl(cellControlId);
+          int cellControlId = (1000 * (row + 1)) + column;
+          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
           cntlFoc.ClearCandidates();
           //if (cntlFoc.CellValue == 0)
           {
@@ -399,8 +399,8 @@ namespace MediaPortal.GUI.NumberPlace
       {
         for (int column = 0; column < grid.CellsInRow; column++)
         {
-          int cellControlId = (1000*(row + 1)) + column;
-          CellControl cntlFoc = (CellControl) GetControl(cellControlId);
+          int cellControlId = (1000 * (row + 1)) + column;
+          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
           cntlFoc.ClearCandidates();
         }
       }
@@ -413,8 +413,8 @@ namespace MediaPortal.GUI.NumberPlace
       {
         for (int column = 0; column < grid.CellsInRow; column++)
         {
-          int cellControlId = (1000*(row + 1)) + column;
-          CellControl cntlFoc = (CellControl) GetControl(cellControlId);
+          int cellControlId = (1000 * (row + 1)) + column;
+          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
           if (cntlFoc.CellValue == 0)
           {
             IList candidates = grid.Possibilities(row, column);
@@ -445,8 +445,8 @@ namespace MediaPortal.GUI.NumberPlace
       {
         for (int column = 0; column < grid.CellsInRow; column++)
         {
-          int cellControlId = (1000*(row + 1)) + column;
-          CellControl cntlFoc = (CellControl) GetControl(cellControlId);
+          int cellControlId = (1000 * (row + 1)) + column;
+          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
           if (cntlFoc.CellValue == 0)
           {
             return false;
@@ -474,8 +474,8 @@ namespace MediaPortal.GUI.NumberPlace
       {
         for (int column = 0; column < grid.CellsInRow; column++)
         {
-          int cellControlId = (1000*(row + 1)) + column;
-          CellControl cntlFoc = (CellControl) GetControl(cellControlId);
+          int cellControlId = (1000 * (row + 1)) + column;
+          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
           if ((cntlFoc.CellValue != cntlFoc.SolutionValue) && cntlFoc.editable)
           {
             return false;
@@ -513,7 +513,7 @@ namespace MediaPortal.GUI.NumberPlace
     private void UpdateButtonStates()
     {
       string textLine = GUILocalizeStrings.Get(19107); // Level:
-      switch ((LevelName) _Settings.Level)
+      switch ((LevelName)_Settings.Level)
       {
         case LevelName.Kids:
           textLine += GUILocalizeStrings.Get(19115); // kids
@@ -537,8 +537,8 @@ namespace MediaPortal.GUI.NumberPlace
       {
         for (int column = 0; column < grid.CellsInRow; column++)
         {
-          int cellControlId = (1000*(row + 1)) + column;
-          CellControl cntlFoc = (CellControl) GetControl(cellControlId);
+          int cellControlId = (1000 * (row + 1)) + column;
+          CellControl cntlFoc = (CellControl)GetControl(cellControlId);
           if (cntlFoc.editable)
           {
             cntlFoc.CellValue = 0;
@@ -551,12 +551,12 @@ namespace MediaPortal.GUI.NumberPlace
 
     private void Result()
     {
-      GUIDialogOK dlg = (GUIDialogOK) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_OK);
+      GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
       if (SolvedCorrect())
       {
         StopTimer();
         gameRunning = false;
-        int score = (100000000/gameRating)/(totalTime.Hours*3600 + totalTime.Minutes*60 + totalTime.Seconds);
+        int score = (100000000 / gameRating) / (totalTime.Hours * 3600 + totalTime.Minutes * 60 + totalTime.Seconds);
 
         dlg.SetHeading(GUILocalizeStrings.Get(19111)); // Game Over
         dlg.SetLine(1, GUILocalizeStrings.Get(19112)); // Congratulation!
@@ -578,7 +578,7 @@ namespace MediaPortal.GUI.NumberPlace
         }
 
         Log.Info("GUINumberPlace: Solved in: {0} game Rating: {2} Score: {1}",
-                 (totalTime.Hours*3600 + totalTime.Minutes*60 + totalTime.Seconds), score, gameRating);
+                 (totalTime.Hours * 3600 + totalTime.Minutes * 60 + totalTime.Seconds), score, gameRating);
 
         //Utils.PlaySound("notify.wav", false, true);
       }
@@ -648,7 +648,7 @@ namespace MediaPortal.GUI.NumberPlace
 
     private string GetPlayerName()
     {
-      VirtualKeyboard keyboard = (VirtualKeyboard) GUIWindowManager.GetWindow((int) Window.WINDOW_VIRTUAL_KEYBOARD);
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
       if (null == keyboard)
       {
         return null;
@@ -674,8 +674,8 @@ namespace MediaPortal.GUI.NumberPlace
           {
             for (int column = 0; column < grid.CellsInRow; column++)
             {
-              int cellControlId = (1000*(row + 1)) + column;
-              CellControl cntlFoc = (CellControl) GetControl(cellControlId);
+              int cellControlId = (1000 * (row + 1)) + column;
+              CellControl cntlFoc = (CellControl)GetControl(cellControlId);
               if (cntlFoc.editable)
               {
                 cntlFoc.CellValue = solution.cells[row, column];
@@ -694,7 +694,7 @@ namespace MediaPortal.GUI.NumberPlace
         int maxrating = 0;
         ClearGrid();
         Grid puzzle = new Grid();
-        switch ((LevelName) _Settings.Level)
+        switch ((LevelName)_Settings.Level)
         {
           case LevelName.Kids:
             minrating = 550;
@@ -717,23 +717,23 @@ namespace MediaPortal.GUI.NumberPlace
         gameRating = Solver.Rate(puzzle);
         //puzzle = Solver.Generate(3);
         Grid solution = Solver.Solve(puzzle);
-        if ((LevelName) _Settings.Level == LevelName.Easy)
+        if ((LevelName)_Settings.Level == LevelName.Easy)
         {
           puzzle = Solver.FillOutCells(puzzle, solution, 10);
           gameRating = Solver.Rate(puzzle);
         }
-        else if ((LevelName) _Settings.Level == LevelName.Kids)
+        else if ((LevelName)_Settings.Level == LevelName.Kids)
         {
           puzzle = Solver.FillOutCells(puzzle, solution, 20);
-          gameRating = Solver.Rate(puzzle)*2;
+          gameRating = Solver.Rate(puzzle) * 2;
         }
 
         for (int row = 0; row < grid.CellsInRow; row++)
         {
           for (int column = 0; column < grid.CellsInRow; column++)
           {
-            int cellControlId = (1000*(row + 1)) + column;
-            CellControl cntlFoc = (CellControl) GetControl(cellControlId);
+            int cellControlId = (1000 * (row + 1)) + column;
+            CellControl cntlFoc = (CellControl)GetControl(cellControlId);
             cntlFoc.CellValue = puzzle.cells[row, column];
             if (cntlFoc.CellValue > 0)
             {
@@ -793,19 +793,19 @@ namespace MediaPortal.GUI.NumberPlace
       }
       else if (control == btnLevel)
       {
-        switch ((LevelName) _Settings.Level)
+        switch ((LevelName)_Settings.Level)
         {
           case LevelName.Kids:
-            _Settings.Level = (int) LevelName.Easy;
+            _Settings.Level = (int)LevelName.Easy;
             break;
           case LevelName.Easy:
-            _Settings.Level = (int) LevelName.Medium;
+            _Settings.Level = (int)LevelName.Medium;
             break;
           case LevelName.Medium:
-            _Settings.Level = (int) LevelName.Hard;
+            _Settings.Level = (int)LevelName.Hard;
             break;
           case LevelName.Hard:
-            _Settings.Level = (int) LevelName.Kids;
+            _Settings.Level = (int)LevelName.Kids;
             break;
         }
         UpdateButtonStates();
@@ -821,8 +821,8 @@ namespace MediaPortal.GUI.NumberPlace
         {
           for (column = 0; column < 9 && m < candidateIndex; column++)
           {
-            int cellControlId = (1000*(row + 1)) + column;
-            CellControl cntlFoc = (CellControl) GetControl(cellControlId);
+            int cellControlId = (1000 * (row + 1)) + column;
+            CellControl cntlFoc = (CellControl)GetControl(cellControlId);
             if (cntlFoc.editable == true && cntlFoc.CellValue == 0)
             {
               m++;
@@ -852,13 +852,13 @@ namespace MediaPortal.GUI.NumberPlace
         if (controlId >= 1000 && controlId <= 9008)
         {
           // Show dialog
-          CellControl cntlFoc = (CellControl) GetControl(controlId);
-          int row = (controlId/1000) - 1;
-          int column = controlId%1000;
+          CellControl cntlFoc = (CellControl)GetControl(controlId);
+          int row = (controlId / 1000) - 1;
+          int column = controlId % 1000;
 
           if (cntlFoc.editable)
           {
-            GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+            GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
             if (dlg != null)
             {
               dlg.Reset();
@@ -907,9 +907,9 @@ namespace MediaPortal.GUI.NumberPlace
         int controlId = GetFocusControlId();
         if (controlId >= 1000 && controlId <= 9008)
         {
-          CellControl cntlFoc = (CellControl) GetControl(controlId);
-          int row = (controlId/1000) - 1;
-          int column = controlId%1000;
+          CellControl cntlFoc = (CellControl)GetControl(controlId);
+          int row = (controlId / 1000) - 1;
+          int column = controlId % 1000;
 
           if (cntlFoc != null)
           {
@@ -989,7 +989,7 @@ namespace MediaPortal.GUI.NumberPlace
 
     private void ShowFilterMenu()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -1034,7 +1034,7 @@ namespace MediaPortal.GUI.NumberPlace
 
     private void ShowToggleCandidatesMenu()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -1062,7 +1062,7 @@ namespace MediaPortal.GUI.NumberPlace
       int controlId = GetFocusControlId();
       if (controlId >= 1000 && controlId <= 9008)
       {
-        CellControl cntlFoc = (CellControl) GetControl(controlId);
+        CellControl cntlFoc = (CellControl)GetControl(controlId);
 
         if (cntlFoc != null)
         {
@@ -1082,7 +1082,7 @@ namespace MediaPortal.GUI.NumberPlace
 
     private void ShowCandidatesMenu()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;
@@ -1098,7 +1098,7 @@ namespace MediaPortal.GUI.NumberPlace
       int controlId = GetFocusControlId();
       if (controlId >= 1000 && controlId <= 9008)
       {
-        CellControl cntlFoc = (CellControl) GetControl(controlId);
+        CellControl cntlFoc = (CellControl)GetControl(controlId);
         if (cntlFoc != null)
         {
           dlg.Add(GUILocalizeStrings.Get(19151)); // Add/remove candidates
@@ -1136,7 +1136,7 @@ namespace MediaPortal.GUI.NumberPlace
 
     private void ShowContextMenu()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
       {
         return;

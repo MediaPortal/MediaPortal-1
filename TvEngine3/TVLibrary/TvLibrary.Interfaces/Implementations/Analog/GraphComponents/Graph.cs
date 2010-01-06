@@ -29,35 +29,42 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
   public class Graph
   {
     #region variables
+
     /// <summary>
     /// The Tuner component
     /// </summary>
     private Tuner _tuner;
+
     /// <summary>
     /// The TvAudio component
     /// </summary>
     private TvAudio _tvAudio;
+
     /// <summary>
     /// The Crossbar component
     /// </summary>
     private Crossbar _crossbar;
+
     /// <summary>
     /// The Capture component
     /// </summary>
     private Capture _capture;
+
     /// <summary>
     /// The Teletext component
     /// </summary>
     private Teletext _teletext;
+
     #endregion
 
     #region ctor
-    private Graph()
-    {
-    }
+
+    private Graph() {}
+
     #endregion
 
     #region Static CreateInstance method
+
     /// <summary>
     /// Creates the Graph instance which represents an analog graph
     /// </summary>
@@ -79,33 +86,37 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
         captureNode = xmlNode.SelectSingleNode("capture");
         teletextNode = xmlNode.SelectSingleNode("teletext");
       }
-      graph.Tuner= Tuner.CreateInstance(tunerNode);
-      graph.TvAudio= TvAudio.CreateInstance(tvAudioNode);
-      graph.Crossbar= Crossbar.CreateInstance(crossbarNode);
+      graph.Tuner = Tuner.CreateInstance(tunerNode);
+      graph.TvAudio = TvAudio.CreateInstance(tvAudioNode);
+      graph.Crossbar = Crossbar.CreateInstance(crossbarNode);
       graph.Capture = Capture.CreateInstance(captureNode);
       graph.Teletext = Teletext.CreateInstance(teletextNode);
       return graph;
     }
+
     #endregion
 
     #region WRiteGraph method
+
     /// <summary>
     /// Writes the graph to the configuration
     /// </summary>
     /// <param name="writer">Writer</param>
     public void WriteGraph(XmlWriter writer)
     {
-      writer.WriteStartElement("graph");//<graph>
+      writer.WriteStartElement("graph"); //<graph>
       _tuner.WriteGraph(writer);
       _tvAudio.WriteGraph(writer);
       _crossbar.WriteGraph(writer);
       _capture.WriteGraph(writer);
       _teletext.WriteGraph(writer);
-      writer.WriteEndElement();//</graph>
+      writer.WriteEndElement(); //</graph>
     }
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// The tuner part of the graph
     /// </summary>
@@ -150,6 +161,7 @@ namespace TvLibrary.Implementations.Analog.GraphComponents
       get { return _teletext; }
       set { _teletext = value; }
     }
+
     #endregion
   }
 }

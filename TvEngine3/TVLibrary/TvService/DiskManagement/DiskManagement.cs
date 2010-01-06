@@ -36,7 +36,8 @@ namespace TvService
   /// </summary>
   public class DiskManagement
   {
-    readonly System.Timers.Timer _timer;
+    private readonly System.Timers.Timer _timer;
+
     public DiskManagement()
     {
       _timer = new System.Timers.Timer();
@@ -47,7 +48,7 @@ namespace TvService
     }
 
 
-    static List<string> GetDisks()
+    private static List<string> GetDisks()
     {
       List<string> drives = new List<string>();
 
@@ -69,7 +70,7 @@ namespace TvService
       return drives;
     }
 
-    static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    private static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       CheckFreeDiskSpace();
     }
@@ -81,7 +82,7 @@ namespace TvService
     /// </summary>
     /// <remarks>Note, this method will run once every 15 minutes
     /// </remarks>
-    static void CheckFreeDiskSpace()
+    private static void CheckFreeDiskSpace()
     {
       //check diskspace every 15 minutes...
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -103,7 +104,7 @@ namespace TvService
       }
     }
 
-    static bool OutOfDiskSpace(string drive)
+    private static bool OutOfDiskSpace(string drive)
     {
       TvBusinessLayer layer = new TvBusinessLayer();
 
@@ -113,7 +114,8 @@ namespace TvService
       try
       {
         minimiumFreeDiskSpace = (ulong)Int32.Parse(quotaText);
-      } catch (Exception e)
+      }
+      catch (Exception e)
       {
         Log.Error("DiskManagement: Exception at parsing freediskspace ({0}) to drive {1}", quotaText, drive);
         Log.Error(e.ToString());
@@ -141,7 +143,7 @@ namespace TvService
       return true;
     }
 
-    static List<RecordingFileInfo> GetRecordingsOnDrive(string drive)
+    private static List<RecordingFileInfo> GetRecordingsOnDrive(string drive)
     {
       List<RecordingFileInfo> recordings = new List<RecordingFileInfo>();
       IList<Recording> recordedTvShows = Recording.ListAll();
@@ -169,7 +171,8 @@ namespace TvService
             fi.filename = recorded.FileName;
             fi.record = recorded;
             recordings.Add(fi);
-          } catch (Exception e)
+          }
+          catch (Exception e)
           {
             Log.Error("DiskManagement: Exception at building FileInfo ({0})", recorded.FileName);
             Log.Write(e);
@@ -179,7 +182,7 @@ namespace TvService
       return recordings;
     }
 
-    static void CheckDriveFreeDiskSpace(string drive)
+    private static void CheckDriveFreeDiskSpace(string drive)
     {
       //get disk quota to use
       if (!OutOfDiskSpace(drive))

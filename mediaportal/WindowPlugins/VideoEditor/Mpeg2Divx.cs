@@ -32,7 +32,7 @@ using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.Core.Transcoding;
 using MediaPortal.GUI.Library;
-using Quality=MediaPortal.Core.Transcoding.Quality;
+using Quality = MediaPortal.Core.Transcoding.Quality;
 
 namespace WindowPlugins.VideoEditor
 {
@@ -61,9 +61,7 @@ namespace WindowPlugins.VideoEditor
     protected const int WS_CLIPCHILDREN = 0x02000000;
     protected const int WS_CLIPSIBLINGS = 0x04000000;
 
-    public Mpeg2Divx()
-    {
-    }
+    public Mpeg2Divx() {}
 
     #region ITranscode Members
 
@@ -119,15 +117,15 @@ namespace WindowPlugins.VideoEditor
       //object comobj = null;
       try
       {
-        graphBuilder = (IGraphBuilder) new FilterGraph();
+        graphBuilder = (IGraphBuilder)new FilterGraph();
 
-        _rotEntry = new DsROTEntry((IFilterGraph) graphBuilder);
+        _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
 
         Log.Info("MPEG2DIVX: add filesource");
         //bufferSource = new AsyncReader();//(IStreamBufferSource)new StreamBufferSource();
 
-        IFileSourceFilter fileSource = (IFileSourceFilter) new AsyncReader(); //(IFileSourceFilter)bufferSource;
-        IBaseFilter filter = (IBaseFilter) fileSource;
+        IFileSourceFilter fileSource = (IFileSourceFilter)new AsyncReader(); //(IFileSourceFilter)bufferSource;
+        IBaseFilter filter = (IBaseFilter)fileSource;
         graphBuilder.AddFilter(filter, "File Source");
 
         Log.Info("MPEG2DIVX: load file:{0}", info.file);
@@ -185,7 +183,7 @@ namespace WindowPlugins.VideoEditor
         IPin pinOut0, pinOut1;
         IPin pinIn0, pinIn1;
 
-        pinOut0 = DsFindPin.ByDirection((IBaseFilter) fileSource, PinDirection.Output, 0);
+        pinOut0 = DsFindPin.ByDirection((IBaseFilter)fileSource, PinDirection.Output, 0);
         if (pinOut0 == null)
         {
           Log.Error("MPEG2DIVX:FAILED:unable to get pins of source");
@@ -209,8 +207,8 @@ namespace WindowPlugins.VideoEditor
         }
 
 
-        pinOut0 = DsFindPin.ByDirection((IBaseFilter) mpegDemuxer, PinDirection.Output, 0); //audio
-        pinOut1 = DsFindPin.ByDirection((IBaseFilter) mpegDemuxer, PinDirection.Output, 1); //video
+        pinOut0 = DsFindPin.ByDirection((IBaseFilter)mpegDemuxer, PinDirection.Output, 0); //audio
+        pinOut1 = DsFindPin.ByDirection((IBaseFilter)mpegDemuxer, PinDirection.Output, 1); //video
         if (pinOut0 == null || pinOut1 == null)
         {
           Log.Error("MPEG2DIVX:FAILED:unable to get pins of demuxer");
@@ -258,7 +256,7 @@ namespace WindowPlugins.VideoEditor
 
         //get file duration
         Log.Info("MPEG2DIVX: Get duration of movie");
-        long lTime = 5*60*60;
+        long lTime = 5 * 60 * 60;
         lTime *= 10000000;
         long pStop = 0;
         hr = mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop),
@@ -272,7 +270,7 @@ namespace WindowPlugins.VideoEditor
           mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop),
                                     AMSeekingSeekingFlags.NoPositioning);
         }
-        double duration = m_dDuration/10000000d;
+        double duration = m_dDuration / 10000000d;
         //      Log.Info("DVR2XVID: movie duration:{0}", Util.Utils.SecondsToHMSString((int)duration));
 
         //				hr=(graphBuilder as IMediaFilter).SetSyncSource(null);
@@ -290,7 +288,7 @@ namespace WindowPlugins.VideoEditor
         {
           long lCurrent;
           mediaSeeking.GetCurrentPosition(out lCurrent);
-          double dpos = (double) lCurrent;
+          double dpos = (double)lCurrent;
           dpos /= 10000000d;
           Thread.Sleep(100);
           if (dpos >= 2.0d)
@@ -314,7 +312,7 @@ namespace WindowPlugins.VideoEditor
         graphBuilder.RemoveFilter(aviMuxer);
         graphBuilder.RemoveFilter(divxCodec);
         graphBuilder.RemoveFilter(mp3Codec);
-        graphBuilder.RemoveFilter((IBaseFilter) fileWriterFilter);
+        graphBuilder.RemoveFilter((IBaseFilter)fileWriterFilter);
         if (!AddCodecs(graphBuilder, info))
         {
           return false;
@@ -376,13 +374,13 @@ namespace WindowPlugins.VideoEditor
       }
       long lCurrent;
       mediaSeeking.GetCurrentPosition(out lCurrent);
-      float percent = ((float) lCurrent)/((float) m_dDuration);
+      float percent = ((float)lCurrent) / ((float)m_dDuration);
       percent *= 50.0f;
       if (percent > 100)
       {
         percent = 100;
       }
-      return (int) percent;
+      return (int)percent;
     }
 
     public bool IsTranscoding()

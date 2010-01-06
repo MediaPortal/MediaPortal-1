@@ -35,9 +35,7 @@ namespace MediaPortal.Topbar
   [PluginIcons("WindowPlugins.GUITopbar.Topbar.gif", "WindowPlugins.GUITopbar.Topbar_disabled.gif")]
   public class TopBarSetup : ISetupForm, IShowPlugin
   {
-    public TopBarSetup()
-    {
-    }
+    public TopBarSetup() {}
 
     #region ISetupForm Members
 
@@ -63,7 +61,7 @@ namespace MediaPortal.Topbar
 
     public int GetWindowId()
     {
-      return (int) GUIWindow.Window.WINDOW_TOPBAR;
+      return (int)GUIWindow.Window.WINDOW_TOPBAR;
     }
 
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,

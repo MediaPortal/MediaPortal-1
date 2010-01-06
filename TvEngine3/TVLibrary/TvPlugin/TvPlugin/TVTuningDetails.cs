@@ -33,7 +33,7 @@ namespace TvPlugin
   {
     public TVTuningDetails()
     {
-      GetID = (int) Window.WINDOW_TV_TUNING_DETAILS;
+      GetID = (int)Window.WINDOW_TV_TUNING_DETAILS;
     }
 
     #region Overrides
@@ -110,21 +110,21 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.TuningDetails.BandWidth", detail.Bandwidth.ToString());
           switch (detail.ChannelType)
           {
-              case 0:
-                  GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "Analog");
-                  break;
-              case 1:
-                  GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "Atsc");
-                  break;
-              case 2:
-                  GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "DVB-C");
-                  break;
-              case 3:
-                  GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "DVB-S");
-                  break;
-              case 4:
-                  GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "DVB-T");
-                  break;
+            case 0:
+              GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "Analog");
+              break;
+            case 1:
+              GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "Atsc");
+              break;
+            case 2:
+              GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "DVB-C");
+              break;
+            case 3:
+              GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "DVB-S");
+              break;
+            case 4:
+              GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "DVB-T");
+              break;
           }
           GUIPropertyManager.SetProperty("#TV.TuningDetails.CountryId", detail.CountryId.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", detail.FreeToAir.ToString());

@@ -110,7 +110,7 @@ namespace MediaPortal.WebEPG.Parser
 
     public IParserData GetData(int index)
     {
-      IParserData xmlData = (IParserData) Activator.CreateInstance(_dataType);
+      IParserData xmlData = (IParserData)Activator.CreateInstance(_dataType);
 
       XmlNode progNode = _nodeList.Item(index);
       if (progNode != null)

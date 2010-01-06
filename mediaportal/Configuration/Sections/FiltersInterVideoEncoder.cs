@@ -71,9 +71,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public FiltersInterVideoEncoder()
-      : this("InterVideo Encoder")
-    {
-    }
+      : this("InterVideo Encoder") {}
 
     /// <summary>
     /// 
@@ -499,7 +497,7 @@ namespace MediaPortal.Configuration.Sections
         {
           try
           {
-            regValue = (Int32) subkey.GetValue("VideoFrameRate", 3);
+            regValue = (Int32)subkey.GetValue("VideoFrameRate", 3);
             switch (regValue)
             {
               case 3:
@@ -515,7 +513,7 @@ namespace MediaPortal.Configuration.Sections
             // if (regValue == 3 || regValue == 4) comboBoxFrameRate.SelectedIndex = regValue - 3;
             // else comboBoxFrameRate.SelectedIndex = 0;
 
-            regValue = (Int32) subkey.GetValue("VideoAspectRatio", 2);
+            regValue = (Int32)subkey.GetValue("VideoAspectRatio", 2);
             switch (regValue)
             {
               case 1:
@@ -531,7 +529,7 @@ namespace MediaPortal.Configuration.Sections
             // if (regValue >= 1 && regValue <= 3) comboBoxAspectRatio.SelectedIndex = regValue - 1;
             // else comboBoxAspectRatio.SelectedIndex = 1;
 
-            regValue = (Int32) subkey.GetValue("VideoFormat", 1);
+            regValue = (Int32)subkey.GetValue("VideoFormat", 1);
             switch (regValue)
             {
               case 1:
@@ -552,7 +550,7 @@ namespace MediaPortal.Configuration.Sections
             //if (regValue == 3) comboBoxVideoFormat.SelectedIndex = 2;
             //else comboBoxVideoFormat.SelectedIndex = 1;
 
-            regValue = (Int32) subkey.GetValue("VideoBitRate", 1);
+            regValue = (Int32)subkey.GetValue("VideoBitRate", 1);
             switch (regValue)
             {
               case 2000:
@@ -573,9 +571,7 @@ namespace MediaPortal.Configuration.Sections
             //if (regValue == 6000) comboBoxEncoderQuality.SelectedIndex = 2;
             //else comboBoxEncoderQuality.SelectedIndex = 1;
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
 
@@ -589,7 +585,7 @@ namespace MediaPortal.Configuration.Sections
         {
           try
           {
-            switch ((Int32) subkey.GetValue("MPEGAudioBitRate", 2))
+            switch ((Int32)subkey.GetValue("MPEGAudioBitRate", 2))
             {
               case 128:
                 comboBoxAudioBitrate.SelectedIndex = 0;
@@ -617,7 +613,7 @@ namespace MediaPortal.Configuration.Sections
                 break;
             }
 
-            Int32 regSamplingFreq = (Int32) subkey.GetValue("MPEGAudioSamplingFreq", 0);
+            Int32 regSamplingFreq = (Int32)subkey.GetValue("MPEGAudioSamplingFreq", 0);
             switch (regSamplingFreq)
             {
               case 0:
@@ -631,21 +627,19 @@ namespace MediaPortal.Configuration.Sections
                 break;
             }
 
-            Int32 regAudioQuality = (Int32) subkey.GetValue("MPEGAudioQuality", 75);
+            Int32 regAudioQuality = (Int32)subkey.GetValue("MPEGAudioQuality", 75);
             radioButtonQualityHigh.Checked = (regAudioQuality == 100);
             radioButtonQualityGood.Checked = (regAudioQuality == 75);
             radioButtonQualityMedium.Checked = (regAudioQuality == 50);
             radioButtonQualityLow.Checked = (regAudioQuality == 25);
 
-            Int32 regSystemMode = (Int32) subkey.GetValue("MPEGAudioSystemMode", 0);
+            Int32 regSystemMode = (Int32)subkey.GetValue("MPEGAudioSystemMode", 0);
             radioButtonModeStereo.Checked = (regSystemMode == 0);
             radioButtonModeJointStereo.Checked = (regSystemMode == 1);
             radioButtonModeDualChannel.Checked = (regSystemMode == 2);
             radioButtonModeMono.Checked = (regSystemMode == 3);
           }
-          catch (Exception)
-          {
-          }
+          catch (Exception) {}
         }
       }
 
@@ -821,9 +815,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void comboBoxVideoFormat_SelectedIndexChanged(object sender, EventArgs e)
-    {
-    }
+    private void comboBoxVideoFormat_SelectedIndexChanged(object sender, EventArgs e) {}
 
     private void comboBoxAspectRatio_SelectedIndexChanged(object sender, EventArgs e)
     {

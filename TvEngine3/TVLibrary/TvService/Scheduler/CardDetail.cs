@@ -21,6 +21,7 @@
 using System;
 using TvLibrary.Interfaces;
 using TvDatabase;
+
 namespace TvService
 {
   /// <summary>
@@ -28,10 +29,10 @@ namespace TvService
   /// </summary>
   public class CardDetail : IComparable<CardDetail>
   {
-    readonly int _cardId;
-    readonly Card _card;
-    readonly IChannel _detail;
-    int _priority;
+    private readonly int _cardId;
+    private readonly Card _card;
+    private readonly IChannel _detail;
+    private int _priority;
 
     /// <summary>
     /// ctor
@@ -52,25 +53,17 @@ namespace TvService
     /// </summary>
     public int Id
     {
-      get
-      {
-        return _cardId;
-      }
+      get { return _cardId; }
     }
+
     /// <summary>
     /// gets/sets the priority
     /// </summary>
     /// <value>The priority.</value>
     public int Priority
     {
-      get
-      {
-        return _priority;
-      }
-      set
-      {
-        _priority = value;
-      }
+      get { return _priority; }
+      set { _priority = value; }
     }
 
     /// <summary>
@@ -78,20 +71,15 @@ namespace TvService
     /// </summary>
     public Card Card
     {
-      get
-      {
-        return _card;
-      }
+      get { return _card; }
     }
+
     /// <summary>
     /// gets the tuning detail
     /// </summary>
     public IChannel TuningDetail
     {
-      get
-      {
-        return _detail;
-      }
+      get { return _detail; }
     }
 
     #region IComparable<CardInfo> Members

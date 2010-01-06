@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -141,8 +141,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             Log.Info("DebugForm.DisplayEQ(): called");
           }
           this.EQSettings.Render_MaxValue = (this.EQSettings.UseNormalEq | this.EQSettings.UseStereoEq)
-                                              ? ((int) bounds.Height)
-                                              : ((int) bounds.Width);
+                                              ? ((int)bounds.Height)
+                                              : ((int)bounds.Width);
           this.EQSettings.Render_BANDS = this.EQSettings.UseNormalEq ? 0x10 : (this.EQSettings.UseStereoEq ? 8 : 1);
           MiniDisplayHelper.ProcessEqData(ref this.EQSettings);
           Monitor.Enter(obj3 = DWriteMutex);
@@ -173,10 +173,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               }
               if (this.EQSettings.UseNormalEq)
               {
-                ef2 = new RectangleF((bounds.X + (i*(((int) bounds.Width)/this.EQSettings.Render_BANDS))) + 1f,
-                                     bounds.Y + (((int) bounds.Height) - this.EQSettings.EqArray[1 + i]),
-                                     (float) ((((int) bounds.Width)/this.EQSettings.Render_BANDS) - 2),
-                                     (float) this.EQSettings.EqArray[1 + i]);
+                ef2 = new RectangleF((bounds.X + (i * (((int)bounds.Width) / this.EQSettings.Render_BANDS))) + 1f,
+                                     bounds.Y + (((int)bounds.Height) - this.EQSettings.EqArray[1 + i]),
+                                     (float)((((int)bounds.Width) / this.EQSettings.Render_BANDS) - 2),
+                                     (float)this.EQSettings.EqArray[1 + i]);
                 this.tGraphics.FillRectangle(Brushes.Black, ef2);
               }
               else
@@ -185,25 +185,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 RectangleF ef3;
                 if (this.EQSettings.UseStereoEq)
                 {
-                  int num4 = (((int) bounds.Width)/2)/this.EQSettings.Render_BANDS;
-                  num2 = i*num4;
-                  int num3 = (i + this.EQSettings.Render_BANDS)*num4;
+                  int num4 = (((int)bounds.Width) / 2) / this.EQSettings.Render_BANDS;
+                  num2 = i * num4;
+                  int num3 = (i + this.EQSettings.Render_BANDS) * num4;
                   ef2 = new RectangleF((bounds.X + num2) + 1f,
-                                       bounds.Y + (((int) bounds.Height) - this.EQSettings.EqArray[1 + i]),
-                                       (float) (num4 - 2), (float) this.EQSettings.EqArray[1 + i]);
+                                       bounds.Y + (((int)bounds.Height) - this.EQSettings.EqArray[1 + i]),
+                                       (float)(num4 - 2), (float)this.EQSettings.EqArray[1 + i]);
                   ef3 = new RectangleF((bounds.X + num3) + 1f,
-                                       bounds.Y + (((int) bounds.Height) - this.EQSettings.EqArray[9 + i]),
-                                       (float) (num4 - 2), (float) this.EQSettings.EqArray[9 + i]);
+                                       bounds.Y + (((int)bounds.Height) - this.EQSettings.EqArray[9 + i]),
+                                       (float)(num4 - 2), (float)this.EQSettings.EqArray[9 + i]);
                   this.tGraphics.FillRectangle(Brushes.Black, ef2);
                   this.tGraphics.FillRectangle(Brushes.Black, ef3);
                 }
                 else if (this.EQSettings.UseVUmeter | this.EQSettings.UseVUmeter2)
                 {
-                  ef2 = new RectangleF(bounds.X + 1f, bounds.Y + 1f, (float) this.EQSettings.EqArray[1 + i],
-                                       (float) (((int) (bounds.Height/2f)) - 2));
-                  num2 = this.EQSettings.UseVUmeter ? 0 : (((int) bounds.Width) - this.EQSettings.EqArray[2 + i]);
-                  ef3 = new RectangleF((bounds.X + num2) + 1f, (bounds.Y + (bounds.Height/2f)) + 1f,
-                                       (float) this.EQSettings.EqArray[2 + i], (float) (((int) (bounds.Height/2f)) - 2));
+                  ef2 = new RectangleF(bounds.X + 1f, bounds.Y + 1f, (float)this.EQSettings.EqArray[1 + i],
+                                       (float)(((int)(bounds.Height / 2f)) - 2));
+                  num2 = this.EQSettings.UseVUmeter ? 0 : (((int)bounds.Width) - this.EQSettings.EqArray[2 + i]);
+                  ef3 = new RectangleF((bounds.X + num2) + 1f, (bounds.Y + (bounds.Height / 2f)) + 1f,
+                                       (float)this.EQSettings.EqArray[2 + i], (float)(((int)(bounds.Height / 2f)) - 2));
                   this.tGraphics.FillRectangle(Brushes.Black, ef2);
                   this.tGraphics.FillRectangle(Brushes.Black, ef3);
                 }
@@ -214,9 +214,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           catch (Exception exception)
           {
             Log.Info("DebugForm.DisplayEQ(): CAUGHT EXCEPTION {0}", new object[] {exception});
-            if (exception.Message.Contains("ThreadAbortException"))
-            {
-            }
+            if (exception.Message.Contains("ThreadAbortException")) {}
           }
           finally
           {
@@ -413,7 +411,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
               {
                 if (this.bitmapData == null)
                 {
-                  this.bitmapData = new byte[bitmapdata.Stride*this.gLines];
+                  this.bitmapData = new byte[bitmapdata.Stride * this.gLines];
                 }
                 Marshal.Copy(bitmapdata.Scan0, this.bitmapData, 0, this.bitmapData.Length);
               }
@@ -462,8 +460,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (!_message.Equals(this.LastText[_line]))
         {
           this.LastText[_line] = _message;
-          RectangleF rect = new RectangleF(0f, (float) (this.tLineHeight*_line), (float) this.tWidth,
-                                           (float) this.tLineHeight);
+          RectangleF rect = new RectangleF(0f, (float)(this.tLineHeight * _line), (float)this.tWidth,
+                                           (float)this.tLineHeight);
           this.tGraphics.SmoothingMode = SmoothingMode.None;
           this.tGraphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
           this.tGraphics.FillRectangle(Brushes.White, rect);
@@ -501,7 +499,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           if (this.bitmapData == null)
           {
-            this.bitmapData = new byte[bitmapdata.Stride*this.gLines];
+            this.bitmapData = new byte[bitmapdata.Stride * this.gLines];
           }
           Marshal.Copy(bitmapdata.Scan0, this.bitmapData, 0, this.bitmapData.Length);
         }
@@ -597,9 +595,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // DebugForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 21F);
-      this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+      this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))),
+                                                     ((int)(((byte)(128)))));
       this.ClientSize = new Size(Settings.Instance.GraphicWidth + 6, Settings.Instance.GraphicHeight + 0x18);
-  
+
       this.Controls.Add(this.graphicDisplay);
       this.Font = new System.Drawing.Font("Lucida Console", 16F);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -607,7 +606,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.Text = "MiniDisplay - Debug (Preview)";
       ((System.ComponentModel.ISupportInitialize)(this.graphicDisplay)).EndInit();
       this.ResumeLayout(false);
-
     }
 
     private void InitializeDriver()
@@ -669,7 +667,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Info("DebugForm.InitializeDriver(): Advanced options - Blank display when idle: {0}",
                new object[] {this.DisplaySettings.BlankDisplayWhenIdle});
       Log.Info("DebugForm.InitializeDriver(): Advanced options -     blank display after: {0} seconds",
-               new object[] {this.DisplaySettings._BlankIdleTimeout/0xf4240L});
+               new object[] {this.DisplaySettings._BlankIdleTimeout / 0xf4240L});
       Log.Info("DebugForm.InitializeDriver(): Advanced options - Shutdown Message - Line 1: {0}",
                new object[] {this.DisplaySettings._Shutdown1});
       Log.Info("DebugForm.InitializeDriver(): Advanced options - Shutdown Message - Line 2: {0}",
@@ -701,17 +699,17 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       this.EQSettings._EQTitleDisplayTime = this.AdvSettings.EQTitleDisplayTime;
       this.EQSettings._EqUpdateDelay = (this.EQSettings._EQ_Restrict_FPS == 0)
                                          ? 0
-                                         : ((0x989680/this.EQSettings._EQ_Restrict_FPS) -
-                                            (0xf4240/this.EQSettings._EQ_Restrict_FPS));
+                                         : ((0x989680 / this.EQSettings._EQ_Restrict_FPS) -
+                                            (0xf4240 / this.EQSettings._EQ_Restrict_FPS));
       this.DisplaySettings.BlankDisplayWithVideo = this.AdvSettings.BlankDisplayWithVideo;
       this.DisplaySettings.EnableDisplayAction = this.AdvSettings.EnableDisplayAction;
       this.DisplaySettings.DisplayActionTime = this.AdvSettings.EnableDisplayActionTime;
       this.DisplaySettings.BlankDisplayWhenIdle = this.AdvSettings.BlankDisplayWhenIdle;
       this.DisplaySettings.BlankIdleDelay = this.AdvSettings.BlankIdleTime;
-      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay*0x989680;
+      this.DisplaySettings._BlankIdleTimeout = this.DisplaySettings.BlankIdleDelay * 0x989680;
       this.DisplaySettings._Shutdown1 = Settings.Instance.Shutdown1;
       this.DisplaySettings._Shutdown2 = Settings.Instance.Shutdown2;
-      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime*0x989680;
+      this.DisplaySettings._DisplayControlTimeout = this.DisplaySettings.DisplayActionTime * 0x989680;
       FileInfo info = new FileInfo(Config.GetFile(Config.Dir.Config, "MiniDisplay_DebugForm.xml"));
       this.SettingsLastModTime = info.LastWriteTime;
       this.LastSettingsCheck = DateTime.Now;
@@ -766,9 +764,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters)
-    {
-    }
+    public void SetCustomCharacters(int[][] customCharacters) {}
 
     public void SetLine(int _line, string _message)
     {
@@ -807,12 +803,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         this.tGraphics = Graphics.FromImage(this.tBitmap);
         this.tGraphics.SmoothingMode = SmoothingMode.None;
         this.tGraphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
-        this.tLineHeight = ((int) this.tGraphics.MeasureString("Zg", this.UseFont).Height) + 2;
-        this.tWidth = ((int) this.tGraphics.MeasureString("M", this.UseFont).Width)*this.tCols;
-        this.tHeight = (((int) this.tGraphics.MeasureString("Zg", this.UseFont).Height)*this.tLines) +
-                       (2*(this.tLines - 1));
+        this.tLineHeight = ((int)this.tGraphics.MeasureString("Zg", this.UseFont).Height) + 2;
+        this.tWidth = ((int)this.tGraphics.MeasureString("M", this.UseFont).Width) * this.tCols;
+        this.tHeight = (((int)this.tGraphics.MeasureString("Zg", this.UseFont).Height) * this.tLines) +
+                       (2 * (this.tLines - 1));
         base.ShowInTaskbar = false;
-        base.Size = new Size(((int) (this.tWidth*0.7f)) + 6, this.tHeight + 0x18);
+        base.Size = new Size(((int)(this.tWidth * 0.7f)) + 6, this.tHeight + 0x18);
         this.tGraphics.Dispose();
         this.tBitmap.Dispose();
         this.tBitmap = new Bitmap(this.tWidth, this.tHeight);
@@ -962,7 +958,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Debug("DebugForm.AdvancedSettings.Load() Loading settings from XML file");
           XmlSerializer serializer = new XmlSerializer(typeof (AdvancedSettings));
           XmlTextReader xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_DebugForm.xml"));
-          settings = (AdvancedSettings) serializer.Deserialize(xmlReader);
+          settings = (AdvancedSettings)serializer.Deserialize(xmlReader);
           xmlReader.Close();
         }
         else
@@ -996,7 +992,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                                  Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 2;
-        serializer.Serialize((XmlWriter) writer, ToSave);
+        serializer.Serialize((XmlWriter)writer, ToSave);
         writer.Close();
         Log.Debug("DebugForm.AdvancedSettings.Save() completed");
       }

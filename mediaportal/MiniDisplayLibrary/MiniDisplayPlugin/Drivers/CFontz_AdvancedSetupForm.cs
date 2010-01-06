@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -297,9 +297,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                 | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.cmbDeviceType);
       this.groupBox1.Controls.Add(this.groupBox7);
@@ -324,8 +324,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cmbDeviceType
       // 
-      this.cmbDeviceType.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                    | AnchorStyles.Right)));
+      this.cmbDeviceType.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                   | AnchorStyles.Right)));
       this.cmbDeviceType.FormattingEnabled = true;
       this.cmbDeviceType.Items.AddRange(new object[]
                                           {
@@ -343,9 +343,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBox7
       // 
-      this.groupBox7.Anchor = ((AnchorStyles) ((((AnchorStyles.Top | AnchorStyles.Bottom)
-                                                 | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.groupBox7.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
+                                                | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.groupBox7.Controls.Add(this.groupEQstyle);
       this.groupBox7.Controls.Add(this.cmbDelayEqTime);
       this.groupBox7.Controls.Add(this.lblRestrictEQ);
@@ -367,8 +367,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupEQstyle
       // 
-      this.groupEQstyle.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                   | AnchorStyles.Right)));
+      this.groupEQstyle.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                                  | AnchorStyles.Right)));
       this.groupEQstyle.Controls.Add(this.cbUseVUmeter2);
       this.groupEQstyle.Controls.Add(this.cbVUindicators);
       this.groupEQstyle.Controls.Add(this.cbUseVUmeter);
@@ -481,7 +481,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // lblRestrictEQ
       // 
-      this.lblRestrictEQ.Anchor = ((AnchorStyles) ((AnchorStyles.Top | AnchorStyles.Right)));
+      this.lblRestrictEQ.Anchor = ((AnchorStyles)((AnchorStyles.Top | AnchorStyles.Right)));
       this.lblRestrictEQ.Location = new Point(100, 124);
       this.lblRestrictEQ.Name = "lblRestrictEQ";
       this.lblRestrictEQ.Size = new Size(116, 17);
@@ -620,8 +620,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // cmbEqRate
       // 
-      this.cmbEqRate.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.cmbEqRate.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.cmbEqRate.BorderColor = Color.Empty;
       this.cmbEqRate.DropDownStyle = ComboBoxStyle.DropDownList;
       this.cmbEqRate.Items.AddRange(new object[]
@@ -716,8 +716,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBox5
       // 
-      this.groupBox5.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.groupBox5.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.groupBox5.Controls.Add(this.mpEnableDisplayActionTime);
       this.groupBox5.Controls.Add(this.cmbBlankIdleTime);
       this.groupBox5.Controls.Add(this.mpEnableDisplayAction);
@@ -841,8 +841,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // groupBox4
       // 
-      this.groupBox4.Anchor = ((AnchorStyles) (((AnchorStyles.Top | AnchorStyles.Left)
-                                                | AnchorStyles.Right)));
+      this.groupBox4.Anchor = ((AnchorStyles)(((AnchorStyles.Top | AnchorStyles.Left)
+                                               | AnchorStyles.Right)));
       this.groupBox4.Controls.Add(this.btnRemoteSetup);
       this.groupBox4.Controls.Add(this.cbEnableCustomKeypadMapping);
       this.groupBox4.Controls.Add(this.cbDisableRepeat);
@@ -898,7 +898,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnOK
       // 
-      this.btnOK.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.btnOK.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
       this.btnOK.Location = new Point(286, 484);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new Size(80, 23);
@@ -909,7 +909,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // 
       // btnReset
       // 
-      this.btnReset.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      this.btnReset.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
       this.btnReset.Location = new Point(200, 484);
       this.btnReset.Name = "btnReset";
       this.btnReset.Size = new Size(80, 23);

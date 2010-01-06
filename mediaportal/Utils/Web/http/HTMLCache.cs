@@ -57,9 +57,7 @@ namespace MediaPortal.Utils.Web
     /// <summary>
     /// Initializes a new instance of the <see cref="HTMLCache"/> class.
     /// </summary>
-    public HTMLCache()
-    {
-    }
+    public HTMLCache() {}
 
     #endregion
 
@@ -197,14 +195,14 @@ namespace MediaPortal.Utils.Web
     /// <returns>filename</returns>
     private static string GetCacheFileName(HTTPRequest Page)
     {
-      uint gethash = (uint) Page.Uri.GetHashCode();
+      uint gethash = (uint)Page.Uri.GetHashCode();
 
       if (Page.PostQuery == null || Page.PostQuery == string.Empty)
       {
         return CACHE_DIR + "/" + Page.Host + "_" + gethash.ToString() + ".html";
       }
 
-      uint posthash = (uint) Page.PostQuery.GetHashCode();
+      uint posthash = (uint)Page.PostQuery.GetHashCode();
 
       return CACHE_DIR + "/" + Page.Host + "_" + gethash.ToString() + "_" + posthash.ToString() + ".html";
     }

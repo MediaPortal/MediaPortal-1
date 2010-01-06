@@ -167,7 +167,7 @@ namespace Tetris
             if (y == m_nFallingRow)
             {
               // move next row?
-              if ((Environment.TickCount - m_nFallingTime)*FallingSpeed > 1)
+              if ((Environment.TickCount - m_nFallingTime) * FallingSpeed > 1)
               {
                 m_nFallingRow++;
                 m_nFallingTime = Environment.TickCount;
@@ -175,7 +175,7 @@ namespace Tetris
               else
               {
                 m_pHost.OnRenderBlock(timePassed, x,
-                                      Height - (y - ((Environment.TickCount - m_nFallingTime)*FallingSpeed)),
+                                      Height - (y - ((Environment.TickCount - m_nFallingTime) * FallingSpeed)),
                                       _Colors[m_nBlock[x, y]], 0);
               }
             }
@@ -305,12 +305,12 @@ namespace Tetris
       m_nLines++;
 
       // play sound, if new level!
-      if ((m_nLines - 1)/m_nLevelMax != m_nLevel && m_nLevel != m_nLevelMax)
+      if ((m_nLines - 1) / m_nLevelMax != m_nLevel && m_nLevel != m_nLevelMax)
       {
         RenderSound(Sound.Level);
       }
 
-      m_nLevel = (m_nLines - 1)/m_nLevelMax;
+      m_nLevel = (m_nLines - 1) / m_nLevelMax;
 
       if (m_nLevel > m_nLevelMax)
       {
@@ -553,7 +553,7 @@ namespace Tetris
       temp.Clone(m_theGame.CurrentBlock);
       temp.X += dx;
       temp.Y += dy;
-      temp.Rotation = (temp.Rotation + 4 + dr)%4;
+      temp.Rotation = (temp.Rotation + 4 + dr) % 4;
 
       // get coordinates
       float[] x = new float[4];
@@ -582,7 +582,7 @@ namespace Tetris
         }
 
         // on another block
-        if (m_theGame.Block[(int) x[i], (int) y[i]] != 0)
+        if (m_theGame.Block[(int)x[i], (int)y[i]] != 0)
         {
           return false;
         }
@@ -599,7 +599,7 @@ namespace Tetris
 
       if (destination_dy != 0)
       {
-        if ((float) (Environment.TickCount - y_start)*Game.FallingSpeed > 1)
+        if ((float)(Environment.TickCount - y_start) * Game.FallingSpeed > 1)
         {
           destination_dy = 0;
         }
@@ -610,7 +610,7 @@ namespace Tetris
       {
         if (destination_dy != 0)
         {
-          y[i] = y[i] + 1 - (float) (Environment.TickCount - y_start)*Game.FallingSpeed;
+          y[i] = y[i] + 1 - (float)(Environment.TickCount - y_start) * Game.FallingSpeed;
         }
       }
     }
@@ -619,16 +619,16 @@ namespace Tetris
     private void ToVirtualCoordinates(ref float[] x, ref float[] y)
     {
       // extract x-coordinates
-      x[0] = (float) ((_Blocks[m_nRotation, m_nData] >> 14) & 3);
-      x[1] = (float) ((_Blocks[m_nRotation, m_nData] >> 10) & 3);
-      x[2] = (float) ((_Blocks[m_nRotation, m_nData] >> 6) & 3);
-      x[3] = (float) ((_Blocks[m_nRotation, m_nData] >> 2) & 3);
+      x[0] = (float)((_Blocks[m_nRotation, m_nData] >> 14) & 3);
+      x[1] = (float)((_Blocks[m_nRotation, m_nData] >> 10) & 3);
+      x[2] = (float)((_Blocks[m_nRotation, m_nData] >> 6) & 3);
+      x[3] = (float)((_Blocks[m_nRotation, m_nData] >> 2) & 3);
 
       // extract y-coordinates
-      y[0] = (float) ((_Blocks[m_nRotation, m_nData] >> 12) & 3);
-      y[1] = (float) ((_Blocks[m_nRotation, m_nData] >> 8) & 3);
-      y[2] = (float) ((_Blocks[m_nRotation, m_nData] >> 4) & 3);
-      y[3] = (float) ((_Blocks[m_nRotation, m_nData]) & 3);
+      y[0] = (float)((_Blocks[m_nRotation, m_nData] >> 12) & 3);
+      y[1] = (float)((_Blocks[m_nRotation, m_nData] >> 8) & 3);
+      y[2] = (float)((_Blocks[m_nRotation, m_nData] >> 4) & 3);
+      y[3] = (float)((_Blocks[m_nRotation, m_nData]) & 3);
 
       // map to complete coordinate system
       for (int i = 0; i < 4; i++)
@@ -659,7 +659,7 @@ namespace Tetris
       if (IsMoveValid(dx, dy, dr))
       {
         // apply position / rotation
-        m_nRotation = ((m_nRotation + 4) + dr)%4;
+        m_nRotation = ((m_nRotation + 4) + dr) % 4;
         m_nX += dx;
         m_nY += dy;
         destination_dy += dy;
@@ -679,7 +679,7 @@ namespace Tetris
       m_nData = r.Next(7);
       m_nColor = m_nData + 1;
       m_nFreefalls = 0;
-      m_nX = Game.Width/2;
+      m_nX = Game.Width / 2;
       m_nY = Game.Height + this.Rectangle.Height + 3;
 
       return IsMoveValid(0, -5, 0);
@@ -746,11 +746,11 @@ namespace Tetris
       {
         if ((x[i] < Game.Width) && (y[i] < Game.Height))
         {
-          game.Block[(int) x[i], (int) (y[i])] = m_nColor;
+          game.Block[(int)x[i], (int)(y[i])] = m_nColor;
         }
       }
 
-      game.Score += ((24 + (3*game.Level)) - m_nFreefalls);
+      game.Score += ((24 + (3 * game.Level)) - m_nFreefalls);
       game.CheckLines();
     }
 

@@ -65,9 +65,7 @@ namespace Rss
     private int port = RssDefault.Int;
 
     /// <summary>Initialize a new instance of the RssCloud class.</summary>
-    public RssCloud()
-    {
-    }
+    public RssCloud() {}
 
     /// <summary>Domain name or IP address of the cloud</summary>
     public string Domain

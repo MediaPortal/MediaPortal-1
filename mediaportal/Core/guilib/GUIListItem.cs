@@ -78,9 +78,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// The (empty) constructor of the GUIListItem.
     /// </summary>
-    public GUIListItem()
-    {
-    }
+    public GUIListItem() {}
 
 
     /// <summary>
@@ -452,9 +450,7 @@ namespace MediaPortal.GUI.Library
         {
           _fileInfo = value;
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
     }
 

@@ -65,14 +65,10 @@ namespace MediaPortal.Localisation
     }
 
     public LocalisationProvider(string directory, string cultureName, bool prefix)
-      : this(directory, directory, cultureName, prefix)
-    {
-    }
+      : this(directory, directory, cultureName, prefix) {}
 
     public LocalisationProvider(string directory, string cultureName)
-      : this(directory, cultureName, true)
-    {
-    }
+      : this(directory, cultureName, true) {}
 
     public void Dispose()
     {
@@ -176,7 +172,7 @@ namespace MediaPortal.Localisation
       for (int i = 0; i < _availableLanguages.Count; i++)
       {
         languageEnumerator.MoveNext();
-        available[i] = (CultureInfo) languageEnumerator.Value;
+        available[i] = (CultureInfo)languageEnumerator.Value;
       }
 
       return available;
@@ -316,7 +312,7 @@ namespace MediaPortal.Localisation
         {
           XmlSerializer s = new XmlSerializer(typeof (StringFile));
           TextReader r = new StreamReader(path);
-          strings = (StringFile) s.Deserialize(r);
+          strings = (StringFile)s.Deserialize(r);
         }
         catch (Exception)
         {
@@ -338,7 +334,8 @@ namespace MediaPortal.Localisation
             _characters = 1536;
           }
         }
-        GlobalServiceProvider.Get<ILog>().Debug("    ExtendedChars = {0}, StringChars = {1}", useChineseHack, strings.characters);
+        GlobalServiceProvider.Get<ILog>().Debug("    ExtendedChars = {0}, StringChars = {1}", useChineseHack,
+                                                strings.characters);
 
         foreach (StringSection section in strings.sections)
         {

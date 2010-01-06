@@ -42,6 +42,7 @@ using MWCommon;
 ///	Feel free to donate any amount of money if this code makes you happy ;)
 ///	Use this code at your own risk. If your machine blows up while using it - don't blame me.
 /// </summary>
+
 namespace MWControls
 {
   /// <summary>
@@ -228,8 +229,6 @@ namespace MWControls
 
     #endregion Property Variables
 
-
-
     #region Help Variables
 
     /// <summary>
@@ -342,8 +341,6 @@ namespace MWControls
 
     #endregion Help Variables
 
-
-
     #region Component Designer generated Variables
 
     /// <summary> 
@@ -354,8 +351,6 @@ namespace MWControls
     #endregion Component Designer generated Variables
 
     #endregion Variables
-
-
 
     #region Constructor & Dispose
 
@@ -394,8 +389,6 @@ namespace MWControls
 
     #endregion Constructor & Dispose
 
-
-
     #region Component Designer generated code
 
     /// <summary> 
@@ -409,8 +402,6 @@ namespace MWControls
 
     #endregion Component Designer generated code
 
-
-
     #region Overridden Properties
 
     /// <summary>
@@ -418,10 +409,7 @@ namespace MWControls
     /// </summary>
     public new bool HideSelection
     {
-      get
-      {
-        return base.HideSelection;
-      }
+      get { return base.HideSelection; }
       set
       {
         base.HideSelection = value;
@@ -431,8 +419,6 @@ namespace MWControls
     }
 
     #endregion Overridden Properties
-
-
 
     #region Overridden EventHandlers
 
@@ -508,8 +494,6 @@ namespace MWControls
 
     #endregion Focus (OnGotFocus & OnLostFocus) & Activation (OnEnter & OnLeave)
 
-
-
     #region Label Edit (OnBeforeLabelEdit & OnAfterLabelEdit)
 
     /// <summary>
@@ -540,8 +524,8 @@ namespace MWControls
         bLabelEditAllowed = false;
 
         if ((AllowBlankNodeText && e.Label == string.Empty) ||
-          ((!string.IsNullOrEmpty(e.Label)) &&
-          IsLabelEditRegExSatisfied(e.Label)))
+            ((!string.IsNullOrEmpty(e.Label)) &&
+             IsLabelEditRegExSatisfied(e.Label)))
         {
           base.OnAfterLabelEdit(e);
         }
@@ -558,8 +542,6 @@ namespace MWControls
 
     #endregion Label Edit (OnBeforeLabelEdit & OnAfterLabelEdit)
 
-
-
     #region Selection (OnBeforeSelect & BeforeSelectMethod)
 
     /// <summary>
@@ -572,7 +554,8 @@ namespace MWControls
       {
         if (!bPaintFocusRectAndHottracking)
         {
-          if (e.Action != TreeViewAction.Unknown && e.Action != TreeViewAction.ByKeyboard && MultiSelect != TreeViewMultiSelect.NoMulti)
+          if (e.Action != TreeViewAction.Unknown && e.Action != TreeViewAction.ByKeyboard &&
+              MultiSelect != TreeViewMultiSelect.NoMulti)
           {
             BeforeSelectMethod(e.Node);
           }
@@ -654,9 +637,9 @@ namespace MWControls
                 }
               }
               else if (MultiSelect == TreeViewMultiSelect.MultiPathToParent ||
-                MultiSelect == TreeViewMultiSelect.MultiPathToParents ||
-                MultiSelect == TreeViewMultiSelect.SinglePathToParent ||
-                MultiSelect == TreeViewMultiSelect.SinglePathToParents)
+                       MultiSelect == TreeViewMultiSelect.MultiPathToParents ||
+                       MultiSelect == TreeViewMultiSelect.SinglePathToParent ||
+                       MultiSelect == TreeViewMultiSelect.SinglePathToParents)
               {
                 SelectNode(tn.PrevVisibleNode, false);
               }
@@ -687,9 +670,9 @@ namespace MWControls
                 }
               }
               else if (MultiSelect == TreeViewMultiSelect.MultiPathToParent ||
-                MultiSelect == TreeViewMultiSelect.MultiPathToParents ||
-                MultiSelect == TreeViewMultiSelect.SinglePathToParent ||
-                MultiSelect == TreeViewMultiSelect.SinglePathToParents)
+                       MultiSelect == TreeViewMultiSelect.MultiPathToParents ||
+                       MultiSelect == TreeViewMultiSelect.SinglePathToParent ||
+                       MultiSelect == TreeViewMultiSelect.SinglePathToParents)
               {
                 SelectNode(tn.NextVisibleNode, false);
               }
@@ -739,8 +722,6 @@ namespace MWControls
 
     #endregion Selection (OnBeforeSelect & BeforeSelectMethod)
 
-
-
     #region Checking (OnBeforeCheck & OnBeforeCheckMethod)
 
     /// <summary>
@@ -751,7 +732,8 @@ namespace MWControls
     {
       if (MultiSelect != TreeViewMultiSelect.Classic)
       {
-        if (e.Action == TreeViewAction.Unknown && !bKeyCheck && !bMouseCheck && !bAllowMultiCheckChanged && !bForceCheckNode)
+        if (e.Action == TreeViewAction.Unknown && !bKeyCheck && !bMouseCheck && !bAllowMultiCheckChanged &&
+            !bForceCheckNode)
         {
           e.Cancel = true;
         }
@@ -835,15 +817,15 @@ namespace MWControls
     private void BeforeCheckMethod(TreeNode tn, bool bUpdate)
     {
       if ((ModifierKeys & Keys.Shift) != 0 ||
-        (ModifierKeys & Keys.Control) != 0 ||
-        (ModifierKeys & Keys.Alt) != 0)
+          (ModifierKeys & Keys.Control) != 0 ||
+          (ModifierKeys & Keys.Alt) != 0)
       {
         bAllowMultiCheckChanged = true;
 
         if (tn.Parent != null)
         {
           if (!((ModifierKeys & Keys.Shift) != 0 && (ModifierKeys & Keys.Control) != 0) &&
-            (ModifierKeys & Keys.Alt) == 0)
+              (ModifierKeys & Keys.Alt) == 0)
           {
             ToggleCheckNode(tn.Parent, bUpdate);
           }
@@ -914,8 +896,6 @@ namespace MWControls
 
     #endregion Checking (OnBeforeCheck & OnBeforeCheckMethod)
 
-
-
     #region Keys (OnKeyDown)
 
     /// <summary>
@@ -930,7 +910,7 @@ namespace MWControls
 
         switch (e.KeyCode)
         {
-          #region F2 Key
+            #region F2 Key
 
           case Keys.F2:
             if (LabelEdit)
@@ -951,11 +931,9 @@ namespace MWControls
 
             break;
 
-          #endregion F2 Key
+            #endregion F2 Key
 
-
-
-          #region Space Key
+            #region Space Key
 
           case Keys.Space:
             if (CheckBoxes)
@@ -1021,11 +999,9 @@ namespace MWControls
 
             break;
 
-          #endregion Space Key
+            #endregion Space Key
 
-
-
-          #region Down Key
+            #region Down Key
 
           case Keys.Down:
             if (MultiSelect != TreeViewMultiSelect.NoMulti)
@@ -1057,11 +1033,9 @@ namespace MWControls
 
             break;
 
-          #endregion Down Key
+            #endregion Down Key
 
-
-
-          #region Up Key
+            #region Up Key
 
           case Keys.Up:
             if (MultiSelect != TreeViewMultiSelect.NoMulti)
@@ -1093,11 +1067,9 @@ namespace MWControls
 
             break;
 
-          #endregion Up Key
+            #endregion Up Key
 
-
-
-          #region Right Key
+            #region Right Key
 
           case Keys.Right:
             if (MultiSelect != TreeViewMultiSelect.NoMulti)
@@ -1129,11 +1101,9 @@ namespace MWControls
 
             break;
 
-          #endregion Right Key
+            #endregion Right Key
 
-
-
-          #region Left Key
+            #region Left Key
 
           case Keys.Left:
             if (MultiSelect != TreeViewMultiSelect.NoMulti)
@@ -1168,11 +1138,9 @@ namespace MWControls
 
             break;
 
-          #endregion Left Key
+            #endregion Left Key
 
-
-
-          #region Home Key
+            #region Home Key
 
           case Keys.Home:
             if (MultiSelect != TreeViewMultiSelect.NoMulti)
@@ -1217,11 +1185,9 @@ namespace MWControls
 
             break;
 
-          #endregion Home Key
+            #endregion Home Key
 
-
-
-          #region End Key
+            #region End Key
 
           case Keys.End:
             if (MultiSelect != TreeViewMultiSelect.NoMulti)
@@ -1276,11 +1242,9 @@ namespace MWControls
 
             break;
 
-          #endregion End Key
+            #endregion End Key
 
-
-
-          #region PageUp Key
+            #region PageUp Key
 
           case Keys.PageUp:
             if (MultiSelect != TreeViewMultiSelect.NoMulti)
@@ -1379,11 +1343,9 @@ namespace MWControls
 
             break;
 
-          #endregion PageUp Key
+            #endregion PageUp Key
 
-
-
-          #region PageDown Key
+            #region PageDown Key
 
           case Keys.PageDown:
             if (MultiSelect != TreeViewMultiSelect.NoMulti)
@@ -1498,11 +1460,9 @@ namespace MWControls
 
             break;
 
-          #endregion PageDown Key
+            #endregion PageDown Key
 
-
-
-          #region A Key
+            #region A Key
 
           case Keys.A:
             if (MultiSelect != TreeViewMultiSelect.NoMulti && (e.Modifiers & Keys.Control) != 0)
@@ -1624,7 +1584,8 @@ namespace MWControls
                   }
                   else
                   {
-                    if ((e.Modifiers & Keys.Shift) == 0 || ((e.Modifiers & Keys.Shift) != 0 && (e.Modifiers & Keys.Alt) != 0))
+                    if ((e.Modifiers & Keys.Shift) == 0 ||
+                        ((e.Modifiers & Keys.Shift) != 0 && (e.Modifiers & Keys.Alt) != 0))
                     {
                       SelectBranch(SelNode, true, true, false);
                     }
@@ -1687,17 +1648,14 @@ namespace MWControls
 
                 case TreeViewMultiSelect.SinglePathToParent:
                   break;
-
               }
             }
 
             break;
 
-          #endregion A Key
+            #endregion A Key
 
-
-
-          #region Escape Key
+            #region Escape Key
 
           case Keys.Escape:
             if (MultiSelect != TreeViewMultiSelect.NoMulti)
@@ -1728,11 +1686,9 @@ namespace MWControls
 
             break;
 
-          #endregion Escape Key
+            #endregion Escape Key
 
-
-
-          #region Q Key
+            #region Q Key
 
           case Keys.Q:
             if ((e.Modifiers & Keys.Control) != 0)
@@ -1760,11 +1716,9 @@ namespace MWControls
 
             break;
 
-          #endregion Q Key
+            #endregion Q Key
 
-
-
-          #region E Key
+            #region E Key
 
           case Keys.E:
             if ((e.Modifiers & Keys.Control) != 0)
@@ -1792,8 +1746,7 @@ namespace MWControls
 
             break;
 
-          #endregion E Key
-
+            #endregion E Key
         }
 
         if (MultiSelect != TreeViewMultiSelect.NoMulti)
@@ -1806,8 +1759,6 @@ namespace MWControls
     }
 
     #endregion Keys (OnKeyDown)
-
-
 
     #region Mouse (OnMouseDown, OnMouseUp, OnMouseMove (& MoveRubberbandStart) & OnMouseLeave)
 
@@ -1895,8 +1846,6 @@ namespace MWControls
 
     #endregion OnMouseDown
 
-
-
     #region OnMouseUp
 
     /// <summary>
@@ -1932,9 +1881,9 @@ namespace MWControls
         if (tnFullRowSelect != null)
         {
           if (FullRowSelect &&
-            bFullRowSelectNodeSelected == IsTreeNodeSelected(tnFullRowSelect) &&
-            bFullRowSelectNodeChecked == tnFullRowSelect.Checked &&
-            bFullRowSelectNodeExpanded == tnFullRowSelect.IsExpanded)
+              bFullRowSelectNodeSelected == IsTreeNodeSelected(tnFullRowSelect) &&
+              bFullRowSelectNodeChecked == tnFullRowSelect.Checked &&
+              bFullRowSelectNodeExpanded == tnFullRowSelect.IsExpanded)
           {
             BeforeSelectMethod(tnFullRowSelect);
           }
@@ -1947,8 +1896,6 @@ namespace MWControls
     }
 
     #endregion OnMouseUp
-
-
 
     #region OnMouseMove & MoveRubberbandStart
 
@@ -1976,9 +1923,9 @@ namespace MWControls
         if (AllowRubberbandSelect)
         {
           if (e.Button == MouseButtons.Left &&
-            MultiSelect != TreeViewMultiSelect.NoMulti &&
-            (bStartRubberbandPainting || bRubberbandHasBeenPainted || (tn != tnMouseDown && tn != null)) &&
-            IsMouseMoveSelect)
+              MultiSelect != TreeViewMultiSelect.NoMulti &&
+              (bStartRubberbandPainting || bRubberbandHasBeenPainted || (tn != tnMouseDown && tn != null)) &&
+              IsMouseMoveSelect)
           {
             if (tnMouseDown != null && tn != null)
             {
@@ -2014,11 +1961,11 @@ namespace MWControls
                 }
 
                 if ((ModifierKeys & Keys.Alt) != 0 &&
-                  MultiSelect != TreeViewMultiSelect.MultiSameLevel &&
-                  MultiSelect != TreeViewMultiSelect.MultiPathToParent &&
-                  MultiSelect != TreeViewMultiSelect.MultiPathToParents &&
-                  MultiSelect != TreeViewMultiSelect.SinglePathToParent &&
-                  MultiSelect != TreeViewMultiSelect.SinglePathToParents)
+                    MultiSelect != TreeViewMultiSelect.MultiSameLevel &&
+                    MultiSelect != TreeViewMultiSelect.MultiPathToParent &&
+                    MultiSelect != TreeViewMultiSelect.MultiPathToParents &&
+                    MultiSelect != TreeViewMultiSelect.SinglePathToParent &&
+                    MultiSelect != TreeViewMultiSelect.SinglePathToParents)
                 {
                   SelectBranch(tnMouseDown, true, true, true);
                 }
@@ -2039,9 +1986,9 @@ namespace MWControls
                       }
                     }
                     else if (MultiSelect == TreeViewMultiSelect.MultiPathToParent ||
-                      MultiSelect == TreeViewMultiSelect.MultiPathToParents ||
-                      MultiSelect == TreeViewMultiSelect.SinglePathToParent ||
-                      MultiSelect == TreeViewMultiSelect.SinglePathToParents)
+                             MultiSelect == TreeViewMultiSelect.MultiPathToParents ||
+                             MultiSelect == TreeViewMultiSelect.SinglePathToParent ||
+                             MultiSelect == TreeViewMultiSelect.SinglePathToParents)
                     {
                       SelectNode(tnTemp.PrevVisibleNode, true);
                     }
@@ -2072,9 +2019,9 @@ namespace MWControls
                       }
                     }
                     else if (MultiSelect == TreeViewMultiSelect.MultiPathToParent ||
-                      MultiSelect == TreeViewMultiSelect.MultiPathToParents ||
-                      MultiSelect == TreeViewMultiSelect.SinglePathToParent ||
-                      MultiSelect == TreeViewMultiSelect.SinglePathToParents)
+                             MultiSelect == TreeViewMultiSelect.MultiPathToParents ||
+                             MultiSelect == TreeViewMultiSelect.SinglePathToParent ||
+                             MultiSelect == TreeViewMultiSelect.SinglePathToParents)
                     {
                       SelectNode(tnTemp.NextVisibleNode, true);
                     }
@@ -2110,9 +2057,9 @@ namespace MWControls
                 }
               }
               else if (MultiSelect == TreeViewMultiSelect.MultiPathToParent ||
-                MultiSelect == TreeViewMultiSelect.MultiPathToParents ||
-                MultiSelect == TreeViewMultiSelect.SinglePathToParent ||
-                MultiSelect == TreeViewMultiSelect.SinglePathToParents)
+                       MultiSelect == TreeViewMultiSelect.MultiPathToParents ||
+                       MultiSelect == TreeViewMultiSelect.SinglePathToParent ||
+                       MultiSelect == TreeViewMultiSelect.SinglePathToParents)
               {
                 SelectNode(tn, true);
               }
@@ -2135,16 +2082,20 @@ namespace MWControls
 
             //The next line is not used because if the Control is scrolled horizontally while the rubberband is painted it is not cleared properly.
             //Rectangle rctInvalidate1 = new Rectangle(ptMouseDown.X, ptMouseDown.Y, ptMouseMoveClient.X - ptMouseDown.X, ptMouseMoveClient.Y - ptMouseDown.Y);
-            Rectangle rctInvalidate1 = new Rectangle(ClientRectangle.Left, ptMouseDown.Y, ClientRectangle.Width, ptMouseMoveClient.Y - ptMouseDown.Y);
+            Rectangle rctInvalidate1 = new Rectangle(ClientRectangle.Left, ptMouseDown.Y, ClientRectangle.Width,
+                                                     ptMouseMoveClient.Y - ptMouseDown.Y);
 
             ptMouseDownScreen = PointToScreen(ptMouseDown);
             ptMouseMoveScreen = PointToScreen(new Point(e.X, e.Y));
 
-            Rectangle rctSelection = new Rectangle(ptMouseDownScreen.X, ptMouseDownScreen.Y, ptMouseMoveScreen.X - ptMouseDownScreen.X, ptMouseMoveScreen.Y - ptMouseDownScreen.Y);
+            Rectangle rctSelection = new Rectangle(ptMouseDownScreen.X, ptMouseDownScreen.Y,
+                                                   ptMouseMoveScreen.X - ptMouseDownScreen.X,
+                                                   ptMouseMoveScreen.Y - ptMouseDownScreen.Y);
 
             //The next line is not used because if the Control is scrolled horizontally while the rubberband is painted it is not cleared properly.
             //Rectangle rctInvalidate2 = new Rectangle(ptMouseDown.X, ptMouseDown.Y, e.X - ptMouseDown.X, e.Y - ptMouseDown.Y);
-            Rectangle rctInvalidate2 = new Rectangle(ClientRectangle.Left, ptMouseDown.Y, ClientRectangle.Width, e.Y - ptMouseDown.Y);
+            Rectangle rctInvalidate2 = new Rectangle(ClientRectangle.Left, ptMouseDown.Y, ClientRectangle.Width,
+                                                     e.Y - ptMouseDown.Y);
 
             //Two Rectangles need to be Invalidated because the new Rectangle could be bigger than the old one or smaller.
             Invalidate(rctInvalidate1, false);
@@ -2153,7 +2104,6 @@ namespace MWControls
 
             ControlPaint.DrawReversibleFrame(rctSelection, BackColor, FrameStyle.Dashed);
             bRubberbandHasBeenPainted = true;
-
           }
           else if (e.Button == MouseButtons.Left && FullRowSelect)
           {
@@ -2170,9 +2120,9 @@ namespace MWControls
               }
             }
             else if (MultiSelect == TreeViewMultiSelect.MultiPathToParent ||
-              MultiSelect == TreeViewMultiSelect.MultiPathToParents ||
-              MultiSelect == TreeViewMultiSelect.SinglePathToParent ||
-              MultiSelect == TreeViewMultiSelect.SinglePathToParents)
+                     MultiSelect == TreeViewMultiSelect.MultiPathToParents ||
+                     MultiSelect == TreeViewMultiSelect.SinglePathToParent ||
+                     MultiSelect == TreeViewMultiSelect.SinglePathToParents)
             {
               SelectNode(tnMouseDown, true);
             }
@@ -2190,13 +2140,17 @@ namespace MWControls
           }
           else if (bRubberbandHasBeenPainted)
           {
-            ControlPaint.DrawReversibleFrame(new Rectangle(ptMouseDownScreen.X, ptMouseDownScreen.Y, ptMouseMoveScreen.X - ptMouseDownScreen.X, ptMouseMoveScreen.Y - ptMouseDownScreen.Y), BackColor, FrameStyle.Dashed);
+            ControlPaint.DrawReversibleFrame(
+              new Rectangle(ptMouseDownScreen.X, ptMouseDownScreen.Y, ptMouseMoveScreen.X - ptMouseDownScreen.X,
+                            ptMouseMoveScreen.Y - ptMouseDownScreen.Y), BackColor, FrameStyle.Dashed);
             bRubberbandHasBeenPainted = false;
           }
         }
         else if (bRubberbandHasBeenPainted)
         {
-          ControlPaint.DrawReversibleFrame(new Rectangle(ptMouseDownScreen.X, ptMouseDownScreen.Y, ptMouseMoveScreen.X - ptMouseDownScreen.X, ptMouseMoveScreen.Y - ptMouseDownScreen.Y), BackColor, FrameStyle.Dashed);
+          ControlPaint.DrawReversibleFrame(
+            new Rectangle(ptMouseDownScreen.X, ptMouseDownScreen.Y, ptMouseMoveScreen.X - ptMouseDownScreen.X,
+                          ptMouseMoveScreen.Y - ptMouseDownScreen.Y), BackColor, FrameStyle.Dashed);
           bRubberbandHasBeenPainted = false;
         }
       }
@@ -2259,8 +2213,6 @@ namespace MWControls
 
     #endregion OnMouseMove & MoveRubberbandStart
 
-
-
     #region OnMouseLeave
 
     /// <summary>
@@ -2273,7 +2225,9 @@ namespace MWControls
       {
         if (bRubberbandHasBeenPainted)
         {
-          ControlPaint.DrawReversibleFrame(new Rectangle(ptMouseDownScreen.X, ptMouseDownScreen.Y, ptMouseMoveScreen.X - ptMouseDownScreen.X, ptMouseMoveScreen.Y - ptMouseDownScreen.Y), BackColor, FrameStyle.Dashed);
+          ControlPaint.DrawReversibleFrame(
+            new Rectangle(ptMouseDownScreen.X, ptMouseDownScreen.Y, ptMouseMoveScreen.X - ptMouseDownScreen.X,
+                          ptMouseMoveScreen.Y - ptMouseDownScreen.Y), BackColor, FrameStyle.Dashed);
           bRubberbandHasBeenPainted = false;
         }
       }
@@ -2287,8 +2241,6 @@ namespace MWControls
 
     #endregion Overridden EventHandlers
 
-
-
     #region Properties and their EventHandlers
 
     #region MultiSelect
@@ -2297,17 +2249,14 @@ namespace MWControls
     /// Decides the multi select characteristics of an MWTreeView Control.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Decides the multi select characteristics of an MWTreeView Control."),
-    DefaultValue(TreeViewMultiSelect.Multi)
+      Browsable(true),
+      Category("Behavior"),
+      Description("Decides the multi select characteristics of an MWTreeView Control."),
+      DefaultValue(TreeViewMultiSelect.Multi)
     ]
     public TreeViewMultiSelect MultiSelect
     {
-      get
-      {
-        return tvmsMultiSelect;
-      }
+      get { return tvmsMultiSelect; }
       set
       {
         if (tvmsMultiSelect != value)
@@ -2401,7 +2350,7 @@ namespace MWControls
               SelNodes = ht;
             }
             else if (value == TreeViewMultiSelect.MultiPathToParents && value != tvmsMultiSelect ||
-              value == TreeViewMultiSelect.SinglePathToParents && value != tvmsMultiSelect)
+                     value == TreeViewMultiSelect.SinglePathToParents && value != tvmsMultiSelect)
             {
               tvmsMultiSelect = value;
 
@@ -2432,8 +2381,8 @@ namespace MWControls
                 foreach (MWTreeNodeWrapper mwtnw in SelNodes.Values)
                 {
                   if ((int)alTreeNodeLevel[i] == GetTreeNodeLevel(mwtnw.Node) &&
-                    alTreeNodeGrandParent[i] == GetTreeNodeGrandParent(mwtnw.Node) &&
-                    !ht.Contains(mwtnw.Node.GetHashCode()))
+                      alTreeNodeGrandParent[i] == GetTreeNodeGrandParent(mwtnw.Node) &&
+                      !ht.Contains(mwtnw.Node.GetHashCode()))
                   {
                     ht.Add(mwtnw.Node.GetHashCode(), mwtnw);
 
@@ -2527,9 +2476,9 @@ namespace MWControls
     /// Occurs before the MultiSelect property changes.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs before the MultiSelect property changes.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs before the MultiSelect property changes.")
     ]
     public event EventHandler BeforeMultiSelectChanged;
 
@@ -2549,9 +2498,9 @@ namespace MWControls
     /// Occurs after the MultiSelect property has changed.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs after the MultiSelect property has changed.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs after the MultiSelect property has changed.")
     ]
     public event EventHandler AfterMultiSelectChanged;
 
@@ -2569,25 +2518,21 @@ namespace MWControls
 
     #endregion MultiSelect
 
-
-
     #region AllowMultiCheck
 
     /// <summary>
     /// True if multiple TreeNodes can be checked at once or false otherwise (true is standard for MS TreeView).
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("True if multiple TreeNodes can be checked at once or false otherwise (true is standard for MS TreeView)."),
-    DefaultValue(true)
+      Browsable(true),
+      Category("Behavior"),
+      Description(
+        "True if multiple TreeNodes can be checked at once or false otherwise (true is standard for MS TreeView)."),
+      DefaultValue(true)
     ]
     public bool AllowMultiCheck
     {
-      get
-      {
-        return bAllowMultiCheck;
-      }
+      get { return bAllowMultiCheck; }
       set
       {
         if (bAllowMultiCheck != value)
@@ -2634,9 +2579,9 @@ namespace MWControls
     /// Occurs before the AllowMultiCheck property changes.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs before the AllowMultiCheck property changes.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs before the AllowMultiCheck property changes.")
     ]
     public event EventHandler BeforeAllowMultiCheckChanged;
 
@@ -2656,9 +2601,9 @@ namespace MWControls
     /// Occurs after the AllowMultiCheck property has changed.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs after the AllowMultiCheck property has changed.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs after the AllowMultiCheck property has changed.")
     ]
     public event EventHandler AfterAllowMultiCheckChanged;
 
@@ -2676,8 +2621,6 @@ namespace MWControls
 
     #endregion AllowMultiCheck
 
-
-
     #region AllowNoSelNode
 
     /// <summary>
@@ -2685,17 +2628,16 @@ namespace MWControls
     /// Note that if using a MultiSelect of TreeViewMultiSelect.NoMulti this property is ignored.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("True if no TreeNode has to be selected or false otherwise (false is standard for MS TreeView).\nNote that if using a MultiSelect of TreeViewMultiSelect.NoMulti this property is ignored."),
-    DefaultValue(true)
+      Browsable(true),
+      Category("Behavior"),
+      Description(
+        "True if no TreeNode has to be selected or false otherwise (false is standard for MS TreeView).\nNote that if using a MultiSelect of TreeViewMultiSelect.NoMulti this property is ignored."
+        ),
+      DefaultValue(true)
     ]
     public bool AllowNoSelNode
     {
-      get
-      {
-        return bAllowNoSelNode;
-      }
+      get { return bAllowNoSelNode; }
       set
       {
         if (bAllowNoSelNode != value)
@@ -2726,9 +2668,9 @@ namespace MWControls
     /// Occurs before the AllowNoSelNode property changes.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs before the AllowNoSelNode property changes.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs before the AllowNoSelNode property changes.")
     ]
     public event EventHandler BeforeAllowNoSelNodeChanged;
 
@@ -2748,9 +2690,9 @@ namespace MWControls
     /// Occurs after the AllowNoSelNode property has changed.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs after the AllowNoSelNode property has changed.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs after the AllowNoSelNode property has changed.")
     ]
     public event EventHandler AfterAllowNoSelNodeChanged;
 
@@ -2768,25 +2710,20 @@ namespace MWControls
 
     #endregion AllowNoSelNode
 
-
-
     #region AllowBlankNodeText
 
     /// <summary>
     /// True if TreeNodes can be blank, i.e. contain no Text.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("True if TreeNodes can be blank, i.e. contain no Text."),
-    DefaultValue(false)
+      Browsable(true),
+      Category("Behavior"),
+      Description("True if TreeNodes can be blank, i.e. contain no Text."),
+      DefaultValue(false)
     ]
     public bool AllowBlankNodeText
     {
-      get
-      {
-        return bAllowBlankNodeText;
-      }
+      get { return bAllowBlankNodeText; }
       set
       {
         if (bAllowBlankNodeText != value)
@@ -2809,9 +2746,9 @@ namespace MWControls
     /// Occurs before the AllowBlankNodeText property changes.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs before the AllowBlankNodeText property changes.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs before the AllowBlankNodeText property changes.")
     ]
     public event EventHandler BeforeAllowBlankNodeTextChanged;
 
@@ -2831,9 +2768,9 @@ namespace MWControls
     /// Occurs after the AllowBlankNodeText property has changed.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs after the AllowBlankNodeText property has changed.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs after the AllowBlankNodeText property has changed.")
     ]
     public event EventHandler AfterAllowBlankNodeTextChanged;
 
@@ -2851,25 +2788,22 @@ namespace MWControls
 
     #endregion AllowBlankNodeText
 
-
-
     #region SelNodes
 
     /// <summary>
     /// HashTable containing the Selected TreeNodes wrapped in MWTreeNodeWrapper objects as values and the TreeNode.GetHashCodes as keys.
     /// </summary>
     [
-    Browsable(false),
-    Category("Behavior"),
-    Description("HashTable containing the Selected TreeNodes wrapped in MWTreeNodeWrapper objects as values and the TreeNode.GetHashCodes as keys."),
-    DefaultValue(null)
+      Browsable(false),
+      Category("Behavior"),
+      Description(
+        "HashTable containing the Selected TreeNodes wrapped in MWTreeNodeWrapper objects as values and the TreeNode.GetHashCodes as keys."
+        ),
+      DefaultValue(null)
     ]
     public Hashtable SelNodes
     {
-      get
-      {
-        return htSelNodes;
-      }
+      get { return htSelNodes; }
       set
       {
         if (htSelNodes != value)
@@ -2945,9 +2879,9 @@ namespace MWControls
     /// Occurs before the SelNodes property changes.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs before the SelNodes property changes.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs before the SelNodes property changes.")
     ]
     public event EventHandler BeforeSelNodesChanged;
 
@@ -2967,9 +2901,9 @@ namespace MWControls
     /// Occurs after the SelNodes property has changed.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs after the SelNodes property has changed.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs after the SelNodes property has changed.")
     ]
     public event EventHandler AfterSelNodesChanged;
 
@@ -2987,25 +2921,21 @@ namespace MWControls
 
     #endregion SelNodes
 
-
-
     #region SelNode (See SelNodeInt for EventHandlers)
 
     /// <summary>
     /// Last Selected TreeNode or null if no TreeNode is selected or if Last Selected TreeNode was deselected.
     /// </summary>
     [
-    Browsable(false),
-    Category("Behavior"),
-    Description("Last Selected TreeNode or null if no TreeNode is selected or if Last Selected TreeNode was deselected."),
-    DefaultValue(null)
+      Browsable(false),
+      Category("Behavior"),
+      Description(
+        "Last Selected TreeNode or null if no TreeNode is selected or if Last Selected TreeNode was deselected."),
+      DefaultValue(null)
     ]
     public TreeNode SelNode
     {
-      get
-      {
-        return tnSelNode;
-      }
+      get { return tnSelNode; }
       set
       {
         if (value != null)
@@ -3021,8 +2951,6 @@ namespace MWControls
 
     #endregion SelNode (See SelNodeInt for EventHandlers)
 
-
-
     #region SelNodeInt
 
     /// <summary>
@@ -3031,17 +2959,16 @@ namespace MWControls
     ///		tnSelNode variable this property has to do it.
     /// </summary>
     [
-    Browsable(false),
-    Category("Behavior"),
-    Description("Last Selected TreeNode or null if no TreeNode is selected or if Last Selected TreeNode was deselected.\nFor internal use only."),
-    DefaultValue(null)
+      Browsable(false),
+      Category("Behavior"),
+      Description(
+        "Last Selected TreeNode or null if no TreeNode is selected or if Last Selected TreeNode was deselected.\nFor internal use only."
+        ),
+      DefaultValue(null)
     ]
     private TreeNode SelNodeInt
     {
-      get
-      {
-        return tnSelNode;
-      }
+      get { return tnSelNode; }
       set
       {
         if (tnSelNode != value)
@@ -3065,8 +2992,8 @@ namespace MWControls
               tnSelNode = value;
 
               if ((MouseButtons & MouseButtons.Left) == 0 &&
-                MultiSelect != TreeViewMultiSelect.NoMulti &&
-                MultiSelect != TreeViewMultiSelect.Classic)
+                  MultiSelect != TreeViewMultiSelect.NoMulti &&
+                  MultiSelect != TreeViewMultiSelect.Classic)
               {
                 bPaintFocusRectAndHottracking = true;
                 SelectedNode = value;
@@ -3080,8 +3007,8 @@ namespace MWControls
         else if (value == null || IsSelectNodeRegExSatisfied(value.Text))
         {
           if ((MouseButtons & MouseButtons.Left) == 0 &&
-            MultiSelect != TreeViewMultiSelect.NoMulti &&
-            MultiSelect != TreeViewMultiSelect.Classic)
+              MultiSelect != TreeViewMultiSelect.NoMulti &&
+              MultiSelect != TreeViewMultiSelect.Classic)
           {
             bPaintFocusRectAndHottracking = true;
             SelectedNode = value;
@@ -3097,9 +3024,9 @@ namespace MWControls
     /// Occurs before the SelNode property changes.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs before the SelNode property changes.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs before the SelNode property changes.")
     ]
     public event EventHandler BeforeSelNodeChanged;
 
@@ -3119,9 +3046,9 @@ namespace MWControls
     /// Occurs after the SelNode property has changed.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs after the SelNode property has changed.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs after the SelNode property has changed.")
     ]
     public event EventHandler AfterSelNodeChanged;
 
@@ -3139,25 +3066,20 @@ namespace MWControls
 
     #endregion SelNodeInt
 
-
-
     #region CheckedNodes
 
     /// <summary>
     /// HashTable containing the Checked TreeNodes as values and the TreeNode.GetHashCodes as keys.
     /// </summary>
     [
-    Browsable(false),
-    Category("Behavior"),
-    Description("HashTable containing the Checked TreeNodes as values and the TreeNode.GetHashCodes as keys."),
-    DefaultValue(null)
+      Browsable(false),
+      Category("Behavior"),
+      Description("HashTable containing the Checked TreeNodes as values and the TreeNode.GetHashCodes as keys."),
+      DefaultValue(null)
     ]
     public Hashtable CheckedNodes
     {
-      get
-      {
-        return htCheckedNodes;
-      }
+      get { return htCheckedNodes; }
       set
       {
         if (htCheckedNodes != value)
@@ -3221,9 +3143,9 @@ namespace MWControls
     /// Occurs before the CheckedNodes property changes.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs before the CheckedNodes property changes.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs before the CheckedNodes property changes.")
     ]
     public event EventHandler BeforeCheckedNodesChanged;
 
@@ -3243,9 +3165,9 @@ namespace MWControls
     /// Occurs after the CheckedNodes property has changed.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs after the CheckedNodes property has changed.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs after the CheckedNodes property has changed.")
     ]
     public event EventHandler AfterCheckedNodesChanged;
 
@@ -3263,25 +3185,21 @@ namespace MWControls
 
     #endregion CheckedNodes
 
-
-
     #region ScrollToSelNode
 
     /// <summary>
     /// True if scrolling is done so the SelNode (Last Selected Tree Node) is always displayed or false otherwise.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("True if scrolling is done so the SelNode (Last Selected Tree Node) is always displayed or false otherwise."),
-    DefaultValue(true)
+      Browsable(true),
+      Category("Behavior"),
+      Description(
+        "True if scrolling is done so the SelNode (Last Selected Tree Node) is always displayed or false otherwise."),
+      DefaultValue(true)
     ]
     public bool ScrollToSelNode
     {
-      get
-      {
-        return bScrollToSelNode;
-      }
+      get { return bScrollToSelNode; }
       set
       {
         if (bScrollToSelNode != value)
@@ -3321,9 +3239,9 @@ namespace MWControls
     /// Occurs before the ScrollToSelNode property changes.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs before the ScrollToSelNode property changes.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs before the ScrollToSelNode property changes.")
     ]
     public event EventHandler BeforeScrollToSelNodeChanged;
 
@@ -3343,9 +3261,9 @@ namespace MWControls
     /// Occurs after the ScrollToSelNode property has changed.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs after the ScrollToSelNode property has changed.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs after the ScrollToSelNode property has changed.")
     ]
     public event EventHandler AfterScrollToSelNodeChanged;
 
@@ -3363,25 +3281,20 @@ namespace MWControls
 
     #endregion ScrollToSelNode
 
-
-
     #region AllowRubberbandSelect
 
     /// <summary>
     /// True if TreeNodes can be selected by a rubberband method or false otherwise.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("True if TreeNodes can be selected by a rubberband method or false otherwise."),
-    DefaultValue(true)
+      Browsable(true),
+      Category("Behavior"),
+      Description("True if TreeNodes can be selected by a rubberband method or false otherwise."),
+      DefaultValue(true)
     ]
     public bool AllowRubberbandSelect
     {
-      get
-      {
-        return bAllowRubberbandSelect;
-      }
+      get { return bAllowRubberbandSelect; }
       set
       {
         if (bAllowRubberbandSelect != value)
@@ -3403,9 +3316,9 @@ namespace MWControls
     /// Occurs before the AllowRubberbandSelect property changes.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs before the AllowRubberbandSelect property changes.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs before the AllowRubberbandSelect property changes.")
     ]
     public event EventHandler BeforeAllowRubberbandSelectChanged;
 
@@ -3425,9 +3338,9 @@ namespace MWControls
     /// Occurs after the AllowRubberbandSelect property has changed.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs after the AllowRubberbandSelect property has changed.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs after the AllowRubberbandSelect property has changed.")
     ]
     public event EventHandler AfterAllowRubberbandSelectChanged;
 
@@ -3445,25 +3358,20 @@ namespace MWControls
 
     #endregion AllowRubberbandSelect
 
-
-
     #region LabelEditRegEx
 
     /// <summary>
     /// Regular expression that has to be satisfied before the Text of a TreeNode can be changed.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Regular expression that has to be satisfied before the Text of a TreeNode can be changed."),
-    DefaultValue("")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Regular expression that has to be satisfied before the Text of a TreeNode can be changed."),
+      DefaultValue("")
     ]
     public string LabelEditRegEx
     {
-      get
-      {
-        return strLabelEditRegEx;
-      }
+      get { return strLabelEditRegEx; }
       set
       {
         if (strLabelEditRegEx != value)
@@ -3485,9 +3393,9 @@ namespace MWControls
     /// Occurs before the LabelEditRegEx property changes.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs before the LabelEditRegEx property changes.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs before the LabelEditRegEx property changes.")
     ]
     public event EventHandler BeforeLabelEditRegExChanged;
 
@@ -3507,9 +3415,9 @@ namespace MWControls
     /// Occurs after the LabelEditRegEx property has changed.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs after the LabelEditRegEx property has changed.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs after the LabelEditRegEx property has changed.")
     ]
     public event EventHandler AfterLabelEditRegExChanged;
 
@@ -3527,25 +3435,21 @@ namespace MWControls
 
     #endregion LabelEditRegEx
 
-
-
     #region DisallowLabelEditRegEx
 
     /// <summary>
     /// Regular expression that cannot be satisfied if the Text of a TreeNode should be able to be changed.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Regular expression that cannot be satisfied if the Text of a TreeNode should be able to be changed."),
-    DefaultValue("")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Regular expression that cannot be satisfied if the Text of a TreeNode should be able to be changed.")
+      ,
+      DefaultValue("")
     ]
     public string DisallowLabelEditRegEx
     {
-      get
-      {
-        return strDisallowLabelEditRegEx;
-      }
+      get { return strDisallowLabelEditRegEx; }
       set
       {
         if (strDisallowLabelEditRegEx != value)
@@ -3567,9 +3471,9 @@ namespace MWControls
     /// Occurs before the DisallowLabelEditRegEx property changes.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs before the DisallowLabelEditRegEx property changes.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs before the DisallowLabelEditRegEx property changes.")
     ]
     public event EventHandler BeforeDisallowLabelEditRegExChanged;
 
@@ -3589,9 +3493,9 @@ namespace MWControls
     /// Occurs after the DisallowLabelEditRegEx property has changed.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs after the DisallowLabelEditRegEx property has changed.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs after the DisallowLabelEditRegEx property has changed.")
     ]
     public event EventHandler AfterDisallowLabelEditRegExChanged;
 
@@ -3609,8 +3513,6 @@ namespace MWControls
 
     #endregion DisallowLabelEditRegEx
 
-
-
     #region SelectNodeRegEx
 
     /// <summary>
@@ -3618,17 +3520,16 @@ namespace MWControls
     /// Note that the AllowNoSelNode property is ignored if this property is used.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Regular expression that has to be satisfied before a TreeNode can be selected.\nNote that the AllowNoSelNode property is ignored if this property is used."),
-    DefaultValue("")
+      Browsable(true),
+      Category("Behavior"),
+      Description(
+        "Regular expression that has to be satisfied before a TreeNode can be selected.\nNote that the AllowNoSelNode property is ignored if this property is used."
+        ),
+      DefaultValue("")
     ]
     public string SelectNodeRegEx
     {
-      get
-      {
-        return strSelectNodeRegEx;
-      }
+      get { return strSelectNodeRegEx; }
       set
       {
         if (strSelectNodeRegEx != value)
@@ -3652,9 +3553,9 @@ namespace MWControls
     /// Occurs before the SelectNodeRegEx property changes.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs before the SelectNodeRegEx property changes.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs before the SelectNodeRegEx property changes.")
     ]
     public event EventHandler BeforeSelectNodeRegExChanged;
 
@@ -3674,9 +3575,9 @@ namespace MWControls
     /// Occurs after the SelectNodeRegEx property has changed.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs after the SelectNodeRegEx property has changed.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs after the SelectNodeRegEx property has changed.")
     ]
     public event EventHandler AfterSelectNodeRegExChanged;
 
@@ -3694,8 +3595,6 @@ namespace MWControls
 
     #endregion SelectNodeRegEx
 
-
-
     #region CheckNodeRegEx
 
     /// <summary>
@@ -3703,17 +3602,14 @@ namespace MWControls
     /// Note that the AllowNoSelNode property is ignored if this property is used.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Regular expression that has to be satisfied before a TreeNode can be checked."),
-    DefaultValue("")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Regular expression that has to be satisfied before a TreeNode can be checked."),
+      DefaultValue("")
     ]
     public string CheckNodeRegEx
     {
-      get
-      {
-        return strCheckNodeRegEx;
-      }
+      get { return strCheckNodeRegEx; }
       set
       {
         if (strCheckNodeRegEx != value)
@@ -3737,9 +3633,9 @@ namespace MWControls
     /// Occurs before the CheckNodeRegEx property changes.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs before the CheckNodeRegEx property changes.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs before the CheckNodeRegEx property changes.")
     ]
     public event EventHandler BeforeCheckNodeRegExChanged;
 
@@ -3759,9 +3655,9 @@ namespace MWControls
     /// Occurs after the CheckNodeRegEx property has changed.
     /// </summary>
     [
-    Browsable(true),
-    Category("Behavior"),
-    Description("Occurs after the CheckNodeRegEx property has changed.")
+      Browsable(true),
+      Category("Behavior"),
+      Description("Occurs after the CheckNodeRegEx property has changed.")
     ]
     public event EventHandler AfterCheckNodeRegExChanged;
 
@@ -3780,8 +3676,6 @@ namespace MWControls
     #endregion CheckNodeRegEx
 
     #endregion Properties and their EventHandlers
-
-
 
     #region Help Methods
 
@@ -3823,8 +3717,6 @@ namespace MWControls
 
     #endregion IsTreeNodeSelected
 
-
-
     #region IsAnyChildTreeNodeSelected
 
     /// <summary>
@@ -3841,7 +3733,8 @@ namespace MWControls
       foreach (MWTreeNodeWrapper mwtnw in SelNodes.Values)
       {
         int iLvl = GetTreeNodeLevel(mwtnw.Node);
-        if (mwtnw.Node != tn && GetTreeNodeGrandParent(mwtnw.Node) == tnGrandParent && GetTreeNodeLevel(mwtnw.Node) > iLevel)
+        if (mwtnw.Node != tn && GetTreeNodeGrandParent(mwtnw.Node) == tnGrandParent &&
+            GetTreeNodeLevel(mwtnw.Node) > iLevel)
         {
           bRetVal = true;
           break;
@@ -3852,8 +3745,6 @@ namespace MWControls
     }
 
     #endregion IsAnyChildTreeNodeSelected
-
-
 
     #region IsTreeNodeChecked
 
@@ -3882,8 +3773,6 @@ namespace MWControls
     }
 
     #endregion IsTreeNodeChecked
-
-
 
     #region EnsureSelNodeNotNull
 
@@ -3929,8 +3818,6 @@ namespace MWControls
     }
 
     #endregion EnsureSelNodeNotNull
-
-
 
     #region HiglightNode / LowlightNode
 
@@ -3994,8 +3881,6 @@ namespace MWControls
     }
 
     #endregion HiglightNode / LowlightNode
-
-
 
     #region SelectNode / DeselectNode / ToggleNode
 
@@ -4199,7 +4084,8 @@ namespace MWControls
                 break;
               }
 
-              if (GetTreeNodeGrandParent(tn) == tnGrandParentSelNodes || MultiSelect == TreeViewMultiSelect.MultiPathToParents)
+              if (GetTreeNodeGrandParent(tn) == tnGrandParentSelNodes ||
+                  MultiSelect == TreeViewMultiSelect.MultiPathToParents)
               {
                 if (!IsTreeNodeSelected(tn))
                 {
@@ -4503,9 +4389,9 @@ namespace MWControls
       if (tn != null && SelNodes.Count > 0 && IsTreeNodeSelected(tn))
       {
         if (MultiSelect == TreeViewMultiSelect.MultiPathToParent ||
-          MultiSelect == TreeViewMultiSelect.MultiPathToParents ||
-          MultiSelect == TreeViewMultiSelect.SinglePathToParent ||
-          MultiSelect == TreeViewMultiSelect.SinglePathToParents)
+            MultiSelect == TreeViewMultiSelect.MultiPathToParents ||
+            MultiSelect == TreeViewMultiSelect.SinglePathToParent ||
+            MultiSelect == TreeViewMultiSelect.SinglePathToParents)
         {
           if (tn.Nodes.Count == 0 || !IsAnyChildTreeNodeSelected(tn))
           {
@@ -4575,8 +4461,6 @@ namespace MWControls
     }
 
     #endregion SelectNode / DeselectNode / ToggleNode
-
-
 
     #region SelectBranch / DeselectBranch
 
@@ -4659,7 +4543,6 @@ namespace MWControls
               DeselectNode(tn2, bChangeSelNode);
             }
           }
-
         }
 
         bRetVal = true;
@@ -4669,8 +4552,6 @@ namespace MWControls
     }
 
     #endregion SelectBranch / DeselectBranch
-
-
 
     #region SelectAllParentNodes
 
@@ -4705,8 +4586,6 @@ namespace MWControls
     }
 
     #endregion SelectAllParentNodes
-
-
 
     #region SelectAllNodes
 
@@ -4795,8 +4674,6 @@ namespace MWControls
     }
 
     #endregion SelectAllNodes
-
-
 
     #region ClearSelNodes
 
@@ -4939,8 +4816,6 @@ namespace MWControls
 
     #endregion ClearSelNodes
 
-
-
     #region ClearSelBranch
 
     /// <summary>
@@ -4980,8 +4855,6 @@ namespace MWControls
     }
 
     #endregion ClearSelBranch
-
-
 
     #region CheckNode / UncheckNode / ToggleCheckNode
 
@@ -5115,8 +4988,6 @@ namespace MWControls
     }
 
     #endregion CheckNode / UncheckNode / ToggleCheckNode
-
-
 
     #region CheckBranch / UncheckBranch / ToggleCheckBranch
 
@@ -5266,8 +5137,6 @@ namespace MWControls
 
     #endregion CheckBranch / UncheckBranch / ToggleCheckBranch
 
-
-
     #region ClearCheckedNodes / CheckAllNodes
 
     /// <summary>
@@ -5312,8 +5181,6 @@ namespace MWControls
     }
 
     #endregion ClearCheckedNodes / CheckAllNodes
-
-
 
     #region ActivateSelNodes / DeactivateSelNodes & ForceDeactivateSelNodes
 
@@ -5378,8 +5245,6 @@ namespace MWControls
 
     #endregion ActivateSelNodes / DeactivateSelNodes & ForceDeactivateSelNodes
 
-
-
     #region IsMouseMoveSelect
 
     /// <summary>
@@ -5398,12 +5263,12 @@ namespace MWControls
       {
         Point ptMouseNow = PointToClient(MousePosition);
 
-        return Math.Abs(ptMouseDownOrig.X - ptMouseNow.X) > SystemInformation.DoubleClickSize.Width || Math.Abs(ptMouseDownOrig.Y - ptMouseNow.Y) > SystemInformation.DoubleClickSize.Height;
+        return Math.Abs(ptMouseDownOrig.X - ptMouseNow.X) > SystemInformation.DoubleClickSize.Width ||
+               Math.Abs(ptMouseDownOrig.Y - ptMouseNow.Y) > SystemInformation.DoubleClickSize.Height;
       }
     }
+
     #endregion IsMouseMoveSelect
-
-
 
     #region IsLabelEditRegExSatisfied
 
@@ -5419,8 +5284,6 @@ namespace MWControls
     }
 
     #endregion IsLabelEditRegExSatisfied
-
-
 
     #region IsDisallowLabelEditRegExSatisfied
 
@@ -5441,8 +5304,6 @@ namespace MWControls
 
     #endregion IsDisallowLabelEditRegExSatisfied
 
-
-
     #region IsSelectNodeRegExSatisfied
 
     /// <summary>
@@ -5457,8 +5318,6 @@ namespace MWControls
 
     #endregion IsSelectNodeRegExSatisfied
 
-
-
     #region IsCheckNodeRegExSatisfied
 
     /// <summary>
@@ -5472,8 +5331,6 @@ namespace MWControls
     }
 
     #endregion IsCheckNodeRegExSatisfied
-
-
 
     #region EnsureAllSelectedNodesAreAllowed
 
@@ -5508,8 +5365,6 @@ namespace MWControls
 
     #endregion EnsureAllSelectedNodesAreAllowed
 
-
-
     #region EnsureAllCheckedNodesAreAllowed
 
     /// <summary>
@@ -5542,8 +5397,6 @@ namespace MWControls
 
     #endregion EnsureAllCheckedNodesAreAllowed
 
-
-
     #region ActivateOrDeactivateSelNodes
 
     /// <summary>
@@ -5572,8 +5425,6 @@ namespace MWControls
     }
 
     #endregion ActivateOrDeactivateSelNodes
-
-
 
     #region RemoveNode and RemoveNodes
 
@@ -5616,9 +5467,8 @@ namespace MWControls
           {
             bRetVal = true;
           }
-        } catch
-        {
         }
+        catch {}
       }
 
       return bRetVal;
@@ -5746,8 +5596,6 @@ namespace MWControls
 
     #endregion Help Methods
 
-
-
     #region Static Help Methods
 
     #region GetTreeNodeLevel
@@ -5771,8 +5619,6 @@ namespace MWControls
 
     #endregion GetTreeNodeLevel
 
-
-
     #region GetTreeNodeGrandParent
 
     /// <summary>
@@ -5793,6 +5639,5 @@ namespace MWControls
     #endregion GetTreeNodeGrandParent
 
     #endregion Static Help Methods
-
   }
 }
