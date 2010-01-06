@@ -1,23 +1,18 @@
-/* 
- *      Copyright (C) 2005-2009 Team MediaPortal
- *      http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2010 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include <streams.h>
 #include <stdio.h>
@@ -56,7 +51,6 @@ UINT CALLBACK WorkerThread(void* param)
     {
       Log("Worker done.");
       p->csLock.Unlock();
-      //AvRevertMmThreadCharacteristics(hMmThread);
       return 0;
     }
 
@@ -78,9 +72,7 @@ UINT CALLBACK SchedulerThread(void* param)
   MMRESULT lastTimerId = 0;
   LONGLONG delay = 0;
   REFERENCE_TIME timePerFrame;
-  //HANDLE hMmThread;
-  //hMmThread = AvSetMmThreadCharacteristics("Playback", &dwTaskIndex);
-  //AvSetMmThreadPriority(hMmThread, AVRT_PRIORITY_HIGH);
+  bool scrubbing = false;
   DWORD dwUser = 0;
   TIMECAPS tc;
   DWORD dwResolution;
@@ -101,7 +93,7 @@ UINT CALLBACK SchedulerThread(void* param)
     LONGLONG diff = GetCurrentTimestamp()-now;
     if (diff > 100000)
     {
-      Log("High lock latency in SchedulerThread: %I64d ms", diff/10000);
+      Log("High lock latency in SchedulerThread: %.2f ms", (double)diff/10000);
     }
     if (p->bDone)
     {
@@ -111,28 +103,26 @@ UINT CALLBACK SchedulerThread(void* param)
         timeKillEvent(lastTimerId);
       }
       p->csLock.Unlock();
-      //AvRevertMmThreadCharacteristics(hMmThread);
       return 0;
     }
 
     p->pPresenter->CheckForScheduledSample(&hnsSampleTime, delay);
     LOG_TRACE("Got scheduling time: %I64d", hnsSampleTime);
     timePerFrame = p->pPresenter->GetFrameDuration();
-    if (hnsSampleTime > 0)
+    scrubbing = p->pPresenter->GetScrubbingStatus();
+    if (hnsSampleTime > 0 && !scrubbing)
     {
       // wait for 3/4 sample time or 3/4 of frame duration depending on what is smaller
       delay = min((hnsSampleTime/100*75), (timePerFrame/100*75));
-      // make sure thread wake up 5% of frame duration earlier than presentation time
-      // delay = delay - (timePerFrame/20);
     }
     else 
     {
-      // backup check to avoid starvation (and work around unknown bugs)
-      delay = timePerFrame/100*75;
+      // workaround for unknown bugs
+      delay = 0; //timePerFrame/100*25;
     }
     if (delay > 10000)
     {
-      LOG_TRACE("Setting Timer");
+      LOG_TRACE("Setting Timer to %I64d ms", delay/10000);
       lastTimerId = timeSetEvent(DWORD(delay/10000), 
                                  0,
                                  (LPTIMECALLBACK)(HANDLE)p->eHasWork,

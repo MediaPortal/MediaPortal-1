@@ -1,23 +1,18 @@
-/* 
- *      Copyright (C) 2005-2009 Team MediaPortal
- *      http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2010 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include <queue>
 #include <dxva2api.h>
@@ -37,7 +32,7 @@ using namespace std;
 #define DEFAULT_FRAME_TIME 400000 // used when fps information is not provided (e.g. TsReader)
 
 // uncomment the //Log to enable extra logging
-#define LOG_TRACE //Log
+#define LOG_TRACE Log
 
 // Macro for locking 
 #define TIME_LOCK(obj, crit, name)  \
@@ -45,7 +40,7 @@ using namespace std;
   CAutoLock lock(obj); \
   LONGLONG diff = GetCurrentTimestamp() - then; \
   if (diff >= crit) { \
-  Log("Critical lock time for %s was %d ms", name, diff/10000); \
+  Log("Critical lock time for %s was %.2f ms", name, (double)diff/10000); \
   }
 
 
@@ -157,6 +152,7 @@ public:
   HRESULT        ProcessInputNotify(int* samplesProcessed);
   void           SetFrameSkipping(bool onOff);
   REFERENCE_TIME GetFrameDuration();
+  bool           GetScrubbingStatus();
   double         GetRefreshRate();
   double         GetDisplayCycle();
   double         GetCycleDifference();
@@ -235,11 +231,9 @@ protected:
   int                               m_iVideoHeight;
   int                               m_iARX;
   int                               m_iARY;
-  BOOL                              m_bFirstInput;
   BOOL                              m_bInputAvailable;
   BOOL                              m_bEndStreaming;
   BOOL                              m_bFlush;
-  int                               m_iExpectedFrameDuration;
   int                               m_iFramesDrawn;
   int                               m_iFramesDropped;
   bool                              m_bFrameSkipping;

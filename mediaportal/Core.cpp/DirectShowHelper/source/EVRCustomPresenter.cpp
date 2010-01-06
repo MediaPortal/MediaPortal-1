@@ -1,23 +1,18 @@
-/* 
- *      Copyright (C) 2005-2009 Team MediaPortal
- *      http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2010 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include <streams.h>
 #include <atlbase.h>
@@ -76,21 +71,21 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     {
       m_pDeviceManager->ResetDevice(direct3dDevice, m_iResetToken);
     }
-    m_pCallback                = pCallback;
-    m_bEndStreaming            = FALSE;
-    m_state                    = MP_RENDER_STATE_SHUTDOWN;
-    m_bSchedulerRunning        = FALSE;
-    m_fRate                    = 1.0f;
-    m_iFreeSamples             = 0;
-    m_nNextJitter              = 0;
-    m_llLastPerf               = 0;
-    m_fAvrFps                  = 0.0;
-    m_rtTimePerFrame           = 0;
-    m_llLastWorkerNotification = 0;
-    m_bFrameSkipping           = true;
-    m_bDVDMenu                 = false;
-    m_bScrubbing               = false;
-    m_fSeekRate                = m_fRate;
+    m_pCallback                 = pCallback;
+    m_bEndStreaming             = FALSE;
+    m_state                     = MP_RENDER_STATE_SHUTDOWN;
+    m_bSchedulerRunning         = FALSE;
+    m_fRate                     = 1.0f;
+    m_iFreeSamples              = 0;
+    m_nNextJitter               = 0;
+    m_llLastPerf                = 0;
+    m_fAvrFps                   = 0.0;
+    m_rtTimePerFrame            = 0;
+    m_llLastWorkerNotification  = 0;
+    m_bFrameSkipping            = true;
+    m_bDVDMenu                  = false;
+    m_bScrubbing                = false;
+    m_fSeekRate                 = m_fRate;
     memset(m_pllJitter,           0, sizeof(m_pllJitter));
     memset(m_pllSyncOffset,       0, sizeof(m_pllSyncOffset));
     memset(m_pllRasterSyncOffset, 0, sizeof(m_pllRasterSyncOffset));
@@ -291,10 +286,8 @@ ULONG MPEVRCustomPresenter::Release()
 
 void MPEVRCustomPresenter::ResetStatistics()
 {
-  m_bFirstInput = true;
   m_iFramesDrawn = 0;
   m_iFramesDropped = 0;
-  m_iExpectedFrameDuration = 0;
 }
 
 HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetSlowestRate(MFRATE_DIRECTION eDirection, BOOL fThin, __RPC__out float *pflRate)
@@ -509,7 +502,8 @@ HRESULT MPEVRCustomPresenter::GetTimeToSchedule(IMFSample* pSample, LONGLONG *ph
     Log("dangerous and unlikely time to schedule [%p]: %I64d. scheduled time: %I64d, now: %I64d",
       pSample, hnsDelta, hnsPresentationTime, hnsTimeNow);
   }
-  LOG_TRACE("Due: %I64d, Calculated delta: %I64d (rate: %f)", hnsPresentationTime/10000, hnsDelta, m_fRate);
+  LOG_TRACE("Due: %I64d, Calculated delta: %I64d (rate: %f)", hnsPresentationTime, hnsDelta, m_fRate);
+
   if (m_fRate != 1.0f && m_fRate != 0.0f)
   {
     *phnsDelta = (LONGLONG)((float)hnsDelta / m_fRate);
@@ -583,17 +577,6 @@ HRESULT MPEVRCustomPresenter::SetMediaType(CComPtr<IMFMediaType> pType, BOOL* pb
 
   HRESULT hr = S_OK;
   LARGE_INTEGER u64;
-
-  hr = pType->GetUINT64(MF_MT_FRAME_RATE, (UINT64*)&u64);
-  if (SUCCEEDED(hr))
-  {
-    Log("Media frame rate: %d / %d", u64.HighPart, u64.LowPart);
-    m_iExpectedFrameDuration = (1000*u64.LowPart) / u64.HighPart;
-  }
-  else 
-  {
-    m_iExpectedFrameDuration = 0;
-  }
 
   CHECK_HR(pType->GetUINT64(MF_MT_FRAME_SIZE, (UINT64*)&u64), "Getting Framesize failed!");
 
@@ -749,6 +732,7 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
     if (hr == 0 && videoFormat->videoInfo.FramesPerSecond.Numerator != 0)
     {
       m_rtTimePerFrame = (20000000I64*videoFormat->videoInfo.FramesPerSecond.Denominator)/videoFormat->videoInfo.FramesPerSecond.Numerator;
+      Log("Time Per Frame: %I64d", m_rtTimePerFrame);
       // HD
       if (videoFormat->videoInfo.dwHeight >= 720 || videoFormat->videoInfo.dwWidth >= 1280)
       {
@@ -1025,7 +1009,7 @@ HRESULT MPEVRCustomPresenter::PresentSample(IMFSample* pSample)
     LONGLONG then = GetCurrentTimestamp();
     CHECK_HR(hr = Paint(pSurface), "failed: Paint");
     LONGLONG diff = GetCurrentTimestamp() - then;
-    LOG_TRACE("Paint() latency: %I64d ms", diff/10000);
+    LOG_TRACE("Paint() latency: %.2f ms", (double)diff/10000);
   }
 
   SAFE_RELEASE(pBuffer);
@@ -1075,7 +1059,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(REFERENCE_TIME *pNextSampl
   while (m_qScheduledSamples.Count() > 0)
   {
     // don't process frame in paused mode during normal playbck
-    if (m_state == MP_RENDER_STATE_PAUSED && !m_bFirstInput && !m_bScrubbing && !m_bDVDMenu) 
+    if (m_state == MP_RENDER_STATE_PAUSED && !m_bScrubbing && !m_bDVDMenu) 
     {
       break;
     }
@@ -1111,6 +1095,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(REFERENCE_TIME *pNextSampl
       {
         LONGLONG sampleLatency = -*pNextSampleTime;
         m_pEventSink->Notify(EC_SAMPLE_LATENCY, (LONG_PTR)&sampleLatency, 0);
+        LOG_TRACE("Sample Latency: %I64d", sampleLatency);
       }
     }
     else 
@@ -1242,14 +1227,14 @@ void MPEVRCustomPresenter::ScheduleSample(IMFSample* pSample)
   LOG_TRACE("Scheduling Sample, size: %d", m_qScheduledSamples.Count());
   DWORD hr;
   LONGLONG nextSampleTime;
-  CHECK_HR(hr=GetTimeToSchedule(pSample, &nextSampleTime), "Couldn't get time to schedule!");
+  CHECK_HR(hr = GetTimeToSchedule(pSample, &nextSampleTime), "Couldn't get time to schedule!");
   if (SUCCEEDED(hr))
   {
     // consider 5 ms "just-in-time" for log-length's sake
     if (nextSampleTime < -50000 && !m_bDVDMenu && !m_bScrubbing)
     {
-      Log("Scheduling sample from the past (%I64d ms, last call to NotifyWorker: %I64d ms)", 
-        -nextSampleTime/10000, (GetCurrentTimestamp()-m_llLastWorkerNotification)/10000);
+      Log("Scheduling sample from the past (%.2f ms, last call to NotifyWorker: %.2f ms)", 
+        (double)-nextSampleTime/10000, (GetCurrentTimestamp()-(double)m_llLastWorkerNotification)/10000);
     }
   }
   m_qScheduledSamples.Put(pSample);
@@ -1290,7 +1275,7 @@ HRESULT MPEVRCustomPresenter::ProcessInputNotify(int* samplesProcessed)
   {
     MFCLOCK_STATE state;
     m_pClock->GetState(0, &state);
-    if (state == MFCLOCK_STATE_PAUSED && !m_bFirstInput && !m_bScrubbing)
+    if (state == MFCLOCK_STATE_PAUSED && !m_bScrubbing)
     {
       Log("Should not be processing data in pause mode");
       m_bInputAvailable = FALSE;
@@ -1342,7 +1327,6 @@ HRESULT MPEVRCustomPresenter::ProcessInputNotify(int* samplesProcessed)
       LONGLONG timeAfterMixer;
       sample->GetSampleTime(&sampleTime);
 
-      m_bFirstInput = false;
       *samplesProcessed++;
 
       m_pClock->GetCorrelatedTime(0, &timeAfterMixer, &systemTime);
@@ -1351,6 +1335,7 @@ HRESULT MPEVRCustomPresenter::ProcessInputNotify(int* samplesProcessed)
       if (m_pEventSink)
       {
         m_pEventSink->Notify(EC_PROCESSING_LATENCY, (LONG_PTR)&mixerLatency, 0);
+        LOG_TRACE("Mixer Latency: %I64d", mixerLatency);
       }
       ScheduleSample(sample);
     }
@@ -1645,7 +1630,7 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 
     // Presenter is flushing samples, do not render! (not considered as failure)
     // This should solve the random video frame freeze issue when stopping the playback
-    if (m_bFlush)
+    if (m_bFlush && !m_bScrubbing)
     {
       return S_OK;
     }
@@ -2091,6 +2076,12 @@ REFERENCE_TIME MPEVRCustomPresenter::GetFrameDuration()
   }
 
   return m_rtTimePerFrame;
+}
+
+
+bool MPEVRCustomPresenter::GetScrubbingStatus()
+{
+  return m_bScrubbing;
 }
 
 

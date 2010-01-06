@@ -1,23 +1,18 @@
-/* 
- *      Copyright (C) 2005-2009 Team MediaPortal
- *      http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2010 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include <streams.h>
 #include <d3dx9.h>
@@ -249,10 +244,10 @@ void StatsRenderer::DrawStats()
     DrawText(rc, strText, 1);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("Display cycle from Windows: %.3f ms | Display refresh rate from Windows: %d Hz", 
-      m_pPresenter->m_dD3DRefreshCycle, m_pPresenter->m_uD3DRefreshRate);
-		DrawText(rc, strText, 1);
-		OffsetRect(&rc, 0, TextHeight);
+    //strText.Format("Display cycle from Windows: %.3f ms | Display refresh rate from Windows: %d Hz", 
+    //  m_pPresenter->m_dD3DRefreshCycle, m_pPresenter->m_uD3DRefreshRate);
+		//DrawText(rc, strText, 1);
+		//OffsetRect(&rc, 0, TextHeight);
 
     strText.Format("Frames drawn %d | dropped %d | # of sync glitches: %d", 
       m_pPresenter->m_iFramesDrawn, m_pPresenter->m_iFramesDropped, m_pPresenter->m_uSyncGlitches );

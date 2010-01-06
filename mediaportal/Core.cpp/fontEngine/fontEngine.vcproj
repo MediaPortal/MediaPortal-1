@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="fontEngine"
 	ProjectGUID="{C3CD9ACF-E025-465C-8B07-4F53CF33003F}"
 	RootNamespace="fontEngine"
@@ -227,7 +227,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\TransformMatrix.h"
+				RelativePath=".\source\TransformMatrix.h"
 				>
 			</File>
 		</Filter>
