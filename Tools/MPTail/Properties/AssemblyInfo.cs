@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
+﻿#region Copyright (C) 2005-2008 Team MediaPortal
 
 /* 
  *	Copyright (C) 2005-2008 Team MediaPortal
@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Team MediaPortal")]
 [assembly: AssemblyProduct("MPTail")]
-[assembly: AssemblyCopyright("Copyright � 2005-2008 Team MediaPortal")]
+[assembly: AssemblyCopyright("Copyright © 2005-2010 Team MediaPortal")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
