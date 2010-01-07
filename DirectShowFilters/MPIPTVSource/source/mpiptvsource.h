@@ -42,6 +42,9 @@ DEFINE_GUID(CLSID_MPIptvSource,
 #define EMPTY_STRING ""
 #define UDP_PROTOCOL "udp"
 #define RTP_PROTOCOL "rtp"
+#define IPTV_BUFFER_SIZE 128 * 1024 //By default 64KB buffer size
+#define IPTV_SOCKET_BUFFER_SIZE 32 * 1024 //Socket receive buffer size - not related to read buffer size above
+#define FILL_DIRECTLY_INTO_BUFFER
 
 class CMPIptvSourceStream : public CSourceStream
 {
@@ -55,13 +58,15 @@ protected:
 	SOCKET m_socket;
 
 	DWORD m_seqNumber;
-	char m_buffer[65536*2];
-	int m_buffsize;
+#ifndef FILL_DIRECTLY_INTO_BUFFER
+  char m_buffer[IPTV_BUFFER_SIZE];
+#endif
+  int m_buffsize;
 
 	HRESULT FillBuffer(IMediaSample *pSamp);
 	HRESULT GetMediaType(__inout CMediaType *pMediaType);
 	HRESULT DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES *pRequest);
-    HRESULT DoBufferProcessingLoop(void);
+  HRESULT DoBufferProcessingLoop(void);
 
 public:
 

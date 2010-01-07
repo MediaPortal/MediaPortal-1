@@ -49,7 +49,7 @@ const AMOVIESETUP_FILTER iptvPushSource =
 {
     &CLSID_MPIptvSource,    // Filter CLSID
     g_wszPushSource,        // String name
-    MERIT_DO_NOT_USE,       // Filter merit
+    MERIT_NORMAL,           // Filter merit
     1,                      // Number pins
     &iptvOutputPin          // Pin details
 };
