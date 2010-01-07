@@ -21,6 +21,7 @@
 using System;
 using System.ServiceProcess;
 using Microsoft.Win32;
+using MediaPortal.ServiceImplementations;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -29,7 +30,7 @@ namespace MediaPortal.Configuration.Sections
     private static McsPolicyStatus _mcsServices;
 
     public ThirdPartyChecks()
-      : this("Additional 3rd party checks") {}
+      : this("Additional 3rd party checks") { }
 
     public ThirdPartyChecks(string name)
       : base(name)
@@ -40,6 +41,7 @@ namespace MediaPortal.Configuration.Sections
     public override void OnSectionActivated()
     {
       _mcsServices = McsPolicyCheck();
+      mpCheckBoxStartMPTray.Checked = MPTrayCheck();
 
       RefreshForm();
     }
@@ -55,6 +57,7 @@ namespace MediaPortal.Configuration.Sections
           mpButtonMCS.Visible = true;
           mpButtonMCS.Enabled = true;
           mpGroupBoxWarningMce.Visible = false;
+          mpGroupBoxMpTray.Visible = true;
           break;
         case McsPolicyStatus.ServicesStopped:
           mpLabelStatusMCS.Text = "services stopped";
@@ -63,6 +66,8 @@ namespace MediaPortal.Configuration.Sections
           mpButtonMCS.Visible = true;
           mpButtonMCS.Enabled = true;
           mpGroupBoxWarningMce.Visible = true;
+          mpGroupBoxMpTray.Visible = false;
+          mpCheckBoxStartMPTray.Checked = false;
           break;
         case McsPolicyStatus.NotAMceSystem:
           mpLabelStatusMCS.Text = "services not installed";
@@ -70,6 +75,7 @@ namespace MediaPortal.Configuration.Sections
           mpButtonMCS.Visible = false;
           mpButtonMCS.Enabled = false;
           mpGroupBoxWarningMce.Visible = false;
+          mpGroupBoxMpTray.Visible = true;
           break;
         default:
           mpLabelStatusMCS.Text = "services running";
@@ -78,16 +84,39 @@ namespace MediaPortal.Configuration.Sections
           mpButtonMCS.Visible = true;
           mpButtonMCS.Enabled = true;
           mpGroupBoxWarningMce.Visible = true;
+          mpGroupBoxMpTray.Visible = false;
+          mpCheckBoxStartMPTray.Checked = false;
           break;
       }
     }
 
     #region MCS Policy Check
 
+    private static bool MPTrayCheck()
+    {
+      try
+      {
+        using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", false))
+        {
+          if (key != null)
+          {
+            object objValue = key.GetValue("MPTray");
+            if (objValue != null) // && string.IsNullOrEmpty(objValue.ToString()))
+            {
+              return true;
+            }
+          }
+        }
+      }
+      catch (Exception) { }
+      return false;
+    }
+
     private static McsPolicyStatus McsPolicyCheck()
     {
       // Check for status of MCE services
       bool mceSystem = false;
+
       ServiceController[] services = ServiceController.GetServices();
       foreach (ServiceController srv in services)
       {
@@ -114,6 +143,32 @@ namespace MediaPortal.Configuration.Sections
       }
       // No MCE services running and no policy: services are stopped
       return McsPolicyStatus.ServicesStopped;
+    }
+
+    private static void ToggleMPTrayStart(bool aEnableAutostart)
+    {
+      try
+      {
+        if (aEnableAutostart) // autostart on boot
+        {
+          string fileName = Config.GetFile(Config.Dir.Base, "MPTray.exe");
+          using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
+          {
+            subkey.SetValue("MPTray", fileName);
+          }
+        }
+        else
+        {
+          using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
+          {
+            subkey.DeleteValue("MPTray", false);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("ThirdPartyChecks: Error toggling autostart of MPTray - {0}", ex.ToString());
+      }
     }
 
     private static McsPolicyStatus McsPolicyManipulation(bool checkonly)
@@ -170,6 +225,12 @@ namespace MediaPortal.Configuration.Sections
       RefreshForm();
     }
 
+    private void mpCheckBoxStartMPTray_CheckedChanged(object sender, EventArgs e)
+    {
+      ToggleMPTrayStart(mpCheckBoxStartMPTray.Checked);
+    }
+
     #endregion
+
   }
 }
