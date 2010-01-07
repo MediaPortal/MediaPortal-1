@@ -1,7 +1,9 @@
 @ECHO OFF
 
-REM set the path to svn root
+REM set paths
 set SVN_ROOT=..
+set DeployVersionSVN="%SVN_ROOT%\Tools\Script & Batch tools\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe"
+
 
 REM detect if BUILD_TYPE should be release or debug
 if not %1!==Debug! goto RELEASE
@@ -22,17 +24,14 @@ if not "%ProgramFiles(x86)%".=="". set progpath=%ProgramFiles(x86)%
 echo.
 echo -= MediaPortal =-
 echo -= build mode: %BUILD_TYPE% =-
+echo. > build.log
 echo.
 
-
-echo.
-echo Building DeployVersionSVN...
-call "%SVN_ROOT%\Tools\Script & Batch tools\DeployVersionSVN\Build.bat" > build.log
 
 echo.
 echo Writing SVN revision assemblies...
-"%SVN_ROOT%\Tools\Script & Batch tools\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn=%CD% >> build.log
-"%SVN_ROOT%\Tools\Script & Batch tools\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn=%CD%\%SVN_ROOT%\Common-MP-TVE3 >> build.log
+%DeployVersionSVN% /svn=%CD% >> build.log
+%DeployVersionSVN% /svn=%CD%\%SVN_ROOT%\Common-MP-TVE3 >> build.log
 
 echo.
 echo Building MediaPortal...
@@ -40,16 +39,14 @@ echo Building MediaPortal...
 
 echo.
 echo Reverting assemblies...
-"%SVN_ROOT%\Tools\Script & Batch tools\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn=%CD% /revert >> build.log
-"%SVN_ROOT%\Tools\Script & Batch tools\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /svn=%CD%\%SVN_ROOT%\Common-MP-TVE3 /revert >> build.log
-
+%DeployVersionSVN% /svn=%CD% /revert >> build.log
+%DeployVersionSVN% /svn=%CD%\%SVN_ROOT%\Common-MP-TVE3 /revert >> build.log
 
 echo.
 echo Reading the svn revision...
-echo $WCREV$>template.txt
-"%ProgramFiles%\TortoiseSVN\bin\SubWCRev.exe" ".." template.txt version.txt >> build.log
-SET /p version=<version.txt >> build.log
-DEL template.txt >> build.log
+%DeployVersionSVN% /svn=%CD% /GetVersion >> build.log
+rem SET /p version=<version.txt >> build.log
+SET version=%errorlevel%
 DEL version.txt >> build.log
 
 echo.
