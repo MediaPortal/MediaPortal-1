@@ -51,6 +51,10 @@ namespace MediaPortal.Configuration.Sections
     private Panel panelFitImage;
     private PictureBox previewPictureBox;
     private LinkLabel linkLabel1;
+    private MPGroupBox mpGroupBoxEngineSettings;
+    private CheckBox checkBoxBasicHome;
+    private CheckBox checkBoxAutosizeToSkin;
+    private CheckBox checkBoxEnableSounds;
     private new IContainer components = null;
 
     public GeneralSkin()
@@ -202,6 +206,11 @@ namespace MediaPortal.Configuration.Sections
         checkBoxUsePrefix.Checked = xmlreader.GetValueAsBool("general", "myprefix", true);
         checkBoxlangRTL.Checked = xmlreader.GetValueAsBool("general", "rtllang", false);
         languageComboBox.Text = xmlreader.GetValueAsString("skin", "language", languageComboBox.Text);
+        checkBoxBasicHome.Checked = xmlreader.GetValueAsBool("general", "startbasichome", false);
+        checkBoxBasicHome.Checked = xmlreader.GetValueAsBool("general", "startbasichome", false);
+        checkBoxAutosizeToSkin.Checked = xmlreader.GetValueAsBool("general", "autosize", false);
+        checkBoxEnableSounds.Checked = xmlreader.GetValueAsBool("general", "enableguisounds", true);
+
         string currentSkin = xmlreader.GetValueAsString("skin", "name", "NoSkin");
 
         float screenHeight = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Height;
@@ -273,6 +282,9 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("general", "rtllang", checkBoxlangRTL.Checked);
         xmlwriter.SetValueAsBool("general", "myprefix", checkBoxUsePrefix.Checked);
         xmlwriter.SetValue("general", "skinobsoletecount", 0);
+        xmlwriter.SetValueAsBool("general", "startbasichome", checkBoxBasicHome.Checked);
+        xmlwriter.SetValueAsBool("general", "autosize", checkBoxAutosizeToSkin.Checked);
+        xmlwriter.SetValueAsBool("general", "enableguisounds", checkBoxEnableSounds.Checked);
       }
     }
 
@@ -294,6 +306,10 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBoxAppearance = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpGroupBoxEngineSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxEnableSounds = new System.Windows.Forms.CheckBox();
+      this.checkBoxAutosizeToSkin = new System.Windows.Forms.CheckBox();
+      this.checkBoxBasicHome = new System.Windows.Forms.CheckBox();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxUsePrefix = new System.Windows.Forms.CheckBox();
       this.checkBoxlangRTL = new System.Windows.Forms.CheckBox();
@@ -307,6 +323,7 @@ namespace MediaPortal.Configuration.Sections
       this.colName = new System.Windows.Forms.ColumnHeader();
       this.colVersion = new System.Windows.Forms.ColumnHeader();
       this.groupBoxAppearance.SuspendLayout();
+      this.mpGroupBoxEngineSettings.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.groupBoxSkin.SuspendLayout();
       this.panelFitImage.SuspendLayout();
@@ -315,11 +332,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxAppearance
       // 
-      this.groupBoxAppearance.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxAppearance.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxAppearance.Controls.Add(this.mpGroupBoxEngineSettings);
       this.groupBoxAppearance.Controls.Add(this.mpGroupBox1);
       this.groupBoxAppearance.Controls.Add(this.groupBoxSkin);
       this.groupBoxAppearance.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -330,12 +346,57 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxAppearance.TabStop = false;
       this.groupBoxAppearance.Text = "Appearance";
       // 
+      // mpGroupBoxEngineSettings
+      // 
+      this.mpGroupBoxEngineSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBoxEngineSettings.Controls.Add(this.checkBoxEnableSounds);
+      this.mpGroupBoxEngineSettings.Controls.Add(this.checkBoxAutosizeToSkin);
+      this.mpGroupBoxEngineSettings.Controls.Add(this.checkBoxBasicHome);
+      this.mpGroupBoxEngineSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBoxEngineSettings.Location = new System.Drawing.Point(6, 191);
+      this.mpGroupBoxEngineSettings.Name = "mpGroupBoxEngineSettings";
+      this.mpGroupBoxEngineSettings.Size = new System.Drawing.Size(460, 92);
+      this.mpGroupBoxEngineSettings.TabIndex = 6;
+      this.mpGroupBoxEngineSettings.TabStop = false;
+      this.mpGroupBoxEngineSettings.Text = "GUI Options";
+      // 
+      // checkBoxEnableSounds
+      // 
+      this.checkBoxEnableSounds.AutoSize = true;
+      this.checkBoxEnableSounds.Checked = true;
+      this.checkBoxEnableSounds.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxEnableSounds.Location = new System.Drawing.Point(19, 65);
+      this.checkBoxEnableSounds.Name = "checkBoxEnableSounds";
+      this.checkBoxEnableSounds.Size = new System.Drawing.Size(148, 17);
+      this.checkBoxEnableSounds.TabIndex = 5;
+      this.checkBoxEnableSounds.Text = "Enable skin sound effects";
+      this.checkBoxEnableSounds.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxAutosizeToSkin
+      // 
+      this.checkBoxAutosizeToSkin.AutoSize = true;
+      this.checkBoxAutosizeToSkin.Location = new System.Drawing.Point(19, 42);
+      this.checkBoxAutosizeToSkin.Name = "checkBoxAutosizeToSkin";
+      this.checkBoxAutosizeToSkin.Size = new System.Drawing.Size(223, 17);
+      this.checkBoxAutosizeToSkin.TabIndex = 4;
+      this.checkBoxAutosizeToSkin.Text = "Autosize window mode to skin dimensions";
+      this.checkBoxAutosizeToSkin.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxBasicHome
+      // 
+      this.checkBoxBasicHome.AutoSize = true;
+      this.checkBoxBasicHome.Location = new System.Drawing.Point(19, 19);
+      this.checkBoxBasicHome.Name = "checkBoxBasicHome";
+      this.checkBoxBasicHome.Size = new System.Drawing.Size(164, 17);
+      this.checkBoxBasicHome.TabIndex = 3;
+      this.checkBoxBasicHome.Text = "Start with BasicHome Screen";
+      this.checkBoxBasicHome.UseVisualStyleBackColor = true;
+      // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.checkBoxUsePrefix);
       this.mpGroupBox1.Controls.Add(this.checkBoxlangRTL);
       this.mpGroupBox1.Controls.Add(this.languageComboBox);
@@ -372,10 +433,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // languageComboBox
       // 
-      this.languageComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.languageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.languageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.languageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.languageComboBox.Location = new System.Drawing.Point(118, 21);
@@ -394,48 +453,39 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxSkin
       // 
-      this.groupBoxSkin.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxSkin.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxSkin.Controls.Add(this.linkLabel1);
       this.groupBoxSkin.Controls.Add(this.panelFitImage);
       this.groupBoxSkin.Controls.Add(this.listViewAvailableSkins);
       this.groupBoxSkin.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxSkin.Location = new System.Drawing.Point(6, 23);
       this.groupBoxSkin.Name = "groupBoxSkin";
-      this.groupBoxSkin.Size = new System.Drawing.Size(460, 236);
+      this.groupBoxSkin.Size = new System.Drawing.Size(460, 162);
       this.groupBoxSkin.TabIndex = 3;
       this.groupBoxSkin.TabStop = false;
-      this.groupBoxSkin.Text = "Skin";
+      this.groupBoxSkin.Text = "Skin Selection";
       // 
       // linkLabel1
       // 
-      this.linkLabel1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.linkLabel1.AutoSize = true;
-      this.linkLabel1.Location = new System.Drawing.Point(16, 209);
+      this.linkLabel1.Location = new System.Drawing.Point(16, 132);
       this.linkLabel1.Name = "linkLabel1";
       this.linkLabel1.Size = new System.Drawing.Size(131, 13);
       this.linkLabel1.TabIndex = 10;
       this.linkLabel1.TabStop = true;
       this.linkLabel1.Text = "more new and hot skins ...";
-      this.linkLabel1.LinkClicked +=
-        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
       // 
       // panelFitImage
       // 
-      this.panelFitImage.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.panelFitImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.panelFitImage.Controls.Add(this.previewPictureBox);
       this.panelFitImage.Location = new System.Drawing.Point(221, 22);
       this.panelFitImage.Name = "panelFitImage";
-      this.panelFitImage.Size = new System.Drawing.Size(222, 179);
+      this.panelFitImage.Size = new System.Drawing.Size(222, 123);
       this.panelFitImage.TabIndex = 5;
       // 
       // previewPictureBox
@@ -445,33 +495,29 @@ namespace MediaPortal.Configuration.Sections
       this.previewPictureBox.Image = global::MediaPortal.Configuration.Properties.Resources.mplogo;
       this.previewPictureBox.Location = new System.Drawing.Point(0, 0);
       this.previewPictureBox.Name = "previewPictureBox";
-      this.previewPictureBox.Size = new System.Drawing.Size(222, 179);
+      this.previewPictureBox.Size = new System.Drawing.Size(222, 123);
       this.previewPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
       this.previewPictureBox.TabIndex = 5;
       this.previewPictureBox.TabStop = false;
       // 
       // listViewAvailableSkins
       // 
-      this.listViewAvailableSkins.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-           | System.Windows.Forms.AnchorStyles.Left)));
-      this.listViewAvailableSkins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-                                                     {
-                                                       this.colName,
-                                                       this.colVersion
-                                                     });
+      this.listViewAvailableSkins.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewAvailableSkins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colName,
+            this.colVersion});
       this.listViewAvailableSkins.FullRowSelect = true;
       this.listViewAvailableSkins.HideSelection = false;
       this.listViewAvailableSkins.Location = new System.Drawing.Point(15, 22);
       this.listViewAvailableSkins.MultiSelect = false;
       this.listViewAvailableSkins.Name = "listViewAvailableSkins";
-      this.listViewAvailableSkins.Size = new System.Drawing.Size(200, 179);
+      this.listViewAvailableSkins.Size = new System.Drawing.Size(200, 107);
       this.listViewAvailableSkins.TabIndex = 3;
       this.listViewAvailableSkins.UseCompatibleStateImageBehavior = false;
       this.listViewAvailableSkins.View = System.Windows.Forms.View.Details;
-      this.listViewAvailableSkins.SelectedIndexChanged +=
-        new System.EventHandler(this.listViewAvailableSkins_SelectedIndexChanged);
+      this.listViewAvailableSkins.SelectedIndexChanged += new System.EventHandler(this.listViewAvailableSkins_SelectedIndexChanged);
       // 
       // colName
       // 
@@ -490,6 +536,8 @@ namespace MediaPortal.Configuration.Sections
       this.Name = "GeneralSkin";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBoxAppearance.ResumeLayout(false);
+      this.mpGroupBoxEngineSettings.ResumeLayout(false);
+      this.mpGroupBoxEngineSettings.PerformLayout();
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.groupBoxSkin.ResumeLayout(false);
@@ -497,6 +545,7 @@ namespace MediaPortal.Configuration.Sections
       this.panelFitImage.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.previewPictureBox)).EndInit();
       this.ResumeLayout(false);
+
     }
 
     #endregion

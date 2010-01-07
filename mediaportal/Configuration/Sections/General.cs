@@ -47,11 +47,15 @@ namespace MediaPortal.Configuration.Sections
     public class DISPLAY_DEVICE
     {
       public int cb = 0;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)] public string DeviceName = new String(' ', 32);
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string DeviceString = new String(' ', 128);
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+      public string DeviceName = new String(' ', 32);
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+      public string DeviceString = new String(' ', 128);
       public int StateFlags = 0;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string DeviceID = new String(' ', 128);
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string DeviceKey = new String(' ', 128);
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+      public string DeviceID = new String(' ', 128);
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+      public string DeviceKey = new String(' ', 128);
     }
 
     [DllImport("user32.dll")]
@@ -63,7 +67,7 @@ namespace MediaPortal.Configuration.Sections
     private const int HWND_BROADCAST = 0xFFFF;
 
     public General()
-      : this("General") {}
+      : this("General") { }
 
     public General(string name)
       : base(name)
@@ -75,57 +79,42 @@ namespace MediaPortal.Configuration.Sections
     private int screennumber = 0; // 0 is the primary screen
 
     private string[][] sectionEntries = new string[][]
-                                          {
-                                            new string[] {"general", "startbasichome", "false"},
-                                            // 0 Start with basic home screen
+                                          {                                            
                                             new string[] {"general", "startfullscreen", "true"},
-                                            // 1 Start MediaPortal in fullscreen mode
+                                            // 0 Start MediaPortal in fullscreen mode
                                             new string[] {"general", "usefullscreensplash", "true"},
-                                            // 2 Use screenselector to choose on which screen MP should start
-                                            new string[] {"general", "autosize", "false"},
-                                            // 3 Autosize window mode to skin
+                                            // 1 Use screenselector to choose on which screen MP should start
                                             new string[] {"general", "alwaysontop", "false"},
-                                            // 4 Keep MediaPortal always on top
+                                            // 2 Keep MediaPortal always on top
                                             new string[] {"general", "hidetaskbar", "false"},
-                                            // 5 Hide taskbar in fullscreen mode      
+                                            // 3 Hide taskbar in fullscreen mode      
                                             new string[] {"general", "autostart", "false"},
-                                            // 6 Autostart MediaPortal on Windows startup
+                                            // 4 Autostart MediaPortal on Windows startup
                                             new string[] {"general", "minimizeonstartup", "false"},
-                                            // 7 Minimize to tray on start up
+                                            // 5 Minimize to tray on start up
                                             new string[] {"general", "minimizeonexit", "false"},
-                                            // 8 Minimize to tray on GUI exit
+                                            // 6 Minimize to tray on GUI exit
                                             new string[] {"general", "mousesupport", "false"},
-                                            // 9 Show special mouse controls (scrollbars, etc)      
+                                            // 7 Show special mouse controls (scrollbars, etc)      
                                             new string[] {"general", "hideextensions", "true"},
-                                            // 10 Hide file extensions like .mp3, .avi, .mpg,...
-                                            new string[] {"general", "enableguisounds", "true"},
-                                            // 11 Enable GUI sound effects
-                                            new string[] {"general", "animations", "true"},
-                                            // 12 Enable animations / transitions	  
-                                            new string[] {"general", "baloontips", "false"},
-                                            // 13 Disable Windows tray area's balloon tips (for all apps)
-                                            //new string[] { "general", "IdleTimer", "true" },               // 14 Blank screen in fullscreen mode when MediaPortal is idle
+                                            // 8 Hide file extensions like .mp3, .avi, .mpg,...                                             
                                             new string[] {"general", "turnoffmonitor", "false"},
-                                            // 15 Turn off monitor when blanking screen	    
+                                            // 9 Turn off monitor when blanking screen	    
                                             new string[] {"general", "turnmonitoronafterresume", "true"},
-                                            // 16 Turn monitor/tv on when resuming from standby
+                                            // 10 Turn monitor/tv on when resuming from standby
                                             new string[] {"general", "enables3trick", "true"},
-                                            // 17 Allow S3 standby although wake up devices are present
+                                            // 11 Allow S3 standby although wake up devices are present
                                             new string[] {"debug", "useS3Hack", "false"},
-                                            // 18 Apply workaround to fix MP freezing on resume on some systems
+                                            // 12 Apply workaround to fix MP freezing on resume on some systems
                                             new string[] {"general", "restartonresume", "false"},
-                                            // 19 Restart MediaPortal on resume (avoids stuttering playback with nvidia)
+                                            // 13 Restart MediaPortal on resume (avoids stuttering playback with nvidia)
                                             new string[] {"general", "showlastactivemodule", "false"},
-                                            // 20 Show last active module when starting / resuming from standby
+                                            // 14 Show last active module when starting / resuming from standby
                                             new string[] {"comskip", "automaticskip", "false"},
-                                            // 21 Automatically skip commercials for videos with ComSkip data available
+                                            // 15 Automatically skip commercials for videos with ComSkip data available
                                             new string[] {"screenselector", "usescreenselector", "false"},
-                                            // 21 Automatically skip commercials for videos with ComSkip data available
+                                            // 16 Allow remember last focused item on supported window/skin
                                             new string[] {"general", "allowRememberLastFocusedItem", "true"},
-                                            //new string[] { "general", "autohidemouse", "true" }, 
-                                            //new string[] { "general", "dblclickasrightclick", "false" },
-                                            //new string[] { "general", "userenderthread", "true" }
-                                            //new string[] { "general", "allowfocus", "false" }      
                                           };
 
     /// <summary> 
@@ -200,53 +189,43 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("general", "loglevel", cbDebug.SelectedIndex);
         xmlwriter.SetValue("general", "ThreadPriority", mpThreadPriority.SelectedItem.ToString());
         xmlwriter.SetValue("screenselector", "screennumber", cbScreen.SelectedIndex);
-        //
-        // Load general settings
-        //
-        for (int index = 0; index < sectionEntries.Length; index++) // Leave out last setting (focus)!
+
+        for (int index = 0; index < sectionEntries.Length; index++)
         {
           string[] currentSection = sectionEntries[index];
           xmlwriter.SetValueAsBool(currentSection[0], currentSection[1], settingsCheckedListBox.GetItemChecked(index));
         }
-        //xmlwriter.SetValue("vmr9OSDSkin","alphaValue",numericUpDown1.Value);
       }
 
       try
       {
-        if (settingsCheckedListBox.GetItemChecked(6)) // autostart on boot
+        if (settingsCheckedListBox.GetItemChecked(4)) // autostart on boot
         {
           string fileName = Config.GetFile(Config.Dir.Base, "MediaPortal.exe");
-          using (
-            RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true)
-            )
+          using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
           {
             subkey.SetValue("MediaPortal", fileName);
           }
         }
         else
         {
-          using (
-            RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true)
-            )
+          using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
           {
             subkey.DeleteValue("MediaPortal", false);
           }
         }
 
-        Int32 iValue = 1;
-        if (settingsCheckedListBox.GetItemChecked(13)) // disable ballon tips
-        {
-          iValue = 0;
-        }
+        //Int32 iValue = 1;
+        //if (settingsCheckedListBox.GetItemChecked(13)) // disable ballon tips
+        //{
+        //  iValue = 0;
+        //}
+        //using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer", true))
+        //{
+        //  subkey.SetValue("EnableBalloonTips", iValue);
+        //}
 
-        using (
-          RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer",
-                                                               true))
-        {
-          subkey.SetValue("EnableBalloonTips", iValue);
-        }
-
-        if (settingsCheckedListBox.GetItemChecked(4)) // always on top
+        if (settingsCheckedListBox.GetItemChecked(2)) // always on top
         {
           using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
           {
@@ -254,16 +233,13 @@ namespace MediaPortal.Configuration.Sections
           }
         }
 
-
         IntPtr result = IntPtr.Zero;
         SendMessageTimeout((IntPtr)HWND_BROADCAST, (IntPtr)WM_SETTINGCHANGE, IntPtr.Zero,
                            Marshal.StringToBSTR(string.Empty), (IntPtr)SMTO_ABORTIFHUNG, (IntPtr)3, out result);
       }
       catch (Exception ex)
       {
-        Log.Info("Exception: {0}", ex.Message);
-        Log.Info("Exception: {0}", ex);
-        Log.Info("Exception: {0}", ex.StackTrace);
+        Log.Error("General: Exception - {0}", ex);
       }
     }
 
