@@ -38,9 +38,6 @@
 ;!define BUILD_DeployTool
 ;!define BUILD_Installer
 
-# At first build DeployVersionSVN.exe, it is needed for all further commands
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild "${svn_DeployVersionSVN}\DeployVersionSVN.sln"' = 0
-
 # GetVersion by exeuting DeployVersionSVN.exe /GetVersion
 ;!system '"$%ProgramFiles%\TortoiseSVN\bin\SubWCRev.exe" "${svn_ROOT}" RevisionInfoTemplate.nsh version.txt' = 0
 !system 'include-MP-PreBuild.bat'
