@@ -275,6 +275,7 @@ ShowUninstDetails show
   !insertmacro "${MacroName}" "SecGabest"
 !endif
   !insertmacro "${MacroName}" "SecPowerScheduler"
+  !insertmacro "${MacroName}" "SecMpeInstaller"
 !macroend
 
 !macro ShutdownRunningMediaPortalApplications
@@ -283,9 +284,12 @@ ShowUninstDetails show
   ${KillProcess} "MediaPortal.exe"
   ${KillProcess} "configuration.exe"
 
-  ; MPInstaller apps
+  ; MpeInstaller v1
   ${KillProcess} "MPInstaller.exe"
   ${KillProcess} "MPIMaker.exe"
+  ; MpeInstaller v2
+  ${KillProcess} "MpeInstaller.exe"
+  ${KillProcess} "MpeMaker.exe"
 
   ${KillProcess} "WatchDog.exe"
   ${KillProcess} "MusicShareWatcher.exe"
@@ -297,10 +301,10 @@ ShowUninstDetails show
   ; WebEPG apps
   ;${KillProcess} "WebEPG.exe"
   ;${KillProcess} "WebEPG-conf.exe"
-  
+
   ;3rd party
   ${KillProcess} "mptray.exe"
-  
+
 !macroend
 
 !macro RenameInstallDirectory
@@ -455,8 +459,6 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal "${MEDIAPORTAL.BASE}\wikipedia.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
 
-  SetOutPath "$MPdir.Config\Installer"
-  File /nonfatal "${MEDIAPORTAL.BASE}\Installer\cleanup.xml"
   SetOutPath "$MPdir.Config\scripts\MovieInfo"
   File /nonfatal "${MEDIAPORTAL.BASE}\scripts\MovieInfo\IMDB.csscript"
 
@@ -489,11 +491,6 @@ Section "MediaPortal core files (required)" SecCore
   ; MusicShareWatcher
   File "${svn_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\${BUILD_TYPE}\MusicShareWatcher.exe"
   File "${svn_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.dll"
-  ; MPInstaller
-  File "${svn_MP}\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.exe"
-  File "${svn_MP}\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.exe.config"
-  File "${svn_MP}\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.Library.dll"
-  File "${svn_MP}\MPInstaller\MPIMaker\bin\${BUILD_TYPE}\MPIMaker.exe"
   ; WatchDog
   File "${svn_MP}\WatchDog\bin\${BUILD_TYPE}\WatchDog.exe"
   File "${svn_MP}\WatchDog\bin\${BUILD_TYPE}\DaggerLib.dll"
@@ -617,11 +614,6 @@ SectionEnd
   ; MusicShareWatcher
   Delete "$MPdir.Base\MusicShareWatcher.exe"
   Delete "$MPdir.Base\MusicShareWatcherHelper.dll"
-  ; MPInstaller
-  Delete "$MPdir.Base\MPInstaller.exe"
-  Delete "$MPdir.Base\MPInstaller.exe.config"
-  Delete "$MPdir.Base\MPInstaller.Library.dll"
-  Delete "$MPdir.Base\MPIMaker.exe"
   ; WatchDog
   Delete "$MPdir.Base\WatchDog.exe"
   Delete "$MPdir.Base\DaggerLib.dll"
@@ -700,6 +692,70 @@ SectionEnd
   Delete "$MPdir.Plugins\Process\PowerSchedulerClientPlugin.dll"
 !macroend
 
+Section "-MediaPortal Extension Installer" SecMpeInstaller
+  ${LOG_TEXT} "INFO" "MediaPortal Extension Installer..."
+
+  ; install files
+  ; MpeInstaller v1
+  SetOutPath "$MPdir.Base"
+  File "${svn_MP}\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.exe"
+  File "${svn_MP}\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.exe.config"
+  File "${svn_MP}\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.Library.dll"
+  File "${svn_MP}\MPInstaller\MPIMaker\bin\${BUILD_TYPE}\MPIMaker.exe"
+  SetOutPath "$MPdir.Config\Installer"
+  File /nonfatal "${MEDIAPORTAL.BASE}\Installer\cleanup.xml"
+  ; MpeInstaller v2
+  SetOutPath "$MPdir.Base"
+  File "${svn_MP}\MPE\MpeCore\bin\${BUILD_TYPE}\MpeCore.dll"
+  File "${svn_MP}\MPE\MpeInstaller\bin\${BUILD_TYPE}\MpeInstaller.exe"
+  File "${svn_MP}\MPE\MpeMaker\bin\${BUILD_TYPE}\MpeMaker.exe"
+
+  ; create startmenu shortcuts
+  CreateDirectory "${STARTMENU_GROUP}"
+  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Installer.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Installer"
+  CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"     "$MPdir.Base\MpeMaker.exe"      ""  "$MPdir.Base\MpeMaker.exe"      0 "" "" "MediaPortal Extension Maker"
+
+  ; associate file extensions
+  ; MpeInstaller v1
+  ${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpi"  "MediaPortal extension"
+  ${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpe1" "MediaPortal extension"
+  ${RegisterExtension} "$MPdir.Base\MpeMaker.exe"     ".xmp"  "MediaPortal extension project"
+  ; MpeInstaller v2
+  #${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpi"  "MediaPortal extension"
+  #${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpe1" "MediaPortal extension"
+  ${RegisterExtension} "$MPdir.Base\MpeMaker.exe"     ".xmp2"  "MediaPortal extension project"
+
+  ${RefreshShellIcons}
+SectionEnd
+!macro Remove_${SecMpeInstaller}
+  ${LOG_TEXT} "INFO" "Uninstalling MediaPortal Extension Installer..."
+
+  ; remove files
+  ; MpeInstaller v1
+  Delete "$MPdir.Base\MPInstaller.exe"
+  Delete "$MPdir.Base\MPInstaller.exe.config"
+  Delete "$MPdir.Base\MPInstaller.Library.dll"
+  Delete "$MPdir.Base\MPIMaker.exe"
+  ; MpeInstaller v2
+  Delete "$MPdir.Base\MpeCore.dll"
+  Delete "$MPdir.Base\MpeInstaller.exe"
+  Delete "$MPdir.Base\MpeMaker.exe"
+
+  ; remove startmenu shortcuts
+  Delete "${STARTMENU_GROUP}\MediaPortal Extension Installer.lnk"
+  Delete "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"
+
+  ; unassociate file extensions
+  ; MpeInstaller v1
+  ${UnRegisterExtension} ".mpi"  "MediaPortal extension"
+  ${UnRegisterExtension} ".mpe1" "MediaPortal extension"
+  ${UnRegisterExtension} ".xmp"  "MediaPortal extension project"
+  ; MpeInstaller v2
+  ${UnRegisterExtension} ".xmp2"  "MediaPortal extension project"
+
+  ${RefreshShellIcons}
+!macroend
+
 SectionGroup /e "Backup" SecBackup
   ${MementoUnselectedSection} "Installation directory" SecBackupInstDir
   ${MementoSectionEnd}
@@ -756,8 +812,6 @@ Section -Post
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"                 "$MPdir.Base\WatchDog.exe"   "-auto"    "$MPdir.Base\WatchDog.exe"   0 "" "" "MediaPortal Debug-Mode"
-      CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Installer.lnk"        "$MPdir.Base\MPInstaller.exe"   ""      "$MPdir.Base\MPInstaller.exe"   0 "" "" "MediaPortal Extension Installer"
-      CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"            "$MPdir.Base\MPIMaker.exe"   ""         "$MPdir.Base\MPIMaker.exe"   0 "" "" "MediaPortal Extension Maker"
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"             "$MPdir.Base\WatchDog.exe"   ""         "$MPdir.Base\WatchDog.exe"   0 "" "" "MediaPortal WatchDog"
       CreateShortCut "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
       CreateShortCut "${STARTMENU_GROUP}\User Files.lnk"                             "$MPdir.Config"                 ""      "$MPdir.Config"                 0 "" "" "Browse you config files, databases, thumbs, logs, ..."
@@ -785,12 +839,6 @@ Section -Post
 
   ; set rights to programmdata directory and reg keys
   !insertmacro SetRights
-
-  ; associate file extensions
-  ${RegisterExtension} "$MPdir.Base\MPInstaller.exe" ".mpi" "MediaPortal extension package"
-  ${RegisterExtension} "$MPdir.Base\MPInstaller.exe" ".mpe1" "MediaPortal extension package"
-  ${RegisterExtension} "$MPdir.Base\MPIMaker.exe" ".xmp" "MediaPortal extension project"
-  ${RefreshShellIcons}
 SectionEnd
 
 #---------------------------------------------------------------------------
@@ -811,7 +859,6 @@ Section Uninstall
   Delete "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Log-Files.lnk"
-  Delete "${STARTMENU_GROUP}\MediaPortal Plugins-Skins Installer.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal TestTool.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"
   Delete "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"
@@ -828,14 +875,6 @@ Section Uninstall
   ; remove last files and instdir
   Delete "$MPdir.Base\uninstall-mp.exe"
   RMDir "$MPdir.Base"
-
-
-  ${un.UnRegisterExtension} ".mpi" "MediaPortal extension package"
-  ${un.UnRegisterExtension} ".mpe1" "MediaPortal extension package"
-  ${un.UnRegisterExtension} ".xmp" "MediaPortal extension project"
-
-  ${un.RefreshShellIcons}
-
 
 
   ${If} $UnInstallMode == 1
