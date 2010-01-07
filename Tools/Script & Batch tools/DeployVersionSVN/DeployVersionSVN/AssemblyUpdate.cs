@@ -83,9 +83,9 @@ namespace DeployVersionSVN
             goto exclude;
           }
 
-        StreamReader read = new StreamReader(file.FullName, true);
-        Encoding encoding = read.CurrentEncoding;
+        StreamReader read = new StreamReader(file.FullName, Encoding.GetEncoding(1252), true);
         string filetext = read.ReadToEnd();
+        Encoding encoding = read.CurrentEncoding;
         read.Close();
 
         string newtext;
