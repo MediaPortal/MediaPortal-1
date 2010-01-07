@@ -292,19 +292,11 @@ ShowUninstDetails show
   ${KillProcess} "MpeMaker.exe"
 
   ${KillProcess} "WatchDog.exe"
+  ${KillProcess} "MPTray.exe"
   ${KillProcess} "MusicShareWatcher.exe"
-  ;${KillProcess} "TVGuideScheduler.exe"
 
   ; MovieThumbnailer
   ${KillProcess} "mtn.exe"
-
-  ; WebEPG apps
-  ;${KillProcess} "WebEPG.exe"
-  ;${KillProcess} "WebEPG-conf.exe"
-
-  ;3rd party
-  ${KillProcess} "mptray.exe"
-
 !macroend
 
 !macro RenameInstallDirectory
@@ -497,6 +489,8 @@ Section "MediaPortal core files (required)" SecCore
   File "${svn_MP}\WatchDog\bin\${BUILD_TYPE}\DaggerLib.DSGraphEdit.dll"
   File "${svn_MP}\WatchDog\bin\${BUILD_TYPE}\DirectShowLib-2005.dll"
   File "${svn_MP}\WatchDog\bin\${BUILD_TYPE}\MediaFoundation.dll"
+  ; MP Tray
+  File "${svn_MP}\MPTray\bin\${BUILD_TYPE}\MPTray.exe"
   ; Plugins
   File "${svn_MP}\RemotePlugins\bin\${BUILD_TYPE}\RemotePlugins.dll"
   File "${svn_MP}\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\${BUILD_TYPE}\HcwHelper.exe"
@@ -620,6 +614,8 @@ SectionEnd
   Delete "$MPdir.Base\DaggerLib.DSGraphEdit.dll"
   Delete "$MPdir.Base\DirectShowLib-2005.dll"
   Delete "$MPdir.Base\MediaFoundation.dll"
+  ; MP Tray
+  Delete "$MPdir.Base\MPTray.exe"
   ; Plugins
   Delete "$MPdir.Base\RemotePlugins.dll"
   Delete "$MPdir.Base\HcwHelper.exe"
