@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using Microsoft.Win32;
@@ -34,6 +35,8 @@ namespace SetRights
   {
     static int Main(string[] args)
     {
+      if (File.Exists(@"C:\no-SetRights.txt")) return 2;
+
       if (args.Length == 0)
       {
         Console.WriteLine("Usage:\n");
@@ -50,6 +53,7 @@ namespace SetRights
         case "hklm": GrantFullControlRegKeyLM(args[1]); break;
         case "hkcu": GrantFullControlRegKeyUser(args[1]); break;
       }
+
       return 0;
     }
 
