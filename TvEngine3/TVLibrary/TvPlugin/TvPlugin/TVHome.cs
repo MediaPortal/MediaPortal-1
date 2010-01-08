@@ -1823,7 +1823,7 @@ namespace TvPlugin
     private void OnAudioTracksReady()
     {
       Log.Debug("TVHome.OnAudioTracksReady()");
-
+      
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int prefLangIdx = GetPreferedAudioStreamIndex(out dualMonoMode);
       g_Player.CurrentAudioStream = prefLangIdx;
@@ -2779,7 +2779,7 @@ namespace TvPlugin
           {
             // lower value means higher priority
             UpdateAudioStreamIndexesBasedOnLang(streams, i, ref idxStreamIndexmpeg, ref idxStreamIndexAc3,
-                                                ref mpegBasedOnLang, idxLangPriAc3, idxLangPrimpeg, ref ac3BasedOnLang);
+                                                ref mpegBasedOnLang, ref idxLangPriAc3, ref idxLangPrimpeg, ref ac3BasedOnLang);
           }
         }
       }
@@ -2843,8 +2843,9 @@ namespace TvPlugin
 
     private static void UpdateAudioStreamIndexesBasedOnLang(IAudioStream[] streams, int i, ref int idxStreamIndexmpeg,
                                                             ref int idxStreamIndexAc3, ref string mpegBasedOnLang,
-                                                            int idxLangPriAc3, int idxLangPrimpeg,
+                                                            ref int idxLangPriAc3, ref int idxLangPrimpeg,
                                                             ref string ac3BasedOnLang)
+
     {
       int langPriority = _preferredLanguages.IndexOf(streams[i].Language);
       string langSel = streams[i].Language;
@@ -2854,20 +2855,27 @@ namespace TvPlugin
       if (langPriority >= 0)
       {
         // has the stream a higher priority than an old one or is this the first AC3 stream with lang pri (idxLangPriAc3 == -1) (AC3)
-        if (IsStreamAC3(streams[i]) && (idxLangPriAc3 == -1 || langPriority < idxLangPriAc3))
+        bool isAC3 = IsStreamAC3(streams[i]);
+        if (isAC3)
         {
-          Log.Debug("Setting AC3 pref");
-          idxStreamIndexAc3 = i;
-          idxLangPriAc3 = langPriority;
-          ac3BasedOnLang = langSel;
-        }
+          if (idxLangPriAc3 == -1 || langPriority < idxLangPriAc3)
+          {
+            Log.Debug("Setting AC3 pref");
+            idxStreamIndexAc3 = i;
+            idxLangPriAc3 = langPriority;
+            ac3BasedOnLang = langSel;
+          }
+        }          
+        else //not AC3
+        {
           // has the stream a higher priority than an old one or is this the first mpeg stream with lang pri (idxLangPrimpeg == -1) (mpeg)
-        else if (idxLangPrimpeg == -1 || langPriority < idxLangPrimpeg)
-        {
-          Log.Debug("Setting mpeg pref");
-          idxStreamIndexmpeg = i;
-          idxLangPrimpeg = langPriority;
-          mpegBasedOnLang = langSel;
+          if (idxLangPrimpeg == -1 || langPriority < idxLangPrimpeg)
+          {
+            Log.Debug("Setting mpeg pref");
+            idxStreamIndexmpeg = i;
+            idxLangPrimpeg = langPriority;
+            mpegBasedOnLang = langSel;
+          }
         }
       }
     }

@@ -531,6 +531,93 @@ namespace TvPluginTests
       Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
     }
 
+    [Test]
+    ///<summary>
+    /// streams : 2
+    /// stream1 : LAATMAC, lang: dan.
+    /// stream2 : LAATMAC, lang: dan.    
+    /// pref_lang : nor, eng, dan
+    /// PreferAC3 : true
+    /// PreferAudioTypeOverLang : false
+    ///</summary>
+    public void GetPreferedAudioStreamIndexTest28()
+    {
+      g_Player.Player = new PlayerMultipleAudioStreamsLATMAAC();      
+      List<string> prefLangs = new List<string>();
+      prefLangs.Add("nor");
+      prefLangs.Add("eng");
+      prefLangs.Add("dan");
+
+      TVHome.PreferredLanguages = prefLangs; //empty
+      TVHome.PreferAC3 = true;
+      TVHome.PreferAudioTypeOverLang = false;
+
+      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
+
+      int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
+
+      Assert.AreEqual(index, 0, "Wrong audio index returned");
+      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+    }
+
+    [Test]
+    ///<summary>
+    /// streams : 2
+    /// stream1 : AC3, lang: dan.
+    /// stream2 : AC3, lang: dan.    
+    /// pref_lang : nor, eng, dan
+    /// PreferAC3 : true
+    /// PreferAudioTypeOverLang : false
+    ///</summary>
+    public void GetPreferedAudioStreamIndexTest29()
+    {
+      g_Player.Player = new PlayerMultipleAudioStreamsAC3();
+      List<string> prefLangs = new List<string>();
+      prefLangs.Add("nor");
+      prefLangs.Add("eng");
+      prefLangs.Add("dan");
+
+      TVHome.PreferredLanguages = prefLangs; //empty
+      TVHome.PreferAC3 = true;
+      TVHome.PreferAudioTypeOverLang = false;
+
+      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
+
+      int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
+
+      Assert.AreEqual(index, 0, "Wrong audio index returned");
+      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+    }
+
+    [Test]
+    ///<summary>
+    /// streams : 2
+    /// stream1 : AC3, lang: dan.
+    /// stream2 : AC3, lang: dan.    
+    /// pref_lang : nor, eng, dan
+    /// PreferAC3 : false
+    /// PreferAudioTypeOverLang : false
+    ///</summary>
+    public void GetPreferedAudioStreamIndexTest30()
+    {
+      g_Player.Player = new PlayerMultipleAudioStreamsAC3();
+      List<string> prefLangs = new List<string>();
+      prefLangs.Add("nor");
+      prefLangs.Add("eng");
+      prefLangs.Add("dan");
+
+      TVHome.PreferredLanguages = prefLangs; //empty
+      TVHome.PreferAC3 = false;
+      TVHome.PreferAudioTypeOverLang = false;
+
+      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
+
+      int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
+
+      Assert.AreEqual(index, 0, "Wrong audio index returned");
+      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+    }
+
     #endregion
 
     #region 1 dualmono audiostream available tests
