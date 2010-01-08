@@ -72,7 +72,6 @@ UINT CALLBACK SchedulerThread(void* param)
   MMRESULT lastTimerId = 0;
   LONGLONG delay = 0;
   REFERENCE_TIME timePerFrame;
-  bool scrubbing = false;
   DWORD dwUser = 0;
   TIMECAPS tc;
   DWORD dwResolution;
@@ -109,8 +108,7 @@ UINT CALLBACK SchedulerThread(void* param)
     p->pPresenter->CheckForScheduledSample(&hnsSampleTime, delay);
     LOG_TRACE("Got scheduling time: %I64d", hnsSampleTime);
     timePerFrame = p->pPresenter->GetFrameDuration();
-    scrubbing = p->pPresenter->GetScrubbingStatus();
-    if (hnsSampleTime > 0 && !scrubbing)
+    if (hnsSampleTime > 0)
     {
       // wait for 3/4 sample time or 3/4 of frame duration depending on what is smaller
       delay = min((hnsSampleTime/100*75), (timePerFrame/100*75));
@@ -118,9 +116,9 @@ UINT CALLBACK SchedulerThread(void* param)
     else 
     {
       // workaround for unknown bugs
-      delay = 0; //timePerFrame/100*25;
+      delay = timePerFrame/100*25;
     }
-    if (delay > 10000)
+    if (delay >= 10000)
     {
       LOG_TRACE("Setting Timer to %I64d ms", delay/10000);
       lastTimerId = timeSetEvent(DWORD(delay/10000), 

@@ -71,21 +71,21 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     {
       m_pDeviceManager->ResetDevice(direct3dDevice, m_iResetToken);
     }
-    m_pCallback                 = pCallback;
-    m_bEndStreaming             = FALSE;
-    m_state                     = MP_RENDER_STATE_SHUTDOWN;
-    m_bSchedulerRunning         = FALSE;
-    m_fRate                     = 1.0f;
-    m_iFreeSamples              = 0;
-    m_nNextJitter               = 0;
-    m_llLastPerf                = 0;
-    m_fAvrFps                   = 0.0;
-    m_rtTimePerFrame            = 0;
-    m_llLastWorkerNotification  = 0;
-    m_bFrameSkipping            = true;
-    m_bDVDMenu                  = false;
-    m_bScrubbing                = false;
-    m_fSeekRate                 = m_fRate;
+    m_pCallback                = pCallback;
+    m_bEndStreaming            = FALSE;
+    m_state                    = MP_RENDER_STATE_SHUTDOWN;
+    m_bSchedulerRunning        = FALSE;
+    m_fRate                    = 1.0f;
+    m_iFreeSamples             = 0;
+    m_nNextJitter              = 0;
+    m_llLastPerf               = 0;
+    m_fAvrFps                  = 0.0;
+    m_rtTimePerFrame           = 0;
+    m_llLastWorkerNotification = 0;
+    m_bFrameSkipping           = true;
+    m_bDVDMenu                 = false;
+    m_bScrubbing               = false;
+    m_fSeekRate                = m_fRate;
     memset(m_pllJitter,           0, sizeof(m_pllJitter));
     memset(m_pllSyncOffset,       0, sizeof(m_pllSyncOffset));
     memset(m_pllRasterSyncOffset, 0, sizeof(m_pllRasterSyncOffset));
@@ -1630,7 +1630,7 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 
     // Presenter is flushing samples, do not render! (not considered as failure)
     // This should solve the random video frame freeze issue when stopping the playback
-    if (m_bFlush && !m_bScrubbing)
+    if (m_bFlush)
     {
       return S_OK;
     }
@@ -2076,12 +2076,6 @@ REFERENCE_TIME MPEVRCustomPresenter::GetFrameDuration()
   }
 
   return m_rtTimePerFrame;
-}
-
-
-bool MPEVRCustomPresenter::GetScrubbingStatus()
-{
-  return m_bScrubbing;
 }
 
 

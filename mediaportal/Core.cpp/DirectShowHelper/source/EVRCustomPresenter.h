@@ -152,7 +152,6 @@ public:
   HRESULT        ProcessInputNotify(int* samplesProcessed);
   void           SetFrameSkipping(bool onOff);
   REFERENCE_TIME GetFrameDuration();
-  bool           GetScrubbingStatus();
   double         GetRefreshRate();
   double         GetDisplayCycle();
   double         GetCycleDifference();
