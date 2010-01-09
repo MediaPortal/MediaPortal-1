@@ -171,6 +171,7 @@
     <Compile Include="Classes\SectionParamCollection.cs" />
     <Compile Include="Classes\VersionInfo.cs" />
     <Compile Include="Classes\VersionProvider\ExtensionVersion.cs" />
+    <Compile Include="Classes\VersionProvider\InstallerVersion.cs" />
     <Compile Include="Classes\VersionProvider\MediaPortalVersion.cs" />
     <Compile Include="Classes\VersionProvider\TvServerVersion.cs" />
     <Compile Include="Classes\WizardButtonsEnum.cs" />

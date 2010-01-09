@@ -86,6 +86,7 @@ namespace MpeCore
       AddVersion(new MediaPortalVersion());
       AddVersion(new TvServerVersion());
       AddVersion(new ExtensionVersion());
+      AddVersion(new InstallerVersion());
 
       InstalledExtensions =
         ExtensionCollection.Load(string.Format("{0}\\InstalledExtensions.xml", BaseFolder));

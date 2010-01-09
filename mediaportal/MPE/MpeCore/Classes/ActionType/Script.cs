@@ -86,6 +86,8 @@ namespace MpeCore.Classes.ActionType
         if (!packageClass.Silent)
           MessageBox.Show("Eror in script : " + ex.Message);
       }
+      if (ItemProcessed != null)
+        ItemProcessed(this, new InstallEventArgs("Script executed " + actionItem.Name));
       return SectionResponseEnum.Ok;
     }
 

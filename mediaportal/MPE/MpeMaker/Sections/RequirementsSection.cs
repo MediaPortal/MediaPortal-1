@@ -81,6 +81,8 @@ namespace MpeMaker.Sections
       SelectedItem.MaxVersion.Build = txt_version3_max.Text;
       SelectedItem.MaxVersion.Revision = txt_version4_max.Text;
       list_versions.SelectedItem = SelectedItem;
+      if (MpeInstaller.VersionProviders.ContainsKey(cmb_type.Text))
+        lbl_ver.Text = MpeInstaller.VersionProviders[cmb_type.Text].Version(txt_id.Text).ToString();
     }
 
     public void Set(PackageClass pak)
@@ -122,6 +124,8 @@ namespace MpeMaker.Sections
       txt_version3_max.Text = item.MaxVersion.Build;
       txt_version4_max.Text = item.MaxVersion.Revision;
       SelectedItem = item;
+      if (MpeInstaller.VersionProviders.ContainsKey(cmb_type.Text))
+        lbl_ver.Text = MpeInstaller.VersionProviders[cmb_type.Text].Version(txt_id.Text).ToString();
     }
 
     private void button1_Click(object sender, EventArgs e)
