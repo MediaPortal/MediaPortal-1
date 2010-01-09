@@ -423,7 +423,7 @@ namespace MpeInstaller
       {
         if (!silent)
           MessageBox.Show("This is a old format file. MpiInstaller will be used to install it! ");
-        Process.Start("MpInstaller.exe", file);
+        Process.Start(MpeCore.MpeInstaller.TransformInRealPath("%Base%")+@"\MpInstaller.exe", file);
         return;
       }
       MpeCore.MpeInstaller.Init();
