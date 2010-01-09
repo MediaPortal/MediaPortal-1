@@ -78,6 +78,7 @@
     <Compile Include="FileEventNotification\IFileWatchEventArgs.cs" />
     <Compile Include="FileEventNotification\InvalidFileWatchInfoException.cs" />
     <Compile Include="FileEventNotification\NotSupportedDriveTypeException.cs" />
+    <Compile Include="General\WeakEventMulticastDelegate.cs" />
     <Compile Include="General\HomogenousCollection.cs" />
     <Compile Include="General\IObservable.cs" />
     <Compile Include="General\Property.cs" />

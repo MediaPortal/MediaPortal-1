@@ -206,6 +206,7 @@ namespace MediaPortal.UI.SkinEngine.SpecialElements.Controls
       base.Dispose();
       UnsubscribeFromMessages();
       StopTimer();
+      _timer.Dispose();
     }
 
     #endregion

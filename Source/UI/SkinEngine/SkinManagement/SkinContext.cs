@@ -41,6 +41,7 @@ namespace MediaPortal.UI.SkinEngine.SkinManagement
 
     #region Private fields
 
+    private static readonly WeakEventMulticastDelegate _skinResourcesChangedDelegate = new WeakEventMulticastDelegate();
     private static string _skinName = null;
     private static string _themeName = null;
     private static SkinResources _skinResources = new SkinResources("[not initialized]"); // Avoid initialization issues. So we don't need to check "if SkinResources == null" every time
@@ -66,7 +67,11 @@ namespace MediaPortal.UI.SkinEngine.SkinManagement
 
     #endregion
 
-    public static event SkinResourcesChangedHandler SkinResourcesChanged;
+    public static event SkinResourcesChangedHandler SkinResourcesChanged
+    {
+      add { _skinResourcesChangedDelegate.Attach(value); }
+      remove { _skinResourcesChangedDelegate.Detach(value); }
+    }
 
     public static DateTime Now
     {
@@ -163,8 +168,7 @@ namespace MediaPortal.UI.SkinEngine.SkinManagement
       set
       {
         _skinResources = value;
-        if (SkinResourcesChanged != null)
-          SkinResourcesChanged(_skinResources);
+        _skinResourcesChangedDelegate.Fire(new object[] {_skinResources});
       }
     }
 

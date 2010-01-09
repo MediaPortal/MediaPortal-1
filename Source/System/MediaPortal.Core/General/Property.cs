@@ -29,32 +29,28 @@ namespace MediaPortal.Core.General
   public delegate void PropertyChangedHandler(Property property, object oldValue);
 
   /// <summary>
-  /// Represents a typed property which can have a value. Changes on the value
-  /// of this property can be tracked by adding a <see cref="PropertyChangedHandler"/>
-  /// to it.
+  /// Represents a typed property which can have a value. Changes on the value of this property
+  /// can be tracked by adding a <see cref="PropertyChangedHandler"/> to it.
   /// </summary>
   public class Property
   {
     #region Protected fields and events
 
-    protected event PropertyChangedHandler PropertyChanged;
+    protected object _syncObj = new object();
     protected object _value;
     protected Type _type;
+    protected WeakEventMulticastDelegate _eventDelegate = new WeakEventMulticastDelegate();
 
     #endregion
 
-    #region Ctor
+    #region Ctor & maintainance
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Property"/> class
     /// without a value.
     /// </summary>
     /// <param name="type">The type of the property.</param>
-    public Property(Type type)
-    {
-      _type = type;
-      _value = null;
-    }
+    public Property(Type type) : this(type, null) {}
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Property"/> class
@@ -74,7 +70,9 @@ namespace MediaPortal.Core.General
     #region Public properties
 
     public Type PropertyType
-    { get { return _type; } }
+    {
+      get { return _type; }
+    }
 
     #endregion
 
@@ -88,7 +86,8 @@ namespace MediaPortal.Core.General
     /// <returns><c>true</c>, if this property has a not-<c>null</c>value, else <c>false</c>.</returns>
     public bool HasValue()
     {
-      return _value != null;
+      lock (_syncObj)
+        return _value != null;
     }
 
     /// <summary>
@@ -96,7 +95,8 @@ namespace MediaPortal.Core.General
     /// </summary>
     public object GetValue()
     {
-      return _value;
+      lock (_syncObj)
+        return _value;
     }
 
     /// <summary>
@@ -110,30 +110,37 @@ namespace MediaPortal.Core.General
         throw new InvalidCastException(
           String.Format("Value '{0}' cannot be assigned to property of type '{1}'", value, _type.Name));
       bool changed;
-      if (_value == null)
-        changed = value != null;
-      else
-        changed = !(_value.Equals(value));
-      object oldValue = _value;
-      _value = value;
+      object oldValue;
+      lock (_syncObj)
+      {
+        if (_value == null)
+          changed = value != null;
+        else
+          changed = !(_value.Equals(value));
+        oldValue = _value;
+        _value = value;
+      }
       if (changed)
         Fire(oldValue);
     }
 
     public void Fire(object oldValue)
     {
-      if (PropertyChanged != null)
-        PropertyChanged(this, oldValue);
+      _eventDelegate.Fire(new object[] {this, oldValue});
     }
 
     /// <summary>
     /// Attaches an event handler.
-    /// The event handler gets called when the property's value gets changed
+    /// The event handler gets called when the property's value gets changed.
     /// </summary>
+    /// <remarks>
+    /// The given <paramref name="handler"/> will be referenced weakly by this class, i.e. attaching an event handler
+    /// will not prevent the target object of the handler from being garbage collected.
+    /// </remarks>
     /// <param name="handler">The handler.</param>
     public void Attach(PropertyChangedHandler handler)
     {
-      PropertyChanged += handler;
+      _eventDelegate.Attach(handler);
     }
 
     /// <summary>
@@ -142,12 +149,12 @@ namespace MediaPortal.Core.General
     /// <param name="handler">The handler.</param>
     public void Detach(PropertyChangedHandler handler)
     {
-      PropertyChanged -= handler;
+      _eventDelegate.Detach(handler);
     }
 
     public void ClearAttachedEvents()
     {
-      PropertyChanged = null;
+      _eventDelegate.ClearAttachedEvents();
     }
 
     #endregion
