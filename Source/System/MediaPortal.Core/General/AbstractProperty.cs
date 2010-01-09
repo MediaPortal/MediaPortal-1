@@ -26,39 +26,37 @@ using System;
 
 namespace MediaPortal.Core.General
 {
-  public delegate void PropertyChangedHandler(Property property, object oldValue);
+  public delegate void PropertyChangedHandler(AbstractProperty property, object oldValue);
 
   /// <summary>
   /// Represents a typed property which can have a value. Changes on the value of this property
-  /// can be tracked by adding a <see cref="PropertyChangedHandler"/> to it.
+  /// can be tracked by adding a <see cref="PropertyChangedHandler"/> to it. Sub classes will introduce the concrete
+  /// event handler implementation.
   /// </summary>
-  public class Property
+  public abstract class AbstractProperty
   {
     #region Protected fields and events
 
     protected object _syncObj = new object();
     protected object _value;
     protected Type _type;
-    protected WeakEventMulticastDelegate _eventDelegate = new WeakEventMulticastDelegate();
 
     #endregion
 
     #region Ctor & maintainance
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Property"/> class
-    /// without a value.
+    /// Initializes a new instance of the <see cref="AbstractProperty"/> class without a value.
     /// </summary>
     /// <param name="type">The type of the property.</param>
-    public Property(Type type) : this(type, null) {}
+    protected AbstractProperty(Type type) : this(type, null) {}
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Property"/> class
-    /// with an initial value.
+    /// Initializes a new instance of the <see cref="AbstractProperty"/> class with an initial value.
     /// </summary>
     /// <param name="value">The property value.</param>
     /// <param name="type">The type of the property.</param>
-    public Property(Type type, object value)
+    protected AbstractProperty(Type type, object value)
     {
       _type = type;
       _value = null;
@@ -79,8 +77,7 @@ namespace MediaPortal.Core.General
     #region Public methods
 
     /// <summary>
-    /// Returns the information if this property has a value,
-    /// i.e. if <see cref="GetValue()"/> will return another value
+    /// Returns the information if this property has a value, i.e. if <see cref="GetValue()"/> will return another value
     /// than <c>null</c>.
     /// </summary>
     /// <returns><c>true</c>, if this property has a not-<c>null</c>value, else <c>false</c>.</returns>
@@ -91,7 +88,7 @@ namespace MediaPortal.Core.General
     }
 
     /// <summary>
-    /// Gets the value of the property
+    /// Gets the value of the property.
     /// </summary>
     public object GetValue()
     {
@@ -124,10 +121,7 @@ namespace MediaPortal.Core.General
         Fire(oldValue);
     }
 
-    public void Fire(object oldValue)
-    {
-      _eventDelegate.Fire(new object[] {this, oldValue});
-    }
+    public abstract void Fire(object oldValue);
 
     /// <summary>
     /// Attaches an event handler.
@@ -138,24 +132,13 @@ namespace MediaPortal.Core.General
     /// will not prevent the target object of the handler from being garbage collected.
     /// </remarks>
     /// <param name="handler">The handler.</param>
-    public void Attach(PropertyChangedHandler handler)
-    {
-      _eventDelegate.Attach(handler);
-    }
+    public abstract void Attach(PropertyChangedHandler handler);
 
     /// <summary>
     /// Detaches the specified event handler.
     /// </summary>
     /// <param name="handler">The handler.</param>
-    public void Detach(PropertyChangedHandler handler)
-    {
-      _eventDelegate.Detach(handler);
-    }
-
-    public void ClearAttachedEvents()
-    {
-      _eventDelegate.ClearAttachedEvents();
-    }
+    public abstract void Detach(PropertyChangedHandler handler);
 
     #endregion
   }

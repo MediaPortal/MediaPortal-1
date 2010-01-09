@@ -58,7 +58,7 @@ namespace MediaPortal.UI.SkinEngine.SkinManagement
     private static ExtendedMatrix _tempTransform = null;
     private static Form _form;
     private static bool _isRendering = false;
-    private static Property _zoomProperty = new Property(typeof(SizeF), new SizeF(1, 1));
+    private static AbstractProperty _zoomProperty = new WProperty(typeof(SizeF), new SizeF(1, 1));
     private static float _Zorder = 1.0f;
     private static DateTime _now;
     private static float _fps = 0;
@@ -190,7 +190,7 @@ namespace MediaPortal.UI.SkinEngine.SkinManagement
       set { _themeName = value; }
     }
 
-    public static Property ZoomProperty
+    public static AbstractProperty ZoomProperty
     {
       get { return _zoomProperty; }
     }
