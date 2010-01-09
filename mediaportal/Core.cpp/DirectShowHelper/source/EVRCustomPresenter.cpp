@@ -1621,6 +1621,10 @@ void MPEVRCustomPresenter::ReleaseSurfaces()
 
 HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 {
+  // Old current surface is saved in case the device is lost
+  // and we need to restore it 
+  IDirect3DSurface9* pOldSurface = NULL;
+
   try
   {
     if (m_pCallback == NULL || pSurface == NULL)
@@ -1635,6 +1639,13 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
       return S_OK;
     }
 
+    HRESULT hr;
+
+    if (FAILED(hr = m_pD3DDev->GetRenderTarget(0, &pOldSurface)))
+    {
+      Log("EVR:Paint: Failed to get current render target: %u\n", hr);
+    }
+
     LONGLONG startPaint = GetCurrentTimestamp();
     D3DRASTER_STATUS rasterStatus;
     if (m_pD3DDev)
@@ -1642,8 +1653,6 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
       m_pD3DDev->GetRasterStatus(0, &rasterStatus);
       m_rasterSyncOffset = (m_displayMode.Height - rasterStatus.ScanLine) * m_dDetectedScanlineTime;
     }
-
-    HRESULT hr;
 
     m_pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
     if (FAILED(hr = m_pD3DDev->StretchRect(pSurface, NULL, m_pVideoSurface, NULL, D3DTEXF_NONE)))
@@ -1658,6 +1667,8 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
       m_pStatsRenderer->DrawStats();
       m_pStatsRenderer->DrawTearingTest();
     }
+
+    m_pD3DDev->SetRenderTarget(0, pOldSurface);
 
     hr = m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)m_pVideoTexture, (DWORD)(IDirect3DSurface9*)pSurface);
 
@@ -1678,7 +1689,15 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
   }
   catch(...)
   {
-    Log("Paint() exception");
+    if (pOldSurface)
+    {
+      Log("Paint() exception - restoring old render target");
+      m_pD3DDev->SetRenderTarget(0, pOldSurface);
+    }
+    else
+    {
+      Log("Paint() exception");
+    }
   }
   return E_FAIL;
 }
