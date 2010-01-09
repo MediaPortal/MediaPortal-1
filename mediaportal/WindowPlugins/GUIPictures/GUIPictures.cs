@@ -300,15 +300,7 @@ namespace MediaPortal.GUI.Pictures
 
     public GUIPictures()
     {
-      GetID = (int)Window.WINDOW_PICTURES;
-
-      virtualDirectory.AddDrives();
-      virtualDirectory.SetExtensions(Util.Utils.PictureExtensions);
-    }
-
-    ~GUIPictures()
-    {
-      SaveSettings();
+      GetID = (int)Window.WINDOW_PICTURES;  
     }
 
     #endregion
@@ -420,14 +412,26 @@ namespace MediaPortal.GUI.Pictures
     #region overrides
 
     public override bool Init()
+    {      
+      return Load(GUIGraphicsContext.Skin + @"\mypics.xml");
+    }
+
+    public override void DeInit()
     {
+      base.DeInit();
+      SaveSettings();
+    }
+
+    public override void OnAdded()
+    {
+      base.OnAdded();
+      virtualDirectory.AddDrives();
+      virtualDirectory.SetExtensions(Util.Utils.PictureExtensions);
       currentFolder = string.Empty;
       destinationFolder = string.Empty;
       thumbCreationPaths.Clear();
       LoadSettings();
-      return Load(GUIGraphicsContext.Skin + @"\mypics.xml");
     }
-
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
@@ -1584,6 +1588,8 @@ namespace MediaPortal.GUI.Pictures
         LoadDirectory(currentFolder);
         if (selectedItemIndex >= 0)
         {
+          if (selectedItemIndex >= facadeView.Count)
+            selectedItemIndex = facadeView.Count - 1;
           GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItemIndex);
         }
       }

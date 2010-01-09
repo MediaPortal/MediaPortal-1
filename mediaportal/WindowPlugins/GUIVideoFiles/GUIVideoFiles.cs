@@ -159,7 +159,13 @@ namespace MediaPortal.GUI.Video
     }
 
     public override bool Init()
+    {      
+      return Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
+    }
+
+    public override void OnAdded()
     {
+      base.OnAdded();
       _imdb = new IMDB(this);
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
       g_Player.PlayBackEnded += new g_Player.EndedHandler(OnPlayBackEnded);
@@ -167,14 +173,7 @@ namespace MediaPortal.GUI.Video
       g_Player.PlayBackChanged += new g_Player.ChangedHandler(OnPlayBackChanged);
       // _currentFolder = null;
 
-      LoadSettings();
-      bool result = Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
-      using (Profile.Settings xmlreader = new Profile.MPSettings())
-      {
-        VideoState.StartWindow = xmlreader.GetValueAsInt("movies", "startWindow", GetID);
-        VideoState.View = xmlreader.GetValueAsString("movies", "startview", "369");
-      }
-      return result;
+      LoadSettings();      
     }
 
     #region Serialisation
@@ -184,6 +183,9 @@ namespace MediaPortal.GUI.Video
       base.LoadSettings();
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
+        VideoState.StartWindow = xmlreader.GetValueAsInt("movies", "startWindow", GetID);
+        VideoState.View = xmlreader.GetValueAsString("movies", "startview", "369");
+
         _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", false);
         _scanSkipExisting = xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
         _getActors = xmlreader.GetValueAsBool("moviedatabase", "getactors", true);
@@ -1834,6 +1836,7 @@ namespace MediaPortal.GUI.Video
     private void OnShowFileMenu(bool preselectDelete)
     {
       GUIListItem item = facadeView.SelectedListItem;
+      
       if (item == null)
       {
         return;
@@ -1876,6 +1879,8 @@ namespace MediaPortal.GUI.Video
         LoadDirectory(_currentFolder);
         if (selectedItem >= 0)
         {
+          if (selectedItem >= facadeView.Count)
+            selectedItem = facadeView.Count - 1;
           GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItem);
         }
       }
