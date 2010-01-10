@@ -475,31 +475,9 @@ namespace MpeInstaller
 
     private void UpdateList(bool silent)
     {
-      List<string> onlineFiles = MpeCore.MpeInstaller.InstalledExtensions.GetUpdateUrls(new List<string>());
-      onlineFiles = MpeCore.MpeInstaller.KnownExtensions.GetUpdateUrls(onlineFiles);
-      if (onlineFiles.Count < 1)
-      {
-        if (!silent)
-          MessageBox.Show("No online update was found !");
-        return;
-      }
-
-      foreach (string onlineFile in onlineFiles)
-      {
-        try
-        {
-          string file = Path.GetTempFileName();
-          new DownloadFile(onlineFile, file);
-          MpeCore.MpeInstaller.KnownExtensions.Add(ExtensionCollection.Load(file));
-          File.Delete(file);
-        }
-        catch (Exception ex)
-        {
-          if (!silent)
-            MessageBox.Show("Error :" + ex.Message);
-        }
-      }
-      MpeCore.MpeInstaller.Save();
+      DownloadInfo dlg = new DownloadInfo();
+      dlg.silent = silent;
+      dlg.ShowDialog();
       _settings.LastUpdate = DateTime.Now;
       _settings.Save();
     }
