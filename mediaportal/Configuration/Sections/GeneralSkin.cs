@@ -55,6 +55,10 @@ namespace MediaPortal.Configuration.Sections
     private CheckBox checkBoxBasicHome;
     private CheckBox checkBoxAutosizeToSkin;
     private CheckBox checkBoxEnableSounds;
+    private NumericUpDown HorizontalScrollSpeedUpDown;
+    private Label label1;
+    private NumericUpDown VerticalScrollSpeedUpDown;
+    private Label label3;
     private new IContainer components = null;
 
     public GeneralSkin()
@@ -210,7 +214,8 @@ namespace MediaPortal.Configuration.Sections
         checkBoxBasicHome.Checked = xmlreader.GetValueAsBool("general", "startbasichome", false);
         checkBoxAutosizeToSkin.Checked = xmlreader.GetValueAsBool("general", "autosize", false);
         checkBoxEnableSounds.Checked = xmlreader.GetValueAsBool("general", "enableguisounds", true);
-
+        HorizontalScrollSpeedUpDown.Value = xmlreader.GetValueAsInt("general", "ScrollSpeedRight", 1);
+        VerticalScrollSpeedUpDown.Value = xmlreader.GetValueAsInt("general", "ScrollSpeedDown", 4);
         string currentSkin = xmlreader.GetValueAsString("skin", "name", "NoSkin");
 
         float screenHeight = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Height;
@@ -285,6 +290,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("general", "startbasichome", checkBoxBasicHome.Checked);
         xmlwriter.SetValueAsBool("general", "autosize", checkBoxAutosizeToSkin.Checked);
         xmlwriter.SetValueAsBool("general", "enableguisounds", checkBoxEnableSounds.Checked);
+        xmlwriter.SetValue("general", "ScrollSpeedRight", HorizontalScrollSpeedUpDown.Value);
+        xmlwriter.SetValue("general", "ScrollSpeedDown", VerticalScrollSpeedUpDown.Value);
       }
     }
 
@@ -307,6 +314,10 @@ namespace MediaPortal.Configuration.Sections
     {
       this.groupBoxAppearance = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpGroupBoxEngineSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.label3 = new System.Windows.Forms.Label();
+      this.label1 = new System.Windows.Forms.Label();
+      this.VerticalScrollSpeedUpDown = new System.Windows.Forms.NumericUpDown();
+      this.HorizontalScrollSpeedUpDown = new System.Windows.Forms.NumericUpDown();
       this.checkBoxEnableSounds = new System.Windows.Forms.CheckBox();
       this.checkBoxAutosizeToSkin = new System.Windows.Forms.CheckBox();
       this.checkBoxBasicHome = new System.Windows.Forms.CheckBox();
@@ -324,6 +335,8 @@ namespace MediaPortal.Configuration.Sections
       this.colVersion = new System.Windows.Forms.ColumnHeader();
       this.groupBoxAppearance.SuspendLayout();
       this.mpGroupBoxEngineSettings.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.VerticalScrollSpeedUpDown)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.HorizontalScrollSpeedUpDown)).BeginInit();
       this.mpGroupBox1.SuspendLayout();
       this.groupBoxSkin.SuspendLayout();
       this.panelFitImage.SuspendLayout();
@@ -350,6 +363,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBoxEngineSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBoxEngineSettings.Controls.Add(this.label3);
+      this.mpGroupBoxEngineSettings.Controls.Add(this.label1);
+      this.mpGroupBoxEngineSettings.Controls.Add(this.VerticalScrollSpeedUpDown);
+      this.mpGroupBoxEngineSettings.Controls.Add(this.HorizontalScrollSpeedUpDown);
       this.mpGroupBoxEngineSettings.Controls.Add(this.checkBoxEnableSounds);
       this.mpGroupBoxEngineSettings.Controls.Add(this.checkBoxAutosizeToSkin);
       this.mpGroupBoxEngineSettings.Controls.Add(this.checkBoxBasicHome);
@@ -360,6 +377,70 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBoxEngineSettings.TabIndex = 6;
       this.mpGroupBoxEngineSettings.TabStop = false;
       this.mpGroupBoxEngineSettings.Text = "GUI Options";
+      // 
+      // label3
+      // 
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(295, 44);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(103, 13);
+      this.label3.TabIndex = 9;
+      this.label3.Text = "Vertical Scroll speed";
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(283, 20);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(115, 13);
+      this.label1.TabIndex = 8;
+      this.label1.Text = "Horizontal Scroll speed";
+      this.label1.Click += new System.EventHandler(this.label1_Click);
+      // 
+      // VerticalScrollSpeedUpDown
+      // 
+      this.VerticalScrollSpeedUpDown.Location = new System.Drawing.Point(404, 42);
+      this.VerticalScrollSpeedUpDown.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+      this.VerticalScrollSpeedUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.VerticalScrollSpeedUpDown.Name = "VerticalScrollSpeedUpDown";
+      this.VerticalScrollSpeedUpDown.Size = new System.Drawing.Size(28, 20);
+      this.VerticalScrollSpeedUpDown.TabIndex = 7;
+      this.VerticalScrollSpeedUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      // 
+      // HorizontalScrollSpeedUpDown
+      // 
+      this.HorizontalScrollSpeedUpDown.Location = new System.Drawing.Point(404, 19);
+      this.HorizontalScrollSpeedUpDown.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+      this.HorizontalScrollSpeedUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.HorizontalScrollSpeedUpDown.Name = "HorizontalScrollSpeedUpDown";
+      this.HorizontalScrollSpeedUpDown.Size = new System.Drawing.Size(28, 20);
+      this.HorizontalScrollSpeedUpDown.TabIndex = 6;
+      this.HorizontalScrollSpeedUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+      this.HorizontalScrollSpeedUpDown.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
       // 
       // checkBoxEnableSounds
       // 
@@ -538,6 +619,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxAppearance.ResumeLayout(false);
       this.mpGroupBoxEngineSettings.ResumeLayout(false);
       this.mpGroupBoxEngineSettings.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.VerticalScrollSpeedUpDown)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.HorizontalScrollSpeedUpDown)).EndInit();
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.groupBoxSkin.ResumeLayout(false);
@@ -549,5 +632,15 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #endregion
+
+    private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label1_Click(object sender, EventArgs e)
+    {
+
+    }
   }
 }
