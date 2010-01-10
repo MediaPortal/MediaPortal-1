@@ -173,7 +173,10 @@ namespace MediaPortal.GUI.Library
       private void D3DTexture_Disposing(object sender, EventArgs e)
       {
         // D3D has disposed of this texture! notify so that things are kept up to date
-        DisposeD3DTexture();
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+        {
+          DisposeD3DTexture();
+        }
       }
 
       private void DisposeD3DTexture()

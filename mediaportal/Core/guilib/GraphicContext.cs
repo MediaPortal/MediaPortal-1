@@ -172,6 +172,7 @@ namespace MediaPortal.GUI.Library
     private static int _currentScreenNumber = -1;
     private static Screen _currentScreen = null;
     private static bool _isDX9EXused = Environment.OSVersion.Version.Major >= 6;
+    private static bool _DX9ExRealDeviceLost = false;
 
     private static Point _screenCenterPos = new Point();
     private static bool m_bAllowRememberLastFocusedItem = true;
@@ -1544,6 +1545,12 @@ namespace MediaPortal.GUI.Library
     public static bool IsDirectX9ExUsed()
     {
       return _isDX9EXused;
+    }
+
+    public static bool DX9ExRealDeviceLost
+    {
+      get { return _DX9ExRealDeviceLost; }
+      set { _DX9ExRealDeviceLost = value; }
     }
 
     public static Pool GetTexturePoolType()

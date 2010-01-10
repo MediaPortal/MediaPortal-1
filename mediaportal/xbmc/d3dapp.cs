@@ -1570,6 +1570,7 @@ namespace MediaPortal
             else
             {
               Log.Warn("d3dapp: DirectX9Ex is lost or gpu hung --> Reinit of DX9Ex is needed.");
+              GUIGraphicsContext.DX9ExRealDeviceLost = true;
               InitializeEnvironment();
             }
           }

@@ -1793,6 +1793,11 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Info("Main: Resetting DX9 device");
 
         int activeWin = GUIWindowManager.ActiveWindow;
+        if (GUIGraphicsContext.DX9ExRealDeviceLost)
+        {
+          activeWin = (int)GUIWindow.Window.WINDOW_HOME;
+        }
+
         GUIWindowManager.UnRoute();
         // avoid that there is an active Window when GUIWindowManager.ActivateWindow(activeWin); is called
         Log.Info("Main: UnRoute - done");
@@ -1820,6 +1825,7 @@ public class MediaPortalApp : D3DApp, IRender
         // Must set the FVF after reset
         GUIFontManager.SetDevice();
 
+        GUIGraphicsContext.DX9ExRealDeviceLost = false;
         Log.Info("Main: Resetting DX9 device done");
       }
     }
@@ -1922,6 +1928,7 @@ public class MediaPortalApp : D3DApp, IRender
           dex.ErrorCode == -2005530512) // GPU_REMOVED
       {
         Log.Info("Main: GPU_HUNG - {0}", dex.ToString());
+        GUIGraphicsContext.DX9ExRealDeviceLost = true;
         if (!RefreshRateChanger.RefreshRateChangePending)
         {
           g_Player.Stop();
