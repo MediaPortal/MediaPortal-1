@@ -37,11 +37,10 @@
 
 // enable unicode functions in mingw
 #ifdef WIN32
-#define UNICODE
-//#define _UNICODE
+    #define UNICODE
+    #define _UNICODE
 #endif
 
-#include <signal.h>
 #include <assert.h>
 #include <ctype.h>
 #include <dirent.h>
@@ -61,32 +60,32 @@
 #include "libavformat/avformat.h"
 #include "libswscale/swscale.h"
 
-#include "libgd/gd.h"
+#include "gd.h"
 
 #define UTF8_FILENAME_SIZE (FILENAME_MAX*4)
 
 #ifdef WIN32
-unsigned int _CRT_fmode = _O_BINARY;  // default binary file including stdin, stdout, stderr
-#include <tchar.h>
-#include <windows.h>
-#ifdef _UNICODE
-#define UTF8_2_WC(wdst, src, size) MultiByteToWideChar(CP_UTF8, 0, (src), -1, (wdst), (size))
-#define WC_2_UTF8(dst, wsrc, size) WideCharToMultiByte(CP_UTF8, 0, (wsrc), -1, (dst), (size), NULL, NULL)
+    unsigned int _CRT_fmode = _O_BINARY;  // default binary file including stdin, stdout, stderr
+    #include <tchar.h>
+    #include <windows.h>
+    #ifdef _UNICODE
+        #define UTF8_2_WC(wdst, src, size) MultiByteToWideChar(CP_UTF8, 0, (src), -1, (wdst), (size))
+        #define WC_2_UTF8(dst, wsrc, size) WideCharToMultiByte(CP_UTF8, 0, (wsrc), -1, (dst), (size), NULL, NULL)
+    #else
+        #define UTF8_2_WC(dst, src, size) ((dst) = (src)) // cant be used to check required size
+        #define WC_2_UTF8(dst, src, size) ((dst) = (src))
+    #endif
 #else
-#define UTF8_2_WC(dst, src, size) ((dst) = (src)) // cant be used to check required size
-#define WC_2_UTF8(dst, src, size) ((dst) = (src))
-#endif
-#else
-#include "fake_tchar.h"
-#define UTF8_2_WC(dst, src, size) ((dst) = (src)) // cant be used to check required size
-#define WC_2_UTF8(dst, src, size) ((dst) = (src))
+    #include "fake_tchar.h"
+    #define UTF8_2_WC(dst, src, size) ((dst) = (src)) // cant be used to check required size
+    #define WC_2_UTF8(dst, src, size) ((dst) = (src))
 #endif
 
 // newline character for info file
 #ifdef WIN32
-#define NEWLINE "\r\n"
+    #define NEWLINE "\r\n"
 #else
-#define NEWLINE "\n"
+    #define NEWLINE "\n"
 #endif
 
 #define EDGE_PARTS 6 // # of parts used in edge detection
@@ -412,11 +411,6 @@ gdImagePtr crop_image(gdImagePtr ip, int new_width, int new_height)
         // return the original should be better
         return ip;
     }
-    if (new_width == 0 || new_height == 0)
-    {
-        return ip;
-    }
-
     gdImageCopy(new_ip, ip, 0, 0, 0, 0, new_width, new_height);
     gdImageDestroy(ip);
     return new_ip;
@@ -1046,6 +1040,7 @@ char *get_stream_info(AVFormatContext *ic, char *url, int strip_path, AVRational
         sprintf(buf + strlen(buf), ", start: %d.%06d", secs, (int)av_rescale(us, 1000000, AV_TIME_BASE));
     }
     */
+
     // some formats, eg. flv, dont seem to support bit_rate, so we'll prefer to 
     // calculate from duration.
     // is this ok? probably not ok with .vob files when duration is wrong. DEBUG
@@ -1557,32 +1552,7 @@ void make_thumbnail(char *file)
             goto cleanup;
         }
     }
-    
-    double duration = 0.0;
-    char *sfx = strrchr(file, '.');
-    int isTs = 0; 
-    if(strcmp(sfx,".ts")==0)
-    {
-        AVFormatParameters ap;
-        ap.mpeg2ts_raw = 1;
-        ap.mpeg2ts_compute_pcr = 1;
 
-        if ((ret=av_open_input_file(&pFormatCtx, file, NULL, 0, &ap))!=0) {
-            av_log(NULL, AV_LOG_ERROR, "\n%s: av_open_input_file %s failed: %d\n", gb_argv0, file, ret);
-            goto cleanup;
-        }
-        // Retrieve stream information
-        if((ret = av_find_stream_info(pFormatCtx)) <0)
-        {
-            av_log(NULL, AV_LOG_ERROR, "\n%s: av_find_stream_info %s failed: %d\n", gb_argv0, file, ret);
-            goto cleanup;
-        }
-        isTs = 1;
-        duration = (double) pFormatCtx->duration / AV_TIME_BASE;
-        if (NULL != pFormatCtx)
-          av_close_input_file(pFormatCtx);
-    }
-   
     // Open video file
     ret = av_open_input_file(&pFormatCtx, file, NULL, 0, NULL);
     if (0 != ret) {
@@ -1594,11 +1564,9 @@ void make_thumbnail(char *file)
     // it should make av_read_frame() generate pts for unknown value
     assert(NULL != pFormatCtx);
     pFormatCtx->flags |= AVFMT_FLAG_GENPTS;
-    //pFormatCtx->debug |= FF_FDEBUG_TS;
 
     // Retrieve stream information
     ret = av_find_stream_info(pFormatCtx);
-    
     if (ret < 0) {
         av_log(NULL, AV_LOG_ERROR, "\n%s: av_find_stream_info %s failed: %d\n", gb_argv0, file, ret);
         goto cleanup;
@@ -1663,11 +1631,8 @@ void make_thumbnail(char *file)
     // is this a codec bug? it seem this value can be in the header or in the stream.
     AVRational sample_aspect_ratio = pCodecCtx->sample_aspect_ratio;
 
-    if(!isTs)
-    {
-     duration = (double) pFormatCtx->duration / AV_TIME_BASE; // can be unknown & can be incorrect (e.g. .vob files)
-    }
-    if (duration <= 0.0) {
+    double duration = (double) pFormatCtx->duration / AV_TIME_BASE; // can be unknown & can be incorrect (e.g. .vob files)
+    if (duration <= 0) {
         duration = guess_duration(pFormatCtx, video_index, pCodecCtx, pFrame);
         // have to turn timestamping off because it'll be incorrect
         if (1 == gb_t_timestamp) { // on
@@ -2728,12 +2693,6 @@ void usage()
     av_log(NULL, AV_LOG_ERROR, "gpl-2.0.txt.\n");
 }
 
-void my_signal_handler(int sig)
-{
-    signal(SIGSEGV, my_signal_handler); // reset the signal handler for SIGSEGV
-    exit(-1);
-}
-
 int main(int argc, char *argv[])
 {
     gb_argv0 = path_2_file(argv[0]);
@@ -2947,7 +2906,6 @@ int main(int argc, char *argv[])
     }
     //gdUseFontConfig(1); // set GD to use fontconfig patterns
 
-    signal(SIGSEGV, my_signal_handler);
     /* process movie files */
     process_loop(argc - optind, argv + optind);
 
