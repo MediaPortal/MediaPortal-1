@@ -88,7 +88,6 @@ namespace MediaPortal.Dialogs
 
     public override void PreInit() {}
 
-
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
@@ -136,7 +135,6 @@ namespace MediaPortal.Dialogs
         //g_application.FrameMove();
       }
     }
-
 
     public void DoModal(int dwParentId)
     {
@@ -608,8 +606,7 @@ namespace MediaPortal.Dialogs
       }
       if (m_preselectDelete)
       {
-        OnDeleteItem(item);
-        m_bReload = true;
+        OnDeleteItem(item);        
         return;
       }
 
@@ -660,8 +657,7 @@ namespace MediaPortal.Dialogs
       switch (dlg.SelectedId)
       {
         case 117: // delete
-          OnDeleteItem(item);
-          m_bReload = true;
+          OnDeleteItem(item);          
           break;
 
         case 118: // rename
@@ -884,6 +880,7 @@ namespace MediaPortal.Dialogs
       {
         return;
       }
+      m_bReload = true;
       DoDeleteItem(item);
     }
 
