@@ -268,7 +268,9 @@ namespace MediaPortal.GUI.Weather
             if (strSatURL.Length == 0)
             {
               //strSatURL = "http://www.heute.de/CMO/frontend/subsystem_we/WeShowPicture/0,6008,161,00.gif";
-              strSatURL = @"http://images.intellicast.com/WeatherImg/SatelliteLoop/hieusat_None_anim.gif";
+              //strSatURL = @"http://images.intellicast.com/WeatherImg/SatelliteLoop/hieusat_None_anim.gif";
+              //strSatURL = @"http://www.sat24.com/image.ashx?country=eu&type=loop&sat=vis";
+              strSatURL = @"http://www.sat24.com/image.ashx?country=eu";
             }
 
             LocationInfo loc = new LocationInfo();
