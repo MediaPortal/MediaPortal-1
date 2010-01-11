@@ -41,7 +41,7 @@ namespace SetupTv.Sections
   public partial class ImportExport : SectionSettings
   {
     public ImportExport()
-      : this("Import/Export") {}
+      : this("Import/Export") { }
 
     public ImportExport(string name)
       : base(name)
@@ -382,7 +382,9 @@ namespace SetupTv.Sections
                 dbChannel = layer.GetChannelByName(name) ?? layer.AddChannel("", name);
               }
               else
+              {
                 dbChannel = layer.AddNewChannel(name);
+              }
 
               dbChannel.GrabEpg = grabEpg;
               dbChannel.IsRadio = isRadio;
@@ -395,6 +397,19 @@ namespace SetupTv.Sections
               dbChannel.FreeToAir = FreeToAir;
               dbChannel.DisplayName = displayName;
               dbChannel.Persist();
+
+              //
+              // chemelli: When we import channels we need to add those to the "AllChannels" group
+              //
+              if (isTv)
+              {
+                layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+              }
+              else
+              {
+                layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.AllChannels);
+              }
+
               foreach (XmlNode nodeMap in mappingList)
               {
                 int idCard = Int32.Parse(nodeMap.Attributes["IdCard"].Value);
