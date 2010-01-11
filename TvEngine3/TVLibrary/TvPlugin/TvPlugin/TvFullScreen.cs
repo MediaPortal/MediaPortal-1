@@ -2907,7 +2907,7 @@ namespace TvPlugin
         {
           ChangeChannelNr(iChannel);
         }
-        HideZapOSD();
+        //HideZapOSD();
         _channelInputVisible = false;
         TVHome.Navigator.ZapChannelNr = -1;
         _channelName = String.Empty;
@@ -2938,24 +2938,25 @@ namespace TvPlugin
       if (chKey == '0' && !_channelInputVisible)
       {
         TVHome.OnLastViewedChannel();
-        if (!_zapOsdVisible)
-        {
-          if (!_useVMR9Zap)
-          {
-            //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _zapWindow.GetID, 0, 0, GetID, 0,
-            //                                null);
-            //_zapWindow.OnMessage(msg);
-            //Log.Debug("ZAP OSD:ON");
-            //_zapTimeOutTimer = DateTime.Now;
-            //_zapOsdVisible = true;
-            ShowZapOSD(null);
-          }
-        }
-        else
-        {
-          _zapWindow.UpdateChannelInfo();
-          _zapTimeOutTimer = DateTime.Now;
-        }
+        UpdateOSD();
+        //if (!_zapOsdVisible)
+        //{
+        //  if (!_useVMR9Zap)
+        //  {
+        //    //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _zapWindow.GetID, 0, 0, GetID, 0,
+        //    //                                null);
+        //    //_zapWindow.OnMessage(msg);
+        //    //Log.Debug("ZAP OSD:ON");
+        //    //_zapTimeOutTimer = DateTime.Now;
+        //    //_zapOsdVisible = true;
+        //    ShowZapOSD(null);
+        //  }
+        //}
+        //else
+        //{
+        //  _zapWindow.UpdateChannelInfo();
+        //  _zapTimeOutTimer = DateTime.Now;
+        //}
         return;
       }
       if (chKey >= '0' && chKey <= '9') //Make sure it's only for the remote
@@ -3145,7 +3146,7 @@ namespace TvPlugin
       }
 
       UpdateOSD();
-      _zapTimeOutTimer = DateTime.Now;
+      //_zapTimeOutTimer = DateTime.Now;
     }
 
     public void ZapPreviousChannel()
@@ -3156,7 +3157,7 @@ namespace TvPlugin
       }
       Log.Debug("ZapPreviousChannel()");
       TVHome.Navigator.ZapToPreviousChannel(true);
-      _zapTimeOutTimer = DateTime.Now;
+      //_zapTimeOutTimer = DateTime.Now;
       UpdateOSD();
       ///@
       ///if (_useVMR9Zap == true && _vmr9OSD != null)
@@ -3174,7 +3175,7 @@ namespace TvPlugin
 
       Log.Debug("ZapNextChannel()");
       TVHome.Navigator.ZapToNextChannel(true);
-      _zapTimeOutTimer = DateTime.Now;
+      //_zapTimeOutTimer = DateTime.Now;
       UpdateOSD();
       ///@
       ///if (_useVMR9Zap == true && _vmr9OSD != null)
