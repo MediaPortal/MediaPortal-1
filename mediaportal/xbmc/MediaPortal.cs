@@ -2728,6 +2728,7 @@ public class MediaPortalApp : D3DApp, IRender
         Utils.PlaySound(action.SoundFileName, false, true);
       }
       GUIGraphicsContext.OnAction(action);
+      return;
     }
     else
     {
