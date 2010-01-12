@@ -137,6 +137,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_pCurrentAudioBuffer = new CBuffer();
   m_pCurrentSubtitleBuffer = new CBuffer();
   m_iAudioStream = 0;
+  m_AudioStreamType = SERVICE_TYPE_AUDIO_UNKNOWN ;
   m_iSubtitleStream = 0;
   m_audioPid = 0;
   m_currentSubtitlePid = 0;
@@ -221,13 +222,6 @@ bool CDeMultiplexer::SetAudioStream(int stream)
   if (stream < 0 || stream >= m_audioStreams.size())
     return S_FALSE;
 
-  //get the current audio forma stream type
-  int oldAudioStreamType = SERVICE_TYPE_AUDIO_MPEG2;
-  if (m_iAudioStream >= 0 && m_iAudioStream < m_audioStreams.size())
-  {
-    oldAudioStreamType = m_audioStreams[m_iAudioStream].audioType;
-  }
- 
   //set index
   m_iAudioStream = stream;
 
@@ -238,12 +232,15 @@ bool CDeMultiplexer::SetAudioStream(int stream)
     newAudioStreamType = m_audioStreams[m_iAudioStream].audioType;
   }
 
+  LogDebug("Old Audio %d, New Audio %d", m_AudioStreamType, newAudioStreamType) ;
   //did it change?
-  if (oldAudioStreamType != newAudioStreamType)
+  if ((m_AudioStreamType == SERVICE_TYPE_AUDIO_UNKNOWN) || (m_AudioStreamType != newAudioStreamType))
   {
+    m_AudioStreamType = newAudioStreamType ;
     //yes, is the audio pin connected?
     if (m_filter.GetAudioPin()->IsConnected())
-    {                                         // here, stream is not parsed yet
+    {
+	  // here, stream is not parsed yet
       if (!IsMediaChanging())             
       {
         LogDebug("SetAudioStream : OnMediaTypeChanged(1)") ;
@@ -1686,13 +1683,13 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   if (info.PatVersion != m_iPatVersion)
   {
     LogDebug("OnNewChannel pat version:%d->%d",m_iPatVersion, info.PatVersion);
-    m_iPatVersion=info.PatVersion;
-	if (m_filter.m_bLiveTv && !IsNewPatReady())
+	if (m_filter.m_bLiveTv && ((m_ReqPatVersion & 0x0F) != (info.PatVersion & 0x0F)) && (m_iPatVersion!=-1))
 	{
 		LogDebug("Unexpected LiveTV PAT change due to provider, update m_ReqPatVersion to new PAT version : %d",m_ReqPatVersion);
 		// Unexpected LiveTV PAT change due to provider.
-		ClearRequestNewPat() ;
+		m_ReqPatVersion = info.PatVersion ;
 	}
+    m_iPatVersion=info.PatVersion;
     m_bSetAudioDiscontinuity=true;
     m_bSetVideoDiscontinuity=true;
     Flush();
@@ -1713,11 +1710,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   {
     oldVideoServiceType=m_pids.videoPids[0].VideoServiceType;
   }
-  int oldAudioStreamType=SERVICE_TYPE_AUDIO_MPEG2;
-  if (m_iAudioStream>=0 && m_iAudioStream < m_audioStreams.size())
-  {
-    oldAudioStreamType=m_audioStreams[m_iAudioStream].audioType;
-  }
+
   m_pids=pids;
   LogDebug("New channel found (PAT/PMT/SDT changed)");
   m_pids.LogPIDs();
@@ -1799,7 +1792,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   }
 
   //did the audio format change?
-  if (oldAudioStreamType != newAudioStreamType )
+  if (m_AudioStreamType != newAudioStreamType )
   {
     //yes, is the audio pin connected?
     if (m_filter.GetAudioPin()->IsConnected())
@@ -1823,11 +1816,17 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     }
     else
     {
-      // notify the ITSReaderCallback. MP will then rebuild the graph
-      LogDebug("DeMultiplexer: Audio media types changed. Trigger OnMediaTypeChanged()...");
-      m_filter.OnMediaTypeChanged(1);
-      SetMediaChanging(true); 
-//      SetAudioChanging(true);
+      if (m_audioStreams.size() == 1)
+      {
+	    if ((m_AudioStreamType == SERVICE_TYPE_AUDIO_UNKNOWN) || (m_AudioStreamType != newAudioStreamType))
+        {
+		  m_AudioStreamType = newAudioStreamType ;
+          // notify the ITSReaderCallback. MP will then rebuild the graph
+          LogDebug("DeMultiplexer: Audio media types changed. Trigger OnMediaTypeChanged()...");
+          m_filter.OnMediaTypeChanged(1);
+          SetMediaChanging(true); 
+		}
+	  }
     }
     #else
     if (audioChanged && videoChanged)
@@ -1845,9 +1844,13 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   if (m_audioStreams.size() > 1)
   {
     LogDebug("OnRequestAudioChange()");
-    m_filter.OnRequestAudioChange();
     SetAudioChanging(true);
+    m_filter.OnRequestAudioChange();
   }
+  else
+    m_AudioStreamType = newAudioStreamType ;
+
+  LogDebug("New Audio %d", m_AudioStreamType) ;
 
   if( pSubUpdateCallback != NULL)
   {

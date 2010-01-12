@@ -190,6 +190,8 @@ private:
   CTsDuration& m_duration;
   CTsReaderFilter& m_filter;
   unsigned int m_iAudioStream;
+  int m_AudioStreamType;
+
   unsigned int m_audioPid;
   unsigned int m_currentSubtitlePid;
   unsigned int m_iSubtitleStream;

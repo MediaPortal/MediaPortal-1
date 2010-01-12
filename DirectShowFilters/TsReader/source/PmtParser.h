@@ -31,6 +31,7 @@ using namespace std;
 #define SERVICE_TYPE_DCII_OR_LPCM		0x80 // can be DC-II MPEG2 Video OR LPCM Audio if registration descriptor=HDMV
 #define SERVICE_TYPE_VIDEO_MPEG4		0x10
 #define SERVICE_TYPE_VIDEO_H264		  0x1b
+#define SERVICE_TYPE_AUDIO_UNKNOWN	-1
 #define SERVICE_TYPE_AUDIO_MPEG1		0x3
 #define SERVICE_TYPE_AUDIO_MPEG2		0x4
 #define SERVICE_TYPE_AUDIO_AC3			0x81 //fake
