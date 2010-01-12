@@ -415,6 +415,7 @@ namespace MediaPortal.Player
         TsReader reader = new TsReader();
         _fileSource = (IBaseFilter)reader;
         _ireader = (ITSReader)reader;
+        _interfaceTSReader = _fileSource;
         _ireader.SetRelaxedMode(relaxTsReader); // enable/disable continousity filtering
         _ireader.SetTsReaderCallback(this);
         _ireader.SetRequestAudioChangeCallback(this);

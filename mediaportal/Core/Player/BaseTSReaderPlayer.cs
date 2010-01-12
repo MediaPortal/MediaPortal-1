@@ -476,7 +476,7 @@ namespace MediaPortal.Player
         ExclusiveMode(false);
         return false;
       }
-      _interfaceTSReader = _fileSource;
+//      _interfaceTSReader = _fileSource;
       _startingUp = _isLive;
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
       msg.Label = strFile;
@@ -1005,11 +1005,12 @@ namespace MediaPortal.Player
     {
       get
       {
-        UpdateCurrentPosition();
-        if (_duration < 0)
-        {
-          Process();
-        }
+        UpdateCurrentPosition();  
+// Ambass : calling Process() in another thread of "MPMain" can cause unexpected re-entrancy, deadlocks, out of sequence execution....
+//        if (_duration < 0)
+//        {
+//          Process();
+//        }
         return _duration;
       }
     }
@@ -1447,7 +1448,15 @@ namespace MediaPortal.Player
 
     public int OnRequestAudioChange()
     {
-      _bRequestAudioChange = true;
+      if (Thread.CurrentThread.Name == "MPMain")
+      {   // probably called on TsReader startup, we can ( and should ! ) do it immediately.
+        Log.Info("TSReaderPlayer:OnRequestAudioChange()");
+        g_Player.OnAudioTracksReady();
+      }
+      else
+      {
+        _bRequestAudioChange = true;
+      }
       return 0;
     }
 
