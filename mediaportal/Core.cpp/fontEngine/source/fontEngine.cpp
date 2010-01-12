@@ -819,7 +819,7 @@ void FontEnginePresentTextures()
   if(inPresentTextures)
   {
     char log[128];
-    sprintf(log,"ERROR Fontengine:FontEnginePresentTextures() re-entrance");
+    sprintf(log,"ERROR Fontengine:FontEnginePresentTextures() re-entrance\n");
     Log(log);
   }
   inPresentTextures=true;
