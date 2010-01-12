@@ -421,14 +421,11 @@ namespace TvLibrary.Log
           {
             using (StreamWriter writer = new StreamWriter(logFileName, true))
             {
-              string thread = Thread.CurrentThread.Name;
-              if (string.IsNullOrEmpty(thread))
-              {
-                thread = Thread.CurrentThread.ManagedThreadId.ToString();
-              }
+              string threadName = Thread.CurrentThread.Name;
+              int threadId = Thread.CurrentThread.ManagedThreadId;
 
               writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of file
-              writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}]: {2}", DateTime.Now, thread, logLine);
+              writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}({2})]: {3}", DateTime.Now, threadName, threadId, logLine);
               writer.Close();
             }
           }

@@ -331,14 +331,11 @@ namespace MediaPortal.ServiceImplementations
           {
             using (StreamWriter writer = new StreamWriter(GetFileName(type), true))
             {
-              string thread = Thread.CurrentThread.Name;
-              if (thread == null)
-              {
-                thread = Thread.CurrentThread.ManagedThreadId.ToString();
-              }
+              string threadName = Thread.CurrentThread.Name;
+              int threadId = Thread.CurrentThread.ManagedThreadId;
               // Write message to log stream
-              writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}][{2}]: {3}", DateTime.Now, GetLevelName(logLevel),
-                               thread, string.Format(format, arg));
+              writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}][{2}({3})]: {4}", DateTime.Now, GetLevelName(logLevel),
+                               threadName, threadId, string.Format(format, arg));
               writer.Close();
             }
           }
