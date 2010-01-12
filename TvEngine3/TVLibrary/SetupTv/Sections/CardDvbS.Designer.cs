@@ -575,9 +575,9 @@ namespace SetupTv.Sections
       this.checkEnableDVBS2.AutoSize = true;
       this.checkEnableDVBS2.Location = new System.Drawing.Point(10, 153);
       this.checkEnableDVBS2.Name = "checkEnableDVBS2";
-      this.checkEnableDVBS2.Size = new System.Drawing.Size(162, 17);
+      this.checkEnableDVBS2.Size = new System.Drawing.Size(226, 17);
       this.checkEnableDVBS2.TabIndex = 113;
-      this.checkEnableDVBS2.Text = "Search for DVB-S2 channels";
+      this.checkEnableDVBS2.Text = "Enable DVB-S2 channels tuning/scanning";
       this.checkEnableDVBS2.UseVisualStyleBackColor = true;
       // 
       // checkBoxAdvancedTuning

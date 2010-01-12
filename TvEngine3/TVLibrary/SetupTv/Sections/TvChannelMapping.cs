@@ -26,6 +26,7 @@ using Gentle.Framework;
 using TvDatabase;
 using TvLibrary.Interfaces;
 using MediaPortal.UserInterface.Controls;
+using TvLibrary.Log;
 
 namespace SetupTv.Sections
 {
@@ -52,7 +53,7 @@ namespace SetupTv.Sections
     }
 
     public TvChannelMapping()
-      : this("TV Mapping") {}
+      : this("TV Mapping") { }
 
     private readonly MPListViewStringColumnSorter lvwColumnSorter1;
     private readonly MPListViewStringColumnSorter lvwColumnSorter2;
@@ -160,7 +161,7 @@ namespace SetupTv.Sections
       mpListViewMapped.Items.Clear();
       mpListViewChannels.Items.Clear();
 
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
       IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
@@ -183,7 +184,7 @@ namespace SetupTv.Sections
         {
           channel = map.ReferencedChannel();
         }
-        catch (Exception) {}
+        catch (Exception) { }
         if (channel == null)
           continue;
         if (channel.IsTv == false)
@@ -242,6 +243,11 @@ namespace SetupTv.Sections
 
               if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
               {
+                string msg = String.Format(
+                    "Imported channel {0} detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to map these channels.",
+                    tDetail.Name);
+                MessageBox.Show(msg, "Warning, wrong setup detected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Log.Debug(msg);
                 continue;
               }
 
