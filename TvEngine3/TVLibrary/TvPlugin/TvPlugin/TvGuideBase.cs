@@ -2540,22 +2540,40 @@ namespace TvPlugin
           if (control != null)
           {
             Program prog = (Program)control.Data;
-
-            if (DateTime.Now < prog.EndTime && m_dtStartTime < prog.StartTime || _singleChannelView)
+            
+            if (_singleChannelView)
             {
               _cursorY = x;
               bOK = true;
-              break;
+              break; 
             }
 
-            if (m_dtStartTime >= prog.StartTime && m_dtStartTime < prog.EndTime && DateTime.Now < prog.EndTime)
+            bool isvalid = false;
+            DateTime time = DateTime.Now;
+            if (time < prog.EndTime) // present & future
             {
-              _cursorY = x;
-              bOK = true;
-              break;
+              if (m_dtStartTime <= prog.StartTime)
+              {
+                isvalid = true;
+              }
+              else if (m_dtStartTime >= prog.StartTime && m_dtStartTime < prog.EndTime)
+              {
+                isvalid = true;
+              }
+              else if (m_dtStartTime < time)
+              {
+                isvalid = true;
+              }
             }
-            // this one will skip past programs
-            if (m_dtStartTime < DateTime.Now && DateTime.Now < prog.EndTime)
+            else if(time > _currentProgram.EndTime) // history
+            {
+              if (prog.EndTime > m_dtStartTime)
+              {
+                isvalid = true;
+              }
+            }
+            
+            if (isvalid)
             {
               _cursorY = x;
               bOK = true;
