@@ -97,8 +97,8 @@ namespace TvPlugin
     private DateTime _vmr7UpdateTimer = DateTime.Now;
     //		string			m_sZapChannel;
     //		long				m_iZapDelay;
-    private bool _isOsdVisible = false;
-    private bool _zapOsdVisible = false;
+    private volatile bool _isOsdVisible = false;
+    private volatile bool _zapOsdVisible = false;
     //bool _msnWindowVisible = false;       // msn related can be removed
     private bool _channelInputVisible = false;
 
@@ -2682,13 +2682,13 @@ namespace TvPlugin
       {
         base.Render(timePassed);
       }
-      if (_isOsdVisible && !_zapOsdVisible)
-      {
-        _osdWindow.Render(timePassed);
-      }
-      else if (_zapOsdVisible)
+      if (_zapOsdVisible)
       {
         _zapWindow.Render(timePassed);
+      }
+      else if (_isOsdVisible)
+      {
+        _osdWindow.Render(timePassed);
       }
 
       if (g_Player.Playing || TVHome.DoingChannelChange())
@@ -2709,6 +2709,7 @@ namespace TvPlugin
       //_isOsdVisible = false;
       //GUIWindowManager.IsOsdVisible = false;
       HideMainOSD();
+      HideZapOSD();
 
       //close window
       ///@
@@ -2768,14 +2769,6 @@ namespace TvPlugin
       if (!_zapOsdVisible)
       {
         GUIMessage msg;
-        if (_isOsdVisible)
-        {
-          // hide main OSD
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0,
-                               GetID, 0, null);
-          _osdWindow.OnMessage(msg); // Send a de-init msg to the OSD
-          GUIWindowManager.IsOsdVisible = false; // do we need this?
-        }
         // Show zap OSD
         msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _zapWindow.GetID, 0, 0,
                                         GetID, 0, null);
@@ -2787,6 +2780,16 @@ namespace TvPlugin
         Log.Debug("ZAP OSD:ON");
         _zapTimeOutTimer = DateTime.Now;
         _zapOsdVisible = true;
+        // now even if main OSD is visible it won't be rendered
+
+        if (_isOsdVisible) 
+        {
+          // hide main OSD
+          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0,
+                               GetID, 0, null);
+          _osdWindow.OnMessage(msg); // Send a de-init msg to the OSD
+          GUIWindowManager.IsOsdVisible = false; // do we need this?
+        }
         //GUIWindowManager.VisibleOsd = Window.WINDOW_TVZAPOSD;
       }
     }
@@ -2796,19 +2799,21 @@ namespace TvPlugin
       // Hide zap OSD
       if (_zapOsdVisible)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _zapWindow.GetID, 0, 0,
-                                        GetID, 0, null);
-        _zapWindow.OnMessage(msg);
-        _zapOsdVisible = false;
+        GUIMessage msg;
         //GUIWindowManager.IsOsdVisible = false;
         // Show main OSD if it was temporarily hidden
-        if(_isOsdVisible)
+        if (_isOsdVisible)
         {
           msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _osdWindow.GetID, 0, 0, GetID, 0,
-                                          null);
+                               null);
           _osdWindow.OnMessage(msg); // Send an init msg to the OSD
           GUIWindowManager.VisibleOsd = Window.WINDOW_TVOSD;
         }
+
+        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _zapWindow.GetID, 0, 0,
+                             GetID, 0, null);
+        _zapWindow.OnMessage(msg);
+        _zapOsdVisible = false;
       }
     }
 
@@ -2817,7 +2822,6 @@ namespace TvPlugin
       if(!_isOsdVisible)
       {
         _osdTimeoutTimer = DateTime.Now;
-        _isOsdVisible = true;
         if (!_zapOsdVisible)
         {
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _osdWindow.GetID, 0, 0, GetID, 0,
@@ -2825,19 +2829,23 @@ namespace TvPlugin
           _osdWindow.OnMessage(msg); // Send an init msg to the OSD
           GUIWindowManager.VisibleOsd = Window.WINDOW_TVOSD;
         }
+        _isOsdVisible = true;
       }
     }
 
     public void HideMainOSD()
     {
-      if(_isOsdVisible && !_zapOsdVisible)
+      if(_isOsdVisible)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID,
-                                        0, null);
-        _osdWindow.OnMessage(msg); // Send a de-init msg to the OSD
-        GUIWindowManager.IsOsdVisible = false;
+        _isOsdVisible = false; // make sure osd won't be rendered
+        if (!_zapOsdVisible)
+        {
+          GUIWindowManager.IsOsdVisible = false;
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID,
+                                          0, null);
+          _osdWindow.OnMessage(msg); // Send a de-init msg to the OSD
+        }
       }
-      _isOsdVisible = false;
     }
 
     public void RenderForm(float timePassed)
@@ -2861,13 +2869,13 @@ namespace TvPlugin
       }
       // do we need 2 render the OSD?
 
-      if (_isOsdVisible && !_zapOsdVisible)
-      {
-        _osdWindow.Render(timePassed);
-      }
-      else if (_zapOsdVisible)
+      if (_zapOsdVisible)
       {
         _zapWindow.Render(timePassed);
+      }
+      else if (_isOsdVisible)
+      {
+        _osdWindow.Render(timePassed);
       }
     }
 
