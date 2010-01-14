@@ -377,6 +377,25 @@ namespace MediaPortal.DeployTool
     }
     #endregion
 
+    #region Aero check
+    [DllImport("dwmapi.dll")]
+    public static extern int DwmIsCompositionEnabled(ref int pfEnabled);
+
+    public static bool IsAeroEnabled()
+    {
+      int enabled = 0;
+      try
+      {
+        DwmIsCompositionEnabled(ref enabled);
+      }
+      catch (DllNotFoundException)
+      {
+        return false;
+      }
+      return (enabled == 1);
+    }
+    #endregion
+
     public static bool CheckStartupPath()
     {
       try

@@ -504,4 +504,9 @@ Transfer this folder to your HTPC. Start installation by running "MediaPortal.De
   <data name="DBMSType_rbMSSQL_disabled" xml:space="preserve">
     <value>Microsoft SQL-Server Express 2005 is disabled</value>
   </data>
+  <data name="AeroThemeMissing" xml:space="preserve">
+    <value>Windows AERO is currently disabled.
+Please note that AERO is needed to avoid tearing and stuttering.
+Enabling AERO will also reduce CPU usage, thus making your HTPC run cooler and quieter.</value>
+  </data>
 </root>
