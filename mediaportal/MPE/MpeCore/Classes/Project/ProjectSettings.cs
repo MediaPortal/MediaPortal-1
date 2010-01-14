@@ -89,7 +89,7 @@ namespace MpeCore.Classes.Project
       fileList = folderGroup.Recursive
                    ? di.GetFiles("*.*", SearchOption.AllDirectories)
                    : di.GetFiles("*.*", SearchOption.TopDirectoryOnly);
-      string dir = folderGroup.Folder;
+      string dir = Path.GetFullPath(folderGroup.Folder);
       string templ = folderGroup.DestinationFilename;
       if (!dir.EndsWith("\\"))
       {

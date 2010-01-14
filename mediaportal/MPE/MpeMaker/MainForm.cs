@@ -68,11 +68,15 @@ namespace MpeMaker
           if (arguments.Build)
           {
             if (string.IsNullOrEmpty(Package.GeneralInfo.Location))
-              MessageBox.Show("No out file is specified");
+              Console.WriteLine("[MpeMaker] No out file is specified");
             List<string> list = Package.ValidatePackage();
-            if (Package.ValidatePackage().Count > 0)
+            if (list.Count > 0)
             {
-              MessageBox.Show("Error in package");
+              Console.WriteLine("[MpeMaker] Error in package");
+              foreach (string s in list)
+              {
+                Console.WriteLine("[MpeMaker] " + s);
+              }
               Close();
               return;
             }

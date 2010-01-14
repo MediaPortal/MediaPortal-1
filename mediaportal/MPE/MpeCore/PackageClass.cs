@@ -192,7 +192,7 @@ namespace MpeCore
       {
         if (item.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(item.Value) && !File.Exists(item.Value))
         {
-          respList.Add(string.Format("Params ->{0} file not found", item.Name));
+          respList.Add(string.Format("Params ->{0} file not found {1}", item.Name, item.Value));
         }
       }
 

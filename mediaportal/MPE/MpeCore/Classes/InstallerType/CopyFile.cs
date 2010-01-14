@@ -156,17 +156,17 @@ namespace MpeCore.Classes.InstallerType
       if (!File.Exists(fileItem.LocalFileName))
       {
         response.Valid = false;
-        response.Message = "Source file not found !";
+        response.Message = "Source file not found ! " + fileItem.LocalFileName;
       }
       if (string.IsNullOrEmpty(fileItem.DestinationFilename))
       {
         response.Valid = false;
-        response.Message = "No install location specified !";
+        response.Message = "No install location specified ! " + fileItem.LocalFileName;
       }
       if (!fileItem.DestinationFilename.Contains("%"))
       {
         response.Valid = false;
-        response.Message = "No template in destination path specified !";
+        response.Message = "No template in destination path specified ! " + fileItem.LocalFileName;
       }
       return response;
     }

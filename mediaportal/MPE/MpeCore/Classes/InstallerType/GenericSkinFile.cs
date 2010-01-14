@@ -143,7 +143,7 @@ namespace MpeCore.Classes.InstallerType
       if (!fileItem.DestinationFilename.StartsWith("%Skin%\\[DEFAULT]"))
       {
         response.Valid = false;
-        response.Message = "Template  not start with %Skin%\\[DEFAULT] in destination path specified !";
+        response.Message = "Template  not start with %Skin%\\[DEFAULT] in destination path specified !" + fileItem.DestinationFilename;
       }
       return response;
     }
