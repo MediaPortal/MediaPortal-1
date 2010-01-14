@@ -501,4 +501,9 @@ Proseguire l'installazione è un vostro rischio.</value>
   <data name="DBMSType_rbMSSQL_disabled" xml:space="preserve">
     <value>Microsoft SQL-Server Express 2005 è disabilitato</value>
   </data>
+  <data name="AeroThemeMissing" xml:space="preserve">
+    <value>Windows AERO è attualmente disabilitato.
+Tenere conto che AERO è necessario per evitare tremolio e scatti durante la riproduzione video.
+Abilitando AERO si ridurrà anche l'uso della CPU, e il vostro HTPC sarà silenzioso e produrrà meno calore.</value>
+  </data>
 </root>
