@@ -451,9 +451,7 @@ Section "MediaPortal core files (required)" SecCore
 
 
   SetOutPath "$MPdir.Base"
-  SetOverwrite off
-  File /nonfatal "${MEDIAPORTAL.BASE}\MediaPortalDirs.xml"
-  SetOverwrite on
+  File "${svn_MP}\MediaPortal.Base\MediaPortalDirs.xml"
   ; MediaPortal.exe
   File "${svn_MP}\xbmc\bin\${BUILD_TYPE}\MediaPortal.exe"
   File "${svn_MP}\xbmc\bin\${BUILD_TYPE}\MediaPortal.exe.config"
