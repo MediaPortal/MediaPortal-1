@@ -725,6 +725,12 @@ namespace MediaPortal.Player
           _graphBuilder = null;
         }
 
+        if (_dvbSubRenderer != null)
+        {
+          _dvbSubRenderer.SetPlayer(null);
+        }
+        _dvbSubRenderer = null;
+
         GUIGraphicsContext.form.Invalidate(true);
         _state = PlayState.Init;
       }

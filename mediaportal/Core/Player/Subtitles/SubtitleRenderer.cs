@@ -863,11 +863,13 @@ namespace MediaPortal.Player.Subtitles
     /// </summary>
     public void Clear()
     {
+      Log.Debug("SubtitleRenderer: starting cleanup");
       startPos = 0;
       lock (subtitles)
       {
         subtitles.Clear();
       }
+
       // swap
       if (subTexture != null)
       {
@@ -878,6 +880,13 @@ namespace MediaPortal.Player.Subtitles
           subFilter = null;
         }
       }
+
+      if (vertexBuffer != null)
+      {
+        vertexBuffer.Dispose();
+        vertexBuffer = null;
+      }
+      Log.Debug("SubtitleRenderer: cleanup done");
     }
   }
 }
