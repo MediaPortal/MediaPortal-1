@@ -127,6 +127,7 @@ namespace TvService
         //only remove subchannel if it exists.
         if (_cardHandler.Card.GetSubChannel(user.SubChannel) != null)
         {
+          int usedSubChannel = user.SubChannel;
           // Before we remove the subchannel we have to stop it
           ITvSubChannel subChannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
           if (subChannel.IsTimeShifting)
@@ -141,7 +142,7 @@ namespace TvService
           CleanTimeshiftFilesThread cleanTimeshiftFilesThread =
             new CleanTimeshiftFilesThread(_cardHandler.DataBaseCard.TimeShiftFolder,
                                           String.Format("live{0}-{1}.ts", _cardHandler.DataBaseCard.IdCard,
-                                                        user.SubChannel));
+                                                        usedSubChannel));
           Thread cleanupThread = new Thread(cleanTimeshiftFilesThread.CleanTimeshiftFiles);
           cleanupThread.IsBackground = true;
           cleanupThread.Name = "TS_File_Cleanup";
