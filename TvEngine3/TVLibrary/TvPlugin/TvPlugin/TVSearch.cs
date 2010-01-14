@@ -1265,18 +1265,7 @@ namespace TvPlugin
                 {
                   //delete specific series
                   Schedule sched = Schedule.Retrieve(rec1.IdSchedule);
-                  TVHome.PromptAndDeleteRecordingSchedule(sched.IdSchedule,
-                                                          /*sched.ReferencedChannel().CurrentProgram,*/
-                                                          false, false);
-
-                  //TVHome.DeleteRecordingSchedule(Schedule.Retrieve(rec1.IdSchedule));
-
-                  /*
-                  server.StopRecordingSchedule(rec1.IdSchedule);
-                  CanceledSchedule schedule = new CanceledSchedule(rec1.IdSchedule, program.StartTime);
-                  schedule.Persist();
-                  server.OnNewSchedule();
-                  */
+                  TVUtil.DeleteRecAndSchedWithPrompt(sched);                  
                 }
                 else
                 {

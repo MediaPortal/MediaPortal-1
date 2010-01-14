@@ -787,103 +787,6 @@ namespace TvPlugin
       }
     }
 
-    /// <summary>
-    /// Deletes a single or a complete schedule.
-    /// The user is being prompted if the schedule is currently recording.
-    /// If the schedule is currently recording, then this is stopped also.
-    /// </summary>
-    /// <param name="Schedule">schedule id to be deleted</param>
-    /// <param name="Program">current program</param>    
-    /// <param name="deleteEntireSchedule">true if the complete schedule is to be removed.</param>
-    /// <param name="supressPrompt">true if no prompt is needed.</param>
-    /// <returns>true if the schedule was deleted, otherwise false</returns>
-    public static bool PromptAndDeleteRecordingSchedule(int scheduleId, bool deleteEntireSchedule,
-                                                        bool supressPrompt)
-    {
-      if (scheduleId < 1)
-      {
-        return false;
-      }
-      Schedule schedule = Schedule.Retrieve(scheduleId); //always have the correct version from DB.      
-
-      if (schedule == null)
-      {
-        return false;
-      }
-
-      bool isRec = TvDatabase.Schedule.IsScheduleRecording(schedule.IdSchedule);
-      bool confirmed = true;
-
-      Schedule parentSchedule = schedule.ReferencedSchedule();
-
-      bool isOnce = true;
-
-      if (parentSchedule == null)
-      {
-        parentSchedule = schedule;
-        Schedule spawn = Schedule.RetrieveSpawnedSchedule(parentSchedule.IdSchedule, parentSchedule.StartTime);
-        if (spawn != null)
-        {
-          schedule = spawn;
-        }
-      }
-
-      isOnce = (parentSchedule.ScheduleType == (int)ScheduleRecordingType.Once);
-
-      TvServer server = new TvServer();
-
-      if (isRec)
-      {
-        if (!supressPrompt)
-        {
-          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
-          if (null == dlgYesNo)
-          {
-            Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
-            return false;
-          }
-          dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
-          dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730)); //This schedule is recording. If you delete
-          dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731)); //the schedule then the recording is stopped.
-          dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
-          dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-          confirmed = dlgYesNo.IsConfirmed;
-        }
-      }
-
-      if (confirmed)
-      {
-        //create the cancelled schedule to prevent the schedule from restarting again.
-        // we only create cancelled recordings on series type schedules
-        if (!isOnce)
-        {
-          CanceledSchedule canceledSchedule = new CanceledSchedule(parentSchedule.IdSchedule,
-                                                                   schedule.StartTime);
-          canceledSchedule.Persist();
-        }
-
-        //is the schedule recording, then stop it now.
-        if (isRec)
-        {
-          server.StopRecordingSchedule(schedule.IdSchedule);
-        }
-
-        //delete the entire schedule ?
-        if (deleteEntireSchedule && parentSchedule != null)
-        {
-          parentSchedule.Delete();
-        }
-        else if (!isRec && schedule != null && isOnce)
-        {
-          schedule.Delete();
-        }
-
-        server.OnNewSchedule();
-        return true;
-      }
-      return false;
-    }
-
     public static bool UseRTSP()
     {
       if (!settingsLoaded)
@@ -1966,7 +1869,7 @@ namespace TvPlugin
         Schedule s = Schedule.Retrieve(card.RecordingScheduleId);
         if (s != null)
         {
-          PromptAndDeleteRecordingSchedule(s.IdSchedule, false, true);
+          TVUtil.DeleteRecAndSchedQuietly(s);          
         }
         return false;
       }
@@ -2139,8 +2042,7 @@ namespace TvPlugin
         {
           return;
         }
-
-        PromptAndDeleteRecordingSchedule(parentSchedule.IdSchedule, false, false);
+        TVUtil.DeleteRecAndSchedWithPrompt(parentSchedule);        
         OnActiveRecordings(); //keep on showing the list until --> 1) user leaves menu, 2) no more active recordings
       }
       else

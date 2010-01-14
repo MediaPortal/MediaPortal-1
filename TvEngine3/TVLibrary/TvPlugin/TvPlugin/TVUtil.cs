@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using TvDatabase;
 using MediaPortal.Profile;
@@ -429,5 +430,320 @@ namespace TvPlugin
 
       return fileName;
     }
+
+
+    #region scheduler helper methods
+
+
+    /// <summary>
+    /// Deletes a single or a complete schedule.    
+    /// If the schedule is currently recording, then this is stopped also.    
+    /// </summary>
+    /// <param name="Schedule">schedule id to be deleted</param>    
+    /// <returns>true if the schedule was deleted, otherwise false</returns>
+    public static bool DeleteRecAndSchedQuietly(Schedule schedule)
+    {
+      DateTime canceledStartTime = schedule.StartTime;
+      return (DeleteRecAndSchedQuietly(schedule, canceledStartTime));
+    }
+    /// <summary>
+    /// Deletes a single or a complete schedule.    
+    /// If the schedule is currently recording, then this is stopped also.    
+    /// </summary>
+    /// <param name="Schedule">schedule id to be deleted</param>    
+    /// <param name="canceledStartTime">start time of the schedule to cancel</param>    
+    /// <returns>true if the schedule was deleted, otherwise false</returns>
+    public static bool DeleteRecAndSchedQuietly(Schedule schedule, DateTime canceledStartTime)
+    {
+      bool wasDeleted = false;
+      if (IsValidSchedule(schedule))
+      {   
+        Schedule parentSchedule = null;
+        wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule);        
+      }
+      return wasDeleted;
+    }
+
+    
+    /// <summary>
+    /// Deletes a single or a complete schedule.    
+    /// If the schedule is currently recording, then this is stopped also.
+    /// The entire schedule will be deleted
+    /// </summary>
+    /// <param name="Schedule">schedule id to be deleted</param>        
+    /// <returns>true if the schedule was deleted, otherwise false</returns>
+    public static bool DeleteRecAndEntireSchedQuietly(Schedule schedule)
+    {
+      DateTime canceledStartTime = schedule.StartTime;
+      return (DeleteRecAndEntireSchedQuietly(schedule, canceledStartTime));      
+    }
+
+    /// <summary>
+    /// Deletes a single or a complete schedule.    
+    /// If the schedule is currently recording, then this is stopped also.
+    /// The entire schedule will be deleted
+    /// </summary>
+    /// <param name="Schedule">schedule id to be deleted</param>    
+    /// <param name="canceledStartTime">start time of the schedule to cancel</param>    
+    /// <returns>true if the schedule was deleted, otherwise false</returns>
+    public static bool DeleteRecAndEntireSchedQuietly(Schedule schedule, DateTime canceledStartTime)
+    {
+      bool wasDeleted = false;
+      if (IsValidSchedule(schedule))
+      {
+        Schedule parentSchedule = null;
+        wasDeleted = StopRecAndDeleteEntireSchedule(schedule, parentSchedule);        
+      }
+      return wasDeleted;
+    }
+
+
+        /// <summary>
+    /// Deletes a single or a complete schedule.
+    /// The user is being prompted if the schedule is currently recording.
+    /// If the schedule is currently recording, then this is stopped also.    
+    /// </summary>
+    /// <param name="Schedule">schedule id to be deleted</param>        
+    /// <returns>true if the schedule was deleted, otherwise false</returns>
+    public static bool DeleteRecAndSchedWithPrompt(Schedule schedule)
+    {
+      DateTime canceledStartTime = schedule.StartTime;
+      return (DeleteRecAndSchedWithPrompt(schedule, canceledStartTime));
+    }
+
+    /// <summary>
+    /// Deletes a single or a complete schedule.
+    /// The user is being prompted if the schedule is currently recording.
+    /// If the schedule is currently recording, then this is stopped also.    
+    /// </summary>
+    /// <param name="Schedule">schedule id to be deleted</param>    
+    /// <param name="canceledStartTime">start time of the schedule to cancel</param>    
+    /// <returns>true if the schedule was deleted, otherwise false</returns>
+    public static bool DeleteRecAndSchedWithPrompt(Schedule schedule, DateTime canceledStartTime)
+    {
+      bool wasDeleted = false;
+      if (IsValidSchedule(schedule))
+      {        
+        Schedule parentSchedule = null;
+        bool confirmed = true;
+        GetParentAndSpawnSchedule(ref schedule, out parentSchedule);
+        confirmed = PromptDeleteRecording(schedule.IdSchedule);
+
+        if (confirmed)
+        {
+          wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule);          
+        }        
+      }
+      return wasDeleted;
+    }   
+
+        /// <summary>
+    /// Deletes a single or a complete schedule.
+    /// The user is being prompted if the schedule is currently recording.
+    /// If the schedule is currently recording, then this is stopped also.
+    /// The entire schedule will be deleted
+    /// </summary>
+    /// <param name="Schedule">schedule id to be deleted</param>        
+    /// <returns>true if the schedule was deleted, otherwise false</returns>
+    public static bool DeleteRecAndEntireSchedWithPrompt(Schedule schedule)
+    {
+      DateTime canceledStartTime = schedule.StartTime;
+      return (DeleteRecAndEntireSchedWithPrompt(schedule, canceledStartTime));          
+    }
+
+    /// <summary>
+    /// Deletes a single or a complete schedule.
+    /// The user is being prompted if the schedule is currently recording.
+    /// If the schedule is currently recording, then this is stopped also.
+    /// The entire schedule will be deleted
+    /// </summary>
+    /// <param name="Schedule">schedule id to be deleted</param>    
+    /// <param name="canceledStartTime">start time of the schedule to cancel</param>    
+    /// <returns>true if the schedule was deleted, otherwise false</returns>
+    public static bool DeleteRecAndEntireSchedWithPrompt(Schedule schedule, DateTime canceledStartTime)
+    {
+      bool wasDeleted = false;
+      if (IsValidSchedule(schedule))
+      {        
+        Schedule parentSchedule = null;        
+        bool confirmed = true;
+        GetParentAndSpawnSchedule(ref schedule, out parentSchedule);        
+        confirmed = PromptDeleteRecording(schedule.IdSchedule);
+        
+        if (confirmed)
+        {
+          wasDeleted = StopRecAndDeleteEntireSchedule(schedule, parentSchedule);
+        }        
+      }
+      return wasDeleted;
+    }
+
+    private static bool StopRecAndDeleteSchedule(Schedule schedule, Schedule parentSchedule)
+    {      
+      bool wasDeleted = CancelEpisode(schedule.StartTime, parentSchedule);
+
+      if (!wasDeleted)
+      {
+        wasDeleted = DeleteSchedule(schedule.IdSchedule);
+      }
+      
+      StopRecording(schedule);
+      TvServer server = new TvServer();
+      server.OnNewSchedule();      
+      return wasDeleted;
+    }
+
+    private static bool StopRecAndDeleteEntireSchedule(Schedule schedule, Schedule parentSchedule)
+    {
+      bool wasDeleted = false;
+      bool episodeCanceled = CancelEpisode(schedule.StartTime, parentSchedule);
+      TvServer server = new TvServer();
+      StopRecording(schedule);      
+      wasDeleted = DeleteEntireOrOnceSchedule(schedule, parentSchedule);            
+      server.OnNewSchedule();
+      return wasDeleted;
+    }
+
+    private static bool IsScheduleTypeOnce (int IdSchedule)
+    {
+      Schedule schedule = Schedule.Retrieve(IdSchedule);
+      bool isOnce = (schedule.ScheduleType == (int)ScheduleRecordingType.Once);
+      return isOnce;
+    }
+
+    private static bool DeleteEntireOrOnceSchedule(Schedule schedule, Schedule parentSchedule)
+    {
+      //is the schedule recording, then stop it now.
+      bool wasDeleted = false;
+      try
+      {
+        bool isRec = TvDatabase.Schedule.IsScheduleRecording(schedule.IdSchedule);
+        bool isOnce = IsScheduleTypeOnce(parentSchedule.IdSchedule);
+                
+
+        if (parentSchedule != null)
+        {
+          wasDeleted = DeleteSchedule(parentSchedule.IdSchedule);          
+        }
+
+        if (schedule != null)
+        {
+          wasDeleted = DeleteSchedule(schedule.IdSchedule);          
+        } 
+      }
+      catch (Exception)
+      {
+        //consume ex
+      }            
+      return wasDeleted;
+    }
+
+    private static bool DeleteSchedule (int IdSchedule)
+    {
+      bool scheduleDeleted = false;
+      if (IdSchedule > 0)
+      {
+        Schedule sched2del = Schedule.Retrieve(IdSchedule);
+        if (sched2del != null)
+        {
+          sched2del.Delete();          
+        }
+        scheduleDeleted = true;
+      }
+      else
+      {
+        scheduleDeleted = false;
+        throw new Exception("schedule id is invalid");
+      }
+      return scheduleDeleted;
+    }
+
+    private static bool CancelEpisode(DateTime cancelStartTime, Schedule scheduleToCancel)
+    {
+      //create the canceled schedule to prevent the schedule from restarting again.
+      // we only create cancelled recordings on series type schedules      
+      bool episodeCanceled = false;
+      Schedule sched2cancel = Schedule.Retrieve(scheduleToCancel.IdSchedule);
+      bool isOnce = IsScheduleTypeOnce(scheduleToCancel.IdSchedule);      
+      if (!isOnce)
+      {
+        DateTime cancel = cancelStartTime;
+        int IdForScheduleToCancel = scheduleToCancel.IdSchedule;
+        CanceledSchedule canceledSchedule = new CanceledSchedule(IdForScheduleToCancel, cancel);
+        canceledSchedule.Persist();
+        episodeCanceled = true;
+      }
+      return episodeCanceled;
+    }
+
+    private static bool PromptDeleteRecording(int IdSchedule)
+    {
+      bool confirmed = false;
+      bool isRec = TvDatabase.Schedule.IsScheduleRecording(IdSchedule);
+
+      if (isRec)
+      {
+        GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+        if (null == dlgYesNo)
+        {
+          Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
+        }
+        else
+        {
+          dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
+          dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730)); //This schedule is recording. If you delete
+          dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731)); //the schedule then the recording is stopped.
+          dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
+          dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+          confirmed = dlgYesNo.IsConfirmed;
+        }
+      }
+      else
+      {
+        confirmed = true;
+      }
+      return confirmed;
+    }
+
+    private static void GetParentAndSpawnSchedule(ref Schedule schedule, out Schedule parentSchedule)
+    {
+      parentSchedule = schedule.ReferencedSchedule();
+      if (parentSchedule == null)
+      {
+        parentSchedule = schedule;
+        Schedule spawn = Schedule.RetrieveSpawnedSchedule(parentSchedule.IdSchedule, parentSchedule.StartTime);
+        if (spawn != null)
+        {
+          schedule = spawn;
+        }
+      }
+    }
+
+    private static bool IsValidSchedule(Schedule schedule)
+    {
+      if (schedule == null)
+      {
+        return false;
+      }
+      int scheduleId = schedule.IdSchedule;
+
+      if (scheduleId < 1)
+      {
+        return false;
+      }
+      return true;
+    }
+
+    private static void StopRecording(Schedule schedule)
+    {
+      bool isRec = TvDatabase.Schedule.IsScheduleRecording(schedule.IdSchedule);
+      if (isRec)
+      {
+        TvServer server = new TvServer();
+        server.StopRecordingSchedule(schedule.IdSchedule);
+      }
+    }
+
+    #endregion
   }
 }

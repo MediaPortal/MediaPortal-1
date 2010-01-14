@@ -2971,7 +2971,7 @@ namespace TvPlugin
             break;
           case 629: //stop recording
             Schedule schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel().Name);
-            TVHome.PromptAndDeleteRecordingSchedule(schedule.IdSchedule, true, false);
+            TVUtil.DeleteRecAndEntireSchedWithPrompt(schedule);            
             Update(true); //remove RED marker
             break;
 

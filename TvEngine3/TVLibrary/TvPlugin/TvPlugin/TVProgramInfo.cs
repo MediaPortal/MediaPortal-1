@@ -927,7 +927,8 @@ namespace TvPlugin
           Schedule schedFromDB = Schedule.Retrieve(card.RecordingScheduleId);
           if (schedFromDB.IsManual)
           {
-            TVHome.PromptAndDeleteRecordingSchedule(card.RecordingScheduleId, false, false);
+            Schedule sched = Schedule.Retrieve(card.RecordingScheduleId);
+            TVUtil.DeleteRecAndSchedWithPrompt(sched);
           }
           else
           {
@@ -952,7 +953,7 @@ namespace TvPlugin
 
       if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
       {
-        TVHome.PromptAndDeleteRecordingSchedule(schedule.IdSchedule, false, false);
+        TVUtil.DeleteRecAndSchedWithPrompt(schedule);        
         Program.ResetPendingState(program.IdProgram);
         return;
       }
@@ -990,9 +991,16 @@ namespace TvPlugin
             deleteEntireSched = true;
             break;
         }
-
-        schedule.StartTime = program.StartTime;
-        TVHome.PromptAndDeleteRecordingSchedule(schedule.IdSchedule, deleteEntireSched, false);
+                
+        if (deleteEntireSched)
+        {
+          TVUtil.DeleteRecAndEntireSchedWithPrompt(schedule, program.StartTime);
+        }
+        else
+        {
+          TVUtil.DeleteRecAndSchedWithPrompt(schedule, program.StartTime);  
+        }
+        
         Program.ResetPendingState(program.IdProgram);
       }
     }

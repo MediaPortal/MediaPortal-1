@@ -1424,7 +1424,7 @@ namespace TvPlugin
         TvDatabase.Schedule sched = rec.ReferencedSchedule();
         if (sched != null)
         {
-          TVHome.PromptAndDeleteRecordingSchedule(sched.IdSchedule, false, true);
+          TVUtil.DeleteRecAndSchedQuietly(sched);          
         }
       }
       else

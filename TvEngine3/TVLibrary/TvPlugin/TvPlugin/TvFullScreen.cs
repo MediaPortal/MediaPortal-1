@@ -1011,7 +1011,7 @@ namespace TvPlugin
           }
 
           Schedule s = Schedule.Retrieve(card.RecordingScheduleId);
-          TVHome.PromptAndDeleteRecordingSchedule(s.IdSchedule, false, true);
+          TVUtil.DeleteRecAndSchedQuietly(s);          
 
           GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
           if (dlgNotify == null)

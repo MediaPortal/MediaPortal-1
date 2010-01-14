@@ -878,12 +878,13 @@ namespace TvPlugin
         case 981: //Cancel this show
           {
             Program prgFromSchedule = Program.RetrieveByTitleAndTimes(rec.ProgramName, rec.StartTime, rec.EndTime);
+            DateTime canceledStartTime = rec.StartTime;
             if (prgFromSchedule != null)
             {
-              rec.StartTime = prgFromSchedule.StartTime;
+              canceledStartTime = prgFromSchedule.StartTime;
             }
 
-            bool res = TVHome.PromptAndDeleteRecordingSchedule(rec.IdSchedule, false, false);
+            bool res = TVUtil.DeleteRecAndSchedWithPrompt(rec, canceledStartTime);
             if (res)
             {
               LoadDirectory();
@@ -897,11 +898,13 @@ namespace TvPlugin
         case 618: // delete entire recording
           {
             Program prgFromSchedule = Program.RetrieveByTitleAndTimes(rec.ProgramName, rec.StartTime, rec.EndTime);
+            DateTime canceledStartTime = rec.StartTime;
             if (prgFromSchedule != null)
             {
-              rec.StartTime = prgFromSchedule.StartTime;
+              canceledStartTime = prgFromSchedule.StartTime;
             }
-            bool res = TVHome.PromptAndDeleteRecordingSchedule(rec.IdSchedule, true, false);
+
+            bool res = TVUtil.DeleteRecAndEntireSchedWithPrompt(rec, canceledStartTime);
             if (res)
             {
               if (showSeries && !item.IsFolder)
