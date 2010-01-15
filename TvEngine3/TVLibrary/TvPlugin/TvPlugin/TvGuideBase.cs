@@ -2608,17 +2608,14 @@ namespace TvPlugin
       UnFocus();
       if (_cursorY <= 0)
       {
-        if (_viewingTime < DateTime.Now)
+        // custom focus handling only if button available
+        if (MinYIndex == -1)
         {
-          // custom focus handling only if button available
-          if (MinYIndex == -1)
+          _cursorY--; // decrease by 1, 
+          if (_cursorY == -1) // means tvgroup entered (-1) or moved left (-2)
           {
-            _cursorY--; // decrease by 1, 
-            if (_cursorY == -1) // means tvgroup entered (-1) or moved left (-2)
-            {
-              SetFocus();
-              return;
-            }
+            SetFocus();
+            return;
           }
         }
         _viewingTime = _viewingTime.AddMinutes(-_timePerBlock);
