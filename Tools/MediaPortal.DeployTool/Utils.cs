@@ -97,6 +97,7 @@ namespace MediaPortal.DeployTool
   class Utils
   {
     public static readonly OSInfo.OSInfo.OSList _osver = OSInfo.OSInfo.GetOSName();
+    public static readonly int _osverInt = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSMinorVersion;
 
     #region DialogHelper
     public static void ErrorDlg(string msg)

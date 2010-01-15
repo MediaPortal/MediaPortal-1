@@ -156,7 +156,7 @@ namespace MediaPortal.DeployTool
         //
         else
         {
-          if (Utils.IsAeroEnabled())
+          if ((Utils._osverInt >= 60) && !Utils.IsAeroEnabled())
           {
             MessageBox.Show(Localizer.GetBestTranslation("AeroThemeMissing"), "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
           }
