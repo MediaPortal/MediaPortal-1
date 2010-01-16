@@ -38,7 +38,7 @@
 // enable unicode functions in mingw
 #ifdef WIN32
 #define UNICODE
-//#define _UNICODE
+#define _UNICODE
 #endif
 
 #include <signal.h>
