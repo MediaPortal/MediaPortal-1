@@ -112,8 +112,7 @@ namespace TvService
     {
       Log.Write("Scheduler: started");
       _controller = RemoteControl.Instance;
-
-      //ResetEPGprogramStateData();
+      
       ResetRecordingStates();
 
       _recordingsInProgressList = new List<RecordingDetail>();
@@ -190,6 +189,8 @@ namespace TvService
 
         HandleRecordingList();
         DoSchedule();
+        CheckAndDeleteOrphanedRecordings();
+        CheckAndDeleteOrphanedOnceSchedules();
         HandleSleepMode();
         _scheduleCheckTimer = DateTime.Now;
       }
@@ -200,6 +201,17 @@ namespace TvService
       finally
       {
         _reEntrant = false;
+      }
+    }
+
+    private void CheckAndDeleteOrphanedOnceSchedules()
+    {
+      IList<Schedule> schedules = Schedule.FindOrphanedOnceSchedules();
+      
+      foreach (Schedule orphan in schedules)
+      {
+        Log.Debug("Scheduler: Orphaned once schedule found {0} - removing", orphan.IdSchedule);
+        orphan.Delete();
       }
     }
 
@@ -270,9 +282,7 @@ namespace TvService
           {
             StartRecord(newRecording);
           }
-        }
-
-        CheckAndDeleteOrphanedRecordings();
+        }        
       }
     }
 

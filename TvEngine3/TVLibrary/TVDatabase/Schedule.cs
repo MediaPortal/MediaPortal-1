@@ -444,6 +444,37 @@ namespace TvDatabase
       return Broker.RetrieveList<Schedule>();
     }
 
+    public static IList <Schedule> FindOrphanedOnceSchedules()
+    {
+    
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Schedule));
+
+      // 
+      DateTime now = DateTime.Now;
+      sb.AddConstraint(Operator.Equals, "scheduleType", 0);        
+      sb.AddConstraint(Operator.LessThan, "endtime", now);
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      IList<Schedule> getList = ObjectFactory.GetCollection<Schedule>(stmt.Execute());
+      IList<Schedule> newList = new List<Schedule>();
+      if (getList.Count > 0)
+      {
+        foreach (Schedule schedule in getList)
+        {
+          DateTime endPostTime = schedule.endTime.AddMinutes(schedule.postRecordInterval);
+          
+          if (endPostTime < now)
+          {
+            newList.Add(schedule);
+          }
+        }          
+      }
+      return newList;
+    }
+
     public static Schedule FindNoEPGSchedule(string channelName)
     {
       //channelName
@@ -564,7 +595,6 @@ namespace TvDatabase
             break;
 
           case (int)ScheduleRecordingType.Daily:
-            //List<Program> prgsDaily = (List<Program>)Program.RetrieveDaily(schedule.programName, schedule.startTime, DateTime.MaxValue, schedule.ReferencedChannel().IdChannel);
             List<Program> prgsDaily =
               (List<Program>)
               Program.RetrieveDaily(schedule.programName, schedule.startTime, schedule.endTime,
@@ -576,12 +606,9 @@ namespace TvDatabase
               {
                 if (!schedule.IsSerieIsCanceled(prgDaily.StartTime))
                 {
-                  //if (prgDaily.StartTime >= schedule.startTime && prgDaily.EndTime <= schedule.endTime) //maybe SQL query could do this faster ?
-                  {
-                    prgDaily.IsRecordingOncePending = false;
-                    prgDaily.IsRecordingSeriesPending = !clear;
-                    prgDaily.Persist();
-                  }
+                  prgDaily.IsRecordingOncePending = false;
+                  prgDaily.IsRecordingSeriesPending = !clear;
+                  prgDaily.Persist();
                 }
               }
             }
@@ -627,7 +654,6 @@ namespace TvDatabase
             break;
 
           case (int)ScheduleRecordingType.Weekends:
-            //List<Program> prgsWeekends = (List<Program>)Program.RetrieveWeekends(schedule.programName, schedule.startTime, DateTime.MaxValue, schedule.ReferencedChannel().IdChannel);
             List<Program> prgsWeekends =
               (List<Program>)
               Program.RetrieveWeekends(schedule.programName, schedule.startTime, schedule.endTime,
@@ -638,28 +664,16 @@ namespace TvDatabase
               foreach (Program prgWeekends in prgsWeekends)
               {
                 if (!schedule.IsSerieIsCanceled(prgWeekends.StartTime))
-                {
-                  // TODO : following IF statements should be done by WHERE clause in SQL.
-                  //do we have a program in the weekend ?
-                  //if (prgWeekends.StartTime.DayOfWeek == DayOfWeek.Saturday || prgWeekends.StartTime.DayOfWeek == DayOfWeek.Sunday)
-                  {
-                    //DateTime start = new DateTime(schedule.startTime.Year, schedule.startTime.Month, prgWeekends.StartTime.Day, schedule.startTime.Hour, schedule.startTime.Minute, schedule.startTime.Second);
-                    //DateTime end = new DateTime(schedule.endTime.Year, schedule.endTime.Month, prgWeekends.EndTime.Day, schedule.endTime.Hour, schedule.endTime.Minute, schedule.endTime.Second);
-
-                    //if (prgWeekends.StartTime >= start && prgWeekends.EndTime <= end)
-                    {
-                      prgWeekends.IsRecordingOncePending = false;
-                      prgWeekends.IsRecordingSeriesPending = !clear;
-                      prgWeekends.Persist();
-                    }
-                  }
-                }
+                {                
+                  prgWeekends.IsRecordingOncePending = false;
+                  prgWeekends.IsRecordingSeriesPending = !clear;
+                  prgWeekends.Persist();
+              }
               }
             }
             break;
 
           case (int)ScheduleRecordingType.Weekly:
-            //List<Program> prgsWeekly = (List<Program>)Program.RetrieveWeekly(schedule.programName, schedule.startTime, DateTime.MaxValue, schedule.ReferencedChannel().IdChannel);
             List<Program> prgsWeekly =
               (List<Program>)
               Program.RetrieveWeekly(schedule.programName, schedule.startTime, schedule.endTime,
@@ -671,26 +685,15 @@ namespace TvDatabase
               {
                 if (!schedule.IsSerieIsCanceled(prgWeekly.StartTime))
                 {
-                  // TODO : following IF statements should be done by WHERE clause in SQL.                    
-                  //if (prgWeekly.StartTime.DayOfWeek == schedule.startTime.DayOfWeek)
-                  {
-                    //DateTime start = new DateTime(schedule.startTime.Year, schedule.startTime.Month, prgWeekly.StartTime.Day, schedule.startTime.Hour, schedule.startTime.Minute, schedule.startTime.Second);
-                    //DateTime end = new DateTime(schedule.endTime.Year, schedule.endTime.Month, prgWeekly.EndTime.Day, schedule.endTime.Hour, schedule.endTime.Minute, schedule.endTime.Second);
-
-                    //if (prgWeekly.StartTime >= start && prgWeekly.EndTime <= end)
-                    {
-                      prgWeekly.IsRecordingOncePending = false;
-                      prgWeekly.IsRecordingSeriesPending = !clear;
-                      prgWeekly.Persist();
-                    }
-                  }
+                  prgWeekly.IsRecordingOncePending = false;
+                  prgWeekly.IsRecordingSeriesPending = !clear;
+                  prgWeekly.Persist();
                 }
               }
             }
             break;
 
           case (int)ScheduleRecordingType.WorkingDays:
-            //List<Program> prgsWorkingDays = (List<Program>)Program.RetrieveWorkingDays(schedule.programName, schedule.startTime, DateTime.MaxValue, schedule.ReferencedChannel().IdChannel);
             List<Program> prgsWorkingDays =
               (List<Program>)
               Program.RetrieveWorkingDays(schedule.programName, schedule.startTime, schedule.endTime,
@@ -701,20 +704,10 @@ namespace TvDatabase
               foreach (Program prgWorkingDays in prgsWorkingDays)
               {
                 if (!schedule.IsSerieIsCanceled(prgWorkingDays.StartTime))
-                {
-                  // TODO : following IF statements should be done by WHERE clause in SQL.                    
-                  //if (prgWorkingDays.StartTime.DayOfWeek != DayOfWeek.Saturday && prgWorkingDays.StartTime.DayOfWeek != DayOfWeek.Sunday)
-                  {
-                    //DateTime start = new DateTime(schedule.startTime.Year, schedule.startTime.Month, prgWorkingDays.StartTime.Day, schedule.startTime.Hour, schedule.startTime.Minute, schedule.startTime.Second);
-                    //DateTime end = new DateTime(schedule.endTime.Year, schedule.endTime.Month, prgWorkingDays.EndTime.Day, schedule.endTime.Hour, schedule.endTime.Minute, schedule.endTime.Second);
-
-                    //if (prgWorkingDays.StartTime >= start && prgWorkingDays.EndTime <= end)
-                    {
-                      prgWorkingDays.IsRecordingOncePending = false;
-                      prgWorkingDays.IsRecordingSeriesPending = !clear;
-                      prgWorkingDays.Persist();
-                    }
-                  }
+                {                 
+                  prgWorkingDays.IsRecordingOncePending = false;
+                  prgWorkingDays.IsRecordingSeriesPending = !clear;
+                  prgWorkingDays.Persist();
                 }
               }
             }
@@ -991,19 +984,10 @@ namespace TvDatabase
     {
       foreach (CanceledSchedule schedule in ReferringCanceledSchedule())
       {
-        schedule.Remove();
-        //TODO : reset state
-
-        //lets find the child schedule that was cancelled
-        //Schedule spawnSchedule = Schedule.RetrieveSpawnedSchedule(schedule.IdSchedule, schedule.CancelDateTime);
-
-        //if (spawnSchedule != null)
-        //{
-
+        schedule.Remove();       
         Program.SetSingleStateSeriesPending(schedule.CancelDateTime,
                                             schedule.ReferencedSchedule().ReferencedChannel().IdChannel,
                                             schedule.ReferencedSchedule().ProgramName);
-        //}
       }
       return;
     }
@@ -1018,7 +1002,6 @@ namespace TvDatabase
           Program.SetSingleStateSeriesPending(schedule.CancelDateTime,
                                               schedule.ReferencedSchedule().ReferencedChannel().IdChannel,
                                               schedule.ReferencedSchedule().ProgramName);
-          //TODO : reset state
         }
       }
       return;
@@ -1173,9 +1156,6 @@ namespace TvDatabase
       return false;
     }
 
-    //IsRecordingProgram(TVProgram program, bool filterCanceledRecordings)
-
-
     public bool DoesUseEpisodeManagement
     {
       get
@@ -1227,16 +1207,12 @@ namespace TvDatabase
         conflict.Remove();
       }
 
-      //Schedule parentSeriesSched = RetrieveSeries(this.ReferencedChannel().IdChannel, this.programName, this.startTime, this.endTime);
-      //if (parentSeriesSched == null)
-      //{
       IList<CanceledSchedule> listCanceledSchedule = ReferringCanceledSchedule();
       foreach (CanceledSchedule schedule in listCanceledSchedule)
       {
         schedule.Remove();
       }
-      //}
-
+    
       // does the schedule still exist ?
       // if yes then remove it, if no leave it.
       Schedule schedExists = Retrieve(idSchedule);

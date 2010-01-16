@@ -670,10 +670,7 @@ namespace TvDatabase
     }
 
     public static IList<Program> RetrieveDaily(string title, DateTime startTime, DateTime endTime, int channelId)
-    {
-      //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
-      //IList<Program> prgs = Program.RetrieveListByTitleTimesAndChannel(title, startTime, DateTime.MaxValue, channelId);
-      //return prgs;            
+    {           
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       // where foreigntable.foreignkey = ourprimarykey
@@ -694,17 +691,13 @@ namespace TvDatabase
 
     public static IList<Program> RetrieveEveryTimeOnEveryChannel(string title, DateTime startTime, DateTime endTime)
     {
-      //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
       IList<Program> prgs = Program.RetrieveByTitleAndTimesInterval(title, startTime, DateTime.MaxValue);
       return prgs;
     }
 
     public static IList<Program> RetrieveEveryTimeOnThisChannel(string title, DateTime startTime, DateTime endTime,
                                                                 int channelId)
-    {
-      //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
-
-      //select * from 'foreigntable'
+    {      
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       // where foreigntable.foreignkey = ourprimarykey
@@ -722,9 +715,6 @@ namespace TvDatabase
 
     public static IList<Program> RetrieveWeekends(string title, DateTime startTime, DateTime endTime, int channelId)
     {
-      //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
-      //IList<Program> prgs = Program.RetrieveListByTitleTimesAndChannel(title, startTime, DateTime.MaxValue, channelId);
-      //return prgs;
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       // where foreigntable.foreignkey = ourprimarykey
@@ -747,9 +737,6 @@ namespace TvDatabase
 
     public static IList<Program> RetrieveWeekly(string title, DateTime startTime, DateTime endTime, int channelId)
     {
-      //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
-      //IList<Program> prgs = Program.RetrieveListByTitleTimesAndChannel(title, startTime, DateTime.MaxValue, channelId);
-      //return prgs;
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       // where foreigntable.foreignkey = ourprimarykey
@@ -772,9 +759,6 @@ namespace TvDatabase
 
     public static IList<Program> RetrieveWorkingDays(string title, DateTime startTime, DateTime endTime, int channelId)
     {
-      //TODO : make optimized SQL that only returns the records we need, no more no less. remember to check the calling method.
-      //IList<Program> prgs = Program.RetrieveListByTitleTimesAndChannel(title, startTime, DateTime.MaxValue, channelId);
-      //return prgs;
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       // where foreigntable.foreignkey = ourprimarykey
@@ -925,33 +909,7 @@ namespace TvDatabase
       prg.IsRecordingOncePending = false;
       prg.IsRecordingSeriesPending = false;
       prg.Persist();
-    }
-
-    /*
-    /// <summary>
-    /// Static method to retrieve all instances that are stored in the database in one call
-    /// </summary>    
-    public static void ResetStates()
-    {
-
-      IList<Program> presentNotifications  = Program.RetrieveAllNotifications();
-
-      //reset recording states, but keep the notify state if present
-      //SqlBuilder sb = new SqlBuilder(StatementType.Update, typeof(Program));
-      //sb.AddConstraint(Operator.GreaterThan, "state", (int)ProgramState.None);                              
-
-      //SqlStatement stmt = sb.GetStatement();
-
-      foreach (Program prg in presentNotifications)
-      {        
-        prg.IsRecordingManual = false;
-        prg.IsRecordingSeries = false;
-        prg.IsRecordingOncePending = false;
-        prg.IsRecordingSeriesPending = false;
-        prg.Persist();
-      }      
-    }
-    */
+    }   
 
     public static IList<Program> RetrieveAllNotifications()
     {
