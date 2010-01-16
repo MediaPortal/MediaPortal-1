@@ -1838,7 +1838,7 @@ public class MediaPortalApp : D3DApp, IRender
   /// </summary>
   protected override void OnResizeEnd(EventArgs e)
   {
-    Log.Info("Main: OnResizeEndn called");
+    Log.Info("Main: OnResizeEnd");
     if (GUIGraphicsContext.IsDirectX9ExUsed())
     {
       _resizeOngoing = false;
