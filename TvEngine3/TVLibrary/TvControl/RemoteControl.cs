@@ -53,7 +53,6 @@ namespace TvControl
     #region delegates / events
 
     public delegate void RemotingDisconnectedDelegate();
-
     public delegate void RemotingConnectedDelegate();
 
     public static event RemotingDisconnectedDelegate OnRemotingDisconnected;
@@ -63,7 +62,6 @@ namespace TvControl
 
     #region private members
 
-    //private static TcpClient _tcpClient = new TcpClient();
     private static bool _doingRefreshRemotingConnectionStatus = false;
     private static bool _firstFailure = true;
     private static bool _isRemotingConnected = false;
@@ -72,44 +70,7 @@ namespace TvControl
     private static TcpChannel _callbackChannel = null; // callback channel
     private static bool _useIncreasedTimeoutForInitialConnection = true;
 
-    // Reverted mantis #1409: private static uint _timeOut = 45000; // specified in ms (currently all remoting calls are aborted if processing takes more than 45 sec)
-
-    #endregion
-
-    /*private static DateTime _lastConnectionCheck = DateTime.MinValue;
-    private static DateTime _lastOKConnection = DateTime.MinValue;    
-    private static Thread _connectionMonitorThread = null;
-
-    private static void StartConnectionMonitorThread()
-    {
-      if (_connectionMonitorThread != null)
-      {
-        if (_connectionMonitorThread.IsAlive)
-        {
-          return;
-        }
-      }
-      Log.Debug("RemoteControl: ConnectionMonitor started.");
-      _connectionMonitorThread = new Thread(ConnectionMonitor);
-      _connectionMonitorThread.IsBackground = true;
-      _connectionMonitorThread.Name = "RemoteControl: TCP Connection Monitor Thread";
-      _connectionMonitorThread.Start();
-    }
-    
-    private static void ConnectionMonitor()
-    {
-      while (true)
-      {
-        _lastConnectionCheck = DateTime.Now;
-        _isRemotingConnected = CheckTcpPort();
-        if (_isRemotingConnected)
-        {
-          _lastOKConnection = DateTime.Now;
-        }
-
-        Thread.Sleep(1000); //check each 1 sec.
-      }
-    }*/
+    #endregion 
 
     #region public constructors
 
@@ -160,62 +121,13 @@ namespace TvControl
 
     #region private static methods
 
-    /*public delegate bool IsRemotingConnectedDelegate();
-
-    private static bool IsRemotingConnected()
-    {
-      try
-      {
-        return CheckTcpPort();
-      }
-      catch (Exception)
-      {
-      }
-      return false;
-    }
-
-    [OneWayAttribute]
-    private static void IsConnectedAsyncCallBack(IAsyncResult ar)
-    {
-      IsRemotingConnectedDelegate rem = (IsRemotingConnectedDelegate)((AsyncResult)ar).AsyncDelegate;
-    }
-
-    private static void CallRemotingAsynch(int timeout)
-    {
-      // Create the delegate.
-      IsRemotingConnectedDelegate dlgt = new IsRemotingConnectedDelegate(IsRemotingConnected);
-
-      // Initiate the asychronous call.
-      AsyncCallback remoteCallback = new AsyncCallback(IsConnectedAsyncCallBack);
-      IAsyncResult ar = dlgt.BeginInvoke(remoteCallback, null);
-
-      Thread.Sleep(0);
-
-      // Wait for the WaitHandle to become signaled.
-      if (!ar.AsyncWaitHandle.WaitOne(timeout))
-      {
-        _isRemotingConnected = false;
-      }
-      else
-      {
-        _isRemotingConnected = dlgt.EndInvoke(ar);
-      }
-    }
-    */
-
+   
     [MethodImpl(MethodImplOptions.Synchronized)]
     private static void RefreshRemotingConnectionStatus()
     {
       Stopwatch benchClock = Stopwatch.StartNew();
-      //bool isRemotingConnectedOld = _isRemotingConnected;
       try
       {
-        /*
-        if (_doingRefreshRemotingConnectionStatus)
-          return;
-
-        _doingRefreshRemotingConnectionStatus = true;
-        */
         if (_tvControl == null)
         {
           _isRemotingConnected = false;
@@ -238,20 +150,12 @@ namespace TvControl
         if (iterations < 1)
         {
           iterations = 1;
-        }
-        else
-        {
-          Log.Info("RemoteControl - RefreshRemotingConnectionStatus iterations : {0}", iterations);
-        }
+        }        
 
         int count = 0;
 
-
         while (!_isRemotingConnected && count < iterations)
         {
-          //CallRemotingAsynch(MAX_TCP_TIMEOUT);
-          //_isRemotingConnected = CheckTcpPort();          
-
           _isRemotingConnected = CheckTcpPort();
 
           count++;
@@ -260,22 +164,6 @@ namespace TvControl
             Thread.Sleep(10);
           }
         }
-
-        /*TimeSpan ts;
-        //if we are disconnected, wait the timeout to see if we reconnect again.
-        while (!_isRemotingConnected)
-        {
-          ts = DateTime.Now - _lastOKConnection;
-          if (!_isRemotingConnected && ts.Milliseconds < timeout) 
-          {
-            Log.Info("Waiting for connection for {0} msec out of max {1} msec", ts.Milliseconds, timeout);
-            Thread.Sleep(100);
-          }
-          else
-          {
-            break;
-          }
-        }*/
       }
       catch (System.Threading.ThreadAbortException)
       {
@@ -394,42 +282,10 @@ namespace TvControl
       }
     }
 
-/*    private static void ConnectCallback(IAsyncResult ar)
-    {
-      try
-      {
-        // Retrieve the socket from the state object.
-        Socket client = (Socket)ar.AsyncState;
-
-        // Complete the connection.
-        client.EndConnect(ar);
-
-        Console.WriteLine("Socket connected to {0}",
-            client.RemoteEndPoint.ToString());
-
-        // Signal that the connection has been made.
-        connectDone.Set();
-      }
-      catch (Exception e)
-      {
-        Console.WriteLine(e.ToString());
-      }
-    }
-
-    public static void Connect(EndPoint remoteEP, Socket client)
-    {
-      client.BeginConnect(remoteEP,
-          new AsyncCallback(ConnectCallback), client);
-
-      connectDone.WaitOne();
-    }
-    */
-
     private static void ConnectCallback(System.IAsyncResult ar) {}
 
     private static bool CheckTcpPort()
     {
-      //AutoResetEvent connectDone = new AutoResetEvent(false);
       Stopwatch benchClock = Stopwatch.StartNew();
 
       TcpClient tcpClient = new TcpClient();
@@ -438,35 +294,11 @@ namespace TvControl
       {
         IAsyncResult result = tcpClient.BeginConnect(
           _hostName,
-          REMOTING_PORT, null
-          /*
-          
-          new AsyncCallback(
-          delegate(IAsyncResult ar)
-          {                                    
-            if (tcpClient != null)
-            {
-              try
-              {
-                if (tcpClient.Connected)
-                {
-                  //tcpClient.EndConnect(ar);
-                  tcpClient.Close();
-                }
-              }              
-              catch(Exception e)
-              {
-              }
-            }
-            connectDone.Set();
-          }
-          )*/,
+          REMOTING_PORT, null,
           tcpClient);
 
-        //bool success = connectDone.WaitOne(MAX_TCP_TIMEOUT, true);        
         bool success = result.AsyncWaitHandle.WaitOne(MAX_TCP_TIMEOUT, true);
         return success;
-        //tcpClient.Connect(_hostName, REMOTING_PORT);                        
       }
       catch (Exception e)
       {
@@ -478,7 +310,6 @@ namespace TvControl
 
         if (tcpClient.Connected)
         {
-          //tcpClient.EndConnect(ar);
           tcpClient.Close();
         }
         Log.Debug("TCP connect took : {0}", benchClock.ElapsedMilliseconds);
@@ -497,9 +328,6 @@ namespace TvControl
     {
       get
       {
-        //lock (syncRoot)
-        //{
-        // System.Diagnostics.Debugger.Launch();                
         try
         {
           if (_tvControl != null)
@@ -574,7 +402,6 @@ namespace TvControl
 
         return null;
       }
-      //}
     }
 
     #endregion
