@@ -945,11 +945,11 @@ namespace TvPlugin
       {
         foreach (GroupMap groupMap in m_currentChannel.ReferringGroupMap())
         {
-          if (groupMap.ReferencedChannelGroup().GroupName == groupname)
+          foundMatchingGroupName = DoesGroupNameContainGroupName(groupMap, groupname);
+          if (foundMatchingGroupName)
           {
-            foundMatchingGroupName = true;
             break;
-          }
+          }          
         }
       }
 
@@ -972,12 +972,23 @@ namespace TvPlugin
       if (!foundMatchingGroupName && m_currentChannel != null && m_currentChannel.ReferringGroupMap().Count > 0)
       {
         GroupMap groupMap =
-          (GroupMap)m_currentChannel.ReferringGroupMap()[m_currentChannel.ReferringGroupMap().Count - 1];
-        m_currentgroup = GetGroupIndex(groupMap.ReferencedChannelGroup().GroupName);
-        if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count) // Group no longer exists?
+          (GroupMap) m_currentChannel.ReferringGroupMap()[m_currentChannel.ReferringGroupMap().Count - 1];
+
+        ChannelGroup group = groupMap.ReferencedChannelGroup();        
+
+        if (group != null)
+        {
+          m_currentgroup = GetGroupIndex(group.GroupName);
+
+          if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count) // Group no longer exists?
+          {
+            m_currentgroup = 0;
+          }
+        }
+        else
         {
           m_currentgroup = 0;
-        }
+        }        
       }
 
       if (m_currentChannel != null)
@@ -1024,11 +1035,11 @@ namespace TvPlugin
 
             foreach (GroupMap groupMap in m_currentChannel.ReferringGroupMap())
             {
-              if (groupMap.ReferencedChannelGroup().GroupName == groupName)
+              foundMatchingGroupName = DoesGroupNameContainGroupName(groupMap, groupName);
+              if (foundMatchingGroupName)
               {
-                foundMatchingGroupName = true;
                 break;
-              }
+              }                        
             }
             if (foundMatchingGroupName)
             {
@@ -1051,6 +1062,18 @@ namespace TvPlugin
         }
         catch (Exception) {}
       }
+    }
+
+    private static bool DoesGroupNameContainGroupName (GroupMap groupMap, string groupname)
+    {
+      bool foundMatchingGroupName = false;
+      ChannelGroup group = groupMap.ReferencedChannelGroup();
+      if (group != null && group.GroupName == groupname)
+      {
+        foundMatchingGroupName = true;
+      }
+
+      return foundMatchingGroupName;
     }
 
     #endregion
