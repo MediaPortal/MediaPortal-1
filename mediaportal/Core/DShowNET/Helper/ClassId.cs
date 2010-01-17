@@ -63,6 +63,7 @@ namespace DShowNET.Helper
     public static readonly Guid InternalScriptRenderer = new Guid("48025243-2D39-11CE-875D-00608CB78066");
 
     public static readonly Guid HaaliGuid = new Guid("55DA30FC-F16B-49FC-BAA5-AE59FC65F82D");
+    public static readonly Guid MPCMatroska = new Guid("149D2E01-C32E-4939-80F6-C07B81015A7A");
 
     /// <summary>Creates an instance of a COM object by class ID.</summary>
     /// <param name="id">The class ID of the component to instantiate.</param>
