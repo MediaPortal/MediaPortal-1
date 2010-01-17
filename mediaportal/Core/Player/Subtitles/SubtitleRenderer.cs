@@ -131,6 +131,7 @@ namespace MediaPortal.Player.Subtitles
     public double timeOut; // NOTE: in seconds
     public int firstScanLine;
     public long id = 0;
+    public Texture texture;
 
     public void Dispose()
     {
@@ -398,27 +399,38 @@ namespace MediaPortal.Player.Subtitles
           subtitle.id = subCounter++;
           //Log.Debug("Received Subtitle : " + subtitle.ToString());
 
-          // get bits of allocated image
-          BitmapData bmData = subtitle.subBitmap.LockBits(new Rectangle(0, 0, sub.bmWidth, sub.bmHeight),
-                                                          ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
-          int newSize = bmData.Stride * sub.bmHeight;
-          int size = sub.bmWidthBytes * sub.bmHeight;
-
-          if (newSize != size)
+          Texture texture = null;
+          try
           {
-            Log.Error("SubtitleRenderer: newSize != size : {0} != {1}", newSize, size);
+            // allocate new texture
+            texture = new Texture(GUIGraphicsContext.DX9Device, (int)subtitle.width, (int)subtitle.height, 1, Usage.Dynamic,
+                                  Format.A8R8G8B8, Pool.Default);
+            int pitch;
+            GraphicsStream a = texture.LockRectangle(0, LockFlags.None, out pitch);
+
+            // Quick copy of content
+            unsafe
+            {
+              byte* to = (byte*)a.InternalDataPointer;
+              byte* from = (byte*)sub.bmBits;
+              for (int y = 0; y < sub.bmHeight; ++y)
+              {
+                for (int x = 0; x < sub.bmWidth * 4; ++x)
+                {
+                  to[pitch * y + x] = from[y * sub.bmWidthBytes + x];
+                }
+              }
+            }
+
+            texture.UnlockRectangle(0);
+            subtitle.texture = texture;
           }
-          // Copy to new bitmap
-          //Marshal.Copy(sub.bmBits,bmData.Scan0, 0, newSize);
-          byte[] srcData = new byte[size];
-
-          // could be done in one copy, but no IntPtr -> IntPtr Marshal.Copy method exists?
-          Marshal.Copy(sub.bmBits, srcData, 0, size);
-          Marshal.Copy(srcData, 0, bmData.Scan0, newSize);
-
-          subtitle.subBitmap.UnlockBits(bmData);
-
-          // subtitle.subBitmap.Save("C:\\users\\petert\\sub" + subtitle.id + ".bmp"); // debug
+          catch (Exception e)
+          {
+            Log.Debug("SubtitleRenderer: Failed to create subtitle surface!");
+            Log.Error(e);
+            return 0;
+          }
 
           AddSubtitle(subtitle);
         }
@@ -497,6 +509,8 @@ namespace MediaPortal.Player.Subtitles
                   activeSubPage);
 
         Subtitle subtitle = new Subtitle();
+        
+        // TODO - RenderText should directly draw to a D3D texture
         subtitle.subBitmap = RenderText(sub.lc);
         subtitle.timeOut = sub.timeOut;
         subtitle.presentTime = sub.timeStamp / 90000.0f + startPos;
@@ -506,6 +520,43 @@ namespace MediaPortal.Player.Subtitles
         subtitle.screenHeight = 576;
         subtitle.screenWidth = 720;
         subtitle.firstScanLine = 0;
+
+        Texture texture = null;
+        try
+        {
+          // allocate new texture
+          texture = new Texture(GUIGraphicsContext.DX9Device, subtitle.subBitmap.Width, 
+            subtitle.subBitmap.Height, 1, Usage.Dynamic, Format.A8R8G8B8, Pool.Default);
+          int pitch;
+          GraphicsStream a = texture.LockRectangle(0, LockFlags.None, out pitch);
+          BitmapData bd = subtitle.subBitmap.LockBits(new Rectangle(0, 0, subtitle.subBitmap.Width, 
+            subtitle.subBitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+          // Quick copy of content
+          unsafe
+          {
+            byte* to = (byte*)a.InternalDataPointer;
+            byte* from = (byte*)bd.Scan0.ToPointer();
+            for (int y = 0; y < bd.Height; ++y)
+            {
+              for (int x = 0; x < bd.Width * 4; ++x)
+              {
+                to[pitch * y + x] = from[y * bd.Stride + x];
+              }
+            }
+          }
+          texture.UnlockRectangle(0);
+          subtitle.subBitmap.UnlockBits(bd);
+          subtitle.subBitmap.Dispose();
+          subtitle.subBitmap = null;
+          subtitle.texture = texture;
+        }
+        catch (Exception e)
+        {
+          Log.Debug("SubtitleRenderer: Failed to create subtitle surface!");
+          Log.Error(e);
+          return;
+        }
 
         AddSubtitle(subtitle);
       }
@@ -563,42 +614,7 @@ namespace MediaPortal.Player.Subtitles
     private void SetSubtitle(Subtitle subtitle)
     {
       Log.Debug("SubtitleRenderer: SetSubtitle : " + subtitle.ToString());
-      Texture texture = null;
-      try
-      {
-        Bitmap bitmap = subtitle.subBitmap;
-        // allocate new texture
-        texture = new Texture(GUIGraphicsContext.DX9Device, bitmap.Width, bitmap.Height, 1, Usage.Dynamic,
-                              Format.A8R8G8B8, Pool.Default);
-        int pitch;
-        GraphicsStream a = texture.LockRectangle(0, LockFlags.None, out pitch);
-        BitmapData bd = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly,
-                                        PixelFormat.Format32bppArgb);
 
-        // Quick copy of content
-        unsafe
-        {
-          byte* to = (byte*)a.InternalDataPointer;
-          byte* from = (byte*)bd.Scan0.ToPointer();
-          for (int y = 0; y < bd.Height; ++y)
-          {
-            for (int x = 0; x < bd.Width * 4; ++x)
-            {
-              to[pitch * y + x] = from[y * bd.Stride + x];
-            }
-          }
-        }
-        texture.UnlockRectangle(0);
-        bitmap.UnlockBits(bd);
-        bitmap.Dispose();
-        bitmap = null;
-      }
-      catch (Exception e)
-      {
-        Log.Debug("SubtitleRenderer: Failed to create subtitle surface!!!");
-        Log.Error(e);
-        return;
-      }
       // dispose of old subtitle
       if (subTexture != null)
       {
@@ -607,7 +623,7 @@ namespace MediaPortal.Player.Subtitles
       }
 
       // set new subtitle
-      subTexture = texture;
+      subTexture = subtitle.texture;
       currentSubtitle = subtitle;
       currentSubtitle.subBitmap.Dispose();
       currentSubtitle.subBitmap = null;
