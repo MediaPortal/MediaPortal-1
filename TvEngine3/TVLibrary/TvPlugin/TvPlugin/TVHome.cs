@@ -2217,13 +2217,16 @@ namespace TvPlugin
         if (scheduleId > 0)
         {
           Schedule schedule = Schedule.Retrieve(scheduleId);
-          if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
+          if (schedule != null)
           {
-            imgRecordingIcon.SetFileName(Thumbs.TvRecordingIcon);
-          }
-          else
-          {
-            imgRecordingIcon.SetFileName(Thumbs.TvRecordingSeriesIcon);
+            if (schedule.ScheduleType == (int) ScheduleRecordingType.Once)
+            {
+              imgRecordingIcon.SetFileName(Thumbs.TvRecordingIcon);
+            }
+            else
+            {
+              imgRecordingIcon.SetFileName(Thumbs.TvRecordingSeriesIcon);
+            }
           }
         }
       }
