@@ -426,6 +426,10 @@ namespace TvPlugin
         ProcessNotifies(preNotifySecs);
         ProcessRecordings(preNotifySecs);
       }
+      catch (Exception ex)
+      {        
+        Log.Error("Tv NotifyManager: Exception at timer_tick {0} st : {1}", ex.ToString(), Environment.StackTrace);
+      }
       finally
       {
         _busy = false;
