@@ -660,18 +660,22 @@ namespace TvPlugin
 
     private static bool CancelEpisode(DateTime cancelStartTime, Schedule scheduleToCancel)
     {
-      //create the canceled schedule to prevent the schedule from restarting again.
-      // we only create cancelled recordings on series type schedules      
       bool episodeCanceled = false;
-      Schedule sched2cancel = Schedule.Retrieve(scheduleToCancel.IdSchedule);
-      bool isOnce = IsScheduleTypeOnce(scheduleToCancel.IdSchedule);      
-      if (!isOnce)
+
+      if (scheduleToCancel != null)
       {
-        DateTime cancel = cancelStartTime;
-        int IdForScheduleToCancel = scheduleToCancel.IdSchedule;
-        CanceledSchedule canceledSchedule = new CanceledSchedule(IdForScheduleToCancel, cancel);
-        canceledSchedule.Persist();
-        episodeCanceled = true;
+        //create the canceled schedule to prevent the schedule from restarting again.
+        // we only create cancelled recordings on series type schedules      
+        Schedule sched2cancel = Schedule.Retrieve(scheduleToCancel.IdSchedule);
+        bool isOnce = IsScheduleTypeOnce(scheduleToCancel.IdSchedule);
+        if (!isOnce)
+        {
+          DateTime cancel = cancelStartTime;
+          int IdForScheduleToCancel = scheduleToCancel.IdSchedule;
+          CanceledSchedule canceledSchedule = new CanceledSchedule(IdForScheduleToCancel, cancel);
+          canceledSchedule.Persist();
+          episodeCanceled = true;
+        }
       }
       return episodeCanceled;
     }

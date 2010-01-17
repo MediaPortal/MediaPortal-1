@@ -1406,26 +1406,12 @@ namespace TvPlugin
       }
 
       dlgYesNo.SetDefaultToYes(false);
-      bool isRec = IsRecordingActual(rec);
-      bool activeRecDeleted = false;
+      bool isRec = IsRecordingActual(rec);      
       TvServer server = new TvServer();
       if (isRec)
       {
-        dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
-        dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730)); //This schedule is recording. If you delete
-        dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731)); //the schedule then the recording is stopped.
-        dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
-        dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-        if (!dlgYesNo.IsConfirmed)
-        {
-          return;
-        }
-
         TvDatabase.Schedule sched = rec.ReferencedSchedule();
-        if (sched != null)
-        {
-          TVUtil.DeleteRecAndSchedQuietly(sched);          
-        }
+        TVUtil.DeleteRecAndSchedWithPrompt(sched);
       }
       else
       {
@@ -1451,26 +1437,37 @@ namespace TvPlugin
         {
           g_Player.Stop();
         }
-      }
+      }    
 
-      // we have to make sure that the recording process on the server has indeed stopped, otherwise we are not able to delete the 
-      // recording file.
-      // we will max. wait 5 sec.
-      if (activeRecDeleted)
+      TryDeleteRecordingAndNotifyUser(rec);
+
+      CacheManager.Clear();
+
+      LoadDirectory();
+      while (_iSelectedItem >= GetItemCount() && _iSelectedItem > 0)
       {
-        DateTime now = DateTime.Now;
-        bool timeOut = false;
-        VirtualCard card;
-        while (server.IsRecording(rec.ReferencedChannel().Name, out card) && !timeOut)
+        _iSelectedItem--;
+      }
+      GUIControl.SelectItemControl(GetID, facadeView.GetID, _iSelectedItem);
+    }
+
+    private void TryDeleteRecordingAndNotifyUser(Recording rec)
+    {
+      TvServer server = new TvServer();
+      int timeout = 0;
+      bool deleteRecording = false;      
+
+      while (!deleteRecording && timeout < 5)      
+      {
+        deleteRecording = server.DeleteRecording(rec.IdRecording);        
+        if (!deleteRecording)
         {
-          TimeSpan ts = (DateTime.Now - now);
-          timeOut = ts.TotalSeconds > 5; //5 sec, then timeout
+          timeout++;          
           Thread.Sleep(1000);
-        }
+        }        
       }
 
-      //somehow we were unable to delete the file, notify the user.
-      if (!server.DeleteRecording(rec.IdRecording))
+      if (!deleteRecording)
       {
         GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
 
@@ -1482,15 +1479,6 @@ namespace TvPlugin
           dlgOk.DoModal(GetID);
         }
       }
-
-      CacheManager.Clear();
-
-      LoadDirectory();
-      while (_iSelectedItem >= GetItemCount() && _iSelectedItem > 0)
-      {
-        _iSelectedItem--;
-      }
-      GUIControl.SelectItemControl(GetID, facadeView.GetID, _iSelectedItem);
     }
 
     private void OnCleanup()
