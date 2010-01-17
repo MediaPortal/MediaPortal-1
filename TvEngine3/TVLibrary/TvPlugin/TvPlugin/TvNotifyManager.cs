@@ -130,8 +130,7 @@ namespace TvPlugin
           break;
         }
         else
-        {
-          //stoppedRec = Recording.Retrieve(actRec.IdRecording); //refresh from db
+        {          
           stoppedRec = Recording.Refresh(actRec.IdRecording);
         }
       }

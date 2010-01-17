@@ -470,9 +470,12 @@ namespace TvDatabase
       }
       Key key = new Key(typeof (Recording), true, "idRecording", id);
 
-      Recording rec = Broker.RetrieveInstance<Recording>(key);
-      Broker.Refresh(rec);
+      Recording rec = Broker.TryRetrieveInstance<Recording>(key);
 
+      if (rec != null)
+      {
+        Broker.Refresh(rec);
+      }
       return rec;
     }
 
