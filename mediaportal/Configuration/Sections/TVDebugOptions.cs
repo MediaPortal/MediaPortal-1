@@ -52,7 +52,7 @@ namespace MediaPortal.Configuration.Sections
 
 
     public TVDebugOptions()
-      : this("Debug Options") {}
+      : this("Debug Options") { }
 
     public TVDebugOptions(string name)
       : base(name)
@@ -95,7 +95,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources =
-        new System.ComponentModel.ComponentResourceManager(typeof (TVDebugOptions));
+        new System.ComponentModel.ComponentResourceManager(typeof(TVDebugOptions));
       this.groupBoxSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpDoNotAllowSlowMotionDuringZappingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpEnableRecordingFromTimeshiftCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -312,20 +312,20 @@ namespace MediaPortal.Configuration.Sections
 
       singleSeat = Common.IsSingleSeat();
 
+      bool rtsp;
       using (Settings xmlreader = new MPSettings())
       {
         textBoxRecording.Text = xmlreader.GetValueAsString("tvservice", "recordingpath", "");
         textBoxTimeshifting.Text = xmlreader.GetValueAsString("tvservice", "timeshiftingpath", "");
-        bool rtsp = xmlreader.GetValueAsBool("tvservice", "usertsp", !singleSeat);
+        rtsp = xmlreader.GetValueAsBool("tvservice", "usertsp", !singleSeat);
         mpUseRtspCheckBox.Checked = singleSeat ? rtsp : !rtsp;
       }
       mpUseRtspCheckBox.Text = singleSeat ? "Single seat setup: force RTSP usage." : "Multi seat setup: use UNC paths.";
-      mpRtspPathsGroupBox.Visible = !singleSeat;
+      mpRtspPathsGroupBox.Visible = (!singleSeat && !rtsp);
 
       mpEnableRecordingFromTimeshiftCheckBox.Checked = DebugSettings.EnableRecordingFromTimeshift;
       mpDoNotAllowSlowMotionDuringZappingCheckBox.Checked = DebugSettings.DoNotAllowSlowMotionDuringZapping;
     }
-
 
     public override void SaveSettings()
     {
