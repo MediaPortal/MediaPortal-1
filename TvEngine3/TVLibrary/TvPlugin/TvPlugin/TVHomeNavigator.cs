@@ -542,6 +542,7 @@ namespace TvPlugin
       Log.Debug("ChannelNavigator.ZapToChannel {0} - zapdelay {1}", channel.DisplayName, useZapDelay);
       TVHome.UserChannelChanged = true;
       m_zapchannel = channel;
+      m_zapchannel.CurrentGroup = null;
 
       if (useZapDelay)
       {
@@ -688,6 +689,7 @@ namespace TvPlugin
 
       TVHome.UserChannelChanged = true;
       m_zapchannel = chan;
+      m_zapchannel.CurrentGroup = null;
       m_zapChannelNr = -1;
       Log.Info("Navigator:ZapNext {0}->{1}", currentChan.DisplayName, m_zapchannel.DisplayName);
       if (GUIWindowManager.ActiveWindow == (int)(int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
@@ -743,6 +745,7 @@ namespace TvPlugin
 
       TVHome.UserChannelChanged = true;
       m_zapchannel = chan;
+      m_zapchannel.CurrentGroup = null;
       m_zapChannelNr = -1;
       Log.Info("Navigator:ZapPrevious {0}->{1}",
                currentChan.DisplayName, m_zapchannel.DisplayName);
