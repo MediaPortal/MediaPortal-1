@@ -449,6 +449,7 @@ void CDeMultiplexer::FlushVideo()
   }
 
   m_p.Free();
+  m_lastStart = 0;
   m_pl.RemoveAll();
   m_fHasAccessUnitDelimiters = false;
 
@@ -1098,6 +1099,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
     m_p.Attach(DNew Packet());
     m_p->bDiscontinuity = false ;
     m_p->rtStart = Packet::INVALID_TIME;
+    m_lastStart = 0;
   }
   
   if (header.PayloadUnitStart)
@@ -1171,8 +1173,9 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
             m_lastVideoPTS=pts;
           }
         }
+        m_lastStart -= 9+start[8];
         m_p->RemoveAt(m_WaitHeaderPES, 9+start[8]) ;
-      
+
         m_p->rtStart = pts.IsValid ? (pts.PcrReferenceBase) : Packet::INVALID_TIME;
         m_WaitHeaderPES = -1 ;
       }
@@ -1189,10 +1192,18 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
     while(start <= end-4)
     {
       BYTE* next = start+1;
+      if (next < m_p->GetData() + m_lastStart)
+      {
+        next = m_p->GetData() + m_lastStart;
+      }
 
       while(next <= end-4 && *(DWORD*)next != 0x01000000) next++;
 
-      if(next >= end-4) break ;
+      if(next >= end-4)
+      {
+        m_lastStart = next - m_p->GetData();
+        break;
+      }
         
       int size = next - start;
 
@@ -1329,10 +1340,12 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
       m_pl.AddTail(p2);
 
       start = next;
+      m_lastStart = start - m_p->GetData() + 1;
     }
       
     if(start > m_p->GetData())
     {
+      m_lastStart -= (start - m_p->GetData());
       m_p->RemoveAt(0, start - m_p->GetData());
     }
   }

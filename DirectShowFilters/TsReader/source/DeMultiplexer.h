@@ -230,4 +230,5 @@ private:
   CAutoPtr<Packet> m_p;
   CAutoPtrList<Packet> m_pl;
   bool m_fHasAccessUnitDelimiters;
+  DWORD m_lastStart;
 };
