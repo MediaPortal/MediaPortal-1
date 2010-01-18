@@ -51,6 +51,7 @@ extern int ShowBuffer;
 
 #define DNew new // For MPC-HC source compatibility
 
+/*
 class CH246IFrameScanner
 {
 private:
@@ -125,6 +126,7 @@ public:
     }
   }
 };
+*/
 
 CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
 :m_duration(duration)
@@ -1240,14 +1242,14 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
           CAutoPtr<Packet> p(DNew Packet());
           p = m_pl.RemoveHead();
 //          LogDebug("Output NALU Type: %d (%d)", p->GetAt(4)&0x1f,p->GetCount());
-          CH246IFrameScanner iFrameScanner;
-          iFrameScanner.ProcessNALU(p);
+          //CH246IFrameScanner iFrameScanner;
+          //iFrameScanner.ProcessNALU(p);
     
           while(m_pl.GetCount())
           {
             CAutoPtr<Packet> p2 = m_pl.RemoveHead();
-            if (!iFrameScanner.SeenEnough())
-              iFrameScanner.ProcessNALU(p2);
+            //if (!iFrameScanner.SeenEnough())
+            //  iFrameScanner.ProcessNALU(p2);
 //          LogDebug("Output NALU Type: %d (%d)", p2->GetAt(4)&0x1f,p2->GetCount());
             p->Append(*p2);
           }
