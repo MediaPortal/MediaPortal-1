@@ -2756,7 +2756,7 @@ namespace TvPlugin
         {
           ShowZapOSD(message);
         }
-        //else
+        else
         {
           _zapWindow.UpdateChannelInfo();
           _zapTimeOutTimer = DateTime.Now;
