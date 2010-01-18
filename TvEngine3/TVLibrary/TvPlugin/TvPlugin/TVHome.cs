@@ -3258,15 +3258,27 @@ namespace TvPlugin
 
         // we might have a situation on the server where card has changed in order to complete a 
         // channel change. - lets check for this.
-        // if this has happened, we need to re-create graph.
         if (newCardId != card.Id || Card.Id != card.Id)
         {
-          _status.Set(LiveTvStatus.CardChange);
-          _status.Reset(LiveTvStatus.WasPlaying);
+          // 2 cases:
+          // if the timeshift switched from card 1 -> 2 (error) -> 1
+          if (newCardId != card.Id)
+          {
+            // reset the card change flag, otherwise the StartPlay() would cause a step back to same ts buffer file
+            _status.Reset(LiveTvStatus.CardChange);
+            // after CI menu was moved to new card, now assign it to the fallback card after change
+            RegisterCiMenu(card.Id);
+          }
+          // if the timeshift switched from card 1 -> 2 (ok) 
+          if (Card.Id != card.Id)
+          {
+            // expected card change successful, set card change flag so new ts buffer file will be started
+            _status.Set(LiveTvStatus.CardChange);
+            _status.Reset(LiveTvStatus.WasPlaying);
+          }
         }
         else
         {
-          // check if after starttimeshift the active card is same as before (tvserver can do "failover" to another card)
           _status.Reset(LiveTvStatus.CardChange);
           _status.Set(LiveTvStatus.SeekToEnd);
         }
