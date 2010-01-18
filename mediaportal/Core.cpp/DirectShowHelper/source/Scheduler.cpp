@@ -110,13 +110,13 @@ UINT CALLBACK SchedulerThread(void* param)
     timePerFrame = p->pPresenter->GetFrameDuration();
     if (hnsSampleTime > 0)
     {
-      // wait for 3/4 sample time or 3/4 of frame duration depending on what is smaller
-      delay = min((hnsSampleTime/100*75), (timePerFrame/100*75));
+      // wait for 1/3 sample time or 1/3 of frame duration depending on what is smaller
+      delay = min((hnsSampleTime/3), (timePerFrame/3));
     }
     else 
     {
-      // workaround for unknown bugs
-      delay = timePerFrame/100*25;
+      // do not schedule late frames
+      delay = 0;
     }
     if (delay >= 10000)
     {
@@ -129,7 +129,8 @@ UINT CALLBACK SchedulerThread(void* param)
     }
     else 
     {
-      p->eHasWork.Set();
+      //p->eHasWork.Set();
+      p->pPresenter->CheckForScheduledSample(&hnsSampleTime, delay);
     }
     p->csLock.Unlock();
     while (!p->eHasWork.Wait());

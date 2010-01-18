@@ -1078,8 +1078,8 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(REFERENCE_TIME *pNextSampl
     }
     LOG_TRACE("Time to schedule: %I64d", *pNextSampleTime);
 
-    // If we are ahead up to one quarter of a frame present sample as the vsync will be waited for anyway
-    if (*pNextSampleTime > m_rtTimePerFrame/4)
+    // If we are ahead up to 1/3 + 1ms of a frame present sample as the vsync will be waited for anyway
+    if (*pNextSampleTime > (m_rtTimePerFrame/3)+10000)
     {
       break;
     }
@@ -1101,8 +1101,6 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(REFERENCE_TIME *pNextSampl
     else 
     {
       CHECK_HR(PresentSample(pSample), "PresentSample failed");
-      // EXPERIMENTAL: give other threads some time to breath
-      Sleep(3);
     }
     *pNextSampleTime = 0;
     ReturnSample(pSample, TRUE);
@@ -1119,7 +1117,7 @@ void MPEVRCustomPresenter::StartWorkers()
     return;
   }
   StartThread(&m_hScheduler, &m_schedulerParams, SchedulerThread, &m_uSchedulerThreadId, THREAD_PRIORITY_TIME_CRITICAL);
-  StartThread(&m_hWorker, &m_workerParams, WorkerThread, &m_uWorkerThreadId, THREAD_PRIORITY_BELOW_NORMAL);
+  StartThread(&m_hWorker, &m_workerParams, WorkerThread, &m_uWorkerThreadId, THREAD_PRIORITY_ABOVE_NORMAL);
   m_bSchedulerRunning = TRUE;
 }
 
