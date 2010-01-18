@@ -109,6 +109,7 @@ public class MediaPortalApp : D3DApp, IRender
   private static bool _mpCrashed = false;
   private static int _startupDelay = 0;
   private static bool _waitForTvServer = false;
+  private static DateTime _lastOnresume = DateTime.Now;
 #if AUTOUPDATE
   string m_strNewVersion = "";
   bool m_bNewVersionAvailable = false;
@@ -1324,6 +1325,7 @@ public class MediaPortalApp : D3DApp, IRender
       AutoPlay.StartListening();
       _onResumeRunning = false;
       ignoreContextMenuAction = false;
+      _lastOnresume = DateTime.Now;
       Log.Info("Main: OnResume - Done");
     }
   }
@@ -2387,29 +2389,14 @@ public class MediaPortalApp : D3DApp, IRender
           {
             //reboot
             Log.Info("Main: Reboot requested");
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
-            switch (action.wID)
+            bool okToChangePowermode = (action.fAmount1 == 1);
+
+            if (!okToChangePowermode)
             {
-              case Action.ActionType.ACTION_REBOOT:
-                msg.Param1 = 630;
-                break;
-
-              case Action.ActionType.ACTION_POWER_OFF:
-                msg.Param1 = 1600;
-                break;
-
-              case Action.ActionType.ACTION_SUSPEND:
-                msg.Param1 = 1601;
-                break;
-
-              case Action.ActionType.ACTION_HIBERNATE:
-                msg.Param1 = 1602;
-                break;
+              okToChangePowermode = PromptUserBeforeChangingPowermode(action);
             }
-            msg.Param2 = 0;
-            msg.Param3 = 0;
-            GUIWindowManager.SendMessage(msg);
-            if (msg.Param1 == 1)
+                        
+            if (okToChangePowermode)
             {
               switch (action.wID)
               {
@@ -2427,13 +2414,19 @@ public class MediaPortalApp : D3DApp, IRender
                   break;
 
                 case Action.ActionType.ACTION_SUSPEND:
-                  restartOptions = RestartOptions.Suspend;
-                  Utils.SuspendSystem(false);
+                  if (IsSuspendOrHibernationAllowed())
+                  {
+                    restartOptions = RestartOptions.Suspend;
+                    Utils.SuspendSystem(false); 
+                  }                  
                   break;
 
                 case Action.ActionType.ACTION_HIBERNATE:
-                  restartOptions = RestartOptions.Hibernate;
-                  Utils.HibernateSystem(false);
+                  if (IsSuspendOrHibernationAllowed())                  
+                  {
+                    restartOptions = RestartOptions.Hibernate;
+                    Utils.HibernateSystem(false); 
+                  }                  
                   break;
               }
             }
@@ -2672,6 +2665,40 @@ public class MediaPortalApp : D3DApp, IRender
       throw new Exception("exception occured", ex);
 #endif
     }
+  }
+
+  private bool PromptUserBeforeChangingPowermode(Action action) 
+  {    
+    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
+    switch (action.wID)
+    {
+      case Action.ActionType.ACTION_REBOOT:
+        msg.Param1 = 630;
+        break;
+
+      case Action.ActionType.ACTION_POWER_OFF:
+        msg.Param1 = 1600;
+        break;
+
+      case Action.ActionType.ACTION_SUSPEND:
+        msg.Param1 = 1601;
+        break;
+
+      case Action.ActionType.ACTION_HIBERNATE:
+        msg.Param1 = 1602;
+        break;
+    }
+    msg.Param2 = 0;
+    msg.Param3 = 0;
+    GUIWindowManager.SendMessage(msg);
+
+    return (msg.Param1 == 1);
+  }
+
+  private bool IsSuspendOrHibernationAllowed() 
+  {
+    TimeSpan ts = DateTime.Now - _lastOnresume;
+    return (ts.TotalSeconds > 5);    
   }
 
   #region keypress handlers

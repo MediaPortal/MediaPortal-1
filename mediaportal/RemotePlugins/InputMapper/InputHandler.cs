@@ -437,22 +437,6 @@ namespace MediaPortal.InputDevices
           if ((map.CmdProperty == "STANDBY") || (map.CmdProperty == "HIBERNATE"))
           {
             GUIGraphicsContext.ResetLastActivity();
-
-            //Stop all media before suspending or hibernating
-            if (g_Player.Playing)
-            {
-              GUIWindowManager.SendThreadCallbackAndWait(StopPlayback, 0, 0, null);
-            }
-
-            // this is all handled in mediaportal.cs - OnSuspend          
-            /*
-            if (_basicHome)
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
-            else
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)GUIWindow.Window.WINDOW_HOME, 0, null);
-            
-            GUIWindowManager.SendThreadMessage(msg);             
-            */
           }
 
           switch (map.CmdProperty)
@@ -470,16 +454,12 @@ namespace MediaPortal.InputDevices
               GUIGraphicsContext.OnAction(action);
               break;
             case "STANDBY":
-              // we need a slow standby (force=false), in order to have the onsuspend method being called on mediportal.cs
-              // this is needed in order to have "ShowLastActiveModule" working correctly.
-              // also using force=true results in a silent non critical D3DERR_DEVICELOST exception when resuming from powerstate.
-              WindowsController.ExitWindows(RestartOptions.Suspend, false);
+              action = new Action(Action.ActionType.ACTION_SUSPEND, 1, 0); //1 = ignore prompt
+              GUIGraphicsContext.OnAction(action);              
               break;
             case "HIBERNATE":
-              // we need a slow hibernation (force=false), in order to have the onsuspend method being called on mediportal.cs
-              // this is needed in order to have "ShowLastActiveModule" working correctly.
-              // also using force=true results in a silent non critical D3DERR_DEVICELOST exception when resuming from powerstate.
-              WindowsController.ExitWindows(RestartOptions.Hibernate, false);
+              action = new Action(Action.ActionType.ACTION_HIBERNATE, 1, 0); //1 = ignore prompt
+              GUIGraphicsContext.OnAction(action);                            
               break;
           }
           break;
