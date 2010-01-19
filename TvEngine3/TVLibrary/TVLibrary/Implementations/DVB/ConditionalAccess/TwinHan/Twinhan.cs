@@ -441,28 +441,6 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("Twinhan:  GetPmtReply() returned {0} bytes", back);
         DVB_MMI.DumpBinary(_ptrPmt, 0, back);
         //Marshal.ReleaseComObject(propertySet);
-        /*
-        try
-        {
-          System.IO.File.Delete("c:\\pmtreply.dat");
-        }
-        catch (Exception ex)
-        {
-          Log.Log.WriteFile("Error while deleting file: ", ex);
-        }
-        using (System.IO.FileStream stream = new System.IO.FileStream("c:\\pmtreply.dat", System.IO.FileMode.OpenOrCreate))
-        {
-          using (System.IO.BinaryWriter writer = new System.IO.BinaryWriter(stream))
-          {
-            for (int i = 0; i < 1024; ++i)
-            {
-              byte k = Marshal.ReadByte(_ptrPmt, i);
-              writer.Write(k);
-            }
-            writer.Flush();
-          }
-        }
-        */
       }
       return "";
     }
@@ -689,6 +667,12 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     private void StartCiHandlerThread()
     {
+      // Check if the polling thread is still alive. It will be terminated in case of errors, i.e. when CI callback failed.
+      if (CiMenuThread != null && !CiMenuThread.IsAlive)
+      {
+        CiMenuThread.Abort();
+        CiMenuThread = null;
+      }
       if (CiMenuThread == null)
       {
         Log.Log.Debug("TwinHan: Starting new CI handler thread");
@@ -782,10 +766,11 @@ namespace TvLibrary.Implementations.DVB
       MMIInfoStruct MMI = new MMIInfoStruct();
       if (Cancel == true)
       {
-        MMI.Answer = 0; // 0 means back
+        SelectMenu(0); // 0 means back
       }
       else
       {
+        MMI.Answer = 3;
         MMI.AnswerStr = Answer;
       }
       return SendMMI(MMI);
@@ -890,34 +875,33 @@ namespace TvLibrary.Implementations.DVB
                 Log.Log.Debug("Prompt:      {0}", MMI.Prompt);
                 Log.Log.Debug("AnswerLength:{0}", MMI.Answer_Text_Length);
                 Log.Log.Debug("Blind_Answer:{0}", MMI.Blind_Answer);
-                if (MMI.EnqFlag != 0)
-                {
-                  if (m_ciMenuCallback != null)
-                  {
-                    m_ciMenuCallback.OnCiRequest((MMI.Blind_Answer == 1), (uint)MMI.Answer_Text_Length, MMI.Prompt);
-                  }
-                }
+
                 // which types do we get???
-                if (MMI.Type == 1)
+                switch (MMI.Type)
                 {
-                  if (m_ciMenuCallback != null)
-                  {
-                    m_ciMenuCallback.OnCiMenu(MMI.Header, MMI.SubHeader, MMI.BottomLine, MMI.ItemCount);
-                    for (int m = 0; m < MMI.ItemCount; m++)
+                  case 0:
+                    m_ciMenuCallback.OnCiCloseDisplay(0);
+                    break;
+                  case 1:
+                    if (m_ciMenuCallback != null)
                     {
-                      // choice number start with 0
-                      m_ciMenuCallback.OnCiMenuChoice(m, MMI.MenuItems[m].MenuItem);
+                      m_ciMenuCallback.OnCiMenu(MMI.Header, MMI.SubHeader, MMI.BottomLine, MMI.ItemCount);
+                      for (int m = 0; m < MMI.ItemCount; m++)
+                      {
+                        // choice number start with 0
+                        m_ciMenuCallback.OnCiMenuChoice(m, MMI.MenuItems[m].MenuItem);
+                      }
                     }
-                    //if (MMI.ItemCount > 0) m_ciMenuCallback.OnCiMenuChoice(0, MMI.MenuItem1);
-                    //if (MMI.ItemCount > 1) m_ciMenuCallback.OnCiMenuChoice(1, MMI.MenuItem2);
-                    //if (MMI.ItemCount > 2) m_ciMenuCallback.OnCiMenuChoice(2, MMI.MenuItem3);
-                    //if (MMI.ItemCount > 3) m_ciMenuCallback.OnCiMenuChoice(3, MMI.MenuItem4);
-                    //if (MMI.ItemCount > 4) m_ciMenuCallback.OnCiMenuChoice(4, MMI.MenuItem5);
-                    //if (MMI.ItemCount > 5) m_ciMenuCallback.OnCiMenuChoice(5, MMI.MenuItem6);
-                    //if (MMI.ItemCount > 6) m_ciMenuCallback.OnCiMenuChoice(6, MMI.MenuItem7);
-                    //if (MMI.ItemCount > 7) m_ciMenuCallback.OnCiMenuChoice(7, MMI.MenuItem8);
-                    //if (MMI.ItemCount > 8) m_ciMenuCallback.OnCiMenuChoice(8, MMI.MenuItem9);
-                  }
+                    break;
+                  case 3:
+                    if (MMI.EnqFlag != 0)
+                    {
+                      if (m_ciMenuCallback != null)
+                      {
+                        m_ciMenuCallback.OnCiRequest((MMI.Blind_Answer == 1), (uint)MMI.Answer_Text_Length, MMI.Prompt);
+                      }
+                    }
+                    break;
                 }
               }
               break;

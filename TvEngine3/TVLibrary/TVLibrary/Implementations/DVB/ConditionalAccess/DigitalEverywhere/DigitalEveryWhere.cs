@@ -1143,6 +1143,12 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     private void StartCiHandlerThread()
     {
+      // Check if the polling thread is still alive. It will be terminated in case of errors, i.e. when CI callback failed.
+      if (CiMenuThread != null && !CiMenuThread.IsAlive)
+      {
+        CiMenuThread.Abort();
+        CiMenuThread = null;
+      }
       if (CiMenuThread == null)
       {
         Log.Log.Debug("FireDTV: Starting new CI handler thread");
