@@ -36,7 +36,7 @@
     <String id="60">Wachten op starten van TV service...</String>
     <String id="61">Wacht {0} seconde(n) tot opstarten...</String>
     <String id="62">Initialiseren van DirectX...</String>
-    <String id="63">Initialiseren van invoer apparaten...		</String>
+    <String id="63">Initialiseren van invoer apparaten...</String>
     <String id="64">Opstarten plugins...</String>
     <String id="65">Laden van keymap.xml...</String>
     <String id="66">Laden van teksten...</String>
@@ -44,7 +44,7 @@
     <String id="68">Laden van lettertypen...</String>
     <String id="69">Laden van skin ({0})...</String>
     <String id="70">Laden van Windows plugin...</String>
-    <String id="71">Initaliseren van Windows manager...</String>
+    <String id="71">Initialiseren van Windows manager...</String>
     <String id="100">Weergave: Pictogrammen</String>
     <String id="101">Weergave: Lijst</String>
     <String id="102">Scannen</String>
@@ -951,7 +951,7 @@
     <String id="1103">Nummer aan het importeren</String>
     <String id="1104">over</String>
     <String id="1105">Nummers aan het importeren</String>
-    <String id="1110">Nieuwe opname overlaan</String>
+    <String id="1110">Nieuwe opname overslaan</String>
     <String id="1111">Tegenstrijdige opname(s) overslaan</String>
     <String id="1112">Tegenstrijdige opname behouden</String>
     <String id="1113">Tegenstrijdige aflevering(en) overslaan</String>
@@ -1322,7 +1322,7 @@
     <String id="5912">Vorige week</String>
     <String id="5913">Deze week</String>
     <String id="5914">Volgende week</String>
-    <String id="5915">Nog geen recencies</String>
+    <String id="5915">Nog geen recensies</String>
     <String id="5916">Geen trailers gevonden.</String>
     <String id="5917">Duitse trailers</String>
     <String id="5918">Television Suisse Romande VOD</String>
