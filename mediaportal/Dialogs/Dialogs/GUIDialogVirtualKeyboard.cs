@@ -365,13 +365,10 @@ namespace MediaPortal.Dialogs
     public bool _password;
     public GUIImage image;
     public bool _useSearchLayout;
-
     // added by Agree
     public int _searchKind; // 0=Starts with, 1=Contains, 2=Ends with
     //
-
     public ArrayList _keyboardList = new ArrayList(); // list of rows = keyboard
-
     public float SkinRatio;
 
     #endregion
@@ -745,6 +742,9 @@ namespace MediaPortal.Dialogs
 
     public override void Render(float timePassed)
     {
+      if (!_isVisible) //not yet ready for rendering
+        return;
+
       lock (this)
       {
         GUIGraphicsContext.SetScalingResolution(0, 0, false);
@@ -1575,6 +1575,9 @@ namespace MediaPortal.Dialogs
 
     protected void DrawTextBox(float timePassed, int x1, int y1, int x2, int y2)
     {
+      if (image == null) // avoid nullref
+        return;
+
       //long lColor=0xaaffffff;
 
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1, ref y1);
@@ -1597,6 +1600,9 @@ namespace MediaPortal.Dialogs
 
     protected void DrawText(int x, int y)
     {
+      if (_fontSearchText == null) // avoid nullref
+        return;
+
       GUIGraphicsContext.ScalePosToScreenResolution(ref x, ref y);
       string textLine = _textEntered;
       if (_password)
