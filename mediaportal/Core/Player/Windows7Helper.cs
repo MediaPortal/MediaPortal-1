@@ -229,42 +229,42 @@ namespace MediaPortal.Player
           numerator = 24000;
           denominator = 1001;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-          break;
+        break;
         case 24000:
           numerator = 24000;
           denominator = 1000;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-          break;
+        break;
         case 25000:
           numerator = 25000;
           denominator = 1000;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-          break;
+        break;
         case 30000:
           numerator = 30000;
           denominator = 1000;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-          break;
+        break;
         case 50000:
           numerator = 50000;
           denominator = 1000;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-          break;
+        break;
         case 59940:
           numerator = 60000;
           denominator = 1001;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-          break;
+        break;
         case 60000:
           numerator = 60000;
           denominator = 1000;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-          break;
+        break;
         default:
-          numerator = (uint)refreshRate;
+          numerator = (uint)refreshRate/1000;
           denominator = 1;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
-          break;
+        break;
       }
 
       // set refresh rate parameters in display config

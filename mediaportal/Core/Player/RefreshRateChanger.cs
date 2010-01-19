@@ -30,6 +30,8 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Microsoft.DirectX.Direct3D;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows.Forms;
 
 #endregion
 
@@ -184,6 +186,10 @@ namespace MediaPortal.Player
                               [In] ChangeDisplaySettings_Flags dwFlags, [In] IntPtr lParam);
 
 
+    [DllImport("dwmapi.dll")]
+    public static extern int DwmIsCompositionEnabled(ref int pfEnabled);
+
+
     public static void Win32_SetRefreshRate(uint monitorIndex, uint refreshRate)
     {
       Win32.DISPLAY_DEVICE displayDevice = new Win32.DISPLAY_DEVICE();
@@ -199,6 +205,7 @@ namespace MediaPortal.Player
                                                                              Win32.ChangeDisplaySettings_Flags.None,
                                                                              IntPtr.Zero);
         Log.Debug("CycleRefreshRate: result {0} for refresh rate change {1}Hz", r, refreshRate);
+        FixDwm();
       }
       else
       {
@@ -217,6 +224,7 @@ namespace MediaPortal.Player
           double newRefreshRate = W7RefreshRateHelper.GetRefreshRate(monitorIndex);
           Log.Debug("CycleRefreshRate: successfully changed refresh rate to {0}Hz ({1}Hz requested)",
                     newRefreshRate.ToString("#.###"), refreshRate);
+          FixDwm();
         }
         else
         {
@@ -226,6 +234,54 @@ namespace MediaPortal.Player
       else
       {
         Win32_SetRefreshRate(monitorIndex, (uint)refreshRate);
+      }
+    }
+
+    // Fix for Mantis 0002608
+    public class SuicideForm : Form
+    {
+      public SuicideForm()
+      {
+        Thread.Sleep(500);
+        this.Activated += new EventHandler(SuicideForm_Activated);
+        this.Opacity = 0;
+      }
+
+      private void SuicideForm_Activated(Object sender, EventArgs e)
+      {
+        Thread.Sleep(1000);
+        this.Close();
+      }
+    }
+
+
+    public static void KillFormThread()
+    {
+      SuicideForm suicideForm = new SuicideForm();
+      suicideForm.Show();
+      suicideForm.Focus();
+    }
+
+
+    public static void FixDwm()
+    {
+      try
+      {
+        int dwmEnabled = 0;
+        DwmIsCompositionEnabled(ref dwmEnabled);
+
+        if (dwmEnabled > 0)
+        {
+          Log.Debug("CycleRefresh: DWM Detected, performing shenanigans");
+
+          ThreadStart starter = delegate { KillFormThread(); };
+          Thread killFormThread = new Thread(starter);
+          killFormThread.IsBackground = true;
+          killFormThread.Start();
+        }
+      }
+      catch
+      {
       }
     }
   }
@@ -633,6 +689,7 @@ namespace MediaPortal.Player
         }
         else if (RunExternalJob(newExtCmd, strFile, type, deviceReset) && newRR != currentRR)
         {
+          Win32.FixDwm();
           NotifyRefreshRateChanged(newRRDescription, (strFile.Length > 0));
         }
       }
