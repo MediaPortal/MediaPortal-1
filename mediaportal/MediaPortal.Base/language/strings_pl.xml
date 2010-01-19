@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="Polish" characters="380">
   <Section name="unmapped">
     <String id="0" prefix="Moje ">Programy</String>
@@ -7,10 +7,10 @@
     <String id="3" prefix="Moje ">Wideo</String>
     <String id="4">Program telewizyjny</String>
     <String id="5">Ustawienia</String>
-	<String id="6">Brakująca etykieta!</String>
+    <String id="6">Brakująca etykieta!</String>
     <String id="7" prefix="Moje ">Pliki</String>
     <String id="8" prefix="Moja ">Pogoda</String>
-    <String id="9" prefix="Moje ">Wiadmości</String>
+    <String id="9" prefix="Moje ">Wiadomości</String>
     <String id="10" prefix="Moje ">Przepisy</String>
     <String id="11">Poniedziałek</String>
     <String id="12">Wtorek</String>
@@ -285,7 +285,7 @@
     <String id="351">Wyłącz</String>
     <String id="352">Dim</String>
     <String id="353">Czarny</String>
-	<String id="354">Ścieżki Matrycy</String>
+    <String id="354">Ścieżki Matrycy</String>
     <String id="355">Włącz wygaszacz po</String>
     <String id="356">Tryb wygaszacza</String>
     <String id="357">Wyłącz komputer po</String>
@@ -448,44 +448,45 @@
     <String id="517">Błąd krytyczny, operacja została przerwana</String>
     <String id="518">Czy usunąć ten utwór?</String>
     <String id="519">Napisy wyłączone</String>
+    <String id="528">Artyści albumów</String>
     <String id="529">Widok: Lista Dużych Ikon</String>
     <String id="530">Wykryto dysk z obrazami, czy chcesz go otworzyć?</String>
     <String id="531">Wykryto dysk z filmem, czy chcesz go otworzyć?</String>
     <String id="532">Wykryto dysk z muzyką, czy chcesz go otworzyć?</String>
     <String id="533">Przewodnik po stacjach</String>
     <String id="534">Umiarkowany</String>
-	<String id="535">N</String>
-    <String id="536">E</String>
-    <String id="537">S</String>
-    <String id="538">W</String>
-    <String id="539">NE</String>
-    <String id="540">SE</String>
-    <String id="541">SW</String>
-    <String id="542">NW</String>
+    <String id="535">Pn.</String>
+    <String id="536">Wsch.</String>
+    <String id="537">Pd.</String>
+    <String id="538">Zach.</String>
+    <String id="539">Pn.-wsch.</String>
+    <String id="540">Pd.-wsch.</String>
+    <String id="541">Pd.-zach.</String>
+    <String id="542">Pn.-zach.</String>
     <String id="543">Burza z piorunami</String>
-    <String id="544">NNE</String>
-    <String id="545">ENE</String>
-    <String id="546">ESE</String>
-    <String id="547">SSE</String>
-    <String id="548">SSW</String>
-    <String id="549">WSW</String>
+    <String id="544">Pn. pn.-wsch.</String>
+    <String id="545">Wsch. pn.-wsch.</String>
+    <String id="546">Wsch. pd.-wsch.</String>
+    <String id="547">Pd. pd.-wsch.</String>
+    <String id="548">Pd. pd.-zach.</String>
+    <String id="549">Zach. pd.-zach.</String>
     <String id="550">Obetnij</String>
-    <String id="551">WNW</String>
-    <String id="552">NNW</String>
+    <String id="551">Zach. pn.-zach.</String>
+    <String id="552">Pn. pn.-zach.</String>
     <String id="553">Późno</String>
     <String id="554">bardzo</String>
     <String id="555">z {0} przy {1} {2}</String>
     <String id="556">różne</String>
     <String id="557">spokojnie</String>
     <String id="558">Bezwietrznie</String>
-	<String id="559">w sąsiedztwie</String>
+    <String id="559">w sąsiedztwie</String>
     <String id="560">Czyszczenie</String>
-	<String id="561">km/h</String>
-	<String id="562">mph</String>
-	<String id="563">kn</String>
-	<String id="564">m/s</String>
-	<String id="565">bft</String>
-	<String id="590">Str. 100</String>
+    <String id="561">km/h</String>
+    <String id="562">mph</String>
+    <String id="563">kn</String>
+    <String id="564">m/s</String>
+    <String id="565">bft</String>
+    <String id="590">Str. 100</String>
     <String id="591">Str. 200</String>
     <String id="592">Str. 300</String>
     <String id="593">Ukryta</String>
@@ -520,7 +521,7 @@
     <String id="624">Wyczyść</String>
     <String id="625">Zaplanowane usunięte:</String>
     <String id="626">Zmień typ</String>
-	<String id="627">Kanały:</String>
+    <String id="627">Kanały:</String>
     <String id="628">Programy:</String>
     <String id="629">Zatrzymaj</String>
     <String id="630">Czy chcesz uruchomić ponownie?</String>
@@ -565,15 +566,15 @@
     <String id="669">Sortuj: Gatunek</String>
     <String id="670">Sortuj: Bitrate</String>
     <String id="671">Sortuj: Obejrzane</String>
-    <String id="672">Nagrywaj Pon-Pią</String>
-    <String id="673">Szybkość Scrolla</String>
+    <String id="672">Nagrywaj pon-pią</String>
+    <String id="673">Szybkość przewijania</String>
     <String id="674">Ustawienia interfejsu</String>
     <String id="675">Przykład:</String>
     <String id="676">Usunąć obejrzane nagrania?</String>
     <String id="677">razy</String>
     <String id="678">Sortuj: Gatunek</String>
     <String id="679">Tygodniowo</String>
-    <String id="680">Pon-Pią</String>
+    <String id="680">pon-pią</String>
     <String id="681">Oczekiwanie</String>
     <String id="682">Nagrywanie</String>
     <String id="683">Zakończono</String>
@@ -585,8 +586,8 @@
     <String id="689">Bio.</String>
     <String id="690">Dyskografia (Albumy)</String>
     <String id="691">Dyskografia (kompilacje, opakowania)</String>
-    <String id="692">Strumienie - TV</String>
-	<String id="699">TV</String>
+    <String id="692">Strumienie TV</String>
+    <String id="699">TV</String>
     <String id="700">Dyskografia (single)</String>
     <String id="701">Dyskografia (teledyski, wywiady)</String>
     <String id="702">Nie znaleziono artystów!</String>
@@ -594,7 +595,7 @@
     <String id="704">Nagłówek odebrany</String>
     <String id="705">Pobieram nagłówki RSS dla</String>
     <String id="706">Wybierz nagłówek</String>
-    <String id="707">Włącz/Wyłącz</String>
+    <String id="707">Telewizja włączona</String>
     <String id="708">Timeshifting</String>
     <String id="709">Auto. aktualizacje</String>
     <String id="710">Nowa wersja jest dostępna</String>
@@ -631,16 +632,16 @@
     <String id="741">Widok: Wilgotność</String>
     <String id="742">Widok: Opady</String>
     <String id="743">5-dniowa prognoza</String>
-    <String id="744">Wschód</String>
-    <String id="745">Zachód</String>
-    <String id="746">max</String>
-    <String id="747">min</String>
+    <String id="744">Wschód słońca</String>
+    <String id="745">Zachód słońca</String>
+    <String id="746">maks.</String>
+    <String id="747">min.</String>
     <String id="748">Opady</String>
     <String id="750">Obrazy</String>
     <String id="751">Pokaż wszystkie utwory dla tego artysty</String>
-	<String id="752">Nie wybrano nagrań</String>
+    <String id="752">Nie wybrano nagrań</String>
     <String id="753">Nie zainstalowano kart z tunerem</String>
-	<String id="754">Żaden tuner nie nagrywa wybranego programu</String>
+    <String id="754">Żaden tuner nie nagrywa wybranego programu</String>
     <String id="755">Żaden tuner nie wyświetla obrazu</String>
     <String id="756">Żaden tuner nie może odbierać: {0}</String>
     <String id="757">Wszystkie tunery są zajęte</String>
@@ -666,7 +667,7 @@
     <String id="777">Tryb użycia Timeshift</String>
     <String id="778">Uruchom timeshift automatycznie podczas startu</String>
     <String id="779">Timeshit musi być uruchomione ręcznie</String>
-	<String id="780">Wybierz metodę planowania</String>
+    <String id="780">Wybierz metodę planowania</String>
     <String id="781">Szybkie nagrywanie</String>
     <String id="782">Zaawansowane nagrywanie</String>
     <String id="789">Teraz:</String>
@@ -686,6 +687,9 @@
     <String id="810">Karta</String>
     <String id="820">Usunąć nieobejrzane nagrania?</String>
     <String id="830">Wyczyść status obejrzane</String>
+    <String id="831">Wyjmij napęd wymienny.</String>
+    <String id="832">Nie można usunąć napędu:</String>
+    <String id="833">Napęd można teraz bezpiecznie usunąć.</String>
     <String id="850" prefix="Mój">Budzik</String>
     <String id="851">Lista odtwarzania</String>
     <String id="852">Budzik włączony</String>
@@ -798,6 +802,10 @@
     <String id="959">dołączył do dyskusji</String>
     <String id="960">opuścił dyskusję</String>
     <String id="961">Status MSN</String>
+    <String id="965">Stały bitrate</String>
+    <String id="966">Średnia zmiennego bitrate</String>
+    <String id="967">Szczyt zmiennego bitrate</String>
+    <String id="968">Nieokreślony</String>
     <String id="970">Poprzednie okno</String>
     <String id="971">Grupa</String>
     <String id="972">Wszystkie kanały</String>
@@ -889,6 +897,34 @@
     <String id="1062">Obiekt</String>
     <String id="1064">Zakładki</String>
     <String id="1065">Skocz do</String>
+    <String id="1066">MP4</String>
+    <String id="1067">Bardzo wysoki</String>
+    <String id="1068">HD</String>
+    <String id="1069">240x180</String>
+    <String id="1070">288x216</String>
+    <String id="1071">352x240</String>
+    <String id="1072">352x288</String>
+    <String id="1073">640x480</String>
+    <String id="1074">704x480</String>
+    <String id="1075">720x576</String>
+    <String id="1076">1280x720</String>
+    <String id="1077">1920x1080</String>
+    <String id="1078">12,5 kl./s</String>
+    <String id="1079">15 kl./s</String>
+    <String id="1080">23,97 kl./s</String>
+    <String id="1081">25 kl./s</String>
+    <String id="1082">29,97 kl./s</String>
+    <String id="1083">100 kb/s</String>
+    <String id="1084">256 kb/s</String>
+    <String id="1085">384 kb/s</String>
+    <String id="1086">768 kb/s</String>
+    <String id="1087">1536 kb/s</String>
+    <String id="1088">3072 kb/s</String>
+    <String id="1089">5376 kb/s</String>
+    <String id="1090">Standard wideo</String>
+    <String id="1091">Film</String>
+    <String id="1092">NTSC</String>
+    <String id="1093">PAL</String>
     <String id="1100">Importuj CD</String>
     <String id="1101">Importuj zaznaczone ścieżki</String>
     <String id="1102">Anuluj import CD</String>
@@ -896,23 +932,34 @@
     <String id="1104">pozostało</String>
     <String id="1105">Importowanie ścieżek</String>
     <String id="1110">Pomiń nowe nagrania</String>
-	<String id="1111">Pomiń nagranie(a) konfliktowe</String>
+    <String id="1111">Pomiń nagranie(a) konfliktowe</String>
     <String id="1112">Zachowuj konflikt</String>
+    <String id="1113">Pomiń konfliktowe ocinki</String>
     <String id="1190">Powiększenie 14:9</String>
+    <String id="1191">Powtórz listy odtwarzania</String>
+    <String id="1192">Użyj VMR9 dla strumieni sieciowych</String>
+    <String id="1193">Włącz efekty dźwiękowe programu</String>
+    <String id="1194">Startuj z ekranem podstawowym</String>
+    <String id="1195">Pozwól na obsługę programu myszą</String>
+    <String id="1196">Włącz napisy</String>
+    <String id="1197">Wyłącz DXVA</String>
+    <String id="1198">Nawigator DVD</String>
     <String id="1200">Kreator konfiguracji</String>
-	<String id="1300" prefix="Moje ">Programy TV</String>
+    <String id="1300" prefix="Moje ">Programy TV</String>
     <String id="1440" prefix="Moja ">Telegazeta</String>
     <String id="1441">Telegazeta</String>
     <String id="1442">Szybkość przewijania (poziom)</String>
     <String id="1443">Szybkość przewijania (pion)</String>
-	<String id="1444">Pre-record</String>
+    <String id="1444">Pre-record</String>
     <String id="1445">Post-record</String>
     <String id="1446">Nagrywanie rozpoczęte</String>
     <String id="1447">Nagrywanie zatrzymane</String>
     <String id="1448">Wybierz</String>
     <String id="1449">Zatrzymaj nagrywanie</String>
     <String id="1450">Czy na pewno zatrzymać nagrywanie?</String>
-    <String id="1500">Timeshit nie może być uruchomiony</String>
+    <String id="1451">Nie można otworzyć</String>
+    <String id="1499">Brak sygnału</String>
+    <String id="1500">Timeshift nie może być uruchomiony</String>
     <String id="1501">Karta jest wyłączona</String>
     <String id="1502">Brak wolnej karty</String>
     <String id="1503">Kanał jest zakodowany</String>
@@ -921,9 +968,17 @@
     <String id="1506">Wystąpił nieoczekiwany błąd</String>
     <String id="1507">Nieznany kanał</String>
     <String id="1508">Kanał nie jest przypisany do żadnej karty.</String>
-	<String id="1509">Brak szczegółów strojenia dla kanału</String>
-	<String id="1510">Połączenie do usługi TV stracone</String>
-	<String id="1511">Brak aktywnych strumieni</String>
+    <String id="1509">Brak szczegółów strojenia dla kanału</String>
+    <String id="1510">Połączenie do usługi TV stracone</String>
+    <String id="1511">Brak aktywnych strumieni</String>
+    <String id="1512">Wrócić do poprzedniego kanału?</String>
+    <String id="1513">Timeshift zatrzymany z powodu\rzaplanowanego nagrywania</String>
+    <String id="1514">Timeshift zatrzymany przez\radministratora</String>
+    <String id="1515">Timeshift zatrzymany przez serwer</String>
+    <String id="1516">Timehift zatrzymany z nieznanego powodu</String>
+    <String id="1517">Timehift zatrzymany przez innego\rużytkownika</String>
+    <String id="1518">Nie można stworzyć wykresu</String>
+    <String id="1519">Brak zainstalowanego enkodera programowego</String>
     <String id="1950" prefix="Mój ">Status</String>
     <String id="1951">Dysk twardy</String>
     <String id="1952">Wentylator</String>
@@ -998,12 +1053,12 @@
     <String id="2047">gram</String>
     <String id="2048">kilogram</String>
     <String id="2049">Usunąć ten przepis?</String>
-    <String id="2050">Usunąć tą kategorię?</String>
+    <String id="2050">Usunąć tę kategorię?</String>
     <String id="2051">Szukaj w Tytułach</String>
     <String id="2052">Szukaj w Przepisie</String>
     <String id="2053">Kategoria</String>
     <String id="2054">Brak wpisu!</String>
-	<String id="2055">Ustawienia</String>
+    <String id="2055">Ustawienia</String>
     <String id="2056">Jakość obrazu:</String>
     <String id="2057">Jakość dźwięku:</String>
     <String id="2058">Rozdzielczość:</String>
@@ -1138,20 +1193,24 @@
     <String id="2514">Powrót do tekstu</String>
     <String id="2515">Obrazy</String>
     <String id="2516" prefix="Moja ">Wikipedia</String>
-	<String id="2599">Niezdefiniowany</String>
+    <String id="2550">Naprawdę chcesz zatrzymać telewizję?</String>
+    <String id="2551">(bufor timehift zostanie utracony)</String>
+    <String id="2552">Tak</String>
+    <String id="2553">Nie</String>
+    <String id="2599">Niezdefiniowany</String>
     <String id="2600">Angielski</String>
     <String id="2601">Niemiecki</String>
     <String id="2602">Francuski</String>
     <String id="2603">Holenderski</String>
     <String id="2604">Norweski</String>
-    <String id="2606">Włoski</String>
     <String id="2605">Szwedzki</String>
+    <String id="2606">Włoski</String>
     <String id="2607">Hiszpański</String>
     <String id="2608">Portugalski</String>
     <String id="2609">Duński</String>
     <String id="2610">Polski</String>
-	<String id="2611">Czeski</String>
-	<String id="2612">Węgierski</String>
+    <String id="2611">Czeski</String>
+    <String id="2612">Węgierski</String>
     <String id="2997">godz</String>
     <String id="2998">min</String>
     <String id="2999">sek</String>
@@ -1185,18 +1244,18 @@
     <String id="4500">Pomiń albumy z istniejącymi okładkami</String>
     <String id="4501">Zapisz okładkę w folderze albumu</String>
     <String id="4502">Zapisz okładkę w folderze miniatur</String>
-	<String id="4503">Pobieram liczbę albumów. Proszę czekać...</String>
+    <String id="4503">Pobieram liczbę albumów. Proszę czekać...</String>
     <String id="4504">{0}% - {1} z {2}</String>
     <String id="4505">Wyszukiwanie {0}...</String>
     <String id="4506">[pusty]</String>
-	<String id="4507">Pobieranie okładek przerwane przez użytkownika</String>
+    <String id="4507">Pobieranie okładek przerwane przez użytkownika</String>
     <String id="4508">Pobieranie okładek zakończone pomyślnie</String>
     <String id="4509">Pobieranie okładek zakończone z błędami</String>
     <String id="4510">Zaktualizowano {0} okładek</String>
-    <String id="4511">Zakończono pobieranie okładek</String>	
+    <String id="4511">Zakończono pobieranie okładek</String>
     <String id="4512">Wszystkie okładki są aktualne</String>
     <String id="4513">Różne</String>
-	<String id="4514">Pobieralnia Okładek</String>
+    <String id="4514">Pobieralnia Okładek</String>
     <String id="4515">Wyniki wyszukiwania okładek</String>
     <String id="4516">Nie odnaleziono okładki</String>
     <String id="4517">Zamknij</String>
@@ -1204,7 +1263,7 @@
     <String id="4519">Obecna okładka</String>
     <String id="4520">Pomiń</String>
     <String id="4521">Pokaż informacje o albumie</String>
-	<String id="4522">Pobieranie: {0}...</String>
+    <String id="4522">Pobieranie: {0}...</String>
     <String id="4540">Teraz odtwarzane</String>
     <String id="4541">Następny utwór</String>
     <String id="4542">Nie załadowano listy odtwarzania</String>
@@ -1252,7 +1311,7 @@
     <String id="6007">Opcje nagrywania</String>
     <String id="6008">Sortowanie kanałów</String>
     <String id="6009">Przewodnik DVB</String>
-	<String id="6010">Pobieralnia XMLTV EPG</String>
+    <String id="6010">Pobieralnia XMLTV EPG</String>
     <String id="6011">DVB EPG:</String>
     <String id="6012">Zaktualizuj Program TV z następujących kanałów DVB:</String>
     <String id="6013">Ręczny xmltv</String>
@@ -1262,7 +1321,7 @@
     <String id="6017">Dodaj nagrania do bazy filmowej</String>
     <String id="6018">minut zanim program się zacznie</String>
     <String id="6019">minut po tym jak program się skończy</String>
-	<String id="6020">Powtarzaj pokaz slajdów</String>
+    <String id="6020">Powtarzaj pokaz slajdów</String>
     <String id="6021">Auto. kolejność losowa slajdów</String>
     <String id="6022">Konfiguracja wideo</String>
     <String id="6023">Konfiguracja ekranu</String>
@@ -1277,10 +1336,11 @@
     <String id="6032">Szukaj po tytule</String>
     <String id="6033">Szukaj po wyrażeniu</String>
     <String id="6034">Szukaj po gatunku</String>
-	<String id="6035">Dodaj plan</String>
+    <String id="6035">Dodaj plan</String>
     <String id="6036">Kodek wideo H.264</String>
-	<String id="6037">Film bufurowany</String>
-	<String id="6038">Wybierz dysk do odtworzenia.</String>
+    <String id="6037">Film dzielony</String>
+    <String id="6038">Wybierz dysk do odtworzenia.</String>
+    <String id="6039">Kodek audio AAC</String>
     <String id="8000" prefix="Moja ">Poczta</String>
     <String id="8001">Sprawdź skrzynkę</String>
     <String id="8002">Auto. sprawdzanie wył.</String>
@@ -1322,15 +1382,68 @@
     <String id="9009">Model aparatu:</String>
     <String id="9010">Marka sprzętu:</String>
     <String id="9011">Komentarz:</String>
+    <String id="9100" prefix="Mój">Miniwyświetlacz</String>
+    <String id="9101">Wtyczka nie jest skonfigurowana.</String>
+    <String id="9102">Uruchom najpierw Konfigurację MediaPortalu!</String>
+    <String id="9103">Opcje klawiatury</String>
+    <String id="9104">Opcje wyświetlania</String>
+    <String id="9105">Opcje kontroli wyświetlania</String>
+    <String id="9106">Opcje korektora</String>
+    <String id="9107">Opcje podświetlenia</String>
+    <String id="9108">Opcje pilota</String>
+    <String id="9109">Kontroluj stany energii</String>
+    <String id="9110">Kontrast</String>
+    <String id="9111">Jasność</String>
+    <String id="9112">Czerwony</String>
+    <String id="9113">Zielony</String>
+    <String id="9114">Niebieski</String>
+    <String id="9115">Odwróć obraz</String>
+    <String id="9116">Pusty obraz z wideo</String>
+    <String id="9117">Zezwól na operacje wyświetlania</String>
+    <String id="9118">Pokaż czas</String>
+    <String id="9119">Pusty obraz gdy nieużywany</String>
+    <String id="9120">Opóźnienie</String>
+    <String id="9121">Pokaż głośność</String>
+    <String id="9122">Pokaż progres</String>
+    <String id="9123">Ikona dysku</String>
+    <String id="9124">Status napędu</String>
+    <String id="9125">Status CD/DVD</String>
+    <String id="9126">Użyj czcionki użytkownika</String>
+    <String id="9127">Użyj dużej czcionki</String>
+    <String id="9128">Użyj dużej czcionki użytkownika</String>
+    <String id="9129">Odwróć dużą czcionkę</String>
+    <String id="9130">Edytor czcionki</String>
+    <String id="9131">Edytor ikon</String>
+    <String id="9132">Użyj korektora</String>
+    <String id="9133">Sytl korektora</String>
+    <String id="9134">Użyj wygładzania korektora</String>
+    <String id="9135">Opóźnij start</String>
+    <String id="9136">Opóźnij czas</String>
+    <String id="9137">Pokaż tytuł</String>
+    <String id="9138">Czas tytułu</String>
+    <String id="9139">Częstotliwość tytułu</String>
+    <String id="9140">BRAK OPCJI KLAWIATURY</String>
+    <String id="9141">Włącz klawiaturę</String>
+    <String id="9142">Mapowanie użytkownika</String>
+    <String id="9143">Mapowanie klawiatury</String>
+    <String id="9144">BRAK OPCJI PILOTA</String>
+    <String id="9145">Wyłącz pilot</String>
+    <String id="9146">Wyłącz powtarzanie</String>
+    <String id="9147">Opóźnienie powtarzania</String>
+    <String id="9148">Mapowanie pilota</String>
+    <String id="9149">Normalny</String>
+    <String id="9150">Stereo</String>
+    <String id="9151">Licznik VU</String>
+    <String id="9152">Licznik VU 2</String>
     <String id="9997">Sekundy:</String>
     <String id="9998">Minuty:</String>
     <String id="9999">Godziny:</String>
     <String id="10100">Ukryte miny</String>
     <String id="10101">Czas gry</String>
-    <String id="10102">Najszybszy czas</String>
+    <String id="10102">Najlepszy czas</String>
     <String id="10103" prefix="Mój ">Saper</String>
     <String id="10104">Mini EPG</String>
-	<String id="10105">Teraz</String>
+    <String id="10105">Teraz</String>
     <String id="11000">Ustawienia przycięcia</String>
     <String id="11001">Góra:</String>
     <String id="11002">Dół:</String>
@@ -1356,11 +1469,29 @@
     <String id="13016">Sortuj według: Uruchamiania</String>
     <String id="13017">Sortuj według: Ostatni</String>
     <String id="13018">Sortuj według: Oceny</String>
-	<String id="13031">Dostawca</String>
+    <String id="13031">Dostawca</String>
     <String id="13032">Najczęściej uruchamiane</String>
     <String id="13033">Ostatnio uruchamiane</String>
     <String id="13034">Tytuł</String>
     <String id="13041">Pokaż informacje o pliku</String>
+    <String id="14001" prefix="Moje">Wtyczki</String>
+    <String id="14002">Widok</String>
+    <String id="14003">Zainstalowane wtyczki</String>
+    <String id="14004">Wtyczki online</String>
+    <String id="14005">Zainstaluj</String>
+    <String id="14006">Odinstaluj</String>
+    <String id="14007">Zainstaluj ponownie</String>
+    <String id="14008">Anuluj ostatnią operację</String>
+    <String id="14009">Operacja zostanie przeprowadzona po\rnastępnym uruchomieniu</String>
+    <String id="14010">ciągnij wtyczkę</String>
+    <String id="14011">Wybierz opcję</String>
+    <String id="14012">Nie obsługuje tej wersji MP (potrzebna wesja {0})</String>
+    <String id="14013">Czy chcesz kontynuować?</String>
+    <String id="14014">Odświeżanie informacji online</String>
+    <String id="14015">Uaktualnienia</String>
+    <String id="14016">Sortuj według: pobrań</String>
+    <String id="14017">Sortuj według: ocen</String>
+    <String id="14018">Instaluj uaktualnienie</String>
     <String id="16001">Imprezka</String>
     <String id="19001" prefix="Mój ">Tetris</String>
     <String id="19002">Nowa gra</String>
@@ -1394,9 +1525,9 @@
     <String id="19117">Wyczyść komórkę</String>
     <String id="19118">Pomóż raz</String>
     <String id="19119">Od nowa</String>
-	<String id="19120">Kandydaci</String>
+    <String id="19120">Kandydaci</String>
     <String id="19121">Czas:</String>
-	<String id="19122">Filtr 1</String>
+    <String id="19122">Filtr 1</String>
     <String id="19123">Filtr 2</String>
     <String id="19124">Filtr 3</String>
     <String id="19125">Filtr 4</String>
@@ -1428,13 +1559,13 @@
     <String id="19151">Dodaj/Usuń Kandydatów</String>
     <String id="25001">Czekam na stronę {0:X}...!</String>
     <String id="30000" prefix="Moje ">Teledyski</String>
-    <String id="30001">Poszukiwane</String>	
+    <String id="30001">Poszukiwane</String>
     <String id="30002">Nowości na Yahoo</String>
     <String id="30003">Odtwarzaj wszystko</String>
     <String id="30004">Poprzednia strona</String>
     <String id="30005">Następna strona</String>
     <String id="30006">Stop</String>
-	<String id="30007">Szukaj innych klipów tego artysty</String>
+    <String id="30007">Szukaj innych klipów tego artysty</String>
     <String id="30008">pozycja</String>
     <String id="30009">strona</String>
     <String id="30010">Wyniki wyszukiwania dla {0} - strona {1}</String>
@@ -1459,6 +1590,8 @@
     <String id="33019">losowymi ulubionymi ścieżkami</String>
     <String id="33030">ścieżkami z listy Top</String>
     <String id="33031">innymi ścieżkami według tagów:</String>
+    <String id="33032">Topowe nagranie albumu nie znajduje się</String>
+    <String id="33033">w Twojej kolekcji!</String>
     <String id="33040">Kopiuj teraz odtwarzane do schowka</String>
     <String id="33041">Dodaj ten album do listy odtwarzania</String>
     <String id="34000">Last.fm</String>
@@ -1466,15 +1599,20 @@
     <String id="34002">Przyjaciel:</String>
     <String id="34003">Sąsiad:</String>
     <String id="34004">Grupa:</String>
+    <String id="34005">Zmień konto użytkownika</String>
     <String id="34010">Miłość</String>
     <String id="34011">Ban</String>
     <String id="34012">Pomiń</String>
     <String id="34013">Tryb odkrywania</String>
     <String id="34014">Dodaj do profilu</String>
     <String id="34015">Przeładuj tagi/przyjaciół</String>
+    <String id="34016">Graj podobnego artystę</String>
+    <String id="34017">Graj podobny tag</String>
     <String id="34020">Obecny:</String>
     <String id="34030">Brak tagów</String>
     <String id="34031">Brak przyjaciół</String>
+    <String id="34032">Brak artystów</String>
+    <String id="34039">Podobny do artysty:</String>
     <String id="34040">Zalecane radio</String>
     <String id="34041">Zaczynam ustawiać wybrany tag: </String>
     <String id="34042">Nie został wybrany żaden tag</String>
@@ -1491,9 +1629,13 @@
     <String id="34053">Odtwarzanie wybranego strumienia nie powiodło się</String>
     <String id="34054">Radio handshake nie powiodło się!</String>
     <String id="34055">Strumienie mogą być tymczasowo niedostępne</String>
+    <String id="34060">Wpisz tag...</String>
+    <String id="34061">Wpisz nazwę użytkownika...</String>
+    <String id="34062">Wpisz artystę</String>
+    <String id="34063">Nie wybrano jeszcze żadnego artysty</String>
     <String id="40001">Czekam na Stan wstrzymania</String>
     <String id="40002">MediaPortal jest ciągle zajęty.</String>
-    <String id="40003">Kiedy wszystkie zadania zostaną zakończone MediaPortal przejdzie w Stan wstrzymania.</String>	
+    <String id="40003">Kiedy wszystkie zadania zostaną zakończone MediaPortal przejdzie w Stan wstrzymania.</String>
     <String id="100000">Start</String>
     <String id="100001" prefix="Moja ">Telewizja</String>
     <String id="100002" prefix="Moje ">Obrazy</String>
@@ -1527,9 +1669,10 @@
     <String id="100032">MSN Messenger</String>
     <String id="100033">MSN Messenger czat</String>
     <String id="100034" prefix="Moje ">Dodatki</String>
-	<String id="100035">Podstawowy</String>
+    <String id="100035">Podstawowy</String>
     <String id="100100">Okno Tak/Nie</String>
     <String id="100101">Okno postępu</String>
+    <String id="100102">Okno Graj/Zatrzymaj</String>
     <String id="100500">Muzyka/Lista odtwarzania</String>
     <String id="100501">Muzyka/Pliki</String>
     <String id="100502">Muzyka/Albumy</String>
@@ -1590,6 +1733,8 @@
     <String id="100707">EPG -&gt;Przypisywanie kanałów</String>
     <String id="100708">Pomiń te ustawienia</String>
     <String id="100709">Ustawienia serwera TV</String>
+    <String id="100746">Sposób wyszukiwania TV</String>
+    <String id="100747">Wyszukiwanie TV</String>
     <String id="100748">Informacje o programie</String>
     <String id="100749">Telewizja/Brak sygnału</String>
     <String id="100750">Przepisy</String>
@@ -1602,7 +1747,11 @@
     <String id="100761">Przewodnik TV</String>
     <String id="100762">Przewodnik Radio</String>
     <String id="100770">Explorer</String>
+    <String id="100800" prefix="Moje">Wtyczki</String>
     <String id="101000">klawiatura</String>
+    <String id="101002">Wirtualna klawiatura standardowa</String>
+    <String id="101003">Wirtualna klawiatura sieciowa</String>
+    <String id="101004">Wirtualna klawiatura SMS</String>
     <String id="102000">Wybierz okno</String>
     <String id="102001">Muzyka/informacje</String>
     <String id="102002">Okno OK</String>
@@ -1631,14 +1780,28 @@
     <String id="103007">Telewizja/Zap OSD</String>
     <String id="103009">Telewizja/Mini EPG</String>
     <String id="103011">Telewizja/Ustawienia przycięcia</String>
-    <String id="104711">Wikipedia</String>
-    <String id="105900">Zwiastuny</String>
-	<String id="106666">Harmonogram zasilania czeka</String>
+    <String id="103012">Szczegóły ustawień kanałów</String>
+    <String id="104711" prefix="Moja">Wikipedia</String>
+    <String id="105000">Alarm</String>
+    <String id="105001">Alarm - Szczegóły alarmu</String>
+    <String id="105002">Alarm - Drzemka</String>
+    <String id="105900" prefix="Moje">Zwiastuny</String>
+    <String id="106666">Harmonogram zasilania czeka</String>
     <String id="107700">Telewizja/Telegazeta</String>
     <String id="107701">Telewizja/Telegazeta</String>
     <String id="107777">Sudoku</String>
     <String id="107890">Radio Last.fm</String>
     <String id="108888">Menu Muzyka</String>
+    <String id="109000">Ustawienia Miniwyświetlacza</String>
+    <String id="109001">Ustawienia Miniwyświetlacza - Podświetlenie</String>
+    <String id="109002">Ustawienia Miniwyświetlacza - Kontrola wyświetlania</String>
+    <String id="109003">Ustawienia Miniwyświetlacza - Opcje wyświetlania</String>
+    <String id="109004">Ustawienia Miniwyświetlacza - Korektor</String>
+    <String id="109005">Ustawienia Miniwyświetlacza - klawiatura	</String>
+    <String id="109006">Ustawienia Miniwyświetlacza - Pilot</String>
+    <String id="109811" prefix="Moje">Seriale</String>
+    <String id="190478" prefix="Moje">Teksty piosenek</String>
+    <String id="196742">Filmy</String>
     <String id="200000">Proszę wybierz sposób pobierania EPG. Jeśli Twój kraj</String>
     <String id="200001">nie znajduję się na liście, trzeba będzie podać EPG ręcznie.</String>
     <String id="200002">Możesz teraz przypisać kanały EPG do Twoich kanałów TV</String>
@@ -1688,6 +1851,24 @@
     <String id="200047">Utwórz miniatury (razem z podfol.)</String>
     <String id="200048">Utwórz wszystkie miniatury</String>
     <String id="200049">Tylko obejrzane nagrania dla tego programu</String>
-    <String id="200050">Spowoduje to usunięcie Twoich nagrań z dysku twardego</String>	
+    <String id="200050">Spowoduje to usunięcie Twoich nagrań z dysku twardego</String>
+    <String id="200051">Usunąć ten odcinek?</String>
+    <String id="200052">Aktywne nagrywania</String>
+    <String id="200053">Brak aktywnych nagrywań</String>
+    <String id="200054">Nie można usunąć nagrania</String>
+    <String id="200055">Telewizja na żywo może zostać zakłócona</String>
+    <String id="200059">Tryb podwójnego mono</String>
+    <String id="200060">Stereo</String>
+    <String id="200061">Lewy kanał do lewych i prawych głośników</String>
+    <String id="200062">Prawy kanał do lewych i prawych głośników</String>
+    <String id="200063">Miksuj oba</String>
+    <String id="200064">Połączony z Serwerem TV</String>
+    <String id="200065">Kilka portów wydaje się zablokowanych</String>
+    <String id="200066">Nie można połączyć się z Serwerem TV</String>
+    <String id="200067">Połączony z bazą danych</String>
+    <String id="200068">Nie można połączyć się z bazą danych</String>
+    <String id="200069">Wszystkie porty IP wydają się w porządku</String>
+    <String id="200070">Sprawdź firewall</String>
+    <String id="200071">Usunąć ten folder i jego podfoldery?</String>
   </Section>
 </Language>
