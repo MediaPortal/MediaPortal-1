@@ -3223,6 +3223,13 @@ namespace TvPlugin
           RenderBlackImage();
           g_Player.PauseGraph();
         }
+        else
+        {
+          // if CI menu is not attached due to card change, do it if graph was not playing 
+          // (some handlers use polling threads that get stopped on graph stop)
+          if (_status.IsNotSet(LiveTvStatus.CardChange))
+            RegisterCiMenu(newCardId);
+        }
 
         // if card was not changed
         if (_status.IsNotSet(LiveTvStatus.CardChange))
@@ -3258,24 +3265,21 @@ namespace TvPlugin
 
         // we might have a situation on the server where card has changed in order to complete a 
         // channel change. - lets check for this.
-        if (newCardId != card.Id || Card.Id != card.Id)
+        // 2 cases:
+        // if the timeshift switched from card 1 -> 2 (error) -> 1
+        if (newCardId != card.Id)
         {
-          // 2 cases:
-          // if the timeshift switched from card 1 -> 2 (error) -> 1
-          if (newCardId != card.Id)
-          {
-            // reset the card change flag, otherwise the StartPlay() would cause a step back to same ts buffer file
-            _status.Reset(LiveTvStatus.CardChange);
-            // after CI menu was moved to new card, now assign it to the fallback card after change
-            RegisterCiMenu(card.Id);
-          }
-          // if the timeshift switched from card 1 -> 2 (ok) 
-          if (Card.Id != card.Id)
-          {
-            // expected card change successful, set card change flag so new ts buffer file will be started
-            _status.Set(LiveTvStatus.CardChange);
-            _status.Reset(LiveTvStatus.WasPlaying);
-          }
+          // reset the card change flag, otherwise the StartPlay() would cause a step back to same ts buffer file
+          _status.Reset(LiveTvStatus.CardChange);
+          // after CI menu was moved to new card, now assign it to the fallback card after change
+          RegisterCiMenu(card.Id);
+        }
+        // if the timeshift switched from card 1 -> 2 (ok) 
+        else if (Card.Id != card.Id)
+        {
+          // expected card change successful, set card change flag so new ts buffer file will be started
+          _status.Set(LiveTvStatus.CardChange);
+          _status.Reset(LiveTvStatus.WasPlaying);
         }
         else
         {
