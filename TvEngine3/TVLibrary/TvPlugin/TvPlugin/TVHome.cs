@@ -1609,7 +1609,7 @@ namespace TvPlugin
 
     private void OnResume()
     {
-      Log.Debug("TVHome.OnResume()");
+      Log.Debug("TVHome.OnResume()");      
       Connected = false;
       RemoteControl.OnRemotingDisconnected +=
         new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
@@ -1988,7 +1988,14 @@ namespace TvPlugin
 
     public static void UpdateTimeShift() {}
 
+
     private void OnActiveRecordings()
+    {
+      IList<Recording> ignoreActiveRecordings = new List<Recording> ();
+      OnActiveRecordings(ignoreActiveRecordings);
+    }
+
+    private void OnActiveRecordings(IList<Recording> ignoreActiveRecordings)
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
@@ -2004,23 +2011,26 @@ namespace TvPlugin
       {
         foreach (Recording activeRecording in activeRecordings)
         {
-          GUIListItem item = new GUIListItem();
-          string channelName = activeRecording.ReferencedChannel().DisplayName;
-          string programTitle = activeRecording.Title.Trim(); // default is current EPG info
-
-          item.Label = channelName;
-          item.Label2 = programTitle;
-
-          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channelName);
-          if (!File.Exists(strLogo))
+          if (!ignoreActiveRecordings.Contains(activeRecording))
           {
-            strLogo = "defaultVideoBig.png";
-          }
+            GUIListItem item = new GUIListItem();
+            string channelName = activeRecording.ReferencedChannel().DisplayName;
+            string programTitle = activeRecording.Title.Trim(); // default is current EPG info
 
-          item.IconImage = strLogo;
-          item.IconImageBig = strLogo;
-          item.PinImage = "";
-          dlg.Add(item);
+            item.Label = channelName;
+            item.Label2 = programTitle;
+
+            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channelName);
+            if (!File.Exists(strLogo))
+            {
+              strLogo = "defaultVideoBig.png";
+            }
+
+            item.IconImage = strLogo;
+            item.IconImageBig = strLogo;
+            item.PinImage = "";
+            dlg.Add(item);
+          }
         }
 
         dlg.SelectedLabel = activeRecordings.Count;
@@ -2042,8 +2052,12 @@ namespace TvPlugin
         {
           return;
         }
-        TVUtil.DeleteRecAndSchedWithPrompt(parentSchedule);        
-        OnActiveRecordings(); //keep on showing the list until --> 1) user leaves menu, 2) no more active recordings
+        bool deleted = TVUtil.DeleteRecAndSchedQuietly(parentSchedule);
+        if (deleted && !ignoreActiveRecordings.Contains(selectedRecording))
+        {
+          ignoreActiveRecordings.Add(selectedRecording);
+        }
+        OnActiveRecordings(ignoreActiveRecordings); //keep on showing the list until --> 1) user leaves menu, 2) no more active recordings
       }
       else
       {
