@@ -939,7 +939,7 @@ void MPEVRCustomPresenter::Flush()
 {
   CAutoLock sLock(&m_lockSamples);
   CAutoLock ssLock(&m_lockScheduledSamples);
-  if (m_qScheduledSamples.Count() > 0 && !m_bDVDMenu)
+  if (m_qScheduledSamples.Count() > 0 && !m_bDVDMenu && !m_bScrubbing)
   {
     Log("Flushing: size=%d", m_qScheduledSamples.Count());
     while (m_qScheduledSamples.Count() > 0)
@@ -1043,6 +1043,7 @@ bool MPEVRCustomPresenter::ImmediateCheckForInput()
 void MPEVRCustomPresenter::LogStats()
 {
 }
+
 
 HRESULT MPEVRCustomPresenter::CheckForScheduledSample(REFERENCE_TIME *pNextSampleTime, REFERENCE_TIME hnsLastSleepTime)
 {
@@ -1632,7 +1633,7 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 
     // Presenter is flushing samples, do not render! (not considered as failure)
     // This should solve the random video frame freeze issue when stopping the playback
-    if (m_bFlush)
+    if (m_bFlush && !m_bScrubbing)
     {
       return S_OK;
     }

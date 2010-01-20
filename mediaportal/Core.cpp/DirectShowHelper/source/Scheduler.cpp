@@ -127,6 +127,7 @@ UINT CALLBACK SchedulerThread(void* param)
                                  0, 
                                  TIME_ONESHOT|TIME_KILL_SYNCHRONOUS|TIME_CALLBACK_EVENT_SET);
     }
+    // EXPERIMENTAL: CheckForScheduleSample() call can probably be removed.
     else 
     {
       //p->eHasWork.Set();
