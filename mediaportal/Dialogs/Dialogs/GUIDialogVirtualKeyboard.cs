@@ -1046,7 +1046,6 @@ namespace MediaPortal.Dialogs
       keyRow.Add(new Key(Xkey.XK_CAP_E_ACUTE));
       keyRow.Add(new Key(Xkey.XK_CAP_E_CIRCUMFLEX));
       keyRow.Add(new Key(Xkey.XK_CAP_E_DIAERESIS));
-
       keyBoard.Add(keyRow);
 
       // Third row
@@ -1070,7 +1069,6 @@ namespace MediaPortal.Dialogs
       keyRow.Add(new Key(Xkey.XK_CAP_O_ACUTE));
       keyRow.Add(new Key(Xkey.XK_CAP_O_CIRCUMFLEX));
       keyRow.Add(new Key(Xkey.XK_CAP_O_TILDE));
-
       keyBoard.Add(keyRow);
 
       // Fourth row
@@ -1382,7 +1380,11 @@ namespace MediaPortal.Dialogs
             {
               _currentKey = Math.Max(7, _lastColumn); // restore column
             }
-            break;
+            if (_currentKeyboard == KeyboardTypes.TYPE_ACCENTS && _currentKey > 8)
+            {
+              _currentKey = 8;
+            }
+            break;            
           case 4:
             if (_currentKey == 1) // spacebar
             {
@@ -1412,6 +1414,12 @@ namespace MediaPortal.Dialogs
         // Update key index for special cases
         switch (_currentRow)
         {
+          case 0:
+            if (_currentKeyboard == KeyboardTypes.TYPE_ACCENTS && _currentKey > 8)
+            {
+              _currentKey = 8;
+            }
+            break;
           case 2:
             if (_currentKey > 7) // q - t
             {
