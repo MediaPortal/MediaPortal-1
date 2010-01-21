@@ -3,7 +3,7 @@
   <Section name="unmapped">
     <String id="0">Programy</String>
     <String id="1" prefix="Má ">Fotogalerie</String>
-    <String id="2" prefix="Má ">Hudba</String>
+    <String id="2" prefix="Má ">Audio</String>
     <String id="3" prefix="Má ">Videa</String>
     <String id="4">TV program</String>
     <String id="5">Nastavení</String>
@@ -33,7 +33,7 @@
     <String id="32">Prosinec</String>
     <String id="50">DVD</String>
     <String id="51">Přehrát disk</String>
-    <String id="60">Čekání na spuštění služby "TV service..."</String>
+    <String id="60">Čekání na spuštění služby "TV service"...</String>
     <String id="61">Čekání {0} sekund(s) před spuštěním...</String>
     <String id="62">Inicializace DirectX...</String>
     <String id="63">Inicializace vstupních zařízení...</String>
@@ -48,9 +48,9 @@
     <String id="100">Zobrazení: Ikony</String>
     <String id="101">Zobrazení: Seznam</String>
     <String id="102">Skenovat</String>
-    <String id="103">Třídit podle: Jména</String>
-    <String id="104">Třídit podle: Data</String>
-    <String id="105">Třídit podle: Velikosti</String>
+    <String id="103">Řadit dle: Názvu</String>
+    <String id="104">Řadit dle: Datumu</String>
+    <String id="105">Řadit dle: Velikosti</String>
     <String id="106">Ne</String>
     <String id="107">Ano</String>
     <String id="108">Prezentace</String>
@@ -193,7 +193,7 @@
     <String id="246">Autostart obrázků</String>
     <String id="247">Skripty</String>
     <String id="248">Jazyk</String>
-    <String id="249">Hudba</String>
+    <String id="249">Audio</String>
     <String id="250">Vizualizace</String>
     <String id="251">Vyberte umístění adresáře</String>
     <String id="252">Výstup do všech repro</String>
@@ -207,12 +207,12 @@
     <String id="262">Povelový výstup</String>
     <String id="263">http server:</String>
     <String id="264">Záznam</String>
-    <String id="265">Zastavit záznam</String>
-    <String id="266">Třídit: Podle názvu</String>
-    <String id="267">Třídit: Podle času</String>
-    <String id="268">Třídit: Podle Alba</String>
-    <String id="269">Třídit: Podle interpreta</String>
-    <String id="270">Třídit: Podle</String>
+    <String id="265">Přerušit záznam</String>
+    <String id="266">Řadit dle: Stopy</String>
+    <String id="267">Řadit dle: Času</String>
+    <String id="268">Řadit dle: Titulu</String>
+    <String id="269">Řadit dle: Interpreta</String>
+    <String id="270">Řadit dle: Alba</String>
     <String id="271">TOP 100</String>
     <String id="272">Levý horní okraj</String>
     <String id="273">Pravý dolní okraj</String>
@@ -281,7 +281,7 @@
     <String id="341">Přehrát DVD</String>
     <String id="342">Filmy</String>
     <String id="343">Nastavit framerate</String>
-    <String id="344">Herecké obsazení:</String>
+    <String id="344">Herecké obsazení</String>
     <String id="345">Rok</String>
     <String id="346">Spojovat videa</String>
     <String id="347">Nespojovat videa</String>
@@ -298,11 +298,11 @@
     <String id="360">Spořič</String>
     <String id="361">*R. Slideshow</String>
     <String id="362">Screensaver Fade Level (%)</String>
-    <String id="363">Třídit podle: soubor</String>
+    <String id="363">Řadit dle: Souboru</String>
     <String id="364">DD/DTS vícekanálový výstup</String>
-    <String id="365">Třídit podle: Jména</String>
-    <String id="366">Třídit podle: Roku</String>
-    <String id="367">Třídit podle: Hodnocení</String>
+    <String id="365">Řadit dle: Jména</String>
+    <String id="366">Řadit dle: Roku</String>
+    <String id="367">Řadit dle: Hodnocení</String>
     <String id="368">Databáze IMDB</String>
     <String id="369">Název</String>
     <String id="370">Bouřky</String>
@@ -363,7 +363,7 @@
     <String id="427">Disk:</String>
     <String id="428">Vložte CD/DVD</String>
     <String id="429">Prosím vložte následující CD/DVD</String>
-    <String id="430">Třídit podle: DVD#</String>
+    <String id="430">Řadit dle: DVD#</String>
     <String id="431">Nepoužívat cache</String>
     <String id="432">Vymazat filmy z databáze</String>
     <String id="433">Jste si jisti vymazáním?</String>
@@ -408,8 +408,8 @@
     <String id="472">Prodleva OSD</String>
     <String id="473">Kvalitní převzorkování</String>
     <String id="474">Vypnuto</String>
-    <String id="475">Jen hudba</String>
-    <String id="476">Hudba a Video</String>
+    <String id="475">Jen audio</String>
+    <String id="476">Audio a Video</String>
     <String id="477">Nemohu načíst playlist</String>
     <String id="478">OSD</String>
     <String id="479">Vzhled a jazyk</String>
@@ -449,6 +449,7 @@
     <String id="517">Fatální chyba, akce není dokončena</String>
     <String id="518">Smazat tuto skladbu?</String>
     <String id="519">Vyp.titulky</String>
+    <String id="527">Řadit dle: Shlédnuto</String>
     <String id="528">Album Artists</String>
     <String id="529">Rozvržení: seznam velkých ikon</String>
     <String id="530">Bylo vloženo CD s fotografiemi, chcete jej otevřít?</String>
@@ -553,24 +554,24 @@
     <String id="665" prefix="Mé ">Rádio</String>
     <String id="666">Stanice</String>
     <String id="667">Automatické laďění</String>
-    <String id="668">Třídit podle: Typu</String>
-    <String id="669">Třídit podle: Žánru</String>
-    <String id="670">Třídit podle: Datového toku</String>
-    <String id="671">Třídit podle: Shlédnuto</String>
+    <String id="668">Řadit dle: Typu</String>
+    <String id="669">Řadit dle: Žánru</String>
+    <String id="670">Řadit dle: Datového toku</String>
+    <String id="671">Řadit dle: Shlédnuto</String>
     <String id="672">Nahrávat Po-Pá</String>
     <String id="673">Rychlost scrolování</String>
     <String id="674">Nastavení GUI</String>
     <String id="675">Příklad:</String>
     <String id="676">Smazat přehrané záznamy?</String>
     <String id="677">krát</String>
-    <String id="678">Třídit podle: Žánru</String>
+    <String id="678">Řadit dle: Žánru</String>
     <String id="679">Týdně</String>
     <String id="680">Po-Pá</String>
     <String id="681">Čekání</String>
     <String id="682">Záznam</String>
     <String id="683">Dokončeno</String>
     <String id="684">Zrušeno</String>
-    <String id="685">Třídit podle: Stav</String>
+    <String id="685">Řadit dle: Stavu</String>
     <String id="686">Narození</String>
     <String id="687">Roky aktivit</String>
     <String id="688">Nástroje</String>
@@ -776,7 +777,8 @@
     <String id="977">Žádná karta není dostupná</String>
     <String id="979">Přehrát záznam od začátku</String>
     <String id="980">Přehrát záznam od bodu živého vysílání</String>
-    <String id="982">Smazat celý plán</String>
+    <String id="981">Zrušit záznam tohoto pořadu</String>
+    <String id="982">Zrušit celý plán záznamu</String>
     <String id="983" prefix="Mé ">Playlisty</String>
     <String id="984">Stahuji seznam filmů</String>
     <String id="986">Stahuji info o hercích</String>
@@ -822,7 +824,7 @@
     <String id="1032">Uspat</String>
     <String id="1033">Právě probíhá nahrávání</String>
     <String id="1034">Není signál!</String>
-    <String id="1035">TV kánál je zakódovaný</String>
+    <String id="1035">TV kanál je kódovaný!</String>
     <String id="1036">Žádné video nenalezeno</String>
     <String id="1037">TV-informace o programu</String>
     <String id="1038">Detailní záznam</String>
@@ -894,9 +896,18 @@
     <String id="1447">Stop nahrávání:</String>
     <String id="1448">Žádný</String>
     <String id="1449">Stop nahrávání:</String>
+    <String id="1450">Opravdu chcete přerušit nahrávání?</String>
+    <String id="1451">Nelze přehrát</String>
+    <String id="1499">Není signál</String>
     <String id="1500">Nelze zapnout časový posun</String>
     <String id="1501">Card is disabled</String>
     <String id="1502">Není k dispozici žádná volná TV karta</String>
+    <String id="1503">Kanál je kódovaný</String>
+    <String id="1504">Video/audio není detekováno</String>
+    <String id="1506">Vyskytla se neznámá chyba</String>
+    <String id="1507">Neznámý kanál</String>
+    <String id="1508">Kanál není přiřazen žádné TV kartě</String>
+    <String id="1510">Spojení se službou "TV service" bylo ztraceno</String> 
     <String id="1511">Žádné aktivní streamy</String>
     <String id="1513">Vzhledem k naplánovanému nahráváni byl vypnut\rčasový posun</String>
     <String id="1950">Stav</String>
@@ -1328,7 +1339,7 @@
     <String id="16001">Party Shuffle</String>
     <String id="19001" prefix="Můj ">Tetris</String>
     <String id="19002">Nová hra</String>
-    <String id="19003">Hudba</String>
+    <String id="19003">Audio</String>
     <String id="19004">Zvuky</String>
     <String id="19005">Skóre</String>
     <String id="19006">Level</String>
@@ -1465,7 +1476,7 @@
     <String id="100002">Obrázky</String>
     <String id="100003">Soubor</String>
     <String id="100004">Nastavení</String>
-    <String id="100005">Hudba</String>
+    <String id="100005">Audio</String>
     <String id="100006">Videa</String>
     <String id="100007">Systémové informace</String>
     <String id="100008">Nastavení-hlavní</String>
@@ -1572,7 +1583,7 @@
     <String id="101000">Klávesnice</String>
     <String id="101002">Virtuální klávesnice</String>
     <String id="102000">Výběr dialogu</String>
-    <String id="102001" prefix="Má ">Hudba/info</String>
+    <String id="102001" prefix="Mé ">Audio/info</String>
     <String id="102002">Dialog OK</String>
     <String id="102003" prefix="Má ">Videos/Info</String>
     <String id="102004" prefix="Mé ">Skripty/Info</String>
@@ -1664,7 +1675,7 @@
     <String id="200052">Aktivní nahrávání</String>
     <String id="200053">Žádné nahrávání neprobíhá</String>
     <String id="200054">Nelze smazat TV záznam.</String>
-    <String id="200055">Live TV viewing might be disrupted.</String>
+    <String id="200055">Živé TV vysílání může být přerušeno.</String>
     <String id="200059">Audio Dual Mono Mode</String>
     <String id="200060">Stereo</String>
     <String id="200061">Left channel to the left and right speakers</String>
