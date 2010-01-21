@@ -29,12 +29,13 @@
         private void InitializeComponent()
         {
           this.components = new System.ComponentModel.Container();
-          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RequirementsSection));
           this.list_versions = new System.Windows.Forms.ListBox();
           this.toolStrip1 = new System.Windows.Forms.ToolStrip();
           this.mnu_add = new System.Windows.Forms.ToolStripDropDownButton();
           this.mnu_del = new System.Windows.Forms.ToolStripButton();
           this.groupBox1 = new System.Windows.Forms.GroupBox();
+          this.lbl_ver = new System.Windows.Forms.Label();
+          this.label5 = new System.Windows.Forms.Label();
           this.label4 = new System.Windows.Forms.Label();
           this.txt_name = new System.Windows.Forms.TextBox();
           this.button1 = new System.Windows.Forms.Button();
@@ -56,8 +57,6 @@
           this.label1 = new System.Windows.Forms.Label();
           this.cmb_type = new System.Windows.Forms.ComboBox();
           this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-          this.label5 = new System.Windows.Forms.Label();
-          this.lbl_ver = new System.Windows.Forms.Label();
           this.toolStrip1.SuspendLayout();
           this.groupBox1.SuspendLayout();
           this.groupBox3.SuspendLayout();
@@ -84,14 +83,14 @@
           this.toolStrip1.Location = new System.Drawing.Point(0, 0);
           this.toolStrip1.Name = "toolStrip1";
           this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-          this.toolStrip1.Size = new System.Drawing.Size(64, 25);
+          this.toolStrip1.Size = new System.Drawing.Size(95, 25);
           this.toolStrip1.TabIndex = 1;
           this.toolStrip1.Text = "toolStrip1";
           // 
           // mnu_add
           // 
           this.mnu_add.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-          this.mnu_add.Image = ((System.Drawing.Image)(resources.GetObject("mnu_add.Image")));
+          this.mnu_add.Image = global::MpeMaker.Properties.Resources.folder_add;
           this.mnu_add.ImageTransparentColor = System.Drawing.Color.Magenta;
           this.mnu_add.Name = "mnu_add";
           this.mnu_add.Size = new System.Drawing.Size(29, 22);
@@ -100,7 +99,7 @@
           // mnu_del
           // 
           this.mnu_del.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-          this.mnu_del.Image = ((System.Drawing.Image)(resources.GetObject("mnu_del.Image")));
+          this.mnu_del.Image = global::MpeMaker.Properties.Resources.folder_delete;
           this.mnu_del.ImageTransparentColor = System.Drawing.Color.Magenta;
           this.mnu_del.Name = "mnu_del";
           this.mnu_del.Size = new System.Drawing.Size(23, 22);
@@ -131,6 +130,24 @@
           this.groupBox1.Size = new System.Drawing.Size(386, 396);
           this.groupBox1.TabIndex = 2;
           this.groupBox1.TabStop = false;
+          // 
+          // lbl_ver
+          // 
+          this.lbl_ver.AutoSize = true;
+          this.lbl_ver.Location = new System.Drawing.Point(129, 190);
+          this.lbl_ver.Name = "lbl_ver";
+          this.lbl_ver.Size = new System.Drawing.Size(40, 13);
+          this.lbl_ver.TabIndex = 13;
+          this.lbl_ver.Text = "0.0.0.0";
+          // 
+          // label5
+          // 
+          this.label5.AutoSize = true;
+          this.label5.Location = new System.Drawing.Point(39, 190);
+          this.label5.Name = "label5";
+          this.label5.Size = new System.Drawing.Size(84, 13);
+          this.label5.TabIndex = 12;
+          this.label5.Text = "Current version :";
           // 
           // label4
           // 
@@ -350,24 +367,6 @@
           // toolTip1
           // 
           this.toolTip1.IsBalloon = true;
-          // 
-          // label5
-          // 
-          this.label5.AutoSize = true;
-          this.label5.Location = new System.Drawing.Point(39, 190);
-          this.label5.Name = "label5";
-          this.label5.Size = new System.Drawing.Size(84, 13);
-          this.label5.TabIndex = 12;
-          this.label5.Text = "Current version :";
-          // 
-          // lbl_ver
-          // 
-          this.lbl_ver.AutoSize = true;
-          this.lbl_ver.Location = new System.Drawing.Point(129, 190);
-          this.lbl_ver.Name = "lbl_ver";
-          this.lbl_ver.Size = new System.Drawing.Size(40, 13);
-          this.lbl_ver.TabIndex = 13;
-          this.lbl_ver.Text = "0.0.0.0";
           // 
           // RequirementsSection
           // 
