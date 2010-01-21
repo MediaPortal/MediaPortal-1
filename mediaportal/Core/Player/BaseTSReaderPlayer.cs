@@ -126,6 +126,7 @@ namespace MediaPortal.Player
     protected bool _isFullscreen = true;
     protected PlayState _state = PlayState.Init;
     protected int _volume = 100;
+    protected int _volumeBeforeSeeking = 100;
     protected IGraphBuilder _graphBuilder = null;
     protected IMediaSeeking _mediaSeeking = null;
     protected int _speed = 1;
@@ -854,6 +855,19 @@ namespace MediaPortal.Player
                 _mediaCtrl.Run();
                 _speedRate = 10000;
                 _usingFastSeeking = false;
+                
+                // unmute audio when speed returns to 1.0x
+                Volume = _volumeBeforeSeeking;
+                _volumeBeforeSeeking = 0;
+              }
+              else
+              {
+                // mute audio during > 1.0x playback
+                if (_volumeBeforeSeeking == 0)
+                {
+                  _volumeBeforeSeeking = Volume;
+                }
+                Volume = 0;
               }
             }
           }
@@ -1866,7 +1880,7 @@ namespace MediaPortal.Player
         }
         // if we end up at the end of time then just
         // start @ the end-100msec
-        long margin = (IsTimeShifting) ? 30000000 : 1000000;
+        long margin = (IsTimeShifting) ? 30000000 : 10000;
 
         if ((rewind > (latest - margin)) && (_speedRate > 0))
         {
