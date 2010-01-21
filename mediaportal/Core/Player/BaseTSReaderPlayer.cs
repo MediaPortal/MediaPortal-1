@@ -617,40 +617,7 @@ namespace MediaPortal.Player
         _bRequestAudioChange = false;
         g_Player.OnAudioTracksReady();
       }
-      //Log.Info("1");
-      /*
-      if (_startingUp && _isLive)
-      {
-        ushort pgmCount = 0;
-        ushort pgmNumber = 0;
-        ushort audioPid = 0;
-        ushort videoPid = 0;
-        ushort pcrPid = 0;
-        long duration = 0;
-        ITSFileSource tsInterface = _fileSource as ITSFileSource;
-        tsInterface.GetAudioPid(ref audioPid);
-        tsInterface.GetVideoPid(ref videoPid);
-        tsInterface.GetPCRPid(ref pcrPid);
-        tsInterface.GetPgmCount(ref pgmCount);
-        tsInterface.GetDuration(ref duration);
-        if (pgmCount > 0 && duration > 0)
-        {
-          tsInterface.GetPgmNumb(ref pgmNumber);
-          Log.Info("programs:{0} duration:{1} current pgm:{2}", pgmCount, duration, pgmNumber);
-          Log.Info("video:{0:X} audio:{1:X} pcr:{2:X}", videoPid, audioPid, pcrPid);
-          if (pgmNumber != 1)
-          {
-            tsInterface.SetPgmNumb(1);
-            Log.Info("selected prgm number 1");
-          }
-          _startingUp = false;
-        }
-      }
-      else
-      {
-        _startingUp = false;
-      }
-      */
+
       _startingUp = false;
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalMilliseconds >= 50 || iSpeed != 1)
@@ -659,31 +626,6 @@ namespace MediaPortal.Player
         UpdateDuration();
         _updateTimer = DateTime.Now;
       }
-
-      /*
-      if (IsTimeShifting)
-      {
-        if (Speed > 1 && CurrentPosition + 5d >= Duration)
-        {
-          Log.Info("TSReaderPlayer: stop FFWD since end of timeshiftbuffer reached");
-          Speed = 1;
-          UpdateDuration();
-          SeekAbsolute(Duration);
-        }
-        if (Speed < 0 && CurrentPosition < 5d)
-        {
-          Log.Info("TSReaderPlayer: stop RWD since begin of timeshiftbuffer reached");
-          Speed = 1;
-          SeekAbsolute(0d);
-        }
-        
-				//if (Speed<0 && CurrentPosition > _lastPosition)
-				//{
-				//	Speed=1;
-				//	SeekAsolutePercentage(0);
-				//}
-      }
-      */
 
       _lastPosition = CurrentPosition;
       if (GUIGraphicsContext.VideoWindow.Width <= 10 && GUIGraphicsContext.IsFullScreenVideo == false)
@@ -1799,13 +1741,13 @@ namespace MediaPortal.Player
                        p1, p2, p1, p2);
               MovieEnded();
 
-              // Playback was aborted! No sound driver is available for use!
+              // Playback was aborted! No sound driver is available!
               if (code == EventCode.ErrorAbort && p1 == DSERR_NODRIVER)
               {
                 CloseInterfaces();
                 ExclusiveMode(false);
                 _state = PlayState.Ended;
-                Log.Error("TSReaderPlayer: No sound driver is available for use!");
+                Log.Error("TSReaderPlayer: No sound driver is available!");
               }
             }
             //else
@@ -1884,12 +1826,20 @@ namespace MediaPortal.Player
 
         if ((rewind > (latest - margin)) && (_speedRate > 0))
         {
-          _speedRate = 10000;
-          rewind = latest - margin;
-          //Log.Info(" seek ff:{0} {1}",rewind,latest);
-          hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning,
+          if (IsTimeShifting)
+          {
+            _speedRate = 10000;
+            rewind = latest - margin;
+            //Log.Info(" seek ff:{0} {1}",rewind,latest);
+            hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning,
                                           new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-          _mediaCtrl.Run();
+            _mediaCtrl.Run();
+          }
+          else
+          {
+            Log.Info("TSReaderPlayer: Fastforward reached the end of file, stopping playback");
+            _state = PlayState.Ended;
+          }
           return;
         }
         //seek to new moment in time
