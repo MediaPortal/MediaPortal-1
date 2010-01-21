@@ -31,6 +31,8 @@ namespace MpeMaker.Classes
     {
       Build = false;
       SetVersion = false;
+      UpdateXML = false;
+
       if (args.Length > 0)
       {
         ProjectFile = args[0];
@@ -45,6 +47,9 @@ namespace MpeMaker.Classes
             Version = VersionInfo.Pharse(ver);
             SetVersion = true;
           }
+
+          if (s.StartsWith("/UpdateXML"))
+            UpdateXML = true;
         }
       }
     }
@@ -53,5 +58,6 @@ namespace MpeMaker.Classes
     public VersionInfo Version { get; set; }
     public bool Build { get; set; }
     public bool SetVersion { get; set; }
+    public bool UpdateXML { get; set; }
   }
 }

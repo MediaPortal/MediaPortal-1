@@ -65,10 +65,15 @@ namespace MpeMaker
         {
           if (arguments.SetVersion)
             Package.GeneralInfo.Version = arguments.Version;
+
+          if (arguments.UpdateXML)
+            Package.WriteUpdateXml(Package.ProjectSettings.UpdatePath1);
+
           if (arguments.Build)
           {
             if (string.IsNullOrEmpty(Package.GeneralInfo.Location))
               Console.WriteLine("[MpeMaker] No out file is specified");
+
             List<string> list = Package.ValidatePackage();
             if (list.Count > 0)
             {
