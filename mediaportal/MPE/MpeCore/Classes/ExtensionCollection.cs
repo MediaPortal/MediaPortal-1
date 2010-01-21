@@ -225,25 +225,28 @@ namespace MpeCore.Classes
     /// <returns></returns>
     public static ExtensionCollection Load(string fileName)
     {
-      if (File.Exists(fileName))
+      if (String.IsNullOrEmpty(fileName))
+        return new ExtensionCollection();
+
+      if (!File.Exists(fileName))
+        return new ExtensionCollection();
+
+
+      FileStream fs = null;
+      try
       {
-        FileStream fs = null;
-        try
-        {
-          XmlSerializer serializer = new XmlSerializer(typeof (ExtensionCollection));
-          fs = new FileStream(fileName, FileMode.Open);
-          ExtensionCollection extensionCollection = (ExtensionCollection)serializer.Deserialize(fs);
-          fs.Close();
-          return extensionCollection;
-        }
-        catch
-        {
-          if (fs != null)
-            fs.Dispose();
-          return new ExtensionCollection();
-        }
+        XmlSerializer serializer = new XmlSerializer(typeof (ExtensionCollection));
+        fs = new FileStream(fileName, FileMode.Open);
+        ExtensionCollection extensionCollection = (ExtensionCollection)serializer.Deserialize(fs);
+        fs.Close();
+        return extensionCollection;
       }
-      return new ExtensionCollection();
+      catch
+      {
+        if (fs != null)
+          fs.Dispose();
+        return new ExtensionCollection();
+      }
     }
   }
 }
