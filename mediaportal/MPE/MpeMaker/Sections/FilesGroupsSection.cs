@@ -20,16 +20,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using MpeCore;
 using MpeCore.Classes;
 using MpeCore.Classes.Project;
-using MpeCore.Interfaces;
 using MpeMaker.Dialogs;
 
 namespace MpeMaker.Sections
@@ -37,12 +33,14 @@ namespace MpeMaker.Sections
   public partial class FilesGroupsSection : UserControl, ISectionControl
   {
     public PackageClass Package { get; set; }
-
     public GroupItem SelectedGroup { get; set; }
-
     public FileItem SelectedItem { get; set; }
 
-    private bool _loading = false;
+    private bool _loading;
+
+    private const string ImageKeyError = "Error";
+    private const string ImageKeyFile = "File";
+    private const string ImageKeyGroup = "Group";
 
     public FilesGroupsSection()
     {
@@ -51,6 +49,10 @@ namespace MpeMaker.Sections
       {
         cmb_installtype.Items.Add(keyValuePair.Key);
       }
+
+      imageList.Images.Add(ImageKeyFile, Properties.Resources.text_x_generic_template);
+      imageList.Images.Add(ImageKeyError, Properties.Resources.dialog_error);
+      imageList.Images.Add(ImageKeyGroup, Properties.Resources.video_display);
     }
 
     #region ISectionControl Members
@@ -91,21 +93,21 @@ namespace MpeMaker.Sections
                           Text = group.Name,
                           Tag = group,
                           ToolTipText = group.DisplayName,
-                          ImageIndex = 2,
-                          SelectedImageIndex = 2
+                          ImageKey = ImageKeyGroup,
+                          SelectedImageKey = ImageKeyGroup
                         };
       treeView1.Nodes.Add(node);
       return node;
     }
 
-    private void AddFile(TreeNode node, FileItem file)
+    private static void AddFile(TreeNode node, FileItem file)
     {
       GroupItem group = node.Tag as GroupItem;
       TreeNode newnode = new TreeNode();
       newnode.Text = file.ToString();
       newnode.Tag = file;
-      newnode.ImageIndex = File.Exists(Path.GetFullPath(file.LocalFileName)) ? 0 : 1;
-      newnode.SelectedImageIndex = File.Exists(Path.GetFullPath(file.LocalFileName)) ? 0 : 1;
+      newnode.ImageKey = File.Exists(Path.GetFullPath(file.LocalFileName)) ? ImageKeyFile : ImageKeyError;
+      newnode.SelectedImageKey = File.Exists(Path.GetFullPath(file.LocalFileName)) ? ImageKeyFile : ImageKeyError;
       newnode.ToolTipText = Path.GetFullPath(file.LocalFileName);
       node.Nodes.Add(newnode);
     }
@@ -115,7 +117,7 @@ namespace MpeMaker.Sections
       return GetGroupNode(treeView1.SelectedNode);
     }
 
-    private TreeNode GetGroupNode(TreeNode selectedNode)
+    private static TreeNode GetGroupNode(TreeNode selectedNode)
     {
       if (selectedNode == null)
         return null;
@@ -152,15 +154,15 @@ namespace MpeMaker.Sections
         return;
       }
 
-      openFileDialog1.Title = "Select files";
-      openFileDialog1.Multiselect = true;
-      if (openFileDialog1.ShowDialog() == DialogResult.OK)
+      openFileDialog.Title = "Select files";
+      openFileDialog.Multiselect = true;
+      if (openFileDialog.ShowDialog() == DialogResult.OK)
       {
-        AddFiles(openFileDialog1.FileNames);
+        AddFiles(openFileDialog.FileNames);
       }
     }
 
-    private void AddFiles(string[] files)
+    private void AddFiles(IEnumerable<string> files)
     {
       TreeNode selectedNode = GetSelectedGroupNode();
       if (selectedNode == null) return;
@@ -203,14 +205,7 @@ namespace MpeMaker.Sections
         chk_default.Checked = group.DefaulChecked;
         txt_displlayName.Text = group.DisplayName;
         cmb_parentGroup.Text = group.ParentGroup;
-        if (group.Files.Items.Count > 0)
-        {
-          tabPage_file.Enabled = true;
-        }
-        else
-        {
-          tabPage_file.Enabled = false;
-        }
+        tabPage_file.Enabled = group.Files.Items.Count > 0;
 
         list_folder.Items.Clear();
         foreach (FolderGroup folderGroup in Package.ProjectSettings.GetFolderGroups(group.Name))
@@ -300,7 +295,7 @@ namespace MpeMaker.Sections
       }
       if (SelectedItem != null)
       {
-        toolTip1.SetToolTip(cmb_installtype,
+        toolTip.SetToolTip(cmb_installtype,
                             MpeInstaller.InstallerTypeProviders[cmb_installtype.Text].Description);
         SelectedItem.InstallType = cmb_installtype.Text;
         SelectedItem.DestinationFilename = txt_installpath.Text;
@@ -390,7 +385,7 @@ namespace MpeMaker.Sections
 
     private void treeView1_DragEnter(object sender, DragEventArgs e)
     {
-      if (e.Data.GetDataPresent(DataFormats.FileDrop, false) == true)
+      if (e.Data.GetDataPresent(DataFormats.FileDrop, false))
         e.Effect = DragDropEffects.All;
     }
 

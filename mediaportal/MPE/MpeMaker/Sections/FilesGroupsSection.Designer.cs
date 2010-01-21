@@ -29,17 +29,16 @@
         private void InitializeComponent()
         {
           this.components = new System.ComponentModel.Container();
-          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FilesGroupsSection));
           this.treeView1 = new System.Windows.Forms.TreeView();
-          this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-          this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+          this.imageList = new System.Windows.Forms.ImageList(this.components);
+          this.toolStrip = new System.Windows.Forms.ToolStrip();
           this.mnu_add_group = new System.Windows.Forms.ToolStripButton();
           this.mnu_remove_group = new System.Windows.Forms.ToolStripButton();
           this.toolStripButton3 = new System.Windows.Forms.ToolStripSeparator();
           this.mnu_add_files = new System.Windows.Forms.ToolStripButton();
           this.mnu_add_folder = new System.Windows.Forms.ToolStripButton();
           this.mnu_remove_files = new System.Windows.Forms.ToolStripButton();
-          this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+          this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
           this.tabControl1 = new System.Windows.Forms.TabControl();
           this.tabPage_group = new System.Windows.Forms.TabPage();
           this.label8 = new System.Windows.Forms.Label();
@@ -62,8 +61,8 @@
           this.txt_installpath = new System.Windows.Forms.TextBox();
           this.label1 = new System.Windows.Forms.Label();
           this.cmb_installtype = new System.Windows.Forms.ComboBox();
-          this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-          this.toolStrip1.SuspendLayout();
+          this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+          this.toolStrip.SuspendLayout();
           this.tabControl1.SuspendLayout();
           this.tabPage_group.SuspendLayout();
           this.tabPage_file.SuspendLayout();
@@ -76,7 +75,7 @@
                       | System.Windows.Forms.AnchorStyles.Left)));
           this.treeView1.HideSelection = false;
           this.treeView1.ImageIndex = 0;
-          this.treeView1.ImageList = this.imageList1;
+          this.treeView1.ImageList = this.imageList;
           this.treeView1.Location = new System.Drawing.Point(0, 35);
           this.treeView1.Name = "treeView1";
           this.treeView1.SelectedImageIndex = 0;
@@ -88,30 +87,28 @@
           this.treeView1.DragEnter += new System.Windows.Forms.DragEventHandler(this.treeView1_DragEnter);
           this.treeView1.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView1_DragOver);
           // 
-          // imageList1
+          // imageList
           // 
-          this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-          this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-          this.imageList1.Images.SetKeyName(0, "text-x-generic-template.png");
-          this.imageList1.Images.SetKeyName(1, "dialog-error.png");
-          this.imageList1.Images.SetKeyName(2, "video-display.png");
+          this.imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+          this.imageList.ImageSize = new System.Drawing.Size(16, 16);
+          this.imageList.TransparentColor = System.Drawing.Color.Transparent;
           // 
-          // toolStrip1
+          // toolStrip
           // 
-          this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
-          this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+          this.toolStrip.Dock = System.Windows.Forms.DockStyle.None;
+          this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnu_add_group,
             this.mnu_remove_group,
             this.toolStripButton3,
             this.mnu_add_files,
             this.mnu_add_folder,
             this.mnu_remove_files});
-          this.toolStrip1.Location = new System.Drawing.Point(3, 7);
-          this.toolStrip1.Name = "toolStrip1";
-          this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-          this.toolStrip1.Size = new System.Drawing.Size(164, 25);
-          this.toolStrip1.TabIndex = 2;
-          this.toolStrip1.Text = "toolStrip1";
+          this.toolStrip.Location = new System.Drawing.Point(3, 7);
+          this.toolStrip.Name = "toolStrip";
+          this.toolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+          this.toolStrip.Size = new System.Drawing.Size(133, 25);
+          this.toolStrip.TabIndex = 2;
+          this.toolStrip.Text = "toolStrip1";
           // 
           // mnu_add_group
           // 
@@ -170,9 +167,9 @@
           this.mnu_remove_files.Text = "Remove files";
           this.mnu_remove_files.Click += new System.EventHandler(this.mnu_remove_files_Click);
           // 
-          // openFileDialog1
+          // openFileDialog
           // 
-          this.openFileDialog1.FileName = "openFileDialog1";
+          this.openFileDialog.FileName = "openFileDialog1";
           // 
           // tabControl1
           // 
@@ -420,7 +417,7 @@
           this.cmb_installtype.Name = "cmb_installtype";
           this.cmb_installtype.Size = new System.Drawing.Size(216, 21);
           this.cmb_installtype.TabIndex = 0;
-          this.toolTip1.SetToolTip(this.cmb_installtype, "1");
+          this.toolTip.SetToolTip(this.cmb_installtype, "1");
           this.cmb_installtype.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
           // 
           // FilesGroupsSection
@@ -430,12 +427,12 @@
           this.AutoSize = true;
           this.BackColor = System.Drawing.SystemColors.Control;
           this.Controls.Add(this.tabControl1);
-          this.Controls.Add(this.toolStrip1);
+          this.Controls.Add(this.toolStrip);
           this.Controls.Add(this.treeView1);
           this.Name = "FilesGroupsSection";
           this.Size = new System.Drawing.Size(702, 428);
-          this.toolStrip1.ResumeLayout(false);
-          this.toolStrip1.PerformLayout();
+          this.toolStrip.ResumeLayout(false);
+          this.toolStrip.PerformLayout();
           this.tabControl1.ResumeLayout(false);
           this.tabPage_group.ResumeLayout(false);
           this.tabPage_group.PerformLayout();
@@ -449,13 +446,13 @@
         #endregion
 
         private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton mnu_add_group;
         private System.Windows.Forms.ToolStripButton mnu_remove_group;
         private System.Windows.Forms.ToolStripSeparator toolStripButton3;
         private System.Windows.Forms.ToolStripButton mnu_add_files;
         private System.Windows.Forms.ToolStripButton mnu_remove_files;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage_group;
         private System.Windows.Forms.TabPage tabPage_file;
@@ -477,10 +474,10 @@
         private System.Windows.Forms.ToolStripButton mnu_add_folder;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox txt_param1;
-        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ListBox list_folder;
-        private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.ImageList imageList;
 
     }
 }

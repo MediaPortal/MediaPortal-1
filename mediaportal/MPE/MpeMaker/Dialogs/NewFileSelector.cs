@@ -19,17 +19,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using MpeCore;
 using MpeCore.Classes;
 using MpeCore.Classes.Project;
-using MpeCore.Interfaces;
 using MpeMaker.Wizards;
 
 namespace MpeMaker.Dialogs
@@ -42,13 +36,25 @@ namespace MpeMaker.Dialogs
     {
       Package = packageClass;
       InitializeComponent();
-      listView1.Items[0].Selected = true;
+
+      imageList.Images.Add(Properties.Resources.document_new);
+      imageList.Images.Add(Properties.Resources.document_open);
+      imageList.Images.Add(Properties.Resources.applications_graphics);
+
+      ListViewGroup wizardGroup = new ListViewGroup("Wizards", HorizontalAlignment.Left);
+      listView.Groups.Add(wizardGroup);
+      listView.Items.Add(new ListViewItem("New Project", 0));
+      listView.Items.Add(new ListViewItem("Open project", 1));
+      listView.Items.Add(new ListViewItem("New Skin Project Wizard", 2, wizardGroup));
+
+      listView.Items[0].Selected = true;
     }
 
     private void btn_ok_Click(object sender, EventArgs e)
     {
-      this.Hide();
-      switch (listView1.SelectedIndices[0])
+      Hide();
+
+      switch (listView.SelectedIndices[0])
       {
         case 0:
           New();
@@ -62,8 +68,9 @@ namespace MpeMaker.Dialogs
         default:
           break;
       }
-      this.DialogResult = DialogResult.OK;
-      this.Close();
+
+      DialogResult = DialogResult.OK;
+      Close();
     }
 
     private void New()
@@ -87,34 +94,34 @@ namespace MpeMaker.Dialogs
 
     private void Open()
     {
-      openFileDialog1.Filter = "Mpe project file(*.xmp2)|*.xmp2|All files|*.*";
-      openFileDialog1.Title = "Open extension installer project file";
-      openFileDialog1.Multiselect = false;
-      if (openFileDialog1.ShowDialog() == DialogResult.OK)
+      openFileDialog.Filter = "Mpe project file(*.xmp2)|*.xmp2|All files|*.*";
+      openFileDialog.Title = "Open extension installer project file";
+      openFileDialog.Multiselect = false;
+      if (openFileDialog.ShowDialog() == DialogResult.OK)
       {
         PackageClass pak = new PackageClass();
-        if (!pak.Load(openFileDialog1.FileName))
+        if (!pak.Load(openFileDialog.FileName))
         {
           MessageBox.Show("Error loading package project");
         }
         Package = pak;
-        Package.GenerateAbsolutePath(Path.GetDirectoryName(openFileDialog1.FileName));
+        Package.GenerateAbsolutePath(Path.GetDirectoryName(openFileDialog.FileName));
         foreach (FolderGroup folderGroup in Package.ProjectSettings.FolderGroups)
         {
           ProjectSettings.UpdateFiles(Package, folderGroup);
         }
-        Package.ProjectSettings.ProjectFilename = openFileDialog1.FileName;
+        Package.ProjectSettings.ProjectFilename = openFileDialog.FileName;
       }
     }
 
     private void listView1_SelectedIndexChanged(object sender, EventArgs e)
     {
-      btn_ok.Enabled = listView1.SelectedItems.Count > 0;
+      btn_ok.Enabled = listView.SelectedItems.Count > 0;
     }
 
     private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
     {
-      if (listView1.SelectedItems.Count > 0)
+      if (listView.SelectedItems.Count > 0)
         btn_ok_Click(sender, null);
     }
   }
