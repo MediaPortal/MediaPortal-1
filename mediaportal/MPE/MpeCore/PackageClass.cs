@@ -539,5 +539,24 @@ namespace MpeCore
       str = str.Replace("[VersionDescription]", GeneralInfo.VersionDescription);
       return str;
     }
+
+    /// <summary>
+    /// Writes the XML file for getting infos about updates.
+    /// </summary>
+    /// <param name="xmlFile">is the filename where to save the infos to.</param>
+    public bool WriteUpdateXml(string xmlFile)
+    {
+      if (String.IsNullOrEmpty(xmlFile))
+      {
+        Console.WriteLine("[MpeMaker] Error: Output file for Update.xml is not specified in package.");
+        return false;
+      }
+
+      ExtensionCollection list = ExtensionCollection.Load(xmlFile);
+      list.Add(this);
+      list.Save(xmlFile);
+
+      return true;
+    }
   }
 }

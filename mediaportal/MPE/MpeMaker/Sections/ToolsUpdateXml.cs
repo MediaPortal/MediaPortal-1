@@ -107,12 +107,7 @@ namespace MpeMaker.Sections
     /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     private void btn_gen_Click(object sender, EventArgs e)
     {
-      string xmlFile = textBox1.Text;
-      ExtensionCollection list = new ExtensionCollection();
-      if (File.Exists(xmlFile))
-        list = ExtensionCollection.Load(xmlFile);
-      list.Add(Package);
-      list.Save(xmlFile);
+      Package.WriteUpdateXml(textBox1.Text);
     }
 
     public void Set(PackageClass pak)
