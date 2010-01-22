@@ -189,5 +189,16 @@ namespace MpeMaker.Sections
       else
         base.OnKeyDown(e);
     }
+
+    private void OnKeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Delete)
+      {
+        e.Handled = true;
+
+        if (sender == list_versions)
+          mnu_del_Click(null, null);
+      }
+    }
   }
 }

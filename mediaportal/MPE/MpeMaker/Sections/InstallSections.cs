@@ -324,5 +324,20 @@ namespace MpeMaker.Sections
       }
       list_groups.SelectedIndex = idx + 1;
     }
+
+    private void OnKeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Delete)
+      {
+        e.Handled = true;
+
+        if (sender == listBox_sections)
+          mnu_remove_Click(null, null);
+        else if (sender == list_actions)
+          mnu_action_del_Click(null, null);
+        else if (sender == list_groups)
+          toolStripButton2_Click(null, null);
+      }
+    }
   }
 }

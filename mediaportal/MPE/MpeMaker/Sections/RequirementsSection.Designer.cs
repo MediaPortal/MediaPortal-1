@@ -73,6 +73,7 @@
           this.list_versions.Size = new System.Drawing.Size(291, 394);
           this.list_versions.TabIndex = 0;
           this.list_versions.SelectedIndexChanged += new System.EventHandler(this.list_versions_SelectedIndexChanged);
+          this.list_versions.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
           // 
           // toolStrip1
           // 

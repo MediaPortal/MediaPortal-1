@@ -83,6 +83,7 @@
           this.listBox_sections.Size = new System.Drawing.Size(254, 394);
           this.listBox_sections.TabIndex = 0;
           this.listBox_sections.SelectedIndexChanged += new System.EventHandler(this.listBox_sections_SelectedIndexChanged);
+          this.listBox_sections.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
           // 
           // toolStrip1
           // 
@@ -127,6 +128,7 @@
           this.list_groups.Size = new System.Drawing.Size(272, 134);
           this.list_groups.TabIndex = 5;
           this.toolTip1.SetToolTip(this.list_groups, "Check the included group item on this section,\r\nnot all sections need groups. ");
+          this.list_groups.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
           // 
           // groupBox1
           // 
@@ -391,6 +393,7 @@
           this.list_actions.Size = new System.Drawing.Size(301, 134);
           this.list_actions.TabIndex = 1;
           this.toolTip1.SetToolTip(this.list_actions, "Atached actions to the section ");
+          this.list_actions.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
           // 
           // toolStrip2
           // 

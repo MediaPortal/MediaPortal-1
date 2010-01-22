@@ -415,5 +415,21 @@ namespace MpeMaker.Sections
       if (files.Length > 0)
         AddFiles(files);
     }
+
+    private void OnKeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Delete)
+      {
+        e.Handled = true;
+
+        if (sender == treeView1 && treeView1.SelectedNode != null)
+        {
+          if (treeView1.SelectedNode.Tag is GroupItem)
+            mnu_remove_group_Click(null, null);
+          else if (treeView1.SelectedNode.Tag is FileItem)
+            mnu_remove_files_Click(null, null);
+        }
+      }
+    }
   }
 }
