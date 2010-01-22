@@ -58,7 +58,12 @@ namespace MpeMaker
         return;
       }
 
-      if (!LoadProject(arguments.ProjectFile)) return;
+      // load project specified by app arguments
+      PackageClass loadedProject = LoadProject(arguments.ProjectFile);
+      // if loading failed, stop here and show mainform
+      if (loadedProject == null) return;
+      // update project
+      UpdatePackage(loadedProject);
 
       if (arguments.SetVersion)
         Package.GeneralInfo.Version = arguments.Version;
@@ -210,32 +215,34 @@ namespace MpeMaker
 
     #region New / Load / Save project
 
-    private void NewProject()
+    private static PackageClass GetNewProject()
     {
-      Package = new PackageClass();
-      Package.Groups.Items.Add(new GroupItem("Default"));
-      Package.Sections.Add("Welcome Screen");
-      Package.Sections.Items[0].WizardButtonsEnum = WizardButtonsEnum.NextCancel;
-      Package.Sections.Add("Install Section");
+      PackageClass packageClass = new PackageClass();
+      packageClass.Groups.Items.Add(new GroupItem("Default"));
+      packageClass.Sections.Add("Welcome Screen");
+      packageClass.Sections.Items[0].WizardButtonsEnum = WizardButtonsEnum.NextCancel;
+      packageClass.Sections.Add("Install Section");
       var item = new ActionItem("InstallFiles")
       {
         Params =
           new SectionParamCollection(
           MpeInstaller.ActionProviders["InstallFiles"].GetDefaultParams())
       };
-      Package.Sections.Items[1].Actions.Add(item);
-      Package.Sections.Items[1].WizardButtonsEnum = WizardButtonsEnum.Next;
-      Package.Sections.Add("Setup Complete");
-      Package.Sections.Items[2].WizardButtonsEnum = WizardButtonsEnum.Finish;
+      packageClass.Sections.Items[1].Actions.Add(item);
+      packageClass.Sections.Items[1].WizardButtonsEnum = WizardButtonsEnum.Next;
+      packageClass.Sections.Add("Setup Complete");
+      packageClass.Sections.Items[2].WizardButtonsEnum = WizardButtonsEnum.Finish;
+
+      return packageClass;
     }
 
-    private bool LoadProject(string filename)
+    private static PackageClass LoadProject(string filename)
     {
       PackageClass pak = new PackageClass();
       if (!pak.Load(filename))
       {
         MessageBox.Show("Error loading package project");
-        return false;
+        return null;
       }
 
       pak.GenerateAbsolutePath(Path.GetDirectoryName(filename));
@@ -246,10 +253,7 @@ namespace MpeMaker
 
       pak.ProjectSettings.ProjectFilename = filename;
 
-      Package = pak;
-
-      SetTitle();
-      return true;
+      return pak;
     }
 
     private void SaveProject(string filename)
@@ -274,13 +278,17 @@ namespace MpeMaker
       Hide();
 
       NewFileSelector newFileSelector = new NewFileSelector();
-      if (newFileSelector.ShowDialog() == DialogResult.OK)
+      DialogResult dialogResult = newFileSelector.ShowDialog();
+
+      Show();
+      BringToFront();
+
+      if (dialogResult == DialogResult.OK)
       {
-        treeView1.SelectedNode = treeView1.Nodes[0];
         switch (newFileSelector.MpeStartupResult)
         {
           case MpeStartupResult.NewFile:
-            NewProject();
+            UpdatePackage(GetNewProject());
             break;
 
           case MpeStartupResult.OpenFile:
@@ -288,15 +296,19 @@ namespace MpeMaker
             break;
 
           case MpeStartupResult.SkinWizard:
-            Package = NewSkin.Get(Package);
+            UpdatePackage(NewSkin.Get(Package));
             break;
         }
-
-        treeView1.SelectedNode = treeView1.Nodes[0];
-        SetTitle();
       }
+    }
 
-      Show();
+    private void UpdatePackage(PackageClass packageClass)
+    {
+      if (packageClass == null) return;
+
+      Package = packageClass;
+      treeView1.SelectedNode = treeView1.Nodes[0];
+      SetTitle();
     }
   }
 }
