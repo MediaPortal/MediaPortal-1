@@ -29,11 +29,9 @@
         private void InitializeComponent()
         {
           this.components = new System.ComponentModel.Container();
-          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewFileSelector));
           this.listView = new System.Windows.Forms.ListView();
           this.imageList = new System.Windows.Forms.ImageList(this.components);
           this.btn_ok = new System.Windows.Forms.Button();
-          this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
           this.SuspendLayout();
           // 
           // listView
@@ -65,10 +63,6 @@
           this.btn_ok.UseVisualStyleBackColor = true;
           this.btn_ok.Click += new System.EventHandler(this.btn_ok_Click);
           // 
-          // openFileDialog
-          // 
-          this.openFileDialog.FileName = "openFileDialog1";
-          // 
           // NewFileSelector
           // 
           this.AcceptButton = this.btn_ok;
@@ -78,7 +72,6 @@
           this.Controls.Add(this.btn_ok);
           this.Controls.Add(this.listView);
           this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
-          this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
           this.MaximizeBox = false;
           this.MinimizeBox = false;
           this.Name = "NewFileSelector";
@@ -93,6 +86,5 @@
         private System.Windows.Forms.ListView listView;
         private System.Windows.Forms.ImageList imageList;
         private System.Windows.Forms.Button btn_ok;
-        private System.Windows.Forms.OpenFileDialog openFileDialog;
     }
 }

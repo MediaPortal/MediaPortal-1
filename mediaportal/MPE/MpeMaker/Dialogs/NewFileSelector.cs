@@ -19,23 +19,26 @@
 #endregion
 
 using System;
-using System.IO;
+using System.Drawing;
 using System.Windows.Forms;
-using MpeCore;
-using MpeCore.Classes;
-using MpeCore.Classes.Project;
-using MpeMaker.Wizards;
 
 namespace MpeMaker.Dialogs
 {
+  public enum MpeStartupResult
+  {
+    NewFile,
+    OpenFile,
+    SkinWizard
+  }
+
   public partial class NewFileSelector : Form
   {
-    public PackageClass Package;
+    public MpeStartupResult MpeStartupResult;
 
-    public NewFileSelector(PackageClass packageClass)
+    public NewFileSelector()
     {
-      Package = packageClass;
       InitializeComponent();
+      Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 
       imageList.Images.Add(Properties.Resources.document_new);
       imageList.Images.Add(Properties.Resources.document_open);
@@ -57,13 +60,13 @@ namespace MpeMaker.Dialogs
       switch (listView.SelectedIndices[0])
       {
         case 0:
-          New();
+          MpeStartupResult = MpeStartupResult.NewFile;
           break;
         case 1:
-          Open();
+          MpeStartupResult = MpeStartupResult.OpenFile;
           break;
         case 2:
-          Package = NewSkin.Get(Package);
+          MpeStartupResult = MpeStartupResult.SkinWizard;
           break;
         default:
           break;
@@ -71,47 +74,6 @@ namespace MpeMaker.Dialogs
 
       DialogResult = DialogResult.OK;
       Close();
-    }
-
-    private void New()
-    {
-      Package = new PackageClass();
-      Package.Groups.Items.Add(new GroupItem("Default"));
-      Package.Sections.Add("Welcome Screen");
-      Package.Sections.Items[0].WizardButtonsEnum = WizardButtonsEnum.NextCancel;
-      Package.Sections.Add("Install Section");
-      var item = new ActionItem("InstallFiles")
-                   {
-                     Params =
-                       new SectionParamCollection(
-                       MpeInstaller.ActionProviders["InstallFiles"].GetDefaultParams())
-                   };
-      Package.Sections.Items[1].Actions.Add(item);
-      Package.Sections.Items[1].WizardButtonsEnum = WizardButtonsEnum.Next;
-      Package.Sections.Add("Setup Complete");
-      Package.Sections.Items[2].WizardButtonsEnum = WizardButtonsEnum.Finish;
-    }
-
-    private void Open()
-    {
-      openFileDialog.Filter = "Mpe project file(*.xmp2)|*.xmp2|All files|*.*";
-      openFileDialog.Title = "Open extension installer project file";
-      openFileDialog.Multiselect = false;
-      if (openFileDialog.ShowDialog() == DialogResult.OK)
-      {
-        PackageClass pak = new PackageClass();
-        if (!pak.Load(openFileDialog.FileName))
-        {
-          MessageBox.Show("Error loading package project");
-        }
-        Package = pak;
-        Package.GenerateAbsolutePath(Path.GetDirectoryName(openFileDialog.FileName));
-        foreach (FolderGroup folderGroup in Package.ProjectSettings.FolderGroups)
-        {
-          ProjectSettings.UpdateFiles(Package, folderGroup);
-        }
-        Package.ProjectSettings.ProjectFilename = openFileDialog.FileName;
-      }
     }
 
     private void listView1_SelectedIndexChanged(object sender, EventArgs e)

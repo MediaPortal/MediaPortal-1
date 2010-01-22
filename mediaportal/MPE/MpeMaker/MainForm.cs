@@ -20,119 +20,164 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.IO;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using MpeCore;
 using MpeCore.Classes;
 using MpeCore.Classes.Project;
-using MpeCore.Classes.SectionPanel;
-using MpeCore.Interfaces;
+using MpeMaker.Classes;
 using MpeMaker.Dialogs;
 using MpeMaker.Sections;
-using MpeMaker.Classes;
+using MpeMaker.Wizards;
 
 namespace MpeMaker
 {
   public partial class MainForm : Form
   {
-    public PackageClass Package { get; set; }
-    private Dictionary<string, Control> panels = new Dictionary<string, Control>();
-    public string ProjectFileName = "";
+    private const string mpeFileDialogFilter = "Mpe project file(*.xmp2)|*.xmp2|All files|*.*";
+
+    private readonly Dictionary<string, Control> _panels = new Dictionary<string, Control>();
+
+    #region Constructors
 
     public MainForm()
     {
-      MpeInstaller.Init();
-      InitializeComponent();
-      Package = new PackageClass();
       Init();
-      NewProject();
+      OpenNewFileSelector();
     }
 
     public MainForm(ProgramArguments arguments)
     {
-      MpeInstaller.Init();
-      InitializeComponent();
-      Package = new PackageClass();
       Init();
-      //NewProject();
-      if (File.Exists(arguments.ProjectFile))
-      {
-        if (LoadProject(arguments.ProjectFile))
-        {
-          if (arguments.SetVersion)
-            Package.GeneralInfo.Version = arguments.Version;
 
-          if (arguments.UpdateXML)
-            Package.WriteUpdateXml(Package.ProjectSettings.UpdatePath1);
-
-          if (arguments.Build)
-          {
-            if (string.IsNullOrEmpty(Package.GeneralInfo.Location))
-              Console.WriteLine("[MpeMaker] No out file is specified");
-
-            List<string> list = Package.ValidatePackage();
-            if (list.Count > 0)
-            {
-              Console.WriteLine("[MpeMaker] Error in package");
-              foreach (string s in list)
-              {
-                Console.WriteLine("[MpeMaker] " + s);
-              }
-              Close();
-              return;
-            }
-            MpeInstaller.ZipProvider.Save(Package, Package.ReplaceInfo(Package.GeneralInfo.Location));
-            Close();
-            return;
-          }
-        }
-      }
-      else
+      if (!File.Exists(arguments.ProjectFile))
       {
         MessageBox.Show("Project file not specified or not found !");
+        return;
+      }
+
+      if (!LoadProject(arguments.ProjectFile)) return;
+
+      if (arguments.SetVersion)
+        Package.GeneralInfo.Version = arguments.Version;
+
+      if (arguments.UpdateXML)
+        Package.WriteUpdateXml(Package.ProjectSettings.UpdatePath1);
+
+      if (arguments.Build)
+      {
+        if (string.IsNullOrEmpty(Package.GeneralInfo.Location))
+          Console.WriteLine("[MpeMaker] No out file is specified");
+
+        List<string> list = Package.ValidatePackage();
+        if (list.Count > 0)
+        {
+          Console.WriteLine("[MpeMaker] Error in package");
+          foreach (string s in list)
+          {
+            Console.WriteLine("[MpeMaker] " + s);
+          }
+          Close();
+          return;
+        }
+        MpeInstaller.ZipProvider.Save(Package, Package.ReplaceInfo(Package.GeneralInfo.Location));
+        Close();
+        return;
       }
     }
-
 
     private void Init()
     {
+      MpeInstaller.Init();
+      InitializeComponent();
+      Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+
+      Package = new PackageClass();
+
       splitContainer1.Panel1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
       treeView1.ExpandAll();
-      panels.Add("Node0", new WelcomSection());
-      panels.Add("Node2", new GeneralSection());
-      panels.Add("Node3", new FilesGroupsSection());
-      panels.Add("Node4", new InstallSections());
-      panels.Add("Node5", new RequirementsSection());
-      panels.Add("Node6", new BuildSection());
-      panels.Add("Node7", new ToolsUpdateXml());
+      _panels.Add("Node0", new WelcomSection());
+      _panels.Add("Node2", new GeneralSection());
+      _panels.Add("Node3", new FilesGroupsSection());
+      _panels.Add("Node4", new InstallSections());
+      _panels.Add("Node5", new RequirementsSection());
+      _panels.Add("Node6", new BuildSection());
+      _panels.Add("Node7", new ToolsUpdateXml());
+
+      openFileDialog.Filter = mpeFileDialogFilter;
+      saveFileDialog.Filter = mpeFileDialogFilter;
     }
 
-    private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+    #endregion
+
+    #region Properties
+
+    public PackageClass Package { get; set; }
+
+    public string ProjectFileName
     {
-      if (panels.ContainsKey(e.Node.Name))
+      get
       {
-        splitContainer1.Panel2.Controls.Clear();
-        panels[e.Node.Name].Anchor = (AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top |
-                                      AnchorStyles.Left);
-        panels[e.Node.Name].Dock = DockStyle.Fill;
-        splitContainer1.Panel2.Controls.Add(panels[e.Node.Name]);
-        ((ISectionControl)panels[e.Node.Name]).Set(Package);
+        if (Package == null) return string.Empty;
+        if (Package.ProjectSettings == null) return string.Empty;
+
+        return Package.ProjectSettings.ProjectFilename;
       }
     }
 
-    private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+    #endregion
+
+    private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
     {
-      Close();
+      if (_panels.ContainsKey(e.Node.Name))
+      {
+        splitContainer1.Panel2.Controls.Clear();
+        _panels[e.Node.Name].Anchor = (AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top |
+                                      AnchorStyles.Left);
+        _panels[e.Node.Name].Dock = DockStyle.Fill;
+        splitContainer1.Panel2.Controls.Add(_panels[e.Node.Name]);
+        ((ISectionControl)_panels[e.Node.Name]).Set(Package);
+      }
+    }
+
+    private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+    {
+      e.Cancel = !LoosingChangesConfirmed("Close MpeMaker");
+    }
+
+    #region Menu
+
+    private void mnu_new_Click(object sender, EventArgs e)
+    {
+      if (LoosingChangesConfirmed("New Project"))
+      {
+        OpenNewFileSelector();
+      }
+    }
+
+    private void mnu_open_Click(object sender, EventArgs e)
+    {
+      if (LoosingChangesConfirmed("Open Project"))
+      {
+        OpenFile();
+      }
+    }
+
+    private void OpenFile()
+    {
+      openFileDialog.FileName = ProjectFileName;
+      if (openFileDialog.ShowDialog() == DialogResult.OK)
+      {
+        LoadProject(openFileDialog.FileName);
+      }
     }
 
     private void mnu_save_Click(object sender, EventArgs e)
     {
       if (File.Exists(ProjectFileName))
-        Save(ProjectFileName);
+        SaveProject(ProjectFileName);
       else
       {
         mnu_saveAs_Click(null, null);
@@ -141,44 +186,47 @@ namespace MpeMaker
 
     private void mnu_saveAs_Click(object sender, EventArgs e)
     {
-      saveFileDialog1.Filter = "Mpe project file(*.xmp2)|*.xmp2|All files|*.*";
-      saveFileDialog1.Title = "Save extension installer proiect file";
-      if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+      if (saveFileDialog.ShowDialog() == DialogResult.OK)
       {
-        Save(saveFileDialog1.FileName);
+        SaveProject(saveFileDialog.FileName);
       }
     }
 
-    private void Save(string file)
+    private void exitToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      Package.GenerateRelativePath(Path.GetDirectoryName(file));
-      Package.Save(file);
-      Package.GenerateAbsolutePath(Path.GetDirectoryName(file));
-      ProjectFileName = file;
-      SetTitle();
+      Close();
     }
 
-    private void SetTitle()
+    private static bool LoosingChangesConfirmed(string caption)
     {
-      this.Text = "MpeMaker - " + ProjectFileName;
+      StringBuilder stringBuilder = new StringBuilder();
+      stringBuilder.AppendLine("All not saved changes will be lost,");
+      stringBuilder.AppendLine("Do you want to continue?");
+
+      return MessageBox.Show(stringBuilder.ToString(), caption, MessageBoxButtons.YesNo) == DialogResult.Yes;
     }
 
-    private void mnu_open_Click(object sender, EventArgs e)
+    #endregion
+
+    #region New / Load / Save project
+
+    private void NewProject()
     {
-      openFileDialog1.Filter = "Mpe project file(*.xmp2)|*.xmp2|All files|*.*";
-      openFileDialog1.Title = "Open extension installer project file";
-      openFileDialog1.FileName = ProjectFileName;
-      openFileDialog1.Multiselect = false;
-      if (openFileDialog1.ShowDialog() == DialogResult.OK)
+      Package = new PackageClass();
+      Package.Groups.Items.Add(new GroupItem("Default"));
+      Package.Sections.Add("Welcome Screen");
+      Package.Sections.Items[0].WizardButtonsEnum = WizardButtonsEnum.NextCancel;
+      Package.Sections.Add("Install Section");
+      var item = new ActionItem("InstallFiles")
       {
-        if (!LoadProject(openFileDialog1.FileName))
-        {
-          MessageBox.Show("Wrong project file format !");
-          return;
-        }
-      }
-      ProjectFileName = openFileDialog1.FileName;
-      SetTitle();
+        Params =
+          new SectionParamCollection(
+          MpeInstaller.ActionProviders["InstallFiles"].GetDefaultParams())
+      };
+      Package.Sections.Items[1].Actions.Add(item);
+      Package.Sections.Items[1].WizardButtonsEnum = WizardButtonsEnum.Next;
+      Package.Sections.Add("Setup Complete");
+      Package.Sections.Items[2].WizardButtonsEnum = WizardButtonsEnum.Finish;
     }
 
     private bool LoadProject(string filename)
@@ -189,38 +237,66 @@ namespace MpeMaker
         MessageBox.Show("Error loading package project");
         return false;
       }
-      Package = pak;
-      Package.GenerateAbsolutePath(Path.GetDirectoryName(filename));
-      foreach (FolderGroup folderGroup in Package.ProjectSettings.FolderGroups)
+
+      pak.GenerateAbsolutePath(Path.GetDirectoryName(filename));
+      foreach (FolderGroup folderGroup in pak.ProjectSettings.FolderGroups)
       {
-        ProjectSettings.UpdateFiles(Package, folderGroup);
+        ProjectSettings.UpdateFiles(pak, folderGroup);
       }
-      ProjectFileName = filename;
-      treeView1.SelectedNode = treeView1.Nodes[0];
+
+      pak.ProjectSettings.ProjectFilename = filename;
+
+      Package = pak;
+
       SetTitle();
       return true;
     }
 
-    private void mnu_new_Click(object sender, EventArgs e)
+    private void SaveProject(string filename)
     {
-      if (
-        MessageBox.Show("All not saved changes will be lost, \n Do you want to continue ?", "New project",
-                        MessageBoxButtons.YesNo) == DialogResult.Yes)
-      {
-        NewProject();
-      }
+      Package.ProjectSettings.ProjectFilename = filename;
+      Package.GenerateRelativePath(Path.GetDirectoryName(filename));
+      Package.Save(filename);
+      Package.GenerateAbsolutePath(Path.GetDirectoryName(filename));
+
+      SetTitle();
     }
 
-    private void NewProject()
+    #endregion
+
+    private void SetTitle()
     {
-      NewFileSelector newf = new NewFileSelector(Package);
-      if (newf.ShowDialog() == DialogResult.OK)
+      Text = "MpeMaker - " + ProjectFileName;
+    }
+
+    private void OpenNewFileSelector()
+    {
+      Hide();
+
+      NewFileSelector newFileSelector = new NewFileSelector();
+      if (newFileSelector.ShowDialog() == DialogResult.OK)
       {
         treeView1.SelectedNode = treeView1.Nodes[0];
-        Package = newf.Package;
-        ProjectFileName = Package.ProjectSettings.ProjectFilename;
+        switch (newFileSelector.MpeStartupResult)
+        {
+          case MpeStartupResult.NewFile:
+            NewProject();
+            break;
+
+          case MpeStartupResult.OpenFile:
+            OpenFile();
+            break;
+
+          case MpeStartupResult.SkinWizard:
+            Package = NewSkin.Get(Package);
+            break;
+        }
+
+        treeView1.SelectedNode = treeView1.Nodes[0];
         SetTitle();
       }
+
+      Show();
     }
   }
 }
