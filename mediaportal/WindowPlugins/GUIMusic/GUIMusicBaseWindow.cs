@@ -707,10 +707,12 @@ namespace MediaPortal.GUI.Music
 
     protected override void OnPageLoad()
     {
-      // watch if we're still playing a last.fm radio stream
-      //if (g_Player.Playing)
-      //  if (Util.Utils.IsLastFMStream(g_Player.CurrentFile))
-      //    g_Player.Stop();
+      // Update current playing (might have changed when other window was running)
+      PlayListItem currentItem = playlistPlayer.GetCurrentItem();
+      if (currentItem != null)
+      {
+        _currentPlaying = currentItem.FileName;
+      }
 
       if (m_database == null)
       {
