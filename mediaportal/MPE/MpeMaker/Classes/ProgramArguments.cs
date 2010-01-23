@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using MpeCore.Classes;
 
@@ -35,7 +36,7 @@ namespace MpeMaker.Classes
 
       if (args.Length > 0)
       {
-        ProjectFile = args[0];
+        ProjectFile = Path.GetFullPath(args[0]);
         foreach (string s in args)
         {
           if (s.StartsWith("/B"))

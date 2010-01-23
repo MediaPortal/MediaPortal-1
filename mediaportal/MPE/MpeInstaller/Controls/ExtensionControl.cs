@@ -146,7 +146,7 @@ namespace MpeInstaller.Controls
 
       if (Parent == null)
         return;
-      ExtensionListControl parent = Parent.Parent as ExtensionListControl;
+      var parent = Parent.Parent as ExtensionListControl;
       if (Selected)
       {
         if (parent != null && Selected)

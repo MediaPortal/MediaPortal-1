@@ -67,29 +67,36 @@ namespace MpeMaker
       if (arguments.SetVersion)
         Package.GeneralInfo.Version = arguments.Version;
 
-      if (arguments.UpdateXML)
-        Package.WriteUpdateXml(Package.ProjectSettings.UpdatePath1);
-
       if (arguments.Build)
       {
         if (string.IsNullOrEmpty(Package.GeneralInfo.Location))
-          Console.WriteLine("[MpeMaker] No out file is specified");
-
-        List<string> list = Package.ValidatePackage();
-        if (list.Count > 0)
         {
-          Console.WriteLine("[MpeMaker] Error in package");
-          foreach (string s in list)
+          Console.WriteLine("[MpeMaker] No out file is specified");
+        }
+        else
+        {
+          List<string> list = Package.ValidatePackage();
+          if (list.Count > 0)
           {
-            Console.WriteLine("[MpeMaker] " + s);
+            Console.WriteLine("[MpeMaker] Error in package");
+            foreach (string s in list)
+            {
+              Console.WriteLine("[MpeMaker] " + s);
+            }
+            Close();
+            return;
           }
+          Package.GeneralInfo.ReleaseDate = DateTime.Now;
+          SaveProject(arguments.ProjectFile);
+          MpeInstaller.ZipProvider.Save(Package, Package.ReplaceInfo(Package.GeneralInfo.Location));
           Close();
           return;
         }
-        MpeInstaller.ZipProvider.Save(Package, Package.ReplaceInfo(Package.GeneralInfo.Location));
-        Close();
-        return;
       }
+
+      if (arguments.UpdateXML)
+        Package.WriteUpdateXml(Package.ProjectSettings.UpdatePath1);
+
     }
 
     private void Init()
@@ -113,7 +120,7 @@ namespace MpeMaker
       openFileDialog.Filter = mpeFileDialogFilter;
       saveFileDialog.Filter = mpeFileDialogFilter;
 
-      mruMenu = new MruStripMenu(mnu_recent, new MruStripMenu.ClickedHandler(OnMruFile), mruRegKey + "\\MRU", true, 10);
+      mruMenu = new MruStripMenu(mnu_recent, OnMruFile, mruRegKey + "\\MRU", true, 10);
     }
 
     #endregion
