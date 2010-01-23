@@ -58,12 +58,8 @@ namespace MpeMaker
         return;
       }
 
-      // load project specified by app arguments
-      PackageClass loadedProject = LoadProject(arguments.ProjectFile);
       // if loading failed, stop here and show mainform
-      if (loadedProject == null) return;
-      // update project
-      UpdatePackage(loadedProject);
+      if (!LoadProject(arguments.ProjectFile)) return;
 
       if (arguments.SetVersion)
         Package.GeneralInfo.Version = arguments.Version;
@@ -119,7 +115,20 @@ namespace MpeMaker
 
     #region Properties
 
-    public PackageClass Package { get; set; }
+    private PackageClass _package;
+    public PackageClass Package
+    {
+      get { return _package; }
+      set
+      {
+        if (value == null) return;
+
+        _package = value;
+
+        treeView1.SelectedNode = treeView1.Nodes[0];
+        SetTitle();
+      }
+    }
 
     public string ProjectFileName
     {
@@ -236,13 +245,13 @@ namespace MpeMaker
       return packageClass;
     }
 
-    private static PackageClass LoadProject(string filename)
+    private bool LoadProject(string filename)
     {
       PackageClass pak = new PackageClass();
       if (!pak.Load(filename))
       {
         MessageBox.Show("Error loading package project");
-        return null;
+        return false;
       }
 
       pak.GenerateAbsolutePath(Path.GetDirectoryName(filename));
@@ -253,7 +262,8 @@ namespace MpeMaker
 
       pak.ProjectSettings.ProjectFilename = filename;
 
-      return pak;
+      Package = pak;
+      return true;
     }
 
     private void SaveProject(string filename)
@@ -278,37 +288,29 @@ namespace MpeMaker
       Hide();
 
       NewFileSelector newFileSelector = new NewFileSelector();
-      DialogResult dialogResult = newFileSelector.ShowDialog();
+      //DialogResult dialogResult = ;
 
-      Show();
-      BringToFront();
-
-      if (dialogResult == DialogResult.OK)
+      if (newFileSelector.ShowDialog() == DialogResult.OK)
       {
         switch (newFileSelector.MpeStartupResult)
         {
           case MpeStartupResult.NewFile:
-            UpdatePackage(GetNewProject());
+            Package = GetNewProject();
             break;
 
           case MpeStartupResult.OpenFile:
+            Show();
             OpenFile();
             break;
 
           case MpeStartupResult.SkinWizard:
-            UpdatePackage(NewSkin.Get(Package));
+            Package = NewSkin.Get(Package);
             break;
         }
       }
-    }
 
-    private void UpdatePackage(PackageClass packageClass)
-    {
-      if (packageClass == null) return;
-
-      Package = packageClass;
-      treeView1.SelectedNode = treeView1.Nodes[0];
-      SetTitle();
+      Show();
+      BringToFront();
     }
   }
 }
