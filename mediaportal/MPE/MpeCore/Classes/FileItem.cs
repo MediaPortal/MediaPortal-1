@@ -151,11 +151,15 @@ namespace MpeCore.Classes
     [XmlIgnore]
     public string TempFileLocation { get; set; }
 
+    #region Overrides
+
     public override string ToString()
     {
       if (string.IsNullOrEmpty(DestinationFilename))
         return Path.GetFileName(LocalFileName);
       return DestinationFilename;
     }
+
+    #endregion Overrides
   }
 }

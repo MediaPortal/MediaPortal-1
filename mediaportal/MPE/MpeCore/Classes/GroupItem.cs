@@ -100,10 +100,10 @@ namespace MpeCore.Classes
 
     [XmlAttribute]
     /// <summary>
-      /// Gets or sets the name of the group.
-      /// </summary>
-      /// <value>The name.</value>
-      public string Name { get; set; }
+    /// Gets or sets the name of the group.
+    /// </summary>
+    /// <value>The name.</value>
+    public string Name { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether [defaul checked].
@@ -136,5 +136,14 @@ namespace MpeCore.Classes
     }
 
     public FileItemCollection Files { get; set; }
+
+    #region Overrides
+
+    public override string ToString()
+    {
+      return DisplayName;
+    }
+
+    #endregion Overrides
   }
 }
