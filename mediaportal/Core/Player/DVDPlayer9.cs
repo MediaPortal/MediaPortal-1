@@ -42,11 +42,88 @@ namespace MediaPortal.Player
 
     private VMR9Util _vmr9 = null;
 
-    /// <summary> create the used COM components and get the interfaces. </summary>
+    private void RenderOutPins(IBaseFilter baseFilter)
+    {
+      if (baseFilter == null)
+        return;
+
+      int fetched;
+      IEnumPins pinEnum;
+      int hr = baseFilter.EnumPins(out pinEnum);
+      if (hr == 0 && pinEnum != null)
+      {
+        pinEnum.Reset();
+        IPin[] pins = new IPin[1];
+        while (pinEnum.Next(1, pins, out fetched) == 0)
+        {
+          if (fetched > 0)
+          {
+            try
+            {
+              PinDirection pinDir;
+              pins[0].QueryDirection(out pinDir);
+              if (pinDir == PinDirection.Output)
+              {
+                IPin pOutPin;
+                hr = pins[0].ConnectedTo(out pOutPin);
+                if (pOutPin != null)
+                  DirectShowUtil.ReleaseComObject(pOutPin);
+                if (hr == DsResults.E_NotConnected)
+                {
+                  FilterInfo i;
+                  PinInfo pinInfo = new PinInfo();
+                  if (baseFilter.QueryFilterInfo(out i) == 0 && pins[0].QueryPinInfo(out pinInfo) == 0)
+                  {
+                    Log.Debug("Filter: {0} - pin connect: {1}", i.achName, pinInfo.name);
+
+                  }
+                  DirectShowUtil.ReleaseComObject(i.pGraph);
+                  DirectShowUtil.ReleaseComObject(pinInfo.filter);
+                  hr = _graphBuilder.Render(pins[0]);
+                  DsError.ThrowExceptionForHR(hr);
+                }
+              }
+            }
+            finally { }
+          }
+          else
+          {
+            break;
+          }
+        }
+        DirectShowUtil.ReleaseComObject(pinEnum);
+      }      
+    }
+
+    private void DoGraph(IGraphBuilder graphBuilder, IBaseFilter baseFilter)
+    {
+      if (graphBuilder == null)
+        return;
+      if (baseFilter != null)
+        RenderOutPins(baseFilter);
+      
+      IEnumFilters enumFilters;
+      graphBuilder.EnumFilters(out enumFilters);
+      int fetched;
+      IBaseFilter[] filters = new IBaseFilter[1];
+      while (enumFilters.Next(1, filters, out fetched) == 0)
+      {
+        if (fetched > 0 && filters[0] != baseFilter)
+        {
+          RenderOutPins(filters[0]);
+        }
+        else
+        {
+          break;
+        }
+      }
+      DirectShowUtil.ReleaseComObject(enumFilters);      
+    }
+
+    /// <summary> create the used COM components and get the interfaces. </summary>    
     protected override bool GetInterfaces(string path)
     {
       int hr;
-      //Type	            comtype = null;
       object comobj = null;
       _freeNavigator = true;
       _dvdInfo = null;
@@ -73,15 +150,15 @@ namespace MediaPortal.Player
         {
           arMode = AspectRatioMode.Crop;
         }
-        if (aspectRatio == "letterbox")
+        else if (aspectRatio == "letterbox")
         {
           arMode = AspectRatioMode.LetterBox;
         }
-        if (aspectRatio == "stretch")
+        else if (aspectRatio == "stretch")
         {
           arMode = AspectRatioMode.Stretched;
         }
-        if (aspectRatio == "follow stream")
+        else if (aspectRatio == "follow stream")
         {
           arMode = AspectRatioMode.StretchedAsPrimary;
         }
@@ -91,15 +168,15 @@ namespace MediaPortal.Player
         {
           _videoPref = DvdPreferredDisplayMode.DisplayContentDefault;
         }
-        if (displayMode == "16:9")
+        else if (displayMode == "16:9")
         {
           _videoPref = DvdPreferredDisplayMode.Display16x9;
         }
-        if (displayMode == "4:3 pan scan")
+        else if (displayMode == "4:3 pan scan")
         {
           _videoPref = DvdPreferredDisplayMode.Display4x3PanScanPreferred;
         }
-        if (displayMode == "4:3 letterbox")
+        else if (displayMode == "4:3 letterbox")
         {
           _videoPref = DvdPreferredDisplayMode.Display4x3LetterBoxPreferred;
         }
@@ -164,25 +241,19 @@ namespace MediaPortal.Player
           }
         }
       }
-
-      Log.Info("DVDPlayer9: Enabling DX9 exclusive mode");
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
-      GUIWindowManager.SendMessage(msg);
-
+      
       try
-      {
-        _vmr9 = new VMR9Util();
+      {        
         _dvdGraph = (IDvdGraphBuilder)new DvdGraphBuilder();
 
         hr = _dvdGraph.GetFiltergraph(out _graphBuilder);
-        if (hr != 0)
-        {
-          Marshal.ThrowExceptionForHR(hr);
-        }
+        DsError.ThrowExceptionForHR(hr);
 
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
-
+        
+        _vmr9 = new VMR9Util();
         _vmr9.AddVMR9(_graphBuilder);
+        _vmr9.Enable(false);
 
         try
         {
@@ -191,73 +262,55 @@ namespace MediaPortal.Player
           if (_dvdbasefilter != null)
           {
             AddPreferedCodecs(_graphBuilder);
-            _dvdCtrl = _dvdbasefilter as IDvdControl2;
+            _dvdCtrl = (IDvdControl2)_dvdbasefilter;
             if (_dvdCtrl != null)
             {
-              _dvdInfo = _dvdbasefilter as IDvdInfo2;
-              if (path != null)
+              _dvdInfo = (IDvdInfo2)_dvdbasefilter;
+              if (!String.IsNullOrEmpty(path))
               {
-                if (path.Length != 0)
-                {
                   hr = _dvdCtrl.SetDVDDirectory(path);
-                }
+                  DsError.ThrowExceptionForHR(hr);
               }
               _dvdCtrl.SetOption(DvdOptionFlag.HMSFTimeCodeEvents, true); // use new HMSF timecode format
               _dvdCtrl.SetOption(DvdOptionFlag.ResetOnStop, false);
-              DirectShowUtil.RenderOutputPins(_graphBuilder, _dvdbasefilter);
 
+              DoGraph(_graphBuilder, _dvdbasefilter);
+    
               _freeNavigator = false;
-            }
-            //DirectShowUtil.ReleaseComObject( _dvdbasefilter); _dvdbasefilter = null;              
+            }        
           }
         }
         catch (Exception ex)
         {
           Log.Error("DVDPlayer9:Add {0} as navigator failed: {1}", dvdDNavigator, ex.Message);
         }
-        Guid riid;
-
+        
         if (_dvdInfo == null)
         {
-          Log.Info("Dvdplayer9:volume rendered, get interfaces");
-          riid = typeof (IDvdInfo2).GUID;
-          hr = _dvdGraph.GetDvdInterface(riid, out comobj);
-          if (hr < 0)
-          {
-            Marshal.ThrowExceptionForHR(hr);
-          }
+          Log.Info("Dvdplayer9:Volume rendered, get interfaces");
+          hr = _dvdGraph.GetDvdInterface(typeof(IDvdInfo2).GUID, out comobj);
+          DsError.ThrowExceptionForHR(hr);
           _dvdInfo = (IDvdInfo2)comobj;
           comobj = null;
         }
 
         if (_dvdCtrl == null)
         {
-          Log.Info("Dvdplayer9: get IDvdControl2");
-          riid = typeof (IDvdControl2).GUID;
-          hr = _dvdGraph.GetDvdInterface(riid, out comobj);
-          if (hr < 0)
-          {
-            Marshal.ThrowExceptionForHR(hr);
-          }
+          Log.Info("Dvdplayer9:Get IDvdControl2");
+          hr = _dvdGraph.GetDvdInterface(typeof(IDvdControl2).GUID, out comobj);
+          DsError.ThrowExceptionForHR(hr);
           _dvdCtrl = (IDvdControl2)comobj;
           comobj = null;
           if (_dvdCtrl != null)
           {
-            Log.Info("Dvdplayer9: get IDvdControl2");
+            Log.Info("Dvdplayer9:Get IDvdControl2");
           }
           else
           {
-            Log.Error("Dvdplayer9: FAILED TO get get IDvdControl2");
+            Log.Error("Dvdplayer9:Failed to get IDvdControl2");
           }
-        }
+        }        
 
-        _mediaCtrl = (IMediaControl)_graphBuilder;
-        _mediaEvt = (IMediaEventEx)_graphBuilder;
-        _basicAudio = _graphBuilder as IBasicAudio;
-        _mediaPos = (IMediaPosition)_graphBuilder;
-        _basicVideo = _graphBuilder as IBasicVideo2;
-
-        Log.Info("Dvdplayer9:disabling Line21 Decoder (Closed Captions)");
         // disable Closed Captions!
         IBaseFilter basefilter;
         _graphBuilder.FindFilterByName("Line 21 Decoder", out basefilter);
@@ -265,8 +318,13 @@ namespace MediaPortal.Player
         {
           _graphBuilder.FindFilterByName("Line21 Decoder", out basefilter);
         }
+        if (basefilter == null)
+        {
+          _graphBuilder.FindFilterByName("Line 21 Decoder 2", out basefilter);
+        }
         if (basefilter != null)
         {
+          Log.Info("Dvdplayer9:Disabling Line21 Decoder (Closed Captions)");        
           _line21Decoder = (IAMLine21Decoder)basefilter;
           if (_line21Decoder != null)
           {
@@ -278,29 +336,37 @@ namespace MediaPortal.Player
             }
             else
             {
-              Log.Info("DVDPlayer9:failed to disable Closed Captions");
+              Log.Info("DVDPlayer9:Failed to disable Closed Captions");
             }
           }
         }
 
-        DirectShowUtil.SetARMode(_graphBuilder, arMode);
-        DirectShowUtil.EnableDeInterlace(_graphBuilder);
-        //m_ovMgr = new OVTOOLLib.OvMgrClass();
-        //m_ovMgr.SetGraph(_graphBuilder);
+        if (!_vmr9.IsVMR9Connected)
+        {
+          Log.Info("DVDPlayer9:Failed vmr9 not connected");
+          _mediaCtrl = null;
+          Cleanup();
+          return false;
+        }
+        
+        _mediaCtrl = (IMediaControl)_graphBuilder;
+        _mediaEvt = (IMediaEventEx)_graphBuilder;
+        _basicAudio = (IBasicAudio)_graphBuilder;
+        _mediaPos = (IMediaPosition)_graphBuilder;
+        _basicVideo = (IBasicVideo2)_graphBuilder;
 
         _videoWidth = _vmr9.VideoWidth;
         _videoHeight = _vmr9.VideoHeight;
 
-        if (!_vmr9.IsVMR9Connected)
-        {
-          Log.Info("DVDPlayer9:failed vmr9 not connected");
-          _mediaCtrl = null;
-          Cleanup();
-          return base.GetInterfaces(path);
-        }
-
+        DirectShowUtil.SetARMode(_graphBuilder, arMode);        
         _vmr9.SetDeinterlaceMode();
-        Log.Info("Dvdplayer9:graph created");
+        _vmr9.Enable(true);
+
+        Log.Info("DVDPlayer9:Enabling DX9 exclusive mode");
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
+        GUIWindowManager.SendMessage(msg);
+
+        Log.Info("Dvdplayer9:Graph created");
         _started = true;
         return true;
       }
@@ -311,7 +377,7 @@ namespace MediaPortal.Player
       }
       finally {}
     }
-
+    
     /// <summary> do cleanup and release DirectShow. </summary>
     protected override void CloseInterfaces()
     {
