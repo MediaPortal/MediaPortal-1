@@ -443,7 +443,9 @@ namespace MpeInstaller
           if (!silent)
             if (
               MessageBox.Show(
-                "This extension already have a installed version. \n This will be uninstalled first. \n Do you want to continue ? ",
+                "This extension already have a installed version. \n This will be uninstalled first. \n Do you want to continue ?  \n"+
+                 "Old extension version: "+ installedPak.GeneralInfo.Version.ToString()+" \n" +
+                 "New extension version: "+ pak.GeneralInfo.Version.ToString(),
                 "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
               return;
           UnInstall dlg = new UnInstall();

@@ -70,6 +70,7 @@ namespace MpeInstaller.Controls
       {
         btn_update.Visible = true;
         img_update.Visible = true;
+        toolTip1.SetToolTip(img_update, "New update available. Version: " + UpdatePackage.GeneralInfo.Version.ToString());
       }
       else
       {
