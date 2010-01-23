@@ -46,8 +46,11 @@
           this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.mnu_new = new System.Windows.Forms.ToolStripMenuItem();
           this.mnu_open = new System.Windows.Forms.ToolStripMenuItem();
+          this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
           this.mnu_save = new System.Windows.Forms.ToolStripMenuItem();
           this.mnu_saveAs = new System.Windows.Forms.ToolStripMenuItem();
+          this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+          this.mnu_recent = new System.Windows.Forms.ToolStripMenuItem();
           this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
           this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
           this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -74,8 +77,11 @@
           this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnu_new,
             this.mnu_open,
+            this.toolStripSeparator2,
             this.mnu_save,
             this.mnu_saveAs,
+            this.toolStripSeparator3,
+            this.mnu_recent,
             this.toolStripSeparator1,
             this.exitToolStripMenuItem});
           this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -86,23 +92,28 @@
           // 
           this.mnu_new.Image = global::MpeMaker.Properties.Resources.document_new;
           this.mnu_new.Name = "mnu_new";
-          this.mnu_new.Size = new System.Drawing.Size(123, 22);
-          this.mnu_new.Text = "New";
+          this.mnu_new.Size = new System.Drawing.Size(178, 22);
+          this.mnu_new.Text = "New...";
           this.mnu_new.Click += new System.EventHandler(this.mnu_new_Click);
           // 
           // mnu_open
           // 
           this.mnu_open.Image = global::MpeMaker.Properties.Resources.document_open;
           this.mnu_open.Name = "mnu_open";
-          this.mnu_open.Size = new System.Drawing.Size(123, 22);
-          this.mnu_open.Text = "Open";
+          this.mnu_open.Size = new System.Drawing.Size(178, 22);
+          this.mnu_open.Text = "Open...";
           this.mnu_open.Click += new System.EventHandler(this.mnu_open_Click);
+          // 
+          // toolStripSeparator2
+          // 
+          this.toolStripSeparator2.Name = "toolStripSeparator2";
+          this.toolStripSeparator2.Size = new System.Drawing.Size(175, 6);
           // 
           // mnu_save
           // 
           this.mnu_save.Image = global::MpeMaker.Properties.Resources.document_save;
           this.mnu_save.Name = "mnu_save";
-          this.mnu_save.Size = new System.Drawing.Size(123, 22);
+          this.mnu_save.Size = new System.Drawing.Size(178, 22);
           this.mnu_save.Text = "Save";
           this.mnu_save.Click += new System.EventHandler(this.mnu_save_Click);
           // 
@@ -110,19 +121,30 @@
           // 
           this.mnu_saveAs.Image = global::MpeMaker.Properties.Resources.document_save_as;
           this.mnu_saveAs.Name = "mnu_saveAs";
-          this.mnu_saveAs.Size = new System.Drawing.Size(123, 22);
-          this.mnu_saveAs.Text = "Save As ..";
+          this.mnu_saveAs.Size = new System.Drawing.Size(178, 22);
+          this.mnu_saveAs.Text = "Save As...";
           this.mnu_saveAs.Click += new System.EventHandler(this.mnu_saveAs_Click);
+          // 
+          // toolStripSeparator3
+          // 
+          this.toolStripSeparator3.Name = "toolStripSeparator3";
+          this.toolStripSeparator3.Size = new System.Drawing.Size(175, 6);
+          // 
+          // mnu_recent
+          // 
+          this.mnu_recent.Name = "mnu_recent";
+          this.mnu_recent.Size = new System.Drawing.Size(178, 22);
+          this.mnu_recent.Text = "Most Recently Used";
           // 
           // toolStripSeparator1
           // 
           this.toolStripSeparator1.Name = "toolStripSeparator1";
-          this.toolStripSeparator1.Size = new System.Drawing.Size(120, 6);
+          this.toolStripSeparator1.Size = new System.Drawing.Size(175, 6);
           // 
           // exitToolStripMenuItem
           // 
           this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-          this.exitToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+          this.exitToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
           this.exitToolStripMenuItem.Text = "Exit";
           this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
           // 
@@ -207,6 +229,7 @@
           this.Controls.Add(this.mainMenu);
           this.Name = "MainForm";
           this.Text = "MpeMaker";
+          this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
           this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
           this.mainMenu.ResumeLayout(false);
           this.mainMenu.PerformLayout();
@@ -231,6 +254,9 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem mnu_recent;
     }
 }
 

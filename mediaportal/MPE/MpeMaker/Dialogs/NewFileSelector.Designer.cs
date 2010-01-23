@@ -36,12 +36,17 @@
           // 
           // listView
           // 
+          this.listView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                      | System.Windows.Forms.AnchorStyles.Left)
+                      | System.Windows.Forms.AnchorStyles.Right)));
           this.listView.HideSelection = false;
           this.listView.LargeImageList = this.imageList;
           this.listView.Location = new System.Drawing.Point(-1, -1);
           this.listView.MultiSelect = false;
           this.listView.Name = "listView";
-          this.listView.Size = new System.Drawing.Size(479, 256);
+          this.listView.ShowItemToolTips = true;
+          this.listView.Size = new System.Drawing.Size(650, 353);
+          this.listView.SmallImageList = this.imageList;
           this.listView.TabIndex = 0;
           this.listView.UseCompatibleStateImageBehavior = false;
           this.listView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
@@ -55,7 +60,8 @@
           // 
           // btn_ok
           // 
-          this.btn_ok.Location = new System.Drawing.Point(387, 271);
+          this.btn_ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+          this.btn_ok.Location = new System.Drawing.Point(558, 368);
           this.btn_ok.Name = "btn_ok";
           this.btn_ok.Size = new System.Drawing.Size(75, 23);
           this.btn_ok.TabIndex = 2;
@@ -68,7 +74,7 @@
           this.AcceptButton = this.btn_ok;
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-          this.ClientSize = new System.Drawing.Size(474, 306);
+          this.ClientSize = new System.Drawing.Size(645, 403);
           this.Controls.Add(this.btn_ok);
           this.Controls.Add(this.listView);
           this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;

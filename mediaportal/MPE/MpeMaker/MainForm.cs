@@ -36,6 +36,9 @@ namespace MpeMaker
 {
   public partial class MainForm : Form
   {
+    protected MruStripMenu mruMenu;
+    
+    private const string mruRegKey = "SOFTWARE\\Team MediaPortal\\MpeMaker";
     private const string mpeFileDialogFilter = "Mpe project file(*.xmp2)|*.xmp2|All files|*.*";
 
     private readonly Dictionary<string, Control> _panels = new Dictionary<string, Control>();
@@ -109,6 +112,8 @@ namespace MpeMaker
 
       openFileDialog.Filter = mpeFileDialogFilter;
       saveFileDialog.Filter = mpeFileDialogFilter;
+
+      mruMenu = new MruStripMenu(mnu_recent, new MruStripMenu.ClickedHandler(OnMruFile), mruRegKey + "\\MRU", true, 10);
     }
 
     #endregion
@@ -161,31 +166,34 @@ namespace MpeMaker
       e.Cancel = !LoosingChangesConfirmed("Close MpeMaker");
     }
 
+    private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+    {
+      mruMenu.SaveToRegistry();
+    }
+
     #region Menu
 
     private void mnu_new_Click(object sender, EventArgs e)
     {
-      if (LoosingChangesConfirmed("New Project"))
-      {
-        OpenNewFileSelector();
-      }
+      if (!LoosingChangesConfirmed("New Project")) return;
+
+      OpenNewFileSelector();
     }
 
     private void mnu_open_Click(object sender, EventArgs e)
     {
-      if (LoosingChangesConfirmed("Open Project"))
-      {
-        OpenFile();
-      }
+      if (!LoosingChangesConfirmed("Open Project")) return;
+
+      OpenFile();
     }
 
     private void OpenFile()
     {
       openFileDialog.FileName = ProjectFileName;
-      if (openFileDialog.ShowDialog() == DialogResult.OK)
-      {
-        LoadProject(openFileDialog.FileName);
-      }
+      
+      if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+
+      LoadProject(openFileDialog.FileName);
     }
 
     private void mnu_save_Click(object sender, EventArgs e)
@@ -200,10 +208,24 @@ namespace MpeMaker
 
     private void mnu_saveAs_Click(object sender, EventArgs e)
     {
-      if (saveFileDialog.ShowDialog() == DialogResult.OK)
+      if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+
+      SaveProject(saveFileDialog.FileName);
+      mruMenu.AddFile(saveFileDialog.FileName);
+    }
+
+    private void OnMruFile(int number, string filename)
+    {
+      if (!LoosingChangesConfirmed("Load Project")) return;
+
+      if (!File.Exists(filename))
       {
-        SaveProject(saveFileDialog.FileName);
+        mruMenu.RemoveFile(number);
+        return;
       }
+
+      LoadProject(filename);
+      mruMenu.SetFirstFile(number);
     }
 
     private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -263,6 +285,7 @@ namespace MpeMaker
       pak.ProjectSettings.ProjectFilename = filename;
 
       Package = pak;
+      mruMenu.AddFile(filename);
       return true;
     }
 
@@ -287,9 +310,7 @@ namespace MpeMaker
     {
       Hide();
 
-      NewFileSelector newFileSelector = new NewFileSelector();
-      //DialogResult dialogResult = ;
-
+      NewFileSelector newFileSelector = new NewFileSelector(mruMenu.Files);
       if (newFileSelector.ShowDialog() == DialogResult.OK)
       {
         switch (newFileSelector.MpeStartupResult)
@@ -305,6 +326,10 @@ namespace MpeMaker
 
           case MpeStartupResult.SkinWizard:
             Package = NewSkin.Get(Package);
+            break;
+
+          case MpeStartupResult.MruFile:
+            LoadProject(newFileSelector.MpeStartupResultParam);
             break;
         }
       }

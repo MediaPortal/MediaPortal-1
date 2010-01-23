@@ -19,7 +19,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace MpeMaker.Dialogs
@@ -28,48 +30,78 @@ namespace MpeMaker.Dialogs
   {
     NewFile,
     OpenFile,
-    SkinWizard
+    SkinWizard,
+    MruFile
   }
 
   public partial class NewFileSelector : Form
   {
     public MpeStartupResult MpeStartupResult;
+    public string MpeStartupResultParam;
+
+    #region ImageKeys for ImageList
+
+    private const string ImageKeyNew = "new";
+    private const string ImageKeyOpen = "open";
+    private const string ImageKeySkinWizard = "skin_wizard";
+    private const string ImageKeyMruFile = "mru";
+
+    #endregion
+
+    #region Constructors
 
     public NewFileSelector()
     {
       InitializeComponent();
       Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 
-      imageList.Images.Add(Properties.Resources.document_new);
-      imageList.Images.Add(Properties.Resources.document_open);
-      imageList.Images.Add(Properties.Resources.applications_graphics);
+      imageList.Images.Add(ImageKeyNew, Properties.Resources.document_new);
+      imageList.Images.Add(ImageKeyOpen, Properties.Resources.document_open);
+      imageList.Images.Add(ImageKeySkinWizard, Properties.Resources.applications_graphics);
 
       ListViewGroup wizardGroup = new ListViewGroup("Wizards", HorizontalAlignment.Left);
       listView.Groups.Add(wizardGroup);
-      listView.Items.Add(new ListViewItem("New Project", 0));
-      listView.Items.Add(new ListViewItem("Open project", 1));
-      listView.Items.Add(new ListViewItem("New Skin Project Wizard", 2, wizardGroup));
+
+      listView.Items.Add(new ListViewItem("New Project", ImageKeyNew) { Tag = MpeStartupResult.NewFile });
+      listView.Items.Add(new ListViewItem("Open project", ImageKeyOpen) { Tag = MpeStartupResult.OpenFile });
+      listView.Items.Add(new ListViewItem("New Skin Project Wizard", ImageKeySkinWizard, wizardGroup) { Tag = MpeStartupResult.SkinWizard });
 
       listView.Items[0].Selected = true;
     }
+
+    public NewFileSelector(ICollection<string> mruFiles)
+      : this()
+    {
+      if (mruFiles.Count == 0) return;
+
+      imageList.Images.Add(ImageKeyMruFile, Icon.ExtractAssociatedIcon(Application.ExecutablePath));
+
+      ListViewGroup mruGroup = new ListViewGroup("Most Recently Used", HorizontalAlignment.Left);
+      listView.Groups.Add(mruGroup);
+
+      foreach (string filepath in mruFiles)
+      {
+        if (!File.Exists(filepath)) continue;
+        string filename = Path.GetFileNameWithoutExtension(filepath);
+
+        var item = new ListViewItem(filename, ImageKeyMruFile, mruGroup);
+        item.Tag = MpeStartupResult.MruFile;
+        item.ToolTipText = filepath;
+
+        listView.Items.Add(item);
+      }
+    }
+
+    #endregion
 
     private void btn_ok_Click(object sender, EventArgs e)
     {
       Hide();
 
-      switch (listView.SelectedIndices[0])
+      MpeStartupResult = (MpeStartupResult) listView.SelectedItems[0].Tag;
+      if (MpeStartupResult == MpeStartupResult.MruFile)
       {
-        case 0:
-          MpeStartupResult = MpeStartupResult.NewFile;
-          break;
-        case 1:
-          MpeStartupResult = MpeStartupResult.OpenFile;
-          break;
-        case 2:
-          MpeStartupResult = MpeStartupResult.SkinWizard;
-          break;
-        default:
-          break;
+        MpeStartupResultParam = listView.SelectedItems[0].ToolTipText;
       }
 
       DialogResult = DialogResult.OK;
