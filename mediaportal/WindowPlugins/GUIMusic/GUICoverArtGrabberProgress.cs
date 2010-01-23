@@ -581,7 +581,7 @@ namespace MediaPortal.GUI.Music
 
     private void SetOverallProgressLabel()
     {
-      int percent = progOverall.Percentage;
+      float percent = progOverall.Percentage;
       string progressText = string.Format("{0}% - Getting cover art {1} of {2}", percent, _CurrentCoverArtIndex,
                                           _AlbumCount);
       lblOverallProgress.Label = progressText;

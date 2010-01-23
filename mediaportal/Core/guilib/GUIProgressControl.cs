@@ -42,7 +42,7 @@ namespace MediaPortal.GUI.Library
     private GUIAnimation _imageLeft = null;
     private GUIAnimation _imageMid = null;
     private GUIAnimation _imageRight = null;
-    private int _percentage = 0;
+    private float _percentage = 0;
     private bool _containsProperty = false;
 
 
@@ -174,11 +174,9 @@ namespace MediaPortal.GUI.Library
         string m_strText = GUIPropertyManager.Parse(_property);
         if (m_strText != string.Empty)
         {
-          try
-          {
-            Percentage = Int32.Parse(m_strText);
-          }
-          catch (Exception) {}
+          float p;
+          Single.TryParse(m_strText, out p);
+          Percentage = p;
         }
       }
 
@@ -201,19 +199,21 @@ namespace MediaPortal.GUI.Library
       //iHeight=20;
       int off = 12;
       GUIGraphicsContext.ScaleHorizontal(ref off);
-      int percent = _percentage;
-      if (percent > 100)
+      float fWidth = _percentage;
+      if (fWidth > 100.0f)
       {
-        percent = 100;
+        fWidth = 100.0f;
       }
-      float fWidth = (float)percent;
-      fWidth /= 100.0f;
+
       fWidth *= (float)(_imageBackGround.Width - 2 * off - iWidthLeft - iWidthRight);
+      fWidth /= 100.0f;
+
+
 
       int iXPos = off + _imageBackGround.XPosition;
 
       int iYPos = _imageBackGround.YPosition + (iBkgHeight - iHeightLeft) / 2;
-      //_imageLeft.SetHeight(iHeight);
+
       _imageLeft.SetPosition(iXPos, iYPos);
       _imageLeft.Height = iHeightLeft;
       _imageLeft.Width = iWidthLeft;
@@ -221,16 +221,16 @@ namespace MediaPortal.GUI.Library
       _imageLeft.Render(timePassed);
 
       iXPos += iWidthLeft;
-      if (percent > 0 && (int)fWidth > 1)
+      if (_percentage > 0 && fWidth > 1)
       {
         _imageMid.SetPosition(iXPos, iYPos);
-        _imageMid.Height = iHeightLeft; //_imageMid.TextureHeight;
+        _imageMid.Height = iHeightLeft; 
         _imageMid.Width = (int)Math.Abs(fWidth);
         _imageMid.SetPosition(iXPos, iYPos);
         _imageMid.Render(timePassed);
         iXPos += (int)fWidth;
       }
-      //_imageRight.SetHeight(iHeight);
+
       _imageRight.SetPosition(iXPos, iYPos);
       _imageRight.Height = iHeightRight;
       _imageRight.Width = iWidthRight;
@@ -251,7 +251,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Get/set the percentage the progressbar indicates.
     /// </summary>
-    public int Percentage
+    public float Percentage
     {
       get { return _percentage; }
       set { _percentage = value; }

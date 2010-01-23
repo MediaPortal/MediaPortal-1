@@ -378,7 +378,6 @@ namespace MediaPortal.GUI.Music
 
       UpdateImagePathContainer();
       UpdateTrackInfo();
-      UpdateTrackPosition();
 
       if (GUIWindowManager.ActiveWindow == GetID)
       {
@@ -1534,7 +1533,6 @@ namespace MediaPortal.GUI.Music
 
     private void UpdateTrackInfo()
     {
-      UpdateTrackPosition();
 
       if (CurrentTrackTag == null)
       {
@@ -1699,20 +1697,6 @@ namespace MediaPortal.GUI.Music
         GUIPropertyManager.SetProperty("#Play.Next.Genre", string.Empty);
         GUIPropertyManager.SetProperty("#Play.Next.Year", string.Empty);
         GUIPropertyManager.SetProperty("#Play.Next.Rating", "0");
-      }
-    }
-
-    private void UpdateTrackPosition()
-    {
-      if (g_Player.Playing)
-      {
-        double trackDuration = g_Player.Duration;
-        double curTrackPostion = g_Player.CurrentPosition;
-
-        int progPrecent = (int)(curTrackPostion / trackDuration * 100d);
-
-        this.ProgTrack.Percentage = progPrecent;
-        ProgTrack.Visible = ProgTrack.Percentage > 0;
       }
     }
 

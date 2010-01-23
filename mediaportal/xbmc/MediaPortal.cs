@@ -2028,15 +2028,14 @@ public class MediaPortalApp : D3DApp, IRender
       {
         GUIPropertyManager.SetProperty("#duration", Utils.SecondsToHMSString((int)g_Player.Duration));
         GUIPropertyManager.SetProperty("#shortduration", Utils.SecondsToShortHMSString((int)g_Player.Duration));
-        double fPercentage = g_Player.CurrentPosition / g_Player.Duration;
-        int iPercent = (int)(100 * fPercentage);
-        GUIPropertyManager.SetProperty("#percentage", iPercent.ToString());
+        float fPercentage = (float)(100.0d*g_Player.CurrentPosition / g_Player.Duration);
+        GUIPropertyManager.SetProperty("#percentage", fPercentage.ToString());
       }
       else
       {
         GUIPropertyManager.SetProperty("#duration", string.Empty);
         GUIPropertyManager.SetProperty("#shortduration", string.Empty);
-        GUIPropertyManager.SetProperty("#percentage", "0");
+        GUIPropertyManager.SetProperty("#percentage", "0.0");
       }
       GUIPropertyManager.SetProperty("#playspeed", g_Player.Speed.ToString());
     }

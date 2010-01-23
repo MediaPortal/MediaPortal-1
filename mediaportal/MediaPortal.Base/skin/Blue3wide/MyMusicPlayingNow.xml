@@ -243,6 +243,8 @@
     <control>
       <type>progress</type>
       <description>track progress</description>
+      <label>#percentage</label>
+      <visible>player.hasmedia</visible>
       <id>118</id>
       <posX>631</posX>
       <posY>490</posY>

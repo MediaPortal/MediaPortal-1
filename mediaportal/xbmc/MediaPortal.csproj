@@ -213,6 +213,9 @@
       <Name>System.Runtime.Serialization.Formatters.Soap</Name>
     </Reference>
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web.Extensions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
