@@ -36,6 +36,8 @@ namespace MpeMaker.Dialogs
 
   public partial class NewFileSelector : Form
   {
+    #region Fields
+
     public MpeStartupResult MpeStartupResult;
     public string MpeStartupResultParam;
 
@@ -45,6 +47,8 @@ namespace MpeMaker.Dialogs
     private const string ImageKeyOpen = "open";
     private const string ImageKeySkinWizard = "skin_wizard";
     private const string ImageKeyMruFile = "mru";
+
+    #endregion
 
     #endregion
 

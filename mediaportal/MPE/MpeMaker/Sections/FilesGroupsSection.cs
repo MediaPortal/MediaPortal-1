@@ -32,15 +32,21 @@ namespace MpeMaker.Sections
 {
   public partial class FilesGroupsSection : UserControl, ISectionControl
   {
-    public PackageClass Package { get; set; }
-    public GroupItem SelectedGroup { get; set; }
-    public FileItem SelectedItem { get; set; }
+    #region Fields
 
     private bool _loading;
+
+    #region ImageKeys for ImageList
 
     private const string ImageKeyError = "Error";
     private const string ImageKeyFile = "File";
     private const string ImageKeyGroup = "Group";
+
+    #endregion
+
+    #endregion
+
+    #region Constructors
 
     public FilesGroupsSection()
     {
@@ -55,6 +61,31 @@ namespace MpeMaker.Sections
       imageList.Images.Add(ImageKeyGroup, Properties.Resources.video_display);
     }
 
+    #endregion
+
+    #region Properties
+
+    public PackageClass Package { get; set; }
+    public GroupItem SelectedGroup { get; set; }
+    public FileItem SelectedItem { get; set; }
+
+    private TreeNode SelectedNode
+    {
+      get
+      {
+        if (treeView1.SelectedNodes.Count == 0) return null;
+
+        return treeView1.SelectedNodes[0];
+      }
+      set
+      {
+        treeView1.SelectedNodes.Clear();
+        treeView1.SelectedNodes.Add(value);
+      }
+    }
+
+    #endregion
+
     #region ISectionControl Members
 
     public void Set(PackageClass pak)
@@ -63,7 +94,7 @@ namespace MpeMaker.Sections
       treeView1.Nodes.Clear();
       PopulateTreeView();
       if (treeView1.Nodes.Count > 0)
-        treeView1.SelectedNode = treeView1.Nodes[0];
+        SelectedNode = treeView1.Nodes[0];
     }
 
 
@@ -114,13 +145,13 @@ namespace MpeMaker.Sections
 
     private TreeNode GetSelectedGroupNode()
     {
-      return GetGroupNode(treeView1.SelectedNode);
+      return GetGroupNode(SelectedNode);
     }
 
     private static TreeNode GetGroupNode(TreeNode selectedNode)
     {
-      if (selectedNode == null)
-        return null;
+      if (selectedNode == null) return null;
+
       if (selectedNode.Tag.GetType() != typeof (GroupItem))
       {
         if (selectedNode.Parent != null)
@@ -129,6 +160,7 @@ namespace MpeMaker.Sections
         }
         return null;
       }
+
       return selectedNode;
     }
 
@@ -185,6 +217,7 @@ namespace MpeMaker.Sections
     private void SetProperties(TreeNode node)
     {
       _loading = true;
+
       var group = GetSelectedGroupNode().Tag as GroupItem;
       var file = node.Tag as FileItem;
       SelectedGroup = null;
@@ -216,13 +249,13 @@ namespace MpeMaker.Sections
 
       if (file != null)
       {
-        tabControl1.SelectTab(1);
+        tabControl1.SelectedTab = tabPage_file;
         tabPage_file.Enabled = true;
         btn_set.Enabled = false;
       }
       else if (group != null)
       {
-        tabControl1.SelectTab(0);
+        tabControl1.SelectedTab = tabPage_group;
         file = GetCommonItem(group);
         tabPage_file.Enabled = group.Files.Items.Count > 0;
         btn_set.Enabled = true;
@@ -271,10 +304,37 @@ namespace MpeMaker.Sections
 
     private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
     {
-      if (e.Node != null)
+      if (e.Node == null)
+      {
+        tabControl1.Enabled = false;
+
+        mnu_add_group.Enabled = true;
+        mnu_add_files.Enabled = false;
+        mnu_add_folder.Enabled = false;
+
+        mnu_remove_group.Enabled = false;
+        mnu_remove_files.Enabled = false;
+        return;
+      }
+
+      // set props on the right and enable tabcontrol
+      if (treeView1.SelectedNodes.Count == 1)
       {
         SetProperties(e.Node);
+        tabControl1.Enabled = true;
       }
+      else
+      {
+        tabControl1.Enabled = false;
+      }
+
+      // if something is selected always allow to add stuff
+      mnu_add_group.Enabled = true;
+      mnu_add_files.Enabled = true;
+      mnu_add_folder.Enabled = true;
+
+      mnu_remove_files.Enabled = e.Node.Tag is FileItem;
+      mnu_remove_group.Enabled = e.Node.Tag is GroupItem;
     }
 
     private void txt_description_TextChanged(object sender, EventArgs e)
@@ -288,9 +348,9 @@ namespace MpeMaker.Sections
         SelectedGroup.DefaulChecked = chk_default.Checked;
         SelectedGroup.DisplayName = txt_displlayName.Text;
         SelectedGroup.ParentGroup = cmb_parentGroup.Text;
-        if (treeView1.SelectedNode != null && treeView1.SelectedNode.Tag as GroupItem != null)
+        if (SelectedNode != null && SelectedNode.Tag as GroupItem != null)
         {
-          treeView1.SelectedNode.ToolTipText = txt_displlayName.Text;
+          SelectedNode.ToolTipText = txt_displlayName.Text;
         }
       }
       if (SelectedItem != null)
@@ -302,9 +362,9 @@ namespace MpeMaker.Sections
         SelectedItem.UpdateOption = (UpdateOptionEnum)cmb_overwrite.SelectedIndex;
         SelectedItem.Param1 = txt_param1.Text;
         SelectedItem.Modified = true;
-        if (treeView1.SelectedNode != null && treeView1.SelectedNode.Tag as FileItem != null)
+        if (SelectedNode != null && SelectedNode.Tag as FileItem != null)
         {
-          treeView1.SelectedNode.Text = txt_installpath.Text;
+          SelectedNode.Text = txt_installpath.Text;
         }
       }
     }
@@ -321,33 +381,71 @@ namespace MpeMaker.Sections
 
     private void mnu_remove_group_Click(object sender, EventArgs e)
     {
-      if (SelectedGroup == null)
-        return;
-      if (MessageBox.Show("Do you want to Delete group " + SelectedGroup.Name, "", MessageBoxButtons.YesNo) !=
-          DialogResult.Yes)
-        return;
-      Package.Groups.Items.Remove(SelectedGroup);
+      // only check selected for GroupItem
+      // since we only allow multi select for same level (and parent node),
+      // all items will be GroupItem if first item is it
+      if (SelectedNode == null) return;
+      if (!(SelectedNode.Tag is GroupItem)) return;
+
+      string msgBoxText;
+      string msgBoxCaption;
+      if (treeView1.SelectedNodes.Count == 1)
+      {
+        msgBoxCaption = "Delete group";
+        msgBoxText = String.Format("Do you want to delete group {0} from list?", SelectedNode.Tag as GroupItem);
+      }
+      else
+      {
+        msgBoxCaption = "Delete multiple groups";
+        msgBoxText = String.Format("Do you want to delete {0} groups from list?", treeView1.SelectedNodes.Count);
+      }
+
+      if (MessageBox.Show(msgBoxText, msgBoxCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+
+      foreach (TreeNode treeNode in treeView1.SelectedNodes)
+      {
+        GroupItem groupItem = (GroupItem)treeNode.Tag;
+        Package.Groups.Items.Remove(groupItem);
+        Package.ProjectSettings.RemoveFolderGroup(groupItem.Name);
+      }
+
       treeView1.Nodes.Clear();
-      Package.ProjectSettings.RemoveFolderGroup(SelectedGroup.Name);
       PopulateTreeView();
       if (treeView1.Nodes.Count > 0)
-        treeView1.SelectedNode = treeView1.Nodes[0];
+        SelectedNode = treeView1.Nodes[0];
     }
 
 
     private void mnu_remove_files_Click(object sender, EventArgs e)
     {
-      TreeNode selectedNode = treeView1.SelectedNode;
-      if (selectedNode == null)
-        return;
-      FileItem item = selectedNode.Tag as FileItem;
-      if (item == null)
-        return;
-      if (MessageBox.Show("Do you want to Delete file " + item + " from list ?", "", MessageBoxButtons.YesNo) !=
-          DialogResult.Yes)
-        return;
-      SelectedGroup.Files.Items.Remove(item);
-      selectedNode.Remove();
+      // only check selected for FileItem
+      // since we only allow multi select for same level (and parent node),
+      // all items will be FileItem if first item is it
+      if (SelectedNode == null) return;
+      if (!(SelectedNode.Tag is FileItem)) return;
+
+      string msgBoxText;
+      string msgBoxCaption;
+      if (treeView1.SelectedNodes.Count == 1)
+      {
+        msgBoxCaption = "Delete file";
+        msgBoxText = String.Format("Do you want to delete file {0} from list?", SelectedNode.Tag as FileItem);
+      }
+      else
+      {
+        msgBoxCaption = "Delete multiple files";
+        msgBoxText = String.Format("Do you want to delete {0} files from list?", treeView1.SelectedNodes.Count);
+      }
+
+      if (MessageBox.Show(msgBoxText, msgBoxCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+
+      foreach (TreeNode treeNode in treeView1.SelectedNodes)
+      {
+        FileItem fileItem = (FileItem)treeNode.Tag;
+        SelectedGroup.Files.Items.Remove(fileItem);
+        treeNode.Remove();
+      }
+
       //treeView1.Nodes.Clear();
       //PopulateTreeView();
     }
@@ -395,7 +493,7 @@ namespace MpeMaker.Sections
       TreeNode targetNode = treeView1.GetNodeAt(pt);
       if (targetNode != null)
       {
-        treeView1.SelectedNode = GetGroupNode(targetNode);
+        SelectedNode = GetGroupNode(targetNode);
       }
     }
 
@@ -422,11 +520,11 @@ namespace MpeMaker.Sections
       {
         e.Handled = true;
 
-        if (sender == treeView1 && treeView1.SelectedNode != null)
+        if (sender == treeView1 && SelectedNode != null)
         {
-          if (treeView1.SelectedNode.Tag is GroupItem)
+          if (SelectedNode.Tag is GroupItem)
             mnu_remove_group_Click(null, null);
-          else if (treeView1.SelectedNode.Tag is FileItem)
+          else if (SelectedNode.Tag is FileItem)
             mnu_remove_files_Click(null, null);
         }
       }

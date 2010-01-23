@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
           this.components = new System.ComponentModel.Container();
-          this.treeView1 = new System.Windows.Forms.TreeView();
           this.imageList = new System.Windows.Forms.ImageList(this.components);
           this.toolStrip = new System.Windows.Forms.ToolStrip();
           this.mnu_add_group = new System.Windows.Forms.ToolStripButton();
@@ -62,32 +61,12 @@
           this.label1 = new System.Windows.Forms.Label();
           this.cmb_installtype = new System.Windows.Forms.ComboBox();
           this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+          this.treeView1 = new CodersLab.Windows.Controls.TreeView();
           this.toolStrip.SuspendLayout();
           this.tabControl1.SuspendLayout();
           this.tabPage_group.SuspendLayout();
           this.tabPage_file.SuspendLayout();
           this.SuspendLayout();
-          // 
-          // treeView1
-          // 
-          this.treeView1.AllowDrop = true;
-          this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                      | System.Windows.Forms.AnchorStyles.Left)));
-          this.treeView1.HideSelection = false;
-          this.treeView1.ImageIndex = 0;
-          this.treeView1.ImageList = this.imageList;
-          this.treeView1.Location = new System.Drawing.Point(0, 35);
-          this.treeView1.Name = "treeView1";
-          this.treeView1.SelectedImageIndex = 0;
-          this.treeView1.ShowNodeToolTips = true;
-          this.treeView1.Size = new System.Drawing.Size(371, 390);
-          this.treeView1.TabIndex = 1;
-          this.treeView1.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeView1_DragDrop);
-          this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
-          this.treeView1.Leave += new System.EventHandler(this.treeView1_Leave);
-          this.treeView1.DragEnter += new System.Windows.Forms.DragEventHandler(this.treeView1_DragEnter);
-          this.treeView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
-          this.treeView1.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView1_DragOver);
           // 
           // imageList
           // 
@@ -422,6 +401,29 @@
           this.toolTip.SetToolTip(this.cmb_installtype, "1");
           this.cmb_installtype.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
           // 
+          // treeView1
+          // 
+          this.treeView1.AllowDrop = true;
+          this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                      | System.Windows.Forms.AnchorStyles.Left)));
+          this.treeView1.HideSelection = false;
+          this.treeView1.ImageIndex = 0;
+          this.treeView1.ImageList = this.imageList;
+          this.treeView1.Location = new System.Drawing.Point(0, 35);
+          this.treeView1.Name = "treeView1";
+          this.treeView1.SelectedImageIndex = 0;
+          this.treeView1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+          this.treeView1.SelectionMode = CodersLab.Windows.Controls.TreeViewSelectionMode.MultiSelectSameParent;
+          this.treeView1.ShowNodeToolTips = true;
+          this.treeView1.Size = new System.Drawing.Size(371, 390);
+          this.treeView1.TabIndex = 1;
+          this.treeView1.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeView1_DragDrop);
+          this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+          this.treeView1.Leave += new System.EventHandler(this.treeView1_Leave);
+          this.treeView1.DragEnter += new System.Windows.Forms.DragEventHandler(this.treeView1_DragEnter);
+          this.treeView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
+          this.treeView1.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView1_DragOver);
+          // 
           // FilesGroupsSection
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -447,7 +449,7 @@
 
         #endregion
 
-        private System.Windows.Forms.TreeView treeView1;
+        private CodersLab.Windows.Controls.TreeView treeView1;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton mnu_add_group;
         private System.Windows.Forms.ToolStripButton mnu_remove_group;
