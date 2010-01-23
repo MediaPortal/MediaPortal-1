@@ -192,7 +192,8 @@
           this.treeView1.ShowPlusMinus = false;
           this.treeView1.Size = new System.Drawing.Size(175, 452);
           this.treeView1.TabIndex = 2;
-          this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+          this.treeView1.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView_BeforeCollapse);
+          this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterSelect);
           // 
           // splitContainer1
           // 

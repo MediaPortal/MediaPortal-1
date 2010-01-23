@@ -155,7 +155,9 @@ namespace MpeMaker
 
     #endregion
 
-    private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+    #region Windows Forms events
+
+    private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
     {
       if (_panels.ContainsKey(e.Node.Name))
       {
@@ -166,6 +168,12 @@ namespace MpeMaker
         splitContainer1.Panel2.Controls.Add(_panels[e.Node.Name]);
         ((ISectionControl)_panels[e.Node.Name]).Set(Package);
       }
+    }
+
+    private void treeView_BeforeCollapse(object sender, TreeViewCancelEventArgs e)
+    {
+      // prevent collapsing the items
+      e.Cancel = true;
     }
 
     private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -191,16 +199,7 @@ namespace MpeMaker
     {
       if (!LoosingChangesConfirmed("Open Project")) return;
 
-      OpenFile();
-    }
-
-    private void OpenFile()
-    {
-      openFileDialog.FileName = ProjectFileName;
-      
-      if (openFileDialog.ShowDialog() != DialogResult.OK) return;
-
-      LoadProject(openFileDialog.FileName);
+      OpenFileDialog();
     }
 
     private void mnu_save_Click(object sender, EventArgs e)
@@ -240,14 +239,7 @@ namespace MpeMaker
       Close();
     }
 
-    private static bool LoosingChangesConfirmed(string caption)
-    {
-      StringBuilder stringBuilder = new StringBuilder();
-      stringBuilder.AppendLine("All not saved changes will be lost,");
-      stringBuilder.AppendLine("Do you want to continue?");
-
-      return MessageBox.Show(stringBuilder.ToString(), caption, MessageBoxButtons.YesNo) == DialogResult.Yes;
-    }
+    #endregion
 
     #endregion
 
@@ -272,6 +264,15 @@ namespace MpeMaker
       packageClass.Sections.Items[2].WizardButtonsEnum = WizardButtonsEnum.Finish;
 
       return packageClass;
+    }
+
+    private void OpenFileDialog()
+    {
+      openFileDialog.FileName = ProjectFileName;
+
+      if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+
+      LoadProject(openFileDialog.FileName);
     }
 
     private bool LoadProject(string filename)
@@ -328,7 +329,7 @@ namespace MpeMaker
 
           case MpeStartupResult.OpenFile:
             Show();
-            OpenFile();
+            OpenFileDialog();
             break;
 
           case MpeStartupResult.SkinWizard:
@@ -343,6 +344,15 @@ namespace MpeMaker
 
       Show();
       BringToFront();
+    }
+
+    private static bool LoosingChangesConfirmed(string caption)
+    {
+      StringBuilder stringBuilder = new StringBuilder();
+      stringBuilder.AppendLine("All not saved changes will be lost,");
+      stringBuilder.AppendLine("Do you want to continue?");
+
+      return MessageBox.Show(stringBuilder.ToString(), caption, MessageBoxButtons.YesNo) == DialogResult.Yes;
     }
   }
 }
