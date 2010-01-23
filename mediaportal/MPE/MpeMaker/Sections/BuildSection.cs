@@ -46,6 +46,8 @@ namespace MpeMaker.Sections
       txt_outfile.Text = pak.GeneralInfo.Location;
       lbl_file.Text = Package.ReplaceInfo(txt_outfile.Text);
       _loading = false;
+
+      txt_outfile_TextChanged(null, null);
     }
 
     public PackageClass Get()
@@ -105,9 +107,11 @@ namespace MpeMaker.Sections
     private void txt_outfile_TextChanged(object sender, EventArgs e)
     {
       lbl_file.Text = Package.ReplaceInfo(txt_outfile.Text);
-      if (_loading)
-        return;
+      if (_loading) return;
+
       Package.GeneralInfo.Location = txt_outfile.Text;
+
+      btn_generate.Enabled = !String.IsNullOrEmpty(txt_outfile.Text);
     }
   }
 }
