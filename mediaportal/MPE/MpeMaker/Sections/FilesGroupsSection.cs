@@ -431,5 +431,13 @@ namespace MpeMaker.Sections
         }
       }
     }
+
+    private void treeView1_Leave(object sender, EventArgs e)
+    {
+      // prevent loosing focus to tabControl1, when
+      // switching selected treenode from file to group item and vica versa
+      if (_loading)
+        treeView1.Focus();
+    }
   }
 }

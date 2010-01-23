@@ -84,6 +84,7 @@
           this.treeView1.TabIndex = 1;
           this.treeView1.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeView1_DragDrop);
           this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+          this.treeView1.Leave += new System.EventHandler(this.treeView1_Leave);
           this.treeView1.DragEnter += new System.Windows.Forms.DragEventHandler(this.treeView1_DragEnter);
           this.treeView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
           this.treeView1.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView1_DragOver);
