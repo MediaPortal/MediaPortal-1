@@ -567,6 +567,26 @@ namespace SetupTv.Sections
                   case 5: //Webstream
                     layer.AddWebStreamTuningDetails(dbChannel, url, bitrate);
                     break;
+                  case 7: //DVBIPChannel
+                    DVBIPChannel dvbipChannel = new DVBIPChannel();
+                    dvbipChannel.AudioPid = audioPid;
+                    dvbipChannel.FreeToAir = fta;
+                    dvbipChannel.Frequency = frequency;
+                    dvbipChannel.IsRadio = isRadio;
+                    dvbipChannel.IsTv = isTv;
+                    dvbipChannel.LogicalChannelNumber = channelNumber;
+                    dvbipChannel.Name = name;
+                    dvbipChannel.NetworkId = networkId;
+                    dvbipChannel.PcrPid = pcrPid;
+                    dvbipChannel.PmtPid = pmtPid;
+                    dvbipChannel.Provider = provider;
+                    dvbipChannel.ServiceId = serviceId;
+                    dvbipChannel.TransportId = transportId;
+                    dvbipChannel.Url=url;
+                    dvbipChannel.VideoPid = videoPid;
+                    layer.AddTuningDetails(dbChannel, dvbipChannel);
+                    Log.Info("TvChannels: Added tuning details for DVB-IP channel: {0} provider: {1}", name, provider);
+                    break;
                 }
               }
             }
