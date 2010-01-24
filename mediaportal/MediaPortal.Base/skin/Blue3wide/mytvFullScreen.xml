@@ -69,7 +69,6 @@
     <control>
       <description>TV Progress Bar</description>
       <type>tvprogress</type>
-      <id>100</id>
       <posX>155</posX>
       <posY>647</posY>
       <width>822</width>
