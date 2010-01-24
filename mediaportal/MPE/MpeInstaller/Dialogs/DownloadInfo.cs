@@ -61,6 +61,8 @@ namespace MpeInstaller.Dialogs
     {
       onlineFiles = MpeCore.MpeInstaller.InstalledExtensions.GetUpdateUrls(new List<string>());
       onlineFiles = MpeCore.MpeInstaller.KnownExtensions.GetUpdateUrls(onlineFiles);
+      onlineFiles = MpeCore.MpeInstaller.GetInitialUrlIndex(onlineFiles);
+
       if (onlineFiles.Count < 1)
       {
         if (!silent)

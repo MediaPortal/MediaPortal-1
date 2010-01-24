@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -477,6 +478,7 @@ namespace MpeInstaller
 
     private void UpdateList(bool silent)
     {
+      DownloadExtensionIndex();
       DownloadInfo dlg = new DownloadInfo();
       dlg.silent = silent;
       dlg.ShowDialog();
@@ -542,5 +544,59 @@ namespace MpeInstaller
     {
       DoUpdateAll();
     }
+
+    #region DownloadExtensionIndex
+
+    private string tempUpdateIndex;
+    private const string UpdateIndexURL = "http://wiki.team-mediaportal.com/MpeInstaller/UpdateIndex?action=raw";
+
+    private void DownloadExtensionIndex()
+    {
+      try
+      {
+        tempUpdateIndex = Path.GetTempFileName();
+        DownloadFile dlg = new DownloadFile();
+        dlg.Client.DownloadProgressChanged += Client_DownloadProgressChanged;
+        dlg.Client.DownloadFileCompleted += UpdateIndex_DownloadFileCompleted;
+        dlg.StartDownload(UpdateIndexURL, tempUpdateIndex);
+
+
+
+        //WebClient webClient = new WebClient();
+        //webClient.DownloadProgressChanged += Client_DownloadProgressChanged;
+        //webClient.DownloadFileCompleted += updateIndex_DownloadFileCompleted;
+
+        //tempIndexFile = Path.GetTempFileName();
+        ////listBox1.Items.Add(onlineFile);
+        ////progressBar1.Value++;
+        ////progressBar1.Update();
+        ////listBox1.Update();
+        ////Update();
+        //Client.DownloadFileAsync(new Uri(UpdateIndexURL), tempIndexFile);
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show("Error :" + ex.Message);
+      }
+    }
+
+    private void UpdateIndex_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+    {
+      Client_DownloadFileCompleted(sender, e);
+      if (!File.Exists(tempUpdateIndex)) return;
+      
+      List<string> indexUrls = new List<string>();
+      string[] lines = File.ReadAllLines(tempUpdateIndex);
+      foreach (string line in lines)
+      {
+        if (string.IsNullOrEmpty(line)) continue;
+        if (line.StartsWith("#")) continue;
+
+        indexUrls.Add(line);
+      }
+
+      MpeCore.MpeInstaller.SetInitialUrlIndex(indexUrls);
+    }
+    #endregion
   }
 }

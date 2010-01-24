@@ -44,6 +44,8 @@ namespace MpeCore
     public static ExtensionCollection InstalledExtensions { get; set; }
     public static ExtensionCollection KnownExtensions { get; set; }
 
+    private static List<string> extensionUrlList = new List<string>();
+
     public static void Init()
     {
       InstallerTypeProviders = new Dictionary<string, IInstallerTypeProvider>();
@@ -158,6 +160,30 @@ namespace MpeCore
         localFile = pathProvider.Value.Expand(localFile);
       }
       return localFile;
+    }
+
+    public static void SetInitialUrlIndex(List<string> list)
+    {
+      foreach (string url in list)
+      {
+        if (string.IsNullOrEmpty(url)) continue;
+
+        if (!extensionUrlList.Contains(url))
+          extensionUrlList.Add(url);
+      }
+    }
+
+    public static List<string> GetInitialUrlIndex(List<string> list)
+    {
+      foreach (string url in extensionUrlList)
+      {
+        if (string.IsNullOrEmpty(url)) continue;
+
+        if (!list.Contains(url))
+          list.Add(url);
+      }
+
+      return list;
     }
   }
 }
