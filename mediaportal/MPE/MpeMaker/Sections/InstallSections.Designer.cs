@@ -94,7 +94,7 @@
           this.toolStrip1.Location = new System.Drawing.Point(0, 0);
           this.toolStrip1.Name = "toolStrip1";
           this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-          this.toolStrip1.Size = new System.Drawing.Size(64, 25);
+          this.toolStrip1.Size = new System.Drawing.Size(95, 25);
           this.toolStrip1.TabIndex = 2;
           this.toolStrip1.Text = "toolStrip1";
           // 
@@ -123,9 +123,9 @@
                       | System.Windows.Forms.AnchorStyles.Left)
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.list_groups.FormattingEnabled = true;
-          this.list_groups.Location = new System.Drawing.Point(3, 33);
+          this.list_groups.Location = new System.Drawing.Point(6, 31);
           this.list_groups.Name = "list_groups";
-          this.list_groups.Size = new System.Drawing.Size(272, 134);
+          this.list_groups.Size = new System.Drawing.Size(266, 134);
           this.list_groups.TabIndex = 5;
           this.toolTip1.SetToolTip(this.list_groups, "Check the included group item on this section,\r\nnot all sections need groups. ");
           this.list_groups.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
@@ -386,11 +386,13 @@
           // 
           // list_actions
           // 
-          this.list_actions.Dock = System.Windows.Forms.DockStyle.Fill;
+          this.list_actions.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                      | System.Windows.Forms.AnchorStyles.Left)
+                      | System.Windows.Forms.AnchorStyles.Right)));
           this.list_actions.FormattingEnabled = true;
-          this.list_actions.Location = new System.Drawing.Point(3, 28);
+          this.list_actions.Location = new System.Drawing.Point(6, 31);
           this.list_actions.Name = "list_actions";
-          this.list_actions.Size = new System.Drawing.Size(301, 134);
+          this.list_actions.Size = new System.Drawing.Size(295, 134);
           this.list_actions.TabIndex = 1;
           this.toolTip1.SetToolTip(this.list_actions, "Atached actions to the section ");
           this.list_actions.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
