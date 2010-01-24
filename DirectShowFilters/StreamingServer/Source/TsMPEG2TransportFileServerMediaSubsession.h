@@ -4,6 +4,7 @@
 #ifndef _FILE_SERVER_MEDIA_SUBSESSION_HH
 #include "FileServerMediaSubsession.hh"
 #endif
+#include "TsDuration.h"
 
 class TsMPEG2TransportFileServerMediaSubsession: public FileServerMediaSubsession{
 public:
@@ -18,6 +19,9 @@ protected:
 	virtual ~TsMPEG2TransportFileServerMediaSubsession();
 	virtual float duration() const;
 	virtual __int64 filelength() const;
+
+  CTsDuration *m_pDuration;
+  FileReader *m_pFileDuration;
 
 private: // redefined virtual functions
 	virtual void seekStreamSource(FramedSource* inputSource, double seekNPT);

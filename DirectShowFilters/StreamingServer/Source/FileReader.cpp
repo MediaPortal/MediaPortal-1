@@ -48,6 +48,10 @@ FileReader::~FileReader()
 		delete m_pFileName;
 }
 
+FileReader* FileReader::CreateFileReader()
+{
+	return new FileReader();
+}
 
 HRESULT FileReader::GetFileName(LPOLESTR *lpszFileName)
 {

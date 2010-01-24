@@ -9,7 +9,6 @@
 #include "TsStreamFileSource.h"
 #include "TsMPEG2TransportFileServerMediaSubsession.h" 
 #include "MPEG1or2FileServerDemux.hh" 
-#include "TsFileDuration.h"
 #include "MPRTSPServer.h"
 //#include "RTSPOverHTTPServer.hh"
 

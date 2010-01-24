@@ -23,9 +23,14 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include <fcntl.h>
 #endif
 
+#include <streams.h>
+
 #include "TsStreamFileSource.h"
 #include "InputFile.hh"
 #include "GroupsockHelper.hh"
+
+#include "TsFileSeek.h"
+
 extern void LogDebug(const char *fmt, ...) ;
 
 
@@ -82,6 +87,24 @@ void TsStreamFileSource::seekToByteAbsolute(u_int64_t byteNumber)
 	reader->SetFilePointer( (int64_t)byteNumber, FILE_BEGIN);
 	m_buffer.Clear();
 }
+
+void TsStreamFileSource::seekToTimeAbsolute(CRefTime& seekTime, CTsDuration& duration) 
+{
+  	MultiFileReader* reader = (MultiFileReader*)fFid;
+    double startTime = seekTime.Millisecs();
+    startTime /= 1000.0f;
+    LogDebug("StreamingServer::  Seek-> %f/%f", startTime, duration.Duration().Millisecs()/1000.0f);
+    CTsFileSeek seek(duration);
+    seek.SetFileReader(reader);
+    seek.Seek(seekTime);
+  	m_buffer.Clear();
+}
+
+
+
+
+
+
 
 void TsStreamFileSource::seekToByteRelative(int64_t offset) 
 {

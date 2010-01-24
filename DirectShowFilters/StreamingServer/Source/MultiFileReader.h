@@ -46,6 +46,7 @@ public:
 	MultiFileReader();
 	virtual ~MultiFileReader();
 
+	virtual FileReader* CreateFileReader();
 
 	virtual HRESULT GetFileName(LPOLESTR *lpszFileName);
 	virtual HRESULT SetFileName(LPCOLESTR pszFileName);

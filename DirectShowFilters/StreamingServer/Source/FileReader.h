@@ -34,6 +34,7 @@ public:
 	FileReader();
 	virtual ~FileReader();
 
+	virtual FileReader* CreateFileReader();
 
 	// Open and write to the file
 	virtual HRESULT GetFileName(LPOLESTR *lpszFileName);

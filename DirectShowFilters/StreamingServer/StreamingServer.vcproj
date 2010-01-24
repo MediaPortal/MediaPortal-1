@@ -67,7 +67,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="strmbasd.lib winmm.lib livemedia555D.lib WS2_32.Lib"
+				AdditionalDependencies="DvbCoreUtilsD.lib strmbasd.lib winmm.lib livemedia555D.lib WS2_32.Lib"
 				OutputFile=".\bin\Debug\$(ProjectName).dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;; ..\shared"
@@ -155,7 +155,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="strmbase.lib livemedia555.lib winmm.lib ws2_32.lib"
+				AdditionalDependencies="DvbCoreUtils.lib strmbase.lib livemedia555.lib winmm.lib ws2_32.lib"
 				OutputFile=".\bin\Release\$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;; ..\shared"
@@ -248,18 +248,6 @@
 				Name="TsFileSource"
 				>
 				<File
-					RelativePath=".\Source\PidInfo.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\PidParser.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\SampleBuffer.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\Source\TSBuffer.cpp"
 					>
 				</File>
@@ -268,7 +256,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Source\TsFileDuration.cpp"
+					RelativePath=".\Source\TsDuration.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\TsFileSeek.cpp"
 					>
 				</File>
 				<File
@@ -294,6 +286,10 @@
 				RelativePath=".\Source\EnterCriticalSection.h"
 				>
 			</File>
+			<File
+				RelativePath=".\Source\StdAfx.h"
+				>
+			</File>
 			<Filter
 				Name="FileReader"
 				>
@@ -314,19 +310,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Source\PidInfo.h"
+					RelativePath=".\Source\TsDuration.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Source\PidParser.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\samplebuffer.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\TsFileDuration.h"
+					RelativePath=".\Source\TsFileSeek.h"
 					>
 				</File>
 			</Filter>

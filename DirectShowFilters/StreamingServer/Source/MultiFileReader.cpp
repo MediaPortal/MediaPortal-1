@@ -66,6 +66,10 @@ MultiFileReader::~MultiFileReader()
 */
 }
 
+FileReader* MultiFileReader::CreateFileReader()
+{
+	return (FileReader *)new MultiFileReader();
+}
 
 HRESULT MultiFileReader::GetFileName(LPOLESTR *lpszFileName)
 {
@@ -124,7 +128,7 @@ BOOL MultiFileReader::IsFileInvalid()
 
 HRESULT MultiFileReader::GetFileSize(__int64 *pStartPosition, __int64 *pLength)
 {
-//	RefreshTSBufferFile();
+	RefreshTSBufferFile();
 //	CheckPointer(pStartPosition,E_POINTER);
 //	CheckPointer(pLength,E_POINTER);
 	*pStartPosition = m_startPosition;

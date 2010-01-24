@@ -27,6 +27,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "FileReader.h"
 #include "MultiFileReader.h"
 #include "TsBuffer.h"
+#include "TsFileSeek.h"
+
 
 class TsStreamFileSource: public FramedFileSource {
 public:
@@ -50,6 +52,7 @@ public:
 
 	void seekToByteAbsolute(u_int64_t byteNumber);
 	void seekToByteRelative(int64_t offset);
+  void seekToTimeAbsolute(CRefTime& seekTime, CTsDuration& duration); 
 
 protected:
 	TsStreamFileSource(UsageEnvironment& env,

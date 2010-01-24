@@ -5,7 +5,6 @@
 #include "SimpleRTPSink.hh"
 #include "TsStreamFileSource.h"
 #include "TsMPEG2TransportStreamFramer.h"
-#include "TsFileDuration.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -19,10 +18,36 @@ TsMPEG2TransportFileServerMediaSubsession::TsMPEG2TransportFileServerMediaSubses
 {
 	strcpy(m_fileName,fFileName);
 	m_bTimeshifting = timeshifting;
+
+  if (strstr(m_fileName,".tsbuffer")!=NULL)
+  {
+    m_pFileDuration = new MultiFileReader();
+  }
+  else
+  {
+    m_pFileDuration = new FileReader();
+  }
+
+  //open file
+  WCHAR wFileName[1024];
+  MultiByteToWideChar(CP_ACP,0,m_fileName,-1,wFileName,1024);
+  m_pFileDuration->SetFileName(wFileName);
+  m_pFileDuration->OpenFile();
+
+  //get file duration
+  m_pDuration = new CTsDuration();
+  m_pDuration->SetFileReader(m_pFileDuration);
+  m_pDuration->UpdateDuration();
+  m_pFileDuration->CloseFile();
+
 }
 
 TsMPEG2TransportFileServerMediaSubsession::~TsMPEG2TransportFileServerMediaSubsession() 
 {
+  delete m_pDuration;
+  m_pDuration = NULL;
+  delete m_pFileDuration;
+  m_pFileDuration = NULL;
 }
 
 #define TRANSPORT_PACKET_SIZE 188
@@ -39,8 +64,8 @@ FramedSource* TsMPEG2TransportFileServerMediaSubsession::createNewStreamSource(u
 	if (fileSource == NULL) return NULL;
 	fFileSize = fileSource->fileSize();
 	strcpy(m_fileName,fFileName);
-
-	// Create a framer for the Transport Stream:
+ 
+  // Create a framer for the Transport Stream:
 	return TsMPEG2TransportStreamFramer::createNew(envir(), fileSource);
 }
 
@@ -61,26 +86,10 @@ void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* i
 		source->seekToByteAbsolute(0LL);
 		return;
 	}
-	float fileDuration=duration();
-	if (seekNPT<0) seekNPT=0;
+	double fileDuration=duration();
+
 	if (seekNPT>(fileDuration-0.1)) seekNPT=(fileDuration-0.1);
 	if (seekNPT <0) seekNPT=0;
-
-
-	if(m_bTimeshifting){
-		// This should fix the seeking being carried out to early.
-		// if this happens (on multiseat) u get end up with a black screen and no sound, until u do a manaual seek.
-		__int64	fileSizeInitial = filelength();
-		__int64	fileSizeActual = filelength();
-		DWORD dwTick=GetTickCount();	
-		while (fileSizeInitial == fileSizeActual && (GetTickCount() - dwTick <=5000)) // lets exit the loop if filesize isnt increased for 5 secs.	
-		{		
-			LogDebug("waiting for TS file to grow ; %d, %d ", (DWORD)fileSizeInitial, (DWORD)fileSizeActual);
-			fileSizeActual = filelength();	
-			Sleep(100);	
-		}
-		LogDebug("TS file grown - now ready for the actual seek ; initial size %d, actual size %d, wait(ms) %d", (DWORD)fileSizeInitial, (DWORD)fileSizeActual, (GetTickCount() - dwTick));
-	}
 
 	double pos=seekNPT / fileDuration;
 	__int64 fileSize=source->fileSize();
@@ -89,31 +98,27 @@ void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* i
 	pos*=188;
 	__int64 newPos=(__int64) pos;
 
-	source->seekToByteAbsolute(newPos);
+//	source->seekToByteAbsolute(newPos);
+  source->seekToTimeAbsolute(CRefTime((LONG)(seekNPT*1000.0)), *m_pDuration) ;
 	LogDebug("ts seekStreamSource %f / %f ->%d", seekNPT,fileDuration, (DWORD)newPos);
 }
 
 float TsMPEG2TransportFileServerMediaSubsession::duration() const
 {
-	CTsFileDuration duration;
-	duration.SetFileName((char*)m_fileName);
-	duration.OpenFile();
-	duration.UpdateDuration();
-	duration.CloseFile();
-	return duration.Duration();
+  m_pFileDuration->OpenFile();
+  m_pDuration->UpdateDuration();
+  m_pFileDuration->CloseFile();
+	return m_pDuration->Duration().Millisecs() / 1000.0f;
 }
-
 
 __int64 TsMPEG2TransportFileServerMediaSubsession::filelength() const
 {  
 	__int64	fileSizeTmp = 0;
 
-	CTsFileDuration duration;
-	duration.SetFileName((char*)m_fileName);
-	duration.OpenFile();
+  m_pFileDuration->OpenFile();
+  fileSizeTmp = m_pFileDuration->GetFileSize();
+  m_pFileDuration->CloseFile();
 
-	fileSizeTmp = duration.GetFileSize();
-
-	duration.CloseFile();
 	return fileSizeTmp;
 }
+
