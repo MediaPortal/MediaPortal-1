@@ -75,10 +75,9 @@
           // 
           // listBox_sections
           // 
-          this.listBox_sections.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                      | System.Windows.Forms.AnchorStyles.Left)));
+          this.listBox_sections.Dock = System.Windows.Forms.DockStyle.Left;
           this.listBox_sections.FormattingEnabled = true;
-          this.listBox_sections.Location = new System.Drawing.Point(0, 26);
+          this.listBox_sections.Location = new System.Drawing.Point(0, 25);
           this.listBox_sections.Name = "listBox_sections";
           this.listBox_sections.Size = new System.Drawing.Size(254, 394);
           this.listBox_sections.TabIndex = 0;
@@ -87,14 +86,13 @@
           // 
           // toolStrip1
           // 
-          this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
           this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnu_add,
             this.mnu_remove});
           this.toolStrip1.Location = new System.Drawing.Point(0, 0);
           this.toolStrip1.Name = "toolStrip1";
           this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-          this.toolStrip1.Size = new System.Drawing.Size(95, 25);
+          this.toolStrip1.Size = new System.Drawing.Size(683, 25);
           this.toolStrip1.TabIndex = 2;
           this.toolStrip1.Text = "toolStrip1";
           // 
@@ -125,7 +123,7 @@
           this.list_groups.FormattingEnabled = true;
           this.list_groups.Location = new System.Drawing.Point(6, 31);
           this.list_groups.Name = "list_groups";
-          this.list_groups.Size = new System.Drawing.Size(266, 134);
+          this.list_groups.Size = new System.Drawing.Size(342, 134);
           this.list_groups.TabIndex = 5;
           this.toolTip1.SetToolTip(this.list_groups, "Check the included group item on this section,\r\nnot all sections need groups. ");
           this.list_groups.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
@@ -146,9 +144,9 @@
           this.groupBox1.Controls.Add(this.cmb_sectiontype);
           this.groupBox1.Controls.Add(this.label2);
           this.groupBox1.Controls.Add(this.txt_name);
-          this.groupBox1.Location = new System.Drawing.Point(301, 26);
+          this.groupBox1.Location = new System.Drawing.Point(289, 28);
           this.groupBox1.Name = "groupBox1";
-          this.groupBox1.Size = new System.Drawing.Size(315, 190);
+          this.groupBox1.Size = new System.Drawing.Size(391, 190);
           this.groupBox1.TabIndex = 7;
           this.groupBox1.TabStop = false;
           // 
@@ -176,7 +174,7 @@
             " Finish "});
           this.cmb_buttons.Location = new System.Drawing.Point(87, 121);
           this.cmb_buttons.Name = "cmb_buttons";
-          this.cmb_buttons.Size = new System.Drawing.Size(222, 21);
+          this.cmb_buttons.Size = new System.Drawing.Size(298, 21);
           this.cmb_buttons.TabIndex = 10;
           this.cmb_buttons.SelectedIndexChanged += new System.EventHandler(this.txt_name_TextChanged);
           // 
@@ -197,7 +195,7 @@
           this.cmb_grupvisibility.FormattingEnabled = true;
           this.cmb_grupvisibility.Location = new System.Drawing.Point(87, 94);
           this.cmb_grupvisibility.Name = "cmb_grupvisibility";
-          this.cmb_grupvisibility.Size = new System.Drawing.Size(222, 21);
+          this.cmb_grupvisibility.Size = new System.Drawing.Size(298, 21);
           this.cmb_grupvisibility.TabIndex = 8;
           this.toolTip1.SetToolTip(this.cmb_grupvisibility, "If the selected group is checked, the section will be shown\r\nIf no group specifie" +
                   "d the section always visible");
@@ -219,13 +217,13 @@
           this.txt_guid.Location = new System.Drawing.Point(87, 13);
           this.txt_guid.Name = "txt_guid";
           this.txt_guid.ReadOnly = true;
-          this.txt_guid.Size = new System.Drawing.Size(222, 20);
+          this.txt_guid.Size = new System.Drawing.Size(298, 20);
           this.txt_guid.TabIndex = 6;
           // 
           // btn_preview
           // 
           this.btn_preview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.btn_preview.Location = new System.Drawing.Point(219, 161);
+          this.btn_preview.Location = new System.Drawing.Point(295, 161);
           this.btn_preview.Name = "btn_preview";
           this.btn_preview.Size = new System.Drawing.Size(75, 23);
           this.btn_preview.TabIndex = 5;
@@ -261,7 +259,7 @@
           this.cmb_sectiontype.FormattingEnabled = true;
           this.cmb_sectiontype.Location = new System.Drawing.Point(87, 65);
           this.cmb_sectiontype.Name = "cmb_sectiontype";
-          this.cmb_sectiontype.Size = new System.Drawing.Size(222, 21);
+          this.cmb_sectiontype.Size = new System.Drawing.Size(298, 21);
           this.cmb_sectiontype.TabIndex = 2;
           this.cmb_sectiontype.SelectedIndexChanged += new System.EventHandler(this.txt_name_TextChanged);
           // 
@@ -280,7 +278,7 @@
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.txt_name.Location = new System.Drawing.Point(87, 39);
           this.txt_name.Name = "txt_name";
-          this.txt_name.Size = new System.Drawing.Size(222, 20);
+          this.txt_name.Size = new System.Drawing.Size(298, 20);
           this.txt_name.TabIndex = 0;
           this.txt_name.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
           // 
@@ -291,10 +289,10 @@
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.tabControl1.Controls.Add(this.tabPage1);
           this.tabControl1.Controls.Add(this.tabPage2);
-          this.tabControl1.Location = new System.Drawing.Point(301, 222);
+          this.tabControl1.Location = new System.Drawing.Point(289, 224);
           this.tabControl1.Name = "tabControl1";
           this.tabControl1.SelectedIndex = 0;
-          this.tabControl1.Size = new System.Drawing.Size(315, 197);
+          this.tabControl1.Size = new System.Drawing.Size(391, 197);
           this.tabControl1.TabIndex = 8;
           // 
           // tabPage1
@@ -306,7 +304,7 @@
           this.tabPage1.Location = new System.Drawing.Point(4, 22);
           this.tabPage1.Name = "tabPage1";
           this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-          this.tabPage1.Size = new System.Drawing.Size(307, 171);
+          this.tabPage1.Size = new System.Drawing.Size(383, 171);
           this.tabPage1.TabIndex = 0;
           this.tabPage1.Text = "Groups";
           this.tabPage1.UseVisualStyleBackColor = true;
@@ -315,7 +313,7 @@
           // 
           this.btn_group_down.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
           this.btn_group_down.Image = global::MpeMaker.Properties.Resources.arrow_down;
-          this.btn_group_down.Location = new System.Drawing.Point(278, 99);
+          this.btn_group_down.Location = new System.Drawing.Point(354, 96);
           this.btn_group_down.Name = "btn_group_down";
           this.btn_group_down.Size = new System.Drawing.Size(23, 31);
           this.btn_group_down.TabIndex = 8;
@@ -326,7 +324,7 @@
           // 
           this.btn_group_up.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
           this.btn_group_up.Image = global::MpeMaker.Properties.Resources.arrow_up;
-          this.btn_group_up.Location = new System.Drawing.Point(278, 62);
+          this.btn_group_up.Location = new System.Drawing.Point(354, 62);
           this.btn_group_up.Name = "btn_group_up";
           this.btn_group_up.Size = new System.Drawing.Size(23, 31);
           this.btn_group_up.TabIndex = 7;
@@ -342,7 +340,7 @@
           this.mnu_group_remove.Location = new System.Drawing.Point(3, 3);
           this.mnu_group_remove.Name = "mnu_group_remove";
           this.mnu_group_remove.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-          this.mnu_group_remove.Size = new System.Drawing.Size(301, 25);
+          this.mnu_group_remove.Size = new System.Drawing.Size(377, 25);
           this.mnu_group_remove.TabIndex = 6;
           this.mnu_group_remove.Text = "toolStrip3";
           // 
@@ -379,7 +377,7 @@
           this.tabPage2.Location = new System.Drawing.Point(4, 22);
           this.tabPage2.Name = "tabPage2";
           this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-          this.tabPage2.Size = new System.Drawing.Size(307, 171);
+          this.tabPage2.Size = new System.Drawing.Size(383, 171);
           this.tabPage2.TabIndex = 1;
           this.tabPage2.Text = "Actions";
           this.tabPage2.UseVisualStyleBackColor = true;
@@ -392,7 +390,7 @@
           this.list_actions.FormattingEnabled = true;
           this.list_actions.Location = new System.Drawing.Point(6, 31);
           this.list_actions.Name = "list_actions";
-          this.list_actions.Size = new System.Drawing.Size(295, 134);
+          this.list_actions.Size = new System.Drawing.Size(371, 134);
           this.list_actions.TabIndex = 1;
           this.toolTip1.SetToolTip(this.list_actions, "Atached actions to the section ");
           this.list_actions.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
@@ -406,7 +404,7 @@
           this.toolStrip2.Location = new System.Drawing.Point(3, 3);
           this.toolStrip2.Name = "toolStrip2";
           this.toolStrip2.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-          this.toolStrip2.Size = new System.Drawing.Size(301, 25);
+          this.toolStrip2.Size = new System.Drawing.Size(377, 25);
           this.toolStrip2.TabIndex = 0;
           this.toolStrip2.Text = "toolStrip2";
           // 
@@ -467,13 +465,12 @@
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-          this.AutoSize = true;
           this.Controls.Add(this.tabControl1);
           this.Controls.Add(this.groupBox1);
           this.Controls.Add(this.btn_down);
           this.Controls.Add(this.btn_up);
-          this.Controls.Add(this.toolStrip1);
           this.Controls.Add(this.listBox_sections);
+          this.Controls.Add(this.toolStrip1);
           this.Name = "InstallSections";
           this.Size = new System.Drawing.Size(683, 427);
           this.Load += new System.EventHandler(this.InstallSections_Load);

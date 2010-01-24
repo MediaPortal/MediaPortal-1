@@ -76,7 +76,6 @@
           // 
           // toolStrip
           // 
-          this.toolStrip.Dock = System.Windows.Forms.DockStyle.None;
           this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnu_add_group,
             this.mnu_remove_group,
@@ -84,10 +83,10 @@
             this.mnu_add_files,
             this.mnu_add_folder,
             this.mnu_remove_files});
-          this.toolStrip.Location = new System.Drawing.Point(3, 7);
+          this.toolStrip.Location = new System.Drawing.Point(0, 0);
           this.toolStrip.Name = "toolStrip";
           this.toolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-          this.toolStrip.Size = new System.Drawing.Size(133, 25);
+          this.toolStrip.Size = new System.Drawing.Size(702, 25);
           this.toolStrip.TabIndex = 2;
           this.toolStrip.Text = "toolStrip1";
           // 
@@ -154,15 +153,13 @@
           // 
           // tabControl1
           // 
-          this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                      | System.Windows.Forms.AnchorStyles.Left)
-                      | System.Windows.Forms.AnchorStyles.Right)));
           this.tabControl1.Controls.Add(this.tabPage_group);
           this.tabControl1.Controls.Add(this.tabPage_file);
-          this.tabControl1.Location = new System.Drawing.Point(377, 35);
+          this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+          this.tabControl1.Location = new System.Drawing.Point(342, 25);
           this.tabControl1.Name = "tabControl1";
           this.tabControl1.SelectedIndex = 0;
-          this.tabControl1.Size = new System.Drawing.Size(322, 390);
+          this.tabControl1.Size = new System.Drawing.Size(360, 403);
           this.tabControl1.TabIndex = 3;
           // 
           // tabPage_group
@@ -179,7 +176,7 @@
           this.tabPage_group.Location = new System.Drawing.Point(4, 22);
           this.tabPage_group.Name = "tabPage_group";
           this.tabPage_group.Padding = new System.Windows.Forms.Padding(3);
-          this.tabPage_group.Size = new System.Drawing.Size(314, 364);
+          this.tabPage_group.Size = new System.Drawing.Size(387, 377);
           this.tabPage_group.TabIndex = 0;
           this.tabPage_group.Text = "Group";
           this.tabPage_group.UseVisualStyleBackColor = true;
@@ -200,7 +197,7 @@
           this.list_folder.FormattingEnabled = true;
           this.list_folder.Location = new System.Drawing.Point(6, 201);
           this.list_folder.Name = "list_folder";
-          this.list_folder.Size = new System.Drawing.Size(302, 82);
+          this.list_folder.Size = new System.Drawing.Size(375, 82);
           this.list_folder.TabIndex = 8;
           // 
           // label5
@@ -220,7 +217,7 @@
           this.cmb_parentGroup.FormattingEnabled = true;
           this.cmb_parentGroup.Location = new System.Drawing.Point(80, 127);
           this.cmb_parentGroup.Name = "cmb_parentGroup";
-          this.cmb_parentGroup.Size = new System.Drawing.Size(228, 21);
+          this.cmb_parentGroup.Size = new System.Drawing.Size(301, 21);
           this.cmb_parentGroup.TabIndex = 6;
           this.cmb_parentGroup.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
           // 
@@ -230,7 +227,7 @@
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.txt_displlayName.Location = new System.Drawing.Point(6, 19);
           this.txt_displlayName.Name = "txt_displlayName";
-          this.txt_displlayName.Size = new System.Drawing.Size(302, 20);
+          this.txt_displlayName.Size = new System.Drawing.Size(375, 20);
           this.txt_displlayName.TabIndex = 5;
           this.txt_displlayName.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
           // 
@@ -270,7 +267,7 @@
           this.txt_description.Location = new System.Drawing.Point(6, 58);
           this.txt_description.Multiline = true;
           this.txt_description.Name = "txt_description";
-          this.txt_description.Size = new System.Drawing.Size(302, 63);
+          this.txt_description.Size = new System.Drawing.Size(375, 63);
           this.txt_description.TabIndex = 1;
           this.txt_description.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
           // 
@@ -289,7 +286,7 @@
           this.tabPage_file.Location = new System.Drawing.Point(4, 22);
           this.tabPage_file.Name = "tabPage_file";
           this.tabPage_file.Padding = new System.Windows.Forms.Padding(3);
-          this.tabPage_file.Size = new System.Drawing.Size(314, 364);
+          this.tabPage_file.Size = new System.Drawing.Size(352, 377);
           this.tabPage_file.TabIndex = 1;
           this.tabPage_file.Text = "File";
           this.tabPage_file.UseVisualStyleBackColor = true;
@@ -309,14 +306,14 @@
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.txt_param1.Location = new System.Drawing.Point(95, 114);
           this.txt_param1.Name = "txt_param1";
-          this.txt_param1.Size = new System.Drawing.Size(216, 20);
+          this.txt_param1.Size = new System.Drawing.Size(254, 20);
           this.txt_param1.TabIndex = 8;
           this.txt_param1.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
           // 
           // btn_set
           // 
           this.btn_set.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.btn_set.Location = new System.Drawing.Point(233, 140);
+          this.btn_set.Location = new System.Drawing.Point(271, 140);
           this.btn_set.Name = "btn_set";
           this.btn_set.Size = new System.Drawing.Size(75, 23);
           this.btn_set.TabIndex = 7;
@@ -345,14 +342,14 @@
             "Overwrite if older"});
           this.cmb_overwrite.Location = new System.Drawing.Point(95, 59);
           this.cmb_overwrite.Name = "cmb_overwrite";
-          this.cmb_overwrite.Size = new System.Drawing.Size(216, 21);
+          this.cmb_overwrite.Size = new System.Drawing.Size(254, 21);
           this.cmb_overwrite.TabIndex = 5;
           this.cmb_overwrite.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
           // 
           // button1
           // 
           this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.button1.Location = new System.Drawing.Point(289, 86);
+          this.button1.Location = new System.Drawing.Point(327, 86);
           this.button1.Name = "button1";
           this.button1.Size = new System.Drawing.Size(19, 23);
           this.button1.TabIndex = 4;
@@ -375,7 +372,7 @@
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.txt_installpath.Location = new System.Drawing.Point(95, 88);
           this.txt_installpath.Name = "txt_installpath";
-          this.txt_installpath.Size = new System.Drawing.Size(190, 20);
+          this.txt_installpath.Size = new System.Drawing.Size(228, 20);
           this.txt_installpath.TabIndex = 2;
           this.txt_installpath.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
           // 
@@ -396,7 +393,7 @@
           this.cmb_installtype.FormattingEnabled = true;
           this.cmb_installtype.Location = new System.Drawing.Point(95, 32);
           this.cmb_installtype.Name = "cmb_installtype";
-          this.cmb_installtype.Size = new System.Drawing.Size(216, 21);
+          this.cmb_installtype.Size = new System.Drawing.Size(254, 21);
           this.cmb_installtype.TabIndex = 0;
           this.toolTip.SetToolTip(this.cmb_installtype, "1");
           this.cmb_installtype.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
@@ -404,18 +401,17 @@
           // treeView1
           // 
           this.treeView1.AllowDrop = true;
-          this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                      | System.Windows.Forms.AnchorStyles.Left)));
+          this.treeView1.Dock = System.Windows.Forms.DockStyle.Left;
           this.treeView1.HideSelection = false;
           this.treeView1.ImageIndex = 0;
           this.treeView1.ImageList = this.imageList;
-          this.treeView1.Location = new System.Drawing.Point(0, 35);
+          this.treeView1.Location = new System.Drawing.Point(0, 25);
           this.treeView1.Name = "treeView1";
           this.treeView1.SelectedImageIndex = 0;
           this.treeView1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
           this.treeView1.SelectionMode = CodersLab.Windows.Controls.TreeViewSelectionMode.MultiSelectSameParent;
           this.treeView1.ShowNodeToolTips = true;
-          this.treeView1.Size = new System.Drawing.Size(371, 390);
+          this.treeView1.Size = new System.Drawing.Size(342, 403);
           this.treeView1.TabIndex = 1;
           this.treeView1.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeView1_DragDrop);
           this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
@@ -428,11 +424,10 @@
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-          this.AutoSize = true;
           this.BackColor = System.Drawing.SystemColors.Control;
           this.Controls.Add(this.tabControl1);
-          this.Controls.Add(this.toolStrip);
           this.Controls.Add(this.treeView1);
+          this.Controls.Add(this.toolStrip);
           this.Name = "FilesGroupsSection";
           this.Size = new System.Drawing.Size(702, 428);
           this.toolStrip.ResumeLayout(false);
