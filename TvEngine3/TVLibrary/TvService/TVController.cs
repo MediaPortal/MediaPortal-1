@@ -2110,6 +2110,46 @@ namespace TvService
     }
 
     /// <summary>
+    /// Deletes invalid recordings from database. A recording is invalid if the corresponding file no longer exists.
+    /// </summary>
+    public bool DeleteInvalidRecordings()
+    {
+      Log.Debug("Deleting invalid recordings");
+      IList<Recording> itemlist = Recording.ListAll();
+      bool foundInvalidRecording = false;
+      foreach (Recording rec in itemlist)
+      {
+        if (!IsRecordingValid(rec.IdRecording))
+        {
+          DeleteRecording(rec.IdRecording);
+          foundInvalidRecording = true;
+        }
+      }
+      return foundInvalidRecording;
+    }
+
+    /// <summary>
+    /// Deletes watched recordings from database.
+    /// </summary>
+    public bool DeleteWatchedRecordings(string currentTitle)
+    {
+      IList<Recording> itemlist = Recording.ListAll();
+      bool foundWatchedRecordings = false;
+      foreach (Recording rec in itemlist)
+      {
+        if (rec.TimesWatched > 0)
+        {
+          if (currentTitle == null || currentTitle == rec.Title)
+          {
+            DeleteRecording(rec.IdRecording);
+            foundWatchedRecordings = true;
+          }
+        }
+      }
+      return foundWatchedRecordings;
+    }
+
+    /// <summary>
     /// returns which schedule the card specified is currently recording
     /// </summary>
     /// <param name="cardId">card id</param>

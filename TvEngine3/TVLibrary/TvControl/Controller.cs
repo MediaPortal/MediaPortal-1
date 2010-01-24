@@ -337,6 +337,16 @@ namespace TvControl
     bool IsRecordingValid(int idRecording);
 
     /// <summary>
+    /// Deletes invalid recordings from database. A recording is invalid if the corresponding file no longer exists.
+    /// </summary>
+    bool DeleteInvalidRecordings();
+
+    /// <summary>
+    /// Deletes watched recordings from database.
+    /// </summary>
+    bool DeleteWatchedRecordings(string currentTitle);
+
+    /// <summary>
     /// Gets the rtsp URL for file located on the tvserver.
     /// </summary>
     /// <param name="fileName">Name of the file.</param>

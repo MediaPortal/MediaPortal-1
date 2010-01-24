@@ -1544,33 +1544,14 @@ namespace TvPlugin
       GUIControl.SelectItemControl(GetID, facadeView.GetID, _iSelectedItem);
     }
 
-    private void DeleteWatchedRecordings(string _currentTitle)
+    private void DeleteWatchedRecordings(string currentTitle)
     {
-      IList<Recording> itemlist = Recording.ListAll();
-      TvServer server = new TvServer();
-      foreach (Recording rec in itemlist)
-      {
-        if (rec.TimesWatched > 0)
-        {
-          if (_currentTitle == null || _currentTitle == rec.Title)
-          {
-            server.DeleteRecording(rec.IdRecording);
-          }
-        }
-      }
+      RemoteControl.Instance.DeleteWatchedRecordings(currentTitle);
     }
 
     private void DeleteInvalidRecordings()
     {
-      IList<Recording> itemlist = Recording.ListAllActive();
-      TvServer server = new TvServer();
-      bool foundInvalidRecording = false;
-      foreach (Recording rec in itemlist)
-      {
-        server.DeleteRecording(rec.IdRecording);
-        foundInvalidRecording = true;
-      }
-      if (foundInvalidRecording)
+      if (RemoteControl.Instance.DeleteInvalidRecordings())
       {
         CacheManager.Clear();
         LoadDirectory();
