@@ -107,7 +107,16 @@ namespace MpeMaker.Sections
 
     private void btn_gen_guid_Click(object sender, EventArgs e)
     {
-      txt_guid.Text = Guid.NewGuid().ToString();
+      StringBuilder stringBuilder = new StringBuilder();
+      stringBuilder.AppendLine("A new GUID for your extension will be created.");
+      stringBuilder.AppendLine();
+      stringBuilder.Append(
+        "The GUID is needed to identify your extension. Changing it may break update history or update detection of old versions.");
+
+      if (MessageBox.Show(stringBuilder.ToString(), "Creating new extension identifier",
+                          MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) ==
+          DialogResult.OK)
+        txt_guid.Text = Guid.NewGuid().ToString();
     }
 
 
