@@ -191,6 +191,7 @@
   <ItemGroup>
     <None Include="Icons\internet-group-chat.png" />
     <None Include="Icons\internet-web-browser.png" />
+    <None Include="Icons\package-x-generic.png" />
     <Content Include="MPI MediaPortal Installer.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

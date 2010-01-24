@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Data;
+using System.Net;
 using System.IO;
 using System.Windows.Forms;
 using MpeCore;
@@ -36,20 +36,43 @@ namespace MpeInstaller.Controls
   {
     public PackageClass Package;
     public PackageClass UpdatePackage = null;
+    private DownloadItem _downloadItem = new DownloadItem();
+    private WebClient _client = new WebClient();
 
     public ExtensionControl(PackageClass packageClass)
     {
+
+      _client.DownloadFileCompleted += _client_DownloadFileCompleted;
+
       InitializeComponent();
       lbl_name.Text = packageClass.GeneralInfo.Name + " ";
       lbl_version.Text = packageClass.GeneralInfo.Version.ToString();
       lbl_description.Text = packageClass.GeneralInfo.ExtensionDescription;
+      bool haveimage = false;
+
       if (Directory.Exists(packageClass.LocationFolder))
       {
         DirectoryInfo di = new DirectoryInfo(packageClass.LocationFolder);
         FileInfo[] fileInfos = di.GetFiles("icon.*");
         if (fileInfos.Length > 0)
+        {
           img_logo.LoadAsync(fileInfos[0].FullName);
+          haveimage = true;
+        }
       }
+
+      if (!haveimage && !string.IsNullOrEmpty(packageClass.GeneralInfo.Params[ParamNamesConst.ONLINE_ICON].Value))
+      {
+        try
+        {
+          _downloadItem.SourceUrl = packageClass.GeneralInfo.Params[ParamNamesConst.ONLINE_ICON].Value;
+          _downloadItem.TempDestination = Path.GetTempFileName();
+          _downloadItem.Destination = packageClass.LocationFolder + "icon.png";
+          _client.DownloadFileAsync(new Uri(_downloadItem.SourceUrl), _downloadItem.TempDestination);
+        }
+        catch (Exception) {}
+      }
+
       Package = MpeCore.MpeInstaller.InstalledExtensions.Get(packageClass);
       if (Package == null)
       {
@@ -87,6 +110,22 @@ namespace MpeInstaller.Controls
       }
       Selected = false;
       SelectControl();
+    }
+
+    void _client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+    {
+      try
+      {
+        if (e.Error == null)
+        {
+          File.Copy(_downloadItem.TempDestination, _downloadItem.Destination, true);
+          img_logo.LoadAsync(_downloadItem.Destination);
+        }
+      }
+      catch (Exception)
+      {
+
+      }
     }
 
     private void PopulateInstallBtn()

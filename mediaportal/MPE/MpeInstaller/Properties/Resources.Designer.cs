@@ -74,6 +74,13 @@ namespace MpeInstaller.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap package_x_generic {
+            get {
+                object obj = ResourceManager.GetObject("package-x-generic", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap software_update_available {
             get {
                 object obj = ResourceManager.GetObject("software-update-available", resourceCulture);

@@ -205,6 +205,7 @@
           // 
           // img_logo
           // 
+          this.img_logo.Image = global::MpeInstaller.Properties.Resources.package_x_generic;
           this.img_logo.Location = new System.Drawing.Point(6, 21);
           this.img_logo.Name = "img_logo";
           this.img_logo.Size = new System.Drawing.Size(64, 64);
