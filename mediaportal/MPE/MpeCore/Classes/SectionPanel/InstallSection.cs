@@ -24,6 +24,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using MpeCore.Interfaces;
 using MpeCore.Classes;
@@ -60,7 +61,6 @@ namespace MpeCore.Classes.SectionPanel
       Mode = ShowModeEnum.Preview;
       Section = sectionItem;
       Package = packageClass;
-      ControlBox = true;
       SetValues();
       timer1.Enabled = true;
       ShowDialog();
@@ -71,7 +71,7 @@ namespace MpeCore.Classes.SectionPanel
       Mode = ShowModeEnum.Real;
       Package = packageClass;
       Section = sectionItem;
-      ControlBox = false;
+      base.DisableX_Click();
       SetValues();
       Base.ActionExecute(Package, Section, ActionExecuteLocationEnum.BeforPanelShow);
       ShowDialog();

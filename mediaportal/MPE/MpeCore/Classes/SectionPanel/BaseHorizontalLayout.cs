@@ -29,7 +29,7 @@ using System.Windows.Forms;
 
 namespace MpeCore.Classes.SectionPanel
 {
-  public partial class BaseHorizontalLayout : Form
+  public partial class BaseHorizontalLayout : BaseLayout
   {
     protected const string Const_LABEL_BIG = "Header Title";
     protected const string Const_LABEL_SMALL = "Header description";
