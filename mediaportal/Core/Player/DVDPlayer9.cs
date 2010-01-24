@@ -241,7 +241,11 @@ namespace MediaPortal.Player
           }
         }
       }
-      
+
+      Log.Info("DVDPlayer9:Enabling DX9 exclusive mode");
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
+      GUIWindowManager.SendMessage(msg);
+
       try
       {        
         _dvdGraph = (IDvdGraphBuilder)new DvdGraphBuilder();
@@ -362,9 +366,7 @@ namespace MediaPortal.Player
         _vmr9.SetDeinterlaceMode();
         _vmr9.Enable(true);
 
-        Log.Info("DVDPlayer9:Enabling DX9 exclusive mode");
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
-        GUIWindowManager.SendMessage(msg);
+
 
         Log.Info("Dvdplayer9:Graph created");
         _started = true;
