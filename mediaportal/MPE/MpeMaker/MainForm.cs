@@ -214,6 +214,18 @@ namespace MpeMaker
 
     private void mnu_saveAs_Click(object sender, EventArgs e)
     {
+      if (!String.IsNullOrEmpty(ProjectFileName))
+      {
+        string file = Path.GetFileName(ProjectFileName);
+        string directory = Path.GetDirectoryName(ProjectFileName);
+        // set initial dir to the xmp2 package dir
+        if (Directory.Exists(directory))
+        {
+          saveFileDialog.InitialDirectory = directory;
+          saveFileDialog.FileName = file;
+        }
+      }
+
       if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
 
       SaveProject(saveFileDialog.FileName);
@@ -268,7 +280,17 @@ namespace MpeMaker
 
     private void OpenFileDialog()
     {
-      openFileDialog.FileName = ProjectFileName;
+      if (!String.IsNullOrEmpty(ProjectFileName))
+      {
+        string file = Path.GetFileName(ProjectFileName);
+        string directory = Path.GetDirectoryName(ProjectFileName);
+        // set initial dir to the xmp2 package dir
+        if (Directory.Exists(directory))
+        {
+          openFileDialog.InitialDirectory = directory;
+          openFileDialog.FileName = file;
+        }
+      }
 
       if (openFileDialog.ShowDialog() != DialogResult.OK) return;
 
