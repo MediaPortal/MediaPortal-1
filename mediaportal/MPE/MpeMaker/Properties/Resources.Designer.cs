@@ -165,6 +165,13 @@ namespace MpeMaker.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap internet_web_browser {
+            get {
+                object obj = ResourceManager.GetObject("internet_web_browser", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap list_add {
             get {
                 object obj = ResourceManager.GetObject("list_add", resourceCulture);

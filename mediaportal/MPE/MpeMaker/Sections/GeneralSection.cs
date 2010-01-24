@@ -167,5 +167,36 @@ namespace MpeMaker.Sections
       else
         base.OnKeyDown(e);
     }
+
+    private void homepageButton_Click(object sender, EventArgs e)
+    {
+      OpenUrl(txt_homepage.Text);
+    }
+
+    private void forumButton_Click(object sender, EventArgs e)
+    {
+      OpenUrl(txt_forum.Text);
+    }
+
+    private void updateButton_Click(object sender, EventArgs e)
+    {
+      OpenUrl(txt_update.Text);
+    }
+
+    private void onlineButton_Click(object sender, EventArgs e)
+    {
+      OpenUrl(txt_online.Text);
+    }
+
+    private static void OpenUrl(string url)
+    {
+      if (string.IsNullOrEmpty(url)) return;
+
+      try
+      {
+        Process.Start(url);
+      }
+      catch {}
+    }
   }
 }
