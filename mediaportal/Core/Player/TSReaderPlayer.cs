@@ -762,27 +762,52 @@ namespace MediaPortal.Player
         {
           lock (_mediaCtrl)
           {
+            int SeekTries = 3;
+
             UpdateCurrentPosition();
             if (dTimeInSecs < 0)
             {
               dTimeInSecs = 0;
             }
             dTimeInSecs *= 10000000d;
+
             long lTime = (long)dTimeInSecs;
-            long pStop = 0;
-            long lContentStart, lContentEnd;
-            _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
-            lTime += lContentStart;
-            Log.Info("TsReaderPlayer:seekabs:{0} start:{1} end:{2}", lTime, lContentStart, lContentEnd);
-            /*if (lTime > lContentEnd)
+
+            while (SeekTries>0)
             {
-              System.Threading.Thread.Sleep(500);
+              long pStop = 0;
+              long lContentStart, lContentEnd;
               _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
-              lTime = lContentEnd;
-            }*/
-            int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning,
-                                                new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-            Log.Info("TsReaderPlayer seek done:{0:X}", hr);
+              lTime += lContentStart;
+              Log.Info("TsReaderPlayer:seekabs:{0} start:{1} end:{2}", lTime, lContentStart, lContentEnd);
+              /*if (lTime > lContentEnd)
+              {
+                System.Threading.Thread.Sleep(500);
+                _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
+                lTime = lContentEnd;
+              }*/
+              int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning,
+                                                  new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+              long lStreamPos;
+              double fCurrentPos;
+              _mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
+              _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
+              Log.Info("TsReaderPlayer: pos: {0} start:{1} end:{2}", lStreamPos, lContentStart, lContentEnd);
+              if (lStreamPos > lContentStart)
+              {
+                Log.Info("TsReaderPlayer seek done:{0:X}", hr);
+                SeekTries = 0;
+              }
+              else
+              {
+                // This could happen in LiveTv/Rstp when TsBuffers are reused and requested position is before "start"
+                // Only way to recover correct position is to seek again on "start"
+                SeekTries--;
+                lTime = 0;
+                Log.Info("TsReaderPlayer seek again : pos: {0} lower than start:{1} end:{2} ( Cnt {3} )", lStreamPos, lContentStart, lContentEnd, SeekTries);
+              }
+            }
+
             if (VMR9Util.g_vmr9 != null)
             {
               VMR9Util.g_vmr9.FrameCounter = 123;
