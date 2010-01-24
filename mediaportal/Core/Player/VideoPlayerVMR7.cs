@@ -274,10 +274,17 @@ namespace MediaPortal.Player
         catch(DeviceLostException)
         {
         }*/
-        DirectShowUtil.SetARMode(graphBuilder, AspectRatioMode.Stretched);
-        _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
+        DirectShowUtil.SetARMode(graphBuilder, AspectRatioMode.Stretched);        
         // DsUtils.DumpFilters(graphBuilder);
-        hr = mediaCtrl.Run();
+        try
+        {
+          hr = mediaCtrl.Run();
+          DsError.ThrowExceptionForHR(hr);
+        }
+        catch (Exception error)
+        {
+          Log.Error("VideoPlayer: Unable to play with reason - {0}", error.Message);
+        }
         if (hr < 0)
         {
           Error.SetError("Unable to play movie", "Unable to start movie");

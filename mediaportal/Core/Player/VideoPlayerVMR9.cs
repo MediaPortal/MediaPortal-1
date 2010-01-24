@@ -57,18 +57,14 @@ namespace MediaPortal.Player
         SetVideoWindow();
       }
     }
-
+    
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces()
     {
-      DsRect rect = new DsRect();
-      rect.top = 0;
-      rect.bottom = GUIGraphicsContext.form.Height;
-      rect.left = 0;
-      rect.right = GUIGraphicsContext.form.Width;
       try
       {
         graphBuilder = (IGraphBuilder)new FilterGraph();
+        _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
         // add preferred video & audio codecs
         int hr;
         bool bAutoDecoderSettings = false;
@@ -118,42 +114,26 @@ namespace MediaPortal.Player
           Vmr9.AddVMR9(graphBuilder);
           Vmr9.Enable(false);
 
-          string extension = Path.GetExtension(m_strCurrentFile).ToLower();
-          if (extension.Equals(".dvr-ms") || extension.Equals(".mpg") || extension.Equals(".mpeg") ||
-              extension.Equals(".bin") || extension.Equals(".dat"))
+          if (strVideoCodec.Length > 0)
           {
-            if (strVideoCodec.Length > 0)
-            {
-              DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
-            }
-            if (strAudioCodec.Length > 0)
-            {
-              DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
-            }
+            DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
           }
-          if (extension.Equals(".wmv"))
+          if (strAudioCodec.Length > 0)
           {
-            DirectShowUtil.AddFilterToGraph(graphBuilder, "WMVideo Decoder DMO");
-            DirectShowUtil.AddFilterToGraph(graphBuilder, "WMAudio Decoder DMO");
+            DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
           }
-          if (extension.Equals(".mp4") || extension.Equals(".mkv"))
+          if (strH264VideoCodec.Length > 0 && strH264VideoCodec != strVideoCodec)
           {
-            if (strH264VideoCodec.Length > 0)
-            {
-              DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
-            }
-            if (strAudioCodec.Length > 0)
-            {
-              DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
-            }
-            if (strAACAudioCodec.Length > 0 && strAACAudioCodec != strAudioCodec)
-            {
-              DirectShowUtil.AddFilterToGraph(graphBuilder, strAACAudioCodec);
-            }
+            DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
+          }
+          if (strAACAudioCodec.Length > 0 && strAACAudioCodec != strAudioCodec)
+          {
+            DirectShowUtil.AddFilterToGraph(graphBuilder, strAACAudioCodec);
           }
         }
         else
         {
+          #region auto
           // in order to retain the same decoding chain than one would get in graphedit when using the DShow filter priorities only, we have
           // to be a bit slick. You'll find out that if you add the renderer first to the graph then render a file you don't end up with
           // the same decoding chain than just rendering the file (which in turn uses VMR7). Usually ffdshow (and maybe other filters which
@@ -233,6 +213,7 @@ namespace MediaPortal.Player
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
             GUIWindowManager.SendMessage(msg);
           }
+          #endregion
         }
         if (strAudiorenderer.Length > 0)
         {
@@ -286,6 +267,7 @@ namespace MediaPortal.Player
         {
           // render
           hr = graphBuilder.RenderFile(m_strCurrentFile, string.Empty);
+          DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
         }
         if (Vmr9 == null)
         {

@@ -354,7 +354,6 @@ namespace DShowNET.Helper
       Log.Info("-----EndofTypes");
     }
 
-
     private static bool TestMediaTypes(IPin pin, IPin receiver)
     {
       bool ret = false;
@@ -383,7 +382,6 @@ namespace DShowNET.Helper
       //Log.Info("-----EndofTypes");
       return ret;
     }
-
 
     private static bool TryConnect(IGraphBuilder graphBuilder, string filtername, IPin outputPin)
     {
@@ -611,7 +609,6 @@ namespace DShowNET.Helper
       }
     }
 
-
     private static void LogFilters(ArrayList filters)
     {
       int nr = 1;
@@ -709,21 +706,22 @@ namespace DShowNET.Helper
       }
       ReleaseFilters(currentfilters);
       //not found, try new filter from registry
-      Log.Info("No preloaded filter could be connected. Trying to load new one from registry");
-      IEnumMediaTypes enumTypes;
-      hr = outputPin.EnumMediaTypes(out enumTypes);
-      if (hr != 0)
-      {
-        Log.Debug("Failed: {0:x}", hr);
-        return false;
-      }
-      Log.Debug("Got enum");
-      ArrayList major = new ArrayList();
-      ArrayList sub = new ArrayList();
       if (TryNewFilters)
       {
+        Log.Info("No preloaded filter could be connected. Trying to load new one from registry");
+        IEnumMediaTypes enumTypes;
+        hr = outputPin.EnumMediaTypes(out enumTypes);
+        if (hr != 0)
+        {
+          Log.Debug("Failed: {0:x}", hr);
+          return false;
+        }
+        Log.Debug("Got enum");
+        ArrayList major = new ArrayList();
+        ArrayList sub = new ArrayList();
+
         Log.Debug("Getting corresponding filters");
-        for (;;)
+        for (; ; )
         {
           AMMediaType[] mediaTypes = new AMMediaType[1];
           int typesFetched;
@@ -737,8 +735,8 @@ namespace DShowNET.Helper
         }
         ReleaseComObject(enumTypes);
         Log.Debug("Found {0} media types", major.Count);
-        Guid[] majorTypes = (Guid[])major.ToArray(typeof (Guid));
-        Guid[] subTypes = (Guid[])sub.ToArray(typeof (Guid));
+        Guid[] majorTypes = (Guid[])major.ToArray(typeof(Guid));
+        Guid[] subTypes = (Guid[])sub.ToArray(typeof(Guid));
         Log.Debug("Loading filters");
         ArrayList filters = FilterHelper.GetFilters(majorTypes, subTypes, (Merit)0x00400000);
         Log.Debug("Loaded {0} filters", filters.Count);
@@ -774,10 +772,20 @@ namespace DShowNET.Helper
 
     public static bool RenderOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter)
     {
-      return RenderOutputPins(graphBuilder, filter, 100);
+      return RenderOutputPins(graphBuilder, filter, 100, true);
+    }
+
+    public static bool RenderOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter, bool tryAllFilters)
+    {
+      return RenderOutputPins(graphBuilder, filter, 100, tryAllFilters);
     }
 
     public static bool RenderOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter, int maxPinsToRender)
+    {
+      return RenderOutputPins(graphBuilder, filter, maxPinsToRender, true);
+    }
+
+    public static bool RenderOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter, int maxPinsToRender, bool tryAllFilters)
     {
       int pinsRendered = 0;
       bool bAllConnected = true;
@@ -822,7 +830,7 @@ namespace DShowNET.Helper
                 if (hr != 0 || pConnectPin == null)
                 {
                   hr = 0;
-                  if (TryConnect(graphBuilder, info.achName, pins[0]))
+                  if (TryConnect(graphBuilder, info.achName, pins[0], tryAllFilters))
                     //if ((hr=graphBuilder.Render(pins[0])) == 0)
                   {
                     Log.Info("  render ok");
@@ -942,6 +950,65 @@ namespace DShowNET.Helper
         } while (iFetched == 1);
         ReleaseComObject(pinEnum);
       }
+    }
+
+    public static void RemoveUnusedFiltersFromGraph(IGraphBuilder graphBuilder)
+    {
+      if (graphBuilder == null)
+        return;
+
+      IEnumFilters enumFilters;
+      graphBuilder.EnumFilters(out enumFilters);
+      int fetched;
+      IBaseFilter[] filters = new IBaseFilter[1];
+      while (enumFilters.Next(1, filters, out fetched) == 0)
+      {
+        if (fetched > 0)
+        {
+          IEnumPins pinEnum;
+          int hr = filters[0].EnumPins(out pinEnum);
+          if (hr == 0 && pinEnum != null)
+          {
+            pinEnum.Reset();
+            IPin[] pins = new IPin[1];
+            bool filterUsed = false;
+            bool hasOut = false;
+            bool hasIn = false;
+            while (pinEnum.Next(1, pins, out fetched) == 0)
+            {
+              if (fetched > 0)
+              {
+                PinDirection pinDir;
+                pins[0].QueryDirection(out pinDir);
+                if (pinDir == PinDirection.Output)
+                  hasOut = true;
+                else
+                  hasIn = true;
+
+                IPin pOutPin;
+                hr = pins[0].ConnectedTo(out pOutPin);
+                if (pOutPin != null)
+                  DirectShowUtil.ReleaseComObject(pOutPin);
+                if (hr != DsResults.E_NotConnected)
+                {
+                  filterUsed = true;
+                  break;
+                }
+              }              
+            }
+            DirectShowUtil.ReleaseComObject(pinEnum);
+            if (!filterUsed && hasOut && hasIn)
+            {
+              FilterInfo i;
+              filters[0].QueryFilterInfo(out i);
+              graphBuilder.RemoveFilter(filters[0]);
+              Log.Info("Unused filter removed: {0}", i.achName);
+              DirectShowUtil.ReleaseComObject(i.pGraph);
+            }
+          }
+        }
+      }
+      DirectShowUtil.ReleaseComObject(enumFilters);
     }
 
     public static bool DisconnectAllPins(IGraphBuilder graphBuilder, IBaseFilter filter)
