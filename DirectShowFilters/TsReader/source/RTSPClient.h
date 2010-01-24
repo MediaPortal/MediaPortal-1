@@ -15,7 +15,7 @@ public:
   virtual ~CRTSPClient(void);
   bool Initialize();
   bool OpenStream(char* url);
-  bool Play(double fStart);
+  bool Play(double fStart,double fDuration);
   void Stop();
 	bool IsRunning();
 	long Duration();
@@ -70,6 +70,7 @@ public:
   bool m_BufferThreadActive;
 	long m_duration;
 	double m_fStart;
+	double m_fDuration;
 	char m_url[2048];
 	bool m_bRunning;
   bool m_bPaused;

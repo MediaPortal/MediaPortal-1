@@ -90,13 +90,23 @@ Boolean CRTSPClient::clientStartPlayingSession(Medium* client,MediaSession* sess
   RTSPClient* rtspClient = (RTSPClient*)client;
 
   long dur=m_duration/1000;
-  long diff=abs(dur-m_fStart);
-  if (diff <20 && m_fStart>1 )
+  double fStart = m_fStart ;
+  double fStartToEnd ;
+  if (m_fDuration > 0.0)
   {
-    m_fStart=dur+5;
+	  fStartToEnd = m_fDuration-m_fStart ;
+	  if (fStartToEnd<0) fStartToEnd=0 ;
+	  fStart = dur - fStartToEnd ;
+	  if (fStart<0) fStart=0 ;
   }
-  LogDebug("CRTSPClient::clientStartPlayingSession() play from %.3f / %.3f",m_fStart,(float)m_duration/1000);
-  return rtspClient->playMediaSession(*session,m_fStart);
+
+  long diff=abs(dur-m_fStart);
+//  if (diff <20 && m_fStart>1 )
+//  {
+//    m_fStart=dur+5;
+//  }
+  LogDebug("CRTSPClient::clientStartPlayingSession() play from %.3f / %.3f",fStart,(float)m_duration/1000);
+  return rtspClient->playMediaSession(*session,fStart);
 
 }
 
@@ -243,41 +253,16 @@ bool CRTSPClient::OpenStream(char* url)
 	char* range=strstr(sdpDescription,"a=range:npt=");
 	if (range!=NULL)
 	{
-		range+=strlen("a=range:npt=");
-		char rangeEnd[128];
-		char rangeStart[128];
-		strcpy(rangeEnd,"");
-		strcpy(rangeStart,"");
-		int pos=0;
-		int setPos=0;
-		while (isdigit(range[pos]) )
+		char *pStart = range+strlen("a=range:npt=");
+    char *pEnd = strstr(range,"-") ;
+		if (pEnd!=NULL)
 		{
-			rangeStart[setPos]=range[pos];
-			rangeStart[setPos+1]=0;
-			pos++;
-			setPos++;
-		}
-		pos++;
-		setPos=0;
-		while (isdigit(range[pos]) )
-		{
-			rangeEnd[setPos]=range[pos];
-			rangeEnd[setPos+1]=0;
-			pos++;
-			setPos++;
-		}
-	
-    LogDebug("rangestart:%s rangeend:%s", rangeStart,rangeEnd);
-		if (strlen(rangeStart)>0)
-		{
-			long startOfFile =0;//atol(rangeStart);
-			long endOfFile =7200*1000;
-			if (strlen(rangeEnd)>0)
-			{
-				endOfFile=atol(rangeEnd);
-			}
-      LogDebug("start:%d end:%d", (int)startOfFile,(int)endOfFile);
-			m_duration=(endOfFile-startOfFile)*1000;
+			pEnd++ ;
+      double Start=atof(pStart) ;
+  		double End=atof(pEnd) ;
+
+      LogDebug("rangestart:%f rangeend:%f", Start,End);
+			m_duration=((End-Start)*1000.0);
 		}
 	}
   // Create a media session object from this SDP description:
@@ -534,11 +519,12 @@ bool CRTSPClient::Pause()
 	LogDebug("CRTSPClient::Pause() done");
 	return true;
 }
-bool CRTSPClient::Play(double fStart)
+bool CRTSPClient::Play(double fStart,double fDuration)
 {
-	LogDebug("CRTSPClient::Play from %f", fStart);
+	LogDebug("CRTSPClient::Play from %f / %f", (float)fStart,(float)fDuration);
   m_bPaused=false;
 	m_fStart=fStart;
+	m_fDuration=fDuration;
 	if (m_BufferThreadActive)
 	{
 		Stop();

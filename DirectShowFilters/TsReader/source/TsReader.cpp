@@ -538,27 +538,38 @@ STDMETHODIMP CTsReaderFilter::Pause()
         double startTime=m_seekTime.Millisecs();
         startTime/=1000.0;
 
+        long Old_rtspDuration = m_rtspClient.Duration() ;
         //clear buffers
         LogDebug("  -- Pause()  ->start rtsp from %f", startTime);
         m_buffer.Clear();
-		m_demultiplexer.Flush();
+        m_demultiplexer.Flush();
 
         //start streaming
         m_buffer.Run(true);
-        m_rtspClient.Play(startTime);
-        m_tickCount = GetTickCount();
+        m_rtspClient.Play(startTime,0.0);
+//        m_tickCount = GetTickCount();
         LogDebug("  -- Pause()  ->rtsp started");
 
-        //get duration of the stream
-        double duration = m_rtspClient.Duration()/1000.0f;
-        CPcr pcrstart, pcrEnd, pcrMax;
-        pcrstart = m_duration.StartPcr();
-        duration += pcrstart.ToClock();
-        pcrEnd.FromClock(duration);
-        m_duration.Set(pcrstart, pcrEnd, pcrMax);
+        //update the duration of the stream
+        CPcr pcrStart, pcrEnd, pcrMax ;
+        double duration = m_rtspClient.Duration() / 1000.0f ;
 
-        //allow audio/video/subtitle pins to block in fillbuffer
-        LogDebug("  -- Pause()-  >duration:%f", (m_rtspClient.Duration() / 1000.0f));
+        if (m_bTimeShifting)
+        {
+          // EndPcr is continuously increasing ( until ~26 hours for rollover that will fail ! )
+          // So, we refer duration to End, and just update start.
+          pcrEnd   = m_duration.EndPcr() ;
+          double start  = pcrEnd.ToClock() - duration;
+	        if (start<0) start=0 ;
+          pcrStart.FromClock(start) ;
+          m_duration.Set( pcrStart, pcrEnd, pcrMax) ;     // Pause()-RTSP
+        }
+        else
+        {
+          // It's a record, eventually end can increase if recording is in progress, let the end virtually updated by ThreadProc()
+          m_bRecording = (Old_rtspDuration != m_rtspClient.Duration()) ;
+        }
+        LogDebug("Timeshift %d, Recording %d, StartPCR %f, EndPcr %f, Duration %f",m_bTimeShifting,m_bRecording,m_duration.StartPcr().ToClock(),m_duration.EndPcr().ToClock(),(float)m_duration.Duration().Millisecs()/1000.0f) ;
       }
       else
       {
@@ -632,7 +643,9 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
   m_fileReader = NULL;
   m_fileDuration = NULL;
   m_seekTime = CRefTime(0L);
+  m_absSeekTime = CRefTime(0L);
   m_WaitForSeekToEof=0;
+  m_bRecording=false ;
 
   wcscpy(m_fileName, pszFileName);
   char url[MAX_PATH];
@@ -657,22 +670,25 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
 
     m_buffer.Clear();
     m_buffer.Run(true);
-    m_rtspClient.Play(0.0);
+    m_rtspClient.Play(0.0,0.0);
     m_tickCount = GetTickCount();
     m_fileReader = new CMemoryReader(m_buffer);
     m_demultiplexer.SetFileReader(m_fileReader);
     m_demultiplexer.Start();
     m_buffer.Run(false);
-    m_tickCount = GetTickCount();
 
     LogDebug("close rtsp:%s", url);
     m_rtspClient.Stop();
+
+    m_tickCount = GetTickCount()-m_rtspClient.Duration();   // Will be ready to update "virtual end Pcr" on recording in progress.
+
     double duration = m_rtspClient.Duration() / 1000.0f;
     CPcr pcrstart, pcrEnd, pcrMax;
     pcrstart = m_duration.StartPcr();
     duration += pcrstart.ToClock();
     pcrEnd.FromClock(duration);
-    m_duration.Set(pcrstart, pcrEnd, pcrMax);
+    pcrstart.IsValid=true ;
+    m_duration.Set(pcrstart, pcrEnd, pcrMax);    //Load()
   }
   else if ((length > 7) && (strnicmp(url, "rtsp://",7) == 0))
   {
@@ -695,27 +711,29 @@ STDMETHODIMP CTsReaderFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pm
     //play
     m_buffer.Clear();
     m_buffer.Run(true);
-    m_rtspClient.Play(0.0);
-    m_tickCount = GetTickCount();
+    m_rtspClient.Play(0.0,0.0);
     m_fileReader = new CMemoryReader(m_buffer);
 
     //get audio /video pids
     m_demultiplexer.SetFileReader(m_fileReader);
     m_demultiplexer.Start();
     m_buffer.Run(false);
-    m_tickCount = GetTickCount();
 
     // stop streaming
     LogDebug("close rtsp:%s", url);
     m_rtspClient.Stop();
 
+    m_tickCount = GetTickCount()-m_rtspClient.Duration();
+
     //get the duration of the stream
+
     double duration = m_rtspClient.Duration() / 1000.0f;
     CPcr pcrstart, pcrEnd, pcrMax;
     pcrstart = m_duration.StartPcr();
     duration += pcrstart.ToClock();
     pcrEnd.FromClock(duration);
-    m_duration.Set(pcrstart, pcrEnd, pcrMax);
+    pcrstart.IsValid=true ;
+    m_duration.Set(pcrstart, pcrEnd, pcrMax);    //Load()
   }
   else
   {
@@ -847,7 +865,9 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
     m_buffer.Clear();
     m_buffer.Run(true);
     //start rtsp stream from the seek-time
-    if (m_rtspClient.Play(startTime))
+
+  long Old_rtspDuration = m_rtspClient.Duration();
+	if (m_rtspClient.Play(startTime, m_duration.Duration().Millisecs()/1000.0))
 	{
       int loop = 0;
       while (m_buffer.Size() == 0 && loop++ <= 50 ) // lets exit the loop if no data received for 5 secs.
@@ -862,20 +882,26 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
 		return ;
 	  }
 
-      m_tickCount = GetTickCount();
+    //update the duration of the stream
+    CPcr pcrStart, pcrEnd, pcrMax ;
+    double duration = m_rtspClient.Duration() / 1000.0f ;
 
-      //update the duration of the stream
-      double duration = m_rtspClient.Duration() / 1000.0f;
-    
-      CPcr pcrstart;
-      CPcr pcrEnd;
-      CPcr pcrMax;
-
-      pcrstart = m_duration.StartPcr();
-      duration += pcrstart.ToClock();
-      pcrEnd.FromClock(duration);
-      m_duration.Set( pcrstart, pcrEnd, pcrMax);
-      LogDebug("CTsReaderFilter::  Seek->start client done duration:%2.2f",duration);
+    if (m_bTimeShifting)
+    {
+      // EndPcr is continuously increasing ( until ~26 hours for rollover that will fail ! )
+      // So, we refer duration to End, and just update start.
+      pcrEnd   = m_duration.EndPcr() ;
+      double start  = pcrEnd.ToClock() - duration;
+      if (start<0) start=0 ;
+      pcrStart.FromClock(start) ;
+      m_duration.Set( pcrStart, pcrEnd, pcrMax) ;     // Seek()-RTSP
+    }
+    else
+    {
+      // It's a record, eventually end can increase if recording is in progress, let the end virtually updated by ThreadProc()
+      m_bRecording = (Old_rtspDuration != m_rtspClient.Duration()) ;
+    }
+    LogDebug("CTsReaderFilter:: Rtsp seek :Timeshift %d, Recording %d, StartPCR %f, EndPcr %f, Duration %f",m_bTimeShifting,m_bRecording,m_duration.StartPcr().ToClock(),m_duration.EndPcr().ToClock(),(float)m_duration.Duration().Millisecs()/1000.0f) ;
 	}
 	else
 	{
@@ -891,37 +917,63 @@ bool CTsReaderFilter::IsFilterRunning()
 }
 
 
-void CTsReaderFilter::SeekPreStart(CRefTime& rtSeek)
+void CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
 {
   bool doSeek = true;
+  CTsDuration tsduration=GetDuration();
+
+  SetMediaPosition(rtAbsSeek.m_time) ;
+
+  //Note that the seek timestamp (m_rtStart) is done in the range
+  //from earliest - latest from GetAvailable()
+  //We however would like the seek timestamp to be in the range 0-fileduration
+  CRefTime rtSeek = rtAbsSeek;
+  float seekTime = (float)rtSeek.Millisecs();
+  seekTime /= 1000.0f;
+
+  //get the earliest timestamp available in the file
+  float earliesTimeStamp = 0;
+  earliesTimeStamp = tsduration.StartPcr().ToClock() - tsduration.FirstStartPcr().ToClock();
+
+  if (earliesTimeStamp < 0) earliesTimeStamp = 0;
+
+  //correct the seek time
+  seekTime -= earliesTimeStamp;
+  if (seekTime < 0) seekTime = 0;
+
+  seekTime *= 1000.0f;
+  rtSeek = CRefTime((LONG)seekTime);
+  // Now rtSeek contains the "relative" position from "0 to buffer/file duration"
+
   // Should we really seek ?
   
   // Because all skips generated after "Stop()" cause a lot of problem
   // This remove all these stupid skips. 
   if(m_State == State_Stopped)
   {   
-    if ((m_bStoppedForUnexpectedSeek || (m_seekTime==rtSeek)) && !m_bForceSeekOnStop)
+    if ((m_bStoppedForUnexpectedSeek || (m_absSeekTime==rtAbsSeek)) && !m_bForceSeekOnStop)
     {
 //      LogDebug("CTsReaderFilter::--SeekStart() Stopped state -- No new seek %f", 
 //      (float)rtSeek.Millisecs()/1000.0f);
       m_bStoppedForUnexpectedSeek=false ;
       m_seekTime = rtSeek ;
+      m_absSeekTime = rtAbsSeek ;
       return ;
     }
   }
 
-  if (((rtSeek == m_seekTime) && !m_bStreamCompensated) || (m_demultiplexer.IsMediaChanging() && !m_bOnZap && !m_bForceSeekOnStop))  
+  if (((m_absSeekTime==rtAbsSeek) && !m_bStreamCompensated) || (m_demultiplexer.IsMediaChanging() && !m_bOnZap && !m_bForceSeekOnStop))  
   {
     doSeek = false;
-    LogDebug("CTsReaderFilter::--SeekStart()-- No new seek %f - Stream compensated: %d, OnZap: %d, Force %d, Media changing: %d", 
-    (float)rtSeek.Millisecs()/1000.0f, m_bStreamCompensated,m_bOnZap,m_bForceSeekOnStop, m_demultiplexer.IsMediaChanging());
+    LogDebug("CTsReaderFilter::--SeekStart()-- No new seek %f ( Abs %f / %f ) - Stream compensated: %d, OnZap: %d, Force %d, Media changing: %d", 
+		(float)rtSeek.Millisecs()/1000.0f, (float)rtAbsSeek.Millisecs()/1000.0f, (float)m_duration.EndPcr().ToClock(),m_bStreamCompensated,m_bOnZap,m_bForceSeekOnStop, m_demultiplexer.IsMediaChanging());
 //	  m_bStreamCompensated=false ;
     m_bForceSeekOnStop = false ;
   }
   else
   {
-    LogDebug("CTsReaderFilter::--SeekStart()-- LiveTv : %d, TimeShifting: %d %3.3f, OnZap: %d, Force %d, Media changing %d",
-    m_bLiveTv,m_bTimeShifting,(float)rtSeek.Millisecs()/1000.0,m_bOnZap,m_bForceSeekOnStop,m_demultiplexer.IsMediaChanging());
+    LogDebug("CTsReaderFilter::--SeekStart()-- LiveTv : %d, TimeShifting: %d %3.3f ( Abs %f / %f ), OnZap: %d, Force %d, Media changing %d",
+		m_bLiveTv,m_bTimeShifting,(float)rtSeek.Millisecs()/1000.0,(float)rtAbsSeek.Millisecs()/1000.0f, (float)m_duration.EndPcr().ToClock(),m_bOnZap,m_bForceSeekOnStop,m_demultiplexer.IsMediaChanging());
 
     m_bForceSeekOnStop = false ;
 
@@ -941,6 +993,7 @@ void CTsReaderFilter::SeekPreStart(CRefTime& rtSeek)
     }
 
     m_seekTime=rtSeek ;
+    m_absSeekTime = rtAbsSeek ;
 
     if (!doSeek && !m_bOnZap) return ;
 
@@ -1000,8 +1053,11 @@ void CTsReaderFilter::SeekPreStart(CRefTime& rtSeek)
 
     if (GetAudioPin()->IsConnected())
     {
-      //deliver a end-flush to the codec filter so it will start asking for data again
+      // deliver a end-flush to the codec filter so it will start asking for data again
       GetAudioPin()->DeliverEndFlush();
+
+      // Update m_rtStart in case of has not seeked yet
+      GetAudioPin()->SetStart(rtAbsSeek) ;
 
       // and restart the thread
       GetAudioPin()->Run();
@@ -1011,6 +1067,9 @@ void CTsReaderFilter::SeekPreStart(CRefTime& rtSeek)
     {
       //deliver a end-flush to the codec filter so it will start asking for data again
       GetVideoPin()->DeliverEndFlush();
+
+      // Update m_rtStart in case of has not seeked yet
+      GetVideoPin()->SetStart(rtAbsSeek) ;
 
       // and restart the thread
       GetVideoPin()->Run();
@@ -1093,7 +1152,7 @@ do
             duration.EndPcr().PcrReferenceBase!=m_duration.EndPcr().PcrReferenceBase)
         {
           //yes, then update it
-          m_duration.Set(duration.StartPcr(), duration.EndPcr(), duration.MaxPcr());
+          m_duration.Set(duration.StartPcr(), duration.EndPcr(), duration.MaxPcr());  // Local file
 
           // Is graph running?
           if (m_State == State_Running||m_State==State_Paused)
@@ -1109,46 +1168,33 @@ do
     {
       // we are not playing a local file
       // are we playing a (RTSP) stream?
-      if (m_rtspClient.IsRunning())
+//      if (m_rtspClient.IsRunning())
       {
-        if (m_bTimeShifting)
+        if (m_bTimeShifting || m_bRecording)
         {
           //yes.
           //Then update the duration. Since we cannot 'read' the duration continously from the stream
           //we take the duration we got when we started playing this stream
           //and add the time-passed since then to it which should give a indication of the current
           //duration
-          DWORD ticks=(GetTickCount()-m_tickCount)/1000;
-          double duration=m_rtspClient.Duration()/1000.0f;
-          duration+=ticks;
-          CPcr pcrstart,pcrEnd,pcrMax;
-          pcrstart=m_duration.StartPcr();
-          duration+=pcrstart.ToClock();
-          pcrEnd.FromClock(duration);
+		      double end = (double)(GetTickCount()-m_tickCount)/1000.0 ;
 
-          CTsDuration newDuration;
-          newDuration.Set( pcrstart, pcrEnd,pcrMax);
+          CPcr pcrStart,pcrEnd,pcrMax ;
+          pcrStart=m_duration.StartPcr();
+          pcrEnd.FromClock(end);
+	
+          //set the duration
+          m_duration.Set( pcrStart, pcrEnd, pcrMax);          // Continuous update
 
-          //did we find a duration?
-          if (newDuration.Duration().Millisecs()>0)
+          // Is graph running?
+          if (m_State == State_Running)
           {
-            //did the duration change?
-            if (newDuration.Duration() != m_duration.Duration())
-            {
-              //set the duration
-              m_duration.Set( pcrstart, pcrEnd,pcrMax);
-
-              // Is graph running?
-              if (m_State == State_Running)
-              {
-
-                //yes, then send a EC_LENGTH_CHANGED event to the graph
-                NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);
-                SetDuration();
-              }
-            }
+            //yes, then send a EC_LENGTH_CHANGED event to the graph
+            NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);
+            SetDuration();
           }
         }
+//		LogDebug("RTSP duration : %f", (float)m_duration.Duration().Millisecs()/1000.0f) ;
       }
     }
   }

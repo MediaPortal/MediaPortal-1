@@ -498,6 +498,7 @@ HRESULT CAudioPin::OnThreadStartPlay()
 
 void CAudioPin::SetStart(CRefTime rtStartTime)
 {
+  m_rtStart = rtStartTime ;
 }
 STDMETHODIMP CAudioPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags)
 {
@@ -510,31 +511,8 @@ STDMETHODIMP CAudioPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LON
 ///
 void CAudioPin::UpdateFromSeek()
 {
-  CTsDuration tsduration=m_pTsReaderFilter->GetDuration();
+  m_pTsReaderFilter->SeekPreStart(m_rtStart);
 
-  m_pTsReaderFilter->SetMediaPosition(m_rtStart.m_time) ;
-
-  //Note that the seek timestamp (m_rtStart) is done in the range
-  //from earliest - latest from GetAvailable()
-  //We however would like the seek timestamp to be in the range 0-fileduration
-  CRefTime rtSeek = m_rtStart;
-  float seekTime = (float)rtSeek.Millisecs();
-  seekTime /= 1000.0f;
-
-  //get the earliest timestamp available in the file
-  float earliesTimeStamp = 0;
-  earliesTimeStamp = tsduration.StartPcr().ToClock() - tsduration.FirstStartPcr().ToClock();
-
-  if (earliesTimeStamp < 0) earliesTimeStamp = 0;
-
-  //correct the seek time
-  seekTime -= earliesTimeStamp;
-  if (seekTime < 0) seekTime = 0;
-
-  seekTime *= 1000.0f;
-  rtSeek = CRefTime((LONG)seekTime);
-
-  m_pTsReaderFilter->SeekPreStart(rtSeek);
 //  LogDebug("aud: seek done %f/%f",(float)m_rtStart.Millisecs()/1000.0f,(float)m_rtDuration.Millisecs()/1000.0f);
   return ;
 }

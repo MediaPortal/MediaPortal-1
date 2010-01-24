@@ -217,7 +217,9 @@ private:
   CMemoryBuffer   m_buffer;
   DWORD           m_tickCount;
   CRefTime        m_seekTime;
+  CRefTime        m_absSeekTime;
   bool            m_bTimeShifting;
+  bool            m_bRecording;
   IDVBSubtitle*   m_pDVBSubtitle;
   ITSReaderCallback* m_pCallback;
   ITSReaderAudioChange* m_pRequestAudioCallback;
