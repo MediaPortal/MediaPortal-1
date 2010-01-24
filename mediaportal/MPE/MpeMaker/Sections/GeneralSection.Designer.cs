@@ -58,14 +58,14 @@
           this.label11 = new System.Windows.Forms.Label();
           this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
           this.btn_params = new System.Windows.Forms.Button();
-          this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+          this.toolTip = new System.Windows.Forms.ToolTip(this.components);
           this.txt_tags = new System.Windows.Forms.TextBox();
           this.date_release = new System.Windows.Forms.DateTimePicker();
           this.label12 = new System.Windows.Forms.Label();
           this.label13 = new System.Windows.Forms.Label();
           this.homepageButton = new System.Windows.Forms.Button();
-          this.img_logo = new System.Windows.Forms.PictureBox();
           this.imageList = new System.Windows.Forms.ImageList(this.components);
+          this.img_logo = new System.Windows.Forms.PictureBox();
           this.forumButton = new System.Windows.Forms.Button();
           this.updateButton = new System.Windows.Forms.Button();
           this.onlineButton = new System.Windows.Forms.Button();
@@ -108,6 +108,7 @@
           this.txt_guid.Name = "txt_guid";
           this.txt_guid.Size = new System.Drawing.Size(236, 20);
           this.txt_guid.TabIndex = 1;
+          this.toolTip.SetToolTip(this.txt_guid, "Identifier for this extension");
           this.txt_guid.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
           // 
           // label3
@@ -250,7 +251,7 @@
           this.txt_update.Name = "txt_update";
           this.txt_update.Size = new System.Drawing.Size(226, 20);
           this.txt_update.TabIndex = 10;
-          this.toolTip1.SetToolTip(this.txt_update, "Onlie lication if the xml file were the update if is stored");
+          this.toolTip.SetToolTip(this.txt_update, "Online location if the xml file were the update if is stored");
           this.txt_update.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
           // 
           // label8
@@ -326,7 +327,7 @@
           this.txt_online.Name = "txt_online";
           this.txt_online.Size = new System.Drawing.Size(227, 20);
           this.txt_online.TabIndex = 11;
-          this.toolTip1.SetToolTip(this.txt_online, "Online location of the package it self");
+          this.toolTip.SetToolTip(this.txt_online, "Online location of the package it self");
           this.txt_online.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
           // 
           // label11
@@ -353,9 +354,10 @@
           this.btn_params.UseVisualStyleBackColor = true;
           this.btn_params.Click += new System.EventHandler(this.btn_params_Click);
           // 
-          // toolTip1
+          // toolTip
           // 
-          this.toolTip1.IsBalloon = true;
+          this.toolTip.IsBalloon = true;
+          this.toolTip.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
           // 
           // txt_tags
           // 
@@ -367,7 +369,7 @@
           this.txt_tags.Name = "txt_tags";
           this.txt_tags.Size = new System.Drawing.Size(259, 359);
           this.txt_tags.TabIndex = 13;
-          this.toolTip1.SetToolTip(this.txt_tags, "Tags separated by \",\"");
+          this.toolTip.SetToolTip(this.txt_tags, "Tags separated by \",\"");
           this.txt_tags.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
           // 
           // date_release
@@ -407,6 +409,12 @@
           this.homepageButton.UseVisualStyleBackColor = true;
           this.homepageButton.Click += new System.EventHandler(this.homepageButton_Click);
           // 
+          // imageList
+          // 
+          this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
+          this.imageList.TransparentColor = System.Drawing.Color.Transparent;
+          this.imageList.Images.SetKeyName(0, "internet-web-browser.png");
+          // 
           // img_logo
           // 
           this.img_logo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -416,12 +424,6 @@
           this.img_logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
           this.img_logo.TabIndex = 26;
           this.img_logo.TabStop = false;
-          // 
-          // imageList
-          // 
-          this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
-          this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-          this.imageList.Images.SetKeyName(0, "internet-web-browser.png");
           // 
           // forumButton
           // 
@@ -539,7 +541,7 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button btn_params;
-        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.PictureBox img_logo;
         private System.Windows.Forms.DateTimePicker date_release;
         private System.Windows.Forms.Label label12;
