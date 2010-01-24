@@ -94,6 +94,9 @@
       <label2>#TV.Record.percent3</label2>
       <font>font13</font>
       <textcolor>FF000000</textcolor>
+      <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
     </control>
     <control>
       <description>MSGBox</description>

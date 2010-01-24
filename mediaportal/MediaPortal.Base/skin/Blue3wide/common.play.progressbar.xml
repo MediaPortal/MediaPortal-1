@@ -92,7 +92,7 @@
       <width>822</width>
       <height>25</height>
       <label>#play.progressbar.percentage</label>
-      <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
+      <visible>[window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)]+!window.isvisible(602)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
