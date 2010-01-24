@@ -459,6 +459,7 @@ namespace TvPlugin
       if (IsValidSchedule(schedule))
       {   
         Schedule parentSchedule = null;
+        GetParentAndSpawnSchedule(ref schedule, out parentSchedule);
         wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule);        
       }
       return wasDeleted;
