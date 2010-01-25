@@ -59,10 +59,23 @@ namespace MpeInstaller.Controls
 
     public void Set(ExtensionCollection collection)
     {
+      comboBox1.Items.Clear();
+      comboBox1.Items.Add("All");
       flowLayoutPanel1.Controls.Clear();
       foreach (PackageClass item in collection.Items)
       {
         flowLayoutPanel1.Controls.Add(new ExtensionControl(item));
+        AddTags(item.GeneralInfo.TagList);
+      }
+      comboBox1.Text = "All";
+    }
+
+    private void AddTags(TagCollection tags)
+    {
+      foreach (var tag in tags.Tags)
+      {
+        if (!comboBox1.Items.Contains(tag))
+          comboBox1.Items.Add(tag);
       }
     }
 
@@ -92,5 +105,28 @@ namespace MpeInstaller.Controls
       if (InstallExtension != null)
         InstallExtension(control, pak);
     }
+
+    public void Filter(string filter, string tag)
+    {
+      foreach (var control in flowLayoutPanel1.Controls)
+      {
+        var cnt = control as ExtensionControl;
+        if(cnt!=null)
+        {
+          cnt.Visible = cnt.Filter(filter, tag);
+        }
+      }
+    }
+
+    private void textBox1_TextChanged(object sender, EventArgs e)
+    {
+      Filter(textBox1.Text, comboBox1.Text);
+    }
+
+    private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      Filter(textBox1.Text, comboBox1.Text);
+    }
+
   }
 }

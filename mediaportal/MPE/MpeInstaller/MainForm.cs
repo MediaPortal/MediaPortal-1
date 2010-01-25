@@ -586,7 +586,7 @@ namespace MpeInstaller
       Client_DownloadFileCompleted(sender, e);
       if (!File.Exists(tempUpdateIndex)) return;
       
-      List<string> indexUrls = new List<string>();
+      var indexUrls = new List<string>();
       string[] lines = File.ReadAllLines(tempUpdateIndex);
       foreach (string line in lines)
       {

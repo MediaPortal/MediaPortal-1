@@ -275,5 +275,31 @@ namespace MpeInstaller.Controls
       }
       catch (Exception) {}
     }
+
+    public bool Filter(string str, string tag)
+    {
+      tag = tag.Trim();
+      if (tag.ToUpper() == "ALL")
+        tag = string.Empty;
+
+      bool strResult = string.IsNullOrEmpty(str);
+      bool tagResult = string.IsNullOrEmpty(tag);
+
+      if (string.IsNullOrEmpty(str))
+        strResult = true;
+      if (Package.GeneralInfo.Name.ToUpper().Contains(str.ToUpper()))
+        strResult = true;
+      if (Package.GeneralInfo.ExtensionDescription.ToUpper().Contains(str.ToUpper()))
+        strResult = true;
+      if (Package.GeneralInfo.TagList.Tags.Contains(str.ToLower()))
+        strResult = true;
+      if(!string.IsNullOrEmpty(tag))
+      {
+        if (Package.GeneralInfo.TagList.Tags.Contains(tag.ToLower()))
+          tagResult = true;
+      }
+      return strResult && tagResult;
+    }
+
   }
 }
