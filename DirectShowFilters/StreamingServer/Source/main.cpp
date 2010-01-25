@@ -130,7 +130,7 @@ int StreamSetupEx(char* ipAdress, int port)
 	sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log",folder);
 	::DeleteFile(fileName);
 
-	LogDebug("-------------- v1.0.0.2---------------");
+	LogDebug("-------------- v1.0.1.0 ---------------");
 	if (port == DEFAULT_RTSP_PORT) {
 		LogDebug("Stream server:Setup stream server for ip: %s", ipAdress);
 	}
