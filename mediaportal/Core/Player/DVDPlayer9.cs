@@ -40,67 +40,14 @@ namespace MediaPortal.Player
     private const uint VFW_E_DVD_DECNOTENOUGH = 0x8004027B;
     private const uint VFW_E_DVD_RENDERFAIL = 0x8004027A;
 
-    private VMR9Util _vmr9 = null;
-
-    private void RenderOutPins(IBaseFilter baseFilter)
-    {
-      if (baseFilter == null)
-        return;
-
-      int fetched;
-      IEnumPins pinEnum;
-      int hr = baseFilter.EnumPins(out pinEnum);
-      if (hr == 0 && pinEnum != null)
-      {
-        pinEnum.Reset();
-        IPin[] pins = new IPin[1];
-        while (pinEnum.Next(1, pins, out fetched) == 0)
-        {
-          if (fetched > 0)
-          {
-            try
-            {
-              PinDirection pinDir;
-              pins[0].QueryDirection(out pinDir);
-              if (pinDir == PinDirection.Output)
-              {
-                IPin pOutPin;
-                hr = pins[0].ConnectedTo(out pOutPin);
-                if (pOutPin != null)
-                  DirectShowUtil.ReleaseComObject(pOutPin);
-                if (hr == DsResults.E_NotConnected)
-                {
-                  FilterInfo i;
-                  PinInfo pinInfo = new PinInfo();
-                  if (baseFilter.QueryFilterInfo(out i) == 0 && pins[0].QueryPinInfo(out pinInfo) == 0)
-                  {
-                    Log.Debug("Filter: {0} - pin connect: {1}", i.achName, pinInfo.name);
-
-                  }
-                  DirectShowUtil.ReleaseComObject(i.pGraph);
-                  DirectShowUtil.ReleaseComObject(pinInfo.filter);
-                  hr = _graphBuilder.Render(pins[0]);
-                  DsError.ThrowExceptionForHR(hr);
-                }
-              }
-            }
-            finally { }
-          }
-          else
-          {
-            break;
-          }
-        }
-        DirectShowUtil.ReleaseComObject(pinEnum);
-      }      
-    }
+    private VMR9Util _vmr9 = null;    
 
     private void DoGraph(IGraphBuilder graphBuilder, IBaseFilter baseFilter)
     {
       if (graphBuilder == null)
         return;
       if (baseFilter != null)
-        RenderOutPins(baseFilter);
+        DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, baseFilter);
       
       IEnumFilters enumFilters;
       graphBuilder.EnumFilters(out enumFilters);
@@ -110,7 +57,7 @@ namespace MediaPortal.Player
       {
         if (fetched > 0 && filters[0] != baseFilter)
         {
-          RenderOutPins(filters[0]);
+          DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, filters[0]);
         }
         else
         {
