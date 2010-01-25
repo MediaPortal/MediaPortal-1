@@ -44,11 +44,7 @@
             treeNode8});
           this.mainMenu = new System.Windows.Forms.MenuStrip();
           this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-          this.mnu_new = new System.Windows.Forms.ToolStripMenuItem();
-          this.mnu_open = new System.Windows.Forms.ToolStripMenuItem();
           this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-          this.mnu_save = new System.Windows.Forms.ToolStripMenuItem();
-          this.mnu_saveAs = new System.Windows.Forms.ToolStripMenuItem();
           this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
           this.mnu_recent = new System.Windows.Forms.ToolStripMenuItem();
           this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -57,9 +53,24 @@
           this.treeView1 = new System.Windows.Forms.TreeView();
           this.splitContainer1 = new System.Windows.Forms.SplitContainer();
           this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+          this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+          this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+          this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+          this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+          this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+          this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
+          this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
+          this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
+          this.openDirToolStripButton = new System.Windows.Forms.ToolStripButton();
+          this.mnu_new = new System.Windows.Forms.ToolStripMenuItem();
+          this.mnu_open = new System.Windows.Forms.ToolStripMenuItem();
+          this.mnu_save = new System.Windows.Forms.ToolStripMenuItem();
+          this.mnu_saveAs = new System.Windows.Forms.ToolStripMenuItem();
+          this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
           this.mainMenu.SuspendLayout();
           this.splitContainer1.Panel1.SuspendLayout();
           this.splitContainer1.SuspendLayout();
+          this.toolStrip1.SuspendLayout();
           this.SuspendLayout();
           // 
           // mainMenu
@@ -88,42 +99,10 @@
           this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
           this.fileToolStripMenuItem.Text = "File";
           // 
-          // mnu_new
-          // 
-          this.mnu_new.Image = global::MpeMaker.Properties.Resources.document_new;
-          this.mnu_new.Name = "mnu_new";
-          this.mnu_new.Size = new System.Drawing.Size(178, 22);
-          this.mnu_new.Text = "New...";
-          this.mnu_new.Click += new System.EventHandler(this.mnu_new_Click);
-          // 
-          // mnu_open
-          // 
-          this.mnu_open.Image = global::MpeMaker.Properties.Resources.document_open;
-          this.mnu_open.Name = "mnu_open";
-          this.mnu_open.Size = new System.Drawing.Size(178, 22);
-          this.mnu_open.Text = "Open...";
-          this.mnu_open.Click += new System.EventHandler(this.mnu_open_Click);
-          // 
           // toolStripSeparator2
           // 
           this.toolStripSeparator2.Name = "toolStripSeparator2";
           this.toolStripSeparator2.Size = new System.Drawing.Size(175, 6);
-          // 
-          // mnu_save
-          // 
-          this.mnu_save.Image = global::MpeMaker.Properties.Resources.document_save;
-          this.mnu_save.Name = "mnu_save";
-          this.mnu_save.Size = new System.Drawing.Size(178, 22);
-          this.mnu_save.Text = "Save";
-          this.mnu_save.Click += new System.EventHandler(this.mnu_save_Click);
-          // 
-          // mnu_saveAs
-          // 
-          this.mnu_saveAs.Image = global::MpeMaker.Properties.Resources.document_save_as;
-          this.mnu_saveAs.Name = "mnu_saveAs";
-          this.mnu_saveAs.Size = new System.Drawing.Size(178, 22);
-          this.mnu_saveAs.Text = "Save As...";
-          this.mnu_saveAs.Click += new System.EventHandler(this.mnu_saveAs_Click);
           // 
           // toolStripSeparator3
           // 
@@ -190,19 +169,17 @@
             treeNode9});
           this.treeView1.ShowLines = false;
           this.treeView1.ShowPlusMinus = false;
-          this.treeView1.Size = new System.Drawing.Size(175, 452);
+          this.treeView1.Size = new System.Drawing.Size(175, 427);
           this.treeView1.TabIndex = 2;
           this.treeView1.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView_BeforeCollapse);
           this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterSelect);
           // 
           // splitContainer1
           // 
-          this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                      | System.Windows.Forms.AnchorStyles.Left)
-                      | System.Windows.Forms.AnchorStyles.Right)));
+          this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
           this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
           this.splitContainer1.IsSplitterFixed = true;
-          this.splitContainer1.Location = new System.Drawing.Point(0, 24);
+          this.splitContainer1.Location = new System.Drawing.Point(0, 49);
           this.splitContainer1.Name = "splitContainer1";
           // 
           // splitContainer1.Panel1
@@ -213,7 +190,7 @@
           // splitContainer1.Panel2
           // 
           this.splitContainer1.Panel2.BackColor = System.Drawing.SystemColors.Control;
-          this.splitContainer1.Size = new System.Drawing.Size(893, 455);
+          this.splitContainer1.Size = new System.Drawing.Size(893, 430);
           this.splitContainer1.SplitterDistance = 181;
           this.splitContainer1.TabIndex = 3;
           // 
@@ -221,12 +198,141 @@
           // 
           this.saveFileDialog.Title = "Save extension installer proiect file";
           // 
+          // toolStrip1
+          // 
+          this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButton1,
+            this.toolStripButton2,
+            this.toolStripSeparator6,
+            this.toolStripButton3,
+            this.toolStripButton4,
+            this.toolStripSeparator4,
+            this.openDirToolStripButton,
+            this.toolStripSeparator5,
+            this.toolStripButton5});
+          this.toolStrip1.Location = new System.Drawing.Point(0, 24);
+          this.toolStrip1.Name = "toolStrip1";
+          this.toolStrip1.Size = new System.Drawing.Size(893, 25);
+          this.toolStrip1.TabIndex = 4;
+          this.toolStrip1.Text = "toolStrip1";
+          // 
+          // toolStripSeparator4
+          // 
+          this.toolStripSeparator4.Name = "toolStripSeparator4";
+          this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+          // 
+          // toolStripSeparator5
+          // 
+          this.toolStripSeparator5.Name = "toolStripSeparator5";
+          this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
+          // 
+          // toolStripSeparator6
+          // 
+          this.toolStripSeparator6.Name = "toolStripSeparator6";
+          this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
+          // 
+          // toolStripButton1
+          // 
+          this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+          this.toolStripButton1.Image = global::MpeMaker.Properties.Resources.document_new;
+          this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+          this.toolStripButton1.Name = "toolStripButton1";
+          this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+          this.toolStripButton1.Text = "New project...";
+          this.toolStripButton1.Click += new System.EventHandler(this.mnu_new_Click);
+          // 
+          // toolStripButton2
+          // 
+          this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+          this.toolStripButton2.Image = global::MpeMaker.Properties.Resources.document_open;
+          this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+          this.toolStripButton2.Name = "toolStripButton2";
+          this.toolStripButton2.Size = new System.Drawing.Size(23, 22);
+          this.toolStripButton2.Text = "Open project...";
+          this.toolStripButton2.Click += new System.EventHandler(this.mnu_open_Click);
+          // 
+          // toolStripButton3
+          // 
+          this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+          this.toolStripButton3.Image = global::MpeMaker.Properties.Resources.document_save;
+          this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+          this.toolStripButton3.Name = "toolStripButton3";
+          this.toolStripButton3.Size = new System.Drawing.Size(23, 22);
+          this.toolStripButton3.Text = "Save project";
+          this.toolStripButton3.Click += new System.EventHandler(this.mnu_save_Click);
+          // 
+          // toolStripButton4
+          // 
+          this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+          this.toolStripButton4.Image = global::MpeMaker.Properties.Resources.document_save_as;
+          this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
+          this.toolStripButton4.Name = "toolStripButton4";
+          this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
+          this.toolStripButton4.Text = "Save project as...";
+          this.toolStripButton4.Click += new System.EventHandler(this.mnu_saveAs_Click);
+          // 
+          // openDirToolStripButton
+          // 
+          this.openDirToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+          this.openDirToolStripButton.Image = global::MpeMaker.Properties.Resources.folder_page;
+          this.openDirToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+          this.openDirToolStripButton.Name = "openDirToolStripButton";
+          this.openDirToolStripButton.Size = new System.Drawing.Size(23, 22);
+          this.openDirToolStripButton.Text = "Open containing folder...";
+          this.openDirToolStripButton.Click += new System.EventHandler(this.toolStripButton5_Click);
+          // 
+          // mnu_new
+          // 
+          this.mnu_new.Image = global::MpeMaker.Properties.Resources.document_new;
+          this.mnu_new.Name = "mnu_new";
+          this.mnu_new.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+          this.mnu_new.Size = new System.Drawing.Size(178, 22);
+          this.mnu_new.Text = "New...";
+          this.mnu_new.Click += new System.EventHandler(this.mnu_new_Click);
+          // 
+          // mnu_open
+          // 
+          this.mnu_open.Image = global::MpeMaker.Properties.Resources.document_open;
+          this.mnu_open.Name = "mnu_open";
+          this.mnu_open.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+          this.mnu_open.Size = new System.Drawing.Size(178, 22);
+          this.mnu_open.Text = "Open...";
+          this.mnu_open.Click += new System.EventHandler(this.mnu_open_Click);
+          // 
+          // mnu_save
+          // 
+          this.mnu_save.Image = global::MpeMaker.Properties.Resources.document_save;
+          this.mnu_save.Name = "mnu_save";
+          this.mnu_save.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+          this.mnu_save.Size = new System.Drawing.Size(178, 22);
+          this.mnu_save.Text = "Save";
+          this.mnu_save.Click += new System.EventHandler(this.mnu_save_Click);
+          // 
+          // mnu_saveAs
+          // 
+          this.mnu_saveAs.Image = global::MpeMaker.Properties.Resources.document_save_as;
+          this.mnu_saveAs.Name = "mnu_saveAs";
+          this.mnu_saveAs.Size = new System.Drawing.Size(178, 22);
+          this.mnu_saveAs.Text = "Save As...";
+          this.mnu_saveAs.Click += new System.EventHandler(this.mnu_saveAs_Click);
+          // 
+          // toolStripButton5
+          // 
+          this.toolStripButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+          this.toolStripButton5.Image = global::MpeMaker.Properties.Resources.Start;
+          this.toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
+          this.toolStripButton5.Name = "toolStripButton5";
+          this.toolStripButton5.Size = new System.Drawing.Size(23, 22);
+          this.toolStripButton5.Text = "Build package";
+          this.toolStripButton5.Click += new System.EventHandler(this.toolStripButton5_Click_1);
+          // 
           // MainForm
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
           this.ClientSize = new System.Drawing.Size(893, 479);
           this.Controls.Add(this.splitContainer1);
+          this.Controls.Add(this.toolStrip1);
           this.Controls.Add(this.mainMenu);
           this.Name = "MainForm";
           this.Text = "MpeMaker";
@@ -236,6 +342,8 @@
           this.mainMenu.PerformLayout();
           this.splitContainer1.Panel1.ResumeLayout(false);
           this.splitContainer1.ResumeLayout(false);
+          this.toolStrip1.ResumeLayout(false);
+          this.toolStrip1.PerformLayout();
           this.ResumeLayout(false);
           this.PerformLayout();
 
@@ -258,6 +366,16 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem mnu_recent;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripButton toolStripButton2;
+        private System.Windows.Forms.ToolStripButton toolStripButton3;
+        private System.Windows.Forms.ToolStripButton toolStripButton4;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripButton openDirToolStripButton;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripButton toolStripButton5;
     }
 }
 

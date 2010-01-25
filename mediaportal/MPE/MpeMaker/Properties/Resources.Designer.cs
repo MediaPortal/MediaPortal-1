@@ -200,6 +200,13 @@ namespace MpeMaker.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Start {
+            get {
+                object obj = ResourceManager.GetObject("Start", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap text_x_generic_template {
             get {
                 object obj = ResourceManager.GetObject("text_x_generic_template", resourceCulture);

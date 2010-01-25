@@ -342,6 +342,7 @@
     <Content Include="Icons\page_delete.png" />
     <Content Include="Icons\document_save.png" />
     <Content Include="Icons\document_save_as.png" />
+    <Content Include="Icons\Start.png" />
     <Content Include="Icons\text-x-generic-template.png" />
     <Content Include="Icons\video-display.png" />
     <Content Include="MPI MediaPortal Installer.ico" />

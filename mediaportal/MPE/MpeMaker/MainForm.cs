@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -148,8 +149,19 @@ namespace MpeMaker
       {
         if (Package == null) return string.Empty;
         if (Package.ProjectSettings == null) return string.Empty;
+        if (string.IsNullOrEmpty(Package.ProjectSettings.ProjectFilename)) return string.Empty;
 
         return Package.ProjectSettings.ProjectFilename;
+      }
+    }
+
+    public string ProjectDirectory
+    {
+      get
+      {
+        if (string.IsNullOrEmpty(ProjectFileName)) return string.Empty;
+
+        return Path.GetDirectoryName(ProjectFileName);
       }
     }
 
@@ -159,15 +171,16 @@ namespace MpeMaker
 
     private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
     {
-      if (_panels.ContainsKey(e.Node.Name))
-      {
-        splitContainer1.Panel2.Controls.Clear();
-        _panels[e.Node.Name].Anchor = (AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top |
-                                      AnchorStyles.Left);
-        _panels[e.Node.Name].Dock = DockStyle.Fill;
-        splitContainer1.Panel2.Controls.Add(_panels[e.Node.Name]);
-        ((ISectionControl)_panels[e.Node.Name]).Set(Package);
-      }
+      string key = e.Node.Name;
+      if (key == null) return;
+      if (!_panels.ContainsKey(key)) return;
+
+      splitContainer1.Panel2.Controls.Clear();
+      _panels[key].Anchor = (AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top |
+                                     AnchorStyles.Left);
+      _panels[key].Dock = DockStyle.Fill;
+      splitContainer1.Panel2.Controls.Add(_panels[key]);
+      ((ISectionControl)_panels[key]).Set(Package);
     }
 
     private void treeView_BeforeCollapse(object sender, TreeViewCancelEventArgs e)
@@ -334,6 +347,8 @@ namespace MpeMaker
     private void SetTitle()
     {
       Text = "MpeMaker - " + ProjectFileName;
+
+      openDirToolStripButton.Enabled = Directory.Exists(ProjectDirectory);
     }
 
     private void OpenNewFileSelector()
@@ -375,6 +390,32 @@ namespace MpeMaker
       stringBuilder.AppendLine("Do you want to continue?");
 
       return MessageBox.Show(stringBuilder.ToString(), caption, MessageBoxButtons.YesNo) == DialogResult.Yes;
+    }
+
+    private void toolStripButton5_Click(object sender, EventArgs e)
+    {
+      try
+      {
+        if (string.IsNullOrEmpty(ProjectDirectory)) return;
+
+        Process.Start(ProjectDirectory);
+      }
+      catch {}
+    }
+
+    private void toolStripButton5_Click_1(object sender, EventArgs e)
+    {
+      foreach (TreeNode treeNode in treeView1.Nodes)
+      {
+        if (!_panels.ContainsKey(treeNode.Name)) continue;
+        BuildSection buildSection = _panels[treeNode.Name] as BuildSection;
+        if (buildSection == null) continue;
+
+        treeView1.SelectedNode = treeNode;
+        buildSection.btn_generate_Click(null, null);
+
+        break;
+      }
     }
   }
 }

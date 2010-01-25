@@ -66,7 +66,7 @@ namespace MpeMaker.Sections
       }
     }
 
-    private void btn_generate_Click(object sender, EventArgs e)
+    public void btn_generate_Click(object sender, EventArgs e)
     {
       list_error.Items.Clear();
       list_message.Items.Clear();
