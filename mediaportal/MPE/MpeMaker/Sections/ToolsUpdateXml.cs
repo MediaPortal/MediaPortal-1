@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
+using System.Web;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -151,6 +151,39 @@ namespace MpeMaker.Sections
 
       btn_gen.Enabled = !String.IsNullOrEmpty(textBox1.Text);
       add_list.Enabled = !(String.IsNullOrEmpty(txt_list1.Text) || String.IsNullOrEmpty(txt_list2.Text));
+    }
+
+    private void button2_Click(object sender, EventArgs e)
+    {
+      if (string.IsNullOrEmpty(Package.GeneralInfo.UpdateUrl))
+      {
+        MessageBox.Show("No update url is specified.");
+        return;
+      }
+      if (Package.ValidatePackage().Count > 0)
+      {
+        MessageBox.Show("Package contain error(s). First sove it !");
+        return;
+      }
+
+      string url =
+        string.Format("http://install.team-mediaportal.com/MPEI/submit.php?url={0}&name={1}&version={2}&id={3}",
+                      Package.GeneralInfo.UpdateUrl, Package.GeneralInfo.Name, Package.GeneralInfo.Version,
+                      Package.GeneralInfo.Id);
+      webBrowser.ProgressChanged += webBrowser_ProgressChanged;
+      webBrowser.StatusTextChanged += webBrowser_StatusTextChanged;
+      webBrowser.Navigate(url);
+    }
+
+    void webBrowser_StatusTextChanged(object sender, EventArgs e)
+    {
+      toolStripStatusLabel1.Text = webBrowser.StatusText;
+    }
+
+    void webBrowser_ProgressChanged(object sender, WebBrowserProgressChangedEventArgs e)
+    {
+      toolStripProgressBar1.Maximum = (int) e.MaximumProgress;
+      toolStripProgressBar1.Value = (int)e.CurrentProgress;
     }
   }
 }
