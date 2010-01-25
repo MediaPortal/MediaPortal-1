@@ -548,8 +548,9 @@ namespace MpeInstaller
     #region DownloadExtensionIndex
 
     private string tempUpdateIndex;
-    private const string UpdateIndexURL = "http://wiki.team-mediaportal.com/MpeInstaller/UpdateIndex?action=raw";
-
+    // private const string UpdateIndexUrl = "http://wiki.team-mediaportal.com/MpeInstaller/UpdateIndex?action=raw";
+    private const string UpdateIndexUrl = "http://install.team-mediaportal.com/MPEI/extensions.txt";
+    
     private void DownloadExtensionIndex()
     {
       try
@@ -558,7 +559,7 @@ namespace MpeInstaller
         DownloadFile dlg = new DownloadFile();
         dlg.Client.DownloadProgressChanged += Client_DownloadProgressChanged;
         dlg.Client.DownloadFileCompleted += UpdateIndex_DownloadFileCompleted;
-        dlg.StartDownload(UpdateIndexURL, tempUpdateIndex);
+        dlg.StartDownload(UpdateIndexUrl, tempUpdateIndex);
 
 
 
@@ -572,7 +573,7 @@ namespace MpeInstaller
         ////progressBar1.Update();
         ////listBox1.Update();
         ////Update();
-        //Client.DownloadFileAsync(new Uri(UpdateIndexURL), tempIndexFile);
+        //Client.DownloadFileAsync(new Uri(UpdateIndexUrl), tempIndexFile);
       }
       catch (Exception ex)
       {
@@ -592,7 +593,7 @@ namespace MpeInstaller
         if (string.IsNullOrEmpty(line)) continue;
         if (line.StartsWith("#")) continue;
 
-        indexUrls.Add(line);
+        indexUrls.Add(line.Split(';')[0]);
       }
 
       MpeCore.MpeInstaller.SetInitialUrlIndex(indexUrls);

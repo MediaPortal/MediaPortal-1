@@ -168,7 +168,7 @@ namespace MpeMaker.Sections
 
       string url =
         string.Format("http://install.team-mediaportal.com/MPEI/submit.php?url={0}&name={1}&version={2}&id={3}",
-                      Package.GeneralInfo.UpdateUrl, Package.GeneralInfo.Name, Package.GeneralInfo.Version,
+                      HttpUtility.UrlEncode(Package.GeneralInfo.UpdateUrl), Package.GeneralInfo.Name, Package.GeneralInfo.Version,
                       Package.GeneralInfo.Id);
       webBrowser.ProgressChanged += webBrowser_ProgressChanged;
       webBrowser.StatusTextChanged += webBrowser_StatusTextChanged;
