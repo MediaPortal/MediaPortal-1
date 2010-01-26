@@ -27,7 +27,7 @@
     <control>
       <description>TV Logo</description>
       <type>image</type>
-      <id>0</id>
+      <id>10</id>
       <posX>590</posX>
       <posY>508</posY>
       <width>39</width>
