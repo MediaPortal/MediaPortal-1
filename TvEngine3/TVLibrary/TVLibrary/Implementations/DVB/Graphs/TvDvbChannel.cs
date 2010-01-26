@@ -1109,14 +1109,12 @@ namespace TvLibrary.Implementations.DVB
                 _channelInfo = new ChannelInfo();
                 _channelInfo.DecodePmt(_pmtData);
                 _channelInfo.network_pmt_PID = channel.PmtPid;
-                //                if (channel.PcrPid <= 0)
-                //                {
-                channel.PcrPid = _channelInfo.pcr_pid;
+
                 // always set pcr_pid despite useless database info, as it's required for setup HW filtering ( ambass )
-                //                }
-                //                _channelInfo.pcr_pid = channel.PcrPid;
+                channel.PcrPid = _channelInfo.pcr_pid;
+
                 // update any service scrambled / unscambled changes
-                if (_channelInfo.scrambled = channel.FreeToAir)
+                if (_channelInfo.scrambled == channel.FreeToAir)
                 {
                   channel.FreeToAir = !_channelInfo.scrambled;
                 }
