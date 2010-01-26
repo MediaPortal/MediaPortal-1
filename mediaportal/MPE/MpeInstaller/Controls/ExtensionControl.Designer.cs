@@ -44,6 +44,7 @@
           this.btn_home = new System.Windows.Forms.Button();
           this.btn_forum = new System.Windows.Forms.Button();
           this.img_logo = new System.Windows.Forms.PictureBox();
+          this.timer1 = new System.Windows.Forms.Timer(this.components);
           ((System.ComponentModel.ISupportInitialize)(this.img_dep)).BeginInit();
           ((System.ComponentModel.ISupportInitialize)(this.img_update)).BeginInit();
           this.toolStrip1.SuspendLayout();
@@ -214,6 +215,11 @@
           this.img_logo.TabStop = false;
           this.img_logo.Click += new System.EventHandler(this.img_logo_Click);
           // 
+          // timer1
+          // 
+          this.timer1.Interval = 2;
+          this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+          // 
           // ExtensionControl
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -264,5 +270,6 @@
         private System.Windows.Forms.ToolStripDropDownButton btn_install;
         private System.Windows.Forms.Button btn_forum;
         private System.Windows.Forms.Button btn_home;
+        private System.Windows.Forms.Timer timer1;
     }
 }

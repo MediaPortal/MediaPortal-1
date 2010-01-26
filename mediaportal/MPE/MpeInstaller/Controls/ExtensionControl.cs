@@ -135,7 +135,8 @@ namespace MpeInstaller.Controls
       foreach (PackageClass item in collection.GetList(Package.GeneralInfo.Id).Items)
       {
         ToolStripMenuItem testToolStripMenuItem = new ToolStripMenuItem();
-        testToolStripMenuItem.Text = string.Format("Version - {0}", item.GeneralInfo.Version);
+        testToolStripMenuItem.Text = string.Format("Version - {0} [{1}]", item.GeneralInfo.Version,
+                                                   item.GeneralInfo.DevelopmentStatus);
         PackageClass pak = MpeCore.MpeInstaller.InstalledExtensions.Get(Package.GeneralInfo.Id);
         if (pak != null && item.GeneralInfo.Version.CompareTo(pak.GeneralInfo.Version) == 0)
         {
@@ -144,7 +145,7 @@ namespace MpeInstaller.Controls
         }
         testToolStripMenuItem.ToolTipText = item.GeneralInfo.VersionDescription;
         testToolStripMenuItem.Tag = item;
-        testToolStripMenuItem.Click += new EventHandler(testToolStripMenuItem_Click);
+        testToolStripMenuItem.Click += testToolStripMenuItem_Click;
         btn_install.DropDownItems.Add(testToolStripMenuItem);
       }
     }
@@ -180,8 +181,10 @@ namespace MpeInstaller.Controls
       lbl_description.ForeColor = _selected ? Color.Blue : Color.Black;
       lbl_name.ForeColor = _selected ? Color.Blue : Color.Black;
       lbl_version.ForeColor = _selected ? Color.Blue : Color.Black;
-      AutoSize = _selected;
-      Height = _selected ? 123 : 90;
+      //AutoSize = _selected;
+      //Height = _selected ? 123 : 90;
+      Height = 90;
+      timer1.Enabled = _selected;
 
       if (Parent == null)
         return;
@@ -299,6 +302,16 @@ namespace MpeInstaller.Controls
           tagResult = true;
       }
       return strResult && tagResult;
+    }
+
+    private void timer1_Tick(object sender, EventArgs e)
+    {
+      if (Height < 120)
+        Height ++;
+      else
+      {
+        timer1.Enabled = false;
+      }
     }
 
   }
