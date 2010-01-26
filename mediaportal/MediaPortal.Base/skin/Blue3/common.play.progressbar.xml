@@ -41,7 +41,7 @@
       <posX>101</posX>
       <posY>476</posY>
       <font>font14</font>
-      <label>#TV.View.channel</label>
+      <label>#Play.Current.Title</label>
       <textcolor>white</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
@@ -84,7 +84,7 @@
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-    <!--control>
+    <control>
       <description>progress bar</description>
       <type>progress</type>
       <id>1</id>
@@ -93,10 +93,10 @@
       <width>462</width>
       <height>20</height>
       <label>#play.progressbar.percentage</label>
-      <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
+      <visible>[window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)]+!window.isvisible(602)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
-    </control-->
+    </control>
     <control>
       <description>Start Time Info</description>
       <type>label</type>

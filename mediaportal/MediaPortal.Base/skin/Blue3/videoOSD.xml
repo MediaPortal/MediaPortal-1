@@ -623,6 +623,38 @@
       <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
+      <description>VC-1</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>500</posX>
+      <posY>416</posY>
+      <width>51</width>
+      <height>41</height>
+      <visible>string.contains(#Play.Current.VideoCodec, VC-1)+Control.IsVisible(989)</visible>
+      <texture>logos\vc-1.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
+    <control>
+      <description>VC-1</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>500</posX>
+      <posY>416</posY>
+      <width>51</width>
+      <height>41</height>
+      <visible>string.contains(#Play.Current.VideoCodec, VC-1)+!Control.IsVisible(989)</visible>
+      <texture>logos\vc-1.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
+    
+    <control>
       <description>Subtitles</description>
       <type>image</type>
       <id>0</id>
