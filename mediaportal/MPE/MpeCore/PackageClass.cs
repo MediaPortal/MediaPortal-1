@@ -485,7 +485,7 @@ namespace MpeCore
     public void Save(string fileName)
     {
       GenerateUniqueFileList();
-      var serializer = new XmlSerializer(typeof (PackageClass));
+      var serializer = new XmlSerializer(typeof(PackageClass));
       TextWriter writer = new StreamWriter(fileName);
       serializer.Serialize(writer, this);
       writer.Close();
@@ -502,7 +502,7 @@ namespace MpeCore
       {
         try
         {
-          XmlSerializer serializer = new XmlSerializer(typeof (PackageClass));
+          XmlSerializer serializer = new XmlSerializer(typeof(PackageClass));
           FileStream fs = new FileStream(fileName, FileMode.Open);
           PackageClass packageClass = (PackageClass)serializer.Deserialize(fs);
           fs.Close();
@@ -558,5 +558,21 @@ namespace MpeCore
 
       return true;
     }
+
+    /// <summary>
+    /// Compares the specified package.
+    /// </summary>
+    /// <param name="pak1">The pak1.</param>
+    /// <param name="pak2">The pak2.</param>
+    /// <returns></returns>
+    public static int Compare(PackageClass pak1, PackageClass pak2)
+    {
+      if (pak1.GeneralInfo.Name.CompareTo(pak2.GeneralInfo.Name) == 0)
+      {
+        return pak1.GeneralInfo.Version.CompareTo(pak2.GeneralInfo.Version);
+      }
+      return pak1.GeneralInfo.Name.CompareTo(pak2.GeneralInfo.Name);
+    }
+
   }
 }

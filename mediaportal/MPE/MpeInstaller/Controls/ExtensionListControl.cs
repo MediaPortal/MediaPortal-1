@@ -68,6 +68,7 @@ namespace MpeInstaller.Controls
         AddTags(item.GeneralInfo.TagList);
       }
       comboBox1.Text = "All";
+      textBox1.Text = string.Empty;
     }
 
     private void AddTags(TagCollection tags)

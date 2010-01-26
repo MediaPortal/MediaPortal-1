@@ -190,6 +190,7 @@ namespace MpeCore.Classes
           resp.Add(item);
         }
       }
+      resp.Items.Sort(PackageClass.Compare);
       return resp;
     }
 
@@ -239,6 +240,7 @@ namespace MpeCore.Classes
         fs = new FileStream(fileName, FileMode.Open);
         ExtensionCollection extensionCollection = (ExtensionCollection)serializer.Deserialize(fs);
         fs.Close();
+        extensionCollection.Items.Sort(PackageClass.Compare);
         return extensionCollection;
       }
       catch
