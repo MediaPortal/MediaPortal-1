@@ -354,13 +354,6 @@ namespace TvLibrary.Implementations.DVB.Structures
               {
                 byte[] data = new byte[x];
                 Array.Copy(buf, pointer, data, 0, x);
-                if (indicator == 9)
-                {
-                  string tmp = "";
-                  for (int teller = 0; teller < x; ++teller)
-                    tmp += String.Format("{0:x} ", buf[pointer + teller]);
-                  Log.Log.Info("descr2 pid:{0:X} len:{1:X} {2}", pmtEs.ElementaryStreamPID, x, tmp);
-                }
                 switch (indicator)
                 {
                   case 0x02: // video
@@ -381,9 +374,17 @@ namespace TvLibrary.Implementations.DVB.Structures
                     pidInfo.isEAC3Audio = false;
                     pidInfo.stream_type = 0x03;
                     break;
-                  case 0x09:
+                  case 0x09: //MPEG CA Descriptor
                     pmtEs.Descriptors.Add(data);
                     pmtEs.ElementaryStreamInfoLength += data.Length;
+
+                    string tmp = "";
+                    for (int teller = 0; teller < x; ++teller)
+                      tmp += String.Format("{0:x} ", buf[pointer + teller]);
+                    Log.Log.Info("descr2 pid:{0:X} len:{1:X} {2}", pmtEs.ElementaryStreamPID, x, tmp);
+
+                    scrambled = true; // if there is a CA Descriptor, the stream is scrambled
+
                     break;
                   case 0x0A: //MPEG_ISO639_Lang																														
                     pidInfo.language = DVB_GetMPEGISO639Lang(data);
