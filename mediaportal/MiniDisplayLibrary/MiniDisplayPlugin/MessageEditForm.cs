@@ -316,6 +316,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.propertyList.Add("#TV.Guide.Day");
       this.propertyList.Add("#TV.Guide.thumb");
       this.propertyList.Add("#TV.Guide.Title");
+      this.propertyList.Add("#TV.Guide.SubTitle");
       this.propertyList.Add("#TV.Guide.CompositeTitle");
       this.propertyList.Add("#TV.Guide.Time");
       this.propertyList.Add("#TV.Guide.Duration");

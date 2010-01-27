@@ -117,6 +117,7 @@ namespace MediaPortal.GUI.Library
       _properties["#TV.Guide.Day"] = string.Empty;
       _properties["#TV.Guide.thumb"] = string.Empty;
       _properties["#TV.Guide.Title"] = string.Empty;
+      _properties["#TV.Guide.SubTitle"] = string.Empty;
       _properties["#TV.Guide.CompositeTitle"] = string.Empty;
       _properties["#TV.Guide.Time"] = string.Empty;
       _properties["#TV.Guide.Duration"] = string.Empty;
