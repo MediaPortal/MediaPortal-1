@@ -670,18 +670,6 @@ namespace TvEngine
           title += " (Wdh.)";
       }
 
-      string shortDescription = KurzBeschreibung;
-      string description;
-      if (_useShortProgramDesc)
-        description = shortDescription;
-      else
-      {
-        description = Beschreibung;
-        // If short desc has info but "long" desc has not
-        if (description.Length < shortDescription.Length)
-          description = shortDescription;
-      }
-
       string genre = Genre;
       string shortCritic = Kurzkritik;
 
@@ -759,6 +747,18 @@ namespace TvEngine
             {
               Log.Info("TVMovie: Invalid year for OnAirDate - {0}", date);
             }
+          }
+
+          string shortDescription = KurzBeschreibung;
+          string description;
+          if (_useShortProgramDesc)
+            description = shortDescription;
+          else
+          {
+            description = Beschreibung;
+            // If short desc has info but "long" desc has not
+            if (description.Length < shortDescription.Length)
+              description = shortDescription;
           }
 
           description = description.Replace("<br>", "\n");
