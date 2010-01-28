@@ -35,6 +35,17 @@ namespace MpeCore.Classes.InstallerType
     [DllImport("gdi32")]
     public static extern int RemoveFontResource(string lpFileName);
 
+    [DllImport("kernel32.dll", SetLastError = true)]
+
+    static extern int WriteProfileString(string lpszSection, string lpszKeyName, string lpszString);
+
+    [DllImport("user32.dll")]
+    public static extern int SendMessage(int hWnd, // handle to destination window 
+                                         uint Msg, // message 
+                                         int wParam, // first message parameter 
+                                         int lParam // second message parameter 
+      );
+
     public new string Name
     {
       get { return "CopyFont"; }
@@ -42,7 +53,7 @@ namespace MpeCore.Classes.InstallerType
 
     public override string Description
     {
-      get { return "Copy the file to specified location and register to system fonts"; }
+      get { return "Copy the file to specified location and register to system fonts\nUse for installing %Fonts% path."; }
     }
 
     public new string GetZipEntry(FileItem fileItem)

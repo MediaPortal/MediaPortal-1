@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using MpeCore.Interfaces;
 
@@ -40,6 +41,13 @@ namespace MpeCore.Classes.PathProvider
                    Environment.GetFolderPath(
                      (Environment.SpecialFolder)Enum.Parse(typeof (Environment.SpecialFolder), options)));
       }
+      string fontsDir = Environment.GetEnvironmentVariable("windir");
+
+      if (fontsDir == null)
+        fontsDir = "c:\\windows\\fonts";
+      else
+        fontsDir = Path.Combine(fontsDir, "fonts");
+      _paths.Add("%Fonts%", fontsDir);
     }
 
     #region IPathProvider Members
