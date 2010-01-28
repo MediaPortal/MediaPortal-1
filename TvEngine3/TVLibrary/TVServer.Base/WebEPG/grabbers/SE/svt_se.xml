@@ -29,15 +29,18 @@
         <Search match="\[[0-9]{2,}\]" field="#SHOWVIEW" remove="true"/>
         <Search match="Repris fr&amp;#229;n [0-9/]{3,}." field="#REPEATNOTFALSE" remove="true"/>
         <Search match="\[Repris\]" field="#REPEATNOTFALSE" remove="true"/>
-        <Search match="Del [0-9]{1,} av [0-9]{1,}.|- del [0-9]{1,}|Del [0-9]{1,}.|del [0-9]{1,}." field="#EPISODE" remove="false"/>
+        <Search match="[^a-z][Dd]el \d+" field="#EPISODE" remove="false"/>
         <Search match="Avsnitt: [0-9]{1,} av [0-9]{1,}." field="#EPISODE" remove="false"/>
+        <Search match="Säsong \d+" field="#SEASON" remove="false"/>
         <Search match="Text-tv [0-9]{1,}[0-9a-zA-Z, ]{1,}." field="#TELETEXTSUBTITLE" remove="true"/>
         <Search match="Textat sid\. \d\d\d" field="#SUBTITLESNOTFALSE" remove="true"/>
         <Search match="&amp;#196;ven [0-9/]{1,}[0-9a-zA-Z, /]{1,}." field="#REPEATDATE" remove="true"/>
         <Search match="BREDBILD" field="#WIDESCREEN" remove="true"/>
-        <Search match="(Bobster|Bolibompa) \d\d:\d\d-\d\d:\d\d: " field="" remove="true"/>
         <Search match="OBS! Hör till .*? tablå\." field="" remove="true"/>
       </Searches>
     </Html>
   </Listing>
+  <Actions>
+    <Modify channel="*" field="#TITLE" search=" \? " action="Replace"> - </Modify>
+  </Actions>
 </Grabber>
