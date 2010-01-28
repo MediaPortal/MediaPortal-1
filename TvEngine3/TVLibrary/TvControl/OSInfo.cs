@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace OSInfo
@@ -47,6 +48,10 @@ namespace OSInfo
     [DllImport("kernel32.dll")]
     private static extern bool GetVersionEx(ref OSVERSIONINFOEX osVersionInfo);
 
+    [DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool IsWow64Process([In] IntPtr hProcess, [Out] out bool lpSystemInfo);
+
     #region Private Constants
 
     private const int VER_NT_WORKSTATION = 1;
@@ -62,7 +67,7 @@ namespace OSInfo
     private const int VER_SUITE_WH_SERVER = 32768;
 
     #endregion
-
+    
     #region Operating System enum
 
     /// <summary>
@@ -101,6 +106,24 @@ namespace OSInfo
     }
 
     #endregion
+
+    #region Private Methods
+
+    private static bool Is32BitProcessOn64BitProcessor()
+    {
+      bool result = false;
+
+      //Make sure IsWow64Process is available (Os must be >= XP SP2)
+      if ((Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor >= 1 && OSServicePackMajor >= 2) ||
+        Environment.OSVersion.Version.Major >= 6)
+      {
+        IsWow64Process(Process.GetCurrentProcess().Handle, out result);
+      }
+
+      return result;
+    }
+
+    #endregion 
 
     #region Public Methods
 
@@ -371,6 +394,11 @@ namespace OSInfo
         default:
           return 0;
       }
+    }
+    
+    public static bool Is64bitOs()
+    {
+      return IntPtr.Size == 8 || (IntPtr.Size == 4 && Is32BitProcessOn64BitProcessor());
     }
 
     #endregion
