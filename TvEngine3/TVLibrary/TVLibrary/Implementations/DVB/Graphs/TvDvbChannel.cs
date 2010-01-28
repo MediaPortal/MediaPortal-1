@@ -1104,77 +1104,77 @@ namespace TvLibrary.Implementations.DVB
                          _pmtVersion, version);
             if (pmtProgramNumber == channel.ServiceId)
             {
-              if (_pmtVersion != version)
+              if (_pmtVersion == version) //already received this pmt
+                return true;
+
+              _pmtVersion = version;
+
+              _channelInfo = new ChannelInfo();
+              _channelInfo.DecodePmt(_pmtData);
+              _channelInfo.network_pmt_PID = channel.PmtPid;
+
+              // always set pcr_pid despite useless database info, as it's required for setup HW filtering ( ambass )
+              channel.PcrPid = _channelInfo.pcr_pid;
+
+              // update any service scrambled / unscambled changes
+              if (_channelInfo.scrambled == channel.FreeToAir)
               {
-                _channelInfo = new ChannelInfo();
-                _channelInfo.DecodePmt(_pmtData);
-                _channelInfo.network_pmt_PID = channel.PmtPid;
-
-                // always set pcr_pid despite useless database info, as it's required for setup HW filtering ( ambass )
-                channel.PcrPid = _channelInfo.pcr_pid;
-
-                // update any service scrambled / unscambled changes
-                if (_channelInfo.scrambled == channel.FreeToAir)
+                channel.FreeToAir = !_channelInfo.scrambled;
+                Log.Log.Info("subch:{0} SendPMT: Channel FTA information changed to {1} according to CAIDs in PMT.", _subChannelId, channel.FreeToAir);
+              }
+              if ((_mdplugs != null) && (foundCA))
+              {
+                try
                 {
-                  channel.FreeToAir = !_channelInfo.scrambled;
-                }
-                if ((_mdplugs != null) && (foundCA))
-                {
-                  try
+                  int catLength = _tsFilterInterface.CaGetCaData(_subChannelIndex, catMem);
+                  if (catLength > 0)
                   {
-                    int catLength = _tsFilterInterface.CaGetCaData(_subChannelIndex, catMem);
-                    if (catLength > 0)
-                    {
-                      byte[] cat = new byte[catLength];
-                      Marshal.Copy(catMem, cat, 0, catLength);
-                      _channelInfo.DecodeCat(cat, catLength);
-                    }
-                  }
-                  catch (Exception ex)
-                  {
-                    Log.Log.Write(ex);
+                    byte[] cat = new byte[catLength];
+                    Marshal.Copy(catMem, cat, 0, catLength);
+                    _channelInfo.DecodeCat(cat, catLength);
                   }
                 }
-
-                updatePids = true;
-                Log.Log.WriteFile("subch:{0} SendPMT version:{1} len:{2} {3}", _subChannelId, version, _pmtLength,
-                                  _channelInfo.caPMT.ProgramNumber);
-                if (_conditionalAccess != null)
+                catch (Exception ex)
                 {
-                  int audioPid = -1;
-                  if (_currentAudioStream != null)
-                  {
-                    audioPid = _currentAudioStream.Pid;
-                  }
+                  Log.Log.Write(ex);
+                }
+              }
 
-                  if (_conditionalAccess.SendPMT(_subChannelId, (DVBBaseChannel)CurrentChannel, _pmtData, _pmtLength,
-                                                 audioPid))
-                  {
-                    _pmtVersion = version;
-                    Log.Log.WriteFile("subch:{0} cam flags:{1}", _subChannelId, _conditionalAccess.IsCamReady());
-                    return true;
-                  }
-                  else
-                  {
-                    //cam is not ready yet
-                    Log.Log.WriteFile("subch:{0} SendPmt failed cam flags:{1}", _subChannelId,
-                                      _conditionalAccess.IsCamReady());
-                    _pmtVersion = -1;
-                    waitInterval = 3000;
-                    return false;
-                  }
-                }
-                else
-                {
-                  Log.Log.Info("subch:{0} No cam in use", _subChannelId);
-                }
-                _pmtVersion = version;
+              updatePids = true;
+
+              if (_conditionalAccess == null)
+              {
+                Log.Log.Info("subch:{0} SendPMT: No cam in use, nothing to do.", _subChannelId);
+                return true;
+              }
+              if (channel.FreeToAir)
+              {
+                Log.Log.Info("subch:{0} SendPMT: Channel is FTA, nothing to do.", _subChannelId);
+                return true;
+              }
+              Log.Log.WriteFile("subch:{0} SendPMT version:{1} len:{2} {3}", _subChannelId, version, _pmtLength,
+                                _channelInfo.caPMT.ProgramNumber);
+
+              int audioPid = -1;
+              if (_currentAudioStream != null)
+              {
+                audioPid = _currentAudioStream.Pid;
+              }
+
+              if (_conditionalAccess.SendPMT(_subChannelId, channel, _pmtData, _pmtLength,
+                                             audioPid))
+              {
+                Log.Log.WriteFile("subch:{0} cam flags:{1}", _subChannelId, _conditionalAccess.IsCamReady());
                 return true;
               }
               else
               {
-                //already received this pmt                
-                return true;
+                //cam is not ready yet
+                Log.Log.WriteFile("subch:{0} SendPmt failed cam flags:{1}", _subChannelId,
+                                  _conditionalAccess.IsCamReady());
+                _pmtVersion = -1;
+                waitInterval = 3000;
+                return false;
               }
             }
           }
