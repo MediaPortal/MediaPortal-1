@@ -28,18 +28,12 @@ TsMPEG2TransportFileServerMediaSubsession::TsMPEG2TransportFileServerMediaSubses
     m_pFileDuration = new FileReader();
   }
 
-  //open file
+  // initialize duration estimator
   WCHAR wFileName[1024];
   MultiByteToWideChar(CP_ACP,0,m_fileName,-1,wFileName,1024);
   m_pFileDuration->SetFileName(wFileName);
-  m_pFileDuration->OpenFile();
-
-  //get file duration
   m_pDuration = new CTsDuration();
   m_pDuration->SetFileReader(m_pFileDuration);
-  m_pDuration->UpdateDuration();
-  m_pFileDuration->CloseFile();
-
 }
 
 TsMPEG2TransportFileServerMediaSubsession::~TsMPEG2TransportFileServerMediaSubsession() 
