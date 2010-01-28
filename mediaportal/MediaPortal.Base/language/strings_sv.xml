@@ -835,7 +835,7 @@
     <String id="980">Spela upp inspelningen från "nutid"</String>
     <String id="981">Avbryt detta program</String>
     <String id="982">Radera denna inspelning</String>
-    <String id="983" prefix="Mina">Spellistor</String>
+    <String id="983" prefix="Mina ">Spellistor</String>
     <String id="984">Tar emot filmlista</String>
     <String id="985">Tar emot filminfo</String>
     <String id="986">Tar emot skådespelare</String>
@@ -1630,7 +1630,7 @@
     <String id="33032">Detta albums bästa låt kunde inte</String>
     <String id="33033">hittas i din samling!</String>
     <String id="33040">Copy now playing spam to clipboard</String>
-    <String id="33041">Addera detta album till spellistan</String>
+    <String id="33041">Lägg till detta album till spellistan</String>
     <String id="34000" prefix="Min">Last.fm</String>
     <String id="34001">Starta / byt ström</String>
     <String id="34002">Vän: </String>
