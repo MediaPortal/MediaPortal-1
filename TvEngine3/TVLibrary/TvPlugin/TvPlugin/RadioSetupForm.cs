@@ -20,6 +20,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
@@ -69,6 +71,11 @@ namespace TvPlugin
     private void RadioSetupForm_Load(object sender, EventArgs e)
     {
       LoadSettings();
+
+      string gentle = String.Format(@"{0}\gentle.config", Config.GetFolder(Config.Dir.Config));
+      NameValueCollection appSettings = ConfigurationManager.AppSettings;
+      appSettings.Set("GentleConfigFile", gentle);
+
       cbShowAllChannelsGroup.Checked = _showAllChannelsGroup;
       cbRememberLastGroup.Checked = _rememberLastGroup;
       comboBoxGroups.Items.Clear();
