@@ -205,8 +205,19 @@ namespace SetupTv.Sections
       checkBoxShowRatings.Checked = layer.GetSetting("TvMovieShowRatings", "true").Value == "true";
       checkBoxShowAudioFormat.Checked = layer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
       checkBoxSlowImport.Checked = layer.GetSetting("TvMovieSlowImport", "true").Value == "true";
-      checkBoxLimitActors.Checked = Convert.ToInt32(layer.GetSetting("TvMovieLimitActors", "5").Value) > 0;
-      numericUpDownActorCount.Value = Convert.ToDecimal(layer.GetSetting("TvMovieLimitActors", "5").Value);
+      
+      var tvMovieLimitActors = Convert.ToDecimal(layer.GetSetting("TvMovieLimitActors", "5").Value);
+      if (tvMovieLimitActors < numericUpDownActorCount.Minimum || tvMovieLimitActors > numericUpDownActorCount.Maximum)
+      {
+        checkBoxLimitActors.Checked = false;
+        numericUpDownActorCount.Value = numericUpDownActorCount.Minimum;
+      }
+      else
+      {
+        checkBoxLimitActors.Checked = true;
+        numericUpDownActorCount.Value = tvMovieLimitActors;
+      }
+
       checkBoxShowLive.Checked = layer.GetSetting("TvMovieShowLive", "true").Value == "true";
       checkBoxShowRepeat.Checked = layer.GetSetting("TvMovieShowRepeating", "false").Value == "true";
       SetRestPeriod(layer.GetSetting("TvMovieRestPeriod", "24").Value);
