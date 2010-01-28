@@ -26,5 +26,9 @@ namespace MpeCore.Classes
     public const string ONLINE_ICON = "Online Icon";
     public const string CONFIG = "Configuration file";
     public const string SECTION_ICON = "Header image";
+
+
+
+    public const string DEVELOPMENTSTATUS_STABE = "Stable";
   }
 }

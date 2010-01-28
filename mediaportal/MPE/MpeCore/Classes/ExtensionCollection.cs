@@ -21,7 +21,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Xml.Serialization;
 
 namespace MpeCore.Classes
@@ -45,6 +44,8 @@ namespace MpeCore.Classes
       List<string> ids = new List<string>();
       foreach (PackageClass item in Items)
       {
+        if (item.IsHiden)
+          continue;
         if (!ids.Contains(item.GeneralInfo.Id))
           ids.Add(item.GeneralInfo.Id);
       }
@@ -64,6 +65,8 @@ namespace MpeCore.Classes
     {
       foreach (PackageClass item in Items)
       {
+        if (item.IsHiden)
+          continue;
         if (string.IsNullOrEmpty(item.GeneralInfo.UpdateUrl))
           continue;
         if (!urls.Contains(item.GeneralInfo.UpdateUrl))
@@ -143,6 +146,9 @@ namespace MpeCore.Classes
     {
       foreach (PackageClass item in Items)
       {
+        if (item.IsHiden)
+          continue;
+        
         if (item.GeneralInfo.Id == id && item.GeneralInfo.Version.CompareTo(version) == 0)
           return item;
       }
@@ -159,6 +165,8 @@ namespace MpeCore.Classes
       PackageClass ret = null;
       foreach (PackageClass item in Items)
       {
+        if (item.IsHiden)
+          continue;
         if (item.GeneralInfo.Id == id)
         {
           if (ret == null)
@@ -185,6 +193,8 @@ namespace MpeCore.Classes
       ExtensionCollection resp = new ExtensionCollection();
       foreach (PackageClass item in Items)
       {
+        if (item.IsHiden)
+          continue;
         if (item.GeneralInfo.Id == id)
         {
           resp.Add(item);
@@ -248,6 +258,29 @@ namespace MpeCore.Classes
         if (fs != null)
           fs.Dispose();
         return new ExtensionCollection();
+      }
+    }
+
+    /// <summary>
+    /// Hide extensions which not are stabe releases
+    /// </summary>
+    public void HideByRelease()
+    {
+      foreach (PackageClass item in Items)
+      {
+        item.IsHiden = false;
+        if (item.GeneralInfo.DevelopmentStatus != ParamNamesConst.DEVELOPMENTSTATUS_STABE)
+        {
+          item.IsHiden = true;
+        }
+      }
+    }
+
+    public void ShowAll()
+    {
+      foreach (PackageClass item in Items)
+      {
+        item.IsHiden = false;
       }
     }
   }

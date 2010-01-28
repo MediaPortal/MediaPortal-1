@@ -31,9 +31,7 @@
           System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
           this.tabControl1 = new System.Windows.Forms.TabControl();
           this.tab_extensions = new System.Windows.Forms.TabPage();
-          this.extensionListControl = new MpeInstaller.Controls.ExtensionListControl();
           this.tab_known = new System.Windows.Forms.TabPage();
-          this.extensionListContro_all = new MpeInstaller.Controls.ExtensionListControl();
           this.tab_options = new System.Windows.Forms.TabPage();
           this.button2 = new System.Windows.Forms.Button();
           this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -44,6 +42,9 @@
           this.chk_update = new System.Windows.Forms.CheckBox();
           this.btn_online_update = new System.Windows.Forms.Button();
           this.button1 = new System.Windows.Forms.Button();
+          this.chk_stable = new System.Windows.Forms.CheckBox();
+          this.extensionListControl = new MpeInstaller.Controls.ExtensionListControl();
+          this.extensionListContro_all = new MpeInstaller.Controls.ExtensionListControl();
           this.tabControl1.SuspendLayout();
           this.tab_extensions.SuspendLayout();
           this.tab_known.SuspendLayout();
@@ -76,46 +77,16 @@
           this.tab_extensions.Text = "Installed extensions";
           this.tab_extensions.UseVisualStyleBackColor = true;
           // 
-          // extensionListControl
-          // 
-          this.extensionListControl.AllowDrop = true;
-          this.extensionListControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                      | System.Windows.Forms.AnchorStyles.Left)
-                      | System.Windows.Forms.AnchorStyles.Right)));
-          this.extensionListControl.AutoSize = true;
-          this.extensionListControl.Location = new System.Drawing.Point(3, 3);
-          this.extensionListControl.Name = "extensionListControl";
-          this.extensionListControl.SelectedItem = null;
-          this.extensionListControl.Size = new System.Drawing.Size(575, 448);
-          this.extensionListControl.TabIndex = 0;
-          this.extensionListControl.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
-          this.extensionListControl.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
-          // 
           // tab_known
           // 
           this.tab_known.Controls.Add(this.extensionListContro_all);
           this.tab_known.Location = new System.Drawing.Point(4, 22);
           this.tab_known.Name = "tab_known";
           this.tab_known.Padding = new System.Windows.Forms.Padding(3);
-          this.tab_known.Size = new System.Drawing.Size(578, 454);
+          this.tab_known.Size = new System.Drawing.Size(581, 454);
           this.tab_known.TabIndex = 2;
           this.tab_known.Text = "Known extensions";
           this.tab_known.UseVisualStyleBackColor = true;
-          // 
-          // extensionListContro_all
-          // 
-          this.extensionListContro_all.AllowDrop = true;
-          this.extensionListContro_all.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                      | System.Windows.Forms.AnchorStyles.Left)
-                      | System.Windows.Forms.AnchorStyles.Right)));
-          this.extensionListContro_all.AutoSize = true;
-          this.extensionListContro_all.Location = new System.Drawing.Point(3, 3);
-          this.extensionListContro_all.Name = "extensionListContro_all";
-          this.extensionListContro_all.SelectedItem = null;
-          this.extensionListContro_all.Size = new System.Drawing.Size(572, 448);
-          this.extensionListContro_all.TabIndex = 0;
-          this.extensionListContro_all.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
-          this.extensionListContro_all.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
           // 
           // tab_options
           // 
@@ -127,7 +98,7 @@
           this.tab_options.Location = new System.Drawing.Point(4, 22);
           this.tab_options.Name = "tab_options";
           this.tab_options.Padding = new System.Windows.Forms.Padding(3);
-          this.tab_options.Size = new System.Drawing.Size(578, 454);
+          this.tab_options.Size = new System.Drawing.Size(581, 454);
           this.tab_options.TabIndex = 1;
           this.tab_options.Text = "Options";
           this.tab_options.UseVisualStyleBackColor = true;
@@ -147,6 +118,7 @@
           // 
           // groupBox1
           // 
+          this.groupBox1.Controls.Add(this.chk_stable);
           this.groupBox1.Controls.Add(this.chk_updateExtension);
           this.groupBox1.Controls.Add(this.label2);
           this.groupBox1.Controls.Add(this.label1);
@@ -154,7 +126,7 @@
           this.groupBox1.Controls.Add(this.chk_update);
           this.groupBox1.Location = new System.Drawing.Point(8, 76);
           this.groupBox1.Name = "groupBox1";
-          this.groupBox1.Size = new System.Drawing.Size(562, 67);
+          this.groupBox1.Size = new System.Drawing.Size(562, 88);
           this.groupBox1.TabIndex = 2;
           this.groupBox1.TabStop = false;
           this.groupBox1.Text = "Startup";
@@ -239,6 +211,47 @@
           this.button1.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
           this.button1.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
           // 
+          // chk_stable
+          // 
+          this.chk_stable.AutoSize = true;
+          this.chk_stable.Location = new System.Drawing.Point(6, 65);
+          this.chk_stable.Name = "chk_stable";
+          this.chk_stable.Size = new System.Drawing.Size(148, 17);
+          this.chk_stable.TabIndex = 5;
+          this.chk_stable.Text = "Show only stable releases";
+          this.chk_stable.UseVisualStyleBackColor = true;
+          this.chk_stable.CheckedChanged += new System.EventHandler(this.chk_stable_CheckedChanged);
+          // 
+          // extensionListControl
+          // 
+          this.extensionListControl.AllowDrop = true;
+          this.extensionListControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                      | System.Windows.Forms.AnchorStyles.Left)
+                      | System.Windows.Forms.AnchorStyles.Right)));
+          this.extensionListControl.AutoSize = true;
+          this.extensionListControl.Location = new System.Drawing.Point(3, 3);
+          this.extensionListControl.Name = "extensionListControl";
+          this.extensionListControl.SelectedItem = null;
+          this.extensionListControl.Size = new System.Drawing.Size(577, 451);
+          this.extensionListControl.TabIndex = 0;
+          this.extensionListControl.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
+          this.extensionListControl.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
+          // 
+          // extensionListContro_all
+          // 
+          this.extensionListContro_all.AllowDrop = true;
+          this.extensionListContro_all.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                      | System.Windows.Forms.AnchorStyles.Left)
+                      | System.Windows.Forms.AnchorStyles.Right)));
+          this.extensionListContro_all.AutoSize = true;
+          this.extensionListContro_all.Location = new System.Drawing.Point(3, 3);
+          this.extensionListContro_all.Name = "extensionListContro_all";
+          this.extensionListContro_all.SelectedItem = null;
+          this.extensionListContro_all.Size = new System.Drawing.Size(577, 451);
+          this.extensionListContro_all.TabIndex = 0;
+          this.extensionListContro_all.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
+          this.extensionListContro_all.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
+          // 
           // MainForm
           // 
           this.AllowDrop = true;
@@ -287,6 +300,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.NumericUpDown numeric_Days;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.CheckBox chk_stable;
     }
 }
 

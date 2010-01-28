@@ -21,7 +21,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using MpeCore.Classes;
@@ -55,6 +54,7 @@ namespace MpeCore
       Dependencies = new DependencyItemCollection();
       ProjectSettings = new ProjectSettings();
       Silent = false;
+      IsHiden = false;
     }
 
     public string Version { get; set; }
@@ -73,6 +73,9 @@ namespace MpeCore
 
     [XmlIgnore]
     public bool Silent { get; set; }
+
+    [XmlIgnore]
+    public bool IsHiden { get; set; }
 
     /// <summary>
     /// Gets the location folder were stored the backup and the uninstall informations. Ended with \
@@ -187,7 +190,7 @@ namespace MpeCore
     /// <returns>The package is valid if a zero length list returned, else return list of errors</returns>
     public List<string> ValidatePackage()
     {
-      List<string> respList = new List<string>();
+      var respList = new List<string>();
       foreach (SectionParam item in GeneralInfo.Params.Items)
       {
         if (item.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(item.Value) && !File.Exists(item.Value))
@@ -288,7 +291,7 @@ namespace MpeCore
     /// <returns></returns>
     public bool StartInstallWizard()
     {
-      WizardNavigator navigator = new WizardNavigator(this);
+      var navigator = new WizardNavigator(this);
       if (navigator.Navigate() == SectionResponseEnum.Ok)
         DoAdditionalInstallTasks();
       return true;
@@ -502,9 +505,9 @@ namespace MpeCore
       {
         try
         {
-          XmlSerializer serializer = new XmlSerializer(typeof(PackageClass));
-          FileStream fs = new FileStream(fileName, FileMode.Open);
-          PackageClass packageClass = (PackageClass)serializer.Deserialize(fs);
+          var serializer = new XmlSerializer(typeof(PackageClass));
+          var fs = new FileStream(fileName, FileMode.Open);
+          var packageClass = (PackageClass)serializer.Deserialize(fs);
           fs.Close();
           this.Groups = packageClass.Groups;
           this.Sections = packageClass.Sections;

@@ -29,15 +29,17 @@ namespace MpeCore.Classes
     public ApplicationSettings()
     {
       LastUpdate = DateTime.MinValue;
-      UpdateDays = 0;
+      UpdateDays = 7;
       UpdateAll = false;
       DoUpdateInStartUp = true;
+      ShowOnlyStable = true;
     }
 
     public DateTime LastUpdate { get; set; }
     public int UpdateDays { get; set; }
     public bool UpdateAll { get; set; }
     public bool DoUpdateInStartUp { get; set; }
+    public bool ShowOnlyStable { get; set; }
 
     public void Save()
     {

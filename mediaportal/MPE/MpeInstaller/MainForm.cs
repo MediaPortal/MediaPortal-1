@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -158,6 +157,20 @@ namespace MpeInstaller
       collection.Save();
     }
 
+    private void FilterList()
+    {
+      if (_settings.ShowOnlyStable)
+      {
+        //MpeCore.MpeInstaller.InstalledExtensions.HideByRelease();
+        MpeCore.MpeInstaller.KnownExtensions.HideByRelease();
+      }
+      else
+      {
+        MpeCore.MpeInstaller.InstalledExtensions.ShowAll();
+        MpeCore.MpeInstaller.KnownExtensions.ShowAll();
+      }
+    }
+
     public void Init()
     {
       InitializeComponent();
@@ -166,7 +179,9 @@ namespace MpeInstaller
       _loading = true;
       chk_update.Checked = _settings.DoUpdateInStartUp;
       chk_updateExtension.Checked = _settings.UpdateAll;
+      chk_stable.Checked = _settings.ShowOnlyStable;
       numeric_Days.Value = _settings.UpdateDays;
+      FilterList();
       chk_update_CheckedChanged(null, null);
       _loading = false;
       extensionListControl.UnInstallExtension += extensionListControl_UnInstallExtension;
@@ -445,8 +460,8 @@ namespace MpeInstaller
             if (
               MessageBox.Show(
                 "This extension already have a installed version. \n This will be uninstalled first. \n Do you want to continue ?  \n"+
-                 "Old extension version: "+ installedPak.GeneralInfo.Version.ToString()+" \n" +
-                 "New extension version: "+ pak.GeneralInfo.Version.ToString(),
+                 "Old extension version: "+ installedPak.GeneralInfo.Version+" \n" +
+                 "New extension version: "+ pak.GeneralInfo.Version,
                 "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
               return;
           UnInstall dlg = new UnInstall();
@@ -482,6 +497,7 @@ namespace MpeInstaller
       DownloadInfo dlg = new DownloadInfo();
       dlg.silent = silent;
       dlg.ShowDialog();
+      FilterList();
       _settings.LastUpdate = DateTime.Now;
       _settings.Save();
     }
@@ -527,6 +543,7 @@ namespace MpeInstaller
         _settings.DoUpdateInStartUp = chk_update.Checked;
         _settings.UpdateAll = chk_updateExtension.Checked;
         _settings.UpdateDays = (int)numeric_Days.Value;
+        _settings.ShowOnlyStable = chk_stable.Checked;
       }
       if (!_settings.DoUpdateInStartUp)
       {
@@ -595,9 +612,15 @@ namespace MpeInstaller
 
         indexUrls.Add(line.Split(';')[0]);
       }
-
       MpeCore.MpeInstaller.SetInitialUrlIndex(indexUrls);
     }
     #endregion
+
+    private void chk_stable_CheckedChanged(object sender, EventArgs e)
+    {
+      chk_update_CheckedChanged(null, null);
+      FilterList();
+      RefreshLists();
+    }
   }
 }
