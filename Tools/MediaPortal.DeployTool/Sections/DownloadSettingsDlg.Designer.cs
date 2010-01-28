@@ -136,7 +136,7 @@ namespace MediaPortal.DeployTool.Sections
         // DownloadSettingsDlg
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
         this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_internet_connection;
         this.Controls.Add(this.b64bit);
         this.Controls.Add(this.b32bit);

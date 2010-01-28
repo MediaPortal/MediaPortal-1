@@ -139,7 +139,7 @@ namespace MediaPortal.DeployTool
       // ManualDownload
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
-      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.AutoSize = true;
       this.ClientSize = new System.Drawing.Size(672, 200);
       this.Controls.Add(this.buttonContinue);
