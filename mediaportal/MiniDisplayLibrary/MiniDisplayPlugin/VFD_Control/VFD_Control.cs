@@ -424,7 +424,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       if (_VendorID == 0x0547 && _ProductID == 0x7000)
       {
         // write single line into display
-        writeLine(1, text);
+        writeLine(0, text);
       }
       else
       {
@@ -513,7 +513,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
         //2 0x00
         //1 0x00
         //0 0x00
-        if (LineNo == 1)
+        if (LineNo == 0)
         {
           // erase line 1               
           myOutputReport.Write(new byte[] {0x00, 0x04, 0x04, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00}, _HIDHandle);
@@ -568,13 +568,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       if (_VendorID == 0x0547 && _ProductID == 0x7000)
       {
         // FIC Spectra display
-        writeLine(1, "       ");
+        writeLine(0, "       ");
       }
       else
       {
         // Scaleo E
+        writeLine(0, "");
         writeLine(1, "");
-        writeLine(2, "");
       }
     }
 
@@ -586,7 +586,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.MiniDisplayPlugin.VFD_Con
       if (_VendorID == 0x0547 && _ProductID == 0x7000)
       {
         // FIC Spectra clear screen
-        writeLine(1, "       ");
+        writeLine(0, "       ");
         setVolume(0);
         updateFICSymbol(FICSymbols.Volume, false);
         updateFICSymbol(FICSymbols.Home, false);
