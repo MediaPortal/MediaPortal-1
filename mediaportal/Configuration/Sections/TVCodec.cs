@@ -255,6 +255,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void videoCodecComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
     {
+    /*
       h264videoCodecComboBox.SelectedIndexChanged -= h264videoCodecComboBox_SelectedIndexChanged;
       if (videoCodecComboBox.Text.Contains(Windows7Codec))
       {
@@ -274,10 +275,12 @@ namespace MediaPortal.Configuration.Sections
         }
       }
       h264videoCodecComboBox.SelectedIndexChanged += h264videoCodecComboBox_SelectedIndexChanged;
+    */
     }
 
     private void h264videoCodecComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
     {
+    /*
       videoCodecComboBox.SelectedIndexChanged -= videoCodecComboBox_SelectedIndexChanged;
       if (h264videoCodecComboBox.Text.Contains(Windows7Codec))
       {
@@ -297,6 +300,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
       videoCodecComboBox.SelectedIndexChanged += videoCodecComboBox_SelectedIndexChanged;
+    */
     }
   }
 }

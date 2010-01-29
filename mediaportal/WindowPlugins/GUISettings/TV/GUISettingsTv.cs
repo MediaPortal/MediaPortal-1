@@ -44,8 +44,6 @@ namespace WindowPlugins.GUISettings.TV
     [SkinControl(35)] protected GUIButtonControl btnH264VideoCodec = null;
     [SkinControl(36)] protected GUIButtonControl btnAACAudioCodec = null;
 
-    public readonly string Windows7Codec = "Microsoft DTV-DVD Video Decoder";
-
     public GUISettingsTv()
     {
       GetID = (int)Window.WINDOW_SETTINGS_TV;
@@ -93,8 +91,13 @@ namespace WindowPlugins.GUISettings.TV
       base.OnClicked(controlId, control, actionType);
     }
 
-    ArrayList MPEG2list()
+    private void OnVideoCodec()
     {
+      string strVideoCodec = "";
+      using (Settings xmlreader = new MPSettings())
+      {
+        strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
+      }
       ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
       //Remove Muxer's from the list to avoid confusion.
       while (availableVideoFilters.Contains("CyberLink MPEG Muxer"))
@@ -114,23 +117,6 @@ namespace WindowPlugins.GUISettings.TV
         availableVideoFilters.Remove("Nero Mpeg2 Encoder");
       }
       availableVideoFilters.Sort();
-
-      return availableVideoFilters;
-    }
-
-    ArrayList H264list()
-    {
-      return FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
-    }
-
-    private void OnVideoCodec()
-    {
-      string strVideoCodec = "";
-      using (Settings xmlreader = new MPSettings())
-      {
-        strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
-      }
-      ArrayList availableVideoFilters = MPEG2list();
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
@@ -154,29 +140,9 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      string selectedCodec = (string)availableVideoFilters[dlg.SelectedLabel];
       using (Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("mytv", "videocodec", selectedCodec);
-
-        if (selectedCodec.Contains(Windows7Codec))
-        {
-          xmlwriter.SetValue("mytv", "h264videocodec", selectedCodec);
-        }
-        else
-        {
-          string h264Codec = xmlwriter.GetValue("mytv", "h264videocodec");
-          if (h264Codec.Contains(Windows7Codec))
-          {
-            for (int i = 0; i < H264list().Count; i++)
-            {
-              string listedCodec = H264list()[i].ToString();
-              if (listedCodec == Windows7Codec) continue;
-              xmlwriter.SetValue("mytv", "h264videocodec", listedCodec);
-              break;
-            }
-          }
-        }
+        xmlwriter.SetValue("mytv", "videocodec", (string)availableVideoFilters[dlg.SelectedLabel]);
       }
     }
 
@@ -187,7 +153,7 @@ namespace WindowPlugins.GUISettings.TV
       {
         strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
       }
-      ArrayList availableH264VideoFilters = H264list();
+      ArrayList availableH264VideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.H264);
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
@@ -211,31 +177,10 @@ namespace WindowPlugins.GUISettings.TV
       {
         return;
       }
-      string selectedCodec = (string)availableH264VideoFilters[dlg.SelectedLabel];
       using (Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("mytv", "h264videocodec", selectedCodec);
-
-        if (selectedCodec.Contains(Windows7Codec))
-        {
-          xmlwriter.SetValue("mytv", "videocodec", selectedCodec);
-        }
-        else
-        {
-          string videoCodec = xmlwriter.GetValue("mytv", "videocodec");
-          if (videoCodec.Contains(Windows7Codec))
-          {
-            for (int i = 0; i < H264list().Count; i++)
-            {
-              string listedCodec = MPEG2list()[i].ToString();
-              if (listedCodec == Windows7Codec) continue;
-              xmlwriter.SetValue("mytv", "videocodec", listedCodec);
-              break;
-            }
-          }
-        }
+        xmlwriter.SetValue("mytv", "h264videocodec", (string)availableH264VideoFilters[dlg.SelectedLabel]);
       }
-
     }
 
     private void OnAudioCodec()
@@ -376,7 +321,7 @@ namespace WindowPlugins.GUISettings.TV
 
     private void OnDeinterlace()
     {
-      string[] deinterlaceModes = { "None", "Bob", "Weave", "Best" };
+      string[] deinterlaceModes = {"None", "Bob", "Weave", "Best"};
       int deInterlaceMode = 1;
       using (Settings xmlreader = new MPSettings())
       {

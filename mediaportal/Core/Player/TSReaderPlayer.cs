@@ -141,8 +141,8 @@ namespace MediaPortal.Player
     private bool enableDVBBitmapSubtitles = false;
     private bool enableDVBTtxtSubtitles = false;
     private bool enableMPAudioSwitcher = false;
-    private int relaxTsReader = 0; // Disable dropping of discontinued dvb packets
-
+    private int relaxTsReader = 0; // Disable dropping of discontinued dvb packets    
+        
     #endregion
 
     [Guid("558D9EA6-B177-4c30-9ED5-BF2D714BCBCA"),
@@ -303,19 +303,16 @@ namespace MediaPortal.Player
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces(string filename)
     {
-      //create the pins on the demux then connect the demux then mapp the pids.
-      Speed = 1;
       Log.Info("TSReaderPlayer: GetInterfaces()");
-      //Log.Info("TSReaderPlayer: build graph");
       try
       {
         _graphBuilder = (IGraphBuilder)new FilterGraph();
+        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
         #region add vmr9
 
         if (_isRadio == false)
         {
-          Log.Info("TSReaderPlayer: add _vmr9");
           _vmr9 = new VMR9Util();
           _vmr9.AddVMR9(_graphBuilder);
           _vmr9.Enable(false);
@@ -325,13 +322,9 @@ namespace MediaPortal.Player
 
         #region add codecs
 
-        Log.Info("TSReaderPlayer: add codecs");
+        Log.Info("TSReaderPlayer: Add codecs");
         // add preferred video & audio codecs
-        string strVideoCodec = "";
-        string strAudioCodec = "";
-        string strAACAudioCodec = "";
         string strAudioRenderer = "";
-        string strH264VideoCodec = "";
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
 
@@ -341,37 +334,28 @@ namespace MediaPortal.Player
 
         if (_isRadio == false)
         {
-          try
+          if (strVideoCodec.Length > 0)
           {
-            if (strVideoCodec.Length > 0)
-            {
-              DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
-            }
+            DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
           }
-          catch (Exception ex)
+          if (strH264VideoCodec.Length > 0 && strH264VideoCodec != strVideoCodec)
           {
-            Log.Warn("Failed to add video decoder. Maybe it's missing?\nMessage: {0}", ex.Message);
+            DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
           }
-          try
-          {
-            if (strH264VideoCodec.Length > 0 && strH264VideoCodec != strVideoCodec)
-            {
-              DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
-            }
-          }
-          catch (Exception ex)
-          {
-            Log.Warn("Failed to add h.264 video decoder. Maybe it's missing?\nMessage: {0}", ex.Message);
-          }
+          else
+            strH264VideoCodec = "";
         }
         if (strAudioCodec.Length > 0)
         {
           DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
         }
-        if (strAACAudioCodec.Length > 0)
+        if (strAACAudioCodec.Length > 0 && strAACAudioCodec != strAudioCodec)
         {
           DirectShowUtil.AddFilterToGraph(_graphBuilder, strAACAudioCodec);
         }
+        else
+          strAACAudioCodec = "";
+
         if (strAudioRenderer.Length > 0)
         {
           _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, true);
@@ -400,7 +384,7 @@ namespace MediaPortal.Player
 
         if (enableMPAudioSwitcher)
         {
-          Log.Info("Adding audio switcher to graph");
+          Log.Info("TSReaderPlayer: Adding audio switcher to graph");
           _audioSwitcherFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal AudioSwitcher");
           if (_audioSwitcherFilter == null)
           {
@@ -419,14 +403,9 @@ namespace MediaPortal.Player
         _ireader.SetRelaxedMode(relaxTsReader); // enable/disable continousity filtering
         _ireader.SetTsReaderCallback(this);
         _ireader.SetRequestAudioChangeCallback(this);
-        Log.Info("TSReaderPlayer:add TsReader to graph");
+        Log.Info("TSReaderPlayer: Add TsReader to graph");
         int hr = _graphBuilder.AddFilter((IBaseFilter)_fileSource, "TsReader");
-        if (hr != 0)
-        {
-          Log.Error("TSReaderPlayer:Failed to add TsReader to graph");
-          _ireader = null;
-          return false;
-        }
+        DsError.ThrowExceptionForHR(hr);
 
         #endregion
 
@@ -435,26 +414,30 @@ namespace MediaPortal.Player
         IFileSourceFilter interfaceFile = (IFileSourceFilter)_fileSource;
         if (interfaceFile == null)
         {
-          Log.Error("TSReaderPlayer:Failed to get IFileSourceFilter");
+          Log.Error("TSReaderPlayer: Failed to get IFileSourceFilter");
+          Cleanup();
           return false;
         }
-        Log.Info("TSReaderPlayer: open file: {0}", filename);
+        Log.Info("TSReaderPlayer: Open file: {0}", filename);
         hr = interfaceFile.Load(filename, null);
         if (hr != 0)
         {
-          Log.Error("TSReaderPlayer:Failed to open file:{0} :0x{1:x}", filename, hr);
+          Log.Error("TSReaderPlayer: Failed to open file:{0} :0x{1:x}", filename, hr);
+          Cleanup();
           return false;
         }
 
         #endregion
 
         #region render TsReader output pins
-
+        Log.Info("TSReaderPlayer: Render TsReader outputs");
+          
         if (_isRadio)
         {
           IEnumPins enumPins;
-          _fileSource.EnumPins(out enumPins);
-          IPin[] pins = new IPin[2];
+          hr = _fileSource.EnumPins(out enumPins);
+          DsError.ThrowExceptionForHR(hr);
+          IPin[] pins = new IPin[1];
           int fetched = 0;
           while (enumPins.Next(1, pins, out fetched) == 0)
           {
@@ -464,31 +447,33 @@ namespace MediaPortal.Player
             }
             PinDirection direction;
             pins[0].QueryDirection(out direction);
-            if (direction == PinDirection.Input)
+            if (direction == PinDirection.Output)
             {
-              continue;
-            }
-            IEnumMediaTypes enumMediaTypes;
-            pins[0].EnumMediaTypes(out enumMediaTypes);
-            AMMediaType[] mediaTypes = new AMMediaType[20];
-            int fetchedTypes;
-            enumMediaTypes.Next(20, mediaTypes, out fetchedTypes);
-            for (int i = 0; i < fetchedTypes; ++i)
-            {
-              if (mediaTypes[i].majorType == MediaType.Audio)
+              IEnumMediaTypes enumMediaTypes;
+              pins[0].EnumMediaTypes(out enumMediaTypes);
+              AMMediaType[] mediaTypes = new AMMediaType[20];
+              int fetchedTypes;
+              enumMediaTypes.Next(20, mediaTypes, out fetchedTypes);
+              for (int i = 0; i < fetchedTypes; ++i)
               {
-                _graphBuilder.Render(pins[0]);
-                break;
+                if (mediaTypes[i].majorType == MediaType.Audio)
+                {
+                  hr = _graphBuilder.Render(pins[0]);
+                  DsError.ThrowExceptionForHR(hr);
+                  break;
+                }
               }
             }
+            DirectShowUtil.ReleaseComObject(pins[0]);
           }
+          DirectShowUtil.ReleaseComObject(enumPins);
         }
         else
         {
-          Log.Info("TSReaderPlayer:render TsReader outputs");
           IEnumPins enumPins;
-          _fileSource.EnumPins(out enumPins);
-          IPin[] pins = new IPin[2];
+          hr = _fileSource.EnumPins(out enumPins);
+          DsError.ThrowExceptionForHR(hr);
+          IPin[] pins = new IPin[1];
           int fetched = 0;
           while (enumPins.Next(1, pins, out fetched) == 0)
           {
@@ -498,22 +483,11 @@ namespace MediaPortal.Player
             }
             PinDirection direction;
             pins[0].QueryDirection(out direction);
-            if (direction == PinDirection.Input)
+            if (direction == PinDirection.Output)
             {
-              DirectShowUtil.ReleaseComObject(pins[0]);
-              continue;
+              hr = _graphBuilder.Render(pins[0]);
+              DsError.ThrowExceptionForHR(hr);
             }
-            try
-            {
-              _graphBuilder.Render(pins[0]);
-            }
-            catch (Exception ex)
-            {
-              Log.Warn(
-                "Failed to render an output pin of TsReader. Maybe it's a radio recording and we try to render the video pin.\nMessage: {0}",
-                ex.Message);
-            }
-
             DirectShowUtil.ReleaseComObject(pins[0]);
           }
           DirectShowUtil.ReleaseComObject(enumPins);
@@ -526,12 +500,12 @@ namespace MediaPortal.Player
         _mediaSeeking = (IMediaSeeking)_graphBuilder;
         if (_mediaSeeking == null)
         {
-          Log.Error("Unable to get IMediaSeeking interface#1");
+          Log.Error("TSReaderPlayer: Unable to get IMediaSeeking interface#1");
         }
-        _audioStream = _fileSource as IAudioStream;
+        _audioStream = (IAudioStream)_fileSource;
         if (_audioStream == null)
         {
-          Log.Error("Unable to get IAudioStream interface");
+          Log.Error("TSReaderPlayer: Unable to get IAudioStream interface");
         }
         _audioSelector = new AudioSelector(_audioStream);
         if (enableDVBTtxtSubtitles || enableDVBBitmapSubtitles)
@@ -548,19 +522,19 @@ namespace MediaPortal.Player
         }
         if (enableDVBBitmapSubtitles)
         {
-          _subtitleStream = _fileSource as ISubtitleStream;
+          _subtitleStream = (ISubtitleStream)_fileSource;
           if (_subtitleStream == null)
           {
-            Log.Error("Unable to get ISubtitleStream interface");
+            Log.Error("TSReaderPlayer: Unable to get ISubtitleStream interface");
           }
         }
         if (enableDVBTtxtSubtitles)
         {
           //Log.Debug("TSReaderPlayer: Obtaining TeletextSource");
-          _teletextSource = _fileSource as ITeletextSource;
+          _teletextSource = (ITeletextSource)_fileSource;
           if (_teletextSource == null)
           {
-            Log.Error("Unable to get ITeletextSource interface");
+            Log.Error("TSReaderPlayer: Unable to get ITeletextSource interface");
           }
           Log.Debug("TSReaderPlayer: Creating Teletext Receiver");
           TeletextSubtitleDecoder ttxtDecoder = new TeletextSubtitleDecoder(_dvbSubRenderer);
@@ -577,53 +551,31 @@ namespace MediaPortal.Player
         if (_audioRendererFilter != null)
         {
           //Log.Info("TSReaderPlayer:set reference clock");
-          IMediaFilter mp = _graphBuilder as IMediaFilter;
-          IReferenceClock clock = _audioRendererFilter as IReferenceClock;
+          IMediaFilter mp = (IMediaFilter)_graphBuilder;
+          IReferenceClock clock = (IReferenceClock)_audioRendererFilter;
           hr = mp.SetSyncSource(null);
           hr = mp.SetSyncSource(clock);
           //Log.Info("TSReaderPlayer:set reference clock:{0:X}", hr);
-          _basicAudio = (IBasicAudio)_graphBuilder;
-          //_mediaSeeking.SetPositions(new DsLong(0), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(0), AMSeekingSeekingFlags.NoPositioning);
+          _basicAudio = (IBasicAudio)_graphBuilder;          
         }
         if (_isRadio == false)
         {
           if (!_vmr9.IsVMR9Connected)
           {
-            int count = 0;
-            while (true)
-            {
-              Log.Debug("TSReaderPlayer: waiting for vmr9 connection");
-              Application.DoEvents();
-              if (count > 20)
-              {
-                Log.Debug(
-                  "TSReaderPlayer: no vmr9 connection. Maybe we have a radio recording but expect video too so we suppose it's ok.");
-                //gemx: we have to return TRUE here because otherwise we won't be able to play recoded radio from the RecordedTV screen
-                return true;
-                /*if (g_Player.IsRadio)
-                {
-                  return true;
-                }
-                else
-                {
-                  g_Player.Stop();
-                  return false;
-                }*/
-                //Cleanup();
-                //return false;
-              }
-              count++;
-              Thread.Sleep(100);
-            }
+            Log.Error("TSReaderPlayer: Failed vmr9 not connected");
+            Cleanup();
+            return false;
           }
           DirectShowUtil.EnableDeInterlace(_graphBuilder);
           _vmr9.SetDeinterlaceMode();
         }
+        DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
         return true;
       }
       catch (Exception ex)
       {
-        Log.Error("TSReaderPlayer:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
+        Log.Error("TSReaderPlayer: Exception while creating DShow graph {0}", ex.Message);
+        Cleanup();
         return false;
       }
     }

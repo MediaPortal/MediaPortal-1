@@ -180,6 +180,10 @@ namespace MediaPortal.Player
     protected int iChangedMediaTypes;
     protected VideoStreamFormat _videoFormat;
     protected int _lastFrameCounter;
+    protected string strVideoCodec = "";
+    protected string strAudioCodec = "";
+    protected string strAACAudioCodec = "";
+    protected string strH264VideoCodec = "";
 
     #endregion
 
@@ -394,6 +398,7 @@ namespace MediaPortal.Player
           return false;
         }
       }
+      Speed = 1;      
       iSpeed = 1;
       _speedRate = 10000;
       _isLive = false;
@@ -467,7 +472,6 @@ namespace MediaPortal.Player
         ExclusiveMode(false);
         return false;
       }
-      _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
       hr = _mediaCtrl.Run();
       if (hr < 0)
       {
@@ -1464,36 +1468,38 @@ namespace MediaPortal.Player
       {
         lock (_mediaCtrl)
         {
-          int hr = _mediaCtrl.Stop();
-          if (hr != 0)
+          int hr;
+          try
           {
-            Log.Error("Error stopping graph: ({0:x})", hr);
+            hr = _mediaCtrl.Stop();
+            DsError.ThrowExceptionForHR(hr);
           }
-          FilterState state;
-          hr = _mediaCtrl.GetState(Timeout.Infinite, out state);
-          Log.Info("Graph stopped.");
+          catch (Exception error)
+          {
+            Log.Error("Error stopping graph: {0}", error.Message);
+          }
           if (needRebuild)
           {
             Log.Info("Doing full graph rebuild for {0}.", iChangedMediaTypes);
-            FilterInfo fInfo;
-            _fileSource.QueryFilterInfo(out fInfo);
             switch (iChangedMediaTypes)
             {
               case 1: // audio changed
                 Log.Info("Rerendering audio pin of tsreader filter.");
-                ReRenderPin(fInfo.achName, "Audio");
+                ReAddFilters("Audio");
                 break;
               case 2: // video changed
                 Log.Info("Rerendering video pin of tsreader filter.");
-                ReRenderPin(fInfo.achName, "Video");
+                ReAddFilters("Video");
                 break;
               case 3: // both changed
                 Log.Info("Rerendering audio pin of tsreader filter.");
-                ReRenderPin(fInfo.achName, "Audio");
+                ReAddFilters("Audio");
                 Log.Info("Rerendering video pin of tsreader filter.");
-                ReRenderPin(fInfo.achName, "Video");
+                ReAddFilters("Video");
                 break;
             }
+            DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, _fileSource);
+            DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
           }
           else
           {
@@ -1515,16 +1521,17 @@ namespace MediaPortal.Player
                 break;
             }
           }
-          hr = _mediaCtrl.Run();
-          if (hr < 0 || hr > 1) // 0 = started, 1 = starting to play
+          try
           {
-            Log.Error("Error starting graph: ({0:x})", hr);
+            hr = _mediaCtrl.Run();
+            DsError.ThrowExceptionForHR(hr);
           }
-          else
+          catch (Exception error)
           {
-            Log.Info("Reconfigure graph done");
+            Log.Error("Error starting graph: {0}", error.Message);
+            return;
           }
-          return;
+          Log.Info("Reconfigure graph done");
         }
       }
     }
@@ -1852,13 +1859,29 @@ namespace MediaPortal.Player
         _elapsedTimer = DateTime.Now;
       }
     }
-
-    private void ReRenderPin(string filterName, string pinName)
+        
+    private void ReAddFilters(string selection)
     {
-      IPin pPin = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, pinName);
-      DirectShowUtil.DisconnectPin(_graphBuilder, pPin);
-      DirectShowUtil.TryConnect(_graphBuilder, filterName, pPin, false);
-      DirectShowUtil.ReleaseComObject(pPin);
+      if (selection == "Video")
+      {
+        DirectShowUtil.RemoveFilters(_graphBuilder, strVideoCodec);
+        DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
+        if (!String.IsNullOrEmpty(strH264VideoCodec))
+        {
+          DirectShowUtil.RemoveFilters(_graphBuilder, strH264VideoCodec);
+          DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
+        }
+      }
+      else
+      {
+        DirectShowUtil.RemoveFilters(_graphBuilder, strAudioCodec);
+        DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
+        if (!String.IsNullOrEmpty(strAACAudioCodec))
+        {
+          DirectShowUtil.RemoveFilters(_graphBuilder, strAACAudioCodec);
+          DirectShowUtil.AddFilterToGraph(_graphBuilder, strAACAudioCodec);
+        }
+      }          
     }
 
     private void ReConnectPin(string pinName)
