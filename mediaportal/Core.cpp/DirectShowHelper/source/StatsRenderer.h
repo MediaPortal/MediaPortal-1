@@ -41,8 +41,8 @@ public:
   StatsRenderer(MPEVRCustomPresenter* presenter, IDirect3DDevice9* device);
   ~StatsRenderer(void);
 
-  void DrawText(const RECT &rc, const CString &strText, int _Priority);
-  HRESULT DrawRect(DWORD _Color, DWORD _Alpha, const CRect &_Rect);
+  void DrawText(const RECT &rc, const CString &strText);
+  HRESULT DrawRect(DWORD color, DWORD alpha, const CRect &rect);
   
   void DrawTearingTest();
   void DrawStats();

@@ -22,6 +22,7 @@
 #include <mmsystem.h>
 #include <d3d9.h>
 #include <mfidl.h>
+#include <math.h>
 
 #include "dshowhelper.h"
 #include "evrcustompresenter.h"
@@ -110,8 +111,22 @@ UINT CALLBACK SchedulerThread(void* param)
     timePerFrame = p->pPresenter->GetFrameDuration();
     if (hnsSampleTime > 0)
     {
-      // wait for 1/3 sample time or 1/3 of frame duration depending on what is smaller
-      delay = min((hnsSampleTime/3), (timePerFrame/3));
+      double detectedFrameTime = p->pPresenter->GetDetectedFrameTime() * 10000000.0;
+
+      if (detectedFrameTime > 0) 
+      {
+        timePerFrame = (LONGLONG)detectedFrameTime;
+      }
+
+      // Every second frame matching to display device refresh rate
+      if (fabs(p->pPresenter->GetDisplayCycle() - timePerFrame/20000) < 0.0015)
+      {
+        delay = hnsSampleTime/4;
+      }
+      else
+      {
+        delay = hnsSampleTime*3/4;
+      }
     }
     else 
     {
@@ -127,12 +142,7 @@ UINT CALLBACK SchedulerThread(void* param)
                                  0, 
                                  TIME_ONESHOT|TIME_KILL_SYNCHRONOUS|TIME_CALLBACK_EVENT_SET);
     }
-    // EXPERIMENTAL: CheckForScheduleSample() call can probably be removed.
-    else 
-    {
-      //p->eHasWork.Set();
-      p->pPresenter->CheckForScheduledSample(&hnsSampleTime, delay);
-    }
+
     p->csLock.Unlock();
     while (!p->eHasWork.Wait());
     LOG_TRACE("Scheduler woken up");

@@ -14,19 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
+#include "StdAfx.h"
 #include <streams.h>
 #include <atlbase.h>
 #include <d3dx9.h>
 #include <dvdmedia.h>
 #include <mfapi.h>
 #include <mferror.h>
+#include <afxtempl.h> // CMap
+#include <dwmapi.h>
 
 #include "dshowhelper.h"
 #include "evrcustompresenter.h"
 #include "scheduler.h"
 #include "timesource.h"
 #include "statsrenderer.h"
-
+#include "autoint.h"
 
 void LogIID(REFIID riid)
 {
@@ -52,7 +55,8 @@ void LogGUID(REFGUID guid)
 
 MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter* EVRFilter):
   m_refCount(1), 
-  m_qScheduledSamples(NUM_SURFACES) 
+  m_qScheduledSamples(NUM_SURFACES),
+  m_EVRFilter(EVRFilter)
 {
   timeBeginPeriod(1);
   if (m_pMFCreateVideoSampleFromSurface != NULL)
@@ -94,7 +98,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     m_fJitterStdDev		      = 0.0;
     m_fSyncOffsetStdDev     = 0.0;
     m_fSyncOffsetAvr	      = 0.0;
-    m_uD3DRefreshRate       = 0;
+    m_dD3DRefreshRate       = 0.0;
     m_dD3DRefreshCycle      = 0.0;
     m_dOptimumDisplayCycle  = 0.0;
     m_dCycleDifference      = 0.0;
@@ -102,37 +106,34 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     m_rasterSyncOffset      = 0;
     m_dDetectedScanlineTime = 0;
 
-    // TODO add multi monitor support! Also support moving MP between different monitors?
+    // sample time correction variables
+    m_LastScheduledUncorrectedSampleTime  = -1;
+    m_LastScheduledSampleTimeFP           = 0;
+    m_DetectedFrameTimePos                = 0;
+    m_DetectedFrameRate                   = 0;
+    m_DetectedFrameTime                   = -1;
+    m_DetectedFrameTimeStdDev             = 0;
+    m_bCorrectedFrameTime                 = 0;    
+    m_DetectedLock                        = false;
+
     m_pD3DDev->GetDisplayMode(0, &m_displayMode);
-	  //if(FAILED(m_pD3DDev->GetAdapterDisplayMode(GetAdapter(m_pD3DDev), &m_displayMode)))
-	  //{
-		//  Log("GetAdapterDisplayMode failed");
-	  //}
-    //else
-    //{
-	    m_uD3DRefreshRate = m_displayMode.RefreshRate;
-	    m_dD3DRefreshCycle = 1000.0 / (double)m_uD3DRefreshRate; // In ms
-    //}
 
     m_bDrawStats = false;
   }
-
+  
+  if (m_pDwmEnableMMCSS)
+  {
+    HRESULT hr = m_pDwmEnableMMCSS(true);
+    if (SUCCEEDED(hr)) 
+    {
+      Log("Enabling the Multimedia Class Schedule Service for DWM succeed");
+    }
+    else
+    {
+      Log("Enabling the Multimedia Class Schedule Servicer for DWM failed");
+    }
+  }
   m_pStatsRenderer = new StatsRenderer(this, m_pD3DDev);
-}
-
-UINT MPEVRCustomPresenter::GetAdapter(IDirect3D9* pD3D)
-{
-//	if(m_hWnd == NULL | pD3D == NULL) return D3DADAPTER_DEFAULT;
-
-//	HMONITOR hMonitor = MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTONEAREST);
-//	if(hMonitor == NULL) return D3DADAPTER_DEFAULT;
-
-//	for(UINT adp = 0, num_adp = pD3D->GetAdapterCount(); adp < num_adp; ++adp)
-//	{
-//		HMONITOR hAdpMon = pD3D->GetAdapterMonitor(adp);
-//		if(hAdpMon == hMonitor) return adp;
-//	}
-	return D3DADAPTER_DEFAULT;
 }
 
 void MPEVRCustomPresenter::SetFrameSkipping(bool onOff)
@@ -144,6 +145,11 @@ void MPEVRCustomPresenter::SetFrameSkipping(bool onOff)
 
 void MPEVRCustomPresenter::EnableDrawStats(bool enable)
 {
+  // Reset stats when hiding them. This will easen up the troubleshooting / debugging
+  if (m_bDrawStats && !enable)
+  {
+    ResetEVRStatCounters();
+  }
   m_bDrawStats = enable;
 }
 
@@ -281,13 +287,6 @@ ULONG MPEVRCustomPresenter::Release()
     delete this;
   }
   return ret;
-}
-
-
-void MPEVRCustomPresenter::ResetStatistics()
-{
-  m_iFramesDrawn = 0;
-  m_iFramesDropped = 0;
 }
 
 HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetSlowestRate(MFRATE_DIRECTION eDirection, BOOL fThin, __RPC__out float *pflRate)
@@ -462,7 +461,6 @@ HRESULT MPEVRCustomPresenter::TrackSample(IMFSample *pSample)
   return hr;
 }
 
-
 HRESULT MPEVRCustomPresenter::GetTimeToSchedule(IMFSample* pSample, LONGLONG *phnsDelta)
 {
   LONGLONG hnsPresentationTime = 0; // Target presentation time
@@ -496,6 +494,7 @@ HRESULT MPEVRCustomPresenter::GetTimeToSchedule(IMFSample* pSample, LONGLONG *ph
 
   // Calculate the amount of time until the sample's presentation time. A negative value means the sample is late.
   hnsDelta = hnsPresentationTime - hnsTimeNow;
+ 
   // if off more than a second and not scrubbing and not DVD Menu
   if (hnsDelta > 100000000 && !m_bScrubbing && !m_bDVDMenu)
   {
@@ -731,7 +730,7 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
 
     if (hr == 0 && videoFormat->videoInfo.FramesPerSecond.Numerator != 0)
     {
-      m_rtTimePerFrame = (20000000I64*videoFormat->videoInfo.FramesPerSecond.Denominator)/videoFormat->videoInfo.FramesPerSecond.Numerator;
+      m_rtTimePerFrame = (10000000I64*videoFormat->videoInfo.FramesPerSecond.Denominator)/videoFormat->videoInfo.FramesPerSecond.Numerator;
       Log("Time Per Frame: %I64d", m_rtTimePerFrame);
       // HD
       if (videoFormat->videoInfo.dwHeight >= 720 || videoFormat->videoInfo.dwWidth >= 1280)
@@ -754,6 +753,7 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
     if (m_rtTimePerFrame == 0)
     {
       // if fps information is not provided use default (workaround for possible bugs)
+      Log("No time per frame available usinf default: %d", DEFAULT_FRAME_TIME);
       m_rtTimePerFrame = DEFAULT_FRAME_TIME;
     }
 
@@ -952,6 +952,8 @@ void MPEVRCustomPresenter::Flush()
       }
     }
   }
+
+  m_LastScheduledUncorrectedSampleTime = -1;
   m_bFlush = FALSE;
 }
 
@@ -1044,7 +1046,6 @@ void MPEVRCustomPresenter::LogStats()
 {
 }
 
-
 HRESULT MPEVRCustomPresenter::CheckForScheduledSample(REFERENCE_TIME *pNextSampleTime, REFERENCE_TIME hnsLastSleepTime)
 {
   HRESULT hr = S_OK;
@@ -1079,8 +1080,8 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(REFERENCE_TIME *pNextSampl
     }
     LOG_TRACE("Time to schedule: %I64d", *pNextSampleTime);
 
-    // If we are ahead up to 1/3 + 1ms of a frame present sample as the vsync will be waited for anyway
-    if (*pNextSampleTime > (m_rtTimePerFrame/3)+10000)
+    // If we are ahead up to 1/4 of a frame present sample as the vsync will be waited for anyway
+    if (*pNextSampleTime > (m_rtTimePerFrame/4))
     {
       break;
     }
@@ -1224,6 +1225,9 @@ void MPEVRCustomPresenter::ScheduleSample(IMFSample* pSample)
 {
   CAutoLock lock(&m_lockScheduledSamples);
   LOG_TRACE("Scheduling Sample, size: %d", m_qScheduledSamples.Count());
+
+  CorrectSampleTime(pSample);
+
   DWORD hr;
   LONGLONG nextSampleTime;
   CHECK_HR(hr = GetTimeToSchedule(pSample, &nextSampleTime), "Couldn't get time to schedule!");
@@ -1236,6 +1240,7 @@ void MPEVRCustomPresenter::ScheduleSample(IMFSample* pSample)
         (double)-nextSampleTime/10000, (GetCurrentTimestamp()-(double)m_llLastWorkerNotification)/10000);
     }
   }
+
   m_qScheduledSamples.Put(pSample);
   if (m_qScheduledSamples.Count() >= 1)
   {
@@ -1408,12 +1413,11 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::ProcessMessage(MFVP_MESSAGE_TYPE
       Log("ProcessMessage MFVP_MESSAGE_BEGINSTREAMING");
       m_bEndStreaming = FALSE;
       m_state = MP_RENDER_STATE_STARTED;
-      ResetStatistics();
       StartWorkers();
 
       // TODO add 2nd monitor support
       ResetTraceStats();
-      EstimateRefreshTimings();
+      //EstimateRefreshTimings();
     break;
 
     case MFVP_MESSAGE_ENDSTREAMING:
@@ -1461,7 +1465,7 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockStart(MFTIME hnsSystemTim
 {
   Log("OnClockStart");
   m_state = MP_RENDER_STATE_STARTED;
-  ResetStatistics();
+  ResetTraceStats();
   Flush();
   NotifyWorker();
   NotifyScheduler();
@@ -1645,13 +1649,64 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
       Log("EVR:Paint: Failed to get current render target: %u\n", hr);
     }
 
-    LONGLONG startPaint = GetCurrentTimestamp();
-    D3DRASTER_STATUS rasterStatus;
-    if (m_pD3DDev)
+    int priority = GetThreadPriority(GetCurrentThread());
+    if (priority != THREAD_PRIORITY_ERROR_RETURN)
     {
-      m_pD3DDev->GetRasterStatus(0, &rasterStatus);
-      m_rasterSyncOffset = (m_displayMode.Height - rasterStatus.ScanLine) * m_dDetectedScanlineTime;
+      SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
     }
+
+    if (m_dD3DRefreshRate == 0)
+    {
+      GetRefreshRateDwm();
+    }
+
+	  // Raster offset target
+    double limitLow = 0.40;
+
+    REFERENCE_TIME timePerFrame = m_rtTimePerFrame;
+    if (m_DetectedFrameTime * 10000000.0 > 0) 
+    {
+      timePerFrame = (LONGLONG)(m_DetectedFrameTime * 10000000.0);
+    }
+
+    // Every second frame matching to display device refresh rate
+    if (fabs(m_dD3DRefreshCycle - timePerFrame/20000) < 0.0015)
+    {
+      double limitLow = 0.75;
+    }
+
+    D3DRASTER_STATUS rasterStatus;
+    LONGLONG prev = GetCurrentTimestamp();
+
+    // Correct raster offset - It Will Come
+    while (SUCCEEDED(m_pD3DDev->GetRasterStatus(0, &rasterStatus)))
+    {
+      if (!rasterStatus.InVBlank && 
+        (rasterStatus.ScanLine >= limitLow * m_displayMode.Height )) //&&
+        //(rasterStatus.ScanLine <= limitHigh * m_displayMode.Height))
+      {
+        break;
+      }
+
+      if ((GetCurrentTimestamp() - prev) > 800000) break;
+
+      Sleep(1);	
+    }
+
+    m_rasterSyncOffset = (m_displayMode.Height - rasterStatus.ScanLine) * m_dDetectedScanlineTime;
+    if (m_rasterSyncOffset > 1000)
+    {
+      // Correct invalid values, scanline can be bigger than screen resolution	
+      m_rasterSyncOffset = m_dDetectedScanlineTime * m_displayMode.Height;
+    }
+
+    // Restore thread priority
+    if (priority != THREAD_PRIORITY_ERROR_RETURN)
+    {
+      SetThreadPriority(GetCurrentThread(), priority);
+    }
+
+    LONGLONG startPaint = GetCurrentTimestamp();
 
     m_pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
     if (FAILED(hr = m_pD3DDev->StretchRect(pSurface, NULL, m_pVideoSurface, NULL, D3DTEXF_NONE)))
@@ -1671,6 +1726,10 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 
     hr = m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)m_pVideoTexture, (DWORD)(IDirect3DSurface9*)pSurface);
 
+    m_PaintTime = GetCurrentTimestamp() - startPaint;
+    m_PaintTimeMin = min(m_PaintTimeMin, m_PaintTime);
+    m_PaintTimeMax = max(m_PaintTimeMax, m_PaintTime);
+
     OnVBlankFinished(true, startPaint, GetCurrentTimestamp());
 
     CalculateJitter(startPaint);
@@ -1679,10 +1738,6 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
     {
       ResetTraceStats();
     }
-
-    m_PaintTime = (GetCurrentTimestamp() - startPaint);
-    m_PaintTimeMin = min(m_PaintTimeMin, m_PaintTime);
-    m_PaintTimeMax = max(m_PaintTimeMax, m_PaintTime);
 
     return hr;
   }
@@ -1966,30 +2021,43 @@ void MPEVRCustomPresenter::EstimateRefreshTimings()
 
     m_dDetectedScanlineTime = (double)(endTime - startTime) / (double)((endLine - startLine) * 10000.0);
 
-    // Estimate the display refresh rate from the vsyncs
-    UINT i;
-    m_pD3DDev->GetRasterStatus(0, &rasterStatus);
-    while (rasterStatus.ScanLine != 0)
+    m_dEstRefreshCycle = m_dD3DRefreshCycle;
+  }
+}
+
+
+// get composition refresh rate
+void MPEVRCustomPresenter::GetRefreshRateDwm()
+{
+  if (m_pDwmGetCompositionTimingInfo)
+  {
+    HRESULT hr;
+    DWM_TIMING_INFO timingInfo;
+
+    ZeroMemory(&timingInfo, sizeof(timingInfo));
+    timingInfo.cbSize = sizeof(timingInfo);
+    hr = m_pDwmGetCompositionTimingInfo(NULL, &timingInfo);
+    if (SUCCEEDED(hr))
     {
-      m_pD3DDev->GetRasterStatus(0, &rasterStatus);
+      m_dD3DRefreshRate = (double)timingInfo.rateRefresh.uiNumerator / (double)timingInfo.rateRefresh.uiDenominator;
+      m_dD3DRefreshCycle = 1000.0 / m_dD3DRefreshRate;
+      
+      m_dDetectedScanlineTime = m_dD3DRefreshCycle / m_displayMode.Height;
+      
+      Log("Numerator %d, Denominator %d", timingInfo.rateRefresh.uiNumerator, timingInfo.rateRefresh.uiDenominator);
+      LOG_TRACE("DwmGetCompositionTimingInfo() returned refresh rate %.3f", m_dD3DRefreshRate);
     }
-    // Now we're at the start of a vsync
-    startTime = GetCurrentTimestamp();
-    for (i = 1; i <= 50; i++)
+    else
     {
-      m_pD3DDev->GetRasterStatus(0, &rasterStatus);
-      while (rasterStatus.ScanLine == 0)
-      {
-        m_pD3DDev->GetRasterStatus(0, &rasterStatus);
-      }
-      while (rasterStatus.ScanLine != 0)
-      {
-        m_pD3DDev->GetRasterStatus(0, &rasterStatus);
-      }
-      // Now we're at the next vsync
+      m_dD3DRefreshRate = (double)m_displayMode.RefreshRate;
+      m_dD3DRefreshCycle = 1000.0 / m_dD3DRefreshRate; // In ms 
+      LOG_TRACE("DwmGetCompositionTimingInfo() failed - using inaccurate DirectX timing info");
     }
-    endTime = GetCurrentTimestamp();
-    m_dEstRefreshCycle = (double)(endTime - startTime) / ((i - 1) * 10000.0);
+  }
+  else // XP
+  {
+	    m_dD3DRefreshRate = (double)m_displayMode.RefreshRate;
+	    m_dD3DRefreshCycle = 1000.0 / m_dD3DRefreshRate; // In ms  
   }
 }
 
@@ -2074,14 +2142,16 @@ void MPEVRCustomPresenter::OnVBlankFinished(bool fAll, LONGLONG periodStart, LON
 
 void MPEVRCustomPresenter::ResetTraceStats()
 {
-  m_uSyncGlitches = 0;
-	m_PaintTimeMin  = MAXLONG64;
-	m_PaintTimeMax  = MINLONG64;
-	m_MinJitter     = MAXLONG64;
-	m_MaxJitter     = MINLONG64;
-	m_MinSyncOffset = MAXLONG64;
-	m_MaxSyncOffset = MINLONG64;
-  m_bResetStats   = false;
+  m_uSyncGlitches   = 0;
+  m_PaintTimeMin    = MAXLONG64;
+  m_PaintTimeMax    = MINLONG64;
+  m_MinJitter       = MAXLONG64;
+  m_MaxJitter       = MINLONG64;
+  m_MinSyncOffset   = MAXLONG64;
+  m_MaxSyncOffset   = MINLONG64;
+  m_iFramesDrawn    = 0;
+  m_iFramesDropped  = 0;
+  m_bResetStats     = false;
 }
 
 
@@ -2100,16 +2170,21 @@ REFERENCE_TIME MPEVRCustomPresenter::GetFrameDuration()
 // Get the best estimate of the display refresh rate in Hz
 double MPEVRCustomPresenter::GetRefreshRate()
 {
-  return (double)m_uD3DRefreshRate;
+  return m_dD3DRefreshRate;
 }
 
 
 // Get the best estimate of the display cycle time in milliseconds
 double MPEVRCustomPresenter::GetDisplayCycle()
 {
-  return (double)m_dD3DRefreshCycle;
+  return m_dD3DRefreshCycle;
 }
 
+// Get detected frame duration in milliseconds
+double MPEVRCustomPresenter::GetDetectedFrameTime()
+{
+  return m_DetectedFrameTime;
+}
 
 // Get the difference in video and display cycle times.
 double MPEVRCustomPresenter::GetCycleDifference()
@@ -2165,3 +2240,157 @@ void MPEVRCustomPresenter::NotifyDVDMenuState(bool pIsInMenu)
   }
 }
 
+void MPEVRCustomPresenter::CorrectSampleTime(IMFSample* pSample)
+{
+  double ForceFPS = 0.0;
+  //double ForceFPS = 59.94;
+  //double ForceFPS = 23.976;
+  if (ForceFPS != 0.0)
+  {
+    m_rtTimePerFrame = (LONGLONG)(10000000.0 / ForceFPS);
+  }
+
+  LONGLONG Duration = m_rtTimePerFrame;
+  LONGLONG PrevTime = m_LastScheduledUncorrectedSampleTime;
+  LONGLONG Time;
+  LONGLONG SetDuration;
+  pSample->GetSampleDuration(&SetDuration);
+  pSample->GetSampleTime(&Time);
+  m_LastScheduledUncorrectedSampleTime = Time;
+
+  m_bCorrectedFrameTime = false;
+  double LastFP = m_LastScheduledSampleTimeFP;
+
+  LONGLONG Diff2 = (LONGLONG)(PrevTime - m_LastScheduledSampleTimeFP*10000000.0);
+  LONGLONG Diff = Time - PrevTime;
+  if (PrevTime == -1)
+    Diff = 0;
+  if (Diff < 0)
+    Diff = -Diff;
+  if (Diff2 < 0)
+    Diff2 = -Diff2;
+  if (Diff < m_rtTimePerFrame*8 && m_rtTimePerFrame && 
+      Diff2 < m_rtTimePerFrame*8 && m_fRate == 1.0f &&
+      !m_bDVDMenu && !m_bScrubbing) 
+  {
+    int iPos = (m_DetectedFrameTimePos++) % 30;
+    LONGLONG Diff = Time - PrevTime;
+    if (PrevTime == -1)
+    Diff = 0;
+    m_DetectedFrameTimeHistory[iPos] = Diff;
+
+    if (m_DetectedFrameTimePos >= 10)
+    {
+      int nFrames = min(m_DetectedFrameTimePos, 30);
+      LONGLONG DectedSum = 0;
+      for (int i = 0; i < nFrames; ++i)
+      {
+        DectedSum += m_DetectedFrameTimeHistory[i];
+      }
+
+      double Average = double(DectedSum) / double(nFrames);
+      double DeviationSum = 0.0;
+      for (int i = 0; i < nFrames; ++i)
+      {
+        double Deviation = m_DetectedFrameTimeHistory[i] - Average;
+        DeviationSum += Deviation*Deviation;
+      }
+
+      double StdDev = sqrt(DeviationSum/double(nFrames));
+
+      m_DetectedFrameTimeStdDev = StdDev;
+
+      double DetectedRate = 1.0/ (double(DectedSum) / (nFrames * 10000000.0) );
+
+      double AllowedError = 0.0003;
+
+      static double AllowedValues[] = {60.0, 59.94, 50.0, 48.0, 47.952, 30.0, 29.97, 25.0, 24.0, 23.976};
+
+      int nAllowed = sizeof(AllowedValues) / sizeof(AllowedValues[0]);
+      for (int i = 0; i < nAllowed; ++i)
+      {
+        if (fabs(1.0 - DetectedRate / AllowedValues[i]) < AllowedError)
+        {
+          DetectedRate = AllowedValues[i];
+          break;
+        }
+      }
+
+      m_DetectedFrameTimeHistoryHistory[m_DetectedFrameTimePos % 100] = DetectedRate;
+
+      CMap<double, double, CAutoInt, CAutoInt> Map;
+
+      for (int i = 0; i < 100; ++i)
+      {
+        ++Map[m_DetectedFrameTimeHistoryHistory[i]];
+      }
+
+      POSITION Pos = Map.GetStartPosition();
+      double BestVal = 0.0;
+      int BestNum = 5;
+      while (Pos)
+      {
+        double Key;
+        CAutoInt Value;
+        Map.GetNextAssoc(Pos, Key, Value);
+        if (Value.m_Int > BestNum && Key != 0.0)
+        {
+          BestNum = Value.m_Int;
+          BestVal = Key;
+        }
+      }
+
+      m_DetectedLock = false;
+      for (int i = 0; i < nAllowed; ++i)
+      {
+        if (BestVal == AllowedValues[i])
+        {
+          m_DetectedLock = true;
+          break;
+        }
+      }
+      if (BestVal != 0.0)
+      {
+        m_DetectedFrameRate = BestVal;
+        m_DetectedFrameTime = 1.0 / BestVal;
+      }
+    }
+
+    LONGLONG PredictedNext = PrevTime + m_rtTimePerFrame;
+    LONGLONG PredictedDiff = PredictedNext - Time;
+    if (PredictedDiff < 0)
+      PredictedDiff = -PredictedDiff;
+
+    if (m_DetectedFrameTime != 0.0 && m_DetectedLock )
+    {
+      double CurrentTime = Time / 10000000.0;
+      double LastTime = m_LastScheduledSampleTimeFP;
+      double PredictedTime = LastTime + m_DetectedFrameTime;
+      if (fabs(PredictedTime - CurrentTime) > 0.0015) // 1.5 ms wrong, lets correct
+      {
+        CurrentTime = PredictedTime;
+        Time = (LONGLONG)(CurrentTime * 10000000.0);
+        // Not needed?
+        //pSample->SetSampleTime(Time);
+        pSample->SetSampleDuration((LONGLONG)(m_DetectedFrameTime * 10000000.0));
+        m_bCorrectedFrameTime = true;
+      }
+      m_LastScheduledSampleTimeFP = CurrentTime;;
+    }
+    else
+    {
+      m_LastScheduledSampleTimeFP = Time / 10000000.0;
+    }
+  }
+  else
+  {
+    m_LastScheduledSampleTimeFP = Time / 10000000.0;
+    if (Diff > m_rtTimePerFrame*8)
+    {
+      // Seek
+      m_DetectedFrameTimePos = 0;
+      m_DetectedLock = false;
+    }
+  }
+  LOG_TRACE("EVR: Time: %f %f %f\n", Time / 10000000.0, SetDuration / 10000000.0, m_DetectedFrameRate);
+}

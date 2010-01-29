@@ -16,6 +16,7 @@
 
 #pragma warning(disable: 4995 4996)
 
+#include "StdAfx.h"
 #include <streams.h>
 #include <atlbase.h>
 #include <shlobj.h>
@@ -35,11 +36,18 @@ using namespace std;
 HMODULE m_hModuleDXVA2  = NULL;
 HMODULE m_hModuleEVR    = NULL;
 HMODULE m_hModuleMFPLAT = NULL;
+HMODULE m_hModuleDWMAPI = NULL;
 
 TDXVA2CreateDirect3DDeviceManager9* m_pDXVA2CreateDirect3DDeviceManager9 = NULL;
 TMFCreateVideoSampleFromSurface*    m_pMFCreateVideoSampleFromSurface    = NULL;
 TMFCreateVideoMediaType*            m_pMFCreateVideoMediaType            = NULL;
 TMFCreateMediaType*                 m_pMFCreateMediaType                 = NULL;
+
+// Vista / Windows 7 only
+TDwmEnableMMCSS*                    m_pDwmEnableMMCSS                    = NULL;
+TDwmGetCompositionTimingInfo*       m_pDwmGetCompositionTimingInfo       = NULL;
+TDwmIsCompositionEnabled*           m_pDwmIsCompositionEnabled           = NULL;
+TDwmEnableComposition*              m_pDwmEnableComposition              = NULL;
 
 BOOL m_bEVRLoaded    = false;
 char* m_RenderPrefix = "vmr9";
@@ -133,7 +141,7 @@ void LogRotate()
 CCritSec m_qLock;
 std::queue<std::string> m_logQueue;
 BOOL m_bLoggerRunning;
-HANDLE m_hLogger=NULL;
+HANDLE m_hLogger = NULL;
 
 string GetLogLine()
 {
@@ -361,6 +369,15 @@ void UnloadEVR()
     }
     m_hModuleMFPLAT = NULL;
   }
+  if (m_hModuleDWMAPI != NULL)
+  {
+    Log("Freeing lib: DWMAPI.dll");
+    if (!FreeLibrary(m_hModuleMFPLAT))
+    {
+      Log("DWMAPI.dll could not be unloaded");
+    }
+    m_hModuleMFPLAT = NULL;
+  }
 }
 
 
@@ -397,6 +414,18 @@ bool LoadEVR()
           {
             Log("Found method MFCreateMediaType");
             Log("Successfully loaded EVR dlls");
+            
+            sprintf(mfDLLFileName,"%s\\dwmapi.dll", systemFolder);
+            m_hModuleDWMAPI = LoadLibrary(mfDLLFileName);
+            // Vista / Windows 7 only, allowed to return NULL. Remember to check agains NULL when using
+            if (m_hModuleDWMAPI)
+            {
+              Log("Successfully loaded DWM dll");
+			  m_pDwmEnableMMCSS = (TDwmEnableMMCSS*)GetProcAddress(m_hModuleDWMAPI,"DwmEnableMMCSS");
+              m_pDwmGetCompositionTimingInfo = (TDwmGetCompositionTimingInfo*)GetProcAddress(m_hModuleDWMAPI,"DwmGetCompositionTimingInfo");
+              m_pDwmIsCompositionEnabled = (TDwmIsCompositionEnabled*)GetProcAddress(m_hModuleDWMAPI,"DwmIsCompositionEnabled");
+              m_pDwmEnableComposition = (TDwmEnableComposition*)GetProcAddress(m_hModuleDWMAPI,"DwmEnableComposition");
+            }
             return TRUE;
           }
         }
@@ -1173,29 +1202,3 @@ void AddWstCodecToGraph(IGraphBuilder* pGraph)
     pWstCodec->Release();
   }
 }
-
-
-int processCounter = 0;
-int threadCounter = 0;
-BOOL APIENTRY DllMain(HANDLE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)
-{
-  switch (ul_reason_for_call)
-  {
-  case DLL_PROCESS_ATTACH:
-    processCounter++;
-    break;
-  case DLL_THREAD_ATTACH:
-    threadCounter++;
-    break;
-  case DLL_THREAD_DETACH:
-    threadCounter--;
-    break;
-  case DLL_PROCESS_DETACH:
-    processCounter--;
-    if (processCounter == 0)
-      StopLogger();
-    break;
-  }
-  return TRUE;
-}
-

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="DirectShowHelper"
 	ProjectGUID="{7C2419B3-501B-4B10-B3D4-E81BEB16843F}"
 	RootNamespace="dshowhelper"
@@ -21,7 +21,7 @@
 			OutputDirectory=".\obj\Debug"
 			IntermediateDirectory=".\obj\Debug"
 			ConfigurationType="2"
-			UseOfMFC="0"
+			UseOfMFC="2"
 			CharacterSet="2"
 			>
 			<Tool
@@ -109,7 +109,7 @@
 			OutputDirectory=".\obj\Release"
 			IntermediateDirectory=".\obj\Release"
 			ConfigurationType="2"
-			UseOfMFC="0"
+			UseOfMFC="2"
 			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
@@ -207,6 +207,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\source\dllmodul.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\dshowhelper.cpp"
 				>
 			</File>
@@ -241,6 +245,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\source\autoint.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\callback.h"
 				>
 			</File>
@@ -266,6 +274,10 @@
 			</File>
 			<File
 				RelativePath=".\source\StatsRenderer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\StdAfx.h"
 				>
 			</File>
 			<File

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
-#include <windows.h>
+#include "StdAfx.h"
 #include <streams.h>  // CAutolock
 
 #define ABS64(num) (num >=0 ? num : -num)

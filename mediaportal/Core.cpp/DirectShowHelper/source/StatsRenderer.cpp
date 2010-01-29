@@ -33,6 +33,7 @@ struct MYD3DVERTEX<0>
 };
 #pragma pack(pop)
 
+
 StatsRenderer::StatsRenderer(MPEVRCustomPresenter* presenter, IDirect3DDevice9* device):
   m_pPresenter(presenter),
   m_pD3DDev(device),
@@ -64,9 +65,11 @@ StatsRenderer::StatsRenderer(MPEVRCustomPresenter* presenter, IDirect3DDevice9* 
   }
 }
 
+
 StatsRenderer::~StatsRenderer(void)
 {
 }
+
 
 static HRESULT DrawRect(CComPtr<IDirect3DDevice9> pD3DDev, MYD3DVERTEX<0> v[4])
 {
@@ -104,87 +107,29 @@ static HRESULT DrawRect(CComPtr<IDirect3DDevice9> pD3DDev, MYD3DVERTEX<0> v[4])
   return E_FAIL;
 }
 
-void StatsRenderer::DrawText(const RECT &rc, const CString &strText, int _Priority)
-{
-	if (_Priority < 1)
-  {
-    return;
-  }
 
-	int Quality = 1;
+void StatsRenderer::DrawText(const RECT &rc, const CString &strText)
+{
 	D3DXCOLOR Color1( 1.0f, 0.2f, 0.2f, 1.0f );
 	D3DXCOLOR Color0( 0.0f, 0.0f, 0.0f, 1.0f );
 	RECT Rect1 = rc;
 	RECT Rect2 = rc;
-	if (Quality == 1)
-  {
-    OffsetRect(&Rect2 , 2, 2);
-  }
-  else
-  {
-    OffsetRect(&Rect2 , -1, -1);
-  }
 
-  if (Quality > 0)
-  {
-    {
-      m_pFont->DrawText( m_pSprite, strText, -1, &Rect2, DT_NOCLIP, Color0);
-    }
-  }
-  OffsetRect(&Rect2 , 1, 0);
-
-  if (Quality > 3)
-  {
-    m_pFont->DrawText( m_pSprite, strText, -1, &Rect2, DT_NOCLIP, Color0);
-  }
-  OffsetRect(&Rect2 , 1, 0);
-
-  if (Quality > 2)
-  {
-    m_pFont->DrawText( m_pSprite, strText, -1, &Rect2, DT_NOCLIP, Color0);
-  }
-  OffsetRect(&Rect2 , 0, 1);
-
-  if (Quality > 3)
-  {
-    m_pFont->DrawText( m_pSprite, strText, -1, &Rect2, DT_NOCLIP, Color0);
-  }
-  OffsetRect(&Rect2 , 0, 1);
-
-  if (Quality > 1)
-  {
-    m_pFont->DrawText( m_pSprite, strText, -1, &Rect2, DT_NOCLIP, Color0);
-  }
-  OffsetRect(&Rect2 , -1, 0);
-
-  if (Quality > 3)
-  {
-    m_pFont->DrawText( m_pSprite, strText, -1, &Rect2, DT_NOCLIP, Color0);
-  }
-  OffsetRect(&Rect2 , -1, 0);
-
-  if (Quality > 2)
-  {
-    m_pFont->DrawText( m_pSprite, strText, -1, &Rect2, DT_NOCLIP, Color0);
-  }
-  OffsetRect(&Rect2 , 0, -1);
-
-  if (Quality > 3)
-  {
-    m_pFont->DrawText( m_pSprite, strText, -1, &Rect2, DT_NOCLIP, Color0);
-  }
+  OffsetRect(&Rect2 , 1, 1);
+  m_pFont->DrawText( m_pSprite, strText, -1, &Rect2, DT_NOCLIP, Color0);
   m_pFont->DrawText( m_pSprite, strText, -1, &Rect1, DT_NOCLIP, Color1);
 }
 
-HRESULT StatsRenderer::DrawRect(DWORD _Color, DWORD _Alpha, const CRect &_Rect)
+
+HRESULT StatsRenderer::DrawRect(DWORD color, DWORD alpha, const CRect &rect)
 {
-	DWORD Color = D3DCOLOR_ARGB(_Alpha, GetRValue(_Color), GetGValue(_Color), GetBValue(_Color));
+	DWORD Color = D3DCOLOR_ARGB(alpha, GetRValue(color), GetGValue(color), GetBValue(color));
 	MYD3DVERTEX<0> v[] =
 	{
-		{float(_Rect.left),  float(_Rect.top),    0.5f, 2.0f, Color},
-		{float(_Rect.right), float(_Rect.top),    0.5f, 2.0f, Color},
-		{float(_Rect.left),  float(_Rect.bottom), 0.5f, 2.0f, Color},
-		{float(_Rect.right), float(_Rect.bottom), 0.5f, 2.0f, Color},
+		{float(rect.left),  float(rect.top),    0.5f, 2.0f, Color},
+		{float(rect.right), float(rect.top),    0.5f, 2.0f, Color},
+		{float(rect.left),  float(rect.bottom), 0.5f, 2.0f, Color},
+		{float(rect.right), float(rect.bottom), 0.5f, 2.0f, Color},
 	};
 
 	for(int i = 0; i < countof(v); i++)
@@ -241,52 +186,52 @@ void StatsRenderer::DrawStats()
     strText.Format("Display resolution: %d x %d | Video resolution: %d x %d | Aspect ratio: %d x %d", 
       m_pPresenter->m_displayMode.Width, m_pPresenter->m_displayMode.Height, m_pPresenter->m_iVideoWidth, 
       m_pPresenter->m_iVideoHeight, m_pPresenter->m_iARX, m_pPresenter->m_iARY);
-    DrawText(rc, strText, 1);
+    DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    //strText.Format("Display cycle from Windows: %.3f ms | Display refresh rate from Windows: %d Hz", 
-    //  m_pPresenter->m_dD3DRefreshCycle, m_pPresenter->m_uD3DRefreshRate);
-		//DrawText(rc, strText, 1);
-		//OffsetRect(&rc, 0, TextHeight);
+    strText.Format("Display cycle from Windows: %.3f ms | Display refresh rate from Windows: %.3f Hz", 
+      m_pPresenter->m_dD3DRefreshCycle, m_pPresenter->m_dD3DRefreshRate);
+		DrawText(rc, strText);
+		OffsetRect(&rc, 0, TextHeight);
 
     strText.Format("Frames drawn %d | dropped %d | # of sync glitches: %d", 
       m_pPresenter->m_iFramesDrawn, m_pPresenter->m_iFramesDropped, m_pPresenter->m_uSyncGlitches );
-    DrawText(rc, strText, 1);
+    DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
     strText.Format("Act.: %.3f fps | Act.frame time (red): %+5.3f ms [%+.3f ms, %+.3f ms] | SDev: %.3f ms", 
       10000000.0 / m_pPresenter->m_fJitterMean, m_pPresenter->m_fJitterMean / 10000.0, 
       (double(llMinJitter)/10000.0), (double(llMaxJitter)/10000.0), m_pPresenter->m_fJitterStdDev/10000.0);
-    DrawText(rc, strText, 1);
+    DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
 		//strText.Format("FIX ME! Measured closest match display cycle: %.3f ms | Measured base display cycle: %.3f ms", 
     //  m_pPresenter->m_dOptimumDisplayCycle, m_pPresenter->m_dEstRefreshCycle);
-		//DrawText(rc, strText, 1);
+		//DrawText(rc, strText);
 		//OffsetRect(&rc, 0, TextHeight);
 
 		//strText.Format("FIX ME! Display cycle - frame cycle mismatch: %.3f %%", 100 * m_pPresenter->m_dCycleDifference);
-		//DrawText(rc, strText, 1);
+		//DrawText(rc, strText);
 		//OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("Paint offset (green): %+5.1f ms [%.1f ms, %.1f ms] | SDev: %.3f ms", 
+    strText.Format("Sync offset (green): %+5.1f ms [%.1f ms, %.1f ms] | SDev: %.3f ms", 
       m_pPresenter->m_fSyncOffsetAvr/10000.0, (double(llMinSyncOffset)/10000.0), (double(llMaxSyncOffset)/10000.0), 
       m_pPresenter->m_fSyncOffsetStdDev/10000.0);
-    DrawText(rc, strText, 1);
+    DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("Raster offset (yellow): %5.2f ms | detected scanline time %+2.4f ms | est. refresh cycle %+2.4f", 
-      m_pPresenter->m_rasterSyncOffset, m_pPresenter->m_dDetectedScanlineTime, m_pPresenter->m_dEstRefreshCycle);
-    DrawText(rc, strText, 1);
+    strText.Format("Raster offset (yellow): %5.2f ms", m_pPresenter->m_rasterSyncOffset);
+    DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
+    // FIXME: PaintTime includes full time up to vsync.
     // divided in multiple stages to keep the accuracy
-    strText.Format("Paint time: %+5.3f ms [%.3f ms, %.3f ms]", 
-      (double(m_pPresenter->m_PaintTime/1000))/10, 
-      (double(m_pPresenter->m_PaintTimeMin/1000))/10, 
-      (double(m_pPresenter->m_PaintTimeMax/1000))/10 );
-    DrawText(rc, strText, 2);
-    OffsetRect(&rc, 0, TextHeight);
+    //strText.Format("Paint time: %+5.1f ms [%.3f ms, %.3f ms]", 
+    //  (double(m_pPresenter->m_PaintTime/1000))/10, 
+    //  (double(m_pPresenter->m_PaintTimeMin/1000))/10, 
+    //  (double(m_pPresenter->m_PaintTimeMax/1000))/10 );
+    //DrawText(rc, strText);
+    //OffsetRect(&rc, 0, TextHeight);
 
     OffsetRect(&rc, 0, TextHeight); // Extra "line feed"
     m_pSprite->End();
@@ -379,6 +324,7 @@ void StatsRenderer::DrawStats()
   }
 }
 
+
 void StatsRenderer::DrawTearingTest()
 {
   RECT rcTearing;
@@ -396,10 +342,12 @@ void StatsRenderer::DrawTearingTest()
   m_nTearingPos = (m_nTearingPos + 7) % m_pPresenter->m_iVideoWidth;
 }
 
+
 void StatsRenderer::VideSizeChanged()
 {
   m_bVideoSizeChanged = true;
 }
+
 
 HINSTANCE StatsRenderer::GetD3X9Dll()
 {

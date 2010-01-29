@@ -28,6 +28,7 @@
 #endif
 
 #include <dxva2api.h>
+#include <dwmapi.h>
 
 // This class is exported from the dshowhelper.dll
 class DSHOWHELPER_API Cdshowhelper 
@@ -51,6 +52,18 @@ extern TMFCreateVideoMediaType* m_pMFCreateVideoMediaType;
 
 typedef HRESULT __stdcall TMFCreateMediaType(IMFMediaType** ppIMediaType);
 extern TMFCreateMediaType* m_pMFCreateMediaType;
+
+typedef HRESULT __stdcall TDwmEnableMMCSS(BOOL fEnableMMCSS);
+extern TDwmEnableMMCSS* m_pDwmEnableMMCSS;
+
+typedef HRESULT __stdcall TDwmGetCompositionTimingInfo(HWND hwnd, DWM_TIMING_INFO *pTimingInfo);
+extern TDwmGetCompositionTimingInfo* m_pDwmGetCompositionTimingInfo;
+
+typedef HRESULT __stdcall TDwmIsCompositionEnabled(BOOL *pfEnabled);
+extern TDwmIsCompositionEnabled* m_pDwmIsCompositionEnabled;
+
+typedef HRESULT __stdcall TDwmEnableComposition(UINT uCompositionAction);
+extern TDwmEnableComposition* m_pDwmEnableComposition;
 
 HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService, REFIID riid, LPVOID* ppvObject);
 

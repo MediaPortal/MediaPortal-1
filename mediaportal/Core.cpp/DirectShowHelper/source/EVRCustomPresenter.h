@@ -29,7 +29,7 @@ using namespace std;
 #define NB_JITTER 125
 
 // magic numbers
-#define DEFAULT_FRAME_TIME 400000 // used when fps information is not provided (e.g. TsReader)
+#define DEFAULT_FRAME_TIME 200000 // used when fps information is not provided (PAL interlaced == 50fps)
 
 // uncomment the //Log to enable extra logging
 #define LOG_TRACE //Log
@@ -155,6 +155,7 @@ public:
   double         GetRefreshRate();
   double         GetDisplayCycle();
   double         GetCycleDifference();
+  double         GetDetectedFrameTime();
 
   // Settings
   void           EnableDrawStats(bool enable);
@@ -168,7 +169,6 @@ friend class StatsRenderer;
 
 protected:
   void           EstimateRefreshTimings();
-  UINT           GetAdapter(IDirect3D9* pD3D);
   bool           ImmediateCheckForInput();
   void           LogStats();
   void           ReleaseSurfaces();
@@ -197,6 +197,8 @@ protected:
   void           ReturnSample(IMFSample* pSample, BOOL tryNotify);
   void           ResetStatistics();
   HRESULT        PresentSample(IMFSample* pSample);
+  void           CorrectSampleTime(IMFSample* pSample);
+  void           GetRefreshRateDwm();
 
   CComPtr<IDirect3DTexture9>        m_pVideoTexture;
   CComPtr<IDirect3DSurface9>        m_pVideoSurface;
@@ -238,6 +240,7 @@ protected:
   bool                              m_bFrameSkipping;
   double                            m_fSeekRate;
   bool                              m_bScrubbing;
+  bool                              m_bFirstFrame;
   bool                              m_bDVDMenu;
   MP_RENDER_STATE                   m_state;
   double                            m_fAvrFps;						            // Estimate the real FPS
@@ -270,9 +273,9 @@ protected:
   bool      m_bResetStats;
   bool      m_bDrawStats;
 
-  D3DDISPLAYMODE m_displayMode;
-  unsigned int m_uD3DRefreshRate;
-  double m_dD3DRefreshCycle;
+  D3DDISPLAYMODE  m_displayMode;
+  double          m_dD3DRefreshRate;
+  double          m_dD3DRefreshCycle;
 
   // Functions to trace timing performance
   void OnVBlankFinished(bool fAll, LONGLONG periodStart, LONGLONG periodEnd);
@@ -287,5 +290,19 @@ protected:
   double m_pllRasterSyncOffset[NB_JITTER];
 
   StatsRenderer* m_pStatsRenderer; 
-};
 
+  // dshowhelper owns this
+  IBaseFilter*  m_EVRFilter;
+
+  // Used for detecting the real frame duration
+  LONGLONG      m_LastScheduledUncorrectedSampleTime;
+  double        m_LastScheduledSampleTimeFP;
+  LONGLONG      m_DetectedFrameTimeHistory[30];
+  double        m_DetectedFrameTimeHistoryHistory[100];
+  int           m_DetectedFrameTimePos;
+  double        m_DetectedFrameRate;
+  double        m_DetectedFrameTime;
+  double        m_DetectedFrameTimeStdDev;
+  bool          m_bCorrectedFrameTime;
+  bool          m_DetectedLock;
+};
