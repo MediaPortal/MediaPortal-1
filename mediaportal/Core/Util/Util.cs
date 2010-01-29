@@ -56,6 +56,16 @@ namespace MediaPortal.Util
   /// </summary>
   public class Utils
   {
+
+    [DllImport("User32")]
+    public static extern void GetWindowText(int h, StringBuilder s, int nMaxCount);
+
+    [DllImport("User32")]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    [DllImport("User32")]
+    public static extern int EnumWindows(IECallBack x, int y);
+
     [DllImport("kernel32.dll")]
     private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out UInt64 lpFreeBytesAvailable,
                                                   out UInt64 lpTotalNumberOfBytes, out UInt64 lpTotalNumberOfFreeBytes);
@@ -101,6 +111,11 @@ namespace MediaPortal.Util
     private static extern int WNetAddConnection2A(ref NetResource pstNetRes, string psPassword, string psUsername,
                                                   int piFlags);
 
+
+    private const int SW_SHOWNORMAL = 1;
+    private const int SW_SHOW = 5;
+    private const int SW_RESTORE = 9;
+
     private const int CONNECT_UPDATE_PROFILE = 0x00000001;
     private const int RESOURCETYPE_DISK = 0x1;
 
@@ -117,6 +132,7 @@ namespace MediaPortal.Util
       public string Provider;
     }
 
+    public delegate bool IECallBack(int hwnd, int lParam);
     public delegate void UtilEventHandler(Process proc, bool waitForExit);
 
     public static event UtilEventHandler OnStartExternal = null; // Event: Start external process / waeberd & mPod
@@ -1533,6 +1549,68 @@ namespace MediaPortal.Util
       {
         CriticalOutputLines.Add(aFailureString);
       }
+    }
+
+    /// <summary>
+    /// Checks whether a process is currently running
+    /// </summary>
+    /// <param name="aShouldExit">Indicate that a windows application should be closed gracefully. If it does not respond in 10 seconds a kill is performed</param>
+    /// <returns>If the given process is still present.</returns>
+    public static bool CheckForRunningProcess(string aProcessName, bool aShouldExit)
+    {
+      bool mpRunning = false;
+      string processName = aProcessName;
+      foreach (Process process in Process.GetProcesses())
+      {
+        if (process.ProcessName.Equals(processName))
+        {
+          if (!aShouldExit)
+          {
+            mpRunning = true;
+            break;
+          }
+          else
+          {
+            try
+            {
+              // Kill the MediaPortal process by finding window and sending ALT+F4 to it.
+              IECallBack ewp = new IECallBack(EnumWindowCallBack);
+              EnumWindows(ewp, 0);
+              process.CloseMainWindow();
+              // Wait for the process to die, we wait for a maximum of 10 seconds
+              if (!process.WaitForExit(10000))
+              {
+                process.Kill();
+              }
+            }
+            catch (Exception)
+            {
+              try
+              {
+                process.Kill();
+              }
+              catch (Exception) { }
+            }
+
+            mpRunning = CheckForRunningProcess(aProcessName, false);
+            break;
+          }
+        }
+      }
+      return mpRunning;
+    }
+
+    private static bool EnumWindowCallBack(int hwnd, int lParam)
+    {
+      IntPtr windowHandle = (IntPtr)hwnd;
+      StringBuilder sb = new StringBuilder(1024);
+      GetWindowText((int)windowHandle, sb, sb.Capacity);
+      string window = sb.ToString().ToLower();
+      if (window.IndexOf("mediaportal") >= 0 || window.IndexOf("media portal") >= 0)
+      {
+        ShowWindow(windowHandle, SW_SHOWNORMAL);
+      }
+      return true;
     }
 
     public static bool PlayDVD()

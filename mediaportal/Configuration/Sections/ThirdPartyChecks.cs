@@ -154,7 +154,22 @@ namespace MediaPortal.Configuration.Sections
           string fileName = Config.GetFile(Config.Dir.Base, "MPTray.exe");
           using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
           {
-            subkey.SetValue("MPTray", fileName);
+            object objValue = subkey.GetValue("MPTray");
+            if (objValue == null || String.IsNullOrEmpty(objValue.ToString()))
+            {
+              subkey.SetValue("MPTray", fileName);
+              Log.Info("ThirdPartyChecks: Added MPTray to user's autostart");
+            }
+            else
+            {
+              Log.Debug("ThirdPartyChecks: MPTray already present in user's autostart");
+            }
+          }
+
+          if (!Util.Utils.CheckForRunningProcess("MPTray.exe", false))
+          {
+            Log.Debug("ThirdPartyChecks: MPTray not yet running. Launching...");
+            Util.Utils.StartProcess(fileName, String.Empty, false, false);
           }
         }
         else
@@ -162,6 +177,7 @@ namespace MediaPortal.Configuration.Sections
           using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
           {
             subkey.DeleteValue("MPTray", false);
+            Log.Info("ThirdPartyChecks: Removed MPTray from user's autostart");
           }
         }
       }

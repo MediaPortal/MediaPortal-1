@@ -56,12 +56,6 @@ namespace MediaPortal.Configuration
     private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
     [DllImport("User32")]
-    public static extern int EnumWindows(IECallBack x, int y);
-
-    [DllImport("User32")]
-    public static extern void GetWindowText(int h, StringBuilder s, int nMaxCount);
-
-    [DllImport("User32")]
     public static extern void GetClassName(int h, StringBuilder s, int nMaxCount);
 
     [DllImport("User32", CharSet = CharSet.Auto)]
@@ -117,11 +111,8 @@ namespace MediaPortal.Configuration
 
     #region Variables
 
-    public delegate bool IECallBack(int hwnd, int lParam);
-
-    private const int SW_SHOWNORMAL = 1;
     private const int SW_SHOW = 5;
-    private const int SW_RESTORE = 9;
+
     private const string _windowName = "MediaPortal - Configuration";
     private int hintShowCount = 0;
     private LinkLabel linkLabel1;
@@ -1322,68 +1313,19 @@ namespace MediaPortal.Configuration
       Settings.SaveCache();
     }
 
-    /// <summary>
-    /// Checks whether a process is currently running
-    /// </summary>
-    /// <param name="aShouldExit">Indicate that a windows application should be closed gracefully. If it does not respond in 10 seconds a kill is performed</param>
-    /// <returns>If the given process is still present.</returns>
-    private bool CheckForRunningProcess(string aProcessName, bool aShouldExit)
-    {
-      bool mpRunning = false;
-      string processName = aProcessName;
-      foreach (Process process in Process.GetProcesses())
-      {
-        if (process.ProcessName.Equals(processName))
-        {
-          if (!aShouldExit)
-          {
-            mpRunning = true;
-            break;
-          }
-          else
-          {
-            try
-            {
-              // Kill the MediaPortal process by finding window and sending ALT+F4 to it.
-              IECallBack ewp = new IECallBack(EnumWindowCallBack);
-              EnumWindows(ewp, 0);
-              process.CloseMainWindow();
-              // Wait for the process to die, we wait for a maximum of 10 seconds
-              if (!process.WaitForExit(10000))
-              {
-                process.Kill();
-              }
-            }
-            catch (Exception)
-            {
-              try
-              {
-                process.Kill();
-              }
-              catch (Exception) {}
-            }
-
-            mpRunning = CheckForRunningProcess(aProcessName, false);
-            break;
-          }
-        }
-      }
-      return mpRunning;
-    }
-
     private void applyButton_Click(object sender, EventArgs e)
     {
       try
       {
         // Check if MediaPortal is running, if so inform user that it needs to be restarted for the changes to take effect.
-        if (CheckForRunningProcess("MediaPortal", false))
+        if (Util.Utils.CheckForRunningProcess("MediaPortal", false))
         {
           DialogResult dialogResult =
             MessageBox.Show("For the changes to take effect you need to restart MediaPortal, restart now?",
                             "MediaPortal", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
           if (dialogResult == DialogResult.Yes)
           {
-            if (!CheckForRunningProcess("MediaPortal", true))
+            if (!Util.Utils.CheckForRunningProcess("MediaPortal", true))
             {
               SaveAllSettings();
               // Start the MediaPortal process
@@ -1396,19 +1338,6 @@ namespace MediaPortal.Configuration
       catch (Exception) {}
 
       SaveAllSettings();
-    }
-
-    private bool EnumWindowCallBack(int hwnd, int lParam)
-    {
-      IntPtr windowHandle = (IntPtr)hwnd;
-      StringBuilder sb = new StringBuilder(1024);
-      GetWindowText((int)windowHandle, sb, sb.Capacity);
-      string window = sb.ToString().ToLower();
-      if (window.IndexOf("mediaportal") >= 0 || window.IndexOf("media portal") >= 0)
-      {
-        ShowWindow(windowHandle, SW_SHOWNORMAL);
-      }
-      return true;
     }
 
     private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
