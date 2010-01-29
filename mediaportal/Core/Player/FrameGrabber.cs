@@ -121,7 +121,7 @@ namespace MediaPortal
     public void OnFrame(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pSurface)
     {
       // Is GetCurrentImage() requesting a frame grab?
-      if (!grabSample)
+      if (!grabSample || width == 0 || height == 0)
       {
         return;
       }
