@@ -114,21 +114,38 @@ namespace MediaPortal.Player
           Vmr9.AddVMR9(graphBuilder);
           Vmr9.Enable(false);
 
-          if (strVideoCodec.Length > 0)
+          string extension = Path.GetExtension(m_strCurrentFile).ToLower();
+          if (extension.Equals(".dvr-ms") || extension.Equals(".mpg") || extension.Equals(".mpeg") ||
+              extension.Equals(".bin") || extension.Equals(".dat"))
           {
-            DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
+            if (strVideoCodec.Length > 0)
+            {
+              DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
+            }
+            if (strAudioCodec.Length > 0)
+            {
+              DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+            }
           }
-          if (strAudioCodec.Length > 0)
+          if (extension.Equals(".wmv"))
           {
-            DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+            DirectShowUtil.AddFilterToGraph(graphBuilder, "WMVideo Decoder DMO");
+            DirectShowUtil.AddFilterToGraph(graphBuilder, "WMAudio Decoder DMO");
           }
-          if (strH264VideoCodec.Length > 0 && strH264VideoCodec != strVideoCodec)
+          if (extension.Equals(".mp4") || extension.Equals(".mkv"))
           {
-            DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
-          }
-          if (strAACAudioCodec.Length > 0 && strAACAudioCodec != strAudioCodec)
-          {
-            DirectShowUtil.AddFilterToGraph(graphBuilder, strAACAudioCodec);
+            if (strH264VideoCodec.Length > 0)
+            {
+              DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
+            }
+            if (strAudioCodec.Length > 0)
+            {
+              DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+            }
+            if (strAACAudioCodec.Length > 0 && strAACAudioCodec != strAudioCodec)
+            {
+              DirectShowUtil.AddFilterToGraph(graphBuilder, strAACAudioCodec);
+            }
           }
         }
         else
