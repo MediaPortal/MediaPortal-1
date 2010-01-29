@@ -372,7 +372,7 @@ void UnloadEVR()
   if (m_hModuleDWMAPI != NULL)
   {
     Log("Freeing lib: DWMAPI.dll");
-    if (!FreeLibrary(m_hModuleMFPLAT))
+    if (!FreeLibrary(m_hModuleDWMAPI))
     {
       Log("DWMAPI.dll could not be unloaded");
     }
@@ -421,7 +421,7 @@ bool LoadEVR()
             if (m_hModuleDWMAPI)
             {
               Log("Successfully loaded DWM dll");
-			  m_pDwmEnableMMCSS = (TDwmEnableMMCSS*)GetProcAddress(m_hModuleDWMAPI,"DwmEnableMMCSS");
+              m_pDwmEnableMMCSS = (TDwmEnableMMCSS*)GetProcAddress(m_hModuleDWMAPI,"DwmEnableMMCSS");
               m_pDwmGetCompositionTimingInfo = (TDwmGetCompositionTimingInfo*)GetProcAddress(m_hModuleDWMAPI,"DwmGetCompositionTimingInfo");
               m_pDwmIsCompositionEnabled = (TDwmIsCompositionEnabled*)GetProcAddress(m_hModuleDWMAPI,"DwmIsCompositionEnabled");
               m_pDwmEnableComposition = (TDwmEnableComposition*)GetProcAddress(m_hModuleDWMAPI,"DwmEnableComposition");
