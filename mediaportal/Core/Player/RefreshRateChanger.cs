@@ -30,7 +30,6 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Microsoft.DirectX.Direct3D;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows.Forms;
 
 #endregion

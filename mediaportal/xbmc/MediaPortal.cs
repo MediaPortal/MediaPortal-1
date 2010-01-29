@@ -148,8 +148,10 @@ public class MediaPortalApp : D3DApp, IRender
   private DateTime m_updateTimer = DateTime.MinValue;
   private int m_iDateLayout;
   private static SplashScreen splashScreen;
+#if !DEBUG
   private static bool _avoidVersionChecking;
-  private bool _resetOnResize = false;
+#endif
+  private bool _resetOnResize;
 
   #endregion
 
@@ -212,12 +214,14 @@ public class MediaPortalApp : D3DApp, IRender
           string skinOverrideArg = arg.Remove(0, 6); // remove /?= from the argument
           _strSkinOverride = skinOverrideArg;
         }
+#if !DEBUG
         _avoidVersionChecking = false;
         if (arg.ToLowerInvariant() == "/avoidversioncheck")
         {
           _avoidVersionChecking = true;
           Log.Warn("Version check is disabled by command line switch \"/avoidVersionCheck\"");
         }
+#endif
       }
     }
     Log.BackupLogFiles();

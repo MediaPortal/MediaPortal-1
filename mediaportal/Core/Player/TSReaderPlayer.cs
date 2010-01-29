@@ -741,7 +741,6 @@ namespace MediaPortal.Player
               int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning,
                                                   new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
               long lStreamPos;
-              double fCurrentPos;
               _mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
               _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
               Log.Info("TsReaderPlayer: pos: {0} start:{1} end:{2}", lStreamPos, lContentStart, lContentEnd);
