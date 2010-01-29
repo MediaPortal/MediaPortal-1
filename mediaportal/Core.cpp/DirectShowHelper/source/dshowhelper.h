@@ -59,12 +59,6 @@ extern TDwmEnableMMCSS* m_pDwmEnableMMCSS;
 typedef HRESULT __stdcall TDwmGetCompositionTimingInfo(HWND hwnd, DWM_TIMING_INFO *pTimingInfo);
 extern TDwmGetCompositionTimingInfo* m_pDwmGetCompositionTimingInfo;
 
-typedef HRESULT __stdcall TDwmIsCompositionEnabled(BOOL *pfEnabled);
-extern TDwmIsCompositionEnabled* m_pDwmIsCompositionEnabled;
-
-typedef HRESULT __stdcall TDwmEnableComposition(UINT uCompositionAction);
-extern TDwmEnableComposition* m_pDwmEnableComposition;
-
 HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService, REFIID riid, LPVOID* ppvObject);
 
 void Log(const char *fmt, ...);

@@ -46,8 +46,6 @@ TMFCreateMediaType*                 m_pMFCreateMediaType                 = NULL;
 // Vista / Windows 7 only
 TDwmEnableMMCSS*                    m_pDwmEnableMMCSS                    = NULL;
 TDwmGetCompositionTimingInfo*       m_pDwmGetCompositionTimingInfo       = NULL;
-TDwmIsCompositionEnabled*           m_pDwmIsCompositionEnabled           = NULL;
-TDwmEnableComposition*              m_pDwmEnableComposition              = NULL;
 
 BOOL m_bEVRLoaded    = false;
 char* m_RenderPrefix = "vmr9";
@@ -423,8 +421,6 @@ bool LoadEVR()
               Log("Successfully loaded DWM dll");
               m_pDwmEnableMMCSS = (TDwmEnableMMCSS*)GetProcAddress(m_hModuleDWMAPI,"DwmEnableMMCSS");
               m_pDwmGetCompositionTimingInfo = (TDwmGetCompositionTimingInfo*)GetProcAddress(m_hModuleDWMAPI,"DwmGetCompositionTimingInfo");
-              m_pDwmIsCompositionEnabled = (TDwmIsCompositionEnabled*)GetProcAddress(m_hModuleDWMAPI,"DwmIsCompositionEnabled");
-              m_pDwmEnableComposition = (TDwmEnableComposition*)GetProcAddress(m_hModuleDWMAPI,"DwmEnableComposition");
             }
             return TRUE;
           }

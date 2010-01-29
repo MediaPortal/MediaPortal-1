@@ -2036,22 +2036,21 @@ void MPEVRCustomPresenter::GetRefreshRateDwm()
 
     ZeroMemory(&timingInfo, sizeof(timingInfo));
     timingInfo.cbSize = sizeof(timingInfo);
-    hr = m_pDwmGetCompositionTimingInfo(NULL, &timingInfo);
+    hr = m_pDwmGetCompositionTimingInfo(GetActiveWindow(), &timingInfo);
     if (SUCCEEDED(hr))
     {
       m_dD3DRefreshRate = (double)timingInfo.rateRefresh.uiNumerator / (double)timingInfo.rateRefresh.uiDenominator;
       m_dD3DRefreshCycle = 1000.0 / m_dD3DRefreshRate;
       
       m_dDetectedScanlineTime = m_dD3DRefreshCycle / m_displayMode.Height;
-      
-      Log("Numerator %d, Denominator %d", timingInfo.rateRefresh.uiNumerator, timingInfo.rateRefresh.uiDenominator);
-      LOG_TRACE("DwmGetCompositionTimingInfo() returned refresh rate %.3f", m_dD3DRefreshRate);
+
+      Log("DwmGetCompositionTimingInfo() returned refresh rate %.3f", m_dD3DRefreshRate);
     }
     else
     {
       m_dD3DRefreshRate = (double)m_displayMode.RefreshRate;
       m_dD3DRefreshCycle = 1000.0 / m_dD3DRefreshRate; // In ms 
-      LOG_TRACE("DwmGetCompositionTimingInfo() failed - using inaccurate DirectX timing info");
+      Log("DwmGetCompositionTimingInfo() failed - using inaccurate DirectX timing info");
     }
   }
   else // XP
