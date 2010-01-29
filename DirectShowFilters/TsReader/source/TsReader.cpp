@@ -167,7 +167,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   TCHAR filename[1024];
   GetLogFile(filename);
   ::DeleteFile(filename);
-  LogDebug("-------------- v1.2.5 ----------------");
+  LogDebug("-------------- v1.2.6 ----------------");
 
   m_fileReader=NULL;
   m_fileDuration=NULL;
@@ -1128,6 +1128,9 @@ void CTsReaderFilter::ThreadProc()
 {
   LogDebug("CTsReaderFilter::ThreadProc start()");
 
+  int durationUpdateLoop = 1;
+  long Old_rtspDuration = 0 ;
+
   ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_BELOW_NORMAL);
 do
 {
@@ -1167,34 +1170,59 @@ do
     else
     {
       // we are not playing a local file
-      // are we playing a (RTSP) stream?
-//      if (m_rtspClient.IsRunning())
+      // we are playing a (RTSP) stream?
+      if(m_bTimeShifting || m_bRecording)
       {
-        if (m_bTimeShifting || m_bRecording)
+        if(durationUpdateLoop == 0)
         {
-          //yes.
-          //Then update the duration. Since we cannot 'read' the duration continously from the stream
-          //we take the duration we got when we started playing this stream
-          //and add the time-passed since then to it which should give a indication of the current
-          //duration
-		      double end = (double)(GetTickCount()-m_tickCount)/1000.0 ;
-
-          CPcr pcrStart,pcrEnd,pcrMax ;
-          pcrStart=m_duration.StartPcr();
-          pcrEnd.FromClock(end);
-	
-          //set the duration
-          m_duration.Set( pcrStart, pcrEnd, pcrMax);          // Continuous update
-
-          // Is graph running?
-          if (m_State == State_Running)
-          {
-            //yes, then send a EC_LENGTH_CHANGED event to the graph
-            NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);
-            SetDuration();
-          }
+        	Old_rtspDuration = m_rtspClient.Duration();
+          m_rtspClient.UpdateDuration();
         }
-//		LogDebug("RTSP duration : %f", (float)m_duration.Duration().Millisecs()/1000.0f) ;
+  	
+        CPcr pcrStart, pcrEnd, pcrMax ;
+        double duration = m_rtspClient.Duration() / 1000.0f ;
+        double start = m_duration.StartPcr().ToClock() ;
+        double end = m_duration.EndPcr().ToClock() ; 
+        
+    	  if (m_bTimeShifting)
+        {
+          // EndPcr is continuously increasing ( until ~26 hours for rollover that will fail ! )
+          // So, we refer duration to End, and just update start.
+          end = (double)(GetTickCount()-m_tickCount)/1000.0 ;
+          if(durationUpdateLoop == 0)
+          {
+            start  = end - duration;
+            if (start<0) start=0 ;
+          }
+				}
+				else
+				{
+          end = start + duration ;
+					if (Old_rtspDuration!=m_rtspClient.Duration())  // recording alive, continue to increase every second.
+					{
+            end += (double)(durationUpdateLoop % 5) ;
+					}
+          else
+          {
+            m_bRecording = false;
+          }
+				}           
+        //set the duration
+        pcrStart.FromClock(start) ;
+        pcrEnd.FromClock(end);
+        m_duration.Set( pcrStart, pcrEnd, pcrMax);          // Continuous update
+
+//          LogDebug("Start : %f, End : %f",(float)m_duration.StartPcr().ToClock(),(float)m_duration.EndPcr().ToClock()) ;
+
+        durationUpdateLoop = (durationUpdateLoop + 1) % 5;
+        
+        // Is graph running?
+        if (m_State == State_Running)
+        {
+          //yes, then send a EC_LENGTH_CHANGED event to the graph
+          NotifyEvent(EC_LENGTH_CHANGED, NULL, NULL);
+          SetDuration();
+        }
       }
     }
   }

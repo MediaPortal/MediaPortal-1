@@ -25,6 +25,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include <GroupsockHelper.hh>
 #include <math.h>
 
+extern void LogDebug(const char *fmt, ...) ;
+
 ////////// ServerMediaSession //////////
 
 ServerMediaSession* ServerMediaSession
@@ -221,6 +223,7 @@ char* ServerMediaSession::generateSDPDescription() {
 
     // Unless subsessions have differing durations, we also have a "a=range:" line:
     float dur = duration();
+//	LogDebug("generateSDPDescription() duration %f",dur) ;
     if (dur == 0.0) {
       rangeLine = strDup("a=range:npt=0-\r\n");
     } else if (dur > 0.0) {
@@ -230,6 +233,7 @@ char* ServerMediaSession::generateSDPDescription() {
     } else { // subsessions have differing durations, so "a=range:" lines go there
       rangeLine = strDup("");
     }
+//	LogDebug("generateSDPDescription() duration %f : %s",dur,rangeLine) ;
 
     char const* const sdpPrefixFmt =
       "v=0\r\n"
@@ -377,6 +381,7 @@ ServerMediaSubsession::rangeSDPLine() const {
 
   // Use our own duration for a "a=range:" line:
   float ourDuration = duration();
+LogDebug("rangeSDPLine() duration %f",ourDuration) ;
   if (ourDuration == 0.0) {
     return strDup("a=range:npt=0-\r\n");
   } else {

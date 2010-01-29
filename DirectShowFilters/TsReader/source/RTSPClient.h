@@ -25,6 +25,9 @@ public:
 	void Continue();
 	void FillBuffer(DWORD byteCount);
 
+  char* getSDPDescription();
+  bool UpdateDuration();
+
 protected:
   CMemoryBuffer& m_buffer;
   Medium* createClient(UsageEnvironment& env,int verbosityLevel, char const* applicationName) ;

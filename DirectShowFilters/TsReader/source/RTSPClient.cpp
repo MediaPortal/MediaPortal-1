@@ -75,6 +75,20 @@ char* CRTSPClient::getSDPDescriptionFromURL(Medium* client, char const* url,
   return result;
 }
 
+char* CRTSPClient::getSDPDescription() 
+{
+//	LogDebug("CRTSPClient::getSDPDescription()");
+  RTSPClient *client = (RTSPClient*)m_ourClient;
+  RTSPClient *rtspClient = RTSPClient::createNew(client->envir(), 0, "TSFileSource", tunnelOverHTTPPortNum);
+  char* result;
+  result = rtspClient->describeURL(m_url);
+
+//  LogDebug("CRTSPClient::getSDPDescription() statusCode = %d", rtspClient->describeStatus());
+  Medium::close(rtspClient);
+
+  return result;
+}
+
 Boolean CRTSPClient::clientSetupSubsession(Medium* client, MediaSubsession* subsession,Boolean streamUsingTCP) 
 {
 	LogDebug("CRTSPClient::clientSetupSubsession()");
@@ -561,4 +575,31 @@ bool CRTSPClient::Play(double fStart,double fDuration)
 	}
 	StartBufferThread();
 	return true;
+}
+
+bool CRTSPClient::UpdateDuration()
+{
+  char* sdpDescription= getSDPDescription();
+  if (sdpDescription == NULL) 
+	{
+    LogDebug("UpdateStreamDuration: Failed to get a SDP description from URL %s %s", m_url ,m_env->getResultMsg() );
+    return false;
+  }
+  //LogDebug("Opened URL %s %s",url,sdpDescription);
+
+	char* range=strstr(sdpDescription,"a=range:npt=");
+	if (range!=NULL)
+	{
+		char *pStart = range+strlen("a=range:npt=");
+    char *pEnd = strstr(range,"-") ;
+		if (pEnd!=NULL)
+		{
+			pEnd++ ;
+      double Start=atof(pStart) ;
+  		double End=atof(pEnd) ;
+
+//      LogDebug("rangestart:%f rangeend:%f", Start,End);
+			m_duration=((End-Start)*1000.0);
+		}
+	}
 }

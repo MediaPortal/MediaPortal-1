@@ -209,7 +209,7 @@ HRESULT FileReader::CloseFile()
 
 	if (m_hFile == INVALID_HANDLE_VALUE) 
   {
-    LogDebug("FileReader::CloseFile() no open file");
+//    LogDebug("FileReader::CloseFile() no open file");
 		return S_OK;
 	}
 
