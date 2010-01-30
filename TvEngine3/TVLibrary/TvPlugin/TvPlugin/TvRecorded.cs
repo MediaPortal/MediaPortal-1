@@ -334,7 +334,7 @@ namespace TvPlugin
     #region Overrides
 
     public override bool Init()
-    {
+    {      
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayRecordingBackStopped);
       g_Player.PlayBackEnded += new g_Player.EndedHandler(OnPlayRecordingBackEnded);
       g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayRecordingBackStarted);
@@ -570,7 +570,7 @@ namespace TvPlugin
       {
         case GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED:
           UpdateProperties();
-          break;
+          break;          
       }
       return base.OnMessage(message);
     }
@@ -1408,12 +1408,12 @@ namespace TvPlugin
       dlgYesNo.SetDefaultToYes(false);
       bool isRec = IsRecordingActual(rec);      
       TvServer server = new TvServer();
+      bool remove = false;
       if (isRec)
       {
         TvDatabase.Schedule sched = rec.ReferencedSchedule();
-        TVUtil.DeleteRecAndSchedWithPrompt(sched);
-      }
-      else
+        remove = TVUtil.DeleteRecAndSchedWithPrompt(sched);
+      } else
       {
         if (rec.TimesWatched > 0)
         {
@@ -1431,14 +1431,24 @@ namespace TvPlugin
         dlgYesNo.DoModal(GetID);
         if (!dlgYesNo.IsConfirmed)
         {
-          return;
+            return;
         }
+        remove = true;
+        
+      }
+
+      if (remove)
+      {
         if (isRecPlaying)
         {
-          g_Player.Stop();
-        }
-      }    
-
+          Log.Info("g_Player.Stopped {0}", g_Player.Stopped);                  
+          g_Player.Stop();                    
+        }        
+        DeleteRecordingAndUpdateGUI(rec); 
+      }
+    }
+   
+    private void DeleteRecordingAndUpdateGUI(Recording rec) {
       TryDeleteRecordingAndNotifyUser(rec);
 
       CacheManager.Clear();
@@ -1450,6 +1460,7 @@ namespace TvPlugin
       }
       GUIControl.SelectItemControl(GetID, facadeView.GetID, _iSelectedItem);
     }
+
 
     private void TryDeleteRecordingAndNotifyUser(Recording rec)
     {
@@ -1924,7 +1935,7 @@ namespace TvPlugin
     #region playback events
 
     private void doOnPlayBackStoppedOrChanged(g_Player.MediaType type, int stoptime, string filename, string caller)
-    {
+    {      
       Log.Info("TvRecorded:{0} {1} {2}", caller, type, filename);
       if (type != g_Player.MediaType.Recording)
       {
