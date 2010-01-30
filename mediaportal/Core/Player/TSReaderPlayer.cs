@@ -431,7 +431,7 @@ namespace MediaPortal.Player
 
         #region render TsReader output pins
         Log.Info("TSReaderPlayer: Render TsReader outputs");
-          
+         
         if (_isRadio)
         {
           IEnumPins enumPins;
@@ -470,29 +470,8 @@ namespace MediaPortal.Player
         }
         else
         {
-          IEnumPins enumPins;
-          hr = _fileSource.EnumPins(out enumPins);
-          DsError.ThrowExceptionForHR(hr);
-          IPin[] pins = new IPin[1];
-          int fetched = 0;
-          while (enumPins.Next(1, pins, out fetched) == 0)
-          {
-            if (fetched != 1)
-            {
-              break;
-            }
-            PinDirection direction;
-            pins[0].QueryDirection(out direction);
-            if (direction == PinDirection.Output)
-            {
-              hr = _graphBuilder.Render(pins[0]);
-              DsError.ThrowExceptionForHR(hr);
-            }
-            DirectShowUtil.ReleaseComObject(pins[0]);
-          }
-          DirectShowUtil.ReleaseComObject(enumPins);
+          DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, _fileSource);
         }
-
         #endregion
 
         _mediaCtrl = (IMediaControl)_graphBuilder;
