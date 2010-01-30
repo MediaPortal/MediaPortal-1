@@ -800,14 +800,18 @@ namespace DShowNET.Helper
                 {
                   FilterInfo i;
                   PinInfo pinInfo;
+                  string pinName = string.Empty;
                   if (baseFilter.QueryFilterInfo(out i) == 0 && pins[0].QueryPinInfo(out pinInfo) == 0)
                   {
-                    Log.Debug("Filter: {0} - pin connect: {1}", i.achName, pinInfo.name);
-
+                    Log.Debug("Filter: {0} - try to connect: {1}", i.achName, pinInfo.name);
+                    pinName = pinInfo.name;
                   }
                   DirectShowUtil.ReleaseComObject(i.pGraph);
                   hr = graphBuilder.Render(pins[0]);
-                  DsError.ThrowExceptionForHR(hr);
+                  if (hr != 0)
+                    Log.Warn(" - failed");
+                  if(pinName !="Subtitle") // subtitle render error not critical
+                    DsError.ThrowExceptionForHR(hr);
                 }
               }
             }

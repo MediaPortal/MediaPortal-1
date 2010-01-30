@@ -635,7 +635,18 @@ namespace MediaPortal.Player
         _basicAudio = null;
         _basicVideo = null;
         _ireader = null;
-        _fileSource = null;
+
+        if (_audioRendererFilter != null)
+        {
+          DirectShowUtil.ReleaseComObject(_audioRendererFilter);
+          _audioRendererFilter = null;
+        }
+
+        if (_fileSource != null)
+        {
+          DirectShowUtil.ReleaseComObject(_fileSource);          
+          _fileSource = null;
+        }
 
         if (_vmr9 != null)
         {
