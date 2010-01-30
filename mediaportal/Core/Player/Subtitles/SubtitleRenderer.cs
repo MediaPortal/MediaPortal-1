@@ -613,20 +613,34 @@ namespace MediaPortal.Player.Subtitles
     /// <param name="subtitle"></param>
     private void SetSubtitle(Subtitle subtitle)
     {
-      Log.Debug("SubtitleRenderer: SetSubtitle : " + subtitle.ToString());
-
-      // dispose of old subtitle
-      if (subTexture != null)
+      try
       {
-        subTexture.Dispose();
-        subTexture = null;
-      }
+        Log.Debug("SubtitleRenderer: SetSubtitle : " + subtitle.ToString());
 
-      // set new subtitle
-      subTexture = subtitle.texture;
-      currentSubtitle = subtitle;
-      currentSubtitle.subBitmap.Dispose();
-      currentSubtitle.subBitmap = null;
+        // dispose of old subtitle
+        if (subTexture != null)
+        {
+          subTexture.Dispose();
+          subTexture = null;
+        }
+
+        // set new subtitle
+        if (subtitle != null)
+        {          
+          subTexture = subtitle.texture;
+          currentSubtitle = subtitle;
+
+          if (currentSubtitle.subBitmap != null)
+          {
+            currentSubtitle.subBitmap.Dispose();
+            currentSubtitle.subBitmap = null;
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        Log.Error("SubtitleRenderer: SetSubtitle exception: {0} {1}", e.Message, e.StackTrace);         
+      }      
     }
 
     /// <summary>
