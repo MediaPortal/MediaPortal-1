@@ -584,106 +584,110 @@ namespace MediaPortal.Player
       GUIWindowManager.SendMessage(msg);
     }
 
+    private object lockObj = new object();
     private void Cleanup()
     {
-      if (_graphBuilder == null)
+      lock (lockObj)
       {
-        return;
-      }
-      int hr;
-      Log.Info("TSReaderPlayer: cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
-      try
-      {
-        if (_mediaCtrl != null)
+        if (_graphBuilder == null)
         {
-          int counter = 0;
-          FilterState state;
-          hr = _mediaCtrl.Stop();
-          hr = _mediaCtrl.GetState(10, out state);
-          while (state != FilterState.Stopped || GUIGraphicsContext.InVmr9Render)
+          return;
+        }
+        int hr;
+        Log.Info("TSReaderPlayer: cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
+        try
+        {
+          if (_mediaCtrl != null)
           {
-            Thread.Sleep(100);
+            int counter = 0;
+            FilterState state;
+            hr = _mediaCtrl.Stop();
             hr = _mediaCtrl.GetState(10, out state);
-            counter++;
-            if (counter >= 30)
+            while (state != FilterState.Stopped || GUIGraphicsContext.InVmr9Render)
             {
-              if (state != FilterState.Stopped)
-                Log.Error("TSReaderPlayer: graph still running");
-              if (GUIGraphicsContext.InVmr9Render)
-                Log.Error("TSReaderPlayer: in renderer");
-              break;
+              Thread.Sleep(100);
+              hr = _mediaCtrl.GetState(10, out state);
+              counter++;
+              if (counter >= 30)
+              {
+                if (state != FilterState.Stopped)
+                  Log.Error("TSReaderPlayer: graph still running");
+                if (GUIGraphicsContext.InVmr9Render)
+                  Log.Error("TSReaderPlayer: in renderer");
+                break;
+              }
             }
+            _mediaCtrl = null;
           }
-          _mediaCtrl = null;
-        }
 
-        if (_mediaEvt != null)
-        {
-          hr = _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
-          _mediaEvt = null;
-        }
-
-        _videoWin = _graphBuilder as IVideoWindow;
-        if (_videoWin != null)
-        {
-          hr = _videoWin.put_Visible(OABool.False);
-          hr = _videoWin.put_Owner(IntPtr.Zero);
-          _videoWin = null;
-        }
-
-        _mediaSeeking = null;
-        _basicAudio = null;
-        _basicVideo = null;
-        _ireader = null;
-
-        if (_audioRendererFilter != null)
-        {
-          DirectShowUtil.ReleaseComObject(_audioRendererFilter);
-          _audioRendererFilter = null;
-        }
-
-        if (_fileSource != null)
-        {
-          DirectShowUtil.ReleaseComObject(_fileSource);          
-          _fileSource = null;
-        }
-
-        if (_vmr9 != null)
-        {
-          _vmr9.Enable(false);
-          _vmr9.Dispose();
-          _vmr9 = null;
-        }
-
-        if (_graphBuilder != null)
-        {
-          DirectShowUtil.RemoveFilters(_graphBuilder);
-          if (_rotEntry != null)
+          if (_mediaEvt != null)
           {
-            _rotEntry.Dispose();
-            _rotEntry = null;
+            hr = _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
+            _mediaEvt = null;
           }
-          DirectShowUtil.ReleaseComObject(_graphBuilder);
-          _graphBuilder = null;
-        }
 
-        if (_dvbSubRenderer != null)
+          _videoWin = _graphBuilder as IVideoWindow;
+          if (_videoWin != null)
+          {
+            hr = _videoWin.put_Visible(OABool.False);
+            hr = _videoWin.put_Owner(IntPtr.Zero);
+            _videoWin = null;
+          }
+          
+          _mediaSeeking = null;
+          _basicAudio = null;
+          _basicVideo = null;
+          _ireader = null;
+
+          if (_audioRendererFilter != null)
+          {            
+            DirectShowUtil.ReleaseComObject(_audioRendererFilter);
+            _audioRendererFilter = null;
+          }
+
+          if (_fileSource != null)
+          {
+            DirectShowUtil.ReleaseComObject(_fileSource, 5000);
+            _fileSource = null;
+          }
+
+          if (_vmr9 != null)
+          {
+            _vmr9.Enable(false);
+            _vmr9.Dispose();
+            _vmr9 = null;
+          }
+
+          if (_graphBuilder != null)
+          {
+            DirectShowUtil.RemoveFilters(_graphBuilder);
+            if (_rotEntry != null)
+            {
+              _rotEntry.Dispose();
+              _rotEntry = null;
+            }
+            DirectShowUtil.ReleaseComObject(_graphBuilder);            
+            _graphBuilder = null;
+          }
+
+          if (_dvbSubRenderer != null)
+          {            
+            _dvbSubRenderer.SetPlayer(null);
+          }
+          _dvbSubRenderer = null;          
+
+          GUIGraphicsContext.form.Invalidate(true);
+          _state = PlayState.Init;
+        }
+        catch (Exception ex)
         {
-          _dvbSubRenderer.SetPlayer(null);
+          Log.Error("TSReaderPlayer: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
         }
-        _dvbSubRenderer = null;
-
-        GUIGraphicsContext.form.Invalidate(true);
-        _state = PlayState.Init;
+        //switch back to directx windowed mode
+        Log.Info("TSReaderPlayer: Disabling DX9 exclusive mode");
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(msg);
       }
-      catch (Exception ex)
-      {
-        Log.Error("TSReaderPlayer: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
-      }
-      //switch back to directx windowed mode
-      Log.Info("TSReaderPlayer: Disabling DX9 exclusive mode");
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-      GUIWindowManager.SendMessage(msg);
     }
 
     protected override void OnProcess()

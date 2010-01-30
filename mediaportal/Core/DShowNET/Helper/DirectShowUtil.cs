@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+using System.Threading;
 using DirectShowLib;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -1849,6 +1850,33 @@ namespace DShowNET.Helper
       {
         RemoveDownStreamFilters(graphBuilder, info.filter, true);
       }
+    }
+
+    public static int ReleaseComObject(object obj, int timeOut)
+    {
+      int returnVal = 1;
+
+      if (obj != null)
+      {
+        Stopwatch stopwatch = new Stopwatch();
+        while (returnVal > 0 && stopwatch.ElapsedMilliseconds < timeOut)
+        {
+          returnVal = Marshal.ReleaseComObject(obj);
+          if (returnVal > 0)
+          {
+            Thread.Sleep(50);
+          }
+          else
+          {
+            return returnVal;
+          }
+        }
+      }      
+
+      StackTrace st = new StackTrace(true);
+      Log.Error("Exception while releasing COM object (NULL) - stacktrace: {0}", st);
+
+      return 0;
     }
 
     public static int ReleaseComObject(object obj)
