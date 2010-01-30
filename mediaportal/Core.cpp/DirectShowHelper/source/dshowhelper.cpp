@@ -374,7 +374,7 @@ void UnloadEVR()
     {
       Log("DWMAPI.dll could not be unloaded");
     }
-    m_hModuleMFPLAT = NULL;
+    m_hModuleDWMAPI = NULL;
   }
 }
 

@@ -2055,8 +2055,8 @@ void MPEVRCustomPresenter::GetRefreshRateDwm()
   }
   else // XP
   {
-	    m_dD3DRefreshRate = (double)m_displayMode.RefreshRate;
-	    m_dD3DRefreshCycle = 1000.0 / m_dD3DRefreshRate; // In ms  
+    m_dD3DRefreshRate = (double)m_displayMode.RefreshRate;
+    m_dD3DRefreshCycle = 1000.0 / m_dD3DRefreshRate; // In ms  
   }
 }
 
