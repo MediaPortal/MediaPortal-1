@@ -1858,7 +1858,7 @@ namespace DShowNET.Helper
 
       if (obj != null)
       {
-        Stopwatch stopwatch = new Stopwatch();
+        Stopwatch stopwatch = Stopwatch.StartNew();        
         while (returnVal > 0 && stopwatch.ElapsedMilliseconds < timeOut)
         {
           returnVal = Marshal.ReleaseComObject(obj);
