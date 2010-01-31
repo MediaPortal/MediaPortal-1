@@ -902,6 +902,205 @@ namespace TvPluginTests
 
     #endregion
 
+    #region 2 dualmono audiostream available tests
+
+    [Test]
+    ///<summary>
+    /// streams : 2
+    /// stream1 : mpeg1 dualmono, lang: left:eng right:dan
+    /// stream2 : mpeg1 dualmono, lang: left:swe right:nor
+    /// pref_lang : empty
+    /// PreferAC3 : false
+    /// PreferAudioTypeOverLang : false
+    ///</summary>
+    public void GetPreferedAudioStreamIndexTest31()
+    {
+      g_Player.Player = new PlayerTwoDualMonoAudioStreams();      
+
+      List<string> prefLangs = new List<string>();
+      TVHome.PreferredLanguages = prefLangs; //empty
+      TVHome.PreferAC3 = false;
+      TVHome.PreferAudioTypeOverLang = false;
+
+      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;      
+
+      int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
+
+      Assert.AreEqual(index, 0, "Wrong audio index returned");
+      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.UNSUPPORTED, "dualMonoMode returned should be UNSUPPORTED");
+    }
+
+    [Test]
+    ///<summary>
+    /// streams : 2
+    /// stream1 : mpeg1 dualmono, lang: left:eng right:dan
+    /// stream2 : mpeg1 dualmono, lang: left:swe right:nor
+    /// pref_lang : dan
+    /// PreferAC3 : false
+    /// PreferAudioTypeOverLang : false
+    ///</summary>
+    public void GetPreferedAudioStreamIndexTest32()
+    {
+      g_Player.Player = new PlayerTwoDualMonoAudioStreams();
+
+      List<string> prefLangs = new List<string>();
+      prefLangs.Add("dan");
+      TVHome.PreferredLanguages = prefLangs; //empty
+      TVHome.PreferAC3 = false;
+      TVHome.PreferAudioTypeOverLang = false;
+
+      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
+
+      int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
+
+      Assert.AreEqual(index, 0, "Wrong audio index returned");
+      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.RIGHT_MONO, "dualMonoMode returned should be RIGHT_MONO");
+    }
+
+    [Test]
+    ///<summary>
+    /// streams : 2
+    /// stream1 : mpeg1 dualmono, lang: left:eng right:dan
+    /// stream2 : mpeg1 dualmono, lang: left:swe right:nor
+    /// pref_lang : eng
+    /// PreferAC3 : false
+    /// PreferAudioTypeOverLang : false
+    ///</summary>
+    public void GetPreferedAudioStreamIndexTest33()
+    {
+      g_Player.Player = new PlayerTwoDualMonoAudioStreams();
+
+      List<string> prefLangs = new List<string>();
+      prefLangs.Add("eng");
+      TVHome.PreferredLanguages = prefLangs; //empty
+      TVHome.PreferAC3 = false;
+      TVHome.PreferAudioTypeOverLang = false;
+
+      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
+
+      int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
+
+      Assert.AreEqual(index, 0, "Wrong audio index returned");
+      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.LEFT_MONO, "dualMonoMode returned should be LEFT_MONO");
+    }
+
+    [Test]
+    ///<summary>
+    /// streams : 2
+    /// stream1 : mpeg1 dualmono, lang: left:eng right:dan
+    /// stream2 : mpeg1 dualmono, lang: left:swe right:nor
+    /// pref_lang : swe
+    /// PreferAC3 : false
+    /// PreferAudioTypeOverLang : false
+    ///</summary>
+    public void GetPreferedAudioStreamIndexTest34()
+    {
+      g_Player.Player = new PlayerTwoDualMonoAudioStreams();
+
+      List<string> prefLangs = new List<string>();
+      prefLangs.Add("swe");
+      TVHome.PreferredLanguages = prefLangs; //empty
+      TVHome.PreferAC3 = false;
+      TVHome.PreferAudioTypeOverLang = false;
+
+      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
+
+      int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
+
+      Assert.AreEqual(index, 1, "Wrong audio index returned");
+      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.LEFT_MONO, "dualMonoMode returned should be LEFT_MONO");
+    }
+
+
+    [Test]
+    ///<summary>
+    /// streams : 2
+    /// stream1 : mpeg1 dualmono, lang: left:eng right:dan
+    /// stream2 : mpeg1 dualmono, lang: left:swe right:nor
+    /// pref_lang : nor
+    /// PreferAC3 : false
+    /// PreferAudioTypeOverLang : false
+    ///</summary>
+    public void GetPreferedAudioStreamIndexTest35()
+    {
+      g_Player.Player = new PlayerTwoDualMonoAudioStreams();
+
+      List<string> prefLangs = new List<string>();
+      prefLangs.Add("nor");
+      TVHome.PreferredLanguages = prefLangs; //empty
+      TVHome.PreferAC3 = false;
+      TVHome.PreferAudioTypeOverLang = false;
+
+      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
+
+      int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
+
+      Assert.AreEqual(index, 1, "Wrong audio index returned");
+      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.RIGHT_MONO, "dualMonoMode returned should be RIGHT_MONO");
+    }
+
+    [Test]
+    ///<summary>
+    /// streams : 2
+    /// stream1 : mpeg1 dualmono, lang: left:eng right:dan
+    /// stream2 : mpeg1 dualmono, lang: left:swe right:nor
+    /// pref_lang : deu,fra,nor
+    /// PreferAC3 : true
+    /// PreferAudioTypeOverLang : true
+    ///</summary>
+    public void GetPreferedAudioStreamIndexTest36()
+    {
+      g_Player.Player = new PlayerTwoDualMonoAudioStreams();
+
+      List<string> prefLangs = new List<string>();
+      prefLangs.Add("deu");
+      prefLangs.Add("fra");
+      prefLangs.Add("nor");
+      TVHome.PreferredLanguages = prefLangs; //empty
+      TVHome.PreferAC3 = true;
+      TVHome.PreferAudioTypeOverLang = true;
+
+      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
+
+      int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
+
+      Assert.AreEqual(index, 1, "Wrong audio index returned");
+      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.RIGHT_MONO, "dualMonoMode returned should be RIGHT_MONO");
+    }
+
+    [Test]
+    ///<summary>
+    /// streams : 2
+    /// stream1 : mpeg1 dualmono, lang: left:eng right:dan
+    /// stream2 : mpeg1 dualmono, lang: left:swe right:nor
+    /// pref_lang : deu,fra,dan,nor
+    /// PreferAC3 : true
+    /// PreferAudioTypeOverLang : true
+    ///</summary>
+    public void GetPreferedAudioStreamIndexTest37()
+    {
+      g_Player.Player = new PlayerTwoDualMonoAudioStreams();
+
+      List<string> prefLangs = new List<string>();
+      prefLangs.Add("deu");
+      prefLangs.Add("fra");
+      prefLangs.Add("dan");
+      prefLangs.Add("nor");
+      TVHome.PreferredLanguages = prefLangs; //empty
+      TVHome.PreferAC3 = true;
+      TVHome.PreferAudioTypeOverLang = true;
+
+      eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
+
+      int index = TVHome.GetPreferedAudioStreamIndex(out dualMonoMode);
+
+      Assert.AreEqual(index, 0, "Wrong audio index returned");
+      Assert.AreEqual(dualMonoMode, eAudioDualMonoMode.RIGHT_MONO, "dualMonoMode returned should be RIGHT_MONO");
+    }
+
+    #endregion
+
+
     #endregion
 
   }

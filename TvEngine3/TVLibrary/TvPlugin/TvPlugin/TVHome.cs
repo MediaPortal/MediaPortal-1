@@ -2693,6 +2693,10 @@ namespace TvPlugin
           if (ShouldApplyDualMonoMode(streams[i].Language))
           {
             dualMonoMode = GetDualMonoMode(streams, i, ref priority, ref idxStreamIndexmpeg, ref mpegBasedOnLang);
+            if (dualMonoMode != eAudioDualMonoMode.UNSUPPORTED)
+            {
+              break;
+            }
           }
           else
           {

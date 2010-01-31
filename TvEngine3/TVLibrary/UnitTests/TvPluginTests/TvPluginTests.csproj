@@ -57,6 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IPlayerStubs\PlayerTwoDualMonoAudioStreams.cs" />
     <Compile Include="IPlayerStubs\PlayerMultipleAudioStreamsAC3.cs" />
     <Compile Include="IPlayerStubs\PlayerMultipleAudioStreamsLATMAAC.cs" />
     <Compile Include="IPlayerStubs\PlayerMultipleDualMonoAudioStreams.cs" />
