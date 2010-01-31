@@ -33,10 +33,11 @@
 
 using namespace std;
 
-HMODULE m_hModuleDXVA2  = NULL;
-HMODULE m_hModuleEVR    = NULL;
-HMODULE m_hModuleMFPLAT = NULL;
-HMODULE m_hModuleDWMAPI = NULL;
+HMODULE m_hModuleDXVA2    = NULL;
+HMODULE m_hModuleEVR      = NULL;
+HMODULE m_hModuleMFPLAT   = NULL;
+HMODULE m_hModuleDWMAPI   = NULL;
+HMODULE m_hModuleW7Helper = NULL;
 
 TDXVA2CreateDirect3DDeviceManager9* m_pDXVA2CreateDirect3DDeviceManager9 = NULL;
 TMFCreateVideoSampleFromSurface*    m_pMFCreateVideoSampleFromSurface    = NULL;
@@ -44,8 +45,8 @@ TMFCreateVideoMediaType*            m_pMFCreateVideoMediaType            = NULL;
 TMFCreateMediaType*                 m_pMFCreateMediaType                 = NULL;
 
 // Vista / Windows 7 only
-TDwmEnableMMCSS*                    m_pDwmEnableMMCSS                    = NULL;
-TDwmGetCompositionTimingInfo*       m_pDwmGetCompositionTimingInfo       = NULL;
+TDwmEnableMMCSS*                    m_pDwmEnableMMCSS   = NULL;
+TW7GetRefreshRate*                  m_pW7GetRefreshRate = NULL;
 
 BOOL m_bEVRLoaded    = false;
 char* m_RenderPrefix = "vmr9";
@@ -336,6 +337,33 @@ void Vmr9Deinit()
   Log("Vmr9Deinit exit");
 }
 
+// http://msdn.microsoft.com/en-us/library/ms725491(VS.85).aspx
+BOOL IsWin7()
+{
+   OSVERSIONINFOEX osvi;
+   DWORDLONG dwlConditionMask = 0;
+   int op = VER_GREATER_EQUAL;
+
+   // Initialize the OSVERSIONINFOEX structure.
+   ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
+   osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+   osvi.dwMajorVersion = 6;
+   osvi.dwMinorVersion = 1;
+   osvi.wServicePackMajor = 0;
+   osvi.wServicePackMinor = 0;
+
+   // Initialize the condition mask.
+   VER_SET_CONDITION(dwlConditionMask, VER_MAJORVERSION, op);
+   VER_SET_CONDITION(dwlConditionMask, VER_MINORVERSION, op);
+   VER_SET_CONDITION(dwlConditionMask, VER_SERVICEPACKMAJOR, op);
+   VER_SET_CONDITION(dwlConditionMask, VER_SERVICEPACKMINOR, op);
+
+   // Perform the test.
+   return VerifyVersionInfo(
+     &osvi,
+     VER_MAJORVERSION | VER_MINORVERSION | VER_SERVICEPACKMAJOR | VER_SERVICEPACKMINOR,
+     dwlConditionMask);
+}
 
 void UnloadEVR()
 {
@@ -376,6 +404,15 @@ void UnloadEVR()
     }
     m_hModuleDWMAPI = NULL;
   }
+  if (m_hModuleW7Helper != NULL)
+  {
+    Log("Freeing lib: Win7RefreshRateHelper.dll");
+    if (!FreeLibrary(m_hModuleW7Helper))
+    {
+      Log("Win7RefreshRateHelper.dll could not be unloaded");
+    }
+    m_hModuleW7Helper = NULL;
+  }
 }
 
 
@@ -383,10 +420,10 @@ bool LoadEVR()
 {
   Log("Loading EVR libraries");
   char systemFolder[MAX_PATH];
-  char mfDLLFileName[MAX_PATH];
+  char DLLFileName[MAX_PATH];
   GetSystemDirectory(systemFolder,sizeof(systemFolder));
-  sprintf(mfDLLFileName,"%s\\dxva2.dll", systemFolder);
-  m_hModuleDXVA2=LoadLibrary(mfDLLFileName);
+  sprintf(DLLFileName,"%s\\dxva2.dll", systemFolder);
+  m_hModuleDXVA2=LoadLibrary(DLLFileName);
   if (m_hModuleDXVA2 != NULL)
   {
     Log("Found dxva2.dll");
@@ -394,8 +431,8 @@ bool LoadEVR()
     if (m_pDXVA2CreateDirect3DDeviceManager9 != NULL)
     {
       Log("Found method DXVA2CreateDirect3DDeviceManager9");
-      sprintf(mfDLLFileName,"%s\\evr.dll", systemFolder);
-      m_hModuleEVR = LoadLibrary(mfDLLFileName);
+      sprintf(DLLFileName,"%s\\evr.dll", systemFolder);
+      m_hModuleEVR = LoadLibrary(DLLFileName);
       m_pMFCreateVideoSampleFromSurface = (TMFCreateVideoSampleFromSurface*)GetProcAddress(m_hModuleEVR,"MFCreateVideoSampleFromSurface");
 
       if (m_pMFCreateVideoSampleFromSurface)
@@ -405,22 +442,40 @@ bool LoadEVR()
         if(m_pMFCreateVideoMediaType)
         {
           Log("Found method MFCreateVideoMediaType");
-          sprintf(mfDLLFileName,"%s\\mfplat.dll", systemFolder);
-          m_hModuleMFPLAT = LoadLibrary(mfDLLFileName);
+          sprintf(DLLFileName,"%s\\mfplat.dll", systemFolder);
+          m_hModuleMFPLAT = LoadLibrary(DLLFileName);
           m_pMFCreateMediaType = (TMFCreateMediaType*)GetProcAddress(m_hModuleMFPLAT,"MFCreateMediaType");
           if (m_pMFCreateMediaType)
           {
             Log("Found method MFCreateMediaType");
             Log("Successfully loaded EVR dlls");
             
-            sprintf(mfDLLFileName,"%s\\dwmapi.dll", systemFolder);
-            m_hModuleDWMAPI = LoadLibrary(mfDLLFileName);
+            sprintf(DLLFileName,"%s\\dwmapi.dll", systemFolder);
+            m_hModuleDWMAPI = LoadLibrary(DLLFileName);
             // Vista / Windows 7 only, allowed to return NULL. Remember to check agains NULL when using
             if (m_hModuleDWMAPI)
             {
               Log("Successfully loaded DWM dll");
               m_pDwmEnableMMCSS = (TDwmEnableMMCSS*)GetProcAddress(m_hModuleDWMAPI,"DwmEnableMMCSS");
-              m_pDwmGetCompositionTimingInfo = (TDwmGetCompositionTimingInfo*)GetProcAddress(m_hModuleDWMAPI,"DwmGetCompositionTimingInfo");
+            }
+
+            if (IsWin7())
+            {
+              sprintf(DLLFileName,"Win7RefreshRateHelper.dll");
+              m_hModuleW7Helper = LoadLibrary(DLLFileName);
+              if (m_hModuleW7Helper)
+              {
+                Log("Successfully loaded Win7RefreshRateHelper.dll");
+                m_pW7GetRefreshRate = (TW7GetRefreshRate*)GetProcAddress(m_hModuleW7Helper,"W7GetRefreshRate");
+                if (m_pW7GetRefreshRate)
+                {
+                  Log("  W7GetRefreshRate() found");
+                }
+                else
+                {
+                  Log("  W7GetRefreshRate() not found");
+                }
+              }
             }
             return TRUE;
           }
@@ -538,7 +593,7 @@ BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* evrFilter,
     Log("Could not get IMFVideoRenderer");
     return FALSE;
   }
-  m_evrPresenter = new MPEVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor, m_pVMR9Filter);
+  m_evrPresenter = new MPEVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor, m_pVMR9Filter, IsWin7());
   hr = pRenderer->InitializeRenderer(NULL, m_evrPresenter);
   if (FAILED(hr))
   {
@@ -1198,3 +1253,4 @@ void AddWstCodecToGraph(IGraphBuilder* pGraph)
     pWstCodec->Release();
   }
 }
+

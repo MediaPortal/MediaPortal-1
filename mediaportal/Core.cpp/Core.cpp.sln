@@ -6,6 +6,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DXUtil", "DXUtil\DXUtil.vcp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fontEngine", "fontEngine\fontEngine.vcproj", "{C3CD9ACF-E025-465C-8B07-4F53CF33003F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Win7RefreshRateHelper", "Win7RefreshRateHelper\Win7RefreshRateHelper.vcproj", "{CDE13610-062F-4DC8-B2BE-99EECA9AAA3E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32

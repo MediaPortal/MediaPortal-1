@@ -86,6 +86,7 @@ xcopy %1\MediaPortal.Base\Skin\*.* %ConfigPath%\"Team MediaPortal\MediaPortal\Sk
 
 REM Copy all dll files from cpp solution
 xcopy %1\Core.cpp\DirectShowHelper\bin\%2\dshowhelper.dll .
+xcopy %1\Core.cpp\Win7RefreshRateHelper\bin\%2\Win7RefreshRateHelper.dll .
 xcopy %1\Core.cpp\DXUtil\bin\%2\dxutil.dll .
 xcopy %1\Core.cpp\fontEngine\bin\%2\fontEngine.dll .
 copy /y %1\Core.cpp\mpc-hc_subs\bin\%2\mpcSubs.dll .

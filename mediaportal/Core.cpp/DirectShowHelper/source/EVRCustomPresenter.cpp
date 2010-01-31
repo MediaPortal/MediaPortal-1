@@ -15,6 +15,7 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
+
 #include <streams.h>
 #include <atlbase.h>
 #include <d3dx9.h>
@@ -53,17 +54,18 @@ void LogGUID(REFGUID guid)
   CoTaskMemFree(str);
 }
 
-MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter* EVRFilter):
+MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter* EVRFilter, BOOL pIsWin7):
   m_refCount(1), 
   m_qScheduledSamples(NUM_SURFACES),
-  m_EVRFilter(EVRFilter)
+  m_EVRFilter(EVRFilter),
+  m_bIsWin7(pIsWin7)
 {
   timeBeginPeriod(1);
   if (m_pMFCreateVideoSampleFromSurface != NULL)
   {
     HRESULT hr;
     LogRotate();
-    Log("----------v0.5---------------------------");
+    Log("----------v0.6---------------------------");
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
     hr = m_pDXVA2CreateDirect3DDeviceManager9(&m_iResetToken, &m_pDeviceManager);
@@ -1417,7 +1419,7 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::ProcessMessage(MFVP_MESSAGE_TYPE
 
       // TODO add 2nd monitor support
       ResetTraceStats();
-      //EstimateRefreshTimings();
+      EstimateRefreshTimings();
     break;
 
     case MFVP_MESSAGE_ENDSTREAMING:
@@ -1657,7 +1659,7 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 
     if (m_dD3DRefreshRate == 0)
     {
-      GetRefreshRateDwm();
+      GetRealRefreshRate();
     }
 
 	  // Raster offset target
@@ -2026,41 +2028,6 @@ void MPEVRCustomPresenter::EstimateRefreshTimings()
 }
 
 
-// get composition refresh rate
-void MPEVRCustomPresenter::GetRefreshRateDwm()
-{
-  if (m_pDwmGetCompositionTimingInfo)
-  {
-    HRESULT hr;
-    DWM_TIMING_INFO timingInfo;
-
-    ZeroMemory(&timingInfo, sizeof(timingInfo));
-    timingInfo.cbSize = sizeof(timingInfo);
-    hr = m_pDwmGetCompositionTimingInfo(GetActiveWindow(), &timingInfo);
-    if (SUCCEEDED(hr))
-    {
-      m_dD3DRefreshRate = (double)timingInfo.rateRefresh.uiNumerator / (double)timingInfo.rateRefresh.uiDenominator;
-      m_dD3DRefreshCycle = 1000.0 / m_dD3DRefreshRate;
-      
-      m_dDetectedScanlineTime = m_dD3DRefreshCycle / m_displayMode.Height;
-
-      Log("DwmGetCompositionTimingInfo() returned refresh rate %.3f", m_dD3DRefreshRate);
-    }
-    else
-    {
-      m_dD3DRefreshRate = (double)m_displayMode.RefreshRate;
-      m_dD3DRefreshCycle = 1000.0 / m_dD3DRefreshRate; // In ms 
-      Log("DwmGetCompositionTimingInfo() failed - using inaccurate DirectX timing info");
-    }
-  }
-  else // XP
-  {
-    m_dD3DRefreshRate = (double)m_displayMode.RefreshRate;
-    m_dD3DRefreshCycle = 1000.0 / m_dD3DRefreshRate; // In ms  
-  }
-}
-
-
 // Update the array m_pllJitter with a new vsync period. Calculate min, max and stddev.
 void MPEVRCustomPresenter::CalculateJitter(LONGLONG PerfCounter)
 {
@@ -2393,3 +2360,25 @@ void MPEVRCustomPresenter::CorrectSampleTime(IMFSample* pSample)
   }
   LOG_TRACE("EVR: Time: %f %f %f\n", Time / 10000000.0, SetDuration / 10000000.0, m_DetectedFrameRate);
 }
+
+
+// get driver refresh rate
+void MPEVRCustomPresenter::GetRealRefreshRate()
+{
+  // Win7
+  if (m_bIsWin7 && m_pW7GetRefreshRate)
+  {
+    m_dD3DRefreshRate = m_pW7GetRefreshRate();
+
+    if (m_dD3DRefreshRate == -1)
+    {
+      m_dD3DRefreshRate = (double)m_displayMode.RefreshRate;
+    }
+  }
+  else // XP or Vista
+  {
+	  m_dD3DRefreshRate = (double)m_displayMode.RefreshRate;
+  }
+  m_dD3DRefreshCycle = 1000.0 / m_dD3DRefreshRate; // in ms
+}
+

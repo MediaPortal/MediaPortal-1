@@ -54,7 +54,6 @@ enum MP_RENDER_STATE
 	MP_RENDER_STATE_SHUTDOWN
 };
 
-
 typedef struct _SchedulerParams
 {
 	MPEVRCustomPresenter* pPresenter;
@@ -78,7 +77,7 @@ class MPEVRCustomPresenter
 {
 
 public:
-  MPEVRCustomPresenter(IVMR9Callback* callback, IDirect3DDevice9* direct3dDevice,HMONITOR monitor, IBaseFilter* EVRFilter);
+  MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter* EVRFilter, BOOL pIsWin7);
   virtual ~MPEVRCustomPresenter();
 
   //IQualProp (stub)
@@ -198,7 +197,7 @@ protected:
   void           ResetStatistics();
   HRESULT        PresentSample(IMFSample* pSample);
   void           CorrectSampleTime(IMFSample* pSample);
-  void           GetRefreshRateDwm();
+  void           GetRealRefreshRate();
 
   CComPtr<IDirect3DTexture9>        m_pVideoTexture;
   CComPtr<IDirect3DSurface9>        m_pVideoSurface;
@@ -305,4 +304,6 @@ protected:
   double        m_DetectedFrameTimeStdDev;
   bool          m_bCorrectedFrameTime;
   bool          m_DetectedLock;
+
+  BOOL          m_bIsWin7;
 };

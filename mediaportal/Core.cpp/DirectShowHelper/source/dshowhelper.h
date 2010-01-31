@@ -56,8 +56,8 @@ extern TMFCreateMediaType* m_pMFCreateMediaType;
 typedef HRESULT __stdcall TDwmEnableMMCSS(BOOL fEnableMMCSS);
 extern TDwmEnableMMCSS* m_pDwmEnableMMCSS;
 
-typedef HRESULT __stdcall TDwmGetCompositionTimingInfo(HWND hwnd, DWM_TIMING_INFO *pTimingInfo);
-extern TDwmGetCompositionTimingInfo* m_pDwmGetCompositionTimingInfo;
+typedef double __stdcall TW7GetRefreshRate();
+extern TW7GetRefreshRate* m_pW7GetRefreshRate;
 
 HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService, REFIID riid, LPVOID* ppvObject);
 
