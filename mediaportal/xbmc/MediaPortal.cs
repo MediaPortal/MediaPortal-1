@@ -2264,7 +2264,7 @@ public class MediaPortalApp : D3DApp, IRender
           //decrease volume 
         case Action.ActionType.ACTION_VOLUME_DOWN:
           VolumeHandler.Instance.Volume = VolumeHandler.Instance.Previous;
-          return;
+          break;
 
           //increase volume 
         case Action.ActionType.ACTION_VOLUME_UP:
