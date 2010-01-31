@@ -227,7 +227,7 @@ namespace MediaPortal.Player
         }
         else
         {
-          Log.Error("CycleRefreshRate: unable to change refresh rate {0}Hz for monitor {1}", refreshRate, monitorIndex);
+          Log.Error("CycleRefreshRate: unable to change refresh rate to {0}Hz for monitor {1}", refreshRate, monitorIndex);
         }
       }
       else
