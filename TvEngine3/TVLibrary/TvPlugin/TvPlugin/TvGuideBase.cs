@@ -3077,16 +3077,17 @@ namespace TvPlugin
             bool isRecNOepg = IsRecordingNoEPG(_currentProgram.ReferencedChannel().Name);
 
             Schedule schedule = null;
-            if (isRecNOepg)
-            {
-              schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel().Name);
-            }
-            else if (isRec)
+
+            if (isRec)
             {
               // If you select the program which is currently recording open a dialog to ask if you want to see it from the beginning
               // imagine a sports event where you do not want to see the live point to be spoiled           
               schedule = Schedule.RetrieveOnce(_currentProgram.ReferencedChannel().IdChannel, _currentProgram.Title,
-                                               _currentProgram.StartTime, _currentProgram.EndTime);
+                                               _currentProgram.StartTime, _currentProgram.EndTime);              
+            }
+            else if (isRecNOepg)            
+            {
+              schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel().Name);
             }
 
             if (schedule != null)
