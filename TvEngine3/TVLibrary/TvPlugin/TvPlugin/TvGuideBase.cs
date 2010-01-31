@@ -3112,7 +3112,7 @@ namespace TvPlugin
               dlg.Reset();
               dlg.SetHeading(_currentProgram.Title);
               dlg.AddLocalizedString(979); //Play recording from beginning
-              dlg.AddLocalizedString(980); //Play recording from live point
+              dlg.AddLocalizedString(938); //View this channel
               dlg.DoModal(GetID);
 
               if (dlg.SelectedLabel == -1)
@@ -3159,7 +3159,7 @@ namespace TvPlugin
                     }
                     return;
 
-                  case 980: // Play recording from live point
+                  case 938: // View this channel
                     {
                       TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
                       if (g_Player.Playing)
