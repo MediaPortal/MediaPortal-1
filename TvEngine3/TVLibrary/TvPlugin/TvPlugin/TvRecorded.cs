@@ -1278,7 +1278,7 @@ namespace TvPlugin
       }
 
       int stoptime = rec.StopTime;
-      if (stoptime > 0)
+      if (stoptime > 0 && !_bIsLiveRecording)
       {
         GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
         if (null == dlgYesNo)
@@ -1305,22 +1305,22 @@ namespace TvPlugin
           dlg.Reset();
           dlg.SetHeading(rec.Title);
           dlg.AddLocalizedString(979); //Play recording from beginning
+          if (stoptime > 0)
+          {
+            dlg.Add(GUILocalizeStrings.Get(936) + " " + Utils.SecondsToHMSString(rec.StopTime));
+          }
           dlg.AddLocalizedString(980); //Play recording from live point
           dlg.DoModal(GetID);
-          if (dlg.SelectedId == 979) {}
+          if (dlg.SelectedId == 979)
+          {
+            stoptime = 0;
+          }
           else if (dlg.SelectedId == 980)
           {
-            TVHome.ViewChannelAndCheck(rec.ReferencedChannel());
-            if (g_Player.Playing)
-            {
-              g_Player.ShowFullScreenWindow();
-            }
-            return true;
+            stoptime = -1; // magic -1 is used for the live point
           }
         }
       }
-
-
       /*
               IMDBMovie movieDetails = new IMDBMovie();
               VideoDatabase.GetMovieInfo(rec.FileName, ref movieDetails);
@@ -1363,8 +1363,13 @@ namespace TvPlugin
         if (stoptime > 0)
         {
           g_Player.SeekAbsolute(stoptime);
+        } 
+        else if (stoptime == -1) 
+        {
+          // 5 second margin is used that the TsReader wont stop playback right after it has been started
+		  double dTime = g_Player.Duration - 5;
+          g_Player.SeekAbsolute(dTime);
         }
-
         //populates recording metadata to g_player;
         g_Player.currentFileName = rec.FileName;
         g_Player.currentTitle = rec.Title;
