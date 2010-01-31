@@ -3286,9 +3286,16 @@ namespace TvPlugin
         // 2 cases:
         // if the timeshift switched from card 1 -> 2 (error) -> 1
         if (newCardId != card.Id)
-        {
-          // reset the card change flag, otherwise the StartPlay() would cause a step back to same ts buffer file
-          _status.Reset(LiveTvStatus.CardChange);
+        {          
+          if (Card.Id != card.Id)
+          {
+            _status.Set(LiveTvStatus.CardChange);
+          }
+          else
+          {
+            // reset the card change flag, otherwise the StartPlay() would cause a step back to same ts buffer file
+            _status.Reset(LiveTvStatus.CardChange);   
+          }
           // after CI menu was moved to new card, now assign it to the fallback card after change
           RegisterCiMenu(card.Id);
         }
