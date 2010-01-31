@@ -43,6 +43,8 @@ namespace MpeCore.Classes
 
     public void Save()
     {
+      if (!Directory.Exists(MpeInstaller.BaseFolder))
+        Directory.CreateDirectory(MpeInstaller.BaseFolder);
       string filename = string.Format("{0}\\InstallerSettings.xml", MpeInstaller.BaseFolder);
       var serializer = new XmlSerializer(typeof (ApplicationSettings));
       TextWriter writer = new StreamWriter(filename);

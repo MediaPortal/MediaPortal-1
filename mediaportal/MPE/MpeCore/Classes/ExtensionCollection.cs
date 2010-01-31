@@ -222,6 +222,8 @@ namespace MpeCore.Classes
 
     public void Save(string fileName)
     {
+      if (!Directory.Exists(Path.GetDirectoryName(fileName)))
+        Directory.CreateDirectory(Path.GetDirectoryName(fileName));
       var serializer = new XmlSerializer(typeof (ExtensionCollection));
       TextWriter writer = new StreamWriter(fileName);
       serializer.Serialize(writer, this);

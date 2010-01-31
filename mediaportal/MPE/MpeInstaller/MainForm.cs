@@ -506,8 +506,8 @@ namespace MpeInstaller
     {
       DateTime d = _settings.LastUpdate;
       int i = DateTime.Now.Subtract(d).Days;
-      if (_settings.DoUpdateInStartUp && i > _settings.UpdateDays &&
-          MpeCore.MpeInstaller.InstalledExtensions.Items.Count > 0 &&
+      if (((_settings.DoUpdateInStartUp && i > _settings.UpdateDays) ||
+          MpeCore.MpeInstaller.KnownExtensions.Items.Count == 0 )&&
           MessageBox.Show("Do you want to update the extension list ?", "Update", MessageBoxButtons.YesNo,
                           MessageBoxIcon.Question) == DialogResult.Yes)
       {
