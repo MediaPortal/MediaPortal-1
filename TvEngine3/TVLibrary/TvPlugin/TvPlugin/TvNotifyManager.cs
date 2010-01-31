@@ -397,30 +397,31 @@ namespace TvPlugin
 
     private void _timer_Tick(object sender, EventArgs e)
     {
-      if (!TVHome.Connected || (!_enableTVNotification && !_enableRecNotification))
-      {
-        return;
-      }
-      ;
-      if (_busy)
-      {
-        return;
-      }
-      ;
-      _busy = true;
-
-      if (_actualRecordings == null)
-      {
-        AddActiveRecordings();
-      }
-
-      if (!TVHome.Connected)
-      {
-        return;
-      }
-      ;
       try
       {
+        if (!TVHome.Connected || (!_enableTVNotification && !_enableRecNotification))
+        {
+          return;
+        }
+        ;
+        if (_busy)
+        {
+          return;
+        }
+        ;
+        _busy = true;
+
+        if (_actualRecordings == null)
+        {
+          AddActiveRecordings();
+        }
+
+        if (!TVHome.Connected)
+        {
+          return;
+        }
+        ;
+      
         DateTime preNotifySecs = DateTime.Now.AddSeconds(_preNotifyConfig);
         TvTimeShiftPositionWatcher.CheckOrUpdateTimeShiftPosition(false);
         ProcessNotifies(preNotifySecs);
