@@ -261,7 +261,7 @@ namespace MediaPortal.Player
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
         break;
         default:
-          numerator = (uint)refreshRate/1000;
+          numerator = (uint)(newRefreshRate/1000);
           denominator = 1;
           scanLineOrdering = DISPLAYCONFIG_SCANLINE_ORDERING_PROGRESSIVE;
         break;
