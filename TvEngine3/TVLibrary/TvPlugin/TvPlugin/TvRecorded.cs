@@ -1272,11 +1272,6 @@ namespace TvPlugin
         }
       }
 
-      if (TVHome.Card != null)
-      {
-        TVHome.Card.StopTimeShifting();
-      }
-
       int stoptime = rec.StopTime;
       if (stoptime > 0 && !_bIsLiveRecording)
       {
@@ -1307,10 +1302,14 @@ namespace TvPlugin
           dlg.AddLocalizedString(979); //Play recording from beginning
           if (stoptime > 0)
           {
-            dlg.Add(GUILocalizeStrings.Get(936) + " " + Utils.SecondsToHMSString(rec.StopTime));
+            dlg.Add(GUILocalizeStrings.Get(936) + " " + Utils.SecondsToHMSString(rec.StopTime)); //Continue playing at last stop time
           }
           dlg.AddLocalizedString(980); //Play recording from live point
           dlg.DoModal(GetID);
+          if (dlg.SelectedId == -1)
+          {
+            return false;
+          }
           if (dlg.SelectedId == 979)
           {
             stoptime = 0;
@@ -1320,6 +1319,11 @@ namespace TvPlugin
             stoptime = -1; // magic -1 is used for the live point
           }
         }
+      }
+
+      if (TVHome.Card != null)
+      {
+        TVHome.Card.StopTimeShifting();
       }
       /*
               IMDBMovie movieDetails = new IMDBMovie();
@@ -1363,11 +1367,11 @@ namespace TvPlugin
         if (stoptime > 0)
         {
           g_Player.SeekAbsolute(stoptime);
-        } 
-        else if (stoptime == -1) 
+        }
+        else if (stoptime == -1)
         {
           // 5 second margin is used that the TsReader wont stop playback right after it has been started
-		  double dTime = g_Player.Duration - 5;
+          double dTime = g_Player.Duration - 5;
           g_Player.SeekAbsolute(dTime);
         }
         //populates recording metadata to g_player;
