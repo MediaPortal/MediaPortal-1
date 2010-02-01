@@ -1492,6 +1492,12 @@ namespace MediaPortal.GUI.Library
                                          _packedDiffuseTextureNo, uoff, voff, umax, vmax);
                 }
               }
+
+              if ((_borderLeft > 0 || _borderRight > 0 || _borderTop > 0 || _borderBottom > 0) && _borderTextureFileName.Length > 0)
+              {
+                DrawBorder();
+              }
+
               frame = null;
               base.Render(timePassed);
             }
