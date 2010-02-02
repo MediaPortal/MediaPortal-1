@@ -57,7 +57,7 @@
           this.lbl_name.ForeColor = System.Drawing.SystemColors.ControlText;
           this.lbl_name.Location = new System.Drawing.Point(5, 3);
           this.lbl_name.Name = "lbl_name";
-          this.lbl_name.Size = new System.Drawing.Size(435, 18);
+          this.lbl_name.Size = new System.Drawing.Size(424, 18);
           this.lbl_name.TabIndex = 0;
           this.lbl_name.Text = "label1";
           this.lbl_name.Click += new System.EventHandler(this.lbl_name_Click);
@@ -87,10 +87,9 @@
           // lbl_version
           // 
           this.lbl_version.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.lbl_version.AutoSize = true;
-          this.lbl_version.Location = new System.Drawing.Point(460, 3);
+          this.lbl_version.Location = new System.Drawing.Point(435, 3);
           this.lbl_version.Name = "lbl_version";
-          this.lbl_version.Size = new System.Drawing.Size(35, 13);
+          this.lbl_version.Size = new System.Drawing.Size(66, 18);
           this.lbl_version.TabIndex = 4;
           this.lbl_version.Text = "label1";
           this.lbl_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;

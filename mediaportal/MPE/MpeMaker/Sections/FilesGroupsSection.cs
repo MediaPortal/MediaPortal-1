@@ -214,6 +214,8 @@ namespace MpeMaker.Sections
       }
     }
 
+    
+
     private void SetProperties(TreeNode node)
     {
       _loading = true;
@@ -445,9 +447,8 @@ namespace MpeMaker.Sections
         SelectedGroup.Files.Items.Remove(fileItem);
         treeNode.Remove();
       }
-
-      //treeView1.Nodes.Clear();
-      //PopulateTreeView();
+      Package.ProjectSettings.RemoveFolderGroup(SelectedGroup.Name);
+      list_folder.Items.Clear();
     }
 
     private void btn_set_Click(object sender, EventArgs e)
@@ -536,6 +537,14 @@ namespace MpeMaker.Sections
       // switching selected treenode from file to group item and vica versa
       if (_loading)
         treeView1.Focus();
+    }
+
+    private void btn_clearat_Click(object sender, EventArgs e)
+    {
+      if (SelectedGroup == null)
+        return;
+      Package.ProjectSettings.RemoveFolderGroup(SelectedGroup.Name);
+      list_folder.Items.Clear();
     }
   }
 }

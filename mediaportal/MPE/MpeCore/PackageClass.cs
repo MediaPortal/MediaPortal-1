@@ -349,7 +349,7 @@ namespace MpeCore
         foreach (FileItem fileItem in groupItem.Files.Items)
         {
           if (!Path.IsPathRooted(fileItem.LocalFileName))
-            fileItem.LocalFileName = Path.Combine(path, fileItem.LocalFileName);
+            fileItem.LocalFileName = Path.GetFullPath(Path.Combine(path, fileItem.LocalFileName));
         }
       }
 
@@ -361,7 +361,7 @@ namespace MpeCore
           {
             //sectionParam.Value = PathUtil.RelativePathTo(path, sectionParam.Value);
             if (!Path.IsPathRooted(sectionParam.Value))
-              sectionParam.Value = Path.Combine(path, sectionParam.Value);
+              sectionParam.Value = Path.GetFullPath(Path.Combine(path, sectionParam.Value));
           }
         }
         foreach (ActionItem actionItem in sectionItem.Actions.Items)
@@ -372,7 +372,7 @@ namespace MpeCore
             {
               //sectionParam.Value = PathUtil.RelativePathTo(path, sectionParam.Value);
               if (!Path.IsPathRooted(sectionParam.Value))
-                sectionParam.Value = Path.Combine(path, sectionParam.Value);
+                sectionParam.Value = Path.GetFullPath(Path.Combine(path, sectionParam.Value));
             }
           }
         }
@@ -384,14 +384,14 @@ namespace MpeCore
         {
           //sectionParam.Value = PathUtil.RelativePathTo(path, sectionParam.Value);
           if (!Path.IsPathRooted(sectionParam.Value))
-            sectionParam.Value = Path.Combine(path, sectionParam.Value);
+            sectionParam.Value = Path.GetFullPath(Path.Combine(path, sectionParam.Value));
         }
       }
 
       foreach (FolderGroup folderGroup in ProjectSettings.FolderGroups)
       {
         if (!Path.IsPathRooted(folderGroup.Folder))
-          folderGroup.Folder = Path.Combine(path, folderGroup.Folder);
+          folderGroup.Folder = Path.GetFullPath(Path.Combine(path, folderGroup.Folder));
       }
     }
 

@@ -61,6 +61,7 @@
           this.label1 = new System.Windows.Forms.Label();
           this.cmb_installtype = new System.Windows.Forms.ComboBox();
           this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+          this.btn_clearat = new System.Windows.Forms.Button();
           this.treeView1 = new CodersLab.Windows.Controls.TreeView();
           this.toolStrip.SuspendLayout();
           this.tabControl1.SuspendLayout();
@@ -164,6 +165,7 @@
           // 
           // tabPage_group
           // 
+          this.tabPage_group.Controls.Add(this.btn_clearat);
           this.tabPage_group.Controls.Add(this.label8);
           this.tabPage_group.Controls.Add(this.list_folder);
           this.tabPage_group.Controls.Add(this.label5);
@@ -176,7 +178,7 @@
           this.tabPage_group.Location = new System.Drawing.Point(4, 22);
           this.tabPage_group.Name = "tabPage_group";
           this.tabPage_group.Padding = new System.Windows.Forms.Padding(3);
-          this.tabPage_group.Size = new System.Drawing.Size(387, 377);
+          this.tabPage_group.Size = new System.Drawing.Size(352, 377);
           this.tabPage_group.TabIndex = 0;
           this.tabPage_group.Text = "Group";
           this.tabPage_group.UseVisualStyleBackColor = true;
@@ -398,6 +400,16 @@
           this.toolTip.SetToolTip(this.cmb_installtype, "1");
           this.cmb_installtype.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
           // 
+          // btn_clearat
+          // 
+          this.btn_clearat.Location = new System.Drawing.Point(6, 289);
+          this.btn_clearat.Name = "btn_clearat";
+          this.btn_clearat.Size = new System.Drawing.Size(142, 23);
+          this.btn_clearat.TabIndex = 10;
+          this.btn_clearat.Text = "Clear attached folders";
+          this.btn_clearat.UseVisualStyleBackColor = true;
+          this.btn_clearat.Click += new System.EventHandler(this.btn_clearat_Click);
+          // 
           // treeView1
           // 
           this.treeView1.AllowDrop = true;
@@ -477,6 +489,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ListBox list_folder;
         private System.Windows.Forms.ImageList imageList;
+        private System.Windows.Forms.Button btn_clearat;
 
     }
 }

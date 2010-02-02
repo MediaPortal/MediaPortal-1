@@ -81,10 +81,12 @@ namespace MpeCore.Classes.Project
 
     public static void UpdateFiles(PackageClass packageClass, FolderGroup folderGroup)
     {
+      
       if (string.IsNullOrEmpty(folderGroup.Folder))
         return;
+      folderGroup.Folder = Path.GetFullPath(folderGroup.Folder);
       GroupItem _groupItem = packageClass.Groups[folderGroup.Group];
-      DirectoryInfo di = new DirectoryInfo(folderGroup.Folder);
+      DirectoryInfo di = new DirectoryInfo(Path.GetFullPath(folderGroup.Folder));
       FileInfo[] fileList;
       fileList = folderGroup.Recursive
                    ? di.GetFiles("*.*", SearchOption.AllDirectories)
