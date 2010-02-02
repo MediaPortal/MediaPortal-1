@@ -309,9 +309,9 @@
           this.label7.AutoSize = true;
           this.label7.Location = new System.Drawing.Point(3, 117);
           this.label7.Name = "label7";
-          this.label7.Size = new System.Drawing.Size(46, 13);
+          this.label7.Size = new System.Drawing.Size(73, 13);
           this.label7.TabIndex = 10;
-          this.label7.Text = "Param 1";
+          this.label7.Text = "Ignored skins:";
           // 
           // txt_param1
           // 
@@ -321,8 +321,8 @@
           this.txt_param1.Name = "txt_param1";
           this.txt_param1.Size = new System.Drawing.Size(251, 20);
           this.txt_param1.TabIndex = 8;
-          this.toolTip.SetToolTip(this.txt_param1, "Add all skins here, which should be ignored when installing Generic Skin file,\r\ns" +
-                  "eparated by comma (\',\').");
+          this.toolTip.SetToolTip(this.txt_param1, "Add all skins here, which should be ignored when installing Generic Skin files,\r\n" +
+                  "separated by comma (\',\').");
           this.txt_param1.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
           // 
           // btn_set
@@ -333,6 +333,7 @@
           this.btn_set.Size = new System.Drawing.Size(75, 23);
           this.btn_set.TabIndex = 7;
           this.btn_set.Text = "Set";
+          this.toolTip.SetToolTip(this.btn_set, "Set these options to all file items of this group.");
           this.btn_set.UseVisualStyleBackColor = true;
           this.btn_set.Click += new System.EventHandler(this.btn_set_Click);
           // 

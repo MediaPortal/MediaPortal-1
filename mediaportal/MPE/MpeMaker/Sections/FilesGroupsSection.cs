@@ -465,6 +465,9 @@ namespace MpeMaker.Sections
                                          ? fileItem.DestinationFilename
                                          : Path.Combine(SelectedItem.DestinationFilename,
                                                         Path.GetFileName(fileItem.LocalFileName));
+        fileItem.Param1 = string.IsNullOrEmpty(SelectedItem.Param1)
+                            ? fileItem.Param1
+                            : SelectedItem.Param1;
       }
     }
 
