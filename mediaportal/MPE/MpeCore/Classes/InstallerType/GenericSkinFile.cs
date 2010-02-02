@@ -148,43 +148,39 @@ namespace MpeCore.Classes.InstallerType
       return response;
     }
 
-    private static List<string> GetInstalledSkins(string[] skipedskin)
+    private static List<string> GetInstalledSkins(IEnumerable<string> skipedSkins)
     {
       var installedSkinList = new List<string>();
 
       string skinDirectory = MpeInstaller.TransformInRealPath("%Skin%");
-      if (Directory.Exists(skinDirectory))
+      if (!Directory.Exists(skinDirectory)) return installedSkinList;
+
+      string[] skinFolders = Directory.GetDirectories(skinDirectory, "*.*");
+      foreach (string skinFolder in skinFolders)
       {
-        string[] skinFolders = Directory.GetDirectories(skinDirectory, "*.*");
+        bool isInvalidDirectory = false;
 
-        foreach (string skinFolder in skinFolders)
+        string directoryName = skinFolder.Substring(skinDirectory.Length + 1);
+        if (string.IsNullOrEmpty(directoryName)) continue;
+
+        foreach (string invalidDirectory in skipedSkins)
         {
-          bool isInvalidDirectory = false;
-
-          string directoryName = skinFolder.Substring(skinDirectory.Length + 1);
-
-          if (!string.IsNullOrEmpty(directoryName))
+          if (invalidDirectory.Trim().Equals(
+            directoryName.Trim(),
+            StringComparison.OrdinalIgnoreCase))
           {
-            foreach (string invalidDirectory in skipedskin)
-            {
-              if (invalidDirectory.Equals(directoryName.Trim(), StringComparison.OrdinalIgnoreCase))
-              {
-                isInvalidDirectory = true;
-                break;
-              }
-            }
-
-            if (isInvalidDirectory == false)
-            {
-              string filename = Path.Combine(skinDirectory, Path.Combine(directoryName, "references.xml"));
-              if (File.Exists(filename))
-              {
-                installedSkinList.Add(directoryName);
-              }
-            }
+            isInvalidDirectory = true;
+            break;
           }
         }
+        if (isInvalidDirectory) continue;
+
+        string filename = Path.Combine(skinDirectory, Path.Combine(directoryName, "references.xml"));
+        if (!File.Exists(filename)) continue;
+
+        installedSkinList.Add(directoryName);
       }
+
       return installedSkinList;
     }
   }
