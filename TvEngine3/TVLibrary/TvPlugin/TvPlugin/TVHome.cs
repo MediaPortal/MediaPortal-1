@@ -3333,7 +3333,15 @@ namespace TvPlugin
         {
           StartPlay();
         }
-        TvTimeShiftPositionWatcher.CheckOrUpdateTimeShiftPosition(true);
+        try
+        {
+          TvTimeShiftPositionWatcher.CheckOrUpdateTimeShiftPosition(true);
+        }
+        catch
+        {
+          //ignore, error already logged
+        }
+        
         _playbackStopped = false;
         _doingChannelChange = false;
         _ServerNotConnectedHandled = false;
