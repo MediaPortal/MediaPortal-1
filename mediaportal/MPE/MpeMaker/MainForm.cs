@@ -247,13 +247,17 @@ namespace MpeMaker
 
     private void OnMruFile(int number, string filename)
     {
-      if (!LoosingChangesConfirmed("Load Project")) return;
-
       if (!File.Exists(filename))
       {
+        string message = String.Format("Project file {0} was not found.{1}{1}Entry will be removed from 'Most Recently Used'-list.",
+                                       Path.GetFileName(filename),
+                                       Environment.NewLine);
+        MessageBox.Show(message, "File not found", MessageBoxButtons.OK, MessageBoxIcon.Information);
         mruMenu.RemoveFile(number);
         return;
       }
+
+      if (!LoosingChangesConfirmed("Load Project")) return;
 
       LoadProject(filename);
       mruMenu.SetFirstFile(number);
