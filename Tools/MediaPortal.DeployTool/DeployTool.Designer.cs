@@ -46,7 +46,7 @@ namespace MediaPortal.DeployTool
       // 
       // splitContainer1
       // 
-      this.splitContainer1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(198)))), ((int)(((byte)(198)))), ((int)(((byte)(198)))));
+      this.splitContainer1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(31)))), ((int)(((byte)(73)))));
       this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
       this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
       this.splitContainer1.IsSplitterFixed = true;
@@ -57,6 +57,7 @@ namespace MediaPortal.DeployTool
       // 
       // splitContainer1.Panel1
       // 
+      this.splitContainer1.Panel1.BackColor = System.Drawing.Color.Transparent;
       this.splitContainer1.Panel1.Controls.Add(this.bHelp);
       this.splitContainer1.Panel1.Controls.Add(this.bExit);
       this.splitContainer1.Panel1.Controls.Add(this.pictureBox1);
@@ -64,6 +65,7 @@ namespace MediaPortal.DeployTool
       // 
       // splitContainer1.Panel2
       // 
+      this.splitContainer1.Panel2.BackColor = System.Drawing.Color.Transparent;
       this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
       this.splitContainer1.Size = new System.Drawing.Size(666, 416);
       this.splitContainer1.SplitterDistance = 122;
@@ -72,7 +74,8 @@ namespace MediaPortal.DeployTool
       // 
       // bHelp
       // 
-      this.bHelp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(31)))), ((int)(((byte)(73)))));
+      this.bHelp.BackColor = System.Drawing.Color.Transparent;
+      this.bHelp.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_help_button;
       this.bHelp.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
       this.bHelp.Cursor = System.Windows.Forms.Cursors.Hand;
       this.bHelp.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(31)))), ((int)(((byte)(73)))));
@@ -90,7 +93,8 @@ namespace MediaPortal.DeployTool
       // 
       // bExit
       // 
-      this.bExit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(31)))), ((int)(((byte)(73)))));
+      this.bExit.BackColor = System.Drawing.Color.Transparent;
+      this.bExit.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_exit_button;
       this.bExit.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
       this.bExit.Cursor = System.Windows.Forms.Cursors.Hand;
       this.bExit.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(31)))), ((int)(((byte)(73)))));
@@ -98,7 +102,7 @@ namespace MediaPortal.DeployTool
       this.bExit.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(31)))), ((int)(((byte)(73)))));
       this.bExit.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(31)))), ((int)(((byte)(73)))));
       this.bExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-      this.bExit.Image = global::MediaPortal.DeployTool.Images.exit41;
+      this.bExit.Image = global::MediaPortal.DeployTool.Images.exitIcon;
       this.bExit.Location = new System.Drawing.Point(616, 16);
       this.bExit.Margin = new System.Windows.Forms.Padding(0);
       this.bExit.Name = "bExit";
@@ -109,8 +113,7 @@ namespace MediaPortal.DeployTool
       // 
       // pictureBox1
       // 
-      this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(31)))), ((int)(((byte)(73)))));
-      this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+      this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
       this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
       this.pictureBox1.Image = global::MediaPortal.DeployTool.Images.Background_top;
       this.pictureBox1.Location = new System.Drawing.Point(0, 0);
@@ -121,7 +124,7 @@ namespace MediaPortal.DeployTool
       // 
       // splitContainer2
       // 
-      this.splitContainer2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+      this.splitContainer2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(31)))), ((int)(((byte)(73)))));
       this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
       this.splitContainer2.IsSplitterFixed = true;
       this.splitContainer2.Location = new System.Drawing.Point(0, 0);
@@ -131,8 +134,8 @@ namespace MediaPortal.DeployTool
       // 
       // splitContainer2.Panel1
       // 
+      this.splitContainer2.Panel1.BackColor = System.Drawing.Color.Navy;
       this.splitContainer2.Panel1.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
-      this.splitContainer2.Panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
       // 
       // splitContainer2.Panel2
       // 
@@ -141,6 +144,7 @@ namespace MediaPortal.DeployTool
       this.splitContainer2.Panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
       this.splitContainer2.Panel2.Controls.Add(this.nextButton);
       this.splitContainer2.Panel2.Controls.Add(this.backButton);
+      this.splitContainer2.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer2_Panel2_Paint);
       this.splitContainer2.Size = new System.Drawing.Size(666, 293);
       this.splitContainer2.SplitterDistance = 250;
       this.splitContainer2.SplitterWidth = 1;
@@ -175,8 +179,7 @@ namespace MediaPortal.DeployTool
       // 
       // DeployTool
       // 
-        this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackColor = System.Drawing.Color.White;
       this.ClientSize = new System.Drawing.Size(666, 416);
       this.Controls.Add(this.splitContainer1);

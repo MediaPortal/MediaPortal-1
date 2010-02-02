@@ -133,14 +133,14 @@
   <data name="Background_top" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Background top.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="exit41" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\exit41.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Choose_button_off" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Choose button off.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Background_bottom" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Background bottom.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Choose_button_off" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Choose button off.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="helpIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\helpIcon.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Background_middle_TV__yes_no" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Background middle TV  yes no.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -148,10 +148,16 @@
   <data name="Background_middle_internet_connection" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Background middle internet connection.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Background exit button" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Background exit button.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Choose_button_on" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Choose button on.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="helpIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\helpIcon.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Background help button" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Background help button.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="exitIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\exiticon.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

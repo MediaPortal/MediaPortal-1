@@ -603,8 +603,6 @@
     <None Include="Resources\MePo_average.png" />
     <None Include="Resources\MePo_smart.png" />
     <None Include="Resources\MePo_tv.png" />
-    <None Include="Resources\MP_logo.png" />
-    <None Include="Resources\MP_packshoth.jpg" />
     <None Include="Resources\Background top.png" />
     <None Include="Resources\Background bottom.png" />
     <None Include="Resources\Background middle internet connection.png" />
@@ -614,8 +612,10 @@
     <None Include="Resources\Background middle empty.png" />
     <None Include="Resources\Choose button on.png" />
     <None Include="Resources\Choose button off.png" />
-    <None Include="Resources\exit41.png" />
+    <None Include="Resources\exitIcon.png" />
     <None Include="Resources\helpIcon.png" />
+    <None Include="Resources\Background exit button.png" />
+    <None Include="Resources\Background help button.png" />
     <Content Include="Resources\MePo_download.png" />
   </ItemGroup>
   <ItemGroup>
