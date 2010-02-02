@@ -28,7 +28,7 @@ namespace MpeCore.Classes.ZipProvider
   public class ZipProviderClass : IDisposable
   {
     private List<string> _tempFileList = new List<string>();
-    private ZipFile _zipPackageFile = null;
+    private ZipFile _zipPackageFile;
 
     /// <summary>
     /// Loads the specified zipfile.
@@ -43,7 +43,7 @@ namespace MpeCore.Classes.ZipProvider
         PackageClass pak = new PackageClass();
         _zipPackageFile = ZipFile.Read(zipfile);
         string tempPackageFile = Path.GetTempFileName();
-        FileStream fs = new FileStream(tempPackageFile, FileMode.Create);
+        var fs = new FileStream(tempPackageFile, FileMode.Create);
         _zipPackageFile["MediaPortalExtension.xml"].Extract(fs);
         fs.Close();
         pak.Load(tempPackageFile);
@@ -81,15 +81,22 @@ namespace MpeCore.Classes.ZipProvider
 
     public bool Extract(FileItem item, string extractLocation)
     {
-      //if (File.Exists(item.TempFileLocation))
-      //    File.Copy(item.TempFileLocation, extractLocation, true);
-      FileStream fs = new FileStream(extractLocation, FileMode.Create);
-      _zipPackageFile[item.ZipFileName].Extract(fs);
-      fs.Close();
-      File.SetCreationTime(extractLocation, FileDate(item));
-      File.SetLastAccessTime(extractLocation, FileDate(item));
-      File.SetLastWriteTime(extractLocation, FileDate(item));
-      item.TempFileLocation = extractLocation;
+      try
+      {
+        //if (File.Exists(item.TempFileLocation))
+        //    File.Copy(item.TempFileLocation, extractLocation, true);
+        var fs = new FileStream(extractLocation, FileMode.Create);
+        _zipPackageFile[item.ZipFileName].Extract(fs);
+        fs.Close();
+        File.SetCreationTime(extractLocation, FileDate(item));
+        File.SetLastAccessTime(extractLocation, FileDate(item));
+        File.SetLastWriteTime(extractLocation, FileDate(item));
+        item.TempFileLocation = extractLocation;
+      }
+      catch (Exception)
+      {
+        return false;
+      }
       return true;
     }
 
