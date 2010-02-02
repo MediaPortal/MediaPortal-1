@@ -321,6 +321,8 @@
           this.txt_param1.Name = "txt_param1";
           this.txt_param1.Size = new System.Drawing.Size(251, 20);
           this.txt_param1.TabIndex = 8;
+          this.toolTip.SetToolTip(this.txt_param1, "Add all skins here, which should be ignored when installing Generic Skin file,\r\ns" +
+                  "eparated by comma (\',\').");
           this.txt_param1.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
           // 
           // btn_set
