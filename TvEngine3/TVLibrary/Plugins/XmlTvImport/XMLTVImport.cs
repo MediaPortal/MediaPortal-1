@@ -735,51 +735,23 @@ namespace TvEngine
 
                 progChan.programs.Sort();
                 progChan.programs.AlreadySorted = true;
-                progChan.programs.FixEndTimes();
-
-                //for (int i = 0 ; i < progChan.programs.Count ; ++i)
-                //{
-                //  Program prog = (Program)progChan.programs[i];
-                //  if (i + 1 < progChan.programs.Count)
-                //  {
-                //    //correct the times of the current program using the times of the next one
-                //    Program progNext = (Program)progChan.programs[i + 1];
-                //    if (prog.StartTime >= prog.EndTime)
-                //    {
-                //      prog.EndTime = progNext.StartTime;
-                //    }
-                //    if (prog.EndTime > progNext.StartTime)
-                //    {
-                //      //if the endTime of this program is later that the start of the next program 
-                //      //it probably needs to be corrected (only needed when the grabber )
-                //      prog.EndTime = progNext.StartTime;
-                //    }
-                //  }
-                //}
-
+                progChan.programs.FixEndTimes(); 
                 progChan.programs.RemoveOverlappingPrograms(); // be sure that we do not have any overlapping
 
                 // get the id of the channel, just get the IdChannel of the first program
                 int idChannel = progChan.programs[0].IdChannel;
 
-                // retrieve all programs for this channel
-                ProgramList dbPrograms = new ProgramList(); // = new ArrayList();
+                if (!deleteBeforeImport)
                 {
+                  // retrieve all programs for this channel
                   SqlBuilder sb2 = new SqlBuilder(StatementType.Select, typeof (Program));
                   sb2.AddConstraint(Operator.Equals, "idChannel", idChannel);
                   sb2.AddOrderByField(false, "starttime");
                   SqlStatement stmt2 = sb2.GetStatement(true);
-                  //IList<Program> programsInDbs = ObjectFactory.GetCollection<Program>(stmt2.Execute());
-                  dbPrograms = new ProgramList(ObjectFactory.GetCollection<Program>(stmt2.Execute()));
-
-                  //int count = programsInDbs.Count;
-                  //programs.Capacity = count;
-                  //for (int i = 0 ; i < count ; i++)
-                  //  programs.Add(programsInDbs[i]);
+                  ProgramList dbPrograms = new ProgramList();
+                  ObjectFactory.GetCollection<Program>(stmt2.Execute(), dbPrograms);
+                  progChan.programs.RemoveOverlappingPrograms(dbPrograms, true);
                 }
-
-                //List<Program> importProgs = new List<Program>(progChan.programs.Count);
-                progChan.programs.RemoveOverlappingPrograms(dbPrograms);
 
                 for (int i = 0; i < progChan.programs.Count; ++i)
                 {
