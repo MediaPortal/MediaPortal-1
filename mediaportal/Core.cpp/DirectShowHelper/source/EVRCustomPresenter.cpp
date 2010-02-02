@@ -65,7 +65,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   {
     HRESULT hr;
     LogRotate();
-    Log("----------v0.6---------------------------");
+    Log("----------v1.1.0---------------------------");
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
     hr = m_pDXVA2CreateDirect3DDeviceManager9(&m_iResetToken, &m_pDeviceManager);
@@ -123,7 +123,9 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     m_bDrawStats = false;
   }
   
-  if (m_pDwmEnableMMCSS)
+  // Do not use this as it causes: 0002675: Micro stutters after Refresh Rate changes 
+  // Either MS bug, or we should be recreating the DirectX device on every refresh rate change
+  /*if (m_pDwmEnableMMCSS)
   {
     HRESULT hr = m_pDwmEnableMMCSS(true);
     if (SUCCEEDED(hr)) 
@@ -134,7 +136,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     {
       Log("Enabling the Multimedia Class Schedule Servicer for DWM failed");
     }
-  }
+  }*/
   m_pStatsRenderer = new StatsRenderer(this, m_pD3DDev);
 }
 
@@ -382,9 +384,10 @@ HRESULT MPEVRCustomPresenter::InitServicePointers(IMFTopologyServiceLookup *pLoo
     (void**)&m_pClock,          // Receives the pointer.
     &cCount);                   // Number of pointers
 
+
   if (FAILED(hr))
   {
-    Log("ERR: Could not get IMFClock interface");
+    Log("ERR: Could not get IMFClock interface (just info, not an error)");
   }
   else 
   {
@@ -1008,6 +1011,7 @@ HRESULT MPEVRCustomPresenter::PresentSample(IMFSample* pSample)
 			  m_pCallback->SetSampleTime(hnsTimeScheduled);
       }
     }
+
     // Present the swap surface
     LOG_TRACE("Painting");
     LONGLONG then = GetCurrentTimestamp();
@@ -1662,8 +1666,7 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
       GetRealRefreshRate();
     }
 
-	  // Raster offset target
-    double limitLow = 0.40;
+    D3DRASTER_STATUS rasterStatus;
 
     REFERENCE_TIME timePerFrame = m_rtTimePerFrame;
     if (m_DetectedFrameTime * 10000000.0 > 0) 
@@ -1674,27 +1677,23 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
     // Every second frame matching to display device refresh rate
     if (fabs(m_dD3DRefreshCycle - timePerFrame/20000) < 0.0015)
     {
-      double limitLow = 0.75;
-    }
-
-    D3DRASTER_STATUS rasterStatus;
-    LONGLONG prev = GetCurrentTimestamp();
-
-    // Correct raster offset - It Will Come
-    while (SUCCEEDED(m_pD3DDev->GetRasterStatus(0, &rasterStatus)))
-    {
-      if (!rasterStatus.InVBlank && 
-        (rasterStatus.ScanLine >= limitLow * m_displayMode.Height )) //&&
-        //(rasterStatus.ScanLine <= limitHigh * m_displayMode.Height))
+      UINT limitLow = m_displayMode.Height / 4; 
+      UINT limitHigh = m_displayMode.Height / 2; 
+      
+      // Correct raster offset - It Will Come
+      while (SUCCEEDED(m_pD3DDev->GetRasterStatus(0, &rasterStatus)))
       {
-        break;
+        if (rasterStatus.ScanLine >= limitLow &&
+            rasterStatus.ScanLine <= limitHigh)
+        {
+          break; // Raster target offset found
+        }
+
+        Sleep(1);	
       }
-
-      if ((GetCurrentTimestamp() - prev) > 800000) break;
-
-      Sleep(1);	
     }
 
+	m_pD3DDev->GetRasterStatus(0, &rasterStatus);
     m_rasterSyncOffset = (m_displayMode.Height - rasterStatus.ScanLine) * m_dDetectedScanlineTime;
     if (m_rasterSyncOffset > 1000)
     {

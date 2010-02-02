@@ -34,6 +34,8 @@ static AFX_EXTENSION_MODULE controlDLL;
 
 // force initialization early
 #pragma warning(disable: 4074)
+// ADDED - MS compiler nagging on MS code
+#pragma warning(disable: 4073)
 #pragma init_seg(lib)
 
 /////////////////////////////////////////////////////////////////////////////
