@@ -439,6 +439,8 @@ namespace MpeMaker.Sections
         msgBoxText = String.Format("Do you want to delete {0} files from list?", treeView1.SelectedNodes.Count);
       }
 
+      msgBoxText += String.Format("{0}{0}This will remove all 'Attached folders' from this group, too!", Environment.NewLine);
+
       if (MessageBox.Show(msgBoxText, msgBoxCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
 
       foreach (TreeNode treeNode in treeView1.SelectedNodes)

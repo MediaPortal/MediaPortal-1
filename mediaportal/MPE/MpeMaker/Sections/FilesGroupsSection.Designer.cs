@@ -40,6 +40,7 @@
           this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
           this.tabControl1 = new System.Windows.Forms.TabControl();
           this.tabPage_group = new System.Windows.Forms.TabPage();
+          this.btn_clearat = new System.Windows.Forms.Button();
           this.label8 = new System.Windows.Forms.Label();
           this.list_folder = new System.Windows.Forms.ListBox();
           this.label5 = new System.Windows.Forms.Label();
@@ -61,7 +62,6 @@
           this.label1 = new System.Windows.Forms.Label();
           this.cmb_installtype = new System.Windows.Forms.ComboBox();
           this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-          this.btn_clearat = new System.Windows.Forms.Button();
           this.treeView1 = new CodersLab.Windows.Controls.TreeView();
           this.toolStrip.SuspendLayout();
           this.tabControl1.SuspendLayout();
@@ -183,6 +183,16 @@
           this.tabPage_group.Text = "Group";
           this.tabPage_group.UseVisualStyleBackColor = true;
           // 
+          // btn_clearat
+          // 
+          this.btn_clearat.Location = new System.Drawing.Point(6, 289);
+          this.btn_clearat.Name = "btn_clearat";
+          this.btn_clearat.Size = new System.Drawing.Size(142, 23);
+          this.btn_clearat.TabIndex = 10;
+          this.btn_clearat.Text = "Clear attached folders";
+          this.btn_clearat.UseVisualStyleBackColor = true;
+          this.btn_clearat.Click += new System.EventHandler(this.btn_clearat_Click);
+          // 
           // label8
           // 
           this.label8.AutoSize = true;
@@ -199,13 +209,14 @@
           this.list_folder.FormattingEnabled = true;
           this.list_folder.Location = new System.Drawing.Point(6, 201);
           this.list_folder.Name = "list_folder";
-          this.list_folder.Size = new System.Drawing.Size(375, 82);
+          this.list_folder.Size = new System.Drawing.Size(340, 82);
           this.list_folder.TabIndex = 8;
+          this.toolTip.SetToolTip(this.list_folder, "All files in this directory will be recursively added to this group.");
           // 
           // label5
           // 
           this.label5.AutoSize = true;
-          this.label5.Location = new System.Drawing.Point(6, 127);
+          this.label5.Location = new System.Drawing.Point(6, 130);
           this.label5.Name = "label5";
           this.label5.Size = new System.Drawing.Size(68, 13);
           this.label5.TabIndex = 7;
@@ -219,7 +230,7 @@
           this.cmb_parentGroup.FormattingEnabled = true;
           this.cmb_parentGroup.Location = new System.Drawing.Point(80, 127);
           this.cmb_parentGroup.Name = "cmb_parentGroup";
-          this.cmb_parentGroup.Size = new System.Drawing.Size(301, 21);
+          this.cmb_parentGroup.Size = new System.Drawing.Size(266, 21);
           this.cmb_parentGroup.TabIndex = 6;
           this.cmb_parentGroup.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
           // 
@@ -229,7 +240,7 @@
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.txt_displlayName.Location = new System.Drawing.Point(6, 19);
           this.txt_displlayName.Name = "txt_displlayName";
-          this.txt_displlayName.Size = new System.Drawing.Size(375, 20);
+          this.txt_displlayName.Size = new System.Drawing.Size(340, 20);
           this.txt_displlayName.TabIndex = 5;
           this.txt_displlayName.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
           // 
@@ -269,7 +280,7 @@
           this.txt_description.Location = new System.Drawing.Point(6, 58);
           this.txt_description.Multiline = true;
           this.txt_description.Name = "txt_description";
-          this.txt_description.Size = new System.Drawing.Size(375, 63);
+          this.txt_description.Size = new System.Drawing.Size(340, 63);
           this.txt_description.TabIndex = 1;
           this.txt_description.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
           // 
@@ -308,7 +319,7 @@
                       | System.Windows.Forms.AnchorStyles.Right)));
           this.txt_param1.Location = new System.Drawing.Point(95, 114);
           this.txt_param1.Name = "txt_param1";
-          this.txt_param1.Size = new System.Drawing.Size(254, 20);
+          this.txt_param1.Size = new System.Drawing.Size(251, 20);
           this.txt_param1.TabIndex = 8;
           this.txt_param1.TextChanged += new System.EventHandler(this.txt_description_TextChanged);
           // 
@@ -344,7 +355,7 @@
             "Overwrite if older"});
           this.cmb_overwrite.Location = new System.Drawing.Point(95, 59);
           this.cmb_overwrite.Name = "cmb_overwrite";
-          this.cmb_overwrite.Size = new System.Drawing.Size(254, 21);
+          this.cmb_overwrite.Size = new System.Drawing.Size(251, 21);
           this.cmb_overwrite.TabIndex = 5;
           this.cmb_overwrite.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
           // 
@@ -395,20 +406,10 @@
           this.cmb_installtype.FormattingEnabled = true;
           this.cmb_installtype.Location = new System.Drawing.Point(95, 32);
           this.cmb_installtype.Name = "cmb_installtype";
-          this.cmb_installtype.Size = new System.Drawing.Size(254, 21);
+          this.cmb_installtype.Size = new System.Drawing.Size(251, 21);
           this.cmb_installtype.TabIndex = 0;
           this.toolTip.SetToolTip(this.cmb_installtype, "1");
           this.cmb_installtype.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
-          // 
-          // btn_clearat
-          // 
-          this.btn_clearat.Location = new System.Drawing.Point(6, 289);
-          this.btn_clearat.Name = "btn_clearat";
-          this.btn_clearat.Size = new System.Drawing.Size(142, 23);
-          this.btn_clearat.TabIndex = 10;
-          this.btn_clearat.Text = "Clear attached folders";
-          this.btn_clearat.UseVisualStyleBackColor = true;
-          this.btn_clearat.Click += new System.EventHandler(this.btn_clearat_Click);
           // 
           // treeView1
           // 
