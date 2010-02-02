@@ -134,7 +134,6 @@ namespace MediaPortal.DeployTool
       // 
       // splitContainer2.Panel1
       // 
-      this.splitContainer2.Panel1.BackColor = System.Drawing.Color.Navy;
       this.splitContainer2.Panel1.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
       // 
       // splitContainer2.Panel2
@@ -144,7 +143,6 @@ namespace MediaPortal.DeployTool
       this.splitContainer2.Panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
       this.splitContainer2.Panel2.Controls.Add(this.nextButton);
       this.splitContainer2.Panel2.Controls.Add(this.backButton);
-      this.splitContainer2.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer2_Panel2_Paint);
       this.splitContainer2.Size = new System.Drawing.Size(666, 293);
       this.splitContainer2.SplitterDistance = 250;
       this.splitContainer2.SplitterWidth = 1;
@@ -179,6 +177,7 @@ namespace MediaPortal.DeployTool
       // 
       // DeployTool
       // 
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackColor = System.Drawing.Color.White;
       this.ClientSize = new System.Drawing.Size(666, 416);

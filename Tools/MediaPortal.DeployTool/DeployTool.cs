@@ -237,10 +237,5 @@ namespace MediaPortal.DeployTool
         MessageBox.Show(String.Format("Unable to open the help page with your default browser - {0}", ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
     }
-
-    private void splitContainer2_Panel2_Paint(object sender, PaintEventArgs e)
-    {
-
-    }
   }
 }
