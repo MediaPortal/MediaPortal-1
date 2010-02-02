@@ -43,6 +43,7 @@ namespace MpeMaker.Sections
       _packageClass = packageClass;
       _actionItem = item;
       InitializeComponent();
+      Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
       cmb_type.Text = item.ActionType;
       cmb_group.Items.Add("");
       foreach (var group in packageClass.Groups.Items)
