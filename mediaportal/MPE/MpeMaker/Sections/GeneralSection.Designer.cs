@@ -357,7 +357,6 @@
           // toolTip
           // 
           this.toolTip.IsBalloon = true;
-          this.toolTip.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
           // 
           // txt_tags
           // 
