@@ -35,7 +35,7 @@ namespace MpeCore.Classes.ActionType
     private const string Const_Wait = "Wait for exit";
     private const string Const_Un_APP = "Path to uninstall application";
     private const string Const_Un_Params = "Parameters for uninstall application";
-    private const string Const_Un_Wait = "Wait for exit";
+    private const string Const_Un_Wait = "Wait for exit on uninstall";
 
     public event FileInstalledEventHandler ItemProcessed;
 

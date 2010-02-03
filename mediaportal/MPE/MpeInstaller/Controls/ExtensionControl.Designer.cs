@@ -45,6 +45,7 @@
           this.btn_forum = new System.Windows.Forms.Button();
           this.img_logo = new System.Windows.Forms.PictureBox();
           this.timer1 = new System.Windows.Forms.Timer(this.components);
+          this.btn_screenshot = new System.Windows.Forms.Button();
           ((System.ComponentModel.ISupportInitialize)(this.img_dep)).BeginInit();
           ((System.ComponentModel.ISupportInitialize)(this.img_update)).BeginInit();
           this.toolStrip1.SuspendLayout();
@@ -219,12 +220,24 @@
           this.timer1.Interval = 2;
           this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
           // 
+          // btn_screenshot
+          // 
+          this.btn_screenshot.FlatStyle = System.Windows.Forms.FlatStyle.System;
+          this.btn_screenshot.Location = new System.Drawing.Point(399, 91);
+          this.btn_screenshot.Name = "btn_screenshot";
+          this.btn_screenshot.Size = new System.Drawing.Size(75, 23);
+          this.btn_screenshot.TabIndex = 13;
+          this.btn_screenshot.Text = "ScreenShots";
+          this.btn_screenshot.UseVisualStyleBackColor = true;
+          this.btn_screenshot.Click += new System.EventHandler(this.btn_screenshot_Click);
+          // 
           // ExtensionControl
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
           this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
           this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+          this.Controls.Add(this.btn_screenshot);
           this.Controls.Add(this.btn_home);
           this.Controls.Add(this.btn_forum);
           this.Controls.Add(this.toolStrip1);
@@ -270,5 +283,6 @@
         private System.Windows.Forms.Button btn_forum;
         private System.Windows.Forms.Button btn_home;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Button btn_screenshot;
     }
 }

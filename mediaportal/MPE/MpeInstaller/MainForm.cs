@@ -40,6 +40,7 @@ namespace MpeInstaller
     private ApplicationSettings _settings = new ApplicationSettings();
     private SplashScreen splashScreen = new SplashScreen();
     private bool _loading = true;
+    private ScreenShotNavigator _screenShotNavigator = new ScreenShotNavigator();
 
     public MainForm()
     {
@@ -188,10 +189,19 @@ namespace MpeInstaller
       extensionListControl.UpdateExtension += extensionListControl_UpdateExtension;
       extensionListControl.ConfigureExtension += extensionListControl_ConfigureExtension;
       extensionListControl.InstallExtension += extensionListControl_InstallExtension;
+      extensionListControl.ShowScreenShot += extensionListControl_ShowScreenShot;
       extensionListContro_all.UnInstallExtension += extensionListControl_UnInstallExtension;
       extensionListContro_all.UpdateExtension += extensionListControl_UpdateExtension;
       extensionListContro_all.ConfigureExtension += extensionListControl_ConfigureExtension;
       extensionListContro_all.InstallExtension += extensionListControl_InstallExtension;
+      extensionListContro_all.ShowScreenShot += extensionListControl_ShowScreenShot;
+    }
+
+    void extensionListControl_ShowScreenShot(object sender, PackageClass packageClass)
+    {
+      _screenShotNavigator.Set(packageClass);
+      if (!_screenShotNavigator.Visible)
+        _screenShotNavigator.Show();
     }
 
     private void extensionListControl_InstallExtension(object sender, PackageClass packageClass)

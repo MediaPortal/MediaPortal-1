@@ -49,6 +49,10 @@ namespace MpeInstaller.Controls
 
     public delegate void InstallExtensionHandler(object sender, PackageClass packageClass);
 
+    public event ShowScreenShotHandler ShowScreenShot;
+
+    public delegate void ShowScreenShotHandler(object sender, PackageClass packageClass);
+
     public ExtensionListControl()
     {
       InitializeComponent();
@@ -105,6 +109,12 @@ namespace MpeInstaller.Controls
     {
       if (InstallExtension != null)
         InstallExtension(control, pak);
+    }
+
+    public void OnShowScreenShot(ExtensionControl control, PackageClass pak)
+    {
+      if (ShowScreenShot != null)
+        ShowScreenShot(control, pak);
     }
 
     public void Filter(string filter, string tag)

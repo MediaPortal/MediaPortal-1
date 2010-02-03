@@ -39,6 +39,8 @@ namespace MpeCore.Classes
                                   "The icon file of the package stored online (jpg,png,bmp)"));
       Params.Add(new SectionParam(ParamNamesConst.CONFIG, "", ValueTypeEnum.Template,
                                   "The file used to configure the extension.\n If have .exe extension the will be executed\n If have .dll extension used like MP plugin configuration"));
+      Params.Add(new SectionParam(ParamNamesConst.ONLINE_SCREENSHOT, "", ValueTypeEnum.String,
+                                  "Online stored screenshot urls separated by ; "));
     }
 
     public string Name { get; set; }

@@ -73,6 +73,8 @@ namespace MpeInstaller.Controls
         catch (Exception) {}
       }
 
+      btn_screenshot.Enabled = !string.IsNullOrEmpty(packageClass.GeneralInfo.Params[ParamNamesConst.ONLINE_SCREENSHOT].Value);
+
       Package = MpeCore.MpeInstaller.InstalledExtensions.Get(packageClass);
       if (Package == null)
       {
@@ -312,6 +314,14 @@ namespace MpeInstaller.Controls
       {
         timer1.Enabled = false;
       }
+    }
+
+    private void btn_screenshot_Click(object sender, EventArgs e)
+    {
+      ExtensionListControl parent = Parent.Parent as ExtensionListControl;
+      if (parent == null)
+        return;
+      parent.OnShowScreenShot(this, Package);
     }
 
   }
