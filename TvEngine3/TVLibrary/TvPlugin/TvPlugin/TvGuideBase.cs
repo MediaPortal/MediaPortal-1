@@ -3079,11 +3079,22 @@ namespace TvPlugin
             Schedule schedule = null;
 
             if (isRec)
-            {
+            {              
               // If you select the program which is currently recording open a dialog to ask if you want to see it from the beginning
               // imagine a sports event where you do not want to see the live point to be spoiled           
-              schedule = Schedule.RetrieveOnce(_currentProgram.ReferencedChannel().IdChannel, _currentProgram.Title,
-                                               _currentProgram.StartTime, _currentProgram.EndTime);              
+              Schedule scheduleSeries = Schedule.RetrieveSeries(_currentProgram.ReferencedChannel().IdChannel, _currentProgram.StartTime,
+                                      _currentProgram.EndTime);
+
+              if (scheduleSeries != null)
+              {
+                schedule = Schedule.RetrieveSpawnedSchedule(scheduleSeries.IdSchedule, _currentProgram.StartTime);
+              }
+
+              if (schedule == null)
+              {
+                schedule = scheduleSeries;
+              }
+              
             }
             else if (isRecNOepg)            
             {
