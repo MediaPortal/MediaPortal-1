@@ -31,7 +31,11 @@ namespace MpeCore.Classes.ActionType
   internal class RunApplication : IActionType
   {
     private const string Const_APP = "Path to application";
-    private const string Const_Params = "Parameters to application";
+    private const string Const_Params = "Parameters for application";
+    private const string Const_Wait = "Wait for exit";
+    private const string Const_Un_APP = "Path to uninstall application";
+    private const string Const_Un_Params = "Parameters for uninstall application";
+    private const string Const_Un_Wait = "Wait for exit";
 
     public event FileInstalledEventHandler ItemProcessed;
 
@@ -57,31 +61,50 @@ namespace MpeCore.Classes.ActionType
                                   "Path to the application like \n %Base%\\MediaPortal.exe"));
       Params.Add(new SectionParam(Const_Params, "", ValueTypeEnum.String,
                                   "Command line parameters"));
+      Params.Add(new SectionParam(Const_Wait, "", ValueTypeEnum.Bool,
+                            "Wait for exit "));
+      Params.Add(new SectionParam(Const_Un_APP, "", ValueTypeEnum.Template,
+                            "Path to the application which should be executed when uninstall"));
+      Params.Add(new SectionParam(Const_Un_Params, "", ValueTypeEnum.String,
+                                  "Command line parameters for uninstall app"));
+      Params.Add(new SectionParam(Const_Un_Wait, "", ValueTypeEnum.Bool,
+                            "Wait for exit on uninstall "));
       return Params;
     }
 
     public SectionResponseEnum Execute(PackageClass packageClass, ActionItem actionItem)
     {
+
+      Process myProcess = new Process();
+
       try
       {
-        if (!string.IsNullOrEmpty(actionItem.Params[Const_Params].Value))
-        {
-          Process.Start(MpeInstaller.TransformInRealPath(actionItem.Params[Const_APP].Value),
-                        actionItem.Params[Const_Params].Value);
-        }
-        else
-        {
-          Process.Start(MpeInstaller.TransformInRealPath(actionItem.Params[Const_APP].Value));
-        }
+        myProcess.StartInfo.UseShellExecute = false;
+        myProcess.StartInfo.FileName = MpeInstaller.TransformInRealPath(actionItem.Params[Const_APP].Value);
+        myProcess.StartInfo.Arguments = MpeInstaller.TransformInRealPath(actionItem.Params[Const_Params].Value);
+        myProcess.StartInfo.CreateNoWindow = true;
+        myProcess.Start();
+        if (actionItem.Params[Const_Wait].GetValueAsBool())
+          myProcess.WaitForExit();
+
       }
-      catch (Exception)
+      catch (Exception e)
       {
         if (ItemProcessed != null)
-          ItemProcessed(this, new InstallEventArgs("Error tos start application"));
+          ItemProcessed(this, new InstallEventArgs("Error to start application"));
         return SectionResponseEnum.Ok;
       }
-      if (ItemProcessed != null)
-        ItemProcessed(this, new InstallEventArgs("Application start done"));
+      if (packageClass.Silent)
+      {
+        myProcess.StartInfo.CreateNoWindow = true;
+        myProcess.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+      }
+      UnInstallItem unInstallItem = new UnInstallItem();
+      unInstallItem.ActionType = DisplayName;
+      unInstallItem.ActionParam = new SectionParamCollection(actionItem.Params);
+      unInstallItem.ActionParam[Const_APP].Value = actionItem.Params[Const_APP].GetValueAsPath();
+      unInstallItem.ActionParam[Const_Un_APP].Value = actionItem.Params[Const_Un_APP].GetValueAsPath();
+      packageClass.UnInstallInfo.Items.Add(unInstallItem);
       return SectionResponseEnum.Ok;
     }
 
@@ -99,7 +122,34 @@ namespace MpeCore.Classes.ActionType
 
     public SectionResponseEnum UnInstall(PackageClass packageClass, UnInstallItem item)
     {
+      Process myProcess = new Process();
+
+      try
+      {
+        myProcess.StartInfo.UseShellExecute = false;
+        myProcess.StartInfo.FileName = MpeInstaller.TransformInRealPath(item.ActionParam[Const_Un_APP].Value);
+        myProcess.StartInfo.Arguments = MpeInstaller.TransformInRealPath(item.ActionParam[Const_Un_Params].Value);
+        if (packageClass.Silent)
+        {
+          myProcess.StartInfo.CreateNoWindow = true;
+          myProcess.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+        }
+        myProcess.Start();
+        if (item.ActionParam[Const_Un_Wait].GetValueAsBool())
+          myProcess.WaitForExit();
+
+      }
+      catch (Exception e)
+      {
+        if (ItemProcessed != null)
+          ItemProcessed(this, new InstallEventArgs("Error to start application"));
+        return SectionResponseEnum.Ok;
+      }
+      if (ItemProcessed != null)
+        ItemProcessed(this, new InstallEventArgs("Application start done"));
       return SectionResponseEnum.Ok;
     }
   }
+
+
 }

@@ -37,9 +37,11 @@ namespace MpeCore.Classes.PathProvider
 
       foreach (string options in Enum.GetNames(typeof (Environment.SpecialFolder)))
       {
-        _paths.Add(string.Format("%{0}%", options),
-                   Environment.GetFolderPath(
-                     (Environment.SpecialFolder)Enum.Parse(typeof (Environment.SpecialFolder), options)));
+        if (!string.IsNullOrEmpty(Environment.GetFolderPath(
+                     (Environment.SpecialFolder)Enum.Parse(typeof(Environment.SpecialFolder), options))))
+          _paths.Add(string.Format("%{0}%", options),
+                     Environment.GetFolderPath(
+                       (Environment.SpecialFolder)Enum.Parse(typeof (Environment.SpecialFolder), options)));
       }
       string fontsDir = Environment.GetEnvironmentVariable("windir");
 
@@ -47,7 +49,9 @@ namespace MpeCore.Classes.PathProvider
         fontsDir = "c:\\windows\\fonts";
       else
         fontsDir = Path.Combine(fontsDir, "fonts");
+
       _paths.Add("%Fonts%", fontsDir);
+      _paths.Add("%Temp%", Path.GetTempPath());
     }
 
     #region IPathProvider Members
