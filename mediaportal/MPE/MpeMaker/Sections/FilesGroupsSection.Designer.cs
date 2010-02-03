@@ -309,9 +309,9 @@
           this.label7.AutoSize = true;
           this.label7.Location = new System.Drawing.Point(3, 117);
           this.label7.Name = "label7";
-          this.label7.Size = new System.Drawing.Size(73, 13);
+          this.label7.Size = new System.Drawing.Size(46, 13);
           this.label7.TabIndex = 10;
-          this.label7.Text = "Ignored skins:";
+          this.label7.Text = "Param1:";
           // 
           // txt_param1
           // 
@@ -413,6 +413,10 @@
           this.cmb_installtype.TabIndex = 0;
           this.toolTip.SetToolTip(this.cmb_installtype, "1");
           this.cmb_installtype.SelectedIndexChanged += new System.EventHandler(this.txt_description_TextChanged);
+          // 
+          // toolTip
+          // 
+          this.toolTip.IsBalloon = true;
           // 
           // treeView1
           // 
