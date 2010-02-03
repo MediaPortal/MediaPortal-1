@@ -312,12 +312,12 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
   //char log[128];
   //sprintf(log,"FontEngineAddTexture(%x)\n", hashCode);
   //Log(log);
-  if(inPresentTextures)
+  /*if(inPresentTextures)
   {
     char log[128];
     sprintf(log,"FontEngineAddTexture -- called when inPresentTextures == true - possible bug...\n");
     Log(log);    
-  }
+  }*/
 
   int selected=-1;
   for (int i=0; i < MAX_TEXTURES;++i)
