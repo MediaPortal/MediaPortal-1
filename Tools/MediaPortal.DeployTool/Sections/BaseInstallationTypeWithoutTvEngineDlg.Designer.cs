@@ -150,7 +150,8 @@ namespace MediaPortal.DeployTool.Sections
       this.bAdvanced.Click += new System.EventHandler(this.bAdvanced_Click);
       // 
       // BaseInstallationTypeWithoutTvEngineDlg
-      // 
+      //
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_one_click_install_choose;
       this.Controls.Add(this.bAdvanced);

@@ -84,6 +84,7 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // WelcomeDlg
       // 
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_with_MP_Box;
       this.Controls.Add(this.cbLanguage);
