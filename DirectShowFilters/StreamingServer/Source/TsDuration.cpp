@@ -85,6 +85,8 @@ void CTsDuration::UpdateDuration()
     m_maxPcr.Reset();
     m_reader->SetFilePointer(0,FILE_BEGIN);
 
+    Reset() ; // Reset internal "PacketSync" buffer
+
     //find the first pcr in the file
     while (!m_startPcr.IsValid)
     {
@@ -102,7 +104,7 @@ void CTsDuration::UpdateDuration()
         m_reader->Read(buffer,1,&dwBytesRead);
         return;
       }
-    OnRawData(buffer,dwBytesRead);
+      OnRawData(buffer,dwBytesRead);
     }
 
     //find the last pcr in the file
@@ -124,6 +126,7 @@ void CTsDuration::UpdateDuration()
       {
         break;
       }
+      Reset() ; // Reset internal "PacketSync" buffer
       OnRawData(buffer,dwBytesRead);
       offset+=sizeof(buffer);
     }
@@ -173,6 +176,7 @@ void CTsDuration::UpdateDuration()
       {
         break;
       }
+      Reset() ; // Reset internal "PacketSync" buffer
       OnRawData(buffer,dwBytesRead);
       offset+=sizeof(buffer);
     }
