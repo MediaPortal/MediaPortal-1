@@ -20,8 +20,6 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
-using System.Windows.Forms;
 using MpeCore.Classes.Events;
 using MpeCore.Classes.SectionPanel;
 using MpeCore.Interfaces;
@@ -83,21 +81,26 @@ namespace MpeCore.Classes.ActionType
         myProcess.StartInfo.FileName = MpeInstaller.TransformInRealPath(actionItem.Params[Const_APP].Value);
         myProcess.StartInfo.Arguments = MpeInstaller.TransformInRealPath(actionItem.Params[Const_Params].Value);
         myProcess.StartInfo.CreateNoWindow = true;
+
+        if (packageClass.Silent)
+        {
+          myProcess.StartInfo.CreateNoWindow = true;
+          myProcess.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+        }
+
         myProcess.Start();
         if (actionItem.Params[Const_Wait].GetValueAsBool())
+        {
           myProcess.WaitForExit();
-
+          if (myProcess.ExitCode != 0)
+            return SectionResponseEnum.Error;
+        }
       }
       catch (Exception e)
       {
         if (ItemProcessed != null)
           ItemProcessed(this, new InstallEventArgs("Error to start application"));
-        return SectionResponseEnum.Ok;
-      }
-      if (packageClass.Silent)
-      {
-        myProcess.StartInfo.CreateNoWindow = true;
-        myProcess.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+        return SectionResponseEnum.Error;
       }
       UnInstallItem unInstallItem = new UnInstallItem();
       unInstallItem.ActionType = DisplayName;

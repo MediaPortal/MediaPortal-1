@@ -79,6 +79,13 @@ namespace MpeCore.Classes
           case SectionResponseEnum.Ok:
             break;
           case SectionResponseEnum.Error:
+            //if (!Package.Silent)
+            //  MessageBox.Show("Error on installation. Installation aborted !");
+            bool sil_ = Package.Silent;
+            Package.Silent = true;
+            Package.UnInstall();
+            Package.Silent = sil_;
+            return SectionResponseEnum.Error;
             break;
         }
         if (Response != SectionResponseEnum.Back && Response != SectionResponseEnum.Next)

@@ -19,14 +19,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 using MpeCore.Interfaces;
-using MpeCore.Classes;
 
 namespace MpeCore.Classes.SectionPanel
 {
@@ -66,19 +60,24 @@ namespace MpeCore.Classes.SectionPanel
     public void Preview(PackageClass packageClass, SectionItem sectionItem)
     {
       MessageBox.Show("This is a non visual Section. Nothing to show");
-      ;
     }
 
     public SectionResponseEnum Execute(PackageClass packageClass, SectionItem sectionItem)
     {
-      Base.ActionExecute(packageClass, sectionItem, ActionExecuteLocationEnum.BeforPanelShow);
-      Base.ActionExecute(packageClass, sectionItem, ActionExecuteLocationEnum.AfterPanelShow);
+      SectionResponseEnum _resp;
+      _resp = ActionExecute(packageClass, sectionItem, ActionExecuteLocationEnum.BeforPanelShow);
+      if (_resp != SectionResponseEnum.Ok)
+        return _resp;
+      _resp = ActionExecute(packageClass, sectionItem, ActionExecuteLocationEnum.AfterPanelShow);
+      if (_resp != SectionResponseEnum.Ok)
+        return _resp;
+
       foreach (string includedGroup in sectionItem.IncludedGroups)
       {
         packageClass.Groups[includedGroup].Checked = sectionItem.Params[Const_state].GetValueAsBool();
       }
-      Base.ActionExecute(packageClass, sectionItem, ActionExecuteLocationEnum.AfterPanelHide);
-      return SectionResponseEnum.Ok;
+      _resp = ActionExecute(packageClass, sectionItem, ActionExecuteLocationEnum.AfterPanelHide);
+      return _resp;
     }
   }
 }

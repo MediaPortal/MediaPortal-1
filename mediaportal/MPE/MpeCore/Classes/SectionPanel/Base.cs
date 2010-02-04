@@ -26,17 +26,24 @@ namespace MpeCore.Classes.SectionPanel
 {
   public class Base
   {
-    public static void ActionExecute(PackageClass packageClass, SectionItem sectionItem,
+    public static SectionResponseEnum ActionExecute(PackageClass packageClass, SectionItem sectionItem,
                                      ActionExecuteLocationEnum locationEnum)
     {
+      SectionResponseEnum responseEnum = SectionResponseEnum.Ok;
       foreach (ActionItem list in sectionItem.Actions.Items)
       {
         if (list.ExecuteLocation != locationEnum)
           continue;
         if (!string.IsNullOrEmpty(list.ConditionGroup) && !packageClass.Groups[list.ConditionGroup].Checked)
           continue;
-        MpeInstaller.ActionProviders[list.ActionType].Execute(packageClass, list);
+        responseEnum = MpeInstaller.ActionProviders[list.ActionType].Execute(packageClass, list);
+        if (responseEnum != SectionResponseEnum.Ok)
+        {
+          break;
+        }
       }
+      return responseEnum;
     }
+
   }
 }
