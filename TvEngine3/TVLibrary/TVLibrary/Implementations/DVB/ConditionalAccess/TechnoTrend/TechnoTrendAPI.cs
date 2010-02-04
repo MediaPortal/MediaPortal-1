@@ -1290,6 +1290,10 @@ namespace TvLibrary.Implementations.DVB
     public unsafe void onSwitchOsdOff(IntPtr Context, byte nSlot)
     {
       Log.Log.Debug("TechnoTrend:CI_OnSwitchOsdOff slot:{0}", nSlot);
+      if (ciMenuCallbacks != null)
+      {
+        ciMenuCallbacks.OnCiCloseDisplay(0);
+      }
     }
 
     /// <summary>

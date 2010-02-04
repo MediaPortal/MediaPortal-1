@@ -39,7 +39,9 @@ namespace TvLibrary.Interfaces
     /// no choices
     NoChoices = 4,
     /// error
-    Error = 5
+    Error = 5,
+    /// open menu is to be closed
+    Close =6
   }
 
   /// <summary>

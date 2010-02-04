@@ -3653,6 +3653,18 @@ namespace TvPlugin
               TVHome.Card.SendMenuAnswer(true, null); // cancel request 
             }
             break;
+          case CiMenuState.Close:
+            if (_dialogNotify != null)
+            {
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _dialogNotify.GetID, 0, 0, 0, 0, null);
+              _dialogNotify.OnMessage(msg);	// Send a de-init msg to hide the current notify dialog
+            }
+            if (dlgCiMenu != null)
+            {
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, dlgCiMenu.GetID, 0, 0, 0, 0, null);
+              dlgCiMenu.OnMessage(msg);	// Send a de-init msg to hide the current CI menu dialog
+            }
+            break;
         }
 
         CiMenuActive = false; // finished

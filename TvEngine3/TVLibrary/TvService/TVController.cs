@@ -122,6 +122,17 @@ namespace TvService
     #region CI Menu Event handling
 
     /// <summary>
+    /// Flag that is that to true when a users opens CI menu interactive.
+    /// It is used to filter out unwanted, unrequested CI callbacks.
+    /// </summary>
+    private bool IsCiMenuInteractive = false;
+
+    /// <summary>
+    /// Remember the number of currently attached CI menu supporting card.
+    /// </summary>
+    private int ActiveCiMenuCard = -1;
+
+    /// <summary>
     /// Local copy of event holding a collection
     /// </summary>
     private static event CiMenuCallback s_ciMenu;
@@ -210,7 +221,10 @@ namespace TvService
       if (ValidateTvControllerParams(cardId, false))
         return false;
       if (_cards[cardId].CiMenuActions != null)
+      {
+        IsCiMenuInteractive = true; // user action
         return _cards[cardId].CiMenuActions.EnterCIMenu();
+      }
       return false;
     }
 
@@ -238,9 +252,21 @@ namespace TvService
       Log.Debug("CloseMenu called");
       if (ValidateTvControllerParams(cardId, false))
         return false;
-      return _cards[cardId].CiMenuActions != null && _cards[cardId].CiMenuActions.CloseCIMenu();
+      if (_cards[cardId].CiMenuActions != null)
+      {
+        IsCiMenuInteractive = false; // user action ended by wanted close
+        return _cards[cardId].CiMenuActions.CloseCIMenu();
+      }
+      return false;
     }
 
+    /// <summary>
+    /// Sends a menu answer back to CAM
+    /// </summary>
+    /// <param name="cardId">card</param>
+    /// <param name="Cancel">true to cancel request</param>
+    /// <param name="Answer">answer string</param>
+    /// <returns></returns>
     public bool SendMenuAnswer(int cardId, bool Cancel, string Answer)
     {
       Log.Debug("SendMenuAnswer called");
@@ -274,6 +300,7 @@ namespace TvService
         return false;
       if (_cards[cardId].CiMenuActions != null)
       {
+        ActiveCiMenuCard = cardId;
         res = _cards[cardId].CiMenuActions.SetCiMenuHandler(this);
         Log.Debug("TvController: SetCiMenuHandler: result {0}", res);
         return res;
@@ -3856,8 +3883,16 @@ namespace TvService
       if (curMenu != null)
       {
         if (curMenu.State == CiMenuState.Ready || curMenu.State == CiMenuState.NoChoices ||
-            curMenu.State == CiMenuState.Request)
+            curMenu.State == CiMenuState.Request || curMenu.State == CiMenuState.Close)
         {
+          // special workaround for AstonCrypt2 cam type (according to database CamType)
+          // avoid unwanted CI menu callbacks if user has not opened CI menu interactively
+          if (ActiveCiMenuCard != -1 && _cards[ActiveCiMenuCard].DataBaseCard.CamType == 1 && !IsCiMenuInteractive)
+          {
+            Log.Debug("AstonCrypt2: unrequested CI menu received, no action done. Menu Title: {0}", curMenu.Title);
+            return;
+          }
+
           if (s_ciMenu != null)
           {
             s_ciMenu(curMenu); // pass to eventhandlers
@@ -3921,9 +3956,9 @@ namespace TvService
       // sometimes first a "Close" is sent, even no others callbacks were done before 
       if (curMenu == null)
       {
-        curMenu = new CiMenu(String.Empty, String.Empty, String.Empty, CiMenuState.Closed);
+        curMenu = new CiMenu(String.Empty, String.Empty, String.Empty, CiMenuState.Close);
       }
-      curMenu.State = CiMenuState.Closed;
+      curMenu.State = CiMenuState.Close;
       CheckForCallback();
       return 0;
     }
