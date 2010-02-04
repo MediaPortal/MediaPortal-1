@@ -39,7 +39,7 @@ namespace MpeInstaller.Dialogs
       pictureBox.ImageLocation = "";
       progressBar1.Visible = false;
       Urls.Clear();
-      string[] u = pak.GeneralInfo.Params[ParamNamesConst.ONLINE_SCREENSHOT].Value.Split(';');
+      string[] u = pak.GeneralInfo.Params[ParamNamesConst.ONLINE_SCREENSHOT].Value.Split(ParamNamesConst.SEPARATORS);
       foreach (var s in u)
       {
         Urls.Add(s);

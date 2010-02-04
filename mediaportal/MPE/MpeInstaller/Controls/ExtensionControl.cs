@@ -67,7 +67,9 @@ namespace MpeInstaller.Controls
         {
           _downloadItem.SourceUrl = packageClass.GeneralInfo.Params[ParamNamesConst.ONLINE_ICON].Value;
           _downloadItem.TempDestination = Path.GetTempFileName();
-          _downloadItem.Destination = packageClass.LocationFolder + "icon.png";
+          _downloadItem.Destination = packageClass.LocationFolder + "icon" + Path.GetExtension(_downloadItem.SourceUrl);
+          if (!Directory.Exists(Path.GetDirectoryName(_downloadItem.Destination)))
+            Directory.CreateDirectory(Path.GetDirectoryName(_downloadItem.Destination));
           _client.DownloadFileAsync(new Uri(_downloadItem.SourceUrl), _downloadItem.TempDestination);
         }
         catch (Exception) {}

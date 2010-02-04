@@ -25,11 +25,11 @@ namespace MpeCore.Classes
     public const string ICON = "Icon";
     public const string ONLINE_ICON = "Online Icon";
     public const string CONFIG = "Configuration file";
-    public const string ONLINE_SCREENSHOT  = "Online Screenshots";
+    public const string ONLINE_SCREENSHOT = "Online Screenshots";
     public const string SECTION_ICON = "Header image";
 
-
-
+    public static char[] SEPARATORS = {',', ';'};
+  
     public const string DEVELOPMENTSTATUS_STABE = "Stable";
   }
 }

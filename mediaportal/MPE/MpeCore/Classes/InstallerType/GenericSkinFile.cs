@@ -44,7 +44,7 @@ namespace MpeCore.Classes.InstallerType
 
     public void Install(PackageClass packageClass, FileItem file)
     {
-      List<string> skinList = GetInstalledSkins(file.Param1.Split(','));
+      List<string> skinList = GetInstalledSkins(file.Param1.Split(ParamNamesConst.SEPARATORS));
       foreach (string list in skinList)
       {
         FileItem fileItem = new FileItem(file);
