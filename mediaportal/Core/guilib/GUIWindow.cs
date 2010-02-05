@@ -1049,15 +1049,18 @@ namespace MediaPortal.GUI.Library
     {
       try
       {
-        // tell every control we're gonna alloc the resources next
+        // create duplicate Children list to prevent collection modified exceptions
+        GUIControl[] childrenArray = new GUIControl[Children.Count];
+        Children.CopyTo(childrenArray, 0);
 
-        foreach (GUIControl control in Children)
+        // tell every control we're gonna alloc the resources next
+        foreach (GUIControl control in childrenArray)
         {
           control.PreAllocResources();
         }
 
         // ask every control to alloc its resources
-        foreach (GUIControl control in Children)
+        foreach (GUIControl control in childrenArray)
         {
           control.AllocResources();
         }
