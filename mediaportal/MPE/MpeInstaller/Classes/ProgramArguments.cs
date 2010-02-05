@@ -31,6 +31,8 @@ namespace MpeInstaller.Classes
     {
       Silent = false;
       Update = false;
+      UninstallPackage = false;
+
       foreach (string s in args)
       {
         if (File.Exists(s))
@@ -47,6 +49,11 @@ namespace MpeInstaller.Classes
           if (File.Exists(BackGround))
             Splash = true;
         }
+        if (s.StartsWith("/Uninstall="))
+        {
+          UninstallPackage = true;
+          PackageID = s.Substring(8).Replace("\"", "");
+        }
       }
     }
 
@@ -56,5 +63,8 @@ namespace MpeInstaller.Classes
     public bool Update { get; set; }
     public string BackGround { get; set; }
     public bool Splash { get; set; }
+
+    public bool UninstallPackage { get; private set; }
+    public string PackageID { get; private set; }
   }
 }

@@ -82,6 +82,16 @@ namespace MpeInstaller
             splashScreen.Close();
           return;
         }
+        if (args.UninstallPackage)
+        {
+          if (string.IsNullOrEmpty(args.PackageID)) return;
+          PackageClass pc = MpeCore.MpeInstaller.InstalledExtensions.Get(args.PackageID);
+          if (pc == null) return;
+
+          pc.UnInstall();
+
+          return;
+        }
       }
       catch (Exception ex)
       {
