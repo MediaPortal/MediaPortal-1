@@ -61,10 +61,10 @@ namespace MediaPortal.GUI.Library
       Log.Debug("TextureManager: Dispose()");
       _packer.Dispose();
       if (disposing)
-      {
-        foreach (CachedTexture cached in _cache)
+      {                
+        for (int i = _cache.Count - 1; i >= 0; i--)
         {
-          cached.Disposed -= new EventHandler(cachedTexture_Disposed);
+          CachedTexture cached = _cache[i];                  
           cached.Dispose();
         }
         _cache.Clear();
@@ -479,20 +479,20 @@ namespace MediaPortal.GUI.Library
       }
       return 0;
     }
-
-    [MethodImpl(MethodImplOptions.Synchronized)]
+    
     private static void cachedTexture_Disposed(object sender, EventArgs e)
     {
       // a texture in the cache has been disposed of! remove from the cache
-      for (int i = 0; i < _cache.Count; ++i)
+      for (int i = _cache.Count - 1; i >= 0; i--)              
       {
-        if (_cache[i] == sender)
+        CachedTexture cached = _cache[i];
+        if (cached == sender)
         {
           //Log.Debug("TextureManager: Already disposed texture - cleaning up the cache...");
-          _cache[i].Disposed -= new EventHandler(cachedTexture_Disposed);
-          if (_persistentTextures.ContainsKey(_cache[i].Name))
-            _persistentTextures.Remove(_cache[i].Name);
-          _cache.Remove(_cache[i]);
+          cached.Disposed -= new EventHandler(cachedTexture_Disposed);
+          if (_persistentTextures.ContainsKey(cached.Name))
+            _persistentTextures.Remove(cached.Name);
+          _cache.Remove(cached);
         }
       }
     }
@@ -697,7 +697,6 @@ namespace MediaPortal.GUI.Library
       return null;
     }
 
-    [MethodImpl(MethodImplOptions.Synchronized)]
     public static void ReleaseTexture(string fileName)
     {
       if (string.IsNullOrEmpty(fileName))
@@ -715,24 +714,19 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      for (int i = 0; i < _cache.Count; i++)
-      {
+      for (int i = _cache.Count - 1; i >= 0; i--)        
+      {            
         try
         {
           CachedTexture oldImage = _cache[i];
           if (!string.IsNullOrEmpty(oldImage.Name))
           {
             if (String.Compare(oldImage.Name, fileName, true) == 0)
-            {
-              lock (oldImage)
-              {
-                //Log.Debug("TextureManager: Dispose:{0} Frames:{1} Total:{2} Mem left:{3}", oldImage.Name, oldImage.Frames, _cache.Count, Convert.ToString(GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1000));
-                _cache.Remove(oldImage);
-                _textureCacheLookup.Remove(oldImage.Name);
-                oldImage.Disposed -= new EventHandler(cachedTexture_Disposed);
-                oldImage.Dispose();
-                break;
-              }
+            {              
+              //Log.Debug("TextureManager: Dispose:{0} Frames:{1} Total:{2} Mem left:{3}", oldImage.Name, oldImage.Frames, _cache.Count, Convert.ToString(GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1000));                
+              _textureCacheLookup.Remove(oldImage.Name);                
+              oldImage.Dispose();
+              break;              
             }
           }
         }
@@ -747,21 +741,22 @@ namespace MediaPortal.GUI.Library
     {
       //TODO
     }
-
-    [MethodImpl(MethodImplOptions.Synchronized)]
+    
     public static void CleanupThumbs()
     {
       Log.Debug("TextureManager: CleanupThumbs()");
       try
       {
         List<CachedTexture> newCache = new List<CachedTexture>();
-        foreach (CachedTexture cached in _cache)
+
+        for (int i = _cache.Count - 1; i >= 0; i--)        
         {
+          CachedTexture cached = _cache[i];
+
           if (IsTemporary(cached.Name))
           {
-            // Log.Debug("TextureManager: dispose: " + cached.Name + " total: " + _cache.Count + " mem left: " + Convert.ToString(GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1000));
-            cached.Disposed -= new EventHandler(cachedTexture_Disposed);
-            cached.Dispose();
+            // Log.Debug("TextureManager: dispose: " + cached.Name + " total: " + _cache.Count + " mem left: " + Convert.ToString(GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1000));                        
+            cached.Dispose();            
           }
           else
           {

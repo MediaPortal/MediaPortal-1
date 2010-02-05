@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using DShowNET.Helper;
@@ -32,7 +33,7 @@ namespace MediaPortal.GUI.Library
   /// A datastructure for caching textures.
   /// This is used by the GUITextureManager which keeps a cache of all textures in use
   /// </summary>
-  public class CachedTexture
+  public class CachedTexture : IDisposable
   {
     #region imports
 
@@ -293,6 +294,8 @@ namespace MediaPortal.GUI.Library
 
     #region variables
 
+    // Track whether Dispose has been called.
+    private bool disposed = false;
     private string _fileName = ""; // filename of the texture
     private List<Frame> _listFrames = new List<Frame>(); // array to hold all frames
     private int _textureWidth = 0; // width of the texture
@@ -308,6 +311,15 @@ namespace MediaPortal.GUI.Library
     /// The (emtpy) constructor of the CachedTexture class.
     /// </summary>
     public CachedTexture() {}
+
+    ~CachedTexture()
+    {      
+      // call Dispose with false.  Since we're in the
+      // destructor call, the managed resources will be
+      // disposed of anyways.
+      Dispose(false);
+    }
+
 
     #endregion
 
@@ -455,36 +467,62 @@ namespace MediaPortal.GUI.Library
 
     #region IDisposable Members
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private void Dispose(bool disposeManagedResources)
+    {
+      // process only if mananged and unmanaged resources have
+      // not been disposed of.      
+      if (!this.disposed)
+      {
+        lock (this) 
+		{
+          if (disposeManagedResources) 
+		  {
+            // dispose managed resources
+            foreach (Frame tex in _listFrames) 
+			{
+              if (tex != null) 
+			  {
+                tex.Disposed -= new EventHandler(frame_Disposed);
+                tex.Dispose();
+              }
+            }
+            _listFrames.Clear();
+            if (_gdiBitmap != null) 
+			{
+              try 
+			  {
+                _gdiBitmap.Dispose();
+              }
+              catch (Exception) 
+			  {
+                //already disposed?
+              }
+              _gdiBitmap = null;
+            }
+            if (Disposed != null) 
+			{
+              Disposed(this, new EventArgs());
+            }
+          }
+          // dispose unmanaged resources
+        }
+        disposed = true;
+      }      
+    }
+
+
     /// <summary>
     /// Releases the resources used by the texture.
     /// </summary>
     public void Dispose()
     {
-      foreach (Frame tex in _listFrames)
-      {
-        if (tex != null)
-        {
-          tex.Disposed -= new EventHandler(frame_Disposed);
-          tex.Dispose();
-        }
-      }
-      _listFrames.Clear();
-      if (_gdiBitmap != null)
-      {
-        try
-        {
-          _gdiBitmap.Dispose();
-        }
-        catch (Exception)
-        {
-          //already disposed?
-        }
-        _gdiBitmap = null;
-      }
-      if (Disposed != null)
-      {
-        Disposed(this, new EventArgs());
-      }
+      Dispose(true);
+      // This object will be cleaned up by the Dispose method.
+      // Therefore, calling GC.SupressFinalize to take this object off
+      // the finalization queue and prevent finalization code for this object
+      // from executing a second time.
+      GC.SuppressFinalize(this);      
     }
 
     #endregion
