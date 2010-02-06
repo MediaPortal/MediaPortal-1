@@ -293,7 +293,7 @@ namespace TvLibrary.Implementations
                   _cards.Add(dvbcCard);
                   connected = true;
                 }
-                else if (pguidNetworkTypes[n] == (typeof (ATSCNetworkProvider).GUID) && !isCablePreferred)
+                else if (pguidNetworkTypes[n] == (typeof (ATSCNetworkProvider).GUID))
                 {
                   Log.Log.WriteFile("Detected ATSC* card:{0}", name);
                   TvCardATSC dvbsCard = new TvCardATSC(_epgEvents, devices[i]);
