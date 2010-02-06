@@ -2,7 +2,80 @@
 <Grabber>
   <Info availableDays="14" timezone="W. Europe Standard Time" version="2.0" />
   <Channels>
-    <Channel id="rtl.de" siteId="23" />
+    <Channel id="Jetix" siteId="215" />
+	<Channel id="TIDE" siteId="216" />
+	<Channel id="Discovery HD" siteId="219" />
+	<Channel id="Bibel TV" siteId="191" />
+	<Channel id="TSR2" siteId="28" />
+	<Channel id="ZDF_neo" siteId="51" />
+	<Channel id="NBC" siteId="80" />
+	<Channel id="Eurosport 2" siteId="234" />
+<Channel id="Cartoon Network" siteId="235" />
+<Channel id="FOX" siteId="237" />
+<Channel id="Sky Action" siteId="239" />
+<Channel id="Sky Cinema" siteId="241" />
+<Channel id="Sky Cinema +1" siteId="243" />
+<Channel id="Sky Cinema +24" siteId="245" />
+<Channel id="Sky Cinema Hits" siteId="247" />
+<Channel id="Sky Comedy" siteId="249" />
+<Channel id="Sky Emotion" siteId="251" />
+<Channel id="Sky Fussball Bundesliga" siteId="253" />
+<Channel id="Sky Krimi" siteId="255" />
+<Channel id="Sky Nostalgie" siteId="257" />
+<Channel id="Sky Sport 1" siteId="259" />
+<Channel id="Sky Sport 2" siteId="261" />
+<Channel id="Sky Sport Austria" siteId="263" />
+<Channel id="Sky Select" siteId="264" />
+<Channel id="Sky Sport HD" siteId="265" />
+<Channel id="Disney Cinemagic" siteId="300" />
+<Channel id="Motor Vision TV" siteId="301" />
+<Channel id="Spiegel Geschichte" siteId="303" />
+<Channel id="Kabel1 Classics" siteId="304" />
+<Channel id="TNT Serie" siteId="305" />
+<Channel id="VH-1 Classic" siteId="306" />
+<Channel id="AXN" siteId="307" />
+<Channel id="Boomerang" siteId="308" />
+<Channel id="MTV Entertainment" siteId="309" />
+<Channel id="Nick Premium" siteId="310" />
+<Channel id="RTL Crime" siteId="311" />
+<Channel id="RTL Living" siteId="312" />
+<Channel id="Romance TV" siteId="313" />
+<Channel id="Sat.1 comedy" siteId="314" />
+<Channel id="Biography Channel" siteId="315" />
+<Channel id="TNT Film" siteId="316" />
+<Channel id="PASSION" siteId="317" />
+<Channel id="History Channel" siteId="318" />
+<Channel id="ESPN Amerika" siteId="319" />
+<Channel id="NRW TV" siteId="350" />
+<Channel id="Channel 21" siteId="351" />
+<Channel id="Toon Disney" siteId="352" />
+<Channel id="Trace TV" siteId="353" />
+<Channel id="MTV Hits" siteId="355" />
+<Channel id="MTV Dance" siteId="356" />
+<Channel id="Sonnenklar TV" siteId="357" />
+<Channel id="Sail TV" siteId="358" />
+<Channel id="Deutsches Wetterfernsehen" siteId="359" />
+<Channel id="Spiegel TV" siteId="360" />
+<Channel id="Fashion TV" siteId="361" />
+<Channel id="Gute Laune TV" siteId="362" />
+<Channel id="Motors TV" siteId="363" />
+<Channel id="Silverline" siteId="364" />
+<Channel id="K TV" siteId="365" />
+<Channel id="Playboy TV" siteId="366" />
+<Channel id="Playhouse Disney" siteId="367" />
+<Channel id="DMC.TV" siteId="368" />
+<Channel id="RTL TVI" siteId="369" />
+<Channel id="TIMM TV" siteId="370" />
+<Channel id="Super RTL CH" siteId="371" />
+<Channel id="Okto.TV" siteId="372" />
+<Channel id="Blue Movie 2" siteId="373" />
+<Channel id="TV gusto" siteId="374" />
+<Channel id="ESPN Classic Sport" siteId="375" />
+<Channel id="E! Entertainment" siteId="376" />
+<Channel id="Blue Movie 3" siteId="377" />
+<Channel id="Toon Disney +1" siteId="378" />
+
+	<Channel id="rtl.de" siteId="23" />
     <Channel id="ard.de" siteId="37" />
     <Channel id="zdf.de" siteId="36" />
     <Channel id="wdr.de" siteId="35" />
