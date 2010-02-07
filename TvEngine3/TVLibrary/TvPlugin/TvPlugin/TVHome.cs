@@ -950,10 +950,7 @@ namespace TvPlugin
 
           if (g_Player.FullScreen)
           {
-            GUIMessage initMsgTV = null;
-            initMsgTV = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)Window.WINDOW_TV, 0, 0, 0, 0,
-                                       null);
-            GUIWindowManager.SendThreadMessage(initMsgTV);
+            ShowTvHome();
             return true;
           }
           Thread showDlgThread = new Thread(ShowDlgThread);
@@ -984,6 +981,12 @@ namespace TvPlugin
         _doingHandleServerNotConnected = false;
       }
       return false;
+    }
+    
+    private static void ShowTvHome() {
+      GUIMessage msg = null;
+      msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)Window.WINDOW_TV, 0, 0, 0, 0, null);
+      GUIWindowManager.SendThreadMessage(msg);      
     }
 
     public static bool WaitForGentleConnection()
@@ -2923,6 +2926,11 @@ namespace TvPlugin
     {
       GUIGraphicsContext.RenderBlackImage = false;
 
+      if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_TVFULLSCREEN)
+      {
+        GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV, true);
+      }
+
       _lastError.Result = succeeded;
       _lastError.FailingChannel = channel;
       _lastError.Messages.Clear();
@@ -3010,27 +3018,7 @@ namespace TvPlugin
         sbMessage.AppendFormat("\n{0}", _lastError.Messages[idx]);
       }
       pDlgNotify.SetText(sbMessage.ToString());
-
-      // Fullscreen shows the TVZapOSD to handle error messages
-      if (GUIWindowManager.ActiveWindow == (int)(int)Window.WINDOW_TVFULLSCREEN)
-      {
-        // If failed and wasPlaying TV, left screen as it is and show osd with error message 
-        Log.Info("send message to fullscreen tv");
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_TV_ERROR_NOTIFY, GUIWindowManager.ActiveWindow, 0,
-                                        0, 0, 0,
-                                        null);
-        msg.SendToTargetWindow = true;
-        msg.TargetWindowId = (int)(int)Window.WINDOW_TVFULLSCREEN;
-        msg.Object = _lastError; // forward error info object
-        msg.Param1 = 3; // sec timeout
-        GUIGraphicsContext.SendMessage(msg);
-        return;
-      }
-      else
-      {
-        // show notify dialog 
-        pDlgNotify.DoModal((int)GUIWindowManager.ActiveWindowEx);
-      }
+      pDlgNotify.DoModal((int)GUIWindowManager.ActiveWindowEx);
     }
 
     private static void OnBlackImageRendered()
