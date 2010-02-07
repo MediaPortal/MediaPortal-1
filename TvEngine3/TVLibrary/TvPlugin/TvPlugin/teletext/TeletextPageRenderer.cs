@@ -633,6 +633,10 @@ namespace TvLibrary.Teletext
       int[] pageAttribs = new int[31 * 40];
       bool row24 = false;
 
+      if (pageBitmap == null)
+      {
+        return;
+      }
 
       Graphics renderGraphics = Graphics.FromImage(pageBitmap);
 
