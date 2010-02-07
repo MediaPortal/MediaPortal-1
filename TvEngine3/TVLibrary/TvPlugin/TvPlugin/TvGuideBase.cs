@@ -3087,12 +3087,16 @@ namespace TvPlugin
 
               if (scheduleSeries != null)
               {
-                schedule = Schedule.RetrieveSpawnedSchedule(scheduleSeries.IdSchedule, _currentProgram.StartTime);
+                  schedule = Schedule.RetrieveSpawnedSchedule(scheduleSeries.IdSchedule, _currentProgram.StartTime);
+                  if (schedule == null)
+                  {
+                      schedule = scheduleSeries;
+                  }
               }
-
-              if (schedule == null)
+              else
               {
-                schedule = scheduleSeries;
+                  schedule = Schedule.RetrieveOnce(_currentProgram.ReferencedChannel().IdChannel, _currentProgram.Title,
+                                              _currentProgram.StartTime, _currentProgram.EndTime);
               }
               
             }
