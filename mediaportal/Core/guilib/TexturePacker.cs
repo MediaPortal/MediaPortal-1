@@ -352,11 +352,10 @@ namespace MediaPortal.GUI.Library
         }
         if (xmlreader.GetValueAsBool("debug", "packLogoGfx", true))
         {
-          string[] logoFiles = Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "*.png",
-                                                  SearchOption.AllDirectories);
-          //string[] thumbFiles = Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "*.jpg", SearchOption.AllDirectories);
-          files.AddRange(logoFiles);
-          //files.AddRange(thumbFiles);
+          string[] tvLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), "*.png", SearchOption.AllDirectories);
+          string[] radioLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, "Radio"), "*.png", SearchOption.AllDirectories);
+          files.AddRange(tvLogos);
+          files.AddRange(radioLogos);
         }
         if (xmlreader.GetValueAsBool("debug", "packPluginGfx", true))
         {
