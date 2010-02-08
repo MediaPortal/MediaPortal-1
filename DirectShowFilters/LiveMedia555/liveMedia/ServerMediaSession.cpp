@@ -223,7 +223,7 @@ char* ServerMediaSession::generateSDPDescription() {
 
     // Unless subsessions have differing durations, we also have a "a=range:" line:
     float dur = duration();
-//	LogDebug("generateSDPDescription() duration %f",dur) ;
+//    LogDebug("generateSDPDescription() duration %f",dur) ;
     if (dur == 0.0) {
       rangeLine = strDup("a=range:npt=0-\r\n");
     } else if (dur > 0.0) {
@@ -233,7 +233,7 @@ char* ServerMediaSession::generateSDPDescription() {
     } else { // subsessions have differing durations, so "a=range:" lines go there
       rangeLine = strDup("");
     }
-//	LogDebug("generateSDPDescription() duration %f : %s",dur,rangeLine) ;
+    LogDebug("generateSDPDescription() duration %f : %s",dur,rangeLine) ;
 
     char const* const sdpPrefixFmt =
       "v=0\r\n"

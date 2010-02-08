@@ -157,7 +157,7 @@ DWORD MultiFileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMeth
 		m_currentPosition = m_startPosition;
 
 	if (m_currentPosition > m_endPosition) {
-		LogDebug("Seeking beyond the end position: %I64d > %%I64d", m_currentPosition, m_endPosition);
+		LogDebug("Seeking beyond the end position: %I64d > %I64d", m_currentPosition, m_endPosition);
 		m_currentPosition = m_endPosition;
 	}
 
