@@ -597,7 +597,7 @@ namespace TvDatabase
           case (int)ScheduleRecordingType.Daily:
             List<Program> prgsDaily =
               (List<Program>)
-              Program.RetrieveDaily(schedule.programName, schedule.startTime, schedule.endTime,
+              Program.RetrieveDaily(schedule.startTime, schedule.endTime,
                                     schedule.ReferencedChannel().IdChannel);
 
             if (prgsDaily != null && prgsDaily.Count > 0)
@@ -656,7 +656,7 @@ namespace TvDatabase
           case (int)ScheduleRecordingType.Weekends:
             List<Program> prgsWeekends =
               (List<Program>)
-              Program.RetrieveWeekends(schedule.programName, schedule.startTime, schedule.endTime,
+              Program.RetrieveWeekends(schedule.startTime, schedule.endTime,
                                        schedule.ReferencedChannel().IdChannel);
 
             if (prgsWeekends != null && prgsWeekends.Count > 0)
@@ -676,7 +676,7 @@ namespace TvDatabase
           case (int)ScheduleRecordingType.Weekly:
             List<Program> prgsWeekly =
               (List<Program>)
-              Program.RetrieveWeekly(schedule.programName, schedule.startTime, schedule.endTime,
+              Program.RetrieveWeekly(schedule.startTime, schedule.endTime,
                                      schedule.ReferencedChannel().IdChannel);
 
             if (prgsWeekly != null && prgsWeekly.Count > 0)
@@ -696,7 +696,7 @@ namespace TvDatabase
           case (int)ScheduleRecordingType.WorkingDays:
             List<Program> prgsWorkingDays =
               (List<Program>)
-              Program.RetrieveWorkingDays(schedule.programName, schedule.startTime, schedule.endTime,
+              Program.RetrieveWorkingDays(schedule.startTime, schedule.endTime,
                                           schedule.ReferencedChannel().IdChannel);
 
             if (prgsWorkingDays != null && prgsWorkingDays.Count > 0)

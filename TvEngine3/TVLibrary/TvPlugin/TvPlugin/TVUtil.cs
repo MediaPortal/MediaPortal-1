@@ -108,6 +108,7 @@ namespace TvPlugin
             {
               recNew.Canceled = recNew.StartTime;
             }
+            UpdateCurrentProgramTitle(ref recNew);
             recordings.Add(recNew);
           }
           dtDay = dtDay.AddDays(1);
@@ -141,6 +142,7 @@ namespace TvPlugin
             }
             if (recNew.StartTime >= DateTime.Now)
             {
+              UpdateCurrentProgramTitle(ref recNew);
               recordings.Add(recNew);
             }
           }
@@ -168,6 +170,7 @@ namespace TvPlugin
             {
               recNew.Canceled = recNew.StartTime;
             }
+            UpdateCurrentProgramTitle(ref recNew);
             recordings.Add(recNew);
           }
         }
@@ -197,8 +200,10 @@ namespace TvPlugin
             {
               recNew.Canceled = recNew.StartTime;
             }
+
             if (recNew.StartTime >= DateTime.Now)
             {
+              UpdateCurrentProgramTitle(ref recNew);
               recordings.Add(recNew);
             }
           }
@@ -226,6 +231,7 @@ namespace TvPlugin
         {
           Schedule recNew = rec.Clone();
           recNew.ScheduleType = (int)ScheduleRecordingType.Once;
+          recNew.ProgramName = prog.Title;
           recNew.IdChannel = prog.IdChannel;
           recNew.StartTime = prog.StartTime;
           recNew.EndTime = prog.EndTime;
@@ -238,6 +244,16 @@ namespace TvPlugin
         }
       }
       return recordings;
+    }
+
+    private static void UpdateCurrentProgramTitle(ref Schedule recNew)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      IList<Program> programs = layer.GetPrograms(recNew.ReferencedChannel(), recNew.StartTime, recNew.EndTime);
+      if (programs != null && programs.Count > 0)
+      {
+        recNew.ProgramName = programs[0].Title;
+      }
     }
 
     public static string GetDisplayTitle(Recording rec)

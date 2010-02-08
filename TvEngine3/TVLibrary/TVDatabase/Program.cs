@@ -554,35 +554,36 @@ namespace TvDatabase
                                              endParam));
             }
           }
-          break;
-        case "mssql":
+          break;               
+        case "sqlserver":
           if (crossMidnight)
           {
+             
             sb.AddConstraint(
               string.Format(
-                "({0} >= CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)))" +
-                "OR {0} <= CAST(FLOOR(CAST({0} AS float)) + CAST(@{2} AS float) - FLOOR(CAST(@{2} AS float))))",
+                "({0} >= DATEADD(Minute, -1, CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)) AS DATETIME))" +
+                "OR {0} <= DATEADD(Minute, 1, CAST(FLOOR(CAST({0} AS float)) + CAST(@{2} AS float) - FLOOR(CAST(@{2} AS float))AS DATETIME)))",                                
                 startField, startParam, endParam));
             if (!string.IsNullOrEmpty(endField))
             {
               sb.AddConstraint(
                 string.Format(
-                  "({0} >= CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)))" +
-                  "OR {0} <= CAST(FLOOR(CAST({0} AS float)) + CAST(@{2} AS float) - FLOOR(CAST(@{2} AS float))))",
+                  "({0} >= DATEADD(Minute, -1, CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)) AS DATETIME))" +
+                  "OR {0} <= DATEADD(Minute, 1, CAST(FLOOR(CAST({0} AS float)) + CAST(@{2} AS float) - FLOOR(CAST(@{2} AS float)) AS DATETIME)))",
                   endField, startParam, endParam));
             }
           }
           else
           {
             sb.AddConstraint(
-              string.Format(
-                "{0} >= CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)))", startField,
-                startParam));
+                        string.Format(
+                          "{0} >= DATEADD(Minute, -1, CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)) AS DATETIME))", startField,
+                          startParam));
             if (!string.IsNullOrEmpty(endField))
             {
               sb.AddConstraint(
                 string.Format(
-                  "{0} <= CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)))", endField,
+                "{0} <= DATEADD(Minute, 1,CAST(FLOOR(CAST({0} AS float)) + CAST(@{1} AS float) - FLOOR(CAST(@{1} AS float)) AS DATETIME))", endField,
                   endParam));
             }
           }
@@ -598,8 +599,22 @@ namespace TvDatabase
         case "mysql":
           sb.AddConstraint(string.Format("DAYOFWEEK({0}) in ({1})", timeField, days));
           break;
-        case "mssql":
+        case "sqlserver":
           sb.AddConstraint(string.Format("DATEPART(dw, {0}) in ({1})", timeField, days));
+          break;
+      }
+    }
+
+    private static void AddStartEndTimeConstraints(SqlBuilder sb, string startTimeField, string endTimeField)
+    {
+      string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
+      switch (provider)
+      {
+        case "mysql":
+          sb.AddConstraint(string.Format("HOUR({0}) < HOUR({1}))", startTimeField, endTimeField));
+          break;
+        case "sqlserver":
+          sb.AddConstraint(string.Format("DATEPART(hh, {0}) < DATEPART(hh, {1})", startTimeField, endTimeField));
           break;
       }
     }
@@ -669,17 +684,21 @@ namespace TvDatabase
       return RetrieveByTitleTimesAndChannel(title, startTime, endTime, channelId);
     }
 
-    public static IList<Program> RetrieveDaily(string title, DateTime startTime, DateTime endTime, int channelId)
+    public static IList<Program> RetrieveDaily(DateTime startTime, DateTime endTime, int channelId)
     {           
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
-      // where foreigntable.foreignkey = ourprimarykey
-      sb.AddConstraint(Operator.Equals, "Title", title);
+      // where foreigntable.foreignkey = ourprimarykey      
       sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);
       sb.AddConstraint(Operator.Equals, "idChannel", channelId);
       sb.AddParameter("pStartTime", typeof (DateTime));
       sb.AddParameter("pEndTime", typeof (DateTime));
-      AddTimeRangeConstraint(sb, "startTime", "endTime", "pStartTime", "pEndTime", (endTime.Day != startTime.Day));
+      bool midnightCrossover = (endTime.Day != startTime.Day);
+      AddTimeRangeConstraint(sb, "startTime", "endTime", "pStartTime", "pEndTime", midnightCrossover);
+      if (!midnightCrossover)
+      {
+        AddStartEndTimeConstraints(sb, "startTime", "endTime");
+      }
       // passing true indicates that we'd like a list of elements, i.e. that no primary key
       // constraints from the type being retrieved should be added to the statement
       SqlStatement stmt = sb.GetStatement(true);
@@ -713,19 +732,22 @@ namespace TvDatabase
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
-    public static IList<Program> RetrieveWeekends(string title, DateTime startTime, DateTime endTime, int channelId)
+    public static IList<Program> RetrieveWeekends(DateTime startTime, DateTime endTime, int channelId)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
-      // where foreigntable.foreignkey = ourprimarykey
-      sb.AddConstraint(Operator.Equals, "Title", title);
-      sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);
-      //sb.AddConstraint(Operator.LessThanOrEquals, "endTime", endTime);
+      // where foreigntable.foreignkey = ourprimarykey      
+      sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);      
       sb.AddConstraint(Operator.Equals, "idChannel", channelId);
       sb.AddParameter("pStartTime", typeof (DateTime));
       sb.AddParameter("pEndTime", typeof (DateTime));
-      AddTimeRangeConstraint(sb, "startTime", "endTime", "pStartTime", "pEndTime", (endTime.Day != startTime.Day));
+      bool midnightCrossover = (endTime.Day != startTime.Day);
+      AddTimeRangeConstraint(sb, "startTime", "endTime", "pStartTime", "pEndTime", midnightCrossover);
       AddWeekdayConstraint(sb, "startTime", "1,7");
+      if (!midnightCrossover)
+      {
+        AddStartEndTimeConstraints(sb, "startTime", "endTime");
+      }
       // passing true indicates that we'd like a list of elements, i.e. that no primary key
       // constraints from the type being retrieved should be added to the statement
       SqlStatement stmt = sb.GetStatement(true);
@@ -735,19 +757,23 @@ namespace TvDatabase
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
-    public static IList<Program> RetrieveWeekly(string title, DateTime startTime, DateTime endTime, int channelId)
+    public static IList<Program> RetrieveWeekly(DateTime startTime, DateTime endTime, int channelId)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
-      // where foreigntable.foreignkey = ourprimarykey
-      sb.AddConstraint(Operator.Equals, "Title", title);
+      // where foreigntable.foreignkey = ourprimarykey      
       sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);
-      //sb.AddConstraint(Operator.LessThanOrEquals, "endTime", endTime);
       sb.AddConstraint(Operator.Equals, "idChannel", channelId);
       sb.AddParameter("pStartTime", typeof (DateTime));
       sb.AddParameter("pEndTime", typeof (DateTime));
-      AddTimeRangeConstraint(sb, "startTime", "endTime", "pStartTime", "pEndTime", (endTime.Day != startTime.Day));
+
+      bool midnightCrossover = (endTime.Day != startTime.Day);
+      AddTimeRangeConstraint(sb, "startTime", "endTime", "pStartTime", "pEndTime", midnightCrossover);
       AddWeekdayConstraint(sb, "startTime", ((int)startTime.DayOfWeek + 1).ToString());
+      if (!midnightCrossover)
+      {
+        AddStartEndTimeConstraints(sb, "startTime", "endTime");
+      }
       // passing true indicates that we'd like a list of elements, i.e. that no primary key
       // constraints from the type being retrieved should be added to the statement
       SqlStatement stmt = sb.GetStatement(true);
@@ -757,19 +783,22 @@ namespace TvDatabase
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
-    public static IList<Program> RetrieveWorkingDays(string title, DateTime startTime, DateTime endTime, int channelId)
+    public static IList<Program> RetrieveWorkingDays(DateTime startTime, DateTime endTime, int channelId)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
-      // where foreigntable.foreignkey = ourprimarykey
-      sb.AddConstraint(Operator.Equals, "Title", title);
+      // where foreigntable.foreignkey = ourprimarykey      
       sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);
-      //sb.AddConstraint(Operator.LessThanOrEquals, "endTime", endTime);
       sb.AddConstraint(Operator.Equals, "idChannel", channelId);
       sb.AddParameter("pStartTime", typeof (DateTime));
       sb.AddParameter("pEndTime", typeof (DateTime));
-      AddTimeRangeConstraint(sb, "startTime", "endTime", "pStartTime", "pEndTime", (endTime.Day != startTime.Day));
+      bool midnightCrossover = (endTime.Day != startTime.Day);
+      AddTimeRangeConstraint(sb, "startTime", "endTime", "pStartTime", "pEndTime", midnightCrossover);
       AddWeekdayConstraint(sb, "startTime", "2,3,4,5,6");
+      if (!midnightCrossover)
+      {
+        AddStartEndTimeConstraints(sb, "startTime", "endTime");
+      }
       // passing true indicates that we'd like a list of elements, i.e. that no primary key
       // constraints from the type being retrieved should be added to the statement
       SqlStatement stmt = sb.GetStatement(true);
