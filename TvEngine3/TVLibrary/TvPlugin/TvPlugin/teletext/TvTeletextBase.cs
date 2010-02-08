@@ -541,7 +541,8 @@ namespace TvPlugin
       if (_redrawForeground)
       {
         imgTeletextForeground.IsVisible = false;
-        imgTeletextForeground.LockMemoryImageTexture(out bitmap);
+        if (!imgTeletextForeground.LockMemoryImageTexture(out bitmap))
+          return;
         _renderer.RenderPage(ref bitmap, receivedPage, receivedPageNumber, receivedSubPageNumber);
         imgTeletextForeground.UnLockMemoryImageTexture();
         imgTeletextForeground.IsVisible = true;
@@ -549,7 +550,8 @@ namespace TvPlugin
       else
       {
         imgTeletextBackground.IsVisible = false;
-        imgTeletextBackground.LockMemoryImageTexture(out bitmap);
+        if (!imgTeletextBackground.LockMemoryImageTexture(out bitmap))
+          return;
         _renderer.RenderPage(ref bitmap, receivedPage, receivedPageNumber, receivedSubPageNumber);
         imgTeletextBackground.UnLockMemoryImageTexture();
         imgTeletextBackground.IsVisible = true;
