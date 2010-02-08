@@ -202,7 +202,9 @@ namespace TvLibrary.Channels
       {
         return true;
       }
-      return dvbcChannel.Frequency != Frequency;
+      return dvbcChannel.Frequency != Frequency ||
+             dvbcChannel.ModulationType != ModulationType ||
+             dvbcChannel.SymbolRate != SymbolRate;
     }
   }
 }

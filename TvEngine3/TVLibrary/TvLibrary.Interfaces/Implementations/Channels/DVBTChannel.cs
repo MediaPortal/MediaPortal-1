@@ -190,7 +190,8 @@ namespace TvLibrary.Channels
       {
         return true;
       }
-      return dvbtChannel.Frequency != Frequency;
+      return dvbtChannel.Frequency != Frequency || 
+             dvbtChannel.BandWidth != BandWidth;
     }
   }
 }
