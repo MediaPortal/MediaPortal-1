@@ -42,31 +42,6 @@ namespace MediaPortal.Player
 
     private VMR9Util _vmr9 = null;    
 
-    private void DoGraph(IGraphBuilder graphBuilder, IBaseFilter baseFilter)
-    {
-      if (graphBuilder == null)
-        return;
-      if (baseFilter != null)
-        DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, baseFilter);
-      
-      IEnumFilters enumFilters;
-      graphBuilder.EnumFilters(out enumFilters);
-      int fetched;
-      IBaseFilter[] filters = new IBaseFilter[1];
-      while (enumFilters.Next(1, filters, out fetched) == 0)
-      {
-        if (fetched > 0 && filters[0] != baseFilter)
-        {
-          DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, filters[0]);
-        }
-        else
-        {
-          break;
-        }
-      }
-      DirectShowUtil.ReleaseComObject(enumFilters);      
-    }
-
     /// <summary> create the used COM components and get the interfaces. </summary>    
     protected override bool GetInterfaces(string path)
     {
@@ -225,7 +200,7 @@ namespace MediaPortal.Player
               _dvdCtrl.SetOption(DvdOptionFlag.HMSFTimeCodeEvents, true); // use new HMSF timecode format
               _dvdCtrl.SetOption(DvdOptionFlag.ResetOnStop, false);
 
-              DoGraph(_graphBuilder, _dvdbasefilter);
+              DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _dvdbasefilter);
     
               _freeNavigator = false;
             }        
@@ -313,18 +288,16 @@ namespace MediaPortal.Player
         _vmr9.SetDeinterlaceMode();
         _vmr9.Enable(true);
 
-
-
         Log.Info("Dvdplayer9:Graph created");
         _started = true;
         return true;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Error("DvdPlayer9:Exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);        
         CloseInterfaces();
         return false;
       }
-      finally {}
     }
     
     /// <summary> do cleanup and release DirectShow. </summary>

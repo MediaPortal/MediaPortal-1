@@ -34,102 +34,6 @@ namespace MediaPortal.Player
 {
   internal class TSReaderPlayer : BaseTSReaderPlayer
   {
-    #region structs
-
-    private static byte[] Mpeg2ProgramVideo =
-      {
-        0x00, 0x00, 0x00, 0x00, //  .hdr.rcSource.left
-        0x00, 0x00, 0x00, 0x00, //  .hdr.rcSource.top
-        0xd0, 0x02, 0x00, 0x00, //  .hdr.rcSource.right
-        0x40, 0x02, 0x00, 0x00, //  .hdr.rcSource.bottom
-        0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.left
-        0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.top
-        0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.right
-        0x00, 0x00, 0x00, 0x00, //  .hdr.rcTarget.bottom
-        0xc0, 0xe1, 0xe4, 0x00, //  .hdr.dwBitRate
-        0x00, 0x00, 0x00, 0x00, //  .hdr.dwBitErrorRate
-        0x80, 0x1a, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, //  .hdr.AvgTimePerFrame
-        0x00, 0x00, 0x00, 0x00, //  .hdr.dwInterlaceFlags
-        0x00, 0x00, 0x00, 0x00, //  .hdr.dwCopyProtectFlags
-        0x00, 0x00, 0x00, 0x00, //  .hdr.dwPictAspectRatioX
-        0x00, 0x00, 0x00, 0x00, //  .hdr.dwPictAspectRatioY
-        0x00, 0x00, 0x00, 0x00, //  .hdr.dwReserved1
-        0x00, 0x00, 0x00, 0x00, //  .hdr.dwReserved2
-        0x28, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biSize
-        0xd0, 0x02, 0x00, 0x00, //  .hdr.bmiHeader.biWidth
-        0x40, 0x02, 0x00, 0x00, //  .hdr.bmiHeader.biHeight
-        0x00, 0x00, //  .hdr.bmiHeader.biPlanes
-        0x00, 0x00, //  .hdr.bmiHeader.biBitCount
-        0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biCompression
-        0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biSizeImage
-        0xd0, 0x07, 0x00, 0x00, //  .hdr.bmiHeader.biXPelsPerMeter
-        0x42, 0xd8, 0x00, 0x00, //  .hdr.bmiHeader.biYPelsPerMeter
-        0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biClrUsed
-        0x00, 0x00, 0x00, 0x00, //  .hdr.bmiHeader.biClrImportant
-        0x00, 0x00, 0x00, 0x00, //  .dwStartTimeCode
-        0x4c, 0x00, 0x00, 0x00, //  .cbSequenceHeader
-        0x00, 0x00, 0x00, 0x00, //  .dwProfile
-        0x00, 0x00, 0x00, 0x00, //  .dwLevel
-        0x00, 0x00, 0x00, 0x00, //  .Flags
-        //  .dwSequenceHeader [1]
-        0x00, 0x00, 0x01, 0xb3, 0x2d, 0x02, 0x40, 0x33,
-        0x24, 0x9f, 0x23, 0x81, 0x10, 0x11, 0x11, 0x12,
-        0x12, 0x12, 0x13, 0x13, 0x13, 0x13, 0x14, 0x14,
-        0x14, 0x14, 0x14, 0x15, 0x15, 0x15, 0x15, 0x15,
-        0x15, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16,
-        0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17,
-        0x18, 0x18, 0x18, 0x19, 0x18, 0x18, 0x18, 0x19,
-        0x1a, 0x1a, 0x1a, 0x1a, 0x19, 0x1b, 0x1b, 0x1b,
-        0x1b, 0x1b, 0x1c, 0x1c, 0x1c, 0x1c, 0x1e, 0x1e,
-        0x1e, 0x1f, 0x1f, 0x21, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-      };
-
-    private static byte[] MPEG2AudioFormat =
-      {
-        0x50, 0x00, //wFormatTag
-        0x02, 0x00, //nChannels
-        0x80, 0xbb, 0x00, 0x00, //nSamplesPerSec
-        0x00, 0x7d, 0x00, 0x00, //nAvgBytesPerSec
-        0x01, 0x00, //nBlockAlign
-        0x00, 0x00, //wBitsPerSample
-        0x16, 0x00, //cbSize
-        0x02, 0x00, //wValidBitsPerSample
-        0x00, 0xe8, //wSamplesPerBlock
-        0x03, 0x00, //wReserved
-        0x01, 0x00, 0x01, 0x00, //dwChannelMask
-        0x01, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-      };
-
-    #endregion
-
     #region variables
 
     private VMR9Util _vmr9 = null;
@@ -142,7 +46,10 @@ namespace MediaPortal.Player
     private bool enableDVBTtxtSubtitles = false;
     private bool enableMPAudioSwitcher = false;
     private int relaxTsReader = 0; // Disable dropping of discontinued dvb packets    
-        
+    string strVideoCodec = "";
+    string strAudioCodec = "";
+    string strAACAudioCodec = "";
+    string strH264VideoCodec = ""; 
     #endregion
 
     [Guid("558D9EA6-B177-4c30-9ED5-BF2D714BCBCA"),
@@ -300,6 +207,20 @@ namespace MediaPortal.Player
       _isStarted = true;
     }
 
+    protected override void MatchFilters()
+    {
+      if (_videoFormat.streamType == VideoStreamType.MPEG2)
+      {
+        videoFilterPriority1 = strVideoCodec;
+        videoFilterPriority2 = strH264VideoCodec;
+      }
+      else
+      {
+        videoFilterPriority1 = strH264VideoCodec;
+        videoFilterPriority2 = strVideoCodec;
+      }     
+    }
+
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces(string filename)
     {
@@ -309,74 +230,12 @@ namespace MediaPortal.Player
         _graphBuilder = (IGraphBuilder)new FilterGraph();
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
-        #region add vmr9        
+        #region add vmr9
         if (!_isRadio)
         {
           _vmr9 = new VMR9Util();
           _vmr9.AddVMR9(_graphBuilder);
           _vmr9.Enable(false);
-        }
-
-        #endregion
-
-        #region add codecs
-
-        Log.Info("TSReaderPlayer: Add codecs");
-        // add preferred video & audio codecs
-        string strAudioRenderer = "";
-        int intFilters = 0; // FlipGer: count custom filters
-        string strFilters = ""; // FlipGer: collect custom filters
-
-        LoadMyTvFilterSettings(ref intFilters, ref strFilters, ref strVideoCodec, ref strAudioCodec,
-                               ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer,
-                               ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles, ref relaxTsReader);
-        
-        if (!_isRadio)
-        {
-          if (strVideoCodec.Length > 0)
-          {
-            DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
-          }
-          if (strH264VideoCodec.Length > 0 && strH264VideoCodec != strVideoCodec)
-          {
-            DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
-          }
-          else
-            strH264VideoCodec = "";
-
-          if (enableDVBBitmapSubtitles)
-          {
-            try
-            {
-              SubtitleRenderer.GetInstance().AddSubtitleFilter(_graphBuilder);
-            }
-            catch (Exception e)
-            {
-              Log.Error(e);
-            }
-          }
-        }
-        if (strAudioCodec.Length > 0)
-        {
-          DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
-        }
-        if (strAACAudioCodec.Length > 0 && strAACAudioCodec != strAudioCodec)
-        {
-          DirectShowUtil.AddFilterToGraph(_graphBuilder, strAACAudioCodec);
-        }
-        else
-          strAACAudioCodec = "";
-
-        if (strAudioRenderer.Length > 0)
-        {
-          _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, true);
-        }
-        
-        // FlipGer: add custom filters to graph
-        string[] arrFilters = strFilters.Split(';');
-        for (int i = 0; i < intFilters; i++)
-        {
-          DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
         }
 
         #endregion
@@ -429,49 +288,67 @@ namespace MediaPortal.Player
 
         #endregion
 
-        #region render TsReader output pins
-        Log.Info("TSReaderPlayer: Render TsReader outputs");
-         
-        if (_isRadio)
+        #region add codecs
+
+        Log.Info("TSReaderPlayer: Add codecs");
+        // add preferred video & audio codecs
+        string strAudioRenderer = "";
+        int intFilters = 0; // FlipGer: count custom filters
+        string strFilters = ""; // FlipGer: collect custom filters
+
+        LoadMyTvFilterSettings(ref intFilters, ref strFilters, ref strVideoCodec, ref strAudioCodec,
+                               ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer,
+                               ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles, ref relaxTsReader);
+
+        if (strH264VideoCodec == strVideoCodec)
+          strH264VideoCodec = "";
+        if (strAACAudioCodec == strAudioCodec)
+          strAACAudioCodec = "";
+
+        MatchFilters();
+        audioFilterPriority1 = strAudioCodec;
+        audioFilterPriority2 = strAACAudioCodec;
+
+        if (!_isRadio)
         {
-          IEnumPins enumPins;
-          hr = _fileSource.EnumPins(out enumPins);
-          DsError.ThrowExceptionForHR(hr);
-          IPin[] pins = new IPin[1];
-          int fetched = 0;
-          while (enumPins.Next(1, pins, out fetched) == 0)
+          if (!DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Video, videoFilterPriority1))
+            DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Video, videoFilterPriority2);
+
+          if (enableDVBBitmapSubtitles)
           {
-            if (fetched != 1)
+            try
             {
-              break;
+              SubtitleRenderer.GetInstance().AddSubtitleFilter(_graphBuilder);
             }
-            PinDirection direction;
-            pins[0].QueryDirection(out direction);
-            if (direction == PinDirection.Output)
+            catch (Exception e)
             {
-              IEnumMediaTypes enumMediaTypes;
-              pins[0].EnumMediaTypes(out enumMediaTypes);
-              AMMediaType[] mediaTypes = new AMMediaType[20];
-              int fetchedTypes;
-              enumMediaTypes.Next(20, mediaTypes, out fetchedTypes);
-              for (int i = 0; i < fetchedTypes; ++i)
-              {
-                if (mediaTypes[i].majorType == MediaType.Audio)
-                {
-                  hr = _graphBuilder.Render(pins[0]);
-                  DsError.ThrowExceptionForHR(hr);
-                  break;
-                }
-              }
+              Log.Error(e);
             }
-            DirectShowUtil.ReleaseComObject(pins[0]);
           }
-          DirectShowUtil.ReleaseComObject(enumPins);
         }
-        else
+
+        if (!DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Audio, audioFilterPriority1))
+          DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Audio, audioFilterPriority2);
+
+        if (strAudioRenderer.Length > 0)
         {
-          DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, _fileSource);
+          _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, true);
         }
+
+        // FlipGer: add custom filters to graph
+        string[] arrFilters = strFilters.Split(';');
+        for (int i = 0; i < intFilters; i++)
+        {
+          DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
+        }
+
+        #endregion
+
+        #region render TsReader output pins
+
+        Log.Info("TSReaderPlayer: Render TsReader outputs");
+        DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
+
         #endregion
 
         _mediaCtrl = (IMediaControl)_graphBuilder;
@@ -539,7 +416,7 @@ namespace MediaPortal.Player
           hr = mp.SetSyncSource(null);
           hr = mp.SetSyncSource(clock);
           //Log.Info("TSReaderPlayer:set reference clock:{0:X}", hr);
-          _basicAudio = (IBasicAudio)_graphBuilder;          
+          _basicAudio = (IBasicAudio)_graphBuilder;
         }
         if (!_isRadio)
         {
@@ -552,7 +429,6 @@ namespace MediaPortal.Player
           DirectShowUtil.EnableDeInterlace(_graphBuilder);
           _vmr9.SetDeinterlaceMode();
         }
-        DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
         return true;
       }
       catch (Exception ex)

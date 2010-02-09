@@ -297,7 +297,6 @@ namespace DShowNET.Helper
       return null;
     }
 
-
     public static IPin FindSourcePinOf(IBaseFilter filter)
     {
       int hr = 0;
@@ -688,6 +687,65 @@ namespace DShowNET.Helper
         ReleaseComObject(filter);
       }
     }
+    
+    public static bool TryConnect(IGraphBuilder graphbuilder, IBaseFilter source, Guid mediaType, string targetFilter)
+    {
+      if (string.IsNullOrEmpty(targetFilter))
+        return false;
+
+      bool connected = false;
+      IBaseFilter destination = null;
+      destination = AddFilterToGraph(graphbuilder, targetFilter);
+
+      if (!TryConnect(graphbuilder, source, mediaType, destination))
+        graphbuilder.RemoveFilter(destination);
+      else
+        connected = true;
+
+      ReleaseComObject(destination); destination = null;
+      return connected;
+    }
+
+    public static bool TryConnect(IGraphBuilder graphbuilder, IBaseFilter source, Guid mediaType, IBaseFilter targetFilter)
+    {
+      bool connected = false;
+      IEnumPins enumPins;
+      int hr = source.EnumPins(out enumPins);
+      DsError.ThrowExceptionForHR(hr);
+      IPin[] pins = new IPin[1];
+      int fetched = 0;
+      while (enumPins.Next(1, pins, out fetched) == 0)
+      {
+        if (fetched != 1)
+        {
+          break;
+        }
+        PinDirection direction;
+        pins[0].QueryDirection(out direction);
+        if (direction == PinDirection.Output)
+        {
+          IEnumMediaTypes enumMediaTypes;
+          pins[0].EnumMediaTypes(out enumMediaTypes);
+          AMMediaType[] mediaTypes = new AMMediaType[20];
+          int fetchedTypes;
+          enumMediaTypes.Next(20, mediaTypes, out fetchedTypes);
+          for (int i = 0; i < fetchedTypes; ++i)
+          {
+            if (mediaTypes[i].majorType == mediaType)
+            {
+              if (graphbuilder.ConnectDirect(pins[0], DsFindPin.ByDirection(targetFilter, PinDirection.Input, 0), null) >= 0)
+              {
+                connected = true;
+                break;
+              }
+            }
+          }
+        }
+        ReleaseComObject(pins[0]);
+      }
+      ReleaseComObject(enumPins);
+      return connected;
+    }
 
     public static bool TryConnect(IGraphBuilder graphBuilder, string filtername, IPin outputPin, bool TryNewFilters)
     {
@@ -771,6 +829,41 @@ namespace DShowNET.Helper
       return outputInfo.name.StartsWith("~");
     }
 
+    public static void RenderGraphBuilderOutputPins(IGraphBuilder graphBuilder, IBaseFilter baseFilter)
+    {
+      if (graphBuilder == null)
+        return;
+      if (baseFilter != null)
+        RenderUnconnectedOutputPins(graphBuilder, baseFilter);
+
+      int hr = 0;
+      IEnumFilters enumFilters = null;
+      ArrayList filtersArray = new ArrayList();
+      hr = graphBuilder.EnumFilters(out enumFilters);
+      DsError.ThrowExceptionForHR(hr);
+
+      IBaseFilter[] filters = new IBaseFilter[1];
+      int fetched;
+
+      while (enumFilters.Next(filters.Length, filters, out fetched) == 0)
+      {
+        filtersArray.Add(filters[0]);
+      }
+
+      foreach (IBaseFilter filter in filtersArray)
+      {
+        if (filter != baseFilter)
+        {
+          RenderUnconnectedOutputPins(graphBuilder, filter);
+        }
+        else
+        {
+          break;
+        }
+      }
+      ReleaseComObject(enumFilters);
+    }
+
     public static void RenderUnconnectedOutputPins(IGraphBuilder graphBuilder, IBaseFilter baseFilter)
     {
       if (baseFilter == null)
@@ -779,51 +872,33 @@ namespace DShowNET.Helper
       int fetched;
       IEnumPins pinEnum;
       int hr = baseFilter.EnumPins(out pinEnum);
+      DsError.ThrowExceptionForHR(hr);
       if (hr == 0 && pinEnum != null)
       {
         pinEnum.Reset();
         IPin[] pins = new IPin[1];
-        while (pinEnum.Next(1, pins, out fetched) == 0)
+        while (pinEnum.Next(1, pins, out fetched) == 0 && fetched > 0)
         {
-          if (fetched > 0)
+          PinDirection pinDir;
+          pins[0].QueryDirection(out pinDir);
+          if (pinDir == PinDirection.Output && !HasConnection(pins[0]))
           {
-            try
+            FilterInfo i;
+            PinInfo pinInfo;
+            string pinName = string.Empty;
+            if (baseFilter.QueryFilterInfo(out i) == 0 && pins[0].QueryPinInfo(out pinInfo) == 0)
             {
-              PinDirection pinDir;
-              pins[0].QueryDirection(out pinDir);
-              if (pinDir == PinDirection.Output)
-              {
-                IPin pOutPin;
-                hr = pins[0].ConnectedTo(out pOutPin);
-                if (pOutPin != null)
-                  DirectShowUtil.ReleaseComObject(pOutPin);
-                if (hr == DsResults.E_NotConnected)
-                {
-                  FilterInfo i;
-                  PinInfo pinInfo;
-                  string pinName = string.Empty;
-                  if (baseFilter.QueryFilterInfo(out i) == 0 && pins[0].QueryPinInfo(out pinInfo) == 0)
-                  {
-                    Log.Debug("Filter: {0} - try to connect: {1}", i.achName, pinInfo.name);
-                    pinName = pinInfo.name;
-                  }
-                  DirectShowUtil.ReleaseComObject(i.pGraph);
-                  hr = graphBuilder.Render(pins[0]);
-                  if (hr != 0)
-                    Log.Warn(" - failed");
-                  if(pinName !="Subtitle") // subtitle render error not critical
-                    DsError.ThrowExceptionForHR(hr);
-                }
-              }
+              Log.Debug("Filter: {0} - try to connect: {1}", i.achName, pinInfo.name);
+              pinName = pinInfo.name;
             }
-            finally { }
+            ReleaseComObject(i.pGraph);
+            hr = graphBuilder.Render(pins[0]);
+            if (hr != 0)
+              Log.Debug(" - failed");
           }
-          else
-          {
-            break;
-          }
+          ReleaseComObject(pins[0]);
         }
-        DirectShowUtil.ReleaseComObject(pinEnum);
+        ReleaseComObject(pinEnum);
       }
     }
 
@@ -1072,7 +1147,7 @@ namespace DShowNET.Helper
               hr = graphBuilder.RemoveFilter(filter);
               DsError.ThrowExceptionForHR(hr);
               if (hr == 0)
-                Log.Debug(" -remove done");              
+                Log.Debug(" - remove done");              
             }
           }
           ReleaseComObject(info.pGraph);
@@ -1083,7 +1158,7 @@ namespace DShowNET.Helper
       {
         Log.Error("DirectShowUtil: Remove unused filters failed - {0}", error.Message);
       }
-      DirectShowUtil.ReleaseComObject(enumFilters);
+      ReleaseComObject(enumFilters);
     }
 
     public static bool DisconnectAllPins(IGraphBuilder graphBuilder, IBaseFilter filter)

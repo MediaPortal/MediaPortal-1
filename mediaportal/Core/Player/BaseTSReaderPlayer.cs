@@ -180,11 +180,11 @@ namespace MediaPortal.Player
     protected int iChangedMediaTypes;
     protected VideoStreamFormat _videoFormat;
     protected int _lastFrameCounter;
-    protected string strVideoCodec = "";
-    protected string strAudioCodec = "";
-    protected string strAACAudioCodec = "";
-    protected string strH264VideoCodec = "";
-
+    protected string videoFilterPriority1 = "";
+    protected string videoFilterPriority2 = "";
+    protected string audioFilterPriority1 = "";
+    protected string audioFilterPriority2 = "";
+    
     #endregion
 
     #region ctor/dtor
@@ -1498,8 +1498,7 @@ namespace MediaPortal.Player
                 ReAddFilters("Video");
                 break;
             }
-            DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, _fileSource);
-            DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+            DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);            
           }
           else
           {
@@ -1859,27 +1858,31 @@ namespace MediaPortal.Player
         _elapsedTimer = DateTime.Now;
       }
     }
-        
+
+    protected virtual void MatchFilters() {}
+
     private void ReAddFilters(string selection)
-    {
+    {      
       if (selection == "Video")
       {
-        DirectShowUtil.RemoveFilters(_graphBuilder, strVideoCodec);
-        DirectShowUtil.AddFilterToGraph(_graphBuilder, strVideoCodec);
-        if (!String.IsNullOrEmpty(strH264VideoCodec))
+        DirectShowUtil.RemoveFilters(_graphBuilder, videoFilterPriority1);
+        if (!String.IsNullOrEmpty(videoFilterPriority2))
+          DirectShowUtil.RemoveFilters(_graphBuilder, videoFilterPriority2);
+        
+        MatchFilters();        
+        if (!DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Video, videoFilterPriority1))
         {
-          DirectShowUtil.RemoveFilters(_graphBuilder, strH264VideoCodec);
-          DirectShowUtil.AddFilterToGraph(_graphBuilder, strH264VideoCodec);
+          DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Video, videoFilterPriority2);
         }
       }
       else
       {
-        DirectShowUtil.RemoveFilters(_graphBuilder, strAudioCodec);
-        DirectShowUtil.AddFilterToGraph(_graphBuilder, strAudioCodec);
-        if (!String.IsNullOrEmpty(strAACAudioCodec))
+        DirectShowUtil.RemoveFilters(_graphBuilder, audioFilterPriority1);
+        if (!String.IsNullOrEmpty(audioFilterPriority2))
+          DirectShowUtil.RemoveFilters(_graphBuilder, audioFilterPriority2);
+        if (!DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Audio, audioFilterPriority1))
         {
-          DirectShowUtil.RemoveFilters(_graphBuilder, strAACAudioCodec);
-          DirectShowUtil.AddFilterToGraph(_graphBuilder, strAACAudioCodec);
+          DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Audio, audioFilterPriority2);
         }
       }          
     }
