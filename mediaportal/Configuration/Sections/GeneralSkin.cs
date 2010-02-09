@@ -72,8 +72,6 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
-      this.linkLabel1.Links.Add(0, linkLabel1.Text.Length, "http://wiki.team-mediaportal.com/Extensions-Skins");
-
       LoadLanguages();
       //
       // Load available skins
@@ -299,9 +297,11 @@ namespace MediaPortal.Configuration.Sections
     {
       try
       {
-        Process.Start((string)e.Link.LinkData);
+        // This url is a redirect, which shouldn't be changed.
+        // If it's target should be changed, contact high, please.
+        Process.Start(@"http://www.team-mediaportal.com/MP1/skingallery");
       }
-      catch (Exception) {}
+      catch { }
     }
 
     #region Designer generated code
