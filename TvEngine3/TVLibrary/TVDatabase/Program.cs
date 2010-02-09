@@ -611,10 +611,10 @@ namespace TvDatabase
       switch (provider)
       {
         case "mysql":
-          sb.AddConstraint(string.Format("HOUR({0}) < HOUR({1}))", startTimeField, endTimeField));
+          sb.AddConstraint(string.Format("HOUR({0}) <= HOUR({1}))", startTimeField, endTimeField));
           break;
         case "sqlserver":
-          sb.AddConstraint(string.Format("DATEPART(hh, {0}) < DATEPART(hh, {1})", startTimeField, endTimeField));
+          sb.AddConstraint(string.Format("DATEPART(hh, {0}) <= DATEPART(hh, {1})", startTimeField, endTimeField));
           break;
       }
     }
