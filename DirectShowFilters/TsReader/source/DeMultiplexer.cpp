@@ -916,7 +916,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
   if(!CheckContinuity(m_AudioPrevCC, header))
   {
     LogDebug("Audio Continuity error... %x ( prev %x )", header.ContinuityCounter, m_AudioPrevCC);
-    m_AudioValidPES = m_DisableDiscontinuitiesFiltering;  
+    if (!m_DisableDiscontinuitiesFiltering) m_AudioValidPES=false;  
   }
 
   m_AudioPrevCC = header.ContinuityCounter;
@@ -1070,7 +1070,7 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
   if(!CheckContinuity(m_VideoPrevCC, header))
   {
     LogDebug("Video Continuity error... %x ( prev %x )", header.ContinuityCounter, m_VideoPrevCC);
-    m_VideoValidPES = m_DisableDiscontinuitiesFiltering;  
+    if (!m_DisableDiscontinuitiesFiltering) m_VideoValidPES=false;  
   }
 
   m_VideoPrevCC = header.ContinuityCounter;
