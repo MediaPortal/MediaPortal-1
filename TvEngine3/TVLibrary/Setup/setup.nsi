@@ -507,6 +507,10 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     CreateShortCut "${STARTMENU_GROUP}\TV-Server Configuration.lnk" "$INSTDIR\SetupTV.exe"  "" "$INSTDIR\SetupTV.exe"  0 "" "" "TV-Server Configuration"
     CreateDirectory "${COMMON_APPDATA}\log"
     CreateShortCut "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"     "${COMMON_APPDATA}\log" "" "${COMMON_APPDATA}\log" 0 "" "" "TV-Server Log-Files"
+
+    WriteINIStr "${STARTMENU_GROUP}\Quick Setup Guide.url"  "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/TeamMediaPortal/MP1QuickSetupGuide"
+    WriteINIStr "${STARTMENU_GROUP}\Help.url"               "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/"
+    WriteINIStr "${STARTMENU_GROUP}\web site.url"           "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
     # [OBSOLETE] CreateShortcut "${STARTMENU_GROUP}\MCE Blaster Learn.lnk" "$INSTDIR\Blaster.exe" "" "$INSTDIR\Blaster.exe" 0 "" "" "MCE Blaster Learn"
     ;!insertmacro MUI_STARTMENU_WRITE_END
   ;${EndIf}
@@ -617,6 +621,10 @@ ${MementoSectionEnd}
   ; remove Start Menu shortcuts
   Delete "${STARTMENU_GROUP}\TV-Server Configuration.lnk"
   Delete "${STARTMENU_GROUP}\TV-Server Log-Files.lnk"
+
+  Delete "${STARTMENU_GROUP}\Quick Setup Guide.url"
+  Delete "${STARTMENU_GROUP}\Help.url"
+  Delete "${STARTMENU_GROUP}\web site.url"
   ; remove Desktop shortcuts
   Delete "$DESKTOP\TV-Server Configuration.lnk"
 !macroend

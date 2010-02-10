@@ -810,8 +810,10 @@ Section -Post
       CreateShortCut "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"             "$MPdir.Base\WatchDog.exe"   ""         "$MPdir.Base\WatchDog.exe"   0 "" "" "MediaPortal WatchDog"
       CreateShortCut "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"
       CreateShortCut "${STARTMENU_GROUP}\User Files.lnk"                             "$MPdir.Config"                 ""      "$MPdir.Config"                 0 "" "" "Browse you config files, databases, thumbs, logs, ..."
-      WriteINIStr "${STARTMENU_GROUP}\Help.url"      "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/"
-      WriteINIStr "${STARTMENU_GROUP}\web site.url"  "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
+
+      WriteINIStr "${STARTMENU_GROUP}\Quick Setup Guide.url"  "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/TeamMediaPortal/MP1QuickSetupGuide"
+      WriteINIStr "${STARTMENU_GROUP}\Help.url"               "InternetShortcut" "URL" "http://wiki.team-mediaportal.com/"
+      WriteINIStr "${STARTMENU_GROUP}\web site.url"           "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
   ;${EndIf}
 
   WriteRegDWORD HKLM "${REG_UNINSTALL}" "VersionMajor"    "${VER_MAJOR}"
@@ -858,6 +860,8 @@ Section Uninstall
   Delete "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"
   Delete "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"
   Delete "${STARTMENU_GROUP}\User Files.lnk"
+
+  Delete "${STARTMENU_GROUP}\Quick Setup Guide.url"
   Delete "${STARTMENU_GROUP}\Help.url"
   Delete "${STARTMENU_GROUP}\web site.url"
   RMDir "${STARTMENU_GROUP}"
