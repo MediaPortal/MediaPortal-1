@@ -141,15 +141,24 @@ namespace TvPlugin
 
     private static BitHelper<LiveTvStatus> _status = new BitHelper<LiveTvStatus>();
 
-    [SkinControl(2)] protected GUIButtonControl btnTvGuide = null;
-    [SkinControl(3)] protected GUIButtonControl btnRecord = null;
-    [SkinControl(7)] protected GUIButtonControl btnChannel = null;
-    [SkinControl(8)] protected GUIToggleButtonControl btnTvOnOff = null;
-    [SkinControl(13)] protected GUIButtonControl btnTeletext = null;
-    [SkinControl(24)] protected GUIImage imgRecordingIcon = null;
-    [SkinControl(99)] protected GUIVideoControl videoWindow = null;
-    [SkinControl(9)] protected GUIButtonControl btnActiveStreams = null;
-    [SkinControl(14)] protected GUIButtonControl btnActiveRecordings = null;
+    [SkinControl(2)]
+    protected GUIButtonControl btnTvGuide = null;
+    [SkinControl(3)]
+    protected GUIButtonControl btnRecord = null;
+    [SkinControl(7)]
+    protected GUIButtonControl btnChannel = null;
+    [SkinControl(8)]
+    protected GUIToggleButtonControl btnTvOnOff = null;
+    [SkinControl(13)]
+    protected GUIButtonControl btnTeletext = null;
+    [SkinControl(24)]
+    protected GUIImage imgRecordingIcon = null;
+    [SkinControl(99)]
+    protected GUIVideoControl videoWindow = null;
+    [SkinControl(9)]
+    protected GUIButtonControl btnActiveStreams = null;
+    [SkinControl(14)]
+    protected GUIButtonControl btnActiveRecordings = null;
 
     // error handling
     public class ChannelErrorInfo
@@ -169,6 +178,8 @@ namespace TvPlugin
     private static CiMenu currentCiMenu = null;
     private static object CiMenuLock = new object();
     private static bool CiMenuActive = false;
+
+    private static List<CiMenu> CiMenuList = new List<CiMenu>();
 
     #endregion
 
@@ -230,7 +241,7 @@ namespace TvPlugin
       return false;
     }
 
-    public void ShowPlugin() {}
+    public void ShowPlugin() { }
 
     #endregion
 
@@ -248,7 +259,7 @@ namespace TvPlugin
       GetID = (int)Window.WINDOW_TV;
     }
 
-    #region Overrides      
+    #region Overrides
 
     public override bool Init()
     {
@@ -620,7 +631,7 @@ namespace TvPlugin
           ViewChannelAndCheck(Navigator.Channel);
         }
         else
-          // current channel seems to be non-tv (radio ?), get latest known tv channel from xml config and use this instead
+        // current channel seems to be non-tv (radio ?), get latest known tv channel from xml config and use this instead
         {
           Settings xmlreader = new MPSettings();
           string currentchannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
@@ -662,7 +673,7 @@ namespace TvPlugin
         case GUIMessage.MessageType.GUI_MSG_RESUME_TV:
           {
             if (_autoTurnOnTv && !wasPrevWinTVplugin())
-              // we only want to resume TV if previous window is NOT a tvplugin based one. (ex. tvguide.)
+            // we only want to resume TV if previous window is NOT a tvplugin based one. (ex. tvguide.)
             {
               //restart viewing...  
               Log.Info("tv home msg resume tv:{0}", Navigator.CurrentChannel);
@@ -982,11 +993,12 @@ namespace TvPlugin
       }
       return false;
     }
-    
-    private static void ShowTvHome() {
+
+    private static void ShowTvHome()
+    {
       GUIMessage msg = null;
       msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, (int)Window.WINDOW_TV, 0, 0, 0, 0, null);
-      GUIWindowManager.SendThreadMessage(msg);      
+      GUIWindowManager.SendThreadMessage(msg);
     }
 
     public static bool WaitForGentleConnection()
@@ -1369,7 +1381,7 @@ namespace TvPlugin
         _notifyManager.Stop();
         stopHeartBeatThread();
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
     private void HeartBeatTransmitter()
@@ -1603,7 +1615,7 @@ namespace TvPlugin
         //Connected = false;
         _ServerNotConnectedHandled = false;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       finally
       {
         _suspended = true;
@@ -1612,7 +1624,7 @@ namespace TvPlugin
 
     private void OnResume()
     {
-      Log.Debug("TVHome.OnResume()");      
+      Log.Debug("TVHome.OnResume()");
       Connected = false;
       RemoteControl.OnRemotingDisconnected +=
         new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
@@ -1729,7 +1741,7 @@ namespace TvPlugin
     private void OnAudioTracksReady()
     {
       Log.Debug("TVHome.OnAudioTracksReady()");
-      
+
       eAudioDualMonoMode dualMonoMode = eAudioDualMonoMode.UNSUPPORTED;
       int prefLangIdx = GetPreferedAudioStreamIndex(out dualMonoMode);
       g_Player.CurrentAudioStream = prefLangIdx;
@@ -1872,7 +1884,7 @@ namespace TvPlugin
         Schedule s = Schedule.Retrieve(card.RecordingScheduleId);
         if (s != null)
         {
-          TVUtil.DeleteRecAndSchedQuietly(s);          
+          TVUtil.DeleteRecAndSchedQuietly(s);
         }
         return false;
       }
@@ -1989,12 +2001,12 @@ namespace TvPlugin
       return (bool)_isSingleSeat;
     }
 
-    public static void UpdateTimeShift() {}
+    public static void UpdateTimeShift() { }
 
 
     private void OnActiveRecordings()
     {
-      IList<Recording> ignoreActiveRecordings = new List<Recording> ();
+      IList<Recording> ignoreActiveRecordings = new List<Recording>();
       OnActiveRecordings(ignoreActiveRecordings);
     }
 
@@ -2236,7 +2248,7 @@ namespace TvPlugin
           Schedule schedule = Schedule.Retrieve(scheduleId);
           if (schedule != null)
           {
-            if (schedule.ScheduleType == (int) ScheduleRecordingType.Once)
+            if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
             {
               imgRecordingIcon.SetFileName(Thumbs.TvRecordingIcon);
             }
@@ -2575,7 +2587,7 @@ namespace TvPlugin
     /// run and/or modify the unit tests accordingly.
     /// </summary>
     public static int GetPreferedAudioStreamIndex(out eAudioDualMonoMode dualMonoMode)
-      // also used from tvrecorded class
+    // also used from tvrecorded class
     {
       int idxFirstAc3 = -1; // the index of the first avail. ac3 found
       int idxFirstmpeg = -1; // the index of the first avail. mpg found
@@ -2629,7 +2641,7 @@ namespace TvPlugin
       }
 
       if (idx == -1 || !_preferAC3)
-        // we end up here if ac3 selection didnt happen (no ac3 avail.) or if preferac3 is disabled.
+      // we end up here if ac3 selection didnt happen (no ac3 avail.) or if preferac3 is disabled.
       {
         if (IsPreferredAudioLanguageAvailable())
         {
@@ -2720,7 +2732,7 @@ namespace TvPlugin
         Log.Info("Audio stream: switching to preferred MPEG audio stream {0}, based on LANG {1}", idx,
                  mpegBasedOnLang);
       }
-        //if not, did we even find a mpeg track ?
+      //if not, did we even find a mpeg track ?
       else if (idxFirstmpeg > -1)
       {
         //we did find a AC3 track, but not based on LANG - should we choose this or the mpeg track which is based on LANG.
@@ -2748,7 +2760,7 @@ namespace TvPlugin
         idx = idxStreamIndexAc3;
         Log.Info("Audio stream: switching to preferred AC3 audio stream {0}, based on LANG {1}", idx, ac3BasedOnLang);
       }
-        //if not, did we even find an ac3 track ?
+      //if not, did we even find an ac3 track ?
       else if (idxFirstAc3 > -1)
       {
         //we did find an AC3 track, but not based on LANG - should we choose this or the mpeg track which is based on LANG.
@@ -2771,7 +2783,6 @@ namespace TvPlugin
                                                             ref int idxStreamIndexAc3, ref string mpegBasedOnLang,
                                                             ref int idxLangPriAc3, ref int idxLangPrimpeg,
                                                             ref string ac3BasedOnLang)
-
     {
       int langPriority = _preferredLanguages.IndexOf(streams[i].Language);
       string langSel = streams[i].Language;
@@ -2791,7 +2802,7 @@ namespace TvPlugin
             idxLangPriAc3 = langPriority;
             ac3BasedOnLang = langSel;
           }
-        }          
+        }
         else //not AC3
         {
           // has the stream a higher priority than an old one or is this the first mpeg stream with lang pri (idxLangPrimpeg == -1) (mpeg)
@@ -3132,7 +3143,7 @@ namespace TvPlugin
         }
       }
       else if (g_Player.IsTVRecording && _userChannelChanged)
-        //we are watching a recording, we have now issued a ch. change..stop the player.
+      //we are watching a recording, we have now issued a ch. change..stop the player.
       {
         _userChannelChanged = false;
         g_Player.Stop(true);
@@ -3146,7 +3157,7 @@ namespace TvPlugin
       if (Card != null)
       {
         if (g_Player.Playing && g_Player.IsTV && !g_Player.IsTVRecording)
-          //modified by joboehl. Avoids other video being played instead of TV. 
+        //modified by joboehl. Avoids other video being played instead of TV. 
         {
           //if we're already watching this channel, then simply return
           if (Card.IsTimeShifting == true && Card.IdChannel == channel.IdChannel)
@@ -3274,7 +3285,7 @@ namespace TvPlugin
         // 2 cases:
         // if the timeshift switched from card 1 -> 2 (error) -> 1
         if (newCardId != card.Id)
-        {          
+        {
           if (Card.Id != card.Id)
           {
             _status.Set(LiveTvStatus.CardChange);
@@ -3282,7 +3293,7 @@ namespace TvPlugin
           else
           {
             // reset the card change flag, otherwise the StartPlay() would cause a step back to same ts buffer file
-            _status.Reset(LiveTvStatus.CardChange);   
+            _status.Reset(LiveTvStatus.CardChange);
           }
           // after CI menu was moved to new card, now assign it to the fallback card after change
           RegisterCiMenu(card.Id);
@@ -3329,7 +3340,7 @@ namespace TvPlugin
         {
           //ignore, error already logged
         }
-        
+
         _playbackStopped = false;
         _doingChannelChange = false;
         _ServerNotConnectedHandled = false;
@@ -3551,7 +3562,10 @@ namespace TvPlugin
     {
       lock (CiMenuLock)
       {
-        currentCiMenu = Menu;
+        CiMenuList.Add(Menu);
+        if (CiMenuActive)       // Just suppose if a new menu is coming from CAM, last one can be trashed.
+          dlgCiMenu.Reset();
+        Log.Debug("ProcessCiMenu {0} {1} ", Menu, CiMenuList.Count);
       }
     }
 
@@ -3562,102 +3576,98 @@ namespace TvPlugin
     {
       lock (CiMenuLock)
       {
-        if (currentCiMenu == null || CiMenuActive == true)
-        {
-          return;
-        }
-
+        if (CiMenuActive || CiMenuList.Count == 0) return;
+        currentCiMenu = CiMenuList[0];
+        CiMenuList.RemoveAt(0);
         CiMenuActive = true; // avoid re-entrance from process()
-
-        if (dlgCiMenu == null)
-        {
-          dlgCiMenu =
-            (GUIDialogCIMenu)
-            GUIWindowManager.GetWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_DIALOG_CIMENU);
-        }
-
-        switch (currentCiMenu.State)
-        {
-            // choices available, so show them
-          case TvLibrary.Interfaces.CiMenuState.Ready:
-            dlgCiMenu.Reset();
-            dlgCiMenu.SetHeading(currentCiMenu.Title, currentCiMenu.Subtitle, currentCiMenu.BottomText); // CI Menu
-
-
-            for (int i = 0; i < currentCiMenu.NumChoices; i++) // CI Menu Entries
-              dlgCiMenu.Add(currentCiMenu.MenuEntries[i].Message); // take only message, numbers come from dialog
-
-            // show dialog and wait for result       
-            dlgCiMenu.DoModal(GUIWindowManager.ActiveWindow);
-            if (currentCiMenu.State != TvLibrary.Interfaces.CiMenuState.Error)
-            {
-              if (dlgCiMenu.SelectedId != -1)
-              {
-                TVHome.Card.SelectCiMenu(Convert.ToByte(dlgCiMenu.SelectedId));
-              }
-              else
-              {
-                TVHome.Card.SelectCiMenu(0); // 0 means "back"
-              }
-            }
-            else
-            {
-              TVHome.Card.CloseMenu(); // in case of error close the menu
-            }
-            break;
-
-            // errors and menu options with no choices
-          case TvLibrary.Interfaces.CiMenuState.Error:
-          case TvLibrary.Interfaces.CiMenuState.NoChoices:
-
-            if (_dialogNotify == null)
-            {
-              //_dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-              _dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
-            }
-            if (null != _dialogNotify)
-            {
-              _dialogNotify.Reset();
-              _dialogNotify.ClearAll();
-              _dialogNotify.SetHeading(currentCiMenu.Title);
-
-              _dialogNotify.SetText(String.Format("{0}\r\n{1}", currentCiMenu.Subtitle, currentCiMenu.BottomText));
-              _dialogNotify.TimeOut = 2; // seconds
-              _dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
-            }
-            break;
-
-            // requests require users input so open keyboard
-          case TvLibrary.Interfaces.CiMenuState.Request:
-            String result = "";
-            if (
-              GetKeyboard(currentCiMenu.RequestText, currentCiMenu.AnswerLength, currentCiMenu.Password, ref result) ==
-              true)
-            {
-              TVHome.Card.SendMenuAnswer(false, result); // send answer, cancel=false
-            }
-            else
-            {
-              TVHome.Card.SendMenuAnswer(true, null); // cancel request 
-            }
-            break;
-          case CiMenuState.Close:
-            if (_dialogNotify != null)
-            {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _dialogNotify.GetID, 0, 0, 0, 0, null);
-              _dialogNotify.OnMessage(msg);	// Send a de-init msg to hide the current notify dialog
-            }
-            if (dlgCiMenu != null)
-            {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, dlgCiMenu.GetID, 0, 0, 0, 0, null);
-              dlgCiMenu.OnMessage(msg);	// Send a de-init msg to hide the current CI menu dialog
-            }
-            break;
-        }
-
-        CiMenuActive = false; // finished
-        currentCiMenu = null; // reset menu
       }
+
+      if (dlgCiMenu == null)
+      {
+        dlgCiMenu =
+          (GUIDialogCIMenu)
+          GUIWindowManager.GetWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_DIALOG_CIMENU);
+      }
+
+      switch (currentCiMenu.State)
+      {
+        // choices available, so show them
+        case TvLibrary.Interfaces.CiMenuState.Ready:
+          dlgCiMenu.Reset();
+          dlgCiMenu.SetHeading(currentCiMenu.Title, currentCiMenu.Subtitle, currentCiMenu.BottomText); // CI Menu
+
+          for (int i = 0; i < currentCiMenu.NumChoices; i++) // CI Menu Entries
+            dlgCiMenu.Add(currentCiMenu.MenuEntries[i].Message); // take only message, numbers come from dialog
+
+          // show dialog and wait for result       
+          dlgCiMenu.DoModal(GUIWindowManager.ActiveWindow);
+          if (currentCiMenu.State != TvLibrary.Interfaces.CiMenuState.Error)
+          {
+            if (dlgCiMenu.SelectedId != -1)
+            {
+              TVHome.Card.SelectCiMenu(Convert.ToByte(dlgCiMenu.SelectedId));
+            }
+            else
+            {
+              if (CiMenuList.Count == 0)      // Another menu is pending, do not answer...
+                TVHome.Card.SelectCiMenu(0); // 0 means "back"
+            }
+          }
+          else
+          {
+            TVHome.Card.CloseMenu(); // in case of error close the menu
+          }
+          break;
+
+        // errors and menu options with no choices
+        case TvLibrary.Interfaces.CiMenuState.Error:
+        case TvLibrary.Interfaces.CiMenuState.NoChoices:
+
+          if (_dialogNotify == null)
+          {
+            _dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+          }
+          if (null != _dialogNotify)
+          {
+            _dialogNotify.Reset();
+            _dialogNotify.ClearAll();
+            _dialogNotify.SetHeading(currentCiMenu.Title);
+            _dialogNotify.SetText(String.Format("{0}\r\n{1}", currentCiMenu.Subtitle, currentCiMenu.BottomText));
+            _dialogNotify.TimeOut = 2; // seconds
+            _dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
+          }
+          break;
+
+        // requests require users input so open keyboard
+        case TvLibrary.Interfaces.CiMenuState.Request:
+          String result = "";
+          if (
+            GetKeyboard(currentCiMenu.RequestText, currentCiMenu.AnswerLength, currentCiMenu.Password, ref result) ==
+            true)
+          {
+            TVHome.Card.SendMenuAnswer(false, result); // send answer, cancel=false
+          }
+          else
+          {
+            TVHome.Card.SendMenuAnswer(true, null); // cancel request 
+          }
+          break;
+        case CiMenuState.Close:
+          if (_dialogNotify != null)
+          {
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _dialogNotify.GetID, 0, 0, 0, 0, null);
+            _dialogNotify.OnMessage(msg);	// Send a de-init msg to hide the current notify dialog
+          }
+          if (dlgCiMenu != null)
+          {
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, dlgCiMenu.GetID, 0, 0, 0, 0, null);
+            dlgCiMenu.OnMessage(msg);	// Send a de-init msg to hide the current CI menu dialog
+          }
+          break;
+      }
+
+      CiMenuActive = false; // finished
+      currentCiMenu = null; // reset menu
     }
 
     #endregion
