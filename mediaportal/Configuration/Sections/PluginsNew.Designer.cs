@@ -74,6 +74,7 @@ namespace MediaPortal.Configuration.Sections
       this.contextMenuStrip = new MediaPortal.UserInterface.Controls.MPContextMenuStrip();
       this.toolTip = new MediaPortal.UserInterface.Controls.MPToolTip();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.SuspendLayout();
@@ -115,6 +116,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.linkLabel1);
       this.tabPage1.Controls.Add(this.mpButtonConfig);
       this.tabPage1.Controls.Add(this.mpButtonPlugin);
       this.tabPage1.Controls.Add(this.mpButtonHome);
@@ -240,6 +242,18 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.openFileDialog1.Filter = "MPI files|*.mpi|ZIP files|*.zip|All files|*.*";
       // 
+      // linkLabel1
+      // 
+      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.linkLabel1.AutoSize = true;
+      this.linkLabel1.Location = new System.Drawing.Point(284, 311);
+      this.linkLabel1.Name = "linkLabel1";
+      this.linkLabel1.Size = new System.Drawing.Size(160, 13);
+      this.linkLabel1.TabIndex = 5;
+      this.linkLabel1.TabStop = true;
+      this.linkLabel1.Text = "Browse and install new plugins...";
+      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      // 
       // PluginsNew
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -270,6 +284,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPButton mpButtonPlugin;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonHome;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonEnable;
+    private System.Windows.Forms.LinkLabel linkLabel1;
 
 
   }

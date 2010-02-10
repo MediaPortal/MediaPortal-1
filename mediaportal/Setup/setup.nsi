@@ -702,6 +702,9 @@ Section "-MediaPortal Extension Installer" SecMpeInstaller
   File "${svn_MP}\MPE\MpeMaker\bin\${BUILD_TYPE}\MpeMaker.exe"
 
   ; create startmenu shortcuts
+  ${If} $noDesktopSC != 1
+    CreateShortCut "$DESKTOP\MediaPortal Extension Installer.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Installer"
+  ${EndIf}
   CreateDirectory "${STARTMENU_GROUP}"
   CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Installer.lnk" "$MPdir.Base\MpeInstaller.exe"  ""  "$MPdir.Base\MpeInstaller.exe"  0 "" "" "MediaPortal Extension Installer"
   CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"     "$MPdir.Base\MpeMaker.exe"      ""  "$MPdir.Base\MpeMaker.exe"      0 "" "" "MediaPortal Extension Maker"
@@ -733,6 +736,7 @@ SectionEnd
   Delete "$MPdir.Base\MpeMaker.exe"
 
   ; remove startmenu shortcuts
+  Delete "$DESKTOP\MediaPortal Extension Installer.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Extension Installer.lnk"
   Delete "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"
 

@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -744,6 +745,15 @@ namespace MediaPortal.Configuration.Sections
           }
         }
       }
+    }
+
+    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      try
+      {
+        Process.Start(Config.GetFile(Config.Dir.Base, "MpeInstaller.exe"));
+      }
+      catch {}
     }
   }
 }
