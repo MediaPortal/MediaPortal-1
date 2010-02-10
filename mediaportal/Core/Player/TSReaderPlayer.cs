@@ -207,18 +207,34 @@ namespace MediaPortal.Player
       _isStarted = true;
     }
 
-    protected override void MatchFilters()
+    protected override void MatchFilters(string format)
     {
-      if (_videoFormat.streamType == VideoStreamType.MPEG2)
+      if (format == "Video")
       {
-        videoFilterPriority1 = strVideoCodec;
-        videoFilterPriority2 = strH264VideoCodec;
+        if (_videoFormat.streamType == VideoStreamType.MPEG2)
+        {
+          videoFilterPriority1 = strVideoCodec;
+          videoFilterPriority2 = strH264VideoCodec;
+        }
+        else
+        {
+          videoFilterPriority1 = strH264VideoCodec;
+          videoFilterPriority2 = strVideoCodec;
+        }
       }
       else
       {
-        videoFilterPriority1 = strH264VideoCodec;
-        videoFilterPriority2 = strVideoCodec;
-      }     
+        if (AudioType(CurrentAudioStream).Contains("AAC"))
+        {
+          audioFilterPriority1 = strAACAudioCodec;
+          audioFilterPriority2 = strAudioCodec;
+        }
+        else
+        {
+          audioFilterPriority1 = strAudioCodec;
+          audioFilterPriority2 = strAACAudioCodec;
+        }
+      }
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>
@@ -305,15 +321,29 @@ namespace MediaPortal.Player
         if (strAACAudioCodec == strAudioCodec)
           strAACAudioCodec = "";
 
-        MatchFilters();
-        audioFilterPriority1 = strAudioCodec;
-        audioFilterPriority2 = strAACAudioCodec;
+        MatchFilters("Video");
+        MatchFilters("Audio");
 
         if (!_isRadio)
         {
           if (!DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Video, videoFilterPriority1))
-            DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Video, videoFilterPriority2);
-
+          {
+            if (videoFilterPriority1 == strVideoCodec)
+              strVideoCodec = "";
+            else
+              strH264VideoCodec = "";
+            videoFilterPriority1 = "";
+            if (!DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Video, videoFilterPriority2))
+            {
+              if (videoFilterPriority2 == strVideoCodec)
+                strVideoCodec = "";
+              else
+                strH264VideoCodec = "";
+              videoFilterPriority2 = "";
+            }
+            else
+              videoFilterPriority1 = videoFilterPriority2;
+          }
           if (enableDVBBitmapSubtitles)
           {
             try

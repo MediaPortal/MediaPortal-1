@@ -697,6 +697,9 @@ namespace DShowNET.Helper
       IBaseFilter destination = null;
       destination = AddFilterToGraph(graphbuilder, targetFilter);
 
+      if (destination == null)
+        return false;
+
       if (!TryConnect(graphbuilder, source, mediaType, destination))
         graphbuilder.RemoveFilter(destination);
       else

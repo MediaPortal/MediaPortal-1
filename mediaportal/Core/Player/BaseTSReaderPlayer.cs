@@ -1420,6 +1420,7 @@ namespace MediaPortal.Player
       return 0;
     }
 
+    /*
     //check if the pin connections can be kept, or if a graph rebuilding is necessary!
     private bool GraphNeedsRebuild()
     {
@@ -1460,10 +1461,11 @@ namespace MediaPortal.Player
       Log.Info("Graph needs a rebuild: {0}", needsRebuild ? "True" : "False");
       return needsRebuild;
     }
+    */
 
     public void DoGraphRebuild()
     {
-      bool needRebuild = GraphNeedsRebuild();
+      bool needRebuild = true; // GraphNeedsRebuild(); forcing is equal in speed
       if (_mediaCtrl != null)
       {
         lock (_mediaCtrl)
@@ -1500,6 +1502,7 @@ namespace MediaPortal.Player
             }
             DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);            
           }
+          /*
           else
           {
             switch (iChangedMediaTypes)
@@ -1520,6 +1523,7 @@ namespace MediaPortal.Player
                 break;
             }
           }
+          */
           try
           {
             hr = _mediaCtrl.Run();
@@ -1859,27 +1863,47 @@ namespace MediaPortal.Player
       }
     }
 
-    protected virtual void MatchFilters() {}
+    protected virtual void MatchFilters(string format) {}
 
     private void ReAddFilters(string selection)
     {      
       if (selection == "Video")
       {
+        if (String.IsNullOrEmpty(videoFilterPriority1)) // bad filter selection in config
+        {
+          IPin pinFrom = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Video");
+          IPin pinTo;
+          int hr = pinFrom.ConnectedTo(out pinTo);
+          if (hr >= 0 && pinTo != null)
+          {
+            PinInfo pInfo;
+            pinTo.QueryPinInfo(out pInfo);
+            FilterInfo fInfo;
+            pInfo.filter.QueryFilterInfo(out fInfo);
+            Log.Debug("TSReaderPlayer:Found video filter - {0}", fInfo.achName);
+            videoFilterPriority1 = fInfo.achName;
+            DsUtils.FreePinInfo(pInfo);
+            DirectShowUtil.ReleaseComObject(fInfo.pGraph);
+            DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
+          }
+          DirectShowUtil.ReleaseComObject(pinFrom); pinFrom = null;
+        }
         DirectShowUtil.RemoveFilters(_graphBuilder, videoFilterPriority1);
-        if (!String.IsNullOrEmpty(videoFilterPriority2))
-          DirectShowUtil.RemoveFilters(_graphBuilder, videoFilterPriority2);
-        
-        MatchFilters();        
+        MatchFilters(selection);
         if (!DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Video, videoFilterPriority1))
         {
-          DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Video, videoFilterPriority2);
+          videoFilterPriority1 = "";
+          if (DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Video, videoFilterPriority2))
+            videoFilterPriority1 = videoFilterPriority2;
         }
       }
       else
       {
-        DirectShowUtil.RemoveFilters(_graphBuilder, audioFilterPriority1);
+        if (!String.IsNullOrEmpty(audioFilterPriority1))
+          DirectShowUtil.RemoveFilters(_graphBuilder, audioFilterPriority1);
         if (!String.IsNullOrEmpty(audioFilterPriority2))
           DirectShowUtil.RemoveFilters(_graphBuilder, audioFilterPriority2);
+        MatchFilters(selection);
         if (!DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Audio, audioFilterPriority1))
         {
           DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Audio, audioFilterPriority2);
@@ -1887,6 +1911,7 @@ namespace MediaPortal.Player
       }          
     }
 
+    /*
     private void ReConnectPin(string pinName)
     {
       IPin pPin = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, pinName);
@@ -1901,7 +1926,7 @@ namespace MediaPortal.Player
         DirectShowUtil.ReleaseComObject(decoderPin);
       }
     }
-
+    */
     #endregion
 
     #region IDisposable Members
