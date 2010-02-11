@@ -48,101 +48,103 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       bool extensiveLogging = Settings.Instance.ExtensiveLogging;
       bool flag2 = (EQSETTINGS.UseStereoEq | EQSETTINGS.UseVUmeter) | EQSETTINGS.UseVUmeter2;
-      if (g_Player.Player != null)
+      if (g_Player.Player == null || !g_Player.IsMusic || !BassMusicPlayer.IsDefaultMusicPlayer)
       {
-        if (!EQSETTINGS.UseEqDisplay)
-        {
-          return false;
-        }
-        if (EQSETTINGS._AudioUseASIO)
-        {
-          return false;
-        }
-        try
-        {
-          if (EQSETTINGS.DelayEQ & (g_Player.CurrentPosition < EQSETTINGS._DelayEQTime))
-          {
-            EQSETTINGS._EQDisplayTitle = false;
-            EQSETTINGS._LastEQTitle = (DateTime.Now.Ticks / 1000);
-            return false;
-          }
-          if (EQSETTINGS.EQTitleDisplay)
-          {
-            if (g_Player.CurrentPosition < EQSETTINGS._EQTitleDisplayTime)
-            {
-              EQSETTINGS._EQDisplayTitle = false;
-            }
-            if (((DateTime.Now.Ticks / 1000) - EQSETTINGS._LastEQTitle) > (EQSETTINGS._EQTitleDisplayTime * 10000))
-            {
-              EQSETTINGS._LastEQTitle = (DateTime.Now.Ticks / 1000);
-              EQSETTINGS._EQDisplayTitle = !EQSETTINGS._EQDisplayTitle;
-            }
-            if (EQSETTINGS._EQDisplayTitle &
-                (((DateTime.Now.Ticks / 1000) - EQSETTINGS._LastEQTitle) < (EQSETTINGS._EQTitleShowTime * 10000)))
-            {
-              return false;
-            }
-          }
-        }
-        catch
+        return false;
+      } 
+
+      if (!EQSETTINGS.UseEqDisplay)
+      {
+        return false;
+      }
+      if (EQSETTINGS._AudioUseASIO)
+      {
+        return false;
+      }
+      try
+      {
+        if (EQSETTINGS.DelayEQ & (g_Player.CurrentPosition < EQSETTINGS._DelayEQTime))
         {
           EQSETTINGS._EQDisplayTitle = false;
           EQSETTINGS._LastEQTitle = (DateTime.Now.Ticks / 1000);
           return false;
         }
-        int handle = -1;
-        try
+        if (EQSETTINGS.EQTitleDisplay)
         {
-          handle = g_Player.Player.CurrentAudioStream;
-        }
-        catch (Exception exception)
-        {
-          Log.Debug("MiniDisplay.GetEQ(): Caugth exception obtaining audio stream: {0}", new object[] {exception});
-          return false;
-        }
-        if ((handle != 0) & (handle != -1))
-        {
-          int num2;
-          if (extensiveLogging)
+          if (g_Player.CurrentPosition < EQSETTINGS._EQTitleDisplayTime)
           {
-            Log.Info("MiniDisplay.GetEQ(): attempting to retrieve equalizer data from audio stream {0}",
-                     new object[] {handle});
+            EQSETTINGS._EQDisplayTitle = false;
           }
-          try
+          if (((DateTime.Now.Ticks / 1000) - EQSETTINGS._LastEQTitle) > (EQSETTINGS._EQTitleDisplayTime * 10000))
           {
-            int num3;
-            if (flag2)
-            {
-              num3 = -2147483630;
-            }
-            else
-            {
-              num3 = -2147483646;
-            }
-            num2 = Bass.BASS_ChannelGetData(handle, EQSETTINGS.EqFftData, num3);
+            EQSETTINGS._LastEQTitle = (DateTime.Now.Ticks / 1000);
+            EQSETTINGS._EQDisplayTitle = !EQSETTINGS._EQDisplayTitle;
           }
-          catch
+          if (EQSETTINGS._EQDisplayTitle &
+              (((DateTime.Now.Ticks / 1000) - EQSETTINGS._LastEQTitle) < (EQSETTINGS._EQTitleShowTime * 10000)))
           {
-            if (extensiveLogging)
-            {
-              Log.Info("MiniDisplay.GetEQ(): CAUGHT EXCeption - audio stream {0} disappeared", new object[] {handle});
-            }
             return false;
           }
-          if (num2 > 0)
+        }
+      }
+      catch
+      {
+        EQSETTINGS._EQDisplayTitle = false;
+        EQSETTINGS._LastEQTitle = (DateTime.Now.Ticks / 1000);
+        return false;
+      }
+      int handle = -1;
+      try
+      {
+        handle = g_Player.Player.CurrentAudioStream;
+      }
+      catch (Exception exception)
+      {
+        Log.Debug("MiniDisplay.GetEQ(): Caugth exception obtaining audio stream: {0}", new object[] {exception});
+        return false;
+      }
+      if ((handle != 0) & (handle != -1))
+      {
+        int num2;
+        if (extensiveLogging)
+        {
+          Log.Info("MiniDisplay.GetEQ(): attempting to retrieve equalizer data from audio stream {0}",
+                   new object[] {handle});
+        }
+        try
+        {
+          int num3;
+          if (flag2)
           {
-            return true;
+            num3 = -2147483630;
           }
+          else
+          {
+            num3 = -2147483646;
+          }
+          num2 = Bass.BASS_ChannelGetData(handle, EQSETTINGS.EqFftData, num3);
+        }
+        catch
+        {
           if (extensiveLogging)
           {
-            Log.Info("MiniDisplay.GetEQ(): unable to retreive equalizer data");
+            Log.Info("MiniDisplay.GetEQ(): CAUGHT EXCeption - audio stream {0} disappeared", new object[] {handle});
           }
           return false;
+        }
+        if (num2 > 0)
+        {
+          return true;
         }
         if (extensiveLogging)
         {
-          Log.Info("MiniDisplay.GetEQ(): Audio Stream not available");
+          Log.Info("MiniDisplay.GetEQ(): unable to retreive equalizer data");
         }
+        return false;
+      }
+      if (extensiveLogging)
+      {
+        Log.Info("MiniDisplay.GetEQ(): Audio Stream not available");
       }
       return false;
     }
