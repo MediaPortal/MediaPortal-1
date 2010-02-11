@@ -298,7 +298,7 @@ void FontEngineRemoveTexture(int textureNo)
   textureData[textureNo].vertices=NULL;
   if ( textureData[textureNo].pTexture!=NULL)
   {
-    //textureData[textureNo].pTexture->Release();
+    textureData[textureNo].pTexture->Release();
   }
   textureData[textureNo].pTexture=NULL;
   textureData[textureNo].updateVertexBuffer=true;
@@ -340,6 +340,7 @@ int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
   textureData[selected].useAlphaBlend=useAlphaBlend;
   textureData[selected].hashCode=hashCode;
   textureData[selected].pTexture=(LPDIRECT3DTEXTURE9)texture;
+  textureData[selected].pTexture->AddRef();
   textureData[selected].updateVertexBuffer=true;
 
   if (textureData[selected].pVertexBuffer==NULL)
