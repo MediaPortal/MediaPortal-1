@@ -930,7 +930,8 @@ namespace TvPlugin
       }
       else
       {
-        TVHome.ViewChannelAndCheck(channel);
+        if (TVHome.Navigator.CurrentChannel != channel.Name)
+          TVHome.ViewChannel(channel);
       }
     }
 
