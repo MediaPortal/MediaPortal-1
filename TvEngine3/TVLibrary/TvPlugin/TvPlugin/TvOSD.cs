@@ -1499,12 +1499,17 @@ namespace TvPlugin
         }
 
         // next program
-        prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(prog.EndTime.AddMinutes(1));
-        if (prog != null)
+        Channel chan = TVHome.Navigator.GetChannel(GetChannelName());
+        if (chan != null)
         {
-          if (tbOnTvNext != null)
+          prog = chan.GetProgramAt(prog.EndTime.AddMinutes(1));
+
+          if (prog != null)
           {
-            tbOnTvNext.Label = strTime + "  " + TVUtil.GetDisplayTitle(prog);
+            if (tbOnTvNext != null)
+            {
+              tbOnTvNext.Label = strTime + "  " + TVUtil.GetDisplayTitle(prog);
+            }
           }
         }
       }
@@ -1540,7 +1545,10 @@ namespace TvPlugin
           endTime = Utils.SecondsToHMSString((int)duration);
 
           //remaining = "0";                    
-          tbOnTvNow.Label = title;
+          if (tbOnTvNow != null)
+          {
+            tbOnTvNow.Label = title;
+          }
           GUIPropertyManager.SetProperty("#TV.View.compositetitle", title);
           GUIPropertyManager.SetProperty("#TV.View.start", startTime);
           GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
@@ -1554,8 +1562,14 @@ namespace TvPlugin
 
       else
       {
-        tbOnTvNow.Label = GUILocalizeStrings.Get(736); // no epg for this channel
-        tbOnTvNext.Label = GUILocalizeStrings.Get(736); // no epg for this channel
+        if (tbOnTvNow != null)
+        {
+          tbOnTvNow.Label = GUILocalizeStrings.Get(736); // no epg for this channel
+        }
+        if (tbOnTvNext != null)
+        {
+          tbOnTvNext.Label = GUILocalizeStrings.Get(736); // no epg for this channel
+        }
 
         GUIPropertyManager.SetProperty("#TV.View.start", string.Empty);
         GUIPropertyManager.SetProperty("#TV.View.stop", string.Empty);
