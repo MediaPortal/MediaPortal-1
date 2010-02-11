@@ -256,19 +256,6 @@ namespace MediaPortal.Player
 
         #endregion
 
-        #region add AudioSwitcher
-
-        if (enableMPAudioSwitcher)
-        {
-          _audioSwitcherFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal AudioSwitcher");
-          if (_audioSwitcherFilter == null)
-          {
-            Log.Error("TSReaderPlayer: Failed to add AudioSwitcher to graph");
-          }
-        }
-
-        #endregion
-
         #region add TsReader
 
         TsReader reader = new TsReader();
@@ -365,6 +352,18 @@ namespace MediaPortal.Player
           _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, true);
         }
 
+        #region add AudioSwitcher
+
+        if (enableMPAudioSwitcher)
+        {
+          _audioSwitcherFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal AudioSwitcher");
+          if (_audioSwitcherFilter == null)
+          {
+            Log.Error("TSReaderPlayer: Failed to add AudioSwitcher to graph");
+          }
+        }
+
+        #endregion
         // FlipGer: add custom filters to graph
         string[] arrFilters = strFilters.Split(';');
         for (int i = 0; i < intFilters; i++)
