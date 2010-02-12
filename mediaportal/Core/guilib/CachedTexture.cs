@@ -57,11 +57,9 @@ namespace MediaPortal.GUI.Library
 
     #endregion
 
-    #region events
+    #region events / delegates
 
     public event EventHandler Disposed;
-
-    private delegate void SafeDisposer();
 
     #endregion
 
@@ -71,10 +69,12 @@ namespace MediaPortal.GUI.Library
     /// Class which contains a single frame
     /// A cached texture can contain more then 1 frames for example when its an animated gif
     /// </summary>
-    public class Frame
+    public class Frame : IDisposable
     {
       #region variables
 
+      // Track whether Dispose has been called.
+      private bool disposed = false;
       private Texture _image; //texture of current frame
       private int _duration; //duration of current frame
       private int _textureNumber = -1;
@@ -111,6 +111,14 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+      ~Frame()
+      {      
+        // call Dispose with false.  Since we're in the
+        // destructor call, the managed resources will be
+        // disposed of anyways.
+        Dispose(false);
+      }
+
       public string ImageName
       {
         get { return _imageName; }
@@ -136,22 +144,13 @@ namespace MediaPortal.GUI.Library
               if (logTextures)
               {
                 Log.Info("Frame:Image fontengine: remove texture:{0} {1}", _textureNumber.ToString(), _imageName);
-              }
-              FontEngineRemoveTexture(_textureNumber);
-              if (!_image.Disposed)
-              {
-                _image.Dispose();
-              }
-              _textureNumber = -1;
+              }              
+              Dispose();                            
             }
             catch (Exception)
             {
               //already disposed?
-            }
-            if (Disposed != null)
-            {
-              Disposed(this, new EventArgs());
-            }
+            }           
           }
           _image = value;
 
@@ -176,21 +175,9 @@ namespace MediaPortal.GUI.Library
         // D3D has disposed of this texture! notify so that things are kept up to date
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
         {
-          DisposeD3DTexture();
+          Dispose();
         }
-      }
-
-      private void DisposeD3DTexture()
-      {
-        if (GUIGraphicsContext.form.InvokeRequired)
-        {
-          SafeDisposer d = new SafeDisposer(DisposeD3DTexture);
-          GUIGraphicsContext.form.Invoke(d);
-          return;
-        }
-        //Log.Warn("CachedTexture: Already disposed texture - cleaning up now!");
-        Dispose();
-      }
+      }      
 
       /// <summary>
       /// property to get/set the duration for this frame
@@ -204,9 +191,43 @@ namespace MediaPortal.GUI.Library
 
       #region IDisposable Members
 
-      [MethodImpl(MethodImplOptions.Synchronized)]
+      /// <summary>
+      /// Releases the resources used by the texture.
+      /// </summary>
       public void Dispose()
+      {        
+        Dispose(true);
+        // This object will be cleaned up by the Dispose method.
+        // Therefore, calling GC.SupressFinalize to take this object off
+        // the finalization queue and prevent finalization code for this object
+        // from executing a second time.
+        GC.SuppressFinalize(this);
+      }
+      
+      private void Dispose(bool disposeManagedResources)
+      {              
+        // process only if mananged and unmanaged resources have
+        // not been disposed of.      
+        if (!this.disposed)
+        {
+          /*if (disposeManagedResources)
+          {            
+          }*/
+          lock (this)
+          {
+            DisposeUnmanagedResources();
+          }                            
+          disposed = true;
+          if (Disposed != null)
+          {
+            Disposed(this, new EventArgs());
+          }
+        }
+      }
+
+      private void DisposeUnmanagedResources()
       {
+        //Log.Debug("Frame.DisposeUnmanagedResources mainthread: {0}", !(GUIGraphicsContext.form.InvokeRequired));
         if (_image != null)
         {
           if (Disposing != null)
@@ -219,8 +240,14 @@ namespace MediaPortal.GUI.Library
           }
           try
           {
-            if (!_image.Disposed)
+            if (_textureNumber >= 0)
             {
+              FontEngineRemoveTexture(_textureNumber);
+              _textureNumber = -1;
+            }
+
+            if (_image != null && !_image.Disposed)
+            {              
               _image.Disposing -= new EventHandler(D3DTexture_Disposing);
               _image.Dispose();
             }
@@ -229,16 +256,7 @@ namespace MediaPortal.GUI.Library
           {
             //image already disposed?
           }
-          _image = null;
-          if (_textureNumber >= 0)
-          {
-            FontEngineRemoveTexture(_textureNumber);
-            _textureNumber = -1;
-          }
-          if (Disposed != null)
-          {
-            Disposed(this, new EventArgs());
-          }
+          _image = null;                    
         }
       }
 
@@ -351,26 +369,14 @@ namespace MediaPortal.GUI.Library
       {
         Dispose(); // cleanup..
         _listFrames.Clear();
-        _listFrames.Add(value);
         value.Disposed += new EventHandler(frame_Disposed);
+        _listFrames.Add(value);        
       }
     }
 
     private void frame_Disposed(object sender, EventArgs e)
     {
       // D3D has released the texture in one Frame. In that case, just dispose the whole CachedTexture
-      DisposeFrame();
-    }
-
-    private void DisposeFrame()
-    {
-      if (GUIGraphicsContext.form.InvokeRequired)
-      {
-        SafeDisposer d = new SafeDisposer(DisposeFrame);
-        GUIGraphicsContext.form.Invoke(d);
-        return;
-      }
-      //Log.Warn("CachedTexture: Already disposed frame - cleaning up now!");
       Dispose();
     }
 
@@ -446,8 +452,8 @@ namespace MediaPortal.GUI.Library
 
         if (_listFrames.Count <= index)
         {
-          _listFrames.Add(value);
           value.Disposed += new EventHandler(frame_Disposed);
+          _listFrames.Add(value);          
         }
         else
         {
@@ -456,8 +462,8 @@ namespace MediaPortal.GUI.Library
           {
             frame.Disposed -= new EventHandler(frame_Disposed);
             frame.Dispose();
-            _listFrames[index] = value;
             value.Disposed += new EventHandler(frame_Disposed);
+            _listFrames[index] = value;            
           }
         }
       }
@@ -467,48 +473,53 @@ namespace MediaPortal.GUI.Library
 
     #region IDisposable Members
 
-    [MethodImpl(MethodImplOptions.Synchronized)]
     private void Dispose(bool disposeManagedResources)
-    {
+    {      
       // process only if mananged and unmanaged resources have
       // not been disposed of.      
       if (!this.disposed)
-      {
-        lock (this) 
-		{
-          if (disposeManagedResources) 
-		  {
-            // dispose managed resources
-            foreach (Frame tex in _listFrames) 
-			{
-              if (tex != null) 
-			  {
-                tex.Disposed -= new EventHandler(frame_Disposed);
-                tex.Dispose();
-              }
-            }
-            _listFrames.Clear();
-            if (_gdiBitmap != null) 
-			{
-              try 
-			  {
-                _gdiBitmap.Dispose();
-              }
-              catch (Exception) 
-			  {
-                //already disposed?
-              }
-              _gdiBitmap = null;
-            }
-            if (Disposed != null) 
-			{
-              Disposed(this, new EventArgs());
-            }
-          }
-          // dispose unmanaged resources
-        }
+      {     
+        /*
+        if (disposeManagedResources)
+        {
+          //dispose managed resources          
+        } */       
+        lock (this)
+        {
+          DisposeUnmanagedResources(); 
+        }        
         disposed = true;
-      }      
+        if (Disposed != null)
+        {
+          Disposed(this, new EventArgs());
+        }                
+      }
+    }
+
+    private void DisposeUnmanagedResources() {
+      foreach (Frame tex in _listFrames)
+      {
+        if (tex != null)
+        {
+          tex.Disposed -= new EventHandler(frame_Disposed);
+          tex.Dispose();
+        }
+      }
+
+      _listFrames.Clear();          
+
+      if (_gdiBitmap != null)
+      {
+        try
+        {
+          _gdiBitmap.Dispose();
+        }
+        catch (Exception)
+        {
+          //already disposed?
+        }
+        _gdiBitmap = null;
+      }
     }
 
 
@@ -516,7 +527,7 @@ namespace MediaPortal.GUI.Library
     /// Releases the resources used by the texture.
     /// </summary>
     public void Dispose()
-    {
+    {      
       Dispose(true);
       // This object will be cleaned up by the Dispose method.
       // Therefore, calling GC.SupressFinalize to take this object off

@@ -60,15 +60,17 @@ namespace MediaPortal.GUI.Library
     {
       Log.Debug("TextureManager: Dispose()");
       _packer.Dispose();
-      if (disposing)
-      {                
-        for (int i = _cache.Count - 1; i >= 0; i--)
-        {
-          CachedTexture cached = _cache[i];                  
-          cached.Dispose();
-        }
-        _cache.Clear();
+      /*if (disposing)
+      {                       
+      }*/
+
+      for (int i = _cache.Count - 1; i >= 0; i--)
+      {
+        CachedTexture cached = _cache[i];
+        cached.Dispose();
       }
+      _cache.Clear();      
+
       _cacheDownload.Clear();
 
       string[] files = null;
