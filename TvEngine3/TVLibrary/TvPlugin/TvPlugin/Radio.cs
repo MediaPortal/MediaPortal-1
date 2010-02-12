@@ -930,8 +930,10 @@ namespace TvPlugin
       }
       else
       {
-        if (TVHome.Navigator.CurrentChannel != channel.Name)
-          TVHome.ViewChannel(channel);
+        if (TVHome.Navigator.CurrentChannel == channel.Name && g_Player.IsRadio && g_Player.Playing)
+          return;
+
+        TVHome.ViewChannel(channel);
       }
     }
 
