@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfDVBCTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <DVBCTuning>
-    <Frequency>626000</Frequency>
+    <Frequency>650000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>361000</Frequency>
+    <Frequency>730000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>353000</Frequency>
+    <Frequency>554000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>345000</Frequency>
+    <Frequency>666000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
@@ -26,7 +26,7 @@
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>329000</Frequency>
+    <Frequency>842000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
@@ -36,7 +36,7 @@
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>682000</Frequency>
+    <Frequency>626000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
@@ -56,12 +56,12 @@
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>337000</Frequency>
+    <Frequency>738000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>482000</Frequency>
+    <Frequency>714000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
@@ -86,7 +86,7 @@
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>506000</Frequency>
+    <Frequency>634000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
@@ -101,7 +101,7 @@
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>642000</Frequency>
+    <Frequency>562000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
@@ -111,7 +111,7 @@
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
   <DVBCTuning>
-    <Frequency>586000</Frequency>
+    <Frequency>538000</Frequency>
     <ModulationType>Mod64Qam</ModulationType>
     <SymbolRate>6875</SymbolRate>
   </DVBCTuning>
