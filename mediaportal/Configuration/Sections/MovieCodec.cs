@@ -133,7 +133,6 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlreader = new MPSettings())
       {
         autoDecoderSettings.Checked = xmlreader.GetValueAsBool("movieplayer", "autodecodersettings", false);
-        enableAudioDualMonoModes.Checked = xmlreader.GetValueAsBool("movieplayer", "audiodualmono", false);
         UpdateDecoderSettings();
         audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer",
                                                                         "Default DirectSound Device");
@@ -263,7 +262,6 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValueAsBool("movieplayer", "autodecodersettings", autoDecoderSettings.Checked);
-        xmlwriter.SetValueAsBool("movieplayer", "audiodualmono", enableAudioDualMonoModes.Checked);
         xmlwriter.SetValue("movieplayer", "audiorenderer", audioRendererComboBox.Text);
         // Set codecs
         xmlwriter.SetValue("movieplayer", "mpeg2audiocodec", audioCodecComboBox.Text);

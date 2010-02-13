@@ -26,7 +26,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.labelAACDecoder = new MediaPortal.UserInterface.Controls.MPLabel();
       this.aacAudioCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.enableAudioDualMonoModes = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.autoDecoderSettings = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.h264videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -48,7 +47,6 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.labelAACDecoder);
       this.mpGroupBox1.Controls.Add(this.aacAudioCodecComboBox);
-      this.mpGroupBox1.Controls.Add(this.enableAudioDualMonoModes);
       this.mpGroupBox1.Controls.Add(this.autoDecoderSettings);
       this.mpGroupBox1.Controls.Add(this.mpLabel1);
       this.mpGroupBox1.Controls.Add(this.h264videoCodecComboBox);
@@ -61,7 +59,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(3, 3);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(466, 226);
+      this.mpGroupBox1.Size = new System.Drawing.Size(466, 197);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Settings";
@@ -84,19 +82,6 @@ namespace MediaPortal.Configuration.Sections
       this.aacAudioCodecComboBox.Name = "aacAudioCodecComboBox";
       this.aacAudioCodecComboBox.Size = new System.Drawing.Size(282, 21);
       this.aacAudioCodecComboBox.TabIndex = 15;
-      // 
-      // enableAudioDualMonoModes
-      // 
-      this.enableAudioDualMonoModes.AutoSize = true;
-      this.enableAudioDualMonoModes.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-      this.enableAudioDualMonoModes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.enableAudioDualMonoModes.Location = new System.Drawing.Point(19, 185);
-      this.enableAudioDualMonoModes.Name = "enableAudioDualMonoModes";
-      this.enableAudioDualMonoModes.Size = new System.Drawing.Size(386, 30);
-      this.enableAudioDualMonoModes.TabIndex = 10;
-      this.enableAudioDualMonoModes.Text = "Enable AudioDualMono mode switching\r\n(if 1 audio stream contains 2x mono channels" +
-          ", you can switch between them)";
-      this.enableAudioDualMonoModes.UseVisualStyleBackColor = true;
       // 
       // autoDecoderSettings
       // 
@@ -233,7 +218,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
     private MediaPortal.UserInterface.Controls.MPLabel labelAACDecoder;
     private MediaPortal.UserInterface.Controls.MPComboBox aacAudioCodecComboBox;
-    private MediaPortal.UserInterface.Controls.MPCheckBox enableAudioDualMonoModes;
     private MediaPortal.UserInterface.Controls.MPCheckBox autoDecoderSettings;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPComboBox h264videoCodecComboBox;
