@@ -324,17 +324,17 @@ namespace TvEngine
           {
             senderUrl = sender["Webseite"].ToString();
           }
-          catch (Exception) {}
+          catch (Exception) { }
           try
           {
             senderSort = sender["SortNrTVMovie"].ToString();
           }
-          catch (Exception) {}
+          catch (Exception) { }
           try
           {
             senderZeichen = sender["Zeichen"].ToString();
           }
-          catch (Exception) {}
+          catch (Exception) { }
 
           TVMChannel current = new TVMChannel(senderId,
                                               senderKennung,
@@ -401,7 +401,6 @@ namespace TvEngine
       DateTime ImportStartTime = DateTime.Now;
       Log.Debug("TVMovie: Importing database");
       int maximum = 0;
-      bool useGentle = false;
 
       foreach (TVMChannel tvmChan in _tvmEpgChannels)
         foreach (Mapping mapping in mappingList)
@@ -458,20 +457,17 @@ namespace TvEngine
 
             _tvmEpgProgs.Clear();
 
-            _programsCounter += ImportStation(station.TvmEpgChannel, channelNames, allChannels, useGentle);
+            _programsCounter += ImportStation(station.TvmEpgChannel, channelNames, allChannels);
 
             ThreadPriority importPrio = _slowImport ? ThreadPriority.BelowNormal : ThreadPriority.AboveNormal;
             if (_slowImport)
               Thread.Sleep(32);
 
-            if (!useGentle)
-            {
-              // make a copy of this list because Insert it done in syncronized threads - therefore the object reference would cause multiple/missing entries
-              List<Program> InsertCopy = new List<Program>(_tvmEpgProgs);
-              int debugCount = TvBLayer.InsertPrograms(InsertCopy, DeleteBeforeImportOption.OverlappingPrograms,
-                                                       importPrio);
-              Log.Info("TVMovie: Inserted {0} programs", debugCount);
-            }
+            // make a copy of this list because Insert it done in syncronized threads - therefore the object reference would cause multiple/missing entries
+            List<Program> InsertCopy = new List<Program>(_tvmEpgProgs);
+            int debugCount = TvBLayer.InsertPrograms(InsertCopy, DeleteBeforeImportOption.OverlappingPrograms,
+                                                     importPrio);
+            Log.Info("TVMovie: Inserted {0} programs", debugCount);
           }
           catch (Exception ex)
           {
@@ -479,12 +475,11 @@ namespace TvEngine
           }
         }
       }
-      if (!useGentle)
-      {
-        Log.Debug("TVMovie: Waiting for database to be updated...");
-        TvBLayer.WaitForInsertPrograms();
-        Log.Debug("TVMovie: Database update finished.");
-      }
+
+      Log.Debug("TVMovie: Waiting for database to be updated...");
+      TvBLayer.WaitForInsertPrograms();
+      Log.Debug("TVMovie: Database update finished.");
+
 
       if (OnStationsChanged != null)
         OnStationsChanged(maximum, maximum, "Import done");
@@ -526,7 +521,7 @@ namespace TvEngine
       _xmlFile = String.Format(@"{0}\TVMovieMapping.xml", Log.GetPathName());
     }
 
-    private int ImportStation(string stationName, List<Mapping> channelNames, IList<Channel> allChannels, bool useGentle)
+    private int ImportStation(string stationName, List<Mapping> channelNames, IList<Channel> allChannels)
     {
       int counter = 0;
       string sqlSelect = String.Empty;
@@ -550,17 +545,6 @@ namespace TvEngine
       OleDbTransaction databaseTransaction = null;
       using (OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection))
       {
-        if (useGentle)
-        {
-          foreach (Mapping map in channelNames)
-            if (map.TvmEpgChannel == stationName)
-            {
-              Log.Debug("TVMovie: Purging old programs for channel {0}", map.Channel);
-              ClearPrograms(map.Channel);
-              if (_slowImport)
-                Thread.Sleep(32);
-            }
-        }
         try
         {
           _databaseConnection.Open();
@@ -571,7 +555,7 @@ namespace TvEngine
           {
             while (reader.Read())
             {
-              ImportSingleChannelData(channelNames, allChannels, useGentle, counter,
+              ImportSingleChannelData(channelNames, allChannels, counter,
                                       reader[0].ToString(), reader[1].ToString(), reader[2].ToString(),
                                       reader[3].ToString(), reader[4].ToString(), reader[5].ToString(),
                                       reader[6].ToString(), reader[7].ToString(),
@@ -602,7 +586,7 @@ namespace TvEngine
           {
             databaseTransaction.Rollback();
           }
-          catch (Exception) {}
+          catch (Exception) { }
           Log.Info("TVMovie: Exception: {0}", ex1);
           return 0;
         }
@@ -619,8 +603,7 @@ namespace TvEngine
     /// <summary>
     /// Takes a DataRow worth of EPG Details to persist them in MP's program table
     /// </summary>
-    private void ImportSingleChannelData(List<Mapping> channelNames, IList<Channel> allChannels, bool useGentlePersist,
-                                         int aCounter,
+    private void ImportSingleChannelData(List<Mapping> channelNames, IList<Channel> allChannels, int aCounter,
                                          string SenderKennung, string Beginn, string Ende, string Sendung, string Genre,
                                          string Kurzkritik, string KurzBeschreibung, string Beschreibung,
                                          string Audiodescription, string DolbySuround, string Stereo,
@@ -833,8 +816,6 @@ namespace TvEngine
           Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre,
                                      Program.ProgramState.None, OnAirDate, String.Empty, String.Empty, episode,
                                      String.Empty, EPGStarRating, classification, Convert.ToInt32(classification));
-          if (useGentlePersist)
-            prog.Persist();
 
           _tvmEpgProgs.Add(prog);
 
@@ -1110,7 +1091,7 @@ namespace TvEngine
         lRet = lRet * 100L + iSec;
         return lRet;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return 0;
     }
 
