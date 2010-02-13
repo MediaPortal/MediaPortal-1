@@ -287,7 +287,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// The (emtpy) constructur of the GUIWindow
     /// </summary>
-    public GUIWindow() {}
+    public GUIWindow() { }
 
     /// <summary>
     /// Constructor
@@ -806,7 +806,7 @@ namespace MediaPortal.GUI.Library
     /// It gives the window the oppertunity to allocate any (directx) resources
     /// it may need
     /// </summary>
-    public virtual void PreInit() {}
+    public virtual void PreInit() { }
 
     /// <summary>
     /// Restores all the (x,y) positions of the XML file to their original values
@@ -831,12 +831,12 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     ///  Gets called when DirectX device has been restored. 
     /// </summary>
-    public virtual void OnDeviceRestored() {}
+    public virtual void OnDeviceRestored() { }
 
     /// <summary>
     /// Gets called when DirectX device has been lost. Any texture/font is now invalid
     /// </summary>
-    public virtual void OnDeviceLost() {}
+    public virtual void OnDeviceLost() { }
 
     /// <summary>
     /// Returns whether the music/video/tv overlay is allowed on this screen
@@ -867,7 +867,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public virtual void Process() {}
+    public virtual void Process() { }
 
     public virtual void SetObject(object obj)
     {
@@ -918,7 +918,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    protected virtual void PreLoadPage() {}
+    protected virtual void PreLoadPage() { }
 
     protected virtual void OnPageLoad()
     {
@@ -1000,18 +1000,18 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    protected virtual void OnShowContextMenu() {}
+    protected virtual void OnShowContextMenu() { }
 
     protected virtual void OnPreviousWindow()
     {
       GUIWindowManager.ShowPreviousWindow();
     }
 
-    protected virtual void OnClicked(int controlId, GUIControl control, Action.ActionType actionType) {}
+    protected virtual void OnClicked(int controlId, GUIControl control, Action.ActionType actionType) { }
 
-    protected virtual void OnClickedUp(int controlId, GUIControl control, Action.ActionType actionType) {}
+    protected virtual void OnClickedUp(int controlId, GUIControl control, Action.ActionType actionType) { }
 
-    protected virtual void OnClickedDown(int controlId, GUIControl control, Action.ActionType actionType) {}
+    protected virtual void OnClickedDown(int controlId, GUIControl control, Action.ActionType actionType) { }
 
     /// <summary>
     /// Returns whether the user can goto full screen video,tv,visualisation from this window
@@ -1038,7 +1038,7 @@ namespace MediaPortal.GUI.Library
     /// Every window window should override this method and cleanup any resources
     /// </summary>
     /// <returns></returns>
-    public virtual void DeInit() {}
+    public virtual void DeInit() { }
 
     /// <summary>
     /// Gets called by the runtime just before the window gets shown. It
@@ -1049,17 +1049,40 @@ namespace MediaPortal.GUI.Library
     {
       try
       {
+        List<int> faultyControl = new List<int>();
         // tell every control we're gonna alloc the resources next
-
-        foreach (GUIControl control in Children)
+        for (int i = 0; i < Children.Count; i++)
         {
-          control.PreAllocResources();
+          try
+          {
+            ((GUIControl)(Children[i])).PreAllocResources();
+          }
+          catch (Exception ex1)
+          {
+            faultyControl.Add(i);
+            Log.Error("GUIWindow: Error in PreAllocResources for {0} - {1}", Children[i].ToString(), ex1.ToString());
+          }
         }
 
         // ask every control to alloc its resources
-        foreach (GUIControl control in Children)
+        for (int i = 0; i < Children.Count; i++)
         {
-          control.AllocResources();
+          try
+          {
+            if (!faultyControl.Contains(i))
+            {
+              ((GUIControl)(Children[i])).AllocResources();
+            }
+            else
+            {
+              Log.Warn("GUIWindow: Did not AllocResources for Control # {0}", ((GUIControl)(Children[i])).GetID);
+            }
+          }
+          catch (Exception ex2)
+          {
+            faultyControl.Add(i);
+            Log.Error("GUIWindow: Error in AllocResources for {0} - {1}", Children[i].ToString(), ex2.ToString());
+          }
         }
       }
       catch (Exception ex)
@@ -1132,10 +1155,10 @@ namespace MediaPortal.GUI.Library
                                                        | BindingFlags.Public);
       foreach (FieldInfo field in allFields)
       {
-        if (field.IsDefined(typeof (SkinControlAttribute), false))
+        if (field.IsDefined(typeof(SkinControlAttribute), false))
         {
           SkinControlAttribute atrb =
-            (SkinControlAttribute)field.GetCustomAttributes(typeof (SkinControlAttribute), false)[0];
+            (SkinControlAttribute)field.GetCustomAttributes(typeof(SkinControlAttribute), false)[0];
 
           GUIControl control = GetControl(atrb.ID);
           if (control != null)
@@ -1503,7 +1526,7 @@ namespace MediaPortal.GUI.Library
               }
               break;
 
-              // Initialize the window.
+            // Initialize the window.
 
             case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 
@@ -1577,9 +1600,9 @@ namespace MediaPortal.GUI.Library
                 _previousFocusedControlId = id;
               }
               return true;
-              // TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
+            // TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
 
-              // Cleanup and free resources
+            // Cleanup and free resources
             case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
               {
                 OnPageDestroy(message.Param1);
@@ -1597,7 +1620,7 @@ namespace MediaPortal.GUI.Library
                 return true;
               }
 
-              // Set the focus on the correct control
+            // Set the focus on the correct control
             case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
               {
                 if (GetFocusControlId() == message.TargetControlId)
@@ -1754,7 +1777,7 @@ namespace MediaPortal.GUI.Library
       get { return false; }
     }
 
-    public virtual void OnAdded() {}
+    public virtual void OnAdded() { }
 
     public virtual string GetModuleName()
     {
@@ -1778,7 +1801,7 @@ namespace MediaPortal.GUI.Library
       return true;
     }
 
-    private void UpdateStates(AnimationType type, AnimationProcess currentProcess, AnimationState currentState) {}
+    private void UpdateStates(AnimationType type, AnimationProcess currentProcess, AnimationState currentState) { }
 
     private bool HasAnimation(AnimationType animType)
     {
