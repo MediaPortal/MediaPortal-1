@@ -20,11 +20,13 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
 using MediaPortal.Services;
+
 
 namespace MediaPortal.ServiceImplementations
 {
@@ -61,7 +63,7 @@ namespace MediaPortal.ServiceImplementations
       using (Settings xmlreader = new MPSettings())
       {
         _minLevel =
-          (Level)Enum.Parse(typeof (Level), xmlreader.GetValueAsString("general", "loglevel", "3"));
+          (Level)Enum.Parse(typeof(Level), xmlreader.GetValueAsString("general", "loglevel", "3"));
       }
       bConfiguration = false;
     }
@@ -317,7 +319,7 @@ namespace MediaPortal.ServiceImplementations
 
     public void WriteFile(LogType type, Level logLevel, string format, params object[] arg)
     {
-      lock (typeof (Log))
+      lock (typeof(Log))
       {
         try
         {
@@ -329,7 +331,7 @@ namespace MediaPortal.ServiceImplementations
 
           if (logLevel <= _minLevel)
           {
-            using (StreamWriter writer = new StreamWriter(GetFileName(type), true))
+            using (StreamWriter writer = new StreamWriter(GetFileName(type), true, Encoding.UTF8))
             {
               string threadName = Thread.CurrentThread.Name;
               int threadId = Thread.CurrentThread.ManagedThreadId;
@@ -340,7 +342,7 @@ namespace MediaPortal.ServiceImplementations
             }
           }
         }
-        catch (Exception) {}
+        catch (Exception) { }
       }
 
       //

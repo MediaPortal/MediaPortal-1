@@ -21,6 +21,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace MediaPortal.GUI.Library
 {
@@ -55,7 +56,7 @@ namespace MediaPortal.GUI.Library
       {
         try
         {
-          using (StreamWriter writer = new StreamWriter(_logFilename, true))
+          using (StreamWriter writer = new StreamWriter(_logFilename, true, Encoding.UTF8))
           {
             writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
             writer.Write(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " ");

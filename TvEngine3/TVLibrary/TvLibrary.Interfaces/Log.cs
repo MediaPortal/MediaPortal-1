@@ -419,7 +419,7 @@ namespace TvLibrary.Log
 
           if (CheckLogPrepared(logFileName))
           {
-            using (StreamWriter writer = new StreamWriter(logFileName, true))
+            using (StreamWriter writer = new StreamWriter(logFileName, true, Encoding.UTF8))
             {
               string threadName = Thread.CurrentThread.Name;
               int threadId = Thread.CurrentThread.ManagedThreadId;

@@ -151,7 +151,7 @@ namespace MediaPortal.Playlists
 
     public void Save(PlayList playListParam, string fileName)
     {
-      using (StreamWriter writer = new StreamWriter(fileName, false))
+      using (StreamWriter writer = new StreamWriter(fileName, false, Encoding.UTF8))
       {
         writer.WriteLine(START_PLAYLIST_MARKER);
         for (int i = 0; i < playListParam.Count; i++)

@@ -21,6 +21,7 @@
 using System;
 using System.IO;
 using SetupTv;
+using System.Text;
 
 namespace MediaPortal.Playlists
 {
@@ -145,7 +146,7 @@ namespace MediaPortal.Playlists
     {
       try
       {
-        using (StreamWriter writer = new StreamWriter(fileName, false))
+        using (StreamWriter writer = new StreamWriter(fileName, false, Encoding.UTF8))
         {
           writer.WriteLine(M3U_START_MARKER);
 
