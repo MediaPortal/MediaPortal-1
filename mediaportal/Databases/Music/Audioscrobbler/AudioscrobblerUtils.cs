@@ -660,7 +660,7 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        if (Convert.ToDouble(aSong.LastFMMatch, NumberFormatInfo.InvariantInfo) < _minimumArtistMatchPercent)
+        if ((Convert.ToDouble(aSong.LastFMMatch, NumberFormatInfo.InvariantInfo) * 100) < _minimumArtistMatchPercent)
         {
           return true;
         }
@@ -708,7 +708,7 @@ namespace MediaPortal.Music.Database
             int retval = 0;
             if (x.LastFMMatch != string.Empty && y.LastFMMatch != string.Empty)
             {
-              if (Convert.ToInt32(x.LastFMMatch) < Convert.ToInt32(x.LastFMMatch))
+              if (Convert.ToDecimal(x.LastFMMatch) < Convert.ToDecimal(x.LastFMMatch))
               {
                 retval = 1;
               }
