@@ -487,21 +487,6 @@
     <Compile Include="UserInterfaceControls\MWTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Dispatcher\Job.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Dispatcher\JobComparer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Dispatcher\JobDispatcher.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Dispatcher\JobFlags.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Dispatcher\JobPriority.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Drawing.Layouts\DockLayout.cs">
       <SubType>Code</SubType>
     </Compile>

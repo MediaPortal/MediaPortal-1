@@ -39,7 +39,6 @@ using MediaPortal;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
-using MediaPortal.Dispatcher;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
 using MediaPortal.IR;
@@ -1452,10 +1451,7 @@ public class MediaPortalApp : D3DApp, IRender
       GUIPropertyManager.SetProperty("#MOY", GetMonthOfYear()); // January
       GUIPropertyManager.SetProperty("#SY", GetShortYear()); // 80
       GUIPropertyManager.SetProperty("#Year", GetYear()); // 1980
-      JobDispatcher.Init();
-      //
-      // Kill the splash screen
-      //
+
       if (splashScreen != null)
       {
         splashScreen.Stop();
@@ -1585,7 +1581,7 @@ public class MediaPortalApp : D3DApp, IRender
     SaveLastActiveModule();
 
     Log.Info("Main: Exiting");
-    JobDispatcher.Term();
+
     if (usbuirtdevice != null)
     {
       usbuirtdevice.Close();
