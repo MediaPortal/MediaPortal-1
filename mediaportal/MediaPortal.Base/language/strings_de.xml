@@ -1000,6 +1000,8 @@
     <String id="1518">Graph konnte nicht erstellt</String>
     <String id="1519">Kein unterstützter Software-Encoder installiert</String>
     <String id="1520">Nicht genügend Festplattenspeicher</String>
+	  <String id="1521">Suche Titel</String>
+	  <String id="1522">Suche Kategorie</String>
     <String id="1523">Suche Beschreibung</String>
     <String id="1600">Herunterfahren?</String>
     <String id="1601">Schlafmodus?</String>
