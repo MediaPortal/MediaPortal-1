@@ -65,7 +65,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   {
     HRESULT hr;
     LogRotate();
-    Log("----------v1.1.0---------------------------");
+    Log("----------v1.2.0---------------------------");
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
     hr = m_pDXVA2CreateDirect3DDeviceManager9(&m_iResetToken, &m_pDeviceManager);
@@ -1086,8 +1086,8 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(REFERENCE_TIME *pNextSampl
     }
     LOG_TRACE("Time to schedule: %I64d", *pNextSampleTime);
 
-    // If we are ahead up to 1/4 of a frame present sample as the vsync will be waited for anyway
-    if (*pNextSampleTime > (m_rtTimePerFrame/4))
+    // Only present sample if is it due this vsync
+    if (*pNextSampleTime > m_rtTimePerFrame)
     {
       break;
     }

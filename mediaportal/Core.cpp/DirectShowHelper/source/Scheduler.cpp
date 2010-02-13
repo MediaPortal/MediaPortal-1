@@ -125,14 +125,15 @@ UINT CALLBACK SchedulerThread(void* param)
       }
       else
       {
-        delay = hnsSampleTime*3/4;
+        delay = hnsSampleTime/8;
       }
     }
     else 
     {
-      // do not schedule late frames
+      // do not delay late frames
       delay = 0;
     }
+    // set timer if delay is at least 1 ms
     if (delay >= 10000)
     {
       LOG_TRACE("Setting Timer to %I64d ms", delay/10000);

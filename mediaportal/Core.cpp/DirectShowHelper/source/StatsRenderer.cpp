@@ -194,10 +194,12 @@ void StatsRenderer::DrawStats()
 		DrawText(rc, strText);
 		OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("Frames drawn %d | dropped %d | # of sync glitches: %d", 
-      m_pPresenter->m_iFramesDrawn, m_pPresenter->m_iFramesDropped, m_pPresenter->m_uSyncGlitches );
+    strText.Format("Frames drawn: %d | Frames dropped: %d", 
+      m_pPresenter->m_iFramesDrawn, m_pPresenter->m_iFramesDropped);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
+
+    OffsetRect(&rc, 0, TextHeight); // Extra "line feed"
 
     strText.Format("Act.: %.3f fps | Act.frame time (red): %+5.3f ms [%+.3f ms, %+.3f ms] | SDev: %.3f ms", 
       10000000.0 / m_pPresenter->m_fJitterMean, m_pPresenter->m_fJitterMean / 10000.0, 
@@ -299,7 +301,7 @@ void StatsRenderer::DrawStats()
       Points[i].x = (FLOAT)(StartX + (i * 5));
       double offsetY = StartY + (double)m_pPresenter->m_pllSyncOffset[nIndex] / 3000 + 125 ;
       if (offsetY < StartY) offsetY = StartY;
-      if (offsetY > StartY+DrawHeight) offsetY = StartY+DrawHeight;
+      if (offsetY > StartY+DrawHeight) offsetY = StartY + DrawHeight;
       Points[i].y = (FLOAT)(offsetY);
     }		
     m_pLine->Draw(Points, NB_JITTER, D3DCOLOR_XRGB(100, 200, 100));
