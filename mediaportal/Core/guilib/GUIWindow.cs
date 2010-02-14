@@ -1080,7 +1080,6 @@ namespace MediaPortal.GUI.Library
           }
           catch (Exception ex2)
           {
-            faultyControl.Add(i);
             Log.Error("GUIWindow: Error in AllocResources for {0} - {1}", Children[i].ToString(), ex2.ToString());
           }
         }
