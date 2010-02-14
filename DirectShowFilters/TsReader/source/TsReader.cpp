@@ -1132,8 +1132,8 @@ void CTsReaderFilter::ThreadProc()
   long Old_rtspDuration = 0 ;
 
   ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_BELOW_NORMAL);
-do
-{
+  do
+  {
     //if demuxer reached the end of the file, we can stop the thread
     //since we're no longer playing
     if (m_demultiplexer.EndOfFile())
