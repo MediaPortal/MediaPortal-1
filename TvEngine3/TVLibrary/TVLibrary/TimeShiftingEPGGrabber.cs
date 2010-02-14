@@ -142,7 +142,7 @@ namespace TvLibrary
       _dbUpdater.ReloadConfig();
       foreach (EpgChannel epgChannel in _epg)
       {
-          _dbUpdater.UpdateEpgForChannel(epgChannel);
+        _dbUpdater.UpdateEpgForChannel(epgChannel);
       }
       Schedule.SynchProgramStatesForAll();
       Log.Log.Epg("TimeshiftingEpgGrabber: Finished updating the database.");
