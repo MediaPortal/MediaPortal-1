@@ -681,6 +681,12 @@ namespace MediaPortal.Player
         SeekAbsolute(pos);
       }
 
+      // Workaround for Mantis issue: 0002698: Last frame can get stuck on the screen when TS file playback ends 
+	  if (_currentPos > _duration && !IsTimeShifting)
+      {
+        MovieEnded();
+      }
+
       if (_ireader != null)
       {
         _ireader.SetMediaPosition((long)(_streamPos * 10000000d));
@@ -966,11 +972,12 @@ namespace MediaPortal.Player
       get
       {
         UpdateCurrentPosition();  
-// Ambass : calling Process() in another thread of "MPMain" can cause unexpected re-entrancy, deadlocks, out of sequence execution....
-//        if (_duration < 0)
-//        {
-//          Process();
-//        }
+        // Ambass : calling Process() in another thread of "MPMain" can cause unexpected re-entrancy, deadlocks, out of sequence execution...
+        /*
+        if (_duration < 0)
+        {
+          Process();
+        }*/
         return _duration;
       }
     }
