@@ -290,8 +290,8 @@ namespace MediaPortal.Configuration.Sections
       // paypalPictureBox
       // 
       this.paypalPictureBox.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.paypalPictureBox.Image = global::MediaPortal.Configuration.Properties.Resources.PayPal;
-      this.paypalPictureBox.Location = new System.Drawing.Point(133, 314);
+      this.paypalPictureBox.Image = global::MediaPortal.Configuration.Properties.Resources.logo_PayPal;
+      this.paypalPictureBox.Location = new System.Drawing.Point(133, 315);
       this.paypalPictureBox.Name = "paypalPictureBox";
       this.paypalPictureBox.Size = new System.Drawing.Size(72, 29);
       this.paypalPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
