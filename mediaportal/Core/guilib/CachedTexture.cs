@@ -474,29 +474,33 @@ namespace MediaPortal.GUI.Library
     #region IDisposable Members
 
     private void Dispose(bool disposeManagedResources)
-    {      
+    {
       // process only if mananged and unmanaged resources have
       // not been disposed of.      
-      if (!this.disposed)
-      {     
-        /*
-        if (disposeManagedResources)
+      lock (this)
+      {
+        if (!this.disposed)
         {
-          //dispose managed resources          
-        } */       
-        lock (this)
-        {
-          DisposeUnmanagedResources(); 
-        }        
-        disposed = true;
-        if (Disposed != null)
-        {
-          Disposed(this, new EventArgs());
-        }                
+          /*
+          if (disposeManagedResources)
+          {
+            //dispose managed resources          
+          } */
+          DisposeUnmanagedResources();
+        }
       }
+
+      DisposeFrames();//somehow we need to call this always, regardless of state 'this.disposed', otherwise we leak resources.
+
+      this.disposed = true;
+
+      if (!this.disposed && Disposed != null)
+      {
+        Disposed(this, new EventArgs());
+      }                
     }
 
-    private void DisposeUnmanagedResources() {
+    private void DisposeFrames() {
       foreach (Frame tex in _listFrames)
       {
         if (tex != null)
@@ -505,9 +509,10 @@ namespace MediaPortal.GUI.Library
           tex.Dispose();
         }
       }
+      _listFrames.Clear();
+    }
 
-      _listFrames.Clear();          
-
+    private void DisposeUnmanagedResources() {             
       if (_gdiBitmap != null)
       {
         try
