@@ -95,17 +95,13 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    private void linkLabelPayPal_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    private void paypalPictureBox_Click(object sender, System.EventArgs e)
     {
-      if (linkLabelPayPal.Text == null)
+      try
       {
-        return;
+        Process.Start("http://www.team-mediaportal.com/donate.html");
       }
-      if (linkLabelPayPal.Text.Length > 0)
-      {
-        ProcessStartInfo sInfo = new ProcessStartInfo(linkLabelPayPal.Text);
-        Process.Start(sInfo);
-      }
+      catch {}
     }
   }
 }

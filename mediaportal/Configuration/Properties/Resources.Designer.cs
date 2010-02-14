@@ -81,6 +81,13 @@ namespace MediaPortal.Configuration.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap logo_PayPal {
+            get {
+                object obj = ResourceManager.GetObject("logo_PayPal", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap mepo_donation {
             get {
                 object obj = ResourceManager.GetObject("mepo_donation", resourceCulture);

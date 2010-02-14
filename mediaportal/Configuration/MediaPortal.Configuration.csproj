@@ -882,6 +882,7 @@
     <Content Include="Resources\icon_folder.png" />
     <Content Include="Resources\icon_help.png" />
     <Content Include="Resources\icon_refresh.png" />
+    <Content Include="Resources\logo_PayPal.png" />
     <None Include="Resources\mplogo.png" />
     <None Include="Resources\remote.MceVista.png" />
     <None Include="Resources\remote.Mce2004.png" />

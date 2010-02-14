@@ -88,15 +88,13 @@ namespace SetupTv.Sections
       }
     }
 
-    private void linkLabelPayPal_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    private void paypalPictureBox_Click(object sender, System.EventArgs e)
     {
-      if (linkLabelPayPal.Text == null)
-        return;
-      if (linkLabelPayPal.Text.Length > 0)
+      try
       {
-        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelPayPal.Text);
-        System.Diagnostics.Process.Start(sInfo);
+        Process.Start("http://www.team-mediaportal.com/donate.html");
       }
+      catch { }
     }
   }
 }

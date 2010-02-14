@@ -69,15 +69,16 @@ namespace SetupTv.Sections
       this.labelForums = new MediaPortal.UserInterface.Controls.MPLabel();
       this.linkLabelHomepage = new System.Windows.Forms.LinkLabel();
       this.labelHomepage = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.linkLabelPayPal = new System.Windows.Forms.LinkLabel();
       this.labelMePo = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBoxAbout = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.labelVersion3 = new System.Windows.Forms.Label();
       this.labelVersion2 = new System.Windows.Forms.Label();
       this.labelVersion1 = new System.Windows.Forms.Label();
+      this.paypalPictureBox = new System.Windows.Forms.PictureBox();
       this.groupBoxInfo.SuspendLayout();
       this.groupBoxContact.SuspendLayout();
       this.mpGroupBoxAbout.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.paypalPictureBox)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBoxInfo
@@ -235,23 +236,6 @@ namespace SetupTv.Sections
       this.labelHomepage.TabIndex = 0;
       this.labelHomepage.Text = "Homepage:";
       // 
-      // linkLabelPayPal
-      // 
-      this.linkLabelPayPal.ActiveLinkColor = System.Drawing.Color.Transparent;
-      this.linkLabelPayPal.DisabledLinkColor = System.Drawing.Color.Transparent;
-      this.linkLabelPayPal.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.linkLabelPayPal.Image = global::SetupTv.Properties.Resources.logo_PayPal;
-      this.linkLabelPayPal.LinkColor = System.Drawing.Color.Transparent;
-      this.linkLabelPayPal.Location = new System.Drawing.Point(133, 314);
-      this.linkLabelPayPal.Name = "linkLabelPayPal";
-      this.linkLabelPayPal.Size = new System.Drawing.Size(72, 29);
-      this.linkLabelPayPal.TabIndex = 2;
-      this.linkLabelPayPal.TabStop = true;
-      this.linkLabelPayPal.Text = "http://www.team-mediaportal.com/donate.html";
-      this.linkLabelPayPal.UseCompatibleTextRendering = true;
-      this.linkLabelPayPal.VisitedLinkColor = System.Drawing.Color.Transparent;
-      this.linkLabelPayPal.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelPayPal_LinkClicked);
-      // 
       // labelMePo
       // 
       this.labelMePo.Image = global::SetupTv.Properties.Resources.logo_MePo;
@@ -303,10 +287,22 @@ namespace SetupTv.Sections
       this.labelVersion1.TabIndex = 0;
       this.labelVersion1.Text = "Version:";
       // 
+      // paypalPictureBox
+      // 
+      this.paypalPictureBox.Cursor = System.Windows.Forms.Cursors.Hand;
+      this.paypalPictureBox.Image = global::SetupTv.Properties.Resources.logo_PayPal;
+      this.paypalPictureBox.Location = new System.Drawing.Point(133, 315);
+      this.paypalPictureBox.Name = "paypalPictureBox";
+      this.paypalPictureBox.Size = new System.Drawing.Size(72, 29);
+      this.paypalPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+      this.paypalPictureBox.TabIndex = 11;
+      this.paypalPictureBox.TabStop = false;
+      this.paypalPictureBox.Click += new System.EventHandler(this.paypalPictureBox_Click);
+      // 
       // Project
       // 
+      this.Controls.Add(this.paypalPictureBox);
       this.Controls.Add(this.mpGroupBoxAbout);
-      this.Controls.Add(this.linkLabelPayPal);
       this.Controls.Add(this.groupBoxContact);
       this.Controls.Add(this.groupBoxInfo);
       this.Controls.Add(this.labelMePo);
@@ -317,7 +313,9 @@ namespace SetupTv.Sections
       this.groupBoxContact.PerformLayout();
       this.mpGroupBoxAbout.ResumeLayout(false);
       this.mpGroupBoxAbout.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.paypalPictureBox)).EndInit();
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 
@@ -337,11 +335,11 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelSourceForge;
     private System.Windows.Forms.LinkLabel linkLabelSourceforge;
     private MediaPortal.UserInterface.Controls.MPLabel labelInfo2;
-    private System.Windows.Forms.LinkLabel linkLabelPayPal;
     private MediaPortal.UserInterface.Controls.MPLabel labelMePo;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxAbout;
     private System.Windows.Forms.Label labelVersion3;
     private System.Windows.Forms.Label labelVersion2;
     private System.Windows.Forms.Label labelVersion1;
+    private System.Windows.Forms.PictureBox paypalPictureBox;
   }
 }
