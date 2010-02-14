@@ -59,7 +59,7 @@ Name "MediaPortal Unpacker"
 
 !define VER_MAJOR       1
 !define VER_MINOR       0
-!define VER_REVISION    3
+!define VER_REVISION    4
 !ifdef VER_BUILD
   !undef VER_BUILD
 !endif
@@ -67,7 +67,7 @@ Name "MediaPortal Unpacker"
 
 ;!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
 ;this is for display purposes
-!define VERSION "1.0.1 ALPHA! for TESTING ONLY"
+!define VERSION "1.1.0 RC1"
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
