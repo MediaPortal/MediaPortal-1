@@ -662,6 +662,7 @@ namespace TvService
           }
         }
         _epg.Clear();
+        Schedule.SynchProgramStatesForAll();
         Log.Epg("Epg: card:{0} Finished updating the database.", _user.CardId);
       }
       catch (Exception ex)
@@ -779,19 +780,14 @@ namespace TvService
         {
           case TvServerEventType.StartTimeShifting:
             Log.Epg("epg cancelled due to start timeshifting");
-            StopEpg();
+            OnEpgCancelled();
             break;
 
           case TvServerEventType.StartRecording:
             Log.Epg("epg cancelled due to start recording");
-            StopEpg();
+            OnEpgCancelled();
             break;
         }
-    }
-
-    private void StopEpg()
-    {
-      _tvController.StopGrabbingEpg(_user);
     }
 
     #endregion

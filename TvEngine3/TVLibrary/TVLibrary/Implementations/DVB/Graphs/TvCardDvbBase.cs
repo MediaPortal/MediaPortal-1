@@ -1986,8 +1986,10 @@ namespace TvLibrary.Implementations.DVB
     public void AbortGrabbing()
     {
       Log.Log.Write("dvb:abort grabbing epg");
-      _interfaceEpgGrabber.AbortGrabbing();
-      _timeshiftingEPGGrabber.OnEpgCancelled();
+      if (_interfaceEpgGrabber != null)
+        _interfaceEpgGrabber.AbortGrabbing();
+      if (_timeshiftingEPGGrabber != null)
+        _timeshiftingEPGGrabber.OnEpgCancelled();
     }
 
     /// <summary>

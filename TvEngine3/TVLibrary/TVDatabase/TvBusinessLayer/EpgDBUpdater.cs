@@ -233,7 +233,7 @@ namespace TvDatabase
 
       //_layer.StartResetProgramStatesThread(System.Threading.ThreadPriority.Lowest);
 
-      Schedule.SynchProgramStatesForAll();
+      
 
       Log.Epg("- Inserted {0} epg entries for channel {1}", iInserted, dbChannel.DisplayName);
     }
