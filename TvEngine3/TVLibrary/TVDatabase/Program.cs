@@ -542,7 +542,7 @@ namespace TvDatabase
                   "(EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})" +
                   "OR EXTRACT(HOUR_SECOND FROM {0}) <= EXTRACT(HOUR_SECOND FROM ?{2}))",
                   endField, startParam, endParam));
-              sb.AddConstraint(string.Format("EXTRACT(HOUR_SECOND FROM {0}) <= EXTRACT(HOUR_SECOND FROM ?{1})", startField,
+              sb.AddConstraint(string.Format("EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})", startField,
                                              endField));
             }
           }
@@ -554,31 +554,12 @@ namespace TvDatabase
             {
               sb.AddConstraint(string.Format("EXTRACT(HOUR_SECOND FROM {0}) <= EXTRACT(HOUR_SECOND FROM ?{1})", endField,
                                              endParam));
-              sb.AddConstraint(string.Format("EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})", startField,
+              sb.AddConstraint(string.Format("EXTRACT(HOUR_SECOND FROM {0}) <= EXTRACT(HOUR_SECOND FROM ?{1})", startField,
                                              endField));
             }
           }
           break;
         case "sqlserver":
-/*
-          if (crossMidnight)
-          {
-            sb.AddConstraint(
-              string.Format(
-                "({0} >= DateAdd(mi, (DateDiff(mi, 0, {1}) +1440*(DateDiff(Day, 0, {0})-DateDiff(Day, 0, {1}))), 0)" +
-                "OR {0} <= DateAdd(mi, (DateDiff(mi, 0, {2}) +1440*(DateDiff(Day, 0, {0})-DateDiff(Day, 0, {2}))), 0))",
-                startField, startParam, endParam));
-            if (!string.IsNullOrEmpty(endField))
-            {
-              sb.AddConstraint(
-                string.Format(
-                "({0} >= DateAdd(mi, (DateDiff(mi, 0, {1}) +1440*(DateDiff(Day, 0, {0})-DateDiff(Day, 0, {1}))), 0)" +
-                "OR {0} <= DateAdd(mi, (DateDiff(mi, 0, {2}) +1440*(DateDiff(Day, 0, {0})-DateDiff(Day, 0, {2}))), 0))",
-                  endField, startParam, endParam));
-            }
-          }
-          else
-*/
           {
             sb.AddConstraint(
               string.Format(
@@ -586,10 +567,6 @@ namespace TvDatabase
                 startParam));
             if (!string.IsNullOrEmpty(endField))
             {
-              //sb.AddConstraint(
-              //  string.Format(
-              //    "{0} <= DateAdd(mi, (DateDiff(mi, 0, {1}) +1440*(DateDiff(Day, 0, {0})-DateDiff(Day, 0, {1}))), 0)", endField,
-              //    endParam));
               sb.AddConstraint(
                 string.Format(
                   "{1} <= DateAdd(mi, (DateDiff(mi, 0, @{3}) + 1440*(DateDiff(Day, 0, {0})-DateDiff(Day, 0, @{2}))), 0)", startField,
