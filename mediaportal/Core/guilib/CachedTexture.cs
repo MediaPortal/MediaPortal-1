@@ -216,12 +216,12 @@ namespace MediaPortal.GUI.Library
           lock (this)
           {
             DisposeUnmanagedResources();
-          }                            
-          disposed = true;
+          }                                      
           if (Disposed != null)
           {
             Disposed(this, new EventArgs());
           }
+          disposed = true;
         }
       }
 
@@ -490,14 +490,13 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      DisposeFrames();//somehow we need to call this always, regardless of state 'this.disposed', otherwise we leak resources.
+      DisposeFrames();//somehow we need to call this always, regardless of state 'this.disposed', otherwise we leak resources.      
 
-      this.disposed = true;
-
-      if (!this.disposed && Disposed != null)
+      if (Disposed != null)
       {
         Disposed(this, new EventArgs());
-      }                
+      }
+      this.disposed = true;
     }
 
     private void DisposeFrames() {
