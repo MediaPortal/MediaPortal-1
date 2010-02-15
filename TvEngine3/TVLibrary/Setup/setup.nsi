@@ -85,7 +85,7 @@
 
 !define VER_MAJOR       1
 !define VER_MINOR       0
-!define VER_REVISION    4
+!define VER_REVISION    5
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
