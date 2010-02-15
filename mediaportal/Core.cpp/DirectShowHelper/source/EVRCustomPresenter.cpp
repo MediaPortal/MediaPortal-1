@@ -1693,7 +1693,7 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
       }
     }
 
-	m_pD3DDev->GetRasterStatus(0, &rasterStatus);
+    m_pD3DDev->GetRasterStatus(0, &rasterStatus);
     m_rasterSyncOffset = (m_displayMode.Height - rasterStatus.ScanLine) * m_dDetectedScanlineTime;
     if (m_rasterSyncOffset > 1000)
     {
