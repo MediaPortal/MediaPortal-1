@@ -42,8 +42,9 @@ namespace MediaPortal.DeployTool.Sections
       // 
       this.labelSectionHeader.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelSectionHeader.Location = new System.Drawing.Point(200, 34);
-      this.labelSectionHeader.MaximumSize = new System.Drawing.Size(350, 0);
-      this.labelSectionHeader.Size = new System.Drawing.Size(253, 14);
+      this.labelSectionHeader.MaximumSize = new System.Drawing.Size(400, 0);
+      this.labelSectionHeader.MinimumSize = new System.Drawing.Size(400, 0);
+      this.labelSectionHeader.Size = new System.Drawing.Size(400, 14);
       this.labelSectionHeader.Text = "Please select settings for downloads:";
       // 
       // rb32bit
@@ -52,7 +53,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rb32bit.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rb32bit.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rb32bit.ForeColor = System.Drawing.Color.White;
-      this.rb32bit.Location = new System.Drawing.Point(245, 208);
+      this.rb32bit.Location = new System.Drawing.Point(245, 213);
       this.rb32bit.Name = "rb32bit";
       this.rb32bit.Size = new System.Drawing.Size(70, 13);
       this.rb32bit.TabIndex = 13;
@@ -65,7 +66,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rb64bit.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rb64bit.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rb64bit.ForeColor = System.Drawing.Color.White;
-      this.rb64bit.Location = new System.Drawing.Point(440, 208);
+      this.rb64bit.Location = new System.Drawing.Point(440, 213);
       this.rb64bit.Name = "rb64bit";
       this.rb64bit.Size = new System.Drawing.Size(70, 13);
       this.rb64bit.TabIndex = 14;
@@ -86,7 +87,7 @@ namespace MediaPortal.DeployTool.Sections
       this.listViewLang.Location = new System.Drawing.Point(203, 62);
       this.listViewLang.MultiSelect = false;
       this.listViewLang.Name = "listViewLang";
-      this.listViewLang.Size = new System.Drawing.Size(329, 135);
+      this.listViewLang.Size = new System.Drawing.Size(420, 135);
       this.listViewLang.Sorting = System.Windows.Forms.SortOrder.Ascending;
       this.listViewLang.TabIndex = 1;
       this.listViewLang.UseCompatibleStateImageBehavior = false;
@@ -113,7 +114,7 @@ namespace MediaPortal.DeployTool.Sections
       this.b32bit.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.b32bit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.b32bit.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.b32bit.Location = new System.Drawing.Point(202, 203);
+      this.b32bit.Location = new System.Drawing.Point(202, 208);
       this.b32bit.Name = "b32bit";
       this.b32bit.Size = new System.Drawing.Size(37, 23);
       this.b32bit.TabIndex = 2;
@@ -127,7 +128,7 @@ namespace MediaPortal.DeployTool.Sections
       this.b64bit.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.b64bit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.b64bit.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.b64bit.Location = new System.Drawing.Point(397, 203);
+      this.b64bit.Location = new System.Drawing.Point(397, 208);
       this.b64bit.Name = "b64bit";
       this.b64bit.Size = new System.Drawing.Size(37, 23);
       this.b64bit.TabIndex = 3;
@@ -136,7 +137,7 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // DownloadSettingsDlg
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+	  this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_internet_connection;
       this.Controls.Add(this.b64bit);

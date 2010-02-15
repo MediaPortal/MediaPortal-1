@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace MediaPortal.DeployTool.Sections
 {
@@ -28,7 +29,10 @@ namespace MediaPortal.DeployTool.Sections
       if (Utils._osver == OSInfo.OSInfo.OSList.Windows7)
       {
         bMS.Enabled = false;
-        rbMSSQL.Enabled = false;
+        // For better readability label is not disabled, only the eventhandler is removed
+        rbMSSQL.Click -= bMS_Click;
+        rbMSSQL.Cursor = DefaultCursor;
+        rbMSSQL.ForeColor = Color.DimGray;
         rbMSSQL.Text = Localizer.GetBestTranslation("DBMSType_rbMSSQL_disabled");
         lbMSSQL.Visible = true;
         lbMSSQL.Enabled = true;

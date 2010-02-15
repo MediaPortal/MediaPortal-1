@@ -42,7 +42,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelHeading1.AutoSize = true;
       this.labelHeading1.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelHeading1.ForeColor = System.Drawing.Color.White;
-      this.labelHeading1.Location = new System.Drawing.Point(182, 18);
+      this.labelHeading1.Location = new System.Drawing.Point(182, 21);
       this.labelHeading1.Name = "labelHeading1";
       this.labelHeading1.Size = new System.Drawing.Size(143, 17);
       this.labelHeading1.TabIndex = 11;
@@ -53,7 +53,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelHeading2.AutoSize = true;
       this.labelHeading2.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelHeading2.ForeColor = System.Drawing.Color.White;
-      this.labelHeading2.Location = new System.Drawing.Point(182, 48);
+      this.labelHeading2.Location = new System.Drawing.Point(182, 40);
       this.labelHeading2.MaximumSize = new System.Drawing.Size(386, 0);
       this.labelHeading2.Name = "labelHeading2";
       this.labelHeading2.Size = new System.Drawing.Size(335, 34);
@@ -78,7 +78,7 @@ namespace MediaPortal.DeployTool.Sections
       this.linkHomepage.AutoSize = true;
       this.linkHomepage.Cursor = System.Windows.Forms.Cursors.Hand;
       this.linkHomepage.LinkColor = System.Drawing.Color.White;
-      this.linkHomepage.Location = new System.Drawing.Point(182, 148);
+      this.linkHomepage.Location = new System.Drawing.Point(182, 153);
       this.linkHomepage.Name = "linkHomepage";
       this.linkHomepage.Size = new System.Drawing.Size(118, 13);
       this.linkHomepage.TabIndex = 14;
@@ -91,7 +91,7 @@ namespace MediaPortal.DeployTool.Sections
       this.linkForum.AutoSize = true;
       this.linkForum.Cursor = System.Windows.Forms.Cursors.Hand;
       this.linkForum.LinkColor = System.Drawing.Color.White;
-      this.linkForum.Location = new System.Drawing.Point(182, 173);
+      this.linkForum.Location = new System.Drawing.Point(182, 172);
       this.linkForum.Name = "linkForum";
       this.linkForum.Size = new System.Drawing.Size(100, 13);
       this.linkForum.TabIndex = 15;
@@ -104,7 +104,7 @@ namespace MediaPortal.DeployTool.Sections
       this.linkWiki.AutoSize = true;
       this.linkWiki.Cursor = System.Windows.Forms.Cursors.Hand;
       this.linkWiki.LinkColor = System.Drawing.Color.White;
-      this.linkWiki.Location = new System.Drawing.Point(182, 196);
+      this.linkWiki.Location = new System.Drawing.Point(182, 191);
       this.linkWiki.Name = "linkWiki";
       this.linkWiki.Size = new System.Drawing.Size(87, 13);
       this.linkWiki.TabIndex = 16;
@@ -127,7 +127,7 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // FinishedDlg
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+	  this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_with_MP_Box;
       this.Controls.Add(this.labelEbay);

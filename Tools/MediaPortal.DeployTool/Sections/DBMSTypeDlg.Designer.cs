@@ -53,11 +53,11 @@ namespace MediaPortal.DeployTool.Sections
       // 
       this.rbMSSQL.AutoSize = true;
       this.rbMSSQL.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.rbMSSQL.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.rbMSSQL.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbMSSQL.ForeColor = System.Drawing.Color.White;
       this.rbMSSQL.Location = new System.Drawing.Point(95, 82);
       this.rbMSSQL.Name = "rbMSSQL";
-      this.rbMSSQL.Size = new System.Drawing.Size(274, 13);
+      this.rbMSSQL.Size = new System.Drawing.Size(311, 13);
       this.rbMSSQL.TabIndex = 23;
       this.rbMSSQL.Text = "Microsoft SQL-Server Express 2005 is disabled";
       this.rbMSSQL.Click += new System.EventHandler(this.bMS_Click);
@@ -66,11 +66,11 @@ namespace MediaPortal.DeployTool.Sections
       // 
       this.rbMySQL.AutoSize = true;
       this.rbMySQL.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.rbMySQL.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.rbMySQL.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbMySQL.ForeColor = System.Drawing.Color.White;
       this.rbMySQL.Location = new System.Drawing.Point(95, 141);
       this.rbMySQL.Name = "rbMySQL";
-      this.rbMySQL.Size = new System.Drawing.Size(57, 13);
+      this.rbMySQL.Size = new System.Drawing.Size(61, 13);
       this.rbMySQL.TabIndex = 24;
       this.rbMySQL.Text = "MySQL 5";
       this.rbMySQL.Click += new System.EventHandler(this.bMySQL_Click);
@@ -79,11 +79,11 @@ namespace MediaPortal.DeployTool.Sections
       // 
       this.rbDBAlreadyInstalled.AutoSize = true;
       this.rbDBAlreadyInstalled.Cursor = System.Windows.Forms.Cursors.Hand;
-      this.rbDBAlreadyInstalled.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.rbDBAlreadyInstalled.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbDBAlreadyInstalled.ForeColor = System.Drawing.Color.White;
       this.rbDBAlreadyInstalled.Location = new System.Drawing.Point(95, 189);
       this.rbDBAlreadyInstalled.Name = "rbDBAlreadyInstalled";
-      this.rbDBAlreadyInstalled.Size = new System.Drawing.Size(357, 13);
+      this.rbDBAlreadyInstalled.Size = new System.Drawing.Size(403, 13);
       this.rbDBAlreadyInstalled.TabIndex = 25;
       this.rbDBAlreadyInstalled.Text = "SQL server is already present and will be used for TV-Server";
       this.rbDBAlreadyInstalled.Click += new System.EventHandler(this.bExists_Click);
@@ -151,7 +151,7 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // DBMSTypeDlg
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+	  this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
       this.Controls.Add(this.lbMSSQL);

@@ -78,7 +78,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelAdvancedDesc.ForeColor = System.Drawing.Color.White;
       this.labelAdvancedDesc.Location = new System.Drawing.Point(206, 174);
       this.labelAdvancedDesc.Name = "labelAdvancedDesc";
-      this.labelAdvancedDesc.Size = new System.Drawing.Size(321, 46);
+      this.labelAdvancedDesc.Size = new System.Drawing.Size(389, 46);
       this.labelAdvancedDesc.TabIndex = 18;
       this.labelAdvancedDesc.Text = "The advanced installation allows you to specify installation locations and other " +
           "settings";
@@ -102,7 +102,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelOneClickDesc.ForeColor = System.Drawing.Color.White;
       this.labelOneClickDesc.Location = new System.Drawing.Point(206, 69);
       this.labelOneClickDesc.Name = "labelOneClickDesc";
-      this.labelOneClickDesc.Size = new System.Drawing.Size(321, 46);
+      this.labelOneClickDesc.Size = new System.Drawing.Size(389, 46);
       this.labelOneClickDesc.TabIndex = 16;
       this.labelOneClickDesc.Text = "All required applications will be installed into their default locations and with" +
           " the default settings.";
@@ -150,8 +150,8 @@ namespace MediaPortal.DeployTool.Sections
       this.bAdvanced.Click += new System.EventHandler(this.bAdvanced_Click);
       // 
       // BaseInstallationTypeWithoutTvEngineDlg
-      //
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      // 
+	  this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_one_click_install_choose;
       this.Controls.Add(this.bAdvanced);

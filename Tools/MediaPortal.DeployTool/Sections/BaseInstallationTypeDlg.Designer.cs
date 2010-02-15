@@ -51,7 +51,7 @@ namespace MediaPortal.DeployTool.Sections
       this.labelOneClickCaption.BackColor = System.Drawing.Color.Transparent;
       this.labelOneClickCaption.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelOneClickCaption.ForeColor = System.Drawing.Color.White;
-      this.labelOneClickCaption.Location = new System.Drawing.Point(194, 41);
+      this.labelOneClickCaption.Location = new System.Drawing.Point(194, 40);
       this.labelOneClickCaption.Name = "labelOneClickCaption";
       this.labelOneClickCaption.Size = new System.Drawing.Size(162, 16);
       this.labelOneClickCaption.TabIndex = 1;
@@ -62,9 +62,9 @@ namespace MediaPortal.DeployTool.Sections
       this.labelOneClickDesc.BackColor = System.Drawing.Color.Transparent;
       this.labelOneClickDesc.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelOneClickDesc.ForeColor = System.Drawing.Color.White;
-      this.labelOneClickDesc.Location = new System.Drawing.Point(204, 57);
+      this.labelOneClickDesc.Location = new System.Drawing.Point(206, 58);
       this.labelOneClickDesc.Name = "labelOneClickDesc";
-      this.labelOneClickDesc.Size = new System.Drawing.Size(321, 59);
+      this.labelOneClickDesc.Size = new System.Drawing.Size(399, 58);
       this.labelOneClickDesc.TabIndex = 2;
       this.labelOneClickDesc.Text = "All required applications will be installed into their default locations and with" +
           " the default settings. The database password is \"MediaPortal\".";
@@ -74,9 +74,9 @@ namespace MediaPortal.DeployTool.Sections
       this.labelAdvancedDesc.BackColor = System.Drawing.Color.Transparent;
       this.labelAdvancedDesc.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelAdvancedDesc.ForeColor = System.Drawing.Color.White;
-      this.labelAdvancedDesc.Location = new System.Drawing.Point(204, 160);
+      this.labelAdvancedDesc.Location = new System.Drawing.Point(206, 162);
       this.labelAdvancedDesc.Name = "labelAdvancedDesc";
-      this.labelAdvancedDesc.Size = new System.Drawing.Size(321, 46);
+      this.labelAdvancedDesc.Size = new System.Drawing.Size(399, 46);
       this.labelAdvancedDesc.TabIndex = 6;
       this.labelAdvancedDesc.Text = "The advanced installation allows you to install Server/Client setups and to speci" +
           "fy installation locations and other settings";
@@ -99,7 +99,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbOneClick.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbOneClick.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbOneClick.ForeColor = System.Drawing.Color.White;
-      this.rbOneClick.Location = new System.Drawing.Point(230, 116);
+      this.rbOneClick.Location = new System.Drawing.Point(244, 116);
       this.rbOneClick.Name = "rbOneClick";
       this.rbOneClick.Size = new System.Drawing.Size(153, 13);
       this.rbOneClick.TabIndex = 14;
@@ -112,7 +112,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbAdvanced.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbAdvanced.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbAdvanced.ForeColor = System.Drawing.Color.White;
-      this.rbAdvanced.Location = new System.Drawing.Point(230, 214);
+      this.rbAdvanced.Location = new System.Drawing.Point(244, 214);
       this.rbAdvanced.Name = "rbAdvanced";
       this.rbAdvanced.Size = new System.Drawing.Size(153, 13);
       this.rbAdvanced.TabIndex = 14;
@@ -127,7 +127,7 @@ namespace MediaPortal.DeployTool.Sections
       this.bOneClick.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.bOneClick.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.bOneClick.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.bOneClick.Location = new System.Drawing.Point(187, 111);
+      this.bOneClick.Location = new System.Drawing.Point(201, 111);
       this.bOneClick.Name = "bOneClick";
       this.bOneClick.Size = new System.Drawing.Size(37, 23);
       this.bOneClick.TabIndex = 15;
@@ -142,7 +142,7 @@ namespace MediaPortal.DeployTool.Sections
       this.bAdvanced.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.bAdvanced.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.bAdvanced.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.bAdvanced.Location = new System.Drawing.Point(187, 209);
+      this.bAdvanced.Location = new System.Drawing.Point(201, 209);
       this.bAdvanced.Name = "bAdvanced";
       this.bAdvanced.Size = new System.Drawing.Size(37, 23);
       this.bAdvanced.TabIndex = 16;
@@ -150,8 +150,8 @@ namespace MediaPortal.DeployTool.Sections
       this.bAdvanced.Click += new System.EventHandler(this.bAdvanced_Click);
       // 
       // BaseInstallationTypeDlg
-      //
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      // 
+	  this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_one_click_install_choose;
       this.Controls.Add(this.bAdvanced);

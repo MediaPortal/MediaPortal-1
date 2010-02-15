@@ -40,11 +40,11 @@ namespace MediaPortal.DeployTool.Sections
       this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonBrowse.Cursor = System.Windows.Forms.Cursors.Hand;
       this.buttonBrowse.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.buttonBrowse.Location = new System.Drawing.Point(499, 113);
+      this.buttonBrowse.Location = new System.Drawing.Point(499, 114);
       this.buttonBrowse.Name = "buttonBrowse";
-      this.buttonBrowse.Size = new System.Drawing.Size(99, 23);
+      this.buttonBrowse.Size = new System.Drawing.Size(70, 23);
       this.buttonBrowse.TabIndex = 21;
-      this.buttonBrowse.Text = "browse";
+      this.buttonBrowse.Text = "Browse";
       this.buttonBrowse.UseVisualStyleBackColor = true;
       this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click);
       // 
@@ -93,7 +93,7 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // TvServerSettingsDlg
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+	  this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_empty;
       this.Controls.Add(this.checkBoxFirewall);

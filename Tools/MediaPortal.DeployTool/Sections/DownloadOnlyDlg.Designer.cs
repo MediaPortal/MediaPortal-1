@@ -49,7 +49,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbInstallNow.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbInstallNow.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbInstallNow.ForeColor = System.Drawing.Color.White;
-      this.rbInstallNow.Location = new System.Drawing.Point(238, 151);
+      this.rbInstallNow.Location = new System.Drawing.Point(238, 140);
       this.rbInstallNow.Name = "rbInstallNow";
       this.rbInstallNow.Size = new System.Drawing.Size(176, 13);
       this.rbInstallNow.TabIndex = 20;
@@ -62,7 +62,7 @@ namespace MediaPortal.DeployTool.Sections
       this.rbDownloadOnly.Cursor = System.Windows.Forms.Cursors.Hand;
       this.rbDownloadOnly.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.rbDownloadOnly.ForeColor = System.Drawing.Color.White;
-      this.rbDownloadOnly.Location = new System.Drawing.Point(238, 204);
+      this.rbDownloadOnly.Location = new System.Drawing.Point(238, 188);
       this.rbDownloadOnly.Name = "rbDownloadOnly";
       this.rbDownloadOnly.Size = new System.Drawing.Size(216, 13);
       this.rbDownloadOnly.TabIndex = 20;
@@ -77,7 +77,7 @@ namespace MediaPortal.DeployTool.Sections
       this.bInstallNow.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.bInstallNow.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.bInstallNow.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.bInstallNow.Location = new System.Drawing.Point(195, 146);
+      this.bInstallNow.Location = new System.Drawing.Point(195, 135);
       this.bInstallNow.Name = "bInstallNow";
       this.bInstallNow.Size = new System.Drawing.Size(37, 23);
       this.bInstallNow.TabIndex = 1;
@@ -92,7 +92,7 @@ namespace MediaPortal.DeployTool.Sections
       this.bDownloadOnly.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
       this.bDownloadOnly.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
       this.bDownloadOnly.Image = global::MediaPortal.DeployTool.Images.Choose_button_off;
-      this.bDownloadOnly.Location = new System.Drawing.Point(195, 199);
+      this.bDownloadOnly.Location = new System.Drawing.Point(195, 183);
       this.bDownloadOnly.Name = "bDownloadOnly";
       this.bDownloadOnly.Size = new System.Drawing.Size(37, 23);
       this.bDownloadOnly.TabIndex = 2;
@@ -101,7 +101,7 @@ namespace MediaPortal.DeployTool.Sections
       // 
       // DownloadOnlyDlg
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+	  this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
       this.BackgroundImage = global::MediaPortal.DeployTool.Images.Background_middle_internet_connection;
       this.Controls.Add(this.bDownloadOnly);

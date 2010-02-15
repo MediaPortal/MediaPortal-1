@@ -23,6 +23,7 @@
 
 #endregion
 
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace MediaPortal.DeployTool.Sections
@@ -44,6 +45,7 @@ namespace MediaPortal.DeployTool.Sections
       {
         labelHeading2.Text = Localizer.GetBestTranslation("Finished_labelHeading2_download");
         labelHeading3.Text = Localizer.GetBestTranslation("Finished_labelHeading3_download");
+        labelHeading3.Location = new Point(labelHeading3.Location.X,79); 
       }
       else
       {
