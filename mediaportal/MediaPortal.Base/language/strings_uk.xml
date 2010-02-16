@@ -32,6 +32,19 @@
     <String id="31">листопада</String>
     <String id="32">грудня</String>
     <String id="50" prefix="Мої ">DVD</String>
+    <String id="51">Грати диск</String>
+    <String id="60">Чекаю завантаження сервісу ТБ...</String>
+    <String id="61">Чекаю {0} секунд перед запуском...</String>
+    <String id="62">Ініціалізація DirectX...</String>
+    <String id="63">Ініціалізація пристроїв вводу...</String>
+    <String id="64">Запуск додатків...</String>
+    <String id="65">Завантаження keymap.xml...</String>
+    <String id="66">Завантаження локалізації...</String>
+    <String id="67">Буферизація графіки...</String>
+    <String id="68">Завантаження шрифтів...</String>
+    <String id="69">Завантаження оболонки ({0})...</String>
+    <String id="70">Завантаження додатків...</String>
+    <String id="71">Ініціалізація менеджера вікон...</String>
     <String id="100">Вид: образи</String>
     <String id="101">Вид: список</String>
     <String id="102">Сканувати</String>
@@ -98,7 +111,7 @@
     <String id="163">Читаю</String>
     <String id="164">Нема диску</String>
     <String id="165">Є диск</String>
-    <String id="166">Скін:</String>
+    <String id="166">Оболонка:</String>
     <String id="167">FTP сервер:</String>
     <String id="168">Синхонізувати час:</String>
     <String id="169">Роздільна здатність:</String>
@@ -408,7 +421,7 @@
     <String id="476">Для музики та відео</String>
     <String id="477">Неможливо завантажити список програвання</String>
     <String id="478">Екранне Меню</String>
-    <String id="479">Скін і мова</String>
+    <String id="479">Оболонка і мова</String>
     <String id="480">Інтерфейс користувача</String>
     <String id="481">Налаштування Аудіо</String>
     <String id="482">Про XBMC</String>
@@ -448,6 +461,7 @@
     <String id="517">Фатальна помилка</String>
     <String id="518">Видалити цю пісню?</String>
     <String id="519">Без субтитрів</String>
+    <String id="527">Порядок: Переглянуто</String>
     <String id="528">Виконавці</String>
     <String id="529">Вид: список великих образів</String>
     <String id="530">Вставлено диск з фото, відкрити його?</String>
@@ -670,6 +684,8 @@
     <String id="780">Виберіть метод планування</String>
     <String id="781">Простий запис</String>
     <String id="782">Складний запис</String>
+    <String id="783">Поворот на 180°</String>
+    <String id="784">Поворот на 270°</String>
     <String id="789">Зараз: </String>
     <String id="790">Далі: </String>
     <String id="798">слабкий</String>
@@ -868,7 +884,7 @@
     <String id="1029">Мова субтитрів</String>
     <String id="1030">Вимкнення</String>
     <String id="1031">Перезапуск</String>
-    <String id="1032">Сон</String>
+    <String id="1032">Режим сну</String>
     <String id="1033">Телепрограма записується прямо зараз</String>
     <String id="1034">Немає сигналу!</String>
     <String id="1035">Телеканал закодовано!</String>
@@ -885,7 +901,7 @@
     <String id="1046">Назавжди</String>
     <String id="1047">Повноекранний старт</String>
     <String id="1048">Налаштування</String>
-    <String id="1049">Міцний сон</String>
+    <String id="1049">Режим гібернації</String>
     <String id="1050">Сб-Нд</String>
     <String id="1051">Записувати Сб-Нд</String>
     <String id="1052">Пісні</String>
@@ -893,6 +909,10 @@
     <String id="1054">(записування)</String>
     <String id="1055">(буферизація)</String>
     <String id="1056">(недосяжний)</String>
+    <String id="1057">Записувати Нд-Чт</String>
+    <String id="1058">Записувати Пт-Сб</String>
+    <String id="1059">Нд-Чт</String>
+    <String id="1060">Пт-Сб</String>
     <String id="1061">Змінний</String>
     <String id="1062">Об'єкт</String>
     <String id="1064">Закладки</String>
@@ -978,7 +998,14 @@
     <String id="1516">Перегляд зупинено\rз невідомих причин</String>
     <String id="1517">Перегляд зупинено\rіншим користувачем</String>
     <String id="1518">Неможливо створити DirectShow граф</String>
-    <String id="1519">Не встановлено підходящий програмний кодек</String>    
+    <String id="1519">Не встановлено підходящий програмний кодек</String>
+    <String id="1520">Недостатньо місця на диску</String>
+    <String id="1521">Перегляд по назві</String>
+    <String id="1522">Перегляд по жанру</String>
+    <String id="1523">Шукати в описі</String>
+    <String id="1600">Ви дійсно бажаєте вимкнути комп'ютер?</String>
+    <String id="1601">Ви дійсно бажаєте перевести комп'ютер в режим сну?</String>
+    <String id="1602">Ви дійсно бажаєте перевести комп'ютер в режим гібернації?</String>
     <String id="1950" prefix="Мій ">Стан</String>
     <String id="1951">Жорсткий диск</String>
     <String id="1952">Вентилятор</String>
@@ -1212,7 +1239,11 @@
     <String id="2610">Польська</String>
     <String id="2611">Чешська</String>
     <String id="2612">Угорська</String>
+    <String id="2613">Російська</String>
+    <String id="2614">Українська</String>
     <!-- End of Wikipedia Strings -->
+    <String id="2650">Перезавантажую шрифти - зачекайте будь-ласка...</String>
+    <String id="2700">Відкрити CI меню</String>
     <String id="2997">год</String>
     <String id="2998">хв</String>
     <String id="2999">сек</String>
@@ -1277,6 +1308,7 @@
     <String id="4554">Знайти інформацію про CD</String>
     <String id="4555">Список програвання</String>
     <String id="4557">Додати все до списку програвання</String>
+    <String id="4558">Нещобавно додані</String>
     <String id="5900" prefix="Мої ">Трейлери</String>
     <String id="5901">Показати фільми</String>
     <String id="5902">Які фільми показувати?</String>
@@ -1343,6 +1375,13 @@
     <String id="6037">Відкладений фільм</String>
     <String id="6038">Виберіть диск</String>
     <String id="6039">Кодек аудіо LATM AAC</String>
+    <String id="6040">Вчора</String>
+    <String id="6041">Позавчора</String>
+    <String id="6050">Цього тижня</String>
+    <String id="6060">Цього місяця</String>
+    <String id="6070">Цього року</String>
+    <String id="6080">Минулого року</String>
+    <String id="6090">Раніше</String>
     <String id="8000" prefix="Моя ">Пошта</String>
     <String id="8001">Перевірити поштову скриньку</String>
     <String id="8002">Ввімкнути автоперевірку</String>
@@ -1445,7 +1484,7 @@
     <String id="10102">Кращий час</String>
     <String id="10103" prefix="Мій ">Мінер</String>
     <String id="10104">Міні-програма</String>
-    <String id="10105">Негайно</String>
+    <String id="10105">Зараз</String>
     <String id="11000">Параметри обрізання</String>
     <String id="11001">Згори:</String>
     <String id="11002">Знизу:</String>
@@ -1730,7 +1769,7 @@
     <String id="100702">ТБ Порядок каналів</String>
     <String id="100703">ТБ Налаштування фільмів</String>
     <String id="100704">Налаштування DVD</String>
-    <String id="100705">Налаштування скінів</String>
+    <String id="100705">Налаштування оболонки</String>
     <String id="100706">Налаштування телепрограми</String>
     <String id="100707">Телепрограма -&gt; Відповідність каналів</String>
     <String id="100708">Налаштування кроків переходів</String>
@@ -1749,6 +1788,7 @@
     <String id="100761">Телепрограма</String>
     <String id="100762">Програма радіопередач</String>
     <String id="100770">Провідник</String>
+    <String id="100800" prefix="Мої ">Додатки</String>
     <String id="101000">клавіатура</String>
     <String id="101002">Віруальна клавіатура</String>
     <String id="101003">Віруальна клавіатура для мережі</String>
@@ -1770,6 +1810,7 @@
     <String id="102014">Інформація про зображення</String>
     <String id="102015">Міні-меню</String>
     <String id="102016">Повідомлення</String>
+    <String id="102018">CI меню</String>
     <String id="102600" prefix="Моя ">Погода</String>
     <String id="102700" prefix="Мої ">Новини</String>
     <String id="102900">Збереження екрану</String>
