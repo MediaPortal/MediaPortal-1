@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+ï»¿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="Dutch" characters="255">
   <Section name="unmapped">
     <String id="0">Programma's</String>
@@ -60,15 +60,15 @@
     <String id="112">PAUZE</String>
     <String id="113">Bestanden: Bron</String>
     <String id="114">Bestanden: Bestemming</String>
-    <String id="115">Kopiëren</String>
+    <String id="115">KopiÃ«ren</String>
     <String id="116">Verplaatsen</String>
     <String id="117">Verwijderen</String>
     <String id="118">Hernoemen</String>
     <String id="119">Nieuwe map</String>
-    <String id="120">Bevestig bestand kopiëren</String>
+    <String id="120">Bevestig bestand kopiÃ«ren</String>
     <String id="121">Bevestig bestand verplaatsen</String>
     <String id="122">Bevestig bestand verwijderen</String>
-    <String id="123">Deze bestanden kopiëren?</String>
+    <String id="123">Deze bestanden kopiÃ«ren?</String>
     <String id="124">Deze bestanden verplaatsen?</String>
     <String id="125">Deze bestanden verwijderen?</String>
     <String id="126">Status</String>
@@ -322,8 +322,8 @@
     <String id="375">Sneeuw</String>
     <String id="376">Regen</String>
     <String id="377">Lichte</String>
-    <String id="378">vm</String>
-    <String id="379">nm</String>
+    <String id="378">Ochtend</String>
+    <String id="379">Avond</String>
     <String id="380">Buien</String>
     <String id="381">Enkele</String>
     <String id="382">Verspreid</String>
@@ -519,7 +519,7 @@
     <String id="608">TV-gids importeren mislukt</String>
     <String id="609">TV-gids importeren gereed</String>
     <String id="610">Niet opnemen</String>
-    <String id="611">Één keer opnemen</String>
+    <String id="611">Ã‰Ã©n keer opnemen</String>
     <String id="612">Iedere keer opnemen op dit kanaal</String>
     <String id="613">Iedere keer opnemen op ieder kanaal</String>
     <String id="614">Iedere week opnemen op dit tijdstip</String>
@@ -555,7 +555,7 @@
     <String id="644">Sorteren TV-programma's</String>
     <String id="645">Inlezen XML-bestand</String>
     <String id="646">Geplande opnames</String>
-    <String id="647">Één keer</String>
+    <String id="647">Ã‰Ã©n keer</String>
     <String id="648">Dagelijks</String>
     <String id="649">Iedere</String>
     <String id="650">Iedere keer op {0}</String>
@@ -684,8 +684,8 @@
     <String id="780">Kies methode voor opname</String>
     <String id="781">Eenvoudige opname</String>
     <String id="782">Geavanceerde opname</String>
-    <String id="783">Roteer 180°</String>
-    <String id="784">Roteer 270°</String>
+    <String id="783">Roteer 180Â°</String>
+    <String id="784">Roteer 270Â°</String>
     <String id="789">Nu: </String>
     <String id="790">Volgende: </String>
     <String id="798">laag</String>
@@ -698,7 +698,7 @@
     <String id="805">Leeg</String>
     <String id="806">Titel</String>
     <String id="807">Aantal</String>
-    <String id="808">Ingrediënten</String>
+    <String id="808">IngrediÃ«nten</String>
     <String id="809">Bereiding</String>
     <String id="810">Kaart</String>
     <String id="820">Verwijder niet bekeken opnames?</String>
@@ -855,7 +855,7 @@
     <String id="1000">het DVR-MS formaat naar MPEG, XVID of WMV.</String>
     <String id="1001">LET OP: Om naar XVID om te kunnen zetten</String>
     <String id="1002">moet de Elecard MPEG2-videodecoder</String>
-    <String id="1003">geïnstalleerd zijn.</String>
+    <String id="1003">geÃ¯nstalleerd zijn.</String>
     <String id="1004">Opname begint bijna</String>
     <String id="1005">op kanaal</String>
     <String id="1006">Laat de opname beginnen</String>
@@ -903,7 +903,7 @@
     <String id="1048">Instellingen</String>
     <String id="1049">Slaapstand</String>
     <String id="1050">Za-Zo</String>
-    <String id="1051">Opnemen Za-Zo</String>
+    <String id="1051">Opnemen op zaterdag en zondag</String>
     <String id="1052">Nummers</String>
     <String id="1053">Onbekende oproep</String>
     <String id="1054">(opnemen)</String>
@@ -914,7 +914,7 @@
     <String id="1059">Zo-Do</String>
     <String id="1060">Vr-Za</String>
     <String id="1061">Verwijderbaar</String>
-    <String id="1062">Voorwerp</String>
+    <String id="1062">Item</String>
     <String id="1064">Leeswijzers</String>
     <String id="1065">Ga naar</String>
     <String id="1066">MP4</String>
@@ -976,7 +976,7 @@
     <String id="1447">Opname gestopt:</String>
     <String id="1448">Selectie opheffen</String>
     <String id="1449">Opname stoppen</String>
-    <String id="1450">Wilt u de opname beëindigen?</String>
+    <String id="1450">Wilt u de opname beÃ«indigen?</String>
     <String id="1451">Afspelen niet mogelijk</String>
     <String id="1499">Geen signaal</String>
     <String id="1500">Start timeshifting niet mogelijk</String>
@@ -998,7 +998,7 @@
     <String id="1516">Timeshifting is gestopt door een\ronbekende oorzaak</String>
     <String id="1517">Timeshifting is gestopt door een\randere gebruiker</String>
     <String id="1518">Niet mogelijk om het beeld op te bouwen</String>
-    <String id="1519">Er is geen ondersteunde software-encoder geïnstalleerd</String>
+    <String id="1519">Er is geen ondersteunde software-encoder geÃ¯nstalleerd</String>
     <String id="1520">Niet genoeg schijfruimte</String>
     <String id="1521">Bekijk op titel</String>
     <String id="1522">Bekijk op genre</String>
@@ -1038,7 +1038,7 @@
     <String id="2005">Verwijderen</String>
     <String id="2006">Titel</String>
     <String id="2007">Aantal</String>
-    <String id="2008">Ingrediënten</String>
+    <String id="2008">IngrediÃ«nten</String>
     <String id="2009">Aanwijzingen</String>
     <String id="2010">Kaart</String>
     <String id="2011">Afdrukken</String>
@@ -1136,7 +1136,7 @@
     <String id="2104">Maak Video-DVD</String>
     <String id="2105">Maak Data-CD</String>
     <String id="2106">Maak Data-DVD</String>
-    <String id="2107">Start kopiëren</String>
+    <String id="2107">Start kopiÃ«ren</String>
     <String id="2108">Voer lege CD/DVD in</String>
     <String id="2109">en druk op OK</String>
     <String id="2110">Voer originele CD/DVD in.</String>
@@ -1180,13 +1180,13 @@
     <String id="2200">Verkenner</String>
     <String id="2201">Selecteer bron</String>
     <String id="2202">Selecteer doel</String>
-    <String id="2203">Kopiëren</String>
+    <String id="2203">KopiÃ«ren</String>
     <String id="2204">Map aanmaken</String>
     <String id="2205">Selectie opheffen</String>
     <String id="2206">Alles selecteren</String>
     <String id="2207">Wilt u de map</String>
     <String id="2208">aanmaken?</String>
-    <String id="2209">Wilt u de geselecteerde bestanden kopiëren?</String>
+    <String id="2209">Wilt u de geselecteerde bestanden kopiÃ«ren?</String>
     <String id="2210">De bestanden zijn gekopieerd!</String>
     <String id="2211">De bestanden worden gekopieerd.</String>
     <String id="2212">Verwijderen</String>
@@ -1197,7 +1197,7 @@
     <String id="2217">Doelbestand bestaat al!</String>
     <String id="2218">Bestand overschrijven?</String>
     <String id="2219">Kan bestanden niet verplaatsen vanaf dit station!</String>
-    <String id="2220">Geselecteerd bestand kopiëren?</String>
+    <String id="2220">Geselecteerd bestand kopiÃ«ren?</String>
     <String id="2221">Wilt u de geselecteerde bestanden verwijderen?</String>
     <String id="2222">Bestanden verwijderd</String>
     <String id="2223">Prullenbak</String>
@@ -1239,9 +1239,9 @@
     <String id="2611">Tsjechisch</String>
     <String id="2612">Hongaars</String>
     <String id="2613">Russisch</String>
-    <String id="2614">Oekraïns</String>
+    <String id="2614">OekraÃ¯ns</String>
     <String id="2650">Herladen van lettertypes - Even geduld a.u.b.</String>
-    <String id="2700">CI menu openen</String>
+    <String id="2700">CI-menu openen</String>
     <String id="2997">uur</String>
     <String id="2998">min</String>
     <String id="2999">sec</String>
@@ -1280,8 +1280,8 @@
     <String id="4505">Zoeken {0}...</String>
     <String id="4506">Leeg</String>
     <String id="4507">Cover-artzoeker stopgezet door gebruiker</String>
-    <String id="4508">Cover-artzoektocht met succes beëindigd</String>
-    <String id="4509">Cover-artzoektocht geëindigd met fouten</String>
+    <String id="4508">Cover-artzoektocht met succes beÃ«indigd</String>
+    <String id="4509">Cover-artzoektocht geÃ«indigd met fouten</String>
     <String id="4510">{0} cover-artafbeeldingen bijgewerkt</String>
     <String id="4511">Cover-artzoeker klaar</String>
     <String id="4512">Alle covers bijgewerkt</String>
@@ -1391,7 +1391,7 @@
     <String id="8009">Alles ongelezen</String>
     <String id="8010">Geen mailbox ingesteld</String>
     <String id="8011">Ga naar Setup en stel minimaal</String>
-    <String id="8012">één mailbox om Mail te kunnen gebruiken.</String>
+    <String id="8012">Ã©Ã©n mailbox om Mail te kunnen gebruiken.</String>
     <String id="8013">Geen antwoord van de server.</String>
     <String id="8014">De server'{0}'antwoord niet!</String>
     <String id="8015">Kijk de instellingen van postvak'{0}'na.</String>
@@ -1492,9 +1492,9 @@
     <String id="13000">Systeem:</String>
     <String id="13001">Fabrikant:</String>
     <String id="13002">Start</String>
-    <String id="13003">*.mlf bestand wordt geïmporteerd</String>
-    <String id="13004">*.my bestand wordt geïmporteerd</String>
-    <String id="13005">Laatst geïmporteerde bestand:</String>
+    <String id="13003">*.mlf bestand wordt geÃ¯mporteerd</String>
+    <String id="13004">*.my bestand wordt geÃ¯mporteerd</String>
+    <String id="13005">Laatst geÃ¯mporteerde bestand:</String>
     <String id="13006">Kleine afbeelding</String>
     <String id="13007">Grote afbeelding</String>
     <String id="13008">Ken Burns effect</String>
@@ -1515,10 +1515,10 @@
     <String id="13041">Bestandsinformatie</String>
     <String id="14001">Uitbreidingen</String>
     <String id="14002">Weergeven</String>
-    <String id="14003">Geïnstalleerde uitbreidingen</String>
+    <String id="14003">GeÃ¯nstalleerde uitbreidingen</String>
     <String id="14004">Online uitbreidingen</String>
     <String id="14005">Installeer uitbreiding</String>
-    <String id="14006">Deïnstalleer uitbreiding</String>
+    <String id="14006">DeÃ¯nstalleer uitbreiding</String>
     <String id="14007">Herinstalleer uitbreiding</String>
     <String id="14008">Herroepen van laatste actie</String>
     <String id="14009">Tijdens de volgende herstart wordt deze actie uitgevoerd</String>
@@ -1663,7 +1663,7 @@
     <String id="34048">Mijn buurt</String>
     <String id="34049">Mijn web afspeellijst</String>
     <String id="34050">Geen stream actief</String>
-    <String id="34051">Stream beëindigd!</String>
+    <String id="34051">Stream beÃ«indigd!</String>
     <String id="34052">Geen materiaal meer of slechte verbinding</String>
     <String id="34053">Afspelen van de geselecteerde stream mislukt</String>
     <String id="34054">Verbinden met radio mislukt!</String>
@@ -1749,7 +1749,7 @@
     <String id="100625">Wizard/ATSC/Scannen</String>
     <String id="100626">Wizard/Analoog/Land</String>
     <String id="100627">Wizard/Analoog/Stad</String>
-    <String id="100628">Wizard/Analoog/Land/Geïmporteerd</String>
+    <String id="100628">Wizard/Analoog/Land/GeÃ¯mporteerd</String>
     <String id="100629">Wizard/Analoog/Land/Handmatig</String>
     <String id="100630">Wizard/Analoog/Scannen</String>
     <String id="100631">Wizard/Analoog/Hernoemen</String>
