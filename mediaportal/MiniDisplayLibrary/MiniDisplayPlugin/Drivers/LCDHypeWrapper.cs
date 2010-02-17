@@ -986,9 +986,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void SendText(string _text)
     {
-      for (int i = 0; i < _text.Length; i++)
+
+      Byte[] encodedBytes = Encoding.Default.GetBytes(_text);
+
+      foreach (Byte num in encodedBytes)
       {
-        byte num2 = (byte)_text[i];
+        byte num2=num;
         if (num2 < 0x20)
         {
           num2 =
