@@ -567,7 +567,8 @@ STDMETHODIMP CTsReaderFilter::Pause()
         else
         {
           // It's a record, eventually end can increase if recording is in progress, let the end virtually updated by ThreadProc()
-          m_bRecording = (Old_rtspDuration != m_rtspClient.Duration()) ;
+          //m_bRecording = (Old_rtspDuration != m_rtspClient.Duration()) ;
+          m_bRecording = true; // duration may have not increased in such a short time
         }
         LogDebug("Timeshift %d, Recording %d, StartPCR %f, EndPcr %f, Duration %f",m_bTimeShifting,m_bRecording,m_duration.StartPcr().ToClock(),m_duration.EndPcr().ToClock(),(float)m_duration.Duration().Millisecs()/1000.0f) ;
       }
@@ -899,7 +900,8 @@ void CTsReaderFilter::Seek(CRefTime& seekTime, bool seekInfile)
     else
     {
       // It's a record, eventually end can increase if recording is in progress, let the end virtually updated by ThreadProc()
-      m_bRecording = (Old_rtspDuration != m_rtspClient.Duration()) ;
+      //m_bRecording = (Old_rtspDuration != m_rtspClient.Duration()) ;
+      m_bRecording = true; // duration may have not increased in such a short time
     }
     LogDebug("CTsReaderFilter:: Rtsp seek :Timeshift %d, Recording %d, StartPCR %f, EndPcr %f, Duration %f",m_bTimeShifting,m_bRecording,m_duration.StartPcr().ToClock(),m_duration.EndPcr().ToClock(),(float)m_duration.Duration().Millisecs()/1000.0f) ;
 	}
@@ -1129,7 +1131,7 @@ void CTsReaderFilter::ThreadProc()
   LogDebug("CTsReaderFilter::ThreadProc start()");
 
   int durationUpdateLoop = 1;
-  long Old_rtspDuration = 0 ;
+  long Old_rtspDuration = -1 ;
 
   ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_BELOW_NORMAL);
   do
