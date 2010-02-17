@@ -11,7 +11,7 @@
     <Channel id="yleteema@yle.fi" siteId="yleteema" />
     <Channel id="yleextra@yle.fi" siteId="yleextra" />
     <Channel id="jim@jim.fi" siteId="jim" />
-    <Channel id="diggari@diggari.fi" siteId="diggari" />
+    <Channel id="thevoice.fi" siteId="thevoicetvviisi" />
     <Channel id="mtv3max@mtv3max.fi" siteId="mtv3max" />
     <Channel id="subtvleffa@subtvleffa.fi" siteId="subtvleffa" />
     <Channel id="mtv3fakta@mtv3fakta.fi" siteId="mtv3fakta" />
@@ -75,21 +75,18 @@
     <Channel id="E entertainment@E entertainment.fi" siteId="imeentertainment" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.telvis.fi/tvopas/?vw=channel&amp;ch=[ID]&amp;sh=all&amp;dy=[DD].[MM].[YYYY]" post="" external="false" encoding="" />
+    <Site url="http://www.telvis.fi/tvohjelmat/?vw=channel&amp;ch=[ID]&amp;sh=all&amp;dy=[DD].[MM].[YYYY]" post="" external="false" encoding="" />
     <Html>
-      <Template name="default">
-        <SectionTemplate tags="DSH">
+      <Template name="default" start="channelpage" end="modrow-clear">
+        <SectionTemplate tags="STD">
           <TemplateText>
-            &lt;div&gt;&lt;div&gt;
-            &lt;h4&gt;
-            &lt;span&gt;&lt;#START&gt;&lt;/span&gt;
-            &lt;#TITLE&gt;
-            &lt;/h4&gt;
-            &lt;p&gt;
-            &lt;#DESCRIPTION&gt;
-            &lt;script&gt;&lt;/script&gt;
-            &lt;/p&gt;
-            &lt;/div&gt;&lt;/div&gt;
+ &lt;h4&gt;
+&lt;span class="time"&gt;&lt;#START&gt;&lt;/span&gt;
+&lt;#TITLE&gt;&lt;span class="iconset" id="a6_1265914800000"&gt;&lt;script&gt;document.write(addRemFavLinkTwo("FlashForward","6_1265914800000",""));&lt;/script&gt;&lt;/span&gt;
+&lt;/h4&gt;
+&lt;#DESCRIPTION&gt;
+&lt;/div&gt;
+
           </TemplateText>
         </SectionTemplate>
       </Template>
