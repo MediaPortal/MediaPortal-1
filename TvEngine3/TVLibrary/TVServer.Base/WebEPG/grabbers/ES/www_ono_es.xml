@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info availableDays="7" timezone="" version="2.0" />
+  <Channels>
+    <Channel id="la1@rtve.es" siteId="1" />
+    <Channel id="la2@rtve.es" siteId="2" />
+    <Channel id="antena3@antena3.com" siteId="3" />
+    <Channel id="cuatro@cuatro.com" siteId="4" />
+    <Channel id="telecinco@telecinco.es" siteId="5" />
+    <Channel id="lasexta@lasexta.com" siteId="6" />
+    <Channel id="cinestar@teuve.com" siteId="18" />
+    <Channel id="calle13@calle13-es.com" siteId="25" />
+    <Channel id="fox@foxtv.es" siteId="26" />
+    <Channel id="axn@axn.es" siteId="27" />
+    <Channel id="cosmopolitan@cosmopolitan.es" siteId="29" />
+    <Channel id="paramount-comedy@paramountcomedy.es" siteId="31" />
+    <Channel id="buzz@teuve.com" siteId="32" />
+    <Channel id="fdf@telecinco.es" siteId="33" />
+    <Channel id="disney-cinemagic@disney.es" siteId="35" />
+    <Channel id="disney-channel@disney.es" siteId="36" />
+    <Channel id="disney-channel-1@disney.es" siteId="38" />
+    <Channel id="playhouse@disney.es" siteId="39" />
+    <Channel id="cartoon-network.es@cartoonnetwork.es" siteId="41" />
+    <Channel id="disney-xd@disney.es" siteId="43" />
+    <Channel id="nickelodeon@nickelodeon.es" siteId="44" />
+    <Channel id="teledeporte@rtve.es" siteId="48" />
+    <Channel id="eurosport@eurosport-tv.com" siteId="49" />
+    <Channel id="eurosport-2@eurosport-tv.com" siteId="50" />
+    <Channel id="la siete@telecinco.es" siteId="51" />
+    <Channel id="discovery-channel@tudiscovery.com" siteId="56" />
+    <Channel id="canal-historia@canalhistoria.com" siteId="57" />
+    <Channel id="the-biography-channel@thebiographychannel.es" siteId="58" />
+    <Channel id="odisea@odisea.es" siteId="59" />
+    <Channel id="national-geographic@nationalgeographic.com.es" siteId="61" />
+    <Channel id="discovery-channel@tudiscovery.com" siteId="62" />
+    <Channel id="canal-cocina@canalcocina.es" siteId="65" />
+    <Channel id="decasa@canaldecasa.es" siteId="66" />
+    <Channel id="sol-musica@solmusica.com" siteId="68" />
+    <Channel id="mtv-españa@mtv.es" siteId="69" />
+    <Channel id="vh1@vh1.com" siteId="73" />
+    <Channel id="euronews@euronews.net" siteId="77" />
+    <Channel id="goltv@goltv.tv" siteId="150" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://ocioytv.ono.es/epg/list.action?sec=69&amp;hour=&amp;day=[DAY_OFFSET]&amp;dialId=[ID]" post="" external="false" encoding="iso-8859-1" />
+    <Html>
+      <Template name="default" start="listaProgramas" end="Ver toda la programaci">
+        <SectionTemplate tags="SPAN">
+          <TemplateText>	
+		&lt;span class="resultado"&gt;&lt;#START&gt;&lt;a class="showhide" onclick="return false;" 				href="#contCanal_0_0"&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;/span&gt;								&lt;span class="categoria"&gt;&lt;#GENRE&gt;&lt;/span&gt;								&lt;div id="contCanal_0_0" class="esconder"&gt;
+		&lt;ul&gt;
+		&lt;!--															&lt;li&gt;&lt;strong&gt;Emisión:&lt;/strong&gt; lunes, 16.11.2009 00:00h - 00:12h (Una hora menos 		en Canarias)&lt;/li&gt;--&gt;												&lt;li&gt;&lt;#DESCRIPTION&gt;.&lt;/li&gt;
+		&lt;li&gt;&lt;strong&gt;Valoración edad:&lt;/strong&gt; 17&lt;/li&gt;							&lt;li&gt;&lt;strong&gt;Título de capítulo:&lt;/strong&gt;&lt;#SUBTITLE&gt;&lt;/li&gt;					&lt;li&gt;&lt;strong&gt;Número de capítulo:&lt;/strong&gt; &lt;#EPISODE&gt;&lt;/li&gt;					&lt;!--														--&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

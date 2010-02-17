@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Grabber>
   <Info availableDays="7" timezone="" version="2.0" />
   <Channels>
@@ -11,6 +11,7 @@
     <Channel id="24h@tve.es" siteId="24-horas" />
     <Channel id="teledeporte@tve.es" siteId="teledeporte" />
     <Channel id="lasexta@lasexta.com" siteId="la-sexta" />
+    <Channel id="40Tv@sogecable.es" siteId="los40" />
     <Channel id="40latino@sogecable.es" siteId="40-latino" />
     <Channel id="andaluciatv@andaluciatv.es" siteId="andalucia-tv" />
     <Channel id="axn@sogecable.es" siteId="axn" />
