@@ -667,6 +667,28 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Write(ex);
       }
       return true;
+    }    
+
+    /// <summary>
+    /// sends the diseqc command to the card
+    /// </summary>
+    /// <param name="parameters">The parameters.</param>
+    /// <param name="channel">The current tv/radio channel</param>
+    public void ReSendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
+    {
+      // Some cards need to setup DISEQ commands when graph is running (otherwise no signal errors will most likely occur).
+      // Add any such cards here.
+      try
+      {
+        if (_hauppauge != null)
+        {
+          _hauppauge.SendDiseqCommand(parameters, channel);          
+        }
+      }       
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+      }
     }
 
     /// <summary>
@@ -675,7 +697,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="parameters">The parameters.</param>
     /// <param name="channel">The current tv/radio channel</param>
     public void SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
-    {
+    {     
       try
       {
         if (_knc != null)

@@ -504,7 +504,7 @@ namespace TvLibrary.Implementations.DVB
     ///</summary>
     ///<returns>true, when the tuner is locked and a signal is present</returns>
     public override bool LockedInOnSignal()
-    {
+    {      
       //UpdateSignalQuality(true);
       bool isLocked = false;
       DateTime timeStart = DateTime.Now;
@@ -547,6 +547,10 @@ namespace TvLibrary.Implementations.DVB
       return isLocked;
     }
 
+    protected virtual void OnRunGraph()
+    {
+      //default behaviour is nothing
+    }
 
     /// <summary>
     /// Methods which starts the graph
@@ -558,7 +562,7 @@ namespace TvLibrary.Implementations.DVB
       if (_mapSubChannels.ContainsKey(subChannel))
       {
         if (graphRunning)
-        {
+        {          
           if (!LockedInOnSignal())
           {
             throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
@@ -578,6 +582,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb:  RunGraph returns: 0x{0:X}", hr);
         throw new TvException("Unable to start graph");
       }
+      OnRunGraph();
       //GetTunerSignalStatistics();
       _epgGrabbing = false;
       if (_mapSubChannels.ContainsKey(subChannel))

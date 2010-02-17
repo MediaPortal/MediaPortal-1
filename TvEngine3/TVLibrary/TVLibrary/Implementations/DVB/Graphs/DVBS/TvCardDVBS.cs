@@ -39,6 +39,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected IDVBSTuningSpace _tuningSpace;
 
+    private DVBSChannel _dvbsChannel;
     /// <summary>
     /// holds the current DVB-S tuning request
     /// </summary>
@@ -279,6 +280,7 @@ namespace TvLibrary.Implementations.DVB
       }
       try
       {
+        _dvbsChannel = dvbsChannel;
         RunGraph(ch.SubChannelId);
       }
       catch (TvExceptionNoSignal)
@@ -289,6 +291,14 @@ namespace TvLibrary.Implementations.DVB
       if (dvbsChannel.ServiceId < 0 || dvbsChannel.NetworkId < 0 || dvbsChannel.TransportId < 0)
         _filterTIF.Stop();
       return ch;
+    }
+
+    protected override void OnRunGraph()
+    {
+      if (_conditionalAccess != null)
+      {
+        _conditionalAccess.ReSendDiseqcCommand(_parameters, _dvbsChannel);
+      }
     }
 
     #endregion
