@@ -317,7 +317,7 @@ namespace MPLanguageTool
       }
       catch (Exception)
       {
-        return false; 
+        return false;
       }
     }
 
@@ -327,7 +327,7 @@ namespace MPLanguageTool
       string xml = BuildFileName(languageID, true);
       // Don't init the Streamwriter here, as it will clear the file content.
       // When saving multiple sections language files like MP2 or MPTagThat this causes troubles
-      StreamWriter writer; 
+      StreamWriter writer;
       switch (frmMain.LangType)
       {
         case frmMain.StringsType.MediaPortal_1:
@@ -406,7 +406,7 @@ namespace MPLanguageTool
             attrName = "name";
             break;
         }
-        
+
         int startIndex = MainNodeSelection.IndexOf("'") + 1;
         int endIndex = MainNodeSelection.LastIndexOf("'");
         string sectionName = MainNodeSelection.Substring(startIndex, endIndex - startIndex);
@@ -454,11 +454,11 @@ namespace MPLanguageTool
       }
       doc.Save(xml);
     }
-	
-	private static int getMaxCharsForLanguageID(string languageID)
-	{
-	  int maxChars;
-	   
+
+    private static int getMaxCharsForLanguageID(string languageID)
+    {
+      int maxChars;
+
       switch (languageID)
       {
         case "cs":          //Czech
@@ -469,7 +469,7 @@ namespace MPLanguageTool
           maxChars = 974;
           break;
         case "he":          //Hebrew
-          maxChars = 1456;
+          maxChars = 1524;
           break;
         case "pl":          //Polish
           maxChars = 380;
@@ -485,7 +485,7 @@ namespace MPLanguageTool
           break;
       }
 
-	  return maxChars;
-	}
+      return maxChars;
+    }
   }
 }
