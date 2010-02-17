@@ -463,6 +463,7 @@ namespace MPLanguageTool
       {
         case "cs":          //Czech
         case "hu":          //Hungarian
+        case "sl":					//Slovenian
           maxChars = 512;
           break;
         case "el":          //Greek
