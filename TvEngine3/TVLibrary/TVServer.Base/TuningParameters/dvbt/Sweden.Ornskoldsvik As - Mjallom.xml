@@ -11,12 +11,17 @@
     <Offset>125</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>802000</Frequency>
+    <Frequency>578000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>818000</Frequency>
+    <Frequency>506000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>125</Offset>
+  </DVBTTuning>
+  <DVBTTuning>
+    <Frequency>642000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
