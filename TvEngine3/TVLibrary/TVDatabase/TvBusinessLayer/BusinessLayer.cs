@@ -2251,6 +2251,9 @@ namespace TvDatabase
           if (lastImport.AddSeconds(60) < DateTime.Now)
           {
             // Done importing and 60 seconds since last import
+            // Remove old programs
+            TvBusinessLayer layer = new TvBusinessLayer();
+            layer.RemoveOldPrograms();
             // Let's update states
             Schedule.SynchProgramStatesForAll();
             // and exit
