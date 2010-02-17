@@ -19,29 +19,13 @@ TsMPEG2TransportFileServerMediaSubsession::TsMPEG2TransportFileServerMediaSubses
 	strcpy(m_fileName,fFileName);
 	m_bTimeshifting = timeshifting;
 
-  if (strstr(m_fileName,".tsbuffer")!=NULL)
-  {
-    m_pFileDuration = new MultiFileReader();
-  }
-  else
-  {
-    m_pFileDuration = new FileReader();
-  }
-
-  // initialize duration estimator
-  WCHAR wFileName[1024];
-  MultiByteToWideChar(CP_ACP,0,m_fileName,-1,wFileName,1024);
-  m_pFileDuration->SetFileName(wFileName);
   m_pDuration = new CTsDuration();
-  m_pDuration->SetFileReader(m_pFileDuration);
 }
 
 TsMPEG2TransportFileServerMediaSubsession::~TsMPEG2TransportFileServerMediaSubsession() 
 {
   delete m_pDuration;
   m_pDuration = NULL;
-  delete m_pFileDuration;
-  m_pFileDuration = NULL;
 }
 
 #define TRANSPORT_PACKET_SIZE 188
@@ -99,20 +83,61 @@ void TsMPEG2TransportFileServerMediaSubsession::seekStreamSource(FramedSource* i
 
 float TsMPEG2TransportFileServerMediaSubsession::duration() const
 {
-  m_pFileDuration->OpenFile();
-  m_pDuration->UpdateDuration();
-  m_pFileDuration->CloseFile();
-	return m_pDuration->Duration().Millisecs() / 1000.0f;
+  FileReader *pFileDuration = OpenFileDuration();
+  if (pFileDuration)
+  {
+    m_pDuration->UpdateDuration();
+    CloseFileDuration(pFileDuration);
+	  return m_pDuration->Duration().Millisecs() / 1000.0f;
+  }
+  return 10.0f; //fake it
 }
 
 __int64 TsMPEG2TransportFileServerMediaSubsession::filelength() const
 {  
 	__int64	fileSizeTmp = 0;
-
-  m_pFileDuration->OpenFile();
-  fileSizeTmp = m_pFileDuration->GetFileSize();
-  m_pFileDuration->CloseFile();
-
-	return fileSizeTmp;
+  FileReader *pFileDuration = OpenFileDuration();
+  if (pFileDuration)
+  {
+    fileSizeTmp = pFileDuration->GetFileSize();
+	  CloseFileDuration(pFileDuration);
+  }
+  return fileSizeTmp;
 }
 
+FileReader* TsMPEG2TransportFileServerMediaSubsession::OpenFileDuration() const
+{
+  FileReader *pFileDuration;
+
+  if (strstr(m_fileName,".tsbuffer")!=NULL)
+  {
+    pFileDuration = new MultiFileReader();
+  }
+  else
+  {
+    pFileDuration = new FileReader();
+  }
+
+  // initialize duration estimator
+  WCHAR wFileName[1024];
+  MultiByteToWideChar(CP_ACP,0,m_fileName,-1,wFileName,1024);
+  pFileDuration->SetFileName(wFileName);
+  if(FAILED(pFileDuration->OpenFile()))
+  {
+    CloseFileDuration(pFileDuration);
+    pFileDuration = NULL;
+  }
+
+  m_pDuration->SetFileReader(pFileDuration);
+  return pFileDuration;
+}
+
+void TsMPEG2TransportFileServerMediaSubsession::CloseFileDuration(FileReader *pFileDuration) const
+{
+  if(pFileDuration)
+  {
+    pFileDuration->CloseFile();
+    m_pDuration->SetFileReader(NULL);
+    delete pFileDuration;
+  }
+}

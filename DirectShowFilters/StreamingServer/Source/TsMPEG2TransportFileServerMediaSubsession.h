@@ -19,9 +19,10 @@ protected:
 	virtual ~TsMPEG2TransportFileServerMediaSubsession();
 	virtual float duration() const;
 	virtual __int64 filelength() const;
+  FileReader* OpenFileDuration() const;
+  void CloseFileDuration(FileReader *pFileDuration) const;
 
   CTsDuration *m_pDuration;
-  FileReader *m_pFileDuration;
 
 private: // redefined virtual functions
 	virtual void seekStreamSource(FramedSource* inputSource, double seekNPT);
