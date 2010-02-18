@@ -713,7 +713,7 @@ Section "-MediaPortal Extension Installer" SecMpeInstaller
   ; MpeInstaller v1
   ${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpi"  "MediaPortal extension"
   ${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpe1" "MediaPortal extension"
-  ${RegisterExtension} "$MPdir.Base\MpeMaker.exe"     ".xmp"  "MediaPortal extension project"
+  ${RegisterExtension} "$MPdir.Base\MpiMaker.exe"     ".xmp"  "MediaPortal extension project"
   ; MpeInstaller v2
   #${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpi"  "MediaPortal extension"
   #${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpe1" "MediaPortal extension"
