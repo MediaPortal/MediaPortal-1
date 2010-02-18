@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="de" availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="ORF 1" siteId="14"/>
+    <Channel id="ORF 2" siteId="15"/>
+    <Channel id="ORF 1 HD" siteId="3824"/>
+    <Channel id="ATV" siteId="958"/>
+    <Channel id="Puls 4" siteId="3796"/>
+    <Channel id="Austria 9" siteId="3855"/>
+    <Channel id="TW1" siteId="959"/>
+    <Channel id="Okto" siteId="4107"/>
+    <Channel id="Servus TV" siteId="4119"/>
+    <Channel id="Steiermark 1 TV" siteId="3551"/>
+    <Channel id="K-TV" siteId="846"/>
+    <Channel id="gotv" siteId="887"/>
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.tvtv.at/tvtv/index.vm?groupid=6&amp;dayId=[DAY_OFFSET]&amp;weekId=0&amp;chnl=[ID]&amp;lang=de&amp;epgView=list" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="timeTabMorn_on" end="">
+        <SectionTemplate tags="SAD">
+          <TemplateText>
+&lt;td&gt;&lt;div&gt;&lt;span&gt;&lt;#START&gt;&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;div&gt;&lt;a href&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;/div&gt;&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;&lt;/td&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>
