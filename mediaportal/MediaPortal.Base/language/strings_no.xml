@@ -38,13 +38,13 @@
     <String id="62">Initierer DirectX...</String>
     <String id="63">Initierer inn enheter...</String>
     <String id="64">Starter tillegg...</String>
-    <String id="65">Laster keymap.xml...</String>
+    <String id="65">Laster oppsett av fjernkontroller...</String>
     <String id="66">Laster språk...</String>
     <String id="67">Bygger grafikk...</String>
     <String id="68">Laster fonter...</String>
     <String id="69">Laster skinn ({0})...</String>
-    <String id="70">Laster tillegg for vindu...</String>
-    <String id="71">Initierer vindu manager...</String>
+    <String id="70">Laster grafiske tillegg...</String>
+    <String id="71">Laster tilleggsbehandleren</String>
     <String id="100">Vis: Ikoner</String>
     <String id="101">Vis: Liste</String>
     <String id="102">Skann</String>
@@ -63,7 +63,7 @@
     <String id="115">Kopier</String>
     <String id="116">Flytt</String>
     <String id="117">Slett</String>
-    <String id="118">Omdøp</String>
+    <String id="118">Gi nytt navn</String>
     <String id="119">Ny mappe</String>
     <String id="120">Bekreft kopiering av fil(er)</String>
     <String id="121">Bekreft flytting av fil(er)</String>
@@ -107,13 +107,13 @@
     <String id="159">Ingen link</String>
     <String id="160">Ledig</String>
     <String id="161">Ikke tilgjengelig</String>
-    <String id="162">Brett åpen</String>
+    <String id="162">Drevskuff åpen</String>
     <String id="163">Leser</String>
     <String id="164">Ingen disk</String>
     <String id="165">Disk tilstede</String>
-    <String id="166">Overflate:</String>
+    <String id="166">Utseende:</String>
     <String id="167">FTP-server:</String>
-    <String id="168">Synkronisere tid:</String>
+    <String id="168">Synkroniser tid:</String>
     <String id="169">Oppløsning:</String>
     <String id="170">Album:</String>
     <String id="171">Artist:</String>
@@ -137,7 +137,7 @@
     <String id="189">Skanner media info</String>
     <String id="190">Lagre</String>
     <String id="191">Blande</String>
-    <String id="192">Rydde</String>
+    <String id="192">Tøm</String>
     <String id="193">Skann</String>
     <String id="194">Søker...</String>
     <String id="195">Ingen IMDB-info funnet!</String>
@@ -150,7 +150,7 @@
     <String id="202">Oppsummering:</String>
     <String id="203">Handlingsutkast:</String>
     <String id="204">Vurdering:</String>
-    <String id="205">Votes:</String>
+    <String id="205">Stemmer:</String>
     <String id="206">Skuespillere:</String>
     <String id="207">Handling</String>
     <String id="208">Spill</String>
@@ -445,7 +445,7 @@
     <String id="501">Sett som mål</String>
     <String id="502">Kan ikke fullføre handlingen</String>
     <String id="503">Slette denne mappen</String>
-    <String id="504">Gå til mål</String>
+    <String id="504">Gå til målmappe</String>
     <String id="505">Kalkulerer</String>
     <String id="506">Er du sikker?</String>
     <String id="507">elementer</String>
@@ -508,7 +508,7 @@
     <String id="595">Fullskjerm</String>
     <String id="596">Venter på Side {0}/{1}...</String>
     <String id="599">Storm</String>
-    <String id="600">TV-Guide</String>
+    <String id="600">TV-guide</String>
     <String id="601">Ta opp nå</String>
     <String id="602">Kanal:</String>
     <String id="603">Planlagt</String>
@@ -762,20 +762,20 @@
     <String id="903">Logg inn</String>
     <String id="904">Logg ut</String>
     <String id="905">Du må konfigurere denne modulen først</String>
-    <String id="906">Skriv inn din epost-adresse i oppsettet</String>
+    <String id="906">Skriv inn din epost-adresse i innstillingene</String>
     <String id="907">Kan ikke koble til MSN</String>
     <String id="908">skriver en melding...</String>
     <String id="909">Kobler opp...</String>
     <String id="910">Logger på...</String>
     <String id="911">Ingen kanaler</String>
-    <String id="912">Kan ikke laste ned siste nytt</String>
+    <String id="912">Kan ikke laste ned de siste nyhetene</String>
     <String id="913" prefix="Mine ">Tillegg</String>
     <String id="914">Opptak</String>
     <String id="915">TV-kanaler</String>
     <String id="916">Ekstern fil</String>
     <String id="917">Denne filen er på en nettverksstasjon</String>
     <String id="918">Skal jeg laste den ned til ditt standard</String>
-    <String id="919">lokalområde?</String>
+    <String id="919">mappe?</String>
     <String id="920">Kan ikke laste ned ekstern fil</String>
     <String id="921">Filen lastes ned nå</String>
     <String id="922">Beskrivelse</String>
@@ -791,7 +791,7 @@
     <String id="932">Favoritter</String>
     <String id="933">Fjern fra favoritter</String>
     <String id="934">Sett poengsum</String>
-    <String id="935">Vis: Rating</String>
+    <String id="935">Vis: Stemmer</String>
     <String id="936">Fortsette fra:</String>
     <String id="937">Importere TV-guide</String>
     <String id="938">Vis denne kanalen</String>
@@ -802,7 +802,7 @@
     <String id="943">Normal</String>
     <String id="944">Original</String>
     <String id="945">Letterbox</String>
-    <String id="946">Ikke linjær strekk</String>
+    <String id="946">Ikke-lineær strekk</String>
     <String id="947">Zoom</String>
     <String id="948">Pålogget</String>
     <String id="949">Opptatt</String>
@@ -851,10 +851,10 @@
     <String id="996">valgte opptak?</String>
     <String id="997">Ferdig</String>
     <String id="998">XviD</String>
-    <String id="999">Denne pluginen lar deg kode om dine</String>
+    <String id="999">Denne pluginen lar deg konvertere dine</String>
     <String id="1000">TV-programmer fra .ts til mpg eller wmv</String>
     <String id="1001">Vennligst merk. Dine opptak må</String>
-    <String id="1002">virke i MediaPortal med både lyd å bilde</String>
+    <String id="1002">virke i MediaPortal med både lyd og bilde</String>
     <String id="1003">før du koder om til wmv.</String>
     <String id="1004">I ferd med å starte opptak</String>
     <String id="1005">på kanal</String>
@@ -881,12 +881,12 @@
     <String id="1026">Sjekk loggfilene for detaljer.</String>
     <String id="1027" prefix="Min ">DVD</String>
     <String id="1028">By</String>
-    <String id="1029">Undertekst-språk</String>
+    <String id="1029">Språk på undertekst</String>
     <String id="1030">Slå av</String>
     <String id="1031">Start på nytt</String>
     <String id="1032">Hvilemodus</String>
     <String id="1033">TV-programmer blir tatt opp nå</String>
-    <String id="1034">Ingen signaler oppdaget!</String>
+    <String id="1034">Intet signal ble oppdaget!</String>
     <String id="1035">TV-kanalen er kodet!</String>
     <String id="1036">Ingen video funnet</String>
     <String id="1037" prefix="Min ">TV-programinformasjon</String>
@@ -913,7 +913,7 @@
     <String id="1058">Ta opp Fre-Lør</String>
     <String id="1059">Søn-Tor</String>
     <String id="1060">Fre-Lør</String>
-    <String id="1061">Minnekort</String>
+    <String id="1061">Eksterne</String>
     <String id="1062">Objekt</String>
     <String id="1064">Bokmerker</String>
     <String id="1065">Gå til</String>
@@ -960,7 +960,7 @@
     <String id="1192">Bruk VMR9 for Web Streams</String>
     <String id="1193">Bruke GUI Lyd Effekter</String>
     <String id="1194">Start med Basic Home</String>
-    <String id="1195">Bruke GUI Muse-kontroll</String>
+    <String id="1195">Slå på ekstra GUI musekontroller</String>
     <String id="1196">Bruk undertekster</String>
     <String id="1197">Slå av DXVA</String>
     <String id="1198">DVD Navigator</String>
@@ -1090,22 +1090,22 @@
     <String id="2057">Lyd-kvalitet</String>
     <String id="2058">Oppløsning</String>
     <String id="2059">Comskip-fil funnet</String>
-    <String id="2060">Vil du bruke denne?</String>
+    <String id="2060">vil du bruke denne?</String>
     <String id="2061">Comskip-filen er ikke kompatibel</String>
     <String id="2062">lav</String>
     <String id="2063">medium</String>
     <String id="2064">høy</String>
-    <String id="2065">Vennligst velg mpg filen du vil konvertere til divx:</String>
-    <String id="2066">Mpeg til divx</String>
-    <String id="2067">Vennligst velg .ts filen du vil konvertere til divx:</String>
-    <String id="2068">.ts til divx</String>
+    <String id="2065">Vennligst velg mpg filen du vil konvertere til DivX:</String>
+    <String id="2066">Mpeg til DivX</String>
+    <String id="2067">Vennligst velg .ts filen du vil konvertere til DivX:</String>
+    <String id="2068">.ts til DivX</String>
     <String id="2069">Ferdig med å sammenføye videofilene</String>
     <String id="2070">Ferdig med å konvertere videofilen</String>
     <String id="2071">.ts til mpeg</String>
     <String id="2072">Start konvertering</String>
     <String id="2073">Vennligst velg den .ts filen du har vil konvertere:</String>
     <String id="2074">Vennligst velg den filen du vil spleise inn:</String>
-    <String id="2075">Definere nye kutt punkter</String>
+    <String id="2075">Definere nye kuttpunkter</String>
     <String id="2076">Redigere</String>
     <String id="2077">Kutt</String>
     <String id="2078">Lim inn</String>
@@ -1120,7 +1120,7 @@
     <String id="2087">bakover</String>
     <String id="2088">Kutteliste:</String>
     <String id="2089">juster kvalitet</String>
-    <String id="2090">Video-Redigerer</String>
+    <String id="2090" prefix="min">Video-redigerer</String>
     <String id="2091">Prosessen ble avbrutt</String>
     <String id="2092">Vennligst velg filen du vil redigere:</String>
     <String id="2093">legg till</String>
@@ -1154,7 +1154,7 @@
     <String id="2122">starter!</String>
     <String id="2123">Diskinfo</String>
     <String id="2124">Kan ikke slette: Media er ikke skrivbar</String>
-    <String id="2125">Slett Disk....</String>
+    <String id="2125">Slett DVD...</String>
     <String id="2126">Ta ut CD</String>
     <String id="2127">CDen er ikke skrivbar</String>
     <String id="2128">Forberede brenning: estimert tid:</String>
@@ -1220,7 +1220,7 @@
     <String id="2514">Tilbake til tekst</String>
     <String id="2515">Bilder</String>
     <String id="2516" prefix="Min ">Wikipedia</String>
-    <String id="2550">Vil du virkelig STOPPE Live TV?</String>
+    <String id="2550">Er du sikker på at du vil stoppe Live TV?</String>
     <String id="2551">(timeshift filen(e) vil bli slettet)</String>
     <String id="2552">Stopp</String>
     <String id="2553">Spill</String>
@@ -1238,7 +1238,9 @@
     <String id="2610">Polsk</String>
     <String id="2611">Tsjekkisk</String>
     <String id="2612">Ungarsk</String>
-    <String id="2650">Laster fonter på nytt, venligst vent...</String>
+    <String id="2613">Russisk</String>
+    <String id="2614">Ukrainsk</String>
+    <String id="2650">Laster skrifttyper på nytt, venligst vent...</String>
     <String id="2700">Åpne CI meny</String>
     <String id="2997">t</String>
     <String id="2998">min</String>
@@ -1343,7 +1345,7 @@
     <String id="6009">DVB Guide</String>
     <String id="6010">XMLTV EPG grabber</String>
     <String id="6011">DVB EPG:</String>
-    <String id="6012">Oppdater TVGuide fra følgende DVB kanaler:</String>
+    <String id="6012">Oppdater TV-guide fra følgende DVB kanaler:</String>
     <String id="6013">Manuell xmltv</String>
     <String id="6014">TV oppsett</String>
     <String id="6015">DVD oppsett</String>
@@ -1422,7 +1424,7 @@
     <String id="9100">Mini Display</String>
     <String id="9101">Plugin er ikke konfigurert</String>
     <String id="9102">Vennligst kjør MediaPortal Configuration først!</String>
-    <String id="9103">Innstilling for pad</String>
+    <String id="9103">Innstilling for keypad</String>
     <String id="9104">Skjerminnstillinger</String>
     <String id="9105">Skjermkontrollinnstillinger</String>
     <String id="9106">Equalizer innstillinger</String>
@@ -1517,12 +1519,12 @@
     <String id="14004">Online utvidelser</String>
     <String id="14005">Installer utvidelse</String>
     <String id="14006">Avinstaller utvidelse</String>
-    <String id="14007">Innstaller på nytt</String>
+    <String id="14007">Installer på nytt</String>
     <String id="14008">Omgjør siste endring</String>
     <String id="14009">Vil bli utført på neste oppstart av MediaPortal</String>
     <String id="14010">Last ned utvidelse</String>
     <String id="14011">Velg en av mulighetene</String>
-    <String id="14012">Ikke gyldig MediaPortal versjon! (Du trenger versjon {0})</String>
+    <String id="14012">Ikke støttet MediaPortal versjon! (Du trenger versjon {0})</String>
     <String id="14013">Vil du fortsette?</String>
     <String id="14014">Oppdaterer online informasjon</String>
     <String id="14015">Oppdateringer</String>
@@ -1862,8 +1864,8 @@
     <String id="200032">Nei</String>
     <String id="200033">TV-oppsett - Analog TV</String>
     <String id="200034">Vennligst velg din by fra følgende liste.</String>
-    <String id="200035">NB hvis din by ikke er listet må du manuelt stille inn kanalene.</String>
-    <String id="200036">Manuell tuning</String>
+    <String id="200035">Merk at hvis din by ikke er opplistet må du manuelt søke inn kanalene.</String>
+    <String id="200036">Manuelt søk</String>
     <String id="200037">Hopp over &gt;</String>
     <String id="200038">På en PC delt med andre programmer</String>
     <String id="200039">Legg til skip step</String>
@@ -1873,9 +1875,9 @@
     <String id="200043">Rensk opp i TV-opptak</String>
     <String id="200044">Ugyldige TV-opptak</String>
     <String id="200045">Begge</String>
-    <String id="200046">Lag Miniatyrbilder</String>
-    <String id="200047">Lag Miniatyrbilder (inkludert undermapper)</String>
-    <String id="200048">Lag Miniatyrbilder på nytt</String>
+    <String id="200046">Lag miniatyrbilder</String>
+    <String id="200047">Lag miniatyrbilder (inkluder undermapper)</String>
+    <String id="200048">Lag miniatyrbilder på nytt</String>
     <String id="200049">Bare opptak som er sett for denne serien</String>
     <String id="200050">Dette vil slette opptakene fra harddisken</String>
     <String id="200051">Slette denne episoden?</String>
