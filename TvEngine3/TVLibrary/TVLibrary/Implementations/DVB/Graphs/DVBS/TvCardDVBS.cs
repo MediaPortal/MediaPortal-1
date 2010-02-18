@@ -34,6 +34,9 @@ namespace TvLibrary.Implementations.DVB
   {
     #region variables
 
+    private bool _diseqCsucceded = true;
+    private int _diseqCretries = 0;
+
     /// <summary>
     /// holds the DVB-S tuning space
     /// </summary>
@@ -260,7 +263,7 @@ namespace TvLibrary.Implementations.DVB
         //set the DisEqC parameters 
         if (_conditionalAccess != null)
         {
-          _conditionalAccess.SendDiseqcCommand(_parameters, dvbsChannel);
+          _diseqCsucceded = _conditionalAccess.SendDiseqcCommand(_parameters, dvbsChannel);
         }
         //put the Tuner request parameters to the driver
         ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, true);
@@ -282,23 +285,37 @@ namespace TvLibrary.Implementations.DVB
       {
         _dvbsChannel = dvbsChannel;
         RunGraph(ch.SubChannelId);
+
+        // workaround for hauppauge dvb-s cards that fail to properly set diseqC the first time around.
+        // restart graph, but only once.
+        if (_diseqCretries == 0 && !_diseqCsucceded && _conditionalAccess != null)
+        {
+          _diseqCretries++;
+          Log.Log.WriteFile("dvbs: setting diseqC failed the first time, resetting diseqC");
+          StopGraph();
+          Tune(subChannelId, channel);                
+        }
       }
       catch (TvExceptionNoSignal)
-      {
+      {                            
         FreeSubChannel(ch.SubChannelId);
-        throw;
+        throw;                  
       }
       if (dvbsChannel.ServiceId < 0 || dvbsChannel.NetworkId < 0 || dvbsChannel.TransportId < 0)
         _filterTIF.Stop();
       return ch;
-    }
+    }    
 
-    protected override void OnRunGraph()
+    protected override bool ShouldWaitForSignal()
     {
-      if (_conditionalAccess != null)
-      {
-        _conditionalAccess.ReSendDiseqcCommand(_parameters, _dvbsChannel);
+      bool shouldWait = true;     
+
+      if (_diseqCretries == 0 && !_diseqCsucceded && _conditionalAccess != null)
+      {        
+        shouldWait = false;                        
       }
+
+      return shouldWait;
     }
 
     #endregion

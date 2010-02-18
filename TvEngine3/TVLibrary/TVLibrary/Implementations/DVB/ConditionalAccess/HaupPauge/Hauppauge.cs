@@ -103,13 +103,14 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="channel">The channel.</param>
     /// <param name="parameters">The scanparameters.</param>
-    public void SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
+    public bool SendDiseqCommand(ScanParameters parameters, DVBSChannel channel)
     {
+      bool succeeded = true;
       if (_isHauppauge == false)
-        return;
+        return true;
       int antennaNr = BandTypeConverter.GetAntennaNr(channel);
       if (antennaNr == 0)
-        return;
+        return true;
       //clear the message params before writing in order to avoid corruption of the diseqc message.
       for (int i = 0; i < 188; ++i)
       {
@@ -166,8 +167,10 @@ namespace TvLibrary.Implementations.DVB
                                 len, _ptrDiseqc, len);
       if (hr != 0)
       {
+        succeeded = false;
         Log.Log.Info("Hauppauge: SendDiseq returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
       }
+      return succeeded;
     }
 
     #region IDiSEqCController Members

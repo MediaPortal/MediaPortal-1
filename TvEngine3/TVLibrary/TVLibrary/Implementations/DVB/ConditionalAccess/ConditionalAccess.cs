@@ -62,7 +62,8 @@ namespace TvLibrary.Implementations.DVB
     private readonly GenPixBDA _genpix;
     private readonly TeVii _TeVii;
 
-    private readonly ICiMenuActions _ciMenu;
+    private readonly ICiMenuActions _ciMenu;    
+
 
     /// <summary>
     /// Accessor for CI Menu handler
@@ -674,30 +675,9 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="parameters">The parameters.</param>
     /// <param name="channel">The current tv/radio channel</param>
-    public void ReSendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
+    public bool SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
     {
-      // Some cards need to setup DISEQ commands when graph is running (otherwise no signal errors will most likely occur).
-      // Add any such cards here.
-      try
-      {
-        if (_hauppauge != null)
-        {
-          _hauppauge.SendDiseqCommand(parameters, channel);          
-        }
-      }       
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-      }
-    }
-
-    /// <summary>
-    /// sends the diseqc command to the card
-    /// </summary>
-    /// <param name="parameters">The parameters.</param>
-    /// <param name="channel">The current tv/radio channel</param>
-    public void SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
-    {     
+      bool succeeded = true;
       try
       {
         if (_knc != null)
@@ -722,7 +702,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_hauppauge != null)
         {
-          _hauppauge.SendDiseqCommand(parameters, channel);
+          succeeded = _hauppauge.SendDiseqCommand(parameters, channel);
           System.Threading.Thread.Sleep(100);
         }
         if (_genericbdas != null)
@@ -755,6 +735,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Write(ex);
       }
+      return succeeded;
     }
 
     /// <summary>
@@ -1069,7 +1050,7 @@ namespace TvLibrary.Implementations.DVB
           _ciMenu.SetCiMenuHandler(value);
         }
       }
-    }
+    }    
 
     #region IDisposable Member
 

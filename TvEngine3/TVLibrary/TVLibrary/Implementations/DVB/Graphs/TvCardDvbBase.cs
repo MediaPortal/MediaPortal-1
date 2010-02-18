@@ -529,10 +529,10 @@ namespace TvLibrary.Implementations.DVB
           }
         }
         if (!isLocked)
-        {
+        {        
           ts = DateTime.Now - timeStart;
           Log.Log.WriteFile("dvb:  LockedInOnSignal waiting 20ms");
-          System.Threading.Thread.Sleep(20);
+          System.Threading.Thread.Sleep(20);          
         }
       }
 
@@ -547,8 +547,9 @@ namespace TvLibrary.Implementations.DVB
       return isLocked;
     }
 
-    protected virtual void OnRunGraph()
+    protected virtual bool ShouldWaitForSignal()
     {
+      return true;
       //default behaviour is nothing
     }
 
@@ -582,7 +583,12 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb:  RunGraph returns: 0x{0:X}", hr);
         throw new TvException("Unable to start graph");
       }
-      OnRunGraph();
+
+      if (!ShouldWaitForSignal())
+      {
+        return;
+      }
+
       //GetTunerSignalStatistics();
       _epgGrabbing = false;
       if (_mapSubChannels.ContainsKey(subChannel))
