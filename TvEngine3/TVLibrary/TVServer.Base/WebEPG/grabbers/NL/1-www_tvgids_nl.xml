@@ -68,35 +68,60 @@
     <Channel id="3sat.de" siteId="50" />
     <Channel id="pro-sieben.de" siteId="58" />
     <Channel id="eurosport@eurosport.com" siteId="19" />
+    <Channel id="world@discoverychannel.co.uk" siteId="306" />
+    <Channel id="travel@discoverychannel.co.uk" siteId="307" />
+    <Channel id="civil@discoverychannel.co.uk" siteId="305" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.tvgids.nl/zoeken/?trefwoord=Titel+of+trefwoord&amp;station=[ID]&amp;genre=&amp;interval=0&amp;periode=7&amp;timeslot=0" post="" external="false" encoding="" />
+    <Site url="http://www.tvgids.nl/zoeken/?q=&amp;d=[DAY_OFFSET]&amp;z=[ID]&amp;t=0&amp;g=&amp;v=0" post="" external="false" encoding="" />
     <Html>
-      <Template name="default">
-        <SectionTemplate tags="T">
+      <Template name="default" start="&lt;div class=&quot;listingBox&quot;&gt;">
+        <SectionTemplate tags="DAS">
           <TemplateText>
-            &lt;tr&gt;
-            &lt;th&gt;&lt;#START&gt; - &lt;#END&gt;&lt;/th&gt;
-            &lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
-            &lt;td&gt;&lt;/td&gt;
-            &lt;td&gt;&lt;/td&gt;
-            &lt;/tr&gt;
+						&lt;div class=&quot;program&quot;&gt;
+						&lt;a&gt;
+						&lt;span class=&quot;time&quot;&gt;&lt;#START&gt; - &lt;#END&gt;&lt;/span&gt;
+						&lt;span class=&quot;title&quot;&gt;&lt;#TITLE&gt;&lt;/span&gt;
+						&lt;span class=&quot;channel&quot;&gt;&lt;/span&gt;
+						&lt;/a&gt;
+						&lt;span class=&quot;options&quot;&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
-      <Template name="Details" start="progDetail">
-        <SectionTemplate tags="TAP">
+      <Template name="Details" start="&lt;div class=&quot;detailBox&quot;&gt;">
+        <SectionTemplate tags="DPLU">
           <TemplateText>
-            &lt;td&gt;
-            &lt;p&gt;&lt;#SUBTITLE&gt;&lt;/p&gt;
-            &lt;p&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;
-            &lt;p&gt;&lt;/p&gt;
-            &lt;p&gt;&lt;a href&gt;&lt;/a&gt;&lt;a href="/zoeken/?genre=&lt;#GENRE:genre=,&gt;"&gt;&lt;/a&gt;
+						&lt;div class=&quot;detailBox&quot;&gt;
+						&lt;h2&gt;
+						&lt;span class=&quot;title&quot;&gt;&lt;/span&gt;
+						&lt;span class=&quot;channeltime&quot;&gt;&lt;/span&gt;
+						&lt;/h2&gt;
+						&lt;div class=&quot;description&quot;&gt;
+						&lt;div class=&quot;text&quot;&gt;
+						&lt;div class=&quot;type&quot;&gt;&lt;#SUBTITLE&gt;&lt;/div&gt;
+						&lt;p&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;
+						&lt;p&gt;&lt;/p&gt;
+						&lt;br /&gt;
+						&lt;a href=&quot;javascript:history.back();&quot;&gt;Terug&lt;/a&gt;
+						&lt;/div&gt;
+						&lt;/div&gt;
+						&lt;div class=&quot;info&quot;&gt;
+						&lt;ul&gt;
+						&lt;li&gt;
+						&lt;strong&gt;&lt;/strong&gt;&lt;br /&gt;
+						&lt;/li&gt;
+						&lt;li&gt;
+						&lt;strong&gt;&lt;/strong&gt;&lt;br /&gt;
+						&lt;/li&gt;
+						&lt;li&gt;
+						&lt;strong&gt;Genre:&lt;/strong&gt;&lt;br /&gt;
+						&lt;#GENRE&gt;
+						&lt;/li&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
       <Sublinks>
-        <Sublink search="programmadetail" template="Details" />
+        <Sublink search="/programma/" template="Details" />
       </Sublinks>
     </Html>
   </Listing>
@@ -120,7 +145,6 @@
     <Modify channel="*" field="#GENRE" search="Sport" action="Replace">Sport</Modify>
     <Modify channel="*" field="#GENRE" search="Theater" action="Replace">Theater</Modify>
     <Modify channel="*" field="#GENRE" search="Wetenschap" action="Replace">Wetenschap</Modify>
-    <Modify channel="ned3@omroep.nl" field="#TITLE" search="Z@pp" action="Remove" />
     <Modify channel="ned3@omroep.nl" field="#TITLE" search="Nederland 3" action="Remove" />
     <Modify channel="nationalgeographic.nl" field="#TITLE" search="National Geographic Channel" action="Remove" />
     <Modify channel="nationalgeographic.nl" field="#TITLE" search="CNBC" action="Remove" />
