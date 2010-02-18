@@ -364,11 +364,7 @@ HRESULT MPEVRCustomPresenter::InitServicePointers(IMFTopologyServiceLookup *pLoo
     (void**)&m_pMixer,          // Receives the pointer.
     &cCount);                   // Number of pointers
 
-  if (FAILED(hr))
-  {
-    Log("ERR: Could not get IMFTransform interface");
-  }
-  else 
+  if (SUCCEEDED(hr))
   {
     Log("Found mixers: %d", cCount);
     ASSERT(cCount == 0 || cCount == 1);
@@ -385,11 +381,7 @@ HRESULT MPEVRCustomPresenter::InitServicePointers(IMFTopologyServiceLookup *pLoo
     &cCount);                   // Number of pointers
 
 
-  if (FAILED(hr))
-  {
-    Log("ERR: Could not get IMFClock interface (just info, not an error)");
-  }
-  else 
+  if (SUCCEEDED(hr))
   {
     Log("Found clock: %d", cCount);
     ASSERT(cCount == 0 || cCount == 1);
@@ -405,11 +397,7 @@ HRESULT MPEVRCustomPresenter::InitServicePointers(IMFTopologyServiceLookup *pLoo
     (void**)&m_pEventSink,      // Receives the pointer.
     &cCount);                   // Number of pointers
 
-  if (FAILED(hr))
-  {
-    Log("ERR: Could not get IMediaEventSink interface");
-  }
-  else 
+  if (SUCCEEDED(hr))
   {
     Log("Found event sink: %d", cCount);
     ASSERT(cCount == 0 || cCount == 1);
