@@ -141,6 +141,9 @@ public class MediaPortalApp : D3DApp, IRender
   private const int SPIF_SENDWININICHANGE = 0x0002;
   private const string mpMutex = "{E0151CBA-7F81-41df-9849-F5298A779EB3}";
   private const string configMutex = "{0BFD648F-A59F-482A-961B-337D70968611}";
+  private const int GPU_HUNG = -2005530508;
+  private const int D3DERR_INVALIDCALL = -2005530516;
+  private const int GPU_REMOVED = -2005530512;
   private bool supportsFiltering = false;
   private bool bSupportsAlphaBlend = false;
   private int g_nAnisotropy;
@@ -1855,6 +1858,7 @@ public class MediaPortalApp : D3DApp, IRender
   #region Render()
 
   private static bool reentrant = false;
+  private int d3ErrInvalidCallCounter = 0;
 
   protected override void Render(float timePassed)
   {
@@ -1909,6 +1913,7 @@ public class MediaPortalApp : D3DApp, IRender
       RenderStats();
       GUIFontManager.Present();
       GUIGraphicsContext.DX9Device.EndScene();
+      d3ErrInvalidCallCounter = 0;
       try
       {
         // Show the frame on the primary surface.
@@ -1925,9 +1930,28 @@ public class MediaPortalApp : D3DApp, IRender
       }
     }
     catch (DirectXException dex)
-    {
-      if (dex.ErrorCode == -2005530508 || // GPU_HUNG
-          dex.ErrorCode == -2005530512) // GPU_REMOVED
+    {      
+      if (dex.ErrorCode == D3DERR_INVALIDCALL)
+      {
+        d3ErrInvalidCallCounter++;
+        
+        int currentScreenNr = GUIGraphicsContext.currentScreenNumber;
+        
+        if ((currentScreenNr > -1) && (Manager.Adapters.Count > currentScreenNr))
+        {          
+          double currentRR = Manager.Adapters[currentScreenNr].CurrentDisplayMode.RefreshRate;
+
+          if (currentRR > 0 && d3ErrInvalidCallCounter > (5 * currentRR))
+          {
+            d3ErrInvalidCallCounter = 0;//reset counter
+            Log.Info("Main: D3DERR_INVALIDCALL - {0}", dex.ToString());
+            GUIGraphicsContext.DX9ExRealDeviceLost = true;
+            GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;            
+          }
+        }                
+      }
+      else if (dex.ErrorCode == GPU_HUNG || 
+          dex.ErrorCode == GPU_REMOVED) 
       {
         Log.Info("Main: GPU_HUNG - {0}", dex.ToString());
         GUIGraphicsContext.DX9ExRealDeviceLost = true;
