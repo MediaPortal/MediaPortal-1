@@ -676,17 +676,18 @@ namespace TvDatabase
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
-    public static IList<Program> RetrieveEveryTimeOnEveryChannel(string title, DateTime startTime, DateTime endTime)
+    public static IList<Program> RetrieveEveryTimeOnEveryChannel(string title)
     {
-      IList<Program> prgs = Program.RetrieveByTitleAndTimesInterval(title, startTime, DateTime.MaxValue);
+      IList<Program> prgs = Program.RetrieveByTitleAndTimesInterval(title, DateTime.Now , DateTime.MaxValue);
       return prgs;
     }
 
-    public static IList<Program> RetrieveEveryTimeOnThisChannel(string title, DateTime startTime, DateTime endTime,
-                                                                int channelId)
-    {      
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
+    public static IList<Program> RetrieveEveryTimeOnThisChannel(string title, int channelId)
+    {
+      DateTime startTime = DateTime.Now;
+      DateTime endTime = DateTime.MaxValue;
 
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
       // where foreigntable.foreignkey = ourprimarykey
       sb.AddConstraint(Operator.Equals, "Title", title);
       sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);

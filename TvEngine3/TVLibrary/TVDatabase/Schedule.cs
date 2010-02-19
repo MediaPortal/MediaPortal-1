@@ -617,7 +617,7 @@ namespace TvDatabase
           case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
             List<Program> prgsEveryTimeOnEveryChannel =
               (List<Program>)
-              Program.RetrieveEveryTimeOnEveryChannel(schedule.programName, schedule.startTime, DateTime.MaxValue);
+              Program.RetrieveEveryTimeOnEveryChannel(schedule.programName);
 
             if (prgsEveryTimeOnEveryChannel != null && prgsEveryTimeOnEveryChannel.Count > 0)
             {
@@ -636,8 +636,7 @@ namespace TvDatabase
           case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
             List<Program> prgsEveryTimeOnThisChannel =
               (List<Program>)
-              Program.RetrieveEveryTimeOnThisChannel(schedule.programName, schedule.startTime, DateTime.MaxValue,
-                                                     schedule.ReferencedChannel().IdChannel);
+              Program.RetrieveEveryTimeOnThisChannel(schedule.programName, schedule.ReferencedChannel().IdChannel);
 
             if (prgsEveryTimeOnThisChannel != null && prgsEveryTimeOnThisChannel.Count > 0)
             {
