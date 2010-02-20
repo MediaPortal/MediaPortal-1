@@ -123,7 +123,7 @@ namespace MediaPortal.MusicShareWatcher
         if (watcher != null)
         {
           Log.Info(LogType.MusicShareWatcher,
-                   "Windows has resumed from standby/hibernate mode: Reenabling FilesystemWatcher");
+                   "Windows has resumed from standby/hibernate mode: Re-enabling file system watcher");
           watcher.StartMonitor();
         }
 
