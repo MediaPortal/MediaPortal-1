@@ -1,0 +1,27 @@
+
+
+1. Update to Windows SDK v6.1:
+
+        http://www.microsoft.com/downloads/details.aspx?FamilyId=F26B1AA4-741A-433A-9BE5-FA919850BDBF&displaylang=en
+
+
+
+
+2. Create the following registry key (check the path if you did a custom install):
+
+	Windows Registry Editor Version 5.00
+
+	[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework]
+	"SDKInstallRootv2.0"="C:\\Program Files\\Microsoft SDKs\\Windows\\v6.1"
+
+
+
+
+3. If you have a x64 system, compiling   should be done by   
+
+      DeployToolUnPacker-x64.nsi
+      
+      instead of            DeployToolUnPacker.nsi .
+
+
+NOTE: Used http://msdn.microsoft.com/en-us/windowsserver/bb986638.aspx, chapter 5.1.2 as reference

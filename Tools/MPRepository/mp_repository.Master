@@ -1,0 +1,52 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="mp_repository.master.cs" Inherits="MPRepository.Web.mp_repository" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <title>MediaPortal Repository</title>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="mprForm" runat="server">
+    
+      <h3>Media Portal Repository</h3>
+    
+      <asp:SiteMapPath ID="SiteMapPath1" runat="server" Font-Names="Verdana" 
+         Font-Size="0.8em" PathSeparator=" : ">
+         <PathSeparatorStyle Font-Bold="True" ForeColor="#990000" />
+         <CurrentNodeStyle ForeColor="#333333" />
+         <NodeStyle Font-Bold="True" ForeColor="#990000" />
+         <RootNodeStyle Font-Bold="True" ForeColor="#FF8000" />
+      </asp:SiteMapPath>
+      <hr />
+
+      <asp:SiteMapDataSource ID="mprSiteMapDataSource" Runat="server" />
+
+    <table width="100%">
+    <tr><td valign="top">
+    <div id="menuDiv">
+    
+      <asp:TreeView ID="mprTreeMenu" runat="server" ImageSet="Simple" NodeIndent="10" DataSourceID="mprSiteMapDataSource" MaxDataBindDepth="1">
+        <ParentNodeStyle Font-Bold="False" />
+        <HoverNodeStyle Font-Underline="True" ForeColor="#DD5555" />
+        <SelectedNodeStyle Font-Underline="True" ForeColor="#DD5555" 
+          HorizontalPadding="0px" VerticalPadding="0px" />
+        <NodeStyle Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" 
+          HorizontalPadding="0px" NodeSpacing="0px" VerticalPadding="0px" />
+      </asp:TreeView>
+    
+    </div>
+    </td>
+    <td width="90%">
+      <div>
+          <asp:ContentPlaceHolder ID="MPRContentHolder1" runat="server">         
+          </asp:ContentPlaceHolder>
+      </div>
+      
+    </td></tr>
+    </table>
+    </form>
+</body>
+</html>

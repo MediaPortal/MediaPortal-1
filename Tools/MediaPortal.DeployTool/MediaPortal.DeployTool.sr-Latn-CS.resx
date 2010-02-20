@@ -1,0 +1,476 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="WatchTV_labelSectionHeader" xml:space="preserve">
+    <value>Želite li da gledate televiziju pomoću MediaPortal-a?</value>
+  </data>
+  <data name="WatchTV_on" xml:space="preserve">
+    <value>Da - Koristiću MediaPortal za gledanje televizije.</value>
+  </data>
+  <data name="WatchTV_off" xml:space="preserve">
+    <value>Ne - Neću koristiti MediaPortal za gledanje televizije.</value>
+  </data>
+  <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
+    <value>Svi potrebni programi će biti instalirani u svoje podrazumevane lokacije i sa standardnim podešavanjima.</value>
+  </data>
+  <data name="BaseInstallationNoTvEngine_labelAdvancedDesc" xml:space="preserve">
+    <value>Napredna instalacija omogućava vam da odredite lokaciju instalacije i druga podešavanja.</value>
+  </data>
+  <data name="BaseInstallation_labelAdvancedCaption" xml:space="preserve">
+    <value>Napredna instalacija</value>
+  </data>
+  <data name="BaseInstallation_labelAdvancedDesc" xml:space="preserve">
+    <value>Napredna instalacija omogićava vam da instalirate i podesite Klijent/Server kao i lokaciju instalacije</value>
+  </data>
+  <data name="BaseInstallation_labelOneClickCaption" xml:space="preserve">
+    <value>Jedan-klik instalacija</value>
+  </data>
+  <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
+    <value>Svi potrebni programi će biti instalirani u svoje podrazumevane lokacije i sa standardnim podešavanjima. Lozinka baze podataka je "MediaPortal"l</value>
+  </data>
+  <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
+    <value>Izvrši naprednu instalaciju</value>
+  </data>
+  <data name="BaseInstallation_rbOneClick" xml:space="preserve">
+    <value>Izvrši Jedan-klik instalaciju</value>
+  </data>
+  <data name="CustomInstallation_labelSectionHeader" xml:space="preserve">
+    <value>Molimo vas, odaberite šta želite da instalirate:</value>
+  </data>
+  <data name="CustomInstallation_rbClient" xml:space="preserve">
+    <value>MediaPortal klijent</value>
+  </data>
+  <data name="CustomInstallation_labelClient" xml:space="preserve">
+    <value>Ovim ćete instalirati samo MediaPortal. Da bi gledali tv MediaPortal će se priključiti na TV-server koji se nalazi na vašoj mreži.</value>
+  </data>
+  <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
+    <value>Instalacija za samo jedan računar</value>
+  </data>
+  <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
+    <value>Ovo je prava instalacija ukoliko vam je TV kartica na istom računaru na kome želite da instalirate MediaPortal i da gledate televiziju uz pomoć MediaPortal-a.</value>
+  </data>
+  <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
+    <value>Lokalni TV-server (glavni)</value>
+  </data>
+  <data name="CustomInstallation_labelMaster" xml:space="preserve">
+    <value>Ovim ćete instalirati MediaPortal TV-server na ovom računaru
+Računar će raditi kao lokalni TV-server i omogućiće drugim računarima na vašoj mreži pristum TV karticama. (Potrebna je instalacija baze podataka)</value>
+  </data>
+  <data name="MainWindow_browseButton" xml:space="preserve">
+    <value>Potraži</value>
+  </data>
+  <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Podesi Windows Firewall da dozvoli spoljni pristup serveru baze podataka</value>
+  </data>
+  <data name="DBMSSettings_errInvalidInstallationPath" xml:space="preserve">
+    <value>Odredite lokaciju za instalaciju SQL-servera.</value>
+  </data>
+  <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
+    <value>Odredite administratorsku lozinku za SQL-server</value>
+  </data>
+  <data name="DBMSSettings_labelHeading" xml:space="preserve">
+    <value>Podesite potrebne opcije za SQL-server instalaciju:</value>
+  </data>
+  <data name="DBMSSettings_labelInstDir" xml:space="preserve">
+    <value>Direktorijum instalacije</value>
+  </data>
+  <data name="DBMSSettings_labelPassword" xml:space="preserve">
+    <value>SQL-server lozinka za administratora</value>
+  </data>
+  <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
+    <value>Odaberite instalacioni direktorijum za SQL-server</value>
+  </data>
+  <data name="DBMSType_labelHeading" xml:space="preserve">
+    <value>Odaberite SQL-server koji želite da koritite:</value>
+  </data>
+  <data name="DBMSType_rbMSSQL" xml:space="preserve">
+    <value>Microsoft SQL-Server Express 2005</value>
+  </data>
+  <data name="DBMSType_rbMySQL" xml:space="preserve">
+    <value>MySQL 5</value>
+  </data>
+  <data name="DBMSType_rbDBAlreadyInstalled" xml:space="preserve">
+    <value>SQL-server već postoji i biće korišćen za TV-server</value>
+  </data>
+  <data name="Finished_labelHeading1" xml:space="preserve">
+    <value>Čestitamo!</value>
+  </data>
+  <data name="Finished_labelHeading2_install" xml:space="preserve">
+    <value>Uspešno ste završili instalaciju programa.</value>
+  </data>
+  <data name="Finished_labelHeading3_install" xml:space="preserve">
+    <value>Ispod, možete pronaći korisne informacije koje će vam pomoći, u početku, oko MediaPortal-a</value>
+  </data>
+  <data name="Finished_linkForum" xml:space="preserve">
+    <value>Forum MediaPortal-a</value>
+  </data>
+  <data name="Finished_linkHomepage" xml:space="preserve">
+    <value>Glavna internet stranica MediaPortal-a</value>
+  </data>
+  <data name="Finished_linkWiki" xml:space="preserve">
+    <value>MediaPortal Wiki</value>
+  </data>
+  <data name="HTTPDownload_buttonCancel" xml:space="preserve">
+    <value>Odustani</value>
+  </data>
+  <data name="HTTPDownload_errDownloadFailed" xml:space="preserve">
+    <value>Nastao je problem prilikom preuzimanja potrebnog fajla.</value>
+  </data>
+  <data name="HTTPDownload_labelSourceURL" xml:space="preserve">
+    <value>Internet adresa za preuzimanje fajla:</value>
+  </data>
+  <data name="HTTPDownload_labelTargetFile" xml:space="preserve">
+    <value>Fajl za preuzimanje:</value>
+  </data>
+  <data name="HTTPDownload_msgCanceledByUser" xml:space="preserve">
+    <value>Preuzimanje fajla otkazano od strane korisnika</value>
+  </data>
+  <data name="HTTPDownload_Title" xml:space="preserve">
+    <value>Preuzimanje fajla je u toku ...</value>
+  </data>
+  <data name="Install_actionDownloadInstall" xml:space="preserve">
+    <value>Preuzimanje-&gt;Instalacija</value>
+  </data>
+  <data name="Install_actionInstall" xml:space="preserve">
+    <value>Instalacija</value>
+  </data>
+  <data name="Install_actionNothing" xml:space="preserve">
+    <value>&lt;bez akcije&gt;</value>
+  </data>
+  <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
+    <value>De-instaliraj prethodno-&gt;Preuzimi-&gt;Instaliraj</value>
+  </data>
+  <data name="Install_actionUninstallInstall" xml:space="preserve">
+    <value>Odstrani prethodnu instalaciju-&gt;Instaliraj</value>
+  </data>
+  <data name="Install_buttonInstall" xml:space="preserve">
+    <value>Instaliraj</value>
+  </data>
+  <data name="Install_colAction" xml:space="preserve">
+    <value>Akcija</value>
+  </data>
+  <data name="Install_colApplication" xml:space="preserve">
+    <value>Program</value>
+  </data>
+  <data name="Install_colState" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Install_errAppsMissing" xml:space="preserve">
+    <value>Nisu instalirani svi potrebni programi.</value>
+  </data>
+  <data name="Install_errDownloadFailed" xml:space="preserve">
+    <value>Neuspelo preuzimanje programa  [{0}]</value>
+  </data>
+  <data name="Install_errInstallFailed" xml:space="preserve">
+    <value>Instalacija programa nije uspela  [{0}]</value>
+  </data>
+  <data name="Install_labelHeadingInstall" xml:space="preserve">
+    <value>Klikni na instalaciono dugme da bi se pokrenula instalacija</value>
+  </data>
+  <data name="Install_msgDownloading" xml:space="preserve">
+    <value>Preuzimanje ...</value>
+  </data>
+  <data name="Install_msgInstalling" xml:space="preserve">
+    <value>Instalacija ...</value>
+  </data>
+  <data name="Install_msgUninstalling" xml:space="preserve">
+    <value>De-instalacija ...</value>
+  </data>
+  <data name="Install_stateInstalled" xml:space="preserve">
+    <value>Instalirano</value>
+  </data>
+  <data name="Install_stateNotInstalled" xml:space="preserve">
+    <value>Nije instalirano</value>
+  </data>
+  <data name="Install_stateVersionMismatch" xml:space="preserve">
+    <value>Druga verzija programa je već instalirana</value>
+  </data>
+  <data name="MainWindow_AppName" xml:space="preserve">
+    <value>MediaPortal alat za instalaciju</value>
+  </data>
+  <data name="MainWindow_backButton" xml:space="preserve">
+    <value>Prethodni</value>
+  </data>
+  <data name="MainWindow_buttonClose" xml:space="preserve">
+    <value>Izlaz</value>
+  </data>
+  <data name="MainWindow_labelAppHeading" xml:space="preserve">
+    <value>Ova instalacija će vas voditi kroz instalaciju MediaPortal-a i svih potrebnih komponenti.</value>
+  </data>
+  <data name="MainWindow_nextButton" xml:space="preserve">
+    <value>Sledeći</value>
+  </data>
+  <data name="ManualDownload_buttonContinue" xml:space="preserve">
+    <value>Nastavi</value>
+  </data>
+  <data name="ManualDownload_errFileNotFound" xml:space="preserve">
+    <value>Fajl {0} još uvek ne postoji. Pretraži disk.
+(Ime fajla treba da bude kao i predloženo)
+</value>
+  </data>
+  <data name="ManualDownload_labelDesc" xml:space="preserve">
+    <value>Klikni na dugme "Nastavi" kada završite sa preuzimanjem potrebnog fajla.</value>
+  </data>
+  <data name="ManualDownload_labelHeading" xml:space="preserve">
+    <value>Moraćete da preuzmete sa interneta sledeće fajlove:</value>
+  </data>
+  <data name="ManualDownload_linkDir" xml:space="preserve">
+    <value>Otvori direktorijum</value>
+  </data>
+  <data name="ManualDownload_linkURL" xml:space="preserve">
+    <value>Preuzmi fajl</value>
+  </data>
+  <data name="ManualDownload_Title" xml:space="preserve">
+    <value>Manuelno preuzimanje sa interneta</value>
+  </data>
+  <data name="MPSettings_errInvalidPath" xml:space="preserve">
+    <value>Morate da odaberete ispravnu instalacionu putanju za MediaPortal</value>
+  </data>
+  <data name="MPSettings_labelHeading" xml:space="preserve">
+    <value>Podesite potrebne opcije za MediaPortal instalaciju:</value>
+  </data>
+  <data name="MPSettings_labelInstDir" xml:space="preserve">
+    <value>Instalacioni direktorijum MediaPortal-a:</value>
+  </data>
+  <data name="MPSettings_msgSelectDir" xml:space="preserve">
+    <value>Odaberite instalacioni direktorijum za MediaPortal</value>
+  </data>
+  <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Podesite Windows Firewall da omogući pristup spolja na TV-server</value>
+  </data>
+  <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
+    <value>Morate da odaberete ispravnu instalacionu putanju za TV-server.</value>
+  </data>
+  <data name="TvServerSettings_labelHeading" xml:space="preserve">
+    <value>Podesite potrebne opcije za instalaciju TV-servera:</value>
+  </data>
+  <data name="TvServerSettings_labelInstDir" xml:space="preserve">
+    <value>Instalacioni direktorijum TV-servera:</value>
+  </data>
+  <data name="TvServerSettings_msgSelectDir" xml:space="preserve">
+    <value>Odaberite instalacioni direktorijum za TV-server</value>
+  </data>
+  <data name="Welcome_labelHeading1" xml:space="preserve">
+    <value>Hvala što ste odabrali MediaPortal ... Besplatni OpenSource Medija sistem</value>
+  </data>
+  <data name="Welcome_labelHeading2" xml:space="preserve">
+    <value>Ovaj alat će vas voditi kroz proces instalacije</value>
+  </data>
+  <data name="Welcome_labelHeading3" xml:space="preserve">
+    <value>Odaberite vaš jezik pre nego nastavite</value>
+  </data>
+  <data name="Finished_labelEbay" xml:space="preserve">
+    <value>MediaPortal je besplatan. Ako ste platili za softver, prevareni ste!</value>
+  </data>
+  <data name="Install_actionConfigure" xml:space="preserve">
+    <value>Podesi
+</value>
+  </data>
+  <data name="Install_actionRemove" xml:space="preserve">
+    <value>Odstrani</value>
+  </data>
+  <data name="Install_errConfigureFailed" xml:space="preserve">
+    <value>Podešavanje nije uspelo</value>
+  </data>
+  <data name="Install_errRemoveFailed" xml:space="preserve">
+    <value>De-instalacija nije uspela</value>
+  </data>
+  <data name="Install_msgConfiguring" xml:space="preserve">
+    <value>Podešavanje je u toku ...</value>
+  </data>
+  <data name="Install_stateConfigured" xml:space="preserve">
+    <value>Podešavanje je uspešno</value>
+  </data>
+  <data name="Install_stateNotConfigured" xml:space="preserve">
+    <value>Nije podešeno</value>
+  </data>
+  <data name="Install_stateRemoved" xml:space="preserve">
+    <value>Odstranjeno</value>
+  </data>
+  <data name="Install_stateUninstall" xml:space="preserve">
+    <value>De-instaliraj</value>
+  </data>
+  <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
+    <value>Pristup internet je potreban za proces instalacije.
+
+Da li želite da započnete sa instalacijom sada ili želite da prezumete potrebne programe
+kako bi ste nastavili za instalacijom kasnije?
+(na računaru bez pristupa internetu)</value>
+  </data>
+  <data name="DownloadOnly_no" xml:space="preserve">
+    <value>Preuzmi samo potrebne komponente</value>
+  </data>
+  <data name="DownloadOnly_yes" xml:space="preserve">
+    <value>Pokreni instalaciju</value>
+  </data>
+  <data name="Install_buttonDownload" xml:space="preserve">
+    <value>Preuzmi</value>
+  </data>
+  <data name="Install_stateDownloaded" xml:space="preserve">
+    <value>Preuzeto</value>
+  </data>
+  <data name="Install_actionDownload" xml:space="preserve">
+    <value>Preuzimanje</value>
+  </data>
+  <data name="Install_stateNotDownloaded" xml:space="preserve">
+    <value>Nije preuzeto</value>
+  </data>
+  <data name="Finished_labelHeading2_download" xml:space="preserve">
+    <value>Uspešno ste preuzeli sve komponente MediaPortal-a</value>
+  </data>
+  <data name="Install_labelHeadingDownload" xml:space="preserve">
+    <value>Klikni na dugme "Preuzmi" kako bi se preuzele sve potrebne komponente</value>
+  </data>
+  <data name="OS_Support" xml:space="preserve">
+    <value>Izvinjavamo se, ali vaš operativni sistem ne podržava MediaPortal!</value>
+  </data>
+  <data name="OS_Warning" xml:space="preserve">
+    <value>Vaš operativni sistem ne podržava MediaPortal jer Mikrosoft nije rešio neke probleme.
+Nastavite na sopstveni rizik!</value>
+  </data>
+  <data name="DownloadSettings_failed" xml:space="preserve">
+    <value>Preuzimanje podešavanja nije uspelo.
+Proverite podešavanja za Internet Eksplorer i pokušajte ponovo.
+Oštećen konfiguracioni fajl, ukoliko postoji, biće sada obrisan.</value>
+  </data>
+  <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
+    <value>Podesite Windows Firewall da omogući pristup spolja na MediaPortal</value>
+  </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value>Otkrivena je Beta Verzija SP-a, vaš sistem nije podržan ...
+Nastavite na sopstveni rizik!</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value>Ovaj program će se zatvoriti i otvoriti direktorijum "MediaPortal instalacija".
+Prenesite ovaj direktorijum na vaš HTPC. Pokrenite instalaciju pokretanjem "MediaPortal.DeployTool.exe".</value>
+  </data>
+  <data name="Install_stateSkipped" xml:space="preserve">
+    <value>Preskočeno
+</value>
+  </data>
+  <data name="Exit_Installation" xml:space="preserve">
+    <value>Da li stvarno želite da prekinete instalaciju MediaPortal-a?</value>
+  </data>
+  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
+    <value>Trenutna podešavanja za preuzimanje: Jezik={0}, Glavni={1}</value>
+  </data>
+  <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
+    <value>Odaberite podešavanja za preuzimanje sa interneta:</value>
+  </data>
+</root>

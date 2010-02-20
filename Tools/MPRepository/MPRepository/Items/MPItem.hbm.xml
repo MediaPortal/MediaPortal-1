@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="MPRepository"
+                   namespace="MPRepository.Items">
+
+  <class name="MPItem">
+    <id name="Id" unsaved-value="0">
+      <generator class="identity" />
+    </id>
+    <property name="Name" />
+    <many-to-one name="Type" />
+    <set name="Categories" table="MPItem_Categories" >
+      <key column="MPItem" />
+      <many-to-many class="MPCategory" />
+    </set>
+    <property name="Description" length="10000" />
+    <property name="DescriptionShort" length="150" />
+    <property name="License" length="10000" />
+    <property name="LicenseMustAccept" />
+    <property name="Author" />
+    <property name="Homepage" />
+    <bag name="Versions" order-by="version desc" cascade="all-delete-orphan" inverse="true" >
+      <key column="MPItem" />
+      <one-to-many class="MPItemVersion" />
+    </bag>
+    <bag name="Comments" order-by="time desc" cascade="all-delete-orphan">
+      <key column="MPItem" />
+      <one-to-many class="MPItemComment" />
+    </bag>
+    <set name="Tags" table ="MPItem_Tags">
+      <key column="MPItem" />
+      <many-to-many class="MPTag"/>
+    </set>
+    <component name="Rating">
+      <property name="votes" access="field" />
+      <property name="votesTotal" access="field" />
+    </component>
+    <property name="IsDeleted" />
+      
+    <!-- missing RATING. component? -->
+    
+  </class>
+</hibernate-mapping>
