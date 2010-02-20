@@ -371,53 +371,47 @@
     <Content Include="HelpContent\DeployToolGuide\DeployToolGuide.htm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\10_advancedInstall.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\10_advancedInstall.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\11_dbType.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\11_dbType.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\12_dbInstall.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\12_dbInstall.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\13_mpInstall.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\13_mpInstall.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\14_tvServerInstall.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\14_tvServerInstall.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\15_installFiles.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\15_installFiles.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\16_installFinished.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\16_installFinished.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\1_language.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\1_language.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\2_setupMode.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\2_setupMode.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\3_downloadSettings.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\3_downloadSettings.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\4_downloadFiles.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\4_downloadFiles.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\5_downloadFinished.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\5_downloadFinished.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\6_watchTV.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\6_watchTV.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\7_watchHDTV.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\8_tvEngine.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\9_installationMode.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\9_installationMode.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\common.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
