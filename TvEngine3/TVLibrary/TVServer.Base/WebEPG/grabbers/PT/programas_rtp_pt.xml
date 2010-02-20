@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="pt" availableDays="7" timezone="GMT Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="rtp1@rtp.pt" siteId="1" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://programas.rtp.pt/EPG/epg-dia.php?datai=-2&amp;dia=[DD]-[MM]-[YYYY]&amp;sem=e&amp;canal=[ID]&amp;gen=&amp;time=" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="&lt;!-- INICIO GRELHA" end="Actualiza">
+        <SectionTemplate tags="T">
+          <TemplateText>
+&lt;tr&gt;
+&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
+&lt;/tr&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

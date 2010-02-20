@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Grabber>
+ <Info availableDays="1" timezone="" version="2.0" />
+  <Channels>
+    <Channel id="A3Neox@antena3.es" siteId="A3_Neox" />
+    <Channel id="T5SPORT@telecinco.es" siteId="Tele_5_Sport" />
+    <Channel id="A3NOVA@antena3.es" siteId="A3_Nova" />
+    <Channel id="Antena3@antena3.es" siteId="Antena_3" />
+    <Channel id="Canal24@tve.es" siteId="Canal_24h" />
+    <Channel id="ClanTV@tve.es" siteId="Clan_TV" />
+    <Channel id="CNN+-es" siteId="CNN+" />
+    <Channel id="Cuatro.com" siteId="Cuatro" />
+    <Channel id="FlyMusic.tv" siteId="Fly_Music" />
+    <Channel id="LA_2@tve.es" siteId="La_2" />
+    <Channel id="LaSexta.com" siteId="La_Sexta" />
+    <Channel id="NetTV.es" siteId="Net_TV" />
+    <Channel id="Telecinco@Telecinco.es" siteId="Telecinco" />
+    <Channel id="T5Estrellas@telecinco.es" siteId="Tele_5_Estrellas" />
+    <Channel id="Teledeporte@tve.es" siteId="Teledeporte" />
+    <Channel id="TVE_1@tve.es" siteId="TVE1" />
+    <Channel id="Veo_TV@veo.es" siteId="Veo_TV" />
+    <Channel id="Veo_TV_2@veo.es" siteId="Veo_TV_2" />
+    <Channel id="40_Latino_TV-es" siteId="40_Latino_TV" />
+    <Channel id="Telemadrid@Telemadrid.es" siteId="Telemadrid" />
+    <Channel id="La_Otra@telemadrid.es" siteId="La_Otra" />
+    <Channel id="CMT-es" siteId="CMT" />
+    <Channel id="Onda_6@telemadrid.es" siteId="Onda_6" />
+    <Channel id="Canal_sur@canalsur.es" siteId="Canal_Sur" />
+    <Channel id="C2_Andalucia@canalsur.es" siteId="Canal_2_Andalucia" />
+    <Channel id="TVG@tvg.es" siteId="TVG" />
+    <Channel id="TVCanaria.tv" siteId="TV_Canaria" />
+    <Channel id="TVC@tv3.cat" siteId="TVC" />
+    <Channel id="Barcelona_TV@tv3.cat" siteId="Barcelona_TV" />
+    <Channel id="TV3@tv3.cat" siteId="TV3" />
+    <Channel id="K3_33@tv3.cat" siteId="K3_33" />
+    <Channel id="3_24@tv3.cat" siteId="3_24" />
+    <Channel id="Canal_300@tv3.cat" siteId="Canal_300" />
+    <Channel id="Canal_9@rtvv.es" siteId="Canal_9" />
+    <Channel id="Punt_2@rtvv.es" siteId="Punt_2" />
+    <Channel id="ETB1@eitb.com" siteId="ETB1" />
+    <Channel id="ETB2@eitb.com" siteId="ETB2" />
+    <Channel id="TD8@8tv.cat" siteId="td8" />
+    <Channel id="IB3.es" siteId="IB3" />
+    <Channel id="ETB-SAT@eitb.com" siteId="ETB-Sat" />
+    <Channel id="Canal_Vasco@eitb.es" siteId="Canal_Vasco" />
+    <Channel id="Galicia_TV_America@tvg.es" siteId="Galicia_TV_America" />
+    <Channel id="CanalExtremadura.es" siteId="Canal_Extremadura" />
+    <Channel id="AragonTelevision.es" siteId="Aragon_Television" />
+    <Channel id="PopularTV.net" siteId="Popular_TV" />
+    <Channel id="8Madrid.tv" siteId="8madrid" />
+  </Channels>
+
+  <Listing type="Html">
+    <Site url="http://www.programacion-tdt.com/[ID].html" post="" external="false" encoding="" />
+      <Html>
+         <Template name="default" start="Parrilla hoy en" end="Web oficial de la cadena">
+            <SectionTemplate tags="T">
+               <TemplateText>
+                  &lt;tr&gt;
+	          &lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+	          &lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
+	          &lt;/tr&gt;
+               </TemplateText>
+	    </SectionTemplate>
+         </Template>
+      </Html>
+   </Listing>
+</Grabber>
+ 	  	 

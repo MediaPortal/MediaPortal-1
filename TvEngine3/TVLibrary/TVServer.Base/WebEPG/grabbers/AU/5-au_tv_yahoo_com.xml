@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="en" availableDays="14" timezone="" version="2.0" />
+  <Channels>
+    <Channel id="abc-vic@abc.net.au" siteId="92843" />
+    <Channel id="abc2@abc.net.au" siteId="283793" />
+    <Channel id="7-vic-metro@seven.com.au" siteId="96100" />
+    <Channel id="9-vic-metro@ninemsn.com.au" siteId="252342" />
+    <Channel id="10-vic-metro@ten.com.au" siteId="250185" />
+    <Channel id="sbs@sbs.com.au" siteId="273191" />
+    <Channel id="sbs2@sbs.com.au" siteId="272787" />
+    <Channel id="channel31-vic@channel31.com.au" siteId="251882" />
+    <Channel id="abc-nsw@abc.net.au" siteId="18294" />
+    <Channel id="abc2@abc.net.au" siteId="283793" />
+    <Channel id="7-nsw-metro@seven.com.au" siteId="18891" />
+    <Channel id="9-nsw-metro@ninemsn.com.au" siteId="18671" />
+    <Channel id="10-nsw-metro@ten.com.au" siteId="85459" />
+    <Channel id="sbs@sbs.com.au" siteId="251831" />
+    <Channel id="sbs2@sbs.com.au" siteId="272787" />
+    <Channel id="abc-qld@abc.net.au" siteId="246952" />
+    <Channel id="abc2@abc.net.au" siteId="283793" />
+    <Channel id="7-qld-metro@seven.com.au" siteId="92783" />
+    <Channel id="9-qld-metro@ninemsn.com.au" siteId="260461" />
+    <Channel id="10-qld-metro@ten.com.au" siteId="246955" />
+    <Channel id="sbs@sbs.com.au" siteId="264783" />
+    <Channel id="sbs2@sbs.com.au" siteId="272787" />
+    <Channel id="abc-nt@abc.net.au" siteId="251888" />
+    <Channel id="abc2@abc.net.au" siteId="283793" />
+    <Channel id="7-nt-metro@seven.com.au" siteId="251862" />
+    <Channel id="9-nt-metro@ninemsn.com.au" siteId="86169" />
+    <Channel id="sbs@sbs.com.au" siteId="273204" />
+    <Channel id="sbs2@sbs.com.au" siteId="272787" />
+    <Channel id="abc-act@abc.net.au" siteId="275885" />
+    <Channel id="abc2@abc.net.au" siteId="283793" />
+    <Channel id="7-act-metro@seven.com.au" siteId="81869" />
+    <Channel id="9-act-metro@ninemsn.com.au" siteId="249943" />
+    <Channel id="10-act-metro@ten.com.au" siteId="289724" />
+    <Channel id="sbs@sbs.com.au" siteId="259105" />
+    <Channel id="sbs2@sbs.com.au" siteId="272787" />
+    <Channel id="abc-sa@abc.net.au" siteId="86170" />
+    <Channel id="abc2@abc.net.au" siteId="283793" />
+    <Channel id="7-sa-metro@seven.com.au" siteId="85832" />
+    <Channel id="9-sa-metro@ninemsn.com.au" siteId="86173" />
+    <Channel id="10-sa-metro@ten.com.au" siteId="250187" />
+    <Channel id="sbs@sbs.com.au" siteId="259106" />
+    <Channel id="sbs2@sbs.com.au" siteId="272787" />
+    <Channel id="abc-tas@abc.net.au" siteId="86162" />
+    <Channel id="abc2@abc.net.au" siteId="283793" />
+    <Channel id="7-tas-metro@seven.com.au" siteId="251856" />
+    <Channel id="9-tas-metro@ninemsn.com.au" siteId="249724" />
+    <Channel id="10-tas-metro@ten.com.au" siteId="272547" />
+    <Channel id="sbs@sbs.com.au" siteId="264617" />
+    <Channel id="sbs2@sbs.com.au" siteId="272787" />
+    <Channel id="abc-wa@abc.net.au" siteId="249832" />
+    <Channel id="abc2@abc.net.au" siteId="283793" />
+    <Channel id="7-wa-metro@seven.com.au" siteId="86178" />
+    <Channel id="9-wa-metro@ninemsn.com.au" siteId="96115" />
+    <Channel id="10-wa-metro@ten.com.au" siteId="16173" />
+    <Channel id="sbs-wa@sbs.com.au" siteId="259107" />
+    <Channel id="sbs2@sbs.com.au" siteId="272787" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://au.tv.yahoo.com/venueresults.html?dt=[YYYY]-[MM]-[DD]&amp;vn=[ID]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="&lt;b&gt; Program">
+        <SectionTemplate tags="T">
+          <TemplateText>
+	&lt;tr&gt;
+	&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
+	&lt;/tr&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Template name="Details">
+        <SectionTemplate tags="HP">
+          <TemplateText>
+&lt;h2&gt;&lt;#SUBTITLE&gt;&lt;&lt;/h2&gt;
+&lt;P&gt;:&lt;#GENRE&gt;&lt;/P&gt;
+&lt;P&gt;&lt;#DESCRIPTION&gt;&lt;/P&gt;
+&lt;P&gt;&lt;/P&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Sublinks>
+        <Sublink search="event" template="Details">
+          <Link url="http://au.tv.yahoo.com/[1]" post="" external="false" encoding="" />
+        </Sublink>
+      </Sublinks>
+    </Html>
+  </Listing>
+</Grabber>

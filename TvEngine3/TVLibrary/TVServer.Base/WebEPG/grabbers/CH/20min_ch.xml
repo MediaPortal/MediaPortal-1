@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="de" availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="sf1@sfdrs.ch" siteId="5" />
+    <Channel id="sf2@sfdrs.ch" siteId="14" />
+    <Channel id="tsr1@tsr.ch" siteId="19" />
+    <Channel id="tsr2@tsr.ch" siteId="20" />
+    <Channel id="tsi1@rtsi.ch" siteId="180" />
+    <Channel id="startv.ch" siteId="15" />
+    <Channel id="www.telezueri.ch" siteId="33" />
+    <Channel id="orf1@orf.at" siteId="3" />
+    <Channel id="orf2@orf.at" siteId="4" />
+    <Channel id="ard.de" siteId="2" />
+    <Channel id="pro-sieben.de" siteId="10" />
+    <Channel id="3sat.de" siteId="7" />
+    <Channel id="sat1.de" siteId="13" />
+    <Channel id="arte-tv.com" siteId="8" />
+    <Channel id="rtl.de" siteId="11" />
+    <Channel id="rtl2.de" siteId="12" />
+    <Channel id="super-rtl.de" siteId="16" />
+    <Channel id="kabel1.de" siteId="9" />
+    <Channel id="vox.de" siteId="21" />
+    <Channel id="zdf.de" siteId="6" />
+    <Channel id="dsf.de" siteId="25" />
+    <Channel id="wdr.de" siteId="22" />
+    <Channel id="swr.de" siteId="17" />
+    <Channel id="br-online.de" siteId="39" />
+    <Channel id="ndrtv.de" siteId="40" />
+    <Channel id="mdr.de" siteId="28" />
+    <Channel id="neunlive.de" siteId="50" />
+    <Channel id="viva.tv" siteId="35" />
+    <Channel id="vivaplus.tv" siteId="55" />
+    <Channel id="mtv.de" siteId="29" />
+    <Channel id="tf1.fr" siteId="34" />
+    <Channel id="france2.fr" siteId="168" />
+    <Channel id="france3.fr" siteId="169" />
+    <Channel id="rtl9.com" siteId="177" />
+    <Channel id="f@tv5.fr" siteId="181" />
+    <Channel id="bbcprime.com" siteId="1" />
+    <Channel id="eurosport@eurosport.com" siteId="26" />
+    <Channel id="cnni-emea@cnn.com" siteId="24" />
+    <Channel id="3plus.ch" siteId="184" />
+    <Channel id="u1tv.ch" siteId="52" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.20min.ch/unterhaltung/tv-guide/" post="program_id=&amp;cb-[ID]=on&amp;dates=0-6&amp;time=all_day&amp;text=&amp;cat=all&amp;subcat=all" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="show_program">
+        <SectionTemplate tags="T">
+          <TemplateText>
+            &lt;tr&gt;
+            &lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Template name="Details" start="SMS">
+        <SectionTemplate tags="T">
+          <TemplateText>
+            &lt;/tr&gt;
+            &lt;Z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/Z)?&gt;
+            &lt;Z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/Z)?&gt;
+            &lt;Z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/Z)?&gt;
+            &lt;Z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/Z)?&gt;
+            &lt;Z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/Z)?&gt;
+            &lt;Z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/Z)?&gt;
+            &lt;Z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/Z)?&gt;
+            &lt;Z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/Z)?&gt;
+            &lt;Z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/Z)?&gt;
+            &lt;Z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/Z)?&gt;
+            &lt;Z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/Z)?&gt;
+            &lt;Z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/Z)?&gt;
+            &lt;Z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/Z)?&gt;
+            &lt;Z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/Z)?&gt;
+          </TemplateText>
+          <MatchList>
+            <Match field="#COUNTRY" match="Produktionsland" />
+            <Match field="#GENRE" match="Genre" />
+            <Match field="#DESCRIPTION" match="Beschreibung" />
+            <Match field="#DESCRIPTION" match="Info" />
+            <Match field="#ACTORS" match="Schauspieler" />
+            <Match field="#SUBTITLE" match="Untertitel" />
+            <Match field="#EPISODE" match="Episode" />
+          </MatchList>
+        </SectionTemplate>
+      </Template>
+      <Sublinks>
+        <Sublink search="show_program" template="Details">
+          <Link url="http://www.20min.ch/unterhaltung/tv-guide/" post="program_id=[1]&amp;cb-5=on&amp;dates=0-6&amp;time=all_day&amp;text=&amp;cat=all&amp;subcat=all" external="false" encoding="" />
+        </Sublink>
+      </Sublinks>
+    </Html>
+  </Listing>
+</Grabber>

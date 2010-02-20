@@ -1,0 +1,115 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0D1BA455-CE59-4133-8EAA-1A1E82F8AA12}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DirectShowLib</RootNamespace>
+    <AssemblyName>DirectShowLib</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;ALLOW_UNTESTED_INTERFACES</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;ALLOW_UNTESTED_INTERFACES</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="amstream.cs" />
+    <Compile Include="amvideo.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="atscpsipparser.cs" />
+    <Compile Include="austream.cs" />
+    <Compile Include="AxCore.cs" />
+    <Compile Include="AXExtend.cs" />
+    <Compile Include="BDAIface.cs" />
+    <Compile Include="Bdatif.cs" />
+    <Compile Include="BDATypes.cs" />
+    <Compile Include="Control.cs" />
+    <Compile Include="DES.cs" />
+    <Compile Include="DevEnum.cs" />
+    <Compile Include="DMODShow.cs" />
+    <Compile Include="dsattrib.cs" />
+    <Compile Include="DsUtils.cs" />
+    <Compile Include="dvbsiparser.cs" />
+    <Compile Include="DVDIf.cs" />
+    <Compile Include="DynGraph.cs" />
+    <Compile Include="encdec.cs" />
+    <Compile Include="EvCode.cs" />
+    <Compile Include="IL21Dec.cs" />
+    <Compile Include="MediaObj.cs" />
+    <Compile Include="MediaParam.cs" />
+    <Compile Include="Misc.cs" />
+    <Compile Include="Mixerocx.cs" />
+    <Compile Include="mmstream.cs" />
+    <Compile Include="mpconfig.cs" />
+    <Compile Include="Mpeg2Data.cs" />
+    <Compile Include="mpeg2psiparser.cs" />
+    <Compile Include="Mpeg2Structs.cs" />
+    <Compile Include="other.cs" />
+    <Compile Include="PlayList.cs" />
+    <Compile Include="QEdit.cs" />
+    <Compile Include="qnetwork.cs" />
+    <Compile Include="RegBag.cs" />
+    <Compile Include="Sbe.cs" />
+    <Compile Include="Tuner.cs" />
+    <Compile Include="TvRatings.cs" />
+    <Compile Include="Uuids.cs" />
+    <Compile Include="Vidcap.cs" />
+    <Compile Include="VidPort.cs" />
+    <Compile Include="Vmr9.cs" />
+    <Compile Include="VmRender.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

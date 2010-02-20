@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfTransponder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Transponder>
+    <CarrierFrequency>3922000</CarrierFrequency>
+    <Polarisation>CircularR</Polarisation>
+    <SymbolRate>2895</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>RateNotSet</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>4185000</CarrierFrequency>
+    <Polarisation>CircularR</Polarisation>
+    <SymbolRate>6527</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>Rate1_2</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>3762000</CarrierFrequency>
+    <Polarisation>CircularR</Polarisation>
+    <SymbolRate>13500</SymbolRate>
+    <Modulation>Mod8Psk</Modulation>
+    <InnerFecRate>RateNotSet</InnerFecRate>
+    <Pilot>On</Pilot>
+    <Rolloff>ThirtyFive</Rolloff>
+  </Transponder>
+</ArrayOfTransponder>

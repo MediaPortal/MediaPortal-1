@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="si" availableDays="2" timezone="Central Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="POP TV" siteId="4" />
+	<Channel id="Gea TV" siteId="1000034" />
+	<Channel id="Info TV (HD)" siteId="1000029" />
+	<Channel id="MediaTV" siteId="2000000006" />
+    <Channel id="Kanal A" siteId="5" />
+    <Channel id="TV3" siteId="7" />
+    <Channel id="Info TV" siteId="8" />
+    <Channel id="MediaTV" siteId="2000000006" />
+    <Channel id="MTV Adria" siteId="41" />
+    <Channel id="Net TV" siteId="12" />
+    <Channel id="Klik TV" siteId="1000051" />
+    <Channel id="R Kanal+" siteId="2000000001" />
+    <Channel id="RTS Maribor" siteId="14" />
+    <Channel id="SIP TV" siteId="16" />
+    <Channel id="Sponka TV" siteId="2000000004" />
+    <Channel id="SportKlub +" siteId="2000000057" />
+    <Channel id="SportKlub Slovenija" siteId="2000000059" />
+    <Channel id="Š 1" siteId="1000009" />
+    <Channel id="Š 2" siteId="1000024" />
+    <Channel id="TV Paprika" siteId="13" />
+    <Channel id="TV Pika" siteId="6" />
+    <Channel id="Animal Planet" siteId="20" />
+    <Channel id="BBC Prime" siteId="21" />
+    <Channel id="BBC World" siteId="22" />
+    <Channel id="Boomerang" siteId="2000000032" />
+    <Channel id="Cartoon Network" siteId="2000000039" />
+    <Channel id="CNBC" siteId="2000000005" />
+    <Channel id="CNN International" siteId="25" />
+	<Channel id="Da Vinci Learning" siteId="1000055" />
+    <Channel id="Discovery Channel" siteId="26" />
+    <Channel id="Discovery Channel HD" siteId="2000000054" />
+    <Channel id="Discovery Science" siteId="28" />
+    <Channel id="Discovery T &amp; L" siteId="29" />
+    <Channel id="Discovery World" siteId="27" />
+	<Channel id="ESPN America" siteId="2000000031" />
+    <Channel id="ESPN Classic Sport" siteId="31" />
+    <Channel id="Eurosport" siteId="33" />
+	<Channel id="Eurosport HD" siteId="1000025" />
+    <Channel id="Eurosport 2 (ANG)" siteId="35" />
+    <Channel id="Extreme Sports" siteId="37" />
+    <Channel id="Fashion TV" siteId="38" />
+    <Channel id="Fox News" siteId="2000000000" />
+    <Channel id="Fox Crime" siteId="1000033" />
+    <Channel id="Fox Life" siteId="1000032" />
+    <Channel id="Hallmark" siteId="2000000040" />
+    <Channel id="HBO" siteId="1000015" />
+    <Channel id="History Channel" siteId="1000043" />
+	<Channel id="History Channel HD" siteId="1000048" />
+    <Channel id="MGM" siteId="1000028" />
+    <Channel id="HBO Commedy" siteId="1000016" />
+    <Channel id="Jetix" siteId="39" />
+	<Channel id="Motors TV" siteId="40" />
+	<Channel id="MTV 2" siteId="136" />
+	<Channel id="MTV Dance" siteId="126" />
+	<Channel id="MTV Hits" siteId="127" />
+    <Channel id="NASN" siteId="2000000031" />
+    <Channel id="National Geographic" siteId="42" />
+	<Channel id="National Geographic HD" siteId="1000049" />
+    <Channel id="National Geographic Wild" siteId="18" />
+    <Channel id="Sailing Channel" siteId="46" />
+    <Channel id="Sky News" siteId="2000000002" />
+    <Channel id="Smile of a Child TV" siteId="2000000010" />
+    <Channel id="Trace TV" siteId="47" />
+    <Channel id="Travel Channel" siteId="48" />
+    <Channel id="TV1000" siteId="1000010" />
+    <Channel id="VH1" siteId="50" />
+    <Channel id="VH1 Classic" siteId="51" />
+    <Channel id="Viasat History" siteId="1000046" />
+	<Channel id="Viasat Explorer" siteId="1000045" />
+	<Channel id="Yacht &amp; Sail" siteId="46" />
+    <Channel id="Zone Club" siteId="24" />
+    <Channel id="Zone Reality" siteId="44" />
+    <Channel id="3SAT" siteId="55" />
+    <Channel id="Das Erste (ARD)" siteId="59" />
+    <Channel id="DSF" siteId="60" />
+	<Channel id="DW-TV" siteId="2000000008" />
+	<Channel id="Eurosport (NEM)" siteId="1000044" />
+	<Channel id="Eurosport 2 (NEM)" siteId="1000003" />
+    <Channel id="Kabel1" siteId="61" />
+    <Channel id="KiKa" siteId="62" />
+	<Channel id="N 24" siteId="113" />
+    <Channel id="ORF1" siteId="66" />
+    <Channel id="ORF2" siteId="67" />
+    <Channel id="Pro 7" siteId="69" />
+    <Channel id="RTL" siteId="70" />
+    <Channel id="RTL2" siteId="71" />
+    <Channel id="SAT1" siteId="72" />
+    <Channel id="Super RTL" siteId="73" />
+    <Channel id="Viva" siteId="76" />
+    <Channel id="VOX" siteId="78" />
+    <Channel id="ZDF" siteId="80" />
+    <Channel id="AB Moteurs" siteId="2000000014" />
+	<Channel id="Animaux" siteId="81" />
+    <Channel id="Chasse et Peche" siteId="83" />
+	<Channel id="Encyclopedia" siteId="1000038" />
+	<Channel id="FR2" siteId="86" />
+	<Channel id="FR3" siteId="87" />
+    <Channel id="Mezzo" siteId="91" />
+    <Channel id="TiJi" siteId="92" />
+    <Channel id="TV 5 Europe" siteId="93" />
+    <Channel id="RAI 1" siteId="101" />
+    <Channel id="RAI 2" siteId="102" />
+    <Channel id="RAI 3" siteId="103" />
+    <Channel id="Rete 4" siteId="2000000036" />
+    <Channel id="Italia 1" siteId="2000000038" />
+    <Channel id="Canale 5" siteId="2000000037" />
+    <Channel id="DM SAT Televizija" siteId="2000000026" />
+    <Channel id="Pink Plus" siteId="107" />
+    <Channel id="RTS" siteId="108" />
+    <Channel id="HRT 1" siteId="105" />
+    <Channel id="HRT 2" siteId="106" />
+    <Channel id="Nezavisna televizija" siteId="151" />
+    <Channel id="RTVE" siteId="98" />
+	<Channel id="TL Novelas Europe" siteId="100" />
+    <Channel id="Zone Romantica" siteId="45" />
+    <Channel id="Duna 1" siteId="2000000007" />
+    <Channel id="Duna 2" siteId="2000000013" />
+    <Channel id="Magyar Televizio 2" siteId="111" />
+    <Channel id="BNTV" siteId="129" />
+	<Channel id="DM SAT Televizija" siteId="2000000026" />
+    <Channel id="Hayat SAT" siteId="110" />
+	<Channel id="TV Polonia" siteId="2000000003" />
+    <Channel id="OBN" siteId="152" />
+    <Channel id="RTK Kosova" siteId="2000000015" />
+  </Channels>
+  <Channel id="RTR Planeta" siteId="112" />
+  <Listing type="Html">
+    <Site url="http://tv.t-2.net/?TVCHUID=[ID]&amp;date=[YYYY][MM][DD]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="Spored za dan" end="Datumi za ta program:">
+            <SectionTemplate tags="TB" >
+    <TemplateText>
+    &lt;tr&gt;&lt;td&gt;&lt;tt&gt;&lt;#START&gt;&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;&lt;b&gt;&lt;#TITLE&gt;&lt;/b&gt;&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>
