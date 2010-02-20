@@ -277,13 +277,13 @@ namespace TvControl
     /// </summary>
     /// <param name="user">The user.</param>
     /// <param name="idChannel">id of the channel</param>
-    /// <param name="card">returns on which card timeshifting is started</param>
+    /// <param name="card">returns on which card timeshifting is started</param>    
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
     public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card)
     {
-      card = null;
+      card = null;      
       try
       {
         TvResult result = RemoteControl.Instance.StartTimeShifting(ref user, idChannel, out card);
@@ -302,7 +302,33 @@ namespace TvControl
     /// <param name="user">The user.</param>
     /// <param name="idChannel">id of the channel</param>
     /// <param name="card">returns on which card timeshifting is started</param>
-    /// <param name="forceCardId">Indicated, if the card should be forced</param>
+    /// <param name="cardChanged">indicates if card was changed</param>
+    /// <returns>
+    /// TvResult indicating whether method succeeded
+    /// </returns>
+    public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card, out bool cardChanged)
+    {
+      card = null;
+      cardChanged = false;
+      try
+      {        
+        TvResult result = RemoteControl.Instance.StartTimeShifting(ref user, idChannel, out card, out cardChanged);
+        return result;
+      }
+      catch (Exception)
+      {
+        HandleFailure();
+      }
+      return TvResult.UnknownError;
+    }
+
+    /// <summary>
+    /// Start timeshifting on a specific channel
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <param name="idChannel">id of the channel</param>
+    /// <param name="card">returns on which card timeshifting is started</param>
+    /// <param name="forceCardId">Indicated, if the card should be forced</param>    
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
@@ -310,7 +336,7 @@ namespace TvControl
     {
       card = null;
       try
-      {
+      {        
         TvResult result = RemoteControl.Instance.StartTimeShifting(ref user, idChannel, out card, forceCardId);
         return result;
       }

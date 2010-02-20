@@ -3264,8 +3264,8 @@ namespace TvPlugin
         {
           g_Player.OnZapping(0x80); // Setup Zapping for TsReader, requesting new PAT from stream
         }
-
-        succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card);
+        bool cardChanged = false;
+        succeeded = server.StartTimeShifting(ref user, channel.IdChannel, out card, out cardChanged);
 
         if (_status.IsSet(LiveTvStatus.WasPlaying))
         {
@@ -3288,32 +3288,13 @@ namespace TvPlugin
           return true; // "success"
         }
 
-
-        //timeshifting succeeded					                    
-
-        // we might have a situation on the server where card has changed in order to complete a 
-        // channel change. - lets check for this.
-        // 2 cases:
-        // if the timeshift switched from card 1 -> 2 (error) -> 1
-        if (newCardId != card.Id)
+        if (cardChanged)
         {
-          if (Card.Id != card.Id)
-          {
             _status.Set(LiveTvStatus.CardChange);
-          }
-          else
+          if (card != null)
           {
-            // reset the card change flag, otherwise the StartPlay() would cause a step back to same ts buffer file
-            _status.Reset(LiveTvStatus.CardChange);
-          }
-          // after CI menu was moved to new card, now assign it to the fallback card after change
           RegisterCiMenu(card.Id);
         }
-        // if the timeshift switched from card 1 -> 2 (ok) 
-        else if (Card.Id != card.Id)
-        {
-          // expected card change successful, set card change flag so new ts buffer file will be started
-          _status.Set(LiveTvStatus.CardChange);
           _status.Reset(LiveTvStatus.WasPlaying);
         }
         else

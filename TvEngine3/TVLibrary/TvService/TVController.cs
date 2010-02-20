@@ -2432,16 +2432,35 @@ namespace TvService
     /// <param name="idChannel">The id channel.</param>
     /// <param name="card">returns card for which timeshifting is started</param>
     /// <param name="forceCardId">Indicated, if the card should be forced</param>
+    /// <param name="cardChanged">indicates if card was changed</param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
     public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card, bool forceCardId)
     {
+      bool cardChanged = false;
+      return StartTimeShifting(ref user, idChannel, out card, forceCardId, out cardChanged);
+    }
+
+    /// <summary>
+    /// Start timeshifting on a specific channel
+    /// </summary>
+    /// <param name="user">user credentials.</param>
+    /// <param name="idChannel">The id channel.</param>
+    /// <param name="card">returns card for which timeshifting is started</param>
+    /// <param name="forceCardId">Indicated, if the card should be forced</param>
+    /// <param name="cardChanged">indicates if card was changed</param>
+    /// <returns>
+    /// TvResult indicating whether method succeeded
+    /// </returns>
+    public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card, bool forceCardId, out bool cardChanged)
+    {
+      cardChanged = false;
       if (user == null)
       {
         card = null;
         return TvResult.UnknownError;
-      }
+      }      
 
       Channel channel = Channel.Retrieve(idChannel);
       Log.Write("Controller: StartTimeShifting {0} {1}", channel.DisplayName, channel.IdChannel);
@@ -2502,12 +2521,15 @@ namespace TvService
           return result;
         }
 
+        int previousCardId = user.CardId;       
+
         //keep tuning each card until we are succesful                
         for (int i = 0; i < freeCards.Count; i++)
         {
           if (i > 0)
           {
             Log.Write("Controller: Timeshifting failed, lets try next available card.");
+            cardChanged = (freeCards.Count > 1);
           }
           User userCopy = new User(user.Name, user.IsAdmin);
 
@@ -2602,6 +2624,12 @@ namespace TvService
           card = GetVirtualCard(userCopy);
           RemoveUserFromOtherCards(card.Id, userCopy); //only remove user from other cards if new tuning was a success
           UpdateChannelStatesForUsers();
+
+          if (!cardChanged)
+          {
+            cardChanged = (previousCardId != userCopy.CardId);
+          }
+
           break; //if we made it to the bottom, then we have a successful timeshifting.
         }
 
@@ -2631,13 +2659,29 @@ namespace TvService
     /// </summary>
     /// <param name="user">user credentials.</param>
     /// <param name="idChannel">The id channel.</param>
-    /// <param name="card">returns card for which timeshifting is started</param>
+    /// <param name="card">returns card for which timeshifting is started</param>    
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
     public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card)
     {
-      return StartTimeShifting(ref user, idChannel, out card, false);
+      bool cardChanged = false;
+      return StartTimeShifting(ref user, idChannel, out card, false, out cardChanged);
+    }
+
+    /// <summary>
+    /// Start timeshifting on a specific channel
+    /// </summary>
+    /// <param name="user">user credentials.</param>
+    /// <param name="idChannel">The id channel.</param>
+    /// <param name="card">returns card for which timeshifting is started</param>
+    /// <param name="cardChanged">indicates if card was changed</param>
+    /// <returns>
+    /// TvResult indicating whether method succeeded
+    /// </returns>
+    public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card, out bool cardChanged)
+    {
+      return StartTimeShifting(ref user, idChannel, out card, false, out cardChanged);
     }
 
     /// <summary>
