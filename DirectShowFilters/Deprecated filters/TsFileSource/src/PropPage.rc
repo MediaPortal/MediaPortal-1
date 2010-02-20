@@ -1,0 +1,514 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// German (Germany) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE MOVEABLE PURE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // German (Germany) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (Australia) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENA)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PROPPAGE DIALOG DISCARDABLE  0, 0, 302, 298
+STYLE DS_MODALFRAME | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Program Infomation",IDC_STATIC,7,7,111,207,BS_CENTER
+    LTEXT           "Duration",IDC_STATIC,13,16,30,10
+    EDITTEXT        IDC_DURATION,13,26,99,13,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "PCR ~ PTS",IDC_STATIC,14,41,49,8
+    LTEXT           "PMT",IDC_STATIC,67,80,15,8
+    EDITTEXT        IDC_PMT,86,78,27,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "PCR",IDC_STATIC,67,94,15,8
+    EDITTEXT        IDC_PCR,86,92,27,12,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "&Select",IDC_ENTER,13,196,58,12,WS_GROUP
+    EDITTEXT        IDC_PGM,73,196,40,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Prev",IDC_PREV,13,177,27,13,WS_GROUP
+    EDITTEXT        IDC_CNT,97,177,16,12,ES_CENTER | ES_AUTOHSCROLL | 
+                    ES_READONLY
+    GROUPBOX        "Pids",IDC_STATIC,123,7,80,138
+    LTEXT           "Video",IDC_STATIC,129,16,25,8
+    EDITTEXT        IDC_VIDEO,159,14,40,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Audio",IDC_STATIC,129,48,25,8
+    EDITTEXT        IDC_AUDIO,159,46,20,12,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_AUDIO2,179,46,20,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "AC3",IDC_STATIC,129,64,27,8
+    EDITTEXT        IDC_AC3,159,62,20,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "SID",IDC_STATIC,67,66,17,8
+    EDITTEXT        IDC_SID,86,64,27,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Teletext",IDC_STATIC,129,113,27,8
+    EDITTEXT        IDC_TXT,159,111,40,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "File Status",IDC_STATIC,13,245,35,8
+    EDITTEXT        IDC_FILEMODE,52,244,65,12,ES_AUTOHSCROLL | ES_READONLY
+    CONTROL         "Live Delay",IDC_DELAYMODE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,210,128,85,10
+    GROUPBOX        "MPEG Audio Pin Type",IDC_STATIC,210,7,85,34
+    RADIOBUTTON     "MPEG 1",IDC_MPEG1MODE,223,18,65,8,WS_GROUP
+    RADIOBUTTON     "MPEG 2",IDC_MPEG2MODE,223,29,65,8,WS_GROUP
+    CONTROL         "Demux Control",IDC_AUTOMODE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,131,177,62,10
+    CONTROL         "AC3 Preference",IDC_AC3MODE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,210,68,85,10
+    CONTROL         "Rate Control",IDC_RATECONTROL,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,210,117,85,10
+    CONTROL         "Enable TS Pin",IDC_CREATETSPIN,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,210,105,85,10
+    CONTROL         "Audio2 Preference",IDC_AUDIO2MODE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,210,56,85,10
+    PUSHBUTTON      "&Save",IDC_SAVE,251,237,44,13
+    EDITTEXT        IDC_TSID,34,92,27,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "TSID",IDC_STATIC,14,95,19,8
+    LTEXT           "Count",IDC_STATIC,74,180,20,8
+    EDITTEXT        IDC_NID,34,64,27,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "NID",IDC_STATIC,15,66,15,8
+    EDITTEXT        IDC_AC3_2,179,62,20,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "AAC",IDC_STATIC,129,80,27,8
+    PUSHBUTTON      "&Next",IDC_NEXT,44,177,27,13,WS_GROUP
+    EDITTEXT        IDC_ONID,34,78,27,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "ONID",IDC_STATIC,13,80,17,8
+    CONTROL         "NP Control",IDC_NPCTRL,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,131,190,56,10
+    CONTROL         "NP Slave",IDC_NPSLAVE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,131,203,54,10
+    PUSHBUTTON      "&Refresh",IDC_REFRESH,197,237,45,13
+    EDITTEXT        IDC_ONETID,13,138,100,13,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_CHID,13,161,100,13,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_NETID,13,115,99,13,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "Show EPG &Info",IDC_EPGINFO,125,237,63,13
+    LTEXT           "Network Name",IDC_STATIC,14,106,48,8
+    LTEXT           "Original Network Name",IDC_STATIC,13,129,74,8
+    LTEXT           "Program Name",IDC_STATIC,13,152,48,8
+    CONTROL         "ROT Enable",IDC_ROTMODE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,131,216,55,10
+    GROUPBOX        "Graph Control",IDC_STATIC,124,166,171,65
+    GROUPBOX        "Reference Clock",IDC_STATIC,209,171,80,57,BS_CENTER
+    CONTROL         "Default",IDC_DEFCLOCK,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,215,183,65,8
+    CONTROL         "Demux",IDC_DEMCLOCK,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,215,205,65,8
+    CONTROL         "Audio Render",IDC_RENCLOCK,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,215,216,65,8
+    EDITTEXT        IDC_VIDEOTYPE,159,30,40,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Vid Typ",IDC_STATIC,129,32,28,8
+    EDITTEXT        IDC_AAC,159,78,20,12,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_AAC2,179,78,20,12,ES_AUTOHSCROLL | ES_READONLY
+    CONTROL         "Enable Teletext Pin",IDC_CREATETXTPIN,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,210,80,85,10
+    CONTROL         "TSFileSource",IDC_TSFSCLOCK,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,215,194,65,8
+    PUSHBUTTON      "&Change Filename",IDC_LOAD,13,216,100,11
+    LTEXT           "File Bit Rate",IDC_STATIC,68,41,43,8
+    EDITTEXT        IDC_DATARATE,68,49,45,13,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_CURR,14,49,48,12,ES_AUTOHSCROLL | ES_READONLY
+    CONTROL         "Force 720x576 A.R.",IDC_FIXED_AR,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,210,44,85,10
+    GROUPBOX        "Description",IDC_STATIC,7,257,288,36
+    LTEXT           "Subtitle",IDC_STATIC,129,128,27,8
+    EDITTEXT        IDC_SUB,159,126,40,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "DTS",IDC_STATIC,129,97,27,8
+    EDITTEXT        IDC_DTS,159,95,20,12,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_DTS2,179,95,20,12,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_FILE,7,230,110,12,ES_AUTOHSCROLL | ES_READONLY
+    CONTROL         "Enable Subtitle Pin",IDC_CREATESUBPIN,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,210,92,85,10
+    EDITTEXT        IDC_RATE,226,151,29,13
+    CONTROL         "Spin2",IDC_RATESPIN,"msctls_updown32",UDS_SETBUDDYINT | 
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
+                    WS_TABSTOP,246,151,11,14
+    PUSHBUTTON      "&Change",IDC_RATECHG,259,151,36,13,WS_GROUP
+    CTEXT           "TSFileSource Version 2.2.0.9\nThis filter is published under Gnu Public Licence © 2003. Written by\nDH, bear@forums.dvbowners.com and nate@forums.dvbowners.com.",
+                    IDC_STATIC,22,265,241,26
+    CTEXT           "Beta 21",IDC_STATIC,267,265,28,8
+    CONTROL         "Packet Inject Enable",IDC_INJECTMODE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,210,139,85,10
+    LTEXT           "Clock Speed",IDC_STATIC,202,149,23,18
+    CONTROL         "Use Shared Mem",IDC_SHAREDMODE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,127,150,70,10
+END
+
+IDD_SINKPROPPAGE DIALOG DISCARDABLE  0, 0, 302, 212
+STYLE DS_MODALFRAME | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Registry Infomation",IDC_STATIC,7,7,111,138,BS_CENTER
+    LTEXT           "Chunk Reserve",IDC_STATIC,13,16,77,10
+    PUSHBUTTON      "&Save Registry Settings",IDC_SAVE,13,148,96,13
+    EDITTEXT        IDC_CHKRES,14,26,39,12,ES_AUTOHSCROLL
+    LTEXT           "Max Buffer File Size",IDC_STATIC,13,41,77,10
+    EDITTEXT        IDC_MAXSIZE,13,51,40,12,ES_AUTOHSCROLL
+    LTEXT           "Min Numb Buffer Files",IDC_STATIC,13,67,70,10
+    EDITTEXT        IDC_MINNUMB,13,76,27,12,ES_AUTOHSCROLL
+    LTEXT           "Max Numb Buffer Files",IDC_STATIC,13,91,77,10
+    EDITTEXT        IDC_MAXNUMB,14,100,26,12,ES_AUTOHSCROLL
+    LTEXT           "MBytes",IDC_STATIC,56,27,24,10
+    LTEXT           "MBytes",IDC_STATIC,56,52,24,10
+    PUSHBUTTON      "&Change",IDC_CHKRESCHG,84,25,30,12,WS_GROUP
+    PUSHBUTTON      "&Change",IDC_MAXSIZECHG,84,50,30,12,WS_GROUP
+    PUSHBUTTON      "&Change",IDC_MINNUMBCHG,84,76,30,12,WS_GROUP
+    PUSHBUTTON      "&Change",IDC_MAXNUMBCHG,84,101,30,12,WS_GROUP
+    LTEXT           "Default File Name",IDC_STATIC,13,115,77,10
+    EDITTEXT        IDC_DEFNAME,13,124,65,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Change",IDC_DEFNAMECHG,83,125,30,12,WS_GROUP
+    GROUPBOX        "Status Infomation",IDC_STATIC,184,7,111,137,BS_CENTER
+    EDITTEXT        IDC_CURNAME,189,102,66,12,ES_AUTOHSCROLL
+    LTEXT           "Current File Name",IDC_STATIC,189,92,77,10
+    PUSHBUTTON      "&Change",IDC_CURNAMECHG,259,102,29,12,WS_GROUP
+    PUSHBUTTON      "&Refresh Page",IDC_REFRESH,190,148,96,13
+    EDITTEXT        IDC_CURSIZE,189,127,66,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Current Buffer Size",IDC_STATIC,189,117,77,10
+    LTEXT           "MBytes",IDC_STATIC,259,126,24,10
+    EDITTEXT        IDC_PKTERRORS,189,78,66,12,ES_AUTOHSCROLL
+    LTEXT           "Packet Errors",IDC_STATIC,189,68,60,10
+    PUSHBUTTON      "&Reset",IDC_RESET,259,78,29,12,WS_GROUP
+    GROUPBOX        "Description",IDC_STATIC,7,165,288,43
+    EDITTEXT        IDC_CURNUMB,267,17,20,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Current File Name Id",IDC_STATIC,189,19,68,10
+    EDITTEXT        IDC_NUMBADD,267,43,20,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Number Files Added",IDC_STATIC,189,44,67,10
+    EDITTEXT        IDC_NUMBREM,267,56,20,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Number Removed",IDC_STATIC,189,58,66,10
+    EDITTEXT        IDC_TOTALNUMB,267,30,20,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Total Files In Use",IDC_STATIC,189,32,68,10
+    CTEXT           "TSFileSink of TSFileSource Version 2.2.0.9\nThis filter is published under Gnu Public Licence © 2003. Written by\nDH, bear@forums.dvbowners.com and nate@forums.dvbowners.com.",
+                    IDC_STATIC,26,175,237,26
+    CTEXT           "Beta 21",IDC_STATIC,267,174,28,8
+END
+
+IDD_PARSERPROPPAGE DIALOGEX 0, 0, 304, 308
+STYLE DS_MODALFRAME | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Program Infomation",IDC_STATIC,9,9,111,207,BS_CENTER
+    LTEXT           "Duration",IDC_STATIC,15,18,30,10
+    EDITTEXT        IDC_DURATION,15,28,99,13,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "PCR ~ PTS",IDC_STATIC,16,43,49,8
+    LTEXT           "PMT",IDC_STATIC,69,82,15,8
+    EDITTEXT        IDC_PMT,88,80,27,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "PCR",IDC_STATIC,69,96,15,8
+    EDITTEXT        IDC_PCR,88,94,27,12,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "&Select",IDC_ENTER,15,198,58,12,WS_GROUP
+    EDITTEXT        IDC_PGM,75,198,40,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Prev",IDC_PREV,15,179,27,13,WS_GROUP
+    EDITTEXT        IDC_CNT,99,179,16,12,ES_CENTER | ES_AUTOHSCROLL | 
+                    ES_READONLY
+    GROUPBOX        "Pids",IDC_STATIC,125,9,80,138
+    LTEXT           "Video",IDC_STATIC,131,18,25,8
+    EDITTEXT        IDC_VIDEO,161,16,40,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Audio",IDC_STATIC,131,50,25,8
+    EDITTEXT        IDC_AUDIO,161,48,20,12,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_AUDIO2,181,48,20,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "AC3",IDC_STATIC,131,66,27,8
+    EDITTEXT        IDC_AC3,161,64,20,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "SID",IDC_STATIC,69,68,17,8
+    EDITTEXT        IDC_SID,88,66,27,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Teletext",IDC_STATIC,131,115,27,8
+    EDITTEXT        IDC_TXT,161,113,40,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "File Status",IDC_STATIC,13,247,35,8
+    EDITTEXT        IDC_FILEMODE,55,246,64,12,ES_AUTOHSCROLL | ES_READONLY
+    CONTROL         "Live Delay",IDC_DELAYMODE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,212,130,85,10
+    GROUPBOX        "MPEG Audio Pin Type",IDC_STATIC,212,9,85,34
+    RADIOBUTTON     "MPEG 1",IDC_MPEG1MODE,225,20,65,8,WS_GROUP
+    RADIOBUTTON     "MPEG 2",IDC_MPEG2MODE,225,31,65,8,WS_GROUP
+    CONTROL         "Demux Control",IDC_AUTOMODE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,133,179,62,10
+    CONTROL         "AC3 Preference",IDC_AC3MODE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,212,70,85,10
+    CONTROL         "Rate Control",IDC_RATECONTROL,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,212,119,85,10
+    CONTROL         "Enable TS Pin",IDC_CREATETSPIN,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,212,107,85,10
+    CONTROL         "Audio2 Preference",IDC_AUDIO2MODE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,212,58,85,10
+    PUSHBUTTON      "&Save",IDC_SAVE,253,239,44,13
+    EDITTEXT        IDC_TSID,36,94,27,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "TSID",IDC_STATIC,16,97,19,8
+    LTEXT           "Count",IDC_STATIC,76,182,20,8
+    EDITTEXT        IDC_NID,36,66,27,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "NID",IDC_STATIC,17,68,15,8
+    EDITTEXT        IDC_AC3_2,181,64,20,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "AAC",IDC_STATIC,131,82,27,8
+    PUSHBUTTON      "&Next",IDC_NEXT,46,179,27,13,WS_GROUP
+    EDITTEXT        IDC_ONID,36,80,27,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "ONID",IDC_STATIC,15,82,17,8
+    CONTROL         "NP Control",IDC_NPCTRL,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,133,192,56,10
+    CONTROL         "NP Slave",IDC_NPSLAVE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,133,205,54,10
+    PUSHBUTTON      "&Refresh",IDC_REFRESH,199,239,45,13
+    EDITTEXT        IDC_ONETID,15,140,100,13,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_CHID,15,163,100,13,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_NETID,15,117,99,13,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "Show EPG &Info",IDC_EPGINFO,127,239,63,13
+    LTEXT           "Network Name",IDC_STATIC,16,108,48,8
+    LTEXT           "Original Network Name",IDC_STATIC,15,131,74,8
+    LTEXT           "Program Name",IDC_STATIC,15,154,48,8
+    CONTROL         "ROT Enable",IDC_ROTMODE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,133,218,55,10
+    GROUPBOX        "Graph Control",IDC_STATIC,126,168,171,65
+    GROUPBOX        "Reference Clock",IDC_STATIC,211,173,80,57,BS_CENTER
+    CONTROL         "Default",IDC_DEFCLOCK,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,217,185,65,8
+    CONTROL         "Demux",IDC_DEMCLOCK,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,217,207,65,8
+    CONTROL         "Audio Render",IDC_RENCLOCK,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,217,218,65,8
+    EDITTEXT        IDC_VIDEOTYPE,161,32,40,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Vid Typ",IDC_STATIC,131,34,28,8
+    EDITTEXT        IDC_AAC,161,80,20,12,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_AAC2,181,80,20,12,ES_AUTOHSCROLL | ES_READONLY
+    CONTROL         "Enable Teletext Pin",IDC_CREATETXTPIN,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,212,82,85,10
+    CONTROL         "TSFileSource",IDC_TSFSCLOCK,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,217,196,65,8
+    PUSHBUTTON      "&Change Filename",IDC_LOAD,15,218,100,11
+    LTEXT           "File Bit Rate",IDC_STATIC,70,43,43,8
+    EDITTEXT        IDC_DATARATE,70,51,45,13,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_CURR,16,51,48,12,ES_AUTOHSCROLL | ES_READONLY
+    CONTROL         "Force 720x576 A.R.",IDC_FIXED_AR,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,212,46,85,10
+    GROUPBOX        "Description",IDC_STATIC,7,262,290,39
+    LTEXT           "Subtitle",IDC_STATIC,131,130,27,8
+    EDITTEXT        IDC_SUB,161,128,40,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "DTS",IDC_STATIC,131,99,27,8
+    EDITTEXT        IDC_DTS,161,97,20,12,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_DTS2,181,97,20,12,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        IDC_FILE,9,232,110,13,ES_AUTOHSCROLL | ES_READONLY
+    CONTROL         "Enable Subtitle Pin",IDC_CREATESUBPIN,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,212,94,85,10
+    LTEXT           "Clock Speed",IDC_STATIC,202,151,23,18
+    EDITTEXT        IDC_RATE,228,153,29,13
+    CONTROL         "Spin2",IDC_RATESPIN,"msctls_updown32",UDS_SETBUDDYINT | 
+                    UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS | 
+                    WS_TABSTOP,248,153,11,14
+    PUSHBUTTON      "&Change",IDC_RATECHG,261,153,36,13,WS_GROUP
+    CTEXT           "TSParserSource Version 2.2.0.9\nThis filter is published under Gnu Public Licence © 2003. Written by\nDH, bear@forums.dvbowners.com and nate@forums.dvbowners.com.",
+                    IDC_STATIC,27,270,235,25,0,WS_EX_TRANSPARENT
+    CTEXT           "Beta 21",IDC_STATIC,263,269,28,8
+    CONTROL         "Packet Injection",IDC_INJECTMODE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,212,141,85,10
+    CONTROL         "Use Shared Mem",IDC_SHAREDMODE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,129,153,72,10
+END
+
+IDD_PARSERSINKPROPPAGE DIALOG DISCARDABLE  0, 0, 302, 215
+STYLE DS_MODALFRAME | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Registry Infomation",IDC_STATIC,7,7,111,138,BS_CENTER
+    LTEXT           "Chunk Reserve",IDC_STATIC,13,16,77,10
+    PUSHBUTTON      "&Save Registry Settings",IDC_SAVE,13,148,96,13
+    EDITTEXT        IDC_CHKRES,14,26,39,12,ES_AUTOHSCROLL
+    LTEXT           "Max Buffer File Size",IDC_STATIC,13,41,77,10
+    EDITTEXT        IDC_MAXSIZE,13,51,40,12,ES_AUTOHSCROLL
+    LTEXT           "Min Numb Buffer Files",IDC_STATIC,13,67,70,10
+    EDITTEXT        IDC_MINNUMB,13,76,27,12,ES_AUTOHSCROLL
+    LTEXT           "Max Numb Buffer Files",IDC_STATIC,13,91,77,10
+    EDITTEXT        IDC_MAXNUMB,14,100,26,12,ES_AUTOHSCROLL
+    LTEXT           "MBytes",IDC_STATIC,56,27,24,10
+    LTEXT           "MBytes",IDC_STATIC,56,52,24,10
+    PUSHBUTTON      "&Change",IDC_CHKRESCHG,84,25,30,12,WS_GROUP
+    PUSHBUTTON      "&Change",IDC_MAXSIZECHG,84,50,30,12,WS_GROUP
+    PUSHBUTTON      "&Change",IDC_MINNUMBCHG,84,76,30,12,WS_GROUP
+    PUSHBUTTON      "&Change",IDC_MAXNUMBCHG,84,101,30,12,WS_GROUP
+    LTEXT           "Default File Name",IDC_STATIC,13,115,77,10
+    EDITTEXT        IDC_DEFNAME,13,124,65,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Change",IDC_DEFNAMECHG,83,125,30,12,WS_GROUP
+    GROUPBOX        "Status Infomation",IDC_STATIC,184,7,111,137,BS_CENTER
+    EDITTEXT        IDC_CURNUMB,267,17,20,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Current File Name Id",IDC_STATIC,189,19,68,10
+    EDITTEXT        IDC_CURNAME,189,102,66,12,ES_AUTOHSCROLL
+    LTEXT           "Current File Name",IDC_STATIC,189,92,77,10
+    EDITTEXT        IDC_NUMBADD,267,43,20,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Number Files Added",IDC_STATIC,189,44,67,10
+    EDITTEXT        IDC_NUMBREM,267,56,20,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Number Removed",IDC_STATIC,189,58,66,10
+    PUSHBUTTON      "&Change",IDC_CURNAMECHG,259,102,29,12,WS_GROUP
+    PUSHBUTTON      "&Refresh Page",IDC_REFRESH,190,148,96,13
+    EDITTEXT        IDC_CURSIZE,189,127,66,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Current Buffer Size",IDC_STATIC,189,117,77,10
+    LTEXT           "MBytes",IDC_STATIC,259,126,24,10
+    EDITTEXT        IDC_PKTERRORS,189,78,66,12,ES_AUTOHSCROLL
+    LTEXT           "Packet Errors",IDC_STATIC,189,68,60,10
+    PUSHBUTTON      "&Reset",IDC_RESET,259,78,29,12,WS_GROUP
+    GROUPBOX        "Description",IDC_STATIC,7,165,288,43
+    EDITTEXT        IDC_TOTALNUMB,267,30,20,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Total Files In Use",IDC_STATIC,189,32,68,10
+    CTEXT           "TSParserSink of TSFileSource Version 2.2.0.9\nThis filter is published under Gnu Public Licence © 2003. Written by\nDH, bear@forums.dvbowners.com and nate@forums.dvbowners.com.",
+                    IDC_STATIC,23,175,235,26
+    CTEXT           "Beta 21",IDC_STATIC,260,174,28,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO MOVEABLE PURE 
+BEGIN
+    IDD_PROPPAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 295
+        TOPMARGIN, 7
+    END
+
+    IDD_SINKPROPPAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 295
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 208
+    END
+
+    IDD_PARSERPROPPAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 297
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
+    END
+
+    IDD_PARSERSINKPROPPAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 295
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 208
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 2,2,0,9
+ PRODUCTVERSION 2,2,0,9
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "0c0904e4"
+        BEGIN
+            VALUE "Comments", "Push Source & TimeShifting File Writer filter for MPEG-2 Transport Stream Files.(BDA Compatable)\0"
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "TS File Source(AU)\0"
+            VALUE "FileVersion", "2, 2, 0, 9\0"
+            VALUE "InternalName", "TS File Source(AU)\0"
+            VALUE "LegalCopyright", "This filter is published under Gnu Public Licence © 2003. Written by DH & bear@forums.dvbowners.com & nate@forums.dvbowners.com.\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "TSFileSource.ax\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "TS File Source(AU)\0"
+            VALUE "ProductVersion", "2, 2, 0, 9\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0xc09, 1252
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_PROPPAGE_TITLE      "TSFileSource Filter Properties"
+    IDS_SINKPROPPAGE_TITLE  "TSFileSink Filter Properties"
+    IDS_INFORMATION_TITLE   "TSFileSource Filter Description"
+    IDS_PARSERPROPPAGE_TITLE "TSParserSource Filter Properties"
+    IDS_PARSERSINKPROPPAGE_TITLE "TSParserSink Filter Properties"
+END
+
+#endif    // English (Australia) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
