@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>700</id>
+  <defaultcontrol>24</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:6014</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:hover_my tv.png</define>
+  <controls>
+    <import>common.settings.xml</import>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
+      <posX>56</posX>
+      <posY>151</posY>
+      <layout>GridLayout(2, 6, 46, 6, 1)</layout>
+      <control>
+        <description>MPEG-2 Video Codecs</description>
+        <type>button</type>
+        <id>24</id>
+        <label>6000</label>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>H.264 Video Codecs</description>
+        <type>button</type>
+        <id>35</id>
+        <label>6036</label>
+      </control>
+      <control>
+        <description>Audio Codecs</description>
+        <type>button</type>
+        <id>25</id>
+        <label>6001</label>
+      </control>
+      <control>
+        <description>LATM AAC Audio Codecs</description>
+        <type>button</type>
+        <id>36</id>
+        <label>6039</label>
+      </control>
+      <control>
+        <description>Audio Renderer</description>
+        <type>button</type>
+        <id>33</id>
+        <label>6002</label>
+      </control>
+      <control>
+        <description>De-interlacing</description>
+        <type>button</type>
+        <id>27</id>
+        <label>6003</label>
+      </control>
+      <control>
+        <description>Apect Ratio</description>
+        <type>button</type>
+        <id>28</id>
+        <label>6004</label>
+        <ondown>30</ondown>
+      </control>
+      <control>
+        <description>Automatically turn TV on</description>
+        <type>button</type>
+        <id>30</id>
+        <label>6006</label>
+        <ondown>24</ondown>
+      </control>
+    </control>
+  </controls>
+</window>

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Language name="English (US)" characters="255">
+  <Section name="unmapped">
+    <String id="168">Synchronize Time:</String>
+    <String id="313">Reorganize database</String>
+    <String id="317">Reorganization successfull</String>
+    <String id="319">Error reorganizing songs</String>
+    <String id="321">Error reorganizing artists</String>
+    <String id="323">Error reorganizing genres</String>
+    <String id="325">Error reorganizing pathes</String>
+    <String id="327">Error reorganizing albums</String>
+    <String id="333">Do you want to reorganize my music database?</String>
+    <String id="334">Reorganize my music database</String>
+    <String id="930">Add to favorites</String>
+    <String id="932">Favorites</String>
+    <String id="2013">Favorites</String>
+    <String id="2039">mililiter</String>
+    <String id="2040">mililiter</String>
+    <String id="2041">centiliter</String>
+    <String id="2042">deciliter</String>
+    <String id="2043">liter</String>
+    <String id="2223">Trashcan</String>
+    <String id="4001">Favorites</String>
+    <String id="33002">Scrobble: Neighbors</String>
+    <String id="33012">tracks your neighbors like</String>
+    <String id="33019">random favorite tracks</String>
+    <String id="34003">Neighbor:</String>
+    <String id="34048">My neighbor's radio</String>
+	<String id="200051">Invalid video file</String>
+	<String id="200059">Audio Dual Mono Mode</String>
+	<String id="200060">Stereo</String>
+	<String id="200061">Left channel to the left and right speakers</String>
+	<String id="200062">Right channel to the left and right speakers</String>
+	<String id="200063">Mix both</String>		
+  </Section>
+</Language>

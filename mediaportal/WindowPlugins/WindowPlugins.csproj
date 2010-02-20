@@ -1,0 +1,720 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B282C55B-A37B-4CEC-A4FC-00791069BF00}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>WindowPlugins</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>WindowPlugins</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureCardDefinitions|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureDefintionsRelease|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;UseCaptureCardDefinitions</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>
+    </DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureCardDefinitions|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\UseCaptureCardDefinitions\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureDefintionsRelease|x86' ">
+    <OutputPath>bin\UseCaptureDefintionsRelease\</OutputPath>
+    <DefineConstants>TRACE;UseCaptureCardDefinitions</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>
+    </DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="KCS.Utilities, Version=1.1.1.2, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\KCS.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3DX, Version=1.0.2911.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.DirectDraw, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Drawing.Design">
+      <Name>System.Drawing.Design</Name>
+    </Reference>
+    <Reference Include="System.Management">
+      <Name>System.Management</Name>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap">
+      <Name>System.Runtime.Serialization.Formatters.Soap</Name>
+    </Reference>
+    <Reference Include="System.Web">
+      <Name>System.Web</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <Reference Include="xAPMessage, Version=1.2.9.8, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\xAPMessage.dll</HintPath>
+    </Reference>
+    <Reference Include="xAPTransport, Version=1.2.9.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MediaPortal.Base\xAPTransport.dll</HintPath>
+    </Reference>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Name>Core</Name>
+      <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Databases\Databases.csproj">
+      <Name>Databases</Name>
+      <Project>{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Dialogs\Dialogs.csproj">
+      <Name>Dialogs</Name>
+      <Project>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
+      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
+      <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ExternalPlayers\ExternalPlayers.csproj">
+      <Project>{DFAB8CDD-A6BA-4A87-930F-CB09B30C1C9D}</Project>
+      <Name>ExternalPlayers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MiniDisplayLibrary\MiniDisplayLibrary.csproj">
+      <Project>{8635D515-A5D4-4FB7-BD30-71770651E18B}</Project>
+      <Name>MiniDisplayLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MPInstaller\MPInstaller.Library\MPInstaller.Library.csproj">
+      <Project>{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}</Project>
+      <Name>MPInstaller.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlugins\RemotePlugins.csproj">
+      <Project>{0A234721-1F13-4DF8-9B1E-64D9E3111203}</Project>
+      <Name>RemotePlugins</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XPImapiBurner\XPImapiBurner.csproj">
+      <Project>{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}</Project>
+      <Name>XPImapiBurner</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIBurner\BurnVideoDVD.cs" />
+    <Compile Include="GUIBurner\BurnDataDVD.cs" />
+    <Compile Include="GUIBurner\BurnDVDEvents.cs" />
+    <Compile Include="GUIBurner\GUIBurner.cs" />
+    <Compile Include="GUIBurner\MadlldlibWrapper.cs" />
+    <Compile Include="GUIBurner\SetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUIDisc\GUIDisc.cs" />
+    <Compile Include="GUIMusic\GUIMusicMenu.cs" />
+    <Compile Include="GUIPictures\GUISlidePicture.cs" />
+    <Compile Include="GUIPictures\SlideCache.cs" />
+    <Compile Include="GUISettings\MiniDisplay\BacklightWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\DisplayControlWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\DisplayOptionsWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\EqualizerWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\KeyPadWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\MainMenuWindow.cs" />
+    <Compile Include="GUISettings\MiniDisplay\RemoteWindow.cs" />
+    <Compile Include="GUISettings\TV\GUISettingsTv.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITetris\MyTetrisControl.cs" />
+    <Compile Include="GUIVideoFiles\MatroskaTagLib.cs" />
+    <Compile Include="GUIVideoFiles\SelectDVDHandler.cs" />
+    <Compile Include="GUIWeather\WeatherChannel.cs" />
+    <Compile Include="Home\GUIHome.cs" />
+    <Compile Include="Home\GUIHomeBaseWindow.cs" />
+    <Compile Include="Home\GUIHomeSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Home\GUIHomeSetupForm.Designer.cs">
+      <DependentUpon>GUIHomeSetupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUIMusic\GUICoverArtGrabberProgress.cs" />
+    <Compile Include="GUIMusic\GUICoverArtGrabberResults.cs" />
+    <Compile Include="GUIMusic\GUIMusicFullscreen.cs" />
+    <Compile Include="GUIMusic\GUIMusicPlayingNow.cs" />
+    <Compile Include="GUIMusic\GUIMusicPlaylist.cs" />
+    <Compile Include="GUIMusic\MusicImport.cs" />
+    <Compile Include="GUIMusic\GUIMusicArtistInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIMusic\GUIMusicBaseWindow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIMusic\GUIMusicFiles.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIMusic\GUIMusicGenres.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIMusic\GUIMusicInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIMusic\GUIMusicOverlay.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIMusic\MusicSort.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIMusic\MusicState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIMusic\MusicViewHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPictures\GUIPictures.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIPictures\GUISlideShow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRadioLastFM\GUIRadioLastFM.cs" />
+    <Compile Include="GUIRadioLastFM\PluginSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUIRadioLastFM\PluginSetupForm.Designer.cs">
+      <DependentUpon>PluginSetupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUIRadioLastFM\StreamControl.cs" />
+    <Compile Include="GUIRSSFeed\DBBool.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\DetailsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\ExceptionCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\GUIRSSFeed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssCategory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssCategoryCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssChannel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssChannelCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssCloud.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssCompact.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssDefault.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssEnclosure.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssEnumerators.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssFeed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssFeedCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssGuid.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssImage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssItemCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssModule.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssModuleCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssModuleItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssModuleItemCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssModuleItemCollectionCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssSource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssTextInput.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\RssWriter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIRSSFeed\SetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUISettings\DVD\GUISettingsDVD.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\General\GUISettingsGeneral.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\General\GUISettingsSkipSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\GUISettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\GUISettingsGUI.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\GUISettingsMovieCalibration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\GUISettingsMusic.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\GUISettingsScreen.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\GUISettingsSlideShow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\GUISettingsUICalibration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Movies\GUISettingsMovies.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\MusicDatabaseReorg.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\General\GUIWizardGeneral.cs" />
+    <Compile Include="GUISettings\Wizard\GUIWizardFinished.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\GUIWizardWelcome.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUISettings\Wizard\Remotes\GUIWizardRemote.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUINumberPlace\CellControl.cs" />
+    <Compile Include="GUINumberPlace\Grid.cs" />
+    <Compile Include="GUINumberPlace\GUINumberPlace.cs" />
+    <Compile Include="GUINumberPlace\Solver.cs" />
+    <Compile Include="GUITetris\MyTetris.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITetris\Tetris.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITopbar\GUITopbar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITopbar\TopBarSetup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUITopbar\TopBarSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUIVideoFiles\GUIVideoArtistInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIVideoFiles\GUIVideoBaseWindow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIVideoFiles\GUIVideoFiles.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIVideoFiles\GUIVideoFullscreen.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIVideoFiles\GUIVideoInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIVideoFiles\GUIVideoOSD.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIVideoFiles\GUIVideoOverlay.cs" />
+    <Compile Include="GUIVideoFiles\GUIVideoPlaylist.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIVideoFiles\GUIVideoTitle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIVideoFiles\GUIVideoTopOverlay.cs" />
+    <Compile Include="GUIVideoFiles\VideoSort.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIVideoFiles\VideoState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIVideoFiles\VideoViewHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIWeather\Geochron.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIWeather\GUIWindowWeather.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GUIWikipedia\WikipediaImage.cs" />
+    <Compile Include="GUIWikipedia\GUIWikipedia.cs" />
+    <Compile Include="GUIWikipedia\WikipediaArticle.cs" />
+    <Compile Include="Home\GUIBasicHome.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Home\GUIPlugIns.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="VideoEditor\BufferedTsFileReader.cs" />
+    <Compile Include="VideoEditor\CompressSettings.cs" />
+    <Compile Include="VideoEditor\Converter.cs" />
+    <Compile Include="VideoEditor\DvrMsModifier.cs" />
+    <Compile Include="VideoEditor\EditSettings.cs" />
+    <Compile Include="VideoEditor\GUIVideoEditor.cs" />
+    <Compile Include="VideoEditor\Mpeg2Divx.cs" />
+    <Compile Include="VideoEditor\Mpeg2Splitter.cs" />
+    <Compile Include="VideoEditor\MpegModifier.cs" />
+    <Compile Include="VideoEditor\PcrUtils.cs" />
+    <Compile Include="VideoEditor\TimeDomain.cs" />
+    <Compile Include="VideoEditor\TsFileCutter.cs" />
+    <Compile Include="VideoEditor\VideoEditorConfiguration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VideoEditor\VideoEditorConfiguration.Designer.cs">
+      <DependentUpon>VideoEditorConfiguration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VideoEditor\VideoEditorPreview.cs" />
+    <Compile Include="VideoEditor\VideoEditorSettings.cs" />
+    <Compile Include="VideoEditor\VideoEditorSetup.cs" />
+    <EmbeddedResource Include="GUIBurner\SetupForm.resx">
+      <DependentUpon>SetupForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Home\GUIHomeSetupForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GUIHomeSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIRadioLastFM\PluginSetupForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PluginSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIRSSFeed\DetailsForm.resx">
+      <DependentUpon>DetailsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIRSSFeed\GUIRSSFeed.DetailsForm.resources" />
+    <EmbeddedResource Include="GUIRSSFeed\GUIRSSFeed.SetupForm.resources" />
+    <EmbeddedResource Include="GUIRSSFeed\SetupForm.resx">
+      <DependentUpon>SetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUITopbar\TopBarSetupForm.resx">
+      <DependentUpon>TopBarSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Home\resources\folder.png" />
+    <EmbeddedResource Include="Home\resources\node.png" />
+    <EmbeddedResource Include="Home\resources\script.png" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VideoEditor\VideoEditorConfiguration.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>VideoEditorConfiguration.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIRadioLastFM\BallonRadio.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIRadioLastFM\BallonRadioDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIRSSFeed\rssicon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIRSSFeed\rssicon_disabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIMusic\Music.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIMusic\MusicDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIVideoFiles\Video.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIVideoFiles\VideoDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUITetris\Tetris.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUITetris\TetrisDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIWeather\Weather.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIWeather\WeatherDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIWikipedia\Wikipedia.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIWikipedia\WikipediaDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIPictures\Pictures.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIPictures\PicturesDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUISettings\Settings.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUISettings\SettingsDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIBurner\Burner.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIBurner\BurnerDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUINumberPlace\NumberPlace.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUINumberPlace\NumberPlaceDisabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Home\Homemenu.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Home\Homemenu_disabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="VideoEditor\VideoEditor.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="VideoEditor\VideoEditor_disabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUITopbar\Topbar.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUITopbar\Topbar_disabled.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIRadioLastFM\BallonRadio.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIDisc\DVD.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GUIDisc\DVDDisabled.gif" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

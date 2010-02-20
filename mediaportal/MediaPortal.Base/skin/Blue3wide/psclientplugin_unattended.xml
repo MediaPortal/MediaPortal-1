@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>6666</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>#header.label:40001</define>
+  <define>#header.image:</define>
+  <define>#header.hover:</define>
+  <controls>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <posX>142</posX>
+      <posY>187</posY>
+      <type>label</type>
+      <id>2</id>
+      <label>40002</label>
+      <font>font13</font>
+      <textcolor>White</textcolor>
+    </control>
+    <control>
+      <posX>142</posX>
+      <posY>250</posY>
+      <type>label</type>
+      <id>2</id>
+      <label>40003</label>
+      <font>font13</font>
+      <textcolor>White</textcolor>
+    </control>
+  </controls>
+</window>

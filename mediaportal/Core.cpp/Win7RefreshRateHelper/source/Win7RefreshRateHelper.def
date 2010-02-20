@@ -1,0 +1,5 @@
+LIBRARY      "Win7RefreshRateHelper"
+
+EXPORTS
+
+W7GetRefreshRate        @1

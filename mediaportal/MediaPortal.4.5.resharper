@@ -1,0 +1,6 @@
+<Configuration>
+  <CodeStyleSettings>
+    <ExternalPath>MediaPortal.ReSharper.xml</ExternalPath>
+    <Sharing>EXTERNAL</Sharing>
+  </CodeStyleSettings>
+</Configuration>

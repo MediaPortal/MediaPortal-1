@@ -1,0 +1,100 @@
+#region Copyright (C) 2005-2010 Team MediaPortal
+
+// Copyright (C) 2005-2010 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
+namespace System.Windows.Dispatcher
+{
+  public class DispatcherTimer
+  {
+    #region Constructors
+
+    public DispatcherTimer() : this(DispatcherPriority.Background) {}
+
+    public DispatcherTimer(DispatcherPriority priority) : this(priority, null) {}
+
+    public DispatcherTimer(DispatcherPriority priority, Dispatcher dispatcher)
+      : this(TimeSpan.Zero, priority, null, dispatcher) {}
+
+    public DispatcherTimer(TimeSpan interval, DispatcherPriority priority, EventHandler callback, Dispatcher dispatcher)
+    {
+      _interval = interval;
+      _priority = priority;
+
+      if (callback != null)
+      {
+        Tick += callback;
+      }
+
+      _dispatcher = dispatcher;
+    }
+
+    #endregion Constructors
+
+    #region Events
+
+    public event EventHandler Tick;
+
+    #endregion Events
+
+    #region Methods
+
+    public void Start() {}
+
+    public void Stop() {}
+
+    #endregion Methods
+
+    #region Properties
+
+    public Dispatcher Dispatcher
+    {
+      get { return _dispatcher; }
+    }
+
+    public TimeSpan Interval
+    {
+      get { return _interval; }
+      set { _interval = value; }
+    }
+
+    public bool IsEnabled
+    {
+      get { return _isEnabled; }
+      set { _isEnabled = true; }
+    }
+
+    public object Tag
+    {
+      get { return _tag; }
+      set { _tag = value; }
+    }
+
+    #endregion Properties
+
+    #region Fields
+
+    private Dispatcher _dispatcher;
+    private bool _isEnabled;
+    private TimeSpan _interval;
+    private DispatcherPriority _priority;
+    private object _tag;
+
+    #endregion Fields
+  }
+}

@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2008</id>
+  <defaultcontrol>1</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <import>common.dialog.xml</import>
+    <control>
+      <description>CD1</description>
+      <type>button</type>
+      <id>101</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onleft>120</onleft>
+      <onright>102</onright>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD2</description>
+      <type>button</type>
+      <id>102</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>103</onright>
+      <onleft>101</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD3</description>
+      <type>button</type>
+      <id>103</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>104</onright>
+      <onleft>102</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD4</description>
+      <type>button</type>
+      <id>104</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>105</onright>
+      <onleft>103</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD5</description>
+      <type>button</type>
+      <id>105</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>106</onright>
+      <onleft>104</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD6</description>
+      <type>button</type>
+      <id>106</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>107</onright>
+      <onleft>105</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD7</description>
+      <type>button</type>
+      <id>107</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>108</onright>
+      <onleft>106</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD8</description>
+      <type>button</type>
+      <id>108</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>109</onright>
+      <onleft>107</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD9</description>
+      <type>button</type>
+      <id>109</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>110</onright>
+      <onleft>108</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD10</description>
+      <type>button</type>
+      <id>110</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>111</onright>
+      <onleft>109</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD11</description>
+      <type>button</type>
+      <id>111</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>112</onright>
+      <onleft>110</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD12</description>
+      <type>button</type>
+      <id>112</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>113</onright>
+      <onleft>111</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD13</description>
+      <type>button</type>
+      <id>113</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>114</onright>
+      <onleft>112</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD14</description>
+      <type>button</type>
+      <id>114</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>115</onright>
+      <onleft>113</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD15</description>
+      <type>button</type>
+      <id>115</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>116</onright>
+      <onleft>114</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD16</description>
+      <type>button</type>
+      <id>116</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>117</onright>
+      <onleft>115</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD17</description>
+      <type>button</type>
+      <id>117</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>118</onright>
+      <onleft>116</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD18</description>
+      <type>button</type>
+      <id>118</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>119</onright>
+      <onleft>117</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD19</description>
+      <type>button</type>
+      <id>119</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>120</onright>
+      <onleft>118</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD20</description>
+      <type>button</type>
+      <id>120</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>11</onright>
+      <onleft>119</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD21</description>
+      <type>button</type>
+      <id>121</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onleft>120</onleft>
+      <onright>122</onright>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD22</description>
+      <type>button</type>
+      <id>122</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>123</onright>
+      <onleft>121</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD23</description>
+      <type>button</type>
+      <id>123</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>124</onright>
+      <onleft>122</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD24</description>
+      <type>button</type>
+      <id>124</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>125</onright>
+      <onleft>123</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD25</description>
+      <type>button</type>
+      <id>125</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>126</onright>
+      <onleft>124</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD26</description>
+      <type>button</type>
+      <id>126</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>127</onright>
+      <onleft>125</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD27</description>
+      <type>button</type>
+      <id>127</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>128</onright>
+      <onleft>126</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD28</description>
+      <type>button</type>
+      <id>128</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>129</onright>
+      <onleft>127</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD29</description>
+      <type>button</type>
+      <id>129</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>130</onright>
+      <onleft>128</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD30</description>
+      <type>button</type>
+      <id>130</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>131</onright>
+      <onleft>129</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD31</description>
+      <type>button</type>
+      <id>131</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>132</onright>
+      <onleft>130</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD32</description>
+      <type>button</type>
+      <id>132</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>133</onright>
+      <onleft>131</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD33</description>
+      <type>button</type>
+      <id>133</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>134</onright>
+      <onleft>132</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD34</description>
+      <type>button</type>
+      <id>134</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>135</onright>
+      <onleft>133</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD35</description>
+      <type>button</type>
+      <id>135</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>136</onright>
+      <onleft>134</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD36</description>
+      <type>button</type>
+      <id>136</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>137</onright>
+      <onleft>135</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD37</description>
+      <type>button</type>
+      <id>137</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>138</onright>
+      <onleft>136</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD38</description>
+      <type>button</type>
+      <id>138</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>139</onright>
+      <onleft>137</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD39</description>
+      <type>button</type>
+      <id>139</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>140</onright>
+      <onleft>138</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>CD40</description>
+      <type>button</type>
+      <id>140</id>
+      <width>64</width>
+      <height>64</height>
+      <textureFocus>button-cd-focus.png</textureFocus>
+      <textureNoFocus>button-cd-nofocus.png</textureNoFocus>
+      <onright>11</onright>
+      <onleft>139</onleft>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>    
+  </controls>
+</window>
