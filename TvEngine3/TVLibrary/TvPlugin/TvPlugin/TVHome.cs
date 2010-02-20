@@ -3473,6 +3473,23 @@ namespace TvPlugin
       bool useRTSP = UseRTSP();
 
       Log.Info("tvhome:startplay:{0} - using rtsp mode:{1}", timeshiftFileName, useRTSP);
+
+      if (!useRTSP)
+      {
+        bool tsFileExists = false;
+        int timeout = 0;
+        while (!tsFileExists && timeout < 50)
+        {
+          tsFileExists = File.Exists(timeshiftFileName);
+          if (!tsFileExists)
+          {
+            Log.Info("tvhome:startplay: waiting for TS file {0}", timeshiftFileName);
+            timeout++;
+            Thread.Sleep(10);
+          }
+        }
+      }
+
       g_Player.Play(timeshiftFileName, mediaType);
       benchClock.Stop();
       Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()",
