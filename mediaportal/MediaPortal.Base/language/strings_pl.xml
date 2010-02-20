@@ -32,6 +32,19 @@
     <String id="31">Listopada</String>
     <String id="32">Grudnia</String>
     <String id="50" prefix="Moje ">DVD</String>
+    <String id="51">Odtwarzaj dysk</String>
+    <String id="60">Czekam na start serwisu TV</String>
+    <String id="61">Czekam {0} sekund przed startem</String>
+    <String id="62">Uruchamiam DirectX</String>
+    <String id="63">Uruchamiam urządzenia wejścia</String>
+    <String id="64">Uruchamiam wtyczki...</String>
+    <String id="65">Ładuję keymap.xml...</String>
+    <String id="66">Ładuję znaki...</String>
+    <String id="67">Buforuję grafiki...</String>
+    <String id="68">Ładuję czcionki</String>
+    <String id="69">Ładuję skórę ({0})...</String>
+    <String id="70">Ładuję wtyczki okien...</String>
+    <String id="71">Startuję menedżer okien...</String>
     <String id="100">Widok: Ikony</String>
     <String id="101">Widok: Lista</String>
     <String id="102">Skanowanie</String>
@@ -448,6 +461,7 @@
     <String id="517">Błąd krytyczny, operacja została przerwana</String>
     <String id="518">Czy usunąć ten utwór?</String>
     <String id="519">Napisy wyłączone</String>
+    <String id="527">Sortuj: Oglądane</String>
     <String id="528">Artyści albumów</String>
     <String id="529">Widok: Lista Dużych Ikon</String>
     <String id="530">Wykryto dysk z obrazami, czy chcesz go otworzyć?</String>
@@ -670,6 +684,8 @@
     <String id="780">Wybierz metodę planowania</String>
     <String id="781">Szybkie nagrywanie</String>
     <String id="782">Zaawansowane nagrywanie</String>
+    <String id="783">Obróć o 180 stopni</String>
+    <String id="784">Obróć o 270 stopni</String>
     <String id="789">Teraz:</String>
     <String id="790">Następny:</String>
     <String id="798">niski</String>
@@ -893,6 +909,10 @@
     <String id="1054">(nagrywanie)</String>
     <String id="1055">(timeshifting)</String>
     <String id="1056">(niedostępne)</String>
+    <String id="1057">Nagrywaj nie-czw</String>
+    <String id="1058">Nagrywaj pią-sob</String>
+    <String id="1059">Nie-czw</String>
+    <String id="1060">Pią-sob</String>
     <String id="1061">Przenośny</String>
     <String id="1062">Obiekt</String>
     <String id="1064">Zakładki</String>
@@ -979,6 +999,13 @@
     <String id="1517">Timehift zatrzymany przez innego\rużytkownika</String>
     <String id="1518">Nie można stworzyć wykresu</String>
     <String id="1519">Brak zainstalowanego enkodera programowego</String>
+    <String id="1520">Niewystarczające miejsce na dysku</String>
+    <String id="1521">Pokaż wg tytułu</String>
+    <String id="1522">Pokaż wg rodzaju</String>
+    <String id="1523">Szukaj w opisie</String>
+    <String id="1600">Czy chcesz wyłączyć komputer?</String>
+    <String id="1601">Czy chcesz wstrzymać komputer?</String>
+    <String id="1602">Czy chcesz zahibernować komputer?</String>
     <String id="1950" prefix="Mój ">Status</String>
     <String id="1951">Dysk twardy</String>
     <String id="1952">Wentylator</String>
@@ -1211,6 +1238,10 @@
     <String id="2610">Polski</String>
     <String id="2611">Czeski</String>
     <String id="2612">Węgierski</String>
+    <String id="2613">Rosyjski</String>
+    <String id="2614">Ukraiński</String>
+    <String id="2650">Ładowanie czcionek - proszę czekać...</String>
+    <String id="2700">Otwórz menu CI</String>
     <String id="2997">godz</String>
     <String id="2998">min</String>
     <String id="2999">sek</String>
@@ -1275,6 +1306,7 @@
     <String id="4554">Przeszukiwanie info o CD</String>
     <String id="4555">Obecna Lista odtw.</String>
     <String id="4557">Dodaj wszystko do listy odtwarzania</String>
+    <String id="4558">Ostatnio dodane</String>
     <String id="5900" prefix="Moje ">Zwiastuny</String>
     <String id="5901">Pokaż wideo</String>
     <String id="5902">Wybierz kategorię</String>
@@ -1341,6 +1373,13 @@
     <String id="6037">Film dzielony</String>
     <String id="6038">Wybierz dysk do odtworzenia.</String>
     <String id="6039">Kodek audio AAC</String>
+    <String id="6040">Wczoraj</String>
+    <String id="6041">Dwa dni temu</String>
+    <String id="6050">Bieżący tydzień</String>
+    <String id="6060">Bieżący miesiąc</String>
+    <String id="6070">Bieżący rok</String>
+    <String id="6080">Ubiegły rok</String>
+    <String id="6090">Starsze</String>
     <String id="8000" prefix="Moja ">Poczta</String>
     <String id="8001">Sprawdź skrzynkę</String>
     <String id="8002">Auto. sprawdzanie wył.</String>
@@ -1643,7 +1682,6 @@
     <String id="100004">Ustawienia</String>
     <String id="100005" prefix="Moja ">Muzyka</String>
     <String id="100006" prefix="Moje ">Wideo</String>
-    <String id="100007">Informacje o systemie</String>
     <String id="100008">Ustawienia-&gt;Ogólne</String>
     <String id="100009">Ustawienia-&gt;Ekran</String>
     <String id="100010">Ustawienia-&gt;Ekran-&gt;Kalibracja interfejsu</String>
@@ -1666,8 +1704,6 @@
     <String id="100029">Ustawienia-&gt;Ogólne-&gt;LCD</String>
     <String id="100030" prefix="Moje ">Radio</String>
     <String id="100031">Ustawienia-&gt;Ekran-&gt;Szybkość scrolla</String>
-    <String id="100032">MSN Messenger</String>
-    <String id="100033">MSN Messenger czat</String>
     <String id="100034" prefix="Moje ">Dodatki</String>
     <String id="100035">Podstawowy</String>
     <String id="100100">Okno Tak/Nie</String>
@@ -1737,7 +1773,6 @@
     <String id="100747">Wyszukiwanie TV</String>
     <String id="100748">Informacje o programie</String>
     <String id="100749">Telewizja/Brak sygnału</String>
-    <String id="100750">Przepisy</String>
     <String id="100755">Status</String>
     <String id="100756">Szczegóły statusu</String>
     <String id="100757">Ustawienia statusu</String>
@@ -1746,7 +1781,6 @@
     <String id="100760">Nagrywarka</String>
     <String id="100761">Przewodnik TV</String>
     <String id="100762">Przewodnik Radio</String>
-    <String id="100770">Explorer</String>
     <String id="100800" prefix="Moje">Wtyczki</String>
     <String id="101000">klawiatura</String>
     <String id="101002">Wirtualna klawiatura standardowa</String>
@@ -1769,6 +1803,7 @@
     <String id="102014">Informacje o obrazie</String>
     <String id="102015">Mini Menu</String>
     <String id="102016">Powiadomienie</String>
+    <String id="102018">Menu CI</String>
     <String id="102600">Pogoda</String>
     <String id="102700">Wiadomości</String>
     <String id="102900">Wygaszacz ekranu</String>
@@ -1782,10 +1817,6 @@
     <String id="103011">Telewizja/Ustawienia przycięcia</String>
     <String id="103012">Szczegóły ustawień kanałów</String>
     <String id="104711" prefix="Moja">Wikipedia</String>
-    <String id="105000">Alarm</String>
-    <String id="105001">Alarm - Szczegóły alarmu</String>
-    <String id="105002">Alarm - Drzemka</String>
-    <String id="105900" prefix="Moje">Zwiastuny</String>
     <String id="106666">Harmonogram zasilania czeka</String>
     <String id="107700">Telewizja/Telegazeta</String>
     <String id="107701">Telewizja/Telegazeta</String>
@@ -1799,9 +1830,6 @@
     <String id="109004">Ustawienia Miniwyświetlacza - Korektor</String>
     <String id="109005">Ustawienia Miniwyświetlacza - klawiatura	</String>
     <String id="109006">Ustawienia Miniwyświetlacza - Pilot</String>
-    <String id="109811" prefix="Moje">Seriale</String>
-    <String id="190478" prefix="Moje">Teksty piosenek</String>
-    <String id="196742">Filmy</String>
     <String id="200000">Proszę wybierz sposób pobierania EPG. Jeśli Twój kraj</String>
     <String id="200001">nie znajduję się na liście, trzeba będzie podać EPG ręcznie.</String>
     <String id="200002">Możesz teraz przypisać kanały EPG do Twoich kanałów TV</String>
