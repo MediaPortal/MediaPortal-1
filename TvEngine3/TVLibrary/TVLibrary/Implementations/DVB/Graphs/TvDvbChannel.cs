@@ -339,7 +339,7 @@ namespace TvLibrary.Implementations.DVB
               }
               else
               {
-                Log.Log.Debug("WaitForPMT: sending PMT to CAM took {0} seconds.", tsPMT2CAM.TotalSeconds);
+                Log.Log.Debug("WaitForPmt: PMT handling took {0} seconds.", tsPMT2CAM.TotalSeconds);
               }
 
               // PMT was found so exit here
