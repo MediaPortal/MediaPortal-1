@@ -458,7 +458,8 @@ namespace MediaPortal.Player.Subtitles
               if (hr != 0 && other == null)
               {
                 PinInfo info;
-                pins[0].QueryPinInfo(out info);                
+                pins[0].QueryPinInfo(out info);
+                DsUtils.FreePinInfo(info);                
                 if (!String.IsNullOrEmpty(strPinName))
                 {
                   if (String.Compare(info.name, strPinName) == 0)

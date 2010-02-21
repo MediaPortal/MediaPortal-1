@@ -403,6 +403,8 @@ namespace DShowNET.Helper
         {
           FilterInfo info;
           filters[0].QueryFilterInfo(out info);
+          ReleaseComObject(info.pGraph);
+          
           string filtername = info.achName;
           ReleaseComObject(filters[0]);
           if (filtername.Equals(name))
@@ -441,8 +443,13 @@ namespace DShowNET.Helper
       int hr;
       FilterInfo info;
       PinInfo outputInfo;
+      
       to.QueryFilterInfo(out info);
+      ReleaseComObject(info.pGraph);
+      
       outputPin.QueryPinInfo(out outputInfo);
+      DsUtils.FreePinInfo(outputInfo);
+
       if (info.achName.Equals(filtername))
       {
         return false; //do not connect to self
@@ -466,6 +473,7 @@ namespace DShowNET.Helper
         {
           PinInfo pinInfo;
           pins[0].QueryPinInfo(out pinInfo);
+          DsUtils.FreePinInfo(pinInfo);
           Log.Debug("Testing compatibility to {0}",
                     pinInfo.name);
           //ListMediaTypes(pins[0]);
@@ -756,6 +764,7 @@ namespace DShowNET.Helper
       Log.Info("----------------TryConnect-------------");
       PinInfo outputInfo;
       outputPin.QueryPinInfo(out outputInfo);
+      DsUtils.FreePinInfo(outputInfo);
       //ListMediaTypes(outputPin);
       ArrayList currentfilters = GetFilters(graphBuilder);
       foreach (IBaseFilter filter in currentfilters)
@@ -889,11 +898,16 @@ namespace DShowNET.Helper
             FilterInfo i;
             PinInfo pinInfo;
             string pinName = string.Empty;
-            if (baseFilter.QueryFilterInfo(out i) == 0 && pins[0].QueryPinInfo(out pinInfo) == 0)
+            if (baseFilter.QueryFilterInfo(out i) == 0)
             {
-              Log.Debug("Filter: {0} - try to connect: {1}", i.achName, pinInfo.name);
-              pinName = pinInfo.name;
+              if (pins[0].QueryPinInfo(out pinInfo) == 0)
+              {
+                Log.Debug("Filter: {0} - try to connect: {1}", i.achName, pinInfo.name);
+                pinName = pinInfo.name;
+                DsUtils.FreePinInfo(pinInfo);
+              }
             }
+
             ReleaseComObject(i.pGraph);
             hr = graphBuilder.Render(pins[0]);
             if (hr != 0)
@@ -927,6 +941,8 @@ namespace DShowNET.Helper
       IEnumPins pinEnum;
       FilterInfo info;
       filter.QueryFilterInfo(out info);
+      ReleaseComObject(info.pGraph);
+      
       int hr = filter.EnumPins(out pinEnum);
       if ((hr == 0) && (pinEnum != null))
       {
@@ -947,10 +963,10 @@ namespace DShowNET.Helper
             {
               PinInfo pinInfo = new PinInfo();
               hr = pins[0].QueryPinInfo(out pinInfo);
+              DsUtils.FreePinInfo(pinInfo);
               if (hr == 0)
               {
                 Log.Info("  got pin#{0}:{1}", iPinNo - 1, pinInfo.name);
-                ReleaseComObject(pinInfo.filter);
               }
               else
               {
@@ -1036,9 +1052,9 @@ namespace DShowNET.Helper
               //Log.Info("  find pin info");
               PinInfo pinInfo = new PinInfo();
               hr = pins[0].QueryPinInfo(out pinInfo);
+              DsUtils.FreePinInfo(pinInfo);
               if (hr >= 0)
               {
-                //ReleaseComObject(pinInfo.filter);
                 Log.Info("  got pin#{0}:{1}", iPinNo - 1, pinInfo.name);
               }
               else
@@ -1188,6 +1204,7 @@ namespace DShowNET.Helper
         }
         PinInfo pinInfo;
         pins[0].QueryPinInfo(out pinInfo);
+        DsUtils.FreePinInfo(pinInfo);
         if (pinInfo.dir == PinDirection.Output)
         {
           if (!DisconnectPin(graphBuilder, pins[0]))
@@ -1208,6 +1225,7 @@ namespace DShowNET.Helper
       bool allDisconnected = true;
       PinInfo info;
       pin.QueryPinInfo(out info);
+      DsUtils.FreePinInfo(info);
       Log.Info("Disconnecting pin {0}", info.name);
       if (hr == 0 && other != null)
       {
@@ -1228,6 +1246,7 @@ namespace DShowNET.Helper
           allDisconnected = false;
           Log.Error("Error disconnecting other: {0:x}", hr);
         }
+        DsUtils.FreePinInfo(info);
         ReleaseComObject(other);
       }
       else
@@ -1264,7 +1283,9 @@ namespace DShowNET.Helper
       PinInfo info;
       PinInfo infoOther;
       pin.QueryPinInfo(out info);
+      DsUtils.FreePinInfo(info);
       other.QueryPinInfo(out infoOther);
+      DsUtils.FreePinInfo(infoOther);
       Log.Info("Pins {0} and {1} do not accept each other. Tested {2} media types", info.name, infoOther.name, count);
       return false;
     }
@@ -1277,6 +1298,8 @@ namespace DShowNET.Helper
       IEnumPins pinEnum;
       FilterInfo info;
       filter.QueryFilterInfo(out info);
+      ReleaseComObject(info.pGraph);
+      
       int hr = filter.EnumPins(out pinEnum);
       if ((hr == 0) && (pinEnum != null))
       {
@@ -1297,10 +1320,10 @@ namespace DShowNET.Helper
             {
               PinInfo pinInfo = new PinInfo();
               hr = pins[0].QueryPinInfo(out pinInfo);
+              DsUtils.FreePinInfo(pinInfo);
               if (hr == 0)
               {
                 Log.Info("  got pin#{0}:{1}", iPinNo - 1, pinInfo.name);
-                ReleaseComObject(pinInfo.filter);
               }
               else
               {
@@ -1352,6 +1375,7 @@ namespace DShowNET.Helper
       IEnumPins pinEnum;
       FilterInfo info;
       filter.QueryFilterInfo(out info);
+      ReleaseComObject(info.pGraph);
       int hr = filter.EnumPins(out pinEnum);
       if ((hr == 0) && (pinEnum != null))
       {
@@ -1372,10 +1396,10 @@ namespace DShowNET.Helper
             {
               PinInfo pinInfo = new PinInfo();
               hr = pins[0].QueryPinInfo(out pinInfo);
+              DsUtils.FreePinInfo(pinInfo);
               if (hr == 0)
               {
                 Log.Info("  got pin#{0}:{1}", iPinNo - 1, pinInfo.name);
-                ReleaseComObject(pinInfo.filter);
               }
               else
               {
@@ -1622,6 +1646,7 @@ namespace DShowNET.Helper
             {
               FilterInfo filter_infos = new FilterInfo();
               foundfilter[0].QueryFilterInfo(out filter_infos);
+              ReleaseComObject(filter_infos.pGraph);
               Log.Debug("GetFilterByName: {0}, {1}", name, filter_infos.achName);
               if (filter_infos.achName.LastIndexOf(name) != -1)
               {
@@ -1683,6 +1708,8 @@ namespace DShowNET.Helper
         {
           FilterInfo info;
           filter.QueryFilterInfo(out info);
+          ReleaseComObject(info.pGraph);
+       
           try
           {
             if (!String.IsNullOrEmpty(filterName))
@@ -1699,8 +1726,8 @@ namespace DShowNET.Helper
             {
               hr = graphBuilder.RemoveFilter(filter);
               DsError.ThrowExceptionForHR(hr);
-              ReleaseComObject(filter);
-              Log.Debug("Remove filter from graph: {0}", info.achName);          
+              int i = ReleaseComObject(filter);
+              Log.Debug("Remove filter from graph: {0} {1}", info.achName,i );          
             }            
           }
           catch (Exception error)
@@ -1854,7 +1881,7 @@ namespace DShowNET.Helper
             {
               PinInfo info;
               pins[0].QueryPinInfo(out info);
-              //ReleaseComObject(info.filter);
+              DsUtils.FreePinInfo(info);
               if (String.Compare(info.name, strPinName) == 0)
               {
                 ReleaseComObject(pinEnum);
@@ -1901,10 +1928,12 @@ namespace DShowNET.Helper
         }
         PinInfo info;
         pinConnected.QueryPinInfo(out info);
+
         if (info.filter != null)
         {
           RemoveDownStreamFilters(graphBuilder, info.filter, true);
         }
+        DsUtils.FreePinInfo(info);
         ReleaseComObject(pins[0]);
       }
       if (remove)
@@ -1928,6 +1957,7 @@ namespace DShowNET.Helper
       {
         RemoveDownStreamFilters(graphBuilder, info.filter, true);
       }
+      DsUtils.FreePinInfo(info);
     }
 
     public static int ReleaseComObject(object obj, int timeOut)

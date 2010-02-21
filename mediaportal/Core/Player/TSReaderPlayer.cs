@@ -549,8 +549,8 @@ namespace MediaPortal.Player
           _ireader = null;
 
           if (_audioRendererFilter != null)
-          {            
-            DirectShowUtil.ReleaseComObject(_audioRendererFilter);
+          {
+            while (DirectShowUtil.ReleaseComObject(_audioRendererFilter) > 0) ;
             _audioRendererFilter = null;
           }
 
@@ -575,7 +575,7 @@ namespace MediaPortal.Player
               _rotEntry.Dispose();
               _rotEntry = null;
             }
-            DirectShowUtil.ReleaseComObject(_graphBuilder);            
+            while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;          
             _graphBuilder = null;
           }
 

@@ -694,6 +694,10 @@ namespace MediaPortal.Player
         IVMRDeinterlaceControl9 deinterlace = (IVMRDeinterlaceControl9)_vmr9Filter;
         IPin InPin = null;
         int hr = _vmr9Filter.FindPin("VMR Input0", out InPin);
+        if (hr != 0)
+        {
+          Log.Error("VMR9: failed finding InPin {0:X}", hr);
+        }
         AMMediaType mediatype = new AMMediaType();
         InPin.ConnectionMediaType(mediatype);
         //Start by getting the media type of the video stream.
@@ -902,7 +906,7 @@ namespace MediaPortal.Player
         hr = DirectShowUtil.ReleaseComObject(InPin);
         if (hr != 0)
         {
-          Log.Error("VMR9: failed releasing InPin 0x:(0)", hr);
+          Log.Error("VMR9: failed releasing InPin {0:X}", hr);
         }
         else
         {
@@ -1121,7 +1125,6 @@ namespace MediaPortal.Player
 
       if (_scene != null)
       {
-        //Log.Info("VMR9Helper:stop planescene");
         _scene.Stop();
         _instanceCounter--;
         _scene.Deinit();
@@ -1130,15 +1133,9 @@ namespace MediaPortal.Player
         GUIGraphicsContext.InVmr9Render = false;
         currentVmr9State = Vmr9PlayState.Playing;
       }
-      //int result;
-      //if (_vmr9MixerBitmapInterface!= null)
-      //	while ( (result=DirectShowUtil.ReleaseComObject(_vmr9MixerBitmapInterface))>0); 
-      //result=DirectShowUtil.ReleaseComObject(_vmr9MixerBitmapInterface);
+
       _vmr9MixerBitmapInterface = null;
 
-      //				if (_qualityInterface != null)
-      //					while ( (result=DirectShowUtil.ReleaseComObject(_qualityInterface))>0); 
-      //DirectShowUtil.ReleaseComObject(_qualityInterface);
       _qualityInterface = null;
 
       if (GUIGraphicsContext.IsEvr)
@@ -1149,8 +1146,11 @@ namespace MediaPortal.Player
       {
         Vmr9Deinit();
       }
-
-      _vmr9Filter = null;
+      if (_vmr9Filter != null)
+      {
+         while (DirectShowUtil.ReleaseComObject(_vmr9Filter) > 0);
+        _vmr9Filter = null;
+      }
       _graphBuilderInterface = null;
       _scene = null;
       g_vmr9 = null;
