@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 
@@ -156,7 +157,9 @@ namespace MediaPortal.Player
         for (int i = 0; i < iAudioStreams; i++)
         {
           int intValue;
-          if (int.TryParse(_mI.Get(StreamKind.Audio, i, "Channel(s)"), out intValue) && intValue > _audioChannels)
+          string sChannels = Regex.Split(_mI.Get(StreamKind.Audio, i, "Channel(s)"), @"\D+")[0];
+
+          if (int.TryParse(sChannels, out intValue) && intValue > _audioChannels)
           {
             int.TryParse(_mI.Get(StreamKind.Audio, i, "SamplingRate"), out _audioRate);
             _audioChannels = intValue;
