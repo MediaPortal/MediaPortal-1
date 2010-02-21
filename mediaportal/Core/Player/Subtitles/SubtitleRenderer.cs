@@ -405,6 +405,13 @@ namespace MediaPortal.Player.Subtitles
             // allocate new texture
             texture = new Texture(GUIGraphicsContext.DX9Device, (int)subtitle.width, (int)subtitle.height, 1, Usage.Dynamic,
                                   Format.A8R8G8B8, Pool.Default);
+
+            if (texture == null)
+            {
+              Log.Debug("OnSubtitle: Failed to create new texture!");
+              return 0;
+            }
+
             int pitch;
             GraphicsStream a = texture.LockRectangle(0, LockFlags.None, out pitch);
 
@@ -425,10 +432,9 @@ namespace MediaPortal.Player.Subtitles
             texture.UnlockRectangle(0);
             subtitle.texture = texture;
           }
-          catch (Exception e)
+          catch (Exception)
           {
-            Log.Debug("SubtitleRenderer: Failed to create subtitle surface!");
-            Log.Error(e);
+            Log.Debug("OnSubtitle: Failed to copy bitmap data!");
             return 0;
           }
 
