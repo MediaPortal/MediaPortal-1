@@ -1802,6 +1802,12 @@ public class MediaPortalApp : D3DApp, IRender
         {
           activeWin = (int)GUIWindow.Window.WINDOW_HOME;
         }
+        // Device lost must be priorized over this one!
+        else if (Currentmodulefullscreen())
+        {
+          activeWin = GUIWindowManager.GetPreviousActiveWindow();
+          GUIWindowManager.ShowPreviousWindow();
+        }
 
         GUIWindowManager.UnRoute();
         // avoid that there is an active Window when GUIWindowManager.ActivateWindow(activeWin); is called
