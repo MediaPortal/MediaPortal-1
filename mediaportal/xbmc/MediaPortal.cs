@@ -235,7 +235,11 @@ public class MediaPortalApp : D3DApp, IRender
       {
         //no, then start configuration.exe in wizard form
         Log.Info("MediaPortal.xml not found. Launching configuration tool and exiting...");
-        Process.Start(Config.GetFile(Config.Dir.Base, "configuration.exe"), @"/wizard");
+        try
+        {
+          Process.Start(Config.GetFile(Config.Dir.Base, "configuration.exe"), @"/wizard");
+        }
+        catch {} // no exception logging needed, since MP is now closed
         return;
       }
 
