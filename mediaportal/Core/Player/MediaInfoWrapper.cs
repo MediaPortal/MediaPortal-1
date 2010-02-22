@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
-using System.Text.RegularExpressions;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 
@@ -109,7 +108,7 @@ namespace MediaPortal.Player
           {
             int vobDuration = 0;
             _mI.Open(vob);
-            int.TryParse(_mI.Get(StreamKind.General, 0, "PlayTime"), out vobDuration);
+            int.TryParse(_mI.Get(StreamKind.General, 0, "Duration"), out vobDuration);
             _mI.Close();
             _videoDuration += vobDuration;
           }
@@ -127,8 +126,8 @@ namespace MediaPortal.Player
                         out _framerate);
         int.TryParse(_mI.Get(StreamKind.Video, 0, "Width"), out _width);
         int.TryParse(_mI.Get(StreamKind.Video, 0, "Height"), out _height);
-        _aspectRatio = _mI.Get(StreamKind.Video, 0, "AspectRatio/String") == "4:3" ? "fullscreen" : "widescreen";
-        _videoCodec = _mI.Get(StreamKind.Video, 0, "Codec").ToUpper();
+        _aspectRatio = _mI.Get(StreamKind.Video, 0, "Display AspectRatio") == "4:3" ? "fullscreen" : "widescreen";
+        _videoCodec = GetFullCodecName(StreamKind.Video);
         _scanType = _mI.Get(StreamKind.Video, 0, "ScanType").ToLower();
         _isInterlaced = _scanType.Contains("interlaced");
 
@@ -149,7 +148,7 @@ namespace MediaPortal.Player
 
         if (_videoDuration == 0)
         {
-          int.TryParse(_mI.Get(StreamKind.Video, 0, "PlayTime"), out _videoDuration);
+          int.TryParse(_mI.Get(StreamKind.Video, 0, "Duration"), out _videoDuration);
         }
 
         //Audio
@@ -157,13 +156,14 @@ namespace MediaPortal.Player
         for (int i = 0; i < iAudioStreams; i++)
         {
           int intValue;
-          string sChannels = Regex.Split(_mI.Get(StreamKind.Audio, i, "Channel(s)"), @"\D+")[0];
+
+          string sChannels = _mI.Get(StreamKind.Audio, i, "Channel(s)").Split(new char[] { '/' })[0].Trim();
 
           if (int.TryParse(sChannels, out intValue) && intValue > _audioChannels)
           {
             int.TryParse(_mI.Get(StreamKind.Audio, i, "SamplingRate"), out _audioRate);
             _audioChannels = intValue;
-            _audioCodec = _mI.Get(StreamKind.Audio, i, "Codec/String").ToUpper();
+            _audioCodec = GetFullCodecName(StreamKind.Audio, i);
           }
         }
 
@@ -171,6 +171,9 @@ namespace MediaPortal.Player
         {
           case 8:
             _audioChannelsFriendly = "7.1";
+            break;
+          case 7:
+            _audioChannelsFriendly = "6.1";
             break;
           case 6:
             _audioChannelsFriendly = "5.1";
@@ -187,7 +190,7 @@ namespace MediaPortal.Player
         }
 
         //Subtitles
-        int.TryParse(_mI.Get(StreamKind.General, 0, "TextCount"), out _numsubtitles);
+        _numsubtitles = _mI.Count_Get(StreamKind.Text);
 
         if (checkHasExternalSubtitles(strFile))
         {
@@ -315,6 +318,38 @@ namespace MediaPortal.Player
       }
 
       return false;
+    }
+
+    private string GetFullCodecName(StreamKind type, int audiotrack)
+    {
+      string strCodec = _mI.Get(type, 0, "Format").ToUpper();
+      string strCodecVer = _mI.Get(type, 0, "Format_Version").ToUpper();
+      if (strCodec == "MPEG-4 VISUAL")
+      {
+        strCodec = _mI.Get(type, 0, "CodecID").ToUpper();
+      }
+      else
+      {
+        if (!String.IsNullOrEmpty(strCodecVer))
+        {
+          strCodec = (strCodec + " " + strCodecVer).Trim();
+          string strCodecProf = _mI.Get(type, 0, "Format_Profile").ToUpper();
+          if (type == StreamKind.Video && strCodecProf != "MAIN@MAIN")
+          {
+            strCodec = (strCodec + " " + strCodecProf).Trim();
+          }
+        }
+      }
+      if (type == StreamKind.Audio)
+      {
+        strCodec = (strCodec + " " + _mI.Get(type, audiotrack, "Format_Profile").Split(new char[] { '/' })[0].ToUpper()).Trim();
+      }
+      return strCodec;
+    }
+
+    private string GetFullCodecName(StreamKind type)
+    {
+      return GetFullCodecName(type, 0);
     }
 
     #endregion
