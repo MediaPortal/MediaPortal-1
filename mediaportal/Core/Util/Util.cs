@@ -169,7 +169,7 @@ namespace MediaPortal.Util
         }
 
         strTmp = xmlreader.GetValueAsString("movies", "extensions",
-                                            ".avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.sbe,.dvr-ms,.ts,.dat,.ifo,.iso");
+                                            ".avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo");
         tok = new Tokens(strTmp, new[] {','});
         foreach (string extension in tok)
         {

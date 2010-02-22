@@ -711,7 +711,7 @@
     <entry name="shareview19">0</entry>
     <entry name="default">
     </entry>
-    <entry name="extensions">.avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.sbe,.dvr-ms,.ts,.dat,.ifo,.iso</entry>
+    <entry name="extensions">.avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo</entry>
     <entry name="fuzzyMatching">yes</entry>
   </section>
   <section name="pictures">
