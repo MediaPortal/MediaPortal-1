@@ -207,15 +207,15 @@ namespace MediaPortal.Player
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Width            : {0}", _width);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Height           : {0}", _height);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: AspectRatio      : {0}", _aspectRatio);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: VideoCodec       : {0}", _videoCodec);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: VideoCodec       : {0} [ \"{1}.png\" ]", _videoCodec, Util.Utils.MakeFileName(_videoCodec).ToLower());
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Scan type        : {0}", _scanType);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsInterlaced     : {0}", _isInterlaced);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: VideoResolution  : {0}", _videoResolution);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: VideoDuration    : {0}", _videoDuration);
         //Audio
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioRate        : {0}", _audioRate);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioChannels    : {0}", _audioChannels);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioCodec       : {0}", _audioCodec);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioChannels    : {0} [ \"{1}.png\" ]", _audioChannels, _audioChannelsFriendly);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioCodec       : {0} [ \"{1}.png\" ]", _audioCodec, Util.Utils.MakeFileName(_audioCodec).ToLower());
         //Subtitles
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: HasSubtitles     : {0}", _hasSubtitles);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: NumSubtitles     : {0}", _numsubtitles);
@@ -344,7 +344,10 @@ namespace MediaPortal.Player
       {
         strCodec = (strCodec + " " + _mI.Get(type, audiotrack, "Format_Profile").Split(new char[] { '/' })[0].ToUpper()).Trim();
       }
-      return strCodec;
+      //
+      // Workarround because skin engine ( string.equals/string.contains ) doesn't handle the "+" as last digit
+      //
+      return strCodec.Replace("+", "PLUS");
     }
 
     private string GetFullCodecName(StreamKind type)
