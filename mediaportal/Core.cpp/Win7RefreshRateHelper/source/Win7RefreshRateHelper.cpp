@@ -27,8 +27,6 @@ double W7GetRefreshRate()
   DISPLAYCONFIG_MODE_INFO* pModeInfoArray = NULL;
   DISPLAYCONFIG_TOPOLOGY_ID* pCurrentTopologyId = NULL;
   LONG result;
-  LONG numerator;
-  LONG denominator;
   double refreshRate = -1;
 
   // Get size of buffers for QueryDisplayConfig
@@ -50,6 +48,7 @@ double W7GetRefreshRate()
 	{
     // freeing memory
     free(pPathInfoArray);
+    free(pModeInfoArray);
     return(refreshRate);
   }
 
@@ -68,10 +67,10 @@ double W7GetRefreshRate()
       {
         DISPLAYCONFIG_PATH_TARGET_INFO target;
         target = pPathInfoArray[i].targetInfo;
-				numerator = target.refreshRate.Numerator;
-				denominator = target.refreshRate.Denominator;
-				refreshRate = (double)numerator/(double)denominator;
-				break;
+        LONG numerator = target.refreshRate.Numerator;
+        LONG denominator = target.refreshRate.Denominator;
+        refreshRate = (double)numerator/(double)denominator;
+        break;
 	    }
     }
   }
