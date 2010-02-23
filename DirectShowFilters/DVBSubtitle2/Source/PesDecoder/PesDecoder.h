@@ -24,6 +24,7 @@
 class CPesCallback
 {
 public:
+  virtual ~CPesCallback(){};
   virtual int OnNewPesPacket( int streamId, byte* header, int headerlen,byte* data, int len, bool isStart )=0;
 };
 
@@ -31,7 +32,7 @@ class CPesDecoder
 {
 public:
   CPesDecoder( CPesCallback* callback );
-  virtual ~CPesDecoder( void );
+  virtual ~CPesDecoder();
   void    SetPid( int pid );
   int     GetPid();
   bool    OnTsPacket( byte* tsPacket );

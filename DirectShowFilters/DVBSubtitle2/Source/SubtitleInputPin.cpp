@@ -166,7 +166,6 @@ int CSubtitleInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen
                                        byte* data, int len, bool isStart )
 {
   //LogDebug( "CSubtitleInputPin::OnNewPesPacket" ); 
-  
   byte* pesData = NULL;
   pesData = (unsigned char*)malloc( headerlen + len );
 
@@ -175,9 +174,7 @@ int CSubtitleInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen
 
   m_pSubDecoder->ProcessPES( pesData, headerlen + len, m_SubtitlePid );
 
-  delete pesData;
-  pesData = NULL;
-
+  free(pesData);
   return 0;
 }
 

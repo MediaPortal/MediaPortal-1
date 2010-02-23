@@ -42,28 +42,30 @@ struct SUBTITLE
 
 struct TEXT_SUBTITLE
 {
-	int character_table;
-	LPCSTR language;
-	int page;
-	LPCSTR text;
-	int firstLine;  // can be 0 to (totalLines - 1)
-	int totalLines; // for teletext this is 25 lines
+  int character_table;
+  LPCSTR language;
+  int page;
+  LPCSTR text;
+  int firstLine;  // can be 0 to (totalLines - 1)
+  int totalLines; // for teletext this is 25 lines
 
-	unsigned    __int64 timestamp;
-	unsigned    __int64 timeOut;
+  unsigned    __int64 timestamp;
+  unsigned    __int64 timeOut;
 };
 
 struct DVBLANG
 {
-	DVBLANG()
+  DVBLANG()
   {
-	}
-	DVBLANG(byte b1, byte b2, byte b3)
+    ZeroMemory((void*)&lang, sizeof(lang));
+  }
+  
+  DVBLANG(byte b1, byte b2, byte b3)
   {
-		lang[0] = b1;	
-		lang[1] = b2;
-		lang[2] = b3;
-	}
+    lang[0] = b1;	
+    lang[1] = b2;
+    lang[2] = b3;
+  }
 
-	byte lang[3];
+  byte lang[3];
 };

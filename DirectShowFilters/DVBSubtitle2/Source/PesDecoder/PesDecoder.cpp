@@ -38,7 +38,10 @@ CPesDecoder::CPesDecoder( CPesCallback* callback )
   m_pCallback = callback;
   m_iStreamId = -1;
   m_iPesHeaderLen = 0;
+  ZeroMemory((void*)&m_pesHeader, sizeof(m_pesHeader));
   m_iPesLength = 0;
+  m_bStart = false;
+  m_packets = 0;
 }
 
 CPesDecoder::~CPesDecoder( void )
