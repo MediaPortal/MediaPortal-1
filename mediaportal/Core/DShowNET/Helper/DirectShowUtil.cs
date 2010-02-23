@@ -1716,18 +1716,18 @@ namespace DShowNET.Helper
             {
               if (String.Equals(info.achName, filterName))
               {
+                Log.Debug("Remove filter from graph: {0}", info.achName);
                 hr = graphBuilder.RemoveFilter(filter);
                 DsError.ThrowExceptionForHR(hr);
-                ReleaseComObject(filter);
-                Log.Debug("Remove filter from graph: {0}", info.achName);          
+
               }
             }
             else
             {
+              Log.Debug("Remove filter from graph: {0}", info.achName);
               hr = graphBuilder.RemoveFilter(filter);
               DsError.ThrowExceptionForHR(hr);
-              int i = ReleaseComObject(filter);
-              Log.Debug("Remove filter from graph: {0} {1}", info.achName,i );          
+                        
             }            
           }
           catch (Exception error)
@@ -1735,6 +1735,18 @@ namespace DShowNET.Helper
             Log.Error("Remove of filter: {0}, failed with code (HR): {1}, explanation: {2}", info.achName, hr.ToString(),
                       error.Message);
           }
+
+        }
+        try
+        {
+          foreach (IBaseFilter filter in filtersArray)
+          {
+            while ((hr = ReleaseComObject(filter)) > 0)
+              Log.Debug("Decreasing ref count: {0}", hr);
+          }
+        }
+        catch (Exception)
+        {
         }
       }
       catch (Exception)
