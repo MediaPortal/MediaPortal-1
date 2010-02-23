@@ -23,8 +23,6 @@
 #include "channelscan.h"
 #include "epgscanner.h"
 #include "pmtgrabber.h"
-//#include "recorder.h"
-//#include "timeshifting.h"
 #include "DiskRecorder.h"
 #include "teletextgrabber.h"
 #include "cagrabber.h"
