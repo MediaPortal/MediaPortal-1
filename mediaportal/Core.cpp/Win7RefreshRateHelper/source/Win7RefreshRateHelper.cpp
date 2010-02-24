@@ -38,17 +38,16 @@ double W7GetRefreshRate()
 
   // allocate memory for QueryDisplayConfig buffers
   pPathInfoArray = (DISPLAYCONFIG_PATH_INFO*)calloc(uNumPathArrayElements, sizeof(DISPLAYCONFIG_PATH_INFO));
-  if (pPathInfoArray == NULL )
+  if (pPathInfoArray == NULL)
 	{
     return(refreshRate);
   }
 
   pModeInfoArray = (DISPLAYCONFIG_MODE_INFO*)calloc(uNumModeInfoArrayElements, sizeof(DISPLAYCONFIG_MODE_INFO));
-  if (pPathInfoArray == NULL )
+  if (pModeInfoArray == NULL)
 	{
     // freeing memory
     free(pPathInfoArray);
-    free(pModeInfoArray);
     return(refreshRate);
   }
 
