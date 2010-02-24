@@ -243,6 +243,14 @@ namespace MediaPortal.Player
       Log.Info("TSReaderPlayer: GetInterfaces()");
       try
       {
+        string strAudioRenderer = "";
+        int intFilters = 0; // FlipGer: count custom filters
+        string strFilters = ""; // FlipGer: collect custom filters
+
+        LoadMyTvFilterSettings(ref intFilters, ref strFilters, ref strVideoCodec, ref strAudioCodec,
+                               ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer,
+                               ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles, ref relaxTsReader);
+        
         _graphBuilder = (IGraphBuilder)new FilterGraph();
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
@@ -256,6 +264,24 @@ namespace MediaPortal.Player
 
         #endregion
 
+        if (strAudioRenderer.Length > 0) //audio renderer must be in graph before audio switcher
+        {
+          _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, true);
+        }
+
+        #region add AudioSwitcher
+
+        if (enableMPAudioSwitcher) //audio switcher must be in graph before tsreader audiochangecallback
+        {
+          _audioSwitcherFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal AudioSwitcher");
+          if (_audioSwitcherFilter == null)
+          {
+            Log.Error("TSReaderPlayer: Failed to add AudioSwitcher to graph");
+          }
+        }
+
+        #endregion
+        
         #region add TsReader
 
         TsReader reader = new TsReader();
@@ -295,14 +321,7 @@ namespace MediaPortal.Player
 
         Log.Info("TSReaderPlayer: Add codecs");
         // add preferred video & audio codecs
-        string strAudioRenderer = "";
-        int intFilters = 0; // FlipGer: count custom filters
-        string strFilters = ""; // FlipGer: collect custom filters
-
-        LoadMyTvFilterSettings(ref intFilters, ref strFilters, ref strVideoCodec, ref strAudioCodec,
-                               ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer,
-                               ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles, ref relaxTsReader);
-
+        
         if (strH264VideoCodec == strVideoCodec)
           strH264VideoCodec = "";
         if (strAACAudioCodec == strAudioCodec)
@@ -347,23 +366,8 @@ namespace MediaPortal.Player
         if (!DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Audio, audioFilterPriority1))
           DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Audio, audioFilterPriority2);
 
-        if (strAudioRenderer.Length > 0)
-        {
-          _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, true);
-        }
+        
 
-        #region add AudioSwitcher
-
-        if (enableMPAudioSwitcher)
-        {
-          _audioSwitcherFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal AudioSwitcher");
-          if (_audioSwitcherFilter == null)
-          {
-            Log.Error("TSReaderPlayer: Failed to add AudioSwitcher to graph");
-          }
-        }
-
-        #endregion
         // FlipGer: add custom filters to graph
         string[] arrFilters = strFilters.Split(';');
         for (int i = 0; i < intFilters; i++)
