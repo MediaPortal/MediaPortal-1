@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfTransponder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Transponder>
-    <CarrierFrequency>3642000</CarrierFrequency>
+    <CarrierFrequency>3644000</CarrierFrequency>
     <Polarisation>CircularR</Polarisation>
-    <SymbolRate>13330</SymbolRate>
+    <SymbolRate>8545</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate2_3</InnerFecRate>
     <Pilot>NotSet</Pilot>

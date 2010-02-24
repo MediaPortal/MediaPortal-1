@@ -3,7 +3,7 @@
   <Transponder>
     <CarrierFrequency>10996000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
-    <SymbolRate>2531</SymbolRate>
+    <SymbolRate>2532</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -12,7 +12,7 @@
   <Transponder>
     <CarrierFrequency>11001000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
-    <SymbolRate>3570</SymbolRate>
+    <SymbolRate>3571</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -21,7 +21,7 @@
   <Transponder>
     <CarrierFrequency>11006000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
-    <SymbolRate>2856</SymbolRate>
+    <SymbolRate>2857</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -49,24 +49,6 @@
     <CarrierFrequency>11054000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
     <SymbolRate>27500</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>11080000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>2900</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>11085000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>2900</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -138,7 +120,7 @@
   <Transponder>
     <CarrierFrequency>11154000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
-    <SymbolRate>2200</SymbolRate>
+    <SymbolRate>2220</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>

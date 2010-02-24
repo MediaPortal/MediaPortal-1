@@ -37,15 +37,6 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>3577000</CarrierFrequency>
-    <Polarisation>CircularL</Polarisation>
-    <SymbolRate>2626</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
     <CarrierFrequency>3582000</CarrierFrequency>
     <Polarisation>CircularL</Polarisation>
     <SymbolRate>4275</SymbolRate>
@@ -154,9 +145,9 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>3764000</CarrierFrequency>
+    <CarrierFrequency>3746000</CarrierFrequency>
     <Polarisation>CircularL</Polarisation>
-    <SymbolRate>2531</SymbolRate>
+    <SymbolRate>2890</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -177,6 +168,15 @@
     <SymbolRate>1500</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>3886000</CarrierFrequency>
+    <Polarisation>CircularL</Polarisation>
+    <SymbolRate>5859</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>Rate5_6</InnerFecRate>
     <Pilot>NotSet</Pilot>
     <Rolloff>NotSet</Rolloff>
   </Transponder>
@@ -354,9 +354,9 @@
   <Transponder>
     <CarrierFrequency>11476000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
-    <SymbolRate>12000</SymbolRate>
+    <SymbolRate>9000</SymbolRate>
     <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
+    <InnerFecRate>Rate5_6</InnerFecRate>
     <Pilot>NotSet</Pilot>
     <Rolloff>NotSet</Rolloff>
   </Transponder>

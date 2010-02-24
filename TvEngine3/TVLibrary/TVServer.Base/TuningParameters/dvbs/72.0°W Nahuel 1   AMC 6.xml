@@ -10,15 +10,6 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>3786000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>4340</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
     <CarrierFrequency>3953000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>4167</SymbolRate>
@@ -451,20 +442,11 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>12025000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>3979</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>RateNotSet</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
     <CarrierFrequency>12031000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
-    <SymbolRate>3979</SymbolRate>
+    <SymbolRate>12401</SymbolRate>
     <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>RateNotSet</InnerFecRate>
+    <InnerFecRate>Rate5_6</InnerFecRate>
     <Pilot>NotSet</Pilot>
     <Rolloff>NotSet</Rolloff>
   </Transponder>
@@ -505,7 +487,7 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>12053000</CarrierFrequency>
+    <CarrierFrequency>12055000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>6890</SymbolRate>
     <Modulation>ModNotSet</Modulation>
@@ -523,11 +505,11 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>12144000</CarrierFrequency>
+    <CarrierFrequency>12148000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>2573</SymbolRate>
     <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
+    <InnerFecRate>RateNotSet</InnerFecRate>
     <Pilot>NotSet</Pilot>
     <Rolloff>NotSet</Rolloff>
   </Transponder>

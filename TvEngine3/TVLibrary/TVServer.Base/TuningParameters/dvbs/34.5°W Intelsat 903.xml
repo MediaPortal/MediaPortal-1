@@ -111,7 +111,7 @@
   <Transponder>
     <CarrierFrequency>11464000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
-    <SymbolRate>5255</SymbolRate>
+    <SymbolRate>7755</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate7_8</InnerFecRate>
     <Pilot>NotSet</Pilot>
