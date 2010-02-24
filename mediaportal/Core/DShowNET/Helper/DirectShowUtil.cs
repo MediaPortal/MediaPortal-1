@@ -909,7 +909,8 @@ namespace DShowNET.Helper
             }
 
             ReleaseComObject(i.pGraph);
-            hr = graphBuilder.Render(pins[0]);
+            if (!pinName.StartsWith("~")) //disable CC pin rendering
+              hr = graphBuilder.Render(pins[0]);
             if (hr != 0)
               Log.Debug(" - failed");
           }
