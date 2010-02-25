@@ -310,7 +310,7 @@ namespace TvService
           IList<Recording> pastRecordings = Recording.ListAll();
           Log.Debug("Scheduler: Check recordings for schedule {0}...", ToRecordTitle);
           // EPG needs to have episode information to distinguish between repeatings and new broadcasts
-          if (ToRecordEpisode.Equals(String.Empty))
+          if (ToRecordEpisode.Equals(String.Empty) || ToRecordEpisode.Equals(".."))
           {
             // Check the type so we aren't logging too verbose on single runs
             if (schedule.ScheduleType != (int)ScheduleRecordingType.Once)
