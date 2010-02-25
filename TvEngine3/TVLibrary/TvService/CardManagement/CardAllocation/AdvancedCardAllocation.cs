@@ -200,8 +200,13 @@ namespace TvService
     {
       try
       {
+
+        //Log.Info("GetAvailableCardsForChannel st {0}", Environment.StackTrace);
         //construct list of all cards we can use to tune to the new channel
         List<CardDetail> cardsAvailable = new List<CardDetail>();
+        List<int> cardsUnAvailable = new List<int>();
+
+        
 
         Log.Info("Controller: find free card for channel {0}", dbChannel.Name);
         TvBusinessLayer layer = new TvBusinessLayer();
@@ -234,6 +239,13 @@ namespace TvService
           {
             KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
             int cardId = keyPair.Value.DataBaseCard.IdCard;
+
+            if (cardsUnAvailable.Contains(cardId))
+            {
+              Log.Info("Controller:    card:{0} has already been queried, skipping.", cardId);
+              continue;              
+            }
+
             ITvCardHandler tvcard = cards[cardId];
 
             bool isCardFoundAndEnabled = IsCardFoundEnabled(cardsAvailable, keyPair);
@@ -241,6 +253,7 @@ namespace TvService
             {
               //not enabled, so skip the card
               Log.Info("Controller:    card:{0} type:{1} is disabled", cardId, tvcard.Type);
+              cardsUnAvailable.Add(cardId);
               continue;
             }
 
@@ -249,6 +262,7 @@ namespace TvService
             {
               Log.Error("card: unable to connect to slave controller at:{0}",
                         keyPair.Value.DataBaseCard.ReferencedServer().HostName);
+              cardsUnAvailable.Add(cardId);
               continue;
             }
 
@@ -256,6 +270,7 @@ namespace TvService
             {
               //card cannot tune to this channel, so skip it
               Log.Info("Controller:    card:{0} type:{1} cannot tune to channel", cardId, tvcard.Type);
+              cardsUnAvailable.Add(cardId);
               continue;
             }
 
@@ -265,6 +280,7 @@ namespace TvService
             if (!isChannelMappedToCard)
             {
               Log.Info("Controller:    card:{0} type:{1} channel not mapped", cardId, tvcard.Type);
+              cardsUnAvailable.Add(cardId);
               continue;
             }
 
@@ -279,6 +295,7 @@ namespace TvService
                                                      checkTransponders, out isSameTransponder, out canDecrypt);
             if (!checkTransponder)
             {
+              cardsUnAvailable.Add(cardId);
               continue;
             }
 
