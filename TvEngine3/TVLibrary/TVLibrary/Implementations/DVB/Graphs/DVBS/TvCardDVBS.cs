@@ -36,17 +36,7 @@ namespace TvLibrary.Implementations.DVB
 
     private bool _diseqCsucceded = true;
     private int _diseqCretries = 0;
-
-    /// <summary>
-    /// holds the DVB-S tuning space
-    /// </summary>
-    protected IDVBSTuningSpace _tuningSpace;
-
-    private DVBSChannel _dvbsChannel;
-    /// <summary>
-    /// holds the current DVB-S tuning request
-    /// </summary>
-    protected IDVBTuneRequest _tuneRequest;
+    private DVBSChannel _dvbsChannel;    
 
     #endregion
 
@@ -85,7 +75,7 @@ namespace TvLibrary.Implementations.DVB
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
         // Method names should be self explanatory
-        AddNetworkProviderFilter(typeof (DVBSNetworkProvider).GUID);
+        AddNetworkProviderFilter(typeof(DVBSNetworkProvider).GUID);
         CreateTuningSpace();
         AddMpeg2DemuxerToGraph();
         AddAndConnectBDABoardFilters(_device);
@@ -137,6 +127,7 @@ namespace TvLibrary.Implementations.DVB
       }
       ITuneRequest request;
       container.get_EnumTuningSpaces(out enumTuning);
+      IDVBSTuningSpace tuningSpace;
       while (true)
       {
         int fetched;
@@ -148,14 +139,16 @@ namespace TvLibrary.Implementations.DVB
         if (name == "MediaPortal DVBS TuningSpace")
         {
           Log.Log.WriteFile("dvbs:found correct tuningspace {0}", name);
+
           _tuningSpace = (IDVBSTuningSpace)spaces[0];
-          _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
-          _tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
-          _tuningSpace.put_LowOscillator(lowOsc * 1000);
-          _tuningSpace.put_HighOscillator(hiOsc * 1000);
-          tuner.put_TuningSpace(_tuningSpace);
-          _tuningSpace.CreateTuneRequest(out request);
-          _tuneRequest = (IDVBTuneRequest)request;
+          tuningSpace = (IDVBSTuningSpace) _tuningSpace;
+          tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
+          tuningSpace.put_SpectralInversion(SpectralInversion.Automatic);
+          tuningSpace.put_LowOscillator(lowOsc * 1000);
+          tuningSpace.put_HighOscillator(hiOsc * 1000);
+          tuner.put_TuningSpace(tuningSpace);
+          tuningSpace.CreateTuneRequest(out request);
+          _tuneRequest = (IDVBTuneRequest)request;          
           return;
         }
         Release.ComObject("ITuningSpace", spaces[0]);
@@ -163,13 +156,14 @@ namespace TvLibrary.Implementations.DVB
       Release.ComObject("IEnumTuningSpaces", enumTuning);
       Log.Log.WriteFile("dvbs:Create new tuningspace");
       _tuningSpace = (IDVBSTuningSpace)new DVBSTuningSpace();
-      _tuningSpace.put_UniqueName("MediaPortal DVBS TuningSpace");
-      _tuningSpace.put_FriendlyName("MediaPortal DVBS TuningSpace");
-      _tuningSpace.put__NetworkType(typeof (DVBSNetworkProvider).GUID);
-      _tuningSpace.put_SystemType(DVBSystemType.Satellite);
-      _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
-      _tuningSpace.put_LowOscillator(lowOsc * 1000);
-      _tuningSpace.put_HighOscillator(hiOsc * 1000);
+      tuningSpace = (IDVBSTuningSpace) _tuningSpace;
+      tuningSpace.put_UniqueName("MediaPortal DVBS TuningSpace");
+      tuningSpace.put_FriendlyName("MediaPortal DVBS TuningSpace");
+      tuningSpace.put__NetworkType(typeof(DVBSNetworkProvider).GUID);
+      tuningSpace.put_SystemType(DVBSystemType.Satellite);
+      tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
+      tuningSpace.put_LowOscillator(lowOsc * 1000);
+      tuningSpace.put_HighOscillator(hiOsc * 1000);      
       IDVBSLocator locator = (IDVBSLocator)new DVBSLocator();
       locator.put_CarrierFrequency(-1);
       locator.put_InnerFEC(FECMethod.MethodNotSet);
@@ -199,92 +193,81 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
-      DVBSChannel dvbsChannel = channel as DVBSChannel;
-      if (dvbsChannel == null)
-      {
-        Log.Log.WriteFile("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
-        return null;
-      }
-      /*if (CurrentChannel != null)
-      {
-        //@FIX this fails for back-2-back recordings
-        //if (oldChannel.Equals(channel)) return _mapSubChannels[0];
-      }*/
-      if (dvbsChannel.SwitchingFrequency < 10)
-      {
-        dvbsChannel.SwitchingFrequency = 11700000;
-      }
-      Log.Log.WriteFile("dvbs:  Tune:{0}", channel);
-      if (_graphState == GraphState.Idle)
-      {
-        BuildGraph();
-      }
-      if (_mapSubChannels.ContainsKey(subChannelId) == false)
-      {
-        subChannelId = GetNewSubChannel(channel);
-      }
-      ITvSubChannel ch;
-      if (_previousChannel == null || _previousChannel.IsDifferentTransponder(dvbsChannel))
-      {
-        //_pmtPid = -1;
-        ILocator locator;
-        int lowOsc;
-        int hiOsc;
-        int lnbSwitch;
-        BandTypeConverter.GetDefaultLnbSetup(Parameters, dvbsChannel.BandType, out lowOsc, out hiOsc, out lnbSwitch);
-        Log.Log.Info("LNB low:{0} hi:{1} switch:{2}", lowOsc, hiOsc, lnbSwitch);
-        if (lnbSwitch == 0)
-          lnbSwitch = 18000;
-        _tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
-        _tuningSpace.put_LowOscillator(lowOsc * 1000);
-        _tuningSpace.put_HighOscillator(hiOsc * 1000);
-        ITuneRequest request;
-        _tuningSpace.CreateTuneRequest(out request);
-        _tuneRequest = (IDVBTuneRequest)request;
-        _tuningSpace.get_DefaultLocator(out locator);
-        IDVBSLocator dvbsLocator = (IDVBSLocator)locator;
-        _tuneRequest.put_ONID(dvbsChannel.NetworkId);
-        _tuneRequest.put_SID(dvbsChannel.ServiceId);
-        _tuneRequest.put_TSID(dvbsChannel.TransportId);
-        locator.put_CarrierFrequency((int)dvbsChannel.Frequency);
-        dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
-        dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
-        //DVB-S2 specific modulation class call here if DVB-S2 card detected
-        DVBSChannel tuneChannel = dvbsChannel;
-        if (_conditionalAccess != null)
-        {
-          tuneChannel = _conditionalAccess.SetDVBS2Modulation(_parameters, dvbsChannel);
-        }
-        dvbsLocator.put_Modulation(tuneChannel.ModulationType);
-        Log.Log.WriteFile("dvbs:channel modulation is set to {0}", tuneChannel.ModulationType);
-        dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
-        Log.Log.WriteFile("dvbs:channel FECRate is set to {0}", tuneChannel.InnerFecRate);
-        _tuneRequest.put_Locator(locator);
-        //set the DisEqC parameters 
-        if (_conditionalAccess != null)
-        {
-          _diseqCsucceded = _conditionalAccess.SendDiseqcCommand(_parameters, dvbsChannel);
-        }
-        //put the Tuner request parameters to the driver
-        ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, true);
-        _previousChannel = dvbsChannel;
-      }
-      else
-      {
-        ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, false);
-      }
-      //move diseqc motor to correct satellite
-      if (_conditionalAccess != null)
-      {
-        if (dvbsChannel.SatelliteIndex > 0 && _conditionalAccess.DiSEqCMotor != null)
-        {
-          _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
-        }
-      }
+      Log.Log.WriteFile("dvbs: Tune:{0}", channel);
       try
       {
+        DVBSChannel dvbsChannel = channel as DVBSChannel;
+        if (dvbsChannel == null)
+        {
+          Log.Log.WriteFile("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
+          return null;
+        }
+        /*if (CurrentChannel != null)
+        {
+          //@FIX this fails for back-2-back recordings
+          //if (oldChannel.Equals(channel)) return _mapSubChannels[0];
+        }*/
+        if (dvbsChannel.SwitchingFrequency < 10)
+        {
+          dvbsChannel.SwitchingFrequency = 11700000;
+        }
+        Log.Log.WriteFile("dvbs:  Tune:{0}", channel);
+        if (_graphState == GraphState.Idle)
+        {
+          BuildGraph();
+        }
+        if (_mapSubChannels.ContainsKey(subChannelId) == false)
+        {
+          subChannelId = GetNewSubChannel(channel);
+        }
+
+        if (_previousChannel == null || _previousChannel.IsDifferentTransponder(dvbsChannel))
+        {
+          //_pmtPid = -1;
+          ILocator locator;
+          int lowOsc;
+          int hiOsc;
+          int lnbSwitch;
+          BandTypeConverter.GetDefaultLnbSetup(Parameters, dvbsChannel.BandType, out lowOsc, out hiOsc, out lnbSwitch);
+          Log.Log.Info("LNB low:{0} hi:{1} switch:{2}", lowOsc, hiOsc, lnbSwitch);
+          if (lnbSwitch == 0)
+            lnbSwitch = 18000;
+          IDVBSTuningSpace tuningSpace = (IDVBSTuningSpace)_tuningSpace;
+          tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
+          tuningSpace.put_LowOscillator(lowOsc * 1000);
+          tuningSpace.put_HighOscillator(hiOsc * 1000);
+          ITuneRequest request;
+          _tuningSpace.CreateTuneRequest(out request);
+          _tuneRequest = (IDVBTuneRequest)request;
+          _tuningSpace.get_DefaultLocator(out locator);
+          IDVBSLocator dvbsLocator = (IDVBSLocator)locator;
+          IDVBTuneRequest tuneRequest = (IDVBTuneRequest)_tuneRequest;
+          tuneRequest.put_ONID(dvbsChannel.NetworkId);
+          tuneRequest.put_SID(dvbsChannel.ServiceId);
+          tuneRequest.put_TSID(dvbsChannel.TransportId);
+          locator.put_CarrierFrequency((int)dvbsChannel.Frequency);
+          dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
+          dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
+          //DVB-S2 specific modulation class call here if DVB-S2 card detected
+          DVBSChannel tuneChannel = dvbsChannel;
+          if (_conditionalAccess != null)
+          {
+            tuneChannel = _conditionalAccess.SetDVBS2Modulation(_parameters, dvbsChannel);
+          }
+          dvbsLocator.put_Modulation(tuneChannel.ModulationType);
+          Log.Log.WriteFile("dvbs:channel modulation is set to {0}", tuneChannel.ModulationType);
+          dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
+          Log.Log.WriteFile("dvbs:channel FECRate is set to {0}", tuneChannel.InnerFecRate);
+          _tuneRequest.put_Locator(locator);
+          //set the DisEqC parameters 
+          if (_conditionalAccess != null)
+          {
+            _diseqCsucceded = _conditionalAccess.SendDiseqcCommand(_parameters, dvbsChannel);
+          }          
+        }
+
         _dvbsChannel = dvbsChannel;
-        RunGraph(ch.SubChannelId);
+        ITvSubChannel ch = base.Tune(subChannelId, channel);
 
         // workaround for hauppauge dvb-s cards that fail to properly set diseqC the first time around.
         // restart graph, but only once.
@@ -293,26 +276,47 @@ namespace TvLibrary.Implementations.DVB
           _diseqCretries++;
           Log.Log.WriteFile("dvbs: setting diseqC failed the first time, resetting diseqC");
           StopGraph();
-          Tune(subChannelId, channel);                
+          Tune(subChannelId, channel);
         }
+
+        if (dvbsChannel.ServiceId < 0 || dvbsChannel.NetworkId < 0 || dvbsChannel.TransportId < 0)
+          _filterTIF.Stop();
+        return ch;
       }
       catch (TvExceptionNoSignal)
-      {                            
-        FreeSubChannel(ch.SubChannelId);
-        throw;                  
+      {
+        throw;
       }
-      if (dvbsChannel.ServiceId < 0 || dvbsChannel.NetworkId < 0 || dvbsChannel.TransportId < 0)
-        _filterTIF.Stop();
-      return ch;
-    }    
+      catch (Exception ex)
+      {
+        Log.Log.Write(ex);
+        throw;
+      }
+    }
+
+    protected override void OnAfterTune (IChannel channel)
+    {
+      DVBSChannel dvbsChannel = channel as DVBSChannel;
+      if (dvbsChannel != null)
+      {
+        //move diseqc motor to correct satellite
+        if (_conditionalAccess != null)
+        {
+          if (dvbsChannel.SatelliteIndex > 0 && _conditionalAccess.DiSEqCMotor != null)
+          {
+            _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
+          }
+        } 
+      }      
+    }
 
     protected override bool ShouldWaitForSignal()
     {
-      bool shouldWait = true;     
+      bool shouldWait = true;
 
       if (_diseqCretries == 0 && !_diseqCsucceded && _conditionalAccess != null)
-      {        
-        shouldWait = false;                        
+      {
+        shouldWait = false;
       }
 
       return shouldWait;

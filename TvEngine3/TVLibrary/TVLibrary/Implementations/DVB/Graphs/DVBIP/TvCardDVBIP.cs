@@ -152,6 +152,7 @@ namespace TvLibrary.Implementations.DVB
     public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       Log.Log.WriteFile("dvbip:  Tune:{0}", channel);
+      ITvSubChannel ch = null;
       try
       {
         DVBIPChannel dvbipChannel = channel as DVBIPChannel;
@@ -210,7 +211,7 @@ namespace TvLibrary.Implementations.DVB
         _lastSignalUpdate = DateTime.MinValue;
 
         _mapSubChannels[subChannelId].OnAfterTune();
-        ITvSubChannel ch = _mapSubChannels[subChannelId];
+        ch = _mapSubChannels[subChannelId];
         Log.Log.Info("dvbip: tune: Running graph for channel {0}", ch.ToString());
         Log.Log.Info("dvbip: tune: SubChannel {0}", ch.SubChannelId);
         RunGraph(ch.SubChannelId, dvbipChannel.Url);
@@ -219,8 +220,12 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
+        if (ch != null)
+        {
+          FreeSubChannel(ch.SubChannelId);  
+        }        
         Log.Log.Write(ex);
-        throw ex;
+        throw;
       }
       //unreachable return null;
     }

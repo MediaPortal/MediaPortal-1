@@ -105,6 +105,16 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region variables
+    
+    /// <summary>
+    /// holds the the DVB tuning space
+    /// </summary>
+    protected ITuningSpace _tuningSpace;
+
+    /// <summary>
+    /// holds the current DVB tuning request
+    /// </summary>
+    protected ITuneRequest _tuneRequest;
 
     /// <summary>
     /// Capture graph builder
@@ -252,6 +262,50 @@ namespace TvLibrary.Implementations.DVB
       _minChannel = -1;
       _maxChannel = -1;
       _supportsSubChannels = true;
+    }
+
+    #endregion
+
+    #region tuning
+
+    protected virtual void OnAfterTune (IChannel channel)
+    {
+      
+    }
+
+    /// <summary>
+    /// Tunes the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The sub channel id</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns></returns>
+    public virtual ITvSubChannel Tune(int subChannelId, IChannel channel)
+    {      
+      bool performTune = (_previousChannel == null || _previousChannel.IsDifferentTransponder(channel));      
+      ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, performTune);
+      _previousChannel = channel;
+     
+      try
+      {
+        if (ch != null)
+        {
+          RunGraph(ch.SubChannelId);
+          OnAfterTune(channel);
+          return ch;
+        }       
+        else
+        {
+          throw new TvException("TvCardDvbVase.Tune: Subchannel was null");
+        }
+      }
+      catch (Exception)
+      {
+        if (ch != null)
+        {
+          FreeSubChannel(ch.SubChannelId);
+        }
+        throw;
+      }      
     }
 
     #endregion

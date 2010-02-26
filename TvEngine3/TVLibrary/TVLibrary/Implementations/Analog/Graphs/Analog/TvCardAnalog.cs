@@ -259,7 +259,7 @@ namespace TvLibrary.Implementations.Analog
       {
         RunGraph(subChannel.SubChannelId);
       }
-      catch (TvExceptionNoSignal)
+      catch (Exception)
       {
         FreeSubChannel(subChannel.SubChannelId);
         throw;

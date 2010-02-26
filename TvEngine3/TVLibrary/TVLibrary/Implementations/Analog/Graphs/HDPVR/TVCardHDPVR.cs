@@ -245,7 +245,16 @@ namespace TvLibrary.Implementations.Analog
       subChannel.OnBeforeTune();
       PerformTuning(channel);
       subChannel.OnAfterTune();
-      RunGraph(subChannelId);
+      try
+      {
+        RunGraph(subChannelId);
+      }
+      catch (Exception)
+      {
+        FreeSubChannel(subChannelId);        
+        throw;
+      }
+      
       return subChannel;
     }
 
