@@ -309,10 +309,10 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
     Error=0  ;
   	m_TSBufferFile.SetFilePointer(0, FILE_END);
 	  __int64 fileLength = m_TSBufferFile.GetFilePointer();
-		if (fileLength==0)
-			return S_FALSE;
 
-	  if (fileLength <= (sizeof(__int64) + sizeof(long) + sizeof(long) + sizeof(wchar_t) + sizeof(long) + sizeof(long))) Error|=0x01;
+    // Min file length is Header ( __int64 + long + long ) + filelist ( > 0 ) + Footer ( long + long ) 
+    if (fileLength <= (sizeof(__int64) + sizeof(long) + sizeof(long) + sizeof(wchar_t) + sizeof(long) + sizeof(long)))
+			return S_FALSE;
 
 	  m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
 	
@@ -331,8 +331,8 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 
     __int64 remainingLength = fileLength - sizeof(__int64) - sizeof(long) - sizeof(long) - sizeof(long) - sizeof(long) ;
 
-    // Above 100kb or below 0 seems stupid and figure out a problem !!!
-		if ((remainingLength > 100000) || (remainingLength < 0)) Error=0x10;;
+    // Above 100kb seems stupid and figure out a problem !!!
+		if (remainingLength > 100000) Error=0x10;;
   
     pBuffer = (LPWSTR)new BYTE[(UINT)remainingLength];
 
