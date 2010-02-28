@@ -66,7 +66,7 @@ namespace DShowNET.Helper
     /// <summary> Create a new filter from its moniker </summary>
     internal Filter(IMoniker moniker)
     {
-      MonikerString = getMonikerString(moniker);
+      MonikerString = getMonikerString(moniker);   
     }
 
     public string Name
@@ -80,6 +80,12 @@ namespace DShowNET.Helper
         _name = getName(MonikerString);
         return _name;
       }
+    }
+
+    public Guid CLSID 
+	{ 
+      get; 
+	  protected set; 
     }
 
     public void ResolveName()
@@ -120,6 +126,13 @@ namespace DShowNET.Helper
         {
           throw new NotImplementedException("Device FriendlyName");
         }
+
+        bag.Read("CLSID", out val, null);
+        if (hr == 0) 
+		{
+		  CLSID = new Guid(val as string);
+        }
+
         return (ret);
       }
       catch (Exception)

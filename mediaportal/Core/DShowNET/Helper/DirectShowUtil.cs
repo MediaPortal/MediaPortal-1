@@ -46,12 +46,17 @@ namespace DShowNET.Helper
 
     public static IBaseFilter AddFilterToGraph(IGraphBuilder graphBuilder, string strFilterName)
     {
+      return AddFilterToGraph(graphBuilder, strFilterName, Guid.Empty);
+    }
+
+    public static IBaseFilter AddFilterToGraph(IGraphBuilder graphBuilder, string strFilterName, Guid clsid)
+    {
       try
       {
         IBaseFilter NewFilter = null;
         foreach (Filter filter in Filters.LegacyFilters)
         {
-          if (String.Compare(filter.Name, strFilterName, true) == 0)
+          if (String.Compare(filter.Name, strFilterName, true) == 0 && (clsid == Guid.Empty || filter.CLSID == clsid) )
           {
             NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
 
