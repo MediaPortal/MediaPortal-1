@@ -230,6 +230,7 @@ namespace TvService
         //foreach tuning detail
         foreach (IChannel tuningDetail in tuningDetails)
         {
+          cardsUnAvailable.Clear();
           number++;
           Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());
           Dictionary<int, ITvCardHandler>.Enumerator enumerator = cards.GetEnumerator();
@@ -247,13 +248,13 @@ namespace TvService
             }
 
             ITvCardHandler tvcard = cards[cardId];
-
+            
             bool isCardFoundAndEnabled = IsCardFoundEnabled(cardsAvailable, keyPair);
             if (!isCardFoundAndEnabled)
             {
               //not enabled, so skip the card
               Log.Info("Controller:    card:{0} type:{1} is disabled", cardId, tvcard.Type);
-              cardsUnAvailable.Add(cardId);
+              AddCardUnAvailable(ref cardsUnAvailable, cardId);
               continue;
             }
 
@@ -262,7 +263,7 @@ namespace TvService
             {
               Log.Error("card: unable to connect to slave controller at:{0}",
                         keyPair.Value.DataBaseCard.ReferencedServer().HostName);
-              cardsUnAvailable.Add(cardId);
+              AddCardUnAvailable(ref cardsUnAvailable, cardId);
               continue;
             }
 
@@ -270,7 +271,7 @@ namespace TvService
             {
               //card cannot tune to this channel, so skip it
               Log.Info("Controller:    card:{0} type:{1} cannot tune to channel", cardId, tvcard.Type);
-              cardsUnAvailable.Add(cardId);
+              AddCardUnAvailable(ref cardsUnAvailable, cardId);
               continue;
             }
 
@@ -280,7 +281,7 @@ namespace TvService
             if (!isChannelMappedToCard)
             {
               Log.Info("Controller:    card:{0} type:{1} channel not mapped", cardId, tvcard.Type);
-              cardsUnAvailable.Add(cardId);
+              AddCardUnAvailable(ref cardsUnAvailable, cardId);
               continue;
             }
 
@@ -295,7 +296,7 @@ namespace TvService
                                                      checkTransponders, out isSameTransponder, out canDecrypt);
             if (!checkTransponder)
             {
-              cardsUnAvailable.Add(cardId);
+              AddCardUnAvailable(ref cardsUnAvailable, cardId);
               continue;
             }
 
@@ -334,6 +335,14 @@ namespace TvService
         result = TvResult.UnknownError;
         Log.Write(ex);
         return null;
+      }
+    }
+
+    private void AddCardUnAvailable(ref List<int> cardsUnAvailable, int cardId)
+    {
+      if (!cardsUnAvailable.Contains(cardId))
+      {
+        cardsUnAvailable.Add(cardId);
       }
     }
 
