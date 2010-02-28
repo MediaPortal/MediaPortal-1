@@ -383,7 +383,11 @@ namespace TvDatabase
     /// </summary>
     public bool IsRecording
     {
-      get { return isRecording; }
+      get
+      {
+        this.Refresh();
+        return isRecording;
+      }
       set
       {
         isChanged |= isRecording != value;
