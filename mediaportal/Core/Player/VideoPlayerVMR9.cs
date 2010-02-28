@@ -73,11 +73,7 @@ namespace MediaPortal.Player
         string strAudioCodec = "";
         string strAACAudioCodec = "";
         string strAudiorenderer = "";
-        string strFilters = ""; // FlipGer: collect custom filters
-        string videoFilterPriority1 = "";
-        string videoFilterPriority2 = "";
-        string audioFilterPriority1 = "";
-        string audioFilterPriority2 = "";
+        string strFilters = ""; // FlipGer: collect custom filters        
         bool wmvAudio;
         bool autoloadSubtitles;
         bool bAutoDecoderSettings = false;
@@ -126,83 +122,43 @@ namespace MediaPortal.Player
         graphBuilder.AddSourceFilter(m_strCurrentFile, null, out source);
         string extension = Path.GetExtension(m_strCurrentFile).ToLower();
 
-        if (strH264VideoCodec == strVideoCodec)
-          strH264VideoCodec = "";
-        if (strAACAudioCodec == strAudioCodec)
-          strAACAudioCodec = "";
-
-        videoFilterPriority1 = strVideoCodec;
-        videoFilterPriority2 = strH264VideoCodec;
-        audioFilterPriority1 = strAudioCodec;
-        audioFilterPriority2 = strAACAudioCodec;
-
         switch (extension)
         {
-          case ".avi":
+          case ".dvr-ms":
+          case ".mpg":
+          case ".mpeg":
+          case ".bin":
+          case ".dat":          
             {
-              // Check if splitter is in the graph.
-              IBaseFilter hms = null;
-              DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.HaaliGuid, out hms);
-              if (hms == null)
-                DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.MPCMatroska, out hms);
-              if (hms == null)
-              {
-                IBaseFilter destination = DirectShowUtil.AddFilterToGraph(graphBuilder, "AVI Splitter");
-                IPin pinFrom = DsFindPin.ByDirection(source, PinDirection.Output, 0);
-                IPin pinTo = DsFindPin.ByDirection(destination, PinDirection.Input, 0);
-                graphBuilder.ConnectDirect(pinFrom, pinTo, null);
-                DirectShowUtil.ReleaseComObject(source); source = null;
-                source = DirectShowUtil.GetFilterByName(graphBuilder, "AVI Splitter");
-                DirectShowUtil.ReleaseComObject(destination); destination = null;
-                DirectShowUtil.ReleaseComObject(pinFrom); pinFrom = null;
-                DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
-              }
-              else
-                DirectShowUtil.ReleaseComObject(hms); hms = null;
+              strH264VideoCodec = "";
+              strAACAudioCodec = "";
               break;
             }
           case ".wmv":
             {
-              videoFilterPriority1 = "WMVideo Decoder DMO";
-              videoFilterPriority2 = "";
-              audioFilterPriority1 = ""; //add filter to graph manually for high resolution output
-              audioFilterPriority2 = "";
-              //Set High Resolution Output > 2 channels
-              IBaseFilter baseFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "WMAudio Decoder DMO");
-              if (baseFilter != null && wmvAudio != false) //Also check configuration option enabled
-              {
-                //Set the filter setting to enable more than 2 audio channels
-                const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
-                object val = true;
-                IPropertyBag propBag = (IPropertyBag)baseFilter;
-                hr = propBag.Write(g_wszWMACHiResOutput, ref val);
-                if (hr != 0)
-                {
-                  Log.Info("VideoPlayerVMR9: Write failed: g_wszWMACHiResOutput {0}", hr);
-                }
-                else
-                {
-                  Log.Info("VideoPlayerVMR9: WMAudio Decoder now set for > 2 audio channels");
-                }
-                DirectShowUtil.ReleaseComObject(baseFilter); baseFilter = null;
-              }
+              strVideoCodec = "WMVideo Decoder DMO";
+              strH264VideoCodec = "";
+              strAudioCodec = "WMAudio Decoder DMO";
+              strAACAudioCodec = "";              
               break;
             }
           case ".mkv":
           case ".m2ts":
           case ".mp4":
             {
-              videoFilterPriority1 = strH264VideoCodec;
-              videoFilterPriority2 = strVideoCodec;
+              strVideoCodec = "";
               break;
             }
         }
 
-        if (!DirectShowUtil.TryConnect(graphBuilder, source, MediaType.Video, videoFilterPriority1))
-          DirectShowUtil.TryConnect(graphBuilder, source, MediaType.Video, videoFilterPriority2);
-
-        if (!DirectShowUtil.TryConnect(graphBuilder, source, MediaType.Audio, audioFilterPriority1) && strAACAudioCodec != strAudioCodec)
-          DirectShowUtil.TryConnect(graphBuilder, source, MediaType.Audio, audioFilterPriority2);
+        if (!string.IsNullOrEmpty(strVideoCodec))
+          DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
+        if (!string.IsNullOrEmpty(strH264VideoCodec) && strVideoCodec != strH264VideoCodec)
+          DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
+        if (!string.IsNullOrEmpty(strAudioCodec))
+          DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
+        if (!string.IsNullOrEmpty(strAACAudioCodec) && strAudioCodec != strAACAudioCodec) 
+          DirectShowUtil.AddFilterToGraph(graphBuilder, strAACAudioCodec);
 
         if (strAudiorenderer.Length > 0)
         {
@@ -216,8 +172,30 @@ namespace MediaPortal.Player
           DirectShowUtil.AddFilterToGraph(graphBuilder, arrFilters[i]);
         }
 
+        //Set High Resolution Output > 2 channels
+        IBaseFilter baseFilter = null;
+        graphBuilder.FindFilterByName("WMAudio Decoder DMO", out baseFilter);
+        if (baseFilter != null && wmvAudio != false) //Also check configuration option enabled
+        {
+          //Set the filter setting to enable more than 2 audio channels
+          const string g_wszWMACHiResOutput = "_HIRESOUTPUT";
+          object val = true;
+          IPropertyBag propBag = (IPropertyBag)baseFilter;
+          hr = propBag.Write(g_wszWMACHiResOutput, ref val);
+          if (hr != 0)
+          {
+            Log.Info("VideoPlayerVMR9: Write failed: g_wszWMACHiResOutput {0}", hr);
+          }
+          else
+          {
+            Log.Info("VideoPlayerVMR9: WMAudio Decoder now set for > 2 audio channels");
+          }
+          DirectShowUtil.ReleaseComObject(baseFilter); baseFilter = null;
+        }
+
         DirectShowUtil.RenderGraphBuilderOutputPins(graphBuilder, source);
         DirectShowUtil.ReleaseComObject(source); source = null;
+        DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
 
         #region Subtitles
 
@@ -238,6 +216,7 @@ namespace MediaPortal.Player
         mediaSeek = (IMediaSeeking)graphBuilder;
         mediaPos = (IMediaPosition)graphBuilder;
         basicAudio = (IBasicAudio)graphBuilder;
+        videoWin = (IVideoWindow)graphBuilder;
         m_iVideoWidth = Vmr9.VideoWidth;
         m_iVideoHeight = Vmr9.VideoHeight;
         Vmr9.SetDeinterlaceMode();
@@ -309,6 +288,7 @@ namespace MediaPortal.Player
         mediaSeek = (IMediaSeeking)graphBuilder;
         mediaPos = (IMediaPosition)graphBuilder;
         basicAudio = (IBasicAudio)graphBuilder;
+        videoWin = (IVideoWindow)graphBuilder;
         m_iVideoWidth = Vmr9.VideoWidth;
         m_iVideoHeight = Vmr9.VideoHeight;
 
@@ -379,7 +359,6 @@ namespace MediaPortal.Player
           mediaEvt = null;
         }
 
-        videoWin = graphBuilder as IVideoWindow;
         if (videoWin != null)
         {
           hr = videoWin.put_Visible(OABool.False);

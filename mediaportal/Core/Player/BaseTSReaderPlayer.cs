@@ -180,10 +180,8 @@ namespace MediaPortal.Player
     protected int iChangedMediaTypes;
     protected VideoStreamFormat _videoFormat;
     protected int _lastFrameCounter;
-    protected string videoFilterPriority1 = "";
-    protected string videoFilterPriority2 = "";
-    protected string audioFilterPriority1 = "";
-    protected string audioFilterPriority2 = "";
+    protected string videoFilter = "";    
+    protected string audioFilter = "";    
     
     #endregion
 
@@ -1507,7 +1505,8 @@ namespace MediaPortal.Player
                 ReAddFilters("Video");
                 break;
             }
-            DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);            
+            DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, _fileSource);
+            DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
           }
           /*
           else
@@ -1873,49 +1872,34 @@ namespace MediaPortal.Player
     protected virtual void MatchFilters(string format) {}
 
     private void ReAddFilters(string selection)
-    {      
+    {
+      // we have to find first filter connected to tsreader which will be removed
+      IPin pinFrom = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, selection);
+      IPin pinTo;
+      int hr = pinFrom.ConnectedTo(out pinTo);
+      if (hr >= 0 && pinTo != null)
+      {
+        PinInfo pInfo;
+        pinTo.QueryPinInfo(out pInfo);
+        FilterInfo fInfo;
+        pInfo.filter.QueryFilterInfo(out fInfo);
+        Log.Debug("TSReaderPlayer: Remove filter - {0}", fInfo.achName);
+        _graphBuilder.RemoveFilter(pInfo.filter);
+        DsUtils.FreePinInfo(pInfo);
+        DirectShowUtil.ReleaseComObject(fInfo.pGraph);
+        DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
+      }
+      DirectShowUtil.ReleaseComObject(pinFrom); pinFrom = null;
+      MatchFilters(selection);
+
       if (selection == "Video")
       {
-        if (String.IsNullOrEmpty(videoFilterPriority1)) // bad filter selection in config
-        {
-          IPin pinFrom = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, "Video");
-          IPin pinTo;
-          int hr = pinFrom.ConnectedTo(out pinTo);
-          if (hr >= 0 && pinTo != null)
-          {
-            PinInfo pInfo;
-            pinTo.QueryPinInfo(out pInfo);
-            FilterInfo fInfo;
-            pInfo.filter.QueryFilterInfo(out fInfo);
-            Log.Debug("TSReaderPlayer:Found video filter - {0}", fInfo.achName);
-            videoFilterPriority1 = fInfo.achName;
-            DsUtils.FreePinInfo(pInfo);
-            DirectShowUtil.ReleaseComObject(fInfo.pGraph);
-            DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
-          }
-          DirectShowUtil.ReleaseComObject(pinFrom); pinFrom = null;
-        }
-        DirectShowUtil.RemoveFilters(_graphBuilder, videoFilterPriority1);
-        MatchFilters(selection);
-        if (!DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Video, videoFilterPriority1))
-        {
-          videoFilterPriority1 = "";
-          if (DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Video, videoFilterPriority2))
-            videoFilterPriority1 = videoFilterPriority2;
-        }
+        DirectShowUtil.AddFilterToGraph(_graphBuilder, videoFilter);
       }
       else
       {
-        if (!String.IsNullOrEmpty(audioFilterPriority1))
-          DirectShowUtil.RemoveFilters(_graphBuilder, audioFilterPriority1);
-        if (!String.IsNullOrEmpty(audioFilterPriority2))
-          DirectShowUtil.RemoveFilters(_graphBuilder, audioFilterPriority2);
-        MatchFilters(selection);
-        if (!DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Audio, audioFilterPriority1))
-        {
-          DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Audio, audioFilterPriority2);
-        }
-      }          
+        DirectShowUtil.AddFilterToGraph(_graphBuilder, audioFilter);
+      }
     }
 
     /*

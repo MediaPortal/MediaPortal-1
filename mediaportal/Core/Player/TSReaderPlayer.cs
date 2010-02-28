@@ -213,26 +213,22 @@ namespace MediaPortal.Player
       {
         if (_videoFormat.streamType == VideoStreamType.MPEG2)
         {
-          videoFilterPriority1 = strVideoCodec;
-          videoFilterPriority2 = strH264VideoCodec;
+          videoFilter = strVideoCodec;          
         }
         else
         {
-          videoFilterPriority1 = strH264VideoCodec;
-          videoFilterPriority2 = strVideoCodec;
+          videoFilter = strH264VideoCodec;          
         }
       }
       else
       {
         if (AudioType(CurrentAudioStream).Contains("AAC"))
         {
-          audioFilterPriority1 = strAACAudioCodec;
-          audioFilterPriority2 = strAudioCodec;
+          audioFilter = strAACAudioCodec;          
         }
         else
         {
-          audioFilterPriority1 = strAudioCodec;
-          audioFilterPriority2 = strAACAudioCodec;
+          audioFilter = strAudioCodec;          
         }
       }
     }
@@ -322,34 +318,12 @@ namespace MediaPortal.Player
         Log.Info("TSReaderPlayer: Add codecs");
         // add preferred video & audio codecs
         
-        if (strH264VideoCodec == strVideoCodec)
-          strH264VideoCodec = "";
-        if (strAACAudioCodec == strAudioCodec)
-          strAACAudioCodec = "";
-
         MatchFilters("Video");
         MatchFilters("Audio");
 
         if (!_isRadio)
         {
-          if (!DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Video, videoFilterPriority1))
-          {
-            if (videoFilterPriority1 == strVideoCodec)
-              strVideoCodec = "";
-            else
-              strH264VideoCodec = "";
-            videoFilterPriority1 = "";
-            if (!DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Video, videoFilterPriority2))
-            {
-              if (videoFilterPriority2 == strVideoCodec)
-                strVideoCodec = "";
-              else
-                strH264VideoCodec = "";
-              videoFilterPriority2 = "";
-            }
-            else
-              videoFilterPriority1 = videoFilterPriority2;
-          }
+          DirectShowUtil.AddFilterToGraph(_graphBuilder, videoFilter);
           if (enableDVBBitmapSubtitles)
           {
             try
@@ -363,10 +337,7 @@ namespace MediaPortal.Player
           }
         }
 
-        if (!DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Audio, audioFilterPriority1))
-          DirectShowUtil.TryConnect(_graphBuilder, _fileSource, MediaType.Audio, audioFilterPriority2);
-
-        
+        DirectShowUtil.AddFilterToGraph(_graphBuilder, audioFilter);
 
         // FlipGer: add custom filters to graph
         string[] arrFilters = strFilters.Split(';');
@@ -380,7 +351,47 @@ namespace MediaPortal.Player
         #region render TsReader output pins
 
         Log.Info("TSReaderPlayer: Render TsReader outputs");
-        DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
+        if (_isRadio)
+        {
+          IEnumPins enumPins;
+          hr = _fileSource.EnumPins(out enumPins);
+          DsError.ThrowExceptionForHR(hr);
+          IPin[] pins = new IPin[1];
+          int fetched = 0;
+          while (enumPins.Next(1, pins, out fetched) == 0)
+          {
+            if (fetched != 1)
+            {
+              break;
+            }
+            PinDirection direction;
+            pins[0].QueryDirection(out direction);
+            if (direction == PinDirection.Output)
+            {
+              IEnumMediaTypes enumMediaTypes;
+              pins[0].EnumMediaTypes(out enumMediaTypes);
+              AMMediaType[] mediaTypes = new AMMediaType[20];
+              int fetchedTypes;
+              enumMediaTypes.Next(20, mediaTypes, out fetchedTypes);
+              for (int i = 0; i < fetchedTypes; ++i)
+              {
+                if (mediaTypes[i].majorType == MediaType.Audio)
+                {
+                  hr = _graphBuilder.Render(pins[0]);
+                  DsError.ThrowExceptionForHR(hr);
+                  break;
+                }
+              }
+            }
+            DirectShowUtil.ReleaseComObject(pins[0]);
+          }
+          DirectShowUtil.ReleaseComObject(enumPins);
+        }
+        else
+        {
+          DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, _fileSource);
+        }        
+        DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
 
         #endregion
 
