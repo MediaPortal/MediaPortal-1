@@ -139,38 +139,6 @@ HRESULT CVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERTIES 
 
 HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
 {
-  HRESULT hr;
-
-  bool mpeg2Video=false;
-  CDeMultiplexer& demux=m_pTsReaderFilter->GetDemultiplexer();
-  if (demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_MPEG1 ||
-    demux.GetVideoServiceType()==SERVICE_TYPE_VIDEO_MPEG2)
-  {
-    mpeg2Video=true;
-  }
-  PIN_INFO pinInfo;
-  
-  hr=pReceivePin->QueryPinInfo(&pinInfo);
-  if (!SUCCEEDED(hr)) return E_FAIL;
-  if (pinInfo.pFilter==NULL) return E_FAIL;
-  hr=pinInfo.pFilter->QueryFilterInfo(&m_filterInfo);
-  m_filterInfo.pGraph->Release();
-  pinInfo.pFilter->Release();
-
-  if (!SUCCEEDED(hr)) return E_FAIL;
-  if (mpeg2Video)
-  {
-    //dont accept FFDShow for mpeg1/2 video playback
-    if (wcscmp(m_filterInfo.achName,L"ffdshow Video Decoder")==0)
-    {
-      return E_FAIL;
-    }
-    if (wcscmp(m_filterInfo.achName,L"ffdshow raw video Decoder")==0)
-    {
-      return E_FAIL;
-    }
-  }
-
   //LogDebug("vid:CheckConnect()");
   return CBaseOutputPin::CheckConnect(pReceivePin);
 }
