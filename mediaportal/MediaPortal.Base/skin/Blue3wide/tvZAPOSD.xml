@@ -82,10 +82,9 @@
       <description>rec logo</description>
       <type>image</type>
       <id>39</id>
-      <posX>910</posX>
-      <posY>530</posY>
+      <posX>930</posX>
+      <posY>596</posY>
       <texture>rec.png</texture>
-      <colordiffuse>50ffffff</colordiffuse>
     </control>
     <control>
       <description>On tv NOW</description>
