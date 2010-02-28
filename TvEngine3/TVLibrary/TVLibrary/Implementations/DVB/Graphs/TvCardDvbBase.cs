@@ -835,12 +835,19 @@ namespace TvLibrary.Implementations.DVB
       string configfile = String.Format(@"{0}\WinTV-CI.xml", Log.Log.GetPathName());
       string cardmoniker = "";
       XmlDocument doc = new XmlDocument();
-      doc.Load(configfile);
-      if (doc.DocumentElement != null)
+      try
       {
-        XmlNode cardNode = doc.DocumentElement.SelectSingleNode("/configuration/card");
-        XmlNode node = cardNode.SelectSingleNode("device/path");
-        cardmoniker = node.InnerText;
+        doc.Load(configfile);
+        if (doc.DocumentElement != null)
+        {
+          XmlNode cardNode = doc.DocumentElement.SelectSingleNode("/configuration/card");
+          XmlNode node = cardNode.SelectSingleNode("device/path");
+          cardmoniker = node.InnerText;
+        }
+      }
+      catch
+      {
+        Log.Log.Error("dvb:  WinTv CI configuration missing or invalid. Configure it inside SetupTv!");
       }
       string tuner = _tunerDevice.DevicePath;
       if (tuner != cardmoniker)
