@@ -19,7 +19,9 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
 using Microsoft.Win32;
@@ -46,7 +48,7 @@ namespace TvEngine
     #endregion
 
     #region Static properties
-    
+
     private static string GetRegistryValueFromValueName(string valueName)
     {
       string value = string.Empty;
@@ -61,7 +63,7 @@ namespace TvEngine
         //Otherwise try to get it from VirtualStore
         if (string.IsNullOrEmpty(value))
         {
-          string virtualStoreSubKey = OSInfo.OSInfo.Is64bitOs() ? _virtualStoreRegSubKey64b : _virtualStoreRegSubKey32b;
+          string virtualStoreSubKey = Check64bit() ? _virtualStoreRegSubKey64b : _virtualStoreRegSubKey32b;
 
           foreach (String userKeyName in Registry.Users.GetSubKeyNames())
           {
@@ -90,11 +92,11 @@ namespace TvEngine
 
     public static string TVMovieProgramPath
     {
-      get 
+      get
       {
         var setting = TvMovieDatabase.TvBLayer.GetSetting("TvMovieInstallPath", string.Empty);
         string path = setting.Value;
-        
+
         if (!File.Exists(path))
         {
           path = GetRegistryValueFromValueName("ProgrammPath");
@@ -136,6 +138,31 @@ namespace TvEngine
       }
     }
 
+    #endregion
+
+    #region IsWow64 check
+    [DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool IsWow64Process(
+         [In] IntPtr hProcess,
+         [Out] out bool lpSystemInfo
+         );
+
+    public static bool Check64bit()
+    {
+      //IsWow64Process is not supported under Windows2000
+      if (OSInfo.OSInfo.GetOSName() == OSInfo.OSInfo.OSList.Windows2000andPrevious) return false;
+
+      Process p = Process.GetCurrentProcess();
+      IntPtr handle = p.Handle;
+      bool isWow64;
+      bool success = IsWow64Process(handle, out isWow64);
+      if (!success)
+      {
+        throw new System.ComponentModel.Win32Exception();
+      }
+      return isWow64;
+    }
     #endregion
 
     #region Powerscheduler handling

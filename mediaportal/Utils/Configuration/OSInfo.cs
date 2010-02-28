@@ -36,7 +36,8 @@ namespace OSInfo
       public int dwMinorVersion;
       public int dwBuildNumber;
       public int dwPlatformId;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string szCSDVersion;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+      public string szCSDVersion;
       public short wServicePackMajor;
       public short wServicePackMinor;
       public short wSuiteMask;
@@ -47,19 +48,95 @@ namespace OSInfo
     [DllImport("kernel32.dll")]
     private static extern bool GetVersionEx(ref OSVERSIONINFOEX osVersionInfo);
 
+    [DllImport("kernel32.dll")]
+    private static extern bool GetProductInfo(
+      [In] int dwOSMajorVersion,
+      [In] int dwOSMinorVersion,
+      [In] int dwSpMajorVersion,
+      [In] int dwSpMinorVersion,
+      [Out] out int pdwReturnedProductType);
+
+    [DllImport("user32.dll")]
+    private static extern bool GetSystemMetrics([In] int nIndex);
+
     #region Private Constants
 
-    private const int VER_NT_WORKSTATION = 1;
-    private const int VER_NT_DOMAIN_CONTROLLER = 2;
-    private const int VER_NT_SERVER = 3;
-    private const int VER_SUITE_SMALLBUSINESS = 1;
-    private const int VER_SUITE_ENTERPRISE = 2;
-    private const int VER_SUITE_TERMINAL = 16;
-    private const int VER_SUITE_DATACENTER = 128;
-    private const int VER_SUITE_SINGLEUSERTS = 256;
-    private const int VER_SUITE_PERSONAL = 512;
-    private const int VER_SUITE_BLADE = 1024;
-    private const int VER_SUITE_WH_SERVER = 32768;
+    //wProductType ( http://msdn.microsoft.com/en-us/library/ms724833(VS.85).aspx )
+    private const int NT_WORKSTATION = 1;
+    private const int NT_DOMAIN_CONTROLLER = 2;
+    private const int NT_SERVER = 3;
+
+    //SuiteMask ( http://msdn.microsoft.com/en-us/library/ms724833(VS.85).aspx )
+    private const int VER_SUITE_SMALLBUSINESS = 0x00000001;
+    private const int VER_SUITE_ENTERPRISE = 0x00000002;
+    private const int VER_SUITE_BACKOFFICE = 0x00000004;
+    private const int VER_SUITE_TERMINAL = 0x00000010;
+    private const int VER_SUITE_SMALLBUSINESS_RESTRICTED = 0x00000020;
+    private const int VER_SUITE_EMBEDDEDNT = 0x00000040;
+    private const int VER_SUITE_DATACENTER = 0x00000080;
+    private const int VER_SUITE_SINGLEUSERTS = 0x00000100;
+    private const int VER_SUITE_PERSONAL = 0x00000200;
+    private const int VER_SUITE_BLADE = 0x00000400;
+    private const int VER_SUITE_STORAGE_SERVER = 0x00002000;
+    private const int VER_SUITE_COMPUTE_SERV = 0x00004000;
+    private const int VER_SUITE_WH_SERVER = 0x00008000;
+
+    //ProductType ( http://msdn.microsoft.com/en-us/library/ms724358(VS.85).aspx )
+    private const int PRODUCT_BUSINESS = 0x00000006;
+    private const int PRODUCT_BUSINESS_N = 0x00000010;
+    private const int PRODUCT_CLUSTER_SERVER = 0x00000012;
+    private const int PRODUCT_DATACENTER_SERVER = 0x00000008;
+    private const int PRODUCT_DATACENTER_SERVER_CORE = 0x0000000C;
+    private const int PRODUCT_DATACENTER_SERVER_CORE_V = 0x00000027;
+    private const int PRODUCT_DATACENTER_SERVER_V = 0x00000025;
+    private const int PRODUCT_ENTERPRISE = 0x00000004;
+    private const int PRODUCT_ENTERPRISE_E = 0x00000046;
+    private const int PRODUCT_ENTERPRISE_N = 0x0000001B;
+    private const int PRODUCT_ENTERPRISE_SERVER = 0x0000000A;
+    private const int PRODUCT_ENTERPRISE_SERVER_CORE = 0x0000000E;
+    private const int PRODUCT_ENTERPRISE_SERVER_CORE_V = 0x00000029;
+    private const int PRODUCT_ENTERPRISE_SERVER_IA64 = 0x0000000F;
+    private const int PRODUCT_ENTERPRISE_SERVER_V = 0x00000026;
+    private const int PRODUCT_HOME_BASIC = 0x00000002;
+    private const int PRODUCT_HOME_BASIC_E = 0x00000043;
+    private const int PRODUCT_HOME_BASIC_N = 0x00000005;
+    private const int PRODUCT_HOME_PREMIUM = 0x00000003;
+    private const int PRODUCT_HOME_PREMIUM_E = 0x00000044;
+    private const int PRODUCT_HOME_PREMIUM_N = 0x0000001A;
+    private const int PRODUCT_HYPERV = 0x0000002A;
+    private const int PRODUCT_MEDIUMBUSINESS_SERVER_MANAGEMENT = 0x0000001E;
+    private const int PRODUCT_MEDIUMBUSINESS_SERVER_MESSAGING = 0x00000020;
+    private const int PRODUCT_MEDIUMBUSINESS_SERVER_SECURITY = 0x0000001F;
+    private const int PRODUCT_PROFESSIONAL = 0x00000030;
+    private const int PRODUCT_PROFESSIONAL_E = 0x00000045;
+    private const int PRODUCT_PROFESSIONAL_N = 0x00000031;
+    private const int PRODUCT_SERVER_FOR_SMALLBUSINESS = 0x00000018;
+    private const int PRODUCT_SERVER_FOR_SMALLBUSINESS_V = 0x00000023;
+    private const int PRODUCT_SERVER_FOUNDATION = 0x00000021;
+    private const int PRODUCT_SMALLBUSINESS_SERVER = 0x00000009;
+    private const int PRODUCT_STANDARD_SERVER = 0x00000007;
+    private const int PRODUCT_STANDARD_SERVER_CORE = 0x0000000D;
+    private const int PRODUCT_STANDARD_SERVER_CORE_V = 0x00000028;
+    private const int PRODUCT_STANDARD_SERVER_V = 0x00000024;
+    private const int PRODUCT_STARTER = 0x0000000B;
+    private const int PRODUCT_STARTER_E = 0x00000042;
+    private const int PRODUCT_STARTER_N = 0x0000002F;
+    private const int PRODUCT_STORAGE_ENTERPRISE_SERVER = 0x00000017;
+    private const int PRODUCT_STORAGE_EXPRESS_SERVER = 0x00000014;
+    private const int PRODUCT_STORAGE_STANDARD_SERVER = 0x00000015;
+    private const int PRODUCT_STORAGE_WORKGROUP_SERVER = 0x00000016;
+    private const int PRODUCT_UNDEFINED = 0x00000000;
+    private const int PRODUCT_ULTIMATE = 0x00000001;
+    private const int PRODUCT_ULTIMATE_E = 0x00000047;
+    private const int PRODUCT_ULTIMATE_N = 0x0000001C;
+    private const int PRODUCT_WEB_SERVER = 0x00000011;
+    private const int PRODUCT_WEB_SERVER_CORE = 0x0000001D;
+
+    //sysMetrics ( http://msdn.microsoft.com/en-us/library/ms724385(VS.85).aspx )
+    private const int SM_TABLETPC = 86;
+    private const int SM_MEDIACENTER = 87;
+    private const int SM_STARTER = 88;
+    private const int SM_SERVERR2 = 89;
 
     #endregion
 
@@ -95,9 +172,17 @@ namespace OSInfo
       ///</summary>
       Windows2003,
       ///<summary>
+      /// Windows 2003 R2 Server
+      ///</summary>
+      Windows2003R2,
+      ///<summary>
       /// Windows 2008 Server
       ///</summary>
-      Windows2008
+      Windows2008,
+      ///<summary>
+      /// Windows 2008 R2 Server
+      ///</summary>
+      Windows2008R2
     }
 
     #endregion
@@ -111,35 +196,43 @@ namespace OSInfo
     public static string GetOSProductType()
     {
       OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
       if (!GetVersionEx(ref osVersionInfo)) return string.Empty;
 
       switch (OSMajorVersion)
       {
         case 4:
-          if (OSProductType == VER_NT_WORKSTATION)
+          if (OSProductType == NT_WORKSTATION)
           {
             // Windows NT 4.0 Workstation
             return " Workstation";
           }
-          if (OSProductType == VER_NT_SERVER)
+          if (OSProductType == NT_SERVER)
           {
             // Windows NT 4.0 Server
             return " Server";
           }
           return string.Empty;
         case 5:
-          if (OSProductType == VER_NT_WORKSTATION)
+          if (GetSystemMetrics(SM_MEDIACENTER))
           {
-            if ((osVersionInfo.wSuiteMask & VER_SUITE_PERSONAL) == VER_SUITE_PERSONAL)
-            {
-              // Windows XP Home Edition
-              return " Home Edition";
-            }
-            // Windows XP / Windows 2000 Professional
-            return " Professional";
+            return " Media Center";
           }
-          if (OSProductType == VER_NT_SERVER)
+          if (GetSystemMetrics(SM_TABLETPC))
+          {
+            return " Tablet PC";
+          }
+          if (OSProductType == NT_WORKSTATION)
+          {
+            if ((osVersionInfo.wSuiteMask & VER_SUITE_EMBEDDEDNT) == VER_SUITE_EMBEDDEDNT)
+            {
+              //Windows XP Embedded
+              return " Embedded";
+            }
+            return (osVersionInfo.wSuiteMask & VER_SUITE_PERSONAL) == VER_SUITE_PERSONAL ? " Home" : " Professional";
+            // Windows XP / Windows 2000 Professional
+          }
+          if (OSProductType == NT_SERVER || OSProductType == NT_DOMAIN_CONTROLLER)
           {
             if (OSMinorVersion == 0)
             {
@@ -168,6 +261,16 @@ namespace OSInfo
                 // Windows Server 2003 Enterprise Edition
                 return " Enterprise Edition";
               }
+              if ((osVersionInfo.wSuiteMask & VER_SUITE_STORAGE_SERVER) == VER_SUITE_STORAGE_SERVER)
+              {
+                // Windows Server 2003 Storage Edition
+                return " Storage Edition";
+              }
+              if ((osVersionInfo.wSuiteMask & VER_SUITE_COMPUTE_SERV) == VER_SUITE_COMPUTE_SERV)
+              {
+                // Windows Server 2003 Compute Cluster Edition
+                return " Compute Cluster Edition";
+              }
               if ((osVersionInfo.wSuiteMask & VER_SUITE_BLADE) == VER_SUITE_BLADE)
               {
                 // Windows Server 2003 Web Edition
@@ -179,44 +282,78 @@ namespace OSInfo
           }
           break;
         case 6:
-          if (OSProductType == VER_NT_WORKSTATION)
+          int strProductType;
+          GetProductInfo(osVersionInfo.dwMajorVersion, osVersionInfo.dwMinorVersion, 0, 0, out strProductType);
+          switch (strProductType)
           {
-            if (OSMinorVersion == 0)
-            {
-              if ((osVersionInfo.wSuiteMask & VER_SUITE_PERSONAL) == VER_SUITE_PERSONAL)
-              {
-                // Windows Vista Home Basic / Home Premium
-                return " Home Basic/Premium";
-              }
-              // Windows Vista Business / Enterprise
-              return " Business/Enterprise";
-            }
-            if (OSMinorVersion == 1)
-            {
-              return "Windows 7";
-            }
-          }
-          if (OSProductType == VER_NT_SERVER)
-          {
-            if (OSMinorVersion == 0)
-            {
-              if ((osVersionInfo.wSuiteMask & VER_SUITE_DATACENTER) == VER_SUITE_DATACENTER)
-              {
-                // Windows 2008 Datacenter Server
-                return " Datacenter Server";
-              }
-              if ((osVersionInfo.wSuiteMask & VER_SUITE_ENTERPRISE) == VER_SUITE_ENTERPRISE)
-              {
-                // Windows 2008 Advanced Server
-                return " Advanced Server";
-              }
-              if ((osVersionInfo.wSuiteMask & VER_SUITE_WH_SERVER) == VER_SUITE_WH_SERVER)
-              {
-                return " Home Server";
-              }
-              // Windows 2008 Server
-              return " Server";
-            }
+            case PRODUCT_ULTIMATE:
+            case PRODUCT_ULTIMATE_E:
+            case PRODUCT_ULTIMATE_N:
+              return "Ultimate Edition";
+            case PRODUCT_PROFESSIONAL:
+            case PRODUCT_PROFESSIONAL_E:
+            case PRODUCT_PROFESSIONAL_N:
+              return "Professional";
+            case PRODUCT_HOME_PREMIUM:
+            case PRODUCT_HOME_PREMIUM_E:
+            case PRODUCT_HOME_PREMIUM_N:
+              return "Home Premium Edition";
+            case PRODUCT_HOME_BASIC:
+            case PRODUCT_HOME_BASIC_E:
+            case PRODUCT_HOME_BASIC_N:
+              return "Home Basic Edition";
+            case PRODUCT_ENTERPRISE:
+            case PRODUCT_ENTERPRISE_E:
+            case PRODUCT_ENTERPRISE_N:
+            case PRODUCT_ENTERPRISE_SERVER_V:
+              return "Enterprise Edition";
+            case PRODUCT_BUSINESS:
+            case PRODUCT_BUSINESS_N:
+              return "Business Edition";
+            case PRODUCT_STARTER:
+            case PRODUCT_STARTER_E:
+            case PRODUCT_STARTER_N:
+              return "Starter Edition";
+            case PRODUCT_CLUSTER_SERVER:
+              return "Cluster Server Edition";
+            case PRODUCT_DATACENTER_SERVER:
+            case PRODUCT_DATACENTER_SERVER_V:
+              return "Datacenter Edition";
+            case PRODUCT_DATACENTER_SERVER_CORE:
+            case PRODUCT_DATACENTER_SERVER_CORE_V:
+              return "Datacenter Edition (core installation)";
+            case PRODUCT_ENTERPRISE_SERVER:
+              return "Enterprise Edition";
+            case PRODUCT_ENTERPRISE_SERVER_CORE:
+            case PRODUCT_ENTERPRISE_SERVER_CORE_V:
+              return "Enterprise Edition (core installation)";
+            case PRODUCT_ENTERPRISE_SERVER_IA64:
+              return "Enterprise Edition for Itanium-based Systems";
+            case PRODUCT_SMALLBUSINESS_SERVER:
+              return "Small Business Server";
+            //case PRODUCT_SMALLBUSINESS_SERVER_PREMIUM:
+            //  return "Small Business Server Premium Edition";
+            case PRODUCT_SERVER_FOR_SMALLBUSINESS:
+            case PRODUCT_SERVER_FOR_SMALLBUSINESS_V:
+              return "Windows Essential Server Solutions";
+            case PRODUCT_STANDARD_SERVER:
+            case PRODUCT_STANDARD_SERVER_V:
+              return "Standard Edition";
+            case PRODUCT_STANDARD_SERVER_CORE:
+            case PRODUCT_STANDARD_SERVER_CORE_V:
+              return "Standard Edition (core installation)";
+            case PRODUCT_WEB_SERVER:
+            case PRODUCT_WEB_SERVER_CORE:
+              return "Web Server Edition";
+            case PRODUCT_MEDIUMBUSINESS_SERVER_MANAGEMENT:
+            case PRODUCT_MEDIUMBUSINESS_SERVER_MESSAGING:
+            case PRODUCT_MEDIUMBUSINESS_SERVER_SECURITY:
+              return "Windows Essential Business Server ";
+            case PRODUCT_STORAGE_ENTERPRISE_SERVER:
+            case PRODUCT_STORAGE_EXPRESS_SERVER:
+            case PRODUCT_STORAGE_STANDARD_SERVER:
+            case PRODUCT_STORAGE_WORKGROUP_SERVER:
+              return "Storage Server";
           }
           break;
       }
@@ -230,7 +367,7 @@ namespace OSInfo
     public static string GetOSServicePack()
     {
       OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
       return !GetVersionEx(ref osVersionInfo) ? string.Empty : osVersionInfo.szCSDVersion;
     }
 
@@ -293,7 +430,16 @@ namespace OSInfo
                       osName = "Windows XP";
                       break;
                     case 2:
-                      osName = OSProductType == VER_NT_SERVER ? "Windows Server 2003" : "Windows XP x64";
+                      if (OSProductType == NT_WORKSTATION)
+                      {
+                        osName = "WindowsXP x64";
+                      }
+                      else
+                      {
+                        osName = GetSystemMetrics(SM_SERVERR2) ? "Windows Server 2003 R2" : "Windows Server 2003";
+                      }
+
+
                       break;
                   }
                   break;
@@ -303,10 +449,10 @@ namespace OSInfo
                   switch (OSMinorVersion)
                   {
                     case 0:
-                      osName = OSProductType == VER_NT_SERVER ? "Windows 2008" : "Windows Vista";
+                      osName = OSProductType == NT_WORKSTATION ? "Windows Vista" : "Windows 2008";
                       break;
                     case 1:
-                      osName = "Windows7";
+                      osName = OSProductType == NT_WORKSTATION ? "Windows 7" : "Windows 2008 R2";
                       break;
                   }
                   break;
@@ -332,11 +478,15 @@ namespace OSInfo
         case 51:
           return OSList.WindowsXp;
         case 52:
-          return OSProductType == VER_NT_SERVER ? OSList.Windows2003 : OSList.WindowsXp64;
+          if (OSProductType == NT_WORKSTATION)
+          {
+            return OSList.WindowsXp64;
+          }
+          return GetSystemMetrics(SM_SERVERR2) ? OSList.Windows2003R2 : OSList.Windows2003;
         case 60:
-          return OSProductType == VER_NT_SERVER ? OSList.Windows2008 : OSList.WindowsVista;
+          return OSProductType == NT_WORKSTATION ? OSList.WindowsVista : OSList.Windows2008;
         case 61:
-          return OSList.Windows7;
+          return OSProductType == NT_WORKSTATION ? OSList.Windows7 : OSList.Windows2008R2;
       }
       return OSList.Windows2000andPrevious;
     }
@@ -366,9 +516,12 @@ namespace OSInfo
         case OSList.Windows7:
           return OSBuildVersion == 7600 ? 1 : 2;
         case OSList.Windows2003:
+        case OSList.Windows2003R2:
         case OSList.Windows2008:
+        case OSList.Windows2008R2:
           return 2;
         default:
+          // Windows2000andPrevious and WindowsXp64
           return 0;
       }
     }
@@ -425,7 +578,7 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
         if (!GetVersionEx(ref osVersionInfo)) return -1;
         return osVersionInfo.wServicePackMajor;
       }
@@ -439,7 +592,7 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
         if (!GetVersionEx(ref osVersionInfo)) return -1;
         return osVersionInfo.wServicePackMinor;
       }
@@ -453,7 +606,7 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
         if (!GetVersionEx(ref osVersionInfo)) return 0x0;
         return osVersionInfo.wProductType;
       }
