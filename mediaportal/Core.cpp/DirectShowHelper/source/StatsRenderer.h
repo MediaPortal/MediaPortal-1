@@ -44,7 +44,7 @@ public:
   void DrawText(const RECT &rc, const CString &strText);
   HRESULT DrawRect(DWORD color, DWORD alpha, const CRect &rect);
   
-  void DrawTearingTest();
+  void DrawTearingTest(CComPtr<IDirect3DSurface9> pSurface);
   void DrawStats();
   void VideSizeChanged();
 

@@ -121,9 +121,6 @@ protected:
   CComPtr<IDirect3DDevice9> m_pD3DDev;
 	CComPtr<IDirect3D9> m_pD3D;
 	IDirect3DSurface9** m_pSurfaces;
-  
-  CComPtr<IDirect3DTexture9> m_pVideoTexture;
-	CComPtr<IDirect3DSurface9> m_pVideoSurface;
 
 	long		  m_refCount;
 	DWORD		  m_surfaceCount;

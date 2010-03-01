@@ -199,8 +199,6 @@ protected:
   void           CorrectSampleTime(IMFSample* pSample);
   void           GetRealRefreshRate();
 
-  CComPtr<IDirect3DTexture9>        m_pVideoTexture;
-  CComPtr<IDirect3DSurface9>        m_pVideoSurface;
   CComPtr<IDirect3DDevice9>         m_pD3DDev;
   IVMR9Callback*                    m_pCallback;
   CComPtr<IDirect3DDeviceManager9>  m_pDeviceManager;

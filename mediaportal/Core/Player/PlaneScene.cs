@@ -51,24 +51,6 @@ namespace MediaPortal.Player
   {
     #region imports
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineRemoveTexture(int textureNo);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe int FontEngineAddSurface(int hasCode, bool useAlphaBlend, void* fontTexture);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
-                                                            float uoff, float voff, float umax, float vmax, int color);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEnginePresentTextures();
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineSetTexture(void* texture);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineDrawSurface(int fx, int fy, int nw, int nh,
@@ -81,9 +63,6 @@ namespace MediaPortal.Player
 
     private bool _stopPainting = false;
     private Surface _renderTarget = null;
-    private IRender _renderFrame;
-    private long _diffuseColor = 0xFFFFFFFF;
-    private int _fadeFrameCounter = 0;
     private bool _fadingIn = true;
     private float _uValue = 1.0f;
     private float _vValue = 1.0f;
@@ -96,8 +75,7 @@ namespace MediaPortal.Player
     private Rectangle _sourceRect, _destinationRect;
     private Geometry _geometry = new Geometry();
     private VMR9Util _vmr9Util = null;
-    private VertexBuffer[] _vertexBuffers;
-    private uint _textureAddress;
+    private uint _surfaceAddress;
 
     private CropSettings _cropSettings;
     private bool updateCrop = false; // indicates that _cropSettings has been updated
@@ -136,26 +114,13 @@ namespace MediaPortal.Player
 
     #region ctor
 
-    public PlaneScene(IRender renderer, VMR9Util util)
+    public PlaneScene(VMR9Util util)
     {
       //	Log.Info("PlaneScene: ctor()");
 
-      _textureAddress = 0;
+      _surfaceAddress = 0;
       _vmr9Util = util;
-      _renderFrame = renderer;
-
-      // Number of vertex buffers must be same as numer of segments in non-linear stretch
-      _vertexBuffers = new VertexBuffer[nlsSourcePartitioning.Length];
-      for (int i = 0; i < _vertexBuffers.Length; i++)
-      {
-        _vertexBuffers[i] = new VertexBuffer(typeof (CustomVertex.TransformedColoredTextured),
-                                             4,
-                                             GUIGraphicsContext.DX9Device,
-                                             0,
-                                             CustomVertex.TransformedColoredTextured.Format,
-                                             GUIGraphicsContext.GetTexturePoolType());
-      }
-
+      
       _blackImage = new GUIImage(0);
       _blackImage.SetFileName("black.png");
       _blackImage.AllocResources();
@@ -287,14 +252,7 @@ namespace MediaPortal.Player
         _renderTarget.Dispose();
         _renderTarget = null;
       }
-      for (int i = 0; i < _vertexBuffers.Length; i++)
-      {
-        if (_vertexBuffers[i] != null)
-        {
-          _vertexBuffers[i].Dispose();
-          _vertexBuffers[i] = null;
-        }
-      }
+
       if (_blackImage != null)
       {
         _blackImage.FreeResources();
@@ -504,6 +462,9 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// This method repaints a paused video
+    /// </returns>
     public void Repaint()
     {
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING ||
@@ -523,7 +484,7 @@ namespace MediaPortal.Player
       {
         if (!GUIGraphicsContext.InVmr9Render)
         {
-          if (_textureAddress != 0)
+          if (_surfaceAddress != 0)
           {
             InternalPresentImage(_vmr9Util.VideoWidth, _vmr9Util.VideoHeight, _arVideoWidth, _arVideoHeight, true);
           }
@@ -540,6 +501,9 @@ namespace MediaPortal.Player
 
     #region IVMR9Callback Members
 
+    /// <summary>
+    /// Callback method that is called by the VMR9 /EVR renderer
+    /// </returns>
     public int PresentImage(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pTexture, uint pSurface)
     {
       try
@@ -548,9 +512,9 @@ namespace MediaPortal.Player
         // if it likes (method returns immediatly otherwise
         grabber.OnFrame(width, height, arWidth, arHeight, pSurface);
 
-        _textureAddress = pTexture;
+        _surfaceAddress = pSurface;
 
-        if (pTexture == 0)
+        if (pSurface == 0)
         {
           Log.Debug("PlaneScene: PresentImage() dispose surfaces");
           _vmr9Util.VideoWidth = 0;
@@ -605,6 +569,7 @@ namespace MediaPortal.Player
         _debugStep = 0;
         _reEntrant = true;
         GUIGraphicsContext.InVmr9Render = true;
+        
         if (width > 0 && height > 0)
         {
           _vmr9Util.VideoWidth = width;
@@ -646,35 +611,10 @@ namespace MediaPortal.Player
 
         _debugStep = 2;
 
-        //first time, fade in the video in 12 steps
-        int iMaxSteps = 12;
-        if (_fadeFrameCounter < iMaxSteps)
-        {
-          // fade in
-          int iStep = 0xff / iMaxSteps;
-          if (_fadingIn)
-          {
-            _diffuseColor = iStep * _fadeFrameCounter;
-            _diffuseColor <<= 24;
-            _diffuseColor |= 0xffffff;
-          }
-          else
-          {
-            _diffuseColor = (iMaxSteps - iStep) * _fadeFrameCounter;
-            _diffuseColor <<= 24;
-            _diffuseColor |= 0xffffff;
-          }
-          _fadeFrameCounter++;
-        }
-        else
-        {
-          //after 12 steps, just present the video texture
-          _diffuseColor = 0xFFffffff;
-        }
 
         _debugStep = 3;
         //get desired video window
-        if (width > 0 && height > 0 && _textureAddress != 0)
+        if (width > 0 && height > 0 && _surfaceAddress != 0)
         {
           Size nativeSize = new Size(width, height);
           _shouldRenderTexture = SetVideoWindow(nativeSize);
@@ -693,7 +633,8 @@ namespace MediaPortal.Player
         {
           if (!GUIGraphicsContext.BlankScreen)
           {
-            _renderFrame.RenderFrame(timePassed);
+            // Render GUI + Video surface
+            GUIGraphicsContext.RenderGUI.RenderFrame(timePassed);
             GUIFontManager.Present();
           }
         }
@@ -723,7 +664,7 @@ namespace MediaPortal.Player
       {
         GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.LOST;
         Log.Error("Planescene({0},{1},{2},{3},{4},{5},{6}):Unhandled exception in:",
-                  width, height, arWidth, arHeight, _textureAddress, isRepaint, _debugStep);
+                  width, height, arWidth, arHeight, _surfaceAddress, isRepaint, _debugStep);
         Log.Error(ex);
       }
       finally
@@ -734,85 +675,25 @@ namespace MediaPortal.Player
     }
 
 
-    private void DrawTextureSegment(VertexBuffer vertexBuffer, float srcX, float srcY, float srcWidth, float srcHeight,
-                                    float dstX, float dstY, float dstWidth, float dstHeight, long lColorDiffuse)
+    private void DrawSurfaceSegment(uint surfaceAddr, float srcX, float srcY, float srcWidth, float srcHeight,
+                                    float dstX, float dstY, float dstWidth, float dstHeight)
     {
-      CustomVertex.TransformedColoredTextured[] verts =
-        (CustomVertex.TransformedColoredTextured[])vertexBuffer.Lock(0, 0);
-
-      float fVideoWidth = (float)GUIGraphicsContext.VideoSize.Width;
-      float fVideoHeight = (float)GUIGraphicsContext.VideoSize.Height;
-      float uoff = srcX / fVideoWidth;
-      float voff = srcY / fVideoHeight;
-      float umax = srcWidth / fVideoWidth;
-      float vmax = srcHeight / fVideoHeight;
-
-
-      // Lock the buffer (which will return our structs)
-      // Top right
-      verts[0].X = dstX - 0.5f;
-      verts[0].Y = dstY + dstHeight - 0.5f;
-      verts[0].Z = 0.0f;
-      verts[0].Rhw = 1.0f;
-      verts[0].Color = (int)lColorDiffuse;
-      verts[0].Tu = uoff;
-      verts[0].Tv = voff + vmax;
-
-      // Top Left
-      verts[1].X = dstX - 0.5f;
-      verts[1].Y = dstY - 0.5f;
-      verts[1].Z = 0.0f;
-      verts[1].Rhw = 1.0f;
-      verts[1].Color = (int)lColorDiffuse;
-      verts[1].Tu = uoff;
-      verts[1].Tv = voff;
-
-      // Bottom right
-      verts[2].X = dstX + dstWidth - 0.5f;
-      verts[2].Y = dstY + dstHeight - 0.5f;
-      verts[2].Z = 0.0f;
-      verts[2].Rhw = 1.0f;
-      verts[2].Color = (int)lColorDiffuse;
-      verts[2].Tu = uoff + umax;
-      verts[2].Tv = voff + vmax;
-
-      // Bottom left
-      verts[3].X = dstX + dstWidth - 0.5f;
-      verts[3].Y = dstY - 0.5f;
-      verts[3].Z = 0.0f;
-      verts[3].Rhw = 1.0f;
-      verts[3].Color = (int)lColorDiffuse;
-      verts[3].Tu = uoff + umax;
-      verts[3].Tv = voff;
-      vertexBuffer.Unlock();
       unsafe
       {
-        GUIGraphicsContext.DX9Device.SetStreamSource(0, vertexBuffer, 0);
-        GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+        IntPtr ptr = new IntPtr(surfaceAddr);
+        FontEngineDrawSurface((int)srcX, (int)srcY, (int)srcWidth, (int)srcHeight, (int)dstX, (int)dstY, (int)dstWidth, (int)dstHeight, ptr.ToPointer());
       }
     }
 
 
-    private void DrawTexture(uint texAddr, long lColorDiffuse)
+    private void DrawSurface(uint surfaceAddr)
     {
-      if (texAddr == 0)
+      if (surfaceAddr == 0)
       {
         return;
       }
       unsafe
       {
-        IntPtr ptr = new IntPtr(texAddr);
-        FontEngineSetTexture(ptr.ToPointer());
-
-        GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter = TextureFilter.Linear;
-        GUIGraphicsContext.DX9Device.SamplerState[0].AddressU = TextureAddress.Clamp;
-        GUIGraphicsContext.DX9Device.SamplerState[0].AddressV = TextureAddress.Clamp;
-        GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
-
-        GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, false);
-        GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaTestEnable, false);
 
         if (_useNonLinearStretch)
         {
@@ -843,7 +724,7 @@ namespace MediaPortal.Player
             dstRight = (int)dstRightFloat;
 
 
-            DrawTextureSegment(_vertexBuffers[i],
+            DrawSurfaceSegment(surfaceAddr,
                                srcLeft,
                                _sourceRect.Top,
                                srcRight - srcLeft,
@@ -851,13 +732,12 @@ namespace MediaPortal.Player
                                dstLeft,
                                _destinationRect.Top,
                                dstRight - dstLeft,
-                               _destinationRect.Height,
-                               lColorDiffuse);
+                               _destinationRect.Height);
           }
         }
         else
         {
-          DrawTextureSegment(_vertexBuffers[0],
+          DrawSurfaceSegment(surfaceAddr,
                              _sourceRect.Left,
                              _sourceRect.Top,
                              _sourceRect.Width,
@@ -865,12 +745,9 @@ namespace MediaPortal.Player
                              _destinationRect.Left,
                              _destinationRect.Top,
                              _destinationRect.Width,
-                             _destinationRect.Height,
-                             lColorDiffuse);
+                             _destinationRect.Height);
         }
 
-        GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, true);
-        GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaTestEnable, true);
 
         // unset the texture and palette or the texture caching crashes because the runtime still has a reference
         GUIGraphicsContext.DX9Device.SetTexture(0, null);
@@ -943,9 +820,9 @@ namespace MediaPortal.Player
           return;
         }
 
-        if (_textureAddress != 0)
+        if (_surfaceAddress != 0)
         {
-          DrawTexture(_textureAddress, _diffuseColor);
+          DrawSurface(_surfaceAddress);
         }
       }
       else

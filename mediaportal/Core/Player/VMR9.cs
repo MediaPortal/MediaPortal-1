@@ -384,7 +384,7 @@ namespace MediaPortal.Player
       hMonitor = Manager.GetAdapterMonitor(ai.Adapter);
       IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
-      _scene = new PlaneScene(_renderFrame, this);
+      _scene = new PlaneScene(this);
       _scene.Init();
 
       HResult hr;

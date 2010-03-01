@@ -155,58 +155,10 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
   m_iARX=lpAllocInfo->szAspectRatio.cx;
   m_iARY=lpAllocInfo->szAspectRatio.cy;
 
-  if(FAILED(hr = AllocVideoSurface()))
-  { 
-    Log("vmr9:InitializeDevice()   AllocVideoSurface returned:0x%x",hr);
-    return hr;
-  }
-
-  // test if the colorspace is acceptable
-  m_pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-  hr = m_pD3DDev->StretchRect(m_pSurfaces[0], NULL, m_pVideoSurface, NULL, D3DTEXF_NONE);
-  m_pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-  if(FAILED(hr))
-  {
-    Log("vmr9:InitializeDevice()   StretchRect returned:0x%x",hr);
-    DeleteSurfaces();
-    return E_FAIL;
-  }
-
-  if(FAILED(hr = m_pD3DDev->ColorFill(m_pVideoSurface, NULL, 0)))
-  {
-    Log("vmr9:InitializeDevice()   ColorFill returned:0x%x",hr);
-    DeleteSurfaces();
-    return E_FAIL;
-  }
-
   Log("vmr9:InitializeDevice() done()");
   return hr;
 }
 
-
-HRESULT CVMR9AllocatorPresenter::AllocVideoSurface()
-{
-  CAutoLock cAutoLock(this);
-  HRESULT hr;
-
-
-  m_pVideoTexture = NULL;
-  m_pVideoSurface = NULL;
-
-
-  if(FAILED(hr = m_pD3DDev->CreateTexture(
-    m_iVideoWidth, m_iVideoHeight, 1, 
-    D3DUSAGE_RENDERTARGET, /*D3DFMT_X8R8G8B8*/D3DFMT_A8R8G8B8, 
-    D3DPOOL_DEFAULT, &m_pVideoTexture, NULL)))
-    return hr;
-
-  if(FAILED(hr = m_pVideoTexture->GetSurfaceLevel(0, &m_pVideoSurface)))
-    return hr;
-
-
-  hr = m_pD3DDev->ColorFill(m_pVideoSurface, NULL, 0);
-  return S_OK;
-}
 
 STDMETHODIMP CVMR9AllocatorPresenter::TerminateDevice(DWORD_PTR dwUserID)
 {
@@ -341,10 +293,6 @@ void CVMR9AllocatorPresenter::DeleteSurfaces()
   }
   CAutoLock cAutoLock(this);
 
-
-  m_pVideoTexture = NULL;
-  m_pVideoSurface = NULL;
-
 }
 
 void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface, SIZE szAspectRatio)
@@ -354,16 +302,7 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface, SIZE szAspectRa
     if (m_pCallback==NULL || pSurface == NULL)
       return;
 
-    HRESULT hr;
-
-    m_pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-    if(FAILED(hr = m_pD3DDev->StretchRect(pSurface, NULL, m_pVideoSurface, NULL, D3DTEXF_NONE)))
-    {
-      Log("vmr9:Paint: StretchRect failed %u\n",hr);
-    }
-    m_pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-
-    m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)m_pVideoTexture, (DWORD)pSurface);
+    m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)0, (DWORD)pSurface);
   }
   catch(...)
   {

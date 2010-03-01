@@ -65,7 +65,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   {
     HRESULT hr;
     LogRotate();
-    Log("----------v1.2.0---------------------------");
+    Log("----------v1.3.0---------------------------");
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
     hr = m_pDXVA2CreateDirect3DDeviceManager9(&m_iResetToken, &m_pDeviceManager);
@@ -667,23 +667,6 @@ void MPEVRCustomPresenter::ReAllocSurfaces()
   CHECK_HR(m_pDeviceManager->UnlockDevice(hDevice, FALSE), "failed: Unlock device");
   Log("Releasing device: %d", pDevice->Release());
   CHECK_HR(m_pDeviceManager->CloseDeviceHandle(hDevice), "failed: CloseDeviceHandle");
-
-  m_pVideoTexture = NULL;
-  m_pVideoSurface = NULL;
-
-  hr = m_pD3DDev->CreateTexture(m_iVideoWidth, m_iVideoHeight, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pVideoTexture, NULL);
-  if (FAILED(hr))
-  {
-    return;
-  }
-
-  hr = m_pVideoTexture->GetSurfaceLevel(0, &m_pVideoSurface);
-  if (FAILED(hr))
-  {
-    return;
-  }
-
-  hr = m_pD3DDev->ColorFill(m_pVideoSurface, NULL, 0);
   
   m_pStatsRenderer->VideSizeChanged();
 
@@ -1697,23 +1680,16 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 
     LONGLONG startPaint = GetCurrentTimestamp();
 
-    m_pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-    if (FAILED(hr = m_pD3DDev->StretchRect(pSurface, NULL, m_pVideoSurface, NULL, D3DTEXF_NONE)))
-    {
-      Log("EVR:Paint: StretchRect failed %u\n",hr);
-    }
-    m_pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-    m_pD3DDev->SetRenderTarget(0, m_pVideoSurface);
-
     if (m_bDrawStats)
     {
+      m_pD3DDev->SetRenderTarget(0, pSurface);
       m_pStatsRenderer->DrawStats();
-      m_pStatsRenderer->DrawTearingTest();
+      m_pStatsRenderer->DrawTearingTest(pSurface);
     }
 
     m_pD3DDev->SetRenderTarget(0, pOldSurface);
 
-    hr = m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)m_pVideoTexture, (DWORD)(IDirect3DSurface9*)pSurface);
+    hr = m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)0, (DWORD)(IDirect3DSurface9*)pSurface);
 
     m_PaintTime = GetCurrentTimestamp() - startPaint;
     m_PaintTimeMin = min(m_PaintTimeMin, m_PaintTime);
