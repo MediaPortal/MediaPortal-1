@@ -258,9 +258,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           CRefTime BestCompensation ;
           CRefTime AddVideoCompensation ;
           LogDebug("Audio Samples : %d, First : %03.3f, Last : %03.3f",cntA, (float)firstAudio.Millisecs()/1000.0f,(float)lastAudio.Millisecs()/1000.0f);
-          LogDebug("Video Samples : %d, First : %03.3f, Last : %03.3f GOP start : %03.3f",cntV, (float)firstVideo.Millisecs()/1000.0f,(float)lastVideo.Millisecs()/1000.0f, demux.m_IframeSample.Millisecs()/1000.0f);
+          LogDebug("Video Samples : %d, First : %03.3f, Last : %03.3f",cntV, (float)firstVideo.Millisecs()/1000.0f,(float)lastVideo.Millisecs()/1000.0f);
           if (m_pTsReaderFilter->GetVideoPin()->IsConnected())
           {
+/*
             if( !m_EnableSlowMotionOnZapping &&
                ( lastAudio.Millisecs() < demux.m_IframeSample.Millisecs() ) &&
                demux.GetVideoServiceType() != SERVICE_TYPE_VIDEO_UNKNOWN )
@@ -270,13 +271,13 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               buffer=NULL ;
               return NOERROR;
             }
-            
-            if (firstAudio.Millisecs() < demux.m_IframeSample.Millisecs())
+*/            
+            if (firstAudio.Millisecs() < firstVideo.Millisecs())
             {
-              if (lastAudio.Millisecs() - 150 < demux.m_IframeSample.Millisecs())
+              if (lastAudio.Millisecs() - 200 < firstVideo.Millisecs())
               {
-                BestCompensation  = lastAudio - 1500000 - m_pTsReaderFilter->m_RandomCompensation - m_rtStart ; //demux.m_IframeSample /*firstVideo*/ -m_rtStart ;
-                AddVideoCompensation = ( demux.m_IframeSample-lastAudio + 1500000 ) ;
+                BestCompensation  = lastAudio - 2000000 - m_pTsReaderFilter->m_RandomCompensation - m_rtStart ; //demux.m_IframeSample /*firstVideo*/ -m_rtStart ;
+                AddVideoCompensation = ( firstVideo - lastAudio + 2000000 ) ;
                 LogDebug("Compensation : ( Rnd : %d mS ) Audio pts greatly ahead Video pts . Add %03.3f sec of extra video comp to start now !...( real time TV )",(DWORD)m_pTsReaderFilter->m_RandomCompensation/10000,(float)AddVideoCompensation.Millisecs()/1000.0f) ;
               }
               else
@@ -288,24 +289,24 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             }
             else
             {
-              if (lastVideo.Millisecs() < firstAudio.Millisecs())
-              {
-                BestCompensation = lastVideo-m_rtStart ;
-                AddVideoCompensation = 0 ;
-                LogDebug("Compensation : Suspicious case, Audio pts greatly behind Videop pts ...") ;
-              }
-              else
-              {
-                BestCompensation = firstAudio-m_rtStart ;
-                AddVideoCompensation = 0 ;
-                LogDebug("Compensation : Audio pts behind Video Pts ( Recover skipping Video ) ....") ;
-              }
+//              if (lastVideo.Millisecs() < firstAudio.Millisecs())
+//              {
+//                BestCompensation = lastVideo-m_rtStart ;
+//                AddVideoCompensation = 0 ;
+//                LogDebug("Compensation : Suspicious case, Audio pts greatly behind Videop pts ...") ;
+//              }
+//              else
+//              {
+              BestCompensation = firstAudio-m_rtStart ;
+              AddVideoCompensation = 0 ;
+              LogDebug("Compensation : Audio pts behind Video Pts ( Recover skipping Video ) ....") ;
+//              }
             }
-						if (lastVideo.Millisecs()==firstVideo.Millisecs())		// temporary hack for channels containing full GOP into single PES.
-						{
-							BestCompensation -= (REFERENCE_TIME)5000000 ;
-							AddVideoCompensation += (REFERENCE_TIME)5000000 ;
-						}
+//						if (lastVideo.Millisecs()==firstVideo.Millisecs())		// temporary hack for channels containing full GOP into single PES.
+//						{
+//							BestCompensation -= (REFERENCE_TIME)5000000 ;
+//							AddVideoCompensation += (REFERENCE_TIME)5000000 ;
+//						}
             m_pTsReaderFilter->m_RandomCompensation += 500000 ;   // Stupid feature required to have FFRW working with DVXA ( at least ATI.. ) to avoid frozen picture. ( it moves just moves the sample time a bit !! )
             m_pTsReaderFilter->m_RandomCompensation = m_pTsReaderFilter->m_RandomCompensation % 1000000 ;
           }
@@ -483,6 +484,7 @@ HRESULT CAudioPin::OnThreadStartPlay()
 {
   //set flag to compensate any differences in the stream time & file time
   m_pTsReaderFilter->m_bStreamCompensated = false;
+  m_pTsReaderFilter->GetDemultiplexer().m_bAudioVideoReady=false ;
 
   //set discontinuity flag indicating to codec that the new data
   //is not belonging to any previous data

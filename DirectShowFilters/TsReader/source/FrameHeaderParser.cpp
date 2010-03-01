@@ -1281,7 +1281,8 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 			UINT64 pic_width_in_mbs_minus1 = gb.UExpGolombRead();
 			UINT64 pic_height_in_map_units_minus1 = gb.UExpGolombRead();
 			BYTE frame_mbs_only_flag = (BYTE)gb.BitRead(1);
-
+      
+      h.progressive = (frame_mbs_only_flag != 0);
 			h.width = (pic_width_in_mbs_minus1 + 1) * 16;
 			h.height = (2 - frame_mbs_only_flag) * (pic_height_in_map_units_minus1 + 1) * 16;
 

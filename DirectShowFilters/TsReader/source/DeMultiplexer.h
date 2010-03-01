@@ -131,8 +131,8 @@ public:
   bool IsAudioChanging(void);
 
   bool m_DisableDiscontinuitiesFiltering ;
-  CRefTime  m_IframeSample ;
   DWORD m_LastDataFromRtsp ;
+  bool m_bAudioVideoReady ;
 
 private:
   struct stAudioStream
@@ -208,7 +208,9 @@ private:
   int m_WaitNewPatTmo;
   int m_receivedPackets;
 
-  bool m_bIframeFound ;
+  bool m_bFirstGopFound ;
+  bool m_bFrame0Found ;
+
   bool  m_bWaitForMediaChange;
   DWORD m_tWaitForMediaChange;
   bool  m_bWaitForAudioSelection;
@@ -231,4 +233,16 @@ private:
   CAutoPtrList<Packet> m_pl;
   bool m_fHasAccessUnitDelimiters;
   DWORD m_lastStart;
+  CPcr m_VideoPts ;
+  CPcr m_CurrentVideoPts ;
+  bool m_bInBlock ;
+  double m_curFrameRate ;
+  int m_LastValidFrameCount ;
+  CPcr m_LastValidFramePts ;
+
+  bool m_bAudioAtEof;
+  bool m_bVideoAtEof;
+
+  float m_MinAudioDelta ;
+  float m_MinVideoDelta ;
 };

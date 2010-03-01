@@ -85,6 +85,10 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2)
 			basicVideoInfo.fps=1000 / (avc.AvgTimePerFrame /10000);
 			basicVideoInfo.arx=avc.arx;
 			basicVideoInfo.ary=avc.ary;
+			if (!avc.progressive)
+				basicVideoInfo.isInterlaced=1;
+			else
+				basicVideoInfo.isInterlaced=0;
 			basicVideoInfo.streamType=2; // H264
 			basicVideoInfo.isValid=true;
 			if (forceAVC1)

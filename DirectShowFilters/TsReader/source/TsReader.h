@@ -190,6 +190,7 @@ public:
 
   bool            m_bOnZap ;
   bool            m_bForceSeekOnStop;
+  bool            m_bRenderingClockTooFast;
 
 protected:
   void ThreadProc();
@@ -226,5 +227,7 @@ private:
 
   bool            m_bAnalog;
   bool            m_bStoppedForUnexpectedSeek ;
+  bool            m_bPauseOnClockTooFast;
+  DWORD           m_MPmainThreadID ;
 };
 

@@ -167,7 +167,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   TCHAR filename[1024];
   GetLogFile(filename);
   ::DeleteFile(filename);
-  LogDebug("-------------- v1.3.0 ----------------");
+  LogDebug("-------------- v1.4.0 ----------------");
 
   m_fileReader=NULL;
   m_fileDuration=NULL;
@@ -216,6 +216,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   SetMediaPosition(0) ;
   m_bStoppedForUnexpectedSeek=false ;
   m_bForceSeekOnStop=false ;
+  m_MPmainThreadID = GetCurrentThreadId() ;
 }
 
 CTsReaderFilter::~CTsReaderFilter()
@@ -455,6 +456,7 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
   SetMediaPosition(m_MediaPos) ;   // reset offset.
 
   FindSubtitleFilter();
+  m_bPauseOnClockTooFast=false ;
   LogDebug("CTsReaderFilter::Run(%05.2f) state %d -->done",msec,m_State);
   return hr;
 }
@@ -500,6 +502,7 @@ STDMETHODIMP CTsReaderFilter::Stop()
   {
     m_demultiplexer.Flush() ;
     m_bStreamCompensated=false;
+    m_demultiplexer.m_bAudioVideoReady=false;
   }
   LogDebug("CTsReaderFilter::Stop() done");
   m_bStoppedForUnexpectedSeek=true ;
@@ -525,9 +528,11 @@ STDMETHODIMP CTsReaderFilter::Pause()
   //pause filter
   HRESULT hr=CSource::Pause();
 
-  //are we using rtsp?
-  if (m_fileDuration==NULL)
+  if (!m_bPauseOnClockTooFast)
   {
+    //are we using rtsp?
+    if (m_fileDuration==NULL)
+    {
     //yes, are we busy seeking?
     if (!IsSeeking())
     {
@@ -607,8 +612,9 @@ STDMETHODIMP CTsReaderFilter::Pause()
         }
       }
     }
+    }
+    m_demultiplexer.m_LastDataFromRtsp = GetTickCount() ;
   }
-  m_demultiplexer.m_LastDataFromRtsp = GetTickCount() ;
 
   //is the duration update thread running?
   if (!IsThreadRunning())
@@ -1027,6 +1033,7 @@ void CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
     }
 
     m_bStreamCompensated=false ;
+    m_demultiplexer.m_bAudioVideoReady=false ;
 
 	  if (!m_bOnZap || !m_demultiplexer.IsNewPatReady() || m_bAnalog) // On zapping, new PAT has occured, we should not flush to avoid loosing data.
 	  {                                                               //             new PAT has not occured, we should flush to avoid restart with old data.							
@@ -1468,19 +1475,50 @@ bool CTsReaderFilter::IsStopping()
   return m_bStopping;
 }
 
-//void CTsReaderFilter::GetTime(REFERENCE_TIME *Time)
-//{
-//  m_pClock->GetTime(Time) ;
-//}
-  
+
 void CTsReaderFilter::SetMediaPosition(REFERENCE_TIME MediaPos)
 {
-  CAutoLock cObjectLock(&m_GetTimeLock);
-  m_MediaPos = MediaPos ;
-  m_BaseTime = (REFERENCE_TIME)GetTickCount() * 10000 ; // m_pClock->GetTime(&m_BaseTime) ;
-  m_LastTime=m_BaseTime ;
+  {
+    CAutoLock cObjectLock(&m_GetTimeLock);
+    m_MediaPos = MediaPos ;
+    m_BaseTime = (REFERENCE_TIME)GetTickCount() * 10000 ; // m_pClock->GetTime(&m_BaseTime) ;
+    m_LastTime=m_BaseTime ;
+  }
 //  LogDebug("SetMediaPos : %f %f",(float)MediaPos/10000,(float)m_LastTime/10000) ; 
 
+// This is not really the right place, but this is the only method called by "MPmain" that could allow
+// TsReader to "Pause" itself without deadlock issue.
+// This is also here to allow compatibility with previous releases, avoiding a new callback from MP.
+
+  if (m_bRenderingClockTooFast)
+  {
+    if (m_bPauseOnClockTooFast)
+      return ;                  // Do not re-enter !
+    if (GetCurrentThreadId()!=m_MPmainThreadID) 
+      return ;                  // Only MPmain can do that !
+    if (((m_MediaPos/10000)-m_absSeekTime.Millisecs()) < 30*1000)
+    {
+      return ;                  
+    }
+
+    m_bPauseOnClockTooFast=true ;
+    if (State() == State_Running)
+    {
+      IMediaControl * ptrMediaCtrl;
+      if (SUCCEEDED(GetFilterGraph()->QueryInterface(IID_IMediaControl, (void**)&ptrMediaCtrl)))
+      {
+        LogDebug("Pause 200mS renderer clock to match provider/RTSP clock...") ; 
+        ptrMediaCtrl->Pause() ;
+        Sleep(200) ;
+//        m_TestTime = GetTickCount() ;
+        ptrMediaCtrl->Run() ;
+        m_bRenderingClockTooFast=false ;
+      }
+      else
+        LogDebug("Pause failed...") ; 
+    }
+    m_bPauseOnClockTooFast=false ;
+  }
 }
 
 void CTsReaderFilter::GetMediaPosition(REFERENCE_TIME *pMediaPos)
