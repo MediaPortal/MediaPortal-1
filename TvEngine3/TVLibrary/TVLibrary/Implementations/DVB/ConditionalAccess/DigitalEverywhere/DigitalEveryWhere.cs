@@ -457,7 +457,7 @@ namespace TvLibrary.Implementations.DVB
           if (c.Channel.Equals(context.Channel))
             exists = true;
         }
-        if (!exists)
+        if (!exists && context.Channel.FreeToAir == false)
         {
           filteredChannels.Add(context);
         }

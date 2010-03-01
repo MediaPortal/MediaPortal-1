@@ -969,7 +969,7 @@ namespace TvLibrary.Implementations.DVB
           if (c.Channel.Equals(context.Channel))
             exists = true;
         }
-        if (!exists && context.ServiceId != 0) // also check for sid != 0, otherwise TT API fails
+        if (!exists && context.ServiceId != 0 && context.Channel.FreeToAir == false) // also check for sid != 0, otherwise TT API fails
         {
           filteredChannels.Add(context);
         }
