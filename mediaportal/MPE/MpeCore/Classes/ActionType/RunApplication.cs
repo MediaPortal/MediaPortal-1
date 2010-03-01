@@ -96,7 +96,7 @@ namespace MpeCore.Classes.ActionType
             return SectionResponseEnum.Error;
         }
       }
-      catch (Exception e)
+      catch
       {
         if (ItemProcessed != null)
           ItemProcessed(this, new InstallEventArgs("Error to start application"));

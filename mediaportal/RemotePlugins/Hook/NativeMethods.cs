@@ -20,6 +20,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace MediaPortal.Hooks
 {
@@ -27,7 +28,7 @@ namespace MediaPortal.Hooks
   {
     #region Constructors
 
-    private NativeMethods() {}
+    private NativeMethods() { }
 
     #endregion Constructors
 
@@ -125,14 +126,14 @@ namespace MediaPortal.Hooks
         return false;
 
       // if we don't attach successfully to the windows thread then we're out of options
-      if (!AttachThreadInput(AppDomain.GetCurrentThreadId(), GetWindowThreadProcessId(windowForeground, 0), true))
+      if (!AttachThreadInput(Thread.CurrentThread.ManagedThreadId, GetWindowThreadProcessId(windowForeground, 0), true))
         return false;
 
       SetForegroundWindow(window);
       BringWindowToTop(window);
       SetFocus(window);
 
-      AttachThreadInput(AppDomain.GetCurrentThreadId(), GetWindowThreadProcessId(windowForeground, 0), false);
+      AttachThreadInput(Thread.CurrentThread.ManagedThreadId, GetWindowThreadProcessId(windowForeground, 0), false);
 
       // we've done all that we can so base our return value on whether we have succeeded or not
       return (GetForegroundWindow() == window);

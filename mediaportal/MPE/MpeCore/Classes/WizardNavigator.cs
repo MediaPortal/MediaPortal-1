@@ -86,7 +86,6 @@ namespace MpeCore.Classes
             Package.UnInstall();
             Package.Silent = sil_;
             return SectionResponseEnum.Error;
-            break;
         }
         if (Response != SectionResponseEnum.Back && Response != SectionResponseEnum.Next)
         {
