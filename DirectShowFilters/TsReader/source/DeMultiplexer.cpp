@@ -1969,7 +1969,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
 
   //if we have more than 1 audio track available, tell host application that we are ready
   //to receive an audio track change.
-  if (m_audioStreams.size() > 1)
+  if (m_audioStreams.size() >= 1)
   {
     LogDebug("OnRequestAudioChange()");
     SetAudioChanging(true);
