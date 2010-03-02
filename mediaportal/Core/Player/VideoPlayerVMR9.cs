@@ -193,7 +193,7 @@ namespace MediaPortal.Player
           DirectShowUtil.ReleaseComObject(baseFilter); baseFilter = null;
         }
 
-        DirectShowUtil.RenderGraphBuilderOutputPins(graphBuilder, source);
+        DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, source);
         DirectShowUtil.ReleaseComObject(source); source = null;
         DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
 

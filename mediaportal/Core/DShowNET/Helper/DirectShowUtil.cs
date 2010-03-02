@@ -714,7 +714,10 @@ namespace DShowNET.Helper
         return false;
 
       if (!TryConnect(graphbuilder, source, mediaType, destination))
+      {
+        Log.Info(" - not compatible, removed");
         graphbuilder.RemoveFilter(destination);
+      }
       else
         connected = true;
 
@@ -913,9 +916,8 @@ namespace DShowNET.Helper
               }
             }
 
-            ReleaseComObject(i.pGraph);
-            if (!pinName.StartsWith("~")) //disable CC pin rendering
-              hr = graphBuilder.Render(pins[0]);
+            ReleaseComObject(i.pGraph);            
+            hr = graphBuilder.Render(pins[0]);
             if (hr != 0)
               Log.Debug(" - failed");
           }
