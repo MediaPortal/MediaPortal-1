@@ -32,7 +32,7 @@ namespace MediaPortal.Configuration.Sections
     //private MediaPortal.UserInterface.Controls.MPLabel label4;
     //private System.ComponentModel.IContainer components = null;
 
-    public FiltersSection() : this("Codecs and Renderer") {}
+    public FiltersSection() : this("Codecs and Renderer") { }
 
     private void InitializeComponent()
     {
@@ -107,6 +107,7 @@ namespace MediaPortal.Configuration.Sections
       Log.Info("  add Video codec section");
       TabPage videoTab = new TabPage("Video Codecs");
       MovieCodec mc = new MovieCodec();
+      mc.LoadSettings();
       mc.Dock = DockStyle.Fill;
       mc.OnSectionActivated();
       videoTab.Enter += new System.EventHandler(OnSectionActivatedWrapper);
@@ -117,6 +118,7 @@ namespace MediaPortal.Configuration.Sections
       Log.Info("  add TV codec section");
       TabPage tvTab = new TabPage("TV Codecs");
       TVCodec tc = new TVCodec();
+      tc.LoadSettings();
       tc.Dock = DockStyle.Fill;
       tvTab.Enter += new System.EventHandler(OnSectionActivatedWrapper);
       tvTab.Leave += new System.EventHandler(OnSectionDeActivatedWrapper);
@@ -126,6 +128,7 @@ namespace MediaPortal.Configuration.Sections
       Log.Info("  add DVD codec section");
       TabPage dvdTab = new TabPage("DVD Codecs");
       DVDCodec dc = new DVDCodec();
+      dc.LoadSettings();
       dc.Dock = DockStyle.Fill;
       dvdTab.Enter += new System.EventHandler(OnSectionActivatedWrapper);
       dvdTab.Leave += new System.EventHandler(OnSectionDeActivatedWrapper);
@@ -135,6 +138,7 @@ namespace MediaPortal.Configuration.Sections
       Log.Info("  add Renderer section");
       TabPage rendererTab = new TabPage("Video Renderer");
       FiltersVideoRenderer renderConfig = new FiltersVideoRenderer();
+      renderConfig.LoadSettings();
       renderConfig.Dock = DockStyle.Fill;
       rendererTab.Enter += new System.EventHandler(OnSectionActivatedWrapper);
       rendererTab.Leave += new System.EventHandler(OnSectionDeActivatedWrapper);
