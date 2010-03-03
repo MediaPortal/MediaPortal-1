@@ -45,7 +45,7 @@ namespace MediaPortal.Configuration.Sections
     private CheckBox useMediaInfo;
 
     public DVDPlayer()
-      : this("DVD Player") {}
+      : this("DVD Discs/Images Player") { }
 
     public DVDPlayer(string name)
       : base(name)

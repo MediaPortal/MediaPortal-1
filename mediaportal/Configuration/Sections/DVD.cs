@@ -49,7 +49,7 @@ namespace MediaPortal.Configuration.Sections
                                          };
 
     public DVD()
-      : this("DVD") {}
+      : this("DVD Discs/Images") { }
 
     public DVD(string name)
       : base(name)

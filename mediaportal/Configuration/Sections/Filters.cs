@@ -125,8 +125,8 @@ namespace MediaPortal.Configuration.Sections
       tvTab.Controls.Add(tc);
       mpTabControl1.TabPages.Add(tvTab);
 
-      Log.Info("  add DVD codec section");
-      TabPage dvdTab = new TabPage("DVD Codecs");
+      Log.Info("  add DVD Discs/Images codec section");
+      TabPage dvdTab = new TabPage("DVD Discs/Images Codecs");
       DVDCodec dc = new DVDCodec();
       dc.LoadSettings();
       dc.Dock = DockStyle.Fill;

@@ -27,7 +27,7 @@ namespace MediaPortal.Configuration.Sections
   public partial class DVDZoom : SectionSettings
   {
     public DVDZoom()
-      : this("DVD Zoom") {}
+      : this("DVD Discs/Images Zoom") { }
 
     public DVDZoom(string name)
       : base(name)

@@ -52,7 +52,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public DVDCodec()
-      : this("DVD Codecs") {}
+      : this("DVD Discs/Images Codecs") { }
 
     /// <summary>
     /// 
