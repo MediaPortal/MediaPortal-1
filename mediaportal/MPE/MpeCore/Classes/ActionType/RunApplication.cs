@@ -31,6 +31,7 @@ namespace MpeCore.Classes.ActionType
     private const string Const_APP = "Path to application";
     private const string Const_Params = "Parameters for application";
     private const string Const_Wait = "Wait for exit";
+    private const string Const_DontRUnOnSilent = "Don't run when silent install";
     private const string Const_Un_APP = "Path to uninstall application";
     private const string Const_Un_Params = "Parameters for uninstall application";
     private const string Const_Un_Wait = "Wait for exit on uninstall";
@@ -61,6 +62,8 @@ namespace MpeCore.Classes.ActionType
                                   "Command line parameters"));
       Params.Add(new SectionParam(Const_Wait, "", ValueTypeEnum.Bool,
                             "Wait for exit "));
+      Params.Add(new SectionParam(Const_DontRUnOnSilent, "", ValueTypeEnum.Bool,
+                            "If set to Yes the aplication don't run when the istalation is silent "));
       Params.Add(new SectionParam(Const_Un_APP, "", ValueTypeEnum.Template,
                             "Path to the application which should be executed when uninstall"));
       Params.Add(new SectionParam(Const_Un_Params, "", ValueTypeEnum.String,
@@ -72,6 +75,8 @@ namespace MpeCore.Classes.ActionType
 
     public SectionResponseEnum Execute(PackageClass packageClass, ActionItem actionItem)
     {
+      if (actionItem.Params[Const_APP].GetValueAsBool() && packageClass.Silent)
+        return SectionResponseEnum.Ok;
 
       Process myProcess = new Process();
 
@@ -87,7 +92,6 @@ namespace MpeCore.Classes.ActionType
           myProcess.StartInfo.CreateNoWindow = true;
           myProcess.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
         }
-
         myProcess.Start();
         if (actionItem.Params[Const_Wait].GetValueAsBool())
         {

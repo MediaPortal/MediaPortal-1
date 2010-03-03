@@ -104,6 +104,7 @@
           this.mnu_add.Name = "mnu_add";
           this.mnu_add.Size = new System.Drawing.Size(29, 22);
           this.mnu_add.Text = "toolStripButton1";
+          this.mnu_add.ToolTipText = " ";
           // 
           // mnu_remove
           // 
@@ -113,6 +114,7 @@
           this.mnu_remove.Name = "mnu_remove";
           this.mnu_remove.Size = new System.Drawing.Size(23, 22);
           this.mnu_remove.Text = "toolStripButton1";
+          this.mnu_remove.ToolTipText = " ";
           this.mnu_remove.Click += new System.EventHandler(this.mnu_remove_Click);
           // 
           // list_groups

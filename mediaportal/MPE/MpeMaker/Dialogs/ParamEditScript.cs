@@ -54,7 +54,7 @@ namespace MpeMaker.Dialogs
 
     private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      Process.Start("http://wiki.team-mediaportal.com/MpeMakerScript");
+      Process.Start("http://wiki.team-mediaportal.com/MpeMaker/Script");
     }
   }
 }
