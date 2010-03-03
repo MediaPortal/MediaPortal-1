@@ -534,6 +534,7 @@ namespace TvLibrary.Implementations.DVB
           _graphState = _timeshiftFileName != "" ? GraphState.TimeShifting : GraphState.Created;
         }
       }
+      else
       {
         Log.Log.WriteFile("tvdvbchannel.OnStopRecording - not recording");
       }
