@@ -372,7 +372,7 @@
     <entry name="shareview18">0</entry>
     <entry name="shareview19">0</entry>
     <entry name="default">(D:) CD/DVD</entry>
-    <entry name="extensions">.mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.wpl</entry>
+    <entry name="extensions">.mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc</entry>
   </section>
   <section name="movies">
     <entry name="sharename0">(D:) CD/DVD</entry>
