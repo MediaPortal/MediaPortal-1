@@ -118,8 +118,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.addButton);
       this.groupBox1.Controls.Add(this.removeButton);
@@ -136,7 +136,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(440, 32);
@@ -173,12 +173,13 @@ namespace MediaPortal.Configuration.Sections
       this.extensionsListBox.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.extensionsListBox.Location = new System.Drawing.Point(16, 88);
       this.extensionsListBox.Name = "extensionsListBox";
       this.extensionsListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
       this.extensionsListBox.Size = new System.Drawing.Size(360, 303);
+      this.extensionsListBox.Sorted = true;
       this.extensionsListBox.TabIndex = 3;
       this.extensionsListBox.SelectedIndexChanged += new System.EventHandler(this.extensionsListBox_SelectedIndexChanged);
       // 
@@ -187,7 +188,7 @@ namespace MediaPortal.Configuration.Sections
       this.extensionTextBox.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.extensionTextBox.Location = new System.Drawing.Point(16, 64);
       this.extensionTextBox.Name = "extensionTextBox";
       this.extensionTextBox.Size = new System.Drawing.Size(360, 20);
