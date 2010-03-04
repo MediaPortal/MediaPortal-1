@@ -26,15 +26,14 @@ namespace MediaPortal.Configuration.Sections
   public class MusicExtensions : BaseFileExtensions
   {
     public MusicExtensions()
-      : this("Music Extensions") {}
+      : this("Music Extensions") { }
 
     public MusicExtensions(string name)
-      : base(name) {}
+      : base(name) { }
 
     public override void LoadSettings()
     {
-      base.LoadSettings("music",
-                        ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc,.cue,.aif,.aiff");
+      base.LoadSettings("music", Util.Utils.AudioExtensionsDefault);
     }
 
     public override void SaveSettings()

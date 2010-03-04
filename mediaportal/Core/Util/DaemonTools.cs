@@ -57,10 +57,9 @@ namespace MediaPortal.Util
          * nrg (Nero)
          * pdi (Instant CD/DVD)
          * b5t (BlindWrite 5)
-        */
+         */
         string[] extensions =
-          xmlreader.GetValueAsString("daemon", "extensions",
-                                     ".cue, .bin, .iso, .ccd, .bwt, .mds, .cdi, .nrg, .pdi, .b5t, .img").Split(',');
+          xmlreader.GetValueAsString("daemon", "extensions", Utils.ImageExtensionsDefault).Split(',');
         _supportedExtensions = new List<string>();
         // Can't use an AddRange, as we need to trim the blanks  
         foreach (string ext in extensions)

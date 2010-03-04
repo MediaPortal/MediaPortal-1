@@ -77,8 +77,7 @@ namespace MediaPortal.Music.Database
       _createArtistPreviews = false;
       _createGenrePreviews = true;
       _createMissingFolderThumbs = false;
-      _supportedExtensions =
-        ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc,.cue,.aif,.aiff";
+      _supportedExtensions = Util.Utils.AudioExtensionsDefault;
       _stripArtistPrefixes = false;
       _currentDate = DateTime.Now;
 
@@ -86,7 +85,7 @@ namespace MediaPortal.Music.Database
       Open();
     }
 
-    ~MusicDatabase() {}
+    ~MusicDatabase() { }
 
     public static void ReOpen()
     {
@@ -146,8 +145,7 @@ namespace MediaPortal.Music.Database
                                                               _treatFolderAsAlbum);
         _createArtistPreviews = xmlreader.GetValueAsBool("musicfiles", "createartistthumbs", false);
         _createGenrePreviews = xmlreader.GetValueAsBool("musicfiles", "creategenrethumbs", true);
-        _supportedExtensions = xmlreader.GetValueAsString("music", "extensions",
-                                                          ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc");
+        _supportedExtensions = xmlreader.GetValueAsString("music", "extensions", Util.Utils.AudioExtensionsDefault);
         _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
 
         try
@@ -174,7 +172,7 @@ namespace MediaPortal.Music.Database
         {
           Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
         }
-        catch (Exception) {}
+        catch (Exception) { }
 
         if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV11.db3")))
         {

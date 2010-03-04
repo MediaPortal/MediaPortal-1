@@ -33,7 +33,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      base.LoadSettings("pictures", ".jpg,.jpeg,.gif,.bmp,.png");
+      base.LoadSettings("pictures", Util.Utils.PictureExtensionsDefault);
     }
 
     public override void SaveSettings()

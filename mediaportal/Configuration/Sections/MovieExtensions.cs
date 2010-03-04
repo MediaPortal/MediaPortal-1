@@ -26,15 +26,14 @@ namespace MediaPortal.Configuration.Sections
   public class MovieExtensions : BaseFileExtensions
   {
     public MovieExtensions()
-      : this("Video Extensions") {}
+      : this("Video Extensions") { }
 
     public MovieExtensions(string name)
-      : base(name) {}
+      : base(name) { }
 
     public override void LoadSettings()
     {
-      base.LoadSettings("movies",
-                        ".avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo");
+      base.LoadSettings("movies", Util.Utils.VideoExtensionsDefault);
     }
 
     public override void SaveSettings()

@@ -47,7 +47,7 @@ namespace MediaPortal.Configuration.Sections
     private IContainer components = null;
 
     public GeneralDaemonTools()
-      : this("Virtual Drive") {}
+      : this("Virtual Drive") { }
 
     public GeneralDaemonTools(string name)
       : base(name)
@@ -65,7 +65,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
 
@@ -93,8 +93,7 @@ namespace MediaPortal.Configuration.Sections
       {
         checkBoxDaemonTools.Checked = xmlreader.GetValueAsBool("daemon", "enabled", false);
         textBoxDaemonTools.Text = xmlreader.GetValueAsString("daemon", "path", "");
-        textBoxExtensions.Text = xmlreader.GetValueAsString("daemon", "extensions",
-                                                            ".cue, .bin, .iso, .ccd, .bwt, .mds, .cdi, .nrg, .pdi, .b5t, .img");
+        textBoxExtensions.Text = xmlreader.GetValueAsString("daemon", "extensions", Util.Utils.ImageExtensionsDefault);
         comboBoxDrive.SelectedItem = xmlreader.GetValueAsString("daemon", "drive", "E:");
         comboDriveNo.SelectedItem = xmlreader.GetValueAsInt("daemon", "driveNo", 0).ToString();
         checkBoxAskBeforePlaying.Checked = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
@@ -137,7 +136,7 @@ namespace MediaPortal.Configuration.Sections
               break;
             }
           }
-          catch (Exception) {}
+          catch (Exception) { }
         }
         rk.Close();
       }

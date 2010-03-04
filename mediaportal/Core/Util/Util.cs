@@ -140,17 +140,23 @@ namespace MediaPortal.Util
     private static ArrayList m_AudioExtensions = new ArrayList();
     private static ArrayList m_VideoExtensions = new ArrayList();
     private static ArrayList m_PictureExtensions = new ArrayList();
+    private static ArrayList m_ImageExtensions = new ArrayList();
 
     private static string[] _artistNamePrefixes;
 
     private static bool m_bHideExtensions = false;
     private static bool enableGuiSounds;
 
-    private static char[] crypt = new char[10] {'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q'};
+    private static char[] crypt = new char[10] { 'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q' };
 
 
     // singleton. Dont allow any instance of this class
-    private Utils() {}
+    private Utils() { }
+
+    public static string AudioExtensionsDefault = ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc";
+    public static string VideoExtensionsDefault = ".avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo";
+    public static string PictureExtensionsDefault = ".jpg,.jpeg,.gif,.bmp,.png";
+    public static string ImageExtensionsDefault = ".cue,.bin,.iso,.ccd,.bwt,.mds,.cdi,.nrg,.pdi,.b5t,.img";
 
     static Utils()
     {
@@ -160,37 +166,57 @@ namespace MediaPortal.Util
         string artistNamePrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         _artistNamePrefixes = artistNamePrefixes.Split(',');
 
-        string strTmp = xmlreader.GetValueAsString("music", "extensions",
-                                                   ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc");
-        Tokens tok = new Tokens(strTmp, new[] {','});
+        string strTmp = xmlreader.GetValueAsString("music", "extensions", AudioExtensionsDefault);
+        Tokens tok = new Tokens(strTmp, new[] { ',' });
         foreach (string extension in tok)
         {
-          m_AudioExtensions.Add(extension.ToLower());
+          m_AudioExtensions.Add(extension.ToLower().Trim());
         }
 
-        strTmp = xmlreader.GetValueAsString("movies", "extensions",
-                                            ".avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo");
-        tok = new Tokens(strTmp, new[] {','});
+        strTmp = xmlreader.GetValueAsString("movies", "extensions", VideoExtensionsDefault);
+        tok = new Tokens(strTmp, new[] { ',' });
         foreach (string extension in tok)
         {
-          m_VideoExtensions.Add(extension.ToLower());
+          m_VideoExtensions.Add(extension.ToLower().Trim());
         }
 
-        strTmp = xmlreader.GetValueAsString("pictures", "extensions", ".jpg,.jpeg,.gif,.bmp,.png");
-        tok = new Tokens(strTmp, new[] {','});
+        strTmp = xmlreader.GetValueAsString("pictures", "extensions", PictureExtensionsDefault);
+        tok = new Tokens(strTmp, new[] { ',' });
         foreach (string extension in tok)
         {
-          m_PictureExtensions.Add(extension.ToLower());
+          m_PictureExtensions.Add(extension.ToLower().Trim());
+        }
+
+        if (xmlreader.GetValueAsBool("daemon", "enabled", false))
+        {
+          strTmp = xmlreader.GetValueAsString("daemon", "extensions", ImageExtensionsDefault);
+          tok = new Tokens(strTmp, new[] { ',' });
+          foreach (string extension in tok)
+          {
+            m_ImageExtensions.Add(extension.ToLower().Trim());
+          }
         }
 
         enableGuiSounds = xmlreader.GetValueAsBool("general", "enableguisounds", true);
       }
     }
 
-
     public static ArrayList VideoExtensions
     {
-      get { return m_VideoExtensions; }
+      get
+      {
+        ArrayList t = new ArrayList();
+        t.AddRange(m_VideoExtensions);
+        //
+        // Added images extensions in order to trigger autoplay as video
+        // no more need to add them manually to Videos extensions (mantis #2749)
+        //
+        if (m_ImageExtensions.Count != 0)
+        {
+          t.AddRange(m_ImageExtensions);
+        }
+        return t;
+      }
     }
 
     public static ArrayList AudioExtensions
@@ -201,6 +227,11 @@ namespace MediaPortal.Util
     public static ArrayList PictureExtensions
     {
       get { return m_PictureExtensions; }
+    }
+
+    public static ArrayList ImageExtensions
+    {
+      get { return m_ImageExtensions; }
     }
 
     public static string GetDriveSerial(string drive)
@@ -271,7 +302,7 @@ namespace MediaPortal.Util
         if (Convert.ToUInt32(mo["DriveType"]) == 4)
           return Convert.ToString(mo["ProviderName"]);
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return sFilePath;
     }
 
@@ -349,7 +380,7 @@ namespace MediaPortal.Util
         if (strPath.ToLower().IndexOf("live.ts") >= 0) return true;
         if (strPath.ToLower().IndexOf("ts.tsbuffer") >= 0) return true;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -360,7 +391,7 @@ namespace MediaPortal.Util
       {
         if (strPath.ToLower().IndexOf("rtsp:") >= 0) return true;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -371,7 +402,7 @@ namespace MediaPortal.Util
       {
         if (strPath.ToLower().IndexOf("radio.ts") >= 0) return true;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -405,7 +436,7 @@ namespace MediaPortal.Util
             return true;
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -451,7 +482,7 @@ namespace MediaPortal.Util
           if (extension == extensionFile) return true;
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -468,7 +499,7 @@ namespace MediaPortal.Util
           if (extension == extensionFile) return true;
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -484,7 +515,7 @@ namespace MediaPortal.Util
         if (extensionFile == ".b4s") return true;
         if (extensionFile == ".wpl") return true;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -497,7 +528,7 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLower();
         if (extensionFile == ".exe") return true;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -510,7 +541,7 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLower();
         if (extensionFile == ".lnk") return true;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -945,7 +976,7 @@ namespace MediaPortal.Util
         }
         return String.Format("{0} {1}-{2}", day, dt.Day, dt.Month);
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return string.Empty;
     }
 
@@ -1025,7 +1056,7 @@ namespace MediaPortal.Util
         RegistryKey regKey = Registry.CurrentUser.OpenSubKey(string.Format(@"Network\{0}", strPath.Substring(0, 1)));
         return (regKey != null);
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -1251,7 +1282,7 @@ namespace MediaPortal.Util
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
 
       // No matches were found, so no stacking
       return false;
@@ -1300,7 +1331,7 @@ namespace MediaPortal.Util
         string strRet = Path.GetFullPath(String.Format("{0}{1}.jpg", Config.GetFolder(Config.Dir.Thumbs), dwcrc));
         return strRet;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return "000";
     }
 
@@ -1365,7 +1396,7 @@ namespace MediaPortal.Util
           CloseHandle(fHandle);
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
 
       return result;
     }
@@ -1765,7 +1796,7 @@ namespace MediaPortal.Util
         DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
         return dt;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return DateTime.Now;
     }
 
@@ -1788,7 +1819,7 @@ namespace MediaPortal.Util
         lRet = lRet * 100L + iSec;
         return lRet;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return 0;
     }
 
@@ -1860,7 +1891,7 @@ namespace MediaPortal.Util
         File.Delete(strFile);
         return true;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -1877,7 +1908,7 @@ namespace MediaPortal.Util
         Directory.Delete(aDirectory, aRecursive);
         return true;
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return false;
     }
 
@@ -1931,7 +1962,7 @@ namespace MediaPortal.Util
         {
           File.Copy(file, strFile, true);
         }
-        catch (Exception) {}
+        catch (Exception) { }
         return;
       }
       DownLoadImage(strURL, file);
@@ -1967,7 +1998,7 @@ namespace MediaPortal.Util
           // wr.Proxy = WebProxy.GetDefaultProxy();
           wr.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) {}
+        catch (Exception) { }
         HttpWebResponse ws = (HttpWebResponse)wr.GetResponse();
 
         using (Stream str = ws.GetResponseStream())
@@ -2059,7 +2090,7 @@ namespace MediaPortal.Util
         else
           return Path.GetFileName(strPath);
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return strPath;
     }
 
@@ -2354,7 +2385,7 @@ namespace MediaPortal.Util
                 break;
               }
             }
-            catch (Exception) {}
+            catch (Exception) { }
           }
           if (File.Exists(strRemoteFolderThumb))
             return strRemoteFolderThumb;
@@ -2731,10 +2762,10 @@ namespace MediaPortal.Util
           {
             File.Delete(strFile);
           }
-          catch (Exception) {}
+          catch (Exception) { }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
     public static bool UsingTvServer
@@ -2772,7 +2803,7 @@ namespace MediaPortal.Util
         sec = Int32.Parse(parts[5]);
         return new DateTime(year, month, day, hour, min, sec, 0);
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return DateTime.Now;
     }
 
@@ -2881,11 +2912,11 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) {}
+            catch (Exception) { }
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
 
       // clean the TempSBE\ folder
       try
@@ -2900,11 +2931,11 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) {}
+            catch (Exception) { }
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
 
       // delete *.tv
       try
@@ -2919,14 +2950,14 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) {}
+            catch (Exception) { }
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
-//void DeleteOldTimeShiftFiles(string path)
+    //void DeleteOldTimeShiftFiles(string path)
 
     public static void DeleteRecording(string recordingFilename)
     {
@@ -2971,10 +3002,10 @@ namespace MediaPortal.Util
               }
             }
           }
-          catch (Exception) {}
+          catch (Exception) { }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
     /// <summary>
@@ -3007,7 +3038,7 @@ namespace MediaPortal.Util
         {
           result += crypt[(int)c - 48];
         }
-        catch {}
+        catch { }
       return result;
     }
 
@@ -3022,7 +3053,7 @@ namespace MediaPortal.Util
             if (crypt[i] == c)
               result += (i).ToString();
         }
-        catch {}
+        catch { }
       }
       return result;
     }
