@@ -36,18 +36,22 @@
           this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
           this.img_dep = new System.Windows.Forms.PictureBox();
           this.img_update = new System.Windows.Forms.PictureBox();
+          this.btn_home = new System.Windows.Forms.Button();
+          this.btn_forum = new System.Windows.Forms.Button();
+          this.img_update1 = new System.Windows.Forms.PictureBox();
+          this.img_dep1 = new System.Windows.Forms.PictureBox();
           this.btn_update = new System.Windows.Forms.Button();
           this.btn_more_info = new System.Windows.Forms.Button();
           this.btn_conf = new System.Windows.Forms.Button();
           this.toolStrip1 = new System.Windows.Forms.ToolStrip();
           this.btn_install = new System.Windows.Forms.ToolStripDropDownButton();
-          this.btn_home = new System.Windows.Forms.Button();
-          this.btn_forum = new System.Windows.Forms.Button();
           this.img_logo = new System.Windows.Forms.PictureBox();
           this.timer1 = new System.Windows.Forms.Timer(this.components);
           this.btn_screenshot = new System.Windows.Forms.Button();
           ((System.ComponentModel.ISupportInitialize)(this.img_dep)).BeginInit();
           ((System.ComponentModel.ISupportInitialize)(this.img_update)).BeginInit();
+          ((System.ComponentModel.ISupportInitialize)(this.img_update1)).BeginInit();
+          ((System.ComponentModel.ISupportInitialize)(this.img_dep1)).BeginInit();
           this.toolStrip1.SuspendLayout();
           ((System.ComponentModel.ISupportInitialize)(this.img_logo)).BeginInit();
           this.SuspendLayout();
@@ -80,7 +84,7 @@
           // 
           this.lbl_description.Location = new System.Drawing.Point(113, 21);
           this.lbl_description.Name = "lbl_description";
-          this.lbl_description.Size = new System.Drawing.Size(382, 64);
+          this.lbl_description.Size = new System.Drawing.Size(394, 64);
           this.lbl_description.TabIndex = 3;
           this.lbl_description.Text = "label1";
           this.lbl_description.Click += new System.EventHandler(this.lbl_description_Click);
@@ -88,12 +92,12 @@
           // lbl_version
           // 
           this.lbl_version.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.lbl_version.Location = new System.Drawing.Point(435, 3);
+          this.lbl_version.Location = new System.Drawing.Point(437, 3);
           this.lbl_version.Name = "lbl_version";
-          this.lbl_version.Size = new System.Drawing.Size(66, 18);
+          this.lbl_version.Size = new System.Drawing.Size(110, 18);
           this.lbl_version.TabIndex = 4;
           this.lbl_version.Text = "label1";
-          this.lbl_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+          this.lbl_version.TextAlign = System.Drawing.ContentAlignment.TopRight;
           this.lbl_version.Click += new System.EventHandler(this.lbl_version_Click);
           // 
           // toolTip1
@@ -125,6 +129,57 @@
           this.toolTip1.SetToolTip(this.img_update, "New update available ");
           this.img_update.Click += new System.EventHandler(this.img_update_Click);
           // 
+          // btn_home
+          // 
+          this.btn_home.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+          this.btn_home.Image = global::MpeInstaller.Properties.Resources.internet_web_browser;
+          this.btn_home.Location = new System.Drawing.Point(513, 59);
+          this.btn_home.Name = "btn_home";
+          this.btn_home.Size = new System.Drawing.Size(32, 32);
+          this.btn_home.TabIndex = 12;
+          this.toolTip1.SetToolTip(this.btn_home, "Extension web page");
+          this.btn_home.UseVisualStyleBackColor = true;
+          this.btn_home.Click += new System.EventHandler(this.btn_home_Click);
+          // 
+          // btn_forum
+          // 
+          this.btn_forum.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+          this.btn_forum.Image = global::MpeInstaller.Properties.Resources.internet_group_chat;
+          this.btn_forum.Location = new System.Drawing.Point(513, 21);
+          this.btn_forum.Name = "btn_forum";
+          this.btn_forum.Size = new System.Drawing.Size(32, 32);
+          this.btn_forum.TabIndex = 32;
+          this.toolTip1.SetToolTip(this.btn_forum, "Extension forum page");
+          this.btn_forum.UseVisualStyleBackColor = true;
+          this.btn_forum.Click += new System.EventHandler(this.btn_forum_Click);
+          // 
+          // img_update1
+          // 
+          this.img_update1.BackColor = System.Drawing.Color.Transparent;
+          this.img_update1.Image = global::MpeInstaller.Properties.Resources.software_update_available;
+          this.img_update1.Location = new System.Drawing.Point(399, 1);
+          this.img_update1.Name = "img_update1";
+          this.img_update1.Size = new System.Drawing.Size(20, 20);
+          this.img_update1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+          this.img_update1.TabIndex = 33;
+          this.img_update1.TabStop = false;
+          this.toolTip1.SetToolTip(this.img_update1, "New update available ");
+          this.img_update1.Click += new System.EventHandler(this.img_update1_Click);
+          // 
+          // img_dep1
+          // 
+          this.img_dep1.BackColor = System.Drawing.Color.Transparent;
+          this.img_dep1.Image = global::MpeInstaller.Properties.Resources.software_update_urgent;
+          this.img_dep1.Location = new System.Drawing.Point(421, 1);
+          this.img_dep1.Name = "img_dep1";
+          this.img_dep1.Size = new System.Drawing.Size(20, 20);
+          this.img_dep1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+          this.img_dep1.TabIndex = 34;
+          this.img_dep1.TabStop = false;
+          this.toolTip1.SetToolTip(this.img_dep1, "Some of the dependency not met.\r\nThe extension may not work properlly\r\n Use More " +
+                  "info button");
+          this.img_dep1.Click += new System.EventHandler(this.img_dep1_Click);
+          // 
           // btn_update
           // 
           this.btn_update.BackColor = System.Drawing.SystemColors.ButtonFace;
@@ -148,6 +203,7 @@
           this.btn_more_info.Text = "More info.";
           this.btn_more_info.UseVisualStyleBackColor = true;
           this.btn_more_info.Visible = false;
+          this.btn_more_info.Click += new System.EventHandler(this.btn_more_info_Click);
           // 
           // btn_conf
           // 
@@ -184,26 +240,6 @@
           this.btn_install.Text = "Install";
           this.btn_install.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
           // 
-          // btn_home
-          // 
-          this.btn_home.Image = global::MpeInstaller.Properties.Resources.internet_web_browser;
-          this.btn_home.Location = new System.Drawing.Point(507, 47);
-          this.btn_home.Name = "btn_home";
-          this.btn_home.Size = new System.Drawing.Size(38, 38);
-          this.btn_home.TabIndex = 12;
-          this.btn_home.UseVisualStyleBackColor = true;
-          this.btn_home.Click += new System.EventHandler(this.btn_home_Click);
-          // 
-          // btn_forum
-          // 
-          this.btn_forum.Image = global::MpeInstaller.Properties.Resources.internet_group_chat;
-          this.btn_forum.Location = new System.Drawing.Point(507, 3);
-          this.btn_forum.Name = "btn_forum";
-          this.btn_forum.Size = new System.Drawing.Size(38, 38);
-          this.btn_forum.TabIndex = 11;
-          this.btn_forum.UseVisualStyleBackColor = true;
-          this.btn_forum.Click += new System.EventHandler(this.btn_forum_Click);
-          // 
           // img_logo
           // 
           this.img_logo.Image = global::MpeInstaller.Properties.Resources.package_x_generic;
@@ -217,7 +253,7 @@
           // 
           // timer1
           // 
-          this.timer1.Interval = 2;
+          this.timer1.Interval = 1;
           this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
           // 
           // btn_screenshot
@@ -236,7 +272,8 @@
           this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
           this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
-          this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+          this.Controls.Add(this.img_dep1);
+          this.Controls.Add(this.img_update1);
           this.Controls.Add(this.btn_screenshot);
           this.Controls.Add(this.btn_home);
           this.Controls.Add(this.btn_forum);
@@ -252,11 +289,14 @@
           this.Controls.Add(this.btn_uninstall);
           this.Controls.Add(this.lbl_name);
           this.ForeColor = System.Drawing.SystemColors.ButtonFace;
+          this.Margin = new System.Windows.Forms.Padding(1);
           this.Name = "ExtensionControl";
-          this.Size = new System.Drawing.Size(548, 123);
+          this.Size = new System.Drawing.Size(550, 125);
           this.Click += new System.EventHandler(this.ExtensionControl_Click);
           ((System.ComponentModel.ISupportInitialize)(this.img_dep)).EndInit();
           ((System.ComponentModel.ISupportInitialize)(this.img_update)).EndInit();
+          ((System.ComponentModel.ISupportInitialize)(this.img_update1)).EndInit();
+          ((System.ComponentModel.ISupportInitialize)(this.img_dep1)).EndInit();
           this.toolStrip1.ResumeLayout(false);
           this.toolStrip1.PerformLayout();
           ((System.ComponentModel.ISupportInitialize)(this.img_logo)).EndInit();
@@ -284,5 +324,7 @@
         private System.Windows.Forms.Button btn_home;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button btn_screenshot;
+        private System.Windows.Forms.PictureBox img_update1;
+        private System.Windows.Forms.PictureBox img_dep1;
     }
 }

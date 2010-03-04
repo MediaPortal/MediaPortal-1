@@ -45,7 +45,7 @@ namespace MpeInstaller.Controls
       _client.DownloadFileCompleted += _client_DownloadFileCompleted;
 
       InitializeComponent();
-      lbl_name.Text = packageClass.GeneralInfo.Name + " ";
+      lbl_name.Text = packageClass.GeneralInfo.Name + " - " + packageClass.GeneralInfo.Author;
       lbl_version.Text = packageClass.GeneralInfo.Version.ToString();
       lbl_description.Text = packageClass.GeneralInfo.ExtensionDescription;
       bool haveimage = false;
@@ -97,20 +97,25 @@ namespace MpeInstaller.Controls
       {
         btn_update.Visible = true;
         img_update.Visible = true;
+        img_update1.Visible = true;
         toolTip1.SetToolTip(img_update, "New update available. Version: " + UpdatePackage.GeneralInfo.Version.ToString());
+        toolTip1.SetToolTip(img_update1, "New update available. Version: " + UpdatePackage.GeneralInfo.Version.ToString());
       }
       else
       {
         btn_update.Visible = false;
         img_update.Visible = false;
+        img_update1.Visible = false;
       }
       if (!Package.CheckDependency(true))
       {
         img_dep.Visible = true;
+        img_dep1.Visible = true;
       }
       else
       {
         img_dep.Visible = false;
+        img_dep1.Visible = false;
       }
       Selected = false;
       SelectControl();
@@ -147,7 +152,10 @@ namespace MpeInstaller.Controls
           testToolStripMenuItem.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold,
                                                 GraphicsUnit.Point, ((byte)(0)));
         }
-        testToolStripMenuItem.ToolTipText = item.GeneralInfo.VersionDescription;
+        
+        testToolStripMenuItem.ToolTipText = item.GeneralInfo.VersionDescription.Length > 1024
+                                              ? item.GeneralInfo.VersionDescription.Substring(0, 1024) + "..."
+                                              : item.GeneralInfo.VersionDescription;
         testToolStripMenuItem.Tag = item;
         testToolStripMenuItem.Click += testToolStripMenuItem_Click;
         btn_install.DropDownItems.Add(testToolStripMenuItem);
@@ -187,9 +195,9 @@ namespace MpeInstaller.Controls
       lbl_version.ForeColor = _selected ? Color.Blue : Color.Black;
       //AutoSize = _selected;
       //Height = _selected ? 123 : 90;
-      Height = 90;
+      Height = 20;
       timer1.Enabled = _selected;
-
+      
       if (Parent == null)
         return;
       var parent = Parent.Parent as ExtensionListControl;
@@ -311,7 +319,7 @@ namespace MpeInstaller.Controls
     private void timer1_Tick(object sender, EventArgs e)
     {
       if (Height < 120)
-        Height ++;
+        Height = Height + 3;
       else
       {
         timer1.Enabled = false;
@@ -325,6 +333,22 @@ namespace MpeInstaller.Controls
         return;
       parent.OnShowScreenShot(this, Package);
     }
+
+    private void btn_more_info_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void img_dep1_Click(object sender, EventArgs e)
+    {
+      ExtensionControl_Click(null, null);
+    }
+
+    private void img_update1_Click(object sender, EventArgs e)
+    {
+      ExtensionControl_Click(null, null);
+    }
+
 
   }
 }

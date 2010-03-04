@@ -19,11 +19,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 using MpeCore;
 using MpeCore.Classes;
@@ -57,6 +52,7 @@ namespace MpeInstaller.Controls
     {
       InitializeComponent();
       SelectedItem = null;
+      flowLayoutPanel1.VerticalScroll.Visible = true;
     }
 
     public ExtensionControl SelectedItem { get; set; }
@@ -137,6 +133,11 @@ namespace MpeInstaller.Controls
     private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
       Filter(textBox1.Text, comboBox1.Text);
+    }
+
+    private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+    {
+
     }
 
   }

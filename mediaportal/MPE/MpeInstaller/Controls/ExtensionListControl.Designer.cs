@@ -37,15 +37,16 @@
           // 
           // flowLayoutPanel1
           // 
-          this.flowLayoutPanel1.AutoScroll = true;
           this.flowLayoutPanel1.BackColor = System.Drawing.Color.White;
+          this.flowLayoutPanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
           this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
           this.flowLayoutPanel1.ForeColor = System.Drawing.SystemColors.ButtonFace;
           this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 31);
+          this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
           this.flowLayoutPanel1.Name = "flowLayoutPanel1";
           this.flowLayoutPanel1.Size = new System.Drawing.Size(574, 417);
           this.flowLayoutPanel1.TabIndex = 0;
-          this.flowLayoutPanel1.WrapContents = false;
+          this.flowLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.flowLayoutPanel1_Paint);
           this.flowLayoutPanel1.Click += new System.EventHandler(this.flowLayoutPanel1_Click);
           // 
           // textBox1
