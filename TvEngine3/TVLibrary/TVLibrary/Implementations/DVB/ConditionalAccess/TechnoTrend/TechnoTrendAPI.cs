@@ -1290,9 +1290,16 @@ namespace TvLibrary.Implementations.DVB
     public unsafe void onSwitchOsdOff(IntPtr Context, byte nSlot)
     {
       Log.Log.Debug("TechnoTrend:CI_OnSwitchOsdOff slot:{0}", nSlot);
-      if (ciMenuCallbacks != null)
+      try
       {
-        ciMenuCallbacks.OnCiCloseDisplay(0);
+        if (ciMenuCallbacks != null)
+        {
+          ciMenuCallbacks.OnCiCloseDisplay(0);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Debug("TechnoTrend: CI_OnSwitchOsdOff() exception: {0}", ex.ToString());
       }
     }
 
@@ -1309,10 +1316,17 @@ namespace TvLibrary.Implementations.DVB
     {
       Log.Log.Debug("TechnoTrend: OnInputRequest; bBlindAnswer {0}, nExpectedLength: {1}; dwKeyMask: {2} ", bBlindAnswer,
                     nExpectedLength, dwKeyMask);
-      if (ciMenuCallbacks != null)
+      try
       {
-        ciMenuCallbacks.OnCiRequest(bBlindAnswer, nExpectedLength, m_ciDisplayString);
-        // m_ciDisplayString from former callback!
+        if (ciMenuCallbacks != null)
+        {
+          ciMenuCallbacks.OnCiRequest(bBlindAnswer, nExpectedLength, m_ciDisplayString);
+          // m_ciDisplayString from former callback!
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Debug("TechnoTrend: OnInputRequest() exception: {0}", ex.ToString());
       }
     }
 
