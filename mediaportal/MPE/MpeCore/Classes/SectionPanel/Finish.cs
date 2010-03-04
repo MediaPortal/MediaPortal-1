@@ -35,10 +35,12 @@ namespace MpeCore.Classes.SectionPanel
   {
     private const string CONST_TEXT1 = "Header text";
     private const string CONST_IMAGE = "Left part image";
+    private const string CONST_RADIO = "Show radio buttons";
 
     private SectionItem Section = new SectionItem();
     private PackageClass _packageClass = new PackageClass();
     private List<CheckBox> CheckBoxs = new List<CheckBox>();
+    private List<RadioButton> RadioButtons = new List<RadioButton>();
     public ShowModeEnum Mode = ShowModeEnum.Preview;
 
 
@@ -54,6 +56,14 @@ namespace MpeCore.Classes.SectionPanel
       CheckBoxs.Add(checkBox5);
       CheckBoxs.Add(checkBox6);
       CheckBoxs.Add(checkBox7);
+      
+      RadioButtons.Add(radioButton1);
+      RadioButtons.Add(radioButton2);
+      RadioButtons.Add(radioButton3);
+      RadioButtons.Add(radioButton4);
+      RadioButtons.Add(radioButton5);
+      RadioButtons.Add(radioButton6);
+      RadioButtons.Add(radioButton7);
     }
 
     #region ISectionPanel Members
@@ -87,6 +97,7 @@ namespace MpeCore.Classes.SectionPanel
       param.Add(new SectionParam(CONST_TEXT1, "The Extension Installer Wizard has successfully installed [Name].",
                                  ValueTypeEnum.String, ""));
       param.Add(new SectionParam(CONST_IMAGE, "", ValueTypeEnum.File, ""));
+      param.Add(new SectionParam(CONST_RADIO, "", ValueTypeEnum.Bool, "Use radiobutton in place of combobox"));
       param.Add(new SectionParam(ParamNamesConst.SECTION_ICON, "", ValueTypeEnum.File,
                                  "Image in upper right part"));
       return param;
@@ -126,17 +137,33 @@ namespace MpeCore.Classes.SectionPanel
       {
         base.pictureBox1.Load(Section.Params[CONST_IMAGE].Value);
       }
+      int i = 0;
       foreach (CheckBox checkBox in CheckBoxs)
       {
         checkBox.Visible = false;
+        RadioButtons[i].Location = checkBox.Location;
+        RadioButtons[i].Visible = false;
+        i++;
       }
-      int i = 0;
+      i = 0;
       foreach (var includedGroup in Section.IncludedGroups)
       {
-        CheckBoxs[i].Visible = true;
-        CheckBoxs[i].Text = _packageClass.Groups[includedGroup].DisplayName;
-        CheckBoxs[i].Checked = _packageClass.Groups[includedGroup].Checked;
-        CheckBoxs[i].Tag = _packageClass.Groups[includedGroup];
+        if(Section.Params[CONST_RADIO].GetValueAsBool())
+        {
+          RadioButtons[i].Visible = true;
+          RadioButtons[i].Text = _packageClass.Groups[includedGroup].DisplayName;
+          RadioButtons[i].Checked = _packageClass.Groups[includedGroup].Checked;
+          RadioButtons[i].Tag = _packageClass.Groups[includedGroup];
+          this.toolTip1.SetToolTip(RadioButtons[i], _packageClass.Groups[includedGroup].Description);
+        }
+        else
+        {
+          CheckBoxs[i].Visible = true;
+          CheckBoxs[i].Text = _packageClass.Groups[includedGroup].DisplayName;
+          CheckBoxs[i].Checked = _packageClass.Groups[includedGroup].Checked;
+          CheckBoxs[i].Tag = _packageClass.Groups[includedGroup];
+          this.toolTip1.SetToolTip(CheckBoxs[i], _packageClass.Groups[includedGroup].Description);
+        }
         i++;
         if (i > 6)
           break;
@@ -206,6 +233,15 @@ namespace MpeCore.Classes.SectionPanel
       if (Mode == ShowModeEnum.Preview)
         return;
       CheckBox box = (CheckBox)sender;
+      GroupItem item = box.Tag as GroupItem;
+      item.Checked = box.Checked;
+    }
+
+    private void radioButton1_CheckedChanged(object sender, EventArgs e)
+    {
+      if (Mode == ShowModeEnum.Preview)
+        return;
+      RadioButton box = (RadioButton)sender;
       GroupItem item = box.Tag as GroupItem;
       item.Checked = box.Checked;
     }
