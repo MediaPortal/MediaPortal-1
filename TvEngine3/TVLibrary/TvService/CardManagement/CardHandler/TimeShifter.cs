@@ -374,7 +374,6 @@ namespace TvService
             {
               Log.Info("start subch:{0} No PMT received. Timeshifting failed", subchannel.SubChannelId);
               Stop(ref user);
-              _cardHandler.Users.RemoveUser(user);
               return TvResult.UnableToStartGraph;
             }
           }
@@ -397,7 +396,6 @@ namespace TvService
             if (!WaitForTimeShiftFile(ref user, out isScrambled))
             {
               Stop(ref user);
-              _cardHandler.Users.RemoveUser(user);
               if (isScrambled)
               {
                 return TvResult.ChannelIsScrambled;
@@ -423,14 +421,12 @@ namespace TvService
           if (result == false)
           {
             Stop(ref user);
-            _cardHandler.Users.RemoveUser(user);
             return TvResult.UnableToStartGraph;
           }
           fileName += ".tsbuffer";
           if (!WaitForTimeShiftFile(ref user, out isScrambled))
           {
             Stop(ref user);
-            _cardHandler.Users.RemoveUser(user);
             if (isScrambled)
             {
               return TvResult.ChannelIsScrambled;
@@ -521,24 +517,10 @@ namespace TvService
           }
           else
           {
-            if (subchannel != null)
-            {
-              Log.Debug("card not IDLE - freeing subch: {0}", subchannel.SubChannelId);
-              subchannel.StopTimeShifting();
-              _cardHandler.Card.FreeSubChannel(subchannel.SubChannelId);
-              /*
-              if (subchannel is BaseSubChannel)
-              {
-                BaseSubChannel baseSubCh = (BaseSubChannel)subchannel;
-
-                Log.Debug("card not IDLE - freeing subch: {0}", subchannel.SubChannelId);
-                baseSubCh.Decompose();
-                //subchannel.StopTimeShifting();              
-                _cardHandler.Card.FreeSubChannel(subchannel.SubChannelId);              
-              }
-              */
-            }
+            Log.Debug("card not IDLE - removing user: {0}", user.Name);
+            _cardHandler.Users.RemoveUser(user);
           }
+          
           context.Remove(user);
           return true;
         }
