@@ -506,4 +506,8 @@ Proseguire l'installazione è un vostro rischio.</value>
 Tenere conto che AERO è necessario per evitare tremolio e scatti durante la riproduzione video.
 Abilitando AERO si ridurrà anche l'uso della CPU, e il vostro HTPC sarà silenzioso e produrrà meno calore.</value>
   </data>
+  <data name="Reboot_Required" xml:space="preserve">
+    <value>E' richiesto un riavvio da un componente Microsoft.
+Procedere con tale operazione prima di continuare l'installazione di MediaPortal.</value>
+  </data>
 </root>
