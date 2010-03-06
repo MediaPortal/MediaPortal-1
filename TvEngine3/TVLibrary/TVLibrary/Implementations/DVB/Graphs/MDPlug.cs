@@ -257,10 +257,6 @@ namespace TvLibrary.Implementations.DVB
       {
         for (iplg = 0; iplg < _instanceNumber - 1; iplg++)
         {
-          filtername = "mdapifilter" + (iplg + 1);
-          Log.Log.Info("mdplugs: add {0}", filtername);
-          graphBuilder.AddFilter(_mDPlugs[iplg + 1].mdapiFilter, filtername);
-
           Log.Log.Info("mdplugs: connect mdapifilter{0}->mdapifilter{1}", iplg, iplg + 1);
           IPin mdApiOutPrev = DsFindPin.ByDirection(_mDPlugs[iplg].mdapiFilter, PinDirection.Output, 0);
           IPin mdApiInNext = DsFindPin.ByDirection(_mDPlugs[iplg + 1].mdapiFilter, PinDirection.Input, 0);
@@ -273,6 +269,7 @@ namespace TvLibrary.Implementations.DVB
           }
         }
       }
+      filtername = "mdapifilter" + iplg;
       Log.Log.Info("mdplugs: connect {0}->2nd tee", filtername);
       IPin mdApiOutLast = DsFindPin.ByDirection(_mDPlugs[iplg].mdapiFilter, PinDirection.Output, 0);
       IPin secondTeeIn = DsFindPin.ByDirection(infTeeSecond, PinDirection.Input, 0);
