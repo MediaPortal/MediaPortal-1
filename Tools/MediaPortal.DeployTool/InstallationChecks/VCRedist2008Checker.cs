@@ -54,6 +54,20 @@ namespace MediaPortal.DeployTool.InstallationChecks
         if (setup != null)
         {
           setup.WaitForExit();
+          // Return codes:
+          //  0               = success, no reboot required
+          //  3010            = success, reboot required
+          //  any other value = failure
+
+          if (setup.ExitCode != 0)
+          {
+            // Write Run registry key
+            Utils.AutoRunApplication("set");
+
+            // Notify about the needed reboot
+            MessageBox.Show(Localizer.GetBestTranslation("Reboot_Required"), GetDisplayName(), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            Environment.Exit(-3);
+          }
         }
         return true;
       }

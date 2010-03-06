@@ -82,6 +82,9 @@ namespace MediaPortal.DeployTool
         InstallationProperties.Instance.Set("ProgramFiles", Environment.GetEnvironmentVariable("ProgramFiles"));
       }
 
+      // Delete Run registry key
+      Utils.AutoRunApplication("delete");
+
       // Paint first screen
       InitializeComponent();
       Localizer.SwitchCulture("en-US");

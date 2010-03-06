@@ -509,4 +509,8 @@ Transfer this folder to your HTPC. Start installation by running "MediaPortal.De
 Please note that AERO is needed to avoid tearing and stuttering.
 Enabling AERO will also reduce CPU usage, thus making your HTPC run cooler and quieter.</value>
   </data>
+  <data name="Reboot_Required" xml:space="preserve">
+    <value>A reboot is needed by a Microsoft component.
+Please proceed with it before continuing with MediaPortal installation.</value>
+  </data>
 </root>

@@ -323,6 +323,32 @@ namespace MediaPortal.DeployTool
       }
     }
 
+    public static bool AutoRunApplication(string action)
+    {
+      const string desc = "MediaPortal Installation";
+      RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+      if (key != null)
+      {
+        if (action == "set")
+        {
+          key.SetValue(desc, Application.ExecutablePath);
+        }
+        else
+        {
+          try
+          {
+            key.DeleteValue(desc, true);
+          }
+          catch
+          {
+            return false;
+          }
+        }
+        key.Close();
+      }
+      return true;
+    }
+
     #region Operation System Version Check
     public static void CheckPrerequisites()
     {
