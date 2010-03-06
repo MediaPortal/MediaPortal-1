@@ -18,18 +18,49 @@
 
 #endregion
 
-using TvLibrary.Interfaces;
-using TvLibrary.Channels;
-using TvDatabase;
-using TvControl;
-using System;
+#region usings 
+
 using System.Collections.Generic;
+using TvControl;
+using TvDatabase;
+using TvLibrary.Channels;
+using TvLibrary.Interfaces;
+
+#endregion
 
 namespace TvService
 {
   public class CardAllocationBase
   {
     #region protected members
+
+    protected static bool IsOnlyActiveUserCurrentUser(Dictionary<int, ITvCardHandler> cards, User currentUser)
+    {      
+      bool isOnlyActiveUserCurrentUser = true;
+
+      Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = cards.Values;                    
+      foreach (ITvCardHandler cardHandler in cardHandlers)
+      {
+        User[] users = cardHandler.Users.GetUsers();
+
+        if (users != null && users.Length > 0)
+        {
+          foreach (User u in users)
+          {
+            if (u.Name != currentUser.Name)
+            {
+              isOnlyActiveUserCurrentUser = false;
+              break;
+            }
+          }
+        }
+        if (!isOnlyActiveUserCurrentUser)
+        {
+          break;
+        }
+      }
+      return isOnlyActiveUserCurrentUser;
+    }
 
     protected static bool IsCamAbleToDecrypChannel(User user, ITvCardHandler tvcard, Channel ch, int decryptLimit,
                                                    out bool isRec)
@@ -42,7 +73,7 @@ namespace TvService
       {
         isRec = tvcard.Recorder.IsRecordingChannel(currentUserCh.Name);
       }
-      if (tvcard.TimeShifter.IsTimeShifting(ref user) && !isRec)
+      if (!isRec && tvcard.TimeShifter.IsTimeShifting(ref user))
       {
         bool fta = isFTA(tvcard, user);
         if (fta)
@@ -82,72 +113,41 @@ namespace TvService
     protected static bool isFTA(ITvCardHandler tvcard, User user)
     {
       IChannel unknownChannel = tvcard.CurrentChannel(ref user);
-
       bool fta = true;
 
       if (unknownChannel != null)
       {
-        if (unknownChannel is DVBCChannel)
+        DVBBaseChannel dvbChannel = unknownChannel as DVBBaseChannel;
+
+        if (dvbChannel != null)
         {
-          fta = ((DVBCChannel)unknownChannel).FreeToAir;
-        }
-        else if (unknownChannel is DVBSChannel)
-        {
-          fta = ((DVBSChannel)unknownChannel).FreeToAir;
-        }
-        else if (unknownChannel is DVBTChannel)
-        {
-          fta = ((DVBTChannel)unknownChannel).FreeToAir;
-        }
-        else if (unknownChannel is ATSCChannel)
-        {
-          fta = ((ATSCChannel)unknownChannel).FreeToAir;
-        }
-        else if (unknownChannel is DVBIPChannel)
-        {
-          fta = ((DVBIPChannel)unknownChannel).FreeToAir;
-        }
+          fta = dvbChannel.FreeToAir;
+        }        
       }
       return fta;
     }
 
-    protected static bool IsChannelMappedToCard(Channel dbChannel, KeyValuePair<int, ITvCardHandler> keyPair,
+    protected static bool IsChannelMappedToCard(Channel dbChannel, string devicePath,
                                                 out ChannelMap channelMap)
     {
       //check if channel is mapped to this card and that the mapping is not for "Epg Only"
       bool isChannelMappedToCard = false;
       channelMap = null;
-      foreach (ChannelMap map in dbChannel.ReferringChannelMap())
+
+      List<ChannelMap> channelMaps = dbChannel.ReferringChannelMap() as List<ChannelMap>;
+
+      if (channelMaps != null)
       {
-        if (map.ReferencedCard().DevicePath == keyPair.Value.DataBaseCard.DevicePath && !map.EpgOnly)
-        {
-          //yes
-          channelMap = map;
-
-          if (null != channelMap)
-          {
-            //channel is not mapped to this card, so skip it            
-            isChannelMappedToCard = true;
-          }
-
-          break;
-        }
-      }
+        channelMap = channelMaps.Find(m => !m.EpgOnly && m.ReferencedCard().DevicePath == devicePath);
+        isChannelMappedToCard = (channelMap != null);
+      }      
+     
       return isChannelMappedToCard;
     }
 
     protected static bool IsValidTuningDetails(List<IChannel> tuningDetails)
     {
-      bool isValid = true;
-      if (tuningDetails == null)
-      {
-        isValid = false;
-      }
-      else if (tuningDetails.Count == 0)
-      {
-        isValid = false;
-      }
-
+      bool isValid = (tuningDetails != null && tuningDetails.Count > 0);
       return isValid;
     }
 

@@ -18,15 +18,17 @@
 
 #endregion
 
+#region usings
+
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Runtime.CompilerServices;
-using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using System.Diagnostics;
 using TvControl;
 using TvDatabase;
-using TvLibrary.Channels;
+using TvLibrary.Interfaces;
+using TvLibrary.Log;
+
+#endregion
 
 namespace TvService
 {
@@ -34,24 +36,22 @@ namespace TvService
   {
     #region private members    
 
-    private static bool IsCardFoundEnabled(List<CardDetail> cardsAvailable, KeyValuePair<int, ITvCardHandler> keyPair)
-    {
+    private static bool IsCardFoundAndEnabled(List<CardDetail> cardsAvailable, ITvCardHandler cardHandler)
+    {      
       //get the card info
-      bool isEnabled = false;
-      bool isFound = true;
-      foreach (CardDetail info in cardsAvailable)
-      {
-        if (info.Card.DevicePath == keyPair.Value.DataBaseCard.DevicePath)
-        {
-          isFound = false;
-        }
-      }
+      bool isEnabled = false;      
 
-      if (isFound)
+      if (cardsAvailable != null)
       {
-        //check if card is enabled
-        isEnabled = keyPair.Value.DataBaseCard.Enabled;
-      }
+        bool isFound = !(cardsAvailable.Exists(c => c.Card.DevicePath == cardHandler.DataBaseCard.DevicePath));
+
+        if (isFound)
+        {
+          //check if card is enabled
+          isEnabled = cardHandler.DataBaseCard.Enabled;
+        }
+      }      
+      
       return isEnabled;
     }
 
@@ -185,7 +185,10 @@ namespace TvService
       return priority;
     }
 
-    #endregion
+    #endregion    
+    
+
+
 
     #region ICardAllocation Members
 
@@ -198,15 +201,13 @@ namespace TvService
                                                         ref User user, bool checkTransponders, out TvResult result,
                                                         int recommendedCardId)
     {
+      Stopwatch stopwatch = Stopwatch.StartNew();
       try
-      {
-
+      {        
         //Log.Info("GetAvailableCardsForChannel st {0}", Environment.StackTrace);
         //construct list of all cards we can use to tune to the new channel
         List<CardDetail> cardsAvailable = new List<CardDetail>();
-        List<int> cardsUnAvailable = new List<int>();
-
-        
+        List<int> cardsUnAvailable = new List<int>();        
 
         Log.Info("Controller: find free card for channel {0}", dbChannel.Name);
         TvBusinessLayer layer = new TvBusinessLayer();
@@ -227,88 +228,98 @@ namespace TvService
 
         int cardsFound = 0;
         int number = 0;
-        //foreach tuning detail
+        bool isOnlyActiveUserCurrentUser = IsOnlyActiveUserCurrentUser(cards, user);
         foreach (IChannel tuningDetail in tuningDetails)
         {
           cardsUnAvailable.Clear();
           number++;
-          Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());
-          Dictionary<int, ITvCardHandler>.Enumerator enumerator = cards.GetEnumerator();
-
-          //for each card...
-          while (enumerator.MoveNext())
-          {
-            KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
-            int cardId = keyPair.Value.DataBaseCard.IdCard;
+          Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());          
+          Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = cards.Values;                    
+          foreach (ITvCardHandler cardHandler in cardHandlers)
+          {                        
+            int cardId = cardHandler.DataBaseCard.IdCard;
 
             if (cardsUnAvailable.Contains(cardId))
             {
               Log.Info("Controller:    card:{0} has already been queried, skipping.", cardId);
               continue;              
-            }
+            }            
 
-            ITvCardHandler tvcard = cards[cardId];
-            
-            bool isCardFoundAndEnabled = IsCardFoundEnabled(cardsAvailable, keyPair);
+            bool isCardFoundAndEnabled = IsCardFoundAndEnabled(cardsAvailable, cardHandler);
             if (!isCardFoundAndEnabled)
             {
               //not enabled, so skip the card
-              Log.Info("Controller:    card:{0} type:{1} is disabled", cardId, tvcard.Type);
+              Log.Info("Controller:    card:{0} type:{1} is disabled", cardId, cardHandler.Type);
               AddCardUnAvailable(ref cardsUnAvailable, cardId);
               continue;
             }
 
-            bool isCardPresent = IsCardPresent(cardId, keyPair.Value.DataBaseCard.ReferencedServer().HostName);
+            bool isCardPresent = IsCardPresent(cardId, cardHandler.DataBaseCard.ReferencedServer().HostName);
             if (!isCardPresent)
             {
               Log.Error("card: unable to connect to slave controller at:{0}",
-                        keyPair.Value.DataBaseCard.ReferencedServer().HostName);
+                        cardHandler.DataBaseCard.ReferencedServer().HostName);
               AddCardUnAvailable(ref cardsUnAvailable, cardId);
               continue;
             }
 
-            if (!tvcard.Tuner.CanTune(tuningDetail))
+            if (!cardHandler.Tuner.CanTune(tuningDetail))
             {
               //card cannot tune to this channel, so skip it
-              Log.Info("Controller:    card:{0} type:{1} cannot tune to channel", cardId, tvcard.Type);
+              Log.Info("Controller:    card:{0} type:{1} cannot tune to channel", cardId, cardHandler.Type);
               AddCardUnAvailable(ref cardsUnAvailable, cardId);
               continue;
             }
 
             //check if channel is mapped to this card and that the mapping is not for "Epg Only"
             ChannelMap channelMap = null;
-            bool isChannelMappedToCard = IsChannelMappedToCard(dbChannel, keyPair, out channelMap);
+            bool isChannelMappedToCard = IsChannelMappedToCard(dbChannel, cardHandler.DataBaseCard.DevicePath, out channelMap);
             if (!isChannelMappedToCard)
             {
-              Log.Info("Controller:    card:{0} type:{1} channel not mapped", cardId, tvcard.Type);
+              Log.Info("Controller:    card:{0} type:{1} channel not mapped", cardId, cardHandler.Type);
               AddCardUnAvailable(ref cardsUnAvailable, cardId);
               continue;
             }
 
-            //ok card could be used to tune to this channel
-            //now we check if its free...
-            cardsFound++;
+            CardDetail cardInfo = null;
+            int nrOfOtherUsers = 0;
             bool isSameTransponder = false;
-            bool canDecrypt = true;
-            int decryptLimit = keyPair.Value.DataBaseCard.DecryptLimit;
 
-            bool checkTransponder = CheckTransponder(dbChannel, user, tvcard, decryptLimit, cardId, tuningDetail,
-                                                     checkTransponders, out isSameTransponder, out canDecrypt);
-            if (!checkTransponder)
+            if (isOnlyActiveUserCurrentUser)
             {
-              AddCardUnAvailable(ref cardsUnAvailable, cardId);
-              continue;
+              isSameTransponder = true;
+              nrOfOtherUsers = 0;
+              cardInfo = new CardDetail(cardId, channelMap.ReferencedCard(), tuningDetail);
+              cardInfo.Priority = CardPriority(cardInfo.Priority, nrOfOtherUsers, isSameTransponder, true, cardId,
+                                            recommendedCardId);
             }
+            else
+            {
+              //ok card could be used to tune to this channel
+              //now we check if its free...
+              cardsFound++;
+              isSameTransponder = false;
+              bool canDecrypt = true;
+              int decryptLimit = cardHandler.DataBaseCard.DecryptLimit;
 
-            CardDetail cardInfo = new CardDetail(cardId, channelMap.ReferencedCard(), tuningDetail);
+              bool checkTransponder = CheckTransponder(dbChannel, user, cardHandler, decryptLimit, cardId, tuningDetail,
+                                                       checkTransponders, out isSameTransponder, out canDecrypt);
+              if (!checkTransponder)
+              {
+                AddCardUnAvailable(ref cardsUnAvailable, cardId);
+                continue;
+              }
 
-            //determine how many other users are using this card            
-            int nrOfOtherUsers = NumberOfUsersOnCard(cards, user, cardInfo);
-            cardInfo.Priority = CardPriority(cardInfo.Priority, nrOfOtherUsers, isSameTransponder, canDecrypt, cardId,
-                                             recommendedCardId);
+              cardInfo = new CardDetail(cardId, channelMap.ReferencedCard(), tuningDetail);
 
+              //determine how many other users are using this card                        
+              nrOfOtherUsers = NumberOfUsersOnCard(cards, user, cardInfo);
+              cardInfo.Priority = CardPriority(cardInfo.Priority, nrOfOtherUsers, isSameTransponder, canDecrypt, cardId,
+                                            recommendedCardId);
+            }
+                        
             Log.Info("Controller:    card:{0} type:{1} is available priority:{2} #users:{3} same transponder:{4}",
-                     cardInfo.Id, tvcard.Type, cardInfo.Priority, nrOfOtherUsers, isSameTransponder);
+                     cardInfo.Id, cardHandler.Type, cardInfo.Priority, nrOfOtherUsers, isSameTransponder);
 
             cardsAvailable.Add(cardInfo);
           }
@@ -335,6 +346,11 @@ namespace TvService
         result = TvResult.UnknownError;
         Log.Write(ex);
         return null;
+      }
+      finally
+      {
+        stopwatch.Stop();        
+        Log.Info("AdvancedCardAllocation.GetAvailableCardsForChannel took {0} msec", stopwatch.ElapsedMilliseconds);
       }
     }
 

@@ -3116,14 +3116,6 @@ namespace TvPlugin
       }
       Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
 
-      //if a channel is untunable, then there is no reason to carry on or even stop playback.
-      ChannelState CurrentChanState = TvServer.GetChannelState(channel.IdChannel, Card.User);
-      if (CurrentChanState == ChannelState.nottunable)
-      {
-        ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
-        return false;
-      }
-
       //BAV: fixing mantis bug 1263: TV starts with no video if Radio is previously ON & channel selected from TV guide
       if ((!channel.IsRadio && g_Player.IsRadio) || (channel.IsRadio && !g_Player.IsRadio))
       {
@@ -3290,11 +3282,11 @@ namespace TvPlugin
 
         if (cardChanged)
         {
-            _status.Set(LiveTvStatus.CardChange);
+          _status.Set(LiveTvStatus.CardChange);
           if (card != null)
           {
-          RegisterCiMenu(card.Id);
-        }
+            RegisterCiMenu(card.Id);
+          }
           _status.Reset(LiveTvStatus.WasPlaying);
         }
         else
