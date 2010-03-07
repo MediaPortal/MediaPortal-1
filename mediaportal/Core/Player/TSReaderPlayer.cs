@@ -49,6 +49,7 @@ namespace MediaPortal.Player
     string strVideoCodec = "";
     string strAudioCodec = "";
     string strAACAudioCodec = "";
+    string strDDPLUSAudioCodec = "";
     string strH264VideoCodec = ""; 
     #endregion
 
@@ -147,7 +148,7 @@ namespace MediaPortal.Player
     }
 
     protected void LoadMyTvFilterSettings(ref int intFilters, ref string strFilters, ref string strVideoCodec,
-                                          ref string strAudioCodec, ref string strAACAudioCodec,
+                                          ref string strAudioCodec, ref string strAACAudioCodec, ref string strDDPLUSAudioCodec,
                                           ref string strH264VideoCodec, ref string strAudioRenderer,
                                           ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles,
                                           ref int relaxTsReader)
@@ -168,6 +169,7 @@ namespace MediaPortal.Player
         strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
         strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
         strAACAudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
+        strDDPLUSAudioCodec = xmlreader.GetValueAsString("mytv", "ddplusaudiocodec", "");
         strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
         strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
         enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
@@ -224,11 +226,18 @@ namespace MediaPortal.Player
       {
         if (AudioType(CurrentAudioStream).Contains("AAC"))
         {
-          audioFilter = strAACAudioCodec;          
+          audioFilter = strAACAudioCodec;
         }
         else
         {
-          audioFilter = strAudioCodec;          
+          if (AudioType(CurrentAudioStream).Contains("DD+"))
+          {
+            audioFilter = strDDPLUSAudioCodec;
+          }
+          else
+          {
+            audioFilter = strAudioCodec;
+          }
         }
       }
     }
@@ -244,7 +253,7 @@ namespace MediaPortal.Player
         string strFilters = ""; // FlipGer: collect custom filters
 
         LoadMyTvFilterSettings(ref intFilters, ref strFilters, ref strVideoCodec, ref strAudioCodec,
-                               ref strAACAudioCodec, ref strH264VideoCodec, ref strAudioRenderer,
+                               ref strAACAudioCodec, ref strDDPLUSAudioCodec, ref strH264VideoCodec, ref strAudioRenderer,
                                ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles, ref relaxTsReader);
         
         _graphBuilder = (IGraphBuilder)new FilterGraph();

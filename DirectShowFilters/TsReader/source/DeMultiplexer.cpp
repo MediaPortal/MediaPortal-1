@@ -26,6 +26,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <streams.h>
+#include <wmcodecdsp.h>
 #include "demultiplexer.h"
 #include "buffer.h"
 #include "..\..\shared\adaptionfield.h"
@@ -350,10 +351,19 @@ void CDeMultiplexer::GetAudioStreamType(int stream,CMediaType& pmt)
       pmt.SetFormat(AACAudioFormat,sizeof(AACAudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_AC3:
-    case SERVICE_TYPE_AUDIO_DD_PLUS:
       pmt.InitMediaType();
       pmt.SetType      (& MEDIATYPE_Audio);
       pmt.SetSubtype   (& MEDIASUBTYPE_DOLBY_AC3);
+      pmt.SetSampleSize(1);
+      pmt.SetTemporalCompression(FALSE);
+      pmt.SetVariableSize();
+      pmt.SetFormatType(&FORMAT_WaveFormatEx);
+      pmt.SetFormat(AC3AudioFormat,sizeof(AC3AudioFormat));
+      break;
+    case SERVICE_TYPE_AUDIO_DD_PLUS:
+      pmt.InitMediaType();
+      pmt.SetType      (& MEDIATYPE_Audio);
+      pmt.SetSubtype   (& MEDIASUBTYPE_DOLBY_DDPLUS);
       pmt.SetSampleSize(1);
       pmt.SetTemporalCompression(FALSE);
       pmt.SetVariableSize();

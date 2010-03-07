@@ -36,6 +36,8 @@ namespace MediaPortal.Configuration.Sections
       this.audioRendererComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabelNote = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDDPLUSDecoder = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.ddplusAudioCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
       this.SuspendLayout();
@@ -44,6 +46,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.ddplusAudioCodecComboBox);
+      this.groupBox1.Controls.Add(this.labelDDPLUSDecoder);
       this.groupBox1.Controls.Add(this.audioCodecComboBox);
       this.groupBox1.Controls.Add(this.labelAACDecoder);
       this.groupBox1.Controls.Add(this.aacAudioCodecComboBox);
@@ -57,7 +61,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(3, 3);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(466, 154);
+      this.groupBox1.Size = new System.Drawing.Size(466, 187);
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
@@ -142,7 +146,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelAudioRenderer
       // 
-      this.labelAudioRenderer.Location = new System.Drawing.Point(16, 124);
+      this.labelAudioRenderer.Location = new System.Drawing.Point(16, 147);
       this.labelAudioRenderer.Name = "labelAudioRenderer";
       this.labelAudioRenderer.Size = new System.Drawing.Size(88, 16);
       this.labelAudioRenderer.TabIndex = 6;
@@ -154,7 +158,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.audioRendererComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioRendererComboBox.Location = new System.Drawing.Point(168, 120);
+      this.audioRendererComboBox.Location = new System.Drawing.Point(168, 144);
       this.audioRendererComboBox.Name = "audioRendererComboBox";
       this.audioRendererComboBox.Size = new System.Drawing.Size(282, 21);
       this.audioRendererComboBox.TabIndex = 7;
@@ -180,6 +184,25 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabelNote.Size = new System.Drawing.Size(247, 13);
       this.mpLabelNote.TabIndex = 2;
       this.mpLabelNote.Text = "All .ts files will be played using TV codecs settings !";
+      // 
+      // labelDDPLUSDecoder
+      // 
+      this.labelDDPLUSDecoder.Location = new System.Drawing.Point(16, 123);
+      this.labelDDPLUSDecoder.Name = "labelDDPLUSDecoder";
+      this.labelDDPLUSDecoder.Size = new System.Drawing.Size(146, 17);
+      this.labelDDPLUSDecoder.TabIndex = 14;
+      this.labelDDPLUSDecoder.Text = "DD+ audio decoder:";
+      // 
+      // ddplusAudioCodecComboBox
+      // 
+      this.ddplusAudioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.ddplusAudioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.ddplusAudioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.ddplusAudioCodecComboBox.Location = new System.Drawing.Point(168, 120);
+      this.ddplusAudioCodecComboBox.Name = "ddplusAudioCodecComboBox";
+      this.ddplusAudioCodecComboBox.Size = new System.Drawing.Size(282, 21);
+      this.ddplusAudioCodecComboBox.TabIndex = 15;
       // 
       // TVCodec
       // 
@@ -211,5 +234,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox audioRendererComboBox;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabelNote;
+    private MediaPortal.UserInterface.Controls.MPComboBox ddplusAudioCodecComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDDPLUSDecoder;
   }
 }

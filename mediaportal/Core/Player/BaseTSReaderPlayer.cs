@@ -304,6 +304,10 @@ namespace MediaPortal.Player
         {
           return "AC3";
         }
+        if (sType.subType == MEDIASUBTYPE_DDPLUS_AUDIO)
+        {
+          return "DD+";
+        }
         if (sType.subType == MEDIASUBTYPE_MPEG1_PAYLOAD)
         {
           return "Mpeg1";
@@ -1570,6 +1574,7 @@ namespace MediaPortal.Player
         string strH264VideoCodec = "";
         string strAudioCodec = "";
         string strAACAudioCodec = "";
+        string strDDPLUSAudioCodec = "";
         string strAudiorenderer = "";
         int intFilters = 0; // FlipGer: count custom filters
         string strFilters = ""; // FlipGer: collect custom filters
@@ -1592,6 +1597,7 @@ namespace MediaPortal.Player
           strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
           strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
           strAACAudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
+          strDDPLUSAudioCodec = xmlreader.GetValueAsString("mytv", "ddplusaudiocodec", "");
           strAudiorenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
           string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
           GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(strValue);
@@ -1611,6 +1617,10 @@ namespace MediaPortal.Player
         if (strAACAudioCodec.Length > 0)
         {
           DirectShowUtil.AddFilterToGraph(_graphBuilder, strAACAudioCodec);
+        }
+        if (strDDPLUSAudioCodec.Length > 0)
+        {
+          DirectShowUtil.AddFilterToGraph(_graphBuilder, strDDPLUSAudioCodec);
         }
         if (strAudiorenderer.Length > 0)
         {
@@ -1934,6 +1944,11 @@ namespace MediaPortal.Player
     private static Guid MEDIASUBTYPE_AC3_AUDIO
     {
       get { return new Guid("e06d802c-db46-11cf-b4d1-00805f6cbbea"); }
+    }
+
+    private static Guid MEDIASUBTYPE_DDPLUS_AUDIO
+    {
+      get { return new Guid("a7fb87af-2d02-42fb-a4d4-05cd93843bdd"); }
     }
 
     private static Guid MEDIASUBTYPE_MPEG2_AUDIO

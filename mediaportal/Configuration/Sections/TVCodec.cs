@@ -96,12 +96,15 @@ namespace MediaPortal.Configuration.Sections
         availableAudioFilters.Sort();
         ArrayList availableAACAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.LATMAAC);
         availableAACAudioFilters.Sort();
+        ArrayList availableDDPLUSAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.DDPLUS);
+        availableDDPLUSAudioFilters.Sort();
         ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
         availableAudioRenderers.Sort();
         videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
         h264videoCodecComboBox.Items.AddRange(availableH264VideoFilters.ToArray());
         audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
         aacAudioCodecComboBox.Items.AddRange(availableAACAudioFilters.ToArray());
+        ddplusAudioCodecComboBox.Items.AddRange(availableDDPLUSAudioFilters.ToArray());
         audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
         _init = true;
         LoadSettings();
@@ -124,6 +127,7 @@ namespace MediaPortal.Configuration.Sections
         string videoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
         string h264videoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
         string aacaudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
+        string ddplusaudioCodec = xmlreader.GetValueAsString("mytv", "ddplusaudiocodec", "");
         string audioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
 
         if (audioCodec == string.Empty)
@@ -226,11 +230,34 @@ namespace MediaPortal.Configuration.Sections
             }
           }
         }
+
+        if (ddplusaudioCodec == string.Empty)
+        {
+          ArrayList availableDDPLUSAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
+          if (availableDDPLUSAudioFilters.Count > 0)
+          {
+            bool ffdshowFound = false;
+            ddplusaudioCodec = (string)availableDDPLUSAudioFilters[0];
+            foreach (string filter in availableDDPLUSAudioFilters)
+            {
+              if (filter.Equals("ffdshow Audio Decoder"))
+              {
+                ffdshowFound = true;
+              }
+            }
+            if (ffdshowFound)
+            {
+              ddplusaudioCodec = "ffdshow Audio Decoder";
+            }
+          }
+        }
+
         audioCodecComboBox.Text = audioCodec;
         videoCodecComboBox.Text = videoCodec;
         h264videoCodecComboBox.Text = h264videoCodec;
         audioRendererComboBox.Text = audioRenderer;
         aacAudioCodecComboBox.Text = aacaudioCodec;
+        ddplusAudioCodecComboBox.Text = ddplusaudioCodec;
       }
     }
 
@@ -250,6 +277,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("mytv", "h264videocodec", h264videoCodecComboBox.Text);
         xmlwriter.SetValue("mytv", "audiorenderer", audioRendererComboBox.Text);
         xmlwriter.SetValue("mytv", "aacaudiocodec", aacAudioCodecComboBox.Text);
+        xmlwriter.SetValue("mytv", "ddplusaudiocodec", ddplusAudioCodecComboBox.Text);
       }
     }
 
