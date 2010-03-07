@@ -93,11 +93,11 @@ AutoCloseWindow true
 VIProductVersion "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
 VIAddVersionKey ProductName       "${PRODUCT_NAME}"
 VIAddVersionKey ProductVersion    "${VERSION}"
-VIAddVersionKey CompanyName       "${COMPANY}"
-VIAddVersionKey CompanyWebsite    "${URL}"
+VIAddVersionKey CompanyName       "${PRODUCT_PUBLISHER}"
+VIAddVersionKey CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey FileVersion       "${VERSION}"
 VIAddVersionKey FileDescription   "${PRODUCT_NAME} installation ${VERSION}"
-VIAddVersionKey LegalCopyright    "Copyright © 2005-2009 ${COMPANY}"
+VIAddVersionKey LegalCopyright    "Copyright © 2005-2009 ${PRODUCT_PUBLISHER}"
 
 ;if we want to make it fully silent we can uncomment this
 ;SilentInstall silent
