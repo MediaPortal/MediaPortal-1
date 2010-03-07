@@ -118,7 +118,7 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>12095000</CarrierFrequency>
+    <CarrierFrequency>12096000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>4340</SymbolRate>
     <Modulation>ModNotSet</Modulation>

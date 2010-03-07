@@ -352,6 +352,15 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
+    <CarrierFrequency>12175000</CarrierFrequency>
+    <Polarisation>LinearH</Polarisation>
+    <SymbolRate>4342</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>RateNotSet</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
     <CarrierFrequency>12044000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>3200</SymbolRate>
