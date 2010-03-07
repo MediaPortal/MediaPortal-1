@@ -956,7 +956,6 @@ namespace MediaPortal.GUI.Video
           }
       }
 
-
       base.OnAction(action);
     }
 
@@ -1081,8 +1080,6 @@ namespace MediaPortal.GUI.Video
                 HideControl(GetID, i);
               }
             }
-
-
             return true;
           }
 
@@ -1098,24 +1095,9 @@ namespace MediaPortal.GUI.Video
               }
               _isOsdVisible = false;
               GUIWindowManager.IsOsdVisible = false;
-
-              if (VMR7Util.g_vmr7 != null)
-              {
-                VMR7Util.g_vmr7.SaveBitmap(null, false, false, 0.8f);
-              }
-              /*if (VMR9Util.g_vmr9!=null)
-              {	
-                VMR9Util.g_vmr9.SaveBitmap(null,false,false,0.8f);
-              }*/
-              base.OnMessage(message);
-
-              //            if (m_form!=null) 
-              //            {
-              //              m_form.Close();
-              //              m_form.Dispose();
-              //            }
-              //            m_form=null;
+              GUIGraphicsContext.IsFullScreenVideo = false;
               GUILayerManager.UnRegisterLayer(this);
+              base.OnMessage(message);
             }
             return true;
           }
