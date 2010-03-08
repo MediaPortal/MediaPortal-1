@@ -527,36 +527,16 @@ namespace TvDatabase
       switch (provider)
       {
         case "mysql":
-          if (crossMidnight)
+          sb.AddConstraint(
+            string.Format("{0} >= DATE_ADD(DATE({0}), INTERVAL TIME(?{1}) HOUR_SECOND)", 
+                          startField, startParam));
+          if (!string.IsNullOrEmpty(endField))
           {
-            // If time range [s, e] crosses midnight (i.e. e<s), both startTime and endTime must not be in the range (e, s)
             sb.AddConstraint(
               string.Format(
-                "(EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})" +
-                "OR EXTRACT(HOUR_SECOND FROM {0}) <= EXTRACT(HOUR_SECOND FROM ?{2}))",
-                startField, startParam, endParam));
-            if (!string.IsNullOrEmpty(endField))
-            {
-              sb.AddConstraint(
-                string.Format(
-                  "(EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})" +
-                  "OR EXTRACT(HOUR_SECOND FROM {0}) <= EXTRACT(HOUR_SECOND FROM ?{2}))",
-                  endField, startParam, endParam));
-              sb.AddConstraint(string.Format("EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})", startField,
-                                             endField));
-            }
-          }
-          else
-          {
-            sb.AddConstraint(string.Format("EXTRACT(HOUR_SECOND FROM {0}) >= EXTRACT(HOUR_SECOND FROM ?{1})", startField,
-                                           startParam));
-            if (!string.IsNullOrEmpty(endField))
-            {
-              sb.AddConstraint(string.Format("EXTRACT(HOUR_SECOND FROM {0}) <= EXTRACT(HOUR_SECOND FROM ?{1})", endField,
-                                             endParam));
-              sb.AddConstraint(string.Format("EXTRACT(HOUR_SECOND FROM {0}) <= EXTRACT(HOUR_SECOND FROM ?{1})", startField,
-                                             endField));
-            }
+                "{1} <= DATE_ADD(DATE_ADD(DATE({0}), INTERVAL {3} DAY), INTERVAL TIME(?{2}) HOUR_SECOND)",
+                startField, endField, endParam, crossMidnight? 1:0));
+
           }
           break;
         case "sqlserver":
