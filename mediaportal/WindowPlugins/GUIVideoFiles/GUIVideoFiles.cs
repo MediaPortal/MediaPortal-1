@@ -640,8 +640,8 @@ namespace MediaPortal.GUI.Video
         // Check if folder is actually a DVD. If so don't browse this folder, but play the DVD!
         if ((File.Exists(path + @"\VIDEO_TS\VIDEO_TS.IFO")) && (item.Label != ".."))
         {
-          OnPlayDVD(path, GetID);
-          return;
+          isFolderAMovie = true;
+          path = item.Path + @"\VIDEO_TS\VIDEO_TS.IFO";
         }
         else
         {
