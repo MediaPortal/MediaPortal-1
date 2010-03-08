@@ -1238,6 +1238,8 @@
     <String id="2610">Polsk</String>
     <String id="2611">Tjekkisk</String>
     <String id="2612">Ungarsk</String>
+    <String id="2613">Russisk</String>
+    <String id="2614">Ukrainsk</String>
     <String id="2650">Genloader skrifttyper - vent venligst...</String>
     <String id="2700">Åben CI menu</String>
     <String id="2997">t</String>
@@ -1896,8 +1898,5 @@
     <String id="200069">Alle IP porte forbinder ok</String>
     <String id="200070">Check firewall</String>
     <String id="200071">Slet denne mappe og alle underliggende mapper?</String>
-    <String id="129050">YouTube.FM</String>
-    <String id="129051">YouTube.FM playliste</String>
-    <String id="129052">YouTube.FM Spiller nu</String>
   </Section>
 </Language>
