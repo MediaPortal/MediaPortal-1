@@ -965,6 +965,8 @@
     <String id="1197">Disabilita DXVA</String>
     <String id="1198">Navigatore del DVD</String>
     <String id="1200">Wizard delle impostazioni</String>
+    <String id="1201">Riproduci il video dall'inizio</String>
+    <String id="1211">Riproduci il video da {0}</String>
     <String id="1300" prefix="Le mie ">Serie TV</String>
     <String id="1440" prefix="Il mio ">Televideo</String>
     <String id="1441">Televideo</String>
