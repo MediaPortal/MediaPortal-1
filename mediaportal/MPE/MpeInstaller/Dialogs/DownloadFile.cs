@@ -66,9 +66,20 @@ namespace MpeInstaller.Dialogs
 
     private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
     {
-      progressBar1.Value = e.ProgressPercentage;
-      label1.Text = string.Format("{0} kb/{1} kb", e.BytesReceived / 1024, e.TotalBytesToReceive / 1024);
+      if (e.TotalBytesToReceive > 0)
+      {
+        progressBar1.Style = ProgressBarStyle.Blocks;
+        progressBar1.Value = e.ProgressPercentage;
+        label1.Text = string.Format("{0} kb/{1} kb", e.BytesReceived / 1024, e.TotalBytesToReceive / 1024);
+      }
+      else
+      {
+        progressBar1.Value = e.ProgressPercentage;
+        progressBar1.Style = ProgressBarStyle.Marquee;
+        label1.Text = string.Format("{0} kb", e.BytesReceived / 1024);
+      }
     }
+
 
     public DownloadFile(string source, string dest)
     {

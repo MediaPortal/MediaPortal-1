@@ -224,6 +224,11 @@ namespace MpeInstaller
       }
       PackageClass pak = new PackageClass();
       pak = pak.ZipProvider.Load(newPackageLoacation);
+      if (pak == null)
+      {
+        MessageBox.Show("Package loading error ! Install aborted!");
+        return;
+      }
       if (!pak.CheckDependency(false))
       {
         MessageBox.Show("Dependency check error ! Install aborted!");
