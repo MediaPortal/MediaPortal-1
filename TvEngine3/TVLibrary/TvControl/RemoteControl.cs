@@ -282,7 +282,23 @@ namespace TvControl
       }
     }
 
-    private static void ConnectCallback(System.IAsyncResult ar) {}
+    private static void ConnectCallback(System.IAsyncResult ar)
+    {
+      TcpClient tcpClient = (TcpClient)ar.AsyncState;
+      try
+      {
+        tcpClient.EndConnect(ar);
+      }
+      catch(Exception)
+      {
+        // EndConnect will throw an exception here if the connection has failed
+        // so we have to catch it or MP will exit with unhandled exception
+      }
+      finally
+      {
+        tcpClient.Close();
+      }
+    }
 
     private static bool CheckTcpPort()
     {
@@ -294,7 +310,7 @@ namespace TvControl
       {
         IAsyncResult result = tcpClient.BeginConnect(
           _hostName,
-          REMOTING_PORT, null,
+          REMOTING_PORT, ConnectCallback,
           tcpClient);
 
         bool success = result.AsyncWaitHandle.WaitOne(MAX_TCP_TIMEOUT, true);
