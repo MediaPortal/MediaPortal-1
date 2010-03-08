@@ -34,6 +34,7 @@ namespace MediaPortal.DeployTool
   {
     private DeployDialog _currentDialog;
     public string _currentCulture = "en-US";
+    public bool _restart;
 
     #region IDeployDialog interface
     public void UpdateUI()
@@ -82,19 +83,35 @@ namespace MediaPortal.DeployTool
         InstallationProperties.Instance.Set("ProgramFiles", Environment.GetEnvironmentVariable("ProgramFiles"));
       }
 
-      // Delete Run registry key
-      Utils.AutoRunApplication("delete");
-
       // Paint first screen
       InitializeComponent();
       Localizer.SwitchCulture("en-US");
       UpdateUI();
 
-      _currentDialog = DialogFlowHandler.Instance.GetDialogInstance(DialogType.Welcome);
+      // Delete Run registry key
+      DialogType firstDlg;
+      if (Utils.AutoRunApplication("delete"))
+      {
+        firstDlg = DialogType.Installation;
+        InstallationProperties.Instance.Load();
+        Localizer.SwitchCulture(InstallationProperties.Instance["language"]);
+        _restart = true;
+      }
+      else
+      {
+        firstDlg = DialogType.Welcome;
+        Localizer.SwitchCulture("en-US");
+        _restart = false;
+      }
+      _currentDialog = DialogFlowHandler.Instance.GetDialogInstance(firstDlg);
       splitContainer2.Panel1.Controls.Add(_currentDialog);
-      InstallationProperties.Instance.Add("InstallTypeHeader", "Choose installation type");
+      InstallationProperties.Instance.Set("InstallTypeHeader", "Choose installation type");
       backButton.Visible = false;
       UpdateUI();
+      if (_restart)
+      {
+        nextButton.Text = Localizer.GetBestTranslation("Install_buttonInstall");
+      }
       nextButton.Focus();
     }
 
@@ -197,7 +214,7 @@ namespace MediaPortal.DeployTool
         nextButton.Enabled = true;
         nextButton.Text = Localizer.GetBestTranslation("MainWindow_buttonClose");
       }
-      if (InstallationProperties.Instance["Install_Dialog"] == "yes")
+      if (!_restart && InstallationProperties.Instance["Install_Dialog"] == "yes")
       {
         nextButton.Text = InstallationProperties.Instance["InstallType"] == "download_only" ? Localizer.GetBestTranslation("Install_buttonDownload") : Localizer.GetBestTranslation("Install_buttonInstall");
         InstallationProperties.Instance.Set("Install_Dialog", "no");

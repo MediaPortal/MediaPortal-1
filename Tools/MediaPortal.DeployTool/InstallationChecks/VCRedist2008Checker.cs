@@ -49,32 +49,30 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public bool Install()
     {
       Process setup = Process.Start(_fileName, "/Q");
-      try
+      if (setup != null)
       {
-        if (setup != null)
+        setup.WaitForExit();
+        // Return codes:
+        //  0               = success, no reboot required
+        //  3010            = success, reboot required
+        //  any other value = failure
+
+        if (setup.ExitCode == 3010 || File.Exists("c:\\vc_force_reboot"))
         {
-          setup.WaitForExit();
-          // Return codes:
-          //  0               = success, no reboot required
-          //  3010            = success, reboot required
-          //  any other value = failure
+          // Write Run registry key
+          Utils.AutoRunApplication("set");
 
-          if (setup.ExitCode != 0)
-          {
-            // Write Run registry key
-            Utils.AutoRunApplication("set");
-
-            // Notify about the needed reboot
-            MessageBox.Show(Localizer.GetBestTranslation("Reboot_Required"), GetDisplayName(), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            Environment.Exit(-3);
-          }
+          // Notify about the needed reboot
+          MessageBox.Show(Localizer.GetBestTranslation("Reboot_Required"), GetDisplayName(), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          Environment.Exit(-3);
         }
-        return true;
+
+        if (setup.ExitCode == 0)
+        {
+          return true;
+        }
       }
-      catch
-      {
-        return false;
-      }
+      return false;
     }
     public bool UnInstall()
     {
@@ -96,6 +94,13 @@ namespace MediaPortal.DeployTool.InstallationChecks
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
+
+      if (File.Exists("c:\\vc_force_noinstalled"))
+      {
+        result.state = CheckState.NOT_INSTALLED;
+        return result;
+      }
+
       string ManifestDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\winsxs\\Manifests\\";
       //Manifests for Vista/2008/Windows7
       const string ManifestCRT_Vista = "x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.4148_none_5090ab56bcba71c2.manifest";

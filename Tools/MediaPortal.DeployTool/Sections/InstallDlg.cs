@@ -83,6 +83,7 @@ namespace MediaPortal.DeployTool.Sections
     public override void SetProperties()
     {
       InstallationProperties.Instance.Set("finished", "yes");
+      InstallationProperties.Instance.Save();
     }
     #endregion
 
