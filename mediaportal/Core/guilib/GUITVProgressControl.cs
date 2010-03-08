@@ -41,9 +41,9 @@ namespace MediaPortal.GUI.Library
     private GUIAnimation _imageLeft = null;
     private GUIAnimation _imageMid = null;
     private GUIAnimation _imageRight = null;
-    private int _percentage1 = 0;
-    private int _percentage2 = 0;
-    private int _percentage3 = 0;
+    private float _percentage1 = 0;
+    private float _percentage2 = 0;
+    private float _percentage3 = 0;
 
 
     [XMLSkinElement("label")] private string _propertyLabel = "";
@@ -269,7 +269,7 @@ namespace MediaPortal.GUI.Library
         {
           try
           {
-            Percentage1 = Int32.Parse(m_strText);
+            Percentage1 = float.Parse(m_strText);
           }
           catch (Exception) {}
           if (Percentage1 < 0 || Percentage1 > 100)
@@ -285,7 +285,7 @@ namespace MediaPortal.GUI.Library
         {
           try
           {
-            Percentage1 = Int32.Parse(strText);
+            Percentage1 = float.Parse(strText);
           }
           catch (Exception) {}
           if (Percentage1 < 0 || Percentage1 > 100)
@@ -302,7 +302,7 @@ namespace MediaPortal.GUI.Library
         {
           try
           {
-            Percentage2 = Int32.Parse(strText);
+            Percentage2 = float.Parse(strText);
           }
           catch (Exception) {}
           if (Percentage2 < 0 || Percentage2 > 100)
@@ -318,7 +318,7 @@ namespace MediaPortal.GUI.Library
         {
           try
           {
-            Percentage3 = Int32.Parse(strText);
+            Percentage3 = float.Parse(strText);
           }
           catch (Exception) {}
           if (Percentage3 < 0 || Percentage3 > 100)
@@ -380,18 +380,18 @@ namespace MediaPortal.GUI.Library
       iCurPos = iWidth1 + xPos;
 
       //render 2nd color
-      int iPercent;
+      float fPercent;
       if (Percentage2 >= Percentage1)
       {
-        iPercent = Percentage2 - Percentage1;
+        fPercent = Percentage2 - Percentage1;
       }
       else
       {
-        iPercent = 0;
+        fPercent = 0;
       }
       fWidth = (float)iWidth;
       fWidth /= 100.0f;
-      fWidth *= (float)iPercent;
+      fWidth *= (float)fPercent;
       iWidth2 = (int)Math.Floor(fWidth);
       if (iWidth2 > 0)
       {
@@ -405,15 +405,15 @@ namespace MediaPortal.GUI.Library
       if (Percentage3 >= Percentage2)
       {
         //render 3th color
-        iPercent = Percentage3 - Percentage2;
+        fPercent = Percentage3 - Percentage2;
       }
       else
       {
-        iPercent = 0;
+        fPercent = 0;
       }
       fWidth = (float)iWidth;
       fWidth /= 100.0f;
-      fWidth *= (float)iPercent;
+      fWidth *= (float)fPercent;
       iWidth3 = (int)Math.Floor(fWidth);
       if (iWidth3 > 0)
       {
@@ -535,7 +535,7 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
-    public int Percentage1
+    public float Percentage1
     {
       get { return _percentage1; }
       set
@@ -552,7 +552,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public int Percentage2
+    public float Percentage2
     {
       get { return _percentage2; }
       set
@@ -569,7 +569,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public int Percentage3
+    public float Percentage3
     {
       get { return _percentage3; }
       set

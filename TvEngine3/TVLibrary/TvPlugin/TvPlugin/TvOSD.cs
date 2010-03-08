@@ -1640,7 +1640,7 @@ namespace TvPlugin
         double iCurSecs = ts.TotalSeconds;
         fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
         fPercent *= 100.0d;
-        GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
+        GUIPropertyManager.SetProperty("#TV.View.Percentage", fPercent.ToString());
         Get_TimeInfo();
 
         bool updateProperties = false;
@@ -1705,7 +1705,7 @@ namespace TvPlugin
           fPercent = ((double)currentPosition) / ((double)duration);
           fPercent *= 100.0d;
 
-          GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
+          GUIPropertyManager.SetProperty("#TV.View.Percentage", fPercent.ToString());
           Get_TimeInfo();
 
           GUIPropertyManager.SetProperty("#TV.View.channel", channelDisplayName);

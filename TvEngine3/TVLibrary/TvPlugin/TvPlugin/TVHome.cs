@@ -2492,16 +2492,16 @@ namespace TvPlugin
 
           double timeShiftStartPointPercent = ((double)timeShiftStartPoint) / ((double)programDuration);
           timeShiftStartPointPercent *= 100.0d;
-          GUIPropertyManager.SetProperty("#TV.Record.percent1", ((int)timeShiftStartPointPercent).ToString());
+          GUIPropertyManager.SetProperty("#TV.Record.percent1", timeShiftStartPointPercent.ToString());
 
           double playingPointPercent = ((double)playingPoint) / ((double)programDuration);
           playingPointPercent *= 100.0d;
-          GUIPropertyManager.SetProperty("#TV.Record.percent2", ((int)playingPointPercent).ToString());
+          GUIPropertyManager.SetProperty("#TV.Record.percent2", playingPointPercent.ToString());
 
           double percentLivePoint = ((double)livePoint) / ((double)programDuration);
           percentLivePoint *= 100.0d;
-          GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)percentLivePoint).ToString());
-          GUIPropertyManager.SetProperty("#TV.Record.percent3", ((int)percentLivePoint).ToString());
+          GUIPropertyManager.SetProperty("#TV.View.Percentage", percentLivePoint.ToString());
+          GUIPropertyManager.SetProperty("#TV.Record.percent3", percentLivePoint.ToString());
         }
 
         catch (Exception ex)
@@ -2520,7 +2520,7 @@ namespace TvPlugin
         double percentLivePoint = ((double)currentPosition) / ((double)duration);
         percentLivePoint *= 100.0d;
 
-        GUIPropertyManager.SetProperty("#TV.Record.percent1", ((int)percentLivePoint).ToString());
+        GUIPropertyManager.SetProperty("#TV.Record.percent1", percentLivePoint.ToString());
         GUIPropertyManager.SetProperty("#TV.Record.percent2", "0");
         GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
 

@@ -460,7 +460,7 @@ namespace TvPlugin
       double iCurSecs = ts.TotalSeconds;
       fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
       fPercent *= 100.0d;
-      GUIPropertyManager.SetProperty("#TV.View.Percentage", ((int)fPercent).ToString());
+      GUIPropertyManager.SetProperty("#TV.View.Percentage", fPercent.ToString());
     }
   }
 }
