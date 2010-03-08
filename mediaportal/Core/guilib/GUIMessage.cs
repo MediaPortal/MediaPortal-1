@@ -127,6 +127,7 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_REMOVE_REMOVABLE_DRIVE = 96,
       GUI_MSG_REFRESHRATE_CHANGED = 97,
       GUI_MSG_TV_ERROR_NOTIFY = 98, // morpheus_xx, tv error handling
+      GUI_MSG_PLAY_DVD = 99, // chefkoch
       PS_ONSTANDBY = 9999
     } ;
 

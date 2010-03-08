@@ -365,8 +365,14 @@ namespace MediaPortal.Ripper
           }
           if (shouldPlay)
           {
-            g_Player.PlayDVD(strDrive + @"\VIDEO_TS\VIDEO_TS.IFO");
-            g_Player.ShowFullScreenWindow();
+            // Send a message with the drive to the message handler. 
+            // The message handler will play the DVD
+            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_DVD,
+                                 (int)GUIWindow.Window.WINDOW_VIDEOS,
+                                 GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
+            msg.Label = strDrive;
+            msg.SendToTargetWindow = true;
+            GUIWindowManager.SendThreadMessage(msg);
           }
           break;
 

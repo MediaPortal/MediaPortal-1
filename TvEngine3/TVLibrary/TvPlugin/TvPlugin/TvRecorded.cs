@@ -1273,51 +1273,30 @@ namespace TvPlugin
       }
 
       int stoptime = rec.StopTime;
-      if (stoptime > 0 && !_bIsLiveRecording)
+      if (_bIsLiveRecording || stoptime > 0)
       {
-        GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
-        if (null == dlgYesNo)
+        GUIResumeDialog.MediaType mediaType = GUIResumeDialog.MediaType.Recording;
+        if (_bIsLiveRecording)
+          mediaType = GUIResumeDialog.MediaType.LiveRecording;
+
+        GUIResumeDialog.Result result =
+          GUIResumeDialog.ShowResumeDialog(rec.Title, rec.StopTime, mediaType);
+
+        switch (result)
         {
-          return false;
-        }
-        dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
-        string chName = GetRecordingDisplayName(rec);
-        dlgYesNo.SetLine(1, chName);
-        dlgYesNo.SetLine(2, rec.Title);
-        dlgYesNo.SetLine(3, GUILocalizeStrings.Get(936) + " " + Utils.SecondsToHMSString(rec.StopTime));
-        dlgYesNo.SetDefaultToYes(true);
-        dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-        if (!dlgYesNo.IsConfirmed)
-        {
-          stoptime = 0;
-        }
-      }
-      else if (_bIsLiveRecording)
-      {
-        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
-        if (dlg != null)
-        {
-          dlg.Reset();
-          dlg.SetHeading(rec.Title);
-          dlg.AddLocalizedString(979); //Play recording from beginning
-          if (stoptime > 0)
-          {
-            dlg.Add(GUILocalizeStrings.Get(936) + " " + Utils.SecondsToHMSString(rec.StopTime)); //Continue playing at last stop time
-          }
-          dlg.AddLocalizedString(980); //Play recording from live point
-          dlg.DoModal(GetID);
-          if (dlg.SelectedId == -1)
-          {
+          case GUIResumeDialog.Result.Abort:
             return false;
-          }
-          if (dlg.SelectedId == 979)
-          {
+           
+          case GUIResumeDialog.Result.PlayFromBeginning:
             stoptime = 0;
-          }
-          else if (dlg.SelectedId == 980)
-          {
+            break;
+            
+          case GUIResumeDialog.Result.PlayFromLivePoint:
             stoptime = -1; // magic -1 is used for the live point
-          }
+            break;
+
+          default: // from last stop time and on error
+            break;
         }
       }
 

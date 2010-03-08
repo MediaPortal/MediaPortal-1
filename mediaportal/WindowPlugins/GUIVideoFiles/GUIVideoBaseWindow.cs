@@ -393,7 +393,7 @@ namespace MediaPortal.GUI.Video
         string dvdToPlay = selectDVDHandler.ShowSelectDVDDialog(GetID);
         if (dvdToPlay != null)
         {
-          selectDVDHandler.OnPlayDVD(dvdToPlay, GetID);
+          OnPlayDVD(dvdToPlay, GetID);
         }
         return;
       }
@@ -943,6 +943,21 @@ namespace MediaPortal.GUI.Video
       OnSort();
       //UpdateButtonStates();
       GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
+    }
+
+    protected void OnPlayDVD(String drive, int parentId)
+    {
+      ISelectDVDHandler selectDVDHandler;
+      if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
+      {
+        selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
+      }
+      else
+      {
+        selectDVDHandler = new SelectDVDHandler();
+        GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
+      }
+      selectDVDHandler.OnPlayDVD(drive, GetID);
     }
   }
 }

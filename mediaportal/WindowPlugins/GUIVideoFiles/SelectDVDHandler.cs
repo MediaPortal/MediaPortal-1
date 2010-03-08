@@ -135,15 +135,8 @@ namespace MediaPortal.GUI.Video
         {
           return true;
         }
-        else
-        {
-          g_Player.Stop();
-        }
       }
-      if (g_Player.Playing && !g_Player.IsDVD)
-      {
-        g_Player.Stop();
-      }
+
       if (Util.Utils.getDriveType(drive) == 5) //cd or dvd drive
       {
         string driverLetter = drive.Substring(0, 1);
@@ -173,23 +166,21 @@ namespace MediaPortal.GUI.Video
                 title = movieDetails.Title;
               }
 
-              GUIDialogYesNo dlgYesNo =
-                (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-              if (null == dlgYesNo)
-              {
-                return false;
-              }
-              dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
-              dlgYesNo.SetLine(1, title);
-              dlgYesNo.SetLine(2, GUILocalizeStrings.Get(936) + Util.Utils.SecondsToHMSString(timeMovieStopped));
-              dlgYesNo.SetDefaultToYes(true);
-              dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+              GUIResumeDialog.Result result =
+                GUIResumeDialog.ShowResumeDialog(title, timeMovieStopped,
+                                                 GUIResumeDialog.MediaType.DVD);
 
-              if (!dlgYesNo.IsConfirmed)
-              {
+              if (result == GUIResumeDialog.Result.Abort)
+                return false;
+
+              if (result == GUIResumeDialog.Result.PlayFromBeginning)
                 timeMovieStopped = 0;
-              }
             }
+          }
+
+          if (g_Player.Playing)
+          {
+            g_Player.Stop();
           }
 
           g_Player.PlayDVD(drive + @"\VIDEO_TS\VIDEO_TS.IFO");

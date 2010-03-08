@@ -409,6 +409,10 @@ namespace MediaPortal.GUI.Video
             LoadDirectory(_currentFolder);
           }
           break;
+
+        case GUIMessage.MessageType.GUI_MSG_PLAY_DVD:
+          OnPlayDVD(message.Label, GetID);
+          break;
       }
       return base.OnMessage(message);
     }
@@ -636,8 +640,8 @@ namespace MediaPortal.GUI.Video
         // Check if folder is actually a DVD. If so don't browse this folder, but play the DVD!
         if ((File.Exists(path + @"\VIDEO_TS\VIDEO_TS.IFO")) && (item.Label != ".."))
         {
-          isFolderAMovie = true;
-          path = item.Path + @"\VIDEO_TS\VIDEO_TS.IFO";
+          OnPlayDVD(path, GetID);
+          return;
         }
         else
         {
@@ -755,27 +759,22 @@ namespace MediaPortal.GUI.Video
                     if (!asked)
                     {
                       asked = true;
-                      GUIDialogYesNo dlgYesNo =
-                        (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
-                      if (null == dlgYesNo)
-                      {
+
+                      GUIResumeDialog.Result result =
+                        GUIResumeDialog.ShowResumeDialog(title, movieDuration + timeMovieStopped,
+                                                         GUIResumeDialog.MediaType.Video);
+
+                      if (result == GUIResumeDialog.Result.Abort)
                         return;
-                      }
-                      dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
-                      dlgYesNo.SetLine(1, title);
-                      dlgYesNo.SetLine(2,
-                                       GUILocalizeStrings.Get(936) + " " +
-                                       Util.Utils.SecondsToHMSString(movieDuration + timeMovieStopped));
-                      dlgYesNo.SetDefaultToYes(true);
-                      dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-                      if (dlgYesNo.IsConfirmed)
+
+                      if (result == GUIResumeDialog.Result.PlayFromBeginning)
                       {
-                        askForResumeMovie = false;
+                        VideoDatabase.DeleteMovieStopTime(idFile);
                         newItems.Add(temporaryListItem);
                       }
                       else
                       {
-                        VideoDatabase.DeleteMovieStopTime(idFile);
+                        askForResumeMovie = false;
                         newItems.Add(temporaryListItem);
                       }
                     } //if (!asked)
@@ -1334,21 +1333,15 @@ namespace MediaPortal.GUI.Video
           }
           if (askForResumeMovie)
           {
-            GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
-            if (null == dlgYesNo)
-            {
-              return;
-            }
-            dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
-            dlgYesNo.SetLine(1, title);
-            dlgYesNo.SetLine(2, GUILocalizeStrings.Get(936) + " " + Util.Utils.SecondsToHMSString(timeMovieStopped));
-            dlgYesNo.SetDefaultToYes(true);
-            dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+            GUIResumeDialog.Result result =
+              GUIResumeDialog.ShowResumeDialog(title, timeMovieStopped,
+                                               GUIResumeDialog.MediaType.Video);
 
-            if (!dlgYesNo.IsConfirmed)
-            {
+            if (result == GUIResumeDialog.Result.Abort)
+              return;
+
+            if (result == GUIResumeDialog.Result.PlayFromBeginning)
               timeMovieStopped = 0;
-            }
           }
         }
       }
@@ -1731,17 +1724,7 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 341: //Play dvd
-          ISelectDVDHandler selectDVDHandler;
-          if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
-          {
-            selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
-          }
-          else
-          {
-            selectDVDHandler = new SelectDVDHandler();
-            GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
-          }
-          selectDVDHandler.OnPlayDVD(item.Path, GetID);
+          OnPlayDVD(item.Path, GetID);
           break;
 
         case 346: //Stack
@@ -2263,27 +2246,22 @@ namespace MediaPortal.GUI.Video
                 if (!asked)
                 {
                   asked = true;
-                  GUIDialogYesNo dlgYesNo =
-                    (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
-                  if (null == dlgYesNo)
-                  {
+
+                  GUIResumeDialog.Result result =
+                    GUIResumeDialog.ShowResumeDialog(title, movieDuration + timeMovieStopped,
+                                                     GUIResumeDialog.MediaType.Video);
+
+                  if (result == GUIResumeDialog.Result.Abort)
                     return;
-                  }
-                  dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
-                  dlgYesNo.SetLine(1, title);
-                  dlgYesNo.SetLine(2,
-                                   GUILocalizeStrings.Get(936) + " " +
-                                   Util.Utils.SecondsToHMSString(movieDuration + timeMovieStopped));
-                  dlgYesNo.SetDefaultToYes(true);
-                  dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-                  if (dlgYesNo.IsConfirmed)
+
+                  if (result == GUIResumeDialog.Result.PlayFromBeginning)
                   {
-                    askForResumeMovie = false;
+                    VideoDatabase.DeleteMovieStopTime(idFile);
                     newItems.Add(temporaryListItem);
                   }
                   else
                   {
-                    VideoDatabase.DeleteMovieStopTime(idFile);
+                    askForResumeMovie = false;
                     newItems.Add(temporaryListItem);
                   }
                 } //if (!asked)

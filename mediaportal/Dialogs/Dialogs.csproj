@@ -185,6 +185,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Dialogs\GUIDialogVirtualKeyboard.cs" />
+    <Compile Include="Dialogs\Helper\GUIResumeDialog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

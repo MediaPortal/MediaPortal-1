@@ -965,6 +965,8 @@
     <String id="1197">DXVA deaktivieren</String>
     <String id="1198">DVD Navigator</String>
     <String id="1200">Einrichtungs-Assistent</String>
+    <String id="1201">Video von Anfang an wiedergeben</String>
+    <String id="1211">Wiedergabe bei {0} fortsetzen</String>
     <String id="1300" prefix="Meine ">TV Serien</String>
     <String id="1440" prefix="Mein ">Videotext</String>
     <String id="1441">Videotext</String>
