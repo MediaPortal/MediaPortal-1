@@ -1702,24 +1702,12 @@ namespace MediaPortal.GUI.Library
         }
 
         GUIListItem pItem = _listItems[iItem];
-        if (_searchString.Length < 4)
+        if (pItem.Label.ToUpper().StartsWith(SearchKey.ToUpper()) == true)
         {
-          // Short search string
-          if (pItem.Label.ToUpper().StartsWith(SearchKey.ToUpper()) == true)
-          {
-            bItemFound = true;
-            break;
-          }
+          bItemFound = true;
+          break;
         }
-        else
-        {
-          // Long search string
-          if (pItem.Label.ToUpper().IndexOf(SearchKey.ToUpper()) >= 0)
-          {
-            bItemFound = true;
-            break;
-          }
-        }
+        
         if (iSearchMethode == SearchType.SEARCH_FIRST)
         {
           iItem++;
