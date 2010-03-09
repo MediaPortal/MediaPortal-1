@@ -324,10 +324,6 @@ namespace TvControl
       {
         benchClock.Stop();
 
-        if (tcpClient.Connected)
-        {
-          tcpClient.Close();
-        }
         Log.Debug("TCP connect took : {0}", benchClock.ElapsedMilliseconds);
       }
 
