@@ -32,12 +32,11 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIPropertyManager
   {
-    
     // pattern that matches a property tag, e.g. '#myproperty' or '#some.property_string'
     private static Regex propertyExpr = new Regex(@"#[a-z0-9\._]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-    
+
     private static Dictionary<string, string> _properties = new Dictionary<string, string>();
-    private static bool _isChanged = false;    
+    private static bool _isChanged = false;
 
     public delegate void OnPropertyChangedHandler(string tag, string tagValue);
 
@@ -288,9 +287,9 @@ namespace MediaPortal.GUI.Library
 
       if (tagvalue == null)
       {
-          tagvalue = string.Empty;
+        tagvalue = string.Empty;
       }
-      
+
       if (tag.Equals("#currentmodule"))
       {
         try
@@ -304,9 +303,9 @@ namespace MediaPortal.GUI.Library
       lock (_properties)
       {
         changed = (!_properties.ContainsKey(tag) || _properties[tag] != tagvalue);
-        if (changed) 
+        if (changed)
         {
-            _properties[tag] = tagvalue;
+          _properties[tag] = tagvalue;
         }
       }
 
@@ -324,18 +323,16 @@ namespace MediaPortal.GUI.Library
     /// <returns>property value</returns>
     public static string GetProperty(string tag)
     {
-      if (tag != null && tag.IndexOf('#') > -1) 
+      string property = string.Empty;
+      if (tag != null && tag.IndexOf('#') > -1)
       {
-          lock (_properties) 
-          {
-              if (_properties.ContainsKey(tag)) 
-              {
-                  return _properties[tag];
-              }
-          }
+        lock (_properties)
+        {          
+          _properties.TryGetValue(tag, out property);                    
+        }
       }
 
-      return string.Empty;    
+      return property;
     }
 
     /// <summary>
@@ -406,44 +403,47 @@ namespace MediaPortal.GUI.Library
     {
       if (line == null)
       {
-          return string.Empty;
+        return string.Empty;
       }
 
       if (line.IndexOf('#') > -1)
       {
-          // Matches a property tag and replaces it with the value for that property
-          MatchCollection matches = propertyExpr.Matches(line);
-          foreach (Match match in matches) {
-              line = line.Replace(match.Value, ParseProperty(match.Value));
-          }
+        // Matches a property tag and replaces it with the value for that property
+        MatchCollection matches = propertyExpr.Matches(line);
+        foreach (Match match in matches)
+        {
+          line = line.Replace(match.Value, ParseProperty(match.Value));
+        }
       }
 
       return line;
-    } 
-    
+    }
+
     // Because currently the properties don't have delimiters there are some situations 
     // where we cannot properly get the complete property tag. In order to be 
     // backwards compatible with current skins/plugins this logic is to ensure 
     // everything is parsed similar to the pre-patch situation, it actually _can_ make 
     // the parsing a bit slower depending on how the properties are used, but it's still 
     // significantly faster than before.
-    private static string ParseProperty(string property) {
-        for (int i = property.Length; i > 1; i--) 
+    private static string ParseProperty(string property)
+    {
+      for (int i = property.Length; i > 1; i--)
+      {
+        // if the property is not an existing property we iterate through every
+        // substring of the value untill we find the property, we replace the substring with
+        // the value of the property and in turn leave the overhead string intact.
+        string tag = property.Substring(0, i);
+        lock (_properties)
         {
-            // if the property is not an existing property we iterate through every
-            // substring of the value untill we find the property, we replace the substring with
-            // the value of the property and in turn leave the overhead string intact.
-            string tag = property.Substring(0,i);
-            lock (_properties) 
-            {
-                if (_properties.ContainsKey(tag))
-                {
-                    return property.Replace(tag, _properties[tag]);
-                }
-            }
+          string propertyValue = string.Empty;
+          if (_properties.TryGetValue(tag, out propertyValue))
+          {
+            return property.Replace(tag, propertyValue);
+          }          
         }
+      }
 
-        return property;
+      return property;
     }
   }
 }
