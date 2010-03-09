@@ -293,6 +293,8 @@ namespace MpeInstaller.Controls
 
     public bool Filter(string str, string tag)
     {
+      if (Package == null)
+        return true;
       tag = tag.Trim();
       if (tag.ToUpper() == "ALL")
         tag = string.Empty;
@@ -302,12 +304,15 @@ namespace MpeInstaller.Controls
 
       if (string.IsNullOrEmpty(str))
         strResult = true;
-      if (Package.GeneralInfo.Name.ToUpper().Contains(str.ToUpper()))
-        strResult = true;
-      if (Package.GeneralInfo.ExtensionDescription.ToUpper().Contains(str.ToUpper()))
-        strResult = true;
-      if (Package.GeneralInfo.TagList.Tags.Contains(str.ToLower()))
-        strResult = true;
+      else
+      {
+        if (Package.GeneralInfo.Name.ToUpper().Contains(str.ToUpper()))
+          strResult = true;
+        if (Package.GeneralInfo.ExtensionDescription.ToUpper().Contains(str.ToUpper()))
+          strResult = true;
+        if (Package.GeneralInfo.TagList.Tags.Contains(str.ToLower()))
+          strResult = true;
+      }
       if(!string.IsNullOrEmpty(tag))
       {
         if (Package.GeneralInfo.TagList.Tags.Contains(tag.ToLower()))

@@ -118,7 +118,7 @@ namespace MpeInstaller.Controls
       foreach (var control in flowLayoutPanel1.Controls)
       {
         var cnt = control as ExtensionControl;
-        if(cnt!=null)
+        if (cnt != null)
         {
           cnt.Visible = cnt.Filter(filter, tag);
         }
