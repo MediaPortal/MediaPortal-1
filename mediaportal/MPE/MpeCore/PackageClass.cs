@@ -570,11 +570,11 @@ namespace MpeCore
     /// <returns></returns>
     public static int Compare(PackageClass pak1, PackageClass pak2)
     {
-      if (pak1.GeneralInfo.Name.CompareTo(pak2.GeneralInfo.Name) == 0)
+      if (pak1.GeneralInfo.Name.ToUpper().CompareTo(pak2.GeneralInfo.Name.ToUpper()) == 0)
       {
         return pak1.GeneralInfo.Version.CompareTo(pak2.GeneralInfo.Version);
       }
-      return pak1.GeneralInfo.Name.CompareTo(pak2.GeneralInfo.Name);
+      return pak1.GeneralInfo.Name.ToUpper().CompareTo(pak2.GeneralInfo.Name.ToUpper());
     }
 
   }

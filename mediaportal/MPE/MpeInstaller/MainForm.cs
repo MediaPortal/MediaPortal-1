@@ -122,7 +122,7 @@ namespace MpeInstaller
             Thread.Sleep(5000);
             pr.Kill();
           }
-          catch (Exception) {}
+          catch (Exception) { }
         }
       }
       ExecuteQueue();
@@ -275,8 +275,8 @@ namespace MpeInstaller
           PluginLoader remoteExecutor =
             (PluginLoader)
             appDomain.CreateInstanceFromAndUnwrap(
-              Assembly.GetAssembly(typeof (MpeCore.MpeInstaller)).Location,
-              typeof (PluginLoader).ToString());
+              Assembly.GetAssembly(typeof(MpeCore.MpeInstaller)).Location,
+              typeof(PluginLoader).ToString());
           remoteExecutor.Load(conf_str);
           remoteExecutor.Dispose();
 
@@ -464,7 +464,7 @@ namespace MpeInstaller
       {
         if (!silent)
           MessageBox.Show("This is a old format file. MpiInstaller will be used to install it! ");
-        Process.Start(MpeCore.MpeInstaller.TransformInRealPath("%Base%")+@"\MpInstaller.exe", file);
+        Process.Start(MpeCore.MpeInstaller.TransformInRealPath("%Base%") + @"\MpInstaller.exe", file);
         return;
       }
       MpeCore.MpeInstaller.Init();
@@ -484,9 +484,9 @@ namespace MpeInstaller
           if (!silent)
             if (
               MessageBox.Show(
-                "This extension already have a installed version. \n This will be uninstalled first. \n Do you want to continue ?  \n"+
-                 "Old extension version: "+ installedPak.GeneralInfo.Version+" \n" +
-                 "New extension version: "+ pak.GeneralInfo.Version,
+                "This extension already have a installed version. \n This will be uninstalled first. \n Do you want to continue ?  \n" +
+                 "Old extension version: " + installedPak.GeneralInfo.Version + " \n" +
+                 "New extension version: " + pak.GeneralInfo.Version,
                 "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
               return;
           UnInstall dlg = new UnInstall();
@@ -532,7 +532,7 @@ namespace MpeInstaller
       DateTime d = _settings.LastUpdate;
       int i = DateTime.Now.Subtract(d).Days;
       if (((_settings.DoUpdateInStartUp && i > _settings.UpdateDays) ||
-          MpeCore.MpeInstaller.KnownExtensions.Items.Count == 0 )&&
+          MpeCore.MpeInstaller.KnownExtensions.Items.Count == 0) &&
           MessageBox.Show("Do you want to update the extension list ?", "Update", MessageBoxButtons.YesNo,
                           MessageBoxIcon.Question) == DialogResult.Yes)
       {
@@ -592,7 +592,7 @@ namespace MpeInstaller
     private string tempUpdateIndex;
     // private const string UpdateIndexUrl = "http://wiki.team-mediaportal.com/MpeInstaller/UpdateIndex?action=raw";
     private const string UpdateIndexUrl = "http://install.team-mediaportal.com/MPEI/extensions.txt";
-    
+
     private void DownloadExtensionIndex()
     {
       try
@@ -627,7 +627,7 @@ namespace MpeInstaller
     {
       Client_DownloadFileCompleted(sender, e);
       if (!File.Exists(tempUpdateIndex)) return;
-      
+
       var indexUrls = new List<string>();
       string[] lines = File.ReadAllLines(tempUpdateIndex);
       foreach (string line in lines)
@@ -647,5 +647,38 @@ namespace MpeInstaller
       FilterList();
       RefreshLists();
     }
+
+    private void btn_clean_Click(object sender, EventArgs e)
+    {
+      if (MessageBox.Show("Do you want to clear all unused data ?\nYou need to redownload update info .", "Cleanup", MessageBoxButtons.YesNo,
+                          MessageBoxIcon.Question) == DialogResult.Yes)
+      {
+        ExtensionCollection collection = new ExtensionCollection();
+        foreach (PackageClass item in MpeCore.MpeInstaller.KnownExtensions.Items)
+        {
+          if (MpeCore.MpeInstaller.InstalledExtensions.Get(item) == null)
+          {
+            collection.Items.Add(item);
+          }
+        }
+        foreach (PackageClass packageClass in collection.Items)
+        {
+          try
+          {
+            if (Directory.Exists(packageClass.LocationFolder))
+              Directory.Delete(packageClass.LocationFolder, true);
+            MpeCore.MpeInstaller.KnownExtensions.Remove(packageClass);
+          }
+          catch (Exception ex)
+          {
+            MessageBox.Show("Error : " + ex.Message);
+          }
+        }
+        MpeCore.MpeInstaller.Save();
+        FilterList();
+        RefreshLists();
+      }
+    }
+
   }
 }
