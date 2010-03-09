@@ -65,7 +65,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   {
     HRESULT hr;
     LogRotate();
-    Log("----------v1.3.0---------------------------");
+    Log("----------v1.3.1---------------------------");
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
     hr = m_pDXVA2CreateDirect3DDeviceManager9(&m_iResetToken, &m_pDeviceManager);
@@ -1689,7 +1689,10 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 
     m_pD3DDev->SetRenderTarget(0, pOldSurface);
 
-    hr = m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)0, (DWORD)(IDirect3DSurface9*)pSurface);
+    IDirect3DTexture9* pTexture = NULL;
+    pSurface->GetContainer(IID_IDirect3DTexture9, (void**)&pTexture);
+
+    hr = m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)pTexture, (DWORD)(IDirect3DSurface9*)0);
 
     m_PaintTime = GetCurrentTimestamp() - startPaint;
     m_PaintTimeMin = min(m_PaintTimeMin, m_PaintTime);

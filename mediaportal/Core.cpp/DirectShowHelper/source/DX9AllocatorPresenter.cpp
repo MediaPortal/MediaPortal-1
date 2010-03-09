@@ -28,7 +28,7 @@ void Log(const char *fmt, ...) ;
 CVMR9AllocatorPresenter::CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevice, IVMR9Callback* callback, HMONITOR monitor)
 : m_refCount(1)
 {
-  Log("----------v0.37---------------------------");
+  Log("----------v0.4---------------------------");
   m_hMonitor = monitor;
   m_pD3DDev = direct3dDevice;
   m_pCallback = callback;
@@ -135,15 +135,17 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
   m_pSurfaces = new IDirect3DSurface9* [m_surfaceCount];
 
   //Log("vmr9:IntializeDevice() try TexureSurface|DXVA|3DRenderTarget");
+  lpAllocInfo->dwFlags = VMR9AllocFlag_TextureSurface |VMR9AllocFlag_3DRenderTarget;
+
   DWORD dwFlags=lpAllocInfo->dwFlags;
   Log("vmr9:flags:");
   if (dwFlags & VMR9AllocFlag_3DRenderTarget)   Log("vmr9:  3drendertarget");
-  if (dwFlags & VMR9AllocFlag_DXVATarget)		  Log("vmr9:  DXVATarget");
+  if (dwFlags & VMR9AllocFlag_DXVATarget)		    Log("vmr9:  DXVATarget");
   if (dwFlags & VMR9AllocFlag_OffscreenSurface) Log("vmr9:  OffscreenSurface");
   if (dwFlags & VMR9AllocFlag_RGBDynamicSwitch) Log("vmr9:  RGBDynamicSwitch");
   if (dwFlags & VMR9AllocFlag_TextureSurface)   Log("vmr9:  TextureSurface");
 
-  //lpAllocInfo->dwFlags =dwFlags| VMR9AllocFlag_OffscreenSurface;
+  
   hr = m_pIVMRSurfAllocNotify->AllocateSurfaceHelper(lpAllocInfo, lpNumBuffers, m_pSurfaces);
   if(FAILED(hr))
   {
@@ -302,7 +304,9 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface, SIZE szAspectRa
     if (m_pCallback==NULL || pSurface == NULL)
       return;
 
-    m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)0, (DWORD)pSurface);
+    IDirect3DTexture9* pTexture = NULL;
+    pSurface->GetContainer(IID_IDirect3DTexture9, (void**)&pTexture);
+    m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (DWORD)(IDirect3DTexture9*)pTexture, (DWORD)(IDirect3DSurface9*)0);
   }
   catch(...)
   {
