@@ -393,6 +393,7 @@ namespace MediaPortal.GUI.Library
       m_nextWindowID = (int)GUIWindow.Window.WINDOW_INVALID;
       m_prevWindowID = (int)GUIWindow.Window.WINDOW_INVALID;
       m_stringParameters.Add("__ZZZZ__");
+      GUIPropertyManager.OnPropertyChanged += GUIPropertyManager_OnPropertyChanged;
       // to offset the string parameters by 1 to assure that all entries are non-zero
     }
 
@@ -1875,12 +1876,15 @@ namespace MediaPortal.GUI.Library
     // for toggle button controls and visibility of images.
     public static bool GetBool(int condition1, int dwContextWindow)
     {
-      // check our cache
+      
       bool result = false;
-      if (IsCached(condition1, dwContextWindow, ref result))
-      {
-        return result;
-      }
+      
+      // Commented out the 3 lines below as the cache is never filled.
+      // check our cache
+      // if (IsCached(condition1, dwContextWindow, ref result))
+      //{
+      //  return result;
+      //}
 
       if (condition1 >= COMBINED_VALUES_START && (condition1 - COMBINED_VALUES_START) < (int)(m_CombinedValues.Count))
       {
@@ -2170,12 +2174,17 @@ namespace MediaPortal.GUI.Library
       }
       //CacheBool(condition1, dwContextWindow, bReturn);
       return bReturn;
-    }
+    }    
 
     /// \brief Examines the multi information sent and returns true or false accordingly.
     private static bool GetMultiInfoBool(GUIInfo info, int dwContextWindow)
     {
       bool bReturn = false;
+      if (IsCachedMultiInfoBoolResult(info, out bReturn)) 
+      {
+          return bReturn;
+      }
+
       int condition = Math.Abs(info.m_info);
       switch (condition)
       {
@@ -2183,41 +2192,39 @@ namespace MediaPortal.GUI.Library
           bReturn = SkinSettings.GetSkinBool(info.m_data1);
           break;
         case STRING_EQUALS:
-          if (info.m_data2 != 0)
-          {
-            string value1 = GUIPropertyManager.Parse(SkinSettings.GetSkinString(info.m_data1)).Trim().ToLowerInvariant();
-            string value2 = GUIPropertyManager.Parse(m_stringParameters[info.m_data2]).Trim().ToLowerInvariant();
-            bReturn = value1.Equals(value2);
-          }
-          else
-          {
-            bReturn = (GUIPropertyManager.Parse(SkinSettings.GetSkinString(info.m_data1)).Length != 0);
-          }
-          break;
         case STRING_STARTS:
-          if (info.m_data2 != 0)
-          {
-            string value1 = GUIPropertyManager.Parse(SkinSettings.GetSkinString(info.m_data1)).Trim().ToLowerInvariant();
-            string value2 = GUIPropertyManager.Parse(m_stringParameters[info.m_data2]).Trim().ToLowerInvariant();
-            bReturn = value1.StartsWith(value2);
-          }
-          else
-          {
-            bReturn = (GUIPropertyManager.Parse(SkinSettings.GetSkinString(info.m_data1)).Length != 0);
-          }
-          break;
         case STRING_CONTAINS:
-          if (info.m_data2 != 0)
-          {
-            string value1 = GUIPropertyManager.Parse(SkinSettings.GetSkinString(info.m_data1)).Trim().ToLowerInvariant();
-            string value2 = GUIPropertyManager.Parse(m_stringParameters[info.m_data2]).Trim().ToLowerInvariant();
-            bReturn = value1.Contains(value2);
+          if (info.m_data2 != 0) {
+              string prop1 = SkinSettings.GetSkinString(info.m_data1);
+              string prop2 = m_stringParameters[info.m_data2];
+
+              string value1 = GUIPropertyManager.Parse(prop1).Trim().ToLowerInvariant();
+              string value2 = GUIPropertyManager.Parse(prop2).Trim().ToLowerInvariant();
+
+              if (condition == STRING_EQUALS) {
+                  bReturn = (value1 == value2);
+              }
+              else if (condition == STRING_STARTS) {
+                  bReturn = value1.StartsWith(value2);
+              }
+              else {
+                  bReturn = value1.Contains(value2);
+              }
+
+              bReturn = (info.m_info < 0) ? !bReturn : bReturn;
+              AddMultiBoolInfoProperty(info, prop1);
+              AddMultiBoolInfoProperty(info, prop2);
+              AddMultiInfoBoolResult(info, bReturn);
+              
           }
-          else
-          {
-            bReturn = (GUIPropertyManager.Parse(SkinSettings.GetSkinString(info.m_data1)).Length != 0);
+          else {
+              string skinProperty = SkinSettings.GetSkinString(info.m_data1);
+              bReturn = (GUIPropertyManager.Parse(skinProperty).Length != 0);
+              bReturn = (info.m_info < 0) ? !bReturn : bReturn;
+              AddMultiBoolInfoProperty(info, skinProperty);
+              AddMultiInfoBoolResult(info, bReturn);
           }
-          break;
+          return bReturn;
         case CONTROL_GROUP_HAS_FOCUS:
           //  GUIWindow win = GUIWindowManager.GetWindow(dwContextWindow);
           //  if (win == null) win = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
@@ -2330,6 +2337,90 @@ namespace MediaPortal.GUI.Library
       return (info.m_info < 0) ? !bReturn : bReturn;
     }
 
+    #region MultiInfoBool Caching
+
+    private static readonly object lockCache = new object();
+    private static Dictionary<string, List<GUIInfo>> m_cacheMultiInfoBoolProperties = new Dictionary<string, List<GUIInfo>>();
+    private static Dictionary<GUIInfo, bool> m_cacheMultiInfoBoolResults = new Dictionary<GUIInfo, bool>();
+
+    /// <summary>
+    /// Adds (links) a property to the given MultiInfoBool condition
+    /// </summary>
+    /// <param name="info">the GUIInfo object(condition)</param>
+    /// <param name="property"></param>
+    private static void AddMultiBoolInfoProperty(GUIInfo info, string property) {
+        if (property == null || property.IndexOf('#') == -1 )
+            return;
+
+        lock (lockCache) {
+            if (!m_cacheMultiInfoBoolProperties.ContainsKey(property)) {
+                List<GUIInfo> set = new List<GUIInfo>();
+                set.Add(info);
+                m_cacheMultiInfoBoolProperties[property] = set;
+            }
+            else 
+            {
+                List<GUIInfo> set = m_cacheMultiInfoBoolProperties[property];
+                if (!set.Contains(info)) 
+                {
+                    set.Add(info);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Adds a result to the MultiInfoBool cache
+    /// </summary>
+    /// <param name="info">the GUIInfo object(condition)</param>
+    /// <param name="result">result of the condition</param>
+    private static void AddMultiInfoBoolResult(GUIInfo info, bool result) {
+        lock (lockCache) {
+            m_cacheMultiInfoBoolResults[info] = result;
+        }
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether this condition has as cached result
+    /// </summary>
+    /// <param name="info">the GUIInfo object(condition)</param>
+    /// <param name="result">returns the value from cache </param>
+    /// <returns>True if output was cached</returns>
+    private static bool IsCachedMultiInfoBoolResult(GUIInfo info, out bool result) {
+        result = false;
+        lock (lockCache) {
+            if (!m_cacheMultiInfoBoolResults.ContainsKey(info)) {
+                return false;
+            }
+
+            result = m_cacheMultiInfoBoolResults[info];
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Listens for property changes and clears  every MultiInfoBool result from cache that is linked to that property
+    /// </summary>
+    /// <param name="tag"></param>
+    /// <param name="tagValue"></param>
+    private static void GUIPropertyManager_OnPropertyChanged(string tag, string tagValue) {
+        lock (lockCache) {
+            
+            if (!m_cacheMultiInfoBoolProperties.ContainsKey(tag)) {
+                return;
+            }
+
+            foreach (GUIInfo info in m_cacheMultiInfoBoolProperties[tag]) {
+                if (m_cacheMultiInfoBoolResults.ContainsKey(info)) {
+                    m_cacheMultiInfoBoolResults.Remove(info);
+                }
+            }
+        }
+    }
+
+    #endregion
+
+    // todo: these 3 methods below are commented out throughout this file and are not used?
     private static void CacheBool(int condition, int contextWindow, bool result)
     {
       // windows have id's up to 13100 or thereabouts (ie 2^14 needed)
