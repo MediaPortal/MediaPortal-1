@@ -59,7 +59,7 @@ namespace MediaPortal.GUI.Video
       }
 
       string dvdToPlay = selectDVDHandler.ShowSelectDriveDialog(GetID, false);
-      if (!String.IsNullOrEmpty(dvdToPlay) && !g_Player.CurrentFile.StartsWith(dvdToPlay) && !g_Player.Playing)
+      if (!String.IsNullOrEmpty(dvdToPlay) && !g_Player.CurrentFile.StartsWith(dvdToPlay))
       {
         MediaPortal.Ripper.AutoPlay.ExamineCD(dvdToPlay, true);
       }
@@ -79,7 +79,7 @@ namespace MediaPortal.GUI.Video
 
     public string PluginName()
     {
-      return "Play Disc Shortcut";
+      return "Play Disc";
     }
 
     public bool DefaultEnabled()
