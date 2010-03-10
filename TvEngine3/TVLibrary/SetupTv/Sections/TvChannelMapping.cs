@@ -214,6 +214,7 @@ namespace SetupTv.Sections
       }
       mpListViewMapped.Items.AddRange(items.ToArray());
       items = new List<ListViewItem>();
+      int invalidS2Channels = 0;
       foreach (Channel channel in channels)
       {
         if (channel.IsTv == false)
@@ -243,11 +244,10 @@ namespace SetupTv.Sections
 
               if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
               {
-                string msg = String.Format(
+                Log.Debug(String.Format(
                     "Imported channel {0} detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to map these channels.",
-                    tDetail.Name);
-                MessageBox.Show(msg, "Warning, wrong setup detected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                Log.Debug(msg);
+                    tDetail.Name));
+                invalidS2Channels++;
                 continue;
               }
 
@@ -288,6 +288,15 @@ namespace SetupTv.Sections
         item.Tag = channel;
         items.Add(item);
       }
+
+      if (invalidS2Channels >= 1)
+      {
+        string msg = String.Format(
+            "Imported {0} channels detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to map these channels.",
+            invalidS2Channels);
+        MessageBox.Show(msg, "Warning, wrong setup detected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+      }
+
       mpListViewChannels.Items.AddRange(items.ToArray());
       mpListViewChannels.Sort();
       mpListViewChannels.EndUpdate();
