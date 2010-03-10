@@ -251,7 +251,7 @@
           this.txt_update.Name = "txt_update";
           this.txt_update.Size = new System.Drawing.Size(226, 20);
           this.txt_update.TabIndex = 10;
-          this.toolTip.SetToolTip(this.txt_update, "Online location if the xml file were the update if is stored");
+          this.toolTip.SetToolTip(this.txt_update, "Online location of the xml file were the update if is stored");
           this.txt_update.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
           // 
           // label8
@@ -350,7 +350,7 @@
           this.btn_params.Name = "btn_params";
           this.btn_params.Size = new System.Drawing.Size(135, 23);
           this.btn_params.TabIndex = 16;
-          this.btn_params.Text = "Aditional params";
+          this.btn_params.Text = "Additional params";
           this.btn_params.UseVisualStyleBackColor = true;
           this.btn_params.Click += new System.EventHandler(this.btn_params_Click);
           // 

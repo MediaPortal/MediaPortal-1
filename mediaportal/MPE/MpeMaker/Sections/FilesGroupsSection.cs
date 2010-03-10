@@ -268,6 +268,7 @@ namespace MpeMaker.Sections
         txt_installpath.Text = file.DestinationFilename;
         cmb_installtype.Text = file.InstallType;
         cmb_overwrite.SelectedIndex = (int)file.UpdateOption;
+        txt_source.Text = file.LocalFileName;
         txt_param1.Text = file.Param1;
       }
 

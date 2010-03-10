@@ -62,6 +62,8 @@
           this.label1 = new System.Windows.Forms.Label();
           this.cmb_installtype = new System.Windows.Forms.ComboBox();
           this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+          this.txt_source = new System.Windows.Forms.TextBox();
+          this.label9 = new System.Windows.Forms.Label();
           this.treeView1 = new CodersLab.Windows.Controls.TreeView();
           this.toolStrip.SuspendLayout();
           this.tabControl1.SuspendLayout();
@@ -286,6 +288,8 @@
           // 
           // tabPage_file
           // 
+          this.tabPage_file.Controls.Add(this.label9);
+          this.tabPage_file.Controls.Add(this.txt_source);
           this.tabPage_file.Controls.Add(this.label7);
           this.tabPage_file.Controls.Add(this.txt_param1);
           this.tabPage_file.Controls.Add(this.btn_set);
@@ -418,6 +422,26 @@
           // 
           this.toolTip.IsBalloon = true;
           // 
+          // txt_source
+          // 
+          this.txt_source.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                      | System.Windows.Forms.AnchorStyles.Right)));
+          this.txt_source.Location = new System.Drawing.Point(6, 181);
+          this.txt_source.Multiline = true;
+          this.txt_source.Name = "txt_source";
+          this.txt_source.ReadOnly = true;
+          this.txt_source.Size = new System.Drawing.Size(339, 36);
+          this.txt_source.TabIndex = 11;
+          // 
+          // label9
+          // 
+          this.label9.AutoSize = true;
+          this.label9.Location = new System.Drawing.Point(6, 165);
+          this.label9.Name = "label9";
+          this.label9.Size = new System.Drawing.Size(41, 13);
+          this.label9.TabIndex = 12;
+          this.label9.Text = "Source";
+          // 
           // treeView1
           // 
           this.treeView1.AllowDrop = true;
@@ -498,6 +522,8 @@
         private System.Windows.Forms.ListBox list_folder;
         private System.Windows.Forms.ImageList imageList;
         private System.Windows.Forms.Button btn_clearat;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox txt_source;
 
     }
 }
