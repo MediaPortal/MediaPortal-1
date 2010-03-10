@@ -64,40 +64,20 @@ namespace TvService
       _program = null;
       _isSerie = isSerie;
 
-      TvDatabase.Program _current = schedule.ReferencedChannel().CurrentProgram; // current running program
-      TvDatabase.Program _next = schedule.ReferencedChannel().NextProgram; // next running one
+      DateTime startTime = DateTime.MinValue;
 
-      //find which program we are recording
-      if (schedule.ScheduleType == (int)ScheduleRecordingType.Daily ||
-          schedule.ScheduleType == (int)ScheduleRecordingType.Weekends ||
-          schedule.ScheduleType == (int)ScheduleRecordingType.Weekly ||
-          schedule.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
+      if (isSerie)
       {
-        if (_current != null)
-        {
-          if (schedule.StartTime.Hour == _current.StartTime.Hour &&
-              schedule.StartTime.Minute == _current.StartTime.Minute)
-            // the program we wanna record is the current running show?
-          {
-            _program = _current;
-          }
-        }
-        if (_next != null)
-        {
-          // maybe the next then ...
-          {
-            if (schedule.StartTime.Hour == _next.StartTime.Hour &&
-                schedule.StartTime.Minute == _next.StartTime.Minute)
-            {
-              _program = _next;
-            }
-          }
-        }
+        DateTime now = DateTime.Now.AddMinutes(schedule.PreRecordInterval);
+        startTime = new DateTime(now.Year, now.Month, now.Day, schedule.StartTime.Hour, schedule.StartTime.Minute, 0);
       }
       else
       {
-        _program = schedule.ReferencedChannel().GetProgramAt(schedule.StartTime.AddMinutes(schedule.PreRecordInterval));
+        startTime = schedule.StartTime;
       }
+
+      _program = schedule.ReferencedChannel().GetProgramAt(startTime);
+
       //no program? then treat this as a manual recording
       if (_program == null)
       {
