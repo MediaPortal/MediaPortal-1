@@ -152,10 +152,10 @@ namespace MpeInstaller.Controls
           testToolStripMenuItem.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold,
                                                 GraphicsUnit.Point, ((byte)(0)));
         }
-        
-        testToolStripMenuItem.ToolTipText = item.GeneralInfo.VersionDescription.Length > 1024
-                                              ? item.GeneralInfo.VersionDescription.Substring(0, 1024) + "..."
-                                              : item.GeneralInfo.VersionDescription;
+        if (item.GeneralInfo.VersionDescription != null)
+          testToolStripMenuItem.ToolTipText = item.GeneralInfo.VersionDescription.Length > 1024
+                                                ? item.GeneralInfo.VersionDescription.Substring(0, 1024) + "..."
+                                                : item.GeneralInfo.VersionDescription;
         testToolStripMenuItem.Tag = item;
         testToolStripMenuItem.Click += testToolStripMenuItem_Click;
         btn_install.DropDownItems.Add(testToolStripMenuItem);
