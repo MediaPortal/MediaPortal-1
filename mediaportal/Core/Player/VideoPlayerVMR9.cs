@@ -123,22 +123,13 @@ namespace MediaPortal.Player
         string extension = Path.GetExtension(m_strCurrentFile).ToLower();
 
         switch (extension)
-        {
-          case ".dvr-ms":
-          case ".mpg":
-          case ".mpeg":
-          case ".bin":
-          case ".dat":          
-            {
-              strH264VideoCodec = "";
-              strAACAudioCodec = "";
-              break;
-            }
+        { 
           case ".wmv":
+          case ".asf":
             {
-              strVideoCodec = "WMVideo Decoder DMO";
+              //strVideoCodec = "WMVideo Decoder DMO"; //allow e.g. ffdshow usage
               strH264VideoCodec = "";
-              strAudioCodec = "WMAudio Decoder DMO";
+              strAudioCodec = "WMAudio Decoder DMO"; // multichannel audio needs this filter
               strAACAudioCodec = "";              
               break;
             }
@@ -149,6 +140,10 @@ namespace MediaPortal.Player
               strVideoCodec = "";
               break;
             }
+          default:
+            strH264VideoCodec = "";
+            strAACAudioCodec = "";
+            break;
         }
 
         if (!string.IsNullOrEmpty(strVideoCodec))
@@ -184,7 +179,7 @@ namespace MediaPortal.Player
           hr = propBag.Write(g_wszWMACHiResOutput, ref val);
           if (hr != 0)
           {
-            Log.Info("VideoPlayerVMR9: Write failed: g_wszWMACHiResOutput {0}", hr);
+            Log.Info("VideoPlayerVMR9: Unable to turn WMAudio multichannel on. Reason: {0}", hr);
           }
           else
           {
