@@ -62,7 +62,7 @@ namespace MediaPortal.Configuration.Sections
     private new IContainer components = null;
 
     public GeneralSkin()
-      : this("Skin") {}
+      : this("Skin") { }
 
     public GeneralSkin(string name)
       : base(name)
@@ -85,11 +85,11 @@ namespace MediaPortal.Configuration.Sections
         foreach (string skinFolder in skinFolders)
         {
           bool isInvalidDirectory = false;
-          string[] invalidDirectoryNames = new string[] {"cvs"};
+          string[] invalidDirectoryNames = new string[] { "cvs" };
 
           string directoryName = skinFolder.Substring(SkinDirectory.Length + 1);
 
-          if (directoryName != null && directoryName.Length > 0)
+          if (!string.IsNullOrEmpty(directoryName))
           {
             foreach (string invalidDirectory in invalidDirectoryNames)
             {
@@ -148,7 +148,7 @@ namespace MediaPortal.Configuration.Sections
                                          String.Format(@"{0}\{1}", Config.GetFolder(Config.Dir.Cache), currentSkin));
         MediaPortal.Util.Utils.DirectoryDelete(fontCache, true);
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
     private void listViewAvailableSkins_SelectedIndexChanged(object sender, EventArgs e)
@@ -216,20 +216,13 @@ namespace MediaPortal.Configuration.Sections
         VerticalScrollSpeedUpDown.Value = xmlreader.GetValueAsInt("general", "ScrollSpeedDown", 4);
         string currentSkin = xmlreader.GetValueAsString("skin", "name", "NoSkin");
 
-        float screenHeight = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Height;
-        float screenWidth = GUIGraphicsContext.currentFullscreenAdapterInfo.CurrentDisplayMode.Width;
+        float screenHeight = GUIGraphicsContext.currentScreen.Bounds.Height;
+        float screenWidth = GUIGraphicsContext.currentScreen.Bounds.Width;
         float screenRatio = (screenWidth / screenHeight);
         if (currentSkin == "NoSkin")
         {
           //Change default skin based on screen aspect ratio
-          if (screenRatio > 1.5)
-          {
-            currentSkin = "Blue3wide";
-          }
-          else
-          {
-            currentSkin = "Blue3";
-          }
+          currentSkin = screenRatio > 1.5 ? "Blue3wide" : "Blue3";
         }
 
         //
@@ -266,7 +259,7 @@ namespace MediaPortal.Configuration.Sections
         {
           selectedSkin = listViewAvailableSkins.SelectedItems[0].Text;
         }
-        catch (Exception) {}
+        catch (Exception) { }
         if (prevSkin != selectedSkin)
         {
           xmlwriter.SetValueAsBool("general", "dontshowskinversion", false);
