@@ -114,7 +114,7 @@ namespace TvService
     {
       Log.Write("Scheduler: started");
       _controller = RemoteControl.Instance;
-      
+
       ResetRecordingStates();
 
       _recordingsInProgressList = new List<RecordingDetail>();
@@ -149,7 +149,7 @@ namespace TvService
     #endregion
 
     #region private members
- 
+
     private static void ResetRecordingStates()
     {
       Recording.ResetActiveRecordings();
@@ -194,10 +194,10 @@ namespace TvService
           _resetTimerPending = false;
         }
         else
-        {          
-          _scheduleCheckTimer = DateTime.Now;            
+        {
+          _scheduleCheckTimer = DateTime.Now;
         }
-        
+
       }
       catch (Exception ex)
       {
@@ -221,8 +221,8 @@ namespace TvService
         {
           Log.Debug("Scheduler: Orphaned once schedule found {0} - removing", orphan.IdSchedule);
           orphan.Delete();
-        } 
-      }      
+        }
+      }
     }
 
     private string CleanEpisodeTitle(string aEpisodeTitle)
@@ -293,13 +293,13 @@ namespace TvService
           {
             if (newRecording != null)
             {
-              StartRecord(newRecording);  
+              StartRecord(newRecording);
             }
             else
             {
               Log.Info("DoSchedule: RecordingDetail was null");
             }
-            
+
           }
         }
       }
@@ -312,10 +312,10 @@ namespace TvService
       bool NewRecordingNeeded = true;
       //cleanup: remove EPG additions of Clickfinder plugin      
       try
-      {        
+      {
         // Allow user to turn this on or off in case of unreliable EPG
         if (_preventDuplicateEpisodes && newRecording != null)
-        {          
+        {
           switch (_preventDuplicateEpisodesKey)
           {
             case 1: // Episode Number
@@ -327,7 +327,7 @@ namespace TvService
               break;
           }
 
-          ToRecordTitle = CleanEpisodeTitle(newRecording.Program.Title);          
+          ToRecordTitle = CleanEpisodeTitle(newRecording.Program.Title);
 
           IList<Recording> pastRecordings = Recording.ListAll();
           Log.Debug("Scheduler: Check recordings for schedule {0}...", ToRecordTitle);
@@ -401,8 +401,8 @@ namespace TvService
                         }
                         else
                         {
-                          CanceledSchedule canceled = new CanceledSchedule(newRecording.Schedule.IdSchedule,
-                                                                        newRecording.Program.StartTime);
+                          CanceledSchedule canceled = new CanceledSchedule(newRecording.Schedule.IdSchedule, newRecording.Program.IdChannel,
+                                                                           newRecording.Program.StartTime);
                           canceled.Persist();
                           _episodeManagement.OnScheduleEnded(newRecording.FileName, newRecording.Schedule,
                                                              newRecording.Program);
@@ -543,7 +543,7 @@ namespace TvService
       switch (type)
       {
         case ScheduleRecordingType.Once:
-          newRecording = IsTimeToRecordOnce(schedule, currentTime, out isTimeToRecord);          
+          newRecording = IsTimeToRecordOnce(schedule, currentTime, out isTimeToRecord);
           break;
 
         case ScheduleRecordingType.Daily:
@@ -551,7 +551,7 @@ namespace TvService
           break;
 
         case ScheduleRecordingType.Weekends:
-          newRecording = IsTimeToRecordWeekends(schedule, currentTime, out isTimeToRecord);          
+          newRecording = IsTimeToRecordWeekends(schedule, currentTime, out isTimeToRecord);
           break;
 
         case ScheduleRecordingType.WorkingDays:
@@ -559,7 +559,7 @@ namespace TvService
           break;
 
         case ScheduleRecordingType.Weekly:
-          newRecording = IsTimeToRecordWeekly(schedule, currentTime, out isTimeToRecord);          
+          newRecording = IsTimeToRecordWeekly(schedule, currentTime, out isTimeToRecord);
           break;
 
         case ScheduleRecordingType.EveryTimeOnThisChannel:
@@ -583,12 +583,12 @@ namespace TvService
                                                                                             schedule.PostRecordInterval);
       foreach (TvDatabase.Program program in programs)
       {
-        if (!schedule.IsSerieIsCanceled(program.StartTime, program.IdChannel))
-        {          
+        if (!schedule.IsSerieIsCanceled(program.StartTime))
+        {
           if (CreateSpawnedOnceSchedule(schedule, program))
           {
             createSpawnedOnceSchedule = true;
-          }         
+          }
         }
       }
       if (createSpawnedOnceSchedule)
@@ -598,16 +598,16 @@ namespace TvService
       return isTimeToRecord;
     }
 
-    private bool IsTimeToRecordEveryTimeOnThisChannel(Schedule schedule, DateTime currentTime) 
+    private bool IsTimeToRecordEveryTimeOnThisChannel(Schedule schedule, DateTime currentTime)
     {
-      bool isTimeToRecord = false;    
+      bool isTimeToRecord = false;
       TvDatabase.Program current = schedule.ReferencedChannel().GetProgramAt(currentTime.AddMinutes(schedule.PreRecordInterval), schedule.ProgramName);
 
       if (current != null)
       {
         if (currentTime >= current.StartTime.AddMinutes(-schedule.PreRecordInterval) &&
             currentTime <= current.EndTime.AddMinutes(schedule.PostRecordInterval))
-        {                        
+        {
           if (!schedule.IsSerieIsCanceled(current.StartTime))
           {
             bool createSpawnedOnceSchedule = CreateSpawnedOnceSchedule(schedule, current);
@@ -615,10 +615,10 @@ namespace TvService
             {
               ResetTimer(); //lets process the spawned once schedule at once.
             }
-          }            
+          }
         }
-      }        
-      
+      }
+
       return isTimeToRecord;
     }
 
@@ -629,7 +629,7 @@ namespace TvService
       if ((currentTime.DayOfWeek == schedule.StartTime.DayOfWeek) && (currentTime.Date >= schedule.StartTime.Date))
       {
         newRecording = CreateNewRecordingDetail(schedule, currentTime);
-        isTimeToRecord = (newRecording != null);                  
+        isTimeToRecord = (newRecording != null);
       }
       return newRecording;
     }
@@ -642,12 +642,12 @@ namespace TvService
       if (weekEndTool.IsWorkingDay(currentTime.DayOfWeek))
       {
         newRecording = CreateNewRecordingDetail(schedule, currentTime);
-        isTimeToRecord = (newRecording != null);                        
+        isTimeToRecord = (newRecording != null);
       }
       return newRecording;
     }
 
-    private  RecordingDetail IsTimeToRecordWeekends(Schedule schedule, DateTime currentTime, out bool isTimeToRecord)
+    private RecordingDetail IsTimeToRecordWeekends(Schedule schedule, DateTime currentTime, out bool isTimeToRecord)
     {
       isTimeToRecord = false;
       RecordingDetail newRecording = null;
@@ -655,7 +655,7 @@ namespace TvService
       if (weekEndTool.IsWeekend(currentTime.DayOfWeek))
       {
         newRecording = CreateNewRecordingDetail(schedule, currentTime);
-        isTimeToRecord = (newRecording != null);            
+        isTimeToRecord = (newRecording != null);
       }
       return newRecording;
     }
@@ -681,13 +681,13 @@ namespace TvService
         if (!isRecordingSchedule)
         {
           newRecording = new RecordingDetail(schedule, schedule.ReferencedChannel(), schedule.EndTime, schedule.Series);
-          isTimeToRecord = true;         
-        }        
+          isTimeToRecord = true;
+        }
       }
       return newRecording;
     }
 
-    private bool CreateSpawnedOnceSchedule(Schedule schedule, TvDatabase.Program current) 
+    private bool CreateSpawnedOnceSchedule(Schedule schedule, TvDatabase.Program current)
     {
       bool isSpawnedOnceScheduleCreated = false;
       Schedule dbSchedule = Schedule.RetrieveOnce(current.IdChannel, current.Title, current.StartTime,
@@ -708,14 +708,14 @@ namespace TvService
           newSchedule.IdParentSchedule = schedule.IdSchedule;
           newSchedule.Persist();
           isSpawnedOnceScheduleCreated = true;
-            // 'once typed' created schedule will be used instead at next call of IsTimeToRecord()
+          // 'once typed' created schedule will be used instead at next call of IsTimeToRecord()
         }
-      }      
+      }
 
       return isSpawnedOnceScheduleCreated;
     }
 
-    private RecordingDetail CreateNewRecordingDetail(Schedule schedule, DateTime currentTime) 
+    private RecordingDetail CreateNewRecordingDetail(Schedule schedule, DateTime currentTime)
     {
       RecordingDetail newRecording = null;
       DateTime start = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day, schedule.StartTime.Hour,
@@ -1008,9 +1008,9 @@ namespace TvService
             recording.Recording.Refresh();
             recording.Recording.EndTime = DateTime.Now;
             recording.Recording.IsRecording = false;
-            recording.Recording.Persist();  
+            recording.Recording.Persist();
           }
-          catch(Exception ex)
+          catch (Exception ex)
           {
             Log.Error("StopRecord - updating record id={0} failed {1}", recording.Recording.IdRecording, ex.StackTrace);
           }
@@ -1044,8 +1044,7 @@ namespace TvService
                       recording.Program.EndTime, recording.Schedule.PostRecordInterval);
             if (DateTime.Now <= recording.Program.EndTime.AddMinutes(recording.Schedule.PostRecordInterval))
             {
-              CanceledSchedule canceled = new CanceledSchedule(recording.Schedule.IdSchedule,
-                                                            recording.Program.StartTime);
+              CanceledSchedule canceled = new CanceledSchedule(recording.Schedule.IdSchedule, recording.Program.IdChannel, recording.Program.StartTime);
               canceled.Persist();
             }
             _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
