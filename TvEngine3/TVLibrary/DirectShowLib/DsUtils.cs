@@ -33,7 +33,6 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using DirectShowLib.Dvd;
-
 #if !USING_NET11
 
 #endif

@@ -2277,7 +2277,7 @@ namespace DirectShowLib
       );
   }
 
-  /*[ComImport, System.Security.SuppressUnmanagedCodeSecurity,
+  [ComImport, SuppressUnmanagedCodeSecurity,
   Guid("02997C3B-8E1B-460e-9270-545E0DE9563E"),
   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IVideoEncoder : IEncoderAPI
@@ -2285,14 +2285,14 @@ namespace DirectShowLib
     #region IEncoderAPI Methods
 
     [PreserveSig]
-    new int IsSupported([In] Guid Api);
+    new int IsSupported([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
 
     [PreserveSig]
-    new int IsAvailable([In] Guid Api);
+    new int IsAvailable([In, MarshalAs(UnmanagedType.LPStruct)] Guid Api);
 
     [PreserveSig]
     new int GetParameterRange(
-        [In] Guid Api,
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
         [Out] out object ValueMin,
         [Out] out object ValueMax,
         [Out] out object SteppingDelta
@@ -2300,31 +2300,31 @@ namespace DirectShowLib
 
     [PreserveSig]
     new int GetParameterValues(
-        [In] Guid Api,
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
         [Out] out object[] Values,
         [Out] out int ValuesCount
         );
 
     [PreserveSig]
     new int GetDefaultValue(
-        [In] Guid Api,
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
         [Out] out object Value
         );
 
     [PreserveSig]
     new int GetValue(
-        [In] Guid Api,
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
         [Out] out object Value
         );
 
     [PreserveSig]
     new int SetValue(
-        [In] Guid Api,
-        [In] object Value
+      [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
+      [In] ref object Value
         );
 
     #endregion
-  }*/
+  }
 
   [ComImport, SuppressUnmanagedCodeSecurity,
    Guid("6feded3e-0ff1-4901-a2f1-43f7012c8515"),
