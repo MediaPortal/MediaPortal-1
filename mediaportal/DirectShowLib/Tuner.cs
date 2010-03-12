@@ -1126,11 +1126,13 @@ namespace DirectShowLib.BDA
     [PreserveSig]
     int put_LNBSwitch([In] int LNBSwitch);
 
-    [PreserveSig]
-    int get_InputRange([Out, MarshalAs(UnmanagedType.BStr)] out string InputRange);
+     [PreserveSig]
+    //int get_InputRange([Out, MarshalAs(UnmanagedType.BStr)] out string InputRange);
+    int get_InputRange([Out] out long InputRange);
 
     [PreserveSig]
-    int put_InputRange([Out, MarshalAs(UnmanagedType.BStr)] string InputRange);
+    //int put_InputRange([Out, MarshalAs(UnmanagedType.BStr)] string InputRange);
+    int put_InputRange([In] long InputRange);
 
     [PreserveSig]
     int get_SpectralInversion([Out] out SpectralInversion SpectralInversionVal);

@@ -2273,7 +2273,7 @@ namespace DirectShowLib
     [PreserveSig]
     int SetValue(
       [In, MarshalAs(UnmanagedType.LPStruct)] Guid Api,
-      [In] object Value
+      [In] ref object Value
       );
   }
 
