@@ -139,10 +139,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
-      <Project>{0D1BA455-CE59-4133-8EAA-1A1E82F8AA12}</Project>
-      <Name>DirectShowLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Plugins\PluginBase\PluginBase.csproj">
       <Project>{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}</Project>
       <Name>PluginBase</Name>

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{E9D3F443-A654-4D94-BBAA-080362D25D7C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -142,10 +142,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
-      <Project>{0D1BA455-CE59-4133-8EAA-1A1E82F8AA12}</Project>
-      <Name>DirectShowLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj">
       <Project>{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}</Project>
       <Name>TvLibrary.Interfaces</Name>

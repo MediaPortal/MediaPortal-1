@@ -188,8 +188,8 @@
     <Compile Include="TimeShiftingEPGGrabber.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
-      <Project>{0D1BA455-CE59-4133-8EAA-1A1E82F8AA12}</Project>
+    <ProjectReference Include="..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
+      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">

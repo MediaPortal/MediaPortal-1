@@ -2013,7 +2013,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
+    <ProjectReference Include="..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
     </ProjectReference>

@@ -112,10 +112,6 @@
       <Project>{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}</Project>
       <Name>Databases</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
-      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
-      <Name>DirectShowLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MediaPortal.Support\MediaPortal.Support.csproj">
       <Project>{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}</Project>
       <Name>MediaPortal.Support</Name>

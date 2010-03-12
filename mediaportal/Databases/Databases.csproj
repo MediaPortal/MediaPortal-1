@@ -167,10 +167,6 @@
       <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
-    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
-      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
-      <Name>DirectShowLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>

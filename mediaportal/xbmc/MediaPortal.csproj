@@ -219,6 +219,10 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
+    <ProjectReference Include="..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
+      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
+      <Name>DirectShowLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Name>Core</Name>
       <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
@@ -233,10 +237,6 @@
       <Name>Dialogs</Name>
       <Project>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
-    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
-      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
-      <Name>DirectShowLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\MediaPortal.Support\MediaPortal.Support.csproj">
       <Project>{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}</Project>

@@ -203,6 +203,10 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
+    <ProjectReference Include="..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
+      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
+      <Name>DirectShowLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Name>Core</Name>
       <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
@@ -212,10 +216,6 @@
       <Name>Databases</Name>
       <Project>{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
-    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
-      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
-      <Name>DirectShowLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\MPInstaller\MPInstaller.Library\MPInstaller.Library.csproj">
       <Project>{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}</Project>

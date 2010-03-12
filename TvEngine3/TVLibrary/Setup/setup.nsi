@@ -428,7 +428,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; Rest of Files
   SetOutPath "$INSTDIR"
-  File "${svn_TVServer}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
+  File "${svn_Common_MP_TVE3}\bin\${BUILD_TYPE}\DirectShowLib.dll"
   File "${svn_TVServer}\Plugins\PluginBase\bin\${BUILD_TYPE}\PluginBase.dll"
   File "${svn_Common_MP_TVE3}\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll"
   File "${svn_TVServer}\Plugins\ServerBlaster\ServerBlaster (Learn)\bin\${BUILD_TYPE}\Blaster.exe"

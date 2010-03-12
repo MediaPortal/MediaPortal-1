@@ -460,7 +460,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${svn_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe.config"
   ; Core
   File "${svn_MP}\core\bin\${BUILD_TYPE}\Core.dll"
-  File "${svn_MP}\core\bin\${BUILD_TYPE}\DirectShowLib.dll"
+  File "${svn_Common_MP_TVE3}\bin\${BUILD_TYPE}\DirectShowLib.dll"
   File "${svn_MP}\core.cpp\fontEngine\bin\${BUILD_TYPE}\fontengine.dll"
   File "${svn_MP}\core.cpp\DirectShowHelper\bin\${BUILD_TYPE}\dshowhelper.dll"
   File "${svn_MP}\core.cpp\Win7RefreshRateHelper\bin\${BUILD_TYPE}\Win7RefreshRateHelper.dll"

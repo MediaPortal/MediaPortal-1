@@ -179,10 +179,6 @@
       <Project>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
-    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
-      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
-      <Name>DirectShowLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MiniDisplayLibrary\MiniDisplayLibrary.csproj">
       <Project>{8635D515-A5D4-4FB7-BD30-71770651E18B}</Project>
       <Name>MiniDisplayLibrary</Name>

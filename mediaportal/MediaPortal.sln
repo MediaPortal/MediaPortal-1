@@ -59,8 +59,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HcwHelper", "RemotePlugins\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Tests", "MediaPortal.Tests\MediaPortal.Tests.csproj", "{DF3AC5D1-762E-4807-8642-1AE773B65E07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectShowLib", "DirectShowLib\DirectShowLib.csproj", "{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Support", "MediaPortal.Support\MediaPortal.Support.csproj", "{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicShareWatcherHelper", "ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\MusicShareWatcherHelper.csproj", "{C6564AA7-976B-43EF-9E35-7E607EE1DD12}"
@@ -110,6 +108,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MpeInstaller", "MPE\MpeInstaller\MpeInstaller.csproj", "{7A626CB9-0660-4F47-B059-7AC7F68EDB0A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTray", "MPTray\MPTray.csproj", "{74FB430C-6F41-434B-B9C3-F93BEE56E5FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectShowLib", "..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj", "{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -231,14 +231,6 @@ Global
 		{DF3AC5D1-762E-4807-8642-1AE773B65E07}.UseCaptureCardDefinitions|x86.Build.0 = Release|x86
 		{DF3AC5D1-762E-4807-8642-1AE773B65E07}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86
 		{DF3AC5D1-762E-4807-8642-1AE773B65E07}.UseCaptureDefintionsRelease|x86.Build.0 = Release|x86
-		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Debug|x86.ActiveCfg = Debug|x86
-		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Debug|x86.Build.0 = Debug|x86
-		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Release|x86.ActiveCfg = Release|x86
-		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Release|x86.Build.0 = Release|x86
-		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|x86
-		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.UseCaptureCardDefinitions|x86.Build.0 = Release|x86
-		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86
-		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.UseCaptureDefintionsRelease|x86.Build.0 = Release|x86
 		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.Debug|x86.ActiveCfg = Debug|x86
 		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.Debug|x86.Build.0 = Debug|x86
 		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.Release|x86.ActiveCfg = Release|x86
@@ -347,6 +339,14 @@ Global
 		{74FB430C-6F41-434B-B9C3-F93BEE56E5FF}.Release|x86.Build.0 = Release|x86
 		{74FB430C-6F41-434B-B9C3-F93BEE56E5FF}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|x86
 		{74FB430C-6F41-434B-B9C3-F93BEE56E5FF}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86
+		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Debug|x86.ActiveCfg = Debug|x86
+		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Debug|x86.Build.0 = Debug|x86
+		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Release|x86.ActiveCfg = Release|x86
+		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Release|x86.Build.0 = Release|x86
+		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|x86
+		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.UseCaptureCardDefinitions|x86.Build.0 = Release|x86
+		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86
+		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.UseCaptureDefintionsRelease|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
