@@ -34,7 +34,8 @@ using System.Security.Permissions;
 [assembly: Guid("6D0386CE-37E6-4f77-B678-07C584105DC6")]
 [assembly: AssemblyVersion("2.0.0.0")]
 #if DEBUG
-[assembly: AssemblyProduct("MediaPortal")]
+
+[assembly: AssemblyProduct("Debug Version")]
 #else
 
 [assembly: AssemblyProduct("Release Version")]
