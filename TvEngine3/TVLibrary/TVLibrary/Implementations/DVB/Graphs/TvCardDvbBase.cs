@@ -1011,7 +1011,10 @@ namespace TvLibrary.Implementations.DVB
         if (device.DevicePath != devices[i].DevicePath)
           continue;
         if (DevicesInUse.Instance.IsUsed(devices[i]))
+        {
+          Log.Log.Info("dvb:  [Tuner]: {0} is being used by TVServer already or another application!", devices[i].Name);
           continue;
+        }
         int hr;
         try
         {
@@ -1049,6 +1052,7 @@ namespace TvLibrary.Implementations.DVB
       // Assume we found a tuner filter...
       if (_filterTuner == null)
       {
+        Log.Log.Info("dvb:  A useable TV Tuner cannot be found! Either the device no longer exists or it's in use by another application!"); 
         Log.Log.Error("dvb:  No TVTuner installed");
         throw new TvException("No TVTuner installed");
       }
