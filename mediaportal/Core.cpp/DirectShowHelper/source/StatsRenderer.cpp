@@ -330,18 +330,30 @@ void StatsRenderer::DrawStats()
 void StatsRenderer::DrawTearingTest(CComPtr<IDirect3DSurface9> pSurface)
 {
   RECT rcTearing;
+
+  UINT height = m_pPresenter->m_iVideoHeight;
+  if (height > m_pPresenter->m_displayMode.Height)
+  {
+    height = m_pPresenter->m_displayMode.Height;
+  }
+
+  UINT width = m_pPresenter->m_iVideoWidth;
+  if (width > m_pPresenter->m_displayMode.Width)
+  {
+    width = m_pPresenter->m_displayMode.Width;
+  }
 	
   rcTearing.left = m_nTearingPos;
   rcTearing.top = 0;
   rcTearing.right = rcTearing.left + 4;
-  rcTearing.bottom = m_pPresenter->m_iVideoHeight;
-  m_pD3DDev->ColorFill(pSurface, &rcTearing, D3DCOLOR_ARGB (255,255,255,255));
+  rcTearing.bottom = height;
+  m_pD3DDev->ColorFill(pSurface, &rcTearing, D3DCOLOR_ARGB(255,255,255,255));
 
-  rcTearing.left = (rcTearing.right + 15) % m_pPresenter->m_iVideoWidth;
+  rcTearing.left = (rcTearing.right + 15) % width;
   rcTearing.right	= rcTearing.left + 4;
-  m_pD3DDev->ColorFill(pSurface, &rcTearing, D3DCOLOR_ARGB (255,255,255,255));
+  m_pD3DDev->ColorFill(pSurface, &rcTearing, D3DCOLOR_ARGB(255,255,255,255));
 
-  m_nTearingPos = (m_nTearingPos + 7) % m_pPresenter->m_iVideoWidth;
+  m_nTearingPos = (m_nTearingPos + 7) % width;
 }
 
 
