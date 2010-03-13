@@ -37,6 +37,8 @@ CRTSPClient::CRTSPClient(CMemoryBuffer& buffer)
 CRTSPClient::~CRTSPClient()
 {
 	LogDebug("CRTSPClient::~CRTSPClient()");
+  Medium::close(m_ourClient);
+  m_ourClient = NULL;
 }
 
 
