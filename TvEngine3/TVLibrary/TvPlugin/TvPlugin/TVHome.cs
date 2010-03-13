@@ -1746,6 +1746,10 @@ namespace TvPlugin
       {
         g_Player.SetAudioDualMonoMode(dualMonoMode);
       }
+      else if (g_Player.GetAudioDualMonoMode() != eAudioDualMonoMode.UNSUPPORTED)
+      {
+        g_Player.SetAudioDualMonoMode(eAudioDualMonoMode.STEREO);
+      }
     }
 
     private void OnPlayBackStarted(g_Player.MediaType type, string filename)
