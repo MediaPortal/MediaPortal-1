@@ -388,7 +388,7 @@ namespace TvPlugin
           switch (dlg.SelectedId)
           {
             case 981: //delete specific series
-              CanceledSchedule canceledSchedule = new CanceledSchedule(schedule.IdSchedule, schedule.StartTime);
+              CanceledSchedule canceledSchedule = new CanceledSchedule(schedule.IdSchedule, schedule.IdChannel, schedule.StartTime);
               canceledSchedule.Persist();
               selectedItem = null;
               TvServer server = new TvServer();

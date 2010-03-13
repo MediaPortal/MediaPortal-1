@@ -520,7 +520,7 @@ namespace TvPlugin
 
       if ((selectedItem != null) && (showSeries))
       {
-        List<Schedule> seriesList = TVHome.Util.GetRecordingTimes(selectedItem);
+        IList<Schedule> seriesList = TVHome.Util.GetRecordingTimes(selectedItem);
 
         GUIListItem item = new GUIListItem();
         item.Label = "..";
@@ -562,7 +562,7 @@ namespace TvPlugin
             }
             else
             {
-              List<Schedule> seriesList = TVHome.Util.GetRecordingTimes(rec);
+              IList<Schedule> seriesList = TVHome.Util.GetRecordingTimes(rec);
               for (int serieNr = 0; serieNr < seriesList.Count; ++serieNr)
               {
                 Schedule recSeries = (Schedule)seriesList[serieNr];
@@ -590,7 +590,7 @@ namespace TvPlugin
             {
               continue; // do not show single recordings if showSeries is enabled
             }
-            if (rec.IsSerieIsCanceled(rec.StartTime))
+            if (rec.IsSerieIsCanceled(rec.StartTime, rec.IdChannel))
             {
               continue;
             }
@@ -774,7 +774,7 @@ namespace TvPlugin
         }
         if (selectedItem == null)
         {
-          List<Schedule> seriesList = TVHome.Util.GetRecordingTimes(item.TVTag as Schedule);
+          IList<Schedule> seriesList = TVHome.Util.GetRecordingTimes(item.TVTag as Schedule);
           if (seriesList.Count < 1)
           {
             noitems = true; // no items existing
@@ -876,15 +876,9 @@ namespace TvPlugin
           break;
 
         case 981: //Cancel this show
-          {
-            Program prgFromSchedule = Program.RetrieveByTitleAndTimes(rec.ProgramName, rec.StartTime, rec.EndTime);
-            DateTime canceledStartTime = rec.StartTime;
-            if (prgFromSchedule != null)
-            {
-              canceledStartTime = prgFromSchedule.StartTime;
-            }
-
-            bool res = TVUtil.DeleteRecAndSchedWithPrompt(rec, canceledStartTime);
+          {            
+            DateTime canceledStartTime = GetCanceledStartTime(rec);
+            bool res = TVUtil.DeleteRecAndSchedWithPrompt(rec, canceledStartTime, rec.IdChannel);
             if (res)
             {
               LoadDirectory();
@@ -896,14 +890,8 @@ namespace TvPlugin
           goto case 618;
 
         case 618: // delete entire recording
-          {
-            Program prgFromSchedule = Program.RetrieveByTitleAndTimes(rec.ProgramName, rec.StartTime, rec.EndTime);
-            DateTime canceledStartTime = rec.StartTime;
-            if (prgFromSchedule != null)
-            {
-              canceledStartTime = prgFromSchedule.StartTime;
-            }
-
+          {                        
+            DateTime canceledStartTime = GetCanceledStartTime(rec);            
             bool res = TVUtil.DeleteRecAndEntireSchedWithPrompt(rec, canceledStartTime);
             if (res)
             {
@@ -996,6 +984,19 @@ namespace TvPlugin
         m_iSelectedItem--;
       }
       GUIControl.SelectItemControl(GetID, listSchedules.GetID, m_iSelectedItem);
+    }
+   
+    private static DateTime GetCanceledStartTime(Schedule rec)
+    {      
+      Program prgFromSchedule = Program.RetrieveByTitleAndTimes(rec.ProgramName, rec.StartTime, rec.EndTime);
+      DateTime canceledStartTime = rec.StartTime;
+      
+      if (prgFromSchedule != null)
+      {     
+        canceledStartTime = prgFromSchedule.StartTime;        
+      }
+
+      return canceledStartTime;
     }
 
 

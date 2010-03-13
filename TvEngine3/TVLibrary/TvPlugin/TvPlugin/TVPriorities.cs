@@ -215,7 +215,7 @@ namespace TvPlugin
       int total = 0;
       foreach (Schedule rec in itemlist)
       {
-        if (rec.IsSerieIsCanceled(rec.StartTime))
+        if (rec.IsSerieIsCanceled(rec.StartTime, rec.IdChannel))
         {
           continue;
         }
@@ -470,7 +470,7 @@ namespace TvPlugin
                 if (dlgYesNo.IsConfirmed)
                 {
                   server.StopRecordingSchedule(rec.IdSchedule);
-                  CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
+                  CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.IdChannel, rec.StartTime);
                   rec.Persist();
                   server.OnNewSchedule();
                 }
@@ -479,7 +479,7 @@ namespace TvPlugin
             else
             {
               server.StopRecordingSchedule(rec.IdSchedule);
-              CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.StartTime);
+              CanceledSchedule schedule = new CanceledSchedule(rec.IdSchedule, rec.IdChannel, rec.StartTime);
               rec.Persist();
               server.OnNewSchedule();
             }

@@ -119,6 +119,8 @@ namespace TvPlugin
     [SkinControl(3)] protected GUIButtonControl btnAdvancedRecord = null;
     [SkinControl(4)] protected GUIButtonControl btnKeep = null;
     [SkinControl(5)] protected GUIToggleButtonControl btnNotify = null;
+    [SkinControl(11)]
+    protected GUILabelControl lblUpcomingEpsiodes = null;
     [SkinControl(10)] protected GUIListControl lstUpcomingEpsiodes = null;
     [SkinControl(6)] protected GUIButtonControl btnQuality = null;
     [SkinControl(7)] protected GUIButtonControl btnEpisodes = null;
@@ -127,6 +129,10 @@ namespace TvPlugin
 
     private bool _notificationEnabled;
     private static Program currentProgram;
+    private static Program initialProgram;
+    private static Schedule currentSchedule;
+    private static bool anyUpcomingEpisodesRecording = true;
+
     private readonly List<int> RecordingIntervalValues = new List<int>();
     private int _preRec;
     private int _postRec;
@@ -174,7 +180,12 @@ namespace TvPlugin
 
     public override bool OnMessage(GUIMessage message)
     {
-      if (message.Message == GUIMessage.MessageType.GUI_MSG_WINDOW_INIT)
+      if (message.Message == GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT)
+      {
+        ResetCurrentScheduleAndProgram();
+        initialProgram = null;
+      }
+      else if (message.Message == GUIMessage.MessageType.GUI_MSG_WINDOW_INIT)
       {
         RecordingIntervalValues.Clear();
         //Fill the list with all available pre & post intervals
@@ -287,6 +298,12 @@ namespace TvPlugin
         lock (fieldLock)
         {
           currentProgram = value;
+          if (initialProgram == null)
+          {
+            initialProgram = currentProgram;
+            currentSchedule = Schedule.RetrieveSeries(currentProgram.ReferencedChannel().IdChannel, currentProgram.StartTime,
+                                     currentProgram.EndTime);
+          }
         }
       }
     }
@@ -295,6 +312,7 @@ namespace TvPlugin
     {
       set
       {
+        currentSchedule = value;
         CurrentProgram = null;
         TvBusinessLayer layer = new TvBusinessLayer();
         // comment: this is not performant, i.e. query 15.000 programs and then start comparing each of them
@@ -313,7 +331,7 @@ namespace TvPlugin
         {
           CurrentProgram = new Program(value.IdChannel, value.StartTime, value.EndTime, value.ProgramName, "",
                                        "", Program.ProgramState.None, DateTime.MinValue, "", "", "", "", 0, "", 0);
-        }
+        }        
       }
     }
 
@@ -331,12 +349,12 @@ namespace TvPlugin
 
     private static bool IsRecordingProgram(Program program, out Schedule recordingSchedule,
                                            bool filterCanceledRecordings)
-    {
+    {      
       recordingSchedule = null;
       IList<Schedule> schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
       {
-        if (schedule.Canceled != Schedule.MinSchedule)
+        if (schedule.Canceled != Schedule.MinSchedule || (filterCanceledRecordings && schedule.IsSerieIsCanceled(program.StartTime, program.IdChannel)))
         {
           continue;
         }
@@ -440,7 +458,7 @@ namespace TvPlugin
         }
         else
         {
-          lastSelectedProgram = CurrentProgram;
+          lastSelectedProgram = initialProgram;// CurrentProgram;
         }
 
         lstUpcomingEpsiodes.Clear();
@@ -480,10 +498,54 @@ namespace TvPlugin
       lstUpcomingEpsiodes.Clear();
       TvBusinessLayer layer = new TvBusinessLayer();
       DateTime dtDay = DateTime.Now;
-      IList<Program> episodes = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(28), CurrentProgram.Title, null);
+      List<Program> episodes = (List<Program>)layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(28), initialProgram.Title, null);
 
-      for (int i = 0; i < episodes.Count; i++)
+      IList<Program> actualUpcomingEps = new List<Program>();      
+      if (currentSchedule != null)
       {
+        int scheduletype = currentSchedule.ScheduleType;        
+
+        switch (scheduletype)
+        {
+          case (int)ScheduleRecordingType.Weekly:
+            actualUpcomingEps = Program.RetrieveWeekly(initialProgram.StartTime, initialProgram.EndTime, initialProgram.IdChannel);
+            break;
+
+          case (int)ScheduleRecordingType.Weekends:
+            actualUpcomingEps = Program.RetrieveWeekends(initialProgram.StartTime, initialProgram.EndTime, initialProgram.IdChannel);
+            break;
+
+          case (int)ScheduleRecordingType.WorkingDays:
+            actualUpcomingEps = Program.RetrieveWorkingDays(initialProgram.StartTime, initialProgram.EndTime, initialProgram.IdChannel);
+            break;
+
+          case (int)ScheduleRecordingType.Daily:
+          actualUpcomingEps = Program.RetrieveDaily(initialProgram.StartTime, initialProgram.EndTime, initialProgram.IdChannel);
+          break;
+        }
+       
+        //episodes.AddRange(actualUpcomingEps);
+
+        if (actualUpcomingEps.Count > 0)
+        {
+          for (int i = actualUpcomingEps.Count - 1; i >= 0; i--)
+          {
+            Program ep = actualUpcomingEps[i];
+
+            if (!episodes.Contains(ep))
+            {
+              episodes.Add(ep);
+            }
+          }
+          episodes.Sort((x, y) => (x.StartTime.CompareTo(y.StartTime))); //resort list locally on starttime
+        }
+
+      }
+      bool updateCurrentProgram = true;
+      anyUpcomingEpisodesRecording = false;
+      int activeRecordings = 0;
+      for (int i = 0; i < episodes.Count; i++)
+      {        
         Program episode = episodes[i];
         GUIListItem item = new GUIListItem();
         item.Label = TVUtil.GetDisplayTitle(episode);
@@ -494,23 +556,42 @@ namespace TvPlugin
           item.Label = String.Format("{0} {1}", episode.ReferencedChannel().DisplayName, TVUtil.GetDisplayTitle(episode));
           logo = "defaultVideoBig.png";
         }
-        Schedule recordingSchedule;
-        bool isRecPrg = IsRecordingProgram(episode, out recordingSchedule, true);
-        /*
-        bool isRecPrgNow = false;
-        if (!isRecPrg)
-        {
-          isRecPrgNow = TVHome.IsRecordingSchedule();
-        }*/
 
+        bool isActualUpcomingEps = actualUpcomingEps.Contains(episode) ;
+        bool isRecPrg = isActualUpcomingEps;
+        Schedule recordingSchedule = currentSchedule;
+        if (!isActualUpcomingEps)
+        {          
+          isRecPrg = IsRecordingProgram(episode, out recordingSchedule, true);        
+        }
         if (isRecPrg)
-        {
-          if (!recordingSchedule.IsSerieIsCanceled(episode.StartTime))
+        {          
+          if (!recordingSchedule.IsSerieIsCanceled(episode.StartTime, episode.IdChannel))
           {
+            string recThumb = Thumbs.TvRecordingIcon;
+            // TODO; do we want partial recordings even ?
+            /*if (isActualUpcomingEps && currentSchedule != null)
+            {
+              //check for partial recordings.
+              bool isIsPartialRecording = Schedule.IsPartialRecording(currentSchedule, episode);
+              if (isIsPartialRecording)
+              {
+                recThumb = Thumbs.TvPartialRecordingIcon;
+              }
+            }*/
+            
             item.PinImage = recordingSchedule.ReferringConflicts().Count > 0
                               ? Thumbs.TvConflictRecordingIcon
-                              : Thumbs.TvRecordingIcon;
-          }
+                              : recThumb;              
+            
+            if (updateCurrentProgram)
+            {
+              currentProgram = episode;
+            }
+            activeRecordings++;
+            anyUpcomingEpisodesRecording = true;
+            updateCurrentProgram = false;
+          }          
           item.TVTag = recordingSchedule;
         }
         else
@@ -540,10 +621,19 @@ namespace TvPlugin
         }
         lstUpcomingEpsiodes.Add(item);
       }
+
+
+      if (!anyUpcomingEpisodesRecording)
+      {
+        currentProgram = initialProgram;
+      }
+
       if (itemToSelect != -1)
       {
         lstUpcomingEpsiodes.SelectedListItemIndex = itemToSelect;
       }
+
+      lblUpcomingEpsiodes.Label = GUILocalizeStrings.Get(1041, new object[] { activeRecordings });
 
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(lstUpcomingEpsiodes.ListItems.Count));
@@ -554,18 +644,30 @@ namespace TvPlugin
       IList<Schedule> schedules = Schedule.ListAll();
       bool isRecording = false;
       bool isSeries = false;
-      foreach (Schedule schedule in schedules)
-      {
-        Schedule recSched;
-        isRecording = IsRecordingProgram(CurrentProgram, out recSched, true);
 
-        if (isRecording)
+      if (currentSchedule != null)
+      {
+        isRecording = true;
+        if ((ScheduleRecordingType)currentSchedule.ScheduleType != ScheduleRecordingType.Once)
         {
-          if ((ScheduleRecordingType)schedule.ScheduleType != ScheduleRecordingType.Once)
+          isSeries = true;
+        }
+      }
+      else
+      {
+        foreach (Schedule schedule in schedules)
+        {
+          Schedule recSched;
+          isRecording = IsRecordingProgram(CurrentProgram, out recSched, true);
+
+          if (isRecording)
           {
-            isSeries = true;
+            if ((ScheduleRecordingType)schedule.ScheduleType != ScheduleRecordingType.Once)
+            {
+              isSeries = true;
+            }
+            break;
           }
-          break;
         }
       }
       if (isRecording)
@@ -597,8 +699,8 @@ namespace TvPlugin
 
     private void OnPreRecordInterval()
     {
-      Schedule rec;
-      if (false == IsRecordingProgram(CurrentProgram, out rec, false))
+      Schedule rec = currentSchedule;
+      if (currentSchedule == null && !IsRecordingProgram(CurrentProgram, out rec, false))
       {
         return;
       }
@@ -661,6 +763,7 @@ namespace TvPlugin
 
         rec.PreRecordInterval = RecordingIntervalValues[dlg.SelectedLabel];
         rec.Persist();
+        currentSchedule = rec;
 
         Schedule assocSchedule = Schedule.RetrieveOnce(rec.IdChannel, CurrentProgram.Title, CurrentProgram.StartTime,
                                                        CurrentProgram.EndTime);
@@ -678,8 +781,8 @@ namespace TvPlugin
 
     private void OnPostRecordInterval()
     {
-      Schedule rec;
-      if (false == IsRecordingProgram(CurrentProgram, out rec, false))
+      Schedule rec = currentSchedule;
+      if (currentSchedule == null && !IsRecordingProgram(CurrentProgram, out rec, false))
       {
         return;
       }
@@ -741,6 +844,7 @@ namespace TvPlugin
 
         rec.PostRecordInterval = RecordingIntervalValues[dlg.SelectedLabel];
         rec.Persist();
+        currentSchedule = rec;
 
         Schedule assocSchedule = Schedule.RetrieveOnce(rec.IdChannel, CurrentProgram.Title, CurrentProgram.StartTime,
                                                        CurrentProgram.EndTime);
@@ -755,8 +859,8 @@ namespace TvPlugin
 
     private void OnSetQuality()
     {
-      Schedule rec;
-      if (false == IsRecordingProgram(CurrentProgram, out rec, false))
+      Schedule rec = currentSchedule;
+      if (currentSchedule == null && !IsRecordingProgram(CurrentProgram, out rec, false))
       {
         return;
       }
@@ -816,6 +920,7 @@ namespace TvPlugin
 
         rec.BitRateMode = _newBitRate;
         rec.Persist();
+        currentSchedule = rec;
 
         dlg.Reset();
         dlg.SetHeading(882);
@@ -889,14 +994,15 @@ namespace TvPlugin
 
         rec.QualityType = _newQuality;
         rec.Persist();
+        currentSchedule = rec;
       }
       Update();
     }
 
     private void OnSetEpisodes()
     {
-      Schedule rec;
-      if (false == IsRecordingProgram(CurrentProgram, out rec, false))
+      Schedule rec = currentSchedule;
+      if (currentSchedule == null && !IsRecordingProgram(CurrentProgram, out rec, false))
       {
         return;
       }
@@ -913,7 +1019,11 @@ namespace TvPlugin
       }
       Log.Debug("TVProgammInfo.OnRecordProgram - programm = {0}", program.ToString());
       Schedule recordingSchedule;
-      if (IsRecordingProgram(program, out recordingSchedule, true)) // check if schedule is already existing
+      if (!anyUpcomingEpisodesRecording && currentSchedule != null)
+      {
+        CancelProgram(program, currentSchedule);
+      }
+      else if (IsRecordingProgram(program, out recordingSchedule, true)) // check if schedule is already existing
       {
         CancelProgram(program, recordingSchedule);
       }
@@ -928,7 +1038,7 @@ namespace TvPlugin
           if (schedFromDB.IsManual)
           {
             Schedule sched = Schedule.Retrieve(card.RecordingScheduleId);
-            TVUtil.DeleteRecAndSchedWithPrompt(sched);
+            TVUtil.DeleteRecAndSchedWithPrompt(sched, program.IdChannel);
           }
           else
           {
@@ -953,8 +1063,9 @@ namespace TvPlugin
 
       if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
       {
-        TVUtil.DeleteRecAndSchedWithPrompt(schedule);        
+        TVUtil.DeleteRecAndSchedWithPrompt(schedule, program.IdChannel);        
         Program.ResetPendingState(program.IdProgram);
+        ResetCurrentScheduleAndProgram(schedule);
         return;
       }
 
@@ -974,7 +1085,10 @@ namespace TvPlugin
 
         dlg.Reset();
         dlg.SetHeading(TVUtil.GetDisplayTitle(program));
-        dlg.AddLocalizedString(981); //Cancel this show
+        if (anyUpcomingEpisodesRecording)
+        {
+          dlg.AddLocalizedString(981); //Cancel this show
+        }
         dlg.AddLocalizedString(982); //Delete this entire schedule
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1)
@@ -995,13 +1109,33 @@ namespace TvPlugin
         if (deleteEntireSched)
         {
           TVUtil.DeleteRecAndEntireSchedWithPrompt(schedule, program.StartTime);
+          ResetCurrentScheduleAndProgram(schedule);
         }
         else
         {
-          TVUtil.DeleteRecAndSchedWithPrompt(schedule, program.StartTime);  
+          TVUtil.DeleteRecAndSchedWithPrompt(schedule, program.StartTime, program.IdChannel);  
         }
         
         Program.ResetPendingState(program.IdProgram);
+      }
+    }
+
+    private void ResetCurrentScheduleAndProgram()
+    {
+      currentProgram = initialProgram;
+      currentSchedule = null;
+    }
+
+    private void ResetCurrentScheduleAndProgram(Schedule schedule)
+    {
+      if (
+        currentSchedule == null ||
+        (
+        currentSchedule != null &&
+        (currentSchedule.ScheduleType == 0 || (currentSchedule.ScheduleType > 0 && schedule.ScheduleType > 0))
+        ))
+      {
+        ResetCurrentScheduleAndProgram();
       }
     }
 
@@ -1017,7 +1151,7 @@ namespace TvPlugin
                   schedule.ScheduleType);
         Log.Debug("                            - schedule= {0}", schedule.ToString());
         //schedule = Schedule.Retrieve(schedule.IdSchedule); // get the correct informations
-        if (schedule.IsSerieIsCanceled(program.StartTime))
+        if (schedule.IsSerieIsCanceled(program.StartTime, program.IdChannel))
         {
           //lets delete the cancelled schedule.
 
@@ -1108,14 +1242,20 @@ namespace TvPlugin
       if (saveSchedule != null)
       {
         Log.Debug("TVProgramInfo.CreateProgram - UnCancleSerie at {0}", program.StartTime);
-        saveSchedule.UnCancelSerie(program.StartTime);
+        saveSchedule.UnCancelSerie(program.StartTime, program.IdChannel);
         //saveSchedule.UnCancelSerie();
         saveSchedule.Persist();
+        currentSchedule = saveSchedule;
       }
       else
       {
         Log.Debug("TVProgramInfo.CreateProgram - create schedule = {0}", schedule.ToString());
         schedule.Persist();
+
+        if (currentSchedule == null || (currentSchedule.ScheduleType > 0 && schedule.ScheduleType != (int)ScheduleRecordingType.Once))
+        {
+          currentSchedule = schedule;
+        }
       }
       if (skipConflictingEpisodes)
       {
@@ -1126,7 +1266,7 @@ namespace TvPlugin
           {
             continue;
           }
-          if (episode.IsSerieIsCanceled(episode.StartTime))
+          if (episode.IsSerieIsCanceled(episode.StartTime, program.IdChannel))
           {
             continue;
           }
@@ -1135,7 +1275,7 @@ namespace TvPlugin
             if (episode.IsOverlapping(conflict))
             {
               Log.Debug("TVProgramInfo.CreateProgram - skip episode = {0}", episode.ToString());
-              CanceledSchedule canceledSchedule = new CanceledSchedule(schedule.IdSchedule, episode.StartTime);
+              CanceledSchedule canceledSchedule = new CanceledSchedule(schedule.IdSchedule, program.IdChannel, episode.StartTime);
               canceledSchedule.Persist();
             }
           }
@@ -1260,8 +1400,8 @@ namespace TvPlugin
 
     private void OnKeep()
     {
-      Schedule rec;
-      if (false == IsRecordingProgram(CurrentProgram, out rec, false))
+      Schedule rec = currentSchedule;
+      if (currentSchedule == null && !IsRecordingProgram(CurrentProgram, out rec, false))
       {
         return;
       }
@@ -1335,6 +1475,7 @@ namespace TvPlugin
           break;
       }
       rec.Persist();
+      currentSchedule = rec;
       TvServer server = new TvServer();
       server.OnNewSchedule();
     }

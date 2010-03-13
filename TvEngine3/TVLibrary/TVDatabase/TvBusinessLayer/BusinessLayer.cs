@@ -1778,12 +1778,13 @@ namespace TvDatabase
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       StringBuilder SqlSelectCommand = new StringBuilder();
       SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
-      SqlSelectCommand.AppendFormat("where endTime > '{0}' ", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
+      SqlSelectCommand.AppendFormat("where endTime > '{0}' ", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));      
+
       if (searchCriteria.Length > 0)
       {
         SqlSelectCommand.AppendFormat("and title like '{0}%' ", EscapeSQLString(searchCriteria));
       }
-      SqlSelectCommand.Append("and c.visibleInGuide = 1 order by title, startTime");
+      SqlSelectCommand.Append("and c.visibleInGuide = 1 order by title,startTime");
       SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof (Program)).GetStatement(true);
       SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, stmt.Command, SqlSelectCommand.ToString(),
                                                     typeof (Program));
@@ -3154,7 +3155,7 @@ namespace TvDatabase
           recNew.StartTime = prog.StartTime;
           recNew.EndTime = prog.EndTime;
           recNew.Series = true;
-          if (rec.IsSerieIsCanceled(recNew.StartTime))
+          if (rec.IsSerieIsCanceled(recNew.StartTime, prog.IdChannel))
           {
             recNew.Canceled = recNew.StartTime;
           }

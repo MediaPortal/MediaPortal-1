@@ -1429,8 +1429,8 @@ namespace TvPlugin
         _currentTime = strTime;
         _currentChannel = strChannel;
 
-        bool bSeries = _currentProgram.IsRecordingSeries || _currentProgram.IsRecordingSeriesPending;
-        bool bConflict = _currentProgram.HasConflict;
+        bool bSeries = _currentProgram.IsRecordingSeries || _currentProgram.IsRecordingSeriesPending || _currentProgram.IsPartialRecordingSeriesPending;
+        bool bConflict = _currentProgram.HasConflict;        
         bRecording = bSeries || (_currentProgram.IsRecording || _currentProgram.IsRecordingOncePending);
 
         if (bRecording)
@@ -1450,7 +1450,20 @@ namespace TvPlugin
           }
           else if (bSeries)
           {
-            img.SetFileName(Thumbs.TvRecordingSeriesIcon);
+            //TODO: do we even want partial recordings ?
+            /*
+            bool bPartialRecording = _currentProgram.IsPartialRecordingSeriesPending;
+
+            if (bPartialRecording)
+            {
+              img.SetFileName(Thumbs.TvPartialRecordingIcon);  
+            }
+            else
+            {
+              img.SetFileName(Thumbs.TvRecordingSeriesIcon);  
+            }*/
+            img.SetFileName(Thumbs.TvRecordingSeriesIcon);  
+            
           }
           else
           {
@@ -1715,7 +1728,7 @@ namespace TvPlugin
         img.RenderLeft = false;
         img.RenderRight = false;
 
-        bool bSeries = (program.IsRecordingSeries || program.IsRecordingSeriesPending);
+        bool bSeries = (program.IsRecordingSeries || program.IsRecordingSeriesPending || program.IsPartialRecordingSeriesPending);
         bool bConflict = program.HasConflict;
         bool bRecording = bSeries || (program.IsRecording || program.IsRecordingOncePending);
 
@@ -1818,6 +1831,7 @@ namespace TvPlugin
         }
         if (bRecording)
         {
+          bool bPartialRecording = _currentProgram.IsPartialRecordingSeriesPending;
           if (_useNewRecordingButtonColor)
           {
             img.TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
@@ -1835,6 +1849,16 @@ namespace TvPlugin
             }
             else if (bSeries)
             {
+              //TODO: do we even want partial recordings ?
+              /*
+              if (bPartialRecording)
+              {
+                img.TexutureIcon = Thumbs.TvPartialRecordingIcon;
+              }
+              else
+              {
+                img.TexutureIcon =Thumbs.TvRecordingSeriesIcon;
+              } */
               img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
             }
             else
@@ -2129,7 +2153,21 @@ namespace TvPlugin
                 }
                 else if (bSeries)
                 {
-                  img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
+                  //TODO: do we even want partial recordings ?
+                  /*
+                  bool bPartialRecording = program.IsPartialRecordingSeriesPending;
+                  
+                  if (bPartialRecording)
+                  {
+                    img.TexutureIcon = Thumbs.TvPartialRecordingIcon;  
+                  }
+                  else
+                  {
+                    img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;  
+                  }*/
+
+                  img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;  
+                  
                 }
                 else
                 {

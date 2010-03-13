@@ -1011,7 +1011,7 @@ namespace TvPlugin
           }
 
           Schedule s = Schedule.Retrieve(card.RecordingScheduleId);
-          TVUtil.DeleteRecAndSchedQuietly(s);          
+          TVUtil.DeleteRecAndSchedQuietly(s, card.IdChannel);          
 
           GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
           if (dlgNotify == null)

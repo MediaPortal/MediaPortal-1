@@ -778,7 +778,7 @@ namespace TvPlugin
           {
             if (cancelSched.CancelDateTime == channel.CurrentProgram.StartTime)
             {
-              existingParentSchedule.UnCancelSerie(channel.CurrentProgram.StartTime);
+              existingParentSchedule.UnCancelSerie(channel.CurrentProgram.StartTime, channel.CurrentProgram.IdChannel);
               server.OnNewSchedule();
               return;
             }
@@ -1884,7 +1884,7 @@ namespace TvPlugin
         Schedule s = Schedule.Retrieve(card.RecordingScheduleId);
         if (s != null)
         {
-          TVUtil.DeleteRecAndSchedQuietly(s);
+          TVUtil.DeleteRecAndSchedQuietly(s, card.IdChannel);
         }
         return false;
       }
@@ -2067,7 +2067,7 @@ namespace TvPlugin
         {
           return;
         }
-        bool deleted = TVUtil.DeleteRecAndSchedWithPrompt(parentSchedule);
+        bool deleted = TVUtil.DeleteRecAndSchedWithPrompt(parentSchedule, selectedRecording.IdChannel);            
         if (deleted && !ignoreActiveRecordings.Contains(selectedRecording))
         {
           ignoreActiveRecordings.Add(selectedRecording);

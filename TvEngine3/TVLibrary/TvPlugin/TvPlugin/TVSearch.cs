@@ -1265,7 +1265,7 @@ namespace TvPlugin
                 {
                   //delete specific series
                   Schedule sched = Schedule.Retrieve(rec1.IdSchedule);
-                  TVUtil.DeleteRecAndSchedWithPrompt(sched);                  
+                  TVUtil.DeleteRecAndSchedWithPrompt(sched, program.IdChannel);
                 }
                 else
                 {

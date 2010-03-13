@@ -71,175 +71,70 @@ namespace TvPlugin
 
     #endregion
 
-    public List<Schedule> GetRecordingTimes(Schedule rec)
+    public IList<Schedule> GetRecordingTimes(Schedule rec)
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
-      TvBusinessLayer layer = new TvBusinessLayer();
-      List<Schedule> recordings = new List<Schedule>();
+      DateTime startTime = DateTime.Now;
+      DateTime endTime = startTime.AddDays(_days);
 
-      DateTime dtDay = DateTime.Now;
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Once)
+      IList<Schedule> recordings = new List<Schedule>();
+      IList<Program> programs = new List<Program>();
+
+      switch (rec.ScheduleType)
       {
-        recordings.Add(rec);
-        return recordings;
+        case (int)ScheduleRecordingType.Once:
+          recordings.Add(rec);
+          return recordings;
+          break;
+
+        case (int)ScheduleRecordingType.Daily:
+          programs = Program.RetrieveDaily(startTime, endTime, rec.ReferencedChannel().IdChannel);
+          break;
+
+        case (int)ScheduleRecordingType.WorkingDays:
+          programs = Program.RetrieveWorkingDays(startTime, endTime, rec.ReferencedChannel().IdChannel);
+          break;
+
+        case (int)ScheduleRecordingType.Weekends:
+          programs = Program.RetrieveWeekends(startTime, endTime, rec.ReferencedChannel().IdChannel);
+          break;
+
+        case (int)ScheduleRecordingType.Weekly:
+          programs = Program.RetrieveWeekly(startTime, endTime, rec.ReferencedChannel().IdChannel);
+          break;
+
+        case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
+          programs = Program.RetrieveEveryTimeOnThisChannel(rec.ProgramName, rec.ReferencedChannel().IdChannel);
+          break;
+
+        case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
+          programs = Program.RetrieveEveryTimeOnEveryChannel(rec.ProgramName);
+          break;
+
       }
+      recordings = AddProgramsToSchedulesList(rec, programs);
+      return recordings;
+    }
 
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Daily)
+    private IList<Schedule> AddProgramsToSchedulesList(Schedule rec, IList<Program> programs)
+    {
+      IList<Schedule> recordings = new List<Schedule>();
+      if (programs != null && programs.Count > 0)
       {
-        for (int i = 0; i < _days; ++i)
+        foreach (Program prg in programs)
         {
-          Schedule recNew = rec.Clone();
+          Schedule recNew = rec.Clone();          
           recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-          recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute,
-                                          0);
-          if (rec.EndTime.Day > rec.StartTime.Day)
-          {
-            dtDay = dtDay.AddDays(1);
-          }
-          recNew.EndTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0);
-          if (rec.EndTime.Day > rec.StartTime.Day)
-          {
-            dtDay = dtDay.AddDays(-1);
-          }
+          recNew.StartTime = prg.StartTime;
+          recNew.EndTime = prg.EndTime;
+          recNew.IdChannel = prg.IdChannel;
           recNew.Series = true;
-          if (recNew.StartTime >= DateTime.Now)
-          {
-            if (rec.IsSerieIsCanceled(recNew.StartTime))
-            {
-              recNew.Canceled = recNew.StartTime;
-            }
-            UpdateCurrentProgramTitle(ref recNew);
-            recordings.Add(recNew);
-          }
-          dtDay = dtDay.AddDays(1);
-        }
-        return recordings;
-      }
+          recNew.ProgramName = prg.Title;
 
-      if (rec.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
-      {
-        for (int i = 0; i < _days; ++i)
-        {
-          if (weekEndTool.IsWorkingDay(dtDay.DayOfWeek))
-          {
-            Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-            recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute,
-                                            0);
-            if (rec.EndTime.Day > rec.StartTime.Day)
-            {
-              dtDay = dtDay.AddDays(1);
-            }
-            recNew.EndTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0);
-            if (rec.EndTime.Day > rec.StartTime.Day)
-            {
-              dtDay = dtDay.AddDays(-1);
-            }
-            recNew.Series = true;
-            if (rec.IsSerieIsCanceled(recNew.StartTime))
-            {
-              recNew.Canceled = recNew.StartTime;
-            }
-            if (recNew.StartTime >= DateTime.Now)
-            {
-              UpdateCurrentProgramTitle(ref recNew);
-              recordings.Add(recNew);
-            }
-          }
-          dtDay = dtDay.AddDays(1);
-        }
-        return recordings;
-      }
-
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Weekends)
-      {
-        IList<Program> progList;
-        progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.ReferencedChannel());
-
-        foreach (Program prog in progList)
-        {
-          if ((rec.IsRecordingProgram(prog, false)) && (weekEndTool.IsWeekend(prog.StartTime.DayOfWeek)))
-          {
-            Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-            recNew.StartTime = prog.StartTime;
-            recNew.EndTime = prog.EndTime;
-            recNew.Series = true;
-
-            if (rec.IsSerieIsCanceled(recNew.StartTime))
-            {
-              recNew.Canceled = recNew.StartTime;
-            }
-            UpdateCurrentProgramTitle(ref recNew);
-            recordings.Add(recNew);
-          }
-        }
-        return recordings;
-      }
-      if (rec.ScheduleType == (int)ScheduleRecordingType.Weekly)
-      {
-        for (int i = 0; i < _days; ++i)
-        {
-          if (dtDay.DayOfWeek == rec.StartTime.DayOfWeek)
-          {
-            Schedule recNew = rec.Clone();
-            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-            recNew.StartTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute,
-                                            0);
-            if (rec.EndTime.Day > rec.StartTime.Day)
-            {
-              dtDay = dtDay.AddDays(1);
-            }
-            recNew.EndTime = new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0);
-            if (rec.EndTime.Day > rec.StartTime.Day)
-            {
-              dtDay = dtDay.AddDays(-1);
-            }
-            recNew.Series = true;
-            if (rec.IsSerieIsCanceled(recNew.StartTime))
-            {
-              recNew.Canceled = recNew.StartTime;
-            }
-
-            if (recNew.StartTime >= DateTime.Now)
-            {
-              UpdateCurrentProgramTitle(ref recNew);
-              recordings.Add(recNew);
-            }
-          }
-          dtDay = dtDay.AddDays(1);
-        }
-        return recordings;
-      }
-
-
-      IList<Program> programs;
-      if (rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel)
-      {
-        Log.Debug("get {0} {1} EveryTimeOnThisChannel", rec.ProgramName, rec.ReferencedChannel().DisplayName);
-        programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, rec.ReferencedChannel());
-      }
-      else
-      {
-        Log.Debug("get {0} EveryTimeOnAllChannels", rec.ProgramName);
-
-        programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(_days), rec.ProgramName, null);
-      }
-      foreach (Program prog in programs)
-      {
-        if (rec.IsRecordingProgram(prog, false))
-        {
-          Schedule recNew = rec.Clone();
-          recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-          recNew.ProgramName = prog.Title;
-          recNew.IdChannel = prog.IdChannel;
-          recNew.StartTime = prog.StartTime;
-          recNew.EndTime = prog.EndTime;
-          recNew.Series = true;
           if (rec.IsSerieIsCanceled(recNew.StartTime))
           {
             recNew.Canceled = recNew.StartTime;
           }
+          
           recordings.Add(recNew);
         }
       }
@@ -457,10 +352,10 @@ namespace TvPlugin
     /// </summary>
     /// <param name="Schedule">schedule id to be deleted</param>    
     /// <returns>true if the schedule was deleted, otherwise false</returns>
-    public static bool DeleteRecAndSchedQuietly(Schedule schedule)
+    public static bool DeleteRecAndSchedQuietly(Schedule schedule, int idChannel)
     {
       DateTime canceledStartTime = schedule.StartTime;
-      return (DeleteRecAndSchedQuietly(schedule, canceledStartTime));
+      return (DeleteRecAndSchedQuietly(schedule, canceledStartTime, idChannel));
     }
     /// <summary>
     /// Deletes a single or a complete schedule.    
@@ -469,14 +364,14 @@ namespace TvPlugin
     /// <param name="Schedule">schedule id to be deleted</param>    
     /// <param name="canceledStartTime">start time of the schedule to cancel</param>    
     /// <returns>true if the schedule was deleted, otherwise false</returns>
-    public static bool DeleteRecAndSchedQuietly(Schedule schedule, DateTime canceledStartTime)
+    public static bool DeleteRecAndSchedQuietly(Schedule schedule, DateTime canceledStartTime, int idChannel)
     {
       bool wasDeleted = false;
       if (IsValidSchedule(schedule))
       {   
         Schedule parentSchedule = null;
         GetParentAndSpawnSchedule(ref schedule, out parentSchedule);
-        wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule);        
+        wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule, idChannel, canceledStartTime);        
       }
       return wasDeleted;
     }
@@ -509,7 +404,7 @@ namespace TvPlugin
       if (IsValidSchedule(schedule))
       {
         Schedule parentSchedule = null;
-        wasDeleted = StopRecAndDeleteEntireSchedule(schedule, parentSchedule);        
+        wasDeleted = StopRecAndDeleteEntireSchedule(schedule, parentSchedule, canceledStartTime);        
       }
       return wasDeleted;
     }
@@ -522,10 +417,10 @@ namespace TvPlugin
     /// </summary>
     /// <param name="Schedule">schedule id to be deleted</param>        
     /// <returns>true if the schedule was deleted, otherwise false</returns>
-    public static bool DeleteRecAndSchedWithPrompt(Schedule schedule)
+    public static bool DeleteRecAndSchedWithPrompt(Schedule schedule, int idChannel)
     {
       DateTime canceledStartTime = schedule.StartTime;
-      return (DeleteRecAndSchedWithPrompt(schedule, canceledStartTime));
+      return (DeleteRecAndSchedWithPrompt(schedule, canceledStartTime, idChannel));
     }
 
     /// <summary>
@@ -536,7 +431,7 @@ namespace TvPlugin
     /// <param name="Schedule">schedule id to be deleted</param>    
     /// <param name="canceledStartTime">start time of the schedule to cancel</param>    
     /// <returns>true if the schedule was deleted, otherwise false</returns>
-    public static bool DeleteRecAndSchedWithPrompt(Schedule schedule, DateTime canceledStartTime)
+    public static bool DeleteRecAndSchedWithPrompt(Schedule schedule, DateTime canceledStartTime, int idChannel)
     {
       bool wasDeleted = false;
       if (IsValidSchedule(schedule))
@@ -548,7 +443,7 @@ namespace TvPlugin
 
         if (confirmed)
         {
-          wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule);          
+          wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule, idChannel, canceledStartTime);          
         }        
       }
       return wasDeleted;
@@ -589,15 +484,15 @@ namespace TvPlugin
         
         if (confirmed)
         {
-          wasDeleted = StopRecAndDeleteEntireSchedule(schedule, parentSchedule);
+          wasDeleted = StopRecAndDeleteEntireSchedule(schedule, parentSchedule, canceledStartTime);
         }        
       }
       return wasDeleted;
     }
 
-    private static bool StopRecAndDeleteSchedule(Schedule schedule, Schedule parentSchedule)
-    {      
-      bool wasDeleted = CancelEpisode(schedule.StartTime, parentSchedule);
+    private static bool StopRecAndDeleteSchedule(Schedule schedule, Schedule parentSchedule, int idChannel, DateTime canceledStartTime)
+    {
+      bool wasDeleted = CancelEpisode(canceledStartTime, parentSchedule, idChannel);
 
       if (!wasDeleted)
       {
@@ -610,10 +505,11 @@ namespace TvPlugin
       return wasDeleted;
     }
 
-    private static bool StopRecAndDeleteEntireSchedule(Schedule schedule, Schedule parentSchedule)
+    private static bool StopRecAndDeleteEntireSchedule(Schedule schedule, Schedule parentSchedule, DateTime canceledStartTime)
     {
+      int idChannel = schedule.IdChannel;
       bool wasDeleted = false;
-      bool episodeCanceled = CancelEpisode(schedule.StartTime, parentSchedule);
+      bool episodeCanceled = CancelEpisode(canceledStartTime, parentSchedule, idChannel);
       TvServer server = new TvServer();
       StopRecording(schedule);      
       wasDeleted = DeleteEntireOrOnceSchedule(schedule, parentSchedule);            
@@ -675,7 +571,7 @@ namespace TvPlugin
       return scheduleDeleted;
     }
 
-    private static bool CancelEpisode(DateTime cancelStartTime, Schedule scheduleToCancel)
+    private static bool CancelEpisode(DateTime cancelStartTime, Schedule scheduleToCancel, int idChannel)
     {
       bool episodeCanceled = false;
 
@@ -689,7 +585,7 @@ namespace TvPlugin
         {
           DateTime cancel = cancelStartTime;
           int IdForScheduleToCancel = scheduleToCancel.IdSchedule;
-          CanceledSchedule canceledSchedule = new CanceledSchedule(IdForScheduleToCancel, cancel);
+          CanceledSchedule canceledSchedule = new CanceledSchedule(IdForScheduleToCancel, idChannel, cancel);
           canceledSchedule.Persist();
           episodeCanceled = true;
         }

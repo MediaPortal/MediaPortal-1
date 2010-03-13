@@ -65,7 +65,8 @@ namespace TvDatabase
       RecordManual = 8,
       Conflict = 16,
       RecordOncePending = 32, // used to indicate recording icon on tvguide, even though it hasnt begun yet.
-      RecordSeriesPending = 64 // used to indicate recording icon on tvguide, even though it hasnt begun yet.
+      RecordSeriesPending = 64, // used to indicate recording icon on tvguide, even though it hasnt begun yet.
+      PartialRecordSeriesPending = 128 // used to indicate partial recording icon on tvguide, even though it hasnt begun yet.
     }
 
     #endregion
@@ -276,7 +277,7 @@ namespace TvDatabase
     /// </summary>
     public bool IsRecording
     {
-      get { return (IsRecordingSeries || IsRecordingManual || IsRecordingOnce); }
+      get { return (IsPartialRecordingSeriesPending || IsRecordingSeries || IsRecordingManual || IsRecordingOnce); }
     }
 
     /// <summary>
@@ -323,6 +324,28 @@ namespace TvDatabase
           newState |= ProgramState.RecordSeriesPending;
         }
 
+        isChanged |= (int)state != (int)newState;
+        state = (int)newState;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column IsRecordingSeriesPending
+    /// </summary>
+    public bool IsPartialRecordingSeriesPending
+    {
+      get { return ((state & (int)ProgramState.PartialRecordSeriesPending) == (int)ProgramState.PartialRecordSeriesPending); }
+      set
+      {
+        ProgramState newState = (ProgramState)state;
+        if (value) //add the Record bit flag
+        {
+          newState |= ProgramState.PartialRecordSeriesPending;
+        }
+        else
+        {
+          newState &= ~ProgramState.PartialRecordSeriesPending;
+        }
         isChanged |= (int)state != (int)newState;
         state = (int)newState;
       }
@@ -524,37 +547,25 @@ namespace TvDatabase
                                                string endParam, bool crossMidnight)
     {
       string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
+      string baseConstraint;
       switch (provider)
       {
         case "mysql":
-          sb.AddConstraint(
-            string.Format("{0} >= DATE_ADD(DATE({0}), INTERVAL TIME(?{1}) HOUR_SECOND)", 
-                          startField, startParam));
-          if (!string.IsNullOrEmpty(endField))
-          {
-            sb.AddConstraint(
-              string.Format(
-                "{1} <= DATE_ADD(DATE_ADD(DATE({0}), INTERVAL {3} DAY), INTERVAL TIME(?{2}) HOUR_SECOND)",
-                startField, endField, endParam, crossMidnight? 1:0));
-
-          }
+          baseConstraint = string.Format("({0} < DATE_ADD(ADDDATE(DATE({0}), {4}{{0}}), INTERVAL TIME(?{3}) HOUR_SECOND)" +
+                           " AND {1} > DATE_ADD(ADDDATE(DATE({0}), 0{{0}}), INTERVAL TIME(?{2}) HOUR_SECOND))",
+                           startField, endField, startParam, endParam, crossMidnight ? 1 : 0);
           break;
         case "sqlserver":
-          {
-            sb.AddConstraint(
-              string.Format(
-                "{0} >= DateAdd(mi, (DateDiff(mi, 0, @{1}) + 1440*(DateDiff(Day, 0, {0})-DateDiff(Day, 0, @{1}))), 0)", startField,
-                startParam));
-            if (!string.IsNullOrEmpty(endField))
-            {
-              sb.AddConstraint(
-                string.Format(
-                  "{1} <= DateAdd(mi, (DateDiff(mi, 0, @{3}) + 1440*(DateDiff(Day, 0, {0})-DateDiff(Day, 0, @{2}))), 0)", startField,
-                  endField, startParam, endParam));
-            }
-          }
+            baseConstraint = string.Format("({0} < DateAdd(mi, 1440*(DateDiff(Day, @{2}, {0}){{0}}), @{3})" +
+                                           "AND {1} > DateAdd(mi, 1440*(DateDiff(Day, @{2}, {0}){{0}}), @{2}))",
+                                           startField, endField, startParam, endParam);
           break;
+        default:
+          return;
       }
+      sb.AddConstraint(string.Format(baseConstraint, "") +
+                       " OR " + string.Format(baseConstraint, "+1") +
+                       " OR " + string.Format(baseConstraint, "-1"));
     }
 
     private static void AddWeekdayConstraint(SqlBuilder sb, string timeField, string days)
@@ -658,7 +669,7 @@ namespace TvDatabase
 
     public static IList<Program> RetrieveEveryTimeOnEveryChannel(string title)
     {
-      IList<Program> prgs = Program.RetrieveByTitleAndTimesInterval(title, DateTime.Now , DateTime.MaxValue);
+      IList<Program> prgs = Program.RetrieveByTitleAndTimesInterval(title, DateTime.Now, DateTime.MaxValue);
       return prgs;
     }
 
@@ -667,7 +678,7 @@ namespace TvDatabase
       DateTime startTime = DateTime.Now;
       DateTime endTime = DateTime.MaxValue;
 
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
       // where foreigntable.foreignkey = ourprimarykey
       sb.AddConstraint(Operator.Equals, "Title", title);
       sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", startTime);
