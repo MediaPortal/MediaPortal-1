@@ -134,8 +134,6 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
 
   m_pSurfaces = new IDirect3DSurface9* [m_surfaceCount];
 
-  //Log("vmr9:IntializeDevice() try TexureSurface|DXVA|3DRenderTarget");
-  lpAllocInfo->dwFlags = VMR9AllocFlag_TextureSurface |VMR9AllocFlag_3DRenderTarget;
 
   DWORD dwFlags=lpAllocInfo->dwFlags;
   Log("vmr9:flags:");
@@ -145,7 +143,9 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
   if (dwFlags & VMR9AllocFlag_RGBDynamicSwitch) Log("vmr9:  RGBDynamicSwitch");
   if (dwFlags & VMR9AllocFlag_TextureSurface)   Log("vmr9:  TextureSurface");
 
-  
+  lpAllocInfo->dwFlags = VMR9AllocFlag_TextureSurface | VMR9AllocFlag_3DRenderTarget;
+  lpAllocInfo->Format = D3DFMT_UNKNOWN;
+
   hr = m_pIVMRSurfAllocNotify->AllocateSurfaceHelper(lpAllocInfo, lpNumBuffers, m_pSurfaces);
   if(FAILED(hr))
   {
