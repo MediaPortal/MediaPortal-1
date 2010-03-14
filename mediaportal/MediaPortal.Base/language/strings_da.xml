@@ -893,7 +893,7 @@
     <String id="1038">Optagelses-metode</String>
     <String id="1039">Optag ikke</String>
     <String id="1040">Advar mig</String>
-    <String id="1041">Kommende afsnit</String>
+    <String id="1041">Kommende afsnit aktive:{0}</String>
     <String id="1042">Gem indtil</String>
     <String id="1043">Indtil set</String>
     <String id="1044">Indtil der er brug for plads</String>

@@ -893,7 +893,7 @@
     <String id="1038">Advanced record</String>
     <String id="1039">Don't record</String>
     <String id="1040">Alert me</String>
-    <String id="1041">Upcoming episodes</String>
+    <String id="1041">Upcoming episodes (active:{0})</String>
     <String id="1042">Keep until</String>
     <String id="1043">Until watched</String>
     <String id="1044">Until space needed</String>
