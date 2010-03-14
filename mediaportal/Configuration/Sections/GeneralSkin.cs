@@ -205,7 +205,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        checkBoxUsePrefix.Checked = xmlreader.GetValueAsBool("general", "myprefix", true);
+        checkBoxUsePrefix.Checked = xmlreader.GetValueAsBool("general", "myprefix", false);
         checkBoxlangRTL.Checked = xmlreader.GetValueAsBool("general", "rtllang", false);
         languageComboBox.Text = xmlreader.GetValueAsString("skin", "language", languageComboBox.Text);
         checkBoxBasicHome.Checked = xmlreader.GetValueAsBool("general", "startbasichome", false);
