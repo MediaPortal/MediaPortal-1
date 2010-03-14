@@ -80,6 +80,10 @@ namespace MediaPortal.Player.Subtitles
       {
         lock (langInfo)
         {
+          // From ETSI
+          // Magazine number 8: A packet with a magazine value of 0 is referred to as belonging to magazine 8.
+          if (page < 100) 
+            page += 800;
           if (!langInfo.ContainsKey(page))
           {
             langInfo.Add(page, iso_lang);
@@ -120,7 +124,6 @@ namespace MediaPortal.Player.Subtitles
         this.isSerial = true;
       }
       int new_page_num = header.PageNumber();
-      language = header.Language();
 
       if (pageNumInProgress != new_page_num)
       {
@@ -130,6 +133,7 @@ namespace MediaPortal.Player.Subtitles
           // if we were working on a previous page its finished now
           EndPage();
         }
+        language = header.Language();
         Clear();
         pageNumInProgress = new_page_num;
       }
