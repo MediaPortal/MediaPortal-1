@@ -582,7 +582,7 @@ namespace SetupTv.Sections
                     dvbipChannel.Provider = provider;
                     dvbipChannel.ServiceId = serviceId;
                     dvbipChannel.TransportId = transportId;
-                    dvbipChannel.Url=url;
+                    dvbipChannel.Url = url;
                     dvbipChannel.VideoPid = videoPid;
                     layer.AddTuningDetails(dbChannel, dvbipChannel);
                     Log.Info("TvChannels: Added tuning details for DVB-IP channel: {0} provider: {1}", name, provider);
@@ -626,8 +626,23 @@ namespace SetupTv.Sections
                 int sortOrder = Int32.Parse(GetNodeAttribute(nodeMap, "SortOrder", "9999"));
                 if (channel != null)
                 {
-                  GroupMap map = new GroupMap(group.IdGroup, channel.IdChannel, sortOrder);
-                  map.Persist();
+                  if (!channel.GroupNames.Contains(group.GroupName))
+                  {
+                    GroupMap map = new GroupMap(group.IdGroup, channel.IdChannel, sortOrder);
+                    map.Persist();
+                  }
+                  else
+                  {
+                    foreach (GroupMap map in channel.ReferringGroupMap())
+                    {
+                      if (map.IdGroup == group.IdGroup)
+                      {
+                        map.SortOrder = sortOrder;
+                        map.Persist();
+                        break;
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -658,8 +673,23 @@ namespace SetupTv.Sections
                 int sortOrder = Int32.Parse(GetNodeAttribute(nodeMap, "SortOrder", "9999"));
                 if (channel != null)
                 {
-                  RadioGroupMap map = new RadioGroupMap(group.IdGroup, channel.IdChannel, sortOrder);
-                  map.Persist();
+                  if (!channel.GroupNames.Contains(group.GroupName))
+                  {
+                    RadioGroupMap map = new RadioGroupMap(group.IdGroup, channel.IdChannel, sortOrder);
+                    map.Persist();
+                  }
+                  else
+                  {
+                    foreach (RadioGroupMap map in channel.ReferringRadioGroupMap())
+                    {
+                      if (map.IdGroup == group.IdGroup)
+                      {
+                        map.SortOrder = sortOrder;
+                        map.Persist();
+                        break;
+                      }
+                    }
+                  }
                 }
               }
             }
