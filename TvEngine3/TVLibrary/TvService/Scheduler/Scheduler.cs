@@ -472,20 +472,13 @@ namespace TvService
     {
       if (_recordingsInProgressList == null)
       {
-        SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS);
         return;
       }
 
       if (_recordingsInProgressList.Count > 0)
       {
-        //disable the sleep timer
-        SetThreadExecutionState(
-          (EXECUTION_STATE)((uint)EXECUTION_STATE.ES_CONTINUOUS + (uint)EXECUTION_STATE.ES_SYSTEM_REQUIRED));
-      }
-      else
-      {
-        //enable the sleep timer
-        SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS);
+        //reset the sleep timer
+        SetThreadExecutionState(EXECUTION_STATE.ES_SYSTEM_REQUIRED);
       }
     }
 

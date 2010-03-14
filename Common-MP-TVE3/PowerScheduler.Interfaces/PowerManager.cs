@@ -83,23 +83,8 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// <returns>bool indicating whether or not standby is allowed</returns>
     public bool AllowStandby()
     {
-      if (_standbyAllowed)
-      {
-        return true;
-      }
-      lock (this)
-      {
-        ExecutionState result = SetThreadExecutionState(ExecutionState.Continuous);
-        if (result == ExecutionState.Error)
-        {
-          return false;
-        }
-        else
-        {
-          _standbyAllowed = true;
-          return true;
-        }
-      }
+      _standbyAllowed = true;
+      return true;
     }
 
     /// <summary>
@@ -108,22 +93,16 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// <returns>bool indicating whether or not standby is prevented</returns>
     public bool PreventStandby()
     {
-      if (!_standbyAllowed)
-      {
-        return true;
-      }
       lock (this)
       {
-        ExecutionState result = SetThreadExecutionState(ExecutionState.SystemRequired | ExecutionState.Continuous);
+        ExecutionState result = SetThreadExecutionState(ExecutionState.SystemRequired);
+        //Log.Debug("PowerManager.PreventStandBy: SetThreadExecutionState() returned: {0}", result.ToString());
         if (result == ExecutionState.Error)
         {
           return false;
         }
-        else
-        {
-          _standbyAllowed = false;
-          return true;
-        }
+        _standbyAllowed = false;
+        return true;
       }
     }
 
