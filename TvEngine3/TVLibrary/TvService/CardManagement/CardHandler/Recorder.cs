@@ -218,7 +218,7 @@ namespace TvService
             Log.Write("card: StopRecording context null");
             return false;
           }
-          if (IsRecording(ref user))
+          if (user.IsAdmin)
           {
             context.GetUser(ref user);
             ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
@@ -233,11 +233,7 @@ namespace TvService
             {
               _cardHandler.Users.RemoveUser(user);
             }
-          }
-          else
-          {
-            Log.Write("card: StopRecording user '{0}' not recording, skipping", user.Name);
-          }
+          }          
 
           User[] users = context.Users;
           for (int i = 0; i < users.Length; ++i)

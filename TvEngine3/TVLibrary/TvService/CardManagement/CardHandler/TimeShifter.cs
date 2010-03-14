@@ -365,7 +365,7 @@ namespace TvService
             return TvResult.UnknownChannel;
 
           _subchannel = subchannel;
-
+          
           Log.Write("card: CAM enabled : {0}", _cardHandler.HasCA);
 
           if (subchannel is TvDvbChannel)
@@ -465,11 +465,7 @@ namespace TvService
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
-          return true;
-        if (false == IsTimeShifting(ref user))
-          return true;
-        if (_cardHandler.Recorder.IsRecording(ref user))
-          return true;
+          return true;        
 
         ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
         if (subchannel is BaseSubChannel)
