@@ -23,6 +23,8 @@ namespace LogoAutoRenamer
       this.buttonDst = new System.Windows.Forms.Button();
       this.buttonXml = new System.Windows.Forms.Button();
       this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+      this.progressBarStatus = new System.Windows.Forms.ProgressBar();
+      this.label3 = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 
       // buttonStart
@@ -122,11 +124,31 @@ namespace LogoAutoRenamer
       // 
       this.folderBrowserDialog1.RootFolder = System.Environment.SpecialFolder.MyComputer;
       // 
-      // Form1
+      // progressBarStatus
+      // 
+      this.progressBarStatus.Location = new System.Drawing.Point(-1, 190);
+      this.progressBarStatus.Name = "progressBarStatus";
+      this.progressBarStatus.Size = new System.Drawing.Size(481, 23);
+      this.progressBarStatus.Step = 1;
+      this.progressBarStatus.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+      this.progressBarStatus.TabIndex = 13;
+      // 
+      // label3
+      // 
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(21, 36);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(92, 13);
+      this.label3.TabIndex = 14;
+      this.label3.Text = "( png, jpg and gif )";
+      // 
+      // MainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(480, 213);
+      this.Controls.Add(this.label3);
+      this.Controls.Add(this.progressBarStatus);
       this.Controls.Add(this.buttonXml);
       this.Controls.Add(this.buttonDst);
       this.Controls.Add(this.buttonSrc);
@@ -137,7 +159,7 @@ namespace LogoAutoRenamer
       this.Controls.Add(this.label2);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.buttonStart);
-      this.Name = "Form1";
+      this.Name = "MainForm";
       this.Text = "Logo auto renamer";
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -158,6 +180,8 @@ namespace LogoAutoRenamer
     private System.Windows.Forms.Button buttonDst;
     private System.Windows.Forms.Button buttonXml;
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+    private System.Windows.Forms.ProgressBar progressBarStatus;
+    private System.Windows.Forms.Label label3;
 
   }
 }

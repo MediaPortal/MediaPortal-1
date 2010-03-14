@@ -1,9 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -20,7 +24,12 @@ namespace LogoAutoRenamer
       textBoxSrc.Text = curDir + @"\logos src";
       textBoxDst.Text = curDir + @"\logos dst";
       textboxXml.Text = curDir + @"\export.xml";
-      Text = Assembly.GetExecutingAssembly().GetName().Name + " v1.0.0.0";
+      Text = Assembly.GetExecutingAssembly().GetName().Name + " v." + Assembly.GetExecutingAssembly().GetName().Version;
+
+      if ((Environment.OSVersion.Version.Major * 10 + Environment.OSVersion.Version.Minor) >= 60)
+      {
+        DisableProcessWindowsGhosting();
+      }
     }
 
     public override sealed string Text
@@ -62,8 +71,14 @@ namespace LogoAutoRenamer
       {
         XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/tvserver/channels/channel");
         if (nodeList != null)
+        {
+          progressBarStatus.Maximum = nodeList.Count;
+          progressBarStatus.Minimum = 0;
+          progressBarStatus.Step = 1;
+          progressBarStatus.Show();
           foreach (XmlNode node in nodeList)
           {
+            progressBarStatus.PerformStep();
             chName = node.Attributes["DisplayName"].Value.ToLower(); // "rete 4"
             string chSearch = chName;
             chType = node.Attributes["IsTv"].Value.ToLower() == "true" ? "TV   " : "Radio";
@@ -98,7 +113,7 @@ namespace LogoAutoRenamer
 
             bool foundLogo = false;
 
-            foreach (FileInfo f in dirSrc.GetFiles("*"))
+            foreach (FileInfo f in GetFiles(dirSrc, "*.png,*.jpg,*.gif"))
             {
               foreach (string rule in rules)
               {
@@ -108,10 +123,10 @@ namespace LogoAutoRenamer
                 if (chName.Length >= 2 && (logoName.StartsWith(rule) || logoName.EndsWith(rule + logoExt)))
                 {
 #if DEBUG
-                Console.WriteLine("Channelname : <" + chName + ">");
-                Console.WriteLine("FileName    : <" + logoName + ">");
-                Console.WriteLine("Rule        : <" + rule + ">");
-                Console.WriteLine("***");
+                  Console.WriteLine("Channelname : <" + chName + ">");
+                  Console.WriteLine("FileName    : <" + logoName + ">");
+                  Console.WriteLine("Rule        : <" + rule + ">");
+                  Console.WriteLine("***");
 #endif
                   foundLogo = true;
                   break;
@@ -123,8 +138,17 @@ namespace LogoAutoRenamer
             string chNameLog = ("<" + chName + ">").PadRight(40, ' ') + "[" + chType + "]";
             if (foundLogo)
             {
-              File.Copy(textBoxSrc.Text + "\\" + logoName,
-                        textBoxDst.Text + "\\" + chType.Trim() + "\\" + chName + logoExt, true);
+              string src = textBoxSrc.Text + "\\" + logoName;
+              string dst = textBoxDst.Text + "\\" + chType.Trim() + "\\" + chName;
+              if (logoExt != ".png")
+              {
+                Image image = Image.FromFile(src);
+                image.Save(dst + ".png", ImageFormat.Png);
+              }
+              else
+              {
+                File.Copy(src, dst + logoExt, true);
+              }
               tw.WriteLine(chNameLog + ":  found logo <" + logoName + ">");
               iChWithLogo++;
             }
@@ -134,6 +158,7 @@ namespace LogoAutoRenamer
               iChNoLogo++;
             }
           }
+        }
       }
 
       tw.WriteLine("");
@@ -233,5 +258,25 @@ namespace LogoAutoRenamer
       }
       return (sb.ToString().Normalize(NormalizationForm.FormC));
     }
+
+    private static FileInfo[] GetFiles(DirectoryInfo dir, string searchPatterns)
+    {
+      ArrayList files = new ArrayList();
+      string[] patterns = searchPatterns.Split(',');
+      foreach (string pattern in patterns)
+      {
+        if (pattern.Length != 0)
+        {
+          files.AddRange(dir.GetFiles(pattern));
+        }
+      }
+      return (FileInfo[])files.ToArray(typeof(FileInfo));
+    }
+
+    #region DLL import
+    [DllImport("User32.dll", CharSet = CharSet.Auto)]
+    public static extern void DisableProcessWindowsGhosting();
+    #endregion
+
   }
 }
