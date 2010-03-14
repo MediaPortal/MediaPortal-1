@@ -20,6 +20,7 @@
 
 using System;
 using System.Text.RegularExpressions;
+using TvControl;
 using TvDatabase;
 using TvLibrary.Log;
 
@@ -41,7 +42,7 @@ namespace TvService
     private DateTime _dateTimeRecordingStarted;
     private Recording _recording;
     private readonly bool _isSerie;
-
+    private User _user;
     #endregion
 
     #region ctor
@@ -58,6 +59,12 @@ namespace TvService
     /// 
     public RecordingDetail(Schedule schedule, Channel channel, DateTime endTime, bool isSerie)
     {
+      _user = new User();
+      User.Name = string.Format("scheduler{0}", schedule.IdSchedule);
+      User.CardId = -1;
+      User.SubChannel = -1;
+      User.IsAdmin = true;      
+
       _schedule = schedule;
       _channel = channel;
       _endTime = endTime;
@@ -178,6 +185,11 @@ namespace TvService
     public bool IsSerie
     {
       get { return _isSerie; }
+    }
+
+    public User User
+    {
+      get { return _user; }
     }
 
     #endregion
