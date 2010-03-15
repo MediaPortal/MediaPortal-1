@@ -735,7 +735,7 @@ namespace MediaPortal.Configuration.Sections
           //
           // Add an action to the global node
           //
-          KeyAction action = new KeyAction(-1, "", "<New Action>", "");
+          KeyAction action = new KeyAction(0, "", "<New Action>", "");
           globalActions.Add(action);
 
           TreeNode actionNode = new TreeNode(action.Description + " (" + action.Id + ")");
@@ -762,7 +762,7 @@ namespace MediaPortal.Configuration.Sections
           ActionWindow window = new ActionWindow();
           windowActions.Add(window);
 
-          window.Id = -1;
+          window.Id = 0;
           window.Description = "<New Window>";
 
           TreeNode windowNode = new TreeNode(window.Description + " (" + window.Id + ")");
@@ -784,7 +784,7 @@ namespace MediaPortal.Configuration.Sections
           //
           // Add an action to the selected window
           //
-          KeyAction action = new KeyAction(-1, "", "<New Action>", "");
+          KeyAction action = new KeyAction(0, "", "<New Action>", "");
           window.Actions.Add(action);
 
           TreeNode actionNode = new TreeNode(action.Description + " (" + action.Id + ")");
@@ -845,14 +845,7 @@ namespace MediaPortal.Configuration.Sections
         {
           ActionWindow window = currentlySelectedNode.Tag as ActionWindow;
 
-          if (idTextBox.Text.Length > 0)
-          {
-            window.Id = Convert.ToInt32(idTextBox.Text);
-          }
-          else
-          {
-            window.Id = -1;
-          }
+          window.Id = idTextBox.Text.Length > 0 ? Convert.ToInt32(idTextBox.Text) : 0;
 
           currentlySelectedNode.Text = window.Description + " (" + window.Id + ")";
         }
