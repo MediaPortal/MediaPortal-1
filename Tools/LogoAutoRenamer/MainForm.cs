@@ -49,7 +49,7 @@ namespace LogoAutoRenamer
       string logoName = string.Empty;
       string logoExt = string.Empty;
       string log = "c:\\" + Assembly.GetExecutingAssembly().GetName().Name + ".log";
-      string[] dirs = { textBoxDst.Text, textBoxDst.Text + "\\TV", textBoxDst.Text + "\\Radio" };
+      string[] dirs = { textBoxDst.Text, textBoxDst.Text + "\\TV", textBoxDst.Text + "\\TV\\logos", textBoxDst.Text + "\\Radio" };
       char[] invalidChs = { '\\', '/', ':', '*', '?', '"', '<', '>', '|' };
 
       buttonStart.Enabled = false;
@@ -106,7 +106,7 @@ namespace LogoAutoRenamer
             }
 
             //Add rules for channels that end with (?) when ? is a number
-            rules.AddRange(AddRules(Regex.Replace(chName, @"(\([0-9]\))", string.Empty)));
+            rules.AddRange(AddRules(Regex.Replace(chName, @"(\([0-9]\))", string.Empty).Trim()));
 
             //Add standard rules
             rules.AddRange(AddRules(chSearch));
@@ -139,16 +139,10 @@ namespace LogoAutoRenamer
             if (foundLogo)
             {
               string src = textBoxSrc.Text + "\\" + logoName;
-              string dst = textBoxDst.Text + "\\" + chType.Trim() + "\\" + chName;
-              if (logoExt != ".png")
-              {
-                Image image = Image.FromFile(src);
-                image.Save(dst + ".png", ImageFormat.Png);
-              }
-              else
-              {
-                File.Copy(src, dst + logoExt, true);
-              }
+              string dir = chType.Trim() == "TV" ? "TV\\logos" : "Radio";
+              string dst = textBoxDst.Text + "\\" + dir + "\\" + chName + ".png";
+              Image image = Image.FromFile(src);
+              image.Save(dst, ImageFormat.Png);
               tw.WriteLine(chNameLog + ":  found logo <" + logoName + ">");
               iChWithLogo++;
             }
