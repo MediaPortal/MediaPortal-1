@@ -58,7 +58,9 @@ namespace TvService
         if (_cardHandler.DataBaseCard.Enabled == false)
           return TvResult.CardIsDisabled;
         Log.Info("card: Tune {0} to {1}", _cardHandler.DataBaseCard.IdCard, channel.Name);
-        lock (this)
+        
+        // fix mantis 0002776: Code locking in cardtuner can cause hangs 
+        //lock (this)
         {
           if (_cardHandler.IsLocal == false)
           {
