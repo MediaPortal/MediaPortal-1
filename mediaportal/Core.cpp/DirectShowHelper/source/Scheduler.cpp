@@ -82,11 +82,6 @@ UINT CALLBACK SchedulerThread(void* param)
 
   while (true)
   {
-    if (lastTimerId > 0)
-    {
-      timeKillEvent(lastTimerId);
-      lastTimerId = 0;
-    }
     LONGLONG now = GetCurrentTimestamp();
     p->csLock.Lock();
     LOG_TRACE("Scheduler got lock");
@@ -98,10 +93,6 @@ UINT CALLBACK SchedulerThread(void* param)
     if (p->bDone)
     {
       Log("Scheduler done.");
-      if (lastTimerId > 0)
-      {
-        timeKillEvent(lastTimerId);
-      }
       p->csLock.Unlock();
       return 0;
     }
@@ -115,7 +106,7 @@ UINT CALLBACK SchedulerThread(void* param)
 
       if (detectedFrameTime > 0) 
       {
-        timePerFrame = (LONGLONG)detectedFrameTime;
+        timePerFrame = detectedFrameTime;
       }
 
       // Every second frame matching to display device refresh rate
@@ -133,6 +124,7 @@ UINT CALLBACK SchedulerThread(void* param)
       // do not delay late frames
       delay = 0;
     }
+
     // set timer if delay is at least 1 ms
     if (delay >= 10000)
     {

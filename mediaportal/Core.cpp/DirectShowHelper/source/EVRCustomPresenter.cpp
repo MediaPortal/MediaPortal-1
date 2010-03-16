@@ -1023,16 +1023,26 @@ void MPEVRCustomPresenter::LogStats()
 {
 }
 
+
 HRESULT MPEVRCustomPresenter::CheckForScheduledSample(REFERENCE_TIME *pNextSampleTime, REFERENCE_TIME hnsLastSleepTime)
 {
   HRESULT hr = S_OK;
   LogStats();
   LOG_TRACE("Checking for scheduled sample (size: %d)", m_qScheduledSamples.Count());
   *pNextSampleTime = 0;
+
+  // only flush queues while not scrubbing and not in DVD menus
   if (m_bFlush)
   {
-    Flush();
-    return S_OK;
+    if (!m_bScrubbing && !m_bDVDMenu)
+    {
+      Flush();
+      return S_OK;
+    }
+    else
+    {
+      m_bFlush = FALSE;
+    }
   }
 
   while (m_qScheduledSamples.Count() > 0)
@@ -1364,7 +1374,7 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::ProcessMessage(MFVP_MESSAGE_TYPE
   {
     case MFVP_MESSAGE_FLUSH:
       // The presenter should discard any pending samples.
-      LOG_TRACE("ProcessMessage MFVP_MESSAGE_FLUSH");
+      Log("ProcessMessage MFVP_MESSAGE_FLUSH");
       // Delegate to avoid a weird deadlock with application-idle handler Flush();
       m_bFlush = TRUE;
       NotifyScheduler();
@@ -1612,11 +1622,17 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
       return E_FAIL;
     }
 
-    // Presenter is flushing samples, do not render! (not considered as failure)
-    // This should solve the random video frame freeze issue when stopping the playback
-    if (m_bFlush && !m_bScrubbing)
+    // Presenter is flushing samples, do not render unless scrubbing or in DVD menus
+    if (m_bFlush)
     {
-      return S_OK;
+      if (!m_bScrubbing && !m_bDVDMenu)
+      {
+        return S_OK;
+      }
+      else
+      {
+        m_bFlush = FALSE;
+      }
     }
 
     HRESULT hr;
