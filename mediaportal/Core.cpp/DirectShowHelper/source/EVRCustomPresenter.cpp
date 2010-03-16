@@ -979,7 +979,7 @@ HRESULT MPEVRCustomPresenter::PresentSample(IMFSample* pSample)
       pSample->GetSampleTime(&hnsTimeScheduled);
       if (hnsTimeScheduled > 0)
       {
-			  m_pCallback->SetSampleTime(hnsTimeScheduled);
+        m_pCallback->SetSampleTime(hnsTimeScheduled);
       }
     }
 
