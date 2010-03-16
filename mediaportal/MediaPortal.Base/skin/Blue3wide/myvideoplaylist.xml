@@ -86,7 +86,7 @@
           <posY>523</posY>
           <width>355</width>
           <height>87</height>
-          <font>font32</font>
+          <font>dingbats</font>
           <align>left</align>
           <textcolor>20ffffff</textcolor>
           <label>#currentplaytime</label>
