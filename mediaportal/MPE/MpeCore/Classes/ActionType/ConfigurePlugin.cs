@@ -48,7 +48,7 @@ namespace MpeCore.Classes.ActionType
 
     public string Description
     {
-      get { return "Execute the specified application"; }
+      get { return "Configure the specified plugin"; }
     }
 
     public SectionParamCollection GetDefaultParams()
@@ -61,6 +61,8 @@ namespace MpeCore.Classes.ActionType
 
     public SectionResponseEnum Execute(PackageClass packageClass, ActionItem actionItem)
     {
+      if (packageClass.Silent)
+        return SectionResponseEnum.Ok;
       try
       {
         if (!packageClass.Silent && File.Exists(MpeInstaller.TransformInRealPath(actionItem.Params[Const_APP].Value)))
