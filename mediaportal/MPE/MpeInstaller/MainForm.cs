@@ -464,7 +464,7 @@ namespace MpeInstaller
       {
         if (!silent)
           MessageBox.Show("This is a old format file. MpiInstaller will be used to install it! ");
-        Process.Start(MpeCore.MpeInstaller.TransformInRealPath("%Base%") + @"\MpInstaller.exe", file);
+        Process.Start(Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%Base%"), @"MpInstaller.exe"), file);
         return;
       }
       MpeCore.MpeInstaller.Init();
@@ -484,7 +484,7 @@ namespace MpeInstaller
           if (!silent)
             if (
               MessageBox.Show(
-                "This extension already have a installed version. \n This will be uninstalled first. \n Do you want to continue ?  \n" +
+                "This extension already have a installed version. \nThis will be uninstalled first. \nDo you want to continue ?  \n" +
                  "Old extension version: " + installedPak.GeneralInfo.Version + " \n" +
                  "New extension version: " + pak.GeneralInfo.Version,
                 "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
