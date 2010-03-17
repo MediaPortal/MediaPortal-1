@@ -3084,12 +3084,11 @@ namespace TvService
     public Dictionary<int, ChannelState> GetAllTimeshiftingAndRecordingChannels()
     {
       Dictionary<int, ChannelState> result = new Dictionary<int, ChannelState>();
-      Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
+      Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = _cards.Values;
 
-      while (enumerator.MoveNext())
-      {
-        KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
-        ITvCardHandler tvcard = keyPair.Value;
+
+      foreach (ITvCardHandler tvcard in cardHandlers)      
+      {                
         User[] users = tvcard.Users.GetUsers();
 
         if (users == null || users.Length == 0)

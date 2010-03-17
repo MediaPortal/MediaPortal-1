@@ -229,12 +229,18 @@ namespace TvService
         int cardsFound = 0;
         int number = 0;
         bool isOnlyActiveUserCurrentUser = IsOnlyActiveUserCurrentUser(cards, user);
+
+        Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = null;
+        if (tuningDetails != null && tuningDetails.Count > 0)
+        {
+          cardHandlers = cards.Values;  
+        }
+        
         foreach (IChannel tuningDetail in tuningDetails)
         {
           cardsUnAvailable.Clear();
           number++;
-          Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());          
-          Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = cards.Values;                    
+          Log.Info("Controller:   channel #{0} {1} ", number, tuningDetail.ToString());                    
           foreach (ITvCardHandler cardHandler in cardHandlers)
           {                        
             int cardId = cardHandler.DataBaseCard.IdCard;

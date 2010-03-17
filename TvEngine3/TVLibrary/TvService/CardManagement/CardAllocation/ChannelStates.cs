@@ -169,6 +169,8 @@ namespace TvService
         Dictionary<int, ChannelState> TSandRecStates = null;
         List<int> clearChannelStates = new List<int>();
 
+        Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = cards.Values;
+
         bool isOnlyActiveUserCurrentUser = IsOnlyActiveUserCurrentUser(cards, allUsers[0]);
 
         foreach (Channel ch in channels)
@@ -190,8 +192,7 @@ namespace TvService
           }
 
           foreach (IChannel tuningDetail in tuningDetails)
-          {
-            Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = cards.Values;
+          {            
             foreach (ITvCardHandler cardHandler in cardHandlers)
             {              
               int cardId = cardHandler.DataBaseCard.IdCard;              
