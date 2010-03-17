@@ -34,7 +34,7 @@ namespace MediaPortal.Configuration.Sections
     #region ctor
 
     public GeneralStartupDelay()
-      : this("Startup Delay") {}
+      : this("Startup Delay") { }
 
     public GeneralStartupDelay(string name)
       : base(name)
@@ -50,7 +50,9 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        nudDelay.Value = xmlreader.GetValueAsInt("general", "startup delay", 0);
+        nudDelay.Value = xmlreader.GetValueAsInt("general", "delay", 0);
+        mpCheckBoxMpStartup.Checked = xmlreader.GetValueAsBool("general", "delay startup", false);
+        mpCheckBoxMpResume.Checked = xmlreader.GetValueAsBool("general", "delay resume", false);
       }
       //
       // On single seat WaitForTvService is forced enabled !
@@ -62,7 +64,9 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        xmlreader.SetValue("general", "startup delay", nudDelay.Value);
+        xmlreader.SetValue("general", "delay", nudDelay.Value);
+        xmlreader.SetValueAsBool("general", "delay startup", mpCheckBoxMpStartup.Checked);
+        xmlreader.SetValueAsBool("general", "delay resume", mpCheckBoxMpResume.Checked);
         xmlreader.SetValueAsBool("general", "wait for tvserver", cbWaitForTvService.Checked);
       }
     }

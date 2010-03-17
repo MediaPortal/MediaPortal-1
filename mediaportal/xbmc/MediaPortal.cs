@@ -266,7 +266,9 @@ public class MediaPortalApp : D3DApp, IRender
           Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
         }
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", false);
-        _startupDelay = xmlreader.GetValueAsInt("general", "startup delay", 0);
+        _startupDelay = xmlreader.GetValueAsBool("general", "delay startup", false)
+                          ? xmlreader.GetValueAsInt("general", "delay", 0)
+                          : 0;
         _waitForTvServer = xmlreader.GetValueAsBool("general", "wait for tvserver", false);
         watchdogEnabled = xmlreader.GetValueAsBool("general", "watchdogEnabled", true);
         restartOnError = xmlreader.GetValueAsBool("general", "restartOnError", false);
@@ -1237,6 +1239,18 @@ public class MediaPortalApp : D3DApp, IRender
 
   private void OnResume()
   {
+    using (Settings xmlreader = new MPSettings())
+    {
+      int waitOnResume = xmlreader.GetValueAsBool("general", "delay resume", false)
+                       ? xmlreader.GetValueAsInt("general", "delay", 0)
+                       : 0;
+      if (waitOnResume > 0)
+      {
+        Log.Info("MP waiting on resume {0} secs", waitOnResume);
+        Thread.Sleep(waitOnResume * 1000);
+      }
+    }
+
     GUIGraphicsContext.ResetLastActivity(); // avoid ScreenSaver after standby
     ignoreContextMenuAction = true;
     if (_onResumeRunning == true)
