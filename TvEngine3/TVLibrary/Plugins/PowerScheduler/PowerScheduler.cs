@@ -1348,7 +1348,8 @@ namespace TvEngine.PowerScheduler
       if (controller != null && _reinitializeController)
       {
         Log.Debug("PowerScheduler: ReInit Controller");
-        controller.Restart();
+        Thread.Sleep(5000); // Give it a few seconds.
+        controller.Init();
         _reinitializeController = false;
         _cardsStopped = false;
       }
