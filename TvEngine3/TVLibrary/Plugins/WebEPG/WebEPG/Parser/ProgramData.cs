@@ -190,7 +190,7 @@ namespace MediaPortal.WebEPG.Parser
             {
               Regex replace = new Regex(actions[i].search);
               string newValue = replace.Replace(fieldText, actions[i].text);
-              SetElement(actions[i].field, newValue);
+              PutElement(actions[i].field, newValue);
             }
           }
         }
@@ -354,6 +354,33 @@ namespace MediaPortal.WebEPG.Parser
           break;
       }
       return null;
+    }
+
+    private void PutElement(string tag, string element)
+    {
+      try {
+        switch (tag)
+        {
+          case "#DESCRIPTION":
+            _description = element.Trim(' ', '\n', '\t');
+            break;
+          case "#TITLE":
+            Title = element.Trim(' ', '\n', '\t');
+            break;
+          case "#SUBTITLE":
+            SubTitle = element.Trim(' ', '\n', '\t');
+            break;
+          case "#GENRE":
+            Genre = element.Trim(' ', '\n', '\t');
+            break;
+          default:
+            break;
+        }
+      }
+      catch (Exception)
+      {
+        Log.Error("Parsing error {0} : {1}", tag, element);
+      }
     }
 
     //private string[,] GetSearchParams(string SearchList)
