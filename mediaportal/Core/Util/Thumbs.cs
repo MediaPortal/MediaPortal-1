@@ -60,6 +60,10 @@ namespace MediaPortal.Util
     public static readonly string TvRecordingSeriesIcon = "tvguide_recordserie_button.png";
     public static readonly string TvConflictRecordingIcon = "tvguide_recordconflict_button.png";
     public static readonly string TvConflictRecordingSeriesIcon = "tvguide_recordserie_conflict_button.png";
+    public static readonly string TvPartialRecordingIcon = "tvguide_part_record_button.png";
+    public static readonly string TvPartialRecordingSeriesIcon = "tvguide_part_recordserie_button.png";
+    public static readonly string TvConflictPartialRecordingIcon = "tvguide_part_recordconflict_button.png";
+    public static readonly string TvConflictPartialRecordingSeriesIcon = "tvguide_part_recordserie_conflict_button.png";
 
     public static readonly string TvIsRecordingIcon = "tv_is_recording.png";
     public static readonly string TvIsTimeshiftingIcon = "tv_is_timeshifting.png";

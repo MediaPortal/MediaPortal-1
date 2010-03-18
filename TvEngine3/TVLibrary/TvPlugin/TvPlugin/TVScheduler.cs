@@ -481,26 +481,32 @@ namespace TvPlugin
         strLogo = "defaultVideoBig.png";
       }
       bool conflicting = (schedule.ReferringConflicts().Count > 0);
+      Program program = Program.RetrieveByTitleTimesAndChannel(schedule.ProgramName, schedule.StartTime,
+                                                               schedule.EndTime, schedule.IdChannel);
+      bool isPartialRecording = (program != null) ? program.IsPartialRecordingSeriesPending : false;
+
       if (schedule.ScheduleType != (int)(ScheduleRecordingType.Once))
       {
         if (conflicting)
         {
-          item.PinImage = Thumbs.TvConflictRecordingSeriesIcon;
+          item.PinImage = isPartialRecording
+                            ? Thumbs.TvConflictPartialRecordingSeriesIcon
+                            : Thumbs.TvConflictRecordingSeriesIcon;
         }
         else
         {
-          item.PinImage = Thumbs.TvRecordingSeriesIcon;
+          item.PinImage = isPartialRecording ? Thumbs.TvPartialRecordingSeriesIcon : Thumbs.TvRecordingSeriesIcon;
         }
       }
       else
       {
         if (conflicting)
         {
-          item.PinImage = Thumbs.TvConflictRecordingIcon;
+          item.PinImage = isPartialRecording ? Thumbs.TvConflictPartialRecordingIcon : Thumbs.TvConflictRecordingIcon;
         }
         else
         {
-          item.PinImage = Thumbs.TvRecordingIcon;
+          item.PinImage = isPartialRecording ? Thumbs.TvPartialRecordingIcon : Thumbs.TvRecordingIcon;
         }
       }
       item.ThumbnailImage = strLogo;
@@ -575,7 +581,7 @@ namespace TvPlugin
                   continue;
                 }
 
-                item = Schedule2ListItem(rec);
+                item = Schedule2ListItem(recSeries);
                 item.MusicTag = rec;
                 item.TVTag = recSeries;
                 listSchedules.Add(item);

@@ -568,22 +568,23 @@ namespace TvPlugin
         {          
           if (!recordingSchedule.IsSerieIsCanceled(episode.StartTime, episode.IdChannel))
           {
-            string recThumb = Thumbs.TvRecordingIcon;
-            // TODO; do we want partial recordings even ?
-            /*if (isActualUpcomingEps && currentSchedule != null)
+            bool hasConflict = recordingSchedule.ReferringConflicts().Count > 0;
+            bool isPartialRecording = false;
+
+            //check for partial recordings.
+            if (isActualUpcomingEps && currentSchedule != null)
             {
-              //check for partial recordings.
-              bool isIsPartialRecording = Schedule.IsPartialRecording(currentSchedule, episode);
-              if (isIsPartialRecording)
-              {
-                recThumb = Thumbs.TvPartialRecordingIcon;
-              }
-            }*/
-            
-            item.PinImage = recordingSchedule.ReferringConflicts().Count > 0
-                              ? Thumbs.TvConflictRecordingIcon
-                              : recThumb;              
-            
+              isPartialRecording = Schedule.IsPartialRecording(currentSchedule, episode);
+            }
+            if (isPartialRecording)
+            {
+              item.PinImage = hasConflict ? Thumbs.TvConflictPartialRecordingIcon : Thumbs.TvPartialRecordingIcon;
+            }
+            else
+            {
+              item.PinImage = hasConflict ? Thumbs.TvConflictRecordingIcon : Thumbs.TvRecordingIcon;
+            }
+
             if (updateCurrentProgram)
             {
               currentProgram = episode;

@@ -139,6 +139,7 @@ namespace TvPlugin
     private bool _showChannelNumber = false;
     private int _channelNumberMaxLength = 3;
     private bool _useNewRecordingButtonColor = false;
+    private bool _useNewPartialRecordingButtonColor = false;
     private bool _useNewNotifyButtonColor = false;
     private bool _notificationEnabled = false;
     private bool _recalculateProgramOffset;
@@ -221,6 +222,8 @@ namespace TvPlugin
       }
       _useNewRecordingButtonColor =
         File.Exists(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_recButton_Focus_middle.png"));
+      _useNewPartialRecordingButtonColor =
+        File.Exists(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_partRecButton_Focus_middle.png"));
       _useNewNotifyButtonColor =
         File.Exists(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_notifyButton_Focus_middle.png"));
     }
@@ -1437,37 +1440,42 @@ namespace TvPlugin
         {
           GUIImage img = (GUIImage)GetControl((int)Controls.IMG_REC_PIN);
 
+          bool bPartialRecording = _currentProgram.IsPartialRecordingSeriesPending;
+
           if (bConflict)
           {
             if (bSeries)
             {
-              img.SetFileName(Thumbs.TvConflictRecordingSeriesIcon);
+              img.SetFileName(bPartialRecording ?
+                Thumbs.TvConflictPartialRecordingSeriesIcon : Thumbs.TvConflictRecordingSeriesIcon);
             }
             else
             {
-              img.SetFileName(Thumbs.TvConflictRecordingIcon);
+              img.SetFileName(bPartialRecording ?
+                Thumbs.TvConflictPartialRecordingIcon : Thumbs.TvConflictRecordingIcon);
             }
           }
           else if (bSeries)
           {
-            //TODO: do we even want partial recordings ?
-            /*
-            bool bPartialRecording = _currentProgram.IsPartialRecordingSeriesPending;
-
             if (bPartialRecording)
             {
-              img.SetFileName(Thumbs.TvPartialRecordingIcon);  
+              img.SetFileName(Thumbs.TvPartialRecordingSeriesIcon);  
             }
             else
             {
               img.SetFileName(Thumbs.TvRecordingSeriesIcon);  
-            }*/
-            img.SetFileName(Thumbs.TvRecordingSeriesIcon);  
-            
+            }
           }
           else
           {
-            img.SetFileName(Thumbs.TvRecordingIcon);
+            if (bPartialRecording)
+            {
+              img.SetFileName(Thumbs.TvPartialRecordingIcon);
+            }
+            else
+            {
+              img.SetFileName(Thumbs.TvRecordingIcon);
+            }
           }
           GUIControl.ShowControl(GetID, (int)Controls.IMG_REC_PIN);
         }
@@ -1831,39 +1839,42 @@ namespace TvPlugin
         }
         if (bRecording)
         {
-          bool bPartialRecording = _currentProgram.IsPartialRecordingSeriesPending;
-          if (_useNewRecordingButtonColor)
+          bool bPartialRecording = program.IsPartialRecordingSeriesPending;
+
+          if (bPartialRecording && _useNewPartialRecordingButtonColor)
           {
-            img.TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
-            img.TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
-            img.TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
-            img.TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
-            img.TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
-            img.TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
+            img.TexutureFocusLeftName = "tvguide_partRecButton_Focus_left.png";
+            img.TexutureFocusMidName = "tvguide_partRecButton_Focus_middle.png";
+            img.TexutureFocusRightName = "tvguide_partRecButton_Focus_right.png";
+            img.TexutureNoFocusLeftName = "tvguide_partRecButton_noFocus_left.png";
+            img.TexutureNoFocusMidName = "tvguide_partRecButton_noFocus_middle.png";
+            img.TexutureNoFocusRightName = "tvguide_partRecButton_noFocus_right.png";
           }
           else
           {
-            if (bConflict)
+            if (_useNewRecordingButtonColor)
             {
-              img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
-            }
-            else if (bSeries)
-            {
-              //TODO: do we even want partial recordings ?
-              /*
-              if (bPartialRecording)
-              {
-                img.TexutureIcon = Thumbs.TvPartialRecordingIcon;
-              }
-              else
-              {
-                img.TexutureIcon =Thumbs.TvRecordingSeriesIcon;
-              } */
-              img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
+              img.TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
+              img.TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
+              img.TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
+              img.TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
+              img.TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
+              img.TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
             }
             else
             {
-              img.TexutureIcon = Thumbs.TvRecordingIcon;
+              if (bConflict)
+              {
+                img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
+              }
+              else if (bSeries)
+              {
+                img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
+              }
+              else
+              {
+                img.TexutureIcon = Thumbs.TvRecordingIcon;
+              }
             }
           }
         }
@@ -2136,42 +2147,42 @@ namespace TvPlugin
             }
             if (bRecording)
             {
-              if (_useNewRecordingButtonColor)
+              bool bPartialRecording = program.IsPartialRecordingSeriesPending;
+
+              if (bPartialRecording && _useNewPartialRecordingButtonColor)
               {
-                img.TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
-                img.TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
-                img.TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
-                img.TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
-                img.TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
-                img.TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
+                img.TexutureFocusLeftName = "tvguide_partRecButton_Focus_left.png";
+                img.TexutureFocusMidName = "tvguide_partRecButton_Focus_middle.png";
+                img.TexutureFocusRightName = "tvguide_partRecButton_Focus_right.png";
+                img.TexutureNoFocusLeftName = "tvguide_partRecButton_noFocus_left.png";
+                img.TexutureNoFocusMidName = "tvguide_partRecButton_noFocus_middle.png";
+                img.TexutureNoFocusRightName = "tvguide_partRecButton_noFocus_right.png";
               }
               else
               {
-                if (bConflict)
+                if (_useNewRecordingButtonColor)
                 {
-                  img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
-                }
-                else if (bSeries)
-                {
-                  //TODO: do we even want partial recordings ?
-                  /*
-                  bool bPartialRecording = program.IsPartialRecordingSeriesPending;
-                  
-                  if (bPartialRecording)
-                  {
-                    img.TexutureIcon = Thumbs.TvPartialRecordingIcon;  
-                  }
-                  else
-                  {
-                    img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;  
-                  }*/
-
-                  img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;  
-                  
+                  img.TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
+                  img.TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
+                  img.TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
+                  img.TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
+                  img.TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
+                  img.TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
                 }
                 else
                 {
-                  img.TexutureIcon = Thumbs.TvRecordingIcon;
+                  if (bConflict)
+                  {
+                    img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
+                  }
+                  else if (bSeries)
+                  {
+                    img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
+                  }
+                  else
+                  {
+                    img.TexutureIcon = Thumbs.TvRecordingIcon;
+                  }
                 }
               }
             }
@@ -2234,7 +2245,8 @@ namespace TvPlugin
 
             if (program.IsRunningAt(dt))
             {
-              if (img.TexutureFocusMidName != "tvguide_recButton_Focus_middle.png")
+              if (img.TexutureFocusMidName != "tvguide_recButton_Focus_middle.png" &&
+                  img.TexutureFocusMidName != "tvguide_partRecButton_Focus_middle.png")
               {
                 img.TexutureNoFocusLeftName = "tvguide_button_left.png";
                 img.TexutureNoFocusMidName = "tvguide_button_middle.png";

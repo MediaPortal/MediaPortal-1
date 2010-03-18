@@ -176,6 +176,26 @@ namespace TvDatabase
       get { return !_deltaInWorkingDay ? (DayOfWeek.Sunday) : (DayOfWeek.Saturday); }
     }
 
+    /// <summary>
+    /// Returns a comma separated list of the weekend days as 
+    /// numbers suitable for use in SQL queries
+    /// </summary>
+    /// <value>the weekend days list</value>
+    public string SqlWeekendDays
+    {
+      get { return !_deltaInWorkingDay ? "1,7" : "6,7"; }
+    }
+
+    /// <summary>
+    /// Returns a comma separated list of the working days as 
+    /// numbers suitable for use in SQL queries
+    /// </summary>
+    /// <value>the working days list</value>
+    public string SqlWorkingDays
+    {
+      get { return !_deltaInWorkingDay ? "2,3,4,5,6" : "1,2,3,4,5"; }
+    }
+
     #endregion
   }
 }

@@ -754,6 +754,11 @@ namespace TvService
         heartBeatMonitorThread.Name = "HeartBeatMonitor";
         heartBeatMonitorThread.IsBackground = true;
         heartBeatMonitorThread.Start();
+
+        // Re-evaluate program states
+        Log.Info("Controller: recalculating program states");
+        TvDatabase.Program.ResetAllStates();
+        Schedule.SynchProgramStatesForAll();
       }
       catch (Exception ex)
       {

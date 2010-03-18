@@ -87,27 +87,27 @@ namespace TvPlugin
           break;
 
         case (int)ScheduleRecordingType.Daily:
-          programs = Program.RetrieveDaily(startTime, endTime, rec.ReferencedChannel().IdChannel);
+          programs = Program.RetrieveDaily(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);
           break;
 
         case (int)ScheduleRecordingType.WorkingDays:
-          programs = Program.RetrieveWorkingDays(startTime, endTime, rec.ReferencedChannel().IdChannel);
+          programs = Program.RetrieveWorkingDays(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);
           break;
 
         case (int)ScheduleRecordingType.Weekends:
-          programs = Program.RetrieveWeekends(startTime, endTime, rec.ReferencedChannel().IdChannel);
+          programs = Program.RetrieveWeekends(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);
           break;
 
         case (int)ScheduleRecordingType.Weekly:
-          programs = Program.RetrieveWeekly(startTime, endTime, rec.ReferencedChannel().IdChannel);
+          programs = Program.RetrieveWeekly(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);
           break;
 
         case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
-          programs = Program.RetrieveEveryTimeOnThisChannel(rec.ProgramName, rec.ReferencedChannel().IdChannel);
+          programs = Program.RetrieveEveryTimeOnThisChannel(rec.ProgramName, rec.ReferencedChannel().IdChannel, _days);
           break;
 
         case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
-          programs = Program.RetrieveEveryTimeOnEveryChannel(rec.ProgramName);
+          programs = Program.RetrieveEveryTimeOnEveryChannel(rec.ProgramName, _days);
           break;
 
       }
