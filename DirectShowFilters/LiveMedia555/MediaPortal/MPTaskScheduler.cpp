@@ -33,7 +33,6 @@ MPTaskScheduler::MPTaskScheduler()
 }
 
 MPTaskScheduler::~MPTaskScheduler() {
-	BasicTaskScheduler::~BasicTaskScheduler();
 }
 
 void MPTaskScheduler::doEventLoop(char* watchVariable) {

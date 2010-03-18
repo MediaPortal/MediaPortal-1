@@ -38,7 +38,6 @@ MPMPEG2TransportStreamFromPESSource
 
 MPMPEG2TransportStreamFromPESSource::~MPMPEG2TransportStreamFromPESSource() 
 {
-	MPEG2TransportStreamFromPESSource::~MPEG2TransportStreamFromPESSource();
 	LogDebug("MPEG2TransportStreamFromPESSource::dtor:%x",this);
 	fMPInputSource=NULL;
 }

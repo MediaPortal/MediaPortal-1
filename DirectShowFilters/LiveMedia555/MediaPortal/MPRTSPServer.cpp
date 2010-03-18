@@ -62,7 +62,6 @@ MPRTSPServer::MPRTSPServer(UsageEnvironment& env,
 }
 
 MPRTSPServer::~MPRTSPServer() {
-	RTSPServer::~RTSPServer();
 }
 
 RTSPServer::RTSPClientSession*
@@ -84,7 +83,6 @@ MPRTSPServer::MPRTSPClientSession
 }
 
 MPRTSPServer::MPRTSPClientSession::~MPRTSPClientSession() {
-	RTSPServer::RTSPClientSession::~RTSPClientSession();
 	fOurMPServer.RemoveClient(this);
 }
 
