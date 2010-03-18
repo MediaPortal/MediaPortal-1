@@ -1491,7 +1491,16 @@ namespace MediaPortal.Player
           }
           if (needRebuild)
           {
-            Log.Info("Doing full graph rebuild for {0}.", iChangedMediaTypes);
+            // this is a hack for MS Video Decoder and AC3 audio change
+            // would suggest to always do full audio and video rendering for all filters
+            IBaseFilter MSVideoCodec = null;
+            _graphBuilder.FindFilterByName("Microsoft DTV-DVD Video Decoder", out MSVideoCodec);
+            if (MSVideoCodec != null)
+            {
+              iChangedMediaTypes = 3;
+              DirectShowUtil.ReleaseComObject(MSVideoCodec); MSVideoCodec = null;
+            }
+            // hack end
             switch (iChangedMediaTypes)
             {
               case 1: // audio changed
@@ -1503,9 +1512,8 @@ namespace MediaPortal.Player
                 ReAddFilters("Video");
                 break;
               case 3: // both changed
-                Log.Info("Rerendering audio pin of tsreader filter.");
+                Log.Info("Rerendering audio and video pins of tsreader filter.");
                 ReAddFilters("Audio");
-                Log.Info("Rerendering video pin of tsreader filter.");
                 ReAddFilters("Video");
                 break;
             }
