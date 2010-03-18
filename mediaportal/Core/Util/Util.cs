@@ -1533,6 +1533,11 @@ namespace MediaPortal.Util
 
           success = (ExternalProc.HasExited && ExternalProc.ExitCode == aFailConditions.SuccessExitCode);
 
+          if(!success)
+          {
+            Log.Error("Util: Error executing {0}: return code {1}", aAppName, ExternalProc.ExitCode);
+          }
+
           ExternalProc.OutputDataReceived -= new DataReceivedEventHandler(OutputDataHandler);
           ExternalProc.ErrorDataReceived -= new DataReceivedEventHandler(ErrorDataHandler);
         }
