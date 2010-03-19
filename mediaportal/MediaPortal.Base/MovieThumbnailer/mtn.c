@@ -1564,6 +1564,8 @@ void make_thumbnail(char *file)
     if(strcmp(sfx,".ts")==0)
     {
         AVFormatParameters ap;
+        
+        memset(&ap,0,sizeof(ap));
         ap.mpeg2ts_raw = 1;
         ap.mpeg2ts_compute_pcr = 1;
 
