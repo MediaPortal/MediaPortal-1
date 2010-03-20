@@ -1560,7 +1560,6 @@ void make_thumbnail(char *file)
     
     double duration = 0.0;
     char *sfx = strrchr(file, '.');
-    int isTs = 0; 
     if(strcmp(sfx,".ts")==0)
     {
         AVFormatParameters ap;
@@ -1579,7 +1578,6 @@ void make_thumbnail(char *file)
             av_log(NULL, AV_LOG_ERROR, "\n%s: av_find_stream_info %s failed: %d\n", gb_argv0, file, ret);
             goto cleanup;
         }
-        isTs = 1;
         duration = (double) pFormatCtx->duration / AV_TIME_BASE;
         if (NULL != pFormatCtx)
           av_close_input_file(pFormatCtx);
@@ -1665,10 +1663,9 @@ void make_thumbnail(char *file)
     // is this a codec bug? it seem this value can be in the header or in the stream.
     AVRational sample_aspect_ratio = pCodecCtx->sample_aspect_ratio;
 
-    if(!isTs)
-    {
-     duration = (double) pFormatCtx->duration / AV_TIME_BASE; // can be unknown & can be incorrect (e.g. .vob files)
-    }
+    if (((double) pFormatCtx->duration / AV_TIME_BASE) > duration)
+      duration = (double) pFormatCtx->duration / AV_TIME_BASE; // can be unknown & can be incorrect (e.g. .vob files)
+
     if (duration <= 0.0) {
         duration = guess_duration(pFormatCtx, video_index, pCodecCtx, pFrame);
         // have to turn timestamping off because it'll be incorrect
