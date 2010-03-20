@@ -17,6 +17,9 @@
 #include "StdAfx.h"
 #include <streams.h>  // CAutolock
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 #define ABS64(num) (num >=0 ? num : -num)
 #define LowDW(num) ((unsigned __int64)(unsigned long)(num & 0xFFFFFFFFUL))
 #define HighDW(num) ((unsigned __int64)(num >> 32))

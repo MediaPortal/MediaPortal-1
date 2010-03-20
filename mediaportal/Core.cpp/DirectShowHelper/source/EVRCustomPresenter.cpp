@@ -32,6 +32,9 @@
 #include "statsrenderer.h"
 #include "autoint.h"
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 void LogIID(REFIID riid)
 {
   LPOLESTR str;
@@ -166,6 +169,8 @@ void MPEVRCustomPresenter::ResetEVRStatCounters()
 
 MPEVRCustomPresenter::~MPEVRCustomPresenter()
 {
+  Log("destructor");
+  
   if (m_pCallback != NULL)
   {
     m_pCallback->PresentImage(0, 0, 0, 0, 0, 0);
@@ -179,6 +184,7 @@ MPEVRCustomPresenter::~MPEVRCustomPresenter()
   {
     m_vFreeSamples[i] = 0;
   }
+  delete m_pStatsRenderer;
   Log("Done");
 }	
 

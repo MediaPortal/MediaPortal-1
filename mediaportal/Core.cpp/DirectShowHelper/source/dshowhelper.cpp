@@ -31,6 +31,9 @@
 #include "evrcustomPresenter.h"
 #include "dx9allocatorpresenter.h"
 
+// For more details for memory leak detection see the alloctracing.h header
+//#include "..\..\alloctracing.h"
+
 using namespace std;
 
 HMODULE m_hModuleDXVA2    = NULL;
@@ -630,7 +633,7 @@ void EvrDeinit()
 {
   try
   {
-    int hr;
+    int refCount(0);
     if (m_pControl) 
     {
       m_pControl->Release();
@@ -639,9 +642,9 @@ void EvrDeinit()
     if (m_evrPresenter!=NULL)
     {
 
-        hr = m_evrPresenter->Release();
+      refCount = m_evrPresenter->Release();
       m_evrPresenter = NULL;
-      Log("EVRDeinit:m_evrPresenter release:%d", hr);
+      Log("EVRDeinit:m_evrPresenter release: %d", refCount);
     }
     m_evrPresenter = NULL;
 

@@ -25,6 +25,9 @@
 #define __IDxtKey_INTERFACE_DEFINED__
 #include <qedit.h>
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 // Function prototypes
 int GrabBitmaps(TCHAR * szFile);
 HRESULT GetPin(IBaseFilter * pFilter, PIN_DIRECTION dirrequired,  int iNum, IPin **ppPin);
@@ -33,7 +36,6 @@ IPin *  GetOutPin( IBaseFilter *pFilter, int Num );
 
 // Constants
 #define NUM_FRAMES_TO_GRAB  1
-
 
 extern void Log(const char *fmt, ...) ;
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="DirectShowHelper"
 	ProjectGUID="{7C2419B3-501B-4B10-B3D4-E81BEB16843F}"
 	RootNamespace="dshowhelper"
@@ -244,6 +244,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\alloctracing.h"
+				>
+			</File>
 			<File
 				RelativePath=".\source\autoint.h"
 				>

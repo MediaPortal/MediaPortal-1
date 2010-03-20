@@ -22,6 +22,9 @@ using namespace std;
 #include <vector>
 #include <shlobj.h>
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 #pragma warning(disable:4996)
 #pragma warning(disable:4995)
 #pragma warning(disable:4244)
