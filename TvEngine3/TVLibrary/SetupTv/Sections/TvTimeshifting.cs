@@ -223,5 +223,29 @@ namespace SetupTv.Sections
     #endregion
 
     private void groupBoxTimeshiftSettings_Enter(object sender, EventArgs e) {}
+
+    private void numericUpDownMaxFileSize_ValueChanged(object sender, EventArgs e)
+    {
+        lblMinFileSizeNeeded.Text = "Minimum drive space needed: ";
+        lblMinFileSizeNeeded.Text += (3 * numericUpDownMaxFileSize.Value) + " MByte";
+        lblFileSizeNeeded.Text = "Drive space needed: ";
+        lblFileSizeNeeded.Text += (numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) + numericUpDownMaxFileSize.Value + " MByte";
+        lblOverhead.Text = "Drive space overhead needed: ";
+        lblOverhead.Text += numericUpDownMaxFileSize.Value + " MByte";
+        lblTimeSD.Text = "Maximum timeshifting for SD content: approx." + ((float)(numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) / 100f * 2.75f) + " Minutes";
+        lblTimeHD.Text = "Maximum timeshifting for HD content: approx." + ((float)(numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) / 100f * 1.00f) + " Minutes";
+    }
+
+    private void numericUpDownMinFiles_ValueChanged(object sender, EventArgs e)
+    {
+        lblMinFileSizeNeeded.Text = "Minimum drive space needed: ";
+        lblMinFileSizeNeeded.Text += (3 * numericUpDownMaxFileSize.Value)+ " MByte";
+        lblFileSizeNeeded.Text = "Drive space needed: ";
+        lblFileSizeNeeded.Text += (numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) + numericUpDownMaxFileSize.Value + " MByte";
+        lblOverhead.Text = "Drive space overhead needed: ";
+        lblOverhead.Text += numericUpDownMaxFileSize.Value + " MByte";
+        lblTimeSD.Text = "Maximum timeshifting for SD content: approx." + ((float)(numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) / 100f * 2.75f) + " Minutes";
+        lblTimeHD.Text = "Maximum timeshifting for HD content: approx." + ((float)(numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) / 100f * 1.00f) + " Minutes";
+    }
   }
 }
