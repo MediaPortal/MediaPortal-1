@@ -259,16 +259,6 @@ namespace MediaPortal.Player
         _graphBuilder = (IGraphBuilder)new FilterGraph();
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
-        #region add vmr9
-        if (!_isRadio)
-        {
-          _vmr9 = new VMR9Util();
-          _vmr9.AddVMR9(_graphBuilder);
-          _vmr9.Enable(false);
-        }
-
-        #endregion
-
         if (strAudioRenderer.Length > 0) //audio renderer must be in graph before audio switcher
         {
           _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, true);
@@ -323,6 +313,12 @@ namespace MediaPortal.Player
         #endregion
 
         #region add codecs
+        // does .ts file contain video?
+        // default is _isRadio=false which prevents recorded radio file playing
+        if (_videoFormat.IsValid)
+          _isRadio = false;
+        else
+          _isRadio = true;
 
         Log.Info("TSReaderPlayer: Add codecs");
         // add preferred video & audio codecs
@@ -332,6 +328,10 @@ namespace MediaPortal.Player
 
         if (!_isRadio)
         {
+          _vmr9 = new VMR9Util();
+          _vmr9.AddVMR9(_graphBuilder);
+          _vmr9.Enable(false);
+
           DirectShowUtil.AddFilterToGraph(_graphBuilder, videoFilter);
           if (enableDVBBitmapSubtitles)
           {
