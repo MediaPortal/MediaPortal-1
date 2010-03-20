@@ -309,16 +309,6 @@ void FontEngineRemoveTexture(int textureNo)
 //*******************************************************************************************************************
 int FontEngineAddTexture(int hashCode, bool useAlphaBlend, void* texture)
 {
-  //char log[128];
-  //sprintf(log,"FontEngineAddTexture(%x)\n", hashCode);
-  //Log(log);
-  /*if(inPresentTextures)
-  {
-    char log[128];
-    sprintf(log,"FontEngineAddTexture -- called when inPresentTextures == true - possible bug...\n");
-    Log(log);    
-  }*/
-
   int selected=-1;
   for (int i=0; i < MAX_TEXTURES;++i)
   {
@@ -612,14 +602,6 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
   float x4=matrix.ScaleFinalXCoord(xpos2,ypos);
   float y4=matrix.ScaleFinalYCoord(xpos2,ypos);
   float z4=matrix.ScaleFinalZCoord(xpos2,ypos);
-
-  if (z1>0.0f||z2>0.0f || z3>0.0f || z4>0.0f)
-  {
-    char szbuf[1024];
-    sprintf(szbuf,"(%02.2f,%02.2f,%02.2f,%02.2f,%02.2f,%02.2f) (%02.2f,%02.2f,%02.2f,%02.2f,%02.2f,%02.2f) (%02.2f,%02.2f,%02.2f,%02.2f,%02.2f,%02.2f) (%02.2f,%02.2f,%02.2f,%02.2f,%02.2f,%02.2f)\n",
-            x1,y1,z1, x2,y2,z2, x3,y3,z3, x4,y4,z4);
-    ::OutputDebugStringA(szbuf);
-  }
 
   //upper left
   if (texture->vertices[iv].tu != tx1 || texture->vertices[iv].tv !=ty1 || texture->vertices[iv].color!=color ||
