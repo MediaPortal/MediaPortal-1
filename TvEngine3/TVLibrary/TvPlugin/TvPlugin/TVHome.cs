@@ -957,7 +957,12 @@ namespace TvPlugin
         {
           //Card.User.Name = new User().Name;
           if (g_Player.Playing)
-            TVHome.StopPlayerMainThread();
+          {
+            if (g_Player.IsTimeShifting) // live TV or radio must be stopped
+              TVHome.StopPlayerMainThread();
+            else // playing something else so do not disturb
+              return true;
+          }
 
           if (g_Player.FullScreen)
           {
@@ -1766,7 +1771,7 @@ namespace TvPlugin
       {
         return;
       }
-      if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_RADIO)
+      if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_RADIO || GUIWindowManager.ActiveWindow == (int)Window.WINDOW_RADIO_GUIDE)
       {
         return;
       }
@@ -2002,7 +2007,6 @@ namespace TvPlugin
     }
 
     public static void UpdateTimeShift() { }
-
 
     private void OnActiveRecordings()
     {

@@ -1344,7 +1344,7 @@ namespace TvPlugin
       Log.Info("TvRecorded Play:{0} - using rtsp mode:{1}", fileName, useRTSP);
       if (g_Player.Play(fileName, g_Player.MediaType.Recording))
       {
-        if (Utils.IsVideo(fileName))
+        if (Utils.IsVideo(fileName) && !g_Player.IsRadio)
         {
           //g_Player.SeekAbsolute(0); //this seek sometimes causes a deadlock in tsreader. original problem still present.
           g_Player.ShowFullScreenWindow();

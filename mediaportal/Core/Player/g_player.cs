@@ -1345,7 +1345,7 @@ namespace MediaPortal.Player
         {
           return false;
         }
-        return (_currentMedia == MediaType.Radio);
+        return (_player.IsRadio);
       }
     }
 

@@ -2259,13 +2259,8 @@ namespace TvPlugin
         {
           case 938: // view channel
             Log.Debug("viewch channel:{0}", _currentChannel);
-            TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
-            if (TVHome.Card.IsTimeShifting && TVHome.Card.IdChannel == _currentProgram.ReferencedChannel().IdChannel)
-            {
-              g_Player.ShowFullScreenWindow();
-            }
+            TVHome.ViewChannel(_currentProgram.ReferencedChannel());
             return;
-
 
           case 939: // switch mode
             OnSwitchMode();
@@ -2358,14 +2353,14 @@ namespace TvPlugin
                 break;
               case 938:
                 Log.Debug("RadioGuide: switch currently running show to fullscreen");
-                TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
+                TVHome.ViewChannel(_currentProgram.ReferencedChannel());
                 break;
             }
           }
           else
           {
             // zap to selected show's channel
-            TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
+            TVHome.ViewChannel(_currentProgram.ReferencedChannel());
           }
         }
         else
