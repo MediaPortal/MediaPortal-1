@@ -106,7 +106,7 @@ UINT CALLBACK SchedulerThread(void* param)
 
       if (detectedFrameTime > 0) 
       {
-        timePerFrame = detectedFrameTime;
+        timePerFrame = (LONGLONG)detectedFrameTime;
       }
 
       // Every second frame matching to display device refresh rate
