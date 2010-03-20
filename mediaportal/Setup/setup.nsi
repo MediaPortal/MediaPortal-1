@@ -394,6 +394,7 @@ Section "MediaPortal core files (required)" SecCore
     /x MediaPortalDirs.xml \
     /x wikipedia.xml \
     /x yac-area-codes.xml \
+    /x mtn.c \
     "
 
 ### AUTO-GENERATED   UNINSTALLATION CODE ###
