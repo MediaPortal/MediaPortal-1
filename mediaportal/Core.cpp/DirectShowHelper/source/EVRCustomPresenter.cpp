@@ -68,7 +68,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   {
     HRESULT hr;
     LogRotate();
-    Log("----------v1.3.1---------------------------");
+    Log("----------v1.3.1------------ instance 0x%x", this);
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
     hr = m_pDXVA2CreateDirect3DDeviceManager9(&m_iResetToken, &m_pDeviceManager);
@@ -169,7 +169,7 @@ void MPEVRCustomPresenter::ResetEVRStatCounters()
 
 MPEVRCustomPresenter::~MPEVRCustomPresenter()
 {
-  Log("destructor");
+  Log("EVRCustomPresenter::dtor - instance 0x%x", this);
   
   if (m_pCallback != NULL)
   {

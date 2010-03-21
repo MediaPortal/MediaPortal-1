@@ -641,7 +641,6 @@ void EvrDeinit()
     }
     if (m_evrPresenter!=NULL)
     {
-
       refCount = m_evrPresenter->Release();
       m_evrPresenter = NULL;
       Log("EVRDeinit:m_evrPresenter release: %d", refCount);
