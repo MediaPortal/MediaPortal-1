@@ -58,7 +58,7 @@ namespace TvPlugin
   {
     #region constants
 
-    private const int HEARTBEAT_INTERVAL = 5; //seconds
+    private const int HEARTBEAT_INTERVAL = 1; //seconds
     private const int MAX_WAIT_FOR_SERVER_CONNECTION = 10; //seconds
     private const int WM_POWERBROADCAST = 0x0218;
     private const int WM_QUERYENDSESSION = 0x0011;
@@ -125,6 +125,7 @@ namespace TvPlugin
     private static bool _ServerNotConnectedHandled = false;
     private static bool _recoverTV = false;
     private static bool _connected = false;
+    private static bool _isAnyCardRecording = false;
     protected static TvServer _server;
 
     private static ManualResetEvent _waitForBlackScreen = null;
@@ -1079,6 +1080,11 @@ namespace TvPlugin
       }
     }
 
+    public static bool IsAnyCardRecording
+    {
+      get { return _isAnyCardRecording; }
+    }
+
     public static bool Connected
     {
       get { return _connected; }
@@ -1387,20 +1393,32 @@ namespace TvPlugin
 
     private void HeartBeatTransmitter()
     {
+      int countToHBLoop = 5;
+
       while (true)
       {
-        if (!Connected) // is this needed to update connection status
-          RefreshConnectionState();
-        if (Connected && !_suspended)
+        // 1 second loop
+        if (Connected)
         {
-          bool isTS = (Card != null && Card.IsTimeShifting);
-          if (Connected && isTS)
-          {
-            // send heartbeat to tv server each 5 sec.
-            // this way we signal to the server that we are alive thus avoid being kicked.
-            // Log.Debug("TVHome: sending HeartBeat signal to server.");
+          _isAnyCardRecording = TvServer.IsAnyCardRecording();          
+        }
 
-            // when debugging we want to disable heartbeats
+        // HeartBeat loop (5 seconds)
+        if (countToHBLoop >= 5)
+        {
+          countToHBLoop = 0;
+          if (!Connected) // is this needed to update connection status
+            RefreshConnectionState();
+          if (Connected && !_suspended)
+          {
+            bool isTS = (Card != null && Card.IsTimeShifting);
+            if (Connected && isTS)
+            {
+              // send heartbeat to tv server each 5 sec.
+              // this way we signal to the server that we are alive thus avoid being kicked.
+              // Log.Debug("TVHome: sending HeartBeat signal to server.");
+
+              // when debugging we want to disable heartbeats
 #if !DEBUG
             try
             {
@@ -1411,43 +1429,45 @@ namespace TvPlugin
               Log.Error("TVHome: failed sending HeartBeat signal to server. ({0})", e.Message);
             }
 #endif
-          }
-          else if (Connected && !isTS && !_playbackStopped && _onPageLoadDone &&
-                   (!g_Player.IsTVRecording && (g_Player.IsTV || g_Player.IsRadio)))
-          {
-            // check the possible reason why timeshifting has suddenly stopped
-            // maybe the server kicked the client b/c a recording on another transponder was due.
-
-            TvStoppedReason result = Card.GetTimeshiftStoppedReason;
-            if (result != TvStoppedReason.UnknownReason)
+            }
+            else if (Connected && !isTS && !_playbackStopped && _onPageLoadDone &&
+                     (!g_Player.IsTVRecording && (g_Player.IsTV || g_Player.IsRadio)))
             {
-              Log.Debug("TVHome: Timeshifting seems to have stopped - TvStoppedReason:{0}", result);
-              string errMsg = "";
+              // check the possible reason why timeshifting has suddenly stopped
+              // maybe the server kicked the client b/c a recording on another transponder was due.
 
-              switch (result)
+              TvStoppedReason result = Card.GetTimeshiftStoppedReason;
+              if (result != TvStoppedReason.UnknownReason)
               {
-                case TvStoppedReason.HeartBeatTimeOut:
-                  errMsg = GUILocalizeStrings.Get(1515);
-                  break;
-                case TvStoppedReason.KickedByAdmin:
-                  errMsg = GUILocalizeStrings.Get(1514);
-                  break;
-                case TvStoppedReason.RecordingStarted:
-                  errMsg = GUILocalizeStrings.Get(1513);
-                  break;
-                case TvStoppedReason.OwnerChangedTS:
-                  errMsg = GUILocalizeStrings.Get(1517);
-                  break;
-                default:
-                  errMsg = GUILocalizeStrings.Get(1516);
-                  break;
-              }
+                Log.Debug("TVHome: Timeshifting seems to have stopped - TvStoppedReason:{0}", result);
+                string errMsg = "";
 
-              NotifyUser(errMsg);
+                switch (result)
+                {
+                  case TvStoppedReason.HeartBeatTimeOut:
+                    errMsg = GUILocalizeStrings.Get(1515);
+                    break;
+                  case TvStoppedReason.KickedByAdmin:
+                    errMsg = GUILocalizeStrings.Get(1514);
+                    break;
+                  case TvStoppedReason.RecordingStarted:
+                    errMsg = GUILocalizeStrings.Get(1513);
+                    break;
+                  case TvStoppedReason.OwnerChangedTS:
+                    errMsg = GUILocalizeStrings.Get(1517);
+                    break;
+                  default:
+                    errMsg = GUILocalizeStrings.Get(1516);
+                    break;
+                }
+
+                NotifyUser(errMsg);
+              }
             }
           }
         }
-        Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 5 secs. before sending heartbeat again
+        Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 1 sec. before sending heartbeat again
+        countToHBLoop++;
       }
     }
 

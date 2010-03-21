@@ -62,14 +62,13 @@ namespace TvControl
 
     #region private members
 
-    private static bool _doingRefreshRemotingConnectionStatus = false;
     private static bool _firstFailure = true;
     private static bool _isRemotingConnected = false;
     private static IController _tvControl;
     private static string _hostName = System.Net.Dns.GetHostName();
     private static TcpChannel _callbackChannel = null; // callback channel
     private static bool _useIncreasedTimeoutForInitialConnection = true;
-
+    
     #endregion 
 
     #region public constructors
@@ -156,7 +155,7 @@ namespace TvControl
 
         while (!_isRemotingConnected && count < iterations)
         {
-          _isRemotingConnected = CheckTcpPort();
+          CheckTcpPort();
 
           count++;
           if (!_isRemotingConnected)
@@ -180,7 +179,6 @@ namespace TvControl
       finally
       {
         InvokeEvents();
-        _doingRefreshRemotingConnectionStatus = false;
       }
     }
 
@@ -313,24 +311,19 @@ namespace TvControl
           REMOTING_PORT, ConnectCallback,
           tcpClient);
 
-        bool success = result.AsyncWaitHandle.WaitOne(MAX_TCP_TIMEOUT, true);
-        return success;
+        _isRemotingConnected = result.AsyncWaitHandle.WaitOne(MAX_TCP_TIMEOUT, true);        
+        return _isRemotingConnected;
       }
-      catch (Exception e)
+      catch (Exception)
       {
         return false;
       }
       finally
       {
         benchClock.Stop();
-
         Log.Debug("TCP connect took : {0}", benchClock.ElapsedMilliseconds);
       }
-
-      return true;
     }
-
-    //private static object syncRoot = new Object();
 
     /// <summary>
     /// returns an the <see cref="T:TvControl.IController"/> interface to the tv server

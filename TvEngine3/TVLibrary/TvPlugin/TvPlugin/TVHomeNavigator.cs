@@ -487,9 +487,9 @@ namespace TvPlugin
         {
           // else if any card is recording
           // then get & use that channel
-          TvServer server = new TvServer();
-          if (server.IsAnyCardRecording())
+          if (TVHome.IsAnyCardRecording)
           {
+            TvServer server = new TvServer();          
             for (int i = 0; i < server.Count; ++i)
             {
               User user = new User();
