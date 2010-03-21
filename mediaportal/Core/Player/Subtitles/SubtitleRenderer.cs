@@ -918,17 +918,18 @@ namespace MediaPortal.Player.Subtitles
       if (subTexture != null)
       {
         subTexture.Dispose();
-        subTexture = null;
-        lock (alert)
-        {
-          subFilter = null;
-        }
+        subTexture = null;        
       }
 
       if (vertexBuffer != null)
       {
         vertexBuffer.Dispose();
         vertexBuffer = null;
+      }
+
+      lock (alert)
+      {        
+        subFilter = null;
       }
 
       instance = null;
