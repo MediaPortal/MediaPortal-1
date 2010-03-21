@@ -138,6 +138,13 @@ namespace MediaPortal.Player.Subtitles
       if (subBitmap != null)
       {
         subBitmap.Dispose();
+        subBitmap = null;
+      }
+
+      if (texture != null && !texture.Disposed)
+      {
+        texture.Dispose();
+        texture = null;
       }
     }
 
@@ -248,14 +255,11 @@ namespace MediaPortal.Player.Subtitles
         instance.updateTimeoutCallBack = new UpdateTimeoutCallback(instance.UpdateTimeout);
       }
       return instance;
-    }
+    }    
 
     public void SetPlayer(IPlayer p)
     {
-      lock (subtitles)
-      {
-        subtitles.Clear();
-      }
+      ClearSubtitles();
       clearOnNextRender = true;
       player = p;
     }
@@ -294,10 +298,7 @@ namespace MediaPortal.Player.Subtitles
     {
       Log.Debug("SubtitleRenderer: OnSeek - clear subtitles");
       // Remove all previously received subtitles
-      lock (subtitles)
-      {
-        subtitles.Clear();
-      }
+      ClearSubtitles();
       // Fixed seeking, currently TsPlayer & TsReader is not reseting the base time when seeking
       //this.startPos = startPos;
       clearOnNextRender = true;
@@ -315,10 +316,7 @@ namespace MediaPortal.Player.Subtitles
     {
       Log.Debug("SubtitleRenderer: RESET");
       // Remove all previously received subtitles
-      lock (subtitles)
-      {
-        subtitles.Clear();
-      }
+      ClearSubtitles();
       clearOnNextRender = true;
       return 0;
     }
@@ -894,6 +892,18 @@ namespace MediaPortal.Player.Subtitles
       }
     }
 
+    private void ClearSubtitles ()
+    {
+      lock (subtitles)
+      {
+        foreach (Subtitle subtitle in subtitles)
+        {
+          subtitle.Dispose();
+        }
+        subtitles.Clear(); 
+      }      
+    }
+
     /// <summary>
     /// Cleans up resources
     /// </summary>
@@ -901,10 +911,8 @@ namespace MediaPortal.Player.Subtitles
     {
       Log.Debug("SubtitleRenderer: starting cleanup");
       startPos = 0;
-      lock (subtitles)
-      {
-        subtitles.Clear();
-      }
+
+      ClearSubtitles();
 
       // swap
       if (subTexture != null)
@@ -922,6 +930,9 @@ namespace MediaPortal.Player.Subtitles
         vertexBuffer.Dispose();
         vertexBuffer = null;
       }
+
+      instance = null;
+
       Log.Debug("SubtitleRenderer: cleanup done");
     }
   }
