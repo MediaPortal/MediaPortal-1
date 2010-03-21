@@ -43,6 +43,9 @@
 #include "..\..\shared\DebugSettings.h"
 #include <cassert>
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 static char logFile[MAX_PATH];
 static WORD logFileParsed = -1;
 
@@ -97,7 +100,7 @@ void LogDebug(const char *fmt, ...)
     systemTime.wDay, systemTime.wMonth, systemTime.wYear,
     systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
     buffer);
-  ::OutputDebugString(buf);
+  //::OutputDebugString(buf);
 };
 
 

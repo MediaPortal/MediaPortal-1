@@ -33,6 +33,9 @@
 #include "videopin.h"
 #include "pmtparser.h"
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 #define MAX_TIME  86400000L
 byte MPEG1AudioFormat[] =
 {

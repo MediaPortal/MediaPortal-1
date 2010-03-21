@@ -31,6 +31,10 @@
 #include "SubtitlePin.h"
 #include "AudioPin.h"
 #include "Videopin.h"
+
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 #define MAX_TIME  86400000L
 extern void LogDebug(const char *fmt, ...) ;
 

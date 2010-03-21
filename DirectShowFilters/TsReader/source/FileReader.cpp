@@ -24,9 +24,11 @@
 *    http://forums.dvbowners.com/
 */
 #include "StdAfx.h"
-
 #include "FileReader.h"
-//#include "global.h"
+
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 extern void LogDebug(const char *fmt, ...) ;
 FileReader::FileReader() :
 	m_hFile(INVALID_HANDLE_VALUE),

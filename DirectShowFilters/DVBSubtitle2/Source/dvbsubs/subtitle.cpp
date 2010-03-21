@@ -27,6 +27,9 @@
 #include <string>
 #include "subtitle.h"
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\..\alloctracing.h"
+
 extern void LogDebug(const char *fmt, ...);
 
 static int count = 0;

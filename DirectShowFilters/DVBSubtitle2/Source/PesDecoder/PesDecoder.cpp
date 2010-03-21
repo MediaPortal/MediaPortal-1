@@ -25,6 +25,9 @@
 #include "packetsync.h"
 #include <cassert>
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\..\alloctracing.h"
+
 const int PADDING_STREAM_ID = 190;
 
 extern void LogDebug( const char *fmt, ... );

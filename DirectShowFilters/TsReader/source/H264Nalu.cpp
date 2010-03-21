@@ -23,6 +23,9 @@
 #include "StdAfx.h"
 #include "H264Nalu.h"
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 void CH264Nalu::SetBuffer(BYTE* pBuffer, int nSize, int nNALSize)
 {
 	m_pBuffer		= pBuffer;

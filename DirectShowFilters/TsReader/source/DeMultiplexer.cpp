@@ -39,6 +39,9 @@
 #include "h264nalu.h"
 #include <cassert>
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 #define MAX_BUF_SIZE 8000
 #define BUFFER_LENGTH 0x1000
 #define READ_SIZE (1316*30)

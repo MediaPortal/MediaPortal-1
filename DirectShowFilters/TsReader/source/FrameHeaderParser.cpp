@@ -33,6 +33,9 @@
 #include "mediaformats.h"
 #include <wmcodecdsp.h>
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 extern void LogDebug(const char *fmt, ...) ;
 
 #define MARKER if(BitRead(1) != 1) {ASSERT(0); return(false);}

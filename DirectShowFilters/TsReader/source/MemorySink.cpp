@@ -7,6 +7,9 @@
 #include "MemorySink.h"
 #include "GroupsockHelper.hh"
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 ////////// CMemorySink //////////
 #define SUBMIT_BUF_SIZE (1316*30)
 extern void LogDebug(const char *fmt, ...) ;

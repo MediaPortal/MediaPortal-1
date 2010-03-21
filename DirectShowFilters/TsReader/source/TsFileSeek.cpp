@@ -28,6 +28,9 @@
 #include "TsFileSeek.h"
 #include "..\..\shared\adaptionfield.h"
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 const float SEEKING_ACCURACY = (float)0.08; // 1/25 *2 (2 frames in PAL)
 const int MAX_SEEKING_ITERATIONS = 50;
 

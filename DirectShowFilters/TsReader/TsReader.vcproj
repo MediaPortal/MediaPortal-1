@@ -348,6 +348,10 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
+				RelativePath="..\alloctracing.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\AudioPin.h"
 				>
 			</File>

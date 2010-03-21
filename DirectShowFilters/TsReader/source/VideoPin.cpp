@@ -33,6 +33,9 @@
 #include "mediaformats.h"
 #include <wmcodecdsp.h>
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 #define MAX_TIME  86400000L
 #define DRIFT_RATE 0.5f
 

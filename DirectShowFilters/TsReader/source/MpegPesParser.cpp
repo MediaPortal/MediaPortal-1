@@ -34,6 +34,9 @@
 
 #include "MpegPesParser.h"
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 extern void LogDebug(const char *fmt, ...) ;
 
 CMpegPesParser::CMpegPesParser()

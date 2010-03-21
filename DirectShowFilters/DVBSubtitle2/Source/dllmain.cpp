@@ -25,6 +25,9 @@
 #include <shlobj.h>
 #include "DVBSub.h"
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 static bool folderOk = false;
 
 using std::string;
@@ -144,7 +147,7 @@ void LogDebug(const char *fmt, ...)
     systemTime.wDay, systemTime.wMonth, systemTime.wYear,
     systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
     buffer);
-  ::OutputDebugString(buf);
+  //::OutputDebugString(buf);
 };
 
 //#else

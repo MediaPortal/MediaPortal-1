@@ -26,6 +26,9 @@
 #include "channelinfo.h"
 #include <cassert>
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 void LogDebug(const char *fmt, ...); 
 
 CPmtParser::CPmtParser()

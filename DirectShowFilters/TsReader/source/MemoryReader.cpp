@@ -6,6 +6,9 @@
 #include <streams.h>
 #include "MemoryReader.h"
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 CMemoryReader::CMemoryReader(CMemoryBuffer& buffer)
 :m_buffer(buffer)
 {
