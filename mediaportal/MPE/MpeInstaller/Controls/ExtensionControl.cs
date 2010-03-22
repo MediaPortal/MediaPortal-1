@@ -193,9 +193,11 @@ namespace MpeInstaller.Controls
       lbl_description.ForeColor = _selected ? Color.Blue : Color.Black;
       lbl_name.ForeColor = _selected ? Color.Blue : Color.Black;
       lbl_version.ForeColor = _selected ? Color.Blue : Color.Black;
-      //AutoSize = _selected;
+      if (!_selected)
+        AutoSize = false;
+      //
       //Height = _selected ? 123 : 90;
-      Height = 20;
+      Height = 23;
       timer1.Enabled = _selected;
       
       if (Parent == null)
@@ -327,6 +329,7 @@ namespace MpeInstaller.Controls
         Height = Height + 3;
       else
       {
+        AutoSize = true;
         timer1.Enabled = false;
       }
     }
@@ -352,6 +355,11 @@ namespace MpeInstaller.Controls
     private void img_update1_Click(object sender, EventArgs e)
     {
       ExtensionControl_Click(null, null);
+    }
+
+    private void ExtensionControl_Load(object sender, EventArgs e)
+    {
+
     }
 
 

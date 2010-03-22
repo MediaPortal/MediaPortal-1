@@ -60,11 +60,12 @@
           // 
           this.lbl_name.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
           this.lbl_name.ForeColor = System.Drawing.SystemColors.ControlText;
-          this.lbl_name.Location = new System.Drawing.Point(5, 3);
+          this.lbl_name.Location = new System.Drawing.Point(0, 0);
           this.lbl_name.Name = "lbl_name";
-          this.lbl_name.Size = new System.Drawing.Size(424, 18);
+          this.lbl_name.Size = new System.Drawing.Size(388, 18);
           this.lbl_name.TabIndex = 0;
           this.lbl_name.Text = "label1";
+          this.lbl_name.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
           this.lbl_name.Click += new System.EventHandler(this.lbl_name_Click);
           // 
           // btn_uninstall
@@ -92,12 +93,12 @@
           // lbl_version
           // 
           this.lbl_version.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.lbl_version.Location = new System.Drawing.Point(437, 3);
+          this.lbl_version.Location = new System.Drawing.Point(437, 0);
           this.lbl_version.Name = "lbl_version";
           this.lbl_version.Size = new System.Drawing.Size(110, 18);
           this.lbl_version.TabIndex = 4;
           this.lbl_version.Text = "label1";
-          this.lbl_version.TextAlign = System.Drawing.ContentAlignment.TopRight;
+          this.lbl_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
           this.lbl_version.Click += new System.EventHandler(this.lbl_version_Click);
           // 
           // toolTip1
@@ -157,7 +158,7 @@
           // 
           this.img_update1.BackColor = System.Drawing.Color.Transparent;
           this.img_update1.Image = global::MpeInstaller.Properties.Resources.software_update_available;
-          this.img_update1.Location = new System.Drawing.Point(399, 1);
+          this.img_update1.Location = new System.Drawing.Point(399, -2);
           this.img_update1.Name = "img_update1";
           this.img_update1.Size = new System.Drawing.Size(20, 20);
           this.img_update1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -170,7 +171,7 @@
           // 
           this.img_dep1.BackColor = System.Drawing.Color.Transparent;
           this.img_dep1.Image = global::MpeInstaller.Properties.Resources.software_update_urgent;
-          this.img_dep1.Location = new System.Drawing.Point(421, 1);
+          this.img_dep1.Location = new System.Drawing.Point(425, -2);
           this.img_dep1.Name = "img_dep1";
           this.img_dep1.Size = new System.Drawing.Size(20, 20);
           this.img_dep1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -292,6 +293,7 @@
           this.Margin = new System.Windows.Forms.Padding(1);
           this.Name = "ExtensionControl";
           this.Size = new System.Drawing.Size(550, 125);
+          this.Load += new System.EventHandler(this.ExtensionControl_Load);
           this.Click += new System.EventHandler(this.ExtensionControl_Click);
           ((System.ComponentModel.ISupportInitialize)(this.img_dep)).EndInit();
           ((System.ComponentModel.ISupportInitialize)(this.img_update)).EndInit();
