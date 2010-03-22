@@ -83,7 +83,6 @@ namespace TvPlugin
     private DateTime _viewingTime = DateTime.Now;
     private int _channelOffset = 0;
     private IList _channelList = new ArrayList();
-
     private int _timePerBlock = 30; // steps of 30 minutes
     private int _channelCount = 5;
     private int _numberOfBlocks = 4;
@@ -109,9 +108,9 @@ namespace TvPlugin
     private int _backupCursorY = 0;
     private int _backupChannelOffset = 0;
     private DateTime _updateTimer = DateTime.Now;
-
     private DateTime _keyPressedTimer = DateTime.Now;
     private string _lineInput = String.Empty;
+    private bool _useNewRecordingButtonColor = false;
     //static bool _workerThreadRunning = false;
 
     #endregion
@@ -164,6 +163,8 @@ namespace TvPlugin
         _cursorX = xmlreader.GetValueAsInt("RadioGuideBase", "ypos", 0);
         _channelOffset = xmlreader.GetValueAsInt("RadioGuideBase", "yoffset", 0);
       }
+      _useNewRecordingButtonColor =
+        File.Exists(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_recButton_Focus_middle.png"));
     }
 
     private void SaveSettings()
@@ -205,7 +206,6 @@ namespace TvPlugin
         _useColorsForGenres = xmlreader.GetValueAsBool("xmltv", "colors", false);
       }
     }
-
 
     public override void OnAction(Action action)
     {
@@ -311,7 +311,6 @@ namespace TvPlugin
           Update(false);
           break;
 
-
         case Action.ActionType.ACTION_CONTEXT_MENU:
           {
             if (_cursorY >= 0 && _cursorX >= 0)
@@ -388,11 +387,13 @@ namespace TvPlugin
             return;
           }
           //break;
+        
         case Action.ActionType.ACTION_SHOW_INFO:
           {
             ShowContextMenu();
           }
           break;
+        
         case Action.ActionType.ACTION_INCREASE_TIMEBLOCK:
           {
             _timePerBlock += 15;
@@ -404,22 +405,21 @@ namespace TvPlugin
             SetFocus();
           }
           break;
+        
         case Action.ActionType.ACTION_REWIND:
-          goto case Action.ActionType.ACTION_MUSIC_REWIND;
-
         case Action.ActionType.ACTION_MUSIC_REWIND:
           _viewingTime = _viewingTime.AddHours(-3);
           Update(false);
           SetFocus();
           break;
+        
         case Action.ActionType.ACTION_FORWARD:
-          goto case Action.ActionType.ACTION_MUSIC_FORWARD;
-
         case Action.ActionType.ACTION_MUSIC_FORWARD:
           _viewingTime = _viewingTime.AddHours(3);
           Update(false);
           SetFocus();
           break;
+        
         case Action.ActionType.ACTION_DECREASE_TIMEBLOCK:
           {
             if (_timePerBlock > 15)
@@ -430,6 +430,7 @@ namespace TvPlugin
             SetFocus();
           }
           break;
+        
         case Action.ActionType.ACTION_DEFAULT_TIMEBLOCK:
           {
             _timePerBlock = 30;
@@ -675,7 +676,6 @@ namespace TvPlugin
       ;
     }
 
-
     public override void Process()
     {
       // This somehow breaks directly stop timeshifting after it started
@@ -859,7 +859,7 @@ namespace TvPlugin
           label.Label = strTime;
           dt = dt.AddMinutes(_timePerBlock);
 
-          label.TextAlignment = GUIControl.Alignment.ALIGN_CENTER;
+          label.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
           label.IsVisible = !_singleChannelView;
           label.Width = iLabelWidth;
           label.Height = cntlHeaderBkgImg.RenderHeight;
@@ -934,7 +934,6 @@ namespace TvPlugin
         UpdateVerticalScrollbar();
 
         GetChannels();
-
 
         string day;
         switch (_viewingTime.DayOfWeek)
@@ -1131,10 +1130,18 @@ namespace TvPlugin
         _currentTime = strTime;
         _currentChannel = strChannel;
 
-        //bool bRecording = false;
+        bool bRecording = _currentProgram.IsRecording || _currentProgram.IsRecordingOncePending;
         //bool bSeries = false;
         //bool bConflict = false;
-        GUIControl.HideControl(GetID, (int)Controls.IMG_REC_PIN);
+        
+        if (bRecording)
+        {
+          GUIImage img = (GUIImage)GetControl((int)Controls.IMG_REC_PIN);
+          img.SetFileName(Thumbs.TvRecordingIcon);
+          GUIControl.ShowControl(GetID, (int)Controls.IMG_REC_PIN);
+        }
+        else
+          GUIControl.HideControl(GetID, (int)Controls.IMG_REC_PIN);
       }
     }
 
@@ -1261,7 +1268,7 @@ namespace TvPlugin
         }
         img.RenderLeft = false;
         img.RenderRight = false;
-        bool bRecording = false;
+        bool bRecording = program.IsRecording || program.IsRecordingOncePending; 
         bool bSeries = false;
         bool bConflict = false;
 
@@ -1359,17 +1366,29 @@ namespace TvPlugin
         }
         if (bRecording)
         {
-          if (bConflict)
+          if (_useNewRecordingButtonColor)
           {
-            img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
-          }
-          else if (bSeries)
-          {
-            img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
+            img.TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
+            img.TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
+            img.TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
+            img.TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
+            img.TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
+            img.TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
           }
           else
           {
-            img.TexutureIcon = Thumbs.TvRecordingIcon;
+            if (bConflict)
+            {
+              img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
+            }
+            else if (bSeries)
+            {
+              img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
+            }
+            else
+            {
+              img.TexutureIcon = Thumbs.TvRecordingIcon;
+            }
           }
         }
       }
@@ -1406,7 +1425,6 @@ namespace TvPlugin
           img.IsVisible = true;
         }
       }
-
 
       IList<Program> programs;
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -1460,8 +1478,8 @@ namespace TvPlugin
           dtBlokStart = dtBlokStart.AddMilliseconds(-dtBlokStart.Millisecond);
           dtBlokStart = dtBlokStart.AddSeconds(-dtBlokStart.Second);
 
+          bool bRecording = program.IsRecording || program.IsRecordingOncePending;
           bool bSeries = false;
-          bool bRecording = false;
           bool bConflict = false;
 
           int iStartXPos = 0;
@@ -1573,17 +1591,29 @@ namespace TvPlugin
             }
             if (bRecording)
             {
-              if (bConflict)
+              if (_useNewRecordingButtonColor)
               {
-                img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
-              }
-              else if (bSeries)
-              {
-                img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
+                img.TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
+                img.TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
+                img.TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
+                img.TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
+                img.TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
+                img.TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
               }
               else
               {
-                img.TexutureIcon = Thumbs.TvRecordingIcon;
+                if (bConflict)
+                {
+                  img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
+                }
+                else if (bSeries)
+                {
+                  img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
+                }
+                else
+                {
+                  img.TexutureIcon = Thumbs.TvRecordingIcon;
+                }
               }
             }
 
@@ -1709,7 +1739,6 @@ namespace TvPlugin
       }
       return iProgramCount;
     }
-
 
     private void OnDown(bool updateScreen)
     {
@@ -2230,7 +2259,6 @@ namespace TvPlugin
       }
     }
 
-
     private void ShowContextMenu()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -2371,7 +2399,6 @@ namespace TvPlugin
       }
     }
 
-
     /// <summary>
     /// "Record" entry in context menu
     /// </summary>
@@ -2443,7 +2470,6 @@ namespace TvPlugin
       }*/
       return Color.White.ToArgb();
     }
-
 
     private void OnKeyTimeout()
     {
