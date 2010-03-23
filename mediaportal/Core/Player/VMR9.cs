@@ -902,16 +902,12 @@ namespace MediaPortal.Player
         {
           Log.Info("VMR9: no need to de-interlace this video source");
         }
+        DsUtils.FreeAMMediaType(mediatype);
         //release the VMR9 pin
         hr = DirectShowUtil.ReleaseComObject(InPin);
-        if (hr != 0)
-        {
-          Log.Error("VMR9: failed releasing InPin {0:X}", hr);
-        }
-        else
-        {
-          InPin = null;
-        }
+
+        InPin = null;
+        mediatype = null;
       }
     }
 
