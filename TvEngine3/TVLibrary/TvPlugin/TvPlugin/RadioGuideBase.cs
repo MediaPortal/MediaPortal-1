@@ -73,7 +73,9 @@ namespace TvPlugin
       IMG_CHAN1 = 50,
       IMG_CHAN1_LABEL = 70,
       IMG_TIME1 = 90, // first and template
-      IMG_REC_PIN = 31
+      IMG_REC_PIN = 31,
+      SINGLE_CHANNEL_LABEL = 32,
+      SINGLE_CHANNEL_IMAGE = 33,
     } ;
 
     #endregion
@@ -223,7 +225,8 @@ namespace TvPlugin
           }
           break;
 
-        case Action.ActionType.ACTION_SELECT_ITEM:
+        /* this will break remote
+          case Action.ActionType.ACTION_SELECT_ITEM:
           if (GetFocusControlId() != -1 && _cursorX >= 0)
           {
             if (_cursorY == 0)
@@ -236,7 +239,8 @@ namespace TvPlugin
             }
           }
           break;
-
+        */
+        
         case Action.ActionType.ACTION_MOUSE_MOVE:
           {
             int x = (int)action.fAmount1;
@@ -856,7 +860,7 @@ namespace TvPlugin
           iHour = dt.Hour;
           iMin = dt.Minute;
           string strTime = dt.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-          label.Label = strTime;
+          label.Label = " " + strTime;
           dt = dt.AddMinutes(_timePerBlock);
 
           label.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
@@ -867,6 +871,8 @@ namespace TvPlugin
           label.TextColor = labelTime.TextColor;
           label.SetPosition(xpos, ypos);
         }
+
+        GetChannels();
 
         // add channels...
         int iHeight = cntlPanel.Height + cntlPanel.YPosition - cntlChannelTemplate.YPosition;
@@ -929,11 +935,10 @@ namespace TvPlugin
           imgBut.ColourDiffuse = 0xffffffff;
           imgBut.DoUpdate();
         }
+        
 
         UpdateHorizontalScrollbar();
         UpdateVerticalScrollbar();
-
-        GetChannels();
 
         string day;
         switch (_viewingTime.DayOfWeek)
@@ -978,7 +983,6 @@ namespace TvPlugin
         long iStart = Int64.Parse(strStart);
         long iEnd = Int64.Parse(strEnd);
 
-
         if (_channelOffset > _channelList.Count)
         {
           _channelOffset = 0;
@@ -996,33 +1000,51 @@ namespace TvPlugin
 
         if (_singleChannelView)
         {
-          if (_cursorY == 0)
+          // show all buttons (could be less visible if channels < rows)
+          for (int iChannel = 0; iChannel < _channelCount; iChannel++)
           {
-            //_singleChannelNumber=_cursorX + _channelOffset;
-            //if (_singleChannelNumber >= _channelList.Count) _singleChannelNumber-=_channelList.Count;
-            //GUIButton3PartControl img=(GUIButton3PartControl)GetControl(_cursorX+(int)Controls.IMG_CHAN1);
-            //if (null!=img) _currentChannel=img.Label1;
+            GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1 + iChannel) as GUIButton3PartControl;
+            if (imgBut != null)
+              imgBut.IsVisible = true;
           }
           Channel channel = (Channel)_channelList[_singleChannelNumber];
           RenderSingleChannel(channel);
         }
         else
         {
+          setSingleChannelLabelVisibility(false);
           int chan = _channelOffset;
+          int firstButtonYPos = 0;
+          int lastButtonYPos = 0;
           for (int iChannel = 0; iChannel < _channelCount; iChannel++)
           {
             if (chan < _channelList.Count)
             {
               Channel channel = (Channel)_channelList[chan];
               RenderChannel(iChannel, channel, iStart, iEnd, selectCurrentShow);
+              GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1 + iChannel) as GUIButton3PartControl;
+              if (imgBut != null)
+              {
+                if (iChannel == 0)
+                  firstButtonYPos = imgBut.YPosition;
+
+                lastButtonYPos = imgBut.YPosition + imgBut.Height;
+              }
+            }
+            else
+            {
+              GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1 + iChannel) as GUIButton3PartControl;
+              if (imgBut != null)
+                imgBut.IsVisible = false;
             }
             chan++;
-            if (chan >= _channelList.Count)
-            {
-              chan = 0;
-            }
           }
-
+          GUIImage vertLine = GetControl((int)Controls.VERTICAL_LINE) as GUIImage;
+          if (vertLine != null)
+          {
+            // height taken from last button (bottom) minus the yposition of slider plus the offset of slider in relation to first button
+            vertLine.Height = lastButtonYPos - vertLine.YPosition + (firstButtonYPos - vertLine.YPosition);
+          }
           // update selected channel 
           _singleChannelNumber = _cursorX + _channelOffset;
           if (_singleChannelNumber >= _channelList.Count)
@@ -1068,7 +1090,7 @@ namespace TvPlugin
       string strLogo = Utils.GetCoverArt(Thumbs.Radio, strChannel);
       if (!File.Exists(strLogo))
       {
-        strLogo = "defaultVideoBig.png";
+        strLogo = "defaultMyRadioBig.png";
       }
       GUIPropertyManager.SetProperty("#Radio.Guide.thumb", strLogo);
       if (_cursorY == 0 || _currentProgram == null)
@@ -1145,71 +1167,126 @@ namespace TvPlugin
       }
     }
 
-    //void SetProperties()
-
     private void RenderSingleChannel(Channel channel)
     {
-      int chan = _channelOffset;
-      for (int iChannel = 0; iChannel < _channelCount; iChannel++)
-      {
-        if (chan < _channelList.Count)
-        {
-          Channel tvChan = (Channel)_channelList[chan];
-
-          string strLogo = Utils.GetCoverArt(Thumbs.Radio, tvChan.DisplayName);
-          if (File.Exists(strLogo))
-          {
-            GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
-            if (img != null)
-            {
-              if (_showChannelLogos)
-              {
-                img.TexutureIcon = strLogo;
-              }
-              img.Label1 = tvChan.DisplayName;
-              img.IsVisible = true;
-            }
-          }
-          else
-          {
-            GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
-            if (img != null)
-            {
-              if (_showChannelLogos)
-              {
-                img.TexutureIcon = "defaultVideoBig.png";
-              }
-              img.Label1 = tvChan.DisplayName;
-              img.IsVisible = true;
-            }
-          }
-        }
-        chan++;
-        if (chan >= _channelList.Count)
-        {
-          chan = 0;
-        }
-      }
-
-      IList<Program> programs;
+      IList<Program> programs = new List<Program>();
       DateTime dtStart = DateTime.Now;
       DateTime dtEnd = dtStart.AddDays(30);
-      long iStart = Utils.datetolong(dtStart);
-      long iEnd = Utils.datetolong(dtEnd);
 
       TvBusinessLayer layer = new TvBusinessLayer();
       programs = layer.GetPrograms(channel, dtStart, dtEnd);
+
       _totalProgramCount = programs.Count;
       if (_totalProgramCount == 0)
       {
         _totalProgramCount = _channelCount;
       }
 
+      GUILabelControl channelLabel = GetControl((int)Controls.SINGLE_CHANNEL_LABEL) as GUILabelControl;
+      GUIImage channelImage = GetControl((int)Controls.SINGLE_CHANNEL_IMAGE) as GUIImage;
+      
+      string strLogo = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
+      if (strLogo.Length == 0)
+      {
+        strLogo = "defaultMyRadioBig.png";
+      }
+      if (channelImage == null)
+      {
+        channelImage = new GUIImage(GetID, (int)Controls.SINGLE_CHANNEL_IMAGE,
+                                        GetControl((int)Controls.LABEL_TIME1).XPosition,
+                                        GetControl((int)Controls.LABEL_TIME1).YPosition - 15,
+                                        40, 40, strLogo, Color.White);
+        channelImage.AllocResources();
+        GUIControl temp = (GUIControl)channelImage;
+        Add(ref temp);
+      }
+      else
+      {
+        channelImage.SetFileName(strLogo);
+      }
+
+      if (channelLabel == null)
+      {
+        channelLabel = new GUILabelControl(GetID, (int)Controls.SINGLE_CHANNEL_LABEL,
+                                           channelImage.XPosition + 44,
+                                           channelImage.YPosition + 10,
+                                           300, 40, "font16", channel.DisplayName, 4294967295, GUIControl.Alignment.Left,
+                                           GUIControl.VAlignment.Top,
+                                           true, 0, 0, 0xFF000000);
+        channelLabel.AllocResources();
+        GUIControl temp = channelLabel;
+        Add(ref temp);
+      }
+
+      setSingleChannelLabelVisibility(true);
+
+      channelLabel.Label = channel.DisplayName;
+      if (strLogo.Length > 0)
+      {
+        channelImage.SetFileName(strLogo);
+      }
+
+      if (channelLabel != null)
+      {
+        channelLabel.Label = channel.DisplayName;
+      }
+      bool _recalculateProgramOffset = true;
+      if (_recalculateProgramOffset)
+      {
+        _recalculateProgramOffset = false;
+        bool found = false;
+        for (int i = 0; i < programs.Count; i++)
+        {
+          Program program = (Program)programs[i];
+          if (program.StartTime >= _viewingTime)
+          {
+            _programOffset = i;
+            found = true;
+            break;
+          }
+        }
+        if (!found)
+        {
+          _programOffset = programs.Count;
+        }
+      }
+      else if (_programOffset < programs.Count)
+      {
+        int day = ((Program)programs[_programOffset]).StartTime.DayOfYear;
+        bool changed = false;
+        while (day > _viewingTime.DayOfYear)
+        {
+          _viewingTime = _viewingTime.AddDays(1.0);
+          changed = true;
+        }
+        while (day < _viewingTime.DayOfYear)
+        {
+          _viewingTime = _viewingTime.AddDays(-1.0);
+          changed = true;
+        }
+        if (changed)
+        {
+          GUISpinControl cntlDay = GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
+
+          // Find first day in TVGuide and set spincontrol position 
+          int iDay = CalcDays();
+          for (; iDay < 0; ++iDay)
+          {
+            _viewingTime = _viewingTime.AddDays(1.0);
+          }
+          for (; iDay >= MaxDaysInGuide; --iDay)
+          {
+            _viewingTime = _viewingTime.AddDays(-1.0);
+          }
+          cntlDay.Value = iDay;
+        }
+      }
       // ichan = number of rows
       for (int ichan = 0; ichan < _channelCount; ++ichan)
       {
         GUIButton3PartControl imgCh = GetControl(ichan + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
-        imgCh.TexutureIcon = "";
+        if(imgCh!=null)
+          imgCh.TexutureIcon = "";
 
         int iStartXPos = GetControl(0 + (int)Controls.LABEL_TIME1).XPosition;
         int height = GetControl((int)Controls.IMG_CHAN1 + 1).YPosition;
@@ -1227,14 +1304,37 @@ namespace TvPlugin
         }
         else
         {
-          program = new Program(channel.IdChannel, DateTime.Now, DateTime.Now, "-", "-", "-", Program.ProgramState.None,
-                                DateTime.MinValue,
-                                string.Empty, string.Empty, string.Empty, string.Empty, -1, string.Empty, -1);
+          // bugfix for 0 items
+          if (programs.Count == 0)
+          {
+            program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", string.Empty, string.Empty,
+                                  Program.ProgramState.None,
+                                  DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1,
+                                  string.Empty, -1);
+          }
+          else
+          {
+            program = (Program)programs[programs.Count - 1];
+            if (program.EndTime.DayOfYear == _viewingTime.DayOfYear)
+            {
+              program = new Program(channel.IdChannel, program.EndTime, program.EndTime, "-", "-", "-",
+                                    Program.ProgramState.None,
+                                    DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1,
+                                    string.Empty, -1);
+            }
+            else
+            {
+              program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", "-", "-",
+                                    Program.ProgramState.None,
+                                    DateTime.MinValue, string.Empty, string.Empty, string.Empty, string.Empty, -1,
+                                    string.Empty, -1);
+            }
+          }
         }
 
         int ypos = GetControl(ichan + (int)Controls.IMG_CHAN1).YPosition;
         int iControlId = 100 + ichan * RowID + 0 * ColID;
-        GUIButton3PartControl img = (GUIButton3PartControl)GetControl(iControlId);
+        GUIButton3PartControl img = GetControl(iControlId) as GUIButton3PartControl;
 
         if (img == null)
         {
@@ -1268,9 +1368,10 @@ namespace TvPlugin
         }
         img.RenderLeft = false;
         img.RenderRight = false;
-        bool bRecording = program.IsRecording || program.IsRecordingOncePending; 
-        bool bSeries = false;
-        bool bConflict = false;
+
+        bool bSeries = (program.IsRecordingSeries || program.IsRecordingSeriesPending || program.IsPartialRecordingSeriesPending);
+        bool bConflict = program.HasConflict;
+        bool bRecording = bSeries || (program.IsRecording || program.IsRecordingOncePending);
 
         img.Data = program;
         img.ColourDiffuse = GetColorForGenre(program.Genre);
@@ -1293,24 +1394,17 @@ namespace TvPlugin
         img.FontName1 = "font13";
         img.TextColor1 = 0xffffffff;
 
-        string strTimeSingle = String.Empty;
-        string strTime = String.Empty;
+        img.Label1 = TVUtil.GetDisplayTitle(program);
 
-        img.Label1 = program.Title;
-        //if (program.StartTime != 0)
+        string strTimeSingle = String.Format("{0}",
+                                             program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+
+        if (program.StartTime.DayOfYear != _viewingTime.DayOfYear)
         {
-          strTimeSingle = String.Format("{0}",
-                                        program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
-          strTime = String.Format("{0}-{1}",
-                                  program.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                  program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
-          if (program.StartTime.Date != DateTime.Now.Date)
-          {
-            img.Label1 = String.Format("{0} {1}", Utils.GetShortDayString(program.StartTime), program.Title);
-          }
+          img.Label1 = String.Format("{0} {1}", Utils.GetShortDayString(program.StartTime),
+                                     TVUtil.GetDisplayTitle(program));
         }
+
         GUILabelControl labelTemplate;
         if (program.IsRunningAt(dt))
         {
@@ -1360,10 +1454,7 @@ namespace TvPlugin
         img.SetPosition(img.XPosition, img.YPosition);
 
         img.TexutureIcon = String.Empty;
-        if (ShouldNotifyProgram(program))
-        {
-          img.TexutureIcon = Thumbs.TvNotifyIcon;
-        }
+
         if (bRecording)
         {
           if (_useNewRecordingButtonColor)
@@ -1394,8 +1485,28 @@ namespace TvPlugin
       }
     }
 
-    //void RenderSingleChannel(Channel channel)
+    private void setSingleChannelLabelVisibility(bool visible)
+    {
+      GUILabelControl channelLabel = GetControl((int)Controls.SINGLE_CHANNEL_LABEL) as GUILabelControl;
+      GUIImage channelImage = GetControl((int)Controls.SINGLE_CHANNEL_IMAGE) as GUIImage;
+      GUISpinControl timeInterval = GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL) as GUISpinControl;
 
+      if (channelLabel != null)
+      {
+        channelLabel.Visible = visible;
+      }
+
+      if (channelImage != null)
+      {
+        channelImage.Visible = visible;
+      }
+
+      if (timeInterval != null)
+      {
+        timeInterval.Visible = !visible;
+      }
+    }
+    
     private void RenderChannel(int iChannel, Channel channel, long iStart, long iEnd, bool selectCurrentShow)
     {
       string strLogo = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
@@ -1419,7 +1530,7 @@ namespace TvPlugin
         {
           if (_showChannelLogos)
           {
-            img.TexutureIcon = "defaultVideoBig.png";
+            img.TexutureIcon = "defaultMyRadioBig.png";
           }
           img.Label1 = channel.DisplayName;
           img.IsVisible = true;
@@ -1719,8 +1830,6 @@ namespace TvPlugin
       }
     }
 
-    //void RenderChannel(int iChannel,Channel channel, long iStart, long iEnd, bool selectCurrentShow)
-
     private int ProgramCount(int iChannel)
     {
       int iProgramCount = 0;
@@ -1818,81 +1927,9 @@ namespace TvPlugin
         }
         return;
       }
-      int iCurY = _cursorX;
-      int iCurOff = _channelOffset;
-      int iX1, iX2;
-      //      int iNewWidth=0;
-      int iControlId = 100 + _cursorX * RowID + (_cursorY - 1) * ColID;
-      GUIControl control = GetControl(iControlId);
-      if (control == null)
+      if (_cursorY > 0)
       {
-        return;
-      }
-      iX1 = control.XPosition;
-      iX2 = control.XPosition + control.Width;
-
-      bool bOK = false;
-      int iMaxSearch = _channelList.Count;
-      while (!bOK && (iMaxSearch > 0))
-      {
-        iMaxSearch--;
-        if (_cursorX + 1 < _channelCount)
-        {
-          _cursorX++;
-        }
-        else
-        {
-          _channelOffset++;
-          if (_channelOffset > 0 && _channelOffset >= _channelList.Count)
-          {
-            _channelOffset -= _channelList.Count;
-          }
-          if (updateScreen)
-          {
-            Update(false);
-          }
-        }
-
-        for (int x = 1; x < ColID; x++)
-        {
-          iControlId = 100 + _cursorX * RowID + (x - 1) * ColID;
-          control = GetControl(iControlId);
-          if (control != null)
-          {
-            Program prog = (Program)control.Data;
-            if (x == 1 && m_dtStartTime < prog.StartTime || _singleChannelView)
-            {
-              _cursorY = x;
-              bOK = true;
-              break;
-            }
-
-            if (m_dtStartTime >= prog.StartTime && m_dtStartTime < prog.EndTime)
-            {
-              _cursorY = x;
-              bOK = true;
-              break;
-            }
-          }
-        }
-      }
-      if (!bOK)
-      {
-        _cursorX = iCurY;
-        _channelOffset = iCurOff;
-      }
-      if (updateScreen)
-      {
-        if (iCurOff == _channelOffset)
-        {
-          Correct();
-          UpdateCurrentProgram();
-          return;
-        }
-
-        Correct();
-        Update(false);
-        SetFocus();
+        SetBestMatchingProgram(updateScreen, true);
       }
     }
 
@@ -1958,88 +1995,9 @@ namespace TvPlugin
         }
         return;
       }
-      int iCurY = _cursorX;
-      int iCurOff = _channelOffset;
-
-      int iX1, iX2;
-      int iControlId = 100 + _cursorX * RowID + (_cursorY - 1) * ColID;
-      GUIControl control = GetControl(iControlId);
-      if (control == null)
+      if (_cursorY > 0)
       {
-        return;
-      }
-      iX1 = control.XPosition;
-      iX2 = control.XPosition + control.Width;
-
-      bool bOK = false;
-      int iMaxSearch = _channelList.Count;
-      while (!bOK && (iMaxSearch > 0))
-      {
-        iMaxSearch--;
-        if (_cursorX == 0)
-        {
-          if (_channelOffset > 0)
-          {
-            _channelOffset--;
-            if (updateScreen)
-            {
-              Update(false);
-            }
-          }
-          else
-          {
-            break;
-          }
-        }
-        else
-        {
-          _cursorX--;
-        }
-
-        for (int x = 1; x < ColID; x++)
-        {
-          iControlId = 100 + _cursorX * RowID + (x - 1) * ColID;
-          control = GetControl(iControlId);
-          if (control != null)
-          {
-            Program prog = (Program)control.Data;
-            if (x == 1 && m_dtStartTime < prog.StartTime || _singleChannelView)
-            {
-              _cursorY = x;
-              bOK = true;
-              break;
-            }
-            if (m_dtStartTime >= prog.StartTime && m_dtStartTime < prog.EndTime)
-            {
-              _cursorY = x;
-              bOK = true;
-              break;
-            }
-          }
-          else
-          {
-            break;
-          }
-        }
-      }
-      if (!bOK)
-      {
-        _cursorX = iCurY;
-        _channelOffset = iCurOff;
-      }
-
-      if (updateScreen)
-      {
-        if (iCurOff == _channelOffset)
-        {
-          Correct();
-          UpdateCurrentProgram();
-          return;
-        }
-
-        Correct();
-        Update(false);
-        SetFocus();
+        SetBestMatchingProgram(updateScreen, false);
       }
     }
 
@@ -2203,6 +2161,137 @@ namespace TvPlugin
           SetProperties();
         }
         GUIControl.FocusControl(GetID, iControlId);
+      }
+    }
+
+    private void SetBestMatchingProgram(bool updateScreen, bool DirectionIsDown)
+    {
+      // if cursor is on a program in guide, try to find the "best time matching" program in new channel
+      int iCurY = _cursorX;
+      int iCurOff = _channelOffset;
+      int iX1, iX2;
+      int iControlId = 100 + _cursorX * RowID + (_cursorY - 1) * ColID;
+      GUIControl control = GetControl(iControlId);
+      if (control == null)
+      {
+        return;
+      }
+      iX1 = control.XPosition;
+      iX2 = control.XPosition + control.Width;
+
+      bool bOK = false;
+      int iMaxSearch = _channelList.Count;
+
+      // TODO rewrite the while loop, the code is a little awkward.
+      while (!bOK && (iMaxSearch > 0))
+      {
+        iMaxSearch--;
+        if (DirectionIsDown == true)
+        {
+          // increase only if more
+          if (_cursorX + 1 < Math.Min(_channelCount, _channelList.Count))
+          {
+            _cursorX++;
+          }
+          else if(_channelList.Count > _channelCount)
+          {
+            _channelOffset++;
+            if (_channelOffset > 0 && _channelOffset >= _channelList.Count)
+            {
+              _channelOffset -= _channelList.Count;
+            }
+            if (updateScreen)
+            {
+              Update(false);
+            }
+          }
+        }
+        else // Direction "Up"
+        {
+          if (_cursorX == 0)
+          {
+            if (_channelOffset > 0)
+            {
+              _channelOffset--;
+              if (updateScreen)
+              {
+                Update(false);
+              }
+            }
+            else
+            {
+              break;
+            }
+          }
+          else
+          {
+            _cursorX--;
+          }
+        }
+
+        for (int x = 1; x < ColID; x++)
+        {
+          iControlId = 100 + _cursorX * RowID + (x - 1) * ColID;
+          control = GetControl(iControlId);
+          if (control != null)
+          {
+            Program prog = (Program)control.Data;
+
+            if (_singleChannelView)
+            {
+              _cursorY = x;
+              bOK = true;
+              break;
+            }
+
+            bool isvalid = false;
+            DateTime time = DateTime.Now;
+            if (time < prog.EndTime) // present & future
+            {
+              if (m_dtStartTime <= prog.StartTime)
+              {
+                isvalid = true;
+              }
+              else if (m_dtStartTime >= prog.StartTime && m_dtStartTime < prog.EndTime)
+              {
+                isvalid = true;
+              }
+              else if (m_dtStartTime < time)
+              {
+                isvalid = true;
+              }
+            }
+            else if (time > _currentProgram.EndTime) // history
+            {
+              if (prog.EndTime > m_dtStartTime)
+              {
+                isvalid = true;
+              }
+            }
+
+            if (isvalid)
+            {
+              _cursorY = x;
+              bOK = true;
+              break;
+            }
+          }
+        }
+      }
+      if (!bOK)
+      {
+        _cursorX = iCurY;
+        _channelOffset = iCurOff;
+      }
+      if (updateScreen)
+      {
+        Correct();
+        if (iCurOff == _channelOffset)
+        {
+          UpdateCurrentProgram();
+          return;
+        }
+        SetFocus();
       }
     }
 
