@@ -53,8 +53,6 @@ extern void LogDebug(const char *fmt, ...);
 
 extern int ShowBuffer;
 
-#define DNew new // For MPC-HC source compatibility
-
 /*
 class CH246IFrameScanner
 {
@@ -143,7 +141,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_pCurrentAudioBuffer = new CBuffer();
   m_pCurrentSubtitleBuffer = new CBuffer();
   m_iAudioStream = 0;
-  m_AudioStreamType = SERVICE_TYPE_AUDIO_UNKNOWN ;
+  m_AudioStreamType = SERVICE_TYPE_AUDIO_UNKNOWN;
   m_iSubtitleStream = 0;
   m_audioPid = 0;
   m_currentSubtitlePid = 0;
@@ -151,6 +149,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_bHoldAudio = false;
   m_bHoldVideo = false;
   m_bHoldSubtitle = false;
+  m_bShuttingDown = false;
   m_iAudioIdx = -1;
   m_iPatVersion = -1;
   m_ReqPatVersion = -1;
@@ -168,7 +167,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
   m_mpegParserTriggerFormatChange = false;
   SetMediaChanging(false);
   SetAudioChanging(false);
-  m_DisableDiscontinuitiesFiltering = false ;
+  m_DisableDiscontinuitiesFiltering = false;
 
   m_AudioPrevCC = -1;
   m_FirstAudioSample = 0x7FFFFFFF00000000LL;
@@ -186,6 +185,7 @@ CDeMultiplexer::CDeMultiplexer(CTsDuration& duration,CTsReaderFilter& filter)
 
 CDeMultiplexer::~CDeMultiplexer()
 {
+  m_bShuttingDown = true;
   Flush();
   delete m_pCurrentVideoBuffer;
   delete m_pCurrentAudioBuffer;
@@ -1119,26 +1119,28 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
   if (m_pids.videoPids.size() == 0 || m_pids.videoPids[0].Pid==0) return;
   if (header.Pid!=m_pids.videoPids[0].Pid) return;
 
-  if ( header.AdaptionFieldOnly() ) return;
+  if (header.AdaptionFieldOnly()) return;
 
-  if(!CheckContinuity(m_VideoPrevCC, header))
+  if (!CheckContinuity(m_VideoPrevCC, header))
   {
     LogDebug("Video Continuity error... %x ( prev %x )", header.ContinuityCounter, m_VideoPrevCC);
-    if (!m_DisableDiscontinuitiesFiltering) m_VideoValidPES=false;  
+    if (!m_DisableDiscontinuitiesFiltering) m_VideoValidPES = false;  
   }
 
   m_VideoPrevCC = header.ContinuityCounter;
 
   CAutoLock lock (&m_sectionVideo);
 
-  if( m_pids.videoPids[0].VideoServiceType==SERVICE_TYPE_VIDEO_MPEG1 ||
-      m_pids.videoPids[0].VideoServiceType==SERVICE_TYPE_VIDEO_MPEG2 )
+  if (m_bShuttingDown) return;
+
+  if (m_pids.videoPids[0].VideoServiceType == SERVICE_TYPE_VIDEO_MPEG1 ||
+      m_pids.videoPids[0].VideoServiceType == SERVICE_TYPE_VIDEO_MPEG2)
   {
     FillVideoMPEG2(header, tsPacket);
   }
   else
   {
-//    ParseVideoH264(header, tsPacket) ;
+    //ParseVideoH264(header, tsPacket);
     FillVideoH264(header, tsPacket);
   }
 }
@@ -1152,7 +1154,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
 
   if(!m_p)
   {
-    m_p.Attach(DNew Packet());
+    m_p.Attach(new Packet());
     m_p->bDiscontinuity = false ;
     m_p->rtStart = Packet::INVALID_TIME;
     m_lastStart = 0;
@@ -1165,7 +1167,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
 //    LogDebug("DeMultiplexer::FillVideo PayLoad Unit Start");
   }
   
-  CAutoPtr<Packet> p(DNew Packet());
+  CAutoPtr<Packet> p(new Packet());
   
   if (headerlen < 188)
   {            
@@ -1275,7 +1277,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
           ((Nalu.GetDataLength() >>  8) & 0x0000ff00) |
           ((Nalu.GetDataLength() <<  8) & 0x00ff0000) |
           ((Nalu.GetDataLength() << 24) & 0xff000000);
-        CAutoPtr<Packet> p3(DNew Packet());
+        CAutoPtr<Packet> p3(new Packet());
 
         p3->SetCount (Nalu.GetDataLength()+sizeof(dwNalLength));
 
@@ -1293,7 +1295,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
       {
         if ((m_pl.GetCount()>0) && m_mVideoValidPES)
         {
-          CAutoPtr<Packet> p(DNew Packet());
+          CAutoPtr<Packet> p(new Packet());
           p = m_pl.RemoveHead();
 //          LogDebug("Output NALU Type: %d (%d)", p->GetAt(4)&0x1f,p->GetCount());
           //CH246IFrameScanner iFrameScanner;
@@ -1449,7 +1451,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 
   if(!m_p)
   {
-    m_p.Attach(DNew Packet());
+    m_p.Attach(new Packet());
     m_p->bDiscontinuity = false ;
     m_p->rtStart = Packet::INVALID_TIME;
     m_lastStart = 0;
@@ -1463,7 +1465,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 //    LogDebug("DeMultiplexer::FillVideo PayLoad Unit Start");
   }
   
-  CAutoPtr<Packet> p(DNew Packet());
+  CAutoPtr<Packet> p(new Packet());
   
   if (headerlen < 188)
   {            
@@ -1577,7 +1579,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
         m_bInBlock=false ;
         int size = next - start;
 
-        CAutoPtr<Packet> p2(DNew Packet());		
+        CAutoPtr<Packet> p2(new Packet());		
         p2->SetCount(size);
         memcpy (p2->GetData(), m_p->GetData(), size) ;
         
@@ -1592,7 +1594,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
         
           if (m_VideoValidPES)
           {
-            CAutoPtr<Packet> p(DNew Packet());
+            CAutoPtr<Packet> p(new Packet());
             p = m_pl.RemoveHead();
 //            LogDebug("Output Type: %x %d", *(DWORD*)p->GetData(),p->GetCount());
     

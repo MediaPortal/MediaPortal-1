@@ -121,18 +121,18 @@ public:
 
   void CallTeletextEventCallback(int eventCode,unsigned long int eventValue);
 
-  void SetMediaChanging(bool onOff) ;
-  bool IsMediaChanging() ;
-  void RequestNewPat(void) ;
-  void ClearRequestNewPat(void) ;
-  void ResetPatInfo(void) ;
-  bool IsNewPatReady(void) ;
+  void SetMediaChanging(bool onOff);
+  bool IsMediaChanging();
+  void RequestNewPat(void);
+  void ClearRequestNewPat(void);
+  void ResetPatInfo(void);
+  bool IsNewPatReady(void);
   void SetAudioChanging(bool onOff);
   bool IsAudioChanging(void);
 
-  bool m_DisableDiscontinuitiesFiltering ;
-  DWORD m_LastDataFromRtsp ;
-  bool m_bAudioVideoReady ;
+  bool m_DisableDiscontinuitiesFiltering;
+  DWORD m_LastDataFromRtsp;
+  bool m_bAudioVideoReady;
 
 private:
   struct stAudioStream
@@ -208,15 +208,15 @@ private:
   int m_WaitNewPatTmo;
   int m_receivedPackets;
 
-  bool m_bFirstGopFound ;
-  bool m_bFrame0Found ;
+  bool m_bFirstGopFound;
+  bool m_bFrame0Found;
 
   bool  m_bWaitForMediaChange;
   DWORD m_tWaitForMediaChange;
   bool  m_bWaitForAudioSelection;
   DWORD m_tWaitForAudioSelection;
 
-  bool m_bStarting ;
+  bool m_bStarting;
 
   bool m_mpegParserTriggerFormatChange;
   bool m_bSetAudioDiscontinuity;
@@ -233,16 +233,18 @@ private:
   CAutoPtrList<Packet> m_pl;
   bool m_fHasAccessUnitDelimiters;
   DWORD m_lastStart;
-  CPcr m_VideoPts ;
-  CPcr m_CurrentVideoPts ;
-  bool m_bInBlock ;
-  double m_curFrameRate ;
-  int m_LastValidFrameCount ;
-  CPcr m_LastValidFramePts ;
+  CPcr m_VideoPts;
+  CPcr m_CurrentVideoPts;
+  bool m_bInBlock;
+  double m_curFrameRate;
+  int m_LastValidFrameCount;
+  CPcr m_LastValidFramePts;
 
   bool m_bAudioAtEof;
   bool m_bVideoAtEof;
 
-  float m_MinAudioDelta ;
-  float m_MinVideoDelta ;
+  float m_MinAudioDelta;
+  float m_MinVideoDelta;
+
+  bool m_bShuttingDown;
 };

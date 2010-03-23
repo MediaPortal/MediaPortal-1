@@ -59,23 +59,12 @@ DECLARE_INTERFACE_(ITSReaderAudioChange, IUnknown)
   ITSReader : public IUnknown
   {
   public:
-      virtual HRESULT STDMETHODCALLTYPE SetGraphCallback( 
-		/* [in] */ ITSReaderCallback* pCallback
-		) = 0;		        
-			virtual HRESULT STDMETHODCALLTYPE SetRequestAudioChangeCallback( 
-								ITSReaderAudioChange* pCallback) = 0;
-
-      virtual HRESULT STDMETHODCALLTYPE SetRelaxedMode( 
-								BOOL relaxedReading) = 0;
-
-      virtual void    STDMETHODCALLTYPE OnZapping( 
-								int info) = 0;
-
-      virtual void    STDMETHODCALLTYPE OnGraphRebuild( 
-								int info) = 0;
-
-      virtual void    STDMETHODCALLTYPE SetMediaPosition( 
-								REFERENCE_TIME MediaPos) = 0;
+      virtual HRESULT STDMETHODCALLTYPE SetGraphCallback(ITSReaderCallback* pCallback) = 0;		        
+			virtual HRESULT STDMETHODCALLTYPE SetRequestAudioChangeCallback(ITSReaderAudioChange* pCallback) = 0;
+      virtual HRESULT STDMETHODCALLTYPE SetRelaxedMode(BOOL relaxedReading) = 0;
+      virtual void    STDMETHODCALLTYPE OnZapping(int info) = 0;
+      virtual void    STDMETHODCALLTYPE OnGraphRebuild(int info) = 0;
+      virtual void    STDMETHODCALLTYPE SetMediaPosition(REFERENCE_TIME MediaPos) = 0;
 
 		  //virtual HRESULT STDMETHODCALLTYPE GetVideoFormat(int *width,int *height, int *aspectRatioX,int *aspectRatioY,int *bitrate,int *interlaced) PURE;
   };
@@ -139,6 +128,7 @@ public:
   STDMETHODIMP	  SetGraphCallback(ITSReaderCallback* pCallback);
   STDMETHODIMP	  SetRequestAudioChangeCallback(ITSReaderAudioChange* pCallback);
   STDMETHODIMP	  SetRelaxedMode(BOOL relaxedReading);
+
   void STDMETHODCALLTYPE  OnZapping(int info);
   void STDMETHODCALLTYPE  OnGraphRebuild(int info);
   void STDMETHODCALLTYPE  SetMediaPosition(REFERENCE_TIME MediaPos);
@@ -147,7 +137,7 @@ public:
   STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
   STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
   STDMETHODIMP    GetDuration(REFERENCE_TIME *dur);
-  double		      GetStartTime();
+  double          GetStartTime();
   bool            IsFilterRunning();
   CDeMultiplexer& GetDemultiplexer();
   void            Seek(CRefTime&  seekTime, bool seekInFile);
@@ -171,7 +161,7 @@ public:
 
   bool            IsSeeking();
   int             SeekingDone();
-  bool		      IsStopping();
+  bool            IsStopping();
   //bool            IsSeekingToEof();
 
   DWORD           m_lastPause;
@@ -179,33 +169,37 @@ public:
   CRefTime        m_ClockOnStart;
 
   REFERENCE_TIME  m_RandomCompensation;
-	REFERENCE_TIME  m_MediaPos ;
-	REFERENCE_TIME  m_BaseTime ;
-	REFERENCE_TIME  m_LastTime ;
+  REFERENCE_TIME  m_MediaPos;
+  REFERENCE_TIME  m_BaseTime;
+  REFERENCE_TIME  m_LastTime;
+  
   bool            m_bLiveTv;
   bool            m_bStopping;
   int             m_WaitForSeekToEof;
-	void GetTime(REFERENCE_TIME *Time);
-	void GetMediaPosition(REFERENCE_TIME *pMediaTime);
+	
+  void GetTime(REFERENCE_TIME *Time);
+  void GetMediaPosition(REFERENCE_TIME *pMediaTime);
 
-  bool            m_bOnZap ;
+  bool            m_bOnZap;
   bool            m_bForceSeekOnStop;
   bool            m_bRenderingClockTooFast;
 
 protected:
   void ThreadProc();
+
 private:
-  void SetDuration();
-  HRESULT AddGraphToRot(IUnknown *pUnkGraph) ;
+  void    SetDuration();
+  HRESULT AddGraphToRot(IUnknown *pUnkGraph);
   HRESULT FindSubtitleFilter();
   void    RemoveGraphFromRot();
-  CAudioPin*	  m_pAudioPin;
-  CVideoPin*	  m_pVideoPin;
+
+  CAudioPin*	    m_pAudioPin;
+  CVideoPin*	    m_pVideoPin;
   CSubtitlePin*	  m_pSubtitlePin;
   WCHAR           m_fileName[1024];
   CCritSec        m_section;
   CCritSec        m_CritSecDuration;
-	CCritSec        m_GetTimeLock;
+  CCritSec        m_GetTimeLock;
   FileReader*     m_fileReader;
   FileReader*     m_fileDuration;
   CTsDuration     m_duration;
@@ -228,6 +222,6 @@ private:
   bool            m_bAnalog;
   bool            m_bStoppedForUnexpectedSeek ;
   bool            m_bPauseOnClockTooFast;
-  DWORD           m_MPmainThreadID ;
+  DWORD           m_MPmainThreadID;
 };
 
