@@ -68,7 +68,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   {
     HRESULT hr;
     LogRotate();
-    Log("----------v1.3.1------------ instance 0x%x", this);
+    Log("----------v1.3.3------------ instance 0x%x", this);
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
     hr = m_pDXVA2CreateDirect3DDeviceManager9(&m_iResetToken, &m_pDeviceManager);
@@ -166,6 +166,10 @@ void MPEVRCustomPresenter::ResetEVRStatCounters()
   m_bResetStats = true;
 }
 
+void MPEVRCustomPresenter::ReleaseCallback()
+{
+  m_pCallback = NULL;
+}
 
 MPEVRCustomPresenter::~MPEVRCustomPresenter()
 {

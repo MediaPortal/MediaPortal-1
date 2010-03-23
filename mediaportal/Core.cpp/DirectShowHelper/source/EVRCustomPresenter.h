@@ -156,6 +156,9 @@ public:
   double         GetCycleDifference();
   double         GetDetectedFrameTime();
 
+  // Release EVR callback (C# side)
+  void           ReleaseCallback();
+
   // Settings
   void           EnableDrawStats(bool enable);
   void           ResetEVRStatCounters();

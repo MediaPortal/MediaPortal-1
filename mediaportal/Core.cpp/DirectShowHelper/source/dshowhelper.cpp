@@ -578,7 +578,11 @@ BOOL EvrInit(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* evrFilter,
   HRESULT hr;
   m_RenderPrefix = "evr";
   LogRotate();
-  m_bEVRLoaded = LoadEVR();
+  // Make sure that we aren't trying to load the DLLs for second time
+  if(!m_bEVRLoaded)
+  {
+    m_bEVRLoaded = LoadEVR();
+  }
   if (!m_bEVRLoaded) 
   {
     Log("EVR libraries are not loaded. Cannot init EVR");
@@ -641,6 +645,7 @@ void EvrDeinit()
     }
     if (m_evrPresenter!=NULL)
     {
+      m_evrPresenter->ReleaseCallback();
       refCount = m_evrPresenter->Release();
       m_evrPresenter = NULL;
       Log("EVRDeinit:m_evrPresenter release: %d", refCount);
@@ -649,11 +654,17 @@ void EvrDeinit()
 
     //SAFE_RELEASE(m_pVMR9Filter);
     m_pVMR9Filter = NULL;
+    
+    // Do not unload DLLs when playback stops
+    // 1) it generates randomly a access violation inside EVR.DLL
+    // 2) it gives a small performance boost since most of the time we are going to play a 2nd video as well
+    /*
     if (m_bEVRLoaded)
     {
       UnloadEVR();
       m_bEVRLoaded = FALSE;
     }
+    */
   }
   catch(...)
   {

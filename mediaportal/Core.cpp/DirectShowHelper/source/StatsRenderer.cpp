@@ -71,6 +71,8 @@ StatsRenderer::StatsRenderer(MPEVRCustomPresenter* presenter, IDirect3DDevice9* 
 
 StatsRenderer::~StatsRenderer(void)
 {
+  m_pSprite = NULL;
+  m_pLine = NULL;
 }
 
 
