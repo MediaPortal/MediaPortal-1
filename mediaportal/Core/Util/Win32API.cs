@@ -118,13 +118,37 @@ namespace MediaPortal.Util
     public static extern IntPtr GetParent(HandleRef hWnd);
 
     [DllImport("user32", SetLastError = true)]
-    private static extern uint ShowWindow(uint _hwnd, int _showCommand);
+    public static extern uint ShowWindow(uint _hwnd, int _showCommand);
 
     [DllImportAttribute("user32", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
     public static extern int EnableWindow(uint hwnd, int fEnable);
 
+    [DllImport("user32.dll")]
+    public static extern bool IsWindowVisible(IntPtr handle);
+
+    [DllImport("user32.dll")]
+    public static extern bool IsWindowEnabled(IntPtr handle);
+
+    [DllImport("user32")]
+    private static extern bool AttachThreadInput(int nThreadId, int nThreadIdTo, bool bAttach);
+
+    [DllImport("user32")]
+    private static extern int GetWindowThreadProcessId(IntPtr hWnd, out int unused);
+
+    [DllImport("kernel32.dll")]
+    private static extern int GetCurrentThreadId();
+
+    [DllImport("user32")]
+    private static extern IntPtr GetForegroundWindow();
+
     [DllImport("user32", SetLastError = true)]
-    private static extern uint SetForegroundWindow(uint _hwnd);
+    private static extern bool SetForegroundWindow(IntPtr _hwnd);
+
+    [DllImport("user32")]
+    private static extern bool SetFocus(IntPtr hWnd);
+
+    [DllImport("user32")]
+    private static extern bool BringWindowToTop(IntPtr hWnd);
 
     [DllImport("user32", SetLastError = true)]
     public static extern bool PostThreadMessage(int idThread, uint Msg, uint wParam, uint lParam);
@@ -161,8 +185,10 @@ namespace MediaPortal.Util
       public int nFileSizeLow;
       public int dwReserved0;
       public int dwReserved1;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string cFileName;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)] public string cAlternate;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+      public string cFileName;
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
+      public string cAlternate;
     }
 
     [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
@@ -388,7 +414,7 @@ namespace MediaPortal.Util
       {
         Show("Shell_TrayWnd", "", bVisible);
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
     public static void EnableStartBar(bool bEnable)
@@ -397,7 +423,7 @@ namespace MediaPortal.Util
       {
         Enable("Shell_TrayWnd", "", bEnable);
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
     /// <summary> 
@@ -425,7 +451,7 @@ namespace MediaPortal.Util
         default:
           // if it's not minimized, then we just call SetForegroundWindow to 
           // bring it to the front. 
-          SetForegroundWindow(_hWnd);
+          SetForegroundWindow((IntPtr)_hWnd);
           break;
       }
     }
@@ -475,6 +501,56 @@ namespace MediaPortal.Util
       {
         Win32API.PostThreadMessage(thread.Id, Win32API.WM_SHOWWINDOW, 0, 0);
       }
+    }
+
+    public static bool SetForegroundWindow(IntPtr window, bool force)
+    {
+      IntPtr windowForeground = GetForegroundWindow();
+
+      if (window == windowForeground)
+      {
+        return true;
+      }
+
+      bool setAttempt = SetForegroundWindow(window);
+
+      if (force == false || setAttempt)
+      {
+        return setAttempt;
+      }
+
+      if (windowForeground == IntPtr.Zero)
+      {
+        return false;
+      }
+
+      // if we don't attach successfully to the windows thread then we're out of options
+      int processId;
+      int fgWindowPID = GetWindowThreadProcessId(windowForeground, out processId);
+
+      if (fgWindowPID == -1)
+      {
+        return false;
+      }
+
+      // If we don't attach successfully to the windows thread then we're out of options
+      int curThreadID = GetCurrentThreadId();
+      bool attached = AttachThreadInput(curThreadID, fgWindowPID, true);
+      int lastError = Marshal.GetLastWin32Error();
+
+      if (!attached)
+      {
+        return false;
+      }
+
+      SetForegroundWindow(window);
+      BringWindowToTop(window);
+      SetFocus(window);
+
+      AttachThreadInput(curThreadID, fgWindowPID, false);
+
+      // we've done all that we can so base our return value on whether we have succeeded or not
+      return (GetForegroundWindow() == window);
     }
 
     public static string GetFolderPath(int csidl)

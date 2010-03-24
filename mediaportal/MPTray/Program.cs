@@ -27,8 +27,8 @@ using System.Windows.Forms;
 using MediaPortal.Hardware;
 using MediaPortal.Hooks;
 using MediaPortal.ServiceImplementations;
+using MediaPortal.Util;
 using Microsoft.Win32;
-using System.Drawing;
 
 namespace MPTray
 {
@@ -52,8 +52,8 @@ namespace MPTray
 
       if (processes.Length > 0)
       {
-        NativeMethods.ShowWindow(processes[0].MainWindowHandle, NativeMethods.ShowWindowFlags.ShowNormal);
-        if (NativeMethods.SetForegroundWindow(processes[0].MainWindowHandle, true))
+        Win32API.ShowWindow((uint)processes[0].MainWindowHandle, (int)Win32API.ShowWindowFlags.ShowNormal);
+        if (Win32API.SetForegroundWindow(processes[0].MainWindowHandle, true))
         {
           Log.Info("MPTray: Successfully switched focus.");
         }
@@ -183,13 +183,15 @@ namespace MPTray
 
       if (_windowsKeyPressed && (e.KeyCode == Keys.T || e.KeyCode == Keys.K || e.KeyCode != Keys.M))
       {
-        IntPtr handle = NativeMethods.FindWindow("Shell_TrayWnd", null);
+        string className = "Shell_TrayWnd";
+        string n= null;
+        IntPtr handle = (IntPtr)Win32API.FindWindow(ref className, ref n);
 
-        if (handle != IntPtr.Zero && NativeMethods.IsWindowVisible(handle) == false)
-          NativeMethods.ShowWindow(handle, NativeMethods.ShowWindowFlags.ShowNA);
+        if (handle != IntPtr.Zero && Win32API.IsWindowVisible(handle) == false)
+          Win32API.ShowWindow((uint)handle, (int)Win32API.ShowWindowFlags.ShowNA);
 
-        if (handle != IntPtr.Zero && NativeMethods.IsWindowEnabled(handle) == false)
-          NativeMethods.EnableWindow(handle, true);
+        if (handle != IntPtr.Zero && Win32API.IsWindowEnabled(handle) == false)
+          Win32API.EnableWindow((uint)handle, 1);
 
         e.Handled = e.KeyCode != Keys.M;
       }
