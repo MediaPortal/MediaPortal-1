@@ -489,17 +489,24 @@ namespace MpeInstaller
       {
         if (installedPak != null)
         {
-          if (!silent)
-            if (
-              MessageBox.Show(
-                "This extension already have a installed version. \nThis will be uninstalled first. \nDo you want to continue ?  \n" +
-                 "Old extension version: " + installedPak.GeneralInfo.Version + " \n" +
-                 "New extension version: " + pak.GeneralInfo.Version,
-                "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
-              return;
-          UnInstall dlg = new UnInstall();
-          dlg.Execute(installedPak, true);
-          pak.CopyGroupCheck(installedPak);
+          if (pak.GeneralInfo.Params[ParamNamesConst.FORCE_TO_UNINSTALL_ON_UPDATE].GetValueAsBool())
+          {
+            if (!silent)
+              if (
+                MessageBox.Show(
+                  "This extension already have a installed version. \nThis will be uninstalled first. \nDo you want to continue ?  \n" +
+                  "Old extension version: " + installedPak.GeneralInfo.Version + " \n" +
+                  "New extension version: " + pak.GeneralInfo.Version,
+                  "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
+                return;
+            UnInstall dlg = new UnInstall();
+            dlg.Execute(installedPak, true);
+            pak.CopyGroupCheck(installedPak);
+          }
+          else
+          {
+            MpeCore.MpeInstaller.InstalledExtensions.Remove(pak);
+          }
         }
         if (gui)
           this.Hide();

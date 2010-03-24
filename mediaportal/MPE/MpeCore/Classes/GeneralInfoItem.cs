@@ -41,6 +41,8 @@ namespace MpeCore.Classes
                                   "The file used to configure the extension.\n If have .exe extension the will be executed\n If have .dll extension used like MP plugin configuration"));
       Params.Add(new SectionParam(ParamNamesConst.ONLINE_SCREENSHOT, "", ValueTypeEnum.String,
                                   "Online stored screenshot urls separated by ; "));
+      Params.Add(new SectionParam(ParamNamesConst.FORCE_TO_UNINSTALL_ON_UPDATE, "yes", ValueTypeEnum.Bool,
+                                  "Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer."));
     }
 
     public string Name { get; set; }

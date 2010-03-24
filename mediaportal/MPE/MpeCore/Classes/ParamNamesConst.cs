@@ -26,6 +26,7 @@ namespace MpeCore.Classes
     public const string ONLINE_ICON = "Online Icon";
     public const string CONFIG = "Configuration file";
     public const string ONLINE_SCREENSHOT = "Online Screenshots";
+    public const string FORCE_TO_UNINSTALL_ON_UPDATE = "Force to uninstall on update";
     public const string SECTION_ICON = "Header image";
 
     public static char[] SEPARATORS = {',', ';'};
