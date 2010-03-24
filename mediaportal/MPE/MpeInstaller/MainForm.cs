@@ -187,6 +187,8 @@ namespace MpeInstaller
       InitializeComponent();
       MpeCore.MpeInstaller.Init();
       _settings = ApplicationSettings.Load();
+      MpeCore.MpeInstaller.InstalledExtensions.IgnoredUpdates = _settings.IgnoredUpdates;
+      MpeCore.MpeInstaller.KnownExtensions.IgnoredUpdates = _settings.IgnoredUpdates;
       _loading = true;
       chk_update.Checked = _settings.DoUpdateInStartUp;
       chk_updateExtension.Checked = _settings.UpdateAll;

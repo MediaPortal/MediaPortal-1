@@ -20,6 +20,7 @@
 
 using System;
 using System.Windows.Forms;
+using System.Collections.Generic;
 using MpeCore;
 using MpeCore.Classes;
 
@@ -48,11 +49,13 @@ namespace MpeInstaller.Controls
 
     public delegate void ShowScreenShotHandler(object sender, PackageClass packageClass);
 
+    public Dictionary<string, int> TagList;
     public ExtensionListControl()
     {
       InitializeComponent();
       SelectedItem = null;
       flowLayoutPanel1.VerticalScroll.Visible = true;
+      TagList = new Dictionary<string, int>();
     }
 
     public ExtensionControl SelectedItem { get; set; }
@@ -61,6 +64,7 @@ namespace MpeInstaller.Controls
     {
       comboBox1.Items.Clear();
       comboBox1.Items.Add("All");
+      TagList.Clear();
       flowLayoutPanel1.Controls.Clear();
       foreach (PackageClass item in collection.Items)
       {
@@ -69,14 +73,21 @@ namespace MpeInstaller.Controls
       }
       comboBox1.Text = "All";
       textBox1.Text = string.Empty;
+      foreach (KeyValuePair<string, int> tagList in TagList)
+      {
+        if (tagList.Value > 1)
+          comboBox1.Items.Add(tagList.Key);
+      }
     }
 
     private void AddTags(TagCollection tags)
     {
       foreach (var tag in tags.Tags)
       {
-        if (!comboBox1.Items.Contains(tag))
-          comboBox1.Items.Add(tag);
+        if (!TagList.ContainsKey(tag))
+          TagList.Add(tag, 1);
+        else
+          TagList[tag]++;
       }
     }
 
@@ -87,8 +98,7 @@ namespace MpeInstaller.Controls
       if (UnInstallExtension != null)
         UnInstallExtension(control, control.Package);
     }
-
-
+    
     public void OnUpdateExtension(ExtensionControl control)
     {
       if (UpdateExtension != null)
@@ -138,6 +148,19 @@ namespace MpeInstaller.Controls
     private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
     {
 
+    }
+
+    private void label1_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void flowLayoutPanel1_SizeChanged(object sender, EventArgs e)
+    {
+      if (flowLayoutPanel1.Controls.Count > 1 && flowLayoutPanel1.Size.Width > flowLayoutPanel1.Controls[0].Width + 30)
+        flowLayoutPanel1.WrapContents = true;
+      else
+        flowLayoutPanel1.WrapContents = false;
     }
 
   }

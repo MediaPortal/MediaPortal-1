@@ -92,21 +92,6 @@ namespace MpeInstaller.Controls
       PopulateInstallBtn();
       btn_conf.Enabled = !string.IsNullOrEmpty(Package.GeneralInfo.Params[ParamNamesConst.CONFIG].GetValueAsPath());
 
-      UpdatePackage = MpeCore.MpeInstaller.KnownExtensions.GetUpdate(Package);
-      if (UpdatePackage != null)
-      {
-        btn_update.Visible = true;
-        img_update.Visible = true;
-        img_update1.Visible = true;
-        toolTip1.SetToolTip(img_update, "New update available. Version: " + UpdatePackage.GeneralInfo.Version.ToString());
-        toolTip1.SetToolTip(img_update1, "New update available. Version: " + UpdatePackage.GeneralInfo.Version.ToString());
-      }
-      else
-      {
-        btn_update.Visible = false;
-        img_update.Visible = false;
-        img_update1.Visible = false;
-      }
       if (!Package.CheckDependency(true))
       {
         img_dep.Visible = true;
@@ -119,6 +104,7 @@ namespace MpeInstaller.Controls
       }
       Selected = false;
       SelectControl();
+      SetButtonState();
     }
 
     void _client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
@@ -186,6 +172,26 @@ namespace MpeInstaller.Controls
       }
     }
 
+    private void SetButtonState()
+    {
+      UpdatePackage = MpeCore.MpeInstaller.KnownExtensions.GetUpdate(Package);
+      if (UpdatePackage != null)
+      {
+        btn_update.Visible = true;
+        img_update.Visible = true;
+        img_update1.Visible = true;
+        toolTip1.SetToolTip(img_update, "New update available. Version: " + UpdatePackage.GeneralInfo.Version.ToString());
+        toolTip1.SetToolTip(img_update1, "New update available. Version: " + UpdatePackage.GeneralInfo.Version.ToString());
+      }
+      else
+      {
+        btn_update.Visible = false;
+        img_update.Visible = false;
+        img_update1.Visible = false;
+      }
+     
+    }
+
     private void SelectControl()
     {
       BackColor = _selected ? SystemColors.GradientInactiveCaption : Color.White;
@@ -213,6 +219,10 @@ namespace MpeInstaller.Controls
           }
         }
         if (parent != null) parent.SelectedItem = this;
+      }
+      if (Package.Parent != null)
+      {
+        chk_ignore.Checked = Package.Parent.IgnoredUpdates.Contains(Package.GeneralInfo.Id);
       }
     }
 
@@ -336,15 +346,10 @@ namespace MpeInstaller.Controls
 
     private void btn_screenshot_Click(object sender, EventArgs e)
     {
-      ExtensionListControl parent = Parent.Parent as ExtensionListControl;
+      var parent = Parent.Parent as ExtensionListControl;
       if (parent == null)
         return;
       parent.OnShowScreenShot(this, Package);
-    }
-
-    private void btn_more_info_Click(object sender, EventArgs e)
-    {
-
     }
 
     private void img_dep1_Click(object sender, EventArgs e)
@@ -360,6 +365,24 @@ namespace MpeInstaller.Controls
     private void ExtensionControl_Load(object sender, EventArgs e)
     {
 
+    }
+
+    private void chk_ignore_CheckedChanged(object sender, EventArgs e)
+    {
+      if (Package.Parent != null)
+      {
+        if (chk_ignore.Checked)
+        {
+          if (!Package.Parent.IgnoredUpdates.Contains(Package.GeneralInfo.Id))
+            Package.Parent.IgnoredUpdates.Add(Package.GeneralInfo.Id);
+        }
+        else
+        {
+          if (Package.Parent.IgnoredUpdates.Contains(Package.GeneralInfo.Id))
+            Package.Parent.IgnoredUpdates.Remove(Package.GeneralInfo.Id);
+        }
+        SetButtonState();
+      }
     }
 
 

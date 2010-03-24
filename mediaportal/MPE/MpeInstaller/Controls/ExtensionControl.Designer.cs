@@ -41,13 +41,13 @@
           this.img_update1 = new System.Windows.Forms.PictureBox();
           this.img_dep1 = new System.Windows.Forms.PictureBox();
           this.btn_update = new System.Windows.Forms.Button();
-          this.btn_more_info = new System.Windows.Forms.Button();
           this.btn_conf = new System.Windows.Forms.Button();
           this.toolStrip1 = new System.Windows.Forms.ToolStrip();
           this.btn_install = new System.Windows.Forms.ToolStripDropDownButton();
           this.img_logo = new System.Windows.Forms.PictureBox();
           this.timer1 = new System.Windows.Forms.Timer(this.components);
           this.btn_screenshot = new System.Windows.Forms.Button();
+          this.chk_ignore = new System.Windows.Forms.CheckBox();
           ((System.ComponentModel.ISupportInitialize)(this.img_dep)).BeginInit();
           ((System.ComponentModel.ISupportInitialize)(this.img_update)).BeginInit();
           ((System.ComponentModel.ISupportInitialize)(this.img_update1)).BeginInit();
@@ -194,22 +194,10 @@
           this.btn_update.UseVisualStyleBackColor = false;
           this.btn_update.Click += new System.EventHandler(this.btn_update_Click);
           // 
-          // btn_more_info
-          // 
-          this.btn_more_info.FlatStyle = System.Windows.Forms.FlatStyle.System;
-          this.btn_more_info.Location = new System.Drawing.Point(237, 91);
-          this.btn_more_info.Name = "btn_more_info";
-          this.btn_more_info.Size = new System.Drawing.Size(75, 23);
-          this.btn_more_info.TabIndex = 8;
-          this.btn_more_info.Text = "More info.";
-          this.btn_more_info.UseVisualStyleBackColor = true;
-          this.btn_more_info.Visible = false;
-          this.btn_more_info.Click += new System.EventHandler(this.btn_more_info_Click);
-          // 
           // btn_conf
           // 
           this.btn_conf.FlatStyle = System.Windows.Forms.FlatStyle.System;
-          this.btn_conf.Location = new System.Drawing.Point(318, 91);
+          this.btn_conf.Location = new System.Drawing.Point(232, 91);
           this.btn_conf.Name = "btn_conf";
           this.btn_conf.Size = new System.Drawing.Size(75, 23);
           this.btn_conf.TabIndex = 9;
@@ -260,7 +248,7 @@
           // btn_screenshot
           // 
           this.btn_screenshot.FlatStyle = System.Windows.Forms.FlatStyle.System;
-          this.btn_screenshot.Location = new System.Drawing.Point(399, 91);
+          this.btn_screenshot.Location = new System.Drawing.Point(313, 91);
           this.btn_screenshot.Name = "btn_screenshot";
           this.btn_screenshot.Size = new System.Drawing.Size(75, 23);
           this.btn_screenshot.TabIndex = 13;
@@ -268,11 +256,24 @@
           this.btn_screenshot.UseVisualStyleBackColor = true;
           this.btn_screenshot.Click += new System.EventHandler(this.btn_screenshot_Click);
           // 
+          // chk_ignore
+          // 
+          this.chk_ignore.AutoSize = true;
+          this.chk_ignore.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+          this.chk_ignore.Location = new System.Drawing.Point(451, 97);
+          this.chk_ignore.Name = "chk_ignore";
+          this.chk_ignore.Size = new System.Drawing.Size(94, 17);
+          this.chk_ignore.TabIndex = 35;
+          this.chk_ignore.Text = "Ignore updates";
+          this.chk_ignore.UseVisualStyleBackColor = true;
+          this.chk_ignore.CheckedChanged += new System.EventHandler(this.chk_ignore_CheckedChanged);
+          // 
           // ExtensionControl
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
           this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+          this.Controls.Add(this.chk_ignore);
           this.Controls.Add(this.img_dep1);
           this.Controls.Add(this.img_update1);
           this.Controls.Add(this.btn_screenshot);
@@ -280,7 +281,6 @@
           this.Controls.Add(this.btn_forum);
           this.Controls.Add(this.toolStrip1);
           this.Controls.Add(this.btn_conf);
-          this.Controls.Add(this.btn_more_info);
           this.Controls.Add(this.img_dep);
           this.Controls.Add(this.btn_update);
           this.Controls.Add(this.img_update);
@@ -318,7 +318,6 @@
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Button btn_update;
         private System.Windows.Forms.PictureBox img_dep;
-        private System.Windows.Forms.Button btn_more_info;
         private System.Windows.Forms.Button btn_conf;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripDropDownButton btn_install;
@@ -328,5 +327,6 @@
         private System.Windows.Forms.Button btn_screenshot;
         private System.Windows.Forms.PictureBox img_update1;
         private System.Windows.Forms.PictureBox img_dep1;
+        private System.Windows.Forms.CheckBox chk_ignore;
     }
 }

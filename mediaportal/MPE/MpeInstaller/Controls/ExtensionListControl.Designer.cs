@@ -37,6 +37,9 @@
           // 
           // flowLayoutPanel1
           // 
+          this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                      | System.Windows.Forms.AnchorStyles.Left)
+                      | System.Windows.Forms.AnchorStyles.Right)));
           this.flowLayoutPanel1.AutoScroll = true;
           this.flowLayoutPanel1.BackColor = System.Drawing.Color.White;
           this.flowLayoutPanel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -50,6 +53,7 @@
           this.flowLayoutPanel1.WrapContents = false;
           this.flowLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.flowLayoutPanel1_Paint);
           this.flowLayoutPanel1.Click += new System.EventHandler(this.flowLayoutPanel1_Click);
+          this.flowLayoutPanel1.SizeChanged += new System.EventHandler(this.flowLayoutPanel1_SizeChanged);
           // 
           // textBox1
           // 
@@ -67,6 +71,7 @@
           this.label1.Size = new System.Drawing.Size(41, 13);
           this.label1.TabIndex = 2;
           this.label1.Text = "Search";
+          this.label1.Click += new System.EventHandler(this.label1_Click);
           // 
           // comboBox1
           // 

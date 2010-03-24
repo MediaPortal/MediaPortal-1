@@ -30,10 +30,12 @@ namespace MpeCore.Classes
     public ExtensionCollection()
     {
       Items = new List<PackageClass>();
+      IgnoredUpdates = new List<string>();
     }
 
     public List<PackageClass> Items { get; set; }
-
+    [XmlIgnore]
+    public List<string> IgnoredUpdates { get; set; }
 
     /// <summary>
     /// Gets the unique list of extensions with hightess version
@@ -116,6 +118,7 @@ namespace MpeCore.Classes
       }
       pak.Dependencies = packageClass.Dependencies;
       pak.Version = packageClass.Version;
+      pak.Parent = this;
       Items.Add(pak);
     }
 
@@ -211,6 +214,8 @@ namespace MpeCore.Classes
     /// <returns></returns>
     public PackageClass GetUpdate(PackageClass pak)
     {
+      if (IgnoredUpdates.Contains(pak.GeneralInfo.Id))
+        return null;
       PackageClass ret = Get(pak.GeneralInfo.Id);
       if (ret == null)
         return null;
@@ -253,6 +258,10 @@ namespace MpeCore.Classes
         ExtensionCollection extensionCollection = (ExtensionCollection)serializer.Deserialize(fs);
         fs.Close();
         extensionCollection.Items.Sort(PackageClass.Compare);
+        foreach (PackageClass item in extensionCollection.Items)
+        {
+          item.Parent = extensionCollection;
+        }
         return extensionCollection;
       }
       catch

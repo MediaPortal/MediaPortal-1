@@ -55,6 +55,7 @@ namespace MpeCore
       ProjectSettings = new ProjectSettings();
       Silent = false;
       IsHiden = false;
+      Parent = null;
     }
 
     public string Version { get; set; }
@@ -64,6 +65,9 @@ namespace MpeCore
     public GeneralInfoItem GeneralInfo { get; set; }
     public FileItemCollection UniqueFileList { get; set; }
     public ProjectSettings ProjectSettings { get; set; }
+
+    [XmlIgnore]
+    public ExtensionCollection Parent { get; set; }
 
     [XmlIgnore]
     public ZipProviderClass ZipProvider { get; set; }
