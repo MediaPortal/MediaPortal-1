@@ -371,6 +371,12 @@ namespace MpeInstaller
       }
       PackageClass pak = new PackageClass();
       pak = pak.ZipProvider.Load(newPackageLoacation);
+      if (pak == null)
+      {
+        if (!silent)
+          MessageBox.Show("Invalid package format ! Update aborted !");
+        return false;
+      }
       if (pak.GeneralInfo.Id != newpackageClass.GeneralInfo.Id ||
           pak.GeneralInfo.Version.CompareTo(newpackageClass.GeneralInfo.Version) < 0)
       {
