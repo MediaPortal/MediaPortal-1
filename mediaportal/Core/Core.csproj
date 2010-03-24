@@ -1480,9 +1480,6 @@
     <Compile Include="System.Windows.Media.Animation\IClock.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Media.Animation\NativeMethods.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Media.Animation\ParallelTimeline.cs">
       <SubType>Code</SubType>
     </Compile>
