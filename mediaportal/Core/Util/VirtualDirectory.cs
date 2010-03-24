@@ -1511,6 +1511,10 @@ namespace MediaPortal.Util
 
             if ((fd.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
             {
+              // Skip hidden folders
+              if ((fd.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                continue;
+
               string strPath = FileName.Substring(aDirectory.Length + 1);
               fi.Name = fd.cFileName;
               item = new GUIListItem(strPath, "", FileName, true, fi);
