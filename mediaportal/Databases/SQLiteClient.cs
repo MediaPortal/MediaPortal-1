@@ -376,7 +376,7 @@ namespace SQLite.NET
       }
       DateTime now = DateTime.Now;
       TimeSpan ts = now - DateTime.Now;
-      while (true && ts.TotalSeconds > -5)
+      while (true && ts.TotalSeconds > -15)
       {
         res = sqlite3_step(pVm);
         pN = sqlite3_column_count(pVm);
