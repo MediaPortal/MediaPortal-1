@@ -1972,7 +1972,7 @@ namespace MediaPortal.Util
       return ftp;
     }
 
-    #region generics    
+    #region Statics
 
     public static void SetInitialDefaultShares(bool addOptical, bool addMusic, bool addPictures, bool addVideos)
     {
@@ -2111,9 +2111,9 @@ namespace MediaPortal.Util
         }
       }
     }
-  }
 
-  #endregion
+    #endregion
+  }
 
   /// <summary>
   /// Singleton class that returns instances to the diffrent kind
