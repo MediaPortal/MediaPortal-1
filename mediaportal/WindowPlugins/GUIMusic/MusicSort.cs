@@ -160,13 +160,27 @@ namespace MediaPortal.GUI.Music
         case SortMethod.Year:
           item1.Label2 = item1.Year.ToString();
           item2.Label2 = item2.Year.ToString();
+
+          // When sorting on Year, we need to take also the Label into account and sort on that as well
+          string compVal1 = item1.Year.ToString() + item1.Label;
+          string compVal2 = item2.Year.ToString() + item2.Label;
           if (bAscending)
           {
-            return (int)(item1.Year - item2.Year);
+            if (item1.Year == item2.Year)
+            {
+              // When the Year is equal just sort on the Label
+              return String.Compare(item1.Label, item2.Label, true);
+            }
+            return String.Compare(compVal1, compVal2, true);
           }
           else
           {
-            return (int)(item2.Year - item1.Year);
+            if (item1.Year == item2.Year)
+            {
+              // When the Year is equal, sort on label ASCENDING, altough sorting on year is DESC
+              return String.Compare(item1.Label, item2.Label, true);
+            }
+            return String.Compare(compVal2, compVal1, true);
           }
 
         case SortMethod.Rating:
