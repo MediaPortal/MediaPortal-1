@@ -1304,7 +1304,7 @@
     <String id="4552">Spil nu</String>
     <String id="4553">Vis playliste</String>
     <String id="4554">Slå CD info op</String>
-    <String id="4555">Aktive playliste</String>
+    <String id="4555">Aktiv playliste</String>
     <String id="4557">Tilføj alle til playliste</String>
     <String id="4558">For nylig tilføjet</String>
     <String id="5900" prefix="Mine ">Trailere</String>
@@ -1437,8 +1437,8 @@
     <String id="9113">Grøn</String>
     <String id="9114">Blå</String>
     <String id="9115">Invert display</String>
-    <String id="9116">Tom display under videoafspilning</String>
-    <String id="9117">Tom Display Actions</String>
+    <String id="9116">Tomt display under videoafspilning</String>
+    <String id="9117">Tom display Actions</String>
     <String id="9118">Vis display tid</String>
     <String id="9119">Blank display ved ledig</String>
     <String id="9120">Ledig forsinkelse</String>
@@ -1619,14 +1619,14 @@
     <String id="33008">Ingen aktiv playliste</String>
     <String id="33009">at indsætte eller tilføje nummer til!</String>
     <String id="33010">Fyld automatisk playliste med</String>
-    <String id="33011">tilsvarende numre</String>
-    <String id="33012">numre dine naboer kan lide</String>
-    <String id="33013">numre med tilsvarende markering</String>
-    <String id="33014">numre spillet for nyligt</String>
-    <String id="33016">numre dine venner kan lide</String>
-    <String id="33017">tilfældige numre</String>
-    <String id="33018">tilfældige ikke-hørte numre</String>
-    <String id="33019">tilfældige foretrukne numre</String>
+    <String id="33011">Tilsvarende numre</String>
+    <String id="33012">Numre dine naboer kan lide</String>
+    <String id="33013">Numre med tilsvarende markering</String>
+    <String id="33014">Numre spillet for nyligt</String>
+    <String id="33016">Numre dine venner kan lide</String>
+    <String id="33017">Tilfældige numre</String>
+    <String id="33018">Tilfældige ikke-hørte numre</String>
+    <String id="33019">Tilfældige foretrukne numre</String>
     <String id="33030">Top album-numre</String>
     <String id="33031">Andre numre markeret med: </String>
     <String id="33032">Dette albums topnummer kunne ikke</String>
