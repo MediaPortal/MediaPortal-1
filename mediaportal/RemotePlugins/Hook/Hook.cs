@@ -30,13 +30,13 @@ namespace MediaPortal.Hooks
 
     public Hook() {}
 
-    public Hook(HookType hookType)
+    public Hook(Util.Win32API.HookType hookType)
     {
       _hookType = hookType;
-      _hookDelegate = new HookDelegate(this.InternalHookDelegate);
+      _hookDelegate = new Util.Win32API.HookDelegate(this.InternalHookDelegate);
     }
 
-    public Hook(HookType hookType, HookDelegate hookDelegate)
+    public Hook(Util.Win32API.HookType hookType, Util.Win32API.HookDelegate hookDelegate)
     {
       _hookType = hookType;
       _hookDelegate = hookDelegate;
@@ -66,7 +66,7 @@ namespace MediaPortal.Hooks
         }
       }
 
-      return NativeMethods.CallNextHookEx(_hookHandle, code, wParam, lParam);
+      return Util.Win32API.CallNextHookEx(_hookHandle, code, wParam, lParam);
     }
 
     private void OnHookInvoked(HookEventArgs e)
@@ -88,14 +88,14 @@ namespace MediaPortal.Hooks
       {
         if (value && _hookHandle == IntPtr.Zero)
         {
-          _hookHandle = NativeMethods.SetWindowsHookEx(_hookType, _hookDelegate,
+          _hookHandle = Util.Win32API.SetWindowsHookEx(_hookType, _hookDelegate,
                                                        Marshal.GetHINSTANCE(
                                                          Assembly.GetExecutingAssembly().GetModules()[0]), 0
             /* AppDomain.GetCurrentThreadId() */);
         }
         else if (value == false && _hookHandle != IntPtr.Zero)
         {
-          NativeMethods.UnhookWindowsHookEx(_hookHandle);
+          Util.Win32API.UnhookWindowsHookEx(_hookHandle);
 
           _hookHandle = IntPtr.Zero;
         }
@@ -106,9 +106,9 @@ namespace MediaPortal.Hooks
 
     #region Fields
 
-    private HookDelegate _hookDelegate = null;
+    private Util.Win32API.HookDelegate _hookDelegate = null;
     private IntPtr _hookHandle = IntPtr.Zero;
-    private HookType _hookType;
+    private Util.Win32API.HookType _hookType;
 
     #endregion Fields
   }

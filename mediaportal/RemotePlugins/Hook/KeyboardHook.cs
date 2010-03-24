@@ -28,7 +28,7 @@ namespace MediaPortal.Hooks
     #region Constructors
 
     public KeyboardHook()
-      : base(HookType.WH_KEYBOARD_LL)
+      : base(Util.Win32API.HookType.WH_KEYBOARD_LL)
     {
       base.HookInvoked += new HookEventHandler(OnHookInvoked);
     }

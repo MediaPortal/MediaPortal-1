@@ -61,8 +61,14 @@ namespace MediaPortal.Util
     //   [DllImportAttribute("user32", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
     //   public static extern int GetKeyState(int nVirtKey);
 
-    //    [DllImportAttribute("user32", EntryPoint="SetWindowsHookExA", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
-    //    public static extern int SetWindowsHookEx(int idHook, LowLevelKeyboardDelegate lpfn, int hmod, int dwThreadId);
+    [DllImport("user32")]
+    public static extern IntPtr SetWindowsHookEx(HookType code, HookDelegate func, IntPtr hInstance, int threadID);
+
+    [DllImport("user32")]
+    public static extern int UnhookWindowsHookEx(IntPtr hhook);
+
+    [DllImport("user32")]
+    public static extern int CallNextHookEx(IntPtr hhook, int code, int wParam, IntPtr lParam);
 
     [DllImport("gdi32.dll", EntryPoint = "CreateCompatibleDC")]
     public static extern IntPtr CreateCompatibleDC(IntPtr hdc);
@@ -235,6 +241,50 @@ namespace MediaPortal.Util
     }
 
     #endregion
+
+    #region Enums
+
+    public enum ShowWindowFlags
+    {
+      Hide = 0,
+      ShowNormal = 1,
+      Normal = 1,
+      ShowMinimized = 2,
+      ShowMaximized = 3,
+      Maximize = 3,
+      ShowNoActivate = 4,
+      Show = 5,
+      Minimize = 6,
+      ShowMinNoActive = 7,
+      ShowNA = 8,
+      Restore = 9,
+      ShowDefault = 10,
+      ForceMinimize = 11,
+      Max = 11,
+    }
+
+    public enum HookType
+    {
+      WH_JOURNALRECORD = 0,
+      WH_JOURNALPLAYBACK = 1,
+      WH_KEYBOARD = 2,
+      WH_GETMESSAGE = 3,
+      WH_CALLWNDPROC = 4,
+      WH_CBT = 5,
+      WH_SYSMSGFILTER = 6,
+      WH_MOUSE = 7,
+      WH_HARDWARE = 8,
+      WH_DEBUG = 9,
+      WH_SHELL = 10,
+      WH_FOREGROUNDIDLE = 11,
+      WH_CALLWNDPROCRET = 12,
+      WH_KEYBOARD_LL = 13,
+      WH_MOUSE_LL = 14
+    }
+
+    #endregion
+
+    public delegate int HookDelegate(int code, int wParam, IntPtr lParam);
 
     #endregion
 

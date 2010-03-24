@@ -177,12 +177,9 @@
       <DependentUpon>USBUIRTAdvancedForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Hook\Hook.cs" />
-    <Compile Include="Hook\HookDelegate.cs" />
     <Compile Include="Hook\HookEventArgs.cs" />
     <Compile Include="Hook\HookEventHandler.cs" />
-    <Compile Include="Hook\HookType.cs" />
     <Compile Include="Hook\KeyboardHook.cs" />
-    <Compile Include="Hook\NativeMethods.cs" />
     <Compile Include="InputMapper\InputHandler.cs" />
     <Compile Include="InputMapper\InputMappingForm.cs">
       <SubType>Form</SubType>
