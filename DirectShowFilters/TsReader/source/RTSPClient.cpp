@@ -43,6 +43,13 @@ CRTSPClient::~CRTSPClient()
   LogDebug("CRTSPClient::~CRTSPClient()");
   Medium::close(m_ourClient);
   m_ourClient = NULL;
+  if (m_env)
+  {
+    TaskScheduler *scheduler = &m_env->taskScheduler();
+    m_env->reclaim();
+    m_env = NULL;
+    delete scheduler;
+  }
 }
 
 
