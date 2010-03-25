@@ -26,7 +26,6 @@ using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.Hardware;
 using MediaPortal.Hooks;
-using MediaPortal.ServiceImplementations;
 using MediaPortal.Util;
 using Microsoft.Win32;
 
@@ -40,6 +39,7 @@ namespace MPTray
 
     private void InstallKeyboardHook()
     {
+      Log.Write("MPTray: InstallKeyboardHook");
       _keyboardHook = new KeyboardHook();
       _keyboardHook.KeyDown += OnKeyDown;
       _keyboardHook.KeyUp += OnKeyUp;
@@ -48,29 +48,34 @@ namespace MPTray
 
     private static void SwitchFocus()
     {
+      Log.Write("MPTray: SwitchFocus");
+
       Process[] processes = Process.GetProcessesByName("mediaportal");
 
       if (processes.Length > 0)
       {
+        // Make MediaPortal window normal ( if minimized )
         Win32API.ShowWindow((uint)processes[0].MainWindowHandle, (int)Win32API.ShowWindowFlags.ShowNormal);
+
+        // Make Mediaportal window focused
         if (Win32API.SetForegroundWindow(processes[0].MainWindowHandle, true))
         {
-          Log.Info("MPTray: Successfully switched focus.");
+          Log.Write("MPTray: Successfully switched focus.");
         }
       }
       else
       {
-        if (processes.Length <= 0)
-        {
-          Log.Debug("MPTray: MediaPortal is not running (yet).");
-        }
+        Log.Write("MPTray: MediaPortal is not running (yet).");
       }
     }
 
     private static void OnClick(object sender, RemoteEventArgs e)
     {
+      Log.Write("MPTray: OnClick");
       if (e.Button != RemoteButton.Start)
+      {
         return;
+      }
 
       Process[] processes = Process.GetProcessesByName("mediaportal");
 
@@ -78,13 +83,13 @@ namespace MPTray
       {
         if (processes.Length > 1)
         {
-          Log.Warn("MPTray: More than one window named \"MediaPortal\" has been found!");
+          Log.Write("MPTray: More than one window named \"MediaPortal\" has been found!");
           foreach (Process procName in processes)
           {
-            Log.Info("MPTray:   {0} (Started: {1}, ID: {2})", procName.ProcessName, procName.StartTime.ToShortTimeString(), procName.Id);
+            Log.Write("MPTray:   {0} (Started: {1}, ID: {2})", procName.ProcessName, procName.StartTime.ToShortTimeString(), procName.Id);
           }
         }
-        Log.Info("MPTray: MediaPortal is already running - switching focus.");
+        Log.Write("MPTray: MediaPortal is already running - switching focus.");
         SwitchFocus();
       }
       else
@@ -93,15 +98,19 @@ namespace MPTray
         {
           Uri uri = new Uri(Assembly.GetExecutingAssembly().GetName().CodeBase);
 
-          Process process = new Process();
+          Process process = new Process
+                              {
+                                StartInfo =
+                                  {
+                                    FileName = "mediaportal.exe",
+                                    WorkingDirectory = Path.GetDirectoryName(uri.LocalPath),
+                                    UseShellExecute = true
+                                  }
+                              };
 
-          process.StartInfo.FileName = "mediaportal.exe";
-          process.StartInfo.WorkingDirectory = Path.GetDirectoryName(uri.LocalPath);
-          process.StartInfo.UseShellExecute = true;
           process.Start();
 
-          using (
-            EventWaitHandle handle = new EventWaitHandle(false, EventResetMode.ManualReset, "MediaPortalHandleCreated"))
+          using (EventWaitHandle handle = new EventWaitHandle(false, EventResetMode.ManualReset, "MediaPortalHandleCreated"))
           {
             if (handle.SafeWaitHandle.IsInvalid)
             {
@@ -116,25 +125,28 @@ namespace MPTray
         }
         catch (Exception ex)
         {
-          Log.Error("MPTray: Error starting MediaPortal {0}", ex.Message);
+          Log.Write("MPTray: Error starting MediaPortal {0}", ex.Message);
         }
       }
     }
 
     private static void OnDeviceArrival(object sender, EventArgs e)
     {
-      Log.Debug("MPTray: Device installed");
+      Log.Write("MPTray: Device installed");
     }
 
     private static void OnDeviceRemoval(object sender, EventArgs e)
     {
-      Log.Debug("MPTray: Device removed");
+      Log.Write("MPTray: Device removed");
     }
 
     private void OnKeyDown(object sender, KeyEventArgs e)
     {
+      Log.Write("MPTray: OnKeyDown");
       if (e.KeyCode == Keys.LWin || e.KeyCode == Keys.RWin)
+      {
         _windowsKeyPressed = true;
+      }
 
       if (_windowsKeyPressed && e.KeyCode == Keys.E)
       {
@@ -189,12 +201,14 @@ namespace MPTray
 
     private void OnKeyUp(object sender, KeyEventArgs e)
     {
+      Log.Write("MPTray: OnKeyUp");
       if (e.KeyCode == Keys.LWin || e.KeyCode == Keys.RWin)
         _windowsKeyPressed = false;
     }
 
     private static void Register(bool register, RegistryKey hive)
     {
+      Log.Write("MPTray: Register");
       try
       {
         if (register)
@@ -216,7 +230,7 @@ namespace MPTray
       }
       catch (Exception e)
       {
-        Log.Error("MPTray: Failed to modify autostart entry {0}", e.ToString());
+        Log.Write("MPTray: Failed to modify autostart entry {0}", e.ToString());
       }
     }
 
@@ -230,11 +244,12 @@ namespace MPTray
         }
         catch (InvalidOperationException) { }
 
-        Log.Debug("MPTray: Starting...");
+        Log.Open("MPTray.log");
+        Log.Write("MPTray: Starting...");
 
         if (TerminateProcess("ehtray"))
         {
-          Log.Info("MPTray: Terminating running instance(s) of ehtray.exe");
+          Log.Write("MPTray: Terminating running instance(s) of ehtray.exe");
         }
 
         Remote.Click += OnClick;
@@ -252,20 +267,22 @@ namespace MPTray
       }
       catch (Exception e)
       {
-        Log.Error("MPTray: Error on startup {0}", e.ToString());
+        Log.Write("MPTray: Error on startup {0}", e.ToString());
       }
 
       if (_keyboardHook != null)
       {
-        Log.Info("MPTray: Disabling keyboard hook");
+        Log.Write("MPTray: Disabling keyboard hook");
         _keyboardHook.IsEnabled = false;
       }
 
-      Log.Debug("MPTray: Exiting");
+      Log.Write("MPTray: Exiting...");
     }
 
     private static bool TerminateProcess(string processName)
     {
+      Log.Write("MPTray: TerminateProcess");
+
       bool terminatedProcess = false;
 
       try
@@ -284,7 +301,7 @@ namespace MPTray
       }
       catch (Exception ex)
       {
-        Log.Error("MPTray: Error while terminating process(es): {0}, {1}", processName, ex.ToString());
+        Log.Write("MPTray: Error while terminating process(es): {0}, {1}", processName, ex.ToString());
       }
 
       return terminatedProcess;
@@ -343,7 +360,7 @@ namespace MPTray
             Register(false, Registry.LocalMachine);
             return;
           default:
-            Log.Info("MPTray: Ignoring unknown command line parameter: '{0}'", arg);
+            Log.Write("MPTray: Ignoring unknown command line parameter: '{0}'", arg);
             break;
         }
       }
@@ -352,7 +369,7 @@ namespace MPTray
 
       if (processes.Length != 1)
       {
-        Log.Warn("MPTray: Another instance of MPTray is already running");
+        Log.Write("MPTray: Another instance of MPTray is already running");
         return;
       }
 
@@ -361,6 +378,7 @@ namespace MPTray
 
     private void InitTrayIcon()
     {
+      Log.Write("MPTray: InitTrayIcon");
       if (_systemNotificationAreaIcon == null)
       {
         try
@@ -386,13 +404,14 @@ namespace MPTray
         }
         catch (Exception ex)
         {
-          Log.Error("MPTray: Could not init tray icon - {0}", ex.ToString());
+          Log.Write("MPTray: Could not init tray icon - {0}", ex.ToString());
         }
       }
     }
 
     private void MenuItem1Click(object sender, EventArgs e)
     {
+      Log.Write("MPTray: MenuItem1Click");
       _systemNotificationAreaIcon.Visible = false;
       _systemNotificationAreaIcon = null;
       Application.Exit();
@@ -406,5 +425,80 @@ namespace MPTray
     private bool _windowsKeyPressed;
 
     #endregion Fields
+
+    #region Log
+    public class Log
+    {
+      private static StreamWriter _streamWriter;
+
+      public static void Open(string fileName)
+      {
+        if (_streamWriter != null)
+        {
+          return;
+        }
+
+        string filePath = Path.Combine(MediaPortal.Configuration.Config.GetFolder(MediaPortal.Configuration.Config.Dir.Log), fileName);
+        if (File.Exists(filePath))
+        {
+          try
+          {
+            string backup = Path.ChangeExtension(filePath, ".bak");
+
+            if (File.Exists(backup))
+            {
+              File.Delete(backup);
+            }
+            File.Move(filePath, backup);
+          }
+          catch { }
+        }
+
+        try
+        {
+          _streamWriter = new StreamWriter(filePath, false)
+          {
+            AutoFlush = true
+          };
+          string message = String.Format("{0:yyyy-MM-dd HH:mm:ss.ffffff} - {1}: Log Opened", DateTime.Now, Thread.CurrentThread.Name);
+          _streamWriter.WriteLine(message);
+
+          message = String.Format("{0:yyyy-MM-dd HH:mm:ss.ffffff} - {1}: {2}", DateTime.Now, Thread.CurrentThread.Name, FileVersionInfo.GetVersionInfo(Application.ExecutablePath).FileVersion);
+          _streamWriter.WriteLine(message);
+        }
+        catch { }
+      }
+
+      public static void Close()
+      {
+        if (_streamWriter == null)
+        {
+          return;
+        }
+        try
+        {
+          string message = String.Format("{0:yyyy-MM-dd HH:mm:ss.ffffff} - {1}: Log Closed", DateTime.Now, Thread.CurrentThread.Name);
+          _streamWriter.WriteLine(message);
+          _streamWriter.WriteLine();
+        }
+        finally
+        {
+          _streamWriter.Dispose();
+          _streamWriter = null;
+        }
+      }
+
+      public static void Write(string format, params object[] args)
+      {
+        if (_streamWriter == null)
+        {
+          return;
+        }
+        string message = String.Format("{0:yyyy-MM-dd HH:mm:ss.ffffff} - ", DateTime.Now) + String.Format(format, args);
+
+        _streamWriter.WriteLine(message);
+      }
+    }
+    #endregion
   }
 }
