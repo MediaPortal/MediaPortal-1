@@ -34,19 +34,19 @@ namespace MPTray
 {
   public class ShellApplication
   {
-    private NotifyIcon _SystemNotificationAreaIcon = null;
+    private NotifyIcon _systemNotificationAreaIcon;
 
     #region Methods
 
     private void InstallKeyboardHook()
     {
       _keyboardHook = new KeyboardHook();
-      _keyboardHook.KeyDown += new KeyEventHandler(OnKeyDown);
-      _keyboardHook.KeyUp += new KeyEventHandler(OnKeyUp);
+      _keyboardHook.KeyDown += OnKeyDown;
+      _keyboardHook.KeyUp += OnKeyUp;
       _keyboardHook.IsEnabled = true;
     }
 
-    private void SwitchFocus()
+    private static void SwitchFocus()
     {
       Process[] processes = Process.GetProcessesByName("mediaportal");
 
@@ -65,30 +65,9 @@ namespace MPTray
           Log.Debug("MPTray: MediaPortal is not running (yet).");
         }
       }
-
-      // MPTrayMOD version
-      //int attempts = 0;
-      //while (attempts < 60) // considerably high since MP might be caching textures
-      //{
-      //  processes = Process.GetProcessesByName("mediaportal");
-      //  if (processes.Length > 0 && NativeMethods.SetForegroundWindow(processes[0].MainWindowHandle, true))
-      //  {
-      //    Log.Info("MPTray: Successfully switched focus.");
-      //    break;
-      //  }
-      //  else
-      //  {
-      //    if (processes.Length <= 0)
-      //    {
-      //      Log.Debug("MPTray: MediaPortal is not running (yet).");
-      //    }
-      //  }
-      //  Thread.Sleep(1000);
-      //  attempts++;
-      //}
     }
 
-    private void OnClick(object sender, RemoteEventArgs e)
+    private static void OnClick(object sender, RemoteEventArgs e)
     {
       if (e.Button != RemoteButton.Start)
         return;
@@ -99,15 +78,11 @@ namespace MPTray
       {
         if (processes.Length > 1)
         {
-          try
+          Log.Warn("MPTray: More than one window named \"MediaPortal\" has been found!");
+          foreach (Process procName in processes)
           {
-            Log.Warn("MPTray: More than one window named \"MediaPortal\" has been found!");
-            foreach (Process procName in processes)
-            {
-              Log.Info("MPTray:   {0} (Started: {1}, ID: {2})", procName.ProcessName, procName.StartTime.ToShortTimeString(), procName.Id);
-            }
+            Log.Info("MPTray:   {0} (Started: {1}, ID: {2})", procName.ProcessName, procName.StartTime.ToShortTimeString(), procName.Id);
           }
-          catch (Exception) { }
         }
         Log.Info("MPTray: MediaPortal is already running - switching focus.");
         SwitchFocus();
@@ -146,12 +121,12 @@ namespace MPTray
       }
     }
 
-    private void OnDeviceArrival(object sender, EventArgs e)
+    private static void OnDeviceArrival(object sender, EventArgs e)
     {
       Log.Debug("MPTray: Device installed");
     }
 
-    private void OnDeviceRemoval(object sender, EventArgs e)
+    private static void OnDeviceRemoval(object sender, EventArgs e)
     {
       Log.Debug("MPTray: Device removed");
     }
@@ -184,7 +159,7 @@ namespace MPTray
       if (_windowsKeyPressed && (e.KeyCode == Keys.T || e.KeyCode == Keys.K || e.KeyCode != Keys.M))
       {
         string className = "Shell_TrayWnd";
-        string n= null;
+        string n = null;
         IntPtr handle = (IntPtr)Win32API.FindWindow(ref className, ref n);
 
         if (handle != IntPtr.Zero && Win32API.IsWindowVisible(handle) == false)
@@ -218,19 +193,25 @@ namespace MPTray
         _windowsKeyPressed = false;
     }
 
-    private void Register(bool register, RegistryKey hive)
+    private static void Register(bool register, RegistryKey hive)
     {
       try
       {
         if (register)
         {
           RegistryKey key = hive.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");
-          key.SetValue("MediaPortal Shell", System.Windows.Forms.Application.ExecutablePath);
+          if (key != null)
+          {
+            key.SetValue("MediaPortal Shell", Application.ExecutablePath);
+          }
         }
         else
         {
           RegistryKey key = hive.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-          key.DeleteValue("MediaPortal Shell");
+          if (key != null)
+          {
+            key.DeleteValue("MediaPortal Shell");
+          }
         }
       }
       catch (Exception e)
@@ -242,7 +223,7 @@ namespace MPTray
     private void Run()
     {
       try
-      {        
+      {
         try
         {
           Thread.CurrentThread.Name = "MPTray";
@@ -256,9 +237,9 @@ namespace MPTray
           Log.Info("MPTray: Terminating running instance(s) of ehtray.exe");
         }
 
-        Remote.Click += new RemoteEventHandler(this.OnClick);
-        Remote.DeviceArrival += new DeviceEventHandler(this.OnDeviceArrival);
-        Remote.DeviceRemoval += new DeviceEventHandler(this.OnDeviceRemoval);
+        Remote.Click += OnClick;
+        Device.DeviceArrival += OnDeviceArrival;
+        Device.DeviceRemoval += OnDeviceRemoval;
 
         // reduce the memory footprint of the app
         Process process = Process.GetCurrentProcess();
@@ -283,7 +264,7 @@ namespace MPTray
       Log.Debug("MPTray: Exiting");
     }
 
-    private bool TerminateProcess(string processName)
+    private static bool TerminateProcess(string processName)
     {
       bool terminatedProcess = false;
 
@@ -334,32 +315,32 @@ namespace MPTray
             break;
           case "/kill":
           case "-kill":
-            handler.TerminateProcess("mptray");
+            TerminateProcess("mptray");
             return;
           case "/register":
           case "-register":
           case "/register:user":
           case "-register:user":
-            handler.Register(true, Registry.CurrentUser);
+            Register(true, Registry.CurrentUser);
             return;
           case "/register:all":
           case "-register:all":
-            handler.Register(true, Registry.LocalMachine);
+            Register(true, Registry.LocalMachine);
             return;
           case "/unregister":
           case "-unregister":
           case "/unregister:user":
           case "-unregister:user":
-            handler.Register(false, Registry.CurrentUser);
+            Register(false, Registry.CurrentUser);
             return;
           case "/unregister:all":
           case "-unregister:all":
-            handler.Register(false, Registry.LocalMachine);
+            Register(false, Registry.LocalMachine);
             return;
           case "/unregister:both":
           case "-unregister:both":
-            handler.Register(false, Registry.CurrentUser);
-            handler.Register(false, Registry.LocalMachine);
+            Register(false, Registry.CurrentUser);
+            Register(false, Registry.LocalMachine);
             return;
           default:
             Log.Info("MPTray: Ignoring unknown command line parameter: '{0}'", arg);
@@ -380,29 +361,28 @@ namespace MPTray
 
     private void InitTrayIcon()
     {
-      if (_SystemNotificationAreaIcon == null)
+      if (_systemNotificationAreaIcon == null)
       {
         try
         {
           ContextMenu contextMenuTray = new ContextMenu();
           MenuItem menuItem1 = new MenuItem();
-          //MenuItem menuItem2 = new MenuItem();
 
           // Initialize contextMenuTray
-          contextMenuTray.MenuItems.AddRange(new MenuItem[] { menuItem1 /*, menuItem2 */});
+          contextMenuTray.MenuItems.AddRange(new[] { menuItem1 });
 
           // Initialize menuItem1
           menuItem1.Index = 0;
           menuItem1.Text = "Close";
-          menuItem1.Click += new EventHandler(menuItem1_Click);
+          menuItem1.Click += MenuItem1Click;
 
-          _SystemNotificationAreaIcon = new NotifyIcon();
-          _SystemNotificationAreaIcon.ContextMenu = contextMenuTray;
-
-          //Stream s = GetType().Assembly.GetManifestResourceStream("MPTrayIcon");
-          _SystemNotificationAreaIcon.Icon = MPTray.Properties.Resources.MPTrayIcon;
-          _SystemNotificationAreaIcon.Text = "MediaPortal Tray Launcher";
-          _SystemNotificationAreaIcon.Visible = true;
+          _systemNotificationAreaIcon = new NotifyIcon
+                                          {
+                                            ContextMenu = contextMenuTray,
+                                            Icon = Properties.Resources.MPTrayIcon,
+                                            Text = "MediaPortal Tray Launcher",
+                                            Visible = true
+                                          };
         }
         catch (Exception ex)
         {
@@ -411,10 +391,10 @@ namespace MPTray
       }
     }
 
-    private void menuItem1_Click(object sender, EventArgs e)
+    private void MenuItem1Click(object sender, EventArgs e)
     {
-      _SystemNotificationAreaIcon.Visible = false;
-      _SystemNotificationAreaIcon = null;
+      _systemNotificationAreaIcon.Visible = false;
+      _systemNotificationAreaIcon = null;
       Application.Exit();
     }
 
