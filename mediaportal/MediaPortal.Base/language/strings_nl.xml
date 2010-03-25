@@ -884,7 +884,7 @@
     <String id="1029">Taal voor ondertiteling</String>
     <String id="1030">Uitschakelen</String>
     <String id="1031">Herstarten</String>
-    <String id="1032">Slapen</String>
+    <String id="1032">Slaapstand</String>
     <String id="1033">Programma's worden momenteel opgenomen</String>
     <String id="1034">Geen signaal gedetecteerd!</String>
     <String id="1035">Kanaal is gecodeerd</String>
@@ -901,7 +901,7 @@
     <String id="1046">Altijd</String>
     <String id="1047">Start beeldvullend</String>
     <String id="1048">Instellingen</String>
-    <String id="1049">Slaapstand</String>
+    <String id="1049">Sluimerstand</String>
     <String id="1050">Za-Zo</String>
     <String id="1051">Opnemen op zaterdag en zondag</String>
     <String id="1052">Nummers</String>
