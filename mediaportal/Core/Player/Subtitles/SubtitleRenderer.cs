@@ -863,6 +863,7 @@ namespace MediaPortal.Player.Subtitles
                                         4, GUIGraphicsContext.DX9Device,
                                         0, CustomVertex.TransformedTextured.Format,
                                         GUIGraphicsContext.GetTexturePoolType());
+        wx0 = wy0 = wwidth0 = wheight0 = 0;
       }
 
       if (wx0 != wx || wy0 != wy || wwidth0 != wwidth || wheight0 != wheight)

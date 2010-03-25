@@ -206,7 +206,7 @@ namespace MediaPortal.Player.Subtitles
     public static char[] Convert(int languageCode, byte[] teletext)
     {
       assert(languageCode >= 0 && languageCode <= 7, "Convert: Lang outside range!");
-      Log.Debug("Convert: Input data length {0} teletext");
+      Log.Debug("Convert: Input data length {0} teletext", teletext.Length);
       char[] text = new char[teletext.Length];
 
       for (int i = 0; i < teletext.Length; i++)
