@@ -2183,7 +2183,7 @@ namespace TvPlugin
       int counter = 0;
       foreach (ChannelLinkageMap map in linkages)
       {
-        string channelName = map.ReferringLinkedChannel().DisplayName;
+        string channelName = map.DisplayName;
         GUIListItem item = new GUIListItem(channelName);
         if (channelName == TVHome.Navigator.CurrentChannel) //contains the display name
         {

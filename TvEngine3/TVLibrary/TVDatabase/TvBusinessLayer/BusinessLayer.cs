@@ -1259,27 +1259,17 @@ namespace TvDatabase
 
     public IList<ChannelLinkageMap> GetLinkagesForChannel(Channel channel)
     {
+      IList<ChannelLinkageMap> pmap=channel.ReferringLinkedChannels();
+      if (pmap!=null)
+      {
+        if (pmap.Count>0)
+          return pmap;
+      }
       int idChannel = -1;
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (ChannelLinkageMap));
       sb.AddConstraint(Operator.Equals, "idLinkedChannel", channel.IdChannel);
       SqlStatement stmt = sb.GetStatement(true);
-      IList<ChannelLinkageMap> links = ObjectFactory.GetCollection<ChannelLinkageMap>(stmt.Execute());
-      if (links != null)
-      {
-        if (links.Count > 0)
-        {
-          ChannelLinkageMap map = links[0];
-          idChannel = map.ReferringPortalChannel().IdChannel;
-        }
-      }
-      if (idChannel == -1)
-      {
-        idChannel = channel.IdChannel;
-      }
-      sb = new SqlBuilder(StatementType.Select, typeof (ChannelLinkageMap));
-      sb.AddConstraint(Operator.Equals, "idPortalChannel", idChannel);
-      stmt = sb.GetStatement(true);
-      return ObjectFactory.GetCollection<ChannelLinkageMap>(stmt.Execute());
+      return  ObjectFactory.GetCollection<ChannelLinkageMap>(stmt.Execute());
     }
 
     #endregion

@@ -84,7 +84,7 @@ namespace TvService
         }
         dbLinkedChannnel.DisplayName = lChannel.Name;
         dbLinkedChannnel.Persist();
-        ChannelLinkageMap map = new ChannelLinkageMap(dbPortalChannel.IdChannel, dbLinkedChannnel.IdChannel);
+        ChannelLinkageMap map = new ChannelLinkageMap(dbPortalChannel.IdChannel, dbLinkedChannnel.IdChannel,lChannel.Name);
         map.Persist();
       }
     }
@@ -100,7 +100,7 @@ namespace TvService
         Log.Info("[Linkage Scanner] New portal channel {0} {1} {2}", pChannel.NetworkId, pChannel.ServiceId,
                  pChannel.TransportId);
         foreach (LinkedChannel lchan in pChannel.LinkedChannels)
-          Log.Info("[Linkage Scanner] - {0}", lchan.Name);
+          Log.Info("[Linkage Scanner] - {0} nid={1},tid={2} sid={3}", lchan.Name,lchan.NetworkId,lchan.TransportId,lchan.ServiceId);
         PersistPortalChannel(pChannel);
       }
     }
