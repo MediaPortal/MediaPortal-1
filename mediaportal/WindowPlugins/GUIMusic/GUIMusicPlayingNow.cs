@@ -1676,6 +1676,8 @@ namespace MediaPortal.GUI.Music
           strYear = string.Empty;
         }
 
+        string nextTrackThumb = GUIMusicFiles.GetCoverArt(false, NextTrackFileName, NextTrackTag);
+        GUIPropertyManager.SetProperty("#Play.Next.Thumb", nextTrackThumb);
         GUIPropertyManager.SetProperty("#Play.Next.Title", NextTrackTag.Title);
         GUIPropertyManager.SetProperty("#Play.Next.Track", strNextTrack);
         GUIPropertyManager.SetProperty("#Play.Next.Album", NextTrackTag.Album);
@@ -1690,6 +1692,7 @@ namespace MediaPortal.GUI.Music
         {
           LblUpNext.Visible = false;
         }
+        GUIPropertyManager.SetProperty("#Play.Next.Thumb", string.Empty);
         GUIPropertyManager.SetProperty("#Play.Next.Title", string.Empty);
         GUIPropertyManager.SetProperty("#Play.Next.Track", string.Empty);
         GUIPropertyManager.SetProperty("#Play.Next.Album", string.Empty);
