@@ -22,9 +22,9 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using MediaPortal.Util;
 
 namespace MediaPortal.InputDevices
 {
@@ -38,40 +38,7 @@ namespace MediaPortal.InputDevices
     public const Int32 HWND_TOPMOST = -1;
     public const Int32 HWND_NOTOPMOST = -2;
 
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    public static extern IntPtr FindWindow(
-      [MarshalAs(UnmanagedType.LPTStr)] string lpClassName,
-      [MarshalAs(UnmanagedType.LPTStr)] string lpWindowName);
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct COPYDATASTRUCT
-    {
-      public IntPtr dwData;
-      public int cbData;
-      [MarshalAs(UnmanagedType.LPStr)] public string lpData;
-    }
-
-    [DllImport("User32")]
-    private static extern int SetForegroundWindow(IntPtr hwnd);
-
-    // Activates a window
-    [DllImport("User32.DLL")]
-    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetActiveWindow();
-
-    private const int SW_SHOW = 5;
-    private const int SW_RESTORE = 9;
     private const int WM_COPYDATA = 0x004a;
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam,
-                                          [In()] ref COPYDATASTRUCT lParam);
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern int SendMessageA(IntPtr hwnd, int wMsg, int wParam,
-                                           int lParam);
 
     private const string TAB = "	";
     protected IntPtr m_hwnd = IntPtr.Zero;
@@ -84,7 +51,6 @@ namespace MediaPortal.InputDevices
     //protected bool m_bNeedsEnter = false;
     protected bool m_bInitRetry = true;
     protected int m_IRdelay = 300;
-
 
     public WinLirc()
     {
@@ -123,19 +89,18 @@ namespace MediaPortal.InputDevices
         //m_bNeedsEnter = xmlreader.GetValueAsString("WINLIRC", "needs_enter", "false") == "true";
       }
 
-
       //find winlirc
       m_windowName = "WinLIRC";
-      m_hwnd = FindWindow(null, m_windowName);
+      m_hwnd = Win32API.FindWindow(null, m_windowName);
 
       //check we found it - if not, start it!
       if (m_hwnd.ToInt32() <= 0) // try to find it and start it since it's not found
       {
         Log.Info("WinLirc window not found, starting WinLirc");
-        IntPtr mpHwnd = GetActiveWindow(); //Get MP
+        IntPtr mpHwnd = Win32API.GetActiveWindow(); //Get MP
         StartWinLirc(m_pathtowinlirc); //Start Winlirc
-        ShowWindow(mpHwnd, SW_RESTORE); //restore MP		
-        SetForegroundWindow(mpHwnd); //restore MP
+        Win32API.ShowWindow(mpHwnd, Win32API.ShowWindowFlags.Restore); //restore MP		
+        Win32API.SetForegroundWindow(mpHwnd); //restore MP
       }
       if (m_hwnd.ToInt32() > 0)
       {
@@ -172,7 +137,7 @@ namespace MediaPortal.InputDevices
         for (int i = 0; i < 15; i++) // wait for up to 3 seconds for WinLirc to start.
         {
           Thread.Sleep(200);
-          m_hwnd = FindWindow(null, m_windowName);
+          m_hwnd = Win32API.FindWindow(null, m_windowName);
           if (m_hwnd.ToInt32() > 0) // window handle was found
           {
             break;
@@ -215,7 +180,7 @@ namespace MediaPortal.InputDevices
         string IRData;
 
         //our copy struct
-        COPYDATASTRUCT cds;
+        Win32API.COPYDATASTRUCT cds;
 
         string[] sets = channel_data.Split("|".ToCharArray());
         foreach (string command in sets)
@@ -224,7 +189,7 @@ namespace MediaPortal.InputDevices
           //channelparts[0] will be name of remote
           //channelparts[1] will be repeat count
           //channelparts[2] will be code(s)
-          string[] channelparts = {m_remote, m_repeat, command}; //default to using m_remote:m_repeat:command
+          string[] channelparts = { m_remote, m_repeat, command }; //default to using m_remote:m_repeat:command
 
           //now if channel_data has a ':', split that & use it instead!
           //NOTE: channel_data should be Remote:Repeat:Codes
@@ -250,9 +215,9 @@ namespace MediaPortal.InputDevices
             //IRData must be "remote+TAB+code+TAB+repeatcount"
             IRData = channelparts[0] + TAB + s + TAB + m_repeat;
             cds.dwData = (IntPtr)0;
-            cds.lpData = IRData;
+            cds.lpData = Marshal.StringToHGlobalUni(IRData);
             cds.cbData = IRData.Length + 1;
-            SendMessage(m_hwnd, WM_COPYDATA, 0, ref cds);
+            Win32API.SendMessage(m_hwnd, WM_COPYDATA, 0, ref cds);
             Thread.Sleep(m_IRdelay);
           }
         }

@@ -21,31 +21,16 @@
 using System;
 using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.TagReader;
+using MediaPortal.Util;
 using Un4seen.Bass.AddOn.Vis;
 
 namespace MediaPortal.Visualization
 {
   public class WinampViz : VisualizationBase
   {
-    #region Imports
-
-    [DllImport("User32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
-    private static extern bool SetForegroundWindow(IntPtr hWnd);
-
-    [DllImport("User32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
-    private static extern bool MoveWindow(IntPtr hWnd, int x, int y, int cx, int cy, bool repaint);
-
-    [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto, EntryPoint = "GetWindow")]
-    private static extern IntPtr GetWindow(IntPtr hWnd, int child);
-
-    private const int GW_CHILD = 5;
-
-    #endregion
-
     #region Variables
 
     private BASS_VIS_INFO _mediaInfo = null;
@@ -260,10 +245,10 @@ namespace MediaPortal.Visualization
       // Do a move of the Winamp Viz
       if (_visParam.VisHandle != 0)
       {
-        hwndChild = GetWindow(VisualizationWindow.Handle, GW_CHILD);
+        hwndChild = Win32API.GetWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Show);
         if (hwndChild != IntPtr.Zero)
         {
-          MoveWindow(hwndChild, 0, 0, newSize.Width, newSize.Height, true);
+          Win32API.MoveWindow(hwndChild, 0, 0, newSize.Width, newSize.Height, true);
         }
       }
       return true;
@@ -319,10 +304,10 @@ namespace MediaPortal.Visualization
         BassVis.BASS_VIS_ExecutePlugin(visExec, _visParam);
         if (_visParam.VisGenWinHandle != IntPtr.Zero)
         {
-          hwndChild = GetWindow(VisualizationWindow.Handle, GW_CHILD);
+          hwndChild = Win32API.GetWindow(VisualizationWindow.Handle, Win32API.ShowWindowFlags.Show);
           if (hwndChild != IntPtr.Zero)
           {
-            MoveWindow(hwndChild, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height, true);
+            Win32API.MoveWindow(hwndChild, 0, 0, VisualizationWindow.Width, VisualizationWindow.Height, true);
           }
 
           BassVis.BASS_VIS_SetVisPort(_visParam,
@@ -347,7 +332,7 @@ namespace MediaPortal.Visualization
         }
 
         // The Winamp Plugin has stolen focus on the MP window. Bring it back to froeground
-        SetForegroundWindow(GUIGraphicsContext.form.Handle);
+        Win32API.SetForegroundWindow(GUIGraphicsContext.form.Handle);
 
         firstRun = false;
       }

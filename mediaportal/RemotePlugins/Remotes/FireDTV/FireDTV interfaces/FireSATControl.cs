@@ -26,6 +26,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 #endregion
 
@@ -36,16 +37,6 @@ namespace MediaPortal.InputDevices.FireDTV
   /// </summary>
   public class FireDTVControl
   {
-    /// <summary>
-    /// The SetDllDirectory function adds a directory to the search path used to locate DLLs for the application.
-    /// http://msdn.microsoft.com/library/en-us/dllproc/base/setdlldirectory.asp
-    /// </summary>
-    /// <param name="PathName">Pointer to a null-terminated string that specifies the directory to be added to the search path.</param>
-    /// <returns></returns>
-    [DllImport("kernel32.dll")]
-    private static extern bool SetDllDirectory(
-      string PathName);
-
     #region Constructor / Destructor
 
     /// <summary>
@@ -76,7 +67,7 @@ namespace MediaPortal.InputDevices.FireDTV
 
         try
         {
-          SetDllDirectory(Path.GetDirectoryName(fullDllPath));
+          Win32API.SetDllDirectory(Path.GetDirectoryName(fullDllPath));
         }
         catch (Exception ex1)
         {
@@ -284,7 +275,7 @@ namespace MediaPortal.InputDevices.FireDTV
       {
         if (_windowHandle == (IntPtr)0)
         {
-          return (IntPtr)FireDTVAPI.GetActiveWindow();
+          return (IntPtr)Win32API.GetActiveWindow();
         }
         else
         {

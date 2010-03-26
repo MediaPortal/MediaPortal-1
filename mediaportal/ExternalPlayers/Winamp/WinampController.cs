@@ -24,6 +24,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using MediaPortal.Util;
 using Microsoft.Win32;
 
 namespace MediaPortal.WinampPlayer
@@ -37,40 +38,6 @@ namespace MediaPortal.WinampPlayer
     public const Int32 TOGGLE_UNHIDEWINDOW = 0x040;
     public const Int32 HWND_TOPMOST = -1;
     public const Int32 HWND_NOTOPMOST = -2;
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    public static extern IntPtr FindWindow(
-      [MarshalAs(UnmanagedType.LPTStr)] string lpClassName,
-      [MarshalAs(UnmanagedType.LPTStr)] string lpWindowName);
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct COPYDATASTRUCT
-    {
-      public IntPtr dwData;
-      public int cbData;
-      [MarshalAs(UnmanagedType.LPStr)] public string lpData;
-    }
-
-    [DllImport("User32")]
-    private static extern int SetForegroundWindow(IntPtr hwnd);
-
-    // Activates a window
-    [DllImport("User32.DLL")]
-    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetActiveWindow();
-
-    private const int SW_SHOW = 5;
-    private const int SW_RESTORE = 9;
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam,
-                                          [In()] ref COPYDATASTRUCT lParam);
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern int SendMessageA(IntPtr hwnd, int wMsg, int wParam,
-                                           int lParam);
 
     private const int WM_COMMAND = 0x111;
     private const int WA_CLOSE = 40001; // close winamp
@@ -131,19 +98,19 @@ namespace MediaPortal.WinampPlayer
     public WinampController()
     {
       m_windowName = "Winamp v1.x";
-      m_hwnd = FindWindow(m_windowName, null);
+      m_hwnd = Win32API.FindWindow(m_windowName, null);
       if (m_hwnd.ToInt32() <= 0) // try to find it and start it since it's not found
       {
-        IntPtr mpHwnd = GetActiveWindow();
+        IntPtr mpHwnd = Win32API.GetActiveWindow();
         if (StartWinamp())
         {
-          m_hwnd = FindWindow(m_windowName, null);
+          m_hwnd = Win32API.FindWindow(m_windowName, null);
           if (m_hwnd.ToInt32() > 0)
           {
             m_winampCreatedHere = true;
           }
-          ShowWindow(mpHwnd, SW_RESTORE);
-          SetForegroundWindow(mpHwnd);
+          Win32API.ShowWindow(mpHwnd, Win32API.ShowWindowFlags.Restore);
+          Win32API.SetForegroundWindow(mpHwnd);
         }
       }
     }
@@ -192,7 +159,7 @@ namespace MediaPortal.WinampPlayer
         for (int i = 0; i < 15; i++) // wait for up to 3 seconds for Foobar2k to start.
         {
           Thread.Sleep(200);
-          pluginWindow = FindWindow(m_windowName, null);
+          pluginWindow = Win32API.FindWindow(m_windowName, null);
           if (pluginWindow.ToInt32() > 0) // window handle was found
           {
             break;
@@ -283,87 +250,87 @@ namespace MediaPortal.WinampPlayer
     public void Stop()
     {
       //IntPtr hwnd = FindWindow(m_windowName, null);			
-      SendMessageA(m_hwnd, WM_COMMAND, WA_STOP, WA_NOTHING);
+      Win32API.SendMessageA(m_hwnd, WM_COMMAND, WA_STOP, WA_NOTHING);
     }
 
     public void Play()
     {
       //IntPtr hwnd = FindWindow(m_windowName, null);			
-      SendMessageA(m_hwnd, WM_COMMAND, WA_PLAY, WA_NOTHING);
+      Win32API.SendMessageA(m_hwnd, WM_COMMAND, WA_PLAY, WA_NOTHING);
     }
 
     public void Pause()
     {
       //IntPtr hwnd = FindWindow(m_windowName, null);			
-      SendMessageA(m_hwnd, WM_COMMAND, WA_PAUSE, WA_NOTHING);
+      Win32API.SendMessageA(m_hwnd, WM_COMMAND, WA_PAUSE, WA_NOTHING);
     }
 
     public void IncreaseVolume()
     {
       //IntPtr hwnd = FindWindow(m_windowName, null);			
-      SendMessageA(m_hwnd, WM_USER, 0, WA_VOLUMEUP);
+      Win32API.SendMessageA(m_hwnd, WM_USER, 0, WA_VOLUMEUP);
     }
 
     public void DecreaseVolume()
     {
       //IntPtr hwnd = FindWindow(m_windowName, null);			
-      SendMessageA(m_hwnd, WM_USER, 0, WA_VOLUMEDOWN);
+      Win32API.SendMessageA(m_hwnd, WM_USER, 0, WA_VOLUMEDOWN);
     }
 
     public void Restart()
     {
       //IntPtr hwnd = FindWindow(m_windowName, null);
-      SendMessageA(m_hwnd, WM_USER, 0, WA_RESTART);
+      Win32API.SendMessageA(m_hwnd, WM_USER, 0, WA_RESTART);
     }
 
     public void SetPlaylistPosition(int intPos)
     {
       //IntPtr hwnd = FindWindow(m_windowName, null);			
-      SendMessageA(m_hwnd, WM_USER, intPos, WA_SETPLAYLISTPOS);
+      Win32API.SendMessageA(m_hwnd, WM_USER, intPos, WA_SETPLAYLISTPOS);
     }
 
     public void ClearPlayList()
     {
       //IntPtr hwnd = FindWindow(m_windowName, null);			
-      SendMessageA(m_hwnd, WM_USER, 0, WA_CLEARPLAYLIST);
+      Win32API.SendMessageA(m_hwnd, WM_USER, 0, WA_CLEARPLAYLIST);
     }
 
     public void ClearPlayListCache()
     {
       //IntPtr hwnd = FindWindow(m_windowName, null);
-      SendMessageA(m_hwnd, WM_USER, 0, WA_REFRESHPLCACHE);
+      Win32API.SendMessageA(m_hwnd, WM_USER, 0, WA_REFRESHPLCACHE);
     }
 
     public int GetPlayListLength()
     {
       //IntPtr hwnd = FindWindow(m_windowName, null);
-      int length = SendMessageA(m_hwnd, WM_USER, 0, WA_PLAYLISTLEN);
+      int length = Win32API.SendMessageA(m_hwnd, WM_USER, 0, WA_PLAYLISTLEN);
       return length;
     }
 
     public void AppendToPlayList(string filename)
     {
-      COPYDATASTRUCT cds;
+      Win32API.COPYDATASTRUCT cds;
       cds.dwData = (IntPtr)WA_FILETOPLAYLIST;
-      cds.lpData = filename;
+      cds.lpData = Marshal.StringToHGlobalUni(filename);
       cds.cbData = filename.Length + 1;
 
       //IntPtr hwnd = FindWindow(m_windowName, null);
 
-      SendMessage(m_hwnd, WM_COPYDATA, 0, ref cds);
+      Win32API.SendMessage(m_hwnd, WM_COPYDATA, 0, ref cds);
     }
 
     public int Status()
     {
       //IntPtr hwnd = FindWindow(m_windowName, null);			
-      int status = SendMessageA(m_hwnd, WM_USER, 0, WA_GETSTATUS);
+      int status = Win32API.SendMessageA(m_hwnd, WM_USER, 0, WA_GETSTATUS);
       return status;
     }
 
     public int GetCurrentSongDuration()
     {
       //IntPtr hwnd = FindWindow(m_windowName, null);			
-      int duration = SendMessageA(m_hwnd, WM_USER, 1, WA_POSITION);
+      int duration = Win32API.SendMessageA(m_hwnd, WM_USER, 1, WA_POSITION);
       return duration;
     }
 
@@ -372,12 +339,12 @@ namespace MediaPortal.WinampPlayer
       set
       {
         //IntPtr hwnd = FindWindow(m_windowName, null);	
-        SendMessageA(m_hwnd, WM_USER, (int)value, WA_SEEKPOS);
+        Win32API.SendMessageA(m_hwnd, WM_USER, (int)value, WA_SEEKPOS);
       }
       get
       {
         //IntPtr hwnd = FindWindow(m_windowName, null);			
-        int position = SendMessageA(m_hwnd, WM_USER, 0, WA_POSITION) / 1000;
+        int position = Win32API.SendMessageA(m_hwnd, WM_USER, 0, WA_POSITION) / 1000;
         return position;
       }
     }
@@ -387,7 +354,7 @@ namespace MediaPortal.WinampPlayer
       set
       {
         //IntPtr hwnd = FindWindow(m_windowName, null);	
-        SendMessageA(m_hwnd, WM_USER, value, WA_SETVOLUME);
+        Win32API.SendMessageA(m_hwnd, WM_USER, value, WA_SETVOLUME);
       }
     }
   }

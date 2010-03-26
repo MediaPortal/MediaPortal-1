@@ -30,6 +30,7 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
+using MediaPortal.Util;
 
 namespace MediaPortal.FoobarPlugin
 {
@@ -39,27 +40,6 @@ namespace MediaPortal.FoobarPlugin
   [PluginIcons("ExternalPlayers.Foobar.foobarlogo.png", "ExternalPlayers.Foobar.foobarlogodisabled.png")]
   public class FoobarPlugin : IExternalPlayer
   {
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    public static extern IntPtr FindWindow(
-      [MarshalAs(UnmanagedType.LPTStr)] string lpClassName,
-      [MarshalAs(UnmanagedType.LPTStr)] string lpWindowName);
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct COPYDATASTRUCT
-    {
-      public IntPtr dwData;
-      public int cbData;
-      public IntPtr lpData;
-    }
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam,
-                                          [In()] ref COPYDATASTRUCT lParam);
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern int SendMessageA(IntPtr hwnd, int wMsg, int wParam,
-                                           int lParam);
-
     private const int WM_HTTPSERVER_MSG_CMD = 0x8898;
     private const int WM_HTTPSERVER_MSG_GETSTATE = 0x00;
     private const int WM_HTTPSERVER_MSG_GETPLAYLENGTH = 0x01;
@@ -72,19 +52,6 @@ namespace MediaPortal.FoobarPlugin
     private const int WM_HTTPSERVER_MSG_SETACTIVEPLAYLIST = 0x08;
     private const int WM_HTTPSERVER_MSG_CLEARPLAYLIST = 0x09;
     private const int WM_COPYDATA = 0x004a;
-
-    [DllImport("User32")]
-    private static extern int SetForegroundWindow(IntPtr hwnd);
-
-    // Activates a window
-    [DllImport("User32.DLL")]
-    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetActiveWindow();
-
-    private const int SW_SHOW = 5;
-    private const int SW_RESTORE = 9;
 
     private const string m_author = "int_20h/rtv";
     private const string m_player = "Foobar2000";
@@ -124,20 +91,20 @@ namespace MediaPortal.FoobarPlugin
     {
       if (m_execPath != null && m_execPath.Length > 0)
       {
-        if (m_windowName != null && m_windowName.Length > 0)
+        if (!string.IsNullOrEmpty(m_windowName))
         {
-          m_hwnd = FindWindow(null, m_windowName);
-          m_hwndPlugin = FindWindow("foo_httpserver_ctrl", null);
+          m_hwnd = Win32API.FindWindow(null,  m_windowName);
+          m_hwndPlugin = Win32API.FindWindow("foo_httpserver_ctrl", null);
         }
         if (m_hwnd.ToInt32() <= 0) // try to find it and start it since it's not found
         {
-          IntPtr mpHwnd = GetActiveWindow();
+          IntPtr mpHwnd = Win32API.GetActiveWindow();
           RunProgram(m_execPath, m_startupparameter);
           Log.Info("ExternalPlayers: Started foobar2000 with {0}", m_startupparameter);
-          ShowWindow(mpHwnd, SW_RESTORE);
-          SetForegroundWindow(mpHwnd);
-          m_hwnd = FindWindow(null, m_windowName);
-          m_hwndPlugin = FindWindow("foo_httpserver_ctrl", null);
+          Win32API.ShowWindow(mpHwnd, Win32API.ShowWindowFlags.Restore);
+          Win32API.SetForegroundWindow(mpHwnd);
+          m_hwnd = Win32API.FindWindow(null, m_windowName);
+          m_hwndPlugin = Win32API.FindWindow("foo_httpserver_ctrl", null);
         }
       }
     }
@@ -165,7 +132,7 @@ namespace MediaPortal.FoobarPlugin
         for (int i = 0; i < (2 * 6); i++) // wait 6 seconds for Foobar2k to start.
         {
           Thread.Sleep(500);
-          httpPluginWindow = FindWindow("foo_httpserver_ctrl", null);
+          httpPluginWindow = Win32API.FindWindow("foo_httpserver_ctrl", null);
           if (httpPluginWindow.ToInt32() > 0) // window handle was found
           {
             break;
@@ -209,7 +176,7 @@ namespace MediaPortal.FoobarPlugin
       }
       if (strExt != null && strExt.Length > 0)
       {
-        m_supportedExtensions = strExt.Split(new char[] {','});
+        m_supportedExtensions = strExt.Split(new char[] { ',' });
       }
       if (execPath != null && execPath.Length > 0)
       {
@@ -225,7 +192,7 @@ namespace MediaPortal.FoobarPlugin
         {
           m_port = Convert.ToInt32(port);
         }
-        catch {}
+        catch { }
       }
       if (startupparameter != null && startupparameter.Length > 0)
       {
@@ -304,7 +271,7 @@ namespace MediaPortal.FoobarPlugin
         // wr.Proxy = WebProxy.GetDefaultProxy();
         myRequest.Proxy.Credentials = CredentialCache.DefaultCredentials;
       }
-      catch (Exception) {}
+      catch (Exception) { }
 
       // Return the response. 
       WebResponse myResponse = myRequest.GetResponse();
@@ -494,20 +461,20 @@ namespace MediaPortal.FoobarPlugin
         startPlayerIfNecessary();
 
         string playListName = "MPPlaylist";
-        COPYDATASTRUCT cds;
+        Win32API.COPYDATASTRUCT cds;
         cds.dwData = (IntPtr)1; // find/create playlist
         cds.lpData = Marshal.StringToCoTaskMemAnsi(playListName);
         cds.cbData = playListName.Length + 1;
 
         // create the playlist or switch to it if there
-        int index = SendMessage(m_hwndPlugin, WM_COPYDATA, 0, ref cds);
+        int index = Win32API.SendMessage(m_hwndPlugin, WM_COPYDATA, 0, ref cds);
         Marshal.FreeCoTaskMem(cds.lpData);
 
         // set the playlist as the active one
-        SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SETACTIVEPLAYLIST, index);
+        Win32API.SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SETACTIVEPLAYLIST, index);
 
         // Clear playlist
-        SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_CLEARPLAYLIST, 0);
+        Win32API.SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_CLEARPLAYLIST, 0);
 
 
         Encoding encode = Encoding.Default;
@@ -524,7 +491,7 @@ namespace MediaPortal.FoobarPlugin
         }
         // write the end of string '\0'
         Marshal.WriteByte(cds.lpData, byData.Length, (byte)0);
-        if (SendMessage(m_hwndPlugin, WM_COPYDATA, 0, ref cds) == 0)
+        if (Win32API.SendMessage(m_hwndPlugin, WM_COPYDATA, 0, ref cds) == 0)
         {
           Marshal.FreeCoTaskMem(cds.lpData);
           Thread.Sleep(1000); // wait for 1 secs so that foobar starts playing
@@ -550,7 +517,7 @@ namespace MediaPortal.FoobarPlugin
     /// </summary>
     public override double Duration
     {
-      get { return SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETPLAYLENGTH, 0); }
+      get { return Win32API.SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETPLAYLENGTH, 0); }
     }
 
     /// <summary>
@@ -558,7 +525,7 @@ namespace MediaPortal.FoobarPlugin
     /// </summary>
     public override double CurrentPosition
     {
-      get { return SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETPLAYBACKTIME, 0); }
+      get { return Win32API.SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETPLAYBACKTIME, 0); }
     }
 
 
@@ -568,7 +535,7 @@ namespace MediaPortal.FoobarPlugin
     public override void Pause()
     {
       // pause
-      SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_PAUSE, 0);
+      Win32API.SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_PAUSE, 0);
     }
 
     /// <summary>
@@ -578,7 +545,7 @@ namespace MediaPortal.FoobarPlugin
     {
       get
       {
-        int state = SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETSTATE, 0);
+        int state = Win32API.SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETSTATE, 0);
         return (state == 1);
       }
     }
@@ -591,7 +558,7 @@ namespace MediaPortal.FoobarPlugin
     {
       get
       {
-        int state = SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETSTATE, 0);
+        int state = Win32API.SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETSTATE, 0);
         return (state == 0);
       }
     }
@@ -606,7 +573,7 @@ namespace MediaPortal.FoobarPlugin
           return false;
         }
 
-        int state = SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETSTATE, 0);
+        int state = Win32API.SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETSTATE, 0);
         return (state == 2);
       }
     }
@@ -623,7 +590,7 @@ namespace MediaPortal.FoobarPlugin
         {
           return false;
         }
-        int state = SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETSTATE, 0);
+        int state = Win32API.SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETSTATE, 0);
         return (state == 2);
       }
     }
@@ -643,7 +610,7 @@ namespace MediaPortal.FoobarPlugin
     public override void Stop()
     {
       m_bStoppedManualy = true;
-      SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_STOP, 0);
+      Win32API.SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_STOP, 0);
       _notifyPlaying = false;
     }
 
@@ -654,8 +621,14 @@ namespace MediaPortal.FoobarPlugin
     public override int Volume
     {
       // GetVolume
-      get { return SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETVOLUME, 0); }
-      set { SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SETVOLUME, value); }
+      get
+      {
+        return Win32API.SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_GETVOLUME, 0);
+      }
+      set
+      {
+        Win32API.SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SETVOLUME, value);
+      }
     }
 
     /// <summary>
@@ -674,10 +647,10 @@ namespace MediaPortal.FoobarPlugin
         }
         if (dTime < Duration)
         {
-          SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int)dTime);
+          Win32API.SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int)dTime);
         }
       }
-      catch {}
+      catch { }
     }
 
     /// <summary>
@@ -695,10 +668,10 @@ namespace MediaPortal.FoobarPlugin
         }
         if (dTime < Duration)
         {
-          SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int)dTime);
+          Win32API.SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int)dTime);
         }
       }
-      catch {}
+      catch { }
     }
 
     /// <summary>
@@ -722,9 +695,9 @@ namespace MediaPortal.FoobarPlugin
       {
         try
         {
-          SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int)fCurPercent);
+          Win32API.SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int)fCurPercent);
         }
-        catch {}
+        catch { }
       }
     }
 
@@ -746,9 +719,9 @@ namespace MediaPortal.FoobarPlugin
       fPercent *= (double)iPercentage;
       try
       {
-        SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int)fPercent);
+        Win32API.SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SEEK, (int)fPercent);
       }
-      catch {}
+      catch { }
     }
 
 

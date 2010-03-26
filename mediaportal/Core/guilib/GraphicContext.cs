@@ -28,6 +28,7 @@ using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.Player;
 using MediaPortal.Profile;
+using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 
@@ -162,8 +163,8 @@ namespace MediaPortal.GUI.Library
     private static bool hasFocus = false;
     private static DateTime _lastActivity = DateTime.Now;
     public static IAutoCrop autoCropper = null;
-    private const uint SC_MONITORPOWER = 0xF170;
-    private const uint WM_SYSCOMMAND = 0x0112;
+    private const int SC_MONITORPOWER = 0xF170;
+    private const int WM_SYSCOMMAND = 0x0112;
     private const int MONITOR_ON = -1;
     private const int MONITOR_OFF = 2;
     private static bool _useSeparateRenderThread = false;
@@ -254,8 +255,8 @@ namespace MediaPortal.GUI.Library
             {
               if (Form.ActiveForm.Handle != IntPtr.Zero)
               {
-                SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER,
-                            value ? (IntPtr)MONITOR_OFF : (IntPtr)MONITOR_ON);
+                Win32API.SendMessageA(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER,
+                            value ? MONITOR_OFF : MONITOR_ON);
               }
               else
               {

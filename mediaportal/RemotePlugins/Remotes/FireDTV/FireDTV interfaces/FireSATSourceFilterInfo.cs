@@ -23,6 +23,7 @@
 using System;
 using System.Collections;
 using System.Text;
+using MediaPortal.Util;
 
 #endregion
 
@@ -181,7 +182,7 @@ namespace MediaPortal.InputDevices.FireDTV
       {
         if (_windowHandle == (IntPtr)0)
         {
-          return (IntPtr)FireDTVAPI.GetActiveWindow();
+          return (IntPtr)Win32API.GetActiveWindow();
         }
         else
         {

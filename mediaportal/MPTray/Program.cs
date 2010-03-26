@@ -55,7 +55,7 @@ namespace MPTray
       if (processes.Length > 0)
       {
         // Make MediaPortal window normal ( if minimized )
-        Win32API.ShowWindow((uint)processes[0].MainWindowHandle, (int)Win32API.ShowWindowFlags.ShowNormal);
+        Win32API.ShowWindow(processes[0].MainWindowHandle, Win32API.ShowWindowFlags.ShowNormal);
 
         // Make Mediaportal window focused
         if (Win32API.SetForegroundWindow(processes[0].MainWindowHandle, true))
@@ -170,15 +170,19 @@ namespace MPTray
 
       if (_windowsKeyPressed && (e.KeyCode == Keys.T || e.KeyCode == Keys.K || e.KeyCode != Keys.M))
       {
-        string className = "Shell_TrayWnd";
-        string n = null;
-        IntPtr handle = (IntPtr)Win32API.FindWindow(ref className, ref n);
+        IntPtr handle = Win32API.FindWindow("Shell_TrayWnd", null);
 
-        if (handle != IntPtr.Zero && Win32API.IsWindowVisible(handle) == false)
-          Win32API.ShowWindow((uint)handle, (int)Win32API.ShowWindowFlags.ShowNA);
-
-        if (handle != IntPtr.Zero && Win32API.IsWindowEnabled(handle) == false)
-          Win32API.EnableWindow((uint)handle, 1);
+        if (handle != IntPtr.Zero)
+        {
+          if (Win32API.IsWindowVisible(handle) == false)
+          {
+            Win32API.ShowWindow(handle, Win32API.ShowWindowFlags.ShowNotActivated);
+          }
+          if (Win32API.IsWindowEnabled(handle) == false)
+          {
+            Win32API.EnableWindow(handle, 1);
+          }
+        }
 
         e.Handled = e.KeyCode != Keys.M;
       }

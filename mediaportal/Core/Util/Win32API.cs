@@ -39,14 +39,10 @@ namespace MediaPortal.Util
 
     #region Constants
 
-    private const int SW_HIDE = 0;
-    private const int SW_SHOWNORMAL = 1;
-    private const int SW_SHOWMINIMIZED = 2;
-    private const int SW_SHOWMAXIMIZED = 3;
-    private const int SW_RESTORE = 9;
     private const int WPF_RESTORETOMAXIMIZED = 2;
     public const int WM_SHOWWINDOW = 0x0018;
     private const int SHGFP_TYPE_CURRENT = 0;
+
     public const int CSIDL_MYMUSIC = 0x000d; // "My Music" folder
     public const int CSIDL_MYVIDEO = 0x000e; // "My Videos" folder
     public const int CSIDL_MYPICTURES = 0x0027; // "My Pictures" folder
@@ -85,13 +81,11 @@ namespace MediaPortal.Util
     [DllImportAttribute("user32", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
     public static extern int UnhookWindowsHookEx(int hHook);
 
-    [DllImportAttribute("user32", EntryPoint = "FindWindowA", ExactSpelling = true, CharSet = CharSet.Ansi,
-      SetLastError = true)]
-    public static extern uint FindWindow([MarshalAs(UnmanagedType.VBByRefStr)] ref string lpClassName,
-                                         [MarshalAs(UnmanagedType.VBByRefStr)] ref string lpWindowName);
+    [DllImport("User32", CharSet = CharSet.Auto)]
+    public static extern IntPtr FindWindow([MarshalAs(UnmanagedType.LPTStr)] string lpClassName, [MarshalAs(UnmanagedType.LPTStr)] string lpWindowName);
 
     [DllImportAttribute("user32", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
-    public static extern int GetWindow(int hwnd, int wCmd);
+    public static extern IntPtr GetWindow(IntPtr hwnd, ShowWindowFlags wCmd);
 
     [DllImport("user32", SetLastError = true)]
     private static extern uint GetWindowPlacement(uint _hwnd, [Out] out WindowPlacement _lpwndpl);
@@ -118,10 +112,10 @@ namespace MediaPortal.Util
     public static extern IntPtr GetParent(HandleRef hWnd);
 
     [DllImport("user32", SetLastError = true)]
-    public static extern uint ShowWindow(uint _hwnd, int _showCommand);
+    public static extern uint ShowWindow(IntPtr hwnd, ShowWindowFlags showCommand);
 
     [DllImportAttribute("user32", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
-    public static extern int EnableWindow(uint hwnd, int fEnable);
+    public static extern int EnableWindow(IntPtr hwnd, int fEnable);
 
     [DllImport("user32.dll")]
     public static extern bool IsWindowVisible(IntPtr handle);
@@ -141,8 +135,14 @@ namespace MediaPortal.Util
     [DllImport("user32")]
     private static extern IntPtr GetForegroundWindow();
 
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetActiveWindow();
+
+    [DllImport("User32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
+    public static extern bool MoveWindow(IntPtr hWnd, int x, int y, int cx, int cy, bool repaint);
+
     [DllImport("user32", SetLastError = true)]
-    private static extern bool SetForegroundWindow(IntPtr _hwnd);
+    public static extern bool SetForegroundWindow(IntPtr _hwnd);
 
     [DllImport("user32")]
     private static extern bool SetFocus(IntPtr hWnd);
@@ -174,6 +174,34 @@ namespace MediaPortal.Util
       [In] IntPtr hProcess,
       [Out] out bool lpSystemInfo);
 
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+    public static extern IntPtr FindFirstFile(string lpFileName, out WIN32_FIND_DATA lpFindFileData);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+    public static extern int FindNextFile(IntPtr hFindFile, ref WIN32_FIND_DATA lpFindFileData);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+    public static extern bool FindClose(IntPtr hFindFile);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    public static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam, [In()] ref COPYDATASTRUCT lParam);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    public static extern int SendMessageA(IntPtr hwnd, int wMsg, int wParam, int lParam);
+
+    /// <summary>
+    /// The SetDllDirectory function adds a directory to the search path used to locate DLLs for the application.
+    /// http://msdn.microsoft.com/library/en-us/dllproc/base/setdlldirectory.asp
+    /// </summary>
+    /// <param name="PathName">Pointer to a null-terminated string that specifies the directory to be added to the search path.</param>
+    /// <returns></returns>
+    [DllImport("kernel32.dll")]
+    public static extern bool SetDllDirectory(string PathName);
+
+    #endregion
+
+    #region Structures
+
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct WIN32_FIND_DATA
     {
@@ -190,19 +218,6 @@ namespace MediaPortal.Util
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
       public string cAlternate;
     }
-
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-    public static extern IntPtr FindFirstFile(string lpFileName, out WIN32_FIND_DATA lpFindFileData);
-
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-    public static extern int FindNextFile(IntPtr hFindFile, ref WIN32_FIND_DATA lpFindFileData);
-
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-    public static extern bool FindClose(IntPtr hFindFile);
-
-    #endregion
-
-    #region Structures
 
     [StructLayout(LayoutKind.Sequential)]
     public struct MSG
@@ -266,6 +281,14 @@ namespace MediaPortal.Util
       public Rectangle normalPosition;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct COPYDATASTRUCT
+    {
+      public IntPtr dwData;
+      public int cbData;
+      public IntPtr lpData;
+    }
+
     #endregion
 
     #region Enums
@@ -274,19 +297,16 @@ namespace MediaPortal.Util
     {
       Hide = 0,
       ShowNormal = 1,
-      Normal = 1,
       ShowMinimized = 2,
       ShowMaximized = 3,
-      Maximize = 3,
       ShowNoActivate = 4,
       Show = 5,
       Minimize = 6,
-      ShowMinNoActive = 7,
-      ShowNA = 8,
+      ShowMinNoActivate = 7,
+      ShowNotActivated = 8,
       Restore = 9,
       ShowDefault = 10,
-      ForceMinimize = 11,
-      Max = 11,
+      ForceMinimize = 11
     }
 
     public enum HookType
@@ -384,20 +404,20 @@ namespace MediaPortal.Util
 
     public static void Show(string ClassName, string WindowName, bool bVisible)
     {
-      uint i = FindWindow(ref ClassName, ref WindowName);
+      IntPtr i = FindWindow(ClassName, WindowName);
       if (bVisible)
       {
-        ShowWindow(i, 5);
+        ShowWindow(i, ShowWindowFlags.Show);
       }
       else
       {
-        ShowWindow(i, 0);
+        ShowWindow(i, ShowWindowFlags.Hide);
       }
     }
 
     public static void Enable(string ClassName, string WindowName, bool bEnable)
     {
-      uint i = FindWindow(ref ClassName, ref WindowName);
+      IntPtr i = FindWindow(ClassName, WindowName);
       if (bEnable)
       {
         EnableWindow(i, -1);
@@ -436,17 +456,17 @@ namespace MediaPortal.Util
       WindowPlacement windowPlacement;
       GetWindowPlacement(_hWnd, out windowPlacement);
 
-      switch (windowPlacement.showCmd)
+      switch ((ShowWindowFlags)windowPlacement.showCmd)
       {
-        case SW_HIDE: //Window is hidden
-          ShowWindow(_hWnd, SW_RESTORE);
+        case ShowWindowFlags.Hide: //Window is hidden
+          ShowWindow((IntPtr)_hWnd, ShowWindowFlags.Restore);
           break;
-        case SW_SHOWMINIMIZED: //Window is minimized
+        case ShowWindowFlags.ShowMinimized: //Window is minimized
           // if the window is minimized, then we need to restore it to its 
           // previous size. we also take into account whether it was 
           // previously maximized. 
-          int showCmd = (windowPlacement.flags == WPF_RESTORETOMAXIMIZED) ? SW_SHOWMAXIMIZED : SW_SHOWNORMAL;
-          ShowWindow(_hWnd, showCmd);
+          ShowWindowFlags showCmd = (windowPlacement.flags == WPF_RESTORETOMAXIMIZED) ? ShowWindowFlags.ShowMaximized : ShowWindowFlags.ShowNormal;
+          ShowWindow((IntPtr)_hWnd, showCmd);
           break;
         default:
           // if it's not minimized, then we just call SetForegroundWindow to 
@@ -465,10 +485,10 @@ namespace MediaPortal.Util
       {
         processName = processName.Substring(0, processName.Length - 7);
       }
-      //processName = "mediaportal";
+
       processes.AddRange(Process.GetProcessesByName(processName));
       processes.AddRange(Process.GetProcessesByName(processName + ".vshost"));
-      //System.Diagnostics.Process.GetCurrentProcess().ProcessName);
+
       foreach (Process process in processes)
       {
         if (process.Id == Process.GetCurrentProcess().Id)

@@ -1115,24 +1115,5 @@ namespace MediaPortal.InputDevices.FireDTV
     public static extern uint FS_RemoteControl_Stop(uint DeviceHandle);
 
     #endregion
-
-    #region Win32 API Imports
-
-    [DllImport("user32.dll")]
-    public static extern IntPtr GetForegroundWindow();
-
-    [DllImport("user32.dll", CharSet = CharSet.Ansi)]
-    public static extern int GetActiveWindow();
-
-    [DllImport("user32.dll")]
-    public static extern int GetWindowText(int hWnd, StringBuilder text, int count);
-
-    [DllImport("user32.dll")]
-    public static extern int GetWindowThreadProcessId(int hwnd, ref int lpdwProcessId);
-
-    [DllImport("user32.dll")]
-    public static extern bool SetForegroundWindow(int hWnd);
-
-    #endregion
   } ;
 }

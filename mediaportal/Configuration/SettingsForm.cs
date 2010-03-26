@@ -25,8 +25,6 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using DirectShowLib;
@@ -37,6 +35,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
+using MediaPortal.Util;
 using DVDPlayer = MediaPortal.Configuration.Sections.DVDPlayer;
 using Keys = MediaPortal.Configuration.Sections.Keys;
 
@@ -47,27 +46,6 @@ namespace MediaPortal.Configuration
   /// </summary>
   public class SettingsForm : MPConfigForm
   {
-    #region DLL imports
-
-    [DllImport("User32.")]
-    public static extern int SendMessage(IntPtr window, int message, int wparam, int lparam);
-
-    [DllImport("User32")]
-    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-    [DllImport("User32")]
-    public static extern void GetClassName(int h, StringBuilder s, int nMaxCount);
-
-    [DllImport("User32", CharSet = CharSet.Auto)]
-    public static extern IntPtr FindWindow(
-      [MarshalAs(UnmanagedType.LPTStr)] string lpClassName,
-      [MarshalAs(UnmanagedType.LPTStr)] string lpWindowName);
-
-    [DllImport("User32")]
-    private static extern int SetForegroundWindow(IntPtr hwnd);
-
-    #endregion
-
     #region ConfigPage struct
 
     public struct ConfigPage
@@ -110,8 +88,6 @@ namespace MediaPortal.Configuration
     #endregion
 
     #region Variables
-
-    private const int SW_SHOW = 5;
 
     private const string _windowName = "MediaPortal - Configuration";
     private int hintShowCount = 0;
@@ -695,12 +671,12 @@ namespace MediaPortal.Configuration
       // get the window handle of configuration.exe
       do
       {
-        hwnd = FindWindow(null, _windowName);
+        hwnd = Win32API.FindWindow(null, _windowName);
         Thread.Sleep(250);
       } while (hwnd == IntPtr.Zero);
       Thread.Sleep(100);
-      ShowWindow(hwnd, SW_SHOW);
-      SetForegroundWindow(hwnd);
+      Win32API.ShowWindow(hwnd, Win32API.ShowWindowFlags.Show);
+      Win32API.SetForegroundWindow(hwnd);
     }
 
     public void AddSection(ConfigPage aSection)
