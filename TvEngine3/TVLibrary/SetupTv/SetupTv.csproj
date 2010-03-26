@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -614,6 +614,8 @@
     <EmbeddedResource Include="50_upgrade_sqlserver_database.sql" />
     <EmbeddedResource Include="51_upgrade_sqlserver_database.sql" />
     <EmbeddedResource Include="51_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="52_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="52_upgrade_sqlserver_database.sql" />
     <None Include="images\icon.down.png" />
     <Content Include="images\icon.mpConfig.ico" />
     <Content Include="images\icon.radio_fta.png" />
