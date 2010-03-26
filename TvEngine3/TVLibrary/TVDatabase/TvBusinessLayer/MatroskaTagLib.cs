@@ -78,65 +78,68 @@ namespace TvDatabase
     /// <param name="aLookupDirString">The parent folder (of recordings)</param>
     public static void GetAllMatroskaTags(object aLookupDirString)
     {
-      Dictionary<string, MatroskaTagInfo> fileRecordings = new Dictionary<string, MatroskaTagInfo>();
       string aDirectory = aLookupDirString.ToString();
-      try
-      {
-        string[] importDirs;
-        // get all subdirectories
-        try
-        {
-          importDirs = Directory.GetDirectories(aDirectory, "*", SearchOption.TopDirectoryOnly);
-        }
-        catch (Exception)
-        {
-          importDirs = new string[] {aDirectory};
-        }
-        List<string> searchDirs = new List<string>(importDirs);
-        if (!searchDirs.Contains(aDirectory))
-        {
-          searchDirs.Add(aDirectory);
-        }
+      Dictionary<string, MatroskaTagInfo> fileRecordings = GetTagInfoForDirectory(aDirectory);
 
-        foreach (string subDir in searchDirs)
-        {
-          try
-          {
-            // we do not have insufficient access rights for this
-            if (subDir.ToLowerInvariant().Contains(@"system volume information") ||
-                subDir.ToLowerInvariant().Contains(@"recycled") || subDir.ToLowerInvariant().Contains(@"recycler"))
-            {
-              continue;
-            }
-            string[] importFiles = Directory.GetFiles(subDir, "*.xml", SearchOption.AllDirectories);
-            foreach (string recordingXml in importFiles)
-            {
-              try
-              {
-                MatroskaTagInfo importTag = ReadTag(recordingXml);
-                fileRecordings[recordingXml] = importTag;
-              }
-              catch (Exception ex)
-              {
-                Log.Info("Error while reading matroska informations in file: ", ex);
-              }
-            }
-          }
-          catch (Exception ex)
-          {
-            Log.Info("Error while reading matroska informations in directory: ", ex);
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Info("Error while reading all matroska informations : ", ex);
-      }
       if (OnTagLookupCompleted != null)
       {
         OnTagLookupCompleted(fileRecordings);
       }
     }
+
+    private static Dictionary<string, MatroskaTagInfo> GetTagInfoForDirectory(string aDirectory)
+    {
+      Dictionary<string, MatroskaTagInfo> foundTagInfo = new Dictionary<string, MatroskaTagInfo>();
+      try
+      {
+        string[] importDirs = new string[] {};
+        // get all subdirectories
+        try
+        {
+          importDirs = Directory.GetDirectories(aDirectory, "*", SearchOption.TopDirectoryOnly);
+        }
+        catch (Exception ex)
+        {
+          Log.Info("Error while reading subdirectories of {0}: {1}", aDirectory, ex);
+        }
+        List<string> searchDirs = new List<string>(importDirs);
+        foreach (string subDir in searchDirs)
+        {
+          Dictionary<string, MatroskaTagInfo> foundTagsInSubDir = GetTagInfoForDirectory(subDir);
+          foreach (KeyValuePair<string, MatroskaTagInfo> kvp in foundTagsInSubDir)
+          {
+            foundTagInfo.Add(kvp.Key, kvp.Value);
+          }
+        }
+        try
+        {
+            string[] importFiles = Directory.GetFiles(aDirectory, "*.xml", SearchOption.TopDirectoryOnly);
+            foreach (string xmlFile in importFiles)
+            {
+              try
+              {
+                MatroskaTagInfo importTag = ReadTag(xmlFile);
+                foundTagInfo[xmlFile] = importTag;
+              }
+              catch (Exception ex)
+              {
+                Log.Info("Error while reading matroska informations in file {0}: {1}",xmlFile, ex);
+              }
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Info("Error while reading matroska informations in directory {0}: {1}", aDirectory, ex);
+          }
+
+      }
+      catch (Exception ex)
+      {
+        Log.Info("Error while reading all matroska informations : ", ex);
+      }
+      return foundTagInfo;
+    }
+
 
     /// <summary>
     /// Reads Matroska tag files
