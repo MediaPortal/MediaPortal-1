@@ -1208,7 +1208,7 @@ namespace MediaPortal.Dialogs
           float fWidth = 0, fHeight = 0;
           _font18.GetTextExtent(_textEntered, ref fWidth, ref fHeight);
 
-          if (fWidth < fTEXTBOX_WIDTH)
+          if (fWidth < (fTEXTBOX_WIDTH * SkinRatio))
           {
             if (_position >= _textEntered.Length)
             {
