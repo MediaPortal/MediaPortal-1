@@ -596,6 +596,12 @@ namespace MediaPortal.GUI.Video
                   UpdateGUI();
                 }
 
+                _showStatus = true;
+                _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                                (int)Control.LABEL_ROW1, 0, 0, null);
+                msg.Label = "";
+                OnMessage(msg);
                 if (_immediateSeekIsRelative)
                 {
                   double currentpos = g_Player.CurrentPosition;
@@ -643,6 +649,12 @@ namespace MediaPortal.GUI.Video
                   UpdateGUI();
                 }
 
+                _showStatus = true;
+                _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                                (int)Control.LABEL_ROW1, 0, 0, null);
+                msg.Label = "";
+                OnMessage(msg);
                 if (_immediateSeekIsRelative)
                 {
                   double currentpos = g_Player.CurrentPosition;
@@ -1780,56 +1792,16 @@ namespace MediaPortal.GUI.Video
 
     public override void Render(float timePassed)
     {
+      if (GUIWindowManager.IsSwitchingToNewWindow)
+      {
+        return;
+      }
       if (GUIGraphicsContext.Vmr9Active || GUIWindowManager.IsRouted)
       {
         base.Render(timePassed);
         if (_isOsdVisible)
         {
           _osdWindow.Render(timePassed);
-        }
-      }
-      else
-      {
-        if (screenState.ContextMenuVisible ||
-            screenState.OsdVisible ||
-            screenState.Paused ||
-            screenState.ShowStatusLine ||
-            screenState.ShowSkipBar ||
-            screenState.ShowTime || _needToClearScreen ||
-            g_Player.Speed != 1)
-        {
-          TimeSpan ts = DateTime.Now - _vmr7UpdateTimer;
-          if ((ts.TotalMilliseconds >= 5000) || _needToClearScreen)
-          {
-            _needToClearScreen = false;
-            if (VMR7Util.g_vmr7 != null)
-            {
-              using (Bitmap bmp = new Bitmap(GUIGraphicsContext.Width, GUIGraphicsContext.Height))
-              {
-                using (Graphics g = Graphics.FromImage(bmp))
-                {
-                  GUIGraphicsContext.graphics = g;
-                  base.Render(timePassed);
-                  RenderForm(timePassed);
-                  GUIGraphicsContext.graphics = null;
-                  screenState.wasVMRBitmapVisible = true;
-                  VMR7Util.g_vmr7.SaveBitmap(bmp, true, true, 0.8f);
-                }
-              }
-            }
-            _vmr7UpdateTimer = DateTime.Now;
-          }
-        }
-        else
-        {
-          if (screenState.wasVMRBitmapVisible)
-          {
-            screenState.wasVMRBitmapVisible = false;
-            if (VMR7Util.g_vmr7 != null)
-            {
-              VMR7Util.g_vmr7.SaveBitmap(null, false, false, 0.8f);
-            }
-          }
         }
       }
     }

@@ -334,7 +334,6 @@ namespace TvPlugin
 			base.ResetAllControls();
 		}
 
-
     public override void OnAction(Action action)
     {
       _needToClearScreen = true;
@@ -479,7 +478,6 @@ namespace TvPlugin
       switch (action.wID)
       {
         case Action.ActionType.ACTION_MOUSE_DOUBLECLICK:
-
         case Action.ActionType.ACTION_SELECT_ITEM:
           {
             if (!g_Player.IsTVRecording)
@@ -511,7 +509,6 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_SHOW_INFO:
-
         case Action.ActionType.ACTION_SHOW_CURRENT_TV_INFO:
           {
             if (action.fAmount1 != 0)
@@ -610,7 +607,6 @@ namespace TvPlugin
             OnMessage(msg);
             break;
           }
-
 
         case Action.ActionType.ACTION_ASPECT_RATIO:
           {
@@ -725,7 +721,6 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_PREVIOUS_MENU:
-
         case Action.ActionType.ACTION_SHOW_GUI:
           Log.Debug("fullscreentv:show gui");
           //if(_vmr9OSD!=null)
@@ -748,7 +743,6 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_MOVE_LEFT:
-
         case Action.ActionType.ACTION_STEP_BACK:
           {
             if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
@@ -772,7 +766,6 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_MOVE_RIGHT:
-
         case Action.ActionType.ACTION_STEP_FORWARD:
           {
             if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
@@ -796,7 +789,6 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_MOVE_DOWN:
-
         case Action.ActionType.ACTION_BIG_STEP_BACK:
           {
             if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
@@ -809,6 +801,10 @@ namespace TvPlugin
               }
               _statusVisible = true;
               _statusTimeOutTimer = DateTime.Now;
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                                (int)Control.LABEL_ROW1, 0, 0, null);
+              msg.Label = "";
+              OnMessage(msg);
               if (_immediateSeekIsRelative)
               {
                 g_Player.SeekRelativePercentage(-_immediateSeekValue);
@@ -822,7 +818,6 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_MOVE_UP:
-
         case Action.ActionType.ACTION_BIG_STEP_FORWARD:
           {
             if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
@@ -835,6 +830,10 @@ namespace TvPlugin
               }
               _statusVisible = true;
               _statusTimeOutTimer = DateTime.Now;
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                                (int)Control.LABEL_ROW1, 0, 0, null);
+              msg.Label = "";
+              OnMessage(msg);
               if (_immediateSeekIsRelative)
               {
                 g_Player.SeekRelativePercentage(_immediateSeekValue);
@@ -868,7 +867,6 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_PLAY:
-
         case Action.ActionType.ACTION_MUSIC_PLAY:
           if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
           {
@@ -930,6 +928,7 @@ namespace TvPlugin
           if (g_Player.IsTVRecording)
           {
             g_Player.Stop();
+            GUIWindowManager.ShowPreviousWindow();
           }
           if (g_Player.IsTimeShifting)
           {
@@ -947,6 +946,7 @@ namespace TvPlugin
               {
                 Log.Debug("TVFullscreen: stop confirmed");
                 g_Player.Stop();
+                GUIWindowManager.ShowPreviousWindow();
               }
             }
           }
@@ -1443,15 +1443,6 @@ namespace TvPlugin
                 }
               }
             }
-            if (VMR7Util.g_vmr7 != null)
-            {
-              VMR7Util.g_vmr7.SaveBitmap(null, false, false, 0.8f);
-            }
-            /*
-            if (VMR9Util.g_vmr9!=null)
-            {	
-              VMR9Util.g_vmr9.SaveBitmap(null,false,false,0.8f);
-            }*/
             GUILayerManager.UnRegisterLayer(this);
             return true;
           }
@@ -2630,67 +2621,20 @@ namespace TvPlugin
       {
         return;
       }
-      /*
-      if (VMR7Util.g_vmr7 != null)
-      {
-        if (!GUIWindowManager.IsRouted)
-        {
-          if (_screenState.ContextMenuVisible ||
-            _screenState.MsgBoxVisible ||
-            //_screenState.MsnVisible ||     // msn related can be removed
-            _screenState.OsdVisible ||
-            _screenState.Paused ||
-            _screenState.ShowGroup ||
-            _screenState.ShowInput ||
-            _screenState.ShowStatusLine ||
-            _screenState.ShowTime ||
-            _screenState.ZapOsdVisible ||
-            g_Player.Speed != 1 ||
-            _needToClearScreen)
-          {
-            TimeSpan ts = DateTime.Now - _vmr7UpdateTimer;
-            if ((ts.TotalMilliseconds >= 5000) || _needToClearScreen)
-            {
-              _needToClearScreen = false;
-              using (Bitmap bmp = new Bitmap(GUIGraphicsContext.Width, GUIGraphicsContext.Height))
-              {
-                using (Graphics g = Graphics.FromImage(bmp))
-                {
-                  GUIGraphicsContext.graphics = g;
-                  base.Render(timePassed);
-                  RenderForm(timePassed);
-                  GUIGraphicsContext.graphics = null;
-                  _screenState.wasVMRBitmapVisible = true;
-                  VMR7Util.g_vmr7.SaveBitmap(bmp, true, true, 0.8f);
-                }
-              }
-              _vmr7UpdateTimer = DateTime.Now;
-            }
-          }
-          else
-          {
-            if (_screenState.wasVMRBitmapVisible)
-            {
-              _screenState.wasVMRBitmapVisible = false;
-              VMR7Util.g_vmr7.SaveBitmap(null, false, false, 0.8f);
-            }
-          }
-        }
-      }*/
-
-      if (GUIGraphicsContext.Vmr9Active)
+      if (GUIGraphicsContext.Vmr9Active || GUIWindowManager.IsRouted)
       {
         base.Render(timePassed);
-      }
-      if (_zapOsdVisible)
-      {
-        _zapWindow.Render(timePassed);
-      }
-      else if (_isOsdVisible)
-      {
-        _osdWindow.Render(timePassed);
-      }
 
+        if (_zapOsdVisible)
+        {
+          _zapWindow.Render(timePassed);
+        }
+        else if (_isOsdVisible)
+        {
+          _osdWindow.Render(timePassed);
+        }
+      }
+    /*
       if (g_Player.Playing || TVHome.DoingChannelChange())
       {
         return;
@@ -2722,6 +2666,7 @@ namespace TvPlugin
       GUIWindowManager.IsOsdVisible = false;
       Log.Debug("Tvfullscreen:not viewing anymore");
       GUIWindowManager.ShowPreviousWindow();
+    */
     }
 
     public void UpdateOSD()
@@ -3072,7 +3017,6 @@ namespace TvPlugin
         ZapToChannel(chan.Name, useZapDelay);
       }
      */
-
 
     /*
           List<TVChannel> channels = CurrentGroup.TvChannels;
