@@ -632,6 +632,12 @@ namespace TvService
                   break;
                 }
               }
+
+              // Fix mantis 0002790: Bad behavior when card count for IPTV = 0 
+              if (dbsCard.Name.StartsWith("MediaPortal IPTV Source Filter"))
+              {
+                CardRemove(dbsCard.IdCard);
+              }
             }
           }
         }
@@ -3862,6 +3868,7 @@ namespace TvService
     {
       if (cardId < 0 || !_cards.ContainsKey(cardId) || (checkCardPresent && !CardPresent(cardId)))
       {
+#if DEBUG
         StackTrace st = new StackTrace(true);
         StackFrame sf = st.GetFrame(0);
         Log.Error(
@@ -3869,6 +3876,7 @@ namespace TvService
           " - incorrect parameters used! cardId {0} _cards.ContainsKey(cardId) == {1} CardPresent {2}", cardId,
           _cards.ContainsKey(cardId), CardPresent(cardId));
         Log.Error("{0}", st);
+#endif
         return true;
       }
       return false;
@@ -3883,6 +3891,7 @@ namespace TvService
     {
       if (user == null || user.CardId < 0 || !_cards.ContainsKey(user.CardId) || (!CardPresent(user.CardId)))
       {
+#if DEBUG
         StackTrace st = new StackTrace(true);
         StackFrame sf = st.GetFrame(0);
 
@@ -3898,6 +3907,7 @@ namespace TvService
           Log.Error("TVController:" + sf.GetMethod().Name + " - incorrect parameters used! user NULL");
         }
         Log.Error("{0}", st);
+#endif 
         return true;
       }
       return false;
