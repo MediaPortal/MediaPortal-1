@@ -114,8 +114,9 @@ namespace MediaPortal.Util
       // Params for mtm (http://moviethumbnail.sourceforge.net/usage.en.html)
       //   -D 8         : edge detection; 0:off >0:on; higher detects more; try -D4 -D6 or -D8
       //   -B 420/E 600 : omit this seconds from the beginning / ending TODO: use pre- / postrecording values
-      //   -c 2  /r 2   : # of column / # of rows
-      //   -s 300       : time step between each shot
+      //   -c 2 / r 2   : # of column / # of rows
+      //   -b 0.60      : skip if % blank is higher; 0:skip all 1:skip really blank >1:off
+      //   -h 100       : minimum height of each shot; will reduce # of column to fit
       //   -t           : time stamp off
       //   -i           : info text off
       //   -w 0         : width of output image; 0:column * movie width
@@ -123,20 +124,18 @@ namespace MediaPortal.Util
       //   -W           : dont overwrite existing files, i.e. update mode
       //   -P           : dont pause before exiting; override -p
 
-      int preGapSec = 0;
-      int postGapSec = 0;
+      int preGapSec = 5;
+      int postGapSec = 5;
       if (aOmitCredits)
       {
         preGapSec = 420;
         postGapSec = 600;
       }
       bool Success = false;
-      string ExtractorArgs = string.Format(" -D 6 -B {0} -E {1} -c {2} -r {3} -s {4} -t -i -w {5} -n -P \"{6}\"",
-                                           preGapSec, postGapSec, PreviewColumns, PreviewRows, "300",
-                                           /*(int)Thumbs.ThumbLargeResolution*/ "0", aVideoPath);
+      string ExtractorArgs = string.Format(" -D 6 -B {0} -E {1} -c {2} -r {3} -b {4} -t -i -w {5} -n -P \"{6}\"",
+                                           preGapSec, postGapSec, PreviewColumns, PreviewRows, Convert.ToDecimal("0.6"), 0, aVideoPath);
       string ExtractorFallbackArgs = string.Format(
-        " -D 8 -B {0} -E {1} -c {2} -r {3} -s {4} -t -i -w {5} -n -P \"{6}\"", 0, 0, PreviewColumns, PreviewRows, "60",
-        /*(int)Thumbs.ThumbLargeResolution*/ "0", aVideoPath);
+        " -D 8 -B {0} -E {1} -c {2} -r {3} -b {4} -t -i -w {5} -n -P \"{6}\"", 0, 0, PreviewColumns, PreviewRows, Convert.ToDecimal("0.6"), 0, aVideoPath);
       // Honour we are using a unix app
       ExtractorArgs = ExtractorArgs.Replace('\\', '/');
       try
@@ -181,7 +180,7 @@ namespace MediaPortal.Util
               File.Delete(OutputThumb);
               Thread.Sleep(50);
             }
-            catch (Exception) {}
+            catch (Exception) { }
           }
         }
         else
@@ -208,7 +207,7 @@ namespace MediaPortal.Util
             File.Delete(ShareThumb);
             Thread.Sleep(30);
           }
-          catch (Exception) {}
+          catch (Exception) { }
         }
       }
       catch (Exception ex)
