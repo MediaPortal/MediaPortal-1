@@ -54,11 +54,13 @@ namespace MPTray
 
       if (processes.Length > 0)
       {
+        IntPtr handle = processes[0].MainWindowHandle;
+
         // Make MediaPortal window normal ( if minimized )
-        Win32API.ShowWindow(processes[0].MainWindowHandle, Win32API.ShowWindowFlags.ShowNormal);
+        Win32API.ShowWindow(handle, Win32API.ShowWindowFlags.ShowNormal);
 
         // Make Mediaportal window focused
-        if (Win32API.SetForegroundWindow(processes[0].MainWindowHandle, true))
+        if (Win32API.SetForegroundWindow(handle, true))
         {
           Log.Write("MPTray: Successfully switched focus.");
         }
@@ -109,11 +111,13 @@ namespace MPTray
                               };
 
           process.Start();
+          process.WaitForInputIdle();
 
           using (EventWaitHandle handle = new EventWaitHandle(false, EventResetMode.ManualReset, "MediaPortalHandleCreated"))
           {
             if (handle.SafeWaitHandle.IsInvalid)
             {
+              Log.Write("MPTray: MediaPortalHandleCreated is invalid !");
               return;
             }
 
