@@ -616,6 +616,7 @@ namespace TvEngine
       DateTime end = System.Data.SqlTypes.SqlDateTime.MinValue.Value;
       DateTime start = System.Data.SqlTypes.SqlDateTime.MinValue.Value;
       string classification = String.Empty;
+      int parentalRating = 0;
       string date = String.Empty;
       string duration = String.Empty;
       string origin = String.Empty;
@@ -659,6 +660,7 @@ namespace TvEngine
       if (_extendDescription)
       {
         classification = FSK;
+        int.TryParse(FSK, out parentalRating);
         date = Herstellungsjahr;
         episode = Originaltitel;
         director = Regie;
@@ -815,7 +817,7 @@ namespace TvEngine
 
           Program prog = new Program(progChannel.IdChannel, newStartDate, newEndDate, title, description, genre,
                                      Program.ProgramState.None, OnAirDate, String.Empty, String.Empty, episode,
-                                     String.Empty, EPGStarRating, classification, Convert.ToInt32(classification));
+                                     String.Empty, EPGStarRating, classification, parentalRating);
 
           _tvmEpgProgs.Add(prog);
 
