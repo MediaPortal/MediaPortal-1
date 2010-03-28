@@ -447,6 +447,23 @@ namespace TvDatabase
       return null;
     }
 
+    public static Recording ActiveRecording(string title)
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Recording));
+      sb.AddConstraint(Operator.Equals, "isRecording", true);
+      sb.AddConstraint(Operator.Equals, "title", title);
+
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      IList<Recording> getList = ObjectFactory.GetCollection<Recording>(stmt.Execute());
+      if (getList.Count != 0)
+      {
+        return getList[0];
+      }
+      return null;
+    }
+
     /// <summary>
     /// Static method to retrieve all instances that are stored in the database in one call
     /// </summary>
@@ -602,5 +619,7 @@ namespace TvDatabase
     {
       Remove();
     }
+
+   
   }
 }

@@ -3081,46 +3081,27 @@ namespace TvPlugin
             string fileName = "";
             bool isRec = _currentProgram.IsRecording;
             bool isRecNOepg = IsRecordingNoEPG(_currentProgram.ReferencedChannel().Name);
-
-            Schedule schedule = null;
-
+            
+            Recording rec = null;
             if (isRec)
-            {              
-              // If you select the program which is currently recording open a dialog to ask if you want to see it from the beginning
-              // imagine a sports event where you do not want to see the live point to be spoiled           
-              Schedule scheduleSeries = Schedule.RetrieveSeries(_currentProgram.ReferencedChannel().IdChannel, _currentProgram.StartTime,
-                                      _currentProgram.EndTime);
-
-              if (scheduleSeries != null)
-              {
-                  schedule = Schedule.RetrieveSpawnedSchedule(scheduleSeries.IdSchedule, _currentProgram.StartTime);
-                  if (schedule == null)
-                  {
-                      schedule = scheduleSeries;
-                  }
-              }
-              else
-              {
-                  schedule = Schedule.RetrieveOnce(_currentProgram.ReferencedChannel().IdChannel, _currentProgram.Title,
-                                              _currentProgram.StartTime, _currentProgram.EndTime);
-              }
-              
+            {
+              rec = Recording.ActiveRecording(_currentProgram.Title);              
             }
             else if (isRecNOepg)            
             {
-              schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel().Name);
-            }
+              Schedule schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel().Name);
 
-            if (schedule != null)
-            {
-              Recording rec = null;
-              rec = Recording.ActiveRecording(schedule.IdSchedule);
-              if (rec != null)
-              {
-                fileName = rec.FileName;
+              if (schedule != null)
+              {                
+                rec = Recording.ActiveRecording(schedule.IdSchedule);                
               }
             }
 
+            if (rec != null)
+            {
+              fileName = rec.FileName;
+            }
+            
             if (!string.IsNullOrEmpty(fileName)) //are we really recording ?
             {
               Log.Info("TVGuide: clicked on a currently running recording");
