@@ -928,8 +928,11 @@ namespace MediaPortal.Plugins.Process
         }
         else
         {
-          Log.Info("PowerScheduler: Keep server alive");
-          RemotePowerControl.Instance.UserActivityDetected(DateTime.Now);
+          if (RemotePowerControl.Isconnected)
+          {
+            Log.Info("PowerScheduler: Keep server alive");
+            RemotePowerControl.Instance.UserActivityDetected(DateTime.Now);
+          }
 
           // check whether go to standby.
           CheckForStandby();
@@ -1248,15 +1251,24 @@ namespace MediaPortal.Plugins.Process
           Log.Debug("PSClientPlugin: marshalled handlers as {0}", _remotingURI);
         }
         // (re-)register with the TVServer
-        int newTag = RemotePowerControl.Instance.RegisterRemote(_remotingURI, _remotingURI);
-        if (_remotingTag != newTag)
+        try
         {
-          if (_remotingTag != 0)
+          int newTag = RemotePowerControl.Instance.RegisterRemote(_remotingURI, _remotingURI);
+          if (_remotingTag != newTag)
           {
-            LogVerbose("PSClientPlugin: reconnected to tvservice");
+            if (_remotingTag != 0)
+            {
+              LogVerbose("PSClientPlugin: reconnected to tvservice");
+            }
+            LogVerbose("PSClientPlugin: registered handlers with tvservice with tag {0}", _remotingTag);
+            _remotingTag = newTag;
           }
-          LogVerbose("PSClientPlugin: registered handlers with tvservice with tag {0}", _remotingTag);
-          _remotingTag = newTag;
+        }
+        catch (Exception ex)
+        {
+          Log.Error(ex);
+          // Should we also clear the connection? 
+          //RemotePowerControl.Clear();
         }
       }
     }
