@@ -3085,7 +3085,7 @@ namespace TvPlugin
             Recording rec = null;
             if (isRec)
             {
-              rec = Recording.ActiveRecording(_currentProgram.Title);              
+              rec = Recording.ActiveRecording(_currentProgram.Title, _currentProgram.IdChannel);              
             }
             else if (isRecNOepg)            
             {
