@@ -129,6 +129,10 @@ namespace TvService
 
           if (useErrorDetection)
           {
+            // fix mantis 0002807: A/V detection for recordings is not working correctly 
+            // reset the events ONLY before attaching the observer, at a later position it can already miss the a/v callback.
+            _eventVideo.Reset();
+            _eventAudio.Reset();
             Log.Debug("Recorder.start add audioVideoEventHandler");
             ((BaseSubChannel)subchannel).AudioVideoEvent += AudioVideoEventHandler;
           }
@@ -502,9 +506,6 @@ namespace TvService
 
       IChannel channel = _subchannel.CurrentChannel;
       bool isRadio = channel.IsRadio;
-
-      _eventVideo.Reset();
-      _eventAudio.Reset();
 
       if (isRadio)
       {
