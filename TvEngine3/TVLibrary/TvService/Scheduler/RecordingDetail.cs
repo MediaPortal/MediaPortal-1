@@ -173,9 +173,19 @@ namespace TvService
     {
       get
       {
-        if (DateTime.Now >= EndTime.AddMinutes(_schedule.PostRecordInterval))
-          return false;
-        return true;
+        bool isRecording = false;
+
+        try
+        {
+          _schedule.Refresh();
+          isRecording = (DateTime.Now < EndTime.AddMinutes(_schedule.PostRecordInterval));
+        }
+        catch (Exception e)
+        {
+          Log.Error("RecordingDetail: exception occured {0}", e);            
+        }
+        
+        return isRecording;
       }
     }
 
