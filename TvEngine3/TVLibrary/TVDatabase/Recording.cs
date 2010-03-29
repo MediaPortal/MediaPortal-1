@@ -447,11 +447,12 @@ namespace TvDatabase
       return null;
     }
 
-    public static Recording ActiveRecording(string title)
+    public static Recording ActiveRecording(string title, int idChannel)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Recording));
       sb.AddConstraint(Operator.Equals, "isRecording", true);
       sb.AddConstraint(Operator.Equals, "title", title);
+      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);      
 
       SqlStatement stmt = sb.GetStatement(true);
 
