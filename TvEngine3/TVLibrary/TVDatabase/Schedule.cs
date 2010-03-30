@@ -744,6 +744,12 @@ namespace TvDatabase
 
     public static bool IsPartialRecording(Schedule schedule, Program prg) 
     {
+      if (schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnEveryChannel ||
+          schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel)
+      {
+        return false;
+      }
+
       //DateTime prgStart = new DateTime(schedule.startTime.Year, schedule.startTime.Month, schedule.startTime.Day, prg.StartTime.Hour, prg.StartTime.Minute, 0);
       //DateTime prgEnd = new DateTime(schedule.endTime.Year, schedule.endTime.Month, schedule.endTime.Day, prg.EndTime.Hour, prg.EndTime.Minute, 0);
 
