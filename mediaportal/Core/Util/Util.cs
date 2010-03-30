@@ -641,72 +641,75 @@ namespace MediaPortal.Util
       {
         if (IsPicture(item.Path)) return;
 
-        strThumb = Path.ChangeExtension(item.Path, ".jpg");
+        string[] thumbs = { Path.ChangeExtension(item.Path, ".jpg"), 
+                            Path.ChangeExtension(item.Path, ".tbn"), 
+                            Path.ChangeExtension(item.Path, ".png"),
+                            GetThumb(item.Path)};
 
-        if (!File.Exists(strThumb))
+        bool foundVideoThumb = false;
+        foreach (string s in thumbs)
         {
-          strThumb = Path.ChangeExtension(item.Path, ".tbn");
-          if (!File.Exists(strThumb))
+          if (File.Exists(s))
           {
-            strThumb = Path.ChangeExtension(item.Path, ".png");
-            if (!File.Exists(strThumb))
-            {
-              strThumb = GetThumb(item.Path);
-              if (!File.Exists(strThumb))
-              {
-                bool createVideoThumbs = false;
-                using (Profile.Settings xmlreader = new Profile.MPSettings())
-                {
-                  createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
-                }
+            strThumb = s;
+            foundVideoThumb = true;
+            break;
+          }
+        }
 
-                if (IsVideo(item.Path) && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()))
+        if (!foundVideoThumb)
+        {
+          bool createVideoThumbs;
+          using (Profile.Settings xmlreader = new Profile.MPSettings())
+          {
+            createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+          }
+
+          Uri file = new Uri(item.Path);
+          if (IsVideo(item.Path) && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()) && (file.IsUnc || file.IsFile))
+          {
+            strThumb = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(item.Path));
+            if (File.Exists(strThumb))
+            {
+              try
+              {
+                File.SetLastAccessTime(strThumb, DateTime.Now);
+                //useful for later creating a process plugin that deletes old thumbnails
+                if (!File.Exists(ConvertToLargeCoverArt(strThumb)))
                 {
-                  strThumb = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(item.Path));
-                  if (File.Exists(strThumb))
-                  {
-                    try
-                    {
-                      File.SetLastAccessTime(strThumb, DateTime.Now);
-                      //useful for later creating a process plugin that deletes old thumbnails
-                      if (!File.Exists(ConvertToLargeCoverArt(strThumb)))
-                      {
-                        File.Copy(strThumb, ConvertToLargeCoverArt(strThumb));
-                        File.SetLastAccessTime(ConvertToLargeCoverArt(strThumb), DateTime.Now);
-                      }
-                    }
-                    catch (Exception ex)
-                    {
-                      Log.Error(ex);
-                    }
-                    item.IconImage = strThumb;
-                    string strLargeThumb = ConvertToLargeCoverArt(strThumb);
-                    if (File.Exists(strLargeThumb))
-                    {
-                      item.ThumbnailImage = strLargeThumb;
-                      item.IconImageBig = strLargeThumb;
-                    }
-                    else
-                    {
-                      item.ThumbnailImage = strThumb;
-                      item.IconImageBig = strThumb;
-                    }
-                  }
-                  else if (createVideoThumbs)
-                  {
-                    Thread extractVideoThumbThread = new Thread(GetVideoThumb)
-                                                       {
-                                                         Name = "ExtractVideoThumb",
-                                                         IsBackground = true,
-                                                         Priority = ThreadPriority.Lowest
-                                                       };
-                    extractVideoThumbThread.Start(item);
-                  }
+                  File.Copy(strThumb, ConvertToLargeCoverArt(strThumb));
+                  File.SetLastAccessTime(ConvertToLargeCoverArt(strThumb), DateTime.Now);
                 }
               }
-              return;
+              catch (Exception ex)
+              {
+                Log.Error(ex);
+              }
+              item.IconImage = strThumb;
+              string strLargeThumb = ConvertToLargeCoverArt(strThumb);
+              if (File.Exists(strLargeThumb))
+              {
+                item.ThumbnailImage = strLargeThumb;
+                item.IconImageBig = strLargeThumb;
+              }
+              else
+              {
+                item.ThumbnailImage = strThumb;
+                item.IconImageBig = strThumb;
+              }
+            }
+            else if (createVideoThumbs)
+            {
+              Thread extractVideoThumbThread = new Thread(GetVideoThumb)
+                                                 {
+                                                   Name = "ExtractVideoThumb",
+                                                   IsBackground = true,
+                                                   Priority = ThreadPriority.Lowest
+                                                 };
+              extractVideoThumbThread.Start(item);
             }
           }
+          return;
         }
 
         // now strThumb exists
@@ -1533,7 +1536,7 @@ namespace MediaPortal.Util
 
           success = (ExternalProc.HasExited && ExternalProc.ExitCode == aFailConditions.SuccessExitCode);
 
-          if(!success)
+          if (!success)
           {
             Log.Error("Util: Error executing {0}: return code {1}", aAppName, ExternalProc.ExitCode);
           }
