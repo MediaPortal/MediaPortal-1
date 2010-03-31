@@ -328,9 +328,15 @@ namespace TvDatabase
 
             stmt = sb.GetStatement();
 
-            ChannelGroup channelGroup = ObjectFactory.GetInstance<ChannelGroup>(stmt.Execute());
-
-            groupNames.Add(channelGroup.GroupName);
+            try
+            {
+              ChannelGroup channelGroup = ObjectFactory.GetInstance<ChannelGroup>(stmt.Execute());
+              groupNames.Add(channelGroup.GroupName);
+            }
+            catch (Exception ex)
+            {
+              Log.Error("channelgroup for channel id={0} with channelgroup id={1} does not exist", idChannel, groupMap.IdGroup);
+            }                        
           }
         }
         else if (this.IsRadio)
