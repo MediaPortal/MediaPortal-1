@@ -2,73 +2,50 @@
 <Grabber>
   <Info availableDays="7" timezone="W. Europe Standard Time" version="2.1.0" />
   <Channels>
-    <Channel id="Rai 1" siteId="1" />
-    <Channel id="Rai 2" siteId="3" />
-    <Channel id="Rai 3" siteId="16" />
-    <Channel id="Rai 4" siteId="161" />
-    <Channel id="Canale 5" siteId="22" />
-    <Channel id="Italia 1" siteId="23" />
-    <Channel id="Rete 4" siteId="24" />
-    <Channel id="La7" siteId="75" />
-    <Channel id="All Music" siteId="72" />
-    <Channel id="MTV Italia" siteId="73" />
-    <Channel id="Facile TV" siteId="159" />
-    <Channel id="Coming soon tv" siteId="147" />
-    <Channel id="Rai News 24" siteId="155" />
-    <Channel id="BBC World" siteId="66" />
-    <Channel id="Boing" siteId="144" />
-    <Channel id="Sport Italia" siteId="160" />
-    <Channel id="Rai Sport Più" siteId="156" />
-    <Channel id="Sportitalia 24" siteId="158" />
-    <Channel id="France 24 (French)" siteId="150" />
-    <Channel id="Iris" siteId="151" />
-    <Channel id="Rai Gulp" siteId="154" />
+    <Channel id="RaiUno" siteId="rai-uno" />
+    <Channel id="RaiDue" siteId="rai-due" />
+    <Channel id="RaiTre" siteId="rai-tre" />
+    <Channel id="Rai 4" siteId="rai-4" />
+    <Channel id="CANALE 5" siteId="canale-5" />
+    <Channel id="ITALIA 1" siteId="italia-1" />
+    <Channel id="RETE 4" siteId="rete-4" />
+    <Channel id="LA7" siteId="la7" />
+    <Channel id="MTV" siteId="mtv" />
+    <Channel id="Coming Soon" siteId="coming-soon" />
+    <Channel id="RaiNotizie24" siteId="rai-news-24" />
+    <Channel id="BBC World" siteId="bbc-world" />
+    <Channel id="Boing" siteId="boing" />
+    <Channel id="Sportitalia" siteId="sportitalia" />
+    <Channel id="Rai Sport Piu" siteId="rai-sport-piu" />
+    <Channel id="Sportitalia24" siteId="sportitalia-24" />
+    <Channel id="France 24 (fr)" siteId="france-24-fr" />
+    <Channel id="Iris" siteId="iris" />
+    <Channel id="Rai Gulp" siteId="rai-gulp" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://spettacolo.virgilio.it/guidatv/cgi/index.cgi?tipo=3&amp;channel=[ID]&amp;day=[DD]/[MM]/[YYYY]" post="" external="false" encoding="" />
+    <Site url="http://cinema-tv.virgilio.it/programmi-tv/programmazione-[ID].html?giorno=[DAY_NAME]" post="" external="false" encoding="" />
+        <Search startOffset="0" maxlistings="0" startPage="0">
+      <DayNames>
+    <Day>lunedi</Day>
+    <Day>martedi</Day>
+    <Day>mercoledi</Day>
+    <Day>giovedi</Day>
+    <Day>venerdi</Day>
+    <Day>sabato</Day>
+    <Day>domenica</Day>
+  </DayNames>
+  </Search>
     <Html>
       <Template name="default">
-        <SectionTemplate tags="TDA">
+        <SectionTemplate tags="TA">
           <TemplateText>
-      &lt;tr&gt;
-      &lt;td&gt;
-      &lt;div&gt;
-      &lt;#START&gt;
-      &lt;/div&gt;
-      &lt;/td&gt;
-      &lt;td&gt;
-      &lt;div&gt;
-      &lt;a href&gt;
-      &lt;#TITLE&gt;
-      &lt;/div&gt;
-      &lt;/td&gt;
-      &lt;td&gt;
-      &lt;div&gt;
-      &lt;#GENRE&gt;
-      &lt;/div&gt;
-      &lt;/td&gt;
-      &lt;/tr&gt;
+&lt;td class="orario"&gt;&lt;#START&gt;&lt;/td&gt;
+&lt;td class="prg_c"&gt;&lt;a&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;&lt;i&gt;&lt;/td&gt;
+&lt;td class="cat_p"&gt;&lt;a&gt;&lt;/a&gt;&lt;/td&gt;
     </TemplateText>
         </SectionTemplate>
       </Template>
-      <Template name="Details" start="&lt;div id=&quot;scheda-genere&quot;&gt;" end="Torna indietro">
-        <SectionTemplate tags="DPB">
-          <TemplateText>
-           &lt;/div&gt;      
-           &lt;div&gt;
-           &lt;#DESCRIPTION&gt;&lt;br&gt;
-           &lt;br&gt;
-           &lt;b&gt;&lt;/b&gt;
-           &lt;br&gt;
-           &lt;z(&gt;&lt;p&gt;&lt;#SUBTITLE&gt;&lt;/p&gt;&lt;/z)?&gt;
-           &lt;br&gt;
-           &lt;/div&gt;
-      </TemplateText>
-        </SectionTemplate>
-      </Template>
-      <Sublinks>
-        <Sublink search="tipo" template="Details" />
-      </Sublinks>
     </Html>
   </Listing>
 </Grabber>
