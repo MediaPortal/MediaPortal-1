@@ -37,6 +37,7 @@
     <Channel id="cinemania-2@sogecable.es" siteId="cinemania-2" />
     <Channel id="cinemania-30@sogecable.es" siteId="cinemania-30" />
     <Channel id="cinemania-clasico@sogecable.es" siteId="cinemania-clasico" />
+    <Channel id="clan-tv@rtve.es" siteId="clan-tve-50" />
     <Channel id="cnbc@sogecable.es" siteId="cnbc" />
     <Channel id="cnn-plus@sogecable.es" siteId="cnn-plus" />
     <Channel id="cosmopolitan@sogecable.es" siteId="cosmopolitan" />
@@ -64,6 +65,7 @@
     <Channel id="people-and-arts@sogecable.es" siteId="people-and-arts" />
     <Channel id="playhouse-disney@sogecable.es" siteId="playhouse-disney" />
     <Channel id="real-madrid-tv@sogecable.es" siteId="real-madrid-tv" />
+    <Channel id="sci-fi@scifi.es" siteId="sci-fi" />
     <Channel id="sportmania@sogecable.es" siteId="sportmania" />
     <Channel id="tcm@sogecable.es" siteId="tcm" />
     <Channel id="telemadrid-sat@sogecable.es" siteId="telemadrid-sat" />
@@ -76,7 +78,7 @@
     <Channel id="viajar@sogecable.es" siteId="viajar" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.miguiatv.com/[YYYY][MM][DD]/[ID].html" post="" external="false" encoding="" />
+    <Site url="http://www.miguiatv.com/[YYYY][MM][DD]/[ID]" post="" external="false" encoding="" />
     <Html>
       <Template name="default" start="listing" end="listing_sky">
         <SectionTemplate tags="T">

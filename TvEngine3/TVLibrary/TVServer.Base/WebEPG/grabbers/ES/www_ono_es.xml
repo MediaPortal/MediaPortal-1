@@ -8,6 +8,7 @@
     <Channel id="cuatro@cuatro.com" siteId="4" />
     <Channel id="telecinco@telecinco.es" siteId="5" />
     <Channel id="lasexta@lasexta.com" siteId="6" />
+    <Channel id="ib3@ib3.tv" siteId="10" />
     <Channel id="cinestar@teuve.com" siteId="18" />
     <Channel id="calle13@calle13-es.com" siteId="25" />
     <Channel id="fox@foxtv.es" siteId="26" />
@@ -40,6 +41,7 @@
     <Channel id="vh1@vh1.com" siteId="73" />
     <Channel id="euronews@euronews.net" siteId="77" />
     <Channel id="goltv@goltv.tv" siteId="150" />
+    <Channel id="veo7@veo.es" siteId="157" />
   </Channels>
   <Listing type="Html">
     <Site url="http://ocioytv.ono.es/epg/list.action?sec=69&amp;hour=&amp;day=[DAY_OFFSET]&amp;dialId=[ID]" post="" external="false" encoding="iso-8859-1" />
