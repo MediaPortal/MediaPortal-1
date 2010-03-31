@@ -460,13 +460,13 @@ namespace MediaPortal.DeployTool
         // Using the same number for all version deactivates upgrade
         //
         case "c":                       //current
-          return "1.0.5";
+          return "1.0.6";
         case "p":                       //previous
-          return "1.0.4";
+          return "1.0.5";
         case "s":                       //stable
-          return "1.0.3";
+          return "1.0.5";
         case "d":                       //display
-          return "1.1.0 RC1";
+          return "1.1.0 RC2";
         default:
           return string.Empty;
       }
