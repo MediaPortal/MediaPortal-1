@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Collections.Generic;
@@ -124,6 +125,9 @@ namespace MediaPortal.Util
       //   -W           : dont overwrite existing files, i.e. update mode
       //   -P           : dont pause before exiting; override -p
 
+      const double flblank = 0.6;
+      string blank = flblank.ToString("F", CultureInfo.CurrentCulture);
+
       int preGapSec = 5;
       int postGapSec = 5;
       if (aOmitCredits)
@@ -133,9 +137,9 @@ namespace MediaPortal.Util
       }
       bool Success = false;
       string ExtractorArgs = string.Format(" -D 6 -B {0} -E {1} -c {2} -r {3} -b {4} -t -i -w {5} -n -P \"{6}\"",
-                                           preGapSec, postGapSec, PreviewColumns, PreviewRows, Convert.ToDecimal("0.6"), 0, aVideoPath);
+                                           preGapSec, postGapSec, PreviewColumns, PreviewRows, blank, 0, aVideoPath);
       string ExtractorFallbackArgs = string.Format(
-        " -D 8 -B {0} -E {1} -c {2} -r {3} -b {4} -t -i -w {5} -n -P \"{6}\"", 0, 0, PreviewColumns, PreviewRows, Convert.ToDecimal("0.6"), 0, aVideoPath);
+        " -D 8 -B {0} -E {1} -c {2} -r {3} -b {4} -t -i -w {5} -n -P \"{6}\"", 0, 0, PreviewColumns, PreviewRows, blank, 0, aVideoPath);
       // Honour we are using a unix app
       ExtractorArgs = ExtractorArgs.Replace('\\', '/');
       try
