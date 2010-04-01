@@ -21,6 +21,7 @@
 #region Usings
 
 using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.Win32.SafeHandles;
@@ -38,7 +39,7 @@ namespace TvEngine.PowerScheduler
     /// <summary>
     /// Wrap the system function <i>SetWaitableTimer</i>.
     /// </summary>
-    [DllImport("Kernel32.dll", EntryPoint = "SetWaitableTimer")]
+    [DllImport("Kernel32.dll", EntryPoint = "SetWaitableTimer", SetLastError = true)]
     private static extern bool SetWaitableTimer(SafeWaitHandle hTimer, Int64* pDue, Int32 lPeriod, IntPtr rNotify,
                                                 IntPtr pArgs, bool bResume);
 
@@ -65,10 +66,14 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     public delegate void TimerExpiredHandler();
 
+    public delegate void TimerExceptionHandler(WaitableTimer sender, TimerException exception);
+
     /// <summary>
     /// Clients can register for the expiration of this timer.
     /// </summary>
     public event TimerExpiredHandler OnTimerExpired;
+
+    public event TimerExceptionHandler OnTimerException;
 
     /// <summary>
     /// This <see cref="Thread"/> will be create by <see cref="SecondsToWait"/> and
@@ -195,7 +200,7 @@ namespace TvEngine.PowerScheduler
         // Start timer
         if (!SetWaitableTimer(SafeWaitHandle, &lInterval, 0, IntPtr.Zero, IntPtr.Zero, true))
         {
-          throw new TimerException("Could not start Timer");
+          throw new TimerException("Could not start Timer", new Win32Exception(Marshal.GetLastWin32Error()));
         }
 
         // Wait for the timer to expire
@@ -205,6 +210,13 @@ namespace TvEngine.PowerScheduler
         if (null != OnTimerExpired)
         {
           OnTimerExpired();
+        }
+      }
+      catch (TimerException e)
+      {
+        if (OnTimerException != null)
+        {
+          OnTimerException(this, e);
         }
       }
       catch (ThreadAbortException)

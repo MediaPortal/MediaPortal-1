@@ -225,6 +225,7 @@ namespace TvEngine.PowerScheduler
       {
         _wakeupTimer = new WaitableTimer();
         _wakeupTimer.OnTimerExpired += new WaitableTimer.TimerExpiredHandler(OnWakeupTimerExpired);
+        _wakeupTimer.OnTimerException += new WaitableTimer.TimerExceptionHandler(OnWakeupTimerException);
       }
 
       // start the timer responsible for standby checking and refreshing settings
@@ -785,6 +786,15 @@ namespace TvEngine.PowerScheduler
     private void OnWakeupTimerExpired()
     {
       Log.Debug("PowerScheduler: OnResume");
+    }
+
+    /// <summary>
+    /// Called when the wakeup fails in any way
+    /// </summary>
+    private void OnWakeupTimerException(WaitableTimer sender, TimerException exception)
+    {
+      Log.Error("PowerScheduler: WaitableTimer had an exception:");
+      Log.Write(exception);
     }
 
     private bool _onTimerElapsedInside = false;
