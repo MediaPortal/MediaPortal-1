@@ -263,6 +263,14 @@ namespace TvService
       }
     }
 
+    /// <summary>
+    /// Returns the number of active recordings
+    /// </summary>
+    public int ActiveRecordingsCount
+    {
+      get { return _recordingsInProgressList.Count; }
+    }   
+
     #endregion
 
     #region private members

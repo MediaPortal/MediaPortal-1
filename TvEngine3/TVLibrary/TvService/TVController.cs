@@ -3857,7 +3857,14 @@ namespace TvService
           return false;
         }
         //Log.Debug("TVController.CanSuspend: finished, can suspend");
-
+        
+        // Double check: if scheduler has active recordings we have messed up subchannels
+        // For now just report this condition so we can get feedback from the users
+        if (_scheduler != null && _scheduler.ActiveRecordingsCount > 0)
+        {
+          Log.Error("TVController.CanSuspend: internal error: scheduler still has {0} active recordings!", _scheduler.ActiveRecordingsCount);
+          // return false;
+        }
         return true;
       }
     }
