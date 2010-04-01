@@ -1787,7 +1787,7 @@ namespace TvPlugin
         UpdateGUIonPlaybackStateChange(true);
       }
 
-      if (currentWindow.IsTv)
+      if (currentWindow.IsTv && type == g_Player.MediaType.TV)
       {
         return;
       }
