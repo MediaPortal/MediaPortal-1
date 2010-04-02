@@ -190,7 +190,7 @@ protected:
   void           NotifyScheduler();
   void           NotifyWorker();
   HRESULT        GetTimeToSchedule(IMFSample* pSample, LONGLONG* pDelta);
-  void           Flush();
+  void           Flush(BOOL forced);
   void           ScheduleSample(IMFSample* pSample);
   IMFSample*     PeekSample();
   BOOL           PopSample();

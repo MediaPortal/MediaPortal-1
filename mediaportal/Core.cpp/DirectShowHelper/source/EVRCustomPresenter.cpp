@@ -921,11 +921,12 @@ HRESULT MPEVRCustomPresenter::GetFreeSample(IMFSample** ppSample)
 }
 
 
-void MPEVRCustomPresenter::Flush()
+void MPEVRCustomPresenter::Flush(BOOL forced)
 {
   CAutoLock sLock(&m_lockSamples);
   CAutoLock ssLock(&m_lockScheduledSamples);
-  if (m_qScheduledSamples.Count() > 0 && !m_bDVDMenu && !m_bScrubbing)
+  if ((m_qScheduledSamples.Count() > 0 && !m_bDVDMenu && !m_bScrubbing) ||
+     (m_qScheduledSamples.Count() > 0 && forced))
   {
     Log("Flushing: size=%d", m_qScheduledSamples.Count());
     while (m_qScheduledSamples.Count() > 0)
@@ -1046,7 +1047,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(REFERENCE_TIME *pNextSampl
   {
     if (!m_bScrubbing && !m_bDVDMenu)
     {
-      Flush();
+      Flush(FALSE);
       return S_OK;
     }
     else
@@ -1463,7 +1464,7 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockStart(MFTIME hnsSystemTim
   Log("OnClockStart");
   m_state = MP_RENDER_STATE_STARTED;
   ResetTraceStats();
-  Flush();
+  Flush(FALSE);
   NotifyWorker();
   NotifyScheduler();
   return S_OK;
@@ -1474,7 +1475,7 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockStop(MFTIME hnsSystemTime
 {
   Log("OnClockStop");
   m_state = MP_RENDER_STATE_STOPPED;
-  Flush();
+  Flush(FALSE);
   return S_OK;
 }
 
@@ -1601,7 +1602,7 @@ void MPEVRCustomPresenter::ReleaseSurfaces()
   {
     m_pCallback->PresentImage(0, 0, 0, 0, 0, 0);
   }
-  Flush();
+  Flush(TRUE);
   m_iFreeSamples = 0;
   for (int i = 0; i < NUM_SURFACES; i++)
   {
