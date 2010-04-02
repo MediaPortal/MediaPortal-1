@@ -653,6 +653,7 @@ namespace TvDatabase
             dvbcChannel.ServiceId = detail.ServiceId;
             dvbcChannel.SymbolRate = detail.Symbolrate;
             dvbcChannel.TransportId = detail.TransportId;
+            dvbcChannel.LogicalChannelNumber = detail.ChannelNumber;
             return dvbcChannel;
           case 3: //DVBSChannel
             DVBSChannel dvbsChannel = new DVBSChannel();
@@ -781,6 +782,7 @@ namespace TvDatabase
             dvbcChannel.ServiceId = detail.ServiceId;
             dvbcChannel.SymbolRate = detail.Symbolrate;
             dvbcChannel.TransportId = detail.TransportId;
+            dvbcChannel.LogicalChannelNumber = detail.ChannelNumber;
             tvChannels.Add(dvbcChannel);
             break;
           case 3: //DVBSChannel
@@ -975,6 +977,7 @@ namespace TvDatabase
       {
         symbolRate = dvbcChannel.SymbolRate;
         modulation = (int)dvbcChannel.ModulationType;
+        channelNumber = dvbcChannel.LogicalChannelNumber > 999 ? channel.IdChannel : dvbcChannel.LogicalChannelNumber;
         channelType = 2;
       }
 
