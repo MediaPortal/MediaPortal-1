@@ -445,10 +445,12 @@ namespace SetupTv.Sections
       switch (e.Column)
       {
         case 0:
+          lvwColumnSorter.OrderType = MPListViewStringColumnSorter.OrderTypes.AsString;
           buttonSort = mpButtonOrderByName;
           buttonOther = mpButtonOrderByNumber;
           break;
         case 1:
+          lvwColumnSorter.OrderType = MPListViewStringColumnSorter.OrderTypes.AsValue;
           buttonSort = mpButtonOrderByNumber;
           buttonOther = mpButtonOrderByName;
           break;
