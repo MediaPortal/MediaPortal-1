@@ -201,7 +201,7 @@ HRESULT CAudioPin::BreakConnect()
   return CSourceStream::BreakConnect();
 }
 
-extern int ShowBuffer ;
+extern int ShowBuffer;
 
 HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 {
@@ -328,7 +328,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             REFERENCE_TIME RefClock = 0;
             m_pTsReaderFilter->GetMediaPosition(&RefClock) ;
 
-			m_pTsReaderFilter->m_ClockOnStart = RefClock - m_rtStart.m_time ;
+            m_pTsReaderFilter->m_ClockOnStart = RefClock - m_rtStart.m_time ;
             if (m_pTsReaderFilter->m_bLiveTv)
             {
               LogDebug("Elapsed time from pause to Audio/Video ( total zapping time ) : %d mS",GetTickCount()-m_pTsReaderFilter->m_lastPause);
@@ -343,7 +343,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           m_pTsReaderFilter->Compensation.m_time=(BestCompensation.m_time - m_pTsReaderFilter->m_ClockOnStart.m_time) - PRESENT_DELAY ;
           m_pTsReaderFilter->AddVideoComp=AddVideoCompensation ;
 
-		  LogDebug("aud:Compensation:%03.3f, Clock on start %03.3f m_rtStart:%d ",(float)m_pTsReaderFilter->Compensation.Millisecs()/1000.0f, m_pTsReaderFilter->m_ClockOnStart.Millisecs()/1000.0f, m_rtStart.Millisecs());
+          LogDebug("aud:Compensation:%03.3f, Clock on start %03.3f m_rtStart:%d ",(float)m_pTsReaderFilter->Compensation.Millisecs()/1000.0f, m_pTsReaderFilter->m_ClockOnStart.Millisecs()/1000.0f, m_rtStart.Millisecs());
 
           //set flag to false so we dont keep compensating
           m_pTsReaderFilter->m_bStreamCompensated = true;
