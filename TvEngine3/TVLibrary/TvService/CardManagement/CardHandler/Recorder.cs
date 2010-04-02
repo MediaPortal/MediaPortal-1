@@ -150,11 +150,20 @@ namespace TvService
               {
                 Log.Write("card: Recording failed! {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
 
+                string cardRecordingFolderName = _cardHandler.DataBaseCard.RecordingFolder;
                 Stop(ref user);
                 _cardHandler.Users.RemoveUser(user);
 
-                // delete 0-byte file in case of error
-                Utils.DeleteFileAndEmptyDirectory(fileName);
+                string recordingfolderName = System.IO.Path.GetDirectoryName(fileName);
+                if (recordingfolderName == cardRecordingFolderName)
+                {
+                  Utils.FileDelete(fileName);
+                }
+                else
+                {
+                  // delete 0-byte file in case of error
+                  Utils.DeleteFileAndEmptyDirectory(fileName);
+                }
                 ((BaseSubChannel)subchannel).AudioVideoEvent -= AudioVideoEventHandler;
                 if (isScrambled)
                 {
