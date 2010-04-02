@@ -62,16 +62,16 @@ namespace TvService
       return isOnlyActiveUserCurrentUser;
     }
 
-    protected static bool IsCamAbleToDecrypChannel(User user, ITvCardHandler tvcard, Channel ch, int decryptLimit,
-                                                   out bool isRec)
+    protected static bool IsCamAbleToDecrypChannel(User user, ITvCardHandler tvcard, Channel ch, int decryptLimit)
     {
-      bool IsCamAbleToDecrypChannel = false;
+      bool isRec = false;
+      bool isCamAbleToDecrypChannel = false;
       int camDecrypting = tvcard.NumberOfChannelsDecrypting;
       Channel currentUserCh = Channel.Retrieve(user.IdChannel);
-      isRec = false;
+      
       if (currentUserCh != null)
       {
-        isRec = tvcard.Recorder.IsRecordingChannel(currentUserCh.Name);
+        isRec = tvcard.Recorder.IsRecordingChannel(currentUserCh.Name);        
       }
       if (!isRec && tvcard.TimeShifter.IsTimeShifting(ref user))
       {
@@ -84,10 +84,10 @@ namespace TvService
       //check if cam is capable of descrambling an extra channel
       if (decryptLimit > 0)
       {
-        IsCamAbleToDecrypChannel = (camDecrypting < decryptLimit);
+        isCamAbleToDecrypChannel = (camDecrypting < decryptLimit);
       }
 
-      return (IsCamAbleToDecrypChannel || ch.FreeToAir);
+      return ((isCamAbleToDecrypChannel && !isRec) || ch.FreeToAir);
     }
 
     protected static bool IsCamAlreadyDecodingChannel(ITvCardHandler tvcard, Channel dbChannel)

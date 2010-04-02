@@ -315,9 +315,8 @@ namespace TvService
               //first check if cam is already decrypting this channel          
               bool isCamAlreadyDecodingChannel = IsCamAlreadyDecodingChannel(tvcard, ch);
 
-              //check if cam is capable of descrambling an extra channel
-              bool isRec = false;
-              bool isCamAbleToDecrypChannel = IsCamAbleToDecrypChannel(user, tvcard, ch, decryptLimit, out isRec);
+              //check if cam is capable of descrambling an extra channel              
+              bool isCamAbleToDecrypChannel = IsCamAbleToDecrypChannel(user, tvcard, ch, decryptLimit);
 
 
               if (isCamAbleToDecrypChannel || isCamAlreadyDecodingChannel)

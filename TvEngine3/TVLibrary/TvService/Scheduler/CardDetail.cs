@@ -33,6 +33,7 @@ namespace TvService
     private readonly Card _card;
     private readonly IChannel _detail;
     private int _priority;
+    private bool _canDecrypt;
 
     /// <summary>
     /// ctor
@@ -42,6 +43,7 @@ namespace TvService
     /// <param name="detail">tuning detail</param>
     public CardDetail(int id, Card card, IChannel detail)
     {
+      _canDecrypt = false;
       _cardId = id;
       _card = card;
       _detail = detail;
@@ -80,6 +82,12 @@ namespace TvService
     public IChannel TuningDetail
     {
       get { return _detail; }
+    }
+
+    public bool CanDecrypt
+    {
+      get { return _canDecrypt; }
+      set { _canDecrypt = value; }
     }
 
     #region IComparable<CardInfo> Members

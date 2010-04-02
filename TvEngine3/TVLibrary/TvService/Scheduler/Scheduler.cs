@@ -957,9 +957,12 @@ namespace TvService
       {
         if (_tvController.IsTunedToTransponder(card.Id, card.TuningDetail))
         {
-          cardInfo = card;
-          Log.Write("Scheduler : record on free card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
-          break;
+          if (card.CanDecrypt)
+          {
+            cardInfo = card;
+            Log.Write("Scheduler : record on free card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
+            break;          
+          }                              
         }
       }
       return cardInfo;
@@ -1011,23 +1014,30 @@ namespace TvService
     {
       CardDetail cardInfo = null;
       TvBusinessLayer layer = new TvBusinessLayer();
-      User tmpUser = _tvController.GetUserForCard(freeCards[0].Id);
-      if ((_tvController.IsRecording(ref tmpUser) == false) &&
-          (layer.GetSetting("scheduleroverlivetv", "yes").Value == "yes"))
+      User[] tmpUsers = _tvController.GetUsersForCard(freeCards[0].Id);
+
+      for (int i = 0; i<tmpUsers.Length; i++)
       {
-        if (_tvController.IsTimeShifting(ref tmpUser))
+        User tmpUser = tmpUsers[i];
+        if ((_tvController.IsRecording(ref tmpUser) == false) &&
+            (layer.GetSetting("scheduleroverlivetv", "yes").Value == "yes"))
         {
-          _tvController.StopTimeShifting(ref tmpUser, TvStoppedReason.RecordingStarted);
+          if (_tvController.IsTimeShifting(ref tmpUser))
+          {
+            _tvController.StopTimeShifting(ref tmpUser, TvStoppedReason.RecordingStarted);
+          }
+          cardInfo = freeCards[0];
+          Log.Write(
+            "Scheduler : no card is tuned to the correct channel. record on card:{0} priority:{1}, kicking user:{2}",
+            cardInfo.Id, cardInfo.Card.Priority, tmpUser.Name);
         }
-        cardInfo = freeCards[0];
-        Log.Write(
-          "Scheduler : no card is tuned to the correct channel. record on card:{0} priority:{1}, kicking user:{2}",
-          cardInfo.Id, cardInfo.Card.Priority, tmpUser.Name);
+        else
+        {
+          Log.Write("Scheduler : no card was found and scheduler not allowed to stop other users LiveTV or recordings. ");
+        }  
       }
-      else
-      {
-        Log.Write("Scheduler : no card was found and scheduler not allowed to stop other users LiveTV or recordings. ");        
-      }
+
+      
       return cardInfo;
     }
 
