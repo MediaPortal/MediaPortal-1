@@ -1,0 +1,517 @@
+#EXTM3U
+#EXTINF:0,FM4
+udp://@239.0.2.10:8224
+#EXTINF:0,Hitradio Ö3
+udp://@239.0.2.10:8223
+#EXTINF:0,Ö1
+udp://@239.0.2.10:8221
+#EXTINF:0,Radio Burgenland
+udp://@239.0.2.10:8226
+#EXTINF:0,Radio Kärnten
+udp://@239.0.2.9:8223
+#EXTINF:0,Radio Niederösterreich
+udp://@239.0.2.10:8225
+#EXTINF:0,Radio Oberösterreich
+udp://@239.0.2.10:8227
+#EXTINF:0,Radio Salzburg
+udp://@239.0.2.10:8228
+#EXTINF:0,Radio Steiermark
+udp://@239.0.2.9:8222
+#EXTINF:0,Radio Tirol
+udp://@239.0.2.10:8229
+#EXTINF:0,Radio Vorarlberg
+udp://@239.0.2.9:8221
+#EXTINF:0,Radio Wien
+udp://@239.0.2.10:8222
+#EXTINF:0,CHROOZE.fm
+udp://@239.0.3.171:8208
+#EXTINF:0,BIG Radio-BIG 1
+udp://@239.0.3.173:8209
+#EXTINF:0,Radio M
+udp://@239.0.3.165:8217
+#EXTINF:0,Radio Mahala
+udp://@239.0.3.156:8208
+#EXTINF:0,Radio Modrica
+udp://@239.0.3.154:8213
+#EXTINF:0,Alpenradio-Volksmusik
+udp://@239.0.3.155:8211
+#EXTINF:0,Antenne Bayern
+udp://@239.0.3.178:8215
+#EXTINF:0,Bash.fm
+udp://@239.0.3.163:8210
+#EXTINF:0,Bayern 1
+udp://@239.0.3.180:8210
+#EXTINF:0,Bayern 2
+udp://@239.0.3.180:8209
+#EXTINF:0,Bayern 3
+udp://@239.0.3.180:8208
+#EXTINF:0,BlackBeats.FM
+udp://@239.0.3.165:8216
+#EXTINF:0,BlackMusic-Radio.de
+udp://@239.0.3.171:8211
+#EXTINF:0,Bremen Eins
+udp://@239.0.3.166:8210
+#EXTINF:0,Bremen Vier
+udp://@239.0.3.179:8215
+#EXTINF:0,BR-Klassik
+udp://@239.0.3.172:8208
+#EXTINF:0,Chromanova-Goatrance & Psytrance
+udp://@239.0.3.162:8211
+#EXTINF:0,Dancefox Radio
+udp://@239.0.3.166:8213
+#EXTINF:0,DEFJAY Radio
+udp://@239.0.3.164:8211
+#EXTINF:0,DELUXE Lounge Radio
+udp://@239.0.3.162:8212
+#EXTINF:0,Die Neue 107.7
+udp://@239.0.3.172:8211
+#EXTINF:0,Die Neue 107.7-80er-Radio
+udp://@239.0.3.161:8213
+#EXTINF:0,Dieters Schlager Radio-Schlager Radio
+udp://@239.0.3.161:8214
+#EXTINF:0,HardBase.FM
+udp://@239.0.3.160:8213
+#EXTINF:0,Hirsch.FM
+udp://@239.0.3.164:8215
+#EXTINF:0,HouseTime.FM
+udp://@239.0.3.161:8211
+#EXTINF:0,hr1
+udp://@239.0.3.163:8213
+#EXTINF:0,hr2
+udp://@239.0.3.163:8212
+#EXTINF:0,hr3
+udp://@239.0.3.166:8214
+#EXTINF:0,hr4
+udp://@239.0.3.163:8211
+#EXTINF:0,Klassik Radio
+udp://@239.0.3.180:8216
+#EXTINF:0,Kuschel.fm
+udp://@239.0.3.155:8209
+#EXTINF:0,MDR FIGARO
+udp://@239.0.3.175:8213
+#EXTINF:0,MDR JUMP
+udp://@239.0.3.178:8216
+#EXTINF:0,MDR SPUTNIK
+udp://@239.0.3.180:8217
+#EXTINF:0,MDR 1 Radio Sachsen
+udp://@239.0.3.168:8213
+#EXTINF:0,MDR 1 Radio Sachsen-Anhalt
+udp://@239.0.3.168:8211
+#EXTINF:0,MDR 1 Radio Thüringen
+udp://@239.0.3.168:8212
+#EXTINF:0,memory-Radio-50er bis 70er
+udp://@239.0.3.161:8212
+#EXTINF:0,#Musik-#Musik.BigCityBeats
+udp://@239.0.3.154:8212
+#EXTINF:0,#Musik-#Musik.Club
+udp://@239.0.3.173:8213
+#EXTINF:0,#Musik-#Musik.FunkY
+udp://@239.0.3.171:8214
+#EXTINF:0,NDR Info
+udp://@239.0.3.179:8213
+#EXTINF:0,NDR Kultur
+udp://@239.0.3.179:8211
+#EXTINF:0,NDR 1 Niedersachsen
+udp://@239.0.3.178:8212
+#EXTINF:0,NDR 1 Radio MV
+udp://@239.0.3.178:8213
+#EXTINF:0,NDR 1 Welle Nord
+udp://@239.0.3.175:8212
+#EXTINF:0,NDR 2
+udp://@239.0.3.179:8214
+#EXTINF:0,NDR 90.3
+udp://@239.0.3.179:8212
+#EXTINF:0,N-JOY
+udp://@239.0.3.180:8215
+#EXTINF:0,Oldie 95
+udp://@239.0.3.169:8208
+#EXTINF:0,Onkelz Rock Radio
+udp://@239.0.3.168:8214
+#EXTINF:0,Radio Alpenmelodie
+udp://@239.0.3.162:8209
+#EXTINF:0,Radio Arabella 100.8+105.2
+udp://@239.0.3.156:8211
+#EXTINF:0,radio ffn
+udp://@239.0.3.178:8211
+#EXTINF:0,Radio Gong 96.3
+udp://@239.0.3.175:8208
+#EXTINF:0,Radio Hamburg
+udp://@239.0.3.171:8212
+#EXTINF:0,Radio Heimatmelodie
+udp://@239.0.3.178:8214
+#EXTINF:0,Radio Jodlerwirt
+udp://@239.0.3.155:8216
+#EXTINF:0,Radio Oberkrain
+udp://@239.0.3.160:8212
+#EXTINF:0,Radio Paloma
+udp://@239.0.3.156:8217
+#EXTINF:0,Radio Schwarze Welle
+udp://@239.0.3.162:8216
+#EXTINF:0,Radio Seefunk
+udp://@239.0.3.170:8217
+#EXTINF:0,RADIO 21-Classic Rock!
+udp://@239.0.3.164:8213
+#EXTINF:0,Radio 7
+udp://@239.0.3.173:8217
+#EXTINF:0,RMNradio
+udp://@239.0.3.175:8216
+#EXTINF:0,RMNSchlagerhölle
+udp://@239.0.3.163:8217
+#EXTINF:0,Rockland Radio
+udp://@239.0.3.170:8209
+#EXTINF:0,RS-Independent
+udp://@239.0.3.152:8211
+#EXTINF:0,RTL Radio
+udp://@239.0.3.178:8210
+#EXTINF:0,ShoutedFM-mth.Break
+udp://@239.0.3.170:8211
+#EXTINF:0,ShoutedFM-mth.House
+udp://@239.0.3.174:8208
+#EXTINF:0,TechnoBase.FM
+udp://@239.0.3.170:8208
+#EXTINF:0,Techno4Ever
+udp://@239.0.3.172:8216
+#EXTINF:0,Top 100 Station
+udp://@239.0.3.160:8216
+#EXTINF:0,WDR 2
+udp://@239.0.3.179:8208
+#EXTINF:0,WDR 3
+udp://@239.0.3.170:8213
+#EXTINF:0,WDR 4
+udp://@239.0.3.170:8210
+#EXTINF:0,WDR 5
+udp://@239.0.3.178:8217
+#EXTINF:0,YOU FM
+udp://@239.0.3.179:8210
+#EXTINF:0,1LIVE
+udp://@239.0.3.179:8209
+#EXTINF:0,1LIVE-diggi
+udp://@239.0.3.161:8216
+#EXTINF:0,89.0 RTL
+udp://@239.0.3.178:8209
+#EXTINF:0,90elf-Dein Fußballradio
+udp://@239.0.3.157:8208
+#EXTINF:0,FIP
+udp://@239.0.3.174:8215
+#EXTINF:0,France Inter
+udp://@239.0.3.174:8217
+#EXTINF:0,France Musique
+udp://@239.0.3.174:8216
+#EXTINF:0,Hot Mix Radio-Dance
+udp://@239.0.3.169:8212
+#EXTINF:0,Psychedelik.com Sunrise-Ambient
+udp://@239.0.3.160:8209
+#EXTINF:0,Psychedelik.com Sunrise-Progressive
+udp://@239.0.3.160:8208
+#EXTINF:0,Puls' Radio
+udp://@239.0.3.175:8210
+#EXTINF:0,Puls' Radio-Version 9.0
+udp://@239.0.3.165:8208
+#EXTINF:0,Radio FG
+udp://@239.0.3.178:8208
+#EXTINF:0,Radio FG-Underground FG
+udp://@239.0.3.163:8216
+#EXTINF:0,Radio Nova
+udp://@239.0.3.175:8211
+#EXTINF:0,Radioblagon-Ambient
+udp://@239.0.3.160:8210
+#EXTINF:0,Clubkydz
+udp://@239.0.3.155:8215
+#EXTINF:0,Deepinside
+udp://@239.0.3.166:8208
+#EXTINF:0,Offshore Music Radio
+udp://@239.0.3.166:8211
+#EXTINF:0,Radio Caroline
+udp://@239.0.3.174:8211
+#EXTINF:0,Soft Rock UK
+udp://@239.0.3.163:8214
+#EXTINF:0,Trance.FM-DJ Channel
+udp://@239.0.3.153:8216
+#EXTINF:0,LiveIreland-Live Irland 1
+udp://@239.0.3.177:8211
+#EXTINF:0,Italian Graffiati
+udp://@239.0.3.162:8208
+#EXTINF:0,Lolliradio-Italia
+udp://@239.0.3.158:8215
+#EXTINF:0,Lolliradio-Soft
+udp://@239.0.3.158:8214
+#EXTINF:0,Radio Birikina
+udp://@239.0.3.164:8214
+#EXTINF:0,Radio Tirol Bozen
+udp://@239.0.3.176:8216
+#EXTINF:0,Südtirol 1
+udp://@239.0.3.173:8212
+#EXTINF:0,Tele Radio Vinschgau
+udp://@239.0.3.158:8212
+#EXTINF:0,4CLUBBERS FM
+udp://@239.0.3.151:8215
+#EXTINF:0,Crolive
+udp://@239.0.3.157:8210
+#EXTINF:0,Radio Banovina
+udp://@239.0.3.162:8210
+#EXTINF:0,Radio Kaj
+udp://@239.0.3.152:8214
+#EXTINF:0,Radio Martin
+udp://@239.0.3.169:8211
+#EXTINF:0,Radio Ogulin
+udp://@239.0.3.164:8209
+#EXTINF:0,Schlager Time
+udp://@239.0.3.160:8211
+#EXTINF:0,Radio Liechtenstein
+udp://@239.0.3.174:8214
+#EXTINF:0,Eldoradio
+udp://@239.0.3.174:8210
+#EXTINF:0,AVRO-Back to the Old School
+udp://@239.0.3.162:8215
+#EXTINF:0,AVRO-Baroque around the clock
+udp://@239.0.3.166:8217
+#EXTINF:0,AVRO-Easy Listening
+udp://@239.0.3.162:8213
+#EXTINF:0,AVRO-Film
+udp://@239.0.3.166:8216
+#EXTINF:0,AVRO-Steenen Tijdperk Sixties
+udp://@239.0.3.162:8214
+#EXTINF:0,DanceGroove Radio
+udp://@239.0.3.167:8212
+#EXTINF:0,Deep FM
+udp://@239.0.3.169:8209
+#EXTINF:0,Hardcore Radio
+udp://@239.0.3.157:8211
+#EXTINF:0,Hard.FM
+udp://@239.0.3.165:8209
+#EXTINF:0,LiveSets.com
+udp://@239.0.3.171:8213
+#EXTINF:0,MOH radio
+udp://@239.0.3.168:8216
+#EXTINF:0,Nashville FM
+udp://@239.0.3.166:8209
+#EXTINF:0,Old School
+udp://@239.0.3.171:8209
+#EXTINF:0,Radio Continu
+udp://@239.0.3.165:8212
+#EXTINF:0,Radio Veronica
+udp://@239.0.3.174:8209
+#EXTINF:0,Radio 4
+udp://@239.0.3.174:8212
+#EXTINF:0,Sky Radio 101 FM
+udp://@239.0.3.161:8210
+#EXTINF:0,Slam! FM
+udp://@239.0.3.177:8214
+#EXTINF:0,Soul Movement
+udp://@239.0.3.169:8210
+#EXTINF:0,Spiel mir einer! Radio
+udp://@239.0.3.164:8216
+#EXTINF:0,Arnold Schönberg Center Webradio
+udp://@239.0.3.171:8210
+#EXTINF:0,AustriaCapriconeRadio
+udp://@239.0.3.151:8216
+#EXTINF:0,BeatNight.AT
+udp://@239.0.3.154:8214
+#EXTINF:0,Das LiveRadio
+udp://@239.0.3.171:8216
+#EXTINF:0,Freies Radio Freistadt
+udp://@239.0.3.157:8209
+#EXTINF:0,Hit FM
+udp://@239.0.3.169:8213
+#EXTINF:0,Joomla Radio Lechtal
+udp://@239.0.3.165:8213
+#EXTINF:0,KRONEHIT
+udp://@239.0.3.176:8208
+#EXTINF:0,KRONEHIT-Dance
+udp://@239.0.3.153:8212
+#EXTINF:0,KRONEHIT-Fresh
+udp://@239.0.3.153:8213
+#EXTINF:0,Life Radio
+udp://@239.0.3.163:8209
+#EXTINF:0,Life Radio-Made in Austria
+udp://@239.0.3.159:8216
+#EXTINF:0,Life Radio-Studio 30
+udp://@239.0.3.159:8217
+#EXTINF:0,Life Radio Tirol
+udp://@239.0.3.152:8209
+#EXTINF:0,LoungeFM
+udp://@239.0.3.167:8216
+#EXTINF:0,MusicBase.FM
+udp://@239.0.3.160:8214
+#EXTINF:0,MusicBase.FM-Clubsection.FM
+udp://@239.0.3.156:8216
+#EXTINF:0,MusicBase.FM-Hardsection.FM
+udp://@239.0.3.156:8214
+#EXTINF:0,MusicBase.FM-Housesection.FM
+udp://@239.0.3.156:8215
+#EXTINF:0,orange 94.0
+udp://@239.0.3.175:8209
+#EXTINF:0,Radio Oberösterreich
+udp://@239.0.3.173:8215
+#EXTINF:0,piu Lounge
+udp://@239.0.3.151:8211
+#EXTINF:0,Radio Alpenfunk
+udp://@239.0.3.151:8210
+#EXTINF:0,Radio Arabella 92.9
+udp://@239.0.3.155:8210
+#EXTINF:0,Radio Arabella 92.9-Austropop
+udp://@239.0.3.159:8213
+#EXTINF:0,Radio Arabella 92.9-Classic Rock
+udp://@239.0.3.159:8211
+#EXTINF:0,Radio Arabella 92.9-Kultschlager
+udp://@239.0.3.159:8212
+#EXTINF:0,Radio Arabella 92.9-Radio Herzflimmern
+udp://@239.0.3.159:8210
+#EXTINF:0,Radio B138
+udp://@239.0.3.155:8217
+#EXTINF:0,Radio Charlie
+udp://@239.0.3.154:8215
+#EXTINF:0,Radio Deutschsongs.eu
+udp://@239.0.3.153:8208
+#EXTINF:0,Radio Helsinki 92.6
+udp://@239.0.3.155:8213
+#EXTINF:0,Radio Karussell
+udp://@239.0.3.155:8212
+#EXTINF:0,Radio kathTube
+udp://@239.0.3.152:8216
+#EXTINF:0,Radio Max-Billa
+udp://@239.0.3.159:8209
+#EXTINF:0,Radio Max-Bipa
+udp://@239.0.3.158:8217
+#EXTINF:0,Radio Max-Merkur
+udp://@239.0.3.159:8208
+#EXTINF:0,Radio PL1
+udp://@239.0.3.165:8210
+#EXTINF:0,Radio Soundportal
+udp://@239.0.3.169:8216
+#EXTINF:0,Radio St. Florian am Inn
+udp://@239.0.3.152:8208
+#EXTINF:0,Radio Uno
+udp://@239.0.3.168:8208
+#EXTINF:0,Radio U1 Tirol
+udp://@239.0.3.161:8209
+#EXTINF:0,Radio Volksmusik
+udp://@239.0.3.156:8210
+#EXTINF:0,Radio 88.6 Wien
+udp://@239.0.3.176:8210
+#EXTINF:0,radio7.at
+udp://@239.0.3.170:8212
+#EXTINF:0,republic-cafe
+udp://@239.0.3.164:8212
+#EXTINF:0,Super Gaudi
+udp://@239.0.3.154:8216
+#EXTINF:0,Unzmarkt-Frauenburg LIVE
+udp://@239.0.3.158:8213
+#EXTINF:0,Web Radio Community
+udp://@239.0.3.154:8210
+#EXTINF:0,Webradio Wilder Kaiser
+udp://@239.0.3.158:8216
+#EXTINF:0,Welle 1
+udp://@239.0.3.176:8209
+#EXTINF:0,98.3 Superfly
+udp://@239.0.3.159:8214
+#EXTINF:0,RMF FM
+udp://@239.0.3.174:8213
+#EXTINF:0,Deep Mix Moscow Radio
+udp://@239.0.3.176:8214
+#EXTINF:0,Radio UNITON
+udp://@239.0.3.172:8209
+#EXTINF:0,Stars Radio
+udp://@239.0.3.167:8209
+#EXTINF:0,Buureradio.ch
+udp://@239.0.3.167:8215
+#EXTINF:0,Energy Zürich
+udp://@239.0.3.177:8210
+#EXTINF:0,lounge-radio.com
+udp://@239.0.3.176:8213
+#EXTINF:0,Radio Swiss Classic
+udp://@239.0.3.176:8217
+#EXTINF:0,Radio Swiss Jazz
+udp://@239.0.3.177:8208
+#EXTINF:0,Radio Swiss Pop
+udp://@239.0.3.177:8209
+#EXTINF:0,SwissGroove
+udp://@239.0.3.172:8210
+#EXTINF:0,UZIC-Techno Minimal
+udp://@239.0.3.161:8217
+#EXTINF:0,B92
+udp://@239.0.3.175:8214
+#EXTINF:0,Naxi Radio 96.9
+udp://@239.0.3.152:8213
+#EXTINF:0,Radio Mali YugiC
+udp://@239.0.3.172:8214
+#EXTINF:0,Radio Morava
+udp://@239.0.3.169:8217
+#EXTINF:0,Radio Maxi
+udp://@239.0.3.173:8214
+#EXTINF:0,Radio Veseljak
+udp://@239.0.3.168:8215
+#EXTINF:0,Da Tempo
+udp://@239.0.3.166:8212
+#EXTINF:0,Ibiza Global Radio
+udp://@239.0.3.168:8217
+#EXTINF:0,Mallorca 95.8-Das Inselradio
+udp://@239.0.3.180:8214
+#EXTINF:0,Bizim FM
+udp://@239.0.3.168:8209
+#EXTINF:0,JoyFM 100.6
+udp://@239.0.3.159:8215
+#EXTINF:0,Radyo Damar
+udp://@239.0.3.156:8212
+#EXTINF:0,Süper FM
+udp://@239.0.3.173:8208
+#EXTINF:0,Turkish World Radio/Türk Radyo Dünyasi
+udp://@239.0.3.171:8215
+#EXTINF:0,Juventus Radio
+udp://@239.0.3.173:8216
+#EXTINF:0,RiseFM-Balaton
+udp://@239.0.3.156:8213
+#EXTINF:0,BassDrive
+udp://@239.0.3.177:8215
+#EXTINF:0,BellyUp4Blues
+udp://@239.0.3.166:8215
+#EXTINF:0,chroniX Radio-chroniX Agression
+udp://@239.0.3.172:8213
+#EXTINF:0,DefJay
+udp://@239.0.3.172:8217
+#EXTINF:0,Digitally Imported-Chillout
+udp://@239.0.3.175:8215
+#EXTINF:0,Digitally Imported-Chillout Dreams
+udp://@239.0.3.153:8210
+#EXTINF:0,Digitally Imported-Eurodance
+udp://@239.0.3.177:8216
+#EXTINF:0,Digitally Imported-Trance
+udp://@239.0.3.177:8217
+#EXTINF:0,Digitally Imported-Vocal Trance
+udp://@239.0.3.175:8217
+#EXTINF:0,friskyRadio
+udp://@239.0.3.176:8212
+#EXTINF:0,Hillbilly Classics
+udp://@239.0.3.158:8210
+#EXTINF:0,HOT 108 JAMZ
+udp://@239.0.3.173:8210
+#EXTINF:0,Kickin' Country
+udp://@239.0.3.167:8208
+#EXTINF:0,Rockabilly Radio
+udp://@239.0.3.155:8208
+#EXTINF:0,Sky.fm-Classical Guitar
+udp://@239.0.3.167:8213
+#EXTINF:0,Sky.fm-New Age
+udp://@239.0.3.170:8214
+#EXTINF:0,Sky.fm-Roots Reggae
+udp://@239.0.3.167:8214
+#EXTINF:0,Sky.fm-Smooth Jazz
+udp://@239.0.3.170:8215
+#EXTINF:0,SmoothLounge.com
+udp://@239.0.3.169:8215
+#EXTINF:0,SomaFM-Groove Salad
+udp://@239.0.3.176:8215
+#EXTINF:0,181.FM-Awesome 80's
+udp://@239.0.3.157:8217
+#EXTINF:0,181.FM-Chilled Out
+udp://@239.0.3.157:8213
+#EXTINF:0,181.FM-Classic Hits 181
+udp://@239.0.3.158:8208
+#EXTINF:0,181.FM-Highway 181
+udp://@239.0.3.157:8214
+#EXTINF:0,181.FM-The Heart
+udp://@239.0.3.158:8209
+#EXTINF:0,.977 Music Network-The Hitz
+udp://@239.0.3.162:8217
+#EXTINF:0,.977 Music Network-The 80's
+udp://@239.0.3.163:8208
