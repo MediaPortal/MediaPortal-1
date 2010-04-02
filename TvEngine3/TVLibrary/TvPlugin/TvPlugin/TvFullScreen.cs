@@ -207,7 +207,6 @@ namespace TvPlugin
       OnPageDestroy(-1);
     }
 
-
     public override bool Init()
     {
       using (Settings xmlreader = new MPSettings())
@@ -883,7 +882,6 @@ namespace TvPlugin
           if (g_Player.IsTVRecording)
           {
             g_Player.Stop();
-            GUIWindowManager.ShowPreviousWindow();
           }
           if (g_Player.IsTimeShifting)
           {
@@ -901,7 +899,6 @@ namespace TvPlugin
               {
                 Log.Debug("TVFullscreen: stop confirmed");
                 g_Player.Stop();
-                GUIWindowManager.ShowPreviousWindow();
               }
             }
           }
@@ -2550,27 +2547,74 @@ namespace TvPlugin
         }
       }
     }
-
+        
     public override void Render(float timePassed)
     {
       if (GUIWindowManager.IsSwitchingToNewWindow)
       {
         return;
       }
-      if (GUIGraphicsContext.Vmr9Active || GUIWindowManager.IsRouted)
+      /*
+      if (VMR7Util.g_vmr7 != null)
+      {
+        if (!GUIWindowManager.IsRouted)
+        {
+          if (_screenState.ContextMenuVisible ||
+            _screenState.MsgBoxVisible ||
+            //_screenState.MsnVisible ||     // msn related can be removed
+            _screenState.OsdVisible ||
+            _screenState.Paused ||
+            _screenState.ShowGroup ||
+            _screenState.ShowInput ||
+            _screenState.ShowStatusLine ||
+            _screenState.ShowTime ||
+            _screenState.ZapOsdVisible ||
+            g_Player.Speed != 1 ||
+            _needToClearScreen)
+          {
+            TimeSpan ts = DateTime.Now - _vmr7UpdateTimer;
+            if ((ts.TotalMilliseconds >= 5000) || _needToClearScreen)
+            {
+              _needToClearScreen = false;
+              using (Bitmap bmp = new Bitmap(GUIGraphicsContext.Width, GUIGraphicsContext.Height))
+              {
+                using (Graphics g = Graphics.FromImage(bmp))
+                {
+                  GUIGraphicsContext.graphics = g;
+                  base.Render(timePassed);
+                  RenderForm(timePassed);
+                  GUIGraphicsContext.graphics = null;
+                  _screenState.wasVMRBitmapVisible = true;
+                  VMR7Util.g_vmr7.SaveBitmap(bmp, true, true, 0.8f);
+                }
+              }
+              _vmr7UpdateTimer = DateTime.Now;
+            }
+          }
+          else
+          {
+            if (_screenState.wasVMRBitmapVisible)
+            {
+              _screenState.wasVMRBitmapVisible = false;
+              VMR7Util.g_vmr7.SaveBitmap(null, false, false, 0.8f);
+            }
+          }
+        }
+      }*/
+
+      if (GUIGraphicsContext.Vmr9Active)
       {
         base.Render(timePassed);
-
-        if (_zapOsdVisible)
-        {
-          _zapWindow.Render(timePassed);
-        }
-        else if (_isOsdVisible)
-        {
-          _osdWindow.Render(timePassed);
-        }
       }
-    /*
+      if (_zapOsdVisible)
+      {
+        _zapWindow.Render(timePassed);
+      }
+      else if (_isOsdVisible)
+      {
+        _osdWindow.Render(timePassed);
+      }
+
       if (g_Player.Playing || TVHome.DoingChannelChange())
       {
         return;
@@ -2581,7 +2625,13 @@ namespace TvPlugin
       }
 
       //close window
+      //GUIMessage msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0,
+      //                                 null);
+      //_osdWindow.OnMessage(msg2); // Send a de-init msg to the OSD
+      //msg2 = null;
       Log.Debug("timeout->OSD:Off");
+      //_isOsdVisible = false;
+      //GUIWindowManager.IsOsdVisible = false;
       HideMainOSD();
       HideZapOSD();
 
@@ -2596,7 +2646,6 @@ namespace TvPlugin
       GUIWindowManager.IsOsdVisible = false;
       Log.Debug("Tvfullscreen:not viewing anymore");
       GUIWindowManager.ShowPreviousWindow();
-    */
     }
 
     public void UpdateOSD()
