@@ -56,6 +56,8 @@ namespace TvService
 
     #region variables
 
+    private ICardAllocation _cardAllocation;
+
     /// <summary>
     /// EPG grabber for DVB
     /// </summary>
@@ -170,7 +172,10 @@ namespace TvService
     /// <summary>
     /// Initializes a new instance of the <see cref="TVController"/> class.
     /// </summary>
-    public TVController() {}
+    public TVController()
+    {
+      _cardAllocation = new AdvancedCardAllocation();
+    }
 
     public Dictionary<int, ITvCardHandler> CardCollection
     {
@@ -2384,10 +2389,9 @@ namespace TvService
       Log.Write("Controller: TimeShiftingWouldUseCard {0} {1}", channel.DisplayName, channel.IdChannel);
 
       try
-      {
-        AdvancedCardAllocation allocation = new AdvancedCardAllocation();
+      {        
         TvResult result;
-        List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_cards, channel, ref user, true, out result,
+        List<CardDetail> freeCards = _cardAllocation.GetAvailableCardsForChannel(_cards, channel, ref user, true, out result,
                                                                             0);
         if (freeCards.Count == 0)
         {
@@ -2481,10 +2485,9 @@ namespace TvService
         _epgGrabber.Stop();
       }
       try
-      {
-        AdvancedCardAllocation allocation = new AdvancedCardAllocation();
+      {        
         TvResult result;
-        List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_cards, channel, ref user, true, out result,
+        List<CardDetail> freeCards = _cardAllocation.GetAvailableCardsForChannel(_cards, channel, ref user, true, out result,
                                                                             0);
         if (freeCards.Count == 0)
         {
@@ -3194,7 +3197,7 @@ namespace TvService
     /// <param name="user"></param>      
     public Dictionary<int, ChannelState> GetAllChannelStatesCached(User user)
     {
-      if (user == null)
+      if (user == null || user.CardId < 1)
       {
         return null;
       }
@@ -3263,16 +3266,31 @@ namespace TvService
     /// </returns>
     public ChannelState GetChannelState(int idChannel, User user)
     {
-      if (user == null)
-        return ChannelState.nottunable;
+      ChannelState chanState = ChannelState.tunable;
 
-      Channel dbchannel = Channel.Retrieve(idChannel);
+      if (user != null)
+      {
+        Dictionary<int, ChannelState> channelStates = GetAllChannelStatesCached(user);
 
-      //User anyUser = new User();
-      TvResult viewResult;
-      AdvancedCardAllocation allocation = new AdvancedCardAllocation();
-      allocation.GetAvailableCardsForChannel(_cards, dbchannel, ref user, true, out viewResult, 0);
-      ChannelState chanState = viewResult == TvResult.Succeeded ? ChannelState.tunable : ChannelState.nottunable;
+        if (channelStates != null)
+        {
+          if (!channelStates.TryGetValue(idChannel, out chanState))
+          {
+            chanState = ChannelState.tunable;
+          }
+        }
+        else
+        {
+          Channel dbchannel = Channel.Retrieve(idChannel);
+          TvResult viewResult;
+          _cardAllocation.GetAvailableCardsForChannel(_cards, dbchannel, ref user, true, out viewResult, 0);
+          chanState = viewResult == TvResult.Succeeded ? ChannelState.tunable : ChannelState.nottunable;
+        }
+      }
+      else
+      {
+        chanState = ChannelState.nottunable;
+      }
 
       return chanState;
     }

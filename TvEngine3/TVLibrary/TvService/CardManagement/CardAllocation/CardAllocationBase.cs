@@ -34,33 +34,54 @@ namespace TvService
   {
     #region protected members
 
-    protected static bool IsOnlyActiveUserCurrentUser(Dictionary<int, ITvCardHandler> cards, User currentUser)
-    {      
-      bool isOnlyActiveUserCurrentUser = true;
 
-      Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = cards.Values;                    
+    protected static Dictionary<int, bool> GetCardsUsedByUser (Dictionary<int, ITvCardHandler> cards, User currentUser)
+    {
+      Dictionary<int, bool> getCardsUsedByUser = new Dictionary<int, bool>();
+
+      Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = cards.Values;
       foreach (ITvCardHandler cardHandler in cardHandlers)
       {
+        bool isActive = true;
+
         User[] users = cardHandler.Users.GetUsers();
 
         if (users != null && users.Length > 0)
-        {
+        {          
           foreach (User u in users)
           {
             if (u.Name != currentUser.Name)
             {
-              isOnlyActiveUserCurrentUser = false;
+              isActive = false;
               break;
             }
+          }          
+        }
+        getCardsUsedByUser.Add(cardHandler.DataBaseCard.IdCard, isActive);
+      }
+      return getCardsUsedByUser;
+    }
+
+    /*protected static Dictionary<int, bool> IsOnlyActiveUserCurrentUser(ITvCardHandler cardHandler, User currentUser)
+    {      
+      bool isOnlyActiveUserCurrentUser = true;
+      
+      User[] users = cardHandler.Users.GetUsers();
+
+      if (users != null && users.Length > 0)
+      {
+        foreach (User u in users)
+        {
+          if (u.Name != currentUser.Name)
+          {
+            isOnlyActiveUserCurrentUser = false;
+            break;
           }
         }
-        if (!isOnlyActiveUserCurrentUser)
-        {
-          break;
-        }
-      }
+      }      
+      
       return isOnlyActiveUserCurrentUser;
-    }
+    }*/
 
     protected static bool IsCamAbleToDecrypChannel(User user, ITvCardHandler tvcard, Channel ch, int decryptLimit)
     {

@@ -871,7 +871,7 @@ namespace TvService
 
       if (cardInfo == null)
       {        
-        cardInfo = FindFirstAvailableCard(freeCards);
+        cardInfo = FindFirstAvailableCardInUse(freeCards);
       }
 
       if (cardInfo == null)
@@ -962,13 +962,17 @@ namespace TvService
             cardInfo = card;
             Log.Write("Scheduler : record on free card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
             break;          
-          }                              
+          } 
+          else
+          {
+            Log.Write("Scheduler : cannot record (decrypt failed/cam limit reached) on card:{0} priority:{1}", card.Id, card.Card.Priority);
+          }                   
         }
       }
       return cardInfo;
     }
 
-    private CardDetail FindFirstAvailableCard(List<CardDetail> freeCards)
+    private CardDetail FindFirstAvailableCardInUse(List<CardDetail> freeCards)
     {
       CardDetail cardInfo = null;
       foreach (CardDetail card in freeCards)
@@ -979,6 +983,10 @@ namespace TvService
           cardInfo = card;
           Log.Write("Scheduler : record on free card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
           break;
+        }
+        else
+        {
+          Log.Write("Scheduler : cannot record (card not in use) on card:{0} priority:{1}", card.Id, card.Card.Priority);
         }
       }
       return cardInfo;

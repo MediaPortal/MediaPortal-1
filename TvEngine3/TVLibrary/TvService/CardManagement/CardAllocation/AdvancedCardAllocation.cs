@@ -88,43 +88,50 @@ namespace TvService
       {
         if (isOwnerOfCard)
         {
-          Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder no CA present", cardId, tvcard.Type);          
+          Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder", cardId, tvcard.Type);          
         } 
         else
         {
           //card is in use, but it is tuned to the same transponder.
-          //meaning.. we can use it.
-          if (tvcard.HasCA && decryptLimit > 0)
+          //meaning.. we can use it.          
+          if (tvcard.HasCA)
           //does the card have a CA module and a CA limit, if yes then proceed to check cam decrypt limit.
           {
-            //but we must check if cam can decode the extra channel as well
-            //first check if cam is already decrypting this channel          
-            bool isCamAlreadyDecodingChannel = IsCamAlreadyDecodingChannel(tvcard, dbChannel);
-
-            //if the user is already using this card
-            //and is watching a scrambled signal
-            //then we must the CAM will always be able to watch the requested channel
-            //since the users zaps
-
-            //check if cam is capable of descrambling an extra channel                            
-            bool isCamAbleToDecrypChannel = IsCamAbleToDecrypChannel(user, tvcard, dbChannel, decryptLimit);
-
-            canDecrypt = isCamAbleToDecrypChannel || isCamAlreadyDecodingChannel;
-
-            if (canDecrypt)
+            if (decryptLimit > 0)
             {
-              Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
-                       cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, decryptLimit);              
-            }
-            else
-            {
-              //it is not, skip this card
-              Log.Info(
-                "Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
-                cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, decryptLimit);              
-            }
+              //but we must check if cam can decode the extra channel as well
+              //first check if cam is already decrypting this channel          
+              bool isCamAlreadyDecodingChannel = IsCamAlreadyDecodingChannel(tvcard, dbChannel);
 
-            checkTransponder = (user.IsAdmin || isOwnerOfCard || canDecrypt);
+              //if the user is already using this card
+              //and is watching a scrambled signal
+              //then we must the CAM will always be able to watch the requested channel
+              //since the users zaps
+
+              //check if cam is capable of descrambling an extra channel                            
+              bool isCamAbleToDecrypChannel = IsCamAbleToDecrypChannel(user, tvcard, dbChannel, decryptLimit);
+
+              canDecrypt = isCamAbleToDecrypChannel || isCamAlreadyDecodingChannel;
+
+              if (canDecrypt)
+              {
+                Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
+                         cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, decryptLimit);
+              }
+              else
+              {
+                //it is not, skip this card
+                Log.Info(
+                  "Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
+                  cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, decryptLimit);
+              }
+
+              checkTransponder = (user.IsAdmin || canDecrypt); 
+            }            
+          }
+          else //fta
+          {
+            canDecrypt = true;
           }
         }
       }
@@ -219,19 +226,22 @@ namespace TvService
           Log.Info("Controller:  No tuning details for channel:{0}", dbChannel.Name);
           result = TvResult.NoTuningDetails;
           return cardsAvailable;
-        }
+        }        
 
         Log.Info("Controller:   got {0} tuning details for {1}", tuningDetails.Count, dbChannel.Name);
 
         int cardsFound = 0;
         int number = 0;
-        bool isOnlyActiveUserCurrentUser = IsOnlyActiveUserCurrentUser(cards, user);
+
+        Dictionary<int, bool> cardsUsedByUser = GetCardsUsedByUser(cards, user);
 
         Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = null;
         if (tuningDetails != null && tuningDetails.Count > 0)
         {
           cardHandlers = cards.Values;  
         }
+
+        
         
         foreach (IChannel tuningDetail in tuningDetails)
         {
@@ -288,13 +298,16 @@ namespace TvService
             int nrOfOtherUsers = 0;
             bool isSameTransponder = false;
 
+            bool isOnlyActiveUserCurrentUser = true;
+            cardsUsedByUser.TryGetValue(cardHandler.DataBaseCard.IdCard, out isOnlyActiveUserCurrentUser);
+
             if (isOnlyActiveUserCurrentUser)
             {
               isSameTransponder = true;
               nrOfOtherUsers = 0;
               cardInfo = new CardDetail(cardId, channelMap.ReferencedCard(), tuningDetail);
               cardInfo.Priority = CardPriority(cardInfo.Priority, nrOfOtherUsers, isSameTransponder, true, cardId,
-                                            recommendedCardId);
+                                            recommendedCardId);              
             }
             else
             {

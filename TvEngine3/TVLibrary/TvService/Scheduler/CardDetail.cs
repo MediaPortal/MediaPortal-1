@@ -43,7 +43,7 @@ namespace TvService
     /// <param name="detail">tuning detail</param>
     public CardDetail(int id, Card card, IChannel detail)
     {
-      _canDecrypt = false;
+      _canDecrypt = true;
       _cardId = id;
       _card = card;
       _detail = detail;

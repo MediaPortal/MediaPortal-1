@@ -171,7 +171,7 @@ namespace TvService
 
         Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = cards.Values;
 
-        bool isOnlyActiveUserCurrentUser = IsOnlyActiveUserCurrentUser(cards, allUsers[0]);
+        Dictionary<int, bool> cardsUsedByUser = GetCardsUsedByUser(cards, allUsers[0]);
 
         foreach (Channel ch in channels)
         {
@@ -222,21 +222,24 @@ namespace TvService
                 UpdateChannelStateUsers(allUsers, ChannelState.nottunable, ch.IdChannel);
                 continue;
               }
+              
+              bool isOnlyActiveUserCurrentUser = true;
+              cardsUsedByUser.TryGetValue(cardHandler.DataBaseCard.IdCard, out isOnlyActiveUserCurrentUser);
 
-              if (!isOnlyActiveUserCurrentUser)
-              {
-                //ok card could be used to tune to this channel
-                //now we check if its free...                              
-                int decryptLimit = cardHandler.DataBaseCard.DecryptLimit;
-                CheckTransponderAllUsers(ch, allUsers, cardHandler, decryptLimit, cardId, tuningDetail, checkTransponders);
-              }
-              else
+              if (isOnlyActiveUserCurrentUser)
               {
                 //no need to do any further checks if user is the only one currently active.
                 if (!clearChannelStates.Contains(ch.IdChannel))
                 {
                   clearChannelStates.Add(ch.IdChannel);
-                }                
+                }                                
+              }
+              else
+              {
+                //ok card could be used to tune to this channel
+                //now we check if its free...                              
+                int decryptLimit = cardHandler.DataBaseCard.DecryptLimit;
+                CheckTransponderAllUsers(ch, allUsers, cardHandler, decryptLimit, cardId, tuningDetail, checkTransponders);
               }                        
             } //while card end
           } //foreach tuningdetail end              

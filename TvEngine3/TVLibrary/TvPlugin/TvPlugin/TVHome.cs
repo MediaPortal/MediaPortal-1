@@ -1400,7 +1400,7 @@ namespace TvPlugin
         // 1 second loop
         if (Connected)
         {
-          _isAnyCardRecording = TvServer.IsAnyCardRecording();          
+          _isAnyCardRecording = TvServer.IsAnyCardRecording();
         }
 
         // HeartBeat loop (5 seconds)
@@ -2091,7 +2091,7 @@ namespace TvPlugin
         {
           return;
         }
-        bool deleted = TVUtil.DeleteRecAndSchedWithPrompt(parentSchedule, selectedRecording.IdChannel);            
+        bool deleted = TVUtil.DeleteRecAndSchedWithPrompt(parentSchedule, selectedRecording.IdChannel);
         if (deleted && !ignoreActiveRecordings.Contains(selectedRecording))
         {
           ignoreActiveRecordings.Add(selectedRecording);
@@ -3143,6 +3143,14 @@ namespace TvPlugin
         return false;
       }
       Log.Info("TVHome.ViewChannelAndCheck(): View channel={0}", channel.DisplayName);
+
+      //if a channel is untunable, then there is no reason to carry on or even stop playback.
+      ChannelState CurrentChanState = TvServer.GetChannelState(channel.IdChannel, Card.User);
+      if (CurrentChanState == ChannelState.nottunable)
+      {
+        ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
+        return false;
+      }
 
       //BAV: fixing mantis bug 1263: TV starts with no video if Radio is previously ON & channel selected from TV guide
       if ((!channel.IsRadio && g_Player.IsRadio) || (channel.IsRadio && !g_Player.IsRadio))
