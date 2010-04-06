@@ -505,13 +505,15 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.WriteFile("subch:{0}-{1} tswriter StartRecording...", _subChannelId, _subChannelIndex);
           SetRecorderPids();
+
+          Log.Log.WriteFile("Set video / audio observer");
+          _tsFilterInterface.RecorderSetVideoAudioObserver(_subChannelIndex, this);
+
           hr = _tsFilterInterface.RecordStartRecord(_subChannelIndex);
           if (hr != 0)
           {
             Log.Log.Error("subch:{0} tswriter StartRecord failed:{1:X}", _subChannelId, hr);
           }
-          Log.Log.WriteFile("Set video / audio observer");
-          _tsFilterInterface.RecorderSetVideoAudioObserver(_subChannelIndex, this);
           _graphState = GraphState.Recording;
         }
       }
@@ -947,10 +949,11 @@ namespace TvLibrary.Implementations.DVB
           _startTimeShifting = false;
           _tsFilterInterface.TimeShiftReset(_subChannelIndex);
           SetTimeShiftPids();
-          _tsFilterInterface.TimeShiftStart(_subChannelIndex);
 
           Log.Log.WriteFile("Set video / audio observer");
           _tsFilterInterface.SetVideoAudioObserver(_subChannelIndex, this);
+
+          _tsFilterInterface.TimeShiftStart(_subChannelIndex);
 
           _graphState = GraphState.TimeShifting;
         }
@@ -959,14 +962,14 @@ namespace TvLibrary.Implementations.DVB
           _startRecording = false;
           SetRecorderPids();
 
+          Log.Log.WriteFile("Set video / audio observer");
+          _tsFilterInterface.RecorderSetVideoAudioObserver(_subChannelIndex, this);
+
           int hr = _tsFilterInterface.RecordStartRecord(_subChannelIndex);
           if (hr != 0)
           {
             Log.Log.Error("subch:[0} StartRecord failed:{1:X}", _subChannelId, hr);
           }
-
-          Log.Log.WriteFile("Set video / audio observer");
-          _tsFilterInterface.RecorderSetVideoAudioObserver(_subChannelIndex, this);
 
           _graphState = GraphState.Recording;
         }

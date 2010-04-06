@@ -207,8 +207,8 @@ namespace TvLibrary.Implementations.Analog
       _tsFilterInterface.AnalyzerSetAudioPid(_subChannelId, 0x1100);
       _tsFilterInterface.TimeShiftPause(_subChannelId, 0);
 
-      _tsFilterInterface.TimeShiftStart(_subChannelId);
       _tsFilterInterface.SetVideoAudioObserver(_subChannelId, this);
+      _tsFilterInterface.TimeShiftStart(_subChannelId);
       _dateTimeShiftStarted = DateTime.Now;
 
       return true;
@@ -236,13 +236,12 @@ namespace TvLibrary.Implementations.Analog
       _tsFilterInterface.RecordSetRecordingFileName(_subChannelId, fileName);
       _tsFilterInterface.RecordSetPmtPid(_subChannelId, 0x0100, 1, _pmtData, _pmtLength);
       _startRecording = true;
+      _tsFilterInterface.RecorderSetVideoAudioObserver(_subChannelId, this);
       int hr = _tsFilterInterface.RecordStartRecord(_subChannelId);
       if (hr != 0)
       {
         Log.Log.Error("subch:{0} StartRecord failed:{1:X}", _subChannelId, hr);
       }
-      _tsFilterInterface.RecorderSetVideoAudioObserver(_subChannelId, this);
-
       _graphState = GraphState.Recording;
     }
 
