@@ -86,7 +86,6 @@ namespace MediaPortal.GUI.Library
 
       #region events
 
-      public event EventHandler Disposing;
       public event EventHandler Disposed;
 
       #endregion
@@ -135,10 +134,7 @@ namespace MediaPortal.GUI.Library
         {
           if (_image != null)
           {
-            if (Disposing != null)
-            {
-              Disposing(this, new EventArgs());
-            }
+
             try
             {
               if (logTextures)
@@ -210,9 +206,6 @@ namespace MediaPortal.GUI.Library
         // not been disposed of.      
         if (!this.disposed)
         {
-          /*if (disposeManagedResources)
-          {            
-          }*/
           lock (this)
           {
             DisposeUnmanagedResources();
@@ -230,10 +223,6 @@ namespace MediaPortal.GUI.Library
         //Log.Debug("Frame.DisposeUnmanagedResources mainthread: {0}", !(GUIGraphicsContext.form.InvokeRequired));
         if (_image != null)
         {
-          if (Disposing != null)
-          {
-            Disposing(this, new EventArgs());
-          }
           if (logTextures)
           {
             Log.Info("Frame: dispose() fontengine: remove texture:" + _textureNumber.ToString());
@@ -481,11 +470,6 @@ namespace MediaPortal.GUI.Library
       {
         if (!this.disposed)
         {
-          /*
-          if (disposeManagedResources)
-          {
-            //dispose managed resources          
-          } */
           DisposeUnmanagedResources();
         }
       }
