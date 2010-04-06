@@ -48,6 +48,7 @@ namespace MediaPortal.Configuration
   {
     #region ConfigPage struct
 
+    public static bool audioplayer_mixing;
     public static bool debug_options;
 
     public struct ConfigPage

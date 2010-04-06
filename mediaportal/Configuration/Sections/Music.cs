@@ -1805,6 +1805,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void enableMixing_CheckedChanged(object sender, EventArgs e)
     {
+      SettingsForm.audioplayer_mixing = enableMixing.Checked;
       if (enableMixing.Checked)
       {
         // We must not have checked the "ASIO" at the same time

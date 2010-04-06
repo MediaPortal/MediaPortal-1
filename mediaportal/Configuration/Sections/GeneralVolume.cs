@@ -23,6 +23,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Text;
 using System.Windows.Forms;
+using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 
@@ -59,11 +60,18 @@ namespace MediaPortal.Configuration.Sections
       groupBoxVolumeOsd.Visible = SettingsForm.AdvancedMode;
       // No code is using this setting currently
       groupBoxStartup.Visible = false;
+
+      // Force enable status before checks
+      groupBoxMixerControl.Enabled = true;
+      groupBoxScale.Enabled = true;
+
       base.OnSectionActivated();
+      LoadSettings();
     }
 
     public override void LoadSettings()
     {
+      Log.Info("load volume");
       // default default
       _useClassicHandler.Checked = true;
 
@@ -101,10 +109,11 @@ namespace MediaPortal.Configuration.Sections
         _useCustomLevel.Checked = startupStyle == 2;
         _customLevel = reader.GetValueAsInt("volume", "startuplevel", 52428);
 
-        // When Upmixing has selected, we need to use Master Volume
-        if (reader.GetValueAsBool("Music", "mixing", false))
+        // When Upmixing has selected, we need to use Wave Volume
+        if (SettingsForm.audioplayer_mixing)
         {
           isDigital = true;
+          groupBoxMixerControl.Enabled = false;
         }
         _useMasterVolume.Checked = !isDigital;
         _useWave.Checked = isDigital;
@@ -157,7 +166,12 @@ namespace MediaPortal.Configuration.Sections
           writer.SetValue("volume", "startupstyle", 2);
         }
 
-        writer.SetValueAsBool("volume", "digital", _useWave.Checked);
+        bool useDigital = _useWave.Checked;
+        if (SettingsForm.audioplayer_mixing)
+        {
+          useDigital = true;
+        }
+        writer.SetValueAsBool("volume", "digital", useDigital);
         writer.SetValue("volume", "table", _customText);
         writer.SetValue("volume", "startuplevel", _customLevel);
         writer.SetValueAsBool("volume", "defaultVolumeOSD", _useVolumeOSD.Checked);
