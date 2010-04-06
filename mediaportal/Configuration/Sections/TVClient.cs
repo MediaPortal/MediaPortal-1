@@ -20,7 +20,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
@@ -111,10 +110,12 @@ namespace MediaPortal.Configuration.Sections
                                               "Number + Title" // Show number and title
                                             };
 
+    private bool _SingleSeat;
+
     #endregion
 
     public TVClient()
-      : this("TV Client") {}
+      : this("TV Client") { }
 
     public TVClient(string name)
       : base(name)
@@ -201,7 +202,7 @@ namespace MediaPortal.Configuration.Sections
                   {
                     if (!_preferredAudioLanguages.Contains(_languagesAvail[i]))
                     {
-                      ListViewItem item = new ListViewItem(new string[] {_languagesAvail[i], _languageCodes[i]});
+                      ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
                       item.Name = _languageCodes[i];
                       if (!mpListViewAvailAudioLang.Items.ContainsKey(item.Name))
                       {
@@ -227,7 +228,7 @@ namespace MediaPortal.Configuration.Sections
                         {
                           if (_languageCodes[j].Contains(langStr))
                           {
-                            ListViewItem item = new ListViewItem(new string[] {_languagesAvail[j], _languageCodes[j]});
+                            ListViewItem item = new ListViewItem(new string[] { _languagesAvail[j], _languageCodes[j] });
                             item.Name = _languageCodes[j];
                             mpListViewPreferredAudioLang.Items.Add(item);
                             break;
@@ -243,7 +244,7 @@ namespace MediaPortal.Configuration.Sections
                   {
                     if (!_preferredSubLanguages.Contains(_languagesAvail[i]))
                     {
-                      ListViewItem item = new ListViewItem(new string[] {_languagesAvail[i], _languageCodes[i]});
+                      ListViewItem item = new ListViewItem(new string[] { _languagesAvail[i], _languageCodes[i] });
                       item.Name = _languageCodes[i];
                       if (!mpListViewAvailSubLang.Items.ContainsKey(item.Name))
                       {
@@ -269,7 +270,7 @@ namespace MediaPortal.Configuration.Sections
                         {
                           if (_languageCodes[j].Contains(langStr))
                           {
-                            ListViewItem item = new ListViewItem(new string[] {_languagesAvail[j], _languageCodes[j]});
+                            ListViewItem item = new ListViewItem(new string[] { _languagesAvail[j], _languageCodes[j] });
                             item.Name = _languageCodes[j];
                             mpListViewPreferredSubLang.Items.Add(item);
                             break;
@@ -298,6 +299,8 @@ namespace MediaPortal.Configuration.Sections
         Log.Debug("Configuration: Loading TVLibrary.Interface assembly");
         Log.Debug("Configuration: Exception: {0}", ex);
       }
+
+      _SingleSeat = Common.IsSingleSeat();
     }
 
     public override void SaveSettings()
@@ -341,6 +344,13 @@ namespace MediaPortal.Configuration.Sections
           prefLangs += (string)item.Name + ";";
         }
         xmlwriter.SetValue("tvservice", "preferredsublanguages", prefLangs);
+
+        //When TvServer is changed, if user changed mode (SingleSeat/MultiSeat), he needs to review the RTSP setting in DebugOptions section
+        if ((xmlwriter.GetValueAsBool("tvservice", "DebugOptions", false) || SettingsForm.debug_options) && (_SingleSeat != Common.IsSingleSeat()))
+        {
+          MessageBox.Show("Please review your RTSP settings in \"DebugOptions\" section", "Warning",
+                          MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        }
       }
     }
 
@@ -806,10 +816,10 @@ namespace MediaPortal.Configuration.Sections
          (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListViewPreferredAudioLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-                                                           {
+                                                      {
                                                              this.columnHeader2,
                                                              this.columnHeader6
-                                                           });
+                                                      });
       this.mpListViewPreferredAudioLang.FullRowSelect = true;
       this.mpListViewPreferredAudioLang.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.mpListViewPreferredAudioLang.HideSelection = false;
@@ -842,10 +852,10 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Left)
            | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListViewAvailAudioLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-                                                       {
+                                                  {
                                                          this.columnHeader1,
                                                          this.columnHeader5
-                                                       });
+                                                  });
       this.mpListViewAvailAudioLang.FullRowSelect = true;
       this.mpListViewAvailAudioLang.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.mpListViewAvailAudioLang.HideSelection = false;
@@ -998,10 +1008,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpListViewPreferredSubLang.AllowDrop = true;
       this.mpListViewPreferredSubLang.AllowRowReorder = true;
       this.mpListViewPreferredSubLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-                                                         {
+                                                    {
                                                            this.columnHeader4,
                                                            this.columnHeader8
-                                                         });
+                                                    });
       this.mpListViewPreferredSubLang.FullRowSelect = true;
       this.mpListViewPreferredSubLang.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.mpListViewPreferredSubLang.HideSelection = false;
@@ -1027,10 +1037,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpListViewAvailSubLang.AllowDrop = true;
       this.mpListViewAvailSubLang.AllowRowReorder = true;
       this.mpListViewAvailSubLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-                                                     {
+                                                {
                                                        this.columnHeader3,
                                                        this.columnHeader7
-                                                     });
+                                                });
       this.mpListViewAvailSubLang.FullRowSelect = true;
       this.mpListViewAvailSubLang.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.mpListViewAvailSubLang.HideSelection = false;
@@ -1217,9 +1227,9 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
     }
 
-    private void mpListView2_SelectedIndexChanged(object sender, EventArgs e) {}
+    private void mpListView2_SelectedIndexChanged(object sender, EventArgs e) { }
 
-    private void mpCheckBox1_CheckedChanged(object sender, EventArgs e) {}
+    private void mpCheckBox1_CheckedChanged(object sender, EventArgs e) { }
 
     private void mpButtonAddAudioLang_Click(object sender, EventArgs e)
     {

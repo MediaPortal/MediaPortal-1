@@ -69,6 +69,7 @@ namespace MediaPortal.Configuration.Sections
         _init = true;
         LoadSettings();
       }
+      SettingsForm.debug_options = true;
     }
 
     /// <summary>
@@ -341,6 +342,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("tvservice", "usertsp", rtsp);
         xmlwriter.SetValue("tvservice", "recordingpath", textBoxRecording.Text);
         xmlwriter.SetValue("tvservice", "timeshiftingpath", textBoxTimeshifting.Text);
+        xmlwriter.SetValueAsBool("tvservice", "DebugOptions", true);
       }
 
       DebugSettings.EnableRecordingFromTimeshift = mpEnableRecordingFromTimeshiftCheckBox.Checked;

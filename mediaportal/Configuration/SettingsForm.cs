@@ -48,6 +48,8 @@ namespace MediaPortal.Configuration
   {
     #region ConfigPage struct
 
+    public static bool debug_options;
+
     public struct ConfigPage
     {
       private string sectionName;
