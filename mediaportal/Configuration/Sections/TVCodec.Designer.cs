@@ -83,7 +83,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelAACDecoder.Name = "labelAACDecoder";
       this.labelAACDecoder.Size = new System.Drawing.Size(146, 17);
       this.labelAACDecoder.TabIndex = 12;
-      this.labelAACDecoder.Text = "AAC audio decoder:";
+      this.labelAACDecoder.Text = "LATM AAC audio decoder:";
       // 
       // aacAudioCodecComboBox
       // 
