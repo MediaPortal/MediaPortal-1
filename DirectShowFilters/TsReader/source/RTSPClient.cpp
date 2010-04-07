@@ -91,6 +91,9 @@ char* CRTSPClient::getSDPDescriptionFromURL(Medium* client, char const* url,
 char* CRTSPClient::getSDPDescription() 
 {
 //	LogDebug("CRTSPClient::getSDPDescription()");
+  if (m_ourClient == NULL)
+    return NULL;
+
   RTSPClient *client = (RTSPClient*)m_ourClient;
   RTSPClient *rtspClient = RTSPClient::createNew(client->envir(), 0, "TSFileSource", tunnelOverHTTPPortNum);
   char* result;

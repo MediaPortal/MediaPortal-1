@@ -216,6 +216,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_bAnalog = false;
   m_bStopping = false;
   m_bOnZap = false;
+  m_bPauseOnClockTooFast = false;
   SetMediaPosition(0) ;
   m_bStoppedForUnexpectedSeek=false ;
   m_bForceSeekOnStop=false ;
