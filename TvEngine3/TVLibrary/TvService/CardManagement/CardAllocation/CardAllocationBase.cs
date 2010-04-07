@@ -62,27 +62,6 @@ namespace TvService
       return getCardsUsedByUser;
     }
 
-    /*protected static Dictionary<int, bool> IsOnlyActiveUserCurrentUser(ITvCardHandler cardHandler, User currentUser)
-    {      
-      bool isOnlyActiveUserCurrentUser = true;
-      
-      User[] users = cardHandler.Users.GetUsers();
-
-      if (users != null && users.Length > 0)
-      {
-        foreach (User u in users)
-        {
-          if (u.Name != currentUser.Name)
-          {
-            isOnlyActiveUserCurrentUser = false;
-            break;
-          }
-        }
-      }      
-      
-      return isOnlyActiveUserCurrentUser;
-    }*/
-
     protected static bool IsCamAbleToDecrypChannel(User user, ITvCardHandler tvcard, Channel ch, int decryptLimit)
     {
       bool isRec = false;

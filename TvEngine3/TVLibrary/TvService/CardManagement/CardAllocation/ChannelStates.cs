@@ -98,18 +98,25 @@ namespace TvService
     private static void UpdateChannelStateUser(User user, ChannelState chState, int channelId)
     {
       ChannelState currentChState;
+      
       bool stateExists = user.ChannelStates.TryGetValue(channelId, out currentChState);
 
-      if (stateExists && currentChState == chState)
-        return;
-
-      if (currentChState != ChannelState.nottunable && chState == ChannelState.nottunable)
-        return;
-
-      if (currentChState == ChannelState.recording && chState != ChannelState.nottunable)
-        return;
-
-      user.ChannelStates[channelId] = chState; //add key if does not exist, or update existing one.          
+      if (stateExists)
+      {
+        if (chState == ChannelState.nottunable)
+        {
+          return;
+        }                
+        bool recording = (currentChState == ChannelState.recording);
+        if (!recording)
+        {
+          user.ChannelStates[channelId] = chState; //add key if does not exist, or update existing one.                            
+        }                
+      }
+      else
+      {
+        user.ChannelStates[channelId] = chState; //add key if does not exist, or update existing one.                          
+      }
     }
 
     private static IList<User> GetActiveUsers(Dictionary<int, ITvCardHandler> cards)
@@ -166,12 +173,9 @@ namespace TvService
 
         TvBusinessLayer layer = new TvBusinessLayer();
 
-        Dictionary<int, ChannelState> TSandRecStates = null;
-        List<int> clearChannelStates = new List<int>();
+        Dictionary<int, ChannelState> TSandRecStates = null;        
 
-        Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = cards.Values;
-
-        Dictionary<int, bool> cardsUsedByUser = GetCardsUsedByUser(cards, allUsers[0]);
+        Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = cards.Values;        
 
         foreach (Channel ch in channels)
         {
@@ -222,25 +226,12 @@ namespace TvService
                 UpdateChannelStateUsers(allUsers, ChannelState.nottunable, ch.IdChannel);
                 continue;
               }
-              
-              bool isOnlyActiveUserCurrentUser = true;
-              cardsUsedByUser.TryGetValue(cardHandler.DataBaseCard.IdCard, out isOnlyActiveUserCurrentUser);
-
-              if (isOnlyActiveUserCurrentUser)
-              {
-                //no need to do any further checks if user is the only one currently active.
-                if (!clearChannelStates.Contains(ch.IdChannel))
-                {
-                  clearChannelStates.Add(ch.IdChannel);
-                }                                
-              }
-              else
-              {
-                //ok card could be used to tune to this channel
-                //now we check if its free...                              
-                int decryptLimit = cardHandler.DataBaseCard.DecryptLimit;
-                CheckTransponderAllUsers(ch, allUsers, cardHandler, decryptLimit, cardId, tuningDetail, checkTransponders);
-              }                        
+                                          
+              //ok card could be used to tune to this channel
+              //now we check if its free...                              
+              int decryptLimit = cardHandler.DataBaseCard.DecryptLimit;
+              CheckTransponderAllUsers(ch, allUsers, cards, cardHandler, decryptLimit, cardId, tuningDetail, checkTransponders);
+                                      
             } //while card end
           } //foreach tuningdetail end              
 
@@ -251,10 +242,9 @@ namespace TvService
           }
           UpdateRecOrTSChannelStateForUsers(ch, allUsers, TSandRecStates);
         }
-        foreach (int id in clearChannelStates)
-        {
-          RemoveChannelStates(allUsers[0], id);
-        }
+
+        RemoveAllTunableChannelStates(allUsers);
+
       }
       catch (InvalidOperationException tex)
       {
@@ -270,7 +260,30 @@ namespace TvService
         stopwatch.Stop();
         Log.Info("ChannelStates.DoSetChannelStates took {0} msec", stopwatch.ElapsedMilliseconds);
       }
-    }    
+    }
+
+    private static void RemoveAllTunableChannelStates(IList<User> allUsers)
+    {
+      foreach (User user in allUsers)
+      {
+
+        List<int> keysToDelete = new List<int>();
+
+
+        foreach (KeyValuePair<int, ChannelState> kvp in user.ChannelStates)
+        {
+          if (kvp.Value == ChannelState.tunable)
+          {
+            keysToDelete.Add(kvp.Key);
+          }          
+        }
+        
+        foreach (int key in keysToDelete) 
+        {
+          user.ChannelStates.Remove(key);
+        }     
+      }
+    }
 
     private static void UpdateRecOrTSChannelStateForUsers(Channel ch, IList<User> allUsers,
                                                           Dictionary<int, ChannelState> TSandRecStates)
@@ -288,7 +301,7 @@ namespace TvService
       }      
     }
 
-    private static void CheckTransponderAllUsers(Channel ch, IList<User> allUsers, ITvCardHandler tvcard,
+    private static void CheckTransponderAllUsers(Channel ch, IList<User> allUsers, Dictionary<int, ITvCardHandler> cards, ITvCardHandler tvcard,
                                                  int decryptLimit, int cardId, IChannel tuningDetail,
                                                  bool checkTransponders)
     {
@@ -301,10 +314,20 @@ namespace TvService
         for (int i = 0; i < allUsers.Count; i++)
         {
           User user = allUsers[i];
-
+                    
           //ignore admin users, like scheduler
           if (user.IsAdmin)
           {
+            continue;
+          }
+
+          Dictionary<int, bool> cardsUsedByUser = GetCardsUsedByUser(cards, user);
+          bool isOnlyActiveUserCurrentUser = true;
+          cardsUsedByUser.TryGetValue(tvcard.DataBaseCard.IdCard, out isOnlyActiveUserCurrentUser);
+
+          if (isOnlyActiveUserCurrentUser)
+          {
+            //no need to do any further checks if user is the only one currently active.
             continue;
           }
 
