@@ -58,18 +58,7 @@ namespace TvService
         }
         allUsers[i] = user;
       }
-    }
-
-    private static void RemoveChannelStates(User user, int channelId)
-    {
-      ChannelState currentChState = ChannelState.tunable;
-      user.ChannelStates.TryGetValue(channelId, out currentChState);
-             
-      if (currentChState == ChannelState.nottunable)
-      {
-        user.ChannelStates.Remove(channelId);  
-      }                      
-    }
+    }   
 
     private static void UpdateChannelStateUsers(IList<User> allUsers, ChannelState chState, int channelId)
     {
