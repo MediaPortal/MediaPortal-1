@@ -928,10 +928,15 @@ namespace MediaPortal.Plugins.Process
         }
         else
         {
-          if (RemotePowerControl.Isconnected)
+          try 
           {
             Log.Info("PowerScheduler: Keep server alive");
             RemotePowerControl.Instance.UserActivityDetected(DateTime.Now);
+          }
+          catch (Exception ex)
+          {
+            LogVerbose("Failed to connect to server:");
+            LogVerbose(ex.ToString());
           }
 
           // check whether go to standby.
