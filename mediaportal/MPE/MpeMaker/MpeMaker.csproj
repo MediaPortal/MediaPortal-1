@@ -325,6 +325,7 @@
   <ItemGroup>
     <Content Include="Icons\go-next.png" />
     <Content Include="Icons\internet-web-browser.png" />
+    <Content Include="Icons\internet-web-browser16.png" />
     <Content Include="Icons\list-add.png" />
     <Content Include="Icons\list-remove.png" />
     <Content Include="Icons\applications-graphics.png" />

@@ -40,7 +40,7 @@
           this.btn_generate = new System.Windows.Forms.Button();
           this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
           this.lbl_file = new System.Windows.Forms.Label();
-          this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+          this.toolTip = new System.Windows.Forms.ToolTip(this.components);
           this.tabControl1.SuspendLayout();
           this.tabPage1.SuspendLayout();
           this.tabPage2.SuspendLayout();
@@ -54,7 +54,8 @@
           this.txt_outfile.Name = "txt_outfile";
           this.txt_outfile.Size = new System.Drawing.Size(648, 20);
           this.txt_outfile.TabIndex = 0;
-          this.toolTip1.SetToolTip(this.txt_outfile, "You can use in name :\r\n[Name]\r\n[Version]\r\n[DevelopmentStatus]\r\n[Author]\r\n");
+          this.toolTip.SetToolTip(this.txt_outfile, "You can use the following placeholders within the filename:\r\n[Name]\r\n[Version]\r\n[" +
+                  "DevelopmentStatus]\r\n[Author]");
           this.txt_outfile.TextChanged += new System.EventHandler(this.txt_outfile_TextChanged);
           // 
           // label1
@@ -188,6 +189,6 @@
         private System.Windows.Forms.Button btn_generate;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Label lbl_file;
-        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }

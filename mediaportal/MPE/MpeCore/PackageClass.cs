@@ -560,7 +560,11 @@ namespace MpeCore
       }
 
       ExtensionCollection list = ExtensionCollection.Load(xmlFile);
-      list.Add(this);
+
+      PackageClass pakToAdd = this;
+      pakToAdd.GeneralInfo.OnlineLocation = ReplaceInfo(pakToAdd.GeneralInfo.OnlineLocation);
+      list.Add(pakToAdd);
+
       list.Save(xmlFile);
 
       return true;

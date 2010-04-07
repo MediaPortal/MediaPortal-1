@@ -102,6 +102,8 @@ namespace MpeCore.Classes.ZipProvider
 
     public bool Save(PackageClass pak, string filename)
     {
+      pak.GeneralInfo.OnlineLocation = pak.ReplaceInfo(pak.GeneralInfo.OnlineLocation);
+
       string temfile = Path.GetTempFileName();
       pak.Save(temfile);
       if (!Directory.Exists(Path.GetDirectoryName(filename)))

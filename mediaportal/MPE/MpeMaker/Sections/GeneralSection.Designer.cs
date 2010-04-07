@@ -64,11 +64,10 @@
           this.label12 = new System.Windows.Forms.Label();
           this.label13 = new System.Windows.Forms.Label();
           this.homepageButton = new System.Windows.Forms.Button();
-          this.imageList = new System.Windows.Forms.ImageList(this.components);
-          this.img_logo = new System.Windows.Forms.PictureBox();
           this.forumButton = new System.Windows.Forms.Button();
           this.updateButton = new System.Windows.Forms.Button();
           this.onlineButton = new System.Windows.Forms.Button();
+          this.img_logo = new System.Windows.Forms.PictureBox();
           ((System.ComponentModel.ISupportInitialize)(this.img_logo)).BeginInit();
           this.SuspendLayout();
           // 
@@ -327,7 +326,7 @@
           this.txt_online.Name = "txt_online";
           this.txt_online.Size = new System.Drawing.Size(227, 20);
           this.txt_online.TabIndex = 11;
-          this.toolTip.SetToolTip(this.txt_online, "Online location of the package it self");
+          this.toolTip.SetToolTip(this.txt_online, resources.GetString("txt_online.ToolTip"));
           this.txt_online.TextChanged += new System.EventHandler(this.txt_name_TextChanged);
           // 
           // label11
@@ -399,20 +398,46 @@
           // homepageButton
           // 
           this.homepageButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.homepageButton.ImageIndex = 0;
-          this.homepageButton.ImageList = this.imageList;
+          this.homepageButton.Image = global::MpeMaker.Properties.Resources.internet_web_browser16;
           this.homepageButton.Location = new System.Drawing.Point(347, 137);
           this.homepageButton.Name = "homepageButton";
-          this.homepageButton.Size = new System.Drawing.Size(26, 23);
+          this.homepageButton.Size = new System.Drawing.Size(26, 24);
           this.homepageButton.TabIndex = 31;
           this.homepageButton.UseVisualStyleBackColor = true;
           this.homepageButton.Click += new System.EventHandler(this.homepageButton_Click);
           // 
-          // imageList
+          // forumButton
           // 
-          this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
-          this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-          this.imageList.Images.SetKeyName(0, "internet-web-browser.png");
+          this.forumButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+          this.forumButton.Image = global::MpeMaker.Properties.Resources.internet_web_browser16;
+          this.forumButton.Location = new System.Drawing.Point(347, 163);
+          this.forumButton.Name = "forumButton";
+          this.forumButton.Size = new System.Drawing.Size(26, 24);
+          this.forumButton.TabIndex = 32;
+          this.forumButton.UseVisualStyleBackColor = true;
+          this.forumButton.Click += new System.EventHandler(this.forumButton_Click);
+          // 
+          // updateButton
+          // 
+          this.updateButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+          this.updateButton.Image = global::MpeMaker.Properties.Resources.internet_web_browser16;
+          this.updateButton.Location = new System.Drawing.Point(347, 189);
+          this.updateButton.Name = "updateButton";
+          this.updateButton.Size = new System.Drawing.Size(26, 24);
+          this.updateButton.TabIndex = 33;
+          this.updateButton.UseVisualStyleBackColor = true;
+          this.updateButton.Click += new System.EventHandler(this.updateButton_Click);
+          // 
+          // onlineButton
+          // 
+          this.onlineButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+          this.onlineButton.Image = global::MpeMaker.Properties.Resources.internet_web_browser16;
+          this.onlineButton.Location = new System.Drawing.Point(347, 215);
+          this.onlineButton.Name = "onlineButton";
+          this.onlineButton.Size = new System.Drawing.Size(26, 24);
+          this.onlineButton.TabIndex = 34;
+          this.onlineButton.UseVisualStyleBackColor = true;
+          this.onlineButton.Click += new System.EventHandler(this.onlineButton_Click);
           // 
           // img_logo
           // 
@@ -423,42 +448,6 @@
           this.img_logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
           this.img_logo.TabIndex = 26;
           this.img_logo.TabStop = false;
-          // 
-          // forumButton
-          // 
-          this.forumButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.forumButton.ImageIndex = 0;
-          this.forumButton.ImageList = this.imageList;
-          this.forumButton.Location = new System.Drawing.Point(347, 163);
-          this.forumButton.Name = "forumButton";
-          this.forumButton.Size = new System.Drawing.Size(26, 23);
-          this.forumButton.TabIndex = 32;
-          this.forumButton.UseVisualStyleBackColor = true;
-          this.forumButton.Click += new System.EventHandler(this.forumButton_Click);
-          // 
-          // updateButton
-          // 
-          this.updateButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.updateButton.ImageIndex = 0;
-          this.updateButton.ImageList = this.imageList;
-          this.updateButton.Location = new System.Drawing.Point(347, 189);
-          this.updateButton.Name = "updateButton";
-          this.updateButton.Size = new System.Drawing.Size(26, 23);
-          this.updateButton.TabIndex = 33;
-          this.updateButton.UseVisualStyleBackColor = true;
-          this.updateButton.Click += new System.EventHandler(this.updateButton_Click);
-          // 
-          // onlineButton
-          // 
-          this.onlineButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-          this.onlineButton.ImageIndex = 0;
-          this.onlineButton.ImageList = this.imageList;
-          this.onlineButton.Location = new System.Drawing.Point(347, 215);
-          this.onlineButton.Name = "onlineButton";
-          this.onlineButton.Size = new System.Drawing.Size(26, 23);
-          this.onlineButton.TabIndex = 34;
-          this.onlineButton.UseVisualStyleBackColor = true;
-          this.onlineButton.Click += new System.EventHandler(this.onlineButton_Click);
           // 
           // GeneralSection
           // 
@@ -547,7 +536,6 @@
         private System.Windows.Forms.TextBox txt_tags;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Button homepageButton;
-        private System.Windows.Forms.ImageList imageList;
         private System.Windows.Forms.Button forumButton;
         private System.Windows.Forms.Button updateButton;
         private System.Windows.Forms.Button onlineButton;
