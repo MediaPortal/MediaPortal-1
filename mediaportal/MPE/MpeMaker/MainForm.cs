@@ -87,17 +87,21 @@ namespace MpeMaker
             Close();
             return;
           }
+
+          // build package
           Package.GeneralInfo.ReleaseDate = DateTime.Now;
           SaveProject(arguments.ProjectFile);
           MpeInstaller.ZipProvider.Save(Package, Package.ReplaceInfo(Package.GeneralInfo.Location));
+
+          // write updatexml
+          if (arguments.UpdateXML)
+            Package.WriteUpdateXml(Package.ProjectSettings.UpdatePath1);
+
+          // close form/app
           Close();
           return;
         }
       }
-
-      if (arguments.UpdateXML)
-        Package.WriteUpdateXml(Package.ProjectSettings.UpdatePath1);
-
     }
 
     private void Init()
