@@ -641,6 +641,11 @@ namespace MediaPortal.GUI.Library
         {
           return;
         }
+        if (string.IsNullOrEmpty(_textureFileNameTag))
+        {
+          return;
+        }
+
         if (_registeredForEvent == false)
         {
           GUIPropertyManager.OnPropertyChanged +=
@@ -667,6 +672,7 @@ namespace MediaPortal.GUI.Library
             _reCalculate = true;
           }
         }
+
         foreach (string file in textureFiles.Split(';'))
         {
           //get the filename of the texture
@@ -676,14 +682,6 @@ namespace MediaPortal.GUI.Library
             fileName = _cachedTextureFileName = GUIPropertyManager.Parse(file);
           }
           if (fileName.Length == 0)
-          {
-            continue;
-          }
-          if (_textureFileNameTag.Length == 0)
-          {
-            continue;
-          }
-          if (_textureFileNameTag == "")
           {
             continue;
           }
@@ -697,6 +695,7 @@ namespace MediaPortal.GUI.Library
                                                  out _packedTextureNo))
           {
             _reCalculate = true;
+            _packedTexture.Disposing += new EventHandler(OnPackedTexturesDisposedEvent);
             return;
           }
 
@@ -753,7 +752,7 @@ namespace MediaPortal.GUI.Library
                                                                          out _textureHeight); //,m_pPalette);
             if (_listTextures[i + iStartCopy] != null)
             {
-              _listTextures[i + iStartCopy].Disposed += new EventHandler(OnImageDisposedEvent);
+              _listTextures[i + iStartCopy].Disposed += new EventHandler(OnListTexturesDisposedEvent);
             }
             else
             {
@@ -787,7 +786,22 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    private void OnImageDisposedEvent(object sender, EventArgs e)
+    private void OnPackedTexturesDisposedEvent(object sender, EventArgs e)
+    {
+      if (_packedTexture == (Texture)sender)
+      {
+        _packedTexture.Disposing -= new EventHandler(OnPackedTexturesDisposedEvent);
+        _packedTexture = null;
+      }
+      if (_registeredForEvent)
+      {
+        GUIPropertyManager.OnPropertyChanged -=
+          new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+        _registeredForEvent = false;
+      }
+    }
+
+    private void OnListTexturesDisposedEvent(object sender, EventArgs e)
     {
       if (_listTextures == null)
       {
@@ -801,7 +815,7 @@ namespace MediaPortal.GUI.Library
       {
         if (_listTextures[i] == sender)
         {
-          _listTextures[i].Disposed -= new EventHandler(OnImageDisposedEvent);
+          _listTextures[i].Disposed -= new EventHandler(OnListTexturesDisposedEvent);
           _listTextures[i] = null;
         }
       }
@@ -877,10 +891,15 @@ namespace MediaPortal.GUI.Library
         {
           if (_listTextures[i] != null)
           {
-            _listTextures[i].Disposed -= new EventHandler(OnImageDisposedEvent);
+            _listTextures[i].Disposed -= new EventHandler(OnListTexturesDisposedEvent);
           }
         }
       }
+      if (_packedTexture != null)
+      {
+        _packedTexture.Disposing -= new EventHandler(OnPackedTexturesDisposedEvent);
+      }
+
       _listTextures = null;
       _currentFrameNumber = 0;
       _currentAnimationLoop = 0;
@@ -1264,18 +1283,6 @@ namespace MediaPortal.GUI.Library
       // to prevent it from being unloaded in another thread while we try to render
       lock (_lockingObject)
       {
-        if (_packedTextureNo >= 0 && _packedTexture != null)
-        {
-          if (_packedTexture.Disposed)
-          {
-            FreeResourcesAndRegEvent();
-            AllocResources();
-            _reCalculate = true;
-            base.Render(timePassed);
-            return;
-          }
-        }
-
         if (_containsProperty && _propertyChanged)
         {
           _propertyChanged = false;
@@ -1322,7 +1329,7 @@ namespace MediaPortal.GUI.Library
             GUIGraphicsContext.BypassUICalibration(true);
           }
           //get the current frame
-          if (_packedTextureNo >= 0)
+          if (_packedTexture != null)
           {
             uint color = (uint)_diffuseColor;
             if (Dimmed)
