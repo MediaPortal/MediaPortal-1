@@ -295,7 +295,6 @@ namespace MediaPortal.GUI.Library
             if (persistent && !_persistentTextures.ContainsKey(newCache.Name))
             {
               _persistentTextures.Add(newCache.Name, true);
-              _cache.Add(newCache);
             }
             _cache.Add(newCache);
             _textureCacheLookup[fileName] = newCache;
@@ -853,6 +852,10 @@ namespace MediaPortal.GUI.Library
       _packer = new TexturePacker();
       _packer.PackSkinGraphics(GUIGraphicsContext.Skin);
 
+      for (int i = 0; i < _cache.Count; ++i)
+      {
+        _cache[i].Dispose();
+      }
       _cache.Clear();
       _cacheDownload.Clear();
     }
