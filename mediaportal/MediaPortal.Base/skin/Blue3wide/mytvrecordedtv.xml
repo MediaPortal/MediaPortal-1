@@ -29,7 +29,7 @@
       <width>245</width>
       <height>138</height>
       <texture>#selectedthumb</texture>
-      <visible>facadeview.list+Control.HasFocus(50)</visible>
+      <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)</visible>
       <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
@@ -42,7 +42,7 @@
       <width>259</width>
       <height>148</height>
       <texture>Picture_cover.png</texture>
-      <visible>facadeview.list+Control.HasFocus(50)+Control.HasThumb(500)</visible>
+      <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)+Control.HasThumb(500)</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>      

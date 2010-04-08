@@ -8,11 +8,13 @@
     <control>
       <type>image</type>
       <description>BG</description>
-      <id>1</id>
+      <width>720</width>
+      <height>576</height>
+      <id>0</id>
     </control>
     <control>
       <type>image</type>
-      <id>1</id>
+      <id>0</id>
       <posX>60</posX>
       <posY>10</posY>
       <texture>television_logo.png</texture>
@@ -20,26 +22,38 @@
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
+      <id>500</id>
       <type>image</type>
-      <id>1</id>
+      <posX>44</posX>
+      <posY>264</posY>
+      <width>180</width>
+      <height>135</height>
+      <texture>#selectedthumb</texture>
+      <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)</visible>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>40</posX>
+      <posY>260</posY>
+      <width>192</width>
+      <height>146</height>
+      <texture>Picture_cover.png</texture>
+      <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)+Control.HasThumb(500)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>      
+    <control>
+      <type>image</type>
+      <id>0</id>
       <posX>77</posX>
       <posY>400</posY>
       <width>161</width>
       <height>158</height>
       <texture>-</texture>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-    </control>
-    <control>
-      <type>label</type>
-      <description>My Recorded TV Text Label</description>
-      <id>1</id>
-      <posX>250</posX>
-      <posY>68</posY>
-      <label>652</label>
-      <font>font16</font>
-      <align>right</align>
-      <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -57,7 +71,7 @@
     <control>
       <type>fadelabel</type>
       <description>Selected item Label</description>
-      <id>1</id>
+      <id>0</id>
       <posX>680</posX>
       <posY>68</posY>
       <width>350</width>
@@ -150,7 +164,6 @@
           <left>0</left>
         </padding>
       </mpe>
-      
       <control>
         <type>fadelabel</type>
         <description>Current program title</description>
@@ -184,16 +197,6 @@
         <label>#TV.RecordedTV.Description</label>
         <textcolor>ffb2d4f5</textcolor>
       </control>
-      <!--          <control>
-            <type>label</type>
-            <description>genre</description>
-            <id>17</id>
-            <posX>404</posX>
-            <posY>460</posY>
-            <label>#TV.RecordedTV.Genre</label>
-            <align>right</align>
-            <textcolor>ffb2d4f5</textcolor>
-         </control> -->
     </control>
     <import>common.facade.recordings.xml</import>
   </controls>
