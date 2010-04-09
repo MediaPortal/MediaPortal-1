@@ -317,6 +317,7 @@ namespace TvService
           if (isOnlyActiveUserCurrentUser)
           {
             //no need to do any further checks if user is the only one currently active.
+            UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
             continue;
           }
 
