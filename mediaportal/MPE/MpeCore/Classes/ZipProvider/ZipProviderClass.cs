@@ -83,14 +83,13 @@ namespace MpeCore.Classes.ZipProvider
     {
       try
       {
-        //if (File.Exists(item.TempFileLocation))
-        //    File.Copy(item.TempFileLocation, extractLocation, true);
         var fs = new FileStream(extractLocation, FileMode.Create);
         _zipPackageFile[item.ZipFileName].Extract(fs);
         fs.Close();
-        File.SetCreationTime(extractLocation, FileDate(item));
-        File.SetLastAccessTime(extractLocation, FileDate(item));
-        File.SetLastWriteTime(extractLocation, FileDate(item));
+        DateTime filedate = FileDate(item);
+        File.SetCreationTime(extractLocation, filedate);
+        File.SetLastAccessTime(extractLocation, filedate);
+        File.SetLastWriteTime(extractLocation, filedate);
         item.TempFileLocation = extractLocation;
       }
       catch (Exception)

@@ -41,6 +41,7 @@
           this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
           this.lbl_file = new System.Windows.Forms.Label();
           this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+          this.btn_test = new System.Windows.Forms.Button();
           this.tabControl1.SuspendLayout();
           this.tabPage1.SuspendLayout();
           this.tabPage2.SuspendLayout();
@@ -156,10 +157,22 @@
           this.lbl_file.TabIndex = 5;
           this.lbl_file.Text = "label2";
           // 
+          // btn_test
+          // 
+          this.btn_test.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+          this.btn_test.Location = new System.Drawing.Point(94, 238);
+          this.btn_test.Name = "btn_test";
+          this.btn_test.Size = new System.Drawing.Size(160, 23);
+          this.btn_test.TabIndex = 6;
+          this.btn_test.Text = "Generate && Test";
+          this.btn_test.UseVisualStyleBackColor = true;
+          this.btn_test.Click += new System.EventHandler(this.btn_test_Click);
+          // 
           // BuildSection
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+          this.Controls.Add(this.btn_test);
           this.Controls.Add(this.lbl_file);
           this.Controls.Add(this.btn_generate);
           this.Controls.Add(this.tabControl1);
@@ -190,5 +203,6 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.Label lbl_file;
         private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.Button btn_test;
     }
 }

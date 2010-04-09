@@ -58,6 +58,8 @@
           this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
           this.pictureBox3.TabIndex = 26;
           this.pictureBox3.TabStop = false;
+          this.pictureBox3.WaitOnLoad = true;
+          this.pictureBox3.Click += new System.EventHandler(this.pictureBox3_Click);
           // 
           // radioButton2
           // 
@@ -92,6 +94,8 @@
           this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
           this.pictureBox1.TabIndex = 23;
           this.pictureBox1.TabStop = false;
+          this.pictureBox1.WaitOnLoad = true;
+          this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
           // 
           // ImageRadioSelector
           // 
@@ -103,7 +107,6 @@
           this.Controls.Add(this.radioButton2);
           this.Controls.Add(this.radioButton1);
           this.Controls.Add(this.pictureBox1);
-          this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
           this.Name = "ImageRadioSelector";
           this.Text = "Extension Installer for   - 0.0.0.0";
           this.Controls.SetChildIndex(this.pictureBox1, 0);

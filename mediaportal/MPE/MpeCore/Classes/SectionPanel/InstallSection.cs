@@ -94,10 +94,18 @@ namespace MpeCore.Classes.SectionPanel
       }
       if (lst_changes.Items.Count > 1)
         lst_changes.SetSelected(lst_changes.Items.Count - 1, true);
+      RefreshControls();
+    }
+
+    void RefreshControls()
+    {
       lbl_curr_file.Refresh();
       lst_changes.Refresh();
       progressBar1.Refresh();
+      Update();
       Refresh();
+      Invalidate(true);
+      RefreshControls();
     }
 
     private void SetValues()
@@ -166,5 +174,10 @@ namespace MpeCore.Classes.SectionPanel
     }
 
     #endregion
+
+    private void timer2_Tick(object sender, EventArgs e)
+    {
+      RefreshControls();
+    }
   }
 }

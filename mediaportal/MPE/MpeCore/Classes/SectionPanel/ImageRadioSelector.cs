@@ -55,9 +55,9 @@ namespace MpeCore.Classes.SectionPanel
     private void SetValues()
     {
       if (File.Exists(Section.Params[CONST_IMAGE_1].Value))
-        pictureBox1.LoadAsync(Section.Params[CONST_IMAGE_1].Value);
+        pictureBox1.Load(Section.Params[CONST_IMAGE_1].Value);
       if (File.Exists(Section.Params[CONST_IMAGE_1].Value))
-        pictureBox3.LoadAsync(Section.Params[CONST_IMAGE_2].Value);
+        pictureBox3.Load(Section.Params[CONST_IMAGE_2].Value);
       label1.Text = Section.Params[CONST_TEXT].Value;
       if (Section.IncludedGroups.Count > 1)
       {
@@ -140,5 +140,15 @@ namespace MpeCore.Classes.SectionPanel
     }
 
     #endregion
+
+    private void pictureBox1_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void pictureBox3_Click(object sender, EventArgs e)
+    {
+
+    }
   }
 }

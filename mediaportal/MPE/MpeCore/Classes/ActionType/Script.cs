@@ -32,6 +32,7 @@ namespace MpeCore.Classes.ActionType
   internal class Script : IActionType
   {
     private const string Const_script = "Script";
+    private const string Const_Un_script = "Uninstall Script";
 
     public event FileInstalledEventHandler ItemProcessed;
 
@@ -68,6 +69,20 @@ namespace MpeCore.Classes.ActionType
                                                 "}\n"
                                   , ValueTypeEnum.Script,
                                   ""));
+      _param.Add(new SectionParam(Const_Un_script, "//css_reference \"MpeCore.dll\";\n" +
+                                          "\n" +
+                                          "using MpeCore.Classes;\n" +
+                                          "using MpeCore;\n" +
+                                          "\n" +
+                                          "public class Script\n" +
+                                          "{\n" +
+                                          "    public static void Main(PackageClass packageClass, UnInstallItem item)\n" +
+                                          "    {\n" +
+                                          "        return;\n" +
+                                          "    }\n" +
+                                          "}\n"
+                            , ValueTypeEnum.Script,
+                            ""));
       return _param;
     }
 
@@ -88,6 +103,14 @@ namespace MpeCore.Classes.ActionType
       }
       if (ItemProcessed != null)
         ItemProcessed(this, new InstallEventArgs("Script executed " + actionItem.Name));
+
+      UnInstallItem unInstallItem = new UnInstallItem();
+      unInstallItem.ActionType = DisplayName;
+      unInstallItem.ActionParam = new SectionParamCollection(actionItem.Params);
+      unInstallItem.ActionParam[Const_script].Value = ""; //actionItem.Params[Const_APP].GetValueAsPath();
+      unInstallItem.ActionParam[Const_Un_script].Value = actionItem.Params[Const_Un_script].Value;
+      packageClass.UnInstallInfo.Items.Add(unInstallItem);
+
       return SectionResponseEnum.Ok;
     }
 
@@ -104,7 +127,21 @@ namespace MpeCore.Classes.ActionType
 
     public SectionResponseEnum UnInstall(PackageClass packageClass, UnInstallItem item)
     {
+      Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+      try
+      {
+        AsmHelper script =
+          new AsmHelper(CSScript.LoadCode(item.ActionParam[Const_Un_script].Value,
+                                          Path.GetTempFileName(), true));
+        script.Invoke("Script.Main", packageClass, item);
+      }
+      catch (Exception ex)
+      {
+        if (!packageClass.Silent)
+          MessageBox.Show("Eror in script : " + ex.Message);
+      }
       return SectionResponseEnum.Ok;
     }
   }
+
 }

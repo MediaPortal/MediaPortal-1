@@ -33,7 +33,12 @@
           this.progressBar1 = new System.Windows.Forms.ProgressBar();
           this.lbl_curr_file = new System.Windows.Forms.Label();
           this.lst_changes = new System.Windows.Forms.ListBox();
+          this.timer2 = new System.Windows.Forms.Timer(this.components);
           this.SuspendLayout();
+          // 
+          // button_next
+          // 
+          this.button_next.Text = "Next>";
           // 
           // timer1
           // 
@@ -64,11 +69,16 @@
           this.lst_changes.Size = new System.Drawing.Size(475, 173);
           this.lst_changes.TabIndex = 25;
           // 
+          // timer2
+          // 
+          this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+          // 
           // InstallSection
           // 
           this.AcceptButton = this.button_next;
-          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+          this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+          this.AutoSize = true;
           this.ClientSize = new System.Drawing.Size(499, 354);
           this.Controls.Add(this.lst_changes);
           this.Controls.Add(this.lbl_curr_file);
@@ -91,5 +101,6 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label lbl_curr_file;
         private System.Windows.Forms.ListBox lst_changes;
+        private System.Windows.Forms.Timer timer2;
     }
 }

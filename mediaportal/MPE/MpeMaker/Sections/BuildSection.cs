@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using MpeCore;
@@ -68,6 +69,33 @@ namespace MpeMaker.Sections
 
     public void btn_generate_Click(object sender, EventArgs e)
     {
+      GenPak(false);
+    }
+
+    /// <summary>
+    /// Handles the TextChanged event of the txt_outfile control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+    private void txt_outfile_TextChanged(object sender, EventArgs e)
+    {
+      lbl_file.Text = Package.ReplaceInfo(txt_outfile.Text);
+      if (_loading) return;
+
+      Package.GeneralInfo.Location = txt_outfile.Text;
+
+      btn_generate.Enabled = !String.IsNullOrEmpty(txt_outfile.Text);
+      btn_test.Enabled = !String.IsNullOrEmpty(txt_outfile.Text);
+    }
+
+
+    private void btn_test_Click(object sender, EventArgs e)
+    {
+      GenPak(true);
+    }
+
+    private void GenPak(bool run)
+    {
       list_error.Items.Clear();
       list_message.Items.Clear();
       foreach (FolderGroup folderGroup in Package.ProjectSettings.FolderGroups)
@@ -95,23 +123,12 @@ namespace MpeMaker.Sections
       list_message.Items.Add("Creating package started at : " + DateTime.Now.ToLongTimeString());
       list_message.Refresh();
       Refresh();
-      MpeInstaller.ZipProvider.Save(Package, Package.ReplaceInfo(txt_outfile.Text));
+      string file = Package.ReplaceInfo(txt_outfile.Text);
+      MpeInstaller.ZipProvider.Save(Package, file);
       list_message.Items.Add("Ended at : " + DateTime.Now.ToLongTimeString());
-    }
-
-    /// <summary>
-    /// Handles the TextChanged event of the txt_outfile control.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-    private void txt_outfile_TextChanged(object sender, EventArgs e)
-    {
-      lbl_file.Text = Package.ReplaceInfo(txt_outfile.Text);
-      if (_loading) return;
-
-      Package.GeneralInfo.Location = txt_outfile.Text;
-
-      btn_generate.Enabled = !String.IsNullOrEmpty(txt_outfile.Text);
+      if (run && File.Exists(file))
+        Process.Start(file);
     }
   }
+
 }
