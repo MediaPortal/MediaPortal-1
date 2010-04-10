@@ -396,6 +396,11 @@ namespace TvPlugin
 
     protected override void OnPageDestroy(int newWindowId)
     {
+      /*g_Player.PlayBackStopped -= new g_Player.StoppedHandler(OnPlayRecordingBackStopped);
+      g_Player.PlayBackEnded -= new g_Player.EndedHandler(OnPlayRecordingBackEnded);
+      g_Player.PlayBackStarted -= new g_Player.StartedHandler(OnPlayRecordingBackStarted);
+      g_Player.PlayBackChanged -= new g_Player.ChangedHandler(OnPlayRecordingBackChanged);*/
+
       _iSelectedItem = GetSelectedItemNo();
       SaveSettings();
       base.OnPageDestroy(newWindowId);
@@ -612,7 +617,7 @@ namespace TvPlugin
       }
       if (!rec.Title.Equals("manual", StringComparison.CurrentCultureIgnoreCase))
       {
-        dlg.AddLocalizedString(1041); //Upcoming episodes      
+        dlg.AddLocalizedString(200072); //Upcoming episodes      
       }
       dlg.AddLocalizedString(1048); //Settings
 
@@ -639,7 +644,7 @@ namespace TvPlugin
           GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_RECORDED_INFO);
           break;
 
-        case 1041:
+        case 200072:
           ShowUpcomingEpisodes(rec);
           break;
 
