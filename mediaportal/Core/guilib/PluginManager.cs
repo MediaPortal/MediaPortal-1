@@ -470,7 +470,8 @@ namespace MediaPortal.GUI.Library
     public static bool WndProc(ref Message msg)
     {
       bool res = false;
-      foreach (IPlugin plugin in _nonGuiPlugins)
+      // some ISetupForm plugins like tvplugin need the wndproc method to determine when system has been resumed.      
+      foreach (ISetupForm plugin in _setupForms)
       {
         if (plugin is IPluginReceiver)
         {
@@ -482,23 +483,6 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-      if (!res)
-      {
-        // some ISetupForm plugins like tvplugin need the wndproc method to determine when system has been resumed.      
-        foreach (ISetupForm plugin in _setupForms)
-        {
-          if (plugin is IPluginReceiver)
-          {
-            IPluginReceiver pluginRev = plugin as IPluginReceiver;
-            res = pluginRev.WndProc(ref msg);
-            if (res)
-            {
-              break;
-            }
-          }
-        }
-      }
-
       return res;
     }
   }
