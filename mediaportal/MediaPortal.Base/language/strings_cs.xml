@@ -1688,5 +1688,6 @@
     <String id="200068">Nelze se připojit k databázi</String>
     <String id="200069">All ip ports seem to be fine</String>
     <String id="200070">Prosím prověřte nastavení firewallu</String>
+    <String id="200072">Blížící se epizody</String>
   </Section>
 </Language>

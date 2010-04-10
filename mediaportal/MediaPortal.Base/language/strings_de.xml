@@ -1910,5 +1910,6 @@
     <String id="200069">Alle nötigen TCP/IP Ports verfügbar</String>
     <String id="200070">Bitte die Firewall überprüfen</String>
     <String id="200071">Diesen Ordner inkl. Unterordner löschen?</String>
+    <String id="200072">Folgen / Wiederholungen dieser Sendung</String>
   </Section>
 </Language>

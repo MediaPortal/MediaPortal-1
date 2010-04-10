@@ -893,7 +893,7 @@
     <String id="1038">Optagelses-metode</String>
     <String id="1039">Optag ikke</String>
     <String id="1040">Advar mig</String>
-    <String id="1041">Kommende afsnit aktive:{0}</String>
+    <String id="1041">Kommende afsnit (aktive:{0})</String>
     <String id="1042">Gem indtil</String>
     <String id="1043">Indtil set</String>
     <String id="1044">Indtil der er brug for plads</String>
@@ -1898,5 +1898,6 @@
     <String id="200069">Alle IP porte forbinder ok</String>
     <String id="200070">Check firewall</String>
     <String id="200071">Slet denne mappe og alle underliggende mapper?</String>
+    <String id="200072">Kommende afsnit</String>
   </Section>
 </Language>
