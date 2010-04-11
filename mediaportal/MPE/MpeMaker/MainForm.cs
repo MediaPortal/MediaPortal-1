@@ -70,19 +70,22 @@ namespace MpeMaker
 
       if (arguments.Build)
       {
+        Console.WriteLine("MpeMaker version: {0}", Application.ProductVersion);
+        Console.WriteLine("Build started at {0}", DateTime.Now.ToLongTimeString());
+        Console.WriteLine("Building \"{0}\"", arguments.ProjectFile);
         if (string.IsNullOrEmpty(Package.GeneralInfo.Location))
         {
-          Console.WriteLine("[MpeMaker] No out file is specified");
+          Console.WriteLine("Error: No output file specified");
         }
         else
         {
           List<string> list = Package.ValidatePackage();
           if (list.Count > 0)
           {
-            Console.WriteLine("[MpeMaker] Error in package");
+            Console.WriteLine("Error(s) in package");
             foreach (string s in list)
             {
-              Console.WriteLine("[MpeMaker] " + s);
+              Console.WriteLine("Error: " + s);
             }
             Close();
             return;
@@ -92,15 +95,20 @@ namespace MpeMaker
           Package.GeneralInfo.ReleaseDate = DateTime.Now;
           SaveProject(arguments.ProjectFile);
           MpeInstaller.ZipProvider.Save(Package, Package.ReplaceInfo(Package.GeneralInfo.Location));
+          Console.WriteLine("Output: \"{0}\"", Package.ReplaceInfo(Package.GeneralInfo.Location));
 
           // write updatexml
           if (arguments.UpdateXML)
+          {
+            Console.WriteLine("Writing UpdateXML to \"{0}\"", Package.ProjectSettings.UpdatePath1);
             Package.WriteUpdateXml(Package.ProjectSettings.UpdatePath1);
+          }
 
-          // close form/app
-          Close();
-          return;
         }
+
+        // close form/app
+        Close();
+        return;
       }
     }
 
