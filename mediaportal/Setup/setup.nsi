@@ -531,7 +531,6 @@ Section "MediaPortal core files (required)" SecCore
 
 SectionEnd
 !macro Remove_${SecCore}
-  ${LOG_TEXT} "DEBUG" "MACRO Remove_${SecCore}"
   ${LOG_TEXT} "INFO" "Uninstalling MediaPortal core files..."
   
   !insertmacro ShutdownRunningMediaPortalApplications
@@ -638,7 +637,6 @@ SectionEnd
 
 !ifndef HEISE_BUILD
 Section "-MPC-HC audio/video decoders" SecGabest
-  ${LOG_TEXT} "DEBUG" "MementoSection SecGabest"
   ${LOG_TEXT} "INFO" "Installing MPC-HC audio/video decoders..."
 
   SetOutPath "$MPdir.Base"
@@ -656,7 +654,6 @@ Section "-MPC-HC audio/video decoders" SecGabest
   nsExec::ExecToLog '"$MPdir.Base\SetMerit.exe" {39F498AF-1A09-4275-B193-673B0BA3D478} 00600000'
 SectionEnd
 !macro Remove_${SecGabest}
-  ${LOG_TEXT} "DEBUG" "MACRO Remove_${SecGabest}"
   ${LOG_TEXT} "INFO" "Uninstalling MPC-HC audio/video decoders..."
 
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MpaDecFilter.ax"
@@ -766,7 +763,6 @@ ${MementoSectionDone}
 #---------------------------------------------------------------------------
 # This Section is executed after the Main secxtion has finished and writes Uninstall information into the registry
 Section -Post
-  ${LOG_TEXT} "DEBUG" "SECTION Post"
   ${LOG_TEXT} "INFO" "Doing post installation stuff..."
 
   ; Removes unselected components
