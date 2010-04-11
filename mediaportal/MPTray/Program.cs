@@ -88,7 +88,7 @@ namespace MPTray
           Log.Write("MPTray: More than one window named \"MediaPortal\" has been found!");
           foreach (Process procName in processes)
           {
-            Log.Write("MPTray:   {0} (Started: {1}, ID: {2})", procName.ProcessName, procName.StartTime.ToShortTimeString(), procName.Id);
+            Log.Write("MPTray: {0} (Started: {1}, ID: {2})", procName.ProcessName, procName.StartTime.ToShortTimeString(), procName.Id);
           }
         }
         Log.Write("MPTray: MediaPortal is already running - switching focus.");
@@ -110,22 +110,8 @@ namespace MPTray
                                   }
                               };
 
+          Log.Write("MPTray: starting MediaPortal");
           process.Start();
-          process.WaitForInputIdle();
-
-          using (EventWaitHandle handle = new EventWaitHandle(false, EventResetMode.ManualReset, "MediaPortalHandleCreated"))
-          {
-            if (handle.SafeWaitHandle.IsInvalid)
-            {
-              Log.Write("MPTray: MediaPortalHandleCreated is invalid !");
-              return;
-            }
-
-            handle.Set();
-            handle.Close();
-
-            SwitchFocus();
-          }
         }
         catch (Exception ex)
         {
