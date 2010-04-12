@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{9BEC8F0F-72E8-4FD5-8C17-11E6098CFFA6}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -326,12 +326,12 @@
     <None Include="Database Files\Gentle_MSAccess.mdb" />
     <None Include="Database Files\Gentle_SQLite2.db" />
     <None Include="Database Files\Gentle_SQLite3.db" />
+    <None Include="PostBuild.bat" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>$(ProjectDir)Postbuild.bat $(ConfigurationName) $(ProjectDir)$(OutDir) $(SolutionDir)..\..\..\..\TvEngine3\TVLibrary\TVDatabase\references</PostBuildEvent>
   </PropertyGroup>
 </Project>

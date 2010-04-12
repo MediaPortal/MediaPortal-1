@@ -32,6 +32,16 @@ namespace Gentle.Framework
 		private string defaultConnectionString; // initialize to avoid compiler warning
 
 		/// <summary>
+		/// Set the default provider. Call this method during application startup 
+		/// to override the default provider defined in the Gentle config file.
+		/// </summary>
+		/// <param name="providerName">The default provider name</param>
+		public void SetDefaultProvider(string providerName)
+		{
+			defaultProviderName = providerName;
+		}
+    
+		/// <summary>
 		/// Set the connection string used by the default provider. Call this method
 		/// during application startup to override the connection string defined in
 		/// the Gentle config file.

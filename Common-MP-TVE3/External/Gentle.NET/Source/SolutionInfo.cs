@@ -17,10 +17,13 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "" )]
-[assembly: AssemblyProduct( "Gentle.NET" )]
+[assembly: AssemblyProduct( "Gentle.NET (MediaPortal patched build)" )]
 [assembly: AssemblyCopyright( "Morten Mertner" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
-[assembly: AssemblyVersion( "1.5.0.*" )]
+[assembly: AssemblyVersion( "1.5.0.29111" )]
 [assembly: CLSCompliant( true )]
 [assembly: ComVisible( false )]
+
+// NOTE: Do not forget to increase revision number in AssemblyVersion
+//       before you build a new version 

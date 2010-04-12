@@ -1024,8 +1024,8 @@ namespace TvPlugin
       // lets wait 10 secs before giving up.
       bool success = false;
 
-      int count = 0;
-      while (!success && count <= 100) //10sec max
+      Stopwatch timer = Stopwatch.StartNew();
+      while (!success && timer.ElapsedMilliseconds < 10000) //10sec max
       {
         try
         {
@@ -1034,9 +1034,8 @@ namespace TvPlugin
         }
         catch (Exception)
         {
-          count++;
           success = false;
-          Log.Debug("TVHome: waiting for gentle.net DB connection {0} msec", (100 * count));
+          Log.Debug("TVHome: waiting for gentle.net DB connection {0} msec", timer.ElapsedMilliseconds);
           Thread.Sleep(100);
         }
       }

@@ -132,6 +132,7 @@ namespace TvPlugin
 
       Log.Info("ChannelNavigator::Reload()");
       ProviderFactory.ResetGentle(true);
+      ProviderFactory.SetDefaultProvider(provider);
       ProviderFactory.SetDefaultProviderConnectionString(connectionString);
     }
 

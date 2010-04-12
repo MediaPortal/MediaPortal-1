@@ -136,6 +136,17 @@ namespace Gentle.Framework
 		}
 
 		/// <summary>
+		/// Update or set the default provider to use. Unless you are calling this method prior to 
+		/// using Gentle the first time, you should call the ResetGentle method to clear all cached data.
+		/// </summary>
+		/// <param name="providerName">The default provider to use.</param>
+		public static void SetDefaultProvider(string providerName)
+		{
+			GentleSettings.DefaultProviderName = providerName;
+			registry.SetDefaultProvider(providerName);
+		}
+
+		/// <summary>
 		/// Update or set the connection string to be used with the default provider. Unless
 		/// you are calling this method prior to using Gentle the first time, you should call 
 		/// the ResetGentle method to clear all cached data.
