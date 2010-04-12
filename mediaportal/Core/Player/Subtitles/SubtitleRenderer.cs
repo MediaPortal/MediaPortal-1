@@ -689,37 +689,37 @@ namespace MediaPortal.Player.Subtitles
 
       lock (_subtitleLock)
       {
-      // ugly temp!
-      bool timeForNext = false;
+        // ugly temp!
+        bool timeForNext = false;
         if (_subtitles.Count > 0)
-      {
+        {
           Subtitle next = _subtitles.First.Value;
           if (next.presentTime <= _player.StreamPosition)
-        {
+          {
             timeForNext = true;
           }
         }
-
+        
         _posOnLastRender = _player.StreamPosition;
 
-      // Check for subtitle if we dont have one currently or if the current one is beyond its timeout
+        // Check for subtitle if we dont have one currently or if the current one is beyond its timeout
         if (_currentSubtitle == null || _currentSubtitle.presentTime + _currentSubtitle.timeOut <= _player.StreamPosition ||
-          timeForNext)
-      {
-        //Log.Debug("-Current position: ");
+            timeForNext)
+        {
+          //Log.Debug("-Current position: ");
           if (_currentSubtitle != null && !timeForNext)
-        {
-          //Log.Debug("-Current subtitle : " + currentSubtitle.ToString() + " time out expired");
+          {
+            //Log.Debug("-Current subtitle : " + currentSubtitle.ToString() + " time out expired");
             _currentSubtitle = null;
-        }
-        if (timeForNext)
-        {
-          //if (currentSubtitle != null) Log.Debug("-Current subtitle : " + currentSubtitle.ToString() + " TIME FOR NEXT!");
-        }
+          }
+          if (timeForNext)
+          {
+            //if (currentSubtitle != null) Log.Debug("-Current subtitle : " + currentSubtitle.ToString() + " TIME FOR NEXT!");
+          }
 
-        Subtitle next = null;
+          Subtitle next = null;
           while (_subtitles.Count > 0)
-        {
+          {
             next = _subtitles.First.Value;
 
             //Log.Debug("-next from queue: " + next.ToString());
@@ -737,100 +737,100 @@ namespace MediaPortal.Player.Subtitles
                 break;
               }
             }
-              // next wants to be displayed in the future so break
+            // next wants to be displayed in the future so break
             else
             {
               //Log.Debug("-next is in the future");
               break;
             }
           }
-        // if currentSubtitle is non-null we have a new subtitle
+          // if currentSubtitle is non-null we have a new subtitle
           if (_currentSubtitle != null)
-        {
+          {
             SetSubtitle(_currentSubtitle);
+          }
+          else
+          {
+            return;
+          }
         }
-        else
+        bool alphaTest = false;
+        bool alphaBlend = false;
+        VertexFormats vertexFormat = CustomVertex.TransformedColoredTextured.Format;
+
+        try
         {
-          return;
-        }
-      }
-      bool alphaTest = false;
-      bool alphaBlend = false;
-      VertexFormats vertexFormat = CustomVertex.TransformedColoredTextured.Format;
+          // store current settings so they can be restored when we are done
+          alphaTest = GUIGraphicsContext.DX9Device.GetRenderStateBoolean(RenderStates.AlphaTestEnable);
+          alphaBlend = GUIGraphicsContext.DX9Device.GetRenderStateBoolean(RenderStates.AlphaBlendEnable);
+          vertexFormat = GUIGraphicsContext.DX9Device.VertexFormat;
 
-      try
-      {
-        // store current settings so they can be restored when we are done
-        alphaTest = GUIGraphicsContext.DX9Device.GetRenderStateBoolean(RenderStates.AlphaTestEnable);
-        alphaBlend = GUIGraphicsContext.DX9Device.GetRenderStateBoolean(RenderStates.AlphaBlendEnable);
-        vertexFormat = GUIGraphicsContext.DX9Device.VertexFormat;
+          int wx = 0, wy = 0, wwidth = 0, wheight = 0;
+          float rationW = 1, rationH = 1;
 
-        int wx = 0, wy = 0, wwidth = 0, wheight = 0;
-        float rationW = 1, rationH = 1;
-
-        if (GUIGraphicsContext.IsFullScreenVideo)
-        {
+          if (GUIGraphicsContext.IsFullScreenVideo)
+          {
             rationH = GUIGraphicsContext.Height / (float)_currentSubtitle.screenHeight;
-          rationW = rationH;
+            rationW = rationH;
 
-          // Get the location to render the subtitle to
-          wx = GUIGraphicsContext.OverScanLeft +
-                 (int)(((float)(GUIGraphicsContext.Width - _currentSubtitle.width * rationW)) / 2);
+            // Get the location to render the subtitle to
+            wx = GUIGraphicsContext.OverScanLeft +
+                   (int)(((float)(GUIGraphicsContext.Width - _currentSubtitle.width * rationW)) / 2);
             wy = GUIGraphicsContext.OverScanTop + (int)(rationH * (float)_currentSubtitle.firstScanLine);
-        }
-        else // Video overlay
-        {
+          }
+          else // Video overlay
+          {
             rationH = GUIGraphicsContext.VideoWindow.Height / (float)_currentSubtitle.screenHeight;
-          rationW = rationH;
+            rationW = rationH;
 
-          wx = GUIGraphicsContext.VideoWindow.Right - (GUIGraphicsContext.VideoWindow.Width / 2) -
-                 (int)(((float)_currentSubtitle.width * rationW) / 2);
+            wx = GUIGraphicsContext.VideoWindow.Right - (GUIGraphicsContext.VideoWindow.Width / 2) -
+                   (int)(((float)_currentSubtitle.width * rationW) / 2);
             wy = GUIGraphicsContext.VideoWindow.Top + (int)(rationH * (float)_currentSubtitle.firstScanLine);
+          }
+
+            wwidth = (int)((float)_currentSubtitle.width * rationW);
+            wheight = (int)((float)_currentSubtitle.height * rationH);
+
+          // make sure the vertex buffer is ready and correct for the coordinates
+          CreateVertexBuffer(wx, wy, wwidth, wheight);
+
+          // Log.Debug("Subtitle render target: wx = {0} wy = {1} ww = {2} wh = {3}", wx, wy, wwidth, wheight);
+
+          // enable alpha testing so that the subtitle is rendered with transparent background
+          GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, true);
+          GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaTestEnable, false);
+
+          // Make sure D3D objects haven't been disposed for some reason. This would  cause
+          // an access violation on native side, causing Skin Engine to halt rendering
+          if (!_subTexture.Disposed && !_vertexBuffer.Disposed)
+          {
+            GUIGraphicsContext.DX9Device.SetStreamSource(0, _vertexBuffer, 0);
+            GUIGraphicsContext.DX9Device.SetTexture(0, _subTexture);
+            GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedTextured.Format;
+            GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+          }
+          else
+          {
+            Log.Debug("Subtitle renderer: D3D resource was disposed! Not trying to render the texture");
+          }       
+        }
+        catch (Exception e)
+        {
+          Log.Error(e);
         }
 
-          wwidth = (int)((float)_currentSubtitle.width * rationW);
-          wheight = (int)((float)_currentSubtitle.height * rationH);
-
-        // make sure the vertex buffer is ready and correct for the coordinates
-        CreateVertexBuffer(wx, wy, wwidth, wheight);
-
-        // Log.Debug("Subtitle render target: wx = {0} wy = {1} ww = {2} wh = {3}", wx, wy, wwidth, wheight);
-
-        // enable alpha testing so that the subtitle is rendered with transparent background
-        GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, true);
-        GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaTestEnable, false);
-
-        // Make sure D3D objects haven't been disposed for some reason. This would  cause
-        // an access violation on native side, causing Skin Engine to halt rendering
-        if (!_subTexture.Disposed && !_vertexBuffer.Disposed)
+        try
         {
-          GUIGraphicsContext.DX9Device.SetStreamSource(0, _vertexBuffer, 0);
-          GUIGraphicsContext.DX9Device.SetTexture(0, _subTexture);
-          GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedTextured.Format;
-          GUIGraphicsContext.DX9Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+          // Restore device settings
+          GUIGraphicsContext.DX9Device.SetTexture(0, null);
+          GUIGraphicsContext.DX9Device.VertexFormat = vertexFormat;
+          GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, alphaBlend);
+          GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaTestEnable, alphaTest);
         }
-        else
+        catch (Exception e)
         {
-          Log.Debug("Subtitle renderer: D3D resource was disposed! Not trying to render the texture");
-        }       
-      }
-      catch (Exception e)
-      {
-        Log.Error(e);
-      }
-
-      try
-      {
-        // Restore device settings
-        GUIGraphicsContext.DX9Device.SetTexture(0, null);
-        GUIGraphicsContext.DX9Device.VertexFormat = vertexFormat;
-        GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, alphaBlend);
-        GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaTestEnable, alphaTest);
-      }
-      catch (Exception e)
-      {
-        Log.Error(e);
-      }
+          Log.Error(e);
+        }
       } // end of lock (subtitle)
     }
 
@@ -901,7 +901,7 @@ namespace MediaPortal.Player.Subtitles
 
       lock (_subtitleLock)
       {
-      // swap
+        // swap
         if (_subTexture != null)
         {
           _subTexture.SafeDispose();
