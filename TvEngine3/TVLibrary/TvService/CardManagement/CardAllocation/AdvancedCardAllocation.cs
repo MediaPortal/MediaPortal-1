@@ -128,6 +128,10 @@ namespace TvService
 
               checkTransponder = (user.IsAdmin || canDecrypt); 
             }            
+            else
+            {
+              canDecrypt = true;
+            }
           }
           else //fta
           {
