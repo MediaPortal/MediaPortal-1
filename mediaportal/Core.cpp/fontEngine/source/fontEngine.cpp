@@ -51,6 +51,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 #define MaxNumfontVertices		8000
 #define MAX_FONTS				      20
 #define MaxNumTextureVertices	3000
+#define MAX_TEXT_LINES        200
 
 // A structure for our custom vertex type
 struct CUSTOMVERTEX
@@ -1035,13 +1036,17 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
   float maxX = viewport.X + viewport.Width;
   float maxY = viewport.Y + viewport.Height;
 
-  float lineWidths[90];
+  float lineWidths[MAX_TEXT_LINES];
   int lineNr=0;
   for (int i=0; i < (int)wcslen(text);++i)
   {
     WCHAR c=text[i];
     if (c == '\n')
     {
+      // don't overflow the array
+      if (lineNr >= MAX_TEXT_LINES-1)
+        continue;
+
       lineWidths[lineNr]=totalWidth;
       totalWidth=0;
       xpos = fStartX;
@@ -1128,16 +1133,18 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
 
       int alpha1=intColor;
       int alpha2=intColor;
-      if (lineWidths[lineNr]>=maxWidth && totalWidth+50>=maxWidth && maxWidth > 0 && maxWidth < 2000)
+      if ((lineNr >= MAX_TEXT_LINES || lineWidths[lineNr] >= maxWidth) && totalWidth+50 >= maxWidth && maxWidth > 0 && maxWidth < 2000)
       {
         int maxAlpha=intColor>>24;
         float diff=(float)(maxWidth-totalWidth);
         diff/=50.0f;
+        if (diff>1) diff = 1;
         alpha1=(int)(maxAlpha * diff);
 
         diff=(float)(maxWidth-totalWidth);
         diff+=(w - fSpacing);
         diff/=50.0f;
+        if (diff>1) diff = 1;
         alpha2=(int)(maxAlpha * diff);
 
         if (alpha1<0) alpha1=0;
@@ -1151,10 +1158,10 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
         alpha2|= (intColor & 0xffffff);
       }
       int vertices=font->iv;
-      UpdateVertex(matrix,font, &font->vertices[font->iv++], xpos1, ypos1, tx1, ty1, alpha1);
-      UpdateVertex(matrix,font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, alpha1);
-      UpdateVertex(matrix,font, &font->vertices[font->iv++], xpos2, ypos2, tx2, ty2, alpha2);
-      UpdateVertex(matrix,font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, alpha2);
+      UpdateVertex(matrix,font, &font->vertices[font->iv++], xpos1, ypos1, tx1, ty1, alpha2);
+      UpdateVertex(matrix,font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, alpha2);
+      UpdateVertex(matrix,font, &font->vertices[font->iv++], xpos2, ypos2, tx2, ty2, alpha1);
+      UpdateVertex(matrix,font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, alpha1);
       //UpdateVertex(font, &font->vertices[font->iv++], xpos1, ypos2, tx1, ty2, alpha2);
       //UpdateVertex(font, &font->vertices[font->iv++], xpos2, ypos1, tx2, ty1, alpha1);
 
