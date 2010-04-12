@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DShowNET.Helper;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.Visualization
 {
@@ -319,7 +320,7 @@ namespace MediaPortal.Visualization
     {
       if (WMPPlugin != null)
       {
-        WMPPlugin.Dispose();
+        WMPPlugin.SafeDispose();
         WMPPlugin = null;
       }
     }

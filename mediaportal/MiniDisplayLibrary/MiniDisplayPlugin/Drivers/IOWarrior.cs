@@ -37,7 +37,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class IOWarrior : BaseDisplay, IDisplay, IDisposable
+  public class IOWarrior : BaseDisplay, IDisplay
   {
     private string _errorMessage = "";
     private int _Gcols;

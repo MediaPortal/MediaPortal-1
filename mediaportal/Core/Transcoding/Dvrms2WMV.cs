@@ -26,6 +26,7 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.SBE;
 using DShowNET.Helper;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Configuration;
@@ -310,7 +311,7 @@ namespace MediaPortal.Core.Transcoding
       DirectShowUtil.RemoveFilters(graphBuilder);
       if (_rotEntry != null)
       {
-        _rotEntry.Dispose();
+        _rotEntry.SafeDispose();
       }
       _rotEntry = null;
       if (graphBuilder != null)

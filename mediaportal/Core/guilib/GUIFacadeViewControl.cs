@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -342,29 +343,30 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Free all resources of the controls
     /// </summary>
-    public override void FreeResources()
+    public override void Dispose()
     {
+      base.Dispose();
       if (AlbumListView != null)
       {
-        AlbumListView.FreeResources();
+        AlbumListView.SafeDispose();
       }
       if (_viewList != null)
       {
-        _viewList.FreeResources();
+        _viewList.SafeDispose();
       }
       if (_viewThumbnail != null)
       {
-        _viewThumbnail.FreeResources();
+        _viewThumbnail.SafeDispose();
       }
       if (_viewFilmStrip != null)
       {
-        _viewFilmStrip.FreeResources();
+        _viewFilmStrip.SafeDispose();
       }
       if (_viewPlayList != null)
       {
-        _viewPlayList.FreeResources();
+        _viewPlayList.SafeDispose();
       }
-      _itemList.Clear();
+      _itemList.DisposeAndClear();
     }
 
     public override bool HitTest(int x, int y, out int controlID, out bool focused)
@@ -407,7 +409,7 @@ namespace MediaPortal.GUI.Library
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_RESET)
         {
           RouteMessage(message);
-          _itemList.Clear();
+          _itemList.DisposeAndClear();
           return true;
         }
         if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECT)
@@ -1032,7 +1034,7 @@ namespace MediaPortal.GUI.Library
       {
         _viewPlayList.Clear();
       }
-      _itemList.Clear();
+      _itemList.DisposeAndClear();
     }
 
     public int SelectedListItemIndex

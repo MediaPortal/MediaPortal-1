@@ -24,6 +24,7 @@ using System.Windows;
 using System.Windows.Serialization;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -106,7 +107,7 @@ namespace MediaPortal.GUI.Library
       base.Render(timePassed);
     }
 
-    public override void FreeResources()
+    public override void Dispose()
     {
       if (_animator != null)
       {
@@ -114,11 +115,9 @@ namespace MediaPortal.GUI.Library
         _animator = null;
       }
 
-      foreach (GUIControl control in Children)
-      {
-        control.FreeResources();
-      }
-      base.FreeResources();
+      Children.SafeDispose();
+      
+      base.Dispose();
     }
 
     public override void AllocResources()

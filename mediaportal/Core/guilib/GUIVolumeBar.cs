@@ -20,6 +20,7 @@
 
 using System;
 using System.Drawing;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -125,10 +126,10 @@ namespace MediaPortal.GUI.Library
       _imageVolumeBar.AllocResources();
     }
 
-    public override void FreeResources()
+    public override void Dispose()
     {
-      base.FreeResources();
-      _imageVolumeBar.FreeResources();
+      base.Dispose();
+      _imageVolumeBar.SafeDispose();
     }
 
     public int Image1

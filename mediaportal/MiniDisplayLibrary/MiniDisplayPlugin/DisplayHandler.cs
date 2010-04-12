@@ -28,7 +28,7 @@ using Image = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Image;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
-  public class DisplayHandler
+  public class DisplayHandler : IDisposable
   {
     private readonly int charsToScroll;
     private readonly IDisplay display;

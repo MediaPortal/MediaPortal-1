@@ -27,6 +27,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -232,6 +233,9 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -314,6 +318,11 @@
     <Compile Include="DShowNET\MediaSubTypeEx.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ExtensionMethods\ArrayExtMethods.cs" />
+    <Compile Include="ExtensionMethods\DisposeHelper.cs" />
+    <Compile Include="ExtensionMethods\ListExtMethods.cs" />
+    <Compile Include="ExtensionMethods\DictionaryExtMethods.cs" />
+    <Compile Include="ExtensionMethods\ObjectMethods.cs" />
     <Compile Include="guilib\GUIInternalOverlayWindow.cs" />
     <Compile Include="guilib\GUIInternalWindow.cs" />
     <Compile Include="guilib\GUISpinButton.cs" />

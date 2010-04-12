@@ -24,6 +24,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.IO;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.TagReader
@@ -623,7 +624,7 @@ namespace MediaPortal.TagReader
       finally
       {
         if (img != null)
-          img.Dispose();
+          img.SafeDispose();
       }
     }
 

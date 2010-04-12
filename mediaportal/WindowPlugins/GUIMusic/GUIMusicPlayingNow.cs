@@ -636,7 +636,7 @@ namespace MediaPortal.GUI.Music
 
       if (ImgCoverArt != null)
       {
-        ImgCoverArt.FreeResources();
+        ImgCoverArt.Dispose();
       }
 
       GC.Collect();
@@ -1338,7 +1338,7 @@ namespace MediaPortal.GUI.Music
             ImgCoverArt.SetFileName(ImagePathContainer[0]);
           }
         }
-        //ImgCoverArt.FreeResources();
+        //ImgCoverArt.Dispose();
         //ImgCoverArt.AllocResources();
       }
     }

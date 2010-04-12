@@ -36,7 +36,7 @@ using MediaPortal.InputDevices;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class VLSYS_Mplay : BaseDisplay, IDisplay, IDisposable
+  public class VLSYS_Mplay : BaseDisplay, IDisplay
   {
     #region variables
 

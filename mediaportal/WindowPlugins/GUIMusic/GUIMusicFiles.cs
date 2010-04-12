@@ -393,7 +393,7 @@ namespace MediaPortal.GUI.Music
         if (!_showSortButton)
         {
           btnSortBy.Visible = false;
-          btnSortBy.FreeResources();
+          btnSortBy.Dispose();
         }
       }
     }

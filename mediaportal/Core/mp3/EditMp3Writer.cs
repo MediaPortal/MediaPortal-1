@@ -48,6 +48,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.UserInterface.Controls;
 using Yeti.Lame;
 
@@ -56,7 +57,7 @@ namespace Yeti.MMedia.Mp3
   /// <summary>
   /// Summary description for EditMp3Writer.
   /// </summary>
-  public class EditMp3Writer : UserControl, IEditAudioWriterConfig
+  public class EditMp3Writer : UserControl, IEditAudioWriterConfig, IDisposable
   {
     private MPTabControl tabControl1;
     private MPTabPage tabPage1;
@@ -107,7 +108,7 @@ namespace Yeti.MMedia.Mp3
       {
         if (components != null)
         {
-          components.Dispose();
+          components.SafeDispose();
         }
       }
       base.Dispose(disposing);

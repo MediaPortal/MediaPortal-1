@@ -25,6 +25,7 @@ using System.Text.RegularExpressions;
 using System.IO;
 using System.Net;
 using MediaPortal.GUI.Library;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.Util
 {
@@ -55,7 +56,7 @@ namespace MediaPortal.Util
     {
       if (searchtag == null) return;
       if (searchtag == string.Empty) return;
-      imageList.Clear();
+      imageList.DisposeAndClearList();
       searchtag = searchtag.Replace(" ", "+");
       string result = string.Empty;
 
@@ -75,7 +76,7 @@ namespace MediaPortal.Util
       }
       finally
       {
-        wc.Dispose();
+        wc.SafeDispose();
       }
 
       Match m = Regex.Match(result, @"http://www.impawards.com/(?<year>\d{4})/.*?.html");
@@ -95,7 +96,7 @@ namespace MediaPortal.Util
         }
         finally
         {
-          wc.Dispose();
+          wc.SafeDispose();
         }
 
         //get main poster displayed on html-page

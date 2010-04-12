@@ -171,6 +171,7 @@ namespace MediaPortal.Ripper
       UnLockCD();
       if (NotWnd != null)
       {
+        NotWnd.DeviceChange -= new DeviceChangeEventHandler(NotWnd_DeviceChange);
         NotWnd.DestroyHandle();
         NotWnd = null;
       }

@@ -23,6 +23,7 @@ using System.Collections;
 using System.IO;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
@@ -86,7 +87,7 @@ namespace MediaPortal.Ripper
 
     ~AutoPlay()
     {
-      _deviceMonitor.Dispose();
+      _deviceMonitor.SafeDispose();
       _deviceMonitor = null;
     }
 
@@ -138,7 +139,7 @@ namespace MediaPortal.Ripper
         _deviceMonitor.Enabled = false;
         _deviceMonitor.OnVolumeInserted -= new DeviceVolumeAction(VolumeInserted);
         _deviceMonitor.OnVolumeRemoved -= new DeviceVolumeAction(VolumeRemoved);
-        _deviceMonitor.Dispose();
+        _deviceMonitor.SafeDispose();
       }
       _deviceMonitor = null;
     }

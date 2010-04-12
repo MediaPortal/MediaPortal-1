@@ -2004,7 +2004,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       if (imgArtistArt != null)
       {
         imgArtistArt.SetFileName(thumb);
-        //imgArtistArt.FreeResources();
+        //imgArtistArt.Dispose();
         //imgArtistArt.AllocResources();
       }
     }

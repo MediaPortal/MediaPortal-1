@@ -42,6 +42,7 @@ namespace MediaPortal.Ripper
 
     public void Dispose()
     {
+      NotWnd.DeviceChange -= new DeviceChangeEventHandler(NotWnd_DeviceChange);
       GC.SuppressFinalize(this);
     }
 

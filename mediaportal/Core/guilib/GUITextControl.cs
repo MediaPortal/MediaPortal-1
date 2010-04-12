@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -146,7 +147,7 @@ namespace MediaPortal.GUI.Library
         if (strText != _previousProperty)
         {
           _offset = 0;
-          _itemList.Clear();
+          _itemList.DisposeAndClearList();
 
           _previousProperty = strText;
           SetText(strText);
@@ -313,7 +314,7 @@ namespace MediaPortal.GUI.Library
           _containsProperty = false;
           _property = "";
           _offset = 0;
-          _itemList.Clear();
+          _itemList.DisposeAndClearList();
           _upDownControl.SetRange(1, 1);
           _upDownControl.Value = 1;
         }
@@ -377,12 +378,12 @@ namespace MediaPortal.GUI.Library
       Calculate();
     }
 
-    public override void FreeResources()
+    public override void Dispose()
     {
       _previousProperty = "";
-      _itemList.Clear();
-      base.FreeResources();
-      _upDownControl.FreeResources();
+      _itemList.DisposeAndClearList();
+      base.Dispose();
+      _upDownControl.SafeDispose();
     }
 
     protected void OnRight()
@@ -675,7 +676,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      _itemList.Clear();
+      _itemList.DisposeAndClearList();
       // start wordwrapping
       // Set a flag so we can determine initial justification effects
       //bool bStartingNewLine = true;
@@ -830,7 +831,7 @@ namespace MediaPortal.GUI.Library
       _containsProperty = false;
       _property = "";
       _offset = 0;
-      _itemList.Clear();
+      _itemList.DisposeAndClearList();
       _upDownControl.SetRange(1, 1);
       _upDownControl.Value = 1;
     }
@@ -847,7 +848,7 @@ namespace MediaPortal.GUI.Library
             _containsProperty = true;
           }
 
-          _itemList.Clear();
+          _itemList.DisposeAndClearList();
           _upDownControl.SetRange(1, 1);
           _upDownControl.Value = 1;
           SetText(value);

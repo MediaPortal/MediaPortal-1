@@ -486,7 +486,7 @@ namespace MediaPortal.Dialogs
     {
       if (image != null)
       {
-        image.FreeResources();
+        image.Dispose();
       }
       image = null;
     }
@@ -549,7 +549,7 @@ namespace MediaPortal.Dialogs
       DeInitialize();
 
       Log.Debug("Window: {0} deinit", ToString());
-      FreeResources();
+      Dispose();
     }
 
     public string Text

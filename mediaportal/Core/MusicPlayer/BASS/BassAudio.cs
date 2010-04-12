@@ -28,6 +28,7 @@ using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player.DSP;
 using MediaPortal.Profile;
@@ -44,6 +45,8 @@ using Un4seen.Bass.AddOn.WaDsp;
 using Un4seen.Bass.Misc;
 using Un4seen.BassAsio;
 using Timer = System.Timers.Timer;
+
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Player
 {
@@ -186,7 +189,7 @@ namespace MediaPortal.Player
   /// <summary>
   /// Handles playback of Audio files and Internet streams via the BASS Audio Engine.
   /// </summary>
-  public class BassAudioEngine : IPlayer, IDisposable
+  public class BassAudioEngine : IPlayer
   {
     #region Enums
 
@@ -781,7 +784,7 @@ namespace MediaPortal.Player
     /// <param name="e"></param>
     private void OnAppFormDisposed(object sender, EventArgs e)
     {
-      Dispose();
+      DisposeAndCleanUp();
     }
 
     #endregion
@@ -791,8 +794,8 @@ namespace MediaPortal.Player
     /// <summary>
     /// Dispose the BASS Audio engine. Free all BASS and Visualisation related resources
     /// </summary>
-    public void Dispose()
-    {
+    public void DisposeAndCleanUp()
+    {      
       // Clean up BASS Resources
       try
       {
@@ -823,8 +826,10 @@ namespace MediaPortal.Player
         Bass.BASS_PluginFree(pluginHandle);
       }
 
-      VizManager.Dispose();
-      VizWindow.Dispose();
+      VizManager.SafeDispose();
+      VizWindow.SafeDispose();
+
+      GUIGraphicsContext.OnNewAction -= new OnActionHandler(OnNewAction);      
     }
 
     /// <summary>
@@ -3232,7 +3237,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// Release the Video Window
     /// </summary>
-    public override void Release()
+    public override void Dispose()
     {
       if (VizWindow != null)
       {

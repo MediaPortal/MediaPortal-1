@@ -22,6 +22,7 @@ using System;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.Configuration.Controls
 {
@@ -98,11 +99,11 @@ namespace MediaPortal.Configuration.Controls
       if (e != null)
       {
         if (e.BackBrushDispose)
-          e.BackBrush.Dispose();
+          e.BackBrush.SafeDispose();
         if (e.ForeBrushDispose)
-          e.ForeBrush.Dispose();
+          e.ForeBrush.SafeDispose();
         if (e.TextFontDispose)
-          e.TextFont.Dispose();
+          e.TextFont.SafeDispose();
       }
     }
   }
@@ -148,11 +149,11 @@ namespace MediaPortal.Configuration.Controls
       if (e != null)
       {
         if (e.BackBrushDispose)
-          e.BackBrush.Dispose();
+          e.BackBrush.SafeDispose();
         if (e.ForeBrushDispose)
-          e.ForeBrush.Dispose();
+          e.ForeBrush.SafeDispose();
         if (e.TextFontDispose)
-          e.TextFont.Dispose();
+          e.TextFont.SafeDispose();
       }
     }
 

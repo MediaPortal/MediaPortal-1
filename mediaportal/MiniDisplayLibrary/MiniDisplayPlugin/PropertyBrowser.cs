@@ -56,6 +56,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         this.components.Dispose();
       }
+
+      GUIPropertyManager.OnPropertyChanged -=
+        new GUIPropertyManager.OnPropertyChangedHandler(this.GUIPropertyManager_OnPropertyChanged);
+
       base.Dispose(disposing);
     }
 

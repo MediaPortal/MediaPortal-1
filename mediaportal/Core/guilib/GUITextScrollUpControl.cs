@@ -23,6 +23,7 @@ using System.Collections;
 using System.Drawing;
 using Microsoft.DirectX.Direct3D;
 using System.Collections.Generic;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -432,11 +433,11 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public override void FreeResources()
+    public override void Dispose()
     {
       _previousProperty = "";
-      _listItems.Clear();
-      base.FreeResources();
+      _listItems.DisposeAndClearList();
+      base.Dispose();
     }
 
 
@@ -495,7 +496,7 @@ namespace MediaPortal.GUI.Library
     {
       try
       {
-        _listItems.Clear();
+        _listItems.DisposeAndClearList();
         // start wordwrapping
         // Set a flag so we can determine initial justification effects
         //bool bStartingNewLine = true;
@@ -639,7 +640,7 @@ namespace MediaPortal.GUI.Library
     private void ClearOffsets()
     {
       _offset = 0;
-      _listItems.Clear();
+      _listItems.DisposeAndClearList();
 
       _yPositionScroll = 0;
       _scrollOffset = 0.0f;

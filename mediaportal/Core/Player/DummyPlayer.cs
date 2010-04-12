@@ -150,6 +150,11 @@ namespace MediaPortal.Player
       get { return IsTV; }
     }
 
+    public override void Dispose()
+    {
+      
+    }
+
     public override bool Paused
     {
       get

@@ -35,7 +35,7 @@ using MediaPortal.InputDevices;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class MatrixMX : BaseDisplay, IDisplay, IDisposable
+  public class MatrixMX : BaseDisplay, IDisplay
   {
     private bool _BackLightControl;
     private int _BackLightLevel = 0x7f;

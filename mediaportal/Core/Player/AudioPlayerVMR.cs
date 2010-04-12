@@ -23,6 +23,7 @@ using System.Windows.Forms;
 using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 
@@ -470,7 +471,7 @@ namespace MediaPortal.Player
         {
           if (_rotEntry != null)
           {
-            _rotEntry.Dispose();
+            _rotEntry.SafeDispose();
             _rotEntry = null;
           }
           DirectShowUtil.ReleaseComObject(graphBuilder);
@@ -539,7 +540,7 @@ namespace MediaPortal.Player
 
     #region IDisposable Members
 
-    public override void Release()
+    public override void Dispose()
     {
       CloseInterfaces();
     }

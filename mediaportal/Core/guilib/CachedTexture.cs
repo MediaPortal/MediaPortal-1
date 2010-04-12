@@ -26,6 +26,8 @@ using System.Runtime.InteropServices;
 using DShowNET.Helper;
 using Microsoft.DirectX.Direct3D;
 using System.Runtime.CompilerServices;
+using MediaPortal.ExtensionMethods;
+//using MediaPortal.EventSubscriptionManager;
 
 namespace MediaPortal.GUI.Library
 {
@@ -81,6 +83,7 @@ namespace MediaPortal.GUI.Library
       public readonly bool UseNewTextureEngine = true;
       private string _imageName = string.Empty;
       private static bool logTextures = false;
+      //private EventSubscriptionManager.EventSubscriptionManager _eventMgr = new EventSubscriptionManager.EventSubscriptionManager(); 
 
       #endregion
 
@@ -111,7 +114,7 @@ namespace MediaPortal.GUI.Library
       }
 
       ~Frame()
-      {      
+      {
         // call Dispose with false.  Since we're in the
         // destructor call, the managed resources will be
         // disposed of anyways.
@@ -140,18 +143,19 @@ namespace MediaPortal.GUI.Library
               if (logTextures)
               {
                 Log.Info("Frame:Image fontengine: remove texture:{0} {1}", _textureNumber.ToString(), _imageName);
-              }              
-              Dispose();                            
+              }
+              Dispose();
             }
             catch (Exception)
             {
               //already disposed?
-            }           
+            }
           }
           _image = value;
 
           if (_image != null)
           {
+            //_eventMgr.Subscribe(_image, "Disposing", new EventHandler(D3DTexture_Disposing));
             _image.Disposing += new EventHandler(D3DTexture_Disposing);
             unsafe
             {
@@ -173,7 +177,7 @@ namespace MediaPortal.GUI.Library
         {
           Dispose();
         }
-      }      
+      }
 
       /// <summary>
       /// property to get/set the duration for this frame
@@ -191,7 +195,7 @@ namespace MediaPortal.GUI.Library
       /// Releases the resources used by the texture.
       /// </summary>
       public void Dispose()
-      {        
+      {
         Dispose(true);
         // This object will be cleaned up by the Dispose method.
         // Therefore, calling GC.SupressFinalize to take this object off
@@ -199,9 +203,9 @@ namespace MediaPortal.GUI.Library
         // from executing a second time.
         GC.SuppressFinalize(this);
       }
-      
+
       private void Dispose(bool disposeManagedResources)
-      {              
+      {
         // process only if mananged and unmanaged resources have
         // not been disposed of.      
         if (!this.disposed)
@@ -209,7 +213,7 @@ namespace MediaPortal.GUI.Library
           lock (this)
           {
             DisposeUnmanagedResources();
-          }                                      
+          }
           if (Disposed != null)
           {
             Disposed(this, new EventArgs());
@@ -236,16 +240,16 @@ namespace MediaPortal.GUI.Library
             }
 
             if (_image != null && !_image.Disposed)
-            {              
+            {
               _image.Disposing -= new EventHandler(D3DTexture_Disposing);
-              _image.Dispose();
+              _image.SafeDispose();
             }
           }
           catch (Exception)
           {
             //image already disposed?
           }
-          _image = null;                    
+          _image = null;
         }
       }
 
@@ -308,7 +312,7 @@ namespace MediaPortal.GUI.Library
     private int _textureWidth = 0; // width of the texture
     private int _textureHeight = 0; // height of the texture
     private int _frameCount = 0; // number of frames in the animation
-    private Image _gdiBitmap = null; // GDI image of the texture
+    private Image _gdiBitmap = null; // GDI image of the texture    
 
     #endregion
 
@@ -317,10 +321,10 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// The (emtpy) constructor of the CachedTexture class.
     /// </summary>
-    public CachedTexture() {}
+    public CachedTexture() { }
 
     ~CachedTexture()
-    {      
+    {
       // call Dispose with false.  Since we're in the
       // destructor call, the managed resources will be
       // disposed of anyways.
@@ -357,9 +361,9 @@ namespace MediaPortal.GUI.Library
       set
       {
         Dispose(); // cleanup..
-        _listFrames.Clear();
+        _listFrames.DisposeAndClear();
         value.Disposed += new EventHandler(frame_Disposed);
-        _listFrames.Add(value);        
+        _listFrames.Add(value);
       }
     }
 
@@ -381,7 +385,7 @@ namespace MediaPortal.GUI.Library
         {
           try
           {
-            _gdiBitmap.Dispose();
+            _gdiBitmap.SafeDispose();
           }
           catch (Exception)
           {
@@ -442,7 +446,7 @@ namespace MediaPortal.GUI.Library
         if (_listFrames.Count <= index)
         {
           value.Disposed += new EventHandler(frame_Disposed);
-          _listFrames.Add(value);          
+          _listFrames.Add(value);
         }
         else
         {
@@ -450,9 +454,9 @@ namespace MediaPortal.GUI.Library
           if (frame != value)
           {
             frame.Disposed -= new EventHandler(frame_Disposed);
-            frame.Dispose();
+            frame.SafeDispose();
             value.Disposed += new EventHandler(frame_Disposed);
-            _listFrames[index] = value;            
+            _listFrames[index] = value;
           }
         }
       }
@@ -483,24 +487,26 @@ namespace MediaPortal.GUI.Library
       this.disposed = true;
     }
 
-    private void DisposeFrames() {
+    private void DisposeFrames()
+    {
       foreach (Frame tex in _listFrames)
       {
         if (tex != null)
         {
           tex.Disposed -= new EventHandler(frame_Disposed);
-          tex.Dispose();
+          tex.SafeDispose();
         }
       }
       _listFrames.Clear();
     }
 
-    private void DisposeUnmanagedResources() {             
+    private void DisposeUnmanagedResources()
+    {
       if (_gdiBitmap != null)
       {
         try
         {
-          _gdiBitmap.Dispose();
+          _gdiBitmap.SafeDispose();
         }
         catch (Exception)
         {
@@ -515,13 +521,13 @@ namespace MediaPortal.GUI.Library
     /// Releases the resources used by the texture.
     /// </summary>
     public void Dispose()
-    {      
+    {
       Dispose(true);
       // This object will be cleaned up by the Dispose method.
       // Therefore, calling GC.SupressFinalize to take this object off
       // the finalization queue and prevent finalization code for this object
       // from executing a second time.
-      GC.SuppressFinalize(this);      
+      GC.SuppressFinalize(this);
     }
 
     #endregion

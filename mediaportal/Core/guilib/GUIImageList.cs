@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -69,12 +70,10 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public override void FreeResources()
+    public override void Dispose()
     {
-      foreach (GUIImage img in _itemList)
-      {
-        img.FreeResources();
-      }
+      base.Dispose();
+      _itemList.SafeDispose();      
     }
 
     public override void Render(float timePassed)

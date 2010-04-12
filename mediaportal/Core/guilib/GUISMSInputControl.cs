@@ -20,6 +20,7 @@
 
 using System;
 using System.Windows.Forms;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -836,14 +837,14 @@ namespace MediaPortal.GUI.Library
       _image.AllocResources();
     }
 
-    public override void FreeResources()
+    public override void Dispose()
     {
       if (_image != null)
       {
-        _image.FreeResources();
+        _image.SafeDispose();
       }
 
-      base.FreeResources();
+      base.Dispose();
     }
 
     public override bool CanFocus()

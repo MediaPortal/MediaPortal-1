@@ -22,6 +22,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.Util
 {
@@ -382,7 +383,7 @@ namespace MediaPortal.Util
 
       if (thumbNail != null)
       {
-        thumbNail.Dispose();
+        thumbNail.SafeDispose();
         thumbNail = null;
       }
 
@@ -635,7 +636,7 @@ namespace MediaPortal.Util
 
         if (thumbNail != null)
         {
-          thumbNail.Dispose();
+          thumbNail.SafeDispose();
         }
 
         disposed = true;

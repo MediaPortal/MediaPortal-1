@@ -1425,7 +1425,7 @@ namespace MediaPortal.Player
 
     #region IDisposable Members
 
-    public override void Release()
+    public override void Dispose()
     {
       CloseInterfaces();
     }

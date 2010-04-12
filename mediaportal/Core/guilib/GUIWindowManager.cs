@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using MediaPortal.ExtensionMethods;
 
 //using System.Reflection;
 //using System.Security;
@@ -600,7 +601,7 @@ namespace MediaPortal.GUI.Library
       for (int x = 0; x < _windowCount; ++x)
       {
         _listWindows[x].DeInit();
-        _listWindows[x].FreeResources();
+        _listWindows[x].SafeDispose();
       }
       _routedWindow = null;
       _listThreadMessages.Clear();
@@ -615,7 +616,7 @@ namespace MediaPortal.GUI.Library
     {
       for (int x = 0; x < _windowCount; ++x)
       {
-        _listWindows[x].FreeResources();
+        _listWindows[x].SafeDispose();
       }
 
       GUIWaitCursor.Dispose();

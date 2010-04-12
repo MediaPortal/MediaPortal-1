@@ -24,6 +24,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using MediaPortal.Drawing;
 using Microsoft.DirectX.Direct3D;
+using MediaPortal.ExtensionMethods;
 
 // used for Keys definition
 
@@ -485,7 +486,7 @@ namespace MediaPortal.GUI.Library
         {
           if (pImage.TextureHeight == 0 && pImage.TextureWidth == 0)
           {
-            pImage.FreeResources();
+            pImage.SafeDispose();
             pImage.AllocResources();
           }
           pImage.ZoomFromTop = !pItem.IsFolder;
@@ -1215,7 +1216,7 @@ namespace MediaPortal.GUI.Library
           _refresh = true;
           if (_imageInfo != null)
           {
-            _imageInfo.FreeResources();
+            _imageInfo.SafeDispose();
             _imageInfo.AllocResources();
             _imageInfo.DoUpdate();
           }
@@ -1842,36 +1843,33 @@ namespace MediaPortal.GUI.Library
       _upDownControl.ParentID = GetID;
     }
 
-    public override void FreeResources()
-    {
-      foreach (GUIListItem item in _listItems)
-      {
-        item.FreeIcons();
-      }
-      _listItems.Clear();
-      base.FreeResources();
+    public override void Dispose()
+    {      
+      _listItems.DisposeAndClear();
+
+      base.Dispose();
       if (_imageBackground != null)
       {
-        _imageBackground.FreeResources();
+        _imageBackground.SafeDispose();
       }
       if (_imageInfo != null)
       {
-        _imageInfo.FreeResources();
+        _imageInfo.SafeDispose();
       }
       if (_upDownControl != null)
       {
-        _upDownControl.FreeResources();
+        _upDownControl.SafeDispose();
       }
       for (int i = 0; i < _imageFolder.Count; ++i)
       {
-        _imageFolder[i].FreeResources();
-        _imageFolderFocus[i].FreeResources();
-        _frameControl[i].FreeResources();
-        _frameFocusControl[i].FreeResources();
+        _imageFolder[i].SafeDispose();
+        _imageFolderFocus[i].SafeDispose();
+        _frameControl[i].SafeDispose();
+        _frameFocusControl[i].SafeDispose();
       }
       if (_horizontalScrollbar != null)
       {
-        _horizontalScrollbar.FreeResources();
+        _horizontalScrollbar.SafeDispose();
       }
     }
 
@@ -2414,7 +2412,7 @@ namespace MediaPortal.GUI.Library
         {
           _itemWidth = 1;
         }
-        FreeResources();
+        Dispose();
         AllocResources();
       }
     }
@@ -2433,7 +2431,7 @@ namespace MediaPortal.GUI.Library
         {
           _itemHeight = 1;
         }
-        FreeResources();
+        Dispose();
         AllocResources();
       }
     }
@@ -3422,7 +3420,7 @@ namespace MediaPortal.GUI.Library
 
     public void Clear()
     {
-      _listItems.Clear();
+      _listItems.DisposeAndClear();
       //GUITextureManager.CleanupThumbs();
       _upDownControl.SetRange(1, 1);
       _upDownControl.Value = 1;

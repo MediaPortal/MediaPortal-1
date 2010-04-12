@@ -20,6 +20,7 @@
 
 using System;
 using MediaPortal.GUI.Library;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.Dialogs
 {
@@ -115,14 +116,14 @@ namespace MediaPortal.Dialogs
     {
       SetHeadingRow2(GUILocalizeStrings.Get(iString));
       selectedItemIndex = -1;
-      listItems.Clear();
+      listItems.DisposeAndClearList();
     }
 
     public void SetHeadingRow3(int iString)
     {
       SetHeadingRow3(GUILocalizeStrings.Get(iString));
       selectedItemIndex = -1;
-      listItems.Clear();
+      listItems.DisposeAndClearList();
     }
 
     public int TimeOut

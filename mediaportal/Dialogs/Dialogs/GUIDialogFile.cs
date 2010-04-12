@@ -169,7 +169,7 @@ namespace MediaPortal.Dialogs
             m_bRunning = false;
             GUIGraphicsContext.Overlay = m_bOverlay;
             //base.OnMessage(message);
-            FreeResources();
+            Dispose();
             DeInitControls();
             GUILayerManager.UnRegisterLayer(this);
             return true;

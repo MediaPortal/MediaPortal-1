@@ -28,6 +28,7 @@ using DirectShowLib;
 using DirectShowLib.SBE;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 
@@ -1442,7 +1443,7 @@ namespace MediaPortal.Player
           DirectShowUtil.RemoveFilters(_graphBuilder);
           if (_rotEntry != null)
           {
-            _rotEntry.Dispose();
+            _rotEntry.SafeDispose();
             _rotEntry = null;
           }
           while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0)
@@ -1620,7 +1621,7 @@ namespace MediaPortal.Player
 
     #region IDisposable Members
 
-    public override void Release()
+    public override void Dispose()
     {
       CloseInterfaces();
     }

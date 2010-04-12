@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Library
@@ -26,7 +27,7 @@ namespace MediaPortal.GUI.Library
   /// <summary>
   /// An implementation of an item that is part of a collection. (E.g, a GUIThumbnailPanel).
   /// </summary>
-  public class GUIListItem
+  public class GUIListItem : IDisposable
   {
     public delegate void ItemSelectedHandler(GUIListItem item, GUIControl parent);
 
@@ -530,39 +531,25 @@ namespace MediaPortal.GUI.Library
 
       if (null != _thumbnailImage)
       {
-        _thumbnailImage.FreeResources();
+        _thumbnailImage.SafeDispose();
         _thumbnailImage = null;
       }
       if (null != _imageIcon)
       {
-        _imageIcon.FreeResources();
+        _imageIcon.SafeDispose();
         _imageIcon = null;
       }
       if (null != _imagePinIcon)
       {
-        _imagePinIcon.FreeResources();
+        _imagePinIcon.SafeDispose();
         _imagePinIcon = null;
       }
       if (null != _imageBigPinIcon)
       {
-        _imageBigPinIcon.FreeResources();
+        _imageBigPinIcon.SafeDispose();
         _imageBigPinIcon = null;
       }
-    }
-
-    /// <summary>
-    /// Free the memory that is used by the icons.
-    /// </summary>
-    public void FreeIcons()
-    {
-      FreeMemory();
-      if (OnRetrieveArt != null)
-      {
-        _thumbNailName = string.Empty;
-        _smallIconName = string.Empty;
-        _pinIconName = string.Empty;
-      }
-    }
+    }    
 
     /// <summary>
     /// This method will raise the OnRetrieveArt() event to
@@ -587,7 +574,7 @@ namespace MediaPortal.GUI.Library
 
     public void RefreshCoverArt()
     {
-      FreeIcons();
+      Dispose();
       _isCoverArtRetrieved = false;
     }
 
@@ -660,5 +647,24 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
+    #region IDisposable Members
+
+    /// <summary>
+    /// Free the memory that is used by the icons.
+    /// </summary>
+    public void Dispose()
+    {        
+      FreeMemory();
+      if (OnRetrieveArt != null)
+      {
+        _thumbNailName = string.Empty;
+        _smallIconName = string.Empty;
+        _pinIconName = string.Empty;
+      }
+    
+    }
+
+    #endregion
   }
 }

@@ -491,7 +491,7 @@ namespace MediaPortal.Player
 
     #region IDisposable Members
 
-    public override void Release()
+    public override void Dispose()
     {
       if (_wmp10Player == null)
       {
@@ -499,13 +499,17 @@ namespace MediaPortal.Player
       }
       _wmp10Player.ClientSize = new Size(0, 0);
       _wmp10Player.Visible = false;
+
+      _wmp10Player.PlayStateChange -= new _WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
+      _wmp10Player.Buffering -= new _WMPOCXEvents_BufferingEventHandler(OnBuffering);
+
       /*
       try
       {
         GUIGraphicsContext.form.Controls.Remove(_wmp10Player);
       }
       catch (Exception) { }
-      _wmp10Player.Dispose();
+      _wmp10Player.SafeDispose();
       _wmp10Player = null;
        * */
     }

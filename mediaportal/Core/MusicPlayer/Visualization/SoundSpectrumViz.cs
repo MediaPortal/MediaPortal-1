@@ -113,7 +113,7 @@ namespace MediaPortal.Visualization
     #endregion
   }
 
-  public class SoundSpectrumViz : VisualizationBase
+  public class SoundSpectrumViz : VisualizationBase, IDisposable
   {
     #region Variables
 

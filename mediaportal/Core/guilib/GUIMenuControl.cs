@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Windows.Media.Animation;
 using MediaPortal.Profile;
 using Microsoft.DirectX.Direct3D;
+using MediaPortal.ExtensionMethods;
 
 // used for Keys definition
 
@@ -940,8 +941,8 @@ namespace MediaPortal.GUI.Library
       }
 
       int controlID = 1;
-      _buttonList.Clear();
-      _hoverList.Clear();
+      _buttonList.DisposeAndClear();
+      _hoverList.DisposeAndClear();
       while ((_buttonInfos.Count > 0) && (_buttonList.Count < _numberOfButtons + 1))
       {
         for (int i = 0; i < _buttonInfos.Count; i++)
@@ -1045,28 +1046,20 @@ namespace MediaPortal.GUI.Library
       base.AllocResources();
     }
 
-    public override void FreeResources()
+    public override void Dispose()
     {
       SaveSetting();
-      foreach (GUIControl control in _buttonList)
-      {
-        control.FreeResources();
-      }
-      foreach (GUIAnimation hover in _hoverList)
-      {
-        hover.FreeResources();
-      }
-      _buttonList.Clear();
-      _hoverList.Clear();
+      _buttonList.DisposeAndClear();
+      _hoverList.DisposeAndClear();
       if (_backgroundImage != null)
       {
-        _backgroundImage.FreeResources();
+        _backgroundImage.SafeDispose();
       }
       if (_focusImage != null)
       {
-        _focusImage.FreeResources();
+        _focusImage.SafeDispose();
       }
-      base.FreeResources();
+      base.Dispose();
     }
 
     #endregion

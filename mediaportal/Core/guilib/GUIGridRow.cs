@@ -20,10 +20,11 @@
 
 using System;
 using System.Collections.Generic;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
-  public class GUIGridRow
+  public class GUIGridRow : IDisposable
   {
     #region variables
 
@@ -118,12 +119,9 @@ namespace MediaPortal.GUI.Library
 
     #region public members
 
-    public void FreeResources()
-    {
-      for (int column = 0; column < _cells.Count; ++column)
-      {
-        _cells[column].FreeResources();
-      }
+    public void Dispose()
+    {   
+      _cells.SafeDispose();
     }
 
     public void Render(int offsetX, ref int offsetY, float timePassed)

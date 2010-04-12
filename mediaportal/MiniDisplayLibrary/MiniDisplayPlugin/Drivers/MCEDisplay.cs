@@ -30,7 +30,7 @@ using Microsoft.Win32;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class MCEDisplay : BaseDisplay, IDisplay, IDisposable
+  public class MCEDisplay : BaseDisplay, IDisplay
   {
     private readonly string[] _lines = new string[2];
     public const bool ExtensiveLogging = true;
@@ -195,6 +195,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Application.DoEvents();
         Thread.Sleep(100);
       }
+
+      GUIPropertyManager.OnPropertyChanged -=
+       new GUIPropertyManager.OnPropertyChangedHandler(this.GUIPropertyManager_OnPropertyChanged);
+
       Log.Info("MCEDisplay.Stop(): MCEDisplay driver STOPPED!");
     }
 

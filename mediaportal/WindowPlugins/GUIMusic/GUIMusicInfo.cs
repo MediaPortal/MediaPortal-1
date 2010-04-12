@@ -316,7 +316,7 @@ namespace MediaPortal.GUI.Music
       {
         coverArtTexture = Util.Picture.Load(thumbNailFileName, 0, 128, 128, true, false, out coverArtTextureWidth,
                                             out coverArtTextureHeight);
-        //imgCoverArt.FreeResources();
+        //imgCoverArt.Dispose();
         //imgCoverArt.AllocResources();
       }
       Update();

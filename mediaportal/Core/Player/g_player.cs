@@ -27,6 +27,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Playlists;
 using MediaPortal.Profile;
@@ -34,6 +35,8 @@ using MediaPortal.Subtitle;
 using MediaPortal.Visualization;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
+
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Player
 {
@@ -665,7 +668,7 @@ namespace MediaPortal.Player
       }
       else
       {
-        _player.Release();
+        _player.SafeDispose();
         _player = null;
         _prevPlayer = null;
       }
@@ -1001,7 +1004,7 @@ namespace MediaPortal.Player
         if (!bResult)
         {
           Log.Info("player:ended");
-          _player.Release();
+          _player.SafeDispose();
           _player = null;
           _subs = null;
           GC.Collect();
@@ -1100,7 +1103,7 @@ namespace MediaPortal.Player
         if (!isPlaybackPossible)
         {
           Log.Info("player:ended");
-          _player.Release();
+          _player.SafeDispose();
           _player = null;
           _subs = null;
           GC.Collect();
@@ -1112,7 +1115,7 @@ namespace MediaPortal.Player
           if (!isPlaybackPossible)
           {
             Log.Info("player2:ended");
-            _player.Release();
+            _player.SafeDispose();
             _player = null;
             _subs = null;
             GC.Collect();
@@ -1156,7 +1159,7 @@ namespace MediaPortal.Player
         }
         if (_prevPlayer != null)
         {
-          _prevPlayer.Release();
+          _prevPlayer.SafeDispose();
           _prevPlayer = null;
         }
       }
@@ -1299,7 +1302,7 @@ namespace MediaPortal.Player
           if (!bResult)
           {
             Log.Info("g_Player: ended");
-            _player.Release();
+            _player.SafeDispose();
             _player = null;
             _subs = null;
             UnableToPlay(strFile, type);

@@ -29,7 +29,7 @@ using Un4seen.Bass.AddOn.Vis;
 
 namespace MediaPortal.Visualization
 {
-  public class SoniqueViz : VisualizationBase
+  public class SoniqueViz : VisualizationBase, IDisposable
   {
     #region Variables
 

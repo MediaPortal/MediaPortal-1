@@ -34,7 +34,7 @@ namespace MediaPortal.GUI.Library
   /// <summary>
   /// Base class for GUIControls.
   /// </summary>
-  public abstract class GUIControl : Control
+  public abstract class GUIControl : Control, IDisposable
   {
     [XMLSkinElement("subtype")] protected string _subType = "";
     [XMLSkinElement("onleft")] protected int _leftControlId = 0;
@@ -601,18 +601,32 @@ namespace MediaPortal.GUI.Library
       _hasRendered = false;
     }
 
+    #region IDisposable Members
+
+    [Obsolete("method 'FreeResources' is obsolete, instead use dispose.")]
+    public void FreeResources()
+    {
+      Dispose();
+    }
+    
     /// <summary>
     /// Frees the control its DirectX resources.
     /// </summary>
-    public virtual void FreeResources()
+    public virtual void Dispose()
     {
       // Reset our animation states
-      for (int i = 0; i < _animations.Count; i++)
+      if (_animations != null)
       {
-        _animations[i].ResetAnimation();
-      }
+        for (int i = 0; i < _animations.Count; i++)
+        {
+          _animations[i].ResetAnimation();
+        } 
+      }      
+      
       _hasRendered = false;
     }
+
+    #endregion
 
     /// <summary>
     /// NeedRefresh() can be called to see if the control needs 2 redraw itself or not
@@ -1186,7 +1200,10 @@ namespace MediaPortal.GUI.Library
     /// <param name="obj">subitem</param>
     public void AddSubItem(object obj)
     {
+      lock (GUIGraphicsContext.RenderLock)
+      {
       _subItemList.Add(obj);
+    }
     }
 
     /// <summary>
@@ -1195,7 +1212,10 @@ namespace MediaPortal.GUI.Library
     /// <param name="obj">subitem</param>
     public void RemoveSubItem(object obj)
     {
+      lock (GUIGraphicsContext.RenderLock)
+      {
       _subItemList.Remove(obj);
+    }
     }
 
     /// <summary>
@@ -1204,11 +1224,14 @@ namespace MediaPortal.GUI.Library
     /// <param name="obj">index</param>
     public void RemoveSubItem(int index)
     {
+      lock (GUIGraphicsContext.RenderLock)
+      {
       if (index <= 0 || index >= _subItemList.Count)
       {
         return;
       }
       _subItemList.RemoveAt(index);
+    }
     }
 
     /// <summary>
@@ -1955,6 +1978,6 @@ namespace MediaPortal.GUI.Library
         anim.ResetAnimation();
       }
       return;
-    }
+    }    
   }
 }

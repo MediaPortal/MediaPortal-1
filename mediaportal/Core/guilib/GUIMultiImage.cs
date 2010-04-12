@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using MediaPortal.Util;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -201,7 +202,7 @@ namespace MediaPortal.GUI.Library
           base.Render(timePassed);
           return;
         }
-        FreeResources();
+        Dispose();
         LoadDirectory();
       }
 
@@ -241,7 +242,7 @@ namespace MediaPortal.GUI.Library
             {
               _fadeTimer.Stop();
               // swap images
-              _imageList[_currentImage].FreeResources();
+              _imageList[_currentImage].SafeDispose();
               _imageList[nextImage].ColourDiffuse = (_imageList[nextImage].ColourDiffuse | 0xff000000);
               _currentImage = nextImage;
               // start the load timer
@@ -265,7 +266,7 @@ namespace MediaPortal.GUI.Library
 
     public override void PreAllocResources()
     {
-      FreeResources();
+      Dispose();
     }
 
     public override void AllocResources()
@@ -290,7 +291,7 @@ namespace MediaPortal.GUI.Library
         _directoryLoaded = false;
         _isAllocated = false;
         _newPath = _texturePath;
-        FreeResources();
+        Dispose();
         base.AllocResources();
       }
       catch (Exception e)
@@ -359,16 +360,20 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public override void FreeResources()
-    {
-      for (int i = 0; i < _imageList.Count; ++i)
+    public override void Dispose()
+    {          
+      _imageList.DisposeAndClear();
+      //_currentImage = 0;      
+
+      if (_registeredForEvent)
       {
-        _imageList[i].FreeResources();
+        GUIPropertyManager.OnPropertyChanged -=
+          new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+        _registeredForEvent = false;
       }
 
-      _imageList.Clear();
       _currentImage = 0;
-      base.FreeResources();
+      base.Dispose();
     }
 
     public override bool CanFocus()

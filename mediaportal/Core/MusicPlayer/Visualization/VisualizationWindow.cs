@@ -32,6 +32,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.Configuration;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
@@ -39,9 +40,11 @@ using MediaPortal.Profile;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
 
+using Action = MediaPortal.GUI.Library.Action;
+
 namespace MediaPortal.Visualization
 {
-  public partial class VisualizationWindow : UserControl
+  public partial class VisualizationWindow : UserControl, IDisposable
   {
     #region Interop
 
@@ -412,7 +415,7 @@ namespace MediaPortal.Visualization
         IntPtr hDC = g.GetHdc();
         _CompatibleDC = CreateCompatibleDC(hDC);
         g.ReleaseHdc(hDC);
-        g.Dispose();
+        g.SafeDispose();
         return _CompatibleDC;
       }
     }
@@ -680,7 +683,7 @@ namespace MediaPortal.Visualization
             IsInternetStream = true;
             if (CurrentThumbImage != null)
             {
-              CurrentThumbImage.Dispose();
+              CurrentThumbImage.SafeDispose();
               CurrentThumbImage = null;
             }
           }
@@ -705,7 +708,7 @@ namespace MediaPortal.Visualization
           {
             if (CurrentTrackInfoImage != null)
             {
-              CurrentTrackInfoImage.Dispose();
+              CurrentTrackInfoImage.SafeDispose();
               CurrentTrackInfoImage = null;
             }
 
@@ -906,7 +909,7 @@ namespace MediaPortal.Visualization
 
       if (TrackInfoImage != null)
       {
-        TrackInfoImage.Dispose();
+        TrackInfoImage.SafeDispose();
         TrackInfoImage = null;
       }
 
@@ -954,7 +957,7 @@ namespace MediaPortal.Visualization
 
       if (MissingCoverArtImage != null)
       {
-        MissingCoverArtImage.Dispose();
+        MissingCoverArtImage.SafeDispose();
         MissingCoverArtImage = null;
       }
 
@@ -1088,7 +1091,7 @@ namespace MediaPortal.Visualization
       {
         if (PauseImage != null)
         {
-          PauseImage.Dispose();
+          PauseImage.SafeDispose();
           PauseImage = null;
         }
 
@@ -1110,7 +1113,7 @@ namespace MediaPortal.Visualization
       {
         if (PlayImage != null)
         {
-          PlayImage.Dispose();
+          PlayImage.SafeDispose();
           PlayImage = null;
         }
 
@@ -1131,7 +1134,7 @@ namespace MediaPortal.Visualization
       {
         if (FFImage != null)
         {
-          FFImage.Dispose();
+          FFImage.SafeDispose();
           FFImage = null;
         }
 
@@ -1152,7 +1155,7 @@ namespace MediaPortal.Visualization
       {
         if (RewImage != null)
         {
-          RewImage.Dispose();
+          RewImage.SafeDispose();
           RewImage = null;
         }
 
@@ -1173,7 +1176,7 @@ namespace MediaPortal.Visualization
       {
         if (StopImage != null)
         {
-          StopImage.Dispose();
+          StopImage.SafeDispose();
           StopImage = null;
         }
 
@@ -1194,7 +1197,7 @@ namespace MediaPortal.Visualization
       {
         if (CrossfadeImage != null)
         {
-          CrossfadeImage.Dispose();
+          CrossfadeImage.SafeDispose();
           CrossfadeImage = null;
         }
 
@@ -1215,7 +1218,7 @@ namespace MediaPortal.Visualization
       {
         if (GapImage != null)
         {
-          GapImage.Dispose();
+          GapImage.SafeDispose();
           GapImage = null;
         }
 
@@ -1236,7 +1239,7 @@ namespace MediaPortal.Visualization
       {
         if (GaplessImage != null)
         {
-          GaplessImage.Dispose();
+          GaplessImage.SafeDispose();
           GaplessImage = null;
         }
 
@@ -1497,9 +1500,13 @@ namespace MediaPortal.Visualization
 
       if (BackBuffer != null)
       {
-        BackBuffer.Dispose();
+        BackBuffer.SafeDispose();
         BackBuffer = null;
       }
+
+      g_Player.PlayBackStarted -= new g_Player.StartedHandler(OnPlayBackStarted);
+      Bass.InternetStreamSongChanged -= new BassAudioEngine.InternetStreamSongChangedDelegate(InternetStreamSongChanged);      
+      GUIGraphicsContext.OnNewAction -= new OnActionHandler(OnNewAction);
     }
 
     private bool NeedsResize()
@@ -1546,7 +1553,7 @@ namespace MediaPortal.Visualization
 
       if (BackBuffer != null)
       {
-        BackBuffer.Dispose();
+        BackBuffer.SafeDispose();
         BackBuffer = null;
       }
 
@@ -1730,7 +1737,7 @@ namespace MediaPortal.Visualization
 
           if (CurrentTrackInfoImage != null)
           {
-            CurrentTrackInfoImage.Dispose();
+            CurrentTrackInfoImage.SafeDispose();
             CurrentTrackInfoImage = null;
           }
         }
@@ -1935,7 +1942,7 @@ namespace MediaPortal.Visualization
                 sleepMS = 0;
               }
 
-              g.Dispose();
+              g.SafeDispose();
 
               // Is it a Soundspectrum Viz, then we use, what their render returned in sleepMS
               if (IsSoundSpectrumViz)
@@ -2045,9 +2052,9 @@ namespace MediaPortal.Visualization
                 Graphics gBmp = Graphics.FromImage(bmp);
                 gBmp.Clear(Color.Black);
                 DrawThumbnailOverlay(gBmp, 1.0f);
-                gBmp.Dispose();
+                gBmp.SafeDispose();
                 g.DrawImageUnscaled(bmp, 0, 0);
-                bmp.Dispose();
+                bmp.SafeDispose();
                 bmp = null;
               }
 
@@ -2122,7 +2129,7 @@ namespace MediaPortal.Visualization
 
             try
             {
-              gBackBuf.Dispose();
+              gBackBuf.SafeDispose();
 
               RestoreDC(_CompatibleDC, dcState);
 
@@ -2199,7 +2206,7 @@ namespace MediaPortal.Visualization
 
         if (CurrentThumbImage != null)
         {
-          CurrentThumbImage.Dispose();
+          CurrentThumbImage.SafeDispose();
           CurrentThumbImage = null;
         }
 
@@ -2298,7 +2305,7 @@ namespace MediaPortal.Visualization
         textRect = new Rectangle(textLeft, textTop, textWidth, textHeight);
         DrawFadingText(g, stringSize, Label4ValueString, textRect, Label4Font, Label4Color);
 
-        g.Dispose();
+        g.SafeDispose();
 
         return true;
       }
@@ -2507,7 +2514,7 @@ namespace MediaPortal.Visualization
         Rectangle rect = new Rectangle(0, 0, Width, Height);
         SolidBrush fillBrush = new SolidBrush(Color.FromArgb((int)(255f * opacity), Color.Black));
         g.FillRectangle(fillBrush, rect);
-        fillBrush.Dispose();
+        fillBrush.SafeDispose();
 
         int imgHeight = Height;
         int imgWidth = imgHeight;
@@ -2596,7 +2603,7 @@ namespace MediaPortal.Visualization
       {
         if (fadingBrush != null)
         {
-          fadingBrush.Dispose();
+          fadingBrush.SafeDispose();
           fadingBrush = null;
         }
       }
@@ -2971,7 +2978,7 @@ namespace MediaPortal.Visualization
           continue;
         }
 
-        img.Dispose();
+        img.SafeDispose();
         img = null;
       }
 

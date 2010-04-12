@@ -91,7 +91,7 @@ namespace MediaPortal.Dialogs
 
     public void SetImage(string filename)
     {
-      imgLogo.FreeResources();
+      imgLogo.Dispose();
       imgLogo.SetFileName(filename);
       imgLogo.AllocResources();
     }

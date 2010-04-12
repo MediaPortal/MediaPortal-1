@@ -20,6 +20,7 @@
 
 using System.Collections;
 using MediaPortal.GUI.Library;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.Dialogs
 {
@@ -101,7 +102,7 @@ namespace MediaPortal.Dialogs
     public override void Reset()
     {
       base.Reset();
-      m_vecList.Clear();
+      m_vecList.DisposeAndClearList();
     }
 
     public void Add(string strLabel)

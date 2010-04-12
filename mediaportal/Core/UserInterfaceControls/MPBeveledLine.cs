@@ -24,6 +24,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.UserInterface.Controls
 {
@@ -56,7 +57,7 @@ namespace MediaPortal.UserInterface.Controls
       System.Drawing.Pen grayPen = new Pen(Color.FromArgb(200, 200, 200));
       graphics.DrawLine(grayPen, 0, 0, this.Width - 1, 0);
       graphics.DrawLine(System.Drawing.Pens.WhiteSmoke, 0, this.Height - 1, this.Width - 1, this.Height - 1);
-      grayPen.Dispose();
+      grayPen.SafeDispose();
     }
 
     /// <summary> 
@@ -68,7 +69,7 @@ namespace MediaPortal.UserInterface.Controls
       {
         if (components != null)
         {
-          components.Dispose();
+          components.SafeDispose();
         }
       }
       base.Dispose(disposing);

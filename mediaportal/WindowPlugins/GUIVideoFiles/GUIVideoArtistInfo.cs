@@ -234,7 +234,7 @@ namespace MediaPortal.GUI.Video
       string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, currentActor.Name);
       if (imgCoverArt != null)
       {
-        imgCoverArt.FreeResources();
+        imgCoverArt.Dispose();
         imgCoverArt.SetFileName(largeCoverArtImage);
         imgCoverArt.AllocResources();
       }

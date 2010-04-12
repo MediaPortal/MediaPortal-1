@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -619,22 +620,25 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Frees the control its DirectX resources.
     /// </summary>
-    public override void FreeResources()
+    public override void Dispose()
     {
-      base.FreeResources();
-      _imageFocused.FreeResources();
-      _imageNonFocused.FreeResources();
-      _imageBackground.FreeResources();
+      base.Dispose();
+      _imageFocused.SafeDispose();
+      _imageNonFocused.SafeDispose();
+      _imageBackground.SafeDispose();
 
-      _imageLeft.FreeResources();
-      _imageLeftFocus.FreeResources();
+      _imageLeft.SafeDispose();
+      _imageLeftFocus.SafeDispose();
 
-      _imageRight.FreeResources();
-      _imageRightFocus.FreeResources();
+      _imageRight.SafeDispose();
+      _imageRightFocus.SafeDispose();
 
+      //_font.Dispose(null, null);      
 
-      _labelControl.FreeResources();
+      _labelControl.SafeDispose();
       _showSelect = false;
+
+      Clear();
     }
 
     public override bool CanFocus()
@@ -1077,7 +1081,8 @@ namespace MediaPortal.GUI.Library
 
     public void Clear()
     {
-      _subItemList.Clear();
+      
+      _subItemList.DisposeAndClearList();
       SelectedItem = -1;
       _defaultItem = -1;
     }

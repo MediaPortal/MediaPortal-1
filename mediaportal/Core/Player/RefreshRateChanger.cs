@@ -245,9 +245,15 @@ namespace MediaPortal.Player
         this.Activated += new EventHandler(SuicideForm_Activated);
         this.Opacity = 0;
       }
+      
+      protected override void Dispose(bool disposing)
+      {          
+          this.Activated -= new EventHandler(SuicideForm_Activated);
+          base.Dispose(disposing);
+      }
 
       private void SuicideForm_Activated(Object sender, EventArgs e)
-      {
+      {      	
         Thread.Sleep(1000);
         this.Close();
       }

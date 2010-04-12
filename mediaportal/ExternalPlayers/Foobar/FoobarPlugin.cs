@@ -578,6 +578,11 @@ namespace MediaPortal.FoobarPlugin
       }
     }
 
+    public override void Dispose()
+    {
+      
+    }
+
 
     /// <summary>
     /// This method returns if the player is in stop state

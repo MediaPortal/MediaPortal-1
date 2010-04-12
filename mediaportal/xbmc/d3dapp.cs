@@ -1625,7 +1625,10 @@ namespace MediaPortal
         //if (!GUIGraphicsContext.Vmr9Active)
         if (!GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
         {
-          Render(GUIGraphicsContext.TimePassed);
+          lock (GUIGraphicsContext.RenderLock)
+          {
+            Render(GUIGraphicsContext.TimePassed);
+          }
         }
       }
       catch (Exception ex)

@@ -256,7 +256,7 @@ namespace MediaPortal.Dialogs
             _parentWindowID = 0;
             _parentWindow = null;
             GUIGraphicsContext.Overlay = _prevOverlay;
-            FreeResources();
+            Dispose();
             DeInitControls();
             GUILayerManager.UnRegisterLayer(this);
             GUILayerManager.RegisterLayer(_prevLayer, GUILayerManager.LayerType.Dialog);

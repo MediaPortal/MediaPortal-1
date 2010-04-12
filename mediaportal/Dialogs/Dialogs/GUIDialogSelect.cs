@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.Dialogs
 {
@@ -65,7 +66,7 @@ namespace MediaPortal.Dialogs
           {
             SetControlLabel(GetID, (int)Controls.CONTROL_HEADING, string.Empty);
             base.OnMessage(message);
-            FreeResources();
+            Dispose();
             DeInitControls();
             return true;
           }
@@ -127,7 +128,7 @@ namespace MediaPortal.Dialogs
     public override void Reset()
     {
       base.Reset();
-      m_vecList.Clear();
+      m_vecList.DisposeAndClearList();
       m_bButtonEnabled = false;
     }
 

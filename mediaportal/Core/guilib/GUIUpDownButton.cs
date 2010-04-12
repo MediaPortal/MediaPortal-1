@@ -18,6 +18,8 @@
 
 #endregion
 
+using MediaPortal.ExtensionMethods;
+
 namespace MediaPortal.GUI.Library
 {
   /// <summary>
@@ -92,10 +94,10 @@ namespace MediaPortal.GUI.Library
       _spinControl.AllocResources();
     }
 
-    public override void FreeResources()
+    public override void Dispose()
     {
-      base.FreeResources();
-      _spinControl.FreeResources();
+      base.Dispose();
+      _spinControl.SafeDispose();
     }
 
 

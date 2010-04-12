@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -476,12 +477,12 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Frees the control its DirectX resources.
     /// </summary>
-    public override void FreeResources()
+    public override void Dispose()
     {
-      base.FreeResources();
-      _imageBackGround.FreeResources();
-      _imageMid.FreeResources();
-      _imageMidFocus.FreeResources();
+      base.Dispose();
+      _imageBackGround.SafeDispose();
+      _imageMid.SafeDispose();
+      _imageMidFocus.SafeDispose();
     }
 
     /// <summary>

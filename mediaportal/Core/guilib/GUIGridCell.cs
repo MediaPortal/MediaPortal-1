@@ -19,10 +19,11 @@
 #endregion
 
 using System;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
-  public class GUIGridCell
+  public class GUIGridCell : IDisposable
   {
     #region variables
 
@@ -125,11 +126,11 @@ namespace MediaPortal.GUI.Library
 
     #region public methods
 
-    public void FreeResources()
+    public void Dispose()
     {
       if (_resourcesAllocated)
       {
-        _control.FreeResources();
+        _control.SafeDispose();
         _resourcesAllocated = false;
       }
     }
@@ -159,13 +160,13 @@ namespace MediaPortal.GUI.Library
         }
         else if (_resourcesAllocated)
         {
-          _control.FreeResources();
+          _control.SafeDispose();
           _resourcesAllocated = false;
         }
       }
       else if (_resourcesAllocated)
       {
-        _control.FreeResources();
+        _control.SafeDispose();
         _resourcesAllocated = false;
       }
       offsetX += RenderWidth;

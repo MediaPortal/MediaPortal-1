@@ -22,6 +22,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
@@ -83,7 +84,7 @@ namespace MediaPortal
             // IMPORTANT: Closes and disposes the stream
             // If this is not done we get a memory leak!
             stream.Close();
-            stream.Dispose();
+            stream.SafeDispose();
             return b;
           }
           Log.Debug("FrameGrabber: Frame grab failed");
@@ -104,7 +105,7 @@ namespace MediaPortal
     {
       if (rgbSurface != null)
       {
-        rgbSurface.Dispose();
+        rgbSurface.SafeDispose();
         rgbSurface = null;
       }
     }
@@ -158,7 +159,7 @@ namespace MediaPortal
       {
         if (rgbSurface != null)
         {
-          rgbSurface.Dispose(); // get rid of rgbSurface just to make sure
+          rgbSurface.SafeDispose(); // get rid of rgbSurface just to make sure
           rgbSurface = null;
         }
         lock (grabNotifier)

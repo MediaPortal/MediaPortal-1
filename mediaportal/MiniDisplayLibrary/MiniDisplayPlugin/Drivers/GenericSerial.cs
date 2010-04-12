@@ -35,7 +35,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class GenericSerial : BaseDisplay, IDisplay, IDisposable
+  public class GenericSerial : BaseDisplay, IDisplay
   {
     private bool _BackLightControl = false;
     //private int _BackLightLevel = 0x7f;

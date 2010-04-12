@@ -24,6 +24,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using MediaPortal.ExtensionMethods;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
@@ -216,7 +217,7 @@ namespace MediaPortal.Util
       {
         if (theImage != null)
         {
-          theImage.Dispose();
+          theImage.SafeDispose();
         }
       }
       return texture;
@@ -424,7 +425,7 @@ namespace MediaPortal.Util
       finally
       {
         if (m_vbBuffer != null)
-          m_vbBuffer.Dispose();
+          m_vbBuffer.SafeDispose();
       }
     }
 
@@ -579,7 +580,7 @@ namespace MediaPortal.Util
       finally
       {
         if (m_vbBuffer != null)
-          m_vbBuffer.Dispose();
+          m_vbBuffer.SafeDispose();
       }
     }
 
@@ -745,7 +746,7 @@ namespace MediaPortal.Util
       {
         if (m_vbBuffer != null)
         {
-          m_vbBuffer.Dispose();
+          m_vbBuffer.SafeDispose();
         }
       }
     }
@@ -815,7 +816,7 @@ namespace MediaPortal.Util
       finally
       {
         if (myImage != null)
-          myImage.Dispose();
+          myImage.SafeDispose();
       }
     }
 
@@ -914,9 +915,9 @@ namespace MediaPortal.Util
       finally
       {
         if (myTargetThumb != null)
-          myTargetThumb.Dispose();
+          myTargetThumb.SafeDispose();
         if (myBitmap != null)
-          myBitmap.Dispose();
+          myBitmap.SafeDispose();
       }
     }
 

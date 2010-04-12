@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using Microsoft.Win32;
@@ -116,8 +117,10 @@ namespace MediaPortal.Visualization
 
       if (Viz != null)
       {
-        ((VisualizationBase)Viz).Dispose();
+        ((VisualizationBase)Viz).SafeDispose();
       }
+      
+      Bass.PlaybackStateChanged -= new BassAudioEngine.PlaybackStateChangedDelegate(OnPlaybackStateChanged);      
     }
 
     #endregion
@@ -156,7 +159,7 @@ namespace MediaPortal.Visualization
       SoundSpectrumViz viz =
         new SoundSpectrumViz(new VisualizationInfo(VisualizationInfo.PluginType.GForce, "", "g-force", "", 0));
       bool engineInstalled = viz.IsEngineInstalled();
-      viz.Dispose();
+      viz.SafeDispose();
 
       return engineInstalled;
     }
@@ -173,7 +176,7 @@ namespace MediaPortal.Visualization
       SoundSpectrumViz viz =
         new SoundSpectrumViz(new VisualizationInfo(VisualizationInfo.PluginType.WhiteCap, "", "whitecap", "", 0));
       bool engineInstalled = viz.IsEngineInstalled();
-      viz.Dispose();
+      viz.SafeDispose();
 
       return engineInstalled;
     }
@@ -462,7 +465,7 @@ namespace MediaPortal.Visualization
         {
           if (wmpVizInfo != null)
           {
-            wmpVizInfo.Dispose();
+            wmpVizInfo.SafeDispose();
             wmpVizInfo = null;
           }
         }

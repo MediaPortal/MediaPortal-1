@@ -36,6 +36,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Windows.Forms;
+using MediaPortal.ExtensionMethods;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
@@ -808,7 +809,7 @@ namespace MediaPortal.Util
       finally
       {
         if (thumb != null)
-          thumb.Dispose();
+          thumb.SafeDispose();
         if (!File.Exists(strThumb) && blacklist != null)
         {
           blacklist.Add(path);
@@ -2543,7 +2544,7 @@ namespace MediaPortal.Util
       finally
       {
         if (img != null)
-          img.Dispose();
+          img.SafeDispose();
         if (MediaPortal.Player.g_Player.Playing)
           Thread.Sleep(50);
         else

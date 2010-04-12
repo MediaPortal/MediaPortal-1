@@ -23,6 +23,7 @@ using System.IO;
 using System.Collections;
 using System.Net;
 using MediaPortal.GUI.Library;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.Util
 {
@@ -53,7 +54,7 @@ namespace MediaPortal.Util
     {
       if (searchtag == null) return;
       if (searchtag == string.Empty) return;
-      m_imageList.Clear();
+      m_imageList.DisposeAndClearList();
       try
       {
         UriBuilder builder = new UriBuilder();

@@ -30,6 +30,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Serialization;
 using System.Xml;
 using MediaPortal.Player;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -44,7 +45,7 @@ namespace MediaPortal.GUI.Library
   /// Each window plugin should derive from this base class
   /// Pluginwindows should be copied in the plugins/windows folder
   /// </summary>
-  public class GUIWindow : Page
+  public class GUIWindow : Page, IDisposable
   {
     #region window ids
 
@@ -279,7 +280,7 @@ namespace MediaPortal.GUI.Library
 
     private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
     private VisualEffect _closeAnimation = new VisualEffect();
-
+    
     #endregion
 
     #region ctor
@@ -421,7 +422,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public void ClearAll()
     {
-      FreeResources();
+      Dispose();      
       Children.Clear();
     }
 
@@ -1095,21 +1096,24 @@ namespace MediaPortal.GUI.Library
     /// Gets called by the runtime when the window is not longer shown. It will
     /// ask every control of the window 2 free its (directx) resources
     /// </summary>
-    public virtual void FreeResources()
+    public virtual void Dispose()
     {
       _windowAllocated = false;
       try
       {
         // tell every control to free its resources
-        foreach (GUIControl control in Children)
-        {
-          control.FreeResources();
-        }
+        Children.Dispose(); //DisposeAndClearList();        
       }
       catch (Exception ex)
       {
-        Log.Error("GUIWindow: FreeResources exception - {0}", ex.ToString());
+        Log.Error("GUIWindow: Dispose exception - {0}", ex.ToString());
       }
+    }
+
+    [Obsolete("method 'FreeResources' is obsolete, instead use dispose.")]
+    public void FreeResources()
+    {
+      Dispose();
     }
 
     /// <summary>
@@ -1278,9 +1282,13 @@ namespace MediaPortal.GUI.Library
         return;
       }
       _shouldRestore = false;
-      FreeResources();
+      Dispose();
+      Children.DisposeAndClearList();
+      _listPositions.DisposeAndClear();
+
       Children.Clear();
       _listPositions.Clear();
+
       Load(_windowXmlFileName);
       LoadSkin();
 
@@ -1607,7 +1615,7 @@ namespace MediaPortal.GUI.Library
                 OnPageDestroy(message.Param1);
 
                 Log.Debug("Window: {0} deinit", this.ToString());
-                FreeResources();
+                Dispose();
                 DeInitControls();
                 GUITextureManager.CleanupThumbs();
                 //GC.Collect();

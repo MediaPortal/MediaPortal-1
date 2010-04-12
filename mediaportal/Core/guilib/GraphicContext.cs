@@ -54,6 +54,9 @@ namespace MediaPortal.GUI.Library
   {
     public static event BlackImageRenderedHandler OnBlackImageRendered;
     public static event VideoReceivedHandler OnVideoReceived;
+    
+    // Rendering loop lock - use this when removing any D3D resources
+    private static object _renderLock = new object();
 
     private static bool _renderBlackImage = false;
     private static List<Point> _cameras = new List<Point>();
@@ -1572,6 +1575,11 @@ namespace MediaPortal.GUI.Library
         _finalTransform = value;
         _finalTransformCalibrated = GetOffsetCorrectionTransform().multiply(_finalTransform);
       }
+    }
+
+    public static object RenderLock
+    {
+      get { return _renderLock; }
     }
 
     /// <summary>

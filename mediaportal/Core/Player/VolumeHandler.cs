@@ -21,9 +21,12 @@
 using System;
 using System.Runtime.InteropServices;
 using MediaPortal.Configuration;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Microsoft.Win32;
+
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Player
 {
@@ -131,7 +134,7 @@ namespace MediaPortal.Player
           writer.SetValue("volume", "lastknown", _instance._mixer.Volume);
         }
 
-        _instance._mixer.Dispose();
+        _instance._mixer.SafeDispose();
         _instance._mixer = null;
       }
       _instance = null;

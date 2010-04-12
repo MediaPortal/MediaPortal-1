@@ -412,6 +412,10 @@ namespace MediaPortal.ITunesPlayer
       }
     }
 
+    public override void Dispose()
+    {          
+    }
+
     public override bool Stopped
     {
       get

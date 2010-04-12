@@ -22,6 +22,7 @@ using System.IO;
 using System.Threading;
 using System.Windows.Media.Animation;
 using MediaPortal.Drawing;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -38,10 +39,10 @@ namespace MediaPortal.GUI.Library
     private static Thread guiWaitCursorThread = null;
 
     public static void Dispose()
-    {
+    {     
       if (_animation != null)
       {
-        _animation.FreeResources();
+        _animation.SafeDispose();
       }
 
       _animation = null;

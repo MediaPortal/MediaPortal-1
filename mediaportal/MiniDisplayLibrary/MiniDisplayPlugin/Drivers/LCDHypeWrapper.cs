@@ -36,7 +36,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class LCDHypeWrapper : BaseDisplay, IDisplay, IDisposable
+  public class LCDHypeWrapper : BaseDisplay, IDisplay
   {
     private bool _BlankDisplayOnExit;
     private Thread _EqThread;

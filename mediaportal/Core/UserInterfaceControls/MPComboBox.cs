@@ -21,6 +21,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.UserInterface.Controls
 {
@@ -50,7 +51,7 @@ namespace MediaPortal.UserInterface.Controls
           this.Width + 1,
           this.Height + 1);
         graphics.DrawRectangle(new Pen(_borderColor), rectangle);
-        graphics.Dispose();
+        graphics.SafeDispose();
       }
       base.WndProc(ref msg);
     }

@@ -21,6 +21,7 @@
 using System.Collections;
 using System.Drawing;
 using Microsoft.DirectX.Direct3D;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -180,7 +181,7 @@ namespace MediaPortal.GUI.Library
           _currentFrame = 0;
           timeElapsed = 0.0f;
           _fadeIn = true && _allowFadeIn;
-          _listLabels.Clear();
+          _listLabels.DisposeAndClearList();
           _previousText = strText;
           strText = strText.Replace("\\r", "\r");
           int ipos = 0;
@@ -381,7 +382,7 @@ namespace MediaPortal.GUI.Library
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
         {
           _previousText = "";
-          _listLabels.Clear();
+          _listLabels.DisposeAndClearList();
           _currentLabelIndex = 0;
           _scrollPosition = 0;
           _scrollPosititionX = 0;
@@ -413,7 +414,7 @@ namespace MediaPortal.GUI.Library
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_RESET)
         {
           _previousText = "";
-          _listLabels.Clear();
+          _listLabels.DisposeAndClearList();
           _currentLabelIndex = 0;
           _scrollPosition = 0;
           _scrollPosititionX = 0;
@@ -754,10 +755,11 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Frees the control its DirectX resources.
     /// </summary>
-    public override void FreeResources()
+    public override void Dispose()
     {
+      base.Dispose();
       _previousText = "";
-      _listLabels.Clear();
+      _listLabels.DisposeAndClearList();
       _font = null;
     }
 
@@ -768,7 +770,7 @@ namespace MediaPortal.GUI.Library
     {
       _currentLabelIndex = 0;
       _previousText = "";
-      _listLabels.Clear();
+      _listLabels.DisposeAndClearList();
       _currentFrame = 0;
       _scrollPosition = 0;
       _scrollPosititionX = 0;

@@ -20,6 +20,7 @@
 
 using System;
 using System.Windows.Forms;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -84,14 +85,14 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScalePosToScreenResolution(ref _sortButtonOffsetX, ref _sortButtonOffsetY);
     }
 
-    public override void FreeResources()
+    public override void Dispose()
     {
-      base.FreeResources();
+      base.Dispose();
 
-      _sortImages[0].FreeResources();
-      _sortImages[1].FreeResources();
-      _sortImages[2].FreeResources();
-      _sortImages[3].FreeResources();
+      _sortImages[0].SafeDispose();
+      _sortImages[1].SafeDispose();
+      _sortImages[2].SafeDispose();
+      _sortImages[3].SafeDispose();
     }
 
     public override void PreAllocResources()

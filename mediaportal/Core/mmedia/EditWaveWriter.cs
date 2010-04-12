@@ -21,6 +21,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.UserInterface.Controls;
 
 namespace Yeti.MMedia
@@ -55,7 +56,7 @@ namespace Yeti.MMedia
       {
         if (components != null)
         {
-          components.Dispose();
+          components.SafeDispose();
         }
       }
       base.Dispose(disposing);

@@ -22,6 +22,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -376,32 +377,32 @@ namespace MediaPortal.GUI.Library
       base.ScaleToScreenResolution();
     }
 
-    public override void FreeResources()
+    public override void Dispose()
     {
-      base.FreeResources();
+      base.Dispose();
 
-      ImgUpButtonNormal.FreeResources();
-      ImgUpButtonFocused.FreeResources();
+      ImgUpButtonNormal.SafeDispose();
+      ImgUpButtonFocused.SafeDispose();
 
-      ImgDownButtonNormal.FreeResources();
-      ImgDownButtonFocused.FreeResources();
+      ImgDownButtonNormal.SafeDispose();
+      ImgDownButtonFocused.SafeDispose();
 
-      ImgDeleteButtonNormal.FreeResources();
-      ImgDeleteButtonFocused.FreeResources();
+      ImgDeleteButtonNormal.SafeDispose();
+      ImgDeleteButtonFocused.SafeDispose();
 
       if (ImgUpButtonDisabled != null)
       {
-        ImgUpButtonDisabled.FreeResources();
+        ImgUpButtonDisabled.SafeDispose();
       }
 
       if (ImgDownButtonDisabled != null)
       {
-        ImgDownButtonDisabled.FreeResources();
+        ImgDownButtonDisabled.SafeDispose();
       }
 
       if (ImgDeleteButtonDisabled != null)
       {
-        ImgDeleteButtonDisabled.FreeResources();
+        ImgDeleteButtonDisabled.SafeDispose();
       }
     }
 

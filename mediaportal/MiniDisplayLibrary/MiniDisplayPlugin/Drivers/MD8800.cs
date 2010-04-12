@@ -33,7 +33,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class MD8800 : BaseDisplay, IDisplay, IDisposable
+  public class MD8800 : BaseDisplay, IDisplay
   {
     private bool _BlankDisplayOnExit;
     private Thread _DisplayThread;

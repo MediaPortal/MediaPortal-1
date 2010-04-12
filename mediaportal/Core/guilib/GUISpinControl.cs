@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -675,8 +676,8 @@ namespace MediaPortal.GUI.Library
 
           case GUIMessage.MessageType.GUI_MSG_LABEL_RESET:
             {
-              _listLabels.Clear();
-              _listValues.Clear();
+              _listLabels.DisposeAndClearList();
+              _listValues.DisposeAndClearList();
               Value = 0;
               return true;
             }
@@ -745,8 +746,8 @@ namespace MediaPortal.GUI.Library
       if (SubItemCount > 0)
       {
         _spinType = SpinType.SPIN_CONTROL_TYPE_TEXT;
-        _listLabels.Clear();
-        _listValues.Clear();
+        _listLabels.DisposeAndClearList();
+        _listValues.DisposeAndClearList();
         for (int i = 0; i < SubItemCount; ++i)
         {
           string subitem = (string)GetSubItem(i);
@@ -757,13 +758,13 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public override void FreeResources()
+    public override void Dispose()
     {
-      base.FreeResources();
-      _imageSpinUp.FreeResources();
-      _imageSpinUpFocus.FreeResources();
-      _imageSpinDown.FreeResources();
-      _imageSpinDownFocus.FreeResources();
+      base.Dispose();
+      _imageSpinUp.SafeDispose();
+      _imageSpinUpFocus.SafeDispose();
+      _imageSpinDown.SafeDispose();
+      _imageSpinDownFocus.SafeDispose();
       _typed = "";
     }
 
@@ -870,8 +871,8 @@ namespace MediaPortal.GUI.Library
 
     public void Reset()
     {
-      _listLabels.Clear();
-      _listValues.Clear();
+      _listLabels.DisposeAndClearList();
+      _listValues.DisposeAndClearList();
       Value = 0;
     }
 

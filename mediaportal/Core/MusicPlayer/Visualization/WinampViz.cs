@@ -29,7 +29,7 @@ using Un4seen.Bass.AddOn.Vis;
 
 namespace MediaPortal.Visualization
 {
-  public class WinampViz : VisualizationBase
+  public class WinampViz : VisualizationBase, IDisposable
   {
     #region Variables
 
@@ -138,6 +138,7 @@ namespace MediaPortal.Visualization
 
     public override void Dispose()
     {
+      Bass.PlaybackStateChanged -= new BassAudioEngine.PlaybackStateChangedDelegate(PlaybackStateChanged);
       base.Dispose();
       Close();
     }

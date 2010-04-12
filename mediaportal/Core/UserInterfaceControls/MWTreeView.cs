@@ -25,6 +25,7 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using MediaPortal.ExtensionMethods;
 using MWCommon;
 
 /// <summary>
@@ -376,7 +377,7 @@ namespace MWControls
       {
         if (components != null)
         {
-          components.Dispose();
+          components.SafeDispose();
         }
       }
 

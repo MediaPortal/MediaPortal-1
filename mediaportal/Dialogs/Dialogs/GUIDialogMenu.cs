@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using MediaPortal.GUI.Library;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.Dialogs
 {
@@ -195,7 +196,7 @@ namespace MediaPortal.Dialogs
     public override void Reset()
     {
       base.Reset();
-      listItems.Clear();
+      listItems.DisposeAndClearList();
       showQuickNumbers = true;
       selectedItemIndex = -1;
     }
@@ -358,7 +359,7 @@ namespace MediaPortal.Dialogs
     {
       SetHeading(GUILocalizeStrings.Get(iString));
       selectedItemIndex = -1;
-      listItems.Clear();
+      listItems.DisposeAndClearList();
     }
   }
 }

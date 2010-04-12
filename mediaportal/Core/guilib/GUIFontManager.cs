@@ -33,6 +33,7 @@ using Microsoft.DirectX.Direct3D;
 using Filter = Microsoft.DirectX.Direct3D.Filter;
 using Font = Microsoft.DirectX.Direct3D.Font;
 using Matrix = Microsoft.DirectX.Matrix;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -87,6 +88,7 @@ namespace MediaPortal.GUI.Library
 
     #endregion
 
+    private static object _renderlock = new object();
     protected static List<GUIFont> _listFonts = new List<GUIFont>();
     private static Sprite _d3dxSprite;
     private static bool _d3dxSpriteUsed;
@@ -99,6 +101,11 @@ namespace MediaPortal.GUI.Library
     public static int Count
     {
       get { return _listFonts.Count; }
+    }
+
+    public static object Renderlock
+    {
+      get { return _renderlock; }
     }
 
     public static void ReleaseUnmanagedResources()
@@ -118,99 +125,103 @@ namespace MediaPortal.GUI.Library
     {
       // Clear current set of fonts
       Dispose();
-      int counter = 0;
-      Log.Info("  Load fonts from {0}", strFilename);
-      _listFonts.Clear();
-
-      // Load the debug font
-      GUIFont fontDebug = new GUIFont("debug", "Arial", 12);
-      fontDebug.ID = counter++;
-      fontDebug.Load();
-      _listFonts.Add(fontDebug);
-
-      try
+      lock (Renderlock)
       {
-        // Load the XML document
-        XmlDocument doc = new XmlDocument();
-        doc.Load(strFilename);
-        // Check the root element
-        if (doc.DocumentElement == null)
+        int counter = 0;
+        Log.Info("  Load fonts from {0}", strFilename);
+        _listFonts.DisposeAndClear();
+
+        // Load the debug font
+        GUIFont fontDebug = new GUIFont("debug", "Arial", 12);
+        fontDebug.ID = counter++;
+        fontDebug.Load();
+        _listFonts.Add(fontDebug);
+
+        try
         {
-          return false;
-        }
-        string strRoot = doc.DocumentElement.Name;
-        if (strRoot != "fonts")
-        {
-          return false;
-        }
-        // Select the list of fonts
-        XmlNodeList list = doc.DocumentElement.SelectNodes("/fonts/font");
-        foreach (XmlNode node in list)
-        {
-          XmlNode nodeStart = node.SelectSingleNode("startchar");
-          XmlNode nodeEnd = node.SelectSingleNode("endchar");
-          XmlNode nodeName = node.SelectSingleNode("name");
-          XmlNode nodeFileName = node.SelectSingleNode("filename");
-          XmlNode nodeHeight = node.SelectSingleNode("height");
-          XmlNode nodeBold = node.SelectSingleNode("bold");
-          XmlNode nodeItalics = node.SelectSingleNode("italic");
-          if (nodeHeight != null && nodeName != null && nodeFileName != null)
+          // Load the XML document
+          XmlDocument doc = new XmlDocument();
+          doc.Load(strFilename);
+          // Check the root element
+          if (doc.DocumentElement == null)
           {
-            bool bold = false;
-            bool italic = false;
-            if (nodeBold != null && nodeBold.InnerText != null && nodeBold.InnerText.Equals("yes"))
-            {
-              bold = true;
-            }
-            if (nodeItalics != null && nodeItalics.InnerText != null && nodeItalics.InnerText.Equals("yes"))
-            {
-              italic = true;
-            }
-            string strName = nodeName.InnerText;
-            string strFileName = nodeFileName.InnerText;
-            int iHeight = Int32.Parse(nodeHeight.InnerText);
-
-            // height is based on 720x576
-            float fPercent = (((float)GUIGraphicsContext.Height) * GUIGraphicsContext.ZoomVertical) / 576.0f;
-            fPercent *= iHeight;
-            iHeight = (int)fPercent;
-            FontStyle style = new FontStyle();
-            style = FontStyle.Regular;
-            if (bold)
-            {
-              style |= FontStyle.Bold;
-            }
-            if (italic)
-            {
-              style |= FontStyle.Italic;
-            }
-            GUIFont font = new GUIFont(strName, strFileName, iHeight, style);
-            font.ID = counter++;
-
-            // .NET's LocalisationProvider should give the correct amount of chars.
-            if (nodeStart != null && nodeStart.InnerText != "" && nodeEnd != null && nodeEnd.InnerText != "")
-            {
-              int start = Int32.Parse(nodeStart.InnerText);
-              int end = Int32.Parse(nodeEnd.InnerText);
-              font.SetRange(start, end);
-            }
-            else
-            {
-              font.SetRange(0, GUIGraphicsContext.CharsInCharacterSet);
-            }
-
-            font.Load();
-            _listFonts.Add(font);
+            return false;
           }
-        }
-        return true;
-      }
-      catch (Exception ex)
-      {
-        Log.Info("GUIFontManager: Exception loading fonts {0} err:{1} stack:{2}", strFilename, ex.Message, ex.StackTrace);
-      }
+          string strRoot = doc.DocumentElement.Name;
+          if (strRoot != "fonts")
+          {
+            return false;
+          }
+          // Select the list of fonts
+          XmlNodeList list = doc.DocumentElement.SelectNodes("/fonts/font");
+          foreach (XmlNode node in list)
+          {
+            XmlNode nodeStart = node.SelectSingleNode("startchar");
+            XmlNode nodeEnd = node.SelectSingleNode("endchar");
+            XmlNode nodeName = node.SelectSingleNode("name");
+            XmlNode nodeFileName = node.SelectSingleNode("filename");
+            XmlNode nodeHeight = node.SelectSingleNode("height");
+            XmlNode nodeBold = node.SelectSingleNode("bold");
+            XmlNode nodeItalics = node.SelectSingleNode("italic");
+            if (nodeHeight != null && nodeName != null && nodeFileName != null)
+            {
+              bool bold = false;
+              bool italic = false;
+              if (nodeBold != null && nodeBold.InnerText != null && nodeBold.InnerText.Equals("yes"))
+              {
+                bold = true;
+              }
+              if (nodeItalics != null && nodeItalics.InnerText != null && nodeItalics.InnerText.Equals("yes"))
+              {
+                italic = true;
+              }
+              string strName = nodeName.InnerText;
+              string strFileName = nodeFileName.InnerText;
+              int iHeight = Int32.Parse(nodeHeight.InnerText);
 
-      return false;
+              // height is based on 720x576
+              float fPercent = (((float)GUIGraphicsContext.Height) * GUIGraphicsContext.ZoomVertical) / 576.0f;
+              fPercent *= iHeight;
+              iHeight = (int)fPercent;
+              FontStyle style = new FontStyle();
+              style = FontStyle.Regular;
+              if (bold)
+              {
+                style |= FontStyle.Bold;
+              }
+              if (italic)
+              {
+                style |= FontStyle.Italic;
+              }
+              GUIFont font = new GUIFont(strName, strFileName, iHeight, style);
+              font.ID = counter++;
+
+              // .NET's LocalisationProvider should give the correct amount of chars.
+              if (nodeStart != null && nodeStart.InnerText != "" && nodeEnd != null && nodeEnd.InnerText != "")
+              {
+                int start = Int32.Parse(nodeStart.InnerText);
+                int end = Int32.Parse(nodeEnd.InnerText);
+                font.SetRange(start, end);
+              }
+              else
+              {
+                font.SetRange(0, GUIGraphicsContext.CharsInCharacterSet);
+              }
+
+              font.Load();
+              _listFonts.Add(font);
+            }
+          }
+          return true;
+        }
+        catch (Exception ex)
+        {
+          Log.Info("GUIFontManager: Exception loading fonts {0} err:{1} stack:{2}", strFilename, ex.Message,
+                   ex.StackTrace);
+        }
+
+        return false;
+      }
     }
 
     /// <summary>
@@ -220,11 +231,14 @@ namespace MediaPortal.GUI.Library
     /// <returns>A GUIFont instance representing the fontnumber or a default GUIFont if the number does not exists.</returns>
     public static GUIFont GetFont(int iFont)
     {
-      if (iFont >= 0 && iFont < _listFonts.Count)
+      lock (Renderlock)
       {
-        return _listFonts[iFont];
-      }
-      return GetFont("debug");
+        if (iFont >= 0 && iFont < _listFonts.Count)
+        {
+          return _listFonts[iFont];
+        }
+        return GetFont("debug"); 
+      }      
     }
 
     /// <summary>
@@ -234,17 +248,20 @@ namespace MediaPortal.GUI.Library
     /// <returns>A GUIFont instance representing the strFontName or a default GUIFont if the strFontName does not exists.</returns>
     public static GUIFont GetFont(string strFontName)
     {
-      for (int i = 0; i < _listFonts.Count; ++i)
+      lock (Renderlock)
       {
-        GUIFont font = _listFonts[i];
-        if (font.FontName == strFontName)
+        for (int i = 0; i < _listFonts.Count; ++i)
         {
-          return font;
+          GUIFont font = _listFonts[i];
+          if (font.FontName == strFontName)
+          {
+            return font;
+          }
         }
-      }
-
-      // just return a font
-      return GetFont("debug");
+        // just return a font
+        return GetFont("debug");
+      }      
+      
     }
 
     public static void MeasureText(Font fnt, string text, ref float textwidth, ref float textheight, int fontSize)
@@ -457,99 +474,106 @@ namespace MediaPortal.GUI.Library
 
     public static void Present()
     {
-      FontEnginePresentTextures();
-      for (int i = 0; i < _listFonts.Count; ++i)
+      lock (Renderlock)
       {
-        GUIFont font = _listFonts[i];
-        font.Present();
-      }
-
-      if (_d3dxSpriteUsed)
-      {
-        if (_d3dxSprite == null)
+        FontEnginePresentTextures();
+        for (int i = 0; i < _listFonts.Count; ++i)
         {
-          _d3dxSprite = new Sprite(GUIGraphicsContext.DX9Device);
-        }
-        _d3dxSprite.Begin(SpriteFlags.AlphaBlend | SpriteFlags.SortTexture);
-        Viewport orgView = GUIGraphicsContext.DX9Device.Viewport;
-        Matrix orgProj = GUIGraphicsContext.DX9Device.Transform.View;
-        Matrix projm = orgProj;
-        Matrix finalm;
-
-        foreach (FontManagerDrawText draw in _listDrawText)
-        {
-          finalm.M11 = draw.matrix[0, 0];
-          finalm.M21 = draw.matrix[0, 1];
-          finalm.M31 = draw.matrix[0, 2];
-          finalm.M41 = draw.matrix[0, 3];
-          finalm.M12 = draw.matrix[1, 0];
-          finalm.M22 = draw.matrix[1, 1];
-          finalm.M32 = draw.matrix[1, 2];
-          finalm.M42 = draw.matrix[1, 3];
-          finalm.M13 = draw.matrix[2, 0];
-          finalm.M23 = draw.matrix[2, 1];
-          finalm.M33 = draw.matrix[2, 2];
-          finalm.M43 = draw.matrix[2, 3];
-          finalm.M14 = 0;
-          finalm.M24 = 0;
-          finalm.M34 = 0;
-          finalm.M44 = 1.0f;
-          _d3dxSprite.Transform = finalm;
-          GUIGraphicsContext.DX9Device.Viewport = draw.viewport;
-          float wfactor = ((float)orgView.Width) / (float)draw.viewport.Width;
-          float hfactor = ((float)orgView.Height) / (float)draw.viewport.Height;
-          float xoffset = (float)(orgView.X - draw.viewport.X);
-          float yoffset = (float)(orgView.Y - draw.viewport.Y);
-          projm.M11 = (orgProj.M11 + orgProj.M14 * xoffset) * wfactor;
-          projm.M21 = (orgProj.M21 + orgProj.M24 * xoffset) * wfactor;
-          projm.M31 = (orgProj.M31 + orgProj.M34 * xoffset) * wfactor;
-          projm.M41 = (orgProj.M41 + orgProj.M44 * xoffset) * wfactor;
-          projm.M12 = (orgProj.M12 + orgProj.M14 * yoffset) * hfactor;
-          projm.M22 = (orgProj.M22 + orgProj.M24 * yoffset) * hfactor;
-          projm.M32 = (orgProj.M32 + orgProj.M34 * yoffset) * hfactor;
-          projm.M42 = (orgProj.M42 + orgProj.M44 * yoffset) * hfactor;
-          GUIGraphicsContext.DX9Device.Transform.View = projm;
-          if (GUIGraphicsContext.IsDirectX9ExUsed())
-          {
-            DrawTextUsingTexture(draw, draw.fontHeight);
-          }
-          else
-          {
-            draw.fnt.DrawText(_d3dxSprite, draw.text, new Rectangle((int)draw.xpos,
-                                                                    (int)draw.ypos, 0, 0), DrawTextFormat.NoClip,
-                              draw.color);
-          }
-
-          _d3dxSprite.Flush();
+          GUIFont font = _listFonts[i];
+          font.Present();
         }
 
-        GUIGraphicsContext.DX9Device.Viewport = orgView;
-        GUIGraphicsContext.DX9Device.Transform.View = orgProj;
-        _d3dxSprite.End();
-        _listDrawText = new List<FontManagerDrawText>();
-        _d3dxSpriteUsed = false;
+        if (_d3dxSpriteUsed)
+        {
+          if (_d3dxSprite == null)
+          {
+            _d3dxSprite = new Sprite(GUIGraphicsContext.DX9Device);
+          }
+          _d3dxSprite.Begin(SpriteFlags.AlphaBlend | SpriteFlags.SortTexture);
+          Viewport orgView = GUIGraphicsContext.DX9Device.Viewport;
+          Matrix orgProj = GUIGraphicsContext.DX9Device.Transform.View;
+          Matrix projm = orgProj;
+          Matrix finalm;
+
+          foreach (FontManagerDrawText draw in _listDrawText)
+          {
+            finalm.M11 = draw.matrix[0, 0];
+            finalm.M21 = draw.matrix[0, 1];
+            finalm.M31 = draw.matrix[0, 2];
+            finalm.M41 = draw.matrix[0, 3];
+            finalm.M12 = draw.matrix[1, 0];
+            finalm.M22 = draw.matrix[1, 1];
+            finalm.M32 = draw.matrix[1, 2];
+            finalm.M42 = draw.matrix[1, 3];
+            finalm.M13 = draw.matrix[2, 0];
+            finalm.M23 = draw.matrix[2, 1];
+            finalm.M33 = draw.matrix[2, 2];
+            finalm.M43 = draw.matrix[2, 3];
+            finalm.M14 = 0;
+            finalm.M24 = 0;
+            finalm.M34 = 0;
+            finalm.M44 = 1.0f;
+            _d3dxSprite.Transform = finalm;
+            GUIGraphicsContext.DX9Device.Viewport = draw.viewport;
+            float wfactor = ((float)orgView.Width) / (float)draw.viewport.Width;
+            float hfactor = ((float)orgView.Height) / (float)draw.viewport.Height;
+            float xoffset = (float)(orgView.X - draw.viewport.X);
+            float yoffset = (float)(orgView.Y - draw.viewport.Y);
+            projm.M11 = (orgProj.M11 + orgProj.M14 * xoffset) * wfactor;
+            projm.M21 = (orgProj.M21 + orgProj.M24 * xoffset) * wfactor;
+            projm.M31 = (orgProj.M31 + orgProj.M34 * xoffset) * wfactor;
+            projm.M41 = (orgProj.M41 + orgProj.M44 * xoffset) * wfactor;
+            projm.M12 = (orgProj.M12 + orgProj.M14 * yoffset) * hfactor;
+            projm.M22 = (orgProj.M22 + orgProj.M24 * yoffset) * hfactor;
+            projm.M32 = (orgProj.M32 + orgProj.M34 * yoffset) * hfactor;
+            projm.M42 = (orgProj.M42 + orgProj.M44 * yoffset) * hfactor;
+            GUIGraphicsContext.DX9Device.Transform.View = projm;
+            if (GUIGraphicsContext.IsDirectX9ExUsed())
+            {
+              DrawTextUsingTexture(draw, draw.fontHeight);
+            }
+            else
+            {
+              draw.fnt.DrawText(_d3dxSprite, draw.text, new Rectangle((int)draw.xpos,
+                                                                      (int)draw.ypos, 0, 0), DrawTextFormat.NoClip,
+                                draw.color);
+            }
+
+            _d3dxSprite.Flush();
+          }
+
+          GUIGraphicsContext.DX9Device.Viewport = orgView;
+          GUIGraphicsContext.DX9Device.Transform.View = orgProj;
+          _d3dxSprite.End();
+          _listDrawText = new List<FontManagerDrawText>();
+          _d3dxSpriteUsed = false;
+        }
       }
     }
-
+    
     /// <summary>
     /// Disposes all GUIFonts.
     /// </summary>
     public static void Dispose()
     {
-      Log.Info("  fonts.Dispose()");
-      foreach (GUIFont font in _listFonts)
+      lock (Renderlock)
       {
-        font.Dispose(null, null);
-      }
+        Log.Info("  fonts.SafeDispose()");
+        //_listFonts.DisposeAndClear();
+        foreach (GUIFont font in _listFonts)
+        {
+          font.Dispose(null, null);
+        }
 
-      if (_d3dxSprite != null)
-      {
-        _d3dxSprite.Dispose();
-        _d3dxSprite = null;
-        _d3dxSpriteUsed = false;
-      }
-      _listFontTextures.Clear();
-      _listFontObjects.Clear();
+        if (_d3dxSprite != null)
+        {
+          _d3dxSprite.SafeDispose();
+          _d3dxSprite = null;
+          _d3dxSpriteUsed = false;
+        }
+        _listFontTextures.DisposeAndClear();
+        _listFontObjects.DisposeAndClear(); 
+      }      
     }
 
     public static void ClearFontCache()
@@ -581,17 +605,20 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void InitializeDeviceObjects()
     {
-      Log.Debug("  fonts.InitializeDeviceObjects()");
-      IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
+      lock (Renderlock)
+      {
+        Log.Debug("  fonts.InitializeDeviceObjects()");
+        IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
-      unsafe
-      {
-        FontEngineSetDevice(upDevice.ToPointer());
-      }
-      foreach (GUIFont font in _listFonts)
-      {
-        font.InitializeDeviceObjects();
-      }
+        unsafe
+        {
+          FontEngineSetDevice(upDevice.ToPointer());
+        }
+        foreach (GUIFont font in _listFonts)
+        {
+          font.InitializeDeviceObjects();
+        } 
+      }      
     }
   }
 }

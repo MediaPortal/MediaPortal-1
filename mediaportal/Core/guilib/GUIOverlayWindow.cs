@@ -25,9 +25,16 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIOverlayWindow : GUIWindow
   {
-    public GUIOverlayWindow()
+    protected override void OnWindowLoaded()
     {
       GUIWindowManager.OnPostRenderAction += new GUIWindowManager.PostRenderActionHandler(OnPostRenderAction);
+      base.OnWindowLoaded();
+    }    
+
+    public override void Dispose()
+    {     
+      GUIWindowManager.OnPostRenderAction -= new GUIWindowManager.PostRenderActionHandler(OnPostRenderAction);
+      base.Dispose();
     }
 
     // Moved to Ctor to prevent multiple event registrations (fixes http://mantis.team-mediaportal.com/view.php?id=724 )

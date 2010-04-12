@@ -23,7 +23,10 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.IR
 {
@@ -248,7 +251,7 @@ namespace MediaPortal.IR
       {
         if (components != null)
         {
-          components.Dispose();
+          components.SafeDispose();
         }
       }
       base.Dispose(disposing);

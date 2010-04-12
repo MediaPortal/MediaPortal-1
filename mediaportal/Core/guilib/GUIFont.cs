@@ -29,6 +29,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.Profile;
 using Microsoft.DirectX.Direct3D;
 using Filter = Microsoft.DirectX.Direct3D.Filter;
@@ -39,7 +40,7 @@ namespace MediaPortal.GUI.Library
   /// <summary>
   /// An implementation of the GUIFont class (renders text using DirectX textures).  This implementation generates the necessary textures for rendering the fonts in DirectX in the @skin\skinname\fonts directory.
   /// </summary>
-  public class GUIFont
+  public class GUIFont : IDisposable
   {
     #region imports
 
@@ -227,9 +228,13 @@ namespace MediaPortal.GUI.Library
     public void Create(string fileName, FontStyle style, int Size)
     {
       Dispose(null, null);
-      _fileName = fileName;
-      _fontHeight = Size;
-      _systemFont = new Font(_fileName, (float)_fontHeight, style);
+
+      lock (GUIFontManager.Renderlock)
+      {
+        _fileName = fileName;
+        _fontHeight = Size;
+        _systemFont = new Font(_fileName, (float)_fontHeight, style);  
+      }      
     }
 
     /// <summary>
@@ -243,49 +248,52 @@ namespace MediaPortal.GUI.Library
     public void DrawTextWidth(float xpos, float ypos, long color, string label, float fMaxWidth,
                               GUIControl.Alignment alignment)
     {
-      if (fMaxWidth <= 0)
+      lock (GUIFontManager.Renderlock)
       {
-        return;
-      }
-      if (xpos <= 0)
-      {
-        return;
-      }
-      if (ypos <= 0)
-      {
-        return;
-      }
-      if (label == null)
-      {
-        return;
-      }
-      if (label.Length == 0)
-      {
-        return;
-      }
-      float fTextWidth = 0, fTextHeight = 0;
-      GetTextExtent(label, ref fTextWidth, ref fTextHeight);
-      if (fTextWidth <= fMaxWidth)
-      {
-        DrawText(xpos, ypos, color, label, alignment, (int)fMaxWidth);
-        return;
-      }
-      while (fTextWidth >= fMaxWidth && label.Length > 1)
-      {
-        if (alignment == GUIControl.Alignment.ALIGN_RIGHT)
+        if (fMaxWidth <= 0)
         {
-          label = label.Substring(1);
+          return;
         }
-        else
+        if (xpos <= 0)
         {
-          label = label.Substring(0, label.Length - 1);
+          return;
+        }
+        if (ypos <= 0)
+        {
+          return;
+        }
+        if (label == null)
+        {
+          return;
+        }
+        if (label.Length == 0)
+        {
+          return;
+        }
+        float fTextWidth = 0, fTextHeight = 0;
+        GetTextExtent(label, ref fTextWidth, ref fTextHeight);
+        if (fTextWidth <= fMaxWidth)
+        {
+          DrawText(xpos, ypos, color, label, alignment, (int)fMaxWidth);
+          return;
+        }
+        while (fTextWidth >= fMaxWidth && label.Length > 1)
+        {
+          if (alignment == GUIControl.Alignment.ALIGN_RIGHT)
+          {
+            label = label.Substring(1);
+          }
+          else
+          {
+            label = label.Substring(0, label.Length - 1);
+          }
+          GetTextExtent(label, ref fTextWidth, ref fTextHeight);
         }
         GetTextExtent(label, ref fTextWidth, ref fTextHeight);
-      }
-      GetTextExtent(label, ref fTextWidth, ref fTextHeight);
-      if (fTextWidth <= fMaxWidth)
-      {
-        DrawText(xpos, ypos, color, label, alignment, -1);
+        if (fTextWidth <= fMaxWidth)
+        {
+          DrawText(xpos, ypos, color, label, alignment, -1);
+        }
       }
     }
 
@@ -299,47 +307,50 @@ namespace MediaPortal.GUI.Library
     /// <param name="alignment">The alignment of the text.</param>
     public void DrawText(float xpos, float ypos, long color, string label, GUIControl.Alignment alignment, int maxWidth)
     {
-      if (label == null)
+      lock (GUIFontManager.Renderlock)
       {
-        return;
-      }
-      if (label.Length == 0)
-      {
-        return;
-      }
-      if (xpos <= 0)
-      {
-        return;
-      }
-      if (ypos <= 0)
-      {
-        return;
-      }
-      int alpha = (int)((color >> 24) & 0xff);
-      int red = (int)((color >> 16) & 0xff);
-      int green = (int)((color >> 8) & 0xff);
-      int blue = (int)(color & 0xff);
-
-      if (alignment == GUIControl.Alignment.ALIGN_LEFT)
-      {
-        DrawText(xpos, ypos, Color.FromArgb(alpha, red, green, blue), label, RenderFlags.Filtered, maxWidth);
-      }
-      else if (alignment == GUIControl.Alignment.ALIGN_RIGHT)
-      {
-        float fW = 0, fH = 0;
-        GetTextExtent(label, ref fW, ref fH);
-        DrawText(xpos - fW, ypos, Color.FromArgb(alpha, red, green, blue), label, RenderFlags.Filtered, maxWidth);
-      }
-      else if (alignment == GUIControl.Alignment.ALIGN_CENTER)
-      {
-        float fW = 0, fH = 0;
-        GetTextExtent(label, ref fW, ref fH);
-        int off = (int)((maxWidth - fW) / 2);
-        if (off < 0)
+        if (label == null)
         {
-          off = 0;
+          return;
         }
-        DrawText(xpos + off, ypos, Color.FromArgb(alpha, red, green, blue), label, RenderFlags.Filtered, maxWidth);
+        if (label.Length == 0)
+        {
+          return;
+        }
+        if (xpos <= 0)
+        {
+          return;
+        }
+        if (ypos <= 0)
+        {
+          return;
+        }
+        int alpha = (int)((color >> 24) & 0xff);
+        int red = (int)((color >> 16) & 0xff);
+        int green = (int)((color >> 8) & 0xff);
+        int blue = (int)(color & 0xff);
+
+        if (alignment == GUIControl.Alignment.ALIGN_LEFT)
+        {
+          DrawText(xpos, ypos, Color.FromArgb(alpha, red, green, blue), label, RenderFlags.Filtered, maxWidth);
+        }
+        else if (alignment == GUIControl.Alignment.ALIGN_RIGHT)
+        {
+          float fW = 0, fH = 0;
+          GetTextExtent(label, ref fW, ref fH);
+          DrawText(xpos - fW, ypos, Color.FromArgb(alpha, red, green, blue), label, RenderFlags.Filtered, maxWidth);
+        }
+        else if (alignment == GUIControl.Alignment.ALIGN_CENTER)
+        {
+          float fW = 0, fH = 0;
+          GetTextExtent(label, ref fW, ref fH);
+          int off = (int)((maxWidth - fW) / 2);
+          if (off < 0)
+          {
+            off = 0;
+          }
+          DrawText(xpos + off, ypos, Color.FromArgb(alpha, red, green, blue), label, RenderFlags.Filtered, maxWidth);
+        }
       }
     }
 
@@ -361,15 +372,18 @@ namespace MediaPortal.GUI.Library
                                int iShadowDistance,
                                long dwShadowColor)
     {
-      // Draw the shadow
-      float fShadowX =
-        (float)Math.Round((double)iShadowDistance * Math.Cos(ConvertDegreesToRadians((double)iShadowAngle)));
-      float fShadowY =
-        (float)Math.Round((double)iShadowDistance * Math.Sin(ConvertDegreesToRadians((double)iShadowAngle)));
-      DrawText(fOriginX + fShadowX, fOriginY + fShadowY, dwShadowColor, strText, alignment, -1);
+      lock (GUIFontManager.Renderlock)
+      {
+        // Draw the shadow
+        float fShadowX =
+          (float)Math.Round((double)iShadowDistance * Math.Cos(ConvertDegreesToRadians((double)iShadowAngle)));
+        float fShadowY =
+          (float)Math.Round((double)iShadowDistance * Math.Sin(ConvertDegreesToRadians((double)iShadowAngle)));
+        DrawText(fOriginX + fShadowX, fOriginY + fShadowY, dwShadowColor, strText, alignment, -1);
 
-      // Draw the text
-      DrawText(fOriginX, fOriginY, dwColor, strText, alignment, -1);
+        // Draw the text
+        DrawText(fOriginX, fOriginY, dwColor, strText, alignment, -1);
+      }
     }
 
     public void DrawShadowTextWidth(float fOriginX, float fOriginY, long dwColor,
@@ -380,15 +394,18 @@ namespace MediaPortal.GUI.Library
                                     long dwShadowColor,
                                     float fMaxWidth)
     {
-      // Draw the shadow
-      float fShadowX =
-        (float)Math.Round((double)iShadowDistance * Math.Cos(ConvertDegreesToRadians((double)iShadowAngle)));
-      float fShadowY =
-        (float)Math.Round((double)iShadowDistance * Math.Sin(ConvertDegreesToRadians((double)iShadowAngle)));
-      DrawTextWidth(fOriginX + fShadowX, fOriginY + fShadowY, dwShadowColor, strText, fMaxWidth, alignment);
+      lock (GUIFontManager.Renderlock)
+      {
+        // Draw the shadow
+        float fShadowX =
+          (float)Math.Round((double)iShadowDistance * Math.Cos(ConvertDegreesToRadians((double)iShadowAngle)));
+        float fShadowY =
+          (float)Math.Round((double)iShadowDistance * Math.Sin(ConvertDegreesToRadians((double)iShadowAngle)));
+        DrawTextWidth(fOriginX + fShadowX, fOriginY + fShadowY, dwShadowColor, strText, fMaxWidth, alignment);
 
-      // Draw the text
-      DrawTextWidth(fOriginX, fOriginY, dwColor, strText, fMaxWidth, alignment);
+        // Draw the text
+        DrawTextWidth(fOriginX, fOriginY, dwColor, strText, fMaxWidth, alignment);
+      }
     }
 
     private static double ConvertDegreesToRadians(double degrees)
@@ -747,60 +764,63 @@ namespace MediaPortal.GUI.Library
     /// <param name="flags">Font render flags.</param>
     protected void DrawText(float xpos, float ypos, Color color, string text, RenderFlags flags, int maxWidth)
     {
-      if (text == null)
+      lock (GUIFontManager.Renderlock)
       {
-        return;
-      }
-      if (text.Length == 0)
-      {
-        return;
-      }
-      if (xpos <= 0)
-      {
-        return;
-      }
-      if (ypos <= 0)
-      {
-        return;
-      }
-      if (maxWidth < -1)
-      {
-        return;
-      }
-
-      if (GUIGraphicsContext.graphics != null)
-      {
-        GUIGraphicsContext.graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
-        GUIGraphicsContext.graphics.SmoothingMode = SmoothingMode.HighQuality; //.AntiAlias;
-        GUIGraphicsContext.graphics.DrawString(text, _systemFont, new SolidBrush(color), xpos, ypos);
-        return;
-      }
-      if (_useRTLLang)
-      {
-        text = HandleRTLText(text);
-      }
-      if (ID >= 0)
-      {
-        for (int i = 0; i < text.Length; ++i)
+        if (text == null)
         {
-          char c = text[i];
-          if (c < _StartCharacter || c >= _EndCharacter)
-          {
-            GUIFontManager.DrawText(_d3dxFont, xpos, ypos, color, text, maxWidth, _fontHeight);
-            return;
-          }
+          return;
+        }
+        if (text.Length == 0)
+        {
+          return;
+        }
+        if (xpos <= 0)
+        {
+          return;
+        }
+        if (ypos <= 0)
+        {
+          return;
+        }
+        if (maxWidth < -1)
+        {
+          return;
         }
 
-        int intColor = color.ToArgb();
-        unsafe
+        if (GUIGraphicsContext.graphics != null)
         {
-          float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
-
-          IntPtr ptrStr = Marshal.StringToCoTaskMemUni(text); //SLOW
-          FontEngineDrawText3D(ID, (void*)(ptrStr.ToPointer()), (int)xpos, (int)ypos, (uint)intColor, maxWidth,
-                               matrix);
-          Marshal.FreeCoTaskMem(ptrStr);
+          GUIGraphicsContext.graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
+          GUIGraphicsContext.graphics.SmoothingMode = SmoothingMode.HighQuality; //.AntiAlias;
+          GUIGraphicsContext.graphics.DrawString(text, _systemFont, new SolidBrush(color), xpos, ypos);
           return;
+        }
+        if (_useRTLLang)
+        {
+          text = HandleRTLText(text);
+        }
+        if (ID >= 0)
+        {
+          for (int i = 0; i < text.Length; ++i)
+          {
+            char c = text[i];
+            if (c < _StartCharacter || c >= _EndCharacter)
+            {
+              GUIFontManager.DrawText(_d3dxFont, xpos, ypos, color, text, maxWidth, _fontHeight);
+              return;
+            }
+          }
+
+          int intColor = color.ToArgb();
+          unsafe
+          {
+            float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
+
+            IntPtr ptrStr = Marshal.StringToCoTaskMemUni(text); //SLOW
+            FontEngineDrawText3D(ID, (void*)(ptrStr.ToPointer()), (int)xpos, (int)ypos, (uint)intColor, maxWidth,
+                                 matrix);
+            Marshal.FreeCoTaskMem(ptrStr);
+            return;
+          }
         }
       }
     }
@@ -904,34 +924,38 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public void Dispose(object sender, EventArgs e)
     {
-      if (_systemFont != null)
+      lock (GUIFontManager.Renderlock)
       {
-        _systemFont.Dispose();
-      }
-
-      if (_d3dxFont != null)
-      {
-        _d3dxFont.Dispose();
-      }
-      _d3dxFont = null;
-
-      if (_textureFont != null)
-      {
-        _textureFont.Disposing -= new EventHandler(_textureFont_Disposing);
-        _textureFont.Dispose();
-      }
-      _textureFont = null;
-      _systemFont = null;
-      _textureCoords = null;
-      if (_fontAdded)
-      {
-        //Log.Debug("GUIFont:Dispose({0}) fontengine: Remove font:{1}", _fontName, ID.ToString());
-        if (ID >= 0)
+        if (_systemFont != null)
         {
-          FontEngineRemoveFont(ID);
+          _systemFont.SafeDispose();
         }
+
+        if (_d3dxFont != null)
+        {
+          _d3dxFont.SafeDispose();
+        }
+        _d3dxFont = null;
+
+        if (_textureFont != null)
+        {
+          _textureFont.Disposing -= new EventHandler(_textureFont_Disposing);
+          _textureFont.SafeDispose();
+        }
+        _textureFont = null;
+        _systemFont = null;
+        _textureCoords = null;
+        if (_fontAdded)
+        {
+          //Log.Debug("GUIFont:Dispose({0}) fontengine: Remove font:{1}", _fontName, ID.ToString());
+          if (ID >= 0)
+          {
+            FontEngineRemoveFont(ID);
+          }
+        }
+        _fontAdded = false;
       }
-      _fontAdded = false;
+      
     }
 
     /// <summary>
@@ -1148,7 +1172,7 @@ namespace MediaPortal.GUI.Library
       finally
       {
         if (s != null)
-          s.Dispose();
+          s.SafeDispose();
       }
     }
 
@@ -1168,30 +1192,33 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public void SetFontEgine()
     {
-      if (_fontAdded)
+      lock (GUIFontManager.Renderlock)
       {
-        return;
-      }
-      if (ID < 0)
-      {
-        return;
-      }
+        if (_fontAdded)
+        {
+          return;
+        }
+        if (ID < 0)
+        {
+          return;
+        }
 
-      //Log.Debug("GUIFont:RestoreDeviceObjects() fontengine: add font:" + ID.ToString());
-      IntPtr upTexture = DirectShowUtil.GetUnmanagedTexture(_textureFont);
-      unsafe
-      {
-        FontEngineAddFont(ID, upTexture.ToPointer(), _StartCharacter, _EndCharacter, _textureScale, _textureWidth,
-                          _textureHeight, _spacingPerChar, MaxNumfontVertices);
-      }
+        //Log.Debug("GUIFont:RestoreDeviceObjects() fontengine: add font:" + ID.ToString());
+        IntPtr upTexture = DirectShowUtil.GetUnmanagedTexture(_textureFont);
+        unsafe
+        {
+          FontEngineAddFont(ID, upTexture.ToPointer(), _StartCharacter, _EndCharacter, _textureScale, _textureWidth,
+                            _textureHeight, _spacingPerChar, MaxNumfontVertices);
+        }
 
-      int length = _textureCoords.GetLength(0);
-      for (int i = 0; i < length; ++i)
-      {
-        FontEngineSetCoordinate(ID, i, 0, _textureCoords[i, 0], _textureCoords[i, 1], _textureCoords[i, 2],
-                                _textureCoords[i, 3]);
+        int length = _textureCoords.GetLength(0);
+        for (int i = 0; i < length; ++i)
+        {
+          FontEngineSetCoordinate(ID, i, 0, _textureCoords[i, 0], _textureCoords[i, 1], _textureCoords[i, 2],
+                                  _textureCoords[i, 3]);
+        }
+        _fontAdded = true;
       }
-      _fontAdded = true;
     }
 
     /// <summary>
@@ -1274,5 +1301,14 @@ namespace MediaPortal.GUI.Library
         x += size.Width + (2 * _spacingPerChar);
       }
     }
+
+    #region IDisposable Members
+
+    public void Dispose()
+    {
+      Dispose(null, null);
+    }
+
+    #endregion
   }
 }

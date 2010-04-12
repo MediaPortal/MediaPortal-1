@@ -20,6 +20,7 @@
 
 using System.Collections.Generic;
 using Microsoft.DirectX.Direct3D;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -130,13 +131,10 @@ namespace MediaPortal.GUI.Library
       SetInitialSelectedItem();
     }
 
-    public override void FreeResources()
+    public override void Dispose()
     {
-      for (int row = 0; row < Count; row++)
-      {
-        _rows[row].FreeResources();
-      }
-      _rows.Clear();
+      base.Dispose();
+      _rows.DisposeAndClear();
     }
 
     public override void Render(float timePassed)

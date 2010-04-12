@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -586,20 +587,20 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public override void FreeResources()
+    public override void Dispose()
     {
-      base.FreeResources();
-      _imageTop.FreeResources();
-      _imageMid.FreeResources();
-      _imageRight.FreeResources();
-      _imageLeft.FreeResources();
-      _imageFill1.FreeResources();
-      _imageFill2.FreeResources();
-      _imageFill3.FreeResources();
-      _imageFillBackground.FreeResources();
-      _imageTick.FreeResources();
-      _imageBottom.FreeResources();
-      _imageLogo.FreeResources();
+      base.Dispose();
+      _imageTop.SafeDispose();
+      _imageMid.SafeDispose();
+      _imageRight.SafeDispose();
+      _imageLeft.SafeDispose();
+      _imageFill1.SafeDispose();
+      _imageFill2.SafeDispose();
+      _imageFill3.SafeDispose();
+      _imageFillBackground.SafeDispose();
+      _imageTick.SafeDispose();
+      _imageBottom.SafeDispose();
+      _imageLogo.SafeDispose();
     }
 
     public override void PreAllocResources()

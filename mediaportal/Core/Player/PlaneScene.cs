@@ -22,6 +22,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player.Subtitles;
 using Microsoft.DirectX;
@@ -282,20 +283,20 @@ namespace MediaPortal.Player
         {
           GUIGraphicsContext.DX9Device.SetRenderTarget(0, _renderTarget);
         }
-        _renderTarget.Dispose();
+        _renderTarget.SafeDispose();
         _renderTarget = null;
       }
       for (int i = 0; i < _vertexBuffers.Length; i++)
       {
         if (_vertexBuffers[i] != null)
         {
-          _vertexBuffers[i].Dispose();
+          _vertexBuffers[i].SafeDispose();
           _vertexBuffers[i] = null;
         }
       }
       if (_blackImage != null)
       {
-        _blackImage.FreeResources();
+        _blackImage.SafeDispose();
         _blackImage = null;
       }
 
@@ -540,47 +541,50 @@ namespace MediaPortal.Player
 
     public int PresentImage(Int16 width, Int16 height, Int16 arWidth, Int16 arHeight, uint pTexture, uint pSurface)
     {
-      try
+      lock (GUIGraphicsContext.RenderLock)
       {
-        // Alert the frame grabber that it has a chance to grab a frame
-        // if it likes (method returns immediatly otherwise
-        grabber.OnFrame(width, height, arWidth, arHeight, pSurface);
-
-        _textureAddress = pTexture;
-
-        if (pTexture == 0)
+        try
         {
-          Log.Debug("PlaneScene: PresentImage() dispose surfaces");
-          _vmr9Util.VideoWidth = 0;
-          _vmr9Util.VideoHeight = 0;
-          _vmr9Util.VideoAspectRatioX = 0;
-          _vmr9Util.VideoAspectRatioY = 0;
-          _arVideoWidth = 0;
-          _arVideoHeight = 0;
-          return 0;
-        }
-        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-        {
-          return 0;
-        }
+          // Alert the frame grabber that it has a chance to grab a frame
+          // if it likes (method returns immediatly otherwise
+          grabber.OnFrame(width, height, arWidth, arHeight, pSurface);
 
-        _vmr9Util.FreeFrameCounter++;
+          _textureAddress = pTexture;
 
-        if (!_drawVideoAllowed || !_isEnabled)
-        {
-          Log.Info("planescene:PresentImage() frame:{0} enabled:{1} allowed:{2}", _vmr9Util.FrameCounter, _isEnabled,
-                   _drawVideoAllowed);
+          if (pTexture == 0)
+          {
+            Log.Debug("PlaneScene: PresentImage() dispose surfaces");
+            _vmr9Util.VideoWidth = 0;
+            _vmr9Util.VideoHeight = 0;
+            _vmr9Util.VideoAspectRatioX = 0;
+            _vmr9Util.VideoAspectRatioY = 0;
+            _arVideoWidth = 0;
+            _arVideoHeight = 0;
+            return 0;
+          }
+          if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+          {
+            return 0;
+          }
+
+          _vmr9Util.FreeFrameCounter++;
+
+          if (!_drawVideoAllowed || !_isEnabled)
+          {
+            Log.Info("planescene:PresentImage() frame:{0} enabled:{1} allowed:{2}", _vmr9Util.FrameCounter, _isEnabled,
+                     _drawVideoAllowed);
+            _vmr9Util.FrameCounter++;
+            return 0;
+          }
           _vmr9Util.FrameCounter++;
-          return 0;
+          //			Log.Info("vmr9:present image()");
+          InternalPresentImage(width, height, arWidth, arHeight, false);
+          //			Log.Info("vmr9:present image() done");
         }
-        _vmr9Util.FrameCounter++;
-        //			Log.Info("vmr9:present image()");
-        InternalPresentImage(width, height, arWidth, arHeight, false);
-        //			Log.Info("vmr9:present image() done");
-      }
-      catch (Exception ex)
-      {
-        Log.Error("Planescene: Error in PresentImage - {0}", ex.ToString());
+        catch (Exception ex)
+        {
+          Log.Error("Planescene: Error in PresentImage - {0}", ex.ToString());
+        }
       }
       return 0;
     }

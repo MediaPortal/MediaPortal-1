@@ -18,6 +18,8 @@
 
 #endregion
 
+using MediaPortal.ExtensionMethods;
+
 namespace MediaPortal.GUI.Library
 {
   /// <summary>
@@ -271,13 +273,13 @@ namespace MediaPortal.GUI.Library
       _height = _imageFocused.Height;
     }
 
-    public override void FreeResources()
+    public override void Dispose()
     {
-      base.FreeResources();
-      _imageFocused.FreeResources();
-      _imageNonFocused.FreeResources();
-      _imageAlternativeFocused.FreeResources();
-      _imageAlternativeNonFocused.FreeResources();
+      base.Dispose();
+      _imageFocused.SafeDispose();
+      _imageNonFocused.SafeDispose();
+      _imageAlternativeFocused.SafeDispose();
+      _imageAlternativeNonFocused.SafeDispose();
     }
 
     public override void SetPosition(int posX, int posY)

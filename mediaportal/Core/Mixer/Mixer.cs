@@ -20,6 +20,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.Mixer
 {
@@ -53,12 +54,12 @@ namespace MediaPortal.Mixer
     {
       if (_mixerControlDetailsVolume != null)
       {
-        _mixerControlDetailsVolume.Dispose();
+        _mixerControlDetailsVolume.SafeDispose();
       }
 
       if (_mixerControlDetailsMute != null)
       {
-        _mixerControlDetailsMute.Dispose();
+        _mixerControlDetailsMute.SafeDispose();
       }
       _mixerEventListener.LineChanged -= new MixerEventHandler(OnLineChanged);
       _mixerEventListener.ControlChanged -= new MixerEventHandler(OnControlChanged);

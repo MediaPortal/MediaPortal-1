@@ -19,6 +19,7 @@
 #endregion
 
 using System.Drawing;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -77,12 +78,12 @@ namespace MediaPortal.GUI.Library
       blackImage.AllocResources();
     }
 
-    public override void FreeResources()
+    public override void Dispose()
     {
-      base.FreeResources();
-      _imageFocusRectangle.FreeResources();
-      thumbImage.FreeResources();
-      blackImage.FreeResources();
+      base.Dispose();
+      _imageFocusRectangle.SafeDispose();
+      thumbImage.SafeDispose();
+      blackImage.SafeDispose();
     }
 
     public override void OnDeInit()

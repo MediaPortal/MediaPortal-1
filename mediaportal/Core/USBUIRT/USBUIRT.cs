@@ -29,6 +29,8 @@ using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
 
+using Action = MediaPortal.GUI.Library.Action;
+
 namespace MediaPortal.IR
 {
 

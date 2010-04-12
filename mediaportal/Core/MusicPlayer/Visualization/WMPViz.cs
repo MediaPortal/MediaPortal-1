@@ -60,7 +60,7 @@ namespace MediaPortal.Visualization
     internal static extern bool SetOutputWMP(VisualizationBase.OutputContextType outputContextType, IntPtr hOutput);
   }
 
-  public class WMPViz : VisualizationBase
+  public class WMPViz : VisualizationBase, IDisposable
   {
     #region Variables
 

@@ -22,6 +22,7 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Forms;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.UserInterface.Controls;
 using WaveLib;
 
@@ -30,7 +31,7 @@ namespace Yeti.MMedia
   /// <summary>
   /// Summary description for EditFormat.
   /// </summary>
-  public class EditFormat : UserControl, IEditFormat
+  public class EditFormat : UserControl, IEditFormat, IDisposable
   {
     private MPComboBox comboBoxChannels;
     private MPComboBox comboBoxBitsPerSample;
@@ -61,7 +62,7 @@ namespace Yeti.MMedia
       {
         if (components != null)
         {
-          components.Dispose();
+          components.SafeDispose();
         }
       }
       base.Dispose(disposing);

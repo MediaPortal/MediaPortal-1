@@ -19,6 +19,7 @@
 #endregion
 
 using System.Windows.Forms;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -174,12 +175,12 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Frees the control its DirectX resources.
     /// </summary>
-    public override void FreeResources()
+    public override void Dispose()
     {
-      base.FreeResources();
-      _imageBackground.FreeResources();
-      _imageBottom.FreeResources();
-      _imageTop.FreeResources();
+      base.Dispose();
+      _imageBackground.SafeDispose();
+      _imageBottom.SafeDispose();
+      _imageTop.SafeDispose();
     }
 
     /// <summary>

@@ -25,6 +25,7 @@ using System.IO;
 using System.Windows.Media.Animation;
 using MediaPortal.Drawing;
 using MediaPortal.Profile;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -317,18 +318,15 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public override void FreeResources()
+    public override void Dispose()
     {
+      base.Dispose();
       if (_images == null)
       {
         return;
       }
 
-      for (int index = 0; index < _images.Length; index++)
-      {
-        _images[index].FreeResources();
-      }
-
+      _images.DisposeAndClear();
       _images = null;
 
       if (_filenames != null)
@@ -352,7 +350,7 @@ namespace MediaPortal.GUI.Library
 
     public void SetFileName(string newFilename)
     {
-      FreeResources();
+      Dispose();
       _textureNames = newFilename;
       AllocResources();
     }

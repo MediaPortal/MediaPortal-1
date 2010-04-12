@@ -46,7 +46,7 @@ namespace MediaPortal.WinampPlayer
     */
     private string[] m_supportedExtensions = new string[0];
 
-    private WinampController m_winampController = null;
+    private WinampController m_winampController = null;    
     private string m_strCurrentFile = null;
     private int m_volume = 100;
     private bool _notifyPlaying = false;
@@ -55,7 +55,7 @@ namespace MediaPortal.WinampPlayer
     public WinampPlugin() {}
 
     public override void ShowPlugin()
-    {
+    {      
       ConfigurationForm confForm = new ConfigurationForm();
       confForm.ShowDialog();
     }
@@ -254,6 +254,11 @@ namespace MediaPortal.WinampPlayer
         }
         return false;
       }
+    }
+
+    public override void Dispose()
+    {
+      m_winampController.Dispose();
     }
 
     public override bool Stopped

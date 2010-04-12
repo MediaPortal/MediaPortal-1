@@ -38,7 +38,7 @@ using MediaPortal.Ripper;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class MatrixGX : BaseDisplay, IDisplay, IDisposable
+  public class MatrixGX : BaseDisplay, IDisplay
   {
     private string _errorMessage = "";
     private int _Gcols;

@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Player.Teletext;
@@ -587,7 +588,7 @@ namespace MediaPortal.Player
           if (_vmr9 != null)
           {
             _vmr9.Enable(false);
-            _vmr9.Dispose();
+            _vmr9.SafeDispose();
             _vmr9 = null;
           }
 
@@ -596,7 +597,7 @@ namespace MediaPortal.Player
             DirectShowUtil.RemoveFilters(_graphBuilder);
             if (_rotEntry != null)
             {
-              _rotEntry.Dispose();
+              _rotEntry.SafeDispose();
               _rotEntry = null;
             }
             while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;          

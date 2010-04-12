@@ -20,6 +20,7 @@
 
 using System;
 using System.Drawing;
+using MediaPortal.ExtensionMethods;
 using Microsoft.Win32;
 using DShowNET.Helper;
 using DirectShowLib;
@@ -338,7 +339,7 @@ namespace MediaPortal.Core.Transcoding
       Log.Info("DVRMS2DIVX: cleanup");
       if (_rotEntry != null)
       {
-        _rotEntry.Dispose();
+        _rotEntry.SafeDispose();
       }
       _rotEntry = null;
 

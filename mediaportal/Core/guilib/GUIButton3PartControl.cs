@@ -20,6 +20,7 @@
 
 using System.Diagnostics;
 using System.IO;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -486,20 +487,20 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Frees the control its DirectX resources.
     /// </summary>
-    public override void FreeResources()
+    public override void Dispose()
     {
-      base.FreeResources();
-      _imageFocusedLeft.FreeResources();
-      _imageFocusedMid.FreeResources();
-      _imageFocusedRight.FreeResources();
-      _imageNonFocusedLeft.FreeResources();
-      _imageNonFocusedMid.FreeResources();
-      _imageNonFocusedRight.FreeResources();
-      _imageIcon.FreeResources();
+      base.Dispose();
+      _imageFocusedLeft.SafeDispose();
+      _imageFocusedMid.SafeDispose();
+      _imageFocusedRight.SafeDispose();
+      _imageNonFocusedLeft.SafeDispose();
+      _imageNonFocusedMid.SafeDispose();
+      _imageNonFocusedRight.SafeDispose();
+      _imageIcon.SafeDispose();
 
 
-      _labelControl1.FreeResources();
-      _labelControl2.FreeResources();
+      _labelControl1.SafeDispose();
+      _labelControl2.SafeDispose();
       GUIPropertyManager.OnPropertyChanged -=
         new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
     }

@@ -2606,7 +2606,7 @@ namespace MediaPortal.GUI.Pictures
 
       // Show Dialog
       dlg.Reset();
-      dlg.ClearAll();
+      dlg.Dispose();
       dlg.SetImage(albumart);
       dlg.SetHeading(4540);
       //dlg.SetText(tag.Title + "\n" + tag.Artist + "\n" + tag.Album);

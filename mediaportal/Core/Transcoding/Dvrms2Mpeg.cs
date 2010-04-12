@@ -23,6 +23,7 @@ using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
 using DirectShowLib.SBE;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using System.Runtime.InteropServices;
 
@@ -287,7 +288,7 @@ namespace MediaPortal.Core.Transcoding
       Log.Info("DVR2MPG: cleanup");
       if (_rotEntry != null)
       {
-        _rotEntry.Dispose();
+        _rotEntry.SafeDispose();
       }
       _rotEntry = null;
 

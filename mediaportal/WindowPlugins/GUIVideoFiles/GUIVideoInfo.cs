@@ -426,7 +426,7 @@ namespace MediaPortal.GUI.Video
 
       if (imgCoverArt != null)
       {
-        imgCoverArt.FreeResources();
+        imgCoverArt.Dispose();
         imgCoverArt.AllocResources();
       }
     }

@@ -256,7 +256,7 @@ namespace MediaPortal.GUI.Video
             {
               HideControl(GetID, i);
             }
-            FreeResources();
+            Dispose();
             GUIPropertyManager.SetProperty("#currentmodule", GUIWindowManager.GetWindow(message.Param1).GetModuleName());
             return true;
           }

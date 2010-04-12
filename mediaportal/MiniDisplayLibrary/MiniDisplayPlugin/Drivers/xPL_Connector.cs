@@ -36,7 +36,7 @@ using MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
-  public class xPL_Connector : BaseDisplay, IDisplay, IDisposable
+  public class xPL_Connector : BaseDisplay, IDisplay
   {
     private bool _BlankDisplayOnExit;
     private bool _DisplayChanged;

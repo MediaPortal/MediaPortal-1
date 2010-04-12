@@ -26,6 +26,7 @@ using System.Windows.Forms;
 using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
@@ -529,7 +530,7 @@ namespace MediaPortal.Player
         if (Vmr9 != null)
         {
           Vmr9.Enable(false);
-          Vmr9.Dispose();
+          Vmr9.SafeDispose();
           Vmr9 = null;
         }
 
@@ -538,7 +539,7 @@ namespace MediaPortal.Player
           DirectShowUtil.RemoveFilters(graphBuilder);
           if (_rotEntry != null)
           {
-            _rotEntry.Dispose();
+            _rotEntry.SafeDispose();
             _rotEntry = null;
           }
           DirectShowUtil.ReleaseComObject(graphBuilder);
@@ -1368,7 +1369,7 @@ namespace MediaPortal.Player
 
     #region IDisposable Members
 
-    public override void Release()
+    public override void Dispose()
     {
       CloseInterfaces();
     }

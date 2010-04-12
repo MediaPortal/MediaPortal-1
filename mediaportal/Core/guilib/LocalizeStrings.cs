@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.Configuration;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.Localisation;
 using MediaPortal.Profile;
 
@@ -52,7 +53,7 @@ namespace MediaPortal.GUI.Library
     {
       if (_stringProvider != null)
       {
-        _stringProvider.Dispose();
+        _stringProvider.SafeDispose();
       }
     }
 

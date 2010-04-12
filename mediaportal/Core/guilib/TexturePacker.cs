@@ -29,6 +29,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using DShowNET.Helper;
 using MediaPortal.Configuration;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
@@ -39,7 +40,7 @@ namespace MediaPortal.GUI.Library
   /// <summary>
   /// Summary description for TexturePacker.
   /// </summary>
-  public class TexturePacker
+  public class TexturePacker : IDisposable
   {
     public delegate void DisposeEventHandler(object sender, int texutureNumber);
 
@@ -559,7 +560,7 @@ namespace MediaPortal.GUI.Library
         file = file.Remove(0, 1);
       }
       result = Add(root, bmp, rootImage, file);
-      bmp.Dispose();
+      bmp.SafeDispose();
       bmp = null;
 
       return result;
@@ -644,7 +645,7 @@ namespace MediaPortal.GUI.Library
               try
               {
                 bigOne.texture.Disposing -= new EventHandler(texture_Disposing);
-                bigOne.texture.Dispose();
+                bigOne.texture.SafeDispose();
               }
               catch (Exception) {}
             }

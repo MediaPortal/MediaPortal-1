@@ -616,13 +616,13 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Free any direct3d resources
     /// </summary>
-    public override void FreeResources()
+    public override void Dispose()
     {
       //_labelText = string.Empty;
       _reCalculate = true;
       GUIPropertyManager.OnPropertyChanged -=
         new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
-      base.FreeResources();
+      base.Dispose();
     }
 
     /// <summary>
