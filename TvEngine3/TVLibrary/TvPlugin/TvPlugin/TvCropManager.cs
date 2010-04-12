@@ -43,6 +43,7 @@ namespace TvPlugin
     ~TvCropManager()
     {
       Log.Info("TvCropManager: Stopped");
+      g_Player.PlayBackStarted -= new g_Player.StartedHandler(g_Player_PlayBackStarted);
     }
 
     #endregion

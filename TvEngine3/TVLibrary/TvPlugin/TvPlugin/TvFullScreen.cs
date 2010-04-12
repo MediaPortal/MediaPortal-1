@@ -205,6 +205,7 @@ namespace TvPlugin
     public override void DeInit()
     {
       OnPageDestroy(-1);
+      _autoZapTimer.Elapsed -= new ElapsedEventHandler(_autoZapTimer_Elapsed);
     }
 
     public override bool Init()
@@ -3093,6 +3094,7 @@ namespace TvPlugin
     public void StopAutoZap()
     {
       Log.Debug("Stop zap mode");
+      _autoZapTimer.Elapsed -= new ElapsedEventHandler(_autoZapTimer_Elapsed);
       _autoZapMode = false;
     }
 

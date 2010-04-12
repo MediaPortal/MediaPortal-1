@@ -336,6 +336,21 @@ namespace TvPlugin
     public override void DeInit()
     {
       OnPageDestroy(-1);
+
+      RemoteControl.OnRemotingDisconnected -=
+       new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
+      RemoteControl.OnRemotingConnected -= new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
+
+      GUIGraphicsContext.OnBlackImageRendered -= new BlackImageRenderedHandler(OnBlackImageRendered);
+      GUIGraphicsContext.OnVideoReceived -= new VideoReceivedHandler(OnVideoReceived);      
+
+      Application.ApplicationExit -= new EventHandler(Application_ApplicationExit);
+
+      g_Player.PlayBackStarted -= new g_Player.StartedHandler(OnPlayBackStarted);
+      g_Player.PlayBackStopped -= new g_Player.StoppedHandler(OnPlayBackStopped);
+      g_Player.AudioTracksReady -= new g_Player.AudioTracksReadyHandler(OnAudioTracksReady);
+
+      GUIWindowManager.Receivers -= new SendMessageHandler(OnGlobalMessage);
     }
 
     public override bool SupportsDelayedLoad
