@@ -1,0 +1,308 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{AF3B526D-DBD9-42C4-B8AB-CFE03178AE50}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>Gentle.Framework</AssemblyName>
+    <AssemblyOriginatorKeyFile>Gentle.snk</AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Flow</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Gentle.Framework</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <SignAssembly>true</SignAssembly>
+    <OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>Gentle.Framework.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>1591;0419</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>RELEASE;TRACE</DefineConstants>
+    <DocumentationFile>Gentle.Framework.xml</DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>1591</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Security">
+      <Name>System.Security</Name>
+    </Reference>
+    <Reference Include="System.Web">
+      <Name>System.Web</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <ProjectReference Include="..\Gentle.Common\Gentle.Common.csproj">
+      <Name>Gentle.Common</Name>
+      <Project>{E7F5B01F-D2D1-450F-A92C-E0B0200514C5}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attributes\ConcurrencyAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attributes\CustomViewAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attributes\ForeignKeyAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attributes\InheritanceAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attributes\PrimaryKeyAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attributes\SequenceNameAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attributes\SoftDeleteAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attributes\TableColumnAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Attributes\TableNameAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Client\Broker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Client\ContextPersistent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Client\GentleBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Client\GentleList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Client\Key.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Client\Persistent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Client\SqlBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Client\SqlResult.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Client\SqlStatement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Client\Transaction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Client\TypedArrayItemBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\BrokerLock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\ColumnMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\FieldList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\FieldMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\GentleRelation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\ObjectMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\ObjectView.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\PersistenceBroker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\ProviderFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\ProviderRegistry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\TableMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\TypeConstruction\ColumnInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\TypeConstruction\ConstructorMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\TypeConstruction\ObjectConstructor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\TypeConstruction\ObjectFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\ValidationBroker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\ValidationMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\ViewMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Enumerations\NullOption.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Enumerations\StatementType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\GentleSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\MasterDefinition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\NamespaceProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="General\NamespaceProviders.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IEntity.cs" />
+    <Compile Include="Interfaces\IBrokerLock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IDatabaseAnalyzer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IGentleProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IPersistenceEngine.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IPersistent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IProviderInformation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\ITableName.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NamespaceDoc.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Provider\GentleAnalyzer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Provider\GentleProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Provider\GentleRenderer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Provider\GentleSqlFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Validation\IValidationPersistent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Validation\RangeValidatorAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Validation\RegExValidatorAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Validation\RequiredValidatorAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Validation\ValidationException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Validation\ValidationMessage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Validation\ValidatorBaseAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Gentle.snk" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

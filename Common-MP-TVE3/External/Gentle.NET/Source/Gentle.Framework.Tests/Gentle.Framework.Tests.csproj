@@ -1,0 +1,337 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9BEC8F0F-72E8-4FD5-8C17-11E6098CFFA6}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>Gentle.Framework.Tests</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Gentle.Framework.Tests</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\Output\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>Gentle.Framework.Tests.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>1591</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>..\..\Output\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>Gentle.Framework.Tests.xml</DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>1591</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework">
+      <Name>nunit.framework</Name>
+      <HintPath>lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino.Mocks">
+      <Name>Rhino.Mocks</Name>
+      <HintPath>lib\Rhino.Mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <ProjectReference Include="..\Gentle.Common\Gentle.Common.csproj">
+      <Name>Gentle.Common</Name>
+      <Project>{E7F5B01F-D2D1-450F-A92C-E0B0200514C5}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Gentle.Framework\Gentle.Framework.csproj">
+      <Name>Gentle.Framework</Name>
+      <Project>{AF3B526D-DBD9-42C4-B8AB-CFE03178AE50}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Gentle.Provider.DB2\Gentle.Provider.DB2.csproj">
+      <Name>Gentle.Provider.DB2</Name>
+      <Project>{E5128903-A06C-4682-A81E-F889AAB03181}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Gentle.Provider.Firebird\Gentle.Provider.Firebird.csproj">
+      <Name>Gentle.Provider.Firebird</Name>
+      <Project>{0EDBF925-B8F4-469F-AFD6-812F36A7D051}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Gentle.Provider.Jet\Gentle.Provider.Jet.csproj">
+      <Name>Gentle.Provider.Jet</Name>
+      <Project>{1181AAF9-2BBE-4C14-BFFA-4B3C9D5690FC}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Gentle.Provider.MySQL\Gentle.Provider.MySQL.csproj">
+      <Name>Gentle.Provider.MySQL</Name>
+      <Project>{07F6A0D3-4B72-4EE8-8E4C-12653BEA87AD}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Gentle.Provider.OracleODP\Gentle.Provider.OracleODP.csproj">
+      <Name>Gentle.Provider.OracleODP</Name>
+      <Project>{CCB23620-6BFD-4F9A-A671-38DCFE657D39}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Gentle.Provider.Oracle\Gentle.Provider.Oracle.csproj">
+      <Name>Gentle.Provider.Oracle</Name>
+      <Project>{0E1AC974-A4DD-4EA2-92E3-AE99C40C35F1}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Gentle.Provider.PostgreSQL\Gentle.Provider.PostgreSQL.csproj">
+      <Name>Gentle.Provider.PostgreSQL</Name>
+      <Project>{C5C762C5-7CF3-4C57-8CF1-D44AD084D27F}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Gentle.Provider.SQLite\Gentle.Provider.SQLite.csproj">
+      <Name>Gentle.Provider.SQLite</Name>
+      <Project>{B5F29BFF-488D-4E4B-88B9-3D97AA3A8008}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Gentle.Provider.SQLServerCE\Gentle.Provider.SQLServerCE.csproj">
+      <Name>Gentle.Provider.SQLServerCE</Name>
+      <Project>{E3149E66-2BF2-4441-8A72-CDEFDE97C4D1}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Gentle.Provider.SQLServer\Gentle.Provider.SQLServer.csproj">
+      <Name>Gentle.Provider.SQLServer</Name>
+      <Project>{4C70BDFF-1505-42DD-8AF2-5747505AD717}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Gentle.Provider.SybaseASA\Gentle.Provider.SybaseASA.csproj">
+      <Name>Gentle.Provider.SybaseASA</Name>
+      <Project>{392C0AD0-07EC-44DE-BA47-75422F750D4C}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Gentle.Provider.Sybase\Gentle.Provider.Sybase.csproj">
+      <Name>Gentle.Provider.Sybase</Name>
+      <Project>{D0DFF1C2-BF2E-4317-BBDD-228A41006246}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BusinessObjects\PHNullableType.cs" />
+    <Compile Include="BusinessObjects\GuidHolder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BusinessObjects\GuidHolderIP.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BusinessObjects\MailingList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BusinessObjects\Member.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BusinessObjects\MemberCC.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BusinessObjects\MemberCCSD.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BusinessObjects\MemberPicture.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BusinessObjects\MemberSD.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BusinessObjects\MemberValidation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BusinessObjects\MultiType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BusinessObjects\Numbers.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BusinessObjects\PHDateTimeNullValue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BusinessObjects\PHEnum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BusinessObjects\PropertyHolder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BusinessObjects\ReservedWords.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NamespaceDoc.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestPHNullableType.cs" />
+    <Compile Include="TestCases\TestCache.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestConstraint.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestDateTimeNullValue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestGuid.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestGuidIP.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestMember.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestMemberCC.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestMemberCCSD.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestMemberPicture.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestMemberSD.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestMultiType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestPerformance.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestPHEnum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestPropertyHolder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestReservedWords.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestSerializable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestSqlFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestThreadSafety.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestValidation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestFramework\TestConfig.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestFramework\TestFirebirdFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestFramework\TestMessages.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestFramework\TestMisc.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestFramework\TestObjectMap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestFramework\TestProviderFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestFramework\TestReflector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UserRole\Role.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UserRole\TestUser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UserRole\User.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UserRole\UserRole.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Content Include="Database Files\Gentle.jpg" />
+    <Content Include="Database Scripts\Firebird.sql" />
+    <Content Include="Database Scripts\MSSQLServer.sql" />
+    <Content Include="Database Scripts\MySQL.sql" />
+    <Content Include="Database Scripts\Oracle.sql" />
+    <Content Include="Database Scripts\PostgreSQL.sql" />
+    <Content Include="Database Scripts\SQLite2.sql" />
+    <Content Include="Database Scripts\SQLite3.sql" />
+    <Content Include="Database Scripts\Sybase.sql" />
+    <Content Include="lib\nunit.framework.dll" />
+    <Content Include="lib\Rhino.Mocks.dll" />
+    <None Include="Database Files\Gentle_MSAccess.mdb" />
+    <None Include="Database Files\Gentle_SQLite2.db" />
+    <None Include="Database Files\Gentle_SQLite3.db" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

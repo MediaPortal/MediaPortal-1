@@ -1,0 +1,224 @@
+<project name="Gentle.Net-Unit-Tests">
+    <include buildfile="Gentle.Local.xml" failonerror="false" />
+    <include buildfile="Gentle.common.xml" />
+
+    <!-- *************************************************************************
+        Add more database connection information here.  This will be used to 
+        create seperate 'testing' dll files and configuration settings.  Each
+        new database in the database.list file needs to have a corresponding
+        engine and connection value. -->
+
+    <!-- property name="database.list" value="oracle, oracle-odp, mysql, firebird, postgresql, msde, sqlite" failonerror="false" / -->
+    <property name="database.list" value="msde" failonerror="false" />
+    <property name="computer.name" value="mnmr-laptop" failonerror="false"/>
+    <property name="environment" value="development" failonerror="false"/>
+
+    <property name="oracle.engine" value="Oracle" failonerror="false"/>
+    <property name="oracle.connection" value="Data Source=GENTLE;User ID=gentle;password=gentle;" failonerror="false"/>
+
+    <property name="oracle-odp.engine" value="OracleODP" failonerror="false"/>
+    <property name="oracle-odp.connection" value="Data Source=GENTLE;User ID=gentle;password=gentle;" failonerror="false"/>
+
+    <property name="mysql.engine" value="MySQL" failonerror="false"/>
+    <property name="mysql.connection" value="Data Source=kermit.symbiote.sporadicism.com;Database=gentle;User ID=root;Password=" failonerror="false"/>
+
+    <property name="firebird.engine" value="Firebird" failonerror="false"/>
+    <property name="firebird.connection" value="User=SYSDBA;Password=masterkey;Database=kermit.symbiote.sporadicism.com/3050:gentle;Dialect=3;Charset=UNICODE_FSS;Role=;Connection lifetime=30;Pooling=true;Packet Size=8192;" failonerror="false" />
+
+    <property name="postgresql.engine" value="PostgreSQL" failonerror="false"/>
+    <property name="postgresql.connection" value="Server=192.168.1.212;Database=gentle;User ID=gentle;Password=gentle;" failonerror="false"/>
+
+    <property name="msde.engine" value="SQLServer" failonerror="false"/>
+    <property name="msde.connection" value="server=127.0.0.1;uid=mm;password=bajer;database=Gentle" failonerror="false"/>
+
+    <property name="sqlite.engine" value="SQLite" failonerror="false"/>
+    <property name="sqlite.connection" value="URI=file:Gentle_Sqlite.db" failonerror="false"/>
+    <property name="sqlite.db" value="${dir.test.data}/Gentle_Sqlite.db" failonerror="false"/>
+
+    <property name="jet.engine" value="Jet" failonerror="false"/>
+    <property name="jet.connection" value="Provider=Microsoft.Jet.OLEDB.4.0;Data Source=${dir.test}\Gentle_MSAccess.mdb;" failonerror="false"/>
+    <property name="jet.db" value="${dir.test.data}/Gentle_MSAccess.mdb" failonerror="false"/>
+
+<!-- *****   Currently don't have a copy of Sybase installed *****
+
+
+    <property name="msde.engine" value="Sybase"/>
+    <property name="msde.connection" value="server=home.sporadicism.local;uid=gentle;password=gentle;database=gentle"/>
+
+    <property name="msde.engine" value="SybaseASA"/>
+    <property name="msde.connection" value="server=home.sporadicism.local;uid=gentle;password=gentle;database=gentle"/>
+-->
+
+    <!-- ************************************************************************* -->
+
+    <target name="SetupTests" description="Copy files to the test output directory in prep for build.">
+        <echo message="Library directory: ${dir.lib}."/>
+        <mkdir dir="${dir.test}/Results"/>
+        <copy todir="${dir.test}" flatten="true">
+            <fileset basedir="${dir.bin}">
+                <include name="**/*.dll" />
+            </fileset>
+        </copy>
+        <copy todir="${dir.test}/Results">
+            <fileset basedir="${nant::get-base-directory()}">
+                <include name="*.png"/>
+            </fileset>
+        </copy>
+        <copy todir="${dir.test}" flatten="true">
+            <fileset basedir="${dir.lib}">
+                <include name="${lib.nunit.framework}" />
+                <include name="${lib.mbunit.framework}" />
+            </fileset>
+        </copy>
+        <copy todir="${dir.test}" flatten="true">
+            <fileset basedir="${dir.test.data}/Database Files">
+                <include name="*.jpg"/>
+            </fileset>
+        </copy>
+        
+        <copy   todir="${dir.test}">
+            <fileset basedir="${dir.conf}">
+                <include name="*.config"/>
+            </fileset>
+        </copy>
+    </target>
+    
+    <target name="BuildTests" description="Build the test dll." depends="SetupTests">
+        <echo message="Library directory: ${dir.lib}"/>
+        <echo message="Bin directory: ${dir.bin}"/>
+        <mkdir dir="${dir.test}"/>
+        <csc    target="library"
+                output="${dir.test}/${assembly.framework-test.name}.dll"
+                debug="${debug}"
+                define="${define}"
+                doc="${dir.test}/${assembly.framework-test.name}.xml">
+            <nowarn>
+                <warning number="1591" if="${debug}"/>
+            </nowarn>
+            <arg value="${unsafe}" />
+            <arg value="${checked}" />
+            <sources>
+                <include name="${dir.src}/${assembly.framework-test.name}/**/*.cs" />
+            </sources>
+            <references>
+                <include name="System.dll" />
+                <include name="System.Data.dll" />
+                <include name="System.Drawing.dll" />
+                <include name="System.EnterpriseServices.dll" />
+                <include name="System.Xml.dll" />
+                <include name="System.Web.dll" />
+                <include name="${dir.test}/${assembly.common.name}.dll"/>
+                <include name="${dir.src}/${assembly.framework-test.name}/lib/**/*.dll"/>  
+                <include name="${dir.lib}/${lib.mbunit.core}"/>
+                <include name="${dir.lib}/${lib.mbunit.framework}"/>
+                <include name="${dir.lib}/${lib.quickgraph}"/>
+                <include name="${dir.test}/${assembly.framework.name}.dll"/>
+            </references>
+        </csc> 
+    </target>
+
+    <target name="init.config" description="Setup the current database type for testing, copy over the dll and replace config settings.">
+        <copy   file="${dir.conf}/${assembly.config}" 
+                tofile="${dir.test}/${assembly.config}" 
+                overwrite="true" />
+
+        <property name="config.path" value="/Gentle.Framework"/>
+        <echo message="[${database.name}] - [${property::get-value(database.name + '.connection')}]"/>
+
+        <!-- Set the engine -->
+        <xmlpoke    file="${dir.test}/${assembly.config}"
+                xpath="${config.path}/DefaultProvider/@name"
+                value="${property::get-value(database.name + '.engine')}" />
+        <!-- Set the connection string -->
+        <xmlpoke    file="${dir.test}/${assembly.config}"
+                xpath="${config.path}/DefaultProvider/@connectionString"
+                value="${property::get-value(database.name + '.connection')}" />
+    </target>
+
+    <target name="init" depends="init.config" description="General initialization/ preperation for tests.">
+        <if test="${property::exists('sqlite.db')}">
+            <copy todir="${dir.test}" flatten="true">
+                <fileset>
+                    <include name="${sqlite.db}"/>
+                </fileset>
+            </copy>
+        </if>
+        <if test="${property::exists('jet.db')}">
+            <copy todir="${dir.test}" flatten="true">
+                <fileset>
+                    <include name="${jet.db}"/>
+                </fileset>
+            </copy>
+        </if>
+    </target>
+
+    <target name="test" depends="BuildTests">
+        <!-- Allow running of just one test in the list -->
+        <if test="${property::exists('test.database')}">
+            <echo message="Test single database: ${test.database}"/>
+            <property name="database.name" value="${test.database}"/>
+            <call target="Init" />
+            <mbunit failonerror="false"  report-types="html;xml" report-output-directory="${dir.test}/Results">
+                <assemblies>
+                    <include name="${dir.test}/${assembly.framework.name}.dll"/>
+                </assemblies>
+            </mbunit>
+            <style style="${nant.location}/NUnit-NoFrame.xsl" in="${dir.test}/${assembly.framework}.dll-results.xml" out="${dir.test}/${database.name}-TestResults.html">
+            </style>
+            <delete file="${dir.test}/${assembly.framework}.dll-results.xml" />
+        </if>
+
+        <ifnot test="${property::exists('test.database')}">
+            <echo message="Test all databases."/>
+            <property name="test.config" value="Gentle.config"/>
+            <property name="test.results" value="${dir.test}/${assembly.framework-test.name}.dll-results.xml"/>
+            
+            <foreach item="String" in="${database.list}" delim="," trim="Both" property="database.name">
+                <echo message=""/>
+                <echo message="Testing database: ${database.name}"/>
+                <call target="init" />
+                
+                <mbunit failonerror="false" report-types="html;xml" report-output-directory="${dir.test}/Results">
+                    <assemblies>
+                        <include name="${dir.test}/${assembly.framework-test.name}.dll"/>
+                    </assemblies>
+                </mbunit>
+                
+                <style  style="${nant.location}/NUnit-NoFrame.xsl" 
+                        in="${test.results}" 
+                        out="${dir.test}/${database.name}-TestResults.html" 
+                        if="${file::exists(test.results)}">
+                </style>
+                <copy   file="${dir.test}/${assembly.framework-test.name}.dll-results.xml" 
+                        tofile="${dir.test}/${database.name}-results.xml"
+                        if="${file::exists(test.results)}" />
+                
+                <!-- Make a backup of the configuration file, just in case there are issues. -->
+                <copy   file="${dir.test}/${test.config}" 
+                        tofile="${dir.test}/${database.name}-${test.config}.done" />
+                <delete     file="${dir.test}/${assembly.framework-test.name}.dll-results.xml"
+                            if="${file::exists(test.results)}" />
+            </foreach>
+        </ifnot>
+
+        <if test="${property::exists('label-to-apply')}">
+            <call target="test.publish"/>
+        </if>
+    </target>
+
+    <target name="test.publish">
+        <ifnot test="${property::exists('dir.ccnet.log')}">
+            <fail message="Please pass in the value of dir.ccnet.log in ccnet build arguments." />
+        </ifnot>
+        <mkdir dir="${dir.ccnet.log}/${label-to-apply}"/>
+        <copy todir="${dir.ccnet.log}/${label-to-apply}" flatten="true">
+            <fileset>
+                <include name="${dir.test}/*.html"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="echo.environment">
+        <echo message="Computer name: ${computer.name}"/>
+    </target>
+</project>

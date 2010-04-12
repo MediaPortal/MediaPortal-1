@@ -1,0 +1,207 @@
+
+IMPORTANT NOTE(S)
+  
+  GENTLE IS NO LONGER OFFICIALLY MAINTAINED (but I will offer commercial
+  support if anyone dares to use it in spite of this warning).
+  
+  This release is a wrap-up release with bugfixes and improvements made since 
+  1.2.9 was released in the summer of 2006.
+
+  Existing users: Please be sure to at least review the BREAKING CHANGES, 
+  DOCUMENTATION, SOURCE CODE and CONTRIBUTORS sections below.
+  
+  
+BREAKING CHANGES  
+  
+  Gentle 1.5.0 has been ported/upgraded to Visual Studio 2008 and the code base
+  now requires .NET 2.0 to run.
+  
+  There are new generic accessors on the Broker, PersistenceBroker, Transaction 
+  and ObjectFactory classes. For consistency, old methods returning ArrayList 
+  instances have been upgraded to return generic List<T> instances (like the 
+  new generic list access methods). This will break existing code if you 
+  downcast the IList return type to ArrayList.
+ 
+  I've updated provider libraries for SQLite, MySQL, PostgreSQL, Firebird and 
+  DB2 to the most recent ones available. No code changes apart from namespace 
+  updates were required to do this. However, these changes remain untested and 
+  might therefore introduce bugs or exhibit modified behavior compared to the 
+  much older versions.
+  
+  Please review the CHANGELOG for a more complete overview of changes.
+  
+
+DOCUMENTATION
+
+  The wiki and issue tracker are currently offline, with no immediate plans to 
+  restore them as they were. The best learning resources for Gentle are 
+  therefore bundled with this release. The Documentation folder contains a PDF
+  export of the original Wiki content along with API documentation for Gentle 
+  itself.
+
+  If someone wants to host the Wiki I'll be happy to supply the appropriate
+  database backups (PostgreSQL dump files) and license files for restoring the 
+  original content. I might also have Confluence XML backups that are database 
+  independant but would need to investigate whether that is the case.
+  
+
+SOURCE CODE
+  
+  The source code is currently available at the following URL:
+  
+  	https://code.mertner.com:8443/svn/gentle/gentle/
+  	
+  Note that this URL might change in the future, although I'll try to keep it 
+  around if possible. If you want a copy of the source and cannot find it, feel
+  free to email me at morten@mertner.com
+  	  
+  The project home remains at SourceForge, where you can download the current
+  release as well as access the support forums. Due to spammer abuse all 
+  mailing list messages are moderated, and most likely I'll soon close down the
+  mailing list facility altogether.
+      
+    http://sf.net/projects/gopf
+      
+
+SUPPORT
+
+  If you are using Gentle and would like commercial support, please contact me 
+  through my business email at morten.mertner@codeworks.eu
+  
+  You are also welcome to try the SourceForge forums - people have generally 
+  been very helpful and patient in helping to resolve other peoples issues.
+  
+
+UPGRADING
+
+  Please review the CHANGELOG entries added since the version you are using and
+  apply any changes as needed. If you find a "breaking" entry that is not 
+  listed in the CHANGELOG, please let me know so I can fix it.
+
+
+INSTALLATION
+
+  Please review the included documentation first, in particular the Getting 
+  Started and Using Gentle pages.
+  
+  You can find sample configuration files in the Configuration folder. You must
+  use either a standalone Gentle.config or declare a section in App/Web.config.
+  
+  Please also remember to uncomment the provider libraries you wish to use, 
+  make sure to reference them from your project so that they get copied to the
+  bin folder, and to set a valid connectionString property for the 
+  DefaultProvider tag in the configuration file.
+
+  VS.NET HELP INTEGRATION
+
+  Execute the register.bat file found in the Documentation/Help subfolder. This 
+  will install the included .HxS and .HxC help files, which will provide you with 
+  context-sensitive help lookup from within Visual Studio.
+
+  You will need the tools H2Reg and MS VS.NET Help Integration Kit. If you do not
+  have these tools, please visit the following link to learn about their use and
+  where to obtain them: http://www.codeproject.com/csharp/VSHelpIntegration.asp
+
+  COMPILING GENTLE
+  
+  You need Visual Studio 2008 or a compatible version of a build tool to compile
+  Gentle. No precompilation steps should be necessary.
+  
+  You will also need to download and install the Microsoft Oracle Client in
+  order to compile the Gentle.Provider.Oracle project.
+  
+  RUNNING THE TESTS
+  
+  You can find either database creation scripts or prepared database files for
+  most of the databases supported below the Source/Gentle.Framework/Tests folder.
+  Use these if you wish to run any of the included test cases.
+
+  CODE GENERATORS
+  
+  Gentle is supported by both MyGeneration (http://www.mygenerationsoftware.com)
+  and CodeSmith, two excellent template-based code generation tools. Both of 
+  these tools are able to generate a Gentle prepared business object from an 
+  existing database schema. 
+  
+  MyGeneration comes bundled with a Gentle.NET template and is the recommended 
+  tool to use (the template offers the most features, is actively maintained, 
+  works with the most database engines, and is able to generate code for an 
+  entire database schema in one go). Use it, and create a complete Gentle-enabled
+  data-access layer in less than a minute! 
+    
+
+CONTRIBUTORS
+
+  Gentle was originally created by Morten Mertner and released as open source
+  in january 2004. It was actively maintained for almost 3 years after the 
+  initial release date culminating in a mature product with the 1.2.9 release
+  in november 2006. 
+  
+  After this attention switched to producing a new version with fewer limitations 
+  and better overall design. This task progressed at an ever slower pace as the 
+  task proved to be fairly difficult and much too large for a single person to 
+  overcome, and it was hard to maintain the belief that the effort was worthwhile
+  given that all the interest was focused on LINQ and competing ORM products.
+	Much code has been written and the source for Gentle 2.0 remains available if 
+	anyone wants to tinker with it (it might not compile currently though).
+  
+  At this time I would like to extend a very special thanks to everybody who
+  has been on board and helped out over the years, whether by answering forum
+  posts, contributing code, reporting bugfixes or even just moral support.
+  I'll not mention any names so as not to forget anybody, but you know who you
+  are! 
+  
+  I'd also like to thank all of the "Gentle fans" who have praised the ease
+  of use, stability or performance of Gentle over the years. Without these
+  the project would never have made it as fas as it did.
+  
+
+LICENSE
+
+  This library has been released under the GNU LGPL 2.1. Please see the
+  full license text located in the file Documentation/license.txt.
+
+
+SPONSORS
+
+  Gentle is kindly being sponsored by the following organisations:
+
+  Atlassian (http://www.atlassian.com) has provided free open-source licenses to
+  their issue tracker JIRA and the "wiki-on-steroids" collaboration tool Confluence.
+  Apart from being outstanding tools I can also personally confirm that their email
+  support rocks!
+
+  Kayako (http://www.kayako.com) has provided a free license to their excellent
+  HelpDesk software. Note that while the software itself was excellent, the support
+  volume for Gentle in the end did not warrant the use of the software.
+  
+  Cenqua (http://www.cenqua.com) has granted a license for their source code 
+  repository browser FishEye.
+
+  *Thanks* for supporting Gentle, and the open source movement in general!
+
+  
+CREDITS
+
+  This library uses code written by third parties - my personal thanks to
+  them all for their efforts!
+
+  Npgsql is Copyright © 2002 The Npgsql Development Team.
+  http://gborg.postgresql.org/project/npgsql/projdisplay.php
+
+  Firebird provider is copyright 2002 Carlos Guzmán Álvarez.
+  http://freshmeat.net/projects/firebird.netdataprovider
+
+  The MySQL library is Copyright © MySQL AB.
+  http://www.mysql.com/
+
+  Thanks also to Mono team for use of the SQLite and SybaseAsa data providers.
+  A major undertaking with a bright future! 
+  http://www.go-mono.com
+
+  The excellent MbUnit test framework is Copyright © Jonathan de Halleux 
+  http://www.mbunit.org (also see http://www.mertner.com/confluence/mbunit)
+
+  The log4net/Apache people require a specific greeting, and it goes like this:
+  "This product includes software developed by the Apache Software Foundation
+  (http://www.apache.org/).". 

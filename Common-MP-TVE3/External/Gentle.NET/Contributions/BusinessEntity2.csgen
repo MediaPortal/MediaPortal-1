@@ -1,0 +1,2620 @@
+﻿##|TYPE Template
+##|UNIQUEID 6E991671-39A8-4305-8AE7-FF9E0BE85B9D
+##|TITLE Gentle.NET 2.0 Business Entity $Rev: 1208 $
+##|NAMESPACE GentleNET.C#
+##|SOURCE_TYPE Source
+##|OUTPUT_LANGUAGE C#
+##|COMMENTS_BEGIN
+This template generates Gentle.NET 2.0 Business
+Object classes from database table definitions.
+##|COMMENTS_END
+##|GUI_ENGINE .Net Script
+##|GUI_LANGUAGE C#
+##|GUI_BEGIN
+<%#DEBUG%><%#REFERENCE System.Windows.Forms.dll %>
+<%#REFERENCE System.Windows.Forms.dll %>
+<%#NAMESPACE System, System.Text, System.Collections, Zeus, Zeus.UserInterface, Zeus.DotNetScript %>
+
+
+public class GeneratedGui : DotNetScriptGui
+{
+	public GeneratedGui(ZeusGuiContext context) : base(context)
+	{
+		if(context.Objects.ContainsKey("DnpUtils"))
+		{
+			DnpUtils.ReadInputFromCache(context);
+		}
+	}
+
+	public override void Setup()
+	{
+		if ( !input.Contains("lstTables") || !input.Contains("txtPath") )
+		{
+			ui.Title = "Gentle.NET 2.0 Business Entity (C#)";
+			ui.Top = 20;
+			ui.Left = 20;
+			ui.Width = 640;
+			ui.Height = 700;
+
+			// Grab default output path
+			string sOutputPath = "";
+			if (input.Contains("defaultOutputPath"))
+			{
+				sOutputPath = input["defaultOutputPath"].ToString();
+			}
+
+
+			// Setup Folder selection input control.
+			GuiLabel lblPath = ui.AddLabel("lblPath", "Select the output path:", "Select the output path in the field below.");
+			lblPath.Width = 120;
+			GuiTextBox outpath = ui.AddTextBox("txtPath", sOutputPath, "Select the Output Path.");
+			outpath.Width = ui.Width - lblPath.Left - lblPath.Width - 30;
+			outpath.Left = lblPath.Left + lblPath.Width;
+			outpath.Top = lblPath.Top;
+			GuiFilePicker btnSelectPath = ui.AddFilePicker("btnPath", "Browse...", "Select the Output Path.", "txtPath", true);
+			btnSelectPath.Width = lblPath.Width + outpath.Width;
+
+			// namespace references
+			GuiLabel lblReferencedNamespace = ui.AddLabel ("lblReferencedNamespace", "Ref. Namespace: ",  "Any additional referenced Namespace.");
+			lblReferencedNamespace.Width = 120;
+			GuiTextBox txtReferencedNamespace = ui.AddTextBox("txtReferencedNamespace", "", "Any additional referenced Namespace.");
+			txtReferencedNamespace.Width = ui.Width - lblReferencedNamespace.Width - lblReferencedNamespace.Left - 30;
+			txtReferencedNamespace.Top = lblReferencedNamespace.Top;
+			txtReferencedNamespace.Left = lblReferencedNamespace.Left + lblReferencedNamespace.Width;
+
+			GuiLabel lblNS = ui.AddLabel ("lblNamespace", "Namespace: ",  "Provide your objects namespace.");
+			lblNS.Width = 120;
+			GuiTextBox txtNamespace = ui.AddTextBox("txtNamespace", MyMeta.DefaultDatabase.Alias, "Provide your objects namespace.");
+			txtNamespace.Width = ui.Width - lblNS.Width - lblNS.Left - 30;
+			txtNamespace.Top = lblNS.Top;
+			txtNamespace.Left = lblNS.Left + lblNS.Width;
+
+			GuiLabel lblBase = ui.AddLabel ("lblBaseClass", "Base class: ",  "Provide your objects base class, derived from Persistent.");
+			lblBase.Width = 120;
+			GuiTextBox txtBaseClass = ui.AddTextBox("txtBaseClass", "Gentle.Persistence.Entity, System.ComponentModel.INotifyPropertyChanged, Gentle.Persistence.IPersistent", "Provide your objects base class.");
+			txtBaseClass.Width = ui.Width - lblBase.Width - lblBase.Left - 30;
+			txtBaseClass.Top = lblBase.Top;
+			txtBaseClass.Left = lblBase.Left + lblBase.Width;
+
+			GuiLabel lblViewBase = ui.AddLabel ("lblViewBaseClass", "Views Base class: ",  "Provide your view objects base class (not derived from Persistent.");
+			lblViewBase.Width = 120;
+			GuiTextBox txtViewBaseClass = ui.AddTextBox("txtViewBaseClass", "Gentle.Persistence.Entity, System.ComponentModel.INotifyPropertyChanged", "Provide your view objects base class.");
+			txtViewBaseClass.Width = ui.Width - lblViewBase.Width - lblViewBase.Left - 30;
+			txtViewBaseClass.Top = lblViewBase.Top;
+			txtViewBaseClass.Left = lblViewBase.Left + lblViewBase.Width;
+
+			GuiLabel lblConc = ui.AddLabel ("lblConcurrentFlag", "Concurrency column: ",  "Provide a column name which keeps concurrent status flag");
+			lblConc.Width = 120;
+			GuiTextBox txtConcurrentFlag = ui.AddTextBox("txtConcurrentFlag", "", "Provide a column name which keeps concurrent status flag.");
+			txtConcurrentFlag.Width = ui.Width - lblConc.Width - lblConc.Left - 30;
+			txtConcurrentFlag.Top = lblConc.Top;
+			txtConcurrentFlag.Left = lblConc.Left + lblConc.Width;
+
+      GuiCheckBox cbGenDebug = ui.AddCheckBox("cbGenDebug", "Generate debug code", false, "If checked, additional debugging properties and methods are generated");
+			cbGenDebug.Width = ui.Width / 2 - 10;
+			cbGenDebug.Enabled = false;
+
+			GuiCheckBox cbDecorateMembers = ui.AddCheckBox("cbDecorateMembers", "Put Gentle attribute decorations on members", true, "If checked, decoration is on members, if not checked decoration is on properties");
+			cbDecorateMembers.Width = ui.Width / 2 - 10;
+
+			GuiCheckBox cbPerformSeedCheck = ui.AddCheckBox("cbPerformSeedCheck", "Perform autokey seed check", false, "Checking this will add a seed check on MS SQL Server autokeys in [class]::Retrieve()");
+			cbPerformSeedCheck.Width = ui.Width / 2 - 10;
+
+			GuiCheckBox cbSealClasses = ui.AddCheckBox("cbSealClasses", "Seal the generated classes", false, "Checking this will cause generated classes to be sealed (and generate only private members)");
+			cbSealClasses.Width = ui.Width / 2 - 10;
+
+			GuiCheckBox cbUsePreservation = ui.AddCheckBox("cbUsePreservation", "Insert code preservation blocks", false, "Generates MyGeneration code preservation blocks to protect manual changes during regeneration.");
+			cbUsePreservation.Width = ui.Width / 2 - 10;
+
+			GuiCheckBox cbUsePascalStyle = ui.AddCheckBox("cbUsePascalStyle", "Change object names to PascalStyle", true, "Checking will change the names to PascalStyle for better reading.");
+			cbUsePascalStyle.Width = ui.Width / 2 - 10;
+
+			GuiCheckBox cbCreateDefaultConstructor = ui.AddCheckBox("cbCreateDefaultConstructor", "Create a default (parameterless) constructor", false, "Create a default (parameterless) constructor.");
+			cbCreateDefaultConstructor.Width = ui.Width / 2 - 10;
+
+			GuiCheckBox cbPerformTrimming = ui.AddCheckBox("cbPerformTrimming", "Trim string values in results", true, "Checking this will cause generated code to automatically trim trailing spaces in string values");
+			cbPerformTrimming.Top = cbGenDebug.Top;
+			cbPerformTrimming.Left = cbGenDebug.Left + cbGenDebug.Width;
+			cbPerformTrimming.Width = cbGenDebug.Width;
+
+			//GuiCheckBox cbReturnStringEmpty = ui.AddCheckBox("cbReturnStringEmpty", "Return string instead of null", true, "Checking this will cause generated properties to return string.Empty if they are not set in the database");
+			//cbReturnStringEmpty.Top =  cbDecorateMembers.Top;
+			//cbReturnStringEmpty.Left = cbPerformTrimming.Left;
+			//cbReturnStringEmpty.Width = cbPerformTrimming.Width;
+
+			GuiCheckBox cbAbstractClasses = ui.AddCheckBox("cbAbstractClasses", "Create abstract rather than concrete classes", false, "Generates abstract classes rather than concrete ones.");
+			cbAbstractClasses.Top =  cbPerformSeedCheck.Top;
+			cbAbstractClasses.Left = cbPerformTrimming.Left;
+			cbAbstractClasses.Width = cbPerformTrimming.Width;
+
+			GuiCheckBox cbSQLiteID = ui.AddCheckBox("cbSQLiteID", "Create read only (O)ID column for SQLite entities", false, "Generates an OID property that maps to SQLite OID autokey column.");
+			cbSQLiteID.Top =  cbSealClasses.Top;
+			cbSQLiteID.Left = cbAbstractClasses.Left;
+			cbSQLiteID.Width = cbAbstractClasses.Width;
+
+			//GuiCheckBox cbPartialClasses = ui.AddCheckBox("cbPartialClasses", "Generate .NET 2.0 partial classes", true, "Add the partial keyword to generated classes for .NET 2.0 usage.");
+			//cbPartialClasses.Top =  cbUsePreservation.Top;
+			//cbPartialClasses.Left = cbSQLiteID.Left;
+			//cbPartialClasses.Width = cbSQLiteID.Width;
+
+			GuiCheckBox cbProtectedDataMembers = ui.AddCheckBox("cbProtectedDataMembers", "Use protected accessibility modifier for members", false, "Uses protected (instead of private) accessiblity modified for members.");
+			cbProtectedDataMembers.Top =  cbUsePascalStyle.Top;
+			cbProtectedDataMembers.Left = cbSQLiteID.Left;
+			cbProtectedDataMembers.Width = cbSQLiteID.Width;
+			cbProtectedDataMembers.AttachEvent("onclick", "cbProtectedDataMembers_onclick");
+
+			GuiLabel lblMemberPrefix = ui.AddLabel ("lblMemberPrefix", "Member prefix: ", "Specify the string used to prefix all member names.");
+			lblMemberPrefix.Visible = false;
+			lblMemberPrefix.Top = cbCreateDefaultConstructor.Top;
+			lblMemberPrefix.Left = cbSQLiteID.Left;
+			lblMemberPrefix.Width = 80;
+			GuiTextBox txtMemberPrefix = ui.AddTextBox("txtMemberPrefix", "", "Prefix all member names with this string.");
+			txtMemberPrefix.Visible = false;
+			txtMemberPrefix.Top = lblMemberPrefix.Top;
+			txtMemberPrefix.Left = lblMemberPrefix.Left + lblMemberPrefix.Width + 4;
+			txtMemberPrefix.Width = 40;
+
+			//GuiCheckBox cbTemp = ui.AddCheckBox("cbTemp", "Temp", false, "Temp");
+			//cbTemp.Top =  cbUsePreservation.Top;
+			//cbTemp.Left = cbUseGentleCaching.Left;
+			//cbTemp.Width = cbUseGentleCaching.Width;
+
+			// Setup Database selection combobox.
+			GuiLabel label_d = ui.AddLabel("lblDatabases", "Select a database:", "Select a database in the dropdown below.");
+			label_d.Top = txtMemberPrefix.Top + txtMemberPrefix.Height + 4;
+			GuiComboBox cmbDatabases = ui.AddComboBox("cmbDatabase", "Select a database.");
+			cmbDatabases.Width = btnSelectPath.Width;
+
+			// Setup Tables selection multi-select listbox.
+			GuiLabel lblTables = ui.AddLabel("lblTables", "Select table(s):", "Select tables from the listbox below.");
+			lblTables.Width = btnSelectPath.Width / 2;
+			GuiListBox lstTables = ui.AddListBox("lstTables", "Select tables.");
+			lstTables.Height = 170;
+			lstTables.Width = btnSelectPath.Width / 2;
+
+			// Setup Views selection multi-select listbox.
+			GuiLabel lblViews = ui.AddLabel("lblViews", "Select views:", "Select views for which a BusinessEntity should be created.");
+			lblViews.Width = btnSelectPath.Width / 2;
+			lblViews.Left = lblTables.Left + lblTables.Width;
+			lblViews.Top = lblTables.Top;
+			GuiListBox lstViews = ui.AddListBox("lstViews", "Select views.");
+			lstViews.Height = 170;
+			lstViews.Width = btnSelectPath.Width / 2;
+			lstViews.Left = lblViews.Left;
+			lstViews.Enabled = true;
+
+
+      // Attach the onchange event to the cmbDatabases control.
+			setupDatabaseDropdown(cmbDatabases);
+			cmbDatabases.AttachEvent("onchange", "cmbDatabases_onchange");
+
+			// Attach the onchange event to cbAbstractClasses and cbSealClasses,
+			// if one is checked, the other should be disabled.
+			cbAbstractClasses.AttachEvent("onclick", "cbAbstractClasses_onclick");
+			cbSealClasses.AttachEvent("onclick", "cbSealClasses_onclick");
+
+			ui.ShowGui = true;
+		}
+		else
+		{
+			ui.ShowGui = false;
+		}
+	}
+
+	public void setupDatabaseDropdown(GuiComboBox cmbDatabases)
+	{
+		try
+		{
+			if (MyMeta.IsConnected)
+			{
+				cmbDatabases.BindData(MyMeta.Databases);
+				if (MyMeta.DefaultDatabase != null)
+				{
+					cmbDatabases.SelectedValue = MyMeta.DefaultDatabase.Alias;
+					bindTables(cmbDatabases.SelectedValue);
+					bindViews(cmbDatabases.SelectedValue);
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+		}
+	}
+
+	public void bindTables(string sDatabase)
+	{
+		int count = 0;
+
+		GuiListBox lstTables = ui["lstTables"] as GuiListBox;
+
+		try
+		{
+			IDatabase db = MyMeta.Databases[sDatabase];
+			lstTables.BindData(db.Tables);
+		}
+		catch (Exception ex)
+		{
+
+
+		}
+	}
+
+	public void bindViews(string sDatabase)
+	{
+		int count = 0;
+
+		GuiListBox lstViews = ui["lstViews"] as GuiListBox;
+
+		try
+		{
+			IDatabase db = MyMeta.Databases[sDatabase];
+			lstViews.BindData(db.Views);
+		}
+		catch (Exception ex) {}
+	}
+
+
+    public void cmbDatabases_onchange(GuiComboBox control)
+	{
+		GuiComboBox cmbDatabases = ui["cmbDatabase"] as GuiComboBox;
+
+		bindTables(cmbDatabases.SelectedText);
+		bindViews(cmbDatabases.SelectedText);
+	}
+
+	public void cbAbstractClasses_onclick(GuiCheckBox control)
+	{
+	  GuiCheckBox cbAbstract = ui["cbAbstractClasses"] as GuiCheckBox;
+	  GuiCheckBox cbSeal = ui["cbSealClasses"] as GuiCheckBox;
+
+	  if(cbAbstract.Checked)
+	  {
+	    cbSeal.Enabled = false;
+	  }
+	  else
+	  {
+	    cbSeal.Enabled = true;
+	  }
+	}
+
+	public void cbSealClasses_onclick(GuiCheckBox control)
+	{
+	  GuiCheckBox cbAbstract = ui["cbAbstractClasses"] as GuiCheckBox;
+	  GuiCheckBox cbSeal = ui["cbSealClasses"] as GuiCheckBox;
+
+	  if(cbSeal.Checked)
+	  {
+	    cbAbstract.Enabled = false;
+	  }
+	  else
+	  {
+	    cbAbstract.Enabled = true;
+	  }
+	}
+
+	public void cbProtectedDataMembers_onclick(GuiCheckBox control)
+	{
+	  GuiCheckBox cbProtectedDataMembers = ui["cbProtectedDataMembers"] as GuiCheckBox;
+	  GuiLabel lblPrefix = ui["lblMemberPrefix"] as GuiLabel;
+	  GuiTextBox tbPrefix = ui["txtMemberPrefix"] as GuiTextBox;
+
+	  lblPrefix.Visible = cbProtectedDataMembers.Checked;
+	  tbPrefix.Visible = cbProtectedDataMembers.Checked;
+	}
+}
+##|GUI_END
+##|BODY_MODE Markup
+##|BODY_ENGINE .Net Script
+##|BODY_LANGUAGE C#
+##|BODY_TAG_START <%
+##|BODY_TAG_END %>
+##|BODY_BEGIN
+<%#DEBUG%><%#REFERENCE System.Windows.Forms.dll,System.Drawing.dll%><%#NAMESPACE System.Windows.Forms,System.Drawing%><%
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// Gentle.NET Business Entity
+// C# class generation script for MyGeneration
+// (c) 2005 - Angelo Hulshout
+// (c) 2007 - Gerhard Junker
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// Revision info: $Rev: 1208 $ //
+// $LastChangedDate: 2007-04-05 12:24:17 +0300 (Πεμ, 05 Απρ 2007) $ //
+// $LastChangedBy: gjunker $ //
+// $HeadURL: https://code.mertner.com:8443/svn/gentle/gentle/Contributions/BusinessEntity2.csgen $ //
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                                                              
+// This template generates a C# class for each user selected table in a user selected database, 
+// deriving each class from Gentle.Persistence.Persistent class or a user defined class.        
+//
+// This template script is free software; you can redistribute it and/or modify it
+// under the terms of the GNU Lesser General Public License 2.1 or later, as
+// published by the Free Software Foundation. See the license.txt file included in
+// the Gentle.NET distribution or the file MyGenTemplate_license.txt in the Gentle.NET
+// section of the MyGeneration Template Library. If neither of those available
+// or accessible, the license can be found at http://www.gnu.org/copyleft/lesser.html.
+//
+// The most current release of this template can be found at the MyGeneration template
+// library: http://www.mygenerationsoftware.com/TemplateLibrary
+// Working copies of new developments in between release versions are kept at the
+// the Gentle.NET Subversion archive (in the Contributions directory):
+// http://www.mertner.com/svn/repos/projects/gentle/
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+public class GentleNETBusinessEntity : DotNetScriptTemplate
+{
+	public GentleNETBusinessEntity(ZeusTemplateContext context) : base(context)
+	{
+		if(context.Objects.ContainsKey("DnpUtils"))
+		{
+			DnpUtils.SaveInputToCache(context);
+		}
+
+		//Set MyMeta options in order to make sure the correct language and data type
+		//generator are used.
+		MyMeta.Language = "C#";
+		MyMeta.DbTarget = "DbType";
+
+		// Initialize settings object
+		// For convenience, we store it in m_UserScriptSettings here.
+		// Other classes use GetInstance() to get access to settings.
+		m_UserScriptSettings = ScriptSettings.InitInstance(input, MyMeta.Databases, DnpUtils);
+	}
+
+	private ScriptSettings m_UserScriptSettings;
+
+	public override void Render()
+	{
+		//Uncomment following line to invoke JIT debugger
+		//System.Diagnostics.Debugger.Launch();
+
+		// Generate progress window, to be used during rendering
+		// of tables, relation tables and views
+		Dnp.Utils.ProgressDialog progressDialog = new Dnp.Utils.ProgressDialog();
+		progressDialog.Show();
+
+		// Initialize progress bar for tables
+		progressDialog.ProgressBar.Minimum = 0;
+		progressDialog.ProgressBar.Maximum = m_UserScriptSettings.Tables.Count;
+		progressDialog.ProgressBar.Value = 0;
+
+		// Keep list of .cs files generated
+		ArrayList csFiles = new ArrayList();
+		string outputFileName = "";
+
+		// Generate code for all selected tables
+		foreach (string tableName in m_UserScriptSettings.Tables)
+		{
+			// Get table info - in order to get access to all properties,
+			// and mainly the Alias.
+			// TODO: replace all refs to table with refs to m_ActiveTable and m_ActiveTable.xxx
+
+			GentleTable ActiveTable = new GentleTable(MyMeta.Databases[m_UserScriptSettings.DatabaseName].Tables[tableName], output);
+
+			// Update progress bar
+			progressDialog.Text = "Processing table " + ActiveTable.Name;
+			progressDialog.ProgressBar.Value++;
+
+			// Filename info
+			outputFileName =m_UserScriptSettings.OutputPath;
+			if (!outputFileName.EndsWith("\\") )
+				outputFileName += "\\";
+			outputFileName += ActiveTable.Alias;
+			if(m_UserScriptSettings.PartialClasses)
+			{
+				outputFileName += ".generated";
+			}
+			outputFileName += ".cs";
+
+			// Add file name to list, for display at end of code generation
+			csFiles.Add( outputFileName );
+			if( m_UserScriptSettings.UsePreservation )
+			{
+				output.setPreserveSource(outputFileName, "/***", "***/");
+			}
+
+			// Render the table
+			ActiveTable.Render();
+
+			// Save the results
+			output.save(outputFileName, false);
+
+			// keep output if only one file generated
+			if(m_UserScriptSettings.Views.Count + m_UserScriptSettings.Tables.Count +
+				m_UserScriptSettings.RelationTables.Count != 1)
+			{
+				output.clear();
+			}
+		}
+
+		// Initialize progress bar for tables
+		progressDialog.ProgressBar.Minimum = 0;
+		progressDialog.ProgressBar.Maximum = m_UserScriptSettings.RelationTables.Count;
+		progressDialog.ProgressBar.Value = 0;
+
+		// Generate code for all relation tables
+		// TODO: This loop is based on an array that is modified in GentleRelation.RenderAsManyToMany
+		//       A cleaner solution is desirable!!
+		foreach (string tableName in m_UserScriptSettings.RelationTables)
+		{
+			// Get table info - in order to get access to all properties,
+			// and mainly the Alias.
+			GentleTable ActiveTable = new GentleTable(MyMeta.Databases[m_UserScriptSettings.DatabaseName].Tables[tableName], output);
+
+			// Update progress bar
+			progressDialog.Text = "Processing relation " + ActiveTable.Name;
+			progressDialog.ProgressBar.Value++;
+
+			// Filename info
+			outputFileName =m_UserScriptSettings.OutputPath;
+			if (!outputFileName.EndsWith("\\") )
+				outputFileName += "\\";
+			outputFileName += ActiveTable.Alias;
+			if(m_UserScriptSettings.PartialClasses)
+			{
+				outputFileName += ".generated";
+			}
+			outputFileName += ".cs";
+
+			// Add file name to list, for display at end of code generation
+			csFiles.Add( outputFileName );
+			if( m_UserScriptSettings.UsePreservation )
+			{
+				output.setPreserveSource(outputFileName, "/***", "***/");
+			}
+
+			// Render the table
+			ActiveTable.Render();
+
+			// Save the results
+			output.save(outputFileName, false);
+
+			// keep output if only one file generated
+			if(m_UserScriptSettings.Views.Count + m_UserScriptSettings.Tables.Count +
+				m_UserScriptSettings.RelationTables.Count != 1)
+			{
+				output.clear();
+			}
+		}
+
+		// Initialize progress bar for views
+		progressDialog.ProgressBar.Minimum = 0;
+		progressDialog.ProgressBar.Maximum = m_UserScriptSettings.Views.Count;
+		progressDialog.ProgressBar.Value = 0;
+
+		// Generate code for all selected views
+		foreach (string viewName in m_UserScriptSettings.Views)
+		{
+			// Get view info - in order to get access to all properties,
+			// and mainly the Alias.
+			GentleView ActiveView = new GentleView(MyMeta.Databases[m_UserScriptSettings.DatabaseName].Views[viewName], output);
+
+			// Update progress bar
+			progressDialog.Text = "Processing relation " + ActiveView.Name;
+			progressDialog.ProgressBar.Value++;
+
+			// Filename info
+			outputFileName =m_UserScriptSettings.OutputPath;
+			if (!outputFileName.EndsWith("\\") )
+				outputFileName += "\\";
+			outputFileName += ActiveView.Alias;
+			if(m_UserScriptSettings.PartialClasses)
+			{
+				outputFileName += ".generated";
+			}
+			outputFileName += ".cs";
+
+
+			// Add file name to list, for display at end of code generation
+			csFiles.Add( outputFileName );
+			if( m_UserScriptSettings.UsePreservation )
+			{
+				output.setPreserveSource(outputFileName, "/***", "***/");
+			}
+
+			// Render the view
+			ActiveView.Render();
+
+			// Save the results
+			output.save(outputFileName, false);
+
+			// keep output if only one file generated
+			if(m_UserScriptSettings.Views.Count + m_UserScriptSettings.Tables.Count +
+				m_UserScriptSettings.RelationTables.Count != 1)
+			{
+				output.clear();
+			}
+		}
+
+		progressDialog.Hide();
+
+		if(csFiles.Count == 1)
+		{
+			output.writeln("(Following lines are not part of generated file)" );
+		}
+		output.writeln("Output directory " +m_UserScriptSettings.OutputPath );
+		output.writeln("Files generated:" );
+		foreach( string csFile in csFiles )
+		{
+		    output.writeln( csFile );
+		}
+
+		MyMeta.SaveUserMetaData();
+
+	} // Render()
+
+
+
+} // class GeneratedTemplate
+
+/// GentleTable class - a utility wrapper around a MyMeta.ITable
+public class GentleTable
+{
+	public enum ConstructorParameters
+	{
+		All,
+		AllAutoKeys,
+		AllExceptAutoKeys,
+		NonNullAndNoAutoKeys,
+		None
+	}
+
+	protected ScriptSettings m_UserScriptSettings; // TODO: replace with getinstance everywhere
+	protected ArrayList m_PrimaryKeys = null;
+	protected MyMeta.ITable m_ITable;
+	protected Zeus.IZeusOutput output; //TODO: replace with m_output
+
+	public GentleTable( MyMeta.ITable table, Zeus.IZeusOutput outputDest )
+	{
+		m_ITable = table;
+		m_UserScriptSettings = ScriptSettings.GetInstance();
+		output = outputDest;
+	}
+
+	public IList PrimaryKeys
+	{
+		get
+		{
+			if(m_PrimaryKeys != null)
+			{
+				return m_PrimaryKeys;
+			}
+
+			// Not initialized yet, so fill it first
+			m_PrimaryKeys = new ArrayList();
+
+			foreach( Column c in m_ITable.Columns )
+			{
+				if(c.IsInPrimaryKey )
+				{
+					m_PrimaryKeys.Add(c.Alias);
+				}
+			}
+			return m_PrimaryKeys;
+		}
+	}
+
+	public bool HasAutoKeys
+	{
+		get
+		{
+			foreach( Column c in m_ITable.PrimaryKeys )
+			{
+				if(c.IsAutoKey)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
+	public bool HasRelations
+	{
+		get
+		{
+			return m_ITable.ForeignKeys.Count > 0;
+		}
+	}
+
+	public ITable MyMetaTable
+	{
+		get
+		{
+			return m_ITable;
+		}
+	}
+
+	public string Alias
+	{
+		get
+		{
+			return m_ITable.Alias.Trim();
+		}
+	}
+
+	public string Name
+	{
+		get
+		{
+			return m_ITable.Name.Trim();
+		}
+	}
+
+	public string CacheStrategy
+	{
+		get
+		{
+			if (m_ITable.Properties["CacheStrategy"] != null)
+			{
+				return m_ITable.Properties["CacheStrategy"].Value;
+			}
+			return "Temporary";
+		}
+	}
+
+	public void Render()
+	{
+%>//========================================================================
+// This file was generated using the MyGeneration tool in combination   //
+// with the Gentle.NET 2.0 Business Entity template, $Rev: 1208 $//
+// .Net Framework 2.0                                                   //
+//========================================================================
+
+<%
+if (m_UserScriptSettings.ReferencedNamespace!="")
+{%>
+using <%=m_UserScriptSettings.ReferencedNamespace%>;
+<%
+}%>
+namespace <%=m_UserScriptSettings.NameSpace %>
+{
+  using System;
+	using System.ComponentModel;
+	using System.Collections.Generic;
+	using Gentle.Common;
+	using Gentle.Persistence;
+	using Gentle.Persistence.QueryConstruction;
+	using Gentle.Repositories;
+	using Gentle.Repositories.Provider.Gentle;
+
+
+  /// <summary>
+  /// Instances of this class represent the properties and methods of a row in the table <b><%= this.Name %></b>.
+	/// </summary>
+	
+	[TableName("<%= this.Name %>", CacheStrategy.<%= this.CacheStrategy%>)]
+	<%= m_UserScriptSettings.ClassModifiers %> class <%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %> : <%= m_UserScriptSettings.BaseClass %>
+	{
+<%
+		// Main logic
+		output.tabLevel++;
+		output.tabLevel++;
+		
+		RenderDataMembers();
+%>
+		#region Constructors<%
+		//if (m_UserScriptSettings.CreateDefaultConstructor)
+		{
+%>
+		/// <summary>
+		/// Create a new instance using the default constructor
+		/// </summary>
+<%
+			RenderConstructor(ConstructorParameters.None);
+		}
+
+		// If table has nullable items, generate a minimum info constructor.
+		// If it only has nullable items, skip this, because it will likely be a duplicate
+		if( HasNullable && HasValues) // avoid empty parameter list
+		{
+%>
+		/// <summary>
+		/// Create a new object using the minimum required information 
+		/// (all not-null fields except auto-generated primary keys).
+		/// </summary>
+<%
+			RenderConstructor(ConstructorParameters.NonNullAndNoAutoKeys);
+		}
+		// if table has no autokeys, All and AllExceptNoAutoKeys generate the same
+		// constructor. First check, then generate one or both
+		if (HasAutoKeys || m_UserScriptSettings.GenerateSQLiteOID)
+		{
+%>
+		/// <summary>
+		/// Create a new object by specifying all fields (except the auto-generated primary key field).
+		/// </summary>
+<%
+			RenderConstructor( ConstructorParameters.AllExceptAutoKeys);
+		}
+%>
+		/// <summary>
+		/// Create an object from an existing row of data. This will be used by Gentle to
+		/// construct objects from retrieved rows.
+		/// </summary>
+<%
+		RenderConstructor( ConstructorParameters.All);
+
+		output.autoTabLn("#endregion // Constructors");
+		output.writeln("");
+
+		RenderEmptyObject();
+
+		// Properties
+		output.autoTabLn("#region Public Properties");
+		RenderProperties();
+		output.autoTabLn("#endregion // Public Properties");
+
+		// Debug and test properties
+		if(m_UserScriptSettings.GenerateDebugCode )
+		{
+%>
+		#region Debug Properties
+		// At present, no debug and test properties are generated by the template
+		#endregion
+
+<%
+		}
+
+		RenderPersistMethod();
+
+		// Instance storage and retrieval
+		output.writeln("");
+		output.autoTabLn("#region Storage and Retrieval");
+		RenderListAllMethod();
+		RenderRetrieveMethod();
+		RenderComplexRetrieveMethod();
+		output.autoTabLn("#endregion");
+
+		// Relations
+		output.writeln("");
+		if( this.HasRelations )
+		{
+			output.autoTabLn("#region Relations");
+			RenderRelations();
+			output.autoTabLn("#endregion");
+		}
+
+		if( m_UserScriptSettings.UsePreservation )
+		{
+			output.writeln("");
+			output.autoTabLn("#region ManualCode");
+			output.autoTab(output.getPreserveBlock("MANUAL_CODE"));
+			output.writeln("");
+			output.autoTabLn("#endregion");
+		}
+
+		output.tabLevel--;
+		output.autoTabLn("}");
+	  output.tabLevel--;
+%>}
+<%
+	}
+
+
+    public void RenderDataMembers()
+	{
+		output.autoTabLn("#region Members");
+%>
+		/// <summary>
+		/// Create a repository for the current entity type using the default provider.
+		/// </summary>
+		protected IRepository<<%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %>> repository = 
+			new GentleRepository<<%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %>>( ProviderFactory.GetDefaultProvider() );
+
+<%
+		if(m_UserScriptSettings.GenerateSQLiteOID)
+		{
+			output.autoTabLn("[TableColumn(\"OID\", NullValue=0)]");
+			output.autoTabLn("protected long oid;");
+		}
+
+		foreach( Column c in m_ITable.Columns )
+		{
+			GentleColumn currentColumn = new GentleColumn(c, output);
+			currentColumn.RenderAsDataMember();
+		}
+%>
+		public bool IsEmpty
+		{
+			get { return Empty.Equals(this); }
+		}		
+		
+<%		
+		output.autoTabLn("#endregion");
+	}
+
+    public void RenderProperties()
+	{
+		if( m_UserScriptSettings.GenerateSQLiteOID )
+		{
+%>		public long OID
+		{
+			get { return oid; }
+		}
+<%
+		}
+
+		foreach( Column c in m_ITable.Columns )
+		{
+			GentleColumn currentColumn = new GentleColumn(c, output);
+
+			currentColumn.RenderAsProperty(true, StringFormatter.CheckAndSetPascalCasing(this.Alias));
+		}
+	}
+
+	private void RenderConstructorParameters(ConstructorParameters cp)
+	{
+		bool first = true;
+		bool printIt;
+
+		// Special case for SQLite OIDs!!
+		if(cp==ConstructorParameters.All && m_UserScriptSettings.GenerateSQLiteOID)
+		{
+			output.write("long OID");
+			first = false;
+		}
+
+		foreach( Column c in m_ITable.Columns )
+		{
+			GentleColumn currentColumn = new GentleColumn(c, output);
+			printIt = false;
+
+			switch(cp)
+			{
+				case ConstructorParameters.All:
+					printIt = true; 
+					break;
+
+				case ConstructorParameters.AllAutoKeys:
+					if (currentColumn.MyMetaColumn.IsAutoKey) printIt = true;
+					break;
+
+				case ConstructorParameters.AllExceptAutoKeys:
+					if(!currentColumn.MyMetaColumn.IsAutoKey && !currentColumn.IsConcurrent)	printIt = true;
+					break;
+
+				case ConstructorParameters.NonNullAndNoAutoKeys:
+					if(!currentColumn.MyMetaColumn.IsNullable && !currentColumn.MyMetaColumn.IsAutoKey && !currentColumn.IsConcurrent) printIt = true;
+					break;
+			}
+
+			if (currentColumn.MyMetaColumn.IsComputed) printIt = false;
+			
+			if(printIt)
+			{
+				if (!first)
+				{
+					output.write(", ");
+				}
+				output.write(currentColumn.LanguageType + " " + currentColumn.ToMemberName());
+				first = false;
+			}
+		}
+	}
+
+
+	private void AssignDataMembers( ConstructorParameters cp)
+	{
+		bool printIt;
+		foreach( Column c in m_ITable.Columns )
+		{
+			GentleColumn currentColumn = new GentleColumn(c, output);
+			printIt = false;
+
+			switch(cp)
+			{
+				case ConstructorParameters.All:
+					printIt = true;
+					break;
+
+				case ConstructorParameters.AllExceptAutoKeys:
+					if(!currentColumn.MyMetaColumn.IsAutoKey && !currentColumn.IsConcurrent)	printIt = true;
+					break;
+
+				case ConstructorParameters.NonNullAndNoAutoKeys:
+					if( (!currentColumn.MyMetaColumn.IsNullable || currentColumn.MyMetaColumn.IsAutoKey) && !currentColumn.IsConcurrent) printIt = true;
+					break;
+			}
+
+			if(printIt)
+			{
+				string memberName = currentColumn.ToMemberName();
+				if(currentColumn.MyMetaColumn.IsAutoKey && cp != ConstructorParameters.All)
+					output.autoTabLn(string.Format("{0} = 0;", memberName));
+				else
+					output.autoTabLn(string.Format("this.{0} = {0};", memberName));
+			}
+		}
+	}
+
+    public void RenderEmptyObject()
+    {
+   		bool first = true;
+   		
+%>		#region Empty Reference Object
+		
+		public static readonly <%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias) %> Empty = new <%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias) %>();
+		
+		#endregion // Empty Reference Object
+		
+<%    
+    }
+    
+    
+    public void RenderConstructor(ConstructorParameters cp)
+	{
+	
+	  if (!m_UserScriptSettings.CreateDefaultConstructor && cp == ConstructorParameters.None) output.autoTab("private ");
+	  else output.autoTab("public ");
+		output.write( StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias) + "(");
+		output.tabLevel += 2;
+		RenderConstructorParameters(cp);
+		output.tabLevel -= 2;
+		output.writeln(")");
+
+		// opening brace
+		output.autoTabLn("{");
+
+		output.tabLevel++;
+
+		AssignDataMembers(cp);
+		output.tabLevel--;
+
+		output.autoTabLn("}");
+	}
+
+	public bool HasNullable
+	{
+		get
+		{
+			foreach( Column c in m_ITable.Columns )
+			{
+				if(c.IsNullable)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
+	public bool HasValues
+	{
+		get
+		{
+			foreach( Column c in m_ITable.Columns )
+			{
+				if(!c.IsNullable && !c.IsAutoKey)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
+	public string PrimaryKeyName
+	{
+		get
+		{
+			IColumns keys = m_ITable.PrimaryKeys;
+			if (keys.Count != 0)
+			{
+				return keys[0].Name;
+			}
+			return "(null)";
+		}
+	}
+
+	public string PrimaryKeyLanguageType
+	{
+		get
+		{
+			if(this.PrimaryKeyName=="(null)")
+			{
+				return "Object";
+			}
+			else
+			{
+				GentleColumn c = new GentleColumn(m_ITable.Columns[this.PrimaryKeyName], output);
+				return c.LanguageType;
+			}
+		}
+	}
+
+	public void RenderRetrieveMethod()
+	{
+		// If table has only one key, generate a simple retrieve function, using
+		// a parameter of the correct language type as key value
+    if (m_ITable.PrimaryKeys.Count > 0)
+    {
+				string tmp = "";
+				foreach( Column c in m_ITable.Columns )
+				{
+					if(c.IsInPrimaryKey )
+					{
+						if (tmp.Length > 0) tmp += ", ";
+						tmp += c.LanguageType + " " + c.Alias;
+					}
+				}
+%>
+		/// <summary>
+		/// Retrieves an <b><%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias) %></b> entity given it's id.
+		/// </summary>
+		public static <%=m_UserScriptSettings.NameSpace %>.<%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias) %> Retrieve(<%= tmp %>)
+		{
+		  IRepository<<%=m_UserScriptSettings.NameSpace %>.<%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %>> repository =  new GentleRepository<<%=m_UserScriptSettings.NameSpace %>.<%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %>>(ProviderFactory.GetDefaultProvider() );
+			ObjectIdentity oid = new ObjectIdentity(typeof(<%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias) %>));
+<%
+				foreach( Column c in m_ITable.Columns )
+				{
+					if(c.IsInPrimaryKey )
+					{
+%>			oid["<%= c.Name %>"] = <%= c.Alias %>;
+<%
+					}
+				}
+%>			<%=m_UserScriptSettings.NameSpace %>.<%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %> tmp = repository.FindByOID(oid);
+			return (null != tmp) ? tmp : <%=m_UserScriptSettings.NameSpace %>.<%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %>.Empty;
+		}
+
+<%	
+		} // (m_ITable.PrimaryKeys.Count > 0)
+		
+		if(m_ITable.PrimaryKeys.Count<1)
+		{
+%>		/// <summary>
+		/// Retrieves an <b><%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias) %></b> entity given it's id.
+		/// </summary>
+		public static <%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias) %> Retrieve(<%=this.PrimaryKeyLanguageType%> id)
+		{
+			throw new NotImplementedException("Gentle.NET Business Entity script: Table associated with this class has no primary key, so no simple retrieve function is generated.");
+		}
+
+<%
+    }
+  }
+
+	public void RenderComplexRetrieveMethod()
+	{
+		// generate method header and body
+%>
+		/// <summary>
+		/// Retrieves an <b><%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias) %></b> entity given it's id, using Gentle.Persistence.ObjectIdentity class.
+		/// This allows retrieval based on multi-column keys.
+		/// </summary>
+		public static <%=m_UserScriptSettings.NameSpace %>.<%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias) %> Retrieve(IObjectIdentity oid)
+		{
+			IRepository<<%=m_UserScriptSettings.NameSpace %>.<%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %>> repository =  new GentleRepository<<%=m_UserScriptSettings.NameSpace %>.<%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %>>(ProviderFactory.GetDefaultProvider() );
+			<%=m_UserScriptSettings.NameSpace %>.<%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %> tmp = repository.FindByOID(oid);
+			return (null != tmp) ? tmp : <%=m_UserScriptSettings.NameSpace %>.<%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %>.Empty;
+		}
+
+<%
+    }
+
+	public void RenderListAllMethod()
+	{
+%>
+		/// <summary>
+		/// Static method to retrieve all <b><%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias) %></b> instances matching the key in one call
+		/// </summary>
+		public static IList<<%=m_UserScriptSettings.NameSpace %>.<%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias)%>> ListAll()
+		{
+<%=			if( m_UserScriptSettings.UsePreservation )
+			{
+				output.autoTab( output.getPreserveBlock("MANUAL_CODE_BeginListAll"));
+			}
+
+%>			IRepository<<%=m_UserScriptSettings.NameSpace %>.<%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias)%>> tmpRepository = new GentleRepository<<%=m_UserScriptSettings.NameSpace %>.<%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias)%>>( ProviderFactory.GetDefaultProvider() );
+			return tmpRepository.Find( null );
+<%
+			if( m_UserScriptSettings.UsePreservation )
+			{
+				output.autoTab( output.getPreserveBlock("MANUAL_CODE_EndListAll"));
+			}
+%>		}
+<%
+	}
+
+	public void RenderPersistMethod()
+	{
+%>
+		#region IPersistent
+
+		/// <summary>
+		/// Persists the current <b><%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias) %></b> entity if it was never persisted or was changed.
+		/// </summary>
+		public void Persist()
+		{
+			if (IsEmpty) return; //throw new GentleException(Error.InvalidRequest ,"Persisting the readonly static entity '<%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias) %>.Empty' is not allowed");
+			repository.Add( this );
+		}
+			
+		/// <summary>
+		/// Remove the current <b><%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias) %></b> entity from the database.
+		/// </summary>
+		public void Remove()
+		{
+			if (IsEmpty) return; //throw new GentleException(Error.InvalidRequest ,"Removing the readonly static entity '<%= StringFormatter.CheckAndSetPascalCasing(m_ITable.Alias) %>.Empty' is not allowed");
+			repository.Remove( this );
+		}
+    
+		#endregion // IPersistent
+<%
+  }
+
+    public void RenderRelations()
+    {
+			for (int k = 0; k < m_ITable.ForeignKeys.Count; k++)
+			{
+		  	IForeignKey fk = m_ITable.ForeignKeys[k];
+
+		  	bool multiples = false;
+		  	for (int j = 0; j < m_ITable.ForeignKeys.Count; j++)
+					if ( k != j)
+					{
+						IForeignKey fj = m_ITable.ForeignKeys[j];
+						if (fk.PrimaryTable.Name          == fj.PrimaryTable.Name) 
+						  if (fk.ForeignTable.Name        == fj.ForeignTable.Name) 
+								if (fk.PrimaryColumns[0].Name == fj.PrimaryColumns[0].Name) 
+								{
+									multiples = true;					
+									break;
+								}
+					}
+
+				GentleRelation CurrentRelation = new GentleRelation( m_ITable, fk, output, multiples);
+				CurrentRelation.RenderForReporting();
+				CurrentRelation.Render();
+			}
+    }
+}
+
+/// GentleTable class - a utility wrapper around a MyMeta.IView
+public class GentleView
+{
+
+	public enum ConstructorParameters
+	{
+		All,
+		AllAutoKeys,
+		AllExceptAutoKeys,
+		NonNullAndNoAutoKeys,
+	}
+
+
+	MyMeta.IView m_IView;
+	protected ArrayList m_PrimaryKeys = null;
+	ScriptSettings m_UserScriptSettings;
+	Zeus.IZeusOutput output;
+
+	public GentleView( MyMeta.IView view , Zeus.IZeusOutput outputDest )
+	{
+		m_IView = view;
+		m_UserScriptSettings = ScriptSettings.GetInstance();
+		output = outputDest;
+	}
+
+	public IView MyMetaView
+	{
+		get
+		{
+			return m_IView;
+		}
+	}
+
+	public string Alias
+	{
+		get
+		{
+			return m_IView.Alias.Trim();
+		}
+	}
+
+	public string Name
+	{
+		get
+		{
+			return m_IView.Name.Trim();
+		}
+	}
+
+	private void RenderConstructorParameters(ConstructorParameters cp)
+	{
+		bool first = true;
+		bool printIt;
+		foreach( Column c in m_IView.Columns )
+		{
+			GentleColumn currentColumn = new GentleColumn(c, output);
+			printIt = false;
+
+			switch(cp)
+			{
+				case ConstructorParameters.All:
+					printIt = true;
+					break;
+
+				case ConstructorParameters.AllAutoKeys:
+					if (currentColumn.MyMetaColumn.IsAutoKey) printIt = true;
+					break;
+
+				case ConstructorParameters.AllExceptAutoKeys:
+					if(!currentColumn.MyMetaColumn.IsAutoKey && !currentColumn.IsConcurrent)	printIt = true;
+					break;
+
+				case ConstructorParameters.NonNullAndNoAutoKeys:
+					if(!currentColumn.MyMetaColumn.IsNullable && currentColumn.MyMetaColumn.IsAutoKey && !currentColumn.IsConcurrent) printIt = true;
+					break;
+			}
+
+			if(printIt)
+			{
+				if (!first)
+				{
+					output.write(", ");
+				}
+				output.write(currentColumn.LanguageType + " " + currentColumn.ToMemberName());
+				first = false;
+			}
+		}
+	}
+
+	private void AssignDataMembers( ConstructorParameters cp)
+	{
+		bool printIt;
+		foreach( Column c in m_IView.Columns )
+		{
+			GentleColumn currentColumn = new GentleColumn(c, output);
+			printIt = false;
+
+			switch(cp)
+			{
+				case ConstructorParameters.All:
+					printIt = true;
+					break;
+
+				case ConstructorParameters.AllExceptAutoKeys:
+					if(!currentColumn.MyMetaColumn.IsAutoKey && !currentColumn.IsConcurrent)	printIt = true;
+					break;
+
+				case ConstructorParameters.NonNullAndNoAutoKeys:
+					if( (!currentColumn.MyMetaColumn.IsNullable || currentColumn.MyMetaColumn.IsAutoKey) && !currentColumn.IsConcurrent) printIt = true;
+					break;
+			}
+
+			if(printIt)
+			{
+				string memberName = currentColumn.ToMemberName();
+				if(currentColumn.MyMetaColumn.IsAutoKey && cp != ConstructorParameters.All)
+					output.autoTabLn(string.Format("{0} = 0;", memberName));
+				else
+					output.autoTabLn(string.Format("this.{0} = {0};", memberName));
+			}
+		}
+	}
+
+
+    public void RenderEmptyObject()
+    {
+%>
+			// needed in a View ?
+			// public static readonly <%= StringFormatter.CheckAndSetPascalCasing(m_IView.Alias) %> Empty;    
+<%    
+    }
+    
+ 
+	public void RenderConstructor( ConstructorParameters cp)
+	{
+		// public Employees(
+		output.autoTab("public " + StringFormatter.CheckAndSetPascalCasing(m_IView.Alias) + "(");
+		output.tabLevel += 2;
+		RenderConstructorParameters(cp);
+		output.tabLevel -= 2;
+		output.writeln(")");
+
+		// opening brace
+		output.autoTabLn("{");
+
+		output.tabLevel++;
+
+		AssignDataMembers(cp);
+		output.tabLevel--;
+
+
+		output.autoTabLn("}");
+	}
+
+	public void RenderDataMembers()
+	{
+		output.autoTabLn("#region Members");
+%>
+
+   /// <summary>
+   /// Create a repository for the current entity type using the default provider.
+   /// </summary>
+   protected IRepository<<%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %>> repository = 
+ 	 	new GentleRepository<<%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %>>(ProviderFactory.GetDefaultProvider() );
+
+<%
+
+		foreach( Column c in m_IView.Columns )
+		{
+			GentleColumn currentColumn = new GentleColumn(c, output);
+			currentColumn.RenderAsDataMember();
+		}
+		output.autoTabLn("#endregion");
+	}
+
+	public void RenderProperties()
+	{
+		foreach( Column c in m_IView.Columns )
+		{
+			GentleColumn currentColumn = new GentleColumn(c, output);
+
+			currentColumn.RenderAsProperty(false, StringFormatter.CheckAndSetPascalCasing(this.Alias));
+		}
+	}
+
+	public void RenderListAllMethod()
+	{
+%>
+		/// <summary>
+		/// Generate a static method to retrieve all <b><%= StringFormatter.CheckAndSetPascalCasing(m_IView.Alias) %></b> instances of a class that are stored in the database
+		/// </summary>
+		static public IList<<%= StringFormatter.CheckAndSetPascalCasing(m_IView.Alias) %>> ListAll()
+		{
+<%=
+			if( m_UserScriptSettings.UsePreservation )
+			{
+				output.autoTab( output.getPreserveBlock("MANUAL_CODE_BeginListAll"));
+			}
+%>
+			return ProviderFactory.GetDefaultProvider().Session.RetrieveList<<%= StringFormatter.CheckAndSetPascalCasing(m_IView.Alias) %>>();
+<%=
+			if( m_UserScriptSettings.UsePreservation )
+			{
+				output.autoTab( output.getPreserveBlock("MANUAL_CODE_EndListAll"));
+			}
+%>
+		}
+
+<%		}
+
+	public void Render()
+	{
+%>
+//========================================================================
+// This file was generated using MyGeneration in combination with the
+// Gentle.NET 2.0 Business Entity template, $Rev: 1208 $
+//========================================================================
+  using System;
+	using System.ComponentModel;
+	using System.Collections.Generic;
+	using Gentle.Common;
+	using Gentle.Persistence;
+	using Gentle.Repositories;
+	using Gentle.Repositories.Provider.Gentle;
+	
+<%
+if (m_UserScriptSettings.ReferencedNamespace!="")
+{
+%>
+using <%=m_UserScriptSettings.ReferencedNamespace%>;
+<%
+}
+%>
+
+namespace <%=m_UserScriptSettings.NameSpace %>
+{
+	#region <%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %>
+	/// <summary>
+	/// Instances of this class represent the properties and methods of a row in the view <b><%= this.Name %></b>.
+	/// </summary>
+	[TableName("<%= this.Name %>"<%output.write(", CacheStrategy.Never");%>)]
+	<%= m_UserScriptSettings.ClassModifiers %> class <%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %> <%if(m_UserScriptSettings.ViewBaseClass!="") output.write(" : ");%> <%=m_UserScriptSettings.ViewBaseClass%>
+	{
+<%
+		// Main logic
+		output.tabLevel++;
+		output.tabLevel++;
+		RenderDataMembers();
+%>
+		#region Constructors
+		/// <summary>
+		/// Create an object from an existing row of data. This will be used by Gentle to
+		/// construct objects from retrieved rows.
+		/// </summary>
+<%
+		RenderConstructor( ConstructorParameters.All);
+
+		output.autoTabLn("#endregion // Constructors");
+		output.writeln("");
+
+		//RenderEmptyObject();
+
+
+		// Properties
+		output.autoTabLn("#region Public Properties");
+		output.autoTabLn("");
+		RenderProperties();
+		output.autoTabLn("#endregion // Public Properties");
+
+		RenderListAllMethod();
+
+		// Debug and test properties
+		if(m_UserScriptSettings.GenerateDebugCode )
+		{
+%>
+		#region Debug Properties
+		// At present, no debug and test properties are generated by the template
+		#endregion // Debug Properties
+
+<%
+		}
+
+		// Instance storage and retrieval
+
+		if( m_UserScriptSettings.UsePreservation )
+		{
+			output.autoTabLn("#region ManualCode");
+			output.autoTab(output.getPreserveBlock("MANUAL_CODE"));
+			output.writeln("");
+			output.autoTabLn("#endregion");
+		}
+
+		output.tabLevel--;
+		output.autoTabLn("}");
+%>
+
+	}
+  #endregion // Storage and Retrieval
+
+<%
+	}
+}
+
+/// GentleTable class - a utility wrapper around a MyMeta.IView
+public class GentleColumn
+{
+	protected MyMeta.IColumn m_IColumn;
+	protected ScriptSettings m_UserScriptSettings;
+	protected Zeus.IZeusOutput output; // TODO: replace with m_output
+
+	public GentleColumn( MyMeta.IColumn	column, Zeus.IZeusOutput outputDest )
+	{
+		m_IColumn = column;
+		m_UserScriptSettings = ScriptSettings.GetInstance();
+		output = outputDest;
+	}
+
+	public IColumn MyMetaColumn
+	{
+		get
+		{
+			return m_IColumn;
+		}
+	}
+
+	public string Alias
+	{
+		get
+		{
+			return m_IColumn.Alias.Trim();
+		}
+	}
+
+	public string Name
+	{
+		get
+		{
+			return m_IColumn.Name.Trim();
+		}
+	}
+
+	public bool IsConcurrent
+	{
+		get
+		{
+			return (m_IColumn.Name == m_UserScriptSettings.ConcurrencyColumn);
+		}
+	}
+
+	public void RenderPropertyAttribute()
+	{
+		string a = "[TableColumn(\"" + m_IColumn.Name + "\"";
+
+		if(!m_IColumn.IsNullable)
+			a += ", IsNullAllowed=false)";
+		else
+		{
+			if (m_IColumn.IsNullable && !m_IColumn.HasDefault)
+			{
+				if (LanguageType == "string")
+				{
+					a += ", NullValue=\"\"";
+				}
+				else if (LanguageType == "Guid")
+				{
+					a += ", NullValue=NullOption.EmptyGuid";
+				}
+				else if (LanguageType != "bool" && LanguageType != "byte[]" && LanguageType != "DateTime")
+				{
+					a += ", NullValue=0";
+				}
+				else
+				{
+					// TODO: NullValues to be determined for:
+					// bool, DateTime, byte[], other array types?
+				}
+			}
+			a += ")";
+		}
+
+		if(m_IColumn.IsInPrimaryKey)
+		{
+			a += ", PrimaryKey(IsAutoGenerated=";
+			a += m_IColumn.IsAutoKey ? "true" : "false";
+			a += ")";
+		}
+
+		if( this.IsConcurrent)
+		{
+			a += ", Concurrency()";
+		}
+
+		if(m_IColumn.IsComputed) 
+		{ 
+			a += ", IsReadOnly=true"; 
+		} 
+		
+		a += "]";
+
+		if( m_UserScriptSettings.UsePreservation )
+		{
+			output.writeln("");
+			output.autoTab(output.getPreserveBlock("MANUAL_CODE_" + m_IColumn.Name));
+			output.writeln("");
+		}
+		output.autoTabLn(a);
+	}
+
+    public void RenderForeignKeyAttribute()
+	{
+	    IForeignKey foreignKey = m_IColumn.ForeignKeys[0];
+//      [TableColumn("ReportsTo"), ForeignKey("Employees", "EmployeeID")]
+		string a = string.Format("[TableColumn(\"{0}\", IsNullAllowed = ", foreignKey.ForeignColumns[0].Name);
+
+		if(!foreignKey.ForeignColumns[0].IsNullable)
+                {
+					a += "false)";
+                }
+                else
+                {
+                        a += "true";
+                        if (m_IColumn.IsNullable && !m_IColumn.HasDefault)
+                        {
+                                if (LanguageType == "string")
+                                {
+                                        a += ", NullValue=\"\"";
+                                }
+		else
+                                {
+                                        a += ", NullValue=0";
+                                }
+                        }
+			a += ")";
+                }
+
+
+                a += string.Format(", ForeignKey(\"{0}\", \"{1}\")]", foreignKey.PrimaryTable.Name, foreignKey.PrimaryColumns[0].Name);
+
+		output.autoTabLn(a);
+	}
+
+	/// Column data type translation - currently only special case for mySQL enums
+	/// LanguageType checks and returns special language types
+	/// RenderLanguageDataType generates special data types like enums
+	public string LanguageType
+	{
+		get
+		{
+			if( m_IColumn.DataTypeName == "ENUM" )
+			{
+				return m_IColumn.Alias + "_Enum";
+			}
+			else
+			{
+				return m_IColumn.LanguageType;
+			}
+		}
+	}
+
+	public string NullableLanguageType
+	{
+		get
+		{
+			if( m_IColumn.DataTypeName == "ENUM" )
+			{
+				return m_IColumn.Alias + "_Enum";
+			}
+			else
+			{
+				if(m_IColumn.IsNullable && m_IColumn.LanguageType != "string" ) 
+						return m_IColumn.LanguageType + "?";
+				else
+				    return m_IColumn.LanguageType;
+			}
+		}
+	}
+
+	public void RenderLanguageDataType()
+	{
+		string typeString = "";
+		if( m_IColumn.DataTypeName == "ENUM" )
+		{
+			typeString = "public enum " + m_IColumn.Alias + "_Enum{ IsEmpty, ";
+			int start = m_IColumn.DataTypeNameComplete.IndexOf('(') + 1;
+			int length = m_IColumn.DataTypeNameComplete.IndexOf(')') - start;
+			typeString += m_IColumn.DataTypeNameComplete.Substring(start, length);
+			typeString += " };";
+			typeString = typeString.Replace("'","");
+		}
+
+		if( typeString != "" )
+		{
+			output.autoTabLn( typeString );
+		}
+
+		return;
+	}
+
+	// First character of member variable names is forced to lower case
+	public string ToMemberName()
+	{
+		string tmp = StringFormatter.CheckAndSetCamelCasing(this.Alias);
+		return m_UserScriptSettings.UsePrefixedMemberNames ? m_UserScriptSettings.MemberPrefix + tmp : tmp;
+	}
+
+	// First character of property names and constructor parameters is forced to lower case
+	public string ToPropertyName(string classname)
+	{
+	 string propname = m_UserScriptSettings.DnpUtils.SetPascalCase(this.Alias);
+	 // prefix property name to avoid collisions
+	 if (
+	      (propname == classname)  
+	      // || (propname == "Provider") must change it by hand in the generated codes!
+	    )
+	       propname = "_" + propname;
+	 return propname;
+	}
+
+
+	public void RenderAsDataMember()
+	{
+		if(m_UserScriptSettings.DecorateMembers )
+		{
+			// Foreign key attribute generation. Check for both IsInForeign and
+			// IsInPrimary, otherwise self references will result in generation
+			// of only Gentle ForeignKey attribute for the primary key
+			if(m_IColumn.IsInForeignKey && !m_IColumn.IsInPrimaryKey)
+			{
+				RenderForeignKeyAttribute();
+			}
+			else
+			{
+				RenderPropertyAttribute();
+			}
+		}
+
+		string defaultValue = ";";
+		if (m_IColumn.HasDefault)
+		{
+			if (LanguageType == "string")
+			{
+				if ((m_IColumn.Default.IndexOf("N'") == 0) || (m_IColumn.Default.Length >= 3))
+				{
+					defaultValue = m_IColumn.Default.Substring(2, m_IColumn.Default.Length-3);
+				}
+				else if ((m_IColumn.Default[0] == '\'') && m_IColumn.Default.Length > 1)
+				{
+					defaultValue = m_IColumn.Default.Substring(1, m_IColumn.Default.Length-2);
+				}
+				else
+				{
+					defaultValue = m_IColumn.Default;
+				}
+
+				if (defaultValue.Length > 0)
+				{
+					defaultValue = string.Format(" = \"{0}\";", defaultValue);
+				}
+				else
+				{
+					defaultValue = " = string.Empty;";
+				}
+			}
+			else if (LanguageType == "bool")
+			{
+				bool defaultBool = (m_IColumn.Default == "1");
+				if (m_IColumn.Default == "1")
+				{
+					defaultValue = " = true;";
+				}
+				else
+				{
+					defaultValue = " = false;";
+				}
+			}
+			else if (m_IColumn.DataTypeName == "ENUM")
+			{
+				defaultValue = string.Format(" = {0}.{1};",LanguageType,m_IColumn.Default);
+			}
+			else
+			{
+				defaultValue = string.Format(" = {0};", m_IColumn.Default);
+			}
+		}
+
+		// If it was one of the follwing types, do not use a default (yet)
+		if (LanguageType == "DateTime")
+		{
+			defaultValue = ";";
+		}
+		if (m_UserScriptSettings.ProtectedDataMembers)
+		{
+			//output.autoTabLn("protected " + NullableLanguageType + " " + ToMemberName() + defaultValue);
+			output.autoTabLn("protected " + LanguageType + " " + ToMemberName() + defaultValue);
+		}
+		else
+		{
+			//output.autoTabLn("private " + NullableLanguageType + " " + ToMemberName() + defaultValue);
+			output.autoTabLn("private " + LanguageType + " " + ToMemberName() + defaultValue);
+		}
+	}
+
+	public void RenderAsProperty(bool writable, string classname)
+	{
+		// Generate column specific datatype
+		RenderLanguageDataType();
+		output.writeln("");
+		output.autoTabLn("/// <summary>");
+		output.autoTabLn("/// Property relating to database column "+this.Name);
+		output.autoTabLn("/// </summary>");
+		if( !m_UserScriptSettings.DecorateMembers ) // if members not decorated, decorate properties
+		{
+			// Foreign key attribute generation. Check for both IsInForeign and
+			// IsInPrimary, otherwise self references will result in generation
+			// of only Gentle ForeignKey attribute for the primary key
+			if(m_IColumn.IsInForeignKey && !m_IColumn.IsInPrimaryKey)
+			{
+				RenderForeignKeyAttribute();
+			}
+			else
+			{
+				RenderPropertyAttribute();
+			}
+		}
+		output.autoTabLn("public " + LanguageType + " " + ToPropertyName(classname));
+		output.autoTabLn("{");
+		output.tabLevel++;
+		string memberName = ToMemberName();
+		if( LanguageType == "string" && m_UserScriptSettings.TrimStrings)
+		{
+			//if (m_IColumn.IsNullable)
+			//{
+					output.autoTabLn(string.Format("get {{ return {0} != null ? {0}.TrimEnd() : string.Empty; }}", memberName));
+			//}
+			//else
+			//{
+			//	output.autoTabLn(string.Format("get {{ return {0}.TrimEnd(); }}", memberName));
+			//}
+		}
+		else
+		{
+			output.autoTabLn(string.Format("get {{ return {0}; }}", memberName));
+		}
+
+		if( (!writable) || (m_UserScriptSettings.DecorateMembers && (m_IColumn.IsAutoKey || m_IColumn.IsComputed))) // Do not generate set for readonly props
+		{
+			// No set{} method is generated if any of the following is true:
+			// writable = false
+			// attribute decoration is on members, and the key is database generated
+		}
+		else
+		{
+			output.autoTabLn("set");
+			output.autoTabLn("{");
+			output.tabLevel++;
+			output.autoTabLn("if (IsEmpty) return;");
+			output.autoTabLn(string.Format("if ( {0} != value )", memberName));
+			output.autoTabLn("{");
+			output.tabLevel++;
+			output.autoTabLn(string.Format("{0} = value;", memberName));
+			output.autoTabLn(string.Format("OnPropertyChanged( \"{0}\" );", ToPropertyName(classname)));
+			output.tabLevel--;
+			output.autoTabLn("}");
+			output.tabLevel--;
+			output.autoTabLn("}");
+		}
+		output.tabLevel--;
+		output.autoTabLn("}");
+	}
+
+	public void Render()
+	{
+		output.autoTabLn( "Column: " + this.Name );
+	}
+}
+
+//=============================================================================
+// Utility classes
+//=============================================================================
+
+/// Utility class for string formatting
+public class StringFormatter
+{
+    public static string CamelCasing(string str)
+    {
+		if (str.Length > 0)
+		{
+			if (str.Length == 1)
+			{
+				return str.ToLower();
+			}
+			else
+			{
+				return Char.ToLower(str[0]).ToString() + str.Substring(1);
+			}
+		}
+		return string.Empty;
+    }
+
+    public static string PascalCasing(string str)
+    {
+		if (str.Length > 0)
+		{
+			if (str.Length == 1)
+			{
+				return str.ToUpper();
+			}
+			else
+			{
+				return Char.ToUpper(str[0]).ToString() + str.Substring(1);
+			}
+		}
+		return string.Empty;
+    }
+
+	public static string CheckAndSetCamelCasing(string myString)
+	{
+		ScriptSettings m_UserScriptSettings;
+		m_UserScriptSettings = ScriptSettings.GetInstance();
+		if (m_UserScriptSettings.UsePascalStyle)
+		{
+			return m_UserScriptSettings.DnpUtils.SetCamelCase(myString);
+		}
+		else
+		{
+			return myString;
+		}
+	}
+
+	public static string CheckAndSetPascalCasing(string myString)
+	{
+		ScriptSettings m_UserScriptSettings;
+		m_UserScriptSettings = ScriptSettings.GetInstance();
+		if (m_UserScriptSettings.UsePascalStyle)
+		{
+			return m_UserScriptSettings.DnpUtils.SetPascalCase(myString);
+		}
+		else
+		{
+			return myString;
+		}
+	}
+}
+
+public class ScriptSettings
+{
+	private IZeusInput m_Input = null;
+	private MyMeta.IDatabases m_Databases = null;
+	private ArrayList m_RelationTables;
+	private Dnp.Utils.Utils m_DnpUtils;
+
+	static private ScriptSettings _instance = null;
+
+	protected ScriptSettings( IZeusInput i, MyMeta.IDatabases dbs, Dnp.Utils.Utils dnp )
+	{
+		m_Input = i;
+		m_Databases = dbs ;
+		m_RelationTables = new ArrayList();
+		m_DnpUtils = dnp;
+	}
+
+	public static ScriptSettings GetInstance()
+	{
+		return _instance;
+	}
+
+	public static ScriptSettings InitInstance( IZeusInput i, MyMeta.IDatabases dbs, Dnp.Utils.Utils dnp )
+	{
+		if( _instance == null )
+		{
+			_instance = new ScriptSettings(i, dbs, dnp );
+		}
+		return _instance;
+	}
+
+	public Dnp.Utils.Utils DnpUtils
+	{
+		get
+		{
+			return m_DnpUtils;
+		}
+	}
+	public MyMeta.IDatabases Databases
+	{
+		get
+		{
+			return m_Databases;
+		}
+	}
+
+	public string DatabaseName
+	{
+		get
+		{
+			return m_Input["cmbDatabase"].ToString();
+		}
+	}
+
+	public string ReferencedNamespace
+	{
+		get
+		{
+			return m_Input["txtReferencedNamespace"].ToString();
+		}
+	}
+
+	public ArrayList Tables
+	{
+		get
+		{
+			return m_Input["lstTables"] as ArrayList;
+		}
+	}
+
+	public ArrayList RelationTables
+	{
+		get
+		{
+			return m_RelationTables;
+		}
+		set
+		{
+			m_RelationTables = value;
+		}
+	}
+
+	public ArrayList Views
+	{
+		get
+		{
+			return m_Input["lstViews"] as ArrayList;
+		}
+	}
+
+	public bool TrimStrings
+	{
+		get
+		{
+			return (bool)m_Input["cbPerformTrimming"];
+		}
+	}
+
+	public bool SeedCheck
+	{
+		get
+		{
+			return (bool)m_Input["cbPerformSeedCheck"];
+		}
+	}
+
+	public bool DecorateMembers
+	{
+		get
+		{
+			return (bool)m_Input["cbDecorateMembers"];
+		}
+	}
+
+	public bool GenerateDebugCode
+	{
+		get
+		{
+			return (bool)m_Input["cbGenDebug"];
+		}
+	}
+
+	public bool SealedClasses
+	{
+		get
+		{
+			return (bool)m_Input["cbSealClasses"];
+		}
+	}
+
+	public bool AbstractClasses
+	{
+		get
+		{
+			return (bool)m_Input["cbAbstractClasses"];
+		}
+	}
+
+	public bool GenerateSQLiteOID
+	{
+		get
+		{
+			return (bool)m_Input["cbSQLiteID"];
+		}
+	}
+
+	public bool PartialClasses
+	{
+		get
+		{
+			//return (bool)m_Input["cbPartialClasses"];
+			return true;
+		}
+	}
+
+	public string ClassModifiers
+	{
+		get
+		{
+			string modifiers = "public ";
+			if (this.SealedClasses)
+			{
+				modifiers += "sealed ";
+			}
+
+			if(this.AbstractClasses)
+			{
+				modifiers += "abstract ";
+			}
+
+			if(this.PartialClasses)
+			{
+				modifiers += "partial ";
+			}
+
+			return modifiers;
+		}
+	}
+
+//	public bool ReturnEmptyStrings
+//	{
+//		get
+//		{
+//			return (bool)m_Input["cbReturnStringEmpty"];
+//		}
+//	}
+
+
+	public string OutputPath
+	{
+		get
+		{
+			return m_Input["txtPath"].ToString();
+		}
+	}
+
+	public string NameSpace
+	{
+		get
+		{
+			return m_Input["txtNamespace"] as string;
+		}
+	}
+
+	public string BaseClass
+	{
+		get
+		{
+			return m_Input["txtBaseClass"] as string;
+		}
+	}
+
+	public string ViewBaseClass
+	{
+		get
+		{
+			return m_Input["txtViewBaseClass"] as string;
+		}
+	}
+
+	public string ConcurrencyColumn
+	{
+		get
+		{
+			return (string) m_Input["txtConcurrentFlag"];
+		}
+	}
+
+	public bool UsePreservation
+	{
+		get
+		{
+			return (bool)m_Input["cbUsePreservation"];
+		}
+	}
+
+	public bool UsePascalStyle
+	{
+		get
+		{
+			return (bool)m_Input["cbUsePascalStyle"];
+		}
+	}
+
+	public bool UsePrefixedMemberNames
+	{
+		get
+		{
+			return MemberPrefix != null && MemberPrefix.Length > 0;
+		}
+	}
+
+	public string MemberPrefix
+	{
+		get
+		{
+			return (string) m_Input["txtMemberPrefix"];
+		}
+	}
+
+	public bool ProtectedDataMembers
+	{
+		get
+		{
+			return (bool)m_Input["cbProtectedDataMembers"];
+		}
+	}
+
+	public bool CreateDefaultConstructor
+	{
+		get
+		{
+			return (bool)m_Input["cbCreateDefaultConstructor"];
+		}
+	}
+}
+
+
+public class GentleRelation
+{
+	private IForeignKey m_ForeignKey;
+	private ITable m_ReferenceTable;
+	private bool m_AllFksArePks;
+	private bool m_ForeignTableHasRequiredFields;
+	private Zeus.IZeusOutput output;
+	private ScriptSettings m_UserScriptSettings;
+	private bool m_Multiple;
+
+	public GentleRelation( ITable r, IForeignKey f, Zeus.IZeusOutput outputDest, bool Multiple )
+	{
+		// The main sources of evil
+		m_ForeignKey = f;
+		m_ReferenceTable = r;
+		m_Multiple = Multiple;
+
+		// Output and settings
+		output = outputDest;
+		m_UserScriptSettings = ScriptSettings.GetInstance();
+
+		// A helper member to optimize speed of analysis
+		m_AllFksArePks = true;
+		for(int j = 0; j < m_ForeignKey.ForeignColumns.Count; j++)
+		{
+			IColumn fkColumn = m_ForeignKey.ForeignColumns[j];
+			IColumn pkColumn = m_ForeignKey.PrimaryColumns[j];
+
+			if (!fkColumn.IsInPrimaryKey || !pkColumn.IsInPrimaryKey)
+			{
+				m_AllFksArePks = false;
+			}
+		}
+
+		// Another helper to optimize speed
+		m_ForeignTableHasRequiredFields = false;
+		for (int j = 0; j < m_ForeignKey.ForeignTable.Columns.Count; j++)
+		{
+			IColumn column = m_ForeignKey.ForeignTable.Columns[j];
+			if (!column.IsInPrimaryKey && !column.HasDefault && !column.IsComputed && !column.IsAutoKey)
+			{
+				m_ForeignTableHasRequiredFields = true;
+				break;
+			}
+		}
+	}
+
+  public bool IsMultiple
+  {
+  	get
+  	{
+  		return m_Multiple;
+  	}
+  }
+
+	public ITable ForeignTable
+	{
+		get
+		{
+			return m_ForeignKey.ForeignTable;
+		}
+	}
+
+	public ITable PrimaryTable
+	{
+		get
+		{
+			return m_ForeignKey.PrimaryTable;
+		}
+	}
+
+	public string Alias
+	{
+		get
+		{
+			return m_ForeignKey.Alias;
+		}
+	}
+
+	public string Type
+	{
+		get
+		{
+			return m_ForeignKey.Alias;
+		}
+	}
+
+	public bool IsSelfReference
+	{
+		get
+		{
+			return m_ForeignKey.PrimaryTable.Name == m_ForeignKey.ForeignTable.Name;
+		}
+	}
+
+	public bool IsOneToOne
+	{
+		get
+		{
+			// TODO: document the rationale of the if statement below
+			if(!IsSelfReference && m_AllFksArePks && 
+			    m_ReferenceTable.PrimaryKeys.Count == m_ForeignKey.ForeignTable.PrimaryKeys.Count )
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+
+	public bool IsZeroToMany
+	{
+		get
+		{
+			bool result = (m_ForeignKey.PrimaryTable.Name == m_ReferenceTable.Name) && 
+			              (m_ForeignKey.ForeignTable.Name != m_ReferenceTable.Name);
+			// TODO: document the rationale of the if statements below
+			if(m_AllFksArePks && 
+			   m_ReferenceTable.PrimaryKeys.Count == m_ForeignKey.ForeignTable.PrimaryKeys.Count )
+			{
+				result = false;
+			}
+			if(IsSelfReference)
+			{
+				result = true;
+			}
+			return result;
+		}
+	}
+
+	public bool IsManyToOne
+	{
+		get
+		{
+			bool result = (m_ForeignKey.ForeignTable.Name == m_ReferenceTable.Name) && 
+			              (m_ForeignKey.PrimaryTable.Name != m_ReferenceTable.Name);
+			// TODO: document the rationale of the if statements below
+			if(m_AllFksArePks && 
+			   m_ReferenceTable.PrimaryKeys.Count == m_ForeignKey.ForeignTable.PrimaryKeys.Count )
+			{
+				result = false;
+			}
+
+			if(IsSelfReference)
+			{
+				result = true;
+			}
+			return result;
+		}
+	}
+
+	public bool IsManyToMany
+	{
+		get
+		{
+			// TODO: document the rationale of the if statement below
+			if(m_AllFksArePks && 
+			   m_ReferenceTable.PrimaryKeys.Count < m_ForeignKey.ForeignTable.PrimaryKeys.Count )
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+
+	public bool ForeignTableHasRequiredFields
+	{
+		get
+		{
+			return m_ForeignTableHasRequiredFields;
+		}
+	}
+
+	public bool IsCrossReference
+	{
+		get
+		{
+			return (!m_ForeignTableHasRequiredFields && IsManyToMany);
+		}
+	}
+
+	public ITable CrossReferenceTable
+	{
+		get
+		{
+			if( IsCrossReference )
+			{
+				for (int j = 0; j < m_ForeignKey.ForeignTable.ForeignKeys.Count; j++)
+				{
+					IForeignKey fk = m_ForeignKey.ForeignTable.ForeignKeys[j];
+
+					if ((fk.PrimaryTable.Name != m_ReferenceTable.Name) &&
+						(fk.PrimaryTable.Name != m_ForeignKey.ForeignTable.Name))
+					{
+						if (fk.ForeignColumns[0].IsInPrimaryKey)
+						{
+							return fk.PrimaryTable;
+						}
+					}
+				}
+			}
+			return null;
+		}
+	}
+
+	public void Render()
+	{
+		// ManyToMany
+		if( IsCrossReference )
+		{
+			RenderAsManyToMany();
+		}
+		
+		if ((IsManyToOne || IsZeroToMany))
+		{
+			// ZeroToMany, ManyToOne and OneToOne for now result in identical code
+			// This is probably not as bad as it seems, since it makes relations
+			// bi-directional, at the slight drawback that a OneToOne returns a list
+			RenderAsOneToMany();
+		}
+	}
+
+  private string toMemberName(string alias)
+  {
+		string tmp = StringFormatter.CheckAndSetCamelCasing(alias);
+		return m_UserScriptSettings.UsePrefixedMemberNames ? m_UserScriptSettings.MemberPrefix + tmp : tmp;
+  }
+  
+  
+	public void RenderAsManyToMany()
+	{
+		// First of all, let's make sure code for the XRef table is generated,
+		// by checking the main list of tables (and extending if necessary)
+		if( !m_UserScriptSettings.Tables.Contains(m_ForeignKey.ForeignTable.Name) &&
+				!m_UserScriptSettings.RelationTables.Contains(m_ForeignKey.ForeignTable.Name))
+		{
+			ArrayList tmp = m_UserScriptSettings.RelationTables;
+			tmp.Add(m_ForeignKey.ForeignTable.Name);
+			m_UserScriptSettings.RelationTables = tmp;
+		}
+
+		// Get foreign keys from the XRef table
+		// Iterate over them and generate a referenced method for each one
+		// Usually, n:m results in 1 loop (relation table has 2 fk's, but this
+		// loop allows for ternary or worse as well
+		foreach( IForeignKey rfk in m_ForeignKey.ForeignTable.ForeignKeys )
+		{
+			string otherTableName;
+			string otherTableAlias;
+			if( rfk.ForeignTable.Name == m_ForeignKey.ForeignTable.Name )
+			{
+				otherTableName = rfk.PrimaryTable.Name;
+				otherTableAlias = rfk.PrimaryTable.Alias;
+			}
+			else
+			{
+				otherTableName = rfk.ForeignTable.Name;
+				otherTableAlias = rfk.ForeignTable.Alias;
+			}
+
+			if( otherTableName != m_ReferenceTable.Name ) // skip self reference!
+			{
+%>
+		/// <summary>
+		/// Return list of referenced objects from n:m relation with
+		/// table "<%=otherTableName%>", using relation table "<%=m_ForeignKey.ForeignTable.Name%>"
+		/// </summary>
+		public GentleList Referenced<%= StringFormatter.CheckAndSetPascalCasing(otherTableAlias) %>Using<%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.ForeignTable.Alias) %>()
+		{
+<%
+				if( m_UserScriptSettings.UsePreservation )
+				{
+					output.autoTab( output.getPreserveBlock("MANUAL_CODE_Begin"+StringFormatter.CheckAndSetPascalCasing(otherTableAlias)));
+				}
+%>
+			return new GentleList(typeof(<%=m_UserScriptSettings.NameSpace%>.<%= StringFormatter.CheckAndSetPascalCasing(otherTableAlias) %>), this, typeof(<%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.ForeignTable.Alias) %>));
+<%
+				if( m_UserScriptSettings.UsePreservation )
+				{
+					output.autoTab( "\t" + output.getPreserveBlock("MANUAL_CODE_End"+StringFormatter.CheckAndSetPascalCasing(otherTableAlias)));
+				}
+%>
+		}
+<%
+			} // if( otherTableName != m_ReferenceTable.Name ) // skip self reference!
+		} // foreach( IForeignKey rfk in m_ForeignKey.ForeignTable.ForeignKeys )
+	} // RenderAsManyToMany()
+	
+	public void RenderAsOneToMany()
+	{
+		// If we are on the 'foreign' side of the relation (ManyToOne)
+		// generate a key function returning the object we reference
+		if( m_ForeignKey.ForeignTable.Name == m_ReferenceTable.Name )
+		{
+%>		/// <summary>
+		///  Retrieve an single <b><%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.PrimaryTable.Alias) %></b> entity referenced from the current entity.
+		/// </summary>
+<%
+			if (IsMultiple)
+			{
+%>
+		public <%=m_UserScriptSettings.NameSpace%>.<%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.PrimaryTable.Alias) %> Referenced<%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.PrimaryTable.Alias) %>Using<%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %>()
+<%
+		}
+		else
+		{
+%>
+		public <%=m_UserScriptSettings.NameSpace%>.<%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.PrimaryTable.Alias) %> Referenced<%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.PrimaryTable.Alias) %>()
+<%
+		}
+		if (m_ForeignKey.ForeignColumns.Count == 1)
+		{
+%>		{
+			return <%=m_UserScriptSettings.NameSpace%>.<%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.PrimaryTable.Alias) %>.Retrieve(this.<%= toMemberName(m_ForeignKey.ForeignColumns[0].Alias) %>);
+		}
+<%
+		}
+		else
+		{
+%>		{
+			ObjectIdentity oid = new ObjectIdentity(typeof(<%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.PrimaryTable.Alias) %>));
+<%
+			for (int i = 0; i < m_ForeignKey.ForeignColumns.Count; i++)
+			{
+%>			oid[ "<%= m_ForeignKey.PrimaryColumns[i].Alias %>" ] = this.<%= toMemberName(m_ForeignKey.ForeignColumns[i].Alias) %>;
+<%					
+			}
+%>			<%=m_UserScriptSettings.NameSpace%>.<%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.PrimaryTable.Alias) %> tmp =  ProviderFactory.GetDefaultProvider().Session.RetrieveInstance<<%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.PrimaryTable.Alias) %>>( oid );
+			return (null != tmp) ? tmp : <%=m_UserScriptSettings.NameSpace%>.<%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.PrimaryTable.Alias) %>.Empty;
+		}
+<%
+		}
+		}
+
+		// If we are on the 'primary' side of the relation (ZeroToMany, OneToOne)
+		// generate a key function returning an IList containing all objects pointing
+		// to ours
+		if( m_ForeignKey.PrimaryTable.Name == m_ReferenceTable.Name )
+		{
+%>
+		/// <summary>
+		/// Get a list of <b><%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.ForeignTable.Alias) %></b> referring to the current entity.
+		/// </summary>
+<%		
+		if (this.IsMultiple)
+		{
+%>		
+		public IList<<%=m_UserScriptSettings.NameSpace%>.<%=StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.ForeignTable.Alias)%>> Referring<%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.ForeignTable.Alias)%>Using<%= StringFormatter.CheckAndSetPascalCasing(this.Alias) %>()
+<%		
+		}
+		else // if (this.IsMultiple)
+		{
+%>		
+		public IList<<%=m_UserScriptSettings.NameSpace%>.<%=StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.ForeignTable.Alias)%>> Referring<%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.ForeignTable.Alias)%>()
+<%	
+		} // end if (this.IsMultiple)
+		  // this is a hack - the final should work without direct access to the Query object and the ObjectFactory. GJ
+%>		{	
+			IGentleProvider provider = ProviderFactory.GetDefaultProvider();	
+			
+			Query q = new Query(Gentle.Persistence.QueryConstruction.QueryType.Select);
+			q.AddTable(new Table("<%= m_ForeignKey.ForeignTable.Alias %>"));
+<%
+			for (int i = 0; i < m_ForeignKey.ForeignColumns.Count; i++)
+			{
+				if (i == 0)
+				{
+%>
+			LogicalExpr e = LogicalExpr.Equals(new FieldItem("<%= m_ForeignKey.ForeignColumns[i].Alias %>"), new ValueItem(this.<%= toMemberName(m_ForeignKey.PrimaryColumns[i].Alias) %>));	
+<%				
+				}
+				else
+				{
+%>			e = new LogicalExpr.And(e,  new LogicalExpr.Equals(new FieldItem("<%= m_ForeignKey.ForeignColumns[i].Alias %>"), new ValueItem(this.<%= toMemberName(m_ForeignKey.PrimaryColumns[i].Alias) %>)));	
+<%				
+				}	
+			}
+%>			q.Where = e;
+			
+			IResult result = provider.Session.Execute(q);
+			return ObjectFactory.GetCollection<<%=m_UserScriptSettings.NameSpace%>.<%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.ForeignTable.Alias) %>>(provider.MappingRegistry.GetTypeMap(typeof(<%=m_UserScriptSettings.NameSpace%>.<%= StringFormatter.CheckAndSetPascalCasing(m_ForeignKey.ForeignTable.Alias) %>)), result, RequestFlags.None);
+		}
+<%	  
+	  }
+	}
+
+	public void RenderForReporting()
+	{
+		output.writeln( "" );
+		output.writeln( "\t\t/*" );
+		output.writeln( "\t\t *\tRelation " + this.Alias );
+		
+		if( this.IsCrossReference )
+			output.writeln( "\t\t *\tcross reference" );
+		if( this.IsSelfReference )
+			output.writeln( "\t\t *\tself reference" );
+		if( this.IsOneToOne )
+			output.writeln( "\t\t *\tone to one" );
+		if( this.IsManyToOne )
+			output.writeln( "\t\t *\tmany to one" );
+		if( this.IsZeroToMany )
+			output.writeln( "\t\t *\tzero to many" );
+		if( this.IsManyToMany )
+			output.writeln( "\t\t *\tmany to many" );
+		if( this.IsMultiple )
+			output.writeln( "\t\t *\tmultiple references" );
+
+		if( this.ForeignTableHasRequiredFields )
+			output.writeln( "\t\t *\tforeign table has required fields" );
+		else
+			output.writeln( "\t\t *\tforeign table has NO required fields" );
+			
+		output.writeln("\t\t */");
+		output.writeln( "" );
+		
+	}
+}
+%>
+##|BODY_END

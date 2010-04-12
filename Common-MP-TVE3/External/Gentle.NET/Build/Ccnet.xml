@@ -1,0 +1,93 @@
+<project name="Ccnet" default="Build">
+    <!-- Frameworks that are being used for this build -->
+    <property name="configurations" value="Debug Release"/>
+    <property name="frameworks"     value="net-1.1 mono-1.0"/>
+    <property name="targets"        value="build run-tests ndoc CreateBuildText Package"/>
+    <sysinfo/>
+
+    <target name="BuildCcnet">
+        <exec program="${path::combine(nant::get-base-directory(), 'nant.exe')}">
+            <arg value="Clean"/>
+            <arg value="checkout"/>
+        </exec>
+
+        <foreach item="String" in="${configurations}" property="configuration" delim=" ">
+            <foreach item="String" in="${frameworks}" property="framework" delim=" ">
+                <foreach item="String" in="${targets}" property="target" delim=" ">
+                    <nant buildfile="Gentle.build" target="${target}" verbose="true" inheritall="false">
+                        <properties>
+                            <property name="nant.settings.currentframework" value="${framework}"        readonly="true" />
+                            <property name="configuration"                  value="${configuration}"    readonly="true"/>
+                            <property name="label-to-apply"                 value="${label-to-apply}"   readonly="true"/>
+                            <property name="dir.ccnet.log"                  value="${dir.ccnet.log}"    readonly="true"/>
+                        </properties>
+                    </nant>
+                </foreach>
+            </foreach>
+        </foreach>
+        
+        <if test="${property::exists('dir.ccnet.log')}">
+            <call target="CreateBuildText"/>
+            
+            <copy todir="${dir.ccnet.log}/${label-to-apply}">
+                <fileset basedir="${nant.project.basedir}/../Package">
+                    <include name="**/*.zip"/>
+                </fileset>
+            </copy>
+
+            <!--  
+                You will need to download junction (for symlinks) here: 
+                http://www.sysinternals.com/ntw2k/source/misc.shtml#junction 
+            -->
+            <exec program="junction.exe">
+                <arg value="-d"/>
+                <arg value="${dir.ccnet.log}/latest"/>
+            </exec>
+            <exec program="junction.exe">
+                <arg value="${dir.ccnet.log}/latest"/>
+                <arg value="${dir.ccnet.log}/${label-to-apply}"/>
+            </exec>
+        </if>    
+    </target> 
+
+    <target name="CreateBuildText">
+        <mkdir dir="${dir.bin}"/>
+        <property name="buildId" value="local"/>
+
+        <if test="${property::exists('label-to-apply')}">
+            <property name="buildId" value="${label-to-apply}"/>
+        </if>
+
+        <echo   file="${dir.bin}\Build.txt" 
+                >Build (${configuration})
+-----
+Build Id:           ${buildId}
+Date:               ${datetime::now()}
+OS:                 ${environment::get-operating-system()}
+Computer:           ${sys.env.COMPUTERNAME}
+NAnt Version:       ${nant.version}
+Targets:            ${targets}
+
+
+Framework
+---------
+Target Framework:   ${framework::get-target-framework()}
+Clr Version:        ${framework::get-clr-version(framework::get-target-framework())}
+Description:        ${framework::get-description(framework::get-target-framework())}
+Family:             ${framework::get-family(framework::get-target-framework())}
+Version:            ${framework::get-version(framework::get-target-framework())}
+Framework Dir:      ${framework::get-framework-directory(framework::get-target-framework())}
+
+
+Subversion
+----------</echo>
+
+        <exec   program="svn"
+                workingdir="${dir.base}"
+                output="${dir.bin}\Build.txt"
+                append="true"
+                >
+            <arg value="info"/>
+        </exec>  
+    </target>
+</project>

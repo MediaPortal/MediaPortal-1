@@ -1,0 +1,354 @@
+<project name="Gentle.NET" default="build.debug">
+    <foreach item="File" property="includeFile">
+        <in>
+            <items>
+                <include name="*.xml" />
+            </items>
+        </in>
+        <do>
+            <include buildfile="${includeFile}"/>
+        </do>
+    </foreach>
+
+    <target name="build.sln.debug" description="Build the project using the Gentle.NET solution file.">
+        <property name="configuration" value="Debug"/>
+        <call target="build.sln"/>
+    </target>
+    
+    <target name="build.sln.release" description="Build the project using the Gentle.NET solution file.">
+        <property name="configuration" value="Release"/>
+        <call target="build.sln"/>
+    </target>
+
+    <target name="build.sln" description="Build the project using the Gentle.NET solution file.">
+        <echo message="Configuration: ${configuration}"/>
+        <solution solutionfile="${dir.src}/Gentle.NET.sln" configuration="${configuration}">
+            <projects>
+                <include name="**.csproj" />
+            </projects>
+        </solution>
+    </target>
+    
+    <target name="Clean">
+        <delete>
+            <fileset basedir="${dir.src}">
+                <include name="**/obj/**"/>
+                <include name="**/bin/**"/>
+            </fileset>
+        </delete>
+        <delete dir="${dir.base}/Output" failonerror="false"/>
+        <delete dir="${dir.base}/Dist" failonerror="false"/>
+    </target>
+    
+    <target name="Package" depends="CreateBuildText">
+        <mkdir dir="${dir.base}/Package"/>
+        <property   name="zipPath" 
+                    value="${dir.base}/Package/Gentle.net[${configuration}]-${framework::get-target-framework()}-${platform::get-name()}.zip"/>
+
+        <delete file="${zipPath}" if="${file::exists(zipPath)}"/>
+
+        <zip zipfile="${zipPath}">
+            <fileset basedir="${dir.bin}">
+                <include name="Build.txt"/>
+            </fileset>
+            <fileset basedir="${dir.base}/Build" prefix="Build">
+                <include name="**/*" />
+            </fileset>
+            <fileset basedir="${dir.base}/Configuration" prefix="Configuration">
+                <include name="**/*" />
+            </fileset>
+            <fileset basedir="${dir.base}/Contributions" prefix="Contributions">
+                <include name="**/*" />
+            </fileset>
+            <fileset basedir="${dir.doc}" prefix="Documentation">
+                <include name="**/*.chm" />
+            </fileset>
+            <fileset basedir="${dir.bin}" prefix="Output/${configuration}">
+                <include name="**" />
+            </fileset>
+            <fileset basedir="${dir.test}" prefix="Output/Test">
+                <include name="**" />
+            </fileset>
+            <fileset basedir="${dir.src}" prefix="Source">
+                <include name="**/*" />
+            </fileset>
+        </zip>
+    </target>
+
+    <target name="SetupKey">
+        <echo message="Sdk directory: ${framework::get-sdk-directory(framework::get-target-framework())}"/>
+        <echo message="Framework directory: ${framework::get-framework-directory(framework::get-target-framework())}"/>
+            <exec program="${framework::get-sdk-directory(framework::get-target-framework())}\sn.exe">
+                <arg value="-i" />
+                <arg value="${path::get-full-path(dir.src + '\Gentle.snk')}"/>
+                <arg value="Gentle"/>
+            </exec>
+    </target>
+
+    <target name="setup">
+        <mkdir dir="${dir.bin}" />
+        <mkdir dir="${dir.dist}" />
+        <mkdir dir="${dir.dist}/bin" />
+        <mkdir dir="${dir.dist}/src" />
+        <copy todir="${dir.bin}" flatten="true">
+            <fileset basedir="${dir.src}">
+                <include name="**/*.dll" />
+            </fileset>
+        </copy>
+        <copy todir="${dir.bin}">
+            <fileset basedir="${dir.conf}">
+                <include name="*.config" />
+            </fileset>
+        </copy>
+
+        <echo message="Building assembly version ${assembly.version}" />
+    </target>
+
+    <target name="build.debug" description="Used for integration/development builds.">
+        <property name="dir.bin" value="${dir.base}/Output/Debug" />
+        <call target="build" />
+    </target>
+
+    <target name="build.release" description="Used for release builds.">
+        <property name="dir.bin" value="${dir.base}/Output/Release" />
+        <call target="build"/>
+        <call target="run-tests"/>
+    </target>
+
+    <target name="build" depends="setup" description="Target used for building/compiling (used by build.debug and build.release)">
+        <echo message="Build in directory: ${dir.bin}."/>
+        <mkdir dir="${dir.bin}"/>
+        
+        <call target="build.core"/>
+        <call target="build.providers"/>
+    </target>
+    
+    <target name="build.core" description="Builds the core dlls.">
+        <csc    target="library"
+                output="${dir.bin}/${assembly.common.name}.dll"
+                debug="${debug}"
+                define="${define}"
+                doc="${dir.bin}/${assembly.common.name}.xml">
+            <nowarn>
+                <warning number="1591" if="${debug}"/>
+            </nowarn>    
+            <arg value="${unsafe}" />
+            <arg value="${checked}" />
+            <sources>
+                <include name="${dir.src}/${assembly.common.name}/**/*.cs" />
+            </sources>
+            <references>
+                <include name="System.dll" />
+                <include name="System.Data.dll" />
+                <include name="System.Data.OracleClient.dll" />
+                <include name="System.EnterpriseServices.dll" />
+                <include name="System.Xml.dll" />
+                <include name="System.Web.dll" />
+                <include name="${dir.src}/${assembly.framework.name}/lib/**/*.dll"/>
+                <include name="${dir.src}/${assembly.common.name}/lib/**/*.dll"/>    
+            </references>
+        </csc>
+
+        <csc    target="library"
+                output="${dir.bin}/${assembly.framework.name}.dll"
+                debug="${debug}"
+                define="${define}"
+                doc="${dir.bin}/${assembly.framework.name}.xml">
+            <nowarn>
+                <warning number="1591" if="${debug}"/>
+            </nowarn>
+            <arg value="${unsafe}" />
+            <arg value="${checked}" />
+            <sources>
+                <include name="${dir.src}/${assembly.framework.name}/**/*.cs" />
+            </sources>
+            <references>
+                <include name="System.dll" />
+                <include name="System.Data.dll" />
+                <include name="System.Data.OracleClient.dll" />
+                <include name="System.EnterpriseServices.dll" />
+                <include name="System.Xml.dll" />
+                <include name="System.Web.dll" />
+                <include name="${dir.lib}/${lib.log4net}"/>
+                <include name="${dir.lib}/${lib.quickgraph}"/>
+                <include name="${dir.lib}/${lib.quickgraph.algorithms}"/>
+                <include name="${assembly.framework.name}/lib/**/*.dll"/>
+                <include name="${dir.bin}/${assembly.common.name}.dll"/>
+            </references>
+        </csc>
+    </target>
+    
+    <target name="build.test" depends="build">
+        <nant buildfile="Gentle.Tests.xml" target="build"/>
+    </target>
+    
+    <target name="build.providers">
+        <foreach item="Folder" in="${dir.src}" property="dir.project">
+            <if test="${string::contains(dir.project, 'Provider')}">
+                <!-- exclude Oracle (breaks on Windows 2003?) and SQL Server CE (req. download) -->
+                <ifnot test="${string::contains(dir.project, 'OracleODP')}">
+                    <ifnot test="${string::contains(dir.project, 'SQLServerCE')}">
+                        <call target="build.provider" />
+                    </ifnot>
+                </ifnot>
+            </if>
+        </foreach>
+    </target>
+    
+    <target name="build.provider" depends="build.core" description="Default build template, uses the framework and common dll to build as well as all dlls in the lib folder.">
+        <echo message="Building provider ${path::get-file-name(dir.project)}"/>
+        <csc    target="library"
+                output="${dir.bin}/${path::get-file-name(dir.project)}.dll"
+                debug="${debug}"
+                define="${define}"
+                doc="${dir.bin}/${path::get-file-name(dir.project)}.xml">
+            <nowarn>
+                <warning number="1591" if="${debug}"/>
+            </nowarn>
+            <arg value="${unsafe}" />
+            <arg value="${checked}" />
+            <sources>
+                <include name="${dir.project}/**/*.cs" />
+            </sources>
+            <references>
+                <include name="System.dll" />
+                <include name="System.Data.dll" />
+                <include name="System.Data.OracleClient.dll" />
+                <include name="System.EnterpriseServices.dll" />
+                <include name="System.Xml.dll" />
+                <include name="System.Web.dll" />
+                <include name="${dir.project}/lib/**/*.dll"/>
+                <include name="${dir.bin}/Gentle.Framework.dll"/>
+                <include name="${dir.bin}/Gentle.Common.dll"/>
+            </references>
+        </csc>
+        <copy todir="${dir.dist}/bin" flatten="true">
+            <fileset>
+                <include name="${dir.src}/**.dll" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="run-tests" depends="build" description="Run the unit tests.">
+        <nant buildfile="Gentle.Tests.xml" target="test" verbose="true">
+            <properties>
+                <property name="dir.bin" value="${dir.bin}" readonly="true" />
+            </properties>
+        </nant>
+    </target>
+
+    <target name="dist" depends="build.release,ndoc" description="Copy all files to a distribution directory.">
+        <copy todir="${dir.dist}/bin">
+            <fileset>
+                <include name="${dir.bin}**" />
+                <include name="${dir.doc}/*.chm" />
+
+                <exclude name="${dir.base}/**/*svn/**" />
+                <exclude name="${dir.base}/**/.svn/**" />
+            </fileset>
+        </copy>
+        <copy todir="${dir.dist}/src">
+            <fileset basedir="${dir.base}">
+                <include name="Build**"/>
+                <include name="Source**" />
+                <include name="Documentation/*.chm"/>
+                <include name="Configuration**"/>
+                <include name="Contributions**"/>
+
+                <exclude name="${dir.base}/**/*svn/**" />
+                <exclude name="${dir.base}/**/.svn/**" />
+                <exclude name="${dir.base}/**/obj/**" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="checkout" description="Checkout the sources from subversion.">
+        <property name="svn.update.commandline" value="update -q -r HEAD --non-interactive"/>
+        <echo message="update command: ${svn.update.commandline}"/>
+        <exec   program="svn"
+                commandline="${svn.update.commandline}"
+                workingdir="${dir.base}"/>
+                
+    </target>
+
+    <target name="ccnet" description="Depricated, use the Ccnet.xml file.">
+        <fail message="Use the Ccnet.xml file"/>
+    </target>
+    
+    <target name="ndoc" failonerror="false" description="Generate .net documentation files and .chm.">
+        <if test="${nant.platform.win32}">
+            <uptodate property="needsBuilding">
+                <sourcefiles basedir="${dir.bin}">
+                    <include name="Gentle*.dll"/>
+                </sourcefiles>
+                <targetfiles basedir="${dir.doc}/html">
+                    <include name="*.chm" />
+                </targetfiles>
+            </uptodate>
+            
+            <if test="${needsBuilding}">
+                <property name="doc.exe" value="hhc.exe" />
+
+                <property name="doc.show-missing-summaries" value="True" />
+                <property name="doc.show-missing-remarks" value="False" />
+                <property name="doc.show-missing-params" value="True" />
+                <property name="doc.show-missing-returns" value="True" />
+                <property name="doc.show-missing-values" value="True" />
+
+                <property name="doc.internals" value="False" />
+                <property name="doc.protected" value="True" />
+                <property name="doc.privates" value="False" />
+                <property name="doc.empty-namespaces" value="False" />
+
+                <property name="doc.include-assembly-version" value="True" />
+
+                <ndoc verbose="true">
+                    <assemblies basedir="${dir.bin}">
+                        <include name="Gentle*.dll" />
+                    </assemblies>
+                    <summaries basedir="${dir.bin}">
+                        <include name="NamespaceSummary.xml"/>
+                    </summaries>
+                    <documenters>
+                        <documenter name="MSDN">
+                            <property name="Title" value="${doc.title}" />
+                            <property name="OutputDirectory" value="${dir.doc}/html" />
+
+                            <property name="ShowMissingSummaries" value="${doc.show-missing-summaries}" />
+                            <property name="ShowMissingRemarks" value="${doc.show-missing-remarks}" />
+                            <property name="ShowMissingParams" value="${doc.show-missing-params}" />
+                            <property name="ShowMissingReturns" value="${doc.show-missing-returns}" />
+                            <property name="ShowMissingValues" value="${doc.show-missing-values}" />
+
+                            <property name="DocumentInternals" value="${doc.internals}" />
+                            <property name="DocumentProtected" value="${doc.protected}" />
+                            <property name="DocumentPrivates" value="${doc.privates}" />
+                            <property name="DocumentEmptyNamespaces" value="${doc.empty-namespaces}" />
+
+                            <property name="IncludeAssemblyVersion" value="${doc.include-assembly-version}" />
+                            <property name="CopyrightText" value="${doc.copyright.text}" />
+                            <property name="CopyrightHref" value="${doc.copyright.href}" />
+
+                            <property name="HtmlHelpName" value="${doc.title}" />
+                            <property name="HtmlHelpCompilerFilename" value="${doc.exe}" />
+                            <property name="IncludeFavorites" value="False" />
+                            <property name="SplitTOCs" value="False" />
+                            <property name="DefaulTOC" value="" />
+                            <property name="ShowVisualBasic" value="True" />
+                        </documenter>
+                    </documenters>
+                </ndoc>
+                <delete>
+                    <fileset basedir="${dir.doc}">
+                        <include name="*.chm" />
+                    </fileset>
+                </delete>
+                <move todir="${dir.doc}">
+                    <fileset basedir="${dir.doc}/html">
+                        <include name="*.chm" />
+                    </fileset>
+                </move>
+            </if>    
+        </if>
+    </target>
+</project>

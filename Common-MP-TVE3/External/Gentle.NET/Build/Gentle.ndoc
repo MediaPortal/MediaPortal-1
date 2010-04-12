@@ -1,0 +1,83 @@
+<project SchemaVersion="1.3">
+    <assemblies>
+        <assembly location="..\Output\Release\Gentle.Common.dll" documentation="..\Output\Release\Gentle.Common.xml" />
+        <assembly location="..\Output\Release\Gentle.Framework.dll" documentation="..\Output\Release\Gentle.Framework.xml" />
+        <assembly location="..\Output\Release\Gentle.Framework.Tests.dll" documentation="..\Output\Release\Gentle.Framework.Tests.xml" />
+        <assembly location="..\Output\Release\Gentle.Provider.Firebird.dll" documentation="..\Output\Release\Gentle.Provider.Firebird.xml" />
+        <assembly location="..\Output\Release\Gentle.Provider.Jet.dll" documentation="..\Output\Release\Gentle.Provider.Jet.xml" />
+        <assembly location="..\Output\Release\Gentle.Provider.MySQL.dll" documentation="..\Output\Release\Gentle.Provider.MySQL.xml" />
+        <assembly location="..\Output\Release\Gentle.Provider.Oracle.dll" documentation="..\Output\Release\Gentle.Provider.Oracle.xml" />
+        <assembly location="..\Output\Release\Gentle.Provider.OracleODP.dll" documentation="..\Output\Release\Gentle.Provider.OracleODP.xml" />
+        <assembly location="..\Output\Release\Gentle.Provider.PostgreSQL.dll" documentation="..\Output\Release\Gentle.Provider.PostgreSQL.xml" />
+        <assembly location="..\Output\Release\Gentle.Provider.SQLite.dll" documentation="..\Output\Release\Gentle.Provider.SQLite.xml" />
+        <assembly location="..\Output\Release\Gentle.Provider.SQLServer.dll" documentation="..\Output\Release\Gentle.Provider.SQLServer.xml" />
+        <assembly location="..\Output\Release\Gentle.Provider.SQLServerCE.dll" documentation="..\Output\Release\Gentle.Provider.SQLServerCE.xml" />
+        <assembly location="..\Output\Release\Gentle.Provider.Sybase.dll" documentation="..\Output\Release\Gentle.Provider.Sybase.xml" />
+        <assembly location="..\Output\Release\Gentle.Provider.SybaseASA.dll" documentation="..\Output\Release\Gentle.Provider.SybaseASA.xml" />
+        <assembly location="..\Output\Release\Gentle.Provider.DB2.dll" documentation="..\Output\Release\Gentle.Provider.DB2.xml" />
+    </assemblies>
+    <referencePaths>
+        <referencePath path="..\Output\Release\**" />
+    </referencePaths>
+    <documenters>
+        <documenter name="JavaDoc">
+            <property name="OutputDirectory" value=".\doc\" />
+        </documenter>
+        <documenter name="LaTeX">
+            <property name="OutputDirectory" value=".\doc\" />
+            <property name="TextFileFullName" value="Documentation.tex" />
+            <property name="TexFileBaseName" value="Documentation" />
+            <property name="LatexCompiler" value="latex" />
+            <property name="TexFileFullPath" value=".\doc\Documentation.tex" />
+        </documenter>
+        <documenter name="LinearHtml">
+            <property name="OutputDirectory" value=".\doc\" />
+            <property name="Title" value="An NDoc Documented Class Library" />
+        </documenter>
+        <documenter name="MSDN">
+            <property name="OutputDirectory" value="..\Documentation\html\" />
+            <property name="HtmlHelpName" value="Gentle" />
+            <property name="Title" value="Gentle.NET Object Persistence Framework" />
+            <property name="IncludeFavorites" value="True" />
+            <property name="ShowMissingSummaries" value="True" />
+            <property name="DocumentInheritedMembers" value="InstanceAndStatic" />
+            <property name="SkipNamespacesWithoutSummaries" value="True" />
+            <property name="AssemblyVersionInfo" value="AssemblyVersion" />
+            <property name="CopyrightText" value="Copyright © 2004 Morten Mertner" />
+            <property name="FeedbackEmailAddress" value="morten@mertner.com" />
+            <property name="UseNamespaceDocSummaries" value="True" />
+            <property name="DocumentAttributes" value="True" />
+            <property name="IncludeDefaultThreadSafety" value="False" />
+        </documenter>
+        <documenter name="MSDN 2003">
+            <property name="OutputDirectory" value="..\Documentation\html\" />
+            <property name="HtmlHelpName" value="Gentle" />
+            <property name="Title" value="Gentle.NET Object Persistence Framework" />
+            <property name="IncludeFavorites" value="True" />
+            <property name="ShowMissingSummaries" value="True" />
+            <property name="DocumentInheritedMembers" value="InstanceAndStatic" />
+            <property name="AssemblyVersionInfo" value="AssemblyVersion" />
+            <property name="CopyrightText" value="Copyright © 2004-2006 Morten Mertner" />
+            <property name="FeedbackEmailAddress" value="morten@mertner.com" />
+            <property name="UseNamespaceDocSummaries" value="True" />
+            <property name="DocumentAttributes" value="True" />
+            <property name="IncludeDefaultThreadSafety" value="False" />
+        </documenter>
+        <documenter name="VS.NET 2003">
+            <property name="OutputDirectory" value="..\Documentation\Help\" />
+            <property name="HtmlHelpName" value="Gentle" />
+            <property name="Title" value="Gentle.NET Object Persistence Framework" />
+            <property name="CollectionNamespace" value="Gentle.Framework" />
+            <property name="RegisterTitleAsCollection" value="True" />
+            <property name="AssemblyVersionInfo" value="AssemblyVersion" />
+            <property name="CopyrightText" value="Copyright © 2004-2006 Morten Mertner" />
+            <property name="FeedbackEmailAddress" value="morten@mertner.com" />
+            <property name="UseNamespaceDocSummaries" value="True" />
+            <property name="DocumentAttributes" value="True" />
+            <property name="IncludeDefaultThreadSafety" value="False" />
+        </documenter>
+        <documenter name="XML">
+            <property name="OutputFile" value=".\doc\doc.xml" />
+        </documenter>
+    </documenters>
+</project>

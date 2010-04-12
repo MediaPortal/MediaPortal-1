@@ -1,0 +1,64 @@
+<project name="gentle-common.xml">
+    <property name="name.project" value="Gentle.NET" />
+
+    <!-- Version information -->
+    <property name="assembly.start-date" value="2004-01-13" />
+    <property name="version.major" value="1"/>
+    <property name="version.minor" value="1"/>
+    <property name="version.revision" value="3"/>
+    <property name="version.build" value="${math::abs(math::floor(timespan::get-total-days(datetime::now() - convert::to-datetime(assembly.start-date))))}" />
+    <property name="assembly.version" value="${version.major}.${version.minor}.${version.revision}.${version.build}" />
+    <tstamp property="build.date" pattern="yyyy-MM-dd HH:mm"/>
+    <property name="assembly.copyright.text" value="Copyright (C) 2004 Morten Mertner. GNU Lesser General Public License (LGPL) licensed." />
+    <property name="assembly.copyright.href" value="http://www.gnu.org/copyleft/lesser.html" />
+    <property name="assembly.description" value="RDBMS-independent object persistence framework" />
+    <property name="assembly.company" value="Morten Mertner" />
+
+    <property name="svn.srcurl" value="http://www.mertner.com/svn/repos/projects/gentle/Source"/>
+
+    <!-- Output library names -->
+    <property name="assembly.framework.name" value="Gentle.Framework" />
+    <property name="assembly.common.name" value="Gentle.Common"/>
+    <property name="assembly.config" value="Gentle.config"/>
+    
+    <property name="assembly.framework-test.name" value="${assembly.framework.name}.Tests"/>
+
+
+    <!-- Project directories -->
+    <property name="configuration" value="Release"/>
+    <property name="dir.base" value="${nant.project.basedir}/.." />
+    <property name="dir.bin" value="${dir.base}/Output/${framework::get-target-framework()}-${platform::get-name()}/${configuration}" />
+    <property name="dir.build" value="${dir.base}/Build/${framework::get-target-framework()}-${platform::get-name()}" />
+    <property name="dir.conf" value="${dir.base}/Configuration" />
+    <property name="dir.dist" value="${dir.base}/Dist/${framework::get-target-framework()}-${platform::get-name()}" />
+    <property name="dir.doc" value="${dir.base}/Documentation" />
+    <property name="dir.lib" value="${dir.base}/Source/${assembly.framework.name}/lib" />
+    <property name="dir.release" value="${dir.bin}" />
+    <property name="dir.src" value="${dir.base}/Source"/>
+    
+    <property name="dir.test" value="${dir.base}/Output/${framework::get-target-framework()}-${platform::get-name()}/Test"/>
+    <property name="dir.test.data" value="${dir.src}/${assembly.framework-test.name}/Database File"/>
+    
+    <!-- External Libraries -->
+    <property name="lib.nunit.framework" value="nunit.framework.dll"/>
+    <property name="lib.mbunit.core" value="MbUnit.Core.dll"/>
+    <property name="lib.mbunit.framework" value="MbUnit.Framework.dll"/>
+    <property name="lib.log4net" value="log4net.dll"/>
+    <property name="lib.quickgraph" value="QuickGraph.dll"/>
+    <property name="lib.quickgraph.algorithms" value="QuickGraph.Algorithms.dll"/>
+
+    <!-- Compiler settings -->
+    <property name="debug" value="${string::to-lower(configuration) == 'debug'}" />
+    <property name="unsafe" value="/unsafe-" />
+    <property name="checked" value="/checked-" />
+    <property name="define" value="DEBUG;TRACE" />
+
+    <!-- Documentation variables -->
+    <property name="doc.title" value="${name.project} Object Persistence Framework" />
+    <property name="doc.copyright.text" value="${assembly.copyright.text}" />
+    <property name="doc.copyright.href" value="${assembly.copyright.href}" />
+    <property name="license" value="${dir.doc}/license.txt" />
+
+    <!-- Test variables -->
+    <property name="outputType" value="Xml" />
+</project>

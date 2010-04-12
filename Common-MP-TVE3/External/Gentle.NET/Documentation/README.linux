@@ -1,0 +1,25 @@
+
+NOTE
+
+  Please refer to the main README for general information on Gentle.NET.
+
+
+BUILDING
+
+  Use NAnt and the included build file (Build/Gentle.build) to build under Mono.
+  
+  You will need a recent version of NAnt (0.85 or newer) to perform a successful 
+  build.
+    
+  
+ISSUES
+
+  There are currently no known issues with Mono, provided that you use Mono 
+  1.1.4 or later. Note that Mono 1.1.8 is broken and should not be used with
+  Gentle. Mono 1.1.9 works as expected, and the general recommendation is to
+  use the latest available release.
+
+  However, because the release process does not involve formal testing under 
+  Mono, it is possible that Mono-specific bugs will appear.
+  
+  Please submit Mono-related bug reports directly to morten@mertner.com.

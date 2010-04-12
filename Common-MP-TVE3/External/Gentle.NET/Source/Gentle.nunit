@@ -1,0 +1,9 @@
+﻿<NUnitProject>
+  <Settings activeconfig="Debug" />
+  <Config name="Debug" binpathtype="Auto">
+    <assembly path="Gentle.Framework\bin\Debug\Gentle.Framework.dll" />
+  </Config>
+  <Config name="Release" configfile="Gentle.Framework.dll.config" binpathtype="Auto">
+    <assembly path="Gentle.Framework\bin\Release\Gentle.Framework.dll" />
+  </Config>
+</NUnitProject>
