@@ -35,8 +35,6 @@ namespace SetRights
   {
     static int Main(string[] args)
     {
-      if (File.Exists(@"C:\no-SetRights.txt")) return 2;
-
       if (args.Length == 0)
       {
         Console.WriteLine("Usage:\n");
@@ -84,6 +82,14 @@ namespace SetRights
             InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, // all subfolders and files
             PropagationFlags.InheritOnly,
             AccessControlType.Allow);
+
+        // Check if such a rule already exists, if so skip the modifications
+        if (ContainsRule(security.GetAccessRules(true, true, typeof(SecurityIdentifier)), newRule))
+        {
+          Console.WriteLine("Permissions already set.");
+          return;
+        }
+
         security.AddAccessRule(newRule);
         System.IO.Directory.SetAccessControl(folderName, security);
 
@@ -148,6 +154,14 @@ namespace SetRights
             InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, // all subfolders and files
             PropagationFlags.InheritOnly,
             AccessControlType.Allow);
+
+        // Check if such a rule already exists, if so skip the modifications
+        if (ContainsRule(security.GetAccessRules(true, true, typeof(SecurityIdentifier)), newRule))
+        {
+          Console.WriteLine("Permissions already set.");
+          return;
+        }
+
         security.AddAccessRule(newRule);
         rKey.SetAccessControl(security);
         rKey.Close();
@@ -157,5 +171,70 @@ namespace SetRights
         Console.WriteLine("Error while setting full write access to everyone for file: {0} : {1}", subKey, ex);
       }
     }
+
+    #region Private helper methods
+
+    /// <summary>
+    /// Checks if the rule already exists in the collection.
+    /// </summary>
+    /// <param name="allRules">collection of existing rules</param>
+    /// <param name="checkRule">rule to check for</param>
+    /// <returns>true if existing</returns>
+    private static bool ContainsRule(AuthorizationRuleCollection allRules, FileSystemAccessRule checkRule)
+    {
+      foreach (FileSystemAccessRule existingRule in allRules)
+      {
+        if (IsEqualRule(existingRule, checkRule))
+          return true;
+      }
+      return false;
+    }
+    /// <summary>
+    /// Checks if the rule already exists in the collection.
+    /// </summary>
+    /// <param name="allRules">collection of existing rules</param>
+    /// <param name="checkRule">rule to check for</param>
+    /// <returns>true if existing</returns>
+    private static bool ContainsRule(AuthorizationRuleCollection allRules, RegistryAccessRule checkRule)
+    {
+      foreach (RegistryAccessRule existingRule in allRules)
+      {
+        if (IsEqualRule(existingRule, checkRule))
+          return true;
+      }
+      return false;
+    }
+    /// <summary>
+    /// Compare two rules on important properties.
+    /// </summary>
+    /// <param name="rule1">access rule 1</param>
+    /// <param name="rule2">access rule 2</param>
+    /// <returns>true if equal</returns>
+    private static bool IsEqualRule(FileSystemAccessRule rule1, FileSystemAccessRule rule2)
+    {
+      if (rule1.AccessControlType != rule2.AccessControlType ||
+        rule1.FileSystemRights != rule2.FileSystemRights ||
+        rule1.IdentityReference != rule2.IdentityReference)
+        return false;
+      else
+        return true;
+    }
+    /// <summary>
+    /// Compare two rules on important properties.
+    /// </summary>
+    /// <param name="rule1">access rule 1</param>
+    /// <param name="rule2">access rule 2</param>
+    /// <returns>true if equal</returns>
+    private static bool IsEqualRule(RegistryAccessRule rule1, RegistryAccessRule rule2)
+    {
+      if (rule1.AccessControlType != rule2.AccessControlType ||
+        rule1.RegistryRights != rule2.RegistryRights ||
+        rule1.IdentityReference != rule2.IdentityReference)
+        return false;
+      else
+        return true;
+    }
+
+    #endregion
   }
 }
