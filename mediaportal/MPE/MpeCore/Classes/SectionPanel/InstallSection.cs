@@ -105,7 +105,6 @@ namespace MpeCore.Classes.SectionPanel
       Update();
       Refresh();
       Invalidate(true);
-      RefreshControls();
     }
 
     private void SetValues()
