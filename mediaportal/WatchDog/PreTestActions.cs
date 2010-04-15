@@ -30,7 +30,8 @@ namespace WatchDog
   /// </summary>
   public class PreTestActions : ProgressDialog
   {
-    private int totalActions = 2;
+    private const int totalActions = 2;
+    private const int actionAmount = 100 / totalActions;
 
     private static string[] logNames = {"Application", "System"};
 
@@ -38,7 +39,6 @@ namespace WatchDog
 
     private void updateProgress(int subActions)
     {
-      int actionAmount = 100 / totalActions;
       int subActionAmount = actionAmount / subActions;
       base.setProgress(base.getProgress() + subActionAmount);
     }
@@ -83,8 +83,12 @@ namespace WatchDog
       {
         if (File.Exists(file))
         {
-          File.Delete(file);
-          updateProgress(subActions);
+          try
+          {
+            File.Delete(file);
+            updateProgress(subActions);
+          }
+          catch (Exception) {}
         }
       }
 
@@ -92,8 +96,12 @@ namespace WatchDog
       {
         if (Directory.Exists(dir))
         {
-          Directory.Delete(dir, true);
-          updateProgress(subActions);
+          try
+          {
+            Directory.Delete(dir, true);
+            updateProgress(subActions);
+          }
+          catch (Exception){}
         }
       }
 
