@@ -1676,8 +1676,16 @@ namespace MediaPortal.GUI.Music
           strYear = string.Empty;
         }
 
-        string nextTrackThumb = GUIMusicFiles.GetCoverArt(false, NextTrackFileName, NextTrackTag);
-        GUIPropertyManager.SetProperty("#Play.Next.Thumb", nextTrackThumb);
+        if (NextTrackFileName != string.Empty)
+        {
+          string nextTrackThumb = GUIMusicFiles.GetCoverArt(false, NextTrackFileName, NextTrackTag);
+          GUIPropertyManager.SetProperty("#Play.Next.Thumb", nextTrackThumb);
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#Play.Next.Thumb", string.Empty);
+        }
+        
         GUIPropertyManager.SetProperty("#Play.Next.Title", NextTrackTag.Title);
         GUIPropertyManager.SetProperty("#Play.Next.Track", strNextTrack);
         GUIPropertyManager.SetProperty("#Play.Next.Album", NextTrackTag.Album);
