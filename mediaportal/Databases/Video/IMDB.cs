@@ -201,6 +201,7 @@ namespace MediaPortal.Video.Database
       public bool LoadScript()
       {
         string scriptFileName = ScriptDirectory + @"\" + this.ID + ".csscript";
+        string compiledScriptFileName = ScriptDirectory + @"\" + this.ID + ".dll"; // Save the compiled script as dll
 
         // Script support script.csscript
         if (!File.Exists(scriptFileName))
@@ -212,7 +213,7 @@ namespace MediaPortal.Video.Database
         try
         {
           Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
-          AsmHelper script = new AsmHelper(CSScript.Load(scriptFileName, null, false));
+          AsmHelper script = new AsmHelper(CSScript.Load(scriptFileName, compiledScriptFileName, false));
           this.Grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
         }
         catch (Exception ex)
