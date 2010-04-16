@@ -68,7 +68,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   {
     HRESULT hr;
     LogRotate();
-    Log("----------v1.3.3------------ instance 0x%x", this);
+    Log("----------v1.3.4------------ instance 0x%x", this);
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
     hr = m_pDXVA2CreateDirect3DDeviceManager9(&m_iResetToken, &m_pDeviceManager);
@@ -168,6 +168,7 @@ void MPEVRCustomPresenter::ResetEVRStatCounters()
 
 void MPEVRCustomPresenter::ReleaseCallback()
 {
+  CAutoLock sLock(&m_lockCallback);
   m_pCallback = NULL;
 }
 
@@ -1622,6 +1623,8 @@ void MPEVRCustomPresenter::ReleaseSurfaces()
 
 HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 {
+  CAutoLock sLock(&m_lockCallback);
+
   // Old current surface is saved in case the device is lost
   // and we need to restore it 
   IDirect3DSurface9* pOldSurface = NULL;
