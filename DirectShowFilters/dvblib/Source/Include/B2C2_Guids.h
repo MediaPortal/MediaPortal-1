@@ -1,0 +1,63 @@
+//
+// Copyright (c) 1998-2001 B2C2, Inc.  All Rights Reserved.
+//
+
+// B2C2_Guids.h
+
+
+#ifndef _B2C2_GUIDS_H_
+#define _B2C2_GUIDS_H_
+
+// B2C2 MPEG2 Filter GUID
+
+// {E82536A0-94DA-11d2-A463-00A0C95D308D}
+DEFINE_GUID(CLSID_B2C2MPEG2Filter, 
+0xe82536a0, 0x94da, 0x11d2, 0xa4, 0x63, 0x0, 0xa0, 0xc9, 0x5d, 0x30, 0x8d);
+
+// B2C2 MPEG2 Filter Tuner Ctrl. Interface GUID
+
+// {D875D4A9-0749-4fe8-ADB9-CC13F9B3DD45}
+DEFINE_GUID(IID_IB2C2MPEG2TunerCtrl, 
+0xd875d4a9, 0x749, 0x4fe8, 0xad, 0xb9, 0xcc, 0x13, 0xf9, 0xb3, 0xdd, 0x45);
+
+// B2C2 MPEG2 Filter Tuner Ctrl. Interface 2 GUID
+
+// {CD900832-50DF-4f8f-882D-1C358F90B3F2}
+DEFINE_GUID(IID_IB2C2MPEG2TunerCtrl2, 
+0xcd900832, 0x50df, 0x4f8f, 0x88, 0x2d, 0x1c, 0x35, 0x8f, 0x90, 0xb3, 0xf2);
+
+// B2C2 MPEG2 Filter Tuner Data Ctrl. Interface GUID
+
+// {7F35C560-08B9-11d5-A469-00D0D7B2C2D7}
+DEFINE_GUID(IID_IB2C2MPEG2DataCtrl, 
+0x7f35c560, 0x8b9, 0x11d5, 0xa4, 0x69, 0x0, 0xd0, 0xd7, 0xb2, 0xc2, 0xd7);
+
+// B2C2 MPEG2 Filter Tuner Data Ctrl. Interface 2 GUID
+
+// {B0666B7C-8C7D-4c20-BB9B-4A7FE0F313A8}
+DEFINE_GUID(IID_IB2C2MPEG2DataCtrl2, 
+0xb0666b7c, 0x8c7d, 0x4c20, 0xbb, 0x9b, 0x4a, 0x7f, 0xe0, 0xf3, 0x13, 0xa8);
+
+// {E2857B5B-84E7-48b7-B842-4EF5E175F315}
+DEFINE_GUID(IID_IB2C2MPEG2DataCtrl3, 
+0xe2857b5b, 0x84e7, 0x48b7, 0xb8, 0x42, 0x4e, 0xf5, 0xe1, 0x75, 0xf3, 0x15);
+
+
+// B2C2 MPEG2 Filter Audio/Video Ctrl. Interface GUID
+
+// {295950B0-696D-4a04-9EE3-C031A0BFBEDE}
+DEFINE_GUID(IID_IB2C2MPEG2AVCtrl, 
+0x295950b0, 0x696d, 0x4a04, 0x9e, 0xe3, 0xc0, 0x31, 0xa0, 0xbf, 0xbe, 0xde);
+
+// B2C2 MPEG2 Filter Audio/Video Ctrl. Interface 2 GUID
+
+// {9C0563CE-2EF7-4568-A297-88C7BB824075}
+DEFINE_GUID(IID_IB2C2MPEG2AVCtrl2, 
+0x9c0563ce, 0x2ef7, 0x4568, 0xa2, 0x97, 0x88, 0xc7, 0xbb, 0x82, 0x40, 0x75);
+
+// {76604DC1-9052-4483-B57B-E3B353E45720}
+DEFINE_GUID(IID_IB2C2MPEG2DataPin, 
+0x76604dc1, 0x9052, 0x4483, 0xb5, 0x7b, 0xe3, 0xb3, 0x53, 0xe4, 0x57, 0x20);
+
+
+#endif	// _B2C2_GUIDS_H_

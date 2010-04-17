@@ -1,0 +1,11 @@
+LIBRARY     StreamingServer
+
+EXPORTS
+StreamSetup			@1
+StreamRun			@2
+StreamAddTimeShiftFile			@3
+StreamAddMpegFile		@4
+StreamRemove		@5
+StreamGetClientCount @6
+StreamGetClientDetail @7
+StreamSetupEx		@8
