@@ -1,0 +1,374 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2010</id>
+  <defaultcontrol>12</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <controls>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <width>720</width>
+      <height>576</height>
+      <texture>black.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+    </control>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>105</posX>
+      <width>546</width>
+      <height>276</height>
+      <posY>155</posY>
+      <texture>dialog_schedule_rec.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Channel</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>150</posX>
+      <posY>227</posY>
+      <label>602</label>
+      <font>font13</font>
+      <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Channel Select</description>
+      <type>spincontrol</type>
+      <id>1</id>
+      <posX>240</posX>
+      <posY>230</posY>
+      <showrange>no</showrange>
+      <digits>3</digits>
+      <onup>12</onup>
+      <ondown>2</ondown>
+      <onleft>1</onleft>
+      <onright>1</onright>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Start Date/Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>150</posX>
+      <posY>260</posY>
+      <label>633</label>
+      <font>font13</font>
+      <textcolor>FFB2D4F5</textcolor>
+    </control>
+    <animation effect="fade" time="250">WindowOpen</animation>
+    <animation effect="fade" time="250">WindowClose</animation>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>150</posX>
+      <posY>280</posY>
+      <label>635</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>time hours</description>
+      <type>spincontrol</type>
+      <spintype>int</spintype>
+      <orientation>vertical</orientation>
+      <digits>2</digits>
+      <id>2</id>
+      <posX>170</posX>
+      <posY>305</posY>
+      <showrange>no</showrange>
+      <onup>1</onup>
+      <ondown>4</ondown>
+      <onleft>2</onleft>
+      <onright>3</onright>
+      <textcolor>FFFFFFFF</textcolor>
+      <textureUp>arrow_round_up_nofocus.png</textureUp>
+      <textureDown>arrow_round_down_nofocus.png</textureDown>
+      <textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
+      <textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>time minutes</description>
+      <type>spincontrol</type>
+      <spintype>int</spintype>
+      <orientation>vertical</orientation>
+      <digits>2</digits>
+      <id>3</id>
+      <posX>220</posX>
+      <posY>305</posY>
+      <showrange>no</showrange>
+      <onup>2</onup>
+      <ondown>4</ondown>
+      <onleft>2</onleft>
+      <onright>3</onright>
+      <textcolor>FFFFFFFF</textcolor>
+      <textureUp>arrow_round_up_nofocus.png</textureUp>
+      <textureDown>arrow_round_down_nofocus.png</textureDown>
+      <textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
+      <textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>150</posX>
+      <posY>330</posY>
+      <label>636</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>DD</description>
+      <type>spincontrol</type>
+      <spintype>int</spintype>
+      <orientation>vertical</orientation>
+      <id>4</id>
+      <posX>170</posX>
+      <posY>360</posY>
+      <showrange>no</showrange>
+      <onup>2</onup>
+      <ondown>7</ondown>
+      <onleft>4</onleft>
+      <onright>5</onright>
+      <textcolor>FFFFFFFF</textcolor>
+      <textureUp>arrow_round_up_nofocus.png</textureUp>
+      <textureDown>arrow_round_down_nofocus.png</textureDown>
+      <textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
+      <textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>MM</description>
+      <type>spincontrol</type>
+      <spintype>int</spintype>
+      <orientation>vertical</orientation>
+      <id>5</id>
+      <posX>220</posX>
+      <posY>360</posY>
+      <showrange>no</showrange>
+      <onup>2</onup>
+      <ondown>7</ondown>
+      <onleft>4</onleft>
+      <onright>6</onright>
+      <textcolor>FFFFFFFF</textcolor>
+      <textureUp>arrow_round_up_nofocus.png</textureUp>
+      <textureDown>arrow_round_down_nofocus.png</textureDown>
+      <textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
+      <textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>YYYY</description>
+      <type>spincontrol</type>
+      <spintype>int</spintype>
+      <digits>4</digits>
+      <orientation>vertical</orientation>
+      <id>6</id>
+      <posX>270</posX>
+      <posY>360</posY>
+      <showrange>no</showrange>
+      <onup>2</onup>
+      <ondown>7</ondown>
+      <onleft>5</onleft>
+      <onright>7</onright>
+      <textcolor>FFFFFFFF</textcolor>
+      <textureUp>arrow_round_up_nofocus.png</textureUp>
+      <textureDown>arrow_round_down_nofocus.png</textureDown>
+      <textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
+      <textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>End Date/Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>360</posX>
+      <posY>260</posY>
+      <label>634</label>
+      <font>font13</font>
+      <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>360</posX>
+      <posY>280</posY>
+      <label>635</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>time hours</description>
+      <type>spincontrol</type>
+      <spintype>int</spintype>
+      <orientation>vertical</orientation>
+      <digits>2</digits>
+      <id>7</id>
+      <posX>380</posX>
+      <posY>305</posY>
+      <showrange>no</showrange>
+      <onup>4</onup>
+      <ondown>9</ondown>
+      <onleft>7</onleft>
+      <onright>8</onright>
+      <textcolor>FFFFFFFF</textcolor>
+      <textureUp>arrow_round_up_nofocus.png</textureUp>
+      <textureDown>arrow_round_down_nofocus.png</textureDown>
+      <textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
+      <textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>time minutes</description>
+      <type>spincontrol</type>
+      <spintype>int</spintype>
+      <orientation>vertical</orientation>
+      <digits>2</digits>
+      <id>8</id>
+      <posX>430</posX>
+      <posY>305</posY>
+      <showrange>no</showrange>
+      <onup>4</onup>
+      <ondown>9</ondown>
+      <onleft>7</onleft>
+      <onright>9</onright>
+      <textcolor>FFFFFFFF</textcolor>
+      <textureUp>arrow_round_up_nofocus.png</textureUp>
+      <textureDown>arrow_round_down_nofocus.png</textureDown>
+      <textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
+      <textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>360</posX>
+      <posY>330</posY>
+      <label>636</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>DD</description>
+      <type>spincontrol</type>
+      <spintype>int</spintype>
+      <orientation>vertical</orientation>
+      <id>9</id>
+      <posX>380</posX>
+      <posY>360</posY>
+      <showrange>no</showrange>
+      <onup>7</onup>
+      <ondown>12</ondown>
+      <onleft>9</onleft>
+      <onright>10</onright>
+      <textcolor>FFFFFFFF</textcolor>
+      <textureUp>arrow_round_up_nofocus.png</textureUp>
+      <textureDown>arrow_round_down_nofocus.png</textureDown>
+      <textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
+      <textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>MM</description>
+      <type>spincontrol</type>
+      <spintype>int</spintype>
+      <orientation>vertical</orientation>
+      <id>10</id>
+      <posX>430</posX>
+      <posY>360</posY>
+      <showrange>no</showrange>
+      <onup>7</onup>
+      <ondown>12</ondown>
+      <onleft>9</onleft>
+      <onright>11</onright>
+      <textcolor>FFFFFFFF</textcolor>
+      <textureUp>arrow_round_up_nofocus.png</textureUp>
+      <textureDown>arrow_round_down_nofocus.png</textureDown>
+      <textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
+      <textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>YYYY</description>
+      <type>spincontrol</type>
+      <spintype>int</spintype>
+      <digits>4</digits>
+      <orientation>vertical</orientation>
+      <id>11</id>
+      <posX>480</posX>
+      <posY>360</posY>
+      <showrange>no</showrange>
+      <onup>7</onup>
+      <ondown>12</ondown>
+      <onleft>10</onleft>
+      <onright>11</onright>
+      <textcolor>FFFFFFFF</textcolor>
+      <textureUp>arrow_round_up_nofocus.png</textureUp>
+      <textureDown>arrow_round_down_nofocus.png</textureDown>
+      <textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
+      <textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>OK button</description>
+      <type>button</type>
+      <id>12</id>
+      <posX>567</posX>
+      <posY>183</posY>
+      <width>43</width>
+      <height>43</height>
+      <textureFocus>dialogue_ok_focus.png</textureFocus>
+      <textureNoFocus>dialogue_ok_nofocus.png</textureNoFocus>
+      <label>-</label>
+      <onleft>10</onleft>
+      <onright>10</onright>
+      <onup>11</onup>
+      <ondown>1</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>dialog Heading</description>
+      <type>label</type>
+      <id>13</id>
+      <posX>150</posX>
+      <posY>190</posY>
+      <label>0</label>
+      <font>font13</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+  </controls>
+</window>

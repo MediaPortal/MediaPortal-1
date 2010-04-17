@@ -1,0 +1,19 @@
+LIBRARY      "fontEngine"
+
+EXPORTS
+
+FontEngineInitialize			@1
+FontEngineAddFont				@2
+FontEngineRemoveFont			@3
+FontEngineSetCoordinate			@4
+FontEngineDrawText3D			@5
+FontEnginePresent3D				@6
+FontEngineAddTexture			@7
+FontEngineRemoveTexture			@8
+FontEngineDrawTexture			@9
+FontEnginePresentTextures		@10
+FontEngineAddSurface			@11
+FontEngineSetTexture			@12
+FontEngineDrawSurface			@13
+FontEngineSetDevice				@14
+FontEngineDrawTexture2			@15

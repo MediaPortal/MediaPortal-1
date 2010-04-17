@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>4711</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:2516</define>
+  <define>#header.image:wikipedia_logo.png</define>
+  <define>#header.hover:-</define>
+  <controls>
+    <import>common.window.xml</import>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="0,-300">WindowClose</animation>
+      <layout>StackLayout</layout>
+      <posX>71</posX>
+      <posY>121</posY>
+      <control>
+        <description>Search Button</description>
+        <type>button</type>
+        <id>10</id>
+        <onup>17</onup>
+        <label>137</label>
+      </control>
+      <control>
+        <description>Select local Wikipedia Button</description>
+        <type>button</type>
+        <id>11</id>
+        <label>200025</label>
+      </control>
+      <control>
+        <description>Back to the text (when viewing an image)</description>
+        <type>button</type>
+        <id>14</id>
+        <label>2514</label>
+        <visible>no</visible>
+      </control>
+      <control>
+        <description>Links Button</description>
+        <type>button</type>
+        <id>12</id>
+        <label>2511</label>
+      </control>
+      <control>
+        <description>Images Button</description>
+        <type>button</type>
+        <id>13</id>
+        <ondown>99</ondown>
+        <label>2515</label>
+      </control>
+    </control>
+    <control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <description>Article title/searchterm</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>497</posX>
+      <posY>87</posY>
+      <visible>no</visible>
+      <label>Article title/searchterm</label>
+      <font>font16</font>
+      <align>left</align>
+    </control>
+    <control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <description>Image description</description>
+      <type>label</type>
+      <id>5</id>
+      <posX>469</posX>
+      <posY>87</posY>
+      <visible>no</visible>
+      <label>Image description</label>
+      <font>font16</font>
+      <align>left</align>
+    </control>
+    <control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <description>Here is the article text displayed</description>
+      <type>textbox</type>
+      <id>20</id>
+      <posX>497</posX>
+      <posY>115</posY>
+      <visible>no</visible>
+      <width>675</width>
+      <height>555</height>
+    </control>
+    <control>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <description>Article Image</description>
+      <type>image</type>
+      <id>25</id>
+      <posX>469</posX>
+      <posY>90</posY>
+      <visible>no</visible>
+      <width>782</width>
+      <height>582</height>
+      <texture />
+      <colorkey>0</colorkey>
+      <colordiffuse>White</colordiffuse>
+      <centered>yes</centered>
+      <keepaspectratio>yes</keepaspectratio>
+    </control>
+  </controls>
+</window>
