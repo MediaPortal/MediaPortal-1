@@ -1,0 +1,24 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="PowerEventHandler.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="TurnTVOn" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="TurnTVOnAtResume" Type="System.Windows.Forms.CheckState" Scope="User">
+      <Value Profile="(Default)">Checked</Value>
+    </Setting>
+    <Setting Name="PathOnSuspend" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="PathOnResume" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="MinimizeAtStartup" Type="System.Windows.Forms.CheckState" Scope="User">
+      <Value Profile="(Default)">Unchecked</Value>
+    </Setting>
+    <Setting Name="LaunchTimeOut" Type="System.String" Scope="User">
+      <Value Profile="(Default)">15</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

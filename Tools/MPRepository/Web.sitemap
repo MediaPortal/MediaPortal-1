@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+  <siteMapNode url="Default.aspx" title="Media Portal Repository"  description="The Media Portal online file repository">
+    <siteMapNode url="list_items.aspx" title="List Items"  description="List existing items in the repository">
+      <siteMapNode url="single_item.aspx" title ="Item Details" description ="Show the full details of an item" />
+    </siteMapNode>     
+    <siteMapNode url="create_item.aspx" title="Create Item"  description="Add a new item to the repository" />
+  </siteMapNode>
+</siteMap>

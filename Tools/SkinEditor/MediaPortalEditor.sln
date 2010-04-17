@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortalEditor", "MediaPortalEditor.csproj", "{4BD72A53-8AC5-4DAA-9177-5BDF932285E9}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer", "setup\Installer.vdproj", "{9DEE91E9-B953-4FEC-B708-DBDAA07AFAB2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4BD72A53-8AC5-4DAA-9177-5BDF932285E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BD72A53-8AC5-4DAA-9177-5BDF932285E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BD72A53-8AC5-4DAA-9177-5BDF932285E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BD72A53-8AC5-4DAA-9177-5BDF932285E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DEE91E9-B953-4FEC-B708-DBDAA07AFAB2}.Debug|Any CPU.ActiveCfg = Debug
+		{9DEE91E9-B953-4FEC-B708-DBDAA07AFAB2}.Release|Any CPU.ActiveCfg = Release
+		{9DEE91E9-B953-4FEC-B708-DBDAA07AFAB2}.Release|Any CPU.Build.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

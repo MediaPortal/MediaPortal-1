@@ -1,0 +1,71 @@
+﻿<Applications>
+
+  <!--- Common section -->
+  <MSSQLExpress32>
+    <URL>http://install.team-mediaportal.com/Sql2005_32bit</URL>
+    <FILE>sqlexpr32.exe</FILE>
+    <TYPE>Automatic</TYPE>
+  </MSSQLExpress32>
+  <MSSQLExpress64>
+    <URL>http://install.team-mediaportal.com/Sql2005_64bit</URL>
+    <FILE>sqlexpr64.exe</FILE>
+    <TYPE>Manual</TYPE>
+  </MSSQLExpress64>
+  <MediaPortal>
+    <URL>http://install.team-mediaportal.com/MediaPortal</URL>
+    <FILE>package-mediaportal.exe</FILE>
+    <TYPE>Automatic</TYPE>
+  </MediaPortal>
+  <TvServer>
+    <URL>http://install.team-mediaportal.com/TvEngine</URL>
+    <FILE>package-tvengine.exe</FILE>
+    <TYPE>Automatic</TYPE>
+  </TvServer>
+  <VCRedist2008>
+    <URL>http://install.team-mediaportal.com/VcRedist2008</URL>
+    <FILE>vcredist2008_x86.exe</FILE>
+    <TYPE>Automatic</TYPE>
+  </VCRedist2008>
+  <WindowsMediaPlayer>
+    <URL>http://install.team-mediaportal.com/WindowsMediaPlayer</URL>
+    <FILE>wmp11-windowsxp-x86.exe</FILE>
+    <TYPE>Manual</TYPE>
+  </WindowsMediaPlayer>
+
+  <!-- Section used by 1.1.0 alpha installer -->
+
+  <DirectXRedist>
+    <URL>http://install.team-mediaportal.com/DirectXRedist</URL>
+    <FILE>directx_mar2009_redist.exe</FILE>
+    <TYPE>Automatic</TYPE>
+  </DirectXRedist>
+  <MySQL32>
+    <URL>http://install.team-mediaportal.com/MySql_32bit</URL>
+    <FILE>mysql-essential-5.1.35-win32.msi</FILE>
+    <TYPE>Automatic</TYPE>
+  </MySQL32>
+  <MySQL64>
+    <URL>http://install.team-mediaportal.com/MySql_64bit</URL>
+    <FILE>mysql-essential-5.1.35-winx64.msi</FILE>
+    <TYPE>Automatic</TYPE>
+  </MySQL64>
+
+  <!-- Section used by 1.0.2 stable installer -->
+
+  <DirectX9c>
+    <URL>http://install.team-mediaportal.com/DirectX</URL>
+    <FILE>directx_aug2008_redist.exe</FILE>
+    <TYPE>Automatic</TYPE>
+  </DirectX9c>
+  <MySQL>
+    <URL>http://install.team-mediaportal.com/MySql</URL>
+    <FILE>mysql-essential-5.0.77-win32.msi</FILE>
+    <TYPE>Automatic</TYPE>
+  </MySQL>
+  <VCRedist2005>
+    <URL>http://install.team-mediaportal.com/VcRedist2005</URL>
+    <FILE>vcredist2005_x86.exe</FILE>
+    <TYPE>Automatic</TYPE>
+  </VCRedist2005>
+
+</Applications>
