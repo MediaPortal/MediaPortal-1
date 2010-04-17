@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Grabber>
+  <Info language="cz" availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="CT1@ct.cz" siteId="1" />
+    <Channel id="CT2@ct.cz" siteId="2" />
+    <Channel id="Nova@nova.cz" siteId="3" />
+    <Channel id="Prima@prima.cz" siteId="4" />
+    <Channel id="STV1@stv.cz" siteId="36" />
+    <Channel id="STV2@stv.cz" siteId="37" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://prepni.atlas.cz/tv/Default.aspx?day=[_D].[_M].[YYYY]" post="__EVENTTARGET=&amp;__EVENTARGUMENT=&amp;__VIEWSTATE=%2FwEPDwUKMTE1MTczNzkwNmQYAQUeX19Db250cm9sc1JlcXVpcmVQb3N0QmFja0tleV9fFgEFKl9jdGwwOmNvbnRlbnQ6U2V6bmFtU3RhbmljOl9jdGwwOmJ0blN1Ym1pdA%3D%3D&amp;_ctl0%3Acontent%3ASeznamStanic%3Achannels=[ID]&amp;__EVENTVALIDATION=%2FwEWAgLur97aCAKh0vu4AQ%3D%3D&amp;_ctl0%3Acontent%3ASeznamStanic%3A_ctl0%3AbtnSubmit.x=48&amp;_ctl0%3Acontent%3ASeznamStanic%3A_ctl0%3AbtnSubmit.y=6" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="tvarea">
+        <SectionTemplate tags="TH">
+          <TemplateText>
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;#START&gt;
+&lt;div&gt;
+&lt;/div&gt;
+&lt;/td&gt;
+ &lt;td&gt;
+&lt;div class="i"&gt;
+&lt;/div&gt;
+ &lt;h3&gt;&lt;a href&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

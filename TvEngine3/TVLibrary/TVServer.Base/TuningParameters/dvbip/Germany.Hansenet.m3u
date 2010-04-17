@@ -1,0 +1,51 @@
+#EXTM3U
+#EXTINF:0,Das Erste
+rtp://@233.51.128.19:1234
+#EXTINF:0,ZDF
+rtp://@233.51.128.25:1234
+#EXTINF:0,KiKa
+rtp://@233.51.128.24:1234
+#EXTINF:0,3sat
+rtp://@233.51.128.22:1234
+#EXTINF:0,Arte
+rtp://@233.51.128.16:1234
+#EXTINF:0,NDR FS HH
+rtp://@233.51.128.33:1234
+#EXTINF:0,NDR FS NS
+rtp://@233.51.128.56:1234
+#EXTINF:0,WDR Koeln
+rtp://@233.51.128.50:1234
+#EXTINF:0,MDR FERNSEHEN
+rtp://@233.51.128.30:1234
+#EXTINF:0,Bayerisches FS 
+rtp://@233.51.128.17:1234
+#EXTINF:0,SWR Fernsehen BW
+rtp://@233.51.128.72:1234
+#EXTINF:0,SWR Fernsehen RP
+rtp://@233.51.128.63:1234
+#EXTINF:0,hr-fernsehen
+rtp://@233.51.128.20:1234
+#EXTINF:0,rbb Berlin
+rtp://@233.51.128.62:1234
+#EXTINF:0,rbb Brandenburg
+rtp://@233.51.128.57:1234
+#EXTINF:0,SR Fernsehen
+rtp://@233.51.128.59:1234
+#EXTINF:0,Radio Bremen TV
+rtp://@233.51.128.58:1234
+#EXTINF:0,Phoenix
+rtp://@233.51.128.21:1234
+#EXTINF:0,BR-alpha
+rtp://@233.51.128.18:1234
+#EXTINF:0,EinsPlus
+rtp://@233.51.128.32:1234
+#EXTINF:0,EinsExtra
+rtp://@233.51.128.31:1234
+#EXTINF:0,EinsFestival
+rtp://@233.51.128.29:1234
+#EXTINF:0,ZDFinfokanal
+rtp://@233.51.128.27:1234
+#EXTINF:0,ZDFdokukanal
+rtp://@233.51.128.26:1234
+#EXTINF:0,ZDFtheaterkanal
+rtp://@233.51.128.28:1234
