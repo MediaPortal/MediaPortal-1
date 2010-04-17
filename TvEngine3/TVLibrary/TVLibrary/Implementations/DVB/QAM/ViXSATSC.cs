@@ -105,7 +105,7 @@ namespace TvLibrary.Implementations.DVB
                                   _tempValue, 4);
         if (hr != 0)
         {
-          Log.Log.Info("ViXS ATSC: Set returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
+          Log.Log.Info("ViXS ATSC: Set returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
         }
       }
     }

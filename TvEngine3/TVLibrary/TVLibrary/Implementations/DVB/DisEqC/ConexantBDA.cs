@@ -163,7 +163,7 @@ namespace TvLibrary.Implementations.DVB
                                 len, _ptrDiseqc, len);
       if (hr != 0)
       {
-        Log.Log.Info("Conexant BDA: SendDiseqCommand returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
+        Log.Log.Info("Conexant BDA: SendDiseqCommand returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
       }
     }
 
@@ -200,7 +200,7 @@ namespace TvLibrary.Implementations.DVB
                                 len, _ptrDiseqc, len);
       if (hr != 0)
       {
-        Log.Log.Info("Conexant BDA: SendDiseqCCommand returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
+        Log.Log.Info("Conexant BDA: SendDiseqCCommand returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
       }
       return (hr == 0);
     }

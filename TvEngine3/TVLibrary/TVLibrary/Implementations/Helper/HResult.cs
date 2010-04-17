@@ -20,6 +20,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using DirectShowLib;
 
 namespace TvLibrary
 {
@@ -285,7 +286,10 @@ namespace TvLibrary
     /// <value>The DX error description.</value>
     private string DXErrorDescription
     {
-      get { return GetDXErrorDescription((int)_hresult); }
+      get 
+      {
+        return DsError.GetErrorText((int)_hresult);        
+      }
     }
 
     #endregion
@@ -322,16 +326,7 @@ namespace TvLibrary
     [DllImport("Dxerr9.dll", EntryPoint = "GetDXErrorString", ExactSpelling = false,
       CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
     public static extern string GetDXErrorString(int hresult);
-
-    /// <summary>
-    /// Static method which gets the DX error description.
-    /// </summary>
-    /// <param name="hresult">The hresult.</param>
-    /// <returns>the DX error description</returns>
-    [DllImport("Dxerr9.dll", EntryPoint = "GetDXErrorDescription", ExactSpelling = false,
-      CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-    public static extern string GetDXErrorDescription(int hresult);
-
+    
     /// <summary>
     /// Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
     /// </summary>

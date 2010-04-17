@@ -448,7 +448,7 @@ namespace TvLibrary.Implementations.DVB
           if (hr != 0)
           {
             Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),
-                              HResult.GetDXErrorDescription(hr));
+                              DsError.GetErrorText(hr));
             //remove subchannel.
             /*if (newSubChannel)
             {

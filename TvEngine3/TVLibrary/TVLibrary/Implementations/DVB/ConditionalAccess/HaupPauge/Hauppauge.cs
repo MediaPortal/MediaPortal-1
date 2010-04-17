@@ -168,7 +168,7 @@ namespace TvLibrary.Implementations.DVB
       if (hr != 0)
       {
         succeeded = false;
-        Log.Log.Info("Hauppauge: SendDiseq returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
+        Log.Log.Info("Hauppauge: SendDiseq returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));        
       }
       return succeeded;
     }
@@ -230,7 +230,7 @@ namespace TvLibrary.Implementations.DVB
                               32, _tempValue, 4);
         if (hr != 0)
         {
-          Log.Log.Info("Hauppauge: Set Pilot returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
+          Log.Log.Info("Hauppauge: Set Pilot returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
         }
       }
       //Set the Roll-off
@@ -244,7 +244,7 @@ namespace TvLibrary.Implementations.DVB
                               32, _tempValue, 4);
         if (hr != 0)
         {
-          Log.Log.Info("Hauppauge: Set Roll-Off returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorDescription(hr));
+          Log.Log.Info("Hauppauge: Set Roll-Off returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
         }
       }
     }
