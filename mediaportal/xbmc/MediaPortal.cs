@@ -3719,18 +3719,20 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected void CheckSkinVersion()
   {
-    OldSkinForm form = new OldSkinForm();
-    if (form.CheckSkinVersion(m_strSkin))
+    using (OldSkinForm form = new OldSkinForm())
     {
-      return;
-    }
+      if (form.CheckSkinVersion(m_strSkin))
+      {
+        return;
+      }
 #if !DEBUG
     if (splashScreen != null)
     {
       splashScreen.AllowWindowOverlay((Form)form);
     }
 #endif
-    form.ShowDialog(this);
+      form.ShowDialog(this);
+    }
   }
 
   #region registry helper function

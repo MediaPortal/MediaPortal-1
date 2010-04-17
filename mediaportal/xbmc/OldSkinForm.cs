@@ -66,6 +66,10 @@ namespace MediaPortal
         {
           components.Dispose();
         }
+        if (CloseTimer != null)
+        {
+          CloseTimer.Dispose();
+        }
       }
       base.Dispose(disposing);
     }
