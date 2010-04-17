@@ -58,9 +58,10 @@ namespace MediaPortal.Configuration
       try
       {
         string searchURI = String.Format("http://xoap.weather.com/search/search?where={0}", UrlEncode(searchString));
-
+        
         // Create the request and fetch the response
         WebRequest request = WebRequest.Create(searchURI);
+
         try
         {
           // Use the current user in case an NTLM Proxy or similar is used.
@@ -73,10 +74,12 @@ namespace MediaPortal.Configuration
         // Read data from the response stream
         Stream responseStream = response.GetResponseStream();
         Encoding iso8859 = Encoding.GetEncoding("iso-8859-1");
-        StreamReader streamReader = new StreamReader(responseStream, iso8859);
-
-        // Fetch information from our stream
-        string data = streamReader.ReadToEnd();
+        string data;
+        using (StreamReader streamReader = new StreamReader(responseStream, iso8859))
+        {
+          // Fetch information from our stream
+          data = streamReader.ReadToEnd();
+        }
 
         XmlDocument document = new XmlDocument();
         document.LoadXml(data);
