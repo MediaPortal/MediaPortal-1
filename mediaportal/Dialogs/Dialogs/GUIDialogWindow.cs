@@ -55,10 +55,6 @@ namespace MediaPortal.Dialogs
 
     public virtual void PageLoad(int ParentID)
     {
-      if (!MediaPortal.Player.g_Player.Playing)
-      {
-        MediaPortal.Player.VolumeHandler.Dispose();
-      }
       if (GUIWindowManager.IsRouted)
       {
         GUIDialogWindow win = (GUIDialogWindow)GUIWindowManager.GetWindow(GUIWindowManager.RoutedWindow);
