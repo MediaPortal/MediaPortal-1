@@ -80,7 +80,7 @@ namespace SetRights
             everyoneSid,
             FileSystemRights.FullControl,                                       // full control so no arm if new files are created
             InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, // all subfolders and files
-            PropagationFlags.InheritOnly,
+            PropagationFlags.None,
             AccessControlType.Allow);
 
         // Check if such a rule already exists, if so skip the modifications
@@ -152,7 +152,7 @@ namespace SetRights
             everyoneSid,
             RegistryRights.FullControl,  // modify is enough for reading/writing/deleting
             InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, // all subfolders and files
-            PropagationFlags.InheritOnly,
+            PropagationFlags.None,
             AccessControlType.Allow);
 
         // Check if such a rule already exists, if so skip the modifications
@@ -214,7 +214,8 @@ namespace SetRights
     {
       if (rule1.AccessControlType != rule2.AccessControlType ||
         rule1.FileSystemRights != rule2.FileSystemRights ||
-        rule1.IdentityReference != rule2.IdentityReference)
+        rule1.IdentityReference != rule2.IdentityReference ||
+        rule1.InheritanceFlags != rule2.InheritanceFlags)
         return false;
       else
         return true;
@@ -229,7 +230,8 @@ namespace SetRights
     {
       if (rule1.AccessControlType != rule2.AccessControlType ||
         rule1.RegistryRights != rule2.RegistryRights ||
-        rule1.IdentityReference != rule2.IdentityReference)
+        rule1.IdentityReference != rule2.IdentityReference ||
+        rule1.InheritanceFlags != rule2.InheritanceFlags)
         return false;
       else
         return true;
