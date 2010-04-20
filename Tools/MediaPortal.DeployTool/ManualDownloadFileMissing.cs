@@ -18,6 +18,7 @@ namespace MediaPortal.DeployTool
     public ManualDownloadFileMissing()
     {
       InitializeComponent();
+      Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
       UpdateUI();
     }
 

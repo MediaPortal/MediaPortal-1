@@ -183,7 +183,6 @@ namespace MediaPortal.DeployTool
       this.ClientSize = new System.Drawing.Size(666, 416);
       this.Controls.Add(this.splitContainer1);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MaximizeBox = false;
       this.Name = "DeployTool";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

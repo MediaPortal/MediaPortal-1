@@ -85,6 +85,7 @@ namespace MediaPortal.DeployTool
 
       // Paint first screen
       InitializeComponent();
+      Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
       Localizer.SwitchCulture("en-US");
       UpdateUI();
 

@@ -76,7 +76,6 @@ namespace MediaPortal.DeployTool
         this.Controls.Add(this.textBox1);
         this.Controls.Add(this.labelHeading);
         this.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-        this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
         this.MaximizeBox = false;
         this.MinimizeBox = false;
         this.Name = "ManualDownloadFileMissing";

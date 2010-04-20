@@ -37,6 +37,7 @@ namespace MediaPortal.DeployTool
     public HTTPDownload()
     {
       InitializeComponent();
+      Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
     }
 
     public DialogResult ShowDialog(string url, string targetFile, string userAgentOs)

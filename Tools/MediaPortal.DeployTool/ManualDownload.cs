@@ -45,6 +45,7 @@ namespace MediaPortal.DeployTool
     public ManualDownload()
     {
       InitializeComponent();
+      Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
       UpdateUI();
     }
 
