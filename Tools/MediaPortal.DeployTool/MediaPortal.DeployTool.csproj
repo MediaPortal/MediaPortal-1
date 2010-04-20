@@ -146,6 +146,7 @@
       <SubType>Designer</SubType>
       <DependentUpon>ManualDownloadFileMissing.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MediaPortal.DeployTool.cs-CZ.resx" />
     <EmbeddedResource Include="MediaPortal.DeployTool.da-DK.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
