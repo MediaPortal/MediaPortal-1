@@ -253,6 +253,7 @@ namespace WatchDog
       {
         _lastMPLogLevel = xmlreader.GetValueAsInt("general", "loglevel", 1);
         xmlreader.SetValue("general", "loglevel", 3);
+        MPSettings.SaveCache();
       }
       _processMP = new Process();
       _processMP.StartInfo.WorkingDirectory = Application.StartupPath;
@@ -303,10 +304,11 @@ namespace WatchDog
       tmrMPWatcher.Enabled = false;
       if (_processMP.HasExited)
       {
-        // Reset the loglevel to "debug"
+        // Reset the loglevel to the original value
         using (Settings xmlreader = new MPSettings())
         {
           xmlreader.SetValue("general", "loglevel", _lastMPLogLevel);
+          MPSettings.SaveCache();
         }
         setStatus("idle");
         PerformPostTestActions();
