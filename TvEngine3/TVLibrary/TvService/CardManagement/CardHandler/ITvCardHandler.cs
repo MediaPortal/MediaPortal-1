@@ -40,7 +40,7 @@ namespace TvService
 
     bool CiMenuSupported { get; }
 
-    ITVCard Card { get; }
+    ITVCard Card { get; set; }
     bool IsLocal { get; set; }
     bool IsIdle { get; }
     Card DataBaseCard { get; set; }
