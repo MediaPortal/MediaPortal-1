@@ -65,6 +65,9 @@ namespace TvLibrary.Streaming
 
     #region constants
 
+    /// <summary>
+    /// Default port number for RTSP
+    /// </summary>
     public const int DefaultPort = 554;
 
     #endregion
@@ -197,6 +200,10 @@ namespace TvLibrary.Streaming
       }
     }
 
+    /// <summary>
+    /// Returns the active streaming port 
+    /// or 0 if not yet initialized
+    /// </summary>
     public int Port
     {
       get { return _initialized ? _port : 0; }
@@ -301,6 +308,8 @@ namespace TvLibrary.Streaming
     /// <param name="fileName">Name of the file.</param>
     public void RemoveFile(string fileName)
     {
+      if (_initialized == false)
+        return;
       Dictionary<string, RtspStream>.Enumerator enumer = _streams.GetEnumerator();
       while (enumer.MoveNext())
       {
@@ -346,7 +355,7 @@ namespace TvLibrary.Streaming
     ///</summary>
     public int ActiveStreams
     {
-      get { return _streams.Count; }
+      get { return _initialized ? _streams.Count : 0; }
     }
 
     #endregion
