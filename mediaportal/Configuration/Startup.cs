@@ -97,7 +97,8 @@ namespace MediaPortal.Configuration
           if (trimmedArgument.StartsWith("/wizard"))
           {
             //startupMode = StartupMode.Wizard;
-            Log.Debug("Startup: Argument did request Wizard mode - {0}", trimmedArgument);
+            //Log.Debug("Startup: Argument did request Wizard mode - {0}", trimmedArgument);
+            Log.Warn("Startup: Wizard mode invoked but currently disabled: argument ignored!");
           }
 
           if (trimmedArgument.StartsWith("/section"))
