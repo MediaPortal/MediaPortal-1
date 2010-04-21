@@ -25,12 +25,7 @@
 #
 #**********************************************************************************************************#
 
-# set different paths, whether env is x32 or x64
-!ifdef x64Environment
-  !define ALToolPath "%WINDOWS_SDK%\Bin\x64"
-!else
-  !define ALToolPath "%WINDOWS_SDK%\Bin"
-!endif
+!define ALToolPath "%WINDOWS_SDK%\Bin"
 
 # The following commands needs to be defined by the parent script (the one, which includes this file).
 ;!define BUILD_MediaPortal
