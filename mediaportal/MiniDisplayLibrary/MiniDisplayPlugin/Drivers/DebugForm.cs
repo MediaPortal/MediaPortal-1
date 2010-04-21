@@ -640,10 +640,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Log.Info("DebugForm.InitializeDriver(): Assembly creation time: {0} ( {1} UTC )",
                  new object[] {info.LastWriteTime, info.LastWriteTimeUtc.ToUniversalTime()});
       }
-      if (this.DoDebug)
-      {
-        Log.Info("DebugForm.InitializeDriver(): Platform: {0}", new object[] {Environment.OSVersion.VersionString});
-      }
       MiniDisplayHelper.InitEQ(ref this.EQSettings);
       MiniDisplayHelper.InitDisplayControl(ref this.DisplaySettings);
       this.LoadAdvancedSettings();

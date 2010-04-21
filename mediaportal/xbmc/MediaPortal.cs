@@ -305,32 +305,17 @@ public class MediaPortalApp : D3DApp, IRender
       //Log MediaPortal version build and operating system level
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
-      string ServicePack = OSInfo.OSInfo.GetOSServicePack();
-      if (!string.IsNullOrEmpty(ServicePack))
-      {
-        ServicePack = " ( " + ServicePack + " )";
-      }
-      Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSNameString() +
-               ServicePack + " [" + OSInfo.OSInfo.OSVersion + "]");
-
+      Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
 
       //Check for unsupported operating systems
-      if (OSInfo.OSInfo.GetOSSupported() != 1)
-      {
-        Log.Warn("****************************************");
-        Log.Warn("* WARNING, OS not officially supported *");
-        Log.Warn("****************************************");
-      }
+      OSPrerequisites.OsCheck(false);
 
       //Log last install of WindowsUpdate patches
       string LastSuccessTime = "NEVER !!!";
       UIntPtr res = UIntPtr.Zero;
 
-      //Store OS version for next checks
-      int OsVer = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSServicePackMinor;
-
       int options = Convert.ToInt32(Reg.RegistryRights.ReadKey);
-      if (OsVer >= 52)
+      if (OSInfo.OSInfo.OsVersionInt() >= 52)
       {
         options = options | Convert.ToInt32(Reg.RegWow64Options.KEY_WOW64_64KEY);
       }
@@ -363,7 +348,7 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Info("Main: Last install from WindowsUpdate is dated {0}", LastSuccessTime);
 
       //Disable "ghosting" for WindowsVista and up
-      if (OsVer >= 60)
+      if (OSInfo.OSInfo.VistaOrLater())
       {
         Log.Debug("Disabling process window ghosting");
         NativeMethods.DisableProcessWindowsGhosting();

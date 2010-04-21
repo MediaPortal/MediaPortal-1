@@ -262,7 +262,7 @@ namespace SetupTv
         }
         if (isLocal)
         {
-          Utils.CheckPrerequisites(DvbCheck);
+          Utils.CheckForDvbHotfix();
         }
         if (reloaded)
         {

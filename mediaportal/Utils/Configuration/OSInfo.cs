@@ -471,9 +471,7 @@ namespace OSInfo
     /// <returns>A string containing the the operating system name.</returns>
     public static OSList GetOSName()
     {
-      int osVer = (OSMajorVersion * 10) + OSMinorVersion;
-
-      switch (osVer)
+      switch (OsVersionInt())
       {
         case 51:
           return OSList.WindowsXp;
@@ -492,38 +490,107 @@ namespace OSInfo
     }
 
     /// <summary>
+    /// Return a full version string, es.: "Windows XP ( Servicepack 2 ) [5.1.0000]"
+    /// </summary>
+    /// <returns>A string rappresenting a fully displayable version</returns>
+    public static string GetOSDisplayVersion()
+    {
+      string servicePack = GetOSServicePack();
+      if (!string.IsNullOrEmpty(servicePack))
+      {
+        servicePack = " ( " + servicePack + " )";
+      }
+      return GetOSNameString() + servicePack + " [" + OSVersion + "]";
+    }
+
+    /// <summary>
     /// Return a value that indicate if the OS is blocked, supported, or officially unsupported
     /// </summary>
-    /// <returns>0 to block installation/usage</returns>
-    /// <returns>1 if fully supported</returns>
-    /// <returns>2 if not officially supported</returns>
-    public static int GetOSSupported()
+    public static OsSupport GetOSSupported()
     {
       switch (GetOSName())
       {
         case OSList.WindowsXp:
           if (OSServicePackMajor < 2)
           {
-            return 0;
+            return OsSupport.Blocked;
           }
-          return OSServicePackMinor == 0 ? 1 : 2;
+          return OSServicePackMinor == 0 ? OsSupport.FullySupported : OsSupport.NotSupported;
         case OSList.WindowsVista:
           if (OSServicePackMajor < 1)
           {
-            return 0;
+            return (int)OsSupport.Blocked;
           }
-          return OSServicePackMinor == 0 ? 1 : 2;
+          return OSServicePackMinor == 0 ? OsSupport.FullySupported : OsSupport.NotSupported;
         case OSList.Windows7:
-          return OSBuildVersion == 7600 ? 1 : 2;
+          return OSBuildVersion == 7600 ? OsSupport.FullySupported : OsSupport.NotSupported;
         case OSList.Windows2003:
         case OSList.Windows2003R2:
         case OSList.Windows2008:
         case OSList.Windows2008R2:
-          return 2;
+          return OsSupport.NotSupported;
         default:
           // Windows2000andPrevious and WindowsXp64
-          return 0;
+          return OsSupport.Blocked;
       }
+    }
+
+    /// <summary>
+    /// List of available status of current OS
+    /// </summary>
+    public enum OsSupport
+    {
+      /// <summary>
+      /// Blocked: will cause an immediate exit of the program
+      /// </summary>
+      Blocked = 0,
+      /// <summary>
+      /// FullySupported: self explanatory
+      /// </summary>
+      FullySupported = 1,
+      /// <summary>
+      /// NotSupported: officially not supported, will log/display a warning
+      /// </summary>
+      NotSupported = 2
+    }
+
+    /// <summary>
+    /// Return a numeric value rappresenting OS version
+    /// </summary>
+    /// <returns>(OSMajorVersion * 10 + OSMinorVersion)</returns>
+    public static int OsVersionInt()
+    {
+      return (OSMajorVersion * 10 + OSMinorVersion);
+    }
+
+    /// <summary>
+    /// Return if running on XP or later
+    /// </summary>
+    /// <returns>true means XP or later</returns>
+    /// <returns>false means 2000 or previous</returns>
+    public static bool XpOrLater()
+    {
+      return OsVersionInt() >= 51;
+    }
+
+    /// <summary>
+    /// Return if running on Vista or later
+    /// </summary>
+    /// <returns>true means Vista or later</returns>
+    /// <returns>false means Xp or previous</returns>
+    public static bool VistaOrLater()
+    {
+      return OsVersionInt() >= 60;
+    }
+
+    /// <summary>
+    /// Return if running on Windows7 or later
+    /// </summary>
+    /// <returns>true means Windows7 or later</returns>
+    /// <returns>false means Vista or previous</returns>
+    public static bool Win7OrLater()
+    {
+      return OsVersionInt() >= 61;
     }
 
     #endregion

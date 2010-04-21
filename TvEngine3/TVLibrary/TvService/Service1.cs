@@ -113,22 +113,10 @@ namespace TvService
 
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
-      string ServicePack = OSInfo.OSInfo.GetOSServicePack();
-      if (!string.IsNullOrEmpty(ServicePack))
-      {
-        ServicePack = " ( " + ServicePack + " )";
-      }
-      Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSNameString() +
-                    ServicePack + " [" + OSInfo.OSInfo.OSVersion + "]");
+      Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
 
       //Check for unsupported operating systems
-      if (OSInfo.OSInfo.GetOSSupported() != 1)
-      {
-        //Used .Info as .Warning is missing
-        Log.Info("****************************************");
-        Log.Info("* WARNING, OS not officially supported *");
-        Log.Info("****************************************");
-      }
+      OSPrerequisites.OsCheck(false);
 
       Application.ThreadException += Application_ThreadException;
       AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;

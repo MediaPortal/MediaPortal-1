@@ -87,8 +87,7 @@ namespace SetupTv.Sections
       switch (comboBoxType.SelectedIndex)
       {
         case 0: // Microsoft
-          int osver = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSMinorVersion;
-          if (osver >= 60)
+          if (OSInfo.OSInfo.VistaOrLater())
           {
             enabled = false;
             checkBoxExtLog.Visible = false;

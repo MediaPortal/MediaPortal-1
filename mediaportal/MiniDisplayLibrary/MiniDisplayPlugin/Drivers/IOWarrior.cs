@@ -197,10 +197,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Log.Info("IOWarrior: Assembly creation time: {0} ( {1} UTC )",
                  new object[] {info.LastWriteTime, info.LastWriteTimeUtc.ToUniversalTime()});
       }
-      if (DoDebug)
-      {
-        Log.Info("IOWarrior: Platform: {0}", new object[] {Environment.OSVersion.VersionString});
-      }
       try
       {
         LoadAdvancedSettings();

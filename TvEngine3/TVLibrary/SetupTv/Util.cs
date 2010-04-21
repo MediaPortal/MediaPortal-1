@@ -78,8 +78,6 @@ namespace SetupTv
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern bool CloseHandle(IntPtr hObject);
 
-    public static OSInfo.OSInfo.OSList _osver = OSInfo.OSInfo.GetOSName();
-
     public delegate void UtilEventHandler(Process proc, bool waitForExit);
 
 
@@ -781,45 +779,7 @@ namespace SetupTv
       return (Application.SetSuspendState(state, forceShutDown, false));
     }
 
-
-    public static void CheckPrerequisites(bool checkDvbFix)
-    {
-      DialogResult res;
-
-      const string MsgNotSupported =
-        "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
-      const string MsgNotInstallable =
-        "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
-      const string MsgBetaServicePack =
-        "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
-
-      string MsgVersion = OSInfo.OSInfo.GetOSNameString() + " ( " + OSInfo.OSInfo.GetOSServicePack() + " ) [" +
-                          OSInfo.OSInfo.OSVersion + "]";
-      switch (OSInfo.OSInfo.GetOSSupported())
-      {
-        case 0:
-          MessageBox.Show(MsgNotInstallable, MsgVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
-          Application.Exit();
-          break;
-        case 1:
-          if (checkDvbFix)
-            CheckForDvbHotfix();
-          break;
-        case 2:
-          res = MessageBox.Show(MsgNotSupported, MsgVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-          if (res == DialogResult.Cancel) Application.Exit();
-          if (checkDvbFix)
-            CheckForDvbHotfix();
-          break;
-      }
-      if (OSInfo.OSInfo.OSServicePackMinor != 0)
-      {
-        res = MessageBox.Show(MsgBetaServicePack, MsgVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-        if (res == DialogResult.Cancel) Application.Exit();
-      }
-    }
-
-    private static void CheckForDvbHotfix()
+    public static void CheckForDvbHotfix()
     {
       List<string> dllPaths = GetRegisteredAssemblyPaths("PsisDecd");
       Version aParamVersion = new Version(0, 0, 0, 0);

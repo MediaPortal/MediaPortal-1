@@ -336,9 +336,10 @@ namespace MediaPortal.Util
     /// <remarks>Thanks to Michael S. Muegel for notifying us about a bug in this code.</remarks>
     protected static void EnableToken(string privilege)
     {
-      if (Environment.OSVersion.Platform != PlatformID.Win32NT ||
-          !CheckEntryPoint("advapi32.dll", "AdjustTokenPrivileges"))
+      if (!CheckEntryPoint("advapi32.dll", "AdjustTokenPrivileges"))
+      {
         return;
+      }
       IntPtr tokenHandle = IntPtr.Zero;
       LUID privilegeLUID = new LUID();
       TOKEN_PRIVILEGES newPrivileges = new TOKEN_PRIVILEGES();

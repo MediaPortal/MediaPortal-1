@@ -55,12 +55,16 @@ namespace MediaPortal.Configuration
       Thread.CurrentThread.Name = "Config Main";
       Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
 
-      // Added OS requirements checks
-      CheckPrerequisites();
-
       // Logger should write into Configuration.log
       Log.SetConfigurationMode();
       Log.BackupLogFile(LogType.Config);
+
+      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
+
+      Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
+
+      //Check for unsupported operating systems
+      OSPrerequisites.OsCheck(true);
 
       Log.Info("Verifying DirectX 9");
       if (!DirectXCheck.IsInstalled())
@@ -133,24 +137,6 @@ namespace MediaPortal.Configuration
           Win32API.ActivatePreviousInstance();
         }
 
-        FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-
-        string ServicePack = OSInfo.OSInfo.GetOSServicePack();
-        if (!string.IsNullOrEmpty(ServicePack))
-        {
-          ServicePack = " ( " + ServicePack + " )";
-        }
-        Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSNameString() +
-                 ServicePack + " [" + OSInfo.OSInfo.OSVersion + "]");
-
-        //Check for unsupported operating systems
-        if (OSInfo.OSInfo.GetOSSupported() != 1)
-        {
-          Log.Warn("****************************************");
-          Log.Warn("* WARNING, OS not officially supported *");
-          Log.Warn("****************************************");
-        }
-
         // Check for a MediaPortal Instance running and don't allow Configuration to start
         using (ProcessLock mpLock = new ProcessLock(mpMutex))
         {
@@ -176,20 +162,20 @@ namespace MediaPortal.Configuration
 
         string MpConfig = Assembly.GetExecutingAssembly().Location;
 #if !DEBUG
-  // Check TvPlugin version
+        // Check TvPlugin version
         string tvPlugin = Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll";
-      if (File.Exists(tvPlugin) && !_avoidVersionChecking)
+        if (File.Exists(tvPlugin) && !_avoidVersionChecking)
         {
           string tvPluginVersion = FileVersionInfo.GetVersionInfo(tvPlugin).ProductVersion;
-        string CfgVersion = FileVersionInfo.GetVersionInfo(MpConfig).ProductVersion;
-        if (CfgVersion != tvPluginVersion)
+          string CfgVersion = FileVersionInfo.GetVersionInfo(MpConfig).ProductVersion;
+          if (CfgVersion != tvPluginVersion)
           {
             string strLine = "TvPlugin and MediaPortal don't have the same version.\r\n";
             strLine += "Please update the older component to the same version as the newer one.\r\n";
-          strLine += "MpConfig Version: " + CfgVersion + "\r\n";
+            strLine += "MpConfig Version: " + CfgVersion + "\r\n";
             strLine += "TvPlugin Version: " + tvPluginVersion;
             MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-          Log.Info(strLine);
+            Log.Info(strLine);
             return;
           }
         }
@@ -251,41 +237,6 @@ namespace MediaPortal.Configuration
         "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
       Application.Exit();
       return null;
-    }
-
-    private static void CheckPrerequisites()
-    {
-      DialogResult res;
-
-      const string MsgNotSupported =
-        "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
-      const string MsgNotInstallable =
-        "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
-      const string MsgBetaServicePack =
-        "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
-
-      string ServicePack = OSInfo.OSInfo.GetOSServicePack();
-      if (!string.IsNullOrEmpty(ServicePack))
-      {
-        ServicePack = " ( " + ServicePack + " )";
-      }
-      string MsgVersion = OSInfo.OSInfo.GetOSNameString() + ServicePack + " [" + OSInfo.OSInfo.OSVersion + "]";
-      switch (OSInfo.OSInfo.GetOSSupported())
-      {
-        case 0:
-          MessageBox.Show(MsgNotInstallable, MsgVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
-          Application.Exit();
-          break;
-        case 2:
-          res = MessageBox.Show(MsgNotSupported, MsgVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-          if (res == DialogResult.Cancel) Application.Exit();
-          break;
-      }
-      if (OSInfo.OSInfo.OSServicePackMinor != 0)
-      {
-        res = MessageBox.Show(MsgBetaServicePack, MsgVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-        if (res == DialogResult.Cancel) Application.Exit();
-      }
     }
   }
 }

@@ -216,10 +216,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Log.Info("MatrixGX: Assembly creation time: {0} ( {1} UTC )",
                  new object[] {info.LastWriteTime, info.LastWriteTimeUtc.ToUniversalTime()});
       }
-      if (this.DoDebug)
-      {
-        Log.Info("MatrixGX: Platform: {0}", new object[] {Environment.OSVersion.VersionString});
-      }
       try
       {
         this.LoadAdvancedSettings();

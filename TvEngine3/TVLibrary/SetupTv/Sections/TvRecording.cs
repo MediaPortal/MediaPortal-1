@@ -344,8 +344,7 @@ namespace SetupTv.Sections
                                     "RecordPath");
         if (String.IsNullOrEmpty(recPath))
         {
-          int os = OSInfo.OSInfo.OSMajorVersion + OSInfo.OSInfo.OSMinorVersion;
-          recPath = os >= 60
+          recPath = OSInfo.OSInfo.VistaOrLater()
                     //Windows Vista and up
                       ? Environment.GetEnvironmentVariable("PUBLIC") + "\\Recorded TV"
                     //Windows XP

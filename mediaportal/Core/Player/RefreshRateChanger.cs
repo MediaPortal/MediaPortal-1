@@ -215,8 +215,7 @@ namespace MediaPortal.Player
 
     public static void CycleRefreshRate(uint monitorIndex, double refreshRate)
     {
-      if (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor == 1)
-        // Are we running Windows 7?
+      if (OSInfo.OSInfo.Win7OrLater())
       {
         if (W7RefreshRateHelper.SetRefreshRate(monitorIndex, refreshRate))
         {

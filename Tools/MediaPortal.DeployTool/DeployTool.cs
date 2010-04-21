@@ -177,7 +177,7 @@ namespace MediaPortal.DeployTool
         //
         else
         {
-          if (InstallationProperties.Instance["InstallType"] != "tvserver_master" && (Utils._osverInt >= 60) && !Utils.IsAeroEnabled())
+          if (InstallationProperties.Instance["InstallType"] != "tvserver_master" && OSInfo.OSInfo.VistaOrLater() && !Utils.IsAeroEnabled())
           {
             MessageBox.Show(Localizer.GetBestTranslation("AeroThemeMissing"), "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
           }

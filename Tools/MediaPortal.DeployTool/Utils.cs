@@ -96,9 +96,6 @@ namespace MediaPortal.DeployTool
 
   class Utils
   {
-    public static readonly OSInfo.OSInfo.OSList _osver = OSInfo.OSInfo.GetOSName();
-    public static readonly int _osverInt = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSMinorVersion;
-
     #region DialogHelper
     public static void ErrorDlg(string msg)
     {
@@ -354,26 +351,20 @@ namespace MediaPortal.DeployTool
     {
       DialogResult res;
 
-      string ServicePack = OSInfo.OSInfo.GetOSServicePack();
-      if (!string.IsNullOrEmpty(ServicePack))
-      {
-        ServicePack = " ( " + ServicePack + " )";
-      }
-      string MsgVersion = OSInfo.OSInfo.GetOSNameString() + ServicePack + " [" + OSInfo.OSInfo.OSVersion + "]";
       switch (OSInfo.OSInfo.GetOSSupported())
       {
-        case 0:
-          MessageBox.Show(Localizer.GetBestTranslation("OS_Support"), MsgVersion, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        case OSInfo.OSInfo.OsSupport.Blocked:
+          MessageBox.Show(Localizer.GetBestTranslation("OS_Support"), OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OK, MessageBoxIcon.Error);
           Application.Exit();
           break;
-        case 2:
-          res = MessageBox.Show(Localizer.GetBestTranslation("OS_Warning"), MsgVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        case OSInfo.OSInfo.OsSupport.NotSupported:
+          res = MessageBox.Show(Localizer.GetBestTranslation("OS_Warning"), OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
           if (res == DialogResult.Cancel) Application.Exit();
           break;
       }
       if (OSInfo.OSInfo.OSServicePackMinor != 0)
       {
-        res = MessageBox.Show(Localizer.GetBestTranslation("OS_Beta"), MsgVersion, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        res = MessageBox.Show(Localizer.GetBestTranslation("OS_Beta"), OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
         if (res == DialogResult.Cancel) Application.Exit();
       }
     }
@@ -390,7 +381,10 @@ namespace MediaPortal.DeployTool
     public static bool Check64bit()
     {
       //IsWow64Process is not supported under Windows2000
-      if (_osver == OSInfo.OSInfo.OSList.Windows2000andPrevious) return false;
+      if (!OSInfo.OSInfo.XpOrLater())
+      {
+        return false;
+      }
 
       Process p = Process.GetCurrentProcess();
       IntPtr handle = p.Handle;

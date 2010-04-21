@@ -59,8 +59,7 @@ namespace MediaPortal.Configuration.Sections
           try
           {
             //EVR - VMR9 selection
-            int ver = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSMinorVersion;
-            ValueEVR = ver >= 60 ? true : false;
+            ValueEVR = OSInfo.OSInfo.VistaOrLater() ? true : false;
           }
           catch (Exception ex)
           {

@@ -25,8 +25,8 @@ namespace MediaPortal.DeployTool.Sections
       rbMySQL.Text = Localizer.GetBestTranslation("DBMSType_rbMySQL");
       rbDBAlreadyInstalled.Text = Localizer.GetBestTranslation("DBMSType_rbDBAlreadyInstalled");
 
-      //MSSQL2005 is not supported on Windows 7
-      if (Utils._osver == OSInfo.OSInfo.OSList.Windows7)
+      //MSSQL2005 is not supported on Windows 7 and later
+      if (OSInfo.OSInfo.Win7OrLater())
       {
         bMS.Enabled = false;
         // For better readability label is not disabled, only the eventhandler is removed

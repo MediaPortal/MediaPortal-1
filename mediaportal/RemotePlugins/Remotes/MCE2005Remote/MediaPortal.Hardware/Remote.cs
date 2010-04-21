@@ -101,7 +101,7 @@ namespace MediaPortal.Hardware
       {
         int valEndRead;
         int devBufIndex;
-        if (OSInfo.OSInfo.GetOSName() == OSInfo.OSInfo.OSList.Windows7)
+        if (OSInfo.OSInfo.Win7OrLater())
         {
           valEndRead = 25;
           devBufIndex = 9;

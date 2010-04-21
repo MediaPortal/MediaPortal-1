@@ -770,7 +770,7 @@ namespace MediaPortal.Util
         {
           //Failed due to incompatible format or no write permissions on folder. Try querying Explorer for thumb.
           Log.Warn("Failed to extract thumb for {0}, trying another method.", path);
-          if (Environment.OSVersion.Version.Major >= 6)
+          if (OSInfo.OSInfo.VistaOrLater())
           {
             thumb = VistaToolbelt.Shell.ThumbnailGenerator.GenerateThumbnail(path); //only works for Vista/7
           }

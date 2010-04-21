@@ -365,9 +365,11 @@ namespace MediaPortal.Util
 
     public static bool Check64Bit()
     {
-      //IsWow64Process is not supported under Windows2000 ( ver 5.0 )
-      int osver = Environment.OSVersion.Version.Major * 10 + Environment.OSVersion.Version.Minor;
-      if (osver <= 50) return false;
+      //IsWow64Process is not supported under Windows2000
+      if (!OSInfo.OSInfo.XpOrLater())
+      {
+        return false;
+      }
 
       Process p = Process.GetCurrentProcess();
       IntPtr handle = p.Handle;

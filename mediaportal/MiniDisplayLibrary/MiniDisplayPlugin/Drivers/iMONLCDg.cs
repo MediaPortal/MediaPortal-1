@@ -2383,10 +2383,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Log.Info("iMONLCDg.InitializeDriver(): Assembly creation time: {0} ( {1} UTC )", info.LastWriteTime,
                  info.LastWriteTimeUtc.ToUniversalTime());
       }
-      if (DoDebug)
-      {
-        Log.Info("iMONLCDg.InitializeDriver(): Platform: {0}", Environment.OSVersion.VersionString);
-      }
       LoadAdvancedSettings();
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Idle Message: {0}", Settings.Instance.IdleMessage);
       Log.Info("iMONLCDg.InitializeDriver(): Advanced options - Delay driver startup: {0}", _DelayStartup.ToString());

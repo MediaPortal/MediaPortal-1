@@ -120,22 +120,10 @@ namespace SetupTv
 
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
-      string ServicePack = OSInfo.OSInfo.GetOSServicePack();
-      if (!string.IsNullOrEmpty(ServicePack))
-      {
-        ServicePack = " ( " + ServicePack + " )";
-      }
-      Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSNameString() +
-               ServicePack + " [" + OSInfo.OSInfo.OSVersion + "] ----");
+      Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
 
       //Check for unsupported operating systems
-      if (OSInfo.OSInfo.GetOSSupported() != 1)
-      {
-        //Used .Info as .Warning is missing
-        Log.Info("****************************************");
-        Log.Info("* WARNING, OS not officially supported *");
-        Log.Info("****************************************");
-      }
+      OSPrerequisites.OsCheck(true);
 
       NameValueCollection appSettings = ConfigurationManager.AppSettings;
       appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", Log.GetPathName()));

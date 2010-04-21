@@ -151,7 +151,10 @@ namespace TvEngine
     public static bool Check64bit()
     {
       //IsWow64Process is not supported under Windows2000
-      if (OSInfo.OSInfo.GetOSName() == OSInfo.OSInfo.OSList.Windows2000andPrevious) return false;
+      if (!OSInfo.OSInfo.XpOrLater())
+      {
+        return false;
+      }
 
       Process p = Process.GetCurrentProcess();
       IntPtr handle = p.Handle;

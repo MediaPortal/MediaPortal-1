@@ -553,24 +553,7 @@ namespace JH.CommBase
       CommTimeouts.ReadIntervalTimeout = Win32Com.MAXDWORD;
       CommTimeouts.ReadTotalTimeoutConstant = 0;
       CommTimeouts.ReadTotalTimeoutMultiplier = 0;
-
-      //JH1.2: 0 does not seem to mean infinite on non-NT platforms, so default it to 10
-      //seconds per byte which should be enough for anyone.
-      if (cs.sendTimeoutMultiplier == 0)
-      {
-        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-        {
-          CommTimeouts.WriteTotalTimeoutMultiplier = 0;
-        }
-        else
-        {
-          CommTimeouts.WriteTotalTimeoutMultiplier = 10000;
-        }
-      }
-      else
-      {
-        CommTimeouts.WriteTotalTimeoutMultiplier = cs.sendTimeoutMultiplier;
-      }
+      CommTimeouts.WriteTotalTimeoutMultiplier = cs.sendTimeoutMultiplier;
       CommTimeouts.WriteTotalTimeoutConstant = cs.sendTimeoutConstant;
 
       PortDCB.init(((cs.parity == Parity.odd) || (cs.parity == Parity.even)), cs.txFlowCTS, cs.txFlowDSR,

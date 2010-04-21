@@ -93,7 +93,6 @@ namespace SetupTv.Sections
           break;
       }
 
-      int osver = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSMinorVersion;
       if (_dvbVersion < new Version(6, 5, 2710, 2732))
       {
         mpLabelStatusDVBHotfix.Text = "not installed";
@@ -103,7 +102,7 @@ namespace SetupTv.Sections
       }
       else
       {
-        mpLabelStatusDVBHotfix.Text = osver < 60 ? "installed" : "not needed on Vista and up";
+        mpLabelStatusDVBHotfix.Text = OSInfo.OSInfo.VistaOrLater() ? "not needed on Vista and up" : "installed";
         mpLabelStatusDVBHotfix.ForeColor = System.Drawing.Color.Green;
         linkLabelDVBHotfix.Enabled = false;
         linkLabelDVBHotfix.Visible = false;

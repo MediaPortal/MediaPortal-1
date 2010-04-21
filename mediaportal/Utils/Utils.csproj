@@ -103,6 +103,7 @@
       <Name>System.Data</Name>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
@@ -122,6 +123,7 @@
     <Compile Include="Configuration\ISettingsPrefetchable.cs" />
     <Compile Include="Configuration\ISettingsProvider.cs" />
     <Compile Include="Configuration\OSInfo.cs" />
+    <Compile Include="Configuration\OSPrerequisites.cs" />
     <Compile Include="Configuration\PluginIconsAttribute.cs" />
     <Compile Include="Configuration\Registry.cs" />
     <Compile Include="Configuration\Settings.cs" />

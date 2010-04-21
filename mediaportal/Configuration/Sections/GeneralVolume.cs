@@ -81,14 +81,13 @@ namespace MediaPortal.Configuration.Sections
         bool isDigital = reader.GetValueAsBool("volume", "digital", true);
 
         // Force a couple of settings for Vista / Windows 7
-        int ver = (OSInfo.OSInfo.OSMajorVersion * 10) + OSInfo.OSInfo.OSMinorVersion;
-        if (ver >= 60)
+        if (OSInfo.OSInfo.VistaOrLater())
         {
           volumeStyle = 4;
           groupBoxMixerControl.Enabled = false;
         }
 
-        if (ver >= 61)
+        if (OSInfo.OSInfo.Win7OrLater())
         {
           isDigital = true;
           groupBoxScale.Enabled = false;

@@ -60,10 +60,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Program Files\Reference Assemblies\Microsoft\WinFX\v3.0\System.Runtime.Remoting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="OSInfo.cs" />
+    <Compile Include="OSPrerequisites.cs" />
     <Compile Include="RemoteControl.cs" />
     <Compile Include="TvServer.cs" />
     <Compile Include="User.cs" />

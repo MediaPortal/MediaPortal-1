@@ -175,7 +175,7 @@ namespace MediaPortal.GUI.Library
     private static AdapterInformation _currentFullscreenAdapterInfo = null;
     private static int _currentScreenNumber = -1;
     private static Screen _currentScreen = null;
-    private static bool _isDX9EXused = Environment.OSVersion.Version.Major >= 6;
+    private static bool _isDX9EXused = OSInfo.OSInfo.VistaOrLater();
     private static bool _DX9ExRealDeviceLost = false;
 
     private static Point _screenCenterPos = new Point();
