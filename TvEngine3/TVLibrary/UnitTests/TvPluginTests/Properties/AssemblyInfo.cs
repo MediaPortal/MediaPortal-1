@@ -1,16 +1,16 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TvPluginTests")]
+[assembly: AssemblyTitle("TVServiceTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("TvPluginTests")]
-[assembly: AssemblyCopyright("Copyright © 2005-2010 Team MediaPortal")]
+[assembly: AssemblyProduct("TVServiceTests")]
+[assembly: AssemblyCopyright("Copyright � 2005-2010 Team MediaPortal")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
