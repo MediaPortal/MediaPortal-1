@@ -874,7 +874,7 @@ namespace MediaPortal.Plugins.Process
         }
       }
 
-      IPHostEntry hostEntry = Dns.GetHostByName(Dns.GetHostName());
+      IPHostEntry hostEntry = Dns.GetHostEntry(Dns.GetHostName());
       foreach (IPAddress address in hostEntry.AddressList)
       {
         LogVerbose("Checking against {0}", address);
