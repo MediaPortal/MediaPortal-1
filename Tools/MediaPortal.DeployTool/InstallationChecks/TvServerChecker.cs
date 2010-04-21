@@ -68,29 +68,21 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return false;
       }
 
-      if (InstallationProperties.Instance["DBMSType"] != "DBAlreadyInstalled")
-      {
-        string sql = InstallationProperties.Instance["DBMSType"] == "msSQL2005" ? "sqlserver" : "mysql";
-        string pwd = InstallationProperties.Instance["DBMSPassword"];
-        string procParams = String.Format("--DeployMode --DeploySql:{0} --DeployPwd:{1}", sql, pwd);
+      string sql = InstallationProperties.Instance["DBMSType"] == "msSQL2005" ? "sqlserver" : "mysql";
+      string pwd = InstallationProperties.Instance["DBMSPassword"];
+      string procParams = String.Format("--DeployMode --DeploySql:{0} --DeployPwd:{1}", sql, pwd);
 
 #if DEBUG
-        MessageBox.Show("Starting " + targetDir + "\\SetupTv.exe " + procParams);
+      MessageBox.Show("Starting " + targetDir + "\\SetupTv.exe " + procParams);
 #endif
 
-        setup = Process.Start(targetDir + "\\SetupTv.exe", procParams);
-        if (setup == null)
-        {
-          return false;
-        }
+      setup = Process.Start(targetDir + "\\SetupTv.exe", procParams);
+      if (setup != null)
+      {
         setup.WaitForExit();
-        if (setup.ExitCode != 0)
-        {
-          return false;
-        }
+        if (setup.ExitCode == 0) return true;
       }
-
-      return true;
+      return false;
     }
 
     public bool UnInstall()
