@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using NUnit.Framework;
-using NUnit.Mocks;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
@@ -25,6 +24,7 @@ using TvLibrary.Channels;
 namespace CardAllocationTests
 {
   [TestFixture]
+  [Isolated]
   public class CardAllocationTest
   {
     #region setup/teardown
@@ -32,6 +32,24 @@ namespace CardAllocationTests
     [TestFixtureSetUp]
     public void TVHomeTestFixtureSetup()
     {
+      
+    }
+
+    [TearDown]
+    public void TVHomeTearDown()
+    {
+      Console.WriteLine("Test");
+    }
+
+    [TestFixtureTearDown]
+    public void TVHomeTestFixtureTearDown()
+    {      
+    }
+
+    [SetUp]
+    public void TVHomeSetUp()
+    {
+      Isolate.Fake.StaticMethods<Log>(Members.MustSpecifyReturnValues);
       Isolate.WhenCalled(() => Log.Info("test", null)).DoInstead(callContext =>
       {
         string format = callContext.Parameters[0] as string;
@@ -59,38 +77,11 @@ namespace CardAllocationTests
         int threadId = Thread.CurrentThread.ManagedThreadId;
         Console.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}({2})]: {3}", DateTime.Now, threadName, threadId, logLine);
       });
-    }
-
-    [TearDown]
-    public void TVHomeTearDown()
-    {
-      Console.WriteLine("Test");
-    }
-
-    [TestFixtureTearDown]
-    public void TVHomeTestFixtureTearDown()
-    {      
-    }
-
-    [SetUp]
-    public void TVHomeSetUp()
-    {
-      Isolate.CleanUp();
     }    
 
     #endregion
 
     #region Card Allocation Tests
-
-    public enum CardType
-    {
-      DVBt,
-      DVBs,
-      DVBc,
-      Analogue,
-      IP,
-      ATSC
-    }
 
     #region simple 1 card tests
 
@@ -99,37 +90,43 @@ namespace CardAllocationTests
     [Test]
     public void TestOneAvailIdleDVBTCardForFTAChannel()
     {
-      TestOneAvailIdleCardForFTAChannel(CardType.DVBt);
+      TestOneAvailIdleCardForFTAChannel(CardType.DvbT);
     }
+
+    [Test]
+    public void TestOneAvailIdleDVBTCardForScrambledChannel()
+    {
+      TestOneAvailIdleFTACardForScrambledChannel(CardType.DvbT);
+    }
+
+    [Test]
+    public void TestOneAvailIdleCAMDVBTCardForScrambledChannel()
+    {
+      TestOneAvailIdleCAMCardForScrambledChannel(CardType.DvbT);
+    }    
    
     [Test]
     public void TestOneAvailLockedDVBTCardForFTAChannel()
-    {      
-      TestOneAvailLockedCardForFTAChannel(CardType.DVBt);
+    {
+      TestOneAvailLockedCardForFTAChannel(CardType.DvbT);
     }
 
     [Test]
     public void TestOneDisabledDVBTCardForFTAChannel()
     {
-      TestOneDisabledCardForFTAChannel(CardType.DVBt);
+      TestOneDisabledCardForFTAChannel(CardType.DvbT);
     }
 
     [Test]
     public void TestOneAbsentDVBTCardForFTAChannel()
     {
-      TestOneAbsentCardForFTAChannel(CardType.DVBt);     
+      TestOneAbsentCardForFTAChannel(CardType.DvbT);     
     }
    
     [Test]
-    public void TestNoTuningDetailForDVBTCardForFTAChannel()
-    {
-      TestNoTuningDetailForCardForFTAChannel(CardType.DVBt);     
-    }    
-
-    [Test]
     public void TestWrongTuningDetailForDVBTCardForFTAChannel()
     {
-      TestWrongTuningDetailForCardForFTAChannel(CardType.DVBt);
+      TestWrongTuningDetailForCardForFTAChannel(CardType.DvbT);
     }
 
     
@@ -141,37 +138,43 @@ namespace CardAllocationTests
     [Test]
     public void TestOneAvailIdleDVBSCardForFTAChannel()
     {
-      TestOneAvailIdleCardForFTAChannel(CardType.DVBs);
+      TestOneAvailIdleCardForFTAChannel(CardType.DvbS);
     }
+
+    [Test]
+    public void TestOneAvailIdleDVBSCardForScrambledChannel()
+    {
+      TestOneAvailIdleFTACardForScrambledChannel(CardType.DvbS);
+    }
+
+    [Test]
+    public void TestOneAvailIdleCAMDVBSCardForScrambledChannel()
+    {      
+      TestOneAvailIdleCAMCardForScrambledChannel(CardType.DvbS);
+    }    
 
     [Test]
     public void TestOneAvailLockedDVBSCardForFTAChannel()
     {
-      TestOneAvailLockedCardForFTAChannel(CardType.DVBs);
+      TestOneAvailLockedCardForFTAChannel(CardType.DvbS);
     }
 
     [Test]
     public void TestOneDisabledDVBSCardForFTAChannel()
     {
-      TestOneDisabledCardForFTAChannel(CardType.DVBs);
+      TestOneDisabledCardForFTAChannel(CardType.DvbS);
     }
 
     [Test]
     public void TestOneAbsentDVBSCardForFTAChannel()
     {
-      TestOneAbsentCardForFTAChannel(CardType.DVBs);
-    }
-
-    [Test]
-    public void TestNoTuningDetailForDVBSCardForFTAChannel()
-    {
-      TestNoTuningDetailForCardForFTAChannel(CardType.DVBs);
+      TestOneAbsentCardForFTAChannel(CardType.DvbS);
     }
 
     [Test]
     public void TestWrongTuningDetailForDVBSCardForFTAChannel()
     {
-      TestWrongTuningDetailForCardForFTAChannel(CardType.DVBs);
+      TestWrongTuningDetailForCardForFTAChannel(CardType.DvbS);
     }
     
     #endregion
@@ -181,37 +184,43 @@ namespace CardAllocationTests
     [Test]
     public void TestOneAvailIdleDVBCCardForFTAChannel()
     {
-      TestOneAvailIdleCardForFTAChannel(CardType.DVBc);
+      TestOneAvailIdleCardForFTAChannel(CardType.DvbC);
     }
+
+    [Test]
+    public void TestOneAvailIdleDVBCCardForScrambledChannel()
+    {
+      TestOneAvailIdleFTACardForScrambledChannel(CardType.DvbC);
+    }
+
+    [Test]
+    public void TestOneAvailIdleCAMDVBCCardForScrambledChannel()
+    {
+      TestOneAvailIdleCAMCardForScrambledChannel(CardType.DvbC);
+    }    
 
     [Test]
     public void TestOneAvailLockedDVBCCardForFTAChannel()
     {
-      TestOneAvailLockedCardForFTAChannel(CardType.DVBc);
+      TestOneAvailLockedCardForFTAChannel(CardType.DvbC);
     }
 
     [Test]
     public void TestOneDisabledDVBCCardForFTAChannel()
     {
-      TestOneDisabledCardForFTAChannel(CardType.DVBc);
+      TestOneDisabledCardForFTAChannel(CardType.DvbC);
     }
 
     [Test]
     public void TestOneAbsentDVBCCardForFTAChannel()
     {
-      TestOneAbsentCardForFTAChannel(CardType.DVBc);
-    }
-
-    [Test]
-    public void TestNoTuningDetailForDVBCCardForFTAChannel()
-    {
-      TestNoTuningDetailForCardForFTAChannel(CardType.DVBc);
+      TestOneAbsentCardForFTAChannel(CardType.DvbC);
     }
 
     [Test]
     public void TestWrongTuningDetailForDVBCCardForFTAChannel()
     {
-      TestWrongTuningDetailForCardForFTAChannel(CardType.DVBc);
+      TestWrongTuningDetailForCardForFTAChannel(CardType.DvbC);
     }
 
     #endregion
@@ -225,17 +234,17 @@ namespace CardAllocationTests
 
       User user = Isolate.Fake.Instance<User>();
       TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
-      IChannel tuningDetail1 = GetTuningDetailBasedOnCardType(cardType);
+      IChannel tuningDetail1 = GetFTATuningDetailBasedOnCardType(cardType);
 
       tuningDetails.Add(tuningDetail1);
 
       DVBCardMocks dvbCardMocks = GetCardMockByCardType(cardType, tuningDetails, user);
       dvbCardMocks.Idle = true;
       ITvCardHandler cardHandler1 = dvbCardMocks.GetMockedCardHandler();
-      cards.Add(cardHandler1.DataBaseCard.IdCard, cardHandler1);
+      cards.Add(dvbCardMocks.CardId, cardHandler1);
 
       ChannelMap channelMap;
-      Channel channel = ChannelMocks.GetFTAChannel(out channelMap);
+      Channel channel = ChannelMocks.GetChannel(out channelMap);
       Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
 
       SetupChannelMapping(cardHandler1, channelMap);
@@ -248,6 +257,68 @@ namespace CardAllocationTests
       Assert.AreEqual(1, availCards.Count, "The number of cards returned is not as expected");
     }
 
+    private void TestOneAvailIdleCAMCardForScrambledChannel(CardType cardType)
+    {
+      Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
+      List<IChannel> tuningDetails = new List<IChannel>();
+
+      User user = Isolate.Fake.Instance<User>();
+      TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
+      IChannel tuningDetail1 = GetScrambledTuningDetailBasedOnCardType(cardType);
+
+      tuningDetails.Add(tuningDetail1);
+
+      DVBCardMocks dvbCardMocks = GetCardMockByCardType(cardType, tuningDetails, user);
+      dvbCardMocks.Idle = true;
+      dvbCardMocks.HasCAM = true;
+      ITvCardHandler cardHandler1 = dvbCardMocks.GetMockedCardHandler();
+      cards.Add(dvbCardMocks.CardId, cardHandler1);
+
+      ChannelMap channelMap;
+      Channel channel = ChannelMocks.GetChannel(out channelMap);
+      Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
+
+      SetupChannelMapping(cardHandler1, channelMap);
+
+      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
+
+      TvResult result;
+      List<CardDetail> availCards = allocation.GetAvailableCardsForChannel(cards, channel, ref user, out result);
+
+      Assert.AreEqual(1, availCards.Count, "The number of cards returned is not as expected");
+    }
+
+    private void TestOneAvailIdleFTACardForScrambledChannel(CardType cardType)
+    {
+      Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
+      List<IChannel> tuningDetails = new List<IChannel>();
+
+      User user = Isolate.Fake.Instance<User>();
+      TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
+      IChannel tuningDetail1 = GetScrambledTuningDetailBasedOnCardType(cardType);
+
+      tuningDetails.Add(tuningDetail1);
+
+      DVBCardMocks dvbCardMocks = GetCardMockByCardType(cardType, tuningDetails, user);
+      dvbCardMocks.Idle = true;
+      dvbCardMocks.HasCAM = false;
+      ITvCardHandler cardHandler1 = dvbCardMocks.GetMockedCardHandler();
+      cards.Add(dvbCardMocks.CardId, cardHandler1);
+
+      ChannelMap channelMap;
+      Channel channel = ChannelMocks.GetChannel(out channelMap);
+      Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
+
+      SetupChannelMapping(cardHandler1, channelMap);
+
+      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
+
+      TvResult result;
+      List<CardDetail> availCards = allocation.GetAvailableCardsForChannel(cards, channel, ref user, out result);
+
+      Assert.AreEqual(0, availCards.Count, "The number of cards returned is not as expected");
+    }
+    
 
     private void TestOneAvailLockedCardForFTAChannel(CardType cardType)
     {
@@ -257,16 +328,16 @@ namespace CardAllocationTests
       User user = Isolate.Fake.Instance<User>();
       TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
 
-      IChannel tuningDetail1 = GetTuningDetailBasedOnCardType(cardType);
+      IChannel tuningDetail1 = GetFTATuningDetailBasedOnCardType(cardType);
       tuningDetails.Add(tuningDetail1);
 
       DVBCardMocks dvbCardMocks = GetCardMockByCardType(cardType, tuningDetails, user);
       dvbCardMocks.Idle = false;
       ITvCardHandler cardHandler1 = dvbCardMocks.GetMockedCardHandler();
-      cards.Add(cardHandler1.DataBaseCard.IdCard, cardHandler1);
+      cards.Add(dvbCardMocks.CardId, cardHandler1);
 
       ChannelMap channelMap;
-      Channel channel = ChannelMocks.GetFTAChannel(out channelMap);
+      Channel channel = ChannelMocks.GetChannel(out channelMap);
       Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
 
       SetupChannelMapping(cardHandler1, channelMap);
@@ -288,7 +359,7 @@ namespace CardAllocationTests
 
       User user = Isolate.Fake.Instance<User>();
       TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
-      IChannel tuningDetail1 = GetTuningDetailBasedOnCardType(cardType);
+      IChannel tuningDetail1 = GetFTATuningDetailBasedOnCardType(cardType);
 
       tuningDetails.Add(tuningDetail1);
 
@@ -296,10 +367,10 @@ namespace CardAllocationTests
       dvbCardMocks.Enabled = false;
       ITvCardHandler cardHandler1 = dvbCardMocks.GetMockedCardHandler();
       //ITvCardHandler cardHandler1 = DVBTCardMocks.AddDisabledFTADVBTCard(tuningDetail1, user);
-      cards.Add(cardHandler1.DataBaseCard.IdCard, cardHandler1);
+      cards.Add(dvbCardMocks.CardId, cardHandler1);
 
       ChannelMap channelMap;
-      Channel channel = ChannelMocks.GetFTAChannel(out channelMap);
+      Channel channel = ChannelMocks.GetChannel(out channelMap);
       Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
 
       SetupChannelMapping(cardHandler1, channelMap);
@@ -319,7 +390,7 @@ namespace CardAllocationTests
       
       User user = Isolate.Fake.Instance<User>();
       TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
-      IChannel tuningDetail1 = GetTuningDetailBasedOnCardType(cardType);
+      IChannel tuningDetail1 = GetFTATuningDetailBasedOnCardType(cardType);
 
       tuningDetails.Add(tuningDetail1);
 
@@ -327,10 +398,10 @@ namespace CardAllocationTests
       dvbCardMocks.Present = false;
       ITvCardHandler cardHandler1 = dvbCardMocks.GetMockedCardHandler();
       //ITvCardHandler cardHandler1 = DVBTCardMocks.AddAbsentFTADVBTCard(tuningDetail1, user);
-      cards.Add(cardHandler1.DataBaseCard.IdCard, cardHandler1);
+      cards.Add(dvbCardMocks.CardId, cardHandler1);
 
       ChannelMap channelMap;
-      Channel channel = ChannelMocks.GetFTAChannel(out channelMap);
+      Channel channel = ChannelMocks.GetChannel(out channelMap);
       Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
 
       SetupChannelMapping(cardHandler1, channelMap);
@@ -343,24 +414,22 @@ namespace CardAllocationTests
       Assert.AreEqual(0, availCards.Count, "The number of cards returned is not as expected");
     }
 
-
-    private void TestNoTuningDetailForCardForFTAChannel(CardType cardType)
+    [Test]
+    public void TestNoTuningDetailsChannel()
     {
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
       User user = Isolate.Fake.Instance<User>();
       TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
-      IChannel tuningDetail1 = GetTuningDetailBasedOnCardType(cardType);
 
-      DVBCardMocks dvbCardMocks = GetCardMockByCardType(cardType, tuningDetails, user);
+      DVBCardMocks dvbCardMocks = GetCardMockByCardType(CardType.DvbC, tuningDetails, user);
       ITvCardHandler cardHandler1 = dvbCardMocks.GetMockedCardHandler();
-      //ITvCardHandler cardHandler1 = DVBTCardMocks.AddIdleFTADVBTCard(tuningDetail1, user);
-      cards.Add(cardHandler1.DataBaseCard.IdCard, cardHandler1);
+      cards.Add(dvbCardMocks.CardId, cardHandler1);
 
 
       ChannelMap channelMap;
-      Channel channel = ChannelMocks.GetFTAChannel(out channelMap);
+      Channel channel = ChannelMocks.GetChannel(out channelMap);
       Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
 
       SetupChannelMapping(cardHandler1, channelMap);
@@ -385,30 +454,30 @@ namespace CardAllocationTests
       CardType cardTypeDifferent = cardType;
       switch (cardType)
       {
-        case CardType.DVBt:
-          cardTypeDifferent = CardType.DVBc;
+        case CardType.DvbT:
+          cardTypeDifferent = CardType.DvbC;
           break;
 
-        case CardType.DVBc:
-          cardTypeDifferent = CardType.DVBs;
+        case CardType.DvbC:
+          cardTypeDifferent = CardType.DvbS;
           break;
 
-        case CardType.DVBs:
-          cardTypeDifferent = CardType.DVBt;
+        case CardType.DvbS:
+          cardTypeDifferent = CardType.DvbT;
           break;
       }
-      IChannel tuningDetail1 = GetTuningDetailBasedOnCardType(cardTypeDifferent);
+      IChannel tuningDetail1 = GetFTATuningDetailBasedOnCardType(cardTypeDifferent);
 
       tuningDetails.Add(tuningDetail1);
 
       DVBCardMocks dvbCardMocks = GetCardMockByCardType(cardType, tuningDetails, user);
       ITvCardHandler cardHandler1 = dvbCardMocks.GetMockedCardHandler();
       //ITvCardHandler cardHandler1 = DVBTCardMocks.AddIdleFTADVBTCard(tuningDetail1, user);
-      cards.Add(cardHandler1.DataBaseCard.IdCard, cardHandler1);
+      cards.Add(dvbCardMocks.CardId, cardHandler1);
 
 
       ChannelMap channelMap;
-      Channel channel = ChannelMocks.GetFTAChannel(out channelMap);
+      Channel channel = ChannelMocks.GetChannel(out channelMap);
       Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
 
       SetupChannelMapping(cardHandler1, channelMap);
@@ -420,6 +489,51 @@ namespace CardAllocationTests
 
       Assert.AreEqual(0, availCards.Count, "The number of cards returned is not as expected");
     }
+    #endregion
+
+    #endregion
+
+    #region advanced multiple card tests
+
+    [Test]
+    public void Test2AvailIdleDVBTCardsForFTAChannel()
+    {
+      Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
+      List<IChannel> tuningDetails = new List<IChannel>();
+
+      User user = Isolate.Fake.Instance<User>();
+      TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
+      IChannel tuningDetail1 = GetFTATuningDetailBasedOnCardType(CardType.DvbT);      
+
+      tuningDetails.Add(tuningDetail1);
+
+      DVBCardMocks dvbCardMocks1 = GetCardMockByCardType(CardType.DvbT, tuningDetails, user);
+      DVBCardMocks dvbCardMocks2 = GetCardMockByCardType(CardType.DvbT, tuningDetails, user);
+      dvbCardMocks1.Idle = true;
+      dvbCardMocks2.Idle = true;
+
+      ITvCardHandler cardHandler1 = dvbCardMocks1.GetMockedCardHandler();
+      cards.Add(dvbCardMocks1.CardId, cardHandler1);
+
+      ITvCardHandler cardHandler2 = dvbCardMocks1.GetMockedCardHandler();
+      cards.Add(dvbCardMocks2.CardId, cardHandler1);
+
+      ChannelMap channelMap;
+      Channel channel = ChannelMocks.GetChannel(out channelMap);
+      Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
+
+      SetupChannelMapping(cardHandler1, channelMap);
+      SetupChannelMapping(cardHandler2, channelMap);
+
+      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
+
+      TvResult result;
+      List<CardDetail> availCards = allocation.GetAvailableCardsForChannel(cards, channel, ref user, out result);
+
+      Assert.AreEqual(2, availCards.Count, "The number of cards returned is not as expected");
+    }
+
+    #region common
     #endregion
 
     #endregion
@@ -440,19 +554,33 @@ namespace CardAllocationTests
       DVBCardMocks cardMocks = null;
       switch (cardType)
       {
-        case CardType.DVBt:
+        case CardType.DvbT:
           cardMocks = new DVBTCardMocks(tuningDetails, user);
           break;
 
-        case CardType.DVBc:
+        case CardType.DvbC:
           cardMocks = new DVBCCardMocks(tuningDetails, user);
           break;
 
-        case CardType.DVBs:
+        case CardType.DvbS:
           cardMocks = new DVBSCardMocks(tuningDetails, user);
           break;
       }
       return cardMocks;
+    }
+
+    private IChannel GetFTATuningDetailBasedOnCardType(CardType cardType)
+    {
+      IChannel channel = GetTuningDetailBasedOnCardType(cardType);
+      Isolate.WhenCalled(() => channel.FreeToAir).WillReturn(true);
+      return channel;
+    }
+
+    private IChannel GetScrambledTuningDetailBasedOnCardType(CardType cardType)
+    {
+      IChannel channel = GetTuningDetailBasedOnCardType(cardType);
+      Isolate.WhenCalled(() => channel.FreeToAir).WillReturn(false);
+      return channel;
     }
 
     private IChannel GetTuningDetailBasedOnCardType(CardType cardType)
@@ -460,15 +588,15 @@ namespace CardAllocationTests
       IChannel tuningDetail = null;
       switch (cardType)
       {
-        case CardType.DVBt:
+        case CardType.DvbT:
           tuningDetail = Isolate.Fake.Instance<DVBTChannel>();
           break;
 
-        case CardType.DVBc:
+        case CardType.DvbC:
           tuningDetail = Isolate.Fake.Instance<DVBCChannel>();
           break;
 
-        case CardType.DVBs:
+        case CardType.DvbS:
           tuningDetail = Isolate.Fake.Instance<DVBSChannel>();
           break;
       }

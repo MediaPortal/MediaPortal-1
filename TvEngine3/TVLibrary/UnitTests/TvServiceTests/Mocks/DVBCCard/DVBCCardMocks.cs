@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TvControl;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
@@ -22,6 +23,11 @@ namespace TVServiceTests.Mocks.DVBCCard
     {
       return (channel is DVBSChannel);      
     }
+
+   protected override CardType GetCardType()
+   {
+     return CardType.DvbS;
+   }
 
    /*
     #region public methods - FTA cards

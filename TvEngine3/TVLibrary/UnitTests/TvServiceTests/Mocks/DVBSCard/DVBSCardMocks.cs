@@ -24,6 +24,11 @@ namespace TVServiceTests.Mocks.DVBSCard
       return (channel is DVBCChannel);      
     }
 
+    protected override CardType GetCardType()
+    {
+      return CardType.DvbC;
+    }
+
     /*
     #region public methods
 

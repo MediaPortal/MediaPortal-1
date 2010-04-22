@@ -16,6 +16,8 @@ namespace TVServiceTests.Mocks
     protected User _user;
     protected int _numberOfChannelsDecrypting = 0;
     protected int _cardId = 0;
+    protected int _decryptLimit = 0;
+    protected int _priority = 0;
     protected bool _isTunedToTransponder = false;
     protected bool _isOwner = true;
     protected int _numberOfUsersOnCard = 0;
@@ -96,6 +98,24 @@ namespace TVServiceTests.Mocks
       set { _numberOfUsersOnCard = value; }
     }
 
+    public int Priority
+    {
+      get { return _priority; }
+      set { _priority = value; }
+    }
+
+    public int CardId
+    {
+      get { return _cardId; }
+      set { _cardId = value; }
+    }
+
+    public int DecryptLimit
+    {
+      get { return _decryptLimit; }
+      set { _decryptLimit = value; }
+    }
+
     public ITvCardHandler GetMockedCardHandler ()
     {
       ITvCardHandler cardHandler1 = Isolate.Fake.Instance<ITvCardHandler>();
@@ -107,6 +127,7 @@ namespace TVServiceTests.Mocks
       Isolate.WhenCalled(() => cardHandler1.DataBaseCard.DevicePath).WillReturn("devicePath");
       Isolate.WhenCalled(() => cardHandler1.SupportsSubChannels).WillReturn(true);
       Isolate.WhenCalled(() => cardHandler1.Users.IsOwner(_user)).WillReturn(_isOwner);
+      Isolate.WhenCalled(() => cardHandler1.DataBaseCard.DecryptLimit).WillReturn(_decryptLimit);      
 
       if (_numberOfUsersOnCard == 0)
       {
@@ -136,9 +157,13 @@ namespace TVServiceTests.Mocks
         Isolate.WhenCalled(() => cardHandler1.Tuner.CanTune(channel)).WillReturn(isSameDVBCardType);        
       }
 
+      Isolate.WhenCalled(() => cardHandler1.Type).WillReturn(GetCardType());
+
       return cardHandler1;
     }
 
     protected abstract bool IsSameDVBCardType(IChannel channel);
+
+    protected abstract CardType GetCardType();
   }
 }
