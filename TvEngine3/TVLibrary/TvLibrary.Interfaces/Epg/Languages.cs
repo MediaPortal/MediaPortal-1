@@ -33,6 +33,8 @@ namespace TvLibrary.Epg
     // Created needed expections lists for all cultures with two ISO-639-2 ( B and T )
     // (data taken from http://en.wikipedia.org/wiki/List_of_ISO_639-2_codes)
     // 
+    // There were 22 B codes; scc and scr are now deprecated but still used by some EPG providers :(
+    //
     private string[] LanguageNameExceptions = {
                                                 "Albanian", "Armenian",
                                                 "Basque", "Burmese",
@@ -45,7 +47,9 @@ namespace TvLibrary.Epg
                                                 "Persian",
                                                 "Romanian",
                                                 "Tibetan",
-                                                "Welsh"
+                                                "Welsh",
+                                                "Serbo-Croatian (Cyrillic)",
+                                                "Serbo-Croatian (Roman)"
                                               };
 
     private string[] LanguageCodeExceptions = {
@@ -60,7 +64,9 @@ namespace TvLibrary.Epg
                                                 "per",
                                                 "rum",
                                                 "tib",
-                                                "wel"
+                                                "wel",
+                                                "scc",
+                                                "scr"
                                               };
 
     /// <summary>
