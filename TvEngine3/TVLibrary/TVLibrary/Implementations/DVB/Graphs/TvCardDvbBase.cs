@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using System.Xml;
 using DirectShowLib;
 using DirectShowLib.BDA;
+using TvLibrary.Hardware;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
@@ -442,19 +443,36 @@ namespace TvLibrary.Implementations.DVB
         }
         if (performTune)
         {
-          Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
-          int hr = ((ITuner)_filterNetworkProvider).put_TuneRequest(tuneRequest);
-          Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
-          if (hr != 0)
+          // HW provider supported tuning methods (i.e. TeVii API)
+          if (_conditionalAccess != null && 
+            _conditionalAccess.HWProvider != null && 
+            _conditionalAccess.HWProvider is ICustomTuning &&
+            (_conditionalAccess.HWProvider as ICustomTuning).SupportsTuningForChannel(channel))
           {
-            Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),
-                              DsError.GetErrorText(hr));
-            //remove subchannel.
-            /*if (newSubChannel)
+            Log.Log.WriteFile("dvb:Custom tune method detected");
+            bool res = (_conditionalAccess.HWProvider as ICustomTuning).CustomTune(channel, _parameters);
+            Log.Log.WriteFile("dvb:Custom tune method finished with result {0}", res);
+            if (!res)
             {
-            _mapSubChannels.Remove(subChannelId);
-            }*/
-            throw new TvException("Unable to tune to channel");
+              throw new TvException("Unable to tune to channel");
+            }
+          }
+          else
+          {
+            Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
+            int hr = ((ITuner)_filterNetworkProvider).put_TuneRequest(tuneRequest);
+            Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
+            if (hr != 0)
+            {
+              Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),
+                                DsError.GetErrorText(hr));
+              //remove subchannel.
+              /*if (newSubChannel)
+              {
+              _mapSubChannels.Remove(subChannelId);
+              }*/
+              throw new TvException("Unable to tune to channel");
+            }
           }
         }
         _lastSignalUpdate = DateTime.MinValue;
@@ -1089,7 +1107,8 @@ namespace TvLibrary.Implementations.DVB
       //Hauppauge Nova USB2 DVB-T & HDHomeRun workaround.
       if (device.Name != null &&
           (device.Name.Contains("Hauppauge Nova USB2 DVB-T TV Receiver") ||
-           device.Name.Contains("Silicondust HDHomeRun Tuner")))
+           device.Name.Contains("Silicondust HDHomeRun Tuner") ||
+           device.Name.Contains("TeVii DVB-S/S2 Receiver")))
       {
         skipCaptureFilter = true;
       }

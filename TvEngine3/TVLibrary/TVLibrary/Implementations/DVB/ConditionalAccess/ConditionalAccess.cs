@@ -61,6 +61,8 @@ namespace TvLibrary.Implementations.DVB
     private readonly ConexantBDA _conexant;
     private readonly GenPixBDA _genpix;
     private readonly TeVii _TeVii;
+    
+    private readonly IHardwareProvider _HWProvider;
 
     private readonly ICiMenuActions _ciMenu;    
 
@@ -73,6 +75,14 @@ namespace TvLibrary.Implementations.DVB
       get { return _ciMenu; }
     }
 
+    /// <summary>
+    /// Accessor for hardware providers.
+    /// Used only for non-standard methods (i.e. vendor APIs)
+    /// </summary>
+    public IHardwareProvider HWProvider
+    {
+      get { return _HWProvider; }
+    }
     //anysee _anysee = null;
 
     #endregion
@@ -212,6 +222,7 @@ namespace TvLibrary.Implementations.DVB
           if (_TeVii.IsSupported)
           {
             _diSEqCMotor = new DiSEqCMotor(_TeVii);
+            _HWProvider = _TeVii;
             Log.Log.WriteFile("Check for Hauppauge WinTV CI");
             if (winTvUsbCiFilter != null)
             {

@@ -34,7 +34,7 @@ namespace TvLibrary.Hardware
   /// <summary>
   /// TeVii hw control class
   /// </summary>
-  public class TeVii : IDisposable, IHardwareProvider, IDiSEqCController
+  public class TeVii : IDisposable, IHardwareProvider, IDiSEqCController, ICustomTuning
   {
     #region Dll Imports
 
@@ -473,6 +473,133 @@ namespace TvLibrary.Hardware
       Log.Log.Debug("ReadDiSEqCCommand not supported");
       reply = new byte[0];
       return true;
+    }
+
+    #endregion
+
+    #region ICustomTuning Member
+
+    /// <summary>
+    /// Check if the custom tune method is supported for given channel type.
+    /// </summary>
+    /// <param name="channel">Channel</param>
+    /// <returns>true if supported</returns>
+    public bool SupportsTuningForChannel(IChannel channel)
+    {
+      return (channel is DVBSChannel);
+    }
+
+    /// <summary>
+    /// Tunes to channel using custom tune method.
+    /// </summary>
+    /// <param name="channel">Channel</param>
+    /// <param name="Parameters">ScanParameters</param>
+    /// <returns>true if successful</returns>
+    public bool CustomTune(IChannel channel, ScanParameters Parameters)
+    {
+      if (!SupportsTuningForChannel(channel))
+        return false;
+
+      DVBSChannel satelliteChannel = channel as DVBSChannel;
+
+      bool hiBand = BandTypeConverter.IsHiBand(satelliteChannel, Parameters);
+      int lof1, lof2, sw;
+      BandTypeConverter.GetDefaultLnbSetup(Parameters, satelliteChannel.BandType, out lof1, out lof2, out sw);
+      int lnbFrequency;
+      if (hiBand)
+        lnbFrequency = lof2 * 1000;
+      else
+        lnbFrequency = lof1 * 1000;
+
+      Log.Log.Debug("TeVii: Start CustomTune F:{0} SR:{1} LOF:{6} P:{2} HI:{3} M:{4} FEC:{5}",
+        (int)satelliteChannel.Frequency,
+        satelliteChannel.SymbolRate * 1000,
+        Translate(satelliteChannel.Polarisation),
+        hiBand,
+        Translate(satelliteChannel.ModulationType),
+        Translate(satelliteChannel.InnerFecRate),
+        lnbFrequency
+        );
+
+      int res = TuneTransponder(m_iDeviceIndex,
+        (int)satelliteChannel.Frequency,
+        satelliteChannel.SymbolRate * 1000,
+        lnbFrequency,
+        Translate(satelliteChannel.Polarisation),
+        hiBand ? 1:0,
+        Translate(satelliteChannel.ModulationType),
+        Translate(satelliteChannel.InnerFecRate)
+        );
+      Log.Log.Debug("TeVii: Send CustomTune: {0}", res);
+      return (res == 1);
+    }
+
+    private TPolarization Translate(Polarisation pol)
+    {
+      switch (pol)
+      {
+        case Polarisation.CircularL:
+        case Polarisation.LinearH: 
+          return TPolarization.TPol_Horizontal;
+        case Polarisation.CircularR:
+        case Polarisation.LinearV: 
+          return TPolarization.TPol_Vertical;
+        default: 
+          return TPolarization.TPol_None;
+      }
+    }
+    private TFEC Translate(BinaryConvolutionCodeRate fec)
+    {
+      switch (fec)
+      {
+        case BinaryConvolutionCodeRate.Rate1_2:
+          return TFEC.TFEC_1_2;
+        case BinaryConvolutionCodeRate.Rate2_3:
+          return TFEC.TFEC_2_3;
+        case BinaryConvolutionCodeRate.Rate3_4:
+          return TFEC.TFEC_3_4;
+        case BinaryConvolutionCodeRate.Rate3_5:
+          return TFEC.TFEC_3_5;
+        case BinaryConvolutionCodeRate.Rate4_5:
+          return TFEC.TFEC_4_5;
+        case BinaryConvolutionCodeRate.Rate5_6:
+          return TFEC.TFEC_5_6;
+        case BinaryConvolutionCodeRate.Rate5_11:
+          return TFEC.TFEC_5_11;
+        case BinaryConvolutionCodeRate.Rate7_8:
+          return TFEC.TFEC_7_8;
+        case BinaryConvolutionCodeRate.Rate1_4:
+          return TFEC.TFEC_1_4;
+        case BinaryConvolutionCodeRate.Rate1_3:
+          return TFEC.TFEC_1_3;
+        case BinaryConvolutionCodeRate.Rate2_5:
+          return TFEC.TFEC_2_5;
+        case BinaryConvolutionCodeRate.Rate6_7:
+          return TFEC.TFEC_6_7;
+        case BinaryConvolutionCodeRate.Rate8_9:
+          return TFEC.TFEC_8_9;
+        case BinaryConvolutionCodeRate.Rate9_10:
+          return TFEC.TFEC_9_10;
+        case BinaryConvolutionCodeRate.RateMax:
+        default:
+          return TFEC.TFEC_AUTO;
+      }
+    }
+    private TMOD Translate(ModulationType mod)
+    {
+      switch (mod)
+      {
+        case ModulationType.Mod8Psk:
+          return TMOD.TMOD_TURBO_8PSK;
+          //return TMOD.TMOD_DVBS2_8PSK;
+        case ModulationType.ModQpsk:
+          return TMOD.TMOD_TURBO_QPSK; 
+          //return TMOD.TMOD_DVBS2_QPSK;
+        case ModulationType.Mod8Vsb:
+          return TMOD.TMOD_8VSB;
+        default:
+          return TMOD.TMOD_AUTO;
+      }
     }
 
     #endregion

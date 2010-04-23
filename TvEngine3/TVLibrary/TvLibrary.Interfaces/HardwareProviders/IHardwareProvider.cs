@@ -25,6 +25,7 @@ using DirectShowLib;
 using TvLibrary.Channels;
 using TvLibrary.Implementations;
 using TvLibrary.Implementations.DVB;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Hardware
 {
@@ -95,5 +96,25 @@ namespace TvLibrary.Hardware
     /// Returns the Capabilities
     /// </summary>
     CapabilitiesType Capabilities { get; }
+  }
+
+  /// <summary>
+  /// Interface for hardware providers to implement a custom tuning method.
+  /// </summary>
+  public interface ICustomTuning
+  {
+    /// <summary>
+    /// Check if the custom tune method is supported for given channel type.
+    /// </summary>
+    /// <param name="channel">Channel</param>
+    /// <returns>true if supported</returns>
+    bool SupportsTuningForChannel(IChannel channel);
+    /// <summary>
+    /// Tunes to channel using custom tune method.
+    /// </summary>
+    /// <param name="channel">Channel</param>
+    /// <param name="Parameters">ScanParameters</param>
+    /// <returns>true if successful</returns>
+    bool CustomTune(IChannel channel, ScanParameters Parameters);
   }
 }
