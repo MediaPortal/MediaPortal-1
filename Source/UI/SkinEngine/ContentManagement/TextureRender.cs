@@ -22,7 +22,6 @@
 
 #endregion
 
-using System;
 using SlimDX;
 using MediaPortal.UI.SkinEngine.DirectX;
 using MediaPortal.UI.SkinEngine.Effects;
@@ -51,7 +50,7 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
     private float _previousUmax;
     private float _previousVMax;
     readonly PrimitiveContext _context;
-    PositionColored2Textured[] _vertices;
+    readonly PositionColored2Textured[] _vertices;
     readonly TextureAsset _texture;
     bool _added = false;
 
@@ -217,7 +216,7 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
         _vertices[5].Position = bottomRight;
         _vertices[5].Color = (int) colorBottomRight;
         //SkinContext.GetAlphaGradientUV(bottomRight, out tu2, out tv2);
-        _context.OnVerticesChanged(2, ref _vertices);
+        _context.OnVerticesChanged(2, _vertices);
       }
     }
 

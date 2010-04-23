@@ -69,7 +69,7 @@ namespace MediaPortal.UI.SkinEngine.Rendering
       _vertices = vertices;
     }
 
-    public void OnVerticesChanged(int numVertices, ref PositionColored2Textured[] vertices)
+    public void OnVerticesChanged(int numVertices, PositionColored2Textured[] vertices)
     {
       InitializeVertexBuffer(numVertices, vertices);
       if (_renderGroup != null)

@@ -46,13 +46,12 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
     private Color4 _previousColor;
     private bool _previousGradientUsed = false;
     private Font _font;
-    private int _primitivecount;
     private bool _textFits = true;
     private float _xPosition = 0;
     private float _previousTotalWidth;
     private int _characterIndex = 0;
     Matrix _previousMatrix;
-    PrimitiveContext _context;
+    readonly PrimitiveContext _context;
     bool _isAdded = false;
 
     #endregion
@@ -92,6 +91,7 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
     /// </summary>
     /// <param name="text">The text.</param>
     /// <param name="textBox">The text box.</param>
+    /// <param name="zOrder">The Z order.</param>
     /// <param name="alignment">The alignment.</param>
     /// <param name="fontSize">The font size.</param>
     /// <param name="color">The color.</param>
@@ -111,10 +111,12 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
     /// </summary>
     /// <param name="text">The text.</param>
     /// <param name="textBox">The text box.</param>
+    /// <param name="zOrder">The Z order.</param>
     /// <param name="alignment">The alignment.</param>
     /// <param name="fontSize">The size.</param>
     /// <param name="color">The color.</param>
     /// <param name="scroll">if set to <c>true</c> then scrolling is allowed.</param>
+    /// <param name="totalWidth">The total width.</param>
     public void Draw(string text, RectangleF textBox, float zOrder, Font.Align alignment, float fontSize, Color4 color, bool scroll, out float totalWidth)
     {
       totalWidth = 0;
@@ -158,7 +160,7 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
           _font.AddString(textDraw, textBox, zOrder, alignment, fontSize, color, true, true, out _textFits, out totalWidth);
 
           PositionColored2Textured[] verts = _font.Vertices;
-          _context.OnVerticesChanged(_font.PrimitiveCount, ref verts);
+          _context.OnVerticesChanged(_font.PrimitiveCount, verts);
           //_font.Render(GraphicsDevice.Device, _vertexBuffer, out _primitivecount);
           _font.ClearStrings();
 
@@ -198,7 +200,7 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
         _font.AddString(text, textBox, zOrder, alignment, fontSize, color, true, false, out _textFits, out totalWidth);
         //_font.Render(GraphicsDevice.Device, _vertexBuffer, out _primitivecount);
         PositionColored2Textured[] verts = _font.Vertices;
-        _context.OnVerticesChanged(_font.PrimitiveCount, ref verts);
+        _context.OnVerticesChanged(_font.PrimitiveCount, verts);
         _font.ClearStrings();
         _previousTotalWidth = totalWidth;
       }
