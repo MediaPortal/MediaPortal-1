@@ -151,6 +151,7 @@ namespace MediaPortal.UI.SkinEngine.Rendering
         if (!_texture.IsAllocated)
           _texture.Allocate();
         _parameters.Set();
+        GraphicsDevice.Device.VertexFormat = PositionColored2Textured.Format;
         _effect.StartRender(_texture.Texture);
         GraphicsDevice.Device.SetStreamSource(0, _vertices, 0, PositionColored2Textured.StrideSize);
         GraphicsDevice.Device.DrawPrimitives(_primitiveType, 0, _primitiveCount);

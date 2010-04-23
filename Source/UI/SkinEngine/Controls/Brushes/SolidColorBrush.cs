@@ -29,7 +29,6 @@ using MediaPortal.UI.SkinEngine.DirectX;
 using MediaPortal.UI.SkinEngine.Rendering;
 using System.Drawing;
 using SlimDX;
-using SlimDX.Direct3D9;
 using MediaPortal.Utilities.DeepCopy;
 using MediaPortal.UI.SkinEngine.SkinManagement;
 
@@ -113,7 +112,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         verts[i].Color = color.ToArgb();
     }
 
-    public override bool BeginRender(VertexBuffer vertexBuffer, int primitiveCount, PrimitiveType primitiveType)
+    public override bool BeginRender(PrimitiveContext primitiveContext)
     {
       Color4 v = ColorConverter.FromColor(Color);
       v.Alpha *= (float) SkinContext.Opacity;

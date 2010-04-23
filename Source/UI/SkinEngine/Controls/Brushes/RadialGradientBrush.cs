@@ -221,7 +221,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       }
     }
 
-    public override bool BeginRender(VertexBuffer vertexBuffer, int primitiveCount, PrimitiveType primitiveType)
+    public override bool BeginRender(PrimitiveContext primitiveContext)
     {
       if (Transform != null)
       {
@@ -237,7 +237,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops, IsOpacityBrush);
         if (_singleColor)
         {
-          SetColor(vertexBuffer);
+          SetColor(primitiveContext.VertexBuffer);
           _effect = ContentManager.GetEffect("solidbrush");
           _handleColor = _effect.GetParameterHandle("g_solidColor");
         }
@@ -268,7 +268,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         }
       }
 
-      //GraphicsDevice.TransformWorld = SkinContext.FinalMatrix.Matrix;
       if (_singleColor)
       {
         Color4 v = ColorConverter.FromColor(GradientStops[0].Color);
@@ -348,8 +347,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
                 _effect.StartRender(_brushTexture.Texture);
 
-                GraphicsDevice.Device.SetStreamSource(0, vertexBuffer, 0, PositionColored2Textured.StrideSize);
-                GraphicsDevice.Device.DrawPrimitives(primitiveType, 0, primitiveCount);
+                GraphicsDevice.Device.SetStreamSource(0, primitiveContext.VertexBuffer, 0, PositionColored2Textured.StrideSize);
+                GraphicsDevice.Device.DrawPrimitives(primitiveContext.PrimitiveType, 0, primitiveContext.NumVertices);
 
                 _effect.EndRender();
 

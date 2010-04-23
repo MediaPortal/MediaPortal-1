@@ -29,6 +29,7 @@ using MediaPortal.Core.General;
 using MediaPortal.UI.SkinEngine.ContentManagement;
 using MediaPortal.UI.SkinEngine.Effects;
 using MediaPortal.UI.SkinEngine.DirectX;
+using MediaPortal.UI.SkinEngine.Rendering;
 using SlimDX;
 using SlimDX.Direct3D9;
 using MediaPortal.Utilities.DeepCopy;
@@ -166,7 +167,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       _refresh = true;
     }
 
-    public override bool BeginRender(VertexBuffer vertexBuffer, int primitiveCount, PrimitiveType primitiveType)
+    public override bool BeginRender(PrimitiveContext primitiveContext)
     {
       if (Transform != null)
       {
@@ -183,7 +184,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops, IsOpacityBrush);
         if (_singleColor)
         {
-          SetColor(vertexBuffer);
+          SetColor(primitiveContext.VertexBuffer);
           _effect = ContentManager.GetEffect("solidbrush");
           _handleSolidColor = _effect.GetParameterHandle("g_solidColor");
         }
@@ -209,7 +210,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         g_endpoint[0] = ((EndPoint.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _bounds.Width;
         g_endpoint[1] = ((EndPoint.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _bounds.Height;
       }
-      //GraphicsDevice.TransformWorld = SkinContext.FinalMatrix.Matrix;
+
       if (!_singleColor)
       {
         if (Freezable)
@@ -279,8 +280,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
                 _handleEndPoint.SetParameter(g_endpoint);
                 _effect.StartRender(_brushTexture.Texture);
 
-                GraphicsDevice.Device.SetStreamSource(0, vertexBuffer, 0, PositionColored2Textured.StrideSize);
-                GraphicsDevice.Device.DrawPrimitives(primitiveType, 0, primitiveCount);
+                GraphicsDevice.Device.SetStreamSource(0, primitiveContext.VertexBuffer, 0, PositionColored2Textured.StrideSize);
+                GraphicsDevice.Device.DrawPrimitives(primitiveContext.PrimitiveType, 0, primitiveContext.NumVertices);
 
                 _effect.EndRender();
 
@@ -445,7 +446,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     {
     }
 
-    public override void SetupPrimitive(Rendering.PrimitiveContext context)
+    public override void SetupPrimitive(PrimitiveContext context)
     {
       context.Parameters = new EffectParameters();
       CheckSingleColor();

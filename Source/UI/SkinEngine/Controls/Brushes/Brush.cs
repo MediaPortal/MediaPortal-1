@@ -265,8 +265,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       _bounds = new RectangleF(minx, miny, maxx, maxy);
     }
 
-    public virtual bool BeginRender(VertexBuffer vertexBuffer, int primitiveCount,
-        PrimitiveType primitiveType)
+    public virtual bool BeginRender(PrimitiveContext primitiveContext)
     {
       return false;
     }

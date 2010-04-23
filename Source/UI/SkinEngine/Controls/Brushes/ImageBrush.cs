@@ -26,8 +26,8 @@ using System.Drawing;
 using MediaPortal.Core.General;
 using MediaPortal.UI.SkinEngine.ContentManagement;
 using MediaPortal.UI.SkinEngine.DirectX;
+using MediaPortal.UI.SkinEngine.Rendering;
 using SlimDX;
-using SlimDX.Direct3D9;
 using MediaPortal.Utilities.DeepCopy;
 
 namespace MediaPortal.UI.SkinEngine.Controls.Brushes
@@ -159,7 +159,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       }
     }
 
-    public override bool BeginRender(VertexBuffer vertexBuffer, int primitiveCount, PrimitiveType primitiveType)
+    public override bool BeginRender(PrimitiveContext primitiveContext)
     {
       //GraphicsDevice.TransformWorld = SkinContext.FinalMatrix.Matrix;
       if (_tex == null)

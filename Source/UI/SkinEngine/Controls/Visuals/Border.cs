@@ -420,24 +420,20 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       SkinContext.AddOpacity(Opacity);
 
       if (_backgroundContext != null)
-      {
-        if (Background.BeginRender(_backgroundContext.VertexBuffer, _backgroundContext.NumVertices, _backgroundContext.PrimitiveType))
+        if (Background.BeginRender(_backgroundContext))
         {
           GraphicsDevice.Device.SetStreamSource(0, _backgroundContext.VertexBuffer, 0, PositionColored2Textured.StrideSize);
           GraphicsDevice.Device.DrawPrimitives(_backgroundContext.PrimitiveType, 0, _backgroundContext.NumVertices);
           Background.EndRender();
         }
-      }
 
       if (_borderContext != null)
-      {
-        if (BorderBrush.BeginRender(_borderContext.VertexBuffer, _borderContext.NumVertices, _borderContext.PrimitiveType))
+        if (BorderBrush.BeginRender(_borderContext))
         {
           GraphicsDevice.Device.SetStreamSource(0, _borderContext.VertexBuffer, 0, PositionColored2Textured.StrideSize);
           GraphicsDevice.Device.DrawPrimitives(_borderContext.PrimitiveType, 0, _borderContext.NumVertices);
           BorderBrush.EndRender();
         }
-      }
 
       if (_content != null)
         _content.Render();

@@ -279,7 +279,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Panels
 
       if (_backgroundContext != null)
       {
-        if (Background.BeginRender(_backgroundContext.VertexBuffer, 2, _backgroundContext.PrimitiveType))
+        if (Background.BeginRender(_backgroundContext))
         {
           GraphicsDevice.Device.SetStreamSource(0, _backgroundContext.VertexBuffer, 0, PositionColored2Textured.StrideSize);
           GraphicsDevice.Device.DrawPrimitives(_backgroundContext.PrimitiveType, 0, 2);

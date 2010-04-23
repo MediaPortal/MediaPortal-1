@@ -31,6 +31,7 @@ using MediaPortal.UI.SkinEngine.ContentManagement;
 using MediaPortal.UI.SkinEngine.Effects;
 using MediaPortal.UI.SkinEngine.DirectX;
 using MediaPortal.UI.SkinEngine.Players;
+using MediaPortal.UI.SkinEngine.Rendering;
 using SlimDX.Direct3D9;
 using MediaPortal.UI.Presentation.Players;
 using MediaPortal.Utilities.DeepCopy;
@@ -165,7 +166,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       PositionColored2Textured.Set(vertexBuffer, verts);
     }
 
-    public override bool BeginRender(VertexBuffer vertexBuffer, int primitiveCount, PrimitiveType primitiveType)
+    public override bool BeginRender(PrimitiveContext primitiveContext)
     {
       IPlayerManager playerManager = ServiceScope.Get<IPlayerManager>(false);
       if (playerManager == null)
@@ -185,7 +186,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         SkinContext.AddRenderTransform(mTrans);
       }
 
-      UpdateVertexBuffer(_renderPlayer, vertexBuffer);
+      UpdateVertexBuffer(_renderPlayer, primitiveContext.VertexBuffer);
       _renderPlayer.BeginRender(_effect);
       return true;
     }
