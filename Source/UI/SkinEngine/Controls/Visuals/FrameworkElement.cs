@@ -1042,7 +1042,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       col.Alpha *= (float) Opacity;
       int color = col.ToArgb();
 
-      //upper left
+      // Upper left
       verts[0].X = bounds.X;
       verts[0].Y = bounds.Y;
       verts[0].Color = color;
@@ -1050,7 +1050,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       verts[0].Tv1 = 0;
       verts[0].Z = zPos;
 
-      //bottom left
+      // Bottom left
       verts[1].X = bounds.X;
       verts[1].Y = bounds.Bottom;
       verts[1].Color = color;
@@ -1058,7 +1058,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       verts[1].Tv1 = 1;
       verts[1].Z = zPos;
 
-      //bottom right
+      // Bottom right
       verts[2].X = bounds.Right;
       verts[2].Y = bounds.Bottom;
       verts[2].Color = color;
@@ -1066,7 +1066,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       verts[2].Tv1 = 1;
       verts[2].Z = zPos;
 
-      //upper left
+      // Upper left
       verts[3].X = bounds.X;
       verts[3].Y = bounds.Y;
       verts[3].Color = color;
@@ -1074,7 +1074,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       verts[3].Tv1 = 0;
       verts[3].Z = zPos;
 
-      //upper right
+      // Upper right
       verts[4].X = bounds.Right;
       verts[4].Y = bounds.Y;
       verts[4].Color = color;
@@ -1082,7 +1082,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       verts[4].Tv1 = 0;
       verts[4].Z = zPos;
 
-      //bottom right
+      // Bottom right
       verts[5].X = bounds.Right;
       verts[5].Y = bounds.Bottom;
       verts[5].Color = color;
@@ -1114,7 +1114,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       base.Deallocate();
       if (_opacityMaskContext != null)
       {
-        //Trace.WriteLine("FrameworkElement: Deallocate _opacityMaskContext");
         _opacityMaskContext.Free(true);
         ContentManager.Remove(_opacityMaskContext);
         _opacityMaskContext = null;
