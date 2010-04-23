@@ -28,6 +28,7 @@ using MediaPortal.UI.SkinEngine.DirectX;
 using MediaPortal.UI.SkinEngine.Effects;
 using MediaPortal.UI.SkinEngine.Rendering;
 using MediaPortal.UI.SkinEngine.SkinManagement;
+using SlimDX.Direct3D9;
 
 namespace MediaPortal.UI.SkinEngine.ContentManagement
 {
@@ -63,10 +64,13 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
     public TextureRender(TextureAsset texture)
     {
       _texture = texture;
-      _context = new PrimitiveContext();
-      _context.Texture = texture;
-      _context.Effect = ContentManager.GetEffect("normal");
-      _context.Parameters = new EffectParameters();
+      _context = new PrimitiveContext
+        {
+            Texture = texture,
+            Effect = ContentManager.GetEffect("normal"),
+            Parameters = new EffectParameters(),
+            PrimitiveType = PrimitiveType.TriangleList
+        };
       _vertices = new PositionColored2Textured[6];
       Set(0, 0, 0, 0, 0, 0, 0, 1, 1, 0xff, 0xff, 0xff, 0xff);
     }
@@ -80,7 +84,6 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
     {
       if (_texture.Name != fileName)
       {
-        RenderPipeline.Instance.Remove(_context);
         _previousX = _previousY = _previousZ = _previousWidth = _previousHeight = 0;
         _previousColorUpperLeft = 0;
         _previousColorBottomLeft = 0;
@@ -89,8 +92,6 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
         //        _previousGradientInUse = false;
         _context.Texture = ContentManager.GetTexture(fileName, thumbnail);
         Set(0, 0, 0, 0, 0, 0, 0, 1, 1, 0xff, 0xff, 0xff, 0xff);
-        RenderPipeline.Instance.Add(_context);
-        _added = true;
       }
     }
 
@@ -334,14 +335,19 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
 
     public void Free()
     {
-      if (_added)
-        RenderPipeline.Instance.Remove(_context);
+      if (_added && _context != null)
+      {
+        if (SkinContext.UseBatching)
+          RenderPipeline.Instance.Remove(_context);
+        _context.Dispose();
+      }
       _added = false;
     }
     public void Alloc()
     {
       if (!_added)
-        RenderPipeline.Instance.Add(_context);
+        if (SkinContext.UseBatching)
+          RenderPipeline.Instance.Add(_context);
       _added = true;
     }
   }

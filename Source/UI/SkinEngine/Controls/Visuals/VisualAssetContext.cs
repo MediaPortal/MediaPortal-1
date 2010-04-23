@@ -34,7 +34,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     public VertexBuffer _vertexBuffer;
     public Texture _texture;
     public DateTime LastTimeUsed;
-    string _name;
+    readonly string _name;
     static int _assetId = 0;
 
     public VisualAssetContext(string controlName, string screenName)
@@ -81,9 +81,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       set
       {
         if (_vertexBuffer != null)
-        {
           _vertexBuffer.Dispose();
-        }
         _vertexBuffer = value;
         LastTimeUsed = SkinContext.Now;
       }
@@ -98,9 +96,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       set
       {
         if (_texture != null)
-        {
           _texture.Dispose();
-        }
         _texture = value;
         LastTimeUsed = SkinContext.Now;
       }

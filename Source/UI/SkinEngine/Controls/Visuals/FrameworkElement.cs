@@ -1026,7 +1026,11 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     /// </summary>
     void UpdateOpacityMask()
     {
-      if (OpacityMask == null) return;
+      if (!_updateOpacityMask)
+        return;
+      _updateOpacityMask = false;
+      if (OpacityMask == null)
+        return;
       if (_opacityMaskContext == null)
       {
         _opacityMaskContext = new VisualAssetContext("FrameworkElement.OpacityMaskContext:" + Name, Screen.Name);
@@ -1038,7 +1042,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
         _opacityMaskContext.VertexBuffer = PositionColored2Textured.Create(6);
       }
-      if (!_updateOpacityMask) return;
       _opacityMaskContext.LastTimeUsed = SkinContext.Now;
       if (_opacityMaskContext.Texture != null)
       {
@@ -1113,9 +1116,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       // Fill the vertex buffer
       OpacityMask.IsOpacityBrush = true;
       OpacityMask.SetupBrush(ActualBounds, FinalLayoutTransform, ActualPosition.Z, ref verts);
-      PositionColored2Textured.Set(_opacityMaskContext.VertexBuffer, ref verts);
-
-      _updateOpacityMask = false;
+      PositionColored2Textured.Set(_opacityMaskContext.VertexBuffer, verts);
     }
 
     #endregion

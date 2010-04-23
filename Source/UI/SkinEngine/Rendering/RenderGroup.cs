@@ -33,88 +33,60 @@ using SlimDX.Direct3D9;
 
 namespace MediaPortal.UI.SkinEngine.Rendering
 {
-  // TODO: Make PrimitiveType configurable, add primitive type to grouping aspects
   public class RenderGroup : IDisposable
   {
     EffectAsset _effect;
     EffectParameters _parameters;
     ITextureAsset _texture;
     VertexBuffer _vertices;
+    PrimitiveType _primitiveType;
     int _primitiveCount;
-    List<PrimitiveContext> _primitives = new List<PrimitiveContext>();
+    readonly List<PrimitiveContext> _primitives = new List<PrimitiveContext>();
     bool _updateVertices;
 
-    #region properties
+    #region Properties
+
     public bool UpdateVertices
     {
-      get
-      {
-        return _updateVertices;
-      }
-      set
-      {
-        _updateVertices = value;
-      }
+      get { return _updateVertices; }
+      set { _updateVertices = value; }
     }
     public EffectAsset Effect
     {
-      get
-      {
-        return _effect;
-      }
-      set
-      {
-        _effect = value;
-      }
+      get { return _effect; }
+      set { _effect = value; }
     }
 
     public EffectParameters Parameters
     {
-      get
-      {
-        return _parameters;
-      }
-      set
-      {
-        _parameters = value;
-      }
+      get { return _parameters; }
+      set { _parameters = value; }
     }
 
     public ITextureAsset Texture
     {
-      get
-      {
-        return _texture;
-      }
-      set
-      {
-        _texture = value;
-      }
+      get { return _texture; }
+      set { _texture = value; }
     }
 
     public VertexBuffer Vertices
     {
-      get
-      {
-        return _vertices;
-      }
-      set
-      {
-        _vertices = value;
-      }
+      get { return _vertices; }
+      set { _vertices = value; }
     }
 
     public int PrimitiveCount
     {
-      get
-      {
-        return _primitiveCount;
-      }
-      set
-      {
-        _primitiveCount = value;
-      }
+      get { return _primitiveCount; }
+      set { _primitiveCount = value; }
     }
+
+    public PrimitiveType PrimitiveType
+    {
+      get { return _primitiveType; }
+      set { _primitiveType = value; }
+    }
+
     #endregion
 
     public void Clear()
@@ -129,6 +101,7 @@ namespace MediaPortal.UI.SkinEngine.Rendering
       _primitives.Remove(primitive);
       _updateVertices = true;
     }
+
     public void Add(PrimitiveContext primitive)
     {
       primitive.RenderGroup = this;
@@ -150,7 +123,7 @@ namespace MediaPortal.UI.SkinEngine.Rendering
         if (primitive.Vertices != null)
         {
           verticeCount += primitive.Vertices.Length;
-          _primitiveCount += primitive.PrimitiveCount;
+          _primitiveCount += primitive.NumVertices;
         }
       }
       if (verticeCount > 0)
@@ -159,10 +132,8 @@ namespace MediaPortal.UI.SkinEngine.Rendering
         using (DataStream stream = _vertices.Lock(0, 0, LockFlags.Discard))
         {
           foreach (PrimitiveContext primitive in _primitives)
-          {
             if (primitive.Vertices != null)
               stream.WriteRange(primitive.Vertices);
-          }
         }
         _vertices.Unlock();
       }
@@ -182,7 +153,7 @@ namespace MediaPortal.UI.SkinEngine.Rendering
         _parameters.Set();
         _effect.StartRender(_texture.Texture);
         GraphicsDevice.Device.SetStreamSource(0, _vertices, 0, PositionColored2Textured.StrideSize);
-        GraphicsDevice.Device.DrawPrimitives(PrimitiveType.TriangleList, 0, _primitiveCount);
+        GraphicsDevice.Device.DrawPrimitives(_primitiveType, 0, _primitiveCount);
         _effect.EndRender();
         _texture.KeepAlive();
       }

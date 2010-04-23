@@ -162,7 +162,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         verts[i].Color = _verts[i].Color;
         verts[i].Z = SkinContext.GetZorder();
       }
-      PositionColored2Textured.Set(vertexBuffer, ref verts);
+      PositionColored2Textured.Set(vertexBuffer, verts);
     }
 
     public override bool BeginRender(VertexBuffer vertexBuffer, int primitiveCount, PrimitiveType primitiveType)

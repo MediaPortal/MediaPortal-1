@@ -36,7 +36,7 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
 {
   public class FontRender
   {
-    #region variables
+    #region Variables
 
     private string _previousText;
     private RectangleF _previousTextBox;
@@ -69,10 +69,13 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
       _previousSize = 0;
       _previousColor = new Color4();
       _previousGradientUsed = false;
-      _context = new PrimitiveContext();
-      _context.Effect = ContentManager.GetEffect("font");
-      _context.Parameters = new EffectParameters();
-      _context.Texture = _font;
+      _context = new PrimitiveContext
+        {
+            Effect = ContentManager.GetEffect("font"),
+            Parameters = new EffectParameters(),
+            Texture = _font,
+            PrimitiveType = PrimitiveType.TriangleList
+        };
     }
 
     /// <summary>
@@ -120,7 +123,7 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
       Alloc();
       if (scroll)
       {
-        if (false == _textFits)
+        if (!_textFits)
         {
           if (IsChanged(text, textBox, zOrder, alignment, fontSize, color))
           {
@@ -214,18 +217,21 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
 
     public void Free()
     {
-      if (_isAdded)
+      if (_isAdded && _context != null)
       {
-        RenderPipeline.Instance.Remove(_context);
-        _isAdded = false;
+        if (SkinContext.UseBatching)
+          RenderPipeline.Instance.Remove(_context);
+        _context.Dispose();
       }
+      _isAdded = false;
     }
 
     public void Alloc()
     {
-      if (_isAdded == false)
+      if (!_isAdded)
       {
-        RenderPipeline.Instance.Add(_context);
+        if (SkinContext.UseBatching)
+          RenderPipeline.Instance.Add(_context);
         _isAdded = true;
       }
     }

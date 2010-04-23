@@ -31,6 +31,7 @@ using System.Net;
 using System.Net.Cache;
 using MediaPortal.Core;
 using MediaPortal.Core.Logging;
+using MediaPortal.UI.SkinEngine.DirectX;
 using MediaPortal.UI.Thumbnails;
 using SlimDX.Direct3D9;
 using MediaPortal.UI.SkinEngine.SkinManagement;

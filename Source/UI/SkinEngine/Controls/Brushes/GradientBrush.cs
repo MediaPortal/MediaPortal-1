@@ -181,7 +181,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       for (int i = 0; i < _verts.Length; ++i)
         _verts[i].Color = color.ToArgb();
 
-      PositionColored2Textured.Set(vertexbuffer, ref _verts);
+      PositionColored2Textured.Set(vertexbuffer, _verts);
     }
 
     #endregion
