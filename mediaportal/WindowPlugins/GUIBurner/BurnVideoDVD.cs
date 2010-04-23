@@ -253,66 +253,69 @@ namespace MediaPortal.GUI.GUIBurner
 
         ProvideStatusUpdate("Creating DVD Menus");
 
-        StreamWriter SW_MenuGen;
-
         #region Generate the Menu File
 
-        SW_MenuGen = File.CreateText(Path.Combine(_TempFolderPath, "menuGen.gen"));
-
-        string strTemp = Path.GetDirectoryName(Application.ExecutablePath);
-        strTemp = Path.Combine(strTemp, GUIGraphicsContext.Skin);
-        strTemp = "Theme Folder =" + Path.Combine(strTemp, "media");
-
-        SW_MenuGen.WriteLine(strTemp);
-        SW_MenuGen.WriteLine(@"Work Folder =" + _TempFolderPath);
-        SW_MenuGen.WriteLine(@"Graphics Magick =" + Config.GetFile(Config.Dir.BurnerSupport, "gm.exe"));
-        SW_MenuGen.WriteLine(@"Mplex =" + Config.GetFile(Config.Dir.BurnerSupport, "mplex.exe"));
-        SW_MenuGen.WriteLine(@"jpeg2yuv =" + Config.GetFile(Config.Dir.BurnerSupport, "png2yuv.exe"));
-        SW_MenuGen.WriteLine(@"mpeg2enc =" + Config.GetFile(Config.Dir.BurnerSupport, "mpeg2enc.exe"));
-        SW_MenuGen.WriteLine(@"spumux =" + Config.GetFile(Config.Dir.BurnerSupport, "spumux.exe"));
-        SW_MenuGen.WriteLine(@"AC3 audio =" + Config.GetFile(Config.Dir.BurnerSupport, "Silence.ac3"));
-        SW_MenuGen.WriteLine(@"Button Image =" + Config.GetFile(Config.Dir.BurnerSupport, "navButton.png"));
-        SW_MenuGen.WriteLine(@"DVD Format (PAL or NTSC)=" + _TvFormat.ToUpper());
-        if (_InDebugMode)
+        using (StreamWriter SW_MenuGen = File.CreateText(Path.Combine(_TempFolderPath, "menuGen.gen")))
         {
-          strTemp = "1";
+
+
+
+          string strTemp = Path.GetDirectoryName(Application.ExecutablePath);
+          strTemp = Path.Combine(strTemp, GUIGraphicsContext.Skin);
+          strTemp = "Theme Folder =" + Path.Combine(strTemp, "media");
+
+          SW_MenuGen.WriteLine(strTemp);
+          SW_MenuGen.WriteLine(@"Work Folder =" + _TempFolderPath);
+          SW_MenuGen.WriteLine(@"Graphics Magick =" + Config.GetFile(Config.Dir.BurnerSupport, "gm.exe"));
+          SW_MenuGen.WriteLine(@"Mplex =" + Config.GetFile(Config.Dir.BurnerSupport, "mplex.exe"));
+          SW_MenuGen.WriteLine(@"jpeg2yuv =" + Config.GetFile(Config.Dir.BurnerSupport, "png2yuv.exe"));
+          SW_MenuGen.WriteLine(@"mpeg2enc =" + Config.GetFile(Config.Dir.BurnerSupport, "mpeg2enc.exe"));
+          SW_MenuGen.WriteLine(@"spumux =" + Config.GetFile(Config.Dir.BurnerSupport, "spumux.exe"));
+          SW_MenuGen.WriteLine(@"AC3 audio =" + Config.GetFile(Config.Dir.BurnerSupport, "Silence.ac3"));
+          SW_MenuGen.WriteLine(@"Button Image =" + Config.GetFile(Config.Dir.BurnerSupport, "navButton.png"));
+          SW_MenuGen.WriteLine(@"DVD Format (PAL or NTSC)=" + _TvFormat.ToUpper());
+
+          if (_InDebugMode)
+          {
+            strTemp = "1";
+          }
+          else
+          {
+            strTemp = "0";
+          }
+
+          SW_MenuGen.WriteLine(@"Leave files for debugging (0 is false, 1 is true)=" + strTemp);
+
+          int NumberOfFiles = _FilesToBurn.Count;
+
+          for (int i = 0; i < NumberOfFiles; i++)
+          {
+            strTemp = "-------------------------Video " + i.ToString() + " -------------------------";
+            SW_MenuGen.WriteLine(strTemp);
+
+            strTemp = Path.GetFileName(_FilesToBurn[i]);
+            string strVideoName = Path.GetFileNameWithoutExtension(strTemp);
+            strTemp = "Video " + i.ToString() + @" Show Title= " + strVideoName;
+            SW_MenuGen.WriteLine(strTemp);
+
+            // This will come from the TV/DVD database when it gets integrated into the context menu
+            //strTemp = "Video " + i.ToString() + @" Episode Title= Live Together, Die Alone";
+            strTemp = "Video " + i.ToString() + @" Episode Title=";
+            SW_MenuGen.WriteLine(strTemp);
+
+            // This will come from the TV/DVD database when it gets integrated into the context menu
+            //strTemp = "Video " + i.ToString() + @" Description= After discovering something odd just offshore, Jack and Sayid come up with a plan to 'confront'";
+            strTemp = "Video " + i.ToString() + @" Description=";
+            SW_MenuGen.WriteLine(strTemp);
+
+            // Commented until I can work out how to take a thumbnail of the video
+            // strTemp = "Video " + i.ToString() + @" Thumbnail=C:\temp\DVD\thumbnail.jpg";
+            strTemp = "Video " + i.ToString() + @" Thumbnail=";
+            SW_MenuGen.WriteLine(strTemp);
+          }
+
+          SW_MenuGen.Close();
         }
-        else
-        {
-          strTemp = "0";
-        }
-
-        SW_MenuGen.WriteLine(@"Leave files for debugging (0 is false, 1 is true)=" + strTemp);
-
-        int NumberOfFiles = _FilesToBurn.Count;
-
-        for (int i = 0; i < NumberOfFiles; i++)
-        {
-          strTemp = "-------------------------Video " + i.ToString() + " -------------------------";
-          SW_MenuGen.WriteLine(strTemp);
-
-          strTemp = Path.GetFileName(_FilesToBurn[i]);
-          string strVideoName = Path.GetFileNameWithoutExtension(strTemp);
-          strTemp = "Video " + i.ToString() + @" Show Title= " + strVideoName;
-          SW_MenuGen.WriteLine(strTemp);
-
-          // This will come from the TV/DVD database when it gets integrated into the context menu
-          //strTemp = "Video " + i.ToString() + @" Episode Title= Live Together, Die Alone";
-          strTemp = "Video " + i.ToString() + @" Episode Title=";
-          SW_MenuGen.WriteLine(strTemp);
-
-          // This will come from the TV/DVD database when it gets integrated into the context menu
-          //strTemp = "Video " + i.ToString() + @" Description= After discovering something odd just offshore, Jack and Sayid come up with a plan to 'confront'";
-          strTemp = "Video " + i.ToString() + @" Description=";
-          SW_MenuGen.WriteLine(strTemp);
-
-          // Commented until I can work out how to take a thumbnail of the video
-          // strTemp = "Video " + i.ToString() + @" Thumbnail=C:\temp\DVD\thumbnail.jpg";
-          strTemp = "Video " + i.ToString() + @" Thumbnail=";
-          SW_MenuGen.WriteLine(strTemp);
-        }
-
-        SW_MenuGen.Close();
 
         #endregion
 
@@ -374,69 +377,68 @@ namespace MediaPortal.GUI.GUIBurner
         ProvideStatusUpdate("Creating Config file for DVD Generation program");
 
         // Now we create the Config.xml file for DvdAuthor.exe
-        StreamWriter SW_ConfigFile;
 
-        SW_ConfigFile = File.CreateText(Path.Combine(_TempFolderPath, "Config.xml"));
-
-        string strTemp;
-
-        SW_ConfigFile.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-        SW_ConfigFile.WriteLine("<dvdauthor>");
-        SW_ConfigFile.WriteLine("  <vmgm>");
-        SW_ConfigFile.WriteLine("    <menus>");
-        SW_ConfigFile.WriteLine("    <video format=\"" + _TvFormat + "\" />");
-        SW_ConfigFile.WriteLine("      <pgc>");
-
-        int NumberOfFiles = _FilesToBurn.Count;
-
-        for (int i = 0; i < NumberOfFiles; i++)
+        using (StreamWriter SW_ConfigFile = File.CreateText(Path.Combine(_TempFolderPath, "Config.xml")))
         {
-          strTemp = "         <button> jump titleset " + (i + 1).ToString() + " menu; </button>";
-          SW_ConfigFile.WriteLine(strTemp);
-        }
+          string strTemp;
 
-        string mBkgdPath = Path.Combine(_TempFolderPath, "menuBackground.menu.mpg");
-        SW_ConfigFile.WriteLine("         <vob file=\"" + mBkgdPath + "\" pause=\"5\"/>");
-        SW_ConfigFile.WriteLine("      </pgc>");
-        SW_ConfigFile.WriteLine("    </menus>");
-        SW_ConfigFile.WriteLine("  </vmgm>");
-
-        for (int i = 0; i < NumberOfFiles; i++)
-        {
-          string smBkgd = "subMenuBackground." + i.ToString() + ".menu.mpg";
-          smBkgd = Path.Combine(_TempFolderPath, smBkgd);
-
-          SW_ConfigFile.WriteLine("  <titleset>");
+          SW_ConfigFile.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+          SW_ConfigFile.WriteLine("<dvdauthor>");
+          SW_ConfigFile.WriteLine("  <vmgm>");
           SW_ConfigFile.WriteLine("    <menus>");
           SW_ConfigFile.WriteLine("    <video format=\"" + _TvFormat + "\" />");
           SW_ConfigFile.WriteLine("      <pgc>");
-          SW_ConfigFile.WriteLine("        <button> jump title 1; </button>");
-          SW_ConfigFile.WriteLine("        <button> jump vmgm menu; </button>");
-          strTemp = "        <vob file=\"" + smBkgd + "\" pause=\"5\"/>";
-          SW_ConfigFile.WriteLine(strTemp);
+
+          int NumberOfFiles = _FilesToBurn.Count;
+
+          for (int i = 0; i < NumberOfFiles; i++)
+          {
+            strTemp = "         <button> jump titleset " + (i + 1).ToString() + " menu; </button>";
+            SW_ConfigFile.WriteLine(strTemp);
+          }
+
+          string mBkgdPath = Path.Combine(_TempFolderPath, "menuBackground.menu.mpg");
+          SW_ConfigFile.WriteLine("         <vob file=\"" + mBkgdPath + "\" pause=\"5\"/>");
           SW_ConfigFile.WriteLine("      </pgc>");
           SW_ConfigFile.WriteLine("    </menus>");
+          SW_ConfigFile.WriteLine("  </vmgm>");
 
-          SW_ConfigFile.WriteLine("    <titles>");
-          SW_ConfigFile.WriteLine("    <video format=\"" + _TvFormat + "\" />");
-          SW_ConfigFile.WriteLine("      <pgc>");
-          strTemp = "        <vob file=\"" + _FilesToBurn[i] +
-                    "\" chapters=\"15:00,30:00,45:00,1:00:00,1:15:00,1:30:00,1:45:00,2:00:00,2:15:00,2:30:00,2:45:00,3:00:00\" />";
-          SW_ConfigFile.WriteLine(strTemp);
-          SW_ConfigFile.WriteLine("        <post>call vmgm menu;</post>");
-          SW_ConfigFile.WriteLine("      </pgc>");
-          SW_ConfigFile.WriteLine("    </titles>");
-          SW_ConfigFile.WriteLine("  </titleset>");
+          for (int i = 0; i < NumberOfFiles; i++)
+          {
+            string smBkgd = "subMenuBackground." + i.ToString() + ".menu.mpg";
+            smBkgd = Path.Combine(_TempFolderPath, smBkgd);
+
+            SW_ConfigFile.WriteLine("  <titleset>");
+            SW_ConfigFile.WriteLine("    <menus>");
+            SW_ConfigFile.WriteLine("    <video format=\"" + _TvFormat + "\" />");
+            SW_ConfigFile.WriteLine("      <pgc>");
+            SW_ConfigFile.WriteLine("        <button> jump title 1; </button>");
+            SW_ConfigFile.WriteLine("        <button> jump vmgm menu; </button>");
+            strTemp = "        <vob file=\"" + smBkgd + "\" pause=\"5\"/>";
+            SW_ConfigFile.WriteLine(strTemp);
+            SW_ConfigFile.WriteLine("      </pgc>");
+            SW_ConfigFile.WriteLine("    </menus>");
+
+            SW_ConfigFile.WriteLine("    <titles>");
+            SW_ConfigFile.WriteLine("    <video format=\"" + _TvFormat + "\" />");
+            SW_ConfigFile.WriteLine("      <pgc>");
+            strTemp = "        <vob file=\"" + _FilesToBurn[i] +
+                      "\" chapters=\"15:00,30:00,45:00,1:00:00,1:15:00,1:30:00,1:45:00,2:00:00,2:15:00,2:30:00,2:45:00,3:00:00\" />";
+            SW_ConfigFile.WriteLine(strTemp);
+            SW_ConfigFile.WriteLine("        <post>call vmgm menu;</post>");
+            SW_ConfigFile.WriteLine("      </pgc>");
+            SW_ConfigFile.WriteLine("    </titles>");
+            SW_ConfigFile.WriteLine("  </titleset>");
+          }
+
+          SW_ConfigFile.WriteLine("</dvdauthor>");
+          SW_ConfigFile.Close();
+
+          // No Actual external app running to Exit so 
+          // we just call BurnProcess_Exited
+          EventArgs e = new EventArgs();
+          BurnProcess_Exited(this, e);
         }
-
-        SW_ConfigFile.WriteLine("</dvdauthor>");
-        SW_ConfigFile.Close();
-
-        // No Actual external app running to Exit so 
-        // we just call BurnProcess_Exited
-        EventArgs e = new EventArgs();
-        BurnProcess_Exited(this, e);
-
         Log.Info("Finished Config XML Creation", "");
       }
       catch (Exception ex)

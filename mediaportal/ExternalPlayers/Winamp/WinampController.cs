@@ -183,45 +183,43 @@ namespace MediaPortal.WinampPlayer
       try
       {
         //Pass the file path and file name to the StreamReader constructor
-        sr = new StreamReader(iniFile);
-
-        //Read the first line of text
-        string line = sr.ReadLine();
-
-        //Continue to read until you reach end of file
-        while (line != null)
+        string line = "";
+        using (sr = new StreamReader(iniFile))
         {
-          if (line.ToLower().Trim().StartsWith("minimized"))
+          //Read the first line of text
+          line = sr.ReadLine();               
+
+          //Continue to read until you reach end of file
+          while (line != null)
           {
-            if (line.ToLower().Trim().StartsWith("minimized=1"))
+            if (line.ToLower().Trim().StartsWith("minimized"))
             {
-              sr.Close();
-              sr = null;
-              return; // already in minimize... nothing to do...
+              if (line.ToLower().Trim().StartsWith("minimized=1"))
+              {
+                sr.Close();                
+                return; // already in minimize... nothing to do...
+              }
+              else
+              {
+                line = "minimized=1";
+              }
             }
-            else
-            {
-              line = "minimized=1";
-            }
+            buff.Append(line);
+            buff.Append("\r\n");
+            //Read the next line
+            line = sr.ReadLine();
           }
-          buff.Append(line);
-          buff.Append("\r\n");
-          //Read the next line
-          line = sr.ReadLine();
+          //close the file
+          sr.Close();          
         }
-        //close the file
-        sr.Close();
-        sr = null;
-
         //Pass the filepath and filename to the StreamWriter Constructor
-        sw = new StreamWriter(iniFile);
-
-        //Write the file back
-        sw.WriteLine(buff.ToString());
-
-        //Close the file
-        sw.Close();
-        sw = null;
+        using (sw = new StreamWriter(iniFile))
+        {
+          //Write the file back
+          sw.WriteLine(buff.ToString());
+          //Close the file
+          sw.Close();                    
+        }        
       }
       catch (Exception e)
       {

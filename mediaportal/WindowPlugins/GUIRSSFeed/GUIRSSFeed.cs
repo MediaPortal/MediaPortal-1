@@ -644,8 +644,11 @@ namespace MediaPortal.GUI.RSS
           // request.Proxy = WebProxy.GetDefaultProxy();
           request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) {}
+        catch (Exception) {}        
+
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        try
+        {                  
         using (Stream stream = response.GetResponseStream())
         {
           Encoding enc;
@@ -666,6 +669,14 @@ namespace MediaPortal.GUI.RSS
         // Convert html to text
         HtmlToText html = new HtmlToText(data);
         text = html.ToString().Trim();
+        }
+        finally
+        {
+          if (response != null)
+          {
+            response.Close();
+          }
+        }
       }
       catch (Exception ex)
       {

@@ -50,7 +50,7 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(String Title, String Subtitle, String Bottom)
     {
-      LoadSkin();
+      //LoadSkin();
       AllocResources();
       InitControls();
       lblHeading.Label = Title;

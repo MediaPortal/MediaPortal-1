@@ -411,11 +411,13 @@ namespace MediaPortal.Visualization
           return _CompatibleDC;
         }
 
-        Graphics g = Graphics.FromHwnd(this.Handle);
-        IntPtr hDC = g.GetHdc();
-        _CompatibleDC = CreateCompatibleDC(hDC);
-        g.ReleaseHdc(hDC);
-        g.SafeDispose();
+        using (Graphics g = Graphics.FromHwnd(this.Handle))
+        {
+          IntPtr hDC = g.GetHdc();
+          _CompatibleDC = CreateCompatibleDC(hDC);
+          g.ReleaseHdc(hDC);          
+        }
+        
         return _CompatibleDC;
       }
     }
@@ -1934,24 +1936,25 @@ namespace MediaPortal.Visualization
               }
 
               DialogWindowIsActive = false;
-              Graphics g = Graphics.FromHwnd(Handle);
-              int sleepMS = RenderVisualization(g);
-
-              if (sleepMS < 0)
+              using (Graphics g = Graphics.FromHwnd(Handle))
               {
-                sleepMS = 0;
-              }
+                int sleepMS = RenderVisualization(g);
 
-              g.SafeDispose();
+                if (sleepMS < 0)
+                {
+                  sleepMS = 0;
+                }
 
-              // Is it a Soundspectrum Viz, then we use, what their render returned in sleepMS
-              if (IsSoundSpectrumViz)
-              {
-                Thread.Sleep(sleepMS);
-              }
-              else
-              {
-                Thread.Sleep(VisualizationRenderInterval);
+
+                // Is it a Soundspectrum Viz, then we use, what their render returned in sleepMS
+                if (IsSoundSpectrumViz)
+                {
+                  Thread.Sleep(sleepMS);
+                }
+                else
+                {
+                  Thread.Sleep(VisualizationRenderInterval);
+                }
               }
             }
           }
@@ -2048,16 +2051,16 @@ namespace MediaPortal.Visualization
             {
               if (CurrentThumbImage != null && !UpdatingCoverArtImage)
               {
-                Bitmap bmp = new Bitmap(Width, Height);
-                Graphics gBmp = Graphics.FromImage(bmp);
-                gBmp.Clear(Color.Black);
-                DrawThumbnailOverlay(gBmp, 1.0f);
-                gBmp.SafeDispose();
-                g.DrawImageUnscaled(bmp, 0, 0);
-                bmp.SafeDispose();
-                bmp = null;
+                using (Bitmap bmp = new Bitmap(Width, Height))
+                {
+                  using (Graphics gBmp = Graphics.FromImage(bmp))
+                  {
+                    gBmp.Clear(Color.Black);
+                    DrawThumbnailOverlay(gBmp, 1.0f);                    
+                  }
+                  g.DrawImageUnscaled(bmp, 0, 0);                    
+                }                                
               }
-
               else
               {
                 g.Clear(Color.Black);
@@ -2096,51 +2099,54 @@ namespace MediaPortal.Visualization
               BackBuffer = Bitmap.FromHbitmap(hNativeMemDCBmp);
             }
 
-            Graphics gBackBuf = Graphics.FromImage(BackBuffer);
-            int dcState = SaveDC(_CompatibleDC);
-
-            SelectObject(_CompatibleDC, hNativeMemDCBmp);
-
-            sleepMS = Viz.RenderVisualization();
-            IntPtr hBackBufDC = gBackBuf.GetHdc();
-            try
+            using (Graphics gBackBuf = Graphics.FromImage(BackBuffer))
             {
-              BitBlt(hBackBufDC, 0, 0, Width, Height, _CompatibleDC, 0, 0, SRCCOPY);
-            }
-            finally
-            {
-              gBackBuf.ReleaseHdc(hBackBufDC);
-            }
+              int dcState = SaveDC(_CompatibleDC);
 
-            if (!FullScreen && CurrentThumbImage != null)
-            {
-              DoThumbnailOverlayFading(gBackBuf);
-            }
+              SelectObject(_CompatibleDC, hNativeMemDCBmp);
 
-            if (FullScreen && NewTrack && ShowTrackOverlay)
-            {
-              DoTrackInfoOverlayFading(gBackBuf);
-            }
-
-            if (ShowTrackOverlay)
-            {
-              DrawPlayStateIcon(gBackBuf);
-            }
-
-            try
-            {
-              gBackBuf.SafeDispose();
-
-              RestoreDC(_CompatibleDC, dcState);
-
-              // The BackBuffer image could be null if we're in the process of resizing
-              if (BackBuffer != null)
+              sleepMS = Viz.RenderVisualization();
+              IntPtr hBackBufDC = gBackBuf.GetHdc();
+              try
               {
-                g.DrawImageUnscaled(BackBuffer, 0, 0);
+                BitBlt(hBackBufDC, 0, 0, Width, Height, _CompatibleDC, 0, 0, SRCCOPY);
               }
-            }
+              finally
+              {
+                gBackBuf.ReleaseHdc(hBackBufDC);
+              }
 
-            catch (Exception) {}
+
+              if (!FullScreen && CurrentThumbImage != null)
+              {
+                DoThumbnailOverlayFading(gBackBuf);
+              }
+
+              if (FullScreen && NewTrack && ShowTrackOverlay)
+              {
+                DoTrackInfoOverlayFading(gBackBuf);
+              }
+
+              if (ShowTrackOverlay)
+              {
+                DrawPlayStateIcon(gBackBuf);
+              }
+
+              try
+              {
+                gBackBuf.SafeDispose();
+
+                RestoreDC(_CompatibleDC, dcState);
+
+                // The BackBuffer image could be null if we're in the process of resizing
+                if (BackBuffer != null)
+                {
+                  g.DrawImageUnscaled(BackBuffer, 0, 0);
+                }
+              }
+
+              catch (Exception) {}
+            }
           }
 
           return sleepMS;
@@ -2250,62 +2256,62 @@ namespace MediaPortal.Visualization
       try
       {
         CurrentTrackInfoImage = new Bitmap(TrackInfoImageWidth, TrackInfoImageHeight);
-        Graphics g = Graphics.FromImage(CurrentTrackInfoImage);
-        g.Clear(Color.FromArgb(0, Color.Black));
-        Rectangle imgRect = new Rectangle(0, 0, TrackInfoImageWidth, TrackInfoImageHeight);
-        g.DrawImage(TrackInfoImage, imgRect, 0, 0, TrackInfoImage.Width, TrackInfoImage.Height, GraphicsUnit.Pixel);
-
-        Image coverArtImage = CurrentThumbImage;
-
-        if (coverArtImage == null)
+        using (Graphics g = Graphics.FromImage(CurrentTrackInfoImage))
         {
-          coverArtImage = MissingCoverArtImage;
+          g.Clear(Color.FromArgb(0, Color.Black));
+          Rectangle imgRect = new Rectangle(0, 0, TrackInfoImageWidth, TrackInfoImageHeight);
+          g.DrawImage(TrackInfoImage, imgRect, 0, 0, TrackInfoImage.Width, TrackInfoImage.Height, GraphicsUnit.Pixel);
+
+          Image coverArtImage = CurrentThumbImage;
+
+          if (coverArtImage == null)
+          {
+            coverArtImage = MissingCoverArtImage;
+          }
+
+          if (coverArtImage != null)
+          {
+            Rectangle coverArtRect = new Rectangle(CoverArtXOffset,
+                                                   CoverArtYOffset,
+                                                   TrackInfoImageHeight - (CoverArtYOffset * 2),
+                                                   TrackInfoImageHeight - (CoverArtYOffset * 2));
+
+            g.DrawImage(coverArtImage, coverArtRect, 0, 0, coverArtImage.Width, coverArtImage.Height, GraphicsUnit.Pixel);
+          }
+
+          SizeF stringSize = SizeF.Empty;
+          int textTop = Label1PosY;
+          int textLeft = Label1PosX;
+          int textWidth = TrackInfoImageWidth - (textLeft + TrackInfoTextRightMargin);
+          stringSize = g.MeasureString(Label1ValueString, Label1Font, textWidth, TextStringFormat);
+          int textHeight = (int)(stringSize.Height + 1f);
+          Rectangle textRect = new Rectangle(textLeft, textTop, textWidth, textHeight);
+          DrawFadingText(g, stringSize, Label1ValueString, textRect, Label1Font, Label1Color);
+
+          textTop = Label2PosY;
+          textLeft = Label2PosX;
+          textWidth = TrackInfoImageWidth - (textLeft + TrackInfoTextRightMargin);
+          stringSize = g.MeasureString(Label2ValueString, Label2Font, textWidth, TextStringFormat);
+          textHeight = (int)(stringSize.Height + 1f);
+          textRect = new Rectangle(textLeft, textTop, textWidth, textHeight);
+          DrawFadingText(g, stringSize, Label2ValueString, textRect, Label2Font, Label2Color);
+
+          textTop = Label3PosY;
+          textLeft = Label3PosX;
+          textWidth = TrackInfoImageWidth - (textLeft + TrackInfoTextRightMargin);
+          stringSize = g.MeasureString(Label3ValueString, Label3Font, textWidth, TextStringFormat);
+          textHeight = (int)(stringSize.Height + 1f);
+          textRect = new Rectangle(textLeft, textTop, textWidth, textHeight);
+          DrawFadingText(g, stringSize, Label3ValueString, textRect, Label3Font, Label3Color);
+
+          textTop = Label4PosY;
+          textLeft = Label4PosX;
+          textWidth = TrackInfoImageWidth - (textLeft + TrackInfoTextRightMargin);
+          stringSize = g.MeasureString(Label4ValueString, Label4Font, textWidth, TextStringFormat);
+          textHeight = (int)(stringSize.Height + 1f);
+          textRect = new Rectangle(textLeft, textTop, textWidth, textHeight);
+          DrawFadingText(g, stringSize, Label4ValueString, textRect, Label4Font, Label4Color);          
         }
-
-        if (coverArtImage != null)
-        {
-          Rectangle coverArtRect = new Rectangle(CoverArtXOffset,
-                                                 CoverArtYOffset,
-                                                 TrackInfoImageHeight - (CoverArtYOffset * 2),
-                                                 TrackInfoImageHeight - (CoverArtYOffset * 2));
-
-          g.DrawImage(coverArtImage, coverArtRect, 0, 0, coverArtImage.Width, coverArtImage.Height, GraphicsUnit.Pixel);
-        }
-
-        SizeF stringSize = SizeF.Empty;
-        int textTop = Label1PosY;
-        int textLeft = Label1PosX;
-        int textWidth = TrackInfoImageWidth - (textLeft + TrackInfoTextRightMargin);
-        stringSize = g.MeasureString(Label1ValueString, Label1Font, textWidth, TextStringFormat);
-        int textHeight = (int)(stringSize.Height + 1f);
-        Rectangle textRect = new Rectangle(textLeft, textTop, textWidth, textHeight);
-        DrawFadingText(g, stringSize, Label1ValueString, textRect, Label1Font, Label1Color);
-
-        textTop = Label2PosY;
-        textLeft = Label2PosX;
-        textWidth = TrackInfoImageWidth - (textLeft + TrackInfoTextRightMargin);
-        stringSize = g.MeasureString(Label2ValueString, Label2Font, textWidth, TextStringFormat);
-        textHeight = (int)(stringSize.Height + 1f);
-        textRect = new Rectangle(textLeft, textTop, textWidth, textHeight);
-        DrawFadingText(g, stringSize, Label2ValueString, textRect, Label2Font, Label2Color);
-
-        textTop = Label3PosY;
-        textLeft = Label3PosX;
-        textWidth = TrackInfoImageWidth - (textLeft + TrackInfoTextRightMargin);
-        stringSize = g.MeasureString(Label3ValueString, Label3Font, textWidth, TextStringFormat);
-        textHeight = (int)(stringSize.Height + 1f);
-        textRect = new Rectangle(textLeft, textTop, textWidth, textHeight);
-        DrawFadingText(g, stringSize, Label3ValueString, textRect, Label3Font, Label3Color);
-
-        textTop = Label4PosY;
-        textLeft = Label4PosX;
-        textWidth = TrackInfoImageWidth - (textLeft + TrackInfoTextRightMargin);
-        stringSize = g.MeasureString(Label4ValueString, Label4Font, textWidth, TextStringFormat);
-        textHeight = (int)(stringSize.Height + 1f);
-        textRect = new Rectangle(textLeft, textTop, textWidth, textHeight);
-        DrawFadingText(g, stringSize, Label4ValueString, textRect, Label4Font, Label4Color);
-
-        g.SafeDispose();
 
         return true;
       }

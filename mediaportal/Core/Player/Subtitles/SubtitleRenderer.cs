@@ -408,21 +408,23 @@ namespace MediaPortal.Player.Subtitles
             }
 
             int pitch;
-            GraphicsStream a = texture.LockRectangle(0, LockFlags.None, out pitch);
-
-            // Quick copy of content
-            unsafe
+            using (GraphicsStream a = texture.LockRectangle(0, LockFlags.None, out pitch))
             {
-              byte* to = (byte*)a.InternalDataPointer;
-              byte* from = (byte*)sub.bmBits;
-              for (int y = 0; y < sub.bmHeight; ++y)
+              // Quick copy of content
+              unsafe
               {
-                for (int x = 0; x < sub.bmWidth * 4; ++x)
+                byte* to = (byte*)a.InternalDataPointer;
+                byte* from = (byte*)sub.bmBits;
+                for (int y = 0; y < sub.bmHeight; ++y)
                 {
-                  to[pitch * y + x] = from[y * sub.bmWidthBytes + x];
+                  for (int x = 0; x < sub.bmWidth * 4; ++x)
+                  {
+                    to[pitch * y + x] = from[y * sub.bmWidthBytes + x];
+                  }
                 }
               }
-            }
+              a.Close();
+            }            
 
             texture.UnlockRectangle(0);
             subtitle.texture = texture;
@@ -522,28 +524,33 @@ namespace MediaPortal.Player.Subtitles
           texture = new Texture(GUIGraphicsContext.DX9Device, subtitle.subBitmap.Width, 
             subtitle.subBitmap.Height, 1, Usage.Dynamic, Format.A8R8G8B8, Pool.Default);
           int pitch;
-          GraphicsStream a = texture.LockRectangle(0, LockFlags.None, out pitch);
-          BitmapData bd = subtitle.subBitmap.LockBits(new Rectangle(0, 0, subtitle.subBitmap.Width, 
-            subtitle.subBitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-
-          // Quick copy of content
-          unsafe
+          using (GraphicsStream a = texture.LockRectangle(0, LockFlags.None, out pitch))
           {
-            byte* to = (byte*)a.InternalDataPointer;
-            byte* from = (byte*)bd.Scan0.ToPointer();
-            for (int y = 0; y < bd.Height; ++y)
+            BitmapData bd = subtitle.subBitmap.LockBits(new Rectangle(0, 0, subtitle.subBitmap.Width,
+                                                                      subtitle.subBitmap.Height), ImageLockMode.ReadOnly,
+                                                        PixelFormat.Format32bppArgb);
+
+            // Quick copy of content
+            unsafe
             {
-              for (int x = 0; x < bd.Width * 4; ++x)
+              byte* to = (byte*)a.InternalDataPointer;
+              byte* from = (byte*)bd.Scan0.ToPointer();
+              for (int y = 0; y < bd.Height; ++y)
               {
-                to[pitch * y + x] = from[y * bd.Stride + x];
+                for (int x = 0; x < bd.Width * 4; ++x)
+                {
+                  to[pitch * y + x] = from[y * bd.Stride + x];
+                }
               }
             }
+
+
+            texture.UnlockRectangle(0);
+            subtitle.subBitmap.UnlockBits(bd);
+            subtitle.subBitmap.SafeDispose();
+            subtitle.subBitmap = null;
+            subtitle.texture = texture;
           }
-          texture.UnlockRectangle(0);
-          subtitle.subBitmap.UnlockBits(bd);
-          subtitle.subBitmap.SafeDispose();
-          subtitle.subBitmap = null;
-          subtitle.texture = texture;
         }
         catch (Exception e)
         {

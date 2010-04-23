@@ -367,38 +367,38 @@ namespace ProcessPlugins.AutoCropper
       {
         Log.Debug("DynamicCrop");
       }
-      Bitmap frame = GetFrame();
-      if (frame == null)
+      using (Bitmap frame = GetFrame())
       {
-        return;
-      }
-      Rectangle bounds = new Rectangle();
+        if (frame == null)
+        {
+          return;
+        }
+        Rectangle bounds = new Rectangle();
 
-      if (!analyzer.FindBounds(frame, ref bounds))
-      {
-        return;
-      }
+        if (!analyzer.FindBounds(frame, ref bounds))
+        {
+          return;
+        }
 
-      int topCrop = bounds.Top;
-      int bottomCrop = frame.Height - bounds.Height - topCrop;
-      int leftCrop = bounds.Left;
-      int rightCrop = frame.Width - bounds.Width - leftCrop;
+        int topCrop = bounds.Top;
+        int bottomCrop = frame.Height - bounds.Height - topCrop;
+        int leftCrop = bounds.Left;
+        int rightCrop = frame.Width - bounds.Width - leftCrop;
 
-      if (bottomCrop < 0)
-      {
-        Log.Error("bottomCrop <0");
-      }
-      //MinDynamicCrop(topCrop, bottomCrop);
-      AvgDynamicCrop(topCrop, bottomCrop, leftCrop, rightCrop);
+        if (bottomCrop < 0)
+        {
+          Log.Error("bottomCrop <0");
+        }
+        //MinDynamicCrop(topCrop, bottomCrop);
+        AvgDynamicCrop(topCrop, bottomCrop, leftCrop, rightCrop);
 
-      /*long id = DateTime.Now.Ticks;
+        /*long id = DateTime.Now.Ticks;
 
       Log.Debug("{0} : top {1}, bot {2}", id, topCrop, bottomCrop);
       frame.Save("C:\\" +  id +".bmp");
       Log.Debug("Current top" + lastSettings.Top);
       Log.Debug("Current bottom" + lastSettings.Bottom);*/
-      frame.Dispose();
-      frame = null;
+      }
     }
 
     /// <summary>
@@ -603,30 +603,30 @@ namespace ProcessPlugins.AutoCropper
         return;
       }
 
-      Bitmap frame = GetFrame();
-
-      if (frame == null)
+      using (Bitmap frame = GetFrame())
       {
-        Log.Warn("AutoCropper Failed to get frame (==null), aborting");
-        return;
+
+        if (frame == null)
+        {
+          Log.Warn("AutoCropper Failed to get frame (==null), aborting");
+          return;
+        }
+
+        Rectangle bounds = new Rectangle();
+
+        if (!analyzer.FindBounds(frame, ref bounds))
+        {
+          return;
+        }
+
+        CropSettings cropSettings = new CropSettings();
+        cropSettings.Top = bounds.Top;
+        cropSettings.Bottom = GUIGraphicsContext.VideoSize.Height - (bounds.Bottom + 1);
+        cropSettings.Left = bounds.Left;
+        cropSettings.Right = GUIGraphicsContext.VideoSize.Width - (bounds.Right + 1);
+
+        RequestCrop(cropSettings);
       }
-
-      Rectangle bounds = new Rectangle();
-
-      if (!analyzer.FindBounds(frame, ref bounds))
-      {
-        return;
-      }
-
-      CropSettings cropSettings = new CropSettings();
-      cropSettings.Top = bounds.Top;
-      cropSettings.Bottom = GUIGraphicsContext.VideoSize.Height - (bounds.Bottom + 1);
-      cropSettings.Left = bounds.Left;
-      cropSettings.Right = GUIGraphicsContext.VideoSize.Width - (bounds.Right + 1);
-
-      RequestCrop(cropSettings);
-      frame.Dispose();
-      frame = null;
     }
   }
 }

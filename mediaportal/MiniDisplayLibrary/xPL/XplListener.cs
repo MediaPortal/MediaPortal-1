@@ -499,9 +499,12 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
     {
       if (this.WriteDebugInfo)
       {
-        StreamWriter writer = File.AppendText(@"c:\xpllib-debug-log.txt");
-        writer.WriteLine(DateTime.Now.ToString("dd-MMM-yy HH:mm:ss") + " " + this.Source + ": " + s);
-        writer.Close();
+        using (StreamWriter writer = File.AppendText(@"c:\xpllib-debug-log.txt"))
+        {
+          writer.WriteLine(DateTime.Now.ToString("dd-MMM-yy HH:mm:ss") + " " + this.Source + ": " + s);
+          writer.Close();  
+        }
+        
       }
       else if (this.DoDebug)
       {

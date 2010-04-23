@@ -66,8 +66,8 @@ namespace MediaPortal.Dialogs
           {
             SetControlLabel(GetID, (int)Controls.CONTROL_HEADING, string.Empty);
             base.OnMessage(message);
-            Dispose();
             DeInitControls();
+            Dispose();            
             return true;
           }
 
@@ -146,7 +146,7 @@ namespace MediaPortal.Dialogs
     public void SetHeading(string strLine)
     {
       Reset();
-      LoadSkin();
+      //LoadSkin();
       AllocResources();
       InitControls();
 

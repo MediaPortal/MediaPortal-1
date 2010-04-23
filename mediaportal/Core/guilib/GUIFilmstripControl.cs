@@ -1845,32 +1845,20 @@ namespace MediaPortal.GUI.Library
 
     public override void Dispose()
     {      
-      _listItems.DisposeAndClear();
 
+      _font = null;
+      _upDownControl.SafeDispose();
+    
+      _listItems.DisposeAndClear();
+      _horizontalScrollbar.SafeDispose();
+      _imageBackground.SafeDispose();
+      _imageInfo.SafeDispose();
+    
+      _frameControl.DisposeAndClear();
+      _frameFocusControl.DisposeAndClear();
+      _imageFolder.DisposeAndClear();
+      _imageFolderFocus.DisposeAndClear();      
       base.Dispose();
-      if (_imageBackground != null)
-      {
-        _imageBackground.SafeDispose();
-      }
-      if (_imageInfo != null)
-      {
-        _imageInfo.SafeDispose();
-      }
-      if (_upDownControl != null)
-      {
-        _upDownControl.SafeDispose();
-      }
-      for (int i = 0; i < _imageFolder.Count; ++i)
-      {
-        _imageFolder[i].SafeDispose();
-        _imageFolderFocus[i].SafeDispose();
-        _frameControl[i].SafeDispose();
-        _frameFocusControl[i].SafeDispose();
-      }
-      if (_horizontalScrollbar != null)
-      {
-        _horizontalScrollbar.SafeDispose();
-      }
     }
 
 

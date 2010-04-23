@@ -320,13 +320,15 @@ namespace Databases.Folders
             writer.Write(strValue);
             writer.Flush();
             strm.Seek(0, SeekOrigin.Begin);
-            TextReader r = new StreamReader(strm);
-            try
+            using (TextReader r = new StreamReader(strm))
             {
-              XmlSerializer serializer = new XmlSerializer(type);
-              Value = serializer.Deserialize(r);
-            }
-            catch (Exception) {}
+              try
+              {
+                XmlSerializer serializer = new XmlSerializer(type);
+                Value = serializer.Deserialize(r);
+              }
+              catch (Exception) { }  
+            }            
           }
         }
       }

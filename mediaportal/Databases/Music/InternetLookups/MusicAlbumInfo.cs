@@ -160,8 +160,11 @@ namespace MediaPortal.Music.Database
         WebResponse result = req.GetResponse();
         Stream ReceiveStream = result.GetResponseStream();
         Encoding encode = Encoding.GetEncoding("utf-8");
-        StreamReader sr = new StreamReader(ReceiveStream, encode);
-        body = sr.ReadToEnd();
+        using (StreamReader sr = new StreamReader(ReceiveStream, encode))
+        {
+          body = sr.ReadToEnd();  
+        }
+        
         return Parse(body);
       }
       catch (Exception) {}

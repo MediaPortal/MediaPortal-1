@@ -59,138 +59,150 @@ namespace MediaPortal.Playlists
       playlist.Name = Path.GetFileName(fileName);
       Encoding fileEncoding = Encoding.Default;
       StreamReader file = new StreamReader(stream, fileEncoding, true);
-      if (file == null)
+      try
       {
-        return false;
-      }
-
-      string line;
-      line = file.ReadLine();
-      if (line == null)
-      {
-        file.Close();
-        return false;
-      }
-
-      string strLine = line.Trim();
-      //CUtil::RemoveCRLF(strLine);
-      if (strLine != START_PLAYLIST_MARKER)
-      {
-        if (strLine.StartsWith("http") || strLine.StartsWith("HTTP") ||
-            strLine.StartsWith("mms") || strLine.StartsWith("MMS") ||
-            strLine.StartsWith("rtp") || strLine.StartsWith("RTP"))
+        if (file == null)
         {
-          PlayListItem newItem = new PlayListItem(strLine, strLine, 0);
-          newItem.Type = PlayListItem.PlayListItemType.AudioStream;
-          playlist.Add(newItem);
-          file.Close();
-          return true;
+          return false;
         }
-        fileEncoding = Encoding.Default;
-        stream = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-        file = new StreamReader(stream, fileEncoding, true);
 
-        //file.Close();
-        //return false;
-      }
-      string infoLine = "";
-      string durationLine = "";
-      fileName = "";
-      line = file.ReadLine();
-      while (line != null)
-      {
-        strLine = line.Trim();
-        //CUtil::RemoveCRLF(strLine);
-        int equalPos = strLine.IndexOf("=");
-        if (equalPos > 0)
+        string line;
+        line = file.ReadLine();
+        if (line == null)
         {
-          string leftPart = strLine.Substring(0, equalPos);
-          equalPos++;
-          string valuePart = strLine.Substring(equalPos);
-          leftPart = leftPart.ToLower();
-          if (leftPart.StartsWith("file"))
+          file.Close();
+          return false;
+        }
+
+        string strLine = line.Trim();
+
+
+        //CUtil::RemoveCRLF(strLine);
+        if (strLine != START_PLAYLIST_MARKER)
+        {
+          if (strLine.StartsWith("http") || strLine.StartsWith("HTTP") ||
+              strLine.StartsWith("mms") || strLine.StartsWith("MMS") ||
+              strLine.StartsWith("rtp") || strLine.StartsWith("RTP"))
           {
-            if (valuePart.Length > 0 && valuePart[0] == '#')
+            PlayListItem newItem = new PlayListItem(strLine, strLine, 0);
+            newItem.Type = PlayListItem.PlayListItemType.AudioStream;
+            playlist.Add(newItem);
+            file.Close();
+            return true;
+          }
+          fileEncoding = Encoding.Default;
+          stream = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+          file = new StreamReader(stream, fileEncoding, true);
+
+          //file.Close();
+          //return false;
+        }
+
+        string infoLine = "";
+        string durationLine = "";
+        fileName = "";
+        line = file.ReadLine();
+        while (line != null)
+        {
+          strLine = line.Trim();
+          //CUtil::RemoveCRLF(strLine);
+          int equalPos = strLine.IndexOf("=");
+          if (equalPos > 0)
+          {
+            string leftPart = strLine.Substring(0, equalPos);
+            equalPos++;
+            string valuePart = strLine.Substring(equalPos);
+            leftPart = leftPart.ToLower();
+            if (leftPart.StartsWith("file"))
             {
-              line = file.ReadLine();
-              continue;
+              if (valuePart.Length > 0 && valuePart[0] == '#')
+              {
+                line = file.ReadLine();
+                continue;
+              }
+
+              if (fileName.Length != 0)
+              {
+                PlayListItem newItem = new PlayListItem(infoLine, fileName, 0);
+                playlist.Add(newItem);
+                fileName = "";
+                infoLine = "";
+                durationLine = "";
+              }
+              fileName = valuePart;
+            }
+            if (leftPart.StartsWith("title"))
+            {
+              infoLine = valuePart;
+            }
+            else
+            {
+              if (infoLine == "")
+              {
+                // For a URL we need to set the label in for the Playlist name, in order to be played.
+                if (label != null && fileName.ToLower().StartsWith("http"))
+                {
+                  infoLine = label;
+                }
+                else
+                {
+                  infoLine = Path.GetFileName(fileName);
+                }
+              }
+            }
+            if (leftPart.StartsWith("length"))
+            {
+              durationLine = valuePart;
+            }
+            if (leftPart == "playlistname")
+            {
+              playlist.Name = valuePart;
             }
 
-            if (fileName.Length != 0)
+            if (durationLine.Length > 0 && infoLine.Length > 0 && fileName.Length > 0)
             {
-              PlayListItem newItem = new PlayListItem(infoLine, fileName, 0);
+              int duration = Int32.Parse(durationLine);
+
+              // Remove trailing slashes. Might cause playback issues
+              if (fileName.EndsWith("/"))
+              {
+                fileName = fileName.Substring(0, fileName.Length - 1);
+              }
+
+              PlayListItem newItem = new PlayListItem(infoLine, fileName, duration);
+              if (fileName.ToLower().StartsWith("http:") || fileName.ToLower().StartsWith("https:") ||
+                  fileName.ToLower().StartsWith("mms:") || fileName.ToLower().StartsWith("rtp:"))
+              {
+                newItem.Type = PlayListItem.PlayListItemType.AudioStream;
+              }
+              else
+              {
+                Util.Utils.GetQualifiedFilename(basePath, ref fileName);
+                newItem.FileName = fileName;
+                newItem.Type = PlayListItem.PlayListItemType.Audio;
+              }
               playlist.Add(newItem);
               fileName = "";
               infoLine = "";
               durationLine = "";
             }
-            fileName = valuePart;
           }
-          if (leftPart.StartsWith("title"))
-          {
-            infoLine = valuePart;
-          }
-          else
-          {
-            if (infoLine == "")
-            {
-              // For a URL we need to set the label in for the Playlist name, in order to be played.
-              if (label != null && fileName.ToLower().StartsWith("http"))
-              {
-                infoLine = label;
-              }
-              else
-              {
-                infoLine = Path.GetFileName(fileName);
-              }
-            }
-          }
-          if (leftPart.StartsWith("length"))
-          {
-            durationLine = valuePart;
-          }
-          if (leftPart == "playlistname")
-          {
-            playlist.Name = valuePart;
-          }
-
-          if (durationLine.Length > 0 && infoLine.Length > 0 && fileName.Length > 0)
-          {
-            int duration = Int32.Parse(durationLine);
-
-            // Remove trailing slashes. Might cause playback issues
-            if (fileName.EndsWith("/"))
-            {
-              fileName = fileName.Substring(0, fileName.Length - 1);
-            }
-
-            PlayListItem newItem = new PlayListItem(infoLine, fileName, duration);
-            if (fileName.ToLower().StartsWith("http:") || fileName.ToLower().StartsWith("https:") ||
-                fileName.ToLower().StartsWith("mms:") || fileName.ToLower().StartsWith("rtp:"))
-            {
-              newItem.Type = PlayListItem.PlayListItemType.AudioStream;
-            }
-            else
-            {
-              Util.Utils.GetQualifiedFilename(basePath, ref fileName);
-              newItem.FileName = fileName;
-              newItem.Type = PlayListItem.PlayListItemType.Audio;
-            }
-            playlist.Add(newItem);
-            fileName = "";
-            infoLine = "";
-            durationLine = "";
-          }
+          line = file.ReadLine();
         }
-        line = file.ReadLine();
-      }
-      file.Close();
+        file.Close();
 
-      if (fileName.Length > 0)
+        if (fileName.Length > 0)
+        {
+          PlayListItem newItem = new PlayListItem(infoLine, fileName, 0);
+        }
+      }
+      finally
       {
-        PlayListItem newItem = new PlayListItem(infoLine, fileName, 0);
+        if (file != null)
+        {
+          file.Close();
+        }
       }
-
 
       return true;
     }

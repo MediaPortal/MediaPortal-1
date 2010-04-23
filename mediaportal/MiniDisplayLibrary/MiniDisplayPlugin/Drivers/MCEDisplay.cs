@@ -179,6 +179,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       Log.Info("MCEDisplay.Start(): Starting MCEDisplay driver");
       this.mainThread = new Thread(new ThreadStart(this.Run));
       this.mainThread.Start();
+      GUIPropertyManager.OnPropertyChanged -=
+        new GUIPropertyManager.OnPropertyChangedHandler(this.GUIPropertyManager_OnPropertyChanged);
       GUIPropertyManager.OnPropertyChanged +=
         new GUIPropertyManager.OnPropertyChangedHandler(this.GUIPropertyManager_OnPropertyChanged);
       Log.Info("MCEDisplay.Start(): MCEDisplay driver started");

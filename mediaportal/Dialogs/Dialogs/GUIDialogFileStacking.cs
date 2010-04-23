@@ -152,7 +152,7 @@ namespace MediaPortal.Dialogs
 
     public void SetNumberOfFiles(int iFiles)
     {
-      LoadSkin();
+      //LoadSkin();
       AllocResources();
       InitControls();
       SetControlLabel(GetID, 1, GUILocalizeStrings.Get(6037));

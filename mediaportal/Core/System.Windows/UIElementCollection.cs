@@ -19,10 +19,11 @@
 #endregion
 
 using System.Collections;
+using MediaPortal.ExtensionMethods;
 
 namespace System.Windows
 {
-  public sealed class UIElementCollection : CollectionBase
+  public sealed class UIElementCollection : CollectionBase, IDisposable
   {
     #region Methods
 
@@ -104,5 +105,14 @@ namespace System.Windows
     }
 
     #endregion Properties
+
+    #region IDisposable Members
+
+    public void Dispose()
+    {      
+      List.Dispose(); //only dispose items, do not remove collection.
+    }
+
+    #endregion
   }
 }

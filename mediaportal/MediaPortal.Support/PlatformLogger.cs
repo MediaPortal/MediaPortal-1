@@ -48,16 +48,18 @@ namespace MediaPortal.Support
 
     public void CreateLogs(string destinationFolder)
     {
-      StreamWriter sw = new StreamWriter(destinationFolder + "\\PlatformInfo.html");
-      sw.WriteLine("<html><head><title>Platform information log</title></head><body><table border=0>");
-      sw.WriteLine("<tr><td><b>Operating system</b></td><td>" + Environment.OSVersion.VersionString + "</td></tr>");
-      sw.WriteLine("<tr><td><b>Hostname</b></td><td>" + Environment.MachineName + "</td></tr>");
-      sw.WriteLine("<tr><td><b>Network attached?</b></td><td>" + SystemInformation.Network.ToString() + "</td></tr>");
-      sw.WriteLine("<tr><td><b>Primary monitor size</b></td><td>" + SystemInformation.PrimaryMonitorSize.ToString() +
-                   "</td></tr>");
-      sw.WriteLine("<tr><td><b>CPU details</b></td><td>" + GetCPUInfos() + "</td></tr>");
-      sw.WriteLine("</body></html>");
-      sw.Close();
+      using (StreamWriter sw = new StreamWriter(destinationFolder + "\\PlatformInfo.html"))
+      {
+        sw.WriteLine("<html><head><title>Platform information log</title></head><body><table border=0>");
+        sw.WriteLine("<tr><td><b>Operating system</b></td><td>" + Environment.OSVersion.VersionString + "</td></tr>");
+        sw.WriteLine("<tr><td><b>Hostname</b></td><td>" + Environment.MachineName + "</td></tr>");
+        sw.WriteLine("<tr><td><b>Network attached?</b></td><td>" + SystemInformation.Network.ToString() + "</td></tr>");
+        sw.WriteLine("<tr><td><b>Primary monitor size</b></td><td>" + SystemInformation.PrimaryMonitorSize.ToString() +
+                     "</td></tr>");
+        sw.WriteLine("<tr><td><b>CPU details</b></td><td>" + GetCPUInfos() + "</td></tr>");
+        sw.WriteLine("</body></html>");
+        sw.Close();
+      }
     }
 
     public string ActionMessage

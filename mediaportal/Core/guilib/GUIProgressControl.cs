@@ -264,6 +264,7 @@ namespace MediaPortal.GUI.Library
     public override void Dispose()
     {
       base.Dispose();
+
       _imageBackGround.SafeDispose();
       _imageMid.SafeDispose();
       _imageRight.SafeDispose();

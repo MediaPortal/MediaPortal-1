@@ -265,6 +265,7 @@ namespace MediaPortal.GUI.Video
             // following line should stay. Problems with OSD not
             // appearing are already fixed elsewhere
             GUIPropertyManager.SetProperty("#currentmodule", GetModuleName());
+            
             AllocResources();
             // if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);
             ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset

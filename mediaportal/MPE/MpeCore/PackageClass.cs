@@ -493,9 +493,11 @@ namespace MpeCore
     {
       GenerateUniqueFileList();
       var serializer = new XmlSerializer(typeof(PackageClass));
-      TextWriter writer = new StreamWriter(fileName);
-      serializer.Serialize(writer, this);
-      writer.Close();
+      using (TextWriter writer = new StreamWriter(fileName))
+      {
+        serializer.Serialize(writer, this);
+        writer.Close(); 
+      }      
     }
 
     /// <summary>

@@ -220,70 +220,73 @@ namespace MediaPortal.Utils.Web
     private bool GetInternal(HTTPRequest page)
     {
       // Use internal code to get HTML page
-      HTTPTransaction Page = new HTTPTransaction();
-      Encoding encode;
-      string strEncode = _defaultEncode;
 
-      if (Page.HTTPGet(page))
+      using (HTTPTransaction Page = new HTTPTransaction())
       {
-        byte[] pageData = Page.GetData();
-        int i;
+        Encoding encode;
+        string strEncode = _defaultEncode;
 
-        if (_encoding != "")
+        if (Page.HTTPGet(page))
         {
-          strEncode = _encoding;
-          _pageEncodingMessage = "Forced: " + _encoding;
-        }
-        else
-        {
-          encode = System.Text.Encoding.GetEncoding(_defaultEncode);
-          _strPageSource = encode.GetString(pageData);
-          int headEnd;
-          if ((headEnd = _strPageSource.ToLower().IndexOf("</head")) != -1)
+          byte[] pageData = Page.GetData();
+          int i;
+
+          if (_encoding != "")
           {
-            if ((i = _strPageSource.ToLower().IndexOf("charset", 0, headEnd)) != -1)
-            {
-              strEncode = "";
-              i += 8;
-              for (; i < _strPageSource.Length && _strPageSource[i] != '\"'; i++)
-              {
-                strEncode += _strPageSource[i];
-              }
-              _encoding = strEncode;
-            }
-
-            if (strEncode == "")
-            {
-              strEncode = _defaultEncode;
-              _pageEncodingMessage = "Default: " + _defaultEncode;
-            }
-            else
-            {
-              _pageEncodingMessage = strEncode;
-            }
+            strEncode = _encoding;
+            _pageEncodingMessage = "Forced: " + _encoding;
           }
-        }
-
-        GlobalServiceProvider.Get<ILog>().Debug("HTMLPage: GetInternal encoding: {0}", _pageEncodingMessage);
-        // Encoding: depends on selected page
-        if (string.IsNullOrEmpty(_strPageSource) || strEncode.ToLower() != _defaultEncode)
-        {
-          try
+          else
           {
-            encode = System.Text.Encoding.GetEncoding(strEncode);
+            encode = System.Text.Encoding.GetEncoding(_defaultEncode);
             _strPageSource = encode.GetString(pageData);
+            int headEnd;
+            if ((headEnd = _strPageSource.ToLower().IndexOf("</head")) != -1)
+            {
+              if ((i = _strPageSource.ToLower().IndexOf("charset", 0, headEnd)) != -1)
+              {
+                strEncode = "";
+                i += 8;
+                for (; i < _strPageSource.Length && _strPageSource[i] != '\"'; i++)
+                {
+                  strEncode += _strPageSource[i];
+                }
+                _encoding = strEncode;
+              }
+
+              if (strEncode == "")
+              {
+                strEncode = _defaultEncode;
+                _pageEncodingMessage = "Default: " + _defaultEncode;
+              }
+              else
+              {
+                _pageEncodingMessage = strEncode;
+              }
+            }
           }
-          catch (System.ArgumentException e)
+
+          GlobalServiceProvider.Get<ILog>().Debug("HTMLPage: GetInternal encoding: {0}", _pageEncodingMessage);
+          // Encoding: depends on selected page
+          if (string.IsNullOrEmpty(_strPageSource) || strEncode.ToLower() != _defaultEncode)
           {
-            GlobalServiceProvider.Get<ILog>().Error(e);
+            try
+            {
+              encode = System.Text.Encoding.GetEncoding(strEncode);
+              _strPageSource = encode.GetString(pageData);
+            }
+            catch (System.ArgumentException e)
+            {
+              GlobalServiceProvider.Get<ILog>().Error(e);
+            }
           }
+          return true;
         }
-        return true;
+        _error = Page.GetError();
+        if (!string.IsNullOrEmpty(_error))
+          GlobalServiceProvider.Get<ILog>().Error("HTMLPage: GetInternal error: {0}", _error);
+        return false;
       }
-      _error = Page.GetError();
-      if (!string.IsNullOrEmpty(_error))
-        GlobalServiceProvider.Get<ILog>().Error("HTMLPage: GetInternal error: {0}", _error);
-      return false;
     }
 
     #endregion

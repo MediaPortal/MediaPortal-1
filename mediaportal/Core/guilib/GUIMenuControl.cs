@@ -1050,15 +1050,11 @@ namespace MediaPortal.GUI.Library
     {
       SaveSetting();
       _buttonList.DisposeAndClear();
-      _hoverList.DisposeAndClear();
-      if (_backgroundImage != null)
-      {
-        _backgroundImage.SafeDispose();
-      }
-      if (_focusImage != null)
-      {
-        _focusImage.SafeDispose();
-      }
+      _hoverList.DisposeAndClear();     
+      _backgroundImage.SafeDispose();            
+      _focusImage.SafeDispose();
+      _hoverImage.SafeDispose();
+      
       base.Dispose();
     }
 

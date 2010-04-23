@@ -220,26 +220,34 @@ namespace Mpeg2SplitterPackage
                 InfoLogging("Start log-file version " + iVersion);
 #endif
         // Create the reader for data
-        fsIn = new FileStream(sInFilename, FileMode.Open, FileAccess.Read);
-        if (fsIn == null)
+        using (fsIn = new FileStream(sInFilename, FileMode.Open, FileAccess.Read))
         {
-          InfoLogging("Error opening fsIn");
-          result = false;
+          if (fsIn == null)
+          {
+            InfoLogging("Error opening fsIn");
+            result = false;
+          }
         }
+       
         // Create the new, empty data file
-        fsOut = new FileStream(sOutFilename, fileMode, FileAccess.Write);
-        if (fsOut == null)
+        using (fsOut = new FileStream(sOutFilename, fileMode, FileAccess.Write))
         {
-          InfoLogging("Error opening fsOut");
-          result = false;
+          if (fsOut == null)
+          {
+            InfoLogging("Error opening fsOut");
+            result = false;
+          }  
         }
+        
         // Create the writer for data.
-        bwOut = new BinaryWriter(fsOut);
-        if (bwOut == null)
+        using (bwOut = new BinaryWriter(fsOut))
         {
-          InfoLogging("Error opening bwOut");
-          result = false;
-        }
+          if (bwOut == null)
+          {
+            InfoLogging("Error opening bwOut");
+            result = false;
+          } 
+        }        
       }
       catch (Exception e)
       {

@@ -156,9 +156,11 @@ namespace MediaPortal.Utils.Web
     {
       if (File.Exists(file))
       {
-        TextReader CacheFile = new StreamReader(file);
-        _strPageSource = CacheFile.ReadToEnd();
-        CacheFile.Close();
+        using (TextReader CacheFile = new StreamReader(file))
+        {
+          _strPageSource = CacheFile.ReadToEnd();
+          CacheFile.Close(); 
+        }        
 
         return true;
       }
@@ -178,9 +180,12 @@ namespace MediaPortal.Utils.Web
         File.Delete(file);
       }
 
-      TextWriter CacheFile = new StreamWriter(file);
-      CacheFile.Write(source);
-      CacheFile.Close();
+      using (TextWriter CacheFile = new StreamWriter(file))
+      {
+        CacheFile.Write(source);
+        CacheFile.Close();  
+      }
+      
     }
 
     /// <summary>

@@ -41,7 +41,7 @@ namespace MediaPortal.Utils.Web
   /// - IHttpAuth for NetworkCredentials (site authenication)
   /// - IHttpStats for Site statistics.
   /// </remarks>
-  public class HTTPTransaction
+  public class HTTPTransaction: IDisposable
   {
     #region Variables
 
@@ -209,9 +209,11 @@ namespace MediaPortal.Utils.Web
           try
           {
             Stream OutputStream = request.GetRequestStream();
-            StreamWriter WriteStream = new StreamWriter(OutputStream);
-            WriteStream.Write(pageRequest.PostQuery);
-            WriteStream.Flush();
+            using (StreamWriter WriteStream = new StreamWriter(OutputStream))
+            {
+              WriteStream.Write(pageRequest.PostQuery);
+              WriteStream.Flush(); 
+            }            
           }
           catch (WebException ex)
           {
@@ -305,6 +307,18 @@ namespace MediaPortal.Utils.Web
       }
 
       return true;
+    }
+
+    #endregion
+
+    #region IDisposable Members
+
+    public void Dispose()
+    {
+      if (_response != null)
+      {
+        _response.Close();
+      }
     }
 
     #endregion

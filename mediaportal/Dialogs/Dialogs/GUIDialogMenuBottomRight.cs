@@ -81,7 +81,7 @@ namespace MediaPortal.Dialogs
 
     public override void SetHeading(string strLine)
     {
-      LoadSkin();
+      //LoadSkin();
       AllocResources();
       InitControls();
 
@@ -90,7 +90,7 @@ namespace MediaPortal.Dialogs
 
     public void SetHeadingRow2(string strLine)
     {
-      LoadSkin();
+      //LoadSkin();
       AllocResources();
       InitControls();
 
@@ -102,7 +102,7 @@ namespace MediaPortal.Dialogs
 
     public void SetHeadingRow3(string strLine)
     {
-      LoadSkin();
+      //LoadSkin();
       AllocResources();
       InitControls();
 

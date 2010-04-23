@@ -87,6 +87,7 @@ namespace MediaPortal.GUI.Library
 
     public override void Dispose()
     {
+      //UnsubscribeEventHandlers();
       base.Dispose();
 
       _sortImages[0].SafeDispose();
@@ -94,6 +95,17 @@ namespace MediaPortal.GUI.Library
       _sortImages[2].SafeDispose();
       _sortImages[3].SafeDispose();
     }
+
+    /*private void UnsubscribeEventHandlers()
+    {
+      if (SortChanged != null)
+      {
+        foreach (SortEventHandler eventDelegate in SortChanged.GetInvocationList())
+        {
+          SortChanged -= eventDelegate;
+        }
+      }
+    } */  
 
     public override void PreAllocResources()
     {

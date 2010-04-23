@@ -54,16 +54,6 @@ namespace MediaPortal.GUI.Library
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe int FontEngineAddSurface(int hasCode, bool useAlphaBlend, void* fontTexture);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
-                                                            float uoff, float voff, float umax, float vmax, int color);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEnginePresentTextures();
-
     #endregion
 
     #region PackedTexture Class
@@ -489,6 +479,7 @@ namespace MediaPortal.GUI.Library
                                              (int)0,
                                              ref info2);
         bigOne.texture = tex;
+        bigOne.texture.Disposing -= new EventHandler(texture_Disposing);
         bigOne.texture.Disposing += new EventHandler(texture_Disposing);
 
         Log.Info("TexturePacker: Loaded {0} texture:{1}x{2} miplevels:{3}", fileName, info2.Width, info2.Height,

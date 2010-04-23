@@ -18,12 +18,15 @@
 
 #endregion
 
+using System;
+using MediaPortal.ExtensionMethods;
+
 namespace MediaPortal.GUI.Library
 {
   /// <summary>
   /// A datastructure for keeping track of the position of a control in a window.
   /// </summary>
-  public class CPosition
+  public class CPosition : IDisposable  
   {
     private GUIControl _control = null; // control to which this structure applies
     private int _positionX = 0; // x-coordinate of the control
@@ -70,5 +73,14 @@ namespace MediaPortal.GUI.Library
     {
       get { return _control; }
     }
+
+    #region IDisposable Members
+
+    public void Dispose()
+    {
+      _control.SafeDispose();
+    }
+
+    #endregion
   }
 }

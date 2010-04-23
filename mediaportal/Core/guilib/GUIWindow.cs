@@ -398,7 +398,7 @@ namespace MediaPortal.GUI.Library
       try
       {
         foreach (GUIControl control in Children)
-        {
+        {          
           control.OnDeInit();
         }
       }
@@ -1050,6 +1050,8 @@ namespace MediaPortal.GUI.Library
     {
       try
       {
+        Dispose();
+        LoadSkin();
         List<int> faultyControl = new List<int>();
         // tell every control we're gonna alloc the resources next
         for (int i = 0; i < Children.Count; i++)
@@ -1102,7 +1104,8 @@ namespace MediaPortal.GUI.Library
       try
       {
         // tell every control to free its resources
-        Children.Dispose(); //DisposeAndClearList();        
+        Children.DisposeAndClearList();        
+        _listPositions.DisposeAndClear();
       }
       catch (Exception ex)
       {
@@ -1282,16 +1285,10 @@ namespace MediaPortal.GUI.Library
         return;
       }
       _shouldRestore = false;
-      Dispose();
-      Children.DisposeAndClearList();
-      _listPositions.DisposeAndClear();
 
-      Children.Clear();
-      _listPositions.Clear();
-
+      Dispose();            
       Load(_windowXmlFileName);
-      LoadSkin();
-
+      //LoadSkin();
       AllocResources();
     }
 
@@ -1615,8 +1612,8 @@ namespace MediaPortal.GUI.Library
                 OnPageDestroy(message.Param1);
 
                 Log.Debug("Window: {0} deinit", this.ToString());
-                Dispose();
                 DeInitControls();
+                Dispose();
                 GUITextureManager.CleanupThumbs();
                 //GC.Collect();
                 //GC.Collect();

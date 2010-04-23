@@ -331,8 +331,10 @@ namespace MediaPortal.Localisation
         try
         {
           XmlSerializer s = new XmlSerializer(typeof (StringFile));
-          TextReader r = new StreamReader(path);
-          strings = (StringFile)s.Deserialize(r);
+          using (TextReader r = new StreamReader(path))
+          {
+            strings = (StringFile)s.Deserialize(r);  
+          }          
         }
         catch (Exception)
         {

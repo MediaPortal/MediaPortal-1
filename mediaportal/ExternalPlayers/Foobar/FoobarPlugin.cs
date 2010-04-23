@@ -218,24 +218,25 @@ namespace MediaPortal.FoobarPlugin
           string iniFile = m_execPath.Substring(0, index) + "installer.ini";
 
           //Pass the file path and file name to the StreamReader constructor
-          sr = new StreamReader(iniFile);
-          //Read the first line of text
-          string line = sr.ReadLine();
-          //Continue to read until you reach end of file
-
-          while (line != null)
+          using (sr = new StreamReader(iniFile))
           {
-            if (line.ToLower().Trim().StartsWith("version"))
+            //Read the first line of text
+            string line = sr.ReadLine();
+            //Continue to read until you reach end of file
+
+            while (line != null)
             {
-              index = line.IndexOf("=");
-              version = line.Substring(index + 1).Trim();
+              if (line.ToLower().Trim().StartsWith("version"))
+              {
+                index = line.IndexOf("=");
+                version = line.Substring(index + 1).Trim();
+              }
+              //Read the next line
+              line = sr.ReadLine();
             }
-            //Read the next line
-            line = sr.ReadLine();
-          }
-          //close the file
-          sr.Close();
-          sr = null;
+            //close the file
+            sr.Close();
+          }          
         }
         catch (Exception e)
         {
@@ -280,8 +281,11 @@ namespace MediaPortal.FoobarPlugin
 
       // 1252 is encoding for Windows format
       Encoding encode = Encoding.GetEncoding(1252);
-      StreamReader sr = new StreamReader(ReceiveStream, encode);
-      retval = sr.ReadToEnd();
+      using (StreamReader sr = new StreamReader(ReceiveStream, encode))
+      {
+        retval = sr.ReadToEnd();  
+      }
+      
 
       // Close the response to free resources.
       myResponse.Close();

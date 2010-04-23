@@ -27,6 +27,7 @@ namespace MediaPortal.GUI.Library
   {
     protected override void OnWindowLoaded()
     {
+      GUIWindowManager.OnPostRenderAction -= new GUIWindowManager.PostRenderActionHandler(OnPostRenderAction);
       GUIWindowManager.OnPostRenderAction += new GUIWindowManager.PostRenderActionHandler(OnPostRenderAction);
       base.OnWindowLoaded();
     }    

@@ -562,7 +562,7 @@ namespace MediaPortal.GUI.Video
       {
         videoOverlay.Focused = false;
       }
-
+      
       LoadSettings();
 
       if (btnSortBy != null)

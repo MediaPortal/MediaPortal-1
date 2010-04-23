@@ -352,19 +352,20 @@ namespace WatchDog
       panel.ShowTimeSlider = false;
       panel.dsDaggerUIGraph1.AutoArrangeWidthOffset = 150;
       panel.dsDaggerUIGraph1.ArrangeNodes(AutoArrangeStyle.All);
-      Bitmap b = new Bitmap(panel.Width, panel.Height);
-      panel.DrawToBitmap(b, panel.Bounds);
-      string imgFile = _tempDir + "\\graph_" + rotEntry.ToString() + ".jpg";
-      try
+      using (Bitmap b = new Bitmap(panel.Width, panel.Height))
       {
-        b.Save(imgFile, ImageFormat.Jpeg);
+        panel.DrawToBitmap(b, panel.Bounds);
+        string imgFile = _tempDir + "\\graph_" + rotEntry.ToString() + ".jpg";
+        try
+        {
+          b.Save(imgFile, ImageFormat.Jpeg);
+        }
+        catch (Exception ex)
+        {
+          Utils.ErrorDlg("Exception raised while trying to save graph snapshot. file=[" + imgFile + "] message=[" +
+                         ex.Message + "]");
+        }
       }
-      catch (Exception ex)
-      {
-        Utils.ErrorDlg("Exception raised while trying to save graph snapshot. file=[" + imgFile + "] message=[" +
-                       ex.Message + "]");
-      }
-      b.Dispose();
       panel.Dispose();
     }
 

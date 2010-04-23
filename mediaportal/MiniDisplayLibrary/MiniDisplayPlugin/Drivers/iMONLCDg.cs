@@ -4247,11 +4247,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           FontData.Rows.Add(row);
         }
         var serializer = new XmlSerializer(typeof (DataTable));
-        TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml"));
-        Log.Debug("SaveFontData(): Serializing data");
-        serializer.Serialize(textWriter, FontData);
-        Log.Debug("SaveFontData(): Writing data to file");
-        textWriter.Close();
+        using (TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml")))
+        {
+          Log.Debug("SaveFontData(): Serializing data");
+          serializer.Serialize(textWriter, FontData);
+          Log.Debug("SaveFontData(): Writing data to file");
+          textWriter.Close();
+        }
         Log.Debug("SaveFontData(): completed");
       }
     }
@@ -4702,11 +4704,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           LIconData.Rows.Add(row);
         }
         var serializer = new XmlSerializer(typeof (DataTable));
-        TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml"));
-        Log.Debug("SaveDefaultLargeIconData(): Serializing data");
-        serializer.Serialize(textWriter, LIconData);
-        Log.Debug("SaveDefaultLargeIconData(): Writing data to file");
-        textWriter.Close();
+        using (TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml")))
+        {
+          Log.Debug("SaveDefaultLargeIconData(): Serializing data");
+          serializer.Serialize(textWriter, LIconData);
+          Log.Debug("SaveDefaultLargeIconData(): Writing data to file");
+          textWriter.Close(); 
+        }        
         Log.Debug("SaveDefaultLargeIconData(): completed");
       }
     }

@@ -128,7 +128,7 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(string strLine)
     {
-      LoadSkin();
+      //LoadSkin();
       AllocResources();
       InitControls();
 
@@ -149,7 +149,7 @@ namespace MediaPortal.Dialogs
 
     public void SetTitle(string title)
     {
-      LoadSkin();
+      //LoadSkin();
       AllocResources();
       InitControls();
       lblName.Label = title;

@@ -512,7 +512,14 @@ namespace MediaPortal.GUI.Library
         if (pImage.TextureHeight == 0 && pImage.TextureWidth == 0)
         {
           pImage.SafeDispose();
+
+          pImage = new GUIImage(0, 0, 0, 0, _imageWidth, _imageHeight, pItem.IconImage, 0x0);
+          pImage.ParentControl = this;
+          pImage.KeepAspectRatio = _keepAspectRatio;
           pImage.AllocResources();
+          pItem.Icon = pImage;
+
+          //pImage.AllocResources();
         }
         pImage.KeepAspectRatio = _keepAspectRatio;
         pImage.Width = _imageWidth;
@@ -2109,11 +2116,8 @@ namespace MediaPortal.GUI.Library
     }
 
     protected virtual void ReleaseButtons()
-    {
-      if (_listButtons != null)
-      {
-        _listButtons.SafeDispose();// DisposeAndClear();
-      }
+    {      
+      _listButtons.DisposeAndClear();      
     }
 
     /// <summary>
@@ -2121,6 +2125,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void AllocResources()
     {
+      Dispose();
       base.AllocResources();
       _upDownControl.AllocResources();
       _verticalScrollbar.AllocResources();
@@ -2182,30 +2187,20 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void Dispose()
     {
-      _listItems.SafeDispose();
       base.Dispose();
-      _upDownControl.SafeDispose();
-      ReleaseButtons();
-      if (_labelControls1 != null)
-      {
-        _labelControls1.SafeDispose();//DisposeAndClear();
-      }
-      if (_labelControls2 != null)
-      {
-        _labelControls2.SafeDispose();
-      }
-      if (_labelControls3 != null)
-      {
-        _labelControls3.SafeDispose();
-      }
-      _listButtons = null;
-      _labelControls1 = null;
-      _labelControls2 = null;
-      _labelControls3 = null;
-      _verticalScrollbar.SafeDispose();
-      //_font.Dispose(null, null);
-      //_font2.Dispose(null, null);
-      //_font3.Dispose(null, null);
+     
+    _font = null;
+    _font2 = null;
+    _font3 = null;
+
+    _upDownControl.SafeDispose();
+    _listButtons.DisposeAndClear();
+    _verticalScrollbar.SafeDispose();
+
+    _listItems.DisposeAndClear();
+    _labelControls1.DisposeAndClear();
+    _labelControls2.DisposeAndClear();
+    _labelControls3.DisposeAndClear();      
     }
 
     /// <summary>

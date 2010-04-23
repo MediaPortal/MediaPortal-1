@@ -301,6 +301,7 @@ namespace MediaPortal.GUI.Library
       base.Dispose();
       _imageCheckMarkFocused.SafeDispose();
       _imageCheckMarkNonFocused.SafeDispose();
+      _font = null;
     }
 
     /// <summary>

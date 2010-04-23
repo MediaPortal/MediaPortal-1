@@ -839,6 +839,7 @@ namespace MediaPortal.GUI.Library
 
     public override void Dispose()
     {
+      //UnsubscribeEventHandlers();
       if (_image != null)
       {
         _image.SafeDispose();
@@ -846,6 +847,17 @@ namespace MediaPortal.GUI.Library
 
       base.Dispose();
     }
+     
+    /*private void UnsubscribeEventHandlers()
+    {
+      if (OnTextChanged != null)
+      {
+        foreach (OnTextChangedHandler eventDelegate in OnTextChanged.GetInvocationList())
+        {
+          OnTextChanged -= eventDelegate;
+        }
+      }
+    } */   
 
     public override bool CanFocus()
     {

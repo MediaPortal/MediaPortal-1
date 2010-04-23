@@ -27,7 +27,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-
+using MediaPortal.ExtensionMethods;
 #endregion
 
 namespace MediaPortal.GUI.Home
@@ -464,5 +464,11 @@ namespace MediaPortal.GUI.Home
     }
 
     #endregion
+
+    public override void Dispose()
+    {
+      _overlayWin.SafeDispose();
+      base.Dispose();
+    }
   }
 }

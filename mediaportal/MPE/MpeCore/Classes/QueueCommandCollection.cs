@@ -43,9 +43,11 @@ namespace MpeCore.Classes
       if (Items.Count > 0)
       {
         var serializer = new XmlSerializer(typeof (QueueCommandCollection));
-        TextWriter writer = new StreamWriter(filename);
-        serializer.Serialize(writer, this);
-        writer.Close();
+        using (TextWriter writer = new StreamWriter(filename))
+        {
+          serializer.Serialize(writer, this);
+          writer.Close(); 
+        }        
       }
       else
       {

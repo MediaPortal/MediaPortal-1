@@ -614,11 +614,14 @@ namespace MediaPortal.Core.Transcoding
           break;
       }
       //Loads profile from the above quality selection.
-      StreamReader prx = new StreamReader(strprofileType);
-      String profileContents = prx.ReadToEnd();
-      profileManager2 = profileManager as IWMProfileManager2;
-
-      hr = profileManager2.LoadProfileByData(profileContents, out profile);
+      using (StreamReader prx = new StreamReader(strprofileType))
+      {
+        String profileContents = prx.ReadToEnd();
+        profileManager2 = profileManager as IWMProfileManager2;
+        hr = profileManager2.LoadProfileByData(profileContents, out profile);
+      }
+      
+      
       if (hr != 0)
       {
         Log.Info("TSReader2WMV: get WMV profile - FAILED! {0}", hr);
@@ -696,8 +699,12 @@ namespace MediaPortal.Core.Transcoding
       //get the profile to modify
       string strprofileType = Config.GetFile(Config.Dir.Base, @"Profiles\MPCustom.prx");
       //read the profile contents
-      StreamReader prx = new StreamReader(strprofileType);
-      String profileContents = prx.ReadToEnd();
+      String profileContents = "";
+      using (StreamReader prx = new StreamReader(strprofileType))
+      {
+        profileContents = prx.ReadToEnd();  
+      }
+      
       profileManager2 = profileManager as IWMProfileManager2;
       profileManagerLanguage = profileManager as IWMProfileManagerLanguage;
       hr = profileManager2.GetSystemProfileVersion(out wmversion);

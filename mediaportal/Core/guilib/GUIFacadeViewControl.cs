@@ -346,26 +346,12 @@ namespace MediaPortal.GUI.Library
     public override void Dispose()
     {
       base.Dispose();
-      if (AlbumListView != null)
-      {
-        AlbumListView.SafeDispose();
-      }
-      if (_viewList != null)
-      {
-        _viewList.SafeDispose();
-      }
-      if (_viewThumbnail != null)
-      {
-        _viewThumbnail.SafeDispose();
-      }
-      if (_viewFilmStrip != null)
-      {
-        _viewFilmStrip.SafeDispose();
-      }
-      if (_viewPlayList != null)
-      {
-        _viewPlayList.SafeDispose();
-      }
+
+      _viewAlbum.SafeDispose();
+      _viewList.SafeDispose();
+      _viewThumbnail.SafeDispose();
+      _viewFilmStrip.SafeDispose();
+      _viewPlayList.SafeDispose();
       _itemList.DisposeAndClear();
     }
 

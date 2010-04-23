@@ -106,11 +106,20 @@ namespace ProcessPlugins.CallerId
           }
           catch (Exception) {}
           WebResponse response = webreq.GetResponse();
-          if (response.ContentType.StartsWith("image"))
+          try
           {
-            result = true;
+            if (response.ContentType.StartsWith("image"))
+            {
+              result = true;
+            }
           }
-          response.Close();
+          finally
+          {
+            if (response != null)
+            {
+              response.Close();
+            }
+          }
         }
         else
         {
@@ -173,8 +182,11 @@ namespace ProcessPlugins.CallerId
               inboundRawYACData = null;
 
               NetworkStream stream = client.GetStream();
-              StreamReader sreader = new StreamReader(stream);
-              inboundRawYACData = sreader.ReadToEnd();
+              using (StreamReader sreader = new StreamReader(stream))
+              {
+                inboundRawYACData = sreader.ReadToEnd();  
+              }
+              
               client.Close(); // Shutdown and end connection
 
 

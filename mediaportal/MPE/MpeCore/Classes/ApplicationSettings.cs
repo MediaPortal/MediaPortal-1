@@ -50,9 +50,11 @@ namespace MpeCore.Classes
         Directory.CreateDirectory(MpeInstaller.BaseFolder);
       string filename = string.Format("{0}\\InstallerSettings.xml", MpeInstaller.BaseFolder);
       var serializer = new XmlSerializer(typeof (ApplicationSettings));
-      TextWriter writer = new StreamWriter(filename);
-      serializer.Serialize(writer, this);
-      writer.Close();
+      using (TextWriter writer = new StreamWriter(filename))
+      {
+        serializer.Serialize(writer, this);
+        writer.Close(); 
+      }      
     }
 
     public static ApplicationSettings Load()

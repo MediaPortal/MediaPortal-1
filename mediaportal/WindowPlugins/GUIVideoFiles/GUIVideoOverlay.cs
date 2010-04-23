@@ -24,6 +24,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Video
 {
@@ -428,5 +429,22 @@ namespace MediaPortal.GUI.Video
     }
 
     #endregion
+
+    public override void Dispose()
+    {
+      GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(OnVideoChanged);
+
+      _videoRectangle.SafeDispose();
+      _videoWindow.SafeDispose();
+      _labelPlayTime.SafeDispose();
+      _imagePlayLogo.SafeDispose();
+      _imagePauseLogo.SafeDispose();
+      _labelInfo.SafeDispose();
+      _labelBigPlayTime.SafeDispose();
+      _imageFastForward.SafeDispose();
+      _imageRewind.SafeDispose();
+
+      base.Dispose();
+    }
   }
 }

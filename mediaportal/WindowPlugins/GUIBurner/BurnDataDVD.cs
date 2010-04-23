@@ -402,10 +402,12 @@ namespace MediaPortal.GUI.GUIBurner
             _CurrentProcess = "Data file copy";
 
             FileInfo fi = new FileInfo(_TempFolderPath + "/Copy.bat");
-            StreamWriter sw = fi.CreateText();
-            string CopyLine = "copy /Y \"" + SourceFilePath + "\" \"" + DestinationFilePath + "\" ";
-            sw.WriteLine(CopyLine);
-            sw.Close();
+            using (StreamWriter sw = fi.CreateText())
+            {
+              string CopyLine = "copy /Y \"" + SourceFilePath + "\" \"" + DestinationFilePath + "\" ";
+              sw.WriteLine(CopyLine);
+              sw.Close(); 
+            }                        
 
             try
             {

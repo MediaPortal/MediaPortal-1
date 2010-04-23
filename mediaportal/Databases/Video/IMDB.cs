@@ -353,8 +353,11 @@ namespace MediaPortal.Video.Database
 
         // Encoding: depends on selected page
         Encoding encode = Encoding.GetEncoding(strEncode);
-        sr = new StreamReader(ReceiveStream, encode);
-        strBody = sr.ReadToEnd();
+        using (sr = new StreamReader(ReceiveStream, encode))
+        {
+          strBody = sr.ReadToEnd();  
+        }
+        
 
         absoluteUri = result.ResponseUri.AbsoluteUri;
       }

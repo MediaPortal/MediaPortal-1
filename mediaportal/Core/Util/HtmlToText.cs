@@ -118,15 +118,28 @@ namespace MediaPortal.Util
         request.Proxy.Credentials = CredentialCache.DefaultCredentials;
       }
       catch (Exception) {}
+
       HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-      Stream stream = response.GetResponseStream();
-      StreamReader r = new StreamReader(stream);
-      string data = r.ReadToEnd();
+      try
+      {
+        Stream stream = response.GetResponseStream();
+        string data = "";
+        using (StreamReader r = new StreamReader(stream))
+        {
+          data = r.ReadToEnd();  
+        }        
 
-
-      HtmlToText app = new HtmlToText(data);
-      string text = app.ToString();
-      Console.WriteLine(text);
+        HtmlToText app = new HtmlToText(data);
+        string text = app.ToString();
+        Console.WriteLine(text);
+      }
+      finally
+      {
+        if (response != null)
+        {
+          response.Close();  
+        }        
+      }
     }
 
     public HtmlToText(string text)

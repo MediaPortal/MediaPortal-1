@@ -108,9 +108,12 @@ namespace Wikipedia
         client.Proxy.Credentials = CredentialCache.DefaultCredentials;
         client.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
         Stream data = client.OpenRead(url);
-        StreamReader reader = new StreamReader(data);
-        imagepage = reader.ReadToEnd();
-        reader.Close();
+        using (StreamReader reader = new StreamReader(data))
+        {
+          imagepage = reader.ReadToEnd();
+          reader.Close();  
+        }
+        
         Log.Info("Wikipedia: Success! Downloaded all data from the image page.");
       }
       catch (Exception e)

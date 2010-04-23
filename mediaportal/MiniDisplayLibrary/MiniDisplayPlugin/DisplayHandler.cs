@@ -125,11 +125,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         {
           Log.Info("MiniDisplayPlugin.DisplayHandler.DrawImages(): Drawing image to buffer");
         }
-        Bitmap bitmap = image.Bitmap;
-        if (bitmap != null)
+        using (Bitmap bitmap = image.Bitmap)
         {
-          graphics.DrawImage(bitmap,
-                             new RectangleF(new PointF((float)image.X, (float)image.Y), bitmap.PhysicalDimension));
+          if (bitmap != null)
+          {
+            graphics.DrawImage(bitmap,
+                               new RectangleF(new PointF((float)image.X, (float)image.Y), bitmap.PhysicalDimension));
+          }
         }
       }
     }

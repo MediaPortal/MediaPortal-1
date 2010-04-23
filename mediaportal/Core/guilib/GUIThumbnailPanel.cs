@@ -1928,12 +1928,11 @@ namespace MediaPortal.GUI.Library
       _controlUpDown.SafeDispose();
       _verticalScrollBar.SafeDispose();
       //_font.Dispose(null, null);
-
-      if (_showFrame)
-      {
-        _frameFocusControl.SafeDispose();
-        _frameNoFocusControl.SafeDispose();
-      }
+      _font = null;
+      
+      _frameFocusControl.SafeDispose();
+      _frameNoFocusControl.SafeDispose();
+      
     }
 
 

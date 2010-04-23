@@ -240,7 +240,7 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(string line)
     {
-      LoadSkin();
+      //LoadSkin();
       AllocResources();
       InitControls();
 

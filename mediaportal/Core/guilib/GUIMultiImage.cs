@@ -283,6 +283,7 @@ namespace MediaPortal.GUI.Library
         }
         if (_registeredForEvent == false)
         {
+        	GUIPropertyManager.OnPropertyChanged -= GUIPropertyManager_OnPropertyChanged;
           GUIPropertyManager.OnPropertyChanged += GUIPropertyManager_OnPropertyChanged;
           _registeredForEvent = true;
         }
@@ -365,13 +366,11 @@ namespace MediaPortal.GUI.Library
       _imageList.DisposeAndClear();
       //_currentImage = 0;      
 
-      if (_registeredForEvent)
-      {
-        GUIPropertyManager.OnPropertyChanged -=
-          new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
-        _registeredForEvent = false;
-      }
-
+      
+      GUIPropertyManager.OnPropertyChanged -=
+        new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+      _registeredForEvent = false;
+      
       _currentImage = 0;
       base.Dispose();
     }

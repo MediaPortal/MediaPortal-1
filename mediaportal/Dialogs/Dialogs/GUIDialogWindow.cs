@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Dialogs
@@ -116,7 +117,7 @@ namespace MediaPortal.Dialogs
       {
         PageDestroy();
       }
-      LoadSkin();
+      //LoadSkin();
       AllocResources();
       InitControls();
       _selectedLabel = -1;
@@ -256,6 +257,9 @@ namespace MediaPortal.Dialogs
             DeInitControls();
             GUILayerManager.UnRegisterLayer(this);
             GUILayerManager.RegisterLayer(_prevLayer, GUILayerManager.LayerType.Dialog);
+
+            _prevLayer = null;
+
             return true;
           }
       }

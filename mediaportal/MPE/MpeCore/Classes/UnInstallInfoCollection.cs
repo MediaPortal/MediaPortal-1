@@ -119,9 +119,11 @@ namespace MpeCore.Classes
       if (!Directory.Exists(Path.GetDirectoryName(fileName)))
         Directory.CreateDirectory(Path.GetDirectoryName(fileName));
       var serializer = new XmlSerializer(typeof (UnInstallInfoCollection));
-      TextWriter writer = new StreamWriter(fileName);
-      serializer.Serialize(writer, this);
-      writer.Close();
+      using (TextWriter writer = new StreamWriter(fileName))
+      {
+        serializer.Serialize(writer, this);
+        writer.Close(); 
+      }      
     }
 
     public UnInstallInfoCollection Load()

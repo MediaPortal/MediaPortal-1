@@ -190,12 +190,15 @@ namespace MediaPortal.TagReader
       char[] delimiters = new char[] {'\n'};
 
       // read in the full cue file
-      TextReader tr = new StreamReader(filename, encoding);
-      //read in file
-      cueLines = tr.ReadToEnd().Split(delimiters);
+      using (TextReader tr = new StreamReader(filename, encoding))
+      {
+        //read in file
+        cueLines = tr.ReadToEnd().Split(delimiters);
 
-      // close the stream
-      tr.Close();
+        // close the stream
+        tr.Close();  
+      }
+      
 
       RemoveEmptyLines(ref cueLines);
 
@@ -699,12 +702,13 @@ namespace MediaPortal.TagReader
     /// <param name="encoding">The encoding used to save the file.</param>
     public void SaveCue(string filename, Encoding encoding)
     {
-      TextWriter tw = new StreamWriter(filename, false, encoding);
+      using (TextWriter tw = new StreamWriter(filename, false, encoding))
+      {
+        tw.WriteLine(this.ToString());
 
-      tw.WriteLine(this.ToString());
-
-      //close the writer stream
-      tw.Close();
+        //close the writer stream
+        tw.Close(); 
+      }      
     }
 
     /// <summary>

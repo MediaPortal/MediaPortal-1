@@ -73,11 +73,13 @@ namespace MediaPortal.Configuration
         // Read data from the response stream
         Stream responseStream = response.GetResponseStream();
         Encoding iso8859 = Encoding.GetEncoding("iso-8859-1");
-        StreamReader streamReader = new StreamReader(responseStream, iso8859);
-
-        // Fetch information from our stream
-        string data = streamReader.ReadToEnd();
-
+        string data = "";
+        using (StreamReader streamReader = new StreamReader(responseStream, iso8859))
+        {
+          // Fetch information from our stream
+          data = streamReader.ReadToEnd();  
+        }
+        
         XmlDocument document = new XmlDocument();
         document.LoadXml(data);
 

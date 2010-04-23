@@ -816,9 +816,10 @@ namespace MediaPortal.Music.Database
       StreamReader reader = null;
       string statusCode = string.Empty;
 
+      HttpWebResponse response = null;
       try
       {
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        response = (HttpWebResponse)request.GetResponse();
         // Print the properties of each cookie.
         int i = 0;
         foreach (Cookie cook in response.Cookies)
@@ -843,14 +844,24 @@ namespace MediaPortal.Music.Database
             Log.Debug("AudioscrobblerBase: String: {0}", cook.ToString());
           }
         }
-        reader = new StreamReader(response.GetResponseStream());
-        statusCode = response.StatusDescription;
+        using (reader = new StreamReader(response.GetResponseStream()))
+        {
+          statusCode = response.StatusDescription;  
+        }
+        
       }
       catch (Exception e)
       {
         Log.Error("AudioscrobblerBase.GetResponse: Exception  - {0}", e.Message);
         Log.Error("AudioscrobblerBase.GetResponse: StatusCode - {0}", statusCode);
         return false;
+      }
+      finally
+      {
+        if (response != null)
+        {
+          response.Close();
+        }
       }
 
       // now we are connected

@@ -20,6 +20,7 @@
 
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Video
 {
@@ -90,6 +91,14 @@ namespace MediaPortal.GUI.Video
       imageRewind.Visible = (g_Player.Speed < 0);
       imageFastForward.Visible = (g_Player.Speed > 1);
       base.Render(timePassed);
+    }
+
+    public override void Dispose()
+    {
+      imagePause.SafeDispose();
+      imageFastForward .SafeDispose();
+      imageRewind.SafeDispose();
+      base.Dispose();
     }
 
     #region IRenderLayer

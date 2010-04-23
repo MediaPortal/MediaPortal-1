@@ -89,7 +89,7 @@ namespace MediaPortal.Dialogs
 
     public void SetHeading(string strLine)
     {
-      LoadSkin();
+      //LoadSkin();
       AllocResources();
       InitControls();
 

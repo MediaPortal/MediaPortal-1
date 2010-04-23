@@ -38,7 +38,7 @@ namespace MediaPortal.GUI.Library
 
     private static Thread guiWaitCursorThread = null;
 
-    public static void Dispose()
+    public new static void Dispose()
     {     
       if (_animation != null)
       {

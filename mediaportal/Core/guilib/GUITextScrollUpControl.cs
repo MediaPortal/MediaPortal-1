@@ -437,6 +437,7 @@ namespace MediaPortal.GUI.Library
     {
       _previousProperty = "";
       _listItems.DisposeAndClearList();
+      _font = null;
       base.Dispose();
     }
 

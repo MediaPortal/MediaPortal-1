@@ -87,6 +87,7 @@ namespace MediaPortal.GUI.Library
     private bool _property1Changed = false;
     private bool _property2Changed = false;
     private bool _reCalculate = false;
+    private bool _registeredForEvent = false;
 
     /// <summary>
     /// empty constructor
@@ -458,8 +459,15 @@ namespace MediaPortal.GUI.Library
       _property2Changed = true;
       _reCalculate = true;
 
-      GUIPropertyManager.OnPropertyChanged +=
-        new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+      if (_registeredForEvent == false)
+      {
+      	GUIPropertyManager.OnPropertyChanged -=
+         new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+         
+        GUIPropertyManager.OnPropertyChanged +=
+         new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+        _registeredForEvent = true;
+      }      
     }
 
     private void GUIPropertyManager_OnPropertyChanged(string tag, string tagValue)
@@ -501,8 +509,11 @@ namespace MediaPortal.GUI.Library
 
       _labelControl1.SafeDispose();
       _labelControl2.SafeDispose();
+
+     
       GUIPropertyManager.OnPropertyChanged -=
         new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+     
     }
 
     /// <summary>

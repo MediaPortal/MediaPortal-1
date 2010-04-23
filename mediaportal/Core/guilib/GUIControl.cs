@@ -28,6 +28,7 @@ using System.Xml;
 using MediaPortal.Drawing;
 using Point = System.Drawing.Point;
 using Size = MediaPortal.Drawing.Size;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -614,15 +615,17 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public virtual void Dispose()
     {
-      // Reset our animation states
+      // Reset our animation states    
       if (_animations != null)
       {
         for (int i = 0; i < _animations.Count; i++)
         {
           _animations[i].ResetAnimation();
         } 
-      }      
+      }
+
       
+
       _hasRendered = false;
     }
 

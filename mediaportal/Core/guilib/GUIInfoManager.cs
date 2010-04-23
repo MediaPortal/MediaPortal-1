@@ -393,6 +393,7 @@ namespace MediaPortal.GUI.Library
       m_nextWindowID = (int)GUIWindow.Window.WINDOW_INVALID;
       m_prevWindowID = (int)GUIWindow.Window.WINDOW_INVALID;
       m_stringParameters.Add("__ZZZZ__");
+      GUIPropertyManager.OnPropertyChanged -= GUIPropertyManager_OnPropertyChanged;
       GUIPropertyManager.OnPropertyChanged += GUIPropertyManager_OnPropertyChanged;
       // to offset the string parameters by 1 to assure that all entries are non-zero
     }

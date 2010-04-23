@@ -480,9 +480,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             o.Rows.Add(row);
           }
           var serializer = new XmlSerializer(typeof (DataTable));
-          TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml"));
-          serializer.Serialize(textWriter, o);
-          textWriter.Close();
+          using (TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml")))
+          {
+            serializer.Serialize(textWriter, o);
+            textWriter.Close();  
+          }
         }
         catch (Exception exception)
         {

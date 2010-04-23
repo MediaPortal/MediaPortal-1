@@ -259,6 +259,13 @@ namespace MediaPortal.Music.Amazon
           Log.Error("Cover Art grabber: Get Response failed:  {0}", e.Message);
           return false;
         }
+        finally
+        {
+          if (response != null)
+          {
+            response.Close();
+          }
+        }
 
         if (responseXml == null)
         {

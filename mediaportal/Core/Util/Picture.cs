@@ -927,8 +927,10 @@ namespace MediaPortal.Util
       {
         using (FileStream fs = new FileStream(aThumbTargetPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None))
         {
-          Bitmap bmp = new Bitmap(myImage);
-          bmp.Save(fs, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+          using (Bitmap bmp = new Bitmap(myImage))
+          {
+            bmp.Save(fs, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);  
+          }          
           fs.Flush();
         }
 

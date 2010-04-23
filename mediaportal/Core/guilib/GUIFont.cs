@@ -66,9 +66,7 @@ namespace MediaPortal.GUI.Library
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEnginePresent3D(int fontNumber);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineSetDevice(void* device);
+    
 
     #endregion
 
@@ -835,25 +833,28 @@ namespace MediaPortal.GUI.Library
     public static int MeasureDisplayStringWidth(Graphics graphics, string text, Font font)
     {
       const int width = 32;
-
-      Bitmap bitmap = new Bitmap(width, 1, graphics);
-      SizeF size = graphics.MeasureString(text, font);
-      Graphics anagra = Graphics.FromImage(bitmap);
-
-      int measured_width = (int)size.Width;
-
-      if (anagra != null)
+      int measured_width = 0;
+      using (Bitmap bitmap = new Bitmap(width, 1, graphics))
       {
-        anagra.Clear(Color.White);
-        anagra.DrawString(text + "|", font, Brushes.Black,
-                          width - measured_width, -font.Height / 2);
-
-        for (int i = width - 1; i >= 0; i--)
+        SizeF size = graphics.MeasureString(text, font);
+        using (Graphics anagra = Graphics.FromImage(bitmap))
         {
-          measured_width--;
-          if (bitmap.GetPixel(i, 0).R != 255) // found a non-white pixel ?
+          measured_width = (int)size.Width;
+
+          if (anagra != null)
           {
-            break;
+            anagra.Clear(Color.White);
+            anagra.DrawString(text + "|", font, Brushes.Black,
+                              width - measured_width, -font.Height / 2);
+
+            for (int i = width - 1; i >= 0; i--)
+            {
+              measured_width--;
+              if (bitmap.GetPixel(i, 0).R != 255) // found a non-white pixel ?
+              {
+                break;
+              }
+            }
           }
         }
       }
@@ -972,60 +973,23 @@ namespace MediaPortal.GUI.Library
     {
       // Create a bitmap on which to measure the alphabet
       Bitmap bmp = new Bitmap(1, 1, PixelFormat.Format32bppArgb);
-      Graphics g = Graphics.FromImage(bmp);
-      bool width = true;
-
-      g.SmoothingMode = SmoothingMode.AntiAlias;
-      g.TextRenderingHint = TextRenderingHint.AntiAlias;
-      g.TextContrast = 0;
-
-      // Establish the font and texture size
-      _textureScale = 1.0f; // Draw fonts into texture without scaling
-
-      // Calculate the dimensions for the smallest power-of-two texture which
-      // can hold all the printable characters
-      _textureWidth = _textureHeight = 256;
-      for (;;)
+      bool width = false;
+      Graphics g = null;
+      try
       {
-        try
-        {
-          // Measure the alphabet
-          PaintAlphabet(g, true);
-        }
-        catch (InvalidOperationException)
-        {
-          // Scale up the texture size and try again
-          if (width)
-          {
-            _textureWidth *= 2;
-          }
-          else
-          {
-            _textureHeight *= 2;
-          }
-          width = !width;
-          continue;
-        }
-        break;
-      }
+        g = Graphics.FromImage(bmp);
+        width = true;
+        g.SmoothingMode = SmoothingMode.AntiAlias;
+        g.TextRenderingHint = TextRenderingHint.AntiAlias;
+        g.TextContrast = 0;
+        // Establish the font and texture size
+        _textureScale = 1.0f; // Draw fonts into texture without scaling
 
-      // If requested texture is too big, use a smaller texture and smaller font,
-      // and scale up when rendering.
-      Caps d3dCaps = GUIGraphicsContext.DX9Device.DeviceCaps;
-
-      // If the needed texture is too large for the video card...
-      if (_textureWidth > d3dCaps.MaxTextureWidth)
-      {
-        // Scale the font size down to fit on the largest possible texture
-        _textureScale = (float)d3dCaps.MaxTextureWidth / (float)_textureWidth;
-        _textureWidth = _textureHeight = d3dCaps.MaxTextureWidth;
-
+        // Calculate the dimensions for the smallest power-of-two texture which
+        // can hold all the printable characters
+        _textureWidth = _textureHeight = 256;
         for (;;)
         {
-          // Create a new, smaller font
-          _fontHeight = (int)Math.Floor(_fontHeight * _textureScale);
-          _systemFont = new Font(_systemFont.Name, _fontHeight, _systemFont.Style);
-
           try
           {
             // Measure the alphabet
@@ -1033,30 +997,75 @@ namespace MediaPortal.GUI.Library
           }
           catch (InvalidOperationException)
           {
-            // If that still doesn't fit, scale down again and continue
-            _textureScale *= 0.9F;
+            // Scale up the texture size and try again
+            if (width)
+            {
+              _textureWidth *= 2;
+            }
+            else
+            {
+              _textureHeight *= 2;
+            }
+            width = !width;
             continue;
           }
-
           break;
         }
+
+
+        // If requested texture is too big, use a smaller texture and smaller font,
+        // and scale up when rendering.
+        Caps d3dCaps = GUIGraphicsContext.DX9Device.DeviceCaps;
+
+        // If the needed texture is too large for the video card...
+        if (_textureWidth > d3dCaps.MaxTextureWidth)
+        {
+          // Scale the font size down to fit on the largest possible texture
+          _textureScale = (float)d3dCaps.MaxTextureWidth / (float)_textureWidth;
+          _textureWidth = _textureHeight = d3dCaps.MaxTextureWidth;
+
+          for (;;)
+          {
+            // Create a new, smaller font
+            _fontHeight = (int)Math.Floor(_fontHeight * _textureScale);
+            _systemFont = new Font(_systemFont.Name, _fontHeight, _systemFont.Style);
+
+            try
+            {
+              // Measure the alphabet
+              PaintAlphabet(g, true);
+            }
+            catch (InvalidOperationException)
+            {
+              // If that still doesn't fit, scale down again and continue
+              _textureScale *= 0.9F;
+              continue;
+            }
+
+            break;
+          }
+        }
+        Trace.WriteLine("font:" + _fontName + " " + _fileName + " height:" + _fontHeight.ToString() + " " +
+                        _textureWidth.ToString() + "x" + _textureHeight.ToString());
+
+        // Release the bitmap used for measuring and create one for drawing
+
+        bmp = new Bitmap(_textureWidth, _textureHeight, PixelFormat.Format32bppArgb);
+        g = Graphics.FromImage(bmp);
+
+        g.SmoothingMode = SmoothingMode.AntiAlias;
+        g.TextRenderingHint = TextRenderingHint.AntiAlias;
+        g.TextContrast = 0;
+        _textureCoords = new float[(10 + _EndCharacter - _StartCharacter),4];
+        // Draw the alphabet
+        PaintAlphabet(g, false);
+        _textureCoords[_EndCharacter - _StartCharacter, 0] = _spacingPerChar;
+        _textureCoords[_EndCharacter - _StartCharacter + 1, 0] = _textureScale;
       }
-      Trace.WriteLine("font:" + _fontName + " " + _fileName + " height:" + _fontHeight.ToString() + " " +
-                      _textureWidth.ToString() + "x" + _textureHeight.ToString());
-
-      // Release the bitmap used for measuring and create one for drawing
-
-      bmp = new Bitmap(_textureWidth, _textureHeight, PixelFormat.Format32bppArgb);
-      g = Graphics.FromImage(bmp);
-
-      g.SmoothingMode = SmoothingMode.AntiAlias;
-      g.TextRenderingHint = TextRenderingHint.AntiAlias;
-      g.TextContrast = 0;
-      _textureCoords = new float[(10 + _EndCharacter - _StartCharacter),4];
-      // Draw the alphabet
-      PaintAlphabet(g, false);
-      _textureCoords[_EndCharacter - _StartCharacter, 0] = _spacingPerChar;
-      _textureCoords[_EndCharacter - _StartCharacter + 1, 0] = _textureScale;
+      finally
+      {
+        g.SafeDispose();
+      }
       return bmp;
     }
 
@@ -1165,6 +1174,7 @@ namespace MediaPortal.GUI.Library
         }
 
 
+				_textureFont.Disposing -= new EventHandler(_textureFont_Disposing);
         _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
         SetFontEgine();
         _d3dxFont = new Microsoft.DirectX.Direct3D.Font(GUIGraphicsContext.DX9Device, _systemFont);

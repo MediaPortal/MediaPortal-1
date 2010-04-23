@@ -622,24 +622,35 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void Dispose()
     {
+      //UnsubscribeEventHandlers();
+
       base.Dispose();
       _imageFocused.SafeDispose();
       _imageNonFocused.SafeDispose();
       _imageBackground.SafeDispose();
-
       _imageLeft.SafeDispose();
       _imageLeftFocus.SafeDispose();
-
       _imageRight.SafeDispose();
       _imageRightFocus.SafeDispose();
-
-      //_font.Dispose(null, null);      
-
       _labelControl.SafeDispose();
+      _font = null;
+
       _showSelect = false;
 
       Clear();
     }
+
+   /* private void UnsubscribeEventHandlers()
+    {
+      if (CaptionChanged != null)
+      {
+        foreach (EventHandler eventDelegate in CaptionChanged.GetInvocationList())
+        {
+          CaptionChanged -= eventDelegate;
+        }
+      }
+    }*/
+
 
     public override bool CanFocus()
     {

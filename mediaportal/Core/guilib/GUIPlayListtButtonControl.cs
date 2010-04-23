@@ -383,27 +383,13 @@ namespace MediaPortal.GUI.Library
 
       ImgUpButtonNormal.SafeDispose();
       ImgUpButtonFocused.SafeDispose();
-
       ImgDownButtonNormal.SafeDispose();
       ImgDownButtonFocused.SafeDispose();
-
       ImgDeleteButtonNormal.SafeDispose();
-      ImgDeleteButtonFocused.SafeDispose();
-
-      if (ImgUpButtonDisabled != null)
-      {
-        ImgUpButtonDisabled.SafeDispose();
-      }
-
-      if (ImgDownButtonDisabled != null)
-      {
-        ImgDownButtonDisabled.SafeDispose();
-      }
-
-      if (ImgDeleteButtonDisabled != null)
-      {
-        ImgDeleteButtonDisabled.SafeDispose();
-      }
+      ImgDeleteButtonFocused.SafeDispose();      
+      ImgUpButtonDisabled.SafeDispose();            
+      ImgDownButtonDisabled.SafeDispose();
+      ImgDeleteButtonDisabled.SafeDispose();
     }
 
     public override void PreAllocResources()

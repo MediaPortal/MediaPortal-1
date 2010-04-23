@@ -480,6 +480,7 @@ namespace MediaPortal.GUI.Library
     public override void AllocResources()
     {
       base.AllocResources();
+      Dispose();
       _frameCounter = 0;
       _imageFocused.AllocResources();
       _imageNonFocused.AllocResources();
@@ -509,12 +510,8 @@ namespace MediaPortal.GUI.Library
       base.Dispose();
       _imageFocused.SafeDispose();
       _imageNonFocused.SafeDispose();
-      _labelControl.SafeDispose();
-
-      if (_hoverImage != null)
-      {
-        _hoverImage.SafeDispose();
-      }
+      _labelControl.SafeDispose();      
+      _hoverImage.SafeDispose();          
     }
 
     /// <summary>

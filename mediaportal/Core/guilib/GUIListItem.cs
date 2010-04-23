@@ -528,27 +528,18 @@ namespace MediaPortal.GUI.Library
     public void FreeMemory()
     {
       _isCoverArtRetrieved = false;
-
-      if (null != _thumbnailImage)
-      {
-        _thumbnailImage.SafeDispose();
-        _thumbnailImage = null;
-      }
-      if (null != _imageIcon)
-      {
-        _imageIcon.SafeDispose();
-        _imageIcon = null;
-      }
-      if (null != _imagePinIcon)
-      {
-        _imagePinIcon.SafeDispose();
-        _imagePinIcon = null;
-      }
-      if (null != _imageBigPinIcon)
-      {
-        _imageBigPinIcon.SafeDispose();
-        _imageBigPinIcon = null;
-      }
+    
+      _thumbnailImage.SafeDispose();
+      _thumbnailImage = null;
+    
+      _imageIcon.SafeDispose();
+      _imageIcon = null;
+    
+      _imagePinIcon.SafeDispose();
+      _imagePinIcon = null;
+    
+      _imageBigPinIcon.SafeDispose();
+      _imageBigPinIcon = null;      
     }    
 
     /// <summary>
@@ -596,7 +587,10 @@ namespace MediaPortal.GUI.Library
 
     private void itemSelectedCallback(IAsyncResult ar)
     {
-      OnItemSelected.EndInvoke(ar);
+      if (OnItemSelected != null)
+      {
+        OnItemSelected.EndInvoke(ar);
+      }
     }
 
     public bool IsPlayed
@@ -654,7 +648,10 @@ namespace MediaPortal.GUI.Library
     /// Free the memory that is used by the icons.
     /// </summary>
     public void Dispose()
-    {        
+    {
+      //UnsubscribeEventHandlers();
+      
+
       FreeMemory();
       if (OnRetrieveArt != null)
       {
@@ -664,6 +661,25 @@ namespace MediaPortal.GUI.Library
       }
     
     }
+
+    /*private void UnsubscribeEventHandlers()
+    {
+      if (OnItemSelected != null)
+      {
+        foreach (ItemSelectedHandler eventDelegate in OnItemSelected.GetInvocationList())
+        {
+          OnItemSelected -= eventDelegate;
+        }  
+      }
+
+      if (OnRetrieveArt != null)
+      {
+        foreach (RetrieveCoverArtHandler eventDelegate in OnRetrieveArt.GetInvocationList())
+        {
+          OnRetrieveArt -= eventDelegate;
+        }
+      }
+    }*/
 
     #endregion
   }

@@ -384,6 +384,7 @@ namespace MediaPortal.GUI.Library
       _itemList.DisposeAndClearList();
       base.Dispose();
       _upDownControl.SafeDispose();
+      _font = null;
     }
 
     protected void OnRight()

@@ -133,9 +133,23 @@ namespace MediaPortal.GUI.Library
 
     public override void Dispose()
     {
+      //UnsubscribeEventHandlers();
+      
       base.Dispose();
       _rows.DisposeAndClear();
+      _currentSelectedItem.SafeDispose();
     }
+
+    /*private void UnsubscribeEventHandlers()
+    {
+      if (OnSelectionChanged != null)
+      {
+        foreach (GridControlEventHandler eventDelegate in OnSelectionChanged.GetInvocationList())
+        {
+          OnSelectionChanged -= eventDelegate;
+        }  
+      }
+    }*/
 
     public override void Render(float timePassed)
     {

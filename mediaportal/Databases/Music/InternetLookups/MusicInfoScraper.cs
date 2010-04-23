@@ -175,13 +175,28 @@ namespace MediaPortal.Music.Database
         req.UserAgent =
           "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; Maxthon; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04307.00";
         HttpWebResponse result = (HttpWebResponse)req.GetResponse();
-        Stream ReceiveStream = result.GetResponseStream();
 
-        // 1252 is encoding for Windows format
-        Encoding encode = Encoding.GetEncoding("utf-8");
-        StreamReader sr = new StreamReader(ReceiveStream, encode);
-        strBody = sr.ReadToEnd();
-        return strBody;
+        try
+        {
+          Stream ReceiveStream = result.GetResponseStream();
+
+          // 1252 is encoding for Windows format
+          Encoding encode = Encoding.GetEncoding("utf-8");
+          using (StreamReader sr = new StreamReader(ReceiveStream, encode))
+          {
+            strBody = sr.ReadToEnd();  
+          }
+          
+          return strBody;
+        }     
+        finally
+        {
+          if (result != null)
+          {
+            result.Close();
+          }
+        }
+        
       }
       catch (Exception) {}
       return "";

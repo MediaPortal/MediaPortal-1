@@ -181,6 +181,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       this.properties.Columns.Add("Value", typeof (string));
       this.properties.PrimaryKey = new DataColumn[] {column};
       this.dataGrid1.DataSource = this.properties;
+      GUIPropertyManager.OnPropertyChanged -=
+        new GUIPropertyManager.OnPropertyChangedHandler(this.GUIPropertyManager_OnPropertyChanged);
       GUIPropertyManager.OnPropertyChanged +=
         new GUIPropertyManager.OnPropertyChangedHandler(this.GUIPropertyManager_OnPropertyChanged);
       this.GUIPropertyManager_OnPropertyChanged("#currentmodule", GUIPropertyManager.GetProperty("#currentmodule"));

@@ -78,14 +78,15 @@ namespace MediaPortal
 
           if (grabSucceeded)
           {
-            GraphicsStream stream = SurfaceLoader.SaveToStream(ImageFileFormat.Bmp, rgbSurface);
-            Bitmap b = new Bitmap(Image.FromStream(stream));
+            using (GraphicsStream stream = SurfaceLoader.SaveToStream(ImageFileFormat.Bmp, rgbSurface))
+            {
+              Bitmap b = new Bitmap(Image.FromStream(stream));
 
-            // IMPORTANT: Closes and disposes the stream
-            // If this is not done we get a memory leak!
-            stream.Close();
-            stream.SafeDispose();
-            return b;
+              // IMPORTANT: Closes and disposes the stream
+              // If this is not done we get a memory leak!
+              stream.Close();
+              return b;
+            }                        
           }
           Log.Debug("FrameGrabber: Frame grab failed");
           return null;

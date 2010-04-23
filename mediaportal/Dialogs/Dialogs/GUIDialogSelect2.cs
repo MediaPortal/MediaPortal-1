@@ -124,7 +124,7 @@ namespace MediaPortal.Dialogs
     public void SetHeading(string strLine)
     {
       Reset();
-      LoadSkin();
+      //LoadSkin();
       AllocResources();
       InitControls();
 

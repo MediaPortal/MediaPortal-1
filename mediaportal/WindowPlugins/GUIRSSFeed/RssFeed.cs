@@ -227,7 +227,16 @@ namespace Rss
               }
             }
             catch {}
-            stream = response.GetResponseStream();
+              
+            finally
+            {              
+              if (response != null)
+              {
+                stream = response.GetResponseStream();
+                response.Close();
+              }
+            }
+            
           }
           catch (WebException we)
           {

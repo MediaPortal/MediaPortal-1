@@ -121,8 +121,11 @@ namespace MediaPortal.Utils.Web
             throw (new Exception());
           }
 
-          reader = new StreamReader(response.GetResponseStream());
-          responseCode = response.StatusCode;
+          using (reader = new StreamReader(response.GetResponseStream()))
+          {
+            responseCode = response.StatusCode;  
+          }
+          
 
           //request = null;
         }
@@ -133,6 +136,13 @@ namespace MediaPortal.Utils.Web
             workerError(targetURL, ex2);
           }
           return;
+        }
+        finally
+        {
+          if (response != null)
+          {
+            response.Close();
+          }
         }
 
         List<String> responseStrings = new List<string>();

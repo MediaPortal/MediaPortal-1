@@ -104,49 +104,51 @@ namespace MediaPortal.Dialogs
     /// <returns>Returns the result of the displayed resume dialog.</returns>
     public static Result ShowResumeDialog(string title, int lastStopTime, MediaType mediaType)
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-      if (dlg == null) return Result.Error;
+      using (GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU))
+      {
+        if (dlg == null) return Result.Error;
 
-      dlg.Reset();
-      dlg.SetHeading(title);
+        dlg.Reset();
+        dlg.SetHeading(title);
 
-      // add menu items
-      GUIListItem itemBeginning = new GUIListItem(GetBeginningText(mediaType));
-      dlg.Add(itemBeginning);
+        // add menu items
+        GUIListItem itemBeginning = new GUIListItem(GetBeginningText(mediaType));
+        dlg.Add(itemBeginning);
 
-      GUIListItem itemLastStopTime = new GUIListItem(GetLastStopTimeText(mediaType, lastStopTime));
-      if (lastStopTime > 0)
-        dlg.Add(itemLastStopTime);
+        GUIListItem itemLastStopTime = new GUIListItem(GetLastStopTimeText(mediaType, lastStopTime));
+        if (lastStopTime > 0)
+          dlg.Add(itemLastStopTime);
 
-      GUIListItem itemLivePoint = new GUIListItem(GUILocalizeStrings.Get(980));
-      if (mediaType == MediaType.LiveRecording)
-        dlg.Add(itemLivePoint);
+        GUIListItem itemLivePoint = new GUIListItem(GUILocalizeStrings.Get(980));
+        if (mediaType == MediaType.LiveRecording)
+          dlg.Add(itemLivePoint);
 
-      // set focus to last stop time
-      // itemIds 0 based, listindex (labels) 1 based
-      dlg.SelectedLabel = itemLastStopTime.ItemId - 1;
+        // set focus to last stop time
+        // itemIds 0 based, listindex (labels) 1 based
+        dlg.SelectedLabel = itemLastStopTime.ItemId - 1;
 
-      //// if dialog contains only beginning item, it is not needed to display it
-      //if (lastStopTime <= 0 && mediaType != MediaType.LiveRecording)
-      //  return Result.PlayFromBeginning;
+        //// if dialog contains only beginning item, it is not needed to display it
+        //if (lastStopTime <= 0 && mediaType != MediaType.LiveRecording)
+        //  return Result.PlayFromBeginning;
 
-      // show dialog
-      dlg.DoModal(GUIWindowManager.ActiveWindow);
+        // show dialog
+        dlg.DoModal(GUIWindowManager.ActiveWindow);
 
-      // set results
-      if (dlg.SelectedId == -1)
-        return Result.Abort;
+        // set results
+        if (dlg.SelectedId == -1)
+          return Result.Abort;
 
-      if (dlg.SelectedId == itemBeginning.ItemId)
+        if (dlg.SelectedId == itemBeginning.ItemId)
+          return Result.PlayFromBeginning;
+
+        if (dlg.SelectedId == itemLastStopTime.ItemId)
+          return Result.PlayFromLastStopTime;
+
+        if (dlg.SelectedId == itemLivePoint.ItemId)
+          return Result.PlayFromLivePoint;
+
         return Result.PlayFromBeginning;
-      
-      if (dlg.SelectedId == itemLastStopTime.ItemId)
-        return Result.PlayFromLastStopTime;
-
-      if (dlg.SelectedId == itemLivePoint.ItemId)
-        return Result.PlayFromLivePoint;
-
-      return Result.PlayFromBeginning;
+      }
     }
   }
 }

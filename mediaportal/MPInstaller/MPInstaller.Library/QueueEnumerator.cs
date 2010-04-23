@@ -46,10 +46,13 @@ namespace MediaPortal.MPInstaller
     {
       if (Items.Count > 0)
       {
-        XmlSerializer serializer = new XmlSerializer(typeof (QueueEnumerator));
-        TextWriter writer = new StreamWriter(filename);
-        serializer.Serialize(writer, this);
-        writer.Close();
+        XmlSerializer serializer = new XmlSerializer(typeof (QueueEnumerator));        
+        using (TextWriter writer = new StreamWriter(filename))
+        {
+          serializer.Serialize(writer, this);
+          writer.Close();
+        }
+
       }
       else if (File.Exists(filename))
       {

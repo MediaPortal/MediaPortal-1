@@ -28,6 +28,7 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Music
 {
@@ -599,5 +600,23 @@ namespace MediaPortal.GUI.Music
     }
 
     #endregion
+
+    public override void Dispose()
+    {
+      _videoRectangle.SafeDispose();
+      _thumbImage.SafeDispose();
+      _labelPlayTime.SafeDispose();
+      _imagePlayLogo.SafeDispose();
+      _imagePauseLogo.SafeDispose();
+      _labelInfo.SafeDispose();
+      _labelBigPlayTime.SafeDispose();
+      _imageFastForward.SafeDispose();
+      _imageRewind.SafeDispose();
+      _videoWindow.SafeDispose();
+      _imageNormal.SafeDispose();
+      _imageGapless.SafeDispose();
+      _imageCrossfade.SafeDispose();
+      base.Dispose();
+    }
   }
 }

@@ -30,6 +30,7 @@ using MediaPortal.Playlists;
 using MediaPortal.Profile;
 using MediaPortal.Video.Database;
 using MediaPortal.Player.Subtitles;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Video
 {
@@ -1108,7 +1109,15 @@ namespace MediaPortal.GUI.Video
               _isOsdVisible = false;
               GUIWindowManager.IsOsdVisible = false;
               GUIGraphicsContext.IsFullScreenVideo = false;
+                            
               GUILayerManager.UnRegisterLayer(this);
+
+              /*imgVolumeMuteIcon.SafeDispose();
+              imgVolumeBar.SafeDispose();
+              imgActionForbiddenIcon.SafeDispose();
+              dlg.SafeDispose();
+              _osdWindow.SafeDispose();*/
+
               base.OnMessage(message);
             }
             return true;

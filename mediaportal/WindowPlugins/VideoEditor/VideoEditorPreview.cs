@@ -471,63 +471,69 @@ namespace WindowPlugins.VideoEditor
           yesnoDialog.DoModal(GetID);
           if (yesnoDialog.IsConfirmed)
           {
-            StreamReader comSkipFile = new StreamReader(comskipFilePath);
-            string line = comSkipFile.ReadLine();
-            string[] lineParts = line.Split(new char[] {'\t', ' '});
-            if (lineParts.Length < 1)
-            {
-              MessageBox(GUILocalizeStrings.Get(2061), "Video Editor"); //The Comskip file is incompatible
-              return;
-            }
-            int framesPerSec = 25;
-            double curPos = 0;
-            if (BaseCompareValidator.CanConvert(lineParts[lineParts.Length - 1], ValidationDataType.Integer))
-            {
-              framesPerSec = Convert.ToInt32(lineParts[lineParts.Length - 1]) / 100;
-            }
-            comSkipFile.ReadLine();
-            while (!comSkipFile.EndOfStream)
+            string line = "";
+            using (StreamReader comSkipFile = new StreamReader(comskipFilePath))
             {
               line = comSkipFile.ReadLine();
-              lineParts = line.Split(new char[] {'\t', ' '});
-              int cutPoint1, cutPoint2;
-              double startPoint = 0, endPoint = 0;
-              if (BaseCompareValidator.CanConvert(lineParts[0], ValidationDataType.Integer))
-              {
-                cutPoint1 = Convert.ToInt32(lineParts[0].Trim());
-                endPoint = cutPoint1 / framesPerSec;
-              }
-              else
+
+
+              string[] lineParts = line.Split(new char[] {'\t', ' '});
+              if (lineParts.Length < 1)
               {
                 MessageBox(GUILocalizeStrings.Get(2061), "Video Editor"); //The Comskip file is incompatible
                 return;
+              }
+              int framesPerSec = 25;
+              double curPos = 0;
+              if (BaseCompareValidator.CanConvert(lineParts[lineParts.Length - 1], ValidationDataType.Integer))
+              {
+                framesPerSec = Convert.ToInt32(lineParts[lineParts.Length - 1]) / 100;
+              }
+              comSkipFile.ReadLine();
+              while (!comSkipFile.EndOfStream)
+              {
+                line = comSkipFile.ReadLine();
+                lineParts = line.Split(new char[] {'\t', ' '});
+                int cutPoint1, cutPoint2;
+                double startPoint = 0, endPoint = 0;
+                if (BaseCompareValidator.CanConvert(lineParts[0], ValidationDataType.Integer))
+                {
+                  cutPoint1 = Convert.ToInt32(lineParts[0].Trim());
+                  endPoint = cutPoint1 / framesPerSec;
+                }
+                else
+                {
+                  MessageBox(GUILocalizeStrings.Get(2061), "Video Editor"); //The Comskip file is incompatible
+                  return;
+                }
+
+                if (BaseCompareValidator.CanConvert(lineParts[1], ValidationDataType.Integer))
+                {
+                  cutPoint2 = Convert.ToInt32(lineParts[1].Trim());
+                  startPoint = cutPoint2 / framesPerSec;
+                }
+                else
+                {
+                  MessageBox(GUILocalizeStrings.Get(2061), "Video Editor"); //The Comskip file is incompatible
+                  return;
+                }
+                cutListCtrl.Add(
+                  new GUIListItem(Utils.SecondsToHMSString((int)curPos) + " - " +
+                                  Utils.SecondsToHMSString((int)endPoint)));
+                durationNew += (endPoint - curPos);
+                newLenghtLbl.Label = Utils.SecondsToHMSString((int)durationNew);
+                cutPointsList.Add(new TimeDomain(curPos, endPoint));
+                curPos = startPoint;
               }
 
-              if (BaseCompareValidator.CanConvert(lineParts[1], ValidationDataType.Integer))
-              {
-                cutPoint2 = Convert.ToInt32(lineParts[1].Trim());
-                startPoint = cutPoint2 / framesPerSec;
-              }
-              else
-              {
-                MessageBox(GUILocalizeStrings.Get(2061), "Video Editor"); //The Comskip file is incompatible
-                return;
-              }
               cutListCtrl.Add(
                 new GUIListItem(Utils.SecondsToHMSString((int)curPos) + " - " +
-                                Utils.SecondsToHMSString((int)endPoint)));
-              durationNew += (endPoint - curPos);
+                                Utils.SecondsToHMSString((int)durationOld)));
+              durationNew += (durationOld - curPos);
               newLenghtLbl.Label = Utils.SecondsToHMSString((int)durationNew);
-              cutPointsList.Add(new TimeDomain(curPos, endPoint));
-              curPos = startPoint;
+              cutPointsList.Add(new TimeDomain(curPos, durationOld));
+              cutBtn.IsEnabled = true;
             }
-            cutListCtrl.Add(
-              new GUIListItem(Utils.SecondsToHMSString((int)curPos) + " - " +
-                              Utils.SecondsToHMSString((int)durationOld)));
-            durationNew += (durationOld - curPos);
-            newLenghtLbl.Label = Utils.SecondsToHMSString((int)durationNew);
-            cutPointsList.Add(new TimeDomain(curPos, durationOld));
-            cutBtn.IsEnabled = true;
           }
         }
       }

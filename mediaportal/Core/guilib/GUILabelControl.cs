@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
@@ -41,6 +42,7 @@ namespace MediaPortal.GUI.Library
     private int _textwidth = 0;
     private int _textheight = 0;
     private bool _useFontCache = false;
+    private bool _registeredForEvent = false;
 
     private GUIFont _font = null;
     private bool _useViewPort = true;
@@ -594,8 +596,15 @@ namespace MediaPortal.GUI.Library
     public override void AllocResources()
     {
       _propertyHasChanged = true;
-      GUIPropertyManager.OnPropertyChanged +=
+
+      if (_registeredForEvent == false)
+      {
+      	GUIPropertyManager.OnPropertyChanged -=
         new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+        GUIPropertyManager.OnPropertyChanged +=
+        new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+        _registeredForEvent = true;
+      }            
       _font = GUIFontManager.GetFont(_fontName);
       Update();
       base.AllocResources();
@@ -619,6 +628,7 @@ namespace MediaPortal.GUI.Library
     public override void Dispose()
     {
       //_labelText = string.Empty;
+      _font = null;
       _reCalculate = true;
       GUIPropertyManager.OnPropertyChanged -=
         new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);

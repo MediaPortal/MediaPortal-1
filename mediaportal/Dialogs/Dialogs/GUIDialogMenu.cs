@@ -337,7 +337,8 @@ namespace MediaPortal.Dialogs
 
     public virtual void SetHeading(string strLine)
     {
-      LoadSkin();
+      //Dispose();
+      //LoadSkin();
       AllocResources();
       InitControls();
 
@@ -360,6 +361,18 @@ namespace MediaPortal.Dialogs
       SetHeading(GUILocalizeStrings.Get(iString));
       selectedItemIndex = -1;
       listItems.DisposeAndClearList();
+    }
+
+    public override void Dispose()
+    {      
+      listItems.DisposeAndClear();
+
+      btnClose.SafeDispose();
+      listView.SafeDispose();
+      lblHeading.SafeDispose();
+      lblHeading2.SafeDispose();      
+
+      base.Dispose();      
     }
   }
 }

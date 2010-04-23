@@ -53,28 +53,8 @@ namespace MediaPortal.Player
     #region imports
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineRemoveTexture(int textureNo);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe int FontEngineAddSurface(int hasCode, bool useAlphaBlend, void* fontTexture);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
-                                                            float uoff, float voff, float umax, float vmax, int color);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEnginePresentTextures();
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineSetTexture(void* texture);
 
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEngineDrawSurface(int fx, int fy, int nw, int nh,
-                                                            int dstX, int dstY, int dstWidth, int dstHeight,
-                                                            void* surface);
 
     #endregion
 

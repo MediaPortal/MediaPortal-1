@@ -44,18 +44,12 @@ namespace MediaPortal.GUI.Library
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe int FontEngineAddSurface(int hasCode, bool useAlphaBlend, void* fontTexture);
+    
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
                                                             float uoff, float voff, float umax, float vmax, int color,
                                                             float[,] matrix);
-
-
-    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe void FontEnginePresentTextures();
 
     #endregion
 
@@ -102,6 +96,7 @@ namespace MediaPortal.GUI.Library
         {
           unsafe
           {
+          	_image.Disposing -= new EventHandler(D3DTexture_Disposing);
             _image.Disposing += new EventHandler(D3DTexture_Disposing);
             IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(_image);
             _textureNumber = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
@@ -156,6 +151,7 @@ namespace MediaPortal.GUI.Library
           if (_image != null)
           {
             //_eventMgr.Subscribe(_image, "Disposing", new EventHandler(D3DTexture_Disposing));
+            _image.Disposing -= new EventHandler(D3DTexture_Disposing);
             _image.Disposing += new EventHandler(D3DTexture_Disposing);
             unsafe
             {
@@ -217,6 +213,13 @@ namespace MediaPortal.GUI.Library
           if (Disposed != null)
           {
             Disposed(this, new EventArgs());
+            if (Disposed != null)
+            {
+              foreach (EventHandler eventDelegate in Disposed.GetInvocationList())
+              {
+                Disposed -= eventDelegate;
+              } 
+            }            
           }
           disposed = true;
         }
@@ -483,6 +486,13 @@ namespace MediaPortal.GUI.Library
       if (Disposed != null)
       {
         Disposed(this, new EventArgs());
+        if (Disposed != null)
+        {
+          foreach (EventHandler eventDelegate in Disposed.GetInvocationList())
+          {
+            Disposed -= eventDelegate;
+          }
+        }
       }
       this.disposed = true;
     }

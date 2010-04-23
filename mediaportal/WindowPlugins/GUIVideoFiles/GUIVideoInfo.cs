@@ -167,6 +167,7 @@ namespace MediaPortal.GUI.Video
       {
         videoOverlay.Focused = false;
       }
+      
       if (currentMovie == null)
       {
         return;

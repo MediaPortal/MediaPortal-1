@@ -461,10 +461,12 @@ namespace MediaPortal.MPInstaller
 
           if (File.Exists(ProjectFileName))
           {
-            sr = new StreamReader(Path.GetFullPath(ProjectFileName));
-            //this is causing mantis bug 2324: 1.1.0 MPI tool is not compatible with 1.0.x 
-            //zip.AddFileStream("installer.xmp", "", sr.BaseStream);
-            zip.AddFileStream("instaler.xmp", "", sr.BaseStream);
+            using (sr = new StreamReader(Path.GetFullPath(ProjectFileName)))
+            {
+              //this is causing mantis bug 2324: 1.1.0 MPI tool is not compatible with 1.0.x 
+              //zip.AddFileStream("installer.xmp", "", sr.BaseStream);
+              zip.AddFileStream("instaler.xmp", "", sr.BaseStream);  
+            }            
           }
           else ls.Items.Add("Error : Project file not found !");
 

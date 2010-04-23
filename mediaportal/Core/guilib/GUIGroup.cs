@@ -115,7 +115,7 @@ namespace MediaPortal.GUI.Library
         _animator = null;
       }
 
-      Children.SafeDispose();
+      _children.SafeDispose();
       
       base.Dispose();
     }

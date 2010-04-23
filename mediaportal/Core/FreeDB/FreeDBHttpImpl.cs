@@ -95,47 +95,50 @@ namespace MediaPortal.Freedb
     public FreeDBSite[] GetFeedbSites()
     {
       FreeDBSite[] retval = null;
-      StreamReader urlRdr = GetStreamFromSite("sites");
-      m_message = urlRdr.ReadLine();
-      int code = GetCode(m_message);
-      m_message = m_message.Substring(4); // remove the code...
-      char[] sep = {' '};
-
-
-      switch (code)
+      using (StreamReader urlRdr = GetStreamFromSite("sites"))
       {
-        case 210: // OK, Site Information Follows.
-          // Read in all sites.
-          string[] sites = ParseMultiLine(urlRdr);
-          retval = new FreeDBSite[sites.Length];
-          int index = 0;
-          // Loop through server list and extract different parts.
-          foreach (string site in sites)
-          {
-            string loc = "";
-            string[] siteInfo = site.Split(sep);
-            retval[index] = new FreeDBSite();
-            retval[index].Host = siteInfo[0];
-            retval[index].Protocol =
-              (FreeDBSite.FreeDBProtocol)Enum.Parse(typeof (FreeDBSite.FreeDBProtocol), siteInfo[1], true);
-            retval[index].Port = Convert.ToInt32(siteInfo[2]);
-            retval[index].URI = siteInfo[3];
-            retval[index].Latitude = siteInfo[4];
-            retval[index].Longitude = siteInfo[5];
+        m_message = urlRdr.ReadLine();
 
-            for (int i = 6; i < siteInfo.Length; i++)
+        int code = GetCode(m_message);
+        m_message = m_message.Substring(4); // remove the code...
+        char[] sep = {' '};
+
+
+        switch (code)
+        {
+          case 210: // OK, Site Information Follows.
+            // Read in all sites.
+            string[] sites = ParseMultiLine(urlRdr);
+            retval = new FreeDBSite[sites.Length];
+            int index = 0;
+            // Loop through server list and extract different parts.
+            foreach (string site in sites)
             {
-              loc += retval[i] + " ";
+              string loc = "";
+              string[] siteInfo = site.Split(sep);
+              retval[index] = new FreeDBSite();
+              retval[index].Host = siteInfo[0];
+              retval[index].Protocol =
+                (FreeDBSite.FreeDBProtocol)Enum.Parse(typeof (FreeDBSite.FreeDBProtocol), siteInfo[1], true);
+              retval[index].Port = Convert.ToInt32(siteInfo[2]);
+              retval[index].URI = siteInfo[3];
+              retval[index].Latitude = siteInfo[4];
+              retval[index].Longitude = siteInfo[5];
+
+              for (int i = 6; i < siteInfo.Length; i++)
+              {
+                loc += retval[i] + " ";
+              }
+              retval[index].Location = loc;
+              index++;
             }
-            retval[index].Location = loc;
-            index++;
-          }
-          break;
-        case 401: // No Site Information Available.
-          break;
-          ;
-        default:
-          break;
+            break;
+          case 401: // No Site Information Available.
+            break;
+            ;
+          default:
+            break;
+        }
       }
       return retval;
     }
@@ -193,62 +196,65 @@ namespace MediaPortal.Freedb
     {
       CDInfo[] retval = null;
       string command = "cddb+query+" + GetCDDBDiscIDInfo(driveLetter, '+');
-      StreamReader urlRdr = GetStreamFromSite(command);
-      m_message = urlRdr.ReadLine();
-      int code = GetCode(m_message);
-      m_message = m_message.Substring(4); // remove the code...
-
-      char[] sep = {' '};
-      string title = "";
-      int index = 0;
-      string[] match;
-      string[] matches;
-
-      switch (code)
+      using (StreamReader urlRdr = GetStreamFromSite(command))
       {
-        case 200: // Exact Match...
-          match = m_message.Split(sep);
-          retval = new CDInfo[1];
+        m_message = urlRdr.ReadLine();
 
-          retval[0] = new CDInfo();
-          retval[0].Category = match[0];
-          retval[0].DiscId = match[1];
-          for (int i = 2; i < match.Length; i++)
-          {
-            title += match[i] + " ";
-          }
-          retval[0].Title = title.Trim();
-          break;
-        case 202: // no match found
-          break;
-        case 211: // Found Inexact Matches. List Follows.
-        case 210: // Found Exact Matches. List Follows.
-          matches = ParseMultiLine(urlRdr);
-          retval = new CDInfo[matches.Length];
-          foreach (string line in matches)
-          {
-            match = line.Split(sep);
+        int code = GetCode(m_message);
+        m_message = m_message.Substring(4); // remove the code...
 
-            retval[index] = new CDInfo();
-            retval[index].Category = match[0];
-            retval[index].DiscId = match[1];
+        char[] sep = {' '};
+        string title = "";
+        int index = 0;
+        string[] match;
+        string[] matches;
+
+        switch (code)
+        {
+          case 200: // Exact Match...
+            match = m_message.Split(sep);
+            retval = new CDInfo[1];
+
+            retval[0] = new CDInfo();
+            retval[0].Category = match[0];
+            retval[0].DiscId = match[1];
             for (int i = 2; i < match.Length; i++)
             {
               title += match[i] + " ";
             }
-            retval[index].Title = title.Trim();
-            index++;
-          }
-          break;
-        case 403: // Database Entry is Corrupt.
-          retval = null;
-          break;
-        case 409: // No handshake... Should not happen!
-          retval = null;
-          break;
-        default:
-          retval = null;
-          break;
+            retval[0].Title = title.Trim();
+            break;
+          case 202: // no match found
+            break;
+          case 211: // Found Inexact Matches. List Follows.
+          case 210: // Found Exact Matches. List Follows.
+            matches = ParseMultiLine(urlRdr);
+            retval = new CDInfo[matches.Length];
+            foreach (string line in matches)
+            {
+              match = line.Split(sep);
+
+              retval[index] = new CDInfo();
+              retval[index].Category = match[0];
+              retval[index].DiscId = match[1];
+              for (int i = 2; i < match.Length; i++)
+              {
+                title += match[i] + " ";
+              }
+              retval[index].Title = title.Trim();
+              index++;
+            }
+            break;
+          case 403: // Database Entry is Corrupt.
+            retval = null;
+            break;
+          case 409: // No handshake... Should not happen!
+            retval = null;
+            break;
+          default:
+            retval = null;
+            break;
+        }
       }
       return retval;
     }
@@ -257,62 +263,65 @@ namespace MediaPortal.Freedb
     {
       CDInfo[] retval = null;
       string command = "cddb+query+" + ID.Replace(" ", "+");
-      StreamReader urlRdr = GetStreamFromSite(command);
-      m_message = urlRdr.ReadLine();
-      int code = GetCode(m_message);
-      m_message = m_message.Substring(4); // remove the code...
-
-      char[] sep = {' '};
-      string title = "";
-      int index = 0;
-      string[] match;
-      string[] matches;
-
-      switch (code)
+      using (StreamReader urlRdr = GetStreamFromSite(command))
       {
-        case 200: // Exact Match...
-          match = m_message.Split(sep);
-          retval = new CDInfo[1];
+        m_message = urlRdr.ReadLine();
 
-          retval[0] = new CDInfo();
-          retval[0].Category = match[0];
-          retval[0].DiscId = match[1];
-          for (int i = 2; i < match.Length; i++)
-          {
-            title += match[i] + " ";
-          }
-          retval[0].Title = title.Trim();
-          break;
-        case 202: // no match found
-          break;
-        case 211: // Found Inexact Matches. List Follows.
-        case 210: // Found Exact Matches. List Follows.
-          matches = ParseMultiLine(urlRdr);
-          retval = new CDInfo[matches.Length];
-          foreach (string line in matches)
-          {
-            match = line.Split(sep);
+        int code = GetCode(m_message);
+        m_message = m_message.Substring(4); // remove the code...
 
-            retval[index] = new CDInfo();
-            retval[index].Category = match[0];
-            retval[index].DiscId = match[1];
+        char[] sep = {' '};
+        string title = "";
+        int index = 0;
+        string[] match;
+        string[] matches;
+
+        switch (code)
+        {
+          case 200: // Exact Match...
+            match = m_message.Split(sep);
+            retval = new CDInfo[1];
+
+            retval[0] = new CDInfo();
+            retval[0].Category = match[0];
+            retval[0].DiscId = match[1];
             for (int i = 2; i < match.Length; i++)
             {
               title += match[i] + " ";
             }
-            retval[index].Title = title.Trim();
-            index++;
-          }
-          break;
-        case 403: // Database Entry is Corrupt.
-          retval = null;
-          break;
-        case 409: // No handshake... Should not happen!
-          retval = null;
-          break;
-        default:
-          retval = null;
-          break;
+            retval[0].Title = title.Trim();
+            break;
+          case 202: // no match found
+            break;
+          case 211: // Found Inexact Matches. List Follows.
+          case 210: // Found Exact Matches. List Follows.
+            matches = ParseMultiLine(urlRdr);
+            retval = new CDInfo[matches.Length];
+            foreach (string line in matches)
+            {
+              match = line.Split(sep);
+
+              retval[index] = new CDInfo();
+              retval[index].Category = match[0];
+              retval[index].DiscId = match[1];
+              for (int i = 2; i < match.Length; i++)
+              {
+                title += match[i] + " ";
+              }
+              retval[index].Title = title.Trim();
+              index++;
+            }
+            break;
+          case 403: // Database Entry is Corrupt.
+            retval = null;
+            break;
+          case 409: // No handshake... Should not happen!
+            retval = null;
+            break;
+          default:
+            retval = null;
+            break;
+        }
       }
       return retval;
     }
@@ -325,25 +334,28 @@ namespace MediaPortal.Freedb
     private string[] GetInfo(string command, bool multipleLine)
     {
       string[] retval = null;
-      StreamReader urlRdr = GetStreamFromSite(command);
-      m_message = urlRdr.ReadLine();
-      int code = GetCode(m_message);
-      m_message = m_message.Substring(4); // remove the code...
-
-      switch (code / 100)
+      using (StreamReader urlRdr = GetStreamFromSite(command))
       {
-        case 2: // no problem
-          retval = ParseMultiLine(urlRdr);
-          break;
-        case 4: // no permission
-          retval = null;
-          break;
-        case 5: // problem
-          retval = null;
-          break;
-        default:
-          retval = null;
-          break;
+        m_message = urlRdr.ReadLine();
+
+        int code = GetCode(m_message);
+        m_message = m_message.Substring(4); // remove the code...
+
+        switch (code / 100)
+        {
+          case 2: // no problem
+            retval = ParseMultiLine(urlRdr);
+            break;
+          case 4: // no permission
+            retval = null;
+            break;
+          case 5: // problem
+            retval = null;
+            break;
+          default:
+            retval = null;
+            break;
+        }
       }
       return retval;
     }

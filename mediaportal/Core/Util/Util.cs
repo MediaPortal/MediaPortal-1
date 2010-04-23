@@ -2009,33 +2009,43 @@ namespace MediaPortal.Util
         }
         catch (Exception) { }
         HttpWebResponse ws = (HttpWebResponse)wr.GetResponse();
-
-        using (Stream str = ws.GetResponseStream())
+        try
         {
-          byte[] inBuf = new byte[900000];
-          int bytesToRead = (int)inBuf.Length;
-          int bytesRead = 0;
 
-          DateTime dt = DateTime.Now;
-          while (bytesToRead > 0)
+          using (Stream str = ws.GetResponseStream())
           {
-            dt = DateTime.Now;
-            int n = str.Read(inBuf, bytesRead, bytesToRead);
-            if (n == 0)
-              break;
-            bytesRead += n;
-            bytesToRead -= n;
-            TimeSpan ts = DateTime.Now - dt;
-            if (ts.TotalSeconds >= 5)
+            byte[] inBuf = new byte[900000];
+            int bytesToRead = (int)inBuf.Length;
+            int bytesRead = 0;
+
+            DateTime dt = DateTime.Now;
+            while (bytesToRead > 0)
             {
-              throw new Exception("timeout");
+              dt = DateTime.Now;
+              int n = str.Read(inBuf, bytesRead, bytesToRead);
+              if (n == 0)
+                break;
+              bytesRead += n;
+              bytesToRead -= n;
+              TimeSpan ts = DateTime.Now - dt;
+              if (ts.TotalSeconds >= 5)
+              {
+                throw new Exception("timeout");
+              }
+            }
+            using (FileStream fstr = new FileStream(strFile, FileMode.OpenOrCreate, FileAccess.Write))
+            {
+              fstr.Write(inBuf, 0, bytesRead);
+              str.Close();
+              fstr.Close();
             }
           }
-          using (FileStream fstr = new FileStream(strFile, FileMode.OpenOrCreate, FileAccess.Write))
+        }
+        finally
+        {
+          if (ws != null)
           {
-            fstr.Write(inBuf, 0, bytesRead);
-            str.Close();
-            fstr.Close();
+            ws.Close();
           }
         }
       }

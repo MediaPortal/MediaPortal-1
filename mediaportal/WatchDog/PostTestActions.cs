@@ -54,56 +54,58 @@ namespace WatchDog
 
     private void CreateHTMLIndexFile()
     {
-      StreamWriter sw = new StreamWriter(_tmpDir + "\\index.html");
-      sw.WriteLine("<html><head><title>MediaPortal Test Tool -- LogReport</title></head><body>");
-      sw.WriteLine("<h1>MediaPortal Test Tool<br>Logs created at " + DateTime.Now.ToString() + "</h1>");
-      sw.WriteLine("<table border=0><tr>");
-      // System infos
-      sw.WriteLine("<td bgcolor=lemonchiffon valign=top><strong>System infos</strong>");
-      sw.WriteLine("<ul>");
-      sw.WriteLine("<li><a href=PlatformInfo.html>Platform infos</a></li>");
-      sw.WriteLine("<li><a href=DxDiag.txt>DirectX infos</a></li>");
-      sw.WriteLine("<li><a href=Hotfixes.xml>Hotfixes</a></li>");
-      sw.WriteLine("</ul></td><td width=10></td>");
-      // Eventlog
-      sw.WriteLine("<td bgcolor=lemonchiffon valign=top><strong>Eventlog</strong>");
-      sw.WriteLine("<ul>");
-      sw.WriteLine("<li><a href=system_eventlog.csv>System eventlog</a></li>");
-      sw.WriteLine("<li><a href=application_eventlog.csv>Application eventlog</a></li>");
-      sw.WriteLine("</ul></td>");
-      sw.WriteLine("</tr><tr height=10><td></td><td></td><td></td></tr><tr>");
-      // MediaPortal logs
-      sw.WriteLine("<td bgcolor=lemonchiffon valign=top><strong>MediaPortal logs</strong>");
-      sw.WriteLine("<ul>");
-      sw.WriteLine("<li><a href=MediaPortal.log>MediaPortal.log</a></li>");
-      sw.WriteLine("<li><a href=Configuration.log>Configuration.log</a></li>");
-      sw.WriteLine("<li><a href=Error.log>Error.log</a></li>");
-      sw.WriteLine("<li><a href=Recorder.log>Recorder.log</a></li>");
-      if (File.Exists(_tmpDir + "\\TsReader.log"))
+      using (StreamWriter sw = new StreamWriter(_tmpDir + "\\index.html"))
       {
-        sw.WriteLine("<li><a href=tsreader.log>TsReader.log</a></li>");
-      }
-      sw.WriteLine("<li><a href=vmr9.log>vmr9.log</a></li>");
-      sw.WriteLine("</ul></td></ul></td><td width=10></td>");
-      // TvServer logs
-      if (File.Exists(_tmpDir + "\\tvserver_tv.log"))
-      {
-        sw.WriteLine("<td bgcolor=lemonchiffon valign=top><strong>TvServer logs</strong>");
+        sw.WriteLine("<html><head><title>MediaPortal Test Tool -- LogReport</title></head><body>");
+        sw.WriteLine("<h1>MediaPortal Test Tool<br>Logs created at " + DateTime.Now.ToString() + "</h1>");
+        sw.WriteLine("<table border=0><tr>");
+        // System infos
+        sw.WriteLine("<td bgcolor=lemonchiffon valign=top><strong>System infos</strong>");
         sw.WriteLine("<ul>");
-        sw.WriteLine("<li><a href=tvserver_tv.log>TV.log</a></li>");
-        sw.WriteLine("<li><a href=tvserver_epg.log>EPG.log</a></li>");
-        sw.WriteLine("<li><a href=tvserver_error.log>Error.log</a></li>");
-        sw.WriteLine("<li><a href=tvserver_Streaming Server.log>Streaming Server.log</a></li>");
-        sw.WriteLine("<li><a href=tvserver_TsWriter.log>TsWriter.log</a></li>");
-        sw.WriteLine("<li><a href=tvserver_Player.log>Player.log</a></li>");
+        sw.WriteLine("<li><a href=PlatformInfo.html>Platform infos</a></li>");
+        sw.WriteLine("<li><a href=DxDiag.txt>DirectX infos</a></li>");
+        sw.WriteLine("<li><a href=Hotfixes.xml>Hotfixes</a></li>");
+        sw.WriteLine("</ul></td><td width=10></td>");
+        // Eventlog
+        sw.WriteLine("<td bgcolor=lemonchiffon valign=top><strong>Eventlog</strong>");
+        sw.WriteLine("<ul>");
+        sw.WriteLine("<li><a href=system_eventlog.csv>System eventlog</a></li>");
+        sw.WriteLine("<li><a href=application_eventlog.csv>Application eventlog</a></li>");
         sw.WriteLine("</ul></td>");
+        sw.WriteLine("</tr><tr height=10><td></td><td></td><td></td></tr><tr>");
+        // MediaPortal logs
+        sw.WriteLine("<td bgcolor=lemonchiffon valign=top><strong>MediaPortal logs</strong>");
+        sw.WriteLine("<ul>");
+        sw.WriteLine("<li><a href=MediaPortal.log>MediaPortal.log</a></li>");
+        sw.WriteLine("<li><a href=Configuration.log>Configuration.log</a></li>");
+        sw.WriteLine("<li><a href=Error.log>Error.log</a></li>");
+        sw.WriteLine("<li><a href=Recorder.log>Recorder.log</a></li>");
+        if (File.Exists(_tmpDir + "\\TsReader.log"))
+        {
+          sw.WriteLine("<li><a href=tsreader.log>TsReader.log</a></li>");
+        }
+        sw.WriteLine("<li><a href=vmr9.log>vmr9.log</a></li>");
+        sw.WriteLine("</ul></td></ul></td><td width=10></td>");
+        // TvServer logs
+        if (File.Exists(_tmpDir + "\\tvserver_tv.log"))
+        {
+          sw.WriteLine("<td bgcolor=lemonchiffon valign=top><strong>TvServer logs</strong>");
+          sw.WriteLine("<ul>");
+          sw.WriteLine("<li><a href=tvserver_tv.log>TV.log</a></li>");
+          sw.WriteLine("<li><a href=tvserver_epg.log>EPG.log</a></li>");
+          sw.WriteLine("<li><a href=tvserver_error.log>Error.log</a></li>");
+          sw.WriteLine("<li><a href=tvserver_Streaming Server.log>Streaming Server.log</a></li>");
+          sw.WriteLine("<li><a href=tvserver_TsWriter.log>TsWriter.log</a></li>");
+          sw.WriteLine("<li><a href=tvserver_Player.log>Player.log</a></li>");
+          sw.WriteLine("</ul></td>");
+        }
+        else
+        {
+          sw.WriteLine("<td bgcolor=lemonchiffon valign=top><strong>TvServer logs <i>(not available)</i></strong></td>");
+        }
+        sw.WriteLine("</tr></table></body></html>");
+        sw.Close();
       }
-      else
-      {
-        sw.WriteLine("<td bgcolor=lemonchiffon valign=top><strong>TvServer logs <i>(not available)</i></strong></td>");
-      }
-      sw.WriteLine("</tr></table></body></html>");
-      sw.Close();
     }
 
     public bool PerformActions()
