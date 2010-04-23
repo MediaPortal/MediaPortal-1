@@ -248,6 +248,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         if (vert.X > maxx) maxx = vert.X;
         if (vert.Y > maxy) maxy = vert.Y;
       }
+      // Albert, 2010-04-23: The following can be removed when the layout transform is no longer calculated in the
+      // vertex coordinates
       if (layoutTransform != null)
       {
         maxx -= minx;
