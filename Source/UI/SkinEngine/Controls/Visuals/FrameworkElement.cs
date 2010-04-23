@@ -915,25 +915,26 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         // Get the current backbuffer
         using (Surface backBuffer = GraphicsDevice.Device.GetRenderTarget(0))
         {
-          SurfaceDescription desc = backBuffer.Description;
+          SurfaceDescription backbufferDesc = backBuffer.Description;
           // Get the surface of our opacity texture
           using (Surface textureOpacitySurface = _opacityMaskContext.Texture.GetSurfaceLevel(0))
           {
+            SurfaceDescription textureOpacityDesc = textureOpacitySurface.Description;
             // Copy the correct rectangle from the backbuffer in the opacitytexture
-            if (desc.Width == GraphicsDevice.Width && desc.Height == GraphicsDevice.Height)
+            if (backbufferDesc.Width == GraphicsDevice.Width && backbufferDesc.Height == GraphicsDevice.Height)
             {
               GraphicsDevice.Device.StretchRectangle(backBuffer,
                   new Rectangle((int) (bounds.X * cx), (int) (bounds.Y * cy), (int) (bounds.Width * cx), (int) (bounds.Height * cy)),
                   textureOpacitySurface,
-                  new Rectangle(0, 0, (int) bounds.Width, (int) bounds.Height),
+                  new Rectangle(0, 0, textureOpacityDesc.Width, textureOpacityDesc.Height),
                   TextureFilter.None);
             }
             else
             {
               GraphicsDevice.Device.StretchRectangle(backBuffer,
-                  new Rectangle(0, 0, desc.Width, desc.Height),
+                  new Rectangle(0, 0, backbufferDesc.Width, backbufferDesc.Height),
                   textureOpacitySurface,
-                  new Rectangle(0, 0, (int) bounds.Width, (int) bounds.Height),
+                  new Rectangle(0, 0, textureOpacityDesc.Width, textureOpacityDesc.Height),
                   TextureFilter.None);
             }
 
@@ -942,13 +943,11 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
             // Render the control (will be rendered into the opacitytexture)
             GraphicsDevice.Device.BeginScene();
-            //GraphicsDevice.Device.VertexFormat = PositionColored2Textured.Format;
-            //GraphicsDevice.TransformWorld = SkinContext.FinalMatrix.Matrix;
             DoRender();
             GraphicsDevice.Device.EndScene();
             SkinContext.RemoveRenderTransform();
 
-            //restore the backbuffer
+            // Restore the backbuffer
             GraphicsDevice.Device.SetRenderTarget(0, backBuffer);
           }
         }
@@ -959,7 +958,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         //GraphicsDevice.Device.VertexFormat = PositionColored2Textured.Format;
         OpacityMask.BeginRender(_opacityMaskContext.Texture);
         GraphicsDevice.Device.SetStreamSource(0, _opacityMaskContext.VertexBuffer, 0, PositionColored2Textured.StrideSize);
-        GraphicsDevice.Device.DrawPrimitives(PrimitiveType.TriangleList, 0, 2);
+        GraphicsDevice.Device.DrawPrimitives(_opacityMaskContext.PrimitiveType, 0, 2);
         OpacityMask.EndRender();
 
         _opacityMaskContext.LastTimeUsed = SkinContext.Now;
@@ -1028,42 +1027,20 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     {
       if (!_updateOpacityMask)
         return;
-      _updateOpacityMask = false;
       if (OpacityMask == null)
         return;
-      if (_opacityMaskContext == null)
-      {
-        _opacityMaskContext = new VisualAssetContext("FrameworkElement.OpacityMaskContext:" + Name, Screen.Name);
-        ContentManager.Add(_opacityMaskContext);
-      }
-      if (_opacityMaskContext.VertexBuffer == null)
-      {
-        _updateOpacityMask = true;
-
-        _opacityMaskContext.VertexBuffer = PositionColored2Textured.Create(6);
-      }
-      _opacityMaskContext.LastTimeUsed = SkinContext.Now;
-      if (_opacityMaskContext.Texture != null)
-      {
-        _opacityMaskContext.Texture.Dispose();
-        _opacityMaskContext.Texture = null;
-      }
+      _updateOpacityMask = false;
+      if (_opacityMaskContext != null)
+        _opacityMaskContext.Free(false);
 
       RectangleF bounds = ActualBounds;
       float zPos = ActualPosition.Z;
-
-      _opacityMaskContext.Texture = new Texture(GraphicsDevice.Device, (int) bounds.Width, (int) bounds.Height,
-          1, Usage.RenderTarget, Format.X8R8G8B8, Pool.Default);
 
       PositionColored2Textured[] verts = new PositionColored2Textured[6];
 
       Color4 col = ColorConverter.FromColor(Color.White);
       col.Alpha *= (float) Opacity;
       int color = col.ToArgb();
-      SurfaceDescription desc = _opacityMaskContext.Texture.GetLevelDescription(0);
-
-      float maxU = (bounds.Width - 1) / desc.Width;
-      float maxV = (bounds.Height - 1) / desc.Height;
 
       //upper left
       verts[0].X = bounds.X;
@@ -1078,15 +1055,15 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       verts[1].Y = bounds.Bottom;
       verts[1].Color = color;
       verts[1].Tu1 = 0;
-      verts[1].Tv1 = maxV;
+      verts[1].Tv1 = 1;
       verts[1].Z = zPos;
 
       //bottom right
       verts[2].X = bounds.Right;
       verts[2].Y = bounds.Bottom;
       verts[2].Color = color;
-      verts[2].Tu1 = maxU;
-      verts[2].Tv1 = maxV;
+      verts[2].Tu1 = 1;
+      verts[2].Tv1 = 1;
       verts[2].Z = zPos;
 
       //upper left
@@ -1101,7 +1078,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       verts[4].X = bounds.Right;
       verts[4].Y = bounds.Y;
       verts[4].Color = color;
-      verts[4].Tu1 = maxU;
+      verts[4].Tu1 = 1;
       verts[4].Tv1 = 0;
       verts[4].Z = zPos;
 
@@ -1109,11 +1086,15 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       verts[5].X = bounds.Right;
       verts[5].Y = bounds.Bottom;
       verts[5].Color = color;
-      verts[5].Tu1 = maxU;
-      verts[5].Tv1 = maxV;
+      verts[5].Tu1 = 1;
+      verts[5].Tv1 = 1;
       verts[5].Z = zPos;
 
-      // Fill the vertex buffer
+      _opacityMaskContext = new VisualAssetContext("FrameworkElement.OpacityMaskContext:" + Name, Screen.Name,
+          verts, PrimitiveType.TriangleList, new Texture(GraphicsDevice.Device, (int) bounds.Width, (int) bounds.Height, 1,
+              Usage.RenderTarget, Format.X8R8G8B8, Pool.Default));
+      ContentManager.Add(_opacityMaskContext);
+
       OpacityMask.IsOpacityBrush = true;
       OpacityMask.SetupBrush(ActualBounds, FinalLayoutTransform, ActualPosition.Z, verts);
       PositionColored2Textured.Set(_opacityMaskContext.VertexBuffer, verts);

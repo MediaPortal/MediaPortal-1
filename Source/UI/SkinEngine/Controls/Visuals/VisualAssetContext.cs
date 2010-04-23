@@ -24,6 +24,7 @@
 
 using System;
 using MediaPortal.UI.SkinEngine.ContentManagement;
+using MediaPortal.UI.SkinEngine.DirectX;
 using SlimDX.Direct3D9;
 using MediaPortal.UI.SkinEngine.SkinManagement;
 
@@ -31,16 +32,23 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 {
   public class VisualAssetContext : IAsset
   {
-    public VertexBuffer _vertexBuffer;
-    public Texture _texture;
-    public DateTime LastTimeUsed;
+    protected VertexBuffer _vertexBuffer;
+    protected PrimitiveType _primitiveType;
+    protected Texture _texture;
     readonly string _name;
     static int _assetId = 0;
 
-    public VisualAssetContext(string controlName, string screenName)
+    public DateTime LastTimeUsed;
+
+    public VisualAssetContext(string controlName, string screenName,
+        PositionColored2Textured[] verts, PrimitiveType primitiveType, Texture texture)
     {
       _name = String.Format("visual#{0} {1} {2}", _assetId, screenName, controlName);
       _assetId++;
+      _vertexBuffer = PositionColored2Textured.Create(verts.Length);
+      _primitiveType = primitiveType;
+      PositionColored2Textured.Set(_vertexBuffer, verts);
+      _texture = texture;
       LastTimeUsed = SkinContext.Now;
     }
 
@@ -48,10 +56,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
     public bool IsAllocated
     {
-      get
-      {
-        return (VertexBuffer != null || Texture != null);
-      }
+      get { return (_vertexBuffer != null || _texture != null); }
     }
 
     public bool CanBeDeleted
@@ -64,9 +69,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         }
         TimeSpan ts = SkinContext.Now - LastTimeUsed;
         if (ts.TotalSeconds >= 1)
-        {
           return true;
-        }
 
         return false;
       }
@@ -74,46 +77,31 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
     public VertexBuffer VertexBuffer
     {
-      get
-      {
-        return _vertexBuffer;
-      }
-      set
-      {
-        if (_vertexBuffer != null)
-          _vertexBuffer.Dispose();
-        _vertexBuffer = value;
-        LastTimeUsed = SkinContext.Now;
-      }
+      get { return _vertexBuffer; }
+    }
+
+    public PrimitiveType PrimitiveType
+    {
+      get { return _primitiveType; }
     }
 
     public Texture Texture
     {
-      get
-      {
-        return _texture;
-      }
-      set
-      {
-        if (_texture != null)
-          _texture.Dispose();
-        _texture = value;
-        LastTimeUsed = SkinContext.Now;
-      }
+      get { return _texture; }
     }
 
     public bool Free(bool force)
     {
-      if (VertexBuffer != null)
+      if (_vertexBuffer != null)
       {
-        VertexBuffer.Dispose();
-        VertexBuffer = null;
+        _vertexBuffer.Dispose();
+        _vertexBuffer = null;
       }
 
-      if (Texture != null)
+      if (_texture != null)
       {
-        Texture.Dispose();
-        Texture = null;
+        _texture.Dispose();
+        _texture = null;
       }
       return false;
     }
