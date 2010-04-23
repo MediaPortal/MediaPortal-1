@@ -116,7 +116,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
             if (verts != null)
             {
               int numVertices = verts.Length / 3;
-              Fill.SetupBrush(ActualBounds, FinalLayoutTransform, ActualPosition.Z, ref verts);
+              Fill.SetupBrush(ActualBounds, FinalLayoutTransform, ActualPosition.Z, verts);
               _fillContext = new PrimitiveContext(numVertices, ref verts, PrimitiveType.TriangleList);
               AddPrimitiveContext(_fillContext);
               Fill.SetupPrimitive(_fillContext);
@@ -140,7 +140,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
             if (verts != null)
             {
               int numVertices = verts.Length/3;
-              Stroke.SetupBrush(ActualBounds, FinalLayoutTransform, ActualPosition.Z, ref verts);
+              Stroke.SetupBrush(ActualBounds, FinalLayoutTransform, ActualPosition.Z, verts);
               _strokeContext = new PrimitiveContext(numVertices, ref verts, PrimitiveType.TriangleList);
               AddPrimitiveContext(_strokeContext);
               Stroke.SetupPrimitive(_strokeContext);

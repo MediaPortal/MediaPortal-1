@@ -100,16 +100,12 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       set { _colorProperty.SetValue(value); }
     }
 
-    public override void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, ref PositionColored2Textured[] verts)
+    public override void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, PositionColored2Textured[] verts)
     {
-      UpdateBounds(bounds, layoutTransform, ref verts);
-      base.SetupBrush(bounds, layoutTransform, zOrder, ref verts);
+      UpdateBounds(bounds, layoutTransform, verts);
+      base.SetupBrush(bounds, layoutTransform, zOrder, verts);
       _effect = ContentManager.GetEffect("solidbrush");
       _effectHandleColor = _effect.GetParameterHandle("g_solidColor");
-      Color4 color = ColorConverter.FromColor(Color);
-      color.Alpha *= (float) Opacity;
-      for (int i = 0; i < verts.Length; ++i)
-        verts[i].Color = color.ToArgb();
     }
 
     public override bool BeginRender(PrimitiveContext primitiveContext)

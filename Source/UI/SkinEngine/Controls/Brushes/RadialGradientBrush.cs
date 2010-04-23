@@ -201,24 +201,20 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     #region Public methods
 
-    public override void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, ref PositionColored2Textured[] verts)
+    public override void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, PositionColored2Textured[] verts)
     {
-      _verts = verts;
-      //if (_texture == null || element.ActualHeight != _height || element.ActualWidth != _width)
-      {
-        UpdateBounds(bounds, layoutTransform, ref verts);
-        if (!IsOpacityBrush)
-          base.SetupBrush(bounds, layoutTransform, zOrder, ref verts);
+      UpdateBounds(bounds, layoutTransform, verts);
+      if (!IsOpacityBrush)
+        base.SetupBrush(bounds, layoutTransform, zOrder, verts);
 
-        _height = bounds.Height;
-        _width = bounds.Width;
-        _position = new Vector3(bounds.X, bounds.Y, zOrder);
+      _height = bounds.Height;
+      _width = bounds.Width;
+      _position = new Vector3(bounds.X, bounds.Y, zOrder);
 
-        if (_brushTexture == null)
-          _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops, IsOpacityBrush);
-        Free(true);
-        _refresh = true;
-      }
+      if (_brushTexture == null)
+        _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops, IsOpacityBrush);
+      Free(true);
+      _refresh = true;
     }
 
     public override bool BeginRender(PrimitiveContext primitiveContext)
@@ -237,7 +233,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops, IsOpacityBrush);
         if (_singleColor)
         {
-          SetColor(primitiveContext.VertexBuffer);
           _effect = ContentManager.GetEffect("solidbrush");
           _handleColor = _effect.GetParameterHandle("g_solidColor");
         }

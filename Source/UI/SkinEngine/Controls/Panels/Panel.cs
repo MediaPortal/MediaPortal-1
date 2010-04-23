@@ -325,7 +325,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Panels
           verts[4].Position = m.Transform(new SlimDX.Vector3(rect.Right, rect.Top, 1.0f));
           verts[5].Position = m.Transform(new SlimDX.Vector3(rect.Right, rect.Bottom, 1.0f));
         }
-        Background.SetupBrush(ActualBounds, FinalLayoutTransform, ActualPosition.Z, ref verts);
+        Background.SetupBrush(ActualBounds, FinalLayoutTransform, ActualPosition.Z, verts);
         RemovePrimitiveContext(ref _backgroundContext);
         _backgroundContext = new PrimitiveContext(2, ref verts, PrimitiveType.TriangleList);
         AddPrimitiveContext(_backgroundContext);

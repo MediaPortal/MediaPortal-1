@@ -150,12 +150,11 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       set { _endPointProperty.SetValue(value); }
     }
 
-    public override void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, ref PositionColored2Textured[] verts)
+    public override void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, PositionColored2Textured[] verts)
     {
-      _verts = verts;
-      UpdateBounds(bounds, layoutTransform, ref verts);
+      UpdateBounds(bounds, layoutTransform, verts);
       if (!IsOpacityBrush)
-        base.SetupBrush(bounds, layoutTransform, zOrder, ref verts);
+        base.SetupBrush(bounds, layoutTransform, zOrder, verts);
 
       _height = bounds.Height;
       _width = bounds.Width;
@@ -184,7 +183,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops, IsOpacityBrush);
         if (_singleColor)
         {
-          SetColor(primitiveContext.VertexBuffer);
           _effect = ContentManager.GetEffect("solidbrush");
           _handleSolidColor = _effect.GetParameterHandle("g_solidColor");
         }

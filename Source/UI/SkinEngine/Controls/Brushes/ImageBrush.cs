@@ -150,12 +150,12 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       _tex.Allocate();
     }
 
-    public override void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, ref PositionColored2Textured[] verts)
+    public override void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, PositionColored2Textured[] verts)
     {
       if (_tex == null)
       {
         Allocate();
-        base.SetupBrush(bounds, layoutTransform, zOrder, ref verts);
+        base.SetupBrush(bounds, layoutTransform, zOrder, verts);
       }
     }
 

@@ -326,7 +326,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
           RemovePrimitiveContext(ref _backgroundContext);
           TriangulateHelper.FillPolygon_TriangleList(path, centerX, centerY, out verts);
           int numVertices = verts.Length / 3;
-          Background.SetupBrush(ActualBounds, FinalLayoutTransform, ActualPosition.Z, ref verts);
+          Background.SetupBrush(ActualBounds, FinalLayoutTransform, ActualPosition.Z, verts);
           _backgroundContext = new PrimitiveContext(numVertices, ref verts, PrimitiveType.TriangleList);
           AddPrimitiveContext(_backgroundContext);
           Background.SetupPrimitive(_backgroundContext);
@@ -351,7 +351,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
           RemovePrimitiveContext(ref _borderContext);
           PositionColored2Textured[] verts;
           GraphicsPathHelper.Flatten(subPathVerts, out verts);
-          BorderBrush.SetupBrush(_borderRect, FinalLayoutTransform, ActualPosition.Z, ref verts);
+          BorderBrush.SetupBrush(_borderRect, FinalLayoutTransform, ActualPosition.Z, verts);
           int numVertices = verts.Length / 3;
           _borderContext = new PrimitiveContext(numVertices, ref verts, PrimitiveType.TriangleList);
           AddPrimitiveContext(_borderContext);
