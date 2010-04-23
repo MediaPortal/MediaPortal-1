@@ -29,7 +29,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Handles the DiSEqC interface for Conexant BDA driver devices
   /// </summary>
-  public class ConexantBDA : IDiSEqCController
+  public class ConexantBDA : IDiSEqCController, IDisposable
   {
     #region constants
 
@@ -71,7 +71,6 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.Debug("Conexant BDA: DVB-S card NOT found!");
             _isConexant = false;
-            Dispose();
           }
         }
       }

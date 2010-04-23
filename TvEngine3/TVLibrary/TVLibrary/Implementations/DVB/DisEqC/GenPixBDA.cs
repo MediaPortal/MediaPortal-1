@@ -29,7 +29,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Handles the DiSEqC interface for GenPix BDA driver devices
   /// </summary>
-  public class GenPixBDA
+  public class GenPixBDA: IDisposable
   {
     #region constants
 
@@ -111,7 +111,6 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.Debug("GenPix BDA: DVB-S card NOT found!");
             _isGenPix = false;
-            Dispose();
           }
         }
       }

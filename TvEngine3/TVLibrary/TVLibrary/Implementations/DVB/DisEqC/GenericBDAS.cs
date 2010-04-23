@@ -25,7 +25,7 @@ using TvLibrary.Channels;
 
 namespace TvLibrary.Implementations.DVB
 {
-  internal class GenericBDAS
+  internal class GenericBDAS: IDisposable
   {
     #region variables
 
@@ -229,5 +229,13 @@ namespace TvLibrary.Implementations.DVB
     {
       get { return _isGenericBDAS; }
     }
+
+    #region IDisposable Member
+
+    public void Dispose()
+    {
+    }
+
+    #endregion
   }
 }

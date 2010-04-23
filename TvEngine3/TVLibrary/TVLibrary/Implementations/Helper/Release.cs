@@ -40,5 +40,58 @@ namespace TvLibrary
         // Log.Log.WriteFile("  Release {0} returns {1}", line, hr);
       }
     }
+    /// <summary>
+    /// Releases a com object
+    /// </summary>
+    /// <param name="line">Log line input</param>
+    /// <param name="o">Object to release</param>
+    public static void ComObjectToNull<E>(string line, ref E o)
+    {
+      if (o != null)
+      {
+        // check if object is disposable
+        try
+        {
+          if (o is System.IDisposable)
+          {
+            (o as System.IDisposable).Dispose();
+          }
+        }
+        catch (System.Exception ex)
+        {
+          Log.Log.Error("  Error in Dispose of {0}: {1}", line, ex.Message);
+        }
+
+        int remainingReferences = Marshal.ReleaseComObject(o);
+        //if (remainingReferences > 0)
+          Log.Log.WriteFile("  Release {0} leaves {1} references", line, remainingReferences);
+
+        o = default(E);
+      }
+    }
+    /// <summary>
+    /// Disposes a object if possible and sets the reference to null.
+    /// </summary>
+    /// <param name="o">Object reference to dispose</param>
+    public static void DisposeToNull<E>(ref E o)
+    {
+      System.IDisposable oDisp = o as System.IDisposable;
+      if (oDisp != null)
+      {
+        oDisp.Dispose();
+      }
+      o = default(E);
+    }
+    /// <summary>
+    /// Disposes a object if possible.
+    /// </summary>
+    /// <param name="o">IDisposable to dispose</param>
+    public static void Dispose(System.IDisposable oDisp)
+    {
+      if (oDisp != null)
+      {
+        oDisp.Dispose();
+      }
+    }
   }
 }

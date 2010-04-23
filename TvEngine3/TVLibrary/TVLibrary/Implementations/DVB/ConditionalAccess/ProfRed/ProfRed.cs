@@ -29,7 +29,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Handles the DiSEqC interface for ProfRed DVB-S/S2 devices
   /// </summary>
-  public class ProfRed : IDiSEqCController
+  public class ProfRed : IDisposable,IDiSEqCController
   {
     #region constants
 
@@ -62,7 +62,7 @@ namespace TvLibrary.Implementations.DVB
           KSPropertySupport supported;
           _propertySet.QuerySupported(_bdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC,
                                       out supported);
-          if (((supported & KSPropertySupport.Get) != 0) & ((supported & KSPropertySupport.Set) == 0))
+          if (((supported & KSPropertySupport.Get) != 0) && ((supported & KSPropertySupport.Set) == 0))
           {
             Log.Log.Info("ProfRed BDA: DVB-S card found!");
             _isProfRed = true;
@@ -226,5 +226,13 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #endregion
+
+    /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>
+    public void Dispose()
+    {
+      Marshal.FreeCoTaskMem(_ptrDiseqc);
+    }  
   }
 }

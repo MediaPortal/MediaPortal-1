@@ -29,7 +29,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Hauppauge CI control calss
   /// </summary>
-  public class Hauppauge : IDiSEqCController
+  public class Hauppauge : IDiSEqCController, IDisposable
   {
     #region constants
 

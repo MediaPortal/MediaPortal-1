@@ -28,7 +28,7 @@ namespace TvLibrary.Implementations.DVB
   ///<summary>
   /// Generic ATSC devices BDA calls
   ///</summary>
-  internal class GenericATSC
+  internal class GenericATSC: IDisposable
   {
     #region constants
 
@@ -71,7 +71,6 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.Debug("GenericATSC: QAM card NOT found!");
             _isGenericATSC = false;
-            Dispose();
           }
         }
       }

@@ -25,7 +25,7 @@ using TvLibrary.Channels;
 
 namespace TvLibrary.Implementations.DVB
 {
-  internal class ViXSATSC
+  internal class ViXSATSC: IDisposable
   {
     #region constants
 
@@ -82,7 +82,6 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.Debug("ViXS ATSC: card NOT found!");
             _isViXSATSC = false;
-            Dispose();
           }
         }
       }

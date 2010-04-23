@@ -133,7 +133,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("KNC card detected");
             return;
           }
-          _knc = null;
+          Release.DisposeToNull(ref _knc);
 
           Log.Log.WriteFile("Check for Digital Everywhere");
           _digitalEveryWhere = new DigitalEverywhere(tunerFilter);
@@ -150,7 +150,7 @@ namespace TvLibrary.Implementations.DVB
             //_digitalEveryWhere.ResetCAM();
             return;
           }
-          _digitalEveryWhere = null;
+          Release.DisposeToNull(ref _digitalEveryWhere);
 
           Log.Log.WriteFile("Check for Twinhan");
           _twinhan = new Twinhan(tunerFilter);
@@ -162,7 +162,7 @@ namespace TvLibrary.Implementations.DVB
             _ciMenu = _twinhan; // Register Twinhan CI Menu capabilities when CAM detected and ready
             return;
           }
-          _twinhan = null;
+          Release.DisposeToNull(ref _twinhan);
 
           Log.Log.WriteFile("Check for TechnoTrend");
           _technoTrend = new TechnoTrendAPI(tunerFilter);
@@ -173,8 +173,8 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("TechnoTrend card detected");
             return;
           }
-          _technoTrend = null;
-
+          Release.DisposeToNull(ref _technoTrend);
+          
           Log.Log.WriteFile("Check for Hauppauge");
           _hauppauge = new Hauppauge(tunerFilter);
           if (_hauppauge.IsHauppauge)
@@ -192,8 +192,8 @@ namespace TvLibrary.Implementations.DVB
             _diSEqCMotor = new DiSEqCMotor(_hauppauge);
             return;
           }
-          _hauppauge = null;
-          _winTvCiModule = null;
+          Release.DisposeToNull(ref _hauppauge);
+          Release.DisposeToNull(ref _winTvCiModule);
 
           /*Log.Log.Info("Check for anysee");
           _anysee = new anysee(tunerFilter, analyzerFilter);
@@ -211,7 +211,7 @@ namespace TvLibrary.Implementations.DVB
             _diSEqCMotor = new DiSEqCMotor(_profred);
             return;
           }
-          _profred = null;
+          Release.DisposeToNull(ref _profred);
 
           // TeVii support
           _TeVii = new TeVii();
@@ -231,11 +231,7 @@ namespace TvLibrary.Implementations.DVB
             }
             return;
           }
-          else
-          {
-            _TeVii.Dispose();
-            _TeVii = null;
-          }
+          Release.DisposeToNull(ref _TeVii);
 
           Log.Log.WriteFile("Check for Conexant based card");
           _conexant = new ConexantBDA(tunerFilter);
@@ -250,8 +246,8 @@ namespace TvLibrary.Implementations.DVB
             }
             return;
           }
-          _conexant = null;
-          _winTvCiModule = null;
+          Release.DisposeToNull(ref _conexant);
+          Release.DisposeToNull(ref _winTvCiModule);
 
           Log.Log.WriteFile("Check for GenPix BDA based card");
           _genpix = new GenPixBDA(tunerFilter);
@@ -266,8 +262,8 @@ namespace TvLibrary.Implementations.DVB
             }
             return;
           }
-          _genpix = null;
-          _winTvCiModule = null;
+          Release.DisposeToNull(ref _genpix);
+          Release.DisposeToNull(ref _winTvCiModule);
 
           Log.Log.WriteFile("Check for Generic DVB-S card");
           _genericbdas = new GenericBDAS(tunerFilter);
@@ -282,7 +278,7 @@ namespace TvLibrary.Implementations.DVB
             }
             return;
           }
-          _genericbdas = null;
+          Release.DisposeToNull(ref _genericbdas);
 
           //Final WinTV-CI check for DVB-T hybrid cards
           Log.Log.WriteFile("Check for Hauppauge WinTV CI");
@@ -292,7 +288,7 @@ namespace TvLibrary.Implementations.DVB
             _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
             return;
           }
-          _winTvCiModule = null;
+          Release.DisposeToNull(ref _winTvCiModule);
         }
 
         //ATSC checks
@@ -306,7 +302,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("ViXS ATSC QAM card detected");
             return;
           }
-          _isvixsatsc = null;
+          Release.DisposeToNull(ref _isvixsatsc);
 
           Log.Log.WriteFile("Check for Generic ATSC QAM card");
           _isgenericatsc = new GenericATSC(tunerFilter);
@@ -315,7 +311,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("Generic ATSC QAM card detected");
             return;
           }
-          _isgenericatsc = null;
+          Release.DisposeToNull(ref _isgenericatsc);
         }
       }
       catch (Exception ex)
@@ -1070,52 +1066,20 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void Dispose()
     {
-      if (_knc != null)
-      {
-        _knc.Dispose();
-      }
-      if (_technoTrend != null)
-      {
-        _technoTrend.Dispose();
-      }
-      if (_digitalEveryWhere != null)
-      {
-        _digitalEveryWhere.Dispose();
-      }
-      if (_hauppauge != null)
-      {
-        _hauppauge.Dispose();
-      }
-      if (_conexant != null)
-      {
-        _conexant.Dispose();
-      }
-      if (_isgenericatsc != null)
-      {
-        _isgenericatsc.Dispose();
-      }
-      if (_isvixsatsc != null)
-      {
-        _isvixsatsc.Dispose();
-      }
-      if (_genpix != null)
-      {
-        _genpix.Dispose();
-      }
-      if (_winTvCiModule != null)
-      {
-        _winTvCiModule.Dispose();
-      }
-      if (_twinhan != null)
-      {
-        _twinhan.Dispose();
-      }
-      if (_TeVii != null)
-      {
-        _TeVii.Dispose();
-      }
+      Release.Dispose(_knc);
+      Release.Dispose(_technoTrend);
+      Release.Dispose(_digitalEveryWhere);
+      Release.Dispose(_hauppauge);
+      Release.Dispose(_conexant);
+      Release.Dispose(_genericbdas);
+      Release.Dispose(_isgenericatsc);
+      Release.Dispose(_isvixsatsc);
+      Release.Dispose(_genpix);
+      Release.Dispose(_winTvCiModule);
+      Release.Dispose(_twinhan);
+      Release.Dispose(_profred);
+      Release.Dispose(_TeVii);
     }
-
     #endregion
   }
 }
