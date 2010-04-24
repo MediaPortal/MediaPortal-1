@@ -31,14 +31,13 @@ namespace MediaPortal.UI.SkinEngine.DirectX
     public static void Set(VertexBuffer buffer, ref PositionColoredTextured[] verts)
     {
       using (DataStream stream = buffer.Lock(0, 0, LockFlags.None))
-      {
         stream.WriteRange(verts);
-      }
       buffer.Unlock();
     }
+
     public static VertexBuffer Create(int verticeCount)
     {
-      return new VertexBuffer(GraphicsDevice.Device, PositionColoredTextured.StrideSize * verticeCount, Usage.WriteOnly, PositionColored2Textured.Format, Pool.Default);
+      return new VertexBuffer(GraphicsDevice.Device, StrideSize * verticeCount, Usage.WriteOnly, Format, Pool.Default);
     }
   }
 }
