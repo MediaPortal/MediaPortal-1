@@ -281,7 +281,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
       PerformLayout();
 
       SkinContext.AddOpacity(Opacity);
-      if (_fillContext != null)
+      if (Fill != null && _fillContext != null)
       {
         GraphicsDevice.Device.VertexFormat = _fillContext.VertexFormat;
         if (Fill.BeginRender(_fillContext))
@@ -291,7 +291,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
           Fill.EndRender();
         }
       }
-      if (_strokeContext != null)
+      if (Stroke != null && _strokeContext != null)
       {
         if (Stroke.BeginRender(_strokeContext))
         {

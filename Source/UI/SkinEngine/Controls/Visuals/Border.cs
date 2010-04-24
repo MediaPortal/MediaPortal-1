@@ -419,7 +419,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
       SkinContext.AddOpacity(Opacity);
 
-      if (_backgroundContext != null)
+      if (Background != null && _backgroundContext != null)
         if (Background.BeginRender(_backgroundContext))
         {
           GraphicsDevice.Device.SetStreamSource(0, _backgroundContext.VertexBuffer, 0, PositionColored2Textured.StrideSize);
@@ -427,7 +427,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
           Background.EndRender();
         }
 
-      if (_borderContext != null)
+      if (BorderBrush != null && _borderContext != null)
         if (BorderBrush.BeginRender(_borderContext))
         {
           GraphicsDevice.Device.SetStreamSource(0, _borderContext.VertexBuffer, 0, PositionColored2Textured.StrideSize);

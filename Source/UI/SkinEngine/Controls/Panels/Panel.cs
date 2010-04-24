@@ -277,7 +277,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Panels
 
       SkinContext.AddOpacity(Opacity);
 
-      if (_backgroundContext != null)
+      if (Background != null && _backgroundContext != null)
       {
         if (Background.BeginRender(_backgroundContext))
         {
