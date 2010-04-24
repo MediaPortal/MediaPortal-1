@@ -41,6 +41,7 @@ namespace MediaPortal.UI.SkinEngine.Rendering
     protected PrimitiveType _primitiveType;
     protected int _numVertices;
     protected VertexFormat _vertexFormat;
+    protected int _strideSize;
     protected RenderGroup _renderGroup;
 
     #endregion
@@ -54,6 +55,7 @@ namespace MediaPortal.UI.SkinEngine.Rendering
       InitializeVertexBuffer(verticesCount, vertices);
       _primitiveType = primitiveType;
       _vertexFormat = PositionColored2Textured.Format; // TODO: Make configurable
+      _strideSize = PositionColored2Textured.StrideSize;
     }
 
     public void Dispose()
@@ -127,6 +129,11 @@ namespace MediaPortal.UI.SkinEngine.Rendering
     public VertexFormat VertexFormat
     {
       get { return _vertexFormat; }
+    }
+
+    public int StrideSize
+    {
+      get { return _strideSize; }
     }
 
     #endregion

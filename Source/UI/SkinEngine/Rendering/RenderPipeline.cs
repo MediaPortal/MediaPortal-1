@@ -118,7 +118,8 @@ namespace MediaPortal.UI.SkinEngine.Rendering
               rendercontext.Parameters.Equals(primitive.Parameters) &&
               rendercontext.Texture == primitive.Texture &&
               rendercontext.PrimitiveType == primitive.PrimitiveType &&
-              rendercontext.VertexFormat == primitive.VertexFormat)
+              rendercontext.VertexFormat == primitive.VertexFormat &&
+              rendercontext.StrideSize == primitive.StrideSize)
           {
             rendercontext.Add(primitive);
             processed = true;
@@ -133,7 +134,8 @@ namespace MediaPortal.UI.SkinEngine.Rendering
                 Parameters = primitive.Parameters,
                 Texture = primitive.Texture,
                 PrimitiveType = primitive.PrimitiveType,
-                VertexFormat = primitive.VertexFormat
+                VertexFormat = primitive.VertexFormat,
+                StrideSize = primitive.StrideSize
             };
           rendercontext.Add(primitive);
           _renderList.Add(rendercontext);
@@ -152,7 +154,8 @@ namespace MediaPortal.UI.SkinEngine.Rendering
               rendercontext.Parameters.Equals(primitive.Parameters) &&
               rendercontext.Texture == primitive.Texture &&
               rendercontext.PrimitiveType == primitive.PrimitiveType &&
-              rendercontext.VertexFormat == primitive.VertexFormat)
+              rendercontext.VertexFormat == primitive.VertexFormat &&
+              rendercontext.StrideSize == primitive.StrideSize)
           {
             rendercontext.Add(primitive);
             processed = true;
@@ -168,7 +171,8 @@ namespace MediaPortal.UI.SkinEngine.Rendering
                 Parameters = primitive.Parameters,
                 Texture = primitive.Texture,
                 PrimitiveType = primitive.PrimitiveType,
-                VertexFormat = primitive.VertexFormat
+                VertexFormat = primitive.VertexFormat,
+                StrideSize = primitive.StrideSize
             };
           rendercontext.Add(primitive);
           _renderList.Add(rendercontext);

@@ -40,6 +40,7 @@ namespace MediaPortal.UI.SkinEngine.Rendering
     ITextureAsset _texture;
     VertexBuffer _vertices;
     VertexFormat _vertexFormat;
+    int _strideSize;
     PrimitiveType _primitiveType;
     int _primitiveCount;
     readonly List<PrimitiveContext> _primitives = new List<PrimitiveContext>();
@@ -81,6 +82,12 @@ namespace MediaPortal.UI.SkinEngine.Rendering
     {
       get { return _vertexFormat; }
       set { _vertexFormat = value; }
+    }
+
+    public int StrideSize
+    {
+      get { return _strideSize; }
+      set { _strideSize = value; }
     }
 
     public int PrimitiveCount
@@ -155,27 +162,18 @@ namespace MediaPortal.UI.SkinEngine.Rendering
       if (_primitiveCount == 0) return false;
 
       if (_texture != null)
-      {
         if (!_texture.IsAllocated)
           _texture.Allocate();
 
-        _parameters.Set();
-        _effect.StartRender(_texture.Texture);
-        GraphicsDevice.Device.VertexFormat = _vertexFormat;
-        GraphicsDevice.Device.SetStreamSource(0, _vertices, 0, PositionColored2Textured.StrideSize);
-        GraphicsDevice.Device.DrawPrimitives(_primitiveType, 0, _primitiveCount);
-        _effect.EndRender();
+      _parameters.Set();
+      _effect.StartRender(_texture == null ? null : _texture.Texture);
+      GraphicsDevice.Device.VertexFormat = _vertexFormat;
+      GraphicsDevice.Device.SetStreamSource(0, _vertices, 0, _strideSize);
+      GraphicsDevice.Device.DrawPrimitives(_primitiveType, 0, _primitiveCount);
+      _effect.EndRender();
+
+      if (_texture != null)
         _texture.KeepAlive();
-      }
-      else
-      {
-        _parameters.Set();
-        _effect.StartRender(null);
-        GraphicsDevice.Device.VertexFormat = _vertexFormat;
-        GraphicsDevice.Device.SetStreamSource(0, _vertices, 0, PositionColored2Textured.StrideSize);
-        GraphicsDevice.Device.DrawPrimitives(PrimitiveType.TriangleList, 0, _primitiveCount);
-        _effect.EndRender();
-      }
       return true;
     }
 

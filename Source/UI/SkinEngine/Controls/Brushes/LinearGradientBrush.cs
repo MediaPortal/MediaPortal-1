@@ -276,8 +276,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
                 _handleEndPoint.SetParameter(g_endpoint);
                 _effect.StartRender(_brushTexture.Texture);
 
-                GraphicsDevice.Device.VertexFormat = PositionColored2Textured.Format;
-                GraphicsDevice.Device.SetStreamSource(0, primitiveContext.VertexBuffer, 0, PositionColored2Textured.StrideSize);
+                GraphicsDevice.Device.VertexFormat = primitiveContext.VertexFormat;
+                GraphicsDevice.Device.SetStreamSource(0, primitiveContext.VertexBuffer, 0, primitiveContext.StrideSize);
                 GraphicsDevice.Device.DrawPrimitives(primitiveContext.PrimitiveType, 0, primitiveContext.NumVertices);
 
                 _effect.EndRender();

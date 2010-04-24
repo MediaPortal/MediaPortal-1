@@ -281,7 +281,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Panels
         if (Background.BeginRender(_backgroundContext))
         {
           GraphicsDevice.Device.VertexFormat = _backgroundContext.VertexFormat;
-          GraphicsDevice.Device.SetStreamSource(0, _backgroundContext.VertexBuffer, 0, PositionColored2Textured.StrideSize);
+          GraphicsDevice.Device.SetStreamSource(0, _backgroundContext.VertexBuffer, 0, _backgroundContext.StrideSize);
           GraphicsDevice.Device.DrawPrimitives(_backgroundContext.PrimitiveType, 0, 2);
           Background.EndRender();
         }

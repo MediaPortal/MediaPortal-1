@@ -34,6 +34,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
   {
     protected VertexBuffer _vertexBuffer;
     protected VertexFormat _vertexFormat;
+    protected int _strideSize;
     protected PrimitiveType _primitiveType;
     protected Texture _texture;
     readonly string _name;
@@ -48,6 +49,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       _assetId++;
       _vertexBuffer = PositionColored2Textured.Create(verts.Length);
       _vertexFormat = PositionColored2Textured.Format;
+      _strideSize = PositionColored2Textured.StrideSize;
       _primitiveType = primitiveType;
       PositionColored2Textured.Set(_vertexBuffer, verts);
       _texture = texture;
@@ -85,6 +87,11 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     public VertexFormat VertexFormat
     {
       get { return _vertexFormat; }
+    }
+
+    public int StrideSize
+    {
+      get { return _strideSize; }
     }
 
     public PrimitiveType PrimitiveType
