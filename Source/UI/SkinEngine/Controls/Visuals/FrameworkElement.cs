@@ -167,6 +167,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       _hasFocusProperty.Attach(OnFocusPropertyChanged);
       _fontFamilyProperty.Attach(OnFontChanged);
       _fontSizeProperty.Attach(OnFontChanged);
+
+      _opacityProperty.Attach(OnOpacityChanged);
+      _opacityMaskProperty.Attach(OnOpacityChanged);
     }
 
     void Detach()
@@ -179,6 +182,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       _hasFocusProperty.Detach(OnFocusPropertyChanged);
       _fontFamilyProperty.Detach(OnFontChanged);
       _fontSizeProperty.Detach(OnFontChanged);
+
+      _opacityProperty.Detach(OnOpacityChanged);
+      _opacityMaskProperty.Detach(OnOpacityChanged);
     }
 
     public override void DeepCopy(IDeepCopyable source, ICopyManager copyManager)
@@ -264,6 +270,11 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     void OnLayoutPropertyChanged(AbstractProperty property, object oldValue)
     {
       InvalidateLayout();
+    }
+
+    void OnOpacityChanged(AbstractProperty property, object oldValue)
+    {
+      _updateOpacityMask = true;
     }
 
     #region Public properties
