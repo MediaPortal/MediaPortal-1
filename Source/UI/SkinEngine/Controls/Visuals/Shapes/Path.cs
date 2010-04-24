@@ -94,7 +94,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
       }
       RectangleF rect = new RectangleF(ActualPosition.X, ActualPosition.Y, (float) ActualWidth, (float) ActualHeight);
 
-      //Fill brush
+      // Setup brushes
+      RemovePrimitiveContext(ref _fillContext);
+      RemovePrimitiveContext(ref _strokeContext);
       if (Fill != null || ((Stroke != null && StrokeThickness > 0)))
       {
         using (GraphicsPath path = CalculateTransformedPath(rect, _finalLayoutTransform))
@@ -110,7 +112,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
               gpi.NextSubpath(subPath, out isClosed);
               TriangulateHelper.Triangulate(subPath, out subPathVerts[i]);
             }
-            RemovePrimitiveContext(ref _fillContext);
             PositionColored2Textured[] verts;
             GraphicsPathHelper.Flatten(subPathVerts, out verts);
             if (verts != null)
@@ -134,7 +135,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
               TriangulateHelper.TriangulateStroke_TriangleList(subPath, (float) StrokeThickness, isClosed,
                   out subPathVerts[i], _finalLayoutTransform);
             }
-            RemovePrimitiveContext(ref _strokeContext);
             PositionColored2Textured[] verts;
             GraphicsPathHelper.Flatten(subPathVerts, out verts);
             if (verts != null)

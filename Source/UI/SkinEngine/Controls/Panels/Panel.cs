@@ -215,7 +215,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Panels
     public override void InvalidateLayout()
     {
       base.InvalidateLayout();
-      _updateRenderOrder = true;
       if (Screen != null) Screen.Invalidate(this);
     }
 
@@ -277,7 +276,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Panels
 
       SkinContext.AddOpacity(Opacity);
 
-      if (Background != null && _backgroundContext != null)
+      if (_backgroundContext != null)
       {
         if (Background.BeginRender(_backgroundContext))
         {
@@ -296,8 +295,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Panels
         return;
       _performLayout = false;
 
-      //Trace.WriteLine("Panel.PerformLayout() " + Name + " -" + GetType().ToString());
-
+      // Setup background brush
+      RemovePrimitiveContext(ref _backgroundContext);
       if (Background != null)
       {
         SizeF actualSize = new SizeF((float) ActualWidth, (float) ActualHeight);
@@ -326,7 +325,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Panels
           verts[5].Position = m.Transform(new SlimDX.Vector3(rect.Right, rect.Bottom, 1.0f));
         }
         Background.SetupBrush(ActualBounds, FinalLayoutTransform, ActualPosition.Z, verts);
-        RemovePrimitiveContext(ref _backgroundContext);
         _backgroundContext = new PrimitiveContext(2, ref verts, PrimitiveType.TriangleList);
         AddPrimitiveContext(_backgroundContext);
         Background.SetupPrimitive(_backgroundContext);

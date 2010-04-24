@@ -172,6 +172,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
       rect.X += ActualPosition.X;
       rect.Y += ActualPosition.Y;
 
+      RemovePrimitiveContext(ref _strokeContext);
       if (Stroke != null && StrokeThickness > 0)
       {
         using (GraphicsPath path = GetLine(rect))
@@ -180,7 +181,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
           float centerY;
           TriangulateHelper.CalcCentroid(path, out centerX, out centerY);
           PositionColored2Textured[] verts;
-          RemovePrimitiveContext(ref _strokeContext);
           TriangulateHelper.FillPolygon_TriangleList(path, centerX, centerY, out verts);
           int numVertices = verts.Length / 3;
           Stroke.SetupBrush(ActualBounds, FinalLayoutTransform, ActualPosition.Z, verts);

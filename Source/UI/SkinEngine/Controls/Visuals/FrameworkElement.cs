@@ -1027,11 +1027,14 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     {
       if (!_updateOpacityMask)
         return;
-      if (OpacityMask == null)
-        return;
       _updateOpacityMask = false;
       if (_opacityMaskContext != null)
+      {
         _opacityMaskContext.Free(false);
+        _opacityMaskContext = null;
+      }
+      if (OpacityMask == null)
+        return;
 
       RectangleF bounds = ActualBounds;
       float zPos = ActualPosition.Z;

@@ -29,7 +29,6 @@ using MediaPortal.UI.SkinEngine.DirectX;
 using MediaPortal.UI.SkinEngine.DirectX.Triangulate;
 using MediaPortal.UI.SkinEngine.Rendering;
 using MediaPortal.Utilities.DeepCopy;
-using MediaPortal.UI.SkinEngine.SkinManagement;
 using SlimDX.Direct3D9;
 
 namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
@@ -144,6 +143,10 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
       RectangleF rect = new RectangleF(0, 0, rectSize.Width, rectSize.Height);
       rect.X += ActualPosition.X;
       rect.Y += ActualPosition.Y;
+
+      // Setup brushes
+      RemovePrimitiveContext(ref _fillContext);
+      RemovePrimitiveContext(ref _strokeContext);
       PositionColored2Textured[] verts;
       if (Fill != null || (Stroke != null && StrokeThickness > 0))
       {
@@ -156,7 +159,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
           float centerY = rect.Height / 2 + rect.Top;
           if (Fill != null)
           {
-            RemovePrimitiveContext(ref _fillContext);
             TriangulateHelper.FillPolygon_TriangleList(path, centerX, centerY, out verts);
             int numVertices = verts.Length / 3;
             Fill.SetupBrush(ActualBounds, FinalLayoutTransform, ActualPosition.Z, verts);
@@ -167,7 +169,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
 
           if (Stroke != null && StrokeThickness > 0)
           {
-            RemovePrimitiveContext(ref _strokeContext);
             TriangulateHelper.TriangulateStroke_TriangleList(path, (float) StrokeThickness, true, out verts, _finalLayoutTransform);
             int numVertices = verts.Length / 3;
             Stroke.SetupBrush(ActualBounds, FinalLayoutTransform, ActualPosition.Z, verts);

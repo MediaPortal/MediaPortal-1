@@ -314,6 +314,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
     protected void PerformLayoutBackground(RectangleF rect)
     {
+      // Setup background brush
+      RemovePrimitiveContext(ref _backgroundContext);
       if (Background != null)
         using (GraphicsPath path = CreateBorderRectPath(rect))
         {
@@ -323,7 +325,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
           PositionColored2Textured[] verts;
           float centerX, centerY;
           TriangulateHelper.CalcCentroid(path, out centerX, out centerY);
-          RemovePrimitiveContext(ref _backgroundContext);
           TriangulateHelper.FillPolygon_TriangleList(path, centerX, centerY, out verts);
           int numVertices = verts.Length / 3;
           Background.SetupBrush(ActualBounds, FinalLayoutTransform, ActualPosition.Z, verts);
@@ -335,6 +336,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
     protected void PerformLayoutBorder(RectangleF rect)
     {
+      // Setup border brush
+      RemovePrimitiveContext(ref _borderContext);
       if (BorderBrush != null && BorderThickness > 0)
         using (GraphicsPath path = CreateBorderRectPath(rect))
         {
@@ -348,7 +351,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
             TriangulateHelper.TriangulateStroke_TriangleList(path, (float) BorderThickness, isClosed,
                 out subPathVerts[i], _finalLayoutTransform);
           }
-          RemovePrimitiveContext(ref _borderContext);
           PositionColored2Textured[] verts;
           GraphicsPathHelper.Flatten(subPathVerts, out verts);
           BorderBrush.SetupBrush(_borderRect, FinalLayoutTransform, ActualPosition.Z, verts);
@@ -380,13 +382,13 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     {
       if ((uiEvent & UIEvent.OpacityChange) != 0 || (uiEvent & UIEvent.FillChange) != 0)
       {
-        if (Background != null && _backgroundContext != null)
+        if (_backgroundContext != null)
           Background.SetupPrimitive(_backgroundContext);
       }
 
       if ((uiEvent & UIEvent.OpacityChange) != 0 || (uiEvent & UIEvent.StrokeChange) != 0)
       {
-        if (BorderBrush != null && _borderContext != null)
+        if (_borderContext != null)
           BorderBrush.SetupPrimitive(_borderContext);
       }
     }
@@ -419,7 +421,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
       SkinContext.AddOpacity(Opacity);
 
-      if (Background != null && _backgroundContext != null)
+      if (_backgroundContext != null)
         if (Background.BeginRender(_backgroundContext))
         {
           GraphicsDevice.Device.SetStreamSource(0, _backgroundContext.VertexBuffer, 0, PositionColored2Textured.StrideSize);
@@ -427,7 +429,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
           Background.EndRender();
         }
 
-      if (BorderBrush != null && _borderContext != null)
+      if (_borderContext != null)
         if (BorderBrush.BeginRender(_borderContext))
         {
           GraphicsDevice.Device.SetStreamSource(0, _borderContext.VertexBuffer, 0, PositionColored2Textured.StrideSize);
