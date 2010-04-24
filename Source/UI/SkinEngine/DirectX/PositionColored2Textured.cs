@@ -51,6 +51,7 @@ applications, and to alter it and redistribute it freely, subject to the followi
     3. This notice may not be removed or altered from any source distribution.
 
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 using System.Runtime.InteropServices;
 using SlimDX;
 using SlimDX.Direct3D9;
