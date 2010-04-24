@@ -955,8 +955,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         SkinContext.CombinedRenderTransforms = originalTransforms;
         // Now render the opacitytexture with the opacitymask brush
         GraphicsDevice.Device.BeginScene();
-        //GraphicsDevice.Device.VertexFormat = PositionColored2Textured.Format;
         OpacityMask.BeginRender(_opacityMaskContext.Texture);
+        GraphicsDevice.Device.VertexFormat = _opacityMaskContext.VertexFormat;
         GraphicsDevice.Device.SetStreamSource(0, _opacityMaskContext.VertexBuffer, 0, PositionColored2Textured.StrideSize);
         GraphicsDevice.Device.DrawPrimitives(_opacityMaskContext.PrimitiveType, 0, 2);
         OpacityMask.EndRender();

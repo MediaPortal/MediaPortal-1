@@ -570,8 +570,8 @@ namespace MediaPortal.UI.SkinEngine.Fonts
 
       _effect.StartRender(_texture);
 
-      GraphicsDevice.Device.VertexFormat = PositionColored2Textured.Format;
       GraphicsDevice.Device.SetTexture(0, _texture);
+      GraphicsDevice.Device.VertexFormat = PositionColored2Textured.Format;
       GraphicsDevice.Device.SetStreamSource(0, buffer, 0, PositionColored2Textured.StrideSize);
       GraphicsDevice.Device.DrawPrimitives(PrimitiveType.TriangleList, 0, 2 * count);
 

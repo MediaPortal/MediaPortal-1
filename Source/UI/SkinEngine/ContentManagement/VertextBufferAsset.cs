@@ -173,8 +173,6 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
       PositionColored2Textured[] verts = new PositionColored2Textured[4];
       unchecked
       {
-        float tu2, tv2;
-        tu2 = tv2 = 1;
         long colorUpperLeft = alphaUpperLeft;
         colorUpperLeft <<= 24;
         colorUpperLeft += 0xffffff;
@@ -285,7 +283,7 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
 
       Set(x, y, z, width, height, 0, 0, 1, 1, (int) alpha, (int) alpha, (int) alpha, (int) alpha);
 
-      //GraphicsDevice.Device.VertexFormat = PositionColored2Textured.Format;
+      GraphicsDevice.Device.VertexFormat = PositionColored2Textured.Format;
       GraphicsDevice.Device.SetStreamSource(streamNumber, _vertexBuffer, 0, PositionColored2Textured.StrideSize);
       _effect.Render(_texture, streamNumber);
       _lastTimeUsed = SkinContext.Now;
@@ -334,7 +332,7 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
 
       Set(x, y, z, width, height, uoff, voff, umax, vmax,
           (int) alphaUpperLeft, (int) alphaBottomLeft, (int) alphaBottomRight, (int) alphaUpperRight);
-      //GraphicsDevice.Device.VertexFormat = PositionColored2Textured.Format;
+      GraphicsDevice.Device.VertexFormat = PositionColored2Textured.Format;
       GraphicsDevice.Device.SetStreamSource(0, _vertexBuffer, 0, PositionColored2Textured.StrideSize);
 
       _effect.Render(_texture, 0);
@@ -386,7 +384,7 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
           (int) alphaBottomRight,
           (int) alphaUpperRight);
 
-      //GraphicsDevice.Device.VertexFormat = PositionColored2Textured.Format;
+      GraphicsDevice.Device.VertexFormat = PositionColored2Textured.Format;
       GraphicsDevice.Device.SetStreamSource(0, _vertexBuffer, 0, PositionColored2Textured.StrideSize);
       effect.Render(_texture,0);
       _lastTimeUsed = SkinContext.Now;

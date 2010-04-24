@@ -266,8 +266,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
                 //render the control (will be rendered into the opacitytexture)
                 GraphicsDevice.Device.BeginScene();
-                //GraphicsDevice.Device.VertexFormat = PositionColored2Textured.Format;
-                //GraphicsDevice.TransformWorld = SkinContext.FinalMatrix.Matrix;
 
                 Matrix mrel;
                 RelativeTransform.GetTransformRel(out mrel);
@@ -278,6 +276,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
                 _handleEndPoint.SetParameter(g_endpoint);
                 _effect.StartRender(_brushTexture.Texture);
 
+                GraphicsDevice.Device.VertexFormat = PositionColored2Textured.Format;
                 GraphicsDevice.Device.SetStreamSource(0, primitiveContext.VertexBuffer, 0, PositionColored2Textured.StrideSize);
                 GraphicsDevice.Device.DrawPrimitives(primitiveContext.PrimitiveType, 0, primitiveContext.NumVertices);
 

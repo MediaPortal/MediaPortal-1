@@ -39,6 +39,7 @@ namespace MediaPortal.UI.SkinEngine.Rendering
     EffectParameters _parameters;
     ITextureAsset _texture;
     VertexBuffer _vertices;
+    VertexFormat _vertexFormat;
     PrimitiveType _primitiveType;
     int _primitiveCount;
     readonly List<PrimitiveContext> _primitives = new List<PrimitiveContext>();
@@ -51,6 +52,7 @@ namespace MediaPortal.UI.SkinEngine.Rendering
       get { return _updateVertices; }
       set { _updateVertices = value; }
     }
+
     public EffectAsset Effect
     {
       get { return _effect; }
@@ -73,6 +75,12 @@ namespace MediaPortal.UI.SkinEngine.Rendering
     {
       get { return _vertices; }
       set { _vertices = value; }
+    }
+
+    public VertexFormat VertexFormat
+    {
+      get { return _vertexFormat; }
+      set { _vertexFormat = value; }
     }
 
     public int PrimitiveCount
@@ -128,7 +136,7 @@ namespace MediaPortal.UI.SkinEngine.Rendering
       }
       if (verticeCount > 0)
       {
-        _vertices = new VertexBuffer(GraphicsDevice.Device, PositionColoredTextured.StrideSize * verticeCount, Usage.Dynamic, PositionColored2Textured.Format, Pool.Default);
+        _vertices = new VertexBuffer(GraphicsDevice.Device, PositionColored2Textured.StrideSize * verticeCount, Usage.Dynamic, PositionColored2Textured.Format, Pool.Default);
         using (DataStream stream = _vertices.Lock(0, 0, LockFlags.Discard))
         {
           foreach (PrimitiveContext primitive in _primitives)
@@ -150,9 +158,10 @@ namespace MediaPortal.UI.SkinEngine.Rendering
       {
         if (!_texture.IsAllocated)
           _texture.Allocate();
+
         _parameters.Set();
-        GraphicsDevice.Device.VertexFormat = PositionColored2Textured.Format;
         _effect.StartRender(_texture.Texture);
+        GraphicsDevice.Device.VertexFormat = _vertexFormat;
         GraphicsDevice.Device.SetStreamSource(0, _vertices, 0, PositionColored2Textured.StrideSize);
         GraphicsDevice.Device.DrawPrimitives(_primitiveType, 0, _primitiveCount);
         _effect.EndRender();
@@ -162,6 +171,7 @@ namespace MediaPortal.UI.SkinEngine.Rendering
       {
         _parameters.Set();
         _effect.StartRender(null);
+        GraphicsDevice.Device.VertexFormat = _vertexFormat;
         GraphicsDevice.Device.SetStreamSource(0, _vertices, 0, PositionColored2Textured.StrideSize);
         GraphicsDevice.Device.DrawPrimitives(PrimitiveType.TriangleList, 0, _primitiveCount);
         _effect.EndRender();

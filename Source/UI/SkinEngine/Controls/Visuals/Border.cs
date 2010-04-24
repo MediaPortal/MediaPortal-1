@@ -424,6 +424,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       if (_backgroundContext != null)
         if (Background.BeginRender(_backgroundContext))
         {
+          GraphicsDevice.Device.VertexFormat = _backgroundContext.VertexFormat;
           GraphicsDevice.Device.SetStreamSource(0, _backgroundContext.VertexBuffer, 0, PositionColored2Textured.StrideSize);
           GraphicsDevice.Device.DrawPrimitives(_backgroundContext.PrimitiveType, 0, _backgroundContext.NumVertices);
           Background.EndRender();
@@ -432,6 +433,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       if (_borderContext != null)
         if (BorderBrush.BeginRender(_borderContext))
         {
+          GraphicsDevice.Device.VertexFormat = _borderContext.VertexFormat;
           GraphicsDevice.Device.SetStreamSource(0, _borderContext.VertexBuffer, 0, PositionColored2Textured.StrideSize);
           GraphicsDevice.Device.DrawPrimitives(_borderContext.PrimitiveType, 0, _borderContext.NumVertices);
           BorderBrush.EndRender();

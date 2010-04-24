@@ -33,6 +33,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
   public class VisualAssetContext : IAsset
   {
     protected VertexBuffer _vertexBuffer;
+    protected VertexFormat _vertexFormat;
     protected PrimitiveType _primitiveType;
     protected Texture _texture;
     readonly string _name;
@@ -46,6 +47,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       _name = String.Format("visual#{0} {1} {2}", _assetId, screenName, controlName);
       _assetId++;
       _vertexBuffer = PositionColored2Textured.Create(verts.Length);
+      _vertexFormat = PositionColored2Textured.Format;
       _primitiveType = primitiveType;
       PositionColored2Textured.Set(_vertexBuffer, verts);
       _texture = texture;
@@ -78,6 +80,11 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     public VertexBuffer VertexBuffer
     {
       get { return _vertexBuffer; }
+    }
+
+    public VertexFormat VertexFormat
+    {
+      get { return _vertexFormat; }
     }
 
     public PrimitiveType PrimitiveType
