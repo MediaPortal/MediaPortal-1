@@ -248,7 +248,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         Free(true);
         g_focus = new float[] { GradientOrigin.X, GradientOrigin.Y };
         g_center = new float[] { Center.X, Center.Y };
-        g_radius = new float[] { (float)RadiusX, (float)RadiusY };
+        g_radius = new float[] { (float) RadiusX, (float) RadiusY };
 
         if (MappingMode == BrushMappingMode.Absolute)
         {
@@ -284,13 +284,13 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
             _handleRadius = _effect.GetParameterHandle("g_radius");
             _handleOpacity = _effect.GetParameterHandle("g_opacity");
 
-            float w = (float)_width;
-            float h = (float)_height;
+            float w = (float) _width;
+            float h = (float) _height;
             float cx = 1.0f;// GraphicsDevice.Width / (float) SkinContext.SkinWidth;
             float cy = 1.0f;// GraphicsDevice.Height / (float) SkinContext.SkinHeight;
 
             bool copy = true;
-            if ((int)w >= SkinContext.SkinWidth && (int)h >= SkinContext.SkinHeight)
+            if ((int) w >= SkinContext.SkinWidth && (int) h >= SkinContext.SkinHeight)
             {
               copy = false;
               w /= 2;
@@ -405,7 +405,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
         g_focus = new float[] { GradientOrigin.X, GradientOrigin.Y };
         g_center = new float[] { Center.X, Center.Y };
-        g_radius = new float[] { (float)RadiusX, (float)RadiusY };
+        g_radius = new float[] { (float) RadiusX, (float) RadiusY };
 
         if (MappingMode == BrushMappingMode.Absolute)
         {
