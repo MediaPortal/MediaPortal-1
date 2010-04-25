@@ -42,6 +42,7 @@ namespace MediaPortal.UI.SkinEngine.Rendering
     protected int _numVertices;
     protected VertexFormat _vertexFormat;
     protected int _strideSize;
+    // TODO: Remove depencency from RenderGroup (inherit from IObservable?)
     protected RenderGroup _renderGroup;
 
     #endregion

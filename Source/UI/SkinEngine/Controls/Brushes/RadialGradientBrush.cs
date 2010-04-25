@@ -420,7 +420,12 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         }
       }
 
-      if (!_singleColor)
+      if (_singleColor)
+      {
+        _effect.StartRender(null);
+        _lastTimeUsed = SkinContext.Now;
+      }
+      else
       {
         Matrix m;
         RelativeTransform.GetTransformRel(out m);
@@ -433,11 +438,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         _handleOpacity.SetParameter((float) (Opacity * SkinContext.Opacity));
         _handleAlphaTexture.SetParameter(_brushTexture.Texture);
         _effect.StartRender(tex);
-        _lastTimeUsed = SkinContext.Now;
-      }
-      else
-      {
-        _effect.StartRender(null);
         _lastTimeUsed = SkinContext.Now;
       }
     }
