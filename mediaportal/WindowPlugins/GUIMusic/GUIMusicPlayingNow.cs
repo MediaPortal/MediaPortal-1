@@ -1596,17 +1596,17 @@ namespace MediaPortal.GUI.Music
             InfoNeeded = true;
           }
 
-          string strTrack = String.Format("{0} {1}", GUILocalizeStrings.Get(435), CurrentTrackTag.Track); //	"Track"
-          if (CurrentTrackTag.Track <= 0)
-          {
-            strTrack = string.Empty;
-          }
+          // Duration
+          string strDuration = CurrentTrackTag.Duration <= 0 ? string.Empty : Util.Utils.SecondsToHMSString(CurrentTrackTag.Duration);
 
-          string strYear = String.Format("{0} {1}", GUILocalizeStrings.Get(436), CurrentTrackTag.Year); //	"Year: "
-          if (CurrentTrackTag.Year <= 1900)
-          {
-            strYear = string.Empty;
-          }
+          // Track
+          string strTrack = CurrentTrackTag.Track <= 0 ? string.Empty : CurrentTrackTag.Track.ToString();
+
+          // Year
+          string strYear = CurrentTrackTag.Year <= 1900 ? string.Empty : CurrentTrackTag.Year.ToString();
+
+          // Rating
+          string strRating = (Convert.ToDecimal(2 * CurrentTrackTag.Rating + 1)).ToString();
 
           GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentTrackTag.Title);
           GUIPropertyManager.SetProperty("#Play.Current.Track", strTrack);
@@ -1614,9 +1614,9 @@ namespace MediaPortal.GUI.Music
           GUIPropertyManager.SetProperty("#Play.Current.Artist", CurrentTrackTag.Artist);
           GUIPropertyManager.SetProperty("#Play.Current.Genre", CurrentTrackTag.Genre);
           GUIPropertyManager.SetProperty("#Play.Current.Year", strYear);
-          GUIPropertyManager.SetProperty("#Play.Current.Rating",
-                                         (Convert.ToDecimal(2 * CurrentTrackTag.Rating + 1)).ToString());
-          GUIPropertyManager.SetProperty("#duration", Util.Utils.SecondsToHMSString(CurrentTrackTag.Duration));
+          GUIPropertyManager.SetProperty("#Play.Current.Rating", strRating);
+          GUIPropertyManager.SetProperty("#Play.Current.Duration", strDuration);
+          GUIPropertyManager.SetProperty("#duration", strDuration);
 
           if (InfoNeeded)
           {
@@ -1631,8 +1631,8 @@ namespace MediaPortal.GUI.Music
           GUIPropertyManager.SetProperty("#Play.Current.Album", string.Empty);
           GUIPropertyManager.SetProperty("#Play.Current.Artist", string.Empty);
           GUIPropertyManager.SetProperty("#Play.Current.Genre", string.Empty);
-          GUIPropertyManager.SetProperty("#duration", "0");
-          GUIPropertyManager.SetProperty("#Play.Current.Rating", "0");
+          GUIPropertyManager.SetProperty("#Play.Current.Duration", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.Rating", string.Empty);
           GUIPropertyManager.SetProperty("#Play.Current.Year", string.Empty);
 
           if (PlaylistPlayer == null)
@@ -1664,35 +1664,31 @@ namespace MediaPortal.GUI.Music
         {
           LblUpNext.Visible = true;
         }
-        string strNextTrack = String.Format("{0} {1}", GUILocalizeStrings.Get(435), NextTrackTag.Track); //	"Track: "
-        if (NextTrackTag.Track <= 0)
-        {
-          strNextTrack = string.Empty;
-        }
 
-        string strYear = String.Format("{0} {1}", GUILocalizeStrings.Get(436), NextTrackTag.Year); //	"Year: "
-        if (NextTrackTag.Year <= 1900)
-        {
-          strYear = string.Empty;
-        }
+        // Duration
+        string strDuration = NextTrackTag.Duration <= 0 ? string.Empty : NextTrackTag.Duration.ToString();
 
-        if (NextTrackFileName != string.Empty)
-        {
-          string nextTrackThumb = GUIMusicFiles.GetCoverArt(false, NextTrackFileName, NextTrackTag);
-          GUIPropertyManager.SetProperty("#Play.Next.Thumb", nextTrackThumb);
-        }
-        else
-        {
-          GUIPropertyManager.SetProperty("#Play.Next.Thumb", string.Empty);
-        }
-        
+        // Track
+        string strNextTrack = NextTrackTag.Track <= 0 ? string.Empty : NextTrackTag.Track.ToString();
+
+        // Year
+        string strYear = NextTrackTag.Year <= 1900 ? string.Empty : NextTrackTag.Year.ToString();
+
+        // Rating
+        string strRating = (Convert.ToDecimal(2 * NextTrackTag.Rating + 1)).ToString();
+
+        // Thumb
+        string nextTrackThumb = NextTrackFileName != string.Empty ? GUIMusicFiles.GetCoverArt(false, NextTrackFileName, NextTrackTag) : string.Empty;
+
+        GUIPropertyManager.SetProperty("#Play.Next.Duration", strDuration);
+        GUIPropertyManager.SetProperty("#Play.Next.Thumb", nextTrackThumb);
         GUIPropertyManager.SetProperty("#Play.Next.Title", NextTrackTag.Title);
         GUIPropertyManager.SetProperty("#Play.Next.Track", strNextTrack);
         GUIPropertyManager.SetProperty("#Play.Next.Album", NextTrackTag.Album);
         GUIPropertyManager.SetProperty("#Play.Next.Artist", NextTrackTag.Artist);
         GUIPropertyManager.SetProperty("#Play.Next.Genre", NextTrackTag.Genre);
         GUIPropertyManager.SetProperty("#Play.Next.Year", strYear);
-        GUIPropertyManager.SetProperty("#Play.Next.Rating", (Convert.ToDecimal(2 * NextTrackTag.Rating + 1)).ToString());
+        GUIPropertyManager.SetProperty("#Play.Next.Rating", strRating);
       }
       else
       {

@@ -1222,28 +1222,22 @@ namespace MediaPortal.Util
 
     public static string GetObjectCountLabel(int iTotalItems)
     {
-      string strObjects = string.Empty;
+      return iTotalItems.ToString();
 
-      if (iTotalItems == 1)
-        strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(1062)); //Object
-      else
-        strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632)); //Objects
-
-      return strObjects;
+      // Old code with embedded labels, see mantis #2833
+      //return iTotalItems == 1
+      //              ? String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(1062))
+      //              : String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
     }
 
     public static string GetSongCountLabel(int iTotalItems, int iTotalSeconds)
     {
-      string strObjects = string.Empty;
+      return String.Format("{0}, {1}", iTotalItems, SecondsToHMSString(iTotalSeconds));
 
-      if (iTotalItems == 1)
-        strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(179),
-                                   MediaPortal.Util.Utils.SecondsToHMSString(iTotalSeconds)); //Song
-      else
-        strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1052),
-                                   MediaPortal.Util.Utils.SecondsToHMSString(iTotalSeconds)); //Songs
-
-      return strObjects;
+      // Old code with embedded labels, see mantis #2833
+      //return iTotalItems == 1
+      //               ? String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(179), SecondsToHMSString(iTotalSeconds))
+      //               : String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1052), SecondsToHMSString(iTotalSeconds));
     }
 
     public static bool GetDVDLabel(string strFile, out string strLabel)

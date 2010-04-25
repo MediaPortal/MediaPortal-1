@@ -688,16 +688,8 @@ namespace MediaPortal.GUI.Library
       }
 
       //set object count label
-      string strObjects = string.Empty;
-      if (iTotalItems == 1)
-      {
-        strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(1062)); //Object
-      }
-      else
-      {
-        strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632)); //Objects
-      }
-      GUIPropertyManager.SetProperty("#itemcount", strObjects);
+      GUIPropertyManager.SetProperty("#itemcount", MediaPortal.Util.Utils.GetObjectCountLabel(iTotalItems));
+
     }
 
     private void UpdateView()

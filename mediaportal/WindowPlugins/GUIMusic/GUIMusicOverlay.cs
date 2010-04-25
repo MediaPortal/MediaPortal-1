@@ -373,26 +373,14 @@ namespace MediaPortal.GUI.Music
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", _thumbLogo);
       if (tag != null)
       {
-        string strText = GUILocalizeStrings.Get(437); //	"Duration"
-        string strDuration = String.Format("{0} {1}", strText, Util.Utils.SecondsToHMSString(tag.Duration));
-        if (tag.Duration <= 0)
-        {
-          strDuration = string.Empty;
-        }
+        // Duration
+        string strDuration = tag.Duration <= 0 ? string.Empty : Util.Utils.SecondsToHMSString(tag.Duration);
 
-        strText = GUILocalizeStrings.Get(435); //	"Track"
-        string strTrack = String.Format("{0} {1}", strText, tag.Track);
-        if (tag.Track <= 0)
-        {
-          strTrack = string.Empty;
-        }
+        // Track
+        string strTrack = tag.Track <= 0 ? string.Empty : tag.Track.ToString();
 
-        strText = GUILocalizeStrings.Get(436); //	"Year"
-        string strYear = String.Format("{0} {1}", strText, tag.Year);
-        if (tag.Year <= 1900)
-        {
-          strYear = string.Empty;
-        }
+        // Year
+        string strYear = tag.Year <= 1900 ? string.Empty : tag.Year.ToString();
 
         GUIPropertyManager.SetProperty("#Play.Current.Genre", tag.Genre);
         GUIPropertyManager.SetProperty("#Play.Current.Comment", tag.Comment);
@@ -402,7 +390,7 @@ namespace MediaPortal.GUI.Music
         GUIPropertyManager.SetProperty("#Play.Current.Track", strTrack);
         GUIPropertyManager.SetProperty("#Play.Current.Year", strYear);
         GUIPropertyManager.SetProperty("#Play.Current.Duration", strDuration);
-        GUIPropertyManager.SetProperty("#duration", Util.Utils.SecondsToHMSString(tag.Duration));
+        GUIPropertyManager.SetProperty("#duration", strDuration);
       }
 
       // Show Information of Next File in Playlist
@@ -427,26 +415,14 @@ namespace MediaPortal.GUI.Music
 
       if (tag != null)
       {
-        string strText = GUILocalizeStrings.Get(437); //	"Duration"
-        string strDuration = String.Format("{0}{1}", strText, Util.Utils.SecondsToHMSString(tag.Duration));
-        if (tag.Duration <= 0)
-        {
-          strDuration = string.Empty;
-        }
+        // Duration
+        string strDuration = tag.Duration <= 0 ? string.Empty : Util.Utils.SecondsToHMSString(tag.Duration);
 
-        strText = GUILocalizeStrings.Get(435); //	"Track"
-        string strTrack = String.Format("{0}{1}", strText, tag.Track);
-        if (tag.Track <= 0)
-        {
-          strTrack = string.Empty;
-        }
+        // Track
+        string strTrack = tag.Track <= 0 ? string.Empty : tag.Track.ToString();
 
-        strText = GUILocalizeStrings.Get(436); //	"Year"
-        string strYear = String.Format("{0}{1}", strText, tag.Year);
-        if (tag.Year <= 1900)
-        {
-          strYear = string.Empty;
-        }
+        // Year
+        string strYear = tag.Year <= 1900 ? string.Empty : tag.Year.ToString();
 
         GUIPropertyManager.SetProperty("#Play.Next.Genre", tag.Genre);
         GUIPropertyManager.SetProperty("#Play.Next.Comment", tag.Comment);

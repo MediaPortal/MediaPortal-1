@@ -194,6 +194,7 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Current.Artist"] = string.Empty;
       _properties["#Play.Current.Director"] = string.Empty;
       _properties["#Play.Current.Album"] = string.Empty;
+      _properties["#Play.Current.Duration"] = string.Empty;
       _properties["#Play.Current.Track"] = string.Empty;
       _properties["#Play.Current.Year"] = string.Empty;
       _properties["#Play.Current.Duration"] = string.Empty;
@@ -348,6 +349,7 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Current.Artist", string.Empty);
       SetProperty("#Play.Current.Director", string.Empty);
       SetProperty("#Play.Current.Album", string.Empty);
+      SetProperty("#Play.Current.Duration", string.Empty);
       SetProperty("#Play.Current.Track", string.Empty);
       SetProperty("#Play.Current.Year", string.Empty);
       SetProperty("#Play.Current.Duration", string.Empty);
