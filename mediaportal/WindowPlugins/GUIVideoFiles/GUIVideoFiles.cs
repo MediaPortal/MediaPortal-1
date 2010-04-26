@@ -122,6 +122,9 @@ namespace MediaPortal.GUI.Video
     private ArrayList _conflictFiles = new ArrayList();
     private bool _switchRemovableDrives;
 
+    private List<GUIListItem> _cachedItems = new List<GUIListItem>();
+    private string _cachedDir = null;
+
     #endregion
 
     #region constructors
@@ -324,7 +327,10 @@ namespace MediaPortal.GUI.Video
         return;
       }
       LoadFolderSettings(_currentFolder);
-      LoadDirectory(_currentFolder);
+
+      //OnPageLoad is sometimes called when stopping playback.
+      //So we use the cached version of the function here.
+      LoadDirectory(_currentFolder, true);
     }
 
     protected override void OnPageDestroy(int newWindowId)
@@ -475,6 +481,16 @@ namespace MediaPortal.GUI.Video
 
     protected override void LoadDirectory(string newFolderName)
     {
+      this.LoadDirectory(newFolderName, false);
+    }
+
+    private void LoadDirectory(string newFolderName, bool useCache)
+    {
+      this.LoadDirectory(newFolderName, useCache, null);
+    }
+
+    private void LoadDirectory(string newFolderName, bool useCache, IList<string> watchedFiles)
+    {
       if (newFolderName == null)
       {
         return;
@@ -516,76 +532,105 @@ namespace MediaPortal.GUI.Video
 
       GUIControl.ClearControl(GetID, facadeView.GetID);
 
-      // here we get ALL files in every subdir, look for folderthumbs, defaultthumbs, etc
-      List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(_currentFolder);
-      if (_mapSettings.Stack)
+      List<GUIListItem> itemlist = null;
+
+      //Tweak to boost performance when starting/stopping playback
+      //For further details see comment in Core\Util\VirtualDirectory.cs
+      if (useCache && _cachedDir == _currentFolder)
       {
-        List<GUIListItem> itemfiltered = new List<GUIListItem>(itemlist.Count);
-        for (int x = 0; x < itemlist.Count; ++x)
+        itemlist = _cachedItems;
+
+        foreach (GUIListItem item in itemlist)
         {
-          bool addItem = true;
-          GUIListItem item1 = (GUIListItem)itemlist[x];
-          for (int y = 0; y < itemlist.Count; ++y)
+          if (watchedFiles != null && watchedFiles.Contains(item.Path))
           {
-            GUIListItem item2 = (GUIListItem)itemlist[y];
-            if (x != y)
+            item.IsPlayed = true;
+          }
+
+          //Do NOT add OnItemSelected event handler here, because its still there...
+
+          facadeView.Add(item);
+        }
+      }
+      else
+      {
+        // here we get ALL files in every subdir, look for folderthumbs, defaultthumbs, etc
+        itemlist = _virtualDirectory.GetDirectoryExt(_currentFolder);
+        if (_mapSettings.Stack)
+        {
+          List<GUIListItem> itemfiltered = new List<GUIListItem>(itemlist.Count);
+          for (int x = 0; x < itemlist.Count; ++x)
+          {
+            bool addItem = true;
+            GUIListItem item1 = (GUIListItem)itemlist[x];
+            for (int y = 0; y < itemlist.Count; ++y)
             {
-              if (!item1.IsFolder || !item2.IsFolder)
+              GUIListItem item2 = (GUIListItem)itemlist[y];
+              if (x != y)
               {
-                if (!item1.IsRemote && !item2.IsRemote)
+                if (!item1.IsFolder || !item2.IsFolder)
                 {
-                  if (Util.Utils.ShouldStack(item1.Path, item2.Path))
+                  if (!item1.IsRemote && !item2.IsRemote)
                   {
-                    if (String.Compare(item1.Path, item2.Path, true) > 0)
+                    if (Util.Utils.ShouldStack(item1.Path, item2.Path))
                     {
-                      addItem = false;
-                      // Update to reflect the stacked size
-                      item2.FileInfo.Length += item1.FileInfo.Length;
+                      if (String.Compare(item1.Path, item2.Path, true) > 0)
+                      {
+                        addItem = false;
+                        // Update to reflect the stacked size
+                        item2.FileInfo.Length += item1.FileInfo.Length;
+                      }
                     }
                   }
                 }
               }
             }
-          }
 
-          if (addItem)
-          {
-            string label = item1.Label;
-            if ((VirtualDirectory.IsValidExtension(item1.Path, Util.Utils.VideoExtensions, false)))
+            if (addItem)
             {
-              Util.Utils.RemoveStackEndings(ref label);
+              string label = item1.Label;
+              if ((VirtualDirectory.IsValidExtension(item1.Path, Util.Utils.VideoExtensions, false)))
+              {
+                Util.Utils.RemoveStackEndings(ref label);
+              }
+              item1.Label = label;
+              itemfiltered.Add(item1);
             }
-            item1.Label = label;
-            itemfiltered.Add(item1);
           }
+          itemlist = itemfiltered;
         }
-        itemlist = itemfiltered;
+
+        ISelectDVDHandler selectDVDHandler;
+        if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
+        {
+          selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
+        }
+        else
+        {
+          selectDVDHandler = new SelectDVDHandler();
+          GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
+        }
+
+        // folder.jpg will already be assigned from "itemlist = virtualDirectory.GetDirectory(_currentFolder);" here
+        selectDVDHandler.SetIMDBThumbs(itemlist, _markWatchedFiles, _eachFolderIsMovie);
+
+        foreach (GUIListItem item in itemlist)
+        {
+          item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+          facadeView.Add(item);
+        }
+
+        _cachedItems = itemlist;
+        _cachedDir = _currentFolder;
       }
 
-      ISelectDVDHandler selectDVDHandler;
-      if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
-      {
-        selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
-      }
-      else
-      {
-        selectDVDHandler = new SelectDVDHandler();
-        GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
-      }
-
-      // folder.jpg will already be assigned from "itemlist = virtualDirectory.GetDirectory(_currentFolder);" here
-      selectDVDHandler.SetIMDBThumbs(itemlist, _markWatchedFiles, _eachFolderIsMovie);
-
-      foreach (GUIListItem item in itemlist)
-      {
-        item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-        facadeView.Add(item);
-      }
       OnSort();
 
       bool itemSelected = false;
 
-      if (selectedListItem != null)
+      //Sometimes the last selected item wasn't restored correcly after playback stop
+      //The !useCache fixes this
+      if (selectedListItem != null && !useCache)
       {
         string selectedItemLabel = _history.Get(_currentFolder);
         for (int i = 0; i < facadeView.Count; ++i)
@@ -720,100 +765,102 @@ namespace MediaPortal.GUI.Video
           int selectedFileIndex = 0;
           int movieDuration = 0;
           ArrayList movies = new ArrayList();
+
+          #region Is all this really neccessary?!
+          //get all movies belonging to each other
+          List<GUIListItem> items = _virtualDirectory.GetDirectoryUnProtectedExt(_currentFolder, true);
+
+          //check if we can resume 1 of those movies
+          int timeMovieStopped = 0;
+          bool asked = false;
+          ArrayList newItems = new ArrayList();
+          for (int i = 0; i < items.Count; ++i)
           {
-            //get all movies belonging to each other
-            List<GUIListItem> items = _virtualDirectory.GetDirectoryUnProtectedExt(_currentFolder, true);
-
-            //check if we can resume 1 of those movies
-            int timeMovieStopped = 0;
-            bool asked = false;
-            ArrayList newItems = new ArrayList();
-            for (int i = 0; i < items.Count; ++i)
+            GUIListItem temporaryListItem = (GUIListItem)items[i];
+            if (Util.Utils.ShouldStack(temporaryListItem.Path, path))
             {
-              GUIListItem temporaryListItem = (GUIListItem)items[i];
-              if (Util.Utils.ShouldStack(temporaryListItem.Path, path))
+              if (!asked)
               {
-                if (!asked)
+                selectedFileIndex++;
+              }
+              IMDBMovie movieDetails = new IMDBMovie();
+              int idFile = VideoDatabase.GetFileId(temporaryListItem.Path);
+              int idMovie = VideoDatabase.GetMovieId(path);
+              if ((idMovie >= 0) && (idFile >= 0))
+              {
+                VideoDatabase.GetMovieInfo(path, ref movieDetails);
+                string title = Path.GetFileName(path);
+                if ((VirtualDirectory.IsValidExtension(path, Util.Utils.VideoExtensions, false)))
                 {
-                  selectedFileIndex++;
+                  Util.Utils.RemoveStackEndings(ref title);
                 }
-                IMDBMovie movieDetails = new IMDBMovie();
-                int idFile = VideoDatabase.GetFileId(temporaryListItem.Path);
-                int idMovie = VideoDatabase.GetMovieId(path);
-                if ((idMovie >= 0) && (idFile >= 0))
+                if (movieDetails.Title != string.Empty)
                 {
-                  VideoDatabase.GetMovieInfo(path, ref movieDetails);
-                  string title = Path.GetFileName(path);
-                  if ((VirtualDirectory.IsValidExtension(path, Util.Utils.VideoExtensions, false)))
-                  {
-                    Util.Utils.RemoveStackEndings(ref title);
-                  }
-                  if (movieDetails.Title != string.Empty)
-                  {
-                    title = movieDetails.Title;
-                  }
+                  title = movieDetails.Title;
+                }
 
-                  timeMovieStopped = VideoDatabase.GetMovieStopTime(idFile);
-                  if (timeMovieStopped > 0)
+                timeMovieStopped = VideoDatabase.GetMovieStopTime(idFile);
+                if (timeMovieStopped > 0)
+                {
+                  if (!asked)
                   {
-                    if (!asked)
+                    asked = true;
+
+                    GUIResumeDialog.Result result =
+                      GUIResumeDialog.ShowResumeDialog(title, movieDuration + timeMovieStopped,
+                                                       GUIResumeDialog.MediaType.Video);
+
+                    if (result == GUIResumeDialog.Result.Abort)
+                      return;
+
+                    if (result == GUIResumeDialog.Result.PlayFromBeginning)
                     {
-                      asked = true;
-
-                      GUIResumeDialog.Result result =
-                        GUIResumeDialog.ShowResumeDialog(title, movieDuration + timeMovieStopped,
-                                                         GUIResumeDialog.MediaType.Video);
-
-                      if (result == GUIResumeDialog.Result.Abort)
-                        return;
-
-                      if (result == GUIResumeDialog.Result.PlayFromBeginning)
-                      {
-                        VideoDatabase.DeleteMovieStopTime(idFile);
-                        newItems.Add(temporaryListItem);
-                      }
-                      else
-                      {
-                        askForResumeMovie = false;
-                        newItems.Add(temporaryListItem);
-                      }
-                    } //if (!asked)
-                    else
-                    {
+                      VideoDatabase.DeleteMovieStopTime(idFile);
                       newItems.Add(temporaryListItem);
                     }
-                  } //if (timeMovieStopped>0)
+                    else
+                    {
+                      askForResumeMovie = false;
+                      newItems.Add(temporaryListItem);
+                    }
+                  } //if (!asked)
                   else
                   {
                     newItems.Add(temporaryListItem);
                   }
-
-                  // Total movie duration
-                  movieDuration += VideoDatabase.GetMovieDuration(idFile);
-                }
-                else //if (idMovie >=0)
+                } //if (timeMovieStopped>0)
+                else
                 {
                   newItems.Add(temporaryListItem);
                 }
-              } //if ( MediaPortal.Util.Utils.ShouldStack(temporaryListItem.Path, path))
-            }
 
-            for (int i = 0; i < newItems.Count; ++i)
-            {
-              GUIListItem temporaryListItem = (GUIListItem)newItems[i];
-              if (Util.Utils.IsVideo(temporaryListItem.Path) && !PlayListFactory.IsPlayList(temporaryListItem.Path))
+                // Total movie duration
+                movieDuration += VideoDatabase.GetMovieDuration(idFile);
+              }
+              else //if (idMovie >=0)
               {
-                if (Util.Utils.ShouldStack(temporaryListItem.Path, path))
-                {
-                  movies.Add(temporaryListItem.Path);
-                }
+                newItems.Add(temporaryListItem);
+              }
+            } //if ( MediaPortal.Util.Utils.ShouldStack(temporaryListItem.Path, path))
+          }
+
+          for (int i = 0; i < newItems.Count; ++i)
+          {
+            GUIListItem temporaryListItem = (GUIListItem)newItems[i];
+            if (Util.Utils.IsVideo(temporaryListItem.Path) && !PlayListFactory.IsPlayList(temporaryListItem.Path))
+            {
+              if (Util.Utils.ShouldStack(temporaryListItem.Path, path))
+              {
+                movies.Add(temporaryListItem.Path);
               }
             }
-            if (movies.Count == 0)
-            {
-              movies.Add(movieFileName);
-            }
           }
+          if (movies.Count == 0)
+          {
+            movies.Add(movieFileName);
+          }
+          #endregion
+
           if (movies.Count <= 0)
           {
             return;
@@ -1448,6 +1495,8 @@ namespace MediaPortal.GUI.Video
       ArrayList movies = new ArrayList();
       int iidMovie = VideoDatabase.GetMovieId(filename);
       VideoDatabase.GetFiles(iidMovie, ref movies);
+      List<string> watchedMovies = new List<string>();
+
       if (movies.Count <= 0)
       {
         return;
@@ -1471,6 +1520,8 @@ namespace MediaPortal.GUI.Video
                    resumeData);
           VideoDatabase.SetMovieStopTimeAndResumeData(idFile, timeMovieStopped, resumeData);
           Log.Debug("GUIVideoFiles: {0} store resume time", caller);
+
+          watchedMovies.Add(strFilePath);
         }
         else
         {
@@ -1479,17 +1530,22 @@ namespace MediaPortal.GUI.Video
       }
       if (_markWatchedFiles) // save a little performance
       {
-        // only reload the share if we're watching it.
-        if (GUIWindowManager.ActiveWindow != (int)Window.WINDOW_FULLSCREEN_VIDEO &&
-            GUIWindowManager.ActiveWindow == GetID)
-        {
-          LoadDirectory(_currentFolder);
-          UpdateButtonStates();
-        }
-        else
-        {
-          Log.Debug("GUIVideoFiles: No LoadDirectory needed {0}", caller);
-        }
+        LoadDirectory(_currentFolder, true, watchedMovies);
+        UpdateButtonStates();
+
+        //The condition below seems to be wrong... E.g. when stopping the playback from the topbar, 
+        //this isn't true, but the watched files definitely need an update...
+
+        //if (GUIWindowManager.ActiveWindow != (int)Window.WINDOW_FULLSCREEN_VIDEO &&
+        //    GUIWindowManager.ActiveWindow == GetID)
+        //{
+        //  LoadDirectory(_currentFolder, true, watchedMovies);
+        //  UpdateButtonStates();
+        //}
+        //else
+        //{
+        //  Log.Debug("GUIVideoFiles: No LoadDirectory needed {0}", caller);
+        //}
       }
 
       if (SubEngine.GetInstance().IsModified())
@@ -1532,6 +1588,8 @@ namespace MediaPortal.GUI.Video
 
       // Handle all movie files from idMovie
       ArrayList movies = new ArrayList();
+      List<string> watchedMovies = new List<string>();
+
       int iidMovie = VideoDatabase.GetMovieId(filename);
       if (iidMovie >= 0)
       {
@@ -1548,6 +1606,8 @@ namespace MediaPortal.GUI.Video
           // Set resumedata to zero
           VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
           VideoDatabase.SetMovieStopTimeAndResumeData(idFile, 0, resumeData);
+
+          watchedMovies.Add(strFilePath);
         }
 
         IMDBMovie details = new IMDBMovie();
@@ -1557,16 +1617,22 @@ namespace MediaPortal.GUI.Video
       }
       if (_markWatchedFiles) // save a little performance
       {
-        if (GUIWindowManager.ActiveWindow != (int)Window.WINDOW_FULLSCREEN_VIDEO &&
-            GUIWindowManager.ActiveWindow == GetID)
-        {
-          LoadDirectory(_currentFolder);
-          UpdateButtonStates();
-        }
-        else
-        {
-          Log.Debug("GUIVideoFiles: No LoadDirectory needed OnPlaybackEnded");
-        }
+        LoadDirectory(_currentFolder, true, watchedMovies);
+        UpdateButtonStates();
+
+        //The condition below seems to be wrong... E.g. when stopping the playback from the topbar, 
+        //this isn't true, but the watched files definitely need an update...
+
+        //if (GUIWindowManager.ActiveWindow != (int)Window.WINDOW_FULLSCREEN_VIDEO &&
+        //    GUIWindowManager.ActiveWindow == GetID)
+        //{
+        //  LoadDirectory(_currentFolder);
+        //  UpdateButtonStates();
+        //}
+        //else
+        //{
+        //  Log.Debug("GUIVideoFiles: No LoadDirectory needed OnPlaybackEnded");
+        //}
       }
     }
 

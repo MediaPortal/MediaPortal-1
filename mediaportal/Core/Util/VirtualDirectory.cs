@@ -53,6 +53,9 @@ namespace MediaPortal.Util
     private Share defaultshare;
     private bool showFilesWithoutExtension;
 
+    private List<GUIListItem> _cachedItems = new List<GUIListItem>();
+    private string _cachedDir = null;
+
     public void LoadSettings(string section)
     {
       Clear();
@@ -1356,7 +1359,7 @@ namespace MediaPortal.Util
         items.Add(item);
       }
 
-      HandleLocalFilesInDir(strDir, ref items, false);
+      HandleLocalFilesInDir(strDir, ref items, false, true);
 
       return items;
     }
@@ -1477,6 +1480,29 @@ namespace MediaPortal.Util
 
     private void HandleLocalFilesInDir(string aDirectory, ref List<GUIListItem> aItemsList, bool aHasRedbookDetails)
     {
+      this.HandleLocalFilesInDir(aDirectory, ref aItemsList, aHasRedbookDetails, false);
+    }
+
+    private void HandleLocalFilesInDir(string aDirectory, ref List<GUIListItem> aItemsList, bool aHasRedbookDetails, bool useCache)
+    {
+      //This function is only used inside GetDirectoryUnProtectedExt. GetDirectoryUnProtectedExt is 
+      //mainly used for internal loading. That means it isn't called when the user explicitly enters a 
+      //directory, but just when MP means it needs to query a directory. The bad thing is that the code 
+      //has grown much over the time and these function is called way too often, which can result in very bad performance
+      //Anyway it isn't really a good idea to always reload a directory completely if it isn't really neccessary.
+      //This change is not meant as the perfect solution, but anything other whould more or less mean a complete remake.
+      //The main purpose of this tweak is to boost the performance when starting/stopping playback, because atm
+      //start playback triggers a complete reload 2-3 times and stop playback another 1-2 times.
+
+      if (useCache && !string.IsNullOrEmpty(_cachedDir) && aDirectory == _cachedDir)
+      {
+        aItemsList.AddRange(_cachedItems);
+        return;
+      }
+
+      _cachedItems.Clear();
+      _cachedDir = null;
+
       try
       {
         Win32API.WIN32_FIND_DATA fd = new Win32API.WIN32_FIND_DATA();
@@ -1526,7 +1552,9 @@ namespace MediaPortal.Util
               {
                 Utils.SetThumbnails(ref item);
               }
+
               aItemsList.Add(item);
+              _cachedItems.Add(item);
             }
             else
             {
@@ -1545,7 +1573,10 @@ namespace MediaPortal.Util
 
                   Utils.SetDefaultIcons(item);
                   Utils.SetThumbnails(ref item);
+
                   aItemsList.Add(item);
+                  _cachedItems.Add(item);
+
                   continue;
                 }
               }
@@ -1569,7 +1600,9 @@ namespace MediaPortal.Util
 
                 Utils.SetDefaultIcons(item);
                 Utils.SetThumbnails(ref item);
+                
                 aItemsList.Add(item);
+                _cachedItems.Add(item);
               }
             }
           }
@@ -1580,10 +1613,15 @@ namespace MediaPortal.Util
         } while (Win32API.FindNextFile(handle, ref fd) != 0);
 
         Win32API.FindClose(handle);
+
+        _cachedDir = aDirectory;
       }
       catch (Exception ex)
       {
         Log.Error("VirtualDirectory: Could not browse folder {0}: {1}", aDirectory, ex.Message);
+
+        _cachedItems.Clear();
+        _cachedDir = null;
       }
     }
 
