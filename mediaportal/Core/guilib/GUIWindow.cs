@@ -1050,6 +1050,11 @@ namespace MediaPortal.GUI.Library
     {
       try
       {
+        if (_windowAllocated)
+        {
+          return;
+        }
+
         Dispose();
         LoadSkin();
         List<int> faultyControl = new List<int>();
