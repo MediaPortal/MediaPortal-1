@@ -254,7 +254,7 @@ namespace MediaPortal.GUI.Library
         {
           try
           {
-            if (turnOffMonitor)
+            if (turnOffMonitor && Form.ActiveForm != null)
             {
               if (Form.ActiveForm.Handle != IntPtr.Zero)
               {
