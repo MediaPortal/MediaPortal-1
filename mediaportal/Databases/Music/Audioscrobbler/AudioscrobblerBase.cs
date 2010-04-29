@@ -844,8 +844,8 @@ namespace MediaPortal.Music.Database
               Log.Debug("AudioscrobblerBase: String: {0}", cook.ToString());
             }
           }
-          reader = new StreamReader(response.GetResponseStream());          
-          statusCode = response.StatusDescription;          
+          reader = new StreamReader(response.GetResponseStream());
+          statusCode = response.StatusDescription;
         }
         catch (Exception e)
         {
@@ -853,94 +853,94 @@ namespace MediaPortal.Music.Database
           Log.Error("AudioscrobblerBase.GetResponse: StatusCode - {0}", statusCode);
           return false;
         }
-      }
 
-    // now we are connected
-      if (_useDebugLog)
-      {
-        Log.Debug("AudioscrobblerBase: Response received - status: {0}", statusCode);
-      }
 
-      bool success = false;
-      bool parse_success = false;
-      try
-      {
-        string respType = reader.ReadLine();
-        if (respType == null)
+        // now we are connected
+        if (_useDebugLog)
         {
-          Log.Error("AudioscrobblerBase.GetResponse: {0}", "Empty response from Audioscrobbler server.");
+          Log.Debug("AudioscrobblerBase: Response received - status: {0}", statusCode);
+        }
+
+        bool success = false;
+        bool parse_success = false;
+        try
+        {
+          string respType = reader.ReadLine();
+          if (respType == null)
+          {
+            Log.Error("AudioscrobblerBase.GetResponse: {0}", "Empty response from Audioscrobbler server.");
+            return false;
+          }
+
+          // Parse the response.
+          if (respType.StartsWith("UPTODATE"))
+          {
+            success = parse_success = parseUpToDateMessage(respType, reader);
+          }
+          else if (respType.StartsWith("UPDATE"))
+          {
+            Log.Error("AudioscrobblerBase: {0}", "UPDATE needed!");
+          }
+          else if (respType.StartsWith("OK"))
+          {
+            success = parse_success = parseOkMessage(respType, reader);
+          }
+          else if (respType.StartsWith("FAILED"))
+          {
+            parse_success = parseFailedMessage(respType, reader);
+          }
+          else if (respType.StartsWith("BADUSER") || respType.StartsWith("BADAUTH"))
+          {
+            parse_success = parseBadUserMessage(respType, reader);
+          }
+          else if (respType.StartsWith("BADTIME"))
+          {
+            parse_success = parseBadTimeMessage(respType, reader);
+          }
+          else if (respType.StartsWith("session="))
+          {
+            success = parse_success = parseRadioStreamMessage(respType, reader);
+          }
+          else if (respType.StartsWith(@"[App]")) // upgrade message
+          {
+            success = parse_success = true;
+          }
+          else if (respType.StartsWith(@"<?xml version=")) // XMLRPC call
+          {
+            success = parse_success = parseXmlRpcMessage(respType, reader);
+          }
+          else
+          {
+            string logmessage = "** CRITICAL ** Unknown response";
+            while ((respType = reader.ReadLine()) != null)
+            {
+              logmessage += "\n " + respType;
+            }
+            Log.Error("AudioscrobblerBase: {0}", logmessage);
+          }
+          // read next line to look for an interval
+          //while ((respType = reader.ReadLine()) != null)
+          //  if (respType.StartsWith("INTERVAL"))
+          //    parse_success = parseIntervalMessage(respType, reader);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("AudioscrobblerBase: Exception on reading response lines - {0}", ex.Message);
+        }
+        finally
+        {
+          if (reader != null)
+          {
+            reader.Dispose();
+          }
+        }
+        if (!parse_success)
+        {
           return false;
         }
 
-        // Parse the response.
-        if (respType.StartsWith("UPTODATE"))
-        {
-          success = parse_success = parseUpToDateMessage(respType, reader);
-        }
-        else if (respType.StartsWith("UPDATE"))
-        {
-          Log.Error("AudioscrobblerBase: {0}", "UPDATE needed!");
-        }
-        else if (respType.StartsWith("OK"))
-        {
-          success = parse_success = parseOkMessage(respType, reader);
-        }
-        else if (respType.StartsWith("FAILED"))
-        {
-          parse_success = parseFailedMessage(respType, reader);
-        }
-        else if (respType.StartsWith("BADUSER") || respType.StartsWith("BADAUTH"))
-        {
-          parse_success = parseBadUserMessage(respType, reader);
-        }
-        else if (respType.StartsWith("BADTIME"))
-        {
-          parse_success = parseBadTimeMessage(respType, reader);
-        }
-        else if (respType.StartsWith("session="))
-        {
-          success = parse_success = parseRadioStreamMessage(respType, reader);
-        }
-        else if (respType.StartsWith(@"[App]")) // upgrade message
-        {
-          success = parse_success = true;
-        }
-        else if (respType.StartsWith(@"<?xml version=")) // XMLRPC call
-        {
-          success = parse_success = parseXmlRpcMessage(respType, reader);
-        }
-        else
-        {
-          string logmessage = "** CRITICAL ** Unknown response";
-          while ((respType = reader.ReadLine()) != null)
-          {
-            logmessage += "\n " + respType;
-          }
-          Log.Error("AudioscrobblerBase: {0}", logmessage);
-        }
-        // read next line to look for an interval
-        //while ((respType = reader.ReadLine()) != null)
-        //  if (respType.StartsWith("INTERVAL"))
-        //    parse_success = parseIntervalMessage(respType, reader);
-      }
-      catch (Exception ex)
-      {
-        Log.Error("AudioscrobblerBase: Exception on reading response lines - {0}", ex.Message);
-      }
-      finally
-      {
-        if (reader != null)
-        {
-          reader.Dispose();
-        }
-      }
-
-      if (!parse_success)
-      {
-        return false;
-      }
-
-      return success;
+        return success;
+      }    
     }
 
     #endregion
