@@ -301,8 +301,14 @@ namespace TvPlugin
           if (initialProgram == null)
           {
             initialProgram = currentProgram;
-            currentSchedule = Schedule.RetrieveSeries(currentProgram.ReferencedChannel().IdChannel, currentProgram.StartTime,
-                                     currentProgram.EndTime);
+            if (currentProgram != null)
+            {
+
+
+              currentSchedule = Schedule.RetrieveSeries(currentProgram.ReferencedChannel().IdChannel,
+                                                        currentProgram.StartTime,
+                                                        currentProgram.EndTime);
+            }
           }
         }
       }
@@ -313,7 +319,7 @@ namespace TvPlugin
       set
       {
         currentSchedule = value;
-        CurrentProgram = null;
+        currentProgram = null;
         TvBusinessLayer layer = new TvBusinessLayer();
         // comment: this is not performant, i.e. query 15.000 programs and then start comparing each of them
         IList<Program> programs = layer.GetPrograms(DateTime.Now, DateTime.Now.AddDays(10));
