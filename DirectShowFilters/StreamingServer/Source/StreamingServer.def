@@ -9,3 +9,4 @@ StreamRemove		@5
 StreamGetClientCount @6
 StreamGetClientDetail @7
 StreamSetupEx		@8
+StreamShutdown		@9

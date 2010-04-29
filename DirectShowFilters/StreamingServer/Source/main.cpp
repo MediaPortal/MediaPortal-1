@@ -52,6 +52,7 @@ MPRTSPServer*			m_rtspServer;
 
 void StreamSetup(char* ipAdress);
 int  StreamSetupEx(char* ipAdress, int port);
+void StreamShutdown();
 void StreamRun();
 void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms,char * streamName, char * inputFileName); // fwd
 void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStream);
@@ -130,7 +131,8 @@ int StreamSetupEx(char* ipAdress, int port)
 	sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log",folder);
 	::DeleteFile(fileName);
 
-	LogDebug("-------------- v1.0.3 ---------------");
+	LogDebug("-------------- v1.0.4 ---------------");
+  StreamShutdown();
 	if (port == DEFAULT_RTSP_PORT) {
 		LogDebug("Stream server:Setup stream server for ip: %s", ipAdress);
 	}
@@ -151,6 +153,27 @@ int StreamSetupEx(char* ipAdress, int port)
 		return 1;
 	}
 	return 0; // ok
+}
+//**************************************************************************************
+void StreamShutdown()
+{
+  if (m_rtspServer != NULL)
+  {
+    LogDebug("Stream server:Shutting down RTSP server");
+    MPRTSPServer *server = m_rtspServer;
+    m_rtspServer = NULL;
+    Medium::close(server);
+  }
+
+  if (m_env != NULL)
+  {
+    LogDebug("Stream server:Cleaning up environment");
+    UsageEnvironment *env = m_env;
+    m_env = NULL;
+    TaskScheduler *scheduler = &env->taskScheduler();
+    env->reclaim();
+    delete scheduler;
+  }
 }
 //**************************************************************************************
 void StreamRun()
