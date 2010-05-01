@@ -320,7 +320,7 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        Log.Log.WriteFile("analog: AddTvCaptureFilter no tvcapture devices found");
+        Log.Log.WriteFile("analog: AddTvCaptureFiler error in allocating devices collection");
         return false;
       }
       if (devices.Length == 0)
@@ -475,7 +475,7 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        Log.Log.WriteFile("analog: AddTvCaptureFilter no tvcapture devices found");
+        Log.Log.WriteFile("analog: AddTvCaptureFiler error in allocating devices collection");
         return false;
       }
       if (devices.Length == 0)

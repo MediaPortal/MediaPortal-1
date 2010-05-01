@@ -66,7 +66,14 @@ namespace TvLibrary.Implementations.Analog.Components
 
     public String TvAudioName
     {
-      get { return _audioDevice.Name; }
+      get
+      {
+        if (_audioDevice != null)
+        {
+          return _audioDevice.Name;
+        }
+        return String.Empty;
+      }
     }
 
     #endregion
@@ -82,7 +89,7 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         if (_filterTvAudioTuner != null)
         {
-          while (Marshal.ReleaseComObject(_filterTvAudioTuner) > 0) {}
+          while (Marshal.ReleaseComObject(_filterTvAudioTuner) > 0) { }
           _filterTvAudioTuner = null;
         }
         if (_audioDevice != null)
@@ -113,9 +120,11 @@ namespace TvLibrary.Implementations.Analog.Components
     /// <returns>true, if the graph building was successful</returns>
     public bool CreateFilterInstance(Graph graph, IFilterGraph2 graphBuilder, Tuner tuner, Crossbar crossbar)
     {
+      streams = new List<IAudioStream>();
       if (!string.IsNullOrEmpty(graph.TvAudio.Name) && graph.TvAudio.Mode != TvAudioVariant.Unavailable)
       {
         Log.Log.WriteFile("analog: Using TvAudio configuration from stored graph");
+
         if (CreateConfigurationBasedFilterInstance(graph, tuner, crossbar, graphBuilder))
         {
           Log.Log.WriteFile("analog: Using TvAudio configuration from stored graph succeeded");
@@ -151,7 +160,7 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         Log.Log.WriteFile("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
         int hr = graphBuilder.Connect(tuner.AudioPin, crossbar.AudioTunerIn);
-        if (hr < 0)
+        if (hr != 0)
         {
           Log.Log.Error("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
           return false;
@@ -169,8 +178,9 @@ namespace TvLibrary.Implementations.Analog.Components
             CheckCapabilities(graph);
             return true;
           }
+          return false;
         }
-        return false;
+        return true;
       }
       string deviceName = graph.TvAudio.Name;
       //get all tv audio tuner devices on this system
@@ -256,7 +266,6 @@ namespace TvLibrary.Implementations.Analog.Components
         return false;
       }
       mode = TvAudioVariant.Normal;
-      streams = new List<IAudioStream>();
       CheckCapabilities(graph);
       return true;
     }
@@ -351,23 +360,22 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         Log.Log.WriteFile("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
         int hr = graphBuilder.Connect(tuner.AudioPin, crossbar.AudioTunerIn);
-        if (hr < 0)
+        if (hr != 0)
         {
           Log.Log.Error("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
-          return false;
-        }
-        Log.Log.WriteFile("analog: AddTvAudioFilter connected TvTuner with Crossbar directly succeeded!");
-        _tvAudioTunerInterface = tuner.Filter as IAMTVAudio;
-        mode = TvAudioVariant.TvTunerConnection;
-        if (_tvAudioTunerInterface != null)
-        {
-          Log.Log.WriteFile("analog: AddTvAudioFilter succeeded - TvTuner is also TvAudio");
-          _filterTvAudioTuner = tuner.Filter;
-          mode = TvAudioVariant.TvTuner;
+          mode = TvAudioVariant.Unavailable;
         }
         else
         {
-          mode = TvAudioVariant.Unavailable;
+          Log.Log.WriteFile("analog: AddTvAudioFilter connected TvTuner with Crossbar directly succeeded!");
+          mode = TvAudioVariant.TvTunerConnection;
+          _tvAudioTunerInterface = tuner.Filter as IAMTVAudio;
+          if (_tvAudioTunerInterface != null)
+          {
+            Log.Log.WriteFile("analog: AddTvAudioFilter succeeded - TvTuner is also TvAudio");
+            _filterTvAudioTuner = tuner.Filter;
+            mode = TvAudioVariant.TvTuner;
+          }
         }
         graph.TvAudio.Mode = mode;
       }
@@ -379,7 +387,6 @@ namespace TvLibrary.Implementations.Analog.Components
       if (mode != TvAudioVariant.Unavailable && mode != TvAudioVariant.TvTunerConnection &&
           _tvAudioTunerInterface != null)
       {
-        streams = new List<IAudioStream>();
         CheckCapabilities(graph);
       }
       return true;
@@ -441,13 +448,16 @@ namespace TvLibrary.Implementations.Analog.Components
     public List<IAudioStream> GetAvailableAudioStreams()
     {
       List<IAudioStream> availableStreams = new List<IAudioStream>();
-      TVAudioMode availableAudioModes;
-      _tvAudioTunerInterface.GetHardwareSupportedTVAudioModes(out availableAudioModes);
-      foreach (AnalogAudioStream stream in streams)
+      if (_filterTvAudioTuner != null)
       {
-        if ((stream.AudioMode & availableAudioModes) != 0)
+        TVAudioMode availableAudioModes;
+        _tvAudioTunerInterface.GetAvailableTVAudioModes(out availableAudioModes);
+        foreach (AnalogAudioStream stream in streams)
         {
-          availableStreams.Add(stream);
+          if ((stream.AudioMode & availableAudioModes) != 0)
+          {
+            availableStreams.Add(stream);
+          }
         }
       }
       return availableStreams;
