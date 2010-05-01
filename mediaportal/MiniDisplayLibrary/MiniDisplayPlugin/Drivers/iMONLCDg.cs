@@ -318,7 +318,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private LargeIcon CustomLargeIcon;
     private DisplayOptions DisplayOptions;
     private DisplayControl DisplaySettings;
-    private bool DoDebug;
+    public static bool DoDebug;
     private bool DVMactive;
     private EQControl EQSettings;
     private string IdleMessage = string.Empty;
@@ -4316,8 +4316,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         get
         {
-          Log.Info("ON: {0}, flashing: {1}, FLASHSTATE : {2}, Rotate: {3}, Invert: {4}",
-                   _diskOn, _diskFlash, _flashState.ToString(), _diskRotate, _diskInverted);
+          if (DoDebug)
+          {
+            Log.Info("ON: {0}, flashing: {1}, FLASHSTATE : {2}, Rotate: {3}, Invert: {4}",
+                     _diskOn, _diskFlash, _flashState.ToString(), _diskRotate, _diskInverted);
+          }
           if (!_diskOn)
           {
             return _diskSolidOffMask;
