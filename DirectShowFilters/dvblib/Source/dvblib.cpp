@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005-2008 Team MediaPortal
+ *	Copyright (C) 2005-2010 Team MediaPortal
  *  Author: Agree
  *	http://www.team-mediaportal.com
  *
@@ -55,7 +55,6 @@
 
 DEFINE_GUID(CLSID_Demux, 0xAFB6C280, 0x2C41, 0x11D3, 0x8A, 0x60, 0x00, 0x00, 0xF8, 0x1E, 0x0E, 0x4A);
 DEFINE_GUID(CLSID_MPSECTAB, 0xC666E115, 0xBB62, 0x4027, 0xA1, 0x13, 0x82, 0xD6, 0x43, 0xFE, 0x2D, 0x99);
-//const IID IID_IMpeg2Data = {0x9B396D40, 0xF380, 0x4e3c, 0xA5, 0x14, 0x1A,0x82, 0xBF, 0x6E, 0xBF, 0xE6};
 DEFINE_GUID(MPEG_SEC_TYPE,0x455f176c, 0x4b06, 0x47ce, 0x9a, 0xef, 0x8c, 0xae, 0xf7, 0x3d, 0xf7, 0xb5);
 DEFINE_GUID(CLSID_GrabberSample, 
 0x2fa4f053, 0x6d60, 0x4cb0, 0x95, 0x3, 0x8e, 0x89, 0x23, 0x4f, 0x3f, 0x73);
@@ -169,7 +168,7 @@ bool GetSectionData(IBaseFilter *filter,PID pid,TID tid,WORD *sectionCount,int t
 			return false;
 	}
 
-	hr=filter->QueryInterface(IID_IMpeg2Data,(void**)&pMPEG);
+	hr=filter->QueryInterface(__uuidof(IMpeg2Data),(void**)&pMPEG);
 	if(FAILED(hr))
 		return false;
 	
@@ -232,7 +231,7 @@ BOOL GetSectionCount(IBaseFilter *filter,PID pid,TID tid,int sectionNumber,WORD 
 	long			len=0;
 	HRESULT			hr;
 
-	hr=filter->QueryInterface(IID_IMpeg2Data,(void**)&pMPEG);
+	hr=filter->QueryInterface(__uuidof(IMpeg2Data),(void**)&pMPEG);
 	if(FAILED(hr))
 		return false;
 
@@ -311,7 +310,7 @@ HRESULT GetPidMap(IPin* pin, unsigned long* pid, unsigned long* mediasampletype)
 	IMPEG2PIDMap	*pMap=NULL;
 	IEnumPIDMap		*pPidEnum=NULL;
 
-	int hr=pin->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+	int hr=pin->QueryInterface(__uuidof(IMPEG2PIDMap),(void**)&pMap);
     if(FAILED(hr))
 		return 1;
 	// 
@@ -362,7 +361,7 @@ HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *p
 	// video
 	if (pVideo!=NULL)
 	{
-		hr=pVideo->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+		hr=pVideo->QueryInterface(__uuidof(IMPEG2PIDMap),(void**)&pMap);
 		if(FAILED(hr) || pMap==NULL)
 		{
 			Log("unable to get IMPEG2PIDMap :0x%x",hr);
@@ -410,7 +409,7 @@ HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *p
 	// audio 
 	if (pAudio!=NULL)
 	{
-		hr=pAudio->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+		hr=pAudio->QueryInterface(__uuidof(IMPEG2PIDMap),(void**)&pMap);
 		if(FAILED(hr) || pMap==NULL)
 			return 3;
 		// 
@@ -444,7 +443,7 @@ HRESULT SetupDemuxer(IPin *pVideo,int videoPID,IPin *pAudio,int audioPID,IPin *p
 	// AC3
 	if (pAudioAC3!=NULL)
 	{
-		hr=pAudioAC3->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+		hr=pAudioAC3->QueryInterface(__uuidof(IMPEG2PIDMap),(void**)&pMap);
 		if(FAILED(hr) || pMap==NULL)
 			return 3;
 		// 
@@ -497,7 +496,7 @@ HRESULT GetPidMapping(IPin *pVideo,int* pids, int* elementary_stream, int* count
 			*count=0;
 			return S_OK;
 		}
-		hr=pVideo->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+		hr=pVideo->QueryInterface(__uuidof(IMPEG2PIDMap),(void**)&pMap);
 		if(FAILED(hr) || pMap==NULL)
 		{
 			Log("unable to get IMPEG2PIDMap :0x%x",hr);
@@ -565,7 +564,7 @@ HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, int elementary_stream, bool u
 		// video
 		if (pVideo!=NULL)
 		{
-			hr=pVideo->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+			hr=pVideo->QueryInterface(__uuidof(IMPEG2PIDMap),(void**)&pMap);
 			if(FAILED(hr) || pMap==NULL)
 			{
 				Log("unable to get IMPEG2PIDMap :0x%x",hr);
@@ -639,7 +638,7 @@ HRESULT SetupDemuxerPids(IPin *pVideo,int *videoPID, int pidCount,int elementary
 		// video
 		if (pVideo!=NULL)
 		{
-			hr=pVideo->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+			hr=pVideo->QueryInterface(__uuidof(IMPEG2PIDMap),(void**)&pMap);
 			if(FAILED(hr) || pMap==NULL)
 			{
 				Log("unable get IMPEG2PIDMap  %x",hr);
@@ -734,7 +733,7 @@ HRESULT DumpMpeg2DemuxerMappings(IBaseFilter* mpeg2Demuxer)
     
 	  IMPEG2PIDMap	*pMap=NULL;
 	  IEnumPIDMap		*pPidEnum=NULL;
-    pins[0]->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+    pins[0]->QueryInterface(__uuidof(IMPEG2PIDMap),(void**)&pMap);
     if (pMap!=NULL)
     {
       Log("  pin:%s", (char*)  _bstr_t(pinInfo.achName));
