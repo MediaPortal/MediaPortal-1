@@ -59,7 +59,7 @@ namespace TvService
         TvBusinessLayer layer = new TvBusinessLayer();
         decimal maxFiles = Convert.ToDecimal(layer.GetSetting("timeshiftMaxFiles", "20").Value);
         Log.Info("TsCopier: baseTs={0} idCurrent={1} idStop={2} maxFiles={3}", baseTs, idCurrent, idStop, maxFiles);
-        Directory.CreateDirectory(Path.GetDirectoryName(_recording) + "\\tsbuffers");
+        Directory.CreateDirectory(Path.GetDirectoryName(_recording) + "\\"+Path.GetFileNameWithoutExtension(_recording)+"_tsbuffers");
         int cycles = 1;
         if (idStop > idStart)
           cycles = (idStop - idStart) + 1;
@@ -68,7 +68,7 @@ namespace TvService
         for (int i = idStart; i <= cycles; i++)
         {
           string currentSourceBuffer = baseTs + idCurrent.ToString() + ".ts";
-          string targetTs = Path.GetDirectoryName(_recording) + "\\tsbuffers\\" + Path.GetFileName(currentSourceBuffer);
+          string targetTs = Path.GetDirectoryName(_recording) + "\\"+Path.GetFileNameWithoutExtension(_recording)+"_tsbuffers\\" + Path.GetFileName(currentSourceBuffer);
           Log.Info("TsCopier: Copying - source: {0}, target: {1}", currentSourceBuffer, targetTs);
           FileStream reader = new FileStream(currentSourceBuffer, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
           FileStream writer = new FileStream(targetTs, FileMode.CreateNew, FileAccess.Write);
