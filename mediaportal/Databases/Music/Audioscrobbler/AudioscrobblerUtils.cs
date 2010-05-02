@@ -2136,7 +2136,6 @@ namespace MediaPortal.Music.Database
         
         string tmpFileName = DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/album/" + artist_ + "/" + album_ + "/info.xml");
         doc.Load(tmpFileName);
-        File.Delete(tmpFileName);
 
         XmlNodeList nodes = doc.SelectNodes(@"//album");
         string tmpCover = string.Empty;
@@ -2236,6 +2235,8 @@ namespace MediaPortal.Music.Database
         {
           fetchWebImage(tmpCover, thumbPath, Thumbs.MusicAlbum);
         }
+
+        File.Delete(tmpFileName);
       }
       catch
       {
@@ -2254,8 +2255,7 @@ namespace MediaPortal.Music.Database
         
         string tmpFileName = DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/topalbums.xml");
         doc.Load(tmpFileName);
-        File.Delete(tmpFileName);
-
+        
         XmlNodeList nodes = doc.SelectNodes(@"//topalbums/album");
 
         foreach (XmlNode node in nodes)
@@ -2300,6 +2300,8 @@ namespace MediaPortal.Music.Database
           }
           TopAlbumList.Add(nodeSong);
         }
+
+        File.Delete(tmpFileName);
       }
       catch
       {
@@ -2318,7 +2320,6 @@ namespace MediaPortal.Music.Database
         
         string tmpFileName = DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/" + "similar.xml");
         doc.Load(tmpFileName);
-        File.Delete(tmpFileName);
         
         XmlNodeList nodes = doc.SelectNodes(@"//similarartists");
 
@@ -2330,6 +2331,8 @@ namespace MediaPortal.Music.Database
         {
           artistInfo.WebImage = nodes[0].Attributes["picture"].Value;
         }
+
+        File.Delete(tmpFileName);
       }
       catch
       {
@@ -2347,8 +2350,7 @@ namespace MediaPortal.Music.Database
 
         string tmpFileName = DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/" + "similar.xml");
         doc.Load(tmpFileName);
-        File.Delete(tmpFileName);
-
+        
         XmlNodeList nodes = doc.SelectNodes(@"//similarartists/artist");
 
         foreach (XmlNode node in nodes)
@@ -2375,6 +2377,8 @@ namespace MediaPortal.Music.Database
           }
           SimilarArtistList.Add(nodeSong);
         }
+
+        File.Delete(tmpFileName);
       }
       catch (Exception ex)
       {
@@ -2403,21 +2407,18 @@ namespace MediaPortal.Music.Database
           case lastFMFeed.topartisttags:
             tmpFileName = DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/toptags.xml");
             doc.Load(tmpFileName);
-            File.Delete(tmpFileName);
             nodes = doc.SelectNodes(@"//toptags/tag");
             break;
           case lastFMFeed.toptracktags:
             tmpFileName =
               DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/track/" + artist_ + "/" + track_ + "/toptags.xml");
             doc.Load(tmpFileName);
-            File.Delete(tmpFileName);
             nodes = doc.SelectNodes(@"//toptags/tag");
             break;
 
           default:
             tmpFileName = DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/toptags.xml");
             doc.Load(tmpFileName);
-            File.Delete(tmpFileName);
             nodes = doc.SelectNodes(@"//toptags/tag");
             break;
         }
@@ -2455,6 +2456,8 @@ namespace MediaPortal.Music.Database
           }
           UsedTagsList.Add(nodeSong);
         }
+
+        File.Delete(tmpFileName);
       }
       catch
       {
@@ -2476,25 +2479,21 @@ namespace MediaPortal.Music.Database
           case lastFMFeed.taggedartists:
             tmpFileName = DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/topartists.xml");
             doc.Load(tmpFileName);
-            File.Delete(tmpFileName);
             nodes = doc.SelectNodes(@"//tag/artist");
             break;
           case lastFMFeed.taggedalbums:
             tmpFileName = DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/topalbums.xml");
             doc.Load(tmpFileName);
-            File.Delete(tmpFileName);
             nodes = doc.SelectNodes(@"//tag/album");
             break;
           case lastFMFeed.taggedtracks:
             tmpFileName = DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/toptracks.xml");
             doc.Load(tmpFileName);
-            File.Delete(tmpFileName);
             nodes = doc.SelectNodes(@"//tag/track");
             break;
           default:
             tmpFileName = DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/tag/" + taggedWith_ + "/topartists.xml");
             doc.Load(tmpFileName);
-            File.Delete(tmpFileName);
             nodes = doc.SelectNodes(@"//tag/artist");
             break;
         }
@@ -2562,6 +2561,8 @@ namespace MediaPortal.Music.Database
           }
           TagsList.Add(nodeSong);
         }
+
+        File.Delete(tmpFileName);
       }
       catch
       {
@@ -2579,7 +2580,6 @@ namespace MediaPortal.Music.Database
 
         string tmpFileName = DownloadTempFile(xmlFileInput); 
         doc.Load(tmpFileName);
-        File.Delete(tmpFileName);
         XmlNodeList nodes = doc.SelectNodes(queryNodePath);
 
         foreach (XmlNode node in nodes)
@@ -2810,6 +2810,7 @@ namespace MediaPortal.Music.Database
           }
           songList.Add(nodeSong);
         }
+        File.Delete(tmpFileName);
       }
       catch
       {
@@ -2846,7 +2847,6 @@ namespace MediaPortal.Music.Database
 
         string tmpFileName = DownloadTempFile(aLocation); 
         doc.Load(tmpFileName);
-        File.Delete(tmpFileName);
         doc.Save(tempFile);
 
         using (XmlReader reader = XmlReader.Create(tempFile))
@@ -2914,6 +2914,7 @@ namespace MediaPortal.Music.Database
           } // <-- while reading
         }
         File.Delete(tempFile);
+        File.Delete(tmpFileName);
       }
       catch (Exception ex)
       {
@@ -2939,7 +2940,6 @@ namespace MediaPortal.Music.Database
         {
           string cachedList = DownloadTempFile(aLocation, aShouldRetry);
           doc.Load(cachedList);
-          File.Delete(cachedList);
 
           using (XmlReader reader = XmlReader.Create(cachedList))
           {
@@ -2953,6 +2953,8 @@ namespace MediaPortal.Music.Database
               }
             }
           }
+
+          File.Delete(cachedList);
         }
         catch (Exception exd)
         {
