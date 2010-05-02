@@ -169,15 +169,11 @@ namespace MediaPortal.GUI.Video
     public override void OnAdded()
     {
       base.OnAdded();
-      _imdb = new IMDB(this);
-      g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
-      g_Player.PlayBackEnded += new g_Player.EndedHandler(OnPlayBackEnded);
-      g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayBackStarted);
-      g_Player.PlayBackChanged += new g_Player.ChangedHandler(OnPlayBackChanged);
+      _imdb = new IMDB(this);      
       // _currentFolder = null;
 
       LoadSettings();      
-    }
+    }    
 
     #region Serialisation
 
@@ -326,6 +322,9 @@ namespace MediaPortal.GUI.Video
         GUIWindowManager.ReplaceWindow(VideoState.StartWindow);
         return;
       }
+
+      RegisterEventHandlers();
+
       LoadFolderSettings(_currentFolder);
 
       //OnPageLoad is sometimes called when stopping playback.
@@ -333,11 +332,34 @@ namespace MediaPortal.GUI.Video
       LoadDirectory(_currentFolder, true);
     }
 
+    private void RegisterEventHandlers() 
+    {
+      UnRegisterEventHandlers();
+      g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
+      g_Player.PlayBackEnded += new g_Player.EndedHandler(OnPlayBackEnded);
+      g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayBackStarted);
+      g_Player.PlayBackChanged += new g_Player.ChangedHandler(OnPlayBackChanged);
+    }
+
     protected override void OnPageDestroy(int newWindowId)
     {
+      bool isVideoWindow = IsVideoWindow(newWindowId);
+
+      if (!isVideoWindow)
+      {
+        UnRegisterEventHandlers();
+      }
+
       _currentSelectedItem = facadeView.SelectedListItemIndex;
       SaveFolderSettings(_currentFolder);
       base.OnPageDestroy(newWindowId);
+    }
+
+    private void UnRegisterEventHandlers() {
+      g_Player.PlayBackStopped -= new g_Player.StoppedHandler(OnPlayBackStopped);
+      g_Player.PlayBackEnded -= new g_Player.EndedHandler(OnPlayBackEnded);
+      g_Player.PlayBackStarted -= new g_Player.StartedHandler(OnPlayBackStarted);
+      g_Player.PlayBackChanged -= new g_Player.ChangedHandler(OnPlayBackChanged);
     }
 
     public override bool OnMessage(GUIMessage message)
@@ -497,7 +519,12 @@ namespace MediaPortal.GUI.Video
       }
 
       GUIWaitCursor.Show();
-      GUIListItem selectedListItem = facadeView.SelectedListItem;
+      GUIListItem selectedListItem = null;
+      
+      if (facadeView != null)
+      {
+        selectedListItem = facadeView.SelectedListItem;
+      }
       if (selectedListItem != null)
       {
         if (selectedListItem.IsFolder && selectedListItem.Label != "..")
@@ -530,7 +557,11 @@ namespace MediaPortal.GUI.Video
       }
       string objectCount = string.Empty;
 
-      GUIControl.ClearControl(GetID, facadeView.GetID);
+      if (facadeView != null)
+      {
+        GUIControl.ClearControl(GetID, facadeView.GetID);  
+      }
+      
 
       List<GUIListItem> itemlist = null;
 
