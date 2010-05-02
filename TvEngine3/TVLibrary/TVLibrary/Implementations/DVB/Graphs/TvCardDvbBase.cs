@@ -689,7 +689,6 @@ namespace TvLibrary.Implementations.DVB
       {
         _mdplugs.FreeAllChannels();
       }
-      _previousChannel = null;
       if (_graphBuilder == null)
         return;
       if (_conditionalAccess.AllowedToStopGraph)

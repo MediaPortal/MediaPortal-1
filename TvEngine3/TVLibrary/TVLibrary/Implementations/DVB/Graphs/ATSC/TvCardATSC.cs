@@ -283,14 +283,5 @@ namespace TvLibrary.Implementations.DVB
         return false;
       return true;
     }
-
-    /// <summary>
-    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
-    public override void Dispose()
-    {
-      _previousChannel = null;
-      base.Dispose();
-    }
   }
 }
