@@ -120,14 +120,16 @@ namespace MediaPortal.MusicShareWatcher
           return;
         }
 
+        // React only to the 1st wakeup event OS sends. Both PBT_APMRESUMEAUTOMATIC and
+        // PBT_APMRESUMESUSPEND are received on manual wakeup.
+        _suspended = false;
+
         if (watcher != null)
         {
           Log.Info(LogType.MusicShareWatcher,
                    "Windows has resumed from standby/hibernate mode: Re-enabling file system watcher");
           watcher.StartMonitor();
         }
-
-        _suspended = false;
       }
     }
 

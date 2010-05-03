@@ -71,7 +71,11 @@ namespace MediaPortal.MusicShareWatcher
     {
       if (bMonitoring)
       {
-        WatchShares();
+        Log.Info(LogType.MusicShareWatcher, "Starting up a worker thread...");
+        Thread WorkerThread = new Thread(WatchShares);
+        WorkerThread.IsBackground = true;
+        WorkerThread.Name = "MusicShareWatcher";
+        WorkerThread.Start();
       }
     }
 
