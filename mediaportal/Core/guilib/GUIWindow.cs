@@ -549,11 +549,11 @@ namespace MediaPortal.GUI.Library
         // Convert the id to an int
         try
         {
-          _windowId = (int)Int32.Parse(nodeId.InnerText);
+          _windowId = Int32.Parse(nodeId.InnerText);
         }
         catch (Exception)
         {
-          // TODO Add some error when conversion fails message here.
+          Log.Error("LoadSkin: error converting nodeid <{0}> to int", nodeId.InnerText);
         }
         // Convert the id of the default control to an int
         try
@@ -562,7 +562,7 @@ namespace MediaPortal.GUI.Library
         }
         catch (Exception)
         {
-          // TODO Add some error when conversion fails message here.
+          Log.Error("LoadSkin: error converting nodeDefault <{0}> to int", nodeDefault.InnerText);
         }
 
         // find any XAML complex/compound properties
