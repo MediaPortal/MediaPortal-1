@@ -70,7 +70,7 @@ Else
   LogFile.writeline strEcho
   strEcho = Date() & "-" & Time() & ": Kill utility will be ""taskkill"""
   LogFile.writeline strEcho	
-  prockill = "taskkill /T /F /IM " & process & ".exe"
+  prockill = "taskkill /F /IM " & process & ".exe"
 
 End If
 
