@@ -515,6 +515,7 @@ namespace MediaPortal.GUI.Video
     {
       if (newFolderName == null)
       {
+        Log.Warn("GUIVideoFiles::LoadDirectory called with invalid argument. newFolderName is null!");
         return;
       }
 
@@ -1171,6 +1172,35 @@ namespace MediaPortal.GUI.Video
         videoInfo.FolderForThumbs = string.Empty;
       }
       GUIWindowManager.ActivateWindow((int)Window.WINDOW_VIDEO_INFO);
+
+      if (movieDetails != null)
+      {
+        string thumbPath = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
+
+        if (string.IsNullOrEmpty(thumbPath) || !File.Exists(thumbPath))
+        {
+          thumbPath = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
+            Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(pItem.Path, ".jpg"))));
+        }
+
+        if (File.Exists(thumbPath))
+        {
+          pItem.RefreshCoverArt();
+
+          pItem.IconImage = thumbPath;
+          pItem.IconImageBig = thumbPath;
+
+          string thumbLargePath = Util.Utils.ConvertToLargeCoverArt(thumbPath);
+          if (File.Exists(thumbLargePath))
+          {
+            pItem.ThumbnailImage = thumbLargePath;
+          }
+          else
+          {
+            pItem.ThumbnailImage = thumbPath;
+          }
+        }
+      }
     }
 
     #endregion
@@ -1561,22 +1591,11 @@ namespace MediaPortal.GUI.Video
       }
       if (_markWatchedFiles) // save a little performance
       {
-        LoadDirectory(_currentFolder, true, watchedMovies);
-        UpdateButtonStates();
-
-        //The condition below seems to be wrong... E.g. when stopping the playback from the topbar, 
-        //this isn't true, but the watched files definitely need an update...
-
-        //if (GUIWindowManager.ActiveWindow != (int)Window.WINDOW_FULLSCREEN_VIDEO &&
-        //    GUIWindowManager.ActiveWindow == GetID)
-        //{
-        //  LoadDirectory(_currentFolder, true, watchedMovies);
-        //  UpdateButtonStates();
-        //}
-        //else
-        //{
-        //  Log.Debug("GUIVideoFiles: No LoadDirectory needed {0}", caller);
-        //}
+        if (GUIWindowManager.ActiveWindow == GetID)
+        {
+          LoadDirectory(_currentFolder, true, watchedMovies);
+          UpdateButtonStates();
+        }
       }
 
       if (SubEngine.GetInstance().IsModified())
@@ -1648,22 +1667,11 @@ namespace MediaPortal.GUI.Video
       }
       if (_markWatchedFiles) // save a little performance
       {
-        LoadDirectory(_currentFolder, true, watchedMovies);
-        UpdateButtonStates();
-
-        //The condition below seems to be wrong... E.g. when stopping the playback from the topbar, 
-        //this isn't true, but the watched files definitely need an update...
-
-        //if (GUIWindowManager.ActiveWindow != (int)Window.WINDOW_FULLSCREEN_VIDEO &&
-        //    GUIWindowManager.ActiveWindow == GetID)
-        //{
-        //  LoadDirectory(_currentFolder);
-        //  UpdateButtonStates();
-        //}
-        //else
-        //{
-        //  Log.Debug("GUIVideoFiles: No LoadDirectory needed OnPlaybackEnded");
-        //}
+        if (GUIWindowManager.ActiveWindow == GetID)
+        {
+          LoadDirectory(_currentFolder, true, watchedMovies);
+          UpdateButtonStates();
+        }
       }
     }
 
