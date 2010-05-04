@@ -577,7 +577,8 @@ namespace TvDatabase
           sb.AddConstraint(string.Format("DAYOFWEEK({0}) in ({1})", timeField, days));
           break;
         case "sqlserver":
-          sb.AddConstraint(string.Format("DATEPART(dw, {0}) in ({1})", timeField, days));
+          // DATEPART(dw, {0})+@@DATEFIRST-7 makes sure result is the same regardless of regional settings
+          sb.AddConstraint(string.Format("(DATEPART(dw, {0})+@@DATEFIRST-7) in ({1})", timeField, days));
           break;
       }
     }
