@@ -143,17 +143,17 @@ namespace MediaPortal.GUI.Music
           else
           {
             // Do sorting on File Date. Needed for Shares View
-            item1.Label2 = item1.FileInfo.ModificationTime.ToShortDateString() + " " +
-                           item1.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-            item2.Label2 = item2.FileInfo.ModificationTime.ToShortDateString() + " " +
-                           item2.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+            item1.Label2 = item1.FileInfo.CreationTime.ToShortDateString() + " " +
+                           item1.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+            item2.Label2 = item2.FileInfo.CreationTime.ToShortDateString() + " " +
+                           item2.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
             if (bAscending)
             {
-              return DateTime.Compare(item1.FileInfo.ModificationTime, item2.FileInfo.ModificationTime);
+              return DateTime.Compare(item1.FileInfo.CreationTime, item2.FileInfo.CreationTime);
             }
             else
             {
-              return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.ModificationTime);
+              return DateTime.Compare(item2.FileInfo.CreationTime, item1.FileInfo.CreationTime);
             }
           }
 

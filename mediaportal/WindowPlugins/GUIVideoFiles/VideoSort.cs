@@ -22,6 +22,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.GUI.Library;
+using MediaPortal.Video.Database;
+using System.Collections;
 
 namespace MediaPortal.GUI.Video
 {
@@ -181,28 +183,36 @@ namespace MediaPortal.GUI.Video
             }
           }
 
-
         case SortMethod.Date:
+
           if (item1.FileInfo == null)
           {
-            return -1;
-          }
-          if (item2.FileInfo == null)
-          {
-            return -1;
+            if (!this.TryGetFileInfo(ref item1))
+            {
+              return -1;
+            }
           }
 
-          item1.Label2 = item1.FileInfo.ModificationTime.ToShortDateString() + " " +
+          if (item2.FileInfo == null)
+          {
+            if (!this.TryGetFileInfo(ref item2))
+            {
+              return -1;
+            }
+          }
+
+          item1.Label2 = item1.FileInfo.CreationTime.ToShortDateString() + " " +
                          item1.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-          item2.Label2 = item2.FileInfo.ModificationTime.ToShortDateString() + " " +
+          item2.Label2 = item2.FileInfo.CreationTime.ToShortDateString() + " " +
                          item2.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+
           if (sortAscending)
           {
-            return DateTime.Compare(item1.FileInfo.ModificationTime, item2.FileInfo.ModificationTime);
+            return DateTime.Compare(item1.FileInfo.CreationTime, item2.FileInfo.CreationTime);
           }
           else
           {
-            return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.ModificationTime);
+            return DateTime.Compare(item2.FileInfo.CreationTime, item1.FileInfo.CreationTime);
           }
         case SortMethod.Unwatched:
           {
@@ -221,6 +231,40 @@ namespace MediaPortal.GUI.Video
           }
       }
       return 0;
+    }
+
+    /// <summary>
+    /// In database view the file info isn't set. 
+    /// This function trys to get the files from database and then creates the file info for it.
+    /// </summary>
+    /// <param name="item">Item to store the file info</param>
+    /// <returns>True if FileInformation was created otherwise false</returns>
+    private bool TryGetFileInfo(ref GUIListItem item)
+    {
+      if (item == null)
+        return false;
+
+      try
+      {
+        IMDBMovie movie1 = item.AlbumInfoTag as IMDBMovie;
+        if (movie1 != null && movie1.ID > 0)
+        {
+          ArrayList movies1 = new ArrayList();
+
+          VideoDatabase.GetFiles(movie1.ID, ref movies1);
+
+          if (movies1.Count > 0)
+          {
+            item.FileInfo = new Util.FileInformation(movies1[0] as string, false);
+          }
+        }
+      }
+      catch (Exception exp)
+      {
+        Log.Error("VideoSort::TryGetFileInfo -> Exception: {0}", exp.Message);
+      }
+
+      return item.FileInfo != null;
     }
   }
 }
