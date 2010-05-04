@@ -1435,7 +1435,7 @@ namespace MediaPortal.GUI.Library
       {
         try
         {
-          GUIControl newControl = GUIControlFactory.Create(_windowId, controlNode, table);
+          GUIControl newControl = GUIControlFactory.Create(_windowId, controlNode, table, xmlFilename);
           if (newControl != null)
           {
             listControls.Add(newControl);

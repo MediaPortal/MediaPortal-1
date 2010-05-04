@@ -18,8 +18,9 @@
 
 #endregion
 
-using System;
+using System.IO;
 using System.Xml;
+using MediaPortal.GUI.Library;
 
 namespace System.Windows.Serialization
 {
@@ -28,8 +29,8 @@ namespace System.Windows.Serialization
     #region Constructors
 
     public XamlParserException(string message, string filename, XmlTextReader reader)
-      : base(string.Format("{0}({1},{2}): {3}", filename, reader.LineNumber, reader.LinePosition, message))
     {
+      Log.Error(string.Format("{0}(\"{1}\"): {2}", filename, reader.ReadString(), message));
       _lineNumber = reader.LineNumber;
       _linePosition = reader.LinePosition;
     }

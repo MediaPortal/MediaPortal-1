@@ -83,9 +83,10 @@ namespace System.Windows.Serialization
       return parser.Read(reader);
     }
 
-    public static object LoadXml(string fragment, XmlNodeType xmlNodeType, object target)
+    public static object LoadXml(string fragment, XmlNodeType xmlNodeType, object target, string filename)
     {
       XamlParser parser = new XamlParser();
+      parser._filename = filename;
 
       return parser.Read(fragment, xmlNodeType, target);
     }
@@ -234,7 +235,7 @@ namespace System.Windows.Serialization
         }
         catch (Exception e)
         {
-          Log.Info("XamlParser.Read: {0}({1},{2}): {3}", _filename, _reader.LineNumber, _reader.LinePosition, e.Message);
+          throw new XamlParserException(e.Message, _filename, _reader);
         }
       }
 

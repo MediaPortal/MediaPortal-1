@@ -580,7 +580,7 @@ namespace MediaPortal.GUI.Library
             xml = xml.Replace("Window.", "GUIWindow.");
           }
 
-          XamlParser.LoadXml(xml, XmlNodeType.Element, this);
+          XamlParser.LoadXml(xml, XmlNodeType.Element, this, _windowXmlFileName);
         }
 
         // Configure the overlay settings
@@ -707,7 +707,7 @@ namespace MediaPortal.GUI.Library
 
       try
       {
-        GUIControl newControl = GUIControlFactory.Create(_windowId, node, defines);
+        GUIControl newControl = GUIControlFactory.Create(_windowId, node, defines, _windowXmlFileName);
         newControl.WindowId = GetID;
         GUIImage img = newControl as GUIImage;
         if (img != null)

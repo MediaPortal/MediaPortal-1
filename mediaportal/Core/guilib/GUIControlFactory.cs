@@ -353,7 +353,7 @@ namespace MediaPortal.GUI.Library
       return null;
     }
 
-    public static GUIControl Create(int dwParentId, XmlNode pControlNode, IDictionary defines)
+    public static GUIControl Create(int dwParentId, XmlNode pControlNode, IDictionary defines, string filename)
     {
       Type typeOfControlToCreate = GetControlType(pControlNode);
       if (typeOfControlToCreate == null)
@@ -375,7 +375,7 @@ namespace MediaPortal.GUI.Library
 
         if (referenceNode != null)
         {
-          UpdateControlWithXmlData(control, typeOfControlToCreate, referenceNode, defines);
+          UpdateControlWithXmlData(control, typeOfControlToCreate, referenceNode, defines, filename);
         }
 
         XmlAttribute styleAttribute = pControlNode.Attributes["Style"];
@@ -386,11 +386,11 @@ namespace MediaPortal.GUI.Library
 
           if (styleNode != null)
           {
-            UpdateControlWithXmlData(control, typeOfControlToCreate, styleNode, defines);
+            UpdateControlWithXmlData(control, typeOfControlToCreate, styleNode, defines, filename);
           }
         }
 
-        UpdateControlWithXmlData(control, typeOfControlToCreate, pControlNode, defines);
+        UpdateControlWithXmlData(control, typeOfControlToCreate, pControlNode, defines, filename);
 
         control.ScaleToScreenResolution();
         AddSubitemsToControl(pControlNode, control);
@@ -400,7 +400,7 @@ namespace MediaPortal.GUI.Library
         {
           foreach (XmlNode subControlNode in pControlNode.SelectNodes("control"))
           {
-            ((IAddChild)control).AddChild(Create(dwParentId, subControlNode, defines));
+            ((IAddChild)control).AddChild(Create(dwParentId, subControlNode, defines, filename));
           }
         }
 
@@ -410,7 +410,7 @@ namespace MediaPortal.GUI.Library
           XmlNodeList nodeList = pControlNode.SelectNodes("control");
           foreach (XmlNode subControlNode in nodeList)
           {
-            GUIControl subControl = Create(dwParentId, subControlNode, defines);
+            GUIControl subControl = Create(dwParentId, subControlNode, defines, filename);
 
             if (subControl is GUIPlayListItemListControl)
             {
@@ -474,7 +474,7 @@ namespace MediaPortal.GUI.Library
     }
 
     private static void UpdateControlWithXmlData(GUIControl control, Type controlType, XmlNode pControlNode,
-                                                 IDictionary defines)
+                                                 IDictionary defines, string filename)
     {
       List<int> vecInfo = new List<int>();
       Hashtable attributesThatCanBeUpdates = GetAttributesToUpdate(controlType);
@@ -688,7 +688,7 @@ namespace MediaPortal.GUI.Library
               xml = xml.Replace("Window.", "GUIWindow.");
             }
 
-            XamlParser.LoadXml(xml, XmlNodeType.Element, control);
+            XamlParser.LoadXml(xml, XmlNodeType.Element, control, filename);
           }
         }
       }
