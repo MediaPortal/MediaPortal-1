@@ -750,37 +750,20 @@ namespace TvDatabase
         return false;
       }
 
-      //DateTime prgStart = new DateTime(schedule.startTime.Year, schedule.startTime.Month, schedule.startTime.Day, prg.StartTime.Hour, prg.StartTime.Minute, 0);
-      //DateTime prgEnd = new DateTime(schedule.endTime.Year, schedule.endTime.Month, schedule.endTime.Day, prg.EndTime.Hour, prg.EndTime.Minute, 0);
+      DateTime schStart;
+      DateTime schEnd;
 
-      DateTime schStart = new DateTime(prg.StartTime.Year, prg.StartTime.Month, prg.StartTime.Day,
-                                       schedule.StartTime.Hour, prg.StartTime.Minute, 0).AddDays(-1);
-      DateTime schEnd = schStart.Add(schedule.endTime.Subtract(schedule.startTime));
-
-      // Try to find on which day schedule should start in order to overlap the program
-      // First try <program start day>-1
-      // e.g. schedule 23:00-01:00, program 00:30-01:30
-      if(prg.StartTime >= schEnd || prg.EndTime <= schStart)
+      if (schedule.GetAdjustedScheduleTimeRange(prg, out schStart, out schEnd))
       {
-        // Then try <program start day>
-        // e.g. schedule 18:00-20:00, program 17:30-19:30 (this is the most usual case)
-        schEnd = schEnd.AddDays(1);
-        schStart = schStart.AddDays(1);
-        if (prg.StartTime >= schEnd || prg.EndTime <= schStart)
-        {
-          // Finally try <program start day>+1
-          // e.g. schedule 00:30-01:30, program 23:00-01:00
-          schEnd = schEnd.AddDays(1);
-          schStart = schStart.AddDays(1);
-          if (prg.StartTime >= schEnd || prg.EndTime <= schStart)
-          {
-            Log.Info(
-              "IsPartialRecording: program ({0} {1} - {2} is not (at least partially) included in the schedule {3:hh:mm} - {4:hh:mm}",
-              prg.Title, prg.StartTime, prg.EndTime, schedule.startTime, schedule.endTime);
-          }
-        }
+        return (prg.StartTime < schStart || prg.EndTime > schEnd);
       }
-      return (prg.StartTime < schStart || prg.EndTime > schEnd);
+      else
+      {
+        Log.Info(
+          "IsPartialRecording: program ({0} {1} - {2} is not (at least partially) included in the schedule {3:hh:mm} - {4:hh:mm}",
+          prg.Title, prg.StartTime, prg.EndTime, schedule.startTime, schedule.endTime);
+        return false;
+      }
     }
 
 
@@ -1240,22 +1223,57 @@ namespace TvDatabase
       return false;
     }
 
-    private bool IsRecordingProgramWithinTimeRange(Program program, bool filterCanceledRecordings) {
+    private bool IsRecordingProgramWithinTimeRange(Program program, bool filterCanceledRecordings)
+    {
+      DateTime scheduleStartTime;
+      DateTime scheduleEndTime;
 
-      DateTime now = DateTime.Now;
-      DateTime prgStartTime = new DateTime(now.Year, now.Month, now.Day, program.StartTime.Hour, program.StartTime.Minute, 0, 0);
-      DateTime prgEndTime = new DateTime(now.Year, now.Month, now.Day, program.EndTime.Hour, program.EndTime.Minute, 0, 0);
-      DateTime scheduleStartTime = new DateTime(now.Year, now.Month, now.Day, StartTime.Hour, StartTime.Minute, 0, 0);
-      DateTime scheduleEndTime = new DateTime(now.Year, now.Month, now.Day, EndTime.Hour, EndTime.Minute, 0, 0);
-
-      bool isProgramWithinStartEndTimes = (prgStartTime >= scheduleStartTime && prgEndTime <= scheduleEndTime);
-      bool isSerieIsCanceled = false;
+      bool isProgramWithinStartEndTimes = GetAdjustedScheduleTimeRange(program, out scheduleStartTime, out scheduleEndTime);
+      bool isSerieNotCanceled = false;
 
       if (isProgramWithinStartEndTimes)
       {
-        isSerieIsCanceled = !(filterCanceledRecordings && IsSerieIsCanceled(program.StartTime));                
+        isSerieNotCanceled = !(filterCanceledRecordings && IsSerieIsCanceled(program.StartTime));                
       }
-      return isSerieIsCanceled;
+      return isSerieNotCanceled;
+    }
+
+    /// <summary>
+    /// Try to offset this schedule's time range by an integral number
+    /// of days so that it overlaps the <paramref name="program"/> time range.
+    /// </summary>
+    /// <param name="program">The program to use for adjusting the timerange</param>
+    /// <param name="scheduleStart">The adjusted start date/time</param>
+    /// <param name="scheduleEnd">The adjusted end date/time</param>
+    /// <returns>True if a suitable adjustment was found</returns>
+    private bool GetAdjustedScheduleTimeRange(Program program, out DateTime scheduleStart, out DateTime scheduleEnd)
+    {
+      scheduleStart = new DateTime(program.StartTime.Year, program.StartTime.Month, program.StartTime.Day,
+                                   startTime.Hour, startTime.Minute, 0).AddDays(-1);
+      scheduleEnd = scheduleStart.Add(endTime.Subtract(startTime));
+      
+      // Try to find on which day schedule should start in order to overlap the program
+      // First try <program start day>-1
+      // e.g. schedule 23:00-01:00, program 00:30-01:30
+      if (program.StartTime >= scheduleEnd || program.EndTime <= scheduleStart)
+      {
+        // Then try <program start day>
+        // e.g. schedule 18:00-20:00, program 17:30-19:30 (this is the most usual case)
+        scheduleEnd = scheduleEnd.AddDays(1);
+        scheduleStart = scheduleStart.AddDays(1);
+        if (program.StartTime >= scheduleEnd || program.EndTime <= scheduleStart)
+        {
+          // Finally try <program start day>+1
+          // e.g. schedule 00:30-01:30, program 23:00-01:00
+          scheduleEnd = scheduleEnd.AddDays(1);
+          scheduleStart = scheduleStart.AddDays(1);
+          if (program.StartTime >= scheduleEnd || program.EndTime <= scheduleStart)
+          {
+            return false; // no overlap found
+          }
+        }
+      }
+      return true;
     }
 
     public bool DoesUseEpisodeManagement
