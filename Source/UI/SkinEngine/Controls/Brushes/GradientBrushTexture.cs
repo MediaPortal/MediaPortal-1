@@ -34,6 +34,10 @@ using MediaPortal.UI.SkinEngine.SkinManagement;
 
 namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 {
+  /// <summary>
+  /// Builds and holds a texture which is used for all gradient brushes. The created texture contains a gradient
+  /// specified by a gradient stop collection.
+  /// </summary>
   public class GradientBrushTexture : ITextureAsset, IDisposable
   {
     Texture _texture;
