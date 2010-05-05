@@ -644,42 +644,43 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 			EPGLanguage& lang=*it;
 			if (lang.language==language)
 			{
-				//found.
-				if (item.size()>0 && lang.event.size()<1)
-					lang.event+=item;
-				if (text.size()>0 && strcmp(item.c_str(),text.c_str())!=0)
+				if (lang.extendedEventComplete != true) 
 				{
-					if (lang.text.size()>0)
+					if (text.size()>0)
 					{
-						if ((BYTE)text[0]<0x20)
+						if (lang.text.size()>0)
 						{
-							if (!lang.CR_added)
+							if ((BYTE)text[0]<0x20)
 							{
-								lang.text+="\n";
-								lang.CR_added=true;
+								if (text.size()>1)
+									lang.text+=text.erase(0,1);
 							}
-							if (text.size()>1)
-								lang.text+=text.erase(0,1);
+							else
+								lang.text+=text;
 						}
 						else
-							lang.text+=text;
+							lang.text=text;
 					}
-					else
-						lang.text=text;
+					if (descriptor_number == last_descriptor_number) 
+					{
+						lang.extendedEventComplete = true;
+					}
+					//LogDebug("epg grab ext:[%s][%s][%s][%s]", language, lang.language, lang.event.c_str(),lang.text.c_str());
 				}
-							//LogDebug("epg grab ext:[%s][%s]", lang.event.c_str(),lang.text.c_str());
 				return;
 			}
 		}
 		//add new language...
 		EPGLanguage lang;
-		lang.CR_added=false;
 		lang.language=language;
-		if (item.size()>0)
-			lang.event=item;
-		if (text.size()>0 && strcmp(item.c_str(),text.c_str())!=0)
+		lang.event="";
+		if (text.size()>0) 
 			lang.text=text;
 		lang.parentalRating=0;
+		if (descriptor_number == last_descriptor_number) 
+		{
+			lang.extendedEventComplete = true;
+		}
 			//LogDebug("epg grab ext:[%s][%s]", lang.event.c_str(),lang.text.c_str());
 		epgEvent.vecLanguages.push_back(lang);
 
@@ -730,8 +731,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 			if (6+event_len > descriptor_len+2)
 			{
 		    EPGLanguage lang;
-				lang.CR_added=false;
-		    lang.language=ISO_639_language_code;
+			lang.language=ISO_639_language_code;
 		    lang.event="";
 		    lang.text="";
 				lang.parentalRating=0;
@@ -755,8 +755,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 		else if (event_len<0)
 		{
 	    EPGLanguage lang;
-			lang.CR_added=false;
-	    lang.language=ISO_639_language_code;
+		lang.language=ISO_639_language_code;
 	    lang.event="";
 	    lang.text="";
 		lang.parentalRating=0;
@@ -772,8 +771,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 			if (off+text_len > descriptor_len+2) 
 			{
 	      EPGLanguage lang;
-				lang.CR_added=false;
-	      lang.language=ISO_639_language_code;
+		  lang.language=ISO_639_language_code;
 	      lang.event="";
 	      lang.text="";
 				lang.parentalRating=0;
@@ -798,8 +796,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 		else if (text_len<0)
 		{
 	    EPGLanguage lang;
-			lang.CR_added=false;
-	    lang.language=ISO_639_language_code;
+		lang.language=ISO_639_language_code;
 	    lang.event="";
 	    lang.text="";
 			lang.parentalRating=0;
@@ -815,14 +812,13 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 			{
 				if (eventText.size()>0)
 					lang.event=eventText;
-				if (eventDescription.size()>0)
+				if (eventDescription.size()>0 && lang.text=="")
 					lang.text=eventDescription;
 				//LogDebug("epg grab short:[%s][%s]", lang.event.c_str(),lang.text.c_str());
 				return;
 			}
 		}
 		EPGLanguage lang;
-		lang.CR_added=false;
 		lang.language=ISO_639_language_code;
 		if (eventText.size()>0)
 			lang.event=eventText;

@@ -38,7 +38,7 @@ typedef  struct stEPGLanguage
 	string event;
 	string text;
 	unsigned int parentalRating;
-	bool CR_added;
+	bool extendedEventComplete;
 } EPGLanguage;
 
 typedef struct stEPGEvent
