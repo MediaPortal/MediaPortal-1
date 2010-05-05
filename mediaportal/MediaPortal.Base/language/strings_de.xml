@@ -1002,8 +1002,8 @@
     <String id="1518">Graph konnte nicht erstellt</String>
     <String id="1519">Kein unterstützter Software-Encoder installiert</String>
     <String id="1520">Nicht genügend Festplattenspeicher</String>
-	  <String id="1521">Suche Titel</String>
-	  <String id="1522">Suche Kategorie</String>
+    <String id="1521">Suche Titel</String>
+    <String id="1522">Suche Kategorie</String>
     <String id="1523">Suche Beschreibung</String>
     <String id="1600">Herunterfahren?</String>
     <String id="1601">Schlafmodus?</String>
@@ -1240,6 +1240,8 @@
     <String id="2610">Polnisch</String>
     <String id="2611">Tschechisch</String>
     <String id="2612">Ungarisch</String>
+    <String id="2613">Russisch</String>
+    <String id="2614">Ukrainisch</String>
     <String id="2650">Lade Schriftarten, bitte warten...</String>
     <String id="2700">CI-Menü öffnen</String>
     <String id="2997">Std</String>
@@ -1306,7 +1308,7 @@
     <String id="4554">Zeige Album-Informationen</String>
     <String id="4555">Aktuelle Wiedergabeliste</String>
     <String id="4557">Alle zur Wiedergabeliste hinzufügen</String>
-	<String id="4558">Neu hinzugefügt</String>
+    <String id="4558">Neu hinzugefügt</String>
     <String id="5900" prefix="Meine ">Kinotrailer</String>
     <String id="5901">Suche Filme</String>
     <String id="5902">Welche Filme zeigen?</String>
@@ -1682,7 +1684,6 @@
     <String id="100004">Einstellungen</String>
     <String id="100005" prefix="Meine ">Musik</String>
     <String id="100006" prefix="Meine ">Filme</String>
-    <String id="100007">System-Informationen</String>
     <String id="100008">Einstellungen-&gt;Allgemein</String>
     <String id="100009">Einstellungen-&gt;Bildschirm</String>
     <String id="100010">Einstellungen-&gt;Bildschirm-&gt;UI Kalibierung</String>
@@ -1705,8 +1706,6 @@
     <String id="100029">Einstellungen-&gt;Allgemein-&gt;LCD</String>
     <String id="100030" prefix="Mein ">Radio</String>
     <String id="100031">Einstellungen-&gt;Bildschirm-&gt;Textlauf-Geschwindigkeit</String>
-    <String id="100032">MSN Messenger</String>
-    <String id="100033">MSN Chat</String>
     <String id="100034">Sonstiges</String>
     <String id="100035">Startbildschirm</String>
     <String id="100100">Ja/Nein Dialog</String>
@@ -1776,7 +1775,6 @@
     <String id="100747">TV Suche</String>
     <String id="100748" prefix="Mein ">Programm-Info</String>
     <String id="100749" prefix="Mein ">TV/Kein Signal</String>
-    <String id="100750" prefix="Meine ">Rezepte</String>
     <String id="100755" prefix="Mein ">Statusmonitor</String>
     <String id="100756" prefix="Mein ">Statusmonitor/Details</String>
     <String id="100757" prefix="Mein ">Statusmonitor/Einstellungen</String>
@@ -1785,7 +1783,6 @@
     <String id="100760" prefix="Mein ">Brenner</String>
     <String id="100761" prefix="Mein ">TV-Programm</String>
     <String id="100762" prefix="Mein ">Radio-Programm</String>
-    <String id="100770" prefix="Mein ">Datei-Manager</String>
     <String id="100800" prefix="Meine ">Erweiterungen</String>
     <String id="101000">Tastatur</String>
     <String id="101002">Standard Bildschirm-Tastatur</String>
@@ -1822,10 +1819,6 @@
     <String id="103011" prefix="Meine ">TV/Bereichs-Einstellungen</String>
     <String id="103012">TV-Empfangs-Daten</String>
     <String id="104711" prefix="Meine ">Wikipedia</String>
-    <String id="105000">Alarm</String>
-    <String id="105001">Alarm - Alarm Details</String>
-    <String id="105002">Alarm - Sleeptimer</String>
-    <String id="105900" prefix="Meine ">Kino-Vorschau</String>
     <String id="106666">Power Scheduler wartet</String>
     <String id="107700" prefix="Mein ">TV/Videotext</String>
     <String id="107701" prefix="Mein ">TV/Videotext</String>
@@ -1839,9 +1832,6 @@
     <String id="109004">Minidisplay Konfiguration : Equalizer</String>
     <String id="109005">Minidisplay Konfiguration : Keypad</String>
     <String id="109006">Minidisplay Konfiguration : Fernbedienung</String>
-    <String id="109811" prefix="Meine ">TV-Serien</String>
-    <String id="190478" prefix="Meine ">Songtexte</String>
-    <String id="196742">MovingPictures</String>  
     <String id="200000">Bitte einen EPG-Grabber auswählen. Hinweis: Ist ihr Land nicht aufgeführt,</String>
     <String id="200001">dann müssen sie den Programmführer manuell einrichten!</String>
     <String id="200002">Sie können jetzt EPG-Kanäle ihren TV-Kanälen zuordnen</String>
