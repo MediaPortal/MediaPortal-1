@@ -88,7 +88,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     {
       UpdateBounds(bounds, layoutTransform, verts);
       base.SetupBrush(bounds, layoutTransform, zOrder, verts);
-      _textureVisual = new Texture(GraphicsDevice.Device, (int)_bounds.Width, (int)_bounds.Height, 1, Usage.RenderTarget, Format.X8R8G8B8, Pool.Default);
+      _textureVisual = new Texture(GraphicsDevice.Device, (int)_vertsBounds.Width, (int)_vertsBounds.Height, 1, Usage.RenderTarget, Format.X8R8G8B8, Pool.Default);
     }
 
     public override bool BeginRender(PrimitiveContext primitiveContext)
@@ -111,8 +111,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
           Vector3 pos = new Vector3(Visual.ActualPosition.X, Visual.ActualPosition.Y, Visual.ActualPosition.Z);
           float width = (float) Visual.ActualWidth;
           float height = (float) Visual.ActualHeight;
-          float w = (float)(_bounds.Width / Visual.Width);
-          float h = (float)(_bounds.Height / Visual.Height);
+          float w = (float)(_vertsBounds.Width / Visual.Width);
+          float h = (float)(_vertsBounds.Height / Visual.Height);
 
           //m.Matrix *= SkinContext.FinalMatrix.Matrix;
           //matrix.Matrix *= Matrix.Scaling(w, h, 1);
@@ -125,15 +125,15 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
             //copy the correct rectangle from the backbuffer in the opacitytexture
             GraphicsDevice.Device.StretchRectangle(backBuffer, new Rectangle(
                 (int) (_orginalPosition.X * cx), (int) (_orginalPosition.Y * cy),
-                (int) (_bounds.Width * cx), (int) (_bounds.Height * cy)), textureVisualSurface,
-                new Rectangle(0, 0, (int) (_bounds.Width), (int) (_bounds.Height)), TextureFilter.None);
+                (int) (_vertsBounds.Width * cx), (int) (_vertsBounds.Height * cy)), textureVisualSurface,
+                new Rectangle(0, 0, (int) (_vertsBounds.Width), (int) (_vertsBounds.Height)), TextureFilter.None);
             matrix.Matrix *= Matrix.Translation(new Vector3(-pos.X, -pos.Y, 0));
             matrix.Matrix *= Matrix.Scaling(GraphicsDevice.Width / width, GraphicsDevice.Height / height, 1);
           }
           else
           {
             GraphicsDevice.Device.StretchRectangle(backBuffer, new Rectangle(0, 0, desc.Width, desc.Height),
-                textureVisualSurface, new Rectangle(0, 0, (int) _bounds.Width, (int) _bounds.Height), TextureFilter.None);
+                textureVisualSurface, new Rectangle(0, 0, (int) _vertsBounds.Width, (int) _vertsBounds.Height), TextureFilter.None);
             
             matrix.Matrix *= Matrix.Translation(new Vector3(-pos.X, -pos.Y, 0));
             matrix.Matrix *= Matrix.Scaling(GraphicsDevice.Width / width, GraphicsDevice.Height / height, 1);

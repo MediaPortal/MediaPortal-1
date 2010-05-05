@@ -199,12 +199,12 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
       float w = bounds.Width;
       float h = bounds.Height;
-      float xoff = _bounds.X;
-      float yoff = _bounds.Y;
+      float xoff = _vertsBounds.X;
+      float yoff = _vertsBounds.Y;
       if (layoutTransform != null)
       {
-        w = _bounds.Width;
-        h = _bounds.Height;
+        w = _vertsBounds.Width;
+        h = _vertsBounds.Height;
         layoutTransform.TransformXY(ref w, ref h);
         layoutTransform.TransformXY(ref xoff, ref yoff);
       }

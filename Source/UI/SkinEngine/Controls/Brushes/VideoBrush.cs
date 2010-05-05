@@ -128,7 +128,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       Rectangle sourceRect;
       Rectangle destinationRect;
       GeometryData gd = new GeometryData(
-          new Size(_videoSize.Width, _videoSize.Height), new Size((int) _bounds.Width, (int) _bounds.Height), _pixelAspectRatio);
+          new Size(_videoSize.Width, _videoSize.Height), new Size((int) _vertsBounds.Width, (int) _vertsBounds.Height), _pixelAspectRatio);
 
       geometryManager.Transform(_currentGeometry, gd, out sourceRect, out destinationRect);
       string shaderName = geometry.Shader;
@@ -140,21 +140,21 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       float maxU = sourceRect.Width / (float) _videoSize.Width;
       float maxV = sourceRect.Height / (float) _videoSize.Height;
 
-      float minX = destinationRect.X / _bounds.Width;
-      float minY = destinationRect.Y / _bounds.Height;
+      float minX = destinationRect.X / _vertsBounds.Width;
+      float minY = destinationRect.Y / _vertsBounds.Height;
 
-      float maxX = destinationRect.Width / _bounds.Width;
-      float maxY = destinationRect.Height / _bounds.Height;
+      float maxX = destinationRect.Width / _vertsBounds.Width;
+      float maxY = destinationRect.Height / _vertsBounds.Height;
 
       float diffU = maxU - minU;
       float diffV = maxV - minV;
       PositionColored2Textured[] verts = new PositionColored2Textured[_verts.Length];
       for (int i = 0; i < _verts.Length; ++i)
       {
-        float x = ((_verts[i].X - _minPosition.X) / _bounds.Width) * maxX + minX;
-        float y = ((_verts[i].Y - _minPosition.Y) / _bounds.Height) * maxY + minY;
-        verts[i].X = x*_bounds.Width + _minPosition.X;
-        verts[i].Y = y*_bounds.Height + _minPosition.Y;
+        float x = ((_verts[i].X - _minPosition.X) / _vertsBounds.Width) * maxX + minX;
+        float y = ((_verts[i].Y - _minPosition.Y) / _vertsBounds.Height) * maxY + minY;
+        verts[i].X = x*_vertsBounds.Width + _minPosition.X;
+        verts[i].Y = y*_vertsBounds.Height + _minPosition.Y;
 
         float u = _verts[i].Tu1 * diffU + minU;
         float v = _verts[i].Tv1 * diffV + minV;

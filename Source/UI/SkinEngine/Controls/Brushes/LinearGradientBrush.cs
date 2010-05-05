@@ -153,14 +153,13 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     public override void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, PositionColored2Textured[] verts)
     {
       UpdateBounds(bounds, layoutTransform, verts);
-      if (!IsOpacityBrush)
-        base.SetupBrush(bounds, layoutTransform, zOrder, verts);
+      base.SetupBrush(bounds, layoutTransform, zOrder, verts);
 
       _height = bounds.Height;
       _width = bounds.Width;
       _position = new Vector3(bounds.X, bounds.Y, zOrder);
       if (_brushTexture == null)
-        _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops, IsOpacityBrush);
+        _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops);
       if (_cacheTexture != null)
         Free(true);
       _refresh = true;
@@ -180,7 +179,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       {
         _refresh = false;
         CheckSingleColor();
-        _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops, IsOpacityBrush);
+        _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops);
         if (_singleColor)
         {
           _effect = ContentManager.GetEffect("solidbrush");
@@ -202,11 +201,11 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       float[] g_endpoint = new float[] { EndPoint.X, EndPoint.Y };
       if (MappingMode == BrushMappingMode.Absolute)
       {
-        g_startpoint[0] = ((StartPoint.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _bounds.Width;
-        g_startpoint[1] = ((StartPoint.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _bounds.Height;
+        g_startpoint[0] = ((StartPoint.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
+        g_startpoint[1] = ((StartPoint.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
 
-        g_endpoint[0] = ((EndPoint.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _bounds.Width;
-        g_endpoint[1] = ((EndPoint.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _bounds.Height;
+        g_endpoint[0] = ((EndPoint.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
+        g_endpoint[1] = ((EndPoint.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
       }
 
       if (!_singleColor)
@@ -225,6 +224,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
             Trace.WriteLine("LinearGradientBrush:Create cached texture");
             float w = (float)_width;
             float h = (float)_height;
+
+            // FIXME Albert: The next two lines are commented out in RadialGradientBrush and at all other locations
+            // where this code was copied. What about this occurence?
             float cx = GraphicsDevice.Width / (float) SkinContext.SkinResources.SkinWidth;
             float cy = GraphicsDevice.Height / (float) SkinContext.SkinResources.SkinHeight;
 
@@ -335,7 +337,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       {
         _refresh = false;
         CheckSingleColor();
-        _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops, IsOpacityBrush);
+        _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops);
         if (_singleColor)
         {
           //SetColor(vertexBuffer);
@@ -352,11 +354,11 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       float[] g_endpoint = new float[] { EndPoint.X, EndPoint.Y };
       if (MappingMode == BrushMappingMode.Absolute)
       {
-        g_startpoint[0] = ((StartPoint.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _bounds.Width;
-        g_startpoint[1] = ((StartPoint.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _bounds.Height;
+        g_startpoint[0] = ((StartPoint.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
+        g_startpoint[1] = ((StartPoint.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
 
-        g_endpoint[0] = ((EndPoint.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _bounds.Width;
-        g_endpoint[1] = ((EndPoint.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _bounds.Height;
+        g_endpoint[0] = ((EndPoint.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
+        g_endpoint[1] = ((EndPoint.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
       }
 
       //GraphicsDevice.TransformWorld = SkinContext.FinalMatrix.Matrix;
@@ -447,7 +449,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     {
       context.Parameters = new EffectParameters();
       CheckSingleColor();
-      _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops, IsOpacityBrush);
+      _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops);
       if (_singleColor)
       {
         Color4 v = ColorConverter.FromColor(GradientStops.OrderedGradientStopList[0].Color);
@@ -469,11 +471,11 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       float[] g_endpoint = new float[] { EndPoint.X, EndPoint.Y };
       if (MappingMode == BrushMappingMode.Absolute)
       {
-        g_startpoint[0] = ((StartPoint.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _bounds.Width;
-        g_startpoint[1] = ((StartPoint.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _bounds.Height;
+        g_startpoint[0] = ((StartPoint.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
+        g_startpoint[1] = ((StartPoint.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
 
-        g_endpoint[0] = ((EndPoint.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _bounds.Width;
-        g_endpoint[1] = ((EndPoint.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _bounds.Height;
+        g_endpoint[0] = ((EndPoint.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
+        g_endpoint[1] = ((EndPoint.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
       }
 
       Matrix m;

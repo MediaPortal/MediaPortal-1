@@ -51,8 +51,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     AbstractProperty _relativeTransformProperty;
     Transform _transform;
     AbstractProperty _freezableProperty;
-    bool _isOpacity;
-    protected RectangleF _bounds;
+    protected RectangleF _vertsBounds;
     protected PointF _orginalPosition;
     protected PointF _minPosition;
 
@@ -76,12 +75,11 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     void Init()
     {
-      _isOpacity = false;
       _opacityProperty = new SProperty(typeof(double), 1.0);
       _relativeTransformProperty = new SProperty(typeof(Transform), new Transform());
       _transform = null;
       _freezableProperty = new SProperty(typeof(bool), false);
-      _bounds = new RectangleF(0, 0, 0, 0);
+      _vertsBounds = new RectangleF(0, 0, 0, 0);
       _orginalPosition = new PointF(0, 0);
     }
 
@@ -100,7 +98,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       Detach();
       base.DeepCopy(source, copyManager);
       Brush b = (Brush) source;
-      IsOpacityBrush = b.IsOpacityBrush;
       Opacity = b.Opacity;
       RelativeTransform = copyManager.GetCopy(b.RelativeTransform);
       Transform = copyManager.GetCopy(b.Transform);
@@ -171,12 +168,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       set { _transform = value; }
     }
 
-    public bool IsOpacityBrush
-    {
-      get { return _isOpacity; }
-      set { _isOpacity = value; }
-    }
-
     public virtual Texture Texture
     {
       get { return null; }
@@ -196,12 +187,12 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     {
       float w = bounds.Width;
       float h = bounds.Height;
-      float xoff = _bounds.X;
-      float yoff = _bounds.Y;
+      float xoff = _vertsBounds.X;
+      float yoff = _vertsBounds.Y;
       if (layoutTransform != null)
       {
-        w = _bounds.Width;
-        h = _bounds.Height;
+        w = _vertsBounds.Width;
+        h = _vertsBounds.Height;
         layoutTransform.TransformXY(ref w, ref h);
         layoutTransform.TransformXY(ref xoff, ref yoff);
       }
@@ -264,7 +255,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         _minPosition.X = _orginalPosition.X + minx;
         _minPosition.Y = _orginalPosition.Y + miny;
       }
-      _bounds = new RectangleF(minx, miny, maxx, maxy);
+      _vertsBounds = new RectangleF(minx, miny, maxx, maxy);
     }
 
     public virtual bool BeginRender(PrimitiveContext primitiveContext)

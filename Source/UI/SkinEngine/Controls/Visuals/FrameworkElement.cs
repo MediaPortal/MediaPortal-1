@@ -1109,7 +1109,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
               Usage.RenderTarget, Format.X8R8G8B8, Pool.Default));
       ContentManager.Add(_opacityMaskContext);
 
-      OpacityMask.IsOpacityBrush = true;
       OpacityMask.SetupBrush(ActualBounds, FinalLayoutTransform, ActualPosition.Z, verts);
       PositionColored2Textured.Set(_opacityMaskContext.VertexBuffer, verts);
     }

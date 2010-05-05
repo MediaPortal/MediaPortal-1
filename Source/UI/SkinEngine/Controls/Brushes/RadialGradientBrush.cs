@@ -204,15 +204,14 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     public override void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, PositionColored2Textured[] verts)
     {
       UpdateBounds(bounds, layoutTransform, verts);
-      if (!IsOpacityBrush)
-        base.SetupBrush(bounds, layoutTransform, zOrder, verts);
+      base.SetupBrush(bounds, layoutTransform, zOrder, verts);
 
       _height = bounds.Height;
       _width = bounds.Width;
       _position = new Vector3(bounds.X, bounds.Y, zOrder);
 
       if (_brushTexture == null)
-        _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops, IsOpacityBrush);
+        _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops);
       Free(true);
       _refresh = true;
     }
@@ -230,7 +229,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       {
         _refresh = false;
         CheckSingleColor();
-        _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops, IsOpacityBrush);
+        _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops);
         if (_singleColor)
         {
           _effect = ContentManager.GetEffect("solidbrush");
@@ -252,14 +251,14 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
         if (MappingMode == BrushMappingMode.Absolute)
         {
-          g_focus[0] = ((GradientOrigin.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _bounds.Width;
-          g_focus[1] = ((GradientOrigin.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _bounds.Height;
+          g_focus[0] = ((GradientOrigin.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
+          g_focus[1] = ((GradientOrigin.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
 
-          g_center[0] = ((Center.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _bounds.Width;
-          g_center[1] = ((Center.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _bounds.Height;
+          g_center[0] = ((Center.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
+          g_center[1] = ((Center.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
 
-          g_radius[0] = (float)((RadiusX * SkinContext.Zoom.Width) / _bounds.Width);
-          g_radius[1] = (float)((RadiusY * SkinContext.Zoom.Height) / _bounds.Height);
+          g_radius[0] = (float)((RadiusX * SkinContext.Zoom.Width) / _vertsBounds.Width);
+          g_radius[1] = (float)((RadiusY * SkinContext.Zoom.Height) / _vertsBounds.Height);
         }
       }
 
@@ -394,7 +393,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       {
         _refresh = false;
         CheckSingleColor();
-        _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops, IsOpacityBrush);
+        _brushTexture = BrushCache.Instance.GetGradientBrush(GradientStops);
         _effect = ContentManager.GetEffect("radialopacitygradient");
         _handleRelativeTransform = _effect.GetParameterHandle("RelativeTransform");
         _handleFocus = _effect.GetParameterHandle("g_focus");
@@ -409,14 +408,14 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
         if (MappingMode == BrushMappingMode.Absolute)
         {
-          g_focus[0] = ((GradientOrigin.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _bounds.Width;
-          g_focus[1] = ((GradientOrigin.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _bounds.Height;
+          g_focus[0] = ((GradientOrigin.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
+          g_focus[1] = ((GradientOrigin.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
 
-          g_center[0] = ((Center.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _bounds.Width;
-          g_center[1] = ((Center.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _bounds.Height;
+          g_center[0] = ((Center.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
+          g_center[1] = ((Center.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
 
-          g_radius[0] = (float) ((RadiusX * SkinContext.Zoom.Width) / _bounds.Width);
-          g_radius[1] = (float) ((RadiusY * SkinContext.Zoom.Height) / _bounds.Height);
+          g_radius[0] = (float) ((RadiusX * SkinContext.Zoom.Width) / _vertsBounds.Width);
+          g_radius[1] = (float) ((RadiusY * SkinContext.Zoom.Height) / _vertsBounds.Height);
         }
       }
 
@@ -505,7 +504,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     {
       context.Parameters = new EffectParameters();
       CheckSingleColor();
-      context.Texture = BrushCache.Instance.GetGradientBrush(GradientStops, IsOpacityBrush);
+      context.Texture = BrushCache.Instance.GetGradientBrush(GradientStops);
       if (_singleColor)
       {
 
@@ -530,14 +529,14 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
         if (MappingMode == BrushMappingMode.Absolute)
         {
-          g_focus[0] = ((GradientOrigin.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _bounds.Width;
-          g_focus[1] = ((GradientOrigin.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _bounds.Height;
+          g_focus[0] = ((GradientOrigin.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
+          g_focus[1] = ((GradientOrigin.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
 
-          g_center[0] = ((Center.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _bounds.Width;
-          g_center[1] = ((Center.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _bounds.Height;
+          g_center[0] = ((Center.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
+          g_center[1] = ((Center.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
 
-          g_radius[0] = (float)((RadiusX * SkinContext.Zoom.Width) / _bounds.Width);
-          g_radius[1] = (float)((RadiusY * SkinContext.Zoom.Height) / _bounds.Height);
+          g_radius[0] = (float)((RadiusX * SkinContext.Zoom.Width) / _vertsBounds.Width);
+          g_radius[1] = (float)((RadiusY * SkinContext.Zoom.Height) / _vertsBounds.Height);
         }
         Matrix mrel;
         RelativeTransform.GetTransformRel(out mrel);

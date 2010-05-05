@@ -49,14 +49,14 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       _cache = new List<BrushTexture>();
     }
 
-    public BrushTexture GetGradientBrush(GradientStopCollection stops, bool opacitybrush)
+    public BrushTexture GetGradientBrush(GradientStopCollection stops)
     {
       foreach (BrushTexture texture in _cache)
-        if ((texture.OpacityBrush == opacitybrush) && texture.IsSame(stops))
+        if (texture.IsSame(stops))
           return texture;
       // Here we must do a copy of the gradient stops. If we don't, the cache will change
       // when the stops are changed outside.
-      BrushTexture brush = new BrushTexture(new GradientStopCollection(stops, null), opacitybrush, null);
+      BrushTexture brush = new BrushTexture(new GradientStopCollection(stops, null));
       _cache.Add(brush);
       return brush;
     }
