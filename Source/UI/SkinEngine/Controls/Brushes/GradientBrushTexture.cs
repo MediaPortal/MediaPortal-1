@@ -34,7 +34,7 @@ using MediaPortal.UI.SkinEngine.SkinManagement;
 
 namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 {
-  public class BrushTexture : ITextureAsset, IDisposable
+  public class GradientBrushTexture : ITextureAsset, IDisposable
   {
     Texture _texture;
     DateTime _lastTimeUsed;
@@ -42,7 +42,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     readonly string _name;
     static int _assetId = 0;
 
-    public BrushTexture(GradientStopCollection stops)
+    public GradientBrushTexture(GradientStopCollection stops)
     {
       _stops = stops;
       Allocate();
