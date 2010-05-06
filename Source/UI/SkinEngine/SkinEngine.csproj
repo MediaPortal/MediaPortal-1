@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -355,6 +355,19 @@
     <Compile Include="Xaml\XamlNamespace\StaticMarkupExtension.cs" />
     <Compile Include="Xaml\Parser.cs" />
     <Compile Include="Utils\GeometricHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Skin\default\shaders\blur.fx" />
+    <None Include="Skin\default\shaders\dialogbg.fx" />
+    <None Include="Skin\default\shaders\font.fx" />
+    <None Include="Skin\default\shaders\greyscale.fx" />
+    <None Include="Skin\default\shaders\lineargradient.fx" />
+    <None Include="Skin\default\shaders\linearopacitygradient.fx" />
+    <None Include="Skin\default\shaders\normal.fx" />
+    <None Include="Skin\default\shaders\radialgradient.fx" />
+    <None Include="Skin\default\shaders\radialopacitygradient.fx" />
+    <None Include="Skin\default\shaders\smartzoom.fx" />
+    <None Include="Skin\default\shaders\solidbrush.fx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\System\MediaPortal.Core\MediaPortal.Core.csproj">
