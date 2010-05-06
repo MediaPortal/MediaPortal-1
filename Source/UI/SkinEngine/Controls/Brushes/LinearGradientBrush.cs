@@ -23,7 +23,6 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using MediaPortal.Core.General;
 using MediaPortal.UI.SkinEngine.ContentManagement;
@@ -37,16 +36,12 @@ using MediaPortal.UI.SkinEngine.SkinManagement;
 
 namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 {
-  public class LinearGradientBrush : GradientBrush, IAsset
+  // TODO: Implement Freezable behaviour
+  public class LinearGradientBrush : GradientBrush
   {
     #region Private fields
 
-    Texture _cacheTexture;
-    double _height;
-    double _width;
-    Vector3 _position;
     EffectAsset _effect;
-    DateTime _lastTimeUsed;
 
     AbstractProperty _startPointProperty;
     AbstractProperty _endPointProperty;
@@ -74,7 +69,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     {
       base.Dispose();
       Detach();
-      Free(false);
     }
 
     void Init()
@@ -155,13 +149,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       UpdateBounds(bounds, layoutTransform, verts);
       base.SetupBrush(bounds, layoutTransform, zOrder, verts);
 
-      _height = bounds.Height;
-      _width = bounds.Width;
-      _position = new Vector3(bounds.X, bounds.Y, zOrder);
       if (_gradientBrushTexture == null)
         _gradientBrushTexture = BrushCache.Instance.GetGradientBrush(GradientStops);
-      if (_cacheTexture != null)
-        Free(true);
       _refresh = true;
     }
 
@@ -193,8 +182,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
           _handleStartPoint = _effect.GetParameterHandle("g_StartPoint");
           _handleEndPoint = _effect.GetParameterHandle("g_EndPoint");
         }
-        if (_cacheTexture != null)
-          Free(true);
       }
 
       float[] g_startpoint = new float[] { StartPoint.X, StartPoint.Y };
@@ -208,117 +195,23 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         g_endpoint[1] = ((EndPoint.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
       }
 
-      if (!_singleColor)
-      {
-        if (Freezable)
-        {
-          if (_cacheTexture == null)
-          {
-            Trace.WriteLine("LinearGradientBrush:Create cached texture");
-            _effect = ContentManager.GetEffect("lineargradient");
-            _handleRelativeTransform = _effect.GetParameterHandle("RelativeTransform");
-            _handleOpacity = _effect.GetParameterHandle("g_opacity");
-            _handleStartPoint = _effect.GetParameterHandle("g_StartPoint");
-            _handleEndPoint = _effect.GetParameterHandle("g_EndPoint");
-
-            Trace.WriteLine("LinearGradientBrush:Create cached texture");
-            float w = (float)_width;
-            float h = (float)_height;
-
-            // FIXME Albert: The next two lines are commented out in RadialGradientBrush and at all other locations
-            // where this code was copied. What about this occurence?
-            float cx = GraphicsDevice.Width / (float) SkinContext.SkinResources.SkinWidth;
-            float cy = GraphicsDevice.Height / (float) SkinContext.SkinResources.SkinHeight;
-
-            bool copy = true;
-            if ((int) w == SkinContext.SkinResources.SkinWidth && (int) h == SkinContext.SkinResources.SkinHeight)
-            {
-              copy = false;
-              w /= 2;
-              h /= 2;
-            }
-            ExtendedMatrix m = new ExtendedMatrix();
-            m.Matrix *= SkinContext.FinalRenderTransform.Matrix;
-            //next put the control at position (0,0,0)
-            //and scale it correctly since the backbuffer now has the dimensions of the control
-            //instead of the skin width/height dimensions
-            m.Matrix *= Matrix.Translation(new Vector3(-(_position.X + 1), -(_position.Y + 1), 0));
-            m.Matrix *= Matrix.Scaling(((SkinContext.SkinResources.SkinWidth) * cx) / w, (SkinContext.SkinResources.SkinHeight * cy) / h, 1.0f);
-
-            SkinContext.AddRenderTransform(m);
-
-            GraphicsDevice.Device.EndScene();
-            _cacheTexture = new Texture(GraphicsDevice.Device, (int) w, (int) h, 1, Usage.RenderTarget, Format.X8R8G8B8, Pool.Default);
-            //get the current backbuffer
-            using (Surface backBuffer = GraphicsDevice.Device.GetRenderTarget(0))
-            {
-              //get the surface of our opacity texture
-              using (Surface cacheSurface = _cacheTexture.GetSurfaceLevel(0))
-              {
-                if (copy)
-                {
-                  //copy the correct rectangle from the backbuffer in the opacitytexture
-                  GraphicsDevice.Device.StretchRectangle(backBuffer,
-                      new Rectangle((int) (_position.X * cx), (int) (_position.Y * cy),
-                          (int) (_width * cx), (int) (_height * cy)),
-                      cacheSurface, new Rectangle(0, 0, (int) w, (int) h), TextureFilter.None);
-                }
-                //change the rendertarget to the opacitytexture
-                GraphicsDevice.Device.SetRenderTarget(0, cacheSurface);
-
-                //render the control (will be rendered into the opacitytexture)
-                GraphicsDevice.Device.BeginScene();
-
-                Matrix mrel;
-                RelativeTransform.GetTransformRel(out mrel);
-                mrel = Matrix.Invert(mrel);
-                _handleRelativeTransform.SetParameter(mrel);
-                _handleOpacity.SetParameter((float) (Opacity * SkinContext.Opacity));
-                _handleStartPoint.SetParameter(g_startpoint);
-                _handleEndPoint.SetParameter(g_endpoint);
-                _effect.StartRender(_gradientBrushTexture.Texture);
-
-                GraphicsDevice.Device.VertexFormat = primitiveContext.VertexFormat;
-                GraphicsDevice.Device.SetStreamSource(0, primitiveContext.VertexBuffer, 0, primitiveContext.StrideSize);
-                GraphicsDevice.Device.DrawPrimitives(primitiveContext.PrimitiveType, 0, primitiveContext.NumVertices);
-
-                _effect.EndRender();
-
-                GraphicsDevice.Device.EndScene();
-                SkinContext.RemoveRenderTransform();
-
-                //restore the backbuffer
-                GraphicsDevice.Device.SetRenderTarget(0, backBuffer);
-                _effect = ContentManager.GetEffect("normal");
-              }
-
-              ContentManager.Add(this);
-            }
-            GraphicsDevice.Device.BeginScene();
-          }
-          _effect.StartRender(_cacheTexture);
-          _lastTimeUsed = SkinContext.FrameRenderingStartTime;
-        }
-        else
-        {
-          Matrix m;
-          RelativeTransform.GetTransformRel(out m);
-          m = Matrix.Invert(m);
-
-          _handleRelativeTransform.SetParameter(m);
-          _handleOpacity.SetParameter((float) (Opacity * SkinContext.Opacity));
-          _handleStartPoint.SetParameter(g_startpoint);
-          _handleEndPoint.SetParameter(g_endpoint);
-          _effect.StartRender(_gradientBrushTexture.Texture);
-          _lastTimeUsed = SkinContext.FrameRenderingStartTime;
-        }
-      }
-      else
+      if (_singleColor)
       {
         Color4 v = ColorConverter.FromColor(GradientStops.OrderedGradientStopList[0].Color);
         _handleSolidColor.SetParameter(v);
         _effect.StartRender(null);
-        _lastTimeUsed = SkinContext.FrameRenderingStartTime;
+      }
+      else
+      {
+        Matrix m;
+        RelativeTransform.GetTransformRel(out m);
+        m = Matrix.Invert(m);
+
+        _handleRelativeTransform.SetParameter(m);
+        _handleOpacity.SetParameter((float) (Opacity * SkinContext.Opacity));
+        _handleStartPoint.SetParameter(g_startpoint);
+        _handleEndPoint.SetParameter(g_endpoint);
+        _effect.StartRender(_gradientBrushTexture.Texture);
       }
       return true;
     }
@@ -338,10 +231,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         _refresh = false;
         CheckSingleColor();
         _gradientBrushTexture = BrushCache.Instance.GetGradientBrush(GradientStops);
-        if (_singleColor)
-        {
-          //SetColor(vertexBuffer);
-        }
         _effect = ContentManager.GetEffect("linearopacitygradient");
         _handleRelativeTransform = _effect.GetParameterHandle("RelativeTransform");
         _handleOpacity = _effect.GetParameterHandle("g_opacity");
@@ -361,8 +250,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         g_endpoint[1] = ((EndPoint.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
       }
 
-      //GraphicsDevice.TransformWorld = SkinContext.FinalMatrix.Matrix;
-      if (!_singleColor)
+      if (_singleColor)
+        _effect.StartRender(null);
+      else
       {
         Matrix m;
         RelativeTransform.GetTransformRel(out m);
@@ -374,12 +264,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         _handleAlphaTexture.SetParameter(_gradientBrushTexture.Texture);
 
         _effect.StartRender(tex);
-        _lastTimeUsed = SkinContext.FrameRenderingStartTime;
-      }
-      else
-      {
-        _effect.StartRender(null);
-        _lastTimeUsed = SkinContext.FrameRenderingStartTime;
       }
     }
 
@@ -391,58 +275,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         SkinContext.RemoveRenderTransform();
     }
 
-    #region IAsset Members
-
-    public bool IsAllocated
-    {
-      get { return (_cacheTexture != null); }
-    }
-
-    public bool CanBeDeleted
-    {
-      get
-      {
-        if (!IsAllocated)
-          return false;
-        TimeSpan ts = SkinContext.FrameRenderingStartTime - _lastTimeUsed;
-        if (ts.TotalSeconds >= 1)
-          return true;
-
-        return false;
-      }
-    }
-
-    public bool Free(bool force)
-    {
-      if (_cacheTexture != null)
-      {
-        Trace.WriteLine("LinearGradientBrush: Free cached texture");
-        _cacheTexture.Dispose();
-        _cacheTexture = null;
-        return true;
-      }
-      return false;
-    }
-
-    #endregion
-
     public override Texture Texture
     {
       get { return _gradientBrushTexture.Texture; }
-    }
-
-    public override void Deallocate()
-    {
-      if (_cacheTexture != null)
-      {
-        _cacheTexture.Dispose();
-        _cacheTexture = null;
-        ContentManager.Remove(this);
-      }
-    }
-
-    public override void Allocate()
-    {
     }
 
     public override void SetupPrimitive(PrimitiveContext context)
