@@ -182,7 +182,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       }
     }
 
-    public bool Free(bool force)
+    public void Free(bool force)
     {
       if (_texture != null)
       {

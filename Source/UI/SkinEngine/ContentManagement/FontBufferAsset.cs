@@ -283,7 +283,7 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
     /// <summary>
     /// Frees this asset.
     /// </summary>
-    public bool Free(bool force)
+    public void Free(bool force)
     {
       if (_vertexBuffer != null)
       {
@@ -292,7 +292,6 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
         _vertexBuffer = null;
         ContentManager.VertexReferences--;
       }
-      return false;
     }
 
     public override string ToString()

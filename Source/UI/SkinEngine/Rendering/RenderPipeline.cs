@@ -212,12 +212,11 @@ namespace MediaPortal.UI.SkinEngine.Rendering
       get { return false; }
     }
 
-    public bool Free(bool force)
+    public void Free(bool force)
     {
-      if (!force) return false;
+      if (!force) return;
       foreach (RenderGroup context in _renderList)
         context.Dispose();
-      return false;
     }
 
     #endregion

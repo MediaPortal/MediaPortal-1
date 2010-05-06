@@ -114,7 +114,7 @@ namespace MediaPortal.UI.SkinEngine.Effects
       }
     }
 
-    public bool Free(bool force)
+    public void Free(bool force)
     {
       if (_handleTechnique != null)
         _handleTechnique.Dispose();
@@ -138,7 +138,6 @@ namespace MediaPortal.UI.SkinEngine.Effects
         _effect.Dispose();
         _effect = null;
       }
-      return false;
     }
 
     #endregion

@@ -984,7 +984,7 @@ namespace MediaPortal.UI.SkinEngine.Fonts
       get { return false; }
     }
 
-    public bool Free(bool force)
+    public void Free(bool force)
     {
       if (_texture != null)
       {
@@ -992,7 +992,6 @@ namespace MediaPortal.UI.SkinEngine.Fonts
         _texture = null;
       }
       _effect.Free(true);
-      return false;
     }
 
     #endregion

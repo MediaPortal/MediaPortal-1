@@ -104,7 +104,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       get { return _texture; }
     }
 
-    public bool Free(bool force)
+    public void Free(bool force)
     {
       if (_vertexBuffer != null)
       {
@@ -117,7 +117,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         _texture.Dispose();
         _texture = null;
       }
-      return false;
     }
 
     public override string ToString()
