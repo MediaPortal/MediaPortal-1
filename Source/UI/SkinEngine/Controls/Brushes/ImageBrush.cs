@@ -159,7 +159,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       }
     }
 
-    public override bool BeginRender(PrimitiveContext primitiveContext)
+    public override bool BeginRenderBrush(PrimitiveContext primitiveContext)
     {
       //GraphicsDevice.TransformWorld = SkinContext.FinalMatrix.Matrix;
       if (_tex == null)

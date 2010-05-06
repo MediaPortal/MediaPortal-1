@@ -278,7 +278,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Panels
 
       if (_backgroundContext != null)
       {
-        if (Background.BeginRender(_backgroundContext))
+        if (Background.BeginRenderBrush(_backgroundContext))
         {
           GraphicsDevice.Device.VertexFormat = _backgroundContext.VertexFormat;
           GraphicsDevice.Device.SetStreamSource(0, _backgroundContext.VertexBuffer, 0, _backgroundContext.StrideSize);

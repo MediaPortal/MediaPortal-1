@@ -91,7 +91,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       _textureVisual = new Texture(GraphicsDevice.Device, (int)_vertsBounds.Width, (int)_vertsBounds.Height, 1, Usage.RenderTarget, Format.X8R8G8B8, Pool.Default);
     }
 
-    public override bool BeginRender(PrimitiveContext primitiveContext)
+    public override bool BeginRenderBrush(PrimitiveContext primitiveContext)
     {
       if (Visual == null) return false;
       List<ExtendedMatrix> originalTransforms = SkinContext.CombinedRenderTransforms;

@@ -284,7 +284,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
       if (_fillContext != null)
       {
         GraphicsDevice.Device.VertexFormat = _fillContext.VertexFormat;
-        if (Fill.BeginRender(_fillContext))
+        if (Fill.BeginRenderBrush(_fillContext))
         {
           GraphicsDevice.Device.VertexFormat = _fillContext.VertexFormat;
           GraphicsDevice.Device.SetStreamSource(0, _fillContext.VertexBuffer, 0, _fillContext.StrideSize);
@@ -294,7 +294,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
       }
       if (_strokeContext != null)
       {
-        if (Stroke.BeginRender(_strokeContext))
+        if (Stroke.BeginRenderBrush(_strokeContext))
         {
           GraphicsDevice.Device.VertexFormat = _strokeContext.VertexFormat;
           GraphicsDevice.Device.SetStreamSource(0, _strokeContext.VertexBuffer, 0, _strokeContext.StrideSize);

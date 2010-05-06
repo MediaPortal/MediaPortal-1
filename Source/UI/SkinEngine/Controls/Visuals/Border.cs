@@ -422,7 +422,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       SkinContext.AddOpacity(Opacity);
 
       if (_backgroundContext != null)
-        if (Background.BeginRender(_backgroundContext))
+        if (Background.BeginRenderBrush(_backgroundContext))
         {
           GraphicsDevice.Device.VertexFormat = _backgroundContext.VertexFormat;
           GraphicsDevice.Device.SetStreamSource(0, _backgroundContext.VertexBuffer, 0, _backgroundContext.StrideSize);
@@ -431,7 +431,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         }
 
       if (_borderContext != null)
-        if (BorderBrush.BeginRender(_borderContext))
+        if (BorderBrush.BeginRenderBrush(_borderContext))
         {
           GraphicsDevice.Device.VertexFormat = _borderContext.VertexFormat;
           GraphicsDevice.Device.SetStreamSource(0, _borderContext.VertexBuffer, 0, _borderContext.StrideSize);

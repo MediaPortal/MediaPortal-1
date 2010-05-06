@@ -166,7 +166,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       PositionColored2Textured.Set(vertexBuffer, verts);
     }
 
-    public override bool BeginRender(PrimitiveContext primitiveContext)
+    public override bool BeginRenderBrush(PrimitiveContext primitiveContext)
     {
       IPlayerManager playerManager = ServiceScope.Get<IPlayerManager>(false);
       if (playerManager == null)
@@ -174,7 +174,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         _renderPlayer = null;
         return false;
       }
-      // The Stream property could change between the calls of BeginRender and EndRender,
+      // The Stream property could change between the calls of BeginRenderBrush and EndRender,
       // so we memorize the rendering player for the EndRender method
       _renderPlayer = playerManager[Stream] as ISlimDXVideoPlayer;
       if (_renderPlayer == null) return false;

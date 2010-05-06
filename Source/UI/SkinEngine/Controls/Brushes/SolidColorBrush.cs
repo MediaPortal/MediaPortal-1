@@ -108,7 +108,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       _effectHandleColor = _effect.GetParameterHandle("g_solidColor");
     }
 
-    public override bool BeginRender(PrimitiveContext primitiveContext)
+    public override bool BeginRenderBrush(PrimitiveContext primitiveContext)
     {
       Color4 v = ColorConverter.FromColor(Color);
       v.Alpha *= (float) SkinContext.Opacity;

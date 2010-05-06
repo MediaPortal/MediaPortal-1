@@ -258,12 +258,12 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       _vertsBounds = new RectangleF(minx, miny, maxx, maxy);
     }
 
-    public virtual bool BeginRender(PrimitiveContext primitiveContext)
+    public virtual bool BeginRenderBrush(PrimitiveContext primitiveContext)
     {
       return false;
     }
 
-    public virtual void BeginRender(Texture tex)
+    public virtual void BeginRenderOpacityBrush(Texture tex)
     { }
 
     public virtual void EndRender()

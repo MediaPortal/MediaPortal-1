@@ -204,7 +204,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       _refresh = true;
     }
 
-    public override bool BeginRender(PrimitiveContext primitiveContext)
+    public override bool BeginRenderBrush(PrimitiveContext primitiveContext)
     {
       if (Transform != null)
       {
@@ -273,7 +273,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       return true;
     }
 
-    public override void BeginRender(Texture tex)
+    public override void BeginRenderOpacityBrush(Texture tex)
     {
       if (Transform != null)
       {
