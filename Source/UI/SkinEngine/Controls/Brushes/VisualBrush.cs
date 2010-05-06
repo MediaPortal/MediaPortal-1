@@ -86,7 +86,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     public override void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, PositionColored2Textured[] verts)
     {
-      UpdateBounds(bounds, layoutTransform, verts);
       base.SetupBrush(bounds, layoutTransform, zOrder, verts);
       _textureVisual = new Texture(GraphicsDevice.Device, (int)_vertsBounds.Width, (int)_vertsBounds.Height, 1, Usage.RenderTarget, Format.X8R8G8B8, Pool.Default);
     }

@@ -185,6 +185,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     public virtual void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, PositionColored2Textured[] verts)
     {
+      UpdateBounds(bounds, layoutTransform, verts);
       float w = bounds.Width;
       float h = bounds.Height;
       float xoff = _vertsBounds.X;

@@ -95,7 +95,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     public override void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, PositionColored2Textured[] verts)
     {
-      UpdateBounds(bounds, layoutTransform, verts);
       base.SetupBrush(bounds, layoutTransform, zOrder, verts);
       _effect = ContentManager.GetEffect("normal");
       _verts = verts;
