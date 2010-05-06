@@ -189,7 +189,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         _texture.Dispose();
         _texture = null;
       }
-      return false;
     }
 
     #endregion
