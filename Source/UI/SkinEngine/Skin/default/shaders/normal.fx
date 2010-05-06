@@ -1,22 +1,20 @@
-half4x4 worldViewProj : WORLDVIEWPROJ; //our world view projection matrix
-texture g_texture;                      // Color texture 
-float    appTime;                   // App's time in seconds
+half4x4 worldViewProj : WORLDVIEWPROJ; // Our world view projection matrix
+texture g_texture; // Color texture 
  
-sampler textureSampler =  
-sampler_state
+sampler textureSampler = sampler_state
 {
-    Texture = <g_texture>;
-    MipFilter = LINEAR;
-    MinFilter = LINEAR;
-    MagFilter = LINEAR;
+  Texture = <g_texture>;
+  MipFilter = LINEAR;
+  MinFilter = LINEAR;
+  MagFilter = LINEAR;
 };
                           
 //application to vertex structure
 struct a2v
 {
-    half4 Position  : POSITION0;
-    half4 Color     : COLOR0;
-    half2 Texcoord  : TEXCOORD0;  // vertex texture coords 
+  half4 Position  : POSITION0;
+  half4 Color     : COLOR0;
+  half2 Texcoord  : TEXCOORD0;  // vertex texture coords 
 };
 
 // vertex shader to pixelshader structure
@@ -48,12 +46,11 @@ void renderPixelShader( in v2p IN, out p2f OUT)
   OUT.Color = tex2D(textureSampler, IN.Texcoord) * IN.Color;
 }
 
-
 technique simple
 {
-    pass p0
-    {
-        vertexshader = compile vs_2_0 renderVertexShader();
-        pixelshader  = compile ps_2_0 renderPixelShader();
-    }
+  pass p0
+  {
+    VertexShader = compile vs_2_0 renderVertexShader();
+    PixelShader  = compile ps_2_0 renderPixelShader();
+  }
 }
