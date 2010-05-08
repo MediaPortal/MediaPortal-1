@@ -1904,6 +1904,57 @@ namespace DShowNET.Helper
       return null;
     }
 
+    public static IPin FindFirstFreePin(IBaseFilter filter, PinDirection dir, string strPinName)
+    {
+      int hr = 0;
+
+      IEnumPins pinEnum;
+      hr = filter.EnumPins(out pinEnum);
+      if ((hr == 0) && (pinEnum != null))
+      {
+        pinEnum.Reset();
+        IPin[] pins = new IPin[1];
+        int f;
+        while (pinEnum.Next(1, pins, out f) == 0)
+        {
+          if (pins[0] != null)
+          {
+            PinDirection pinDir;
+            pins[0].QueryDirection(out pinDir);
+            if (pinDir == dir)
+            {
+              IPin other;
+              hr = pins[0].ConnectedTo(out other);
+              if (hr != 0 && other == null)
+              {
+                PinInfo info;
+                pins[0].QueryPinInfo(out info);
+                DsUtils.FreePinInfo(info);
+                if (!String.IsNullOrEmpty(strPinName))
+                {
+                  if (String.Compare(info.name, strPinName) == 0)
+                  {
+                    //Log.Debug("*** pin {0}", info.name);
+                    DirectShowUtil.ReleaseComObject(pinEnum);
+                    return pins[0];
+                  }
+                }
+                else
+                {
+                  //Log.Debug("*** pin {0}", info.name);
+                  DirectShowUtil.ReleaseComObject(pinEnum);
+                  return pins[0];
+                }
+              }
+            }
+            DirectShowUtil.ReleaseComObject(pins[0]);
+          }
+        }
+        DirectShowUtil.ReleaseComObject(pinEnum);
+      }
+      return null;
+    }
+
     public static void RemoveDownStreamFilters(IGraphBuilder graphBuilder, IBaseFilter fromFilter, bool remove)
     {
       IEnumPins enumPins;

@@ -303,8 +303,8 @@ namespace MediaPortal.Player.Subtitles
         {
           while (true)
           {
-            IPin freeSubtitle = FindFirstFreePin(hms, PinDirection.Output, "");
-            IPin freeVobSub = FindFirstFreePin(vob, PinDirection.Input, "Input");
+            IPin freeSubtitle = DirectShowUtil.FindFirstFreePin(hms, PinDirection.Output, "");
+            IPin freeVobSub = DirectShowUtil.FindFirstFreePin(vob, PinDirection.Input, "Input");
             if (freeSubtitle != null && freeVobSub != null)
             {
               Log.Debug("VideoPlayerVMR9: Connecting Matroska's subtitle output to VobSub's input.");
@@ -432,57 +432,6 @@ namespace MediaPortal.Player.Subtitles
         Log.Error("VideoPlayerVMR9: Could not connect video out to video renderer: {0}", hr);
       else
         Log.Debug("VideoPlayerVMR9: DirectVobSub graph rebuild finished");
-    }
-
-    private static IPin FindFirstFreePin(IBaseFilter filter, PinDirection dir, string strPinName)
-    {
-      int hr = 0;
-
-      IEnumPins pinEnum;
-      hr = filter.EnumPins(out pinEnum);
-      if ((hr == 0) && (pinEnum != null))
-      {
-        pinEnum.Reset();
-        IPin[] pins = new IPin[1];
-        int f;
-        while(pinEnum.Next(1, pins, out f)==0)
-        {
-          if (pins[0] != null)
-          {
-            PinDirection pinDir;
-            pins[0].QueryDirection(out pinDir);
-            if (pinDir == dir)
-            {
-              IPin other;
-              hr = pins[0].ConnectedTo(out other);
-              if (hr != 0 && other == null)
-              {
-                PinInfo info;
-                pins[0].QueryPinInfo(out info);
-                DsUtils.FreePinInfo(info);                
-                if (!String.IsNullOrEmpty(strPinName))
-                {
-                  if (String.Compare(info.name, strPinName) == 0)
-                  {
-                    //Log.Debug("*** pin {0}", info.name);
-                    DirectShowUtil.ReleaseComObject(pinEnum);
-                    return pins[0];
-                  }
-                }
-                else
-                {
-                  //Log.Debug("*** pin {0}", info.name);
-                  DirectShowUtil.ReleaseComObject(pinEnum);
-                  return pins[0];
-                }
-              }
-            }
-            DirectShowUtil.ReleaseComObject(pins[0]);
-          }
-        }
-        DirectShowUtil.ReleaseComObject(pinEnum);
-      }
-      return null;
     }
   }
 }
