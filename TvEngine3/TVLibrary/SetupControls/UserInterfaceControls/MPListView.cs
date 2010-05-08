@@ -356,89 +356,93 @@ namespace MediaPortal.UserInterface.Controls
       }
 
       BeginUpdate();
-
-      MPListView targetListView = null;
-
-      if (!isGroupMapping)
+      try
       {
-        //must be reorder then
-        targetListView = this;
-      }
-      else
-      {
-        //is group mapping so try to get the selected items from source listview
-        targetListView = sourceListView;
-      }
+        MPListView targetListView = null;
 
-      ArrayList insertItems = new ArrayList(targetListView.SelectedItems.Count);
-
-      foreach (ListViewItem item in targetListView.SelectedItems)
-      {
-        insertItems.Add(item.Clone());
-      }
-
-      for (int i = insertItems.Count - 1; i >= 0; i--)
-      {
-        ListViewItem insertItem = (ListViewItem)insertItems[i];
-
-        //delete old items first
-        for (int j = Items.Count - 1; j >= 0; j--)
+        if (!isGroupMapping)
         {
-          int idChannelThis = 0;
-          int idChannelTarget = 0;
+          //must be reorder then
+          targetListView = this;
+        }
+        else
+        {
+          //is group mapping so try to get the selected items from source listview
+          targetListView = sourceListView;
+        }
 
-          try
-          {
-            //we can have Channel and ChannelMap here, thats why we use late-binding here to be able to compare them without need for referencing the classes
-            idChannelThis =
-              (int)
-              Items[j].Tag.GetType().InvokeMember("IdChannel", System.Reflection.BindingFlags.GetProperty, null,
-                                                  Items[j].Tag, null);
-            idChannelTarget =
-              (int)
-              insertItem.Tag.GetType().InvokeMember("IdChannel", System.Reflection.BindingFlags.GetProperty, null,
-                                                    insertItem.Tag, null);
-          }
-          catch
-          {
-            continue;
-          }
+        ArrayList insertItems = new ArrayList(targetListView.SelectedItems.Count);
 
-          if (idChannelThis == idChannelTarget)
-          {
-            Items.RemoveAt(j);
+        foreach (ListViewItem item in targetListView.SelectedItems)
+        {
+          insertItems.Add(item.Clone());
+        }
 
-            if (j < dropIndex)
+        for (int i = insertItems.Count - 1; i >= 0; i--)
+        {
+          ListViewItem insertItem = (ListViewItem)insertItems[i];
+
+          //delete old items first
+          for (int j = Items.Count - 1; j >= 0; j--)
+          {
+            int idChannelThis = 0;
+            int idChannelTarget = 0;
+
+            try
             {
-              dropIndex--;
+              //we can have Channel and ChannelMap here, thats why we use late-binding here to be able to compare them without need for referencing the classes
+              idChannelThis =
+                (int)
+                Items[j].Tag.GetType().InvokeMember("IdChannel", System.Reflection.BindingFlags.GetProperty, null,
+                                                    Items[j].Tag, null);
+              idChannelTarget =
+                (int)
+                insertItem.Tag.GetType().InvokeMember("IdChannel", System.Reflection.BindingFlags.GetProperty, null,
+                                                      insertItem.Tag, null);
+            }
+            catch
+            {
+              continue;
+            }
+
+            if (idChannelThis == idChannelTarget)
+            {
+              Items.RemoveAt(j);
+
+              if (j < dropIndex)
+              {
+                dropIndex--;
+              }
             }
           }
+
+          Items.Insert(dropIndex, insertItem);
         }
 
-        Items.Insert(dropIndex, insertItem);
-      }
-
-      if (!isGroupMapping)
-      {
-        //removing the source items is only needed when doing reordering...
-        foreach (ListViewItem removeItem in SelectedItems)
+        if (!isGroupMapping)
         {
-          Items.Remove(removeItem);
+          //removing the source items is only needed when doing reordering...
+          foreach (ListViewItem removeItem in SelectedItems)
+          {
+            Items.Remove(removeItem);
+          }
+        }
+
+        base.OnDragDrop(e);
+
+        if (!isGroupMapping)
+        {
+          base.OnItemDrag(new ItemDragEventArgs(MouseButtons.Left, insertItems[0]));
+        }
+        else
+        {
+          base.OnItemDrag(new ItemDragEventArgs(MouseButtons.Left, sourceListView));
         }
       }
-
-      base.OnDragDrop(e);
-
-      if (!isGroupMapping)
+      finally
       {
-        base.OnItemDrag(new ItemDragEventArgs(MouseButtons.Left, insertItems[0]));
+        EndUpdate();
       }
-      else
-      {
-        base.OnItemDrag(new ItemDragEventArgs(MouseButtons.Left, sourceListView));
-      }
-
-      EndUpdate();
     }
 
     protected override void OnMouseUp(MouseEventArgs e)

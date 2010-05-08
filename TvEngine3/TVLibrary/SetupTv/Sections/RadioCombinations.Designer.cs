@@ -58,12 +58,12 @@ namespace SetupTv.Sections
       this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addToFavoritesToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(159, 26);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(164, 26);
       // 
       // addToFavoritesToolStripMenuItem
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
-      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
       this.addToFavoritesToolStripMenuItem.Text = "Add to favorites";
       // 
       // openFileDialog1
@@ -133,14 +133,14 @@ namespace SetupTv.Sections
       // 
       // mpListViewMapped
       // 
-      this.mpListViewMapped.AllowDrop = true;
-      this.mpListViewMapped.AllowRowReorder = true;
+      this.mpListViewMapped.AllowRowReorder = false;
       this.mpListViewMapped.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListViewMapped.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader8,
             this.columnHeader5});
+      this.mpListViewMapped.IsChannelListView = false;
       this.mpListViewMapped.LargeImageList = this.imageList1;
       this.mpListViewMapped.Location = new System.Drawing.Point(243, 67);
       this.mpListViewMapped.Name = "mpListViewMapped";
@@ -188,6 +188,7 @@ namespace SetupTv.Sections
       this.mpListViewChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader6});
       this.mpListViewChannels.HideSelection = false;
+      this.mpListViewChannels.IsChannelListView = false;
       this.mpListViewChannels.LargeImageList = this.imageList1;
       this.mpListViewChannels.Location = new System.Drawing.Point(12, 67);
       this.mpListViewChannels.Name = "mpListViewChannels";
