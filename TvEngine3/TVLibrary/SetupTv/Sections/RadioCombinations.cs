@@ -216,10 +216,23 @@ namespace SetupTv.Sections
         map.IdChannel = selectedChannel.IdChannel;
         map.Persist();
       }
-      foreach (GroupMap groupMap in selectedChannel2.ReferringGroupMap())
+      foreach (RadioGroupMap groupMap in selectedChannel2.ReferringRadioGroupMap())
       {
-        groupMap.IdChannel = selectedChannel.IdChannel;
-        groupMap.Persist();
+        bool alreadyExistsInGroup = false;
+        foreach (RadioGroupMap groupMapMaster in selectedChannel.ReferringRadioGroupMap())
+        {
+          if (groupMapMaster.IdGroup == groupMap.IdGroup)
+          {
+            groupMap.Remove();
+            alreadyExistsInGroup = true;
+            continue;
+          }
+        }
+        if (!alreadyExistsInGroup)
+        {
+          groupMap.IdChannel = selectedChannel.IdChannel;
+          groupMap.Persist();
+        }
       }
       foreach (Program program in selectedChannel2.ReferringProgram())
       {

@@ -238,8 +238,21 @@ namespace SetupTv.Sections
       dlg.WaitForDisplay();
       foreach (GroupMap groupMap in selectedChannel2.ReferringGroupMap())
       {
-        groupMap.IdChannel = selectedChannel.IdChannel;
-        groupMap.Persist();
+        bool alreadyExistsInGroup=false;
+        foreach (GroupMap groupMapMaster in selectedChannel.ReferringGroupMap())
+        {
+          if (groupMapMaster.IdGroup == groupMap.IdGroup)
+          {
+            groupMap.Remove();
+            alreadyExistsInGroup=true;
+            continue;
+          }
+        }
+        if (!alreadyExistsInGroup)
+        {
+          groupMap.IdChannel = selectedChannel.IdChannel;
+          groupMap.Persist();
+        }
       }
       dlg.Close();
       dlg = new NotifyForm("Combining Channels...", "Updating Program Table\n\nPlease be patient...");
