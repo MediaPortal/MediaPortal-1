@@ -41,8 +41,9 @@ namespace MediaPortal.Ripper
     #region base variables
 
     private static DeviceVolumeMonitor _deviceMonitor;
-    private static string m_dvd = "No";
-    private static string m_audiocd = "No";
+    private static string m_dvd;
+    private static string m_audiocd;
+    private static bool m_nowPlayingScreen;
     private static ArrayList allfiles;
 
     // A hidden window to allow us to listen to WndProc messages
@@ -77,6 +78,7 @@ namespace MediaPortal.Ripper
     {
       m_dvd = "No";
       m_audiocd = "No";
+      m_nowPlayingScreen = true;
       allfiles = new ArrayList();
 
       _nativeWindow = new NativeWindow();
@@ -116,6 +118,7 @@ namespace MediaPortal.Ripper
       {
         m_dvd = xmlreader.GetValueAsString("dvdplayer", "autoplay", "Ask");
         m_audiocd = xmlreader.GetValueAsString("audioplayer", "autoplay", "No");
+        m_nowPlayingScreen = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", "nowPlayingAlways").StartsWith("nowPlaying");
       }
     }
 
@@ -266,12 +269,7 @@ namespace MediaPortal.Ripper
 
     public static void ExamineCD(string strDrive, bool forcePlay)
     {
-      // don't interrupt if we're already playing something
-      if (g_Player.Playing && !forcePlay)
-      {
-        return;
-      }
-      if (strDrive == null || strDrive.Length == 0)
+      if (string.IsNullOrEmpty(strDrive))
       {
         return;
       }
@@ -285,18 +283,17 @@ namespace MediaPortal.Ripper
         case MediaType.AUDIO_CD:
           Log.Info("Audio CD inserted into drive {0}", strDrive);
           //m_audiocd tells us if we want to autoplay or not
-          bool PlayAudioCd = false;
           if (forcePlay || m_audiocd == "Yes")
           {
-            // Automaticaly play the CD
-            PlayAudioCd = true;
+            // Automatically play the CD
+            shouldPlay = true;
             Log.Info("CD Autoplay = auto");
           }
           else if (m_audiocd == "Ask")
           {
             if (ShouldWeAutoPlay(MediaType.AUDIO_CD))
             {
-              PlayAudioCd = true;
+              shouldPlay = true;
               Log.Info("CD Autoplay, answered yes");
             }
             else
@@ -304,7 +301,7 @@ namespace MediaPortal.Ripper
               Log.Info("CD Autoplay, answered no");
             }
           }
-          if (PlayAudioCd)
+          if (shouldPlay)
           {
             // Send a message with the drive to the message handler. 
             // The message handler will play the CD
@@ -314,6 +311,8 @@ namespace MediaPortal.Ripper
             msg.Label = strDrive;
             msg.SendToTargetWindow = true;
             GUIWindowManager.SendThreadMessage(msg);
+            if (m_nowPlayingScreen)
+              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
           }
           break;
 
@@ -379,25 +378,24 @@ namespace MediaPortal.Ripper
 
         case MediaType.VCD:
           Log.Info("VCD volume inserted {0}", strDrive);
-          bool bPlay = false;
           if (forcePlay || m_dvd == "Yes")
           {
             Log.Info("Autoplay: Yes, start VCD in {0}", strDrive);
-            bPlay = true;
+            shouldPlay = true;
           }
           else if (m_dvd == "Ask")
           {
             if (ShouldWeAutoPlay(MediaType.DVD))
             {
               Log.Info("Autoplay: Answered yes, start VCD in {0}", strDrive);
-              bPlay = true;
+              shouldPlay = true;
             }
             else
             {
               Log.Info("Autoplay: Answered no, do not start VCD in {0}", strDrive);
             }
           }
-          if (bPlay)
+          if (shouldPlay)
           {
             long lMaxLength = 0;
             string sPlayFile = "";
@@ -421,31 +419,23 @@ namespace MediaPortal.Ripper
           Log.Info("Video volume inserted {0}", strDrive);
           if (forcePlay || ShouldWeAutoPlay(MediaType.VIDEOS))
           {
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEOS);
-            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY,
-                                 (int)GUIWindow.Window.WINDOW_VIDEOS,
-                                 GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
-            msg.Label = strDrive;
-            msg.SendToTargetWindow = true;
-            GUIWindowManager.SendThreadMessage(msg);
+            PlayFiles(MediaType.VIDEOS);
           }
           break;
 
         case MediaType.AUDIO:
           Log.Info("Media with audio inserted into drive {0}", strDrive);
-
-          PlayAudioCd = false;
           if (forcePlay || m_audiocd == "Yes")
           {
-            // Automaticaly play the CD
-            Log.Debug("Adding all Audio Files to Playlist");
-            PlayAudioFiles();
+            // Automatically play the CD
+            shouldPlay = true;
+            Log.Debug("Adding all Audio Files to Playlist");                        
           }
           else if (m_audiocd == "Ask")
           {
             if (ShouldWeAutoPlay(MediaType.AUDIO))
             {
-              PlayAudioCd = true;
+              shouldPlay = true;
               Log.Info("Audio Autoplay, answered yes");
             }
             else
@@ -453,15 +443,9 @@ namespace MediaPortal.Ripper
               Log.Info("Audio Autoplay, answered no");
             }
           }
-          if (PlayAudioCd)
+          if (shouldPlay)
           {
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_FILES);
-            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY,
-                                 (int)GUIWindow.Window.WINDOW_MUSIC_FILES,
-                                 GUIWindowManager.ActiveWindow, 0, 0, 0, 0);
-            msg.Label = strDrive;
-            msg.SendToTargetWindow = true;
-            GUIWindowManager.SendThreadMessage(msg);
+            PlayFiles(MediaType.AUDIO);
           }
           break;
 
@@ -475,12 +459,7 @@ namespace MediaPortal.Ripper
 
     public static void ExamineVolume(string strDrive)
     {
-      // don't interrupt if we're already playing something
-      if (g_Player.Playing)
-      {
-        return;
-      }
-      if (strDrive == null || strDrive.Length == 0 || Util.Utils.IsDVD(strDrive))
+      if (string.IsNullOrEmpty(strDrive) || Util.Utils.IsDVD(strDrive))
       {
         return;
       }
@@ -535,85 +514,43 @@ namespace MediaPortal.Ripper
           break;
       }
     }
-
-    private static bool isARedBookCD(string driveLetter)
+    
+    private static MediaType GetMediaTypeFromFiles(string strFolder)
     {
-      try
+      if (string.IsNullOrEmpty(strFolder))
       {
-        if (driveLetter.Length < 1)
-        {
-          return false;
-        }
-        int cddaTracks = 0;
-        CDDrive m_Drive = new CDDrive();
-
-        if (m_Drive.IsOpened)
-        {
-          m_Drive.Close();
-        }
-        if (m_Drive.Open(driveLetter[0]) && m_Drive.IsCDReady() && m_Drive.Refresh())
-        {
-          cddaTracks = m_Drive.GetNumAudioTracks();
-          m_Drive.Close();
-          // another method to find out audio cd as first one can fail with some discs
-          if (cddaTracks <= 0)
-          {
-            string[] files = Directory.GetFiles(driveLetter, "*.cda", SearchOption.TopDirectoryOnly);
-            if (files != null && files.Length > 0)
-            {
-              cddaTracks = files.Length;
-            }
-          }
-        }
-        if (cddaTracks > 0)
-        {
-          return true;
-        }
-        else
-        {
-          return false;
-        }
-      }
-      catch (Exception)
-      {
-        return false;
-      }
-    }
-
-    private static void GetAllFiles(string strFolder, ref ArrayList allfiles)
-    {
-      if (strFolder == null)
-      {
-        return;
-      }
-      if (strFolder.Length == 0)
-      {
-        return;
-      }
-      if (allfiles == null)
-      {
-        return;
+        return MediaType.UNKNOWN;
       }
       try
       {
-        string[] files = Directory.GetFiles(strFolder);
+        allfiles.Clear();
+        MediaType mediaTypeFound = MediaType.UNKNOWN;                
+        string[] files = Directory.GetFiles(strFolder, "*.*", SearchOption.AllDirectories);
         if (files != null && files.Length > 0)
         {
-          for (int i = 0; i < files.Length; ++i)
+          for (int i = files.Length -1; i >= 0; i--)
           {
+            if (Util.Utils.IsVideo(files[i]))
+            {
+              mediaTypeFound = MediaType.VIDEOS;
+            }
+            else if (mediaTypeFound != MediaType.VIDEOS && Util.Utils.IsAudio(files[i]))
+            {
+              mediaTypeFound = MediaType.AUDIO;
+              if (Path.GetExtension(files[i]).ToLower() == ".cda")
+                mediaTypeFound = MediaType.AUDIO_CD;
+            }
+            else if (mediaTypeFound == MediaType.UNKNOWN && Util.Utils.IsPicture(files[i]))
+            {
+              mediaTypeFound = MediaType.PHOTOS;
+            }
             allfiles.Add(files[i]);
           }
         }
-        string[] folders = Directory.GetDirectories(strFolder);
-        if (folders != null && folders.Length > 0)
-        {
-          for (int i = 0; i < folders.Length; ++i)
-          {
-            GetAllFiles(folders[i], ref allfiles);
-          }
-        }
+        return mediaTypeFound;
       }
       catch (Exception) {}
+      return MediaType.UNKNOWN;
     }
 
     /// <summary>
@@ -623,11 +560,7 @@ namespace MediaPortal.Ripper
     /// <returns>The media type of the drive.</returns>
     private static MediaType DetectMediaType(string strDrive)
     {
-      if (strDrive == null)
-      {
-        return MediaType.UNKNOWN;
-      }
-      if (strDrive == string.Empty)
+      if (string.IsNullOrEmpty(strDrive))
       {
         return MediaType.UNKNOWN;
       }
@@ -652,73 +585,63 @@ namespace MediaPortal.Ripper
         {
           return MediaType.VCD;
         }
-
-        if (isARedBookCD(strDrive))
-        {
-          return MediaType.AUDIO_CD;
-        }
-
-        allfiles.Clear();
-        GetAllFiles(strDrive + "\\", ref allfiles);
-        foreach (string FileName in allfiles)
-        {
-          string ext = Path.GetExtension(FileName).ToLower();
-          if (Util.Utils.IsVideo(FileName))
-          {
-            return MediaType.VIDEOS;
-          }
-        }
-
-        foreach (string FileName in allfiles)
-        {
-          string ext = Path.GetExtension(FileName).ToLower();
-          if (Util.Utils.IsAudio(FileName))
-          {
-            return MediaType.AUDIO;
-          }
-        }
-
-        foreach (string FileName in allfiles)
-        {
-          if (Util.Utils.IsPicture(FileName))
-          {
-            return MediaType.PHOTOS;
-          }
-        }
+        
+        return GetMediaTypeFromFiles(strDrive + "\\");        
       }
-      catch (Exception) {}
+      catch (Exception) { }
       return MediaType.UNKNOWN;
     }
 
-    private static void PlayAudioFiles()
+    private static void PlayFiles(MediaType mediaType)
     {
+      bool startPlaylist = false;
       PlayListPlayer playlistPlayer = PlayListPlayer.SingletonPlayer;
 
-      playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
+      if (mediaType == MediaType.AUDIO)
+        playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
+      else
+        playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Clear();
+
       foreach (string file in allfiles)
       {
-        if (!Util.Utils.IsAudio(file))
-        {
+        if (mediaType == MediaType.AUDIO && !Util.Utils.IsAudio(file))
           continue;
-        }
+        else if (mediaType == MediaType.VIDEOS && !Util.Utils.IsVideo(file))
+          continue;
 
         PlayListItem item = new PlayListItem();
         item.FileName = file;
-        item.Type = PlayListItem.PlayListItemType.Audio;
-        playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(item);
+        if (mediaType == MediaType.AUDIO)
+        {
+          item.Type = PlayListItem.PlayListItemType.Audio;
+          playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(item);
+        }
+        else
+        {
+          item.Type = PlayListItem.PlayListItemType.Video;
+          item.Description = file;
+          playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(item); 
+        }
+        startPlaylist = true;        
       }
-
-      // if we got a playlist
-      if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0)
-      {
-        // and start playing it
+      if (startPlaylist)
+      {        
         Log.Debug("Start playing Playlist");
-        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
         playlistPlayer.Reset();
-        playlistPlayer.Play(0);
 
-        // and activate the playlist window
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
+        if (mediaType == MediaType.AUDIO)
+        {
+          playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
+          if (m_nowPlayingScreen)
+            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);          
+        }
+        else
+        {
+          playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST);
+        }        
+        playlistPlayer.Play(0);
       }
     }
 
