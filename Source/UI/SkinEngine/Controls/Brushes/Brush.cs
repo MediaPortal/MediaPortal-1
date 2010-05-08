@@ -186,19 +186,19 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     public virtual void SetupBrush(RectangleF bounds, float zOrder, PositionColored2Textured[] verts)
     {
       UpdateBounds(bounds, verts);
-      float w = bounds.Width;
-      float h = bounds.Height;
+      float w = _vertsBounds.Width;
+      float h = _vertsBounds.Height;
       float xoff = _vertsBounds.X;
       float yoff = _vertsBounds.Y;
-      for (int i = 0; i < verts.Length; ++i)
+      for (int i = 0; i < verts.Length; i++)
       {
         PositionColored2Textured vert = verts[i];
-        float x1 = vert.X;
-        float u = x1 - (bounds.X + xoff);
+        float x = vert.X;
+        float u = x - xoff;
         u /= w;
 
-        float y1 = vert.Y;
-        float v = y1 - (bounds.Y + yoff);
+        float y = vert.Y;
+        float v = y - yoff;
         v /= h;
 
         if (u < 0) u = 0;
@@ -224,7 +224,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       float miny = float.MaxValue;
       float maxx = 0;
       float maxy = 0;
-      for (int i = 0; i < verts.Length; ++i)
+      for (int i = 0; i < verts.Length; i++)
       {
         PositionColored2Textured vert = verts[i];
         if (vert.X < minx) minx = vert.X;
@@ -233,7 +233,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         if (vert.X > maxx) maxx = vert.X;
         if (vert.Y > maxy) maxy = vert.Y;
       }
-      _vertsBounds = new RectangleF(minx, miny, maxx, maxy);
+      _vertsBounds = new RectangleF(minx, miny, maxx - minx, maxy - miny);
     }
 
     public virtual bool BeginRenderBrush(PrimitiveContext primitiveContext, RenderContext renderContext)
