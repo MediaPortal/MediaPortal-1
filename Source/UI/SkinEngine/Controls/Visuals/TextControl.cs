@@ -299,8 +299,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       float w = (float) ActualWidth;
       float h = (float) ActualHeight;
 
-      GraphicsDevice.TransformWorld = localRenderContext.Transform;
-
       Rectangle rect = new Rectangle((int) x, (int) y, (int) w, (int) h);
       Font.Align align = Font.Align.Left;
       if (TextAlign == HorizontalAlignmentEnum.Right)

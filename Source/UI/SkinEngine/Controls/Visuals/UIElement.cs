@@ -554,7 +554,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
     /// <summary>
     /// Returns the desired size this element calculated based on the available size.
-    /// This value denotes the desired size of this element without <see cref="Margin"/>.
+    /// This value denotes the desired size of this element including its <see cref="Margin"/> in the parent's coordinate
+    /// system, i.e. with the <see cref="RenderTransform"/> and <see cref="LayoutTransform"/> applied.
     /// </summary>
     public SizeF DesiredSize
     {
@@ -766,13 +767,17 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       }
       _availableSize = new SizeF(totalSize);
       RemoveMargin(ref totalSize, Margin);
-      MeasureOverride(ref totalSize);
-      AddMargin(ref totalSize, Margin);
-      if (LayoutTransform != null)
+      Matrix? layoutTransform = LayoutTransform == null ? new Matrix?() : LayoutTransform.GetTransform();
+      if (layoutTransform.HasValue)
       {
-        Matrix m = LayoutTransform.GetTransform().RemoveTranslation();
-        m.TransformSize(ref totalSize);
+        float sizeScale;
+        layoutTransform.Value.GetTransformedSizeScale(out sizeScale);
+        totalSize = new SizeF(totalSize.Width / sizeScale, totalSize.Height / sizeScale);
       }
+      MeasureOverride(ref totalSize);
+      if (layoutTransform.HasValue)
+        layoutTransform.Value.TransformSize(ref totalSize);
+      AddMargin(ref totalSize, Margin);
       _desiredSize = totalSize;
 #if DEBUG_LAYOUT
       System.Diagnostics.Trace.WriteLine(string.Format("Measure {0} Name='{1}', returns calculated desired size={2}", GetType().Name, Name, totalSize));
@@ -805,13 +810,18 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
       if (LayoutTransform != null)
       {
-        Matrix inverseTransform = LayoutTransform.GetTransform().RemoveTranslation();
-        inverseTransform.Invert();
-        SizeF invertedSize = rect.Size;
-        inverseTransform.TransformSize(ref invertedSize);
-        PointF invertedLocation = rect.Location;
-        inverseTransform.Transform(ref invertedLocation);
-        rect = new RectangleF(invertedLocation, invertedSize);
+        Matrix layoutTransform = LayoutTransform.GetTransform().RemoveTranslation();
+        if (!layoutTransform.IsIdentity)
+        {
+          float sizeScale;
+          layoutTransform.GetTransformedSizeScale(out sizeScale);
+
+          rect = new RectangleF(
+              rect.Location.X + rect.Width*(1 - 1/sizeScale)/2,
+              rect.Location.Y + rect.Height*(1 - 1/sizeScale)/2,
+              rect.Width/sizeScale,
+              rect.Height/sizeScale);
+        }
       }
       _innerRect = rect;
       ArrangeOverride();

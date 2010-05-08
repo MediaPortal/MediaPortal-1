@@ -153,7 +153,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     public override bool BeginRenderBrush(PrimitiveContext primitiveContext, RenderContext renderContext)
     {
-      Matrix finalTransform = renderContext.Transform;
+      Matrix finalTransform = renderContext.Transform.Clone();
       if (Transform != null)
         finalTransform *= Transform.GetTransform();
       if (_gradientBrushTexture == null)
@@ -212,7 +212,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     {
       if (tex == null)
         return;
-      Matrix finalTransform = renderContext.Transform;
+      Matrix finalTransform = renderContext.Transform.Clone();
       if (Transform != null)
         finalTransform *= Transform.GetTransform();
       if (_refresh)

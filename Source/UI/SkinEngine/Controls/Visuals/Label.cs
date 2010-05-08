@@ -321,8 +321,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       float w = _innerRect.Width;
       float h = _innerRect.Height;
 
-      GraphicsDevice.TransformWorld = localRenderContext.Transform;
-
       RectangleF rect = new RectangleF(x, y, w, h);
       Font.Align align = Font.Align.Left;
       if (TextAlign == HorizontalAlignmentEnum.Right)

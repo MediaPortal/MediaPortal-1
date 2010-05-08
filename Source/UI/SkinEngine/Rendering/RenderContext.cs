@@ -62,26 +62,26 @@ namespace MediaPortal.UI.SkinEngine.Rendering
         Matrix? localRenderTransform, Vector2? renderTransformOrigin,
         double localOpacity)
     {
-      Matrix finalTransform = _transform;
+      Matrix finalTransform = _transform.Clone();
       if (localLayoutTransform.HasValue && localLayoutTransform != Matrix.Identity)
       {
         // Layout transforms don't support translations, so center the transformation matrix at the start point
         // of the control and apply the layout transform without translation
-        Vector2 origin = new Vector2(bounds.X, bounds.Y);
-        Matrix matrix = Matrix.Translation(new Vector3(-origin.X, -origin.Y, 0));
-        matrix *= localLayoutTransform.Value.RemoveTranslation();
-        matrix *= Matrix.Translation(new Vector3(origin.X, origin.Y, 0));
-        finalTransform *= matrix;
+        Vector2 origin = new Vector2(bounds.X + 0.5f*bounds.Width, bounds.Y + 0.5f*bounds.Width);
+        Matrix transform = Matrix.Translation(new Vector3(-origin.X, -origin.Y, 0));
+        transform *= localLayoutTransform.Value.RemoveTranslation();
+        transform *= Matrix.Translation(new Vector3(origin.X, origin.Y, 0));
+        finalTransform *= transform;
       }
       if (localRenderTransform.HasValue && localRenderTransform != Matrix.Identity)
       {
         Vector2 origin = renderTransformOrigin.HasValue ? new Vector2(
             bounds.X + bounds.Width * renderTransformOrigin.Value.X,
             bounds.Y + bounds.Height * renderTransformOrigin.Value.Y) : new Vector2(0, 0);
-        Matrix matrix = Matrix.Translation(new Vector3(-origin.X, -origin.Y, 0));
-        matrix *= localRenderTransform.Value;
-        matrix *= Matrix.Translation(new Vector3(origin.X, origin.Y, 0));
-        finalTransform *= matrix;
+        Matrix transform = Matrix.Translation(new Vector3(-origin.X, -origin.Y, 0));
+        transform *= localRenderTransform.Value;
+        transform *= Matrix.Translation(new Vector3(origin.X, origin.Y, 0));
+        finalTransform *= transform;
       }
       return new RenderContext(finalTransform, _opacity * localOpacity, _zOrder - 0.001f);
     }

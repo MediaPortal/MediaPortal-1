@@ -33,7 +33,7 @@ namespace MediaPortal.UI.SkinEngine
   /// </summary>
   public static class MatrixOperations
   {
-    public static Matrix Clone(Matrix matrix)
+    public static Matrix Clone(this Matrix matrix)
     {
       return new Matrix
         {
@@ -50,9 +50,9 @@ namespace MediaPortal.UI.SkinEngine
     }
 
     /// <summary>
-    /// Returns a matrix with the translation part removed from the given <paramref name="matrix"/>.
+    /// Returns a copy of this matrix with a removed translation part.
     /// </summary>
-    /// <param name="matrix">The matrix to remove the translation part.</param>
+    /// <param name="matrix">The matrix to remove the translation part. The original matrix will not be changed.</param>
     /// <returns>Matrix with removed translation part.</returns>
     public static Matrix RemoveTranslation(this Matrix matrix)
     {
@@ -70,33 +70,33 @@ namespace MediaPortal.UI.SkinEngine
     }
 
     /// <summary>
-    /// Transforms the given point <paramref name="p"/> by the given matrix.
+    /// Transforms the given point <paramref name="p"/> by this matrix.
     /// </summary>
     /// <param name="matrix">Transformation matrix.</param>
     /// <param name="p">Point to transform.</param>
     public static void Transform(this Matrix matrix, ref PointF p)
     {
-      float w = p.X * matrix.M11 + p.Y * matrix.M21;
-      float h = p.X * matrix.M12 + p.Y * matrix.M22;
-      p.X = w;
-      p.Y = h;
+      Vector2 v = new Vector2(p.X, p.Y);
+      matrix.Transform(ref v);
+      p.X = v.X;
+      p.Y = v.Y;
     }
 
     /// <summary>
-    /// Transforms the given point <paramref name="p"/> by the given matrix.
+    /// Transforms the given point <paramref name="p"/> by this matrix.
     /// </summary>
     /// <param name="matrix">Transformation matrix.</param>
     /// <param name="p">Point to transform. Will contain the transformed point after this method returns.</param>
     public static void Transform(this Matrix matrix, ref Point p)
     {
-      float w = p.X * matrix.M11 + p.Y * matrix.M21;
-      float h = p.X * matrix.M12 + p.Y * matrix.M22;
-      p.X = (int) w;
-      p.Y = (int) h;
+      Vector2 v = new Vector2(p.X, p.Y);
+      matrix.Transform(ref v);
+      p.X = (int) v.X;
+      p.Y = (int) v.Y;
     }
 
     /// <summary>
-    /// Transforms the point given by the coordinates <paramref name="x"/> and <paramref name="y"/> by the given matrix.
+    /// Transforms the point given by the coordinates <paramref name="x"/> and <paramref name="y"/> by this matrix.
     /// </summary>
     /// <param name="matrix">Transformation matrix.</param>
     /// <param name="x">X coordinate of the point to transform. Will contain the transformed coordinate after
@@ -105,21 +105,21 @@ namespace MediaPortal.UI.SkinEngine
     /// this method returns.</param>
     public static void Transform(this Matrix matrix, ref float x, ref float y)
     {
-      float w = x * matrix.M11 + y * matrix.M21;
-      float h = x * matrix.M12 + y * matrix.M22;
-      x = w;
-      y = h;
+      Vector2 v = new Vector2(x, y);
+      matrix.Transform(ref v);
+      x = v.X;
+      y = v.Y;
     }
 
     /// <summary>
-    /// Transforms the given two-dimensional vector <paramref name="v"/> by the inverse of the given matrix.
+    /// Transforms the given two-dimensional vector <paramref name="v"/> by this matrix.
     /// </summary>
     /// <param name="matrix">Transformation matrix.</param>
     /// <param name="v">Vector to transform. Will contain the transformed vector after this method returns.</param>
     public static void Transform(this Matrix matrix, ref Vector2 v)
     {
-      float w = v.X * matrix.M11 + v.Y * matrix.M21;
-      float h = v.X * matrix.M12 + v.Y * matrix.M22;
+      float w = v.X * matrix.M11 + v.Y * matrix.M12 + matrix.M31;
+      float h = v.X * matrix.M21 + v.Y * matrix.M22 + matrix.M32;
       v.X = w;
       v.Y = h;
     }
@@ -133,49 +133,43 @@ namespace MediaPortal.UI.SkinEngine
     /// this method returns.</param>
     public static void TransformSize(this Matrix matrix, ref SizeF size)
     {
-      PointF p0 = new PointF(0, 0);
-      PointF p1 = new PointF(size.Width, 0);
-      PointF p2 = new PointF(size.Width, size.Height);
-      PointF p3 = new PointF(0, size.Height);
+      Vector2 p0 = new Vector2(0, 0);
+      Vector2 p1 = new Vector2(size.Width, 0);
+      Vector2 p2 = new Vector2(size.Width, size.Height);
+      Vector2 p3 = new Vector2(0, size.Height);
       matrix.Transform(ref p0);
       matrix.Transform(ref p1);
       matrix.Transform(ref p2);
       matrix.Transform(ref p3);
-      size.Width = Math.Max(p0.X - p2.X, p1.X-p3.X);
-      size.Height = Math.Max(p0.Y - p2.Y, p1.Y-p3.Y);
+      size.Width = Math.Max(Math.Abs(p0.X - p2.X), Math.Abs(p1.X - p3.X));
+      size.Height = Math.Max(Math.Abs(p0.Y - p2.Y), Math.Abs(p1.Y - p3.Y));
     }
 
     /// <summary>
-    /// Transforms the given point <paramref name="p"/> by the inverse of the given matrix.
+    /// Transforms the given point <paramref name="p"/> by the inverse of this matrix.
     /// </summary>
     /// <param name="matrix">Transformation matrix.</param>
     /// <param name="p">Point to transform. Will contain the transformed point after this method returns.</param>
     public static void Invert(this Matrix matrix, ref PointF p)
     {
       Matrix inverse = Matrix.Invert(matrix);
-      float w = p.X * inverse.M11 + p.Y * inverse.M21;
-      float h = p.X * inverse.M12 + p.Y * inverse.M22;
-      p.X = w;
-      p.Y = h;
+      inverse.Transform(ref p);
     }
 
     /// <summary>
-    /// Transforms the given point <paramref name="p"/> by the inverse of the given matrix.
+    /// Transforms the given point <paramref name="p"/> by the inverse of this matrix.
     /// </summary>
     /// <param name="matrix">Transformation matrix.</param>
     /// <param name="p">Point to transform. Will contain the transformed point after this method returns.</param>
     public static void Invert(this Matrix matrix, ref Point p)
     {
       Matrix inverse = Matrix.Invert(matrix);
-      float w = p.X * inverse.M11 + p.Y * inverse.M21;
-      float h = p.X * inverse.M12 + p.Y * inverse.M22;
-      p.X = (int) w;
-      p.Y = (int) h;
+      inverse.Transform(ref p);
     }
 
     /// <summary>
     /// Transforms the point given by the coordinates <paramref name="x"/> and <paramref name="y"/> by the inverse
-    /// of the given matrix.
+    /// of this matrix.
     /// </summary>
     /// <param name="matrix">Transformation matrix.</param>
     /// <param name="x">X coordinate of the point to transform. Will contain the transformed coordinate after
@@ -185,28 +179,35 @@ namespace MediaPortal.UI.SkinEngine
     public static void Invert(this Matrix matrix, ref float x, ref float y)
     {
       Matrix inverse = Matrix.Invert(matrix);
-      float w = x * inverse.M11 + y * inverse.M21;
-      float h = x * inverse.M12 + y * inverse.M22;
-      x = w;
-      y = h;
+      inverse.Transform(ref x, ref y);
     }
 
     /// <summary>
-    /// Transforms the given two-dimensional vector <paramref name="v"/> by the inverse of the given matrix.
+    /// Transforms the given two-dimensional vector <paramref name="v"/> by the inverse of this matrix.
     /// </summary>
     /// <param name="matrix">Transformation matrix.</param>
     /// <param name="v">Vector to transform. Will contain the transformed vector after this method returns.</param>
     public static void Invert(this Matrix matrix, ref Vector2 v)
     {
       Matrix inverse = Matrix.Invert(matrix);
-      float w = v.X * inverse.M11 + v.Y * inverse.M21;
-      float h = v.X * inverse.M12 + v.Y * inverse.M22;
-      v.X = w;
-      v.Y = h;
+      inverse.Transform(ref v);
     }
 
     /// <summary>
-    /// Gets a matrix of the <see cref="System.Drawing.Drawing2D"/> namespace out of the given matrix.
+    /// Returns a <paramref name="sizeScale"/> value which represents the maximum extension of an object transformed
+    /// by this matrix.
+    /// </summary>
+    /// <param name="matrix">Transformation matrix.</param>
+    /// <param name="sizeScale">Factor which represents the size scaling of an object transformed by this matrix.</param>
+    public static void GetTransformedSizeScale(this Matrix matrix, out float sizeScale)
+    {
+      SizeF sizeTest = new SizeF(1f, 1f);
+      matrix.TransformSize(ref sizeTest);
+      sizeScale = Math.Max(sizeTest.Width, sizeTest.Height);
+    }
+
+    /// <summary>
+    /// Gets a matrix of the <see cref="System.Drawing.Drawing2D"/> namespace out of this matrix.
     /// </summary>
     /// <param name="matrix">Matrix to convert.</param>
     /// <returns>Matrix of the 2D-namespace.</returns>

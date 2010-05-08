@@ -137,6 +137,7 @@ namespace MediaPortal.UI.SkinEngine.ContentManagement
     public void Draw(string text, RectangleF textBox, Font.Align alignment, float size, Color4 color, bool scroll,
         out float totalWidth, Matrix finalTransform)
     {
+      finalTransform = finalTransform.Clone();
       totalWidth = 0;
       if (_font == null || String.IsNullOrEmpty(text))
       {
