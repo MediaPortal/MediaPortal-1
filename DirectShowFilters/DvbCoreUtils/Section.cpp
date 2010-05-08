@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2010 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -41,6 +41,29 @@ void CSection::Reset()
   section_number = -1;
   version_number = -1;
   section_syntax_indicator = -1;
+  BufferPos = 0;
+}
+
+CSection& CSection::operator = (const CSection &section)
+{
+  if (&section==this)
+  {
+    return *this;
+  }
+  Copy(section);
+  return *this;
+}
+
+
+void CSection::Copy(const CSection &section)
+{
+	table_id = section.table_id;
+  table_id_extension = section.table_id_extension;
+  section_length = section.section_length;
+  section_number = section.section_number;
+  version_number = section.version_number;
+  section_syntax_indicator = section.section_syntax_indicator;
+  memcpy(Data, section.Data, sizeof(Data));
   BufferPos = 0;
 }
 

@@ -167,6 +167,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\BasePmtParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ChannelInfo.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DvbUtil.cpp"
 				>
 			</File>
@@ -176,6 +184,10 @@
 			</File>
 			<File
 				RelativePath=".\Pcr.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\PidTable.cpp"
 				>
 			</File>
 			<File
@@ -201,6 +213,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\BasePmtParser.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\ChannelInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\DvbUtil.h"
 				>
 			</File>
@@ -217,11 +237,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\shared\PidTable.h"
+				>
+			</File>
+			<File
 				RelativePath="..\shared\Section.h"
 				>
 			</File>
 			<File
 				RelativePath="..\shared\SectionDecoder.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath="..\shared\TeletextServiceInfo.h"
 				>
 			</File>
 			<File

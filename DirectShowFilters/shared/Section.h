@@ -30,6 +30,8 @@ public:
   bool	 DecodeHeader();
 	int		 CalcSectionLength(byte* tsPacket, int start);
   bool   SectionComplete();
+  CSection& operator = (const CSection& section);
+  void Copy(const CSection &section);
 
 	int table_id;
 	int table_id_extension;

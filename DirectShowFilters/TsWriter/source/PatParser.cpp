@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2010 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -157,7 +157,8 @@ bool CPatParser::GetChannel(int index, CChannelInfo& info)
 //*****************************************************************************
 void CPatParser::OnChannel(const CChannelInfo& info)
 {
-  LogDebug("onch: %s %x %x", info.ServiceName,info.PidTable.VideoPid,info.PidTable.AC3Pid);
+  LogDebug("onch: %s", info.ServiceName /*,info.PidTable.VideoPid,info.PidTable.AC3Pid*/);
+  //info.PidTable.LogPIDs();
 
 	// check if we really have a channel with this sid
 	itChannels it=m_mapChannels.find(info.ServiceId);

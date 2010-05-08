@@ -20,8 +20,8 @@
  */
 #pragma once
 #include "..\..\shared\sectiondecoder.h"
-#include "channelinfo.h"
-#include "pidtable.h"
+#include "..\..\shared\channelinfo.h"
+#include "..\..\shared\pidtable.h"
 #include "..\..\shared\tsHeader.h"
 #include <vector>
 using namespace std;

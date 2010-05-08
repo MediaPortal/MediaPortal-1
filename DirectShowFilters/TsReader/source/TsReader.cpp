@@ -65,6 +65,7 @@ void GetLogFile(char *pLog)
   strcpy(pLog, &logFile[0]);
 }
 
+DEFINE_TVE_DEBUG_SETTING(DisableCRCCheck)
 
 void LogDebug(const char *fmt, ...)
 {

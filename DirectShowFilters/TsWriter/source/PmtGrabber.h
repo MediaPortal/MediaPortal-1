@@ -61,10 +61,10 @@ public:
 private:
 	IPMTCallback* m_pCallback;
   byte					m_pmtData[MAX_SECTION_LENGTH];
-	byte					m_pmtPrevData[MAX_SECTION_LENGTH];
 	int						m_iPmtVersion;
 	int						m_iPmtLength;
 	int						m_iServiceId;
+  CSection      m_pmtPrevSection;
   CTsHeader     m_tsHeader;
   CPatParser  	m_patgrab;
 	CCriticalSection m_section;

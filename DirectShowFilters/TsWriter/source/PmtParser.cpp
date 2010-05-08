@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006-2008 Team MediaPortal
+ *	Copyright (C) 2006-2010 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -22,18 +22,15 @@
 #pragma warning(disable:4995)
 #include <windows.h>
 #include "PmtParser.h"
-#include "channelinfo.h"
+#include <cassert>
 
 void LogDebug(const char *fmt, ...) ; 
 extern bool DisableCRCCheck();
 
 CPmtParser::CPmtParser()
 {
-	m_pmtCallback2=NULL;
-	_isFound=false;
-	m_serviceId=-1;
-	if (DisableCRCCheck())
-		EnableCrcCheck(false);
+  CBasePmtParser::CBasePmtParser();
+  m_pmtCallback2=NULL;
 }
 
 CPmtParser::~CPmtParser(void)
@@ -42,21 +39,8 @@ CPmtParser::~CPmtParser(void)
 
 void CPmtParser::Reset()
 {
-	_isFound=false;
 	m_pmtCallback2=NULL;
 	CSectionDecoder::Reset();
-}
-
-void CPmtParser::SetFilter(int pid,int serviceId)
-{
-	SetPid(pid);
-	m_serviceId=serviceId;
-}
-
-void CPmtParser::GetFilter(int &pid,int &serviceId)
-{
-	pid=GetPid();
-	serviceId=m_serviceId;
 }
 
 void CPmtParser::SetPmtCallBack2(IPmtCallBack2* callback)
@@ -64,17 +48,9 @@ void CPmtParser::SetPmtCallBack2(IPmtCallBack2* callback)
 	m_pmtCallback2=callback;
 }
 
-bool CPmtParser::IsReady()
-{
-	return _isFound;
-}
 
-void CPmtParser::OnTsPacket(byte* tsPacket)
-{
-	if (_isFound) return;
-	CSectionDecoder::OnTsPacket(tsPacket);
-}
-
+//FIXME: this older code version is only for backward compatibility with dependent classes.
+//       proper fix is to change code of all classes that depend on PidInfo2 in favour of CPidTable!
 bool CPmtParser::DecodePmt(CSection sections, int &pcr_pid, vector<PidInfo2>& pidInfos)
 {
 	byte* section=sections.Data;
@@ -190,7 +166,7 @@ bool CPmtParser::DecodePmt(CSection sections, int &pcr_pid, vector<PidInfo2>& pi
 
 void CPmtParser::OnNewSection(CSection& sections)
 { 
-	if (_isFound) return;
+	if (m_isFound) return;
 
 	int pcr_pid=0;
 
@@ -199,7 +175,7 @@ void CPmtParser::OnNewSection(CSection& sections)
 	if (m_pmtCallback2!=NULL)
 	{
 		m_pmtCallback2->OnPmtReceived2(GetPid(),m_serviceId,pcr_pid,m_pidInfos2);
-		_isFound=true;
+		m_isFound=true;
 		m_pmtCallback2=NULL;
 	}
 }

@@ -299,10 +299,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\PidTable.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\source\PmtParser.cpp"
 				>
 			</File>
@@ -445,10 +441,6 @@
 			</File>
 			<File
 				RelativePath=".\source\SubtitlePin.h"
-				>
-			</File>
-			<File
-				RelativePath=".\source\TeletextServiceInfo.h"
 				>
 			</File>
 			<File

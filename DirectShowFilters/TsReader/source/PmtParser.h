@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006 Team MediaPortal
+ *	Copyright (C) 2006-2010 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,37 +19,12 @@
  *
  */
 #pragma once
-#include "..\..\shared\sectiondecoder.h"
-#include "..\..\shared\tsheader.h"
-#include "pidtable.h"
+#include "..\..\shared\BasePmtParser.h"
+#include "..\..\shared\pidtable.h"
 #include <map>
 using namespace std;
 
-#define SERVICE_TYPE_VIDEO_UNKNOWN	-1
-#define SERVICE_TYPE_VIDEO_MPEG1		0x1
-#define SERVICE_TYPE_VIDEO_MPEG2		0x2
-#define SERVICE_TYPE_DCII_OR_LPCM		0x80 // can be DC-II MPEG2 Video OR LPCM Audio if registration descriptor=HDMV
-#define SERVICE_TYPE_VIDEO_MPEG4		0x10
-#define SERVICE_TYPE_VIDEO_H264		  0x1b
-#define SERVICE_TYPE_AUDIO_UNKNOWN	-1
-#define SERVICE_TYPE_AUDIO_MPEG1		0x3
-#define SERVICE_TYPE_AUDIO_MPEG2		0x4
-#define SERVICE_TYPE_AUDIO_AC3			0x81 //fake
-#define SERVICE_TYPE_AUDIO_AAC			0x0f
-#define SERVICE_TYPE_AUDIO_LATM_AAC 0x11 //LATM AAC audio
-
-#define SERVICE_TYPE_AUDIO_DD_PLUS  0x84 
-#define SERVICE_TYPE_DVB_SUBTITLES1 0x5
-#define SERVICE_TYPE_DVB_SUBTITLES2 0x6
-
-#define DESCRIPTOR_REGISTRATION     0x05
-#define DESCRIPTOR_VBI_TELETEXT     0x46
-#define DESCRIPTOR_DVB_AC3          0x6a
-#define DESCRIPTOR_DVB_E_AC3        0x7a
-#define DESCRIPTOR_DVB_TELETEXT     0x56
-#define DESCRIPTOR_DVB_SUBTITLING   0x59
-#define DESCRIPTOR_MPEG_ISO639_Lang 0x0a
-
+//TsReader specific callback structure.
 class IPmtCallBack
 {
 public:
@@ -57,20 +32,17 @@ public:
   virtual void OnPidsReceived(const CPidTable& info)=0;
 };
 
-class CPmtParser: public  CSectionDecoder
+//TsReader specific PMT parser class.
+class CPmtParser: public  CBasePmtParser
 {
 public:
   CPmtParser(void);
   virtual     ~CPmtParser(void);
   void        OnNewSection(CSection& section);
   void        SetPmtCallBack(IPmtCallBack* callback);
-  bool        IsReady();
-  CPidTable&  GetPidInfo();
+  void        PmtFoundCallback();
+  void        PidsFoundCallback();
 
 private:
-  int           m_pmtPid;
-  bool          m_isFound;
   IPmtCallBack* m_pmtCallback;
-  CTsHeader     m_tsHeader;
-  CPidTable     m_pidInfo;  
 };

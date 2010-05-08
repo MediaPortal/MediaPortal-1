@@ -27,7 +27,7 @@
 #include <initguid.h>
 
 #include "pmtgrabber.h"
-
+#include "PmtParser.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -38,8 +38,8 @@ CPmtGrabber::CPmtGrabber(LPUNKNOWN pUnk, HRESULT *phr)
 	m_pCallback=NULL;
 	m_iPmtVersion=-1;
 	m_iServiceId=0;
-	memset(m_pmtPrevData,0,sizeof(m_pmtPrevData));
 }
+
 CPmtGrabber::~CPmtGrabber(void)
 {
 }
@@ -62,7 +62,6 @@ STDMETHODIMP CPmtGrabber::SetPmtPid( int pmtPid, long serviceId)
   	CSectionDecoder::SetPid(pmtPid);
   	m_iPmtVersion=-1;
   	m_iServiceId=serviceId;
-  	memset(m_pmtPrevData,0,sizeof(m_pmtPrevData));
   }
 	catch(...)
 	{
@@ -125,16 +124,46 @@ void CPmtGrabber::OnNewSection(CSection& section)
 
 		m_iPmtLength=section.section_length;
 
+    // copy pmt data for passing it to tvserver
 		memcpy(m_pmtData,section.Data,m_iPmtLength);
-		if (memcmp(m_pmtData,m_pmtPrevData,m_iPmtLength)!=0)
+
+    // compare the current section data with the previous one
+    if (memcmp(section.Data, m_pmtPrevSection.Data, m_iPmtLength)!=0)
 		{
-			memcpy(m_pmtPrevData,m_pmtData,m_iPmtLength);
+      bool pidsChanged = false;
+      CPmtParser prevPmtParser;
+      CPmtParser currPmtParser;
+      
+      prevPmtParser.SetPid(GetPid());
+      prevPmtParser.DecodePmtPidTable(m_pmtPrevSection);
+      currPmtParser.SetPid(GetPid());
+      currPmtParser.DecodePmtPidTable(section);
+
+      if (!(prevPmtParser.GetPidInfo() == currPmtParser.GetPidInfo()))
+      {
+        LogDebug("pmtgrabber: PMT pids changed from:");
+        prevPmtParser.GetPidInfo().LogPIDs();
+        LogDebug("pmtgrabber: PMT pids changed to:");
+        currPmtParser.GetPidInfo().LogPIDs();
+        pidsChanged = true;
+      }
+      m_pmtPrevSection=section;
+
       // do a callback each time the version number changes. this also allows switching for "regional channels"
 			if (m_pCallback!=NULL && m_iPmtVersion != section.version_number)
 			{
         LogDebug("pmtgrabber: got new pmt version:%x %x, service_id:%x", section.version_number, m_iPmtVersion, serviceId);
-				LogDebug("pmtgrabber: do callback pid %x",GetPid());
-        m_pCallback->OnPMTReceived(GetPid());
+        // if the pids are different, then a callback is required.
+        if (pidsChanged)
+        {
+				  LogDebug("pmtgrabber: do callback pid %x",GetPid());
+          m_pCallback->OnPMTReceived(GetPid());
+        }
+        // otherwise no need to callback, i.e. if _only_ version number changes regulary...
+        else 
+        {
+				  LogDebug("pmtgrabber: NO callback done because a/v pids still the same.");
+        }
 			}
 		}
  		m_iPmtVersion=section.version_number;

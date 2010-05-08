@@ -24,10 +24,9 @@
 #include "PmtParser.h"
 #include "sdtParser.h"
 #include "NitDecoder.h"
-#include "channelinfo.h"
+#include "..\..\shared\channelinfo.h"
 #include "VirtualChannelTableParser.h"
 #include "..\..\shared\tsheader.h"
-//#include "conditionalAccess.h"
 #include "criticalsection.h"
 #include "entercriticalsection.h"
 #include <vector>

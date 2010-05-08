@@ -281,10 +281,6 @@
 				Name="PSI"
 				>
 				<File
-					RelativePath=".\source\ChannelInfo.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\source\ChannelLinkageParser.cpp"
 					>
 				</File>
@@ -310,10 +306,6 @@
 				</File>
 				<File
 					RelativePath=".\source\PatParser.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\source\PidTable.cpp"
 					>
 				</File>
 				<File
@@ -486,10 +478,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\source\PidTable.h"
-					>
-				</File>
-				<File
 					RelativePath=".\source\PmtParser.h"
 					>
 				</File>
@@ -538,6 +526,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\shared\ChannelInfo.h"
+					>
+				</File>
+				<File
 					RelativePath="..\shared\DebugSettings.h"
 					>
 				</File>
@@ -555,6 +547,10 @@
 				</File>
 				<File
 					RelativePath="..\shared\Pcr.h"
+					>
+				</File>
+				<File
+					RelativePath="..\shared\PidTable.h"
 					>
 				</File>
 				<File

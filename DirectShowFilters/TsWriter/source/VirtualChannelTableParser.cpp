@@ -22,6 +22,7 @@
 #include <windows.h>
 #include <streams.h>
 #include <bdatypes.h>
+#include "PMTParser.h"
 #include "VirtualChannelTableParser.h"
 
 extern void LogDebug(const char *fmt, ...) ;
@@ -242,11 +243,12 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 		  len += (descriptor_len+2);
 	  }
 		start += descriptors_length;
-		LogDebug("VCT:  #%d major:%d minor:%d freq:%d sid:%x tsid:%x servicetype:%x name:%s video:%x audio:%x audio:%x audio:%x ac3:%x", 
+		LogDebug("VCT:  #%d major:%d minor:%d freq:%d sid:%x tsid:%x servicetype:%x name:%s", // video:%x audio:%x audio:%x audio:%x ac3:%x
 				i,
 				info.MajorChannel,info.MinorChannel,info.Frequency,
 				info.ServiceId,info.TransportId,info.ServiceType,
-				info.ServiceName,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AudioPid2,info.PidTable.AudioPid3,info.PidTable.AC3Pid);
+				info.ServiceName/*,info.PidTable.VideoPid,info.PidTable.AudioPid1,info.PidTable.AudioPid2,info.PidTable.AudioPid3,info.PidTable.AC3Pid*/);
+    info.PidTable.LogPIDs();
     m_vecChannels.push_back(info);
   }
 
@@ -308,47 +310,36 @@ void CVirtualChannelTableParser::DecodeServiceLocationDescriptor( byte* buf,int 
 		//  8------ 3--13--- -------- 24------ -------- --------
 		// 76543210|76543210|76543210|76543210|76543210|76543210|
 		//    0        1        2         3        4       5     
-		int streamtype			  = buf[off];
-		int elementary_pid		  = ((buf[off+1]&0x1f)<<8) + buf[off+2];
+		int stream_type			  = buf[off];
+		int elementary_PID		  = ((buf[off+1]&0x1f)<<8) + buf[off+2];
 		int ISO_639_language_code =	(buf[off+3]<<16) +(buf[off+4]<<8) + (buf[off+5]);
 
 		//LogDebug("  nr:%d streamtype:%x pid:%x", i,streamtype,elementary_pid);
 		off+=6;
 		//pmtData.data=ISO_639_language_code;
-		switch (streamtype)
-		{
-			case 0x1: // video
-			case 0x2: // video
-				channelInfo.PidTable.VideoPid=elementary_pid;
-				break;
-			case 0x3: // audio
-			case 0x4: // audio
-      case 0x0f: // AAC audio
-      case 0x11: // LATM AAC audio
-				if (audioSet==0)
-				{
-					channelInfo.PidTable.AudioPid1=elementary_pid;
-					audioSet++;
-				}
-				else if (audioSet==1)
-				{
-					channelInfo.PidTable.AudioPid2=elementary_pid;
-					audioSet++;
-				}
-				else if (audioSet==2)
-				{
-					channelInfo.PidTable.AudioPid3=elementary_pid;
-					audioSet++;
-				}
-				break;
-
-			case 0x81: // ac3
-				channelInfo.PidTable.AC3Pid=elementary_pid;
-				break;
-
-			default:
-				break;
-		}
+    //FIXME: redundant code to BasePmtParser.cpp!
+    if(stream_type==SERVICE_TYPE_VIDEO_MPEG1 
+      || stream_type==SERVICE_TYPE_VIDEO_MPEG2
+      || stream_type==SERVICE_TYPE_VIDEO_MPEG4
+      || stream_type==SERVICE_TYPE_VIDEO_H264 )
+    {
+        VideoPid pid;
+        pid.Pid=elementary_PID;
+        pid.VideoServiceType=stream_type;
+        channelInfo.PidTable.videoPids.push_back(pid);
+    }
+      if(stream_type==SERVICE_TYPE_AUDIO_MPEG1 || 
+        stream_type==SERVICE_TYPE_AUDIO_MPEG2 || 
+        stream_type==SERVICE_TYPE_AUDIO_AC3 || 
+        stream_type==SERVICE_TYPE_AUDIO_AAC || 
+        stream_type==SERVICE_TYPE_AUDIO_LATM_AAC ||
+        stream_type==SERVICE_TYPE_AUDIO_DD_PLUS )
+      {				  
+        AudioPid pid;
+        pid.Pid=elementary_PID;
+        pid.AudioServiceType=stream_type;
+        channelInfo.PidTable.audioPids.push_back(pid);
+      }
 	}
 }
 void CVirtualChannelTableParser::DecodeExtendedChannelNameDescriptor( byte* buf,int start,CChannelInfo& channelInfo, int maxLen)

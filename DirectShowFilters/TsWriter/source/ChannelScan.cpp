@@ -27,7 +27,7 @@
 #include <initguid.h>
 
 #include "channelscan.h"
-#include "channelinfo.h"
+#include "..\..\shared\channelinfo.h"
 #include "tswriter.h"
 
 extern void LogDebug(const char *fmt, ...) ;
