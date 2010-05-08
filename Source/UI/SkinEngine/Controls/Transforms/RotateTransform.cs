@@ -26,7 +26,6 @@ using System;
 using MediaPortal.Core.General;
 using SlimDX;
 using MediaPortal.Utilities.DeepCopy;
-using MediaPortal.UI.SkinEngine.SkinManagement;
 
 namespace MediaPortal.UI.SkinEngine.Controls.Transforms
 {
@@ -134,9 +133,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
         _matrix = Matrix.RotationZ((float) radians);
       else
       {
-        _matrix = Matrix.Translation((float) -CenterX * SkinContext.Zoom.Width, (float) -CenterY * SkinContext.Zoom.Height, 0);
+        _matrix = Matrix.Translation((float) -CenterX, (float) -CenterY, 0);
         _matrix *= Matrix.RotationZ((float) radians);
-        _matrix *= Matrix.Translation((float) CenterX * SkinContext.Zoom.Width, (float) CenterY * SkinContext.Zoom.Height, 0);
+        _matrix *= Matrix.Translation((float) CenterX, (float) CenterY, 0);
       }
     }
 

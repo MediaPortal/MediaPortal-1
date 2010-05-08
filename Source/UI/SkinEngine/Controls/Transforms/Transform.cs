@@ -70,40 +70,24 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
         ObjectChanged(this);
     }
 
-    public void GetTransform(out ExtendedMatrix m)
-    {
-      Matrix matrix;
-      GetTransform(out matrix);
-      m = new ExtendedMatrix();
-      m.Matrix *= matrix;
-    }
-
-    public void GetTransformRel(out ExtendedMatrix m)
-    {
-      Matrix matrix;
-      GetTransformRel(out matrix);
-      m = new ExtendedMatrix();
-      m.Matrix *= matrix;
-    }
-    
-    public virtual void GetTransform(out Matrix m)
+    public virtual Matrix GetTransform()
     {
       if (_needUpdate)
       {
         UpdateTransform();
         _needUpdate = false;
       }
-      m = _matrix;
+      return _matrix;
     }
 
-    public virtual void GetTransformRel(out Matrix m)
+    public virtual Matrix GetTransformRel()
     {
       if (_needUpdateRel)
       {
         UpdateTransformRel();
         _needUpdateRel = false;
       }
-      m = _matrixRel;
+      return _matrixRel;
     }
 
     public virtual void UpdateTransform()

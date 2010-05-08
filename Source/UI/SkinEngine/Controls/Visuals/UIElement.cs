@@ -234,9 +234,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     protected SizeF? _availableSize;
     protected RectangleF? _outerRect;
     protected SizeF _desiredSize;
-    protected RectangleF _finalRect;
+    protected RectangleF _innerRect;
     protected ResourceDictionary _resources;
-    protected ExtendedMatrix _finalLayoutTransform;
     protected IExecutableCommand _loaded;
     protected bool _triggersInitialized;
     protected bool _fireLoaded = true;
@@ -255,7 +254,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     void Init()
     {
       _nameProperty = new SProperty(typeof(string), string.Empty);
-      _acutalPositionProperty = new SProperty(typeof(Vector3), new Vector3(0, 0, 1));
+      _acutalPositionProperty = new SProperty(typeof(PointF), new PointF(0, 0));
       _marginProperty = new SProperty(typeof(Thickness), new Thickness(0, 0, 0, 0));
       _resources = new ResourceDictionary();
       _triggerProperty = new SProperty(typeof(IList<TriggerBase>), new List<TriggerBase>());
@@ -401,11 +400,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       get { return _resources; }
     }
 
-    public ExtendedMatrix FinalLayoutTransform
-    {
-      get { return _finalLayoutTransform; }
-    }
-
     public AbstractProperty OpacityProperty
     {
       get { return _opacityProperty; }
@@ -482,9 +476,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       get { return _acutalPositionProperty; }
     }
 
-    public Vector3 ActualPosition
+    public PointF ActualPosition
     {
-      get { return (Vector3) _acutalPositionProperty.GetValue(); }
+      get { return (PointF) _acutalPositionProperty.GetValue(); }
       set { _acutalPositionProperty.SetValue(value); }
     }
 
@@ -588,81 +582,65 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     #region Layouting
 
     /// <summary>
-    /// Adds this element's margin to the specified <param name="size"/> parameter.
+    /// Adds the given <paramref name="margin"/> to the specified <param name="size"/> parameter.
     /// </summary>
     /// <remarks>
     /// <see cref="float.NaN"/> values will be preserved, i.e. if a <paramref name="size"/> coordinate
     /// is <see cref="float.NaN"/>, it won't be changed.
     /// </remarks>
     /// <param name="size">Size parameter where the margin will be added.</param>
-    public void AddMargin(ref SizeF size)
+    /// <param name="margin">Margin to be added.</param>
+    public static void AddMargin(ref SizeF size, Thickness margin)
     {
-      AddMargin(ref size, Margin);
+      if (!float.IsNaN(size.Width))
+        size.Width += margin.Left + margin.Right;
+      if (!float.IsNaN(size.Height))
+        size.Height += margin.Top + margin.Bottom;
     }
 
     /// <summary>
-    /// Adds this element's margin to the specified <paramref name="rect"/>.
+    /// Adds the given <paramref name="margin"/> to the specified <paramref name="rect"/>.
     /// </summary>
     /// <param name="rect">Inner element's rectangle where the margin will be added.</param>
-    public void AddMargin(ref RectangleF rect)
+    /// <param name="margin">Margin to be added.</param>
+    public static void AddMargin(ref RectangleF rect, Thickness margin)
     {
-      AddMargin(ref rect, Margin);
+      rect.X -= margin.Left;
+      rect.Y -= margin.Top;
+
+      rect.Width += margin.Left + margin.Right;
+      rect.Height += margin.Top + margin.Bottom;
     }
 
     /// <summary>
-    /// Removes this element's margin from the specified <param name="size"/> parameter.
+    /// Removes the given <paramref name="margin"/> from the specified <param name="size"/> parameter.
     /// </summary>
     /// <remarks>
     /// <see cref="float.NaN"/> values will be preserved, i.e. if a <paramref name="size"/> coordinate
     /// is <see cref="float.NaN"/>, it won't be changed.
     /// </remarks>
     /// <param name="size">Size parameter where the margin will be removed.</param>
-    public void RemoveMargin(ref SizeF size)
-    {
-      RemoveMargin(ref size, Margin);
-    }
-
-    /// <summary>
-    /// Removes this element's margin from the specified <paramref name="rect"/>.
-    /// </summary>
-    /// <param name="rect">Outer element's rectangle where the margin will be removed.</param>
-    public void RemoveMargin(ref RectangleF rect)
-    {
-      RemoveMargin(ref rect, Margin);
-    }
-
-    public static void AddMargin(ref SizeF size, Thickness margin)
-    {
-      if (!float.IsNaN(size.Width))
-        size.Width += (margin.Left + margin.Right) * SkinContext.Zoom.Width;
-      if (!float.IsNaN(size.Height))
-        size.Height += (margin.Top + margin.Bottom) * SkinContext.Zoom.Height;
-    }
-
-    public static void AddMargin(ref RectangleF rect, Thickness margin)
-    {
-      rect.X -= margin.Left * SkinContext.Zoom.Width;
-      rect.Y -= margin.Top * SkinContext.Zoom.Height;
-
-      rect.Width += (margin.Left + margin.Right) * SkinContext.Zoom.Width;
-      rect.Height += (margin.Top + margin.Bottom) * SkinContext.Zoom.Height;
-    }
-
+    /// <param name="margin">Margin to be removed.</param>
     public static void RemoveMargin(ref SizeF size, Thickness margin)
     {
       if (!float.IsNaN(size.Width))
-        size.Width -= (margin.Left + margin.Right) * SkinContext.Zoom.Width;
+        size.Width -= margin.Left + margin.Right;
       if (!float.IsNaN(size.Height))
-        size.Height -= (margin.Top + margin.Bottom) * SkinContext.Zoom.Height;
+        size.Height -= margin.Top + margin.Bottom;
     }
 
+    /// <summary>
+    /// Removes the given <paramref name="margin"/> from the specified <paramref name="rect"/>.
+    /// </summary>
+    /// <param name="rect">Outer element's rectangle where the margin will be removed.</param>
+    /// <param name="margin">Margin to be removed.</param>
     public static void RemoveMargin(ref RectangleF rect, Thickness margin)
     {
-      rect.X += margin.Left * SkinContext.Zoom.Width;
-      rect.Y += margin.Top * SkinContext.Zoom.Height;
+      rect.X += margin.Left;
+      rect.Y += margin.Top;
 
-      rect.Width -= (margin.Left + margin.Right) * SkinContext.Zoom.Width;
-      rect.Height -= (margin.Top + margin.Bottom) * SkinContext.Zoom.Height;
+      rect.Width -= margin.Left + margin.Right;
+      rect.Height -= margin.Top + margin.Bottom;
     }
 
     /// <summary>
@@ -787,18 +765,14 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         return;
       }
       _availableSize = new SizeF(totalSize);
-      RemoveMargin(ref totalSize);
+      RemoveMargin(ref totalSize, Margin);
+      MeasureOverride(ref totalSize);
+      AddMargin(ref totalSize, Margin);
       if (LayoutTransform != null)
       {
-        ExtendedMatrix m;
-        LayoutTransform.GetTransform(out m);
-        SkinContext.AddLayoutTransform(m);
+        Matrix m = LayoutTransform.GetTransform().RemoveTranslation();
+        m.TransformSize(ref totalSize);
       }
-      MeasureOverride(ref totalSize);
-      SkinContext.FinalLayoutTransform.TransformSize(ref totalSize);
-      if (LayoutTransform != null)
-        SkinContext.RemoveLayoutTransform();
-      AddMargin(ref totalSize);
       _desiredSize = totalSize;
 #if DEBUG_LAYOUT
       System.Diagnostics.Trace.WriteLine(string.Format("Measure {0} Name='{1}', returns calculated desired size={2}", GetType().Name, Name, totalSize));
@@ -827,30 +801,28 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       }
       _outerRect = new RectangleF(outerRect.Location, outerRect.Size);
       RectangleF rect = new RectangleF(outerRect.Location, outerRect.Size);
-      RemoveMargin(ref rect);
-
-      // TODO: Check if we need this if statement
-      if (!rect.IsEmpty)
-        _finalRect = new RectangleF(rect.Location, rect.Size);
+      RemoveMargin(ref rect, Margin);
 
       if (LayoutTransform != null)
       {
-        ExtendedMatrix m;
-        LayoutTransform.GetTransform(out m);
-        SkinContext.AddLayoutTransform(m);
+        Matrix inverseTransform = LayoutTransform.GetTransform().RemoveTranslation();
+        inverseTransform.Invert();
+        SizeF invertedSize = rect.Size;
+        inverseTransform.TransformSize(ref invertedSize);
+        PointF invertedLocation = rect.Location;
+        inverseTransform.Transform(ref invertedLocation);
+        rect = new RectangleF(invertedLocation, invertedSize);
       }
-      ArrangeOverride(rect);
-      if (LayoutTransform != null)
-        SkinContext.RemoveLayoutTransform();
+      _innerRect = rect;
+      ArrangeOverride();
 
-      _finalLayoutTransform = SkinContext.FinalLayoutTransform;
       Initialize();
       InitializeTriggers();
     }
 
-    protected virtual void ArrangeOverride(RectangleF finalRect)
+    protected virtual void ArrangeOverride()
     {
-      ActualPosition = new Vector3(finalRect.Location.X, finalRect.Location.Y, SkinContext.GetZorder());
+      ActualPosition = _innerRect.Location;
     }
 
     /// <summary>
@@ -897,23 +869,18 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       UIElement parent = VisualParent as UIElement;
       if (parent == null)
       {
-        SizeF screenSize = new SizeF(SkinContext.SkinResources.SkinWidth * SkinContext.Zoom.Width,
-            SkinContext.SkinResources.SkinHeight * SkinContext.Zoom.Height);
-        SizeF size = new SizeF(screenSize.Width, screenSize.Height);
+        SizeF size = new SizeF(Screen.SkinWidth, Screen.SkinHeight);
 
 #if DEBUG_LAYOUT
         System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}', no visual parent so measure with screen size {2}", GetType().Name, Name, size));
 #endif
         Measure(ref size);
 
-        // Root element - restart counting
-        SkinContext.ResetZorder();
-
 #if DEBUG_LAYOUT
         System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}', no visual parent so we arrange with screen size {2}", GetType().Name, Name, size));
 #endif
         // Ignore the measured size - arrange with screen size
-        Arrange(new RectangleF(0, 0, screenSize.Width, screenSize.Height));
+        Arrange(new RectangleF(0, 0, Screen.SkinWidth, Screen.SkinHeight));
       }
       else
       { // We have a visual parent, i.e parent != null
@@ -930,16 +897,10 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         SizeF availableSize = new SizeF(_availableSize.Value.Width, _availableSize.Value.Height);
         SizeF formerDesiredSize = _desiredSize;
 
-        ExtendedMatrix m = _finalLayoutTransform;
-        if (m != null)
-          SkinContext.AddLayoutTransform(m);
-
 #if DEBUG_LAYOUT
         System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}', measuring with former available size {2}", GetType().Name, Name, availableSize));
 #endif
         Measure(ref availableSize);
-        if (m != null)
-          SkinContext.RemoveLayoutTransform();
 
         if (_desiredSize != formerDesiredSize)
         {
@@ -952,18 +913,11 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         }
         else
         { // Our size is the same as before - just arrange
-          if (m != null)
-            SkinContext.AddLayoutTransform(m);
-
-          SkinContext.SetZOrder(ActualPosition.Z);
-
           RectangleF outerRect = new RectangleF(_outerRect.Value.Location, _outerRect.Value.Size);
 #if DEBUG_LAYOUT
           System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}', measuring returned same desired size, arranging with old outer rect {2}", GetType().Name, Name, outerRect));
 #endif
           Arrange(outerRect);
-          if (m != null)
-            SkinContext.RemoveLayoutTransform();
         }
       }
     }

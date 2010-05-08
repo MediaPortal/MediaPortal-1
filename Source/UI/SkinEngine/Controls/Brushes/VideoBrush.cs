@@ -35,7 +35,6 @@ using MediaPortal.UI.SkinEngine.Rendering;
 using SlimDX.Direct3D9;
 using MediaPortal.UI.Presentation.Players;
 using MediaPortal.Utilities.DeepCopy;
-using MediaPortal.UI.SkinEngine.SkinManagement;
 
 namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 {
@@ -93,9 +92,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     #endregion
 
-    public override void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, PositionColored2Textured[] verts)
+    public override void SetupBrush(RectangleF bounds, float zOrder, PositionColored2Textured[] verts)
     {
-      base.SetupBrush(bounds, layoutTransform, zOrder, verts);
+      base.SetupBrush(bounds, zOrder, verts);
       _effect = ContentManager.GetEffect("normal");
       _verts = verts;
       _videoSize = new Size(0, 0);
@@ -104,7 +103,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         ServiceScope.Get<ILogger>().Debug("VideoBrush.SetupBrush: Player manager not found");
     }
 
-    void UpdateVertexBuffer(IVideoPlayer player, VertexBuffer vertexBuffer)
+    void UpdateVertexBuffer(IVideoPlayer player, VertexBuffer vertexBuffer, float zOrder)
     {
       Size size = player.VideoSize;
       Size aspectRatio = player.VideoAspectRatio;
@@ -160,12 +159,12 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         verts[i].Tu1 = u;
         verts[i].Tv1 = v;
         verts[i].Color = _verts[i].Color;
-        verts[i].Z = SkinContext.GetZorder();
+        verts[i].Z = zOrder;
       }
       PositionColored2Textured.Set(vertexBuffer, verts);
     }
 
-    public override bool BeginRenderBrush(PrimitiveContext primitiveContext)
+    public override bool BeginRenderBrush(PrimitiveContext primitiveContext, RenderContext renderContext)
     {
       IPlayerManager playerManager = ServiceScope.Get<IPlayerManager>(false);
       if (playerManager == null)
@@ -178,15 +177,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       _renderPlayer = playerManager[Stream] as ISlimDXVideoPlayer;
       if (_renderPlayer == null) return false;
 
-      if (Transform != null)
-      {
-        ExtendedMatrix mTrans;
-        Transform.GetTransform(out mTrans);
-        SkinContext.AddRenderTransform(mTrans);
-      }
-
-      UpdateVertexBuffer(_renderPlayer, primitiveContext.VertexBuffer);
-      _renderPlayer.BeginRender(_effect);
+      UpdateVertexBuffer(_renderPlayer, primitiveContext.VertexBuffer, renderContext.ZOrder);
+      _renderPlayer.BeginRender(_effect, renderContext.Transform);
       return true;
     }
 
@@ -195,8 +187,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       if (_renderPlayer == null) return;
       _renderPlayer.EndRender(_effect);
       _renderPlayer = null;
-      if (Transform != null)
-        SkinContext.RemoveRenderTransform();
     }
   }
 }

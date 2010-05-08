@@ -41,14 +41,14 @@ namespace MediaPortal.UI.SkinEngine.Effects
   /// </summary>
   public class EffectAsset : IAsset
   {
-    private string _effectName;
+    private readonly string _effectName;
+    readonly Dictionary<string, object> _effectParameters;
+    readonly Dictionary<string, EffectHandleAsset> _parameters;
     private Effect _effect;
     private DateTime _lastUsed = DateTime.MinValue;
-    Dictionary<string, object> _effectParameters;
     EffectHandle _handleWorldProjection;
     EffectHandle _handleTexture;
     EffectHandle _handleTechnique;
-    Dictionary<string, EffectHandleAsset> _parameters;
 
     public EffectAsset(string effectName)
     {
@@ -70,7 +70,7 @@ namespace MediaPortal.UI.SkinEngine.Effects
         Version vertexShaderVersion = GraphicsDevice.Device.Capabilities.VertexShaderVersion;
         Version pixelShaderVersion = GraphicsDevice.Device.Capabilities.PixelShaderVersion;
 
-        ShaderFlags shaderFlags = ShaderFlags.OptimizationLevel3 | ShaderFlags.EnableBackwardsCompatibility; //| ShaderFlags.NoPreshader;
+        const ShaderFlags shaderFlags = ShaderFlags.OptimizationLevel3 | ShaderFlags.EnableBackwardsCompatibility; //| ShaderFlags.NoPreshader;
         //ShaderFlags shaderFlags = ShaderFlags.NoPreshader;
         effectShader = effectShader.Replace("vs_2_0", String.Format("vs_{0}_{1}", vertexShaderVersion.Major, vertexShaderVersion.Minor));
         effectShader = effectShader.Replace("ps_2_0", String.Format("ps_{0}_{1}", pixelShaderVersion.Major, pixelShaderVersion.Minor));
@@ -142,14 +142,14 @@ namespace MediaPortal.UI.SkinEngine.Effects
 
     #endregion
 
-    public void Render(TextureAsset tex, int stream)
+    public void Render(TextureAsset tex, int stream, Matrix finalTransform)
     {
       if (!IsAllocated)
         Allocate();
 
       if (!IsAllocated)
       {
-        //render without effect
+        // Render without effect
         tex.Draw(stream);
         return;
       }
@@ -159,7 +159,7 @@ namespace MediaPortal.UI.SkinEngine.Effects
         if (!tex.IsAllocated)
           return;
       }
-      _effect.SetValue(_handleWorldProjection, SkinContext.FinalRenderTransform.Matrix * GraphicsDevice.FinalTransform);
+      _effect.SetValue(_handleWorldProjection, finalTransform * GraphicsDevice.FinalTransform);
       _effect.SetTexture(_handleTexture, tex.Texture);
       _effect.Technique = _handleTechnique;
       SetEffectParameters();
@@ -171,21 +171,19 @@ namespace MediaPortal.UI.SkinEngine.Effects
       _lastUsed = SkinContext.FrameRenderingStartTime;
     }
 
+    public void StartRender(Matrix finalTransform)
+    {
+      StartRender(null, 0, finalTransform);
+    }
+
     /// <summary>
     /// Starts the rendering of the given texture <paramref name="tex"/> in the stream of number <code>0</code>.
     /// </summary>
     /// <param name="tex">The texture to be rendered.</param>
-    public void StartRender(Texture tex)
+    /// <param name="finalTransform">Final render transformation to apply.</param>
+    public void StartRender(Texture tex, Matrix finalTransform)
     {
-      StartRender(tex, 0);
-    }
-
-    /// <summary>
-    /// Ends the rendering of the stream of number <code>0</code>.
-    /// </summary>
-    public void EndRender()
-    {
-      EndRender(0);
+      StartRender(tex, 0, finalTransform);
     }
 
     /// <summary>
@@ -193,7 +191,8 @@ namespace MediaPortal.UI.SkinEngine.Effects
     /// </summary>
     /// <param name="tex">The texture to be rendered.</param>
     /// <param name="stream">Number of the stream to render.</param>
-    public void StartRender(Texture tex, int stream)
+    /// <param name="finalTransform">Final render transformation to apply.</param>
+    public void StartRender(Texture tex, int stream, Matrix finalTransform)
     {
       if (!IsAllocated)
         Allocate();
@@ -203,7 +202,7 @@ namespace MediaPortal.UI.SkinEngine.Effects
         GraphicsDevice.Device.SetTexture(stream, tex);
         return;
       }
-      _effect.SetValue(_handleWorldProjection, SkinContext.FinalRenderTransform.Matrix * GraphicsDevice.FinalTransform);
+      _effect.SetValue(_handleWorldProjection, finalTransform * GraphicsDevice.FinalTransform);
       _effect.SetTexture(_handleTexture, tex);
       _effect.Technique = _handleTechnique;
       SetEffectParameters();
@@ -211,6 +210,14 @@ namespace MediaPortal.UI.SkinEngine.Effects
       _effect.BeginPass(0);
 
       GraphicsDevice.Device.SetTexture(stream, tex);
+    }
+
+    /// <summary>
+    /// Ends the rendering of the stream of number <code>0</code>.
+    /// </summary>
+    public void EndRender()
+    {
+      EndRender(0);
     }
 
     /// <summary>
@@ -228,9 +235,9 @@ namespace MediaPortal.UI.SkinEngine.Effects
       GraphicsDevice.Device.SetTexture(stream, null);
     }
 
-    public void Render(Texture tex)
+    public void Render(Texture tex, Matrix finalTransform)
     {
-      StartRender(tex);
+      StartRender(tex, finalTransform);
       GraphicsDevice.Device.DrawPrimitives(PrimitiveType.TriangleFan, 0, 2);
       EndRender();
     }

@@ -183,20 +183,13 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     public virtual void Scale(ref float u, ref float v, ref Color4 color)
     { }
 
-    public virtual void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, PositionColored2Textured[] verts)
+    public virtual void SetupBrush(RectangleF bounds, float zOrder, PositionColored2Textured[] verts)
     {
-      UpdateBounds(bounds, layoutTransform, verts);
+      UpdateBounds(bounds, verts);
       float w = bounds.Width;
       float h = bounds.Height;
       float xoff = _vertsBounds.X;
       float yoff = _vertsBounds.Y;
-      if (layoutTransform != null)
-      {
-        w = _vertsBounds.Width;
-        h = _vertsBounds.Height;
-        layoutTransform.TransformXY(ref w, ref h);
-        layoutTransform.TransformXY(ref xoff, ref yoff);
-      }
       for (int i = 0; i < verts.Length; ++i)
       {
         PositionColored2Textured vert = verts[i];
@@ -225,7 +218,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       }
     }
 
-    protected void UpdateBounds(RectangleF bounds, ExtendedMatrix layoutTransform, PositionColored2Textured[] verts)
+    protected void UpdateBounds(RectangleF bounds, PositionColored2Textured[] verts)
     {
       float minx = float.MaxValue;
       float miny = float.MaxValue;
@@ -240,31 +233,15 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         if (vert.X > maxx) maxx = vert.X;
         if (vert.Y > maxy) maxy = vert.Y;
       }
-      // Albert, 2010-04-23: The following can be removed when the layout transform is no longer calculated in the
-      // vertex coordinates
-      if (layoutTransform != null)
-      {
-        maxx -= minx;
-        maxy -= miny;
-        minx -= bounds.X;
-        miny -= bounds.Y;
-        layoutTransform.InvertXY(ref minx, ref miny);
-        layoutTransform.InvertXY(ref maxx, ref maxy);
-
-        _orginalPosition.X = bounds.X;
-        _orginalPosition.Y = bounds.Y;
-        _minPosition.X = _orginalPosition.X + minx;
-        _minPosition.Y = _orginalPosition.Y + miny;
-      }
       _vertsBounds = new RectangleF(minx, miny, maxx, maxy);
     }
 
-    public virtual bool BeginRenderBrush(PrimitiveContext primitiveContext)
+    public virtual bool BeginRenderBrush(PrimitiveContext primitiveContext, RenderContext renderContext)
     {
       return false;
     }
 
-    public virtual void BeginRenderOpacityBrush(Texture tex)
+    public virtual void BeginRenderOpacityBrush(Texture tex, RenderContext renderContext)
     { }
 
     public virtual void EndRender()
@@ -276,7 +253,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     public virtual void Deallocate()
     { }
 
-    public virtual void SetupPrimitive(PrimitiveContext context)
+    public virtual void SetupPrimitive(PrimitiveContext primitiveContext, RenderContext renderContext)
     { }
 
     #endregion

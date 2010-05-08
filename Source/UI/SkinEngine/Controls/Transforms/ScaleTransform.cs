@@ -25,7 +25,6 @@
 using MediaPortal.Core.General;
 using SlimDX;
 using MediaPortal.Utilities.DeepCopy;
-using MediaPortal.UI.SkinEngine.SkinManagement;
 
 namespace MediaPortal.UI.SkinEngine.Controls.Transforms
 {
@@ -150,8 +149,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
       if (sx == 0.0) sx = 0.00002;
       if (sy == 0.0) sy = 0.00002;
 
-      double cx = CenterX * SkinContext.Zoom.Width;
-      double cy = CenterY * SkinContext.Zoom.Height;
+      double cx = CenterX;
+      double cy = CenterY;
 
       if (cx == 0.0 && cy == 0.0)
       {

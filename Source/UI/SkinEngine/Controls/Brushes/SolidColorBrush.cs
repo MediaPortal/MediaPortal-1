@@ -30,7 +30,6 @@ using MediaPortal.UI.SkinEngine.Rendering;
 using System.Drawing;
 using SlimDX;
 using MediaPortal.Utilities.DeepCopy;
-using MediaPortal.UI.SkinEngine.SkinManagement;
 
 namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 {
@@ -100,29 +99,29 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       set { _colorProperty.SetValue(value); }
     }
 
-    public override void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, PositionColored2Textured[] verts)
+    public override void SetupBrush(RectangleF bounds, float zOrder, PositionColored2Textured[] verts)
     {
-      base.SetupBrush(bounds, layoutTransform, zOrder, verts);
+      base.SetupBrush(bounds, zOrder, verts);
       _effect = ContentManager.GetEffect("solidbrush");
       _effectHandleColor = _effect.GetParameterHandle("g_solidColor");
     }
 
-    public override bool BeginRenderBrush(PrimitiveContext primitiveContext)
+    public override bool BeginRenderBrush(PrimitiveContext primitiveContext, RenderContext renderContext)
     {
       Color4 v = ColorConverter.FromColor(Color);
-      v.Alpha *= (float) SkinContext.Opacity;
+      v.Alpha *= (float) renderContext.Opacity;
       _effectHandleColor.SetParameter(v);
-      _effect.StartRender(null);
+      _effect.StartRender(renderContext.Transform);
       return true;
     }
 
-    public override void SetupPrimitive(PrimitiveContext context)
+    public override void SetupPrimitive(PrimitiveContext primitiveContext, RenderContext renderContext)
     {
       Color4 v = ColorConverter.FromColor(Color);
-      v.Alpha *= (float) SkinContext.Opacity;
-      context.Effect = _effect;
-      context.Parameters = new EffectParameters();
-      context.Parameters.Add(_effectHandleColor, v);
+      v.Alpha *= (float) renderContext.Opacity;
+      primitiveContext.Effect = _effect;
+      primitiveContext.Parameters = new EffectParameters();
+      primitiveContext.Parameters.Add(_effectHandleColor, v);
     }
 
     public override void EndRender()
@@ -130,6 +129,5 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       if (_effect != null)
         _effect.EndRender();
     }
-
   }
 }

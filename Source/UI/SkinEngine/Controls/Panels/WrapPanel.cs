@@ -171,9 +171,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Panels
       return new SizeF(totalDesiredWidth, totalDesiredHeight);
     }
 
-    protected override void ArrangeOverride(RectangleF finalRect)
+    protected override void ArrangeOverride()
     {
-      base.ArrangeOverride(finalRect);
+      base.ArrangeOverride();
       switch (Orientation)
       {
         case Orientation.Horizontal:

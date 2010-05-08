@@ -94,7 +94,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     public string ImageSource
     {
-      get { return (string)_imageSourceProperty.GetValue(); }
+      get { return (string) _imageSourceProperty.GetValue(); }
       set { _imageSourceProperty.SetValue(value); }
     }
 
@@ -105,7 +105,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     public double DownloadProgress
     {
-      get { return (double)_downloadProgressProperty.GetValue(); }
+      get { return (double) _downloadProgressProperty.GetValue(); }
       set { _downloadProgressProperty.SetValue(value); }
     }
 
@@ -150,18 +150,17 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       _tex.Allocate();
     }
 
-    public override void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, PositionColored2Textured[] verts)
+    public override void SetupBrush(RectangleF bounds, float zOrder, PositionColored2Textured[] verts)
     {
       if (_tex == null)
       {
         Allocate();
-        base.SetupBrush(bounds, layoutTransform, zOrder, verts);
+        base.SetupBrush(bounds, zOrder, verts);
       }
     }
 
-    public override bool BeginRenderBrush(PrimitiveContext primitiveContext)
+    public override bool BeginRenderBrush(PrimitiveContext primitiveContext, RenderContext renderContext)
     {
-      //GraphicsDevice.TransformWorld = SkinContext.FinalMatrix.Matrix;
       if (_tex == null)
         Allocate();
       _tex.Set(0);

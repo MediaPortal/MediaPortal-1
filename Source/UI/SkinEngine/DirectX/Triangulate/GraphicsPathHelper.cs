@@ -25,6 +25,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Matrix=SlimDX.Matrix;
 
 namespace MediaPortal.UI.SkinEngine.DirectX.Triangulate
 {
@@ -62,7 +63,7 @@ namespace MediaPortal.UI.SkinEngine.DirectX.Triangulate
     /// <param name="radiusY">The Y radius of the rounded edges.</param>
     /// <param name="layoutTransform">The layout transform to apply to the returned path.</param>
     public static GraphicsPath CreateRoundedRectPath(RectangleF baseRect, float radiusX, float radiusY,
-        ExtendedMatrix layoutTransform)
+        Matrix? layoutTransform)
     {
       return CreateRoundedRectWithTitleRegionPath(baseRect, radiusX, radiusY, false, 0f, 0f, layoutTransform);
     }
@@ -81,7 +82,7 @@ namespace MediaPortal.UI.SkinEngine.DirectX.Triangulate
     /// <paramref name="withTitleRegion"/> is set to <c>true</c>.</param>
     /// <param name="layoutTransform">The layout transform to apply to the returned path.</param>
     public static GraphicsPath CreateRoundedRectWithTitleRegionPath(RectangleF baseRect, float radiusX, float radiusY,
-        bool withTitleRegion, float titleInset, float titleWidth, ExtendedMatrix layoutTransform)
+        bool withTitleRegion, float titleInset, float titleWidth, Matrix? layoutTransform)
     {
       GraphicsPath result = new GraphicsPath();
       if (radiusX <= 0.0f && radiusY <= 0.0f || baseRect.Width == 0 || baseRect.Height == 0)
@@ -150,13 +151,12 @@ namespace MediaPortal.UI.SkinEngine.DirectX.Triangulate
         else
           result.CloseFigure();
       }
-      if (layoutTransform != null)
+      if (layoutTransform.HasValue)
       {
-        Matrix mtx = new Matrix();
-        mtx.Translate(-baseRect.X, -baseRect.Y, MatrixOrder.Append);
-        mtx.Multiply(layoutTransform.Get2dMatrix(), MatrixOrder.Append);
-        mtx.Translate(baseRect.X, baseRect.Y, MatrixOrder.Append);
-        result.Transform(mtx);
+        Matrix mtx = Matrix.Translation(-baseRect.X, -baseRect.Y, 0);
+        mtx *= layoutTransform.Value;
+        mtx *= Matrix.Translation(baseRect.X, baseRect.Y, 0);
+        result.Transform(mtx.Get2dMatrix());
       }
       result.Flatten();
       return result;

@@ -24,7 +24,6 @@
 
 using System.Collections.Generic;
 using MediaPortal.Utilities.DeepCopy;
-using MediaPortal.UI.SkinEngine.SkinManagement;
 
 namespace MediaPortal.UI.SkinEngine.Controls.Panels
 {
@@ -41,10 +40,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Panels
     {
       foreach (DefinitionBase db in this)
       {
-        if (db.Length.IsAbsolute) // Fixed size can never change.
-          db.Length.Length = db.Length.Value * SkinContext.Zoom.Width;
-        else
-          db.Length.Length = 0.0;
+        db.Length.Length = db.Length.IsAbsolute ? db.Length.Value : 0.0;
       }
     }
 

@@ -110,11 +110,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
       base.UpdateTransform();
       _matrix = Matrix.Identity;
       foreach (Transform t in Children)
-      {
-        Matrix m;
-        t.GetTransform(out m);
-        _matrix *= m;
-      }
+        _matrix *= t.GetTransform();
     }
 
     public override void UpdateTransformRel()
@@ -122,11 +118,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
       base.UpdateTransformRel();
       _matrixRel = Matrix.Identity;
       foreach (Transform t in Children)
-      {
-        Matrix m;
-        t.GetTransformRel(out m);
-        _matrixRel *= m;
-      }
+        _matrixRel *= t.GetTransformRel();
     }
 
     #region IAddChild Members

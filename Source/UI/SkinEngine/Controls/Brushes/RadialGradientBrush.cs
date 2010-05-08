@@ -31,7 +31,6 @@ using MediaPortal.UI.SkinEngine.Rendering;
 using SlimDX;
 using SlimDX.Direct3D9;
 using MediaPortal.Utilities.DeepCopy;
-using MediaPortal.UI.SkinEngine.SkinManagement;
 
 namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 {
@@ -144,7 +143,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     public Vector2 GradientOrigin
     {
-      get { return (Vector2)_gradientOriginProperty.GetValue(); }
+      get { return (Vector2) _gradientOriginProperty.GetValue(); }
       set { _gradientOriginProperty.SetValue(value); }
     }
 
@@ -155,7 +154,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     public double RadiusX
     {
-      get { return (double)_radiusXProperty.GetValue(); }
+      get { return (double) _radiusXProperty.GetValue(); }
       set { _radiusXProperty.SetValue(value); }
     }
 
@@ -166,7 +165,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     public double RadiusY
     {
-      get { return (double)_radiusYProperty.GetValue(); }
+      get { return (double) _radiusYProperty.GetValue(); }
       set { _radiusYProperty.SetValue(value); }
     }
 
@@ -194,23 +193,20 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     #region Public methods
 
-    public override void SetupBrush(RectangleF bounds, ExtendedMatrix layoutTransform, float zOrder, PositionColored2Textured[] verts)
+    public override void SetupBrush(RectangleF bounds, float zOrder, PositionColored2Textured[] verts)
     {
-      base.SetupBrush(bounds, layoutTransform, zOrder, verts);
+      base.SetupBrush(bounds, zOrder, verts);
 
       if (_gradientBrushTexture == null)
         _gradientBrushTexture = BrushCache.Instance.GetGradientBrush(GradientStops);
       _refresh = true;
     }
 
-    public override bool BeginRenderBrush(PrimitiveContext primitiveContext)
+    public override bool BeginRenderBrush(PrimitiveContext primitiveContext, RenderContext renderContext)
     {
+      Matrix finalTransform = renderContext.Transform;
       if (Transform != null)
-      {
-        ExtendedMatrix mTrans;
-        Transform.GetTransform(out mTrans);
-        SkinContext.AddRenderTransform(mTrans);
-      }
+        finalTransform *= Transform.GetTransform();
       if (_gradientBrushTexture == null) return false;
       if (_refresh)
       {
@@ -238,14 +234,14 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
         if (MappingMode == BrushMappingMode.Absolute)
         {
-          g_focus[0] = ((GradientOrigin.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
-          g_focus[1] = ((GradientOrigin.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
+          g_focus[0] /= _vertsBounds.Width;
+          g_focus[1] /= _vertsBounds.Height;
 
-          g_center[0] = ((Center.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
-          g_center[1] = ((Center.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
+          g_center[0] /= _vertsBounds.Width;
+          g_center[1] /= _vertsBounds.Height;
 
-          g_radius[0] = (float)((RadiusX * SkinContext.Zoom.Width) / _vertsBounds.Width);
-          g_radius[1] = (float)((RadiusY * SkinContext.Zoom.Height) / _vertsBounds.Height);
+          g_radius[0] /= _vertsBounds.Width;
+          g_radius[1] /= _vertsBounds.Height;
         }
       }
 
@@ -253,35 +249,31 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       {
         Color4 v = ColorConverter.FromColor(GradientStops[0].Color);
         _handleColor.SetParameter(v);
-        _effect.StartRender(null);
+        _effect.StartRender(finalTransform);
       }
       else
       {
-        Matrix m;
-        RelativeTransform.GetTransformRel(out m);
-        m = Matrix.Invert(m);
+// TODO: Why invert?
+        Matrix m = Matrix.Invert(RelativeTransform.GetTransformRel());
 
         _handleRelativeTransform.SetParameter(m);
         _handleFocus.SetParameter(g_focus);
         _handleCenter.SetParameter(g_center);
         _handleRadius.SetParameter(g_radius);
-        _handleOpacity.SetParameter((float) (Opacity * SkinContext.Opacity));
+        _handleOpacity.SetParameter((float) (Opacity * renderContext.Opacity));
 
-        _effect.StartRender(_gradientBrushTexture.Texture);
+        _effect.StartRender(_gradientBrushTexture.Texture, finalTransform);
       }
       return true;
     }
 
-    public override void BeginRenderOpacityBrush(Texture tex)
+    public override void BeginRenderOpacityBrush(Texture tex, RenderContext renderContext)
     {
-      if (Transform != null)
-      {
-        ExtendedMatrix mTrans;
-        Transform.GetTransform(out mTrans);
-        SkinContext.AddRenderTransform(mTrans);
-      }
       if (tex == null)
         return;
+      Matrix finalTransform = renderContext.Transform;
+      if (Transform != null)
+        finalTransform *= Transform.GetTransform();
       if (_refresh)
       {
         _refresh = false;
@@ -301,34 +293,31 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
         if (MappingMode == BrushMappingMode.Absolute)
         {
-          g_focus[0] = ((GradientOrigin.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
-          g_focus[1] = ((GradientOrigin.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
+          g_focus[0] /= _vertsBounds.Width;
+          g_focus[1] /= _vertsBounds.Height;
 
-          g_center[0] = ((Center.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
-          g_center[1] = ((Center.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
+          g_center[0] /= _vertsBounds.Width;
+          g_center[1] /= _vertsBounds.Height;
 
-          g_radius[0] = (float) ((RadiusX * SkinContext.Zoom.Width) / _vertsBounds.Width);
-          g_radius[1] = (float) ((RadiusY * SkinContext.Zoom.Height) / _vertsBounds.Height);
+          g_radius[0] /= _vertsBounds.Width;
+          g_radius[1] /= _vertsBounds.Height;
         }
       }
 
       if (_singleColor)
-      {
-        _effect.StartRender(null);
-      }
+        _effect.StartRender(finalTransform);
       else
       {
-        Matrix m;
-        RelativeTransform.GetTransformRel(out m);
-        m = Matrix.Invert(m);
+// TODO: Why invert?
+        Matrix m = Matrix.Invert(RelativeTransform.GetTransformRel());
 
         _handleRelativeTransform.SetParameter(m);
         _handleFocus.SetParameter(g_focus);
         _handleCenter.SetParameter(g_center);
         _handleRadius.SetParameter(g_radius);
-        _handleOpacity.SetParameter((float) (Opacity * SkinContext.Opacity));
+        _handleOpacity.SetParameter((float) (Opacity * renderContext.Opacity));
         _handleAlphaTexture.SetParameter(_gradientBrushTexture.Texture);
-        _effect.StartRender(tex);
+        _effect.StartRender(tex, finalTransform);
       }
     }
 
@@ -336,34 +325,32 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     {
       if (_effect != null)
         _effect.EndRender();
-      if (Transform != null)
-        SkinContext.RemoveRenderTransform();
     }
 
     #endregion
 
-    public override void SetupPrimitive(PrimitiveContext context)
+    public override void SetupPrimitive(PrimitiveContext primitiveContext, RenderContext renderContext)
     {
-      context.Parameters = new EffectParameters();
+      primitiveContext.Parameters = new EffectParameters();
       CheckSingleColor();
-      context.Texture = BrushCache.Instance.GetGradientBrush(GradientStops);
+      primitiveContext.Texture = BrushCache.Instance.GetGradientBrush(GradientStops);
       if (_singleColor)
       {
 
         Color4 v = ColorConverter.FromColor(GradientStops[0].Color);
-        v.Alpha *= (float) SkinContext.Opacity;
-        context.Effect = ContentManager.GetEffect("solidbrush");
-        context.Parameters.Add(context.Effect.GetParameterHandle("g_solidColor"), v);
+        v.Alpha *= (float) renderContext.Opacity;
+        primitiveContext.Effect = ContentManager.GetEffect("solidbrush");
+        primitiveContext.Parameters.Add(primitiveContext.Effect.GetParameterHandle("g_solidColor"), v);
         return;
       }
       else
       {
-        context.Effect = ContentManager.GetEffect("radialgradient");
-        _handleRelativeTransform = context.Effect.GetParameterHandle("RelativeTransform");
-        _handleFocus = context.Effect.GetParameterHandle("g_focus");
-        _handleCenter = context.Effect.GetParameterHandle("g_center");
-        _handleRadius = context.Effect.GetParameterHandle("g_radius");
-        _handleOpacity = context.Effect.GetParameterHandle("g_opacity");
+        primitiveContext.Effect = ContentManager.GetEffect("radialgradient");
+        _handleRelativeTransform = primitiveContext.Effect.GetParameterHandle("RelativeTransform");
+        _handleFocus = primitiveContext.Effect.GetParameterHandle("g_focus");
+        _handleCenter = primitiveContext.Effect.GetParameterHandle("g_center");
+        _handleRadius = primitiveContext.Effect.GetParameterHandle("g_radius");
+        _handleOpacity = primitiveContext.Effect.GetParameterHandle("g_opacity");
 
         g_focus = new float[] { GradientOrigin.X, GradientOrigin.Y };
         g_center = new float[] { Center.X, Center.Y };
@@ -371,23 +358,24 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
         if (MappingMode == BrushMappingMode.Absolute)
         {
-          g_focus[0] = ((GradientOrigin.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
-          g_focus[1] = ((GradientOrigin.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
+          g_focus[0] /= _vertsBounds.Width;
+          g_focus[1] /= _vertsBounds.Height;
 
-          g_center[0] = ((Center.X * SkinContext.Zoom.Width) - (_minPosition.X - _orginalPosition.X)) / _vertsBounds.Width;
-          g_center[1] = ((Center.Y * SkinContext.Zoom.Height) - (_minPosition.Y - _orginalPosition.Y)) / _vertsBounds.Height;
+          g_center[0] /= _vertsBounds.Width;
+          g_center[1] /= _vertsBounds.Height;
 
-          g_radius[0] = (float)((RadiusX * SkinContext.Zoom.Width) / _vertsBounds.Width);
-          g_radius[1] = (float)((RadiusY * SkinContext.Zoom.Height) / _vertsBounds.Height);
+          g_radius[0] /= _vertsBounds.Width;
+          g_radius[1] /= _vertsBounds.Height;
         }
-        Matrix mrel;
-        RelativeTransform.GetTransformRel(out mrel);
-        mrel = Matrix.Invert(mrel);
-        context.Parameters.Add(_handleRelativeTransform, mrel);
-        context.Parameters.Add(_handleFocus, g_focus);
-        context.Parameters.Add(_handleCenter, g_center);
-        context.Parameters.Add(_handleRadius, g_radius);
-        context.Parameters.Add(_handleOpacity, (float) (Opacity * SkinContext.Opacity));
+
+// TODO: Why invert?
+        Matrix m = Matrix.Invert(RelativeTransform.GetTransformRel());
+
+        primitiveContext.Parameters.Add(_handleRelativeTransform, m);
+        primitiveContext.Parameters.Add(_handleFocus, g_focus);
+        primitiveContext.Parameters.Add(_handleCenter, g_center);
+        primitiveContext.Parameters.Add(_handleRadius, g_radius);
+        primitiveContext.Parameters.Add(_handleOpacity, (float) (Opacity * renderContext.Opacity));
       }
     }
   }

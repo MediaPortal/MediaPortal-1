@@ -30,11 +30,12 @@ using MediaPortal.Core;
 using MediaPortal.Core.General;
 using MediaPortal.UI.Presentation.Actions;
 using MediaPortal.UI.SkinEngine.Controls.Visuals;
-using MediaPortal.UI.SkinEngine.DirectX;
 using MediaPortal.UI.SkinEngine.InputManagement;
+using MediaPortal.UI.SkinEngine.Rendering;
 using MediaPortal.UI.SkinEngine.Xaml;
 using MediaPortal.UI.SkinEngine.SkinManagement;
 using MediaPortal.UI.SkinEngine.Utils;
+using SlimDX;
 
 namespace MediaPortal.UI.SkinEngine.ScreenManagement
 {
@@ -144,8 +145,8 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
     protected UIElement _visual;
     protected Animator _animator;
     protected List<InvalidControl> _invalidLayoutControls = new List<InvalidControl>();
-    protected IList<IUpdateEventHandler> _invalidControls = new List<IUpdateEventHandler>();
     protected IDictionary<Key, KeyAction> _keyBindings = null;
+    protected RenderContext _renderContext;
 
     #endregion
 
@@ -162,6 +163,8 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
       _skinWidth = skinWidth;
       _skinHeight = skinHeight;
       _animator = new Animator();
+      SkinContext.WindowSizeProperty.Attach(OnWindowSizeChanged);
+      InitializeRenderContext();
     }
 
     public Animator Animator
@@ -259,18 +262,8 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
 
     public void Reset()
     {
-      if (SkinContext.UseBatching)
-        _visual.DestroyRenderTree();
-      GraphicsDevice.InitializeZoom();
       _visual.InvalidateLayout();
       _visual.Initialize();
-    }
-
-    public void Deallocate()
-    {
-      if (SkinContext.UseBatching)
-        _visual.DestroyRenderTree();
-      _visual.Deallocate();
     }
 
     public void Animate()
@@ -283,7 +276,6 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
     {
       uint time = (uint) Environment.TickCount;
       SkinContext.SystemTickCount = time;
-      SkinContext.FinalRenderTransform = new ExtendedMatrix();
 
       lock (_visual)
       {
@@ -306,10 +298,7 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
             _invalidLayoutControls.RemoveAt(_invalidLayoutControls.Count-1);
             ic.Element.UpdateLayout();
           }
-        if (SkinContext.UseBatching)
-          Update();
-        else
-          _visual.Render();
+        _visual.Render(_renderContext);
       }
     }
 
@@ -342,14 +331,9 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
     {
       lock (_visual)
       {
-        if (SkinContext.UseBatching)
-          _visual.DestroyRenderTree();
-        _invalidControls.Clear();
         _visual.Deallocate();
         _visual.Allocate();
         _visual.Initialize();
-        //if (SkinContext.UseBatching)
-        //  _visual.BuildRenderTree();
 
         _visual.InvalidateLayout();
         _visual.UpdateLayout();
@@ -363,13 +347,11 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
 
     public void Close()
     {
+      SkinContext.WindowSizeProperty.Detach(OnWindowSizeChanged);
       lock (_visual)
       {
         Animator.StopAll();
-        if (SkinContext.UseBatching)
-          _visual.DestroyRenderTree();
         _visual.Deallocate();
-        _invalidControls.Clear();
       }
       if (Closed != null)
         Closed(this, null);
@@ -384,6 +366,11 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
         if (_attachedInput && inputManager.IsMouseUsed)
           _visual.OnMouseMove(inputManager.MousePosition.X, inputManager.MousePosition.Y);
       }
+    }
+
+    private void OnWindowSizeChanged(AbstractProperty property, object oldVal)
+    {
+      InitializeRenderContext();
     }
 
     private void OnKeyPreview(ref Key key)
@@ -430,30 +417,15 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
       }
     }
 
-    public void Invalidate(IUpdateEventHandler ctl)
+    protected void InitializeRenderContext()
     {
-      if (!SkinContext.UseBatching)
-        return;
-
-      lock (_invalidControls)
-      {
-        if (!_invalidControls.Contains(ctl))
-          _invalidControls.Add(ctl);
-      }
+      _renderContext = CreateInitialRenderContext();
     }
 
-    void Update()
+    public RenderContext CreateInitialRenderContext()
     {
-      IList<IUpdateEventHandler> ctls;
-      lock (_invalidControls)
-      {
-        if (_invalidControls.Count == 0) 
-          return;
-        ctls = _invalidControls;
-        _invalidControls = new List<IUpdateEventHandler>();
-      }
-      foreach (IUpdateEventHandler ctl in ctls)
-        ctl.Update();
+      Matrix transform = Matrix.Scaling((float) SkinContext.WindowSize.Width / _skinWidth, (float) SkinContext.WindowSize.Height / _skinHeight, 1);
+      return new RenderContext(transform);
     }
 
     /// <summary>

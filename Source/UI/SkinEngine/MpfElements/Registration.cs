@@ -89,7 +89,6 @@ namespace MediaPortal.UI.SkinEngine.MpfElements
       objectClassRegistrations.Add("TreeView", typeof(SkinEngine.Controls.Visuals.TreeView));
       objectClassRegistrations.Add("TreeViewItem", typeof(SkinEngine.Controls.Visuals.TreeViewItem));
       objectClassRegistrations.Add("ItemsPresenter", typeof(SkinEngine.Controls.Visuals.ItemsPresenter));
-      objectClassRegistrations.Add("StyleSelector", typeof(SkinEngine.Controls.Visuals.StyleSelector));
       objectClassRegistrations.Add("ScrollViewer", typeof(SkinEngine.Controls.Visuals.ScrollViewer));
       objectClassRegistrations.Add("TextBox", typeof(SkinEngine.Controls.Visuals.TextBox));
       objectClassRegistrations.Add("TextControl", typeof(SkinEngine.Controls.Visuals.TextControl));
