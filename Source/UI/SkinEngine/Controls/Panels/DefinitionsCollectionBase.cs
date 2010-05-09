@@ -61,7 +61,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Panels
         else
           cellIndex = Count-1;
       }
-      if (cellSpan < 0 || cellSpan + cellIndex >= Count)
+      if (cellSpan < 0 || cellSpan + cellIndex > Count)
       {
         ServiceScope.Get<ILogger>().Warn("{0}: Invalid cell span {1} in cell {2}; allowed range is {3}-{4}",
             GetType().Name, cellSpan, cellIndex, 1, Count-cellIndex);
