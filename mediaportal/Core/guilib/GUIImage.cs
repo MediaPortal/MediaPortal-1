@@ -126,8 +126,8 @@ namespace MediaPortal.GUI.Library
     //using for debugging leaks;
     private string _debugCachedTextureFileName = "";
     private string _debugCaller = "";
-    private bool _debugDisposed = false;
-    private bool _debugAllocResourcesCalled = false;
+    //private bool _debugDisposed = false;
+    //private bool _debugAllocResourcesCalled = false;
     private Guid _debugGuid = Guid.NewGuid();
 
 
@@ -896,7 +896,7 @@ namespace MediaPortal.GUI.Library
       
       _memoryImage.SafeDispose();
       _memoryImageTexture = null;
-      _debugDisposed = true;      
+      //_debugDisposed = true;      
     }
 
     private void UnsubscribeOnPropertyChanged()
