@@ -115,6 +115,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
     protected bool _updateOpacityMask = false;
     protected bool _updateFocus = false;
+    protected Matrix _inverseFinalTransform = Matrix.Identity;
 
     #endregion
 
@@ -683,16 +684,24 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       }
     }
 
+    protected void TransformMouseCoordinates(ref float x, ref float y)
+    {
+      _inverseFinalTransform.Transform(ref x, ref y);
+    }
+
     public override void OnMouseMove(float x, float y)
     {
-      if (ActualBounds.Contains(x, y))
+      float xTrans = x;
+      float yTrans = y;
+      TransformMouseCoordinates(ref xTrans, ref yTrans);
+      if (ActualBounds.Contains(xTrans, yTrans))
       {
         if (!IsMouseOver)
         {
           IsMouseOver = true;
           FireEvent(MOUSEENTER_EVENT);
         }
-        if (!HasFocus && IsInVisibleArea(x, y))
+        if (!HasFocus && IsInVisibleArea(xTrans, yTrans))
           TrySetFocus(false);
       }
       else
@@ -919,6 +928,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
       RenderContext localRenderContext = parentRenderContext.Derive(bounds, layoutTransformMatrix,
           renderTransformMatrix, RenderTransformOrigin, Opacity);
+      _inverseFinalTransform = Matrix.Invert(localRenderContext.Transform);
 
       if (OpacityMask == null)
         // Simply render without opacity mask

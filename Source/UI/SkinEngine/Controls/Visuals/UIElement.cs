@@ -770,9 +770,10 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       Matrix? layoutTransform = LayoutTransform == null ? new Matrix?() : LayoutTransform.GetTransform();
       if (layoutTransform.HasValue)
       {
-        float sizeScale;
-        layoutTransform.Value.GetTransformedSizeScale(out sizeScale);
-        totalSize = new SizeF(totalSize.Width / sizeScale, totalSize.Height / sizeScale);
+        float sizeScaleX;
+        float sizeScaleY;
+        layoutTransform.Value.GetTransformedSizeScale(out sizeScaleX, out sizeScaleY);
+        totalSize = new SizeF(totalSize.Width / sizeScaleX, totalSize.Height / sizeScaleY);
       }
       MeasureOverride(ref totalSize);
       if (layoutTransform.HasValue)
@@ -813,14 +814,15 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         Matrix layoutTransform = LayoutTransform.GetTransform().RemoveTranslation();
         if (!layoutTransform.IsIdentity)
         {
-          float sizeScale;
-          layoutTransform.GetTransformedSizeScale(out sizeScale);
+          float sizeScaleX;
+          float sizeScaleY;
+          layoutTransform.GetTransformedSizeScale(out sizeScaleX, out sizeScaleY);
 
           rect = new RectangleF(
-              rect.Location.X + rect.Width*(1 - 1/sizeScale)/2,
-              rect.Location.Y + rect.Height*(1 - 1/sizeScale)/2,
-              rect.Width/sizeScale,
-              rect.Height/sizeScale);
+              rect.Location.X + rect.Width*(1 - 1/sizeScaleX)/2,
+              rect.Location.Y + rect.Height*(1 - 1/sizeScaleY)/2,
+              rect.Width/sizeScaleX,
+              rect.Height/sizeScaleY);
         }
       }
       _innerRect = rect;

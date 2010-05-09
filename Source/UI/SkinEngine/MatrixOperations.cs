@@ -118,8 +118,8 @@ namespace MediaPortal.UI.SkinEngine
     /// <param name="v">Vector to transform. Will contain the transformed vector after this method returns.</param>
     public static void Transform(this Matrix matrix, ref Vector2 v)
     {
-      float w = v.X * matrix.M11 + v.Y * matrix.M12 + matrix.M31;
-      float h = v.X * matrix.M21 + v.Y * matrix.M22 + matrix.M32;
+      float w = v.X * matrix.M11 + v.Y * matrix.M21 + matrix.M41;
+      float h = v.X * matrix.M12 + v.Y * matrix.M22 + matrix.M42;
       v.X = w;
       v.Y = h;
     }
@@ -194,16 +194,17 @@ namespace MediaPortal.UI.SkinEngine
     }
 
     /// <summary>
-    /// Returns a <paramref name="sizeScale"/> value which represents the maximum extension of an object transformed
-    /// by this matrix.
+    /// Returns a scale factor in X and Y directions which represents the extension of an object transformed by this matrix.
     /// </summary>
     /// <param name="matrix">Transformation matrix.</param>
-    /// <param name="sizeScale">Factor which represents the size scaling of an object transformed by this matrix.</param>
-    public static void GetTransformedSizeScale(this Matrix matrix, out float sizeScale)
+    /// <param name="sizeScaleX">X factor which represents the size scaling of an object transformed by this matrix.</param>
+    /// <param name="sizeScaleY">Y factor which represents the size scaling of an object transformed by this matrix.</param>
+    public static void GetTransformedSizeScale(this Matrix matrix, out float sizeScaleX, out float sizeScaleY)
     {
       SizeF sizeTest = new SizeF(1f, 1f);
       matrix.TransformSize(ref sizeTest);
-      sizeScale = Math.Max(sizeTest.Width, sizeTest.Height);
+      sizeScaleX = sizeTest.Width;
+      sizeScaleY = sizeTest.Height;
     }
 
     /// <summary>
