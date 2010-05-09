@@ -118,6 +118,7 @@ namespace MediaPortal.UI.SkinEngine
     /// <param name="v">Vector to transform. Will contain the transformed vector after this method returns.</param>
     public static void Transform(this Matrix matrix, ref Vector2 v)
     {
+      // DirectX uses row-major matrices, so we need to multiply the transposed matrix
       float w = v.X * matrix.M11 + v.Y * matrix.M21 + matrix.M41;
       float h = v.X * matrix.M12 + v.Y * matrix.M22 + matrix.M42;
       v.X = w;
