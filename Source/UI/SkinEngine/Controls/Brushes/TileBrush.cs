@@ -170,9 +170,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     #endregion
 
-    public override void SetupBrush(RectangleF bounds, float zOrder, PositionColored2Textured[] verts)
+    public override void SetupBrush(ref PositionColored2Textured[] verts, float zOrder)
     {
-      base.SetupBrush(bounds, zOrder, verts);
+      base.SetupBrush(ref verts, zOrder);
       // todo here:
       ///   - stretchmode
       ///   - tilemode  : none,tile,flipx,flipy
@@ -198,20 +198,20 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
           break;
       }
 
-      float w = bounds.Width;
-      float h = bounds.Height;
       float xoff = _vertsBounds.X;
       float yoff = _vertsBounds.Y;
+      float w = _vertsBounds.Width;
+      float h = _vertsBounds.Height;
 
       for (int i = 0; i < verts.Length; ++i)
       {
         float x1 = verts[i].X;
-        float u = x1 - (bounds.X + xoff);
+        float u = x1 - xoff;
         u /= w * ViewPort.Z;
         u += ViewPort.X;
 
         float y1 = verts[i].Y;
-        float v = y1 - (bounds.Y + yoff);
+        float v = y1 - yoff;
         v /= h * ViewPort.W;
         v += ViewPort.Y;
 

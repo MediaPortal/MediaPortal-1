@@ -268,7 +268,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Panels
           verts[4].Position = new Vector3(rect.Right, rect.Top, 1.0f);
           verts[5].Position = new Vector3(rect.Right, rect.Bottom, 1.0f);
         }
-        Background.SetupBrush(ActualBounds, localRenderContext.ZOrder, verts);
+        Background.SetupBrush(ref verts, localRenderContext.ZOrder);
         _backgroundContext = new PrimitiveContext(2, ref verts, PrimitiveType.TriangleList);
         Background.SetupPrimitive(_backgroundContext, localRenderContext);
       }

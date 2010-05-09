@@ -99,9 +99,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       set { _colorProperty.SetValue(value); }
     }
 
-    public override void SetupBrush(RectangleF bounds, float zOrder, PositionColored2Textured[] verts)
+    public override void SetupBrush(ref PositionColored2Textured[] verts, float zOrder)
     {
-      base.SetupBrush(bounds, zOrder, verts);
+      base.SetupBrush(ref verts, zOrder);
       _effect = ContentManager.GetEffect("solidbrush");
       _effectHandleColor = _effect.GetParameterHandle("g_solidColor");
     }

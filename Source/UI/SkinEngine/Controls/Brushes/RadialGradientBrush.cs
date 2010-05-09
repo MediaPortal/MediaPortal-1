@@ -22,7 +22,6 @@
 
 #endregion
 
-using System.Drawing;
 using MediaPortal.Core.General;
 using MediaPortal.UI.SkinEngine.ContentManagement;
 using MediaPortal.UI.SkinEngine.Effects;
@@ -193,9 +192,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     #region Public methods
 
-    public override void SetupBrush(RectangleF bounds, float zOrder, PositionColored2Textured[] verts)
+    public override void SetupBrush(ref PositionColored2Textured[] verts, float zOrder)
     {
-      base.SetupBrush(bounds, zOrder, verts);
+      base.SetupBrush(ref verts, zOrder);
 
       if (_gradientBrushTexture == null)
         _gradientBrushTexture = BrushCache.Instance.GetGradientBrush(GradientStops);

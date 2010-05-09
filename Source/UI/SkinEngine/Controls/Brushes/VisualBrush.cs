@@ -22,7 +22,6 @@
 
 #endregion
 
-using System.Drawing;
 using MediaPortal.Core.General;
 using MediaPortal.UI.SkinEngine.ContentManagement;
 using MediaPortal.UI.SkinEngine.Controls.Visuals;
@@ -82,9 +81,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     #endregion
 
-    public override void SetupBrush(RectangleF bounds, float zOrder, PositionColored2Textured[] verts)
+    public override void SetupBrush(ref PositionColored2Textured[] verts, float zOrder)
     {
-      base.SetupBrush(bounds, zOrder, verts);
+      base.SetupBrush(ref verts, zOrder);
       _textureVisual = new Texture(GraphicsDevice.Device, (int) _vertsBounds.Width, (int ) _vertsBounds.Height, 1,
           Usage.RenderTarget, Format.X8R8G8B8, Pool.Default);
     }

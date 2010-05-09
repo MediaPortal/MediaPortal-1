@@ -92,9 +92,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     #endregion
 
-    public override void SetupBrush(RectangleF bounds, float zOrder, PositionColored2Textured[] verts)
+    public override void SetupBrush(ref PositionColored2Textured[] verts, float zOrder)
     {
-      base.SetupBrush(bounds, zOrder, verts);
+      base.SetupBrush(ref verts, zOrder);
       _effect = ContentManager.GetEffect("normal");
       _verts = verts;
       _videoSize = new Size(0, 0);
