@@ -96,7 +96,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
 
     public double CenterX
     {
-      get { return (double)_centerXProperty.GetValue(); }
+      get { return (double) _centerXProperty.GetValue(); }
       set { _centerXProperty.SetValue(value); }
     }
 
@@ -107,7 +107,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
 
     public double CenterY
     {
-      get { return (double)_centerYProperty.GetValue(); }
+      get { return (double) _centerYProperty.GetValue(); }
       set { _centerYProperty.SetValue(value); }
     }
 
@@ -118,7 +118,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
 
     public double Angle
     {
-      get { return (double)_angleProperty.GetValue(); }
+      get { return (double) _angleProperty.GetValue(); }
       set { _angleProperty.SetValue(value); }
     }
 
@@ -136,21 +136,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
         _matrix = Matrix.Translation((float) -CenterX, (float) -CenterY, 0);
         _matrix *= Matrix.RotationZ((float) radians);
         _matrix *= Matrix.Translation((float) CenterX, (float) CenterY, 0);
-      }
-    }
-
-    public override void UpdateTransformRel()
-    {
-      base.UpdateTransformRel();
-      double radians = Angle / 180.0 * Math.PI;
-
-      if (CenterX == 0.0 && CenterY == 0.0)
-        _matrixRel = Matrix.RotationZ((float) radians);
-      else
-      {
-        _matrixRel = Matrix.Translation((float) -CenterX, (float) -CenterY, 0);
-        _matrixRel *= Matrix.RotationZ((float) radians);
-        _matrixRel *= Matrix.Translation((float) CenterX, (float) CenterY, 0);
       }
     }
   }

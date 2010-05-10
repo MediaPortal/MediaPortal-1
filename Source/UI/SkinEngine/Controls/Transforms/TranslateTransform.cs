@@ -94,7 +94,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
 
     public double X
     {
-      get { return (double)_XProperty.GetValue(); }
+      get { return (double) _XProperty.GetValue(); }
       set { _XProperty.SetValue(value); }
     }
 
@@ -105,7 +105,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
 
     public double Y
     {
-      get { return (double)_YProperty.GetValue(); }
+      get { return (double) _YProperty.GetValue(); }
       set { _YProperty.SetValue(value); }
     }
 
@@ -113,12 +113,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
     {
       base.UpdateTransform();
       _matrix = Matrix.Translation((float) X, (float) Y, 0);
-    }
-
-    public override void UpdateTransformRel()
-    {
-      base.UpdateTransformRel();
-      _matrixRel = Matrix.Translation((float) X , (float) Y , 0);
     }
   }
 }

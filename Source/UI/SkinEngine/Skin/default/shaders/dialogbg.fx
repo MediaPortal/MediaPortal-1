@@ -9,7 +9,7 @@ sampler textureSampler = sampler_state
   MagFilter = LINEAR;
 };
                           
-//application to vertex structure
+// application to vertex structure
 struct a2v
 {
   float4 Position  : POSITION0;
@@ -19,7 +19,7 @@ struct a2v
 };
 
 // vertex shader to pixelshader structure
-struct v2p 
+struct v2p
 {
   float4 Position   : POSITION;
   float4 Color      : COLOR0;
@@ -28,25 +28,22 @@ struct v2p
 };
 
 // pixel shader to frame
-struct p2f 
+struct p2f
 {
   float4 Color : COLOR0;
 };
-  
-// the vertex shader
-void renderVertexShader( in a2v IN, out v2p OUT ) 
+
+void renderVertexShader(in a2v IN, out v2p OUT)
 {
-  //getting to position to object space
   OUT.Position = mul(IN.Position, worldViewProj);
   OUT.Color = IN.Color;
   OUT.Texcoord = IN.Texcoord;
   OUT.Texcoord1 = IN.Texcoord1;
 }
 
-// the pixel shader
-void renderPixelShader( in v2p IN, out p2f OUT) 
-{ 
-  //Calculate the offsets
+void renderPixelShader(in v2p IN, out p2f OUT)
+{
+  // Calculate the offsets
   float2 Offset;
   Offset.x = 0.5f / float(256);
   Offset.y = 0.5f / float(256);
@@ -64,7 +61,7 @@ void renderPixelShader( in v2p IN, out p2f OUT)
   // Extract the color from the texture
   float4 average = (top + bottom + right + left + top_left + top_right + bottom_left + bottom_right) / 8;
   // Color output
-  average[3] = IN.Color[3]; // keep alpha as it is
+  average[3] = IN.Color[3]; // Keep alpha as it is
   OUT.Color = average;
   float avg = (OUT.Color[0] + OUT.Color[1] + OUT.Color[2])/3.0f;
   float weight = 0.3f;

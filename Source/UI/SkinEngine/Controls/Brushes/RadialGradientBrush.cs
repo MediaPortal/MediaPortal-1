@@ -253,7 +253,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       else
       {
 // TODO: Why invert?
-        Matrix m = Matrix.Invert(RelativeTransform.GetTransformRel());
+        Matrix m = Matrix.Invert(RelativeTransform.GetTransform());
 
         _handleRelativeTransform.SetParameter(m);
         _handleFocus.SetParameter(g_focus);
@@ -308,7 +308,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       else
       {
 // TODO: Why invert?
-        Matrix m = Matrix.Invert(RelativeTransform.GetTransformRel());
+        Matrix m = Matrix.Invert(RelativeTransform.GetTransform());
 
         _handleRelativeTransform.SetParameter(m);
         _handleFocus.SetParameter(g_focus);
@@ -335,7 +335,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       primitiveContext.Texture = BrushCache.Instance.GetGradientBrush(GradientStops);
       if (_singleColor)
       {
-
         Color4 v = ColorConverter.FromColor(GradientStops[0].Color);
         v.Alpha *= (float) renderContext.Opacity;
         primitiveContext.Effect = ContentManager.GetEffect("solidbrush");
@@ -368,7 +367,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         }
 
 // TODO: Why invert?
-        Matrix m = Matrix.Invert(RelativeTransform.GetTransformRel());
+        Matrix m = Matrix.Invert(RelativeTransform.GetTransform());
 
         primitiveContext.Parameters.Add(_handleRelativeTransform, m);
         primitiveContext.Parameters.Add(_handleFocus, g_focus);

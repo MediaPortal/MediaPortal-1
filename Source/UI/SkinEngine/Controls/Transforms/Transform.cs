@@ -34,9 +34,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
     #region Private/protected fields
 
     protected bool _needUpdate = true;
-    protected bool _needUpdateRel = true;
     protected Matrix _matrix = Matrix.Identity;
-    protected Matrix _matrixRel = Matrix.Identity;
 
     #endregion
     
@@ -46,7 +44,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
     {
       base.DeepCopy(source, copyManager);
       _needUpdate = true;
-      _needUpdateRel = true;
     }
 
     #endregion
@@ -58,7 +55,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
     protected void OnPropertyChanged(AbstractProperty property, object oldValue)
     {
       _needUpdate = true;
-      _needUpdateRel = true;
       Fire();
     }
 
@@ -80,20 +76,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
       return _matrix;
     }
 
-    public virtual Matrix GetTransformRel()
-    {
-      if (_needUpdateRel)
-      {
-        UpdateTransformRel();
-        _needUpdateRel = false;
-      }
-      return _matrixRel;
-    }
-
     public virtual void UpdateTransform()
-    { }
-
-    public virtual void UpdateTransformRel()
     { }
   }
 }

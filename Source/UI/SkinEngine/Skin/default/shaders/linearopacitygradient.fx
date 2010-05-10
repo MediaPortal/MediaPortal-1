@@ -23,7 +23,7 @@ sampler alphaSampler = sampler_state
   MagFilter = POINT;
 };
 
-//application to vertex structure
+// application to vertex structure
 struct a2v
 {
   half4 Position  : POSITION0;
@@ -31,42 +31,41 @@ struct a2v
 };
 
 // vertex shader to pixelshader structure
-struct v2p 
+struct v2p
 {
   half4 Position   : POSITION;
   half2 Texcoord   : TEXCOORD0;
 };
 
 // pixel shader to frame
-struct p2f 
+struct p2f
 {
   half4 Color : COLOR0;
 };
 
 half GetColor(half2 pos)
 {
-  half2 Vector1=pos-g_StartPoint;
-  half2 Vector2=g_EndPoint-g_StartPoint;
-  half dist=dot(Vector1,Vector2)/dot(Vector2,Vector2);
+  half2 vPos = pos-g_StartPoint;
+  half2 vDist = g_EndPoint-g_StartPoint;
+  half dist = dot(vPos, vDist) / dot(vDist, vDist);
 
   return dist;
 }
 
-void renderVertexShader( in a2v IN, out v2p OUT ) 
+void renderVertexShader(in a2v IN, out v2p OUT)
 {
-  //getting to position to object space
   OUT.Position = mul(IN.Position, worldViewProj);
   OUT.Texcoord = IN.Texcoord;
 }
 
-void renderPixelShader( in v2p IN, out p2f OUT) 
-{ 
-  half4 pos = half4(IN.Texcoord.x,IN.Texcoord.y,0,1);
+void renderPixelShader(in v2p IN, out p2f OUT)
+{
+  half4 pos = half4(IN.Texcoord.x, IN.Texcoord.y, 0, 1);
   pos = mul(pos, RelativeTransform);
-  half aaa = GetColor( half2(pos.x,pos.y) );
-  half dist = clamp(aaa,0,0.9999);
+  half aaa = GetColor(half2(pos.x, pos.y));
+  half dist = clamp(aaa, 0, 0.9999);
   
-  OUT.Color = tex2D(textureSampler, IN.Texcoord) ;
+  OUT.Color = tex2D(textureSampler, IN.Texcoord);
   half4 alphaColor = tex1D(alphaSampler, dist);
   OUT.Color[3] = alphaColor[3];
 }

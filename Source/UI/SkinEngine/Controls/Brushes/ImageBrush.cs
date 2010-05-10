@@ -31,6 +31,7 @@ using MediaPortal.Utilities.DeepCopy;
 
 namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 {
+  // TODO: Implement
   public class ImageBrush : TileBrush
   {
     #region Private fields

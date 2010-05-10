@@ -196,7 +196,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       else
       {
 // TODO: Why invert?
-        Matrix m = Matrix.Invert(RelativeTransform.GetTransformRel());
+        Matrix m = Matrix.Invert(RelativeTransform.GetTransform());
 
         _handleRelativeTransform.SetParameter(m);
         _handleOpacity.SetParameter((float) (Opacity * renderContext.Opacity));
@@ -242,7 +242,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       else
       {
 // TODO: Why invert?
-        Matrix m = Matrix.Invert(RelativeTransform.GetTransformRel());
+        Matrix m = Matrix.Invert(RelativeTransform.GetTransform());
 
         _handleRelativeTransform.SetParameter(m);
         _handleOpacity.SetParameter((float) (Opacity * renderContext.Opacity));
@@ -299,7 +299,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       }
 
 // TODO: Why invert?
-      Matrix m = Matrix.Invert(RelativeTransform.GetTransformRel());
+      Matrix m = Matrix.Invert(RelativeTransform.GetTransform());
 
       primitiveContext.Parameters.Add(_handleRelativeTransform, m);
       primitiveContext.Parameters.Add(_handleOpacity, (float) (Opacity * renderContext.Opacity));

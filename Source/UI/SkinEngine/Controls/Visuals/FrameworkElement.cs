@@ -874,7 +874,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
     public void RenderToTexture(Texture texture, RenderContext renderContext)
     {
-      // TODO: Rework this: Add RenderTarget property to RenderContext, use standard Render method
+      // TODO: Rework this: Add RenderTarget property to RenderContext, use standard DoRender method
 
       // We do the following here:
       // 1. Set the rendertarget to the given texture
@@ -890,8 +890,10 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         // Get the surface of our opacity texture
         using (Surface renderTextureSurface = texture.GetSurfaceLevel(0))
         {
-          // TODO: Can we leave out the step to copy the backbuffer and make our rendering effect use the opacity parameter
-          // in the texture where our control was not rendered so the backbuffer isn't cleared with black?
+          // TODO: Is it possible to initialize the texture with a transparent color to avoid the need to
+          // copy the backbuffer? Currently, if we don't initialize the texture with the current backbuffer
+          // content, the resulting texture contains a black background and thus will overwrite the
+          // whole backbuffer.
           SurfaceDescription renderTextureDesc = renderTextureSurface.Description;
           // Copy the backbuffer to the render texture
           GraphicsDevice.Device.StretchRectangle(backBuffer,
@@ -935,14 +937,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         DoRender(localRenderContext);
       else
       { // Control has an opacity mask
-        // TODO: Rework this: Add RenderTarget property to RenderContext, simplify rendering opacity brushes
-
-        // What we do here is that
-        // 1. Create an opacity texture which has the same dimensions as the control
-        // 2. Copy the part of the current backbuffer where the control is rendered to the opacity texture
-        // 3. Render the control into the opacity texture
-        // 4. Render the opacitytexture using the opacitymask brush
-        UpdateOpacityMask(localRenderContext.ZOrder);
+        UpdateOpacityMask(localRenderContext);
         RenderToTexture(_opacityMaskContext.Texture, localRenderContext);
 
         // Now render the opacitytexture with the OpacityMask brush
@@ -960,10 +955,10 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     #region Opacitymask
 
     /// <summary>
-    /// Updates the opacity mask texture.
+    /// Updates the opacity mask context.
     /// </summary>
-    /// <param name="zPos">Z position of this element.</param>
-    void UpdateOpacityMask(float zPos)
+    /// <param name="localRenderContext">Current local render context to render this element.</param>
+    void UpdateOpacityMask(RenderContext localRenderContext)
     {
       if (!_updateOpacityMask)
         return;
@@ -978,6 +973,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
       PositionColored2Textured[] verts = new PositionColored2Textured[6];
 
+      float zPos = localRenderContext.ZOrder;
       Color4 col = ColorConverter.FromColor(Color.White);
       col.Alpha *= (float) Opacity;
       int color = col.ToArgb();

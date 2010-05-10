@@ -84,14 +84,12 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
     protected void OnChildrenChanged(IObservable observable)
     {
       _needUpdate = true;
-      _needUpdateRel = true;
       Fire();
     }
 
     protected void OnPropertyChanged(AbstractProperty property)
     {
       _needUpdate = true;
-      _needUpdateRel = true;
       Fire();
     }
 
@@ -102,7 +100,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
 
     public TransformCollection Children
     {
-      get { return (TransformCollection)_childrenProperty.GetValue(); }
+      get { return (TransformCollection) _childrenProperty.GetValue(); }
     }
 
     public override void UpdateTransform()
@@ -111,14 +109,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Transforms
       _matrix = Matrix.Identity;
       foreach (Transform t in Children)
         _matrix *= t.GetTransform();
-    }
-
-    public override void UpdateTransformRel()
-    {
-      base.UpdateTransformRel();
-      _matrixRel = Matrix.Identity;
-      foreach (Transform t in Children)
-        _matrixRel *= t.GetTransformRel();
     }
 
     #region IAddChild Members

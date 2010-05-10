@@ -39,8 +39,10 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     #region Private fields
 
     AbstractProperty _visualProperty;
+    AbstractProperty _autoLayoutContentProperty;
     EffectAsset _effect;
     Texture _textureVisual;
+    bool _layoutDone = false;
 
     #endregion
 
@@ -49,22 +51,42 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     public VisualBrush()
     {
       Init();
+      Attach();
     }
 
     void Init()
     {
       _visualProperty = new SProperty(typeof(FrameworkElement), null);
+      _autoLayoutContentProperty = new SProperty(typeof(bool), true);
       _effect = ContentManager.GetEffect("normal");
+    }
+
+    void Attach()
+    {
+      _visualProperty.Attach(OnVisualChanged);
+    }
+
+    void Detach()
+    {
+      _visualProperty.Detach(OnVisualChanged);
     }
 
     public override void DeepCopy(IDeepCopyable source, ICopyManager copyManager)
     {
+      Detach();
       base.DeepCopy(source, copyManager);
       VisualBrush b = (VisualBrush) source;
-      Visual = b.Visual; // Use the original Visual. Why should we use a copy?
+      Visual = b.Visual; // Use the original Visual, copying isn't necessary
+      AutoLayoutContent = b.AutoLayoutContent;
+      Attach();
     }
 
     #endregion
+
+    void OnVisualChanged(AbstractProperty prop, object oldVal)
+    {
+      _layoutDone = false;
+    }
 
     #region Public properties
 
@@ -75,8 +97,19 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     public FrameworkElement Visual
     {
-      get { return (FrameworkElement)_visualProperty.GetValue(); }
+      get { return (FrameworkElement) _visualProperty.GetValue(); }
       set { _visualProperty.SetValue(value); }
+    }
+
+    public AbstractProperty AutoLayoutContentProperty
+    {
+      get { return _autoLayoutContentProperty; }
+    }
+
+    public bool AutoLayoutContent
+    {
+      get { return (bool) _autoLayoutContentProperty.GetValue(); }
+      set { _autoLayoutContentProperty.SetValue(value); }
     }
 
     #endregion
@@ -90,15 +123,30 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     public override bool BeginRenderBrush(PrimitiveContext primitiveContext, RenderContext renderContext)
     {
-      if (Visual == null) return false;
+      FrameworkElement visual = Visual;
+      if (visual == null) return false;
 
-      // TODO: Is this correct?
-      RenderContext tempRenderContext = renderContext.Derive(_vertsBounds, null, RelativeTransform.GetTransform(), new Vector2(0.5f, 0.5f), Opacity);
+      Matrix finalTransform = renderContext.Transform.Clone();
+      if (Transform != null)
+        finalTransform *= Transform.GetTransform();
+      if (AutoLayoutContent && !_layoutDone)
+      {
+        // Only the initial layout call is done here. Currently, we don't support further, deferred layout calls
+        // of our visual.
+        visual.UpdateLayout();
+        _layoutDone = true;
+      }
 
-      Visual.RenderToTexture(_textureVisual, tempRenderContext);
+      // TODO: Handle properties of TileBrush
+      // TODO: Handle RelativeTransform
+
+      RenderContext tempRenderContext = renderContext.Derive(_vertsBounds, null, null,
+          new Vector2(0.5f, 0.5f), Opacity);
+
+      visual.RenderToTexture(_textureVisual, tempRenderContext);
 
       // Now render our texture
-      _effect.StartRender(_textureVisual, Transform == null ? Matrix.Identity : Transform.GetTransform());
+      _effect.StartRender(_textureVisual, finalTransform);
 
       return true;
     }

@@ -9,7 +9,7 @@ sampler textureSampler = sampler_state
   MagFilter = LINEAR;
 };
                           
-//application to vertex structure
+// application to vertex structure
 struct a2v
 {
   float4 Position  : POSITION0;
@@ -19,7 +19,7 @@ struct a2v
 };
 
 // vertex shader to pixelshader structure
-struct v2p 
+struct v2p
 {
   float4 Position   : POSITION;
   float4 Color      : COLOR0;
@@ -28,13 +28,12 @@ struct v2p
 };
 
 // pixel shader to frame
-struct p2f 
+struct p2f
 {
   float4 Color : COLOR0;
 };
-  
-// the vertex shader
-void renderVertexShader( in a2v IN, out v2p OUT ) 
+
+void renderVertexShader(in a2v IN, out v2p OUT)
 {
   OUT.Position = mul(IN.Position, worldViewProj);
   OUT.Color = IN.Color;
@@ -42,9 +41,8 @@ void renderVertexShader( in a2v IN, out v2p OUT )
   OUT.Texcoord1 = IN.Texcoord1;
 }
 
-// the pixel shader
-void renderPixelShader( in v2p IN, out p2f OUT) 
-{ 
+void renderPixelShader(in v2p IN, out p2f OUT)
+{
   // Calculate the offsets
   float2 Offset;
   Offset.x = 2.0f / float(256);

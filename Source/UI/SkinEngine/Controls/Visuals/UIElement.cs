@@ -876,7 +876,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 #if DEBUG_LAYOUT
       System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}'", GetType().Name, Name));
 #endif
-      //Trace.WriteLine("UpdateLayout: " + Name + "  " + GetType());
 
       UIElement parent = VisualParent as UIElement;
       if (parent == null)
