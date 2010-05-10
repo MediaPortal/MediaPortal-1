@@ -48,6 +48,7 @@ namespace MediaPortal.GUI.Library
     private bool _useViewPort = true;
     private bool _propertyHasChanged = false;
     private bool _reCalculate = false;
+    private FontRenderContext _context;
 
     /// <summary>
     /// The constructor of the GUILabelControl class.
@@ -117,9 +118,7 @@ namespace MediaPortal.GUI.Library
       {
         _containsProperty = true;
       }
-
-      _cachedTextLabel = _labelText;
-      _propertyHasChanged = true;
+      CachedLabel();
     }
 
     /// <summary>
@@ -136,18 +135,13 @@ namespace MediaPortal.GUI.Library
       if (_containsProperty && _propertyHasChanged)
       {
         _propertyHasChanged = false;
-        string newLabel = GUIPropertyManager.Parse(_labelText);
-        if (_cachedTextLabel != newLabel)
-        {
-          if (newLabel == null)
-          {
-            newLabel = "";
-          }
-          _cachedTextLabel = newLabel;
-          _textwidth = 0;
-          _textheight = 0;
-          _reCalculate = true;
-        }
+        CachedLabel();
+      }
+
+      if (string.IsNullOrEmpty(_cachedTextLabel))
+      {
+        base.Render(timePassed);
+        return;
       }
 
       if (_reCalculate)
@@ -156,16 +150,7 @@ namespace MediaPortal.GUI.Library
         ClearFontCache();
       }
 
-      if (_cachedTextLabel == null)
-      {
-        base.Render(timePassed);
-        return;
-      }
-      if (_cachedTextLabel.Length == 0)
-      {
-        base.Render(timePassed);
-        return;
-      }
+
 
       long color = _textColor;
       if (Dimmed)
@@ -175,24 +160,6 @@ namespace MediaPortal.GUI.Library
 
       if (null != _font)
       {
-        if (GUIGraphicsContext.graphics != null)
-        {
-          if (_width > 0)
-          {
-            uint c = (uint)color;
-            c = GUIGraphicsContext.MergeAlpha(c);
-            this.DrawTextWidth(_positionX, _positionY, (int)c, _cachedTextLabel, _width, _textAlignment);
-          }
-          else
-          {
-            uint c = (uint)color;
-            c = GUIGraphicsContext.MergeAlpha(c);
-            this.DrawText(_positionX, _positionY, (int)c, _cachedTextLabel, _textAlignment, -1);
-          }
-          base.Render(timePassed);
-          return;
-        }
-
         if (_textwidth == 0 || _textheight == 0)
         {
           float width = _textwidth;
@@ -221,7 +188,7 @@ namespace MediaPortal.GUI.Library
           uint c = (uint)color;
           c = GUIGraphicsContext.MergeAlpha(c);
 
-          this.DrawText((float)_positionX + xoff, (float)_positionY + yoff, (int)c, _cachedTextLabel,
+          this.DrawText((float)_positionX + xoff, (float)_positionY + yoff, (int)c,
                         Alignment.ALIGN_LEFT, _width);
         }
         else
@@ -233,30 +200,11 @@ namespace MediaPortal.GUI.Library
               uint c = (uint)color;
               c = GUIGraphicsContext.MergeAlpha(c);
 
-              this.DrawText((float)_positionX - _textwidth, vpos, (int)c, _cachedTextLabel,
+              this.DrawText((float)_positionX - _textwidth, vpos, (int)c,
                             Alignment.ALIGN_LEFT, -1);
             }
             else
             {
-/*
-              float fPosCX = (float)_positionX;
-              float fPosCY = (float)_positionY;
-              GUIGraphicsContext.Correct(ref fPosCX, ref fPosCY);
-              if (fPosCX < 0) fPosCX = 0.0f;
-              if (fPosCY < 0) fPosCY = 0.0f;
-              if (fPosCY > GUIGraphicsContext.Height) fPosCY = (float)GUIGraphicsContext.Height;
-              float heighteight = 60.0f;
-              if (heighteight + fPosCY >= GUIGraphicsContext.Height)
-                heighteight = GUIGraphicsContext.Height - fPosCY - 1;
-              if (heighteight <= 0) return;
-
-              float fwidth = _width - 5.0f;
-
-              if (fPosCX <= 0) fPosCX = 0;
-              if (fPosCY <= 0) fPosCY = 0;
-              if (fwidth < 1) return;
-              if (heighteight < 1) return;
-              */
               if (_width < 6)
               {
                 base.Render(timePassed);
@@ -265,10 +213,8 @@ namespace MediaPortal.GUI.Library
               uint c = (uint)color;
               c = GUIGraphicsContext.MergeAlpha(c);
 
-              this.DrawText((float)_positionX - _textwidth, vpos, (int)c, _cachedTextLabel,
+              this.DrawText((float)_positionX - _textwidth, vpos, (int)c,
                             Alignment.ALIGN_LEFT, (int)_width - 5);
-              //if (_useViewPort)
-              //  GUIGraphicsContext.DX9Device.Viewport = oldviewport;
             }
             base.Render(timePassed);
             return;
@@ -279,29 +225,11 @@ namespace MediaPortal.GUI.Library
             uint c = (uint)color;
             c = GUIGraphicsContext.MergeAlpha(c);
 
-            this.DrawText((float)_positionX, vpos, (int)c, _cachedTextLabel, _textAlignment,
+            this.DrawText((float)_positionX, vpos, (int)c, _textAlignment,
                           (int)_width);
           }
           else
           {
-            /*
-            float fPosCX = (float)_positionX;
-            float fPosCY = (float)_positionY;
-            GUIGraphicsContext.Correct(ref fPosCX, ref fPosCY);
-            if (fPosCX < 0) fPosCX = 0.0f;
-            if (fPosCY < 0) fPosCY = 0.0f;
-            if (fPosCY > GUIGraphicsContext.Height) fPosCY = (float)GUIGraphicsContext.Height;
-            float heighteight = 60.0f;
-            if (heighteight + fPosCY >= GUIGraphicsContext.Height)
-              heighteight = GUIGraphicsContext.Height - fPosCY - 1;
-            if (heighteight <= 0) return;
-
-            float fwidth = _width - 5.0f;
-            if (fwidth < 1) return;
-            if (heighteight < 1) return;
-
-            if (fPosCX <= 0) fPosCX = 0;
-            if (fPosCY <= 0) fPosCY = 0;*/
             if (_width < 6)
             {
               return;
@@ -309,7 +237,7 @@ namespace MediaPortal.GUI.Library
 
             uint c = (uint)color;
             c = GUIGraphicsContext.MergeAlpha(c);
-            this.DrawText((float)_positionX, vpos, (int)c, _cachedTextLabel, _textAlignment,
+            this.DrawText((float)_positionX, vpos, (int)c, _textAlignment,
                           (int)_width - 5);
           }
         }
@@ -333,15 +261,15 @@ namespace MediaPortal.GUI.Library
     }
 
     // Wraps the calls to the GUIFont.  This provides opportunity to shadow the text if requested.
-    public void DrawText(float xpos, float ypos, long color, string label, GUIControl.Alignment alignment, int width)
+    public void DrawText(float xpos, float ypos, long color, GUIControl.Alignment alignment, int width)
     {
       if (Shadow)
       {
-        _font.DrawShadowText(xpos, ypos, color, label, alignment, _shadowAngle, _shadowDistance, _shadowColor);
+        _font.DrawShadowText(xpos, ypos, color, _cachedTextLabel, alignment, _shadowAngle, _shadowDistance, _shadowColor);
       }
       else
       {
-        _font.DrawText(xpos, ypos, color, label, alignment, width);
+        _font.DrawTextEx(xpos, ypos, color, _cachedTextLabel, ref _context, width);
       }
     }
 
@@ -531,7 +459,7 @@ namespace MediaPortal.GUI.Library
         }
 
         _labelText = value;
-        _cachedTextLabel = _labelText;
+
 
         if (_labelText.IndexOf("#") >= 0)
         {
@@ -542,9 +470,33 @@ namespace MediaPortal.GUI.Library
           _containsProperty = false;
         }
 
+        CachedLabel();
+
+      }
+    }
+
+    private void CachedLabel()
+    {
+      string v;
+ 
+
+      if (_containsProperty)
+      {
+        v = GUIPropertyManager.Parse(_labelText);
+        if(v == null)
+          v = String.Empty;
+      }
+      else
+      {
+        v = _labelText;
+      }
+      if( v != _cachedTextLabel)
+      {
         _textwidth = 0;
         _textheight = 0;
         _reCalculate = true;
+        _cachedTextLabel = v;
+        _context = null;
       }
     }
 
@@ -664,11 +616,7 @@ namespace MediaPortal.GUI.Library
           {
             return 0;
           }
-          _cachedTextLabel = GUIPropertyManager.Parse(_labelText);
-          if (_cachedTextLabel == null)
-          {
-            _cachedTextLabel = "";
-          }
+          CachedLabel();
           float width = _textwidth;
           float height = _textheight;
           _font.GetTextExtent(_cachedTextLabel, ref width, ref height);
@@ -692,11 +640,7 @@ namespace MediaPortal.GUI.Library
           {
             return 0;
           }
-          _cachedTextLabel = GUIPropertyManager.Parse(_labelText);
-          if (_cachedTextLabel == null)
-          {
-            _cachedTextLabel = "";
-          }
+          CachedLabel();
           float width = _textwidth;
           float height = _textheight;
           _font.GetTextExtent(_cachedTextLabel, ref width, ref height);

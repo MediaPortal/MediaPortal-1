@@ -37,6 +37,36 @@ using Font = System.Drawing.Font;
 
 namespace MediaPortal.GUI.Library
 {
+  public class FontRenderContext 
+  {
+    private IntPtr _ptrStr;
+    private bool _outOfBounds;
+
+    public FontRenderContext(GUIFont font, string t)
+    {
+       string text = font.GetRTLText(t);
+
+      _outOfBounds = font.containsOutOfBoundsChar(text);
+
+      _ptrStr = Marshal.StringToCoTaskMemUni(text);
+    }
+
+    ~FontRenderContext()
+    {
+      Marshal.FreeCoTaskMem(_ptrStr);
+    }
+
+    public bool charOutOfBounds
+    {
+      get { return _outOfBounds; }
+    }
+
+    public IntPtr ptr
+    {
+      get { return _ptrStr; }
+    }
+  }
+
   /// <summary>
   /// An implementation of the GUIFont class (renders text using DirectX textures).  This implementation generates the necessary textures for rendering the fonts in DirectX in the @skin\skinname\fonts directory.
   /// </summary>
@@ -235,6 +265,18 @@ namespace MediaPortal.GUI.Library
       }      
     }
 
+    public bool containsOutOfBoundsChar(string text)
+    {
+      for (int i = 0; i < text.Length; ++i)
+      {
+        char c = text[i];
+        if ((c < _StartCharacter || c >= _EndCharacter) && c != '\n')
+        {
+          return true;
+        }
+      }
+      return false;
+    }
     /// <summary>
     /// Draws text with a maximum width.
     /// </summary>
@@ -457,8 +499,10 @@ namespace MediaPortal.GUI.Library
     /// </remarks>
     /// <param name="text">The text in logical (reading) order</param>
     /// <returns>The text in display order</returns>	
-    public string HandleRTLText(string inLTRText)
+    public string GetRTLText(string inLTRText)
     {
+      if (!_useRTLLang)
+        return inLTRText;
       try
       {
         bool rtl = isRTL(inLTRText);
@@ -753,6 +797,53 @@ namespace MediaPortal.GUI.Library
     #endregion RTL handling
 
     /// <summary>
+    /// Optimized version of "Draw some text on the screen".
+    /// </summary>
+    /// <param name="xpos">The X position.</param>
+    /// <param name="ypos">The Y position.</param>
+    /// <param name="color">The font color.</param>
+    /// <param name="text">The actual text.</param>
+    /// <param name="context">Cached context.</param>
+    /// <param name="maxWidth">Maximum width of text</param>
+    public void DrawTextEx(float xpos, float ypos, long color, string text, ref FontRenderContext context, int maxWidth)
+    {
+      lock (GUIFontManager.Renderlock)
+      {
+        if (context == null)
+        {
+
+          if (string.IsNullOrEmpty(text))
+             return;
+
+          context = new FontRenderContext(this, text);
+        }
+
+        if (xpos <= 0 || ypos <= 0)
+          return;
+
+
+        if (context.charOutOfBounds)
+        {
+          int alpha = (int)((color >> 24) & 0xff);
+          int red = (int)((color >> 16) & 0xff);
+          int green = (int)((color >> 8) & 0xff);
+          int blue = (int)(color & 0xff);
+          GUIFontManager.DrawText(_d3dxFont, xpos, ypos, Color.FromArgb(alpha, red, green, blue), text, maxWidth, _fontHeight);
+          return;
+        }
+
+        unsafe
+        {
+          float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
+
+          FontEngineDrawText3D(ID, (void*)(context.ptr.ToPointer()), (int)xpos, (int)ypos, (uint)color, maxWidth,
+                               matrix);
+          return;
+        }
+      }
+    }
+
+    /// <summary>
     /// Draw some text on the screen.
     /// </summary>
     /// <param name="xpos">The X position.</param>
@@ -785,27 +876,15 @@ namespace MediaPortal.GUI.Library
           return;
         }
 
-        if (GUIGraphicsContext.graphics != null)
-        {
-          GUIGraphicsContext.graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
-          GUIGraphicsContext.graphics.SmoothingMode = SmoothingMode.HighQuality; //.AntiAlias;
-          GUIGraphicsContext.graphics.DrawString(text, _systemFont, new SolidBrush(color), xpos, ypos);
-          return;
-        }
-        if (_useRTLLang)
-        {
-          text = HandleRTLText(text);
-        }
+ 
+        text = GetRTLText(text);
+
         if (ID >= 0)
         {
-          for (int i = 0; i < text.Length; ++i)
+          if(containsOutOfBoundsChar(text))
           {
-            char c = text[i];
-            if (c < _StartCharacter || c >= _EndCharacter)
-            {
               GUIFontManager.DrawText(_d3dxFont, xpos, ypos, color, text, maxWidth, _fontHeight);
               return;
-            }
           }
 
           int intColor = color.ToArgb();
