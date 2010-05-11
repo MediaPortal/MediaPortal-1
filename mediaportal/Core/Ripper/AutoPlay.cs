@@ -269,7 +269,7 @@ namespace MediaPortal.Ripper
 
     public static void ExamineCD(string strDrive, bool forcePlay)
     {
-      if (string.IsNullOrEmpty(strDrive))
+      if (string.IsNullOrEmpty(strDrive) || (g_Player.Playing && DaemonTools.GetVirtualDrive().StartsWith(strDrive)))
       {
         return;
       }
