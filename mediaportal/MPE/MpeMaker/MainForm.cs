@@ -119,8 +119,6 @@ namespace MpeMaker
       Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 
       Package = new PackageClass();
-
-      splitContainer1.Panel1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
       treeView1.ExpandAll();
       _panels.Add("Node0", new WelcomSection());
       _panels.Add("Node2", new GeneralSection());
