@@ -200,6 +200,7 @@ namespace MediaPortal.GUI.Library
       else if (String.Compare(animType, "conditional", true) == 0)
       {
         _type = AnimationType.Conditional;
+        SetInitialCondition();
       }
       if (_type == AnimationType.None)
       {
@@ -349,17 +350,7 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-
-      // acceleration of effect
-      //float accel;
-      //nodeAttribute = node.Attributes.GetNamedItem("acceleration");
-      //if (nodeAttribute != null)
-      //{
-      //  _acceleration = GetFloat(nodeAttribute.Value.ToString());
-      //}
-
-
-      // slide parameters
+      // conditional parameters
       if (_type == AnimationType.Conditional)
       {
         nodeAttribute = node.Attributes.GetNamedItem("pulse");
@@ -449,7 +440,7 @@ namespace MediaPortal.GUI.Library
         nodeAttribute = node.Attributes.GetNamedItem("start");
         if (nodeAttribute != null)
         {
-          _startX = float.Parse(nodeAttribute.Value.ToString());
+          _startX = float.Parse(nodeAttribute.Value);
         }
         nodeAttribute = node.Attributes.GetNamedItem("end");
         if (nodeAttribute != null)
@@ -567,6 +558,11 @@ namespace MediaPortal.GUI.Library
         // || (_currentState == ANI_STATE_DELAYED && _type > 0))
       {
         _queuedProcess = AnimationProcess.None;
+      }
+
+      if (_type == AnimationType.Conditional)
+      {
+        UpdateCondition();
       }
 
       // Update our animation process
