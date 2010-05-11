@@ -305,9 +305,9 @@ namespace MediaPortal.GUI.Library
       // Make the label fade in
       if (_fadeIn && _allowScrolling)
       {
-        long dwAlpha = (0xff / 12) * _currentFrame;
+        long dwAlpha = ((((uint)_textColor) >> 24) * _currentFrame) / 12;
         dwAlpha <<= 24;
-        dwAlpha += (_textColor & 0x00ffffff);
+        dwAlpha |= (_textColor & 0x00ffffff);
         _labelControl.TextColor = dwAlpha;
         float fwt = 0;
         _labelControl.Label = GetShortenedText(strLabel, _width, ref fwt);
