@@ -965,6 +965,8 @@
     <String id="1197">DXVA uitschakelen</String>
     <String id="1198">DVD Navigator</String>
     <String id="1200">Installatiewizard</String>
+    <String id="1201">Video vanaf begin afspelen</String>
+    <String id="1211">Hervatten afspelen vanaf {0}</String>
     <String id="1300">TV-shows</String>
     <String id="1440">Teletekst</String>
     <String id="1441">Teletekst</String>
@@ -985,7 +987,7 @@
     <String id="1503">Kanaal is gecodeerd</String>
     <String id="1504">Geen video/audio waargenomen</String>
     <String id="1505">Niet mogelijk om graph te starten</String>
-    <String id="1506">Onbekende fout</String>
+    <String id="1506">Er is een onbekende fout opgetreden</String>
     <String id="1507">Onbekende zender</String>
     <String id="1508">Kanaal is niet toegekend aan een kaart</String>
     <String id="1509">Geen ontvangstdetails voor de zender beschikbaar</String>
@@ -1253,15 +1255,15 @@
     <String id="3005">Uur geleden</String>
     <String id="3006">Uren geleden</String>
     <String id="3007">Minuut geleden</String>
-    <String id="3008">minuten geleden</String>
+    <String id="3008">Minuten geleden</String>
     <String id="3009">Begint over</String>
-    <String id="3010">minuten te gaan</String>
-    <String id="3011">uur te gaan</String>
-    <String id="3012">uren te gaan</String>
+    <String id="3010">Minuten te gaan</String>
+    <String id="3011">Uur te gaan</String>
+    <String id="3012">Uren te gaan</String>
     <String id="3013">Begint nu</String>
     <String id="3014">Dag</String>
     <String id="3015">Dagen</String>
-    <String id="3016">Al afgelopen</String>
+    <String id="3016">Reeds afgelopen</String>
     <String id="3017">Begonnen</String>
     <String id="3018">Minuut te gaan</String>
     <String id="3019">Series</String>
@@ -1278,7 +1280,7 @@
     <String id="4503">Tellen van aantal albums. Even geduld a.u.b.</String>
     <String id="4504">{0}% - {1} van {2}</String>
     <String id="4505">Zoeken {0}...</String>
-    <String id="4506">Leeg</String>
+    <String id="4506">[Leeg]</String>
     <String id="4507">Cover-artzoeker stopgezet door gebruiker</String>
     <String id="4508">Cover-artzoektocht met succes beëindigd</String>
     <String id="4509">Cover-artzoektocht geëindigd met fouten</String>
@@ -1619,7 +1621,7 @@
     <String id="33008">Er is geen actieve afspeellijst</String>
     <String id="33009">om het nummer aan toe te voegen!</String>
     <String id="33010">Vul playlist met </String>
-    <String id="33011">gelijksoortige nummers</String>
+    <String id="33011">Gelijksoortige nummers</String>
     <String id="33012">Nummers van uw buren</String>
     <String id="33013">Nummers welke voldoen aan een tag</String>
     <String id="33014">Recentelijk gespeelde nummers</String>
