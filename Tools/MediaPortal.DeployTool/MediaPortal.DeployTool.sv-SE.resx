@@ -157,8 +157,7 @@
     <value>MediaPortal Klient</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Detta kommer endast installera MediaPortal. För att titta på TV, kommer den att koppla upp 
-sig mot en TV-Server i ditt lokala nätverk.</value>
+    <value>Detta kommer endast installera MediaPortal. För att titta på TV, kommer den att koppla upp sig mot en TV-Server i ditt lokala nätverk.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Kombinerad installation</value>
@@ -171,8 +170,7 @@ sig mot en TV-Server i ditt lokala nätverk.</value>
   </data>
   <data name="CustomInstallation_labelMaster" xml:space="preserve">
     <value>Detta kommer endast installera MediaPortal TV-Server på denna dator.
-Denna dator kommer att fungera som en dedikerad TV-Server och leverera TV till andra datorer 
-i ditt lokala nätverk. (Databas måste installeras.)</value>
+Denna dator kommer att fungera som en dedikerad TV-Server och leverera TV till andra datorer i ditt lokala nätverk. (Databas måste installeras.)</value>
   </data>
   <data name="MainWindow_browseButton" xml:space="preserve">
     <value>Bläddra</value>
@@ -408,8 +406,7 @@ i ditt lokala nätverk. (Databas måste installeras.)</value>
   <data name="DownloadOnly_labelSectionHeader" xml:space="preserve">
     <value>En internetuppkoppling är ett krav för att installationsprocessen skall fungera.
 
-Vill du starta installationsprocessen nu eller vill du ladda ner alla komponenter 
-som behövs för att utföra installationen senare, kanske på en PC utan en internetanslutning?</value>
+Vill du starta installationsprocessen nu eller vill du ladda ner alla komponenter som behövs för att utföra installationen senare, kanske på en PC utan en internetanslutning?</value>
   </data>
   <data name="DownloadOnly_no" xml:space="preserve">
     <value>Ladda endast ner komponenterna som behövs</value>
@@ -500,5 +497,14 @@ Flytta mappen till din HTPC. Starta installationen genom att köra "MediaPortal.
   </data>
   <data name="DBMSType_rbMSSQL_disabled" xml:space="preserve">
     <value>Microsoft SQL-Server Express 2005 är inaktiverad</value>
+  </data>
+  <data name="AeroThemeMissing" xml:space="preserve">
+    <value>Windows AERO är avslaget.
+Vänligen observera att AERO måste användas för att undvika distortion av bilden och hackig uppspelning.
+Genom att använda AERO minskas även CPU belastningen vilket kan leda till att din HTPC blir svalare samt låter mindre.</value>
+  </data>
+  <data name="Reboot_Required" xml:space="preserve">
+    <value>En omstart av datorn krävs av en Microsoft-komponent.
+Innan du fortsätter med installationen av MediaPortal måste du starta om datorn.</value>
   </data>
 </root>
