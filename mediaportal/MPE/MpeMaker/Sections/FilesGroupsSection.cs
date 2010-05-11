@@ -552,5 +552,23 @@ namespace MpeMaker.Sections
       Package.ProjectSettings.RemoveFolderGroup(SelectedGroup.Name);
       list_folder.Items.Clear();
     }
+
+    private void btnSelectSourceFile_Click(object sender, EventArgs e)
+    {
+        openFileDialog.Title = "Select file";
+        if (openFileDialog.ShowDialog() == DialogResult.OK)
+        {
+            string localFileName = openFileDialog.FileName;
+            txt_source.Text = localFileName;
+            
+            var fileItem = (FileItem)SelectedNode.Tag;
+            fileItem.LocalFileName = localFileName;
+
+            string destinationFilename = MpeInstaller.InstallerTypeProviders[fileItem.InstallType].GetTemplatePath(fileItem);
+            fileItem.DestinationFilename = destinationFilename;
+            txt_installpath.Text = destinationFilename;
+                                    
+        }
+    }
   }
 }
