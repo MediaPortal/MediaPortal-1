@@ -129,7 +129,20 @@ namespace SetupTv
               }
               catch
               {
-                MessageBox.Show(this, "Unable to connect to " + RemoteControl.HostName);
+                DialogResult dlg = MessageBox.Show("Unable to connect to <" + server.HostName + ">.\n" +
+                                                   "Remove from database and restart setuptv ?", "Wrong config detected", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+                if (dlg == DialogResult.Yes)
+                {
+                  server.Delete();
+                  Log.Info("Controller: server {0} deleted ", server.HostName);
+                  ServiceHelper.Stop();
+                  Process.Start(Application.ExecutablePath, "-c");
+                }
+                else
+                {
+                  MessageBox.Show("Setup will now close");
+                }
+                Environment.Exit(-1);
               }
             }
             break;
