@@ -632,7 +632,7 @@
     <String id="727">Live tv op de achtergrond</String>
     <String id="728">Kan niet gestart worden</String>
     <String id="729">VMR9 moet aan staan en TV moet spelen</String>
-    <String id="730">Dit programma wordt nu opgenomen. Als je dit</String>
+    <String id="730">Dit programma wordt nu opgenomen. Als je deze</String>
     <String id="731">verwijdert, dan wordt de opname gestopt.</String>
     <String id="732">Doorgaan?</String>
     <String id="733">Weergave: Filmstrip</String>
@@ -655,7 +655,7 @@
     <String id="751">Toon alle nummers van deze artiest</String>
     <String id="752">Geen opname gespecificeerd</String>
     <String id="753">Geen tunerkaart geinstalleerd</String>
-    <String id="754">Geen enkele tuner neemt deze show op</String>
+    <String id="754">Geen enkele tuner neemt dit programma op</String>
     <String id="755">Geen enkele tuner in gebruik voor TV kijken</String>
     <String id="756">Geen enkele tuner kan {0} ontvangen</String>
     <String id="757">Alle tuners zijn bezet</String>
@@ -966,8 +966,8 @@
     <String id="1198">DVD Navigator</String>
     <String id="1200">Installatiewizard</String>
     <String id="1201">Video vanaf begin afspelen</String>
-    <String id="1211">Hervatten afspelen vanaf {0}</String>
-    <String id="1300">TV-shows</String>
+    <String id="1211">Afspelen hervatten vanaf {0}</String>
+    <String id="1300">TV-Programma's</String>
     <String id="1440">Teletekst</String>
     <String id="1441">Teletekst</String>
     <String id="1442">Rolsnelheid (hor.)</String>
