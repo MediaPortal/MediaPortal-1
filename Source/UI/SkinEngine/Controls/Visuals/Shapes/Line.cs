@@ -164,7 +164,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
           PositionColored2Textured[] verts;
           TriangulateHelper.FillPolygon_TriangleList(path, centerX, centerY, out verts);
           int numVertices = verts.Length / 3;
-          Stroke.SetupBrush(ref verts, context.ZOrder);
+          Stroke.SetupBrush(this, ref verts, context.ZOrder);
           _strokeContext = new PrimitiveContext(numVertices, ref verts, PrimitiveType.TriangleList);
           Stroke.SetupPrimitive(_strokeContext, context);
         }

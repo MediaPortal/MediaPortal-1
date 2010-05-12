@@ -25,6 +25,7 @@
 using System.Drawing;
 using MediaPortal.Core.General;
 using MediaPortal.UI.SkinEngine.Controls.Transforms;
+using MediaPortal.UI.SkinEngine.Controls.Visuals;
 using MediaPortal.UI.SkinEngine.DirectX;
 using MediaPortal.UI.SkinEngine.MpfElements;
 using MediaPortal.UI.SkinEngine.Rendering;
@@ -183,7 +184,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     public virtual void Scale(ref float u, ref float v, ref Color4 color)
     { }
 
-    public virtual void SetupBrush(ref PositionColored2Textured[] verts, float zOrder)
+    public virtual void SetupBrush(FrameworkElement parent, ref PositionColored2Textured[] verts, float zOrder)
     {
       UpdateBounds(ref verts);
       float w = _vertsBounds.Width;

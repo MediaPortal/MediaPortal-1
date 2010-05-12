@@ -24,6 +24,7 @@
 
 using MediaPortal.Core.General;
 using MediaPortal.UI.SkinEngine.ContentManagement;
+using MediaPortal.UI.SkinEngine.Controls.Visuals;
 using MediaPortal.UI.SkinEngine.Effects;
 using MediaPortal.UI.SkinEngine.DirectX;
 using MediaPortal.UI.SkinEngine.Rendering;
@@ -99,9 +100,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       set { _colorProperty.SetValue(value); }
     }
 
-    public override void SetupBrush(ref PositionColored2Textured[] verts, float zOrder)
+    public override void SetupBrush(FrameworkElement parent, ref PositionColored2Textured[] verts, float zOrder)
     {
-      base.SetupBrush(ref verts, zOrder);
+      base.SetupBrush(parent, ref verts, zOrder);
       _effect = ContentManager.GetEffect("solidbrush");
       _effectHandleColor = _effect.GetParameterHandle("g_solidColor");
     }

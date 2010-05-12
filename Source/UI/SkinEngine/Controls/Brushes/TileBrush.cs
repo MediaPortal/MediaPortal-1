@@ -170,9 +170,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     #endregion
 
-    public override void SetupBrush(ref PositionColored2Textured[] verts, float zOrder)
+    public override void SetupBrush(FrameworkElement parent, ref PositionColored2Textured[] verts, float zOrder)
     {
-      base.SetupBrush(ref verts, zOrder);
+      base.SetupBrush(parent, ref verts, zOrder);
       // todo here:
       ///   - stretchmode
       ///   - tilemode  : none,tile,flipx,flipy

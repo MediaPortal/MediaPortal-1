@@ -24,6 +24,7 @@
 
 using MediaPortal.Core.General;
 using MediaPortal.UI.SkinEngine.ContentManagement;
+using MediaPortal.UI.SkinEngine.Controls.Visuals;
 using MediaPortal.UI.SkinEngine.DirectX;
 using MediaPortal.UI.SkinEngine.Rendering;
 using SlimDX;
@@ -150,12 +151,12 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       _tex.Allocate();
     }
 
-    public override void SetupBrush(ref PositionColored2Textured[] verts, float zOrder)
+    public override void SetupBrush(FrameworkElement parent, ref PositionColored2Textured[] verts, float zOrder)
     {
       if (_tex == null)
       {
         Allocate();
-        base.SetupBrush(ref verts, zOrder);
+        base.SetupBrush(parent, ref verts, zOrder);
       }
     }
 

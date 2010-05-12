@@ -28,6 +28,7 @@ using MediaPortal.UI.SkinEngine.Controls.Visuals;
 using MediaPortal.UI.SkinEngine.DirectX;
 using MediaPortal.UI.SkinEngine.Effects;
 using MediaPortal.UI.SkinEngine.Rendering;
+using MediaPortal.UI.SkinEngine.ScreenManagement;
 using SlimDX;
 using SlimDX.Direct3D9;
 using MediaPortal.Utilities.DeepCopy;
@@ -36,13 +37,15 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 {
   public class VisualBrush : TileBrush
   {
-    #region Private fields
+    #region Protected fields
 
-    AbstractProperty _visualProperty;
-    AbstractProperty _autoLayoutContentProperty;
-    EffectAsset _effect;
-    Texture _textureVisual;
-    bool _layoutDone = false;
+    protected AbstractProperty _visualProperty;
+    protected AbstractProperty _autoLayoutContentProperty;
+    protected EffectAsset _effect;
+    protected Texture _textureVisual;
+    protected Screen _screen = null;
+    protected FrameworkElement _preparedVisual = null;
+
 
     #endregion
 
@@ -85,7 +88,22 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     void OnVisualChanged(AbstractProperty prop, object oldVal)
     {
-      _layoutDone = false;
+      PrepareVisual();
+    }
+
+    protected void PrepareVisual()
+    {
+      if (_screen == null)
+        return;
+      FrameworkElement visual = Visual;
+      if (visual == null)
+        return;
+      if (AutoLayoutContent)
+      {
+        visual.SetScreen(_screen);
+        visual.UpdateLayout();
+      }
+      _preparedVisual = visual;
     }
 
     #region Public properties
@@ -114,28 +132,24 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     #endregion
 
-    public override void SetupBrush(ref PositionColored2Textured[] verts, float zOrder)
+    public override void SetupBrush(FrameworkElement parent, ref PositionColored2Textured[] verts, float zOrder)
     {
-      base.SetupBrush(ref verts, zOrder);
+      base.SetupBrush(parent, ref verts, zOrder);
       _textureVisual = new Texture(GraphicsDevice.Device, (int) _vertsBounds.Width, (int ) _vertsBounds.Height, 1,
           Usage.RenderTarget, Format.X8R8G8B8, Pool.Default);
+      _screen = parent.Screen;
+      if (_preparedVisual == null)
+        PrepareVisual();
     }
 
     public override bool BeginRenderBrush(PrimitiveContext primitiveContext, RenderContext renderContext)
     {
-      FrameworkElement visual = Visual;
+      FrameworkElement visual = _preparedVisual;
       if (visual == null) return false;
 
       Matrix finalTransform = renderContext.Transform.Clone();
       if (Transform != null)
         finalTransform *= Transform.GetTransform();
-      if (AutoLayoutContent && !_layoutDone)
-      {
-        // Only the initial layout call is done here. Currently, we don't support further, deferred layout calls
-        // of our visual.
-        visual.UpdateLayout();
-        _layoutDone = true;
-      }
 
       // TODO: Handle properties of TileBrush
       // TODO: Handle RelativeTransform
