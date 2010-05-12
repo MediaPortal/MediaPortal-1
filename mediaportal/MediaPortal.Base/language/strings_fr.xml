@@ -965,6 +965,8 @@
     <String id="1197">Désactiver DXVA</String>
     <String id="1198">Navigateur DVD</String>
     <String id="1200">Installation rapide</String>
+    <String id="1201">Lire la video depuis le début</String>
+    <String id="1211">Reprendre la lecture depuis {0}</String>
     <String id="1300" prefix="Mes ">fichiers TV</String>
     <String id="1440" prefix="Mon ">Télétexte</String>
     <String id="1441">Télétexte</String>
@@ -1238,6 +1240,8 @@
     <String id="2610">Polonais</String>
     <String id="2611">Tchèque</String>
     <String id="2612">Hongrois</String>
+    <String id="2613">Russe</String>
+    <String id="2614">Ukrainien</String>
     <String id="2650">Recharge fonts - attendez...</String>
     <String id="2700">Ouvrir le menu CI</String>
     <String id="2997">h</String>
