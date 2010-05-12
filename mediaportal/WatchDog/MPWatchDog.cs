@@ -35,10 +35,18 @@ namespace WatchDog
 {
   public partial class MPWatchDog : MPForm
   {
+    #region Constants
+
+    private const string Default4to3Skin = "Blue3";
+    private const string Default16to9Skin = "Blue3wide";
+
+    #endregion
+
     #region Variables
 
     private string _tempDir = "";
     private string _zipFile = "";
+    private string _tempConfig;
     private bool _autoMode = false;
     private bool _watchdog = false;
     private bool _restartMP = false;
@@ -47,6 +55,7 @@ namespace WatchDog
     private int _lastMPLogLevel = 2;
     private int _graphsCreated = 0;
     private List<string> _knownPids = new List<string>();
+    private bool _safeMode = false;
 
     #endregion
 
@@ -58,6 +67,7 @@ namespace WatchDog
                          "Usage: MPWatchDog.exe [-auto] [-watchdog] [-zipFile <path+filename>] [-restartMP <delay in seconds>] \n" +
                          "\n" +
                          "auto     : Perform all actions automatically and start MediaPortal in between\n" +
+                         "safe     : Only load built-in plugins and load default skin. Used with auto. \n" +
                          "watchdog : Used internally by MediaPortal to monitor MP\n" +
                          "zipFile  : full path and filename to the zip where all logfiles will be included\n" +
                          "restartMP: automatically collects all logs, saves them as zip to desktop, restarts MP and closes\n" +
@@ -69,6 +79,74 @@ namespace WatchDog
     private void setStatus(string status)
     {
       this.statusBar.Text = string.Format("Status: {0}", status);
+    }
+
+    private void EnableChoice(bool enable)
+    {
+      SafeModeRadioButton.Enabled = enable;
+      NormalModeRadioButton.Enabled = enable;
+      ExportLogsRadioButton.Enabled = enable;
+    }
+
+    private string GetMPArguments()
+    {
+      _tempConfig = CreateTemporaryConfiguration();
+      if (_safeMode)
+      {
+        return String.Format("/skin={0} /safelist=\"{1}\\BuiltInPlugins.xml\" /config=\"{2}\"",
+                             GetScreenAspect() <= 1.5 ? Default4to3Skin : Default16to9Skin,
+                             Application.StartupPath, _tempConfig);
+      }
+      else
+      {
+        return String.Format("/config=\"{0}\"", _tempConfig);
+      }
+    }
+
+    private string CreateTemporaryConfiguration()
+    {
+      string tempSettingsFilename = Path.Combine(_tempDir, "MediaPortalTemp.xml");
+
+      try
+      {
+        File.Copy(MPSettings.ConfigPathName, tempSettingsFilename);
+        using (Settings xmlreader = new Settings(tempSettingsFilename))
+        {
+          xmlreader.SetValue("general", "loglevel", 3);
+        }
+      }
+      catch (Exception)
+      {
+        File.Delete(tempSettingsFilename);
+        throw;
+      }
+      return tempSettingsFilename;
+    }
+
+    private static float GetScreenAspect()
+    {
+      int screenNumber = 0;
+      using (Settings xmlreader = new MPSettings())
+      {
+        if (xmlreader.GetValueAsBool("screenselector", "usescreenselector", false))
+        {
+          screenNumber = xmlreader.GetValueAsInt("screenselector", "screennumber", screenNumber);
+        }
+      }
+      if (screenNumber < 0 || screenNumber >= Screen.AllScreens.Length)
+      {
+        screenNumber = 0;
+      }
+      Screen mpScreen = Screen.AllScreens[screenNumber];
+      return (float)mpScreen.Bounds.Width / (float)mpScreen.Bounds.Height;
+    }
+
+    private string GetZipFilename()
+    {
+      _zipFile = tbZipFile.Text;
+      return _zipFile
+        .Replace("<date>", DateTime.Now.ToString("dd_MM_yy"))
+        .Replace("<time>", DateTime.Now.ToString("HH_mm"));
     }
 
     #endregion
@@ -83,22 +161,28 @@ namespace WatchDog
         _tempDir += "\\";
       }
       _tempDir += "MPTemp";
-      _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortalLogs_" +
-                 DateTime.Now.ToString("dd_MM_yy") + ".zip";
-      tbZipFile.Text = _zipFile;
+      _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortalLogs_<date>__<time>.zip";
       if (!ParseCommandLine())
       {
         Application.Exit();
       }
+      tbZipFile.Text = _zipFile;
       if (_autoMode)
       {
         if (!CheckRequirements())
         {
           Application.Exit();
         }
-        preTestButton.Enabled = false;
-        LaunchMPButton.Enabled = false;
-        postTestButton.Enabled = false;
+        if (_safeMode)
+        {
+          SafeModeRadioButton.Checked = true;
+        }
+        else
+        {
+          NormalModeRadioButton.Checked = true;
+        }
+        EnableChoice(false);
+        ProceedButton.Enabled = false;
         setStatus("Running in auto/debug mode...");
         tmrUnAttended.Enabled = true;
       }
@@ -121,6 +205,9 @@ namespace WatchDog
         {
           case "-zipfile":
             _zipFile = args[++i];
+            break;
+          case "-safe":
+            _safeMode = true;
             break;
           case "-auto":
             _autoMode = true;
@@ -148,11 +235,12 @@ namespace WatchDog
     public bool CheckRequirements()
     {
       Directory.CreateDirectory(_tempDir);
-      if (!Directory.Exists(Path.GetDirectoryName(_zipFile)))
+      string zipFile = GetZipFilename();
+      if (!Directory.Exists(Path.GetDirectoryName(zipFile)))
       {
         try
         {
-          Directory.CreateDirectory(Path.GetDirectoryName(_zipFile));
+          Directory.CreateDirectory(Path.GetDirectoryName(zipFile));
         }
         catch (Exception)
         {
@@ -190,26 +278,33 @@ namespace WatchDog
       Close();
     }
 
-    private void preTestButton_Click(object sender, EventArgs e)
-    {
-      PerformPreTestActions();
-    }
-
-    private void LaunchMPButton_Click(object sender, EventArgs e)
-    {
-      LaunchMediaPortalAction();
-      postTestButton.Enabled = false;
-    }
-
-    private void postTestButton_Click(object sender, EventArgs e)
-    {
-      PerformPostTestActions();
-    }
-
     private void menuItem7_Click(object sender, EventArgs e)
     {
       AboutForm dlg = new AboutForm();
       dlg.ShowDialog();
+    }
+
+    private void ProceedButton_Click(object sender, EventArgs e)
+    {
+      if (!CheckRequirements())
+      {
+        return;
+      }
+
+      EnableChoice(false);
+      ProceedButton.Enabled = false;
+      if (ExportLogsRadioButton.Checked)
+      {
+        PerformPostTestActions();
+        EnableChoice(true);
+        ProceedButton.Enabled = true;
+      }
+      else
+      {
+        _safeMode = SafeModeRadioButton.Checked;
+        PerformPreTestActions(true);
+        LaunchMediaPortalAction();
+      }
     }
 
     #endregion
@@ -217,6 +312,11 @@ namespace WatchDog
     #region Perform actions
 
     private void PerformPreTestActions()
+    {
+      PerformPreTestActions(_autoMode);
+    }
+    
+    private void PerformPreTestActions(bool autoClose)
     {
       setStatus("Busy performing pre-test actions...");
       PreTestActions pta = new PreTestActions();
@@ -233,7 +333,7 @@ namespace WatchDog
       {
         setStatus("Pre-test actions were aborted.");
       }
-      if (_autoMode)
+      if (autoClose)
       {
         pta.Close();
         pta = null;
@@ -248,16 +348,10 @@ namespace WatchDog
         Directory.CreateDirectory(_tempDir);
       }
       setStatus("Launching MediaPortal...");
-      // Set the loglevel to "debug"
-      using (Settings xmlreader = new MPSettings())
-      {
-        _lastMPLogLevel = xmlreader.GetValueAsInt("general", "loglevel", 1);
-        xmlreader.SetValue("general", "loglevel", 3);
-        MPSettings.SaveCache();
-      }
       _processMP = new Process();
       _processMP.StartInfo.WorkingDirectory = Application.StartupPath;
       _processMP.StartInfo.FileName = "mediaportal.exe";
+      _processMP.StartInfo.Arguments = GetMPArguments();
       _processMP.Start();
       setStatus("MediaPortal started. Waiting for exit...");
       Update();
@@ -266,8 +360,13 @@ namespace WatchDog
 
     private void PerformPostTestActions()
     {
+      PerformPostTestActions(_autoMode);
+    }
+
+    private void PerformPostTestActions(bool autoClose)
+    {
       setStatus("Busy performing post-test actions...");
-      PostTestActions pta = new PostTestActions(_tempDir, tbZipFile.Text);
+      PostTestActions pta = new PostTestActions(_tempDir, GetZipFilename());
       pta.Show();
 
       // give windows 1 sec to render the form
@@ -281,7 +380,7 @@ namespace WatchDog
       {
         setStatus("Post-test actions were aborted.");
       }
-      if (_autoMode)
+      if (autoClose)
       {
         pta.Close();
         pta = null;
@@ -304,17 +403,15 @@ namespace WatchDog
       tmrMPWatcher.Enabled = false;
       if (_processMP.HasExited)
       {
-        // Reset the loglevel to the original value
-        using (Settings xmlreader = new MPSettings())
+        if(!string.IsNullOrEmpty(_tempConfig))
         {
-          xmlreader.SetValue("general", "loglevel", _lastMPLogLevel);
-          MPSettings.SaveCache();
+          File.Delete(_tempConfig);
         }
         setStatus("idle");
         PerformPostTestActions();
-        preTestButton.Enabled = true;
-        LaunchMPButton.Enabled = true;
-        postTestButton.Enabled = true;
+
+        EnableChoice(true);
+        ProceedButton.Enabled = true;
         return;
       }
       List<DSGrapheditROTEntry> rotEntries = DaggerDSUtils.GetFilterGraphsFromROT();
@@ -396,8 +493,9 @@ namespace WatchDog
         this.ShowInTaskbar = true;
         this.WindowState = FormWindowState.Normal;
         CheckRequirements();
-        preTestButton.Enabled = false;
-        LaunchMPButton.Enabled = false;
+        EnableChoice(false);
+        ExportLogsRadioButton.Checked = true;
+        ProceedButton.Enabled = true;
         if (!_restartMP)
         {
           Utils.ErrorDlg("MediaPortal crashed unexpectedly.");
@@ -417,5 +515,6 @@ namespace WatchDog
         }
       }
     }
+
   }
 }

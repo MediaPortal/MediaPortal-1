@@ -39,7 +39,7 @@ namespace MediaPortal.Plugins.Process
 
     public void LoadSettings()
     {
-      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings reader = new MPSettings())
       {
         homeOnlyCheckBox.Checked = reader.GetValueAsBool("psclientplugin", "homeonly", true);
         extLogCheckBox.Checked = reader.GetValueAsBool("psclientplugin", "extensivelogging", false);
@@ -52,7 +52,7 @@ namespace MediaPortal.Plugins.Process
 
     public void SaveSettings()
     {
-      using (Settings writer = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings writer = new MPSettings())
       {
         writer.SetValueAsBool("psclientplugin", "homeonly", homeOnlyCheckBox.Checked);
         writer.SetValueAsBool("psclientplugin", "extensivelogging", extLogCheckBox.Checked);

@@ -109,6 +109,8 @@ public class MediaPortalApp : D3DApp, IRender
   private static int _startupDelay = 0;
   private static bool _waitForTvServer = false;
   private static DateTime _lastOnresume = DateTime.Now;
+  private static string _alternateConfig = string.Empty;
+  private static string _safePluginsList;
 #if AUTOUPDATE
   string m_strNewVersion = "";
   bool m_bNewVersionAvailable = false;
@@ -216,6 +218,19 @@ public class MediaPortalApp : D3DApp, IRender
           string skinOverrideArg = arg.Remove(0, 6); // remove /?= from the argument
           _strSkinOverride = skinOverrideArg;
         }
+        if (arg.StartsWith("/config="))
+        {
+          _alternateConfig = arg.Remove(0, 8); // remove /?= from the argument
+          if(!Path.IsPathRooted(_alternateConfig))
+          {
+            _alternateConfig = Config.GetFile(Config.Dir.Config, _alternateConfig);
+          }
+        }
+        if (arg.StartsWith("/safelist="))
+        {
+          _safePluginsList = arg.Remove(0, 10); // remove /?= from the argument
+        }
+
 #if !DEBUG
         _avoidVersionChecking = false;
         if (arg.ToLowerInvariant() == "/avoidversioncheck")
@@ -226,12 +241,41 @@ public class MediaPortalApp : D3DApp, IRender
 #endif
       }
     }
-    Log.BackupLogFiles();
+
+    if (string.IsNullOrEmpty(_alternateConfig))
+    {
+      Log.BackupLogFiles();
+    }
+    else
+    {
+      if (File.Exists(_alternateConfig))
+      {
+        try
+        {
+          MPSettings.ConfigPathName = _alternateConfig;
+          Log.BackupLogFiles();
+          Log.Info("Using alternate configuration file: {0}", MPSettings.ConfigPathName);
+        }
+        catch (Exception  ex)
+        {
+          Log.BackupLogFiles();
+          Log.Error("Failed to change to alternate configuration file:");
+          Log.Error(ex);
+        }
+      }
+      else
+      {
+        Log.BackupLogFiles();
+        Log.Info("Alternative configuration file was specified but the file was not found: '{0}'", _alternateConfig);
+        Log.Info("Using default configuration file instead.");
+      }
+    }
+
     if (!Config.DirsFileUpdateDetected)
     {
       //check if mediaportal has been configured
-      FileInfo fi = new FileInfo(Config.GetFile(Config.Dir.Config, "mediaportal.xml"));
-      if ((!File.Exists(Config.GetFile(Config.Dir.Config, "mediaportal.xml"))) || (fi.Length < 10000))
+      FileInfo fi = new FileInfo(MPSettings.ConfigPathName);
+      if (!File.Exists(MPSettings.ConfigPathName) || (fi.Length < 10000))
       {
         //no, then start configuration.exe in wizard form
         Log.Info("MediaPortal.xml not found. Launching configuration tool and exiting...");
@@ -1678,6 +1722,10 @@ public class MediaPortalApp : D3DApp, IRender
     Log.Info("Main: Loading {0} skin", m_strSkin);
     GUIWindowManager.Initialize();
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(70)); // Loading window plugins...
+    if (!string.IsNullOrEmpty(_safePluginsList))
+    {
+      PluginManager.LoadWhiteList(_safePluginsList);
+    }
     PluginManager.LoadWindowPlugins();
     Log.Info("Main: Loading windowmanager");
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(71)); // Initializing window manager...

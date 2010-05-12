@@ -20,10 +20,12 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Xml;
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
 
@@ -38,6 +40,7 @@ namespace MediaPortal.GUI.Library
     private static ArrayList _guiPlugins = new ArrayList();
     private static ArrayList _setupForms = new ArrayList();
     private static ArrayList _wakeables = new ArrayList();
+    private static HashSet<String> _whiteList;
     private static bool _started = false;
     private static bool _windowPluginsLoaded = false;
     private static bool _nonWindowPluginsLoaded = false;
@@ -62,6 +65,33 @@ namespace MediaPortal.GUI.Library
     public static ArrayList WakeablePlugins
     {
       get { return _wakeables; }
+    }
+
+    public static void LoadWhiteList(string filename)
+    {
+      HashSet<String> whiteList = new HashSet<string>();
+      XmlDocument document = new XmlDocument();
+
+      try
+      {
+        Log.Info("  Loading plugis whitelist:");
+        document.Load(filename);
+        foreach(XmlNode node in document.SelectNodes("/whitelist/plugin"))
+        {
+          string pluginName = node.InnerText.Trim();
+          if (!whiteList.Contains(pluginName))
+          {
+            whiteList.Add(pluginName);
+            Log.Info("    {0}", pluginName);
+          }
+        }
+        _whiteList = whiteList;
+      }
+      catch(Exception ex)
+      {
+        Log.Error("Failed to load plugins whitelist:");
+        Log.Error(ex);
+      }
     }
 
     public static void Load()
@@ -422,13 +452,19 @@ namespace MediaPortal.GUI.Library
         return true;
       }
 
+      strDllname = strDllname.Substring(strDllname.LastIndexOf(@"\") + 1);
+      // If a whitelist is applicable check if the plugin name is in the whitelist
+      if (_whiteList != null && !_whiteList.Contains(strDllname))
+      {
+        return false;
+      }
+
       using (Settings xmlreader = new MPSettings())
       {
         // from the assembly name check the reference to plugin name
         // if available check to see if the plugin is enabled
         // if the plugin name is unknown suggest the assembly should be loaded
 
-        strDllname = strDllname.Substring(strDllname.LastIndexOf(@"\") + 1);
         return xmlreader.GetValueAsBool("pluginsdlls", strDllname, true);
       }
     }
@@ -485,5 +521,6 @@ namespace MediaPortal.GUI.Library
       }
       return res;
     }
+
   }
 }

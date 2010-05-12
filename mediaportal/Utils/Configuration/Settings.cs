@@ -32,8 +32,38 @@ namespace MediaPortal.Profile
   /// </summary>
   public class MPSettings : Settings
   {
+    private static string _configPathName;
+
+    public static string ConfigPathName
+    {
+      get
+      {
+        if (string.IsNullOrEmpty(_configPathName))
+        {
+          _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.Config, "MediaPortal.xml");
+        }
+        return _configPathName;
+      }
+      set 
+      {
+        if (string.IsNullOrEmpty(_configPathName))
+        {
+          _configPathName = value;
+          if (!Path.IsPathRooted(_configPathName))
+          {
+            _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.Config, _configPathName);
+          }
+        }
+        else
+        {
+          throw new InvalidOperationException("ConfigPathName already has a value.");
+        }
+      }
+    }
+
     public MPSettings()
-      : base(Configuration.Config.GetFile(Configuration.Config.Dir.Config, "MediaPortal.xml")) {}
+      : base(ConfigPathName) {}
+
   }
 
   /// <summary>

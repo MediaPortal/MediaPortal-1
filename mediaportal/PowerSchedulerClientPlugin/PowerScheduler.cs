@@ -306,7 +306,7 @@ namespace MediaPortal.Plugins.Process
         {
           // persist the next wakeup datetime, this way 'resume last active module' feature is able to tell the difference between a wakeup done by 
           // a user or by the PS plugin
-          using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+          using (Settings xmlwriter = new MPSettings())
           {
             DateTime nextWakeUp = GetNextWakeupTime(DateTime.Now);
             xmlwriter.SetValue("psclientplugin", "nextwakeup", nextWakeUp.ToString());
@@ -673,7 +673,7 @@ namespace MediaPortal.Plugins.Process
       if (_settings.GetSetting("HomeOnly").Get<bool>())
       {
         bool basicHome;
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
         }
@@ -734,7 +734,7 @@ namespace MediaPortal.Plugins.Process
         _settings.WakeupEnabled = true;
       }
 
-      using (Settings reader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings reader = new MPSettings())
       {
         // Only detect singleseat/multiseat once
         if (!_refreshSettings)

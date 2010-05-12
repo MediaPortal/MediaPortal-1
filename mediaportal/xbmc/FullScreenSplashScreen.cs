@@ -99,7 +99,14 @@ namespace MediaPortal
       // try to find the splashscreen.xml ín the curent skin folder
       using (Settings xmlreader = new MPSettings())
       {
-        m_strSkin = xmlreader.GetValueAsString("skin", "name", "Blue3");
+        if (D3DApp._strSkinOverride.Length > 0)
+        {
+          m_strSkin = D3DApp._strSkinOverride;
+        }
+        else
+        {
+          m_strSkin = xmlreader.GetValueAsString("skin", "name", "Blue3");
+        }
         SkinFilePath = Config.GetFile(Config.Dir.Skin, m_strSkin + "\\splashscreen.xml");
       }
 
@@ -163,7 +170,14 @@ namespace MediaPortal
 
       using (Settings xmlreader = new MPSettings())
       {
-        m_strSkin = xmlreader.GetValueAsString("skin", "name", "Blue3");
+        if (D3DApp._strSkinOverride.Length > 0)
+        {
+          m_strSkin = D3DApp._strSkinOverride;
+        }
+        else
+        {
+          m_strSkin = xmlreader.GetValueAsString("skin", "name", "Blue3");
+        }
         SkinReferenceFilePath = Config.GetFile(Config.Dir.Skin, m_strSkin + "\\references.xml");
       }
 
