@@ -792,6 +792,10 @@ Section -Post
   ${LOG_TEXT} "INFO" "Removing obsolete BASS 2.3 files"
   Delete "$MPdir.Base\MusicPlayer\plugins\audio decoders\bass_wv.dll"
 
+  ; removing old shortcut
+  ${LOG_TEXT} "INFO" "Removing obsolete startmenu shortcuts"
+  Delete "${STARTMENU_GROUP}\MediaPortal Logs Collector.lnk"
+  
   ; create desktop shortcuts
   ${If} $noDesktopSC != 1
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
