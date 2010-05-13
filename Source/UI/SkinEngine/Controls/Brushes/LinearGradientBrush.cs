@@ -44,7 +44,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     AbstractProperty _startPointProperty;
     AbstractProperty _endPointProperty;
     bool _refresh = false;
-    bool _singleColor = true;
     EffectHandleAsset _handleRelativeTransform;
     EffectHandleAsset _handleOpacity;
     EffectHandleAsset _handleStartPoint;
@@ -103,21 +102,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     {
       _refresh = true;
       FireChanged();
-    }
-
-    protected void CheckSingleColor()
-    {
-      int color = -1;
-      _singleColor = true;
-      foreach (GradientStop stop in GradientStops)
-        if (color == -1)
-          color = stop.Color.ToArgb();
-        else
-          if (color != stop.Color.ToArgb())
-          {
-            _singleColor = false;
-            return;
-          }
     }
 
     public AbstractProperty StartPointProperty
@@ -264,49 +248,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     public override Texture Texture
     {
       get { return _gradientBrushTexture.Texture; }
-    }
-
-    public override void SetupPrimitive(PrimitiveContext primitiveContext, RenderContext renderContext)
-    {
-      primitiveContext.Parameters = new EffectParameters();
-      CheckSingleColor();
-      _gradientBrushTexture = BrushCache.Instance.GetGradientBrush(GradientStops);
-      if (_singleColor)
-      {
-        Color4 v = ColorConverter.FromColor(GradientStops.OrderedGradientStopList[0].Color);
-        v.Alpha *= (float) renderContext.Opacity;
-        primitiveContext.Effect = ContentManager.GetEffect("solidbrush");
-        primitiveContext.Parameters.Add(primitiveContext.Effect.GetParameterHandle("g_solidColor"), v);
-        return;
-      }
-      else
-      {
-        primitiveContext.Effect = ContentManager.GetEffect("lineargradient");
-        _handleRelativeTransform = primitiveContext.Effect.GetParameterHandle("RelativeTransform");
-        _handleOpacity = primitiveContext.Effect.GetParameterHandle("g_opacity");
-        _handleStartPoint = primitiveContext.Effect.GetParameterHandle("g_StartPoint");
-        _handleEndPoint = primitiveContext.Effect.GetParameterHandle("g_EndPoint");
-      }
-
-      float[] g_startpoint = new float[] { StartPoint.X, StartPoint.Y };
-      float[] g_endpoint = new float[] { EndPoint.X, EndPoint.Y };
-      if (MappingMode == BrushMappingMode.Absolute)
-      {
-        g_startpoint[0] /= _vertsBounds.Width;
-        g_startpoint[1] /= _vertsBounds.Height;
-
-        g_endpoint[0] /= _vertsBounds.Width;
-        g_endpoint[1] /= _vertsBounds.Height;
-      }
-
-// TODO: Why invert?
-      Matrix m = Matrix.Invert(RelativeTransform.GetTransform());
-
-      primitiveContext.Parameters.Add(_handleRelativeTransform, m);
-      primitiveContext.Parameters.Add(_handleOpacity, (float) (Opacity * renderContext.Opacity));
-      primitiveContext.Parameters.Add(_handleStartPoint, g_startpoint);
-      primitiveContext.Parameters.Add(_handleEndPoint, g_endpoint);
-      primitiveContext.Texture = _gradientBrushTexture;
     }
   }
 }

@@ -254,9 +254,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     public virtual void Deallocate()
     { }
 
-    public virtual void SetupPrimitive(PrimitiveContext primitiveContext, RenderContext renderContext)
-    { }
-
     #endregion
   }
 }

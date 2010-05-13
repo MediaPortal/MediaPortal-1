@@ -46,7 +46,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     AbstractProperty _radiusXProperty;
     AbstractProperty _radiusYProperty;
     bool _refresh = false;
-    bool _singleColor = true;
     EffectHandleAsset _handleRelativeTransform;
     EffectHandleAsset _handleFocus;
     EffectHandleAsset _handleCenter;
@@ -175,21 +174,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     }
 
     #endregion
-
-    protected void CheckSingleColor()
-    {
-      int color = -1;
-      _singleColor = true;
-      foreach (GradientStop stop in GradientStops)
-        if (color == -1)
-          color = stop.Color.ToArgb();
-        else
-          if (color != stop.Color.ToArgb())
-          {
-            _singleColor = false;
-            return;
-          }
-    }
 
     #region Public methods
 
@@ -328,54 +312,5 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     }
 
     #endregion
-
-    public override void SetupPrimitive(PrimitiveContext primitiveContext, RenderContext renderContext)
-    {
-      primitiveContext.Parameters = new EffectParameters();
-      CheckSingleColor();
-      primitiveContext.Texture = BrushCache.Instance.GetGradientBrush(GradientStops);
-      if (_singleColor)
-      {
-        Color4 v = ColorConverter.FromColor(GradientStops[0].Color);
-        v.Alpha *= (float) renderContext.Opacity;
-        primitiveContext.Effect = ContentManager.GetEffect("solidbrush");
-        primitiveContext.Parameters.Add(primitiveContext.Effect.GetParameterHandle("g_solidColor"), v);
-        return;
-      }
-      else
-      {
-        primitiveContext.Effect = ContentManager.GetEffect("radialgradient");
-        _handleRelativeTransform = primitiveContext.Effect.GetParameterHandle("RelativeTransform");
-        _handleFocus = primitiveContext.Effect.GetParameterHandle("g_focus");
-        _handleCenter = primitiveContext.Effect.GetParameterHandle("g_center");
-        _handleRadius = primitiveContext.Effect.GetParameterHandle("g_radius");
-        _handleOpacity = primitiveContext.Effect.GetParameterHandle("g_opacity");
-
-        g_focus = new float[] { GradientOrigin.X, GradientOrigin.Y };
-        g_center = new float[] { Center.X, Center.Y };
-        g_radius = new float[] { (float)RadiusX, (float)RadiusY };
-
-        if (MappingMode == BrushMappingMode.Absolute)
-        {
-          g_focus[0] /= _vertsBounds.Width;
-          g_focus[1] /= _vertsBounds.Height;
-
-          g_center[0] /= _vertsBounds.Width;
-          g_center[1] /= _vertsBounds.Height;
-
-          g_radius[0] /= _vertsBounds.Width;
-          g_radius[1] /= _vertsBounds.Height;
-        }
-
-// TODO: Why invert?
-        Matrix m = Matrix.Invert(RelativeTransform.GetTransform());
-
-        primitiveContext.Parameters.Add(_handleRelativeTransform, m);
-        primitiveContext.Parameters.Add(_handleFocus, g_focus);
-        primitiveContext.Parameters.Add(_handleCenter, g_center);
-        primitiveContext.Parameters.Add(_handleRadius, g_radius);
-        primitiveContext.Parameters.Add(_handleOpacity, (float) (Opacity * renderContext.Opacity));
-      }
-    }
   }
 }

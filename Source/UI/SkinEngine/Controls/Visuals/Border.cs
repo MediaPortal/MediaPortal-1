@@ -310,7 +310,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
           int numVertices = verts.Length / 3;
           Background.SetupBrush(this, ref verts, context.ZOrder);
           _backgroundContext = new PrimitiveContext(numVertices, ref verts, PrimitiveType.TriangleList);
-          Background.SetupPrimitive(_backgroundContext, context);
         }
     }
 
@@ -336,7 +335,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
           BorderBrush.SetupBrush(this, ref verts, context.ZOrder);
           int numVertices = verts.Length / 3;
           _borderContext = new PrimitiveContext(numVertices, ref verts, PrimitiveType.TriangleList);
-          BorderBrush.SetupPrimitive(_borderContext, context);
         }
     }
 

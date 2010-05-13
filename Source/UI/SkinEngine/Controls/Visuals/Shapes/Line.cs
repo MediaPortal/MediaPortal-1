@@ -166,7 +166,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
           int numVertices = verts.Length / 3;
           Stroke.SetupBrush(this, ref verts, context.ZOrder);
           _strokeContext = new PrimitiveContext(numVertices, ref verts, PrimitiveType.TriangleList);
-          Stroke.SetupPrimitive(_strokeContext, context);
         }
       }
 

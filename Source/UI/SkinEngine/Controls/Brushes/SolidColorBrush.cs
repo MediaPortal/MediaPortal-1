@@ -116,15 +116,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       return true;
     }
 
-    public override void SetupPrimitive(PrimitiveContext primitiveContext, RenderContext renderContext)
-    {
-      Color4 v = ColorConverter.FromColor(Color);
-      v.Alpha *= (float) renderContext.Opacity;
-      primitiveContext.Effect = _effect;
-      primitiveContext.Parameters = new EffectParameters();
-      primitiveContext.Parameters.Add(_effectHandleColor, v);
-    }
-
     public override void EndRender()
     {
       if (_effect != null)

@@ -50,13 +50,14 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
   public class GradientBrush : Brush, IAddChild<GradientStop>
   {
-    #region Private fields
+    #region Protected fields
 
     protected PositionColored2Textured[] _verts;
-    AbstractProperty _colorInterpolationModeProperty;
-    AbstractProperty _gradientStopsProperty;
-    AbstractProperty _spreadMethodProperty;
-    AbstractProperty _mappingModeProperty;
+    protected AbstractProperty _colorInterpolationModeProperty;
+    protected AbstractProperty _gradientStopsProperty;
+    protected AbstractProperty _spreadMethodProperty;
+    protected AbstractProperty _mappingModeProperty;
+    protected bool _singleColor = false;
 
     #endregion
 
@@ -168,6 +169,21 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     }
 
     #endregion
+
+    protected void CheckSingleColor()
+    {
+      int color = -1;
+      _singleColor = true;
+      foreach (GradientStop stop in GradientStops)
+        if (color == -1)
+          color = stop.Color.ToArgb();
+        else
+          if (color != stop.Color.ToArgb())
+          {
+            _singleColor = false;
+            return;
+          }
+    }
 
     #region IAddChild Members
 

@@ -270,7 +270,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Panels
         }
         Background.SetupBrush(this, ref verts, localRenderContext.ZOrder);
         _backgroundContext = new PrimitiveContext(2, ref verts, PrimitiveType.TriangleList);
-        Background.SetupPrimitive(_backgroundContext, localRenderContext);
       }
     }
 
