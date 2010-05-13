@@ -213,7 +213,8 @@ namespace MediaPortal.Video.Database
         try
         {
           Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
-          AsmHelper script = new AsmHelper(CSScript.Load(scriptFileName, compiledScriptFileName, false));
+          //AsmHelper script = new AsmHelper(CSScript.Load(scriptFileName, compiledScriptFileName, false)); => causing Error: Access to the path is denied
+          AsmHelper script = new AsmHelper(CSScript.Load(scriptFileName, null, false)); 
           this.Grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
         }
         catch (Exception ex)
