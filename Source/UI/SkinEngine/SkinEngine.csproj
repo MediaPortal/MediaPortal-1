@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -354,6 +354,7 @@
     <Compile Include="Utils\GeometricHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Skin\default\screens\skinengine_config_skinresource_dialog.xaml" />
     <None Include="Skin\default\shaders\blur.fx" />
     <None Include="Skin\default\shaders\dialogbg.fx" />
     <None Include="Skin\default\shaders\font.fx" />
@@ -388,8 +389,6 @@
     <EmbeddedResource Include="GUI\MP2.ico" />
     <Content Include="Language\strings_en.xml" />
     <Content Include="plugin.xml" />
-    <Content Include="Skin\default\screens\skinengine_config_skin_dialog.xaml" />
-    <Content Include="Skin\default\screens\skinengine_config_theme_dialog.xaml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GUI\MainForm.resx">

@@ -180,7 +180,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       }
       else
       {
-// TODO: Why invert?
         Matrix m = Matrix.Invert(RelativeTransform.GetTransform());
 
         _handleRelativeTransform.SetParameter(m);
@@ -226,7 +225,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         _effect.StartRender(finalTransform);
       else
       {
-// TODO: Why invert?
         Matrix m = Matrix.Invert(RelativeTransform.GetTransform());
 
         _handleRelativeTransform.SetParameter(m);
