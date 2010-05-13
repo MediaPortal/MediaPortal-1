@@ -67,7 +67,7 @@ void renderPixelShader(in v2p IN, out p2f OUT)
   
   OUT.Color = tex2D(textureSampler, IN.Texcoord);
   half4 alphaColor = tex1D(alphaSampler, dist);
-  OUT.Color[3] = alphaColor[3];
+  OUT.Color[3] *= alphaColor[3];
 }
 
 technique simple {

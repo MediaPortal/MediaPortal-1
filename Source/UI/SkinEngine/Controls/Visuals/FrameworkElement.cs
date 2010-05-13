@@ -878,34 +878,25 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
       // We do the following here:
       // 1. Set the rendertarget to the given texture
-      // 4. Render the control; since the rendertarget is the given texture, the control is rendered into the texture
-      // 5. Restore the rendertarget to the backbuffer
+      // 2. Clear the texture with an alpha value of 0
+      // 3. Render the control (into the texture)
+      // 4. Restore the rendertarget to the backbuffer
 
       GraphicsDevice.Device.EndScene();
 
       // Get the current backbuffer
       using (Surface backBuffer = GraphicsDevice.Device.GetRenderTarget(0))
       {
-        SurfaceDescription backbufferDesc = backBuffer.Description;
-        // Get the surface of our opacity texture
+        // Get the surface of our render texture
         using (Surface renderTextureSurface = texture.GetSurfaceLevel(0))
         {
-          // TODO: Is it possible to initialize the texture with a transparent color to avoid the need to
-          // copy the backbuffer? Currently, if we don't initialize the texture with the current backbuffer
-          // content, the resulting texture contains a black background and thus will overwrite the
-          // whole backbuffer.
-          SurfaceDescription renderTextureDesc = renderTextureSurface.Description;
-          // Copy the backbuffer to the render texture
-          GraphicsDevice.Device.StretchRectangle(backBuffer,
-              new Rectangle(0, 0, backbufferDesc.Width, backbufferDesc.Height),
-              renderTextureSurface,
-              new Rectangle(0, 0, renderTextureDesc.Width, renderTextureDesc.Height),
-              TextureFilter.None);
-
-          // Change the rendertarget to the opacitytexture
+          // Change the rendertarget to the render texture
           GraphicsDevice.Device.SetRenderTarget(0, renderTextureSurface);
 
-          // Render the control (will be rendered into the given texture)
+          // Fill the background of the texture with an alpha value of 0
+          GraphicsDevice.Device.Clear(ClearFlags.Target, Color.FromArgb(0, Color.Black), 1.0f, 0);
+
+          // Render the control into the given texture
           GraphicsDevice.Device.BeginScene();
           DoRender(renderContext);
           GraphicsDevice.Device.EndScene();
@@ -1029,7 +1020,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       _opacityMaskContext = new VisualAssetContext("FrameworkElement.OpacityMaskContext:" + Name, Screen.Name,
           verts, PrimitiveType.TriangleList, new Texture(GraphicsDevice.Device,
               SkinContext.SkinResources.SkinWidth, SkinContext.SkinResources.SkinHeight, 1,
-              Usage.RenderTarget, Format.X8R8G8B8, Pool.Default));
+              Usage.RenderTarget, Format.A8R8G8B8, Pool.Default));
       ContentManager.Add(_opacityMaskContext);
 
       OpacityMask.SetupBrush(this, ref verts, zPos);
