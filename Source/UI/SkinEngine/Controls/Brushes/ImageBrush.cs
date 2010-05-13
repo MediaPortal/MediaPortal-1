@@ -162,6 +162,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     public override bool BeginRenderBrush(PrimitiveContext primitiveContext, RenderContext renderContext)
     {
+      // TODO: Transform, RelativeTransform
       if (_tex == null)
         Allocate();
       _tex.Set(0);

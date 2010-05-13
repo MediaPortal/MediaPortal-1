@@ -45,8 +45,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     AbstractProperty _gradientOriginProperty;
     AbstractProperty _radiusXProperty;
     AbstractProperty _radiusYProperty;
-    bool _refresh = false;
-    EffectHandleAsset _handleRelativeTransform;
+    EffectHandleAsset _handleTransform;
     EffectHandleAsset _handleFocus;
     EffectHandleAsset _handleCenter;
     EffectHandleAsset _handleRadius;
@@ -57,6 +56,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     float[] g_focus;
     float[] g_center;
     float[] g_radius;
+    bool _refresh = false;
 
     #endregion
 
@@ -189,8 +189,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     public override bool BeginRenderBrush(PrimitiveContext primitiveContext, RenderContext renderContext)
     {
       Matrix finalTransform = renderContext.Transform.Clone();
-      if (Transform != null)
-        finalTransform *= Transform.GetTransform();
       if (_gradientBrushTexture == null) return false;
       if (_refresh)
       {
@@ -205,7 +203,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         else
         {
           _effect = ContentManager.GetEffect("radialgradient");
-          _handleRelativeTransform = _effect.GetParameterHandle("RelativeTransform");
+          _handleTransform = _effect.GetParameterHandle("Transform");
           _handleFocus = _effect.GetParameterHandle("g_focus");
           _handleCenter = _effect.GetParameterHandle("g_center");
           _handleRadius = _effect.GetParameterHandle("g_radius");
@@ -227,6 +225,13 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
           g_radius[0] /= _vertsBounds.Width;
           g_radius[1] /= _vertsBounds.Height;
         }
+        if (RelativeTransform != null)
+        {
+          Matrix m = RelativeTransform.GetTransform();
+          m.Transform(ref g_focus[0], ref g_focus[1]);
+          m.Transform(ref g_center[0], ref g_center[1]);
+          m.Transform(ref g_radius[0], ref g_radius[1]);
+        }
       }
 
       if (_singleColor)
@@ -237,9 +242,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       }
       else
       {
-        Matrix m = Matrix.Invert(RelativeTransform.GetTransform());
-
-        _handleRelativeTransform.SetParameter(m);
+        _handleTransform.SetParameter(GetCachedFinalBrushTransform());
         _handleFocus.SetParameter(g_focus);
         _handleCenter.SetParameter(g_center);
         _handleRadius.SetParameter(g_radius);
@@ -255,15 +258,13 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       if (tex == null)
         return;
       Matrix finalTransform = renderContext.Transform.Clone();
-      if (Transform != null)
-        finalTransform *= Transform.GetTransform();
       if (_refresh)
       {
         _refresh = false;
         CheckSingleColor();
         _gradientBrushTexture = BrushCache.Instance.GetGradientBrush(GradientStops);
         _effect = ContentManager.GetEffect("radialopacitygradient");
-        _handleRelativeTransform = _effect.GetParameterHandle("RelativeTransform");
+        _handleTransform = _effect.GetParameterHandle("Transform");
         _handleFocus = _effect.GetParameterHandle("g_focus");
         _handleCenter = _effect.GetParameterHandle("g_center");
         _handleRadius = _effect.GetParameterHandle("g_radius");
@@ -285,15 +286,20 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
           g_radius[0] /= _vertsBounds.Width;
           g_radius[1] /= _vertsBounds.Height;
         }
+        if (RelativeTransform != null)
+        {
+          Matrix m = RelativeTransform.GetTransform();
+          m.Transform(ref g_focus[0], ref g_focus[1]);
+          m.Transform(ref g_center[0], ref g_center[1]);
+          m.Transform(ref g_radius[0], ref g_radius[1]);
+        }
       }
 
       if (_singleColor)
         _effect.StartRender(finalTransform);
       else
       {
-        Matrix m = Matrix.Invert(RelativeTransform.GetTransform());
-
-        _handleRelativeTransform.SetParameter(m);
+        _handleTransform.SetParameter(GetCachedFinalBrushTransform());
         _handleFocus.SetParameter(g_focus);
         _handleCenter.SetParameter(g_center);
         _handleRadius.SetParameter(g_radius);

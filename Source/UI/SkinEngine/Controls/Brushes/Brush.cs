@@ -53,8 +53,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     Transform _transform;
     AbstractProperty _freezableProperty;
     protected RectangleF _vertsBounds;
-    protected PointF _orginalPosition;
-    protected PointF _minPosition;
+    protected Matrix? _finalBrushTransform = null;
 
     #endregion
 
@@ -77,11 +76,10 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     void Init()
     {
       _opacityProperty = new SProperty(typeof(double), 1.0);
-      _relativeTransformProperty = new SProperty(typeof(Transform), new Transform());
+      _relativeTransformProperty = new SProperty(typeof(Transform), null);
       _transform = null;
       _freezableProperty = new SProperty(typeof(bool), false);
       _vertsBounds = new RectangleF(0, 0, 0, 0);
-      _orginalPosition = new PointF(0, 0);
     }
 
     void Attach()
@@ -103,6 +101,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       RelativeTransform = copyManager.GetCopy(b.RelativeTransform);
       Transform = copyManager.GetCopy(b.Transform);
       Freezable = b.Freezable;
+      _finalBrushTransform = null;
       Attach();
     }
 
@@ -166,7 +165,11 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     public Transform Transform
     {
       get { return _transform; }
-      set { _transform = value; }
+      set
+      {
+        _transform = value;
+        _finalBrushTransform = null;
+      }
     }
 
     public virtual Texture Texture
@@ -235,6 +238,23 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         if (vert.Y > maxy) maxy = vert.Y;
       }
       _vertsBounds = new RectangleF(minx, miny, maxx - minx, maxy - miny);
+    }
+
+    public Matrix GetCachedFinalBrushTransform()
+    {
+      Matrix? transform = _finalBrushTransform;
+      if (transform.HasValue)
+        return transform.Value;
+      if (Transform != null)
+      {
+        transform = Matrix.Scaling(new Vector3(_vertsBounds.Width, _vertsBounds.Height, 1));
+        transform *= Matrix.Invert(Transform.GetTransform());
+        transform *= Matrix.Scaling(new Vector3(1/_vertsBounds.Width, 1/_vertsBounds.Height, 1));
+      }
+      else
+        transform = Matrix.Identity;
+      _finalBrushTransform = transform;
+      return transform.Value;
     }
 
     public virtual bool BeginRenderBrush(PrimitiveContext primitiveContext, RenderContext renderContext)

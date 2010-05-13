@@ -148,11 +148,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       if (visual == null) return false;
 
       Matrix finalTransform = renderContext.Transform.Clone();
-      if (Transform != null)
-        finalTransform *= Transform.GetTransform();
 
       // TODO: Handle properties of TileBrush
-      // TODO: Handle RelativeTransform
+      // TODO: Handle RelativeTransform, Transform
 
       RenderContext tempRenderContext = renderContext.Derive(_vertsBounds, null, null,
           new Vector2(0.5f, 0.5f), Opacity);

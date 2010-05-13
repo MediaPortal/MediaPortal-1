@@ -1,5 +1,5 @@
 half4x4  worldViewProj : WORLDVIEWPROJ; // Our world view projection matrix
-half4x4  RelativeTransform;
+half4x4  Transform;
 texture  g_texture; // Color texture 
 texture  g_alphatex; // Alpha gradient texture 
 
@@ -61,7 +61,7 @@ void renderVertexShader(in a2v IN, out v2p OUT)
 void renderPixelShader(in v2p IN, out p2f OUT)
 {
   half4 pos = half4(IN.Texcoord.x, IN.Texcoord.y, 0, 1);
-  pos = mul(pos, RelativeTransform);
+  pos = mul(pos, Transform);
   half aaa = GetColor(half2(pos.x, pos.y));
   half dist = clamp(aaa, 0, 0.9999);
   

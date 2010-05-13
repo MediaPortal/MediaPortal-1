@@ -43,14 +43,16 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     AbstractProperty _startPointProperty;
     AbstractProperty _endPointProperty;
-    bool _refresh = false;
-    EffectHandleAsset _handleRelativeTransform;
+    EffectHandleAsset _handleTransform;
     EffectHandleAsset _handleOpacity;
     EffectHandleAsset _handleStartPoint;
     EffectHandleAsset _handleEndPoint;
     EffectHandleAsset _handleSolidColor;
     EffectHandleAsset _handleAlphaTexture;
     GradientBrushTexture _gradientBrushTexture;
+    float[] g_startpoint;
+    float[] g_endpoint;
+    bool _refresh = false;
 
     #endregion
 
@@ -138,8 +140,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     public override bool BeginRenderBrush(PrimitiveContext primitiveContext, RenderContext renderContext)
     {
       Matrix finalTransform = renderContext.Transform.Clone();
-      if (Transform != null)
-        finalTransform *= Transform.GetTransform();
       if (_gradientBrushTexture == null)
         return false;
       if (_refresh)
@@ -154,22 +154,28 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         else
         {
           _effect = ContentManager.GetEffect("lineargradient");
-          _handleRelativeTransform = _effect.GetParameterHandle("RelativeTransform");
+          _handleTransform = _effect.GetParameterHandle("Transform");
           _handleOpacity = _effect.GetParameterHandle("g_opacity");
           _handleStartPoint = _effect.GetParameterHandle("g_StartPoint");
           _handleEndPoint = _effect.GetParameterHandle("g_EndPoint");
         }
-      }
 
-      float[] g_startpoint = new float[] { StartPoint.X, StartPoint.Y };
-      float[] g_endpoint = new float[] { EndPoint.X, EndPoint.Y };
-      if (MappingMode == BrushMappingMode.Absolute)
-      {
-        g_startpoint[0] /= _vertsBounds.Width;
-        g_startpoint[1] /= _vertsBounds.Height;
+        g_startpoint = new float[] {StartPoint.X, StartPoint.Y};
+        g_endpoint = new float[] {EndPoint.X, EndPoint.Y};
+        if (MappingMode == BrushMappingMode.Absolute)
+        {
+          g_startpoint[0] /= _vertsBounds.Width;
+          g_startpoint[1] /= _vertsBounds.Height;
 
-        g_endpoint[0] /= _vertsBounds.Width;
-        g_endpoint[1] /= _vertsBounds.Height;
+          g_endpoint[0] /= _vertsBounds.Width;
+          g_endpoint[1] /= _vertsBounds.Height;
+        }
+        if (RelativeTransform != null)
+        {
+          Matrix m = RelativeTransform.GetTransform();
+          m.Transform(ref g_startpoint[0], ref g_startpoint[1]);
+          m.Transform(ref g_endpoint[0], ref g_endpoint[1]);
+        }
       }
 
       if (_singleColor)
@@ -180,9 +186,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       }
       else
       {
-        Matrix m = Matrix.Invert(RelativeTransform.GetTransform());
-
-        _handleRelativeTransform.SetParameter(m);
+        _handleTransform.SetParameter(GetCachedFinalBrushTransform());
         _handleOpacity.SetParameter((float) (Opacity * renderContext.Opacity));
         _handleStartPoint.SetParameter(g_startpoint);
         _handleEndPoint.SetParameter(g_endpoint);
@@ -203,31 +207,35 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         _refresh = false;
         CheckSingleColor();
         _effect = ContentManager.GetEffect("linearopacitygradient");
-        _handleRelativeTransform = _effect.GetParameterHandle("RelativeTransform");
+        _handleTransform = _effect.GetParameterHandle("Transform");
         _handleOpacity = _effect.GetParameterHandle("g_opacity");
         _handleStartPoint = _effect.GetParameterHandle("g_StartPoint");
         _handleEndPoint = _effect.GetParameterHandle("g_EndPoint");
         _handleAlphaTexture = _effect.GetParameterHandle("g_alphatex");
+
+        g_startpoint = new float[] {StartPoint.X, StartPoint.Y};
+        g_endpoint = new float[] {EndPoint.X, EndPoint.Y};
+        if (MappingMode == BrushMappingMode.Absolute)
+        {
+          g_startpoint[0] /= _vertsBounds.Width;
+          g_startpoint[1] /= _vertsBounds.Height;
+
+          g_endpoint[0] /= _vertsBounds.Width;
+          g_endpoint[1] /= _vertsBounds.Height;
+        }
+
+        if (RelativeTransform != null)
+        {
+          Matrix m = RelativeTransform.GetTransform();
+          m.Transform(ref g_startpoint[0], ref g_startpoint[1]);
+          m.Transform(ref g_endpoint[0], ref g_endpoint[1]);
+        }
       }
-
-      float[] g_startpoint = new float[] { StartPoint.X, StartPoint.Y };
-      float[] g_endpoint = new float[] { EndPoint.X, EndPoint.Y };
-      if (MappingMode == BrushMappingMode.Absolute)
-      {
-        g_startpoint[0] /= _vertsBounds.Width;
-        g_startpoint[1] /= _vertsBounds.Height;
-
-        g_endpoint[0] /= _vertsBounds.Width;
-        g_endpoint[1] /= _vertsBounds.Height;
-      }
-
       if (_singleColor)
         _effect.StartRender(finalTransform);
       else
       {
-        Matrix m = Matrix.Invert(RelativeTransform.GetTransform());
-
-        _handleRelativeTransform.SetParameter(m);
+        _handleTransform.SetParameter(GetCachedFinalBrushTransform());
         _handleOpacity.SetParameter((float) (Opacity * renderContext.Opacity));
         _handleStartPoint.SetParameter(g_startpoint);
         _handleEndPoint.SetParameter(g_endpoint);
