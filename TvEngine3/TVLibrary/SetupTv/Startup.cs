@@ -165,25 +165,29 @@ namespace SetupTv
 
       if (startupMode == StartupMode.DeployMode)
       {
-        if (DeploySql == "mysql")
-        {
-          dlg.provider = SetupDatabaseForm.ProviderType.MySql;
-          dlg.rbMySQL.Checked = true;
-          dlg.tbUserID.Text = "root";
-          dlg.tbServerHostName.Text = Dns.GetHostName();
-          dlg.tbServiceDependency.Text = @"MySQL5";
-        }
-        else
-        {
-          dlg.provider = SetupDatabaseForm.ProviderType.SqlServer;
-          dlg.rbSQLServer.Checked = true;
-          dlg.tbUserID.Text = "sa";
-          dlg.tbServerHostName.Text = Dns.GetHostName() + @"\SQLEXPRESS";
-          dlg.tbServiceDependency.Text = @"SQLBrowser";
-        }
         dlg.tbPassword.Text = DeployPwd;
         dlg.tbDatabaseName.Text = dlg.schemaNameDefault;
         dlg.schemaName = dlg.schemaNameDefault;
+        switch (DeploySql)
+        {
+          case "mysql":
+            dlg.provider = SetupDatabaseForm.ProviderType.MySql;
+            dlg.rbMySQL.Checked = true;
+            dlg.tbUserID.Text = "root";
+            dlg.tbServerHostName.Text = Dns.GetHostName();
+            dlg.tbServiceDependency.Text = @"MySQL5";
+            break;
+          case "sqlserver":
+            dlg.provider = SetupDatabaseForm.ProviderType.SqlServer;
+            dlg.rbSQLServer.Checked = true;
+            dlg.tbUserID.Text = "sa";
+            dlg.tbServerHostName.Text = Dns.GetHostName() + @"\SQLEXPRESS";
+            dlg.tbServiceDependency.Text = @"SQLBrowser";
+            break;
+          default:
+            dlg.LoadConnectionDetailsFromConfig(true);
+            break;
+        }
       }
       if ((startupMode != StartupMode.Normal && startupMode != StartupMode.DeployMode) ||
           (!dlg.TestConnection(startupMode)))

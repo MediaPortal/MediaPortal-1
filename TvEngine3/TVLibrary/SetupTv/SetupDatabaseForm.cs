@@ -110,7 +110,7 @@ namespace SetupTv
 
     #region Settings
 
-    private void LoadConnectionDetailsFromConfig(bool lookupMachineName)
+    public void LoadConnectionDetailsFromConfig(bool lookupMachineName)
     {
       //<DefaultProvider name="Firebird" connectionString="User=SYSDBA;Password=masterkey;Data Source=TvLibrary.fdb;ServerType=1;Dialect=3;Charset=UNICODE_FSS;Role=;Pooling=true;" />
       //<DefaultProvider name="SQLServer" connectionString="Password=sa;Persist Security Info=True;User ID=sa;Initial Catalog=TvLibrary;Data Source=pcebeckers;" />
