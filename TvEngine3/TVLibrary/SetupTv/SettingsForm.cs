@@ -118,31 +118,53 @@ namespace SetupTv
         {
           if (server.IsMaster)
           {
-            RemoteControl.HostName = server.HostName;
-
-            if (server.ReferringCard().Count > 0)
+            bool connected = false;
+            while (!connected)
             {
-              try
+              RemoteControl.HostName = server.HostName;
+
+              if (server.ReferringCard().Count > 0)
               {
-                Card c = (Card)server.ReferringCard()[0];
-                RemoteControl.Instance.Type(c.IdCard);
-              }
-              catch
-              {
-                DialogResult dlg = MessageBox.Show("Unable to connect to <" + server.HostName + ">.\n" +
-                                                   "Remove from database and restart setuptv ?", "Wrong config detected", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-                if (dlg == DialogResult.Yes)
+                try
                 {
-                  server.Delete();
-                  Log.Info("Controller: server {0} deleted ", server.HostName);
-                  ServiceHelper.Stop();
-                  Process.Start(Application.ExecutablePath, "-c");
+                  Card c = (Card)server.ReferringCard()[0];
+                  RemoteControl.Instance.Type(c.IdCard);
+                  connected = true;
                 }
-                else
+                catch (Exception ex)
                 {
-                  MessageBox.Show("Setup will now close");
+                  string localHostname = Dns.GetHostName();
+                  if (localHostname != server.HostName)
+                  {
+                    DialogResult dlg = MessageBox.Show(String.Format("Unable to connect to <{0}>.\n" +
+                                                       "Do you want to try the current comupter name ({1}) instead?",
+                                                       server.HostName, localHostname),
+                                                       "Wrong config detected",
+                                                       MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+                    if (dlg == DialogResult.Yes)
+                    {
+                      Log.Info("Controller: server {0} changed to {1}", server.HostName, localHostname);
+                      server.HostName = localHostname;
+                      server.Persist();
+                      RemoteControl.Clear();
+                      ServiceHelper.Restart();
+                    }
+                    else
+                    {
+                      MessageBox.Show("Setup will now close");
+                      Environment.Exit(-1);
+                    }
+                  }
+                  else
+                  {
+                    Log.Error("Cannot connect to server {0}", server.HostName);
+                    Log.Write(ex);
+                    DialogResult dlg = MessageBox.Show("Unable to connect to <" + server.HostName + ">.\n" +
+                                                       "Please check the TV Server logs for details.\n\n" + 
+                                                       "Setup will now close.");
+                    Environment.Exit(-1);
+                  }
                 }
-                Environment.Exit(-1);
               }
             }
             break;
