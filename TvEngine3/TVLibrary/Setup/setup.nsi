@@ -118,6 +118,8 @@ Var noServer
 Var noDesktopSC
 ;Var noStartMenuSC
 Var DeployMode
+Var DeploySql
+Var DeployPwd
 Var UpdateMode
 
 Var PREVIOUS_INSTALLDIR
@@ -336,6 +338,8 @@ Section "-prepare" SecPrepare
     ; if SingleSeat, if NoClient (Server installation), uninstall current one (removes both components) and install new server component
     ; if SingleSeat, if NoServer (Client installation), Do NOT uninstall current one (was removed on during server install already), but install new client component
     ${If} $noClient == 1
+
+      !insertmacro BackupGentleConfig
 
       ${LOG_TEXT} "INFO" "TVServer component will be installed soon. (/noClient was used)"
 
@@ -744,8 +748,6 @@ Section -Post
     ;writes component status to registry
     ${MementoSectionSave}
 
-    !insertmacro RestoreGentleConfig
-
   ${EndIf}
 
 
@@ -793,6 +795,23 @@ Section -Post
 
   ; set rights to programmdata directory and reg keys
   !insertmacro SetRights
+  
+  !insertmacro RestoreGentleConfig
+  
+  
+  ;if TV Server was installed exec SetupTv with correct parameters    
+  ${If} $noServer == 0
+	  ${If} $DeploySql != ""
+	  ${AndIf} $DeployPwd != ""
+	            StrCpy $R0 "--DeployMode --DeploySql:$DeploySql --DeployPwd:$DeployPwd"
+	  ${Else}
+	            StrCpy $R0 "--DeployMode"
+	  ${EndIf}
+	
+	  ${LOG_TEXT} "INFO" "Starting SetupTv.exe $R0..."
+	  ExecWait '"$INSTDIR\SetupTV.exe" $R0'
+  ${EndIf}
+      
 SectionEnd
 
 #---------------------------------------------------------------------------
@@ -896,6 +915,8 @@ Function .onInit
   StrCpy $noDesktopSC 0
   ;StrCpy $noStartMenuSC 0
   StrCpy $DeployMode 0
+  StrCpy $DeploySql ""
+  StrCpy $DeployPwd ""
   StrCpy $UpdateMode 0
 
   ${InitCommandlineParameter}
@@ -904,6 +925,10 @@ Function .onInit
   ${ReadCommandlineParameter} "noDesktopSC"
   ;${ReadCommandlineParameter} "noStartMenuSC"
   ${ReadCommandlineParameter} "DeployMode"
+  ClearErrors
+  ${GetOptions} $R0 "/DeploySql:" $DeploySql
+  ClearErrors
+  ${GetOptions} $R0 "/DeployPwd:" $DeployPwd
 
   ClearErrors
   ${GetOptions} $R0 "/UpdateMode" $R1

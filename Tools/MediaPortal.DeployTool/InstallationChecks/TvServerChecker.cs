@@ -51,38 +51,29 @@ namespace MediaPortal.DeployTool.InstallationChecks
       if (!File.Exists(_fileName)) return false;
       string targetDir = InstallationProperties.Instance["TVServerDir"];
 
-      //NSIS installer need to to if it's a fresh install or an update (chefkoch)
+      //NSIS installer need to know if it's a fresh install or an update (chefkoch)
       string UpdateMode = InstallationProperties.Instance["UpdateMode"] == "yes" ? "/UpdateMode" : string.Empty;
+
+      //NSIS installer need to know SQL type and password to start SetupTv accordly
+      string dbtype = InstallationProperties.Instance["DBMSType"];
+      string sqlparam = string.Empty;
+      string pwdparam = string.Empty;
+      if (!String.IsNullOrEmpty(dbtype))
+      {
+        sqlparam = dbtype == "msSQL2005" ? "/DeploySql:sqlserver" : "/DeploySql:mysql";
+        pwdparam = "/DeployPwd:" + InstallationProperties.Instance["DBMSPassword"];
+      }
 
       //NSIS installer doesn't want " in parameters (chefkoch)
       //Rember that /D must be the last one         (chefkoch)
-      Process setup = Process.Start(_fileName, String.Format("/S /noClient /DeployMode {0} /D={1}", UpdateMode, targetDir));
+      Process setup = Process.Start(_fileName, String.Format("/S /noClient /DeployMode {0} {1} {2} /D={3}", UpdateMode, sqlparam, pwdparam, targetDir));
 
       if (setup == null)
       {
         return false;
       }
       setup.WaitForExit();
-      if (setup.ExitCode != 0)
-      {
-        return false;
-      }
-
-      string sql = InstallationProperties.Instance["DBMSType"] == "msSQL2005" ? "sqlserver" : "mysql";
-      string pwd = InstallationProperties.Instance["DBMSPassword"];
-      string procParams = String.Format("--DeployMode --DeploySql:{0} --DeployPwd:{1}", sql, pwd);
-
-#if DEBUG
-      MessageBox.Show("Starting " + targetDir + "\\SetupTv.exe " + procParams);
-#endif
-
-      setup = Process.Start(targetDir + "\\SetupTv.exe", procParams);
-      if (setup != null)
-      {
-        setup.WaitForExit();
-        if (setup.ExitCode == 0) return true;
-      }
-      return false;
+      return setup.ExitCode == 0;
     }
 
     public bool UnInstall()

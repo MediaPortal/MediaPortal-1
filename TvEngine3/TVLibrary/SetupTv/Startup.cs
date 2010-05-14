@@ -165,28 +165,31 @@ namespace SetupTv
 
       if (startupMode == StartupMode.DeployMode)
       {
-        dlg.tbPassword.Text = DeployPwd;
-        dlg.tbDatabaseName.Text = dlg.schemaNameDefault;
-        dlg.schemaName = dlg.schemaNameDefault;
-        switch (DeploySql)
+        if (String.IsNullOrEmpty(DeploySql) || String.IsNullOrEmpty(DeployPwd))
         {
-          case "mysql":
+          dlg.LoadConnectionDetailsFromConfig(true);
+        }
+        else
+        {
+          if (DeploySql == "mysql")
+          {
             dlg.provider = SetupDatabaseForm.ProviderType.MySql;
             dlg.rbMySQL.Checked = true;
             dlg.tbUserID.Text = "root";
             dlg.tbServerHostName.Text = Dns.GetHostName();
             dlg.tbServiceDependency.Text = @"MySQL5";
-            break;
-          case "sqlserver":
+          }
+          else
+          {
             dlg.provider = SetupDatabaseForm.ProviderType.SqlServer;
             dlg.rbSQLServer.Checked = true;
             dlg.tbUserID.Text = "sa";
             dlg.tbServerHostName.Text = Dns.GetHostName() + @"\SQLEXPRESS";
             dlg.tbServiceDependency.Text = @"SQLBrowser";
-            break;
-          default:
-            dlg.LoadConnectionDetailsFromConfig(true);
-            break;
+          }
+          dlg.tbPassword.Text = DeployPwd;
+          dlg.tbDatabaseName.Text = dlg.schemaNameDefault;
+          dlg.schemaName = dlg.schemaNameDefault;
         }
       }
       if ((startupMode != StartupMode.Normal && startupMode != StartupMode.DeployMode) ||
