@@ -97,12 +97,16 @@ namespace MediaPortal.DeployTool
   class Utils
   {
     #region DialogHelper
+
     public static void ErrorDlg(string msg)
     {
       MessageBox.Show(msg, "MediaPortal Deploy Tool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
       Environment.Exit(-1);
     }
+
     #endregion
+
+    #region Download
 
     public static string GetDownloadString(string session_id, string node_id)
     {
@@ -204,27 +208,14 @@ namespace MediaPortal.DeployTool
       return NewFileName;
     }
 
-    public static bool CheckTargetDir(string dir)
-    {
-      if (dir == "")
-        return false;
-      if (Directory.Exists(dir))
-        return true;
-      try
-      {
-        Directory.CreateDirectory(dir);
-      }
-      catch
-      {
-        return false;
-      }
-      return true;
-    }
-
     private static string GetUserAgentOsString()
     {
       return "Windows NT " + OSInfo.OSInfo.OSMajorVersion + "." + OSInfo.OSInfo.OSMinorVersion;
     }
+
+    #endregion
+
+    #region Uninstall
 
     public static void UninstallNSIS(string RegistryFullPathName)
     {
@@ -299,6 +290,27 @@ namespace MediaPortal.DeployTool
       return result;
     }
 
+    #endregion
+
+    #region Misc checks
+
+    public static bool CheckTargetDir(string dir)
+    {
+      if (dir == "")
+        return false;
+      if (Directory.Exists(dir))
+        return true;
+      try
+      {
+        Directory.CreateDirectory(dir);
+      }
+      catch
+      {
+        return false;
+      }
+      return true;
+    }
+
     public static bool CheckFileVersion(string aFilePath, string aMinimumVersion, out Version aCurrentVersion)
     {
       aCurrentVersion = new Version(0, 0, 0, 0);
@@ -319,6 +331,39 @@ namespace MediaPortal.DeployTool
         return false;
       }
     }
+
+    public static bool CheckStartupPath()
+    {
+      try
+      {
+
+        if (Directory.GetCurrentDirectory().StartsWith("\\"))
+        {
+          MessageBox.Show("Please start installation from a local drive.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+          return false;
+        }
+        FileInfo file = new FileInfo(Application.ExecutablePath);
+        DirectoryInfo dir = file.Directory;
+        if (dir != null)
+        {
+          if ((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+          {
+            MessageBox.Show("Need write access to startup directory.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            return false;
+          }
+        }
+        return true;
+      }
+      catch
+      {
+        MessageBox.Show("Unable to determine startup path. Please try running from a local drive with write access.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
+        return false;
+      }
+    }
+
+    #endregion
+
+    #region Autorun
 
     public static bool AutoRunApplication(string action)
     {
@@ -345,6 +390,8 @@ namespace MediaPortal.DeployTool
       }
       return true;
     }
+
+    #endregion
 
     #region Operation System Version Check
     public static void CheckPrerequisites()
@@ -416,35 +463,6 @@ namespace MediaPortal.DeployTool
       return (enabled == 1);
     }
     #endregion
-
-    public static bool CheckStartupPath()
-    {
-      try
-      {
-
-        if (Directory.GetCurrentDirectory().StartsWith("\\"))
-        {
-          MessageBox.Show("Please start installation from a local drive.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-          return false;
-        }
-        FileInfo file = new FileInfo(Application.ExecutablePath);
-        DirectoryInfo dir = file.Directory;
-        if (dir != null)
-        {
-          if ((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-          {
-            MessageBox.Show("Need write access to startup directory.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-            return false;
-          }
-        }
-        return true;
-      }
-      catch
-      {
-        MessageBox.Show("Unable to determine startup path. Please try running from a local drive with write access.", Application.StartupPath, MessageBoxButtons.OK, MessageBoxIcon.Stop);
-        return false;
-      }
-    }
 
     public static string GetPackageVersion(char type)
     {
