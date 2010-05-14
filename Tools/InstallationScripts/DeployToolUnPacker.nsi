@@ -40,6 +40,33 @@ Name "MediaPortal Unpacker"
 
 
 #---------------------------------------------------------------------------
+# UNPACKER script
+#---------------------------------------------------------------------------
+!define PRODUCT_NAME          "MediaPortal"
+!define PRODUCT_PUBLISHER     "Team MediaPortal"
+!define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
+
+!define VER_MAJOR       1
+!define VER_MINOR       0
+!define VER_REVISION    7
+!ifdef VER_BUILD ; means !build_release was used
+  !undef VER_BUILD
+
+  !system 'include-MP-PreBuild.bat'
+  !include "version.txt"
+  !delfile "version.txt"
+  !if ${VER_BUILD} == 0
+    !warning "It seems there was an error, reading the svn revision. 0 will be used."
+  !endif
+!else
+  !define VER_BUILD       0
+!endif
+
+;this is for display purposes
+!define VERSION "1.1.0 RC3"
+
+
+#---------------------------------------------------------------------------
 # BUILD sources
 #---------------------------------------------------------------------------
 ; comment one of the following lines to disable the preBuild
@@ -50,24 +77,6 @@ Name "MediaPortal Unpacker"
 
 !include "include-MP-PreBuild.nsh"
 
-#---------------------------------------------------------------------------
-# UNPACKER script
-#---------------------------------------------------------------------------
-!define PRODUCT_NAME          "MediaPortal"
-!define PRODUCT_PUBLISHER     "Team MediaPortal"
-!define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
-
-!define VER_MAJOR       1
-!define VER_MINOR       0
-!define VER_REVISION    7
-!ifdef VER_BUILD
-  !undef VER_BUILD
-!endif
-!define VER_BUILD       0
-
-;!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
-;this is for display purposes
-!define VERSION "1.1.0 RC3"
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
@@ -82,7 +91,11 @@ Name "MediaPortal Unpacker"
 #---------------------------------------------------------------------------
 Icon "${svn_DeployTool}\Install.ico"
 !define /date buildTIMESTAMP "%Y-%m-%d-%H-%M"
-OutFile "MediaPortalSetup_1.1.0_SVN${SVN_REVISION}_${buildTIMESTAMP}.exe"
+!if ${VER_BUILD} == 0
+  OutFile "MediaPortalSetup_${VERSION}_${buildTIMESTAMP}.exe"
+!else
+  OutFile "MediaPortalSetup_${VERSION}_SVN${VER_BUILD}_${buildTIMESTAMP}.exe"
+!endif
 InstallDir "$TEMP\MediaPortal Installation"
 
 CRCCheck on
