@@ -464,6 +464,33 @@ namespace MediaPortal.DeployTool
     }
     #endregion
 
+    #region Logging
+
+    private static readonly string _filePath = Application.StartupPath + "\\deploy\\DeployTool-" + DateTime.Now.ToString("dd-MM-yyyy HH_mm") + ".log";
+
+    public void Log(string message)
+    {
+      DateTime dt = DateTime.Now;
+      if (!File.Exists(_filePath))
+      {
+        FileStream fs = File.Create(_filePath);
+        fs.Close();
+      }
+      try
+      {
+        StreamWriter sw = File.AppendText(_filePath);
+        sw.WriteLine(dt.ToString("hh:mm:ss") + " " + message);
+        sw.Flush();
+        sw.Close();
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine(e.Message);
+      }
+    }
+
+    #endregion
+
     public static string GetPackageVersion(char type)
     {
       switch (type.ToString().ToLower())
