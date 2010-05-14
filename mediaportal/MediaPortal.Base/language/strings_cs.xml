@@ -137,7 +137,7 @@
     <String id="189">Načítání informací o mediu</String>
     <String id="190">Uložit playlist</String>
     <String id="191">Náhodně</String>
-    <String id="192">Vymazat</String>
+    <String id="192">Odstranit</String>
     <String id="193">Prohledat</String>
     <String id="194">Hledání...</String>
     <String id="195">Žádné IMDB informace nenalezeny!</String>
@@ -238,7 +238,7 @@
     <String id="293">Titulky</String>
     <String id="294">Vytvořit záložku</String>
     <String id="295">Procházet záložky</String>
-    <String id="296">Vymazat záložku</String>
+    <String id="296">Odstranit záložku</String>
     <String id="298">Posuvník</String>
     <String id="299">Délka videa:</String>
     <String id="300">1. Jazyk</String>
@@ -355,8 +355,8 @@
     <String id="419">Videa/Herci</String>
     <String id="420">Videa/Roky</String>
     <String id="421">Videa/Názvy</String>
-    <String id="422">Vymazat informace o albu</String>
-    <String id="423">Vymazat informace z CDDB</String>
+    <String id="422">Odstranit informace o albu</String>
+    <String id="423">Odstranit informace z CDDB</String>
     <String id="424">Vyber</String>
     <String id="425">Nenalezeny žádné informace o albu.</String>
     <String id="426">CDDB informace nebyly nalezeny</String>
@@ -365,8 +365,8 @@
     <String id="429">Prosím vložte následující CD/DVD</String>
     <String id="430">Řadit dle: DVD#</String>
     <String id="431">Nepoužívat cache</String>
-    <String id="432">Vymazat filmy z databáze</String>
-    <String id="433">Jste si jisti vymazáním?</String>
+    <String id="432">Odstranit filmy z databáze</String>
+    <String id="433">Opravdu chcete provést odstranění</String>
     <String id="434">toto video?</String>
     <String id="435">Stopa</String>
     <String id="436">Rok:</String>
@@ -418,7 +418,7 @@
     <String id="482">Po XBMC</String>
     <String id="483">Album</String>
     <String id="484">Interpret</String>
-    <String id="485">Vymazat album</String>
+    <String id="485">Odstranit album</String>
     <String id="486">Opakovat</String>
     <String id="487">Opakovat jednou</String>
     <String id="491">Použít velké ikony</String>
@@ -431,7 +431,7 @@
     <String id="499">Menu pohled</String>
     <String id="500">Menu soubor</String>
     <String id="501">Vybrat jako cíl</String>
-    <String id="503">Vymazat adresář</String>
+    <String id="503">Odstranit adresář</String>
     <String id="502">Nelze dokončit úlohu</String>
     <String id="504">Otevřít cílovou složku</String>
     <String id="505">Počítám</String>
@@ -447,8 +447,8 @@
     <String id="515">Chyba při odstraňování složky, akce není dokončena</String>
     <String id="516">Chyba při odstraňování cílového souboru, akce není dokončena</String>
     <String id="517">Fatální chyba, akce není dokončena</String>
-    <String id="518">Smazat tuto skladbu?</String>
-    <String id="519">Vyp.titulky</String>
+    <String id="518">Odstranit tuto skladbu?</String>
+    <String id="519">Titulky vypnuty</String>
     <String id="527">Řadit dle: Shlédnuto</String>
     <String id="528">Album Artists</String>
     <String id="529">Rozvržení: seznam velkých ikon</String>
@@ -504,7 +504,7 @@
     <String id="615">Nahrát každý den v tento čas</String>
     <String id="616">Vyberte typ nahrávání</String>
     <String id="617">Nový záznam</String>
-    <String id="618">Vymazat</String>
+    <String id="618">Odstranit</String>
     <String id="619">Upravit detum/čas</String>
     <String id="620">Třídění podle: Kanálů</String>
     <String id="621">Třídění podle: Data</String>
@@ -532,7 +532,7 @@
     <String id="643">Načítání TV programů</String>
     <String id="644">Třídění TV programů</String>
     <String id="645">Nahrát soubor .XML</String>
-    <String id="646">Naplánované záznamy</String>
+    <String id="646">Naplánovaná nahrávání</String>
     <String id="647">Jednou</String>
     <String id="648">Denně</String>
     <String id="649">Každý</String>
@@ -542,7 +542,7 @@
     <String id="653">Odstranit záznam</String>
     <String id="654">Vysunout</String>
     <String id="655">Přehrát TV záznam</String>
-    <String id="656">Smazat TV záznam</String>
+    <String id="656">Odstranit TV záznam</String>
     <String id="657">Pondělí</String>
     <String id="658">Úterý</String>
     <String id="659">Středa</String>
@@ -562,13 +562,13 @@
     <String id="673">Rychlost scrolování</String>
     <String id="674">Nastavení GUI</String>
     <String id="675">Příklad:</String>
-    <String id="676">Smazat přehrané záznamy?</String>
+    <String id="676">Odstranit přehrané záznamy?</String>
     <String id="677">krát</String>
     <String id="678">Řadit dle: Žánru</String>
     <String id="679">Týdně</String>
     <String id="680">Po-Pá</String>
     <String id="681">Čekání</String>
-    <String id="682">Záznam</String>
+    <String id="682">Nahrávání</String>
     <String id="683">Dokončeno</String>
     <String id="684">Zrušeno</String>
     <String id="685">Řadit dle: Stavu</String>
@@ -592,10 +592,10 @@
     <String id="715">Bylo vloženo CD, chete ho přehrát?</String>
     <String id="716">Satelit</String>
     <String id="717">Počasí</String>
-    <String id="718">Smazat Top100</String>
-    <String id="719">Jste si jist že chcete smazat seznam Top100?</String>
+    <String id="718">Odstranit Top100</String>
+    <String id="719">Jste si jist že chcete odstranit seznam Top100?</String>
     <String id="720">Zobrazit: Trvání</String>
-    <String id="721">Zobrait: Počet přehrání</String>
+    <String id="721">Zobrazit: Počet přehrání</String>
     <String id="722">Nelze přehrát disk</String>
     <String id="723">Byl disk vložen?</String>
     <String id="724">Prohledat TV program</String>
@@ -653,9 +653,9 @@
     <String id="777">Spouštění čas.posunu</String>
     <String id="778">Povolit automatické spouštění časového posunu</String>
     <String id="779">Zapínat časový posun manuálně</String>
-    <String id="780">Vyberte typ záznamu</String>
-    <String id="781">Běžný záznam</String>
-    <String id="782">Detailní záznam</String>
+    <String id="780">Vyberte typ nahrávání</String>
+    <String id="781">Běžné nahrávání</String>
+    <String id="782">Detailní nahrávání</String>
     <String id="783">Otočit vzhůru nohama (180°)</String>
     <String id="784">Otočit doleva (+90°)</String>
     <String id="789">Nyní: </String>
@@ -667,12 +667,12 @@
     <String id="802">Končí</String>
     <String id="803">je</String>
     <String id="804">Hotovo</String>
-    <String id="805">Vymazat</String>
+    <String id="805">Odstranit</String>
     <String id="806">Název</String>
     <String id="808">Přísady</String>
     <String id="809">Směry</String>
     <String id="810">Karta</String>
-    <String id="820">Smazat neshlédnutý záznam?</String>
+    <String id="820">Odstranit neshlédnutý záznam?</String>
     <String id="830">Odstranit status "shlédnuto"</String>
     <String id="831">Odebrat vyměnitelný disk</String>
     <String id="832">Nelze odebrat vyměnitelný disk: </String>
@@ -737,7 +737,7 @@
     <String id="922">Popis</String>
     <String id="923">Zobrazit</String>
     <String id="924">Menu</String>
-    <String id="925">Smazat video</String>
+    <String id="925">Odstranit video</String>
     <String id="926">Přidat do playlistu</String>
     <String id="927">Varování</String>
     <String id="928">Najít CD přebal</String>
@@ -751,7 +751,7 @@
     <String id="936">Pokračovat od: </String>
     <String id="937">Import TV průvodce</String>
     <String id="938">Ukázat tento kanál</String>
-    <String id="939">Přepínání</String>
+    <String id="939">Přepnout mód zobrazení TV programu</String>
     <String id="940">Vlastnosti</String>
     <String id="941">Změnit poměr stran</String>
     <String id="942">Roztáhnout</String>
@@ -777,8 +777,8 @@
     <String id="977">Žádná karta není dostupná</String>
     <String id="979">Přehrát záznam od začátku</String>
     <String id="980">Přehrát záznam od bodu živého vysílání</String>
-    <String id="981">Zrušit záznam tohoto pořadu</String>
-    <String id="982">Zrušit celý plán záznamu</String>
+    <String id="981">Zrušit nahrávání tohoto pořadu</String>
+    <String id="982">Zrušit celý plán nahrávání</String>
     <String id="983" prefix="Mé ">Playlisty</String>
     <String id="984">Stahuji seznam filmů</String>
     <String id="986">Stahuji info o hercích</String>
@@ -787,7 +787,7 @@
     <String id="989">FPS</String>
     <String id="990">Datový tok</String>
     <String id="991">Priorita</String>
-    <String id="992">Vymazat originál</String>
+    <String id="992">Odstranit originál</String>
     <String id="993">Vlastní</String>
     <String id="994">Zapnout autokompresi</String>
     <String id="996">Vybrat nahrávání?</String>
@@ -827,12 +827,15 @@
     <String id="1035">TV kanál je kódovaný!</String>
     <String id="1036">Žádné video nenalezeno</String>
     <String id="1037">TV-informace o programu</String>
-    <String id="1038">Detailní záznam</String>
-    <String id="1039">Nezaznamenávat</String>
+    <String id="1038">Detailní nahrávání</String>
+    <String id="1039">Nenahrávat</String>
     <String id="1040">Upozorni mne</String>
     <String id="1041">Blížící se epizody</String>
     <String id="1042">Ponechat do</String>
-    <String id="1046">Pořád</String>
+    <String id="1043">Dokud nebude shlédnuto</String>
+    <String id="1044">Dokud bude místo na disku</String>
+    <String id="1045">Až do data:</String>
+    <String id="1046">Trvale</String>
     <String id="1047">Celoobrazovkový mód</String>
     <String id="1048">Nastavení</String>
     <String id="1049">Hibernace</String>
@@ -877,14 +880,16 @@
     <String id="1103">Importuji stopu</String>
     <String id="1104">Vlevo</String>
     <String id="1105">Importovat stopy</String>
-    <String id="1110">Přeskočit nový záznam</String>
-    <String id="1111">Přeskočit záznam(y) v konfliktu</String>
+    <String id="1110">Přeskočit nové nahrávání</String>
+    <String id="1111">Přeskočit nahrávání v konfliktu</String>
     <String id="1112">Ponechat konflikty</String>
     <String id="1113">Přeskočit epizodu(y) v konfliktu</String>
     <String id="1196">Zapnout titulky</String>
     <String id="1197">Vypnout DXVA</String>
     <String id="1198">DVD Navigátor</String>
     <String id="1200">Průvodce nastavením</String>
+    <String id="1201">Přehrát video od začátku</String>
+    <String id="1211">Pokračovat přehrávání od: {0}</String> <!--{0} is replaced by last stop time in HMS format-->
     <String id="1300" prefix="Mé ">TV pořady</String>
     <String id="1440">Teletext</String>
     <String id="1441">Teletext</String>
@@ -935,12 +940,12 @@
     <String id="1976">otáčky</String>
     <String id="1977">Souborový systém</String>
     <String id="1978">Virtuální paměť</String>
-    <String id="2005">Smazat</String>
+    <String id="2005">Odstranit</String>
     <String id="2006">Titul</String>
     <String id="2009">Příkaz</String>
     <String id="2010">Karta</String>
     <String id="2011">Tisk</String>
-    <String id="2012">Smazat</String>
+    <String id="2012">Odstranit</String>
     <String id="2013">Oblíbení</String>
     <String id="2014">Bez jména</String>
     <String id="2016">Malý</String>
@@ -1007,7 +1012,7 @@
     <String id="2080">Nepodporovaný soubor</String>
     <String id="2081">Nelze stříhat</String>
     <String id="2082">Stříhání bylo dokončeno</String>
-    <String id="2083">Přejete si smazat původní soubor?</String>
+    <String id="2083">Přejete si odstranit původní soubor?</String>
     <String id="2084">start</String>
     <String id="2085">ukončit</String>
     <String id="2086">dozadu</String>
@@ -1077,7 +1082,7 @@
     <String id="2206">Vybrat vše</String>
     <String id="2208">Vytvořit tento adresář?</String>
     <String id="2211">Prosím čekej, soubor se kopíruje!</String>
-    <String id="2212">Smazat</String>
+    <String id="2212">Odstranit</String>
     <String id="2213">Přesunout</String>
     <String id="2214">Přejte si přemístit zvolené soubory?</String>
     <String id="2215">Prosím čekejte - přemisťuji soubory.</String>
@@ -1086,8 +1091,8 @@
     <String id="2218">Přepsat soubor?</String>
     <String id="2219">Nelze přemístit soubor se zvolené jednotky!</String>
     <String id="2220">Kopírovat zvolený soubor?</String>
-    <String id="2221">Přejete si smazat zvolené soubory?</String>
-    <String id="2222">Soubory smazány!</String>
+    <String id="2221">Přejete si odstranit zvolené soubory?</String>
+    <String id="2222">Soubory odstraněny!</String>
     <String id="2223">Rubbish Bin</String>
     <String id="2224">Složka již existuje!</String>
     <String id="2225">Složka vytvořena</String>
@@ -1232,7 +1237,7 @@
     <String id="6013">Manuální xmltv</String>
     <String id="6014">Nastavit TV</String>
     <String id="6015">Nastavit DVD</String>
-    <String id="6016">Po shlédnutí automaticky smazat záznam</String>
+    <String id="6016">Po shlédnutí automaticky odstranit záznam</String>
     <String id="6017">Přidat záznam do filmové databáze</String>
     <String id="6018">minut před začátkem pořadu</String>
     <String id="6019">minut po ukončení pořadu</String>
@@ -1275,7 +1280,7 @@
     <String id="8017">Do</String>
     <String id="8018">Předmět</String>
     <String id="8019">Zpráva</String>
-    <String id="8020">Vymazat mail</String>
+    <String id="8020">Odstranit mail</String>
     <String id="8021">Nastavit jako přečtené</String>
     <String id="8022">Zobrazit přílohy</String>
     <String id="8023">New Messages arrived</String>
@@ -1353,7 +1358,7 @@
     <String id="19101" prefix="Mé ">Sudoku</String>
     <String id="19102">Nová hra</String>
     <String id="19103">Řešení</String>
-    <String id="19104">Vymaž</String>
+    <String id="19104">Odstraň</String>
     <String id="19105">Blokovat chyb. tahy</String>
     <String id="19106">Ukaž chybné tahy</String>
     <String id="19107">Obtížnost: </String>
@@ -1670,11 +1675,11 @@
     <String id="200047">Vytvoř náhledy (včetně podadresářů)</String>
     <String id="200048">Znonu vytvoření všech náhledů</String>
     <String id="200049">Jen shlédnuté záznamy pro tento pořad</String>
-    <String id="200050">Tato akce vymaže záznamy z pevného disku</String>
-    <String id="200051">Vymazat tuto epizodu?</String>
+    <String id="200050">Tato akce odstraní záznamy z pevného disku</String>
+    <String id="200051">Odstranit tuto epizodu?</String>
     <String id="200052">Aktivní nahrávání</String>
     <String id="200053">Žádné nahrávání neprobíhá</String>
-    <String id="200054">Nelze smazat TV záznam.</String>
+    <String id="200054">Nelze odstranit TV záznam.</String>
     <String id="200055">Živé TV vysílání může být přerušeno.</String>
     <String id="200059">Audio Dual Mono Mode</String>
     <String id="200060">Stereo</String>
