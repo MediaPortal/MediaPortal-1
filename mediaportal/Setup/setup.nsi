@@ -133,6 +133,7 @@ Var EXPRESS_UPDATE
 
 Var frominstall
 
+Var MPTray_Running
 
 #---------------------------------------------------------------------------
 # INCLUDE FILES
@@ -287,8 +288,20 @@ ShowUninstDetails show
   ${KillProcess} "MpeMaker.exe"
 
   ${KillProcess} "WatchDog.exe"
-  ${KillProcess} "MPTray.exe"
   ${KillProcess} "MusicShareWatcher.exe"
+
+  ; MPTray
+  ${KillProcess} "MPTray.exe"
+  ${Select} $0
+    ${Case} "0"
+      ;${LOG_TEXT} "INFO" "KillProcess: ${Process} was killed successfully."
+      StrCpy $MPTray_Running 1
+    ${Case} "128"
+      ;${LOG_TEXT} "INFO" "KillProcess: ${Process} is not running."
+      StrCpy $MPTray_Running 0
+    ${CaseElse}
+      ;${LOG_TEXT} "ERROR" "KillProcess: Unknown result: $0"
+  ${EndSelect}
 
   ; MovieThumbnailer
   ${KillProcess} "mtn.exe"
@@ -837,6 +850,12 @@ Section -Post
 
   ; set rights to programmdata directory and reg keys
   !insertmacro SetRights
+
+  ; start MpTray if it was running before
+  ${If} $MPTray_Running == 1
+    ${LOG_TEXT} "INFO" "Starting MPTray..."
+    Exec '"$MPdir.Base\MPTray.exe"'
+  ${EndIf}
 SectionEnd
 
 #---------------------------------------------------------------------------
@@ -950,6 +969,7 @@ Function .onInit
   ${LOG_OPEN}
   ${LOG_TEXT} "DEBUG" "FUNCTION .onInit"
 
+  StrCpy $MPTray_Running 0
 
   #### check and parse cmdline parameter
   ; set default values for parameters ........
