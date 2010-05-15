@@ -763,6 +763,7 @@ namespace TvService
     {
       if (!_disposed)
       {
+        _epgTimer.Dispose();
         _tvController.OnTvServerEvent -= _eventHandler;
         _disposed = true;
       }
