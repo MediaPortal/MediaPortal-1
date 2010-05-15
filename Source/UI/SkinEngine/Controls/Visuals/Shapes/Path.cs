@@ -105,7 +105,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
             if (verts != null)
             {
               int numVertices = verts.Length / 3;
-              Fill.SetupBrush(this, ref verts, context.ZOrder);
+              Fill.SetupBrush(this, ref verts, context.ZOrder, true);
               _fillContext = new PrimitiveContext(numVertices, ref verts, PrimitiveType.TriangleList);
             }
           }
@@ -126,7 +126,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
             if (verts != null)
             {
               int numVertices = verts.Length/3;
-              Stroke.SetupBrush(this, ref verts, context.ZOrder);
+              Stroke.SetupBrush(this, ref verts, context.ZOrder, true);
               _strokeContext = new PrimitiveContext(numVertices, ref verts, PrimitiveType.TriangleList);
             }
           }

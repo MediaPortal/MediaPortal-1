@@ -132,9 +132,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     #endregion
 
-    public override void SetupBrush(FrameworkElement parent, ref PositionColored2Textured[] verts, float zOrder)
+    public override void SetupBrush(FrameworkElement parent, ref PositionColored2Textured[] verts, float zOrder, bool adaptVertsToBrushTexture)
     {
-      base.SetupBrush(parent, ref verts, zOrder);
+      base.SetupBrush(parent, ref verts, zOrder, adaptVertsToBrushTexture);
       _textureVisual = new Texture(GraphicsDevice.Device, (int) _vertsBounds.Width, (int ) _vertsBounds.Height, 1,
           Usage.RenderTarget, Format.X8R8G8B8, Pool.Default);
       _screen = parent.Screen;

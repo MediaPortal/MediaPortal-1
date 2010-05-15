@@ -198,7 +198,7 @@ namespace MediaPortal.UI.SkinEngine.Effects
         Allocate();
       if (!IsAllocated)
       {
-        //render without effect
+        // Render without effect
         GraphicsDevice.Device.SetTexture(stream, tex);
         return;
       }

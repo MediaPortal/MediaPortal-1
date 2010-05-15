@@ -93,9 +93,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     #endregion
 
-    public override void SetupBrush(FrameworkElement parent, ref PositionColored2Textured[] verts, float zOrder)
+    public override void SetupBrush(FrameworkElement parent, ref PositionColored2Textured[] verts, float zOrder, bool adaptVertsToBrushTexture)
     {
-      base.SetupBrush(parent, ref verts, zOrder);
+      base.SetupBrush(parent, ref verts, zOrder, adaptVertsToBrushTexture);
       _effect = ContentManager.GetEffect("normal");
       _verts = verts;
       _videoSize = new Size(0, 0);

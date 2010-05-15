@@ -36,22 +36,30 @@ namespace MediaPortal.UI.SkinEngine.Rendering
     protected readonly double _opacity = 1.0f;
     protected Rectangle? _scissorRect = null;
     protected readonly Matrix _transform;
+    protected RectangleF _transformedRenderBounds = new RectangleF();
 
     #endregion
 
     #region Ctor
 
-    public RenderContext(Matrix startingTransform)
+    public RenderContext(Matrix startingTransform, RectangleF untransformedBounds)
     {
       _transform = startingTransform;
+      SetUntransformedContentsBounds(untransformedBounds);
     }
 
-    public RenderContext(Matrix transform, double opacity, float zOrder)
+    public RenderContext(Matrix transform, double opacity, RectangleF untransformedBounds, float zOrder)
     {
       _zOrder = zOrder;
       _opacity = opacity;
       _transform = transform;
       _scissorRect = null;
+      SetUntransformedContentsBounds(untransformedBounds);
+    }
+
+    protected void SetUntransformedContentsBounds(RectangleF bounds)
+    {
+      _transformedRenderBounds = _transform.GetIncludingTransformedRectangle(bounds);
     }
 
     #endregion
@@ -83,7 +91,8 @@ namespace MediaPortal.UI.SkinEngine.Rendering
         transform *= Matrix.Translation(new Vector3(origin.X, origin.Y, 0));
         finalTransform *= transform;
       }
-      return new RenderContext(finalTransform, _opacity * localOpacity, _zOrder - 0.001f);
+      RenderContext result = new RenderContext(finalTransform, _opacity * localOpacity, bounds, _zOrder - 0.001f);
+      return result;
     }
 
     public void AddScissorRect(Rectangle localScissorRect)
@@ -119,6 +128,22 @@ namespace MediaPortal.UI.SkinEngine.Rendering
       get { return _transform; }
     }
 
+    public RectangleF OccupiedTransformedBounds
+    {
+      get { return _transformedRenderBounds; }
+    }
+
     #endregion
+
+    public void IncludeUntransformedContentsBounds(RectangleF bounds)
+    {
+      RectangleF includingTransformedBounds = _transform.GetIncludingTransformedRectangle(bounds);
+      IncludeTransformedContentsBounds(includingTransformedBounds);
+    }
+
+    public void IncludeTransformedContentsBounds(RectangleF bounds)
+    {
+      _transformedRenderBounds = RectangleF.Union(_transformedRenderBounds, bounds);
+    }
   }
 }

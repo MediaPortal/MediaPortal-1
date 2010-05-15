@@ -151,12 +151,12 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       _tex.Allocate();
     }
 
-    public override void SetupBrush(FrameworkElement parent, ref PositionColored2Textured[] verts, float zOrder)
+    public override void SetupBrush(FrameworkElement parent, ref PositionColored2Textured[] verts, float zOrder, bool adaptVertsToBrushTexture)
     {
       if (_tex == null)
       {
         Allocate();
-        base.SetupBrush(parent, ref verts, zOrder);
+        base.SetupBrush(parent, ref verts, zOrder, adaptVertsToBrushTexture);
       }
     }
 

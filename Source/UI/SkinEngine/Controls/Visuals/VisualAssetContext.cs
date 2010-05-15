@@ -42,41 +42,21 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
     public DateTime LastTimeUsed;
 
-    public VisualAssetContext(string controlName, string screenName,
-        PositionColored2Textured[] verts, PrimitiveType primitiveType, Texture texture)
+    public VisualAssetContext(string controlName, string screenName, Texture texture)
     {
       _name = String.Format("visual#{0} {1} {2}", _assetId, screenName, controlName);
       _assetId++;
+      _texture = texture;
+      LastTimeUsed = SkinContext.FrameRenderingStartTime;
+    }
+
+    public void SetVerts(PositionColored2Textured[] verts, PrimitiveType primitiveType)
+    {
       _vertexBuffer = PositionColored2Textured.Create(verts.Length);
       _vertexFormat = PositionColored2Textured.Format;
       _strideSize = PositionColored2Textured.StrideSize;
       _primitiveType = primitiveType;
       PositionColored2Textured.Set(_vertexBuffer, verts);
-      _texture = texture;
-      LastTimeUsed = SkinContext.FrameRenderingStartTime;
-    }
-
-    #region IAsset Members
-
-    public bool IsAllocated
-    {
-      get { return (_vertexBuffer != null || _texture != null); }
-    }
-
-    public bool CanBeDeleted
-    {
-      get
-      {
-        if (!IsAllocated)
-        {
-          return false;
-        }
-        TimeSpan ts = SkinContext.FrameRenderingStartTime - LastTimeUsed;
-        if (ts.TotalSeconds >= 5)
-          return true;
-
-        return false;
-      }
     }
 
     public VertexBuffer VertexBuffer
@@ -104,6 +84,27 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       get { return _texture; }
     }
 
+    #region IAsset Members
+
+    public bool IsAllocated
+    {
+      get { return (_vertexBuffer != null || _texture != null); }
+    }
+
+    public bool CanBeDeleted
+    {
+      get
+      {
+        if (!IsAllocated)
+          return false;
+        TimeSpan ts = SkinContext.FrameRenderingStartTime - LastTimeUsed;
+        if (ts.TotalSeconds >= 5)
+          return true;
+
+        return false;
+      }
+    }
+
     public void Free(bool force)
     {
       if (_vertexBuffer != null)
@@ -119,11 +120,11 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       }
     }
 
+    #endregion
+
     public override string ToString()
     {
       return _name;
     }
-
-    #endregion
   }
 }

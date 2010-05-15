@@ -22,6 +22,7 @@
 
 #endregion
 
+using System.Drawing;
 using MediaPortal.Core.General;
 using MediaPortal.UI.SkinEngine.ContentManagement;
 using MediaPortal.UI.SkinEngine.Controls.Visuals;
@@ -52,6 +53,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     EffectHandleAsset _handleOpacity;
     EffectHandleAsset _handleColor;
     EffectHandleAsset _handleAlphaTexture;
+    EffectHandleAsset _handleUpperVertsBounds;
+    EffectHandleAsset _handleLowerVertsBounds;
     GradientBrushTexture _gradientBrushTexture;
     float[] g_focus;
     float[] g_center;
@@ -177,9 +180,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
     #region Public methods
 
-    public override void SetupBrush(FrameworkElement parent, ref PositionColored2Textured[] verts, float zOrder)
+    public override void SetupBrush(FrameworkElement parent, ref PositionColored2Textured[] verts, float zOrder, bool adaptVertsToBrushTexture)
     {
-      base.SetupBrush(parent, ref verts, zOrder);
+      base.SetupBrush(parent, ref verts, zOrder, adaptVertsToBrushTexture);
 
       if (_gradientBrushTexture == null)
         _gradientBrushTexture = BrushCache.Instance.GetGradientBrush(GradientStops);
@@ -236,7 +239,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
 
       if (_singleColor)
       {
-        Color4 v = ColorConverter.FromColor(GradientStops[0].Color);
+        Color4 v = ColorConverter.FromColor(Color.FromArgb((int) (255*Opacity*renderContext.Opacity), GradientStops[0].Color));
         _handleColor.SetParameter(v);
         _effect.StartRender(finalTransform);
       }
@@ -262,6 +265,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       {
         _refresh = false;
         CheckSingleColor();
+        // TODO: if (_singleColor) ...
         _gradientBrushTexture = BrushCache.Instance.GetGradientBrush(GradientStops);
         _effect = ContentManager.GetEffect("radialopacitygradient");
         _handleTransform = _effect.GetParameterHandle("Transform");
@@ -270,6 +274,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
         _handleRadius = _effect.GetParameterHandle("g_radius");
         _handleOpacity = _effect.GetParameterHandle("g_opacity");
         _handleAlphaTexture = _effect.GetParameterHandle("g_alphatex");
+        _handleUpperVertsBounds = _effect.GetParameterHandle("g_UpperVertsBounds");
+        _handleLowerVertsBounds = _effect.GetParameterHandle("g_LowerVertsBounds");
 
         g_focus = new float[] { GradientOrigin.X, GradientOrigin.Y };
         g_center = new float[] { Center.X, Center.Y };
@@ -296,15 +302,25 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
       }
 
       if (_singleColor)
-        _effect.StartRender(finalTransform);
+      {
+        _handleOpacity.SetParameter((float) (Opacity * renderContext.Opacity));
+        _effect.StartRender(tex, finalTransform);
+      }
       else
       {
+        SurfaceDescription desc = tex.GetLevelDescription(0);
+        float[] g_LowerVertsBounds = new float[] {_vertsBounds.Left / desc.Width, _vertsBounds.Top / desc.Height};
+        float[] g_UpperVertsBounds = new float[] {_vertsBounds.Right / desc.Width, _vertsBounds.Bottom / desc.Height};
+
         _handleTransform.SetParameter(GetCachedFinalBrushTransform());
         _handleFocus.SetParameter(g_focus);
         _handleCenter.SetParameter(g_center);
         _handleRadius.SetParameter(g_radius);
         _handleOpacity.SetParameter((float) (Opacity * renderContext.Opacity));
         _handleAlphaTexture.SetParameter(_gradientBrushTexture.Texture);
+        _handleUpperVertsBounds.SetParameter(g_UpperVertsBounds);
+        _handleLowerVertsBounds.SetParameter(g_LowerVertsBounds);
+
         _effect.StartRender(tex, finalTransform);
       }
     }

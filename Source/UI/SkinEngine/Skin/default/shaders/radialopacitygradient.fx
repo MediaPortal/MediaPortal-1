@@ -5,6 +5,8 @@ half2    g_radius = {0.5f, 0.5f};
 half2    g_center = {0.5f, 0.5f};
 half2    g_focus = {0.5f, 0.5f};
 half     g_opacity;
+half2    g_UpperVertsBounds;
+half2    g_LowerVertsBounds;
 texture  g_texture; // Color texture 
 texture  g_alphatex; // Alpha gradient texture 
 
@@ -61,14 +63,19 @@ void renderVertexShader(in a2v IN, out v2p OUT)
 
 void renderPixelShader(in v2p IN, out p2f OUT)
 {
-  half4 pos = half4(IN.Texcoord.x,IN.Texcoord.y,0,1);
-  pos = mul(pos, Transform);
-  half dist = GetColor(half2(pos.x,pos.y));
-  dist = clamp(dist,0,0.999999);
+  half4 alphaPos = half4(
+      (IN.Texcoord.x - g_LowerVertsBounds.x)/(g_UpperVertsBounds.x - g_LowerVertsBounds.x),
+      (IN.Texcoord.y - g_LowerVertsBounds.y)/(g_UpperVertsBounds.y - g_LowerVertsBounds.y), 0, 1);
+  alphaPos = mul(alphaPos, Transform);
+  half dist = GetColor(half2(alphaPos.x, alphaPos.y));
+  dist = clamp(dist, 0, 0.9999);
+
+  half4 texPos = half4(IN.Texcoord.x, IN.Texcoord.y, 0, 1);
+  texPos = mul(texPos, Transform);
   
-  OUT.Color = tex2D(textureSampler, IN.Texcoord) ;
+  OUT.Color = tex2D(textureSampler, half2(texPos.x, texPos.y));
   half4 alphaColor = tex1D(alphaSampler, dist);
-  OUT.Color[3] *= alphaColor[3];
+  OUT.Color[3] *= alphaColor[3] * g_opacity;
 }
 
 technique simple {

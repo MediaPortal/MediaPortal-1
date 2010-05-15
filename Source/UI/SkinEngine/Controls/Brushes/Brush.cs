@@ -187,39 +187,40 @@ namespace MediaPortal.UI.SkinEngine.Controls.Brushes
     public virtual void Scale(ref float u, ref float v, ref Color4 color)
     { }
 
-    public virtual void SetupBrush(FrameworkElement parent, ref PositionColored2Textured[] verts, float zOrder)
+    public virtual void SetupBrush(FrameworkElement parent, ref PositionColored2Textured[] verts, float zOrder, bool adaptVertsToBrushTexture)
     {
       UpdateBounds(ref verts);
       float w = _vertsBounds.Width;
       float h = _vertsBounds.Height;
       float xoff = _vertsBounds.X;
       float yoff = _vertsBounds.Y;
-      for (int i = 0; i < verts.Length; i++)
-      {
-        PositionColored2Textured vert = verts[i];
-        float x = vert.X;
-        float u = x - xoff;
-        u /= w;
-
-        float y = vert.Y;
-        float v = y - yoff;
-        v /= h;
-
-        if (u < 0) u = 0;
-        if (u > 1) u = 1;
-        if (v < 0) v = 0;
-        if (v > 1) v = 1;
-        unchecked
+      if (adaptVertsToBrushTexture)
+        for (int i = 0; i < verts.Length; i++)
         {
-          Color4 color = ColorConverter.FromColor(Color.White);
-          color.Alpha *= (float) Opacity;
-          vert.Color = color.ToArgb();
+          PositionColored2Textured vert = verts[i];
+          float x = vert.X;
+          float u = x - xoff;
+          u /= w;
+
+          float y = vert.Y;
+          float v = y - yoff;
+          v /= h;
+
+          if (u < 0) u = 0;
+          if (u > 1) u = 1;
+          if (v < 0) v = 0;
+          if (v > 1) v = 1;
+          unchecked
+          {
+            Color4 color = ColorConverter.FromColor(Color.White);
+            color.Alpha *= (float) Opacity;
+            vert.Color = color.ToArgb();
+          }
+          vert.Tu1 = u;
+          vert.Tv1 = v;
+          vert.Z = zOrder;
+          verts[i] = vert;
         }
-        vert.Tu1 = u;
-        vert.Tv1 = v;
-        vert.Z = zOrder;
-        verts[i] = vert;
-      }
     }
 
     protected void UpdateBounds(ref PositionColored2Textured[] verts)
