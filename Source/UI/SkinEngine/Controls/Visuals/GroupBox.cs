@@ -175,7 +175,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       baseRect.Y += desiredSize.Height/2;
       return GraphicsPathHelper.CreateRoundedRectWithTitleRegionPath(baseRect,
           (float) CornerRadius, (float) CornerRadius, true, HEADER_INSET_LINE,
-          desiredSize.Width + HEADER_INSET_SPACE * 2, null);
+          desiredSize.Width + HEADER_INSET_SPACE * 2);
     }
 
     public override void DoRender(RenderContext localRenderContext)

@@ -158,7 +158,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals.Shapes
 
     protected GraphicsPath CreateRectanglePath(RectangleF rect)
     {
-      return GraphicsPathHelper.CreateRoundedRectPath(rect, (float) RadiusX, (float) RadiusY, null);
+      return GraphicsPathHelper.CreateRoundedRectPath(rect, (float) RadiusX, (float) RadiusY);
     }
   }
 }

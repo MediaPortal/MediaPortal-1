@@ -340,7 +340,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
     protected virtual GraphicsPath CreateBorderRectPath(RectangleF baseRect)
     {
-      return GraphicsPathHelper.CreateRoundedRectPath(baseRect, (float) CornerRadius, (float) CornerRadius, null);
+      return GraphicsPathHelper.CreateRoundedRectPath(baseRect, (float) CornerRadius, (float) CornerRadius);
     }
 
     #endregion
