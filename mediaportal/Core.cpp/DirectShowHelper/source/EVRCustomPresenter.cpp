@@ -33,7 +33,7 @@
 #include "autoint.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+// #include "..\..\alloctracing.h"
 
 void LogIID(REFIID riid)
 {

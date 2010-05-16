@@ -34,7 +34,7 @@ struct MYD3DVERTEX<0>
 #pragma pack(pop)
 
 // For more details for memory leak detection see the alloctracing.h header
-#include "..\..\alloctracing.h"
+// #include "..\..\alloctracing.h"
 
 
 StatsRenderer::StatsRenderer(MPEVRCustomPresenter* presenter, IDirect3DDevice9* device):
