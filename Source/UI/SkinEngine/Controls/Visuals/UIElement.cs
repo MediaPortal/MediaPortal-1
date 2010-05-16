@@ -45,6 +45,7 @@ using MediaPortal.UI.SkinEngine.SkinManagement;
 
 namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 {
+  #region Additional enums, delegates and classes
 
   public enum VisibilityEnum
   {
@@ -208,6 +209,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
   }
 
   public delegate void UIEventDelegate(string eventName);
+
+  #endregion
 
   public abstract class UIElement : Visual, IContentEnabled
   {
@@ -384,8 +387,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     #region Public properties
 
     /// <summary>
-    /// Event handler called for all events defined by their event string
-    /// like <see cref="LOADED_EVENT"/>.
+    /// Event handler called for all events defined by their event string like <see cref="LOADED_EVENT"/>.
     /// </summary>
     public event UIEventDelegate EventOccured;
 
