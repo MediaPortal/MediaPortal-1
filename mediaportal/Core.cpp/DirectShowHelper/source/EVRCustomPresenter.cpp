@@ -25,6 +25,7 @@
 #include <afxtempl.h> // CMap
 #include <dwmapi.h>
 
+#include "IAVSyncClock.h"
 #include "dshowhelper.h"
 #include "evrcustompresenter.h"
 #include "scheduler.h"
@@ -61,7 +62,12 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   m_refCount(1), 
   m_qScheduledSamples(NUM_SURFACES),
   m_EVRFilter(EVRFilter),
-  m_bIsWin7(pIsWin7)
+  m_bIsWin7(pIsWin7),
+  m_pAVSyncClock(NULL),
+  m_dBias(1.0),
+  m_dLastPhase(-1.0),
+  m_dPhaseDriftIntegration(0.0),
+  m_dVariableFreq(1.0)
 {
   timeBeginPeriod(1);
   if (m_pMFCreateVideoSampleFromSurface != NULL)
@@ -176,11 +182,14 @@ MPEVRCustomPresenter::~MPEVRCustomPresenter()
 {
   Log("EVRCustomPresenter::dtor - instance 0x%x", this);
   
-  if (m_pCallback != NULL)
+  if (m_pCallback)
   {
     m_pCallback->PresentImage(0, 0, 0, 0, 0, 0);
   }
-
+  if(m_pAVSyncClock)
+  {
+    SAFE_RELEASE(m_pAVSyncClock);
+  }
   StopWorkers();
   ReleaseSurfaces();
   m_pMediaType.Release();
@@ -760,6 +769,36 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
 
     (*pType)->SetUINT32(MF_MT_VIDEO_NOMINAL_RANGE, MFNominalRange_0_255);
   }
+
+  GetRealRefreshRate();
+
+  m_dFrameCycle = m_rtTimePerFrame / 10000.0;
+
+  double cycleDiff = GetCycleDifference();
+
+  Log("debug: cycleDiff: %f", cycleDiff);
+
+  if (cycleDiff != 0.0 && abs(cycleDiff) < 0.06)
+  {
+    m_dBias = 1.0 - cycleDiff;// + 0.00075;
+    //m_dBias = 1.04270937604271;
+    //m_dBias = 1.04297;
+
+    Log("debug: DIFF %f (bias vs calculated cycle)", m_dBias - 1.0 + cycleDiff);
+    Log("debug: DIFF %f (bias vs calculated MS value)", m_dBias - 1.04297);
+    Log("debug: DIFF %f (bias vs calculated)", m_dBias - 1.04270937604271);
+
+    if(m_pAVSyncClock)
+    {
+      m_pAVSyncClock->SetBias(m_dBias);
+      Log("debug: adjust bias to : %f", m_dBias);
+    }
+    else
+    {
+      Log("debug: adjust bias to : %f - wait audio renderer to be available", m_dBias);
+    }
+  }
+
   return hr;
 }
 
@@ -956,7 +995,7 @@ void MPEVRCustomPresenter::ReturnSample(IMFSample* pSample, BOOL tryNotify)
     LOG_TRACE("No scheduled samples, queue was empty -> todo, CheckForEndOfStream()");
     CheckForEndOfStream();
   }
-  if (tryNotify && m_iFreeSamples == 1 && m_bInputAvailable)
+  if (tryNotify && (m_iFreeSamples < NUM_SURFACES) && m_bInputAvailable)
   {
     NotifyWorker();
   }
@@ -1468,6 +1507,7 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockStart(MFTIME hnsSystemTim
   Flush(FALSE);
   NotifyWorker();
   NotifyScheduler();
+  GetAVSyncClockInterface();
   return S_OK;
 }
 
@@ -1669,31 +1709,6 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 
     D3DRASTER_STATUS rasterStatus;
 
-    REFERENCE_TIME timePerFrame = m_rtTimePerFrame;
-    if (m_DetectedFrameTime * 10000000.0 > 0) 
-    {
-      timePerFrame = (LONGLONG)(m_DetectedFrameTime * 10000000.0);
-    }
-
-    // Every second frame matching to display device refresh rate
-    if (fabs(m_dD3DRefreshCycle - timePerFrame/20000) < 0.0015)
-    {
-      UINT limitLow = m_displayMode.Height / 4; 
-      UINT limitHigh = m_displayMode.Height / 2; 
-      
-      // Correct raster offset - It Will Come
-      while (SUCCEEDED(m_pD3DDev->GetRasterStatus(0, &rasterStatus)))
-      {
-        if (rasterStatus.ScanLine >= limitLow &&
-            rasterStatus.ScanLine <= limitHigh)
-        {
-          break; // Raster target offset found
-        }
-
-        Sleep(1);	
-      }
-    }
-
     m_pD3DDev->GetRasterStatus(0, &rasterStatus);
     m_rasterSyncOffset = (m_displayMode.Height - rasterStatus.ScanLine) * m_dDetectedScanlineTime;
     if (m_rasterSyncOffset > 1000)
@@ -1702,11 +1717,7 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
       m_rasterSyncOffset = m_dDetectedScanlineTime * m_displayMode.Height;
     }
 
-    // Restore thread priority
-    if (priority != THREAD_PRIORITY_ERROR_RETURN)
-    {
-      SetThreadPriority(GetCurrentThread(), priority);
-    }
+    AdjustAudioRenderer();
 
     LONGLONG startPaint = GetCurrentTimestamp();
 
@@ -1729,6 +1740,12 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
     m_PaintTimeMax = max(m_PaintTimeMax, m_PaintTime);
 
     OnVBlankFinished(true, startPaint, GetCurrentTimestamp());
+
+    // Restore thread priority
+    if (priority != THREAD_PRIORITY_ERROR_RETURN)
+    {
+      SetThreadPriority(GetCurrentThread(), priority);
+    }
 
     CalculateJitter(startPaint);
 
@@ -2160,10 +2177,10 @@ double MPEVRCustomPresenter::GetCycleDifference()
   }
   else
 	{
-		for (i = 1; i <= 8; i++) // Try a lot of multiples of the display frequency
+    for (i = 1; i <= 8; i++) 
 		{
 			double dDisplayCycle = i * dBaseDisplayCycle;
-			double diff = (dDisplayCycle - m_rtTimePerFrame / 10000) / m_rtTimePerFrame / 10000;
+			double diff = (dDisplayCycle - m_dFrameCycle) / m_dFrameCycle;
 			if (abs(diff) < abs(minDiff))
 			{
 				minDiff = diff;
@@ -2378,3 +2395,81 @@ void MPEVRCustomPresenter::GetRealRefreshRate()
   m_dD3DRefreshCycle = 1000.0 / m_dD3DRefreshRate; // in ms
 }
 
+void MPEVRCustomPresenter::GetAVSyncClockInterface()
+{
+  FILTER_INFO filterInfo;
+  ZeroMemory(&filterInfo, sizeof(filterInfo));
+  m_EVRFilter->QueryFilterInfo(&filterInfo); // This addref's the pGraph member
+
+  CComPtr<IBaseFilter> pBaseFilter;
+
+  HRESULT hr = filterInfo.pGraph->FindFilterByName(L"MediaPortal - Audio Renderer", &pBaseFilter);
+  filterInfo.pGraph->Release();
+  if (hr != S_OK)
+  {
+    Log("failed to find MediaPortal - Audio Renderer filter!");
+    return;
+  }
+
+  hr = pBaseFilter->QueryInterface(IID_IAVSyncClock, (void**)&m_pAVSyncClock);
+  
+  if(hr != S_OK)
+  {
+    Log("Cannot get Interface IAVSyncClock");
+    return;
+  }
+
+  Log("Found MediaPortal - Audio Renderer filter");
+
+  if(m_pAVSyncClock && m_dBias != 1.0)
+  {
+    Log("  Adjusting bias to: %f", m_dBias);
+    m_pAVSyncClock->SetBias(m_dBias);
+  }
+}
+
+void MPEVRCustomPresenter::AdjustAudioRenderer()
+{
+  double currentPhase = m_rasterSyncOffset / GetDisplayCycle();
+  double targetPhase = 0.5;
+
+  // on first frame
+  if( m_dLastPhase == -1.0)
+  {
+    m_dLastPhase = currentPhase;
+  }
+
+  double phaseDrift = currentPhase - m_dLastPhase;
+  m_dPhaseDriftIntegration += phaseDrift;
+  m_dPhaseDriftIntegration *= 0.99;
+
+  m_dLastPhase = currentPhase;
+
+  if(fabs(currentPhase - targetPhase)> 0.0001)
+  {
+    m_dVariableFreq += phaseDrift / 5;
+  }
+
+  m_dVariableFreq += m_dPhaseDriftIntegration / 1000;
+  
+  // try to use the shortest route to the target raster offset
+  m_dVariableFreq += (fmod(currentPhase - targetPhase + 0.5, 1) - 0.5) / 100;
+
+  double m_dVariableFreqDebug = m_dVariableFreq;
+
+  m_dVariableFreq = max(min(m_dVariableFreq, 1.003), 0.997);
+
+  // Do not adjust the sync clock rate if we are close enough the target 
+  // raster offset this would cause only unnescessary audio resampling
+  if (fabs(currentPhase - targetPhase) < 0.1 )
+  {
+    m_dVariableFreq = 1.0;
+  }
+
+  Log("VF: %f VFD: %f PDI: %f CP: %f ", m_dVariableFreq, m_dVariableFreqDebug, m_dPhaseDriftIntegration, currentPhase);
+
+  if (m_pAVSyncClock)
+  {
+    m_pAVSyncClock->AdjustClock(1.0/m_dVariableFreq);
+  }
+}

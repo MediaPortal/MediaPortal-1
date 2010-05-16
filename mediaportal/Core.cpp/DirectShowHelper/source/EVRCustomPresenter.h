@@ -18,6 +18,7 @@
 #include <dxva2api.h>
 #include <evr.h>
 
+#include "IAVSyncClock.h"
 #include "callback.h"
 #include "myqueue.h"
 
@@ -170,6 +171,8 @@ public:
 friend class StatsRenderer;
 
 protected:
+  void           GetAVSyncClockInterface();
+  void           AdjustAudioRenderer();
   void           EstimateRefreshTimings();
   bool           ImmediateCheckForInput();
   void           LogStats();
@@ -308,4 +311,10 @@ protected:
   bool          m_DetectedLock;
 
   BOOL          m_bIsWin7;
+
+  IAVSyncClock* m_pAVSyncClock;
+  double        m_dBias;
+  double        m_dLastPhase;
+  double        m_dVariableFreq;
+  double        m_dPhaseDriftIntegration;
 };

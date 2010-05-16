@@ -231,6 +231,14 @@ void StatsRenderer::DrawStats()
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
+    OffsetRect(&rc, 0, TextHeight); // Extra "line feed"
+
+    strText.Format("Audio bias: %.10f | Audio adjustment: %.6f | PDI: %.6f", 
+      m_pPresenter->m_dBias, m_pPresenter->m_dVariableFreq, m_pPresenter->m_dPhaseDriftIntegration);
+    DrawText(rc, strText);
+    OffsetRect(&rc, 0, TextHeight);
+
+
     // FIXME: PaintTime includes full time up to vsync.
     // divided in multiple stages to keep the accuracy
     //strText.Format("Paint time: %+5.1f ms [%.3f ms, %.3f ms]", 
