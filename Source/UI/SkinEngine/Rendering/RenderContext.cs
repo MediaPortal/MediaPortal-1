@@ -76,6 +76,7 @@ namespace MediaPortal.UI.SkinEngine.Rendering
         // Layout transforms don't support translations, so center the transformation matrix at the start point
         // of the control and apply the layout transform without translation
         Vector2 origin = new Vector2(bounds.X + 0.5f*bounds.Width, bounds.Y + 0.5f*bounds.Height);
+        finalTransform.Transform(ref origin);
         Matrix transform = Matrix.Translation(new Vector3(-origin.X, -origin.Y, 0));
         transform *= localLayoutTransform.Value.RemoveTranslation();
         transform *= Matrix.Translation(new Vector3(origin.X, origin.Y, 0));
@@ -86,6 +87,7 @@ namespace MediaPortal.UI.SkinEngine.Rendering
         Vector2 origin = renderTransformOrigin.HasValue ? new Vector2(
             bounds.X + bounds.Width * renderTransformOrigin.Value.X,
             bounds.Y + bounds.Height * renderTransformOrigin.Value.Y) : new Vector2(0, 0);
+        finalTransform.Transform(ref origin);
         Matrix transform = Matrix.Translation(new Vector3(-origin.X, -origin.Y, 0));
         transform *= localRenderTransform.Value;
         transform *= Matrix.Translation(new Vector3(origin.X, origin.Y, 0));
