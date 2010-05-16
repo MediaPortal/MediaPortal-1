@@ -504,7 +504,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         HasFocus = true;
         return true;
       }
-      else if (checkChildren)
+      if (checkChildren)
       {
         foreach (UIElement child in GetChildren())
         {
