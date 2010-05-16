@@ -52,6 +52,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
     public void SetVerts(PositionColored2Textured[] verts, PrimitiveType primitiveType)
     {
+      if (_vertexBuffer != null)
+        _vertexBuffer.Dispose();
       _vertexBuffer = PositionColored2Textured.Create(verts.Length);
       _vertexFormat = PositionColored2Textured.Format;
       _strideSize = PositionColored2Textured.StrideSize;
