@@ -114,6 +114,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     protected AbstractProperty _contextMenuCommandProperty;
 
     protected bool _updateOpacityMask = false;
+    protected RectangleF _lastOccupiedTransformedBounds = new RectangleF();
     protected bool _updateFocus = false;
     protected Matrix _inverseFinalTransform = Matrix.Identity;
 
@@ -162,8 +163,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     {
       _widthProperty.Attach(OnLayoutPropertyChanged);
       _heightProperty.Attach(OnLayoutPropertyChanged);
-      _actualHeightProperty.Attach(OnActualSizeChanged);
-      _actualWidthProperty.Attach(OnActualSizeChanged);
+      _actualHeightProperty.Attach(OnActualBoundsChanged);
+      _actualWidthProperty.Attach(OnActualBoundsChanged);
       _styleProperty.Attach(OnStyleChanged);
       _hasFocusProperty.Attach(OnFocusPropertyChanged);
       _fontFamilyProperty.Attach(OnFontChanged);
@@ -171,14 +172,15 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
       _opacityProperty.Attach(OnOpacityChanged);
       _opacityMaskProperty.Attach(OnOpacityChanged);
+      _acutalPositionProperty.Attach(OnActualBoundsChanged);
     }
 
     void Detach()
     {
       _widthProperty.Detach(OnLayoutPropertyChanged);
       _heightProperty.Detach(OnLayoutPropertyChanged);
-      _actualHeightProperty.Detach(OnActualSizeChanged);
-      _actualWidthProperty.Detach(OnActualSizeChanged);
+      _actualHeightProperty.Detach(OnActualBoundsChanged);
+      _actualWidthProperty.Detach(OnActualBoundsChanged);
       _styleProperty.Detach(OnStyleChanged);
       _hasFocusProperty.Detach(OnFocusPropertyChanged);
       _fontFamilyProperty.Detach(OnFontChanged);
@@ -186,6 +188,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
       _opacityProperty.Detach(OnOpacityChanged);
       _opacityMaskProperty.Detach(OnOpacityChanged);
+      _acutalPositionProperty.Detach(OnActualBoundsChanged);
     }
 
     public override void DeepCopy(IDeepCopyable source, ICopyManager copyManager)
@@ -251,7 +254,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       InvalidateParentLayout();
     }
 
-    void OnActualSizeChanged(AbstractProperty property, object oldValue)
+    void OnActualBoundsChanged(AbstractProperty property, object oldValue)
     {
       _updateOpacityMask = true;
     }
@@ -928,6 +931,11 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
         RenderToTexture(_opacityMaskContext.Texture, localRenderContext);
 
+        if (localRenderContext.OccupiedTransformedBounds != _lastOccupiedTransformedBounds)
+          // We must check this each render pass because the control might have changed its bounds due to a render transform
+          _updateOpacityMask = true;
+        _lastOccupiedTransformedBounds = localRenderContext.OccupiedTransformedBounds;
+
         if (_updateOpacityMask)
         {
           UpdateOpacityMask(localRenderContext.OccupiedTransformedBounds, textureSize, localRenderContext.ZOrder);
@@ -948,7 +956,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         _opacityMaskContext.LastTimeUsed = SkinContext.FrameRenderingStartTime.AddDays(1);
       }
       // Calculation of absolute render size (in world coordinate system)
-      parentRenderContext.IncludeUntransformedContentsBounds(localRenderContext.OccupiedTransformedBounds);
+      parentRenderContext.IncludeTransformedContentsBounds(localRenderContext.OccupiedTransformedBounds);
     }
 
     #region Opacitymask
@@ -963,8 +971,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       if (OpacityMask == null)
         return;
       _opacityMaskContext = new VisualAssetContext("FrameworkElement.OpacityMaskContext:" + Name, Screen.Name,
-          new Texture(GraphicsDevice.Device,
-              textureSize.Width, textureSize.Height, 1,
+          new Texture(GraphicsDevice.Device, textureSize.Width, textureSize.Height, 1,
               Usage.RenderTarget, Format.A8R8G8B8, Pool.Default));
       ContentManager.Add(_opacityMaskContext);
     }
@@ -980,10 +987,10 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       col.Alpha *= (float) Opacity;
       int color = col.ToArgb();
       
-      float left = bounds.Left;
-      float right = bounds.Right;
-      float top = bounds.Top;
-      float bottom = bounds.Bottom;
+      float left = bounds.Left - 0.5f;
+      float right = bounds.Right + 0.5f;
+      float top = bounds.Top - 0.5f;
+      float bottom = bounds.Bottom + 0.5f;
       float uLeft = bounds.Left / textureSize.Width;
       float uRight = bounds.Right / textureSize.Width;
       float vTop = bounds.Top / textureSize.Height;
