@@ -593,6 +593,10 @@
 				RelativePath=".\MpAudioRenderer.def"
 				>
 			</File>
+			<File
+				RelativePath=".\SyncClock.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -600,6 +604,10 @@
 			>
 			<File
 				RelativePath=".\aa_dllsetup.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IAVSyncClock.h"
 				>
 			</File>
 			<File
@@ -612,6 +620,10 @@
 			</File>
 			<File
 				RelativePath="stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SyncClock.h"
 				>
 			</File>
 		</Filter>
