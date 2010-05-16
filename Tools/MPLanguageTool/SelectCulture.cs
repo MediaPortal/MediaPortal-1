@@ -29,11 +29,11 @@ namespace MPLanguageTool
     public SelectCulture()
     {
       InitializeComponent();
-      CultureInfo[] cinfos = CultureInfo.GetCultures(CultureTypes.AllCultures);
-      foreach (CultureInfo ci in cinfos)
-      {
-        cbCulture.Items.Add(ci);
-      }
+
+      CultureInfo[] allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+      Array.Sort(allCultures, CompareCultureInfo);
+      cbCulture.Items.AddRange(allCultures);
+
       CultureInfo current = System.Threading.Thread.CurrentThread.CurrentCulture;
       if ((current.CultureTypes & CultureTypes.SpecificCultures) != 0 && frmMain.LangType != frmMain.StringsType.DeployTool)
       {
@@ -60,6 +60,11 @@ namespace MPLanguageTool
     private void btnCancel_Click(object sender, EventArgs e)
     {
       Close();
+    }
+
+    private static int CompareCultureInfo(CultureInfo x, CultureInfo y)
+    {
+      return x.DisplayName.CompareTo(y.DisplayName);
     }
   }
 }
