@@ -1616,10 +1616,7 @@
     <String id="103009" prefix="Má ">TV/Mini EPG</String>
     <String id="103011" prefix="Má ">TV/Nastavení oříznutí</String>
     <String id="104711" prefix="Má ">Wikipedia</String>
-    <String id="105900" prefix="Mé ">Trailery</String>
-    <String id="103003">TV/OSD</String>
-    <String id="103006">TV/MSN OSD</String>
-    <String id="103007">TV/Zap OSD</String>
+    <String id="105900" prefix="Mé ">Trailery</String>      
     <String id="106666">Power Scheduler Waiting</String>
     <String id="107700">TV/Teletext</String>
     <String id="107701">TV/Teletext</String>
