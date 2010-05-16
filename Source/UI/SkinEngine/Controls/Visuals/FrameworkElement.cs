@@ -929,7 +929,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         if (_updateOpacityMask)
           PrepareOpacityMaskContext(textureSize);
 
-        RenderToTexture(_opacityMaskContext.Texture, localRenderContext);
+        RenderContext tempRenderContext = new RenderContext(Matrix.Identity, bounds);
+        RenderToTexture(_opacityMaskContext.Texture, tempRenderContext);
 
         if (localRenderContext.OccupiedTransformedBounds != _lastOccupiedTransformedBounds)
           // We must check this each render pass because the control might have changed its bounds due to a render transform
@@ -938,14 +939,13 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
         if (_updateOpacityMask)
         {
-          UpdateOpacityMask(localRenderContext.OccupiedTransformedBounds, textureSize, localRenderContext.ZOrder);
+          UpdateOpacityMask(tempRenderContext.OccupiedTransformedBounds, textureSize, localRenderContext.ZOrder);
           _updateOpacityMask = false;
         }
 
         // Now render the opacitytexture with the OpacityMask brush
-        RenderContext tempRenderContext = Screen.CreateInitialRenderContext();
 
-        OpacityMask.BeginRenderOpacityBrush(_opacityMaskContext.Texture, tempRenderContext);
+        OpacityMask.BeginRenderOpacityBrush(_opacityMaskContext.Texture, localRenderContext);
         GraphicsDevice.Device.VertexFormat = _opacityMaskContext.VertexFormat;
         GraphicsDevice.Device.SetStreamSource(0, _opacityMaskContext.VertexBuffer, 0, _opacityMaskContext.StrideSize);
         GraphicsDevice.Device.DrawPrimitives(_opacityMaskContext.PrimitiveType, 0, 2);
