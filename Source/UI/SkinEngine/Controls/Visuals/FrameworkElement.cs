@@ -945,8 +945,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         // Now render the opacitytexture with the OpacityMask brush
         RenderContext tempRenderContext = Screen.CreateInitialRenderContext();
 
-// TODO: Drehen der Brush (RelativeTransform += localRenderContext.Transform)
-
         OpacityMask.BeginRenderOpacityBrush(_opacityMaskContext.Texture, tempRenderContext);
         GraphicsDevice.Device.VertexFormat = _opacityMaskContext.VertexFormat;
         GraphicsDevice.Device.SetStreamSource(0, _opacityMaskContext.VertexBuffer, 0, _opacityMaskContext.StrideSize);
