@@ -29,7 +29,7 @@
 
 #include "MpAudioRenderer.h"
 
-#include "../../FilterApp.h"
+#include "FilterApp.h"
 CFilterApp theApp;
 
 #define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }

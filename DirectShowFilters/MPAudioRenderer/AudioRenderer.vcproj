@@ -607,6 +607,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FilterApp.h"
+				>
+			</File>
+			<File
 				RelativePath=".\IAVSyncClock.h"
 				>
 			</File>
