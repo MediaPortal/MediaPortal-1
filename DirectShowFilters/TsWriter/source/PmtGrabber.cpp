@@ -38,6 +38,7 @@ CPmtGrabber::CPmtGrabber(LPUNKNOWN pUnk, HRESULT *phr)
 	m_pCallback=NULL;
 	m_iPmtVersion=-1;
 	m_iServiceId=0;
+  memset(m_pmtPrevSection.Data, 0, sizeof(m_pmtPrevSection.Data));
 }
 
 CPmtGrabber::~CPmtGrabber(void)
@@ -62,6 +63,7 @@ STDMETHODIMP CPmtGrabber::SetPmtPid( int pmtPid, long serviceId)
   	CSectionDecoder::SetPid(pmtPid);
   	m_iPmtVersion=-1;
   	m_iServiceId=serviceId;
+    memset(m_pmtPrevSection.Data, 0, sizeof(m_pmtPrevSection.Data));
   }
 	catch(...)
 	{
