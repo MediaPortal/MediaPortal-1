@@ -196,9 +196,8 @@ namespace SetupTv
           (!dlg.TestConnection(startupMode)))
       {
         Log.Info("---- ask user for connection details ----");
-        dlg.ShowDialog();
-
-        return; // close the application without restart here.
+        if (dlg.ShowDialog() != DialogResult.OK || startupMode != StartupMode.DeployMode)
+          return; // close the application without restart here.
       }
       dlg.CheckServiceName();
       if (startupMode == StartupMode.DeployMode)
