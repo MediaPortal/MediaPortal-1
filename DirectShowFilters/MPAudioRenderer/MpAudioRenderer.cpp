@@ -66,22 +66,7 @@ DEFINE_GUIDSTRUCT("0000000b-0cea-0010-8000-00aa00389b71", KSDATAFORMAT_SUBTYPE_I
 
 #endif
 
-const AMOVIESETUP_MEDIATYPE sudPinTypesIn[] =
-{
- {&GUID_NULL},
-};
-
-const AMOVIESETUP_PIN sudpPins[] =
-{
-    {L"Input", FALSE, FALSE, FALSE, FALSE, &CLSID_NULL, NULL, 1, sudPinTypesIn},
-};
-
-const AMOVIESETUP_FILTER sudFilter[] =
-{
-	{&__uuidof(CMpcAudioRenderer), L"MediaPortal - Audio Renderer", 0x30000000/*countof(sudpPins)*/, NULL/*sudpPins*/,sudpPins},
-};
-
-CUnknown * WINAPI CMpcAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
+CUnknown* WINAPI CMpcAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 {
   ASSERT(phr);
   CMpcAudioRenderer *pNewObject = new CMpcAudioRenderer(punk, phr);
@@ -92,24 +77,6 @@ CUnknown * WINAPI CMpcAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT *phr
       *phr = E_OUTOFMEMORY;
   }
   return pNewObject;
-}
-
-CFactoryTemplate g_Templates[] =
-{
-    {sudFilter[0].strName, &__uuidof(CMpcAudioRenderer), CMpcAudioRenderer::CreateInstance, NULL, &sudFilter[0]},
-	//{L"CMpcAudioRendererPropertyPage", &__uuidof(CMpcAudioRendererSettingsWnd), CreateInstance<CInternalPropertyPageTempl<CMpcAudioRendererSettingsWnd> >},
-};
-
-int g_cTemplates = 1;
-
-STDAPI DllRegisterServer()
-{
-	return AMovieDllRegisterServer2(TRUE);
-}
-
-STDAPI DllUnregisterServer()
-{
-	return AMovieDllRegisterServer2(FALSE);
 }
 
 CMpcAudioRenderer::CMpcAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
@@ -156,7 +123,7 @@ CMpcAudioRenderer::CMpcAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 	if (!useWASAPI)
 	{
 		m_pSoundTouch	= new soundtouch::SoundTouch();
-		*phr = DirectSoundCreate8 (NULL, &m_pDS, NULL);
+		*phr = DirectSoundCreate8(NULL, &m_pDS, NULL);
 	}
 }
 

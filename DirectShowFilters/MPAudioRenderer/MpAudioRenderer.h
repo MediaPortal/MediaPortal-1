@@ -66,13 +66,12 @@ public:
 
   DECLARE_IUNKNOWN
   static CUnknown* WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);
-
-	STDMETHODIMP			NonDelegatingQueryInterface(REFIID riid, void **ppv);
+	STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void **ppv);
 
 	// === IMediaFilter
-	STDMETHOD(Run)				(REFERENCE_TIME tStart);
-	STDMETHOD(Stop)				();
-	STDMETHOD(Pause)			();
+	STDMETHOD(Run)(REFERENCE_TIME tStart);
+	STDMETHOD(Stop)();
+	STDMETHOD(Pause)();
 
   // === IMediaSeeking
   STDMETHODIMP IsFormatSupported(const GUID* pFormat);
@@ -112,7 +111,7 @@ private:
 	HRESULT					GetReferenceClockInterface(REFIID riid, void **ppv);
 	HRESULT					WriteSampleToDSBuffer(IMediaSample *pMediaSample, bool *looped);
 
-  LPDIRECTSOUND8       m_pDS;
+  LPDIRECTSOUND8        m_pDS;
 	LPDIRECTSOUNDBUFFER   m_pDSBuffer;
 	DWORD                 m_dwDSWriteOff;
 	WAVEFORMATEX*         m_pWaveFileFormat;
@@ -130,7 +129,6 @@ private:
   bool        CheckFormatChanged(WAVEFORMATEX *pWaveFormatEx, WAVEFORMATEX **ppNewWaveFormatEx);
   HRESULT	    DoRenderSampleWasapi(IMediaSample *pMediaSample);
   HRESULT     GetBufferSize(WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
-
    
   // WASAPI variables
   bool                useWASAPI;
@@ -158,4 +156,3 @@ private:
   double      m_dBias;
   double      m_dAdjustment;
 };
-
