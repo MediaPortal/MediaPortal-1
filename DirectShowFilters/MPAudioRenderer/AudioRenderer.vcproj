@@ -214,7 +214,7 @@
 				ShowProgress="2"
 				OutputFile="$(OutDir)\$(ProjectName).ax"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
-				IgnoreDefaultLibraryNames="libcmt.lib"
+				IgnoreDefaultLibraryNames="libcmtd.lib"
 				ModuleDefinitionFile="MpAudioRenderer.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
