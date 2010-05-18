@@ -242,7 +242,7 @@ Počítač pak bude sloužit jako vyhrazený TV server a bude poskytovat televiz
     <value>Stahování zrušeno uživatelem</value>
   </data>
   <data name="HTTPDownload_Title" xml:space="preserve">
-    <value>Stahuji soubor...</value>
+    <value>Stahování souboru...</value>
   </data>
   <data name="Install_actionDownloadInstall" xml:space="preserve">
     <value>Stáhnout -&gt; Nainstalovat</value>
@@ -281,16 +281,16 @@ Počítač pak bude sloužit jako vyhrazený TV server a bude poskytovat televiz
     <value>Instalace aplikace [{0}] se nezdařila</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
-    <value>Stiskněte tlačítko „Instaovat” pro spuštění všech nezbytných akcí k instalaci</value>
+    <value>Stiskněte tlačítko „Instalovat” pro spuštění všech nezbytných akcí k instalaci</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
-    <value>Stahuji...</value>
+    <value>Stahování...</value>
   </data>
   <data name="Install_msgInstalling" xml:space="preserve">
-    <value>Instaluji...</value>
+    <value>Instalace...</value>
   </data>
   <data name="Install_msgUninstalling" xml:space="preserve">
-    <value>Odinstaluji...</value>
+    <value>Odinstalace...</value>
   </data>
   <data name="Install_stateInstalled" xml:space="preserve">
     <value>Nainstalováno</value>
@@ -372,7 +372,7 @@ Počítač pak bude sloužit jako vyhrazený TV server a bude poskytovat televiz
     <value>Tento nástroj vás provede procesem instalace</value>
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
-    <value>Vyberte váš jazyk, než budete pokračovat</value>
+    <value>Vyberte jazyk instalace, než budete pokračovat</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
     <value>MediaPortal je ZDARMA - pokud jste ho koupili na eBay, byli jste podvedeni!</value>
@@ -390,7 +390,7 @@ Počítač pak bude sloužit jako vyhrazený TV server a bude poskytovat televiz
     <value>Odinstalace se nezdařila.</value>
   </data>
   <data name="Install_msgConfiguring" xml:space="preserve">
-    <value>Konfiguruji...</value>
+    <value>Konfigurace...</value>
   </data>
   <data name="Install_stateConfigured" xml:space="preserve">
     <value>Konfigurováno</value>
@@ -437,7 +437,7 @@ instalaci později?
     <value>Stiskněte tlačítko „Stáhnout” pro stažení všech potřebných součástí</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
-    <value>Promiťe, váš operační systém není v současné době MediaPortalem podporován!</value>
+    <value>Váš operační systém není bohužel v současné době MediaPortalem podporován!</value>
   </data>
   <data name="OS_Warning" xml:space="preserve">
     <value>Váš operační systém není podporován, protože MediaPortal pro něj nevydal některé nezbytné opravy.
@@ -475,7 +475,7 @@ Přesuňte tuto složku do vašeho HTPC. Zahajte instalaci spuštěním souboru 
     <value>Nebylo nalezeno žádné připojení k Internetu! Pro pokračování v instalaci je vyžadováno aktivní připojení.</value>
   </data>
   <data name="DiskSpace_Error" xml:space="preserve">
-    <value>Na určené jednotce není dostatek volného místa! Pro instalaci MediaPortalu potřebujete nejméně {0} MB volného místa.</value>
+    <value>Na zvolené jednotce není dostatek volného místa! Pro instalaci MediaPortalu potřebujete nejméně {0} MB volného místa.</value>
   </data>
   <data name="Upgrade_labelSectionHeader" xml:space="preserve">
     <value>Byl zjištěn MediaPortal {0}.</value>
