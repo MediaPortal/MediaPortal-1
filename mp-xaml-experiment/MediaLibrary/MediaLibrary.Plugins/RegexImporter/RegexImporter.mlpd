@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<PluginDescription xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <information plugin_name="Regex Importer" plugin_id="ec371cbb-8824-444e-90f2-fdd50f648a8e" plugin_version="1.0" plugin_state="Stable" plugin_type="import" is_COM="false">
-    <short_description>Import files based on .net Regular Expressions</short_description>
-  </information>
-  <documentation />
-  <author author_name="Darkmoor" license_type="Freeware" copyright="Copyright © 2007" />
-  <installation is_multi_package="false" destination_folder="RegexImporter" main_file="RegexImporter.dll" />
-</PluginDescription>
