@@ -1,0 +1,1003 @@
+<%@ CodeTemplate Language="C#" TargetLanguage="C#" Description="Generates a simple business object for Gentle." %>
+
+<%@ Property Name="SourceTable" Type="SchemaExplorer.TableSchema"  Category="Context" Description="Table that the object is based on." %>
+<%@ Property Name="ClassName" Type="System.String" Optional="True" Category="Context" Description="Name of Class to create. Defaults to name of SourceTable" %>
+<%@ Property Name="Namespace" Type="System.String" Optional="True" Category="Namespaces" Description="The top level namespace for all classes." %>
+<%@ Property Name="VariablePreChar" Type="System.String" Category="Context" Default="" Optional="true" Description="Char added infront of attributes, mostly _." %>
+<%@ Property Name="ColumnPreString" Type="System.String" Category="Context" Default="" Optional="true" Description="String to be removed from start of column name (f.e. TSK_)." %>
+<%@ Property Name="TablePreString" Type="System.String" Category="Context" Default="" Optional="true" Description="String to be removed from start of table name (f.e. TSK_)." %>
+<%@ Property Name="ForcePrivateLowercase" Default="true" Type="System.Boolean" Category="Context" Description="Force lowercase of all private attributes." %>
+<%@ Property Name="ForcePublicCapitalize" Default="true" Type="System.Boolean" Category="Context" Description="Force capitalization of all public properties." %>
+<%@ Property Name="RemoveUnderscore" Default="true" Type="System.Boolean" Category="Context" Description="Remove _ in column name." %>
+<%@ Property Name="IncludeVSSHeader" Default="true" Type="System.Boolean" Optional="False" Category="Options" Description="Should standard Visuall SourceSafe header be included?." %>
+<%@ Property Name="ListByString" 	Default="true" Type="System.Boolean" Optional="False" Category="Options" Description="Should it create ListByXXXXXStartsWith methods for every string column? (Collections must not be 'None')" %>
+<%@ Property Name="ObjectsForForeignKeys" Type="System.Boolean" Optional="False" Category="Options" Description="Should it create lazy-loaded propeties for object referenced by Foriegn keys?" %>
+<%@ Property Name="IncludeListAll" 	Default="false" Type="System.Boolean" Optional="False" Category="Options" Description="Should it create a static ListAll property? (Collections must not be 'None')" %>
+<%@ Property Name="Collections" 	Type="CollectionTypeEnum" Category="Options" Description="Should properties which return a collection use ArrayList or an object-specific collection (created using the CodeSmith ArrayList.cst template), or should those properties be skipped." %>
+
+<%@ Assembly Name="SchemaExplorer" %>
+<%@ Assembly Name="System.Data" %>
+<%@ Assembly Name="System.Design" %>
+<%@ Assembly Name="CodeSmith.RegionMergeStrategies" %>
+<%@ Assembly Name="CodeSmith.FileSystemEditors" %>
+
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Import Namespace="System.Text" %>
+<%@ Import Namespace="System.Globalization" %>
+<%@ Import Namespace="CodeSmith.MergeStrategies" %>
+<script runat="template">
+	public enum CollectionTypeEnum
+	{
+		None,
+		ArrayList,
+		xxxCollection,		// This still needs work --- Don't use.
+	}
+</script>
+
+<%
+	string strClassName = ClassName;
+	string strTableAttribute = "[TableName]";	
+	string strNewObjId = "0";
+	string strCollType = "";
+	string strPrimaryKeyType = "int";
+	
+	TextInfo textInfo = new CultureInfo("en-US",false).TextInfo;		
+			
+	strPrimaryKeyType = GetPrimaryKeyType(SourceTable);
+	if (strPrimaryKeyType == "string")
+	{
+		strNewObjId = "\"\"";
+	}
+	else if (strPrimaryKeyType == "Guid")
+	{
+		strNewObjId = "Guid.Empty";
+	}
+	
+	if (strClassName == null || strClassName.Length == 0)
+	{
+		strClassName = GetClassName(SourceTable);
+	}
+	
+	string strNamespace = Namespace;
+	if (Namespace == null || Namespace.Length == 0)
+	{
+		strNamespace = SourceTable.Database.Name;
+	}
+
+	strTableAttribute = String.Format("[TableName(\"{0}\")]", SourceTable.Name); 
+
+	switch (Collections)
+	{
+		case CollectionTypeEnum.None:
+			strCollType = "";
+			break;
+			
+		case CollectionTypeEnum.ArrayList:
+			strCollType = "ArrayList";
+			break;
+			
+		case CollectionTypeEnum.xxxCollection:
+			strCollType = strClassName + "Collection";
+			break;
+	}
+
+%>
+<% AddVssHeader();	%>
+/*
+ * Template to generate a Gentle compatible business object from the database
+ * Copyright (C) 2004 Roger Hendriks, www.fenetre.nl & James M. Curran, www.noveltheory.com
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License 2.1 or later, as
+ * published by the Free Software Foundation. http://www.gnu.org/copyleft/lesser.html for details.
+ *
+ */
+using System;
+<% if (Collections != CollectionTypeEnum.None)   Response.Write("using System.Collections;\r\n");  %>
+using Gentle.Framework;
+
+namespace <%= strNamespace %>
+{
+	#region <%=RegionMergeStrategies.GetTemplateRegionText("Class")%>
+	/// <summary>
+	/// This object represents the properties and methods of a <%= strClassName %>.
+	/// </summary>
+	[Serializable]
+	<%=strTableAttribute %>
+	public class <%= strClassName %> : Persistent
+	{
+		#region <%=RegionMergeStrategies.GetTemplateRegionText("Fields")%>
+	
+		<% foreach (ColumnSchema column in SourceTable.Columns) 
+		{
+			Response.Write ("\t\t");
+			Response.Write (GetMemberVariableDeclarationStatement("private", column) );
+		} 
+		
+			if (ObjectsForForeignKeys)
+			{
+				foreach(TableKeySchema tks in SourceTable.ForeignKeys)
+				{
+					if (tks.ForeignKeyMemberColumns.Count == 1 && !tks.ForeignKeyMemberColumns[0].IsPrimaryKeyMember)
+					{
+						string prop = GetClassName(tks.PrimaryKeyTable);
+						string name = GetPropertyNameForForeignKey(tks.ForeignKeyMemberColumns[0].Name);
+						string var = VariablePreChar + GetCamelCaseName(name);
+						Response.Write(String.Format("\t\tprivate {0} {1}=null;\r\n", prop, var));
+					}
+				}
+			}
+%>		
+		#endregion
+
+		#region <%=RegionMergeStrategies.GetCustomRegionText("Fields")%>
+		// Place custom fields here.
+		#endregion
+		
+		#region <%=RegionMergeStrategies.GetTemplateRegionText("Constructors")%>
+	<%  
+		string siglist = "";
+		string memlist = "";
+		string paramlist = "";
+		string assignlist = "";
+		
+		if (SourceTable.PrimaryKey.MemberColumns.Count == 1)
+		{///------------------------------------------------------------
+			ColumnSchema pcolumn = SourceTable.PrimaryKey.MemberColumns[0]; 
+			memlist = GetMemberVariableName(pcolumn);
+			siglist = strPrimaryKeyType + " " + memlist;
+		%>
+		/// <summary>
+		/// Create an <%= strClassName %> given it's unique identifier
+		/// </summary>
+		/// <param name="<%=memlist%>">Unique identifier for an item</param>
+		/// <returns>An Item business entity</returns>
+		public <%= strClassName %>(<%=siglist%>)
+		{
+			this.<%=GetMemberVariableName(pcolumn)%> = <%=memlist%>;
+			if( <%=memlist%> != <%=strNewObjId%> ) // assume <%=strNewObjId%> is a non-identity for new objects
+			{
+				Broker.Retrieve( this, GetKey( ) );			
+			}
+		}
+		/// <summary>
+		/// Instantiate empty <%= strClassName %> for inserting
+		/// </summary>
+		/// <returns>An Item business entity</returns>
+		public <%= strClassName %>() : this( <%=strNewObjId%> ) {}
+		
+		/// <summary>
+		/// Create an <%= strClassName %> given all available fields
+		/// </summary>
+		/// <returns>An Item business entity</returns>
+		public <%= strClassName %>(<%= GetConstructorParams()%>)
+		{
+		<% foreach (ColumnSchema column in SourceTable.Columns) 
+		{
+			Response.Write ("\t\t\t");
+			Response.Write ("this." + GetMemberVariableName(column) + " = " + GetPropertyName(column) + ";\r\n");
+		} 
+		%>
+		}
+		
+		/// <summary>
+		/// Create an <%= strClassName %> given it's unique identifier
+		/// </summary>
+		/// <param name="<%=memlist%>">Unique identifier for an item</param>
+		/// <returns>An Item business entity</returns>
+		static public <%= strClassName %> Retrieve( <%= siglist %>)
+		{
+			<%= strClassName %> New = new <%= strClassName %>();
+			New.<%=memlist%> = <%=memlist%>;
+			return Broker.RetrieveInstance( typeof(<%= strClassName %>), Key.GetKey( true, New ) ) as <%= strClassName %>;
+		}
+	<%
+		}
+		else  ///-----------------------------------------------------
+		{
+			StringBuilder sb  = new StringBuilder(100);
+			StringBuilder sb1 = new StringBuilder(100);
+			StringBuilder sb2 = new StringBuilder(100);
+			StringBuilder sb3 = new StringBuilder(100);
+			StringBuilder sb4 = new StringBuilder(100);
+			StringBuilder sb5 = new StringBuilder(100);
+			
+			sb.Append("\t\tpublic ");
+			sb.Append(strClassName);
+			sb.Append("(");
+			foreach(ColumnSchema column in SourceTable.PrimaryKey.MemberColumns)
+			{
+				string memname = GetMemberVariableName(column);
+				sb1.Append(GetCSharpVariableType(column));
+				sb1.Append(" ");
+				sb1.Append(memname);
+				sb1.Append(", ");
+				
+				sb4.Append(memname);
+				sb4.Append(", ");
+				
+//				sb2.AppendFormat("\t\t\tCheck.Verify( {0} > 0, \"Unable to create relation without valid {0}.\");\r\n", memname);
+				sb2.AppendFormat("\t\t\tNew.{0} = {0};\r\n", memname);
+				
+				sb3.AppendFormat("\t\t\tthis.{0} = {0};\r\n", memname);
+				
+				sb5.AppendFormat(GetParamComment(column));
+				
+			}
+			sb1.Length -= 2;
+			sb4.Length -= 2;
+			sb.Append(sb1);
+			sb.Append(")\r\n");
+			siglist = sb1.ToString();
+			assignlist = sb2.ToString();
+			
+			Response.Write(sb5.ToString());
+			Response.Write(sb.ToString());
+			Response.Write("\t\t{\r\n");
+///			Response.Write(sb2.ToString());
+			Response.Write(sb3.ToString());
+			Response.WriteLine("\t\t\tBroker.Retrieve( this, GetKey( ) );");
+			Response.WriteLine("\t\t}");
+%>			
+
+		/// <summary>
+		/// Create an <%= strClassName %> given it's unique identifiers
+		/// </summary>
+<%=sb5.ToString()%>		
+		/// <returns>An <%= strClassName %> business entity</returns>
+		static public <%= strClassName %> Retrieve( <%= siglist %>)
+		{
+			<%= strClassName %> New = new <%= strClassName %>();
+<%=sb2.ToString()%>		
+			return Broker.RetrieveInstance( typeof(<%= strClassName %>), Key.GetKey( true, New ) ) as <%= strClassName %>;
+		}
+<%		} ///-----------------------------------------------------
+%>
+		#endregion
+
+		#region <%=RegionMergeStrategies.GetCustomRegionText("Constructors")%>
+		// Place custom constructors here.
+		#endregion
+		
+		#region <%=RegionMergeStrategies.GetTemplateRegionText("Properties")%>
+		<% 
+			foreach (ColumnSchema column in SourceTable.Columns)
+			{ 
+				string	pname = GetPropertyName(column);
+				string PK = "";
+				bool isIdentity = false;
+				bool isComputed = false;
+				ExtendedProperty ep = column.ExtendedProperties["CS_IsIdentity"];
+				if (ep != null && ep.Value.ToString() == "True")
+					isIdentity = true;
+					
+				ep = column.ExtendedProperties["CS_IsComputed"];
+				if (ep != null && ep.Value.ToString() == "True")
+					isComputed = true;
+					
+				if (column.IsPrimaryKeyMember)
+				{
+					PK = ", PrimaryKey";
+					if (isIdentity )
+						PK = PK + "(AutoGenerated=true)";
+
+					if (SourceTable.PrimaryKeys.Count == 1)
+						pname = "Id";
+						
+				}
+					
+				string name = "\"" + column.Name + "\"";
+				if (!column.AllowDBNull)
+				{
+					name = name + ", NotNull=true";
+				}
+				else
+				{
+					// If you can have a null in the column, you'll probably need a MagicValue.
+					name = name + "/*, MagicValue=0.00 */";
+				}
+				
+				if (pname == strClassName)
+					pname = pname + "Name";
+
+				// This displays all of the ExtendedProperties, which may contain info
+				// needed to add other features.
+//				foreach(ExtendedProperty ep1 in column.ExtendedProperties)
+//					Response.Write(String.Format("{0} = {1}, {2}\r\n", ep1.Name, ep1.Value, ep1.DataType));
+				
+		%>
+		///<summary> <%=column.Description %>
+		///</summary>
+		/// <value>
+		/// <%=pname%> accesses the <%=column.Name%> column of the <%=SourceTable.Name%> table.
+		<% if (isIdentity) Response.WriteLine("\t\t///  This is the Identity column for the Table. It can only be read."); %>
+		<% if (isComputed) Response.WriteLine("\t\t///  This is a computed column. It can only be read."); %>
+		/// </value>
+		[TableColumn(<%=name%>)<%= PK %><%=GetForeignKeyList(column) %>]
+		public <%=GetCSharpVariableType(column)%> <%=pname%> 
+		{
+			get {return <%=GetMemberVariableName(column)%>;}
+			<%if (!isIdentity &&  !isComputed)
+			{ %>
+			set { <%=GetMemberVariableName(column)%>  = value;}
+			<%} %>
+		}
+		
+		<%
+		} 
+			if (ObjectsForForeignKeys)
+			{
+				foreach(TableKeySchema tks in SourceTable.ForeignKeys)
+				{
+					if (tks.ForeignKeyMemberColumns.Count == 1 && !tks.ForeignKeyMemberColumns[0].IsPrimaryKeyMember)
+					{
+							string prop = GetClassName(tks.PrimaryKeyTable);
+							string name = GetPropertyNameForForeignKey(tks.ForeignKeyMemberColumns[0].Name);
+							string var = VariablePreChar + GetCamelCaseName(name);
+		%>				
+		public <%=prop%> <%=name%>
+		{
+    		get
+			{ 
+				if (<%=var%> == null)
+					<%=var%> = <%=prop%>.Retrieve(<%=GetMemberVariableName(tks.ForeignKeyMemberColumns[0])%>);
+					
+				return <%=var%>; 
+			}
+		}
+		<%
+		ForeignKeyPropColl(SourceTable.ForeignKeys[0].ForeignKeyTable, SourceTable.ForeignKeys[0].PrimaryKeyTable, "null");
+		%>
+		/******
+		public <%=strCollType%> <%=GetClassName(SourceTable)%>
+		{
+    		get
+			{ 
+				if (<%=var%> == null)
+				{
+					<%=var%> = <%=prop%>.Retrieve(<%=GetMemberVariableName(tks.ForeignKeyMemberColumns[0])%>);
+				}
+					
+				return <%=var%>; 
+			}
+		}
+		 ******/
+		
+		/******
+		public <%=strCollType%> <%=GetClassName(SourceTable) + "s"%>
+		{
+    		get
+			{ 
+				return RetrieveList( typeof(<%=GetClassName(SourceTable)%>), "<%=tks.PrimaryKeyMemberColumns[0].Name%>" ); 
+			}
+		}
+		 ******/
+		
+		<%
+					}
+				}
+				
+				if (SourceTable.PrimaryKey.MemberColumns.Count == 2)
+				{
+					if (Collections == CollectionTypeEnum.xxxCollection)
+					{
+						ForeignKeyPropColl(SourceTable.ForeignKeys[0].PrimaryKeyTable, SourceTable.ForeignKeys[1].PrimaryKeyTable, strClassName);
+						ForeignKeyPropColl(SourceTable.ForeignKeys[1].PrimaryKeyTable, SourceTable.ForeignKeys[0].PrimaryKeyTable, strClassName);
+					}
+					else
+					{
+						ForeignKeyProp(SourceTable.ForeignKeys[0].PrimaryKeyTable, SourceTable.ForeignKeys[1].PrimaryKeyTable, strClassName);
+						ForeignKeyProp(SourceTable.ForeignKeys[1].PrimaryKeyTable, SourceTable.ForeignKeys[0].PrimaryKeyTable, strClassName);
+					}
+				}
+			}
+		%>
+		#endregion
+
+		#region <%=RegionMergeStrategies.GetCustomRegionText("Properties")%>
+		// Place custom properties here.
+		#endregion
+
+		#region <%=RegionMergeStrategies.GetTemplateRegionText("Methods")%>
+		<% if (Collections != CollectionTypeEnum.None) 
+			{
+				if (IncludeListAll)
+				{
+		%>
+		static public <%= strCollType %> ListAll
+		{
+			get
+			{
+				<%= strCollType %> coll = new <%= strCollType %>();
+				Broker.RetrieveList( typeof( <%= strClassName %>), coll ); 
+				return coll;
+			}
+		}
+		
+<%		
+				}
+			if (ListByString)
+			{
+				bool bNeedListFunction = false;
+				foreach (ColumnSchema column in SourceTable.Columns)
+				{
+					if (column.DataType == DbType.String || column.DataType == DbType.AnsiString)
+					{
+						bNeedListFunction = true;
+%>			
+		/// <summary>
+		/// Gets a collection of <%=strClassName%> objects whose <%=GetPropertyName(column)%> 
+		/// column starts with the given string.
+		/// </summary>
+
+		static public <%= strCollType %> ListBy<%=GetPropertyName(column)%>StartsWith( string partialText )
+		{
+			return ListByXXXStartsWithInternal("<%=column.Name%>", partialText);
+		}
+<%
+					}
+				}
+				if (bNeedListFunction)
+				{
+%>			
+		/// <summary>
+		/// Internal function to handle all of the "StartsWith" methods.
+		/// </summary>
+		static private <%= strCollType %> ListByXXXStartsWithInternal( string column, string partialText )
+		{
+		    SqlBuilder sb = new SqlBuilder( StatementType.Select, typeof(<%= strClassName %>) );
+		    // note: we ought to check partialText for illegal characters to avoid security risks
+			partialText = partialText.Replace("'", "''");
+
+		    if (partialText.IndexOf("%") < 0)
+				partialText = partialText + "%";
+			
+		    sb.AddConstraint( Operator.Like, column, partialText );
+		    
+		    // passing true indicates that we'd like a list of elements, i.e. that no primary key
+		    // constraints from the type being retrieved should be added to the statement
+		    
+		    SqlStatement stmt = sb.GetStatement( true );
+			<%= strCollType %> coll = new <%= strCollType %>();
+		    ObjectFactory.GetCollection( typeof(<%= strClassName %>), stmt.Execute(), coll );
+		    return coll;
+		}
+<%		
+				}
+			}
+		}
+%>
+		#endregion
+		
+		#region <%=RegionMergeStrategies.GetCustomRegionText("ntom_Relationships")%>
+		/// TODO: Add Properties for Many-to-Many Relationship here.
+		///       (Note, they are included as comments in the class file for the linking table)
+		///
+		#endregion
+		
+		#region <%=RegionMergeStrategies.GetCustomRegionText("Methods")%>
+		// Place custom properties here.
+		#endregion
+				
+	}
+	#region <%=RegionMergeStrategies.GetTemplateRegionText("Parameters")%>
+	// The following parameters were used with CodeSmith to create this file:
+	//
+	// SourceTable : <%= SourceTable.FullName %>
+	// ClassName: <%= ClassName %>
+	// Namespace: <%= Namespace %>
+	// VariablePreChar: <%= VariablePreChar %>
+	// ColumnPreString: <%= ColumnPreString %>
+	// TablePreString: <%= TablePreString %>	
+	// ForcePrivateLowercase: <%= ForcePrivateLowercase %>
+	// ForcePublicCapitalize: <%= ForcePublicCapitalize %>
+	// RemoveUnderscore: <%= RemoveUnderscore %>
+	// IncludeVSSHeader: <%= IncludeVSSHeader %>
+	// ListByString: <%= ListByString %>
+	// ObjectsForForeignKeys: <%= ObjectsForForeignKeys %>
+	// IncludeListAll: <%= IncludeListAll %>
+	// Collections: <%= Collections %>
+	#endregion
+	
+	#endregion 
+}
+<script runat="template">
+//* BEGIN MERGE STRATEGY
+
+/// <summary>
+/// Gets or sets the filename where merged content should be written.  If no file is specified, no file is written.
+/// </summary>
+[Editor(typeof(CodeSmith.FileSystemEditors.FileNameEditor), typeof(System.Drawing.Design.UITypeEditor))]
+[Category("(Merging - Functionality by Geoff McElhanon)")]
+[Description("The name of the file where merged content is to be saved (if omitted, content will only be rendered to the Output pane).")]
+[CodeTemplateProperty(CodeSmith.Engine.CodeTemplatePropertyOption.Optional)]
+public string MergeDestinationFileName
+{
+	get {return _mergeDestinationFileName;}
+	set {_mergeDestinationFileName = value;}
+}
+private string _mergeDestinationFileName;
+
+public enum MergeType
+{
+	PreserveCustom=0,
+	ReplaceTemplate
+}
+
+[Category("(Merging - Functionality by Geoff McElhanon)")]
+public MergeType UseStrategy
+{
+	get
+	{
+		return _useStrategy;
+	}
+	set
+	{
+		_useStrategy = value;
+	}
+}
+private MergeType _useStrategy;
+
+bool insideRenderToFile = false;
+/// <summary>
+/// Overrides the Render behavior to add merging functionality within the CodeSmith GUI.
+/// </summary>
+/// <param name="writer">The <see cref="TextWriter"/> to which content should be written for display in the CodeSmith output pane.</param>
+public override void Render(System.IO.TextWriter writer)
+{
+	if (insideRenderToFile)
+	{
+		base.Render(writer);
+		return;
+	}
+
+	insideRenderToFile = true;
+
+	if (MergeDestinationFileName == null) 
+		MergeDestinationFileName = ClassName + ".cs";
+		
+	writer.WriteLine("Beginning file writing.");
+
+	// Compatibility with pre-.15 versions.
+	if (!System.IO.File.Exists(MergeDestinationFileName))
+	{
+		writer.WriteLine("File not found, creating initial file.");
+
+		this.RenderToFile(MergeDestinationFileName, true);
+		insideRenderToFile = false;
+		return;
+	}
+
+	CodeSmith.Engine.IMergeStrategy strategy;
+	if (UseStrategy == MergeType.ReplaceTemplate)
+	{
+		strategy = CodeSmith.MergeStrategies.RegionMergeStrategies.ReplaceTemplate;
+	}
+	else
+	{
+		strategy = CodeSmith.MergeStrategies.RegionMergeStrategies.PreserveCustom;
+	}
+
+	this.RenderToFile(MergeDestinationFileName, strategy);
+
+	writer.WriteLine("Finished merging into file.");
+
+	insideRenderToFile = false;
+}
+
+
+public void ForeignKeyProp(TableSchema  colProp, TableSchema colDest, string strClass)
+{
+	TextInfo textInfo = new CultureInfo("en-US",false).TextInfo;		
+	string prop = textInfo.ToTitleCase(colProp.Name);
+	string tbl  = GetClassName(colProp);
+	string where = GetClassName(colDest);
+
+	WriteLine("");
+	WriteLine("\t/*******");
+	WriteLine("\t *** Copy this property to the    {0}   class file.", where);
+	WriteLine("");
+	WriteLine("\tpublic GentleList {0}", prop);
+	WriteLine("\t{");
+	WriteLine("\t\tget");
+	WriteLine("\t\t{");
+	WriteLine("\t\t\tGentleList list  = new GentleList( false, typeof({0}), this, typeof({1}) );", tbl, strClass);
+	WriteLine("\t\t\treturn list;");
+	WriteLine("\t\t}");
+	WriteLine("\t}");
+	WriteLine("\t ******/");
+	WriteLine("");
+}
+
+//* END MERGE STRATEGY
+
+public void ForeignKeyPropColl(TableSchema  colProp, TableSchema colDest, string strClass)
+{
+	TextInfo textInfo = new CultureInfo("en-US",false).TextInfo;		
+	string prop = GetClassName(colProp); //textInfo.ToTitleCase(colProp.Name);
+	string tbl  = GetClassName(colProp);
+	string where = GetClassName(colDest);
+	string mem  = GetMemberVariableNameString(prop);
+	string strColl = tbl + "Collection";
+
+	WriteLine("");
+	WriteLine("\t/*******");
+	WriteLine("\t *** Copy this property to the    {0}   class file.", where);
+	WriteLine("");
+	WriteLine("\t\tprivate {0} {1} = null;", strColl, mem);
+	WriteLine("\tpublic {1} {0}", prop, strColl);
+	WriteLine("\t{");
+	WriteLine("\t\tget");
+	WriteLine("\t\t{");
+	WriteLine("\t\t\tif ({0} == null)", mem);
+	WriteLine("\t\t\t{");
+//	/*
+	WriteLine("\t\t\t\tGentleList list  = new GentleList( false, typeof({0}), this, typeof({1}) );", tbl, strClass);
+	WriteLine("\t\t\t\t{0} = new {1}(list.Count);", mem, strColl);
+	WriteLine("\t\t\t\tforeach ({0} obj in list)", tbl);
+//		*/
+	WriteLine("\t\t\t\t\t{0}.Add(obj);", mem);
+	WriteLine("\t\t\t}");
+	WriteLine("\t\t\treturn {0};", mem);
+
+	WriteLine("\t\t}");
+	WriteLine("\t}");
+	WriteLine("\t ******" + "/");
+	WriteLine("");
+}
+
+
+
+
+void WriteLine(string str)
+{
+	Response.Write(str);
+	Response.Write("\r\n");
+}
+
+void WriteLine(string strFormat, object ob1)
+{
+	Response.Write(String.Format(strFormat, ob1));
+	Response.Write("\r\n");
+}
+void WriteLine(string strFormat, object ob1, object ob2)
+{
+	Response.Write(String.Format(strFormat, ob1, ob2));
+	Response.Write("\r\n");
+}
+void WriteLine(string strFormat, object ob1, object ob2, object ob3)
+{
+	Response.Write(String.Format(strFormat, ob1, ob2, ob3));
+	Response.Write("\r\n");
+}
+
+
+public string GetMemberVariableDeclarationStatement(ColumnSchema column)
+{
+	return GetMemberVariableDeclarationStatement("protected", column);
+}
+
+public string GetMemberVariableDeclarationStatement(string protectionLevel, ColumnSchema column)
+{
+	string statement = protectionLevel + " ";
+	string name = GetMemberVariableName(column);
+	string sType = GetCSharpVariableType(column);
+		
+	statement += Align(sType, 16) + name;
+	statement += GetMemberVariableDefaultValue(column);
+	statement += ";\r\n";
+	
+	return statement;
+}
+
+
+public string GetCamelCaseName(string value)
+{
+	if (value.Length < 3)
+		return value.ToLower();
+	else
+		return value.Substring(0, 1).ToLower() + value.Substring(1);
+}
+
+public string GetMemberVariableName(ColumnSchema column)
+{
+	string propertyName = GetPropertyName(column);
+	return GetMemberVariableNameString(propertyName);
+}
+
+public string GetMemberVariableNameString(string propertyName)
+{
+	if (ForcePrivateLowercase)
+	{
+		propertyName = propertyName.ToLower();
+	}
+
+	return VariablePreChar + GetCamelCaseName(propertyName);
+	
+}
+
+public string GetPropertyName(ColumnSchema column)
+{
+	string propertyName = column.Name;
+	
+	if (propertyName == column.Table.Name + "Name") return "Name";
+	if (propertyName == column.Table.Name + "Description") return "Description";
+	
+	// Remove column prefix string
+	if (ColumnPreString != null && ColumnPreString.Length > 0 && propertyName.StartsWith(ColumnPreString))
+	{
+		propertyName = propertyName.Substring(ColumnPreString.Length, propertyName.Length - ColumnPreString.Length);
+	}
+
+	// Remove _ and change next char in uppercase
+	if (ForcePublicCapitalize)
+	{
+		TextInfo textInfo = new CultureInfo("en-US",false).TextInfo;		
+		propertyName = textInfo.ToTitleCase(propertyName);
+	}
+
+	if (RemoveUnderscore)
+	{
+		propertyName = propertyName.Replace("_", "");
+	}
+
+	
+	return propertyName;
+}
+		
+public string GetMemberVariableDefaultValue(ColumnSchema column)
+{
+	switch (column.DataType)
+	{
+		case DbType.Guid:
+		{
+			return " = Guid.Empty";
+		}
+		case DbType.AnsiString:
+		case DbType.AnsiStringFixedLength:
+		case DbType.String:
+		case DbType.StringFixedLength:
+		{
+			return " = String.Empty";
+		}
+		default:
+		{
+			return "";
+		}
+	}
+}
+
+public string GetCSharpVariableType(ColumnSchema column)
+{
+	if (column.Name.EndsWith("TypeCode") ) 
+		return column.Name;
+	
+	switch (column.DataType)
+	{
+		case DbType.AnsiString: 			return "string";
+		case DbType.AnsiStringFixedLength: 	return "string";
+		case DbType.Binary: 				return "byte[]";
+		case DbType.Boolean: 				return "bool";
+		case DbType.Byte: 					return "int";		// change to "byte" when Gentle.net support bytes
+		case DbType.Currency: 				return "decimal";
+		case DbType.Date: 					return "DateTime";
+		case DbType.DateTime: 				return "DateTime";
+		case DbType.Decimal: 				return "decimal";
+		case DbType.Double: 				return "double";
+		case DbType.Guid: 					return "Guid";
+		case DbType.Int16: 					return "short";
+		case DbType.Int32: 					return "int";
+		case DbType.Int64: 					return "long";
+		case DbType.Object: 				return "object";
+		case DbType.SByte: 					return "sbyte";
+		case DbType.Single: 				return "float";
+		case DbType.String: 				return "string";
+		case DbType.StringFixedLength: 		return "string";
+		case DbType.Time: 					return "TimeSpan";
+		case DbType.UInt16: 				return "ushort";
+		case DbType.UInt32: 				return "uint";
+		case DbType.UInt64: 				return "ulong";
+		case DbType.VarNumeric: 			return "decimal";
+		default:
+		{
+			return "__UNKNOWN__" + column.NativeType;
+		}
+	}
+}
+
+public string GetClassName(TableSchema table)
+{
+	string name = table.Name;
+	/*
+	if (name.EndsWith("s"))
+	{
+		name = name.Substring(0, name.Length - 1);
+	}
+	*/
+	
+	// Remove table prefix string
+	if (TablePreString != null && TablePreString.Length > 0 && name.StartsWith(TablePreString))
+	{
+		name = name.Substring(TablePreString.Length, name.Length - TablePreString.Length);
+	}
+	
+	TextInfo textInfo = new CultureInfo("en-US",false).TextInfo;		
+	name = textInfo.ToTitleCase(name);
+	return name;
+}
+
+public string GetPropertyNameForForeignKey(string name)
+{	
+	// Remove "_ID" at end of string
+	if (name.ToLower().EndsWith("_id"))
+	{
+		name = name.Substring(0, name.Length - 3);
+	}
+
+	// Remove "ID" at end of string
+	if (name.ToLower().EndsWith("id"))
+	{
+		name = name.Substring(0, name.Length - 2);
+	}
+
+	// Remove table prefix string
+	if (TablePreString != null && TablePreString.Length > 0 && name.StartsWith(TablePreString))
+	{
+		name = name.Substring(TablePreString.Length, name.Length - TablePreString.Length);
+	}
+
+	TextInfo textInfo = new CultureInfo("en-US",false).TextInfo;		
+	name = textInfo.ToTitleCase(name);
+	
+	return name;
+}
+
+public string GetPrimaryKeyType(TableSchema table)
+{
+	if (table.PrimaryKey != null)
+	{
+		if (table.PrimaryKey.MemberColumns.Count == 1)
+		{
+			return GetCSharpVariableType(table.PrimaryKey.MemberColumns[0]);
+		}
+		else
+		{
+//			throw new ApplicationException("This template will not work on primary keys with more than one member column.");
+			return GetCSharpVariableType(table.PrimaryKey.MemberColumns[0]);
+		}
+	}
+	else
+	{
+		throw new ApplicationException("This template will only work on tables with a primary key.");
+	}
+}
+public string GetForeignKeyList(ColumnSchema column)
+{
+	StringBuilder  sb = new StringBuilder(100);
+	if (column.IsForeignKeyMember)
+	{
+		string col = column.Name;
+		foreach(TableKeySchema tks in column.Table.ForeignKeys)
+		{
+			if (tks.ForeignKeyMemberColumns[0].Name == col)
+				sb.AppendFormat(@", ForeignKey(""{0}"", ""{1}"")", tks.PrimaryKeyTable.Name, tks.PrimaryKeyMemberColumns[0].Name);
+		}
+	}
+	
+	return sb.ToString();
+}
+
+
+public string Align(string str)
+{
+	return Align(str, 16);
+}
+
+public string Align(string str, int field)
+{
+	int pad =field -str.Length;
+	int tabs = pad /4;
+	if ( (pad % 4) !=0)
+		tabs++;
+	
+	if (tabs > 0)
+		str += new string('\t', tabs);
+	return (str);
+}
+
+
+public void AddVssHeader()
+{
+	if (IncludeVSSHeader)
+	{
+		Response.WriteLine("/*");
+ 		Response.WriteLine(" * $Author: $");
+ 		Response.WriteLine(" * $Revision: $");
+ 		Response.WriteLine(" * $Date: $");
+		Response.WriteLine(" *  This file generated by CodeSmith on " + DateTime.Now.ToLongDateString() );
+ 		Response.WriteLine(" * $History: $");
+ 		Response.WriteLine(" */");
+	}
+}
+
+public string GetColumnDesc(ColumnSchema column)
+{
+	if (column.Description.Length > 0)
+		return column.Description;
+	else
+		return column.Name;
+}
+
+public string GetParamComment(ColumnSchema column)
+{
+		return "\t\t/// <param name=\"" +GetPropertyName(column)+"\">" +  GetColumnDesc(column) + "</param>\r\n";
+}
+
+public string GetConstructorParams()
+{
+	string result = "";
+	
+	foreach (ColumnSchema column in SourceTable.Columns) 
+	{
+		if (result.Length > 0)
+			result += ", ";
+		result += GetCSharpVariableType(column)	+ " " + GetPropertyName(column);
+	} 
+	
+	return result;
+}
+/*
+public string GetSqlDbType(ColumnSchema column)
+{
+	switch (column.NativeType)
+	{
+		case "bigint": 		return "BigInt";
+		case "binary": 		return "Binary";
+		case "bit": 		return "Bit";
+		case "char": 		return "Char";
+		case "datetime": 	return "DateTime";
+		case "decimal": 	return "Decimal";
+		case "float": 		return "Float";
+		case "image": 		return "Image";
+		case "int": 		return "Int";
+		case "money": 		return "Money";
+		case "nchar": 		return "NChar";
+		case "ntext": 		return "NText";
+		case "numeric": 	return "Decimal";
+		case "nvarchar": 	return "NVarChar";
+		case "real": 		return "Real";
+		case "smalldatetime": return "SmallDateTime";
+		case "smallint": 	return "SmallInt";
+		case "smallmoney": 	return "SmallMoney";
+		case "sql_variant": return "Variant";
+		case "sysname": 	return "NChar";
+		case "text": 		return "Text";
+		case "timestamp": 	return "Timestamp";
+		case "tinyint": 	return "TinyInt";
+		case "uniqueidentifier": return "UniqueIdentifier";
+		case "varbinary": 	return "VarBinary";
+		case "varchar": 	return "VarChar";
+		default: 			return "__UNKNOWN__" + column.NativeType;
+	}
+}
+
+public CodeTemplate CompileTemplate(string file) 
+{
+    string path = CodeTemplateInfo.DirectoryName + file;
+    CodeTemplateCompiler compiler = new CodeTemplateCompiler(path);
+
+    compiler.Compile();
+    if (compiler.Errors.Count == 0)
+        return compiler.CreateInstance();
+
+    for (int i = 0; i < compiler.Errors.Count; i++)
+        Response.WriteLine(compiler.Errors[i].ToString());
+
+    return null;
+}
+
+*/
+
+</script>
+
