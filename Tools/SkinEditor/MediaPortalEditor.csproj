@@ -1,0 +1,479 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4BD72A53-8AC5-4DAA-9177-5BDF932285E9}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>MediaPortalEditor</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Mpe</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>Mpe.MediaPortalEditor</StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>0</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MagicLibrary">
+      <Name>MagicLibrary</Name>
+      <HintPath>lib\MagicLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Design">
+      <Name>System.Design</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap">
+      <Name>System.Runtime.Serialization.Formatters.Soap</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <COMReference Include="AxSHDocVw">
+      <Guid>{EAB22AC0-30C1-11CF-A7EB-0000C05BAE0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>1</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+    </COMReference>
+    <COMReference Include="SHDocVw">
+      <Guid>{EAB22AC0-30C1-11CF-A7EB-0000C05BAE0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>1</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Design\MpeAnimationEditorForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Design\MpeAnimationEditorForm.Designer.cs">
+      <DependentUpon>MpeAnimationEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="src\Controls\Design\MpeImageEditorForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Design\MpeStringEditorForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Design\MpeTagEditorForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Design\MpeTextAreaEditorForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeCheckBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeFacadeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeFadeLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeFont.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeFontViewer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeGroup.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeImage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeImageViewer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeItemCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeItemManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeScreen.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeSelectButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeSpinButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeStringTable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeTag.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeTagCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeTextArea.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Controls\MpeToggleButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Properties\MpeAnimationType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Properties\MpeControlAlignment.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Properties\MpeControlLock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Properties\MpeControlOrientation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Properties\MpeControlPadding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Properties\MpeControlType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Properties\MpeLayoutStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Properties\MpeScreenInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Properties\MpeScreenSize.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Properties\MpeScreenType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Controls\Properties\MpeZoomLevel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Designers\Mask\MaskBottom.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Designers\Mask\MaskComponent.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Designers\Mask\MaskLeft.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Designers\Mask\MaskRight.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Designers\Mask\MaskTop.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Designers\MpeControlDesigner.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\Designers\MpeControlMask.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Designers\MpeDesigner.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\Designers\MpeFontDesigner.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\Designers\MpeHelpBrowser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\Designers\MpeImageDesigner.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\Designers\MpeResourceDesigner.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\Designers\MpeResourceMask.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\Designers\MpeScreenDesigner.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\Designers\MpeStringDesigner.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\Forms\MpeAboutForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\Forms\MpeExplorer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\Forms\MpeHelpManager.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\Forms\MpePreferenceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\Forms\MpePropertyManager.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="src\Forms\MpeSaveForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\Forms\MpeSkinBrowserDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\Forms\MpeStatusBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="src\MediaPortalEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="src\MpeData.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MpeData.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="src\MpeGlobal.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\MpeLog.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\MpeParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\MpePreferences.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\MpeResource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="src\MpeResourceCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Content Include="bugs.html" />
+    <Content Include="config.xml" />
+    <Content Include="help\Articles\_images\blank.gif" />
+    <Content Include="help\Articles\_images\button01c.jpg" />
+    <Content Include="help\Articles\_images\button01cs.jpg" />
+    <Content Include="help\Articles\_images\button01l.jpg" />
+    <Content Include="help\Articles\_images\button01n.jpg" />
+    <Content Include="help\Articles\_images\button01r.jpg" />
+    <Content Include="help\Articles\_images\button01s.jpg" />
+    <Content Include="help\Articles\_images\group01b.jpg" />
+    <Content Include="help\Articles\_images\group01bl.jpg" />
+    <Content Include="help\Articles\_images\group01br.jpg" />
+    <Content Include="help\Articles\_images\group01c.jpg" />
+    <Content Include="help\Articles\_images\group01l.jpg" />
+    <Content Include="help\Articles\_images\group01n.jpg" />
+    <Content Include="help\Articles\_images\group01r.jpg" />
+    <Content Include="help\Articles\_images\group01s.jpg" />
+    <Content Include="help\Articles\_images\group01t.jpg" />
+    <Content Include="help\Articles\_images\group01tl.jpg" />
+    <Content Include="help\Articles\_images\group01tr.jpg" />
+    <Content Include="help\Articles\_Textures.html" />
+    <Content Include="help\Styles.css" />
+    <Content Include="help\Tutorials\Layout.html" />
+    <Content Include="help\Tutorials\Start.html" />
+    <Content Include="help\Tutorials\_images\mpe_open_skin.jpg" />
+    <Content Include="help\Tutorials\_images\mpe_start.jpg" />
+    <Content Include="help\Welcome.html" />
+    <Content Include="preferences.xml" />
+    <Content Include="release.html" />
+    <Content Include="src\MpeData.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <CustomToolNamespace>SkinEditor</CustomToolNamespace>
+      <LastGenOutput>MpeData.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="todo.html" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="help\Articles\_images\Thumbs.db" />
+    <None Include="help\Tutorials\_images\Thumbs.db" />
+    <None Include="src\MpeData.xsc">
+      <DependentUpon>MpeData.xsd</DependentUpon>
+    </None>
+    <None Include="src\MpeData.xss">
+      <DependentUpon>MpeData.xsd</DependentUpon>
+    </None>
+    <None Include="src\MpeData.xsx">
+      <DependentUpon>MpeData.xsd</DependentUpon>
+    </None>
+    <EmbeddedResource Include="src\Controls\Design\MpeAnimationEditorForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MpeAnimationEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Controls\Design\MpeImageEditorForm.resx">
+      <DependentUpon>MpeImageEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Controls\Design\MpeStringEditorForm.resx">
+      <DependentUpon>MpeStringEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Controls\Design\MpeTagEditorForm.resx">
+      <DependentUpon>MpeTagEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Controls\Design\MpeTextAreaEditorForm.resx">
+      <DependentUpon>MpeTextAreaEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Controls\MpeButton.resx">
+      <DependentUpon>MpeButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Controls\MpeCheckBox.resx">
+      <DependentUpon>MpeCheckBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Controls\MpeContainer.resx">
+      <DependentUpon>MpeContainer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Controls\MpeControl.resx">
+      <DependentUpon>MpeControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Controls\MpeFadeLabel.resx">
+      <DependentUpon>MpeFadeLabel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Controls\MpeLabel.resx">
+      <DependentUpon>MpeLabel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Designers\Mask\MaskComponent.resx">
+      <DependentUpon>MaskComponent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Designers\MpeControlDesigner.resx">
+      <DependentUpon>MpeControlDesigner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Designers\MpeFontDesigner.resx">
+      <DependentUpon>MpeFontDesigner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Designers\MpeHelpBrowser.resx">
+      <DependentUpon>MpeHelpBrowser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Designers\MpeImageDesigner.resx">
+      <DependentUpon>MpeImageDesigner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Designers\MpeResourceDesigner.resx">
+      <DependentUpon>MpeResourceDesigner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Designers\MpeScreenDesigner.resx">
+      <DependentUpon>MpeScreenDesigner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Designers\MpeStringDesigner.resx">
+      <DependentUpon>MpeStringDesigner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Forms\MpeAboutForm.resx">
+      <DependentUpon>MpeAboutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Forms\MpeExplorer.resx">
+      <DependentUpon>MpeExplorer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Forms\MpeHelpManager.resx">
+      <DependentUpon>MpeHelpManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Forms\MpePreferenceForm.resx">
+      <DependentUpon>MpePreferenceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Forms\MpePropertyManager.resx">
+      <DependentUpon>MpePropertyManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Forms\MpeSaveForm.resx">
+      <DependentUpon>MpeSaveForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Forms\MpeSkinBrowserDialog.resx">
+      <DependentUpon>MpeSkinBrowserDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\Forms\MpeStatusBar.resx">
+      <DependentUpon>MpeStatusBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\MediaPortalEditor.resx">
+      <DependentUpon>MediaPortalEditor.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="help\Reference\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
