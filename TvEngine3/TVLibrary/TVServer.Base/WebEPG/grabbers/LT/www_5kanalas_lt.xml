@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Grabber>
+  <Info language="lt" availableDays="3" timezone="E. Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="5kanalas.lt" siteId="" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.5kanalas.lt/default.aspx?page=Programa&amp;day=[DAY_OFFSET]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="ProgramContainer" end="mainover1">
+        <SectionTemplate tags="T">
+          <TemplateText> &lt;tr&gt;&lt;td&gt;&lt;a&gt;&lt;#START&gt; &lt;#TITLE&gt;&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt; </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Template name="Details" start="&lt;div style=&quot;FLOAT:right&quot;&gt;" end="mainover1">
+        <SectionTemplate tags="S">
+          <TemplateText> &lt;span id="_ctl1_Long1_lblText"&gt; &lt;#SUBTITLE&gt;&lt;br&gt; &lt;#DESCRIPTION&gt;&lt;br&gt;&lt;br&gt; &lt;br&gt;&lt;/span&gt; </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Sublinks>
+        <Sublink search="default.aspx" template="Details" />
+      </Sublinks>
+    </Html>
+  </Listing>
+</Grabber>
