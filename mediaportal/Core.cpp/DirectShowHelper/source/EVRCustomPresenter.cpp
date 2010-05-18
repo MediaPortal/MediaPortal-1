@@ -2431,7 +2431,7 @@ void MPEVRCustomPresenter::GetAVSyncClockInterface()
 void MPEVRCustomPresenter::AdjustAudioRenderer()
 {
   double currentPhase = m_rasterSyncOffset / GetDisplayCycle();
-  double targetPhase = 0.5;
+  double targetPhase = 0.75;
 
   // on first frame
   if( m_dLastPhase == -1.0)
