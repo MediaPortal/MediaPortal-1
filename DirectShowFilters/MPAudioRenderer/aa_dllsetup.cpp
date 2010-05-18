@@ -6,6 +6,7 @@
 // Copyright (c) 1992-2001 Microsoft Corporation.  All rights reserved.
 //------------------------------------------------------------------------------
 
+#include "stdafx.h"
 #include <streams.h>
 #include <strsafe.h>
 

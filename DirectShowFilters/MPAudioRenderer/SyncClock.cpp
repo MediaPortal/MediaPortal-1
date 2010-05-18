@@ -16,6 +16,7 @@
 
 // This code is based on Arto Järvinen's work - http://www.ostrogothia.com/video/
 
+#include "stdafx.h"
 #include <streams.h>
 #include "SyncClock.h"
 
