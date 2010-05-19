@@ -2435,7 +2435,7 @@ void MPEVRCustomPresenter::AdjustAudioRenderer()
 	
   double averagePhaseDifference = 0.0;
 
-	// Keep score of the last 10 deviations from target phase. These numbers have values between -0.5 and 0.5
+	// Keep score of the last X deviations from target phase. These numbers have values between -0.5 and 0.5
   for(unsigned int i = NUM_PHASE_DEVIATIONS - 1; i > 0; i--)
   {
     m_dPhaseDeviations[i] = m_dPhaseDeviations[i-1];
@@ -2443,13 +2443,28 @@ void MPEVRCustomPresenter::AdjustAudioRenderer()
   }
   
   m_dPhaseDeviations[0] = (fmod(currentPhase - targetPhase + 0.5, 1) - 0.5);
+	averagePhaseDifference += m_dPhaseDeviations[0];
 	averagePhaseDifference = averagePhaseDifference / NUM_PHASE_DEVIATIONS;
 
-  if (fabs(averagePhaseDifference) < 0.05 )
-  {
-    m_dVariableFreq = 1.0;
-  }
-	
+	//If we are getting close to target then stop correcting.
+	//Since it is a rolling average we will overshoot the target, so we plan to stop early.
+	//If we are speeding up, we should stop when above the "green" limit
+	if (m_dVariableFreq > 1.0)
+	{
+	  if (averagePhaseDifference > -0.05 )
+    {
+      m_dVariableFreq = 1.0;
+    }
+	}
+  //If we are speeding down, we should stop when below the "green" limit
+	if (m_dVariableFreq < 1.0)
+	{
+	  if (averagePhaseDifference < 0.05 )
+    {
+      m_dVariableFreq = 1.0;
+    }
+	}
+
 	//If we have drifted significantly away from target, let us speed up or slow down until we are within above limits again
 	if (averagePhaseDifference > 0.1)
 	{
