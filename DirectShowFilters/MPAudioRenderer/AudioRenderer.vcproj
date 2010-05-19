@@ -578,7 +578,7 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
 			>
 			<File
-				RelativePath=".\aa_dllsetup.cpp"
+				RelativePath=".\dllsetup.cpp"
 				>
 			</File>
 			<File
@@ -607,7 +607,7 @@
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
 			<File
-				RelativePath=".\aa_dllsetup.h"
+				RelativePath=".\dllsetup.h"
 				>
 			</File>
 			<File
