@@ -131,28 +131,28 @@ private:
   HRESULT     GetBufferSize(WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
    
   // WASAPI variables
-  bool                useWASAPI;
-  IMMDevice*          pMMDevice;
-  IAudioClient*       pAudioClient;
-  IAudioRenderClient* pRenderClient;
-  UINT32              nFramesInBuffer;
-  REFERENCE_TIME      hnsPeriod, hnsActualDuration;
-  HANDLE              hTask;
+  bool                m_bUseWASAPI;
+  IMMDevice*          m_pMMDevice;
+  IAudioClient*       m_pAudioClient;
+  IAudioRenderClient* m_pRenderClient;
+  UINT32              m_nFramesInBuffer;
+  REFERENCE_TIME      m_hnsPeriod;
+  REFERENCE_TIME      m_hnsActualDuration;
+  HANDLE              m_hTask;
   CCritSec            m_csCheck;
-  UINT32              bufferSize;
-  bool                isAudioClientStarted;
-  DWORD               lastBufferTime;
+  UINT32              m_nBufferSize;
+  bool                m_bIsAudioClientStarted;
+  DWORD               m_dwLastBufferTime;
 
-  // AVRT.dll (Vista or greater
-  typedef HANDLE  (__stdcall *PTR_AvSetMmThreadCharacteristicsW)(LPCWSTR TaskName, LPDWORD TaskIndex);
-  typedef BOOL	(__stdcall *PTR_AvRevertMmThreadCharacteristics)(HANDLE AvrtHandle);
+  // AVRT.dll (Vista or greater)
+  typedef HANDLE (__stdcall *PTR_AvSetMmThreadCharacteristicsW)(LPCWSTR TaskName, LPDWORD TaskIndex);
+  typedef BOOL (__stdcall *PTR_AvRevertMmThreadCharacteristics)(HANDLE AvrtHandle);
 
   PTR_AvSetMmThreadCharacteristicsW		pfAvSetMmThreadCharacteristicsW;
   PTR_AvRevertMmThreadCharacteristics		pfAvRevertMmThreadCharacteristics;
 
 private:
   CSyncClock  m_Clock;
-  CCritSec    m_Lock;
   double      m_dBias;
   double      m_dAdjustment;
 };
