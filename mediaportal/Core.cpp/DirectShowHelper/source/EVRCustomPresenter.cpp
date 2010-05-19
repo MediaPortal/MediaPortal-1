@@ -2436,14 +2436,14 @@ void MPEVRCustomPresenter::AdjustAudioRenderer()
   double averagePhaseDifference = 0.0;
 
 	// Keep score of the last 10 deviations from target phase. These numbers have values between -0.5 and 0.5
-  for(unsigned int i = NUM_PHASE_DEVIATIONS - 1 ; i > 0; i--)
+  for(unsigned int i = NUM_PHASE_DEVIATIONS - 1; i > 0; i--)
   {
     m_dPhaseDeviations[i] = m_dPhaseDeviations[i-1];
     averagePhaseDifference += m_dPhaseDeviations[i];
   }
   
   m_dPhaseDeviations[0] = (fmod(currentPhase - targetPhase + 0.5, 1) - 0.5);
-	averagePhaseDifference = averagePhaseDifference/NUM_PHASE_DEVIATIONS;
+	averagePhaseDifference = averagePhaseDifference / NUM_PHASE_DEVIATIONS;
 
   if (fabs(averagePhaseDifference) < 0.05 )
   {
