@@ -29,6 +29,8 @@ using namespace std;
 #define NUM_SURFACES 5
 #define NB_JITTER 125
 
+#define NUM_PHASE_DEVIATIONS 10
+
 // magic numbers
 #define DEFAULT_FRAME_TIME 200000 // used when fps information is not provided (PAL interlaced == 50fps)
 
@@ -314,7 +316,6 @@ protected:
 
   IAVSyncClock* m_pAVSyncClock;
   double        m_dBias;
-  double        m_dLastPhase;
+  double        m_dPhaseDeviations[NUM_PHASE_DEVIATIONS];
   double        m_dVariableFreq;
-  double        m_dPhaseDriftIntegration;
 };

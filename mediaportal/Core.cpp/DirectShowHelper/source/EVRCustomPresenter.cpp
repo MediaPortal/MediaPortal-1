@@ -65,10 +65,10 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   m_bIsWin7(pIsWin7),
   m_pAVSyncClock(NULL),
   m_dBias(1.0),
-  m_dLastPhase(-1.0),
-  m_dPhaseDriftIntegration(0.0),
   m_dVariableFreq(1.0)
 {
+  ZeroMemory((void*)&m_dPhaseDeviations, sizeof(double) * NUM_PHASE_DEVIATIONS);
+  
   timeBeginPeriod(1);
   if (m_pMFCreateVideoSampleFromSurface != NULL)
   {
@@ -2432,41 +2432,36 @@ void MPEVRCustomPresenter::AdjustAudioRenderer()
 {
   double currentPhase = m_rasterSyncOffset / GetDisplayCycle();
   double targetPhase = 0.75;
+	
+  double averagePhaseDifference = 0.0;
 
-  // on first frame
-  if( m_dLastPhase == -1.0)
+	// Keep score of the last 10 deviations from target phase. These numbers have values between -0.5 and 0.5
+  for(unsigned int i = NUM_PHASE_DEVIATIONS - 1 ; i > 0; i--)
   {
-    m_dLastPhase = currentPhase;
+    m_dPhaseDeviations[i] = m_dPhaseDeviations[i-1];
+    averagePhaseDifference += m_dPhaseDeviations[i];
   }
-
-  double phaseDrift = currentPhase - m_dLastPhase;
-  m_dPhaseDriftIntegration += phaseDrift;
-  m_dPhaseDriftIntegration *= 0.99;
-
-  m_dLastPhase = currentPhase;
-
-  if(fabs(currentPhase - targetPhase)> 0.0001)
-  {
-    m_dVariableFreq += phaseDrift / 5;
-  }
-
-  m_dVariableFreq += m_dPhaseDriftIntegration / 1000;
   
-  // try to use the shortest route to the target raster offset
-  m_dVariableFreq += (fmod(currentPhase - targetPhase + 0.5, 1) - 0.5) / 100;
+  m_dPhaseDeviations[0] = (fmod(currentPhase - targetPhase + 0.5, 1) - 0.5);
+	averagePhaseDifference = averagePhaseDifference/NUM_PHASE_DEVIATIONS;
 
-  double m_dVariableFreqDebug = m_dVariableFreq;
-
-  m_dVariableFreq = max(min(m_dVariableFreq, 1.003), 0.997);
-
-  // Do not adjust the sync clock rate if we are close enough the target 
-  // raster offset this would cause only unnescessary audio resampling
-  if (fabs(currentPhase - targetPhase) < 0.1 )
+  if (fabs(averagePhaseDifference) < 0.05 )
   {
     m_dVariableFreq = 1.0;
   }
+	
+	//If we have drifted significantly away from target, let us speed up or slow down until we are within above limits again
+	if (averagePhaseDifference > 0.1)
+	{
+		m_dVariableFreq = 1.003;
+	}
+	if (averagePhaseDifference < -0.1)
+	{
+    m_dVariableFreq = 0.997;
+	}
+	
 
-  Log("VF: %f VFD: %f PDI: %f CP: %f ", m_dVariableFreq, m_dVariableFreqDebug, m_dPhaseDriftIntegration, currentPhase);
+  Log("VF: %f averagePhaseDif: %f CP: %f ", m_dVariableFreq, averagePhaseDifference, currentPhase);
 
   if (m_pAVSyncClock)
   {
