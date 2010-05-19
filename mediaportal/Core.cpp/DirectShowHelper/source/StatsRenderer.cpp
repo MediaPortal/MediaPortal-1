@@ -233,8 +233,7 @@ void StatsRenderer::DrawStats()
 
     OffsetRect(&rc, 0, TextHeight); // Extra "line feed"
 
-    strText.Format("Audio bias: %.10f | Audio adjustment: %.6f | PDI: %.6f", 
-      m_pPresenter->m_dBias, m_pPresenter->m_dVariableFreq, m_pPresenter->m_dPhaseDriftIntegration);
+    strText.Format("Audio bias: %.10f | Audio adjustment: %.6f", m_pPresenter->m_dBias, m_pPresenter->m_dVariableFreq);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
