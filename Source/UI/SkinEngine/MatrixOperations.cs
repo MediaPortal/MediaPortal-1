@@ -213,20 +213,6 @@ namespace MediaPortal.UI.SkinEngine
     }
 
     /// <summary>
-    /// Returns a scale factor in X and Y directions which represents the extension of an object transformed by this matrix.
-    /// </summary>
-    /// <param name="matrix">Transformation matrix.</param>
-    /// <param name="sizeScaleX">X factor which represents the size scaling of an object transformed by this matrix.</param>
-    /// <param name="sizeScaleY">Y factor which represents the size scaling of an object transformed by this matrix.</param>
-    public static void GetTransformedSizeScale(this Matrix matrix, out float sizeScaleX, out float sizeScaleY)
-    {
-      SizeF sizeTest = new SizeF(1f, 1f);
-      matrix.TransformSize(ref sizeTest);
-      sizeScaleX = sizeTest.Width;
-      sizeScaleY = sizeTest.Height;
-    }
-
-    /// <summary>
     /// Gets a matrix of the <see cref="System.Drawing.Drawing2D"/> namespace out of this matrix.
     /// </summary>
     /// <param name="matrix">Matrix to convert.</param>

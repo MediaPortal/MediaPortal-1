@@ -52,9 +52,9 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
     protected class InvalidControl : IComparable<InvalidControl>
     {
       protected int _treeDepth = -1;
-      protected UIElement _element;
+      protected FrameworkElement _element;
 
-      public InvalidControl(UIElement element)
+      public InvalidControl(FrameworkElement element)
       {
         _element = element;
       }
@@ -86,7 +86,7 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
       /// <summary>
       /// Returns the invalid element.
       /// </summary>
-      public UIElement Element
+      public FrameworkElement Element
       {
         get { return _element; }
       }
@@ -142,7 +142,7 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
 
     protected AbstractProperty _opened;
     public event EventHandler Closed;
-    protected UIElement _visual;
+    protected FrameworkElement _visual;
     protected Animator _animator;
     protected List<InvalidControl> _invalidLayoutControls = new List<InvalidControl>();
     protected IDictionary<Key, KeyAction> _keyBindings = null;
@@ -172,7 +172,7 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
       get { return _animator; }
     }
 
-    public UIElement Visual
+    public FrameworkElement Visual
     {
       get { return _visual; }
       set
@@ -181,11 +181,6 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
         if (_visual != null)
           _visual.SetScreen(this);
       }
-    }
-
-    public FrameworkElement RootElement
-    {
-      get { return _visual as FrameworkElement; }
     }
 
     /// <summary>
@@ -405,7 +400,10 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
 
     public void InvalidateLayout(UIElement element)
     {
-      InvalidControl ic = new InvalidControl(element);
+      FrameworkElement fe = element as FrameworkElement;
+      if (fe == null)
+        return;
+      InvalidControl ic = new InvalidControl(fe);
       lock (_invalidLayoutControls)
       {
         if (_invalidLayoutControls.Contains(ic))
@@ -425,7 +423,7 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
     public RenderContext CreateInitialRenderContext()
     {
       Matrix transform = Matrix.Scaling((float) SkinContext.WindowSize.Width / _skinWidth, (float) SkinContext.WindowSize.Height / _skinHeight, 1);
-      return new RenderContext(transform, new RectangleF(0, 0, _skinWidth, _skinHeight));
+      return new RenderContext(transform, null, new RectangleF(0, 0, _skinWidth, _skinHeight));
     }
 
     /// <summary>
@@ -515,7 +513,7 @@ namespace MediaPortal.UI.SkinEngine.ScreenManagement
     /// pressed, or <c>null</c>, if no focus change should take place.</returns>
     public FrameworkElement PredictFocus(RectangleF? currentFocusRect, Key key)
     {
-      FrameworkElement element = Visual as FrameworkElement;
+      FrameworkElement element = _visual;
       if (element == null)
         return null;
       if (key == Key.Up)

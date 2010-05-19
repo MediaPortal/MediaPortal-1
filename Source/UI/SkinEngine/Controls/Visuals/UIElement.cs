@@ -22,8 +22,6 @@
 
 #endregion
 
-//#define DEBUG_LAYOUT
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -707,35 +705,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       return child.IsInArea(x, y) && IsInVisibleArea(x, y);
     }
 
-    #region Replacing methods for the == operator which evaluate two float.NaN values to equal
-
-    public static bool SameValue(float val1, float val2)
-    {
-      return float.IsNaN(val1) && float.IsNaN(val2) || val1 == val2;
-    }
-
-    public static bool SameSize(SizeF size1, SizeF size2)
-    {
-      return SameValue(size1.Width, size2.Width) && SameValue(size1.Height, size2.Height);
-    }
-
-    public static bool SameSize(SizeF? size1, SizeF size2)
-    {
-      return size1.HasValue && SameSize(size1.Value, size2);
-    }
-
-    public static bool SameRect(RectangleF rect1, RectangleF rect2)
-    {
-      return SameValue(rect1.X, rect2.X) && SameValue(rect1.Y, rect2.Y) && SameValue(rect1.Width, rect2.Width) && SameValue(rect1.Height, rect2.Height);
-    }
-
-    public static bool SameRect(RectangleF? rect1, RectangleF rect2)
-    {
-      return rect1.HasValue && SameRect(rect1.Value, rect2);
-    }
-
-    #endregion
-
     /// <summary>
     /// Measures this element's size and fills the <see cref="DesiredSize"/> property.
     /// </summary>
@@ -754,40 +723,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     /// <param name="totalSize">Total size of the element including Margins. As input, this parameter
     /// contains the size available for this child control (size constraint). As output, it must be set
     /// to the <see cref="DesiredSize"/> plus <see cref="Margin"/>.</param>
-    public void Measure(ref SizeF totalSize)
-    {
-#if DEBUG_LAYOUT
-      System.Diagnostics.Trace.WriteLine(string.Format("Measure {0} Name='{1}', totalSize={2}", GetType().Name, Name, totalSize));
-#endif
-      if (SameSize(_availableSize, totalSize))
-      { // Optimization: If our input data is the same and the layout isn't invalid, we don't need to measure again
-        totalSize = _desiredSize;
-#if DEBUG_LAYOUT
-        System.Diagnostics.Trace.WriteLine(string.Format("Measure {0} Name='{1}', cutting short, totalSize is like before, returns desired size={2}", GetType().Name, Name, totalSize));
-#endif
-        return;
-      }
-      _availableSize = new SizeF(totalSize);
-      RemoveMargin(ref totalSize, Margin);
-      Matrix? layoutTransform = LayoutTransform == null ? new Matrix?() : LayoutTransform.GetTransform();
-      if (layoutTransform.HasValue)
-      {
-        float sizeScaleX;
-        float sizeScaleY;
-        layoutTransform.Value.GetTransformedSizeScale(out sizeScaleX, out sizeScaleY);
-        totalSize = new SizeF(totalSize.Width / sizeScaleX, totalSize.Height / sizeScaleY);
-      }
-      MeasureOverride(ref totalSize);
-      if (layoutTransform.HasValue)
-        layoutTransform.Value.TransformSize(ref totalSize);
-      AddMargin(ref totalSize, Margin);
-      _desiredSize = totalSize;
-#if DEBUG_LAYOUT
-      System.Diagnostics.Trace.WriteLine(string.Format("Measure {0} Name='{1}', returns calculated desired size={2}", GetType().Name, Name, totalSize));
-#endif
-    }
-
-    protected virtual void MeasureOverride(ref SizeF totalSize)
+    public virtual void Measure(ref SizeF totalSize)
     {
     }
 
@@ -795,48 +731,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     /// Arranges the UI element and positions it in the finalrect.
     /// </summary>
     /// <param name="outerRect">The final position and size the parent computed for this child element.</param>
-    public void Arrange(RectangleF outerRect)
+    public virtual void Arrange(RectangleF outerRect)
     {
-#if DEBUG_LAYOUT
-      System.Diagnostics.Trace.WriteLine(string.Format("Arrange {0} Name='{1}', outerRect={2}", GetType().Name, Name, outerRect));
-#endif
-      if (SameRect(_outerRect, outerRect))
-      { // Optimization: If our input data is the same and the layout isn't invalid, we don't need to arrange again
-#if DEBUG_LAYOUT
-        System.Diagnostics.Trace.WriteLine(string.Format("Arrange {0} Name='{1}', cutting short, outerRect={2} is like before", GetType().Name, Name, outerRect));
-#endif
-        return;
-      }
-      _outerRect = new RectangleF(outerRect.Location, outerRect.Size);
-      RectangleF rect = new RectangleF(outerRect.Location, outerRect.Size);
-      RemoveMargin(ref rect, Margin);
-
-      if (LayoutTransform != null)
-      {
-        Matrix layoutTransform = LayoutTransform.GetTransform().RemoveTranslation();
-        if (!layoutTransform.IsIdentity)
-        {
-          float sizeScaleX;
-          float sizeScaleY;
-          layoutTransform.GetTransformedSizeScale(out sizeScaleX, out sizeScaleY);
-
-          rect = new RectangleF(
-              rect.Location.X + rect.Width*(1 - 1/sizeScaleX)/2,
-              rect.Location.Y + rect.Height*(1 - 1/sizeScaleY)/2,
-              rect.Width/sizeScaleX,
-              rect.Height/sizeScaleY);
-        }
-      }
-      _innerRect = rect;
-      ArrangeOverride();
-
-      Initialize();
-      InitializeTriggers();
-    }
-
-    protected virtual void ArrangeOverride()
-    {
-      ActualPosition = _innerRect.Location;
     }
 
     /// <summary>
@@ -859,80 +755,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       UIElement parent = VisualParent as UIElement;
       if (parent != null)
         parent.InvalidateLayout();
-    }
-
-    /// <summary>
-    /// Updates the layout, i.e. calls <see cref="Measure(ref SizeF)"/> and <see cref="Arrange(RectangleF)"/>.
-    /// Must be done from the render thread.
-    /// </summary>
-    public void UpdateLayout()
-    {
-      // When measure or arrange is directly or indirectly called from the following code, we need the measure/arrange to be
-      // forced and not be optimized when the available size/outer rect are the same.
-      // We could introduce new variables _isMeasureInvalid and _isArrangementInvalid, set it to true here and
-      // check them in the Measure/Arrange methods, but it is easier to just clear our available size/outer rect cache which
-      // also causes the Measure/Arrange to take place:
-      _availableSize = null;
-      _outerRect = null;
-
-#if DEBUG_LAYOUT
-      System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}'", GetType().Name, Name));
-#endif
-
-      UIElement parent = VisualParent as UIElement;
-      if (parent == null)
-      {
-        SizeF size = new SizeF(Screen.SkinWidth, Screen.SkinHeight);
-
-#if DEBUG_LAYOUT
-        System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}', no visual parent so measure with screen size {2}", GetType().Name, Name, size));
-#endif
-        Measure(ref size);
-
-#if DEBUG_LAYOUT
-        System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}', no visual parent so we arrange with screen size {2}", GetType().Name, Name, size));
-#endif
-        // Ignore the measured size - arrange with screen size
-        Arrange(new RectangleF(0, 0, Screen.SkinWidth, Screen.SkinHeight));
-      }
-      else
-      { // We have a visual parent, i.e parent != null
-        if (!_availableSize.HasValue || !_outerRect.HasValue)
-        {
-#if DEBUG_LAYOUT
-          System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}', no available size or no outer rect, updating layout at parent {2}", GetType().Name, Name, parent));
-#endif
-          // We weren't Measured nor Arranged before - need to update parent
-          parent.InvalidateLayout();
-          return;
-        }
-
-        SizeF availableSize = new SizeF(_availableSize.Value.Width, _availableSize.Value.Height);
-        SizeF formerDesiredSize = _desiredSize;
-
-#if DEBUG_LAYOUT
-        System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}', measuring with former available size {2}", GetType().Name, Name, availableSize));
-#endif
-        Measure(ref availableSize);
-
-        if (_desiredSize != formerDesiredSize)
-        {
-#if DEBUG_LAYOUT
-          System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}', measuring returned different desired size, updating parent (former: {2}, now: {3})", GetType().Name, Name, formerDesiredSize, _desiredSize));
-#endif
-          // Our size has changed - we need to update our parent
-          parent.InvalidateLayout();
-          return;
-        }
-        else
-        { // Our size is the same as before - just arrange
-          RectangleF outerRect = new RectangleF(_outerRect.Value.Location, _outerRect.Value.Size);
-#if DEBUG_LAYOUT
-          System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}', measuring returned same desired size, arranging with old outer rect {2}", GetType().Name, Name, outerRect));
-#endif
-          Arrange(outerRect);
-        }
-      }
     }
 
     #endregion
@@ -1058,10 +880,9 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     {
       if (this is INameScope)
         return this as INameScope;
-      else if (TemplateNameScope != null)
+      if (TemplateNameScope != null)
         return TemplateNameScope;
-      else
-        return LogicalParent == null ? Screen : LogicalParent.FindNameScope();
+      return LogicalParent == null ? Screen : LogicalParent.FindNameScope();
     }
 
     /// <summary>
@@ -1135,8 +956,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       INameScope nameScope = FindNameScope();
       if (nameScope != null)
         return nameScope.FindName(name) as UIElement;
-      else
-        return null;
+      return null;
     }
 
     public void ForEachElementInTree_BreadthFirst(IUIElementAction action)
@@ -1212,6 +1032,16 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
     public static bool IsNear(double x, double y)
     {
       return Math.Abs(x - y) < DELTA_DOUBLE;
+    }
+
+    public static bool GreaterThanOrClose(double x, double y)
+    {
+      return x > y || IsNear(x, y);
+    }
+
+    public static bool LessThanOrClose(double x, double y)
+    {
+      return x< y || IsNear(x, y);
     }
 
     #region IContentEnabled members

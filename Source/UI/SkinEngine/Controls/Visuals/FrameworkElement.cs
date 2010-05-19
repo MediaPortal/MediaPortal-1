@@ -22,6 +22,8 @@
 
 #endregion
 
+//#define DEBUG_LAYOUT
+
 using System;
 using System.Drawing;
 using MediaPortal.UI.Control.InputManager;
@@ -518,24 +520,341 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
       return false;
     }
 
-    protected override void MeasureOverride(ref SizeF totalSize)
+    #region Replacing methods for the == operator which evaluate two float.NaN values to equal
+
+    public static bool SameValue(float val1, float val2)
     {
+      return float.IsNaN(val1) && float.IsNaN(val2) || val1 == val2;
+    }
+
+    public static bool SameSize(SizeF size1, SizeF size2)
+    {
+      return SameValue(size1.Width, size2.Width) && SameValue(size1.Height, size2.Height);
+    }
+
+    public static bool SameSize(SizeF? size1, SizeF size2)
+    {
+      return size1.HasValue && SameSize(size1.Value, size2);
+    }
+
+    public static bool SameRect(RectangleF rect1, RectangleF rect2)
+    {
+      return SameValue(rect1.X, rect2.X) && SameValue(rect1.Y, rect2.Y) && SameValue(rect1.Width, rect2.Width) && SameValue(rect1.Height, rect2.Height);
+    }
+
+    public static bool SameRect(RectangleF? rect1, RectangleF rect2)
+    {
+      return rect1.HasValue && SameRect(rect1.Value, rect2);
+    }
+
+    #endregion
+
+    #region Measure & Arrange
+
+    /// <summary>
+    /// Updates the layout, i.e. calls <see cref="Measure(ref SizeF)"/> and <see cref="Arrange(RectangleF)"/>.
+    /// Must be done from the render thread.
+    /// </summary>
+    public void UpdateLayout()
+    {
+      // When measure or arrange is directly or indirectly called from the following code, we need the measure/arrange to be
+      // forced and not be optimized when the available size/outer rect are the same.
+      // We could introduce new variables _isMeasureInvalid and _isArrangementInvalid, set it to true here and
+      // check them in the Measure/Arrange methods, but it is easier to just clear our available size/outer rect cache which
+      // also causes the Measure/Arrange to take place:
+      _availableSize = null;
+      _outerRect = null;
+
+#if DEBUG_LAYOUT
+      System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}'", GetType().Name, Name));
+#endif
+
+      UIElement parent = VisualParent as UIElement;
+      if (parent == null)
+      {
+        SizeF size = new SizeF(Screen.SkinWidth, Screen.SkinHeight);
+
+#if DEBUG_LAYOUT
+        System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}', no visual parent so measure with screen size {2}", GetType().Name, Name, size));
+#endif
+        Measure(ref size);
+
+#if DEBUG_LAYOUT
+        System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}', no visual parent so we arrange with screen size {2}", GetType().Name, Name, size));
+#endif
+        // Ignore the measured size - arrange with screen size
+        Arrange(new RectangleF(0, 0, Screen.SkinWidth, Screen.SkinHeight));
+      }
+      else
+      { // We have a visual parent, i.e parent != null
+        if (!_availableSize.HasValue || !_outerRect.HasValue)
+        {
+#if DEBUG_LAYOUT
+          System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}', no available size or no outer rect, updating layout at parent {2}", GetType().Name, Name, parent));
+#endif
+          // We weren't Measured nor Arranged before - need to update parent
+          parent.InvalidateLayout();
+          return;
+        }
+
+        SizeF availableSize = new SizeF(_availableSize.Value.Width, _availableSize.Value.Height);
+        SizeF formerDesiredSize = _desiredSize;
+
+#if DEBUG_LAYOUT
+        System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}', measuring with former available size {2}", GetType().Name, Name, availableSize));
+#endif
+        Measure(ref availableSize);
+
+        if (_desiredSize != formerDesiredSize)
+        {
+#if DEBUG_LAYOUT
+          System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}', measuring returned different desired size, updating parent (former: {2}, now: {3})", GetType().Name, Name, formerDesiredSize, _desiredSize));
+#endif
+          // Our size has changed - we need to update our parent
+          parent.InvalidateLayout();
+          return;
+        }
+        // Our size is the same as before - just arrange
+        RectangleF outerRect = new RectangleF(_outerRect.Value.Location, _outerRect.Value.Size);
+#if DEBUG_LAYOUT
+        System.Diagnostics.Trace.WriteLine(string.Format("UpdateLayout {0} Name='{1}', measuring returned same desired size, arranging with old outer rect {2}", GetType().Name, Name, outerRect));
+#endif
+        Arrange(outerRect);
+      }
+    }
+
+    /// <summary>
+    /// Given the transform currently applied to child, this method finds (in axis-aligned local space)
+    /// the largest rectangle that, after transform, fits within transformSpaceBounds.
+    /// Largest rectangle means rectangle of the greatest area in local space (although maximal area in local space
+    /// implies maximal area in transform space).
+    /// </summary>
+    /// <param name="transform">Transformation matrix.</param>
+    /// <param name="localBounds">The bounds in local space where the returned size fits when transformed
+    /// via the given <paramref name="transform"/>.</param>
+    /// <returns>The dimensions, in local space, of the maximal area rectangle found.</returns>
+    private static SizeF FindMaxTransformedSize(Matrix transform, SizeF localBounds)
+    {
+      // X (width) and Y (height) constraints for axis-aligned bounding box in dest. space
+      float xConstr = localBounds.Width;
+      float yConstr = localBounds.Height;
+
+      // Avoid doing math on an empty rect
+      if (IsNear(xConstr, 0) || IsNear(yConstr, 0)) 
+        return new SizeF(0, 0); 
+
+      bool xConstrInfinite = float.IsNaN(xConstr); 
+      bool yConstrInfinite = float.IsNaN(yConstr);
+
+      if (xConstrInfinite && yConstrInfinite)
+        return new SizeF(float.NaN, float.NaN);
+
+      if(xConstrInfinite) // Assume square for one-dimensional constraint 
+        xConstr = yConstr; 
+      else if (yConstrInfinite)
+        yConstr = xConstr; 
+
+      // We only deal with nonsingular matrices here. The nonsingular matrix is the one
+      // that has inverse (determinant != 0).
+      if(transform.Determinant() == 0) 
+        return new SizeF(0, 0);
+
+      float a = transform.M11; 
+      float b = transform.M12;
+      float c = transform.M21; 
+      float d = transform.M22;
+
+      // Result width and height (in child/local space)
+      float w;
+      float h; 
+
+      // Because we are dealing with nonsingular transform matrices, we have (b==0 || c==0) XOR (a==0 || d==0) 
+      if (IsNear(b, 0) || IsNear(c, 0)) 
+      { // (b == 0 || c == 0) ==> a != 0 && d != 0
+        float yCoverD = yConstrInfinite ? float.PositiveInfinity : Math.Abs(yConstr/d); 
+        float xCoverA = xConstrInfinite ? float.PositiveInfinity : Math.Abs(xConstr/a);
+
+        if (IsNear(b, 0))
+        {
+          if (IsNear(c, 0))
+          { // b == 0, c == 0, a != 0, d != 0
+
+            // No constraint relation; use maximal width and height 
+            h = yCoverD; 
+            w = xCoverA; 
+          }
+          else 
+          { // b == 0, a != 0, c != 0, d != 0
+
+            // Maximizing under line (hIntercept=xConstr/c, wIntercept=xConstr/a) 
+            // BUT we still have constraint: h <= yConstr/d
+            h = Math.Min(0.5f*Math.Abs(xConstr/c), yCoverD); 
+            w = xCoverA - ((c * h) / a);
+          } 
+        }
+        else
+        { // c == 0, a != 0, b != 0, d != 0 
+
+          // Maximizing under line (hIntercept=yConstr/d, wIntercept=yConstr/b)
+          // BUT we still have constraint: w <= xConstr/a
+          w = Math.Min( 0.5f*Math.Abs(yConstr/b), xCoverA);
+          h = yCoverD - ((b * w) / d);
+        }
+      }
+      else if (IsNear(a, 0) || IsNear(d, 0))
+      { // (a == 0 || d == 0) ==> b != 0 && c != 0 
+        float yCoverB = Math.Abs(yConstr/b);
+        float xCoverC = Math.Abs(xConstr/c); 
+
+        if (IsNear(a, 0))
+        {
+          if (IsNear(d, 0)) 
+          { // a == 0, d == 0, b != 0, c != 0 
+
+            // No constraint relation; use maximal width and height
+            h = xCoverC;
+            w = yCoverB;
+          }
+          else
+          { // a == 0, b != 0, c != 0, d != 0
+
+            // Maximizing under line (hIntercept=yConstr/d, wIntercept=yConstr/b)
+            // BUT we still have constraint: h <= xConstr/c
+            h = Math.Min(0.5f*Math.Abs(yConstr/d), xCoverC);
+            w = yCoverB - ((d * h) / b);
+          }
+        }
+        else
+        { // d == 0, a != 0, b != 0, c != 0
+
+          // Maximizing under line (hIntercept=xConstr/c, wIntercept=xConstr/a)
+          // BUT we still have constraint: w <= yConstr/b
+          w = Math.Min(0.5f*Math.Abs(xConstr/a), yCoverB);
+          h = xCoverC - ((a * w) / c);
+        }
+      }
+      else
+      { 
+        float xCoverA = Math.Abs(xConstr / a); // w-intercept of x-constraint line
+        float xCoverC = Math.Abs(xConstr / c); // h-intercept of x-constraint line
+
+        float yCoverB = Math.Abs(yConstr / b); // w-intercept of y-constraint line
+        float yCoverD = Math.Abs(yConstr / d); // h-intercept of y-constraint line
+
+        // The tighest constraint governs, so we pick the lowest constraint line
+
+        // The optimal point (w, h) for which Area = w*h is maximized occurs halfway to each intercept.
+        w = Math.Min(yCoverB, xCoverA) * 0.5f;
+        h = Math.Min(xCoverC, yCoverD) * 0.5f;
+
+        if ((GreaterThanOrClose(xCoverA, yCoverB) &&
+             LessThanOrClose(xCoverC, yCoverD)) ||
+            (LessThanOrClose(xCoverA, yCoverB) &&
+             GreaterThanOrClose(xCoverC, yCoverD)))
+        {
+          // Constraint lines cross; since the most restrictive constraint wins,
+          // we have to maximize under two line segments, which together are discontinuous.
+          // Instead, we maximize w*h under the line segment from the two smallest endpoints. 
+
+          // Since we are not (except for in corner cases) on the original constraint lines, 
+          // we are not using up all the available area in transform space.  So scale our shape up 
+          // until it does in at least one dimension.
+
+          SizeF childSizeTr = new SizeF(w, h);
+          transform.TransformSize(ref childSizeTr);
+          float expandFactor = Math.Min(xConstr / childSizeTr.Width, yConstr / childSizeTr.Height); 
+          if (!float.IsNaN(expandFactor) && !float.IsInfinity(expandFactor)) 
+          {
+            w *= expandFactor;
+            h *= expandFactor; 
+          }
+        }
+      }
+      return new SizeF(w, h);
+    }
+
+    public sealed override void Measure(ref SizeF totalSize)
+    {
+#if DEBUG_LAYOUT
+      System.Diagnostics.Trace.WriteLine(string.Format("Measure {0} Name='{1}', totalSize={2}", GetType().Name, Name, totalSize));
+#endif
+      if (SameSize(_availableSize, totalSize))
+      { // Optimization: If our input data is the same and the layout isn't invalid, we don't need to measure again
+        totalSize = _desiredSize;
+#if DEBUG_LAYOUT
+        System.Diagnostics.Trace.WriteLine(string.Format("Measure {0} Name='{1}', cutting short, totalSize is like before, returns desired size={2}", GetType().Name, Name, totalSize));
+#endif
+        return;
+      }
+      _availableSize = new SizeF(totalSize);
+      RemoveMargin(ref totalSize, Margin);
+      
+      Matrix? layoutTransform = LayoutTransform == null ? new Matrix?() : LayoutTransform.GetTransform();
+      if (layoutTransform.HasValue)
+        totalSize = FindMaxTransformedSize(layoutTransform.Value, totalSize);
+
       if (!double.IsNaN(Width))
         totalSize.Width = (float) Width;
       if (!double.IsNaN(Height))
         totalSize.Height = (float) Height;
 
-      SizeF calculatedSize = CalculateDesiredSize(new SizeF(totalSize));
+      totalSize = CalculateDesiredSize(new SizeF(totalSize));
 
-      if (double.IsNaN(Width))
-        totalSize.Width = calculatedSize.Width;
-      if (double.IsNaN(Height))
-        totalSize.Height = calculatedSize.Height;
+      if (!double.IsNaN(Width))
+        totalSize.Width = (float) Width;
+      if (!double.IsNaN(Height))
+        totalSize.Height = (float) Height;
+
+      if (layoutTransform.HasValue)
+        layoutTransform.Value.TransformSize(ref totalSize);
+
+      AddMargin(ref totalSize, Margin);
+      _desiredSize = totalSize;
+#if DEBUG_LAYOUT
+      System.Diagnostics.Trace.WriteLine(string.Format("Measure {0} Name='{1}', returns calculated desired size={2}", GetType().Name, Name, totalSize));
+#endif
     }
 
-    protected override void ArrangeOverride()
+    public sealed override void Arrange(RectangleF outerRect)
     {
-      base.ArrangeOverride();
+#if DEBUG_LAYOUT
+      System.Diagnostics.Trace.WriteLine(string.Format("Arrange {0} Name='{1}', outerRect={2}", GetType().Name, Name, outerRect));
+#endif
+      if (SameRect(_outerRect, outerRect))
+      { // Optimization: If our input data is the same and the layout isn't invalid, we don't need to arrange again
+#if DEBUG_LAYOUT
+        System.Diagnostics.Trace.WriteLine(string.Format("Arrange {0} Name='{1}', cutting short, outerRect={2} is like before", GetType().Name, Name, outerRect));
+#endif
+        return;
+      }
+      _outerRect = new RectangleF(outerRect.Location, outerRect.Size);
+      RectangleF rect = new RectangleF(outerRect.Location, outerRect.Size);
+      RemoveMargin(ref rect, Margin);
+
+      if (LayoutTransform != null)
+      {
+        Matrix layoutTransform = LayoutTransform.GetTransform().RemoveTranslation();
+        if (!layoutTransform.IsIdentity)
+        {
+          SizeF transformedSize = FindMaxTransformedSize(layoutTransform, rect.Size);
+
+          rect = new RectangleF(
+              rect.Location.X + (rect.Width - transformedSize.Width)/2,
+              rect.Location.Y + (rect.Height - transformedSize.Height)/2,
+              transformedSize.Width,
+              transformedSize.Height);
+        }
+      }
+      _innerRect = rect;
+      ArrangeOverride();
+
+      Initialize();
+      InitializeTriggers();
+    }
+
+    protected virtual void ArrangeOverride()
+    {
+      ActualPosition = _innerRect.Location;
       ActualWidth = _innerRect.Width;
       ActualHeight = _innerRect.Height;
       UpdateFocus();
@@ -686,6 +1005,8 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         // Do nothing
       }
     }
+
+    #endregion
 
     protected void TransformMouseCoordinates(ref float x, ref float y)
     {
@@ -877,8 +1198,6 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
     public void RenderToTexture(Texture texture, RenderContext renderContext)
     {
-      // TODO: Rework this: Add RenderTarget property to RenderContext, use standard DoRender method
-
       // We do the following here:
       // 1. Set the rendertarget to the given texture
       // 2. Clear the texture with an alpha value of 0
@@ -918,7 +1237,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
 
       RenderContext localRenderContext = parentRenderContext.Derive(bounds, layoutTransformMatrix,
           renderTransformMatrix, RenderTransformOrigin, Opacity);
-      _inverseFinalTransform = Matrix.Invert(localRenderContext.Transform);
+      _inverseFinalTransform = Matrix.Invert(localRenderContext.MouseTransform);
 
       if (OpacityMask == null)
         // Simply render without opacity mask
@@ -929,7 +1248,7 @@ namespace MediaPortal.UI.SkinEngine.Controls.Visuals
         if (_updateOpacityMask)
           PrepareOpacityMaskContext(textureSize);
 
-        RenderContext tempRenderContext = new RenderContext(Matrix.Identity, bounds);
+        RenderContext tempRenderContext = new RenderContext(Matrix.Identity, localRenderContext.Transform, bounds);
         RenderToTexture(_opacityMaskContext.Texture, tempRenderContext);
 
         if (localRenderContext.OccupiedTransformedBounds != _lastOccupiedTransformedBounds)
