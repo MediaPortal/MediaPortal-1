@@ -117,7 +117,7 @@ CMpcAudioRenderer::CMpcAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 		useWASAPI = false;	// Wasapi not available below Vista
 
   // time streaching is currently implemented for DS only
-  //useWASAPI = false;
+  useWASAPI = false;
 
 	TRACE(_T("CMpcAudioRenderer constructor"));
 	if (!useWASAPI)

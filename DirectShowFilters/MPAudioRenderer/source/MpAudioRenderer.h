@@ -32,7 +32,7 @@
 #include <audioclient.h>
 #include <Endpointvolume.h>
 
-#include "SoundTouch/Include/SoundTouch.h"
+#include "../SoundTouch/Include/SoundTouch.h"
 #include "SyncClock.h"
 #include "IAVSyncClock.h"
 

@@ -21,6 +21,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug Unicode|Win32"
+			OutputDirectory=".\obj\Debug"
+			IntermediateDirectory=".\obj\Debug"
 			ConfigurationType="2"
 			InheritedPropertySheets=".\common.vsprops;.\debug.vsprops"
 			UseOfMFC="2"
@@ -47,6 +49,11 @@
 				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;&quot;$(WINDOWS_SDK)Include\&quot;;&quot;$(DXSDK_DIR)Include&quot;;SoundTouch\include;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_USRDLL;INTEGER_SAMPLES"
 				RuntimeLibrary="3"
+				AssemblerListingLocation=".\obj\Debug/"
+				ObjectFile=".\obj\Debug/"
+				ProgramDataBaseFileName=".\obj\Debug/"
+				CompileAs="2"
+				ShowIncludes="false"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -61,11 +68,11 @@
 				Name="VCLinkerTool"
 				RegisterOutput="false"
 				AdditionalDependencies="dsound.lib strmbasd.lib Winmm.lib"
-				OutputFile="$(OutDir)\$(ProjectName).ax"
+				OutputFile="bin\Debug/mpaudiorenderer.ax"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
-				ModuleDefinitionFile="MpAudioRenderer.def"
+				ModuleDefinitionFile=".\source\MpAudioRenderer.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -169,6 +176,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release Unicode|Win32"
+			OutputDirectory=".\obj\Release"
+			IntermediateDirectory=".\obj\Release"
 			ConfigurationType="2"
 			InheritedPropertySheets=".\common.vsprops;.\debug.vsprops"
 			UseOfMFC="2"
@@ -198,12 +207,16 @@
 				RuntimeLibrary="3"
 				BufferSecurityCheck="true"
 				EnableEnhancedInstructionSet="1"
+				AssemblerListingLocation=".\obj\Release/"
+				ObjectFile=".\obj\Release/"
+				ProgramDataBaseFileName=".\obj\Release/"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				ResourceOutputFileName="$(IntDir)/$(InputName).res"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -212,10 +225,10 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="dsound.lib strmbase.lib Winmm.lib"
 				ShowProgress="2"
-				OutputFile="$(OutDir)\$(ProjectName).ax"
+				OutputFile="bin\Release/mpaudiorenderer.ax"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
-				ModuleDefinitionFile="MpAudioRenderer.def"
+				ModuleDefinitionFile=".\source\MpAudioRenderer.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				LargeAddressAware="2"
@@ -578,27 +591,27 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
 			>
 			<File
-				RelativePath=".\dllsetup.cpp"
+				RelativePath=".\source\dllmain.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\dllmain.cpp"
+				RelativePath=".\source\dllsetup.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\FilterApp.cpp"
+				RelativePath=".\source\FilterApp.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\MpAudioRenderer.cpp"
+				RelativePath=".\source\MpAudioRenderer.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\MpAudioRenderer.def"
+				RelativePath=".\source\MpAudioRenderer.def"
 				>
 			</File>
 			<File
-				RelativePath=".\SyncClock.cpp"
+				RelativePath=".\source\SyncClock.cpp"
 				>
 			</File>
 		</Filter>
@@ -607,31 +620,31 @@
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
 			<File
-				RelativePath=".\dllsetup.h"
+				RelativePath=".\source\dllsetup.h"
 				>
 			</File>
 			<File
-				RelativePath=".\FilterApp.h"
+				RelativePath=".\source\FilterApp.h"
 				>
 			</File>
 			<File
-				RelativePath=".\IAVSyncClock.h"
+				RelativePath=".\source\IAVSyncClock.h"
 				>
 			</File>
 			<File
-				RelativePath=".\MpAudioRenderer.h"
+				RelativePath=".\source\MpAudioRenderer.h"
 				>
 			</File>
 			<File
-				RelativePath=".\resource.h"
+				RelativePath=".\source\resource.h"
 				>
 			</File>
 			<File
-				RelativePath="stdafx.h"
+				RelativePath=".\source\stdafx.h"
 				>
 			</File>
 			<File
-				RelativePath=".\SyncClock.h"
+				RelativePath=".\source\SyncClock.h"
 				>
 			</File>
 		</Filter>
@@ -640,7 +653,7 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 			>
 			<File
-				RelativePath=".\MpAudioRenderer.rc"
+				RelativePath=".\source\MpAudioRenderer.rc"
 				>
 				<FileConfiguration
 					Name="Debug Unicode lib|Win32"
