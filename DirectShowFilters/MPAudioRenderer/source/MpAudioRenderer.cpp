@@ -103,6 +103,7 @@ CMpcAudioRenderer::CMpcAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_hnsActualDuration(0)
 , m_dBias(1.0)
 , m_dAdjustment(1.0)
+, m_bUseTimeStretching(true)
 {
   HMODULE hLib = NULL;
 
@@ -118,14 +119,19 @@ CMpcAudioRenderer::CMpcAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
     m_bUseWASAPI = false;	// Wasapi not available below Vista
   }
 
-  // time stretching is currently implemented for DS only
-  m_bUseWASAPI = false;
+  // For debugging...
+  //m_bUseWASAPI = false;
 
   TRACE(_T("CMpcAudioRenderer constructor"));
   if (!m_bUseWASAPI)
   {
-    m_pSoundTouch	= new soundtouch::SoundTouch();
     *phr = DirectSoundCreate8(NULL, &m_pDS, NULL);
+  }
+  
+  if (m_bUseTimeStretching)
+  {
+	// TODO: use channel based sound objects (since lib has two channel limit)
+    m_pSoundTouch = new soundtouch::SoundTouch();
   }
 }
 
@@ -344,7 +350,7 @@ HRESULT CMpcAudioRenderer::SetMediaType(const CMediaType *pmt)
 
     memcpy(m_pWaveFileFormat, pwf, size);
 
-    if (!m_bUseWASAPI && m_pSoundTouch && (pwf->nChannels <= 2))
+    if (m_pSoundTouch && (pwf->nChannels <= 2))
     {
       m_pSoundTouch->setSampleRate(pwf->nSamplesPerSec);
       m_pSoundTouch->setChannels(pwf->nChannels);
@@ -390,11 +396,23 @@ STDMETHODIMP CMpcAudioRenderer::Run(REFERENCE_TIME tStart)
       return hr;
     }
     
-    hr = m_pAudioClient->Start();
+    /*hr = m_pAudioClient->Start();
     if (FAILED (hr))
     {
       TRACE(_T("CMpcAudioRenderer::Run Start error"));
       return hr;
+    }*/
+
+    if(SUCCEEDED(m_pPosition->GetRate(&m_dRate)))
+    {
+      if (m_dRate < 1.0)
+      {
+        if (FAILED (hr)) return hr;
+      }
+      else
+      {
+        m_pSoundTouch->setRateChange((float)(m_dRate-1.0)*100);
+      }
     }
   }
   else
@@ -695,11 +713,13 @@ HRESULT CMpcAudioRenderer::WriteSampleToDSBuffer(IMediaSample *pMediaSample, boo
   hr = pMediaSample->GetPointer(&pMediaBuffer);
 
   // resample audio stream if required
-  if (m_dRate > 1.0 || m_dBias != 1.0 || m_dAdjustment != 1.0)
+  if (m_bUseTimeStretching)
   {
+    CAutoLock cAutoLock(&m_csResampleLock);
+	
     int nBytePerSample = m_pWaveFileFormat->nChannels * (m_pWaveFileFormat->wBitsPerSample/8);
     m_pSoundTouch->putSamples((const short*)pMediaBuffer, lSize / nBytePerSample);
-    lSize = m_pSoundTouch->receiveSamples ((short*)pMediaBuffer, lSize / nBytePerSample) * nBytePerSample;
+    lSize = m_pSoundTouch->receiveSamples((short*)pMediaBuffer, lSize / nBytePerSample) * nBytePerSample;
   }
 
   pMediaSample->GetTime (&rtStart, &rtStop);
@@ -759,7 +779,8 @@ HRESULT	CMpcAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
   BYTE *pData;
 
   m_nBufferSize = pMediaSample->GetActualDataLength();
-  const long lSize = m_nBufferSize;
+  long lSize = m_nBufferSize;
+
   pMediaSample->GetTime (&rtStart, &rtStop);
   
   AM_MEDIA_TYPE *pmt;
@@ -787,13 +808,24 @@ HRESULT	CMpcAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
   hr = pMediaSample->GetPointer(&pMediaBuffer);
   if (FAILED (hr)) return hr; 
 
+  // resample audio stream if required
+  if (m_bUseTimeStretching)
+  {
+    CAutoLock cAutoLock(&m_csResampleLock);
+	
+    //TRACE(_T("CMpcAudioRenderer::DoRenderSampleWasapi - resampling: m_nBufferSize: %d lSize: %d"), m_nBufferSize, lSize);
+    int nBytePerSample = m_pWaveFileFormat->nChannels * (m_pWaveFileFormat->wBitsPerSample/8);
+    m_pSoundTouch->putSamples((const short*)pMediaBuffer, lSize / nBytePerSample);
+    lSize = m_pSoundTouch->receiveSamples ((short*)pMediaBuffer, lSize / nBytePerSample) * nBytePerSample;
+  }
+
   pInputBufferPointer = &pMediaBuffer[0];
   pInputBufferEnd = &pMediaBuffer[0] + lSize;
 
   WORD frameSize = m_pWaveFileFormat->nBlockAlign;
 
   // Sleep for half the buffer duration since last buffer feed
-  DWORD currentTime=GetTickCount();
+  DWORD currentTime = GetTickCount();
   if (m_dwLastBufferTime != 0 && m_hnsActualDuration != 0 && m_dwLastBufferTime < currentTime && 
     (currentTime - m_dwLastBufferTime) < m_hnsActualDuration)
   {
@@ -1270,6 +1302,8 @@ STDMETHODIMP CMpcAudioRenderer::GetPreroll(LONGLONG *pPreroll)
 
 HRESULT CMpcAudioRenderer::AdjustClock(DOUBLE pAdjustment)
 {
+  CAutoLock cAutoLock(&m_csResampleLock);
+
   m_dAdjustment = pAdjustment;
   m_Clock.SetAdjustment(m_dAdjustment);
   if (m_pSoundTouch)
@@ -1281,6 +1315,8 @@ HRESULT CMpcAudioRenderer::AdjustClock(DOUBLE pAdjustment)
 
 HRESULT CMpcAudioRenderer::SetBias(DOUBLE pBias)
 {
+  CAutoLock cAutoLock(&m_csResampleLock);
+
   m_dBias = pBias;
   m_Clock.SetBias(m_dBias);
   if (m_pSoundTouch)

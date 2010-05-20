@@ -155,4 +155,6 @@ private:
   CSyncClock  m_Clock;
   double      m_dBias;
   double      m_dAdjustment;
+  CCritSec    m_csResampleLock;
+  bool        m_bUseTimeStretching;
 };
