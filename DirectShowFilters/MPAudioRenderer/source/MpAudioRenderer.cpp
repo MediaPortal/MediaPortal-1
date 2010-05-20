@@ -1203,9 +1203,16 @@ HRESULT CMpcAudioRenderer::BeginFlush()
   
   if (m_pAudioClient && m_bIsAudioClientStarted) 
   {
+    HRESULT hr = S_OK;
+    
     m_pAudioClient->Stop();
-    m_pAudioClient->Reset();
+    hr = m_pAudioClient->Reset();
     m_bIsAudioClientStarted = false;
+
+    if (hr != S_OK)
+    {
+      TRACE(_T("CMpcAudioRenderer::BeginFlush - m_pAudioClient reset failed with %d"), hr);
+    }
   }
   
   if (m_pSoundTouch)
