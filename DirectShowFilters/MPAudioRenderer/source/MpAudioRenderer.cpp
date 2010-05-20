@@ -441,8 +441,15 @@ STDMETHODIMP CMpcAudioRenderer::Stop()
 {
   TRACE(_T("CMpcAudioRenderer::Stop"));
   
-  if (m_pDSBuffer) m_pDSBuffer->Stop();
+  if (m_pDSBuffer)
   {
+    m_pDSBuffer->Stop();
+  }
+  
+  if (m_pAudioClient && m_bIsAudioClientStarted) 
+  {
+    m_pAudioClient->Stop();
+    m_pAudioClient->Reset();
     m_bIsAudioClientStarted = false;
   }
 
@@ -879,7 +886,7 @@ HRESULT	CMpcAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
     {
       TRACE(_T("CMpcAudioRenderer::DoRenderSampleWasapi Starting audio client"));
       m_pAudioClient->Start();
-      m_bIsAudioClientStarted=true;
+      m_bIsAudioClientStarted = true;
     }
 
     if (pInputBufferPointer >= pInputBufferEnd)
@@ -1164,7 +1171,7 @@ HRESULT CMpcAudioRenderer::CreateAudioClient(IMMDevice *pMMDevice, IAudioClient 
     }
 
     SAFE_RELEASE(*ppAudioClient);
-    m_bIsAudioClientStarted=false;
+    m_bIsAudioClientStarted = false;
   }
 
   if (!pMMDevice)
@@ -1197,9 +1204,14 @@ HRESULT CMpcAudioRenderer::BeginFlush()
   if (m_pAudioClient && m_bIsAudioClientStarted) 
   {
     m_pAudioClient->Stop();
+    m_pAudioClient->Reset();
+    m_bIsAudioClientStarted = false;
   }
   
-  m_bIsAudioClientStarted = false;
+  if (m_pSoundTouch)
+  {
+    m_pSoundTouch->flush();
+  }
 
   return CBaseRenderer::BeginFlush(); 
 }
