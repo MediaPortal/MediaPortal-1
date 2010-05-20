@@ -104,11 +104,11 @@ CMpcAudioRenderer::CMpcAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_dBias(1.0)
 , m_dAdjustment(1.0)
 {
-  HMODULE hLib;
+  HMODULE hLib = NULL;
 
   // Load Vista specifics DLLs
   hLib = LoadLibrary ("AVRT.dll");
-  if (hLib != NULL)
+  if (hLib)
 	{
     pfAvSetMmThreadCharacteristicsW		= (PTR_AvSetMmThreadCharacteristicsW)	GetProcAddress (hLib, "AvSetMmThreadCharacteristicsW");
     pfAvRevertMmThreadCharacteristics	= (PTR_AvRevertMmThreadCharacteristics)	GetProcAddress (hLib, "AvRevertMmThreadCharacteristics");
@@ -416,21 +416,28 @@ STDMETHODIMP CMpcAudioRenderer::Run(REFERENCE_TIME tStart)
 
     ClearBuffer();
   }
-
   return CBaseRenderer::Run(tStart);
 }
 
 STDMETHODIMP CMpcAudioRenderer::Stop() 
 {
+  TRACE(_T("CMpcAudioRenderer::Stop"));
+  
   if (m_pDSBuffer) m_pDSBuffer->Stop();
   {
     m_bIsAudioClientStarted = false;
   }
 
-  // TODO: work around for the .NET garbage collection keeping the exclusive mode locked
-  /*SAFE_RELEASE(m_pRenderClient);
-  SAFE_RELEASE(m_pAudioClient);
-  SAFE_RELEASE(m_pMMDevice);*/
+  FILTER_STATE state; 
+  GetState(10000, &state);
+
+  if (state == State_Paused)
+  {
+    TRACE(_T("CMpcAudioRenderer::Stop - releasing WASAPI resources"));
+    SAFE_RELEASE(m_pRenderClient);
+    SAFE_RELEASE(m_pAudioClient);
+    SAFE_RELEASE(m_pMMDevice);
+  }
 
   return CBaseRenderer::Stop(); 
 };

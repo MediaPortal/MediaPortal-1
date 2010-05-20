@@ -100,7 +100,7 @@ public:
   // TODO: Ugly hack to get the release mode to compile. To be fixed!
   STDMETHODIMP_(ULONG) NonDelegatingRelease() { return CUnknown::NonDelegatingRelease();};
 
- // CMpcAudioRenderer
+  // CMpcAudioRenderer
 private:
 
 	HRESULT					DoRenderSampleDirectSound(IMediaSample *pMediaSample);
