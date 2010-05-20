@@ -965,6 +965,8 @@
     <String id="1197">Slå av DXVA</String>
     <String id="1198">DVD-Navigator</String>
     <String id="1200">Inställningsguiden</String>
+    <String id="1201">Spela upp videon från början</String>
+    <String id="1211">Återuppta uppspelning från {0}</String>
     <String id="1300" prefix="Mina ">TV-serier</String>
     <String id="1440" prefix="Min ">Text-TV</String>
     <String id="1441">Text-TV</String>
