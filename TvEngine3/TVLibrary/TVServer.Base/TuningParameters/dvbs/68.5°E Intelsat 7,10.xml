@@ -1,42 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ArrayOfTransponder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Transponder>
-    <CarrierFrequency>3503000</CarrierFrequency>
-    <Polarisation>LinearH</Polarisation>
-    <SymbolRate>1808</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>3539000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>3303</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>3558000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>3255</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>3661000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>14074</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
     <CarrierFrequency>3716000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>20600</SymbolRate>
@@ -68,7 +32,7 @@
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>2950</SymbolRate>
     <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
+    <InnerFecRate>Rate5_6</InnerFecRate>
     <Pilot>NotSet</Pilot>
     <Rolloff>NotSet</Rolloff>
   </Transponder>
@@ -174,7 +138,7 @@
   <Transponder>
     <CarrierFrequency>3836000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
-    <SymbolRate>20600</SymbolRate>
+    <SymbolRate>22500</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -183,7 +147,7 @@
   <Transponder>
     <CarrierFrequency>3863000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
-    <SymbolRate>20600</SymbolRate>
+    <SymbolRate>22500</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -195,6 +159,15 @@
     <SymbolRate>19890</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>3893000</CarrierFrequency>
+    <Polarisation>LinearV</Polarisation>
+    <SymbolRate>3003</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>Rate2_3</InnerFecRate>
     <Pilot>NotSet</Pilot>
     <Rolloff>NotSet</Rolloff>
   </Transponder>
@@ -417,7 +390,7 @@
   <Transponder>
     <CarrierFrequency>4130000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
-    <SymbolRate>8680</SymbolRate>
+    <SymbolRate>11850</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -778,6 +751,24 @@
     <CarrierFrequency>3712000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
     <SymbolRate>14454</SymbolRate>
+    <Modulation>Mod8Psk</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>On</Pilot>
+    <Rolloff>ThirtyFive</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>3783000</CarrierFrequency>
+    <Polarisation>LinearH</Polarisation>
+    <SymbolRate>7000</SymbolRate>
+    <Modulation>Mod8Psk</Modulation>
+    <InnerFecRate>Rate9_10</InnerFecRate>
+    <Pilot>On</Pilot>
+    <Rolloff>ThirtyFive</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>4013000</CarrierFrequency>
+    <Polarisation>LinearV</Polarisation>
+    <SymbolRate>1680</SymbolRate>
     <Modulation>Mod8Psk</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>On</Pilot>
