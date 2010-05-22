@@ -50,7 +50,7 @@ namespace SetupTv.Sections
       Text = "Preview " + _channel.Name;
 
       TvServer server = new TvServer();
-      User user = new User();
+      User user = new User("setuptv", false);
       TvResult result = server.StartTimeShifting(ref user, _channel.IdChannel, out _card);
       if (result != TvResult.Succeeded)
       {
