@@ -298,7 +298,7 @@ namespace MediaPortal.GUI.RSS
         }
         dlgProgress.Close();
       }
-      catch (Exception)
+      catch (Exception e)
       {
         dlgProgress.Close();
         if (bShowWarning)
@@ -309,6 +309,7 @@ namespace MediaPortal.GUI.RSS
           msg.Param3 = 0;
           msg.Label3 = m_strSiteURL;
           GUIWindowManager.SendMessage(msg);
+        Log.Error(e);
         }
       }
     }
