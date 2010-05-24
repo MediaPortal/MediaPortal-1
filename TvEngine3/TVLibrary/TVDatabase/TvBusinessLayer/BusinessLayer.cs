@@ -1662,7 +1662,7 @@ namespace TvDatabase
 
       sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
       sb.AddConstraint(string.Format("({0} or {1} or {2}) ", sub1, sub2, sub3));
-      sb.AddConstraint(Operator.Like, "title", "%" + title + "%");
+      sb.AddConstraint(Operator.Equals, "title", title);
       sb.AddOrderByField(true, "starttime");
 
       SqlStatement stmt = sb.GetStatement(true);
@@ -1677,7 +1677,7 @@ namespace TvDatabase
       StringBuilder SqlSelectCommand = new StringBuilder();
       SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
       SqlSelectCommand.AppendFormat(
-        "where ((EndTime > '{0}' and EndTime < '{1}') or (StartTime >= '{0}' and StartTime <= '{1}') or (StartTime <= '{0}' and EndTime >= '{1}')) and title like '%{2}%' and c.visibleInGuide = 1 order by startTime",
+        "where ((EndTime > '{0}' and EndTime < '{1}') or (StartTime >= '{0}' and StartTime <= '{1}') or (StartTime <= '{0}' and EndTime >= '{1}')) and title = '{2}' and c.visibleInGuide = 1 order by startTime",
         StartTimeString, EndTimeString, EscapeSQLString(title)
         );
       SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof (Program)).GetStatement(true);
