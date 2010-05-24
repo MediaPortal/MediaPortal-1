@@ -910,6 +910,7 @@ namespace TvPlugin
       GUIPropertyManager.RemovePlayerProperties();
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", item.Label);
       GUIPropertyManager.SetProperty("#Play.Current.Album", item.Label);
+      GUIPropertyManager.SetProperty("#Play.Current.Thumb", item.ThumbnailImage);
       if (item.MusicTag == null)
       {
         return;
