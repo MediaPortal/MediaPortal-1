@@ -46,6 +46,7 @@
           this.chk_update = new System.Windows.Forms.CheckBox();
           this.btn_online_update = new System.Windows.Forms.Button();
           this.button1 = new System.Windows.Forms.Button();
+          this.lbl_lastupdate = new System.Windows.Forms.Label();
           this.tabControl1.SuspendLayout();
           this.tab_extensions.SuspendLayout();
           this.tab_known.SuspendLayout();
@@ -97,7 +98,7 @@
           this.tab_known.Location = new System.Drawing.Point(4, 22);
           this.tab_known.Name = "tab_known";
           this.tab_known.Padding = new System.Windows.Forms.Padding(3);
-          this.tab_known.Size = new System.Drawing.Size(581, 454);
+          this.tab_known.Size = new System.Drawing.Size(584, 454);
           this.tab_known.TabIndex = 2;
           this.tab_known.Text = "Known extensions";
           this.tab_known.UseVisualStyleBackColor = true;
@@ -110,7 +111,7 @@
           this.extensionListContro_all.Location = new System.Drawing.Point(3, 3);
           this.extensionListContro_all.Name = "extensionListContro_all";
           this.extensionListContro_all.SelectedItem = null;
-          this.extensionListContro_all.Size = new System.Drawing.Size(575, 448);
+          this.extensionListContro_all.Size = new System.Drawing.Size(578, 448);
           this.extensionListContro_all.TabIndex = 0;
           this.extensionListContro_all.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
           this.extensionListContro_all.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
@@ -126,7 +127,7 @@
           this.tab_options.Location = new System.Drawing.Point(4, 22);
           this.tab_options.Name = "tab_options";
           this.tab_options.Padding = new System.Windows.Forms.Padding(3);
-          this.tab_options.Size = new System.Drawing.Size(581, 454);
+          this.tab_options.Size = new System.Drawing.Size(584, 454);
           this.tab_options.TabIndex = 1;
           this.tab_options.Text = "Options";
           this.tab_options.UseVisualStyleBackColor = true;
@@ -157,6 +158,7 @@
           // 
           // groupBox1
           // 
+          this.groupBox1.Controls.Add(this.lbl_lastupdate);
           this.groupBox1.Controls.Add(this.chk_stable);
           this.groupBox1.Controls.Add(this.chk_updateExtension);
           this.groupBox1.Controls.Add(this.label2);
@@ -261,6 +263,15 @@
           this.button1.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
           this.button1.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
           // 
+          // lbl_lastupdate
+          // 
+          this.lbl_lastupdate.AutoSize = true;
+          this.lbl_lastupdate.Location = new System.Drawing.Point(284, 18);
+          this.lbl_lastupdate.Name = "lbl_lastupdate";
+          this.lbl_lastupdate.Size = new System.Drawing.Size(35, 13);
+          this.lbl_lastupdate.TabIndex = 6;
+          this.lbl_lastupdate.Text = "label3";
+          // 
           // MainForm
           // 
           this.AllowDrop = true;
@@ -309,6 +320,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.CheckBox chk_stable;
         private System.Windows.Forms.Button btn_clean;
+        private System.Windows.Forms.Label lbl_lastupdate;
     }
 }
 

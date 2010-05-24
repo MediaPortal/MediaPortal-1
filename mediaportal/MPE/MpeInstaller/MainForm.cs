@@ -409,6 +409,7 @@ namespace MpeInstaller
 
     private void RefreshLists()
     {
+      lbl_lastupdate.Text = "Last update " + _settings.LastUpdate.ToString();
       extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
       extensionListContro_all.Set(MpeCore.MpeInstaller.KnownExtensions.GetUniqueList());
     }

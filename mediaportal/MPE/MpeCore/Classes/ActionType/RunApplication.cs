@@ -146,7 +146,7 @@ namespace MpeCore.Classes.ActionType
           myProcess.WaitForExit();
 
       }
-      catch (Exception e)
+      catch (Exception )
       {
         if (ItemProcessed != null)
           ItemProcessed(this, new InstallEventArgs("Error to start application"));
