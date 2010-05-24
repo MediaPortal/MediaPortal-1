@@ -45,11 +45,12 @@
     <control>
       <description>Current Time Info</description>
       <type>label</type>
-      <posX>39</posX>
+      <posX>670</posX>
       <posY>453</posY>
       <label>#time</label>
       <font>font13</font>
       <textcolor>white</textcolor>
+	  <align>right</align>
       <visible>!Control.IsVisible(989)</visible>
       <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="250">windowopen</animation>
@@ -57,11 +58,12 @@
     <control>
       <description>Current Time Info</description>
       <type>label</type>
-      <posX>39</posX>
+      <posX>670</posX>
       <posY>453</posY>
       <label>#time</label>
       <font>font13</font>
       <textcolor>white</textcolor>
+	  <align>right</align>
       <visible>Control.IsVisible(989)</visible>
       <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -73,7 +75,7 @@
       <type>fadelabel</type>
       <width>289</width>
       <height>29</height>
-      <posX>104</posX>
+      <posX>39</posX>
       <posY>424</posY>
       <font>font13</font>
       <label>#Play.Current.Title</label>
@@ -88,7 +90,7 @@
       <type>fadelabel</type>
       <width>289</width>
       <height>29</height>
-      <posX>104</posX>
+      <posX>39</posX>
       <posY>424</posY>
       <font>font13</font>
       <label>#Play.Current.Title</label>
@@ -125,6 +127,101 @@
       <visible>Control.IsVisible(989)</visible>
       <animation effect="fade" time="800" delay="250" reversible="false">visible</animation>
       <animation effect="fade" time="10" delay="0" reversible="false">hidden</animation>
+    </control>
+    <control>
+      <description>Audio codec (normal osd)</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>410</posX>
+      <posY>417</posY>
+      <width>67</width>
+      <height>38</height>
+      <visible>Control.IsVisible(989)</visible>
+      <texture>logos\#Play.Current.AudioCodec.Texture.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
+    <control>
+      <description>Audio codec (expanded osd)</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>410</posX>
+      <posY>417</posY>
+      <width>67</width>
+      <height>38</height>
+      <visible>!Control.IsVisible(989)</visible>
+      <texture>logos\#Play.Current.AudioCodec.Texture.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
+    
+    <control>
+      <description>Video codec (normal osd)</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>480</posX>
+      <posY>417</posY>
+      <width>67</width>
+      <height>38</height>
+      <visible>Control.IsVisible(989)</visible>
+      <texture>logos\#Play.Current.VideoCodec.Texture.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
+    <control>
+      <description>Video codec (expanded osd)</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>480</posX>
+      <posY>417</posY>
+      <width>67</width>
+      <height>38</height>
+      <visible>!Control.IsVisible(989)</visible>
+      <texture>logos\#Play.Current.VideoCodec.Texture.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
+ 
+    <control>
+      <description>Subtitles</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>340</posX>
+      <posY>417</posY>
+      <width>67</width>
+      <height>38</height>
+      <visible>string.equals(#Play.Current.HasSubtitles, True)+Control.IsVisible(989)</visible>
+      <texture>logos\subtitles.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="slide" start="0,0" end="0,-100" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">visiblechange</animation>
+      <animation effect="fade" time="150">windowopen</animation>
+    </control>
+    <control>
+      <description>Subtitles</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>340</posX>
+      <posY>417</posY>
+      <width>67</width>
+      <height>38</height>
+      <visible>string.equals(#Play.Current.HasSubtitles, True)+!Control.IsVisible(989)</visible>
+      <texture>logos\subtitles.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <animation effect="slide" start="0,-100" end="0,0" time="400" reversible="false">visible</animation>
+      <animation effect="fade" time="150">windowopen</animation>
     </control>
   </controls>
 </window>
