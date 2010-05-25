@@ -62,6 +62,7 @@ namespace MpeInstaller.Controls
 
     public void Set(ExtensionCollection collection)
     {
+      collection.Sort();
       comboBox1.Items.Clear();
       comboBox1.Items.Add("All");
       TagList.Clear();
