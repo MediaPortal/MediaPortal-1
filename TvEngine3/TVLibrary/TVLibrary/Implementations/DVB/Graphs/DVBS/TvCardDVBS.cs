@@ -181,6 +181,15 @@ namespace TvLibrary.Implementations.DVB
       _tuneRequest = (IDVBTuneRequest)request;
     }
 
+    /// <summary>
+    /// Methods which stops the graph
+    /// </summary>
+    public override void StopGraph()
+    {
+      base.StopGraph();
+      _previousChannel = null;
+    }
+
     #endregion
 
     #region tuning & recording
