@@ -24,6 +24,8 @@
 !include LogicLib.nsh
 !include "${svn_InstallScripts}\include\LoggingMacros.nsh"
 
+!AddPluginDir "${svn_InstallScripts}\nsSCM-plugin\Plugin"
+
 #***************************
 #***************************
 
@@ -75,33 +77,27 @@
 
   ${LOG_TEXT} "INFO" "StopService: ${Service}"
 
-  StrCpy $R1 1  ; set counter to 1
-  ${Do}
-
-    nsExec::Exec 'net stop "${Service}"'
-
+  nsSCM::QueryStatus /NOUNLOAD "${Service}"
+  Pop $0
+  Pop $1
+ 
+  ${IfNot} $1 = 1
+  
+		${LOG_TEXT} "INFO" "StopService: Trying to stop ${Service}..."
+  
+  	nsSCM::Stop /NOUNLOAD "${Service}"
     Pop $0
+    Pop $1
 
-    ${Select} $0
-      ${Case} "0"
-        ${LOG_TEXT} "INFO" "StopService: ${Service} was stopped successfully."
-        ${ExitDo}
-      ${Case} "2"
-        ${LOG_TEXT} "INFO" "StopService: ${Service} is not started."
-        ${ExitDo}
-      ${CaseElse}
-
-        ${LOG_TEXT} "ERROR" "StopService: Unknown result: $0"
-        IntOp $R1 $R1 + 1  ; increase retry-counter +1
-        ${If} $R1 > 5  ; try max. 5 times
-          ${ExitDo}
-        ${Else}
-          ${LOG_TEXT} "INFO" "StopService: Trying again. $R1/5"
-        ${EndIf}
-
-      ${EndSelect}
-  ${Loop}
-
+    ${If} $0 == "error"
+        ${LOG_TEXT} "INFO" "StopService: Unable to stop ${Service} (error $1)."
+        Abort "Unable to stop ${Service}. Error $1."
+    ${Else}
+    		${LOG_TEXT} "INFO" "StopService: ${Service} was stopped successfully."
+    ${EndIF}
+  ${Else}
+      ${LOG_TEXT} "INFO" "StopService: ${Service} is already stopped"
+  ${EndIf}
 
   !verbose pop
 !macroend
