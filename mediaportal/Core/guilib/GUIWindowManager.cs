@@ -646,13 +646,6 @@ namespace MediaPortal.GUI.Library
       }
       GUIWaitCursor.Init();
     }
-
-    /// <summary>
-    /// Tell window manager it should route all actions/messages to 
-    /// another window. This is used for dialogs
-    /// </summary>
-    /// <param name="dwID">id of window which should receive the actions/messages</param>
-
     #endregion
 
     #region DirectX lost/restore device handling
@@ -686,8 +679,8 @@ namespace MediaPortal.GUI.Library
     #region window switching
 
     /// <summary>
-    /// ActivateWindow() 
-    /// This function will show/present/activate the window specified
+    /// ReplaceWindow() 
+    /// This function will replace current window with specified window
     /// </summary>
     /// <param name="iWindowID">window id of the window to activate</param>
     public static void ReplaceWindow(int windowId)
@@ -700,6 +693,11 @@ namespace MediaPortal.GUI.Library
       return _previousActiveWindowId;
     }
 
+    /// <summary>
+    /// ActivateWindow() 
+    /// This function will show/present/activate the window specified
+    /// </summary>
+    /// <param name="iWindowID">window id of the window to activate</param>    
     public static void ActivateWindow(int windowId)
     {
       ActivateWindow(windowId, false);
@@ -905,143 +903,33 @@ namespace MediaPortal.GUI.Library
     public static void ShowPreviousWindow()
     {
       Log.Debug("Windowmanager: Goto previous window");
-      _isSwitchingToNewWindow = true;
-      try
+      if (!HasPreviousWindow())
       {
-        int fromWindowId = ActiveWindow;
-        // Exit if there is no previous window
-        if (_listHistory.Count == 0)
-        {
-          // if _listhistorycount gets corrupted, go home          
-          if (_startWithBasicHome)
-            _listHistory.Add((int)GUIWindow.Window.WINDOW_SECOND_HOME);
-          else
-            _listHistory.Add((int)GUIWindow.Window.WINDOW_HOME);
-        }
-
-        if (OnPostRenderAction != null)
-        {
-          OnPostRenderAction(null, null, false);
-        }
-        /*
-        for (int x=0; x < _windowCount;++x)
-        {
-          if (_listWindows[x].DoesPostRender() )
-          {
-            _listWindows[x].Focused=false;
-          }
-        }*/
-        GUIMessage msg;
-        GUIWindow currentWindow;
-        int _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_HOME;
-        if (_listHistory.Count > 0)
-        {
-          _previousActiveWindowId = (int)_listHistory[_listHistory.Count - 1];
-          _listHistory.RemoveAt(_listHistory.Count - 1);
-          //Log.Info("Window list remove Id:{0} new count: {1}", _previousActiveWindowId, _listHistory.Count);
-        }
-
-        if ((_activeWindowIndex >= 0 && _activeWindowIndex < _windowCount))
-        {
-          // deactivate current window
-          currentWindow = _listWindows[_activeWindowIndex];
-
-          // deactivate any window
-          if (_routedWindow != null)
-          {
-            GUIMessage msgDlg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _routedWindow.GetID, 0, 0,
-                                               currentWindow.GetID, 0, null);
-            _routedWindow.OnMessage(msgDlg);
-            _routedWindow = null;
-          }
-
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, currentWindow.GetID, 0, 0,
-                               _previousActiveWindowId, 0, null);
-          currentWindow.OnMessage(msg);
-          if (OnDeActivateWindow != null)
-          {
-            OnDeActivateWindow(currentWindow.GetID);
-          }
-          _activeWindowIndex = -1;
-          _activeWindowId = -1;
-        }
-
-        UnRoute();
-
-        GUIWindow newWindow = null;
-        // activate the new window
-        for (int i = 0; i < _windowCount; i++)
-        {
-          newWindow = _listWindows[i];
-          if (newWindow.GetID == _previousActiveWindowId)
-          {
-            try
-            {
-              _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_INVALID;
-              if (_listHistory.Count > 0)
-              {
-                _previousActiveWindowId = (int)_listHistory[_listHistory.Count - 1];
-              }
-              _activeWindowIndex = i;
-              _activeWindowId = newWindow.GetID;
-              if (OnActivateWindow != null)
-              {
-                OnActivateWindow(newWindow.GetID);
-              }
-              bool currentmodulefullscreen = (newWindow.GetID == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
-                                              newWindow.GetID == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC ||
-                                              newWindow.GetID == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO ||
-                                              newWindow.GetID == (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
-              // do not go to fullscreen back if not playing anymore
-              if (currentmodulefullscreen && !Player.g_Player.Playing)
-              {
-                msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, newWindow.GetID, 0, 0, fromWindowId,
-                                     0,
-                                     null);
-              }
-              else
-              {
-                msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, newWindow.GetID, 0, 0, fromWindowId, 0,
-                                     null);
-              }
-              newWindow.OnMessage(msg);
-              return;
-            }
-            catch (Exception)
-            {
-              break;
-            }
-          }
-        }
-
-        // previous window doesnt exists. (maybe .xml file is invalid or doesnt exists)
-        // so we go back to the first (home) window cause its the only way to get back 
-        // to a working window.
-        _activeWindowIndex = 0;
-        _activeWindowId = (int)GUIWindow.Window.WINDOW_HOME;
-        for (int i = 0; i < _windowCount; i++)
-        {
-          newWindow = _listWindows[i];
-          if (newWindow.GetID == _activeWindowId)
-          {
-            _activeWindowIndex = i;
-            break;
-          }
-        }
-
-        newWindow = _listWindows[_activeWindowIndex];
-        _activeWindowId = newWindow.GetID;
-        if (OnActivateWindow != null)
-        {
-          OnActivateWindow(newWindow.GetID);
-        }
-        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, newWindow.GetID, 0, 0,
-                             (int)GUIWindow.Window.WINDOW_INVALID, 0, null);
-        newWindow.OnMessage(msg);
+        // if _listhistory count gets corrupted, go home          
+        if (_startWithBasicHome)
+          _listHistory.Add((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+        else
+          _listHistory.Add((int)GUIWindow.Window.WINDOW_HOME);
       }
-      finally
+
+      _previousActiveWindowId = (int)_listHistory[_listHistory.Count - 1];
+      _listHistory.RemoveAt(_listHistory.Count - 1);
+
+      bool isFullscreen = (
+        _previousActiveWindowId == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+        _previousActiveWindowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC ||
+        _previousActiveWindowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO ||
+        _previousActiveWindowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+
+      // do not go back to fullscreen if not playing or nothing to show
+      if (isFullscreen && (!Player.g_Player.Playing || (!Player.g_Player.HasVideo && !Player.g_Player.HasViz)))
+        ShowPreviousWindow();
+
+      if (_previousActiveWindowId != ActiveWindow)
       {
-        _isSwitchingToNewWindow = false;
+        CloseCurrentWindow();
+        UnRoute();
+        ActivateWindow(_previousActiveWindowId);
       }
     }
 
