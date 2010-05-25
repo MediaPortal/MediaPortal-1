@@ -106,13 +106,13 @@ namespace MediaPortal.WebEPG.Parser
     public string Title
     {
       get { return _title; }
-      set { _title = ProperCase(value); }
+      set { _title = ProperCase(NormalizeWhitespace(value)); }
     }
 
     public string SubTitle
     {
       get { return _subTitle; }
-      set { _subTitle = ProperCase(value); }
+      set { _subTitle = ProperCase(NormalizeWhitespace(value)); }
     }
 
     public string Description
@@ -124,7 +124,7 @@ namespace MediaPortal.WebEPG.Parser
     public string Genre
     {
       get { return _genre; }
-      set { _genre = ProperCase(value); }
+      set { _genre = ProperCase(NormalizeWhitespace(value)); }
     }
 
     public WorldDateTime StartTime
@@ -189,7 +189,7 @@ namespace MediaPortal.WebEPG.Parser
             if (fieldText != null)
             {
               Regex replace = new Regex(actions[i].search);
-              string newValue = replace.Replace(fieldText, actions[i].text);
+              string newValue = replace.Replace(fieldText, actions[i].text?? "");
               PutElement(actions[i].field, newValue);
             }
           }
@@ -544,6 +544,20 @@ namespace MediaPortal.WebEPG.Parser
       }
 
       return value;
+    }
+
+    /// <summary>
+    /// Normalizes the whitespace in the string by replacings all
+    /// sequences of whitespace characters (space, tab, new-lines)
+    /// to a single space
+    /// </summary>
+    /// <param name="value">The string to normalize</param>
+    /// <returns>The normalized string</returns>
+    private string NormalizeWhitespace(string value)
+    {
+      Regex whitespace = new Regex(@"\s{2,}|[\s-[ ]]+",RegexOptions.Compiled);
+
+      return whitespace.Replace(value, " ");
     }
 
     #endregion
