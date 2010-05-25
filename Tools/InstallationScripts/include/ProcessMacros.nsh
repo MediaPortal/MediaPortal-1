@@ -91,7 +91,7 @@
 
     ${If} $0 == "error"
         ${LOG_TEXT} "INFO" "StopService: Unable to stop ${Service} (error $1)."
-        Abort "Unable to stop ${Service}. Error $1."
+        Abort "Unable to stop ${Service} (error $1). Installation aborted."
     ${Else}
     		${LOG_TEXT} "INFO" "StopService: ${Service} was stopped successfully."
     ${EndIF}
