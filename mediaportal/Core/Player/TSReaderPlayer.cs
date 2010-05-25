@@ -207,7 +207,6 @@ namespace MediaPortal.Player
         return;
       }
       _updateNeeded = false;
-      _isStarted = true;
     }
 
     protected override void MatchFilters(string format)
@@ -314,16 +313,13 @@ namespace MediaPortal.Player
         #endregion
 
         #region add codecs
-        // does .ts file contain video?
+        // is recording and does .ts file contain video?
         // default is _isRadio=false which prevents recorded radio file playing
-        if (_videoFormat.IsValid)
-          _isRadio = false;
-        else
+        if (_mediaType == g_Player.MediaType.Recording && !_videoFormat.IsValid)
           _isRadio = true;
 
         Log.Info("TSReaderPlayer: Add codecs");
         // add preferred video & audio codecs
-        
         MatchFilters("Video");
         MatchFilters("Audio");
 
