@@ -1591,11 +1591,8 @@ namespace MediaPortal.GUI.Video
       }
       if (_markWatchedFiles) // save a little performance
       {
-        if (GUIWindowManager.ActiveWindow == GetID)
-        {
-          LoadDirectory(_currentFolder, true, watchedMovies);
-          UpdateButtonStates();
-        }
+        LoadDirectory(_currentFolder, true, watchedMovies);
+        UpdateButtonStates();
       }
 
       if (SubEngine.GetInstance().IsModified())
@@ -1667,11 +1664,8 @@ namespace MediaPortal.GUI.Video
       }
       if (_markWatchedFiles) // save a little performance
       {
-        if (GUIWindowManager.ActiveWindow == GetID)
-        {
-          LoadDirectory(_currentFolder, true, watchedMovies);
-          UpdateButtonStates();
-        }
+        LoadDirectory(_currentFolder, true, watchedMovies);
+        UpdateButtonStates();
       }
     }
 
