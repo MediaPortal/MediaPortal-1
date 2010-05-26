@@ -421,13 +421,11 @@ namespace MediaPortal.Util
         if (IsPlayList(strPath))
           return false;
         string extensionFile = Path.GetExtension(strPath).ToLower();
-        switch (extensionFile)
+
+        if(extensionFile == ".ts")
         {
-          case ".tv":
-          case ".ts":
-          case ".sbe":
-          case ".dvr-ms":
-            return true;
+          // Forced check to avoid users messed configuration ( .ts remove from Videos extensions list)
+          return true;
         }
         if (VirtualDirectory.IsImageFile(extensionFile.ToLower()))
           return true;
