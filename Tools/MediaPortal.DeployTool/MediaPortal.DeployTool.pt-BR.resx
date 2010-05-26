@@ -173,8 +173,8 @@ utilizar o MediaPortal e assistir TV utilizando o MediaPortal.</value>
     <value>Somente instalará o Servidor de TV do MediaPortal em este PC.
 O PC atuará como um servidor dedicado de TV e proverá a outros PCs na sua rede local o sinal de TV (instalação de base de dados requerida)</value>
   </data>
-  <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
-    <value>Navegar</value>
+  <data name="MainWindow_browseButton" xml:space="preserve">
+    <value>Procurar</value>
   </data>
   <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
     <value>Configure o Firewall do Windows para permitir acesso externo a base de dados do servidor</value>
@@ -338,9 +338,6 @@ O PC atuará como um servidor dedicado de TV e proverá a outros PCs na sua rede
   <data name="ManualDownload_Title" xml:space="preserve">
     <value>Descarregar manualmente</value>
   </data>
-  <data name="MPSettings_buttonBrowse" xml:space="preserve">
-    <value>Navegar</value>
-  </data>
   <data name="MPSettings_errInvalidPath" xml:space="preserve">
     <value>Você tem que fornecer um caminho válido para instalação do MediaPortal.</value>
   </data>
@@ -352,9 +349,6 @@ O PC atuará como um servidor dedicado de TV e proverá a outros PCs na sua rede
   </data>
   <data name="MPSettings_msgSelectDir" xml:space="preserve">
     <value>Selecione o diretório de instalação do MediaPortal</value>
-  </data>
-  <data name="TvServerSettings_buttonBrowse" xml:space="preserve">
-    <value>Navegar</value>
   </data>
   <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
     <value>Configure o Firewall do Windows para permitir acesso externo ao servidor de TV</value>
@@ -467,5 +461,57 @@ Continue e assuma os riscos!</value>
   <data name="Finished_labelHeading3_download" xml:space="preserve">
     <value>Esta aplicação vai agora encerrar e abrir o diretório "MediaPortal Installation".
 Mova esse diretório para o seu HTPC. Inicie a instalação executando "MediaPortal.DeployTool.exe".</value>
+  </data>
+  <data name="Install_stateSkipped" xml:space="preserve">
+    <value>Ignorado</value>
+  </data>
+  <data name="Exit_Installation" xml:space="preserve">
+    <value>Você realmente deseja abortar a instalação do MediaPortal?</value>
+  </data>
+  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
+    <value>Configurações atuais do download: lang={0}, arch={1}</value>
+  </data>
+  <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
+    <value>Por favor, selecione as configurações de download:</value>
+  </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>Conexão com a Internet não encontrada! Para continuar a instalação uma conexão ativa é necessária.</value>
+  </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>Não há espaço suficiente no drive  especificado! Para a instalação do MediaPortal você precisará de pelo menos {0} MB de espaço livre em disco.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader" xml:space="preserve">
+    <value>MediaPortal {0} detectado.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+    <value>MediaPortal {0} (build {1}) detectado</value>
+  </data>
+  <data name="Upgrade_no" xml:space="preserve">
+    <value>Instalação completa</value>
+  </data>
+  <data name="Upgrade_yes" xml:space="preserve">
+    <value>Atualizar instalação atual para {0}</value>
+  </data>
+  <data name="Upgrade_note" xml:space="preserve">
+    <value>NOTA: Você não pode atualizar a partir de uma versão SVN ,
+            estas são destinadas apenas para teste.</value>
+  </data>
+  <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value>Atualização -&gt; Instalar</value>
+  </data>
+  <data name="DBMSType_lbMSSQL_disabled" xml:space="preserve">
+    <value>(Saiba aqui o porquê)</value>
+  </data>
+  <data name="DBMSType_rbMSSQL_disabled" xml:space="preserve">
+    <value>Microsoft SQL-Server Express 2005 está desativado</value>
+  </data>
+  <data name="AeroThemeMissing" xml:space="preserve">
+    <value>O Windows AERO está desativado.
+Por favor, note que o AERO é necessário para evitar Travamendos e Desligamentos.
+Ativando AERO também reduzirá o uso de CPU, tornando o seu HTPC mais frio e silencioso.</value>
+  </data>
+  <data name="Reboot_Required" xml:space="preserve">
+    <value>Uma reinicialização é necessária por um componente da Microsoft.
+Por favor, reinicie o sistema antes de prosseguir com a instalação do MediaPortal.</value>
   </data>
 </root>
