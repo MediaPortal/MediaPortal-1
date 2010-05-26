@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Gentle.Framework;
+using SetupTv.Dialogs;
 using TvDatabase;
 using TvLibrary.Interfaces;
 using MediaPortal.UserInterface.Controls;

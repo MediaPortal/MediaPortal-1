@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using SetupTv.Dialogs;
 using TvControl;
 using MediaPortal.Playlists;
 using Gentle.Framework;
@@ -254,6 +255,36 @@ namespace SetupTv.Sections
               }
             }
           }
+
+          ListViewItem item = new ListViewItem(ch.DisplayName);
+          item.Checked = ch.VisibleInGuide;
+          item.Tag = ch;
+
+          IList<string> groups = ch.GroupNames;
+          List<string> groupNames = new List<string>();
+          foreach (string groupName in groups)
+          {
+            if (groupName != TvConstants.RadioGroupNames.AllChannels)
+            {
+              groupNames.Add(groupName);
+            }
+          }
+          string group = String.Join(", ", groupNames.ToArray());
+          item.SubItems.Add(group);
+
+          List<string> providers = new List<string>();
+          IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
+          foreach (TuningDetail detail in tuningDetails)
+          {
+            if (!providers.Contains(detail.Provider))
+            {
+              providers.Add(detail.Provider);
+            }
+          }
+
+          string provider = String.Join(", ", providers.ToArray());
+          item.SubItems.Add(provider);
+
           StringBuilder builder = new StringBuilder();
 
           if (analog)
@@ -301,102 +332,9 @@ namespace SetupTv.Sections
               builder.Append(",");
             builder.Append("Webstream");
           }
-          int imageIndex = 3;
-          if (ch.FreeToAir == false)
-            imageIndex = 0;
-
-          ListViewItem item = new ListViewItem(ch.DisplayName, imageIndex);
-
-          IList<string> groupNames = ch.GroupNames;
-          if (groupNames.Count > 0)
-          {
-            StringBuilder sbGroupNames = new StringBuilder();
-
-            foreach (string name in groupNames)
-            {
-              if (name == TvConstants.RadioGroupNames.AllChannels)
-                continue;
-
-              if (sbGroupNames.Length > 0)
-                sbGroupNames.Append(", ");
-
-              sbGroupNames.Append(name);
-            }
-
-            item.SubItems.Add(sbGroupNames.ToString());
-          }
-          else
-          {
-            item.SubItems.Add(string.Empty);
-          }
-
-          item.SubItems.Add("-");
-          item.Checked = ch.VisibleInGuide;
-          item.Tag = ch;
           item.SubItems.Add(builder.ToString());
 
-          string provider = "";
-
-          foreach (TuningDetail detail in ch.ReferringTuningDetail())
-          {
-            provider += String.Format("{0},", detail.Provider);
-            float frequency;
-            switch (detail.ChannelType)
-            {
-              case 0: //analog
-                if (detail.VideoSource == (int)AnalogChannel.VideoInputType.Tuner)
-                {
-                  frequency = detail.Frequency;
-                  frequency /= 1000000.0f;
-                  item.SubItems.Add(String.Format("#{0} {1} MHz", detail.ChannelNumber, frequency.ToString("f2")));
-                }
-                else
-                {
-                  item.SubItems.Add(detail.VideoSource.ToString());
-                }
-                break;
-
-              case 1: //ATSC
-                item.SubItems.Add(String.Format("{0} {1}:{2}", detail.ChannelNumber, detail.MajorChannel,
-                                                detail.MinorChannel));
-                break;
-
-              case 2: // DVBC
-                frequency = detail.Frequency;
-                frequency /= 1000.0f;
-                item.SubItems.Add(String.Format("{0} MHz SR:{1}", frequency.ToString("f2"), detail.Symbolrate));
-                break;
-
-              case 3: // DVBS
-                frequency = detail.Frequency;
-                frequency /= 1000.0f;
-                item.SubItems.Add(String.Format("{0} MHz {1}", frequency.ToString("f2"),
-                                                (((Polarisation)detail.Polarisation))));
-                break;
-
-              case 4: // DVBT
-                frequency = detail.Frequency;
-                frequency /= 1000.0f;
-                item.SubItems.Add(String.Format("{0} MHz BW:{1}", frequency.ToString("f2"), detail.Bandwidth));
-                break;
-              case 5: // Webstream
-                item.SubItems.Add(detail.Url);
-                break;
-              case 6: // FM Radio
-                frequency = detail.Frequency;
-                frequency /= 1000000.0f;
-                item.SubItems.Add(String.Format("{0} MHz", frequency.ToString("f3")));
-                break;
-              case 7: // DVB-IP
-                item.SubItems.Add(detail.Url);
-                break;
-            }
-          }
-          if (provider.Length > 1)
-            provider = provider.Substring(0, provider.Length - 1);
-
-          item.SubItems[2].Text = (provider);
-
+         
           items.Add(item);
         }
         mpListView1.Items.AddRange(items.ToArray());
@@ -660,15 +598,6 @@ namespace SetupTv.Sections
       dlg.IsTv = false;
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
-        channel.Persist();
-        foreach (TuningDetail detail in channel.ReferringTuningDetail())
-        {
-          if (detail.Name != channel.Name)
-          {
-            detail.Name = channel.Name;
-            detail.Persist();
-          }
-        }
         OnSectionActivated();
       }
     }
