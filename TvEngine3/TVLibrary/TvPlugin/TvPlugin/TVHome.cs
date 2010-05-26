@@ -3368,7 +3368,8 @@ namespace TvPlugin
         }
         try
         {
-          TvTimeShiftPositionWatcher.CheckOrUpdateTimeShiftPosition(true);
+
+          TvTimeShiftPositionWatcher.SetNewChannel(channel.IdChannel);
         }
         catch
         {
