@@ -965,6 +965,8 @@
     <String id="1197">Desactivar DXVA</String>
     <String id="1198">Navegador</String>
     <String id="1200">Asistente de config.</String>
+    <String id="1201">Reproducir vídeo desde el principio</String>
+    <String id="1211">Reanudar reproducción desde {0}</String>
     <String id="1300" prefix="Mis ">Series de TV</String>
     <String id="1440" prefix="Mi ">TeleTexto</String>
     <String id="1441">TeleTexto</String>
