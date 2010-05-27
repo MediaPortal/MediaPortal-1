@@ -97,8 +97,7 @@ public:
 	STDMETHOD(SetBias)(DOUBLE bias);
 	STDMETHOD(GetBias)(DOUBLE *bias);
 
-  // TODO: Ugly hack to get the release mode to compile. To be fixed!
-  STDMETHODIMP_(ULONG) NonDelegatingRelease() { return CUnknown::NonDelegatingRelease();};
+  void AudioClock(UINT64& pTimestamp);
 
   // CMpcAudioRenderer
 private:
@@ -157,4 +156,10 @@ private:
   double      m_dAdjustment;
   CCritSec    m_csResampleLock;
   bool        m_bUseTimeStretching;
+
+  DWORD       m_dwTimeStart;
+  bool        m_bFirst;
+
+  IAudioClock* m_pAudioClock;
+  UINT64       m_nHWfreq;
 };

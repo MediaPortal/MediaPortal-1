@@ -20,6 +20,7 @@
  *
  */
 
+
 #include "stdafx.h"
 
 #include <initguid.h>
@@ -81,7 +82,7 @@ CUnknown* WINAPI CMpcAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 
 CMpcAudioRenderer::CMpcAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 : CBaseRenderer(__uuidof(this), NAME("MediaPortal - Audio Renderer"), punk, phr)
-, m_Clock(static_cast<IBaseFilter*>(this), phr)
+, m_Clock(static_cast<IBaseFilter*>(this), phr, this)
 , m_pDSBuffer(NULL)
 , m_pSoundTouch(NULL)
 , m_pDS(NULL)
@@ -104,6 +105,9 @@ CMpcAudioRenderer::CMpcAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_dBias(1.0)
 , m_dAdjustment(1.0)
 , m_bUseTimeStretching(true)
+, m_bFirst(true)
+, m_pAudioClock(NULL)
+, m_nHWfreq(0)
 {
   HMODULE hLib = NULL;
 
@@ -130,7 +134,7 @@ CMpcAudioRenderer::CMpcAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
   
   if (m_bUseTimeStretching)
   {
-	// TODO: use channel based sound objects (since lib has two channel limit)
+	  // TODO: use channel based sound objects (since lib has two channel limit)
     m_pSoundTouch = new soundtouch::SoundTouch();
   }
 }
@@ -161,6 +165,8 @@ CMpcAudioRenderer::~CMpcAudioRenderer()
     BYTE *p = (BYTE *)m_pWaveFileFormat;
     SAFE_DELETE_ARRAY(p);
   }
+
+  SAFE_RELEASE(m_pAudioClock);
 
   if (m_hTask && pfAvRevertMmThreadCharacteristics)
   {
@@ -222,6 +228,23 @@ HRESULT	CMpcAudioRenderer::CheckMediaType(const CMediaType *pmt)
   return S_OK;
 }
 
+void CMpcAudioRenderer::AudioClock(UINT64& pTimestamp)
+{
+  //UINT64 freq(0);
+  UINT64 pos(0);
+  UINT64 qpcPos(0);
+  
+  if (m_pAudioClock)
+  {
+    m_pAudioClock->GetPosition(&pos, &qpcPos);
+    pos = pos * 10000000 / m_nHWfreq;
+  }
+
+  //TRACE(_T("time %I64d"), pos);
+
+  pTimestamp = pos;
+}
+
 void CMpcAudioRenderer::OnReceiveFirstSample(IMediaSample *pMediaSample)
 {
   if (!m_bUseWASAPI)
@@ -248,13 +271,16 @@ BOOL CMpcAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   // If we don't have a reference clock then we cannot set up the advise
   // time so we simply set the event indicating an image to render. This
   // will cause us to run flat out without any timing or synchronisation
-  if (hr == S_OK) 
+
+  // Audio should be renderer always when it arrives and the reference clock 
+  // should be based on the audio HW
+  //if (hr == S_OK) 
   {
     EXECUTE_ASSERT(SetEvent((HANDLE) m_RenderEvent));
     return TRUE;
   }
 
-  if (m_dRate <= 1.1)
+  /*if (m_dRate <= 1.1)
   {
     ASSERT(m_dwAdvise == 0);
     ASSERT(m_pClock);
@@ -267,18 +293,24 @@ BOOL CMpcAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   else
   {
     hr = DoRenderSample (pMediaSample);
-  }
+  }*/
 
   // We could not schedule the next sample for rendering despite the fact
   // we have a valid sample here. This is a fair indication that either
   // the system clock is wrong or the time stamp for the sample is duff
-  ASSERT(m_dwAdvise == 0);
+//  ASSERT(m_dwAdvise == 0);
 
-  return FALSE;
+  //return FALSE;
 }
 
 HRESULT	CMpcAudioRenderer::DoRenderSample(IMediaSample *pMediaSample)
 {
+  if(m_bFirst)
+  {
+    //m_Clock.SetDiff( timeGetTime() - m_dwTimeStart);
+    m_bFirst = false;
+  }
+  
   if (m_bUseWASAPI)
   {
     return DoRenderSampleWasapi(pMediaSample);
@@ -356,6 +388,25 @@ HRESULT CMpcAudioRenderer::SetMediaType(const CMediaType *pmt)
       m_pSoundTouch->setChannels(pwf->nChannels);
       m_pSoundTouch->setTempoChange(0);
       m_pSoundTouch->setPitchSemiTones(0);
+
+      // settings from Reclock - watch CPU usage when enabling these!
+      /*bool usequickseek = false;
+      bool useaafilter = false; //seems clearer without it
+      int aafiltertaps = 56; //Def=32 doesnt matter coz its not used
+      int seqms = 120; //reclock original is 82
+      int seekwinms = 28; //reclock original is 28
+      int overlapms = seekwinms; //reduces cutting sound if this is large
+      int seqmslfe = 180; //larger value seems to preserve low frequencies better
+      int seekwinmslfe = 42; //as percentage of seqms
+      int overlapmslfe = seekwinmslfe; //reduces cutting sound if this is large
+
+      m_pSoundTouch->setSetting(SETTING_USE_QUICKSEEK, usequickseek);
+      m_pSoundTouch->setSetting(SETTING_USE_AA_FILTER, useaafilter);
+      m_pSoundTouch->setSetting(SETTING_AA_FILTER_LENGTH, aafiltertaps);
+      m_pSoundTouch->setSetting(SETTING_SEQUENCE_MS, seqms); 
+      m_pSoundTouch->setSetting(SETTING_SEEKWINDOW_MS, seekwinms);
+      m_pSoundTouch->setSetting(SETTING_OVERLAP_MS, overlapms);
+      */
     }
   }
 
@@ -385,6 +436,8 @@ STDMETHODIMP CMpcAudioRenderer::Run(REFERENCE_TIME tStart)
 {
   HRESULT	hr;
 
+  m_dwTimeStart = timeGetTime();
+
   if (m_State == State_Running) return NOERROR;
 
   if (m_bUseWASAPI)
@@ -405,11 +458,11 @@ STDMETHODIMP CMpcAudioRenderer::Run(REFERENCE_TIME tStart)
 
     if(SUCCEEDED(m_pPosition->GetRate(&m_dRate)))
     {
-      if (m_dRate < 1.0)
+      if (m_dRate < 1.0) // TODO should be !=
       {
         if (FAILED (hr)) return hr;
       }
-      else
+      else if (m_pSoundTouch)
       {
         m_pSoundTouch->setRateChange((float)(m_dRate-1.0)*100);
       }
@@ -428,12 +481,15 @@ STDMETHODIMP CMpcAudioRenderer::Run(REFERENCE_TIME tStart)
       else
       {
         hr = m_pDSBuffer->SetFrequency((long)m_pWaveFileFormat->nSamplesPerSec);
-        m_pSoundTouch->setRateChange((float)(m_dRate-1.0)*100);
+        if (m_pSoundTouch)
+        {
+          m_pSoundTouch->setRateChange((float)(m_dRate-1.0)*100);
+        }
       }
     }
-
     ClearBuffer();
   }
+  
   return CBaseRenderer::Run(tStart);
 }
 
@@ -497,7 +553,7 @@ HRESULT CMpcAudioRenderer::GetReferenceClockInterface(REFIID riid, void **ppv)
 
   m_pReferenceClock = new CBaseReferenceClock (NAME("Mpc Audio Clock"), NULL, &hr);
 	
-  if (! m_pReferenceClock)
+  if (!m_pReferenceClock)
     return E_OUTOFMEMORY;
 
   m_pReferenceClock->AddRef();
@@ -729,7 +785,7 @@ HRESULT CMpcAudioRenderer::WriteSampleToDSBuffer(IMediaSample *pMediaSample, boo
     lSize = m_pSoundTouch->receiveSamples((short*)pMediaBuffer, lSize / nBytePerSample) * nBytePerSample;
   }
 
-  pMediaSample->GetTime (&rtStart, &rtStop);
+  pMediaSample->GetTime(&rtStart, &rtStop);
 
   if (rtStart < 0)
   {
@@ -781,12 +837,17 @@ HRESULT	CMpcAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
   
   DWORD flags = 0;
   BYTE *pMediaBuffer = NULL;
+  
+  // TODO: needs to be converted to use static buffer and loops to 
+  BYTE *mediaBufferResult = NULL; 
+
   BYTE *pInputBufferPointer = NULL;
   BYTE *pInputBufferEnd = NULL;
   BYTE *pData;
 
   m_nBufferSize = pMediaSample->GetActualDataLength();
   long lSize = m_nBufferSize;
+  long lResampledSize = 0;
 
   pMediaSample->GetTime (&rtStart, &rtStop);
   
@@ -815,6 +876,10 @@ HRESULT	CMpcAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
   hr = pMediaSample->GetPointer(&pMediaBuffer);
   if (FAILED (hr)) return hr; 
 
+  DWORD start = timeGetTime();
+  DWORD step1 = 0;
+  DWORD step2 = 0;
+
   // resample audio stream if required
   if (m_bUseTimeStretching)
   {
@@ -822,12 +887,44 @@ HRESULT	CMpcAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
 	
     //TRACE(_T("CMpcAudioRenderer::DoRenderSampleWasapi - resampling: m_nBufferSize: %d lSize: %d"), m_nBufferSize, lSize);
     int nBytePerSample = m_pWaveFileFormat->nChannels * (m_pWaveFileFormat->wBitsPerSample/8);
+    
+    step1 = timeGetTime();
+    
     m_pSoundTouch->putSamples((const short*)pMediaBuffer, lSize / nBytePerSample);
-    lSize = m_pSoundTouch->receiveSamples ((short*)pMediaBuffer, lSize / nBytePerSample) * nBytePerSample;
+
+    step2 = timeGetTime();
+
+    //lResampledSize = m_pSoundTouch->receiveSamples((short*)pMediaBuffer, m_pSoundTouch->numSamples() / nBytePerSample) * nBytePerSample;
+    
+    mediaBufferResult = (BYTE*)malloc(m_pSoundTouch->numSamples());
+    lResampledSize = m_pSoundTouch->receiveSamples((short*)mediaBufferResult, m_pSoundTouch->numSamples() / nBytePerSample) * nBytePerSample;
+
+    if (lResampledSize != lSize)
+    {
+      TRACE(_T("CMpcAudioRenderer::DoRenderSampleWasapi - lResampledSize: %d lSize: %d"), lResampledSize, lSize);
+    }
   }
 
-  pInputBufferPointer = &pMediaBuffer[0];
-  pInputBufferEnd = &pMediaBuffer[0] + lSize;
+  DWORD end = timeGetTime();
+
+  UINT64 whole = (end - start);
+  UINT64 dur1 = (step1 - start);
+  UINT64 dur2 = (step2 - step1);
+  UINT64 dur3 = (end - step2);
+
+  TRACE(_T("CMpcAudioRenderer::DoRenderSampleWasapi - processing time %I64u %I64u %I64u %I64u "), whole, dur1, dur2, dur3);
+
+  #ifndef DEBUG
+  //CString OutMsg;
+  //OutMsg.Format("CMpcAudioRenderer::DoRenderSampleWasapi - processing time %I64u %I64u %I64u %I64u ", whole, dur1, dur2, dur3);
+  //OutputDebugString(OutMsg);
+  #endif
+
+  //pInputBufferPointer = &pMediaBuffer[0];
+  //pInputBufferEnd = &pMediaBuffer[0] + lResampledSize;
+
+  pInputBufferPointer = &mediaBufferResult[0];
+  pInputBufferEnd = &mediaBufferResult[0] + lResampledSize;
 
   WORD frameSize = m_pWaveFileFormat->nBlockAlign;
 
@@ -1091,6 +1188,20 @@ HRESULT CMpcAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCl
     TRACE(_T("CMpcAudioRenderer::InitAudioClient failed (0x%08x)"), hr);
     return hr;
   }
+  
+  if (hr == S_OK)
+  {
+    SAFE_RELEASE(m_pAudioClock);
+    hr = m_pAudioClient->GetService(__uuidof(IAudioClock), (void**)&m_pAudioClock);
+    if(FAILED(hr))
+    {
+      TRACE(_T("CMpcAudioRenderer - IAudioClock not found"));
+    }
+    else
+    {
+      m_pAudioClock->GetFrequency(&m_nHWfreq);
+    }
+  }
 
   if (AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED == hr) 
   {
@@ -1113,7 +1224,7 @@ HRESULT CMpcAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCl
                   + 0.5 // rounding
     );
 
-    if (SUCCEEDED (hr)) 
+    if (SUCCEEDED(hr)) 
     {
       hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
     }
@@ -1130,6 +1241,19 @@ HRESULT CMpcAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCl
       TRACE(_T("CMpcAudioRenderer::InitAudioClient Failed to reinitialize the audio client"));
       return hr;
     }
+    else
+    {
+      SAFE_RELEASE(m_pAudioClock);
+      hr = m_pAudioClient->GetService(__uuidof(IAudioClock), (void**)&m_pAudioClock);
+      if(FAILED(hr))
+      {
+        TRACE(_T("CMpcAudioRenderer - IAudioClock not found"));
+      }
+      else
+      {
+        m_pAudioClock->GetFrequency(&m_nHWfreq);
+      }
+    }
   } // if (AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED == hr) 
 
   // get the buffer size, which is aligned
@@ -1144,7 +1268,7 @@ HRESULT CMpcAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCl
     hr = m_pAudioClient->GetService(__uuidof(IAudioRenderClient), (void**)(ppRenderClient));
   }
 
-  if (FAILED (hr))
+  if (FAILED(hr))
   {
     TRACE(_T("CMpcAudioRenderer::InitAudioClient service initialization failed (0x%08x)"), hr);
   }

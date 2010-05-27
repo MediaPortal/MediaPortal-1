@@ -68,6 +68,7 @@
 				Name="VCLinkerTool"
 				RegisterOutput="false"
 				AdditionalDependencies="dsound.lib strmbasd.lib Winmm.lib"
+				ShowProgress="2"
 				OutputFile="bin\Debug/mpaudiorenderer.ax"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
 				IgnoreAllDefaultLibraries="false"
@@ -183,6 +184,7 @@
 			UseOfMFC="2"
 			UseOfATL="0"
 			CharacterSet="2"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -202,14 +204,19 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
+				Optimization="3"
+				InlineFunctionExpansion="2"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;;&quot;$(WINDOWS_SDK)Include\&quot;;&quot;$(DXSDK_DIR)Include&quot;;SoundTouch\include;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_USRDLL;INTEGER_SAMPLES"
-				RuntimeLibrary="3"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="2"
 				BufferSecurityCheck="true"
-				EnableEnhancedInstructionSet="1"
+				EnableEnhancedInstructionSet="2"
 				AssemblerListingLocation=".\obj\Release/"
 				ObjectFile=".\obj\Release/"
 				ProgramDataBaseFileName=".\obj\Release/"
+				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -223,11 +230,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/FORCE:MULTIPLE"
 				AdditionalDependencies="dsound.lib strmbase.lib Winmm.lib"
 				ShowProgress="2"
 				OutputFile="bin\Release/mpaudiorenderer.ax"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
-				IgnoreDefaultLibraryNames="libcmtd.lib"
+				IgnoreDefaultLibraryNames="libcmt.lib"
 				ModuleDefinitionFile=".\source\MpAudioRenderer.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"

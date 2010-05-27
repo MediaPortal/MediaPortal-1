@@ -19,22 +19,31 @@
 #include "stdafx.h"
 #include <streams.h>
 #include "SyncClock.h"
+#include "MpAudioRenderer.h"
 
-CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT *phr)
+CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMpcAudioRenderer* pRenderer)
   : CBaseReferenceClock(NAME("SyncClock"), pUnk, phr),
   m_pCurrentRefClock(0),
   m_pPrevRefClock(0),
   m_dAdjustment(1.0),
-  m_dBias(1.0)
+  m_dBias(1.0),
+  m_pAudioRenderer(pRenderer)
 {
   m_dwPrevSystemTime = timeGetTime();
+  //m_dwPrevSystemTime = 0;
   m_rtPrivateTime = (UNITS / MILLISECONDS) * m_dwPrevSystemTime;
+}
+
+void CSyncClock::SetDiff(DWORD diff)
+{
+   m_rtPrivateTime = m_rtPrivateTime + (UNITS / MILLISECONDS) * diff;
 }
 
 void CSyncClock::SetBias(double pBias)
 {
    m_dBias = pBias;
 }
+
 
 void CSyncClock::SetAdjustment(double pAdjustment)
 {
@@ -56,6 +65,13 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
   CAutoLock cObjectLock(this);
 
   DWORD dwTime = timeGetTime();
+  
+  //UINT64 timestmap(0);
+
+  //m_pAudioRenderer->AudioClock(timestmap);
+  
+  //DWORD dwTime = timestmap / 10000;
+
   REFERENCE_TIME delta = REFERENCE_TIME(dwTime) - REFERENCE_TIME(m_dwPrevSystemTime);
   if(dwTime < m_dwPrevSystemTime)
   {
@@ -65,6 +81,6 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
   m_dwPrevSystemTime = dwTime;
 
   delta = (REFERENCE_TIME)(delta * (UNITS / MILLISECONDS) * m_dAdjustment * m_dBias);
-  m_rtPrivateTime = m_rtPrivateTime + delta;
+  m_rtPrivateTime = m_rtPrivateTime + delta;// + (UNITS / MILLISECONDS) * 500;
   return m_rtPrivateTime;
 }

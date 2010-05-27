@@ -20,11 +20,13 @@
 
 #include <streams.h>
 
+class CMpcAudioRenderer;
+
 class CSyncClock: public CBaseReferenceClock
 {
 
 public:
-  CSyncClock(LPUNKNOWN pUnk, HRESULT *phr);
+  CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMpcAudioRenderer* pRenderer);
 
 	REFERENCE_TIME GetPrivateTime();
 
@@ -34,6 +36,8 @@ public:
   double Bias();
   double Adjustment();
 
+  void SetDiff(DWORD diff);
+
 private:
 	DOUBLE m_dAdjustment;
   DOUBLE m_dBias;
@@ -41,6 +45,9 @@ private:
   REFERENCE_TIME    m_rtPrivateTime;
   DWORD             m_dwPrevSystemTime;
   CCritSec          m_csClock;
+
+  // Not owned
   IReferenceClock*  m_pCurrentRefClock;
   IReferenceClock*  m_pPrevRefClock;
+  CMpcAudioRenderer* m_pAudioRenderer;
 };
