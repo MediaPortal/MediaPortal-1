@@ -958,6 +958,7 @@ HRESULT	CMpcAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
     if (FAILED (hr))
     {
       TRACE(_T("CMpcAudioRenderer::DoRenderSampleWasapi GetBuffer failed with size %ld : (error %lx)"),m_nFramesInBuffer,hr);
+      delete mediaBufferResult;
       return hr;
     }
 
@@ -976,6 +977,7 @@ HRESULT	CMpcAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
     if (FAILED (hr)) 
     {
       TRACE(_T("CMpcAudioRenderer::DoRenderSampleWasapi ReleaseBuffer failed with size %ld (error %lx)"),m_nFramesInBuffer,hr);
+      delete mediaBufferResult;
       return hr;
     }
 
@@ -1005,6 +1007,8 @@ HRESULT	CMpcAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
     m_hnsActualDuration = (DWORD)(m_hnsActualDuration / REFTIMES_PER_MILLISEC / 2);
     Sleep(m_hnsActualDuration);
   }
+  
+  delete mediaBufferResult;
   return hr;
 }
 
