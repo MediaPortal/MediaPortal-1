@@ -21,8 +21,8 @@
       <description>Guide Group Label</description>
       <type>label</type>
       <id>11</id>
-      <posX>444</posX>
-      <posY>87</posY>
+      <posX>165</posX>
+      <posY>12</posY>
       <!-- <label>4</label> -->
       <label>#TV.Guide.Group</label>
       <font>font16</font>
