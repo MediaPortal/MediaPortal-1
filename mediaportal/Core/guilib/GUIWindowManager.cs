@@ -90,13 +90,9 @@ namespace MediaPortal.GUI.Library
     #region delegates and events
 
     public delegate void ThreadMessageHandler(object sender, GUIMessage message);
-
     public delegate void OnCallBackHandler();
-
     public delegate void PostRendererHandler(int level, float timePassed);
-
     public delegate int PostRenderActionHandler(Action action, GUIMessage msg, bool focus);
-
     public delegate void WindowActivationHandler(int windowId);
 
     public static event SendMessageHandler Receivers;
@@ -700,10 +696,87 @@ namespace MediaPortal.GUI.Library
     /// <param name="iWindowID">window id of the window to activate</param>    
     public static void ActivateWindow(int windowId)
     {
-      ActivateWindow(windowId, false);
+      ActivateWindow(windowId, false, false);
     }
 
-    public static void ActivateWindow(int newWindowId, bool replaceWindow)
+    /// <summary>
+    /// ActivateWindow() 
+    /// This function will show/present/activate and replace current window
+    /// with the window specified
+    /// </summary>
+    /// <param name="iWindowID">window id of the window to activate</param>   
+    /// <param name="bReplaceWindow">replace current window</param>    
+    public static void ActivateWindow(int windowId, bool replaceWindow)
+    {
+      ActivateWindow(windowId, replaceWindow, false);
+    }
+
+    private static void RemoveDoubleHistory(int newWindow)
+    {      
+      int index = -1;      
+      List<int> search = new List<int>();
+      List<int> data = new List<int>();
+      
+      // use temporary list and add also current active window for
+      // pattern search data. reverse list for search
+      data.AddRange(_listHistory);
+      data.Add(newWindow);
+      data.Reverse();
+      if (data.Count > 3)
+      {
+        search.Add(data[0]);
+        search.Add(data[1]);
+        while (index !=0 && search.Count < data.Count)
+        {
+          index = SearchPattern(search, data);
+          switch (index)
+          {
+            case 0:
+              break;
+            case 2:
+                for (int count = 0; count < search.Count; count++)
+                {
+                  _listHistory.RemoveAt(_listHistory.Count - 1);
+                }
+                index = 0;
+              break;
+            default:
+              search.Add(data[search.Count]);                            
+              break;
+          }          
+        }        
+      }
+    }
+
+    private static int SearchPattern(List<int> search, List<int> data)
+    {
+      int matches = 0;
+      for (int i = 0; i < data.Count; i++)
+      {
+        if (search[0] == data[i] && data.Count - i >= search.Count)
+        {
+          bool ismatch = true;
+          for (int j = 1; j < search.Count; j++)
+          {
+            if (data[i + j] != search[j])
+            {
+              ismatch = false;
+              break;
+            }
+          }
+          if (ismatch)
+          {
+            matches++;
+            i += search.Count - 1;
+          }          
+        }
+        else
+          break;
+      }
+      return matches;
+    } 
+
+    private static void ActivateWindow(int newWindowId, bool replaceWindow, bool skipHistory)
     {
       _isSwitchingToNewWindow = true;
       try
@@ -734,47 +807,20 @@ namespace MediaPortal.GUI.Library
           // get active window
           previousWindow = _listWindows[_activeWindowIndex];
 
-
           if (!replaceWindow)
           {
             // push active window id to window stack
             _activeWindowId = previousWindow.GetID;
-            if (newWindowId != _activeWindowId)
+            if (newWindowId != _activeWindowId && !skipHistory)
             {
               if (_listHistory.Count > 15)
               {
                 _listHistory.RemoveAt(0);
               }
               _listHistory.Add(_activeWindowId);
-
-              // GEMX: Prevent a sequence of window to re-occure after one another
-              if (_listHistory.Count > 3)
-              {
-                if (_listHistory[_listHistory.Count - 1] == _listHistory[_listHistory.Count - 3] &&
-                    _listHistory[_listHistory.Count - 2] == _listHistory[_listHistory.Count - 4])
-                {
-                  _listHistory.RemoveAt(_listHistory.Count - 1);
-                  _listHistory.RemoveAt(_listHistory.Count - 1);
-                }
-              }
-              //Log.Info("Window list add Id:{0} new count: {1}", _activeWindowId, _listHistory.Count);
-            }
+              RemoveDoubleHistory(newWindowId);
+            }            
           }
-
-          // deactivate old window
-          /*
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, previousWindow.GetID, 0, 0, newWindowId, 0, null);
-          previousWindow.OnMessage(msg);
-          if (OnDeActivateWindow != null)
-            OnDeActivateWindow(previousWindow.GetID);
-          if (!replaceWindow)
-          {
-            _previousActiveWindowId = _activeWindowId;
-            _previousActiveWindowIndex = _activeWindowIndex;
-          }
-          _activeWindowIndex = -1;
-          _activeWindowId = -1;
-          */
         }
 
         #endregion
@@ -926,11 +972,7 @@ namespace MediaPortal.GUI.Library
         ShowPreviousWindow();
 
       if (_previousActiveWindowId != ActiveWindow)
-      {
-        CloseCurrentWindow();
-        UnRoute();
-        ActivateWindow(_previousActiveWindowId);
-      }
+        ActivateWindow(_previousActiveWindowId, false, true);
     }
 
     /// <summary>
@@ -966,7 +1008,6 @@ namespace MediaPortal.GUI.Library
             _routedWindow = null;
           }
 
-
           msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, pWindow.GetID, 0, 0,
                                _previousActiveWindowId, 0, null);
           pWindow.OnMessage(msg);
@@ -997,7 +1038,6 @@ namespace MediaPortal.GUI.Library
       get { return (_windowCount > 0); }
     }
 
-
     /// <summary>
     /// returns true if we're busy switching from window A->window B
     /// used because we want to prevent rendering during this time
@@ -1007,7 +1047,6 @@ namespace MediaPortal.GUI.Library
       get { return _isSwitchingToNewWindow; }
       set { _isSwitchingToNewWindow = value; }
     }
-
 
     /// <summary>
     /// return the ID of the current active window
@@ -1143,7 +1182,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-
     /// <summary>
     /// Render()
     /// ask the current active window to render itself
@@ -1180,7 +1218,6 @@ namespace MediaPortal.GUI.Library
           pWindow = null;
         }
       }
-
       // and call postrender
       // PostRender(timePassed);
     }
@@ -1326,7 +1363,6 @@ namespace MediaPortal.GUI.Library
         return false;
       }
     }
-
 
     /// <summary>
     /// This method will show a warning dialog onscreen
