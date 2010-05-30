@@ -66,12 +66,14 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
 
   DWORD dwTime = timeGetTime();
   
-  //UINT64 timestmap(0);
-
-  //m_pAudioRenderer->AudioClock(timestmap);
+  /*  
+  UINT64 timestmap(0);
+  UINT64 qpc(0);
+  m_pAudioRenderer->AudioClock(timestmap, qpc);
   
-  //DWORD dwTime = timestmap / 10000;
-
+  DWORD dwTime2 = timestmap / 10000;
+  */
+ 
   REFERENCE_TIME delta = REFERENCE_TIME(dwTime) - REFERENCE_TIME(m_dwPrevSystemTime);
   if(dwTime < m_dwPrevSystemTime)
   {
@@ -82,5 +84,6 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
 
   delta = (REFERENCE_TIME)(delta * (UNITS / MILLISECONDS) * m_dAdjustment * m_dBias);
   m_rtPrivateTime = m_rtPrivateTime + delta;// + (UNITS / MILLISECONDS) * 500;
+  
   return m_rtPrivateTime;
 }

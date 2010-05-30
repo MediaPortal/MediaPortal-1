@@ -228,21 +228,15 @@ HRESULT	CMpcAudioRenderer::CheckMediaType(const CMediaType *pmt)
   return S_OK;
 }
 
-void CMpcAudioRenderer::AudioClock(UINT64& pTimestamp)
+void CMpcAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
 {
-  //UINT64 freq(0);
-  UINT64 pos(0);
-  UINT64 qpcPos(0);
-  
   if (m_pAudioClock)
   {
-    m_pAudioClock->GetPosition(&pos, &qpcPos);
-    pos = pos * 10000000 / m_nHWfreq;
+    m_pAudioClock->GetPosition(&pTimestamp, &pQpc);
+    pTimestamp = pTimestamp * 10000000 / m_nHWfreq;
   }
 
   //TRACE(_T("time %I64d"), pos);
-
-  pTimestamp = pos;
 }
 
 void CMpcAudioRenderer::OnReceiveFirstSample(IMediaSample *pMediaSample)

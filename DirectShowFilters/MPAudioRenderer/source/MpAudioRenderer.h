@@ -97,7 +97,7 @@ public:
 	STDMETHOD(SetBias)(DOUBLE bias);
 	STDMETHOD(GetBias)(DOUBLE *bias);
 
-  void AudioClock(UINT64& pTimestamp);
+  void AudioClock(UINT64& pTimestamp, UINT64& pQpc);
 
   // CMpcAudioRenderer
 private:
