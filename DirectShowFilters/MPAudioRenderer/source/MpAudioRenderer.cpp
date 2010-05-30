@@ -237,7 +237,7 @@ void CMpcAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
     pTimestamp = pTimestamp * 10000000 / m_nHWfreq;
   }
 
-  //TRACE(_T("time %I64d"), pos);
+  //TRACE(_T("AudioClock query pos: %I64d qpc: %I64d"), pTimestamp, pQpc);
 }
 
 void CMpcAudioRenderer::OnReceiveFirstSample(IMediaSample *pMediaSample)
