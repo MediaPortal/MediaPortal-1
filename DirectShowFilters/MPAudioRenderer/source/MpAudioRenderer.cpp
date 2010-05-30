@@ -150,6 +150,7 @@ CMpcAudioRenderer::~CMpcAudioRenderer()
   SAFE_RELEASE(m_pDS);
 
   // WASAPI
+  SAFE_RELEASE(m_pAudioClock);
   SAFE_RELEASE(m_pRenderClient);
   SAFE_RELEASE(m_pAudioClient);
   SAFE_RELEASE(m_pMMDevice);
@@ -157,7 +158,7 @@ CMpcAudioRenderer::~CMpcAudioRenderer()
   if (m_pReferenceClock)
   {
     SetSyncSource(NULL);
-    SAFE_RELEASE (m_pReferenceClock);
+    SAFE_RELEASE(m_pReferenceClock);
   }
 
   if (m_pWaveFileFormat)
@@ -509,6 +510,7 @@ STDMETHODIMP CMpcAudioRenderer::Stop()
   if (state == State_Paused)
   {
     TRACE(_T("CMpcAudioRenderer::Stop - releasing WASAPI resources"));
+    SAFE_RELEASE(m_pAudioClock);
     SAFE_RELEASE(m_pRenderClient);
     SAFE_RELEASE(m_pAudioClient);
     SAFE_RELEASE(m_pMMDevice);
@@ -1049,6 +1051,7 @@ HRESULT CMpcAudioRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
       
       m_bIsAudioClientStarted = false;
       SAFE_RELEASE(m_pRenderClient);
+      SAFE_RELEASE(m_pAudioClock);
       SAFE_RELEASE(m_pAudioClient);
       
       if (SUCCEEDED (hr)) 
