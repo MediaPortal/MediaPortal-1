@@ -105,7 +105,7 @@ CMpcAudioRenderer::CMpcAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_dBias(1.0)
 , m_dAdjustment(1.0)
 , m_bUseTimeStretching(true)
-, m_bFirst(true)
+, m_bFirstAudioSample(true)
 , m_pAudioClock(NULL)
 , m_nHWfreq(0)
 {
@@ -269,12 +269,13 @@ BOOL CMpcAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   // Audio should be renderer always when it arrives and the reference clock 
   // should be based on the audio HW
   //if (hr == S_OK) 
+  if (!m_bFirstAudioSample)
   {
     EXECUTE_ASSERT(SetEvent((HANDLE) m_RenderEvent));
     return TRUE;
   }
 
-  /*if (m_dRate <= 1.1)
+  if (m_dRate <= 1.1)
   {
     ASSERT(m_dwAdvise == 0);
     ASSERT(m_pClock);
@@ -287,22 +288,21 @@ BOOL CMpcAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   else
   {
     hr = DoRenderSample (pMediaSample);
-  }*/
+  }
 
   // We could not schedule the next sample for rendering despite the fact
   // we have a valid sample here. This is a fair indication that either
   // the system clock is wrong or the time stamp for the sample is duff
-//  ASSERT(m_dwAdvise == 0);
+  ASSERT(m_dwAdvise == 0);
 
-  //return FALSE;
+  return FALSE;
 }
 
 HRESULT	CMpcAudioRenderer::DoRenderSample(IMediaSample *pMediaSample)
 {
-  if(m_bFirst)
+  if(m_bFirstAudioSample)
   {
-    //m_Clock.SetDiff( timeGetTime() - m_dwTimeStart);
-    m_bFirst = false;
+    m_bFirstAudioSample = false;
   }
   
   if (m_bUseWASAPI)
@@ -1347,6 +1347,7 @@ HRESULT CMpcAudioRenderer::BeginFlush()
 
 HRESULT CMpcAudioRenderer::EndFlush()
 {
+  m_bFirstAudioSample = true;
   return CBaseRenderer::EndFlush(); 
 }
 

@@ -158,7 +158,7 @@ private:
   bool        m_bUseTimeStretching;
 
   DWORD       m_dwTimeStart;
-  bool        m_bFirst;
+  bool        m_bFirstAudioSample;
 
   IAudioClock* m_pAudioClock;
   UINT64       m_nHWfreq;

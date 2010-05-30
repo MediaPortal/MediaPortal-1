@@ -73,7 +73,7 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
   
   DWORD dwTime2 = timestmap / 10000;
   */
- 
+
   REFERENCE_TIME delta = REFERENCE_TIME(dwTime) - REFERENCE_TIME(m_dwPrevSystemTime);
   if(dwTime < m_dwPrevSystemTime)
   {
@@ -83,7 +83,7 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
   m_dwPrevSystemTime = dwTime;
 
   delta = (REFERENCE_TIME)(delta * (UNITS / MILLISECONDS) * m_dAdjustment * m_dBias);
-  m_rtPrivateTime = m_rtPrivateTime + delta;// + (UNITS / MILLISECONDS) * 500;
+  m_rtPrivateTime = m_rtPrivateTime + delta;
   
   return m_rtPrivateTime;
 }
