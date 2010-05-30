@@ -301,7 +301,7 @@ BOOL CMpcAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
 
 HRESULT	CMpcAudioRenderer::DoRenderSample(IMediaSample *pMediaSample)
 {
-  if(m_bFirstAudioSample)
+  if (m_bFirstAudioSample)
   {
     m_bFirstAudioSample = false;
   }
@@ -324,12 +324,12 @@ STDMETHODIMP CMpcAudioRenderer::NonDelegatingQueryInterface(REFIID riid, void **
     return GetInterface(static_cast<IReferenceClock*>(&m_Clock), ppv);
   }
 
-  if( riid == IID_IAVSyncClock ) 
+  if (riid == IID_IAVSyncClock) 
   {
     return GetInterface(static_cast<IAVSyncClock*>(this), ppv);
   }
 
-  if( riid == IID_IMediaSeeking ) 
+  if (riid == IID_IMediaSeeking) 
   {
     return GetInterface(static_cast<IMediaSeeking*>(this), ppv);
   }
@@ -533,6 +533,7 @@ STDMETHODIMP CMpcAudioRenderer::Pause()
   }
   
   m_bIsAudioClientStarted = false;
+  m_bFirstAudioSample = true;
 
   return CBaseRenderer::Pause(); 
 };
