@@ -301,6 +301,8 @@ BOOL CMpcAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
 
 HRESULT	CMpcAudioRenderer::DoRenderSample(IMediaSample *pMediaSample)
 {
+  CAutoLock cRendererLock(&m_InterfaceLock);
+  
   if (m_bFirstAudioSample)
   {
     m_bFirstAudioSample = false;
@@ -424,13 +426,17 @@ HRESULT CMpcAudioRenderer::CompleteConnect(IPin *pReceivePin)
     if (SUCCEEDED(hr)) hr = CreateDSBuffer();
   }
   if (SUCCEEDED(hr)) TRACE(_T("CMpcAudioRenderer::CompleteConnect Success"));
+
   return hr;
 }
 
 STDMETHODIMP CMpcAudioRenderer::Run(REFERENCE_TIME tStart)
 {
-  HRESULT	hr;
+  TRACE(_T("CMpcAudioRenderer::Run"));
 
+  CAutoLock cRendererLock(&m_InterfaceLock);
+  
+  HRESULT	hr;
   m_dwTimeStart = timeGetTime();
 
   if (m_State == State_Running) return NOERROR;
@@ -491,6 +497,8 @@ STDMETHODIMP CMpcAudioRenderer::Run(REFERENCE_TIME tStart)
 STDMETHODIMP CMpcAudioRenderer::Stop() 
 {
   TRACE(_T("CMpcAudioRenderer::Stop"));
+
+  CAutoLock cRendererLock(&m_InterfaceLock);
   
   if (m_pDSBuffer)
   {
@@ -522,6 +530,10 @@ STDMETHODIMP CMpcAudioRenderer::Stop()
 
 STDMETHODIMP CMpcAudioRenderer::Pause()
 {
+  TRACE(_T("CMpcAudioRenderer::Pause"));
+  
+  CAutoLock cRendererLock(&m_InterfaceLock);
+
   if (m_pDSBuffer)
   {
     m_pDSBuffer->Stop();
@@ -529,6 +541,26 @@ STDMETHODIMP CMpcAudioRenderer::Pause()
   
   if (m_pAudioClient && m_bIsAudioClientStarted) 
   {
+    BYTE *pData = NULL;
+    UINT32 bufferSize(0);
+    HRESULT hr = S_OK;
+
+    hr = m_pAudioClient->GetBufferSize(&bufferSize);
+    if (SUCCEEDED(hr) && m_pRenderClient)
+    {
+      hr = m_pRenderClient->GetBuffer(bufferSize, &pData);
+      if (SUCCEEDED(hr))
+      {
+        // Clear the WASAPI buffers so that no looping audio is
+        // played when graph is in the paused state
+        m_pRenderClient->ReleaseBuffer(bufferSize, AUDCLNT_BUFFERFLAGS_SILENT);
+      }
+    }
+    else
+    {
+      TRACE(_T("CMpcAudioRenderer::Pause - m_pRenderClient not available!"));
+    }
+
     m_pAudioClient->Stop();
   }
   
