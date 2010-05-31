@@ -1234,13 +1234,13 @@ HRESULT CMpcAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCl
   {
     SAFE_RELEASE(m_pAudioClock);
     hr = m_pAudioClient->GetService(__uuidof(IAudioClock), (void**)&m_pAudioClock);
-    if(FAILED(hr))
+    if(SUCCEEDED(hr))
     {
-      TRACE(_T("CMpcAudioRenderer - IAudioClock not found"));
+      m_pAudioClock->GetFrequency(&m_nHWfreq);
     }
     else
     {
-      m_pAudioClock->GetFrequency(&m_nHWfreq);
+      TRACE(_T("CMpcAudioRenderer - IAudioClock not found"));
     }
   }
 
