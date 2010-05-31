@@ -517,7 +517,7 @@ namespace MediaPortal.DeployTool
         case "min":
           major = 1;
           minor = 0;
-          revision = 0;         // 1.0.0
+          revision = 4;         // 1.0.4 = RC1
           break;
         case "max":
           major = 1;
