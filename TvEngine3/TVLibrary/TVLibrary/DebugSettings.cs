@@ -112,8 +112,8 @@ namespace TvLibrary
     /// </summary>
     public static bool DumpRawTS
     {
-      get { return GetSetting("DisableCRCCheck"); }
-      set { SetSetting("DisableCRCCheck", value); }
+      get { return GetSetting("DumpRawTS"); }
+      set { SetSetting("DumpRawTS", value); }
     }
 
     /// <summary>
