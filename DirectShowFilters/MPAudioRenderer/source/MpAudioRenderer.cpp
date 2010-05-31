@@ -201,6 +201,13 @@ HRESULT	CMpcAudioRenderer::CheckMediaType(const CMediaType *pmt)
     return VFW_E_TYPE_NOT_ACCEPTED;
   }
 
+  if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
+  {
+    // TODO: should we do something specific here? At least W7 audio codec is providing this info
+    // WAVEFORMATPCMEX *test = (WAVEFORMATPCMEX *) pmt->Format();
+    // return VFW_E_TYPE_NOT_ACCEPTED;
+  }
+
   if (m_bUseWASAPI)
   {
     hr = CheckAudioClient((WAVEFORMATEX *)NULL);
