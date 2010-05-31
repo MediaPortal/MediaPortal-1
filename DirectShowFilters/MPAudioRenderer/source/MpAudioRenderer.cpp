@@ -1170,13 +1170,13 @@ bool CMpcAudioRenderer::CheckFormatChanged(WAVEFORMATEX *pWaveFormatEx, WAVEFORM
 
 HRESULT CMpcAudioRenderer::GetBufferSize(WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod)
 { 
- if (!pWaveFormatEx) 
-   return S_OK;
- 
- if (pWaveFormatEx->cbSize <22) //WAVEFORMATEX
-  return S_OK;
+  if (!pWaveFormatEx) 
+    return S_OK;
 
- WAVEFORMATEXTENSIBLE *wfext = (WAVEFORMATEXTENSIBLE*)pWaveFormatEx;
+  if (pWaveFormatEx->cbSize <22) //WAVEFORMATEX
+    return S_OK;
+
+  WAVEFORMATEXTENSIBLE *wfext = (WAVEFORMATEXTENSIBLE*)pWaveFormatEx;
 
   if (m_nBufferSize == 0 )
   if (wfext->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_MLP)
@@ -1188,14 +1188,14 @@ HRESULT CMpcAudioRenderer::GetBufferSize(WAVEFORMATEX *pWaveFormatEx, REFERENCE_
   else if (wfext->Format.wFormatTag == WAVE_FORMAT_DOLBY_AC3_SPDIF)
     m_nBufferSize = 6144;
   else return S_OK;
- 
+
   *pHnsBufferPeriod = (REFERENCE_TIME)((REFERENCE_TIME)m_nBufferSize * 10000 * 8 / ((REFERENCE_TIME)pWaveFormatEx->nChannels * pWaveFormatEx->wBitsPerSample *
     1.0 * pWaveFormatEx->nSamplesPerSec) /*+ 0.5*/);
     *pHnsBufferPeriod *= 1000;
 
- TRACE(_T("CMpcAudioRenderer::GetBufferSize set a %lld period for a %ld buffer size"),*pHnsBufferPeriod, m_nBufferSize);
+  TRACE(_T("CMpcAudioRenderer::GetBufferSize set a %lld period for a %ld buffer size"),*pHnsBufferPeriod, m_nBufferSize);
 
- return S_OK;
+  return S_OK;
 }
 
 HRESULT CMpcAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioClient *pAudioClient, IAudioRenderClient **ppRenderClient)
