@@ -42,6 +42,20 @@
       <animation effect="fade" time="250">WindowClose</animation>
     </control>-->
     <control>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>622</posX>
+      <posY>682</posY>
+      <label>#selectedindex/#itemcount #currentmodule</label>
+      <align>left</align>
+      <textcolor>White</textcolor>
+      <font>font10</font>
+	  <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
       <description>Selected item Label</description>

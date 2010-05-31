@@ -34,18 +34,6 @@
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
-      <description>Number of Files Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>462</posX>
-      <posY>662</posY>
-      <label>#itemcount</label>
-      <align>left</align>
-      <textcolor>ffffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-    </control>
-    <control>
       <description>Selected item Label</description>
       <type>label</type>
       <id>1</id>

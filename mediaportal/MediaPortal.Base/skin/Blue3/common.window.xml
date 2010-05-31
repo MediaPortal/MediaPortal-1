@@ -37,9 +37,10 @@
       <id>1</id>
       <posX>260</posX>
       <posY>530</posY>
-      <label>#itemcount</label>
+      <label>#selectedindex/#itemcount #currentmodule</label>
       <align>left</align>
       <textcolor>White</textcolor>
+	  <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>

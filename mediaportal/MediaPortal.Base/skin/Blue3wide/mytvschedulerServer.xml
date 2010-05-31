@@ -42,10 +42,11 @@
       <id>12</id>
       <posX>470</posX>
       <posY>650</posY>
-      <label>#itemcount</label>
-      <font>font13</font>
+      <label>#selectedindex/#itemcount #itemtype</label>
+      <font>font10</font>
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
+	  <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>

@@ -62,9 +62,10 @@
       <description>Number of Files Label</description>
       <id>12</id>
       <posX>260</posX>
-      <posY>410</posY>
-      <label>#itemcount</label>
-      <visible>false</visible>
+      <posY>535</posY>
+      <label>#selectedindex/#itemcount #itemtype</label>
+	  <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
+      <align>left</align>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>

@@ -3,6 +3,7 @@
   <id>2700</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
+    <define>#currentmodule:News Feed</define>
   <controls>
     <control>
       <description>background image</description>
@@ -53,9 +54,10 @@
       <id>1</id>
       <posX>260</posX>
       <posY>306</posY>
-      <label>#itemcount</label>
+      <label>#selectedindex/#itemcount #currentmodule</label>
       <align>left</align>
       <textcolor>ffffffff</textcolor>
+	  <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
     </control>
     <control>
       <description>Selected item Label</description>

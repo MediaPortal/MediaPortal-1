@@ -1547,6 +1547,8 @@ namespace MediaPortal.GUI.Library
               }
 
               GUIPropertyManager.SetProperty("#itemcount", string.Empty);
+              // TODO: in derived classes set #itemtype to an appropriate localized string
+              GUIPropertyManager.SetProperty("#itemtype", GUILocalizeStrings.Get(507)); // items
               GUIPropertyManager.SetProperty("#selecteditem", string.Empty);
               GUIPropertyManager.SetProperty("#selecteditem2", string.Empty);
               GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);

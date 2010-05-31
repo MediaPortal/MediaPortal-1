@@ -214,7 +214,7 @@
       <posY>394</posY>
       <width>468</width>
       <height>25</height>
-      <label>#Play.Current.Track</label>
+      <label>Track: #Play.Current.Track</label>
       <font>font16</font>
       <textcolor>80000000</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
@@ -227,7 +227,7 @@
       <posY>391</posY>
       <width>468</width>
       <height>25</height>
-      <label>#Play.Current.Track</label>
+      <label>Track: #Play.Current.Track</label>
       <font>font16</font>
       <animation effect="fade" time="250">WindowOpen</animation>
     </control>
