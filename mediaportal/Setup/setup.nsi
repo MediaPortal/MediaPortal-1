@@ -292,17 +292,8 @@ ShowUninstDetails show
 
   ; MPTray
   ${KillProcess} "MPTray.exe"
-  ${Select} $0
-    ${Case} "0"
-      ;${LOG_TEXT} "INFO" "KillProcess: ${Process} was killed successfully."
-      StrCpy $MPTray_Running 1
-    ${Case} "128"
-      ;${LOG_TEXT} "INFO" "KillProcess: ${Process} is not running."
-      StrCpy $MPTray_Running 0
-    ${CaseElse}
-      ;${LOG_TEXT} "ERROR" "KillProcess: Unknown result: $0"
-  ${EndSelect}
-
+  StrCpy $MPTray_Running $R0
+  
   ; MovieThumbnailer
   ${KillProcess} "mtn.exe"
 !macroend
@@ -852,7 +843,7 @@ Section -Post
   !insertmacro SetRights
 
   ; start MpTray if it was running before
-  ${If} $MPTray_Running == 1
+  ${If} $MPTray_Running == 0
     ${LOG_TEXT} "INFO" "Starting MPTray..."
     Exec '"$MPdir.Base\MPTray.exe"'
   ${EndIf}

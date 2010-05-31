@@ -25,6 +25,7 @@
 !include "${svn_InstallScripts}\include\LoggingMacros.nsh"
 
 !AddPluginDir "${svn_InstallScripts}\nsSCM-plugin\Plugin"
+!AddPluginDir "${svn_InstallScripts}\KillProc-plugin\Plugin"
 
 #***************************
 #***************************
@@ -38,33 +39,16 @@
 
   ${LOG_TEXT} "INFO" "KillProcess: ${Process}"
 
-  StrCpy $R1 1  ; set counter to 1
-  ${Do}
+	KillProcDLL::KillProc "${Process}"
 
-    nsExec::Exec '"taskkill" /F /IM "${Process}"'
-
-    Pop $0
-
-    ${Select} $0
-      ${Case} "0"
-        ${LOG_TEXT} "INFO" "KillProcess: ${Process} was killed successfully."
-        ${ExitDo}
-      ${Case} "128"
-        ${LOG_TEXT} "INFO" "KillProcess: ${Process} is not running."
-        ${ExitDo}
-      ${CaseElse}
-
-        ${LOG_TEXT} "ERROR" "KillProcess: Unknown result: $0"
-        IntOp $R1 $R1 + 1  ; increase retry-counter +1
-        ${If} $R1 > 5  ; try max. 5 times
-          ${ExitDo}
-        ${Else}
-          ${LOG_TEXT} "INFO" "KillProcess: Trying again. $R1/5"
-        ${EndIf}
-
-      ${EndSelect}
-  ${Loop}
-
+	${If} $R0 == "0"
+    		${LOG_TEXT} "INFO" "KillProcess: ${Process} was killed successfully."
+  ${ElseIf} $R0 == "603"
+    		${LOG_TEXT} "INFO" "KillProcess: ${Process} is not running."
+  ${Else}
+        ${LOG_TEXT} "INFO" "KillProcess: Unable to kill ${Process} (error $R0)."
+        Abort "Unable to kill ${Process} (error $R0). Installation aborted."
+  ${EndIF}
 
   !verbose pop
 !macroend
@@ -96,7 +80,7 @@
     		${LOG_TEXT} "INFO" "StopService: ${Service} was stopped successfully."
     ${EndIF}
   ${Else}
-      ${LOG_TEXT} "INFO" "StopService: ${Service} is already stopped"
+      ${LOG_TEXT} "INFO" "StopService: ${Service} is already stopped."
   ${EndIf}
 
   !verbose pop
