@@ -275,12 +275,12 @@ namespace MediaPortal.DeployTool
         key.Close();
 
 #if DEBUG
-        MessageBox.Show("Registry version = <" + version + ">, DeployTool display version = <" + GetPackageVersion('d') + ">, IsInstalled=" + _IsInstalled);
+        MessageBox.Show("Registry version = <" + version + ">, DeployTool display version = <" + GetDisplayVersion() + ">, IsInstalled=" + _IsInstalled);
 #endif
 
         if (_IsInstalled == 1)
         {
-          result.state = version == GetPackageVersion('d') ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
+          result.state = version == GetDisplayVersion() ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
         }
         else
         {
@@ -491,24 +491,47 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
-    public static string GetPackageVersion(char type)
+    #region Version checks
+    public static int CalculateVersion(int major, int minor, int revision)
     {
-      switch (type.ToString().ToLower())
-      {
-        //
-        // Using the same number for all version deactivates upgrade
-        //
-        case "c":                       //current
-          return "1.0.8";
-        case "p":                       //previous
-          return "1.0.7";
-        case "s":                       //stable
-          return "1.0.5";
-        case "d":                       //display
-          return "1.1.0 RC4";
-        default:
-          return string.Empty;
-      }
+      return major * 100 + minor * 10 + revision;
     }
+
+    public static bool IsOfficialBuild(string build)
+    {
+      //
+      // All official releases has "0" as build number
+      // but 1.1.0 RC2 that was 25546
+      //
+      return (build == "0" || build == "25546");
+    }
+
+    public static int GetPackageVersion(string type)
+    {
+      int major = 0;
+      int minor = 0;
+      int revision = 0;
+
+      switch (type)
+      {
+        case "min":
+          major = 1;
+          minor = 0;
+          revision = 0;         // 1.0.0
+          break;
+        case "max":
+          major = 1;
+          minor = 0;
+          revision = 7;         // 1.0.7 = RC3
+          break;
+      }
+      return CalculateVersion(major, minor, revision);
+    }
+
+    public static string GetDisplayVersion()
+    {
+      return "1.1.0 RC4";
+    }
+    #endregion
   }
 }

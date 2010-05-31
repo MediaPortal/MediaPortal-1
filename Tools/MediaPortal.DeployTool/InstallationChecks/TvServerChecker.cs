@@ -38,7 +38,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public string GetDisplayName()
     {
-      return "MediaPortal TV-Server " + Utils.GetPackageVersion('d');
+      return "MediaPortal TV-Server " + Utils.GetDisplayVersion();
     }
 
     public bool Download()

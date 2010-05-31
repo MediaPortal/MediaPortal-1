@@ -53,14 +53,12 @@ namespace MediaPortal.DeployTool.Sections
 
       // MediaPortal
       RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
-      string MpVer = string.Empty;
-      string MpBuild = string.Empty;
+      int MpVer = 0;
+      string MpBuild = "0";
       string MpDisplayVer = string.Empty;
       if (key != null)
       {
-        MpVer = key.GetValue("VersionMajor") + ".";
-        MpVer += key.GetValue("VersionMinor") + ".";
-        MpVer += key.GetValue("VersionRevision");
+        MpVer = Utils.CalculateVersion((int)key.GetValue("VersionMajor"), (int)key.GetValue("VersionMinor"), (int)key.GetValue("VersionRevision"));
         MpBuild = key.GetValue("VersionBuild").ToString();
         MpDisplayVer = key.GetValue("DisplayVersion").ToString().Replace(" for TESTING ONLY", string.Empty);
         key.Close();
@@ -68,14 +66,12 @@ namespace MediaPortal.DeployTool.Sections
 
       // TV-Server
       key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
-      string Tv3Ver = string.Empty;
-      string Tv3Build = string.Empty;
+      int Tv3Ver = 0;
+      string Tv3Build = "0";
       string Tv3DisplayVer = string.Empty;
       if (key != null)
       {
-        Tv3Ver = key.GetValue("VersionMajor") + ".";
-        Tv3Ver += key.GetValue("VersionMinor") + ".";
-        Tv3Ver += key.GetValue("VersionRevision");
+        Tv3Ver = Utils.CalculateVersion((int)key.GetValue("VersionMajor"), (int)key.GetValue("VersionMinor"), (int)key.GetValue("VersionRevision"));
         Tv3Build = key.GetValue("VersionBuild").ToString();
         Tv3DisplayVer = key.GetValue("DisplayVersion").ToString().Replace(" for TESTING ONLY", string.Empty);
         key.Close();
@@ -83,10 +79,9 @@ namespace MediaPortal.DeployTool.Sections
 
       rbUpdate.Enabled = false;
       bUpdate.Enabled = false;
-      if ((MpVer == Utils.GetPackageVersion('p') && MpBuild == "0") ||
-          (Tv3Ver == Utils.GetPackageVersion('p') && Tv3Build == "0") ||
-          (MpVer == Utils.GetPackageVersion('s') && MpBuild == "0") ||
-          (Tv3Ver == Utils.GetPackageVersion('s') && Tv3Build == "0"))
+      if ((MpVer >= Utils.GetPackageVersion("min") && MpVer <= Utils.GetPackageVersion("max")) ||
+          (Tv3Ver >= Utils.GetPackageVersion("min") && Tv3Ver <= Utils.GetPackageVersion("max")) &&
+          (Utils.IsOfficialBuild(MpBuild) && Utils.IsOfficialBuild(Tv3Build)))
       {
         rbUpdate.Enabled = true;
         bUpdate.Enabled = true;
@@ -94,14 +89,14 @@ namespace MediaPortal.DeployTool.Sections
 
       if (!String.IsNullOrEmpty(MpBuild))
       {
-        labelSectionHeader.Text = MpBuild != "0" ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"), MpDisplayVer, MpBuild) : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"), MpDisplayVer);
+        labelSectionHeader.Text = !Utils.IsOfficialBuild(MpBuild) ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"), MpDisplayVer, MpBuild) : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"), MpDisplayVer);
       }
       else
       {
-        labelSectionHeader.Text = Tv3Build != "0" ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"), Tv3DisplayVer, Tv3Build) : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"), Tv3DisplayVer);
+        labelSectionHeader.Text = !Utils.IsOfficialBuild(Tv3Build) ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"), Tv3DisplayVer, Tv3Build) : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"), Tv3DisplayVer);
       }
 
-      rbUpdate.Text = String.Format(Localizer.GetBestTranslation("Upgrade_yes"), Utils.GetPackageVersion('d'));
+      rbUpdate.Text = String.Format(Localizer.GetBestTranslation("Upgrade_yes"), Utils.GetDisplayVersion());
       rbFresh.Text = Localizer.GetBestTranslation("Upgrade_no");
       labelNote.Text = Localizer.GetBestTranslation("Upgrade_note");
     }
