@@ -269,10 +269,16 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.WriteFile("dvbs:channel FECRate is set to {0}", tuneChannel.InnerFecRate);
           _tuneRequest.put_Locator(locator);
           //set the DisEqC parameters 
+          
           if (_conditionalAccess != null)
           {
             _diseqCsucceded = _conditionalAccess.SendDiseqcCommand(_parameters, dvbsChannel);
-          }          
+            //move diseqc motor to correct satellite
+            if (dvbsChannel != null && dvbsChannel.SatelliteIndex > 0 && _conditionalAccess.DiSEqCMotor != null)
+            {
+              _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
+            }
+          }  
         }
 
         _dvbsChannel = dvbsChannel;
@@ -301,22 +307,6 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Write(ex);
         throw;
       }
-    }
-
-    protected override void OnAfterTune (IChannel channel)
-    {
-      DVBSChannel dvbsChannel = channel as DVBSChannel;
-      if (dvbsChannel != null)
-      {
-        //move diseqc motor to correct satellite
-        if (_conditionalAccess != null)
-        {
-          if (dvbsChannel.SatelliteIndex > 0 && _conditionalAccess.DiSEqCMotor != null)
-          {
-            _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
-          }
-        } 
-      }      
     }
 
     protected override bool ShouldWaitForSignal()
