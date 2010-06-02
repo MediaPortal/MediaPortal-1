@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>601</id>
   <defaultcontrol>10</defaultcontrol>
@@ -15,7 +15,7 @@
       <width>720</width>
       <height>576</height>
     </control>
-     <control>
+    <control>
       <type>image</type>
       <id>1</id>
       <posX>60</posX>
@@ -28,10 +28,11 @@
       <description>Scheduler Text Label</description>
       <type>label</type>
       <id>1</id>
-      <posX>250</posX>
-      <posY>70</posY>
+      <posX>268</posX>
+      <posY>77</posY>
+      <width>400</width>
       <label>646</label>
-      <align>right</align>
+      <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
@@ -41,28 +42,14 @@
       <type>label</type>
       <id>12</id>
       <posX>260</posX>
-      <posY>540</posY>
+      <posY>530</posY>
       <label>#selectedindex/#itemcount #itemtype</label>
       <font>font13</font>
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
-	  <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
-    </control>
-    <control>
-      <description>Selected item Label</description>
-      <type>fadelabel</type>
-      <id>1</id>
-      <posX>660</posX>
-      <posY>70</posY>
-      <width>400</width>
-      <label>#selecteditem</label>
-      <font>font13</font>
-      <align>right</align>
-      <textcolor>ffffffff</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
     </control>
     <control>
       <type>group</type>
@@ -143,25 +130,33 @@
         <description>scheduler recordings listcontrol</description>
         <type>listcontrol</type>
         <id>10</id>
-        <height>370</height>
-        <textXOff>50</textXOff>
+        <posX>260</posX>
+        <posY>97</posY>
+        <height>310</height>
+        <width>425</width>
+        <textXOff>0</textXOff>
         <textYOff>2</textYOff>
         <textXOff2>420</textXOff2>
-        <textYOff2>29</textYOff2>
-        <textXOff3>100</textXOff3>
-        <textYOff3>29</textYOff3>
-        <IconXOff>12</IconXOff>
-        <PinIconXOff>55</PinIconXOff>
-        <PinIconYOff>15</PinIconYOff>
-        <spinPosX>606</spinPosX>
-        <spinPosY>535</spinPosY>
-        <itemWidth>45</itemWidth>
-        <itemHeight>45</itemHeight>
+        <textYOff2>25</textYOff2>
+        <textXOff3>80</textXOff3>
+        <textYOff3>27</textYOff3>
+        <IconXOff>5</IconXOff>
+        <IconYOff>4</IconYOff>
+        <PinIconWidth>20</PinIconWidth>
+        <PinIconHeight>15</PinIconHeight>
+        <PinIconXOff>50</PinIconXOff>
+        <PinIconYOff>29</PinIconYOff>
+        <spinWidth>26</spinWidth>
+        <spinHeight>27</spinHeight>
+        <spinPosX>625</spinPosX>
+        <spinPosY>530</spinPosY>
+        <itemWidth>40</itemWidth>
+        <itemHeight>40</itemHeight>
         <textureFocus>album_background_focus.png</textureFocus>
         <textureNoFocus>album_background_nofocus.png</textureNoFocus>
-        <spaceBetweenItems>5</spaceBetweenItems>
-        <textureHeight>50</textureHeight>
+        <spaceBetweenItems>4</spaceBetweenItems>
         <keepaspectratio>yes</keepaspectratio>
+        <textureHeight>50</textureHeight>
         <font2>font10</font2>
         <font3>font10</font3>
         <onleft>2</onleft>
@@ -171,28 +166,69 @@
       </control>
     </control>
     <control>
-      <description>Current program title</description>
-      <type>fadelabel</type>
-      <id>13</id>
+      <type>image</type>
       <posX>260</posX>
-      <posY>425</posY>
-      <width>250</width>
-      <label>#TV.Scheduled.Title</label>
-      <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <posY>399</posY>
+      <width>45</width>
+      <height>45</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <zoom>no</zoom>
+      <texture>#selectedthumb</texture>
+    </control>
+    <control>
+      <description>channel</description>
+      <id>17</id>
+      <type>fadelabel</type>
+      <posX>310</posX>
+      <posY>394</posY>
+      <width>375</width>
+      <align>left</align>
+      <textcolor>FFB2D4F5</textcolor>
+      <label>#TV.Scheduled.Channel</label>
+      <font>font12</font>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Current program time</description>
-      <type>label</type>
       <id>14</id>
-      <posX>260</posX>
-      <posY>445</posY>
+      <type>label</type>
+      <posX>310</posX>
+      <posY>411</posY>
+      <width>180</width>
       <label>#TV.Scheduled.Time</label>
       <align>left</align>
-      <font>font13</font>
+      <font>font12</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Current program genre</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>683</posX>
+      <posY>411</posY>
+      <width>195</width>
+      <label>#TV.Scheduled.Genre</label>
+      <align>right</align>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>!string.equals(#TV.Scheduled.Genre,-)</visible>
+    </control>
+    <control>
+      <description>Current program title</description>
+      <type>fadelabel</type>
+      <id>13</id>
+      <posX>310</posX>
+      <posY>428</posY>
+      <width>375</width>
+      <label>#TV.Scheduled.Title</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -201,25 +237,12 @@
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>260</posX>
-      <posY>470</posY>
-      <width>430</width>
-      <height>65</height>
+      <posY>455</posY>
+      <height>68</height>
+      <width>425</width>
       <label>#TV.Scheduled.Description</label>
-      <font>font13</font>
+      <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-    </control>
-    <control>
-      <description>channel</description>
-      <type>label</type>
-      <id>17</id>
-      <posX>677</posX>
-      <posY>445</posY>
-      <label>#TV.Scheduled.Channel</label>
-      <align>right</align>
-      <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
