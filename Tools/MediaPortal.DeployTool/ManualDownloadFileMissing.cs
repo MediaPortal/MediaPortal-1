@@ -36,8 +36,8 @@ namespace MediaPortal.DeployTool
       openFileDialog.FileName = target_file;
       openFileDialog.InitialDirectory = target_dir;
       openFileDialog.ValidateNames = true;
-      openFileDialog.ShowDialog();
-      textBox1.Text = openFileDialog.FileName;
+      DialogResult res = openFileDialog.ShowDialog();
+      textBox1.Text = res == DialogResult.OK ? openFileDialog.FileName : string.Empty;
     }
 
     private void textBox1_TextChanged(object sender, EventArgs e)
