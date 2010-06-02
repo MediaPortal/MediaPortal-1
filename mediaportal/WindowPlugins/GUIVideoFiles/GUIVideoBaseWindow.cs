@@ -490,6 +490,11 @@ namespace MediaPortal.GUI.Video
         GUIPropertyManager.SetProperty("#currentmodule", GetModuleName());
       }
 
+      if (facadeView == null)
+      {
+        return;
+      }
+
       GUIControl.HideControl(GetID, facadeView.GetID);
 
       int iControl = facadeView.GetID;
