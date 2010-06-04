@@ -25,7 +25,7 @@
     <security>
       <requestedPrivileges>
         <requestedExecutionLevel
-          level="requireAdministrator"
+          level="asInvoker"
           uiAccess="false"/>
         </requestedPrivileges>
        </security>
