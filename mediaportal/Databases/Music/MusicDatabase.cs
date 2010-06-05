@@ -324,7 +324,7 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.AddTable(MusicDbClient, "composer",
                                  "CREATE TABLE composer ( idComposer integer primary key autoincrement, strComposer text)");
         DatabaseUtility.AddIndex(MusicDbClient, "idxcomposertable_strComposer",
-                                 "CREATE INDEX idxcomposerable_strComposer ON composer(strComposer ASC)");
+                                 "CREATE INDEX idxcomposertable_strComposer ON composer(strComposer ASC)");
 
         // Artist Info and Album Info
         DatabaseUtility.AddTable(MusicDbClient, "albuminfo",
