@@ -310,6 +310,8 @@ namespace TvService
 
         /* Replace any trailing dots in path name; Bugfix for Mantis 1881 */
         subDirectory = new Regex(@"\.*$").Replace(subDirectory, "");
+        /* Replace any trailing spaces in path name; Bugfix for Mantis 2933*/
+        subDirectory = new Regex(@"\s+\\\s*|\\\s+").Replace(subDirectory, "\\");
 
         fullPath = recordingPath + "\\" + subDirectory.Trim();
         if (!System.IO.Directory.Exists(fullPath))
