@@ -1,7 +1,7 @@
 #ifndef _SIMD_COMMON_H_
 #define _SIMD_COMMON_H_
 
-#if !defined(__GNUC__)// && 0
+#if !defined(__GNUC__)
   #define __SSE2__
 #endif
 

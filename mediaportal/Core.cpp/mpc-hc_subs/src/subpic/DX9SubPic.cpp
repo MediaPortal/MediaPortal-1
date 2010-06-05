@@ -107,7 +107,22 @@ STDMETHODIMP CDX9SubPic::CopyTo(ISubPic* pSubPic)
 	if(!m_pSurface || FAILED(m_pSurface->GetDevice(&pD3DDev)) || !pD3DDev)
 		return E_FAIL;
 
-	hr = pD3DDev->UpdateTexture((IDirect3DTexture9*)GetObject(), (IDirect3DTexture9*)pSubPic->GetObject());
+	IDirect3DTexture9* pSrcTex = (IDirect3DTexture9*)GetObject();
+	CComPtr<IDirect3DSurface9> pSrcSurf;
+	pSrcTex->GetSurfaceLevel(0, &pSrcSurf);
+	D3DSURFACE_DESC srcDesc;
+	pSrcSurf->GetDesc(&srcDesc);
+
+	IDirect3DTexture9* pDstTex = (IDirect3DTexture9*)pSubPic->GetObject();
+	CComPtr<IDirect3DSurface9> pDstSurf;
+	pDstTex->GetSurfaceLevel(0, &pDstSurf);
+	D3DSURFACE_DESC dstDesc;
+	pDstSurf->GetDesc(&dstDesc);
+
+	RECT r;
+	SetRect(&r, 0, 0, min(srcDesc.Width, dstDesc.Width), min(srcDesc.Height, dstDesc.Height));
+	POINT p = { 0, 0 };
+	hr = pD3DDev->UpdateSurface(pSrcSurf, &r, pDstSurf, &p);
 //	ASSERT (SUCCEEDED (hr));
 
 	return SUCCEEDED(hr) ? S_OK : E_FAIL;
@@ -133,9 +148,7 @@ STDMETHODIMP CDX9SubPic::ClearDirtyRect(DWORD color)
 		{
 			while(h-- > 0)
 			{
-				WORD* start = (WORD*)ptr;
-				WORD* end = start + m_rcDirty.Width();
-				while(start < end) *start++ = (WORD)color;
+				memsetw(ptr, color, 2 * m_rcDirty.Width());
 				ptr += spd.pitch;
 			}
 		}
@@ -143,9 +156,7 @@ STDMETHODIMP CDX9SubPic::ClearDirtyRect(DWORD color)
 		{
 			while(h-- > 0)
 			{
-				DWORD* start = (DWORD*)ptr;
-				DWORD* end = start + m_rcDirty.Width();
-				while(start < end) *start++ = color;
+				memsetd(ptr, color, 4 * m_rcDirty.Width());
 				ptr += spd.pitch;
 			}
 		}
@@ -166,7 +177,6 @@ STDMETHODIMP CDX9SubPic::ClearDirtyRect(DWORD color)
 
 STDMETHODIMP CDX9SubPic::Lock(SubPicDesc& spd)
 {
-
 	D3DSURFACE_DESC d3dsd;
 	ZeroMemory(&d3dsd, sizeof(d3dsd));
 	if(FAILED(m_pSurface->GetDesc(&d3dsd)))
@@ -192,17 +202,20 @@ STDMETHODIMP CDX9SubPic::Lock(SubPicDesc& spd)
 
 STDMETHODIMP CDX9SubPic::Unlock(RECT* pDirtyRect)
 {
-	m_pSurface->UnlockRect();
+	HRESULT hr = m_pSurface->UnlockRect();
 
 	if(pDirtyRect)
 	{
 		m_rcDirty = *pDirtyRect;
-		m_rcDirty.InflateRect(1, 1);
-		m_rcDirty.left &= ~127;
-		m_rcDirty.top &= ~63;
-		m_rcDirty.right = (m_rcDirty.right + 127) & ~127;
-		m_rcDirty.bottom = (m_rcDirty.bottom + 63) & ~63;
-		m_rcDirty &= CRect(CPoint(0, 0), m_size);
+		if (!((CRect*)pDirtyRect)->IsRectEmpty())
+		{
+			m_rcDirty.InflateRect(1, 1);
+			m_rcDirty.left &= ~127;
+			m_rcDirty.top &= ~63;
+			m_rcDirty.right = (m_rcDirty.right + 127) & ~127;
+			m_rcDirty.bottom = (m_rcDirty.bottom + 63) & ~63;
+			m_rcDirty &= CRect(CPoint(0, 0), m_size);
+		}
 	}
 	else
 	{
@@ -210,8 +223,8 @@ STDMETHODIMP CDX9SubPic::Unlock(RECT* pDirtyRect)
 	}
 
 	CComPtr<IDirect3DTexture9> pTexture = (IDirect3DTexture9*)GetObject();
-	if (pTexture)
-		pTexture->AddDirtyRect(&m_rcDirty);
+	if (pTexture && !((CRect*)pDirtyRect)->IsRectEmpty())
+		hr = pTexture->AddDirtyRect(&m_rcDirty);
 
 	return S_OK;
 }
@@ -255,7 +268,7 @@ STDMETHODIMP CDX9SubPic::AlphaBlt(RECT* pSrc, RECT* pDst, SubPicDesc* pTarget)
 			{(float)dst.right, (float)dst.bottom, 0.5f, 2.0f, (float)src.right / w, (float)src.bottom / h},
 		};
 /*
-		for(int i = 0; i < countof(pVertices); i++)
+		for(ptrdiff_t i = 0; i < countof(pVertices); i++)
 		{
 			pVertices[i].x -= 0.5;
 			pVertices[i].y -= 0.5;
@@ -274,7 +287,7 @@ STDMETHODIMP CDX9SubPic::AlphaBlt(RECT* pSrc, RECT* pDst, SubPicDesc* pTarget)
 		hr = pD3DDev->SetRenderState(D3DRS_ZENABLE, FALSE);
     	hr = pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
         hr = pD3DDev->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE); // pre-multiplied src and ...
-        hr = pD3DDev->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_SRCALPHA); // ... inverse alpha channel for dst
+		hr = pD3DDev->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_SRCALPHA); // ... inverse alpha channel for dst
 
 		hr = pD3DDev->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
         hr = pD3DDev->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
@@ -284,8 +297,9 @@ STDMETHODIMP CDX9SubPic::AlphaBlt(RECT* pSrc, RECT* pDst, SubPicDesc* pTarget)
         hr = pD3DDev->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
         hr = pD3DDev->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 
-		hr = pD3DDev->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-		hr = pD3DDev->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+		hr = pD3DDev->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
+		hr = pD3DDev->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
+		hr = pD3DDev->SetSamplerState(0, D3DSAMP_BORDERCOLOR, 0xFF000000);
 
 		/*//
 
@@ -330,12 +344,10 @@ STDMETHODIMP CDX9SubPic::AlphaBlt(RECT* pSrc, RECT* pDst, SubPicDesc* pTarget)
 //
 
 CDX9SubPicAllocator::CDX9SubPicAllocator(IDirect3DDevice9* pD3DDev, SIZE maxsize, bool fPow2Textures) 
-	: ISubPicAllocatorImpl(maxsize, true, fPow2Textures)
+	: CSubPicAllocatorImpl(maxsize, true, fPow2Textures)
 	, m_pD3DDev(pD3DDev)
 	, m_maxsize(maxsize)
 {
-	m_pD3DDev = pD3DDev;
-	m_maxsize = maxsize;
 }
 
 CCritSec CDX9SubPicAllocator::ms_SurfaceQueueLock;
@@ -434,7 +446,8 @@ bool CDX9SubPicAllocator::Alloc(bool fStatic, ISubPic** ppSubPic)
 			return(false);
 	}
 
-	if(!(*ppSubPic = DNew CDX9SubPic(pSurface, fStatic ? 0 : this)))
+	*ppSubPic = DNew CDX9SubPic(pSurface, fStatic ? 0 : this);
+	if(!(*ppSubPic))
 		return(false);
 
 	(*ppSubPic)->AddRef();

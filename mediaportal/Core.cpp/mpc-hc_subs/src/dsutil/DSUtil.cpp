@@ -21,10 +21,13 @@
 
 #include "stdafx.h"
 #include <Vfw.h>
-#include <winddk\devioctl.h>
-#include <winddk\ntddcdrm.h>
+#include <winddk/devioctl.h>
+#include <winddk/ntddcdrm.h>
 #include "DSUtil.h"
+#include "Mpeg2Def.h"
+#include "vd.h"
 #include <moreuuids.h>
+#include <emmintrin.h>
 
 #include <initguid.h>
 #include <d3dx9.h>
@@ -33,7 +36,7 @@
 
 void DumpStreamConfig(TCHAR* fn, IAMStreamConfig* pAMVSCCap)
 {
-	CString s, ss;
+	CString s;
 	CStdioFile f;
 	if(!f.Open(fn, CFile::modeCreate|CFile::modeWrite|CFile::typeText))
 		return;
@@ -48,7 +51,8 @@ void DumpStreamConfig(TCHAR* fn, IAMStreamConfig* pAMVSCCap)
 
 	if(size == sizeof(VIDEO_STREAM_CONFIG_CAPS))
 	{
-		for(int i = 0; i < cnt; i++)
+    CString ss;
+		for(ptrdiff_t i = 0; i < cnt; i++)
 		{
 			AM_MEDIA_TYPE* pmt = NULL;
 
@@ -339,6 +343,32 @@ IBaseFilter* FindFilter(const CLSID& clsid, IFilterGraph* pFG)
 	return NULL;
 }
 
+IPin* FindPin(IBaseFilter* pBF, PIN_DIRECTION direction, const AM_MEDIA_TYPE* pRequestedMT)
+{
+	PIN_DIRECTION	pindir;
+	BeginEnumPins(pBF, pEP, pPin)
+	{
+		CComPtr<IPin>		pFellow;
+
+		if (SUCCEEDED (pPin->QueryDirection(&pindir)) &&
+			pindir == direction &&
+			pPin->ConnectedTo(&pFellow) == VFW_E_NOT_CONNECTED)
+		{
+			BeginEnumMediaTypes(pPin, pEM, pmt)
+			{
+				if (pmt->majortype == pRequestedMT->majortype && pmt->subtype == pRequestedMT->subtype)
+				{
+					return (pPin);
+				}
+			}
+			EndEnumMediaTypes(pmt)
+		}
+	}
+	EndEnumPins
+	return NULL;
+}
+
+
 CStringW GetFilterName(IBaseFilter* pBF)
 {
 	CStringW name;
@@ -563,7 +593,7 @@ void ExtractMediaTypes(IPin* pPin, CAtlArray<GUID>& types)
 	{
 		bool fFound = false;
 
-		for(int i = 0; !fFound && i < (int)types.GetCount(); i += 2)
+		for(ptrdiff_t i = 0; !fFound && i < (int)types.GetCount(); i += 2)
 		{
 			if(types[i] == pmt->majortype && types[i+1] == pmt->subtype)
 				fFound = true;
@@ -718,7 +748,7 @@ void CStringToBin(CString str, CAtlArray<BYTE>& data)
 	BYTE b = 0;
 
 	str.MakeUpper();
-	for(int i = 0, j = str.GetLength(); i < j; i++)
+	for(size_t i = 0, j = str.GetLength(); i < j; i++)
 	{
 		TCHAR c = str[i];
 		if(c >= '0' && c <= '9') 
@@ -813,9 +843,9 @@ cdrom_t GetCDROMType(TCHAR drive, CAtlList<CString>& files)
 				CDROM_TOC TOC;
 				if(DeviceIoControl(hDrive, IOCTL_CDROM_READ_TOC, NULL, 0, &TOC, sizeof(TOC), &BytesReturned, 0))
 				{
-					for(int i = TOC.FirstTrack; i <= TOC.LastTrack; i++)
+					for(ptrdiff_t i = TOC.FirstTrack; i <= TOC.LastTrack; i++)
 					{
-						// MMC-3 Draft Revision 10g: Table 222 – Q Sub-channel control field
+						// MMC-3 Draft Revision 10g: Table 222 - Q Sub-channel control field
 						TOC.TrackData[i-1].Control &= 5;
 						if(TOC.TrackData[i-1].Control == 0 || TOC.TrackData[i-1].Control == 1) 
 						{
@@ -844,7 +874,7 @@ CString GetDriveLabel(TCHAR drive)
 
 	CString path;
 	path.Format(_T("%c:\\"), drive);
-	TCHAR VolumeNameBuffer[MAX_PATH], FileSystemNameBuffer[MAX_PATH];
+	TCHAR VolumeNameBuffer[_MAX_PATH], FileSystemNameBuffer[_MAX_PATH];
 	DWORD VolumeSerialNumber, MaximumComponentLength, FileSystemFlags;
 	if(GetVolumeInformation(path, 
 		VolumeNameBuffer, MAX_PATH, &VolumeSerialNumber, &MaximumComponentLength, 
@@ -881,11 +911,11 @@ bool GetKeyFrames(CString fn, CUIntArray& kfs)
 				if(afi.dwCaps&AVIFILECAPS_ALLKEYFRAMES)
 				{
 					kfs.SetSize(si.dwLength);
-					for(int kf = 0; kf < (int)si.dwLength; kf++) kfs[kf] = kf;
+					for(ptrdiff_t kf = 0; kf < (int)si.dwLength; kf++) kfs[kf] = kf;
 				}
 				else
 				{
-					for(int kf = 0; ; kf++)
+					for(ptrdiff_t kf = 0; ; kf++)
 					{
 						kf = pavi->FindSample(kf, FIND_KEY|FIND_NEXT);
 						if(kf < 0 || kfs.GetCount() > 0 && kfs[kfs.GetCount()-1] >= (UINT)kf) break;
@@ -927,22 +957,57 @@ REFERENCE_TIME HMSF2RT(DVD_HMSF_TIMECODE hmsf, double fps)
 	return (REFERENCE_TIME)((((REFERENCE_TIME)hmsf.bHours*60+hmsf.bMinutes)*60+hmsf.bSeconds)*1000+1.0*hmsf.bFrames*1000/fps)*10000;
 }
 
-void memsetd(void* dst, unsigned int c, int nbytes)
+void memsetd(void* dst, unsigned int c, size_t nbytes)
 {
-#ifdef _WIN64
-	for (int i=0; i<nbytes/sizeof(DWORD); i++)
-		((DWORD*)dst)[i] = c;
-#else
-	__asm
+#ifndef _WIN64
+	if (!(g_cpuid.m_flags & g_cpuid.sse2))
 	{
-		mov eax, c
-		mov ecx, nbytes
-		shr ecx, 2
-		mov edi, dst
-		cld
-		rep stosd
+		__asm
+		{
+			mov eax, c
+			mov ecx, nbytes
+			shr ecx, 2
+			mov edi, dst
+			cld
+			rep stosd
+		}
+		return;
 	}
 #endif
+	size_t n = nbytes / 4;
+	size_t o = n - (n % 4);
+
+	__m128i val = _mm_set1_epi32 ( (int)c );
+	if (((uintptr_t)dst & 0x0F) == 0) // 16-byte aligned
+	{
+		for (ptrdiff_t i = 0; i < o; i+=4)
+			_mm_store_si128( (__m128i*)&(((DWORD*)dst)[i]), val );
+	}
+	else
+	{
+		for (ptrdiff_t i = 0; i < o; i+=4)
+			_mm_storeu_si128( (__m128i*)&(((DWORD*)dst)[i]), val );
+	}
+
+	switch(n - o)
+	{
+	case 3:
+		((DWORD*)dst)[o + 2] = c;
+	case 2:
+		((DWORD*)dst)[o + 1] = c;
+	case 1:
+		((DWORD*)dst)[o + 0] = c;
+	}
+}
+
+void memsetw(void* dst, unsigned short c, size_t nbytes)
+{
+	memsetd(dst, c << 16 | c, nbytes);
+
+	size_t n = nbytes / 2;
+	size_t o = (n / 2) * 2;
+	if ((n - o) == 1)
+		((WORD*)dst)[o] = c;
 }
 
 bool ExtractBIH(const AM_MEDIA_TYPE* pmt, BITMAPINFOHEADER* bih)
@@ -1312,7 +1377,9 @@ HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv)
 
 	HRESULT hr = E_FAIL;
 
-	if(hInst || (hInst = CoLoadLibrary(CComBSTR(fullpath), TRUE)))
+	if(!hInst)
+		hInst = CoLoadLibrary(CComBSTR(fullpath), TRUE);
+	if(hInst)
 	{
 		typedef HRESULT (__stdcall * PDllGetClassObject)(REFCLSID rclsid, REFIID riid, LPVOID* ppv);
 		PDllGetClassObject p = (PDllGetClassObject)GetProcAddress(hInst, "DllGetClassObject");
@@ -2001,7 +2068,7 @@ static struct {LPCSTR name, iso6392, iso6391; LCID lcid;} s_isolangs[] =	// TODO
 	{"Haitian", "hat", "ht"},
 	{"Kalmyk", "xal", ""},
 	{"", "", ""},
-	{"No subtitles", "---", "", LCID_NOSUBTITLES},
+	{"No subtitles", "---", "", (LCID)LCID_NOSUBTITLES},
 };
 
 CString ISO6391ToLanguage(LPCSTR code)
@@ -2010,7 +2077,7 @@ CString ISO6391ToLanguage(LPCSTR code)
 	strncpy_s(tmp, code, 2);
 	tmp[2] = 0;
 	_strlwr_s(tmp);
-	for(int i = 0, j = countof(s_isolangs); i < j; i++)
+	for(ptrdiff_t i = 0, j = countof(s_isolangs); i < j; i++)
 		if(!strcmp(s_isolangs[i].iso6391, tmp))
 		{
 			CString ret = CString(CStringA(s_isolangs[i].name));
@@ -2027,7 +2094,7 @@ CString ISO6392ToLanguage(LPCSTR code)
 	strncpy_s(tmp, code, 3);
 	tmp[3] = 0;
 	_strlwr_s(tmp);
-	for(int i = 0, j = countof(s_isolangs); i < j; i++)
+	for(ptrdiff_t i = 0, j = countof(s_isolangs); i < j; i++)
 	{
 		if(!strcmp(s_isolangs[i].iso6392, tmp))
 		{
@@ -2046,7 +2113,7 @@ LCID ISO6391ToLcid(LPCSTR code)
 	strncpy_s(tmp, code, 3);
 	tmp[3] = 0;
 	_strlwr_s(tmp);
-	for(int i = 0, j = countof(s_isolangs); i < j; i++)
+	for(ptrdiff_t i = 0, j = countof(s_isolangs); i < j; i++)
 	{
 		if(!strcmp(s_isolangs[i].iso6391, code))
 		{
@@ -2062,7 +2129,7 @@ LCID ISO6392ToLcid(LPCSTR code)
 	strncpy_s(tmp, code, 3);
 	tmp[3] = 0;
 	_strlwr_s(tmp);
-	for(int i = 0, j = countof(s_isolangs); i < j; i++)
+	for(ptrdiff_t i = 0, j = countof(s_isolangs); i < j; i++)
 	{
 		if(!strcmp(s_isolangs[i].iso6392, tmp))
 		{
@@ -2078,7 +2145,7 @@ CString ISO6391To6392(LPCSTR code)
 	strncpy_s(tmp, code, 2);
 	tmp[2] = 0;
 	_strlwr_s(tmp);
-	for(int i = 0, j = countof(s_isolangs); i < j; i++)
+	for(ptrdiff_t i = 0, j = countof(s_isolangs); i < j; i++)
 		if(!strcmp(s_isolangs[i].iso6391, tmp))
 			return CString(CStringA(s_isolangs[i].iso6392));
 	return _T("");
@@ -2090,7 +2157,7 @@ CString ISO6392To6391(LPCSTR code)
 	strncpy_s(tmp, code, 3);
 	tmp[3] = 0;
 	_strlwr_s(tmp);
-	for(int i = 0, j = countof(s_isolangs); i < j; i++)
+	for(ptrdiff_t i = 0, j = countof(s_isolangs); i < j; i++)
 		if(!strcmp(s_isolangs[i].iso6392, tmp))
 			return CString(CStringA(s_isolangs[i].iso6391));
 	return _T("");
@@ -2100,7 +2167,7 @@ CString LanguageToISO6392(LPCTSTR lang)
 {
 	CString str = lang;
 	str.MakeLower();
-	for(int i = 0, j = countof(s_isolangs); i < j; i++)
+	for(ptrdiff_t i = 0, j = countof(s_isolangs); i < j; i++)
 	{
 		CAtlList<CString> sl;
 		Explode(CString(s_isolangs[i].name), sl, ';');
@@ -2257,7 +2324,7 @@ void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, const CAtlLi
 	CString subtype = CStringFromGUID(subtype2);
 
 	POSITION pos = chkbytes.GetHeadPosition();
-	for(int i = 0; pos; i++)
+	for(ptrdiff_t i = 0; pos; i++)
 	{
 		CString idx;
 		idx.Format(_T("%d"), i);
@@ -2336,7 +2403,7 @@ LPCTSTR GetDXVAMode(const GUID* guidDecoder)
 void DumpBuffer(BYTE* pBuffer, int nSize)
 {
 	CString	strMsg;
-	int		nPos;
+	int		nPos = 0;
 	strMsg.AppendFormat (L"Size : %d\n", nSize);
 	for (int i=0; i<3; i++)
 	{
@@ -2437,4 +2504,101 @@ DWORD YCrCbToRGB_Rec709(BYTE A, BYTE Y, BYTE Cr, BYTE Cb)
   double bp = Y + 2*(Cb-128)*(1.0-Rec709_Kb);
 
   return D3DCOLOR_ARGB (A, (BYTE)fabs(rp), (BYTE)fabs(gp), (BYTE)fabs(bp));
+}
+
+
+void TraceFilterInfo(IBaseFilter* pBF)
+{
+	FILTER_INFO		Info;
+	if (SUCCEEDED (pBF->QueryFilterInfo(&Info)))
+	{
+		TRACE (" === Filter info : %S\n", Info.achName);
+		BeginEnumPins(pBF, pEnum, pPin)
+		{
+			TracePinInfo(pPin);
+		}
+
+		EndEnumPins
+		Info.pGraph->Release();
+	}
+}
+
+
+void TracePinInfo(IPin* pPin)
+{
+	PIN_INFO		PinInfo;
+	FILTER_INFO		ConnectedFilterInfo;
+	PIN_INFO		ConnectedInfo;
+	CComPtr<IPin>	pConnected;
+	memset (&ConnectedInfo, 0, sizeof(ConnectedInfo));
+	memset (&ConnectedFilterInfo, 0, sizeof(ConnectedFilterInfo));
+	if (SUCCEEDED (pPin->ConnectedTo  (&pConnected)))
+	{
+		pConnected->QueryPinInfo (&ConnectedInfo);
+		ConnectedInfo.pFilter->QueryFilterInfo(&ConnectedFilterInfo);
+		ConnectedInfo.pFilter->Release();
+		ConnectedFilterInfo.pGraph->Release();
+	}
+	pPin->QueryPinInfo (&PinInfo);
+	TRACE("		%S (%S) -> %S (Filter %S)\n", 
+		  PinInfo.achName, 
+		  PinInfo.dir == PINDIR_OUTPUT ? _T("Out") : _T("In"),
+		  ConnectedInfo.achName,
+		  ConnectedFilterInfo.achName);
+	PinInfo.pFilter->Release();
+}
+
+
+const wchar_t *StreamTypeToName(PES_STREAM_TYPE _Type)
+{
+	switch (_Type)
+	{
+	case VIDEO_STREAM_MPEG1: return L"MPEG-1";
+	case VIDEO_STREAM_MPEG2: return L"MPEG-2";
+	case AUDIO_STREAM_MPEG1: return L"MPEG-1";
+	case AUDIO_STREAM_MPEG2: return L"MPEG-2";
+	case VIDEO_STREAM_H264: return L"H264";
+	case AUDIO_STREAM_LPCM: return L"LPCM";
+	case AUDIO_STREAM_AC3: return L"Dolby Digital";
+	case AUDIO_STREAM_DTS: return L"DTS";
+	case AUDIO_STREAM_AC3_TRUE_HD: return L"Dolby TrueHD";
+	case AUDIO_STREAM_AC3_PLUS: return L"Dolby Digital Plus";
+	case AUDIO_STREAM_DTS_HD: return L"DTS-HD High Resolution Audio";
+	case AUDIO_STREAM_DTS_HD_MASTER_AUDIO: return L"DTS-HD Master Audio";
+	case PRESENTATION_GRAPHICS_STREAM: return L"Presentation Graphics Stream";
+	case INTERACTIVE_GRAPHICS_STREAM: return L"Interactive Graphics Stream";
+	case SUBTITLE_STREAM: return L"Subtitle";
+	case SECONDARY_AUDIO_AC3_PLUS: return L"Secondary Dolby Digital Plus";
+	case SECONDARY_AUDIO_DTS_HD: return L"Secondary DTS-HD High Resolution Audio";
+	case VIDEO_STREAM_VC1: return L"VC-1";
+	}
+	return NULL;
+}
+
+//
+// Usage: SetThreadName (-1, "MainThread");
+//
+typedef struct tagTHREADNAME_INFO
+{
+	DWORD dwType; // must be 0x1000
+	LPCSTR szName; // pointer to name (in user addr space)
+	DWORD dwThreadID; // thread ID (-1=caller thread)
+	DWORD dwFlags; // reserved for future use, must be zero
+} THREADNAME_INFO;
+
+void SetThreadName( DWORD dwThreadID, LPCSTR szThreadName)
+{
+	THREADNAME_INFO info;
+	info.dwType = 0x1000;
+	info.szName = szThreadName;
+	info.dwThreadID = dwThreadID;
+	info.dwFlags = 0;
+
+	__try
+	{
+		RaiseException( 0x406D1388, 0, sizeof(info)/sizeof(DWORD), (ULONG_PTR*)&info );
+	}
+	__except(EXCEPTION_CONTINUE_EXECUTION)
+	{
+	}
 }

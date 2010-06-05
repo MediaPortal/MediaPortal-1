@@ -1,7 +1,7 @@
 /* 
- * $Id: GolombBuffer.cpp 956 2009-01-07 17:55:16Z casimir666 $
+ * $Id: GolombBuffer.cpp 1785 2010-04-09 14:12:59Z xhmikosr $
  *
- * (C) 2006-2007 see AUTHORS
+ * (C) 2006-2010 see AUTHORS
  *
  * This file is part of mplayerc.
  *
@@ -21,7 +21,7 @@
  */
 
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "GolombBuffer.h"
 
 CGolombBuffer::CGolombBuffer(BYTE* pBuffer, int nSize)

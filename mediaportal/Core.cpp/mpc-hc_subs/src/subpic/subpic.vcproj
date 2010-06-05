@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
-	Name="subpic"
+	Version="9,00"
+	Name="SubPic"
 	ProjectGUID="{D514EA4D-EAFB-47A9-A437-A582CA571251}"
-	RootNamespace="subpic"
+	RootNamespace="SubPic"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -60,68 +60,9 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="d3d9.lib "
 				OutputFile="..\..\lib\$(ProjectName)DU.lib"
 				AdditionalLibraryDirectories=""
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release Unicode|Win32"
-			ConfigurationType="4"
-			InheritedPropertySheets="..\common.vsprops;..\release.vsprops"
-			UseOfMFC="1"
-			CharacterSet="1"
-			WholeProgramOptimization="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;"
-				RuntimeLibrary="0"
-				UsePrecompiledHeader="2"
-				DisableSpecificWarnings="4244"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="..\..\lib\$(ProjectName)RU.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -201,14 +142,71 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release Unicode|x64"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			Name="Release Unicode|Win32"
 			ConfigurationType="4"
 			InheritedPropertySheets="..\common.vsprops;..\release.vsprops"
 			UseOfMFC="1"
 			CharacterSet="1"
-			WholeProgramOptimization="0"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+                                AdditionalOptions="/MP"
+				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;"
+		
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				AdditionalOptions="/IGNORE:4221 /IGNORE:4006"
+				AdditionalDependencies="d3d9.lib ddraw.lib"
+				OutputFile="..\..\lib\$(ProjectName)RU.lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release Unicode|x64"
+			ConfigurationType="4"
+			InheritedPropertySheets="..\common.vsprops;..\release.vsprops"
+			UseOfMFC="1"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -228,7 +226,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="_WIN64;NDEBUG;_LIB;"
+                                AdditionalOptions="/MP"
+
+				PreprocessorDefinitions="_WIN64;NDEBUG;_LIB"
+				EnableEnhancedInstructionSet="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -241,6 +242,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalOptions="/IGNORE:4221 /IGNORE:4006"
 				AdditionalDependencies="d3d9.lib ddraw.lib"
 				OutputFile="..\..\lib64\$(ProjectName)RU.lib"
 			/>
@@ -276,10 +278,7 @@
 				RelativePath="DX9SubPic.cpp"
 				>
 			</File>
-			<File
-				RelativePath="ISubPic.cpp"
-				>
-			</File>
+
 			<File
 				RelativePath="MemSubPic.cpp"
 				>
@@ -296,7 +295,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release Unicode|Win32"
+					Name="Debug Unicode|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -304,7 +303,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug Unicode|x64"
+					Name="Release Unicode|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -319,6 +318,22 @@
 						UsePrecompiledHeader="1"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\SubPicAllocatorPresenterImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SubPicImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SubPicProviderImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SubPicQueueImpl.cpp"
+				>
 			</File>
 		</Filter>
 		<Filter
@@ -338,6 +353,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ISubRender.h"
+				>
+			</File>
+			<File
 				RelativePath="MemSubPic.h"
 				>
 			</File>
@@ -345,11 +364,22 @@
 				RelativePath="stdafx.h"
 				>
 			</File>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
-			>
+			<File
+				RelativePath=".\SubPicAllocatorPresenterImpl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SubPicImpl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SubPicProviderImpl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SubPicQueueImpl.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

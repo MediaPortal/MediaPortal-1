@@ -1,7 +1,7 @@
 /* 
- * $Id: HdmvClipInfo.h 988 2009-02-01 21:33:05Z beliyaal $
+ * $Id: HdmvClipInfo.h 1785 2010-04-09 14:12:59Z xhmikosr $
  *
- * (C) 2006-2007 see AUTHORS
+ * (C) 2006-2010 see AUTHORS
  *
  * This file is part of mplayerc.
  *
@@ -22,28 +22,7 @@
 
 #pragma once
 
-enum ElementaryStreamTypes
-{
-    INVALID								= 0,
-    VIDEO_STREAM_MPEG1					= 0x01,
-    VIDEO_STREAM_MPEG2					= 0x02,
-    AUDIO_STREAM_MPEG1					= 0x03, // all layers including mp3
-    AUDIO_STREAM_MPEG2					= 0x04,
-    VIDEO_STREAM_H264					= 0x1b,
-    AUDIO_STREAM_LPCM					= 0x80,
-    AUDIO_STREAM_AC3					= 0x81,
-    AUDIO_STREAM_DTS					= 0x82,
-    AUDIO_STREAM_AC3_TRUE_HD			= 0x83,
-    AUDIO_STREAM_AC3_PLUS				= 0x84,
-    AUDIO_STREAM_DTS_HD					= 0x85,
-    AUDIO_STREAM_DTS_HD_MASTER_AUDIO	= 0x86,
-    PRESENTATION_GRAPHICS_STREAM		= 0x90,
-    INTERACTIVE_GRAPHICS_STREAM			= 0x91,
-    SUBTITLE_STREAM						= 0x92,
-    SECONDARY_AUDIO_AC3_PLUS			= 0xa1,
-    SECONDARY_AUDIO_DTS_HD				= 0xa2,
-    VIDEO_STREAM_VC1					= 0xea
-};
+#include "Mpeg2Def.h"
 
 enum BDVM_VideoFormat
 {
@@ -117,7 +96,7 @@ public:
 			memset(this, 0, sizeof(*this));
 		}
 		SHORT					m_PID;
-		ElementaryStreamTypes	m_Type;
+		PES_STREAM_TYPE			m_Type;
 		char					m_LanguageCode[4];
 		LCID					m_LCID;
 
@@ -132,15 +111,34 @@ public:
 		LPCTSTR Format();
 	};
 
+	struct PlaylistItem
+	{
+		CString					m_strFileName;
+		REFERENCE_TIME			m_rtIn;
+		REFERENCE_TIME			m_rtOut;
+
+		REFERENCE_TIME Duration() const
+		{
+			return m_rtOut - m_rtIn;
+		}
+
+		bool operator == (const PlaylistItem& pi) const
+		{
+			return pi.m_strFileName == m_strFileName;
+		}
+	};
+
 	CHdmvClipInfo(void);
+	~CHdmvClipInfo();
 
 	HRESULT		ReadInfo(LPCTSTR strFile);
 	Stream*		FindStream(SHORT wPID);
-	bool		IsHdmv()					{ return m_bIsHdmv; };
-	int			GetStreamNumber()			{ return int(m_Streams.GetCount()); };
-	Stream*		GetStreamByIndex(int nIndex){ return (unsigned(nIndex) < m_Streams.GetCount()) ? &m_Streams[nIndex] : NULL; };
+	bool		IsHdmv()				const	{ return m_bIsHdmv; };
+	size_t		GetStreamNumber()		{ return m_Streams.GetCount(); };
+	Stream*		GetStreamByIndex(size_t nIndex){ return (nIndex < m_Streams.GetCount()) ? &m_Streams[nIndex] : NULL; };
 
-	HRESULT		FindMainMovie(LPCTSTR strFolder, CAtlList<CString>& MainPlaylist);
+	HRESULT		FindMainMovie(LPCTSTR strFolder, CString& strPlaylistFile, CAtlList<PlaylistItem>& MainPlaylist);
+	HRESULT		ReadPlaylist(CString strPlaylistFile, REFERENCE_TIME& rtDuration, CAtlList<PlaylistItem>& Playlist);
 
 private :
 	DWORD		SequenceInfo_start_address;
@@ -155,8 +153,8 @@ private :
 	DWORD		ReadDword();
 	SHORT		ReadShort();
 	BYTE		ReadByte();
-	void		ReadBuffer(BYTE* pBuff, int nLen);
+	void		ReadBuffer(BYTE* pBuff, DWORD nLen);
 
 	HRESULT		ReadProgramInfo();
-	HRESULT		ReadPlaylist(LPCTSTR strPath, LPCTSTR strFile, REFERENCE_TIME& rtDuration, CAtlList<CString>& Playlist);
+	HRESULT		CloseFile(HRESULT hr);
 };

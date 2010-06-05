@@ -28,20 +28,25 @@ TCHAR* exttypestr[] =
 {
 	_T("srt"), _T("sub"), _T("smi"), _T("psb"), 
 	_T("ssa"), _T("ass"), _T("idx"), _T("usf"), 
-	_T("xss"), _T("txt"), _T("ssf"), _T("rt")
+	_T("xss"), _T("txt"), _T("ssf"), _T("rt"), _T("sup")
 };
 
-static TCHAR* ext[2][countof(exttypestr)] = 
+static TCHAR* ext[3][countof(exttypestr)] = 
 {
 	{
 		_T(".srt"), _T(".sub"), _T(".smi"), _T(".psb"), 
 		_T(".ssa"), _T(".ass"), _T(".idx"), _T(".usf"), 
-		_T(".xss"), _T(".txt"), _T(".ssf"), _T(".rt")
+		_T(".xss"), _T(".txt"), _T(".ssf"), _T(".rt"), _T(".sup")
 	},
 	{
 		_T(".*.srt"), _T(".*.sub"), _T(".*.smi"), _T(".*.psb"), 
 		_T(".*.ssa"), _T(".*.ass"), _T(".*.dummyidx"), _T(".*.usf"), 
-		_T(".*.xss"), _T(".*.txt"), _T(".*.ssf"), _T(".*.rt")
+		_T(".*.xss"), _T(".*.txt"), _T(".*.ssf"), _T(".*.rt"), _T(".*.sup")
+	}, 
+	{
+		_T("-*.srt"), _T("-*.sub"), _T("-*.smi"), _T("-*.psb"), 
+		_T("-*.ssa"), _T("-*.ass"), _T("-*.dummyidx"), _T("-*.usf"), 
+		_T("-*.xss"), _T("-*.txt"), _T("-*.ssf"), _T("-*.rt"), _T("-*.sup")
 	}, 
 };
 
@@ -85,7 +90,7 @@ void GetSubFileNames(CString fn, CAtlArray<CString>& paths, CAtlArray<SubFile>& 
 		WIN32_FIND_DATA wfd, wfd2;
 		HANDLE hFile, hFile2;
 
-		for(int k = 0; k < paths.GetCount(); k++)
+		for(ptrdiff_t k = 0; k < paths.GetCount(); k++)
 		{
 			CString path = paths[k];
 			path.Replace('\\', '/');
@@ -120,9 +125,9 @@ void GetSubFileNames(CString fn, CAtlArray<CString>& paths, CAtlArray<SubFile>& 
 			// TODO: use 'sl' in the next step to find files (already a nice speedup as it is now...)
 			if(fEmpty) continue;
 
-			for(int j = 0; j < extlistnum; j++)
+			for(ptrdiff_t j = 0; j < extlistnum; j++)
 			{
-				for(int i = 0; i < extsubnum; i++)
+				for(ptrdiff_t i = 0; i < extsubnum; i++)
 				{
 					if((hFile = FindFirstFile(path + title + ext[j][i], &wfd)) != INVALID_HANDLE_VALUE)
 					{

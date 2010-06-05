@@ -35,7 +35,7 @@ private:
 	friend class CTextPassThruFilter;
 	//ReplaceSubtitle, InvalidateSubtitle are called from CTextPassThruInputPin
 	void ReplaceSubtitle(ISubStream* pSubStreamOld, ISubStream* pSubStreamNew);
-	void InvalidateSubtitle(DWORD_PTR nSubtitleId, REFERENCE_TIME rtInvalidate);
+	void InvalidateSubtitle(ISubStream* pSubStream, REFERENCE_TIME rtInvalidate);
 
 	//load internal subtitles through TextPassThruFilter
 	void LoadInternalSubtitles(IGraphBuilder* pGB);
@@ -47,7 +47,7 @@ private:
 	void SetSubPicProvider(ISubStream* pSubStream);
 
 	void InitInternalSubs(IBaseFilter* pBF);
-	void SelectStream(int i);
+	bool SelectStream(int i);
 	int GetExtCount();
 
 	CComPtr<IDirect3DDevice9> m_d3DDev;
@@ -64,6 +64,7 @@ private:
 	CSize m_lastSize;
 	CComQIPtr<ISubPicAllocator> m_pAllocator;
 
+	bool m_isIntSubStreamSelected;
 	CComQIPtr<IAMStreamSelect> m_pSS; //graph filter with subtitles
 	CAtlArray<int> m_intSubs; //internal sub indexes on IAMStreamSelect
 	CAtlArray<CString> m_intNames; //internal sub names

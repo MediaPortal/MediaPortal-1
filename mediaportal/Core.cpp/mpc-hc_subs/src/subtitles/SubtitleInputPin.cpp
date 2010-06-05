@@ -27,6 +27,7 @@
 #include "RenderedHdmvSubtitle.h"
 
 #include <initguid.h>
+#include <uuids.h>
 #include <moreuuids.h>
 
 // our first format id
@@ -64,6 +65,7 @@ HRESULT CSubtitleInputPin::CheckMediaType(const CMediaType* pmt)
 		|| pmt->majortype == MEDIATYPE_Subtitle && pmt->subtype == MEDIASUBTYPE_SSF
 		|| pmt->majortype == MEDIATYPE_Subtitle && (pmt->subtype == MEDIASUBTYPE_VOBSUB)
 		|| pmt->majortype == MEDIATYPE_Subtitle && pmt->subtype == MEDIASUBTYPE_HDMVSUB
+		|| pmt->majortype == MEDIATYPE_Subtitle && pmt->subtype == MEDIASUBTYPE_DVB_SUBTITLES
 		? S_OK 
 		: E_FAIL;
 }
@@ -80,13 +82,20 @@ HRESULT CSubtitleInputPin::CompleteConnect(IPin* pReceivePin)
 	}
 	else if(m_mt.majortype == MEDIATYPE_Subtitle)
 	{
-		SUBTITLEINFO* psi = (SUBTITLEINFO*)m_mt.pbFormat;
-		DWORD dwOffset = psi->dwOffset;
+		SUBTITLEINFO*	psi		= (SUBTITLEINFO*)m_mt.pbFormat;
+		DWORD			dwOffset	= 0;
+		CString			name;
+		LCID			lcid = 0;
 
-		CString name = ISO6392ToLanguage(psi->IsoLang);
-		LCID	lcid = ISO6392ToLcid(psi->IsoLang);
-		if(name.IsEmpty()) name = _T("Unknown");
-		if(wcslen(psi->TrackName) > 0) name += _T(" (") + CString(psi->TrackName) + _T(")");
+		if (psi != NULL)
+		{
+			dwOffset = psi->dwOffset;
+
+			name = ISO6392ToLanguage(psi->IsoLang);
+			lcid = ISO6392ToLcid(psi->IsoLang);
+			if(name.IsEmpty()) name = _T("Unknown");
+			if(wcslen(psi->TrackName) > 0) name += _T(" (") + CString(psi->TrackName) + _T(")");
+		}
 
 		if(m_mt.subtype == MEDIASUBTYPE_UTF8 
 		/*|| m_mt.subtype == MEDIASUBTYPE_USF*/
@@ -132,7 +141,11 @@ HRESULT CSubtitleInputPin::CompleteConnect(IPin* pReceivePin)
 		}
 		else if (m_mt.subtype == MEDIASUBTYPE_HDMVSUB)
 		{
-			if(!(m_pSubStream = DNew CRenderedHdmvSubtitle(m_pSubLock))) return E_FAIL;
+			if(!(m_pSubStream = DNew CRenderedHdmvSubtitle(m_pSubLock, ST_HDMV))) return E_FAIL;
+		}
+		else if (m_mt.subtype == MEDIASUBTYPE_DVB_SUBTITLES)
+		{
+			if(!(m_pSubStream = DNew CRenderedHdmvSubtitle(m_pSubLock, ST_DVB))) return E_FAIL;
 		}
 	}
 
@@ -197,7 +210,7 @@ STDMETHODIMP CSubtitleInputPin::NewSegment(REFERENCE_TIME tStart, REFERENCE_TIME
 		CVobSubStream* pVSS = (CVobSubStream*)(ISubStream*)m_pSubStream;
 		pVSS->RemoveAll();
 	}
-	else if (m_mt.majortype == MEDIATYPE_Subtitle && m_mt.subtype == MEDIASUBTYPE_HDMVSUB)
+	else if (m_mt.majortype == MEDIATYPE_Subtitle && (m_mt.subtype == MEDIASUBTYPE_HDMVSUB || m_mt.subtype == MEDIASUBTYPE_DVB_SUBTITLES) )
 	{
 		CAutoLock cAutoLock(m_pSubLock);
 		CRenderedHdmvSubtitle* pHdmvSubtitle = (CRenderedHdmvSubtitle*)(ISubStream*)m_pSubStream;
@@ -206,6 +219,14 @@ STDMETHODIMP CSubtitleInputPin::NewSegment(REFERENCE_TIME tStart, REFERENCE_TIME
 
 	return __super::NewSegment(tStart, tStop, dRate);
 }
+
+interface __declspec(uuid("D3D92BC3-713B-451B-9122-320095D51EA5"))
+IMpeg2DemultiplexerTesting : public IUnknown
+{
+	STDMETHOD(GetMpeg2StreamType)(ULONG* plType) = NULL;
+	STDMETHOD(toto)() = NULL;
+};
+
 
 STDMETHODIMP CSubtitleInputPin::Receive(IMediaSample* pSample)
 {
@@ -331,7 +352,7 @@ STDMETHODIMP CSubtitleInputPin::Receive(IMediaSample* pSample)
 
 				CAtlList<CStringW> sl;
 				Explode(str, sl, ',', fields);
-				if(sl.GetCount() == fields)
+				if(sl.GetCount() == (size_t)fields)
 				{
 					stse.readorder = wcstol(sl.RemoveHead(), NULL, 10);
 					stse.layer = wcstol(sl.RemoveHead(), NULL, 10);
@@ -369,8 +390,14 @@ STDMETHODIMP CSubtitleInputPin::Receive(IMediaSample* pSample)
 			CVobSubStream* pVSS = (CVobSubStream*)(ISubStream*)m_pSubStream;
 			pVSS->Add(tStart, tStop, pData, len);
 		}
-		else if (m_mt.subtype == MEDIASUBTYPE_HDMVSUB)
+		else if (m_mt.subtype == MEDIASUBTYPE_HDMVSUB || m_mt.subtype == MEDIASUBTYPE_DVB_SUBTITLES)
 		{
+//CComPtr<IReferenceClock>	pClock;
+//m_pFilter->GetSyncSource(&pClock);
+//CComPtr<IMpeg2DemultiplexerTesting>	 iTest;
+//pClock->QueryInterface(__uuidof(IMpeg2DemultiplexerTesting), (void**)&iTest);
+//ULONG ul;
+//iTest->GetMpeg2StreamType(&ul);
 			CAutoLock cAutoLock(m_pSubLock);
 			CRenderedHdmvSubtitle* pHdmvSubtitle = (CRenderedHdmvSubtitle*)(ISubStream*)m_pSubStream;
 			pHdmvSubtitle->ParseSample (pSample);

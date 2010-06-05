@@ -2,6 +2,7 @@
 #include <d3d9.h>
 #include "..\subpic\ISubPic.h"
 #include "..\subpic\DX9SubPic.h"
+#include "..\subpic\SubPicQueueImpl.h"
 #include <moreuuids.h>
 #include <atlpath.h>
 #include "..\subtitles\VobSubFile.h"
@@ -22,6 +23,7 @@ CSubManager::CSubManager(IDirect3DDevice9* d3DDev, SIZE size, HRESULT& hr)
 	: m_d3DDev(d3DDev),
 	m_isSetTime(false),
 	m_iSubtitleSel(-1),
+	m_isIntSubStreamSelected(false),
 	m_rtNow(-1),
 	m_delay(0),
 	m_lastSize(size)
@@ -94,45 +96,33 @@ void CSubManager::ReplaceSubtitle(ISubStream* pSubStreamOld, ISubStream* pSubStr
 {
 	ApplyStyleSubStream(pSubStreamNew);
 	m_intSubStream = pSubStreamNew;
-	if (m_iSubtitleSel >= GetExtCount())
+	if (m_isIntSubStreamSelected)
 	{
-		ATLTRACE("ReplaceSubtitle: SetSubPicProvider");
 		SetSubPicProvider(pSubStreamNew);
 	}
 }
 
-void CSubManager::InvalidateSubtitle(DWORD_PTR nSubtitleId, REFERENCE_TIME rtInvalidate)
+void CSubManager::InvalidateSubtitle(ISubStream* pSubStream, REFERENCE_TIME rtInvalidate)
 {
-	if(m_iSubtitleSel >= GetExtCount())
+	if(m_pSubStream == pSubStream && m_iSubtitleSel >= 0)
 	{
-		ATLTRACE("InvalidateSubtitle");
+		ATLTRACE("InvalidateSubtitle!");
 		m_pSubPicQueue->Invalidate(rtInvalidate);
 	}
 }
 
-void  CSubManager::SelectStream(int i)
+bool CSubManager::SelectStream(int i)
 {
-	if (i < (int) m_intSubs.GetCount())
+	if (i >= 0 && i < (int) m_intSubs.GetCount())
 	{
 		ATLTRACE("SelectStream %d", i);
 		int index = m_intSubs[i];
-		DWORD dwFlags = 0;
-		if (SUCCEEDED(m_pSS->Info(index, NULL, &dwFlags, NULL, NULL, NULL, NULL, NULL)))
-		{
-			if(dwFlags&(AMSTREAMSELECTINFO_ENABLED|AMSTREAMSELECTINFO_EXCLUSIVE)) 
-			{
-				SetSubPicProvider(m_intSubStream);
-			}
-			else
-			{
-				m_pSS->Enable(index, AMSTREAMSELECTENABLE_ENABLE);
-			}
-		}
+		m_isIntSubStreamSelected = true;
+		SetSubPicProvider(m_intSubStream);
+		HRESULT hr = m_pSS->Enable(index, AMSTREAMSELECTENABLE_ENABLE);
+		return hr == S_OK;
 	}
-	else
-	{
-		m_pSubPicQueue->SetSubPicProvider(NULL);
-	}
+	return false;
 }
 
 void CSubManager::UpdateSubtitle()
@@ -147,21 +137,18 @@ void CSubManager::UpdateSubtitle()
 		if(i < pSubStream->GetStreamCount()) 
 		{
 			CAutoLock cAutoLock(&m_csSubLock);
+			m_isIntSubStreamSelected = false;
 			pSubStream->SetStream(i);
-			//m_nSubtitleId = (DWORD_PTR)pSubStream.p;
 			SetSubPicProvider(pSubStream);
 			return;
 		}
 		i -= pSubStream->GetStreamCount();
 	}
 
-	if (i >= 0)
-	{
-		SelectStream(i);
-	}
-	else
+	if (!SelectStream(i))
 	{
 		m_pSubPicQueue->SetSubPicProvider(NULL);
+		m_isIntSubStreamSelected = false;
 	}
 }
 
@@ -244,8 +231,6 @@ void CSubManager::Render(int x, int y, int width, int height)
 		m_rtNow = g_tSegmentStart + g_tSampleStart - m_delay;
 		m_pSubPicQueue->SetTime(m_rtNow);
 	}
-	m_fps = 10000000.0 / g_rtTimePerFrame;
-	m_pSubPicQueue->SetFPS(m_fps);
 
 	CSize size(width, height);
 	if (m_lastSize != size && width > 0 && height > 0)
@@ -264,10 +249,12 @@ void CSubManager::Render(int x, int y, int width, int height)
  		CRect rcSource, rcDest;
 		if (SUCCEEDED (pSubPic->GetSourceAndDest(&size, rcSource, rcDest))) {
 			rcDest.OffsetRect(x, y);
-			DWORD fvf, alphaTest, colorOp;
+			DWORD fvf, alphaTest, colorOp, samplerAddressU, samplerAddressV;
 			m_d3DDev->GetFVF(&fvf);
 			m_d3DDev->GetRenderState(D3DRS_ALPHATESTENABLE, &alphaTest); 
 			m_d3DDev->GetTextureStageState(0, D3DTSS_COLOROP, &colorOp); //change to it causes "white" osd artifact  
+			m_d3DDev->GetSamplerState(0, D3DSAMP_ADDRESSU, &samplerAddressU);
+			m_d3DDev->GetSamplerState(0, D3DSAMP_ADDRESSV, &samplerAddressV);
 
 			m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE); 
 
@@ -276,6 +263,9 @@ void CSubManager::Render(int x, int y, int width, int height)
 			m_d3DDev->SetFVF(fvf);
 			m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, alphaTest); 
 			m_d3DDev->SetTextureStageState(0, D3DTSS_COLOROP, colorOp);
+
+	 		m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSU, samplerAddressU);
+			m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSV, samplerAddressV);
 		}
 	}
 }
@@ -331,6 +321,12 @@ void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB)
 			else if (!IsTextPin(pPin))
 				continue;
 			
+			if (m_pSS != 0 && CComQIPtr<IAMStreamSelect>(pBF) != 0) 
+			{
+				ATLTRACE("only one IAMStreamSelect filter is supported!");
+				continue;
+			}
+
 			CComQIPtr<IBaseFilter> pTPTF = new CTextPassThruFilter(this);
 			CStringW name;
 			name.Format(L"TextPassThru%08x", pTPTF);
@@ -358,10 +354,15 @@ void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB)
 			if (pSubStream)
 			{
 				ApplyStyleSubStream(pSubStream);
-				m_intSubStream = pSubStream;
-				//m_pSubStreams.AddTail(pSubStream);
-				InitInternalSubs(pBF);
-				return;
+				if (m_pSS == 0 && ((m_pSS = pBF) != 0)) 
+				{
+					InitInternalSubs(pBF);
+					m_intSubStream = pSubStream;
+				}
+				else 
+				{
+					m_pSubStreams.AddTail(pSubStream);
+				}
 			}
 			else
 			{
@@ -406,6 +407,7 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF)
 				}
 				if (!lang.IsEmpty())
 				{
+					ATLTRACE(L"InitInternalSubs: %d, %s", i, lang);
 					m_intSubs.Add(i);
 					m_intNames.Add(lang);
 				}
@@ -539,12 +541,30 @@ void CSubManager::LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB, co
 		{
 			pGB->FindFilterByName(L"Video Mixing Renderer 9", &vmr);
 		}
-		if (vmr)
+		if (!vmr)
 		{
-			CComPtr<IPin> pPin = GetFirstPin(vmr);
-			CComQIPtr<IMemInputPin> pMemInputPin = pPin;
-			HookNewSegmentAndReceive((IPinC*)(IPin*)pPin, (IMemInputPinC*)(IMemInputPin*)pMemInputPin);
+			ATLTRACE(L"Failed to load subtitles: could not find video renderer");
+			return;
 		}
+		CComPtr<IPin> pPin = GetFirstPin(vmr);
+
+		//set fps
+		REFERENCE_TIME rtTimePerFrame(0);
+		if (pPin) {
+			CMediaType mt;
+			if (SUCCEEDED (pPin->ConnectionMediaType(&mt)))
+			{
+				ExtractAvgTimePerFrame(&mt, rtTimePerFrame);
+				ATLTRACE(L"ExtractAvgTimePerFrame: %lu", rtTimePerFrame);
+			}
+		}
+		// If framerate not set by Video Decoder choose 23.97...
+		if (rtTimePerFrame == 0) rtTimePerFrame = 417166;
+		m_fps = 10000000.0 / rtTimePerFrame;
+		m_pSubPicQueue->SetFPS(m_fps);
+
+		CComQIPtr<IMemInputPin> pMemInputPin = pPin;
+		HookNewSegmentAndReceive((IPinC*)(IPin*)pPin, (IMemInputPinC*)(IMemInputPin*)pMemInputPin);
 	}
 	LoadInternalSubtitles(pGB);	
 	LoadExternalSubtitles(fn, paths);

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
-	Name="dsutil"
+	Version="9.00"
+	Name="DSUtil"
 	ProjectGUID="{FC70988B-1AE5-4381-866D-4F405E28AC42}"
-	RootNamespace="dsutil"
+	RootNamespace="DSUtil"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -22,7 +22,7 @@
 		<Configuration
 			Name="Debug Unicode|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="..\common.vsprops"
+			InheritedPropertySheets="..\common.vsprops;..\debug.vsprops"
 			UseOfMFC="1"
 			CharacterSet="1"
 			>
@@ -44,10 +44,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
-				AdditionalIncludeDirectories="..\..\include;&quot;$(DSHOW_BASE)&quot;;&quot;$(DXSDK_DIR)Include&quot;"
+				AdditionalIncludeDirectories="..\..\include;..\BaseClasses;..\thirdparty\VirtualDub\h\"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;"
-				RuntimeLibrary="1"
-				UsePrecompiledHeader="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -60,8 +58,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="vfw32.lib Version.lib"
 				OutputFile="..\..\lib\$(ProjectName)DU.lib"
-				AdditionalLibraryDirectories=""
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -81,8 +79,6 @@
 		</Configuration>
 		<Configuration
 			Name="Debug Unicode|x64"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="..\common.vsprops;..\debug.vsprops"
 			UseOfMFC="1"
@@ -107,9 +103,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
-				AdditionalIncludeDirectories="..\..\include"
+				AdditionalIncludeDirectories="..\..\include;..\BaseClasses"
 				PreprocessorDefinitions="_WIN64;_DEBUG;_LIB;"
-				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -155,6 +150,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -167,10 +163,9 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\include;&quot;$(DSHOW_BASE)&quot;;&quot;$(DXSDK_DIR)Include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;"
-				RuntimeLibrary="0"
-				UsePrecompiledHeader="2"
+				AdditionalOptions="/MP"
+				AdditionalIncludeDirectories="..\..\include;..\BaseClasses;..\thirdparty\VirtualDub\h\"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				DisableSpecificWarnings="4244"
 			/>
 			<Tool
@@ -184,6 +179,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalOptions="/IGNORE:4221 /IGNORE:4006"
+				AdditionalDependencies="vfw32.lib Version.lib"
 				OutputFile="..\..\lib\$(ProjectName)RU.lib"
 			/>
 			<Tool
@@ -204,8 +201,6 @@
 		</Configuration>
 		<Configuration
 			Name="Release Unicode|x64"
-			OutputDirectory="$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="..\common.vsprops;..\release.vsprops"
 			UseOfMFC="1"
@@ -230,8 +225,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\include"
-				PreprocessorDefinitions="_WIN64;NDEBUG;_LIB;"
+				AdditionalOptions="/MP"
+				AdditionalIncludeDirectories="..\..\include;..\BaseClasses"
+				PreprocessorDefinitions="_WIN64;NDEBUG;_LIB"
+				EnableEnhancedInstructionSet="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -244,6 +241,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalOptions="/IGNORE:4221 /IGNORE:4006"
 				AdditionalDependencies="vfw32.lib Version.lib"
 				OutputFile="..\..\lib64\$(ProjectName)RU.lib"
 			/>
@@ -271,132 +269,6 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
 			>
-			<File
-				RelativePath=".\a_yuv2rgb.asm"
-				>
-				<FileConfiguration
-					Name="Debug Unicode|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="ml /c /coff /Cx /nologo /Fo&quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&#x0D;&#x0A;"
-						Outputs="$(OutDir)\$(InputName).obj"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug Unicode|x64"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="ml64 /c /coff /Cx /nologo /Fo&quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&#x0D;&#x0A;"
-						Outputs="$(OutDir)\$(InputName).obj"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Unicode|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="ml /c /coff /Cx /nologo /Fo&quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&#x0D;&#x0A;"
-						Outputs="$(OutDir)\$(InputName).obj"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Unicode|x64"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="ml64 /c /coff /Cx /nologo /Fo&quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&#x0D;&#x0A;"
-						Outputs="$(OutDir)\$(InputName).obj"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\a_yuvtable.asm"
-				>
-				<FileConfiguration
-					Name="Debug Unicode|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="ml /c /coff /Cx /nologo /Fo&quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&#x0D;&#x0A;"
-						Outputs="$(OutDir)\$(InputName).obj"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug Unicode|x64"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="ml64 /c /coff /Cx /nologo /Fo&quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&#x0D;&#x0A;"
-						Outputs="$(OutDir)\$(InputName).obj"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Unicode|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="ml /c /coff /Cx /nologo /Fo&quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&#x0D;&#x0A;"
-						Outputs="$(OutDir)\$(InputName).obj"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Unicode|x64"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="ml64 /c /coff /Cx /nologo /Fo&quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&#x0D;&#x0A;"
-						Outputs="$(OutDir)\$(InputName).obj"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\convert_a.asm"
-				>
-				<FileConfiguration
-					Name="Debug Unicode|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="ml /c /coff /Cx /nologo /Fo&quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-						Outputs="$(OutDir)\$(InputName).obj"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug Unicode|x64"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="ml64 /c /coff /Cx /nologo /Fo&quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-						Outputs="$(OutDir)\$(InputName).obj"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Unicode|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="ml /c /coff /Cx /nologo /Fo&quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-						Outputs="$(OutDir)\$(InputName).obj"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Unicode|x64"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="ml64 /c /coff /Cx /nologo /Fo&quot;$(OutDir)\$(InputName).obj&quot; &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-						Outputs="$(OutDir)\$(InputName).obj"
-					/>
-				</FileConfiguration>
-			</File>
 			<File
 				RelativePath=".\DSMPropertyBag.cpp"
 				>
@@ -497,6 +369,10 @@
 				RelativePath=".\vd.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\vd_asm.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -535,6 +411,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Mpeg2Def.h"
+				>
+			</File>
+			<File
 				RelativePath=".\NullRenderers.h"
 				>
 			</File>
@@ -558,11 +438,10 @@
 				RelativePath=".\vd.h"
 				>
 			</File>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
-			>
+			<File
+				RelativePath=".\vd_asm.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

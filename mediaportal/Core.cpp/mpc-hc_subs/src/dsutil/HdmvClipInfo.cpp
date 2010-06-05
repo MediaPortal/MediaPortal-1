@@ -1,7 +1,7 @@
 /* 
- * $Id: HdmvClipInfo.cpp 988 2009-02-01 21:33:05Z beliyaal $
+ * $Id: HdmvClipInfo.cpp 1785 2010-04-09 14:12:59Z xhmikosr $
  *
- * (C) 2006-2007 see AUTHORS
+ * (C) 2006-2010 see AUTHORS
  *
  * This file is part of mplayerc.
  *
@@ -20,8 +20,9 @@
  *
  */
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "HdmvClipInfo.h"
+#include "DSUtil.h"
 
 extern LCID    ISO6392ToLcid(LPCSTR code);
 
@@ -31,6 +32,20 @@ CHdmvClipInfo::CHdmvClipInfo(void)
 	m_bIsHdmv		= false;
 }
 
+CHdmvClipInfo::~CHdmvClipInfo()
+{
+	CloseFile(S_OK);
+}
+
+HRESULT CHdmvClipInfo::CloseFile(HRESULT hr)
+{
+	if (m_hFile != INVALID_HANDLE_VALUE)
+	{
+		CloseHandle(m_hFile);
+		m_hFile = INVALID_HANDLE_VALUE;
+	}
+	return hr;
+}
 
 DWORD CHdmvClipInfo::ReadDword()
 {
@@ -51,7 +66,7 @@ BYTE CHdmvClipInfo::ReadByte()
 	return bVal;
 }
 
-void CHdmvClipInfo::ReadBuffer(BYTE* pBuff, int nLen)
+void CHdmvClipInfo::ReadBuffer(BYTE* pBuff, DWORD nLen)
 {
 	DWORD	dwRead;
 	ReadFile (m_hFile, pBuff, nLen, &dwRead, NULL);
@@ -70,14 +85,14 @@ HRESULT CHdmvClipInfo::ReadProgramInfo()
 	ReadByte();		//reserved_for_word_align
 	number_of_program_sequences		= (BYTE)ReadByte();
 	int iStream = 0;
-	for (int i=0; i<number_of_program_sequences; i++)
+	for (size_t i=0; i<number_of_program_sequences; i++)
 	{     
 		ReadDword();	//SPN_program_sequence_start
 		ReadShort();	//program_map_PID
 		number_of_streams_in_ps = (BYTE)ReadByte();		//number_of_streams_in_ps
 		ReadByte();		//reserved_for_future_use
 	
-		for (int stream_index=0; stream_index<number_of_streams_in_ps; stream_index++)
+		for (size_t stream_index=0; stream_index<number_of_streams_in_ps; stream_index++)
 		{ 
 			m_Streams.SetCount(iStream + 1);
 			m_Streams[iStream].m_PID			= ReadShort();	// stream_PID
@@ -85,7 +100,7 @@ HRESULT CHdmvClipInfo::ReadProgramInfo()
 			// == StreamCodingInfo
 			dwPos  = SetFilePointer(m_hFile, 0, NULL, FILE_CURRENT) + 1;
 			dwPos += ReadByte();	// length
-			m_Streams[iStream].m_Type	= (ElementaryStreamTypes)ReadByte();
+			m_Streams[iStream].m_Type	= (PES_STREAM_TYPE)ReadByte();
 			
 			switch (m_Streams[iStream].m_Type)
 			{
@@ -164,10 +179,10 @@ HRESULT CHdmvClipInfo::ReadInfo(LPCTSTR strFile)
 	if(m_hFile != INVALID_HANDLE_VALUE)
 	{
 		ReadBuffer(Buff, 4);
-		if (memcmp (Buff, "HDMV", 4)) return VFW_E_INVALID_FILE_FORMAT;
+		if (memcmp (Buff, "HDMV", 4)) return CloseFile(VFW_E_INVALID_FILE_FORMAT);
 
 		ReadBuffer(Buff, 4);
-		if ((memcmp (Buff, "0200", 4)!=0) && (memcmp (Buff, "0100", 4)!=0)) return VFW_E_INVALID_FILE_FORMAT;
+		if ((memcmp (Buff, "0200", 4)!=0) && (memcmp (Buff, "0100", 4)!=0)) return CloseFile (VFW_E_INVALID_FILE_FORMAT);
 
 		SequenceInfo_start_address	= ReadDword();
 		ProgramInfo_start_address	= ReadDword();
@@ -176,8 +191,7 @@ HRESULT CHdmvClipInfo::ReadInfo(LPCTSTR strFile)
 
 		m_bIsHdmv = true;
 
-		CloseHandle (m_hFile);
-		return S_OK;
+		return CloseFile(S_OK);
 	}
 	
 	return AmHresultFromWin32(GetLastError());
@@ -185,8 +199,8 @@ HRESULT CHdmvClipInfo::ReadInfo(LPCTSTR strFile)
 
 CHdmvClipInfo::Stream* CHdmvClipInfo::FindStream(SHORT wPID)
 {
-	int nStreams = int(m_Streams.GetCount());
-	for (int i=0; i<nStreams; i++)
+	size_t nStreams = m_Streams.GetCount();
+	for (size_t i=0; i<nStreams; i++)
 	{
 		if (m_Streams[i].m_PID == wPID)
 			return &m_Streams[i];
@@ -241,80 +255,88 @@ LPCTSTR CHdmvClipInfo::Stream::Format()
 }
 
 
-HRESULT CHdmvClipInfo::ReadPlaylist(LPCTSTR strPath, LPCTSTR strFile, REFERENCE_TIME& rtDuration, CAtlList<CString>& Playlist)
+HRESULT CHdmvClipInfo::ReadPlaylist(CString strPlaylistFile, REFERENCE_TIME& rtDuration, CAtlList<PlaylistItem>& Playlist)
 {
-	DWORD				dwPos;
-	DWORD				dwTemp;
-	SHORT				nPlaylistItems;
-	REFERENCE_TIME		rtIn, rtOut;
-	BYTE				Buff[100];
-	CString				strTemp;
 
-	strTemp.Format(_T("%sPLAYLIST\\%s"), strPath, strFile);
-	m_hFile   = CreateFile(strTemp, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, NULL, 
+	BYTE				Buff[100];
+	CPath				Path (strPlaylistFile);
+	bool				bDuplicate = false;
+
+	// Get BDMV folder
+	Path.RemoveFileSpec();
+	Path.RemoveFileSpec();
+
+	m_hFile   = CreateFile(strPlaylistFile, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, NULL, 
 					       OPEN_EXISTING, FILE_ATTRIBUTE_READONLY|FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 
 	if(m_hFile != INVALID_HANDLE_VALUE)
 	{
 		ReadBuffer(Buff, 4);
-		if (memcmp (Buff, "MPLS", 4)) return VFW_E_INVALID_FILE_FORMAT;
+		if (memcmp (Buff, "MPLS", 4)) return CloseFile(VFW_E_INVALID_FILE_FORMAT);
 
 		ReadBuffer(Buff, 4);
-		if ((memcmp (Buff, "0200", 4)!=0) && (memcmp (Buff, "0100", 4)!=0)) return VFW_E_INVALID_FILE_FORMAT;
+		if ((memcmp (Buff, "0200", 4)!=0) && (memcmp (Buff, "0100", 4)!=0)) return CloseFile(VFW_E_INVALID_FILE_FORMAT);
 
+    DWORD				dwPos;
+		DWORD				dwTemp;
+		SHORT				nPlaylistItems;
+		
 		dwPos = ReadDword();
 		SetFilePointer(m_hFile, dwPos, NULL, FILE_BEGIN);
 
 		ReadDword();
 		ReadShort();
-		dwTemp		   = ReadShort();
-		nPlaylistItems = min((SHORT)dwTemp, 5);	// Main movie should be more than 5 parts...
+		nPlaylistItems = ReadShort();
 		ReadShort();
 		
 		dwPos	  += 10;
 		rtDuration = 0;
-		for (int i=0; i<nPlaylistItems; i++)
-		{		
+		for (size_t i=0; i<nPlaylistItems; i++)
+		{
+			PlaylistItem	Item;
 			SetFilePointer(m_hFile, dwPos, NULL, FILE_BEGIN);
 			dwPos = dwPos + ReadShort() + 2;
 			ReadBuffer(Buff, 5);
-			strTemp.Format(_T("%sSTREAM\\%c%c%c%c%c.M2TS"), strPath, Buff[0], Buff[1], Buff[2], Buff[3], Buff[4]);
-			Playlist.AddTail (strTemp);
+			Item.m_strFileName.Format(_T("%s\\STREAM\\%c%c%c%c%c.M2TS"), Path, Buff[0], Buff[1], Buff[2], Buff[3], Buff[4]);
 
 			ReadBuffer(Buff, 4);
-			if (memcmp (Buff, "M2TS", 4)) return VFW_E_INVALID_FILE_FORMAT;
+			if (memcmp (Buff, "M2TS", 4)) return CloseFile(VFW_E_INVALID_FILE_FORMAT);
 			ReadBuffer(Buff, 3);
 
 			dwTemp	= ReadDword();
-			rtIn = 20000i64*dwTemp/90;	// Carefull : 32->33 bits!
+			Item.m_rtIn = 20000i64*dwTemp/90;	// Carefull : 32->33 bits!
 
 			dwTemp	= ReadDword();
-			rtOut = 20000i64*dwTemp/90;	// Carefull : 32->33 bits!
+			Item.m_rtOut = 20000i64*dwTemp/90;	// Carefull : 32->33 bits!
 
-			rtDuration += (rtOut - rtIn);
+			rtDuration += (Item.m_rtOut - Item.m_rtIn);
 
-//			TRACE ("File : %S,  Duration : %S, Total duration  : %S\n", strName, ReftimeToString (rtOut - rtIn), ReftimeToString (rtDuration));
+			if (Playlist.Find(Item) != NULL)
+				bDuplicate = true;
+			Playlist.AddTail (Item);
+
+			//TRACE ("File : %S, Duration : %S, Total duration  : %S\n", strTemp, ReftimeToString (rtOut - rtIn), ReftimeToString (rtDuration));
 		}
 
-		CloseHandle (m_hFile);
-		return S_OK;
+		CloseFile (S_OK);
+		return bDuplicate ? S_FALSE : S_OK;
 	}
 
 	return AmHresultFromWin32(GetLastError());
 }
 
-HRESULT CHdmvClipInfo::FindMainMovie(LPCTSTR strFolder, CAtlList<CString>& MainPlaylist)
+HRESULT CHdmvClipInfo::FindMainMovie(LPCTSTR strFolder, CString& strPlaylistFile, CAtlList<PlaylistItem>& MainPlaylist)
 {
 	HRESULT				hr		= E_FAIL;
-	REFERENCE_TIME		rtMax	= 0;
-	REFERENCE_TIME		rtCurrent;
+
 	CString				strPath (strFolder);
 	CString				strFilter;
-	CAtlList<CString>	Playlist;
+	
+	CAtlList<PlaylistItem>	Playlist;
 	WIN32_FIND_DATA		fd = {0};
 
 	strPath.Replace(_T("\\PLAYLIST\\"), _T("\\"));
-	strPath.Replace(_T("\\BDMV\\"),		_T("\\"));
+	//strPath.Replace(_T("\\BDMV\\"),		_T("\\"));
 	strPath.Replace(_T("\\STREAM\\"),		_T("\\"));
 	strPath  += _T("\\BDMV\\");
 	strFilter.Format (_T("%sPLAYLIST\\*.mpls"), strPath);
@@ -322,13 +344,20 @@ HRESULT CHdmvClipInfo::FindMainMovie(LPCTSTR strFolder, CAtlList<CString>& MainP
 	HANDLE hFind = FindFirstFile(strFilter, &fd);
 	if(hFind != INVALID_HANDLE_VALUE)
 	{
+    REFERENCE_TIME		rtMax	= 0;
+    REFERENCE_TIME		rtCurrent;
+    CString				strCurrentPlaylist;
 		do
 		{
+			strCurrentPlaylist.Format(_T("%sPLAYLIST\\%s"), strPath, fd.cFileName);
 			Playlist.RemoveAll();
-			if (SUCCEEDED (ReadPlaylist(strPath, fd.cFileName, rtCurrent, Playlist)) && rtCurrent > rtMax)
+			
+			// Main movie shouldn't have duplicate M2TS filename...
+			if (ReadPlaylist(strCurrentPlaylist, rtCurrent, Playlist) == S_OK && rtCurrent > rtMax)
 			{
 				rtMax			= rtCurrent;
 
+				strPlaylistFile = strCurrentPlaylist;
 				MainPlaylist.RemoveAll();
 				POSITION pos = Playlist.GetHeadPosition();
 				while(pos) MainPlaylist.AddTail(Playlist.GetNext(pos));

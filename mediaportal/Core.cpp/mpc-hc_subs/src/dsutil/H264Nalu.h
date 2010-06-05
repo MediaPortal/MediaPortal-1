@@ -1,7 +1,7 @@
 /* 
- * $Id: H264Nalu.h 1156 2009-06-07 14:10:39Z casimir666 $
+ * $Id: H264Nalu.h 1785 2010-04-09 14:12:59Z xhmikosr $
  *
- * (C) 2006-2007 see AUTHORS
+ * (C) 2006-2010 see AUTHORS
  *
  * This file is part of mplayerc.
  *
@@ -60,20 +60,20 @@ private :
 	bool		MoveToNextStartcode();
 
 public :
-	NALU_TYPE	GetType()		{ return nal_unit_type; };
-	bool		IsRefFrame()	{ return (nal_reference_idc != 0); };
+	NALU_TYPE	GetType()		const { return nal_unit_type; };
+	bool		IsRefFrame()	const { return (nal_reference_idc != 0); };
 
-	int			GetDataLength()	{ return m_nCurPos - m_nNALDataPos; };
+	int			GetDataLength()	const { return m_nCurPos - m_nNALDataPos; };
 	BYTE*		GetDataBuffer() { return m_pBuffer + m_nNALDataPos; };
-	int			GetRoundedDataLength()
+	int			GetRoundedDataLength() const
 	{
 		int		nSize = m_nCurPos - m_nNALDataPos;
 		return nSize + 128 - (nSize %128);
 	}
 
-	int			GetLength()		{ return m_nCurPos - m_nNALStartPos; };
+	int			GetLength()		const { return m_nCurPos - m_nNALStartPos; };
 	BYTE*		GetNALBuffer()	{ return m_pBuffer + m_nNALStartPos; };
-	bool		IsEOF()			{ return m_nCurPos >= m_nSize; };
+	bool		IsEOF()			const { return m_nCurPos >= m_nSize; };
 
 	void		SetBuffer (BYTE* pBuffer, int nSize, int nNALSize);
 	bool		ReadNext();

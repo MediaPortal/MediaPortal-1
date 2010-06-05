@@ -19,7 +19,7 @@
  *
  */
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "ccdecoder.h"
 
 CCDecoder::CCDecoder(CString fn, CString rawfn) : m_fn(fn), m_rawfn(rawfn)
@@ -72,11 +72,11 @@ void CCDecoder::SaveDisp(__int64 time)
 {
 	CStringW str;
 
-	for(int row = 0; row < 16; row++)
+	for(ptrdiff_t row = 0; row < 16; row++)
 	{
 		bool fNonEmptyRow = false;
 
-		for(int col = 0; col < 32; col++)
+		for(ptrdiff_t col = 0; col < 32; col++)
 		{
 			if(m_disp[row][col]) 
 			{
@@ -108,7 +108,7 @@ void CCDecoder::DecodeCC(BYTE* buff, int len, __int64 time)
 				(int)((time/1000)%60), 
 				(int)(time%1000));
 
-			for(int i = 0; i < len; i++)
+			for(ptrdiff_t i = 0; i < len; i++)
 			{
 				_ftprintf(f, _T("%02x"), buff[i]);
 				if(i < len-1) _ftprintf(f, _T(" "));
@@ -119,19 +119,19 @@ void CCDecoder::DecodeCC(BYTE* buff, int len, __int64 time)
 		}
 	}
 
-	for(int i = 0; i < len; i++)
+	for(ptrdiff_t i = 0; i < len; i++)
 	{
 		BYTE c = buff[i]&0x7f;
 		if(c >= 0x20)
 		{
 			static WCHAR charmap[0x60] = 
 			{
-				' ','!','"','#','$','%','&','\'','(',')','á','+',',','-','.','/',
-				'0','1','2','3','4','5','6','7','8','9',':',';','<','=','>','?',
+				' ','!','"','#','$','%','&','\'','(',')',0xE1,'+',',','-','.','/',
+				'0','1','2','3','4','5','6','7','8','9',':',';','<','=','>',0x3F,
 				'@','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O',
-				'P','Q','R','S','T','U','V','W','X','Y','Z','[','é',']','í','ó',
-				'ú','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
-				'p','q','r','s','t','u','v','w','x','y','z','ç','÷','N','n','?'
+				'P','Q','R','S','T','U','V','W','X','Y','Z','[',0xE9,']',0xED,0xF3,
+				0xFA,'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',
+				'p','q','r','s','t','u','v','w','x','y','z',0xE7,0xF7,'N','n',0x3F
 			};
 
 			PutChar(charmap[c - 0x20]);
@@ -315,10 +315,6 @@ void CCDecoder::DecodeCC(BYTE* buff, int len, __int64 time)
 
 				MoveCursor(col, row);
 			}
-			else
-			{
-				int iiii = 0;
-			}
 
 			i++;
 		}
@@ -327,7 +323,7 @@ void CCDecoder::DecodeCC(BYTE* buff, int len, __int64 time)
 
 void CCDecoder::ExtractCC(BYTE* buff, int len, __int64 time)
 {
-	for(int i = 0; i < len-9; i++)
+	for(ptrdiff_t i = 0; i < len-9; i++)
 	{
 		if(*(DWORD*)&buff[i] == 0xb2010000 && *(DWORD*)&buff[i+4] == 0xf8014343)
 		{
@@ -337,14 +333,14 @@ void CCDecoder::ExtractCC(BYTE* buff, int len, __int64 time)
 			{
 				nBytes = (nBytes+1)&~1;
 
-				BYTE* pData1 = DNew BYTE[nBytes];
-				BYTE* pData2 = DNew BYTE[nBytes];
+				BYTE* pData1 = new BYTE[nBytes];
+				BYTE* pData2 = new BYTE[nBytes];
 
 				if(pData1 && pData2)
 				{
 					int nBytes1 = 0, nBytes2 = 0;
 
-					for(int j = 0; j < nBytes && i < 0x800;)
+					for(ptrdiff_t j = 0; j < nBytes && i < 0x800;)
 					{
 						if(buff[i++] == 0xff)
 						{

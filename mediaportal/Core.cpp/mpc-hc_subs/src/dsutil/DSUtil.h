@@ -21,20 +21,6 @@
 
 #pragma once
 
-#ifdef UNICODE
-#ifdef DEBUG
-#pragma comment(lib, "dsutilDU")
-#else
-#pragma comment(lib, "dsutilRU")
-#endif
-#else
-#ifdef DEBUG
-#pragma comment(lib, "dsutilD")
-#else
-#pragma comment(lib, "dsutilR")
-#endif
-#endif
-
 #include "NullRenderers.h"
 #include "HdmvClipInfo.h"
 #include "H264Nalu.h"
@@ -61,6 +47,7 @@ extern void NukeDownstream(IBaseFilter* pBF, IFilterGraph* pFG);
 extern void NukeDownstream(IPin* pPin, IFilterGraph* pFG);
 extern IBaseFilter* FindFilter(LPCWSTR clsid, IFilterGraph* pFG);
 extern IBaseFilter* FindFilter(const CLSID& clsid, IFilterGraph* pFG);
+extern IPin* FindPin(IBaseFilter* pBF, PIN_DIRECTION direction, const AM_MEDIA_TYPE* pRequestedMT);
 extern CStringW GetFilterName(IBaseFilter* pBF);
 extern CStringW GetPinName(IPin* pPin);
 extern IFilterGraph* GetGraphFromFilter(IBaseFilter* pBF);
@@ -83,7 +70,8 @@ extern CString GetDriveLabel(TCHAR drive);
 extern bool GetKeyFrames(CString fn, CUIntArray& kfs);
 extern DVD_HMSF_TIMECODE RT2HMSF(REFERENCE_TIME rt, double fps = 0);
 extern REFERENCE_TIME HMSF2RT(DVD_HMSF_TIMECODE hmsf, double fps = 0);
-extern void memsetd(void* dst, unsigned int c, int nbytes);
+extern void memsetd(void* dst, unsigned int c, size_t nbytes);
+extern void memsetw(void* dst, unsigned short c, size_t nbytes);
 extern bool ExtractBIH(const AM_MEDIA_TYPE* pmt, BITMAPINFOHEADER* bih);
 extern bool ExtractBIH(IMediaSample* pMS, BITMAPINFOHEADER* bih);
 extern bool ExtractAvgTimePerFrame(const AM_MEDIA_TYPE* pmt, REFERENCE_TIME& rtAvgTimePerFrame);
@@ -127,6 +115,9 @@ extern COLORREF YCrCbToRGB_Rec601(BYTE Y, BYTE Cr, BYTE Cb);
 extern COLORREF YCrCbToRGB_Rec709(BYTE Y, BYTE Cr, BYTE Cb);
 extern DWORD	YCrCbToRGB_Rec601(BYTE A, BYTE Y, BYTE Cr, BYTE Cb);
 extern DWORD	YCrCbToRGB_Rec709(BYTE A, BYTE Y, BYTE Cr, BYTE Cb);
+extern void		TraceFilterInfo(IBaseFilter* pBF);
+extern void		TracePinInfo(IPin* pPin);
+extern void		SetThreadName( DWORD dwThreadID, LPCSTR szThreadName);
 
 class CPinInfo : public PIN_INFO
 {
@@ -210,3 +201,7 @@ static CUnknown* WINAPI CreateInstance(LPUNKNOWN lpunk, HRESULT* phr)
     if(punk == NULL) *phr = E_OUTOFMEMORY;
 	return punk;
 }
+
+#define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
+#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
+#define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }

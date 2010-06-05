@@ -4,8 +4,8 @@
 
 // IDSMPropertyBag
 
-[uuid("232FD5D2-4954-41E7-BF9B-09E1257B1A95")]
-interface IDSMPropertyBag : public IPropertyBag2
+interface __declspec(uuid("232FD5D2-4954-41E7-BF9B-09E1257B1A95"))
+IDSMPropertyBag : public IPropertyBag2
 {
 	STDMETHOD(SetProperty) (LPCWSTR key, LPCWSTR value) = 0;
 	STDMETHOD(SetProperty) (LPCWSTR key, VARIANT* var) = 0;
@@ -47,8 +47,8 @@ public:
 
 // IDSMResourceBag
 
-[uuid("EBAFBCBE-BDE0-489A-9789-05D5692E3A93")]
-interface IDSMResourceBag : public IUnknown
+interface __declspec(uuid("EBAFBCBE-BDE0-489A-9789-05D5692E3A93"))
+IDSMResourceBag : public IUnknown
 {
 	STDMETHOD_(DWORD, ResGetCount) () = 0;
 	STDMETHOD(ResGet) (DWORD iIndex, BSTR* ppName, BSTR* ppDesc, BSTR* ppMime, BYTE** ppData, DWORD* pDataLen, DWORD_PTR* pTag) = 0;
@@ -68,7 +68,7 @@ public:
 	CDSMResource(const CDSMResource& r);
 	CDSMResource(LPCWSTR name, LPCWSTR desc, LPCWSTR mime, BYTE* pData, int len, DWORD_PTR tag = 0);
 	virtual ~CDSMResource();
-	void operator = (const CDSMResource& r);
+	CDSMResource& operator = (const CDSMResource& r);
 
 	// global access to all resources
 	static CCritSec m_csResources;
@@ -97,8 +97,8 @@ public:
 
 // IDSMChapterBag
 
-[uuid("2D0EBE73-BA82-4E90-859B-C7C48ED3650F")]
-interface IDSMChapterBag : public IUnknown
+interface __declspec(uuid("2D0EBE73-BA82-4E90-859B-C7C48ED3650F"))
+IDSMChapterBag : public IUnknown
 {
 	STDMETHOD_(DWORD, ChapGetCount) () = 0;
 	STDMETHOD(ChapGet) (DWORD iIndex, REFERENCE_TIME* prt, BSTR* ppName) = 0;
@@ -120,7 +120,7 @@ public:
 	CStringW name;
 	CDSMChapter();
 	CDSMChapter(REFERENCE_TIME rt, LPCWSTR name);
-	void operator = (const CDSMChapter& c);
+	CDSMChapter& operator = (const CDSMChapter& c);
 	static int Compare(const void* a, const void* b);
 };
 

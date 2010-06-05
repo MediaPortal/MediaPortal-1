@@ -63,9 +63,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Winmm.lib strmbasd.lib vfw32.lib version.lib "
+				AdditionalDependencies="Winmm.lib vfw32.lib version.lib "
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug&quot;"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -140,9 +140,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Winmm.lib strmbase.lib vfw32.lib Version.lib"
+				AdditionalDependencies="Winmm.lib vfw32.lib Version.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release&quot;"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
