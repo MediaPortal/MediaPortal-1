@@ -58,6 +58,7 @@ namespace MediaPortal.DeployTool.Sections
       this.textBoxDir.Name = "textBoxDir";
       this.textBoxDir.Size = new System.Drawing.Size(463, 20);
       this.textBoxDir.TabIndex = 13;
+      this.textBoxDir.TextChanged += new System.EventHandler(this.textBoxDir_TextChanged);
       // 
       // labelInstDir
       // 
@@ -105,7 +106,6 @@ namespace MediaPortal.DeployTool.Sections
       this.Controls.Add(this.labelHeading);
       this.Name = "MPSettingsDlg";
       this.Size = new System.Drawing.Size(666, 250);
-      this.Load += new System.EventHandler(this.MPSettingsDlg_Load);
       this.Controls.SetChildIndex(this.labelSectionHeader, 0);
       this.Controls.SetChildIndex(this.labelHeading, 0);
       this.Controls.SetChildIndex(this.labelInstDir, 0);

@@ -56,6 +56,7 @@ namespace MediaPortal.DeployTool.Sections
       this.textBoxDir.Name = "textBoxDir";
       this.textBoxDir.Size = new System.Drawing.Size(463, 20);
       this.textBoxDir.TabIndex = 20;
+      this.textBoxDir.TextChanged += new System.EventHandler(this.textBoxDir_TextChanged);
       // 
       // labelInstDir
       // 

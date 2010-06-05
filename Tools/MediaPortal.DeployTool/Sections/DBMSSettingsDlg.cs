@@ -90,7 +90,14 @@ namespace MediaPortal.DeployTool.Sections
       dlg.Description = Localizer.GetBestTranslation("DBMSSettings_msgSelectDir");
       dlg.SelectedPath = textBoxDir.Text;
       if (dlg.ShowDialog() == DialogResult.OK)
-        textBoxDir.Text = installationPath = dlg.SelectedPath;
+      {
+        textBoxDir.Text = dlg.SelectedPath;
+      }
+    }
+
+    private void textBoxDir_TextChanged(object sender, EventArgs e)
+    {
+      installationPath = textBoxDir.Text;
     }
   }
 }
