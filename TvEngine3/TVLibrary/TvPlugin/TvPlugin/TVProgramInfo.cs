@@ -662,19 +662,15 @@ namespace TvPlugin
       }
       else
       {
-        foreach (Schedule schedule in schedules)
-        {
-          Schedule recSched;
-          isRecording = IsRecordingProgram(CurrentProgram, out recSched, true);
+      	// Mantis 2927 
+      	// Removed loop over all schedules as this was not actually 
+      	// needed and was causing performance issues
+        Schedule recSched;
+        isRecording = IsRecordingProgram(CurrentProgram, out recSched, true);
 
-          if (isRecording)
-          {
-            if ((ScheduleRecordingType)schedule.ScheduleType != ScheduleRecordingType.Once)
-            {
-              isSeries = true;
-            }
-            break;
-          }
+        if (isRecording && (ScheduleRecordingType)recSched.ScheduleType != ScheduleRecordingType.Once)
+        {
+          isSeries = true;
         }
       }
       if (isRecording)
