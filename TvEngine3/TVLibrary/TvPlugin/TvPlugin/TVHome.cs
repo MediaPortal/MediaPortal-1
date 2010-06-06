@@ -2105,7 +2105,7 @@ namespace TvPlugin
         {
           return;
         }
-        bool deleted = TVUtil.DeleteRecAndSchedWithPrompt(parentSchedule, selectedRecording.IdChannel);
+        bool deleted = TVUtil.StopRecAndSchedWithPrompt(parentSchedule, selectedRecording.IdChannel);
         if (deleted && !ignoreActiveRecordings.Contains(selectedRecording))
         {
           ignoreActiveRecordings.Add(selectedRecording);
