@@ -75,6 +75,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     HRESULT hr;
     LogRotate();
     Log("----------v1.3.4------------ instance 0x%x", this);
+    Log("---------- audio renderer testing --------", this);
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
     hr = m_pDXVA2CreateDirect3DDeviceManager9(&m_iResetToken, &m_pDeviceManager);
@@ -780,7 +781,7 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
 
   if (cycleDiff != 0.0 && abs(cycleDiff) < 0.06)
   {
-    m_dBias = 1.0 - cycleDiff;// + 0.00075;
+    m_dBias = 1.0 - cycleDiff;
     //m_dBias = 1.04270937604271;
     //m_dBias = 1.04297;
 
@@ -788,7 +789,7 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
     Log("debug: DIFF %f (bias vs calculated MS value)", m_dBias - 1.04297);
     Log("debug: DIFF %f (bias vs calculated)", m_dBias - 1.04270937604271);
 
-    if(m_pAVSyncClock)
+    if (m_pAVSyncClock)
     {
       m_pAVSyncClock->SetBias(m_dBias);
       Log("debug: adjust bias to : %f", m_dBias);
@@ -2476,7 +2477,7 @@ void MPEVRCustomPresenter::AdjustAudioRenderer()
   }
 
 
-  Log("VF: %f averagePhaseDif: %f CP: %f ", m_dVariableFreq, averagePhaseDifference, currentPhase);
+  //Log("VF: %f averagePhaseDif: %f CP: %f ", m_dVariableFreq, averagePhaseDifference, currentPhase);
 
   if (m_pAVSyncClock)
   {
