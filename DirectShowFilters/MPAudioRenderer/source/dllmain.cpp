@@ -16,7 +16,14 @@
 
 #include "stdafx.h"
 
+#include <streams.h>
+#include <atlbase.h>
+#include <shlobj.h>
+#include <queue>
+
 #include "MpAudioRenderer.h"
+
+using namespace std;
 
 const AMOVIESETUP_MEDIATYPE sudPinTypesIn[] =
 {
@@ -65,3 +72,121 @@ STDAPI DllUnregisterServer()
 {
 	return AMovieDllRegisterServer2(FALSE);
 }
+
+
+//
+// TODO: this logging code is borrowed from dshowhelper.dll
+// To be replaced when MP2 has generic C++ log framework available
+//
+
+void LogPath(char* dest, char* name)
+{
+  TCHAR folder[MAX_PATH];
+  SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+  sprintf(dest,"%s\\Team Mediaportal\\MediaPortal\\log\\AudioRenderer.%s",folder,name);
+}
+
+
+void LogRotate()
+{
+  TCHAR fileName[MAX_PATH];
+  LogPath(fileName, "log");
+  TCHAR bakFileName[MAX_PATH];
+  LogPath(bakFileName, "bak");
+  remove(bakFileName);
+  rename(fileName, bakFileName);
+}
+
+
+CCritSec m_qLock;
+std::queue<std::string> m_logQueue;
+BOOL m_bLoggerRunning;
+HANDLE m_hLogger = NULL;
+
+string GetLogLine()
+{
+  CAutoLock lock(&m_qLock);
+  if ( m_logQueue.size() == 0 )
+  {
+    return "";
+  }
+  string ret = m_logQueue.front();
+  m_logQueue.pop();
+  return ret;
+}
+
+
+UINT CALLBACK LogThread(void* param)
+{
+  TCHAR fileName[MAX_PATH];
+  LogPath(fileName, "log");
+  while ( m_bLoggerRunning ) {
+    if ( m_logQueue.size() > 0 ) {
+      FILE* fp = fopen(fileName,"a+");
+      if (fp!=NULL)
+      {
+        SYSTEMTIME systemTime;
+        GetLocalTime(&systemTime);
+        string line = GetLogLine();
+        while (!line.empty())
+        {
+          fprintf(fp, "%s", line.c_str());
+          line = GetLogLine();
+        }
+        fclose(fp);
+      }
+    }
+    Sleep(1000);
+  }
+  return 0;
+}
+
+
+void StartLogger()
+{
+  UINT id;
+  m_hLogger = (HANDLE)_beginthreadex(NULL, 0, LogThread, 0, 0, &id);
+  SetThreadPriority(m_hLogger, THREAD_PRIORITY_BELOW_NORMAL);
+}
+
+
+void StopLogger()
+{
+  if (m_hLogger)
+  {
+    m_bLoggerRunning = FALSE;
+    WaitForSingleObject(m_hLogger, INFINITE);	
+    m_hLogger = NULL;
+  }
+}
+
+
+void Log(const char *fmt, ...) 
+{
+  static CCritSec lock;
+  va_list ap;
+  va_start(ap,fmt);
+
+  CAutoLock logLock(&lock);
+  if (!m_hLogger) {
+    m_bLoggerRunning = true;
+    StartLogger();
+  }
+  char buffer[1000]; 
+  int tmp;
+  va_start(ap,fmt);
+  tmp = vsprintf(buffer, fmt, ap);
+  va_end(ap); 
+
+  SYSTEMTIME systemTime;
+  GetLocalTime(&systemTime);
+  char msg[5000];
+  sprintf_s(msg, 5000,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%x]%s\n",
+    systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+    systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+    systemTime.wMilliseconds,
+    GetCurrentThreadId(),
+    buffer);
+  CAutoLock l(&m_qLock);
+  m_logQueue.push((string)msg);
+};
