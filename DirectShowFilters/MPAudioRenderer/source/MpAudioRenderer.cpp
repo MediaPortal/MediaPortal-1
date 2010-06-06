@@ -194,7 +194,7 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
   if (!pmt) 
     return E_INVALIDARG;
   
-  Log("CMPAudioRenderer::CheckMediaType");
+  Log("CheckMediaType");
   WAVEFORMATEX *pwfx = (WAVEFORMATEX *) pmt->Format();
 
   if (!pwfx) 
@@ -203,7 +203,7 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
   if ((pmt->majortype	!= MEDIATYPE_Audio) ||
       (pmt->formattype != FORMAT_WaveFormatEx))
   {
-    Log("CMPAudioRenderer::CheckMediaType Not supported");
+    Log("CheckMediaType Not supported");
     return VFW_E_TYPE_NOT_ACCEPTED;
   }
 
@@ -219,21 +219,21 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
     hr = CheckAudioClient((WAVEFORMATEX *)NULL);
     if (FAILED(hr))
     {
-      Log("CMPAudioRenderer::CheckMediaType Error on check audio client");
+      Log("CheckMediaType Error on check audio client");
       return hr;
     }
     if (!m_pAudioClient) 
     {
-      Log("CMPAudioRenderer::CheckMediaType Error, audio client not loaded");
+      Log("CheckMediaType Error, audio client not loaded");
       return VFW_E_CANNOT_CONNECT;
     }
 
     if (m_pAudioClient->IsFormatSupported(AUDCLNT_SHAREMODE_EXCLUSIVE, pwfx, NULL) != S_OK)
     {
-      Log("CMPAudioRenderer::CheckMediaType WASAPI client refused the format");
+      Log("CheckMediaType WASAPI client refused the format");
       return VFW_E_TYPE_NOT_ACCEPTED;
     }
-    Log("CMPAudioRenderer::CheckMediaType WASAPI client accepted the format");
+    Log("CheckMediaType WASAPI client accepted the format");
   }
   else if	(pwfx->wFormatTag	!= WAVE_FORMAT_PCM)
   {
