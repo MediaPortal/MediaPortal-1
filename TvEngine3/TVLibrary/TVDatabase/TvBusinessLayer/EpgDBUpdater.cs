@@ -454,6 +454,7 @@ namespace TvDatabase
         dbProg.Classification = classification;
         dbProg.ParentalRating = parentRating;
         dbProg.OriginalAirDate = SqlDateTime.MinValue.Value; // TODO: /!\ add implementation
+        dbProg.ClearState();
       }
       dbProg.Persist();
     }

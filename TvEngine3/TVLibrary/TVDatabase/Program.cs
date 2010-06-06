@@ -948,6 +948,12 @@ namespace TvDatabase
       string sql = "Update program set state=0 where state<>0;";
       SqlStatement stmt = new SqlStatement(StatementType.Update, Broker.Provider.GetCommand(), sql);
       stmt.Execute();
+      Gentle.Common.CacheManager.ClearQueryResultsByType(typeof(Program));
+    }
+
+    public void ClearState()
+    {
+      state = (int)ProgramState.None;
     }
 
     public static IList<Program> RetrieveAllNotifications()
