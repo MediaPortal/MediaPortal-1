@@ -1120,7 +1120,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(REFERENCE_TIME *pNextSampl
     LOG_TRACE("Time to schedule: %I64d", *pNextSampleTime);
 
     // Only present sample if is it due this vsync or if we are scrubbing
-    if (*pNextSampleTime > m_rtTimePerFrame && !m_bScrubbing)
+    if (*pNextSampleTime >= m_rtTimePerFrame * 3/4 && !m_bScrubbing)
     {
       break;
     }

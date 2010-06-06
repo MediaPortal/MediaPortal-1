@@ -105,7 +105,7 @@ UINT CALLBACK SchedulerThread(void* param)
     timePerFrame = p->pPresenter->GetFrameDuration();
     if (hnsSampleTime > 0)
     {
-      double detectedFrameTime = p->pPresenter->GetDetectedFrameTime() * 10000000.0;
+      /*double detectedFrameTime = p->pPresenter->GetDetectedFrameTime() * 10000000.0;
 
       if (detectedFrameTime > 0) 
       {
@@ -119,8 +119,10 @@ UINT CALLBACK SchedulerThread(void* param)
       }
       else
       {
-        delay = hnsSampleTime/8;
-      }
+        delay = hnsSampleTime/4;
+      }*/
+
+      delay = hnsSampleTime/4;
     }
     else 
     {
