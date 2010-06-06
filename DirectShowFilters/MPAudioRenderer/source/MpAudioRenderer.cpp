@@ -937,7 +937,7 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
 
     //lResampledSize = m_pSoundTouch->receiveSamples((short*)pMediaBuffer, m_pSoundTouch->numSamples() / nBytePerSample) * nBytePerSample;
     
-    mediaBufferResult = (BYTE*)malloc(m_pSoundTouch->numSamples());
+    mediaBufferResult = (BYTE*)malloc(m_pSoundTouch->numSamples() * nBytePerSample);
     lResampledSize = m_pSoundTouch->receiveSamples((short*)mediaBufferResult, m_pSoundTouch->numSamples() / nBytePerSample) * nBytePerSample;
   }
 
