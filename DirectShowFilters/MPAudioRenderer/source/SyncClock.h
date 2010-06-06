@@ -20,13 +20,13 @@
 
 #include <streams.h>
 
-class CMpcAudioRenderer;
+class CMPAudioRenderer;
 
 class CSyncClock: public CBaseReferenceClock
 {
 
 public:
-  CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMpcAudioRenderer* pRenderer);
+  CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer);
 
 	REFERENCE_TIME GetPrivateTime();
 
@@ -49,5 +49,5 @@ private:
   // Not owned
   IReferenceClock*  m_pCurrentRefClock;
   IReferenceClock*  m_pPrevRefClock;
-  CMpcAudioRenderer* m_pAudioRenderer;
+  CMPAudioRenderer* m_pAudioRenderer;
 };

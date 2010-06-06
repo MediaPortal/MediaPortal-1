@@ -45,11 +45,11 @@
 // #define AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED      AUDCLNT_ERR(0x019)
 
 [uuid("EC9ED6FC-7B03-4cb6-8C01-4EABE109F26B")]
-class CMpcAudioRenderer : public CBaseRenderer, IMediaSeeking, IAVSyncClock
+class CMPAudioRenderer : public CBaseRenderer, IMediaSeeking, IAVSyncClock
 {
 public:
-	CMpcAudioRenderer(LPUNKNOWN punk, HRESULT *phr);
-	~CMpcAudioRenderer();
+	CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr);
+	~CMPAudioRenderer();
 
   static const AMOVIESETUP_FILTER sudASFilter;
 

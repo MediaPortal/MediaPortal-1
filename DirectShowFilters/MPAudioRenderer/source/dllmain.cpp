@@ -45,7 +45,7 @@ const AMOVIESETUP_PIN sudpPins[] =
 
 const AMOVIESETUP_FILTER sudFilter[] =
 {
-	{&__uuidof(CMpcAudioRenderer), 
+	{&__uuidof(CMPAudioRenderer), 
   L"MediaPortal - Audio Renderer", 
   0x30000000, 
   NULL,
@@ -55,8 +55,8 @@ const AMOVIESETUP_FILTER sudFilter[] =
 CFactoryTemplate g_Templates[] =
 {
   {sudFilter[0].strName, 
-  &__uuidof(CMpcAudioRenderer), 
-  CMpcAudioRenderer::CreateInstance, 
+  &__uuidof(CMPAudioRenderer), 
+  CMPAudioRenderer::CreateInstance, 
   NULL, 
   &sudFilter[0]},
 };
