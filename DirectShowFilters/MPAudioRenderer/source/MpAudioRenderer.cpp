@@ -1502,11 +1502,14 @@ HRESULT CMPAudioRenderer::SetBias(DOUBLE pBias)
 {
   CAutoLock cAutoLock(&m_csResampleLock);
 
+  Log("SetBias: %1.10f", pBias);
+
   m_dBias = pBias;
   m_Clock.SetBias(m_dBias);
   if (m_pSoundTouch)
   {
     m_pSoundTouch->setTempo(m_dAdjustment * m_dBias);
+    Log("SetBias - updated SoundTouch tempo");
   }
   return S_OK;
 }
