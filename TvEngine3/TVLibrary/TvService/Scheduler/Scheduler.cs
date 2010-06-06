@@ -1082,6 +1082,7 @@ namespace TvService
     {
       bool startRecordingOnDisc = false;
 
+      _tvController.EpgGrabberEnabled = false;
       Log.Write("Scheduler : record, first tune to channel");
       TvResult tuneResult = _tvController.Tune(ref user, cardInfo.TuningDetail, RecDetail.Channel.IdChannel);
 
@@ -1113,6 +1114,10 @@ namespace TvService
         }
       }
       
+      if (!startRecordingOnDisc && _tvController.AllCardsIdle)
+      {
+         _tvController.EpgGrabberEnabled = true;
+      }
       return startRecordingOnDisc;
     }
 

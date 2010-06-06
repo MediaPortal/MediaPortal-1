@@ -1913,25 +1913,9 @@ namespace TvService
             _streamer.Remove(String.Format("stream{0}.{1}", cardId, subChannel));
           }
 
-          bool allStopped = true;
-          Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
-          while (enumerator.MoveNext())
+          if (_epgGrabber != null && AllCardsIdle)
           {
-            KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
-            if (keyPair.Value.IsLocal)
-            {
-              if (keyPair.Value.IsIdle == false)
-              {
-                allStopped = false;
-              }
-            }
-          }
-          if (allStopped)
-          {
-            if (_epgGrabber != null)
-            {
-              _epgGrabber.Start();
-            }
+            _epgGrabber.Start();
           }
 
           if (result)
@@ -1961,11 +1945,22 @@ namespace TvService
     {
       if (ValidateTvControllerParams(user))
         return TvResult.UnknownError;
+      if (_epgGrabber != null)
+      {
+        _epgGrabber.Stop();
+      }
       TvResult result = _cards[user.CardId].Recorder.Start(ref user, ref fileName, contentRecording, startTime);
 
       if (result == TvResult.Succeeded)
       {
         UpdateChannelStatesForUsers();
+      }
+      else
+      {
+        if (_epgGrabber != null && AllCardsIdle)
+        {
+          _epgGrabber.Start();
+        }
       }
 
       return result;
@@ -1986,7 +1981,10 @@ namespace TvService
       {
         UpdateChannelStatesForUsers();
       }
-
+      if (_epgGrabber != null && AllCardsIdle)
+      {
+          _epgGrabber.Start();
+      }
       return result;
     }
 
@@ -2528,7 +2526,7 @@ namespace TvService
           //no free cards available
           Log.Write("Controller: StartTimeShifting failed:{0}", result);
 
-          if (_epgGrabber != null)
+          if (_epgGrabber != null && AllCardsIdle)
           {
             _epgGrabber.Start();
           }
@@ -2649,7 +2647,7 @@ namespace TvService
 
         if (result != TvResult.Succeeded)
         {
-          if (_epgGrabber != null)
+          if (_epgGrabber != null && AllCardsIdle)
           {
             _epgGrabber.Start();
           }
@@ -2659,7 +2657,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        if (_epgGrabber != null)
+        if (_epgGrabber != null && AllCardsIdle)
         {
           _epgGrabber.Start();
         }
