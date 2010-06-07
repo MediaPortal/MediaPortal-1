@@ -54,7 +54,7 @@ namespace Gentle.Provider.MySQL
 			}
 			else if( type.Equals( typeof(DateTime) ) )
 			{
-				result = MySqlDbType.Datetime;
+				result = MySqlDbType.DateTime;
 			}
 			else if( type.Equals( typeof(bool) ) || type.Equals( typeof(Byte) ) || type.Equals( typeof(byte) ) )
 			{
@@ -104,7 +104,7 @@ namespace Gentle.Provider.MySQL
 				case "float": // 8
 					return (long) MySqlDbType.Float;
 				case "datetime": // 8
-					return (long) MySqlDbType.Datetime;
+					return (long) MySqlDbType.DateTime;
 				case "decimal":
 				case "numeric":
 					return (long) MySqlDbType.Decimal;

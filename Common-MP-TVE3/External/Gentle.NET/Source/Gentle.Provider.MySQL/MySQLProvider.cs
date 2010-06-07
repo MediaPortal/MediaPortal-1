@@ -70,8 +70,7 @@ namespace Gentle.Provider.MySQL
 		public override IDbCommand GetCommand()
 		{
 			IDbCommand cmd = new MySqlCommand();
-			// not yet supported by MySQL provider:
-			// cmd.CommandTimeout = GentleSettings.DefaultCommandTimeout;
+			cmd.CommandTimeout = GentleSettings.DefaultCommandTimeout;
 			return cmd;
 		}
 
