@@ -205,7 +205,7 @@ namespace TvService
     /// Gets the user.
     /// </summary>
     /// <param name="user">The user.</param>
-    /// <param name=param name="cardId">The card id of the user to be found</param>
+    /// <param name="cardId">The card id of the user to be found</param>
     public void GetUser(ref User user, int cardId)
     {
       foreach (User existingUser in _users)
