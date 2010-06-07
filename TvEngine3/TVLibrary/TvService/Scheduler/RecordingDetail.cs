@@ -177,8 +177,11 @@ namespace TvService
 
         try
         {
-          _schedule.Refresh();
-          isRecording = (DateTime.Now < EndTime.AddMinutes(_schedule.PostRecordInterval));
+          Schedule _sched = Schedule.Retrieve((int)_schedule.IdSchedule);// Refresh();
+          if (_sched != null)
+          {
+            isRecording = (DateTime.Now < EndTime.AddMinutes(_sched.PostRecordInterval));
+          }
         }
         catch (Exception e)
         {
