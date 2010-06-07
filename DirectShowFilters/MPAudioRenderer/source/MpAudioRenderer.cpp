@@ -980,6 +980,11 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
     m_pAudioClient->GetCurrentPadding(&numFramesPadding);
     UINT32 numFramesAvailable = m_nFramesInBuffer - numFramesPadding;
 
+    if (numFramesPadding == 0 && m_bIsAudioClientStarted)
+    {
+      Log("Buffer underflow detected!");
+    }
+
     UINT32 nAvailableBytes = numFramesAvailable * frameSize;
     UINT32 nBytesToWrite = nAvailableBytes;
     // More room than enough in the output buffer
