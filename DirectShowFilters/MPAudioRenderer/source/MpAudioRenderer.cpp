@@ -141,7 +141,11 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
   if (m_bUseTimeStretching)
   {
 	  // TODO: use channel based sound objects (since lib has two channel limit)
+#ifndef MULTICHANNEL_SUPPORT
     m_pSoundTouch = new soundtouch::SoundTouch();
+#else
+    m_pSoundTouch = new CMultiSoundTouch();
+#endif
   }
 }
 
@@ -392,10 +396,14 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
 
     memcpy(m_pWaveFileFormat, pwf, size);
 
+#ifndef MULTICHANNEL_SUPPORT
     if (m_pSoundTouch && (pwf->nChannels <= 2))
+#else
+    if (m_pSoundTouch)
+#endif
     {
-      m_pSoundTouch->setSampleRate(pwf->nSamplesPerSec);
       m_pSoundTouch->setChannels(pwf->nChannels);
+      m_pSoundTouch->setSampleRate(pwf->nSamplesPerSec);
       m_pSoundTouch->setTempoChange(0);
       m_pSoundTouch->setPitchSemiTones(0);
 
@@ -779,11 +787,11 @@ HRESULT	CMPAudioRenderer::DoRenderSampleDirectSound(IMediaSample *pMediaSample)
   if (SUCCEEDED(hr))
   {
     if (((dwPlayCursor < dwWriteCursor) &&
-        (
-        ((m_dwDSWriteOff >= dwPlayCursor) && (m_dwDSWriteOff <=  dwWriteCursor)) ||
-        ((m_dwDSWriteOff < dwPlayCursor) && (m_dwDSWriteOff + lSize >= dwPlayCursor)))) ||
+         (
+          ((m_dwDSWriteOff >= dwPlayCursor) && (m_dwDSWriteOff <=  dwWriteCursor)) ||
+          ((m_dwDSWriteOff < dwPlayCursor) && (m_dwDSWriteOff + lSize >= dwPlayCursor)))) ||
         ((dwWriteCursor < dwPlayCursor) && 
-        ((m_dwDSWriteOff >= dwPlayCursor) || (m_dwDSWriteOff <  dwWriteCursor))))
+         ((m_dwDSWriteOff >= dwPlayCursor) || (m_dwDSWriteOff <  dwWriteCursor))))
     {
       m_dwDSWriteOff = dwWriteCursor;
     }
@@ -809,6 +817,7 @@ HRESULT CMPAudioRenderer::WriteSampleToDSBuffer(IMediaSample *pMediaSample, bool
   HRESULT hr = S_OK;
   bool loop = false;
   
+  BYTE *mediaBufferResult = NULL;
   VOID* pDSLockedBuffers[2] = {NULL, NULL};
   DWORD dwDSLockedSize[2]	= {0, 0};
   BYTE* pMediaBuffer = NULL;
@@ -822,12 +831,17 @@ HRESULT CMPAudioRenderer::WriteSampleToDSBuffer(IMediaSample *pMediaSample, bool
   {
     CAutoLock cAutoLock(&m_csResampleLock);
 	
-    int nBytePerSample = m_pWaveFileFormat->nChannels * (m_pWaveFileFormat->wBitsPerSample/8);
+    int nBytePerSample = m_pWaveFileFormat->nBlockAlign;
     m_pSoundTouch->putSamples((const short*)pMediaBuffer, lSize / nBytePerSample);
-    lSize = m_pSoundTouch->receiveSamples((short*)pMediaBuffer, lSize / nBytePerSample) * nBytePerSample;
+    //Log("Before resample: lSize=%d, nBytePerSample=%d", lSize, nBytePerSample);
+    lSize = m_pSoundTouch->numSamples() * nBytePerSample;
+    mediaBufferResult = (BYTE*)malloc(lSize);
+    lSize = m_pSoundTouch->receiveSamples((short*)mediaBufferResult, lSize / nBytePerSample) * nBytePerSample;
+    pMediaBuffer = mediaBufferResult;
   }
 
   pMediaSample->GetTime(&rtStart, &rtStop);
+  //Log("Sample times: start=%ld, end=%ld", rtStart, rtStop);
 
   if (rtStart < 0)
   {
@@ -839,30 +853,80 @@ HRESULT CMPAudioRenderer::WriteSampleToDSBuffer(IMediaSample *pMediaSample, bool
     lSize -= dwRemove;
   }
 
-  if (SUCCEEDED (hr))
-  hr = m_pDSBuffer->Lock(m_dwDSWriteOff, lSize, &pDSLockedBuffers[0], &dwDSLockedSize[0], &pDSLockedBuffers[1], &dwDSLockedSize[1], 0 );
-
-  if (SUCCEEDED (hr))
+  // Sleep for half the buffer duration since last buffer feed
+  DWORD currentTime = GetTickCount();
+  if (m_dwLastBufferTime != 0 && m_hnsActualDuration != 0 && m_dwLastBufferTime < currentTime && 
+    (currentTime - m_dwLastBufferTime) < m_hnsActualDuration)
   {
-    if (pDSLockedBuffers [0] != NULL)
-    {
-      memcpy(pDSLockedBuffers[0], pMediaBuffer, dwDSLockedSize[0]);
-      m_dwDSWriteOff += dwDSLockedSize[0];
-    }
-
-    if (pDSLockedBuffers [1] != NULL)
-    {
-      memcpy(pDSLockedBuffers[1], &pMediaBuffer[dwDSLockedSize[0]], dwDSLockedSize[1]);
-      m_dwDSWriteOff = dwDSLockedSize[1];
-      loop = true;
-    }
-
-    hr = m_pDSBuffer->Unlock(pDSLockedBuffers[0], dwDSLockedSize[0], pDSLockedBuffers[1], dwDSLockedSize[1]);
-    ATLASSERT (dwDSLockedSize [0] + dwDSLockedSize [1] == (DWORD)lSize);
+    m_hnsActualDuration = m_hnsActualDuration - (currentTime - m_dwLastBufferTime);
+    //Log("Sleeping %ld ms", m_hnsActualDuration);
+    Sleep(m_hnsActualDuration);
   }
 
+  while (SUCCEEDED (hr) && lSize > 0)
+  {
+    DWORD numBytesAvailable, numBytesToWrite;
+    DWORD dwPlayPos, dwWritePos;
+
+    m_pDSBuffer->GetCurrentPosition(&dwPlayPos, &dwWritePos);
+    if (m_dwDSWriteOff < dwPlayPos)
+      numBytesAvailable = dwPlayPos-m_dwDSWriteOff;
+    else
+      numBytesAvailable = dwPlayPos + m_nDSBufSize -m_dwDSWriteOff;
+    
+    if (lSize < numBytesAvailable)
+      numBytesToWrite = lSize;
+    else
+      numBytesToWrite = numBytesAvailable;
+
+    //Log("WriteSampleToDSBuffer: lSize=%d, numBytesAvailable=%d, m_dwDSWriteOff=%d, dwPlayPos=%d, dwWritePos=%d, m_nDSBufSize=%d", lSize, numBytesAvailable, m_dwDSWriteOff, dwPlayPos, dwWritePos, m_nDSBufSize);
+    if (SUCCEEDED (hr))
+      hr = m_pDSBuffer->Lock(m_dwDSWriteOff, numBytesToWrite, &pDSLockedBuffers[0], &dwDSLockedSize[0], &pDSLockedBuffers[1], &dwDSLockedSize[1], 0 );
+
+    if (SUCCEEDED (hr))
+    {
+      if (pDSLockedBuffers [0] != NULL)
+      {
+        memcpy(pDSLockedBuffers[0], pMediaBuffer, dwDSLockedSize[0]);
+        m_dwDSWriteOff += dwDSLockedSize[0];
+      }
+
+      if (pDSLockedBuffers [1] != NULL)
+      {
+        memcpy(pDSLockedBuffers[1], &pMediaBuffer[dwDSLockedSize[0]], dwDSLockedSize[1]);
+        m_dwDSWriteOff = dwDSLockedSize[1];
+        loop = true;
+      }
+
+      hr = m_pDSBuffer->Unlock(pDSLockedBuffers[0], dwDSLockedSize[0], pDSLockedBuffers[1], dwDSLockedSize[1]);
+      //Log("Unlock returned %08x", hr);
+      ATLASSERT (dwDSLockedSize [0] + dwDSLockedSize [1] == (DWORD)numBytesToWrite);
+      lSize -= numBytesToWrite;
+      pMediaBuffer += numBytesToWrite;
+
+      if (lSize <= 0)
+      {
+        m_dwLastBufferTime = GetTickCount();
+       
+        // This is the duration of the filled buffer
+        m_hnsActualDuration = (double)REFTIMES_PER_SEC * (m_nDSBufSize - numBytesAvailable + numBytesToWrite) / m_pWaveFileFormat->nBlockAlign / m_pWaveFileFormat->nSamplesPerSec;
+        
+        // Sleep time is half this duration
+        m_hnsActualDuration = (DWORD)(m_hnsActualDuration / REFTIMES_PER_MILLISEC / 2);
+        break;
+      }
+      // Buffer not completely filled, sleep for half buffer capacity duration
+      m_hnsActualDuration = (double)REFTIMES_PER_SEC * m_nDSBufSize / m_pWaveFileFormat->nBlockAlign / m_pWaveFileFormat->nSamplesPerSec;
+      
+      // Sleep time is half this duration
+      m_hnsActualDuration = (DWORD)(m_hnsActualDuration / REFTIMES_PER_MILLISEC / 2);
+      //Log("Sleeping %ld ms", m_hnsActualDuration);
+      Sleep(m_hnsActualDuration);
+    }
+  }
   if (SUCCEEDED(hr) && looped) *looped = loop;
 
+  delete mediaBufferResult;
   return hr;
 }
 

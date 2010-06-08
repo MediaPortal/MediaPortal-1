@@ -7,6 +7,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug Unicode|Win32 = Debug Unicode|Win32
 		Debug Unicode|x64 = Debug Unicode|x64
+		Release Multichannel|Win32 = Release Multichannel|Win32
+		Release Multichannel|x64 = Release Multichannel|x64
 		Release Unicode|Win32 = Release Unicode|Win32
 		Release Unicode|x64 = Release Unicode|x64
 	EndGlobalSection
@@ -15,6 +17,10 @@ Global
 		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Debug Unicode|Win32.Build.0 = Debug Unicode|Win32
 		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Debug Unicode|x64.ActiveCfg = Debug Unicode|x64
 		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Debug Unicode|x64.Build.0 = Debug Unicode|x64
+		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Release Multichannel|Win32.ActiveCfg = Release Multichannel|Win32
+		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Release Multichannel|Win32.Build.0 = Release Multichannel|Win32
+		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Release Multichannel|x64.ActiveCfg = Release Multichannel|x64
+		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Release Multichannel|x64.Build.0 = Release Multichannel|x64
 		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Release Unicode|Win32.ActiveCfg = Release Unicode|Win32
 		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Release Unicode|Win32.Build.0 = Release Unicode|Win32
 		{D0620EF4-1313-40D5-9069-A82F6FE26994}.Release Unicode|x64.ActiveCfg = Release Unicode|x64

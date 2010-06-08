@@ -33,6 +33,7 @@
 #include <Endpointvolume.h>
 
 #include "../SoundTouch/Include/SoundTouch.h"
+#include "MultiSoundTouch.h"
 #include "SyncClock.h"
 #include "IAVSyncClock.h"
 
@@ -42,7 +43,9 @@
 
 // if you get a compilation error on AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED,
 // uncomment the #define below
-// #define AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED      AUDCLNT_ERR(0x019)
+#ifndef AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED
+#define AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED      AUDCLNT_ERR(0x019)
+#endif
 
 [uuid("EC9ED6FC-7B03-4cb6-8C01-4EABE109F26B")]
 class CMPAudioRenderer : public CBaseRenderer, IMediaSeeking, IAVSyncClock
@@ -118,7 +121,11 @@ private:
   CBaseReferenceClock*	m_pReferenceClock;
   double					      m_dRate;
 
+#ifndef MULTICHANNEL_SUPPORT
   soundtouch::SoundTouch*	m_pSoundTouch;
+#else
+  CMultiSoundTouch*	m_pSoundTouch;
+#endif
 
   // CMpcAudioRenderer WASAPI methods
   HRESULT     GetDefaultAudioDevice(IMMDevice **ppMMDevice);
