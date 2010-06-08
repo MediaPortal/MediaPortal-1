@@ -187,7 +187,6 @@ namespace SetupTv.Sections
         mpListView1.BeginUpdate();
         mpListView1.Items.Clear();
         Channel.ListAll();
-        int channelCount = 0;
         SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
         sb.AddOrderByField(true, "sortOrder");
         SqlStatement stmt = sb.GetStatement(true);
