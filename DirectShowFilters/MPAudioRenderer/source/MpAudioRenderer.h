@@ -105,19 +105,23 @@ public:
   // CMpcAudioRenderer
 private:
 
-	HRESULT					DoRenderSampleDirectSound(IMediaSample *pMediaSample);
+  void            LoadSettingsFromRegistry();
+  void            WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
+  void            WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
 
-	HRESULT					InitCoopLevel();
-	HRESULT					ClearBuffer();
-	HRESULT					CreateDSBuffer();
-	HRESULT					GetReferenceClockInterface(REFIID riid, void **ppv);
-	HRESULT					WriteSampleToDSBuffer(IMediaSample *pMediaSample, bool *looped);
+  HRESULT					DoRenderSampleDirectSound(IMediaSample *pMediaSample);
+
+  HRESULT					InitCoopLevel();
+  HRESULT					ClearBuffer();
+  HRESULT					CreateDSBuffer();
+  HRESULT					GetReferenceClockInterface(REFIID riid, void **ppv);
+  HRESULT					WriteSampleToDSBuffer(IMediaSample *pMediaSample, bool *looped);
 
   LPDIRECTSOUND8        m_pDS;
-	LPDIRECTSOUNDBUFFER   m_pDSBuffer;
-	DWORD                 m_dwDSWriteOff;
-	WAVEFORMATEX*         m_pWaveFileFormat;
-	int						        m_nDSBufSize;
+  LPDIRECTSOUNDBUFFER   m_pDSBuffer;
+  DWORD                 m_dwDSWriteOff;
+  WAVEFORMATEX*         m_pWaveFileFormat;
+  int						        m_nDSBufSize;
   CBaseReferenceClock*	m_pReferenceClock;
   double					      m_dRate;
 
@@ -133,7 +137,7 @@ private:
   HRESULT     InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioClient *pAudioClient, IAudioRenderClient **ppRenderClient);
   HRESULT     CheckAudioClient(WAVEFORMATEX *pWaveFormatEx);
   bool        CheckFormatChanged(WAVEFORMATEX *pWaveFormatEx, WAVEFORMATEX **ppNewWaveFormatEx);
-  HRESULT	    DoRenderSampleWasapi(IMediaSample *pMediaSample);
+  HRESULT     DoRenderSampleWasapi(IMediaSample *pMediaSample);
   HRESULT     GetBufferSize(WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
    
   // WASAPI variables
@@ -149,6 +153,7 @@ private:
   UINT32              m_nBufferSize;
   bool                m_bIsAudioClientStarted;
   DWORD               m_dwLastBufferTime;
+  AUDCLNT_SHAREMODE   m_WASAPIShareMode;
 
   // AVRT.dll (Vista or greater)
   typedef HANDLE (__stdcall *PTR_AvSetMmThreadCharacteristicsW)(LPCWSTR TaskName, LPDWORD TaskIndex);
