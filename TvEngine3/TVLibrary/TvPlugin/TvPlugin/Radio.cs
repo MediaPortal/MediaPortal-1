@@ -101,7 +101,7 @@ namespace TvPlugin
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string tmpLine = xmlreader.GetValue("myradio", "viewby");
         if (tmpLine != null)
@@ -157,7 +157,7 @@ namespace TvPlugin
 
     private void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         switch (currentView)
         {

@@ -47,7 +47,7 @@ namespace TvPlugin
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _serverHostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
         _preferredLanguages = xmlreader.GetValueAsString("tvservice", "preferredlanguages", "");
@@ -60,7 +60,7 @@ namespace TvPlugin
 
     private void SaveSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         xmlreader.SetValue("tvservice", "hostname", _serverHostName);
         xmlreader.SetValue("tvservice", "preferredlanguages", _preferredLanguages);

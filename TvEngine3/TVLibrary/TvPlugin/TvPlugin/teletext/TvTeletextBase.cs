@@ -615,7 +615,7 @@ namespace TvPlugin
     /// </summary>
     protected void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _hiddenMode = xmlreader.GetValueAsBool("mytv", "teletextHidden", false);
         _transparentMode = xmlreader.GetValueAsBool("mytv", "teletextTransparent", false);
@@ -631,7 +631,7 @@ namespace TvPlugin
     {
       if (_rememberLastValues)
       {
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           xmlreader.SetValueAsBool("mytv", "teletextHidden", _hiddenMode);
           xmlreader.SetValueAsBool("mytv", "teletextTransparent", _transparentMode);

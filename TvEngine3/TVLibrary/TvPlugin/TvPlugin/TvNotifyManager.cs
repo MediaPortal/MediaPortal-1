@@ -55,7 +55,7 @@ namespace TvPlugin
 
     public TvNotifyManager()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _enableTVNotification = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
         _enableRecNotification = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);

@@ -157,7 +157,7 @@ namespace TvPlugin
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _notificationEnabled = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
       }

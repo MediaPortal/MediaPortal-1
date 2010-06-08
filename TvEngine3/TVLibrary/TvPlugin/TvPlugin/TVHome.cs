@@ -1245,7 +1245,7 @@ namespace TvPlugin
       byte[] hwAddress;
 
       //Get settings from MediaPortal.xml
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (Settings xmlreader = new MPSettings())
       {
         isWakeOnLanEnabled = xmlreader.GetValueAsBool("tvservice", "isWakeOnLanEnabled", false);
         isAutoMacAddressEnabled = xmlreader.GetValueAsBool("tvservice", "isAutoMacAddressEnabled", false);
@@ -1309,7 +1309,7 @@ namespace TvPlugin
 
                 using (
                   MediaPortal.Profile.Settings xmlwriter =
-                    new MediaPortal.Profile.Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+                    new MediaPortal.Profile.MPSettings())
                 {
                   xmlwriter.SetValue("tvservice", "macAddress", macAddress);
                 }
@@ -1318,7 +1318,7 @@ namespace TvPlugin
           }
 
           //Use stored MAC address
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          using (Settings xmlreader = new MPSettings())
           {
             macAddress = xmlreader.GetValueAsString("tvservice", "macAddress", null);
           }

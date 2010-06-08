@@ -81,7 +81,7 @@ namespace TvPlugin
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string strTmp = String.Empty;
         strTmp = (string)xmlreader.GetValue("tvscheduler", "sort");
@@ -110,7 +110,7 @@ namespace TvPlugin
 
     private void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         switch (currentSortMethod)
         {

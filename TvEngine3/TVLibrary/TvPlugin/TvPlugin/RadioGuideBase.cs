@@ -159,7 +159,7 @@ namespace TvPlugin
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _currentChannel = xmlreader.GetValueAsString("RadioGuideBase", "channel", String.Empty);
         _cursorX = xmlreader.GetValueAsInt("RadioGuideBase", "ypos", 0);
@@ -171,7 +171,7 @@ namespace TvPlugin
 
     private void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("RadioGuideBase", "channel", _currentChannel);
         xmlwriter.SetValue("RadioGuideBase", "ypos", _cursorX.ToString());
@@ -201,7 +201,7 @@ namespace TvPlugin
     {
       Log.Info("StartImportXML: Initialize");
       _tvGuideFileName = "xmltv";
-      using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      using (Settings xmlreader = new MPSettings())
       {
         _tvGuideFileName = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
         _tvGuideFileName = Utils.RemoveTrailingSlash(_tvGuideFileName);

@@ -218,7 +218,7 @@ namespace TvPlugin
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string strTmp = xmlreader.GetValueAsString("tvrecorded", "sort", "channel");
 
@@ -282,7 +282,7 @@ namespace TvPlugin
 
     private void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         switch (_currentSortMethod)
         {
