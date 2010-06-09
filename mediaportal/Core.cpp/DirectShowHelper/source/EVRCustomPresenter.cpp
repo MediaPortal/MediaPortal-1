@@ -65,6 +65,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   m_bIsWin7(pIsWin7),
   m_pAVSyncClock(NULL),
   m_dBias(1.0),
+  m_bBiasAdjustmentDone(false),
   m_dVariableFreq(1.0)
 {
   ZeroMemory((void*)&m_dPhaseDeviations, sizeof(double) * NUM_PHASE_DEVIATIONS);
@@ -791,8 +792,16 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
 
     if (m_pAVSyncClock)
     {
-      m_pAVSyncClock->SetBias(m_dBias);
-      Log("debug: adjust bias to : %f", m_dBias);
+      if (S_OK == m_pAVSyncClock->SetBias(m_dBias))
+      {
+        m_bBiasAdjustmentDone = true;
+        Log("debug: adjust bias to : %f", m_dBias);
+      }
+      else
+      {
+        m_bBiasAdjustmentDone = false;
+        Log("debug: failed to adjust bias to : %f", m_dBias);
+      }
     }
     else
     {
@@ -2424,8 +2433,16 @@ void MPEVRCustomPresenter::GetAVSyncClockInterface()
 
   if(m_pAVSyncClock && m_dBias != 1.0)
   {
-    Log("  Adjusting bias to: %f", m_dBias);
-    m_pAVSyncClock->SetBias(m_dBias);
+    if (S_OK == m_pAVSyncClock->SetBias(m_dBias))
+    {
+      m_bBiasAdjustmentDone = true;
+      Log("  Adjusting bias to: %f", m_dBias);
+    }
+    else
+    {
+      m_bBiasAdjustmentDone = false;
+      Log("debug: failed to adjust bias to : %f", m_dBias);
+    }
   }
 }
 

@@ -316,6 +316,7 @@ protected:
 
   IAVSyncClock* m_pAVSyncClock;
   double        m_dBias;
+  bool          m_bBiasAdjustmentDone;
   double        m_dPhaseDeviations[NUM_PHASE_DEVIATIONS];
   double        m_dVariableFreq;
 };

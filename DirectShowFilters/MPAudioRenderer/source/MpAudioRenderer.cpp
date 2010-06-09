@@ -199,10 +199,10 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
   char* lpData = new char[bufferSize];
 
   LPCTSTR forceDirectSound = TEXT("ForceDirectSound");
-  LPCTSTR enableTimestreching = TEXT("EnableTimestreching");
+  LPCTSTR enableTimestretching = TEXT("EnableTimestretching");
   LPCTSTR WASAPIExclusive = TEXT("WASAPIExclusive");
   DWORD forceDirectSoundData = 0;
-  DWORD enableTimestrechingData = 1;
+  DWORD enableTimestretchingData = 1;
   DWORD WASAPIExclusiveData = 1;
 
   RegOpenKeyEx(HKEY_CURRENT_USER, folder,NULL,KEY_READ,&hKey);
@@ -215,11 +215,11 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
     // TODO: don't assume that all values are available if master key is available!
     // this will fail if new settings are added!
     RegQueryValueEx(hKey, forceDirectSound, NULL, &dwType, (PBYTE)&forceDirectSoundData, &dwSize);
-    RegQueryValueEx(hKey, enableTimestreching, NULL, &dwType, (PBYTE)&enableTimestrechingData, &dwSize);
+    RegQueryValueEx(hKey, enableTimestretching, NULL, &dwType, (PBYTE)&enableTimestretchingData, &dwSize);
     RegQueryValueEx(hKey, WASAPIExclusive, NULL, &dwType, (PBYTE)&WASAPIExclusiveData, &dwSize);
 
     Log("   ForceDirectSound: %d", forceDirectSoundData);
-    Log("   EnableTimestreching: %d", enableTimestrechingData);
+    Log("   EnableTimestrecthing: %d", enableTimestretchingData);
     Log("   WASAPIExclusive: %d", WASAPIExclusiveData);
 
     if( forceDirectSoundData > 0 )
@@ -227,7 +227,7 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
     else
       m_bUseWASAPI = true;
 
-    if( enableTimestrechingData > 0 )
+    if( enableTimestretchingData > 0 )
       m_bUseTimeStretching = true;
     else
       m_bUseTimeStretching = false;
@@ -250,7 +250,7 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
     {
       Log("Success creating master key");
       WriteRegistryKeyDword(hKey, forceDirectSound, forceDirectSoundData);
-      WriteRegistryKeyDword(hKey, enableTimestreching, enableTimestrechingData);
+      WriteRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
       WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
     } 
     else 
@@ -1123,11 +1123,17 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
   //OutputDebugString(OutMsg);
   #endif
 
-  //pInputBufferPointer = &pMediaBuffer[0];
-  //pInputBufferEnd = &pMediaBuffer[0] + lResampledSize;
 
-  pInputBufferPointer = &mediaBufferResult[0];
-  pInputBufferEnd = &mediaBufferResult[0] + lResampledSize;
+  if (m_bUseTimeStretching)
+  {
+    pInputBufferPointer = &mediaBufferResult[0];
+    pInputBufferEnd = &mediaBufferResult[0] + lResampledSize;
+  }
+  else
+  {
+    pInputBufferPointer = &pMediaBuffer[0];
+    pInputBufferEnd = &pMediaBuffer[0] + lSize;
+  }
 
   WORD frameSize = m_pWaveFileFormat->nBlockAlign;
 
@@ -1660,30 +1666,45 @@ STDMETHODIMP CMPAudioRenderer::GetPreroll(LONGLONG *pPreroll)
 HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
 {
   CAutoLock cAutoLock(&m_csResampleLock);
-
-  m_dAdjustment = pAdjustment;
-  m_Clock.SetAdjustment(m_dAdjustment);
-  if (m_pSoundTouch)
+  
+  if (m_bUseTimeStretching)
   {
-    m_pSoundTouch->setTempo(m_dAdjustment * m_dBias);
+    m_dAdjustment = pAdjustment;
+    m_Clock.SetAdjustment(m_dAdjustment);
+    if (m_pSoundTouch)
+    {
+      m_pSoundTouch->setTempo(m_dAdjustment * m_dBias);
+    }
+    return S_OK;
   }
-  return S_OK;
+  else
+  {
+    return S_FALSE;
+  }
 }
 
 HRESULT CMPAudioRenderer::SetBias(DOUBLE pBias)
 {
   CAutoLock cAutoLock(&m_csResampleLock);
 
-  Log("SetBias: %1.10f", pBias);
-
-  m_dBias = pBias;
-  m_Clock.SetBias(m_dBias);
-  if (m_pSoundTouch)
+  if (m_bUseTimeStretching)
   {
-    m_pSoundTouch->setTempo(m_dAdjustment * m_dBias);
-    Log("SetBias - updated SoundTouch tempo");
+    Log("SetBias: %1.10f", pBias);
+
+    m_dBias = pBias;
+    m_Clock.SetBias(m_dBias);
+    if (m_pSoundTouch)
+    {
+      m_pSoundTouch->setTempo(m_dAdjustment * m_dBias);
+      Log("SetBias - updated SoundTouch tempo");
+    }
+    return S_OK;
   }
-  return S_OK;
+  else
+  {
+    Log("SetBias: %1.10f - failed, time stretching is disabled", pBias);
+    return S_FALSE;  
+  }
 }
 
 HRESULT CMPAudioRenderer::GetBias(DOUBLE* pBias)
