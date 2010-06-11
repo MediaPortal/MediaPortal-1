@@ -636,10 +636,10 @@ STDMETHODIMP CMPAudioRenderer::Stop()
     m_bIsAudioClientStarted = false;
   }
 
-  FILTER_STATE state; 
-  GetState(10000, &state);
-
-  if (state == State_Paused)
+  // This is an ugly workaround for the .NET GC not cleaning up the directshow resources
+  // when playback is stopped. Needs to be done since otherwise the next session might
+  // fail if the old one is still alive and it is using WASAPI exclusive mode
+  if (GetRealState() == State_Paused)
   {
     Log("Stop - releasing WASAPI resources");
     SAFE_RELEASE(m_pAudioClock);
