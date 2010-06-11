@@ -39,12 +39,12 @@
     <String id="63">Iniciando dispositivos de entrada...</String>
     <String id="64">Iniciando plugins...</String>
     <String id="65">Cargando keymap.xml...</String>
-    <String id="66">Cargando cadenas...</String>
+    <String id="66">Cargando datos...</String>
     <String id="67">Almacenando gráficos en caché...</String>
     <String id="68">Cargando fuentes...</String>
     <String id="69">Cargando skin ({0})...</String>
     <String id="70">Cargando plugins de pantalla...</String>
-    <String id="71">Iniciando gestor de pantalla...</String>
+    <String id="71">Iniciando administrador de pantalla...</String>
     <String id="100">Diseño: Iconos</String>
     <String id="101">Diseño: Listas</String>
     <String id="102">Escanear</String>
@@ -64,7 +64,7 @@
     <String id="116">Mover</String>
     <String id="117">Borrar</String>
     <String id="118">Renombrar</String>
-    <String id="119">Directorio Nuevo</String>
+    <String id="119">Nueva Carpeta</String>
     <String id="120">Confirmar la copia del archivo</String>
     <String id="121">Confirmar mover el archivo</String>
     <String id="122">Confirmar el borrado del archivo</String>
@@ -227,7 +227,7 @@
     <String id="280">Usando configuración por defecto</String>
     <String id="281">Por favor, compruebe el archivo .xml</String>
     <String id="282">%i elementos encontrados</String>
-    <String id="283">Buscando resultados</String>
+    <String id="283">Resultados de la búsqueda</String>
     <String id="284">No se encontraron resultados</String>
     <String id="285">Filtro de desentrelazado</String>
     <String id="286">Filtro de postproceso</String>
@@ -261,7 +261,7 @@
     <String id="314">Preparando...</String>
     <String id="315">Error en la base de datos</String>
     <String id="316">Buscando canciones...</String>
-    <String id="317">Reorganización con éxito</String>
+    <String id="317">Reorganización satisfactoria</String>
     <String id="318">Marcando canciones borradas</String>
     <String id="319">Error reorganizando canciones</String>
     <String id="320">Buscando artistas...</String>
@@ -351,10 +351,10 @@
     <String id="404">Viento</String>
     <String id="405">Condensación</String>
     <String id="406">Humedad</String>
-    <String id="407">Denso</String>
+    <String id="407">Fuerte</String>
     <String id="410">Accediendo a Weather.com</String>
     <String id="411">Obteniendo el Tiempo para:</String>
-    <String id="412">No se ha podido obtener los datos del tiempo</String>
+    <String id="412">No se ha podido obtener los datos del Tiempo</String>
     <String id="413">Manual</String>
     <String id="414">Este álbum no tiene revisiones</String>
     <String id="415">Descargando miniatura...</String>
@@ -410,10 +410,10 @@
     <String id="465">Contraste</String>
     <String id="466">Gamma</String>
     <String id="467">Tipo</String>
-    <String id="468">Mueve la barra para cambiar la posición del OSD</String>
+    <String id="468">Mueva la barra para cambiar la posición del OSD</String>
     <String id="469">Posición del OSD</String>
     <String id="470">Créditos</String>
-    <String id="471">Modchip</String>
+    <String id="471">Mod. Chip</String>
     <String id="472">Tiempo de duración del OSD</String>
     <String id="473">Resample de alta calidad</String>
     <String id="474">Apagar</String>
@@ -450,7 +450,7 @@
     <String id="506">¿Está seguro?</String>
     <String id="507">elementos</String>
     <String id="508">A</String>
-    <String id="509">Archivo existe en destino ¿Sobrescribir?</String>
+    <String id="509">El archivo de destino ya existe ¿Sobrescribir?</String>
     <String id="510">Cancelar</String>
     <String id="511">Siempre</String>
     <String id="512">Nunca</String>
@@ -464,9 +464,9 @@
     <String id="527">Ordenar por: Visto</String>
     <String id="528">Artistas</String>
     <String id="529">Ver: Lista de iconos grandes</String>
-    <String id="530">Disco de fotos insertado, ¿quieres abrirlo?</String>
-    <String id="531">Disco de películas insertado, ¿quieres abrirlo?</String>
-    <String id="532">Disco de audio insertado, ¿quieres abrirlo?</String>
+    <String id="530">Disco de fotos insertado, ¿quiere abrirlo?</String>
+    <String id="531">Disco de películas insertado, ¿quiere abrirlo?</String>
+    <String id="532">Disco de audio insertado, ¿quiere abrirlo?</String>
     <String id="533">Guía de radio</String>
     <String id="534">Moderado</String>
     <String id="535">N</String>
@@ -538,8 +538,8 @@
     <String id="627">Canales:</String>
     <String id="628">Programas:</String>
     <String id="629">Parar grabación</String>
-    <String id="630">¿Quieres reiniciar?</String>
-    <String id="631">¿Quieres apagar?</String>
+    <String id="630">¿Quiere reiniciar?</String>
+    <String id="631">¿Quiere apagar?</String>
     <String id="632">Objetos</String>
     <String id="633">Inicio Fecha/Hora</String>
     <String id="634">Final Fecha/Hora</String>
@@ -584,7 +584,7 @@
     <String id="673">Velocidad de desplazamiento</String>
     <String id="674">Configuración GUI</String>
     <String id="675">Ejemplo:</String>
-    <String id="676">Borrar las grabaciones vistas</String>
+    <String id="676">¿Borrar las grabaciones vistas?</String>
     <String id="677">veces</String>
     <String id="678">Ordenar por: Género</String>
     <String id="679">Semanal</String>
@@ -660,10 +660,10 @@
     <String id="756">Ninguna sintonizadora puede recibir:{0}</String>
     <String id="757">Todas las sintonizadoras están ocupadas</String>
     <String id="758">La sintonizadora no está grabando</String>
-    <String id="759">Fallo al arrancar timeshift</String>
+    <String id="759">No se pudo comenzar timeshift</String>
     <String id="760">Ninguna sintonizadora disponible para timeshifting</String>
-    <String id="761">Fallo al parar timeshift</String>
-    <String id="762">Fallo al iniciar TV</String>
+    <String id="761">No se pudo parar timeshift</String>
+    <String id="762">No se pudo iniciar TV</String>
     <String id="763">El grabador está ocupado</String>
     <String id="764">El grabador está en pausa</String>
     <String id="765">No hay suficiente espacio libre en disco</String>
@@ -963,7 +963,7 @@
     <String id="1195">Habilitar control de ratón en la interfaz</String>
     <String id="1196">Habilitar subtítulos</String>
     <String id="1197">Desactivar DXVA</String>
-    <String id="1198">Navegador</String>
+    <String id="1198">Navegador DVD</String>
     <String id="1200">Asistente de config.</String>
     <String id="1201">Reproducir vídeo desde el principio</String>
     <String id="1211">Reanudar reproducción desde {0}</String>
@@ -975,18 +975,18 @@
     <String id="1444">Pre-grabación</String>
     <String id="1445">Post-grabación</String>
     <String id="1446">Inicio de grabación:</String>
-    <String id="1447">Término de grabación:</String>
+    <String id="1447">Final de grabación:</String>
     <String id="1448">Deseleccionar</String>
     <String id="1449">Detener grabación</String>
     <String id="1450">¿Está seguro que desea detener la grabación?</String>
     <String id="1451">Imposible reproducir</String>
     <String id="1499">Sin señal</String>
-    <String id="1500">Incapaz de iniciar timeshift</String>
+    <String id="1500">No es posible iniciar timeshift</String>
     <String id="1501">La tarjeta está deshabilitada</String>
     <String id="1502">No hay tarjeta libre disponible</String>
     <String id="1503">El canal está codificado</String>
     <String id="1504">No se ha detectado vídeo/audio</String>
-    <String id="1505">Incapaz de iniciar esquema</String>
+    <String id="1505">No es posible iniciar esquema</String>
     <String id="1506">Ocurrió un error desconocido</String>
     <String id="1507">Canal desconocido</String>
     <String id="1508">El canal no está asignado a ninguna tarjeta</String>
@@ -1438,7 +1438,7 @@
     <String id="9112">Rojo</String>
     <String id="9113">Verde</String>
     <String id="9114">Azul</String>
-    <String id="9115">Invertir pantalla</String>
+    <String id="9115">Invertir Display</String>
     <String id="9116">Anular display durante vídeo</String>
     <String id="9117">Habilitar acciones del display</String>
     <String id="9118">Hora de acción del display</String>
@@ -1633,7 +1633,7 @@
     <String id="33031">Otras canciones con la palabra clave: </String>
     <String id="33032">¡La mejor canción de este disco</String>
     <String id="33033">podría no encontrarse en su colección!</String>
-    <String id="33040">Copiar el spam de la reproducción actual al portapapeles</String>
+    <String id="33040">Copiar el listado de la reproducción actual al portapapeles</String>
     <String id="33041">Añadir este álbum a la lista de reproducción</String>
     <String id="34000" prefix="Mi ">Last.fm</String>
     <String id="34001">Comenzar / Cambiar stream</String>
@@ -1900,6 +1900,6 @@
     <String id="200069">Todos los puertos IP parecen estar bien</String>
     <String id="200070">Por favor, compruebe el firewall</String>
     <String id="200071">¿Borrar esta carpeta y todas sus subcarpetas?</String>
-    <String id="200072">Próximos programas</String>
+    <String id="200072">Próximos episodios</String>
   </Section>
 </Language>
