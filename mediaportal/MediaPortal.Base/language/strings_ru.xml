@@ -893,7 +893,7 @@
     <String id="1038">Продвинутая запись</String>
     <String id="1039">Не записывать</String>
     <String id="1040">Напоминать</String>
-    <String id="1041">Следующие эпизоды</String>
+    <String id="1041">Следующие эпизоды({0})</String>
     <String id="1042">Хранить до</String>
     <String id="1043">До просмотра</String>
     <String id="1044">Пока есть место</String>
@@ -966,7 +966,7 @@
     <String id="1198">DVD Navigator</String>
     <String id="1200">Мастер настроек</String>
     <String id="1201">Воспроизвести видео с начала</String>
-    <String id="1211">Возобновить воспроизведение с</String>
+    <String id="1211">Возобновить воспроизведение с {0}</String>
     <String id="1300" prefix="Мои ">ТВ шоу</String>
     <String id="1440" prefix="Мой ">Телетекст</String>
     <String id="1441">Телетекст</String>
@@ -1163,7 +1163,7 @@
     <String id="2129">Подготовка к записи</String>
     <String id="2130">Блок</String>
     <String id="2131">из</String>
-    <String id="2132">Закрытие диска: осталось:</String>
+    <String id="2132">Закрытие диска: осталось: {0} сек</String>
     <String id="2133">ТВ-Записи</String>
     <String id="2134">Видео</String>
     <String id="2135">Аудио</String>
@@ -1432,6 +1432,7 @@
     <String id="9106">Настройка Эквалайзера</String>
     <String id="9107">Настройка Подсветки</String>
     <String id="9108">Настройка ПДУ</String>
+    <String id="9109">Отслеживать состояние питания</String>
     <String id="9110">Контраст</String>
     <String id="9111">Яркость</String>
     <String id="9112">Красный</String>
@@ -1444,6 +1445,7 @@
     <String id="9119">Отключить Экран при Неактивности</String>
     <String id="9120">Время Неактивности</String>
     <String id="9121">Показ Уровня Громкости</String>
+    <String id="9122">Показ прогресса</String>
     <String id="9123">Иконка Диска</String>
     <String id="9124">Статус Медиа</String>
     <String id="9125">CD/DVD Статус</String>
@@ -1459,13 +1461,17 @@
     <String id="9135">Задержка Запуска</String>
     <String id="9136">Время Задержки</String>
     <String id="9137">Показывать Заголовок</String>
+    <String id="9138">Время показа заголовка</String>
+    <String id="9139">Частота показа заголовка</String>
+    <String id="9140">Настройки клавиш отсутствуют</String>
     <String id="9141">Включить Клавиши</String>
     <String id="9142">Свой Маппинг</String>
     <String id="9143">Маппинг Клавиш</String>
+    <String id="9144">Настройки ПДУ отсутствуют</String>
     <String id="9145">Отключить ПДУ</String>
     <String id="9146">Отключить Повтор</String>
     <String id="9147">Задержка Повтора</String>
-    <String id="9148">Марринг ПДУ</String>
+    <String id="9148">Маппинг ПДУ</String>
     <String id="9149">Нормальный</String>
     <String id="9150">Стерео</String>
     <String id="9151">VU Метр</String>
