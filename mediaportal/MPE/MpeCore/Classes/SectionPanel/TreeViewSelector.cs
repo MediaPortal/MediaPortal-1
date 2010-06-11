@@ -120,7 +120,7 @@ namespace MpeCore.Classes.SectionPanel
           treeView1.Nodes[parent.DisplayName].Nodes.Add(CreateNode(groupItem));
         }
       }
-      treeView1.Sort();
+      //treeView1.Sort();
       treeView1.ExpandAll();
     }
 
