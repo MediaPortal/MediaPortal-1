@@ -51,6 +51,7 @@ namespace MediaPortal.GUI.Library
     {
       _properties["#highlightedbutton"] = string.Empty;
       _properties["#itemcount"] = string.Empty;
+      _properties["#totalduration"] = string.Empty;
       _properties["#selectedindex"] = string.Empty;
       _properties["#selecteditem"] = string.Empty;
       _properties["#selecteditem2"] = string.Empty;

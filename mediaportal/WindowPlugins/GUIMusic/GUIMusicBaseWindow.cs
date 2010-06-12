@@ -1085,15 +1085,16 @@ namespace MediaPortal.GUI.Music
         }
       }
 
-      //set object count label
-      if (totalPlayingTime.TotalSeconds > 0 && method != MusicSort.SortMethod.Album)
+      //set object count label, total duration
+      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
+
+      if (totalPlayingTime.TotalSeconds > 0)
       {
-        GUIPropertyManager.SetProperty("#itemcount",
-                                       Util.Utils.GetSongCountLabel(iTotalItems, (int)totalPlayingTime.TotalSeconds));
+        GUIPropertyManager.SetProperty("#totalduration", Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));
       }
       else
       {
-        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
+        GUIPropertyManager.SetProperty("#totalduration", string.Empty);
       }
     }
 
