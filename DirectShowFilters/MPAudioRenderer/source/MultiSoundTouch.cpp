@@ -65,10 +65,13 @@ static DWORD WINAPI ResampleThread(LPVOID lpParameter)
     BYTE *pMediaBuffer = NULL;
     long size = sample->GetActualDataLength();
     HRESULT hr = sample->GetPointer(&pMediaBuffer);
-
-    // Process the sample 
-    // TODO: /4 needs to be fixed!
-    data->resampler->putSamplesInternal((const short*)pMediaBuffer, size / 4);
+    
+    if (hr == S_OK)
+    {
+      // Process the sample 
+      // TODO: /4 needs to be fixed!
+      data->resampler->putSamplesInternal((const short*)pMediaBuffer, size / 4);
+    }
     
     // We aren't using the sample anymore (AddRef() is done when sample arrives)
     sample->Release();
@@ -91,8 +94,8 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
     m_ThreadData.sampleQueue = &m_sampleQueue;
     
     DWORD threadId = 0;
-    CreateThread( 0, 0, ResampleThread, (LPVOID)&m_ThreadData, 0, &threadId );
-    startevent = CreateEvent( 0, FALSE, FALSE, 0 );
+    CreateThread(0, 0, ResampleThread, (LPVOID)&m_ThreadData, 0, &threadId);
+    startevent = CreateEvent(0, FALSE, FALSE, 0);
   }
 }
 
