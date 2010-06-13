@@ -2,18 +2,29 @@
 #pragma once
 
 #include <dsound.h>
+#include <ks.h>
+#include <ksmedia.h>
+#include <vector>
 
 #include <MMReg.h>  //must be before other Wasapi headers
 
 #include "../SoundTouch/Include/SoundTouch.h"
 
+class CMultiSoundTouch;
+
+typedef struct
+{
+  short* buffer;
+  CMultiSoundTouch* resampler;
+  CCritSec* sampleQueueLock;
+  std::vector<IMediaSample*>* sampleQueue;
+} ThreadData;
+
 class CMultiSoundTouch
 {
 public:
-  CMultiSoundTouch();
+  CMultiSoundTouch(bool pUseThreads);
   ~CMultiSoundTouch();
-
-
 
   /// Sets new rate control value. Normal rate = 1.0, smaller values
   /// represent slower rate, larger faster rates.
@@ -70,12 +81,23 @@ public:
   // Any samples already in que will be lost!
   void setChannels(int channels);
 
+  // Changes a setting controlling the processing system behaviour. See the
+  // 'SETTING_...' defines for available setting ID's.
+  // 
+  // \return 'TRUE' if the setting was succesfully changed
+  BOOL setSetting(int settingId, int value);
+
   bool putSamples(const short *inBuffer, long inSamples);
   uint receiveSamples(short *outBuffer, uint maxSamples);
 
   bool ProcessSamples(const short *inBuffer, long inSamples, short *outBuffer, long *outSamples, long maxOutSamples);
+  bool processSample(IMediaSample *pMediaSample);
 
+  // this needs to be private (pass somehow to the thread...)
+  bool putSamplesInternal(const short *inBuffer, long inSamples);
 private:
+  
+
   static const uint SAMPLE_LEN = 0x10000;
   typedef struct 
   {
@@ -94,4 +116,11 @@ private:
   void StereoInterleave(const soundtouch::SAMPLETYPE *inBuffer, short *outBuffer, uint count);
   void MonoDeInterleave(const short *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
   void MonoInterleave(const soundtouch::SAMPLETYPE *inBuffer, short *outBuffer, uint count);
+
+  ThreadData m_ThreadData;
+  short m_tempBuffer[65536];
+  bool  m_bUseThreads;
+
+  std::vector<IMediaSample*> m_sampleQueue;
+  CCritSec m_sampleQueueLock;
 };

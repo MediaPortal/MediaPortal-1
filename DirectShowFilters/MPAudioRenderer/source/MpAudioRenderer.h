@@ -105,10 +105,12 @@ public:
   // CMpcAudioRenderer
 private:
 
+  // For accessing the registry
   void            LoadSettingsFromRegistry();
-  void            WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
+  void            ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
   void            WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
-
+  void            WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
+  
   HRESULT					DoRenderSampleDirectSound(IMediaSample *pMediaSample);
 
   HRESULT					InitCoopLevel();
@@ -172,6 +174,8 @@ private:
   DWORD       m_dwTimeStart;
   bool        m_bFirstAudioSample;
 
-  IAudioClock* m_pAudioClock;
-  UINT64       m_nHWfreq;
+  IAudioClock*  m_pAudioClock;
+  UINT64        m_nHWfreq;
+
+  bool        m_bUseThreads;
 };

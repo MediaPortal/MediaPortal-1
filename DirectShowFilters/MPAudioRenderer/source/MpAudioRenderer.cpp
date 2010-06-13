@@ -82,6 +82,7 @@ CUnknown* WINAPI CMPAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 
 // for logging
 extern void Log(const char *fmt, ...);
+extern void LogWaveFormat(WAVEFORMATEX* pwfx);
 extern void LogRotate();
 
 CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
@@ -113,6 +114,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_pAudioClock(NULL)
 , m_nHWfreq(0)
 , m_WASAPIShareMode(AUDCLNT_SHAREMODE_EXCLUSIVE)
+, m_bUseThreads(false)
 {
   LogRotate();
   Log("MP Audio Renderer - v0.1");
@@ -147,7 +149,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 #ifndef MULTICHANNEL_SUPPORT
     m_pSoundTouch = new soundtouch::SoundTouch();
 #else
-    m_pSoundTouch = new CMultiSoundTouch();
+    m_pSoundTouch = new CMultiSoundTouch(m_bUseThreads);
 #endif
   }
 }
@@ -198,44 +200,53 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
   DWORD bufferSize = 512; 
   char* lpData = new char[bufferSize];
 
+  // Registry setting names
   LPCTSTR forceDirectSound = TEXT("ForceDirectSound");
   LPCTSTR enableTimestretching = TEXT("EnableTimestretching");
   LPCTSTR WASAPIExclusive = TEXT("WASAPIExclusive");
+  LPCTSTR useThreadsForResampling = TEXT("UseThreadsForResampling");
+  
+  // Default values for the settings in registry
   DWORD forceDirectSoundData = 0;
   DWORD enableTimestretchingData = 1;
   DWORD WASAPIExclusiveData = 1;
+  DWORD useThreadsForResamplingData = 1;
 
-  RegOpenKeyEx(HKEY_CURRENT_USER, folder,NULL,KEY_READ,&hKey);
+  // Try to access the setting root "Software\Team MediaPortal\Audio Renderer"
+  RegOpenKeyEx(HKEY_CURRENT_USER, folder, NULL, KEY_ALL_ACCESS, &hKey);
 
   if (hKey)
   {
-    DWORD dwType = REG_DWORD;
-    DWORD dwSize = sizeof(DWORD);
-  
-    // TODO: don't assume that all values are available if master key is available!
-    // this will fail if new settings are added!
-    RegQueryValueEx(hKey, forceDirectSound, NULL, &dwType, (PBYTE)&forceDirectSoundData, &dwSize);
-    RegQueryValueEx(hKey, enableTimestretching, NULL, &dwType, (PBYTE)&enableTimestretchingData, &dwSize);
-    RegQueryValueEx(hKey, WASAPIExclusive, NULL, &dwType, (PBYTE)&WASAPIExclusiveData, &dwSize);
+    // Read settings from registry
+    ReadRegistryKeyDword(hKey, forceDirectSound, forceDirectSoundData);
+    ReadRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
+    ReadRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
+    ReadRegistryKeyDword(hKey, useThreadsForResampling, useThreadsForResamplingData);
 
-    Log("   ForceDirectSound: %d", forceDirectSoundData);
-    Log("   EnableTimestrecthing: %d", enableTimestretchingData);
-    Log("   WASAPIExclusive: %d", WASAPIExclusiveData);
+    Log("   ForceDirectSound:        %d", forceDirectSoundData);
+    Log("   EnableTimestrecthing:    %d", enableTimestretchingData);
+    Log("   WASAPIExclusive:         %d", WASAPIExclusiveData);
+    Log("   UseThreadsForResampling: %d", useThreadsForResamplingData);
 
-    if( forceDirectSoundData > 0 )
+    if (forceDirectSoundData > 0)
       m_bUseWASAPI = false;
     else
       m_bUseWASAPI = true;
 
-    if( enableTimestretchingData > 0 )
+    if (enableTimestretchingData > 0)
       m_bUseTimeStretching = true;
     else
       m_bUseTimeStretching = false;
 
-    if( WASAPIExclusiveData > 0 )
+    if (WASAPIExclusiveData > 0)
       m_WASAPIShareMode = AUDCLNT_SHAREMODE_EXCLUSIVE;
     else
       m_WASAPIShareMode = AUDCLNT_SHAREMODE_SHARED;
+
+    if (useThreadsForResamplingData > 0)
+      m_bUseThreads = true;
+    else
+      m_bUseThreads = false;
   }
 
   else // no settings in registry, create default values
@@ -252,6 +263,7 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, forceDirectSound, forceDirectSoundData);
       WriteRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
       WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
+      WriteRegistryKeyDword(hKey, useThreadsForResampling, useThreadsForResamplingData);
     } 
     else 
     {
@@ -263,9 +275,29 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
   RegCloseKey (hKey);
 }
 
+void CMPAudioRenderer::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
+{
+  DWORD dwSize = sizeof(DWORD);
+  DWORD dwType = REG_DWORD;
+  LONG error = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)&data, &dwSize);
+  if( error != 0 )
+  {
+    if (error == ERROR_FILE_NOT_FOUND)
+    {
+      Log("   create default value for %s", lpSubKey);
+      WriteRegistryKeyDword(hKey, lpSubKey, data);
+    }
+    else
+    {
+      Log("   faíled to create default value for %s", lpSubKey);
+    }
+  }
+}
+
 void CMPAudioRenderer::WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
 {  
-  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_DWORD, (LPBYTE)&data, sizeof(data));
+  DWORD dwSize = sizeof(DWORD);
+  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_DWORD, (LPBYTE)&data, dwSize);
   if (result == ERROR_SUCCESS) 
   {
     Log("Success writing to Registry: %s", lpSubKey);
@@ -314,11 +346,20 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
     return VFW_E_TYPE_NOT_ACCEPTED;
   }
 
+  LogWaveFormat(pwfx);
+
   if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
   {
     // TODO: should we do something specific here? At least W7 audio codec is providing this info
     // WAVEFORMATPCMEX *test = (WAVEFORMATPCMEX *) pmt->Format();
     // return VFW_E_TYPE_NOT_ACCEPTED;
+  }
+
+  // TODO: allow other than 16 bit audio stream resampling!
+  if (m_bUseTimeStretching && pwfx->wBitsPerSample != 16)
+  {
+    Log("CheckMediaType Error only 16 bit audio resampling is currently supported");
+    return VFW_E_TYPE_NOT_ACCEPTED;
   }
 
   if (m_bUseWASAPI)
@@ -1098,7 +1139,14 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
     
     step1 = timeGetTime();
     
-    m_pSoundTouch->putSamples((const short*)pMediaBuffer, lSize / nBytePerSample);
+    if (m_bUseThreads)
+    {
+      m_pSoundTouch->processSample(pMediaSample);
+    }
+    else
+    {
+      m_pSoundTouch->putSamples((const short*)pMediaBuffer, lSize / nBytePerSample);    
+    }
 
     step2 = timeGetTime();
 
@@ -1122,7 +1170,6 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
   //OutMsg.Format("DoRenderSampleWasapi - processing time %I64u %I64u %I64u %I64u ", whole, dur1, dur2, dur3);
   //OutputDebugString(OutMsg);
   #endif
-
 
   if (m_bUseTimeStretching)
   {
@@ -1229,6 +1276,7 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
 HRESULT CMPAudioRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
 {
   Log("CheckAudioClient");
+  LogWaveFormat(pWaveFormatEx);
 
   HRESULT hr = S_OK;
   CAutoLock cAutoLock(&m_csCheck);

@@ -20,13 +20,80 @@
 typedef void (CMultiSoundTouch::*DeInterleaveFunc)(const soundtouch::SAMPLETYPE *inBuffer, short *outBuffer, uint count);
 typedef void (CMultiSoundTouch::*InterleaveFunc)(const soundtouch::SAMPLETYPE *inBuffer, short *outBuffer, uint count);
 
+// TODO - move these away!
+static HANDLE thread;
+static HANDLE startevent;
 
-CMultiSoundTouch::CMultiSoundTouch() 
+// TODO add support for multiple channel pairs
+static DWORD WINAPI ResampleThread(LPVOID lpParameter)
+{
+  ThreadData* data = static_cast<ThreadData*>(lpParameter);
+
+  // Wait for the first sample to arrive before entering the resample loop	
+  WaitForSingleObject(startevent, INFINITE);
+
+  // TODO: exit this loop nicely!
+  while( 1 )
+  {
+    IMediaSample* sample = NULL;
+    {
+      bool waitForData = false;
+      {
+        CAutoLock cRendererLock(data->sampleQueueLock);
+        if (data->sampleQueue->size() == 0)
+        {
+          // No data to be processed, reset the event in case we are looping too fast
+          ResetEvent(startevent);
+          
+          // Needs to be done outside the scope of cRendererLock 
+          // since we would be creating a deadlock otherwise 
+          waitForData = true;
+        }
+      }
+
+      if (waitForData)
+      {
+        // No data was available, waiting until at least one sample is present
+        DWORD result = WaitForSingleObject(startevent, INFINITE);
+      }
+
+      // Fetch one sample
+      sample = data->sampleQueue->front();
+      data->sampleQueue->erase(data->sampleQueue->begin());
+    }
+
+    BYTE *pMediaBuffer = NULL;
+    long size = sample->GetActualDataLength();
+    HRESULT hr = sample->GetPointer(&pMediaBuffer);
+
+    // Process the sample 
+    // TODO: /4 needs to be fixed!
+    data->resampler->putSamplesInternal((const short*)pMediaBuffer, size / 4);
+    
+    // We aren't using the sample anymore (AddRef() is done when sample arrives)
+    sample->Release();
+  }
+  return 0;
+}
+
+CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads) 
 : m_nChannels(0)
 , m_Streams(NULL)
 , m_nStreamCount(0)
+, m_bUseThreads(pUseThreads)
 {
-  // nothing else to do
+  // Use separate thread per channnel pair?
+  if (m_bUseThreads)
+  {
+    m_ThreadData.buffer = &m_tempBuffer[0];
+    m_ThreadData.resampler = this;
+    m_ThreadData.sampleQueueLock = &m_sampleQueueLock;
+    m_ThreadData.sampleQueue = &m_sampleQueue;
+    
+    DWORD threadId = 0;
+    CreateThread( 0, 0, ResampleThread, (LPVOID)&m_ThreadData, 0, &threadId );
+    startevent = CreateEvent( 0, FALSE, FALSE, 0 );
+  }
 }
 
 CMultiSoundTouch::~CMultiSoundTouch()
@@ -45,6 +112,18 @@ DEFINE_STREAM_FUNC(setPitchSemiTones, float, newPitch)
 DEFINE_STREAM_FUNC(setSampleRate, uint, srate)
 DEFINE_STREAM_FUNC(flush,,)
 DEFINE_STREAM_FUNC(clear,,)
+
+
+BOOL CMultiSoundTouch::setSetting(int settingId, int value)
+{
+  if (m_Streams)
+  {
+    for(int i=0; i<m_nStreamCount; i++)
+      m_Streams[i].processor->setSetting(settingId, value);
+    return true;
+  } 
+  return false;
+}
 
 uint CMultiSoundTouch::numUnprocessedSamples() const
 {
@@ -115,7 +194,25 @@ void CMultiSoundTouch::setChannels(int channels)
   SAFE_DELETE_ARRAY(oldStreams);
 }
 
+
 bool CMultiSoundTouch::putSamples(const short *inBuffer, long inSamples)
+{
+  return putSamplesInternal(inBuffer, inSamples);
+}
+
+bool CMultiSoundTouch::processSample(IMediaSample *pMediaSample)
+{
+  CAutoLock cRendererLock(&m_sampleQueueLock);
+  
+  pMediaSample->AddRef();
+  m_sampleQueue.push_back(pMediaSample);
+
+  SetEvent(startevent);
+  return true;
+}
+
+
+bool CMultiSoundTouch::putSamplesInternal(const short *inBuffer, long inSamples)
 {
   if(m_Streams == NULL)
     return false;
