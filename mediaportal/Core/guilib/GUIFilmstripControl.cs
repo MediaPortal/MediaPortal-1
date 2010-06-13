@@ -1092,8 +1092,8 @@ namespace MediaPortal.GUI.Library
                 if (_searchString.Length > 0)
                 {
                   _searchString = _searchString.Remove(_searchString.Length - 1, 1);
+                  SearchItem(_searchString, SearchType.SEARCH_FIRST);
                 }
-                SearchItem(_searchString, SearchType.SEARCH_FIRST);
               }
               if (((action.m_key.KeyChar >= 65) && (action.m_key.KeyChar <= 90)) ||
                   (action.m_key.KeyChar == (int)Keys.Space))
