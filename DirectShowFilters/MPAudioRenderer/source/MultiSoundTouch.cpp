@@ -24,10 +24,73 @@ typedef void (CMultiSoundTouch::*InterleaveFunc)(const soundtouch::SAMPLETYPE *i
 static HANDLE thread;
 static HANDLE startevent;
 
+// AVRT.dll (Vista or greater)
+typedef HANDLE (__stdcall *PTR_AvSetMmThreadCharacteristicsW)(LPCWSTR TaskName, LPDWORD TaskIndex);
+typedef BOOL (__stdcall *PTR_AvRevertMmThreadCharacteristics)(HANDLE AvrtHandle);
+
+PTR_AvSetMmThreadCharacteristicsW		pfAvSetMmThreadCharacteristicsW;
+PTR_AvRevertMmThreadCharacteristics		pfAvRevertMmThreadCharacteristics;
+
+extern void Log(const char *fmt, ...);
+
 // TODO add support for multiple channel pairs
 static DWORD WINAPI ResampleThread(LPVOID lpParameter)
 {
+  /*HMODULE hLib = NULL;
+  HANDLE hTask = NULL;
+  HRESULT hr = S_OK;
+  
+  // Load Vista specifics DLLs
+  hLib = LoadLibrary ("AVRT.dll");
+  if (hLib)
+  {
+    pfAvSetMmThreadCharacteristicsW		= (PTR_AvSetMmThreadCharacteristicsW)	GetProcAddress (hLib, "AvSetMmThreadCharacteristicsW");
+    pfAvRevertMmThreadCharacteristics	= (PTR_AvRevertMmThreadCharacteristics)	GetProcAddress (hLib, "AvRevertMmThreadCharacteristics");
+  }
+
+  // Ask MMCSS to temporarily boost the thread priority
+  // to reduce glitches while the low-latency stream plays.
+  DWORD taskIndex = 0;
+
+  if (pfAvSetMmThreadCharacteristicsW)
+  {
+    hTask = pfAvSetMmThreadCharacteristicsW(L"Pro Audio", &taskIndex);
+    //Log("InitCoopLevel Putting thread in higher priority for Wasapi mode (lowest latency)");
+    hr = GetLastError();
+    if (!hTask)
+    {
+      //return hr;
+    }
+  }*/
+
   ThreadData* data = static_cast<ThreadData*>(lpParameter);
+
+  HRESULT hr = S_OK;
+
+  ALLOCATOR_PROPERTIES propIn;
+  ALLOCATOR_PROPERTIES propOut;
+  propIn.cBuffers = 20;
+  propIn.cbBuffer = 8192*20;
+  propIn.cbPrefix = 0;
+  propIn.cbAlign = 8;
+
+  // sample allocator per thread
+  // TODO: use distictive name when adding multiple threads?
+
+  CBaseAllocator* pMemAllocator = new CMemAllocator("output sample allocator", NULL, &hr);
+  if (hr != S_OK)
+  {
+    Log("Failed to create sample allocator!");
+    return 0;
+  }
+
+  pMemAllocator->SetProperties(&propIn, &propOut);
+  hr = pMemAllocator->Commit();
+  if (hr != S_OK)
+  {
+    Log("Failed to commit allocator properties!");
+    return 0;
+  }
 
   // Wait for the first sample to arrive before entering the resample loop	
   WaitForSingleObject(startevent, INFINITE);
@@ -35,11 +98,13 @@ static DWORD WINAPI ResampleThread(LPVOID lpParameter)
   // TODO: exit this loop nicely!
   while( 1 )
   {
+    //CAutoLock flushLock(data->flushReceiveLock);
+    
     IMediaSample* sample = NULL;
     {
       bool waitForData = false;
       {
-        CAutoLock cRendererLock(data->sampleQueueLock);
+        CAutoLock cResampleLock(data->sampleQueueLock);
         if (data->sampleQueue->size() == 0)
         {
           // No data to be processed, reset the event in case we are looping too fast
@@ -70,12 +135,40 @@ static DWORD WINAPI ResampleThread(LPVOID lpParameter)
     {
       // Process the sample 
       // TODO: /4 needs to be fixed!
+      
       data->resampler->putSamplesInternal((const short*)pMediaBuffer, size / 4);
+      
+      IMediaSample* outSample = NULL;
+      pMemAllocator->GetBuffer(&outSample, NULL, NULL, 0);
+      if (outSample)
+      {
+        // TODO: *4 needs to be fixed
+        BYTE *pMediaBufferOut = NULL;
+        outSample->GetPointer(&pMediaBufferOut);
+        
+        if (pMediaBufferOut)
+        {
+          unsigned int sampleLength = data->resampler->numSamples() * 4;
+          data->resampler->receiveSamplesInternal((short*)pMediaBufferOut, propIn.cbBuffer/4);
+          outSample->SetActualDataLength(sampleLength);
+
+          { // lock that the playback thread wont access the queue at the same time
+            CAutoLock cRendererLock(data->sampleOutQueueLock);
+            data->sampleOutQueue->push_back(outSample);
+          }
+        }
+      }
     }
     
     // We aren't using the sample anymore (AddRef() is done when sample arrives)
     sample->Release();
   }
+
+  /*if (hTask && pfAvRevertMmThreadCharacteristics)
+  {
+    pfAvRevertMmThreadCharacteristics(hTask);
+  }*/
+
   return 0;
 }
 
@@ -90,8 +183,11 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
   {
     m_ThreadData.buffer = &m_tempBuffer[0];
     m_ThreadData.resampler = this;
+    m_ThreadData.flushReceiveLock = &m_flushReceiveLock;
     m_ThreadData.sampleQueueLock = &m_sampleQueueLock;
+    m_ThreadData.sampleOutQueueLock = &m_sampleOutQueueLock;
     m_ThreadData.sampleQueue = &m_sampleQueue;
+    m_ThreadData.sampleOutQueue = &m_sampleOutQueue;
     
     DWORD threadId = 0;
     CreateThread(0, 0, ResampleThread, (LPVOID)&m_ThreadData, 0, &threadId);
@@ -116,6 +212,28 @@ DEFINE_STREAM_FUNC(setSampleRate, uint, srate)
 DEFINE_STREAM_FUNC(flush,,)
 DEFINE_STREAM_FUNC(clear,,)
 
+// TODO: "unpack" the macros so ::flush can handle this as well
+void CMultiSoundTouch::FlushQueues()
+{
+  // Hold locks as short time as possible
+  /*{
+    CAutoLock cFlushLock(&m_flushReceiveLock);
+    for(int i = 0; i < m_sampleQueue.size(); i++)
+    {
+      m_sampleQueue[i]->Release();
+    }
+    m_sampleQueue.clear();
+  }
+
+  {
+    CAutoLock cFlushLock(&m_flushOutputLock);
+    for(int i = 0; i < m_sampleOutQueue.size(); i++)
+    {
+      m_sampleOutQueue[i]->Release();
+    }
+    m_sampleQueue.clear();
+  }*/
+}
 
 BOOL CMultiSoundTouch::setSetting(int settingId, int value)
 {
@@ -197,7 +315,6 @@ void CMultiSoundTouch::setChannels(int channels)
   SAFE_DELETE_ARRAY(oldStreams);
 }
 
-
 bool CMultiSoundTouch::putSamples(const short *inBuffer, long inSamples)
 {
   return putSamplesInternal(inBuffer, inSamples);
@@ -251,11 +368,68 @@ bool CMultiSoundTouch::putSamplesInternal(const short *inBuffer, long inSamples)
 
 uint CMultiSoundTouch::receiveSamples(short *outBuffer, uint maxSamples)
 {
+  //return receiveSamplesInternal(outBuffer, maxSamples);
+  static bool ignoreEmptySamples = true;
+
+  //if(!outBuffer)
+  //  return 0;
+
+  IMediaSample* sample = NULL;
+  
+  // Try to minimize the time the whole sample queue is locked. 
+  // Flushing is not as time critical
+  //CAutoLock flushLock(&m_flushOutputLock);
+
+  {
+    // Fetch one sample
+    CAutoLock outputLock(&m_sampleOutQueueLock);
+    
+    // TODO use some event with small delay? Possible to get data before next sample 
+    // is received in audio renderer and this method gets called again...
+    if(m_sampleOutQueue.size() == 0)
+    {
+      if (!ignoreEmptySamples)
+      {
+        Log("receiveSamples: Output sample queue was empty! ");
+      }
+      return 0;
+    }
+
+    // just for logging (don't log the initial samples that are empty)
+    ignoreEmptySamples = false; 
+
+    sample = m_sampleOutQueue.front();
+    m_sampleOutQueue.erase(m_sampleOutQueue.begin());
+  }
+  
+  long sampleLength = sample->GetActualDataLength();
+  
+  BYTE *pSampleBuffer = NULL;
+  HRESULT hr = sample->GetPointer(&pSampleBuffer);
+
+  if (hr != S_OK)
+  {
+    Log("receiveSamples: Failed to get sample buffer");
+    sample->Release();
+    return 0;
+  }
+  //*outBuffer = (short)malloc(20000);
+  memcpy(outBuffer, pSampleBuffer, sampleLength);
+  sample->Release();
+
+  // TODO fix /4
+  return sampleLength / 4;
+}
+
+
+uint CMultiSoundTouch::receiveSamplesInternal(short *outBuffer, uint maxSamples)
+{
   if(m_Streams == NULL)
     return 0;
 
   if(m_nChannels <= 2)
   {
+    CAutoLock cRendererLock(&m_sampleOutQueueLock);
     return m_Streams[0].processor->receiveSamples(outBuffer, maxSamples);
   }
   else

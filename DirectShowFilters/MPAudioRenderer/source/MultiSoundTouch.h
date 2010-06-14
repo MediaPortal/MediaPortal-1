@@ -17,7 +17,10 @@ typedef struct
   short* buffer;
   CMultiSoundTouch* resampler;
   CCritSec* sampleQueueLock;
+  CCritSec* sampleOutQueueLock;
+  CCritSec* flushReceiveLock;
   std::vector<IMediaSample*>* sampleQueue;
+  std::vector<IMediaSample*>* sampleOutQueue;
 } ThreadData;
 
 class CMultiSoundTouch
@@ -93,8 +96,12 @@ public:
   bool ProcessSamples(const short *inBuffer, long inSamples, short *outBuffer, long *outSamples, long maxOutSamples);
   bool processSample(IMediaSample *pMediaSample);
 
-  // this needs to be private (pass somehow to the thread...)
+  void FlushQueues();
+
+  // these needs to be private (pass somehow to the thread...)
   bool putSamplesInternal(const short *inBuffer, long inSamples);
+  uint receiveSamplesInternal(short *outBuffer, uint maxSamples);
+
 private:
   
 
@@ -122,5 +129,10 @@ private:
   bool  m_bUseThreads;
 
   std::vector<IMediaSample*> m_sampleQueue;
+  std::vector<IMediaSample*> m_sampleOutQueue;
   CCritSec m_sampleQueueLock;
+  CCritSec m_sampleOutQueueLock;
+
+  CCritSec m_flushReceiveLock;
+  CCritSec m_flushOutputLock;
 };

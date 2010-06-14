@@ -37,6 +37,8 @@ CFilterApp theApp;
 #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
 #define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
 
+//#define TRACE_PERFORMANCE
+
 // === Compatibility with Windows SDK v6.0A (define in KSMedia.h in Windows 7 SDK or later)
 #ifndef STATIC_KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL
 
@@ -1086,14 +1088,14 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
   REFERENCE_TIME rtStop = 0;
   
   DWORD flags = 0;
-  BYTE *pMediaBuffer = NULL;
+  BYTE* pMediaBuffer = NULL;
   
   // TODO: needs to be converted to use static buffer and loops to 
-  BYTE *mediaBufferResult = NULL; 
+  BYTE* mediaBufferResult = NULL; 
 
-  BYTE *pInputBufferPointer = NULL;
-  BYTE *pInputBufferEnd = NULL;
-  BYTE *pData;
+  BYTE* pInputBufferPointer = NULL;
+  BYTE* pInputBufferEnd = NULL;
+  BYTE* pData;
 
   m_nBufferSize = pMediaSample->GetActualDataLength();
   long lSize = m_nBufferSize;
@@ -1152,8 +1154,20 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
 
     //lResampledSize = m_pSoundTouch->receiveSamples((short*)pMediaBuffer, m_pSoundTouch->numSamples() / nBytePerSample) * nBytePerSample;
     
-    mediaBufferResult = (BYTE*)malloc(m_pSoundTouch->numSamples() * nBytePerSample);
+    // TODO fix this
+    mediaBufferResult = (BYTE*)malloc(20000);
     lResampledSize = m_pSoundTouch->receiveSamples((short*)mediaBufferResult, m_pSoundTouch->numSamples() / nBytePerSample) * nBytePerSample;
+    if(lResampledSize == 0)
+    {
+      return S_OK; // No samples to be rendered 
+    }
+
+
+#ifdef TRACE_PERFORMANCE
+    CString OutMsg;
+    OutMsg.Format("Render - Resampled %d", lResampledSize);
+    OutputDebugString(OutMsg);
+#endif
   }
 
   DWORD end = timeGetTime();
@@ -1203,6 +1217,12 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
     if (numFramesPadding == 0 && m_bIsAudioClientStarted)
     {
       Log("Buffer underflow detected!");
+      
+#ifdef TRACE_PERFORMANCE
+      CString OutMsg;
+      OutMsg.Format("DoRenderSampleWasapi - buffer underflow!");
+      OutputDebugString(OutMsg);
+#endif
     }
 
     UINT32 nAvailableBytes = numFramesAvailable * frameSize;
@@ -1609,6 +1629,7 @@ HRESULT CMPAudioRenderer::BeginFlush()
   if (m_pSoundTouch)
   {
     m_pSoundTouch->flush();
+    m_pSoundTouch->FlushQueues();
   }
 
   return CBaseRenderer::BeginFlush(); 
