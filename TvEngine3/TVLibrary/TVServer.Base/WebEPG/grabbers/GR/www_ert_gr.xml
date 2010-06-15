@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="el" availableDays="14" timezone="Central European Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="prisma+@ert.gr" siteId="4" />
+    <Channel id="cine+@ert.gr" siteId="5" />
+    <Channel id="sport+@ert.gr" siteId="6" />
+    <Channel id="et1@ert.gr" siteId="8" />
+    <Channel id="net@ert.gr" siteId="9" />
+    <Channel id="et3@ert.gr" siteId="10" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://tvradio.ert.gr/searchForm.asp" post="frmDates=[DAYOFYEAR]&amp;frmChannels=[ID]&amp;frmSearch=" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="&lt;!-- Today's Program --&gt;" end="&lt;p&gt;">
+        <SectionTemplate tags="TA">
+          <TemplateText>
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;z(&gt;&lt;img&gt;&lt;/z)?&gt;&lt;/td&gt;
+&lt;td&gt;&lt;a&gt;&lt;#TITLE&gt;&lt;/a&gt;&lt;/td&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+
+      <Template name="Details" start="&lt;!-- Transmision Details Full --&gt;" end="&lt;script">
+        <SectionTemplate tags="D">
+          <TemplateText>
+&lt;div&gt;&lt;#GENRE&gt;&lt;/div&gt;
+&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;
+&lt;z(Eπεισόδιο&gt;&lt;#EPISODE&gt;&lt;/z)?&gt;
+&lt;z(&gt;&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;&lt;/z)?&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+
+      <Template name="DetailsOld" start="&lt;!-- Transmision Details Full --&gt;" end="&lt;script">
+        <SectionTemplate tags="TDF">
+          <TemplateText>
+&lt;div&gt;&lt;font&gt;&lt;#GENRE&gt;&lt;/font&gt;&lt;/div&gt;
+&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;
+&lt;#EPISODE:Eπεισόδιο,&gt;
+&lt;div&gt;&lt;#DESCRIPTION&gt;&lt;/div&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+
+
+      <Sublinks>
+        <Sublink search="details\.asp" template="Details">
+           <Link url="http://tvradio.ert.gr/p[1]" />
+	</Sublink>
+      </Sublinks>
+    </Html>
+  </Listing>
+  <Actions>
+    <Modify channel="*" field="#TITLE" search="[Σσ](?=($|\W))" action="Replace">ς</Modify>
+  </Actions>
+</Grabber>

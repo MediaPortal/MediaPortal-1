@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="da" availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="dr1@dr.dk" siteId="dk1" />
+    <Channel id="dr2@dr.dk" siteId="dk2" />
+    <Channel id="tv2@tv2.dk" siteId="td2" />
+    <Channel id="tv3@tv3" siteId="dk3" />
+    <Channel id="tv3+@tv2.dk" siteId="d3%20" />
+    <Channel id="tv1000family@tv1000.dk" siteId="1fa" />
+    <Channel id="tv1000action@tv1000.dk" siteId="1ac" />
+    <Channel id="tv1000nordic@tv1000.dk" siteId="1fa" />
+    <Channel id="tv1000@tv1000.dk" siteId="t0d" />
+    <Channel id="tv1000classic@tv1000.dk" siteId="t1d" />
+    <Channel id="history@viasat.dk" siteId="vhi" />
+    <Channel id="viasatsport1@viasat.dk" siteId="vdk" />
+    <Channel id="viasatsport2@viasat.dk" siteId="vs2" />
+    <Channel id="viasatsport3@viasat.dk" siteId="vs3" />
+    <Channel id="disney.dk" siteId="218" />
+    <Channel id="dk.hallmarkchannel.com" siteId="hlk" />
+    <Channel id="nickelodeon.dk" siteId="nis" />
+    <Channel id="vh1e.com" siteId="vh1" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.dr.dk/nav/programoversigt/w3c/inc/channel.aframe?media=TV&amp;channel=[ID]&amp;seldate=[DAY_OFFSET]&amp;seltime=0" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default">
+        <SectionTemplate tags="TI">
+          <TemplateText>
+            &lt;table&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;img&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#START&gt; &lt;#TITLE&gt;&lt;/td&gt;
+            &lt;/tr&gt;&lt;/table&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Searches>
+        <Search match="\([0-9]{1,3}\)" field="#EPISODE" remove="true" />
+      </Searches>
+    </Html>
+  </Listing>
+</Grabber>

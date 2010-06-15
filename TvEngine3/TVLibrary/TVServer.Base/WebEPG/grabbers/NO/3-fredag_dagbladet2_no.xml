@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="no" availableDays="7" timezone="W. Europe Standard Time" version="2.0.1" />
+  <Channels>
+    <Channel id="nrk3@nrk.no" siteId="98" />
+    <Channel id="nrksuper@nrk.no" siteId="112" />
+    <Channel id="fem@tvnorge.no" siteId="99" />
+    <Channel id="film@tv2.no" siteId="93" />
+    <Channel id="viasat4@viasat.no" siteId="100" />
+    <Channel id="action@tv1000.no" siteId="78" />
+    <Channel id="aljazint.int" siteId="114" />
+    <Channel id="bbcenter@bbc.co.uk" siteId="115" />
+    <Channel id="bbchd@bbc.co.uk" siteId="119" />
+    <Channel id="bbcknow@bbc.co.uk" siteId="118" />
+    <Channel id="bbclife@bbc.co.uk" siteId="117" />
+    <Channel id="classic@tv1000.no" siteId="79" />
+    <Channel id="dr1@dr.dk" siteId="101" />
+    <Channel id="explorer@viasat.no" siteId="66" />
+    <Channel id="eurosport2@eurosport.com" siteId="86" />
+    <Channel id="family@tv1000.no" siteId="80" />
+    <Channel id="drama@canalplus.no" siteId="103" />
+    <Channel id="first@canalplus.no" siteId="104" />
+    <Channel id="thehistorychannel.co.uk" siteId="97" />
+    <Channel id="hits@canalplus.no" siteId="110" />
+    <Channel id="comedy@canalplus.no" siteId="105" />
+    <Channel id="action@canalplus.no" siteId="109" />
+    <Channel id="hd@canalplus.no" siteId="108" />
+    <Channel id="jetix.no" siteId="82" />
+    <Channel id="nationalgeographic.com" siteId="81" />
+    <Channel id="nordic@tv1000.no" siteId="76" />
+    <Channel id="nyhetskanalen@tv2.no" siteId="94" />
+    <Channel id="playhouse@disney.no" siteId="89" />
+    <Channel id="showtime" siteId="83" />
+    <Channel id="silver@no" siteId="96" />
+    <Channel id="sport@tv2.no" siteId="95" />
+    <Channel id="sport1@canalplus.no" siteId="106" />
+    <Channel id="sport2@canalplus.no" siteId="88" />
+    <Channel id="sporthd@canalplus.no" siteId="111" />
+    <Channel id="thevoice.no" siteId="84" />
+    <Channel id="toon@disney.no" siteId="85" />
+    <Channel id="vianatcrime@viasat.no" siteId="102" />
+    <Channel id="viagolf@viasat.no" siteId="113" />
+    <Channel id="viaspohd@viasat.no" siteId="116" />
+    <Channel id="viatv6@viasat.no" siteId="90" />
+  </Channels>
+
+  <Listing type="Html">
+    <Site url="http://fredag.dagbladet.no/tv/index.html?kategori_id=&amp;kanal_id=[ID]&amp;dag=[DAY_OFFSET]&amp;fra_tid=0&amp;til_tid=24" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="&lt;!-- hovedtabell --&gt;" end="&lt;!-- /hovedtabell --&gt;">
+        <SectionTemplate tags="T">
+          <TemplateText>
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;td&gt;
+&lt;b&gt;&lt;#START&gt;&lt;/b&gt;&lt;br&gt;
+(&lt;#END&gt;)
+&lt;/td&gt;
+&lt;td&gt;					&lt;b&gt;
+&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;#SOMETHING&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;#TITLE&gt;				&lt;/b&gt;&lt;br&gt;				&lt;#DESCRIPTION&gt;&lt;br&gt;
+&lt;img&gt;&lt;br&gt;
+    </TemplateText>
+        </SectionTemplate>
+		</Template>
+       <Searches>
+        <Search match="\(R\)" field="#REPEAT" remove="true" />
+        <Search match="\([t]+\)" field="#SUBTITLES" remove="true" />
+        <Search match=" \([0-9]{1,4}[:][0-9]{0,4}\)|\([0-9]{0,4}\)" field="#EPISODE" remove="true" />
+        <Search match=" \(ttv\)" field="#TTV" remove="true" />
+      </Searches>
+      
+    </Html>
+  </Listing>
+</Grabber>

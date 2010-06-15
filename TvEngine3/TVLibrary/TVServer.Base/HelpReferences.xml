@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<helpsystem>
+  <general baseurl="http://wiki.team-mediaportal.com/TV-Server/Configuration/" />
+  <sections>
+    <section name="SetupTv.Sections.Project" suburl="" />
+
+    <section name="SetupTv.Sections.Servers" suburl="TVServers" />
+    <section name="SetupTv.Sections.TvCards" suburl="TVServers" />
+    <section name="SetupTv.Sections.CardAnalog" suburl="TVServers/ScanAnalog" />
+    <section name="SetupTv.Sections.CardAtsc" suburl="TVServers" />
+    <section name="SetupTv.Sections.CardDvbC" suburl="TVServers" />
+    <section name="SetupTv.Sections.CardDvbS" suburl="TVServers/ScanDVBS" />
+    <section name="SetupTv.Sections.CardDvbT" suburl="TVServers/ScanDVBT" />
+    
+    <section name="SetupTv.Sections.TvChannels" suburl="TVChannels" />
+    <section name="SetupTv.Sections.TvCombinations" suburl="TVChannels/Combinations" />
+    <section name="SetupTv.Sections.TvChannelMapping" suburl="TVChannels/Mapping" />
+    <section name="SetupTv.Sections.TvEpgGrabber" suburl="TVChannels/EpgGrabber" />
+    <section name="SetupTv.Sections.TvGroups" suburl="TVChannels/Groups" />
+
+    <section name="SetupTv.Sections.RadioChannels" suburl="RadioChannels" />
+    <section name="SetupTv.Sections.RadioCombinations" suburl="RadioChannels/Combinations" />
+    <section name="SetupTv.Sections.RadioChannelMapping" suburl="RadioChannels/Mapping" />
+    <section name="SetupTv.Sections.RadioEpgGrabber" suburl="RadioChannels/EpgGrabber" />
+    <section name="SetupTv.Sections.RadioGroups" suburl="RadioChannels/Groups" />
+
+    <section name="SetupTv.Sections.ScanSettings" suburl="GeneralSettings" />
+    <section name="SetupTv.Sections.TvRecording" suburl="Recording" />
+    <section name="SetupTv.Sections.TvSchedules" suburl="TVSchedules" />
+    <section name="SetupTv.Sections.StreamingServer" suburl="StreamingServer" />
+    <section name="SetupTv.Sections.TestService" suburl="ManualControl" />
+
+    <section name="SetupTv.Sections.Plugins" suburl="" />
+    
+    <section name="SetupTv.Sections.ComSkipSetup" suburl="Plugins/ComSkipLauncher" />
+    <section name="SetupTv.Sections.CMSetup" suburl="Plugins/ConflictsManager" />
+    <section name="TvEngine.PowerScheduler.PowerSchedulerMasterSetup" suburl="Plugins/PowerScheduler" />
+    <section name="SetupTv.Sections.BlasterSetup" suburl="Plugins/ServerBlaster" />
+    <section name="SetupTv.Sections.TvMovieSetup" suburl="Plugins/TvMovieEpg" />
+    <section name="SetupTv.Sections.XmlTvSetup" suburl="Plugins/XmlTv" />
+
+    <!-- deprecated / disabled sections -->
+    <!--<section name="SetupTv.Sections.PTVGSetup" suburl="PersonalTvGuide" />-->
+  </sections>
+</helpsystem>

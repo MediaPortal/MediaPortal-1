@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info availableDays="5" timezone="New Zealand Standard Time" version="2.1.0" />
+  <Channels>
+    <Channel id="primetv.co.nz" siteId="Prime" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.primetv.co.nz/default.asp?t=0&amp;dayId=[DAY_OFFSET]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="Content Start">
+        <SectionTemplate tags="T">
+          <TemplateText>
+&lt;tr&gt;
+&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
+&lt;td&gt;
+&lt;/tr&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

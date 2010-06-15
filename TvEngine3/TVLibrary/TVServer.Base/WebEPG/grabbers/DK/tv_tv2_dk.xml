@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="da" availableDays="6" timezone="W. Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="tv2@tv2.dk" siteId="Region=1&amp;KanalID=1" />
+    <Channel id="tv2zulu@tv2.dk" siteId="Region=1&amp;KanalID=2" />
+    <Channel id="tv2charlie@tv2.dk" siteId="Region=1&amp;KanalID=152" />
+    <Channel id="tv2news@tv2.dk" siteId="Region=1&amp;KanalID=225" />
+    <Channel id="tv2film@tv2.dk" siteId="Region=1&amp;KanalID=153" />
+    <Channel id="dr1@dr.dk" siteId="Region=1&amp;KanalID=3" />
+    <Channel id="dr2@dr.dk" siteId="Region=1&amp;KanalID=4" />
+    <Channel id="tv3@tv3.dk" siteId="Region=1&amp;KanalID=6" />
+    <Channel id="tv3+@tv3.dk" siteId="Region=1&amp;KanalID=5" />
+    <Channel id="kanal4.dk" siteId="Region=1&amp;KanalID=8" />
+    <Channel id="kanal5.dk" siteId="Region=1&amp;KanalID=7" />
+    <Channel id="canal+@canalplus.dk" siteId="Region=1&amp;KanalID=9" />
+    <Channel id="canal+film1@canalplus.dk" siteId="Region=1&amp;KanalID=10" />
+    <Channel id="canal+film2@canalplus.dk" siteId="Region=1&amp;KanalID=148" />
+    <Channel id="tv1000@tv1000.dk" siteId="Region=1&amp;KanalID=11" />
+    <Channel id="tv1000classic@tv1000.dk" siteId="Region=1&amp;KanalID=12" />
+    <Channel id="viasatsport1@viasat.dk" siteId="Region=1&amp;KanalID=149" />
+    <Channel id="eurosport@eurosport.com" siteId="Region=1&amp;KanalID=13" />
+    <Channel id="kanal-kbh.dk" siteId="Region=1&amp;KanalID=109" />
+    <Channel id="dk4.dk" siteId="Region=1&amp;KanalID=14" />
+    <Channel id="svt1@svt.dk" siteId="Region=3&amp;KanalID=24" />
+    <Channel id="svt2@svt.dk" siteId="Region=3&amp;KanalID=25" />
+    <Channel id="tv4@svt.dk" siteId="Region=3&amp;KanalID=27" />
+    <Channel id="nrk1@nrk.no" siteId="Region=3&amp;KanalID=31" />
+    <Channel id="tv2.no" siteId="Region=3&amp;KanalID=33" />
+    <Channel id="bbcprime.com" siteId="Region=4&amp;KanalID=37" />
+    <Channel id="bbcworld.com" siteId="Region=4&amp;KanalID=38" />
+    <Channel id="cartoon.dk" siteId="Region=4&amp;KanalID=39" />
+    <Channel id="cnni-emea@cnn.com" siteId="Region=4&amp;KanalID=40" />
+    <Channel id="discovery.dk" siteId="Region=4&amp;KanalID=41" />
+    <Channel id="animalplanet.dk" siteId="Region=4&amp;KanalID=36" />
+    <Channel id="mtve.com" siteId="Region=4&amp;KanalID=42" />
+    <Channel id="nationalgeographicchannel.dk" siteId="Region=4&amp;KanalID=43" />
+    <Channel id="vh1.com" siteId="Region=4&amp;KanalID=52" />
+    <Channel id="hallmarkchannel.co.uk" siteId="Region=4&amp;KanalID=98" />
+    <Channel id="tcmeurope.com" siteId="Region=4&amp;KanalID=101" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://tv.tv2.dk/tv/listning.php?[ID]&amp;Soegeord=&amp;Dato=[DAY_OFFSET]&amp;Kategori=0&amp;Periode=1" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default">
+        <SectionTemplate tags="D">
+          <TemplateText>
+            &lt;div&gt;
+            &lt;div&gt;&lt;#START&gt; &lt;#TITLE&gt;&lt;/div&gt;
+            &lt;div&gt;&lt;#GENRE&gt;&lt;/div&gt;
+            &lt;div&gt;&lt;#DESCRIPTION&gt;&lt;div&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Searches>
+        <Search match="\([0-9]{1,3}\)" field="#EPISODE" remove="true" />
+        <Search match="\(TTV\)" field="#SURROUND" remove="true" />
+        <Search match="\(S\)" field="#SUBTITLES" remove="true" />
+        <Search match="\(G\)" field="#G" remove="true" />
+        <Search match="\(TH\)" field="#TH" remove="true" />
+      </Searches>
+    </Html>
+  </Listing>
+</Grabber>
