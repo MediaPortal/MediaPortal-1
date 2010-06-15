@@ -366,7 +366,7 @@ bool CMultiSoundTouch::putSamplesInternal(const short *inBuffer, long inSamples)
   return true;
 }
 
-uint CMultiSoundTouch::receiveSamples(short *outBuffer, uint maxSamples)
+uint CMultiSoundTouch::receiveSamples(short **outBuffer, uint maxSamples)
 {
   //return receiveSamplesInternal(outBuffer, maxSamples);
   static bool ignoreEmptySamples = true;
@@ -414,7 +414,8 @@ uint CMultiSoundTouch::receiveSamples(short *outBuffer, uint maxSamples)
     return 0;
   }
 
-  memcpy(outBuffer, pSampleBuffer, sampleLength);
+  (*outBuffer) = (short*)malloc(sampleLength);
+  memcpy(*outBuffer, pSampleBuffer, sampleLength);
   sample->Release();
 
   // TODO fix /4
@@ -473,7 +474,7 @@ bool CMultiSoundTouch::ProcessSamples(const short *inBuffer, long inSamples, sho
   if (!putSamples(inBuffer, inSamples))
     return false;
 
-  *outSamples = receiveSamples(outBuffer, maxOutSamples);
+  *outSamples = receiveSamples(&outBuffer, maxOutSamples);
   return true;
 }
 

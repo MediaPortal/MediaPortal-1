@@ -973,7 +973,7 @@ HRESULT CMPAudioRenderer::WriteSampleToDSBuffer(IMediaSample *pMediaSample, bool
     //Log("Before resample: lSize=%d, nBytePerSample=%d", lSize, nBytePerSample);
     lSize = m_pSoundTouch->numSamples() * nBytePerSample;
     mediaBufferResult = (BYTE*)malloc(lSize);
-    lSize = m_pSoundTouch->receiveSamples((short*)mediaBufferResult, lSize / nBytePerSample) * nBytePerSample;
+    lSize = m_pSoundTouch->receiveSamples((short**)&mediaBufferResult, lSize / nBytePerSample) * nBytePerSample;
     pMediaBuffer = mediaBufferResult;
   }
 
@@ -1080,8 +1080,6 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
   
   DWORD flags = 0;
   BYTE* pMediaBuffer = NULL;
-  
-  // TODO: needs to be converted to use static buffer and loops to 
   BYTE* mediaBufferResult = NULL; 
 
   BYTE* pInputBufferPointer = NULL;
@@ -1115,14 +1113,6 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
     pmt = NULL;
   }
 
-  // Initialization
-  hr = pMediaSample->GetPointer(&pMediaBuffer);
-  if (FAILED (hr)) return hr; 
-
-  DWORD start = timeGetTime();
-  DWORD step1 = 0;
-  DWORD step2 = 0;
-
   // resample audio stream if required
   if (m_bUseTimeStretching)
   {
@@ -1130,29 +1120,23 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
 	
     int nBytePerSample = m_pWaveFileFormat->nChannels * (m_pWaveFileFormat->wBitsPerSample/8);
     
-    step1 = timeGetTime();
-    
     if (m_bUseThreads)
     {
       m_pSoundTouch->processSample(pMediaSample);
     }
     else
     {
+      hr = pMediaSample->GetPointer(&pMediaBuffer);
+      if (FAILED (hr)) return hr; 
+
       m_pSoundTouch->putSamples((const short*)pMediaBuffer, lSize / nBytePerSample);    
     }
 
-    step2 = timeGetTime();
-
-    //lResampledSize = m_pSoundTouch->receiveSamples((short*)pMediaBuffer, m_pSoundTouch->numSamples() / nBytePerSample) * nBytePerSample;
-    
-    // TODO fix this
-    mediaBufferResult = (BYTE*)malloc(20000);
-    lResampledSize = m_pSoundTouch->receiveSamples((short*)mediaBufferResult, m_pSoundTouch->numSamples() / nBytePerSample) * nBytePerSample;
-    if(lResampledSize == 0)
+    lResampledSize = m_pSoundTouch->receiveSamples((short**)&mediaBufferResult, m_pSoundTouch->numSamples() / nBytePerSample) * nBytePerSample;
+    if (lResampledSize == 0)
     {
       return S_OK; // No samples to be rendered 
     }
-
 
 #ifdef TRACE_PERFORMANCE
     CString OutMsg;
@@ -1160,21 +1144,11 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
     OutputDebugString(OutMsg);
 #endif
   }
-
-  DWORD end = timeGetTime();
-
-  UINT64 whole = (end - start);
-  UINT64 dur1 = (step1 - start);
-  UINT64 dur2 = (step2 - step1);
-  UINT64 dur3 = (end - step2);
-
-  //TRACE(_T("DoRenderSampleWasapi - processing time %I64u %I64u %I64u %I64u "), whole, dur1, dur2, dur3);
-
-  #ifndef DEBUG
-  //CString OutMsg;
-  //OutMsg.Format("DoRenderSampleWasapi - processing time %I64u %I64u %I64u %I64u ", whole, dur1, dur2, dur3);
-  //OutputDebugString(OutMsg);
-  #endif
+  else // no time stretching enabled
+  {
+    hr = pMediaSample->GetPointer(&pMediaBuffer);
+    if (FAILED (hr)) return hr; 
+  }
 
   if (m_bUseTimeStretching)
   {

@@ -91,7 +91,7 @@ public:
   BOOL setSetting(int settingId, int value);
 
   bool putSamples(const short *inBuffer, long inSamples);
-  uint receiveSamples(short *outBuffer, uint maxSamples);
+  uint receiveSamples(short **outBuffer, uint maxSamples);
 
   bool ProcessSamples(const short *inBuffer, long inSamples, short *outBuffer, long *outSamples, long maxOutSamples);
   bool processSample(IMediaSample *pMediaSample);
