@@ -413,7 +413,7 @@ uint CMultiSoundTouch::receiveSamples(short *outBuffer, uint maxSamples)
     sample->Release();
     return 0;
   }
-  //*outBuffer = (short)malloc(20000);
+
   memcpy(outBuffer, pSampleBuffer, sampleLength);
   sample->Release();
 

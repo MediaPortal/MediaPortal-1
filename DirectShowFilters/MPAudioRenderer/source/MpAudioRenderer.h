@@ -127,11 +127,7 @@ private:
   CBaseReferenceClock*	m_pReferenceClock;
   double					      m_dRate;
 
-#ifndef MULTICHANNEL_SUPPORT
-  soundtouch::SoundTouch*	m_pSoundTouch;
-#else
-  CMultiSoundTouch*	m_pSoundTouch;
-#endif
+  CMultiSoundTouch*	    m_pSoundTouch;
 
   // CMpcAudioRenderer WASAPI methods
   HRESULT     GetDefaultAudioDevice(IMMDevice **ppMMDevice);

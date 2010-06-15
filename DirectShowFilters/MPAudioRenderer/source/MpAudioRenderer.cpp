@@ -147,12 +147,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
   
   if (m_bUseTimeStretching)
   {
-	  // TODO: use channel based sound objects (since lib has two channel limit)
-#ifndef MULTICHANNEL_SUPPORT
-    m_pSoundTouch = new soundtouch::SoundTouch();
-#else
     m_pSoundTouch = new CMultiSoundTouch(m_bUseThreads);
-#endif
   }
 }
 
@@ -542,11 +537,7 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
 
     memcpy(m_pWaveFileFormat, pwf, size);
 
-#ifndef MULTICHANNEL_SUPPORT
-    if (m_pSoundTouch && (pwf->nChannels <= 2))
-#else
     if (m_pSoundTouch)
-#endif
     {
       m_pSoundTouch->setChannels(pwf->nChannels);
       m_pSoundTouch->setSampleRate(pwf->nSamplesPerSec);
