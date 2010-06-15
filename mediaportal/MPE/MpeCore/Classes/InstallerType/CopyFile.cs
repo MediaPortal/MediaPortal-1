@@ -38,43 +38,48 @@ namespace MpeCore.Classes.InstallerType
 
     public void Install(PackageClass packageClass, FileItem fileItem)
     {
-      string destination = fileItem.ExpandedDestinationFilename;
-
-      FileItem item = packageClass.UniqueFileList.GetByLocalFileName(fileItem);
-      if (item == null)
-        return;
-
-      if (File.Exists(destination))
+      try
       {
-        switch (fileItem.UpdateOption)
+        string destination = fileItem.ExpandedDestinationFilename;
+
+        FileItem item = packageClass.UniqueFileList.GetByLocalFileName(fileItem);
+        if (item == null)
+          return;
+
+        if (File.Exists(destination))
         {
-          case UpdateOptionEnum.NeverOverwrite:
-            return;
-          case UpdateOptionEnum.AlwaysOverwrite:
-            break;
-          case UpdateOptionEnum.OverwriteIfOlder:
-            if (File.GetLastWriteTime(destination) > packageClass.ZipProvider.FileDate(item))
+          switch (fileItem.UpdateOption)
+          {
+            case UpdateOptionEnum.NeverOverwrite:
               return;
-            break;
+            case UpdateOptionEnum.AlwaysOverwrite:
+              break;
+            case UpdateOptionEnum.OverwriteIfOlder:
+              if (File.GetLastWriteTime(destination) > packageClass.ZipProvider.FileDate(item))
+                return;
+              break;
+          }
         }
+        if (!Directory.Exists(Path.GetDirectoryName(destination)))
+        {
+          string dirname = Path.GetDirectoryName(destination);
+          Directory.CreateDirectory(dirname);
+          if (!dirname.EndsWith("\\"))
+            dirname += "\\";
+          UnInstallItem unI = new UnInstallItem();
+          unI.OriginalFile = dirname;
+          unI.InstallType = "CopyFile";
+          packageClass.UnInstallInfo.Items.Add(unI);
+        }
+        UnInstallItem unInstallItem = packageClass.UnInstallInfo.BackUpFile(item);
+        packageClass.ZipProvider.Extract(item, destination);
+        FileInfo info = new FileInfo(destination);
+        unInstallItem.FileDate = info.CreationTimeUtc;
+        unInstallItem.FileSize = info.Length;
+        packageClass.UnInstallInfo.Items.Add(unInstallItem);
       }
-      if (!Directory.Exists(Path.GetDirectoryName(destination)))
-      {
-        string dirname = Path.GetDirectoryName(destination);
-        Directory.CreateDirectory(dirname);
-        if (!dirname.EndsWith("\\"))
-          dirname += "\\";
-        UnInstallItem unI = new UnInstallItem();
-        unI.OriginalFile = dirname;
-        unI.InstallType = "CopyFile";
-        packageClass.UnInstallInfo.Items.Add(unI);
-      }
-      UnInstallItem unInstallItem = packageClass.UnInstallInfo.BackUpFile(item);
-      packageClass.ZipProvider.Extract(item, destination);
-      FileInfo info = new FileInfo(destination);
-      unInstallItem.FileDate = info.CreationTimeUtc;
-      unInstallItem.FileSize = info.Length;
-      packageClass.UnInstallInfo.Items.Add(unInstallItem);
+      catch (Exception) {}
+
     }
 
 
