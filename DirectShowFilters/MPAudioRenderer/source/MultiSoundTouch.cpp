@@ -354,16 +354,9 @@ bool CMultiSoundTouch::putSamplesInternal(const short *inBuffer, long inSamples)
 
 uint CMultiSoundTouch::receiveSamples(short **outBuffer, uint maxSamples)
 {
-  //return receiveSamplesInternal(outBuffer, maxSamples);
   static bool ignoreEmptySamples = true;
-
-  //if(!outBuffer)
-  //  return 0;
-
   IMediaSample* sample = NULL;
  
-
-
   {
     // Fetch one sample
     CAutoLock outputLock(&m_sampleOutQueueLock);
