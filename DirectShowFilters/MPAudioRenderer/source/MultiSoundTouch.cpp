@@ -20,49 +20,11 @@
 typedef void (CMultiSoundTouch::*DeInterleaveFunc)(const soundtouch::SAMPLETYPE *inBuffer, short *outBuffer, uint count);
 typedef void (CMultiSoundTouch::*InterleaveFunc)(const soundtouch::SAMPLETYPE *inBuffer, short *outBuffer, uint count);
 
-// TODO - move these away!
-static HANDLE thread;
-static HANDLE startevent;
-
-// AVRT.dll (Vista or greater)
-typedef HANDLE (__stdcall *PTR_AvSetMmThreadCharacteristicsW)(LPCWSTR TaskName, LPDWORD TaskIndex);
-typedef BOOL (__stdcall *PTR_AvRevertMmThreadCharacteristics)(HANDLE AvrtHandle);
-
-PTR_AvSetMmThreadCharacteristicsW		pfAvSetMmThreadCharacteristicsW;
-PTR_AvRevertMmThreadCharacteristics		pfAvRevertMmThreadCharacteristics;
-
 extern void Log(const char *fmt, ...);
 
 // TODO add support for multiple channel pairs
 static DWORD WINAPI ResampleThread(LPVOID lpParameter)
 {
-  /*HMODULE hLib = NULL;
-  HANDLE hTask = NULL;
-  HRESULT hr = S_OK;
-  
-  // Load Vista specifics DLLs
-  hLib = LoadLibrary ("AVRT.dll");
-  if (hLib)
-  {
-    pfAvSetMmThreadCharacteristicsW		= (PTR_AvSetMmThreadCharacteristicsW)	GetProcAddress (hLib, "AvSetMmThreadCharacteristicsW");
-    pfAvRevertMmThreadCharacteristics	= (PTR_AvRevertMmThreadCharacteristics)	GetProcAddress (hLib, "AvRevertMmThreadCharacteristics");
-  }
-
-  // Ask MMCSS to temporarily boost the thread priority
-  // to reduce glitches while the low-latency stream plays.
-  DWORD taskIndex = 0;
-
-  if (pfAvSetMmThreadCharacteristicsW)
-  {
-    hTask = pfAvSetMmThreadCharacteristicsW(L"Pro Audio", &taskIndex);
-    //Log("InitCoopLevel Putting thread in higher priority for Wasapi mode (lowest latency)");
-    hr = GetLastError();
-    if (!hTask)
-    {
-      //return hr;
-    }
-  }*/
-
   ThreadData* data = static_cast<ThreadData*>(lpParameter);
 
   HRESULT hr = S_OK;
@@ -73,6 +35,11 @@ static DWORD WINAPI ResampleThread(LPVOID lpParameter)
   propIn.cbBuffer = 8192*20;
   propIn.cbPrefix = 0;
   propIn.cbAlign = 8;
+
+  // These are wait handles for the thread stopping and new sample arrival
+  HANDLE handles[2];
+  handles[0] = data->stopThreadEvent;
+  handles[1] = data->sampleArrivedEvent;
 
   // sample allocator per thread
   // TODO: use distictive name when adding multiple threads?
@@ -93,13 +60,19 @@ static DWORD WINAPI ResampleThread(LPVOID lpParameter)
   }
 
   // Wait for the first sample to arrive before entering the resample loop	
-  WaitForSingleObject(startevent, INFINITE);
+  WaitForSingleObject(data->sampleArrivedEvent, INFINITE);
 
-  // TODO: exit this loop nicely!
-  while( 1 )
+  while(true)
   {
+    // Check event for stop thread
+    if (WaitForSingleObject(data->stopThreadEvent, 0) == WAIT_OBJECT_0)
+    {
+      SetEvent(data->waitThreadToExitEvent);
+      return 0;
+    }
+
     //CAutoLock flushLock(data->flushReceiveLock);
-    
+
     IMediaSample* sample = NULL;
     {
       bool waitForData = false;
@@ -108,7 +81,7 @@ static DWORD WINAPI ResampleThread(LPVOID lpParameter)
         if (data->sampleQueue->size() == 0)
         {
           // No data to be processed, reset the event in case we are looping too fast
-          ResetEvent(startevent);
+          ResetEvent(data->sampleArrivedEvent);
           
           // Needs to be done outside the scope of cRendererLock 
           // since we would be creating a deadlock otherwise 
@@ -118,8 +91,15 @@ static DWORD WINAPI ResampleThread(LPVOID lpParameter)
 
       if (waitForData)
       {
-        // No data was available, waiting until at least one sample is present
-        DWORD result = WaitForSingleObject(startevent, INFINITE);
+        // 1) No data was available, waiting until at least one sample is present
+        // 2) Exit requested for the thread
+        DWORD result = WaitForMultipleObjects(2, handles, false, INFINITE);
+        if (result == WAIT_OBJECT_0)
+        {
+          SetEvent(data->waitThreadToExitEvent);
+          return 0;
+        }
+        // WAIT_OBJECT_0 + 1 <- new samples arrived
       }
 
       // Fetch one sample
@@ -135,7 +115,6 @@ static DWORD WINAPI ResampleThread(LPVOID lpParameter)
     {
       // Process the sample 
       // TODO: /4 needs to be fixed!
-      
       data->resampler->putSamplesInternal((const short*)pMediaBuffer, size / 4);
       
       IMediaSample* outSample = NULL;
@@ -163,12 +142,6 @@ static DWORD WINAPI ResampleThread(LPVOID lpParameter)
     // We aren't using the sample anymore (AddRef() is done when sample arrives)
     sample->Release();
   }
-
-  /*if (hTask && pfAvRevertMmThreadCharacteristics)
-  {
-    pfAvRevertMmThreadCharacteristics(hTask);
-  }*/
-
   return 0;
 }
 
@@ -181,6 +154,13 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
   // Use separate thread per channnel pair?
   if (m_bUseThreads)
   {
+    DWORD threadId = 0;
+    CreateThread(0, 0, ResampleThread, (LPVOID)&m_ThreadData, 0, &threadId);
+
+    m_hSampleArrivedEvent = CreateEvent(0, TRUE, FALSE, 0);
+    m_hStopThreadEvent = CreateEvent(0, TRUE, FALSE, 0);
+    m_hWaitThreadToExitEvent = CreateEvent(0, TRUE, FALSE, 0);
+
     m_ThreadData.buffer = &m_tempBuffer[0];
     m_ThreadData.resampler = this;
     m_ThreadData.flushReceiveLock = &m_flushReceiveLock;
@@ -188,15 +168,21 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
     m_ThreadData.sampleOutQueueLock = &m_sampleOutQueueLock;
     m_ThreadData.sampleQueue = &m_sampleQueue;
     m_ThreadData.sampleOutQueue = &m_sampleOutQueue;
-    
-    DWORD threadId = 0;
-    CreateThread(0, 0, ResampleThread, (LPVOID)&m_ThreadData, 0, &threadId);
-    startevent = CreateEvent(0, FALSE, FALSE, 0);
+    m_ThreadData.sampleArrivedEvent = m_hSampleArrivedEvent;
+    m_ThreadData.stopThreadEvent = m_hStopThreadEvent;
+    m_ThreadData.waitThreadToExitEvent = m_hWaitThreadToExitEvent;
   }
 }
 
 CMultiSoundTouch::~CMultiSoundTouch()
 {
+  SetEvent(m_hStopThreadEvent);
+  WaitForSingleObject(m_hWaitThreadToExitEvent, INFINITE);
+
+  //CloseHandle(m_hSampleArrivedEvent);
+  //CloseHandle(m_hWaitThreadToExitEvent);
+  //CloseHandle(m_hStopThreadEvent);
+
   setChannels(0);
 }
 
@@ -327,7 +313,8 @@ bool CMultiSoundTouch::processSample(IMediaSample *pMediaSample)
   pMediaSample->AddRef();
   m_sampleQueue.push_back(pMediaSample);
 
-  SetEvent(startevent);
+  // Signal to the thread that there is new sample available
+  SetEvent(m_hSampleArrivedEvent);
   return true;
 }
 

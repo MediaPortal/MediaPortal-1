@@ -21,6 +21,9 @@ typedef struct
   CCritSec* flushReceiveLock;
   std::vector<IMediaSample*>* sampleQueue;
   std::vector<IMediaSample*>* sampleOutQueue;
+  HANDLE sampleArrivedEvent;
+  HANDLE stopThreadEvent;
+  HANDLE waitThreadToExitEvent;
 } ThreadData;
 
 class CMultiSoundTouch
@@ -124,8 +127,15 @@ private:
   void MonoDeInterleave(const short *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
   void MonoInterleave(const soundtouch::SAMPLETYPE *inBuffer, short *outBuffer, uint count);
 
+  HANDLE m_hThread;
+
+  HANDLE m_hSampleArrivedEvent;
+  HANDLE m_hStopThreadEvent;
+  HANDLE m_hWaitThreadToExitEvent;
+
   ThreadData m_ThreadData;
-  short m_tempBuffer[65536];
+
+  short m_tempBuffer[65536]; // TODO make dynamic?
   bool  m_bUseThreads;
 
   std::vector<IMediaSample*> m_sampleQueue;
