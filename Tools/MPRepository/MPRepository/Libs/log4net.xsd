@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' targetNamespace='urn:log4net' xmlns='urn:log4net'>
+  <xs:annotation>
+  <xs:documentation>This schema was written by Jerry Wang, Please retain this annotation.</xs:documentation>
+  </xs:annotation>
+
+    <xs:element name='log4net'>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref='appender' minOccurs='0' maxOccurs='unbounded' />
+				<xs:element ref='root' />
+				<xs:element ref='logger' minOccurs='0' maxOccurs='unbounded' />
+				<xs:element ref='renderer' minOccurs='0' maxOccurs='unbounded' />
+				<xs:element ref='param' minOccurs='0' maxOccurs='unbounded' />
+			</xs:sequence>
+			<xs:attribute name='debug' />
+			<xs:attribute name='update' />
+			<xs:attribute name='threshold' />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='appender'>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref='param' minOccurs='0' maxOccurs='unbounded' />
+				<xs:element ref='appender-ref' minOccurs='0' maxOccurs='unbounded' />
+				<xs:element ref='filter' minOccurs='0' maxOccurs='unbounded' />
+				<xs:element ref='layout' />
+			</xs:sequence>
+			<xs:attribute name='name' use='required' />
+			<xs:attribute name='type' use='required' />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='filter'>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref='param' minOccurs='0' maxOccurs='unbounded' />
+			</xs:sequence>
+			<xs:attribute name='type' use='required' />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='root'>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref='level' />
+				<xs:element ref='appender-ref' minOccurs='0' maxOccurs='unbounded' />
+				<xs:element ref='param' minOccurs='0' maxOccurs='unbounded' />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='logger'>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref='level' />
+				<xs:element ref='appender-ref' minOccurs='0' maxOccurs='unbounded' />
+				<xs:element ref='param' minOccurs='0' maxOccurs='unbounded' />
+			</xs:sequence>
+			<xs:attribute name='name' use='required' />
+			<xs:attribute name='additivity' />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='level'>
+		<xs:complexType>
+			<xs:attribute name='value' use='required' />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='appender-ref'>
+		<xs:complexType>
+			<xs:attribute name='ref' use='required' />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='param'>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref='param' minOccurs='0' maxOccurs='unbounded' />
+			</xs:sequence>
+			<xs:attribute name='name' use='required' />
+			<xs:attribute name='value' />
+			<xs:attribute name='type' />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='renderer'>
+		<xs:complexType>
+			<xs:attribute name='renderingClass' use='required' />
+			<xs:attribute name='renderedClass' use='required' />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name='layout'>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref='param' minOccurs='0' maxOccurs='unbounded' />
+			</xs:sequence>
+			<xs:attribute name='type' use='required' />
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>
