@@ -18,7 +18,6 @@ typedef struct
   CMultiSoundTouch* resampler;
   CCritSec* sampleQueueLock;
   CCritSec* sampleOutQueueLock;
-  CCritSec* flushReceiveLock;
   std::vector<IMediaSample*>* sampleQueue;
   std::vector<IMediaSample*>* sampleOutQueue;
   HANDLE sampleArrivedEvent;
@@ -137,12 +136,10 @@ private:
 
   short m_tempBuffer[65536]; // TODO make dynamic?
   bool  m_bUseThreads;
+  bool  m_bFlushSamples;
 
   std::vector<IMediaSample*> m_sampleQueue;
   std::vector<IMediaSample*> m_sampleOutQueue;
   CCritSec m_sampleQueueLock;
   CCritSec m_sampleOutQueueLock;
-
-  CCritSec m_flushReceiveLock;
-  CCritSec m_flushOutputLock;
 };

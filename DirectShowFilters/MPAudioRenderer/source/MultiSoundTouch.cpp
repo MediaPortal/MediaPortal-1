@@ -132,7 +132,7 @@ static DWORD WINAPI ResampleThread(LPVOID lpParameter)
           outSample->SetActualDataLength(sampleLength);
 
           { // lock that the playback thread wont access the queue at the same time
-            CAutoLock cRendererLock(data->sampleOutQueueLock);
+            CAutoLock cOutputQueueLock(data->sampleOutQueueLock);
             data->sampleOutQueue->push_back(outSample);
           }
         }
@@ -150,6 +150,7 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
 , m_Streams(NULL)
 , m_nStreamCount(0)
 , m_bUseThreads(pUseThreads)
+, m_bFlushSamples(false)
 {
   // Use separate thread per channnel pair?
   if (m_bUseThreads)
@@ -163,7 +164,6 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
 
     m_ThreadData.buffer = &m_tempBuffer[0];
     m_ThreadData.resampler = this;
-    m_ThreadData.flushReceiveLock = &m_flushReceiveLock;
     m_ThreadData.sampleQueueLock = &m_sampleQueueLock;
     m_ThreadData.sampleOutQueueLock = &m_sampleOutQueueLock;
     m_ThreadData.sampleQueue = &m_sampleQueue;
@@ -183,6 +183,12 @@ CMultiSoundTouch::~CMultiSoundTouch()
   //CloseHandle(m_hWaitThreadToExitEvent);
   //CloseHandle(m_hStopThreadEvent);
 
+  for(int i = 0; i < m_sampleQueue.size(); i++)
+  {
+    m_sampleQueue[i]->Release();
+  }
+  m_sampleQueue.clear();
+
   setChannels(0);
 }
 
@@ -201,24 +207,7 @@ DEFINE_STREAM_FUNC(clear,,)
 // TODO: "unpack" the macros so ::flush can handle this as well
 void CMultiSoundTouch::FlushQueues()
 {
-  // Hold locks as short time as possible
-  /*{
-    CAutoLock cFlushLock(&m_flushReceiveLock);
-    for(int i = 0; i < m_sampleQueue.size(); i++)
-    {
-      m_sampleQueue[i]->Release();
-    }
-    m_sampleQueue.clear();
-  }
-
-  {
-    CAutoLock cFlushLock(&m_flushOutputLock);
-    for(int i = 0; i < m_sampleOutQueue.size(); i++)
-    {
-      m_sampleOutQueue[i]->Release();
-    }
-    m_sampleQueue.clear();
-  }*/
+  m_bFlushSamples = true;
 }
 
 BOOL CMultiSoundTouch::setSetting(int settingId, int value)
@@ -310,6 +299,16 @@ bool CMultiSoundTouch::processSample(IMediaSample *pMediaSample)
 {
   CAutoLock cRendererLock(&m_sampleQueueLock);
   
+  if (m_bFlushSamples)
+  {
+    m_bFlushSamples = false;
+    for(int i = 0; i < m_sampleQueue.size(); i++)
+    {
+      m_sampleQueue[i]->Release();
+    }
+    m_sampleQueue.clear();
+  }
+    
   pMediaSample->AddRef();
   m_sampleQueue.push_back(pMediaSample);
 
@@ -362,10 +361,8 @@ uint CMultiSoundTouch::receiveSamples(short **outBuffer, uint maxSamples)
   //  return 0;
 
   IMediaSample* sample = NULL;
-  
-  // Try to minimize the time the whole sample queue is locked. 
-  // Flushing is not as time critical
-  //CAutoLock flushLock(&m_flushOutputLock);
+ 
+
 
   {
     // Fetch one sample
