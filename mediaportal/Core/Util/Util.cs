@@ -422,7 +422,7 @@ namespace MediaPortal.Util
           return false;
         string extensionFile = Path.GetExtension(strPath).ToLower();
 
-        if(extensionFile == ".ts")
+        if (extensionFile == ".ts")
         {
           // Forced check to avoid users messed configuration ( .ts remove from Videos extensions list)
           return true;
@@ -664,8 +664,16 @@ namespace MediaPortal.Util
             createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
           }
 
-          Uri file = new Uri(item.Path);
-          if (IsVideo(item.Path) && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()) && (file.IsUnc || file.IsFile))
+          bool isLocal = false;
+          if (!String.IsNullOrEmpty(item.Path) && Uri.IsWellFormedUriString(item.Path, UriKind.RelativeOrAbsolute))
+          {
+            Uri file = new Uri(item.Path);
+            if (file.IsUnc || file.IsFile)
+            {
+              isLocal = true;
+            }
+          }
+          if (isLocal && IsVideo(item.Path) && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()))
           {
             strThumb = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(item.Path));
             if (File.Exists(strThumb))
