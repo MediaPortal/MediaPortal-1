@@ -85,7 +85,7 @@ namespace TvLibrary
     /// <summary>
     /// Disposes a object if possible.
     /// </summary>
-    /// <param name="o">IDisposable to dispose</param>
+    /// <param name="oDisp">IDisposable to dispose</param>
     public static void Dispose(System.IDisposable oDisp)
     {
       if (oDisp != null)
