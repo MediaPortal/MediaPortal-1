@@ -971,11 +971,16 @@ HRESULT CMPAudioRenderer::WriteSampleToDSBuffer(IMediaSample *pMediaSample, bool
     CAutoLock cAutoLock(&m_csResampleLock);
 	
     int nBytePerSample = m_pWaveFileFormat->nBlockAlign;
-    m_pSoundTouch->putSamples((const short*)pMediaBuffer, lSize / nBytePerSample);
-    //Log("Before resample: lSize=%d, nBytePerSample=%d", lSize, nBytePerSample);
-    lSize = m_pSoundTouch->numSamples() * nBytePerSample;
-    mediaBufferResult = (BYTE*)malloc(lSize);
-    lSize = m_pSoundTouch->receiveSamples((short**)&mediaBufferResult, lSize / nBytePerSample) * nBytePerSample;
+
+    if (m_bUseThreads)
+    {
+      m_pSoundTouch->processSample(pMediaSample);
+    }
+    else
+    {
+      m_pSoundTouch->putSamples((const short*)pMediaBuffer, lSize / nBytePerSample);
+    }
+    lSize = m_pSoundTouch->receiveSamples((short**)&mediaBufferResult, 0) * nBytePerSample;
     pMediaBuffer = mediaBufferResult;
   }
 
@@ -1134,7 +1139,7 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
       m_pSoundTouch->putSamples((const short*)pMediaBuffer, lSize / nBytePerSample);    
     }
 
-    lResampledSize = m_pSoundTouch->receiveSamples((short**)&mediaBufferResult, m_pSoundTouch->numSamples() / nBytePerSample) * nBytePerSample;
+    lResampledSize = m_pSoundTouch->receiveSamples((short**)&mediaBufferResult, 0) * nBytePerSample;
     if (lResampledSize == 0)
     {
       return S_OK; // No samples to be rendered 
