@@ -1208,6 +1208,7 @@ public class MediaPortalApp : D3DApp, IRender
       // we only dispose the DB connection if the DB path is remote.      
       // since local db's have no problems.
       DisposeDBs();
+      VolumeHandler.Dispose();
       Log.Info("Main: OnSuspend - Done");
     }
   }

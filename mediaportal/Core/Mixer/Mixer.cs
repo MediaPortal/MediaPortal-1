@@ -65,6 +65,8 @@ namespace MediaPortal.Mixer
       _mixerEventListener.ControlChanged -= new MixerEventHandler(OnControlChanged);
 
       Close();
+      _mixerEventListener.DestroyHandle();
+      _mixerEventListener = null;
     }
 
     public void Open()
