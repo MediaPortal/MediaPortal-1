@@ -96,23 +96,29 @@ namespace SetupTv.Sections
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
-      ListView.SelectedListViewItemCollection selectedItems = mpListViewChannels.SelectedItems;
-      TvBusinessLayer layer = new TvBusinessLayer();
-      foreach (ListViewItem item in selectedItems)
+      try
       {
-        Channel channel = (Channel)item.Tag;
-        ChannelMap map = layer.MapChannelToCard(card, channel, mpCheckBoxMapForEpgOnly.Checked);
-        mpListViewChannels.Items.Remove(item);
-        string displayName = channel.DisplayName;
-        if (mpCheckBoxMapForEpgOnly.Checked)
-          displayName = channel.DisplayName + " (EPG Only)";
-        ListViewItem newItem = mpListViewMapped.Items.Add(displayName, item.ImageIndex);
-        newItem.Tag = map;
+        ListView.SelectedListViewItemCollection selectedItems = mpListViewChannels.SelectedItems;
+        TvBusinessLayer layer = new TvBusinessLayer();
+        foreach (ListViewItem item in selectedItems)
+        {
+          Channel channel = (Channel)item.Tag;
+          ChannelMap map = layer.MapChannelToCard(card, channel, mpCheckBoxMapForEpgOnly.Checked);
+          mpListViewChannels.Items.Remove(item);
+          string displayName = channel.DisplayName;
+          if (mpCheckBoxMapForEpgOnly.Checked)
+            displayName = channel.DisplayName + " (EPG Only)";
+          ListViewItem newItem = mpListViewMapped.Items.Add(displayName, item.ImageIndex);
+          newItem.Tag = map;
+        }
+        mpListViewMapped.Sort();
+        dlg.Close();
       }
-      mpListViewMapped.Sort();
-      dlg.Close();
-      mpListViewChannels.EndUpdate();
-      mpListViewMapped.EndUpdate();
+      finally
+      {
+        mpListViewChannels.EndUpdate();
+        mpListViewMapped.EndUpdate();
+      }
       //DatabaseManager.Instance.SaveChanges();
     }
 
@@ -125,22 +131,28 @@ namespace SetupTv.Sections
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
 
-      ListView.SelectedListViewItemCollection selectedItems = mpListViewMapped.SelectedItems;
-
-      foreach (ListViewItem item in selectedItems)
+      try
       {
-        ChannelMap map = (ChannelMap)item.Tag;
-        mpListViewMapped.Items.Remove(item);
-        Channel referencedChannel = map.ReferencedChannel();
-        ListViewItem newItem = mpListViewChannels.Items.Add(referencedChannel.DisplayName, item.ImageIndex);
-        newItem.Tag = referencedChannel;
-        map.Remove();
+        ListView.SelectedListViewItemCollection selectedItems = mpListViewMapped.SelectedItems;
+
+        foreach (ListViewItem item in selectedItems)
+        {
+          ChannelMap map = (ChannelMap)item.Tag;
+          mpListViewMapped.Items.Remove(item);
+          Channel referencedChannel = map.ReferencedChannel();
+          ListViewItem newItem = mpListViewChannels.Items.Add(referencedChannel.DisplayName, item.ImageIndex);
+          newItem.Tag = referencedChannel;
+          map.Remove();
+        }
+        mpListViewChannels.Sort();
+        mpListViewMapped.Sort();
+        dlg.Close();
       }
-      mpListViewChannels.Sort();
-      mpListViewMapped.Sort();
-      dlg.Close();
-      mpListViewChannels.EndUpdate();
-      mpListViewMapped.EndUpdate();
+      finally
+      {
+        mpListViewChannels.EndUpdate();
+        mpListViewMapped.EndUpdate();
+      }
       // DatabaseManager.Instance.SaveChanges();
     }
 
@@ -150,86 +162,93 @@ namespace SetupTv.Sections
 
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
-      mpListViewMapped.Items.Clear();
-      mpListViewChannels.Items.Clear();
-
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
-      sb.AddOrderByField(true, "sortOrder");
-      SqlStatement stmt = sb.GetStatement(true);
-      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
-
-      Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
-      IList<ChannelMap> maps = card.ReferringChannelMap();
-
-      // get cardtype, dvb, analogue etc.		
-      CardType cardType = RemoteControl.Instance.Type(card.IdCard);
-      //Card card = Card.Retrieve(card.IdCard);
-      TvBusinessLayer layer = new TvBusinessLayer();
-      bool enableDVBS2 = (layer.GetSetting("dvbs" + card.IdCard + "enabledvbs2", "false").Value == "true");
-
-
-      List<ListViewItem> items = new List<ListViewItem>();
-      foreach (ChannelMap map in maps)
+      try
       {
-        Channel channel = null;
-        try
+        mpListViewMapped.Items.Clear();
+        mpListViewChannels.Items.Clear();
+
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+        sb.AddOrderByField(true, "sortOrder");
+        SqlStatement stmt = sb.GetStatement(true);
+        IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
+
+        Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
+        IList<ChannelMap> maps = card.ReferringChannelMap();
+
+        // get cardtype, dvb, analogue etc.		
+        CardType cardType = RemoteControl.Instance.Type(card.IdCard);
+        //Card card = Card.Retrieve(card.IdCard);
+        TvBusinessLayer layer = new TvBusinessLayer();
+        bool enableDVBS2 = (layer.GetSetting("dvbs" + card.IdCard + "enabledvbs2", "false").Value == "true");
+
+
+        List<ListViewItem> items = new List<ListViewItem>();
+        foreach (ChannelMap map in maps)
         {
-          channel = map.ReferencedChannel();
-        }
-        catch (Exception) { }
-        if (channel == null)
-          continue;
-        if (channel.IsTv == false)
-          continue;
-
-
-        List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
-        bool foundValidTuningDetail = tuningDetails.Count > 0;
-        if (foundValidTuningDetail)
-        {
-          int imageIndex = GetImageIndex(tuningDetails);
-          string displayName = channel.DisplayName;
-          if (map.EpgOnly)
-            displayName = channel.DisplayName + " (EPG Only)";
-          ListViewItem item = new ListViewItem(displayName, imageIndex);
-          item.Tag = map;
-          items.Add(item);
-
-          foreach (Channel ch in channels)
+          Channel channel = null;
+          try
           {
-            if (ch.IdChannel == channel.IdChannel)
+            channel = map.ReferencedChannel();
+          }
+          catch (Exception) { }
+          if (channel == null)
+            continue;
+          if (channel.IsTv == false)
+            continue;
+
+
+          List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
+          bool foundValidTuningDetail = tuningDetails.Count > 0;
+          if (foundValidTuningDetail)
+          {
+            int imageIndex = GetImageIndex(tuningDetails);
+            string displayName = channel.DisplayName;
+            if (map.EpgOnly)
+              displayName = channel.DisplayName + " (EPG Only)";
+            ListViewItem item = new ListViewItem(displayName, imageIndex);
+            item.Tag = map;
+            items.Add(item);
+
+            foreach (Channel ch in channels)
             {
-              //No risk of concurrent modification so remove it directly.
-              channels.Remove(ch);
-              break;
+              if (ch.IdChannel == channel.IdChannel)
+              {
+                //No risk of concurrent modification so remove it directly.
+                channels.Remove(ch);
+                break;
+              }
             }
           }
-        } else
-        {
-          map.Delete();
+          else
+          {
+            map.Delete();
+          }
         }
+        mpListViewMapped.Items.AddRange(items.ToArray());
+        items = new List<ListViewItem>();
+        foreach (Channel channel in channels)
+        {
+          if (channel.IsTv == false)
+            continue;
+          List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
+          // only add channel that is tuneable on the device selected.
+          bool foundValidTuningDetail = tuningDetails.Count > 0;
+          if (foundValidTuningDetail)
+          {
+            int imageIndex = GetImageIndex(tuningDetails);
+            ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
+            item.Tag = channel;
+            items.Add(item);
+          }
+        }
+        mpListViewChannels.Items.AddRange(items.ToArray());
+        mpListViewChannels.Sort();
       }
-      mpListViewMapped.Items.AddRange(items.ToArray());
-      items = new List<ListViewItem>();
-      foreach (Channel channel in channels)
+      finally
       {
-        if (channel.IsTv == false)
-          continue;
-        List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
-        // only add channel that is tuneable on the device selected.
-        bool foundValidTuningDetail = tuningDetails.Count > 0;
-        if (foundValidTuningDetail)
-        {
-          int imageIndex = GetImageIndex(tuningDetails);
-          ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
-          item.Tag = channel;
-          items.Add(item);
-        }
+        mpListViewChannels.EndUpdate();
+        mpListViewMapped.EndUpdate();
       }
-      mpListViewChannels.Items.AddRange(items.ToArray());
-      mpListViewChannels.Sort();
-      mpListViewChannels.EndUpdate();
-      mpListViewMapped.EndUpdate();
     }
 
     private void mpListViewChannels_ColumnClick(object sender, ColumnClickEventArgs e)

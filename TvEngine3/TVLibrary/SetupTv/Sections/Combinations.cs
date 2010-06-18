@@ -103,93 +103,105 @@ namespace SetupTv.Sections
     private void mpComboBoxCard_SelectedIndexChanged(object sender, EventArgs e)
     {
       mpListViewChannels.BeginUpdate();
-      mpListViewChannels.Items.Clear();
-      mpListViewMapped.Items.Clear();
-
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-      sb.AddOrderByField(true, "sortOrder");
-      CardInfo cardInfo = (CardInfo)mpComboBoxCard.SelectedItem;
-     
-      Card card = cardInfo.Card;
-      CardType cardType = cards[card.IdCard];
-      IList<ChannelMap> maps = card.ReferringChannelMap();
-
-
-      List<ListViewItem> items = new List<ListViewItem>();
-      foreach (ChannelMap map in maps)
+      try
       {
-        Channel channel = null;
-        try
+        mpListViewChannels.Items.Clear();
+        mpListViewMapped.Items.Clear();
+
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
+        sb.AddOrderByField(true, "sortOrder");
+        CardInfo cardInfo = (CardInfo)mpComboBoxCard.SelectedItem;
+
+        Card card = cardInfo.Card;
+        CardType cardType = cards[card.IdCard];
+        IList<ChannelMap> maps = card.ReferringChannelMap();
+
+
+        List<ListViewItem> items = new List<ListViewItem>();
+        foreach (ChannelMap map in maps)
         {
-          channel = map.ReferencedChannel();
+          Channel channel = null;
+          try
+          {
+            channel = map.ReferencedChannel();
+          }
+          catch (Exception) {}
+          if (channel == null)
+            continue;
+          if (channel.IsTv == false)
+            continue;
+          TvBusinessLayer layer = new TvBusinessLayer();
+          bool enableDVBS2 = (layer.GetSetting("dvbs" + card.IdCard + "enabledvbs2", "false").Value == "true");
+          List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
+          int imageIndex = GetImageIndex(tuningDetails);
+          ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
+          item.Tag = channel;
+          items.Add(item);
         }
-        catch (Exception) {}
-        if (channel == null)
-          continue;
-        if (channel.IsTv == false)
-          continue;
-        TvBusinessLayer layer = new TvBusinessLayer();
-        bool enableDVBS2 = (layer.GetSetting("dvbs" + card.IdCard + "enabledvbs2", "false").Value == "true");
-        List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
-        int imageIndex = GetImageIndex(tuningDetails);
-        ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
-        item.Tag = channel;
-        items.Add(item);
+        mpListViewChannels.Items.AddRange(items.ToArray());
+        mpListViewChannels.Sort();
       }
-      mpListViewChannels.Items.AddRange(items.ToArray());
-      mpListViewChannels.Sort();
-      mpListViewChannels.EndUpdate();
+      finally
+      {
+        mpListViewChannels.EndUpdate();
+      }
     }
 
     private void mpListViewChannels_SelectedIndexChanged(object sender, EventArgs e)
     {
       mpListViewMapped.BeginUpdate();
-      mpListViewMapped.Items.Clear();
-      if (mpListViewChannels.SelectedIndices == null)
-        return;
-      if (mpListViewChannels.SelectedIndices.Count != 1)
-        return;
-      Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
-      ListViewItem selectedItem = mpListViewChannels.Items[mpListViewChannels.SelectedIndices[0]];
-      Channel selectedChannel = (Channel)selectedItem.Tag;
-      IList<Channel> allChannels = Channel.ListAll();
-      List<ListViewItem> items = new List<ListViewItem>();
-      NotifyForm dlg = new NotifyForm("Searching for Similar Channels...",
-                                      "This can take some time\n\nPlease be patient...");
-      dlg.Show(this);
-      dlg.WaitForDisplay();
-      foreach (Channel channel in allChannels)
+      try
       {
-        if (channel.IsTv == false)
-          continue;
-        
-        bool isMapped = false;
-        IList<ChannelMap> list = channel.ReferringChannelMap();
-        foreach (ChannelMap map in list)
+        mpListViewMapped.Items.Clear();
+        if (mpListViewChannels.SelectedIndices == null)
+          return;
+        if (mpListViewChannels.SelectedIndices.Count != 1)
+          return;
+        Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
+        ListViewItem selectedItem = mpListViewChannels.Items[mpListViewChannels.SelectedIndices[0]];
+        Channel selectedChannel = (Channel)selectedItem.Tag;
+        IList<Channel> allChannels = Channel.ListAll();
+        List<ListViewItem> items = new List<ListViewItem>();
+        NotifyForm dlg = new NotifyForm("Searching for Similar Channels...",
+                                        "This can take some time\n\nPlease be patient...");
+        dlg.Show(this);
+        dlg.WaitForDisplay();
+        foreach (Channel channel in allChannels)
         {
-          if (map.IdCard == card.IdCard)
+          if (channel.IsTv == false)
+            continue;
+
+          bool isMapped = false;
+          IList<ChannelMap> list = channel.ReferringChannelMap();
+          foreach (ChannelMap map in list)
           {
-            isMapped = true;
-            break;
+            if (map.IdCard == card.IdCard)
+            {
+              isMapped = true;
+              break;
+            }
           }
+          if (isMapped)
+            continue;
+
+          Levenstein comparer = new Levenstein();
+          float result = comparer.getSimilarity(selectedChannel.DisplayName, channel.DisplayName);
+
+          IList<TuningDetail> details = channel.ReferringTuningDetail();
+          int imageIndex = GetImageIndex(details);
+          ListViewItem item = new ListViewItem((result * 100f).ToString("f2") + "%", imageIndex);
+          item.Tag = channel;
+          item.SubItems.Add(channel.DisplayName);
+          items.Add(item);
         }
-        if (isMapped)
-          continue;
-
-        Levenstein comparer = new Levenstein();
-        float result = comparer.getSimilarity(selectedChannel.DisplayName, channel.DisplayName);
-
-        IList<TuningDetail> details = channel.ReferringTuningDetail();
-        int imageIndex = GetImageIndex(details);
-        ListViewItem item = new ListViewItem((result * 100f).ToString("f2") + "%", imageIndex);
-        item.Tag = channel;
-        item.SubItems.Add(channel.DisplayName);
-        items.Add(item);
+        mpListViewMapped.Items.AddRange(items.ToArray());
+        mpListViewMapped.Sort();
+        dlg.Close();
       }
-      mpListViewMapped.Items.AddRange(items.ToArray());
-      mpListViewMapped.Sort();
-      mpListViewMapped.EndUpdate();
-      dlg.Close();
+      finally
+      {
+        mpListViewMapped.EndUpdate();
+      }
     }
 
     private void btnCombine_Click(object sender, EventArgs e)

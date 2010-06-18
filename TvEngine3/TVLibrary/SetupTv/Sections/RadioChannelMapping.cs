@@ -101,23 +101,29 @@ namespace SetupTv.Sections
 
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
-      ListView.SelectedListViewItemCollection selectedItems = mpListViewChannels.SelectedItems;
-      TvBusinessLayer layer = new TvBusinessLayer();
-      foreach (ListViewItem item in selectedItems)
+      try
       {
-        Channel channel = (Channel)item.Tag;
-        ChannelMap map = layer.MapChannelToCard(card, channel, false);
-        mpListViewChannels.Items.Remove(item);
-        int imageIndex = 0;
-        if (channel.FreeToAir)
-          imageIndex = 3;
+        ListView.SelectedListViewItemCollection selectedItems = mpListViewChannels.SelectedItems;
+        TvBusinessLayer layer = new TvBusinessLayer();
+        foreach (ListViewItem item in selectedItems)
+        {
+          Channel channel = (Channel)item.Tag;
+          ChannelMap map = layer.MapChannelToCard(card, channel, false);
+          mpListViewChannels.Items.Remove(item);
+          int imageIndex = 0;
+          if (channel.FreeToAir)
+            imageIndex = 3;
 
-        ListViewItem newItem = mpListViewMapped.Items.Add(channel.DisplayName, imageIndex);
-        newItem.Tag = map;
+          ListViewItem newItem = mpListViewMapped.Items.Add(channel.DisplayName, imageIndex);
+          newItem.Tag = map;
+        }
+        dlg.Close();
       }
-      dlg.Close();
-      mpListViewChannels.EndUpdate();
-      mpListViewMapped.EndUpdate();
+      finally
+      {
+        mpListViewChannels.EndUpdate();
+        mpListViewMapped.EndUpdate();
+      }
     }
 
 
@@ -129,27 +135,33 @@ namespace SetupTv.Sections
       dlg.WaitForDisplay();
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
-      ListView.SelectedListViewItemCollection selectedItems = mpListViewMapped.SelectedItems;
-
-      foreach (ListViewItem item in selectedItems)
+      try
       {
-        ChannelMap map = (ChannelMap)item.Tag;
-        mpListViewMapped.Items.Remove(item);
+        ListView.SelectedListViewItemCollection selectedItems = mpListViewMapped.SelectedItems;
+
+        foreach (ListViewItem item in selectedItems)
+        {
+          ChannelMap map = (ChannelMap)item.Tag;
+          mpListViewMapped.Items.Remove(item);
 
 
-        int imageIndex = 3;
-        if (map.ReferencedChannel().FreeToAir == false)
-          imageIndex = 0;
-        ListViewItem newItem = mpListViewChannels.Items.Add(map.ReferencedChannel().DisplayName, imageIndex);
-        newItem.Tag = map.ReferencedChannel();
+          int imageIndex = 3;
+          if (map.ReferencedChannel().FreeToAir == false)
+            imageIndex = 0;
+          ListViewItem newItem = mpListViewChannels.Items.Add(map.ReferencedChannel().DisplayName, imageIndex);
+          newItem.Tag = map.ReferencedChannel();
 
 
-        map.Remove();
+          map.Remove();
+        }
+        mpListViewChannels.Sort();
+        dlg.Close();
       }
-      mpListViewChannels.Sort();
-      dlg.Close();
-      mpListViewChannels.EndUpdate();
-      mpListViewMapped.EndUpdate();
+      finally
+      {
+        mpListViewChannels.EndUpdate();
+        mpListViewMapped.EndUpdate();
+      }
     }
 
 
@@ -157,114 +169,120 @@ namespace SetupTv.Sections
     {
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
-      mpListViewMapped.Items.Clear();
-      mpListViewChannels.Items.Clear();
-
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-      sb.AddOrderByField(true, "sortOrder");
-      SqlStatement stmt = sb.GetStatement(true);
-      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
-
-      Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
-      IList<ChannelMap> maps = card.ReferringChannelMap();
-
-      // get cardtype, dvb, analogue etc.		
-      CardType cardType = RemoteControl.Instance.Type(card.IdCard);
-      TvBusinessLayer layer = new TvBusinessLayer();
-      bool enableDVBS2 = (layer.GetSetting("dvbs" + card.IdCard + "enabledvbs2", "false").Value == "true");
-
-      List<ListViewItem> items = new List<ListViewItem>();
-      foreach (ChannelMap map in maps)
+      try
       {
-        Channel channel = map.ReferencedChannel();
-        if (!channel.IsRadio)
-          continue;
-        int imageIndex = channel.FreeToAir ? 3 : 0;
-        ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
-        item.Tag = map;
-        items.Add(item);
-        bool remove = false;
-        foreach (Channel ch in channels)
+        mpListViewMapped.Items.Clear();
+        mpListViewChannels.Items.Clear();
+
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+        sb.AddOrderByField(true, "sortOrder");
+        SqlStatement stmt = sb.GetStatement(true);
+        IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
+
+        Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
+        IList<ChannelMap> maps = card.ReferringChannelMap();
+
+        // get cardtype, dvb, analogue etc.		
+        CardType cardType = RemoteControl.Instance.Type(card.IdCard);
+        TvBusinessLayer layer = new TvBusinessLayer();
+        bool enableDVBS2 = (layer.GetSetting("dvbs" + card.IdCard + "enabledvbs2", "false").Value == "true");
+
+        List<ListViewItem> items = new List<ListViewItem>();
+        foreach (ChannelMap map in maps)
         {
-          if (ch.IdChannel == channel.IdChannel)
+          Channel channel = map.ReferencedChannel();
+          if (!channel.IsRadio)
+            continue;
+          int imageIndex = channel.FreeToAir ? 3 : 0;
+          ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
+          item.Tag = map;
+          items.Add(item);
+          bool remove = false;
+          foreach (Channel ch in channels)
           {
-            remove = true;
-            break;
+            if (ch.IdChannel == channel.IdChannel)
+            {
+              remove = true;
+              break;
+            }
+          }
+          if (remove)
+          {
+            channels.Remove(channel);
           }
         }
-        if (remove)
-        {
-          channels.Remove(channel);
-        }
-      }
-      mpListViewMapped.Items.AddRange(items.ToArray());
+        mpListViewMapped.Items.AddRange(items.ToArray());
 
-      items = new List<ListViewItem>();
-      foreach (Channel channel in channels)
+        items = new List<ListViewItem>();
+        foreach (Channel channel in channels)
+        {
+          if (!channel.IsRadio)
+            continue;
+
+          // only add channels that is tuneable on the device selected.
+          bool foundValidTuningDetail = false;
+          foreach (TuningDetail tDetail in channel.ReferringTuningDetail())
+          {
+            switch (cardType)
+            {
+              case CardType.Analog:
+                foundValidTuningDetail = (tDetail.ChannelType == 0);
+                break;
+
+              case CardType.Atsc:
+                foundValidTuningDetail = (tDetail.ChannelType == 1);
+                break;
+
+              case CardType.DvbC:
+                foundValidTuningDetail = (tDetail.ChannelType == 2);
+                break;
+
+              case CardType.DvbS:
+
+                if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
+                {
+                  continue;
+                }
+
+                foundValidTuningDetail = (tDetail.ChannelType == 3);
+                break;
+
+              case CardType.DvbT:
+                foundValidTuningDetail = (tDetail.ChannelType == 4);
+                break;
+
+              case CardType.RadioWebStream:
+                foundValidTuningDetail = (tDetail.ChannelType == 5);
+                break;
+
+              default:
+                foundValidTuningDetail = true;
+                break;
+            }
+
+            if (foundValidTuningDetail)
+            {
+              break;
+            }
+          }
+          if (!foundValidTuningDetail)
+          {
+            continue;
+          }
+
+          int imageIndex = channel.FreeToAir ? 3 : 0;
+          ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
+          item.Tag = channel;
+          items.Add(item);
+        }
+        mpListViewChannels.Items.AddRange(items.ToArray());
+        mpListViewChannels.Sort();
+      }
+      finally
       {
-        if (!channel.IsRadio)
-          continue;
-
-        // only add channels that is tuneable on the device selected.
-        bool foundValidTuningDetail = false;
-        foreach (TuningDetail tDetail in channel.ReferringTuningDetail())
-        {
-          switch (cardType)
-          {
-            case CardType.Analog:
-              foundValidTuningDetail = (tDetail.ChannelType == 0);
-              break;
-
-            case CardType.Atsc:
-              foundValidTuningDetail = (tDetail.ChannelType == 1);
-              break;
-
-            case CardType.DvbC:
-              foundValidTuningDetail = (tDetail.ChannelType == 2);
-              break;
-
-            case CardType.DvbS:
-
-              if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
-              {
-                continue;
-              }
-
-              foundValidTuningDetail = (tDetail.ChannelType == 3);
-              break;
-
-            case CardType.DvbT:
-              foundValidTuningDetail = (tDetail.ChannelType == 4);
-              break;
-
-            case CardType.RadioWebStream:
-              foundValidTuningDetail = (tDetail.ChannelType == 5);
-              break;
-
-            default:
-              foundValidTuningDetail = true;
-              break;
-          }
-
-          if (foundValidTuningDetail)
-          {
-            break;
-          }
-        }
-        if (!foundValidTuningDetail)
-        {
-          continue;
-        }
-
-        int imageIndex = channel.FreeToAir ? 3 : 0;
-        ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
-        item.Tag = channel;
-        items.Add(item);
+        mpListViewChannels.EndUpdate();
+        mpListViewMapped.EndUpdate();
       }
-      mpListViewChannels.Items.AddRange(items.ToArray());
-      mpListViewChannels.Sort();
-      mpListViewChannels.EndUpdate();
-      mpListViewMapped.EndUpdate();
     }
 
     private void mpListViewChannels_SelectedIndexChanged(object sender, EventArgs e) {}

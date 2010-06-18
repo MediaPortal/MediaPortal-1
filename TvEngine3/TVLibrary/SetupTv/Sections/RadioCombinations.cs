@@ -106,32 +106,38 @@ namespace SetupTv.Sections
     private void mpComboBoxCard_SelectedIndexChanged(object sender, EventArgs e)
     {
       mpListViewChannels.BeginUpdate();
-      mpListViewChannels.Items.Clear();
-      mpListViewMapped.Items.Clear();
-
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-      sb.AddOrderByField(true, "sortOrder");
-
-      Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
-      IList<ChannelMap> maps = card.ReferringChannelMap();
-
-
-      List<ListViewItem> items = new List<ListViewItem>();
-      foreach (ChannelMap map in maps)
+      try
       {
-        Channel channel = map.ReferencedChannel();
-        if (channel.IsRadio == false)
-          continue;
-        int imageIndex = 3;
-        if (channel.FreeToAir == false)
-          imageIndex = 0;
-        ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
-        item.Tag = channel;
-        items.Add(item);
+        mpListViewChannels.Items.Clear();
+        mpListViewMapped.Items.Clear();
+
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
+        sb.AddOrderByField(true, "sortOrder");
+
+        Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
+        IList<ChannelMap> maps = card.ReferringChannelMap();
+
+
+        List<ListViewItem> items = new List<ListViewItem>();
+        foreach (ChannelMap map in maps)
+        {
+          Channel channel = map.ReferencedChannel();
+          if (channel.IsRadio == false)
+            continue;
+          int imageIndex = 3;
+          if (channel.FreeToAir == false)
+            imageIndex = 0;
+          ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
+          item.Tag = channel;
+          items.Add(item);
+        }
+        mpListViewChannels.Items.AddRange(items.ToArray());
+        mpListViewChannels.Sort();
       }
-      mpListViewChannels.Items.AddRange(items.ToArray());
-      mpListViewChannels.EndUpdate();
-      mpListViewChannels.Sort();
+      finally
+      {
+        mpListViewChannels.EndUpdate();        
+      }
     }
 
     private void mpListViewChannels_SelectedIndexChanged(object sender, EventArgs e)

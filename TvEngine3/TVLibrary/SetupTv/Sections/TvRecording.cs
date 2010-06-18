@@ -770,10 +770,10 @@ namespace SetupTv.Sections
     /// <param name="FoundTags"></param>
     private void AddTagFiles(Dictionary<string, MatroskaTagInfo> FoundTags)
     {
+      tvTagRecs.BeginUpdate();
       try
       {
         tvTagRecs.Nodes.Clear();
-        tvTagRecs.BeginUpdate();
         foreach (KeyValuePair<string, MatroskaTagInfo> kvp in FoundTags)
         {
           Recording TagRec = BuildRecordingFromTag(kvp.Key, kvp.Value);
@@ -822,7 +822,6 @@ namespace SetupTv.Sections
         //{
         //  MessageBox.Show(string.Format("Error sorting tag recordings: \n{0}", ex.Message));
         //}
-        tvTagRecs.EndUpdate();
         SetImportButton();
       }
       catch (Exception)
@@ -830,6 +829,10 @@ namespace SetupTv.Sections
         // just in case the GUI controls could be null due to timing problems on thread callback
         if (btnImport != null)
           btnImport.Enabled = false;
+      }
+      finally
+      {
+        tvTagRecs.EndUpdate();
       }
     }
 

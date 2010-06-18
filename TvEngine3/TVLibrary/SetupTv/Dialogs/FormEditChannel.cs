@@ -122,71 +122,77 @@ namespace SetupTv.Dialogs
     private void UpdateTuningDetailList()
     {
       mpListView1.BeginUpdate();
-      mpListView1.Items.Clear();
-      foreach (TuningDetail detail in _tuningDetails)
+      try
       {
-        int imageIndex = 1;
-        if (detail.FreeToAir == false)
-          imageIndex = 2;
-        ListViewItem item = new ListViewItem(detail.IdTuning.ToString(), imageIndex);
-        item.SubItems.Add(detail.Name);
-        item.SubItems.Add(detail.Provider);
-        string channelType = detail.ChannelType.ToString();
-        string description = "";
-        float frequency;
-        switch (detail.ChannelType)
+        mpListView1.Items.Clear();
+        foreach (TuningDetail detail in _tuningDetails)
         {
-          case 0:
-            channelType = "Analog";
-            if (detail.VideoSource == (int)AnalogChannel.VideoInputType.Tuner)
-            {
+          int imageIndex = 1;
+          if (detail.FreeToAir == false)
+            imageIndex = 2;
+          ListViewItem item = new ListViewItem(detail.IdTuning.ToString(), imageIndex);
+          item.SubItems.Add(detail.Name);
+          item.SubItems.Add(detail.Provider);
+          string channelType = detail.ChannelType.ToString();
+          string description = "";
+          float frequency;
+          switch (detail.ChannelType)
+          {
+            case 0:
+              channelType = "Analog";
+              if (detail.VideoSource == (int)AnalogChannel.VideoInputType.Tuner)
+              {
+                frequency = detail.Frequency;
+                frequency /= 1000000.0f;
+                description = String.Format("#{0} {1} MHz", detail.ChannelNumber, frequency.ToString("f2"));
+              }
+              else
+              {
+                description = detail.VideoSource.ToString();
+              }
+              break;
+            case 1:
+              channelType = "ATSC";
+              description = String.Format("{0} {1}:{2}", detail.ChannelNumber, detail.MajorChannel,
+                                          detail.MinorChannel);
+              break;
+            case 2:
+              channelType = "DVB-C";
               frequency = detail.Frequency;
-              frequency /= 1000000.0f;
-              description = String.Format("#{0} {1} MHz", detail.ChannelNumber, frequency.ToString("f2"));
-            }
-            else
-            {
-              description = detail.VideoSource.ToString();
-            }
-            break;
-          case 1:
-            channelType = "ATSC";
-            description = String.Format("{0} {1}:{2}", detail.ChannelNumber, detail.MajorChannel,
-                                        detail.MinorChannel);
-            break;
-          case 2:
-            channelType = "DVB-C";
-            frequency = detail.Frequency;
-            frequency /= 1000.0f;
-            description = String.Format("{0} MHz SR:{1}", frequency.ToString("f2"), detail.Symbolrate);
-            break;
-          case 3:
-            channelType = "DVB-S";
-            frequency = detail.Frequency;
-            frequency /= 1000.0f;
-            description = String.Format("{0} MHz {1}", frequency.ToString("f2"),
-                                        (((Polarisation)detail.Polarisation)));
-            break;
-          case 4:
-            channelType = "DVB-T";
-            frequency = detail.Frequency;
-            frequency /= 1000.0f;
-            description = String.Format("{0} MHz BW:{1}", frequency.ToString("f2"), detail.Bandwidth);
-            break;
-          case 5:
-            channelType = "Web-Stream";
-            description = detail.Url;
-            break;
-          case 7:
-            channelType = "DVB-IP";
-            description = detail.Url;
-            break;
+              frequency /= 1000.0f;
+              description = String.Format("{0} MHz SR:{1}", frequency.ToString("f2"), detail.Symbolrate);
+              break;
+            case 3:
+              channelType = "DVB-S";
+              frequency = detail.Frequency;
+              frequency /= 1000.0f;
+              description = String.Format("{0} MHz {1}", frequency.ToString("f2"),
+                                          (((Polarisation)detail.Polarisation)));
+              break;
+            case 4:
+              channelType = "DVB-T";
+              frequency = detail.Frequency;
+              frequency /= 1000.0f;
+              description = String.Format("{0} MHz BW:{1}", frequency.ToString("f2"), detail.Bandwidth);
+              break;
+            case 5:
+              channelType = "Web-Stream";
+              description = detail.Url;
+              break;
+            case 7:
+              channelType = "DVB-IP";
+              description = detail.Url;
+              break;
+          }
+          item.SubItems.Add(channelType);
+          item.SubItems.Add(description);
+          mpListView1.Items.Add(item);
         }
-        item.SubItems.Add(channelType);
-        item.SubItems.Add(description);
-        mpListView1.Items.Add(item);
       }
-      mpListView1.EndUpdate();
+      finally
+      {
+        mpListView1.EndUpdate();
+      }
     }
 
     private static long GetFrequency(string text, string precision)

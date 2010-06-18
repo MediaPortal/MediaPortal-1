@@ -348,43 +348,55 @@ namespace SetupTv.Sections
     private void buttonUtp_Click(object sender, EventArgs e)
     {
       listView1.BeginUpdate();
-      ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
-      if (indexes.Count == 0)
-        return;
-      for (int i = 0; i < indexes.Count; ++i)
+      try
       {
-        int index = indexes[i];
-        if (index > 0)
+        ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
+        if (indexes.Count == 0)
+          return;
+        for (int i = 0; i < indexes.Count; ++i)
         {
-          ListViewItem item = listView1.Items[index];
-          listView1.Items.RemoveAt(index);
-          listView1.Items.Insert(index - 1, item);
+          int index = indexes[i];
+          if (index > 0)
+          {
+            ListViewItem item = listView1.Items[index];
+            listView1.Items.RemoveAt(index);
+            listView1.Items.Insert(index - 1, item);
+          }
         }
+        ReOrder();
       }
-      ReOrder();
-      listView1.EndUpdate();
+      finally
+      {
+        listView1.EndUpdate();
+      }
     }
 
     private void buttonDown_Click(object sender, EventArgs e)
     {
       listView1.BeginUpdate();
-      ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
-      if (indexes.Count == 0)
-        return;
-      if (listView1.Items.Count < 2)
-        return;
-      for (int i = indexes.Count - 1; i >= 0; i--)
+      try
       {
-        int index = indexes[i];
-        ListViewItem item = listView1.Items[index];
-        listView1.Items.RemoveAt(index);
-        if (index + 1 < listView1.Items.Count)
-          listView1.Items.Insert(index + 1, item);
-        else
-          listView1.Items.Add(item);
+        ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
+        if (indexes.Count == 0)
+          return;
+        if (listView1.Items.Count < 2)
+          return;
+        for (int i = indexes.Count - 1; i >= 0; i--)
+        {
+          int index = indexes[i];
+          ListViewItem item = listView1.Items[index];
+          listView1.Items.RemoveAt(index);
+          if (index + 1 < listView1.Items.Count)
+            listView1.Items.Insert(index + 1, item);
+          else
+            listView1.Items.Add(item);
+        }
+        ReOrder();
       }
-      ReOrder();
-      listView1.EndUpdate();
+      finally
+      {
+        listView1.EndUpdate();
+      }
     }
 
     private void mpButtonDel_Click(object sender, EventArgs e)
