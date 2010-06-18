@@ -576,6 +576,7 @@ namespace TvPlugin
           {
             bool hasConflict = recordingSchedule.ReferringConflicts().Count > 0;
             bool isPartialRecording = false;
+            bool isSeries = (recordingSchedule.ScheduleType != (int)ScheduleRecordingType.Once);
 
             //check for partial recordings.
             if (isActualUpcomingEps && currentSchedule != null)
@@ -584,16 +585,20 @@ namespace TvPlugin
             }
             if (isPartialRecording)
             {
-              item.PinImage = hasConflict ? Thumbs.TvConflictPartialRecordingIcon : Thumbs.TvPartialRecordingIcon;
+              item.PinImage = hasConflict ? 
+                (isSeries? Thumbs.TvConflictPartialRecordingSeriesIcon : Thumbs.TvConflictPartialRecordingIcon) : 
+                (isSeries? Thumbs.TvPartialRecordingSeriesIcon : Thumbs.TvPartialRecordingIcon);
             }
             else
             {
-              item.PinImage = hasConflict ? Thumbs.TvConflictRecordingIcon : Thumbs.TvRecordingIcon;
+              item.PinImage = hasConflict ? 
+                (isSeries? Thumbs.TvConflictRecordingSeriesIcon : Thumbs.TvConflictRecordingIcon) : 
+                (isSeries? Thumbs.TvRecordingSeriesIcon : Thumbs.TvRecordingIcon);
             }
 
             if (updateCurrentProgram)
             {
-              currentProgram = episode;
+              //currentProgram = episode;
             }
             activeRecordings++;
             anyUpcomingEpisodesRecording = true;
