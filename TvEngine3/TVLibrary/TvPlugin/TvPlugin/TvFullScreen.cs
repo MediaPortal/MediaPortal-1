@@ -129,6 +129,7 @@ namespace TvPlugin
     private bool _useVMR9Zap = false;
     private bool _immediateSeekIsRelative = true;
     private int _immediateSeekValue = 10;
+    private int _channelNumberMaxLength = 3;
 
     // Tv error handling
     private TvPlugin.TVHome.ChannelErrorInfo _gotTvErrorMessage = null;
@@ -236,6 +237,7 @@ namespace TvPlugin
         //				m_iZapDelay = 1000*xmlreader.GetValueAsInt("movieplayer","zapdelay",2);
         _zapTimeOutValue = 1000 * xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5);
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
+        _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
         if (xmlreader.GetValueAsBool("mytv", "allowarzoom", true))
         {
           _allowedArModes.Add(Geometry.Type.Zoom);
@@ -2818,7 +2820,7 @@ namespace TvPlugin
         return;
       }
       TimeSpan ts = DateTime.Now - _keyPressedTimer;
-      if (ts.TotalMilliseconds >= 1000)
+      if (ts.TotalMilliseconds >= 1000 || _channelName.Length == _channelNumberMaxLength)
       {
         // change channel
         int iChannel = -1;
@@ -2864,75 +2866,13 @@ namespace TvPlugin
       if (chKey >= '0' && chKey <= '9') //Make sure it's only for the remote
       {
         _channelInputVisible = true;
-        UpdateOSD();
+        
         _keyPressedTimer = DateTime.Now;
         _channelName += chKey;
 
-        string displayedChannelName = string.Empty;
-
-        if (_byIndex)
-        {
-          int channelNr;
-          if (Int32.TryParse(_channelName, out channelNr))
-          {
-            if (channelNr > TVHome.Navigator.CurrentGroup.ReferringGroupMap().Count)
-            {
-              displayedChannelName = "---";
-            }
-            else
-            {
-              GroupMap map = (GroupMap)TVHome.Navigator.CurrentGroup.ReferringGroupMap()[channelNr - 1];
-              displayedChannelName = map.ReferencedChannel().DisplayName;
-            }
-          }
-          else
-          {
-            displayedChannelName = "---";
-          }
-        }
-        /*else
-          for (int ChannelCnt = 0; ChannelCnt < TVHome.Navigator.CurrentGroup.ReferringGroupMap().Count; ChannelCnt++)
-          {
-            GroupMap map = (GroupMap)TVHome.Navigator.CurrentGroup.ReferringGroupMap()[ChannelCnt];
-            if (map.ReferencedChannel().SortOrder == Int32.Parse(_channelName))
-            {
-              displayedChannelName = map.ReferencedChannel().Name;
-              break;
-            }
-          }*/
-        if (displayedChannelName != string.Empty)
-        {
-          //not enough room for label "Channel"
-          //msg.Label = String.Format("{0} {1} ({2})", GUILocalizeStrings.Get(602), _channelName, displayedChannelName);  // Channel
-          displayedChannelName = String.Format("{0} {1} ({2})", "", _channelName, displayedChannelName); // Channel
-        }
-        else
-        {
-          //not enough room for label "Channel"
-          //msg.Label = String.Format("{0} {1}", GUILocalizeStrings.Get(602), _channelName);  // Channel 
-          displayedChannelName = String.Format("{0} {1}", "", _channelName); // Channel
-        }
-
-        int iChannel = -1;
-        Int32.TryParse(_channelName, out iChannel);
-        if (_channelName.Length == 3)
-        {
-          // Change channel immediately          
-          if (iChannel > -1)
-          {
-            ChangeChannelNr(iChannel);
-          }
-          _channelInputVisible = false;
-          TVHome.Navigator.ZapChannelNr = -1;
-          _channelName = "";
-        }
-        else
-        {
-          if (iChannel > -1)
-          {
-            ChangeChannelNr(iChannel, true);
-          }
-        }
+        int channelNr = Int32.Parse(_channelName);
+        TVHome.Navigator.ZapChannelNr = channelNr;
+        UpdateOSD();
       }
     }
 
