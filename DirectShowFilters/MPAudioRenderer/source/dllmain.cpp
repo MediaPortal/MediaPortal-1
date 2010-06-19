@@ -195,7 +195,6 @@ HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
 {
   ULONG cbAnsi;
   ULONG cCharacters;
-  DWORD dwError;
 
   // If input is null then just return the same.
   if (pszW == NULL)
@@ -221,7 +220,7 @@ HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
   if (0 == WideCharToMultiByte(CP_ACP, 0, pszW, cCharacters, *ppszA,
     cbAnsi, NULL, NULL))
   {
-    dwError = GetLastError();
+    DWORD dwError = GetLastError();
     CoTaskMemFree(*ppszA);
     *ppszA = NULL;
     return HRESULT_FROM_WIN32(dwError);

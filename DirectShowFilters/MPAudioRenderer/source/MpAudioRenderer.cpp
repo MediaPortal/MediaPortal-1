@@ -270,7 +270,7 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
     }
   }
   
-  delete lpData;
+  delete[] lpData;
   RegCloseKey (hKey);
 }
 
@@ -504,7 +504,6 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
 	if (!pmt) return E_POINTER;
   
   HRESULT hr = S_OK;
-  int	size = 0;
   Log("SetMediaType");
 
   if (m_bUseWASAPI)
@@ -530,7 +529,7 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
   
   if (pwf)
   {
-    size = sizeof(WAVEFORMATEX) + pwf->cbSize;
+    int	size = sizeof(WAVEFORMATEX) + pwf->cbSize;
 
     m_pWaveFileFormat = (WAVEFORMATEX *)new BYTE[size];
 

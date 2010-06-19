@@ -14,7 +14,6 @@ class CMultiSoundTouch;
 
 typedef struct
 {
-  short* buffer;
   CMultiSoundTouch* resampler;
   CCritSec* sampleQueueLock;
   CCritSec* sampleOutQueueLock;
@@ -134,7 +133,6 @@ private:
 
   ThreadData m_ThreadData;
 
-  short m_tempBuffer[65536]; // TODO make dynamic?
   bool  m_bUseThreads;
   bool  m_bFlushSamples;
 
