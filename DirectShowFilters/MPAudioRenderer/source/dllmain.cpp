@@ -94,7 +94,8 @@ void LogRotate()
   TCHAR bakFileName[MAX_PATH];
   LogPath(bakFileName, "bak");
   remove(bakFileName);
-  rename(fileName, bakFileName);
+  // ignore if rename fails 
+  (void)rename(fileName, bakFileName);
 }
 
 
@@ -123,7 +124,7 @@ UINT CALLBACK LogThread(void* param)
   while ( m_bLoggerRunning ) {
     if ( m_logQueue.size() > 0 ) {
       FILE* fp = fopen(fileName,"a+");
-      if (fp!=NULL)
+      if (fp != NULL)
       {
         SYSTEMTIME systemTime;
         GetLocalTime(&systemTime);
@@ -165,16 +166,17 @@ void Log(const char *fmt, ...)
 {
   static CCritSec lock;
   va_list ap;
-  va_start(ap,fmt);
+  va_start(ap, fmt);
 
   CAutoLock logLock(&lock);
-  if (!m_hLogger) {
+  if (!m_hLogger) 
+  {
     m_bLoggerRunning = true;
     StartLogger();
   }
   char buffer[1000]; 
   int tmp;
-  va_start(ap,fmt);
+  va_start(ap, fmt);
   tmp = vsprintf(buffer, fmt, ap);
   va_end(ap); 
 
@@ -183,7 +185,7 @@ void Log(const char *fmt, ...)
   char msg[5000];
   sprintf_s(msg, 5000,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%x]%s\n",
     systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-    systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+    systemTime.wHour, systemTime.wMinute, systemTime.wSecond,
     systemTime.wMilliseconds,
     GetCurrentThreadId(),
     buffer);
@@ -248,11 +250,14 @@ void LogWaveFormat(WAVEFORMATEX* pwfx)
 
       LPOLESTR str;
       LPSTR astr;
-      str = (LPOLESTR)CoTaskMemAlloc(200);
-      StringFromGUID2(tmp->SubFormat, str, 200);
-      UnicodeToAnsi(str, &astr);
-      Log("  GUID          %s", astr);
-      CoTaskMemFree(str);
+      str = (LPOLESTR)CoTaskMemAlloc(400);
+      if (str)
+      {
+        StringFromGUID2(tmp->SubFormat, str, 200);
+        UnicodeToAnsi(str, &astr);
+        Log("  GUID          %s", astr);
+        CoTaskMemFree(str);
+      }
     }
   }
 }

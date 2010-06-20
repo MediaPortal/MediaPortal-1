@@ -44,11 +44,13 @@ DWORD WINAPI ResampleThread(LPVOID lpParameter)
   // sample allocator per thread
   // TODO: use distictive name when adding multiple threads?
 
-  CBaseAllocator* pMemAllocator = new CMemAllocator("output sample allocator", NULL, &hr);
+  IMemAllocator* pMemAllocator = new CMemAllocator("output sample allocator", NULL, &hr);
+  pMemAllocator->AddRef();
+  
   if (hr != S_OK)
   {
-    Log("Failed to create sample allocator!");
-    delete pMemAllocator;
+    Log("Resampler thread - Failed to create sample allocator!");
+    pMemAllocator->Release();
     return 0;
   }
 
@@ -56,8 +58,8 @@ DWORD WINAPI ResampleThread(LPVOID lpParameter)
   hr = pMemAllocator->Commit();
   if (hr != S_OK)
   {
-    Log("Failed to commit allocator properties!");
-    delete pMemAllocator;
+    Log("Resampler thread - Failed to commit allocator properties!");
+    pMemAllocator->Release();
     return 0;
   }
 
@@ -66,8 +68,9 @@ DWORD WINAPI ResampleThread(LPVOID lpParameter)
     // Check event for stop thread
     if (WaitForSingleObject(data->stopThreadEvent, 0) == WAIT_OBJECT_0)
     {
+      Log("Resampler thread - closing down");
+      pMemAllocator->Release();
       SetEvent(data->waitThreadToExitEvent);
-      delete pMemAllocator;
       return 0;
     }
 
@@ -78,9 +81,6 @@ DWORD WINAPI ResampleThread(LPVOID lpParameter)
         CAutoLock sampleQueueLock(data->sampleQueueLock);
         if (data->sampleQueue->empty())
         {
-          // TODO this is just a workaround for a heap corruption, ResetEvent needs to be removed completely
-          //ResetEvent(data->sampleArrivedEvent);
-
           // Actual waiting beeds to be done outside the scope of sampleQueueLock 
           // since we would be creating a deadlock otherwise 
           waitForData = true;
@@ -94,6 +94,8 @@ DWORD WINAPI ResampleThread(LPVOID lpParameter)
         DWORD result = WaitForMultipleObjects(2, handles, false, INFINITE);
         if (result == WAIT_OBJECT_0)
         {
+          Log("Resampler thread - closing down");
+          pMemAllocator->Release();
           SetEvent(data->waitThreadToExitEvent);
           return 0;
         }
@@ -104,7 +106,7 @@ DWORD WINAPI ResampleThread(LPVOID lpParameter)
         else
         {
           DWORD error = GetLastError();
-          Log("resamper thread: WaitForMultipleObjects failed: %d", error);
+          Log("Resampler thread: WaitForMultipleObjects failed: %d", error);
         }
       }
 
@@ -136,7 +138,7 @@ DWORD WINAPI ResampleThread(LPVOID lpParameter)
     {
       BYTE *pMediaBuffer = NULL;
       long size = sample->GetActualDataLength();
-      HRESULT hr = sample->GetPointer(&pMediaBuffer);
+      hr = sample->GetPointer(&pMediaBuffer);
       
       if (hr == S_OK)
       {
@@ -170,7 +172,9 @@ DWORD WINAPI ResampleThread(LPVOID lpParameter)
       sample->Release();
     }
   }
-  delete pMemAllocator;
+  
+  Log("Resampler thread - closing down");
+  pMemAllocator->Release();
   return 0;
 }
 
@@ -184,9 +188,6 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
   // Use separate thread per channnel pair?
   if (m_bUseThreads)
   {
-    DWORD threadId = 0;
-    CreateThread(0, 0, ResampleThread, (LPVOID)&m_ThreadData, 0, &threadId);
-
     m_hSampleArrivedEvent = CreateEvent(0, FALSE, FALSE, 0);
     m_hStopThreadEvent = CreateEvent(0, FALSE, FALSE, 0);
     m_hWaitThreadToExitEvent = CreateEvent(0, FALSE, FALSE, 0);
@@ -199,6 +200,9 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
     m_ThreadData.sampleArrivedEvent = m_hSampleArrivedEvent;
     m_ThreadData.stopThreadEvent = m_hStopThreadEvent;
     m_ThreadData.waitThreadToExitEvent = m_hWaitThreadToExitEvent;
+
+    DWORD threadId = 0;
+    m_hThread = CreateThread(0, 0, ResampleThread, (LPVOID)&m_ThreadData, 0, &threadId);
   }
   ZeroMemory(m_temp, 2*SAMPLE_LEN);
 }
@@ -208,15 +212,24 @@ CMultiSoundTouch::~CMultiSoundTouch()
   SetEvent(m_hStopThreadEvent);
   WaitForSingleObject(m_hWaitThreadToExitEvent, INFINITE);
 
-  //CloseHandle(m_hSampleArrivedEvent);
-  //CloseHandle(m_hWaitThreadToExitEvent);
-  //CloseHandle(m_hStopThreadEvent);
+  CloseHandle(m_hSampleArrivedEvent);
+  CloseHandle(m_hWaitThreadToExitEvent);
+  CloseHandle(m_hStopThreadEvent);
+  CloseHandle(m_hThread);
 
+  // Release samples that are in input queue
   for(int i = 0; i < m_sampleQueue.size(); i++)
   {
     m_sampleQueue[i]->Release();
   }
   m_sampleQueue.clear();
+
+  // Release samples that are in output queue
+  for(int i = 0; i < m_sampleOutQueue.size(); i++)
+  {
+    m_sampleOutQueue[i]->Release();
+  }
+  m_sampleOutQueue.clear();
 
   setChannels(0);
 }

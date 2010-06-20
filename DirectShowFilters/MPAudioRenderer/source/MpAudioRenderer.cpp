@@ -156,8 +156,6 @@ CMPAudioRenderer::~CMPAudioRenderer()
 {
   Stop();
 
-  delete m_pSoundTouch;
-
   // DSound
   SAFE_DELETE(m_pSoundTouch);
   SAFE_RELEASE(m_pDSBuffer);
@@ -1210,7 +1208,7 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
     if (FAILED (hr))
     {
       Log("DoRenderSampleWasapi GetBuffer failed with size %ld : (error %lx)", m_nFramesInBuffer, hr);
-      delete mediaBufferResult;
+      free (mediaBufferResult);
       return hr;
     }
 
@@ -1229,7 +1227,7 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
     if (FAILED (hr)) 
     {
       Log("DoRenderSampleWasapi ReleaseBuffer failed with size %ld (error %lx)", m_nFramesInBuffer, hr);
-      delete mediaBufferResult;
+      free (mediaBufferResult);
       return hr;
     }
 
@@ -1260,7 +1258,7 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
     Sleep(m_hnsActualDuration);
   }
   
-  delete mediaBufferResult;
+  free (mediaBufferResult);
   return hr;
 }
 
