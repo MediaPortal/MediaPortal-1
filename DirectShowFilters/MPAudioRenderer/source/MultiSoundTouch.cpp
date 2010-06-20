@@ -250,7 +250,7 @@ bool CMultiSoundTouch::InitializeAllocator()
 
   if (hr != S_OK)
   {
-    Log("Resampler thread - Failed to create sample allocator!");
+    Log("Failed to create sample allocator!");
     delete pAllocator;
     return false;
   }
@@ -259,7 +259,7 @@ bool CMultiSoundTouch::InitializeAllocator()
 
   if (hr != S_OK)
   {
-    Log("Resampler thread - Failed to get allocator interface!");
+    Log("Failed to get allocator interface!");
     delete pAllocator;
     return false;
   }
@@ -268,7 +268,7 @@ bool CMultiSoundTouch::InitializeAllocator()
   hr = m_pMemAllocator->Commit();
   if (hr != S_OK)
   {
-    Log("Resampler thread - Failed to commit allocator properties!");
+    Log("Failed to commit allocator properties!");
     SAFE_RELEASE(m_pMemAllocator);
     return false;
   }
