@@ -145,7 +145,7 @@ private:
   // Threading 
   static DWORD WINAPI ResampleThreadEntryPoint(LPVOID lpParameter);
   DWORD ResampleThread();
-  bool InitializeAlocator();
+  bool InitializeAllocator();
 
 
 };

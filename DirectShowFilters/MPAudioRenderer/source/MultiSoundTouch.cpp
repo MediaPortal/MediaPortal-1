@@ -52,7 +52,7 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
     m_hStopThreadEvent = CreateEvent(0, FALSE, FALSE, 0);
     m_hWaitThreadToExitEvent = CreateEvent(0, FALSE, FALSE, 0);
 
-    if (InitializeAlocator())
+    if (InitializeAllocator())
     {
       DWORD threadId = 0;
       m_hThread = CreateThread(0, 0, CMultiSoundTouch::ResampleThreadEntryPoint, (LPVOID)this, 0, &threadId);
@@ -235,7 +235,7 @@ DWORD CMultiSoundTouch::ResampleThread()
   return 0;
 }
 
-bool CMultiSoundTouch::InitializeAlocator()
+bool CMultiSoundTouch::InitializeAllocator()
 {
   ALLOCATOR_PROPERTIES propIn;
   ALLOCATOR_PROPERTIES propOut;
