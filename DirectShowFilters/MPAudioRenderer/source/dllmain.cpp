@@ -111,6 +111,7 @@ string GetLogLine()
   {
     return "";
   }
+
   string ret = m_logQueue.front();
   m_logQueue.pop();
   return ret;
