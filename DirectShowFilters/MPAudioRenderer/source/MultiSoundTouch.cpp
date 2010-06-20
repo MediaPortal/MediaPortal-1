@@ -3,6 +3,9 @@
 
 #include "MultiSoundTouch.h"
 
+#define OUT_BUFFER_SIZE   8192
+#define OUT_BUFFER_COUNT  20
+
 #define DEFINE_STREAM_FUNC(funcname, paramtype, paramname) \
   void CMultiSoundTouch::funcname(paramtype paramname) \
   { \
@@ -16,6 +19,7 @@
 // move these in a separate common header 
 #define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
 #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
+#define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
 
 typedef void (CMultiSoundTouch::*DeInterleaveFunc)(const soundtouch::SAMPLETYPE *inBuffer, short *outBuffer, uint count);
 typedef void (CMultiSoundTouch::*InterleaveFunc)(const soundtouch::SAMPLETYPE *inBuffer, short *outBuffer, uint count);
@@ -23,159 +27,9 @@ typedef void (CMultiSoundTouch::*InterleaveFunc)(const soundtouch::SAMPLETYPE *i
 extern void Log(const char *fmt, ...);
 
 // TODO add support for multiple channel pairs
-DWORD WINAPI ResampleThread(LPVOID lpParameter)
+DWORD WINAPI CMultiSoundTouch::ResampleThreadEntryPoint(LPVOID lpParameter)
 {
-  ThreadData* data = static_cast<ThreadData*>(lpParameter);
-
-  HRESULT hr = S_OK;
-
-  ALLOCATOR_PROPERTIES propIn;
-  ALLOCATOR_PROPERTIES propOut;
-  propIn.cBuffers = 20;
-  propIn.cbBuffer = 8192*20;
-  propIn.cbPrefix = 0;
-  propIn.cbAlign = 8;
-
-  // These are wait handles for the thread stopping and new sample arrival
-  HANDLE handles[2];
-  handles[0] = data->stopThreadEvent;
-  handles[1] = data->sampleArrivedEvent;
-
-  // sample allocator per thread
-  // TODO: use distictive name when adding multiple threads?
-
-  IMemAllocator* pMemAllocator = new CMemAllocator("output sample allocator", NULL, &hr);
-  pMemAllocator->AddRef();
-  
-  if (hr != S_OK)
-  {
-    Log("Resampler thread - Failed to create sample allocator!");
-    pMemAllocator->Release();
-    return 0;
-  }
-
-  pMemAllocator->SetProperties(&propIn, &propOut);
-  hr = pMemAllocator->Commit();
-  if (hr != S_OK)
-  {
-    Log("Resampler thread - Failed to commit allocator properties!");
-    pMemAllocator->Release();
-    return 0;
-  }
-
-  while(true)
-  {
-    // Check event for stop thread
-    if (WaitForSingleObject(data->stopThreadEvent, 0) == WAIT_OBJECT_0)
-    {
-      Log("Resampler thread - closing down");
-      pMemAllocator->Release();
-      SetEvent(data->waitThreadToExitEvent);
-      return 0;
-    }
-
-    IMediaSample* sample = NULL;
-    {
-      bool waitForData = false;
-      {
-        CAutoLock sampleQueueLock(data->sampleQueueLock);
-        if (data->sampleQueue->empty())
-        {
-          // Actual waiting beeds to be done outside the scope of sampleQueueLock 
-          // since we would be creating a deadlock otherwise 
-          waitForData = true;
-        }
-      }
-
-      if (waitForData)
-      {
-        // 1) No data was available, waiting until at least one sample is present
-        // 2) Exit requested for the thread
-        DWORD result = WaitForMultipleObjects(2, handles, false, INFINITE);
-        if (result == WAIT_OBJECT_0)
-        {
-          Log("Resampler thread - closing down");
-          pMemAllocator->Release();
-          SetEvent(data->waitThreadToExitEvent);
-          return 0;
-        }
-        else if (result == WAIT_OBJECT_0 + 1)
-        {
-          // new sample ready
-        }
-        else
-        {
-          DWORD error = GetLastError();
-          Log("Resampler thread: WaitForMultipleObjects failed: %d", error);
-        }
-      }
-
-      // Fetch one sample
-      {
-        CAutoLock sampleQueueLock(data->sampleQueueLock);
-        
-        static int debug_counter = 0;
-        if (data->sampleQueue->size() < debug_counter)
-        {
-          Log("HEAP corruption?! -- sample queue has been modified outside the thread - size less than on previous run!");
-        }
-
-        if (!data->sampleQueue->empty())
-        {
-          sample = data->sampleQueue->front();
-          data->sampleQueue->erase(data->sampleQueue->begin());
-        }
-        else
-        {
-          Log("HEAP corruption?! -- sample queue has been modified outside the thread - size is zero");
-        }
-
-        debug_counter = data->sampleQueue->size();
-      }
-    }
-
-    if (sample)
-    {
-      BYTE *pMediaBuffer = NULL;
-      long size = sample->GetActualDataLength();
-      hr = sample->GetPointer(&pMediaBuffer);
-      
-      if (hr == S_OK)
-      {
-        // Process the sample 
-        // TODO: /4 needs to be fixed!
-        data->resampler->putSamplesInternal((const short*)pMediaBuffer, size / 4);
-        
-        IMediaSample* outSample = NULL;
-        pMemAllocator->GetBuffer(&outSample, NULL, NULL, 0);
-        if (outSample)
-        {
-          // TODO: *4 needs to be fixed
-          BYTE *pMediaBufferOut = NULL;
-          outSample->GetPointer(&pMediaBufferOut);
-          
-          if (pMediaBufferOut)
-          {
-            unsigned int sampleLength = data->resampler->numSamples() * 4;
-            data->resampler->receiveSamplesInternal((short*)pMediaBufferOut, propIn.cbBuffer/4);
-            outSample->SetActualDataLength(sampleLength);
-
-            { // lock that the playback thread wont access the queue at the same time
-              CAutoLock cOutputQueueLock(data->sampleOutQueueLock);
-              data->sampleOutQueue->push_back(outSample);
-            }
-          }
-        }
-      }
-      
-      // We aren't using the sample anymore (AddRef() is done when sample arrives)
-      sample->Release();
-    }
-  }
-  
-  Log("Resampler thread - closing down");
-  pMemAllocator->Release();
-  return 0;
+  return ((CMultiSoundTouch *)lpParameter)->ResampleThread();
 }
 
 CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads) 
@@ -184,7 +38,13 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
 , m_nStreamCount(0)
 , m_bUseThreads(pUseThreads)
 , m_bFlushSamples(false)
+, m_pMemAllocator(NULL)
 {
+    m_hSampleArrivedEvent = 
+      m_hStopThreadEvent = 
+      m_hWaitThreadToExitEvent = 
+      m_hThread = NULL;
+
   // Use separate thread per channnel pair?
   if (m_bUseThreads)
   {
@@ -192,17 +52,11 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
     m_hStopThreadEvent = CreateEvent(0, FALSE, FALSE, 0);
     m_hWaitThreadToExitEvent = CreateEvent(0, FALSE, FALSE, 0);
 
-    m_ThreadData.resampler = this;
-    m_ThreadData.sampleQueueLock = &m_sampleQueueLock;
-    m_ThreadData.sampleOutQueueLock = &m_sampleOutQueueLock;
-    m_ThreadData.sampleQueue = &m_sampleQueue;
-    m_ThreadData.sampleOutQueue = &m_sampleOutQueue;
-    m_ThreadData.sampleArrivedEvent = m_hSampleArrivedEvent;
-    m_ThreadData.stopThreadEvent = m_hStopThreadEvent;
-    m_ThreadData.waitThreadToExitEvent = m_hWaitThreadToExitEvent;
-
-    DWORD threadId = 0;
-    m_hThread = CreateThread(0, 0, ResampleThread, (LPVOID)&m_ThreadData, 0, &threadId);
+    if (InitializeAlocator())
+    {
+      DWORD threadId = 0;
+      m_hThread = CreateThread(0, 0, CMultiSoundTouch::ResampleThreadEntryPoint, (LPVOID)this, 0, &threadId);
+    }
   }
   ZeroMemory(m_temp, 2*SAMPLE_LEN);
 }
@@ -212,10 +66,14 @@ CMultiSoundTouch::~CMultiSoundTouch()
   SetEvent(m_hStopThreadEvent);
   WaitForSingleObject(m_hWaitThreadToExitEvent, INFINITE);
 
-  CloseHandle(m_hSampleArrivedEvent);
-  CloseHandle(m_hWaitThreadToExitEvent);
-  CloseHandle(m_hStopThreadEvent);
-  CloseHandle(m_hThread);
+  if (m_hSampleArrivedEvent)
+    CloseHandle(m_hSampleArrivedEvent);
+  if (m_hWaitThreadToExitEvent)
+    CloseHandle(m_hWaitThreadToExitEvent);
+  if (m_hStopThreadEvent)
+    CloseHandle(m_hStopThreadEvent);
+  if (m_hThread)
+    CloseHandle(m_hThread);
 
   // Release samples that are in input queue
   for(int i = 0; i < m_sampleQueue.size(); i++)
@@ -231,6 +89,11 @@ CMultiSoundTouch::~CMultiSoundTouch()
   }
   m_sampleOutQueue.clear();
 
+  if (m_pMemAllocator)
+    m_pMemAllocator->Decommit();
+
+  SAFE_RELEASE(m_pMemAllocator);
+
   setChannels(0);
 }
 
@@ -245,6 +108,172 @@ DEFINE_STREAM_FUNC(setPitchSemiTones, float, newPitch)
 DEFINE_STREAM_FUNC(setSampleRate, uint, srate)
 DEFINE_STREAM_FUNC(flush,,)
 DEFINE_STREAM_FUNC(clear,,)
+
+DWORD CMultiSoundTouch::ResampleThread()
+{
+  HRESULT hr = S_OK;
+
+  // These are wait handles for the thread stopping and new sample arrival
+  HANDLE handles[2];
+  handles[0] = m_hStopThreadEvent;
+  handles[1] = m_hSampleArrivedEvent;
+
+  while(true)
+  {
+    // Check event for stop thread
+    if (WaitForSingleObject(m_hStopThreadEvent, 0) == WAIT_OBJECT_0)
+    {
+      Log("Resampler thread - closing down");
+      //pMemAllocator->Release();
+      SetEvent(m_hWaitThreadToExitEvent);
+      return 0;
+    }
+
+    IMediaSample* sample = NULL;
+    {
+      bool waitForData = false;
+      {
+        CAutoLock sampleQueueLock(&m_sampleQueueLock);
+        if (m_sampleQueue.empty())
+        {
+          // Actual waiting beeds to be done outside the scope of sampleQueueLock 
+          // since we would be creating a deadlock otherwise 
+          waitForData = true;
+        }
+      }
+
+      if (waitForData)
+      {
+        // 1) No data was available, waiting until at least one sample is present
+        // 2) Exit requested for the thread
+        DWORD result = WaitForMultipleObjects(2, handles, false, INFINITE);
+        if (result == WAIT_OBJECT_0)
+        {
+          Log("Resampler thread - closing down");
+          //pMemAllocator->Release();
+          SetEvent(m_hWaitThreadToExitEvent);
+          return 0;
+        }
+        else if (result == WAIT_OBJECT_0 + 1)
+        {
+          // new sample ready
+        }
+        else
+        {
+          DWORD error = GetLastError();
+          Log("Resampler thread: WaitForMultipleObjects failed: %d", error);
+        }
+      }
+
+      // Fetch one sample
+      {
+        CAutoLock sampleQueueLock(&m_sampleQueueLock);
+        
+        static int debug_counter = 0;
+        if (m_sampleQueue.size() < debug_counter)
+        {
+          Log("HEAP corruption?! -- sample queue has been modified outside the thread - size less than on previous run!");
+        }
+
+        if (!m_sampleQueue.empty())
+        {
+          sample = m_sampleQueue.front();
+          m_sampleQueue.erase(m_sampleQueue.begin());
+        }
+        else
+        {
+          Log("HEAP corruption?! -- sample queue has been modified outside the thread - size is zero");
+        }
+
+        debug_counter = m_sampleQueue.size();
+      }
+    }
+
+    if (sample)
+    {
+      BYTE *pMediaBuffer = NULL;
+      long size = sample->GetActualDataLength();
+      hr = sample->GetPointer(&pMediaBuffer);
+      
+      if (hr == S_OK)
+      {
+        // Process the sample 
+        // TODO: /4 needs to be fixed!
+        putSamplesInternal((const short*)pMediaBuffer, size / 4);
+        
+        IMediaSample* outSample = NULL;
+        m_pMemAllocator->GetBuffer(&outSample, NULL, NULL, 0);
+        if (outSample)
+        {
+          // TODO: *4 needs to be fixed
+          BYTE *pMediaBufferOut = NULL;
+          outSample->GetPointer(&pMediaBufferOut);
+          
+          if (pMediaBufferOut)
+          {
+            unsigned int sampleLength = numSamples();
+            if (sampleLength > OUT_BUFFER_SIZE/4)
+              sampleLength = OUT_BUFFER_SIZE/4;
+            outSample->SetActualDataLength(sampleLength * 4);
+            receiveSamplesInternal((short*)pMediaBufferOut, sampleLength);
+
+            { // lock that the playback thread wont access the queue at the same time
+              CAutoLock cOutputQueueLock(&m_sampleOutQueueLock);
+              m_sampleOutQueue.push_back(outSample);
+            }
+          }
+        }
+      }
+      
+      // We aren't using the sample anymore (AddRef() is done when sample arrives)
+      sample->Release();
+    }
+  }
+  
+  Log("Resampler thread - closing down");
+  //pMemAllocator->Release();
+  return 0;
+}
+
+bool CMultiSoundTouch::InitializeAlocator()
+{
+  ALLOCATOR_PROPERTIES propIn;
+  ALLOCATOR_PROPERTIES propOut;
+  propIn.cBuffers = OUT_BUFFER_COUNT;
+  propIn.cbBuffer = OUT_BUFFER_SIZE*OUT_BUFFER_COUNT;
+  propIn.cbPrefix = 0;
+  propIn.cbAlign = 8;
+
+  HRESULT hr = S_OK;
+
+  CMemAllocator *pAllocator = new CMemAllocator("output sample allocator", NULL, &hr);
+
+  if (hr != S_OK)
+  {
+    Log("Resampler thread - Failed to create sample allocator!");
+    delete pAllocator;
+    return false;
+  }
+
+  hr = pAllocator->QueryInterface(IID_IMemAllocator, (void **)&m_pMemAllocator);
+
+  if (hr != S_OK)
+  {
+    Log("Resampler thread - Failed to get allocator interface!");
+    delete pAllocator;
+    return false;
+  }
+
+  m_pMemAllocator->SetProperties(&propIn, &propOut);
+  hr = m_pMemAllocator->Commit();
+  if (hr != S_OK)
+  {
+    Log("Resampler thread - Failed to commit allocator properties!");
+    SAFE_RELEASE(m_pMemAllocator);
+    return false;
+  }
+  return true;
+}
 
 // TODO: "unpack" the macros so ::flush can handle this as well
 void CMultiSoundTouch::FlushQueues()

@@ -1067,7 +1067,9 @@ HRESULT CMPAudioRenderer::WriteSampleToDSBuffer(IMediaSample *pMediaSample, bool
   }
   if (SUCCEEDED(hr) && looped) *looped = loop;
 
-  delete mediaBufferResult;
+  if(mediaBufferResult)
+    free(mediaBufferResult);
+  //delete mediaBufferResult;
   return hr;
 }
 
