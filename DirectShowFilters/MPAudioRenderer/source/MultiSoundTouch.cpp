@@ -452,6 +452,12 @@ uint CMultiSoundTouch::receiveSamples(short **outBuffer, uint maxSamples)
   
   long sampleLength = sample->GetActualDataLength();
   
+  if (sampleLength == 0)
+  {
+    sample->Release();
+    return 0;
+  }
+
   BYTE *pSampleBuffer = NULL;
   HRESULT hr = sample->GetPointer(&pSampleBuffer);
 

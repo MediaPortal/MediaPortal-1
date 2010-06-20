@@ -1067,9 +1067,9 @@ HRESULT CMPAudioRenderer::WriteSampleToDSBuffer(IMediaSample *pMediaSample, bool
   }
   if (SUCCEEDED(hr) && looped) *looped = loop;
 
-  if(mediaBufferResult)
+  if (mediaBufferResult)
     free(mediaBufferResult);
-  //delete mediaBufferResult;
+
   return hr;
 }
 
@@ -1210,7 +1210,9 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
     if (FAILED (hr))
     {
       Log("DoRenderSampleWasapi GetBuffer failed with size %ld : (error %lx)", m_nFramesInBuffer, hr);
-      free (mediaBufferResult);
+      if(mediaBufferResult)
+        free(mediaBufferResult);
+
       return hr;
     }
 
@@ -1229,7 +1231,9 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
     if (FAILED (hr)) 
     {
       Log("DoRenderSampleWasapi ReleaseBuffer failed with size %ld (error %lx)", m_nFramesInBuffer, hr);
-      free (mediaBufferResult);
+      if(mediaBufferResult)
+        free(mediaBufferResult);
+
       return hr;
     }
 
@@ -1260,7 +1264,9 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
     Sleep(m_hnsActualDuration);
   }
   
-  free (mediaBufferResult);
+  if (mediaBufferResult)
+    free(mediaBufferResult);
+
   return hr;
 }
 
