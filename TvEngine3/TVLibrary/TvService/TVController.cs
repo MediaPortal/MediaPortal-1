@@ -2473,7 +2473,16 @@ namespace TvService
       {
         card = null;
         return TvResult.UnknownError;
-      }      
+      }
+
+      string intialTimeshiftingFilename = "";
+
+      VirtualCard initialCard = GetVirtualCard(user);
+      
+      if (initialCard != null && initialCard.TimeShiftFileName != null)
+      {
+        intialTimeshiftingFilename = initialCard.TimeShiftFileName;
+      }
 
       Channel channel = Channel.Retrieve(idChannel);
       Log.Write("Controller: StartTimeShifting {0} {1}", channel.DisplayName, channel.IdChannel);
@@ -2532,8 +2541,6 @@ namespace TvService
           }
           return result;
         }
-
-        int previousCardId = user.CardId;       
 
         //keep tuning each card until we are succesful                
         for (int i = 0; i < freeCards.Count; i++)
@@ -2637,10 +2644,11 @@ namespace TvService
           RemoveUserFromOtherCards(card.Id, userCopy); //only remove user from other cards if new tuning was a success
           UpdateChannelStatesForUsers();
 
-          if (!cardChanged)
+          if (card != null && card.TimeShiftFileName != null)
           {
-            cardChanged = (previousCardId != userCopy.CardId);
-          }
+            string newTimeshiftingFilename = card.TimeShiftFileName;
+            cardChanged = (intialTimeshiftingFilename != newTimeshiftingFilename);
+          }          
 
           break; //if we made it to the bottom, then we have a successful timeshifting.
         }
