@@ -951,9 +951,9 @@ namespace TvDatabase
       Gentle.Common.CacheManager.ClearQueryResultsByType(typeof(Program));
     }
 
-    public void ClearState()
+    public void ClearRecordPendingState()
     {
-      state = (int)ProgramState.None;
+      state &= ~(int)(ProgramState.RecordOncePending | ProgramState.RecordSeriesPending | ProgramState.PartialRecordSeriesPending);
     }
 
     public static IList<Program> RetrieveAllNotifications()
