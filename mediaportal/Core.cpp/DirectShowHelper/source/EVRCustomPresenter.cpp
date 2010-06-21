@@ -780,11 +780,9 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
 
   Log("debug: cycleDiff: %f", cycleDiff);
 
-  if (cycleDiff != 0.0 && abs(cycleDiff) < 0.06)
+  if (abs(cycleDiff) < 0.06)
   {
     m_dBias = 1.0 - cycleDiff;
-    //m_dBias = 1.04270937604271;
-    //m_dBias = 1.04297;
 
     Log("debug: DIFF %f (bias vs calculated cycle)", m_dBias - 1.0 + cycleDiff);
     Log("debug: DIFF %f (bias vs calculated MS value)", m_dBias - 1.04297);
