@@ -48,7 +48,7 @@ Name "MediaPortal Unpacker"
 
 !define VER_MAJOR       1
 !define VER_MINOR       0
-!define VER_REVISION    8
+!define VER_REVISION    9
 !ifdef VER_BUILD ; means !build_release was used
   !undef VER_BUILD
 
@@ -63,7 +63,7 @@ Name "MediaPortal Unpacker"
 !endif
 
 ;this is for display purposes
-!define VERSION "1.1.0 RC4"
+!define VERSION "1.1.0 RC5"
 
 
 #---------------------------------------------------------------------------
