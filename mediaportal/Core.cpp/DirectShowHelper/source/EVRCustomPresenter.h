@@ -174,7 +174,8 @@ friend class StatsRenderer;
 
 protected:
   void           GetAVSyncClockInterface();
-  void           AdjustAudioRenderer();
+  void           SetupAudioRenderer();
+  void           AdjustAVSync();
   void           EstimateRefreshTimings();
   bool           ImmediateCheckForInput();
   void           LogStats();

@@ -772,41 +772,6 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
     (*pType)->SetUINT32(MF_MT_VIDEO_NOMINAL_RANGE, MFNominalRange_0_255);
   }
 
-  GetRealRefreshRate();
-
-  m_dFrameCycle = m_rtTimePerFrame / 10000.0;
-
-  double cycleDiff = GetCycleDifference();
-
-  Log("debug: cycleDiff: %f", cycleDiff);
-
-  if (abs(cycleDiff) < 0.06)
-  {
-    m_dBias = 1.0 - cycleDiff;
-
-    Log("debug: DIFF %f (bias vs calculated cycle)", m_dBias - 1.0 + cycleDiff);
-    Log("debug: DIFF %f (bias vs calculated MS value)", m_dBias - 1.04297);
-    Log("debug: DIFF %f (bias vs calculated)", m_dBias - 1.04270937604271);
-
-    if (m_pAVSyncClock)
-    {
-      if (S_OK == m_pAVSyncClock->SetBias(m_dBias))
-      {
-        m_bBiasAdjustmentDone = true;
-        Log("debug: adjust bias to : %f", m_dBias);
-      }
-      else
-      {
-        m_bBiasAdjustmentDone = false;
-        Log("debug: failed to adjust bias to : %f", m_dBias);
-      }
-    }
-    else
-    {
-      Log("debug: adjust bias to : %f - wait audio renderer to be available", m_dBias);
-    }
-  }
-
   return hr;
 }
 
@@ -1516,6 +1481,7 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockStart(MFTIME hnsSystemTim
   NotifyWorker();
   NotifyScheduler();
   GetAVSyncClockInterface();
+  SetupAudioRenderer();
   return S_OK;
 }
 
@@ -1725,7 +1691,8 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
       m_rasterSyncOffset = m_dDetectedScanlineTime * m_displayMode.Height;
     }
 
-    AdjustAudioRenderer();
+    GetAVSyncClockInterface();
+    AdjustAVSync();
 
     LONGLONG startPaint = GetCurrentTimestamp();
 
@@ -2405,6 +2372,11 @@ void MPEVRCustomPresenter::GetRealRefreshRate()
 
 void MPEVRCustomPresenter::GetAVSyncClockInterface()
 {
+  if (m_pAVSyncClock)
+  {
+    return;
+  }
+
   FILTER_INFO filterInfo;
   ZeroMemory(&filterInfo, sizeof(filterInfo));
   m_EVRFilter->QueryFilterInfo(&filterInfo); // This addref's the pGraph member
@@ -2421,15 +2393,15 @@ void MPEVRCustomPresenter::GetAVSyncClockInterface()
 
   hr = pBaseFilter->QueryInterface(IID_IAVSyncClock, (void**)&m_pAVSyncClock);
   
-  if(hr != S_OK)
+  if (hr != S_OK)
   {
-    Log("Cannot get Interface IAVSyncClock");
+    Log("Could not get IAVSyncClock interface");
     return;
   }
 
   Log("Found MediaPortal - Audio Renderer filter");
 
-  if(m_pAVSyncClock && m_dBias != 1.0)
+  if (m_pAVSyncClock)
   {
     if (S_OK == m_pAVSyncClock->SetBias(m_dBias))
     {
@@ -2439,12 +2411,50 @@ void MPEVRCustomPresenter::GetAVSyncClockInterface()
     else
     {
       m_bBiasAdjustmentDone = false;
-      Log("debug: failed to adjust bias to : %f", m_dBias);
+      Log("  Failed to adjust bias to : %f", m_dBias);
     }
   }
 }
 
-void MPEVRCustomPresenter::AdjustAudioRenderer()
+void MPEVRCustomPresenter::SetupAudioRenderer()
+{
+  GetRealRefreshRate();
+
+  m_dFrameCycle = m_rtTimePerFrame / 10000.0;
+
+  double cycleDiff = GetCycleDifference();
+
+  Log("SetupAudioRenderer: cycleDiff: %f", cycleDiff);
+
+  if (abs(cycleDiff) < 0.06)
+  {
+    m_dBias = 1.0 - cycleDiff;
+
+    Log("SetupAudioRenderer: DIFF %f (bias vs calculated cycle)", m_dBias - 1.0 + cycleDiff);
+    Log("SetupAudioRenderer: DIFF %f (bias vs calculated MS value)", m_dBias - 1.04297);
+    Log("SetupAudioRenderer: DIFF %f (bias vs calculated)", m_dBias - 1.04270937604271);
+
+    if (m_pAVSyncClock)
+    {
+      if (S_OK == m_pAVSyncClock->SetBias(m_dBias))
+      {
+        m_bBiasAdjustmentDone = true;
+        Log("SetupAudioRenderer: adjust bias to : %f", m_dBias);
+      }
+      else
+      {
+        m_bBiasAdjustmentDone = false;
+        Log("SetupAudioRenderer: failed to adjust bias to : %f", m_dBias);
+      }
+    }
+    else
+    {
+      Log("SetupAudioRenderer: adjust bias to : %f - wait audio renderer to be available", m_dBias);
+    }
+  }
+}
+
+void MPEVRCustomPresenter::AdjustAVSync()
 {
   double currentPhase = m_rasterSyncOffset / GetDisplayCycle();
   double targetPhase = 0.75;
@@ -2462,9 +2472,9 @@ void MPEVRCustomPresenter::AdjustAudioRenderer()
   averagePhaseDifference += m_dPhaseDeviations[0];
   averagePhaseDifference = averagePhaseDifference / NUM_PHASE_DEVIATIONS;
 
-  //If we are getting close to target then stop correcting.
-  //Since it is a rolling average we will overshoot the target, so we plan to stop early.
-  //If we are speeding up, we should stop when above the "green" limit
+  // If we are getting close to target then stop correcting.
+  // Since it is a rolling average we will overshoot the target, so we plan to stop early.
+  // If we are speeding up, we should stop when above the "green" limit
   if (m_dVariableFreq > 1.0)
   {
     if (averagePhaseDifference > -0.05 )
@@ -2472,7 +2482,7 @@ void MPEVRCustomPresenter::AdjustAudioRenderer()
       m_dVariableFreq = 1.0;
     }
   }
-  //If we are speeding down, we should stop when below the "green" limit
+  // If we are speeding down, we should stop when below the "green" limit
   if (m_dVariableFreq < 1.0)
   {
     if (averagePhaseDifference < 0.05 )
@@ -2481,7 +2491,7 @@ void MPEVRCustomPresenter::AdjustAudioRenderer()
     }
   }
 
-  //If we have drifted significantly away from target, let us speed up or slow down until we are within above limits again
+  // If we have drifted significantly away from target, let us speed up or slow down until we are within above limits again
   if (averagePhaseDifference > 0.1)
   {
     m_dVariableFreq = 1.003;
@@ -2490,7 +2500,6 @@ void MPEVRCustomPresenter::AdjustAudioRenderer()
   {
     m_dVariableFreq = 0.997;
   }
-
 
   //Log("VF: %f averagePhaseDif: %f CP: %f ", m_dVariableFreq, averagePhaseDifference, currentPhase);
 
