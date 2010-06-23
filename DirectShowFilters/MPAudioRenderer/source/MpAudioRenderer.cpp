@@ -119,7 +119,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_bUseThreads(false)
 {
   LogRotate();
-  Log("MP Audio Renderer - v0.1");
+  Log("MP Audio Renderer - v0.1 - instance 0x%x", this);
 
   LoadSettingsFromRegistry();
 
@@ -154,6 +154,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 
 CMPAudioRenderer::~CMPAudioRenderer()
 {
+  Log("MP Audio Renderer - destructor - instance 0x%x", this);
   Stop();
 
   // DSound
@@ -185,6 +186,8 @@ CMPAudioRenderer::~CMPAudioRenderer()
   {
     pfAvRevertMmThreadCharacteristics(m_hTask);
   }
+
+  Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
 }
 
 void CMPAudioRenderer::LoadSettingsFromRegistry()

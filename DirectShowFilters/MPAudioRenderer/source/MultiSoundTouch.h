@@ -146,6 +146,5 @@ private:
   static DWORD WINAPI ResampleThreadEntryPoint(LPVOID lpParameter);
   DWORD ResampleThread();
   bool InitializeAllocator();
-
-
+  DWORD m_threadId;
 };

@@ -43,6 +43,7 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
 , m_hStopThreadEvent(NULL)
 , m_hWaitThreadToExitEvent(NULL)
 , m_hThread(NULL)
+, m_threadId(0)
 {
   // Use separate thread per channnel pair?
   if (m_bUseThreads)
@@ -53,8 +54,7 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
 
     if (InitializeAllocator())
     {
-      DWORD threadId = 0;
-      m_hThread = CreateThread(0, 0, CMultiSoundTouch::ResampleThreadEntryPoint, (LPVOID)this, 0, &threadId);
+      m_hThread = CreateThread(0, 0, CMultiSoundTouch::ResampleThreadEntryPoint, (LPVOID)this, 0, &m_threadId);
     }
   }
   ZeroMemory(m_temp, 2*SAMPLE_LEN);
@@ -110,6 +110,8 @@ DEFINE_STREAM_FUNC(clear,,)
 
 DWORD CMultiSoundTouch::ResampleThread()
 {
+  Log("Resampler thread - starting up - thread ID: %d", m_threadId);
+  
   HRESULT hr = S_OK;
 
   // These are wait handles for the thread stopping and new sample arrival
@@ -122,7 +124,7 @@ DWORD CMultiSoundTouch::ResampleThread()
     // Check event for stop thread
     if (WaitForSingleObject(m_hStopThreadEvent, 0) == WAIT_OBJECT_0)
     {
-      Log("Resampler thread - closing down");
+      Log("Resampler thread - closing down - thread ID: %d", m_threadId);
       SetEvent(m_hWaitThreadToExitEvent);
       return 0;
     }
@@ -151,7 +153,7 @@ DWORD CMultiSoundTouch::ResampleThread()
         DWORD result = WaitForMultipleObjects(2, handles, false, INFINITE);
         if (result == WAIT_OBJECT_0)
         {
-          Log("Resampler thread - closing down");
+          Log("Resampler thread - closing down - thread ID: %d", m_threadId);
           SetEvent(m_hWaitThreadToExitEvent);
           return 0;
         }
@@ -217,7 +219,7 @@ DWORD CMultiSoundTouch::ResampleThread()
     }
   }
   
-  Log("Resampler thread - closing down");
+  Log("Resampler thread - closing down - thread ID: %d", m_threadId);
   return 0;
 }
 
