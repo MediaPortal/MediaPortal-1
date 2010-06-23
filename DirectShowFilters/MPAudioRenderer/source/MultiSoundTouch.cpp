@@ -39,12 +39,11 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
 , m_bUseThreads(pUseThreads)
 , m_bFlushSamples(false)
 , m_pMemAllocator(NULL)
+, m_hSampleArrivedEvent(NULL)
+, m_hStopThreadEvent(NULL)
+, m_hWaitThreadToExitEvent(NULL)
+, m_hThread(NULL)
 {
-    m_hSampleArrivedEvent = 
-      m_hStopThreadEvent = 
-      m_hWaitThreadToExitEvent = 
-      m_hThread = NULL;
-
   // Use separate thread per channnel pair?
   if (m_bUseThreads)
   {
@@ -124,7 +123,6 @@ DWORD CMultiSoundTouch::ResampleThread()
     if (WaitForSingleObject(m_hStopThreadEvent, 0) == WAIT_OBJECT_0)
     {
       Log("Resampler thread - closing down");
-      //pMemAllocator->Release();
       SetEvent(m_hWaitThreadToExitEvent);
       return 0;
     }
@@ -136,6 +134,10 @@ DWORD CMultiSoundTouch::ResampleThread()
         CAutoLock sampleQueueLock(&m_sampleQueueLock);
         if (m_sampleQueue.empty())
         {
+          // Make sure that we wont fall thru with the previous sample's 
+          // arrival event in the WaitForMultipleObjects stage 
+          ResetEvent(m_hSampleArrivedEvent);
+
           // Actual waiting beeds to be done outside the scope of sampleQueueLock 
           // since we would be creating a deadlock otherwise 
           waitForData = true;
@@ -150,7 +152,6 @@ DWORD CMultiSoundTouch::ResampleThread()
         if (result == WAIT_OBJECT_0)
         {
           Log("Resampler thread - closing down");
-          //pMemAllocator->Release();
           SetEvent(m_hWaitThreadToExitEvent);
           return 0;
         }
@@ -165,27 +166,13 @@ DWORD CMultiSoundTouch::ResampleThread()
         }
       }
 
-      // Fetch one sample
-      {
+      { // Fetch one sample
         CAutoLock sampleQueueLock(&m_sampleQueueLock);
-        
-        static int debug_counter = 0;
-        if (m_sampleQueue.size() < debug_counter)
-        {
-          Log("HEAP corruption?! -- sample queue has been modified outside the thread - size less than on previous run!");
-        }
-
         if (!m_sampleQueue.empty())
         {
           sample = m_sampleQueue.front();
           m_sampleQueue.erase(m_sampleQueue.begin());
         }
-        else
-        {
-          Log("HEAP corruption?! -- sample queue has been modified outside the thread - size is zero");
-        }
-
-        debug_counter = m_sampleQueue.size();
       }
     }
 
@@ -231,7 +218,6 @@ DWORD CMultiSoundTouch::ResampleThread()
   }
   
   Log("Resampler thread - closing down");
-  //pMemAllocator->Release();
   return 0;
 }
 
