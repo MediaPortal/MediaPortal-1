@@ -633,17 +633,26 @@ namespace MediaPortal.Util
 
     public static void SetThumbnails(ref GUIListItem item)
     {
-      if (item == null) return;
+      if (item == null || String.IsNullOrEmpty(item.Path))
+      {
+        Log.Debug("SetThumbnails: nothing to do.");
+        return;
+      }
+
       string strThumb = string.Empty;
 
       if (!item.IsFolder || (item.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower())))
       {
-        if (IsPicture(item.Path)) return;
+        if (IsPicture(item.Path))
+        {
+          Log.Debug("SetThumbnails: nothing to do.");
+          return;
+        }
 
         string[] thumbs = { Path.ChangeExtension(item.Path, ".jpg"), 
                             Path.ChangeExtension(item.Path, ".tbn"), 
                             Path.ChangeExtension(item.Path, ".png"),
-                            GetThumb(item.Path)};
+                            String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(item.Path))};
 
         bool foundVideoThumb = false;
         foreach (string s in thumbs)
@@ -658,23 +667,16 @@ namespace MediaPortal.Util
 
         if (!foundVideoThumb)
         {
+          Log.Debug("SetThumbnails: Video thumb NOT found!");
           bool createVideoThumbs;
           using (Profile.Settings xmlreader = new Profile.MPSettings())
           {
             createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
           }
 
-          bool isLocal = false;
-          if (!String.IsNullOrEmpty(item.Path) && Uri.IsWellFormedUriString(item.Path, UriKind.RelativeOrAbsolute))
+          if (Path.IsPathRooted(item.Path) && IsVideo(item.Path) && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()))
           {
-            Uri file = new Uri(item.Path);
-            if (file.IsUnc || file.IsFile)
-            {
-              isLocal = true;
-            }
-          }
-          if (isLocal && IsVideo(item.Path) && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()))
-          {
+            Log.Debug("SetThumbnails: Creating a Video thumb...");
             strThumb = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(item.Path));
             if (File.Exists(strThumb))
             {
