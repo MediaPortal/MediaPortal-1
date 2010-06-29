@@ -80,12 +80,16 @@ namespace MediaPortal.Player
       //currently disabled for all tv/radio/streaming video
       if (isTV || isRadio || isRTSP || isAVStream)
       {
+        Log.Debug("MediaInfoWrapper: isTv:{0}, isRadio:{1}, isRTSP:{2}, isAVStream:{3}", isTV, isRadio, isRTSP, isAVStream);
+        Log.Debug("MediaInfoWrapper: disabled for this content");
         return;
       }
 
       //currently mediainfo is only used for local video related material (if enabled)
       if ((!isVideo && !isDVD) || (isDVD && !_DVDenabled))
       {
+        Log.Debug("MediaInfoWrapper: isVideo:{0}, isDVD:{1}[enabled:{2}]", isVideo, isDVD, _DVDenabled);
+        Log.Debug("MediaInfoWrapper: disabled for this content");
         return;
       }
 
