@@ -22,6 +22,42 @@
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
+      <id>500</id>
+      <type>image</type>
+      <posX>44</posX>
+      <posY>264</posY>
+      <width>180</width>
+      <height>135</height>
+      <texture>#selectedthumb</texture>
+      <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)</visible>
+      <animation effect="slide" time="250" start="-300,0" reversible="false">visible</animation>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>40</posX>
+      <posY>260</posY>
+      <width>192</width>
+      <height>146</height>
+      <texture>Picture_cover.png</texture>
+      <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)+Control.HasThumb(500)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>      
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>77</posX>
+      <posY>400</posY>
+      <width>161</width>
+      <height>158</height>
+      <texture>-</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
       <description>Recordings Text Label</description>
       <type>label</type>
       <id>1</id>
