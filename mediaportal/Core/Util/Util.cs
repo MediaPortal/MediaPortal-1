@@ -376,7 +376,7 @@ namespace MediaPortal.Util
     {
       if (strPath == null) return false;
 
-      Match ex = Regex.Match(strPath, @"live\d+-\d+\.ts(\.tsbuffer\d+\.ts)?$");
+      Match ex = Regex.Match(strPath, @"(live\d+-\d+\.ts(\.tsbuffer(\d+\.ts)?)?)$");
       return ex.Success;
     }
 
