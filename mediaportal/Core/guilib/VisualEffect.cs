@@ -727,12 +727,14 @@ namespace MediaPortal.GUI.Library
       bool condition = GUIInfoManager.GetBool(_condition, 0);
       if (condition && !_lastCondition)
       {
+        ApplyAnimation();
         _queuedProcess = AnimationProcess.Normal;
       }
       else if (!condition && _lastCondition)
       {
         if (_isReversible)
         {
+          ApplyAnimation();
           _queuedProcess = AnimationProcess.Reverse;
         }
         else
