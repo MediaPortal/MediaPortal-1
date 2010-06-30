@@ -1433,6 +1433,20 @@ HRESULT CMPAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCli
   //if (SUCCEEDED (hr)) hr = m_pAudioClient->GetDevicePeriod(NULL, &m_hnsPeriod);
   m_hnsPeriod = 500000; //50 ms is the best according to James @Slysoft
 
+  if (!m_pAudioClient)
+  {
+    hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
+    if (FAILED(hr))
+    {
+      Log("InitAudioClient failed to create audio client (0x%08x)", hr);
+      return hr;
+    }
+    else
+    {
+      Log("InitAudioClient created missing audio client");
+    }
+  }
+
   hr = m_pAudioClient->IsFormatSupported(m_WASAPIShareMode, pWaveFormatEx, NULL);
   if (FAILED(hr))
   {
