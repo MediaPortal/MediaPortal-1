@@ -34,7 +34,7 @@
 
 ##### HEISE_BUILD
 # Uncomment the following line to create a setup for "Heise Verlag" / ct' magazine  (without MPC-HC/Gabest Filters)
-;!define HEISE_BUILD
+#!define HEISE_BUILD
 # parameter for command line execution: /DHEISE_BUILD
 
 ##### BUILD_TYPE
@@ -400,6 +400,12 @@ Section "MediaPortal core files (required)" SecCore
     /x yac-area-codes.xml \
     /x mtn.c \
     "
+	
+  #Special build for Heise needs some files excluded.
+  #At the moment this is only lame_enc.dll
+  !define EXCLUDED_FILES_FOR_HEISE_BUILD "\
+    /x lame_enc.dll \
+	"
 
 ### AUTO-GENERATED   UNINSTALLATION CODE ###
   # Files which were diffed before including in installer
@@ -407,7 +413,11 @@ Section "MediaPortal core files (required)" SecCore
   #We can not use the complete mediaportal.base dir recoursivly , because the plugins, thumbs, weather need to be extracted to their special MPdir location
   # exluding only the folders does not work because /x plugins won't extract the \plugins AND musicplayer\plugins directory
   SetOutPath "$MPdir.Base"
-  File /nonfatal /x .svn ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
+  !ifdef HEISE_BUILD
+	File /nonfatal /x .svn ${EXCLUDED_CONFIG_FILES} ${EXCLUDED_FILES_FOR_HEISE_BUILD} "${MEDIAPORTAL.BASE}\*"
+  !else
+	File /nonfatal /x .svn ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
+  !endif
   SetOutPath "$MPdir.Base\MovieThumbnailer"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\MovieThumbnailer\*"
   SetOutPath "$MPdir.Base\MusicPlayer"
