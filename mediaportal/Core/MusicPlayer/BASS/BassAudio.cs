@@ -562,7 +562,7 @@ namespace MediaPortal.Player
 
     public override bool HasViz
     {
-      get { return VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None; }
+      get { return true; }
     }
 
     /// <summary>
