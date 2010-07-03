@@ -403,5 +403,7 @@ protected:
   bool          m_bDetectBias;
   double        m_dPhaseDeviations[NUM_PHASE_DEVIATIONS];
   double        m_dVariableFreq;
+  double        m_dPreviousVariableFreq;
+  unsigned int  m_iClockAdjustmentsDone;
   double        m_avPhaseDiff;
 };

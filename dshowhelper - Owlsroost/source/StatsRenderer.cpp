@@ -250,8 +250,9 @@ void StatsRenderer::DrawStats()
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("Detd bias: %.10f | Ad status: %d | Audio adj: %.6f | AvePhDiff: %.6f", 
-      m_pPresenter->m_dBias, m_pPresenter->m_bBiasAdjustmentDone, m_pPresenter->m_dVariableFreq, m_pPresenter->m_avPhaseDiff);
+    strText.Format("Detd bias: %.10f | Ad status: %d | Audio adj: %.6f | AvePhDiff: %.6f | num adj: %d", 
+      m_pPresenter->m_dBias, m_pPresenter->m_bBiasAdjustmentDone, m_pPresenter->m_dVariableFreq, 
+      m_pPresenter->m_avPhaseDiff, m_pPresenter->m_iClockAdjustmentsDone);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 

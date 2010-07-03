@@ -68,6 +68,8 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   m_bBiasAdjustmentDone(false),
   m_bDetectBias(false),
   m_dVariableFreq(1.0),
+  m_dPreviousVariableFreq(1.0),
+  m_iClockAdjustmentsDone(0),
   m_avPhaseDiff(0)
 {
   ZeroMemory((void*)&m_dPhaseDeviations, sizeof(double) * NUM_PHASE_DEVIATIONS);
@@ -2680,7 +2682,7 @@ void MPEVRCustomPresenter::ResetFrameStats()
   m_iFramesDropped  = 0;
   m_iFramesHeld     = 0;
   m_iLateFrames     = 0;
-  m_iFramesProcessed    = 0;
+  m_iFramesProcessed = 0;
   m_nNextCFP = 0;
   m_fCFPMean = 0;
   m_nNextPCD = 0;
@@ -2696,14 +2698,15 @@ void MPEVRCustomPresenter::ResetFrameStats()
   m_frameRateRatio = 0;
   m_rawFRRatio = 0;
 
-  m_stallTime       = 0;
+  m_stallTime = 0;
   m_earliestPresentTime = 0;
   m_lastPresentTime = 0;
   
-  m_nNextRFP  = 0;
+  m_nNextRFP = 0;
     
   m_PaintTime = 0;
 
+  m_iClockAdjustmentsDone = 0;
 }
 
 
@@ -3324,9 +3327,12 @@ void MPEVRCustomPresenter::AdjustAVSync()
 
   //Log("VF: %f averagePhaseDif: %f CP: %f ", m_dVariableFreq, averagePhaseDifference, currentPhase);
 
-  if (m_pAVSyncClock)
+  if (m_pAVSyncClock && m_dVariableFreq != m_dPreviousVariableFreq)
   {
     m_pAVSyncClock->AdjustClock(1.0/m_dVariableFreq);
+    m_iClockAdjustmentsDone++;
   }
+
+  m_dPreviousVariableFreq = m_dVariableFreq;
 }
 
