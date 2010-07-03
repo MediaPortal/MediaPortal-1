@@ -199,7 +199,7 @@ void StatsRenderer::DrawStats()
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("Measured disp cyc: %.3f ms | Max line: %d | Frames drawn: %d | Frames dropped: %d", 
+    strText.Format("Measured disp cyc: %.5f ms | Max line: %d | Frames drawn: %d | Frames dropped: %d", 
       m_pPresenter->m_dEstRefreshCycle, m_pPresenter->m_maxScanLine, m_pPresenter->m_iFramesDrawn, m_pPresenter->m_iFramesDropped);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);

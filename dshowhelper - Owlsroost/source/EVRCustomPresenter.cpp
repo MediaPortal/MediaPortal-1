@@ -66,6 +66,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   m_pAVSyncClock(NULL),
   m_dBias(1.0),
   m_bBiasAdjustmentDone(false),
+  m_bDetectBias(false),
   m_dVariableFreq(1.0),
   m_avPhaseDiff(0)
 {
@@ -146,6 +147,14 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     m_bDrawStats = false;
   }
     
+  for (int i = 0; i < 2; i++)
+  {
+    if (EstimateRefreshTimings())
+    {
+      break; //only go round the loop again if we don't get a good result
+    }
+  }
+
   m_pStatsRenderer = new StatsRenderer(this, m_pD3DDev);
 }
 
@@ -944,6 +953,13 @@ HRESULT MPEVRCustomPresenter::RenegotiateMediaOutputType()
 
     if (SUCCEEDED(hr))
     {
+      if (m_bDetectBias)
+      {
+        Log("Detect bias enabled - sample type changed");
+        SetupAudioRenderer();
+        m_bDetectBias = false;
+      }
+
       fFoundMediaType = TRUE;
     }
   }
@@ -1832,6 +1848,7 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::ProcessMessage(MFVP_MESSAGE_TYPE
     case MFVP_MESSAGE_BEGINSTREAMING:
       // The EVR switched from stopped to paused. The presenter should allocate resources.
       Log("ProcessMessage MFVP_MESSAGE_BEGINSTREAMING");
+      m_bDetectBias = TRUE;
       m_bEndStreaming = FALSE;
       m_bInputAvailable = FALSE;
       m_bFirstInputNotify = FALSE;
@@ -1895,19 +1912,12 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockStart(MFTIME hnsSystemTim
   ResetTraceStats();
   ResetFrameStats();
   Flush(FALSE);
-  for (int i = 0; i < 2; i++)
-  {
-    if (EstimateRefreshTimings())
-    {
-      break; //only go round the loop again if we don't get a good result
-    }
-  }
   WakeThread(m_hWorker, &m_workerParams);
   WakeThread(m_hScheduler, &m_schedulerParams);
   NotifyWorker(true);
   NotifyScheduler(true);
+  m_bDetectBias = true;
   GetAVSyncClockInterface();
-  SetupAudioRenderer();
   return S_OK;
 }
 
@@ -2404,6 +2414,8 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
   
   if (m_pD3DDev)
   {
+    Log("Starting to estimate display refresh timings");
+
     m_pD3DDev->GetDisplayMode(0, &m_displayMode); //update this just in case anything has changed...
     
     D3DRASTER_STATUS rasterStatus;
@@ -2507,7 +2519,6 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
     Log("Measured display cycle: %.3f ms, locked: %d ", m_dEstRefreshCycle, m_estRefreshLock);
     Log("Maximum scanline: %d", m_maxScanLine);
     Log("Measured scanline time: %.3f us", (m_dDetectedScanlineTime * 1000.0));
-        
         
     m_qGoodPopCnt     = 0;
     m_qBadPopCnt      = 0; 
@@ -3228,8 +3239,6 @@ void MPEVRCustomPresenter::GetAVSyncClockInterface()
 
 void MPEVRCustomPresenter::SetupAudioRenderer()
 {
-  GetRealRefreshRate();
-
   m_dFrameCycle = m_rtTimePerFrame / 10000.0;
 
   double cycleDiff = GetCycleDifference();
