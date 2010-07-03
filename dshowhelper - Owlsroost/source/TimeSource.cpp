@@ -18,7 +18,7 @@
 #include <streams.h>  // CAutolock
 
 // For more details for memory leak detection see the alloctracing.h header
-// #include "..\..\alloctracing.h"
+//#include "..\..\alloctracing.h"
 
 #define ABS64(num) (num >=0 ? num : -num)
 #define LowDW(num) ((unsigned __int64)(unsigned long)(num & 0xFFFFFFFFUL))
@@ -157,7 +157,7 @@ LONGLONG GetCurrentTimestamp()
   if (!g_bTimerInitializer)
   {
     CAutoLock lock(&lock);
-    DWORD_PTR oldmask = SetThreadAffinityMask(GetCurrentThread(), 0);
+    DWORD_PTR oldmask = SetThreadAffinityMask(GetCurrentThread(), 1);
     g_bQPCAvail = QueryPerformanceFrequency((LARGE_INTEGER*)&g_lPerfFrequency);
     SetThreadAffinityMask(GetCurrentThread(), oldmask);
     g_bTimerInitializer = true;

@@ -28,14 +28,30 @@ using namespace std;
 
 #define NUM_SURFACES 5
 #define NB_JITTER 125
-
-#define NUM_PHASE_DEVIATIONS 10
+#define NB_RFPSIZE 64
+#define NB_DFTHSIZE 32
+#define NB_CFPSIZE 16
+#define NB_PCDSIZE 32
+#define LF_THRESH_LOW 3
+#define LF_THRESH (LF_THRESH_LOW + 1)
+#define LF_THRESH_HIGH (LF_THRESH + 3)
+#define FRAME_PROC_THRESH 30
+#define FRAME_PROC_THRSH2 60
+#define DFT_THRESH 0.007
+//#define NUM_PHASE_DEVIATIONS 10
+#define NUM_PHASE_DEVIATIONS 32
 
 // magic numbers
 #define DEFAULT_FRAME_TIME 200000 // used when fps information is not provided (PAL interlaced == 50fps)
 
 // uncomment the //Log to enable extra logging
 #define LOG_TRACE //Log
+
+// uncomment the //Log to enable extra logging
+#define LOG_DELAYS //Log
+
+// uncomment the //Log to enable extra logging
+#define LOG_LATEFR //Log
 
 // Macro for locking 
 #define TIME_LOCK(obj, crit, name)  \
@@ -61,8 +77,13 @@ typedef struct _SchedulerParams
 {
 	MPEVRCustomPresenter* pPresenter;
 	CCritSec csLock;
-	CAMEvent eHasWork;
+	CAMEvent eHasWork;   //Urgent event
+	CAMEvent eHasWorkLP; //Low-priority event
+	CAMEvent eTimerEnd;  //Timer thread event
 	BOOL bDone;
+	BOOL bPause;
+	BOOL bPauseAck;
+	LONGLONG llTime;     //Timer target time
 } SchedulerParams;
 
 class MPEVRCustomPresenter
@@ -149,15 +170,20 @@ public:
   virtual ULONG STDMETHODCALLTYPE AddRef();
   virtual ULONG STDMETHODCALLTYPE Release();
 
-  HRESULT        CheckForScheduledSample(LONGLONG *pNextSampleTime, REFERENCE_TIME hnsLastSleepTime);
-  BOOL           CheckForInput();
-  HRESULT        ProcessInputNotify(int* samplesProcessed);
+  HRESULT        CheckForScheduledSample(LONGLONG *pTargetTime, LONGLONG lastSleepTime, BOOL *idleWait);
+  BOOL           CheckForInput(bool setInAvail);
+  HRESULT        ProcessInputNotify(int* samplesProcessed,  bool setInAvail);
   void           SetFrameSkipping(bool onOff);
   REFERENCE_TIME GetFrameDuration();
   double         GetRefreshRate();
   double         GetDisplayCycle();
   double         GetCycleDifference();
   double         GetDetectedFrameTime();
+  double         GetRealFramePeriod();
+  void           GetFrameRateRatio();
+
+  void           NotifyTimer(LONGLONG targetTime);
+  void           NotifySchedulerTimer();
 
   // Release EVR callback (C# side)
   void           ReleaseCallback();
@@ -165,8 +191,9 @@ public:
   // Settings
   void           EnableDrawStats(bool enable);
   void           ResetEVRStatCounters();
-  void           ResetTraceStats(); // Reset all tracing stats
-
+  void           ResetTraceStats(); // Reset tracing stats
+  void           ResetFrameStats(); // Reset frame stats
+  
   void           NotifyRateChange(double pRate);
   void           NotifyDVDMenuState(bool pIsInMenu);
 
@@ -176,8 +203,7 @@ protected:
   void           GetAVSyncClockInterface();
   void           SetupAudioRenderer();
   void           AdjustAVSync();
-  void           EstimateRefreshTimings();
-  bool           ImmediateCheckForInput();
+  BOOL           EstimateRefreshTimings();
   void           LogStats();
   void           ReleaseSurfaces();
   HRESULT        Paint(CComPtr<IDirect3DSurface9> pSurface);
@@ -192,21 +218,26 @@ protected:
   void           StopWorkers();
   void           StartThread(PHANDLE handle, SchedulerParams* pParams, UINT (CALLBACK *ThreadProc)(void*), UINT* threadId, int threadPriority);
   void           EndThread(HANDLE hThread, SchedulerParams* params);
-  void           NotifyThread(SchedulerParams* params);
-  void           NotifyScheduler();
-  void           NotifyWorker();
-  HRESULT        GetTimeToSchedule(IMFSample* pSample, LONGLONG* pDelta);
+  void           PauseThread(HANDLE hThread, SchedulerParams* params);
+  void           WakeThread(HANDLE hThread, SchedulerParams* params);
+  void           NotifyThread(SchedulerParams* params, bool setWork, bool setWorkLP, LONGLONG llTime);
+  void           NotifyScheduler(bool forceWake);
+  void           NotifyWorker(bool setInAvail);
+  HRESULT        GetTimeToSchedule(IMFSample* pSample, LONGLONG* pDelta, LONGLONG *hnsSystemTime);
   void           Flush(BOOL forced);
   void           ScheduleSample(IMFSample* pSample);
   IMFSample*     PeekSample();
   BOOL           PopSample();
+  int            CheckQueueCount();
   HRESULT        TrackSample(IMFSample *pSample);
   HRESULT        GetFreeSample(IMFSample** ppSample);
   void           ReturnSample(IMFSample* pSample, BOOL tryNotify);
-  void           ResetStatistics();
+//  void           ResetStatistics();
   HRESULT        PresentSample(IMFSample* pSample);
   void           CorrectSampleTime(IMFSample* pSample);
   void           GetRealRefreshRate();
+  LONGLONG       GetDelayToRasterTarget(LONGLONG *targetTime, LONGLONG *offsetTime);
+  void           DwmEnableMMCSSOnOff(bool enable);
 
   CComPtr<IDirect3DDevice9>         m_pD3DDev;
   IVMR9Callback*                    m_pCallback;
@@ -226,11 +257,14 @@ protected:
   CMyQueue<IMFSample*>              m_qScheduledSamples;
   SchedulerParams                   m_schedulerParams;
   SchedulerParams                   m_workerParams;
+  SchedulerParams                   m_timerParams;
   BOOL                              m_bSchedulerRunning;
   HANDLE                            m_hScheduler;
   HANDLE                            m_hWorker;
+  HANDLE                            m_hTimer;
   UINT                              m_uSchedulerThreadId;
   UINT                              m_uWorkerThreadId;
+  UINT                              m_uTimerThreadId;
   UINT                              m_iResetToken;
   float                             m_fRate;
   long                              m_refCount;
@@ -240,6 +274,7 @@ protected:
   int                               m_iARX;
   int                               m_iARY;
   BOOL                              m_bInputAvailable;
+  BOOL                              m_bFirstInputNotify;
   BOOL                              m_bEndStreaming;
   BOOL                              m_bFlush;
   int                               m_iFramesDrawn;
@@ -256,6 +291,28 @@ protected:
   int                               m_nNextJitter;
   REFERENCE_TIME                    m_rtTimePerFrame;
   LONGLONG                          m_llLastWorkerNotification;
+
+  LONGLONG                          m_pllRFP [NB_RFPSIZE];   // timestamp buffer for estimating real frame period
+  LONGLONG                          m_llLastRFPts;
+  int                               m_nNextRFP;
+ 	double                            m_fRFPStdDev;				// Estimate the real frame period std dev
+	double                            m_fRFPMean;
+
+  LONGLONG                          m_pllCFP [NB_CFPSIZE];   // timestamp buffer for estimating real frame period
+  LONGLONG                          m_llLastCFPts;
+  int                               m_nNextCFP;
+	LONGLONG                          m_fCFPMean;
+
+  double                            m_pllPCD [NB_PCDSIZE];   // timestamp buffer for estimating pres/sys clock delta
+  LONGLONG                          m_llLastPCDprsTs;
+  LONGLONG                          m_llLastPCDsysTs;
+  int                               m_nNextPCD;
+	double                            m_fPCDMean;
+	
+  int                               m_iFramesHeld;
+  int                               m_iLateFrames;
+  int                               m_iFramesProcessed;
+ 
 
   int       m_nNextSyncOffset;
   LONGLONG  nsSampleTime;
@@ -287,14 +344,24 @@ protected:
   // Functions to trace timing performance
   void OnVBlankFinished(bool fAll, LONGLONG periodStart, LONGLONG periodEnd);
   void CalculateJitter(LONGLONG PerfCounter);
+  void CalculateRealFramePeriod(LONGLONG timeStamp);
+  void CalculateNSTStats(LONGLONG timeStamp);
+  void CalculatePresClockDelta(LONGLONG presTime, LONGLONG sysTime);
 
   double m_dDetectedScanlineTime;
   double m_dEstRefreshCycle; 
+  bool   m_estRefreshLock;
   double m_dOptimumDisplayCycle;
   double m_dFrameCycle;
   double m_dCycleDifference;
   double m_rasterSyncOffset;
   double m_pllRasterSyncOffset[NB_JITTER];
+  UINT   m_LastStartOfPaintScanline;
+  UINT   m_LastEndOfPaintScanline;
+  UINT   m_maxScanLine;
+  
+  LONGLONG m_SampDuration;
+
 
   StatsRenderer* m_pStatsRenderer; 
 
@@ -304,8 +371,8 @@ protected:
   // Used for detecting the real frame duration
   LONGLONG      m_LastScheduledUncorrectedSampleTime;
   double        m_LastScheduledSampleTimeFP;
-  LONGLONG      m_DetectedFrameTimeHistory[30];
-  double        m_DetectedFrameTimeHistoryHistory[100];
+  LONGLONG      m_DetectedFrameTimeHistory[NB_DFTHSIZE];
+//  double        m_DetectedFrameTimeHistoryHistory[100];
   int           m_DetectedFrameTimePos;
   double        m_DetectedFrameRate;
   double        m_DetectedFrameTime;
@@ -313,11 +380,27 @@ protected:
   bool          m_bCorrectedFrameTime;
   bool          m_DetectedLock;
 
+  int           m_frameRateRatio;
+  int           m_rawFRRatio;
+  
+  int           m_qGoodPopCnt;
+  int           m_qBadPopCnt;
+  int           m_qGoodPutCnt;
+  int           m_qBadPutCnt;
+  int           m_qBadSampTimCnt;
+  int           m_qCorrSampTimCnt;
+  
+  LONGLONG      m_stallTime;
+  LONGLONG      m_earliestPresentTime;
+  LONGLONG      m_lastPresentTime;
+  LONGLONG      m_lastDelayErr;
+  
   BOOL          m_bIsWin7;
-
+  
   IAVSyncClock* m_pAVSyncClock;
   double        m_dBias;
   bool          m_bBiasAdjustmentDone;
   double        m_dPhaseDeviations[NUM_PHASE_DEVIATIONS];
   double        m_dVariableFreq;
+  double        m_avPhaseDiff;
 };
