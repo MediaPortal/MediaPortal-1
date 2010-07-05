@@ -131,6 +131,7 @@ private:
 
   // CMpcAudioRenderer WASAPI methods
   HRESULT     GetDefaultAudioDevice(IMMDevice **ppMMDevice);
+  HRESULT     GetAvailabletAudioDevices(IMMDeviceCollection **ppMMDevices, bool pLog); // caller must release ppMMDevices!
   HRESULT     CreateAudioClient(IMMDevice *pMMDevice, IAudioClient **ppAudioClient);
   HRESULT     InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioClient *pAudioClient, IAudioRenderClient **ppRenderClient);
   HRESULT     CheckAudioClient(WAVEFORMATEX *pWaveFormatEx);

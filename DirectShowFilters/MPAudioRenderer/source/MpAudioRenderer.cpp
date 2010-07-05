@@ -22,11 +22,12 @@
 
 
 #include "stdafx.h"
-
 #include <initguid.h>
 #include "moreuuids.h"
 #include <ks.h>
 #include <ksmedia.h>
+#include <propkey.h>
+#include <FunctionDiscoveryKeys_devpkey.h>
 
 #include "MpAudioRenderer.h"
 #include "FilterApp.h"
@@ -125,6 +126,10 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 
   if (m_bUseWASAPI)
   {
+    IMMDeviceCollection* devices = NULL;
+    GetAvailabletAudioDevices(&devices, true);
+    SAFE_RELEASE(devices); // currently only log available devices
+    
     HMODULE hLib = NULL;
 
     // Load Vista specifics DLLs
@@ -1359,14 +1364,62 @@ HRESULT CMPAudioRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
  
  TODO : choose a device in the renderer configuration dialogs
 */
-HRESULT CMPAudioRenderer::GetDefaultAudioDevice(IMMDevice **pm_pMMDevice)
+HRESULT CMPAudioRenderer::GetDefaultAudioDevice(IMMDevice **ppMMDevice)
 {
   HRESULT hr;
   CComPtr<IMMDeviceEnumerator> enumerator;
   Log("GetDefaultAudioDevice");
 
   hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
-  hr = enumerator->GetDefaultAudioEndpoint(eRender, eConsole, pm_pMMDevice);
+  hr = enumerator->GetDefaultAudioEndpoint(eRender, eConsole, ppMMDevice);
+
+  return hr;
+}
+
+HRESULT CMPAudioRenderer::GetAvailabletAudioDevices(IMMDeviceCollection **ppMMDevices, bool pLog)
+{
+  HRESULT hr;
+  CComPtr<IMMDeviceEnumerator> enumerator;
+  Log("GetAvailableAudioDevices");
+  hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
+
+  IMMDeviceCollection *pCollection = NULL;
+  IMMDevice *pEndpoint = NULL;
+  IPropertyStore *pProps = NULL;
+  LPWSTR pwszID = NULL;
+
+  enumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &pCollection);
+  UINT count(0);
+  hr = pCollection->GetCount(&count);
+
+  if (pLog)
+  {
+    for (ULONG i = 0; i < count; i++)
+    {
+      if (pCollection->Item(i, &pEndpoint) != S_OK)
+        break;
+
+      if (pEndpoint->GetId(&pwszID))
+        break;
+
+      if (pEndpoint->OpenPropertyStore(STGM_READ, &pProps))
+        break;
+
+      PROPVARIANT varName;
+      PropVariantInit(&varName);
+
+      if (pProps->GetValue(PKEY_Device_FriendlyName, &varName))
+        break;
+
+      Log("Audio endpoint %d: \"%S\" (%S)", i, varName.pwszVal, pwszID);
+
+      CoTaskMemFree(pwszID);
+      pwszID = NULL;
+      PropVariantClear(&varName);
+      SAFE_RELEASE(pProps)
+      SAFE_RELEASE(pEndpoint)
+    }
+  }
 
   return hr;
 }
