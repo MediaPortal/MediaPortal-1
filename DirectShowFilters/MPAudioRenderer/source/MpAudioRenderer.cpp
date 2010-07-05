@@ -376,7 +376,9 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
       return VFW_E_CANNOT_CONNECT;
     }
     
-    if (m_pAudioClient->IsFormatSupported(m_WASAPIShareMode, pwfx, NULL) != S_OK)//&closestMatch) != S_OK)
+    // NOTE: using ClosestMatch parameter causes the call to succeed on some drivers 
+    // even when the client wont support the format!
+    if (m_pAudioClient->IsFormatSupported(m_WASAPIShareMode, pwfx, NULL) != S_OK)
     {
       Log("CheckMediaType WASAPI client refused the format, used mix format:");
       WAVEFORMATEX *pwfxCM = NULL;
