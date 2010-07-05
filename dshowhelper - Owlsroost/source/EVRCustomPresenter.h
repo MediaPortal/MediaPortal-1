@@ -400,6 +400,7 @@ protected:
   IAVSyncClock* m_pAVSyncClock;
   double        m_dBias;
   bool          m_bBiasAdjustmentDone;
+  bool          m_bInitialBiasAdjustmentDone;
   bool          m_bDetectBias;
   double        m_dPhaseDeviations[NUM_PHASE_DEVIATIONS];
   double        m_dVariableFreq;

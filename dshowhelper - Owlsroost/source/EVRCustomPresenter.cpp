@@ -66,6 +66,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   m_pAVSyncClock(NULL),
   m_dBias(1.0),
   m_bBiasAdjustmentDone(false),
+  m_bInitialBiasAdjustmentDone(false),
   m_bDetectBias(false),
   m_dVariableFreq(1.0),
   m_dPreviousVariableFreq(1.0),
@@ -955,7 +956,13 @@ HRESULT MPEVRCustomPresenter::RenegotiateMediaOutputType()
 
     if (SUCCEEDED(hr))
     {
-      if (m_bDetectBias)
+      if (!m_bInitialBiasAdjustmentDone)
+      {
+        Log("Detect bias enabled - first sample type negotiation");
+        SetupAudioRenderer();
+        m_bInitialBiasAdjustmentDone = true;
+      }
+      else if(m_bDetectBias)
       {
         Log("Detect bias enabled - sample type changed");
         SetupAudioRenderer();
