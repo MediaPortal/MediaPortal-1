@@ -202,7 +202,7 @@ friend class StatsRenderer;
 protected:
   void           GetAVSyncClockInterface();
   void           SetupAudioRenderer();
-  void           AdjustAVSync();
+  void           AdjustAVSync(double currentPhaseDiff);
   BOOL           EstimateRefreshTimings();
   void           LogStats();
   void           ReleaseSurfaces();

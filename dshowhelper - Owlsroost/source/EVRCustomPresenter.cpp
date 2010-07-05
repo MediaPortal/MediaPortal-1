@@ -80,7 +80,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     HRESULT hr;
     LogRotate();
     Log("----- Owlsroost Version ------ instance 0x%x", this);
-    Log("---------- v0.0.32 ----------- instance 0x%x", this);
+    Log("---------- v0.0.33 ----------- instance 0x%x", this);
     Log("--- audio renderer testing --- instance 0x%x", this);
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
@@ -1115,6 +1115,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
   LONGLONG systemTime = 0;
   LONGLONG lateLimit = 0;
   LONGLONG earlyLimit = hystersisTime;
+  LONGLONG frameTime = m_rtTimePerFrame;
   bool droppedFrame = false;
 
   // Allow 'hystersisTime' late or early frames to avoid synchronised judder problems. 
@@ -1168,7 +1169,6 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
     
     LOG_TRACE("Time to schedule: %I64d", nextSampleTime);
    
-    LONGLONG frameTime = m_rtTimePerFrame;
     if (m_DetectedFrameTime > DFT_THRESH)
     {
       frameTime = (LONGLONG)(m_DetectedFrameTime * 10000000.0);
@@ -1187,7 +1187,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
     *pTargetTime = 0;
         
     //De-sensitise frame dropping to avoid occasional delay glitches triggering frame drops
-    if ((m_frameRateRatio > 0) && !m_bDVDMenu && !m_bScrubbing && !m_pAVSyncClock)
+    if ((m_frameRateRatio > 0) && !m_bDVDMenu && !m_bScrubbing)
     {
       if (droppedFrame)
       {
@@ -1220,13 +1220,6 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
         lateLimit = hystersisTime;
         delErr = 0;
       }
-    }
-    else if (m_pAVSyncClock)
-    {
-      lateLimit = 0;
-      earlyLimit = -((frameTime*2)/4);
-      delErr = 0;
-      m_iLateFrames = 0;
     }
     else
     {
@@ -1262,7 +1255,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
         LONGLONG offsetTime = -delErr; //used to widen vsync correction window
         LONGLONG rasterDelay = GetDelayToRasterTarget( pTargetTime, &offsetTime);
 
-        if ((rasterDelay > 0) && !droppedFrame && !m_pAVSyncClock)
+        if ((rasterDelay > 0) && !droppedFrame)
         {
            // Not at the correct point in the display raster, so sleep until pTargetTime time
           m_earliestPresentTime = 0;
@@ -1272,11 +1265,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
         // We're within the raster timing limits, so present the sample or delay because it's too early...
         
         // Calculate minimum delay to next possible PresentSample() time
-        if (m_pAVSyncClock)
-        {
-          m_earliestPresentTime = 0;
-        }
-        else if (m_frameRateRatio <= 1)
+        if (m_frameRateRatio <= 1)
         {
           m_earliestPresentTime = systemTime + offsetTime;
         }
@@ -1293,19 +1282,9 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
             LOG_LATEFR("Late frame (stall), sampTime %.2f ms, last sleep %.2f, LFr %d",(double)nextSampleTime/10000, (double)lastSleepTime/10000, m_iLateFrames) ;
           }
           
-          if (m_pAVSyncClock)
-          {
-            m_stallTime = (nextSampleTime - (frameTime + earlyLimit));
-            if (m_stallTime > 20000)
-            {
-              *pTargetTime = systemTime + (m_stallTime/2); //delay in smaller chunks
-            }
-          }
-          else
-          {
-            m_stallTime = m_earliestPresentTime - systemTime;
-            *pTargetTime = systemTime + (m_stallTime/2); //delay in smaller chunks
-          }
+          m_stallTime = m_earliestPresentTime - systemTime;
+          *pTargetTime = systemTime + (m_stallTime/2); //delay in smaller chunks
+          
           break;
         }    
                
@@ -1339,6 +1318,24 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
       if (m_iLateFrames > 0)
       {
         m_iLateFrames--;
+      }
+
+      if (m_pAVSyncClock)
+      {
+        double nstPhaseDiff = -(((double)nextSampleTime / (double)frameTime) - 0.5);
+          //Clamp within limits - because of hystersis, the range of nextSampleTime
+          //is greater than frameTime, so it's possible for nstPhaseDiff to exceed
+          //the -0.5 to +0.5 allowable range 
+        if (nstPhaseDiff < -0.499)
+        {
+          nstPhaseDiff = -0.499;
+        }
+        else if (nstPhaseDiff > 0.499)
+        {
+          nstPhaseDiff = 0.499;
+        }
+          
+        AdjustAVSync(nstPhaseDiff);
       }
 
       if (m_bDrawStats)
@@ -2130,7 +2127,7 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
       m_rasterSyncOffset = m_dDetectedScanlineTime * m_maxScanLine;
     }
     
-    AdjustAVSync();
+//    AdjustAVSync();
 
     if (m_bDrawStats)
     {
@@ -3276,11 +3273,8 @@ void MPEVRCustomPresenter::SetupAudioRenderer()
   }
 }
 
-void MPEVRCustomPresenter::AdjustAVSync()
+void MPEVRCustomPresenter::AdjustAVSync(double currentPhaseDiff)
 {
-  double currentPhase = m_rasterSyncOffset / GetDisplayCycle();
-  double targetPhase = 0.75;
-	
   double averagePhaseDifference = 0.0;
 
   // Keep score of the last X deviations from target phase. These numbers have values between -0.5 and 0.5
@@ -3290,7 +3284,7 @@ void MPEVRCustomPresenter::AdjustAVSync()
     averagePhaseDifference += m_dPhaseDeviations[i];
   }
   
-  m_dPhaseDeviations[0] = (fmod(currentPhase - targetPhase + 0.5, 1) - 0.5);
+  m_dPhaseDeviations[0] = currentPhaseDiff;
   averagePhaseDifference += m_dPhaseDeviations[0];
   averagePhaseDifference = averagePhaseDifference / NUM_PHASE_DEVIATIONS;
   
@@ -3306,7 +3300,7 @@ void MPEVRCustomPresenter::AdjustAVSync()
       m_dVariableFreq = 1.0;
     }
   }
-  // If we are speeding down, we should stop when below the "green" limit
+  // If we are slowing down, we should stop when below the "green" limit
   if (m_dVariableFreq < 1.0)
   {
     if (averagePhaseDifference < 0.05 )
