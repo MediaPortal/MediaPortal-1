@@ -232,7 +232,6 @@ protected:
   HRESULT        TrackSample(IMFSample *pSample);
   HRESULT        GetFreeSample(IMFSample** ppSample);
   void           ReturnSample(IMFSample* pSample, BOOL tryNotify);
-//  void           ResetStatistics();
   HRESULT        PresentSample(IMFSample* pSample);
   void           CorrectSampleTime(IMFSample* pSample);
   void           GetRealRefreshRate();
@@ -370,9 +369,7 @@ protected:
 
   // Used for detecting the real frame duration
   LONGLONG      m_LastScheduledUncorrectedSampleTime;
-  double        m_LastScheduledSampleTimeFP;
   LONGLONG      m_DetectedFrameTimeHistory[NB_DFTHSIZE];
-//  double        m_DetectedFrameTimeHistoryHistory[100];
   int           m_DetectedFrameTimePos;
   double        m_DetectedFrameRate;
   double        m_DetectedFrameTime;

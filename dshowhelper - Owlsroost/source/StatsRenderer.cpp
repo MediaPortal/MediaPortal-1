@@ -199,8 +199,8 @@ void StatsRenderer::DrawStats()
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("Measured disp cyc: %.5f ms | Max line: %d | Frames drawn: %d | Frames dropped: %d", 
-      m_pPresenter->m_dEstRefreshCycle, m_pPresenter->m_maxScanLine, m_pPresenter->m_iFramesDrawn, m_pPresenter->m_iFramesDropped);
+    strText.Format("Measured disp rate: %.4f Hz | Max line: %d | Frames drawn: %d | Frames dropped: %d", 
+      1000.0/m_pPresenter->m_dEstRefreshCycle, m_pPresenter->m_maxScanLine, m_pPresenter->m_iFramesDrawn, m_pPresenter->m_iFramesDropped);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
@@ -244,9 +244,9 @@ void StatsRenderer::DrawStats()
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("QPut: %d | QNoPut: %d | QPop: %d | QPut-QPop: %d | StallTime: %3.3f ms | CtdSTimCnt: %d", 
+    strText.Format("QPut: %d | QNoPut: %d | QPop: %d | QPut-QPop: %d | StallTime: %3.3f ms | BadSTimCnt: %d", 
        m_pPresenter->m_qGoodPutCnt, m_pPresenter->m_qBadPutCnt, m_pPresenter->m_qGoodPopCnt, 
-       (m_pPresenter->m_qGoodPutCnt - m_pPresenter->m_qGoodPopCnt), m_pPresenter->m_stallTime/10000.0, m_pPresenter->m_qCorrSampTimCnt );
+       (m_pPresenter->m_qGoodPutCnt - m_pPresenter->m_qGoodPopCnt), m_pPresenter->m_stallTime/10000.0, m_pPresenter->m_qBadSampTimCnt );
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
