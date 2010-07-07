@@ -37,6 +37,8 @@
 #include "SyncClock.h"
 #include "IAVSyncClock.h"
 
+#define MAX_REG_LENGTH 256
+
 // REFERENCE_TIME time units per second and per millisecond
 #define REFTIMES_PER_SEC  10000000
 #define REFTIMES_PER_MILLISEC  10000
@@ -106,18 +108,19 @@ public:
 private:
 
   // For accessing the registry
-  void            LoadSettingsFromRegistry();
-  void            ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
-  void            WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
-  void            WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
+  void LoadSettingsFromRegistry();
+  void ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
+  void WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
+  void ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
+  void WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
   
-  HRESULT					DoRenderSampleDirectSound(IMediaSample *pMediaSample);
-
-  HRESULT					InitCoopLevel();
-  HRESULT					ClearBuffer();
-  HRESULT					CreateDSBuffer();
-  HRESULT					GetReferenceClockInterface(REFIID riid, void **ppv);
-  HRESULT					WriteSampleToDSBuffer(IMediaSample *pMediaSample, bool *looped);
+  // DirectSound methods
+  HRESULT DoRenderSampleDirectSound(IMediaSample *pMediaSample);
+  HRESULT InitCoopLevel();
+  HRESULT ClearBuffer();
+  HRESULT CreateDSBuffer();
+  HRESULT GetReferenceClockInterface(REFIID riid, void **ppv);
+  HRESULT WriteSampleToDSBuffer(IMediaSample *pMediaSample, bool *looped);
 
   LPDIRECTSOUND8        m_pDS;
   LPDIRECTSOUNDBUFFER   m_pDSBuffer;
@@ -129,9 +132,9 @@ private:
 
   CMultiSoundTouch*	    m_pSoundTouch;
 
-  // CMpcAudioRenderer WASAPI methods
-  HRESULT     GetDefaultAudioDevice(IMMDevice **ppMMDevice);
-  HRESULT     GetAvailabletAudioDevices(IMMDeviceCollection **ppMMDevices, bool pLog); // caller must release ppMMDevices!
+  // WASAPI methods
+  HRESULT     GetAudioDevice(IMMDevice **ppMMDevice);
+  HRESULT     GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevices, bool pLog); // caller must release ppMMDevices!
   HRESULT     CreateAudioClient(IMMDevice *pMMDevice, IAudioClient **ppAudioClient);
   HRESULT     InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioClient *pAudioClient, IAudioRenderClient **ppRenderClient);
   HRESULT     CheckAudioClient(WAVEFORMATEX *pWaveFormatEx);
@@ -153,6 +156,8 @@ private:
   bool                m_bIsAudioClientStarted;
   DWORD               m_dwLastBufferTime;
   AUDCLNT_SHAREMODE   m_WASAPIShareMode;
+  bool                m_bReinitAfterStop;
+  WCHAR*              m_wWASAPIPreferredDeviceId;
 
   // AVRT.dll (Vista or greater)
   typedef HANDLE (__stdcall *PTR_AvSetMmThreadCharacteristicsW)(LPCWSTR TaskName, LPDWORD TaskIndex);

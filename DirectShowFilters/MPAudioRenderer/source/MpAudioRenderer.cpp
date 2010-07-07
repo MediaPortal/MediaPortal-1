@@ -118,6 +118,8 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_nHWfreq(0)
 , m_WASAPIShareMode(AUDCLNT_SHAREMODE_EXCLUSIVE)
 , m_bUseThreads(false)
+, m_bReinitAfterStop(false)
+, m_wWASAPIPreferredDeviceId(NULL)
 {
   LogRotate();
   Log("MP Audio Renderer - v0.1 - instance 0x%x", this);
@@ -127,7 +129,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
   if (m_bUseWASAPI)
   {
     IMMDeviceCollection* devices = NULL;
-    GetAvailabletAudioDevices(&devices, true);
+    GetAvailableAudioDevices(&devices, true);
     SAFE_RELEASE(devices); // currently only log available devices
     
     HMODULE hLib = NULL;
@@ -192,30 +194,37 @@ CMPAudioRenderer::~CMPAudioRenderer()
     pfAvRevertMmThreadCharacteristics(m_hTask);
   }
 
+  delete m_wWASAPIPreferredDeviceId;
+
   Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
 }
 
 void CMPAudioRenderer::LoadSettingsFromRegistry()
 {
+  USES_CONVERSION;
+  
   Log("Loading settings from registry");
 
   LPCTSTR folder = TEXT("Software\\Team MediaPortal\\Audio Renderer");
 
   HKEY hKey;
-  DWORD bufferSize = 512; 
-  char* lpData = new char[bufferSize];
+  char* lpData = new char[MAX_REG_LENGTH];
 
   // Registry setting names
   LPCTSTR forceDirectSound = TEXT("ForceDirectSound");
   LPCTSTR enableTimestretching = TEXT("EnableTimestretching");
   LPCTSTR WASAPIExclusive = TEXT("WASAPIExclusive");
   LPCTSTR useThreadsForResampling = TEXT("UseThreadsForResampling");
+  LPCTSTR WASAPIPreferredDevice = TEXT("WASAPIPreferredDevice");
   
   // Default values for the settings in registry
   DWORD forceDirectSoundData = 0;
   DWORD enableTimestretchingData = 1;
   DWORD WASAPIExclusiveData = 1;
   DWORD useThreadsForResamplingData = 1;
+  LPCTSTR WASAPIPreferredDeviceData = new TCHAR[MAX_REG_LENGTH];
+
+  ZeroMemory((void*)WASAPIPreferredDeviceData, MAX_REG_LENGTH);
 
   // Try to access the setting root "Software\Team MediaPortal\Audio Renderer"
   RegOpenKeyEx(HKEY_CURRENT_USER, folder, NULL, KEY_ALL_ACCESS, &hKey);
@@ -227,11 +236,13 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
     ReadRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
     ReadRegistryKeyDword(hKey, useThreadsForResampling, useThreadsForResamplingData);
+    ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
 
     Log("   ForceDirectSound:        %d", forceDirectSoundData);
     Log("   EnableTimestrecthing:    %d", enableTimestretchingData);
     Log("   WASAPIExclusive:         %d", WASAPIExclusiveData);
     Log("   UseThreadsForResampling: %d", useThreadsForResamplingData);
+    Log("   WASAPIPreferredDevice:   %s", WASAPIPreferredDeviceData);
 
     if (forceDirectSoundData > 0)
       m_bUseWASAPI = false;
@@ -252,6 +263,11 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
       m_bUseThreads = true;
     else
       m_bUseThreads = false;
+
+    delete m_wWASAPIPreferredDeviceId;
+    m_wWASAPIPreferredDeviceId = new WCHAR[MAX_REG_LENGTH];
+    
+    wcsncpy(m_wWASAPIPreferredDeviceId, T2W(WASAPIPreferredDeviceData), MAX_REG_LENGTH);
   }
 
   else // no settings in registry, create default values
@@ -313,6 +329,30 @@ void CMPAudioRenderer::WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD
   }
 }
 
+void CMPAudioRenderer::ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
+{
+  DWORD dwSize = MAX_REG_LENGTH;
+  DWORD dwType = REG_SZ;
+  LONG error = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)data, &dwSize);
+  
+  if( error != ERROR_SUCCESS )
+  {
+    if (error == ERROR_FILE_NOT_FOUND)
+    {
+      Log("   create default value for %s", lpSubKey);
+      WriteRegistryKeyString(hKey, lpSubKey, data);
+    }
+    else if (error == ERROR_MORE_DATA)
+    {
+      Log("   too much data, corrupted registry setting(?):  %s", lpSubKey);      
+    }
+    else
+    {
+      Log("   error: %d subkey: %s", error, lpSubKey);       
+    }
+  }
+}
+
 void CMPAudioRenderer::WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
 {  
   LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, strlen(data)+1);
@@ -369,7 +409,8 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
 
   if (m_bUseWASAPI)
   {
-    hr = CheckAudioClient((WAVEFORMATEX *)NULL);
+    //hr = CheckAudioClient((WAVEFORMATEX *)NULL);
+    hr = CheckAudioClient(pwfx);
     if (FAILED(hr))
     {
       Log("CheckMediaType Error on check audio client");
@@ -617,17 +658,21 @@ STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
     hr = CheckAudioClient(m_pWaveFileFormat);
     if (FAILED(hr)) 
     {
-      Log("Run Error on check audio client");
+      Log("Run: error on check audio client (0x%08x)", hr);
       return hr;
     }
-    
-    /*hr = m_pAudioClient->Start();
-    if (FAILED (hr))
-    {
-      Log("Run Start error");
-      return hr;
-    }*/
 
+    // this is required for the .NET GC workaround
+    if (m_bReinitAfterStop)
+    {
+      hr = InitAudioClient(m_pWaveFileFormat, m_pAudioClient, &m_pRenderClient);
+      if (FAILED(hr)) 
+      {
+        Log("Run: error on reinit after stop (0x%08x)", hr);
+        return hr;
+      }
+    }
+    
     if(SUCCEEDED(m_pPosition->GetRate(&m_dRate)))
     {
       if (m_dRate < 1.0) // TODO should be !=
@@ -661,7 +706,7 @@ STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
     }
     ClearBuffer();
   }
-  
+
   return CBaseRenderer::Run(tStart);
 }
 
@@ -680,7 +725,6 @@ STDMETHODIMP CMPAudioRenderer::Stop()
   {
     m_pAudioClient->Stop();
     m_pAudioClient->Reset();
-    m_bIsAudioClientStarted = false;
   }
 
   // This is an ugly workaround for the .NET GC not cleaning up the directshow resources
@@ -693,7 +737,11 @@ STDMETHODIMP CMPAudioRenderer::Stop()
     SAFE_RELEASE(m_pRenderClient);
     SAFE_RELEASE(m_pAudioClient);
     SAFE_RELEASE(m_pMMDevice);
+
+    m_bReinitAfterStop = true;
   }
+
+  m_bIsAudioClientStarted = false;
 
   return CBaseRenderer::Stop(); 
 };
@@ -1293,14 +1341,14 @@ HRESULT CMPAudioRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
   CAutoLock cAutoLock(&m_csCheck);
   
   if (!m_pMMDevice) 
-    hr = GetDefaultAudioDevice(&m_pMMDevice);
+    hr = GetAudioDevice(&m_pMMDevice);
 
   // If no WAVEFORMATEX structure provided and client already exists, return it
   if (m_pAudioClient && !pWaveFormatEx) 
     return hr;
 
   // Just create the audio client if no WAVEFORMATEX provided
-  if (!m_pAudioClient && !pWaveFormatEx)
+  if (!m_pAudioClient)// && !pWaveFormatEx)
   {
     if (SUCCEEDED (hr)) hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
       return hr;
@@ -1358,57 +1406,112 @@ HRESULT CMPAudioRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
   return hr;
 }
 
-/* 
- Retrieves the default audio device from the Core Audio API
- To be used for WASAPI mode
- 
- TODO : choose a device in the renderer configuration dialogs
-*/
-HRESULT CMPAudioRenderer::GetDefaultAudioDevice(IMMDevice **ppMMDevice)
+HRESULT CMPAudioRenderer::GetAudioDevice(IMMDevice **ppMMDevice)
 {
-  HRESULT hr;
-  CComPtr<IMMDeviceEnumerator> enumerator;
-  Log("GetDefaultAudioDevice");
+  Log("GetAudioDevice");
 
-  hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
+  CComPtr<IMMDeviceEnumerator> enumerator;
+  IMMDeviceCollection* devices;
+  HRESULT hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
+
+  if (hr != S_OK)
+  {
+    Log("  failed to create MMDeviceEnumerator!");
+    return hr;
+  }
+
+  Log("Target end point: %S", m_wWASAPIPreferredDeviceId);
+
+  if (GetAvailableAudioDevices(&devices, false) == S_OK)
+  {
+    UINT count(0);
+    hr = devices->GetCount(&count);
+    if (hr != S_OK)
+    {
+      Log("  devices->GetCount failed: (0x%08x)", hr);
+      return hr;
+    }
+    
+    for (int i = 0 ; i < count ; i++)
+    {
+      LPWSTR pwszID = NULL;
+      IMMDevice *endpoint = NULL;
+      hr = devices->Item(i, &endpoint);
+      if (hr == S_OK)
+      {
+        hr = endpoint->GetId(&pwszID);
+        if (hr == S_OK)
+        {
+          // Found the configured audio endpoint
+          if (wcscmp(pwszID, m_wWASAPIPreferredDeviceId) == 0)
+          {
+            enumerator->GetDevice(m_wWASAPIPreferredDeviceId, ppMMDevice); 
+            SAFE_RELEASE(devices);
+            *(ppMMDevice) = endpoint;
+            CoTaskMemFree(pwszID);
+            pwszID = NULL;
+            return S_OK;
+          }
+          else
+          {
+            SAFE_RELEASE(endpoint);
+          }
+        }
+        else
+        {
+          Log("  devices->GetId failed: (0x%08x)", hr);     
+        }
+      }
+      else
+      {
+        Log("  devices->Item failed: (0x%08x)", hr);  
+      }
+
+      CoTaskMemFree(pwszID);
+      pwszID = NULL;
+    }
+  }
+
+  Log("Unable to find selected audio device, using the default end point!");
   hr = enumerator->GetDefaultAudioEndpoint(eRender, eConsole, ppMMDevice);
+
+  SAFE_RELEASE(devices);
 
   return hr;
 }
 
-HRESULT CMPAudioRenderer::GetAvailabletAudioDevices(IMMDeviceCollection **ppMMDevices, bool pLog)
+HRESULT CMPAudioRenderer::GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevices, bool pLog)
 {
   HRESULT hr;
   CComPtr<IMMDeviceEnumerator> enumerator;
   Log("GetAvailableAudioDevices");
   hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
 
-  IMMDeviceCollection *pCollection = NULL;
-  IMMDevice *pEndpoint = NULL;
-  IPropertyStore *pProps = NULL;
+  IMMDevice* pEndpoint = NULL;
+  IPropertyStore* pProps = NULL;
   LPWSTR pwszID = NULL;
 
-  enumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &pCollection);
+  enumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, ppMMDevices);
   UINT count(0);
-  hr = pCollection->GetCount(&count);
+  hr = (*ppMMDevices)->GetCount(&count);
 
   if (pLog)
   {
     for (ULONG i = 0; i < count; i++)
     {
-      if (pCollection->Item(i, &pEndpoint) != S_OK)
+      if ((*ppMMDevices)->Item(i, &pEndpoint) != S_OK)
         break;
 
-      if (pEndpoint->GetId(&pwszID))
+      if (pEndpoint->GetId(&pwszID) != S_OK)
         break;
 
-      if (pEndpoint->OpenPropertyStore(STGM_READ, &pProps))
+      if (pEndpoint->OpenPropertyStore(STGM_READ, &pProps) != S_OK)
         break;
 
       PROPVARIANT varName;
       PropVariantInit(&varName);
 
-      if (pProps->GetValue(PKEY_Device_FriendlyName, &varName))
+      if (pProps->GetValue(PKEY_Device_FriendlyName, &varName) != S_OK)
         break;
 
       Log("Audio endpoint %d: \"%S\" (%S)", i, varName.pwszVal, pwszID);
