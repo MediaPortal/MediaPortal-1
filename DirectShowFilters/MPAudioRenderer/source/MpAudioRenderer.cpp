@@ -122,7 +122,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_wWASAPIPreferredDeviceId(NULL)
 {
   LogRotate();
-  Log("MP Audio Renderer - v0.1 - instance 0x%x", this);
+  Log("MP Audio Renderer - v0.5 - instance 0x%x", this);
 
   LoadSettingsFromRegistry();
 
@@ -301,7 +301,7 @@ void CMPAudioRenderer::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD&
   DWORD dwSize = sizeof(DWORD);
   DWORD dwType = REG_DWORD;
   LONG error = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)&data, &dwSize);
-  if( error != 0 )
+  if (error != ERROR_SUCCESS)
   {
     if (error == ERROR_FILE_NOT_FOUND)
     {
@@ -335,7 +335,7 @@ void CMPAudioRenderer::ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTS
   DWORD dwType = REG_SZ;
   LONG error = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)data, &dwSize);
   
-  if( error != ERROR_SUCCESS )
+  if (error != ERROR_SUCCESS)
   {
     if (error == ERROR_FILE_NOT_FOUND)
     {

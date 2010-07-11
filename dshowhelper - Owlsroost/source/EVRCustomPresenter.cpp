@@ -1331,12 +1331,12 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
 
       if (m_pAVSyncClock) //Update phase deviation data for MP Audio Renderer
       {
-          //Target (0.5 * frameTime) for nextSampleTime
+        //Target (0.5 * frameTime) for nextSampleTime
         double nstPhaseDiff = -(((double)nextSampleTime / (double)frameTime) - 0.5);
 
-          //Clamp within limits - because of hystersis, the range of nextSampleTime
-          //is greater than frameTime, so it's possible for nstPhaseDiff to exceed
-          //the -0.5 to +0.5 allowable range 
+        //Clamp within limits - because of hystersis, the range of nextSampleTime
+        //is greater than frameTime, so it's possible for nstPhaseDiff to exceed
+        //the -0.5 to +0.5 allowable range 
         if (nstPhaseDiff < -0.499)
         {
           nstPhaseDiff = -0.499;
