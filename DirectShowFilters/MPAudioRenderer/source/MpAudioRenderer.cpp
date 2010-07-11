@@ -668,8 +668,8 @@ STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
       hr = InitAudioClient(m_pWaveFileFormat, m_pAudioClient, &m_pRenderClient);
       if (FAILED(hr)) 
       {
-        Log("Run: error on reinit after stop (0x%08x)", hr);
-        return hr;
+        Log("Run: error on reinit after stop (0x%08x) - trying to continue", hr);
+        //return hr;
       }
     }
     
@@ -1624,6 +1624,12 @@ HRESULT CMPAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCli
   if (SUCCEEDED (hr))
   {
     hr = m_pAudioClient->Initialize(m_WASAPIShareMode,0/*AUDCLNT_STREAMFLAGS_EVENTCALLBACK*/, m_hnsPeriod,m_hnsPeriod,pWaveFormatEx,NULL);
+    
+    // when rebuilding the graph between SD / HD zapping the .NET GC workaround
+    // might call the init again. In that case just eat the error 
+    // this needs to be fixed properly if .NET GC workaround is going to be the final solution...
+    if (hr == AUDCLNT_E_ALREADY_INITIALIZED)
+      return S_OK;
   }
     
   if (FAILED (hr) && hr != AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED)
