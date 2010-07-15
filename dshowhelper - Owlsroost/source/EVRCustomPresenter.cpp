@@ -3278,10 +3278,6 @@ void MPEVRCustomPresenter::SetupAudioRenderer()
   {
     m_dBias = 1.0 - cycleDiff;
 
-    Log("SetupAudioRenderer: DIFF %f (bias vs calculated cycle)", m_dBias - 1.0 + cycleDiff);
-    Log("SetupAudioRenderer: DIFF %f (bias vs calculated MS value)", m_dBias - 1.04297);
-    Log("SetupAudioRenderer: DIFF %f (bias vs calculated)", m_dBias - 1.04270937604271);
-
     if (m_pAVSyncClock)
     {
       if (S_OK == m_pAVSyncClock->SetBias(m_dBias))
