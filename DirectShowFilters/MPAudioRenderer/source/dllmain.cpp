@@ -184,7 +184,7 @@ void Log(const char *fmt, ...)
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
   char msg[5000];
-  sprintf_s(msg, 5000,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%x]%s\n",
+  sprintf_s(msg, 5000,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%5x] %s\n",
     systemTime.wDay, systemTime.wMonth, systemTime.wYear,
     systemTime.wHour, systemTime.wMinute, systemTime.wSecond,
     systemTime.wMilliseconds,
