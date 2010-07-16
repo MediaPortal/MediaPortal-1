@@ -180,4 +180,15 @@ private:
   UINT64        m_nHWfreq;
 
   bool        m_bUseThreads;
+
+  // Threading 
+  static DWORD WINAPI RenderThreadEntryPoint(LPVOID lpParameter);
+  DWORD RenderThread();
+  DWORD m_threadId;
+
+  HANDLE m_hThread;
+
+  HANDLE m_hDataEvent;
+  HANDLE m_hStopRenderThreadEvent;
+  HANDLE m_hWaitRenderThreadToExitEvent;
 };

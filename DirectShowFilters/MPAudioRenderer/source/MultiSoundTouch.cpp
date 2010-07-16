@@ -411,6 +411,43 @@ bool CMultiSoundTouch::putSamplesInternal(const short *inBuffer, long inSamples)
   return true;
 }
 
+HRESULT CMultiSoundTouch::GetNextSample(IMediaSample** pSample)
+{
+  CAutoLock outputLock(&m_sampleOutQueueLock);
+  
+  if(m_sampleOutQueue.empty())
+  {
+    return S_FALSE;
+  }
+
+  // Fetch one sample
+  (*pSample) = m_sampleOutQueue.front();
+  m_sampleOutQueue.erase(m_sampleOutQueue.begin());
+
+  return S_OK;
+}
+
+
+HRESULT CMultiSoundTouch::QueueSample(IMediaSample* pSample)
+{
+  CAutoLock cRendererLock(&m_sampleOutQueueLock);
+
+  if (m_bFlushSamples)
+  {
+    m_bFlushSamples = false;
+    for(int i = 0; i < m_sampleOutQueue.size(); i++)
+    {
+      m_sampleOutQueue[i]->Release();
+    }
+    m_sampleOutQueue.clear();
+  }
+    
+  pSample->AddRef();
+  m_sampleOutQueue.push_back(pSample);
+
+  return S_OK;
+}
+
 uint CMultiSoundTouch::receiveSamples(short **outBuffer, uint maxSamples)
 {
   static bool ignoreEmptySamples = true;

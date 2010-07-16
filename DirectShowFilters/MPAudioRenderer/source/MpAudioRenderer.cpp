@@ -38,8 +38,6 @@ CFilterApp theApp;
 #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
 #define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
 
-//#define TRACE_PERFORMANCE
-
 // === Compatibility with Windows SDK v6.0A (define in KSMedia.h in Windows 7 SDK or later)
 #ifndef STATIC_KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL
 
@@ -88,6 +86,135 @@ extern void Log(const char *fmt, ...);
 extern void LogWaveFormat(WAVEFORMATEX* pwfx);
 extern void LogRotate();
 
+DWORD CMPAudioRenderer::RenderThread()
+{
+  Log("Render thread - starting up - thread ID: %d", m_threadId);
+  
+  HRESULT hr = S_OK;
+
+  // These are wait handles for the thread stopping and new sample arrival
+  HANDLE handles[2];
+  handles[0] = m_hStopRenderThreadEvent;
+  handles[1] = m_hDataEvent;
+
+  IMediaSample* sample = NULL;
+  UINT32 sampleOffset = 0;
+  bool writeSilence = false;
+
+  while(true)
+  {
+    // Check event for stop thread
+    if (WaitForSingleObject(m_hStopRenderThreadEvent, 0) == WAIT_OBJECT_0)
+    {
+      Log("Render thread - closing down - thread ID: %d", m_threadId);
+      SetEvent(m_hWaitRenderThreadToExitEvent);
+      return 0;
+    }
+
+    // 1) Waiting for the next WASAPI buffer to be available to be filled
+    // 2) Exit requested for the thread
+    DWORD result = WaitForMultipleObjects(2, handles, false, INFINITE);
+    if (result == WAIT_OBJECT_0)
+    {
+      Log("Render thread - closing down - thread ID: %d", m_threadId);
+      SetEvent(m_hWaitRenderThreadToExitEvent);
+      return 0;
+    }
+    else if (result == WAIT_OBJECT_0 + 1)
+    {
+      HRESULT hr = S_FALSE;
+
+      // Fetch the sample for the first time
+      if(!sample)
+      {
+        sampleOffset = 0;
+        hr = m_pSoundTouch->GetNextSample(&sample);
+        if (FAILED(hr))
+        {
+          // No samples in queue 
+          writeSilence = true;
+        }
+      }
+
+      UINT32 bufferSize = 0;
+      BYTE* data;
+
+      m_pAudioClient->GetBufferSize(&bufferSize);
+
+      // TODO use non-hardcoded value
+      UINT32 bufferSizeInBytes = bufferSize * 4;
+
+      hr = m_pRenderClient->GetBuffer(bufferSize, &data);
+
+      if (SUCCEEDED(hr) && m_pRenderClient)
+      {
+        if (writeSilence)
+        {
+          if (SUCCEEDED(hr))
+          {
+            m_pRenderClient->ReleaseBuffer(bufferSize, AUDCLNT_BUFFERFLAGS_SILENT);
+          }
+        }
+        else if (sample) // we have at least some data to be written
+        {
+          UINT32 bytesCopied = 0;
+          BYTE* sampleData = NULL;
+          UINT32 sampleLength = sample->GetActualDataLength();
+          UINT32 dataLeftInSample = sampleLength - sampleOffset;
+
+          sample->GetPointer(&sampleData);
+
+          do
+          {
+            // no data in current sample anymore
+            if(sampleLength - sampleOffset == 0)
+            {
+              sample->Release();
+              hr = m_pSoundTouch->GetNextSample(&sample);
+              if (FAILED(hr))
+              {
+                // no next sample available
+                Log("Render thread: Buffer underrun, no new samples available!");
+                break;
+              }
+              sample->GetPointer(&sampleData);
+              sampleLength = sample->GetActualDataLength();
+              sampleOffset = 0;
+            }
+
+            dataLeftInSample = sampleLength - sampleOffset;
+
+            UINT32 bytesToCopy = min(dataLeftInSample, bufferSizeInBytes - bytesCopied);
+            memcpy(data + bytesCopied, sampleData + sampleOffset, bytesToCopy); 
+            bytesCopied += bytesToCopy;
+            sampleOffset += bytesToCopy;
+          } while (bytesCopied < bufferSizeInBytes);
+        }
+      }
+
+      hr = m_pRenderClient->ReleaseBuffer(bufferSize, 0);
+      if (FAILED(hr))
+      {
+        Log("Render thread: ReleaseBuffer failed (0x%08x)", hr);
+      }
+    }
+    else
+    {
+      DWORD error = GetLastError();
+      Log("Render thread: WaitForMultipleObjects failed: %d", error);
+    }
+  }
+  
+  Log("Render thread - closing down - thread ID: %d", m_threadId);
+  return 0;
+}
+
+DWORD WINAPI CMPAudioRenderer::RenderThreadEntryPoint(LPVOID lpParameter)
+{
+  return ((CMPAudioRenderer *)lpParameter)->RenderThread();
+}
+
+
 CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 : CBaseRenderer(__uuidof(this), NAME("MediaPortal - Audio Renderer"), punk, phr)
 , m_Clock(static_cast<IBaseFilter*>(this), phr, this)
@@ -120,6 +247,8 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_bUseThreads(false)
 , m_bReinitAfterStop(false)
 , m_wWASAPIPreferredDeviceId(NULL)
+, m_hDataEvent(NULL)
+, m_hThread(NULL)
 {
   LogRotate();
   Log("MP Audio Renderer - v0.5 - instance 0x%x", this);
@@ -132,6 +261,10 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
     GetAvailableAudioDevices(&devices, true);
     SAFE_RELEASE(devices); // currently only log available devices
     
+    m_hDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+    m_hStopRenderThreadEvent = CreateEvent(0, FALSE, FALSE, 0);
+    m_hWaitRenderThreadToExitEvent = CreateEvent(0, FALSE, FALSE, 0);
+
     HMODULE hLib = NULL;
 
     // Load Vista specifics DLLs
@@ -163,6 +296,19 @@ CMPAudioRenderer::~CMPAudioRenderer()
 {
   Log("MP Audio Renderer - destructor - instance 0x%x", this);
   Stop();
+
+  // Get rid of the render thread
+  SetEvent(m_hStopRenderThreadEvent);
+  WaitForSingleObject(m_hWaitRenderThreadToExitEvent, INFINITE);
+
+  if (m_hDataEvent)
+    CloseHandle(m_hDataEvent);
+  if (m_hWaitRenderThreadToExitEvent)
+    CloseHandle(m_hWaitRenderThreadToExitEvent);
+  if (m_hStopRenderThreadEvent)
+    CloseHandle(m_hStopRenderThreadEvent);
+  if (m_hThread)
+    CloseHandle(m_hThread);
 
   // DSound
   SAFE_DELETE(m_pSoundTouch);
@@ -515,20 +661,23 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
 HRESULT	CMPAudioRenderer::DoRenderSample(IMediaSample *pMediaSample)
 {
   CAutoLock cRendererLock(&m_InterfaceLock);
-  
+  HRESULT hr = S_FALSE;
+
+  if (m_bUseWASAPI)
+  {
+    hr = DoRenderSampleWasapi(pMediaSample);
+  }
+  else
+  {
+    hr = DoRenderSampleDirectSound(pMediaSample);
+  }
+
   if (m_bFirstAudioSample)
   {
     m_bFirstAudioSample = false;
   }
-  
-  if (m_bUseWASAPI)
-  {
-    return DoRenderSampleWasapi(pMediaSample);
-  }
-  else
-  {
-    return DoRenderSampleDirectSound(pMediaSample);
-  }
+
+  return hr;
 }
 
 
@@ -1186,7 +1335,7 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
   {
     CAutoLock cAutoLock(&m_csResampleLock);
 	
-    int nBytePerSample = m_pWaveFileFormat->nChannels * (m_pWaveFileFormat->wBitsPerSample/8);
+    int nBytePerSample = m_pWaveFileFormat->nChannels * (m_pWaveFileFormat->wBitsPerSample / 8);
     
     if (m_bUseThreads)
     {
@@ -1200,134 +1349,30 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
       m_pSoundTouch->putSamples((const short*)pMediaBuffer, lSize / nBytePerSample);    
     }
 
-    lResampledSize = m_pSoundTouch->receiveSamples((short**)&mediaBufferResult, 0) * nBytePerSample;
-    if (lResampledSize == 0)
+    if (m_bFirstAudioSample)
     {
-      return S_OK; // No samples to be rendered 
+      UINT32 nFramesInBuffer;
+      hr = m_pAudioClient->GetBufferSize(&m_nFramesInBuffer);
+      hr = m_pRenderClient->GetBuffer(m_nFramesInBuffer, &pData); // just a "ping" buffer
+      hr = m_pRenderClient->ReleaseBuffer(m_nFramesInBuffer, AUDCLNT_BUFFERFLAGS_SILENT);
     }
-
-#ifdef TRACE_PERFORMANCE
-    CString OutMsg;
-    OutMsg.Format("Render - Resampled %d", lResampledSize);
-    OutputDebugString(OutMsg);
-#endif
   }
   else // no time stretching enabled
   {
-    hr = pMediaSample->GetPointer(&pMediaBuffer);
-    if (FAILED (hr)) return hr; 
+    m_pSoundTouch->QueueSample(pMediaSample);
   }
 
-  if (m_bUseTimeStretching)
+  if (!m_bIsAudioClientStarted)
   {
-    pInputBufferPointer = &mediaBufferResult[0];
-    pInputBufferEnd = &mediaBufferResult[0] + lResampledSize;
+    Log("DoRenderSampleWasapi Starting audio client");
+    m_pAudioClient->Start();
+    m_bIsAudioClientStarted = true;
+
+    if(!m_hThread)
+      m_hThread = CreateThread(0, 0, CMPAudioRenderer::RenderThreadEntryPoint, (LPVOID)this, 0, &m_threadId);
+
+
   }
-  else
-  {
-    pInputBufferPointer = &pMediaBuffer[0];
-    pInputBufferEnd = &pMediaBuffer[0] + lSize;
-  }
-
-  WORD frameSize = m_pWaveFileFormat->nBlockAlign;
-
-  // Sleep for half the buffer duration since last buffer feed
-  DWORD currentTime = GetTickCount();
-  if (m_dwLastBufferTime != 0 && m_hnsActualDuration != 0 && m_dwLastBufferTime < currentTime && 
-    (currentTime - m_dwLastBufferTime) < m_hnsActualDuration)
-  {
-    m_hnsActualDuration = m_hnsActualDuration - (currentTime - m_dwLastBufferTime);
-    Sleep(m_hnsActualDuration);
-  }
-
-  // Each loop fills one of the two buffers.
-  while (pInputBufferPointer < pInputBufferEnd)
-  {  
-    UINT32 numFramesPadding = 0;
-    m_pAudioClient->GetCurrentPadding(&numFramesPadding);
-    UINT32 numFramesAvailable = m_nFramesInBuffer - numFramesPadding;
-
-    if (numFramesPadding == 0 && m_bIsAudioClientStarted)
-    {
-      Log("Buffer underflow detected!");
-      
-#ifdef TRACE_PERFORMANCE
-      CString OutMsg;
-      OutMsg.Format("DoRenderSampleWasapi - buffer underflow!");
-      OutputDebugString(OutMsg);
-#endif
-    }
-
-    UINT32 nAvailableBytes = numFramesAvailable * frameSize;
-    UINT32 nBytesToWrite = nAvailableBytes;
-    // More room than enough in the output buffer
-    if (nAvailableBytes > pInputBufferEnd - pInputBufferPointer)
-    {
-      nBytesToWrite = pInputBufferEnd - pInputBufferPointer;
-      numFramesAvailable = (UINT32)((float)nBytesToWrite / frameSize);
-    }
-
-    // Grab the next empty buffer from the audio device.
-    hr = m_pRenderClient->GetBuffer(numFramesAvailable, &pData);
-    if (FAILED (hr))
-    {
-      Log("DoRenderSampleWasapi GetBuffer failed with size %ld : (error %lx)", m_nFramesInBuffer, hr);
-      if(mediaBufferResult)
-        free(mediaBufferResult);
-
-      return hr;
-    }
-
-    // Load the buffer with data from the audio source.
-    if (pData)
-    {
-      memcpy(&pData[0], pInputBufferPointer, nBytesToWrite);
-      pInputBufferPointer += nBytesToWrite;
-    }
-    else
-    {
-      Log("DoRenderSampleWasapi Output buffer is NULL");
-    }
-
-    hr = m_pRenderClient->ReleaseBuffer(numFramesAvailable, 0); // no flags
-    if (FAILED (hr)) 
-    {
-      Log("DoRenderSampleWasapi ReleaseBuffer failed with size %ld (error %lx)", m_nFramesInBuffer, hr);
-      if(mediaBufferResult)
-        free(mediaBufferResult);
-
-      return hr;
-    }
-
-    if (!m_bIsAudioClientStarted)
-    {
-      Log("DoRenderSampleWasapi Starting audio client");
-      m_pAudioClient->Start();
-      m_bIsAudioClientStarted = true;
-    }
-
-    if (pInputBufferPointer >= pInputBufferEnd)
-    {
-      m_dwLastBufferTime = GetTickCount();
-      
-      // This is the duration of the filled buffer
-      m_hnsActualDuration = (double)REFTIMES_PER_SEC * numFramesAvailable / m_pWaveFileFormat->nSamplesPerSec;
-      
-      // Sleep time is half this duration
-      m_hnsActualDuration = (DWORD)(m_hnsActualDuration / REFTIMES_PER_MILLISEC / 2);
-      break;
-    }
-
-    // Buffer not completely filled, sleep for half buffer capacity duration
-    m_hnsActualDuration = (double)REFTIMES_PER_SEC * m_nFramesInBuffer / m_pWaveFileFormat->nSamplesPerSec;
-    
-    // Sleep time is half this duration
-    m_hnsActualDuration = (DWORD)(m_hnsActualDuration / REFTIMES_PER_MILLISEC / 2);
-    Sleep(m_hnsActualDuration);
-  }
-  
-  if (mediaBufferResult)
-    free(mediaBufferResult);
 
   return hr;
 }
@@ -1623,7 +1668,8 @@ HRESULT CMPAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCli
 
   if (SUCCEEDED (hr))
   {
-    hr = m_pAudioClient->Initialize(m_WASAPIShareMode,0/*AUDCLNT_STREAMFLAGS_EVENTCALLBACK*/, m_hnsPeriod,m_hnsPeriod,pWaveFormatEx,NULL);
+    hr = m_pAudioClient->Initialize(m_WASAPIShareMode, AUDCLNT_STREAMFLAGS_EVENTCALLBACK,
+	                                m_hnsPeriod, m_hnsPeriod, pWaveFormatEx, NULL);
     
     // when rebuilding the graph between SD / HD zapping the .NET GC workaround
     // might call the init again. In that case just eat the error 
@@ -1631,13 +1677,13 @@ HRESULT CMPAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCli
     if (hr == AUDCLNT_E_ALREADY_INITIALIZED)
       return S_OK;
   }
-    
+
   if (FAILED (hr) && hr != AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED)
   {
     Log("InitAudioClient failed (0x%08x)", hr);
     return hr;
   }
-  
+
   if (hr == S_OK)
   {
     SAFE_RELEASE(m_pAudioClock);
@@ -1682,7 +1728,8 @@ HRESULT CMPAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCli
 
     if (SUCCEEDED (hr)) 
     {
-      hr = m_pAudioClient->Initialize(m_WASAPIShareMode,0/*AUDCLNT_STREAMFLAGS_EVENTCALLBACK*/, m_hnsPeriod, m_hnsPeriod, pWaveFormatEx, NULL);
+      hr = m_pAudioClient->Initialize(m_WASAPIShareMode, AUDCLNT_STREAMFLAGS_EVENTCALLBACK, 
+	                                  m_hnsPeriod, m_hnsPeriod, pWaveFormatEx, NULL);
     }
  
     if (FAILED(hr))
@@ -1724,6 +1771,14 @@ HRESULT CMPAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCli
   else
   {
     Log("InitAudioClient service initialization success");
+  }
+
+  hr = m_pAudioClient->SetEventHandle(m_hDataEvent);
+
+  if (FAILED(hr))
+  {
+    Log("InitAudioClient SetEventHandle failed (0x%08x)", hr);
+    return hr;
   }
 
   return hr;

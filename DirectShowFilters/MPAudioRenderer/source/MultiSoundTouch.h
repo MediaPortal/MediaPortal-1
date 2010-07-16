@@ -97,6 +97,9 @@ public:
   bool ProcessSamples(const short *inBuffer, long inSamples, short *outBuffer, long *outSamples, long maxOutSamples);
   bool processSample(IMediaSample *pMediaSample);
 
+  HRESULT GetNextSample(IMediaSample** pSample);
+  HRESULT QueueSample(IMediaSample* pSample);
+
   void FlushQueues();
 
   // these needs to be private (pass somehow to the thread...)
