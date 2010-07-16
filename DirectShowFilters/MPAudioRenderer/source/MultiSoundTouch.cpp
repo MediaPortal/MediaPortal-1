@@ -415,7 +415,7 @@ HRESULT CMultiSoundTouch::GetNextSample(IMediaSample** pSample)
 {
   CAutoLock outputLock(&m_sampleOutQueueLock);
   
-  if(m_sampleOutQueue.empty())
+  //if(m_sampleOutQueue.empty())
   {
     return S_FALSE;
   }

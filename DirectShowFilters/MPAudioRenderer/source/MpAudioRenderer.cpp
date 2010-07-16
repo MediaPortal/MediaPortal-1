@@ -298,8 +298,11 @@ CMPAudioRenderer::~CMPAudioRenderer()
   Stop();
 
   // Get rid of the render thread
-  SetEvent(m_hStopRenderThreadEvent);
-  WaitForSingleObject(m_hWaitRenderThreadToExitEvent, INFINITE);
+  if (m_hThread)
+  {
+	  SetEvent(m_hStopRenderThreadEvent);
+	  WaitForSingleObject(m_hWaitRenderThreadToExitEvent, INFINITE);
+  }
 
   if (m_hDataEvent)
     CloseHandle(m_hDataEvent);
