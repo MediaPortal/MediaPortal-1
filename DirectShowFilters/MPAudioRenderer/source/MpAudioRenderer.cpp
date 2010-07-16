@@ -248,7 +248,9 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_bReinitAfterStop(false)
 , m_wWASAPIPreferredDeviceId(NULL)
 , m_hDataEvent(NULL)
-, m_hThread(NULL)
+, m_hRenderThread(NULL)
+, m_hWaitRenderThreadToExitEvent(NULL)
+, m_hStopRenderThreadEvent(NULL)
 {
   LogRotate();
   Log("MP Audio Renderer - v0.5 - instance 0x%x", this);
@@ -264,6 +266,8 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
     m_hDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
     m_hStopRenderThreadEvent = CreateEvent(0, FALSE, FALSE, 0);
     m_hWaitRenderThreadToExitEvent = CreateEvent(0, FALSE, FALSE, 0);
+
+    m_hRenderThread = CreateThread(0, 0, CMPAudioRenderer::RenderThreadEntryPoint, (LPVOID)this, 0, &m_threadId);
 
     HMODULE hLib = NULL;
 
@@ -298,11 +302,8 @@ CMPAudioRenderer::~CMPAudioRenderer()
   Stop();
 
   // Get rid of the render thread
-  if (m_hThread)
-  {
-	  SetEvent(m_hStopRenderThreadEvent);
-	  WaitForSingleObject(m_hWaitRenderThreadToExitEvent, INFINITE);
-  }
+  SetEvent(m_hStopRenderThreadEvent);
+  WaitForSingleObject(m_hWaitRenderThreadToExitEvent, INFINITE);
 
   if (m_hDataEvent)
     CloseHandle(m_hDataEvent);
@@ -310,8 +311,8 @@ CMPAudioRenderer::~CMPAudioRenderer()
     CloseHandle(m_hWaitRenderThreadToExitEvent);
   if (m_hStopRenderThreadEvent)
     CloseHandle(m_hStopRenderThreadEvent);
-  if (m_hThread)
-    CloseHandle(m_hThread);
+  if (m_hRenderThread)
+    CloseHandle(m_hRenderThread);
 
   // DSound
   SAFE_DELETE(m_pSoundTouch);
@@ -632,7 +633,8 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   // Audio should be renderer always when it arrives and the reference clock 
   // should be based on the audio HW
   //if (hr == S_OK) 
-  if (!m_bFirstAudioSample)
+  
+  /*if (!m_bFirstAudioSample)
   {
     EXECUTE_ASSERT(SetEvent((HANDLE) m_RenderEvent));
     return TRUE;
@@ -648,7 +650,7 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
     
     if (SUCCEEDED(hr)) return TRUE;
   }
-  else
+  else*/
   {
     hr = DoRenderSample (pMediaSample);
   }
@@ -1370,11 +1372,6 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
     Log("DoRenderSampleWasapi Starting audio client");
     m_pAudioClient->Start();
     m_bIsAudioClientStarted = true;
-
-    if(!m_hThread)
-      m_hThread = CreateThread(0, 0, CMPAudioRenderer::RenderThreadEntryPoint, (LPVOID)this, 0, &m_threadId);
-
-
   }
 
   return hr;

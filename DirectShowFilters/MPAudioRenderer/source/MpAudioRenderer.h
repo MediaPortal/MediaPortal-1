@@ -186,7 +186,7 @@ private:
   DWORD RenderThread();
   DWORD m_threadId;
 
-  HANDLE m_hThread;
+  HANDLE m_hRenderThread;
 
   HANDLE m_hDataEvent;
   HANDLE m_hStopRenderThreadEvent;
