@@ -194,12 +194,12 @@ void StatsRenderer::DrawStats()
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("Display cycle from Windows: %.3f ms | Display refresh rate from Windows: %.3f Hz", 
+    strText.Format("Display cycle from Windows: %.6f ms | Display refresh rate from Windows: %.3f Hz", 
       m_pPresenter->m_dD3DRefreshCycle, m_pPresenter->m_dD3DRefreshRate);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("Measured disp rate: %.4f Hz | Max line: %d | Frames drawn: %d | Frames dropped: %d", 
+    strText.Format("Measured disp rate: %.6f Hz | Max line: %d | Frames drawn: %d | Frames dropped: %d", 
       1000.0/m_pPresenter->m_dEstRefreshCycle, m_pPresenter->m_maxScanLine, m_pPresenter->m_iFramesDrawn, m_pPresenter->m_iFramesDropped);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
@@ -222,15 +222,6 @@ void StatsRenderer::DrawStats()
       m_pPresenter->m_fRFPStdDev/10000.0, m_pPresenter->m_fCFPMean/10000.0, m_pPresenter->m_frameRateRatio );
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
-
-    //strText.Format("FIX ME! Measured closest match display cycle: %.3f ms | Measured base display cycle: %.3f ms", 
-    //  m_pPresenter->m_dOptimumDisplayCycle, m_pPresenter->m_dEstRefreshCycle);
-    //DrawText(rc, strText);
-    //OffsetRect(&rc, 0, TextHeight);
-
-    //strText.Format("FIX ME! Display cycle - frame cycle mismatch: %.3f %%", 100 * m_pPresenter->m_dCycleDifference);
-    //DrawText(rc, strText);
-    //OffsetRect(&rc, 0, TextHeight);
 
     strText.Format("Render time (green): %+5.1f ms [%.1f ms, %.1f ms] | SDev: %3.3f ms | LastNST: %+3.3f ms", 
       m_pPresenter->m_fSyncOffsetAvr/10000.0, (double(llMinSyncOffset)/10000.0), (double(llMaxSyncOffset)/10000.0), 

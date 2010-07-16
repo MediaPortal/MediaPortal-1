@@ -150,14 +150,6 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     m_bDrawStats = false;
   }
     
-//  for (int i = 0; i < 2; i++)
-//  {
-//    if (EstimateRefreshTimings())
-//    {
-//      break; //only go round the loop again if we don't get a good result
-//    }
-//  }
-  
   EstimateRefreshTimings();
   
   m_pStatsRenderer = new StatsRenderer(this, m_pD3DDev);
@@ -2567,17 +2559,17 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
 
     if (m_dEstRefreshCycle < 5.0) // just in case it's gone badly wrong...
     {
-      Log("Display refresh estimation failed, measured display cycle: %.3f ms", m_dEstRefreshCycle);
+      Log("Display refresh estimation failed, measured display cycle: %.6f ms", m_dEstRefreshCycle);
       m_dEstRefreshCycle = m_dD3DRefreshCycle;
       m_dDetectedScanlineTime = m_dD3DRefreshCycle/(double)(m_displayMode.Height); // in milliseconds
       m_maxScanLine = m_displayMode.Height;
       m_estRefreshLock = false;
     }
 
-    Log("Display cycle from Windows: %.3f ms", m_dD3DRefreshCycle);
-    Log("Measured display cycle: %.3f ms, locked: %d ", m_dEstRefreshCycle, m_estRefreshLock);
+    Log("Display cycle from Windows: %.6f ms", m_dD3DRefreshCycle);
+    Log("Measured display cycle: %.6f ms, locked: %d ", m_dEstRefreshCycle, m_estRefreshLock);
     Log("Maximum scanline: %d", m_maxScanLine);
-    Log("Measured scanline time: %.3f us", (m_dDetectedScanlineTime * 1000.0));
+    Log("Measured scanline time: %.6f us", (m_dDetectedScanlineTime * 1000.0));
     
   }
   return m_estRefreshLock;
