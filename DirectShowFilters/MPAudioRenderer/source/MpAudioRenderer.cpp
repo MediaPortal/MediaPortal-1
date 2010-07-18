@@ -260,7 +260,6 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_hWaitRenderThreadToExitEvent(NULL)
 , m_hStopRenderThreadEvent(NULL)
 , m_bDiscardCurrentSample(false)
-, m_pMediaSampleCopy(NULL)
 {
   LogRotate();
   Log("MP Audio Renderer - v0.6 - instance 0x%x", this);
