@@ -79,15 +79,15 @@ UINT CALLBACK TimerThread(void* param)
   while (!p->bDone)
   {    
     LOG_TRACE("Timer sleeping.");
-    if (!p->bPause)
+    if (p->iPause <= 0)
     {
       dwObject = WaitForMultipleObjects (2, hEvts, FALSE, INFINITE);
     }
 
-    if (p->bPause)
+    if (p->iPause > 0)
     {
       p->bPauseAck = TRUE;
-      while (p->bPause)
+      while (p->iPause > 0)
       {
         Sleep(1);
       }
@@ -177,16 +177,16 @@ UINT CALLBACK WorkerThread(void* param)
   while (!p->bDone)
   {    
     LOG_TRACE("Worker sleeping.");
-    if (!p->bPause)
+    if (p->iPause <= 0)
     {
 //      dwObject = WaitForMultipleObjects (2, hEvts, FALSE, INFINITE);
       dwObject = WaitForMultipleObjects (2, hEvts, FALSE, 50);
     }
 
-    if (p->bPause)
+    if (p->iPause > 0)
     {
       p->bPauseAck = TRUE;
-      while (p->bPause)
+      while (p->iPause > 0)
       {
         Sleep(1);
       }
@@ -296,7 +296,7 @@ UINT CALLBACK SchedulerThread(void* param)
     p->eTimerEnd.Reset();
     p->pPresenter->NotifyTimer(0); //Disable Timer thread
     
-    if (!p->bPause)
+    if (p->iPause <= 0)
     {
       if (idleWait)
       {     
@@ -316,10 +316,10 @@ UINT CALLBACK SchedulerThread(void* param)
       }
     }
 
-    if (p->bPause)
+    if (p->iPause > 0)
     {
       p->bPauseAck = TRUE;
-      while (p->bPause)
+      while (p->iPause > 0)
       {
         Sleep(1);
       }

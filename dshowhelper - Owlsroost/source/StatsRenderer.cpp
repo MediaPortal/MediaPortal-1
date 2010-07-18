@@ -188,64 +188,57 @@ void StatsRenderer::DrawStats()
     CString  strText;
     int TextHeight = int(25.0*m_TextScale + 0.5);
 
-    strText.Format("Display resolution: %d x %d | Video resolution: %d x %d | Aspect ratio: %d x %d", 
-      m_pPresenter->m_displayMode.Width, m_pPresenter->m_displayMode.Height, m_pPresenter->m_iVideoWidth, 
-      m_pPresenter->m_iVideoHeight, m_pPresenter->m_iARX, m_pPresenter->m_iARY);
+    strText.Format("Display: %d x %d @ %.6f Hz | Meas rfsh: %.6f Hz | MaxLine: %d | PCD: %.4f", 
+      m_pPresenter->m_displayMode.Width, m_pPresenter->m_displayMode.Height,
+      m_pPresenter->m_dD3DRefreshRate, 1000.0/m_pPresenter->m_dEstRefreshCycle, m_pPresenter->m_maxScanLine,
+      m_pPresenter->m_fPCDMean);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("Display cycle from Windows: %.6f ms | Display refresh rate from Windows: %.3f Hz", 
-      m_pPresenter->m_dD3DRefreshCycle, m_pPresenter->m_dD3DRefreshRate);
-    DrawText(rc, strText);
-    OffsetRect(&rc, 0, TextHeight);
-
-    strText.Format("Measured disp rate: %.6f Hz | Max line: %d | Frames drawn: %d | Frames dropped: %d", 
-      1000.0/m_pPresenter->m_dEstRefreshCycle, m_pPresenter->m_maxScanLine, m_pPresenter->m_iFramesDrawn, m_pPresenter->m_iFramesDropped);
+    strText.Format("Video: %d x %d @ %d x %d | Act FPS: %.3f (red)| Drwn: %d | Drop: %d | Lkd: %d", 
+      m_pPresenter->m_iVideoWidth, m_pPresenter->m_iVideoHeight, 
+      m_pPresenter->m_iARX, m_pPresenter->m_iARY, 
+      10000000.0 / m_pPresenter->m_fJitterMean, m_pPresenter->m_iFramesDrawn, m_pPresenter->m_iFramesDropped,
+      (int)m_pPresenter->m_DetectedLock);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
     OffsetRect(&rc, 0, TextHeight); // Extra "line feed"
 
-    strText.Format("Act.: %.3f fps | Act.frame time (red): %+5.3f ms | SDev: %.3f ms | Lkd: %d | PCD: %.4f", 
-      10000000.0 / m_pPresenter->m_fJitterMean, m_pPresenter->m_fJitterMean / 10000.0, m_pPresenter->m_fJitterStdDev/10000.0, (int)m_pPresenter->m_DetectedLock, m_pPresenter->m_fPCDMean);
-    DrawText(rc, strText);
-    OffsetRect(&rc, 0, TextHeight);
-    
-    strText.Format(" m_DetFrT: %+5.3f ms | m_DetFrT_SDev: %+5.3f ms | m_rtFrT: %+5.3f ms | m_SDur: %+5.3f ms",  
-      (m_pPresenter->m_DetectedFrameTime * 1000.0), (m_pPresenter->m_DetectedFrameTimeStdDev/10000.0),
-      (m_pPresenter->m_rtTimePerFrame/10000.0 ), (m_pPresenter->m_SampDuration/10000.0) );
+    strText.Format("Render time (grn): %+5.1f ms | NST: %+3.2f ms | AveNST: %+3.2f ms | FrRat: %d | Stall: %3.2f ms ", 
+      m_pPresenter->m_fSyncOffsetAvr/10000.0, m_pPresenter->m_llLastCFPts/10000.0, 
+      m_pPresenter->m_fCFPMean/10000.0, m_pPresenter->m_frameRateRatio, m_pPresenter->m_stallTime/10000.0);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("RFPS: %3.3f fps | RFPrd: %3.3f ms | RFPsdev: %3.3f ms | NSTMean: %+3.3f ms | FrRat: %d", 
-      10000000.0 / m_pPresenter->m_fRFPMean, m_pPresenter->GetRealFramePeriod() * 1000.0, 
-      m_pPresenter->m_fRFPStdDev/10000.0, m_pPresenter->m_fCFPMean/10000.0, m_pPresenter->m_frameRateRatio );
-    DrawText(rc, strText);
-    OffsetRect(&rc, 0, TextHeight);
-
-    strText.Format("Render time (green): %+5.1f ms [%.1f ms, %.1f ms] | SDev: %3.3f ms | LastNST: %+3.3f ms", 
-      m_pPresenter->m_fSyncOffsetAvr/10000.0, (double(llMinSyncOffset)/10000.0), (double(llMaxSyncOffset)/10000.0), 
-      m_pPresenter->m_fSyncOffsetStdDev/10000.0, m_pPresenter->m_llLastCFPts/10000.0);
-    DrawText(rc, strText);
-    OffsetRect(&rc, 0, TextHeight);
-
-    strText.Format("Raster offset (yellow): %5.2f ms | SOP: %4d | EOP: %4d | FrH: %d | LFr: %d | Derr: %5.2f ms",
+    strText.Format("Raster offset (ylw): %5.2f ms | SOP: %4d | EOP: %4d | FrH: %d | LFr: %d | Derr: %5.2f ms",
       m_pPresenter->m_rasterSyncOffset, m_pPresenter->m_LastStartOfPaintScanline, m_pPresenter->m_LastEndOfPaintScanline, 
       m_pPresenter->m_iFramesHeld, m_pPresenter->m_iLateFrames, m_pPresenter->m_lastDelayErr/10000.0);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("QPut: %d | QNoPut: %d | QPop: %d | QPut-QPop: %d | StallTime: %3.3f ms | BadSTimCnt: %d", 
-       m_pPresenter->m_qGoodPutCnt, m_pPresenter->m_qBadPutCnt, m_pPresenter->m_qGoodPopCnt, 
-       (m_pPresenter->m_qGoodPutCnt - m_pPresenter->m_qGoodPopCnt), m_pPresenter->m_stallTime/10000.0, m_pPresenter->m_qBadSampTimCnt );
+    strText.Format("DetFrT: %+5.3f ms | DetFrT_SD: %+5.3f ms | RtFrT: %+5.3f ms | DetSDur: %+5.3f ms",  
+      (m_pPresenter->m_DetectedFrameTime * 1000.0), (m_pPresenter->m_DetectedFrameTimeStdDev/10000.0),
+      (m_pPresenter->m_rtTimePerFrame/10000.0 ), (m_pPresenter->m_SampDuration/10000.0) );
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("Detd bias: %.10f | Ad status: %d | Audio adj: %.6f | AvePhDiff: %.6f | num adj: %d", 
-      m_pPresenter->m_dBias, m_pPresenter->m_bBiasAdjustmentDone, m_pPresenter->m_dVariableFreq, 
-      m_pPresenter->m_avPhaseDiff, m_pPresenter->m_iClockAdjustmentsDone);
-    DrawText(rc, strText);
-    OffsetRect(&rc, 0, TextHeight);
+//    strText.Format("QPut: %d | QNoPut: %d | QPop: %d | QPut-QPop: %d | BadSTimCnt: %d", 
+//       m_pPresenter->m_qGoodPutCnt, m_pPresenter->m_qBadPutCnt, m_pPresenter->m_qGoodPopCnt, 
+//       (m_pPresenter->m_qGoodPutCnt - m_pPresenter->m_qGoodPopCnt), m_pPresenter->m_qBadSampTimCnt );
+//    DrawText(rc, strText);
+//    OffsetRect(&rc, 0, TextHeight);
+
+    if (m_pPresenter->m_pAVSyncClock) //Stats for MP Audio Renderer
+    {
+      OffsetRect(&rc, 0, TextHeight); // Extra "line feed"
+  
+      strText.Format("Detd bias: %.10f | BiasAdj: %d | AudAdj: %.6f | AvePhDiff: %.6f | NumAdj: %d", 
+        m_pPresenter->m_dBias, m_pPresenter->m_bBiasAdjustmentDone, m_pPresenter->m_dVariableFreq, 
+        m_pPresenter->m_avPhaseDiff, m_pPresenter->m_iClockAdjustmentsDone);
+      DrawText(rc, strText);
+      OffsetRect(&rc, 0, TextHeight);
+    }
 
     OffsetRect(&rc, 0, TextHeight); // Extra "line feed"
     m_pSprite->End();

@@ -29,7 +29,7 @@ using namespace std;
 #define NUM_SURFACES 5
 #define NB_JITTER 125
 #define NB_RFPSIZE 64
-#define NB_DFTHSIZE 32
+#define NB_DFTHSIZE 64
 #define NB_CFPSIZE 16
 #define NB_PCDSIZE 32
 #define LF_THRESH_LOW 3
@@ -38,7 +38,6 @@ using namespace std;
 #define FRAME_PROC_THRESH 30
 #define FRAME_PROC_THRSH2 60
 #define DFT_THRESH 0.007
-//#define NUM_PHASE_DEVIATIONS 10
 #define NUM_PHASE_DEVIATIONS 32
 
 // magic numbers
@@ -81,7 +80,7 @@ typedef struct _SchedulerParams
 	CAMEvent eHasWorkLP; //Low-priority event
 	CAMEvent eTimerEnd;  //Timer thread event
 	BOOL bDone;
-	BOOL bPause;
+	long iPause;
 	BOOL bPauseAck;
 	LONGLONG llTime;     //Timer target time
 } SchedulerParams;
@@ -204,7 +203,6 @@ protected:
   void           SetupAudioRenderer();
   void           AdjustAVSync(double currentPhaseDiff);
   BOOL           EstimateRefreshTimings();
-  void           LogStats();
   void           ReleaseSurfaces();
   HRESULT        Paint(CComPtr<IDirect3DSurface9> pSurface);
   HRESULT        SetMediaType(CComPtr<IMFMediaType> pType, BOOL* pbHasChanged);
@@ -301,12 +299,15 @@ protected:
   LONGLONG                          m_llLastCFPts;
   int                               m_nNextCFP;
 	LONGLONG                          m_fCFPMean;
+	LONGLONG                          m_llCFPSumAvg;
 
   double                            m_pllPCD [NB_PCDSIZE];   // timestamp buffer for estimating pres/sys clock delta
   LONGLONG                          m_llLastPCDprsTs;
   LONGLONG                          m_llLastPCDsysTs;
   int                               m_nNextPCD;
 	double                            m_fPCDMean;
+  double                            m_fPCDSumAvg;
+	
 	
   int                               m_iFramesHeld;
   int                               m_iLateFrames;
@@ -370,6 +371,7 @@ protected:
   // Used for detecting the real frame duration
   LONGLONG      m_LastScheduledUncorrectedSampleTime;
   LONGLONG      m_DetectedFrameTimeHistory[NB_DFTHSIZE];
+  LONGLONG      m_DectedSum;
   int           m_DetectedFrameTimePos;
   double        m_DetectedFrameRate;
   double        m_DetectedFrameTime;
@@ -400,6 +402,8 @@ protected:
   bool          m_bInitialBiasAdjustmentDone;
   bool          m_bDetectBias;
   double        m_dPhaseDeviations[NUM_PHASE_DEVIATIONS];
+  int           m_nNextPhDev;
+  double        m_sumPhaseDiff;
   double        m_dVariableFreq;
   double        m_dPreviousVariableFreq;
   unsigned int  m_iClockAdjustmentsDone;
