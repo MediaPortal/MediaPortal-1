@@ -52,7 +52,6 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
 , m_Streams(NULL)
 , m_nStreamCount(0)
 , m_bUseThreads(pUseThreads)
-, m_bFlushSamples(false)
 , m_pMemAllocator(NULL)
 , m_hSampleArrivedEvent(NULL)
 , m_hStopThreadEvent(NULL)
@@ -78,37 +77,10 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
 
 CMultiSoundTouch::~CMultiSoundTouch()
 {
-  // Resampler thread waiting in the IMemAllocator::GetBuffer method return with an error. 
-  // Further calls to GetBuffer fail, until the IMemAllocator::Commit method is called.
-  if (m_pMemAllocator)
-    m_pMemAllocator->Decommit();
+  // releases allocator's samples
+  BeginFlush();
 
-  { // Make sure that the resample thread is not accessing allocator
-    CAutoLock allocatorLock(&m_allocatorLock);
-
-    { // Release samples that are in input queue
-      CAutoLock cQueueLock(&m_sampleQueueLock);
-      for(int i = 0; i < m_sampleQueue.size(); i++)
-      {
-        m_sampleQueue[i]->Release();
-      }
-      m_sampleQueue.clear();
-    }
-    
-    { // Release samples that are in output queue
-      CAutoLock cOutputQueueLock(&m_sampleOutQueueLock);
-      for(int i = 0; i < m_sampleOutQueue.size(); i++)
-      {
-        m_sampleOutQueue[i]->Release();
-      }
-      m_sampleOutQueue.clear();
-    }
-
-    if (m_pPreviousSample)
-      m_pPreviousSample->Release();
-
-    SAFE_RELEASE(m_pMemAllocator);
-  } 
+  SAFE_RELEASE(m_pMemAllocator);
 
   SetEvent(m_hStopThreadEvent);
   WaitForSingleObject(m_hWaitThreadToExitEvent, INFINITE);
@@ -297,10 +269,47 @@ bool CMultiSoundTouch::InitializeAllocator()
   return true;
 }
 
-// TODO: "unpack" the macros so ::flush can handle this as well
-void CMultiSoundTouch::FlushQueues()
+
+void CMultiSoundTouch::BeginFlush()
 {
-  m_bFlushSamples = true;
+  // Resampler thread waiting in the IMemAllocator::GetBuffer method return with an error. 
+  // Further calls to GetBuffer fail, until the IMemAllocator::Commit method is called.
+  if (m_pMemAllocator)
+    m_pMemAllocator->Decommit();
+
+  { // Make sure that the resample thread is not accessing allocator
+    CAutoLock allocatorLock(&m_allocatorLock);
+
+    { // Release samples that are in input queue
+      CAutoLock cQueueLock(&m_sampleQueueLock);
+      for(int i = 0; i < m_sampleQueue.size(); i++)
+      {
+        m_sampleQueue[i]->Release();
+      }
+      m_sampleQueue.clear();
+    }
+    
+    { // Release samples that are in output queue
+      CAutoLock cOutputQueueLock(&m_sampleOutQueueLock);
+      for(int i = 0; i < m_sampleOutQueue.size(); i++)
+      {
+        m_sampleOutQueue[i]->Release();
+      }
+      m_sampleOutQueue.clear();
+    }
+
+    if (m_pPreviousSample)
+    {
+      m_pPreviousSample->Release();
+      m_pPreviousSample = NULL;
+    }
+  } 
+}
+
+void CMultiSoundTouch::EndFlush()
+{
+  if (m_pMemAllocator)
+    m_pMemAllocator->Commit();
 }
 
 BOOL CMultiSoundTouch::setSetting(int settingId, int value)
@@ -392,16 +401,6 @@ bool CMultiSoundTouch::processSample(IMediaSample *pMediaSample)
 {
   CAutoLock cRendererLock(&m_sampleQueueLock);
 
-  if (m_bFlushSamples)
-  {
-    m_bFlushSamples = false;
-    for(int i = 0; i < m_sampleQueue.size(); i++)
-    {
-      m_sampleQueue[i]->Release();
-    }
-    m_sampleQueue.clear();
-  }
-    
   pMediaSample->AddRef();
   m_sampleQueue.push_back(pMediaSample);
 
@@ -477,16 +476,6 @@ HRESULT CMultiSoundTouch::QueueSample(IMediaSample* pSample)
 {
   CAutoLock cRendererLock(&m_sampleOutQueueLock);
 
-  if (m_bFlushSamples)
-  {
-    m_bFlushSamples = false;
-    for(int i = 0; i < m_sampleOutQueue.size(); i++)
-    {
-      m_sampleOutQueue[i]->Release();
-    }
-    m_sampleOutQueue.clear();
-  }
-    
   pSample->AddRef();
   m_sampleOutQueue.push_back(pSample);
 

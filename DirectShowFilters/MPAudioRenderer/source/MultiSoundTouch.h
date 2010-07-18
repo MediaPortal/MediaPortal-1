@@ -88,7 +88,8 @@ public:
   HRESULT GetNextSample(IMediaSample** pSample, bool pReleaseOnly);
   HRESULT QueueSample(IMediaSample* pSample);
 
-  void FlushQueues();
+  void BeginFlush();
+  void EndFlush();
 
   // these needs to be private (pass somehow to the thread...)
   bool putSamplesInternal(const short *inBuffer, long inSamples);

@@ -157,6 +157,7 @@ private:
   DWORD               m_dwLastBufferTime;
   AUDCLNT_SHAREMODE   m_WASAPIShareMode;
   bool                m_bReinitAfterStop;
+  bool                m_bDiscardCurrentSample;
   WCHAR*              m_wWASAPIPreferredDeviceId;
 
   // AVRT.dll (Vista or greater)

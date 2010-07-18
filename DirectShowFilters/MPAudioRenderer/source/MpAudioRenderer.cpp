@@ -122,6 +122,12 @@ DWORD CMPAudioRenderer::RenderThread()
 
       HRESULT hr = S_FALSE;
 
+      if (m_bDiscardCurrentSample)
+      {
+        sample = NULL;
+        m_bDiscardCurrentSample = false;
+      }
+
       // Fetch the sample for the first time
       if(!sample)
       {
@@ -253,6 +259,8 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_hRenderThread(NULL)
 , m_hWaitRenderThreadToExitEvent(NULL)
 , m_hStopRenderThreadEvent(NULL)
+, m_bDiscardCurrentSample(false)
+, m_pMediaSampleCopy(NULL)
 {
   LogRotate();
   Log("MP Audio Renderer - v0.6 - instance 0x%x", this);
@@ -827,6 +835,7 @@ STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
     // this is required for the .NET GC workaround
     if (m_bReinitAfterStop)
     {
+      m_bReinitAfterStop = false;
       hr = InitAudioClient(m_pWaveFileFormat, m_pAudioClient, &m_pRenderClient);
       if (FAILED(hr)) 
       {
@@ -1864,8 +1873,9 @@ HRESULT CMPAudioRenderer::BeginFlush()
   
   if (m_pSoundTouch)
   {
+    m_bDiscardCurrentSample = true;
     m_pSoundTouch->flush();
-    m_pSoundTouch->FlushQueues();
+    m_pSoundTouch->BeginFlush();
   }
 
   return CBaseRenderer::BeginFlush(); 
@@ -1875,6 +1885,12 @@ HRESULT CMPAudioRenderer::EndFlush()
 {
   CAutoLock cRendererLock(&m_InterfaceLock);
   m_bFirstAudioSample = true;
+
+  if (m_pSoundTouch)
+  {
+    m_pSoundTouch->EndFlush();
+  }
+
   return CBaseRenderer::EndFlush(); 
 }
 
