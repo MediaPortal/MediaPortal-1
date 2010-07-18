@@ -12,18 +12,6 @@
 
 class CMultiSoundTouch;
 
-//typedef struct
-//{
-//  CMultiSoundTouch* resampler;
-//  CCritSec* sampleQueueLock;
-//  CCritSec* sampleOutQueueLock;
-//  std::vector<IMediaSample*>* sampleQueue;
-//  std::vector<IMediaSample*>* sampleOutQueue;
-//  HANDLE sampleArrivedEvent;
-//  HANDLE stopThreadEvent;
-//  HANDLE waitThreadToExitEvent;
-//} ThreadData;
-
 class CMultiSoundTouch
 {
 public:
@@ -97,7 +85,7 @@ public:
   bool ProcessSamples(const short *inBuffer, long inSamples, short *outBuffer, long *outSamples, long maxOutSamples);
   bool processSample(IMediaSample *pMediaSample);
 
-  HRESULT GetNextSample(IMediaSample** pSample);
+  HRESULT GetNextSample(IMediaSample** pSample, bool pReleaseOnly);
   HRESULT QueueSample(IMediaSample* pSample);
 
   void FlushQueues();
@@ -135,15 +123,17 @@ private:
   HANDLE m_hWaitThreadToExitEvent;
   IMemAllocator *m_pMemAllocator;
 
-  //ThreadData m_ThreadData;
-
-  bool  m_bUseThreads;
-  bool  m_bFlushSamples;
+  bool m_bUseThreads;
+  bool m_bFlushSamples;
 
   std::vector<IMediaSample*> m_sampleQueue;
   std::vector<IMediaSample*> m_sampleOutQueue;
   CCritSec m_sampleQueueLock;
   CCritSec m_sampleOutQueueLock;
+
+  CCritSec m_allocatorLock;
+
+  IMediaSample* m_pPreviousSample;
 
   // Threading 
   static DWORD WINAPI ResampleThreadEntryPoint(LPVOID lpParameter);

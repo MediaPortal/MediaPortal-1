@@ -1,3 +1,18 @@
+// Copyright (C) 2005-2010 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
 
@@ -44,6 +59,7 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
 , m_hWaitThreadToExitEvent(NULL)
 , m_hThread(NULL)
 , m_threadId(0)
+, m_pPreviousSample(NULL)
 {
   // Use separate thread per channnel pair?
   if (m_bUseThreads)
@@ -62,6 +78,38 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
 
 CMultiSoundTouch::~CMultiSoundTouch()
 {
+  // Resampler thread waiting in the IMemAllocator::GetBuffer method return with an error. 
+  // Further calls to GetBuffer fail, until the IMemAllocator::Commit method is called.
+  if (m_pMemAllocator)
+    m_pMemAllocator->Decommit();
+
+  { // Make sure that the resample thread is not accessing allocator
+    CAutoLock allocatorLock(&m_allocatorLock);
+
+    { // Release samples that are in input queue
+      CAutoLock cQueueLock(&m_sampleQueueLock);
+      for(int i = 0; i < m_sampleQueue.size(); i++)
+      {
+        m_sampleQueue[i]->Release();
+      }
+      m_sampleQueue.clear();
+    }
+    
+    { // Release samples that are in output queue
+      CAutoLock cOutputQueueLock(&m_sampleOutQueueLock);
+      for(int i = 0; i < m_sampleOutQueue.size(); i++)
+      {
+        m_sampleOutQueue[i]->Release();
+      }
+      m_sampleOutQueue.clear();
+    }
+
+    if (m_pPreviousSample)
+      m_pPreviousSample->Release();
+
+    SAFE_RELEASE(m_pMemAllocator);
+  } 
+
   SetEvent(m_hStopThreadEvent);
   WaitForSingleObject(m_hWaitThreadToExitEvent, INFINITE);
 
@@ -73,25 +121,6 @@ CMultiSoundTouch::~CMultiSoundTouch()
     CloseHandle(m_hStopThreadEvent);
   if (m_hThread)
     CloseHandle(m_hThread);
-
-  // Release samples that are in input queue
-  for(int i = 0; i < m_sampleQueue.size(); i++)
-  {
-    m_sampleQueue[i]->Release();
-  }
-  m_sampleQueue.clear();
-
-  // Release samples that are in output queue
-  for(int i = 0; i < m_sampleOutQueue.size(); i++)
-  {
-    m_sampleOutQueue[i]->Release();
-  }
-  m_sampleOutQueue.clear();
-
-  if (m_pMemAllocator)
-    m_pMemAllocator->Decommit();
-
-  SAFE_RELEASE(m_pMemAllocator);
 
   setChannels(0);
 }
@@ -164,10 +193,10 @@ DWORD CMultiSoundTouch::ResampleThread()
         else
         {
           DWORD error = GetLastError();
-          Log("Resampler thread: WaitForMultipleObjects failed: %d", error);
+          Log("Resampler thread - WaitForMultipleObjects failed: %d", error);
         }
       }
-
+      
       { // Fetch one sample
         CAutoLock sampleQueueLock(&m_sampleQueueLock);
         if (!m_sampleQueue.empty())
@@ -178,44 +207,49 @@ DWORD CMultiSoundTouch::ResampleThread()
       }
     }
 
-    if (sample)
     {
-      BYTE *pMediaBuffer = NULL;
-      long size = sample->GetActualDataLength();
-      hr = sample->GetPointer(&pMediaBuffer);
-      
-      if (hr == S_OK)
-      {
-        // Process the sample 
-        // TODO: /4 needs to be fixed!
-        putSamplesInternal((const short*)pMediaBuffer, size / 4);
-        
-        IMediaSample* outSample = NULL;
-        m_pMemAllocator->GetBuffer(&outSample, NULL, NULL, 0);
-        if (outSample)
-        {
-          // TODO: *4 needs to be fixed
-          BYTE *pMediaBufferOut = NULL;
-          outSample->GetPointer(&pMediaBufferOut);
-          
-          if (pMediaBufferOut)
-          {
-            unsigned int sampleLength = numSamples();
-            if (sampleLength > OUT_BUFFER_SIZE/4)
-              sampleLength = OUT_BUFFER_SIZE/4;
-            outSample->SetActualDataLength(sampleLength * 4);
-            receiveSamplesInternal((short*)pMediaBufferOut, sampleLength);
+      CAutoLock allocatorLock(&m_allocatorLock);
 
-            { // lock that the playback thread wont access the queue at the same time
-              CAutoLock cOutputQueueLock(&m_sampleOutQueueLock);
-              m_sampleOutQueue.push_back(outSample);
+      if (sample && m_pMemAllocator)
+      {
+        BYTE *pMediaBuffer = NULL;
+        long size = sample->GetActualDataLength();
+        hr = sample->GetPointer(&pMediaBuffer);
+        
+        if ((hr == S_OK) && m_pMemAllocator)
+        {
+          // Process the sample 
+          // TODO: /4 needs to be fixed!
+          putSamplesInternal((const short*)pMediaBuffer, size / 4);
+          
+          IMediaSample* outSample = NULL;
+          m_pMemAllocator->GetBuffer(&outSample, NULL, NULL, 0);
+
+          if (outSample)
+          {
+            // TODO: *4 needs to be fixed
+            BYTE *pMediaBufferOut = NULL;
+            outSample->GetPointer(&pMediaBufferOut);
+            
+            if (pMediaBufferOut)
+            {
+              unsigned int sampleLength = numSamples();
+              if (sampleLength > OUT_BUFFER_SIZE/4)
+                sampleLength = OUT_BUFFER_SIZE/4;
+              outSample->SetActualDataLength(sampleLength * 4);
+              receiveSamplesInternal((short*)pMediaBufferOut, sampleLength);
+
+              { // lock that the playback thread wont access the queue at the same time
+                CAutoLock cOutputQueueLock(&m_sampleOutQueueLock);
+                m_sampleOutQueue.push_back(outSample);
+              }
             }
           }
         }
-      }
       
-      // We aren't using the sample anymore (AddRef() is done when sample arrives)
-      sample->Release();
+        // We aren't using the sample anymore (AddRef() is done when sample arrives)
+        sample->Release();
+      }
     }
   }
   
@@ -411,10 +445,17 @@ bool CMultiSoundTouch::putSamplesInternal(const short *inBuffer, long inSamples)
   return true;
 }
 
-HRESULT CMultiSoundTouch::GetNextSample(IMediaSample** pSample)
+HRESULT CMultiSoundTouch::GetNextSample(IMediaSample** pSample, bool pReleaseOnly)
 {
   CAutoLock outputLock(&m_sampleOutQueueLock);
-  
+
+  if (pReleaseOnly)
+  {
+    m_pPreviousSample->Release();
+    m_pPreviousSample = NULL;
+    return S_OK;
+  }
+
   if(m_sampleOutQueue.empty())
   {
     return S_FALSE;
@@ -423,6 +464,10 @@ HRESULT CMultiSoundTouch::GetNextSample(IMediaSample** pSample)
   // Fetch one sample
   (*pSample) = m_sampleOutQueue.front();
   m_sampleOutQueue.erase(m_sampleOutQueue.begin());
+
+  if (m_pPreviousSample)
+    m_pPreviousSample->Release();
+  m_pPreviousSample = (*pSample);
 
   return S_OK;
 }
