@@ -3021,7 +3021,7 @@ void MPEVRCustomPresenter::CorrectSampleTime(IMFSample* pSample)
       if ((fabs(1.0 - (DetectedTime / m_DetectedFrameTime)) > 0.01) || (m_DetectedFrameTimePos < NB_DFTHSIZE)) //allow 1% drift
 			{
 	      double AllowedError = 0.025; //Allow 2.5% error to cover (ReClock ?) sample timing jitter
-	      static double AllowedValues[] = {10005.0/30000.0, 1000.0/25000.0, 10005.0/24000.0};  //30Hz and 24Hz are compromise values
+	      static double AllowedValues[] = {1000.5/30000.0, 1000.0/25000.0, 1000.5/24000.0};  //30Hz and 24Hz are compromise values
 	      static double AllowedDivs[] = {4.0, 2.0, 1.0, 0.5};
 	
 	      double BestVal = 0.0;
