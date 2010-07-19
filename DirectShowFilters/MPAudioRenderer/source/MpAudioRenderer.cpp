@@ -298,9 +298,12 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
     *phr = DirectSoundCreate8(NULL, &m_pDS, NULL);
   }
   
-  if (m_bUseTimeStretching)
+  m_pSoundTouch = new CMultiSoundTouch(m_bUseThreads);
+  
+  if (!m_pSoundTouch)
   {
-    m_pSoundTouch = new CMultiSoundTouch(m_bUseThreads);
+    if(phr)
+      *phr = E_OUTOFMEMORY;
   }
 }
 
@@ -319,8 +322,6 @@ CMPAudioRenderer::~CMPAudioRenderer()
     CloseHandle(m_hWaitRenderThreadToExitEvent);
   if (m_hStopRenderThreadEvent)
     CloseHandle(m_hStopRenderThreadEvent);
-  if (m_hRenderThread)
-    CloseHandle(m_hRenderThread);
 
   delete m_pSoundTouch;
 
@@ -354,8 +355,13 @@ CMPAudioRenderer::~CMPAudioRenderer()
   }
 
   // Get rid of the render thread
-  SetEvent(m_hStopRenderThreadEvent);
-  WaitForSingleObject(m_hWaitRenderThreadToExitEvent, INFINITE);
+  if (m_hRenderThread)
+  {
+    SetEvent(m_hStopRenderThreadEvent);
+    WaitForSingleObject(m_hWaitRenderThreadToExitEvent, INFINITE);
+
+    CloseHandle(m_hRenderThread);
+  }
 
   delete[] m_wWASAPIPreferredDeviceId;
 
@@ -919,9 +925,16 @@ STDMETHODIMP CMPAudioRenderer::Stop()
 
 STDMETHODIMP CMPAudioRenderer::Pause()
 {
-  Log("Pause");
-  
   CAutoLock cRendererLock(&m_InterfaceLock);
+
+  Log("Pause");
+
+  // TODO: check if this could be fixed without requiring to drop one sample
+  if (GetRealState() == State_Running)
+  {
+    m_pSoundTouch->GetNextSample(NULL, true);
+    m_bDiscardCurrentSample = true;
+  }
 
   if (m_pDSBuffer)
   {
@@ -930,26 +943,6 @@ STDMETHODIMP CMPAudioRenderer::Pause()
   
   if (m_pAudioClient && m_bIsAudioClientStarted) 
   {
-    BYTE *pData = NULL;
-    UINT32 bufferSize(0);
-    HRESULT hr = S_OK;
-
-    hr = m_pAudioClient->GetBufferSize(&bufferSize);
-    if (SUCCEEDED(hr) && m_pRenderClient)
-    {
-      hr = m_pRenderClient->GetBuffer(bufferSize, &pData);
-      if (SUCCEEDED(hr))
-      {
-        // Clear the WASAPI buffers so that no looping audio is
-        // played when graph is in the paused state
-        m_pRenderClient->ReleaseBuffer(bufferSize, AUDCLNT_BUFFERFLAGS_SILENT);
-      }
-    }
-    else
-    {
-      Log("Pause - m_pRenderClient not available!");
-    }
-
     m_pAudioClient->Stop();
   }
   
