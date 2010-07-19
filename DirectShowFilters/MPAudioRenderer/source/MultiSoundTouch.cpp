@@ -81,9 +81,6 @@ CMultiSoundTouch::~CMultiSoundTouch()
     SAFE_RELEASE(m_pMemAllocator);
   }
 
-  SetEvent(m_hStopThreadEvent);
-  WaitForSingleObject(m_hWaitThreadToExitEvent, INFINITE);
-
   if (m_hSampleArrivedEvent)
     CloseHandle(m_hSampleArrivedEvent);
   if (m_hWaitThreadToExitEvent)
@@ -96,6 +93,11 @@ CMultiSoundTouch::~CMultiSoundTouch()
   setChannels(0);
 }
 
+void CMultiSoundTouch::StopResamplingThread()
+{
+  SetEvent(m_hStopThreadEvent);
+  WaitForSingleObject(m_hWaitThreadToExitEvent, INFINITE);
+}
 
 DEFINE_STREAM_FUNC(setRate,float, newRate)
 DEFINE_STREAM_FUNC(setTempo, float, newTempo)

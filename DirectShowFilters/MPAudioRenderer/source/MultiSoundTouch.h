@@ -91,6 +91,8 @@ public:
   void BeginFlush();
   void EndFlush();
 
+  void StopResamplingThread();
+
   // these needs to be private (pass somehow to the thread...)
   bool putSamplesInternal(const short *inBuffer, long inSamples);
   uint receiveSamplesInternal(short *outBuffer, uint maxSamples);

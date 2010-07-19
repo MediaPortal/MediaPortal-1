@@ -315,12 +315,17 @@ CMPAudioRenderer::~CMPAudioRenderer()
 
   Stop();
 
-  if (m_hDataEvent)
-    CloseHandle(m_hDataEvent);
-  if (m_hWaitRenderThreadToExitEvent)
-    CloseHandle(m_hWaitRenderThreadToExitEvent);
-  if (m_hStopRenderThreadEvent)
-    CloseHandle(m_hStopRenderThreadEvent);
+  if (m_pSoundTouch)
+    m_pSoundTouch->StopResamplingThread();
+
+  // Get rid of the render thread
+  if (m_hRenderThread)
+  {
+    SetEvent(m_hStopRenderThreadEvent);
+    WaitForSingleObject(m_hWaitRenderThreadToExitEvent, INFINITE);
+
+    CloseHandle(m_hRenderThread);
+  }
 
   delete m_pSoundTouch;
 
@@ -353,14 +358,12 @@ CMPAudioRenderer::~CMPAudioRenderer()
     pfAvRevertMmThreadCharacteristics(m_hTask);
   }
 
-  // Get rid of the render thread
-  if (m_hRenderThread)
-  {
-    SetEvent(m_hStopRenderThreadEvent);
-    WaitForSingleObject(m_hWaitRenderThreadToExitEvent, INFINITE);
-
-    CloseHandle(m_hRenderThread);
-  }
+  if (m_hWaitRenderThreadToExitEvent)
+    CloseHandle(m_hWaitRenderThreadToExitEvent);
+  if (m_hStopRenderThreadEvent)
+    CloseHandle(m_hStopRenderThreadEvent);
+  if (m_hDataEvent)
+    CloseHandle(m_hDataEvent);
 
   delete[] m_wWASAPIPreferredDeviceId;
 
