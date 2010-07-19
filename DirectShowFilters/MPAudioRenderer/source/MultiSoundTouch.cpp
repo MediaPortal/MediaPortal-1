@@ -80,7 +80,10 @@ CMultiSoundTouch::~CMultiSoundTouch()
   // releases allocator's samples
   BeginFlush();
 
-  SAFE_RELEASE(m_pMemAllocator);
+  {
+    CAutoLock allocatorLock(&m_allocatorLock);
+    SAFE_RELEASE(m_pMemAllocator);
+  }
 
   SetEvent(m_hStopThreadEvent);
   WaitForSingleObject(m_hWaitThreadToExitEvent, INFINITE);
