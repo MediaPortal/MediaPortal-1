@@ -449,8 +449,11 @@ HRESULT CMultiSoundTouch::GetNextSample(IMediaSample** pSample, bool pReleaseOnl
 
   if (pReleaseOnly)
   {
-    m_pPreviousSample->Release();
-    m_pPreviousSample = NULL;
+    if (m_pPreviousSample)
+    {
+      m_pPreviousSample->Release();
+      m_pPreviousSample = NULL;
+    }
     return S_OK;
   }
 

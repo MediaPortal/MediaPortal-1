@@ -382,12 +382,14 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
   LPCTSTR forceDirectSound = TEXT("ForceDirectSound");
   LPCTSTR enableTimestretching = TEXT("EnableTimestretching");
   LPCTSTR WASAPIExclusive = TEXT("WASAPIExclusive");
+  LPCTSTR devicePeriod = TEXT("DevicePeriod");
   LPCTSTR WASAPIPreferredDevice = TEXT("WASAPIPreferredDevice");
   
   // Default values for the settings in registry
   DWORD forceDirectSoundData = 0;
   DWORD enableTimestretchingData = 1;
   DWORD WASAPIExclusiveData = 1;
+  DWORD devicePeriodData = 500000; // 50 ms
   LPCTSTR WASAPIPreferredDeviceData = new TCHAR[MAX_REG_LENGTH];
 
   ZeroMemory((void*)WASAPIPreferredDeviceData, MAX_REG_LENGTH);
@@ -401,11 +403,13 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, forceDirectSound, forceDirectSoundData);
     ReadRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
     ReadRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
+    ReadRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
     ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
 
     Log("   ForceDirectSound:        %d", forceDirectSoundData);
     Log("   EnableTimestrecthing:    %d", enableTimestretchingData);
     Log("   WASAPIExclusive:         %d", WASAPIExclusiveData);
+    Log("   DevicePeriod:            %d", devicePeriodData);
     Log("   WASAPIPreferredDevice:   %s", WASAPIPreferredDeviceData);
 
     if (forceDirectSoundData > 0)
@@ -422,6 +426,11 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
       m_WASAPIShareMode = AUDCLNT_SHAREMODE_EXCLUSIVE;
     else
       m_WASAPIShareMode = AUDCLNT_SHAREMODE_SHARED;
+
+    if (devicePeriodData >= 0)
+      m_hnsPeriod = devicePeriodData;
+    else
+      m_hnsPeriod = 0;
 
     delete[] m_wWASAPIPreferredDeviceId;
     m_wWASAPIPreferredDeviceId = new WCHAR[MAX_REG_LENGTH];
@@ -445,6 +454,7 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, forceDirectSound, forceDirectSoundData);
       WriteRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
       WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
+      WriteRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
     } 
     else 
     {
@@ -1622,9 +1632,19 @@ HRESULT CMPAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCli
   Log("InitAudioClient");
   HRESULT hr = S_OK;
   
-  // Initialize the stream to play at the minimum latency.
-  //if (SUCCEEDED (hr)) hr = m_pAudioClient->GetDevicePeriod(NULL, &m_hnsPeriod);
-  m_hnsPeriod = 500000; //50 ms is the best according to James @Slysoft
+  if (m_hnsPeriod == 0)
+  {
+    hr = m_pAudioClient->GetDevicePeriod(NULL, &m_hnsPeriod);
+    if (SUCCEEDED(hr))
+    {
+      Log("InitAudioClient using device period from drivers %d ms", m_hnsPeriod / 10000);
+    }
+    else
+    {
+      Log("InitAudioClient failed to get device period from drivers (0x%08x) - using 50 ms", hr); 
+      m_hnsPeriod = 500000; //50 ms is the best according to James @Slysoft
+    }
+  }
 
   if (!m_pAudioClient)
   {
@@ -1775,7 +1795,6 @@ HRESULT CMPAudioRenderer::CreateAudioClient(IMMDevice *pMMDevice, IAudioClient *
   CAutoLock cRendererLock(&m_InterfaceLock);
 
   HRESULT hr = S_OK;
-  m_hnsPeriod = 0;
 
   Log("CreateAudioClient");
 
