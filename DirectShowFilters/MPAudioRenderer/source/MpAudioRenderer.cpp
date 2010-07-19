@@ -654,7 +654,7 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   // should be based on the audio HW
   //if (hr == S_OK) 
   
-  /*if (!m_bFirstAudioSample)
+  if (!m_bFirstAudioSample)
   {
     EXECUTE_ASSERT(SetEvent((HANDLE) m_RenderEvent));
     return TRUE;
@@ -670,9 +670,9 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
     
     if (SUCCEEDED(hr)) return TRUE;
   }
-  else*/
+  else
   {
-    hr = DoRenderSample (pMediaSample);
+    hr = DoRenderSample(pMediaSample);
   }
 
   // We could not schedule the next sample for rendering despite the fact
@@ -928,11 +928,13 @@ STDMETHODIMP CMPAudioRenderer::Pause()
 
   Log("Pause");
 
-  // TODO: check if this could be fixed without requiring to drop one sample
+  // TODO: check if this could be fixed without requiring to drop all sample
   if (GetRealState() == State_Running)
   {
     m_pSoundTouch->GetNextSample(NULL, true);
     m_bDiscardCurrentSample = true;
+    m_pSoundTouch->BeginFlush();
+    m_pSoundTouch->EndFlush();
   }
 
   if (m_pDSBuffer)
@@ -1832,6 +1834,8 @@ HRESULT CMPAudioRenderer::BeginFlush()
 {
   CAutoLock cRendererLock(&m_InterfaceLock);
 
+  HRESULT hrBase = CBaseRenderer::BeginFlush(); 
+
   // Make sure DShow audio buffers are empty when seeking occurs
   if (m_pDSBuffer) 
   {
@@ -1848,7 +1852,7 @@ HRESULT CMPAudioRenderer::BeginFlush()
 
     if (hr != S_OK)
     {
-      Log("BeginFlush - m_pAudioClient reset failed with %d", hr);
+      Log("BeginFlush - m_pAudioClient reset failed with (0x%08x)", hr);
     }
   }
   
@@ -1859,12 +1863,13 @@ HRESULT CMPAudioRenderer::BeginFlush()
     m_pSoundTouch->BeginFlush();
   }
 
-  return CBaseRenderer::BeginFlush(); 
+  return hrBase;
 }
 
 HRESULT CMPAudioRenderer::EndFlush()
 {
   CAutoLock cRendererLock(&m_InterfaceLock);
+  
   m_bFirstAudioSample = true;
 
   if (m_pSoundTouch)
@@ -1950,6 +1955,29 @@ STDMETHODIMP CMPAudioRenderer::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLate
 
 STDMETHODIMP CMPAudioRenderer::SetRate(double dRate)
 {
+  // this one doesn't currenly get called?	
+  if (m_dRate != dRate && dRate == 1.0)
+  {
+    if (m_pAudioClient && m_bIsAudioClientStarted) 
+    {
+      HRESULT hr = S_OK;
+    
+      m_pAudioClient->Stop();
+      hr = m_pAudioClient->Reset();
+      m_bIsAudioClientStarted = false;
+
+      if (hr != S_OK)
+      {
+        Log("SetRate - m_pAudioClient reset failed with (0x%08x)", hr);
+      }
+    }
+  
+    m_bDiscardCurrentSample = true;
+    m_pSoundTouch->flush();
+    m_pSoundTouch->BeginFlush();
+    m_pSoundTouch->EndFlush();
+  }
+  
   m_dRate = dRate;
   return S_OK;
 }
