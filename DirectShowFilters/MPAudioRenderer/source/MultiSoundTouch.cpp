@@ -47,11 +47,10 @@ DWORD WINAPI CMultiSoundTouch::ResampleThreadEntryPoint(LPVOID lpParameter)
   return ((CMultiSoundTouch *)lpParameter)->ResampleThread();
 }
 
-CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads) 
+CMultiSoundTouch::CMultiSoundTouch() 
 : m_nChannels(0)
 , m_Streams(NULL)
 , m_nStreamCount(0)
-, m_bUseThreads(pUseThreads)
 , m_pMemAllocator(NULL)
 , m_hSampleArrivedEvent(NULL)
 , m_hStopThreadEvent(NULL)
@@ -60,17 +59,14 @@ CMultiSoundTouch::CMultiSoundTouch(bool pUseThreads)
 , m_threadId(0)
 , m_pPreviousSample(NULL)
 {
-  // Use separate thread per channnel pair?
-  if (m_bUseThreads)
-  {
-    m_hSampleArrivedEvent = CreateEvent(0, FALSE, FALSE, 0);
-    m_hStopThreadEvent = CreateEvent(0, FALSE, FALSE, 0);
-    m_hWaitThreadToExitEvent = CreateEvent(0, FALSE, FALSE, 0);
+  // TODO: create one thread per channel pair
+  m_hSampleArrivedEvent = CreateEvent(0, FALSE, FALSE, 0);
+  m_hStopThreadEvent = CreateEvent(0, FALSE, FALSE, 0);
+  m_hWaitThreadToExitEvent = CreateEvent(0, FALSE, FALSE, 0);
 
-    if (InitializeAllocator())
-    {
-      m_hThread = CreateThread(0, 0, CMultiSoundTouch::ResampleThreadEntryPoint, (LPVOID)this, 0, &m_threadId);
-    }
+  if (InitializeAllocator())
+  {
+    m_hThread = CreateThread(0, 0, CMultiSoundTouch::ResampleThreadEntryPoint, (LPVOID)this, 0, &m_threadId);
   }
   ZeroMemory(m_temp, 2*SAMPLE_LEN);
 }

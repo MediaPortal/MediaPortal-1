@@ -252,7 +252,6 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_pAudioClock(NULL)
 , m_nHWfreq(0)
 , m_WASAPIShareMode(AUDCLNT_SHAREMODE_EXCLUSIVE)
-, m_bUseThreads(false)
 , m_bReinitAfterStop(false)
 , m_wWASAPIPreferredDeviceId(NULL)
 , m_hDataEvent(NULL)
@@ -298,7 +297,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
     *phr = DirectSoundCreate8(NULL, &m_pDS, NULL);
   }
   
-  m_pSoundTouch = new CMultiSoundTouch(m_bUseThreads);
+  m_pSoundTouch = new CMultiSoundTouch();
   
   if (!m_pSoundTouch)
   {
@@ -383,14 +382,12 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
   LPCTSTR forceDirectSound = TEXT("ForceDirectSound");
   LPCTSTR enableTimestretching = TEXT("EnableTimestretching");
   LPCTSTR WASAPIExclusive = TEXT("WASAPIExclusive");
-  LPCTSTR useThreadsForResampling = TEXT("UseThreadsForResampling");
   LPCTSTR WASAPIPreferredDevice = TEXT("WASAPIPreferredDevice");
   
   // Default values for the settings in registry
   DWORD forceDirectSoundData = 0;
   DWORD enableTimestretchingData = 1;
   DWORD WASAPIExclusiveData = 1;
-  DWORD useThreadsForResamplingData = 1;
   LPCTSTR WASAPIPreferredDeviceData = new TCHAR[MAX_REG_LENGTH];
 
   ZeroMemory((void*)WASAPIPreferredDeviceData, MAX_REG_LENGTH);
@@ -404,13 +401,11 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, forceDirectSound, forceDirectSoundData);
     ReadRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
     ReadRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
-    ReadRegistryKeyDword(hKey, useThreadsForResampling, useThreadsForResamplingData);
     ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
 
     Log("   ForceDirectSound:        %d", forceDirectSoundData);
     Log("   EnableTimestrecthing:    %d", enableTimestretchingData);
     Log("   WASAPIExclusive:         %d", WASAPIExclusiveData);
-    Log("   UseThreadsForResampling: %d", useThreadsForResamplingData);
     Log("   WASAPIPreferredDevice:   %s", WASAPIPreferredDeviceData);
 
     if (forceDirectSoundData > 0)
@@ -427,11 +422,6 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
       m_WASAPIShareMode = AUDCLNT_SHAREMODE_EXCLUSIVE;
     else
       m_WASAPIShareMode = AUDCLNT_SHAREMODE_SHARED;
-
-    if (useThreadsForResamplingData > 0)
-      m_bUseThreads = true;
-    else
-      m_bUseThreads = false;
 
     delete[] m_wWASAPIPreferredDeviceId;
     m_wWASAPIPreferredDeviceId = new WCHAR[MAX_REG_LENGTH];
@@ -455,7 +445,6 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, forceDirectSound, forceDirectSoundData);
       WriteRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
       WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
-      WriteRegistryKeyDword(hKey, useThreadsForResampling, useThreadsForResamplingData);
     } 
     else 
     {
@@ -1194,14 +1183,7 @@ HRESULT CMPAudioRenderer::WriteSampleToDSBuffer(IMediaSample *pMediaSample, bool
 	
     int nBytePerSample = m_pWaveFileFormat->nBlockAlign;
 
-    if (m_bUseThreads)
-    {
-      m_pSoundTouch->processSample(pMediaSample);
-    }
-    else
-    {
-      m_pSoundTouch->putSamples((const short*)pMediaBuffer, lSize / nBytePerSample);
-    }
+    m_pSoundTouch->processSample(pMediaSample);
     lSize = m_pSoundTouch->receiveSamples((short**)&mediaBufferResult, 0) * nBytePerSample;
     pMediaBuffer = mediaBufferResult;
   }
@@ -1349,19 +1331,7 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
   {
     CAutoLock cAutoLock(&m_csResampleLock);
 	
-    int nBytePerSample = m_pWaveFileFormat->nChannels * (m_pWaveFileFormat->wBitsPerSample / 8);
-    
-    if (m_bUseThreads)
-    {
-      m_pSoundTouch->processSample(pMediaSample);
-    }
-    else
-    {
-      hr = pMediaSample->GetPointer(&pMediaBuffer);
-      if (FAILED (hr)) return hr; 
-
-      m_pSoundTouch->putSamples((const short*)pMediaBuffer, lSize / nBytePerSample);    
-    }
+    m_pSoundTouch->processSample(pMediaSample);
 
     if (m_bFirstAudioSample)
     {
@@ -1371,7 +1341,7 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
       hr = m_pRenderClient->ReleaseBuffer(m_nFramesInBuffer, AUDCLNT_BUFFERFLAGS_SILENT);
     }
   }
-  else // no time stretching enabled
+  else // if no time stretching is enabled the sample goes directly to the sample queue
   {
     m_pSoundTouch->QueueSample(pMediaSample);
   }

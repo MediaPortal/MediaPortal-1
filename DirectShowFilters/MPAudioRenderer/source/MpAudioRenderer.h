@@ -180,8 +180,6 @@ private:
   IAudioClock*  m_pAudioClock;
   UINT64        m_nHWfreq;
 
-  bool        m_bUseThreads;
-
   // Threading 
   static DWORD WINAPI RenderThreadEntryPoint(LPVOID lpParameter);
   DWORD RenderThread();

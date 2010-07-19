@@ -15,7 +15,7 @@ class CMultiSoundTouch;
 class CMultiSoundTouch
 {
 public:
-  CMultiSoundTouch(bool pUseThreads);
+  CMultiSoundTouch();
   ~CMultiSoundTouch();
 
   /// Sets new rate control value. Normal rate = 1.0, smaller values
