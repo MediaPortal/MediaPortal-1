@@ -113,6 +113,9 @@ DEFINE_STREAM_FUNC(clear,,)
 // flush requires a specific handling since we need to be able to use the CAutoLock
 void CMultiSoundTouch::flush() 
 { 
+  if (m_pMemAllocator)
+    m_pMemAllocator->Decommit();
+  
   CAutoLock allocatorLock(&m_allocatorLock);
   if (m_Streams) 
   { 
