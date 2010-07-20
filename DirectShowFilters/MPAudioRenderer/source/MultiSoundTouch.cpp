@@ -107,8 +107,20 @@ DEFINE_STREAM_FUNC(setPitchOctaves, float, newPitch)
 DEFINE_STREAM_FUNC(setPitchSemiTones, int, newPitch)
 DEFINE_STREAM_FUNC(setPitchSemiTones, float, newPitch)
 DEFINE_STREAM_FUNC(setSampleRate, uint, srate)
-DEFINE_STREAM_FUNC(flush,,)
 DEFINE_STREAM_FUNC(clear,,)
+
+
+// flush requires a specific handling since we need to be able to use the CAutoLock
+void CMultiSoundTouch::flush() 
+{ 
+  CAutoLock allocatorLock(&m_allocatorLock);
+  if (m_Streams) 
+  { 
+    for(int i=0; i<m_nStreamCount; i++) 
+      m_Streams[i].processor->flush(); 
+  } 
+}
+
 
 DWORD CMultiSoundTouch::ResampleThread()
 {
