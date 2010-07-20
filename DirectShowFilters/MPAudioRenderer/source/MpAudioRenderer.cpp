@@ -642,6 +642,12 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   // Is someone pulling our leg
   if (!pMediaSample) return FALSE;
 
+  if (m_dRate >= 2.0 || m_dRate <= -2.0)
+  {
+    // Do not render Micey Mouse(tm) audio
+    return TRUE;
+  }
+
   // Get the next sample due up for rendering.  If there aren't any ready
   // then GetNextSampleTimes returns an error.  If there is one to be done
   // then it succeeds and yields the sample times. If it is due now then
@@ -848,18 +854,6 @@ STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
       {
         Log("Run: error on reinit after stop (0x%08x) - trying to continue", hr);
         //return hr;
-      }
-    }
-    
-    if(SUCCEEDED(m_pPosition->GetRate(&m_dRate)))
-    {
-      if (m_dRate < 1.0) // TODO should be !=
-      {
-        if (FAILED (hr)) return hr;
-      }
-      else if (m_pSoundTouch)
-      {
-        m_pSoundTouch->setRateChange((float)(m_dRate-1.0)*100);
       }
     }
   }
@@ -1888,27 +1882,37 @@ HRESULT CMPAudioRenderer::EndFlush()
 
 STDMETHODIMP CMPAudioRenderer::IsFormatSupported(const GUID* pFormat)
 {
-  return E_NOTIMPL;
+  CheckPointer(pFormat, E_POINTER);
+  // only seeking in time (REFERENCE_TIME units) is supported
+  return *pFormat == TIME_FORMAT_MEDIA_TIME ? S_OK : S_FALSE;
 }
 
 STDMETHODIMP CMPAudioRenderer::QueryPreferredFormat(GUID* pFormat)
 {
-  return E_NOTIMPL;
+  CheckPointer(pFormat, E_POINTER);
+  *pFormat = TIME_FORMAT_MEDIA_TIME;
+  return S_OK;
 }
 
 STDMETHODIMP CMPAudioRenderer::SetTimeFormat(const GUID* pFormat)
 {
-  return E_NOTIMPL;
+  CheckPointer(pFormat, E_POINTER);
+
+  // nothing to set; just check that it's TIME_FORMAT_TIME
+  return *pFormat == TIME_FORMAT_MEDIA_TIME ? S_OK : E_INVALIDARG;
 }
 
 STDMETHODIMP CMPAudioRenderer::IsUsingTimeFormat(const GUID* pFormat)
 {
-  return E_NOTIMPL;
+  CheckPointer(pFormat, E_POINTER);
+  return *pFormat == TIME_FORMAT_MEDIA_TIME ? S_OK : S_FALSE;
 }
 
 STDMETHODIMP CMPAudioRenderer::GetTimeFormat(GUID* pFormat)
 {
-  return E_NOTIMPL;
+  CheckPointer(pFormat, E_POINTER);
+  *pFormat = TIME_FORMAT_MEDIA_TIME;
+  return S_OK;
 }
 
 STDMETHODIMP CMPAudioRenderer::GetDuration(LONGLONG* pDuration)
@@ -1958,7 +1962,6 @@ STDMETHODIMP CMPAudioRenderer::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLate
 
 STDMETHODIMP CMPAudioRenderer::SetRate(double dRate)
 {
-  // this one doesn't currenly get called?	
   if (m_dRate != dRate && dRate == 1.0)
   {
     if (m_pAudioClient && m_bIsAudioClientStarted) 
