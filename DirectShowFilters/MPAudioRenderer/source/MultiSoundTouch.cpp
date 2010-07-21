@@ -210,28 +210,36 @@ DWORD CMultiSoundTouch::ResampleThread()
           // TODO: /4 needs to be fixed!
           putSamplesInternal((const short*)pMediaBuffer, size / 4);
           
-          IMediaSample* outSample = NULL;
-          m_pMemAllocator->GetBuffer(&outSample, NULL, NULL, 0);
+          unsigned int sampleLength = numSamples();
 
-          if (outSample)
+          if (sampleLength > 0)
           {
-            // TODO: *4 needs to be fixed
-            BYTE *pMediaBufferOut = NULL;
-            outSample->GetPointer(&pMediaBufferOut);
-            
-            if (pMediaBufferOut)
-            {
-              unsigned int sampleLength = numSamples();
-              if (sampleLength > OUT_BUFFER_SIZE/4)
-                sampleLength = OUT_BUFFER_SIZE/4;
-              outSample->SetActualDataLength(sampleLength * 4);
-              receiveSamplesInternal((short*)pMediaBufferOut, sampleLength);
+            IMediaSample* outSample = NULL;
+            m_pMemAllocator->GetBuffer(&outSample, NULL, NULL, 0);
 
-              { // lock that the playback thread wont access the queue at the same time
-                CAutoLock cOutputQueueLock(&m_sampleOutQueueLock);
-                m_sampleOutQueue.push_back(outSample);
+            if (outSample)
+            {
+              // TODO: *4 needs to be fixed
+              BYTE *pMediaBufferOut = NULL;
+              outSample->GetPointer(&pMediaBufferOut);
+              
+              if (pMediaBufferOut)
+              {
+                if (sampleLength > OUT_BUFFER_SIZE/4)
+                  sampleLength = OUT_BUFFER_SIZE/4;
+                outSample->SetActualDataLength(sampleLength * 4);
+                receiveSamplesInternal((short*)pMediaBufferOut, sampleLength);
+
+                { // lock that the playback thread wont access the queue at the same time
+                  CAutoLock cOutputQueueLock(&m_sampleOutQueueLock);
+                  m_sampleOutQueue.push_back(outSample);
+                }
               }
             }
+          }
+          else
+          {
+            //Log("Zero Sized sample");
           }
         }
       

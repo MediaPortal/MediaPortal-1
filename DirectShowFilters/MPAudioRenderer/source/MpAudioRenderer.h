@@ -172,13 +172,18 @@ private:
   double      m_dBias;
   double      m_dAdjustment;
   CCritSec    m_csResampleLock;
+  CCritSec    m_RenderThreadLock;
+
   bool        m_bUseTimeStretching;
 
   DWORD       m_dwTimeStart;
-  bool        m_bFirstAudioSample;
+  LONGLONG    m_dSampleCounter;
 
   IAudioClock*  m_pAudioClock;
   UINT64        m_nHWfreq;
+
+  // Used for detecting dropped data
+  REFERENCE_TIME m_rtNextSampleTime;
 
   // Threading 
   static DWORD WINAPI RenderThreadEntryPoint(LPVOID lpParameter);
