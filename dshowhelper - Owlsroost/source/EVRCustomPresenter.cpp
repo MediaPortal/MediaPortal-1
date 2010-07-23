@@ -83,7 +83,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     HRESULT hr;
     LogRotate();
     Log("----- Owlsroost Version ------ instance 0x%x", this);
-    Log("---------- v0.0.35 ----------- instance 0x%x", this);
+    Log("---------- v0.0.36 ----------- instance 0x%x", this);
     Log("--- audio renderer testing --- instance 0x%x", this);
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
@@ -1243,7 +1243,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
       }
       GetFrameRateRatio(); // update video to display FPS ratio data
       // Within the time window to 'present' a sample, or it's a special play mode
-      if (!m_bDVDMenu && !m_bScrubbing )
+      if (!m_bScrubbing)
       {   
         systemTime = GetCurrentTimestamp();
         if ((m_earliestPresentTime - systemTime) > (displayTime/2) )
@@ -1680,8 +1680,8 @@ void MPEVRCustomPresenter::ScheduleSample(IMFSample* pSample)
     // consider 5 ms "just-in-time" for log-length's sake
     if (nextSampleTime < -50000 && !m_bDVDMenu && !m_bScrubbing)
     {
-      Log("Scheduling sample from the past (%.2f ms, last call to NotifyWorker: %.2f ms)", 
-        (double)-nextSampleTime/10000, (GetCurrentTimestamp()-(double)m_llLastWorkerNotification)/10000);
+      Log("Scheduling sample from the past (%.2f ms, last call to NotifyWorker: %.2f ms, Queue: %d)", 
+        (double)-nextSampleTime/10000, (GetCurrentTimestamp()-(double)m_llLastWorkerNotification)/10000, m_qScheduledSamples.Count());
     }
   }
 

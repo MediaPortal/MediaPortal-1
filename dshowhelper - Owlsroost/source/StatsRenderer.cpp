@@ -217,9 +217,9 @@ void StatsRenderer::DrawStats()
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("DetFrT: %+5.3f ms | DetFrT_SD: %+5.3f ms | RtFrT: %+5.3f ms | DetSDur: %+5.3f ms",  
+    strText.Format("DetFrT: %+5.3f ms | DetFrT_SD: %+5.3f ms | RtFrT: %+5.3f ms | DetSDur: %+5.3f ms | Q: %d",  
       (m_pPresenter->m_DetectedFrameTime * 1000.0), (m_pPresenter->m_DetectedFrameTimeStdDev/10000.0),
-      (m_pPresenter->m_rtTimePerFrame/10000.0 ), (m_pPresenter->m_SampDuration/10000.0) );
+      (m_pPresenter->m_rtTimePerFrame/10000.0 ), (m_pPresenter->m_SampDuration/10000.0), (m_pPresenter->m_qScheduledSamples.Count()) );
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
