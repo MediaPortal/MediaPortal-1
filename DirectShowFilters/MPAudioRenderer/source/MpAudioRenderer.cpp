@@ -41,7 +41,7 @@ CFilterApp theApp;
 #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
 #define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
 
-#define MAX_SAMPLE_TIME_ERROR 50000 // 5 ms
+#define MAX_SAMPLE_TIME_ERROR 10000 // 1.0 ms
 
 // === Compatibility with Windows SDK v6.0A (define in KSMedia.h in Windows 7 SDK or later)
 #ifndef STATIC_KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL
@@ -261,9 +261,11 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_hStopRenderThreadEvent(NULL)
 , m_bDiscardCurrentSample(false)
 , m_rtNextSampleTime(0)
+, m_rtPrevSampleTime(0)
+, m_bDropSamples(false)
 {
   LogRotate();
-  Log("MP Audio Renderer - v0.6 - instance 0x%x", this);
+  Log("MP Audio Renderer - v0.61 - instance 0x%x", this);
 
   LoadSettingsFromRegistry();
 
@@ -638,6 +640,7 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
 {
   REFERENCE_TIME rtSampleTime = 0;
   REFERENCE_TIME rtSampleEndTime = 0;
+  REFERENCE_TIME rtTime = 0;
 
   // Is someone pulling our leg
   if (!pMediaSample) return FALSE;
@@ -657,34 +660,84 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   HRESULT hr = GetSampleTimes(pMediaSample, &rtSampleTime, &rtSampleEndTime);
   if (FAILED(hr)) return FALSE;
 
-  // If we don't have a reference clock then we cannot set up the advise
-  // time so we simply set the event indicating an image to render. This
-  // will cause us to run flat out without any timing or synchronisation
-
-  // Audio should be renderer always when it arrives and the reference clock 
-  // should be based on the audio HW
-  //if (hr == S_OK) 
-
-  bool droppedData = false;
-
   // Try to keep the A/V sync when data has been dropped
   if (abs(rtSampleTime - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR)
   {
-    droppedData = true;
-    Log("Dropped audio data detected: diff: %lld MAX_SAMPLE_TIME_ERROR: %d ", rtSampleTime - m_rtNextSampleTime, MAX_SAMPLE_TIME_ERROR);
+    m_bDropSamples = true;
+    Log("Dropped audio data detected: diff: %lld ms MAX_SAMPLE_TIME_ERROR: %d ms", (rtSampleTime - m_rtNextSampleTime / 10000), MAX_SAMPLE_TIME_ERROR / 10000);
+  }
+
+  // Get media time
+  m_pClock->GetTime(&rtTime);
+  rtTime = rtTime - m_tStart;
+
+  UINT nFrames = pMediaSample->GetActualDataLength() / m_pWaveFileFormat->nBlockAlign;
+  REFERENCE_TIME rtSampleDuration = nFrames * UNITS / m_pWaveFileFormat->nSamplesPerSec;
+  REFERENCE_TIME rtLate = rtTime - rtSampleTime;
+  
+  m_rtNextSampleTime = rtSampleTime + rtSampleDuration;
+
+  //Log("  rtTime: %lld ms rtSampleTime: %lld ms diff %lld ms", rtTime / 10000, rtSampleTime / 10000, (rtTime - rtSampleTime) / 10000);
+
+  // The whole timespan of the sampe is late
+  if( rtLate > rtSampleDuration && m_bDropSamples)
+  {
+    Log("   dropping whole sample - late: %lld ms dur: %lld ms", rtLate/10000, rtSampleDuration/10000);
+    
+    pMediaSample->SetActualDataLength(0);
+
+	// Ttriggers next sample to be scheduled
+    EXECUTE_ASSERT(SetEvent((HANDLE)m_RenderEvent));
+    return TRUE;
+  }
+  else if (m_bDropSamples && rtLate > 0)
+  {
+    long newLenght = m_pWaveFileFormat->nBlockAlign * ((rtSampleDuration - rtLate) * m_pWaveFileFormat->nSamplesPerSec / UNITS);
+    long sampleLenght = pMediaSample->GetActualDataLength();
+    
+    // Just some sanity checks
+    if( newLenght < 0 )
+    {
+      newLenght = 0;
+    }
+    else
+    {
+      newLenght = min(newLenght, sampleLenght);
+    }
+
+    Log("   dropping part of sample %d / %d", newLenght, sampleLenght);
+    pMediaSample->SetActualDataLength(newLenght);
+
+    BYTE* sampleData = NULL;
+    pMediaSample->GetPointer(&sampleData);
+    if (sampleData)
+    {
+      // Discard the oldest sample data to match the start timestamp
+      memmove(sampleData, sampleData + newLenght, newLenght);
+    }
   }
   
-  UINT nFrames = pMediaSample->GetActualDataLength() / m_pWaveFileFormat->nBlockAlign;
-  m_rtNextSampleTime = rtSampleTime + nFrames * UNITS / m_pWaveFileFormat->nSamplesPerSec;
-
-  if (m_dSampleCounter > 1 && !droppedData)
+  if (m_dSampleCounter > 1 && !m_bDropSamples)
   {
     EXECUTE_ASSERT(SetEvent((HANDLE) m_RenderEvent));
+    m_rtPrevSampleTime = rtSampleTime;
     return TRUE;
   }
 
   if (m_dRate <= 1.1)
   {
+    // Discard all old data in queues
+    if (m_bDropSamples)
+    {
+      CAutoLock cInterfaceLock(&m_InterfaceLock);
+      CAutoLock cRenderThreadLock(&m_RenderThreadLock);
+
+      m_pSoundTouch->BeginFlush();
+      m_pSoundTouch->flush();
+      m_pSoundTouch->EndFlush();
+      m_bDropSamples = false; // stream is continuous from this point on
+    }
+
     ASSERT(m_dwAdvise == 0);
     ASSERT(m_pClock);
     WaitForSingleObject((HANDLE)m_RenderEvent, 0);
@@ -697,6 +750,8 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   {
     hr = DoRenderSample(pMediaSample);
   }
+
+  m_rtPrevSampleTime = rtSampleTime;
 
   // We could not schedule the next sample for rendering despite the fact
   // we have a valid sample here. This is a fair indication that either

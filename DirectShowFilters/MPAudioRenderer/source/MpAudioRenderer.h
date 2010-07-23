@@ -184,6 +184,10 @@ private:
 
   // Used for detecting dropped data
   REFERENCE_TIME m_rtNextSampleTime;
+  REFERENCE_TIME m_rtPrevSampleTime;
+
+  // stream has discontinuity error(s), data must be dropped if gaps are too wide
+  bool m_bDropSamples;
 
   // Threading 
   static DWORD WINAPI RenderThreadEntryPoint(LPVOID lpParameter);
