@@ -189,6 +189,8 @@ private:
   // stream has discontinuity error(s), data must be dropped if gaps are too wide
   bool m_bDropSamples;
 
+  bool m_bLogSampleTimes;
+
   // Threading 
   static DWORD WINAPI RenderThreadEntryPoint(LPVOID lpParameter);
   DWORD RenderThread();

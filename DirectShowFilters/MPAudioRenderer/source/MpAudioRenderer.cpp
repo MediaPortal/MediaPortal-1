@@ -263,6 +263,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_rtNextSampleTime(0)
 , m_rtPrevSampleTime(0)
 , m_bDropSamples(false)
+, m_bLogSampleTimes(false)
 {
   LogRotate();
   Log("MP Audio Renderer - v0.61 - instance 0x%x", this);
@@ -391,6 +392,7 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
   LPCTSTR enableTimestretching = TEXT("EnableTimestretching");
   LPCTSTR WASAPIExclusive = TEXT("WASAPIExclusive");
   LPCTSTR devicePeriod = TEXT("DevicePeriod");
+  LPCTSTR logSampleTimes = TEXT("LogSampleTimes");
   LPCTSTR WASAPIPreferredDevice = TEXT("WASAPIPreferredDevice");
   
   // Default values for the settings in registry
@@ -398,6 +400,7 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
   DWORD enableTimestretchingData = 1;
   DWORD WASAPIExclusiveData = 1;
   DWORD devicePeriodData = 500000; // 50 ms
+  DWORD logSampleTimesData = 0;
   LPCTSTR WASAPIPreferredDeviceData = new TCHAR[MAX_REG_LENGTH];
 
   ZeroMemory((void*)WASAPIPreferredDeviceData, MAX_REG_LENGTH);
@@ -412,11 +415,13 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
     ReadRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
     ReadRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
+    ReadRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
     ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
 
     Log("   ForceDirectSound:        %d", forceDirectSoundData);
     Log("   EnableTimestrecthing:    %d", enableTimestretchingData);
     Log("   WASAPIExclusive:         %d", WASAPIExclusiveData);
+    Log("   LogSampleTimes:          %d", logSampleTimesData);
     Log("   DevicePeriod:            %d (1 == minimal, 0 == default, other user defined)", devicePeriodData);
     Log("   WASAPIPreferredDevice:   %s", WASAPIPreferredDeviceData);
 
@@ -434,6 +439,11 @@ void CMPAudioRenderer::LoadSettingsFromRegistry()
       m_WASAPIShareMode = AUDCLNT_SHAREMODE_EXCLUSIVE;
     else
       m_WASAPIShareMode = AUDCLNT_SHAREMODE_SHARED;
+
+    if (logSampleTimesData > 0)
+      m_bLogSampleTimes = true;
+    else
+      m_bLogSampleTimes = false;
 
     m_hnsPeriod = devicePeriodData;
 
@@ -661,10 +671,11 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   if (FAILED(hr)) return FALSE;
 
   // Try to keep the A/V sync when data has been dropped
-  if (abs(rtSampleTime - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR)
+  // TODO: latency should be taken into account somehow
+  if ((abs(rtSampleTime - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_dSampleCounter > 1)
   {
     m_bDropSamples = true;
-    Log("Dropped audio data detected: diff: %lld ms MAX_SAMPLE_TIME_ERROR: %d ms", (rtSampleTime - m_rtNextSampleTime / 10000), MAX_SAMPLE_TIME_ERROR / 10000);
+    Log("  Dropped audio data detected: diff: %.3f ms MAX_SAMPLE_TIME_ERROR: %.3f ms", ((double)rtSampleTime - (double)m_rtNextSampleTime / 10000.0), (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
   }
 
   // Get media time
@@ -677,16 +688,17 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   
   m_rtNextSampleTime = rtSampleTime + rtSampleDuration;
 
-  //Log("  rtTime: %lld ms rtSampleTime: %lld ms diff %lld ms", rtTime / 10000, rtSampleTime / 10000, (rtTime - rtSampleTime) / 10000);
+  if(m_bLogSampleTimes)
+    Log("  rtTime: %.3f ms rtSampleTime: %.3f ms diff %.3f ms", (double)rtTime / 10000.0, (double)rtSampleTime / 10000.0, ((double)rtTime - (double)rtSampleTime) / 10000.0);
 
   // The whole timespan of the sampe is late
   if( rtLate > rtSampleDuration && m_bDropSamples)
   {
-    Log("   dropping whole sample - late: %lld ms dur: %lld ms", rtLate/10000, rtSampleDuration/10000);
-    
+    Log("  dropping whole sample - late: %.3f ms dur: %.3f ms", (double)rtLate/10000.0, (double)rtSampleDuration/10000.0);
+
     pMediaSample->SetActualDataLength(0);
 
-	// Ttriggers next sample to be scheduled
+    // Triggers next sample to be scheduled
     EXECUTE_ASSERT(SetEvent((HANDLE)m_RenderEvent));
     return TRUE;
   }
@@ -1013,6 +1025,7 @@ STDMETHODIMP CMPAudioRenderer::Pause()
   m_bIsAudioClientStarted = false;
   m_dSampleCounter = 0;
   m_rtNextSampleTime = 0;
+  m_rtPrevSampleTime = 0;
 
   return CBaseRenderer::Pause(); 
 };
@@ -1761,7 +1774,7 @@ HRESULT CMPAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCli
 
   if (FAILED (hr) && hr != AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED)
   {
-    Log("InitAudioClient failed (0x%08x)", hr);
+    Log("InitAudioClient Initialize failed (0x%08x)", hr);
     return hr;
   }
 
@@ -1810,7 +1823,7 @@ HRESULT CMPAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCli
     if (SUCCEEDED (hr)) 
     {
       hr = m_pAudioClient->Initialize(m_WASAPIShareMode, AUDCLNT_STREAMFLAGS_EVENTCALLBACK, 
-	                                  m_hnsPeriod, m_hnsPeriod, pWaveFormatEx, NULL);
+	                                    m_hnsPeriod, m_hnsPeriod, pWaveFormatEx, NULL);
     }
  
     if (FAILED(hr))
@@ -1948,6 +1961,7 @@ HRESULT CMPAudioRenderer::EndFlush()
   
   m_dSampleCounter = 0;
   m_rtNextSampleTime = 0;
+  m_rtPrevSampleTime = 0;
 
   if (m_pSoundTouch)
   {
