@@ -266,7 +266,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_bLogSampleTimes(false)
 {
   LogRotate();
-  Log("MP Audio Renderer - v0.61 - instance 0x%x", this);
+  Log("MP Audio Renderer - v0.62 - instance 0x%x", this);
 
   LoadSettingsFromRegistry();
 
@@ -378,7 +378,7 @@ CMPAudioRenderer::~CMPAudioRenderer()
 
 void CMPAudioRenderer::LoadSettingsFromRegistry()
 {
-  USES_CONVERSION;
+  USES_CONVERSION; // this is required for T2W macro
   
   Log("Loading settings from registry");
 
@@ -1059,17 +1059,11 @@ HRESULT CMPAudioRenderer::GetReferenceClockInterface(REFIID riid, void **ppv)
 
 HRESULT CMPAudioRenderer::EndOfStream(void)
 {
-  if (m_pDSBuffer)
-  {
-    m_pDSBuffer->Stop();
-  }
-
-  if (m_pAudioClient && m_bIsAudioClientStarted) 
-  {
-    m_pAudioClient->Stop();
-  }
-
-  m_bIsAudioClientStarted = false;
+  // Do not stop the playback when end of stream is received. Source filter
+  // will send the EndOfStream as soon as the file end is reached, but we
+  // are still having samples in our queues that we still need to play. 
+  // In worst case it could cause almost 10 seconds of the audio to be "eaten"
+  // at the end the playback.
 
   return CBaseRenderer::EndOfStream();
 }
