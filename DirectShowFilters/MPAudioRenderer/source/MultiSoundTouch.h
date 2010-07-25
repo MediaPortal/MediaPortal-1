@@ -100,7 +100,7 @@ public:
 private:
   
 
-  static const uint SAMPLE_LEN = 0x10000;
+  static const uint SAMPLE_LEN = 0x40000;
   typedef struct 
   {
     soundtouch::SoundTouch *processor;

@@ -18,7 +18,7 @@
 
 #include "MultiSoundTouch.h"
 
-#define OUT_BUFFER_SIZE   8192
+#define OUT_BUFFER_SIZE   16384
 #define OUT_BUFFER_COUNT  20
 
 #define DEFINE_STREAM_FUNC(funcname, paramtype, paramname) \
