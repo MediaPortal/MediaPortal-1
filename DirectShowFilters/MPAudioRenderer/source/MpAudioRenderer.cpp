@@ -681,20 +681,24 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   // Get media time
   m_pClock->GetTime(&rtTime);
   rtTime = rtTime - m_tStart;
+  
+  long sampleLenght = pMediaSample->GetActualDataLength();
 
-  UINT nFrames = pMediaSample->GetActualDataLength() / m_pWaveFileFormat->nBlockAlign;
+  UINT nFrames = sampleLenght / m_pWaveFileFormat->nBlockAlign;
   REFERENCE_TIME rtSampleDuration = nFrames * UNITS / m_pWaveFileFormat->nSamplesPerSec;
   REFERENCE_TIME rtLate = rtTime - rtSampleTime;
   
   m_rtNextSampleTime = rtSampleTime + rtSampleDuration;
-
+  
   if(m_bLogSampleTimes)
-    Log("  rtTime: %.3f ms rtSampleTime: %.3f ms diff %.3f ms", (double)rtTime / 10000.0, (double)rtSampleTime / 10000.0, ((double)rtTime - (double)rtSampleTime) / 10000.0);
+    Log("  rtTime: %5.3f ms rtSampleTime: %5.3f ms diff: %5.3f ms size: %d",
+      rtTime / 10000.0, rtSampleTime / 10000.0, (rtTime - rtSampleTime) / 10000.0, sampleLenght);
 
-  // The whole timespan of the sampe is late
+  // The whole timespan of the sample is late
   if( rtLate > rtSampleDuration && m_bDropSamples)
   {
-    Log("  dropping whole sample - late: %.3f ms dur: %.3f ms", (double)rtLate/10000.0, (double)rtSampleDuration/10000.0);
+    Log("  dropping whole sample - late: %.3f ms dur: %.3f ms", 
+      rtLate / 10000.0, rtSampleDuration / 10000.0);
 
     pMediaSample->SetActualDataLength(0);
 
@@ -717,7 +721,7 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
       newLenght = min(newLenght, sampleLenght);
     }
 
-    Log("   dropping part of sample %d / %d", newLenght, sampleLenght);
+    Log("   dropping part of sample %d / %d bytes", newLenght, sampleLenght);
     pMediaSample->SetActualDataLength(newLenght);
 
     BYTE* sampleData = NULL;
