@@ -1235,6 +1235,34 @@
 				</File>
 			</Filter>
 		</Filter>
+		<Filter
+			Name="AC3 encoder"
+			>
+			<Filter
+				Name="include"
+				>
+				<File
+					RelativePath=".\AC3_encoder\ac3enc.h"
+					>
+				</File>
+				<File
+					RelativePath=".\AC3_encoder\bits.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="source"
+				>
+				<File
+					RelativePath=".\AC3_encoder\ac3enc.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\AC3_encoder\bits.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
 	</Files>
 	<Globals>
 		<Global
