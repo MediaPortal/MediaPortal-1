@@ -83,7 +83,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     HRESULT hr;
     LogRotate();
     Log("----- Owlsroost Version ------ instance 0x%x", this);
-    Log("---------- v0.0.36 ----------- instance 0x%x", this);
+    Log("---------- v0.0.37 ----------- instance 0x%x", this);
     Log("--- audio renderer testing --- instance 0x%x", this);
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
@@ -1334,7 +1334,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
         //Clamp within limits - because of hystersis, the range of nextSampleTime
         //is greater than frameTime, so it's possible for nstPhaseDiff to exceed
         //the -0.5 to +0.5 allowable range 
-        if (m_bDVDMenu || m_bScrubbing)
+        if (m_bDVDMenu || m_bScrubbing || (m_frameRateRatio == 0 && m_dBias == 1.0))
         {
           nstPhaseDiff = 0.0;
         }
