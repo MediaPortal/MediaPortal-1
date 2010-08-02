@@ -1760,7 +1760,7 @@ void CMPAudioRenderer::CreateWaveFormatForAC3(WAVEFORMATEX* pwfx)
     pwfx->nBlockAlign = 4;
     pwfx->nChannels = 2;
     pwfx->nSamplesPerSec = 48000;
-    pwfx->nAvgBytesPerSec = 192000;
+    pwfx->nAvgBytesPerSec = 80000;//192000;
   }
 }
 
