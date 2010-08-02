@@ -563,7 +563,7 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
   if (!pmt) 
     return E_INVALIDARG;
   
-  //Log("CheckMediaType");
+  Log("CheckMediaType");
   WAVEFORMATEX *pwfx = (WAVEFORMATEX *) pmt->Format();
 
   if (!pwfx) 
@@ -572,7 +572,7 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
   if ((pmt->majortype	!= MEDIATYPE_Audio) ||
       (pmt->formattype != FORMAT_WaveFormatEx))
   {
-    //Log("CheckMediaType Not supported");
+    Log("CheckMediaType Not supported");
     return VFW_E_TYPE_NOT_ACCEPTED;
   }
 
@@ -585,11 +585,11 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
     // return VFW_E_TYPE_NOT_ACCEPTED;
   }
 
-  // TODO: allow other than 16 bit audio stream resampling!
-  if (m_bUseTimeStretching && pwfx->wBitsPerSample != 16)
+  if (m_bUseTimeStretching)
   {
-    Log("CheckMediaType Error only 16 bit audio resampling is currently supported");
-    return VFW_E_TYPE_NOT_ACCEPTED;
+    hr = m_pSoundTouch->CheckFormat(pwfx);
+    if (FAILED(hr))
+      return hr;
   }
 
   if (m_bUseWASAPI)
@@ -620,10 +620,10 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
     }
     Log("CheckMediaType WASAPI client accepted the format");
   }
-  else if	(pwfx->wFormatTag	!= WAVE_FORMAT_PCM)
-  {
-    return VFW_E_TYPE_NOT_ACCEPTED;
-  }
+  //else if	(!m_bUseTimeStretching && pwfx->wFormatTag != WAVE_FORMAT_PCM)
+  //{
+  //  return VFW_E_TYPE_NOT_ACCEPTED;
+  //}
   return S_OK;
 }
 
@@ -856,7 +856,11 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
 
     if (m_pSoundTouch)
     {
-      m_pSoundTouch->setChannels(pwf->nChannels);
+      //m_pSoundTouch->setChannels(pwf->nChannels);
+      hr = m_pSoundTouch->SetFormat(pwf);
+      if (FAILED(hr))
+        return hr;
+
       m_pSoundTouch->setSampleRate(pwf->nSamplesPerSec);
       m_pSoundTouch->setTempoChange(0);
       m_pSoundTouch->setPitchSemiTones(0);

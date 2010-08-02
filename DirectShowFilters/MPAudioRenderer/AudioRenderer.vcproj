@@ -949,6 +949,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\SoundTouchEx.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\SyncClock.cpp"
 				>
 			</File>
@@ -983,6 +987,10 @@
 			</File>
 			<File
 				RelativePath=".\source\SharedInclude.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\SoundTouchEx.h"
 				>
 			</File>
 			<File

@@ -1,14 +1,29 @@
+// Copyright (C) 2005-2010 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
 #include <dsound.h>
+#include <MMReg.h>  //must be before other Wasapi headers
 #include <ks.h>
 #include <ksmedia.h>
 #include <vector>
 
-#include <MMReg.h>  //must be before other Wasapi headers
-
 #include "../SoundTouch/Include/SoundTouch.h"
+#include "SoundTouchEx.h"
 
 class CMultiSoundTouch;
 
@@ -71,13 +86,18 @@ public:
   // internally enough SoundTouch processors will be 
   // created to process the requested number of channels
   // Any samples already in que will be lost!
-  void setChannels(int channels);
+  //void setChannels(int channels);
 
   // Changes a setting controlling the processing system behaviour. See the
   // 'SETTING_...' defines for available setting ID's.
   // 
   // \return 'TRUE' if the setting was succesfully changed
   BOOL setSetting(int settingId, int value);
+
+  HRESULT CheckFormat(WAVEFORMATEX *pwf);
+  HRESULT CheckFormat(WAVEFORMATEXTENSIBLE *pwfe);
+  HRESULT SetFormat(WAVEFORMATEX *pwf);
+  HRESULT SetFormat(WAVEFORMATEXTENSIBLE *pwfe);
 
   bool putSamples(const short *inBuffer, long inSamples);
   uint receiveSamples(short **outBuffer, uint maxSamples);
@@ -97,28 +117,16 @@ public:
   bool putSamplesInternal(const short *inBuffer, long inSamples);
   uint receiveSamplesInternal(short *outBuffer, uint maxSamples);
 
+protected:
+  HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf);
+
 private:
-  
 
   static const uint SAMPLE_LEN = 0x40000;
-  typedef struct 
-  {
-    soundtouch::SoundTouch *processor;
-    int channels;
-  } StreamProcessor;
+  std::vector<CSoundTouchEx *> *m_Streams;
+  WAVEFORMATEXTENSIBLE *m_pWaveFormat;
 
-  int m_nChannels;
-  
-  int m_nStreamCount;
-  StreamProcessor *m_Streams;
   soundtouch::SAMPLETYPE m_temp[2*SAMPLE_LEN];
-
-  // internal functions to separate/merge streams out of sample buffers
-  void StereoDeInterleave(const short *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
-  void StereoInterleave(const soundtouch::SAMPLETYPE *inBuffer, short *outBuffer, uint count);
-  void MonoDeInterleave(const short *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
-  void MonoInterleave(const soundtouch::SAMPLETYPE *inBuffer, short *outBuffer, uint count);
-
   HANDLE m_hThread;
 
   HANDLE m_hSampleArrivedEvent;
@@ -126,7 +134,6 @@ private:
   HANDLE m_hWaitThreadToExitEvent;
   IMemAllocator *m_pMemAllocator;
 
-  bool m_bUseThreads;
   bool m_bFlushSamples;
 
   std::vector<IMediaSample*> m_sampleQueue;

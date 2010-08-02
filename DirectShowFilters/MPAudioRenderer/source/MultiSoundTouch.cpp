@@ -15,6 +15,7 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include <map>
 
 #include "MultiSoundTouch.h"
 
@@ -26,8 +27,8 @@
   { \
     if (m_Streams) \
     { \
-      for(int i=0; i<m_nStreamCount; i++) \
-        m_Streams[i].processor->funcname(paramname); \
+      for(int i=0; i<m_Streams->size(); i++) \
+        m_Streams->at(i)->funcname(paramname); \
     } \
   }
 
@@ -36,10 +37,37 @@
 #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
 #define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
 
-typedef void (CMultiSoundTouch::*DeInterleaveFunc)(const soundtouch::SAMPLETYPE *inBuffer, short *outBuffer, uint count);
-typedef void (CMultiSoundTouch::*InterleaveFunc)(const soundtouch::SAMPLETYPE *inBuffer, short *outBuffer, uint count);
-
 extern void Log(const char *fmt, ...);
+
+typedef struct tagSpeakerPair {
+  DWORD dwLeft, dwRight;
+  __inline DWORD PairMask()  { return dwLeft | dwRight; };
+} SpeakerPair;
+
+// List of speakers that should be handled as a pair
+static SpeakerPair PairedSpeakers[] = {
+  {SPEAKER_FRONT_LEFT, SPEAKER_FRONT_RIGHT},
+  {SPEAKER_BACK_LEFT, SPEAKER_BACK_RIGHT},
+  {SPEAKER_FRONT_LEFT_OF_CENTER, SPEAKER_FRONT_RIGHT_OF_CENTER},
+  {SPEAKER_FRONT_CENTER, SPEAKER_BACK_CENTER}, // not sure about this one
+  {SPEAKER_SIDE_LEFT, SPEAKER_SIDE_RIGHT},
+  {SPEAKER_TOP_FRONT_LEFT, SPEAKER_TOP_FRONT_RIGHT},
+  {SPEAKER_TOP_BACK_LEFT, SPEAKER_TOP_BACK_RIGHT},
+  {SPEAKER_TOP_FRONT_CENTER, SPEAKER_TOP_BACK_CENTER},  // not sure about this one
+  {NULL, NULL} // end marker
+};
+
+static DWORD gdwDefaultChannelMask[] = {
+  0, // no channels - invalid
+  KSAUDIO_SPEAKER_MONO,
+  KSAUDIO_SPEAKER_STEREO,
+  KSAUDIO_SPEAKER_STEREO | KSAUDIO_SPEAKER_GROUND_FRONT_CENTER,
+  KSAUDIO_SPEAKER_QUAD,
+  0, // 5 channels?
+  KSAUDIO_SPEAKER_5POINT1_SURROUND,
+  0, // 7 channels?
+  KSAUDIO_SPEAKER_7POINT1_SURROUND
+};
 
 // TODO add support for multiple channel pairs
 DWORD WINAPI CMultiSoundTouch::ResampleThreadEntryPoint(LPVOID lpParameter)
@@ -48,18 +76,18 @@ DWORD WINAPI CMultiSoundTouch::ResampleThreadEntryPoint(LPVOID lpParameter)
 }
 
 CMultiSoundTouch::CMultiSoundTouch() 
-: m_nChannels(0)
-, m_Streams(NULL)
-, m_nStreamCount(0)
+: m_Streams(NULL)
+, m_bFlushSamples(false)
 , m_pMemAllocator(NULL)
 , m_hSampleArrivedEvent(NULL)
 , m_hStopThreadEvent(NULL)
 , m_hWaitThreadToExitEvent(NULL)
 , m_hThread(NULL)
 , m_threadId(0)
+, m_pWaveFormat(NULL)
 , m_pPreviousSample(NULL)
 {
-  // TODO: create one thread per channel pair
+  // Use separate thread per channnel pair?
   m_hSampleArrivedEvent = CreateEvent(0, FALSE, FALSE, 0);
   m_hStopThreadEvent = CreateEvent(0, FALSE, FALSE, 0);
   m_hWaitThreadToExitEvent = CreateEvent(0, FALSE, FALSE, 0);
@@ -90,7 +118,7 @@ CMultiSoundTouch::~CMultiSoundTouch()
   if (m_hThread)
     CloseHandle(m_hThread);
 
-  setChannels(0);
+  SetFormat((PWAVEFORMATEXTENSIBLE)NULL);
 }
 
 void CMultiSoundTouch::StopResamplingThread()
@@ -119,8 +147,8 @@ void CMultiSoundTouch::flush()
   CAutoLock allocatorLock(&m_allocatorLock);
   if (m_Streams) 
   { 
-    for(int i=0; i<m_nStreamCount; i++) 
-      m_Streams[i].processor->flush(); 
+    for(int i=0; i<m_Streams->size(); i++) 
+      m_Streams->at(i)->flush(); 
   } 
 }
 
@@ -207,8 +235,7 @@ DWORD CMultiSoundTouch::ResampleThread()
         if ((hr == S_OK) && m_pMemAllocator)
         {
           // Process the sample 
-          // TODO: /4 needs to be fixed!
-          putSamplesInternal((const short*)pMediaBuffer, size / 4);
+          putSamplesInternal((const short*)pMediaBuffer, size / m_pWaveFormat->Format.nBlockAlign);
           
           unsigned int sampleLength = numSamples();
 
@@ -219,15 +246,15 @@ DWORD CMultiSoundTouch::ResampleThread()
 
             if (outSample)
             {
-              // TODO: *4 needs to be fixed
               BYTE *pMediaBufferOut = NULL;
               outSample->GetPointer(&pMediaBufferOut);
               
               if (pMediaBufferOut)
               {
-                if (sampleLength > OUT_BUFFER_SIZE/4)
-                  sampleLength = OUT_BUFFER_SIZE/4;
-                outSample->SetActualDataLength(sampleLength * 4);
+                int maxBufferSamples = OUT_BUFFER_SIZE/m_pWaveFormat->Format.nBlockAlign;
+                if (sampleLength > maxBufferSamples)
+                  sampleLength = maxBufferSamples;
+                outSample->SetActualDataLength(sampleLength * m_pWaveFormat->Format.nBlockAlign);
                 receiveSamplesInternal((short*)pMediaBufferOut, sampleLength);
 
                 { // lock that the playback thread wont access the queue at the same time
@@ -340,8 +367,8 @@ BOOL CMultiSoundTouch::setSetting(int settingId, int value)
 {
   if (m_Streams)
   {
-    for(int i=0; i<m_nStreamCount; i++)
-      m_Streams[i].processor->setSetting(settingId, value);
+    for(int i=0; i<m_Streams->size(); i++)
+      m_Streams->at(i)->setSetting(settingId, value);
     return true;
   } 
   return false;
@@ -350,9 +377,9 @@ BOOL CMultiSoundTouch::setSetting(int settingId, int value)
 uint CMultiSoundTouch::numUnprocessedSamples() const
 {
   uint maxSamples = 0;
-  for (int i=0 ; i<m_nStreamCount; i++)
+  for (int i=0 ; i<m_Streams->size(); i++)
   {
-    uint samples = m_Streams[i].processor->numUnprocessedSamples();
+    uint samples = m_Streams->at(i)->numUnprocessedSamples();
     if (maxSamples == 0 || maxSamples < samples)
       maxSamples = samples;
   }
@@ -363,9 +390,9 @@ uint CMultiSoundTouch::numUnprocessedSamples() const
 uint CMultiSoundTouch::numSamples() const
 {
   uint minSamples = 0;
-  for (int i=0 ; i<m_nStreamCount; i++)
+  for (int i=0 ; i<m_Streams->size(); i++)
   {
-    uint samples = m_Streams[i].processor->numSamples();
+    uint samples = m_Streams->at(i)->numSamples();
     if (minSamples == 0 || minSamples > samples)
       minSamples = samples;
   }
@@ -375,45 +402,198 @@ uint CMultiSoundTouch::numSamples() const
 /// Returns nonzero if there aren't any samples available for outputting.
 int CMultiSoundTouch::isEmpty() const
 {
-  for (int i=0 ; i<m_nStreamCount; i++)
+  for (int i=0 ; i<m_Streams->size(); i++)
   {
-    if (m_Streams[i].processor->isEmpty())
+    if (m_Streams->at(i)->isEmpty())
       return true;
   }
   return false;
 }
 
-
-void CMultiSoundTouch::setChannels(int channels)
+HRESULT CMultiSoundTouch::ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf)
 {
-  int newStreamCount = channels/2 + (channels % 2);
-  StreamProcessor *newStreams = NULL;
-  m_nChannels = channels;
-  if (channels > 0)
+  ASSERT(pwf->cbSize <= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX));
+  memcpy(pwfe, pwf, sizeof(WAVEFORMATEX) + pwf->cbSize);
+  pwfe->Format.cbSize = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
+  switch(pwfe->Format.wFormatTag)
   {
-    // create new streams
-    newStreams = new StreamProcessor[newStreamCount];
-    for(int i=0; i<newStreamCount; i++)
+  case WAVE_FORMAT_PCM:
+    pwfe->SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
+    break;
+  case WAVE_FORMAT_IEEE_FLOAT:
+    pwfe->SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
+    break;
+  default:
+    return VFW_E_TYPE_NOT_ACCEPTED;
+  }
+  if (pwfe->Format.nChannels >= 1 && pwfe->Format.nChannels <= 8)
+  {
+    pwfe->dwChannelMask = gdwDefaultChannelMask[pwfe->Format.nChannels];
+    if (pwfe->dwChannelMask == 0)
+      return VFW_E_TYPE_NOT_ACCEPTED;
+  }
+  else
+    return VFW_E_TYPE_NOT_ACCEPTED;
+
+  pwfe->Samples.wValidBitsPerSample = pwfe->Format.wBitsPerSample;
+  pwfe->Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
+  return S_OK;
+}
+
+HRESULT CMultiSoundTouch::CheckFormat(WAVEFORMATEX *pwf)
+{
+  if (pwf == NULL)
+    return CheckFormat((WAVEFORMATEXTENSIBLE *) NULL);
+
+  if (pwf->cbSize >= 22)
+  {
+    if (pwf->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
+      return CheckFormat((WAVEFORMATEXTENSIBLE *)pwf);
+    else
+      return VFW_E_TYPE_NOT_ACCEPTED;
+  }
+
+  WAVEFORMATEXTENSIBLE wfe;
+  // Setup WFE
+  HRESULT hr = ToWaveFormatExtensible(&wfe, pwf);
+  if (FAILED(hr))
+    return hr;
+  return CheckFormat(&wfe);
+
+}
+
+HRESULT CMultiSoundTouch::CheckFormat(WAVEFORMATEXTENSIBLE *pwfe)
+{
+  if (pwfe != NULL &&
+      pwfe->SubFormat != KSDATAFORMAT_SUBTYPE_PCM &&
+      pwfe->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
+    return VFW_E_TYPE_NOT_ACCEPTED;
+  return S_OK; // Should we return OK if format is NULL?
+}
+
+HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEX *pwf)
+{
+  if (pwf == NULL)
+    return SetFormat((WAVEFORMATEXTENSIBLE *) NULL);
+
+  if (pwf->cbSize >= 22)
+  {
+    if (pwf->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
+      return SetFormat((WAVEFORMATEXTENSIBLE *)pwf);
+    else
+      return VFW_E_TYPE_NOT_ACCEPTED;
+  }
+
+  WAVEFORMATEXTENSIBLE wfe;
+  // Setup WFE
+  HRESULT hr = ToWaveFormatExtensible(&wfe, pwf);
+  if (FAILED(hr))
+    return hr;
+  return SetFormat(&wfe);
+}
+
+HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
+{
+  std::vector<CSoundTouchEx *> *newStreams = NULL;
+  WAVEFORMATEXTENSIBLE *pWaveFormat = NULL;
+
+  if (pwfe != NULL)
+  {
+    // First verify format is supported
+    if (pwfe->SubFormat != KSDATAFORMAT_SUBTYPE_PCM &&
+        pwfe->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
+      return VFW_E_TYPE_NOT_ACCEPTED;
+
+    newStreams =  new std::vector<CSoundTouchEx *>;
+    if (!newStreams)
+      return E_OUTOFMEMORY;
+
+    int size = sizeof(WAVEFORMATEX) + pwfe->Format.cbSize;
+    pWaveFormat = (WAVEFORMATEXTENSIBLE *)new BYTE[size];
+    if (!pWaveFormat)
     {
-      newStreams[i].channels = (channels>1)? 2:1;
-      newStreams[i].processor = new soundtouch::SoundTouch();
-      newStreams[i].processor->setChannels(newStreams[i].channels);
-      channels -= newStreams[i].channels;
+      delete newStreams;
+      return E_OUTOFMEMORY;
+    }
+    memcpy(pWaveFormat, pwfe, size);
+
+    DWORD dwChannelMask = pwfe->dwChannelMask;
+
+    std::map<DWORD, int> speakerOffset;
+    int currOffset = 0;
+    // Each bit position in dwChannelMask corresponds to a speaker position
+    // try every bit position from 0 to 31
+    for(DWORD dwSpeaker = 1; dwSpeaker != 0; dwSpeaker <<= 1) 
+    {
+      if (dwChannelMask & dwSpeaker)
+      {
+        speakerOffset[dwSpeaker] = currOffset;
+        currOffset += pwfe->Format.wBitsPerSample / 8;
+      }
+    }
+
+    ASSERT(speakerOffset.size() == pwfe->Format.nChannels);
+
+    // TODO: First find a set of channels that can be used 
+    // for syncing mono channels like LFE and Center
+    
+    // Now start adding channels
+    bool isFloat = (pwfe->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT);
+    // First try all speaker pairs
+    for(SpeakerPair *pPair = PairedSpeakers; pPair->dwLeft; pPair++)
+    {
+      if ((pPair->PairMask() & dwChannelMask) == pPair->PairMask())
+      {
+        CSoundTouchEx *pStream = new CSoundTouchEx();
+        pStream->setChannels(2);
+        pStream->SetInputChannels(speakerOffset[pPair->dwLeft], speakerOffset[pPair->dwRight]);
+        pStream->SetFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8, pwfe->Samples.wValidBitsPerSample, isFloat);
+        pStream->SetOutputChannels(speakerOffset[pPair->dwLeft], speakerOffset[pPair->dwRight]);
+        newStreams->push_back(pStream);
+        dwChannelMask &= ~pPair->PairMask(); // mark channels as processed
+      }
+    }
+    // Then add all remaining channels as mono streams
+    // try every bit position from 0 to 31
+    for(DWORD dwSpeaker = 1; dwSpeaker != 0; dwSpeaker <<= 1) 
+    {
+      if (dwChannelMask & dwSpeaker)
+      {
+        CSoundTouchEx *pStream = new CSoundTouchEx();
+        // TODO: make this a mixing stream, so that the channel can be synchronized 
+        // to the mix of the main channels (normally Front Left/Right if available)
+        pStream->setChannels(1); 
+        pStream->SetInputChannels(speakerOffset[dwSpeaker]);
+        pStream->SetFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8, pwfe->Samples.wValidBitsPerSample, isFloat);
+        pStream->SetOutputChannels(speakerOffset[dwSpeaker]);
+        newStreams->push_back(pStream);
+        // The following is only necessary if we skip some channels
+        // currently we don't
+        //dwChannelMask &= ~dwSpeaker; // mark channel as processed        
+      }
     }
   }
+
   // delete old ones
-  StreamProcessor *oldStreams = m_Streams;
-  int oldStreamCount = m_nStreamCount;
+  std::vector<CSoundTouchEx *> *oldStreams = m_Streams;
+  WAVEFORMATEXTENSIBLE *pOldFormat = m_pWaveFormat;
+
+  m_Streams = newStreams;
+  m_pWaveFormat = pWaveFormat;
+
+  if (pOldFormat)
+    delete[] (BYTE *)pOldFormat;
+
+  if (oldStreams)
   {
-    // this block might need to be protected by a lock
-    m_Streams = newStreams;
-    m_nStreamCount = newStreamCount;
+    for(int i=0; i<oldStreams->size(); i++)
+    {
+      SAFE_DELETE(oldStreams->at(i));
+    }
+    SAFE_DELETE(oldStreams);
   }
-  for(int i=0; i<oldStreamCount; i++)
-  {
-    SAFE_DELETE(oldStreams[i].processor);
-  }
-  SAFE_DELETE_ARRAY(oldStreams);
+
+  return S_OK;
 }
 
 bool CMultiSoundTouch::putSamples(const short *inBuffer, long inSamples)
@@ -439,31 +619,11 @@ bool CMultiSoundTouch::putSamplesInternal(const short *inBuffer, long inSamples)
   if(m_Streams == NULL)
     return false;
 
-  if(m_nChannels <= 2)
+  for(int i=0; i<m_Streams->size(); i++)
   {
-    m_Streams[0].processor->putSamples(inBuffer, inSamples);
-  }
-  else
-  {
-    for(int i=0; i<m_nStreamCount; i++)
-    {
-      StreamProcessor *stream = &m_Streams[i];
-      long inSamplesRemaining = inSamples;
-      const short *streamInBuf = inBuffer;
-
-      DeInterleaveFunc deInterleave = (stream->channels == 1? &CMultiSoundTouch::MonoDeInterleave : &CMultiSoundTouch::StereoDeInterleave);
-      
-      // input samples
-      while(inSamplesRemaining)
-      {
-        uint batchLen = (inSamplesRemaining < SAMPLE_LEN? inSamplesRemaining : SAMPLE_LEN);
-        (this->*deInterleave)(streamInBuf, m_temp, batchLen);
-        stream->processor->putSamples(m_temp, batchLen);
-        inSamplesRemaining -= batchLen;
-        streamInBuf += batchLen * m_nChannels;
-      }
-      inBuffer += stream->channels;
-    }
+    CSoundTouchEx *stream = m_Streams->at(i);
+    //stream->putSamples(inBuffer, inSamples);
+    stream->putBuffer((BYTE *)inBuffer, inSamples);
   }
   return true;
 }
@@ -558,8 +718,7 @@ uint CMultiSoundTouch::receiveSamples(short **outBuffer, uint maxSamples)
   memcpy(*outBuffer, pSampleBuffer, sampleLength);
   sample->Release();
 
-  // TODO fix /4
-  return sampleLength / 4;
+  return sampleLength / m_pWaveFormat->Format.nBlockAlign;
 }
 
 
@@ -568,40 +727,17 @@ uint CMultiSoundTouch::receiveSamplesInternal(short *outBuffer, uint maxSamples)
   if(m_Streams == NULL)
     return 0;
 
-  if(m_nChannels <= 2)
-  {
-    CAutoLock cRendererLock(&m_sampleOutQueueLock);
-    return m_Streams[0].processor->receiveSamples(outBuffer, maxSamples);
-  }
-  else
-  {
-    uint outSamples = 0;
-    for(int i=0; i<m_nStreamCount; i++)
-    {
-      StreamProcessor *stream = &m_Streams[i];
+  uint outSamples = numSamples();
+  CAutoLock cRendererLock(&m_sampleOutQueueLock);
+  if (outSamples > maxSamples)
+    outSamples = maxSamples;
 
-      InterleaveFunc interleave = (stream->channels == 1? &CMultiSoundTouch::MonoInterleave : &CMultiSoundTouch::StereoInterleave);
-      
-      // output samples
-      short *streamOutBuf = outBuffer;
-      long outSampleSpace = maxSamples;
-      while(outSampleSpace > 0)
-      {
-        uint batchLen = (outSampleSpace < SAMPLE_LEN? outSampleSpace : SAMPLE_LEN);
-        batchLen = stream->processor->receiveSamples(m_temp, batchLen);
-        (this->*interleave)(m_temp, streamOutBuf, batchLen);
-        if(batchLen == 0)
-          break;
-        outSampleSpace -= batchLen;
-        streamOutBuf += batchLen * m_nChannels;
-      }
-      if(outSamples < maxSamples-outSampleSpace)
-        outSamples = maxSamples-outSampleSpace;
-      
-      outBuffer += stream->channels;
-    }
-    return outSamples;
+  for(int i=0; i<m_Streams->size(); i++)
+  {
+    //m_Streams->at(i)->receiveSamples(outBuffer, outSamples);
+    m_Streams->at(i)->getBuffer((BYTE *)outBuffer, outSamples);
   }
+  return outSamples;
 }
 
 // Internal functions to separate/merge streams out of/into sample buffers (from IMediaSample)
@@ -616,45 +752,5 @@ bool CMultiSoundTouch::ProcessSamples(const short *inBuffer, long inSamples, sho
 
   *outSamples = receiveSamples(&outBuffer, maxOutSamples);
   return true;
-}
-
-
-
-void CMultiSoundTouch::StereoDeInterleave(const short *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
-{
-  while(count--)
-  {
-    *outBuffer++ = *inBuffer;
-    *outBuffer++ = *(inBuffer+1);
-    inBuffer += m_nChannels;
-  }
-}
-
-void CMultiSoundTouch::StereoInterleave(const soundtouch::SAMPLETYPE *inBuffer, short *outBuffer, uint count)
-{
-  while(count--)
-  {
-    *outBuffer = *inBuffer;
-    *(outBuffer+1) = *inBuffer++;
-    outBuffer += m_nChannels;
-  }
-}
-
-void CMultiSoundTouch::MonoDeInterleave(const short *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count)
-{
-  while(count--)
-  {
-    *outBuffer++ = *inBuffer;
-    inBuffer += m_nChannels;
-  }
-}
-
-void CMultiSoundTouch::MonoInterleave(const soundtouch::SAMPLETYPE *inBuffer, short *outBuffer, uint count)
-{
-  while(count--)
-  {
-    *outBuffer = *inBuffer;
-    outBuffer += m_nChannels;
-  }
 }
 
