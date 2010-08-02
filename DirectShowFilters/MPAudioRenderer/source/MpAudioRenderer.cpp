@@ -294,7 +294,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
     *phr = DirectSoundCreate8(NULL, &m_pDS, NULL);
   }
   
-  m_pSoundTouch = new CMultiSoundTouch();
+  m_pSoundTouch = new CMultiSoundTouch(m_Settings.m_bEnableAC3Encoding);
   
   if (!m_pSoundTouch)
   {
@@ -409,6 +409,12 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
 
   if (m_Settings.m_bUseWASAPI)
   {
+    // Negotiate the SPDIF connection type only with the audio device
+    if (m_Settings.m_bEnableAC3Encoding)
+    {
+      CreateWaveFormatForAC3(pwfx);
+    }    
+    
     //hr = CheckAudioClient((WAVEFORMATEX *)NULL);
     hr = CheckAudioClient(pwfx);
     if (FAILED(hr))
@@ -1732,6 +1738,19 @@ HRESULT CMPAudioRenderer::CreateAudioClient(IMMDevice *pMMDevice, IAudioClient *
   }
 
   return hr;
+}
+
+void CMPAudioRenderer::CreateWaveFormatForAC3(WAVEFORMATEX* pwfx)
+{
+  if (pwfx)
+  {
+    pwfx->wFormatTag = WAVE_FORMAT_DOLBY_AC3_SPDIF;
+    pwfx->wBitsPerSample = 16;
+    pwfx->nBlockAlign = 4;
+    pwfx->nChannels = 2;
+    pwfx->nSamplesPerSec = 48000;
+    pwfx->nAvgBytesPerSec = 192000;
+  }
 }
 
 HRESULT CMPAudioRenderer::BeginFlush()

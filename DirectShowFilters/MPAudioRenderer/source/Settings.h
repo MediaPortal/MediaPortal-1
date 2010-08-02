@@ -35,6 +35,7 @@ public:
   bool m_bLogSampleTimes;
   bool m_bUseWASAPI;
   bool m_bUseTimeStretching;
+  bool m_bEnableAC3Encoding;
   
   REFERENCE_TIME m_hnsPeriod;
 

@@ -14,11 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
+// parts of the code for AC3 encoding is derived from ffdshow / ffmpeg 
+
 #include "stdafx.h"
 #include <map>
 
 #include "MultiSoundTouch.h"
 
+#define AC3_BITRATE       640000 // does all amplifiers support this?
+#define AC3_FRAME_LENGHT  1536
 #define OUT_BUFFER_SIZE   16384
 #define OUT_BUFFER_COUNT  20
 
@@ -31,6 +35,11 @@
         m_Streams->at(i)->funcname(paramname); \
     } \
   }
+
+template<class T> inline T odd2even(T x)
+{
+  return x&1 ? x + 1 : x;
+}
 
 // move these in a separate common header 
 #define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
@@ -75,7 +84,7 @@ DWORD WINAPI CMultiSoundTouch::ResampleThreadEntryPoint(LPVOID lpParameter)
   return ((CMultiSoundTouch *)lpParameter)->ResampleThread();
 }
 
-CMultiSoundTouch::CMultiSoundTouch() 
+CMultiSoundTouch::CMultiSoundTouch(bool pEnableAC3Encoding) 
 : m_Streams(NULL)
 , m_bFlushSamples(false)
 , m_pMemAllocator(NULL)
@@ -86,6 +95,8 @@ CMultiSoundTouch::CMultiSoundTouch()
 , m_threadId(0)
 , m_pWaveFormat(NULL)
 , m_pPreviousSample(NULL)
+, m_pEncoder(NULL)
+, m_bEnableAC3Encoding(pEnableAC3Encoding)
 {
   // Use separate thread per channnel pair?
   m_hSampleArrivedEvent = CreateEvent(0, FALSE, FALSE, 0);
@@ -119,6 +130,11 @@ CMultiSoundTouch::~CMultiSoundTouch()
     CloseHandle(m_hThread);
 
   SetFormat((PWAVEFORMATEXTENSIBLE)NULL);
+
+  if(m_bEnableAC3Encoding && FAILED(CloseAC3Encoder()))
+  {
+    Log("Error when closing down the AC3 encoder!");
+  }
 }
 
 void CMultiSoundTouch::StopResamplingThread()
@@ -239,7 +255,7 @@ DWORD CMultiSoundTouch::ResampleThread()
           
           unsigned int sampleLength = numSamples();
 
-          if (sampleLength > 0)
+          if ((!m_pEncoder && sampleLength > 0) || (m_pEncoder && sampleLength >= AC3_FRAME_LENGHT))
           {
             IMediaSample* outSample = NULL;
             m_pMemAllocator->GetBuffer(&outSample, NULL, NULL, 0);
@@ -254,8 +270,22 @@ DWORD CMultiSoundTouch::ResampleThread()
                 int maxBufferSamples = OUT_BUFFER_SIZE/m_pWaveFormat->Format.nBlockAlign;
                 if (sampleLength > maxBufferSamples)
                   sampleLength = maxBufferSamples;
-                outSample->SetActualDataLength(sampleLength * m_pWaveFormat->Format.nBlockAlign);
-                receiveSamplesInternal((short*)pMediaBufferOut, sampleLength);
+
+                if (m_pEncoder)
+                {
+                  BYTE outbuf[OUT_BUFFER_SIZE];
+ 
+                  (void)receiveSamplesInternal((short*)pMediaBufferOut, AC3_FRAME_LENGHT);
+                  int AC3lenght = ac3_encoder_frame(m_pEncoder, (short*)pMediaBufferOut, outbuf, sizeof(outbuf));
+                  long resultLenght = CreateAC3Bitstream(outbuf, AC3lenght, pMediaBufferOut);
+                  
+                  outSample->SetActualDataLength(resultLenght);
+                }
+                else
+                {
+                  outSample->SetActualDataLength(sampleLength * m_pWaveFormat->Format.nBlockAlign);
+                  receiveSamplesInternal((short*)pMediaBufferOut, sampleLength);
+                }
 
                 { // lock that the playback thread wont access the queue at the same time
                   CAutoLock cOutputQueueLock(&m_sampleOutQueueLock);
@@ -418,6 +448,7 @@ HRESULT CMultiSoundTouch::ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAV
   switch(pwfe->Format.wFormatTag)
   {
   case WAVE_FORMAT_PCM:
+  case WAVE_FORMAT_DOLBY_AC3_SPDIF:
     pwfe->SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
     break;
   case WAVE_FORMAT_IEEE_FLOAT:
@@ -593,6 +624,11 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
     SAFE_DELETE(oldStreams);
   }
 
+  if (m_bEnableAC3Encoding)
+  {
+    (void)OpenAC3Encoder(AC3_BITRATE, m_pWaveFormat->Format.nChannels, m_pWaveFormat->Format.nSamplesPerSec);
+  }
+
   return S_OK;
 }
 
@@ -754,3 +790,97 @@ bool CMultiSoundTouch::ProcessSamples(const short *inBuffer, long inSamples, sho
   return true;
 }
 
+
+HRESULT CMultiSoundTouch::OpenAC3Encoder(unsigned int bitrate, unsigned int channels, unsigned int sampleRate)
+{
+  Log("OpenEncoder - Creating AC3 encoder - bitrate: %d sampleRate: %d channels: %d", bitrate, sampleRate, channels);
+
+  delete m_pEncoder;
+
+  m_pEncoder = ac3_encoder_open();
+  if (!m_pEncoder) return S_FALSE;
+
+  m_pEncoder->bit_rate = bitrate;
+  m_pEncoder->sample_rate = sampleRate;
+  m_pEncoder->channels = channels;
+
+  if (ac3_encoder_init(m_pEncoder) < 0) 
+  {
+    ac3_encoder_close(m_pEncoder);
+    m_pEncoder = NULL;
+  }
+	
+  return S_OK;
+}
+
+HRESULT CMultiSoundTouch::CloseAC3Encoder()
+{
+  if (!m_pEncoder) return S_FALSE;
+
+  Log("CloseEncoder - Closing AC3 encoder");
+
+  ac3_encoder_close(m_pEncoder);
+  m_pEncoder = NULL;
+
+  return S_OK;
+}
+
+long CMultiSoundTouch::CreateAC3Bitstream(void *buf, size_t size, BYTE *pDataOut)
+{
+  size_t length = 0;
+  size_t repetition_burst = 0x800; // 2048 = AC3 
+
+  unsigned int size2 = AC3_FRAME_LENGHT * 4;
+  length = 0;
+
+  // Add 4 more words (8 bytes) for AC3/DTS (for backward compatibility, should be *4 for other codecs)
+  // AC3/DTS streams start with 8 blank bytes (why, don't know but let's going on with)
+  while (length < odd2even(size) + sizeof(WORD) * 8)
+    length += repetition_burst;
+
+  while (length < size2)
+  length += repetition_burst;
+
+  if (length == 0) length = repetition_burst;
+
+  // IEC 61936 structure writing (HDMI bitstream, SPDIF)
+  DWORD type = 0x0001;
+  short subDataType = 0; 
+  short errorFlag = 0;
+  short datatypeInfo = 0;
+  short bitstreamNumber = 0;
+  
+  type=1; // CODEC_ID_SPDIF_AC3
+
+  DWORD Pc=type | (subDataType << 5) | (errorFlag << 7) | (datatypeInfo << 8) | (bitstreamNumber << 13);
+
+  WORD *pDataOutW=(WORD*)pDataOut; // Header is filled with words instead of bytes
+
+  // Preamble : 16 bytes for AC3/DTS, 8 bytes for other formats
+  int index = 0;
+  pDataOutW[0] = pDataOutW[1] = pDataOutW[2] = pDataOutW[3] = 0; // Stuffing at the beginning, not sure if this is useful
+  index = 4; // First additional four words filled with 0 only for backward compatibility for AC3/DTS
+
+  // Fill after the input buffer with zeros if any extra bytes
+  if (length > 8 + index * 2 + size)
+  {
+    // Fill the output buffer with zeros 
+    memset(pDataOut + 8 + index * 2 + size, 0, length - 8 - index * 2 - size); 
+  }
+
+  // Fill the 8 bytes (4 words) of IEC header
+  pDataOutW[index++] = 0xf872;
+  pDataOutW[index++] = 0x4e1f;
+  pDataOutW[index++] = (WORD)Pc;
+  pDataOutW[index++] = WORD(size * 8); // size in bits for AC3/DTS
+
+  // Data : swap bytes from first byte of data on size length (input buffer lentgh)
+  _swab((char*)buf,(char*)&pDataOutW[index],(int)(size & ~1));
+  if (size & 1) // _swab doesn't like odd number.
+  {
+    pDataOut[index * 2 + size] = ((BYTE*)buf)[size - 1];
+    pDataOut[index * 2 - 1 + size] = 0;
+  }
+
+  return length;
+}

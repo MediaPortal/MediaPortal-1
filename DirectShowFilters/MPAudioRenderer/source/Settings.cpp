@@ -23,6 +23,7 @@ AudioRendererSettings::AudioRendererSettings() :
   m_bLogSampleTimes(false),
   m_bUseWASAPI(true),
   m_bUseTimeStretching(false),
+  m_bEnableAC3Encoding(false),
   m_hnsPeriod(0),
   m_WASAPIShareMode(AUDCLNT_SHAREMODE_EXCLUSIVE),
   m_wWASAPIPreferredDeviceId(NULL)
@@ -51,6 +52,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   LPCTSTR enableTimestretching = TEXT("EnableTimestretching");
   LPCTSTR WASAPIExclusive = TEXT("WASAPIExclusive");
   LPCTSTR devicePeriod = TEXT("DevicePeriod");
+  LPCTSTR enableAC3Encoding = TEXT("EnableAC3Encoding");
   LPCTSTR logSampleTimes = TEXT("LogSampleTimes");
   LPCTSTR WASAPIPreferredDevice = TEXT("WASAPIPreferredDevice");
   
@@ -59,6 +61,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   DWORD enableTimestretchingData = 1;
   DWORD WASAPIExclusiveData = 1;
   DWORD devicePeriodData = 500000; // 50 ms
+  DWORD enableAC3EncodingData = 0;
   DWORD logSampleTimesData = 0;
   LPCTSTR WASAPIPreferredDeviceData = new TCHAR[MAX_REG_LENGTH];
 
@@ -74,12 +77,14 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
     ReadRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
     ReadRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
+    ReadRegistryKeyDword(hKey, enableAC3Encoding, enableAC3EncodingData);
     ReadRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
     ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
 
     Log("   ForceDirectSound:        %d", forceDirectSoundData);
     Log("   EnableTimestrecthing:    %d", enableTimestretchingData);
     Log("   WASAPIExclusive:         %d", WASAPIExclusiveData);
+    Log("   enableAC3Encoding:       %d", enableAC3EncodingData);
     Log("   LogSampleTimes:          %d", logSampleTimesData);
     Log("   DevicePeriod:            %d (1 == minimal, 0 == default, other user defined)", devicePeriodData);
     Log("   WASAPIPreferredDevice:   %s", WASAPIPreferredDeviceData);
@@ -98,6 +103,11 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       m_WASAPIShareMode = AUDCLNT_SHAREMODE_EXCLUSIVE;
     else
       m_WASAPIShareMode = AUDCLNT_SHAREMODE_SHARED;
+
+   if (enableAC3EncodingData > 0)
+      m_bEnableAC3Encoding = true;
+    else
+      m_bEnableAC3Encoding = false;
 
     if (logSampleTimesData > 0)
       m_bLogSampleTimes = true;
@@ -129,6 +139,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
       WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
       WriteRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
+      WriteRegistryKeyDword(hKey, enableAC3Encoding, enableAC3EncodingData);
       WriteRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
     } 
     else 

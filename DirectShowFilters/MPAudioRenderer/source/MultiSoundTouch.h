@@ -23,14 +23,15 @@
 #include <vector>
 
 #include "../SoundTouch/Include/SoundTouch.h"
+#include "../AC3_encoder/ac3enc.h"
 #include "SoundTouchEx.h"
 
-class CMultiSoundTouch;
+typedef signed __int64 int64_t;
 
 class CMultiSoundTouch
 {
 public:
-  CMultiSoundTouch();
+  CMultiSoundTouch(bool pEnableAC3Encoding);
   ~CMultiSoundTouch();
 
   /// Sets new rate control value. Normal rate = 1.0, smaller values
@@ -150,4 +151,12 @@ private:
   DWORD ResampleThread();
   bool InitializeAllocator();
   DWORD m_threadId;
+
+  // AC3 Encoding
+  HRESULT OpenAC3Encoder(unsigned int bitrate, unsigned int channels, unsigned int sampleRate);
+  HRESULT CloseAC3Encoder();
+  long CreateAC3Bitstream(void *buf, size_t size, BYTE *pDataOut);
+
+  AC3CodecContext* m_pEncoder;
+  bool m_bEnableAC3Encoding;
 };

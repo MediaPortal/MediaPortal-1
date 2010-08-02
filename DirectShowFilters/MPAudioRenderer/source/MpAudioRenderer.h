@@ -177,7 +177,10 @@ private:
 
   AudioRendererSettings m_Settings;
 
-  // Threading 
+  // For SPDIF
+  void CreateWaveFormatForAC3(WAVEFORMATEX* pwfx);
+
+  // Audio rendering thread  
   static DWORD WINAPI RenderThreadEntryPoint(LPVOID lpParameter);
   DWORD RenderThread();
   DWORD m_threadId;
