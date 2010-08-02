@@ -238,9 +238,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_pMMDevice(NULL)
 , m_pAudioClient(NULL)
 , m_pRenderClient(NULL)
-, m_bUseWASAPI(true)
 , m_nFramesInBuffer(0)
-, m_hnsPeriod(0)
 , m_hTask(NULL)
 , m_nBufferSize(0)
 , m_bIsAudioClientStarted(false)
@@ -248,13 +246,10 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_hnsActualDuration(0)
 , m_dBias(1.0)
 , m_dAdjustment(1.0)
-, m_bUseTimeStretching(true)
 , m_dSampleCounter(0)
 , m_pAudioClock(NULL)
 , m_nHWfreq(0)
-, m_WASAPIShareMode(AUDCLNT_SHAREMODE_EXCLUSIVE)
 , m_bReinitAfterStop(false)
-, m_wWASAPIPreferredDeviceId(NULL)
 , m_hDataEvent(NULL)
 , m_hRenderThread(NULL)
 , m_hWaitRenderThreadToExitEvent(NULL)
@@ -263,14 +258,11 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_rtNextSampleTime(0)
 , m_rtPrevSampleTime(0)
 , m_bDropSamples(false)
-, m_bLogSampleTimes(false)
 {
   LogRotate();
   Log("MP Audio Renderer - v0.62 - instance 0x%x", this);
 
-  LoadSettingsFromRegistry();
-
-  if (m_bUseWASAPI)
+  if (m_Settings.m_bUseWASAPI)
   {
     IMMDeviceCollection* devices = NULL;
     GetAvailableAudioDevices(&devices, true);
@@ -288,16 +280,16 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
     hLib = LoadLibrary ("AVRT.dll");
     if (hLib)
 	  {
-      pfAvSetMmThreadCharacteristicsW		= (PTR_AvSetMmThreadCharacteristicsW)	GetProcAddress (hLib, "AvSetMmThreadCharacteristicsW");
+      pfAvSetMmThreadCharacteristicsW   = (PTR_AvSetMmThreadCharacteristicsW)	GetProcAddress (hLib, "AvSetMmThreadCharacteristicsW");
       pfAvRevertMmThreadCharacteristics	= (PTR_AvRevertMmThreadCharacteristics)	GetProcAddress (hLib, "AvRevertMmThreadCharacteristics");
 	  }
 	  else
     {
-      m_bUseWASAPI = false;	// WASAPI not available below Vista
+      m_Settings.m_bUseWASAPI = false;	// WASAPI not available below Vista
     }
   }
 
-  if (!m_bUseWASAPI)
+  if (!m_Settings.m_bUseWASAPI)
   {
     *phr = DirectSoundCreate8(NULL, &m_pDS, NULL);
   }
@@ -371,184 +363,7 @@ CMPAudioRenderer::~CMPAudioRenderer()
   if (m_hDataEvent)
     CloseHandle(m_hDataEvent);
 
-  delete[] m_wWASAPIPreferredDeviceId;
-
   Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
-}
-
-void CMPAudioRenderer::LoadSettingsFromRegistry()
-{
-  USES_CONVERSION; // this is required for T2W macro
-  
-  Log("Loading settings from registry");
-
-  LPCTSTR folder = TEXT("Software\\Team MediaPortal\\Audio Renderer");
-
-  HKEY hKey;
-  char* lpData = new char[MAX_REG_LENGTH];
-
-  // Registry setting names
-  LPCTSTR forceDirectSound = TEXT("ForceDirectSound");
-  LPCTSTR enableTimestretching = TEXT("EnableTimestretching");
-  LPCTSTR WASAPIExclusive = TEXT("WASAPIExclusive");
-  LPCTSTR devicePeriod = TEXT("DevicePeriod");
-  LPCTSTR logSampleTimes = TEXT("LogSampleTimes");
-  LPCTSTR WASAPIPreferredDevice = TEXT("WASAPIPreferredDevice");
-  
-  // Default values for the settings in registry
-  DWORD forceDirectSoundData = 0;
-  DWORD enableTimestretchingData = 1;
-  DWORD WASAPIExclusiveData = 1;
-  DWORD devicePeriodData = 500000; // 50 ms
-  DWORD logSampleTimesData = 0;
-  LPCTSTR WASAPIPreferredDeviceData = new TCHAR[MAX_REG_LENGTH];
-
-  ZeroMemory((void*)WASAPIPreferredDeviceData, MAX_REG_LENGTH);
-
-  // Try to access the setting root "Software\Team MediaPortal\Audio Renderer"
-  RegOpenKeyEx(HKEY_CURRENT_USER, folder, NULL, KEY_ALL_ACCESS, &hKey);
-
-  if (hKey)
-  {
-    // Read settings from registry
-    ReadRegistryKeyDword(hKey, forceDirectSound, forceDirectSoundData);
-    ReadRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
-    ReadRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
-    ReadRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
-    ReadRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
-    ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
-
-    Log("   ForceDirectSound:        %d", forceDirectSoundData);
-    Log("   EnableTimestrecthing:    %d", enableTimestretchingData);
-    Log("   WASAPIExclusive:         %d", WASAPIExclusiveData);
-    Log("   LogSampleTimes:          %d", logSampleTimesData);
-    Log("   DevicePeriod:            %d (1 == minimal, 0 == default, other user defined)", devicePeriodData);
-    Log("   WASAPIPreferredDevice:   %s", WASAPIPreferredDeviceData);
-
-    if (forceDirectSoundData > 0)
-      m_bUseWASAPI = false;
-    else
-      m_bUseWASAPI = true;
-
-    if (enableTimestretchingData > 0)
-      m_bUseTimeStretching = true;
-    else
-      m_bUseTimeStretching = false;
-
-    if (WASAPIExclusiveData > 0)
-      m_WASAPIShareMode = AUDCLNT_SHAREMODE_EXCLUSIVE;
-    else
-      m_WASAPIShareMode = AUDCLNT_SHAREMODE_SHARED;
-
-    if (logSampleTimesData > 0)
-      m_bLogSampleTimes = true;
-    else
-      m_bLogSampleTimes = false;
-
-    m_hnsPeriod = devicePeriodData;
-
-    delete[] m_wWASAPIPreferredDeviceId;
-    m_wWASAPIPreferredDeviceId = new WCHAR[MAX_REG_LENGTH];
-    
-    wcsncpy(m_wWASAPIPreferredDeviceId, T2W(WASAPIPreferredDeviceData), MAX_REG_LENGTH);
-
-    delete[] WASAPIPreferredDeviceData;
-  }
-
-  else // no settings in registry, create default values
-  {
-    Log("Failed to open %s", folder);
-    Log("Initializing registry with default settings");
-
-    LONG result = RegCreateKeyEx(HKEY_CURRENT_USER, folder, 0, NULL, REG_OPTION_NON_VOLATILE,
-                                  KEY_ALL_ACCESS, NULL, &hKey, NULL);
-
-    if (result == ERROR_SUCCESS) 
-    {
-      Log("Success creating master key");
-      WriteRegistryKeyDword(hKey, forceDirectSound, forceDirectSoundData);
-      WriteRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
-      WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
-      WriteRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
-    } 
-    else 
-    {
-      Log("Error creating master key %d", result);
-    }
-  }
-  
-  delete[] lpData;
-  RegCloseKey (hKey);
-}
-
-void CMPAudioRenderer::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
-{
-  DWORD dwSize = sizeof(DWORD);
-  DWORD dwType = REG_DWORD;
-  LONG error = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)&data, &dwSize);
-  if (error != ERROR_SUCCESS)
-  {
-    if (error == ERROR_FILE_NOT_FOUND)
-    {
-      Log("   create default value for %s", lpSubKey);
-      WriteRegistryKeyDword(hKey, lpSubKey, data);
-    }
-    else
-    {
-      Log("   faíled to create default value for %s", lpSubKey);
-    }
-  }
-}
-
-void CMPAudioRenderer::WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
-{  
-  DWORD dwSize = sizeof(DWORD);
-  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_DWORD, (LPBYTE)&data, dwSize);
-  if (result == ERROR_SUCCESS) 
-  {
-    Log("Success writing to Registry: %s", lpSubKey);
-  } 
-  else 
-  {
-    Log("Error writing to Registry - subkey: %s error: %d", lpSubKey, result);
-  }
-}
-
-void CMPAudioRenderer::ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
-{
-  DWORD dwSize = MAX_REG_LENGTH;
-  DWORD dwType = REG_SZ;
-  LONG error = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)data, &dwSize);
-  
-  if (error != ERROR_SUCCESS)
-  {
-    if (error == ERROR_FILE_NOT_FOUND)
-    {
-      Log("   create default value for %s", lpSubKey);
-      WriteRegistryKeyString(hKey, lpSubKey, data);
-    }
-    else if (error == ERROR_MORE_DATA)
-    {
-      Log("   too much data, corrupted registry setting(?):  %s", lpSubKey);      
-    }
-    else
-    {
-      Log("   error: %d subkey: %s", error, lpSubKey);       
-    }
-  }
-}
-
-void CMPAudioRenderer::WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
-{  
-  LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, strlen(data)+1);
-  if (result == ERROR_SUCCESS) 
-  {
-    Log("Success writing to Registry: %s", lpSubKey);
-  } 
-  else 
-  {
-    Log("Error writing to Registry - subkey: %s error: %d", lpSubKey, result);
-  }
 }
 
 HRESULT CMPAudioRenderer::CheckInputType(const CMediaType *pmt)
@@ -585,14 +400,14 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
     // return VFW_E_TYPE_NOT_ACCEPTED;
   }
 
-  if (m_bUseTimeStretching)
+  if (m_Settings.m_bUseTimeStretching)
   {
     hr = m_pSoundTouch->CheckFormat(pwfx);
     if (FAILED(hr))
       return hr;
   }
 
-  if (m_bUseWASAPI)
+  if (m_Settings.m_bUseWASAPI)
   {
     //hr = CheckAudioClient((WAVEFORMATEX *)NULL);
     hr = CheckAudioClient(pwfx);
@@ -609,7 +424,7 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
     
     // NOTE: using ClosestMatch parameter causes the call to succeed on some drivers 
     // even when the client wont support the format!
-    if (m_pAudioClient->IsFormatSupported(m_WASAPIShareMode, pwfx, NULL) != S_OK)
+    if (m_pAudioClient->IsFormatSupported(m_Settings.m_WASAPIShareMode, pwfx, NULL) != S_OK)
     {
       Log("CheckMediaType WASAPI client refused the format, used mix format:");
       WAVEFORMATEX *pwfxCM = NULL;
@@ -640,7 +455,7 @@ void CMPAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
 
 void CMPAudioRenderer::OnReceiveFirstSample(IMediaSample *pMediaSample)
 {
-  if (!m_bUseWASAPI)
+  if (!m_Settings.m_bUseWASAPI)
   {
     ClearBuffer();
   }
@@ -690,7 +505,7 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   
   m_rtNextSampleTime = rtSampleTime + rtSampleDuration;
   
-  if(m_bLogSampleTimes)
+  if(m_Settings.m_bLogSampleTimes)
     Log("  rtTime: %5.3f ms rtSampleTime: %5.3f ms diff: %5.3f ms size: %d",
       rtTime / 10000.0, rtSampleTime / 10000.0, (rtTime - rtSampleTime) / 10000.0, sampleLenght);
 
@@ -782,7 +597,7 @@ HRESULT	CMPAudioRenderer::DoRenderSample(IMediaSample *pMediaSample)
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   HRESULT hr = S_FALSE;
 
-  if (m_bUseWASAPI)
+  if (m_Settings.m_bUseWASAPI)
   {
     hr = DoRenderSampleWasapi(pMediaSample);
   }
@@ -822,7 +637,7 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
   HRESULT hr = S_OK;
   Log("SetMediaType");
 
-  if (m_bUseWASAPI)
+  if (m_Settings.m_bUseWASAPI)
   {
     // New media type set but render client already initialized => reset it
     if (m_pRenderClient)
@@ -895,12 +710,12 @@ HRESULT CMPAudioRenderer::CompleteConnect(IPin *pReceivePin)
   
   HRESULT hr = S_OK;
 
-  if (!m_bUseWASAPI && !m_pDS) return E_FAIL;
+  if (!m_Settings.m_bUseWASAPI && !m_pDS) return E_FAIL;
 
   if (SUCCEEDED(hr)) hr = CBaseRenderer::CompleteConnect(pReceivePin);
   if (SUCCEEDED(hr)) hr = InitCoopLevel();
 
-  if (!m_bUseWASAPI)
+  if (!m_Settings.m_bUseWASAPI)
   {
     if (SUCCEEDED(hr)) hr = CreateDSBuffer();
   }
@@ -920,7 +735,7 @@ STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
 
   if (m_State == State_Running) return NOERROR;
 
-  if (m_bUseWASAPI)
+  if (m_Settings.m_bUseWASAPI)
   {
     hr = CheckAudioClient(m_pWaveFileFormat);
     if (FAILED(hr)) 
@@ -1174,7 +989,7 @@ HRESULT CMPAudioRenderer::InitCoopLevel()
   }
 
   ATLASSERT(hWnd != NULL);
-  if (!m_bUseWASAPI)
+  if (!m_Settings.m_bUseWASAPI)
   {
     hr = m_pDS->SetCooperativeLevel(hWnd, DSSCL_PRIORITY);
   }
@@ -1268,7 +1083,7 @@ HRESULT CMPAudioRenderer::WriteSampleToDSBuffer(IMediaSample *pMediaSample, bool
   hr = pMediaSample->GetPointer(&pMediaBuffer);
 
   // resample audio stream if required
-  if (m_bUseTimeStretching)
+  if (m_Settings.m_bUseTimeStretching)
   {
     CAutoLock cAutoLock(&m_csResampleLock);
 	
@@ -1418,7 +1233,7 @@ HRESULT	CMPAudioRenderer::DoRenderSampleWasapi(IMediaSample *pMediaSample)
   }
 
   // resample audio stream if required
-  if (m_bUseTimeStretching)
+  if (m_Settings.m_bUseTimeStretching)
   {
     CAutoLock cAutoLock(&m_csResampleLock);
 	
@@ -1485,7 +1300,7 @@ HRESULT CMPAudioRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
     }
   
     m_pWaveFileFormat = pNewWaveFormatEx;
-    hr = m_pAudioClient->IsFormatSupported(m_WASAPIShareMode, pWaveFormatEx, NULL);
+    hr = m_pAudioClient->IsFormatSupported(m_Settings.m_WASAPIShareMode, pWaveFormatEx, NULL);
   
     if (SUCCEEDED(hr))
     { 
@@ -1538,7 +1353,7 @@ HRESULT CMPAudioRenderer::GetAudioDevice(IMMDevice **ppMMDevice)
     return hr;
   }
 
-  Log("Target end point: %S", m_wWASAPIPreferredDeviceId);
+  Log("Target end point: %S", m_Settings.m_wWASAPIPreferredDeviceId);
 
   if (GetAvailableAudioDevices(&devices, false) == S_OK)
   {
@@ -1561,9 +1376,9 @@ HRESULT CMPAudioRenderer::GetAudioDevice(IMMDevice **ppMMDevice)
         if (hr == S_OK)
         {
           // Found the configured audio endpoint
-          if (wcscmp(pwszID, m_wWASAPIPreferredDeviceId) == 0)
+          if (wcscmp(pwszID, m_Settings.m_wWASAPIPreferredDeviceId) == 0)
           {
-            enumerator->GetDevice(m_wWASAPIPreferredDeviceId, ppMMDevice); 
+            enumerator->GetDevice(m_Settings.m_wWASAPIPreferredDeviceId, ppMMDevice); 
             SAFE_RELEASE(devices);
             *(ppMMDevice) = endpoint;
             CoTaskMemFree(pwszID);
@@ -1715,7 +1530,7 @@ HRESULT CMPAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCli
   Log("InitAudioClient");
   HRESULT hr = S_OK;
   
-  if (m_hnsPeriod == 0 || m_hnsPeriod == 1)
+  if (m_Settings.m_hnsPeriod == 0 || m_Settings.m_hnsPeriod == 1)
   {
     REFERENCE_TIME defaultPeriod(0);
     REFERENCE_TIME minimumPeriod(0);
@@ -1723,16 +1538,16 @@ HRESULT CMPAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCli
     hr = m_pAudioClient->GetDevicePeriod(&defaultPeriod, &minimumPeriod);
     if (SUCCEEDED(hr))
     {
-      if (m_hnsPeriod == 0)
-        m_hnsPeriod = defaultPeriod;
+      if (m_Settings.m_hnsPeriod == 0)
+        m_Settings.m_hnsPeriod = defaultPeriod;
       else
-        m_hnsPeriod = minimumPeriod;
-      Log("InitAudioClient using device period from drivers %d ms", m_hnsPeriod / 10000);
+        m_Settings.m_hnsPeriod = minimumPeriod;
+      Log("InitAudioClient using device period from drivers %d ms", m_Settings.m_hnsPeriod / 10000);
     }
     else
     {
       Log("InitAudioClient failed to get device period from drivers (0x%08x) - using 50 ms", hr); 
-      m_hnsPeriod = 500000; //50 ms is the best according to James @Slysoft
+      m_Settings.m_hnsPeriod = 500000; //50 ms is the best according to James @Slysoft
     }
   }
 
@@ -1750,7 +1565,7 @@ HRESULT CMPAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCli
     }
   }
 
-  hr = m_pAudioClient->IsFormatSupported(m_WASAPIShareMode, pWaveFormatEx, NULL);
+  hr = m_pAudioClient->IsFormatSupported(m_Settings.m_WASAPIShareMode, pWaveFormatEx, NULL);
   if (FAILED(hr))
   {
     Log("InitAudioClient not supported (0x%08x)", hr);
@@ -1760,12 +1575,12 @@ HRESULT CMPAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCli
     Log("InitAudioClient format supported");
   }
 
-  GetBufferSize(pWaveFormatEx, &m_hnsPeriod);
+  GetBufferSize(pWaveFormatEx, &m_Settings.m_hnsPeriod);
 
   if (SUCCEEDED (hr))
   {
-    hr = m_pAudioClient->Initialize(m_WASAPIShareMode, AUDCLNT_STREAMFLAGS_EVENTCALLBACK,
-	                                m_hnsPeriod, m_hnsPeriod, pWaveFormatEx, NULL);
+    hr = m_pAudioClient->Initialize(m_Settings.m_WASAPIShareMode, AUDCLNT_STREAMFLAGS_EVENTCALLBACK,
+	                                m_Settings.m_hnsPeriod, m_Settings.m_hnsPeriod, pWaveFormatEx, NULL);
     
     // when rebuilding the graph between SD / HD zapping the .NET GC workaround
     // might call the init again. In that case just eat the error 
@@ -1806,7 +1621,7 @@ HRESULT CMPAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCli
     SAFE_RELEASE(m_pAudioClient);
 
     // calculate the new aligned periodicity
-    m_hnsPeriod = // hns =
+    m_Settings.m_hnsPeriod = // hns =
                   (REFERENCE_TIME)(
                   10000.0 * // (hns / ms) *
                   1000 * // (ms / s) *
@@ -1820,12 +1635,12 @@ HRESULT CMPAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCli
       hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
     }
       
-    Log("InitAudioClient Trying again with periodicity of %I64u hundred-nanoseconds, or %u frames.\n", m_hnsPeriod, m_nFramesInBuffer);
+    Log("InitAudioClient Trying again with periodicity of %I64u hundred-nanoseconds, or %u frames.\n", m_Settings.m_hnsPeriod, m_nFramesInBuffer);
 
     if (SUCCEEDED (hr)) 
     {
-      hr = m_pAudioClient->Initialize(m_WASAPIShareMode, AUDCLNT_STREAMFLAGS_EVENTCALLBACK, 
-	                                    m_hnsPeriod, m_hnsPeriod, pWaveFormatEx, NULL);
+      hr = m_pAudioClient->Initialize(m_Settings.m_WASAPIShareMode, AUDCLNT_STREAMFLAGS_EVENTCALLBACK, 
+	                                    m_Settings.m_hnsPeriod, m_Settings.m_hnsPeriod, pWaveFormatEx, NULL);
     }
  
     if (FAILED(hr))
@@ -2103,7 +1918,7 @@ HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
 {
   CAutoLock cAutoLock(&m_csResampleLock);
   
-  if (m_bUseTimeStretching)
+  if (m_Settings.m_bUseTimeStretching)
   {
     m_dAdjustment = pAdjustment;
     m_Clock.SetAdjustment(m_dAdjustment);
@@ -2123,7 +1938,7 @@ HRESULT CMPAudioRenderer::SetBias(DOUBLE pBias)
 {
   CAutoLock cAutoLock(&m_csResampleLock);
 
-  if (m_bUseTimeStretching)
+  if (m_Settings.m_bUseTimeStretching)
   {
     Log("SetBias: %1.10f", pBias);
 

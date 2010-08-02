@@ -36,8 +36,7 @@
 #include "MultiSoundTouch.h"
 #include "SyncClock.h"
 #include "IAVSyncClock.h"
-
-#define MAX_REG_LENGTH 256
+#include "Settings.h"
 
 // REFERENCE_TIME time units per second and per millisecond
 #define REFTIMES_PER_SEC  10000000
@@ -107,13 +106,6 @@ public:
   // CMpcAudioRenderer
 private:
 
-  // For accessing the registry
-  void LoadSettingsFromRegistry();
-  void ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
-  void WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data);
-  void ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
-  void WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data);
-  
   // DirectSound methods
   HRESULT DoRenderSampleDirectSound(IMediaSample *pMediaSample);
   HRESULT InitCoopLevel();
@@ -143,22 +135,18 @@ private:
   HRESULT     GetBufferSize(WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
    
   // WASAPI variables
-  bool                m_bUseWASAPI;
   IMMDevice*          m_pMMDevice;
   IAudioClient*       m_pAudioClient;
   IAudioRenderClient* m_pRenderClient;
   UINT32              m_nFramesInBuffer;
-  REFERENCE_TIME      m_hnsPeriod;
   REFERENCE_TIME      m_hnsActualDuration;
   HANDLE              m_hTask;
   CCritSec            m_csCheck;
   UINT32              m_nBufferSize;
   bool                m_bIsAudioClientStarted;
   DWORD               m_dwLastBufferTime;
-  AUDCLNT_SHAREMODE   m_WASAPIShareMode;
   bool                m_bReinitAfterStop;
   bool                m_bDiscardCurrentSample;
-  WCHAR*              m_wWASAPIPreferredDeviceId;
 
   // AVRT.dll (Vista or greater)
   typedef HANDLE (__stdcall *PTR_AvSetMmThreadCharacteristicsW)(LPCWSTR TaskName, LPDWORD TaskIndex);
@@ -174,8 +162,6 @@ private:
   CCritSec    m_csResampleLock;
   CCritSec    m_RenderThreadLock;
 
-  bool        m_bUseTimeStretching;
-
   DWORD       m_dwTimeStart;
   LONGLONG    m_dSampleCounter;
 
@@ -189,7 +175,7 @@ private:
   // stream has discontinuity error(s), data must be dropped if gaps are too wide
   bool m_bDropSamples;
 
-  bool m_bLogSampleTimes;
+  AudioRendererSettings m_Settings;
 
   // Threading 
   static DWORD WINAPI RenderThreadEntryPoint(LPVOID lpParameter);
