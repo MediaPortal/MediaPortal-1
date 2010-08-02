@@ -1453,14 +1453,25 @@ HRESULT CMPAudioRenderer::GetAvailableAudioDevices(IMMDeviceCollection **ppMMDev
       PROPVARIANT varName;
       PropVariantInit(&varName);
 
+      PROPVARIANT eventDriven;
+      PropVariantInit(&eventDriven);
+
       if (pProps->GetValue(PKEY_Device_FriendlyName, &varName) != S_OK)
         break;
 
-      Log("Audio endpoint %d: \"%S\" (%S)", i, varName.pwszVal, pwszID);
+      if (pProps->GetValue(PKEY_AudioEndpoint_Supports_EventDriven_Mode, &eventDriven) == S_OK)
+      {
+        Log("Audio endpoint %d: \"%S\" (%S) - supports pull mode: %d", i, varName.pwszVal, pwszID, eventDriven.intVal);
+      }
+      else
+      {
+        Log("Audio endpoint %d: \"%S\" (%S) - pull mode query failed!", i, varName.pwszVal, pwszID);
+      }
 
       CoTaskMemFree(pwszID);
       pwszID = NULL;
       PropVariantClear(&varName);
+      PropVariantClear(&eventDriven);
       SAFE_RELEASE(pProps)
       SAFE_RELEASE(pEndpoint)
     }
