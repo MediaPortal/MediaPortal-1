@@ -32,6 +32,9 @@ int  FontEngineAddTexture(int hashCode, bool useAlphaBlend,void* texture);
 int  FontEngineAddSurface(int hashCode, bool useAlphaBlend, void* surface);
 void FontEngineRemoveTexture(int textureNo);
 void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color);
+void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m[3][4], int textureNo2, float uoff2, float voff2, float umax2, float vmax2);
+void FontEngineDrawMaskedTexture(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m[3][4], int textureNo2, float uoff2, float voff2, float umax2, float vmax2);
+void FontEngineDrawMaskedTexture2(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m[3][4], int textureNo2, float uoff2, float voff2, float umax2, float vmax2, int textureNo3, float uoff3, float voff3, float umax3, float vmax3);
 void FontEnginePresentTextures();
 
 void FontEngineAddFont(void* device, int fontNumber,void* fontTexture, int firstChar, int endChar, float textureScale, float textureWidth, float textureHeight, float fSpacingPerChar,int maxVertices);

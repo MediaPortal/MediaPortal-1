@@ -17,3 +17,5 @@ FontEngineSetTexture			@12
 FontEngineDrawSurface			@13
 FontEngineSetDevice				@14
 FontEngineDrawTexture2			@15
+FontEngineDrawMaskedTexture			@16
+FontEngineDrawMaskedTexture2			@17
