@@ -84,7 +84,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   ForceDirectSound:        %d", forceDirectSoundData);
     Log("   EnableTimestrecthing:    %d", enableTimestretchingData);
     Log("   WASAPIExclusive:         %d", WASAPIExclusiveData);
-    Log("   enableAC3Encoding:       %d", enableAC3EncodingData);
+    Log("   EnableAC3Encoding:       %d", enableAC3EncodingData);
     Log("   LogSampleTimes:          %d", logSampleTimesData);
     Log("   DevicePeriod:            %d (1 == minimal, 0 == default, other user defined)", devicePeriodData);
     Log("   WASAPIPreferredDevice:   %s", WASAPIPreferredDeviceData);

@@ -20,8 +20,6 @@
  *
  */
 
-
-
 #include "stdafx.h"
 #include <initguid.h>
 #include "moreuuids.h"
