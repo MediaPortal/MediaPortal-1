@@ -448,7 +448,6 @@ HRESULT CMultiSoundTouch::ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAV
   switch(pwfe->Format.wFormatTag)
   {
   case WAVE_FORMAT_PCM:
-  case WAVE_FORMAT_DOLBY_AC3_SPDIF:
     pwfe->SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
     break;
   case WAVE_FORMAT_IEEE_FLOAT:
@@ -490,7 +489,6 @@ HRESULT CMultiSoundTouch::CheckFormat(WAVEFORMATEX *pwf)
   if (FAILED(hr))
     return hr;
   return CheckFormat(&wfe);
-
 }
 
 HRESULT CMultiSoundTouch::CheckFormat(WAVEFORMATEXTENSIBLE *pwfe)

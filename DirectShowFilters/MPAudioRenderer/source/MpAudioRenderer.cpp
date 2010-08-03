@@ -407,12 +407,6 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
 
   if (m_Settings.m_bUseWASAPI)
   {
-    // Negotiate the SPDIF connection type only with the audio device
-    if (m_Settings.m_bEnableAC3Encoding)
-    {
-      CreateWaveFormatForAC3(pwfx);
-    }    
-    
     //hr = CheckAudioClient((WAVEFORMATEX *)NULL);
     hr = CheckAudioClient(pwfx);
     if (FAILED(hr))
@@ -1274,6 +1268,15 @@ HRESULT CMPAudioRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
   Log("CheckAudioClient");
   LogWaveFormat(pWaveFormatEx);
 
+  WAVEFORMATEX AC3WaveFormatEx;
+
+  // Negotiate the SPDIF connection type only with the audio device
+  if (m_Settings.m_bEnableAC3Encoding)
+  {
+    Log("  AC3 encoding mode enabled");
+    CreateWaveFormatForAC3(&AC3WaveFormatEx);
+  } 
+
   HRESULT hr = S_OK;
   CAutoLock cAutoLock(&m_csCheck);
   
@@ -1285,7 +1288,7 @@ HRESULT CMPAudioRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
     return hr;
 
   // Just create the audio client if no WAVEFORMATEX provided
-  if (!m_pAudioClient)// && !pWaveFormatEx)
+  if (!m_pAudioClient)
   {
     if (SUCCEEDED (hr)) hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
       return hr;
@@ -1304,7 +1307,15 @@ HRESULT CMPAudioRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
     }
   
     m_pWaveFileFormat = pNewWaveFormatEx;
-    hr = m_pAudioClient->IsFormatSupported(m_Settings.m_WASAPIShareMode, pWaveFormatEx, NULL);
+
+    if (m_Settings.m_bEnableAC3Encoding)
+    {
+      hr = m_pAudioClient->IsFormatSupported(m_Settings.m_WASAPIShareMode, &AC3WaveFormatEx, NULL);
+    }
+    else
+    {
+      hr = m_pAudioClient->IsFormatSupported(m_Settings.m_WASAPIShareMode, pWaveFormatEx, NULL);    
+    }
   
     if (SUCCEEDED(hr))
     { 
@@ -1338,7 +1349,14 @@ HRESULT CMPAudioRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
 
   if (SUCCEEDED (hr)) 
   {
-    hr = InitAudioClient(pWaveFormatEx, m_pAudioClient, &m_pRenderClient);
+    if (m_Settings.m_bEnableAC3Encoding)
+    {
+      hr = InitAudioClient(&AC3WaveFormatEx, m_pAudioClient, &m_pRenderClient);
+    }
+    else
+    {
+      hr = InitAudioClient(pWaveFormatEx, m_pAudioClient, &m_pRenderClient);
+    }
   }
   return hr;
 }
@@ -1759,6 +1777,7 @@ void CMPAudioRenderer::CreateWaveFormatForAC3(WAVEFORMATEX* pwfx)
     pwfx->nChannels = 2;
     pwfx->nSamplesPerSec = 48000;
     pwfx->nAvgBytesPerSec = 80000;//192000;
+    pwfx->cbSize = 0;
   }
 }
 
