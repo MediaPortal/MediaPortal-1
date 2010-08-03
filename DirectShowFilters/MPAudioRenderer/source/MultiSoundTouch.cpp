@@ -391,6 +391,12 @@ void CMultiSoundTouch::EndFlush()
 {
   if (m_pMemAllocator)
     m_pMemAllocator->Commit();
+
+  if (m_Streams)
+  {
+    for(int i=0; i<m_Streams->size(); i++)
+      m_Streams->at(i)->clear();
+  }
 }
 
 BOOL CMultiSoundTouch::setSetting(int settingId, int value)

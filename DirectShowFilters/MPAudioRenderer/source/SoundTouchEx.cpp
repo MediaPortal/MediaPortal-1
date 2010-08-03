@@ -303,12 +303,12 @@ void CSoundTouchEx::putBuffer(const BYTE *pInBuffer, int numSamples)
 
 void CSoundTouchEx::putMediaSample(IMediaSample *pMediaSample)
 {
-    BYTE *pMediaBuffer = NULL;
-    long size = pMediaSample->GetActualDataLength();
-    HRESULT hr = pMediaSample->GetPointer(&pMediaBuffer);
-    
-    if (hr == S_OK)
-      putBuffer(pMediaBuffer, size / m_nInFrameSize);
+  BYTE *pMediaBuffer = NULL;
+  long size = pMediaSample->GetActualDataLength();
+  HRESULT hr = pMediaSample->GetPointer(&pMediaBuffer);
+
+  if (hr == S_OK)
+    putBuffer(pMediaBuffer, size / m_nInFrameSize);
 }
 
 void CSoundTouchEx::queueMediaSample(IMediaSample *pMediaSample)
