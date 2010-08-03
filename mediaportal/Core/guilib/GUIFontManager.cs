@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2010 Team MediaPortal
 
 // Copyright (C) 2005-2010 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -90,6 +90,7 @@ namespace MediaPortal.GUI.Library
 
     private static object _renderlock = new object();
     protected static List<GUIFont> _listFonts = new List<GUIFont>();
+    protected static Dictionary<string,string> _dictFontAlias = new Dictionary<string, string>();
     private static Sprite _d3dxSprite;
     private static bool _d3dxSpriteUsed;
     private static int _maxCachedTextures = 500;
@@ -212,6 +213,16 @@ namespace MediaPortal.GUI.Library
               _listFonts.Add(font);
             }
           }
+
+          // Select the list of aliases
+          XmlNodeList listAlias = doc.DocumentElement.SelectNodes("/fonts/alias");
+          foreach (XmlNode node in listAlias)
+          {
+            XmlNode nodeName = node.SelectSingleNode("name");
+            XmlNode nodeFontName = node.SelectSingleNode("fontname");
+            _dictFontAlias.Add(nodeName.InnerText, nodeFontName.InnerText);
+          }
+
           return true;
         }
         catch (Exception ex)
@@ -250,18 +261,28 @@ namespace MediaPortal.GUI.Library
     {
       lock (Renderlock)
       {
-        for (int i = 0; i < _listFonts.Count; ++i)
+        if (strFontName != null)
         {
-          GUIFont font = _listFonts[i];
-          if (font.FontName == strFontName)
+          // Try to interpret the font name as an alias before searching for the font.
+          string fn = null;
+          if (!_dictFontAlias.TryGetValue(strFontName, out fn))
           {
-            return font;
+            fn = strFontName;
+          }
+
+          for (int i = 0; i < _listFonts.Count; ++i)
+          {
+            GUIFont font = _listFonts[i];
+            if (font.FontName == fn)
+            {
+              return font;
+            }
           }
         }
+
         // just return a font
         return GetFont("debug");
-      }      
-      
+      }
     }
 
     public static void MeasureText(Font fnt, string text, ref float textwidth, ref float textheight, int fontSize)

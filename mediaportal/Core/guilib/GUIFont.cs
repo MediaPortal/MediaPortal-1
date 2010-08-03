@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2010 Team MediaPortal
 
 // Copyright (C) 2005-2010 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -294,14 +294,6 @@ namespace MediaPortal.GUI.Library
         {
           return;
         }
-        if (xpos <= 0)
-        {
-          return;
-        }
-        if (ypos <= 0)
-        {
-          return;
-        }
         if (label == null)
         {
           return;
@@ -357,14 +349,6 @@ namespace MediaPortal.GUI.Library
         {
           return;
         }
-        if (xpos <= 0)
-        {
-          return;
-        }
-        if (ypos <= 0)
-        {
-          return;
-        }
         int alpha = (int)((color >> 24) & 0xff);
         int red = (int)((color >> 16) & 0xff);
         int green = (int)((color >> 8) & 0xff);
@@ -408,6 +392,7 @@ namespace MediaPortal.GUI.Library
     public void DrawShadowText(float fOriginX, float fOriginY, long dwColor,
                                string strText,
                                GUIControl.Alignment alignment,
+                               int fWidth,
                                int iShadowAngle,
                                int iShadowDistance,
                                long dwShadowColor)
@@ -419,10 +404,10 @@ namespace MediaPortal.GUI.Library
           (float)Math.Round((double)iShadowDistance * Math.Cos(ConvertDegreesToRadians((double)iShadowAngle)));
         float fShadowY =
           (float)Math.Round((double)iShadowDistance * Math.Sin(ConvertDegreesToRadians((double)iShadowAngle)));
-        DrawText(fOriginX + fShadowX, fOriginY + fShadowY, dwShadowColor, strText, alignment, -1);
+        DrawText(fOriginX + fShadowX, fOriginY + fShadowY, dwShadowColor, strText, alignment, fWidth);
 
         // Draw the text
-        DrawText(fOriginX, fOriginY, dwColor, strText, alignment, -1);
+        DrawText(fOriginX, fOriginY, dwColor, strText, alignment, fWidth);
       }
     }
 
@@ -436,15 +421,33 @@ namespace MediaPortal.GUI.Library
     {
       lock (GUIFontManager.Renderlock)
       {
+        float fShadowXOff = (float)Math.Round((double)iShadowDistance * Math.Cos(ConvertDegreesToRadians((double)iShadowAngle)));
+        float fShadowYOff = (float)Math.Round((double)iShadowDistance * Math.Sin(ConvertDegreesToRadians((double)iShadowAngle)));
+        float fShadowX = fOriginX + fShadowXOff;
+        float fShadowY = fOriginY + fShadowYOff;
+
+        float fMaxWidthText = fMaxWidth;
+        float fMaxWidthShadow = fMaxWidth;
+        if (fShadowX > fOriginX)
+        {
+          // Prevent the shadow from extending beyond the width (right edge).
+          fMaxWidthShadow = fMaxWidth - (fShadowX - fOriginX);
+        }
+        else if (fShadowX < fOriginX)
+        {
+          // Shift the whole text to the right to compensate for the shadow origin being to the left of the original text origin.
+          fShadowX = fOriginX;
+          fOriginX += fShadowXOff;
+
+          // Prevent the text from extending beyond the width (right edge).
+          fMaxWidthText = fMaxWidth - (fOriginX - fShadowX);
+        }
+
         // Draw the shadow
-        float fShadowX =
-          (float)Math.Round((double)iShadowDistance * Math.Cos(ConvertDegreesToRadians((double)iShadowAngle)));
-        float fShadowY =
-          (float)Math.Round((double)iShadowDistance * Math.Sin(ConvertDegreesToRadians((double)iShadowAngle)));
-        DrawTextWidth(fOriginX + fShadowX, fOriginY + fShadowY, dwShadowColor, strText, fMaxWidth, alignment);
+        DrawTextWidth(fShadowX, fShadowY, dwShadowColor, strText, fMaxWidthShadow, alignment);
 
         // Draw the text
-        DrawTextWidth(fOriginX, fOriginY, dwColor, strText, fMaxWidth, alignment);
+        DrawTextWidth(fOriginX, fOriginY, dwColor, strText, fMaxWidthText, alignment);
       }
     }
 
@@ -830,7 +833,6 @@ namespace MediaPortal.GUI.Library
           int blue = (int)(color & 0xff);
           GUIFontManager.DrawText(_d3dxFont, xpos, ypos, Color.FromArgb(alpha, red, green, blue), text, maxWidth, _fontHeight);
           return;
-        }
 
         unsafe
         {

@@ -51,6 +51,12 @@ namespace MediaPortal.GUI.Library
                                                             float uoff, float voff, float umax, float vmax, int color,
                                                             float[,] matrix);
 
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, float nh,
+                                                             float uoff, float voff, float umax, float vmax, int color,
+                                                             float[,] matrix, int textureNo2, float uoff2, float voff2,
+                                                             float umax2, float vmax2);
+
     #endregion
 
     #region events / delegates
@@ -293,6 +299,25 @@ namespace MediaPortal.GUI.Library
           localTransform = finalTransform.multiply(localTransform);
 
           FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color, localTransform.Matrix);
+        }
+        else
+        {
+          if (logTextures)
+          {
+            Log.Info("fontengine:Draw() ERROR. Texture is disposed:{0} {1}", _textureNumber.ToString(), _imageName);
+          }
+        }
+      }
+
+      public void Draw(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax,
+                       int color, int maskTextureNo, float uoffm, float voffm, float umaxm, float vmaxm)
+      {
+        if (_textureNumber >= 0)
+        {
+          float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
+          FontEngineDrawMaskedTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax,
+                                      color, matrix,
+                                      maskTextureNo, uoffm, voffm, umaxm, vmaxm);
         }
         else
         {

@@ -26,9 +26,9 @@ using MediaPortal.ExtensionMethods;
 namespace MediaPortal.GUI.Library
 {
   /// <summary>
-  /// Control which acts as a facade to the list,thumbnail and filmstrip view controls
+  /// Control which acts as a facade to the list,thumbnail, filmstrip, and coverflow view controls
   /// for the application it presents itself as 1 control but in reality it
-  /// will route all actions to the current selected control (list,view, or filmstrip)
+  /// will route all actions to the current selected control (list,view, filmstrip, or coverflow)
   /// </summary>
   public class GUIFacadeControl : GUIControl
   {
@@ -49,7 +49,8 @@ namespace MediaPortal.GUI.Library
       LargeIcons,
       Filmstrip,
       AlbumView,
-      Playlist
+      Playlist,
+      CoverFlow
     }
 
     private GUIPlayListItemListControl _viewPlayList = null; // instance of a re-orderable playlist list control
@@ -58,6 +59,7 @@ namespace MediaPortal.GUI.Library
     private GUIListControl _viewAlbum = null; // instance of the album list control
     private GUIThumbnailPanel _viewThumbnail = null; // instance of the thumbnail control
     private GUIFilmstripControl _viewFilmStrip = null; // instance of the filmstrip control
+    private GUICoverFlow _viewCoverFlow = null; // instance of the coverflow control
     private ViewMode _currentViewMode; // current view
     private List<GUIListItem> _itemList = new List<GUIListItem>(); // unfiltered itemlist
 
@@ -143,6 +145,19 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Property to get/set the coverflow control
+    /// </summary>
+    public GUICoverFlow CoverFlowView
+    {
+      get { return _viewCoverFlow; }
+      set
+      {
+        _viewCoverFlow = value;
+        InitControl(_viewCoverFlow);
+      }
+    }
+
+    /// <summary>
     /// Property to get/set the thumbnail control
     /// </summary>
     public GUIThumbnailPanel ThumbnailView
@@ -194,6 +209,8 @@ namespace MediaPortal.GUI.Library
             return _viewList;
           case ViewMode.Filmstrip:
             return _viewFilmStrip;
+          case ViewMode.CoverFlow:
+            return _viewCoverFlow;
           case ViewMode.Playlist:
             return _viewPlayList;
           case ViewMode.LargeIcons:
@@ -212,6 +229,7 @@ namespace MediaPortal.GUI.Library
       _viewFilmStrip.AddAnimations(animations);
       _viewPlayList.AddAnimations(animations);
       _viewThumbnail.AddAnimations(animations);
+      _viewCoverFlow.AddAnimations(animations);
     }
 
 
@@ -281,6 +299,14 @@ namespace MediaPortal.GUI.Library
         _viewPlayList.WindowId = WindowId;
         _viewPlayList.ParentControl = this;
       }
+
+      if (_viewCoverFlow != null)
+      {
+        _viewCoverFlow.AllocResources();
+        _viewCoverFlow.GetID = GetID;
+        _viewCoverFlow.WindowId = WindowId;
+        _viewCoverFlow.ParentControl = this;
+      }
     }
 
     public override int WindowId
@@ -308,6 +334,10 @@ namespace MediaPortal.GUI.Library
         if (_viewPlayList != null)
         {
           _viewPlayList.WindowId = value;
+        }
+        if (_viewCoverFlow != null)
+        {
+          _viewCoverFlow.WindowId = value;
         }
       }
     }
@@ -337,6 +367,10 @@ namespace MediaPortal.GUI.Library
       {
         _viewPlayList.PreAllocResources();
       }
+      if (_viewCoverFlow != null)
+      {
+        _viewCoverFlow.PreAllocResources();
+      }
       UpdateView();
     }
 
@@ -351,6 +385,7 @@ namespace MediaPortal.GUI.Library
       _viewList.SafeDispose();
       _viewThumbnail.SafeDispose();
       _viewFilmStrip.SafeDispose();
+      _viewCoverFlow.SafeDispose();
       _viewPlayList.SafeDispose();
       _itemList.DisposeAndClear();
     }
@@ -441,6 +476,10 @@ namespace MediaPortal.GUI.Library
       {
         _viewPlayList.OnMessage(message);
       }
+      if (_viewCoverFlow != null)
+      {
+        _viewCoverFlow.OnMessage(message);
+      }
     }
 
     public override bool CanFocus()
@@ -508,6 +547,10 @@ namespace MediaPortal.GUI.Library
       {
         _viewPlayList.Sort(comparer);
       }
+      if (_viewCoverFlow != null)
+      {
+        _viewCoverFlow.Sort(comparer);
+      }
       try
       {
         _itemList.Sort(comparer);
@@ -541,6 +584,10 @@ namespace MediaPortal.GUI.Library
       {
         _viewPlayList.Add(item);
       }
+      if (_viewCoverFlow != null)
+      {
+        _viewCoverFlow.Add(item);
+      }
       _itemList.Add(item);
     }
 
@@ -570,6 +617,10 @@ namespace MediaPortal.GUI.Library
       {
         _viewPlayList.Insert(index, item);
       }
+      if (_viewCoverFlow != null)
+      {
+        _viewCoverFlow.Insert(index, item);
+      }
       _itemList.Insert(index, item);
     }
 
@@ -594,6 +645,10 @@ namespace MediaPortal.GUI.Library
       if (_viewPlayList != null)
       {
         _viewPlayList.Clear();
+      }
+      if (_viewCoverFlow != null)
+      {
+        _viewCoverFlow.Clear();
       }
       if (searchString != "")
       {
@@ -624,6 +679,10 @@ namespace MediaPortal.GUI.Library
         if (_viewPlayList != null)
         {
           _viewPlayList.Add(dirUp);
+        }
+        if (_viewCoverFlow != null)
+        {
+          _viewCoverFlow.Add(dirUp);
         }
       }
 
@@ -683,6 +742,10 @@ namespace MediaPortal.GUI.Library
           {
             _viewPlayList.Add(item);
           }
+          if (_viewCoverFlow != null)
+          {
+            _viewCoverFlow.Add(item);
+          }
           iTotalItems++;
         }
       }
@@ -717,6 +780,10 @@ namespace MediaPortal.GUI.Library
         {
           _viewPlayList.IsVisible = false;
         }
+        if (_viewCoverFlow != null)
+        {
+          _viewCoverFlow.IsVisible = false;
+        }
       }
       else if (_currentViewMode == ViewMode.List && _viewList != null)
       {
@@ -740,6 +807,10 @@ namespace MediaPortal.GUI.Library
         if (_viewAlbum != null)
         {
           _viewAlbum.IsVisible = false;
+        }
+        if (_viewCoverFlow != null)
+        {
+          _viewCoverFlow.IsVisible = false;
         }
       }
       else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
@@ -766,6 +837,10 @@ namespace MediaPortal.GUI.Library
         {
           _viewAlbum.IsVisible = false;
         }
+        if (_viewCoverFlow != null)
+        {
+          _viewCoverFlow.IsVisible = false;
+        }
       }
       else if (_currentViewMode == ViewMode.AlbumView && _viewAlbum != null)
       {
@@ -785,6 +860,38 @@ namespace MediaPortal.GUI.Library
         if (_viewFilmStrip != null)
         {
           _viewFilmStrip.IsVisible = false;
+        }
+        if (_viewPlayList != null)
+        {
+          _viewPlayList.IsVisible = false;
+        }
+        if (_viewCoverFlow != null)
+        {
+          _viewCoverFlow.IsVisible = false;
+        }
+      }
+      else if (_currentViewMode == ViewMode.CoverFlow && _viewCoverFlow != null)
+      {
+        base.XPosition = _viewCoverFlow.XPosition;
+        base.YPosition = _viewCoverFlow.YPosition;
+        base.Width = _viewCoverFlow.Width;
+        base.Height = _viewCoverFlow.Height;
+        _viewCoverFlow.IsVisible = true;
+        if (_viewList != null)
+        {
+          _viewList.IsVisible = false;
+        }
+        if (_viewFilmStrip != null)
+        {
+          _viewFilmStrip.IsVisible = false;
+        }
+        if (_viewThumbnail != null)
+        {
+          _viewThumbnail.IsVisible = false;
+        }
+        if (_viewAlbum != null)
+        {
+          _viewAlbum.IsVisible = false;
         }
         if (_viewPlayList != null)
         {
@@ -815,6 +922,10 @@ namespace MediaPortal.GUI.Library
         {
           _viewPlayList.IsVisible = false;
         }
+        if (_viewCoverFlow != null)
+        {
+          _viewCoverFlow.IsVisible = false;
+        }
       }
     }
 
@@ -839,6 +950,9 @@ namespace MediaPortal.GUI.Library
           break;
         case ViewMode.SmallIcons:
           GUIPropertyManager.SetProperty("#facadeview.viewmode", "smallicons");
+          break;
+        case ViewMode.CoverFlow:
+          GUIPropertyManager.SetProperty("#facadeview.viewmode", "coverflow");
           break;
       }
     }
@@ -878,6 +992,10 @@ namespace MediaPortal.GUI.Library
       {
         _viewPlayList.StorePosition();
       }
+      if (_viewCoverFlow != null)
+      {
+        _viewCoverFlow.StorePosition();
+      }
       base.StorePosition();
     }
 
@@ -903,6 +1021,10 @@ namespace MediaPortal.GUI.Library
       {
         _viewPlayList.ReStorePosition();
       }
+      if (_viewCoverFlow != null)
+      {
+        _viewCoverFlow.ReStorePosition();
+      }
       base.ReStorePosition();
     }
 
@@ -927,6 +1049,10 @@ namespace MediaPortal.GUI.Library
       if (_viewPlayList != null)
       {
         _viewPlayList.Animate(timePassed, animator);
+      }
+      if (_viewCoverFlow != null)
+      {
+        _viewCoverFlow.Animate(timePassed, animator);
       }
       base.Animate(timePassed, animator);
     }
@@ -955,6 +1081,10 @@ namespace MediaPortal.GUI.Library
         else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
         {
           return _viewPlayList.SelectedListItem;
+        }
+        else if (_currentViewMode == ViewMode.CoverFlow && _viewCoverFlow != null)
+        {
+          return _viewCoverFlow.SelectedListItem;
         }
         return null;
       }
@@ -985,6 +1115,10 @@ namespace MediaPortal.GUI.Library
         {
           return _viewPlayList.Count;
         }
+        else if (_currentViewMode == ViewMode.CoverFlow && _viewCoverFlow != null)
+        {
+          return _viewCoverFlow.Count;
+        }
         return 0;
       }
     }
@@ -1011,6 +1145,10 @@ namespace MediaPortal.GUI.Library
       else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
       {
         _viewPlayList.Clear();
+      }
+      else if (_currentViewMode == ViewMode.CoverFlow && _viewCoverFlow != null)
+      {
+        _viewCoverFlow.Clear();
       }
       _itemList.DisposeAndClear();
     }
@@ -1039,6 +1177,10 @@ namespace MediaPortal.GUI.Library
         else if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
         {
           return _viewPlayList.SelectedListItemIndex;
+        }
+        else if (_currentViewMode == ViewMode.CoverFlow && _viewCoverFlow != null)
+        {
+          return _viewCoverFlow.SelectedListItemIndex;
         }
         return -1;
       }
@@ -1089,6 +1231,10 @@ namespace MediaPortal.GUI.Library
         {
           return _viewPlayList[index];
         }
+        else if (_currentViewMode == ViewMode.CoverFlow && _viewCoverFlow != null)
+        {
+          return _viewCoverFlow[index];
+        }
         return null;
       }
     }
@@ -1118,6 +1264,10 @@ namespace MediaPortal.GUI.Library
         if (_currentViewMode == ViewMode.Playlist && _viewPlayList != null)
         {
           _viewPlayList[i].RefreshCoverArt();
+        }
+        if (_currentViewMode == ViewMode.CoverFlow && _viewCoverFlow != null)
+        {
+          _viewCoverFlow[i].RefreshCoverArt();
         }
       }
     }

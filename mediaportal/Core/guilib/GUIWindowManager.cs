@@ -21,12 +21,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Threading;
 using MediaPortal.ExtensionMethods;
 
 //using System.Reflection;
 //using System.Security;
 //using System.Runtime.InteropServices;
+using MediaPortal.Player;
+using MediaPortal.Profile;
 
 namespace MediaPortal.GUI.Library
 {
@@ -1018,6 +1021,125 @@ namespace MediaPortal.GUI.Library
           _activeWindowIndex = -1;
           _activeWindowId = -1;
         }
+      }
+      finally
+      {
+        _isSwitchingToNewWindow = false;
+      }
+    }
+
+    public static void ActivateSkin(string skinName, int newWindowId)
+    {
+      _isSwitchingToNewWindow = true;
+
+      try
+      {
+        GUIMessage msg;
+        GUIWindow previousWindow = null;
+        GUIWindow newWindow = null;
+        int newWindowIndex = 0;
+
+        // Find the previous (still current) window.
+        if (_activeWindowIndex >= 0 && _activeWindowIndex < _windowCount)
+        {
+          previousWindow = _listWindows[_activeWindowIndex];
+        }
+
+        // Find the new window.
+        for (int i = 0; i < _windowCount; i++)
+        {
+          if (_listWindows[i].GetID == newWindowId)
+          {
+            try
+            {
+              newWindow = _listWindows[i];
+              newWindowIndex = i;
+              break;
+            }
+            catch (Exception ex)
+            {
+              Log.Warn("WindowManager: Unable to initialize window:{0} {1} {2} {3}",
+                       newWindowId, ex.Message, ex.Source, ex.StackTrace);
+              break;
+            }
+          }
+        }
+
+        // If the new window was not found then we do not change the skin or the window.
+        if (newWindow != null)
+        {
+          // Deactivate the previous window.
+          if (previousWindow != null)
+          {
+            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, previousWindow.GetID, 0, 0, newWindowId, 0, null);
+            previousWindow.OnMessage(msg);
+
+            if (OnDeActivateWindow != null)
+            {
+              OnDeActivateWindow(previousWindow.GetID);
+            }
+
+            _activeWindowIndex = -1;
+            _activeWindowId = -1;
+          }
+
+          // Change the skin and reload the GUI.
+          GUIGraphicsContext.Skin = skinName;
+          using (Settings xmlwriter = new MPSettings())
+          {
+            xmlwriter.SetValue("skin", "name", skinName);
+          }
+
+          GUITextureManager.Clear();
+          GUITextureManager.Init();
+          GUIFontManager.LoadFonts(GUIGraphicsContext.Skin + @"\fonts.xml");
+          GUIFontManager.InitializeDeviceObjects();
+          GUIControlFactory.ClearReferences();
+          GUIControlFactory.LoadReferences(GUIGraphicsContext.Skin + @"\references.xml");
+          GUIWindowManager.OnResize();
+
+          // Activate the new window.
+          _activeWindowIndex = newWindowIndex;
+          _activeWindowId = newWindow.GetID;
+          _nextWindowIndex = -1;
+
+          if (OnActivateWindow != null)
+          {
+            OnActivateWindow(newWindow.GetID);
+          }
+
+          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, newWindow.GetID, 0, 0, _previousActiveWindowId, 0, null);
+          newWindow.OnMessage(msg);
+        }
+
+        // Autosize the window if specified.
+        using (Settings xmlreader = new MPSettings())
+        {
+          xmlreader.SetValue("general", "skinobsoletecount", 0);
+          bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
+          if (autosize && !GUIGraphicsContext.Fullscreen)
+          {
+            try
+            {
+              System.Windows.Forms.Form.ActiveForm.ClientSize =
+                new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+            }
+            catch (System.Exception ex)
+            {
+              Log.Error("Exception: {0}", ex.ToString());
+            }
+          }
+        }
+
+        // Reinitialize the music player visualization window.
+        if (BassMusicPlayer.Player != null && BassMusicPlayer.Player.VisualizationWindow != null)
+        {
+          BassMusicPlayer.Player.VisualizationWindow.Reinit();
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Exception: {0}", ex.ToString());
       }
       finally
       {

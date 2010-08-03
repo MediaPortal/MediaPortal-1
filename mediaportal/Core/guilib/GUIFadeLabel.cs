@@ -81,7 +81,6 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwWidth">The width of this control.</param>
     /// <param name="dwHeight">The height of this control.</param>
     /// <param name="strFont">The indication of the font of this control.</param>
-    /// <param name="strLabel">The label</param>
     /// <param name="dwTextColor">The color of this control.</param>
     /// <param name="dwTextAlign">The alignment of this control.</param>
     /// <param name="dwTextVAlign">The vertical alignment of this control.</param>
@@ -90,14 +89,12 @@ namespace MediaPortal.GUI.Library
     /// <param name="dwShadowColor">The color of the shadow.</param>
     /// <param name="strUserWrapString">The string used to connect a wrapped fade label.</param>
     public GUIFadeLabel(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,
-                        string strFont, string strLabel, long dwTextColor, Alignment dwTextAlign,
-                        VAlignment dwTextVAlign,
+                        string strFont, long dwTextColor, Alignment dwTextAlign, VAlignment dwTextVAlign,
                         int dwShadowAngle, int dwShadowDistance, long dwShadowColor,
                         string strUserWrapString)
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _fontName = strFont;
-      _label = strLabel;
       _textColor = dwTextColor;
       _textAlignment = dwTextAlign;
       _textVAlignment = dwTextVAlign;
@@ -125,7 +122,6 @@ namespace MediaPortal.GUI.Library
       {
         _labelTail = "" + _userWrapString[_userWrapString.Length - 1];
         _wrapString = _userWrapString.Substring(0, _userWrapString.Length - 1);
-        _label += _wrapString;
       }
 
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
@@ -234,6 +230,9 @@ namespace MediaPortal.GUI.Library
 
       // get the current label
       string strLabel = (string)_listLabels[_currentLabelIndex];
+
+      // Add the wrap string (will be stripped later if not needed).
+      strLabel += _wrapString;
 
       //Get the text height to compute vertical position.
 /*      float fTextHeight = 0, fTextWidth = 0;
@@ -356,7 +355,10 @@ namespace MediaPortal.GUI.Library
 
     private void StripWrapString(GUILabelControl labelControl)
     {
-      labelControl.Label = labelControl.Label.Substring(0, labelControl.Label.Length - _wrapString.Length);
+      if (labelControl.Label.Length - _wrapString.Length >= 0)
+      {
+        labelControl.Label = labelControl.Label.Substring(0, labelControl.Label.Length - _wrapString.Length);
+      }
       return;
     }
 
@@ -845,7 +847,7 @@ namespace MediaPortal.GUI.Library
         {
           return;
         }
-        _label = value + _wrapString;
+        _label = value;
         if (_label.IndexOf("#") >= 0)
         {
           _containsProperty = true;
@@ -900,7 +902,7 @@ namespace MediaPortal.GUI.Library
     public override int DimColor
     {
       get { return _dimColor; }
-      set
+      set 
       {
         _dimColor = value;
         // Need to pass the dim color to our delegate label if someone tries to set it (e.g., when fadelabel is in a group).

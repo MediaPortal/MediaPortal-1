@@ -183,6 +183,7 @@ namespace MediaPortal.GUI.Library
 
       // Render the background
       int iBkgHeight = _height;
+      GUIGraphicsContext.ScaleVertical(ref iBkgHeight);
       _imageBackGround.Height = iBkgHeight;
       _imageBackGround.SetPosition(_imageBackGround.XPosition, _imageBackGround.YPosition);
       _imageBackGround.Render(timePassed);
@@ -190,15 +191,15 @@ namespace MediaPortal.GUI.Library
       GUIFontManager.Present();
 
       int iWidthLeft = _imageLeft.TextureWidth;
-      int iHeightLeft = _imageLeft.TextureHeight;
+      int iHeightLeft = _height; //_imageLeft.TextureHeight;
       int iWidthRight = _imageRight.TextureWidth;
-      int iHeightRight = _imageRight.TextureHeight;
+      int iHeightRight = _height; //_imageRight.TextureHeight;
       GUIGraphicsContext.ScaleHorizontal(ref iWidthLeft);
       GUIGraphicsContext.ScaleHorizontal(ref iWidthRight);
       GUIGraphicsContext.ScaleVertical(ref iHeightLeft);
       GUIGraphicsContext.ScaleVertical(ref iHeightRight);
       //iHeight=20;
-      int off = 12;
+      int off = 0; //12;
       GUIGraphicsContext.ScaleHorizontal(ref off);
       float fWidth = _percentage;
       if (fWidth > 100.0f)

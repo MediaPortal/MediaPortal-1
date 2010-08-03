@@ -195,8 +195,7 @@ namespace MediaPortal.GUI.Library
         c = GUIGraphicsContext.MergeAlpha(c);
         if (_shadow)
         {
-          _font.DrawShadowText(x, (float)_textOffsetY + _positionY, c, _label, _textAlignment, _shadowAngle,
-                               _shadowDistance, _shadowColor);
+          _font.DrawShadowText(x, (float)_textOffsetY + _positionY, c, _label, _textAlignment, -1, _shadowAngle, _shadowDistance, _shadowColor);
         }
         else
         {

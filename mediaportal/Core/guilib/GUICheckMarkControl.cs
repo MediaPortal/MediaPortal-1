@@ -182,7 +182,7 @@ namespace MediaPortal.GUI.Library
           {
             if (_shadow)
             {
-              _font.DrawShadowText((float)dwTextPosX, (float)_positionY, _textColor, _label, Alignment.ALIGN_LEFT, 5,
+              _font.DrawShadowText((float) dwTextPosX, (float) _positionY, _textColor, _label, Alignment.ALIGN_LEFT, -1, 5,
                                    5, 0xff000000);
             }
             else
@@ -195,7 +195,7 @@ namespace MediaPortal.GUI.Library
           {
             if (_shadow)
             {
-              _font.DrawShadowText((float)dwTextPosX, (float)_positionY, _disabledColor, _label, Alignment.ALIGN_LEFT,
+              _font.DrawShadowText((float) dwTextPosX, (float) _positionY, _disabledColor, _label, Alignment.ALIGN_LEFT, -1,
                                    5, 5, 0xff000000);
             }
             else

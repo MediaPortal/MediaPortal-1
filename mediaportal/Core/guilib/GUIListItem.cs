@@ -37,7 +37,7 @@ namespace MediaPortal.GUI.Library
     //list,thumbnail or filmstrip view
     public event ItemSelectedHandler OnItemSelected = null;
 
-    //even which gets fired if the list,thumbnail or filmstrip few needs the
+    //even which gets fired if the list,thumbnail, filmstrip or coverflow view needs the
     //coverart for the specified item
     public event RetrieveCoverArtHandler OnRetrieveArt = null;
     protected string _label = string.Empty; // text of column1
@@ -573,7 +573,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// this method will raise the OnItemSelected() event to let any
     /// listener know that this item has been selected by the user in a
-    /// list,thumbnail or filmstrip control
+    /// list,thumbnail, filmstrip, or coverflow control
     /// </summary>
     /// <param name="parent"></param>
     public void ItemSelected(GUIControl parent)
