@@ -397,8 +397,8 @@ namespace MediaPortal.GUI.Library
         _cache.Add(newCache);
         _textureCacheLookup[cacheName] = newCache;
 
-        Log.Debug("TextureManager: added: memoryImage  " + " total: " + _cache.Count + " mem left: " +
-                  GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+        Log.Debug("TextureManager: added: memoryImage  " + " total count: " + _cache.Count + ", mem left (MB): " +
+                  ((uint)GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576));
         return newCache.Frames;
       }
       catch (Exception ex)
@@ -464,8 +464,8 @@ namespace MediaPortal.GUI.Library
         _cache.Add(newCache);
         _textureCacheLookup[cacheName] = newCache;
 
-        Log.Debug("TextureManager: added: memoryImage  " + " total: " + _cache.Count + " mem left: " +
-                  GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+        Log.Debug("TextureManager: added: memoryImage  " + " total count: " + _cache.Count + ", mem left (MB): " +
+                  ((uint)GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576));
         return newCache.Frames;
       }
       catch (Exception ex)
