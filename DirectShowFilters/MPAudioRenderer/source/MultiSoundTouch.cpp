@@ -429,7 +429,7 @@ uint CMultiSoundTouch::numSamples() const
   for (int i=0 ; i<m_Streams->size(); i++)
   {
     uint samples = m_Streams->at(i)->numSamples();
-    if (minSamples == 0 || minSamples > samples)
+    if (i == 0 || minSamples > samples)
       minSamples = samples;
   }
   return minSamples;

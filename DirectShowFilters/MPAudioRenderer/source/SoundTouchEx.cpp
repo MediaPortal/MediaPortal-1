@@ -72,14 +72,15 @@ __inline SAMPLE_FLOAT SampleInt16ToFloat(short sample)
 
 __inline short SampleInt16ToInt16(short sample, long bitMask, long& error)
 {
+  long lSample = ((long)sample)<<16;
 #ifdef DITHER_SAMPLES
   sample += WhiteNoise() * NOISE_COEFF * bitMask + error;
   error = sample & bitMask;
 #endif
-  return sample & ~bitMask;
+  return (lSample & ~bitMask)>>16;
 }
 
-__inline long SampleInt16ToInt32(short sample, int bits)
+__inline long SampleInt16ToInt32(short sample, long bitMask)
 {
   return ((long)sample) << 16;
 }
@@ -291,7 +292,7 @@ void CSoundTouchEx::putBuffer(const BYTE *pInBuffer, int numSamples)
   int inSamplesRemaining = numSamples;
 
   // input samples
-  while(inSamplesRemaining)
+  while(inSamplesRemaining > 0)
   {
     int batchLen = (inSamplesRemaining < BATCH_LEN? inSamplesRemaining : BATCH_LEN);
     (this->*m_pfnDeInterleave)(pInBuffer, m_tempBuffer, batchLen);
@@ -332,12 +333,11 @@ int CSoundTouchEx::getBuffer(BYTE *pOutBuffer, int maxSamples)
     uint batchLen = (outSampleSpace < BATCH_LEN? outSampleSpace : BATCH_LEN);
     batchLen = receiveSamples(m_tempBuffer, batchLen);
     
-    // TODO: FIX THIS
-    //(this->*m_pfnInterleave)(m_tempBuffer, pOutBuffer, batchLen);
-    memcpy(pOutBuffer, m_tempBuffer, batchLen * m_nInFrameSize);
-
     if(batchLen == 0)
       break;
+
+    (this->*m_pfnInterleave)(m_tempBuffer, pOutBuffer, batchLen);
+
     outSampleSpace -= batchLen;
     pOutBuffer += batchLen * m_nOutFrameSize;
   }
