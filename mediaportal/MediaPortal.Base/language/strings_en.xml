@@ -31,6 +31,18 @@
     <String id="30">October</String>
     <String id="31">November</String>
     <String id="32">December</String>
+    <String id="33">Jan</String>
+    <String id="34">Feb</String>
+    <String id="35">Mar</String>
+    <String id="36">Apr</String>
+    <String id="37">May</String>
+    <String id="38">Jun</String>
+    <String id="39">Jul</String>
+    <String id="40">Aug</String>
+    <String id="41">Sep</String>
+    <String id="42">Oct</String>
+    <String id="43">Nov</String>
+    <String id="44">Dec</String>
     <String id="50" prefix="My ">DVDs</String>
     <String id="51">Play disc</String>
     <String id="60">Waiting for startup of TV service...</String>
@@ -352,6 +364,8 @@
     <String id="405">Dew Point</String>
     <String id="406">Humidity</String>
     <String id="407">Heavy</String>
+    <String id="408">Enter a city name</String>
+    <String id="409">Remove Location</String>
     <String id="410">Accessing Weather.com</String>
     <String id="411">Getting Weather for:</String>
     <String id="412">Unable to get weather data</String>
@@ -461,6 +475,12 @@
     <String id="517">Fatal error - action not completed</String>
     <String id="518">Delete this song?</String>
     <String id="519">Subtitles off</String>
+    <String id="520">No locations found</String>
+    <String id="521">Not a valid integer</String>
+    <String id="522">Postive values only!</String>
+    <String id="523">Zero skip is not allowed!</String>
+    <String id="524">3 hour skip is maximum!</String>
+    <String id="525">Skip step already defined</String>    
     <String id="527">Sort by: Watched</String>
     <String id="528">Album Artists</String>
     <String id="529">Layout: Big Icon List</String>
@@ -500,6 +520,9 @@
     <String id="563">kn</String>
     <String id="564">m/s</String>
     <String id="565">bft</String>
+    <String id="566">Quick Weather Info</String>
+    <String id="567">Add City</String>
+    <String id="568">Remove City</String>
     <String id="590">P. 100</String>
     <String id="591">P. 200</String>
     <String id="592">P. 300</String>
@@ -688,6 +711,7 @@
 	<String id="784">Rotate 270°</String>
     <String id="789">Now: </String>
     <String id="790">Next: </String>
+    <String id="791">Layout: Cover Flow</String>
     <String id="798">low</String>
     <String id="799">high</String>
     <String id="800">Starts with</String>
@@ -1377,6 +1401,7 @@
     <String id="6039">AAC Audio Codec</String>
     <String id="6040">Yesterday</String>
     <String id="6041">Two days ago</String>
+    <String id="6042">Enter a skip step number of seconds</String>
     <String id="6050">Current week</String>
     <String id="6060">Current month</String>
     <String id="6070">Current year</String>

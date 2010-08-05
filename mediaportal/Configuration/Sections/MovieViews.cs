@@ -56,6 +56,7 @@ namespace MediaPortal.Configuration.Sections
                                    "Icons",
                                    "Big Icons",
                                    "Filmstrip",
+                                   "Cover Flow",
                                  };
 
     private string[] sortBy = new string[]
