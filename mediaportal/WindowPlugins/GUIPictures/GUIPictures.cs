@@ -259,6 +259,7 @@ namespace MediaPortal.GUI.Pictures
       BigIcons = 2,
       Albums = 3,
       Filmstrip = 4,
+      CoverFlow = 5
     }
 
     private enum Display
@@ -529,6 +530,9 @@ namespace MediaPortal.GUI.Pictures
             break;
 
           case View.Filmstrip:
+            mapSettings.ViewAs = (int)View.CoverFlow;
+            break;
+          case View.CoverFlow:
             mapSettings.ViewAs = (int)View.List;
             break;
         }
@@ -872,6 +876,9 @@ namespace MediaPortal.GUI.Pictures
         case View.Filmstrip:
           textLine = GUILocalizeStrings.Get(733);
           break;
+        case View.CoverFlow:
+          textLine = GUILocalizeStrings.Get(791);
+          break;
       }
       GUIControl.SetControlLabel(GetID, btnViewAs.GetID, textLine);
 
@@ -913,6 +920,10 @@ namespace MediaPortal.GUI.Pictures
       else if (mapSettings.ViewAs == (int)View.Filmstrip)
       {
         facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;
+      }
+      else if (mapSettings.ViewAs == (int)View.CoverFlow)
+      {
+        facadeView.View = GUIFacadeControl.ViewMode.CoverFlow;
       }
       if (itemIndex > -1)
       {

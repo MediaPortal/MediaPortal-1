@@ -283,6 +283,10 @@ namespace MediaPortal.GUI.Music
       {
         return false;
       }
+      if (view == View.CoverFlow)
+      {
+        return false;
+      }
       return true;
     }
 

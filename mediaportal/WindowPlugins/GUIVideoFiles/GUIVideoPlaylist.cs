@@ -89,6 +89,10 @@ namespace MediaPortal.GUI.Video
       {
         return false;
       }
+      if (view == View.CoverFlow)
+      {
+        return false;
+      }
       return true;
     }
 
