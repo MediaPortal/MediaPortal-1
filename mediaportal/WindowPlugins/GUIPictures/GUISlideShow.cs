@@ -2161,8 +2161,11 @@ namespace MediaPortal.GUI.Pictures
       GUIFont pFont = GUIFontManager.GetFont("font13");
       if (pFont != null)
       {
+        float fw = 0f;
+        float fh = 0f;
         string szText = GUILocalizeStrings.Get(112);
-        pFont.DrawShadowText(500.0f, 60.0f, 0xffffffff, szText, GUIControl.Alignment.ALIGN_LEFT, 2, 2, 0xff000000);
+        pFont.GetTextExtent(szText, ref fw, ref fh);
+        pFont.DrawShadowText(500.0f, 60.0f, 0xffffffff, szText, GUIControl.Alignment.ALIGN_LEFT, (int)fw, 2, 2, 0xff000000);
       }
       return true;
     }

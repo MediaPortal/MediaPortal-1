@@ -273,6 +273,8 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Drawing.Layouts\ILayoutDetail.cs" />
+    <Compile Include="Drawing.Layouts\TableLayout.cs" />
     <Compile Include="DShowNET\Helper\AudioMixerHelper.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -323,9 +325,13 @@
     <Compile Include="ExtensionMethods\ListExtMethods.cs" />
     <Compile Include="ExtensionMethods\DictionaryExtMethods.cs" />
     <Compile Include="ExtensionMethods\ObjectMethods.cs" />
+    <Compile Include="guilib\GUICoverFlow.cs" />
     <Compile Include="guilib\GUIInternalOverlayWindow.cs" />
     <Compile Include="guilib\GUIInternalWindow.cs" />
+    <Compile Include="guilib\GUIKeyboard.cs" />
+    <Compile Include="guilib\GUISmsStyledKeyboard.cs" />
     <Compile Include="guilib\GUISpinButton.cs" />
+    <Compile Include="guilib\GUIStandardKeyboard.cs" />
     <Compile Include="Player\MediaInfoWrapper.cs" />
     <Compile Include="Player\RefreshRateChanger.cs" />
     <Compile Include="guilib\Tween.cs" />

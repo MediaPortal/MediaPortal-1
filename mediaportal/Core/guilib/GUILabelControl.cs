@@ -269,7 +269,7 @@ namespace MediaPortal.GUI.Library
     }
 
     // Wraps the calls to the GUIFont.  This provides opportunity to shadow the text if requested.
-    public void DrawText(float xpos, float ypos, long color, GUIControl.Alignment alignment, int width)
+    public void DrawText(float xpos, float ypos, long color, string label, GUIControl.Alignment alignment, int width)
     {
       uint c = (uint)color;
       c = GUIGraphicsContext.MergeAlpha(c);
@@ -283,7 +283,7 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-            _font.DrawTextEx(xpos, ypos, c, label, alignment, width);
+            _font.DrawText(xpos, ypos, c, label, alignment, width);
         }
     }
 

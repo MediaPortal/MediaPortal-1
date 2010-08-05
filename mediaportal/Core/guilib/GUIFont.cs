@@ -833,6 +833,7 @@ namespace MediaPortal.GUI.Library
           int blue = (int)(color & 0xff);
           GUIFontManager.DrawText(_d3dxFont, xpos, ypos, Color.FromArgb(alpha, red, green, blue), text, maxWidth, _fontHeight);
           return;
+        }
 
         unsafe
         {
