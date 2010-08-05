@@ -3002,6 +3002,8 @@ namespace TvPlugin
               break; 
             }
 
+            bool isvalid = false;
+            DateTime time = DateTime.Now;
             if ((_currentProgram.StartTime >= prog.StartTime && _currentProgram.StartTime < prog.EndTime) ||
               (_currentProgram.EndTime <= prog.EndTime && _currentProgram.EndTime > prog.StartTime))
               {
@@ -3530,8 +3532,7 @@ namespace TvPlugin
             bool isRec = _currentProgram.IsRecording;
             bool isRecNOepg = IsRecordingNoEPG(_currentProgram.ReferencedChannel().Name);
 
-            Schedule schedule = null;
-
+            Recording rec = null;
             if (isRec)
             {              
               rec = Recording.ActiveRecording(_currentProgram.Title, _currentProgram.IdChannel);              
