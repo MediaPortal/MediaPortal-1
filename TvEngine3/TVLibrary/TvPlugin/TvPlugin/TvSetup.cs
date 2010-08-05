@@ -316,7 +316,11 @@ namespace TvPlugin
         {
           RemoteControl.Clear();
           RemoteControl.HostName = _hostName;
-          lblHostName.Label = _hostName;
+          if (lblHostName != null)
+          {
+            lblHostName.Label = _hostName;
+          }
+          GUIPropertyManager.SetProperty("#TV.setup.hostname", _hostName);
 
           CheckTvServiceStatus();
 
@@ -410,7 +414,11 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       LoadSettings();
-      lblHostName.Label = _hostName;
+      if (lblHostName != null)
+      {
+        lblHostName.Label = _hostName;
+      }
+      GUIPropertyManager.SetProperty("#TV.setup.hostname", _hostName);
       base.OnPageLoad();
     }
 
