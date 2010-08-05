@@ -147,19 +147,22 @@ DWORD CMPAudioRenderer::RenderThread()
       if (m_pAudioClient && m_pRenderClient)
       {
         DWORD bufferFlags = 0;
+        UINT32 currentPadding = 0;
+        
         m_pAudioClient->GetBufferSize(&bufferSize);
 
-        // TODO use non-hardcoded value
-        UINT32 bufferSizeInBytes = bufferSize * 4;
+        // In exclusive mode we threat the padding as zero -> it will make 
+        // rest of the code a bit cleaner
+        if (m_Settings.m_WASAPIShareMode == AUDCLNT_SHAREMODE_SHARED)
+          m_pAudioClient->GetCurrentPadding(&currentPadding);
 
-        hr = m_pRenderClient->GetBuffer(bufferSize, &data);
+        UINT32 bufferSizeInBytes = (bufferSize - currentPadding) * m_pWaveFileFormat->nBlockAlign;
 
+        hr = m_pRenderClient->GetBuffer(bufferSize - currentPadding, &data);
         if (SUCCEEDED(hr) && m_pRenderClient)
         {
           if (writeSilence || !sample)
-          {
             bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
-          }
           else if (sample) // we have at least some data to be written
           {
             UINT32 bytesCopied = 0;
@@ -196,12 +199,11 @@ DWORD CMPAudioRenderer::RenderThread()
               sampleOffset += bytesToCopy;
             } while (bytesCopied < bufferSizeInBytes);
           }
-        }
-
-        hr = m_pRenderClient->ReleaseBuffer(bufferSize, bufferFlags);
-        if (FAILED(hr))
-        {
-          Log("Render thread: ReleaseBuffer failed (0x%08x)", hr);
+          hr = m_pRenderClient->ReleaseBuffer(bufferSize - currentPadding, bufferFlags);
+          if (FAILED(hr))
+          {
+            Log("Render thread: ReleaseBuffer failed (0x%08x)", hr);
+          }
         }
       }
     }
