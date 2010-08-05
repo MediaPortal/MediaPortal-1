@@ -231,11 +231,11 @@ HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
   return NOERROR;
 }
 
-void LogWaveFormat(WAVEFORMATEX* pwfx)
+void LogWaveFormat(WAVEFORMATEX* pwfx, const char *text)
 {
   if (pwfx)
   {
-    Log("WAVEFORMATEX:");
+    Log("WAVEFORMATEX - %s", text);
     Log("  nAvgBytesPerSec %d", pwfx->nAvgBytesPerSec);
     Log("  nBlockAlign     %d", pwfx->nBlockAlign);
     Log("  nChannels       %d", pwfx->nChannels);

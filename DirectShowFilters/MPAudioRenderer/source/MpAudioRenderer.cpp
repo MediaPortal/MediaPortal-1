@@ -86,7 +86,7 @@ CUnknown* WINAPI CMPAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 
 // for logging
 extern void Log(const char *fmt, ...);
-extern void LogWaveFormat(WAVEFORMATEX* pwfx);
+extern void LogWaveFormat(WAVEFORMATEX* pwfx, const char *text);
 extern void LogRotate();
 
 DWORD CMPAudioRenderer::RenderThread()
@@ -389,7 +389,7 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
     return VFW_E_TYPE_NOT_ACCEPTED;
   }
 
-  LogWaveFormat(pwfx);
+  LogWaveFormat(pwfx, "CheckMediaType");
 
   if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
   {
@@ -420,14 +420,12 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
       return VFW_E_CANNOT_CONNECT;
     }
     
-    // NOTE: using ClosestMatch parameter causes the call to succeed on some drivers 
-    // even when the client wont support the format!
-    if (m_pAudioClient->IsFormatSupported(m_Settings.m_WASAPIShareMode, pwfx, NULL) != S_OK)
+    WAVEFORMATEX *pwfxCM = NULL;
+    hr = m_pAudioClient->IsFormatSupported(m_Settings.m_WASAPIShareMode, pwfx, &pwfxCM);
+    if (hr != S_OK)
     {
-      Log("CheckMediaType WASAPI client refused the format, used mix format:");
-      WAVEFORMATEX *pwfxCM = NULL;
-      m_pAudioClient->GetMixFormat(&pwfxCM);
-      LogWaveFormat(pwfxCM);
+      Log("CheckMediaType WASAPI client refused the format: (0x%08x)", hr);
+      LogWaveFormat(pwfxCM, "Closest match would be" );
       CoTaskMemFree(pwfxCM);
       return VFW_E_TYPE_NOT_ACCEPTED;
     }
@@ -1266,7 +1264,7 @@ HRESULT CMPAudioRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
   CAutoLock cRenderThreadLock(&m_RenderThreadLock);
 
   Log("CheckAudioClient");
-  LogWaveFormat(pWaveFormatEx);
+  LogWaveFormat(pWaveFormatEx, "CheckAudioClient");
 
   WAVEFORMATEX AC3WaveFormatEx;
 
@@ -1598,7 +1596,8 @@ HRESULT CMPAudioRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioCli
     }
   }
 
-  hr = m_pAudioClient->IsFormatSupported(m_Settings.m_WASAPIShareMode, pWaveFormatEx, NULL);
+  WAVEFORMATEX *pwfxCM = NULL;
+  hr = m_pAudioClient->IsFormatSupported(m_Settings.m_WASAPIShareMode, pWaveFormatEx, &pwfxCM);    
   if (FAILED(hr))
   {
     Log("InitAudioClient not supported (0x%08x)", hr);
