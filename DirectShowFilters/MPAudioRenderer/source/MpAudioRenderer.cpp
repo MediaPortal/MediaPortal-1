@@ -1432,6 +1432,32 @@ HRESULT CMPAudioRenderer::GetAudioDevice(IMMDevice **ppMMDevice)
   Log("Unable to find selected audio device, using the default end point!");
   hr = enumerator->GetDefaultAudioEndpoint(eRender, eConsole, ppMMDevice);
 
+  IPropertyStore* pProps = NULL;
+
+  if (SUCCEEDED((*ppMMDevice)->OpenPropertyStore(STGM_READ, &pProps)))
+  {
+    LPWSTR pwszID = NULL;
+    
+    PROPVARIANT varName;
+    PropVariantInit(&varName);
+
+    PROPVARIANT eventDriven;
+    PropVariantInit(&eventDriven);
+
+    if (SUCCEEDED(pProps->GetValue(PKEY_Device_FriendlyName, &varName)) &&
+        SUCCEEDED(pProps->GetValue(PKEY_AudioEndpoint_Supports_EventDriven_Mode, &eventDriven)) &&
+        SUCCEEDED((*ppMMDevice)->GetId(&pwszID)))
+    {
+      Log("Default audio endpoint: \"%S\" (%S) - supports pull mode: %d",varName.pwszVal, pwszID, eventDriven.intVal);
+    }
+
+    CoTaskMemFree(pwszID);
+    pwszID = NULL;
+    PropVariantClear(&varName);
+    PropVariantClear(&eventDriven);
+    SAFE_RELEASE(pProps)
+  }
+
   SAFE_RELEASE(devices);
 
   return hr;
