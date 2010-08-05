@@ -450,6 +450,64 @@
     <textYOff>0</textYOff>
   </control>
   <control>
+    <description>default cover flow</description>
+    <type>coverflow</type>
+    <dimColor>90ffffff</dimColor>
+    <id>11</id>
+    <posX>0</posX>
+    <posY>255</posY>
+    <width>1280</width>
+    <height>720</height>
+    <onup>2</onup>
+    <onleft>2</onleft>
+    <selectedCard>0</selectedCard>
+    <cardWidth>250</cardWidth>
+    <cardHeight>300</cardHeight>
+    <angle>30.0</angle>
+    <sideShift>100.0</sideShift>
+    <sideGap>20.0</sideGap>
+    <sideDepth>50.0</sideDepth>
+    <offsetY>0.0</offsetY>
+    <selectedOffsetY>0.0</selectedOffsetY>
+    <speed>8.0</speed>
+    <backgroundColor>000000FF</backgroundColor>
+    <backgroundHeight>400</backgroundHeight>
+    <backgroundWidth>1280</backgroundWidth>
+    <backgroundX>0</backgroundX>
+    <backgroundY>0</backgroundY>
+    <backgroundDiffuse>FF000000</backgroundDiffuse>
+    <background>-</background>
+    <showBackground>no</showBackground>
+    <showFrame>yes</showFrame>
+    <frame>Picture_cover.png</frame>
+    <frameFocus>Picture_cover.png</frameFocus>
+    <spinSpeed>8.0</spinSpeed>
+    <unfocusedAlpha>FF</unfocusedAlpha>
+    <folderPrefix>[</folderPrefix>
+    <folderSuffix>]</folderSuffix>
+    <font1>font13</font1>
+    <font2>font10</font2>
+    <label1>#title</label1>
+    <label2>#genre</label2>
+    <textColor>FFFFFFFF</textColor>
+    <remoteColor>FFFF0000</remoteColor>
+    <playedColor>FFA0D0FF</playedColor>
+    <downloadColor>FF00FF00</downloadColor>
+    <selectedColor>FFFFFFFF</selectedColor>
+    <shadowAngle>45</shadowAngle>
+    <shadowDistance>1</shadowDistance>
+    <shadowColor>FF000000</shadowColor>
+    <label1YOff>380</label1YOff>
+    <label2YOff>390</label2YOff>
+    <pageSize>10</pageSize>
+    <scrollbarBackground>bar_hor.png</scrollbarBackground>
+    <scrollbarLeft>mouse_left_horizontal.png</scrollbarLeft>
+    <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
+    <scrollbarYOff>400</scrollbarYOff>
+    <showScrollbar>yes</showScrollbar>
+    <cards flipY="yes" diffuse="Thumb_Mask.png"></cards>
+  </control>
+  <control>
     <description>default fadelabel</description>
     <type>fadelabel</type>
     <id>5</id>

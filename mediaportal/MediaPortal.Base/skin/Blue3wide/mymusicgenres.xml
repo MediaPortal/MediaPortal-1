@@ -2,7 +2,7 @@
 <window>
   <id>504</id>
   <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>[facadeview.list|facadeview.filmstrip]</allowoverlay>
+  <allowoverlay>[facadeview.list|facadeview.filmstrip|facadeview.coverflow]</allowoverlay>
   <define>#header.label:#view</define>
   <define>#header.image:music_logo.png</define>
   <define>#header.hover:-</define>
