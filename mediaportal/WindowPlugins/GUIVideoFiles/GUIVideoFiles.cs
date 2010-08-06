@@ -1367,7 +1367,9 @@ namespace MediaPortal.GUI.Video
           if (_markWatchedFiles)
           {
             int fID = VideoDatabase.GetFileId(path);
-            if (VideoDatabase.GetMovieStopTime(fID) > 0)
+            byte[] resumeData = null;
+            int timeStopped = VideoDatabase.GetMovieStopTimeAndResumeData(fID, out resumeData);
+            if (timeStopped > 0 || resumeData != null)
               info.Watched = 1;
           }
         }
