@@ -151,14 +151,26 @@ DEFINE_STREAM_FUNC(setPitchOctaves, float, newPitch)
 DEFINE_STREAM_FUNC(setPitchSemiTones, int, newPitch)
 DEFINE_STREAM_FUNC(setPitchSemiTones, float, newPitch)
 DEFINE_STREAM_FUNC(setSampleRate, uint, srate)
-DEFINE_STREAM_FUNC(clear,,)
 
+// clear requires a specific handling since we need to be able to use the CAutoLock
+void CMultiSoundTouch::clear() 
+{ 
+  if (m_pMemAllocator)
+    m_pMemAllocator->Decommit();
+  
+  CAutoLock allocatorLock(&m_allocatorLock);
+  if (m_Streams) 
+  { 
+    for(int i=0; i<m_Streams->size(); i++) 
+      m_Streams->at(i)->clear(); 
+  } 
+}
 
 // flush requires a specific handling since we need to be able to use the CAutoLock
 void CMultiSoundTouch::flush() 
 { 
-  if (m_pMemAllocator)
-    m_pMemAllocator->Decommit();
+  //if (m_pMemAllocator)
+  //  m_pMemAllocator->Decommit();
   
   CAutoLock allocatorLock(&m_allocatorLock);
   if (m_Streams) 
@@ -391,12 +403,6 @@ void CMultiSoundTouch::EndFlush()
 {
   if (m_pMemAllocator)
     m_pMemAllocator->Commit();
-
-  if (m_Streams)
-  {
-    for(int i=0; i<m_Streams->size(); i++)
-      m_Streams->at(i)->clear();
-  }
 }
 
 BOOL CMultiSoundTouch::setSetting(int settingId, int value)
@@ -569,7 +575,7 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
 
     ASSERT(speakerOffset.size() == pwfe->Format.nChannels);
 
-    // TODO: First find a set of channels that can be used 
+    // TODO: First create the base downmixing coefficients
     // for syncing mono channels like LFE and Center
     
     // Now start adding channels
@@ -582,8 +588,13 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
         CSoundTouchEx *pStream = new CSoundTouchEx();
         pStream->setChannels(2);
         pStream->SetInputChannels(speakerOffset[pPair->dwLeft], speakerOffset[pPair->dwRight]);
-        pStream->SetFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8, pwfe->Samples.wValidBitsPerSample, isFloat);
+        pStream->SetInputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8, pwfe->Samples.wValidBitsPerSample, isFloat);
         pStream->SetOutputChannels(speakerOffset[pPair->dwLeft], speakerOffset[pPair->dwRight]);
+        if (m_bEnableAC3Encoding)
+          pStream->SetOutputFormat(pwfe->Format.nChannels*2, 2, 16, false);
+        else
+          pStream->SetOutputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8, pwfe->Samples.wValidBitsPerSample, isFloat);
+        pStream->SetupFormats();
         newStreams->push_back(pStream);
         dwChannelMask &= ~pPair->PairMask(); // mark channels as processed
       }
@@ -599,8 +610,13 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
         // to the mix of the main channels (normally Front Left/Right if available)
         pStream->setChannels(1); 
         pStream->SetInputChannels(speakerOffset[dwSpeaker]);
-        pStream->SetFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8, pwfe->Samples.wValidBitsPerSample, isFloat);
+        pStream->SetInputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8, pwfe->Samples.wValidBitsPerSample, isFloat);
         pStream->SetOutputChannels(speakerOffset[dwSpeaker]);
+        if (m_bEnableAC3Encoding)
+          pStream->SetOutputFormat(pwfe->Format.nChannels*2, 2, 16, false);
+        else
+          pStream->SetOutputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8, pwfe->Samples.wValidBitsPerSample, isFloat);
+        pStream->SetupFormats();
         newStreams->push_back(pStream);
         // The following is only necessary if we skip some channels
         // currently we don't

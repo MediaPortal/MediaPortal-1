@@ -562,7 +562,7 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
       CAutoLock cRenderThreadLock(&m_RenderThreadLock);
 
       m_pSoundTouch->BeginFlush();
-      m_pSoundTouch->flush();
+      m_pSoundTouch->clear();
       m_pSoundTouch->EndFlush();
       m_bDropSamples = false; // stream is continuous from this point on
     }
@@ -1838,7 +1838,12 @@ HRESULT CMPAudioRenderer::BeginFlush()
   if (m_pSoundTouch)
   {
     m_bDiscardCurrentSample = true;
-    m_pSoundTouch->flush();
+    // Shouldn't the order of the following 2 lines be swapped?
+    // By the time BeginFlush clears the input queue, samples 
+    // may have already been moved from the queue to soundtouch 
+    // input buffer. We need to clear queues/buffers in the 
+    // order data propagatess through them.
+    m_pSoundTouch->clear();
     m_pSoundTouch->BeginFlush();
   }
 
@@ -1967,7 +1972,9 @@ STDMETHODIMP CMPAudioRenderer::SetRate(double dRate)
     }
   
     m_bDiscardCurrentSample = true;
-    m_pSoundTouch->flush();
+    // Shouldn't the order of the following 2 lines be swapped?
+    // See comment above.
+    m_pSoundTouch->clear();
     m_pSoundTouch->BeginFlush();
     m_pSoundTouch->EndFlush();
   }

@@ -48,12 +48,12 @@ public:
   virtual int getBuffer(BYTE *pOutBuffer, int maxSamples);
   //virtual void queueOutputBuffer(IMediaSample *pSample, DWORD dwSeqNo);
 
-  bool SetFormat(int frameSize, int bytesPerSample, int bitsPerSample, bool isFloat);
-  //bool SetInputFormat(int frameSize, int bytesPerSample, int bitsPerSample, bool isFloat);
+  //bool SetFormat(int frameSize, int bytesPerSample, int bitsPerSample, bool isFloat);
+  bool SetInputFormat(int frameSize, int bytesPerSample, int bitsPerSample, bool isFloat);
   void SetInputChannels(int leftOffset, int rightOffset = 0);
-  //bool SetOutputFormat(int frameSize, int bytesPerSample, int bitsPerSample, bool isFloat);
+  bool SetOutputFormat(int frameSize, int bytesPerSample, int bitsPerSample, bool isFloat);
   void SetOutputChannels(int leftOffset, int rightOffset = 0);
-
+  bool SetupFormats();
 
   uint numChannels()  { return channels; };
 
@@ -115,9 +115,6 @@ protected:
 #else
   __inline void ResetDithering() { };
 #endif
-
-  // Internal helpers
-  bool SetupFormats();
 
   // internal functions to separate/merge streams out of sample buffers
   virtual void StereoDeInterleaveFloat(const void *inBuffer, soundtouch::SAMPLETYPE *outBuffer, uint count);
