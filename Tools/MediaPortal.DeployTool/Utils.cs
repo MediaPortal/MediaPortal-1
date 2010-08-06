@@ -521,8 +521,8 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 0;
-          revision = 10;         // 1.0.10 = RC6
+          minor = 1;
+          revision = 0;         // 1.1.0 = final
           break;
       }
       return CalculateVersion(major, minor, revision);
@@ -530,7 +530,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.1.0";
+      return "1.2.0";
     }
     #endregion
   }
