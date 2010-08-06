@@ -1838,13 +1838,8 @@ HRESULT CMPAudioRenderer::BeginFlush()
   if (m_pSoundTouch)
   {
     m_bDiscardCurrentSample = true;
-    // Shouldn't the order of the following 2 lines be swapped?
-    // By the time BeginFlush clears the input queue, samples 
-    // may have already been moved from the queue to soundtouch 
-    // input buffer. We need to clear queues/buffers in the 
-    // order data propagatess through them.
-    m_pSoundTouch->clear();
     m_pSoundTouch->BeginFlush();
+    m_pSoundTouch->clear();
   }
 
   return hrBase;
@@ -1972,10 +1967,9 @@ STDMETHODIMP CMPAudioRenderer::SetRate(double dRate)
     }
   
     m_bDiscardCurrentSample = true;
-    // Shouldn't the order of the following 2 lines be swapped?
-    // See comment above.
-    m_pSoundTouch->clear();
+
     m_pSoundTouch->BeginFlush();
+    m_pSoundTouch->clear();
     m_pSoundTouch->EndFlush();
   }
   
