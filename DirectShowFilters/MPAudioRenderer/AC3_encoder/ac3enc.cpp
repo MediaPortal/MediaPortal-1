@@ -502,7 +502,7 @@ const uint16 ff_ac3_db_per_bit_tab[4]= {
     0x000, 0x700, 0x900, 0xb00,
 };
 
-const int16 ff_ac3_floor_tab[8]= {
+const uint16 ff_ac3_floor_tab[8]= {
     0x2f0, 0x2b0, 0x270, 0x230, 0x1f0, 0x170, 0x0f0, 0xf800,
 };
 
