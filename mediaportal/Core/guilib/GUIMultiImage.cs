@@ -190,6 +190,7 @@ namespace MediaPortal.GUI.Library
             _newPath = "";
           }
           _cachedPath = _newPath;
+          _isAllocated = false;
         }
         if (_cachedPath == null)
         {
@@ -291,7 +292,7 @@ namespace MediaPortal.GUI.Library
         _Info = 0;
         _directoryLoaded = false;
         _isAllocated = false;
-        _newPath = _texturePath;
+        //_newPath = _texturePath;
         Dispose();
         base.AllocResources();
       }
