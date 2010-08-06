@@ -21,6 +21,7 @@
 using System;
 using System.IO;
 using MpeCore.Interfaces;
+using System.Text;
 
 namespace MpeCore.Classes.InstallerType
 {
@@ -117,8 +118,16 @@ namespace MpeCore.Classes.InstallerType
 
     public string GetZipEntry(FileItem fileItem)
     {
+      string asAscii = Encoding.ASCII.GetString(
+            Encoding.Convert(Encoding.UTF8,
+                             Encoding.GetEncoding(Encoding.ASCII.EncodingName,
+                                                  new EncoderReplacementFallback("_"),
+                                                  new DecoderExceptionFallback()),
+                             Encoding.UTF8.GetBytes(Path.GetFileName(fileItem.LocalFileName))
+                             ));
+
       return string.Format("Installer{{CopyFile}}\\{{{0}}}-{1}", Guid.NewGuid(),
-                           Path.GetFileName(fileItem.LocalFileName));
+                           asAscii);
     }
 
     /// <summary>
