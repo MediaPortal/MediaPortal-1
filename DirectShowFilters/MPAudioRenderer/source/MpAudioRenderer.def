@@ -1,5 +1,3 @@
-LIBRARY		"AudioRenderer.ax"
-
 EXPORTS
 	DllCanUnloadNow			PRIVATE
 	DllGetClassObject		PRIVATE
