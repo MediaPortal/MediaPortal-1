@@ -86,7 +86,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   WASAPIExclusive:         %d", WASAPIExclusiveData);
     Log("   EnableAC3Encoding:       %d", enableAC3EncodingData);
     Log("   LogSampleTimes:          %d", logSampleTimesData);
-    Log("   DevicePeriod:            %d (1 == minimal, 0 == default, other user defined)", devicePeriodData);
+    Log("   DevicePeriod:            %d (1 == minimal, 0 == driver default, other user defined)", devicePeriodData);
     Log("   WASAPIPreferredDevice:   %s", WASAPIPreferredDeviceData);
 
     if (forceDirectSoundData > 0)
