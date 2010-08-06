@@ -17,12 +17,12 @@ if not "%ProgramFiles(x86)%".=="". set progpath=%ProgramFiles(x86)%
 
 
 echo.
-echo -= MP Audio Renderer =-
+echo -= dshowhelper - Owlsroost =-
 echo -= build mode: %BUILD_TYPE% =-
 echo. > build.log
 echo.
 
 
 echo.
-echo Building MPAudioRenderer...
-"%progpath%\Microsoft Visual Studio 9.0\Common7\IDE\devenv.com" ".\audio renderer\AudioRenderer.sln" /Build >> build.log
+echo Building dshowhelper - Owlsroost...
+"%progpath%\Microsoft Visual Studio 9.0\Common7\IDE\devenv.com" ".\dshowhelper - Owlsroost\dshowhelper.sln" /Rebuild "%BUILD_TYPE%" >> build.log
