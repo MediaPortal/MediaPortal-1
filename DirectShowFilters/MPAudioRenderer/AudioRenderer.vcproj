@@ -67,7 +67,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				RegisterOutput="false"
-				AdditionalDependencies="dsound.lib strmbasd.lib Winmm.lib"
+				AdditionalDependencies="strmbasd.lib Winmm.lib dsound.lib"
 				ShowProgress="2"
 				OutputFile="bin\Debug/mpaudiorenderer.ax"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;; &quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
@@ -230,8 +230,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/FORCE:MULTIPLE"
-				AdditionalDependencies="dsound.lib strmbase.lib Winmm.lib"
+				AdditionalDependencies="strmbase.lib dsound.lib Winmm.lib"
 				ShowProgress="2"
 				OutputFile="bin\Release/mpaudiorenderer.ax"
 				LinkIncremental="1"
@@ -646,7 +645,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/FORCE:MULTIPLE"
 				AdditionalDependencies="dsound.lib strmbase.lib Winmm.lib"
 				ShowProgress="2"
 				OutputFile="bin\Release/mpaudiorenderer.ax"
