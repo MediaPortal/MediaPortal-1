@@ -488,7 +488,7 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   if ((abs(rtSampleTime - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_dSampleCounter > 1)
   {
     m_bDropSamples = true;
-    Log("  Dropped audio data detected: diff: %.3f ms MAX_SAMPLE_TIME_ERROR: %.3f ms", ((double)rtSampleTime - (double)m_rtNextSampleTime / 10000.0), (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
+    Log("  Dropped audio data detected: diff: %.3f ms MAX_SAMPLE_TIME_ERROR: %.3f ms", ((double)rtSampleTime - (double)m_rtNextSampleTime) / 10000.0, (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
   }
 
   // Get media time
