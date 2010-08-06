@@ -1356,7 +1356,7 @@ namespace MediaPortal.GUI.Library
     {
       // Do not allow the card to spin if there is no back of the card defined.
       return (_cardBackControls.Count > 0) &&
-             !SelectedListItem.IsFolder;
+             SelectedListItem.FileInfo != null;
     }
 
     private void NotifyCardToSpin()
