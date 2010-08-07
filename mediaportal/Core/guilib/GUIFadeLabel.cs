@@ -549,19 +549,23 @@ namespace MediaPortal.GUI.Library
         // doscroll (after having waited some frames)
         string wTmp = "";
 
-        // Add an especially slow setting for far distance + small display + bad eyes + foreign language combination
-        if (GUIGraphicsContext.ScrollSpeedHorizontal < 3)
+        // When scrolling is not allowed (as specified by user) avoid advancing the scroll position.
+        if (_allowScrolling)
         {
-          // Advance one pixel every 3 or 2 frames
-          if (_frameLimiter % (4 - GUIGraphicsContext.ScrollSpeedHorizontal) == 0)
+          // Add an especially slow setting for far distance + small display + bad eyes + foreign language combination
+          if (GUIGraphicsContext.ScrollSpeedHorizontal < 3)
           {
-            _scrollPosititionX++;
+            // Advance one pixel every 3 or 2 frames
+            if (_frameLimiter % (4 - GUIGraphicsContext.ScrollSpeedHorizontal) == 0)
+            {
+              _scrollPosititionX++;
+            }
           }
-        }
-        else
-        {
-          // advance 1 - 3 pixels every frame
-          _scrollPosititionX = _scrollPosititionX + (GUIGraphicsContext.ScrollSpeedHorizontal - 2);
+          else
+          {
+            // advance 1 - 3 pixels every frame
+            _scrollPosititionX = _scrollPosititionX + (GUIGraphicsContext.ScrollSpeedHorizontal - 2);
+          }
         }
 
         if (_scrollPosition >= wszOrgText.Length)
@@ -659,8 +663,7 @@ namespace MediaPortal.GUI.Library
           {
             // 1) reduce maxwidth to ensure faded right edge is drawn
             // 2) compensate the Width to ensure the faded right edge does not move
-            // 3) (+ 1) prevent the text from jumping one pixel when in transition between allowed to scroll and not allowed to scroll
-            int xpos = (int)(fPosX - _scrollPosititionX + _scrollOffset + 1);
+            int xpos = (int)(fPosX - _scrollPosititionX + _scrollOffset);
             //            _log.Info("fPosX, _scrollPosititionX, _scrollOffset, xpos: {0} {1} {2} {3}", fPosX, _scrollPosititionX, _scrollOffset, xpos);
             //            _log.Info("szText {0}", szText);
             _labelControl.SetPosition(xpos, (int)fPosY);
