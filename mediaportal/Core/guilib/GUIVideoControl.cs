@@ -189,9 +189,7 @@ namespace MediaPortal.GUI.Library
             {
               blackImage.Render(timePassed); // causes flickering in fullscreen
             }
-            // gibman ; without the above line we get this bug instead mantis# 1069
-            //GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target|ClearFlags.Target, Color.FromArgb(255,1,1,1), 1.0f, 0,_videoWindows);
-          }
+           }
         }
         else
         {
