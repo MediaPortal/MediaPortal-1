@@ -16,8 +16,9 @@
 
 // This code is based on Arto Järvinen's work - http://www.ostrogothia.com/video/
 
+#pragma once
+
 #include "stdafx.h"
-#include <streams.h>
 #include "SyncClock.h"
 #include "MpAudioRenderer.h"
 

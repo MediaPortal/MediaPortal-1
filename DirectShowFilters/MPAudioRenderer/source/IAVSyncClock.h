@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
+#pragma once
+
 #ifndef IAVSYNCCLOCK
 #define IAVSYNCCLOCK
 

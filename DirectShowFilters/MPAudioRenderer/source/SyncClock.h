@@ -18,8 +18,6 @@
 
 #pragma once
 
-#include <streams.h>
-
 class CMPAudioRenderer;
 
 class CSyncClock: public CBaseReferenceClock

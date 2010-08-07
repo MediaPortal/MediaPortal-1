@@ -6,8 +6,9 @@
 // Copyright (c) 1992-2001 Microsoft Corporation.  All rights reserved.
 //------------------------------------------------------------------------------
 
+#pragma once
+
 #include "stdafx.h"
-#include <streams.h>
 #include <strsafe.h>
 
 //---------------------------------------------------------------------------

@@ -14,9 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
+#pragma once
+
 #include "stdafx.h"
 
-#include <streams.h>
 #include <atlbase.h>
 #include <shlobj.h>
 #include <queue>

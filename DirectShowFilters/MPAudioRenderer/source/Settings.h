@@ -14,14 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
-#include <streams.h>
+#pragma once
+
 #include <dsound.h>
 #include <MMReg.h>  //must be before other Wasapi headers
 #include <strsafe.h>
 #include <mmdeviceapi.h>
 #include <Avrt.h>
 #include <audioclient.h>
-
 
 #define MAX_REG_LENGTH 256
 
