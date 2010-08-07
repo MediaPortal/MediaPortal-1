@@ -937,6 +937,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\MediaSeeking.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\MpAudioRenderer.cpp"
 				>
 			</File>

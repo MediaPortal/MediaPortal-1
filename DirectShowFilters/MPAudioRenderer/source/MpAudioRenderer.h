@@ -77,7 +77,7 @@ public:
 	STDMETHOD(Stop)();
 	STDMETHOD(Pause)();
 
-  // === IMediaSeeking
+  // === IMediaSeeking - implementation is located in MediaSeeking.cpp
   STDMETHODIMP IsFormatSupported(const GUID* pFormat);
   STDMETHODIMP QueryPreferredFormat(GUID* pFormat);
   STDMETHODIMP SetTimeFormat(const GUID* pFormat);
