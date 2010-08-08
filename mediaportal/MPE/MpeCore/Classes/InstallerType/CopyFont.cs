@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -46,6 +47,9 @@ namespace MpeCore.Classes.InstallerType
                                          int lParam // second message parameter 
       );
 
+    const int WM_FONTCHANGE = 0x001D;
+    const int HWND_BROADCAST = 0xffff;
+
     public new string Name
     {
       get { return "CopyFont"; }
@@ -64,7 +68,13 @@ namespace MpeCore.Classes.InstallerType
     public new void Install(PackageClass packageClass, FileItem fileItem)
     {
       base.Install(packageClass, fileItem);
-      int res = AddFontResource(fileItem.ExpandedDestinationFilename);
+      string fontFilePath = fileItem.ExpandedDestinationFilename;
+      if (AddFontResource(fontFilePath) != 0)
+      {
+        SendMessage(HWND_BROADCAST, WM_FONTCHANGE, 0, 0);
+        WriteProfileString("fonts", Path.GetFileNameWithoutExtension(fontFilePath) + " (TrueType)",
+                           Path.GetFileName(fontFilePath));
+      }
     }
   }
 }
