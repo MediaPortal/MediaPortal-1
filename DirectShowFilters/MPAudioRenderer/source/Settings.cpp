@@ -18,6 +18,7 @@
 #include "Settings.h"
 
 extern void Log(const char *fmt, ...);
+extern void LogRotate();
 
 AudioRendererSettings::AudioRendererSettings() : 
   m_bLogSampleTimes(false),
@@ -28,6 +29,9 @@ AudioRendererSettings::AudioRendererSettings() :
   m_WASAPIShareMode(AUDCLNT_SHAREMODE_EXCLUSIVE),
   m_wWASAPIPreferredDeviceId(NULL)
 {
+  LogRotate();
+  Log("MP Audio Renderer - v0.64");
+
   LoadSettingsFromRegistry();
 }
 

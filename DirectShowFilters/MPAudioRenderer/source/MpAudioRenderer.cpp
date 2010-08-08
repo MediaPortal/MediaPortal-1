@@ -85,7 +85,6 @@ CUnknown* WINAPI CMPAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 // for logging
 extern void Log(const char *fmt, ...);
 extern void LogWaveFormat(WAVEFORMATEX* pwfx, const char *text);
-extern void LogRotate();
 
 CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 : CBaseRenderer(__uuidof(this), NAME("MediaPortal - Audio Renderer"), punk, phr)
@@ -101,8 +100,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_rtPrevSampleTime(0)
 , m_bDropSamples(false)
 {
-  LogRotate();
-  Log("MP Audio Renderer - v0.62 - instance 0x%x", this);
+  Log("CMPAudioRenderer - instance 0x%x", this);
 
   if (m_Settings.m_bUseWASAPI)
   {
@@ -248,17 +246,10 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   HRESULT hr = GetSampleTimes(pMediaSample, &rtSampleTime, &rtSampleEndTime);
   if (FAILED(hr)) return FALSE;
 
-  // Try to keep the A/V sync when data has been dropped
-  // TODO: latency should be taken into account somehow
-  if ((abs(rtSampleTime - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_dSampleCounter > 1)
-  {
-    m_bDropSamples = true;
-    Log("  Dropped audio data detected: diff: %.3f ms MAX_SAMPLE_TIME_ERROR: %.3f ms", ((double)rtSampleTime - (double)m_rtNextSampleTime) / 10000.0, (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
-  }
-
   // Get media time
   m_pClock->GetTime(&rtTime);
   rtTime = rtTime - m_tStart;
+  rtTime += m_pRenderDevice->Latency();
   
   long sampleLenght = pMediaSample->GetActualDataLength();
 
@@ -266,6 +257,22 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   REFERENCE_TIME rtSampleDuration = nFrames * UNITS / m_pWaveFileFormat->nSamplesPerSec;
   REFERENCE_TIME rtLate = rtTime - rtSampleTime;
   
+  // Try to keep the A/V sync when data has been dropped
+  if ((abs(rtSampleTime - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_dSampleCounter > 1)
+  {
+    m_bDropSamples = true;
+    Log("  Dropped audio data detected: diff: %.3f ms MAX_SAMPLE_TIME_ERROR: %.3f ms", ((double)rtSampleTime - (double)m_rtNextSampleTime) / 10000.0, (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
+  }
+  else if (rtLate > rtSampleDuration)
+  {
+    m_bDropSamples = true;
+  }
+  else if(rtLate <= rtSampleDuration && m_bDropSamples)
+  {
+    m_bDropSamples = false;
+    Log("  Live stream position after ::Run has been reached");
+  }
+
   m_rtNextSampleTime = rtSampleTime + rtSampleDuration;
   
   if(m_Settings.m_bLogSampleTimes)
@@ -299,7 +306,7 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
       newLenght = min(newLenght, sampleLenght);
     }
 
-    Log("   dropping part of sample %d / %d bytes", newLenght, sampleLenght);
+    Log("  dropping part of sample %d / %d bytes", newLenght, sampleLenght);
     pMediaSample->SetActualDataLength(newLenght);
 
     BYTE* sampleData = NULL;

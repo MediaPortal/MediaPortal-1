@@ -117,7 +117,6 @@ private:
   WAVEFORMATEX*         m_pWaveFileFormat;
   CBaseReferenceClock*	m_pReferenceClock;
   double					      m_dRate;
-
   CMultiSoundTouch*	    m_pSoundTouch;
    
 private:
@@ -126,7 +125,6 @@ private:
   double      m_dAdjustment;
   CCritSec    m_csResampleLock;
   CCritSec    m_RenderThreadLock;
-
   DWORD       m_dwTimeStart;
   LONGLONG    m_dSampleCounter;
 
@@ -138,7 +136,6 @@ private:
   bool m_bDropSamples;
 
   AudioRendererSettings m_Settings;
-
 
   IRenderDevice* m_pRenderDevice;
 };
