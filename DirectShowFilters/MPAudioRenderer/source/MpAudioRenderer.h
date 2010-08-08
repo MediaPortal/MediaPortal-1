@@ -31,15 +31,13 @@
 #include <audioclient.h>
 #include <Endpointvolume.h>
 
+#include "IAVSyncClock.h"
+#include "IRenderDevice.h"
+
 #include "../SoundTouch/Include/SoundTouch.h"
 #include "MultiSoundTouch.h"
 #include "SyncClock.h"
-#include "IAVSyncClock.h"
 #include "Settings.h"
-
-// REFERENCE_TIME time units per second and per millisecond
-#define REFTIMES_PER_SEC  10000000
-#define REFTIMES_PER_MILLISEC  10000
 
 // if you get a compilation error on AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED,
 // uncomment the #define below
@@ -51,30 +49,30 @@
 class CMPAudioRenderer : public CBaseRenderer, IMediaSeeking, IAVSyncClock
 {
 public:
-	CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr);
-	~CMPAudioRenderer();
+  CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr);
+  ~CMPAudioRenderer();
 
   static const AMOVIESETUP_FILTER sudASFilter;
 
-	HRESULT CheckInputType(const CMediaType* mtIn);
-	HRESULT CheckMediaType(const CMediaType *pmt);
-	HRESULT DoRenderSample(IMediaSample *pMediaSample);
-	void    OnReceiveFirstSample(IMediaSample *pMediaSample);
-	BOOL    ScheduleSample(IMediaSample *pMediaSample);
-	HRESULT SetMediaType(const CMediaType *pmt);
+  HRESULT CheckInputType(const CMediaType* mtIn);
+  HRESULT CheckMediaType(const CMediaType *pmt);
+  HRESULT DoRenderSample(IMediaSample *pMediaSample);
+  void    OnReceiveFirstSample(IMediaSample *pMediaSample);
+  BOOL    ScheduleSample(IMediaSample *pMediaSample);
+  HRESULT SetMediaType(const CMediaType *pmt);
   HRESULT CompleteConnect(IPin *pReceivePin);
-	HRESULT EndOfStream(void);
+  HRESULT EndOfStream();
   HRESULT BeginFlush();
   HRESULT EndFlush();
 
   DECLARE_IUNKNOWN
   static CUnknown* WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);
-	STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void **ppv);
+  STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void **ppv);
 
-	// === IMediaFilter
-	STDMETHOD(Run)(REFERENCE_TIME tStart);
-	STDMETHOD(Stop)();
-	STDMETHOD(Pause)();
+  // === IMediaFilter
+  STDMETHOD(Run)(REFERENCE_TIME tStart);
+  STDMETHOD(Stop)();
+  STDMETHOD(Pause)();
 
   // === IMediaSeeking - implementation is located in MediaSeeking.cpp
   STDMETHODIMP IsFormatSupported(const GUID* pFormat);
@@ -96,64 +94,32 @@ public:
   STDMETHODIMP GetPreroll(LONGLONG *pPreroll);
 
   // === IAVSyncClock
-	STDMETHOD(AdjustClock)(DOUBLE adjustment);
-	STDMETHOD(SetBias)(DOUBLE bias);
-	STDMETHOD(GetBias)(DOUBLE *bias);
+  STDMETHOD(AdjustClock)(DOUBLE adjustment);
+  STDMETHOD(SetBias)(DOUBLE bias);
+  STDMETHOD(GetBias)(DOUBLE *bias);
 
   void AudioClock(UINT64& pTimestamp, UINT64& pQpc);
+
+  // RenderDevice(s) uses these getters
+  WAVEFORMATEX* WaveFormat() { return m_pWaveFileFormat; }
+  AudioRendererSettings* Settings(){ return &m_Settings; }
+  IFilterGraph* Graph(){ return m_pGraph; }
+  CMultiSoundTouch* SoundTouch(){ return m_pSoundTouch; }
+  CCritSec* ResampleLock() { return &m_csResampleLock; }
+  CCritSec* RenderThreadLock() { return &m_RenderThreadLock; }
+  CCritSec* InterfaceLock() { return &m_InterfaceLock; }
 
   // CMpcAudioRenderer
 private:
 
-  // DirectSound methods
-  HRESULT DoRenderSampleDirectSound(IMediaSample *pMediaSample);
-  HRESULT InitCoopLevel();
-  HRESULT ClearBuffer();
-  HRESULT CreateDSBuffer();
   HRESULT GetReferenceClockInterface(REFIID riid, void **ppv);
-  HRESULT WriteSampleToDSBuffer(IMediaSample *pMediaSample, bool *looped);
 
-  LPDIRECTSOUND8        m_pDS;
-  LPDIRECTSOUNDBUFFER   m_pDSBuffer;
-  DWORD                 m_dwDSWriteOff;
   WAVEFORMATEX*         m_pWaveFileFormat;
-  int						        m_nDSBufSize;
   CBaseReferenceClock*	m_pReferenceClock;
   double					      m_dRate;
 
   CMultiSoundTouch*	    m_pSoundTouch;
-
-  // WASAPI methods
-  HRESULT     GetAudioDevice(IMMDevice **ppMMDevice);
-  HRESULT     GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevices, bool pLog); // caller must release ppMMDevices!
-  HRESULT     CreateAudioClient(IMMDevice *pMMDevice, IAudioClient **ppAudioClient);
-  HRESULT     InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioClient *pAudioClient, IAudioRenderClient **ppRenderClient);
-  HRESULT     CheckAudioClient(WAVEFORMATEX *pWaveFormatEx);
-  bool        CheckFormatChanged(WAVEFORMATEX *pWaveFormatEx, WAVEFORMATEX **ppNewWaveFormatEx);
-  HRESULT     DoRenderSampleWasapi(IMediaSample *pMediaSample);
-  HRESULT     GetBufferSize(WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
    
-  // WASAPI variables
-  IMMDevice*          m_pMMDevice;
-  IAudioClient*       m_pAudioClient;
-  IAudioRenderClient* m_pRenderClient;
-  UINT32              m_nFramesInBuffer;
-  REFERENCE_TIME      m_hnsActualDuration;
-  HANDLE              m_hTask;
-  CCritSec            m_csCheck;
-  UINT32              m_nBufferSize;
-  bool                m_bIsAudioClientStarted;
-  DWORD               m_dwLastBufferTime;
-  bool                m_bReinitAfterStop;
-  bool                m_bDiscardCurrentSample;
-
-  // AVRT.dll (Vista or greater)
-  typedef HANDLE (__stdcall *PTR_AvSetMmThreadCharacteristicsW)(LPCWSTR TaskName, LPDWORD TaskIndex);
-  typedef BOOL (__stdcall *PTR_AvRevertMmThreadCharacteristics)(HANDLE AvrtHandle);
-
-  PTR_AvSetMmThreadCharacteristicsW		pfAvSetMmThreadCharacteristicsW;
-  PTR_AvRevertMmThreadCharacteristics		pfAvRevertMmThreadCharacteristics;
-
 private:
   CSyncClock  m_Clock;
   double      m_dBias;
@@ -164,9 +130,6 @@ private:
   DWORD       m_dwTimeStart;
   LONGLONG    m_dSampleCounter;
 
-  IAudioClock*  m_pAudioClock;
-  UINT64        m_nHWfreq;
-
   // Used for detecting dropped data
   REFERENCE_TIME m_rtNextSampleTime;
   REFERENCE_TIME m_rtPrevSampleTime;
@@ -176,17 +139,6 @@ private:
 
   AudioRendererSettings m_Settings;
 
-  // For SPDIF
-  void CreateWaveFormatForAC3(WAVEFORMATEX* pwfx);
 
-  // Audio rendering thread  
-  static DWORD WINAPI RenderThreadEntryPoint(LPVOID lpParameter);
-  DWORD RenderThread();
-  DWORD m_threadId;
-
-  HANDLE m_hRenderThread;
-
-  HANDLE m_hDataEvent;
-  HANDLE m_hStopRenderThreadEvent;
-  HANDLE m_hWaitRenderThreadToExitEvent;
+  IRenderDevice* m_pRenderDevice;
 };

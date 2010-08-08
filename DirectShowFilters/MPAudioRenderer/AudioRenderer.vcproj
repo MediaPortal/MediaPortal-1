@@ -925,6 +925,10 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
 			>
 			<File
+				RelativePath=".\source\DirectSoundRenderer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\dllmain.cpp"
 				>
 			</File>
@@ -964,11 +968,19 @@
 				RelativePath=".\source\SyncClock.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\source\WASAPIRenderer.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
+			<File
+				RelativePath=".\source\DirectSoundRenderer.h"
+				>
+			</File>
 			<File
 				RelativePath=".\source\dllsetup.h"
 				>
@@ -979,6 +991,10 @@
 			</File>
 			<File
 				RelativePath=".\source\IAVSyncClock.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\IRenderDevice.h"
 				>
 			</File>
 			<File
@@ -1011,6 +1027,10 @@
 			</File>
 			<File
 				RelativePath=".\source\SyncClock.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\WASAPIRenderer.h"
 				>
 			</File>
 		</Filter>

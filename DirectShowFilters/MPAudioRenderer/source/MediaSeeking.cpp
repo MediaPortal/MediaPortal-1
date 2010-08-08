@@ -113,21 +113,7 @@ STDMETHODIMP CMPAudioRenderer::SetRate(double dRate)
 
   if (m_dRate != dRate && dRate == 1.0)
   {
-    if (m_pAudioClient && m_bIsAudioClientStarted) 
-    {
-      HRESULT hr = S_OK;
-    
-      m_pAudioClient->Stop();
-      hr = m_pAudioClient->Reset();
-      m_bIsAudioClientStarted = false;
-
-      if (hr != S_OK)
-      {
-        Log("SetRate - m_pAudioClient reset failed with (0x%08x)", hr);
-      }
-    }
-  
-    m_bDiscardCurrentSample = true;
+    m_pRenderDevice->SetRate(dRate);
 
     m_pSoundTouch->BeginFlush();
     m_pSoundTouch->clear();

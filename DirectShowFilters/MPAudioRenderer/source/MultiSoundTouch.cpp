@@ -41,11 +41,6 @@ template<class T> inline T odd2even(T x)
   return x&1 ? x + 1 : x;
 }
 
-// move these in a separate common header 
-#define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
-#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
-#define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
-
 extern void Log(const char *fmt, ...);
 
 typedef struct tagSpeakerPair {
