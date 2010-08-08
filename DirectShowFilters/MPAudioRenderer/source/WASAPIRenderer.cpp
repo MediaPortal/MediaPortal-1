@@ -149,10 +149,8 @@ HRESULT WASAPIRenderer::SetMediaType(const CMediaType *pmt)
     WAVEFORMATEX *pNewWf = (WAVEFORMATEX *)pmt->Format();
     Log("WASAPIRenderer::SetMediaType Render client already initialized. Reinitialization...");
     CheckAudioClient(pNewWf);
-    return S_OK;
   }
-  Log("WASAPIRenderer::SetMediaType failed, m_pRenderClient missing!");
-  return S_FALSE;
+  return S_OK;
 }
 
 HRESULT WASAPIRenderer::CompleteConnect(IPin *pReceivePin)
