@@ -46,10 +46,6 @@ CMpegPesParser::CMpegPesParser()
 	pmt.bFixedSizeSamples=false;
 	basicVideoInfo=BasicVideoInfo();
 
-	FILE *f=fopen("c:\\forceAVC1.txt","r");
-	forceAVC1=(f!=NULL);
-	if (f!=NULL)
-		fclose(f);
 }
 
 bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2)
@@ -94,8 +90,6 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket,bool isMpeg2)
 				basicVideoInfo.isInterlaced=0;
 			basicVideoInfo.streamType=2; // H264
 			basicVideoInfo.isValid=true;
-			if (forceAVC1)
-				pmt.subtype=FOURCCMap('1CVA');
 			parsed=true;
 		}
 	}

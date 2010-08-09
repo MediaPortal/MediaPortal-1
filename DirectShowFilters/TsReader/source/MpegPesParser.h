@@ -41,7 +41,6 @@ class CMpegPesParser
 private:
 	CFrameHeaderParser hdrParser;
 	bool ParseVideo(byte* tsPacket,bool isMpeg2);
-	bool forceAVC1;
 
 public:
 	CMpegPesParser();
