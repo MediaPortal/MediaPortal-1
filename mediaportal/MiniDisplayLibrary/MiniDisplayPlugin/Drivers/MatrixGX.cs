@@ -1009,10 +1009,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           object[] arg = new object[] {cDDriveLetters.Length.ToString()};
           Log.Info("MatrixGX.MOGXDisplay.DisplayUpdate() Found {0} CD/DVD Drives.", arg);
         }
-        if (cDDriveLetters.Length > 0)
-        {
-          drive.Open(cDDriveLetters[0]);
-        }
+        //if (cDDriveLetters.Length > 0)
+        //{
+        //  drive.Open(cDDriveLetters[0]);
+        //}
         icon.Reset();
         while (true)
         {
