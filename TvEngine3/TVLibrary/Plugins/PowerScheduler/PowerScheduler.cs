@@ -1290,6 +1290,9 @@ namespace TvEngine.PowerScheduler
         psi.UseShellExecute = true;
         psi.WindowStyle = ProcessWindowStyle.Minimized;
         psi.Arguments = action;
+        psi.ErrorDialog = false;
+        psi.Verb = "runas";
+
         p.StartInfo = psi;
         LogVerbose("Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
         try
