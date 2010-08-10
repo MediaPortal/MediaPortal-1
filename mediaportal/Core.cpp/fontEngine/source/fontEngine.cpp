@@ -250,19 +250,17 @@ void FontEngineSetDevice(void* device)
     m_Filter = D3DTEXF_LINEAR;
   }
   m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
+  m_alphaBlend = -1;
 }
 
 //*******************************************************************************************************************
 
 void FontEngineSetAlphaBlend(DWORD alphaBlend)
 {
-  //char log[128];
   if(alphaBlend!=m_alphaBlend)
   {
     m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,alphaBlend);
     m_alphaBlend = alphaBlend;
-    //sprintf(log,"FontEngineSetAlphaBlend(%d)\n", alphaBlend);
-    //Log(log);
   }
 }
 
@@ -778,19 +776,10 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   verts[3].tv2 = ty1_2;//v2*m_diffuseScaleV;
   verts[3].color = color;
 
-  m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,TRUE);
-  m_pDevice->SetRenderState( D3DRS_ALPHATESTENABLE, TRUE );
-  m_pDevice->SetRenderState( D3DRS_ALPHAREF, 0 );
-  m_pDevice->SetRenderState( D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL );
-  m_pDevice->SetRenderState( D3DRS_FOGENABLE, FALSE );
-  m_pDevice->SetRenderState( D3DRS_FOGTABLEMODE, D3DFOG_NONE );
-  m_pDevice->SetRenderState( D3DRS_FILLMODE, D3DFILL_SOLID );
-  m_pDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
+  FontEngineSetAlphaBlend(TRUE);
   m_pDevice->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
   m_pDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-  m_pDevice->SetRenderState( D3DRS_ZENABLE, FALSE );
-  m_pDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE );
-  m_pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+
 
   if (!ignoreTextureBlending)
   {
@@ -913,19 +902,10 @@ void FontEngineDrawMaskedTexture(int textureNo1,float x, float y, float nw, floa
   verts[3].tv2 = ty1_2;
   verts[3].color = color;
 
-  m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-  m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-  m_pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
-  m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
-  m_pDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
-  m_pDevice->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_NONE);
-  m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-  m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+  FontEngineSetAlphaBlend(TRUE);
+
   m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
   m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-  m_pDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
-  m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-  m_pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
   // This stage simply selects color and alpha from texture1.
   // Choose the alpha and color from the current texture (texture1).
@@ -1068,19 +1048,11 @@ void FontEngineDrawMaskedTexture2(int textureNo1,float x, float y, float nw, flo
   verts[3].tv3 = ty1_3;
   verts[3].color = color;
 
-  m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,TRUE);
-  m_pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-  m_pDevice->SetRenderState(D3DRS_ALPHAREF, 0);
-  m_pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
-  m_pDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
-  m_pDevice->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_NONE);
-  m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-  m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+  FontEngineSetAlphaBlend(TRUE);
+
   m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
   m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-  m_pDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
-  m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-  m_pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+
 
   m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
   m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);

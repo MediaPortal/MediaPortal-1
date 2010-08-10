@@ -32,6 +32,8 @@ using Microsoft.DirectX.Direct3D;
 using Font = System.Drawing.Font;
 using MediaPortal.ExtensionMethods;
 
+
+
 namespace MediaPortal.Player.Subtitles
 {
   /// <summary>
@@ -179,6 +181,9 @@ namespace MediaPortal.Player.Subtitles
 
   public class SubtitleRenderer
   {
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void FontEngineSetAlphaBlend(UInt32 alphaBlend);
+
     private bool _useBitmap = false; // if false use teletext
     private int _activeSubPage = -1; // if use teletext, what page
     private static SubtitleRenderer _instance = null;
@@ -768,7 +773,6 @@ namespace MediaPortal.Player.Subtitles
         try
         {
           // store current settings so they can be restored when we are done
-          alphaTest = GUIGraphicsContext.DX9Device.GetRenderStateBoolean(RenderStates.AlphaTestEnable);
           alphaBlend = GUIGraphicsContext.DX9Device.GetRenderStateBoolean(RenderStates.AlphaBlendEnable);
           vertexFormat = GUIGraphicsContext.DX9Device.VertexFormat;
 
@@ -802,11 +806,10 @@ namespace MediaPortal.Player.Subtitles
           CreateVertexBuffer(wx, wy, wwidth, wheight);
 
           // Log.Debug("Subtitle render target: wx = {0} wy = {1} ww = {2} wh = {3}", wx, wy, wwidth, wheight);
-
-          // enable alpha testing so that the subtitle is rendered with transparent background
-          GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, true);
-          GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaTestEnable, false);
-
+          
+          // enable alpha blending so that the subtitle is rendered with transparent background
+          FontEngineSetAlphaBlend(1); //TRUE
+          
           // Make sure D3D objects haven't been disposed for some reason. This would  cause
           // an access violation on native side, causing Skin Engine to halt rendering
           if (!_subTexture.Disposed && !_vertexBuffer.Disposed)
@@ -831,8 +834,6 @@ namespace MediaPortal.Player.Subtitles
           // Restore device settings
           GUIGraphicsContext.DX9Device.SetTexture(0, null);
           GUIGraphicsContext.DX9Device.VertexFormat = vertexFormat;
-          GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, alphaBlend);
-          GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaTestEnable, alphaTest);
         }
         catch (Exception e)
         {

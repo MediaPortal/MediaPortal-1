@@ -54,7 +54,8 @@ namespace MediaPortal.Player
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineSetTexture(void* texture);
-
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void FontEngineSetAlphaBlend(UInt32 alphaBlend);
 
     #endregion
 
@@ -794,8 +795,7 @@ namespace MediaPortal.Player
         GUIGraphicsContext.DX9Device.SamplerState[0].AddressV = TextureAddress.Clamp;
         GUIGraphicsContext.DX9Device.VertexFormat = CustomVertex.TransformedColoredTextured.Format;
 
-        GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, false);
-        GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaTestEnable, false);
+        FontEngineSetAlphaBlend(0); //FALSE
 
         if (_useNonLinearStretch)
         {
@@ -851,9 +851,6 @@ namespace MediaPortal.Player
                              _destinationRect.Height,
                              lColorDiffuse);
         }
-
-        GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaBlendEnable, true);
-        GUIGraphicsContext.DX9Device.SetRenderState(RenderStates.AlphaTestEnable, true);
 
         // unset the texture and palette or the texture caching crashes because the runtime still has a reference
         GUIGraphicsContext.DX9Device.SetTexture(0, null);

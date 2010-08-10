@@ -3470,7 +3470,6 @@ public class MediaPortalApp : D3DApp, IRender
     GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = true;
     GUIGraphicsContext.DX9Device.RenderState.FogEnable = false;
     GUIGraphicsContext.DX9Device.RenderState.FillMode = FillMode.Solid;
-    GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = true;
     GUIGraphicsContext.DX9Device.RenderState.SourceBlend = Blend.SourceAlpha;
     GUIGraphicsContext.DX9Device.RenderState.DestinationBlend = Blend.InvSourceAlpha;
     GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation = TextureOperation.Modulate;
