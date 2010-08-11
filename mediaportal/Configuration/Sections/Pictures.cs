@@ -47,6 +47,8 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox checkBoxUseExif;
     private MPGroupBox groupBoxViewSettings;
     private MPCheckBox checkBoxGroupDays;
+    private MPCheckBox checkBoxEnableVideo;
+    private MPCheckBox checkBoxPlayVideosInSlideshow;
     private IContainer components = null;
 
     public Pictures()
@@ -77,6 +79,8 @@ namespace MediaPortal.Configuration.Sections
         checkBoxUsePicasa.Checked = xmlreader.GetValueAsBool("pictures", "usePicasa", false);
 
         checkBoxGroupDays.Checked = xmlreader.GetValueAsBool("pictures", "useDayGrouping", false);
+        checkBoxEnableVideo.Checked = xmlreader.GetValueAsBool("pictures", "enableVideoPlayback", false);
+        checkBoxPlayVideosInSlideshow.Checked = xmlreader.GetValueAsBool("pictures", "playVideosInSlideshows", false);
       }
     }
 
@@ -94,6 +98,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("pictures", "useExif", checkBoxUseExif.Checked);
         xmlwriter.SetValueAsBool("pictures", "usePicasa", checkBoxUseExif.Checked);
         xmlwriter.SetValueAsBool("pictures", "useDayGrouping", checkBoxGroupDays.Checked);
+        xmlwriter.SetValueAsBool("pictures", "enableVideoPlayback", checkBoxEnableVideo.Checked);
+        xmlwriter.SetValueAsBool("pictures", "playVideosInSlideshows", checkBoxPlayVideosInSlideshow.Checked);
       }
     }
 
@@ -137,7 +143,9 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxUsePicasa = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxUseExif = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxViewSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxEnableVideo = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxGroupDays = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxPlayVideosInSlideshow = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBoxRotation.SuspendLayout();
@@ -146,10 +154,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.kenburnsTextBox);
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.transitionTextBox);
@@ -168,10 +174,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // kenburnsTextBox
       // 
-      this.kenburnsTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.kenburnsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.kenburnsTextBox.BorderColor = System.Drawing.Color.Empty;
       this.kenburnsTextBox.Location = new System.Drawing.Point(168, 68);
       this.kenburnsTextBox.Name = "kenburnsTextBox";
@@ -189,10 +193,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // transitionTextBox
       // 
-      this.transitionTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.transitionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.transitionTextBox.BorderColor = System.Drawing.Color.Empty;
       this.transitionTextBox.Location = new System.Drawing.Point(168, 44);
       this.transitionTextBox.Name = "transitionTextBox";
@@ -201,10 +203,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // durationTextBox
       // 
-      this.durationTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.durationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.durationTextBox.BorderColor = System.Drawing.Color.Empty;
       this.durationTextBox.Location = new System.Drawing.Point(168, 20);
       this.durationTextBox.Name = "durationTextBox";
@@ -253,10 +253,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.radioButtonKenBurns);
       this.groupBox2.Controls.Add(this.radioButtonRandom);
       this.groupBox2.Controls.Add(this.radioButtonXFade);
@@ -339,14 +337,28 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxViewSettings
       // 
+      this.groupBoxViewSettings.Controls.Add(this.checkBoxPlayVideosInSlideshow);
+      this.groupBoxViewSettings.Controls.Add(this.checkBoxEnableVideo);
       this.groupBoxViewSettings.Controls.Add(this.checkBoxGroupDays);
       this.groupBoxViewSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxViewSettings.Location = new System.Drawing.Point(0, 347);
       this.groupBoxViewSettings.Name = "groupBoxViewSettings";
-      this.groupBoxViewSettings.Size = new System.Drawing.Size(472, 52);
+      this.groupBoxViewSettings.Size = new System.Drawing.Size(472, 96);
       this.groupBoxViewSettings.TabIndex = 3;
       this.groupBoxViewSettings.TabStop = false;
       this.groupBoxViewSettings.Text = "View Settings";
+      // 
+      // checkBoxEnableVideo
+      // 
+      this.checkBoxEnableVideo.AutoSize = true;
+      this.checkBoxEnableVideo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxEnableVideo.Location = new System.Drawing.Point(19, 47);
+      this.checkBoxEnableVideo.Name = "checkBoxEnableVideo";
+      this.checkBoxEnableVideo.Size = new System.Drawing.Size(260, 17);
+      this.checkBoxEnableVideo.TabIndex = 8;
+      this.checkBoxEnableVideo.Text = "Enable playing videos files made with your camera";
+      this.checkBoxEnableVideo.UseVisualStyleBackColor = true;
+      this.checkBoxEnableVideo.CheckedChanged += new System.EventHandler(this.checkBoxEnableVideo_CheckedChanged);
       // 
       // checkBoxGroupDays
       // 
@@ -359,6 +371,17 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxGroupDays.Text = "Create a group for each day in date view (instead of showing the full month)";
       this.checkBoxGroupDays.UseVisualStyleBackColor = true;
       // 
+      // checkBoxPlayVideosInSlideshow
+      // 
+      this.checkBoxPlayVideosInSlideshow.AutoSize = true;
+      this.checkBoxPlayVideosInSlideshow.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxPlayVideosInSlideshow.Location = new System.Drawing.Point(19, 70);
+      this.checkBoxPlayVideosInSlideshow.Name = "checkBoxPlayVideosInSlideshow";
+      this.checkBoxPlayVideosInSlideshow.Size = new System.Drawing.Size(143, 17);
+      this.checkBoxPlayVideosInSlideshow.TabIndex = 9;
+      this.checkBoxPlayVideosInSlideshow.Text = "Play videos in slideshows";
+      this.checkBoxPlayVideosInSlideshow.UseVisualStyleBackColor = true;
+      // 
       // Pictures
       // 
       this.Controls.Add(this.groupBoxViewSettings);
@@ -366,7 +389,7 @@ namespace MediaPortal.Configuration.Sections
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.groupBox2);
       this.Name = "Pictures";
-      this.Size = new System.Drawing.Size(472, 408);
+      this.Size = new System.Drawing.Size(472, 446);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.groupBox2.ResumeLayout(false);
@@ -376,8 +399,14 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxViewSettings.ResumeLayout(false);
       this.groupBoxViewSettings.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion
+
+    private void checkBoxEnableVideo_CheckedChanged(object sender, EventArgs e)
+    {
+      checkBoxPlayVideosInSlideshow.Enabled = (checkBoxEnableVideo.Checked);
+    }
   }
 }

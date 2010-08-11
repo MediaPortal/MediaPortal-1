@@ -52,13 +52,27 @@ namespace MediaPortal.GUI.Pictures
       string slideFilePath = _slideList[_currentSlideIndex];
 
       _currentSlide = _slideCache.GetCurrentSlide(slideFilePath);
-
       GUIPropertyManager.SetProperty("#selecteditem", Util.Utils.GetFilename(slideFilePath));
 
       ResetCurrentZoom(_currentSlide);
 
       PrefetchNextSlide();
 
+      GUIPictures tmpGUIpictures = (GUIPictures)GUIWindowManager.GetWindow((int)Window.WINDOW_PICTURES);
+      Log.Info("GEMX: LoadSlide - currentSlideIndex {0}", _currentSlideIndex);
+      if (_isSlideShow)
+        tmpGUIpictures.IncSelectedItemIndex();
+      else
+        tmpGUIpictures.SetSelectedItemIndex(_currentSlideIndex);
+      if (Util.Utils.IsVideo(slideFilePath))
+      {
+        _returnedFromVideoPlayback = true;
+        g_Player.Play(slideFilePath, g_Player.MediaType.Video);
+        g_Player.ShowFullScreenWindow();
+        _returnedFromVideoPlayback = true;
+      }
+      else
+        _slideDirection = 0;
       return _currentSlide;
     }
 
@@ -157,7 +171,7 @@ namespace MediaPortal.GUI.Pictures
     private SlidePicture _currentSlide = null;
 
     private int _frameCounter = 0;
-    private int _currentSlideIndex = 0;
+    public int _currentSlideIndex = 0;
     private int _lastSlideShown = -1;
     private int _transitionMethod = 0;
     private bool _isSlideShow = false;
@@ -171,6 +185,8 @@ namespace MediaPortal.GUI.Pictures
     private bool _update = false;
     private bool _useRandomTransitions = true;
     private float _defaultZoomFactor = 1.0f;
+    private static bool _returnedFromVideoPlayback = false;
+    private static int _slideDirection = 0; //-1=backwards, 0=nothing, 1=forward
 
 
     private bool _isPictureZoomed
@@ -224,6 +240,18 @@ namespace MediaPortal.GUI.Pictures
 
     #endregion
 
+    public static int SlideDirection
+    {
+      get
+      {
+        return _slideDirection;
+      }
+      set
+      {
+        _slideDirection = value;
+      }
+    }
+
     #region GUIWindow overrides
 
     public GUISlideShow()
@@ -243,17 +271,30 @@ namespace MediaPortal.GUI.Pictures
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           _showOverlayFlag = GUIGraphicsContext.Overlay;
-          base.OnMessage(message);
           GUIGraphicsContext.Overlay = false;
-          _update = false;
-          _lastSlideShown = -1;
-          _currentSlideIndex = -1;
+          Log.Info("GEMX: GUISlideShow init");
+          base.OnMessage(message);
+
+          if (_returnedFromVideoPlayback)
+            GUIWindowManager.ShowPreviousWindow();
+          else
+          {
+            _update = false;
+            _lastSlideShown = -1;
+            _currentSlideIndex = -1;
+          }
           // LoadSettings();
           return true;
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          Reset();
+          Log.Info("GEMX: IsSlideShow {0}", _isSlideShow);
+          Log.Info("GEMX: GUISlideShow de-init {0}", _returnedFromVideoPlayback);
+          if (!_returnedFromVideoPlayback)
+            Reset();
+          if (_returnedFromVideoPlayback && !_isSlideShow)
+            Reset();
           GUIGraphicsContext.Overlay = _showOverlayFlag;
+          _returnedFromVideoPlayback = false;
           break;
 
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
@@ -279,7 +320,7 @@ namespace MediaPortal.GUI.Pictures
 
     public override bool FullScreenVideoAllowed
     {
-      get { return false; }
+      get { return true; }
     }
 
     public override void OnDeviceRestored()
@@ -332,13 +373,19 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case Action.ActionType.ACTION_PREV_ITEM:
+          Log.Info("GEMX: ACTION_PREV_ITEM");
           if (_lastSegmentIndex != -1)
           {
             ShowPrevious(true);
+            _slideDirection = -1;
           }
+          else
+            _slideDirection = 0;
 
           break;
         case Action.ActionType.ACTION_PREV_PICTURE:
+          Log.Info("GEMX: ACTION_PREV_PICTURE");
+          _slideDirection = -1;
           if (!_isPictureZoomed)
           {
             ShowPrevious();
@@ -355,13 +402,19 @@ namespace MediaPortal.GUI.Pictures
           }
           break;
         case Action.ActionType.ACTION_NEXT_ITEM:
+          Log.Info("GEMX: ACTION_NEXT_ITEM");
           if (_lastSegmentIndex != -1)
           {
             ShowNext(true);
+            _slideDirection = 1;
           }
+          else
+            _slideDirection = 0;
 
           break;
         case Action.ActionType.ACTION_NEXT_PICTURE:
+          Log.Info("GEMX: ACTION_NEXT_PICTURE");
+          _slideDirection = 1;
           if (!_isPictureZoomed)
           {
             ShowNext();
@@ -379,6 +432,7 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case Action.ActionType.ACTION_MOVE_LEFT:
+          Log.Info("GEMX: ACTION_MOVE_LEFT");
           _zoomLeftBackground -= 25;
           if (_zoomLeftBackground < 0)
           {
@@ -388,6 +442,7 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case Action.ActionType.ACTION_MOVE_RIGHT:
+          Log.Info("GEMX: ACTION_MOVE_RIGHT");
           _zoomLeftBackground += 25;
           if (_zoomLeftBackground > (int)_backgroundSlide.Width - _zoomWidth)
           {
@@ -591,6 +646,11 @@ namespace MediaPortal.GUI.Pictures
 
     public override void Render(float timePassed)
     {
+      if (g_Player.Playing)
+      {
+        base.Render(timePassed);
+        return;
+      }
       //Log.Info("Render:{0} {1} {2}", timePassed, _renderTimer, _frameCounter);
       if (!_isPaused && !_isPictureZoomed)
       {
@@ -955,7 +1015,7 @@ namespace MediaPortal.GUI.Pictures
       {
         Shuffle();
       }
-
+      _slideDirection = 1;
       _isSlideShow = true;
     }
 
@@ -968,7 +1028,7 @@ namespace MediaPortal.GUI.Pictures
       {
         Shuffle();
       }
-
+      _slideDirection = 1;
       _isSlideShow = true;
     }
 
@@ -1025,6 +1085,7 @@ namespace MediaPortal.GUI.Pictures
 
     private void ShowNext(bool jump)
     {
+      Log.Info("GEMX: ShowNext({0})", jump);
       if (!_isSlideShow)
       {
         _update = true;

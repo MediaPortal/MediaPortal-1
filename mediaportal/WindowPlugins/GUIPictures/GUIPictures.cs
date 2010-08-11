@@ -35,6 +35,7 @@ using MediaPortal.Picture.Database;
 using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.Util;
+using MediaPortal.Player;
 
 namespace MediaPortal.GUI.Pictures
 {
@@ -290,6 +291,8 @@ namespace MediaPortal.GUI.Pictures
     private string fileMenuPinCode = string.Empty;
     private bool _autocreateLargeThumbs = true;
     private bool _useDayGrouping = false;
+    private bool _enableVideoPlayback = false;
+    private bool _playVideosInSlideshows = false;
     //bool _hideExtensions = true;
     private Display disp = Display.Files;
     private bool _switchRemovableDrives;
@@ -314,6 +317,8 @@ namespace MediaPortal.GUI.Pictures
       {
         _autocreateLargeThumbs = !xmlreader.GetValueAsBool("thumbnails", "picturenolargethumbondemand", false);
         _useDayGrouping = xmlreader.GetValueAsBool("pictures", "useDayGrouping", false);
+        _enableVideoPlayback = xmlreader.GetValueAsBool("pictures", "enableVideoPlayback", false);
+        _playVideosInSlideshows = xmlreader.GetValueAsBool("pictures", "playVideosInSlideshows", false);
         isFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         string strDefault = xmlreader.GetValueAsString("pictures", "default", string.Empty);
@@ -432,6 +437,11 @@ namespace MediaPortal.GUI.Pictures
       destinationFolder = string.Empty;
       thumbCreationPaths.Clear();
       LoadSettings();
+      if (_enableVideoPlayback)
+      {
+        foreach (string ext in Util.Utils.VideoExtensions)
+          virtualDirectory.AddExtension(ext);
+      }
     }
     public override void OnAction(Action action)
     {
@@ -495,7 +505,22 @@ namespace MediaPortal.GUI.Pictures
       LoadDirectory(currentFolder);
       if (selectedItemIndex >= 0)
       {
+        GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
+        Log.Info("GEMX: currentSlideIndex {0}", SlideShow._currentSlideIndex);
+        /*if (SlideShow._currentSlideIndex != -1)
+          selectedItemIndex += SlideShow._currentSlideIndex+1;*/
+        int direction = GUISlideShow.SlideDirection;
+        GUISlideShow.SlideDirection = 0;
+        if (direction == 1)
+          selectedItemIndex++;
+        else
+          if (direction == -1)
+            selectedItemIndex--;
         GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItemIndex);
+        if (direction != 0)
+          OnClick(selectedItemIndex);
+        else if (SlideShow._currentSlideIndex != -1)
+          OnSlideShow(selectedItemIndex);
       }
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
@@ -937,9 +962,14 @@ namespace MediaPortal.GUI.Pictures
     /// </summary>
     public void SetSelectedItemIndex(int index)
     {
+      Log.Info("GEMX: selectedItemIndex {0}", selectedItemIndex);
       selectedItemIndex = CountOfNonImageItems + index;
     }
-
+    public void IncSelectedItemIndex()
+    {
+      Log.Info("GEMX: INC selectedItemIndex {0}", selectedItemIndex);
+      selectedItemIndex ++;
+    }
     #endregion
 
     #region folder settings
@@ -1403,8 +1433,16 @@ namespace MediaPortal.GUI.Pictures
       }
       if (SlideShow.Count > 0)
       {
-        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
-        SlideShow.Select(strFile);
+        if (Util.Utils.IsVideo(strFile))
+        {
+          g_Player.Play(strFile, g_Player.MediaType.Video);
+          g_Player.ShowFullScreenWindow();
+        }
+        else
+        {
+          GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
+          SlideShow.Select(strFile);
+        }
       }
     }
 
@@ -1482,6 +1520,8 @@ namespace MediaPortal.GUI.Pictures
         GUIListItem item = GetItem(i);
         if (!item.IsFolder && !item.IsRemote)
         {
+          if (!_playVideosInSlideshows && Util.Utils.IsVideo(item.Path))
+            continue;
           SlideShow.Add(item.Path);
         }
 
