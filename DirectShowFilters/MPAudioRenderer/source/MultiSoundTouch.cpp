@@ -449,8 +449,8 @@ int CMultiSoundTouch::isEmpty() const
 
 HRESULT CMultiSoundTouch::ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf)
 {
-  ASSERT(pwf->cbSize <= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX));
-  memcpy(pwfe, pwf, sizeof(WAVEFORMATEX) + pwf->cbSize);
+  //ASSERT(pwf->cbSize <= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX));
+  memcpy(pwfe, pwf, sizeof(WAVEFORMATEX)/* + pwf->cbSize*/);
   pwfe->Format.cbSize = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
   switch(pwfe->Format.wFormatTag)
   {
@@ -482,7 +482,7 @@ HRESULT CMultiSoundTouch::CheckFormat(WAVEFORMATEX *pwf)
   if (pwf == NULL)
     return CheckFormat((WAVEFORMATEXTENSIBLE *) NULL);
 
-  if (pwf->cbSize >= 22)
+  if (pwf->cbSize >= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX))
   {
     if (pwf->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
       return CheckFormat((WAVEFORMATEXTENSIBLE *)pwf);
