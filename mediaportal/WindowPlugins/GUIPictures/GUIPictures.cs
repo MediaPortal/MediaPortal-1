@@ -1718,6 +1718,10 @@ namespace MediaPortal.GUI.Pictures
       {
         return true;
       }
+      if (windowId == (int)Window.WINDOW_FULLSCREEN_VIDEO)
+      {
+        return true;
+      }
       return false;
     }
 
