@@ -1520,9 +1520,13 @@ namespace MediaPortal.GUI.Pictures
         GUIListItem item = GetItem(i);
         if (!item.IsFolder && !item.IsRemote)
         {
-          if (!_playVideosInSlideshows && Util.Utils.IsVideo(item.Path))
-            continue;
-          SlideShow.Add(item.Path);
+          if (!_playVideosInSlideshows)
+          {
+            if (!Util.Utils.IsVideo(item.Path))
+              SlideShow.Add(item.Path);
+          }
+          else
+            SlideShow.Add(item.Path);
         }
 
         i++;
