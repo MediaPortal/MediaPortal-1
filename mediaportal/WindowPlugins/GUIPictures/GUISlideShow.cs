@@ -59,7 +59,7 @@ namespace MediaPortal.GUI.Pictures
       PrefetchNextSlide();
 
       GUIPictures tmpGUIpictures = (GUIPictures)GUIWindowManager.GetWindow((int)Window.WINDOW_PICTURES);
-      Log.Info("GEMX: LoadSlide - currentSlideIndex {0}", _currentSlideIndex);
+      Log.Debug("GUISlideShow: LoadSlide - currentSlideIndex {0}", _currentSlideIndex);
       if (_isSlideShow)
         tmpGUIpictures.IncSelectedItemIndex();
       else
@@ -272,7 +272,6 @@ namespace MediaPortal.GUI.Pictures
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           _showOverlayFlag = GUIGraphicsContext.Overlay;
           GUIGraphicsContext.Overlay = false;
-          Log.Info("GEMX: GUISlideShow init");
           base.OnMessage(message);
 
           if (_returnedFromVideoPlayback)
@@ -287,8 +286,6 @@ namespace MediaPortal.GUI.Pictures
           return true;
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          Log.Info("GEMX: IsSlideShow {0}", _isSlideShow);
-          Log.Info("GEMX: GUISlideShow de-init {0}", _returnedFromVideoPlayback);
           if (!_returnedFromVideoPlayback)
             Reset();
           if (_returnedFromVideoPlayback && !_isSlideShow)
@@ -373,7 +370,6 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case Action.ActionType.ACTION_PREV_ITEM:
-          Log.Info("GEMX: ACTION_PREV_ITEM");
           if (_lastSegmentIndex != -1)
           {
             ShowPrevious(true);
@@ -384,7 +380,6 @@ namespace MediaPortal.GUI.Pictures
 
           break;
         case Action.ActionType.ACTION_PREV_PICTURE:
-          Log.Info("GEMX: ACTION_PREV_PICTURE");
           _slideDirection = -1;
           if (!_isPictureZoomed)
           {
@@ -402,7 +397,6 @@ namespace MediaPortal.GUI.Pictures
           }
           break;
         case Action.ActionType.ACTION_NEXT_ITEM:
-          Log.Info("GEMX: ACTION_NEXT_ITEM");
           if (_lastSegmentIndex != -1)
           {
             ShowNext(true);
@@ -413,7 +407,6 @@ namespace MediaPortal.GUI.Pictures
 
           break;
         case Action.ActionType.ACTION_NEXT_PICTURE:
-          Log.Info("GEMX: ACTION_NEXT_PICTURE");
           _slideDirection = 1;
           if (!_isPictureZoomed)
           {
@@ -432,7 +425,6 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case Action.ActionType.ACTION_MOVE_LEFT:
-          Log.Info("GEMX: ACTION_MOVE_LEFT");
           _zoomLeftBackground -= 25;
           if (_zoomLeftBackground < 0)
           {
@@ -442,7 +434,6 @@ namespace MediaPortal.GUI.Pictures
           break;
 
         case Action.ActionType.ACTION_MOVE_RIGHT:
-          Log.Info("GEMX: ACTION_MOVE_RIGHT");
           _zoomLeftBackground += 25;
           if (_zoomLeftBackground > (int)_backgroundSlide.Width - _zoomWidth)
           {
@@ -1085,7 +1076,6 @@ namespace MediaPortal.GUI.Pictures
 
     private void ShowNext(bool jump)
     {
-      Log.Info("GEMX: ShowNext({0})", jump);
       if (!_isSlideShow)
       {
         _update = true;

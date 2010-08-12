@@ -506,7 +506,7 @@ namespace MediaPortal.GUI.Pictures
       if (selectedItemIndex >= 0)
       {
         GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
-        Log.Info("GEMX: currentSlideIndex {0}", SlideShow._currentSlideIndex);
+        Log.Debug("GUIPictures: currentSlideIndex {0}", SlideShow._currentSlideIndex);
         /*if (SlideShow._currentSlideIndex != -1)
           selectedItemIndex += SlideShow._currentSlideIndex+1;*/
         int direction = GUISlideShow.SlideDirection;
@@ -962,12 +962,11 @@ namespace MediaPortal.GUI.Pictures
     /// </summary>
     public void SetSelectedItemIndex(int index)
     {
-      Log.Info("GEMX: selectedItemIndex {0}", selectedItemIndex);
       selectedItemIndex = CountOfNonImageItems + index;
     }
     public void IncSelectedItemIndex()
     {
-      Log.Info("GEMX: INC selectedItemIndex {0}", selectedItemIndex);
+      Log.Debug("GUIPictures: INC selectedItemIndex {0}", selectedItemIndex);
       selectedItemIndex ++;
     }
     #endregion
