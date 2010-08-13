@@ -73,6 +73,23 @@ static DWORD gdwDefaultChannelMask[] = {
   KSAUDIO_SPEAKER_7POINT1_SURROUND
 };
 
+static DWORD gdwAC3SpeakerOrder[] = {
+  SPEAKER_FRONT_LEFT, 
+  SPEAKER_FRONT_CENTER,
+  SPEAKER_FRONT_RIGHT,
+  SPEAKER_BACK_LEFT, 
+  SPEAKER_BACK_RIGHT,
+  SPEAKER_LOW_FREQUENCY,
+};
+#define cAC3SpeakerOrder  (sizeof(gdwAC3SpeakerOrder)/sizeof(DWORD))
+#define SPEAKER_AC3_VALID_POSITIONS ( \
+  SPEAKER_FRONT_LEFT | \
+  SPEAKER_FRONT_CENTER | \
+  SPEAKER_FRONT_RIGHT | \
+  SPEAKER_BACK_LEFT | \
+  SPEAKER_BACK_RIGHT | \
+  SPEAKER_LOW_FREQUENCY )
+
 // TODO add support for multiple channel pairs
 DWORD WINAPI CMultiSoundTouch::ResampleThreadEntryPoint(LPVOID lpParameter)
 {
@@ -540,6 +557,13 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
         pwfe->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
       return VFW_E_TYPE_NOT_ACCEPTED;
 
+    DWORD dwChannelMask = pwfe->dwChannelMask;
+
+    // If AC3 encoding is enabled we should not accepted a 
+    // format that cannot be output to AC3
+    if(m_bEnableAC3Encoding && (dwChannelMask & SPEAKER_AC3_VALID_POSITIONS) != dwChannelMask)
+      return VFW_E_TYPE_NOT_ACCEPTED;
+
     newStreams =  new std::vector<CSoundTouchEx *>;
     if (!newStreams)
       return E_OUTOFMEMORY;
@@ -553,9 +577,8 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
     }
     memcpy(pWaveFormat, pwfe, size);
 
-    DWORD dwChannelMask = pwfe->dwChannelMask;
-
-    std::map<DWORD, int> speakerOffset;
+    std::map<DWORD, int> inSpeakerOffset;
+    std::map<DWORD, int> outSpeakerOffset;
     int currOffset = 0;
     // Each bit position in dwChannelMask corresponds to a speaker position
     // try every bit position from 0 to 31
@@ -563,12 +586,37 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
     {
       if (dwChannelMask & dwSpeaker)
       {
-        speakerOffset[dwSpeaker] = currOffset;
+        inSpeakerOffset[dwSpeaker] = currOffset;
         currOffset += pwfe->Format.wBitsPerSample / 8;
       }
     }
 
-    ASSERT(speakerOffset.size() == pwfe->Format.nChannels);
+    ASSERT(inSpeakerOffset.size() == pwfe->Format.nChannels);
+
+    if(m_bEnableAC3Encoding)
+    {
+      // If we ever support other formats with different speaker offsets
+      // just create anoter speaker order table and set these three accordingly
+      int nMaxOutSpeakers = cAC3SpeakerOrder;
+      DWORD *pSpeakerOrder = gdwAC3SpeakerOrder;
+      WORD wOutBytesPerSample = 2;
+
+      currOffset = 0;
+      for(int i = 0; i<nMaxOutSpeakers; i++)
+      {
+        DWORD dwSpeaker = pSpeakerOrder[i];
+        if (dwChannelMask & dwSpeaker)
+        {
+          outSpeakerOffset[dwSpeaker] = currOffset;
+          currOffset += wOutBytesPerSample;
+        }
+      }
+    }
+    else
+    {
+      // PCM output, 1-to-1 mapping of input to output
+      outSpeakerOffset.insert(inSpeakerOffset.begin(), inSpeakerOffset.end());
+    }
 
     // TODO: First create the base downmixing coefficients
     // for syncing mono channels like LFE and Center
@@ -582,9 +630,9 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
       {
         CSoundTouchEx *pStream = new CSoundTouchEx();
         pStream->setChannels(2);
-        pStream->SetInputChannels(speakerOffset[pPair->dwLeft], speakerOffset[pPair->dwRight]);
+        pStream->SetInputChannels(inSpeakerOffset[pPair->dwLeft], inSpeakerOffset[pPair->dwRight]);
         pStream->SetInputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8, pwfe->Samples.wValidBitsPerSample, isFloat);
-        pStream->SetOutputChannels(speakerOffset[pPair->dwLeft], speakerOffset[pPair->dwRight]);
+        pStream->SetOutputChannels(outSpeakerOffset[pPair->dwLeft], outSpeakerOffset[pPair->dwRight]);
         if (m_bEnableAC3Encoding)
           pStream->SetOutputFormat(pwfe->Format.nChannels*2, 2, 16, false);
         else
@@ -604,9 +652,9 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
         // TODO: make this a mixing stream, so that the channel can be synchronized 
         // to the mix of the main channels (normally Front Left/Right if available)
         pStream->setChannels(1); 
-        pStream->SetInputChannels(speakerOffset[dwSpeaker]);
+        pStream->SetInputChannels(inSpeakerOffset[dwSpeaker]);
         pStream->SetInputFormat(pwfe->Format.nBlockAlign, pwfe->Format.wBitsPerSample / 8, pwfe->Samples.wValidBitsPerSample, isFloat);
-        pStream->SetOutputChannels(speakerOffset[dwSpeaker]);
+        pStream->SetOutputChannels(outSpeakerOffset[dwSpeaker]);
         if (m_bEnableAC3Encoding)
           pStream->SetOutputFormat(pwfe->Format.nChannels*2, 2, 16, false);
         else

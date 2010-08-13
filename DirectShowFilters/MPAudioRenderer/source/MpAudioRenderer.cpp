@@ -423,7 +423,11 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
       //m_pSoundTouch->setChannels(pwf->nChannels);
       hr = m_pSoundTouch->SetFormat(pwf);
       if (FAILED(hr))
+      {
+        Log("CMPAudioRenderer::SetMediaType: Format rejected by CMultiSoundTouch (0x%08x)", hr);
+        LogWaveFormat(pwf, "SetMediaType");
         return hr;
+      }
 
       m_pSoundTouch->setSampleRate(pwf->nSamplesPerSec);
       m_pSoundTouch->setTempoChange(0);
