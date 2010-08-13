@@ -49,8 +49,10 @@ DEFINE_GUIDSTRUCT("0000000b-0cea-0010-8000-00aa00389b71", KSDATAFORMAT_SUBTYPE_I
 
 #endif
 
+extern HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src);
+
 extern void Log(const char *fmt, ...);
-extern void LogWaveFormat(WAVEFORMATEX* pwfx, const char *text);
+extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text);
 
 WASAPIRenderer::WASAPIRenderer(CMPAudioRenderer* pRenderer, HRESULT *phr) : 
   m_pMMDevice(NULL),
@@ -70,7 +72,8 @@ WASAPIRenderer::WASAPIRenderer(CMPAudioRenderer* pRenderer, HRESULT *phr) :
   m_hStopRenderThreadEvent(NULL),
   m_hWaitRenderThreadToExitEvent(NULL),
   m_pAudioClock(NULL),
-  m_nHWfreq(0)
+  m_nHWfreq(0),
+  m_pRenderFormat(NULL)
 {
   IMMDeviceCollection* devices = NULL;
   GetAvailableAudioDevices(&devices, true);
@@ -120,6 +123,8 @@ WASAPIRenderer::~WASAPIRenderer()
     CloseHandle(m_hStopRenderThreadEvent);
   if (m_hDataEvent)
     CloseHandle(m_hDataEvent);
+
+  SAFE_DELETE_WAVEFORMATEX(m_pRenderFormat);
 
   Log("WASAPIRenderer - destructor - instance 0x%x - end", this);
 }
@@ -171,15 +176,16 @@ HRESULT WASAPIRenderer::CheckFormat(WAVEFORMATEX* pwfx)
   return S_OK;
 }
 
-HRESULT WASAPIRenderer::SetMediaType(const CMediaType *pmt)
+HRESULT WASAPIRenderer::SetMediaType(const WAVEFORMATEX* pwfx)
 {
   // New media type set but render client already initialized => reset it
   if (m_pRenderClient)
   {
-    WAVEFORMATEX *pNewWf = (WAVEFORMATEX *)pmt->Format();
     Log("WASAPIRenderer::SetMediaType Render client already initialized. Reinitialization...");
-    CheckAudioClient(pNewWf);
+    CheckAudioClient(pwfx);
   }
+  SAFE_DELETE_WAVEFORMATEX(m_pRenderFormat);
+  CopyWaveFormatEx(&m_pRenderFormat, pwfx);
   return S_OK;
 }
 
@@ -223,9 +229,8 @@ HRESULT WASAPIRenderer::Run(REFERENCE_TIME tStart)
   Log("WASAPIRenderer::Run");
 
   HRESULT hr = 0;
-  WAVEFORMATEX* pWaveFileFormat = m_pRenderer->WaveFormat();
 
-  hr = CheckAudioClient(pWaveFileFormat);
+  hr = CheckAudioClient(m_pRenderFormat);
   if (FAILED(hr)) 
   {
     Log("WASAPIRenderer::Run - error on check audio client (0x%08x)", hr);
@@ -236,7 +241,7 @@ HRESULT WASAPIRenderer::Run(REFERENCE_TIME tStart)
   if (m_bReinitAfterStop)
   {
     m_bReinitAfterStop = false;
-    hr = InitAudioClient(pWaveFileFormat, m_pAudioClient, &m_pRenderClient);
+    hr = InitAudioClient(m_pRenderFormat, m_pAudioClient, &m_pRenderClient);
     if (FAILED(hr)) 
     {
       Log("WASAPIRenderer::Run - error on reinit after stop (0x%08x) - trying to continue", hr);
@@ -385,25 +390,28 @@ HRESULT	WASAPIRenderer::DoRenderSample(IMediaSample *pMediaSample, LONGLONG /*pS
 
   pMediaSample->GetTime(&rtStart, &rtStop);
   
-  AM_MEDIA_TYPE *pmt;
-  if (SUCCEEDED(pMediaSample->GetMediaType(&pmt)) && pmt != NULL)
+  if (!m_pRenderer->Settings()->m_bEnableAC3Encoding)
   {
-    CMediaType mt(*pmt);
-    if ((WAVEFORMATEXTENSIBLE*)mt.Format() != NULL)
+    AM_MEDIA_TYPE *pmt;
+    if (SUCCEEDED(pMediaSample->GetMediaType(&pmt)) && pmt != NULL)
     {
-      hr = CheckAudioClient(&(((WAVEFORMATEXTENSIBLE*)mt.Format())->Format));
-    }      
-    else
-    {
-      hr = CheckAudioClient((WAVEFORMATEX*)mt.Format());
+      CMediaType mt(*pmt);
+      if ((WAVEFORMATEXTENSIBLE*)mt.Format() != NULL)
+      {
+        hr = CheckAudioClient(&(((WAVEFORMATEXTENSIBLE*)mt.Format())->Format));
+      }      
+      else
+      {
+        hr = CheckAudioClient((WAVEFORMATEX*)mt.Format());
+      }
+      if (FAILED(hr))
+      {
+        Log("WASAPIRenderer::DoRenderSample - Error while checking audio client with input media type");
+        return hr;
+      }
+      DeleteMediaType(pmt);
+      pmt = NULL;
     }
-    if (FAILED(hr))
-    {
-      Log("WASAPIRenderer::DoRenderSample - Error while checking audio client with input media type");
-      return hr;
-    }
-    DeleteMediaType(pmt);
-    pmt = NULL;
   }
 
   // resample audio stream if required
@@ -420,24 +428,15 @@ HRESULT	WASAPIRenderer::DoRenderSample(IMediaSample *pMediaSample, LONGLONG /*pS
   return hr;
 }
 
-HRESULT WASAPIRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
+HRESULT WASAPIRenderer::CheckAudioClient(const WAVEFORMATEX *pWaveFormatEx)
 {
   CAutoLock cInterfaceLock(m_pRenderer->InterfaceLock());
   CAutoLock cRenderThreadLock(m_pRenderer->RenderThreadLock());
 
-  WAVEFORMATEX* pWaveFileFormat = m_pRenderer->WaveFormat();
-
   Log("WASAPIRenderer::CheckAudioClient");
   LogWaveFormat(pWaveFormatEx, "WASAPIRenderer::CheckAudioClient");
 
-  WAVEFORMATEX AC3WaveFormatEx;
-
   // Negotiate the SPDIF connection type only with the audio device
-  if (m_pRenderer->Settings()->m_bEnableAC3Encoding)
-  {
-    Log("  AC3 encoding mode enabled");
-    CreateWaveFormatForAC3(&AC3WaveFormatEx);
-  } 
 
   HRESULT hr = S_OK;
   CAutoLock cAutoLock(&m_csCheck);
@@ -450,7 +449,7 @@ HRESULT WASAPIRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
     return hr;
 
   // Just create the audio client if no WAVEFORMATEX provided
-  if (!m_pAudioClient)
+  if (!m_pAudioClient && !pWaveFormatEx)
   {
     if (SUCCEEDED (hr)) hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
       return hr;
@@ -462,22 +461,10 @@ HRESULT WASAPIRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
   {
     // Format has changed, audio client has to be reinitialized
     Log("WASAPIRenderer::CheckAudioClient Format changed, reinitialize the audio client");
-    if (pWaveFileFormat)
-    {
-      BYTE *p = (BYTE *)pWaveFileFormat;
-      SAFE_DELETE_ARRAY(p);
-    }
-  
-    pWaveFileFormat = pNewWaveFormatEx;
+    SAFE_DELETE_WAVEFORMATEX(m_pRenderFormat);
+    m_pRenderFormat = pNewWaveFormatEx;
 
-    if (m_pRenderer->Settings()->m_bEnableAC3Encoding)
-    {
-      hr = m_pAudioClient->IsFormatSupported(m_pRenderer->Settings()->m_WASAPIShareMode, &AC3WaveFormatEx, NULL);
-    }
-    else
-    {
-      hr = m_pAudioClient->IsFormatSupported(m_pRenderer->Settings()->m_WASAPIShareMode, pWaveFormatEx, NULL);    
-    }
+    hr = m_pAudioClient->IsFormatSupported(m_pRenderer->Settings()->m_WASAPIShareMode, m_pRenderFormat, NULL);    
   
     if (SUCCEEDED(hr))
     { 
@@ -511,14 +498,7 @@ HRESULT WASAPIRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
 
   if (SUCCEEDED (hr)) 
   {
-    if (m_pRenderer->Settings()->m_bEnableAC3Encoding)
-    {
-      hr = InitAudioClient(&AC3WaveFormatEx, m_pAudioClient, &m_pRenderClient);
-    }
-    else
-    {
-      hr = InitAudioClient(pWaveFormatEx, m_pAudioClient, &m_pRenderClient);
-    }
+    hr = InitAudioClient(pWaveFormatEx, m_pAudioClient, &m_pRenderClient);
   }
   return hr;
 }
@@ -675,7 +655,7 @@ HRESULT WASAPIRenderer::GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevic
       {
         Log("   pull mode query failed!");
       }
-  
+
       Log("");
 
       CoTaskMemFree(pwszID);
@@ -690,20 +670,19 @@ HRESULT WASAPIRenderer::GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevic
   return hr;
 }
 
-bool WASAPIRenderer::CheckFormatChanged(WAVEFORMATEX *pWaveFormatEx, WAVEFORMATEX **ppNewWaveFormatEx)
+bool WASAPIRenderer::CheckFormatChanged(const WAVEFORMATEX *pWaveFormatEx, WAVEFORMATEX **ppNewWaveFormatEx)
 {
-  WAVEFORMATEX* pWaveFileFormat = m_pRenderer->WaveFormat();
-  if (!pWaveFileFormat) return E_POINTER;
+  //if (!pWaveFileFormat) return E_POINTER;
   
   bool formatChanged = false;
 
-  if (!pWaveFileFormat)
+  if (!m_pRenderFormat)
   {
     formatChanged = true;
   }
-  else if (pWaveFormatEx->wFormatTag != pWaveFileFormat->wFormatTag ||
-           pWaveFormatEx->nChannels != pWaveFileFormat->nChannels ||
-           pWaveFormatEx->wBitsPerSample != pWaveFileFormat->wBitsPerSample) // TODO : improve the checks
+  else if (pWaveFormatEx->wFormatTag != m_pRenderFormat->wFormatTag ||
+           pWaveFormatEx->nChannels != m_pRenderFormat->nChannels ||
+           pWaveFormatEx->wBitsPerSample != m_pRenderFormat->wBitsPerSample) // TODO : improve the checks
   {
     formatChanged = true;
   }
@@ -711,23 +690,23 @@ bool WASAPIRenderer::CheckFormatChanged(WAVEFORMATEX *pWaveFormatEx, WAVEFORMATE
   if (!formatChanged)
     return false;
 
-  int size = sizeof(WAVEFORMATEX) + pWaveFormatEx->cbSize; // Always true, even for WAVEFORMATEXTENSIBLE and WAVEFORMATEXTENSIBLE_IEC61937
-  *ppNewWaveFormatEx = (WAVEFORMATEX *)new BYTE[size];
+  if (!ppNewWaveFormatEx) // no copy requested
+    return true;
+
+  HRESULT hr = CopyWaveFormatEx(ppNewWaveFormatEx, pWaveFormatEx);
   
-  if (!*ppNewWaveFormatEx)
+  if (FAILED(hr))
     return false;
-  
-  memcpy(*ppNewWaveFormatEx, pWaveFormatEx, size);
   
   return true;
 }
 
-HRESULT WASAPIRenderer::GetBufferSize(WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod)
+HRESULT WASAPIRenderer::GetBufferSize(const WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod)
 { 
   if (!pWaveFormatEx) 
     return S_OK;
 
-  if (pWaveFormatEx->cbSize <22) //WAVEFORMATEX
+  if (pWaveFormatEx->cbSize < sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX)) //WAVEFORMATEX
     return S_OK;
 
   WAVEFORMATEXTENSIBLE *wfext = (WAVEFORMATEXTENSIBLE*)pWaveFormatEx;
@@ -752,7 +731,7 @@ HRESULT WASAPIRenderer::GetBufferSize(WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIM
   return S_OK;
 }
 
-HRESULT WASAPIRenderer::InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioClient *pAudioClient, IAudioRenderClient **ppRenderClient)
+HRESULT WASAPIRenderer::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudioClient *pAudioClient, IAudioRenderClient **ppRenderClient)
 {
   CAutoLock cInterfaceLock(m_pRenderer->InterfaceLock());
   CAutoLock cRenderThreadLock(m_pRenderer->RenderThreadLock());
@@ -963,20 +942,6 @@ HRESULT WASAPIRenderer::CreateAudioClient(IMMDevice *pMMDevice, IAudioClient **p
   }
 
   return hr;
-}
-
-void WASAPIRenderer::CreateWaveFormatForAC3(WAVEFORMATEX* pwfx)
-{
-  if (pwfx)
-  {
-    pwfx->wFormatTag = WAVE_FORMAT_DOLBY_AC3_SPDIF;
-    pwfx->wBitsPerSample = 16;
-    pwfx->nBlockAlign = 4;
-    pwfx->nChannels = 2;
-    pwfx->nSamplesPerSec = 48000;
-    pwfx->nAvgBytesPerSec = 80000;//192000;
-    pwfx->cbSize = 0;
-  }
 }
 
 DWORD WASAPIRenderer::RenderThread()

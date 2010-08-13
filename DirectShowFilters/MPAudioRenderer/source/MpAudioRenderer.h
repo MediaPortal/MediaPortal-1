@@ -113,6 +113,7 @@ public:
 private:
 
   HRESULT GetReferenceClockInterface(REFIID riid, void **ppv);
+  WAVEFORMATEX* CreateWaveFormatForAC3(int Channels, int SamplesPerSec);
 
   WAVEFORMATEX*         m_pWaveFileFormat;
   CBaseReferenceClock*	m_pReferenceClock;

@@ -39,6 +39,7 @@ CFilterApp theApp;
 
 #define MAX_SAMPLE_TIME_ERROR 10000 // 1.0 ms
 
+extern HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src);
 
 CUnknown* WINAPI CMPAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 {
@@ -55,7 +56,7 @@ CUnknown* WINAPI CMPAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 
 // for logging
 extern void Log(const char *fmt, ...);
-extern void LogWaveFormat(WAVEFORMATEX* pwfx, const char *text);
+extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text);
 
 CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 : CBaseRenderer(__uuidof(this), NAME("MediaPortal - Audio Renderer"), punk, phr)
@@ -124,13 +125,25 @@ CMPAudioRenderer::~CMPAudioRenderer()
     SAFE_RELEASE(m_pReferenceClock);
   }
 
-  if (m_pWaveFileFormat)
-  {
-    BYTE *p = (BYTE *)m_pWaveFileFormat;
-    SAFE_DELETE_ARRAY(p);
-  }
+  SAFE_DELETE_WAVEFORMATEX(m_pWaveFileFormat);
 
- Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
+  Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
+}
+
+WAVEFORMATEX* CMPAudioRenderer::CreateWaveFormatForAC3(int Channels, int SamplesPerSec)
+{
+  WAVEFORMATEX* pwfx = (WAVEFORMATEX*)new BYTE[sizeof(WAVEFORMATEX)];
+  if (pwfx)
+  {
+    pwfx->wFormatTag = WAVE_FORMAT_DOLBY_AC3_SPDIF;
+    pwfx->wBitsPerSample = 16;
+    pwfx->nBlockAlign = 2*Channels;
+    pwfx->nChannels = Channels;
+    pwfx->nSamplesPerSec = SamplesPerSec;
+    pwfx->nAvgBytesPerSec = 80000;//192000;
+    pwfx->cbSize = 0;
+  }
+  return pwfx;
 }
 
 HRESULT CMPAudioRenderer::CheckInputType(const CMediaType *pmt)
@@ -175,7 +188,18 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
   }
 
   if (m_pRenderDevice)
-    hr = m_pRenderDevice->CheckFormat(pwfx);
+  {
+    if (m_Settings.m_bEnableAC3Encoding)
+    {
+      WAVEFORMATEX *pRenderFormat = CreateWaveFormatForAC3(pwfx->nChannels, pwfx->nSamplesPerSec);
+      hr = m_pRenderDevice->CheckFormat(pRenderFormat);
+      SAFE_DELETE_WAVEFORMATEX(pRenderFormat);
+    }
+    else
+    {
+      hr = m_pRenderDevice->CheckFormat(pwfx);
+    }
+  }
 
   return hr;
 }
@@ -367,30 +391,30 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
   
   HRESULT hr = S_OK;
   Log("SetMediaType");
-  
-  if (m_pRenderDevice)
-    m_pRenderDevice->SetMediaType(pmt);
-
-  if (m_pWaveFileFormat)
-  {
-    BYTE *p = (BYTE *)m_pWaveFileFormat;
-    SAFE_DELETE_ARRAY(p);
-  }
-  
-  m_pWaveFileFormat = NULL;
 
   WAVEFORMATEX *pwf = (WAVEFORMATEX *) pmt->Format();
   
+  if (m_pRenderDevice)
+  {
+    if (m_Settings.m_bEnableAC3Encoding)
+    {
+      WAVEFORMATEX *pRenderFormat = CreateWaveFormatForAC3(pwf->nChannels, pwf->nSamplesPerSec);
+      m_pRenderDevice->SetMediaType(pRenderFormat);
+      SAFE_DELETE_WAVEFORMATEX(pRenderFormat);
+    }
+    else
+    {
+      m_pRenderDevice->SetMediaType(pwf);
+    }
+  }
+
+  SAFE_DELETE_WAVEFORMATEX(m_pWaveFileFormat);
+  
   if (pwf)
   {
-    int	size = sizeof(WAVEFORMATEX) + pwf->cbSize;
-
-    m_pWaveFileFormat = (WAVEFORMATEX *)new BYTE[size];
-
-    if (!m_pWaveFileFormat)
-      return E_OUTOFMEMORY;
-
-    memcpy(m_pWaveFileFormat, pwf, size);
+    hr = CopyWaveFormatEx(&m_pWaveFileFormat, pwf);
+    if (FAILED(hr))
+      return hr;
 
     if (m_pSoundTouch)
     {

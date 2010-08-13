@@ -27,7 +27,7 @@ public:
 
   HRESULT InitCoopLevel();
 	HRESULT CheckFormat(WAVEFORMATEX* pwfx);
-	HRESULT SetMediaType(const CMediaType *pmt);
+	HRESULT SetMediaType(const WAVEFORMATEX* pwfx);
   HRESULT CompleteConnect(IPin *pReceivePin);
 
 	HRESULT DoRenderSample(IMediaSample *pMediaSample, LONGLONG pSampleCounter);
@@ -60,12 +60,12 @@ private:
   HRESULT     GetAudioDevice(IMMDevice **ppMMDevice);
   HRESULT     GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevices, bool pLog); // caller must release ppMMDevices!
   HRESULT     CreateAudioClient(IMMDevice *pMMDevice, IAudioClient **ppAudioClient);
-  HRESULT     InitAudioClient(WAVEFORMATEX *pWaveFormatEx, IAudioClient *pAudioClient, IAudioRenderClient **ppRenderClient);
-  HRESULT     CheckAudioClient(WAVEFORMATEX *pWaveFormatEx);
-  bool        CheckFormatChanged(WAVEFORMATEX *pWaveFormatEx, WAVEFORMATEX **ppNewWaveFormatEx);
+  HRESULT     InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudioClient *pAudioClient, IAudioRenderClient **ppRenderClient);
+  HRESULT     CheckAudioClient(const WAVEFORMATEX *pWaveFormatEx);
+  bool        CheckFormatChanged(const WAVEFORMATEX *pWaveFormatEx, WAVEFORMATEX **ppNewWaveFormatEx);
   HRESULT     DoRenderSampleWasapi(IMediaSample *pMediaSample);
-  HRESULT     GetBufferSize(WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
-  void        CreateWaveFormatForAC3(WAVEFORMATEX* pwfx);
+  HRESULT     GetBufferSize(const WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
+  //void        CreateWaveFormatForAC3(WAVEFORMATEX* pwfx);
 
   IMMDevice*          m_pMMDevice;
   IAudioClient*       m_pAudioClient;
@@ -81,6 +81,7 @@ private:
   CMPAudioRenderer*   m_pRenderer;
   IAudioClock*        m_pAudioClock;
   UINT64              m_nHWfreq;
+  WAVEFORMATEX*       m_pRenderFormat;
   // Rendering thread
   static DWORD WINAPI RenderThreadEntryPoint(LPVOID lpParameter);
   DWORD RenderThread();

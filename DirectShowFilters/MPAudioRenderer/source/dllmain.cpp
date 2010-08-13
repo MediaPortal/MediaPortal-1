@@ -28,19 +28,22 @@ using namespace std;
 
 const AMOVIESETUP_MEDIATYPE sudPinTypesIn[] =
 {
-  {&GUID_NULL},
+  {&MEDIATYPE_Audio, &MEDIASUBTYPE_PCM},
+  {&MEDIATYPE_Audio, &MEDIASUBTYPE_IEEE_FLOAT},
+  {&MEDIATYPE_Audio, &KSDATAFORMAT_SUBTYPE_PCM},
+  {&MEDIATYPE_Audio, &KSDATAFORMAT_SUBTYPE_IEEE_FLOAT},
 };
 
 const AMOVIESETUP_PIN sudpPins[] =
 {
   {L"Input", 
-  FALSE, 
+  TRUE, 
   FALSE, 
   FALSE, 
   FALSE, 
   &CLSID_NULL, 
   NULL, 
-  1, 
+  4, 
   sudPinTypesIn},
 };
 
@@ -232,7 +235,7 @@ HRESULT __fastcall UnicodeToAnsi(LPCOLESTR pszW, LPSTR* ppszA)
   return NOERROR;
 }
 
-void LogWaveFormat(WAVEFORMATEX* pwfx, const char *text)
+void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text)
 {
   if (pwfx)
   {
@@ -262,4 +265,24 @@ void LogWaveFormat(WAVEFORMATEX* pwfx, const char *text)
       }
     }
   }
+}
+
+HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src)
+{
+  if (!src)
+    return S_OK;
+
+  if (!dst)
+    return E_POINTER;
+
+  int	size = sizeof(WAVEFORMATEX) + src->cbSize;
+
+  *dst = (WAVEFORMATEX *)new BYTE[size];
+
+  if (!*dst)
+    return E_OUTOFMEMORY;
+
+  memcpy(*dst, src, size);
+
+  return S_OK;
 }

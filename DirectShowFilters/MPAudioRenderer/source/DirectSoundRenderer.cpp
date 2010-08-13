@@ -50,7 +50,7 @@ void DirectSoundRenderer::OnReceiveFirstSample(IMediaSample* /*pMediaSample*/)
   ClearBuffer();
 }
 
-HRESULT DirectSoundRenderer::SetMediaType(const CMediaType *pmt)
+HRESULT DirectSoundRenderer::SetMediaType(const WAVEFORMATEX* pwfx)
 {
   return S_OK;
 }

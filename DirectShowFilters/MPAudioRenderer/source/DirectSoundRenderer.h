@@ -31,7 +31,7 @@ public:
 
   HRESULT InitCoopLevel();
   HRESULT CheckFormat(WAVEFORMATEX* pwfx);
-  HRESULT SetMediaType(const CMediaType *pmt);
+  HRESULT SetMediaType(const WAVEFORMATEX* pwfx);
   HRESULT CompleteConnect(IPin *pReceivePin);
 
   HRESULT DoRenderSample(IMediaSample *pMediaSample, LONGLONG pSampleCounter);
