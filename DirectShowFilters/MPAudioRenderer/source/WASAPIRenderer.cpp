@@ -1011,7 +1011,7 @@ DWORD WASAPIRenderer::RenderThread()
         if (m_pRenderer->Settings()->m_WASAPIShareMode == AUDCLNT_SHAREMODE_SHARED)
           m_pAudioClient->GetCurrentPadding(&currentPadding);
 
-        UINT32 bufferSizeInBytes = (bufferSize - currentPadding) * m_pRenderer->WaveFormat()->nBlockAlign;
+        UINT32 bufferSizeInBytes = (bufferSize - currentPadding) * m_pRenderFormat->nBlockAlign;
 
         hr = m_pRenderClient->GetBuffer(bufferSize - currentPadding, &data);
         if (SUCCEEDED(hr) && m_pRenderClient)

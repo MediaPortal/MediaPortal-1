@@ -639,7 +639,7 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
     SAFE_DELETE(oldStreams);
   }
 
-  if (m_bEnableAC3Encoding)
+  if (m_bEnableAC3Encoding && m_pWaveFormat)
   {
     (void)OpenAC3Encoder(AC3_BITRATE, m_pWaveFormat->Format.nChannels, m_pWaveFormat->Format.nSamplesPerSec);
   }
