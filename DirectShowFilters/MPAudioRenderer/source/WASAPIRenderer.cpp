@@ -449,7 +449,7 @@ HRESULT WASAPIRenderer::CheckAudioClient(const WAVEFORMATEX *pWaveFormatEx)
     return hr;
 
   // Just create the audio client if no WAVEFORMATEX provided
-  if (!m_pAudioClient && !pWaveFormatEx)
+  if (!m_pAudioClient)
   {
     if (SUCCEEDED (hr)) hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
       return hr;
