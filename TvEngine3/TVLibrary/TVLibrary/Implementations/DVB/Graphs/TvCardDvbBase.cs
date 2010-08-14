@@ -168,6 +168,11 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _filterWinTvUsb;
 
     /// <summary>
+    /// DigitalDevices CI filter
+    /// </summary>
+    protected IBaseFilter _filterDigitalDevicesCI;
+
+    /// <summary>
     /// Capture device
     /// </summary>
     protected DsDevice _captureDevice;
@@ -176,6 +181,11 @@ namespace TvLibrary.Implementations.DVB
     /// WinTV CI device
     /// </summary>
     protected DsDevice _deviceWinTvUsb;
+
+    /// <summary>
+    /// DigitalDevices CI device
+    /// </summary>
+    protected DsDevice _deviceDigitalDevicesCI;
 
     /// <summary>
     /// EPG Grabber callback
@@ -281,7 +291,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">The channel.</param>
     /// <returns></returns>
     public virtual ITvSubChannel Tune(int subChannelId, IChannel channel)
-    {      
+    {
       bool performTune = (_previousChannel == null || _previousChannel.IsDifferentTransponder(channel));      
       ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, performTune);
       _previousChannel = channel;
@@ -466,11 +476,6 @@ namespace TvLibrary.Implementations.DVB
             {
               Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),
                                 DsError.GetErrorText(hr));
-              //remove subchannel.
-              /*if (newSubChannel)
-              {
-              _mapSubChannels.Remove(subChannelId);
-              }*/
               throw new TvException("Unable to tune to channel");
             }
           }
@@ -1002,6 +1007,110 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
+    /// Checks if the DigitalDevices CI module is installed
+    /// if so it adds it to the directshow graph
+    /// in the following way:
+    /// [Network Provider]->[Tuner Filter]->[Capture Filter]->[Digital Devices Common Interface]->[InfTee]
+    /// alternaively like this:
+    /// [Network Provider]->[Tuner Filter]->[Digital Devices Common Interface]->[InfTee]
+    /// </summary>
+    /// <param name="captureFilter">The capture filter.</param>
+    /// <param name="captureDevice">The active DsDevice.</param>
+    /// <returns>
+    /// true if hardware found and graph building succeeded, else false
+    /// </returns>
+    protected bool AddDigitalDevicesCIModule(IBaseFilter captureFilter, DsDevice captureDevice)
+    {
+      FilterInfo pInfo;
+      IBaseFilter tmpCiFilter = null;
+      String CardName = String.Empty;
+      String CiDeviceName = String.Empty;
+      bool filterSuccess = false;
+
+      captureFilter.QueryFilterInfo(out pInfo);
+      //Log.Log.Debug(pInfo.achName);
+
+      if (captureDevice == null)
+        return false;
+
+     if (!captureDevice.DevicePath.ToLowerInvariant().Contains("fbca-11de-b16f-000000004d56"))
+        return false;
+
+      try
+      {
+        DsDevice[] capDevices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
+        DsDevice DDCIDevice = null;
+        for (int capIndex = 0; capIndex < capDevices.Length; capIndex++)
+        {
+          // DD components have a common device path part. 
+          if (!(capDevices[capIndex].DevicePath.ToLowerInvariant().Contains("fbca-11de-b16f-000000004d56") &&
+                capDevices[capIndex].Name.ToLowerInvariant().Contains("common interface")))
+            continue;
+
+          CiDeviceName = capDevices[capIndex].Name;
+
+          //try add filter to graph
+          Log.Log.Info("dvb:  Adding {0} to graph", CiDeviceName);
+          if (_graphBuilder.AddSourceFilterForMoniker(capDevices[capIndex].Mon, null, capDevices[capIndex].Name, out tmpCiFilter) == 0)
+          {
+            //DigitalDevices ci module found
+            Log.Log.Info("dvb:  {0} detected", CiDeviceName);
+
+            String filterName = tunerOnly ? "Tuner" : "Capture";
+            //now render [Tuner/Capture]->[CI]
+            Log.Log.Info("dvb:  Render [{0}]->[{1}]", filterName, CiDeviceName);
+            if (_capBuilder.RenderStream(null, null, captureFilter, null, tmpCiFilter) != 0)
+            {
+              Log.Log.Info("dvb:  Render [{0}]->[{1}] failed", filterName, CiDeviceName);
+              _graphBuilder.RemoveFilter(tmpCiFilter);
+              continue;
+            }
+            // filter connected, device found
+            if (!DevicesInUse.Instance.IsUsed(capDevices[capIndex]))
+            {
+              DDCIDevice = capDevices[capIndex];
+              break;
+            }
+          }
+          //cannot add filter to graph...
+          Log.Log.Info("dvb:  failed to add {0} filter to graph, try to find more devices.", CiDeviceName);
+          //there can be multiple CI devices, try next one
+        }
+        if (DDCIDevice == null)
+          return false;
+
+
+        //Finally render [CI]->[InfTee]
+        Log.Log.Info("dvb:  Render [{0}]->[InfTee-Main]", CiDeviceName);
+        if (_capBuilder.RenderStream(null, null, tmpCiFilter, null, _infTeeMain) != 0)
+        {
+          Log.Log.Error("dvb:  Render [{0}]->[InfTee-Main] failed", CiDeviceName);
+          return false;
+        }
+        _filterDigitalDevicesCI = tmpCiFilter;
+        _deviceDigitalDevicesCI = DDCIDevice;
+        DevicesInUse.Instance.Add(DDCIDevice);
+
+        filterSuccess = true;
+        return filterSuccess;
+      }
+      catch (Exception ex)
+      {
+        Log.Log.Error("dvb:   Error adding CI: {0}", ex.Message);
+        filterSuccess = false;
+        return filterSuccess;
+      }
+      finally
+      {
+        if (!filterSuccess && tmpCiFilter != null)
+        {
+          _graphBuilder.RemoveFilter(tmpCiFilter);
+          Release.ComObject(CiDeviceName, tmpCiFilter);
+        }
+      }
+    }
+
+    /// <summary>
     /// Finds the correct bda tuner/capture filters and adds them to the graph
     /// Creates a graph like
     /// [NetworkProvider]->[Tuner]->[Capture]->[Inftee]->[Demuxer]
@@ -1218,6 +1327,15 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.WriteFile("dvb:  Render [Tuner]->[Capture] AOK");
           // render [Capture]->[Inf Tee]
+          if (AddDigitalDevicesCIModule(tmp, devices[i]))
+          {
+            _filterCapture = tmp;
+            _captureDevice = devices[i];
+            DevicesInUse.Instance.Add(devices[i]);
+            Log.Log.WriteFile("dvb:  OK");
+            break;
+          }
+
           if (AddWinTvCIModule(tmp))
           {
             _filterCapture = tmp;
