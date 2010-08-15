@@ -90,7 +90,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
       return;
   }
 
-  m_pSoundTouch = new CMultiSoundTouch(m_Settings.m_bEnableAC3Encoding);
+  m_pSoundTouch = new CMultiSoundTouch(m_Settings.m_bEnableAC3Encoding, m_Settings.m_AC3bitrate);
   
   if (!m_pSoundTouch)
   {

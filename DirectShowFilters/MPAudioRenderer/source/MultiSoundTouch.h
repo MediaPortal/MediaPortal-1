@@ -31,7 +31,7 @@ typedef signed __int64 int64_t;
 class CMultiSoundTouch
 {
 public:
-  CMultiSoundTouch(bool pEnableAC3Encoding);
+  CMultiSoundTouch(bool pEnableAC3Encoding, int AC3bitrate);
   ~CMultiSoundTouch();
 
   /// Sets new rate control value. Normal rate = 1.0, smaller values
@@ -159,4 +159,5 @@ private:
 
   AC3CodecContext* m_pEncoder;
   bool m_bEnableAC3Encoding;
+  int m_dAC3bitrate;
 };

@@ -21,7 +21,6 @@
 
 #include "MultiSoundTouch.h"
 
-#define AC3_BITRATE       640000 // does all amplifiers support this?
 #define AC3_FRAME_LENGHT  1536
 #define OUT_BUFFER_SIZE   16384
 #define OUT_BUFFER_COUNT  20
@@ -96,7 +95,7 @@ DWORD WINAPI CMultiSoundTouch::ResampleThreadEntryPoint(LPVOID lpParameter)
   return ((CMultiSoundTouch *)lpParameter)->ResampleThread();
 }
 
-CMultiSoundTouch::CMultiSoundTouch(bool pEnableAC3Encoding) 
+CMultiSoundTouch::CMultiSoundTouch(bool pEnableAC3Encoding, int AC3bitrate) 
 : m_Streams(NULL)
 , m_bFlushSamples(false)
 , m_pMemAllocator(NULL)
@@ -109,6 +108,7 @@ CMultiSoundTouch::CMultiSoundTouch(bool pEnableAC3Encoding)
 , m_pPreviousSample(NULL)
 , m_pEncoder(NULL)
 , m_bEnableAC3Encoding(pEnableAC3Encoding)
+, m_dAC3bitrate(AC3bitrate)
 {
   // Use separate thread per channnel pair?
   m_hSampleArrivedEvent = CreateEvent(0, FALSE, FALSE, 0);
@@ -689,7 +689,7 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
 
   if (m_bEnableAC3Encoding && m_pWaveFormat)
   {
-    (void)OpenAC3Encoder(AC3_BITRATE, m_pWaveFormat->Format.nChannels, m_pWaveFormat->Format.nSamplesPerSec);
+    (void)OpenAC3Encoder(m_dAC3bitrate, m_pWaveFormat->Format.nChannels, m_pWaveFormat->Format.nSamplesPerSec);
   }
 
   return S_OK;

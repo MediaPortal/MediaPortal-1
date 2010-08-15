@@ -20,12 +20,15 @@
 extern void Log(const char *fmt, ...);
 extern void LogRotate();
 
+int gAllowedAC3bitrates[9] = {192, 224, 256, 320, 384, 448, 512, 576, 640};
+
 AudioRendererSettings::AudioRendererSettings() : 
   m_bLogSampleTimes(false),
   m_bUseWASAPI(true),
   m_bUseTimeStretching(false),
   m_bEnableAC3Encoding(false),
   m_hnsPeriod(0),
+  m_AC3bitrate(448), 
   m_WASAPIShareMode(AUDCLNT_SHAREMODE_EXCLUSIVE),
   m_wWASAPIPreferredDeviceId(NULL)
 {
@@ -57,6 +60,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   LPCTSTR WASAPIExclusive = TEXT("WASAPIExclusive");
   LPCTSTR devicePeriod = TEXT("DevicePeriod");
   LPCTSTR enableAC3Encoding = TEXT("EnableAC3Encoding");
+  LPCTSTR AC3bitrate = TEXT("AC3bitrate");
   LPCTSTR logSampleTimes = TEXT("LogSampleTimes");
   LPCTSTR WASAPIPreferredDevice = TEXT("WASAPIPreferredDevice");
   
@@ -64,8 +68,9 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   DWORD forceDirectSoundData = 0;
   DWORD enableTimestretchingData = 1;
   DWORD WASAPIExclusiveData = 1;
-  DWORD devicePeriodData = 500000; // 50 ms
+  DWORD devicePeriodData = 500000;  // 50 ms
   DWORD enableAC3EncodingData = 0;
+  DWORD AC3bitrateData = 448;       // maximum based on the DVD spec
   DWORD logSampleTimesData = 0;
   LPCTSTR WASAPIPreferredDeviceData = new TCHAR[MAX_REG_LENGTH];
 
@@ -82,6 +87,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
     ReadRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
     ReadRegistryKeyDword(hKey, enableAC3Encoding, enableAC3EncodingData);
+    ReadRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
     ReadRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
     ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
 
@@ -89,6 +95,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   EnableTimestrecthing:    %d", enableTimestretchingData);
     Log("   WASAPIExclusive:         %d", WASAPIExclusiveData);
     Log("   EnableAC3Encoding:       %d", enableAC3EncodingData);
+    Log("   AC3bitrate:              %d", AC3bitrateData);
     Log("   LogSampleTimes:          %d", logSampleTimesData);
     Log("   DevicePeriod:            %d (1 == minimal, 0 == driver default, other user defined)", devicePeriodData);
     Log("   WASAPIPreferredDevice:   %s", WASAPIPreferredDeviceData);
@@ -120,6 +127,24 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
 
     m_hnsPeriod = devicePeriodData;
 
+    bool rateOk = false;
+    for(int i = 0; i < sizeof(gAllowedAC3bitrates) / sizeof(int); i++)
+    {
+      if (gAllowedAC3bitrates[i] == AC3bitrateData)
+      {
+        rateOk = true;
+        break;
+      }
+    }
+
+    if (rateOk)
+      m_AC3bitrate = AC3bitrateData * 1000;
+    else
+    {
+      m_AC3bitrate = 448000;
+      Log("   invalid AC3 bitrate, using 448");
+    }
+
     delete[] m_wWASAPIPreferredDeviceId;
     m_wWASAPIPreferredDeviceId = new WCHAR[MAX_REG_LENGTH];
     
@@ -144,6 +169,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
       WriteRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
       WriteRegistryKeyDword(hKey, enableAC3Encoding, enableAC3EncodingData);
+      WriteRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
       WriteRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
     } 
     else 

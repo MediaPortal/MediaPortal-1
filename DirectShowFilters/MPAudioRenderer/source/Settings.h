@@ -37,6 +37,8 @@ public:
   bool m_bUseTimeStretching;
   bool m_bEnableAC3Encoding;
   
+  int m_AC3bitrate;
+
   REFERENCE_TIME m_hnsPeriod;
 
   AUDCLNT_SHAREMODE m_WASAPIShareMode;
