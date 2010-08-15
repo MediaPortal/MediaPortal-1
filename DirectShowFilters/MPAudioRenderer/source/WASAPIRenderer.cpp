@@ -1034,6 +1034,8 @@ DWORD WASAPIRenderer::RenderThread()
               {
                 sample = NULL;
                 hr = m_pRenderer->SoundTouch()->GetNextSample(&sample, false);
+                
+                // TODO: write the partial sample/data to the audio buffer 
                 if (FAILED(hr) || !sample)
                 {
                   // no next sample available
