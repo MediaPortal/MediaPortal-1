@@ -460,8 +460,23 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
 HRESULT CMPAudioRenderer::CompleteConnect(IPin *pReceivePin)
 {
   Log("CompleteConnect");
-  
+
   HRESULT hr = S_OK;
+  PIN_INFO pinInfo;
+  FILTER_INFO filterInfo;
+  
+  hr = pReceivePin->QueryPinInfo(&pinInfo);
+  if (!SUCCEEDED(hr)) return E_FAIL;
+  if (pinInfo.pFilter == NULL) return E_FAIL;
+  hr = pinInfo.pFilter->QueryFilterInfo(&filterInfo);
+  filterInfo.pGraph->Release();
+  pinInfo.pFilter->Release();
+
+  if (FAILED(hr)) 
+    return E_FAIL;
+  
+  Log("CompleteConnect - audio decoder: %S", &filterInfo.achName);
+
   if (!m_pRenderDevice) return E_FAIL;
 
   if (SUCCEEDED(hr)) hr = CBaseRenderer::CompleteConnect(pReceivePin);
