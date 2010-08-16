@@ -1039,14 +1039,21 @@ DWORD WASAPIRenderer::RenderThread()
                 sample = NULL;
                 hr = m_pRenderer->SoundTouch()->GetNextSample(&sample, false);
                 
-                // TODO: write the partial sample/data to the audio buffer 
-                if (FAILED(hr) || !sample)
+                if (FAILED(hr))
                 {
-                  // no next sample available
-                  Log("WASAPIRenderer::Render thread: Buffer underrun, no new samples available!");
-                  bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
+                  Log("WASAPIRenderer::Render thread: Buffer underrun, fetching sample failed (0x%08x)", hr);
+                  if(bytesCopied == 0)
+                    bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
                   break;
                 }
+                else if(!sample)
+                {
+                  Log("WASAPIRenderer::Render thread: Buffer underrun, no new samples available!");  
+                  if(bytesCopied == 0)
+                    bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
+                  break;
+                }
+
                 sample->GetPointer(&sampleData);
                 sampleLength = sample->GetActualDataLength();
                 sampleOffset = 0;
