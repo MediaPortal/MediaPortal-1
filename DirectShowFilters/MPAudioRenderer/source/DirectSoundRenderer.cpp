@@ -66,11 +66,14 @@ HRESULT DirectSoundRenderer::CompleteConnect(IPin *pReceivePin)
 
 HRESULT DirectSoundRenderer::EndOfStream()
 {
+  Log("DirectSoundRenderer::EndOfStream");
   return S_OK;
 }
 
 HRESULT DirectSoundRenderer::BeginFlush()
 {
+  Log("DirectSoundRenderer::BeginFlush");
+  
   // Make sure DShow audio buffers are empty when seeking occurs
   if (m_pDSBuffer) 
     m_pDSBuffer->Stop();
@@ -80,8 +83,10 @@ HRESULT DirectSoundRenderer::BeginFlush()
 
 HRESULT DirectSoundRenderer::EndFlush()
 {
+  Log("DirectSoundRenderer::EndFlush");
   return S_OK;
 }
+
 HRESULT DirectSoundRenderer::Run(REFERENCE_TIME tStart)
 {
   Log("DirectSoundRenderer::Run");

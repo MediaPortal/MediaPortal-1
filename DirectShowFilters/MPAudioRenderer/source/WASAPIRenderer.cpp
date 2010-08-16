@@ -196,11 +196,14 @@ HRESULT WASAPIRenderer::CompleteConnect(IPin *pReceivePin)
 
 HRESULT WASAPIRenderer::EndOfStream()
 {
+  Log("WASAPIRenderer::EndOfStream");
   return S_OK;
 }
 
 HRESULT WASAPIRenderer::BeginFlush()
 {
+  Log("WASAPIRenderer::BeginFlush");
+
   HRESULT hr = S_OK;
 
   m_bDiscardCurrentSample = true;
@@ -222,6 +225,7 @@ HRESULT WASAPIRenderer::BeginFlush()
 
 HRESULT WASAPIRenderer::EndFlush()
 {
+  Log("WASAPIRenderer::EndFlush");
   return S_OK;
 }
 HRESULT WASAPIRenderer::Run(REFERENCE_TIME tStart)

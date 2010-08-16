@@ -579,6 +579,8 @@ HRESULT CMPAudioRenderer::GetReferenceClockInterface(REFIID riid, void **ppv)
 
 HRESULT CMPAudioRenderer::EndOfStream()
 {
+  Log("EndOfStream");
+
   // Do not stop the playback when end of stream is received. Source filter
   // will send the EndOfStream as soon as the file end is reached, but we
   // are still having samples in our queues that we still need to play. 
@@ -590,6 +592,8 @@ HRESULT CMPAudioRenderer::EndOfStream()
 
 HRESULT CMPAudioRenderer::BeginFlush()
 {
+  Log("BeginFlush");
+
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   CAutoLock cRenderThreadLock(&m_RenderThreadLock);
 
@@ -608,6 +612,8 @@ HRESULT CMPAudioRenderer::BeginFlush()
 
 HRESULT CMPAudioRenderer::EndFlush()
 {
+  Log("EndFlush");
+
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   CAutoLock cRenderThreadLock(&m_RenderThreadLock);
   
@@ -619,6 +625,8 @@ HRESULT CMPAudioRenderer::EndFlush()
   {
     m_pSoundTouch->EndFlush();
   }
+
+  m_pRenderDevice->EndFlush();
 
   return CBaseRenderer::EndFlush(); 
 }
