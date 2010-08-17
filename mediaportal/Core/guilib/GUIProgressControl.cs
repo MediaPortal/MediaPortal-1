@@ -191,9 +191,9 @@ namespace MediaPortal.GUI.Library
       GUIFontManager.Present();
 
       int iWidthLeft = _imageLeft.TextureWidth;
-      int iHeightLeft = _height; //_imageLeft.TextureHeight;
+      int iHeightLeft = _imageLeft.TextureHeight;
       int iWidthRight = _imageRight.TextureWidth;
-      int iHeightRight = _height; //_imageRight.TextureHeight;
+      int iHeightRight = _imageRight.TextureHeight;
       GUIGraphicsContext.ScaleHorizontal(ref iWidthLeft);
       GUIGraphicsContext.ScaleHorizontal(ref iWidthRight);
       GUIGraphicsContext.ScaleVertical(ref iHeightLeft);
