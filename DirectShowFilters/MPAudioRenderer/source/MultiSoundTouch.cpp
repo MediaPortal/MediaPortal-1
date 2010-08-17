@@ -22,7 +22,7 @@
 #include "MultiSoundTouch.h"
 
 #define AC3_FRAME_LENGHT  1536
-#define OUT_BUFFER_SIZE   16384
+#define OUT_BUFFER_SIZE   65536
 #define OUT_BUFFER_COUNT  20
 
 #define DEFINE_STREAM_FUNC(funcname, paramtype, paramname) \
@@ -298,17 +298,26 @@ DWORD CMultiSoundTouch::ResampleThread()
                 if (m_pEncoder)
                 {
                   BYTE outbuf[OUT_BUFFER_SIZE];
- 
-                  (void)receiveSamplesInternal((short*)pMediaBufferOut, AC3_FRAME_LENGHT);
-                  int AC3lenght = ac3_encoder_frame(m_pEncoder, (short*)pMediaBufferOut, outbuf, sizeof(outbuf));
-                  long resultLenght = CreateAC3Bitstream(outbuf, AC3lenght, pMediaBufferOut);
-                  
+                  BYTE resampledData[OUT_BUFFER_SIZE];
+                  long resultLenght = 0;
+
+                  while (numSamples() >= AC3_FRAME_LENGHT)
+                  {
+                    (void)receiveSamplesInternal((short*)resampledData, AC3_FRAME_LENGHT);
+                    int AC3lenght = ac3_encoder_frame(m_pEncoder, (short*)resampledData, outbuf, sizeof(outbuf));
+                    resultLenght += CreateAC3Bitstream(outbuf, AC3lenght, pMediaBufferOut + resultLenght);
+                  }
+
                   outSample->SetActualDataLength(resultLenght);
+
+                  //Log("sampleLength: %d resultLenght: %d remaining samples: %d", sampleLength,resultLenght,numSamples());
                 }
                 else
                 {
                   outSample->SetActualDataLength(sampleLength * m_pWaveFormat->Format.nBlockAlign);
                   receiveSamplesInternal((short*)pMediaBufferOut, sampleLength);
+
+                  //Log("sampleLength: %d remaining samples: %d", sampleLength, numSamples());
                 }
 
                 { // lock that the playback thread wont access the queue at the same time

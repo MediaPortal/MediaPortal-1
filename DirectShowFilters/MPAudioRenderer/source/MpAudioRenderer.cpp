@@ -130,19 +130,19 @@ CMPAudioRenderer::~CMPAudioRenderer()
   Log("MP Audio Renderer - destructor - instance 0x%x - end", this);
 }
 
-WAVEFORMATEX* CMPAudioRenderer::CreateWaveFormatForAC3()
+WAVEFORMATEX* CMPAudioRenderer::CreateWaveFormatForAC3(int pSamplesPerSec)
 {
   WAVEFORMATEX* pwfx = (WAVEFORMATEX*)new BYTE[sizeof(WAVEFORMATEX)];
   if (pwfx)
   {
-    // SPDIF uses static 48KHz, 2 channels, 16 bit. 
-	// AC3 header contains the real stream information
-	pwfx->wFormatTag = WAVE_FORMAT_DOLBY_AC3_SPDIF;
+    // SPDIF uses static 2 channels and 16 bit. 
+    // AC3 header contains the real stream information
+    pwfx->wFormatTag = WAVE_FORMAT_DOLBY_AC3_SPDIF;
     pwfx->wBitsPerSample = 16;
     pwfx->nBlockAlign = 4;
     pwfx->nChannels = 2;
-    pwfx->nSamplesPerSec = 48000;
-    pwfx->nAvgBytesPerSec = 80000;
+    pwfx->nSamplesPerSec = pSamplesPerSec;
+    pwfx->nAvgBytesPerSec = pwfx->nSamplesPerSec * pwfx->nBlockAlign;
     pwfx->cbSize = 0;
   }
   return pwfx;
@@ -193,7 +193,7 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
   {
     if (m_Settings.m_bEnableAC3Encoding)
     {
-      WAVEFORMATEX *pRenderFormat = CreateWaveFormatForAC3();
+      WAVEFORMATEX *pRenderFormat = CreateWaveFormatForAC3(pwfx->nSamplesPerSec);
       hr = m_pRenderDevice->CheckFormat(pRenderFormat);
       SAFE_DELETE_WAVEFORMATEX(pRenderFormat);
     }
@@ -394,13 +394,13 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
   HRESULT hr = S_OK;
   Log("SetMediaType");
 
-  WAVEFORMATEX *pwf = (WAVEFORMATEX *) pmt->Format();
+  WAVEFORMATEX* pwf = (WAVEFORMATEX*) pmt->Format();
   
   if (m_pRenderDevice)
   {
     if (m_Settings.m_bEnableAC3Encoding)
     {
-      WAVEFORMATEX *pRenderFormat = CreateWaveFormatForAC3();
+      WAVEFORMATEX* pRenderFormat = CreateWaveFormatForAC3(pwf->nSamplesPerSec);
       m_pRenderDevice->SetMediaType(pRenderFormat);
       SAFE_DELETE_WAVEFORMATEX(pRenderFormat);
     }
