@@ -718,8 +718,10 @@ namespace MediaPortal.GUI.Library
                      _windowXmlFileName, img.GetID, img.Width, img.Height, img.FileName);
           }
         }
-
-        Children.Add(newControl);
+        lock (GUIGraphicsContext.RenderLock)
+        {
+          Children.Add(newControl);
+        }
       }
       catch (Exception ex)
       {
