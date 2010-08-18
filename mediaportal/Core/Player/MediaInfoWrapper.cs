@@ -48,6 +48,7 @@ namespace MediaPortal.Player
     private string _videoResolution = string.Empty;
     private int _videoDuration = 0;
     private bool _DVDenabled = false;
+    private string _ParseSpeed = "0.5"; // MediaInfo 0.7.34 default
 
     //Audio
     private int _audioRate = 0;
@@ -73,6 +74,7 @@ namespace MediaPortal.Player
       using (Settings xmlreader = new MPSettings())
       {
         _DVDenabled = xmlreader.GetValueAsBool("dvdplayer", "mediainfoused", false);
+        _ParseSpeed = xmlreader.GetValueAsString("debug", "MediaInfoParsespeed", "0.5");
       }
       bool isTV = Util.Utils.IsLiveTv(strFile);
       bool isRadio = Util.Utils.IsLiveRadio(strFile);
@@ -100,6 +102,7 @@ namespace MediaPortal.Player
       try
       {
         _mI = new MediaInfo();
+        _mI.Option("ParseSpeed", _ParseSpeed);
 
         if (Util.VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(strFile)))
           strFile = Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO";
@@ -215,6 +218,7 @@ namespace MediaPortal.Player
 
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: DLL Version      : {0}", _mI.Option("Info_Version"));
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Inspecting media : {0}", strFile);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Parse speed      : {0}", _ParseSpeed);
         //Video
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: FrameRate        : {0}", _framerate);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Width            : {0}", _width);
