@@ -55,6 +55,10 @@ namespace MediaPortal.Player
     private string _audioChannelsFriendly = string.Empty;
     private string _audioCodec = string.Empty;
 
+    //Detection
+    private bool _hasAudio;
+    private bool _hasVideo;
+
     //Subtitles
     private int _numsubtitles = 0;
     private bool _hasSubtitles = false;
@@ -193,6 +197,10 @@ namespace MediaPortal.Player
             break;
         }
 
+        //Detection
+        _hasAudio = _mI.Count_Get(StreamKind.Audio) > 0;
+        _hasVideo = _mI.Count_Get(StreamKind.Video) > 0;
+
         //Subtitles
         _numsubtitles = _mI.Count_Get(StreamKind.Text);
 
@@ -205,6 +213,7 @@ namespace MediaPortal.Player
           _hasSubtitles = _numsubtitles > 0;
         }
 
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: DLL Version      : {0}", _mI.Option("Info_Version"));
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Inspecting media : {0}", strFile);
         //Video
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: FrameRate        : {0}", _framerate);
@@ -220,6 +229,9 @@ namespace MediaPortal.Player
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioRate        : {0}", _audioRate);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioChannels    : {0} [ \"{1}.png\" ]", _audioChannels, _audioChannelsFriendly);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioCodec       : {0} [ \"{1}.png\" ]", _audioCodec, Util.Utils.MakeFileName(_audioCodec).ToLower());
+        //Detection
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: HasAudio         : {0}", _hasAudio);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: HasVideo         : {0}", _hasVideo);
         //Subtitles
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: HasSubtitles     : {0}", _hasSubtitles);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: NumSubtitles     : {0}", _numsubtitles);
@@ -430,6 +442,20 @@ namespace MediaPortal.Player
     public string AudioChannelsFriendly
     {
       get { return _audioChannelsFriendly; }
+    }
+
+    #endregion
+
+    #region public detection properties
+
+    public bool hasVideo
+    {
+      get { return _hasVideo; }
+    }
+
+    public bool hasAudio
+    {
+      get { return _hasAudio; }
     }
 
     #endregion
