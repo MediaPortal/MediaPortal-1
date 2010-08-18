@@ -137,7 +137,7 @@ namespace MediaPortal.Player
       _factory = new PlayerFactory();
     }
 
-    static g_Player() {}
+    static g_Player() { }
 
     public static IPlayer Player
     {
@@ -263,7 +263,7 @@ namespace MediaPortal.Player
         {
           strFromXml = ConvertToNewStyle(strFromXml);
         }
-        foreach (string token in strFromXml.Split(new char[] {',', ';', ' '}))
+        foreach (string token in strFromXml.Split(new char[] { ',', ';', ' ' }))
         {
           if (token == string.Empty)
           {
@@ -293,7 +293,7 @@ namespace MediaPortal.Player
     {
       int count = 0;
       bool foundOtherThanZeroOrOne = false;
-      foreach (string token in strSteps.Split(new char[] {',', ';', ' '}))
+      foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
       {
         if (token == string.Empty)
         {
@@ -313,7 +313,7 @@ namespace MediaPortal.Player
     {
       int count = 0;
       string newStyle = string.Empty;
-      foreach (string token in strSteps.Split(new char[] {',', ';', ' '}))
+      foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
       {
         if (token == string.Empty)
         {
@@ -427,7 +427,7 @@ namespace MediaPortal.Player
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
     #endregion
@@ -1208,8 +1208,8 @@ namespace MediaPortal.Player
         //                    as distinguo:  stream-tv-* and stream-radio-*
         //                    we will also use *.radio.ts and *.tv.ts
 
-        // Exception for ts files with 0 duration = radio
-        bool checkTSisRadio = Path.GetExtension(strFile).ToLower() == ".ts" && (_mediaInfo.VideoDuration == 0);
+        // Exception for ts files with no video stream = radio
+        bool checkTSisRadio = Path.GetExtension(strFile).ToLower() == ".ts" && !_mediaInfo.hasVideo;
 
         if (checkTSisRadio)
         {
@@ -1223,6 +1223,7 @@ namespace MediaPortal.Player
           {
             if (type == MediaType.Unknown)
             {
+              Log.Debug("g_Player.Play - Mediatype Unknown, forcing detection as Video");
               type = MediaType.Video;
             }
             // refreshrate change done here.
@@ -2476,7 +2477,7 @@ namespace MediaPortal.Player
     {
       try
       {
-        using (new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None)) {}
+        using (new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None)) { }
       }
       catch (System.IO.IOException exp)
       {
@@ -2538,7 +2539,7 @@ namespace MediaPortal.Player
               continue;
             }
 
-            string[] tokens = line.Split(new char[] {'\t'});
+            string[] tokens = line.Split(new char[] { '\t' });
             if (tokens.Length != 2)
             {
               continue;
