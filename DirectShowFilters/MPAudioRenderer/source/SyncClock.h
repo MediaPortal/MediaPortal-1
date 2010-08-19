@@ -26,7 +26,7 @@ class CSyncClock: public CBaseReferenceClock
 public:
   CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer);
 
-	REFERENCE_TIME GetPrivateTime();
+  REFERENCE_TIME GetPrivateTime();
 
   void SetBias(double pBias);
   void SetAdjustment(double pAdjustment);
@@ -37,7 +37,7 @@ public:
   void SetDiff(DWORD diff);
 
 private:
-	DOUBLE m_dAdjustment;
+  DOUBLE m_dAdjustment;
   DOUBLE m_dBias;
 
   REFERENCE_TIME    m_rtPrivateTime;
