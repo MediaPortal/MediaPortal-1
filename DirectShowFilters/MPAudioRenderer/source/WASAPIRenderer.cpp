@@ -376,7 +376,25 @@ HRESULT WASAPIRenderer::InitCoopLevel()
 HRESULT	WASAPIRenderer::DoRenderSample(IMediaSample *pMediaSample, LONGLONG /*pSampleCounter*/)
 {
   HRESULT	hr = S_OK;
-  
+
+  if (!m_bIsAudioClientStarted && m_pAudioClient)
+  {
+    hr = m_pAudioClient->Start();
+    if (SUCCEEDED(hr))
+    {
+      m_bIsAudioClientStarted = true;
+      Log("WASAPIRenderer::DoRenderSample - Starting audio client");
+    }
+    else
+    {
+      Log("WASAPIRenderer::DoRenderSample - failed to start audio client (0x%08x)", hr);
+    }
+  }
+  else if(!m_pAudioClient)
+  {
+    Log("WASAPIRenderer::DoRenderSample - no audio client available!");
+  }
+
   REFERENCE_TIME rtStart = 0;
   REFERENCE_TIME rtStop = 0;
   
@@ -439,8 +457,6 @@ HRESULT WASAPIRenderer::CheckAudioClient(const WAVEFORMATEX *pWaveFormatEx)
 
   Log("WASAPIRenderer::CheckAudioClient");
   LogWaveFormat(pWaveFormatEx, "WASAPIRenderer::CheckAudioClient");
-
-  // Negotiate the SPDIF connection type only with the audio device
 
   HRESULT hr = S_OK;
   CAutoLock cAutoLock(&m_csCheck);
@@ -1072,6 +1088,10 @@ DWORD WASAPIRenderer::RenderThread()
           {
             Log("WASAPIRenderer::Render thread: ReleaseBuffer failed (0x%08x)", hr);
           }
+        }
+        else
+        {
+          Log("WASAPIRenderer::Render thread: GetBuffer failed (0x%08x)", hr);
         }
       }
     }
