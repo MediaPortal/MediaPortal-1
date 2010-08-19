@@ -71,6 +71,9 @@ namespace MediaPortal.Dialogs
 
     public void Reset()
     {
+      // Allocate keyboard resources during a Reset().  Withou this, the caller may override skin properties following the Reset()
+      // and the subsequent call to DoModal() will AllocResources() and clobber the callers overrides (AllocResources() is reentrant).
+      AllocResources();
       _keyboard.Reset();
     }
 
@@ -136,6 +139,7 @@ namespace MediaPortal.Dialogs
     protected void PageLoad()
     {
       AllocResources();
+      _keyboard.InitializeInstance();
       _previousOverlayVisible = GUIGraphicsContext.Overlay;
       _keyboard.PressedEnter = false;
       GUIGraphicsContext.Overlay = false;
