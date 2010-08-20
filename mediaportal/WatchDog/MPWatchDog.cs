@@ -145,8 +145,8 @@ namespace WatchDog
     {
       _zipFile = tbZipFile.Text;
       return _zipFile
-        .Replace("<date>", DateTime.Now.ToString("dd_MM_yy"))
-        .Replace("<time>", DateTime.Now.ToString("HH_mm"));
+        .Replace("[date]", DateTime.Now.ToString("dd_MM_yy"))
+        .Replace("[time]", DateTime.Now.ToString("HH_mm"));
     }
 
     #endregion
@@ -161,7 +161,7 @@ namespace WatchDog
         _tempDir += "\\";
       }
       _tempDir += "MPTemp";
-      _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortalLogs_<date>__<time>.zip";
+      _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortalLogs_[date]__[time].zip";
       if (!ParseCommandLine())
       {
         Application.Exit();
