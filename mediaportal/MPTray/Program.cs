@@ -463,27 +463,40 @@ namespace MPTray
         catch { }
       }
 
+      public static void ReOpen(string fileName)
+      {
+        if (_streamWriter != null)
+        {
+          return;
+        }
+
+        string filePath = Path.Combine(MediaPortal.Configuration.Config.GetFolder(MediaPortal.Configuration.Config.Dir.Log), fileName);
+        
+
+        try
+        {
+          _streamWriter = new StreamWriter(filePath, true)
+          {
+            AutoFlush = true
+          };
+        }
+        catch { }
+      }
+
       public static void Close()
       {
         if (_streamWriter == null)
         {
           return;
         }
-        try
-        {
-          string message = String.Format("{0:yyyy-MM-dd HH:mm:ss.ffffff} - {1}: Log Closed", DateTime.Now, Thread.CurrentThread.Name);
-          _streamWriter.WriteLine(message);
-          _streamWriter.WriteLine();
-        }
-        finally
-        {
-          _streamWriter.Dispose();
-          _streamWriter = null;
-        }
+        _streamWriter.Dispose();
+        _streamWriter = null;
+        
       }
 
       public static void Write(string format, params object[] args)
       {
+        Log.ReOpen("MPTray.log");
         if (_streamWriter == null)
         {
           return;
@@ -491,6 +504,7 @@ namespace MPTray
         string message = String.Format("{0:yyyy-MM-dd HH:mm:ss.ffffff} - ", DateTime.Now) + String.Format(format, args);
 
         _streamWriter.WriteLine(message);
+        Log.Close();
       }
     }
     #endregion
