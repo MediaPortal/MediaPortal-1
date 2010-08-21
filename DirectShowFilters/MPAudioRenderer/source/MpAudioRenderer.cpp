@@ -491,9 +491,6 @@ STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
 {
   Log("Run");
 
-  // Try to catch the live point / take latency into account
-  //m_bDropSamples = true;
-
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   
   HRESULT	hr;
@@ -517,6 +514,13 @@ STDMETHODIMP CMPAudioRenderer::Stop()
 
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   CAutoLock cRenderThreadLock(&m_RenderThreadLock);
+
+  if (m_pSoundTouch)
+  {
+    m_pSoundTouch->GetNextSample(NULL, true);
+    m_pSoundTouch->BeginFlush();
+    m_pSoundTouch->EndFlush();  
+  }
   
   m_pRenderDevice->Stop(GetRealState());
 
@@ -532,14 +536,6 @@ STDMETHODIMP CMPAudioRenderer::Pause()
   Log("Pause");
 
   FILTER_STATE state = GetRealState();
-
-  // TODO: check if this could be fixed without requiring to drop all sample
-  if (state == State_Running)
-  {
-    m_pSoundTouch->GetNextSample(NULL, true);
-    m_pSoundTouch->BeginFlush();
-    m_pSoundTouch->EndFlush();
-  }
 
   m_pRenderDevice->Pause(state);
 
