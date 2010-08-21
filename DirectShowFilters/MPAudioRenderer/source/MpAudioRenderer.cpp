@@ -71,6 +71,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_rtNextSampleTime(0)
 , m_rtPrevSampleTime(0)
 , m_bDropSamples(false)
+, m_bFlushSamples(false)
 {
   Log("CMPAudioRenderer - instance 0x%x", this);
 
@@ -252,8 +253,23 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
 
   UINT nFrames = sampleLenght / m_pWaveFileFormat->nBlockAlign;
   REFERENCE_TIME rtSampleDuration = nFrames * UNITS / m_pWaveFileFormat->nSamplesPerSec;
-  REFERENCE_TIME rtLate = rtTime - rtSampleTime;
-  
+  REFERENCE_TIME rtLate = rtTime - rtSampleTime;  
+
+  if (rtSampleTime - m_pRenderDevice->Latency() < 0)
+  {
+    // Preroll samples are ignored. During this time the device's audio
+    // latency will be "eliminated". Preroll amount has been set to match the 
+    // device's buffer latency. Unfortunately IsPreroll() is not working on
+    // all source filters so we have to use own calculation
+    
+    //Log("preroll sample - rtTime: %.3f ms rtSampleTime: %.3f ms ", rtTime/10000.0, rtSampleTime/10000.0);
+    
+    m_rtNextSampleTime = rtSampleTime + rtSampleDuration;
+
+    EXECUTE_ASSERT(SetEvent((HANDLE)m_RenderEvent));
+    return TRUE;
+  }
+
   // Try to keep the A/V sync when data has been dropped
   if ((abs(rtSampleTime - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_dSampleCounter > 1)
   {
@@ -264,7 +280,7 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   {
     m_bDropSamples = true;
   }
-  else if(rtLate <= rtSampleDuration && m_bDropSamples)
+  else if(rtLate  <= rtSampleDuration && m_bDropSamples)
   {
     m_bDropSamples = false;
     Log("  Live stream position after ::Run has been reached");
@@ -314,6 +330,18 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
       memmove(sampleData, sampleData + newLenght, newLenght);
     }
   }
+
+  if (m_bFlushSamples)
+  {
+    CAutoLock cInterfaceLock(&m_InterfaceLock);
+    CAutoLock cRenderThreadLock(&m_RenderThreadLock);
+
+    m_pSoundTouch->BeginFlush();
+    m_pSoundTouch->clear();
+    m_pSoundTouch->EndFlush();
+    m_bDropSamples = false; // stream is continuous from this point on  
+    m_bFlushSamples = false;
+  }
   
   if (m_dSampleCounter > 1 && !m_bDropSamples)
   {
@@ -327,13 +355,7 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
     // Discard all old data in queues
     if (m_bDropSamples)
     {
-      CAutoLock cInterfaceLock(&m_InterfaceLock);
-      CAutoLock cRenderThreadLock(&m_RenderThreadLock);
-
-      m_pSoundTouch->BeginFlush();
-      m_pSoundTouch->clear();
-      m_pSoundTouch->EndFlush();
-      m_bDropSamples = false; // stream is continuous from this point on
+      m_bFlushSamples = true;
     }
 
     ASSERT(m_dwAdvise == 0);
@@ -494,7 +516,6 @@ STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   
   HRESULT	hr;
-  m_dwTimeStart = timeGetTime();
 
   if (m_State == State_Running) return NOERROR;
 

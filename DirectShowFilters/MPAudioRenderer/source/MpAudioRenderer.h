@@ -126,15 +126,17 @@ private:
   double      m_dAdjustment;
   CCritSec    m_csResampleLock;
   CCritSec    m_RenderThreadLock;
-  DWORD       m_dwTimeStart;
   LONGLONG    m_dSampleCounter;
 
   // Used for detecting dropped data
   REFERENCE_TIME m_rtNextSampleTime;
   REFERENCE_TIME m_rtPrevSampleTime;
 
-  // stream has discontinuity error(s), data must be dropped if gaps are too wide
+  // Stream has discontinuity error(s), data must be dropped if gaps are too wide
   bool m_bDropSamples;
+
+  // Flush old audio samples only after the new A/V sync point is reached
+  bool m_bFlushSamples;
 
   AudioRendererSettings m_Settings;
 
