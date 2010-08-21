@@ -999,7 +999,7 @@ DWORD WASAPIRenderer::RenderThread()
   UINT32 sampleOffset = 0;
   bool writeSilence = false;
 
-  while(true)
+  while (true)
   {
     // 1) Waiting for the next WASAPI buffer to be available to be filled
     // 2) Exit requested for the thread
@@ -1014,7 +1014,6 @@ DWORD WASAPIRenderer::RenderThread()
     else if (result == WAIT_OBJECT_0 + 1)
     {
       CAutoLock cRenderThreadLock(m_pRenderer->RenderThreadLock());
-
       HRESULT hr = S_FALSE;
 
       if (m_bDiscardCurrentSample)
@@ -1024,7 +1023,7 @@ DWORD WASAPIRenderer::RenderThread()
       }
 
       // Fetch the sample for the first time
-      if(!sample)
+      if (!sample)
       {
         sampleOffset = 0;
         hr = m_pRenderer->SoundTouch()->GetNextSample(&sample, false);
@@ -1070,7 +1069,7 @@ DWORD WASAPIRenderer::RenderThread()
             do
             {
               // no data in current sample anymore
-              if(sampleLength - sampleOffset == 0)
+              if (sampleLength - sampleOffset == 0)
               {
                 sample = NULL;
                 hr = m_pRenderer->SoundTouch()->GetNextSample(&sample, false);
@@ -1082,7 +1081,7 @@ DWORD WASAPIRenderer::RenderThread()
                     bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
                   break;
                 }
-                else if(!sample)
+                else if (!sample)
                 {
                   Log("WASAPIRenderer::Render thread: Buffer underrun, no new samples available!");  
                   if(bytesCopied == 0)
