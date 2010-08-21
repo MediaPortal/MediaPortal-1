@@ -68,7 +68,6 @@ private:
 
   void StartAudioClient(IAudioClient** ppAudioClient);
   void StopAudioClient(IAudioClient** ppAudioClient);
-  void PingAudioBuffer();
 
   IMMDevice*          m_pMMDevice;
   IAudioClient*       m_pAudioClient;

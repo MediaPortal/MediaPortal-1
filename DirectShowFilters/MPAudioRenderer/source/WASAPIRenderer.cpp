@@ -715,11 +715,11 @@ HRESULT WASAPIRenderer::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudi
         m_pRenderer->Settings()->m_hnsPeriod = defaultPeriod;
       else
         m_pRenderer->Settings()->m_hnsPeriod = minimumPeriod;
-      Log("WASAPIRenderer::InitAudioClient using device period from drivers %d ms", m_pRenderer->Settings()->m_hnsPeriod / 10000);
+      Log("WASAPIRenderer::InitAudioClient using device period from driver %d ms", m_pRenderer->Settings()->m_hnsPeriod / 10000);
     }
     else
     {
-      Log("WASAPIRenderer::InitAudioClient failed to get device period from drivers (0x%08x) - using 50 ms", hr); 
+      Log("WASAPIRenderer::InitAudioClient failed to get device period from driver (0x%08x) - using 50 ms", hr); 
       m_pRenderer->Settings()->m_hnsPeriod = 500000; //50 ms is the best according to James @Slysoft
     }
   }
@@ -751,7 +751,7 @@ HRESULT WASAPIRenderer::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudi
 
   GetBufferSize(pWaveFormatEx, &m_pRenderer->Settings()->m_hnsPeriod);
 
-  if (SUCCEEDED (hr))
+  if (SUCCEEDED(hr))
   {
     hr = m_pAudioClient->Initialize(m_pRenderer->Settings()->m_WASAPIShareMode, AUDCLNT_STREAMFLAGS_EVENTCALLBACK,
 	                                m_pRenderer->Settings()->m_hnsPeriod, m_pRenderer->Settings()->m_hnsPeriod, pWaveFormatEx, NULL);
@@ -763,7 +763,7 @@ HRESULT WASAPIRenderer::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudi
       return S_OK;
   }
 
-  if (FAILED (hr) && hr != AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED)
+  if (FAILED(hr) && hr != AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED)
   {
     Log("WASAPIRenderer::InitAudioClient Initialize failed (0x%08x)", hr);
     return hr;
@@ -783,7 +783,7 @@ HRESULT WASAPIRenderer::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudi
     }
   }
 
-  if (AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED == hr) 
+  if (hr == AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED) 
   {
     // if the buffer size was not aligned, need to do the alignment dance
     Log("WASAPIRenderer::InitAudioClient Buffer size not aligned. Realigning");
@@ -838,7 +838,7 @@ HRESULT WASAPIRenderer::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudi
   } // if (AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED == hr) 
 
   // get the buffer size, which is aligned
-  if (SUCCEEDED (hr)) 
+  if (SUCCEEDED(hr)) 
   {
     hr = m_pAudioClient->GetBufferSize(&m_nFramesInBuffer);
   }
@@ -906,8 +906,6 @@ void WASAPIRenderer::StartAudioClient(IAudioClient** ppAudioClient)
     Log("WASAPIRenderer::StartAudioClient");
     HRESULT hr = S_OK;
 
-    PingAudioBuffer();
-    
     if ((*ppAudioClient))
     {
       hr = (*ppAudioClient)->Start();
@@ -935,10 +933,13 @@ void WASAPIRenderer::StopAudioClient(IAudioClient** ppAudioClient)
     Log("WASAPIRenderer::StopAudioClient");
     HRESULT hr = S_OK;
 
-    PingAudioBuffer();
-
     if (*ppAudioClient)
     {
+      // Let the current audio buffer to be played completely.
+      // Some amplifiers will "cache" the incomplete AC3 packets and that causes issues
+      // when the next AC3 packets are received
+      Sleep(Latency()/10000);
+
       hr = (*ppAudioClient)->Stop();
       if (FAILED(hr))
         Log("   stop failed (0x%08x)", hr);
@@ -948,39 +949,6 @@ void WASAPIRenderer::StopAudioClient(IAudioClient** ppAudioClient)
         Log("   reset failed (0x%08x)", hr);
     }
     m_bIsAudioClientStarted = false;
-  }
-}
-
-void WASAPIRenderer::PingAudioBuffer()
-{
-  HRESULT hr = S_OK;
-
-  BYTE* data;
-  UINT32 bufferSize = 0;
-
-  if (m_pAudioClient && m_pRenderClient && !m_bIsAudioClientStarted)
-  {
-    DWORD bufferFlags = 0;
-    UINT32 currentPadding = 0;
-    
-    m_pAudioClient->GetBufferSize(&bufferSize);
-
-    if (m_pRenderer->Settings()->m_WASAPIShareMode == AUDCLNT_SHAREMODE_SHARED)
-      m_pAudioClient->GetCurrentPadding(&currentPadding);
-
-    UINT32 bufferSizeInBytes = (bufferSize - currentPadding) * m_pRenderFormat->nBlockAlign;
-
-    hr = m_pRenderClient->GetBuffer(bufferSize - currentPadding, &data);
-    
-    if (SUCCEEDED(hr) && data)
-    {
-      Log("Ping audio buffer...");    
-      hr = m_pRenderClient->ReleaseBuffer(m_nFramesInBuffer, AUDCLNT_BUFFERFLAGS_SILENT);
-    }
-    if (FAILED(hr))
-    {
-      Log("Failed to ping audio buffer (0x%08x)", hr);
-    }
   }
 }
 
