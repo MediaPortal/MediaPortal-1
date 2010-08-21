@@ -254,7 +254,8 @@ namespace MediaPortal.Dialogs
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
             //base.OnMessage(message);
-            OnPageDestroy(_parentWindowID);
+            // TODO: Establishes a circular loop
+            // OnPageDestroy(_parentWindowID);
 
             _running = false;
             _parentWindowID = 0;
