@@ -72,6 +72,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_rtPrevSampleTime(0)
 , m_bDropSamples(false)
 , m_bFlushSamples(false)
+, m_pVolumeHandler(NULL)
 {
   Log("CMPAudioRenderer - instance 0x%x", this);
 
@@ -96,6 +97,21 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
   if (!m_pSoundTouch)
   {
     if(phr)
+    {
+      *phr = E_OUTOFMEMORY;
+      return;
+    }
+  }
+
+  m_pVolumeHandler = new CVolumeHandler(punk);
+
+  if (m_pVolumeHandler)
+  {
+    m_pVolumeHandler->AddRef();
+  }
+  else
+  {
+    if(phr)
       *phr = E_OUTOFMEMORY;
   }
 }
@@ -109,6 +125,9 @@ CMPAudioRenderer::~CMPAudioRenderer()
   CAutoLock cInterfaceLock(&m_InterfaceLock);
 
   Stop();
+
+  if (m_pVolumeHandler)
+    m_pVolumeHandler->Release();
 
   if (m_pSoundTouch)
     m_pSoundTouch->StopResamplingThread();
@@ -391,7 +410,7 @@ HRESULT	CMPAudioRenderer::DoRenderSample(IMediaSample *pMediaSample)
 
 STDMETHODIMP CMPAudioRenderer::NonDelegatingQueryInterface(REFIID riid, void **ppv)
 {
-  if(riid == IID_IReferenceClock)
+  if (riid == IID_IReferenceClock)
   {
     return GetInterface(static_cast<IReferenceClock*>(&m_Clock), ppv);
   }
@@ -404,6 +423,11 @@ STDMETHODIMP CMPAudioRenderer::NonDelegatingQueryInterface(REFIID riid, void **p
   if (riid == IID_IMediaSeeking) 
   {
     return GetInterface(static_cast<IMediaSeeking*>(this), ppv);
+  }
+
+  if (riid == IID_IBasicAudio)
+  {
+    return GetInterface(static_cast<IBasicAudio*>(m_pVolumeHandler), ppv);
   }
 
 	return CBaseRenderer::NonDelegatingQueryInterface (riid, ppv);

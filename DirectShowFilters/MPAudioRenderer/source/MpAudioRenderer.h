@@ -38,6 +38,7 @@
 #include "MultiSoundTouch.h"
 #include "SyncClock.h"
 #include "Settings.h"
+#include "VolumeHandler.h"
 
 // if you get a compilation error on AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED,
 // uncomment the #define below
@@ -121,12 +122,13 @@ private:
   CMultiSoundTouch*	    m_pSoundTouch;
    
 private:
-  CSyncClock  m_Clock;
-  double      m_dBias;
-  double      m_dAdjustment;
-  CCritSec    m_csResampleLock;
-  CCritSec    m_RenderThreadLock;
-  LONGLONG    m_dSampleCounter;
+  CSyncClock      m_Clock;
+  CVolumeHandler* m_pVolumeHandler;
+  double          m_dBias;
+  double          m_dAdjustment;
+  CCritSec        m_csResampleLock;
+  CCritSec        m_RenderThreadLock;
+  LONGLONG        m_dSampleCounter;
 
   // Used for detecting dropped data
   REFERENCE_TIME m_rtNextSampleTime;
@@ -141,4 +143,6 @@ private:
   AudioRendererSettings m_Settings;
 
   IRenderDevice* m_pRenderDevice;
+
+  
 };

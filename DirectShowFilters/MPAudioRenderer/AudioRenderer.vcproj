@@ -969,6 +969,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\VolumeHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\WASAPIRenderer.cpp"
 				>
 			</File>
@@ -1027,6 +1031,10 @@
 			</File>
 			<File
 				RelativePath=".\source\SyncClock.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\VolumeHandler.h"
 				>
 			</File>
 			<File
