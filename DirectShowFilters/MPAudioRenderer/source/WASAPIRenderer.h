@@ -57,15 +57,18 @@ private:
   PTR_AvSetMmThreadCharacteristicsW		pfAvSetMmThreadCharacteristicsW;
   PTR_AvRevertMmThreadCharacteristics		pfAvRevertMmThreadCharacteristics;
 
-  HRESULT     GetAudioDevice(IMMDevice **ppMMDevice);
-  HRESULT     GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevices, bool pLog); // caller must release ppMMDevices!
-  HRESULT     CreateAudioClient(IMMDevice *pMMDevice, IAudioClient **ppAudioClient);
-  HRESULT     InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudioClient *pAudioClient, IAudioRenderClient **ppRenderClient);
-  HRESULT     CheckAudioClient(const WAVEFORMATEX *pWaveFormatEx);
-  bool        CheckFormatChanged(const WAVEFORMATEX *pWaveFormatEx, WAVEFORMATEX **ppNewWaveFormatEx);
-  HRESULT     DoRenderSampleWasapi(IMediaSample *pMediaSample);
-  HRESULT     GetBufferSize(const WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
-  //void        CreateWaveFormatForAC3(WAVEFORMATEX* pwfx);
+  HRESULT GetAudioDevice(IMMDevice **ppMMDevice);
+  HRESULT GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevices, bool pLog); // caller must release ppMMDevices!
+  HRESULT CreateAudioClient(IMMDevice *pMMDevice, IAudioClient **ppAudioClient);
+  HRESULT InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudioClient *pAudioClient, IAudioRenderClient **ppRenderClient);
+  HRESULT CheckAudioClient(const WAVEFORMATEX *pWaveFormatEx);
+  bool    CheckFormatChanged(const WAVEFORMATEX *pWaveFormatEx, WAVEFORMATEX **ppNewWaveFormatEx);
+  HRESULT DoRenderSampleWasapi(IMediaSample *pMediaSample);
+  HRESULT GetBufferSize(const WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
+
+  void StartAudioClient(IAudioClient** ppAudioClient);
+  void StopAudioClient(IAudioClient** ppAudioClient);
+  void PingAudioBuffer();
 
   IMMDevice*          m_pMMDevice;
   IAudioClient*       m_pAudioClient;
@@ -82,6 +85,7 @@ private:
   IAudioClock*        m_pAudioClock;
   UINT64              m_nHWfreq;
   WAVEFORMATEX*       m_pRenderFormat;
+  
   // Rendering thread
   static DWORD WINAPI RenderThreadEntryPoint(LPVOID lpParameter);
   DWORD RenderThread();

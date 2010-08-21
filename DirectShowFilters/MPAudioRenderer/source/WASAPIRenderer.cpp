@@ -204,23 +204,10 @@ HRESULT WASAPIRenderer::BeginFlush()
 {
   Log("WASAPIRenderer::BeginFlush");
 
-  HRESULT hr = S_OK;
-
   m_bDiscardCurrentSample = true;
 
-  if (m_pAudioClient && m_bIsAudioClientStarted) 
-  {
-    m_pAudioClient->Stop();
-    hr = m_pAudioClient->Reset();
-    m_bIsAudioClientStarted = false;
-
-    if (hr != S_OK)
-    {
-      Log("WASAPIRenderer::BeginFlush - m_pAudioClient reset failed with (0x%08x)", hr);
-    }
-  }
-
-  return hr;
+  StopAudioClient(&m_pAudioClient);
+  return S_OK;
 }
 
 HRESULT WASAPIRenderer::EndFlush()
@@ -253,12 +240,7 @@ HRESULT WASAPIRenderer::Run(REFERENCE_TIME tStart)
     }
   }
 
-  if (!m_bIsAudioClientStarted)
-  {
-    Log("WASAPIRenderer::Run - Starting audio client");
-    m_pAudioClient->Start();
-    m_bIsAudioClientStarted = true;
-  }
+  StartAudioClient(&m_pAudioClient);
 
   return hr;
 }
@@ -266,11 +248,7 @@ HRESULT WASAPIRenderer::Run(REFERENCE_TIME tStart)
 
 HRESULT WASAPIRenderer::Stop(FILTER_STATE pState)
 {
-  if (m_pAudioClient && m_bIsAudioClientStarted) 
-  {
-    m_pAudioClient->Stop();
-    m_pAudioClient->Reset();
-  }
+  StopAudioClient(&m_pAudioClient);
 
   // This is an ugly workaround for the .NET GC not cleaning up the directshow resources
   // when playback is stopped. Needs to be done since otherwise the next session might
@@ -285,8 +263,6 @@ HRESULT WASAPIRenderer::Stop(FILTER_STATE pState)
 
     m_bReinitAfterStop = true;
   }
-
-  m_bIsAudioClientStarted = false;  
   
   return S_OK;
 }
@@ -299,10 +275,7 @@ HRESULT WASAPIRenderer::Pause(FILTER_STATE pState)
     m_bDiscardCurrentSample = true;
   }
 
-  if (m_pAudioClient && m_bIsAudioClientStarted) 
-  {
-    m_pAudioClient->Stop();
-  }
+  StopAudioClient(&m_pAudioClient);
 
   m_bIsAudioClientStarted = false;
 
@@ -327,26 +300,12 @@ REFERENCE_TIME WASAPIRenderer::Latency()
 
 HRESULT WASAPIRenderer::SetRate(double dRate)
 {
-  HRESULT hr = S_FALSE;
   m_dRate = dRate;
-
   m_bDiscardCurrentSample = true;      
 
-  if (m_pAudioClient && m_bIsAudioClientStarted) 
-  {
-    HRESULT hr = S_OK;
-
-    m_pAudioClient->Stop();
-    hr = m_pAudioClient->Reset();
-    m_bIsAudioClientStarted = false;
-
-    if (hr != S_OK)
-    {
-      Log("WASAPIRenderer::SetRate - m_pAudioClient reset failed with (0x%08x)", hr);
-    }
-  }
+  StopAudioClient(&m_pAudioClient);
   
-  return hr;
+  return S_OK;
 }
 
 
@@ -375,25 +334,13 @@ HRESULT WASAPIRenderer::InitCoopLevel()
 
 HRESULT	WASAPIRenderer::DoRenderSample(IMediaSample *pMediaSample, LONGLONG /*pSampleCounter*/)
 {
-  HRESULT	hr = S_OK;
+  // To reduce logging we check the started status here 
+  if (!m_bIsAudioClientStarted)
+  {
+    StartAudioClient(&m_pAudioClient);
+  }
 
-  if (!m_bIsAudioClientStarted && m_pAudioClient)
-  {
-    hr = m_pAudioClient->Start();
-    if (SUCCEEDED(hr))
-    {
-      m_bIsAudioClientStarted = true;
-      Log("WASAPIRenderer::DoRenderSample - Starting audio client");
-    }
-    else
-    {
-      Log("WASAPIRenderer::DoRenderSample - failed to start audio client (0x%08x)", hr);
-    }
-  }
-  else if(!m_pAudioClient)
-  {
-    Log("WASAPIRenderer::DoRenderSample - no audio client available!");
-  }
+  HRESULT	hr = S_OK;
 
   REFERENCE_TIME rtStart = 0;
   REFERENCE_TIME rtStop = 0;
@@ -404,7 +351,7 @@ HRESULT	WASAPIRenderer::DoRenderSample(IMediaSample *pMediaSample, LONGLONG /*pS
 
   BYTE* pInputBufferPointer = NULL;
   BYTE* pInputBufferEnd = NULL;
-  BYTE* pData;
+  BYTE* pData = NULL;
 
   m_nBufferSize = pMediaSample->GetActualDataLength();
   long lSize = m_nBufferSize;
@@ -488,16 +435,13 @@ HRESULT WASAPIRenderer::CheckAudioClient(const WAVEFORMATEX *pWaveFormatEx)
   
     if (SUCCEEDED(hr))
     { 
-      if (m_pAudioClient && m_bIsAudioClientStarted) 
-        m_pAudioClient->Stop();
-      
-      m_bIsAudioClientStarted = false;
+      StopAudioClient(&m_pAudioClient);
+
       SAFE_RELEASE(m_pRenderClient);
       SAFE_RELEASE(m_pAudioClock);
       SAFE_RELEASE(m_pAudioClient);
       
-      if (SUCCEEDED (hr)) 
-        hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
+      hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
     }
     else
     {
@@ -934,16 +878,7 @@ HRESULT WASAPIRenderer::CreateAudioClient(IMMDevice *pMMDevice, IAudioClient **p
 
   Log("WASAPIRenderer::CreateAudioClient");
 
-  if (*ppAudioClient)
-  {
-    if (m_bIsAudioClientStarted)
-    {
-      (*ppAudioClient)->Stop();
-    }
-
-    SAFE_RELEASE(*ppAudioClient);
-    m_bIsAudioClientStarted = false;
-  }
+  StopAudioClient(ppAudioClient);
 
   if (!pMMDevice)
   {
@@ -962,6 +897,91 @@ HRESULT WASAPIRenderer::CreateAudioClient(IMMDevice *pMMDevice, IAudioClient **p
   }
 
   return hr;
+}
+
+void WASAPIRenderer::StartAudioClient(IAudioClient** ppAudioClient)
+{
+  if (!m_bIsAudioClientStarted)
+  {
+    Log("WASAPIRenderer::StartAudioClient");
+    HRESULT hr = S_OK;
+
+    PingAudioBuffer();
+    
+    if((*ppAudioClient))
+    {
+      hr = (*ppAudioClient)->Start();
+      if (FAILED(hr))
+      {
+        m_bIsAudioClientStarted = false;
+        Log("   start failed (0x%08x)", hr);
+      }
+      else
+      {
+        m_bIsAudioClientStarted = true;
+      }
+    }
+  }
+  else
+  {
+    Log("WASAPIRenderer::StartAudioClient - ignored, already started"); 
+  }
+}
+
+void WASAPIRenderer::StopAudioClient(IAudioClient** ppAudioClient)
+{
+  if (m_bIsAudioClientStarted)
+  {
+    Log("WASAPIRenderer::StopAudioClient");
+    HRESULT hr = S_OK;
+
+    PingAudioBuffer();
+
+    if (*ppAudioClient)
+    {
+      hr = (*ppAudioClient)->Stop();
+      if (FAILED(hr))
+        Log("   stop failed (0x%08x)", hr);
+
+      hr = (*ppAudioClient)->Reset();
+      if (FAILED(hr))
+        Log("   reset failed (0x%08x)", hr);
+    }
+    m_bIsAudioClientStarted = false;
+  }
+}
+
+void WASAPIRenderer::PingAudioBuffer()
+{
+  HRESULT hr = S_OK;
+
+  BYTE* data;
+  UINT32 bufferSize = 0;
+
+  if (m_pAudioClient && m_pRenderClient && !m_bIsAudioClientStarted)
+  {
+    DWORD bufferFlags = 0;
+    UINT32 currentPadding = 0;
+    
+    m_pAudioClient->GetBufferSize(&bufferSize);
+
+    if (m_pRenderer->Settings()->m_WASAPIShareMode == AUDCLNT_SHAREMODE_SHARED)
+      m_pAudioClient->GetCurrentPadding(&currentPadding);
+
+    UINT32 bufferSizeInBytes = (bufferSize - currentPadding) * m_pRenderFormat->nBlockAlign;
+
+    hr = m_pRenderClient->GetBuffer(bufferSize - currentPadding, &data);
+    
+    if (SUCCEEDED(hr) && data)
+    {
+      Log("Ping audio buffer...");    
+      hr = m_pRenderClient->ReleaseBuffer(m_nFramesInBuffer, AUDCLNT_BUFFERFLAGS_SILENT);
+    }
+    if (FAILED(hr))
+    {
+      Log("Failed to ping audio buffer (0x%08x)", hr);
+    }
+  }
 }
 
 DWORD WASAPIRenderer::RenderThread()
