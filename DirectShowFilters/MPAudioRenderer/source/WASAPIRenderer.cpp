@@ -574,7 +574,7 @@ HRESULT WASAPIRenderer::GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevic
   HRESULT hr;
 
   CComPtr<IMMDeviceEnumerator> enumerator;
-  Log("WASAPIRenderer::GetAvailableAudioDevices\n");
+  Log("WASAPIRenderer::GetAvailableAudioDevices");
   hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
 
   IMMDevice* pEndpoint = NULL;
@@ -607,6 +607,7 @@ HRESULT WASAPIRenderer::GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevic
       if (pProps->GetValue(PKEY_Device_FriendlyName, &varName) != S_OK)
         break;
 
+      Log(" ");
       Log("Audio endpoint %d:", i);
       Log("  %S", varName.pwszVal);
       Log("  %S",  pwszID);
@@ -620,8 +621,6 @@ HRESULT WASAPIRenderer::GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevic
         Log("   pull mode query failed!");
       }
 
-      Log("");
-
       CoTaskMemFree(pwszID);
       pwszID = NULL;
       PropVariantClear(&varName);
@@ -629,6 +628,7 @@ HRESULT WASAPIRenderer::GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevic
       SAFE_RELEASE(pProps)
       SAFE_RELEASE(pEndpoint)
     }
+    Log(" ");
   }
 
   return hr;
@@ -908,7 +908,7 @@ void WASAPIRenderer::StartAudioClient(IAudioClient** ppAudioClient)
 
     PingAudioBuffer();
     
-    if((*ppAudioClient))
+    if ((*ppAudioClient))
     {
       hr = (*ppAudioClient)->Start();
       if (FAILED(hr))
