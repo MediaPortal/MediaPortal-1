@@ -78,17 +78,17 @@ StatsRenderer::~StatsRenderer(void)
 
 static HRESULT DrawRect(CComPtr<IDirect3DDevice9> pD3DDev, MYD3DVERTEX<0> v[4])
 {
-  if (!pD3DDev)
+	if (!pD3DDev)
   {
     return E_POINTER;
   }
 
   do
-  {
-    HRESULT hr = pD3DDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-    hr = pD3DDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-    hr = pD3DDev->SetRenderState(D3DRS_ZENABLE, FALSE);
-    hr = pD3DDev->SetRenderState(D3DRS_STENCILENABLE, FALSE);
+	{
+    HRESULT hr;
+    DWORD alphaBlend;
+
+    hr = pD3DDev->GetRenderState(D3DRS_ALPHABLENDENABLE, &alphaBlend);
     hr = pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
     hr = pD3DDev->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA); 
     hr = pD3DDev->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA); 
@@ -103,11 +103,12 @@ static HRESULT DrawRect(CComPtr<IDirect3DDevice9> pD3DDev, MYD3DVERTEX<0> v[4])
     hr = pD3DDev->SetFVF(D3DFVF_XYZRHW | D3DFVF_TEX0 | D3DFVF_DIFFUSE);
 
     MYD3DVERTEX<0> tmp = v[2]; v[2] = v[3]; v[3] = tmp;
-    hr = pD3DDev->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, v, sizeof(v[0]));  
+    hr = pD3DDev->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, v, sizeof(v[0]));	
 
+    hr = pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, alphaBlend);
     return S_OK;
     }
-  while(0);
+	while(0);
 
   return E_FAIL;
 }
@@ -181,13 +182,13 @@ void StatsRenderer::DrawStats()
   LONGLONG llMaxSyncOffset = m_pPresenter->m_MaxSyncOffset;
   LONGLONG llMinSyncOffset = m_pPresenter->m_MinSyncOffset;
 
-  RECT rc = {20, 20, m_pPresenter->m_iVideoWidth, m_pPresenter->m_iVideoHeight};
+  RECT rc = {m_pPresenter->m_iVideoWidth/32, m_pPresenter->m_iVideoHeight/8, m_pPresenter->m_iVideoWidth, m_pPresenter->m_iVideoHeight};
   if (m_pFont && m_pSprite)
   {
     m_pSprite->Begin(D3DXSPRITE_ALPHABLEND);
     CString  strText;
     int TextHeight = int(25.0*m_TextScale + 0.5);
-
+    
     strText.Format("Display: %d x %d @ %.6f Hz | Meas rfsh: %.6f Hz | MaxLine: %d | PCD: %.4f", 
       m_pPresenter->m_displayMode.Width, m_pPresenter->m_displayMode.Height,
       m_pPresenter->m_dD3DRefreshRate, 1000.0/m_pPresenter->m_dEstRefreshCycle, m_pPresenter->m_maxScanLine,
