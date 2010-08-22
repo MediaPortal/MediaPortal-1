@@ -809,7 +809,7 @@ HRESULT WASAPIRenderer::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudi
       hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
     }
       
-    Log("WASAPIRenderer::InitAudioClient Trying again with periodicity of %I64u hundred-nanoseconds, or %u frames.\n", m_pRenderer->Settings()->m_hnsPeriod, m_nFramesInBuffer);
+    Log("WASAPIRenderer::InitAudioClient Trying again with periodicity of %I64u hundred-nanoseconds, or %u frames", m_pRenderer->Settings()->m_hnsPeriod, m_nFramesInBuffer);
 
     if (SUCCEEDED (hr)) 
     {
