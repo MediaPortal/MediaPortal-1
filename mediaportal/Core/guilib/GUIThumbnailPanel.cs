@@ -1062,6 +1062,7 @@ namespace MediaPortal.GUI.Library
 
                OnSelectionChanged();
              }*/
+            OnSelectionChanged();
             _refresh = true;
           }
           break;
