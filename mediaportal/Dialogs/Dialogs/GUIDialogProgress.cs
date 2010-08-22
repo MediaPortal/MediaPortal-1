@@ -234,6 +234,7 @@ namespace MediaPortal.Dialogs
     {
       base.Reset();
       Percentage = 0;
+      _showProgressBar = false;
       DisplayProgressBar = true;
       ShowWaitCursor = false;
       SetHeading(string.Empty);
