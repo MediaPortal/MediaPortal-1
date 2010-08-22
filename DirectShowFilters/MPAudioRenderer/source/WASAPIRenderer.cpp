@@ -773,7 +773,7 @@ HRESULT WASAPIRenderer::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudi
   {
     SAFE_RELEASE(m_pAudioClock);
     hr = m_pAudioClient->GetService(__uuidof(IAudioClock), (void**)&m_pAudioClock);
-    if(SUCCEEDED(hr))
+    if (SUCCEEDED(hr))
     {
       m_pAudioClock->GetFrequency(&m_nHWfreq);
     }
@@ -826,7 +826,7 @@ HRESULT WASAPIRenderer::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudi
     {
       SAFE_RELEASE(m_pAudioClock);
       hr = m_pAudioClient->GetService(__uuidof(IAudioClock), (void**)&m_pAudioClock);
-      if(FAILED(hr))
+      if (FAILED(hr))
       {
         Log("WASAPIRenderer::IAudioClock not found!");
       }
