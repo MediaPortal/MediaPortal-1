@@ -104,14 +104,13 @@ namespace MediaPortal.Player
     #region events
 
     public delegate void StoppedHandler(MediaType type, int stoptime, string filename);
-
     public delegate void EndedHandler(MediaType type, string filename);
-
-    public delegate void StartedHandler(MediaType type, string filename);
-
+    public delegate void StartedHandler(MediaType type, string filename);        
+    public delegate void ChangedHandler(MediaType type, int stoptime, string filename);
     public delegate void ChangedHandler(MediaType type, int stoptime, string filename);
 
     public delegate void AudioTracksReadyHandler();
+    public delegate void TVChannelChangeHandler();
 
     // when a user is already playing a file without stopping the user selects another file for playback.
     // in this case we do not receive the onstopped event.
@@ -122,6 +121,7 @@ namespace MediaPortal.Player
     public static event EndedHandler PlayBackEnded;
     public static event StartedHandler PlayBackStarted;
     public static event AudioTracksReadyHandler AudioTracksReady;
+    public static event TVChannelChangeHandler TVChannelChanged;
 
     #endregion
 
@@ -433,6 +433,15 @@ namespace MediaPortal.Player
     #endregion
 
     #region public members
+
+    //called when TV channel is changed
+    private static void OnTVChannelChanged()
+    {
+      if (TVChannelChanged != null) 
+      {
+        TVChannelChanged();
+      }
+    }
 
     internal static void OnAudioTracksReady()
     {
@@ -2134,6 +2143,7 @@ namespace MediaPortal.Player
       }
       else
       {
+        OnTVChannelChanged();
         _player.OnZapping(info);
         return;
       }
