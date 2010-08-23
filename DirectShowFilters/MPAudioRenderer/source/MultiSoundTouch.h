@@ -120,12 +120,15 @@ public:
 
 protected:
   HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf);
+  void setTempoInternal(float newTempo);
 
 private:
 
   static const uint SAMPLE_LEN = 0x40000;
   std::vector<CSoundTouchEx *> *m_Streams;
   WAVEFORMATEXTENSIBLE *m_pWaveFormat;
+  float m_fCurrentTempo;
+  float m_fNewTempo;
 
   soundtouch::SAMPLETYPE m_temp[2*SAMPLE_LEN];
   HANDLE m_hThread;

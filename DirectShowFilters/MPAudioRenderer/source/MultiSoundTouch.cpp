@@ -109,6 +109,8 @@ CMultiSoundTouch::CMultiSoundTouch(bool pEnableAC3Encoding, int AC3bitrate)
 , m_pEncoder(NULL)
 , m_bEnableAC3Encoding(pEnableAC3Encoding)
 , m_dAC3bitrate(AC3bitrate)
+, m_fCurrentTempo(1.0)
+, m_fNewTempo(1.0)
 {
   // Use separate thread per channnel pair?
   m_hSampleArrivedEvent = CreateEvent(0, FALSE, FALSE, 0);
@@ -156,7 +158,7 @@ void CMultiSoundTouch::StopResamplingThread()
 }
 
 DEFINE_STREAM_FUNC(setRate,float, newRate)
-DEFINE_STREAM_FUNC(setTempo, float, newTempo)
+//DEFINE_STREAM_FUNC(setTempo, float, newTempo)
 DEFINE_STREAM_FUNC(setRateChange, float, newRate)
 DEFINE_STREAM_FUNC(setTempoChange, float, newTempo)
 DEFINE_STREAM_FUNC(setPitchOctaves, float, newPitch)
@@ -192,6 +194,20 @@ void CMultiSoundTouch::flush()
   } 
 }
 
+void CMultiSoundTouch::setTempo(float newTempo)
+{
+  m_fNewTempo = newTempo;
+}
+
+void CMultiSoundTouch::setTempoInternal(float newTempo)
+{
+  if (m_Streams) 
+  { 
+    for(int i=0; i<m_Streams->size(); i++) 
+      m_Streams->at(i)->setTempo(newTempo); 
+  } 
+  m_fCurrentTempo = newTempo;
+}
 
 DWORD CMultiSoundTouch::ResampleThread()
 {
@@ -274,6 +290,9 @@ DWORD CMultiSoundTouch::ResampleThread()
         
         if ((hr == S_OK) && m_pMemAllocator)
         {
+          if(m_Streams != NULL && m_fNewTempo != m_fCurrentTempo)
+            setTempoInternal(m_fNewTempo);
+
           // Process the sample 
           putSamplesInternal((const short*)pMediaBuffer, size / m_pWaveFormat->Format.nBlockAlign);
           
@@ -695,6 +714,8 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
     }
     SAFE_DELETE(oldStreams);
   }
+
+  setTempoInternal(m_fNewTempo);
 
   if (m_bEnableAC3Encoding && m_pWaveFormat)
   {
