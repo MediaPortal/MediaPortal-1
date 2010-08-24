@@ -107,8 +107,7 @@ namespace MediaPortal.Player
     public delegate void EndedHandler(MediaType type, string filename);
     public delegate void StartedHandler(MediaType type, string filename);        
     public delegate void ChangedHandler(MediaType type, int stoptime, string filename);
-    public delegate void ChangedHandler(MediaType type, int stoptime, string filename);
-
+    
     public delegate void AudioTracksReadyHandler();
     public delegate void TVChannelChangeHandler();
 
