@@ -15,8 +15,9 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
-
 #include "SoundTouchEx.h"
+
+#include "alloctracing.h"
 
 extern void Log(const char *fmt, ...);
 

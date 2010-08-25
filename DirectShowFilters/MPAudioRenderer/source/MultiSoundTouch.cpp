@@ -19,6 +19,8 @@
 #include "stdafx.h"
 #include <map>
 
+#include "alloctracing.h"
+
 #include "MultiSoundTouch.h"
 
 #define AC3_FRAME_LENGHT  1536
@@ -375,27 +377,27 @@ bool CMultiSoundTouch::InitializeAllocator()
 
   CMemAllocator *pAllocator = new CMemAllocator("output sample allocator", NULL, &hr);
 
-  if (hr != S_OK)
+  if (FAILED(hr))
   {
-    Log("Failed to create sample allocator!");
+    Log("Failed to create sample allocator (0x%08x)", hr);
     delete pAllocator;
     return false;
   }
 
   hr = pAllocator->QueryInterface(IID_IMemAllocator, (void **)&m_pMemAllocator);
 
-  if (hr != S_OK)
+  if (FAILED(hr))
   {
-    Log("Failed to get allocator interface!");
+    Log("Failed to get allocator interface (0x%08x)", hr);
     delete pAllocator;
     return false;
   }
 
   m_pMemAllocator->SetProperties(&propIn, &propOut);
   hr = m_pMemAllocator->Commit();
-  if (hr != S_OK)
+  if (FAILED(hr))
   {
-    Log("Failed to commit allocator properties!");
+    Log("Failed to commit allocator properties (0x%08x)", hr);
     SAFE_RELEASE(m_pMemAllocator);
     return false;
   }

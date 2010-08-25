@@ -22,6 +22,8 @@
 #include "SyncClock.h"
 #include "MpAudioRenderer.h"
 
+#include "alloctracing.h"
+
 CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer)
   : CBaseReferenceClock(NAME("SyncClock"), pUnk, phr),
   m_pCurrentRefClock(0),

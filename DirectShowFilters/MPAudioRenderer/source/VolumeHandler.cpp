@@ -19,6 +19,8 @@
 #include "stdafx.h"
 #include "VolumeHandler.h"
 
+#include "alloctracing.h"
+
 extern void Log(const char *fmt, ...);
 
 CVolumeHandler::CVolumeHandler(LPUNKNOWN pUnk)
