@@ -17,6 +17,8 @@
 #include "stdafx.h"
 #include "WASAPIRenderer.h"
 
+#include "alloctracing.h"
+
 #include <FunctionDiscoveryKeys_devpkey.h>
 
 // === Compatibility with Windows SDK v6.0A (define in KSMedia.h in Windows 7 SDK or later)
@@ -69,8 +71,10 @@ WASAPIRenderer::WASAPIRenderer(CMPAudioRenderer* pRenderer, HRESULT *phr) :
   m_threadId(0),
   m_hRenderThread(NULL),
   m_hDataEvent(NULL),
+  m_hPauseEvent(NULL),
+  m_hWaitPauseEvent(NULL),
+  m_hResumeEvent(NULL),
   m_hStopRenderThreadEvent(NULL),
-  m_hWaitRenderThreadToExitEvent(NULL),
   m_pAudioClock(NULL),
   m_nHWfreq(0),
   m_pRenderFormat(NULL)
@@ -80,10 +84,12 @@ WASAPIRenderer::WASAPIRenderer(CMPAudioRenderer* pRenderer, HRESULT *phr) :
   SAFE_RELEASE(devices); // currently only log available devices
 
   m_hDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+  m_hPauseEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+  m_hWaitPauseEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+  m_hResumeEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
   m_hStopRenderThreadEvent = CreateEvent(0, FALSE, FALSE, 0);
-  m_hWaitRenderThreadToExitEvent = CreateEvent(0, FALSE, FALSE, 0);
-
-  m_hRenderThread = CreateThread(0, 0, WASAPIRenderer::RenderThreadEntryPoint, (LPVOID)this, 0, &m_threadId);
+  
+  StartRendererThread();
 
   HMODULE hLib = NULL;
 
@@ -117,12 +123,16 @@ WASAPIRenderer::~WASAPIRenderer()
     pfAvRevertMmThreadCharacteristics(m_hTask);
   }
 
-  if (m_hWaitRenderThreadToExitEvent)
-    CloseHandle(m_hWaitRenderThreadToExitEvent);
   if (m_hStopRenderThreadEvent)
     CloseHandle(m_hStopRenderThreadEvent);
   if (m_hDataEvent)
     CloseHandle(m_hDataEvent);
+  if (m_hPauseEvent)
+    CloseHandle(m_hPauseEvent);
+  if (m_hWaitPauseEvent)
+    CloseHandle(m_hWaitPauseEvent);
+  if (m_hResumeEvent)
+    CloseHandle(m_hResumeEvent);
 
   SAFE_DELETE_WAVEFORMATEX(m_pRenderFormat);
 
@@ -136,9 +146,54 @@ HRESULT WASAPIRenderer::StopRendererThread()
   if (m_hRenderThread)
   {
     SetEvent(m_hStopRenderThreadEvent);
-    WaitForSingleObject(m_hWaitRenderThreadToExitEvent, INFINITE);
+    WaitForSingleObject(m_hRenderThread, INFINITE);
 
     CloseHandle(m_hRenderThread);
+    m_hRenderThread = NULL;
+  }
+
+  return S_OK;
+}
+
+HRESULT WASAPIRenderer::PauseRendererThread()
+{
+  Log("WASAPIRenderer::PauseRendererThread");
+  // Pause the render thread
+  if (m_hRenderThread)
+  {
+    SetEvent(m_hPauseEvent);
+    DWORD result = WaitForSingleObject(m_hWaitPauseEvent, INFINITE);
+    if (result != 0)
+    {
+      DWORD error = GetLastError();
+      Log("   error: %d", error);
+    }
+  }
+  else
+  {
+    Log("   No thread was created!");
+	return S_FALSE;
+  }
+
+  return S_OK;
+}
+
+HRESULT WASAPIRenderer::StartRendererThread()
+{
+  if (!m_hRenderThread)
+  {
+    Log("WASAPIRenderer::StartRendererThread"); 
+    m_hRenderThread = CreateThread(0, 0, WASAPIRenderer::RenderThreadEntryPoint, (LPVOID)this, 0, &m_threadId);
+
+    if (m_hRenderThread)
+      return S_OK;
+    else
+      return S_FALSE;
+  }
+  else
+  {
+    Log("WASAPIRenderer::StartRendererThread - resuming");
+    SetEvent(m_hResumeEvent);
   }
 
   return S_OK;
@@ -670,21 +725,25 @@ HRESULT WASAPIRenderer::GetBufferSize(const WAVEFORMATEX *pWaveFormatEx, REFEREN
   if (!pWaveFormatEx) 
     return S_OK;
 
-  if (pWaveFormatEx->cbSize < sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX)) //WAVEFORMATEX
-    return S_OK;
-
-  WAVEFORMATEXTENSIBLE *wfext = (WAVEFORMATEXTENSIBLE*)pWaveFormatEx;
-
-  if (m_nBufferSize == 0 )
-  if (wfext->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_MLP)
-    m_nBufferSize = 61440;
-  else if (wfext->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DTS_HD)
-    m_nBufferSize = 32768;
-  else if (wfext->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL_PLUS)
-    m_nBufferSize = 24576;
-  else if (wfext->Format.wFormatTag == WAVE_FORMAT_DOLBY_AC3_SPDIF)
-    m_nBufferSize = 6144;
-  else return S_OK;
+  if (pWaveFormatEx->cbSize < sizeof(WAVEFORMATEXTENSIBLE)-sizeof(WAVEFORMATEX))
+  {
+    if (pWaveFormatEx->wFormatTag == WAVE_FORMAT_DOLBY_AC3_SPDIF)
+      m_nBufferSize = 6144;
+    else
+      return S_OK; // PCM
+  }
+  else
+  {
+    WAVEFORMATEXTENSIBLE *wfext = (WAVEFORMATEXTENSIBLE*)pWaveFormatEx;
+    
+    if (wfext->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_MLP)
+      m_nBufferSize = 61440;
+    else if (wfext->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DTS_HD)
+      m_nBufferSize = 32768;
+    else if (wfext->SubFormat == KSDATAFORMAT_SUBTYPE_IEC61937_DOLBY_DIGITAL_PLUS)
+      m_nBufferSize = 24576;
+    else return S_OK;
+  }
 
   *pHnsBufferPeriod = (REFERENCE_TIME)((REFERENCE_TIME)m_nBufferSize * 10000 * 8 / ((REFERENCE_TIME)pWaveFormatEx->nChannels * pWaveFormatEx->wBitsPerSample *
     1.0 * pWaveFormatEx->nSamplesPerSec) /*+ 0.5*/);
@@ -903,6 +962,8 @@ void WASAPIRenderer::StartAudioClient(IAudioClient** ppAudioClient)
 {
   if (!m_bIsAudioClientStarted)
   {
+    StartRendererThread();
+    
     Log("WASAPIRenderer::StartAudioClient");
     HRESULT hr = S_OK;
 
@@ -933,12 +994,14 @@ void WASAPIRenderer::StopAudioClient(IAudioClient** ppAudioClient)
     Log("WASAPIRenderer::StopAudioClient");
     HRESULT hr = S_OK;
 
+    PauseRendererThread();
+
     if (*ppAudioClient)
     {
       // Let the current audio buffer to be played completely.
       // Some amplifiers will "cache" the incomplete AC3 packets and that causes issues
       // when the next AC3 packets are received
-      Sleep(Latency()/10000);
+      Sleep(Latency() / 10000);
 
       hr = (*ppAudioClient)->Stop();
       if (FAILED(hr))
@@ -958,10 +1021,16 @@ DWORD WASAPIRenderer::RenderThread()
   
   HRESULT hr = S_OK;
 
-  // These are wait handles for the thread stopping and new sample arrival
-  HANDLE handles[2];
+  // These are wait handles for the thread stopping, new sample arrival and pausing redering
+  HANDLE handles[3];
   handles[0] = m_hStopRenderThreadEvent;
-  handles[1] = m_hDataEvent;
+  handles[1] = m_hPauseEvent;
+  handles[2] = m_hDataEvent;
+
+  // These are wait handles for resuming or exiting the thread
+  HANDLE resumeHandles[2];
+  resumeHandles[0] = m_hStopRenderThreadEvent;
+  resumeHandles[1] = m_hResumeEvent;
 
   IMediaSample* sample = NULL;
   UINT32 sampleOffset = 0;
@@ -971,15 +1040,33 @@ DWORD WASAPIRenderer::RenderThread()
   {
     // 1) Waiting for the next WASAPI buffer to be available to be filled
     // 2) Exit requested for the thread
-    DWORD result = WaitForMultipleObjects(2, handles, false, INFINITE);
-    if (result == WAIT_OBJECT_0)
+    // 3) For a pause request
+    DWORD result = WaitForMultipleObjects(3, handles, false, INFINITE);
+    if (result == WAIT_OBJECT_0) // exit event
     {
       Log("WASAPIRenderer::Render thread - closing down - thread ID: %d", m_threadId);
       m_pRenderer->SoundTouch()->GetNextSample(NULL, true);
-      SetEvent(m_hWaitRenderThreadToExitEvent);
       return 0;
     }
-    else if (result == WAIT_OBJECT_0 + 1)
+    else if (result == WAIT_OBJECT_0 + 1) // pause event
+    {
+      Log("WASAPIRenderer::Render thread - pausing");
+      ResetEvent(m_hResumeEvent);
+      SetEvent(m_hWaitPauseEvent);
+
+      DWORD resultResume = WaitForMultipleObjects(2, resumeHandles, false, INFINITE);
+      if (resultResume == WAIT_OBJECT_0) // exit event
+      {
+        Log("WASAPIRenderer::Render thread - closing down - thread ID: %d", m_threadId);
+        m_pRenderer->SoundTouch()->GetNextSample(NULL, true);
+        return 0;
+      }
+      if (resultResume == WAIT_OBJECT_0 + 1) // resume event
+      {
+        Log("WASAPIRenderer::Render thread - resuming from pause");
+      }
+    }
+    else if (result == WAIT_OBJECT_0 + 2) // data event
     {
       CAutoLock cRenderThreadLock(m_pRenderer->RenderThreadLock());
       HRESULT hr = S_FALSE;

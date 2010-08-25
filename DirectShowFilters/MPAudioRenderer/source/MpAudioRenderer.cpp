@@ -558,7 +558,6 @@ STDMETHODIMP CMPAudioRenderer::Stop()
   Log("Stop");
 
   CAutoLock cInterfaceLock(&m_InterfaceLock);
-  CAutoLock cRenderThreadLock(&m_RenderThreadLock);
 
   if (m_pSoundTouch)
   {
@@ -576,7 +575,6 @@ STDMETHODIMP CMPAudioRenderer::Stop()
 STDMETHODIMP CMPAudioRenderer::Pause()
 {
   CAutoLock cInterfaceLock(&m_InterfaceLock);
-  CAutoLock cRenderThreadLock(&m_RenderThreadLock);
 
   Log("Pause");
 

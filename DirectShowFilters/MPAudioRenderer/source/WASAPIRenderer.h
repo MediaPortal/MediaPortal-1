@@ -90,9 +90,14 @@ private:
   DWORD RenderThread();
   DWORD m_threadId;
 
+  HRESULT StartRendererThread();
+  HRESULT PauseRendererThread();
+
   HANDLE m_hRenderThread;
 
   HANDLE m_hDataEvent;
+  HANDLE m_hPauseEvent;
+  HANDLE m_hResumeEvent;
+  HANDLE m_hWaitPauseEvent;
   HANDLE m_hStopRenderThreadEvent;
-  HANDLE m_hWaitRenderThreadToExitEvent;
 };
