@@ -62,7 +62,7 @@
       <id>1</id>
       <posX>462</posX>
       <posY>662</posY>
-      <label>#itemcount</label>
+      <label>#itemcount #itemtype</label>
       <align>left</align>
       <textcolor>ffffffff</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>

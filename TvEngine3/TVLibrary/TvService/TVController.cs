@@ -1913,25 +1913,9 @@ namespace TvService
             _streamer.Remove(String.Format("stream{0}.{1}", cardId, subChannel));
           }
 
-          bool allStopped = true;
-          Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
-          while (enumerator.MoveNext())
+          if (_epgGrabber != null && AllCardsIdle)
           {
-            KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
-            if (keyPair.Value.IsLocal)
-            {
-              if (keyPair.Value.IsIdle == false)
-              {
-                allStopped = false;
-              }
-            }
-          }
-          if (allStopped)
-          {
-            if (_epgGrabber != null)
-            {
-              _epgGrabber.Start();
-            }
+            _epgGrabber.Start();
           }
 
           if (result)
@@ -1961,11 +1945,22 @@ namespace TvService
     {
       if (ValidateTvControllerParams(user))
         return TvResult.UnknownError;
+      if (_epgGrabber != null)
+      {
+        _epgGrabber.Stop();
+      }
       TvResult result = _cards[user.CardId].Recorder.Start(ref user, ref fileName, contentRecording, startTime);
 
       if (result == TvResult.Succeeded)
       {
         UpdateChannelStatesForUsers();
+      }
+      else
+      {
+        if (_epgGrabber != null && AllCardsIdle)
+        {
+          _epgGrabber.Start();
+        }
       }
 
       return result;
@@ -1986,7 +1981,10 @@ namespace TvService
       {
         UpdateChannelStatesForUsers();
       }
-
+      if (_epgGrabber != null && AllCardsIdle)
+      {
+          _epgGrabber.Start();
+      }
       return result;
     }
 
@@ -2475,7 +2473,16 @@ namespace TvService
       {
         card = null;
         return TvResult.UnknownError;
-      }      
+      }
+
+      string intialTimeshiftingFilename = "";
+
+      VirtualCard initialCard = GetVirtualCard(user);
+      
+      if (initialCard != null && initialCard.TimeShiftFileName != null)
+      {
+        intialTimeshiftingFilename = initialCard.TimeShiftFileName;
+      }
 
       Channel channel = Channel.Retrieve(idChannel);
       Log.Write("Controller: StartTimeShifting {0} {1}", channel.DisplayName, channel.IdChannel);
@@ -2528,14 +2535,12 @@ namespace TvService
           //no free cards available
           Log.Write("Controller: StartTimeShifting failed:{0}", result);
 
-          if (_epgGrabber != null)
+          if (_epgGrabber != null && AllCardsIdle)
           {
             _epgGrabber.Start();
           }
           return result;
         }
-
-        int previousCardId = user.CardId;       
 
         //keep tuning each card until we are succesful                
         for (int i = 0; i < freeCards.Count; i++)
@@ -2639,17 +2644,18 @@ namespace TvService
           RemoveUserFromOtherCards(card.Id, userCopy); //only remove user from other cards if new tuning was a success
           UpdateChannelStatesForUsers();
 
-          if (!cardChanged)
+          if (card != null && card.TimeShiftFileName != null)
           {
-            cardChanged = (previousCardId != userCopy.CardId);
-          }
+            string newTimeshiftingFilename = card.TimeShiftFileName;
+            cardChanged = (intialTimeshiftingFilename != newTimeshiftingFilename);
+          }          
 
           break; //if we made it to the bottom, then we have a successful timeshifting.
         }
 
         if (result != TvResult.Succeeded)
         {
-          if (_epgGrabber != null)
+          if (_epgGrabber != null && AllCardsIdle)
           {
             _epgGrabber.Start();
           }
@@ -2659,7 +2665,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        if (_epgGrabber != null)
+        if (_epgGrabber != null && AllCardsIdle)
         {
           _epgGrabber.Start();
         }

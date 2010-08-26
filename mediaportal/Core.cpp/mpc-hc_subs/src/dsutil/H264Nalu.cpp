@@ -1,7 +1,7 @@
 /* 
- * $Id: H264Nalu.cpp 788 2008-09-08 10:48:50Z casimir666 $
+ * $Id: H264Nalu.cpp 1785 2010-04-09 14:12:59Z xhmikosr $
  *
- * (C) 2006-2007 see AUTHORS
+ * (C) 2006-2010 see AUTHORS
  *
  * This file is part of mplayerc.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "H264Nalu.h"
 
 void CH264Nalu::SetBuffer(BYTE* pBuffer, int nSize, int nNALSize)
@@ -61,7 +61,6 @@ bool CH264Nalu::MoveToNextStartcode()
 
 bool CH264Nalu::ReadNext()
 {
-	int		nTemp;
 
 	if (m_nCurPos >= m_nSize) return false;
 
@@ -70,7 +69,7 @@ bool CH264Nalu::ReadNext()
 		// RTP Nalu type : (XX XX) XX XX NAL..., with XX XX XX XX or XX XX equal to NAL size
 		m_nNALStartPos	= m_nCurPos;
 		m_nNALDataPos	= m_nCurPos + m_nNALSize;
-		nTemp			= 0;
+		int nTemp			= 0;
 		for (int i=0; i<m_nNALSize; i++)
 		{
 			nTemp = (nTemp << 8) + m_pBuffer[m_nCurPos++];

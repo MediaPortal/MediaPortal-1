@@ -51,6 +51,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
+using MediaPortal.GUI.Library;
 
 namespace Rss
 {
@@ -207,7 +208,10 @@ namespace Rss
               // request.Proxy = WebProxy.GetDefaultProxy();
               request.Proxy.Credentials = CredentialCache.DefaultCredentials;
             }
-            catch (Exception) {}
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
           }
           if (oldFeed != null)
           {
@@ -216,39 +220,38 @@ namespace Rss
           }
           try
           {
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            feed.lastModified = response.LastModified;
-            feed.etag = response.Headers["ETag"];
-            try
-            {
-              if (response.ContentEncoding != "")
+              HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+              feed.lastModified = response.LastModified;
+              feed.etag = response.Headers["ETag"];
+              try
               {
-                feed.encoding = Encoding.GetEncoding(response.ContentEncoding);
+                  if (response.ContentEncoding != "")
+                  {
+                      feed.encoding = Encoding.GetEncoding(response.ContentEncoding);
+                  }
+
+                  stream = response.GetResponseStream();
               }
-            }
-            catch {}
-              
-            finally
-            {              
-              if (response != null)
+              catch (Exception e)
               {
-                stream = response.GetResponseStream();
-                response.Close();
+                  Log.Error(e);
               }
-            }
-            
           }
           catch (WebException we)
           {
-            if (oldFeed != null)
-            {
-              oldFeed.cached = true;
-              return oldFeed;
-            }
-            else
-            {
-              throw we; // bad
-            }
+              if (oldFeed != null)
+              {
+                  oldFeed.cached = true;
+                  return oldFeed;
+              }
+              else
+              {
+                  throw we; // bad
+              }
+          }
+          catch (Exception e)
+          {
+              Log.Error(e);
           }
           break;
       }
@@ -272,6 +275,7 @@ namespace Rss
         finally
         {
           feed.exceptions = reader.Exceptions;
+          stream.Close();
           reader.Close();
         }
       }

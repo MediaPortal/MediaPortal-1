@@ -457,7 +457,8 @@ namespace SetupTv
 
         CheckServiceName();
 
-        string TestDb = _dialogMode == StartupMode.Normal ? string.Empty : tbDatabaseName.Text;
+        //string TestDb = _dialogMode == StartupMode.Normal ? string.Empty : tbDatabaseName.Text;
+        string TestDb = string.Empty; // don't check if DB exists, it will be created if needed
 
         bool TestSuccess = rbSQLServer.Checked ? AttemptMsSqlTestConnect(TestDb) : AttemptMySqlTestConnect(TestDb);
 
@@ -618,6 +619,8 @@ namespace SetupTv
     private void mpButtonSave_Click(object sender, EventArgs e)
     {
       SaveGentleConfig();
+
+      DialogResult = DialogResult.OK;
 
       if (_dialogMode == StartupMode.Normal)
         Application.Restart();

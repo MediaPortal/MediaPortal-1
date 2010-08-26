@@ -498,9 +498,18 @@ Verplaats dit bestand naar uw HTPC en start de installatie met "MediaPortal.Depl
     <value>Upgrade-&gt;Installeren</value>
   </data>
   <data name="DBMSType_lbMSSQL_disabled" xml:space="preserve">
-    <value>(leer hier waarom)</value>
+    <value>(lees hier waarom)</value>
   </data>
   <data name="DBMSType_rbMSSQL_disabled" xml:space="preserve">
     <value>Microsoft SQL-Server Express 2005 is uitgeschakeld</value>
+  </data>
+  <data name="AeroThemeMissing" xml:space="preserve">
+    <value>Windows AERO is momenteel uitgeschakeld.
+AERO is nodig om tearing en een schokkerig beeld te voorkomen.
+Inschakelen van AERO zal ook het processor gebruik verminderen, dus het maakt u HTPC minder warm en stiller.</value>
+  </data>
+  <data name="Reboot_Required" xml:space="preserve">
+    <value>Een onderdeel van Microsoft vereist een herstart.
+Ga a.u.b. pas verder met de met de installatie van MediaPortal na de herstart.</value>
   </data>
 </root>

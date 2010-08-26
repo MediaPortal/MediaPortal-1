@@ -53,9 +53,10 @@
       <id>1</id>
       <posX>462</posX>
       <posY>382</posY>
-      <label>#itemcount</label>
+      <label>#selectedindex/#itemcount #currentmodule</label>
       <align>left</align>
       <textcolor>ffffffff</textcolor>
+	  <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
     </control>
     <control>
       <description>Selected item Label</description>

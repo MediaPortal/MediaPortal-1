@@ -23,7 +23,7 @@
 
 #include "STS.h"
 #include "Rasterizer.h"
-#include "..\SubPic\ISubPic.h"
+#include "../SubPic/SubPicProviderImpl.h"
 
 class CMyFont : public CFont
 {
@@ -42,6 +42,8 @@ class CWord : public Rasterizer
 
 	void Transform(CPoint org);
 
+	void Transform_C( CPoint &org );
+	void Transform_SSE2( CPoint &org );
 	bool CreateOpaqueBox();
 
 protected:
@@ -128,9 +130,15 @@ public:
 
 	void Compact();
 
+#ifdef _VSMOD // patch m006. moveable vector clip
+	CRect PaintShadow(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha, MOD_MOVEVC& mod_vc, REFERENCE_TIME rt);
+	CRect PaintOutline(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha, MOD_MOVEVC& mod_vc, REFERENCE_TIME rt);
+	CRect PaintBody(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha, MOD_MOVEVC& mod_vc, REFERENCE_TIME rt);
+#else
 	CRect PaintShadow(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha);
 	CRect PaintOutline(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha);
 	CRect PaintBody(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha);
+#endif
 };
 
 enum eftype
@@ -140,15 +148,22 @@ enum eftype
 	EF_FADE,		// {\fade(a1=param[0], a2=param[1], a3=param[2], t1=t[0], t2=t[1], t3=t[2], t4=t[3])} or {\fad(t1=t[1], t2=t[2])
 	EF_BANNER,		// Banner;delay=param[0][;lefttoright=param[1];fadeawaywidth=param[2]]
 	EF_SCROLL,		// Scroll up/down=param[3];top=param[0];bottom=param[1];delay=param[2][;fadeawayheight=param[4]]
+#ifdef _VSMOD // patch m006. moveable vector clip
+	EF_VECTCLP
+#endif
 };
 
-#define EF_NUMBEROFEFFECTS 5
+#ifdef _VSMOD // patch m006. moveable vector clip
+	#define EF_NUMBEROFEFFECTS 6
+#else
+	#define EF_NUMBEROFEFFECTS 5
+#endif
 
 class Effect
 {
 public:
 	enum eftype type;
-	int param[8];
+    int param[9];
 	int t[4];
 };
 
@@ -204,8 +219,8 @@ public:
 	CRect AllocRect(CSubtitle* s, int segment, int entry, int layer, int collisions);
 };
 
-[uuid("537DCACA-2812-4a4f-B2C6-1A34C17ADEB0")]
-class CRenderedTextSubtitle : public CSimpleTextSubtitle, public ISubPicProviderImpl, public ISubStream
+class __declspec(uuid("537DCACA-2812-4a4f-B2C6-1A34C17ADEB0"))
+CRenderedTextSubtitle : public CSimpleTextSubtitle, public CSubPicProviderImpl, public ISubStream
 {
 	CAtlMap<int, CSubtitle*> m_subtitleCache;
 
@@ -221,6 +236,8 @@ class CRenderedTextSubtitle : public CSimpleTextSubtitle, public ISubPicProvider
 	int m_ktype, m_kstart, m_kend;
 	int m_nPolygon;
 	int m_polygonBaselineOffset;
+	STSStyle *m_pStyleOverride; // the app can decide to use this style instead of a built-in one
+	bool m_doOverrideStyle;
 
 	void ParseEffect(CSubtitle* sub, CString str);
 	void ParseString(CSubtitle* sub, CStringW str, STSStyle& style);
@@ -236,11 +253,18 @@ protected:
 	virtual void OnChanged();
 
 public:
-	CRenderedTextSubtitle(CCritSec* pLock);
+	CRenderedTextSubtitle(CCritSec* pLock, STSStyle *styleOverride = NULL, bool doOverride = false);
 	virtual ~CRenderedTextSubtitle();
 
 	virtual void Copy(CSimpleTextSubtitle& sts);
 	virtual void Empty();
+
+	// call to signal this RTS to ignore any of the styles and apply the given override style
+    void SetOverride(bool doOverride = true, STSStyle *styleOverride = NULL)
+    {
+        m_doOverrideStyle = doOverride;
+        if(styleOverride != NULL) m_pStyleOverride = styleOverride;
+    }
 
 public:
 	bool Init(CSize size, CRect vidrect); // will call Deinit()

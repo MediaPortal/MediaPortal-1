@@ -94,7 +94,6 @@ namespace TvService
       _epgTimer.Elapsed += _epgTimer_Elapsed;
       _eventHandler = controller_OnTvServerEvent;
       _dbUpdater = new EpgDBUpdater(_tvController, "IdleEpgGrabber", true);
-      controller.OnTvServerEvent += _eventHandler;
     }
 
     #endregion
@@ -229,6 +228,7 @@ namespace TvService
     /// </summary>
     public void GrabEpg()
     {
+      _tvController.OnTvServerEvent += _eventHandler;
       TvBusinessLayer layer = new TvBusinessLayer();
       Setting s = layer.GetSetting("timeoutEPG", "10");
       if (Int32.TryParse(s.Value, out _epgTimeOut) == false)
@@ -273,7 +273,7 @@ namespace TvService
       {
         _currentTransponder.InUse = false;
       }
-
+      _tvController.OnTvServerEvent -= _eventHandler;
       _epgTimer.Enabled = false;
       _isRunning = false;
     }
@@ -764,7 +764,7 @@ namespace TvService
       if (!_disposed)
       {
         _epgTimer.Dispose();
-        _tvController.OnTvServerEvent -= _eventHandler;
+
         _disposed = true;
       }
     }

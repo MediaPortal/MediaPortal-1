@@ -39,7 +39,8 @@ namespace MediaPortal.Util
       Icons = 1,
       BigIcons = 2,
       Albums = 3,
-      FilmStrip = 4
+      FilmStrip = 4,
+      CoverFlow = 5
     }
 
     private string m_strPath = string.Empty;

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>603</id>
   <defaultcontrol>50</defaultcontrol>
@@ -58,29 +58,31 @@
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
+      <description>Recordings Text Label</description>
       <type>label</type>
-      <description>Number of Files Label</description>
-      <id>12</id>
-      <posX>260</posX>
-      <posY>410</posY>
-      <label>#itemcount</label>
-      <visible>false</visible>
+      <id>1</id>
+      <posX>268</posX>
+      <posY>77</posY>
+      <width>400</width>
+      <label>604</label>
+      <align>left</align>
+      <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
-      <type>fadelabel</type>
-      <description>Selected item Label</description>
-      <id>0</id>
-      <posX>680</posX>
-      <posY>68</posY>
-      <width>350</width>
-      <label>#selecteditem</label>
-      <font>font14</font>
-      <align>right</align>
-      <disabledcolor>ff808080</disabledcolor>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>12</id>
+      <posX>260</posX>
+      <posY>530</posY>
+      <label>#selectedindex/#itemcount #itemtype</label>
+      <font>font13</font>
+      <align>left</align>
+      <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
+      <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
     </control>
     <control>
       <type>group</type>
@@ -129,7 +131,6 @@
         <onup>5</onup>
         <ondown>7</ondown>
         <label>624</label>
-        <!-- <visible>false</visible> -->
       </control>
       <control>
         <type>button</type>
@@ -144,60 +145,87 @@
       </control>
     </control>
     <control>
-      <type>group</type>
-      <description>group element</description>
+      <type>image</type>
+      <posX>260</posX>
+      <posY>399</posY>
+      <width>45</width>
+      <height>45</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <zoom>no</zoom>
+      <texture>#TV.RecordedTV.thumb</texture>
+    </control>
+    <control>
+      <description>channel</description>
       <id>0</id>
-      <posX>256</posX>
-      <posY>93</posY>
-      <width>438</width>
-      <height>467</height>
+      <type>fadelabel</type>
+      <posX>310</posX>
+      <posY>394</posY>
+      <width>375</width>
+      <align>left</align>
+      <textcolor>FFB2D4F5</textcolor>
+      <label>#TV.RecordedTV.Channel</label>
+      <font>font12</font>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
-      <mpe>
-        <layout>Grid</layout>
-        <spring>no</spring>
-        <spacing>0</spacing>
-        <padding>
-          <top>0</top>
-          <right>0</right>
-          <bottom>0</bottom>
-          <left>0</left>
-        </padding>
-      </mpe>
-      <control>
-        <type>fadelabel</type>
-        <description>Current program title</description>
-        <id>13</id>
-        <posX>800</posX>
-        <posY>600</posY>
-        <label>#TV.RecordedTV.Title</label>
-        <disabledcolor>808080</disabledcolor>
-        <textcolor>00b2d4f5</textcolor>
-      </control>
-      <control>
-        <type>label</type>
-        <description>Current program time</description>
-        <id>14</id>
-        <posX>260</posX>
-        <posY>460</posY>
-        <label>#TV.RecordedTV.Time</label>
-        <textcolor>ffb2d4f5</textcolor>
-        <visible>false</visible>
-      </control>
-      <control>
-        <type>textboxscrollup</type>
-        <description>Description1</description>
-        <id>15</id>
-        <posX>265</posX>
-        <posY>428</posY>
-        <width>417</width>
-        <height>100</height>
-        <colordiffuse>ffffffff</colordiffuse>
-        <font>font12</font>
-        <label>#TV.RecordedTV.Description</label>
-        <textcolor>ffb2d4f5</textcolor>
-      </control>
     </control>
+    <control>
+      <description>Current program time</description>
+      <id>14</id>
+      <type>label</type>
+      <posX>310</posX>
+      <posY>411</posY>
+      <width>180</width>
+      <label>#TV.RecordedTV.Time</label>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Current program genre</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>683</posX>
+      <posY>411</posY>
+      <width>195</width>
+      <label>#TV.RecordedTV.Genre</label>
+      <align>right</align>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <visible>!string.equals(#TV.RecordedTV.Genre,-)</visible>
+    </control>
+    <control>
+      <description>Current program title</description>
+      <type>fadelabel</type>
+      <id>13</id>
+      <posX>310</posX>
+      <posY>428</posY>
+      <width>375</width>
+      <label>#TV.RecordedTV.Title</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Description1</description>
+      <type>textboxscrollup</type>
+      <id>15</id>
+      <posX>260</posX>
+      <posY>455</posY>
+      <height>68</height>
+      <width>425</width>
+      <label>#TV.RecordedTV.Description</label>
+      <font>font11</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
     <import>common.facade.recordings.xml</import>
   </controls>
 </window>

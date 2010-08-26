@@ -166,6 +166,7 @@
           this.txt_name.Size = new System.Drawing.Size(305, 20);
           this.txt_name.TabIndex = 10;
           this.toolTip1.SetToolTip(this.txt_name, "Name of extension");
+          this.txt_name.TextChanged += new System.EventHandler(this.txt_id_TextChanged);
           // 
           // button1
           // 

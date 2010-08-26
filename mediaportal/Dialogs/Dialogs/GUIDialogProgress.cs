@@ -46,6 +46,7 @@ namespace MediaPortal.Dialogs
     private bool _showProgressBar = false;
     private bool _canceled = false;
     private WaitCursor cursor = null;
+    private bool m_bRunning = false;
     // Public Variables
 
     #endregion
@@ -84,17 +85,14 @@ namespace MediaPortal.Dialogs
       get { return _showProgressBar; }
       set
       {
-        if (_showProgressBar != value)
+        _showProgressBar = value;
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE, GetID, 0, (int) Controls.ProgressBar,
+                                        0, 0, null);
+        if (!_showProgressBar)
         {
-          _showProgressBar = value;
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE, GetID, 0, (int)Controls.ProgressBar,
-                                          0, 0, null);
-          if (!_showProgressBar)
-          {
-            msg.Message = GUIMessage.MessageType.GUI_MSG_HIDDEN;
-          }
-          OnMessage(msg);
+          msg.Message = GUIMessage.MessageType.GUI_MSG_HIDDEN;
         }
+        OnMessage(msg);
       }
     }
 
@@ -175,12 +173,19 @@ namespace MediaPortal.Dialogs
       Percentage = NewPercentage;
     }
 
-    public void Progress() {}
+    public void Progress()
+    {
+      if (m_bRunning)
+      {
+        GUIWindowManager.Process();
+      }
+    }
 
     public void StartModal(int ParentId)
     {
       _canceled = false;
       PageLoad(ParentId);
+      m_bRunning = true;
     }
 
     public void ShowProgressBar(bool DisplayBar)
@@ -209,6 +214,7 @@ namespace MediaPortal.Dialogs
     public void Close()
     {
       PageDestroy();
+      m_bRunning = false;
     }
 
     //------------------------------------------------------

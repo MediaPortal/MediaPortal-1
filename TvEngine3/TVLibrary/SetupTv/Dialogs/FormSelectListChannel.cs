@@ -68,29 +68,35 @@ namespace SetupTv.Dialogs
     {
       listViewChannels.Clear();
       listViewChannels.BeginUpdate();
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof (Channel));
-      if (checkBoxGuideChannels.Checked)
+      try
       {
-        sb.AddConstraint(Operator.Equals, "visibleInGuide", 1);
-      }
-      if (checkBoxFTA.Checked)
-      {
-        sb.AddConstraint(Operator.Equals, "freetoair", 1);
-      }
-      sb.AddConstraint(Operator.Equals, "isTv", 1);
-      sb.AddOrderByField(true, "sortOrder");
-      sb.AddOrderByField(true, "displayName");
-      SqlStatement stmt = sb.GetStatement(true);
-      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
+        SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof (Channel));
+        if (checkBoxGuideChannels.Checked)
+        {
+          sb.AddConstraint(Operator.Equals, "visibleInGuide", 1);
+        }
+        if (checkBoxFTA.Checked)
+        {
+          sb.AddConstraint(Operator.Equals, "freetoair", 1);
+        }
+        sb.AddConstraint(Operator.Equals, "isTv", 1);
+        sb.AddOrderByField(true, "sortOrder");
+        sb.AddOrderByField(true, "displayName");
+        SqlStatement stmt = sb.GetStatement(true);
+        IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
 
-      for (int i = 0; i < channels.Count; i++)
-      {
-        // TODO: add imagelist with channel logos from MP :)
-        ListViewItem curItem = new ListViewItem(channels[i].DisplayName);
-        curItem.Tag = channels[i];
-        listViewChannels.Items.Add(curItem);
+        for (int i = 0; i < channels.Count; i++)
+        {
+          // TODO: add imagelist with channel logos from MP :)
+          ListViewItem curItem = new ListViewItem(channels[i].DisplayName);
+          curItem.Tag = channels[i];
+          listViewChannels.Items.Add(curItem);
+        }
       }
-      listViewChannels.EndUpdate();
+      finally
+      {
+        listViewChannels.EndUpdate();
+      }
       mpButtonOk.Enabled = (listViewChannels.Items.Count > 0);
     }
 

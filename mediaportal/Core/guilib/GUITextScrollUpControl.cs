@@ -40,6 +40,14 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("label")] protected string _property = "";
     [XMLSkinElement("seperator")] protected string _seperator = "";
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("lineSpacing")]
+    protected float _lineSpacing = 1.0f;
+    [XMLSkinElement("shadowAngle")]
+    protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")]
+    protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")]
+    protected long _shadowColor = 0xFF000000;
 
     #endregion
 
@@ -153,13 +161,13 @@ namespace MediaPortal.GUI.Library
               _yPositionScroll++;
             //_yPositionScroll = _yPositionScroll + GUIGraphicsContext.ScrollSpeedVertical;
 
-            dwPosY -= (int)(_yPositionScroll - _scrollOffset);
+            dwPosY -= (int)((_yPositionScroll - _scrollOffset) * _lineSpacing);
             // Log.Debug("*** _frameLimiter: {0}, dwPosY: {1}, _scrollOffset: {2}", _frameLimiter, dwPosY, _scrollOffset);
 
             if (_positionY - dwPosY >= _itemHeight)
             {
               // one line has been scrolled away entirely
-              dwPosY += _itemHeight;
+              dwPosY += (int)(_itemHeight * _lineSpacing);
               _scrollOffset += _itemHeight;
               _offset++;
               if (_offset >= _listItems.Count)
@@ -197,7 +205,7 @@ namespace MediaPortal.GUI.Library
         if (GUIGraphicsContext.graphics != null)
         {
           GUIGraphicsContext.graphics.SetClip(new Rectangle(_positionX, _positionY,
-                                                            _width, _itemsPerPage * _itemHeight));
+                                                            _width, (int)(_itemsPerPage * _itemHeight * _lineSpacing)));
         }
         else
         {
@@ -216,7 +224,7 @@ namespace MediaPortal.GUI.Library
           newviewport.X = _positionX;
           newviewport.Y = _positionY;
           newviewport.Width = _width;
-          newviewport.Height = _height;
+          newviewport.Height = (int)(_height * _lineSpacing);
           newviewport.MinZ = 0.0f;
           newviewport.MaxZ = 1.0f;
           GUIGraphicsContext.DX9Device.Viewport = newviewport;
@@ -290,8 +298,15 @@ namespace MediaPortal.GUI.Library
                   x = dwPosX + dMaxWidth + _width;
                   break;
               }
-              _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
-                                  wszText2.Trim(), fTextWidth, _textAlignment);
+              if (Shadow)
+              {
+                _font.DrawShadowTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText2.Trim(), _textAlignment,
+                  _shadowAngle, _shadowDistance, _shadowColor, (float)dMaxWidth);
+              }
+              else
+              {
+                _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText2.Trim(), fTextWidth, _textAlignment);
+              }
             }
 
             switch (_textAlignment)
@@ -305,13 +320,21 @@ namespace MediaPortal.GUI.Library
                 x = dwPosX + _width;
                 break;
             }
-            _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
-                                wszText1.Trim(), (float)dMaxWidth, _textAlignment);
+
+            if (Shadow)
+            {
+              _font.DrawShadowTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText1.Trim(), _textAlignment,
+                _shadowAngle, _shadowDistance, _shadowColor, (float)dMaxWidth);
+            }
+            else
+            {
+              _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText1.Trim(), (float)dMaxWidth, _textAlignment);
+            }
 
             //            Log.Info("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3}", _positionY, dwPosY, _yPositionScroll, _scrollOffset);
             //            Log.Info("dw wszText1.Trim() {0}", wszText1.Trim());
 
-            dwPosY += _itemHeight;
+            dwPosY += (int)(_itemHeight * _lineSpacing);
           }
         }
 
@@ -446,6 +469,19 @@ namespace MediaPortal.GUI.Library
     {
       get { return _itemHeight; }
       set { _itemHeight = value; }
+    }
+
+    public float LineSpacing
+    {
+      get { return _lineSpacing; }
+      set
+      {
+        if (value < 0)
+        {
+          return;
+        }
+        _lineSpacing = value;
+      }
     }
 
     public int Space
@@ -684,6 +720,32 @@ namespace MediaPortal.GUI.Library
     public bool HasText
     {
       get { return this._listItems.Count > 0; }
+    }
+
+    public int ShadowAngle
+    {
+      get { return _shadowAngle; }
+      set { _shadowAngle = value; }
+    }
+
+    public int ShadowDistance
+    {
+      get { return _shadowDistance; }
+      set { _shadowDistance = value; }
+    }
+
+    public long ShadowColor
+    {
+      get { return _shadowColor; }
+      set { _shadowColor = value; }
+    }
+
+    private bool Shadow
+    {
+      get
+      {
+        return (_shadowDistance > 0) && ((_shadowColor >> 24) > 0);
+      }
     }
   }
 }

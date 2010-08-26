@@ -831,8 +831,8 @@
     <String id="976">Следующая глава</String>
     <String id="977">Для просмотра этого канала</String>
     <String id="978">отсутствует свободная карта</String>
-    <String id="979">Воспроизводить запись с начала</String>
-    <String id="980">Воспроизводить запись с текущей точки</String>
+    <String id="979">Воспроизвести запись с начала</String>
+    <String id="980">Воспроизвести запись с текущей точки</String>
     <String id="981">Отменить этот показ</String>
     <String id="982">Удалить эту запись</String>
     <String id="983" prefix="Мои ">Плейлисты</String>
@@ -893,7 +893,7 @@
     <String id="1038">Продвинутая запись</String>
     <String id="1039">Не записывать</String>
     <String id="1040">Напоминать</String>
-    <String id="1041">Следующие эпизоды</String>
+    <String id="1041">Следующие эпизоды({0})</String>
     <String id="1042">Хранить до</String>
     <String id="1043">До просмотра</String>
     <String id="1044">Пока есть место</String>
@@ -965,6 +965,8 @@
     <String id="1197">Выключить DXVA</String>
     <String id="1198">DVD Navigator</String>
     <String id="1200">Мастер настроек</String>
+    <String id="1201">Воспроизвести видео с начала</String>
+    <String id="1211">Возобновить воспроизведение с {0}</String>
     <String id="1300" prefix="Мои ">ТВ шоу</String>
     <String id="1440" prefix="Мой ">Телетекст</String>
     <String id="1441">Телетекст</String>
@@ -1161,7 +1163,7 @@
     <String id="2129">Подготовка к записи</String>
     <String id="2130">Блок</String>
     <String id="2131">из</String>
-    <String id="2132">Закрытие диска: осталось:</String>
+    <String id="2132">Закрытие диска: осталось: {0} сек</String>
     <String id="2133">ТВ-Записи</String>
     <String id="2134">Видео</String>
     <String id="2135">Аудио</String>
@@ -1421,6 +1423,59 @@
     <String id="9009">Модель фотоаппарата:</String>
     <String id="9010">Оборудование:</String>
     <String id="9011">Показать комментарии:</String>
+    <String id="9100">MiniDisplay</String>
+    <String id="9101">Плагин не настроен</String>
+    <String id="9102">Сначала запустите Конфигуратор МедиаПортала пожалуйста!</String>
+    <String id="9103">Настройки Клавиш</String>
+    <String id="9104">Настройка Экрана</String>
+    <String id="9105">Настройка Управления Экраном</String>
+    <String id="9106">Настройка Эквалайзера</String>
+    <String id="9107">Настройка Подсветки</String>
+    <String id="9108">Настройка ПДУ</String>
+    <String id="9109">Отслеживать состояние питания</String>
+    <String id="9110">Контраст</String>
+    <String id="9111">Яркость</String>
+    <String id="9112">Красный</String>
+    <String id="9113">Зеленый</String>
+    <String id="9114">Синий</String>
+    <String id="9115">Обратить Экран</String>
+    <String id="9116">Отключить Экран при воспроизведении Видео</String>
+    <String id="9117">Включить Показ Событий</String>
+    <String id="9118">Время Показа Собтия</String>
+    <String id="9119">Отключить Экран при Неактивности</String>
+    <String id="9120">Время Неактивности</String>
+    <String id="9121">Показ Уровня Громкости</String>
+    <String id="9122">Показ прогресса</String>
+    <String id="9123">Иконка Диска</String>
+    <String id="9124">Статус Медиа</String>
+    <String id="9125">CD/DVD Статус</String>
+    <String id="9126">Использовать Свой Шрифт</String>
+    <String id="9127">Использовать Большие Иконки</String>
+    <String id="9128">Использовать Свои Большие Иконки</String>
+    <String id="9129">Обратить Большие Иконки</String>
+    <String id="9130">Редактор Шрифтов</String>
+    <String id="9131">Редактор Иконок</String>
+    <String id="9132">Использовать Эквалайзер</String>
+    <String id="9133">Стиль Эквалайзера</String>
+    <String id="9134">Использовать Сглаживание Эквалайзера</String>
+    <String id="9135">Задержка Запуска</String>
+    <String id="9136">Время Задержки</String>
+    <String id="9137">Показывать Заголовок</String>
+    <String id="9138">Время показа заголовка</String>
+    <String id="9139">Частота показа заголовка</String>
+    <String id="9140">Настройки клавиш отсутствуют</String>
+    <String id="9141">Включить Клавиши</String>
+    <String id="9142">Свой Маппинг</String>
+    <String id="9143">Маппинг Клавиш</String>
+    <String id="9144">Настройки ПДУ отсутствуют</String>
+    <String id="9145">Отключить ПДУ</String>
+    <String id="9146">Отключить Повтор</String>
+    <String id="9147">Задержка Повтора</String>
+    <String id="9148">Маппинг ПДУ</String>
+    <String id="9149">Нормальный</String>
+    <String id="9150">Стерео</String>
+    <String id="9151">VU Метр</String>
+    <String id="9152">VU Метр 2</String>
     <String id="9997">Секунды:</String>
     <String id="9998">Минуты:</String>
     <String id="9999">Часы:</String>
@@ -1770,6 +1825,13 @@
     <String id="107777" prefix="Мое ">Sudoku</String>
     <String id="107890" prefix="Мое ">Радио Last.fm</String>
     <String id="108888">Музыкальное меню</String>
+    <String id="109000">MiniDisplay - Настройка</String>
+    <String id="109001">MiniDisplay - Настройка - Подсветка</String>
+    <String id="109002">MiniDisplay - Настройка - Управление экраном</String>
+    <String id="109003">MiniDisplay - Настройка - Экран</String>
+    <String id="109004">MiniDisplay - Настройка - Эквалайзер</String>
+    <String id="109005">MiniDisplay - Настройка - Клавиши</String>
+    <String id="109006">MiniDisplay - Настройка - ПДУ</String>
     <String id="200000">Выберите Ваш EPG граббер. Если Ваша страна не указана</String>
     <String id="200001">в списке, то вам придеться загружать EPG самостоятельно.</String>
     <String id="200002">Теперь вы можете назначить EPG каналы вашим телеканалам</String>

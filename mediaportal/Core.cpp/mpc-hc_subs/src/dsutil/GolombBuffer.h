@@ -1,7 +1,7 @@
 /* 
- * $Id: GolombBuffer.h 956 2009-01-07 17:55:16Z casimir666 $
+ * $Id: GolombBuffer.h 1785 2010-04-09 14:12:59Z xhmikosr $
  *
- * (C) 2006-2007 see AUTHORS
+ * (C) 2006-2010 see AUTHORS
  *
  * This file is part of mplayerc.
  *
@@ -20,9 +20,7 @@
  *
  */
 
-
 #pragma once
-
 
 class CGolombBuffer
 {
@@ -34,7 +32,7 @@ public:
 	INT64			SExpGolombRead();
 	void			BitByteAlign();
 
-	inline BYTE		ReadByte()  { return (BYTE) BitRead ( 8); };
+	inline BYTE		ReadByte()	{ return (BYTE) BitRead ( 8); };
 	inline SHORT	ReadShort() { return (SHORT)BitRead (16); };
 	inline DWORD	ReadDword() { return (DWORD)BitRead (32); };
 	void			ReadBuffer(BYTE* pDest, int nSize);
@@ -43,8 +41,9 @@ public:
 	void			Reset(BYTE* pNewBuffer, int nNewSize);
 
 	void			SetSize(int nValue) { m_nSize = nValue; };
-	int				GetSize()			{ return m_nSize; };
-	bool			IsEOF()				{ return m_nBitPos >= m_nSize; };
+	int				GetSize()			const { return m_nSize; };
+	int				RemainingSize() 	const { return m_nSize - m_nBitPos; };
+	bool			IsEOF()				const { return m_nBitPos >= m_nSize; };
 	INT64			GetPos();
 	BYTE*			GetBufferPos()		{ return m_pBuffer + m_nBitPos; };
 

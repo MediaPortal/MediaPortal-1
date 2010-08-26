@@ -81,7 +81,7 @@ namespace TvPlugin
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         string strTmp = String.Empty;
         strTmp = (string)xmlreader.GetValue("tvscheduler", "sort");
@@ -110,7 +110,7 @@ namespace TvPlugin
 
     private void SaveSettings()
     {
-      using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlwriter = new MPSettings())
       {
         switch (currentSortMethod)
         {
@@ -1248,6 +1248,10 @@ namespace TvPlugin
 
         if (schedule.IdChannel < 0)
         {
+          GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", "defaultVideoBig.png");
+        }
+        else
+        {
           GUIPropertyManager.SetProperty("#TV.Scheduled.Channel", schedule.ReferencedChannel().DisplayName);
           string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().DisplayName);
           if (File.Exists(logo))
@@ -1258,10 +1262,6 @@ namespace TvPlugin
           {
             GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", "defaultVideoBig.png");
           }
-        }
-        else
-        {
-          GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", "defaultVideoBig.png");
         }
       }
     }

@@ -65,6 +65,7 @@ namespace MediaPortal.GUI.Library
     private static TransformMatrix _finalTransform = new TransformMatrix();
     private static TransformMatrix _finalTransformCalibrated = new TransformMatrix();
     private static int _bypassUICalibration = 0;
+
     //enum containing current state of mediaportal
     public enum State
     {
@@ -180,6 +181,39 @@ namespace MediaPortal.GUI.Library
 
     private static Point _screenCenterPos = new Point();
     private static bool m_bAllowRememberLastFocusedItem = true;
+
+    private const float DEGREE_TO_RADIAN = 0.01745329f;
+
+    // Stacks for matrix transformations.
+    private static Stack<Matrix> _projectionMatrixStack = new Stack<Matrix>();
+    private static Stack<FinalTransformBucket> _finalTransformStack = new Stack<FinalTransformBucket>();
+
+    /// <summary>
+    /// This internal class contains the information needed to place the final transform on a stack.
+    /// PushMatrix() and PopMatrix() manage the stack.
+    /// </summary>
+    private class FinalTransformBucket
+    {
+      private TransformMatrix mFinalTransform = new TransformMatrix();
+      private TransformMatrix mFinalTransformCalibrated = new TransformMatrix();
+
+      public FinalTransformBucket(TransformMatrix finalTransform, TransformMatrix finalTransformCalibrated)
+      {
+        // The matrices on the stack must be copies otherwise they may be illegally manipulated while on the stack.
+        mFinalTransform = (TransformMatrix)finalTransform.Clone();
+        mFinalTransformCalibrated = (TransformMatrix)finalTransformCalibrated.Clone();
+      }
+
+      public TransformMatrix FinalTransform
+      {
+        get { return mFinalTransform; }
+      }
+
+      public TransformMatrix FinalTransformCalibrated
+      {
+        get { return mFinalTransformCalibrated; }
+      }
+    }
 
     [DllImport("user32.dll")]
     private static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, IntPtr lParam);
@@ -1789,5 +1823,134 @@ namespace MediaPortal.GUI.Library
                                                            100 * h); //Maximum z-value of the view volume.
       DX9Device.Transform.Projection = mtxProjection;
     }
+
+    #region Matrix Management and Transformations
+
+    /// <summary>
+    /// This is a convenience method for users who wish to manage the control transform matrix with an OpenGL-like matrix stack.
+    /// The matrix stack managed is *not* used to set the final transform for MP callers who do not use Push/Pop.
+    /// </summary>
+    public static void PushMatrix()
+    {
+      // Push the current transform matrix onto the stack.
+      _finalTransformStack.Push(new FinalTransformBucket(_finalTransform, _finalTransformCalibrated));
+    }
+
+    /// <summary>
+    /// This is a convenience method for users who wish to manage the control transform matrix with an OpenGL-like matrix stack.
+    /// The matrix stack managed is *not* used to set the final transform for MP callers who do not use Push/Pop.
+    /// </summary>
+    public static void PopMatrix()
+    {
+      // Pop the transform matrix off of the stack.
+      if (_finalTransformStack.Count > 0)
+      {
+        FinalTransformBucket bucket = _finalTransformStack.Pop();
+        _finalTransform = bucket.FinalTransform;
+        _finalTransformCalibrated = bucket.FinalTransformCalibrated;
+      }
+      else
+      {
+        throw new InvalidOperationException("Attempt to pop final transform matrix off of an empty stack");
+      }
+    }
+
+    /// <summary>
+    /// This is a convenience method for users who wish to manage the direct3d projection matrix with an OpenGL-like matrix stack.
+    /// The matrix stack managed is *not* used to set the direct3d projection matrix for MP callers who do not use Push/Pop.
+    /// </summary>
+    public static void PushProjectionMatrix()
+    {
+      // Push the current direct3d projection matrix onto the stack.
+      _projectionMatrixStack.Push(DX9Device.Transform.Projection);
+    }
+
+    /// <summary>
+    /// This is a convenience method for users who wish to manage the direct3d projection matrix with an OpenGL-like matrix stack.
+    /// The matrix stack managed is *not* used to set the direct3d projection matrix for MP callers who do not use Push/Pop.
+    /// </summary>
+    public static void PopProjectionMatrix()
+    {
+      // Pop the direct3d projection matrix off of the stack.
+      if (_projectionMatrixStack.Count > 0)
+      {
+        DX9Device.Transform.Projection = _projectionMatrixStack.Pop();
+      }
+      else
+      {
+        throw new InvalidOperationException("Attempt to pop direct3d projection matrix off of an empty stack");
+      }
+    }
+
+    /// <summary>
+    /// Sets the direct3d project matrix to the specfied perspective view.
+    /// </summary>
+    public static void SetPerspectiveProjectionMatrix(float fovy, float aspectratio, float nearPlane, float farPlane)
+    {
+      Matrix m = Matrix.PerspectiveFovLH(fovy, aspectratio, nearPlane, farPlane);
+      GUIGraphicsContext.DX9Device.Transform.Projection = m;
+    }
+
+    /// <summary>
+    /// Replaces the current control transform with the identity matrix.
+    /// </summary>
+    public static void LoadIdentity()
+    {
+      UpdateFinalTransform(ControlTransform.multiplyAssign(new TransformMatrix()));
+    }
+
+    /// <summary>
+    /// Rotates the control transform matrix by the specified angle (in degrees) around the x-axis.
+    /// </summary>
+    public static void RotateX(float angle, float y, float z)
+    {
+      TransformMatrix m = new TransformMatrix();
+      angle *= DEGREE_TO_RADIAN;
+      m.SetXRotation(angle, y, z, 1.0f);
+      UpdateFinalTransform(ControlTransform.multiplyAssign(m));
+    }
+
+    /// <summary>
+    /// Rotates the control transform matrix by the specified angle (in degrees) around the y-axis.
+    /// </summary>
+    public static void RotateY(float angle, float x, float z)
+    {
+      TransformMatrix m = new TransformMatrix();
+      angle *= DEGREE_TO_RADIAN;
+      m.SetYRotation(angle, x, z, 1.0f);
+      UpdateFinalTransform(ControlTransform.multiplyAssign(m));
+    }
+
+    /// <summary>
+    /// Rotates the control transform matrix by the specified angle (in degrees) around the z-axis.
+    /// </summary>
+    public static void RotateZ(float angle, float x, float y)
+    {
+      TransformMatrix m = new TransformMatrix();
+      angle *= DEGREE_TO_RADIAN;
+      m.SetZRotation(angle, x, y, 1.0f);
+      UpdateFinalTransform(ControlTransform.multiplyAssign(m));
+    }
+
+    /// <summary>
+    /// Scales the control transform matrix by the specified vector.
+    /// </summary>
+    public static void Scale(float x, float y, float z)
+    {
+      TransformMatrix m = TransformMatrix.CreateScaler(x, y, z);
+      UpdateFinalTransform(ControlTransform.multiplyAssign(m));
+    }
+
+    /// <summary>
+    /// Translates the control transform matrix by the specified vector.
+    /// </summary>
+    public static void Translate(float x, float y, float z)
+    {
+      TransformMatrix m = TransformMatrix.CreateTranslation(x, y, z);
+      UpdateFinalTransform(ControlTransform.multiplyAssign(m));
+    }
+
+    #endregion
+
   }
 }

@@ -238,49 +238,54 @@ namespace SetupTv.Sections
         try
         {
           treeViewTvMStations.BeginUpdate();
-          treeViewTvMStations.Nodes.Clear();
-          imageListTvmStations.Images.Clear();
-          treeViewTvMStations.ItemHeight = localInstall ? 24 : 16;
-
-          string GifBasePath = TvMovie.TVMovieProgramPath + @"Gifs\";
-
-          for (int i = 0; i < database.Stations.Count; i++)
-          {
-            try
-            {
-              TVMChannel station = database.Stations[i];
-
-              if (localInstall)
-              {
-                string channelLogo = GifBasePath + station.TvmZeichen;
-                if (!File.Exists(channelLogo))
-                  channelLogo = GifBasePath + @"tvmovie_senderlogoplatzhalter.gif";
-
-                // convert gif to ico
-                Bitmap tvmLogo = new Bitmap(channelLogo);
-                IntPtr iconHandle = tvmLogo.GetHicon();
-                Icon stationThumb = Icon.FromHandle(iconHandle);
-                imageListTvmStations.Images.Add(new Icon(stationThumb, new Size(32, 22)));
-              }
-
-              TreeNode stationNode = new TreeNode(station.TvmEpgDescription, i, i); //, subItems);
-              ChannelInfo channelInfo = new ChannelInfo();
-              channelInfo.Name = station.TvmEpgChannel;
-              stationNode.Tag = channelInfo;
-              treeViewTvMStations.Nodes.Add(stationNode);
-            }
-            catch (Exception exstat)
-            {
-              Log.Info("TvMovieSetup: Error loading TV Movie station - {0}", exstat.Message);
-            }
-          }
-
-          treeViewTvMStations.EndUpdate();
-
-          treeViewMpChannels.BeginUpdate();
-          treeViewMpChannels.Nodes.Clear();
           try
           {
+            treeViewTvMStations.Nodes.Clear();
+            imageListTvmStations.Images.Clear();
+            treeViewTvMStations.ItemHeight = localInstall ? 24 : 16;
+
+            string GifBasePath = TvMovie.TVMovieProgramPath + @"Gifs\";
+
+            for (int i = 0; i < database.Stations.Count; i++)
+            {
+              try
+              {
+                TVMChannel station = database.Stations[i];
+
+                if (localInstall)
+                {
+                  string channelLogo = GifBasePath + station.TvmZeichen;
+                  if (!File.Exists(channelLogo))
+                    channelLogo = GifBasePath + @"tvmovie_senderlogoplatzhalter.gif";
+
+                  // convert gif to ico
+                  Bitmap tvmLogo = new Bitmap(channelLogo);
+                  IntPtr iconHandle = tvmLogo.GetHicon();
+                  Icon stationThumb = Icon.FromHandle(iconHandle);
+                  imageListTvmStations.Images.Add(new Icon(stationThumb, new Size(32, 22)));
+                }
+
+                TreeNode stationNode = new TreeNode(station.TvmEpgDescription, i, i); //, subItems);
+                ChannelInfo channelInfo = new ChannelInfo();
+                channelInfo.Name = station.TvmEpgChannel;
+                stationNode.Tag = channelInfo;
+                treeViewTvMStations.Nodes.Add(stationNode);
+              }
+              catch (Exception exstat)
+              {
+                Log.Info("TvMovieSetup: Error loading TV Movie station - {0}", exstat.Message);
+              }
+            }
+          }
+          finally
+          {
+            treeViewTvMStations.EndUpdate();
+          }
+
+          treeViewMpChannels.BeginUpdate();
+          try
+          {
+            treeViewMpChannels.Nodes.Clear();
             List<Channel> mpChannelList = database.GetChannels();
             foreach (Channel channel in mpChannelList)
             {
@@ -294,7 +299,10 @@ namespace SetupTv.Sections
           {
             Log.Info("TvMovieSetup: Error loading MP's channels from database - {0}", exdb.Message);
           }
-          treeViewMpChannels.EndUpdate();
+          finally
+          {
+            treeViewMpChannels.EndUpdate();
+          }
         }
         catch (Exception ex)
         {
@@ -407,69 +415,75 @@ namespace SetupTv.Sections
     private void LoadMapping()
     {
       treeViewMpChannels.BeginUpdate();
-      foreach (TreeNode treeNode in treeViewMpChannels.Nodes)
-      {
-        foreach (TreeNode childNode in treeNode.Nodes)
-          childNode.Remove();
-      }
       try
       {
-        IList<TvMovieMapping> mappingDb = TvMovieMapping.ListAll();
-        if (mappingDb != null && mappingDb.Count > 0)
+        foreach (TreeNode treeNode in treeViewMpChannels.Nodes)
         {
-          foreach (TvMovieMapping mapping in mappingDb)
+          foreach (TreeNode childNode in treeNode.Nodes)
+            childNode.Remove();
+        }
+        try
+        {
+          IList<TvMovieMapping> mappingDb = TvMovieMapping.ListAll();
+          if (mappingDb != null && mappingDb.Count > 0)
           {
-            string MpChannelName = string.Empty;
-            try
+            foreach (TvMovieMapping mapping in mappingDb)
             {
-              TreeNode channelNode = FindChannel(mapping.IdChannel);
-              if (channelNode != null)
+              string MpChannelName = string.Empty;
+              try
               {
-                string stationName = mapping.StationName;
-                if (FindStation(stationName) != null)
+                TreeNode channelNode = FindChannel(mapping.IdChannel);
+                if (channelNode != null)
                 {
-                  TreeNode stationNode = (TreeNode)FindStation(stationName).Clone();
-                  ChannelInfo channelInfo = new ChannelInfo();
-                  if (stationNode != null)
+                  string stationName = mapping.StationName;
+                  if (FindStation(stationName) != null)
                   {
-                    string start = mapping.TimeSharingStart;
-                    string end = mapping.TimeSharingEnd;
+                    TreeNode stationNode = (TreeNode)FindStation(stationName).Clone();
+                    ChannelInfo channelInfo = new ChannelInfo();
+                    if (stationNode != null)
+                    {
+                      string start = mapping.TimeSharingStart;
+                      string end = mapping.TimeSharingEnd;
 
-                    if (start != "00:00" || end != "00:00")
-                      stationNode.Text = string.Format("{0} ({1}-{2})", stationName, start, end);
-                    else
-                      stationNode.Text = string.Format("{0}", stationName);
+                      if (start != "00:00" || end != "00:00")
+                        stationNode.Text = string.Format("{0} ({1}-{2})", stationName, start, end);
+                      else
+                        stationNode.Text = string.Format("{0}", stationName);
 
-                    channelInfo.Start = start;
-                    channelInfo.End = end;
-                    channelInfo.Name = stationName;
+                      channelInfo.Start = start;
+                      channelInfo.End = end;
+                      channelInfo.Name = stationName;
 
-                    stationNode.Tag = channelInfo;
+                      stationNode.Tag = channelInfo;
 
-                    channelNode.Nodes.Add(stationNode);
-                    channelNode.Expand();
+                      channelNode.Nodes.Add(stationNode);
+                      channelNode.Expand();
+                    }
                   }
+                  else
+                    Log.Debug("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
                 }
-                else
-                  Log.Debug("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
+              }
+              catch (Exception exInner)
+              {
+                Log.Debug("TVMovie plugin: Mapping of station {0} failed; maybe it has been deleted / changed ({1})",
+                          MpChannelName, exInner.Message);
               }
             }
-            catch (Exception exInner)
-            {
-              Log.Debug("TVMovie plugin: Mapping of station {0} failed; maybe it has been deleted / changed ({1})",
-                        MpChannelName, exInner.Message);
-            }
           }
+          else
+            Log.Debug("TVMovie plugin: LoadMapping did not find any mapped channels");
         }
-        else
-          Log.Debug("TVMovie plugin: LoadMapping did not find any mapped channels");
+        catch (Exception ex)
+        {
+          Log.Debug("TVMovie plugin: LoadMapping failed - {0},{1}", ex.Message, ex.StackTrace);
+        }
+        ColorTree();
       }
-      catch (Exception ex)
+      finally
       {
-        Log.Debug("TVMovie plugin: LoadMapping failed - {0},{1}", ex.Message, ex.StackTrace);
+        treeViewMpChannels.EndUpdate();
       }
-      ColorTree();
-      treeViewMpChannels.EndUpdate();
     }
 
     private TreeNode FindChannel(int mpChannelId)

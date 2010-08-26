@@ -409,6 +409,7 @@ namespace MpeInstaller
 
     private void RefreshLists()
     {
+      lbl_lastupdate.Text = "Last update " + _settings.LastUpdate.ToString();
       extensionListControl.Set(MpeCore.MpeInstaller.InstalledExtensions);
       extensionListContro_all.Set(MpeCore.MpeInstaller.KnownExtensions.GetUniqueList());
     }
@@ -471,8 +472,9 @@ namespace MpeInstaller
       if (IsOldFormat(file))
       {
         if (!silent)
-          MessageBox.Show("This is a old format file. MpiInstaller will be used to install it! ");
-        Process.Start(Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%Base%"), @"MpInstaller.exe"), file);
+            MessageBox.Show("This is a old format file (mpi). MPInstaller will be used to install it! ");
+          string mpiPath = Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%Base%"), "MPInstaller.exe");
+          Process.Start(mpiPath, "\"" + file + "\"");
         return;
       }
       MpeCore.MpeInstaller.Init();

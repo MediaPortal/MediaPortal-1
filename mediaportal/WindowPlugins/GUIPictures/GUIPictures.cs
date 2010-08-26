@@ -35,6 +35,7 @@ using MediaPortal.Picture.Database;
 using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.Util;
+using MediaPortal.Player;
 
 namespace MediaPortal.GUI.Pictures
 {
@@ -259,6 +260,7 @@ namespace MediaPortal.GUI.Pictures
       BigIcons = 2,
       Albums = 3,
       Filmstrip = 4,
+      CoverFlow = 5
     }
 
     private enum Display
@@ -289,6 +291,8 @@ namespace MediaPortal.GUI.Pictures
     private string fileMenuPinCode = string.Empty;
     private bool _autocreateLargeThumbs = true;
     private bool _useDayGrouping = false;
+    private bool _enableVideoPlayback = false;
+    private bool _playVideosInSlideshows = false;
     //bool _hideExtensions = true;
     private Display disp = Display.Files;
     private bool _switchRemovableDrives;
@@ -313,6 +317,8 @@ namespace MediaPortal.GUI.Pictures
       {
         _autocreateLargeThumbs = !xmlreader.GetValueAsBool("thumbnails", "picturenolargethumbondemand", false);
         _useDayGrouping = xmlreader.GetValueAsBool("pictures", "useDayGrouping", false);
+        _enableVideoPlayback = xmlreader.GetValueAsBool("pictures", "enableVideoPlayback", false);
+        _playVideosInSlideshows = xmlreader.GetValueAsBool("pictures", "playVideosInSlideshows", false);
         isFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         string strDefault = xmlreader.GetValueAsString("pictures", "default", string.Empty);
@@ -431,6 +437,11 @@ namespace MediaPortal.GUI.Pictures
       destinationFolder = string.Empty;
       thumbCreationPaths.Clear();
       LoadSettings();
+      if (_enableVideoPlayback)
+      {
+        foreach (string ext in Util.Utils.VideoExtensions)
+          virtualDirectory.AddExtension(ext);
+      }
     }
     public override void OnAction(Action action)
     {
@@ -494,7 +505,22 @@ namespace MediaPortal.GUI.Pictures
       LoadDirectory(currentFolder);
       if (selectedItemIndex >= 0)
       {
+        GUISlideShow SlideShow = (GUISlideShow)GUIWindowManager.GetWindow((int)Window.WINDOW_SLIDESHOW);
+        Log.Debug("GUIPictures: currentSlideIndex {0}", SlideShow._currentSlideIndex);
+        /*if (SlideShow._currentSlideIndex != -1)
+          selectedItemIndex += SlideShow._currentSlideIndex+1;*/
+        int direction = GUISlideShow.SlideDirection;
+        GUISlideShow.SlideDirection = 0;
+        if (direction == 1)
+          selectedItemIndex++;
+        else
+          if (direction == -1)
+            selectedItemIndex--;
         GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItemIndex);
+        if (direction != 0)
+          OnClick(selectedItemIndex);
+        else if (SlideShow._currentSlideIndex != -1)
+          OnSlideShow(selectedItemIndex);
       }
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
@@ -529,6 +555,9 @@ namespace MediaPortal.GUI.Pictures
             break;
 
           case View.Filmstrip:
+            mapSettings.ViewAs = (int)View.CoverFlow;
+            break;
+          case View.CoverFlow:
             mapSettings.ViewAs = (int)View.List;
             break;
         }
@@ -872,6 +901,9 @@ namespace MediaPortal.GUI.Pictures
         case View.Filmstrip:
           textLine = GUILocalizeStrings.Get(733);
           break;
+        case View.CoverFlow:
+          textLine = GUILocalizeStrings.Get(791);
+          break;
       }
       GUIControl.SetControlLabel(GetID, btnViewAs.GetID, textLine);
 
@@ -914,6 +946,10 @@ namespace MediaPortal.GUI.Pictures
       {
         facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;
       }
+      else if (mapSettings.ViewAs == (int)View.CoverFlow)
+      {
+        facadeView.View = GUIFacadeControl.ViewMode.CoverFlow;
+      }
       if (itemIndex > -1)
       {
         GUIControl.SelectItemControl(GetID, facadeView.GetID, itemIndex);
@@ -928,7 +964,11 @@ namespace MediaPortal.GUI.Pictures
     {
       selectedItemIndex = CountOfNonImageItems + index;
     }
-
+    public void IncSelectedItemIndex()
+    {
+      Log.Debug("GUIPictures: INC selectedItemIndex {0}", selectedItemIndex);
+      selectedItemIndex ++;
+    }
     #endregion
 
     #region folder settings
@@ -1392,8 +1432,16 @@ namespace MediaPortal.GUI.Pictures
       }
       if (SlideShow.Count > 0)
       {
-        GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
-        SlideShow.Select(strFile);
+        if (Util.Utils.IsVideo(strFile))
+        {
+          g_Player.Play(strFile, g_Player.MediaType.Video);
+          g_Player.ShowFullScreenWindow();
+        }
+        else
+        {
+          GUIWindowManager.ActivateWindow((int)Window.WINDOW_SLIDESHOW);
+          SlideShow.Select(strFile);
+        }
       }
     }
 
@@ -1471,7 +1519,13 @@ namespace MediaPortal.GUI.Pictures
         GUIListItem item = GetItem(i);
         if (!item.IsFolder && !item.IsRemote)
         {
-          SlideShow.Add(item.Path);
+          if (!_playVideosInSlideshows)
+          {
+            if (!Util.Utils.IsVideo(item.Path))
+              SlideShow.Add(item.Path);
+          }
+          else
+            SlideShow.Add(item.Path);
         }
 
         i++;
@@ -1660,6 +1714,10 @@ namespace MediaPortal.GUI.Pictures
         return true;
       }
       if (windowId == (int)Window.WINDOW_SLIDESHOW)
+      {
+        return true;
+      }
+      if (windowId == (int)Window.WINDOW_FULLSCREEN_VIDEO)
       {
         return true;
       }

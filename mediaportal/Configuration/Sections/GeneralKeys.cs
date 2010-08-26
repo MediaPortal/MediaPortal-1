@@ -405,7 +405,7 @@ namespace MediaPortal.Configuration.Sections
       this.idTextBox.BorderColor = System.Drawing.Color.Empty;
       this.idTextBox.Enabled = false;
       this.idTextBox.Location = new System.Drawing.Point(168, 324);
-      this.idTextBox.MaxLength = 4;
+      this.idTextBox.MaxLength = 5;
       this.idTextBox.Name = "idTextBox";
       this.idTextBox.Size = new System.Drawing.Size(40, 20);
       this.idTextBox.TabIndex = 6;

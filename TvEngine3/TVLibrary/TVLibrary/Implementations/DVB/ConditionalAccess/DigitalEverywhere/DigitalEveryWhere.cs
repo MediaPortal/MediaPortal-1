@@ -38,6 +38,7 @@ namespace TvLibrary.Implementations.DVB
   {
     private const int MAX_PMT_SIZE = 1024;
     private const int CA_DATA_SIZE = 1036;
+    private const int INFO_DATA_SIZE = 64;
 
     #region structs
 
@@ -256,13 +257,13 @@ namespace TvLibrary.Implementations.DVB
         if (_isDigitalEverywhere)
         {
           _hasCAM = IsCamPresent();
-          Log.Log.WriteFile("FireDTV cam detected: {0} ", _hasCAM);
+          Log.Log.WriteFile("FireDTV cam detected  : {0}", _hasCAM);
           if (_hasCAM)
           {
-            Log.Log.WriteFile("FireDTV cam name: \"{0}\" ", GetCAMName());
+            Log.Log.WriteFile("FireDTV cam name      : \"{0}\"", GetCAMName());
           }
-          Log.Log.WriteFile("FireDTV driver version: {0} ", GetDriverVersionNumber());
-          Log.Log.WriteFile("FireDTV {0} ", GetHardwareFirmwareVersionNumber());
+          Log.Log.WriteFile("FireDTV driver version: {0}", GetDriverVersionNumber());
+          Log.Log.WriteFile("FireDTV board version : {0}", GetHardwareFirmwareVersionNumber());
         }
       }
       _readCamName = true;
@@ -332,7 +333,7 @@ namespace TvLibrary.Implementations.DVB
       // read CAM name, when it works, this usually means that CAM is ready to descramble (needed i.e. after resume)
       if (_readCamName)
       {
-        Log.Log.WriteFile("FireDTV cam name: \"{0}\" ", GetCAMName());
+        Log.Log.WriteFile("FireDTV cam name    : \"{0}\"", GetCAMName());
       }
 
       //Log.Log.WriteFile("SendPMTToFireDTV pmtLength:{0}", pmtLength);
@@ -668,8 +669,8 @@ namespace TvLibrary.Implementations.DVB
         int byteCount;
         hr = propertySet.Get(propertyGuid,
                              KSPROPERTY_FIRESAT_GET_FIRMWARE_VERSION,
-                             _ptrDataInstance, 22,
-                             _ptrDataReturned, 22, out byteCount);
+                             _ptrDataInstance, INFO_DATA_SIZE,
+                             _ptrDataReturned, INFO_DATA_SIZE, out byteCount);
 
 
         if (hr != 0)
@@ -691,7 +692,7 @@ namespace TvLibrary.Implementations.DVB
         string fwbuild =
           ((Marshal.ReadByte(_ptrDataReturned, 6) * 256) + Marshal.ReadByte(_ptrDataReturned, 7)).ToString();
 
-        version = String.Format("HW: {0}, FW: {1} build {2}", hwrev, fwrev, fwbuild);
+        version = String.Format("HW {0}, FW {1} build {2}", hwrev, fwrev, fwbuild);
       }
       return version;
     }
@@ -717,8 +718,8 @@ namespace TvLibrary.Implementations.DVB
         int byteCount;
         hr = propertySet.Get(propertyGuid,
                              KSPROPERTY_FIRESAT_DRIVER_VERSION,
-                             _ptrDataInstance, 22,
-                             _ptrDataReturned, 22, out byteCount);
+                             _ptrDataInstance, INFO_DATA_SIZE,
+                             _ptrDataReturned, INFO_DATA_SIZE, out byteCount);
 
 
         if (hr != 0)
@@ -733,7 +734,7 @@ namespace TvLibrary.Implementations.DVB
           byte k = Marshal.ReadByte(_ptrDataReturned, i);
 
           if (k < 0x20)
-            ch = '.';
+            break;
           else
             ch = (char)k;
           version += ch;
@@ -860,7 +861,7 @@ namespace TvLibrary.Implementations.DVB
 
       short manufacturer_code = BitConverter.ToInt16(caDataReturned.uData, 0);
       short application_manufacturer = BitConverter.ToInt16(caDataReturned.uData, 2);
-      Log.Log.WriteFile("FireDTV cam manufacturer_code={0}, application_manufacturer={1}",
+      Log.Log.WriteFile("FireDTV cam specs     : manufacturer_code={0}, application_manufacturer={1}",
                         manufacturer_code, application_manufacturer);
 
       int Length = Convert.ToInt16(caDataReturned.uData[4]);

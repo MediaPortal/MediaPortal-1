@@ -52,41 +52,47 @@ namespace SetupTv.Sections
     {
       _loaded = true;
       mpListView2.BeginUpdate();
-      mpListView2.Items.Clear();
-      TvLibrary.Epg.Languages languages = new TvLibrary.Epg.Languages();
-      List<String> codes = languages.GetLanguageCodes();
-      List<String> list = languages.GetLanguages();
-
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("epgLanguages");
-
-      string values = "";
-      for (int j = 0; j < list.Count; j++)
+      try
       {
-        ListViewItem item = new ListViewItem(new string[] {list[j], codes[j]});
-        mpListView2.Items.Add(item);
-        item.Tag = codes[j];
-        if (setting.Value == "")
+        mpListView2.Items.Clear();
+        TvLibrary.Epg.Languages languages = new TvLibrary.Epg.Languages();
+        List<String> codes = languages.GetLanguageCodes();
+        List<String> list = languages.GetLanguages();
+
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Setting setting = layer.GetSetting("epgLanguages");
+
+        string values = "";
+        for (int j = 0; j < list.Count; j++)
         {
-          values += item.Tag;
-          values += ",";
-        }
-        else
-        {
-          if (setting.Value.IndexOf((string)item.Tag) >= 0)
+          ListViewItem item = new ListViewItem(new string[] {list[j], codes[j]});
+          mpListView2.Items.Add(item);
+          item.Tag = codes[j];
+          if (setting.Value == "")
           {
-            item.Checked = true;
+            values += item.Tag;
+            values += ",";
+          }
+          else
+          {
+            if (setting.Value.IndexOf((string)item.Tag) >= 0)
+            {
+              item.Checked = true;
+            }
           }
         }
-      }
-      mpListView2.Sort();
+        mpListView2.Sort();
 
-      mpListView2.EndUpdate();
-      if (setting.Value == "")
+        if (setting.Value == "")
+        {
+          setting.Value = values;
+          setting.Persist();
+          //DatabaseManager.Instance.SaveChanges();
+        }
+      }
+      finally
       {
-        setting.Value = values;
-        setting.Persist();
-        //DatabaseManager.Instance.SaveChanges();
+        mpListView2.EndUpdate();
       }
     }
 
@@ -103,107 +109,113 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       mpListView1.BeginUpdate();
-      LoadLanguages();
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("epgStoreOnlySelected");
-      mpCheckBoxStoreOnlySelected.Checked = (setting.Value == "yes");
-      Dictionary<string, CardType> cards = new Dictionary<string, CardType>();
-      IList<Card> dbsCards = Card.ListAll();
-      foreach (Card card in dbsCards)
+      try
       {
-        cards[card.DevicePath] = RemoteControl.Instance.Type(card.IdCard);
-      }
-      base.OnSectionActivated();
-      mpListView1.Items.Clear();
-
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-      sb.AddOrderByField(true, "sortOrder");
-      SqlStatement stmt = sb.GetStatement(true);
-      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
-
-      foreach (Channel ch in channels)
-      {
-        bool analog = false;
-        bool dvbc = false;
-        bool dvbt = false;
-        bool dvbs = false;
-        bool atsc = false;
-        bool dvbip = false;
-        if (ch.IsTv == false)
-          continue;
-        if (ch.IsWebstream())
-          continue;
-        int imageIndex = 1;
-        if (ch.FreeToAir == false)
-          imageIndex = 2;
-        ListViewItem item = mpListView1.Items.Add(ch.DisplayName, imageIndex);
-        foreach (ChannelMap map in ch.ReferringChannelMap())
+        LoadLanguages();
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Setting setting = layer.GetSetting("epgStoreOnlySelected");
+        mpCheckBoxStoreOnlySelected.Checked = (setting.Value == "yes");
+        Dictionary<string, CardType> cards = new Dictionary<string, CardType>();
+        IList<Card> dbsCards = Card.ListAll();
+        foreach (Card card in dbsCards)
         {
-          if (cards.ContainsKey(map.ReferencedCard().DevicePath))
+          cards[card.DevicePath] = RemoteControl.Instance.Type(card.IdCard);
+        }
+        base.OnSectionActivated();
+        mpListView1.Items.Clear();
+
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
+        sb.AddOrderByField(true, "sortOrder");
+        SqlStatement stmt = sb.GetStatement(true);
+        IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
+
+        foreach (Channel ch in channels)
+        {
+          bool analog = false;
+          bool dvbc = false;
+          bool dvbt = false;
+          bool dvbs = false;
+          bool atsc = false;
+          bool dvbip = false;
+          if (ch.IsTv == false)
+            continue;
+          if (ch.IsWebstream())
+            continue;
+          int imageIndex = 1;
+          if (ch.FreeToAir == false)
+            imageIndex = 2;
+          ListViewItem item = mpListView1.Items.Add(ch.DisplayName, imageIndex);
+          foreach (ChannelMap map in ch.ReferringChannelMap())
           {
-            CardType type = cards[map.ReferencedCard().DevicePath];
-            switch (type)
+            if (cards.ContainsKey(map.ReferencedCard().DevicePath))
             {
-              case CardType.Analog:
-                analog = true;
-                break;
-              case CardType.DvbC:
-                dvbc = true;
-                break;
-              case CardType.DvbT:
-                dvbt = true;
-                break;
-              case CardType.DvbS:
-                dvbs = true;
-                break;
-              case CardType.Atsc:
-                atsc = true;
-                break;
-              case CardType.DvbIP:
-                dvbip = true;
-                break;
+              CardType type = cards[map.ReferencedCard().DevicePath];
+              switch (type)
+              {
+                case CardType.Analog:
+                  analog = true;
+                  break;
+                case CardType.DvbC:
+                  dvbc = true;
+                  break;
+                case CardType.DvbT:
+                  dvbt = true;
+                  break;
+                case CardType.DvbS:
+                  dvbs = true;
+                  break;
+                case CardType.Atsc:
+                  atsc = true;
+                  break;
+                case CardType.DvbIP:
+                  dvbip = true;
+                  break;
+              }
             }
           }
+          string line = "";
+          if (analog)
+          {
+            line += "Analog";
+          }
+          if (dvbc)
+          {
+            if (line != "")
+              line += ",";
+            line += "DVB-C";
+          }
+          if (dvbt)
+          {
+            if (line != "")
+              line += ",";
+            line += "DVB-T";
+          }
+          if (dvbs)
+          {
+            if (line != "")
+              line += ",";
+            line += "DVB-S";
+          }
+          if (atsc)
+          {
+            if (line != "")
+              line += ",";
+            line += "ATSC";
+          }
+          if (dvbip)
+          {
+            if (line != "") line += ",";
+            line += "DVB-IP";
+          }
+          item.SubItems.Add(line);
+          item.Checked = ch.GrabEpg;
+          item.Tag = ch;
         }
-        string line = "";
-        if (analog)
-        {
-          line += "Analog";
-        }
-        if (dvbc)
-        {
-          if (line != "")
-            line += ",";
-          line += "DVB-C";
-        }
-        if (dvbt)
-        {
-          if (line != "")
-            line += ",";
-          line += "DVB-T";
-        }
-        if (dvbs)
-        {
-          if (line != "")
-            line += ",";
-          line += "DVB-S";
-        }
-        if (atsc)
-        {
-          if (line != "")
-            line += ",";
-          line += "ATSC";
-        }
-        if (dvbip)
-        {
-          if (line != "") line += ",";
-          line += "DVB-IP";
-        }
-        item.SubItems.Add(line);
-        item.Checked = ch.GrabEpg;
-        item.Tag = ch;
       }
-      mpListView1.EndUpdate();
+      finally
+      {
+        mpListView1.EndUpdate();
+      }
     }
 
     private void mpListView1_ItemChecked(object sender, ItemCheckedEventArgs e)
@@ -218,38 +230,50 @@ namespace SetupTv.Sections
     private void mpButtonAll_Click(object sender, EventArgs e)
     {
       mpListView2.BeginUpdate();
-      for (int i = 0; i < mpListView2.Items.Count; ++i)
+      try
       {
-        mpListView2.Items[i].Checked = true;
+        for (int i = 0; i < mpListView2.Items.Count; ++i)
+        {
+          mpListView2.Items[i].Checked = true;
+        }
+        TvLibrary.Epg.Languages languages = new TvLibrary.Epg.Languages();
+        List<String> codes = languages.GetLanguageCodes();
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Setting setting = layer.GetSetting("epgLanguages");
+        setting.Value = "";
+        foreach (string code in codes)
+        {
+          setting.Value += code;
+          setting.Value += ",";
+        }
+        //Log.WriteFile("tvsetup:epggrabber:all: epglang={0}", setting.Value);
+        setting.Persist();
       }
-      TvLibrary.Epg.Languages languages = new TvLibrary.Epg.Languages();
-      List<String> codes = languages.GetLanguageCodes();
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("epgLanguages");
-      setting.Value = "";
-      foreach (string code in codes)
+      finally
       {
-        setting.Value += code;
-        setting.Value += ",";
+        mpListView2.EndUpdate();
       }
-      //Log.WriteFile("tvsetup:epggrabber:all: epglang={0}", setting.Value);
-      mpListView2.EndUpdate();
-      setting.Persist();
     }
 
     private void mpButtonNone_Click(object sender, EventArgs e)
     {
       mpListView2.BeginUpdate();
-      for (int i = 0; i < mpListView2.Items.Count; ++i)
+      try
       {
-        mpListView2.Items[i].Checked = false;
+        for (int i = 0; i < mpListView2.Items.Count; ++i)
+        {
+          mpListView2.Items[i].Checked = false;
+        }
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Setting setting = layer.GetSetting("epgLanguages");
+        setting.Value = ",";
+        Log.WriteFile("tvsetup:epggrabber:none: epglang={0}", setting.Value);
+        setting.Persist();
       }
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Setting setting = layer.GetSetting("epgLanguages");
-      setting.Value = ",";
-      Log.WriteFile("tvsetup:epggrabber:none: epglang={0}", setting.Value);
-      setting.Persist();
-      mpListView2.EndUpdate();
+      finally
+      {
+        mpListView2.EndUpdate();
+      }
     }
 
     public override void SaveSettings()
@@ -275,33 +299,51 @@ namespace SetupTv.Sections
     private void mpButtonAllChannels_Click(object sender, EventArgs e)
     {
       mpListView1.BeginUpdate();
-      for (int i = 0; i < mpListView1.Items.Count; ++i)
+      try
       {
-        mpListView1.Items[i].Checked = true;
+        for (int i = 0; i < mpListView1.Items.Count; ++i)
+        {
+          mpListView1.Items[i].Checked = true;
+        }
       }
-      mpListView1.EndUpdate();
+      finally
+      {
+        mpListView1.EndUpdate();
+      }
     }
 
     private void mpButtonNoneChannels_Click(object sender, EventArgs e)
     {
       mpListView1.BeginUpdate();
-      for (int i = 0; i < mpListView1.Items.Count; ++i)
+      try
       {
-        mpListView1.Items[i].Checked = false;
+        for (int i = 0; i < mpListView1.Items.Count; ++i)
+        {
+          mpListView1.Items[i].Checked = false;
+        }
       }
-      mpListView1.EndUpdate();
+      finally
+      {
+        mpListView1.EndUpdate();
+      }
     }
 
     private void mpButtonAllGrouped_Click(object sender, EventArgs e)
     {
       mpListView1.BeginUpdate();
-      for (int i = 0; i < mpListView1.Items.Count; ++i)
+      try
       {
-        Channel ch = (Channel)mpListView1.Items[i].Tag;
-        mpListView1.Items[i].Checked = (ch.ReferringGroupMap().Count > 1);
-        // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
+        for (int i = 0; i < mpListView1.Items.Count; ++i)
+        {
+          Channel ch = (Channel)mpListView1.Items[i].Tag;
+          mpListView1.Items[i].Checked = (ch.ReferringGroupMap().Count > 1);
+          // if count > 1 we assume that the channel has one or more custom group(s) associated with it.
+        }
       }
-      mpListView1.EndUpdate();
+      finally
+      {
+        mpListView1.EndUpdate();
+      }
     }
 
     private void mpListView1_ColumnClick(object sender, ColumnClickEventArgs e)

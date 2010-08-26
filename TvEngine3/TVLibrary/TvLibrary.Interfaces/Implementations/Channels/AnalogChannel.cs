@@ -384,5 +384,10 @@ namespace TvLibrary.Implementations
              analogChannel.ChannelNumber != ChannelNumber ||
              analogChannel.Frequency != Frequency;
     }
+
+    public bool FreeToAir
+    {
+      get { return true; }
+    }
   }
 }

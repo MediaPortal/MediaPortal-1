@@ -153,8 +153,6 @@ namespace TvService
         //construct list of all cards we can use to tune to the new channel
         Log.Debug("Controller: DoSetChannelStates for {0} channels", channels.Count);
 
-        Dictionary<int, ITvCardHandler>.Enumerator enumerator;
-
         if (allUsers == null || allUsers.Count == 0)
         {
           return; // no users, no point in continuing.

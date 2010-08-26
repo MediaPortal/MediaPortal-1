@@ -69,9 +69,19 @@ struct CUSTOMVERTEX2
   FLOAT tu2, tv2;
 };
 
+struct CUSTOMVERTEX3
+{
+  FLOAT x, y, z;
+  DWORD color;
+  FLOAT tu, tv;   // Texture coordinates
+  FLOAT tu2, tv2;
+  FLOAT tu3, tv3;
+};
+
 // Our custom FVF, which describes our custom vertex structure
 #define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1)
 #define D3DFVF_CUSTOMVERTEX2 (D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1|D3DFVF_TEX2)
+#define D3DFVF_CUSTOMVERTEX3 (D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1|D3DFVF_TEX2|D3DFVF_TEX3)
 
 struct FONT_DATA_T
 {
@@ -240,19 +250,17 @@ void FontEngineSetDevice(void* device)
     m_Filter = D3DTEXF_LINEAR;
   }
   m_pDevice->SetFVF( D3DFVF_CUSTOMVERTEX );
+  m_alphaBlend = -1;
 }
 
 //*******************************************************************************************************************
 
 void FontEngineSetAlphaBlend(DWORD alphaBlend)
 {
-  //char log[128];
   if(alphaBlend!=m_alphaBlend)
   {
     m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,alphaBlend);
     m_alphaBlend = alphaBlend;
-    //sprintf(log,"FontEngineSetAlphaBlend(%d)\n", alphaBlend);
-    //Log(log);
   }
 }
 
@@ -673,6 +681,12 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   if (textureNo1 < 0 || textureNo1>=MAX_TEXTURES) return;
   if (textureNo2 < 0 || textureNo2>=MAX_TEXTURES) return;
 
+  bool ignoreTextureBlending = false;
+  if (textureNo1 == textureNo2 & uoff2 == 0 & voff2 == 0 & umax2 == 0 & vmax2 == 0)
+  {
+    ignoreTextureBlending = true;
+  }
+
   TransformMatrix matrix(m);
   FontEnginePresentTextures();
 
@@ -762,33 +776,27 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   verts[3].tv2 = ty1_2;//v2*m_diffuseScaleV;
   verts[3].color = color;
 
-  m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,TRUE);
-  m_pDevice->SetRenderState( D3DRS_ALPHATESTENABLE, TRUE );
-  m_pDevice->SetRenderState( D3DRS_ALPHAREF, 0 );
-  m_pDevice->SetRenderState( D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL );
-  m_pDevice->SetRenderState( D3DRS_FOGENABLE, FALSE );
-  m_pDevice->SetRenderState( D3DRS_FOGTABLEMODE, D3DFOG_NONE );
-  m_pDevice->SetRenderState( D3DRS_FILLMODE, D3DFILL_SOLID );
-  m_pDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
+  FontEngineSetAlphaBlend(TRUE);
   m_pDevice->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
   m_pDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-  m_pDevice->SetRenderState( D3DRS_ZENABLE, FALSE );
-  m_pDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE );
-  m_pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
-  m_pDevice->SetTextureStageState( 0, D3DTSS_COLOROP, D3DTOP_MODULATE );
-  m_pDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-  m_pDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-  m_pDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP, D3DTOP_MODULATE );
-  m_pDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-  m_pDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
 
-  m_pDevice->SetTextureStageState( 1, D3DTSS_COLOROP, D3DTOP_MODULATE);//MODULATE );
-  m_pDevice->SetTextureStageState( 1, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-  m_pDevice->SetTextureStageState( 1, D3DTSS_COLORARG2, D3DTA_CURRENT);
-  m_pDevice->SetTextureStageState( 1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-  m_pDevice->SetTextureStageState( 1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );//D3DTA_TEXTURE );
-  m_pDevice->SetTextureStageState( 1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+  if (!ignoreTextureBlending)
+  {
+    m_pDevice->SetTextureStageState( 0, D3DTSS_COLOROP, D3DTOP_MODULATE );
+    m_pDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+    m_pDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+    m_pDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP, D3DTOP_MODULATE );
+    m_pDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+    m_pDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+
+    m_pDevice->SetTextureStageState( 1, D3DTSS_COLOROP, D3DTOP_MODULATE);//MODULATE );
+    m_pDevice->SetTextureStageState( 1, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+    m_pDevice->SetTextureStageState( 1, D3DTSS_COLORARG2, D3DTA_CURRENT);
+    m_pDevice->SetTextureStageState( 1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+    m_pDevice->SetTextureStageState( 1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );//D3DTA_TEXTURE );
+    m_pDevice->SetTextureStageState( 1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+  }
 
   m_pDevice->SetTexture(0, texture1->pTexture);
   m_pDevice->SetTexture(1, texture2->pTexture);
@@ -798,6 +806,283 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
 
   m_pDevice->SetTexture(0, NULL);
   m_pDevice->SetTexture(1, NULL);
+}
+
+//*******************************************************************************************************************
+void FontEngineDrawMaskedTexture(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m[3][4], int textureNo2, float uoff2, float voff2, float umax2, float vmax2)
+{
+  // textureNo1 - main image
+  // textureNo2 - diffuse image
+  // Draws textureNo1 masked by textureNo2.
+
+  if (textureNo1 < 0 || textureNo1>=MAX_TEXTURES) return;
+  if (textureNo2 < 0 || textureNo2>=MAX_TEXTURES) return;
+
+  TransformMatrix matrix(m);
+  FontEnginePresentTextures();
+
+  TEXTURE_DATA_T* texture1;
+  TEXTURE_DATA_T* texture2;
+  texture1=&textureData[textureNo1];
+  texture2=&textureData[textureNo2];
+
+  float xpos=x;
+  float xpos2=x+nw;
+  float ypos=y;
+  float ypos2=y+nh;
+
+  float tx1=uoff;
+  float tx2=umax;
+  float ty1=voff;
+  float ty2=vmax;
+
+  float tx1_2=uoff2;
+  float tx2_2=umax2;
+  float ty1_2=voff2;
+  float ty2_2=vmax2; 
+  xpos-=0.5f;
+  ypos-=0.5f;
+  xpos2-=0.5f;
+  ypos2-=0.5f;
+
+  //upper left
+  float x1=matrix.ScaleFinalXCoord(xpos,ypos);
+  float y1=matrix.ScaleFinalYCoord(xpos,ypos);
+  float z1 = matrix.ScaleFinalZCoord(xpos,ypos);
+
+  //bottom left
+  float x2=matrix.ScaleFinalXCoord(xpos,ypos+nh);
+  float y2=matrix.ScaleFinalYCoord(xpos,ypos+nh);
+  float z2 = matrix.ScaleFinalZCoord(xpos,ypos+nh);
+
+  //bottom right
+  float x3=matrix.ScaleFinalXCoord(xpos+nw,ypos+nh);
+  float y3=matrix.ScaleFinalYCoord(xpos+nw,ypos+nh);
+  float z3 = matrix.ScaleFinalZCoord(xpos+nw,ypos+nh);
+
+  //upper right
+  float x4=matrix.ScaleFinalXCoord(xpos+nw,ypos);
+  float y4=matrix.ScaleFinalYCoord(xpos+nw,ypos);
+  float z4 = matrix.ScaleFinalZCoord(xpos+nw,ypos);
+
+  CUSTOMVERTEX2 verts[4];
+  verts[0].x = x1; 
+  verts[0].y = y1; 
+  verts[0].z = z1;
+  verts[0].tu = tx1;
+  verts[0].tv = ty1;
+  verts[0].tu2 = tx1_2;
+  verts[0].tv2 = ty1_2;
+  verts[0].color = color;
+
+  verts[1].x = x2; 
+  verts[1].y = y2; 
+  verts[1].z = z2;
+  verts[1].tu = tx1;
+  verts[1].tv = ty2;
+  verts[1].tu2 = tx1_2;
+  verts[1].tv2 = ty2_2;
+  verts[1].color = color;
+
+  verts[2].x = x3; 
+  verts[2].y = y3; 
+  verts[2].z = z3;
+  verts[2].tu = tx2;
+  verts[2].tv = ty2;
+  verts[2].tu2 = tx2_2;
+  verts[2].tv2 = ty2_2;
+  verts[2].color = color;
+
+  verts[3].x = x4; 
+  verts[3].y = y4;
+  verts[3].z = z4;
+  verts[3].tu = tx2;
+  verts[3].tv = ty1;
+  verts[3].tu2 = tx2_2;
+  verts[3].tv2 = ty1_2;
+  verts[3].color = color;
+
+  FontEngineSetAlphaBlend(TRUE);
+
+  m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+  m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+  // This stage simply selects color and alpha from texture1.
+  // Choose the alpha and color from the current texture (texture1).
+  m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
+  m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+  m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+  m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+
+  // This stage blends the alpha of texture1 and texture2.
+  // Select the color from the current texture (the output of stage 1) but select the alpha from the new texture (texture2)
+  // and modulate (multiply) the alpha values of the new texture (texture2) and the current texture (output of stage 1).
+  // Alpha values of zero in texture2 (the mask) result in alpha values of zero (transparent pixels) in the output.
+  m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+  m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_CURRENT);
+  m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+  m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+
+  m_pDevice->SetTexture(0, texture1->pTexture);
+  m_pDevice->SetTexture(1, texture2->pTexture);
+
+  m_pDevice->SetFVF(D3DFVF_CUSTOMVERTEX2);
+  m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(CUSTOMVERTEX2));
+
+  m_pDevice->SetTexture(0, NULL);
+  m_pDevice->SetTexture(1, NULL);
+}
+
+//*******************************************************************************************************************
+void FontEngineDrawMaskedTexture2(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax,
+                                  int color, float m[3][4],
+                                  int textureNo2, float uoff2, float voff2, float umax2, float vmax2,
+                                  int textureNo3, float uoff3, float voff3, float umax3, float vmax3)
+{
+  // textureNo1 - main image
+  // textureNo2 - diffuse image
+  // textureNo3 - mask image
+  // Draws textureNo1 blended with textureNo2 all masked by textureNo3.
+
+  if (textureNo1 < 0 || textureNo1>=MAX_TEXTURES) return;
+  if (textureNo2 < 0 || textureNo2>=MAX_TEXTURES) return;
+  if (textureNo3 < 0 || textureNo3>=MAX_TEXTURES) return;
+
+  TransformMatrix matrix(m);
+  FontEnginePresentTextures();
+
+  TEXTURE_DATA_T* texture1;
+  TEXTURE_DATA_T* texture2;
+  TEXTURE_DATA_T* texture3;
+  texture1=&textureData[textureNo1];
+  texture2=&textureData[textureNo2];
+  texture3=&textureData[textureNo3];
+
+  float xpos=x;
+  float xpos2=x+nw;
+  float ypos=y;
+  float ypos2=y+nh;
+
+  float tx1=uoff;
+  float tx2=umax;
+  float ty1=voff;
+  float ty2=vmax;
+
+  float tx1_2=uoff2;
+  float tx2_2=umax2;
+  float ty1_2=voff2;
+  float ty2_2=vmax2; 
+
+  float tx1_3=uoff3;
+  float tx2_3=umax3;
+  float ty1_3=voff3;
+  float ty2_3=vmax3; 
+
+  xpos-=0.5f;
+  ypos-=0.5f;
+  xpos2-=0.5f;
+  ypos2-=0.5f;
+
+  //upper left
+  float x1=matrix.ScaleFinalXCoord(xpos,ypos);
+  float y1=matrix.ScaleFinalYCoord(xpos,ypos);
+  float z1 = matrix.ScaleFinalZCoord(xpos,ypos);
+
+  //bottom left
+  float x2=matrix.ScaleFinalXCoord(xpos,ypos+nh);
+  float y2=matrix.ScaleFinalYCoord(xpos,ypos+nh);
+  float z2 = matrix.ScaleFinalZCoord(xpos,ypos+nh);
+
+  //bottom right
+  float x3=matrix.ScaleFinalXCoord(xpos+nw,ypos+nh);
+  float y3=matrix.ScaleFinalYCoord(xpos+nw,ypos+nh);
+  float z3 = matrix.ScaleFinalZCoord(xpos+nw,ypos+nh);
+
+  //upper right
+  float x4=matrix.ScaleFinalXCoord(xpos+nw,ypos);
+  float y4=matrix.ScaleFinalYCoord(xpos+nw,ypos);
+  float z4 = matrix.ScaleFinalZCoord(xpos+nw,ypos);
+
+  CUSTOMVERTEX3 verts[4];
+  verts[0].x = x1; 
+  verts[0].y = y1; 
+  verts[0].z = z1;
+  verts[0].tu = tx1;
+  verts[0].tv = ty1;
+  verts[0].tu2 = tx1_2;
+  verts[0].tv2 = ty1_2;
+  verts[0].tu3 = tx1_3;
+  verts[0].tv3 = ty1_3;
+  verts[0].color = color;
+
+  verts[1].x = x2; 
+  verts[1].y = y2; 
+  verts[1].z = z2;
+  verts[1].tu = tx1;
+  verts[1].tv = ty2;
+  verts[1].tu2 = tx1_2;
+  verts[1].tv2 = ty2_2;
+  verts[1].tu3 = tx1_3;
+  verts[1].tv3 = ty2_3;
+  verts[1].color = color;
+
+  verts[2].x = x3; 
+  verts[2].y = y3; 
+  verts[2].z = z3;
+  verts[2].tu = tx2;
+  verts[2].tv = ty2;
+  verts[2].tu2 = tx2_2;
+  verts[2].tv2 = ty2_2;
+  verts[2].tu3 = tx2_3;
+  verts[2].tv3 = ty2_3;
+  verts[2].color = color;
+
+  verts[3].x = x4; 
+  verts[3].y = y4;
+  verts[3].z = z4;
+  verts[3].tu = tx2;
+  verts[3].tv = ty1;
+  verts[3].tu2 = tx2_2;
+  verts[3].tv2 = ty1_2;
+  verts[3].tu3 = tx2_3;
+  verts[3].tv3 = ty1_3;
+  verts[3].color = color;
+
+  FontEngineSetAlphaBlend(TRUE);
+
+  m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+  m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+
+  m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+  m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+  m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+  m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+  m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+  m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+
+  m_pDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
+  m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+  m_pDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
+  m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+  m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+  m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+
+  m_pDevice->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+  m_pDevice->SetTextureStageState(2, D3DTSS_COLORARG1, D3DTA_CURRENT);
+  m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+  m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+
+  m_pDevice->SetTexture(0, texture1->pTexture);
+  m_pDevice->SetTexture(1, texture2->pTexture);
+  m_pDevice->SetTexture(2, texture3->pTexture);
+
+  m_pDevice->SetFVF(D3DFVF_CUSTOMVERTEX3);
+  m_pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, verts, sizeof(CUSTOMVERTEX3));
+
+  m_pDevice->SetTexture(0, NULL);
+  m_pDevice->SetTexture(1, NULL);
+  m_pDevice->SetTexture(2, NULL);
 }
 
 //*******************************************************************************************************************

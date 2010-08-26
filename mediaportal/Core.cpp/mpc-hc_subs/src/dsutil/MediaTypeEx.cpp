@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "DSUtil.h"
 #include "MediaTypeEx.h"
 
@@ -73,13 +73,13 @@ CString CMediaTypeEx::ToString(IPin* pPin)
 		{
 			VIDEOINFOHEADER* vih = (VIDEOINFOHEADER*)pbFormat;
 			if(vih->AvgTimePerFrame) rate.Format(_T("%0.2ffps "), 10000000.0f / vih->AvgTimePerFrame);
-			if(vih->dwBitRate) rate.Format(_T("%s%dKbps"), CString(rate), vih->dwBitRate/1000);
+			if(vih->dwBitRate) rate.Format(_T("%s%dkbps"), CString(rate), vih->dwBitRate/1000);
 		}
 		else if(formattype == FORMAT_VideoInfo2 || formattype == FORMAT_MPEG2_VIDEO || formattype == FORMAT_DiracVideoInfo)
 		{
 			VIDEOINFOHEADER2* vih = (VIDEOINFOHEADER2*)pbFormat;
 			if(vih->AvgTimePerFrame) rate.Format(_T("%0.2ffps "), 10000000.0f / vih->AvgTimePerFrame);
-			if(vih->dwBitRate) rate.Format(_T("%s%dKbps"), CString(rate), vih->dwBitRate/1000);
+			if(vih->dwBitRate) rate.Format(_T("%s%dkbps"), CString(rate), vih->dwBitRate/1000);
 		}
 
 		rate.Trim();
@@ -107,7 +107,7 @@ CString CMediaTypeEx::ToString(IPin* pPin)
 				if(wfe->nChannels == 1) dim.Format(_T("%s mono"), CString(dim));
 				else if(wfe->nChannels == 2) dim.Format(_T("%s stereo"), CString(dim));
 				else dim.Format(_T("%s %dch"), CString(dim), wfe->nChannels);
-				if(wfe->nAvgBytesPerSec) rate.Format(_T("%dKbps"), wfe->nAvgBytesPerSec*8/1000);
+				if(wfe->nAvgBytesPerSec) rate.Format(_T("%dkbps"), wfe->nAvgBytesPerSec*8/1000);
 			}
 		}
 		else if(formattype == FORMAT_VorbisFormat)
@@ -119,7 +119,7 @@ CString CMediaTypeEx::ToString(IPin* pPin)
 			if(vf->nChannels == 1) dim.Format(_T("%s mono"), CString(dim));
 			else if(vf->nChannels == 2) dim.Format(_T("%s stereo"), CString(dim));
 			else dim.Format(_T("%s %dch"), CString(dim), vf->nChannels);
-			if(vf->nAvgBitsPerSec) rate.Format(_T("%dKbps"), vf->nAvgBitsPerSec/1000);
+			if(vf->nAvgBitsPerSec) rate.Format(_T("%dkbps"), vf->nAvgBitsPerSec/1000);
 		}
 		else if(formattype == FORMAT_VorbisFormat2)
 		{
@@ -215,7 +215,7 @@ CString CMediaTypeEx::GetVideoCodecName(const GUID& subtype, DWORD biCompression
 	{
 		BYTE* b = (BYTE*)&biCompression;
 
-		for(int i = 0; i < 4; i++)
+		for(ptrdiff_t i = 0; i < 4; i++)
 			if(b[i] >= 'a' && b[i] <= 'z') 
 				b[i] = toupper(b[i]);
 
@@ -618,25 +618,25 @@ void CMediaTypeEx::Dump(CAtlList<CString>& sl)
 	{
 		sl.AddTail(_T("pbFormat:"));
 
-		for(int i = 0, j = (cbFormat + 15) & ~15; i < j; i += 16)
+		for(ptrdiff_t i = 0, j = (cbFormat + 15) & ~15; i < j; i += 16)
 		{
 			str.Format(_T("%04x:"), i);
 
-			for(int k = i, l = min(i + 16, (int)cbFormat); k < l; k++)
+			for(ptrdiff_t k = i, l = min(i + 16, (int)cbFormat); k < l; k++)
 			{
 				CString byte;
 				byte.Format(_T("%c%02x"), fmtsize > 0 && fmtsize == k ? '|' : ' ', pbFormat[k]);
 				str += byte;
 			}
 
-			for(int k = min(i + 16, (int)cbFormat), l = i + 16; k < l; k++)
+			for(ptrdiff_t k = min(i + 16, (int)cbFormat), l = i + 16; k < l; k++)
 			{
 				str += _T("   ");
 			}
 
 			str += ' ';
 
-			for(int k = i, l = min(i + 16, (int)cbFormat); k < l; k++)
+			for(ptrdiff_t k = i, l = min(i + 16, (int)cbFormat); k < l; k++)
 			{
 				unsigned char c = (unsigned char)pbFormat[k];
 				CStringA ch;

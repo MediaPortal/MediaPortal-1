@@ -58,12 +58,12 @@ namespace SetupTv.Sections
       this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addToFavoritesToolStripMenuItem});
       this.contextMenuStrip1.Name = "contextMenuStrip1";
-      this.contextMenuStrip1.Size = new System.Drawing.Size(164, 26);
+      this.contextMenuStrip1.Size = new System.Drawing.Size(159, 26);
       // 
       // addToFavoritesToolStripMenuItem
       // 
       this.addToFavoritesToolStripMenuItem.Name = "addToFavoritesToolStripMenuItem";
-      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+      this.addToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
       this.addToFavoritesToolStripMenuItem.Text = "Add to favorites";
       // 
       // openFileDialog1
@@ -81,7 +81,6 @@ namespace SetupTv.Sections
       this.tabControl1.SelectedIndex = 0;
       this.tabControl1.Size = new System.Drawing.Size(476, 391);
       this.tabControl1.TabIndex = 8;
-      this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
       // tabPage2
       // 
@@ -133,6 +132,7 @@ namespace SetupTv.Sections
       // 
       // mpListViewMapped
       // 
+      this.mpListViewMapped.AllowDrop = true;
       this.mpListViewMapped.AllowRowReorder = false;
       this.mpListViewMapped.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
@@ -149,7 +149,6 @@ namespace SetupTv.Sections
       this.mpListViewMapped.TabIndex = 2;
       this.mpListViewMapped.UseCompatibleStateImageBehavior = false;
       this.mpListViewMapped.View = System.Windows.Forms.View.Details;
-      this.mpListViewMapped.SelectedIndexChanged += new System.EventHandler(this.mpListViewMapped_SelectedIndexChanged);
       this.mpListViewMapped.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListViewMapped_ColumnClick);
       // 
       // columnHeader8
@@ -165,10 +164,12 @@ namespace SetupTv.Sections
       // 
       this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
       this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageList1.Images.SetKeyName(0, "radio_scrambled.png");
-      this.imageList1.Images.SetKeyName(1, "tv_fta_.png");
-      this.imageList1.Images.SetKeyName(2, "tv_scrambled.png");
-      this.imageList1.Images.SetKeyName(3, "radio_fta_.png");
+      this.imageList1.Images.SetKeyName(0, "radio_fta_.png");
+      this.imageList1.Images.SetKeyName(1, "radio_scrambled.png");
+      this.imageList1.Images.SetKeyName(2, "icon.radio_scrambled_and_fta.png");
+      this.imageList1.Images.SetKeyName(3, "tv_fta_.png");
+      this.imageList1.Images.SetKeyName(4, "tv_scrambled.png");
+      this.imageList1.Images.SetKeyName(5, "icon.tv_scrambled_and_fta.png");
       // 
       // mpLabel2
       // 
@@ -191,6 +192,7 @@ namespace SetupTv.Sections
       this.mpListViewChannels.IsChannelListView = false;
       this.mpListViewChannels.LargeImageList = this.imageList1;
       this.mpListViewChannels.Location = new System.Drawing.Point(12, 67);
+      this.mpListViewChannels.MultiSelect = false;
       this.mpListViewChannels.Name = "mpListViewChannels";
       this.mpListViewChannels.Size = new System.Drawing.Size(193, 265);
       this.mpListViewChannels.SmallImageList = this.imageList1;

@@ -338,6 +338,7 @@ namespace MediaPortal.GUI.Library
     public const int FACADEVIEW_LIST = 803;
     public const int FACADEVIEW_PLAYLIST = 804;
     public const int FACADEVIEW_SMALLICONS = 805;
+    public const int FACADEVIEW_COVERFLOW = 806;
 
     public const int WINDOW_IS_TOPMOST = 9994;
     public const int WINDOW_IS_VISIBLE = 9995;
@@ -1430,6 +1431,10 @@ namespace MediaPortal.GUI.Library
         {
           ret = FACADEVIEW_SMALLICONS;
         }
+        else if (strTest == "facadeview.coverflow")
+        {
+          ret = FACADEVIEW_COVERFLOW;
+      }
       }
       else if (strTest.Length >= 13 && strTest.Substring(0, 13) == "controlgroup(")
       {
@@ -1992,7 +1997,7 @@ namespace MediaPortal.GUI.Library
         bReturn = false; //bReturn = SystemHasInternet();
       }
 
-      else if (condition >= 800 && condition <= 805)
+      else if (condition >= 800 && condition <= 806)
       {
         bReturn = false;
         string viewmode = GUIPropertyManager.GetProperty("#facadeview.viewmode");
@@ -2020,6 +2025,10 @@ namespace MediaPortal.GUI.Library
         {
           bReturn = true;
         }
+        else if (viewmode == "coverflow" && condition == FACADEVIEW_COVERFLOW)
+        {
+          bReturn = true;
+      }
       }
       else if (g_Player.Playing)
       {

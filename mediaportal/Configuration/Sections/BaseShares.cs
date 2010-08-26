@@ -40,7 +40,8 @@ namespace MediaPortal.Configuration.Sections
         List,
         Icons,
         BigIcons,
-        Filmstrip
+        Filmstrip,
+        CoverFlow
       }
 
       public string Name;

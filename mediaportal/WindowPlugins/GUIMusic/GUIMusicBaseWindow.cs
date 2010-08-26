@@ -57,7 +57,8 @@ namespace MediaPortal.GUI.Music
       LargeIcons = 2,
       Albums = 3,
       FilmStrip = 4,
-      PlayList = 5
+      PlayList = 5,
+      CoverFlow = 6
     }
 
     protected enum PlayNowJumpToType //SV Added by SteveV 2006-09-07
@@ -299,6 +300,8 @@ namespace MediaPortal.GUI.Music
           return View.FilmStrip;
         case "playlist":
           return View.PlayList;
+        case "coverflow":
+          return View.CoverFlow;
       }
       if (!string.IsNullOrEmpty(s))
       {
@@ -498,6 +501,18 @@ namespace MediaPortal.GUI.Music
               break;
 
             case View.FilmStrip:
+              CurrentView = View.CoverFlow;
+              if (!AllowView(CurrentView) || facadeView.CoverFlowView == null)
+              {
+                shouldContinue = true;
+              }
+              else
+              {
+                facadeView.View = GUIFacadeControl.ViewMode.CoverFlow;
+              }
+              break;
+
+            case View.CoverFlow:
               CurrentView = View.List;
               if (!AllowView(CurrentView) || facadeView.ListView == null)
               {
@@ -600,6 +615,9 @@ namespace MediaPortal.GUI.Music
           break;
         case View.PlayList:
           strLine = GUILocalizeStrings.Get(101);
+          break;
+        case View.CoverFlow:
+          strLine = GUILocalizeStrings.Get(791);
           break;
       }
       btnViewAs.Label = strLine;
@@ -1085,15 +1103,16 @@ namespace MediaPortal.GUI.Music
         }
       }
 
-      //set object count label
-      if (totalPlayingTime.TotalSeconds > 0 && method != MusicSort.SortMethod.Album)
+      //set object count label, total duration
+      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
+
+      if (totalPlayingTime.TotalSeconds > 0)
       {
-        GUIPropertyManager.SetProperty("#itemcount",
-                                       Util.Utils.GetSongCountLabel(iTotalItems, (int)totalPlayingTime.TotalSeconds));
+        GUIPropertyManager.SetProperty("#totalduration", Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));
       }
       else
       {
-        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
+        GUIPropertyManager.SetProperty("#totalduration", string.Empty);
       }
     }
 
@@ -1118,6 +1137,9 @@ namespace MediaPortal.GUI.Music
           break;
         case View.PlayList:
           facadeView.View = GUIFacadeControl.ViewMode.Playlist;
+          break;
+        case View.CoverFlow:
+          facadeView.View = GUIFacadeControl.ViewMode.CoverFlow;
           break;
       }
 

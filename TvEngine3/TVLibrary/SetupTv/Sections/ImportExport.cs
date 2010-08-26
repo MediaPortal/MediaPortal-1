@@ -512,6 +512,7 @@ namespace SetupTv.Sections
                     dvbcChannel.ServiceId = serviceId;
                     dvbcChannel.SymbolRate = symbolrate;
                     dvbcChannel.TransportId = transportId;
+                    dvbcChannel.LogicalChannelNumber = channelNumber;
                     layer.AddTuningDetails(dbChannel, dvbcChannel);
                     Log.Info("TvChannels: Added tuning details for DVB-C channel: {0} provider: {1}", name, provider);
                     break;

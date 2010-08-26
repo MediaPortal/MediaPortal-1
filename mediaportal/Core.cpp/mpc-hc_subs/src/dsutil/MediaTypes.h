@@ -41,7 +41,7 @@ struct VIH2
 extern VIH vihs[];
 extern VIH2 vih2s[];
 
-extern int VIHSIZE;
+extern UINT VIHSIZE;
 
 extern CString VIH2String(int i), Subtype2String(const GUID& subtype);
 extern void CorrectMediaType(AM_MEDIA_TYPE* pmt);

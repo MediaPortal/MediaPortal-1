@@ -11,10 +11,12 @@
 		EnableIntrinsicFunctions="true"
 		FavorSizeOrSpeed="1"
 		OmitFramePointers="true"
+		PreprocessorDefinitions="_SECURE_SCL=0"
 		StringPooling="true"
 		RuntimeLibrary="0"
-		BufferSecurityCheck="false"
 		DebugInformationFormat="3"
+		BufferSecurityCheck="true"
+		EnableEnhancedInstructionSet="1"
 	/>
 	<Tool
 		Name="VCLinkerTool"

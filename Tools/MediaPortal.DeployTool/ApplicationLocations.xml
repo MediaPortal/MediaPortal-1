@@ -41,12 +41,12 @@
   </DirectXRedist>
   <MySQL32>
     <URL>http://install.team-mediaportal.com/MySql_32bit</URL>
-    <FILE>mysql-essential-5.1.35-win32.msi</FILE>
+    <FILE>mysql-essential-5.1.38-win32.msi</FILE>
     <TYPE>Automatic</TYPE>
   </MySQL32>
   <MySQL64>
     <URL>http://install.team-mediaportal.com/MySql_64bit</URL>
-    <FILE>mysql-essential-5.1.35-winx64.msi</FILE>
+    <FILE>mysql-essential-5.1.38-winx64.msi</FILE>
     <TYPE>Automatic</TYPE>
   </MySQL64>
 

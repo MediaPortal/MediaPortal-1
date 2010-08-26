@@ -50,13 +50,12 @@ protected:
 
 	void RemoveSubStream(ISubStream* pSubStream)
 	{
-		ATLTRACE("RemoveSubStream");
 		m_pSubStreamOld = pSubStream;
 	}
 
 	void InvalidateSubtitle(REFERENCE_TIME rtStart, ISubStream* pSubStream)
 	{
-		m_pTPTFilter->m_pMainFrame->InvalidateSubtitle((DWORD_PTR)pSubStream, rtStart);
+		m_pTPTFilter->m_pMainFrame->InvalidateSubtitle(pSubStream, rtStart);
 	}
 
 public:

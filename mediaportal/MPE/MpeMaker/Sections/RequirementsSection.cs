@@ -71,6 +71,7 @@ namespace MpeMaker.Sections
       SelectedItem.Type = cmb_type.Text;
       SelectedItem.WarnOnly = chk_warn.Checked;
       SelectedItem.Id = txt_id.Text;
+      SelectedItem.Name = txt_name.Text;
       SelectedItem.Message = txt_message.Text;
       SelectedItem.MinVersion.Major = txt_version1_min.Text;
       SelectedItem.MinVersion.Minor = txt_version2_min.Text;
@@ -114,6 +115,7 @@ namespace MpeMaker.Sections
       cmb_type.Text = item.Type;
       chk_warn.Checked = item.WarnOnly;
       txt_id.Text = item.Id;
+      txt_name.Text = item.Name;
       txt_message.Text = item.Message;
       txt_version1_min.Text = item.MinVersion.Major;
       txt_version2_min.Text = item.MinVersion.Minor;

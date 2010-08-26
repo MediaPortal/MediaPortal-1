@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="WatchTV_labelSectionHeader" xml:space="preserve">
-    <value>MediaPortal ile televizyon izlemek istiyor musunuz ?</value>
+    <value>MediaPortal ile TV izlemek istiyor musunuz ?</value>
   </data>
   <data name="WatchTV_on" xml:space="preserve">
-    <value>Evet - MediaPortal kullanarak televizyon izlemek istiyorum.</value>
+    <value>Evet - MediaPortal kullanarak TV izlemek istiyorum.</value>
   </data>
   <data name="WatchTV_off" xml:space="preserve">
-    <value>Hayır - MediaPortal kullanarak televizyon izlemek istemiyorum.</value>
+    <value>Hayır - MediaPortal kullanarak TV izlemek istemiyorum.</value>
   </data>
   <data name="BaseInstallationNoTvEngine_labelOneClickDesc" xml:space="preserve">
     <value>Tüm gerekli uygulamalar varsayılan yerlere ve varsayılan ayarlarla kurulacaktır.</value>
   </data>
   <data name="BaseInstallationNoTvEngine_labelAdvancedDesc" xml:space="preserve">
-    <value>Gelişmiş kurulum kurulum yerlerini ve diğer ayarları değiştirmenize izin verir.</value>
+    <value>Gelişmiş kurulum, kurulum yerlerini ve diğer ayarları belirlemenize olanak tanır.</value>
   </data>
   <data name="BaseInstallation_labelAdvancedCaption" xml:space="preserve">
-    <value>Gelişmiş kurulum</value>
+    <value>Gelişmiş Kurulum</value>
   </data>
   <data name="BaseInstallation_labelAdvancedDesc" xml:space="preserve">
-    <value>Gelişmiş kurulum Sunucu/İstemci paketlerini kurmanıza ve kurulum yerleri ile diğer ayarları değiştirmenize izin verir.</value>
+    <value>Gelişmiş kurulum Sunucu/İstemci seçeneklerini kurmanıza ve kurulum yerleri ile diğer ayarları belirlemenize olanak tanır.</value>
   </data>
   <data name="BaseInstallation_labelOneClickCaption" xml:space="preserve">
-    <value>Tek tuşla kurulum</value>
+    <value>Tek Tuşla Kurulum</value>
   </data>
   <data name="BaseInstallation_labelOneClickDesc" xml:space="preserve">
-    <value>Tüm gerekli uygulamalar varsayılan yerlere ve varsayılan ayarlarla kurulacaktır. Veritabanının şifresi "MediaPortal"dır.</value>
+    <value>Tüm gerekli uygulamalar varsayılan yerlere, varsayılan ayarlarla kurulacaktır. Veritabanının şifresi "MediaPortal"dır.</value>
   </data>
   <data name="BaseInstallation_rbAdvanced" xml:space="preserve">
     <value>Gelişmiş kurulum gerçekleştir</value>
@@ -151,53 +151,53 @@
     <value>Tek tuşla kurulum gerçekleştir</value>
   </data>
   <data name="CustomInstallation_labelSectionHeader" xml:space="preserve">
-    <value>Lütfen hangi paketi kurmak istediğinizi seçiniz:</value>
+    <value>Lütfen hangi tip kurulum istediğinizi seçiniz:</value>
   </data>
   <data name="CustomInstallation_rbClient" xml:space="preserve">
     <value>MediaPortal İstemci</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Bu paket sadece MediaPortal kurulumunu yapacaktır. Televizyon izlemek için yerel ağınızda (LAN) bulunan TV-Sunucusu'na bağlanacaktır.</value>
+    <value>Bu seçenek sadece MediaPortal kurulumunu yapacaktır. TV izlemek için yerel ağınızda bulunan bir TV-Sunucusu'na bağlanacaktır.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
-    <value>Tekli kurulum</value>
+    <value>Tekli Kurulum</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
-    <value>Eğer televizyon kartınızın takılı olduğu bilgisayarda MediaPortal'ı kullanacak ve televizyonu izleyecekseniz, sizin için uygun kurulum paketi budur.</value>
+    <value>Eğer TV kartlarınız, MediaPortal'ı kullanacağınız ve TV izleyeceğiniz bilgisayarda takılıysa, bu kurulum sizin için uygundur.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
     <value>TV-Sunucusu (Asil)</value>
   </data>
   <data name="CustomInstallation_labelMaster" xml:space="preserve">
-    <value>Sadece MediaPortal TV-Sunucusu'nu kuracaktır.
-Bilgisayarınız TV-Sunucusu gibi çalışacak ve yerel ağ üzerindeki diğer bilgisayarlara bilgi sağlayacaktır (veritabanı kurulumu gerekli)</value>
+    <value>Bu seçenek sadece MediaPortal TV-Sunucusu'nu kuracaktır.
+Bilgisayarınız TV-Sunucusu gibi çalışacak ve yerel ağ üzerindeki diğer bilgisayarlara TV sağlayacaktır. (veritabanı kurulumu gereklidir)</value>
   </data>
-  <data name="DBMSSettings_buttonBrowse" xml:space="preserve">
-    <value>Gözat</value>
+  <data name="MainWindow_browseButton" xml:space="preserve">
+    <value>Göz At</value>
   </data>
   <data name="DBMSSettings_checkBoxFirewall" xml:space="preserve">
-    <value>Veritabanı sunucusuna harici erişime izin vermesi için Windows Güvenlik Duvarını yapılandırın.</value>
+    <value>Veritabanı sunucusuna harici erişim izni vermek için Windows Güvenlik Duvarı'nı yapılandır</value>
   </data>
   <data name="DBMSSettings_errInvalidInstallationPath" xml:space="preserve">
     <value>SQL-Sunucusu kurulumu için geçerli bir kurulum dizini tanımlamalısınız.</value>
   </data>
   <data name="DBMSSettings_errPasswordMissing" xml:space="preserve">
-    <value>SQL-Sunucu kullanıcısı için bir şifre tanımlamalısınız.</value>
+    <value>SQL-Sunucu yönetici (admin) kullanıcısı için bir şifre tanımlamalısınız.</value>
   </data>
   <data name="DBMSSettings_labelHeading" xml:space="preserve">
-    <value>Lütfen SQL-Sunucusu kurulumu için gerekli seçenekleri ayarlayın:</value>
+    <value>Lütfen SQL-Sunucusu kurulumu için gerekli ayarları seçiniz:</value>
   </data>
   <data name="DBMSSettings_labelInstDir" xml:space="preserve">
     <value>Kurulum dizini</value>
   </data>
   <data name="DBMSSettings_labelPassword" xml:space="preserve">
-    <value>SQL-Sunucusu kullanıcısı için şifre</value>
+    <value>SQL-Sunucusu yönetici (admin) kullanıcısı için şifre</value>
   </data>
   <data name="DBMSSettings_msgSelectDir" xml:space="preserve">
-    <value>SQL-Sunucusu kurulumu için dizin seçin</value>
+    <value>SQL-Sunucusu kurulumu için dizin seçiniz</value>
   </data>
   <data name="DBMSType_labelHeading" xml:space="preserve">
-    <value>Lütfen kullanmak istediğiniz SQL-Sunucusunu seçiniz:</value>
+    <value>Lütfen kullanmak istediğiniz SQL-Sunucusu'nu seçiniz:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
     <value>Microsoft SQL-Server Express 2005</value>
@@ -251,13 +251,13 @@ Bilgisayarınız TV-Sunucusu gibi çalışacak ve yerel ağ üzerindeki diğer b
     <value>Kur</value>
   </data>
   <data name="Install_actionNothing" xml:space="preserve">
-    <value>&lt;no action&gt;</value>
+    <value>&lt;işlem yapma&gt;</value>
   </data>
   <data name="Install_actionUninstallDownloadInstall" xml:space="preserve">
-    <value>Önceki sürümü kaldır -&gt; Yükle -&gt; Kur</value>
+    <value>Önceki sürümü kaldır-&gt;Yükle-&gt;Kur</value>
   </data>
   <data name="Install_actionUninstallInstall" xml:space="preserve">
-    <value>Önceki sürümü kaldır -&gt; Kur</value>
+    <value>Önceki sürümü kaldır-&gt;Kur</value>
   </data>
   <data name="Install_buttonInstall" xml:space="preserve">
     <value>Kur</value>
@@ -278,7 +278,7 @@ Bilgisayarınız TV-Sunucusu gibi çalışacak ve yerel ağ üzerindeki diğer b
     <value>Uygulamayı indirme başarısız [{0}]</value>
   </data>
   <data name="Install_errInstallFailed" xml:space="preserve">
-    <value>Uygulamayı kurulumu başarısız [{0}]</value>
+    <value>Uygulamayı kurulum başarısız [{0}]</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
     <value>Kurulum için gerekli tüm aksiyonları uygulamak için "Kur" düğmesine basınız</value>
@@ -311,7 +311,7 @@ Bilgisayarınız TV-Sunucusu gibi çalışacak ve yerel ağ üzerindeki diğer b
     <value>Çıkış</value>
   </data>
   <data name="MainWindow_labelAppHeading" xml:space="preserve">
-    <value>Bu uygulama sizi MediaPortal ve gerekli tüm bileşenlerin kurulumu süresinde yönlendirecektir.</value>
+    <value>Bu uygulama sizi MediaPortal ve gerekli tüm bileşenlerin kurulumu süresince yönlendirecektir.</value>
   </data>
   <data name="MainWindow_nextButton" xml:space="preserve">
     <value>İleri</value>
@@ -320,7 +320,8 @@ Bilgisayarınız TV-Sunucusu gibi çalışacak ve yerel ağ üzerindeki diğer b
     <value>Devam et</value>
   </data>
   <data name="ManualDownload_errFileNotFound" xml:space="preserve">
-    <value>İstenen dosya mevcut değil</value>
+    <value>{0} dosyası bulunamadı. Lütfen disk'inizde aratınız
+(dosya adı, önerilene benzer birşey olabilir)</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
     <value>İstenilen dosyanın indirilmesi tamamlandığında "Devam et" tuşuna basın</value>
@@ -332,55 +333,49 @@ Bilgisayarınız TV-Sunucusu gibi çalışacak ve yerel ağ üzerindeki diğer b
     <value>Dizini aç</value>
   </data>
   <data name="ManualDownload_linkURL" xml:space="preserve">
-    <value>Link</value>
+    <value>İndirme link'i</value>
   </data>
   <data name="ManualDownload_Title" xml:space="preserve">
-    <value>Manual indir</value>
-  </data>
-  <data name="MPSettings_buttonBrowse" xml:space="preserve">
-    <value>Gözat</value>
+    <value>Manuel indir</value>
   </data>
   <data name="MPSettings_errInvalidPath" xml:space="preserve">
     <value>MediaPortal'ın kurulumu için geçerli bir dizin tanımlamalısınız.</value>
   </data>
   <data name="MPSettings_labelHeading" xml:space="preserve">
-    <value>Lütfen MediaPortal kurulumu için gerekli seçenekleri ayarlayın:</value>
+    <value>Lütfen MediaPortal kurulumu için gerekli seçenekleri ayarlayınız:</value>
   </data>
   <data name="MPSettings_labelInstDir" xml:space="preserve">
-    <value>MediaPortal kurulum klasörü:</value>
+    <value>MediaPortal kurulum dizini:</value>
   </data>
   <data name="MPSettings_msgSelectDir" xml:space="preserve">
-    <value>MediaPortal kurulumu için dizini seçin</value>
-  </data>
-  <data name="TvServerSettings_buttonBrowse" xml:space="preserve">
-    <value>Gözat</value>
+    <value>MediaPortal kurulumu için dizini seçiniz</value>
   </data>
   <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
-    <value>TV-Sunucusuna harici erişime izin vermesi için Windows Güvenlik Duvarı'nı yapılandırın</value>
+    <value>TV-Sunucusu'na harici erişim izni vermek için Windows Güvenlik Duvarı'nı yapılandır</value>
   </data>
   <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
     <value>TV-Sunucusu kurulumu için geçerli bir dizin tanımlamalısınız.</value>
   </data>
   <data name="TvServerSettings_labelHeading" xml:space="preserve">
-    <value>TV-Sunucusu kurulumu için gerekli seçenekleri ayarlayın:</value>
+    <value>TV-Sunucusu kurulumu için gerekli ayarları seçiniz:</value>
   </data>
   <data name="TvServerSettings_labelInstDir" xml:space="preserve">
     <value>TV-Sunucusu kurulum dizini:</value>
   </data>
   <data name="TvServerSettings_msgSelectDir" xml:space="preserve">
-    <value>TV-Sunucusu için kurulum dizini seçin</value>
+    <value>TV-Sunucusu için kurulum dizini seçiniz</value>
   </data>
   <data name="Welcome_labelHeading1" xml:space="preserve">
-    <value>MediaPortal'ı kullandığınız için teşekkür ederiz... ÜCRETSİZ OpenSource MediaCenter!</value>
+    <value>MediaPortal'ı seçtiğiniz için teşekkür ederiz... ÜCRETSİZ AçıkKaynak MediaCenter!</value>
   </data>
   <data name="Welcome_labelHeading2" xml:space="preserve">
-    <value>Bu araç size kurulum boyunca yardım edecektir</value>
+    <value>Bu araç sizi kurulum süreci boyunca yönlendirecektir</value>
   </data>
   <data name="Welcome_labelHeading3" xml:space="preserve">
-    <value>Devam etmeden önce kullandığınız dili seçin</value>
+    <value>Devam etmeden önce kullandığınız dili seçiniz</value>
   </data>
   <data name="Finished_labelEbay" xml:space="preserve">
-    <value>MediaPortal BEDAVADIR - ebay'den satınaldıysanız kandırıldınız demektir!</value>
+    <value>MediaPortal BEDAVADIR - ebay'den satın aldıysanız kandırıldınız demektir!</value>
   </data>
   <data name="Install_actionConfigure" xml:space="preserve">
     <value>Yapılandır</value>
@@ -395,7 +390,7 @@ Bilgisayarınız TV-Sunucusu gibi çalışacak ve yerel ağ üzerindeki diğer b
     <value>Kaldırma başarız</value>
   </data>
   <data name="Install_msgConfiguring" xml:space="preserve">
-    <value>Yapılandırıyor</value>
+    <value>Yapılandırıyor...</value>
   </data>
   <data name="Install_stateConfigured" xml:space="preserve">
     <value>Yapılandırdı</value>
@@ -441,18 +436,79 @@ gerekli bileşenleri indirmek istiyor musunuz?
     <value>Tüm gerekli bileşenlerin indirilmesini gerçekleştirmek için "indir" düğmesine basınız</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
-    <value>Özür dileriz, işletim sisteminiz MediaPortal tarafından şu anda desteklenmemektedir.</value>
+    <value>Üzgünüz, işletim sisteminiz MediaPortal tarafından şu anda desteklenmemektedir.</value>
   </data>
   <data name="OS_Warning" xml:space="preserve">
     <value>Microsoft gerekli bazı güncellemeleri yayınlamadığı için işletim sisteminiz desteklenmemektedir.
-Riski göze alarak devam edebilirsiniz.</value>
+Devam etmek kendi sorumluluğunuzdadır!</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
-    <value>Seçenekler bilgisini içeren dosya indirilmedi.
-Internet Explorer yapılandırmasını gözden geçirin.
-Hasarlı yapılandırma dosyası, bulundu ise, şimdi silinecektir.</value>
+    <value>Ayarları içeren dosya indirilemedi.
+Internet Explorer yapılandırmasını gözden geçirerek tekrar deneyiniz.
+Hasarlı bir yapılandırma dosyası, eğer bulundu ise, şimdi silinecektir.</value>
   </data>
   <data name="MPSettings_checkBoxFirewall" xml:space="preserve">
-    <value>MediaPortal'a harici erişim izni vermek için Windows Güvenlik duvarını yapılandırın.</value>
+    <value>MediaPortal'a harici erişim izni vermek için Windows Güvenlik Duvarı'nı yapılandır</value>
+  </data>
+  <data name="OS_Beta" xml:space="preserve">
+    <value>Servis pakedi beta sürümü bulundu, sisteminiz desteklenmemektedir...
+Devam etmek kendi sorumluluğunuzdadır!</value>
+  </data>
+  <data name="Finished_labelHeading3_download" xml:space="preserve">
+    <value>Şimdi bu uygulama kapanacak ve "MediaPortal Installation" dizini açılacaktır.
+Bu dizini HTPC'nize aktarın. "MediaPortal.DeployTool.exe" dosyasını çalıştırarak kurulumu başlatın.</value>
+  </data>
+  <data name="Install_stateSkipped" xml:space="preserve">
+    <value>Atlandı</value>
+  </data>
+  <data name="Exit_Installation" xml:space="preserve">
+    <value>MediaPortal kurulumunu gerçekten iptal etmek istiyor musunuz?</value>
+  </data>
+  <data name="DownloadOnly_CurrentSettings" xml:space="preserve">
+    <value>Mevcut indirme ayarları: lang={0}, arch={1}</value>
+  </data>
+  <data name="DownloadSettings_labelSectionHeader" xml:space="preserve">
+    <value>Lütfen indirme ayarlarını seçiniz:</value>
+  </data>
+  <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
+    <value>İnternet bağlantısı bulunamadı! Kuruluma devam etmek için aktif bir bağlantı gerekmektedir.</value>
+  </data>
+  <data name="DiskSpace_Error" xml:space="preserve">
+    <value>Belirtilen sürücüde yeterli boş disk alanı bulunmamaktadır! MediaPortal kurulumu için en azından {0} MB boş disk alanına ihtiyaç vardır.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader" xml:space="preserve">
+    <value>MediaPortal {0} bulundu.</value>
+  </data>
+  <data name="Upgrade_labelSectionHeader_SVN" xml:space="preserve">
+    <value>MediaPortal {0} (derleme {1}) bulundu.</value>
+  </data>
+  <data name="Upgrade_no" xml:space="preserve">
+    <value>Temiz kurulum</value>
+  </data>
+  <data name="Upgrade_yes" xml:space="preserve">
+    <value>Mevcut kurulumu {0}'a güncelle</value>
+  </data>
+  <data name="Upgrade_note" xml:space="preserve">
+    <value>NOT: Mevcut SVN derlemesinden güncelleme yapılamaz,
+          SVN derlemeleri sadece test amaçlıdır.</value>
+  </data>
+  <data name="Install_actionUpgradeInstall" xml:space="preserve">
+    <value>Güncelleme-&gt;Kur</value>
+  </data>
+  <data name="DBMSType_lbMSSQL_disabled" xml:space="preserve">
+    <value>(nedenini öğren)</value>
+  </data>
+  <data name="DBMSType_rbMSSQL_disabled" xml:space="preserve">
+    <value>Microsoft SQL-Server Express 2005 devre dışı</value>
+  </data>
+  <data name="AeroThemeMissing" xml:space="preserve">
+    <value>Windows AERO şu anda devre dışıdır.
+Unutmayın ki AERO, yırtılma (tearing) ve teklemeleri (stuttering) önlemek için gereklidir.
+AERO'yu aktif hale getirmek aynı zamanda işlemci kullanımını da düşürecektir, 
+böylece HTPC'niz daha serin ve sessiz çalışmasını sağlayabilirsiniz.</value>
+  </data>
+  <data name="Reboot_Required" xml:space="preserve">
+    <value>Bir Microsoft bileşeni, sistemin yeniden başlatılmasına ihtiyaç duymaktadır.
+Lütfen MediaPortal kurulumuna devam etmeden önce, bu işlemi gerçekleştirin.</value>
   </data>
 </root>

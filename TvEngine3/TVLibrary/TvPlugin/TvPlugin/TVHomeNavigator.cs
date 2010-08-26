@@ -613,25 +613,30 @@ namespace TvPlugin
         GetChannels(true);
         while (iCounter < channels.Count && found == false)
         {
-          chan = (Channel)_channelList[iCounter];
+          chan = ((GroupMap)channels[iCounter]).ReferencedChannel();
 
           Log.Debug("chan {0}", chan.DisplayName);
-
-          foreach (TuningDetail detail in chan.ReferringTuningDetail())
+          if (chan.VisibleInGuide)
           {
-            Log.Debug("detail nr {0} id{1}", detail.ChannelNumber, detail.IdChannel);
-
-            if (detail.ChannelNumber == channelNr)
+            foreach (TuningDetail detail in chan.ReferringTuningDetail())
             {
-              Log.Debug("find channel: iCounter {0}, detail.ChannelNumber {1}, detail.name {2}, channels.Count {3}",
-                        iCounter, detail.ChannelNumber, detail.Name, channels.Count);
-              found = true;
-              ZapToChannel(iCounter + 1, useZapDelay);
+              Log.Debug("detail nr {0} id{1}", detail.ChannelNumber, detail.IdChannel);
+
+              if (detail.ChannelNumber == channelNr)
+              {
+                Log.Debug("find channel: iCounter {0}, detail.ChannelNumber {1}, detail.name {2}, channels.Count {3}",
+                          iCounter, detail.ChannelNumber, detail.Name, channels.Count);
+                found = true;
+                ZapToChannel(iCounter + 1, useZapDelay);
+              }
             }
           }
           iCounter++;
         }
-        m_zapChannelNr = channelNr;
+        if (found)
+        {
+          m_zapChannelNr = channelNr;
+        }
       }
     }
 

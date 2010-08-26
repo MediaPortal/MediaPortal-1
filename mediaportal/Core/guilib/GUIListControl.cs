@@ -193,12 +193,29 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textureFocus")]
     protected string _buttonFocusName = "";
 
-    [XMLSkinElement("scrollbarbg")]
-    protected string _scrollbarBackgroundName = "";
-    [XMLSkinElement("scrollbartop")]
-    protected string _scrollbarTopName = "";
-    [XMLSkinElement("scrollbarbottom")]
-    protected string _scrollbarBottomName = "";
+    [XMLSkin("textureNoFocus", "border")] protected string _strBorderBNF = "";
+    [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionBNF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+    [XMLSkin("textureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatBNF = false;
+    [XMLSkin("textureNoFocus", "textureRotate")] protected bool _borderTextureRotateBNF = false;
+    [XMLSkin("textureNoFocus", "texture")] protected string _borderTextureFileNameBNF = "image_border.png";
+    [XMLSkin("textureNoFocus", "colorKey")] protected long _borderColorKeyBNF = 0xFFFFFFFF;
+    [XMLSkin("textureNoFocus", "corners")] protected bool _borderHasCornersBNF = false;
+    [XMLSkin("textureNoFocus", "cornerRotate")] protected bool _borderCornerTextureRotateBNF = true;
+
+    [XMLSkin("textureFocus", "border")] protected string _strBorderBF = "";
+    [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionBF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+    [XMLSkin("textureFocus", "textureRepeat")] protected bool _borderTextureRepeatBF = false;
+    [XMLSkin("textureFocus", "textureRotate")] protected bool _borderTextureRotateBF = false;
+    [XMLSkin("textureFocus", "texture")] protected string _borderTextureFileNameBF = "image_border.png";
+    [XMLSkin("textureFocus", "colorKey")] protected long _borderColorKeyBF = 0xFFFFFFFF;
+    [XMLSkin("textureFocus", "corners")] protected bool _borderHasCornersBF = false;
+    [XMLSkin("textureFocus", "cornerRotate")] protected bool _borderCornerTextureRotateBF = true;
+
+
+
+    [XMLSkinElement("scrollbarbg")] protected string _scrollbarBackgroundName = "";
+    [XMLSkinElement("scrollbartop")] protected string _scrollbarTopName = "";
+    [XMLSkinElement("scrollbarbottom")] protected string _scrollbarBottomName = "";
 
     [XMLSkinElement("spinColor")]
     protected long _spinControlColor;
@@ -1355,8 +1372,8 @@ namespace MediaPortal.GUI.Library
                 if (_searchString.Length > 0)
                 {
                   _searchString = _searchString.Remove(_searchString.Length - 1, 1);
+                  SearchItem(_searchString, SearchType.SEARCH_FIRST);
                 }
-                SearchItem(_searchString, SearchType.SEARCH_FIRST);
               }
               if (((action.m_key.KeyChar >= 65) && (action.m_key.KeyChar <= 90)) ||
                   (action.m_key.KeyChar == (int)Keys.Space))
@@ -2109,6 +2126,22 @@ namespace MediaPortal.GUI.Library
                                                      _itemHeight, _buttonFocusName, _buttonNonFocusName,
                                                      _shadowAngle, _shadowDistance, _shadowColor);
         cntl.ParentControl = this;
+        cntl.SetBorderTF(_strBorderBF,
+                         _borderPositionBF,
+                         _borderTextureRepeatBF,
+                         _borderTextureRotateBF,
+                         _borderTextureFileNameBF,
+                         _borderColorKeyBF,
+                         _borderHasCornersBF,
+                         _borderCornerTextureRotateBF);
+        cntl.SetBorderTNF(_strBorderBNF,
+                          _borderPositionBNF,
+                          _borderTextureRepeatBNF,
+                          _borderTextureRotateBNF,
+                          _borderTextureFileNameBNF,
+                          _borderColorKeyBNF,
+                          _borderHasCornersBNF,
+                          _borderCornerTextureRotateBNF);
         cntl.AllocResources();
         cntl.DimColor = DimColor;
         _listButtons.Add(cntl);

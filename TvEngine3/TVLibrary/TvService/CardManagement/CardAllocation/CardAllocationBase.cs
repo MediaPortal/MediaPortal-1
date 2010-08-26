@@ -87,7 +87,7 @@ namespace TvService
         isCamAbleToDecrypChannel = (camDecrypting < decryptLimit);
       }
 
-      return ((isCamAbleToDecrypChannel && !isRec) || ch.FreeToAir);
+      return (isCamAbleToDecrypChannel || ch.FreeToAir);
     }
 
     protected static bool IsCamAlreadyDecodingChannel(ITvCardHandler tvcard, Channel dbChannel)

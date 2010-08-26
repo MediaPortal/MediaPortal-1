@@ -410,6 +410,20 @@ namespace TvPlugin
     }
 
 
+
+    /// <summary>
+    /// Stops a single or a complete schedule.
+    /// The user is being prompted if the schedule is currently recording.
+    /// If the schedule is currently recording, then this is stopped also.    
+    /// </summary>
+    /// <param name="Schedule">schedule id to be deleted</param>        
+    /// <returns>true if the schedule was deleted, otherwise false</returns>
+    public static bool StopRecAndSchedWithPrompt(Schedule schedule, int idChannel)
+    {
+      DateTime canceledStartTime = schedule.StartTime;
+      return (StopRecAndSchedWithPrompt(schedule, canceledStartTime, idChannel));
+    }
+
         /// <summary>
     /// Deletes a single or a complete schedule.
     /// The user is being prompted if the schedule is currently recording.
@@ -422,6 +436,32 @@ namespace TvPlugin
       DateTime canceledStartTime = schedule.StartTime;
       return (DeleteRecAndSchedWithPrompt(schedule, canceledStartTime, idChannel));
     }
+
+    /// <summary>
+    /// Deletes a single or a complete schedule.
+    /// The user is being prompted if the schedule is currently recording.
+    /// If the schedule is currently recording, then this is stopped also.    
+    /// </summary>
+    /// <param name="Schedule">schedule id to be deleted</param>    
+    /// <param name="canceledStartTime">start time of the schedule to cancel</param>    
+    /// <returns>true if the schedule was deleted, otherwise false</returns>
+    public static bool StopRecAndSchedWithPrompt(Schedule schedule, DateTime canceledStartTime, int idChannel)
+    {
+      bool wasDeleted = false;
+      if (IsValidSchedule(schedule))
+      {
+        Schedule parentSchedule = null;
+        bool confirmed = true;
+        GetParentAndSpawnSchedule(ref schedule, out parentSchedule);
+        confirmed = PromptStopRecording(schedule.IdSchedule);
+
+        if (confirmed)
+        {
+          wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule, idChannel, canceledStartTime);
+        }
+      }
+      return wasDeleted;
+    }   
 
     /// <summary>
     /// Deletes a single or a complete schedule.
@@ -591,6 +631,56 @@ namespace TvPlugin
         }
       }
       return episodeCanceled;
+    }          
+
+    private static bool PromptStopRecording(int IdSchedule)
+    {
+      bool confirmed = false;
+      bool isRec = TvDatabase.Schedule.IsScheduleRecording(IdSchedule);
+
+      if (isRec)
+      {
+        GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+        if (null == dlgYesNo)
+        {
+          Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
+        }
+        else
+        {
+          dlgYesNo.SetHeading(1449); // stop recording
+          dlgYesNo.SetLine(1, 1450); // are you sure to stop recording?          
+
+          string recordingTitle = GetRecordingTitle(IdSchedule);
+          dlgYesNo.SetLine(2, recordingTitle); 
+
+          dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+          confirmed = dlgYesNo.IsConfirmed;
+        }
+      }
+      else
+      {
+        confirmed = true;
+      }
+      return confirmed;
+    }
+
+    private static string GetRecordingTitle(int IdSchedule) {
+      string recordingTitle = "";          
+
+      Schedule schedule = Schedule.Retrieve(IdSchedule);
+      if (schedule != null)
+      {
+        Schedule spawnedSchedule = Schedule.RetrieveSpawnedSchedule(IdSchedule, schedule.StartTime);
+        if (spawnedSchedule != null)
+        {
+          recordingTitle = Recording.ActiveRecording(spawnedSchedule.IdSchedule).Title;
+        }
+        else
+        {
+          recordingTitle = Recording.ActiveRecording(IdSchedule).Title;
+        }
+      }
+      return recordingTitle;
     }
 
     private static bool PromptDeleteRecording(int IdSchedule)

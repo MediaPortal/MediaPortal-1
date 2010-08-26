@@ -52,7 +52,7 @@ namespace TvPlugin
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _hostName = xmlreader.GetValueAsString("tvservice", "hostname", "");
       }
@@ -60,7 +60,7 @@ namespace TvPlugin
 
     private void SaveSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         xmlreader.SetValue("tvservice", "hostname", _hostName);
       }
@@ -73,7 +73,7 @@ namespace TvPlugin
     private static void SwitchToHomeView()
     {
       bool basicHome;
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
       }
@@ -316,7 +316,11 @@ namespace TvPlugin
         {
           RemoteControl.Clear();
           RemoteControl.HostName = _hostName;
-          lblHostName.Label = _hostName;
+          if (lblHostName != null)
+          {
+            lblHostName.Label = _hostName;
+          }
+          GUIPropertyManager.SetProperty("#TV.setup.hostname", _hostName);
 
           CheckTvServiceStatus();
 
@@ -410,7 +414,11 @@ namespace TvPlugin
     protected override void OnPageLoad()
     {
       LoadSettings();
-      lblHostName.Label = _hostName;
+      if (lblHostName != null)
+      {
+        lblHostName.Label = _hostName;
+      }
+      GUIPropertyManager.SetProperty("#TV.setup.hostname", _hostName);
       base.OnPageLoad();
     }
 

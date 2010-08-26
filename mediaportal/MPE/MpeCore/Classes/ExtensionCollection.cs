@@ -208,6 +208,14 @@ namespace MpeCore.Classes
     }
 
     /// <summary>
+    /// Sorts this instance.
+    /// </summary>
+    public void Sort()
+    {
+      Items.Sort(PackageClass.Compare);
+    }
+
+    /// <summary>
     /// Gets the latest version of a package. If not found or no new version return Null
     /// </summary>
     /// <param name="pak">The package</param>

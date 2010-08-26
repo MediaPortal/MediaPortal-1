@@ -206,6 +206,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
+
       // This can't be a valid string code if the first character isn't a number.
       // This check will save us from catching unnecessary exceptions.
       if (!char.IsNumber(strLabel, 0))
@@ -213,16 +214,10 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
+      // Attempt to parse an int from the string.  On failure just return leaving the input string unchanged.
       int dwLabelID;
-
-      try
+      if (!Int32.TryParse(strLabel, out dwLabelID))
       {
-        dwLabelID = Int32.Parse(strLabel);
-      }
-      catch (FormatException e)
-      {
-        Log.Error(e);
-        strLabel = string.Empty;
         return;
       }
 

@@ -1113,6 +1113,7 @@ namespace TvDatabase
       {
         symbolRate = dvbcChannel.SymbolRate;
         modulation = (int)dvbcChannel.ModulationType;
+        channelNumber = dvbcChannel.LogicalChannelNumber > 999 ? channel.IdChannel : dvbcChannel.LogicalChannelNumber;
         channelType = 2;
       }
 
@@ -1268,7 +1269,6 @@ namespace TvDatabase
         if (pmap.Count>0)
           return pmap;
       }
-      int idChannel = -1;
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (ChannelLinkageMap));
       sb.AddConstraint(Operator.Equals, "idLinkedChannel", channel.IdChannel);
       SqlStatement stmt = sb.GetStatement(true);
@@ -1448,8 +1448,8 @@ namespace TvDatabase
             MySQLAdapter.TableMappings.Add("Table", "Program");
             MySQLConnect.Open();
             MySQLCmd = new MySqlCommand(BuildEpgSelect(channelList, provider), MySQLConnect);
-            MySQLCmd.Parameters.Add("?startTime", MySqlDbType.Datetime).Value = startTime;
-            MySQLCmd.Parameters.Add("?endTime", MySqlDbType.Datetime).Value = endTime;
+            MySQLCmd.Parameters.Add("?startTime", MySqlDbType.DateTime).Value = startTime;
+            MySQLCmd.Parameters.Add("?endTime", MySqlDbType.DateTime).Value = endTime;
             MySQLAdapter.SelectCommand = MySQLCmd;
             break;
           default:
@@ -1662,7 +1662,7 @@ namespace TvDatabase
 
       sb.AddConstraint(Operator.Equals, "idChannel", channel.IdChannel);
       sb.AddConstraint(string.Format("({0} or {1} or {2}) ", sub1, sub2, sub3));
-      sb.AddConstraint(Operator.Like, "title", "%" + title + "%");
+      sb.AddConstraint(Operator.Equals, "title", title);
       sb.AddOrderByField(true, "starttime");
 
       SqlStatement stmt = sb.GetStatement(true);
@@ -1677,7 +1677,7 @@ namespace TvDatabase
       StringBuilder SqlSelectCommand = new StringBuilder();
       SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
       SqlSelectCommand.AppendFormat(
-        "where ((EndTime > '{0}' and EndTime < '{1}') or (StartTime >= '{0}' and StartTime <= '{1}') or (StartTime <= '{0}' and EndTime >= '{1}')) and title like '%{2}%' and c.visibleInGuide = 1 order by startTime",
+        "where ((EndTime > '{0}' and EndTime < '{1}') or (StartTime >= '{0}' and StartTime <= '{1}') or (StartTime <= '{0}' and EndTime >= '{1}')) and title = '{2}' and c.visibleInGuide = 1 order by startTime",
         StartTimeString, EndTimeString, EscapeSQLString(title)
         );
       SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof (Program)).GetStatement(true);
@@ -2476,8 +2476,8 @@ namespace TvDatabase
         "DELETE FROM Program WHERE idChannel = ?idChannel AND ((endTime > ?rangeStart AND startTime < ?rangeEnd) OR (startTime = endTime AND startTime BETWEEN ?rangeStart AND ?rangeEnd))";
 
       sqlCmd.Parameters.Add("?idChannel", MySqlDbType.Int32);
-      sqlCmd.Parameters.Add("?rangeStart", MySqlDbType.Datetime);
-      sqlCmd.Parameters.Add("?rangeEnd", MySqlDbType.Datetime);
+      sqlCmd.Parameters.Add("?rangeStart", MySqlDbType.DateTime);
+      sqlCmd.Parameters.Add("?rangeEnd", MySqlDbType.DateTime);
 
       try
       {
@@ -2577,14 +2577,14 @@ namespace TvDatabase
         "INSERT INTO Program (idChannel, startTime, endTime, title, description, seriesNum, episodeNum, genre, originalAirDate, classification, starRating, state, parentalRating, episodeName, episodePart) VALUES (?idChannel, ?startTime, ?endTime, ?title, ?description, ?seriesNum, ?episodeNum, ?genre, ?originalAirDate, ?classification, ?starRating, ?state, ?parentalRating, ?episodeName, ?episodePart)";
 
       sqlCmd.Parameters.Add("?idChannel", MySqlDbType.Int32);
-      sqlCmd.Parameters.Add("?startTime", MySqlDbType.Datetime);
-      sqlCmd.Parameters.Add("?endTime", MySqlDbType.Datetime);
+      sqlCmd.Parameters.Add("?startTime", MySqlDbType.DateTime);
+      sqlCmd.Parameters.Add("?endTime", MySqlDbType.DateTime);
       sqlCmd.Parameters.Add("?title", MySqlDbType.VarChar);
       sqlCmd.Parameters.Add("?description", MySqlDbType.VarChar);
       sqlCmd.Parameters.Add("?seriesNum", MySqlDbType.VarChar);
       sqlCmd.Parameters.Add("?episodeNum", MySqlDbType.VarChar);
       sqlCmd.Parameters.Add("?genre", MySqlDbType.VarChar);
-      sqlCmd.Parameters.Add("?originalAirDate", MySqlDbType.Datetime);
+      sqlCmd.Parameters.Add("?originalAirDate", MySqlDbType.DateTime);
       sqlCmd.Parameters.Add("?classification", MySqlDbType.VarChar);
       sqlCmd.Parameters.Add("?starRating", MySqlDbType.Int32);
       sqlCmd.Parameters.Add("?state", MySqlDbType.Int32);

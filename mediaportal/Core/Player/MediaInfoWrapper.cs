@@ -48,12 +48,17 @@ namespace MediaPortal.Player
     private string _videoResolution = string.Empty;
     private int _videoDuration = 0;
     private bool _DVDenabled = false;
+    private string _ParseSpeed = "0.5"; // MediaInfo 0.7.34 default
 
     //Audio
     private int _audioRate = 0;
     private int _audioChannels = 0;
     private string _audioChannelsFriendly = string.Empty;
     private string _audioCodec = string.Empty;
+
+    //Detection
+    private bool _hasAudio;
+    private bool _hasVideo;
 
     //Subtitles
     private int _numsubtitles = 0;
@@ -69,6 +74,7 @@ namespace MediaPortal.Player
       using (Settings xmlreader = new MPSettings())
       {
         _DVDenabled = xmlreader.GetValueAsBool("dvdplayer", "mediainfoused", false);
+        _ParseSpeed = xmlreader.GetValueAsString("debug", "MediaInfoParsespeed", "0.5");
       }
       bool isTV = Util.Utils.IsLiveTv(strFile);
       bool isRadio = Util.Utils.IsLiveRadio(strFile);
@@ -80,18 +86,23 @@ namespace MediaPortal.Player
       //currently disabled for all tv/radio/streaming video
       if (isTV || isRadio || isRTSP || isAVStream)
       {
+        Log.Debug("MediaInfoWrapper: isTv:{0}, isRadio:{1}, isRTSP:{2}, isAVStream:{3}", isTV, isRadio, isRTSP, isAVStream);
+        Log.Debug("MediaInfoWrapper: disabled for this content");
         return;
       }
 
       //currently mediainfo is only used for local video related material (if enabled)
       if ((!isVideo && !isDVD) || (isDVD && !_DVDenabled))
       {
+        Log.Debug("MediaInfoWrapper: isVideo:{0}, isDVD:{1}[enabled:{2}]", isVideo, isDVD, _DVDenabled);
+        Log.Debug("MediaInfoWrapper: disabled for this content");
         return;
       }
 
       try
       {
         _mI = new MediaInfo();
+        _mI.Option("ParseSpeed", _ParseSpeed);
 
         if (Util.VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(strFile)))
           strFile = Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO";
@@ -189,6 +200,10 @@ namespace MediaPortal.Player
             break;
         }
 
+        //Detection
+        _hasAudio = _mI.Count_Get(StreamKind.Audio) > 0;
+        _hasVideo = _mI.Count_Get(StreamKind.Video) > 0;
+
         //Subtitles
         _numsubtitles = _mI.Count_Get(StreamKind.Text);
 
@@ -201,7 +216,9 @@ namespace MediaPortal.Player
           _hasSubtitles = _numsubtitles > 0;
         }
 
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: DLL Version      : {0}", _mI.Option("Info_Version"));
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Inspecting media : {0}", strFile);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: Parse speed      : {0}", _ParseSpeed);
         //Video
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: FrameRate        : {0}", _framerate);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Width            : {0}", _width);
@@ -216,6 +233,9 @@ namespace MediaPortal.Player
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioRate        : {0}", _audioRate);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioChannels    : {0} [ \"{1}.png\" ]", _audioChannels, _audioChannelsFriendly);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioCodec       : {0} [ \"{1}.png\" ]", _audioCodec, Util.Utils.MakeFileName(_audioCodec).ToLower());
+        //Detection
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: HasAudio         : {0}", _hasAudio);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: HasVideo         : {0}", _hasVideo);
         //Subtitles
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: HasSubtitles     : {0}", _hasSubtitles);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: NumSubtitles     : {0}", _numsubtitles);
@@ -426,6 +446,20 @@ namespace MediaPortal.Player
     public string AudioChannelsFriendly
     {
       get { return _audioChannelsFriendly; }
+    }
+
+    #endregion
+
+    #region public detection properties
+
+    public bool hasVideo
+    {
+      get { return _hasVideo; }
+    }
+
+    public bool hasAudio
+    {
+      get { return _hasAudio; }
     }
 
     #endregion

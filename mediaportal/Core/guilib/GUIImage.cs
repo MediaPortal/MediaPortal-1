@@ -49,11 +49,39 @@ namespace MediaPortal.GUI.Library
                                                              float[,] matrix, int textureNo2, float uoff2, float voff2,
                                                              float umax2, float vmax2);    
 
-    /// <summary>The border position.</summary>
-    private const int BORDER_OUTSIDE = 0;
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, float nh,
+                                                             float uoff, float voff, float umax, float vmax, int color,
+                                                             float[,] matrix, int textureNo2, float uoff2, float voff2,
+                                                             float umax2, float vmax2);
 
-    private const int BORDER_INSIDE = 1;
-    private const int BORDER_CENTER = 2;
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void FontEngineDrawMaskedTexture2(int textureNo1, float x, float y, float nw, float nh,
+                                                             float uoff, float voff, float umax, float vmax, int color,
+                                                             float[,] matrix, int textureNo2, float uoff2, float voff2,
+                                                             float umax2, float vmax2, int textureNo3, float uoff3,
+                                                             float voff3, float umax3, float vmax3);
+
+    /// <summary>
+    /// enum to specify the border position
+    /// </summary>
+    public enum BorderPosition
+    {
+      BORDER_IMAGE_OUTSIDE,
+      BORDER_IMAGE_INSIDE,
+      BORDER_IMAGE_CENTER,
+      BORDER_CONTROL_OUTSIDE,
+      BORDER_CONTROL_INSIDE,
+      BORDER_CONTROL_CENTER,
+
+      // added to support XAML parser
+      OutsideImage = BORDER_IMAGE_OUTSIDE,
+      InsideImage = BORDER_IMAGE_INSIDE,
+      CenterImage = BORDER_IMAGE_CENTER,
+      OutsideControl = BORDER_CONTROL_OUTSIDE,
+      InsideControl = BORDER_CONTROL_INSIDE,
+      CenterControl = BORDER_CONTROL_CENTER
+    }
 
     /// <summary>The width of the current texture.</summary>
     private int _textureWidth = 0;
@@ -69,48 +97,36 @@ namespace MediaPortal.GUI.Library
     private int _currentAnimationLoop = 0;
     private int _currentFrameNumber = 0;
 
-    [XMLSkinElement("colorkey")]
-    protected long m_dwColorKey = 0;
-    [XMLSkinElement("texture")]
-    protected string _textureFileNameTag = "";
-    [XMLSkinElement("keepaspectratio")]
-    protected bool _keepAspectRatio = false;
-    [XMLSkinElement("zoom")]
-    protected bool _zoomIn = false;
-    [XMLSkinElement("zoomfromtop")]
-    protected bool _zoomFromTop = false;
-    [XMLSkinElement("fixedheight")]
-    protected bool _isFixedHeight = false;
-    [XMLSkinElement("RepeatBehavior")]
-    protected RepeatBehavior _repeatBehavior = RepeatBehavior.Forever;
-    [XMLSkin("texture", "flipX")]
-    protected bool _flipX = false;
-    [XMLSkin("texture", "flipY")]
-    protected bool _flipY = false;
-    [XMLSkin("texture", "diffuse")]
-    protected string _diffuseFileName = "";
-    [XMLSkinElement("filtered")]
-    protected bool _filterImage = true;
-    [XMLSkinElement("centered")]
-    protected bool _centerImage = false;
-    [XMLSkinElement("border")]
-    protected string _strBorder = "";
-    [XMLSkin("border", "position")]
-    protected string _strBorderPosition = "outside";
-    [XMLSkin("border", "textureRepeat")]
-    protected bool _borderTextureRepeat = false;
-    [XMLSkin("border", "textureRotate")]
-    protected bool _borderTextureRotate = false;
-    [XMLSkin("border", "texture")]
-    protected string _borderTextureFileName = "image_border.png";
-    [XMLSkin("border", "colorKey")]
-    protected long _borderColorKey = 0xFFFFFFFF;
-    [XMLSkinElement("imagepath")]
-    private string _imagePath = ""; // Image path used to store VUMeter files
+    [XMLSkinElement("colorkey")] protected long m_dwColorKey = 0;
+    [XMLSkinElement("texture")] protected string _textureFileNameTag = "";
+    [XMLSkinElement("keepaspectratio")] protected bool _keepAspectRatio = false;
+    [XMLSkinElement("zoom")] protected bool _zoomIn = false;
+    [XMLSkinElement("zoomfromtop")] protected bool _zoomFromTop = false;
+    [XMLSkinElement("fixedheight")] protected bool _isFixedHeight = false;
+    [XMLSkinElement("RepeatBehavior")] protected RepeatBehavior _repeatBehavior = RepeatBehavior.Forever;
+    [XMLSkin("texture", "flipX")] protected bool _flipX = false;
+    [XMLSkin("texture", "flipY")] protected bool _flipY = false;
+    [XMLSkin("texture", "diffuse")] protected string _diffuseFileName = "";
+    [XMLSkin("texture", "mask")] protected string _maskFileName = "";
+    [XMLSkinElement("filtered")] protected bool _filterImage = true;
+    [XMLSkinElement("centered")] protected bool _centerImage = false;
+    [XMLSkinElement("border")] protected string _strBorder = "";
+    [XMLSkin("border", "position")] protected BorderPosition _borderPosition = BorderPosition.BORDER_IMAGE_OUTSIDE;
+    [XMLSkin("border", "textureRepeat")] protected bool _borderTextureRepeat = false;
+    [XMLSkin("border", "textureRotate")] protected bool _borderTextureRotate = false;
+    [XMLSkin("border", "texture")] protected string _borderTextureFileName = "image_border.png";
+    [XMLSkin("border", "colorKey")] protected long _borderColorKey = 0xFFFFFFFF;
+    [XMLSkin("border", "corners")] protected bool _borderHasCorners = false; // implies use of e.g., "image_border_corner.png"
+    [XMLSkin("border", "cornerRotate")] protected bool _borderCornerTextureRotate = true;
+    [XMLSkinElement("imagepath")] private string _imagePath = "";  // Image path used to store VUMeter files
+    [XMLSkinElement("tileFill")] private bool _tileFill = false;  // Will tile a texture to the rectangle rather than stretch it
 
     private int _diffuseTexWidth = 0;
     private int _diffuseTexHeight = 0;
     private Texture _diffuseTexture = null;
+    private int _maskTexWidth = 0;
+    private int _maskTexHeight = 0;
+    private Texture _maskTexture = null;
     private CachedTexture.Frame[] _listTextures = null;
 
     //TODO GIF PALLETTE
@@ -145,9 +161,11 @@ namespace MediaPortal.GUI.Library
 
     private float _texUoff, _texVoff, _texUmax, _texVmax;
     private float _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax;
+    private float _masktexUoff, _masktexVoff, _masktexUmax, _masktexVmax;
     private Texture _packedTexture = null;
     private int _packedTextureNo = -1;
     private int _packedDiffuseTextureNo = -1;
+    private int _packedMaskTextureNo = -1;
     private static bool logtextures = false;
     private bool _isFullScreenImage = false;
     private bool _reCalculate = false;
@@ -160,7 +178,6 @@ namespace MediaPortal.GUI.Library
     private int _borderRight = 0;
     private int _borderTop = 0;
     private int _borderBottom = 0;
-    private int _borderPosition = 0;
 
     private int _memoryImageWidth = 0;
     private int _memoryImageHeight = 0;
@@ -203,19 +220,6 @@ namespace MediaPortal.GUI.Library
         _borderRight = border[0];
         _borderTop = border[0];
         _borderBottom = border[0];
-      }
-
-      if ("center".Equals(strBorderPosition))
-      {
-        _borderPosition = BORDER_CENTER;
-      }
-      else if ("inside".Equals(strBorderPosition))
-      {
-        _borderPosition = BORDER_INSIDE;
-      }
-      else
-      {
-        _borderPosition = BORDER_OUTSIDE;
       }
 
       _borderTextureRepeat = borderTextureRepeat;
@@ -364,19 +368,6 @@ namespace MediaPortal.GUI.Library
           _borderRight = valueParameters[0];
           _borderTop = valueParameters[0];
           _borderBottom = valueParameters[0];
-        }
-
-        if ("center".Equals(_strBorderPosition))
-        {
-          _borderPosition = BORDER_CENTER;
-        }
-        else if ("inside".Equals(_strBorderPosition))
-        {
-          _borderPosition = BORDER_INSIDE;
-        }
-        else
-        {
-          _borderPosition = BORDER_OUTSIDE;
         }
       }
     }
@@ -1407,7 +1398,71 @@ namespace MediaPortal.GUI.Library
             color = GUIGraphicsContext.MergeAlpha(color);
             float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
 
-            FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color, matrix);
+            if (_tileFill)
+              {
+              // Get a texture from the texture file.
+              if (GUITextureManager.Load(_textureFileNameTag, m_dwColorKey, -1, -1, true) == 0)
+              {
+                return; // Could not load the texture.
+              }
+
+              // Get the texture and scale its size for the screen.
+              int tW;
+              int tH;
+              CachedTexture.Frame texture = GUITextureManager.GetTexture(_textureFileNameTag, 0, out tW, out tH);
+              GUIGraphicsContext.ScaleHorizontal(ref tW);
+              GUIGraphicsContext.ScaleVertical(ref tH);
+
+              // Find the next nearest texture size (a power of 2 square).
+              int x = Math.Max(tW, tH);
+              --x;
+              x |= x >> 1;
+              x |= x >> 2;
+              x |= x >> 4;
+              x |= x >> 8;
+              x |= x >> 16;
+              ++x;
+
+              // Compute the number of textures to draw in the control and draw the texture.
+              float umax = _nw / x;
+              float vmax = _nh / x;
+              texture.Draw(_fx, _fy, _nw, _nh, 0, 0, umax, vmax, (int)color);
+            }
+            else
+            {
+              if (_maskFileName.Length > 0)
+              {
+                // Draw the image texture with the alpha-mask.
+                if (_packedMaskTextureNo < 0)
+                {
+                  GUITextureManager.GetPackedTexture(_maskFileName, out _masktexUoff, out _masktexVoff,
+                                                     out _masktexUmax, out _masktexVmax, out _maskTexWidth,
+                                                     out _maskTexHeight, out _maskTexture,
+                                                     out _packedMaskTextureNo);
+                }
+                if (_packedMaskTextureNo >= 0)
+                {
+                  float uoff, voff, umax, vmax, uoffm, voffm, umaxm, vmaxm;
+                  uoff = _uoff;
+                  voff = _voff;
+                  umax = _umax +_uoff;
+                  vmax = _vmax +_voff;
+                  uoffm = _masktexUoff;
+                  voffm = _masktexVoff;
+                  umaxm = _masktexUmax + _masktexUoff;
+                  vmaxm = _masktexVmax + _masktexVoff;
+
+                  FontEngineDrawMaskedTexture(_packedTextureNo, _fx, _fy, _nw, _nh, uoff, voff, umax, vmax,
+                                              (int)color, matrix,
+                                              _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
+                }
+              }
+              else
+              {
+                // Default behavior, draw the image texture with no mask.
+                FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color, matrix);
+              }
+            }
 
             if ((_flipX || _flipY) && _diffuseFileName.Length > 0)
             {
@@ -1456,12 +1511,37 @@ namespace MediaPortal.GUI.Library
                   vmax = _diffusetexVoff;
                 }
 
-
-                //FontEngineDrawTexture(_packedTextureNo, fx, fy, nw, nh, _uoff, _voff, _umax, _vmax, (int)color, m00, m01, m02, m10, m11, m12);
-                //FontEngineDrawTexture(_packedDiffuseTextureNo, fx, fy, nw, nh, uoff, voff, umax, vmax, (int)color, m00, m01, m02, m10, m11, m12);
                 float[,] m = GUIGraphicsContext.GetFinalMatrix();
-                FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color, m
-                                       , _packedDiffuseTextureNo, uoff, voff, umax, vmax);
+
+                if (_maskFileName.Length > 0)
+                {
+                  // Draw the image texture with the alpha-mask.
+                  if (_packedMaskTextureNo < 0)
+                  {
+                    GUITextureManager.GetPackedTexture(_maskFileName, out _masktexUoff, out _masktexVoff,
+                                                       out _masktexUmax, out _masktexVmax, out _maskTexWidth,
+                                                       out _maskTexHeight, out _maskTexture,
+                                                       out _packedMaskTextureNo);
+                  }
+                  if (_packedMaskTextureNo >= 0)
+                  {
+                    float uoffm, voffm, umaxm, vmaxm;
+                    uoffm = _masktexUoff;
+                    voffm = _masktexVoff;
+                    umaxm = _masktexUmax + _masktexUoff;
+                    vmaxm = _masktexVmax + _masktexVoff;
+
+                    FontEngineDrawMaskedTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1,
+                                                 (int)color, m,
+                                                 _packedDiffuseTextureNo, uoff, voff, umax, vmax,
+                                                 _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
+                  }
+                }
+                else
+                {
+                  FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color, m
+                                         , _packedDiffuseTextureNo, uoff, voff, umax, vmax);
+                }
               }
             }
 
@@ -1511,8 +1591,59 @@ namespace MediaPortal.GUI.Library
                 color = (uint)(_diffuseColor & DimColor);
               }
               color = GUIGraphicsContext.MergeAlpha(color);
-              frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color);
 
+              if (_tileFill)
+              {
+                // Get the texture and scale its size for the screen.
+                int tW = GUITextureManager.GetCachedTexture(frame.ImageName).Width;
+                int tH = GUITextureManager.GetCachedTexture(frame.ImageName).Height;
+                GUIGraphicsContext.ScaleHorizontal(ref tW);
+                GUIGraphicsContext.ScaleVertical(ref tH);
+
+                // Find the next nearest texture size (a power of 2 square).
+                int x = Math.Max(tW, tH);
+                --x;
+                x |= x >> 1;
+                x |= x >> 2;
+                x |= x >> 4;
+                x |= x >> 8;
+                x |= x >> 16;
+                ++x;
+
+                // Compute the number of textures to draw in the control and draw the texture.
+                float umax = _nw / x;
+                float vmax = _nh / x;
+                frame.Draw(_fx, _fy, _nw, _nh, 0, 0, umax, vmax, (int)color);
+              }
+              else
+              {
+                if (_maskFileName.Length > 0)
+                {
+                  // Draw the image texture with the alpha-mask.
+                  if (_packedMaskTextureNo < 0)
+                  {
+                    GUITextureManager.GetPackedTexture(_maskFileName, out _masktexUoff, out _masktexVoff,
+                                                       out _masktexUmax, out _masktexVmax, out _maskTexWidth,
+                                                       out _maskTexHeight, out _maskTexture,
+                                                       out _packedMaskTextureNo);
+                  }
+                  if (_packedMaskTextureNo >= 0)
+                  {
+                    float uoffm, voffm, umaxm, vmaxm;
+                    uoffm = _masktexUoff;
+                    voffm = _masktexVoff;
+                    umaxm = _masktexUmax + _masktexUoff;
+                    vmaxm = _masktexVmax + _masktexVoff;
+
+                    frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color,
+                               _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
+                  }
+                }
+                else
+                {
+                  frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color);
+                }
+              }
 
               if ((_flipX || _flipY) && _diffuseFileName.Length > 0)
               {
@@ -1563,9 +1694,36 @@ namespace MediaPortal.GUI.Library
                   }
                   float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
 
-                  FontEngineDrawTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color,
-                                         matrix,
-                                         _packedDiffuseTextureNo, uoff, voff, umax, vmax);
+                  if (_maskFileName.Length > 0)
+                  {
+                    // Draw the image texture with the alpha-mask.
+                    if (_packedMaskTextureNo < 0)
+                    {
+                      GUITextureManager.GetPackedTexture(_maskFileName, out _masktexUoff, out _masktexVoff,
+                                                         out _masktexUmax, out _masktexVmax, out _maskTexWidth,
+                                                         out _maskTexHeight, out _maskTexture,
+                                                         out _packedMaskTextureNo);
+                    }
+                    if (_packedMaskTextureNo >= 0)
+                    {
+                      float uoffm, voffm, umaxm, vmaxm;
+                      uoffm = _masktexUoff;
+                      voffm = _masktexVoff;
+                      umaxm = _masktexUmax + _masktexUoff;
+                      vmaxm = _masktexVmax + _masktexVoff;
+
+                      FontEngineDrawMaskedTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1,
+                                                   (int)color, matrix,
+                                                   _packedDiffuseTextureNo, uoff, voff, umax, vmax,
+                                                   _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
+                    }
+                  }
+                  else
+                  {
+                    FontEngineDrawTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color,
+                                           matrix,
+                                           _packedDiffuseTextureNo, uoff, voff, umax, vmax);
+                  }
                 }
               }
 
@@ -1591,12 +1749,13 @@ namespace MediaPortal.GUI.Library
 
     //*******************************************************************************************************************
     // Draw a rectangle using one texture for four rectangles around the specified rectangle; one on each side.
-    // |------|
+    // U------U
     // |      |
     // |      |
-    // |------|
+    // L------L
     // bl,br,bt,bb - border width on the left,right,top,bottom
     // The border position (pos) is specified by pos relative to the x,y,nw,nh rectangle
+    // U=upper corners, L=lower corners
     // pos values 0=outside, 1=inside, 2=center
     private void DrawBorder()
     {
@@ -1605,48 +1764,101 @@ namespace MediaPortal.GUI.Library
       float bt = _borderTop;
       float bb = _borderBottom;
 
-      float tx, ty, tw, th; // scaling translations for border position (center, inside, outside)
-      float bx, by, bw, bh; // one border rectangle (reused for each side)
-      float umax, vmax; // Texture coordinate extent
-      float zrot = 0.0f; // Rotation of a textured border edge if specified by borderTextureOrientation
+      float posX = 0f, posY = 0f, width = 0f, height = 0f;           // Describes the bounding rectangle to border
+      float tx = 0f, ty = 0f, tw = 0f, th = 0f;                      // Scaling translations for border position (center, inside, outside)
+      float bx = 0f, by = 0f, bw = 0f, bh = 0f;                      // One border rectangle (reused for each side)
+      float umax = 0f, vmax = 0f;                                    // Texture coordinate extent
+      float zrot = 0f;                                               // Rotation of a textured border edge if specified by _borderTextureRotate
+      float cxLeft = 0f, cyLeft = 0f, cwLeft = 0f, chLeft = 0f;      // Left corner rectangle (reused for each left corner)
+      float cxRight = 0f, cyRight = 0f, cwRight = 0f, chRight = 0f;  // Right corner rectangle (reused for each right corner)
+      int cuLeft = 0, cvLeft = 0, cumaxLeft = 0, cvmaxLeft = 0;      // Left corner texture coordinates
+      int cuRight = 0, cvRight = 0, cumaxRight = 0, cvmaxRight = 0;  // Right corner texture coordinates
 
-      CachedTexture.Frame texture;
-      int itw;
-      int ith;
+      CachedTexture.Frame texture = null;
+      CachedTexture.Frame cornerTexture = null;
+      int itw, ith;
+      int ictw, icth;
       float textureWidth;
       float textureHeight;
 
       // Get a texture from the texture file.
-      GUITextureManager.Load(_borderTextureFileName, _borderColorKey, -1, -1, true);
+      if (GUITextureManager.Load(_borderTextureFileName, _borderColorKey, -1, -1, true) == 0)
+      {
+        return; // Could not load the texture.
+      }
       texture = GUITextureManager.GetTexture(_borderTextureFileName, 0, out itw, out ith);
+
+      if (_borderHasCorners)
+      {
+        // Compute the name of the corner texture.
+        string _cornerTextureFileName = Path.GetFileNameWithoutExtension(_borderTextureFileName);
+        _cornerTextureFileName += "_corner" + Path.GetExtension(_borderTextureFileName);
+
+        if (GUITextureManager.Load(_cornerTextureFileName, _borderColorKey, -1, -1, true) == 0)
+        {
+          _borderHasCorners = false; // Could not load the texture; ignore the corners.
+        }
+        else
+        {
+          cornerTexture = GUITextureManager.GetTexture(_cornerTextureFileName, 0, out ictw, out icth);
+        }
+      }
 
       textureWidth = (float)itw;
       textureHeight = (float)ith;
 
-      // Border at center position
-      if (_borderPosition == BORDER_CENTER)
+      switch (_borderPosition)
       {
-        // Use Ceiling(), need an even numbered pixel count in border width to avoid aliasing and gaps due to rounding during presentation.
-        tx = _fx + (float)Math.Ceiling(bl / 2);
-        ty = _fy + (float)Math.Ceiling(bt / 2);
-        tw = _nw - (float)Math.Ceiling(bl / 2) - (float)Math.Ceiling(br / 2);
-        th = _nh - (float)Math.Ceiling(bt / 2) - (float)Math.Ceiling(bb / 2);
+        // Border the image
+        case BorderPosition.BORDER_IMAGE_OUTSIDE:
+        case BorderPosition.BORDER_IMAGE_INSIDE:
+        case BorderPosition.BORDER_IMAGE_CENTER:
+          posX = _fx;
+          posY = _fy;
+          width = _nw;
+          height = _nh;
+          break;
+
+        // Border the control rectangle
+        case BorderPosition.BORDER_CONTROL_OUTSIDE:
+        case BorderPosition.BORDER_CONTROL_INSIDE:
+        case BorderPosition.BORDER_CONTROL_CENTER:
+          posX = XPosition;
+          posY = YPosition;
+          width = Width;
+          height = Height;
+          break;
       }
-      // Border at inside position
-      else if (_borderPosition == BORDER_INSIDE)
+      
+      switch (_borderPosition)
       {
-        tx = _fx + bl;
-        ty = _fy + bt;
-        tw = _nw - bl - br;
-        th = _nh - bt - bb;
-      }
+        // Border at center position
+        case BorderPosition.BORDER_IMAGE_CENTER:
+        case BorderPosition.BORDER_CONTROL_CENTER:
+          // Use Ceiling(), need an even numbered pixel count in border width to avoid aliasing and gaps due to rounding during presentation.
+          tx = posX + (float)Math.Ceiling(bl / 2);
+          ty = posY + (float)Math.Ceiling(bt / 2);
+          tw = width - (float)Math.Ceiling(bl / 2) - (float)Math.Ceiling(br / 2);
+          th = height - (float)Math.Ceiling(bt / 2) - (float)Math.Ceiling(bb / 2);
+          break;
+
+        // Border at inside position
+        case BorderPosition.BORDER_IMAGE_INSIDE:
+        case BorderPosition.BORDER_CONTROL_INSIDE:
+          tx = posX + bl;
+          ty = posY + bt;
+          tw = width - bl - br;
+          th = height - bt - bb;
+          break;
+
       // Border at outside position
-      else
-      {
-        tx = _fx;
-        ty = _fy;
-        tw = _nw;
-        th = _nh;
+        case BorderPosition.BORDER_IMAGE_OUTSIDE:
+        case BorderPosition.BORDER_CONTROL_OUTSIDE:
+          tx = posX;
+          ty = posY;
+          tw = width;
+          th = height;
+          break;
       }
 
       // Left border rectangle
@@ -1655,11 +1867,20 @@ namespace MediaPortal.GUI.Library
       by = ty - bt;
       bw = bl;
       bh = bt + th + bb;
+
+      if (_borderHasCorners)
+      {
+        by = ty;  // Trim to make room to draw the corners
+        bh = th;
+      }
+
       if ((bw > 0) && (bh > 0))
       {
+        int rotOffset = 0;
         if (_borderTextureRotate)
         {
           zrot = -(float)Math.PI / 2;
+          rotOffset = 1; // Offset needed due to base of rotation of border edge
 
           // Transpose the border rectangle
           float temp = bw;
@@ -1667,9 +1888,9 @@ namespace MediaPortal.GUI.Library
           bh = temp;
 
           // Translate the border rectangle origin
-          // (-1) pixel offset accounts for rotation point being at upper left of the pixel at (bx,by)
+          // Pixel offset accounts for rotation point being at upper left of the pixel at (bx,by)
           //bx = bx;
-          by = by + bw - 1;
+          by = by + bw - rotOffset;
 
           // Calculate the texture extent for repeat behaviour while maintaining the textures aspect ratio
           umax = bw / (bh * (textureWidth / textureHeight));
@@ -1689,7 +1910,7 @@ namespace MediaPortal.GUI.Library
           vmax = 1;
         }
 
-        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)_borderColorKey);
+        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)_borderColorKey); // left border
       }
 
       // Right border rectangle
@@ -1698,11 +1919,20 @@ namespace MediaPortal.GUI.Library
       by = ty - bt;
       bw = br;
       bh = bt + th + bb;
+
+      if (_borderHasCorners)
+      {
+        by = ty;  // Trim to make room to draw the corners
+        bh = th;
+      }
+
       if ((bw > 0) && (bh > 0))
       {
+        int rotOffset = 0;
         if (_borderTextureRotate)
         {
           zrot = (float)Math.PI / 2;
+          rotOffset = 1; // Offset needed due to base of rotation of border edge
 
           // Transpose the border rectangle
           float temp = bw;
@@ -1710,8 +1940,8 @@ namespace MediaPortal.GUI.Library
           bh = temp;
 
           // Translate the border rectangle origin
-          // (-1) pixel offset accounts for rotation point being at upper left of the pixel at (bx,by)
-          bx = bx + bh - 1;
+          // Pixel offset accounts for rotation point being at upper left of the pixel at (bx,by)
+          bx = bx + bh - rotOffset;
           //by = by;
 
           // Calculate the texture extent for repeat behaviour while maintaining the textures aspect ratio
@@ -1732,7 +1962,7 @@ namespace MediaPortal.GUI.Library
           vmax = 1;
         }
 
-        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)_borderColorKey);
+        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)_borderColorKey); // right border
       }
 
       // Top border rectangle
@@ -1745,7 +1975,7 @@ namespace MediaPortal.GUI.Library
       {
         if (_borderTextureRotate)
         {
-          zrot = 0.0f;
+          zrot = 0f;
         }
 
         // Calculate the texture extent for repeat behaviour while maintaining the textures aspect ratio
@@ -1759,7 +1989,55 @@ namespace MediaPortal.GUI.Library
           vmax = 1;
         }
 
+        // Compute corner coordinates.
+        if (_borderHasCorners)
+        {
+          // Upper left corner position, size, texture coords
+          cxLeft = bx - bl;
+          cyLeft = by;
+          cwLeft = bl;
+          chLeft = bt;
+
+          cuLeft = 0;
+          cvLeft = 0;
+          cumaxLeft = 1;
+          cvmaxLeft = 1;
+
+          // Upper right corner position, size, texture coords
+          cxRight = bx + bw;
+          cyRight = by;
+          cwRight = br;
+          chRight = bt;
+
+          cuRight = 0;
+          cvRight = 0;
+          cumaxRight = 1;
+          cvmaxRight = 1;
+
+          if (_borderCornerTextureRotate)
+          {
+            // Flip texture horizontally
+            cuRight = 1;
+            cvRight = 0;
+            cumaxRight = 0;
+            cvmaxRight = 1;
+          }
+        }
+
         texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)_borderColorKey);
+        if (_borderHasCorners)
+        {
+          // Using FontEngineDrawTexture2 for its ability to flip the corner texture.
+          float[,] m = GUIGraphicsContext.GetFinalMatrix();
+
+          // Upper left corner
+          FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft, cvmaxLeft, (int)_borderColorKey, m,
+            cornerTexture.TextureNumber, 0, 0, 0, 0); // indicates fontEngine should ignore texture blending
+
+          // Upper right corner
+          FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight, cumaxRight, cvmaxRight, (int)_borderColorKey, m,
+            cornerTexture.TextureNumber, 0, 0, 0, 0); // indicates fontEngine should ignore texture blending
+        }
       }
 
       // Bottom border rectangle
@@ -1770,14 +2048,16 @@ namespace MediaPortal.GUI.Library
       bh = bb;
       if ((bw > 0) && (bh > 0))
       {
+        int rotOffset = 0;
         if (_borderTextureRotate)
         {
           zrot = (float)Math.PI;
+          rotOffset = 1; // Offset needed due to base of rotation of border edge
 
           // Translate the border rectangle origin
-          // (-1) pixel offset accounts for rotation point being at upper left of the pixel at (bx,by)
-          bx = bx + bw - 1;
-          by = by + bh - 1;
+          // Pixel offset accounts for rotation point being at upper left of the pixel at (bx,by)
+          bx = bx + bw - rotOffset;
+          by = by + bh - rotOffset;
         }
 
         // Calculate the texture extent for repeat behaviour while maintaining the textures aspect ratio
@@ -1791,7 +2071,77 @@ namespace MediaPortal.GUI.Library
           vmax = 1;
         }
 
-        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)_borderColorKey);        
+        // Compute corner coordinates.
+        if (_borderHasCorners)
+        {
+          // Lower left corner position, size, texture coords
+          if (_borderTextureRotate)
+          {
+            cxLeft = bx - bw - bl + rotOffset;
+            cyLeft = by - bb + rotOffset;
+          }
+          else
+          {
+            cxLeft = bx - bl;
+            cyLeft = by;
+          }
+          cwLeft = bl;
+          chLeft = bb;
+
+          cuLeft = 0;
+          cvLeft = 0;
+          cumaxLeft = 1;
+          cvmaxLeft = 1;
+
+          // Lower right corner position, size, texture coords
+          if (_borderTextureRotate)
+          {
+            cxRight = bx + rotOffset;
+            cyRight = by - bb + rotOffset;
+          }
+          else
+          {
+            cxRight = bx + bw;
+            cyRight = by;
+          }
+          cwRight = br;
+          chRight = bb;
+
+          cuRight = 0;
+          cvRight = 0;
+          cumaxRight = 1;
+          cvmaxRight = 1;
+
+          if (_borderCornerTextureRotate)
+          {
+            // Flip texture vertically
+            cuLeft = 0;
+            cvLeft = 1;
+            cumaxLeft = 1;
+            cvmaxLeft = 0;
+
+            // Flip texture horizontally and vertically
+            cuRight = 1;
+            cvRight = 1;
+            cumaxRight = 0;
+            cvmaxRight = 0;
+          }
+        }
+
+        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)_borderColorKey);
+        if (_borderHasCorners)
+        {
+          // Using FontEngineDrawTexture2 for its ability to flip the corner texture.
+          float[,] m = GUIGraphicsContext.GetFinalMatrix();
+
+          // Lower left corner
+          FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft, cvmaxLeft, (int)_borderColorKey, m,
+            cornerTexture.TextureNumber, 0, 0, 0, 0); // indicates fontEngine should ignore texture blending
+
+          // Lower right corner
+          FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight, cumaxRight, cvmaxRight, (int)_borderColorKey, m,
+            cornerTexture.TextureNumber, 0, 0, 0, 0); // indicates fontEngine should ignore texture blending
+        }
       }
       texture = null;
     }
@@ -2010,15 +2360,17 @@ namespace MediaPortal.GUI.Library
       _reCalculate = true;
     }
 
-    public void SetBorder(string border, string position, bool textureRepeat, bool textureRotate, string textureFilename,
-                          long colorKey)
+    public void SetBorder(string border, BorderPosition position, bool textureRepeat, bool textureRotate,
+      string textureFilename, long colorKey, bool hasCorners, bool cornerTextureRotate)
     {
       _strBorder = border;
-      _strBorderPosition = position;
+      _borderPosition = position;
       _borderTextureRepeat = textureRepeat;
       _borderTextureRotate = textureRotate;
       _borderTextureFileName = textureFilename;
       _borderColorKey = colorKey;
+      _borderHasCorners = hasCorners;
+      _borderCornerTextureRotate = cornerTextureRotate;
 
       FinalizeBorder();
     }
@@ -2056,6 +2408,20 @@ namespace MediaPortal.GUI.Library
           return;
         }
         _diffuseFileName = value;
+      }
+    }
+
+    public string MaskFileName
+    {
+      get { return _maskFileName; }
+      set
+      {
+        if (_maskFileName == value)
+        {
+          return;
+        }
+        _packedMaskTextureNo = -1; // Force the texture to reload.
+        _maskFileName = value;
       }
     }
 
@@ -2170,6 +2536,12 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
+    }
+
+    public bool TileFill
+    {
+      get { return _tileFill; }
+      set { _tileFill = value; }
     }
   }
 }

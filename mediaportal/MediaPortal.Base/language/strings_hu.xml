@@ -1692,6 +1692,31 @@
     <String id="200050">Ez a művelet törli a felvételeket a merevlemezről</String>
     <String id="33032">Ennek az albumnak a száma</String>
     <String id="33033">nem található a gyüjteményedben!</String>
-		<String id="200072">Következő epizódok</String>
+    <String id="200072">Következő epizódok</String>
+<String id="51">Lemez lejátszása</String>
+<String id="60">Várakozás a TV szerver elindulására...</String>
+<String id="527">Rendezés: nézett</String>
+<String id="783">Elforgatás 180°-al</String>
+<String id="784">Elforgatás 270°-al</String>
+<String id="831">Hordozható eszköz kidása</String>
+<String id="832">Nem kiadható meghajtó:</String>
+<String id="833">A meghajtó nem adható ki biztonságosan</String>
+<String id="965">Állandó bit ráta</String>
+<String id="966">Változó bitráta - fix átlaggal</String>
+<String id="967">Változó bitráta - fix maximummal</String>
+<String id="968">Nem meghatározott</String>
+<String id="1067">Nagyon magas</String>
+<String id="1201">Lejátszás az elejétől</String>
+<String id="1211">Folytatás a {0}-tól</String>
+<String id="1451">Nem lehet lejátszani</String>
+<String id="1499">Nincs jel</String>
+<String id="1512">Ez előző csatornára lépjen?</String>
+<String id="1513">Az időcsúszatás leállt egy felvétel miatt</String>
+<String id="1520">Nincs elég szabad hely</String>
+<String id="200052">Aktív felvétel</String>
+<String id="200053">Nincs aktív felvétel</String>
+<String id="1523">Keresés a tartalomban</String>
+<String id="1521">Cím szerinti nézet</String>
+<String id="1522">Műfaj szerinti nézet</String>
   </Section>
 </Language>

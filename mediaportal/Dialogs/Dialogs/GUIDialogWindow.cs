@@ -82,6 +82,11 @@ namespace MediaPortal.Dialogs
         _running = true;
       }
       GUIWindowManager.IsSwitchingToNewWindow = false;
+
+      while (IsAnimating(AnimationType.WindowOpen) && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      {
+        GUIWindowManager.Process();
+      }
     }
 
     public virtual void PageDestroy()
@@ -249,6 +254,9 @@ namespace MediaPortal.Dialogs
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
             //base.OnMessage(message);
+            // TODO: Establishes a circular loop
+            // OnPageDestroy(_parentWindowID);
+
             _running = false;
             _parentWindowID = 0;
             _parentWindow = null;

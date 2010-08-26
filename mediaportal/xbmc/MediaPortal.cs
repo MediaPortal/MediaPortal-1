@@ -1208,6 +1208,7 @@ public class MediaPortalApp : D3DApp, IRender
       // we only dispose the DB connection if the DB path is remote.      
       // since local db's have no problems.
       DisposeDBs();
+      VolumeHandler.Dispose();
       Log.Info("Main: OnSuspend - Done");
     }
   }
@@ -3469,7 +3470,6 @@ public class MediaPortalApp : D3DApp, IRender
     GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable = true;
     GUIGraphicsContext.DX9Device.RenderState.FogEnable = false;
     GUIGraphicsContext.DX9Device.RenderState.FillMode = FillMode.Solid;
-    GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable = true;
     GUIGraphicsContext.DX9Device.RenderState.SourceBlend = Blend.SourceAlpha;
     GUIGraphicsContext.DX9Device.RenderState.DestinationBlend = Blend.InvSourceAlpha;
     GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation = TextureOperation.Modulate;

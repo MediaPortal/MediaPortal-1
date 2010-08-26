@@ -58,6 +58,7 @@ namespace MediaPortal.GUI.Library
     protected int _frames = 0;
     protected int _startFrame = 0;
     [XMLSkinElement("font")] protected string _fontName = "";
+    [XMLSkinElement("lineSpacing")] protected float _lineSpacing = 1.0f;
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
     [XMLSkinElement("textureUp")] protected string _upTextureName;
     [XMLSkinElement("textureDown")] protected string _downTextureName;
@@ -70,6 +71,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("spinPosY")] protected int _spinControlPositionY;
     [XMLSkinElement("label")] protected string _property = "";
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
 
     private bool _containsProperty = false;
     private string _previousProperty = "a";
@@ -114,6 +118,7 @@ namespace MediaPortal.GUI.Library
       {
         _containsProperty = true;
       }
+      SetText(_property);
     }
 
     public override void ScaleToScreenResolution()
@@ -175,10 +180,17 @@ namespace MediaPortal.GUI.Library
             float fTextWidth = 0, fTextHeight = 0;
             wszText2 = String.Format("{0}", strLabel2);
             _font.GetTextExtent(wszText2, ref fTextWidth, ref fTextHeight);
-            dMaxWidth -= (int)(fTextWidth);
-            _font.DrawTextWidth((float)dwPosX + dMaxWidth, (float)dwPosY + 2,
-                                (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText2, (float)fTextWidth,
-                                _textAlignment);
+            dMaxWidth -= (int) (fTextWidth);
+            if (Shadow)
+            {
+              _font.DrawShadowTextWidth((float)dwPosX + dMaxWidth, (float)dwPosY + 2, _textColor, wszText2, _textAlignment,
+                 _shadowAngle, _shadowDistance, _shadowColor, (float)fTextWidth);
+            }
+            else
+            {
+              _font.DrawTextWidth((float)dwPosX + dMaxWidth, (float)dwPosY + 2, _textColor, wszText2, (float)fTextWidth,
+                                  _textAlignment);
+            }
           }
           switch (_textAlignment)
           {
@@ -189,9 +201,16 @@ namespace MediaPortal.GUI.Library
               x = (float)dwPosX;
               break;
           }
-          _font.DrawTextWidth(x, (float)dwPosY + 2, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText1,
-                              (float)dMaxWidth, _textAlignment);
-          dwPosY += (int)_itemHeight;
+          if (Shadow)
+          {
+            _font.DrawShadowTextWidth(x, (float)dwPosY + 2, _textColor, wszText1, _textAlignment,
+               _shadowAngle, _shadowDistance, _shadowColor, (float)dMaxWidth);
+          }
+          else
+          {
+            _font.DrawTextWidth(x, (float)dwPosY + 2, _textColor, wszText1, (float)dMaxWidth, _textAlignment);
+          }
+          dwPosY += (int)(_itemHeight * _lineSpacing);
         }
       }
       if (_upDownEnabled)
@@ -537,6 +556,19 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public float LineSpacing
+    {
+      get { return _lineSpacing; }
+      set
+      {
+        if (value < 0)
+        {
+          return;
+        }
+        _lineSpacing = value;
+      }
+    }
+
     public int Space
     {
       get { return _spaceBetweenItems; }
@@ -873,6 +905,32 @@ namespace MediaPortal.GUI.Library
     public bool HasText
     {
       get { return this._itemList.Count > 0; }
+    }
+
+    public int ShadowAngle
+    {
+      get { return _shadowAngle; }
+      set { _shadowAngle = value; }
+    }
+
+    public int ShadowDistance
+    {
+      get { return _shadowDistance; }
+      set { _shadowDistance = value; }
+    }
+
+    public long ShadowColor
+    {
+      get { return _shadowColor; }
+      set { _shadowColor = value; }
+    }
+
+    private bool Shadow
+    {
+      get
+      {
+        return (_shadowDistance > 0) && ((_shadowColor >> 24) > 0);
+      }
     }
   }
 }

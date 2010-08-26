@@ -64,10 +64,10 @@ namespace SetupTv.Sections
       InitializeComponent();
       //mpListViewChannels.ListViewItemSorter = new MPListViewSortOnColumn(1);
       lvwColumnSorter1 = new MPListViewStringColumnSorter();
-      lvwColumnSorter1.Order = SortOrder.None;
+      lvwColumnSorter1.Order = SortOrder.Ascending;
       mpListViewChannels.ListViewItemSorter = lvwColumnSorter1;
       lvwColumnSorter2 = new MPListViewStringColumnSorter();
-      lvwColumnSorter2.Order = SortOrder.None;
+      lvwColumnSorter2.Order = SortOrder.Ascending;
       mpListViewMapped.ListViewItemSorter = lvwColumnSorter2;
     }
 
@@ -91,31 +91,34 @@ namespace SetupTv.Sections
     {
       NotifyForm dlg = new NotifyForm("Mapping selected channels to TV-Card...",
                                       "This can take some time\n\nPlease be patient...");
-      dlg.Show();
+      dlg.Show(this);
       dlg.WaitForDisplay();
       Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
-      ListView.SelectedListViewItemCollection selectedItems = mpListViewChannels.SelectedItems;
-      TvBusinessLayer layer = new TvBusinessLayer();
-      foreach (ListViewItem item in selectedItems)
+      try
       {
-        Channel channel = (Channel)item.Tag;
-        ChannelMap map = layer.MapChannelToCard(card, channel, mpCheckBoxMapForEpgOnly.Checked);
-        mpListViewChannels.Items.Remove(item);
-
-        int imageIndex = 1;
-        if (channel.FreeToAir == false)
-          imageIndex = 2;
-        string displayName = channel.DisplayName;
-        if (mpCheckBoxMapForEpgOnly.Checked)
-          displayName = channel.DisplayName + " (EPG Only)";
-        ListViewItem newItem = mpListViewMapped.Items.Add(displayName, imageIndex);
-        newItem.Tag = map;
+        ListView.SelectedListViewItemCollection selectedItems = mpListViewChannels.SelectedItems;
+        TvBusinessLayer layer = new TvBusinessLayer();
+        foreach (ListViewItem item in selectedItems)
+        {
+          Channel channel = (Channel)item.Tag;
+          ChannelMap map = layer.MapChannelToCard(card, channel, mpCheckBoxMapForEpgOnly.Checked);
+          mpListViewChannels.Items.Remove(item);
+          string displayName = channel.DisplayName;
+          if (mpCheckBoxMapForEpgOnly.Checked)
+            displayName = channel.DisplayName + " (EPG Only)";
+          ListViewItem newItem = mpListViewMapped.Items.Add(displayName, item.ImageIndex);
+          newItem.Tag = map;
+        }
+        mpListViewMapped.Sort();
+        dlg.Close();
       }
-      dlg.Close();
-      mpListViewChannels.EndUpdate();
-      mpListViewMapped.EndUpdate();
+      finally
+      {
+        mpListViewChannels.EndUpdate();
+        mpListViewMapped.EndUpdate();
+      }
       //DatabaseManager.Instance.SaveChanges();
     }
 
@@ -123,32 +126,33 @@ namespace SetupTv.Sections
     {
       NotifyForm dlg = new NotifyForm("Unmapping selected channels from TV-Card...",
                                       "This can take some time\n\nPlease be patient...");
-      dlg.Show();
+      dlg.Show(this);
       dlg.WaitForDisplay();
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
 
-      ListView.SelectedListViewItemCollection selectedItems = mpListViewMapped.SelectedItems;
-
-      foreach (ListViewItem item in selectedItems)
+      try
       {
-        ChannelMap map = (ChannelMap)item.Tag;
-        mpListViewMapped.Items.Remove(item);
+        ListView.SelectedListViewItemCollection selectedItems = mpListViewMapped.SelectedItems;
 
-
-        int imageIndex = 1;
-        if (map.ReferencedChannel().FreeToAir == false)
-          imageIndex = 2;
-        ListViewItem newItem = mpListViewChannels.Items.Add(map.ReferencedChannel().DisplayName, imageIndex);
-        newItem.Tag = map.ReferencedChannel();
-
-
-        map.Remove();
+        foreach (ListViewItem item in selectedItems)
+        {
+          ChannelMap map = (ChannelMap)item.Tag;
+          mpListViewMapped.Items.Remove(item);
+          Channel referencedChannel = map.ReferencedChannel();
+          ListViewItem newItem = mpListViewChannels.Items.Add(referencedChannel.DisplayName, item.ImageIndex);
+          newItem.Tag = referencedChannel;
+          map.Remove();
+        }
+        mpListViewChannels.Sort();
+        mpListViewMapped.Sort();
+        dlg.Close();
       }
-      mpListViewChannels.Sort();
-      dlg.Close();
-      mpListViewChannels.EndUpdate();
-      mpListViewMapped.EndUpdate();
+      finally
+      {
+        mpListViewChannels.EndUpdate();
+        mpListViewMapped.EndUpdate();
+      }
       // DatabaseManager.Instance.SaveChanges();
     }
 
@@ -158,149 +162,93 @@ namespace SetupTv.Sections
 
       mpListViewChannels.BeginUpdate();
       mpListViewMapped.BeginUpdate();
-      mpListViewMapped.Items.Clear();
-      mpListViewChannels.Items.Clear();
-
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
-      sb.AddOrderByField(true, "sortOrder");
-      SqlStatement stmt = sb.GetStatement(true);
-      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
-
-      Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
-      IList<ChannelMap> maps = card.ReferringChannelMap();
-
-      // get cardtype, dvb, analogue etc.		
-      CardType cardType = RemoteControl.Instance.Type(card.IdCard);
-      //Card card = Card.Retrieve(card.IdCard);
-      TvBusinessLayer layer = new TvBusinessLayer();
-      bool enableDVBS2 = (layer.GetSetting("dvbs" + card.IdCard + "enabledvbs2", "false").Value == "true");
-
-
-      List<ListViewItem> items = new List<ListViewItem>();
-      foreach (ChannelMap map in maps)
+      try
       {
-        Channel channel = null;
-        try
+        mpListViewMapped.Items.Clear();
+        mpListViewChannels.Items.Clear();
+
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+        sb.AddOrderByField(true, "sortOrder");
+        SqlStatement stmt = sb.GetStatement(true);
+        IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
+
+        Card card = ((CardInfo)mpComboBoxCard.SelectedItem).Card;
+        IList<ChannelMap> maps = card.ReferringChannelMap();
+
+        // get cardtype, dvb, analogue etc.		
+        CardType cardType = RemoteControl.Instance.Type(card.IdCard);
+        //Card card = Card.Retrieve(card.IdCard);
+        TvBusinessLayer layer = new TvBusinessLayer();
+        bool enableDVBS2 = (layer.GetSetting("dvbs" + card.IdCard + "enabledvbs2", "false").Value == "true");
+
+
+        List<ListViewItem> items = new List<ListViewItem>();
+        foreach (ChannelMap map in maps)
         {
-          channel = map.ReferencedChannel();
-        }
-        catch (Exception) { }
-        if (channel == null)
-          continue;
-        if (channel.IsTv == false)
-          continue;
-        int imageIndex = 1;
-        if (channel.FreeToAir == false)
-          imageIndex = 2;
-        string displayName = channel.DisplayName;
-        if (map.EpgOnly)
-          displayName = channel.DisplayName + " (EPG Only)";
-        ListViewItem item = new ListViewItem(displayName, imageIndex);
-        item.Tag = map;
-        items.Add(item);
-        bool remove = false;
-        foreach (Channel ch in channels)
-        {
-          if (ch.IdChannel == channel.IdChannel)
+          Channel channel = null;
+          try
           {
-            remove = true;
-            break;
+            channel = map.ReferencedChannel();
           }
-        }
-        if (remove)
-        {
-          channels.Remove(channel);
-        }
-      }
-      mpListViewMapped.Items.AddRange(items.ToArray());
-      items = new List<ListViewItem>();
-      int invalidS2Channels = 0;
-      foreach (Channel channel in channels)
-      {
-        if (channel.IsTv == false)
-          continue;
-        if (channel.IsWebstream())
-          continue;
+          catch (Exception) { }
+          if (channel == null)
+            continue;
+          if (channel.IsTv == false)
+            continue;
 
-        // only add channels that is tuneable on the device selected.
-        bool foundValidTuningDetail = false;
-        foreach (TuningDetail tDetail in channel.ReferringTuningDetail())
-        {
-          switch (cardType)
-          {
-            case CardType.Analog:
-              foundValidTuningDetail = (tDetail.ChannelType == 0);
-              break;
 
-            case CardType.Atsc:
-              foundValidTuningDetail = (tDetail.ChannelType == 1);
-              break;
-
-            case CardType.DvbC:
-              foundValidTuningDetail = (tDetail.ChannelType == 2);
-              break;
-
-            case CardType.DvbS:
-
-              if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
-              {
-                Log.Debug(String.Format(
-                    "Imported channel {0} detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to map these channels.",
-                    tDetail.Name));
-                invalidS2Channels++;
-                continue;
-              }
-
-              foundValidTuningDetail = (tDetail.ChannelType == 3);
-              break;
-
-            case CardType.DvbT:
-              foundValidTuningDetail = (tDetail.ChannelType == 4);
-              break;
-
-            case CardType.DvbIP:
-              foundValidTuningDetail = (tDetail.ChannelType == 7);
-              break;
-
-            case CardType.RadioWebStream:
-              foundValidTuningDetail = (tDetail.ChannelType == 5);
-              break;
-
-            default:
-              foundValidTuningDetail = true;
-              break;
-          }
-
+          List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
+          bool foundValidTuningDetail = tuningDetails.Count > 0;
           if (foundValidTuningDetail)
           {
-            break;
+            int imageIndex = GetImageIndex(tuningDetails);
+            string displayName = channel.DisplayName;
+            if (map.EpgOnly)
+              displayName = channel.DisplayName + " (EPG Only)";
+            ListViewItem item = new ListViewItem(displayName, imageIndex);
+            item.Tag = map;
+            items.Add(item);
+
+            foreach (Channel ch in channels)
+            {
+              if (ch.IdChannel == channel.IdChannel)
+              {
+                //No risk of concurrent modification so remove it directly.
+                channels.Remove(ch);
+                break;
+              }
+            }
+          }
+          else
+          {
+            map.Delete();
           }
         }
-        if (!foundValidTuningDetail)
+        mpListViewMapped.Items.AddRange(items.ToArray());
+        items = new List<ListViewItem>();
+        foreach (Channel channel in channels)
         {
-          continue;
+          if (channel.IsTv == false)
+            continue;
+          List<TuningDetail> tuningDetails = GetTuningDetailsByCardType(channel, cardType, enableDVBS2);
+          // only add channel that is tuneable on the device selected.
+          bool foundValidTuningDetail = tuningDetails.Count > 0;
+          if (foundValidTuningDetail)
+          {
+            int imageIndex = GetImageIndex(tuningDetails);
+            ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
+            item.Tag = channel;
+            items.Add(item);
+          }
         }
-
-        int imageIndex = 1;
-        if (channel.FreeToAir == false)
-          imageIndex = 2;
-        ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
-        item.Tag = channel;
-        items.Add(item);
+        mpListViewChannels.Items.AddRange(items.ToArray());
+        mpListViewChannels.Sort();
       }
-
-      if (invalidS2Channels >= 1)
+      finally
       {
-        string msg = String.Format(
-            "Imported {0} channels detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to map these channels.",
-            invalidS2Channels);
-        MessageBox.Show(msg, "Warning, wrong setup detected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        mpListViewChannels.EndUpdate();
+        mpListViewMapped.EndUpdate();
       }
-
-      mpListViewChannels.Items.AddRange(items.ToArray());
-      mpListViewChannels.Sort();
-      mpListViewChannels.EndUpdate();
-      mpListViewMapped.EndUpdate();
     }
 
     private void mpListViewChannels_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -361,6 +309,93 @@ namespace SetupTv.Sections
         map.EpgOnly = true;
       }
       map.Persist();
+    }
+
+    private static List<TuningDetail> GetTuningDetailsByCardType(Channel channel, CardType cardType, bool enableDVBS2)
+    {
+      List<TuningDetail> result = new List<TuningDetail>();
+      foreach (TuningDetail tDetail in channel.ReferringTuningDetail())
+      {
+        
+        switch (cardType)
+        {
+          case CardType.Analog:
+            if(tDetail.ChannelType == 0)
+              result.Add(tDetail);
+            break;
+          case CardType.Atsc:
+            if (tDetail.ChannelType == 1)
+              result.Add(tDetail);
+            break;
+          case CardType.DvbC:
+            if (tDetail.ChannelType == 2)
+              result.Add(tDetail);
+            break;
+          case CardType.DvbS:
+            if (tDetail.ChannelType == 3)
+            {
+              if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
+              {
+                Log.Debug(String.Format(
+                            "Imported channel {0} detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to map these channels.",
+                            tDetail.Name));
+              }
+              else
+              {
+                result.Add(tDetail);
+              }
+            }
+            break;
+          case CardType.DvbT:
+            if (tDetail.ChannelType == 4)
+              result.Add(tDetail);
+            break;
+          case CardType.DvbIP:
+            if (tDetail.ChannelType == 7)
+              result.Add(tDetail);
+            break;
+          case CardType.RadioWebStream:
+            if (tDetail.ChannelType == 5)
+              result.Add(tDetail);
+            break;
+          default:
+            break;
+        }
+      }
+      return result;
+    }
+
+    private static int GetImageIndex(IList<TuningDetail> tuningDetails)
+    {
+      bool hasFta = false;
+      bool hasScrambled = false;
+      foreach (TuningDetail detail in tuningDetails)
+      {
+        if (detail.FreeToAir)
+        {
+          hasFta = true;
+        }
+        if (!detail.FreeToAir)
+        {
+          hasScrambled = true;
+        }
+
+      }
+
+      int imageIndex;
+      if (hasFta && hasScrambled)
+      {
+        imageIndex = 5;
+      }
+      else if (hasScrambled)
+      {
+        imageIndex = 4;
+      }
+      else
+      {
+        imageIndex = 3;
+      }
+      return imageIndex;
     }
   }
 }

@@ -157,7 +157,7 @@ namespace TvPlugin
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _notificationEnabled = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
       }
@@ -576,6 +576,7 @@ namespace TvPlugin
           {
             bool hasConflict = recordingSchedule.ReferringConflicts().Count > 0;
             bool isPartialRecording = false;
+            bool isSeries = (recordingSchedule.ScheduleType != (int)ScheduleRecordingType.Once);
 
             //check for partial recordings.
             if (isActualUpcomingEps && currentSchedule != null)
@@ -584,16 +585,20 @@ namespace TvPlugin
             }
             if (isPartialRecording)
             {
-              item.PinImage = hasConflict ? Thumbs.TvConflictPartialRecordingIcon : Thumbs.TvPartialRecordingIcon;
+              item.PinImage = hasConflict ? 
+                (isSeries? Thumbs.TvConflictPartialRecordingSeriesIcon : Thumbs.TvConflictPartialRecordingIcon) : 
+                (isSeries? Thumbs.TvPartialRecordingSeriesIcon : Thumbs.TvPartialRecordingIcon);
             }
             else
             {
-              item.PinImage = hasConflict ? Thumbs.TvConflictRecordingIcon : Thumbs.TvRecordingIcon;
+              item.PinImage = hasConflict ? 
+                (isSeries? Thumbs.TvConflictRecordingSeriesIcon : Thumbs.TvConflictRecordingIcon) : 
+                (isSeries? Thumbs.TvRecordingSeriesIcon : Thumbs.TvRecordingIcon);
             }
 
             if (updateCurrentProgram)
             {
-              currentProgram = episode;
+              //currentProgram = episode;
             }
             activeRecordings++;
             anyUpcomingEpisodesRecording = true;
@@ -662,19 +667,15 @@ namespace TvPlugin
       }
       else
       {
-        foreach (Schedule schedule in schedules)
-        {
-          Schedule recSched;
-          isRecording = IsRecordingProgram(CurrentProgram, out recSched, true);
+      	// Mantis 2927 
+      	// Removed loop over all schedules as this was not actually 
+      	// needed and was causing performance issues
+        Schedule recSched;
+        isRecording = IsRecordingProgram(CurrentProgram, out recSched, true);
 
-          if (isRecording)
-          {
-            if ((ScheduleRecordingType)schedule.ScheduleType != ScheduleRecordingType.Once)
-            {
-              isSeries = true;
-            }
-            break;
-          }
+        if (isRecording && (ScheduleRecordingType)recSched.ScheduleType != ScheduleRecordingType.Once)
+        {
+          isSeries = true;
         }
       }
       if (isRecording)

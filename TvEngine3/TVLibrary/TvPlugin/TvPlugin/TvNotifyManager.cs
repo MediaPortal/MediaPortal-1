@@ -55,7 +55,7 @@ namespace TvPlugin
 
     public TvNotifyManager()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _enableTVNotification = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
         _enableRecNotification = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
@@ -339,7 +339,6 @@ namespace TvPlugin
                                         newRecording.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                         endTime);
             //Recording started            
-            TvTimeShiftPositionWatcher.InitiateBufferFilesCopyProcess(newRecording.FileName);
 
             TimeSpan tsStart = DateTime.Now - newRecording.StartTime;
             // do not show rec. that have been started a while ago.
@@ -423,7 +422,6 @@ namespace TvPlugin
         ;
       
         DateTime preNotifySecs = DateTime.Now.AddSeconds(_preNotifyConfig);
-        TvTimeShiftPositionWatcher.CheckOrUpdateTimeShiftPosition(false);
         ProcessNotifies(preNotifySecs);
         ProcessRecordings(preNotifySecs);
       }

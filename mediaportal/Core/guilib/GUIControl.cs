@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
 using MediaPortal.Drawing;
+using MediaPortal.Drawing.Layouts;
 using Point = System.Drawing.Point;
 using Size = MediaPortal.Drawing.Size;
 using MediaPortal.ExtensionMethods;
@@ -52,6 +53,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("type")] protected string _controlType = "";
     [XMLSkinElement("description")] protected string _description = "";
     [XMLSkinElement("dimColor")] protected int _dimColor = 0x60ffffff;
+    [XMLSkinElement("layoutDetail")] protected ILayoutDetail _layoutDetail;
 
     protected int _parentControlId = 0;
     protected bool _isSelected = false;
@@ -437,6 +439,9 @@ namespace MediaPortal.GUI.Library
               break;
             case GUIFacadeControl.ViewMode.Filmstrip:
               targetList.Add(facade.FilmstripView);
+              break;
+            case GUIFacadeControl.ViewMode.CoverFlow:
+              targetList.Add(facade.CoverFlowView);
               break;
             case GUIFacadeControl.ViewMode.List:
               targetList.Add(facade.ListView);
@@ -1982,5 +1987,11 @@ namespace MediaPortal.GUI.Library
       }
       return;
     }    
+
+    public ILayoutDetail LayoutDetail
+    {
+      get { return _layoutDetail; }
+      set { _layoutDetail = value; }
+  }
   }
 }

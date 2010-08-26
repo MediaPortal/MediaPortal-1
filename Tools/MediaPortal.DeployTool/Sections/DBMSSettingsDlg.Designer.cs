@@ -69,6 +69,7 @@ namespace MediaPortal.DeployTool.Sections
       this.textBoxDir.Size = new System.Drawing.Size(421, 21);
       this.textBoxDir.TabIndex = 4;
       this.textBoxDir.Text = "C:\\Programme\\MSSQL";
+      this.textBoxDir.TextChanged += new System.EventHandler(this.textBoxDir_TextChanged);
       // 
       // textBoxPassword
       // 

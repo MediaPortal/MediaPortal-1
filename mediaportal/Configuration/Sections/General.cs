@@ -75,7 +75,7 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
     }
 
-    private string loglevel = "3"; // 1= error, 2 = info, 3 = debug
+    private string loglevel = "2"; // 1= error, 2 = info, 3 = debug
     private int screennumber = 0; // 0 is the primary screen
 
     private string[][] sectionEntries = new string[][]
@@ -165,7 +165,7 @@ namespace MediaPortal.Configuration.Sections
                                                                          bool.Parse(currentSection[2])));
         }
 
-        loglevel = xmlreader.GetValueAsString("general", "loglevel", "3"); // set loglevel to debug
+        loglevel = xmlreader.GetValueAsString("general", "loglevel", "2"); // set loglevel to info
         cbDebug.SelectedIndex = Convert.ToInt16(loglevel);
         screennumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
 

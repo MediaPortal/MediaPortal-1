@@ -217,6 +217,8 @@
 		<label>-</label>
 		<font>font10</font>
 		<textcolor>FF101010</textcolor>
+        <posX>10</posX>
+        <posY>6</posY>
 	</control>	-->
     <control>
       <description>template for program title light area</description>
@@ -226,6 +228,8 @@
       <label>-</label>
       <font>font14</font>
       <textcolor>ccffffff</textcolor>
+      <posX>10</posX>
+      <posY>6</posY>
     </control>
     <control>
       <description>vertical timeline</description>
@@ -245,6 +249,8 @@
       <label>-</label>
       <font>font14</font>
       <textcolor>ffffffff</textcolor>
+      <posX>10</posX>
+      <posY>6</posY>
     </control>
     <!--	<control>
 		<description>template for genre  dark area</description>
@@ -254,6 +260,8 @@
 		<label>-</label>
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
+        <posX>10</posX>
+        <posY>6</posY>
 	</control> -->
     <control>
       <description>TV background</description>

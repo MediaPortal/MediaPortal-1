@@ -184,7 +184,8 @@ namespace MediaPortal.Configuration
                                         "Icons",
                                         "Big Icons",
                                         "Album",
-                                        "Filmstrip"
+                                        "Filmstrip",
+                                        "Cover Flow"
                                       });
       this.comboBox1.Location = new System.Drawing.Point(16, 136);
       this.comboBox1.Name = "comboBox1";

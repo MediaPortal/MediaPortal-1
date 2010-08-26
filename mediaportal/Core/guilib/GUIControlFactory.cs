@@ -60,6 +60,7 @@ namespace MediaPortal.GUI.Library
         Log.Info("  Loading references from {0}", referenceFile);
         m_referenceNodesByControlType = new Hashtable();
         _cachedStyleNodes = new Dictionary<string, XmlNode>();
+        _cachedDefines = new Dictionary<string, string>();
 
         XmlDocument doc = new XmlDocument();
 
@@ -92,6 +93,19 @@ namespace MediaPortal.GUI.Library
             _cachedStyleNodes[styleNameAttribute.Value] = node;
           }
         }
+
+        // cache the defines
+        foreach (XmlNode node in doc.DocumentElement.SelectNodes("/controls/define"))
+        {
+          string[] tokens = node.InnerText.Split(':');
+
+          if (tokens.Length < 2)
+          {
+            continue;
+      }
+          _cachedDefines[tokens[0]] = tokens[1];
+        }
+
       }
       catch (Exception ex)
       {
@@ -108,6 +122,7 @@ namespace MediaPortal.GUI.Library
     {
       m_referenceNodesByControlType = null;
       _cachedStyleNodes = null;
+      _cachedDefines = null;
     }
 
     private static void ReadSkinSizeFromReferenceFile(XmlDocument doc)
@@ -337,7 +352,7 @@ namespace MediaPortal.GUI.Library
         return 0;
       }
 
-      if (type == typeof (ILayout))
+      if (type == typeof (ILayout) || type == typeof(ILayoutDetail))
       {
         return ParseLayout(valueText);
       }
@@ -438,6 +453,10 @@ namespace MediaPortal.GUI.Library
             {
               facade.FilmstripView = subControl as GUIFilmstripControl;
             }
+            if (subControl is GUICoverFlow)
+            {
+              facade.CoverFlowView = subControl as GUICoverFlow;
+            }
             //UpdateControlWithXmlData(subControl, subControl.GetType(), subControlNode, defines);
           }
         }
@@ -495,9 +514,17 @@ namespace MediaPortal.GUI.Library
               {
                 string text = attribNode.Value;
 
-                if (text.Length > 0 && text[0] == '#' && defines.Contains(text))
+                // Window defines (passed in) override references defines (cached).
+                if (text.Length > 0 && text[0] == '#')
                 {
+                  if (_cachedDefines.ContainsKey(text))
+                  {
+                    text = (string)_cachedDefines[text];
+                  }
+                  if (defines.Contains(text))
+                  {
                   text = (string)defines[text];
+                }
                 }
 
                 object newValue = null;
@@ -622,9 +649,17 @@ namespace MediaPortal.GUI.Library
         {
           string text = element.InnerText;
 
-          if (text.Length > 0 && text[0] == '#' && defines.Contains(text))
+          // Window defines (passed in) override references defines (cached).
+          if (text.Length > 0 && text[0] == '#')
           {
+            if (_cachedDefines.ContainsKey(text))
+            {
+              text = (string)_cachedDefines[text];
+            }
+            if (defines.Contains(text))
+            {
             text = (string)defines[text];
+          }
           }
 
           object newValue = null;
@@ -804,6 +839,12 @@ namespace MediaPortal.GUI.Library
           return typeof (GUIActionGroup);
         case ("menu"):
           return typeof (GUIMenuControl);
+        case ("standardKeyboard"):
+          return typeof(GUIStandardKeyboard);
+        case ("smsStyledKeyboard"):
+          return typeof(GUISmsStyledKeyboard);
+        case ("coverflow"):
+          return typeof(GUICoverFlow);
         default:
           Type t = (Type)m_hashCustomControls[xmlTypeName];
 
@@ -910,6 +951,61 @@ namespace MediaPortal.GUI.Library
         return null;
       }
 
+      if (string.Compare(layoutClass, "TableLayout", true) == 0)
+      {
+        if (valueParameters.Length >= 4)
+        {
+          return new TableLayout(valueParameters[0], valueParameters[1], valueParameters[2], valueParameters[3]);
+        }
+
+        if (valueParameters.Length >= 3)
+        {
+          return new TableLayout(valueParameters[0], valueParameters[1], valueParameters[2]);
+        }
+
+        if (valueParameters.Length >= 2)
+        {
+          return new TableLayout(valueParameters[0], valueParameters[1]);
+        }
+
+        if (valueParameters.Length >= 1)
+        {
+          return new TableLayout(valueParameters[0]);
+        }
+
+        if (valueParameters.Length == 0)
+        {
+          return new TableLayout();
+        }
+
+      return null;
+    }
+
+      if (string.Compare(layoutClass, "TableCell", true) == 0)
+      {
+        if (valueParameters.Length >= 3)
+        {
+          return new TableLayout.Cell(valueParameters[0], valueParameters[1], valueParameters[2]);
+        }
+
+        if (valueParameters.Length >= 2)
+        {
+          return new TableLayout.Cell(valueParameters[0], valueParameters[1]);
+        }
+
+        if (valueParameters.Length >= 1)
+        {
+          return new TableLayout.Cell(valueParameters[0]);
+        }
+
+        if (valueParameters.Length == 0)
+        {
+          return new TableLayout.Cell();
+        }
+
+        return null;
+      }
+
       return null;
     }
 
@@ -995,6 +1091,7 @@ namespace MediaPortal.GUI.Library
 
     // same as above but for caching style nodes
     private static Dictionary<string, XmlNode> _cachedStyleNodes;
+    private static Dictionary<string, string> _cachedDefines;
 
     #endregion Fields
   }

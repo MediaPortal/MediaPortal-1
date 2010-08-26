@@ -25,13 +25,17 @@ using TvLibrary.Channels;
 
 namespace TvLibrary.Implementations.DVB
 {
-  internal class GenericBDAS: IDisposable
+  /// <summary>
+  /// Generic BDA DiSEqC support.
+  /// </summary>
+  public class GenericBDAS: IDisposable
   {
     #region variables
 
     private readonly IKsPropertySet _propertySet;
     protected IBDA_Topology _TunerDevice;
     protected bool _isGenericBDAS;
+    protected String _CardName = "GenericBDAS";
 
     #endregion
 
@@ -60,15 +64,24 @@ namespace TvLibrary.Implementations.DVB
           _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            Log.Log.Debug("GenericBDAS: DiSEqC capable card found!");
+            Log.Log.Debug(FormatMessage("DiSEqC capable card found!"));
             _isGenericBDAS = true;
           }
         }
       }
       else
-        Log.Log.Info("GenericBDAS: tuner pin not found!");
+        Log.Log.Info(FormatMessage("tuner pin not found!"));
     }
 
+    /// <summary>
+    /// Formats the log message to contain card type name at start.
+    /// </summary>
+    /// <param name="LogMessage"></param>
+    /// <returns></returns>
+    protected String FormatMessage(String LogMessage)
+    {
+      return String.Format("{0}:{1}", _CardName, LogMessage);
+    }
     /// <summary>
     /// Sends the diseq command.
     /// </summary>
@@ -79,27 +92,27 @@ namespace TvLibrary.Implementations.DVB
       switch (channel.DisEqc)
       {
         case DisEqcType.Level1AA:
-          Log.Log.Info("GenericBDAS:  Level1AA - SendDiSEqCCommand(0x00)");
+          Log.Log.Info(FormatMessage("  Level1AA - SendDiSEqCCommand(0x00)"));
           SendDiSEqCCommand(0x00);
           break;
         case DisEqcType.Level1AB:
-          Log.Log.Info("GenericBDAS:  Level1AB - SendDiSEqCCommand(0x01)");
+          Log.Log.Info(FormatMessage("  Level1AB - SendDiSEqCCommand(0x01)"));
           SendDiSEqCCommand(0x01);
           break;
         case DisEqcType.Level1BA:
-          Log.Log.Info("GenericBDAS:  Level1BA - SendDiSEqCCommand(0x0100)");
+          Log.Log.Info(FormatMessage("  Level1BA - SendDiSEqCCommand(0x0100)"));
           SendDiSEqCCommand(0x0100);
           break;
         case DisEqcType.Level1BB:
-          Log.Log.Info("GenericBDAS:  Level1BB - SendDiSEqCCommand(0x0101)");
+          Log.Log.Info(FormatMessage("  Level1BB - SendDiSEqCCommand(0x0101)"));
           SendDiSEqCCommand(0x0101);
           break;
         case DisEqcType.SimpleA:
-          Log.Log.Info("GenericBDAS:  SimpleA - SendDiSEqCCommand(0x00)");
+          Log.Log.Info(FormatMessage("  SimpleA - SendDiSEqCCommand(0x00)"));
           SendDiSEqCCommand(0x00);
           break;
         case DisEqcType.SimpleB:
-          Log.Log.Info("GenericBDAS:  SimpleB - SendDiSEqCCommand(0x01)");
+          Log.Log.Info(FormatMessage("  SimpleB - SendDiSEqCCommand(0x01)"));
           SendDiSEqCCommand(0x01);
           break;
         default:
@@ -114,7 +127,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>true if succeeded, otherwise false</returns>
     protected bool SendDiSEqCCommand(ulong ulRange)
     {
-      Log.Log.Info("GenericBDAS:  SendDiSEqC Command {0}", ulRange);
+      Log.Log.Info(FormatMessage("  SendDiSEqC Command {0}"), ulRange);
       // get ControlNode of tuner control node
       object ControlNode;
       int hr = _TunerDevice.GetControlNode(0, 1, 0, out ControlNode);
@@ -133,7 +146,7 @@ namespace TvLibrary.Implementations.DVB
               if (FrequencyFilter != null)
               {
                 hr = FrequencyFilter.put_Range(ulRange);
-                Log.Log.Info("GenericBDAS:  put_Range:{0} success:{1}", ulRange, hr);
+                Log.Log.Info(FormatMessage("  put_Range:{0} success:{1}"), ulRange, hr);
                 if (hr == 0)
                 {
                   // did it accept the changes? 
@@ -143,26 +156,26 @@ namespace TvLibrary.Implementations.DVB
                     hr = DecviceControl.CommitChanges();
                     if (hr == 0)
                     {
-                      Log.Log.Info("GenericBDAS:  CommitChanges() Succeeded");
+                      Log.Log.Info(FormatMessage("  CommitChanges() Succeeded"));
                       return true;
                     }
                     // reset configuration
-                    Log.Log.Info("GenericBDAS:  CommitChanges() Failed!");
+                    Log.Log.Info(FormatMessage("  CommitChanges() Failed!"));
                     DecviceControl.StartChanges();
                     DecviceControl.CommitChanges();
                     return false;
                   }
-                  Log.Log.Info("GenericBDAS:  CheckChanges() Failed!");
+                  Log.Log.Info(FormatMessage("  CheckChanges() Failed!"));
                   return false;
                 }
-                Log.Log.Info("GenericBDAS:  put_Range Failed!");
+                Log.Log.Info(FormatMessage("  put_Range Failed!"));
                 return false;
               }
             }
           }
         }
       }
-      Log.Log.Info("GenericBDAS:  GetControlNode Failed!");
+      Log.Log.Info(FormatMessage("  GetControlNode Failed!"));
       return false;
     }
 
@@ -191,19 +204,19 @@ namespace TvLibrary.Implementations.DVB
               if (FrequencyFilter != null)
               {
                 hr = FrequencyFilter.get_Range(out pulRange);
-                Log.Log.Info("GenericBDAS:  get_Range:{0} success:{1}", pulRange, hr);
+                Log.Log.Info(FormatMessage("  get_Range:{0} success:{1}"), pulRange, hr);
                 if (hr == 0)
                 {
                   return true;
                 }
-                Log.Log.Info("GenericBDAS:  get_Range Failed!");
+                Log.Log.Info(FormatMessage("  get_Range Failed!"));
                 return false;
               }
             }
           }
         }
       }
-      Log.Log.Info("GenericBDAS:  GetControlNode Failed!");
+      Log.Log.Info(FormatMessage("  GetControlNode Failed!"));
       pulRange = 0;
       return false;
     }
@@ -232,7 +245,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region IDisposable Member
 
-    public void Dispose()
+    public virtual void Dispose()
     {
     }
 

@@ -238,7 +238,6 @@ namespace SetupTv
                         +
                         System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName.
                           ToLowerInvariant());
-        bool DvbCheck = false;
         cardPage = new TvCards(server.HostName);
         cardPage.TvCardsChanged += OnTvCardsChanged;
         AddChildSection(servers, cardPage, 0);
@@ -257,27 +256,22 @@ namespace SetupTv
               case CardType.DvbT:
                 cardName = String.Format("{0} DVB-T {1}", cardNo, cardName);
                 AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard), 1);
-                DvbCheck = true;
                 break;
               case CardType.DvbC:
                 cardName = String.Format("{0} DVB-C {1}", cardNo, cardName);
                 AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard), 1);
-                DvbCheck = true;
                 break;
               case CardType.DvbS:
                 cardName = String.Format("{0} DVB-S {1}", cardNo, cardName);
                 AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard), 1);
-                DvbCheck = true;
                 break;
               case CardType.Atsc:
                 cardName = String.Format("{0} ATSC {1}", cardNo, cardName);
                 AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard), 1);
-                DvbCheck = true;
                 break;
               case CardType.DvbIP:
                 cardName = String.Format("{0} DVB-IP {1}", cardNo, cardName);
                 AddChildSection(cardPage, new CardDvbIP(cardName, dbsCard.IdCard), 1);
-                DvbCheck = true;
                 break;
               case CardType.RadioWebStream:
                 cardName = String.Format("{0} {1}", cardNo, cardName);
@@ -285,7 +279,6 @@ namespace SetupTv
                 RadioWebStreamInfo.InfoText =
                   "The RadioWebStream card does not have any options.\n\n\nYou can add your favourite radio webstreams under:\n\n --> 'Radio Channels', 'Add', 'Web-Stream' or by importing a playlist.";
                 AddChildSection(cardPage, RadioWebStreamInfo, 1);
-                DvbCheck = true;
                 break;
               case CardType.Unknown:
                 cardName = String.Format("{0} Unknown {1}", cardNo, cardName);

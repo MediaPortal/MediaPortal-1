@@ -115,7 +115,7 @@ namespace MediaPortal.Subtitle
               int iposx = (GUIGraphicsContext.OverScanWidth - (int)fw) / 2;
               int iposy = (GUIGraphicsContext.Subtitles - (int)fh);
               m_font.DrawShadowText((float)iposx, (float)iposy, m_iColor, line.Text, GUIControl.Alignment.ALIGN_LEFT,
-                                    m_iShadow, m_iShadow, 0xff000000);
+                                    (int)fw, m_iShadow, m_iShadow, 0xff000000);
             }
             catch (Exception) {}
           }

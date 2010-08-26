@@ -251,6 +251,7 @@ namespace TvEngine
         process.StartInfo.FileName = program;
         process.StartInfo.WindowStyle = windowStyle;
         process.StartInfo.WorkingDirectory = workingFolder;
+        process.StartInfo.Verb = "runas";
 
         process.Start();
       }

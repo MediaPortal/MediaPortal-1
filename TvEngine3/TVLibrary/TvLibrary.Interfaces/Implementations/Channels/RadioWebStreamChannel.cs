@@ -165,5 +165,13 @@ namespace TvLibrary.Implementations
     {
       return true;
     }
+
+    /// <summary>
+    /// returns whether this channel is FreeToAir
+    /// </summary>
+    public bool FreeToAir
+    {
+      get { return true; }
+    }
   }
 }

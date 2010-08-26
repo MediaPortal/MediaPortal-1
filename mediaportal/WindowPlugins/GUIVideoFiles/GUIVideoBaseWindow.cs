@@ -48,7 +48,8 @@ namespace MediaPortal.GUI.Video
       Icons = 1,
       LargeIcons = 2,
       FilmStrip = 4,
-      PlayList = 5
+      PlayList = 5,
+      CoverFlow = 6
     }
 
     #endregion
@@ -174,6 +175,8 @@ namespace MediaPortal.GUI.Video
           return View.FilmStrip;
         case "playlist":
           return View.PlayList;
+        case "coverflow":
+          return View.CoverFlow;
       }
       if (!string.IsNullOrEmpty(s))
       {
@@ -346,6 +349,17 @@ namespace MediaPortal.GUI.Video
               break;
 
             case View.FilmStrip:
+              CurrentView = View.CoverFlow;
+              if (!AllowView(CurrentView) || facadeView.ListView == null)
+              {
+                shouldContinue = true;
+              }
+              else
+              {
+                facadeView.View = GUIFacadeControl.ViewMode.CoverFlow;
+              }
+              break;
+            case View.CoverFlow:
               CurrentView = View.List;
               if (!AllowView(CurrentView) || facadeView.ListView == null)
               {
@@ -490,6 +504,11 @@ namespace MediaPortal.GUI.Video
         GUIPropertyManager.SetProperty("#currentmodule", GetModuleName());
       }
 
+      if (facadeView == null)
+      {
+        return;
+      }
+
       GUIControl.HideControl(GetID, facadeView.GetID);
 
       int iControl = facadeView.GetID;
@@ -515,6 +534,9 @@ namespace MediaPortal.GUI.Video
           break;
         case View.PlayList:
           strLine = GUILocalizeStrings.Get(101);
+          break;
+        case View.CoverFlow:
+          strLine = GUILocalizeStrings.Get(791);
           break;
       }
       GUIControl.SetControlLabel(GetID, btnViewAs.GetID, strLine);
@@ -688,6 +710,9 @@ namespace MediaPortal.GUI.Video
           break;
         case View.PlayList:
           facadeView.View = GUIFacadeControl.ViewMode.Playlist;
+          break;
+        case View.CoverFlow:
+          facadeView.View = GUIFacadeControl.ViewMode.CoverFlow;
           break;
       }
     }

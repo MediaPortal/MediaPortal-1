@@ -52,6 +52,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("spinSuffixText")] protected string _suffixText = "";
     [XMLSkinElement("spinTextXOff")] protected int _spinTextOffsetX = 0;
     [XMLSkinElement("spinTextYOff")] protected int _spinTextOffsetY = 0;
+    [XMLSkinElement("spinTextInButton")] protected bool _spinTextInButton = false;
     [XMLSkinElement("showrange")] protected bool _showRange = true;
     [XMLSkinElement("digits")] protected int _digits = -1;
     [XMLSkinElement("reverse")] protected bool _reverse = false;
@@ -66,23 +67,29 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("textvalign")] protected VAlignment _textVAlignment = VAlignment.ALIGN_TOP;
+    [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = -1;
+    [XMLSkinElement("scrollWrapString")] protected string _userWrapString = "";
     [XMLSkin("textureFocus", "border")] protected string _strBorderTF = "";
-    [XMLSkin("textureFocus", "position")] protected string _strBorderPositionTF = "outside";
+    [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionTF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("textureFocus", "textureRepeat")] protected bool _borderTextureRepeatTF = false;
     [XMLSkin("textureFocus", "textureRotate")] protected bool _borderTextureRotateTF = false;
     [XMLSkin("textureFocus", "texture")] protected string _borderTextureFileNameTF = "image_border.png";
     [XMLSkin("textureFocus", "colorKey")] protected long _borderColorKeyTF = 0xFFFFFFFF;
+    [XMLSkin("textureFocus", "corners")] protected bool _borderHasCornersTF = false;
+    [XMLSkin("textureFocus", "cornerRotate")] protected bool _borderCornerTextureRotateTF = true;
     [XMLSkin("textureNoFocus", "border")] protected string _strBorderTNF = "";
-    [XMLSkin("textureNoFocus", "position")] protected string _strBorderPositionTNF = "outside";
+    [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionTNF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("textureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatTNF = false;
     [XMLSkin("textureNoFocus", "textureRotate")] protected bool _borderTextureRotateTNF = false;
     [XMLSkin("textureNoFocus", "texture")] protected string _borderTextureFileNameTNF = "image_border.png";
     [XMLSkin("textureNoFocus", "colorKey")] protected long _borderColorKeyTNF = 0xFFFFFFFF;
+    [XMLSkin("textureNoFocus", "corners")] protected bool _borderHasCornersTNF = false;
+    [XMLSkin("textureNoFocus", "cornerRotate")] protected bool _borderCornerTextureRotateTNF = true;
 
     protected int _frameCounter = 0;
     protected GUIAnimation _imageFocused = null;
     protected GUIAnimation _imageNonFocused = null;
-    protected GUILabelControl _labelControl = null;
+    protected GUIControl _labelControl = null;
     protected GUISpinControl _spinControl = null;
 
     public GUISpinButton(int dwParentID) : base(dwParentID) {}
@@ -141,30 +148,53 @@ namespace MediaPortal.GUI.Library
       _imageFocused.ParentControl = this;
       _imageFocused.Filtering = false;
       _imageFocused.DimColor = DimColor;
-      _imageFocused.SetBorder(_strBorderTF, _strBorderPositionTF, _borderTextureRepeatTF, _borderTextureRotateTF,
-                              _borderTextureFileNameTF, _borderColorKeyTF);
+      _imageFocused.SetBorder(_strBorderTF, _borderPositionTF, _borderTextureRepeatTF, _borderTextureRotateTF,
+        _borderTextureFileNameTF, _borderColorKeyTF, _borderHasCornersTF, _borderCornerTextureRotateTF);
 
       _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
                                               _nonFocusedTextureName);
       _imageNonFocused.ParentControl = this;
       _imageNonFocused.Filtering = false;
       _imageNonFocused.DimColor = DimColor;
-      _imageNonFocused.SetBorder(_strBorderTNF, _strBorderPositionTNF, _borderTextureRepeatTNF, _borderTextureRotateTNF,
-                                 _borderTextureFileNameTNF, _borderColorKeyTNF);
+      _imageNonFocused.SetBorder(_strBorderTNF, _borderPositionTNF, _borderTextureRepeatTNF, _borderTextureRotateTNF,
+        _borderTextureFileNameTNF, _borderColorKeyTNF, _borderHasCornersTNF, _borderCornerTextureRotateTNF);
       GUILocalizeStrings.LocalizeLabel(ref _label);
 
-      _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
-                                          _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false,
-                                          _shadowAngle, _shadowDistance, _shadowColor);
-      _labelControl.ParentControl = this;
-      _labelControl.DimColor = DimColor;
-      _labelControl.TextAlignment = _textAlignment;
-      _labelControl.TextVAlignment = _textVAlignment;
 
-      _spinControl = new GUISpinControl(0, 0, _positionX + _width - _spinWidth, _positionY, _spinWidth,
-                                        _spinHeight, _upTextureName, _downTextureName,
-                                        _upTextureNameFocus, _downTextureNameFocus,
-                                        _fontName, _textColor, _spinType, _spinAlignment);
+      if (_scrollStartDelay < 0)
+      {
+        _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
+                                            _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, false,
+                                            _shadowAngle, _shadowDistance, _shadowColor);
+        ((GUILabelControl)_labelControl).ParentControl = this;
+        ((GUILabelControl)_labelControl).DimColor = DimColor;
+        ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
+        ((GUILabelControl)_labelControl).TextVAlignment = _textVAlignment;
+      }
+      else
+      {
+        _labelControl = new GUIFadeLabel(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
+                                         _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP,
+                                        _shadowAngle, _shadowDistance, _shadowColor,
+                                         _userWrapString);
+        ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
+        ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
+        ((GUIFadeLabel)_labelControl).AllowScrolling = false;
+        ((GUIFadeLabel)_labelControl).AllowFadeIn = false;
+      }
+
+      string spinFontName = _fontName;
+      if (_spinTextInButton)
+      {
+        // When the spin control font name is null the spin control will not render the text.
+        // _spinTextInButton will render the spin control text in the button label.
+        spinFontName = null;
+      }
+
+      _spinControl = new GUISpinControl(GetID, 0, _positionX + _width - _spinWidth, _positionY, _spinWidth,
+                                          _spinHeight, _upTextureName, _downTextureName,
+                                          _upTextureNameFocus, _downTextureNameFocus,
+                                          spinFontName, _textColor, _spinType, _spinAlignment);
       _spinControl.ParentControl = this;
       _spinControl.DimColor = DimColor;
       _spinControl.ShowRange = _showRange;
@@ -213,12 +243,24 @@ namespace MediaPortal.GUI.Library
               _imageFocused.Begin();
             }
             GUIPropertyManager.SetProperty("#highlightedbutton", Label);
+
+            // When button focus is obtained, the GUIFadeLabel (if specified) is allowed to scroll.
+            if (_labelControl is GUIFadeLabel)
+            {
+              ((GUIFadeLabel)_labelControl).Clear(); // Resets the control to use the delayed start
+              ((GUIFadeLabel)_labelControl).AllowScrolling = true;
+            }
           }
           else
           {
             if (_imageNonFocused != null)
             {
               _imageNonFocused.Begin();
+            }
+            // When button focus is lost, the GUIFadeLabel (if specified) is not allowed to scroll.
+            if (_labelControl is GUIFadeLabel)
+            {
+              ((GUIFadeLabel)_labelControl).AllowScrolling = false;
             }
           }
         }
@@ -266,7 +308,8 @@ namespace MediaPortal.GUI.Library
         _imageNonFocused.Render(timePassed);
       }
 
-      int labelWidth = _width - 2 * _textOffsetX;
+      // Compute with of label so that the text does not overlap the spin controls.
+      int labelWidth = _width - (2 * _textOffsetX) - (2 * _spinWidth) - _textOffsetX;
       if (labelWidth <= 0)
       {
         base.Render(timePassed);
@@ -275,10 +318,20 @@ namespace MediaPortal.GUI.Library
       _labelControl.Width = labelWidth;
 
       // render the text on the button
-      _labelControl.TextAlignment = _textAlignment;
-      _labelControl.TextVAlignment = _textVAlignment;
-      _labelControl.Label = _label;
-      _labelControl.TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+      if (_labelControl is GUILabelControl)
+      {
+        ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
+        ((GUILabelControl)_labelControl).TextVAlignment = _textVAlignment;
+        ((GUILabelControl)_labelControl).Label = _label;
+        ((GUILabelControl)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+      }
+      else
+      {
+        ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
+        ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
+        ((GUIFadeLabel)_labelControl).Label = _label;
+        ((GUIFadeLabel)_labelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+      }
 
       int x = 0;
       int y = 0;
@@ -411,6 +464,19 @@ namespace MediaPortal.GUI.Library
           return true;
         }
       }
+
+      // Handle the GUI_MSG_CLICKED messages from my spincontrol
+      // When the user has requested that the spin text should be rendered in the label text we listen for clicks on the
+      // spincontrol and update the button label when a change is detected.
+      if (_spinTextInButton)
+      {
+        if ((message.TargetControlId == GetID) & (message.Message == GUIMessage.MessageType.GUI_MSG_CLICKED))
+        {
+          Label = _spinControl.GetLabel();
+          return true;
+        }
+      }
+
       // Let the base class handle the other messages
       if (base.OnMessage(message))
       {
@@ -529,7 +595,14 @@ namespace MediaPortal.GUI.Library
           return;
         }
         _fontName = value;
-        _labelControl.FontName = _fontName;
+        if (_labelControl is GUILabelControl)
+        {
+          ((GUILabelControl)_labelControl).FontName = _fontName;
+        }
+        else
+        {
+          ((GUIFadeLabel)_labelControl).FontName = _fontName;
+        }
       }
     }
 
@@ -553,9 +626,18 @@ namespace MediaPortal.GUI.Library
       _textColor = dwColor;
       _fontName = strFontName;
 
-      _labelControl.FontName = _fontName;
-      _labelControl.TextColor = dwColor;
-      _labelControl.Label = strLabel;
+      if (_labelControl is GUILabelControl)
+      {
+        ((GUILabelControl)_labelControl).FontName = _fontName;
+        ((GUILabelControl)_labelControl).TextColor = dwColor;
+        ((GUILabelControl)_labelControl).Label = strLabel;
+      }
+      else
+      {
+        ((GUIFadeLabel)_labelControl).FontName = _fontName;
+        ((GUIFadeLabel)_labelControl).TextColor = dwColor;
+        ((GUIFadeLabel)_labelControl).Label = strLabel;
+      }
     }
 
     /// <summary>
@@ -572,7 +654,14 @@ namespace MediaPortal.GUI.Library
         }
 
         _label = value;
-        _labelControl.Label = _label;
+        if (_labelControl is GUILabelControl)
+        {
+          ((GUILabelControl)_labelControl).Label = _label;
+        }
+        else
+        {
+          ((GUIFadeLabel)_labelControl).Label = _label;
+        }
       }
     }
 
@@ -710,10 +799,70 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public GUISpinControl SpinControl
+    public void SetSpinRange(int iStart, int iEnd)
     {
-      get { return _spinControl; }
-      set { _spinControl = value; }
+      _spinControl.SetRange(iStart, iEnd);
     }
+
+    public void AddSpinLabel(string label, int value)
+    {
+      _spinControl.AddLabel(label, value);
+
+      // When the user has requested that the spin text should be rendered in the label text we listen for spin label adds
+      // on the spincontrol and update the button label when a change is detected.
+      if (_spinTextInButton)
+      {
+        Label = _spinControl.GetLabel();
+      }
+    }
+
+    public int SpinValue
+    {
+      get
+      {
+        return _spinControl.Value;
+      }
+      set 
+      {
+        _spinControl.Value = value;
+
+        // When the user has requested that the spin text should be rendered in the label text we listen for spin value sets
+        // on the spincontrol and update the button label when a change is detected.
+        if (_spinTextInButton)
+        {
+          Label = _spinControl.GetLabel();
+        }      
+      }
+    }
+    public void ClearSpinLabels()
+    {
+      _spinControl.Reset();
+
+      // When the user has requested that the spin text should be rendered in the label text we listen for spin label resets
+      // on the spincontrol and update the button label when a change is detected.
+      if (_spinTextInButton)
+      {
+        Label = "";
+      }
+    }
+
+    public string SpinLabel
+    {
+      get
+      {
+        return _spinControl.GetLabel();
+      }
+    }
+
+    public int SpinMaxValue()
+    {
+      return _spinControl.GetMaximum();
+    }
+
+    public int SpinMinValue()
+    {
+      return _spinControl.GetMinimum();
+    }
+
   }
 }

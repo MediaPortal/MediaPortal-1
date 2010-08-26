@@ -127,7 +127,7 @@ namespace MediaPortal.Player
     protected bool _isFullscreen = true;
     protected PlayState _state = PlayState.Init;
     protected int _volume = 100;
-    protected int _volumeBeforeSeeking = 100;
+    protected int _volumeBeforeSeeking = 0;
     protected IGraphBuilder _graphBuilder = null;
     protected IMediaSeeking _mediaSeeking = null;
     protected int _speed = 1;
@@ -812,7 +812,10 @@ namespace MediaPortal.Player
                 _usingFastSeeking = false;
                 
                 // unmute audio when speed returns to 1.0x
-                Volume = _volumeBeforeSeeking;
+                if (_volumeBeforeSeeking != 0)
+                {
+                  Volume = _volumeBeforeSeeking;
+                }
                 _volumeBeforeSeeking = 0;
               }
               else

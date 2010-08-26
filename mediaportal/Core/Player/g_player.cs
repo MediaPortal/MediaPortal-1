@@ -104,14 +104,12 @@ namespace MediaPortal.Player
     #region events
 
     public delegate void StoppedHandler(MediaType type, int stoptime, string filename);
-
     public delegate void EndedHandler(MediaType type, string filename);
-
-    public delegate void StartedHandler(MediaType type, string filename);
-
+    public delegate void StartedHandler(MediaType type, string filename);        
     public delegate void ChangedHandler(MediaType type, int stoptime, string filename);
-
+    
     public delegate void AudioTracksReadyHandler();
+    public delegate void TVChannelChangeHandler();
 
     // when a user is already playing a file without stopping the user selects another file for playback.
     // in this case we do not receive the onstopped event.
@@ -122,6 +120,7 @@ namespace MediaPortal.Player
     public static event EndedHandler PlayBackEnded;
     public static event StartedHandler PlayBackStarted;
     public static event AudioTracksReadyHandler AudioTracksReady;
+    public static event TVChannelChangeHandler TVChannelChanged;
 
     #endregion
 
@@ -137,7 +136,7 @@ namespace MediaPortal.Player
       _factory = new PlayerFactory();
     }
 
-    static g_Player() {}
+    static g_Player() { }
 
     public static IPlayer Player
     {
@@ -263,7 +262,7 @@ namespace MediaPortal.Player
         {
           strFromXml = ConvertToNewStyle(strFromXml);
         }
-        foreach (string token in strFromXml.Split(new char[] {',', ';', ' '}))
+        foreach (string token in strFromXml.Split(new char[] { ',', ';', ' ' }))
         {
           if (token == string.Empty)
           {
@@ -293,7 +292,7 @@ namespace MediaPortal.Player
     {
       int count = 0;
       bool foundOtherThanZeroOrOne = false;
-      foreach (string token in strSteps.Split(new char[] {',', ';', ' '}))
+      foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
       {
         if (token == string.Empty)
         {
@@ -313,7 +312,7 @@ namespace MediaPortal.Player
     {
       int count = 0;
       string newStyle = string.Empty;
-      foreach (string token in strSteps.Split(new char[] {',', ';', ' '}))
+      foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
       {
         if (token == string.Empty)
         {
@@ -427,12 +426,21 @@ namespace MediaPortal.Player
           }
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
     #endregion
 
     #region public members
+
+    //called when TV channel is changed
+    private static void OnTVChannelChanged()
+    {
+      if (TVChannelChanged != null) 
+      {
+        TVChannelChanged();
+      }
+    }
 
     internal static void OnAudioTracksReady()
     {
@@ -1201,28 +1209,48 @@ namespace MediaPortal.Player
         _mediaInfo = new MediaInfoWrapper(strFile);
         Starting = true;
 
-        if (Util.Utils.IsVideo(strFile) || Util.Utils.IsLiveTv(strFile)) //video, tv, rtsp
-        {
-          if (type == MediaType.Unknown)
-          {
-            type = MediaType.Video;
-          }
-          // refreshrate change done here.
-          RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
 
-          if (RefreshRateChanger.RefreshRateChangePending)
+        // Partial fix for mantis 0002825 and 0002919:
+        //      - only take care of singleseat and UNC path ( where TS file is used )
+        //      - missing checks for rtsp. Will be done after 1.1.0 using the stream name
+        //                    as distinguo:  stream-tv-* and stream-radio-*
+        //                    we will also use *.radio.ts and *.tv.ts
+
+        // Exception for ts files with no video stream = radio
+        bool checkTSisRadio = Path.GetExtension(strFile).ToLower() == ".ts" && !_mediaInfo.hasVideo;
+
+        if (checkTSisRadio)
+        {
+          Log.Debug("g_Player.Play - TS file detected as radio...");
+          type = MediaType.Radio;
+        }
+        // End of fix
+        else
+        {
+          if (Util.Utils.IsVideo(strFile) || Util.Utils.IsLiveTv(strFile)) //video, tv, rtsp
           {
-            TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
-            if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
+            if (type == MediaType.Unknown)
             {
-              Log.Info(
-                "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
-                RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
-              RefreshRateChanger.ResetRefreshRateState();
+              Log.Debug("g_Player.Play - Mediatype Unknown, forcing detection as Video");
+              type = MediaType.Video;
             }
-            else
+            // refreshrate change done here.
+            RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+
+            if (RefreshRateChanger.RefreshRateChangePending)
             {
-              return true;
+              TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
+              if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
+              {
+                Log.Info(
+                  "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
+                  RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
+                RefreshRateChanger.ResetRefreshRateState();
+              }
+              else
+              {
+                return true;
+              }
             }
           }
         }
@@ -2114,6 +2142,7 @@ namespace MediaPortal.Player
       }
       else
       {
+        OnTVChannelChanged();
         _player.OnZapping(info);
         return;
       }
@@ -2457,7 +2486,7 @@ namespace MediaPortal.Player
     {
       try
       {
-        using (new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None)) {}
+        using (new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None)) { }
       }
       catch (System.IO.IOException exp)
       {
@@ -2519,7 +2548,7 @@ namespace MediaPortal.Player
               continue;
             }
 
-            string[] tokens = line.Split(new char[] {'\t'});
+            string[] tokens = line.Split(new char[] { '\t' });
             if (tokens.Length != 2)
             {
               continue;

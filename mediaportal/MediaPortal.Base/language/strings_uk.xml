@@ -686,7 +686,7 @@
     <String id="782">Складний запис</String>
     <String id="783">Поворот на 180°</String>
     <String id="784">Поворот на 270°</String>
-    <String id="789">Зараз: </String>
+    <String id="789"></String>
     <String id="790">Далі: </String>
     <String id="798">слабкий</String>
     <String id="799">сильний</String>
@@ -831,8 +831,8 @@
     <String id="976">Наступний епізод</String>
     <String id="977">Зараз намає вільного тюнера</String>
     <String id="978">що може показувати цей канал</String>
-    <String id="979">Показувати записану телепрограму з початку</String>
-    <String id="980">Показувати записану телепрограму наживо</String>
+    <String id="979">Показати записану телепрограму з початку</String>
+    <String id="980">Показати записану телепрограму наживо</String>
     <String id="981">Відмінити запис цієї серії</String>
     <String id="982">Видалити запис всіх серій</String>
     <String id="983" prefix="Мої ">Списки програвання</String>
@@ -957,7 +957,7 @@
     <String id="1113">Пропустити обидва</String>
     <String id="1190">14:9</String>
     <String id="1191">Повторити списки програвання</String>
-    <String id="1192">Use VMR9 for Web Streams</String>
+    <String id="1192">Використовувати VMR9 для відеопотоків інтернету</String>
     <String id="1193">Ввімкнути звуки інтерфейсу</String>
     <String id="1194">Починати з простої домівки</String>
     <String id="1195">Ввімкнути кеурвання мишкою</String>
@@ -965,6 +965,8 @@
     <String id="1197">Вимкнути DXVA</String>
     <String id="1198">Навігатор DVD</String>
     <String id="1200">Майстер налаштування</String>
+    <String id="1201">Показати відео з початку</String>
+    <String id="1211">Продовжити показ з {0}</String> <!--{0} is replaced by last stop time in HMS format-->
     <String id="1300" prefix="Мої ">Серіали</String>
     <String id="1440" prefix="Мій ">Телетекст</String>
     <String id="1441">Телетекст</String>
@@ -1203,7 +1205,6 @@
     <String id="2223">Корзина</String>
     <String id="2224">Тека вже існує!</String>
     <String id="2225">Створено теку</String>
-    <!-- Wikipedia Strings -->
     <String id="2500">Запит не задано!</String>
     <String id="2501">Введіть правильний запит!</String>
     <String id="2502">Виберіть місцеву Вікіпедію:</String>
@@ -1241,7 +1242,6 @@
     <String id="2612">Угорська</String>
     <String id="2613">Російська</String>
     <String id="2614">Українська</String>
-    <!-- End of Wikipedia Strings -->
     <String id="2650">Перезавантажую шрифти - зачекайте будь-ласка...</String>
     <String id="2700">Відкрити CI меню</String>
     <String id="2997">год</String>
@@ -1684,7 +1684,6 @@
     <String id="100004">Налаштування</String>
     <String id="100005" prefix="Моя ">Музика</String>
     <String id="100006" prefix="Моє ">Відео</String>
-    <String id="100007">Системна інформація</String>
     <String id="100008">Налаштування-&gt;Загальні</String>
     <String id="100009">Налаштування-&gt;Екран</String>
     <String id="100010">Налаштування-&gt;Екран-&gt;Калібровка інтерфейсу</String>
@@ -1707,8 +1706,6 @@
     <String id="100029">Налаштування-&gt;Загальні-&gt;LCD</String>
     <String id="100030" prefix="Моє ">Радіо</String>
     <String id="100031">Налаштування-&gt;Екран-&gt;швидкість прокрутки</String>
-    <String id="100032">MSN Messenger</String>
-    <String id="100033">MSN Messenger діалог</String>
     <String id="100034" prefix="Мої ">Додатки</String>
     <String id="100035">Базова домівка</String>
     <String id="100100">Діалог так/ні</String>
@@ -1778,7 +1775,6 @@
     <String id="100747">Пошук ТБ</String>
     <String id="100748">Інформація про програму</String>
     <String id="100749">Телебачення/Нема сигналу</String>
-    <String id="100750">Рецепти</String>
     <String id="100755">Стан</String>
     <String id="100756">Подробиці стану</String>
     <String id="100757">Налаштування стану</String>
@@ -1787,7 +1783,6 @@
     <String id="100760">Випалювач</String>
     <String id="100761">Телепрограма</String>
     <String id="100762">Програма радіопередач</String>
-    <String id="100770">Провідник</String>
     <String id="100800" prefix="Мої ">Додатки</String>
     <String id="101000">клавіатура</String>
     <String id="101002">Віруальна клавіатура</String>
@@ -1824,10 +1819,6 @@
     <String id="103011" prefix="Моє ">Телебачення/Налаштування обрізання</String>
     <String id="103012">Подробиці сканування телебачення</String>
     <String id="104711" prefix="Моя ">Вікіпедія</String>
-    <String id="105000">Будильник</String>
-    <String id="105001">Будильник - Подробиці</String>
-    <String id="105002">Будильник - Час спати</String>
-    <String id="105900" prefix="Мої ">Анонси</String>
     <String id="106666">Очікування планового вимкнення</String>
     <String id="107700" prefix="Моє ">Телебачення/Телетекст</String>
     <String id="107701" prefix="Моє ">Телебачення/Телетекст</String>

@@ -44,6 +44,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textureFocusedRight")] protected string _textureFocusedRight;
     [XMLSkinElement("textureNonFocusedRight")] protected string _textureNonFocusedRight;
     [XMLSkinElement("textureIcon")] protected string _textureIcon;
+    [XMLSkinElement("textureIcon2")] protected string _textureIcon2;
     protected GUIImage _imageNonFocusedMid = null;
     protected GUIImage _imageFocusedRight = null;
     protected GUIImage _imageNonFocusedRight = null;
@@ -51,7 +52,9 @@ namespace MediaPortal.GUI.Library
     protected GUIImage _imageNonFocusedLeft = null;
     protected GUIImage _imageFocusedMid = null;
     protected GUIImage _imageIcon = null;
-    [XMLSkinElement("label1")] protected string _tagLabel1 = "";
+    protected GUIImage _imageIcon2 = null;
+    [XMLSkinElement("label1")]
+    protected string _tagLabel1 = "";
     [XMLSkinElement("label2")] protected string _tagLabel2 = "";
     [XMLSkinElement("font1")] protected string _fontName1 = string.Empty;
     [XMLSkinElement("font2")] protected string _fontName2 = string.Empty;
@@ -76,6 +79,95 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("iconKeepAspectRatio")] protected bool _iconKeepAspectRatio = false;
     [XMLSkinElement("iconCentered")] protected bool _iconCentered = false;
     [XMLSkinElement("iconZoomed")] protected bool _iconZoomed = false;
+    [XMLSkinElement("iconAlign")] protected Alignment _iconAlign = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("iconVAlign")] protected VAlignment _iconVAlign = VAlignment.ALIGN_TOP;
+    [XMLSkinElement("iconInlineLabel1")] protected bool _iconInlineLabel1 = false;
+    [XMLSkinElement("icon2OffsetX")] protected int _icon2OffsetX = -1;
+    [XMLSkinElement("icon2OffsetY")] protected int _icon2OffsetY = -1;
+    [XMLSkinElement("icon2Width")] protected int _icon2Width = -1;
+    [XMLSkinElement("icon2Height")] protected int _icon2Height = -1;
+    [XMLSkinElement("icon2KeepAspectRatio")] protected bool _icon2KeepAspectRatio = false;
+    [XMLSkinElement("icon2Centered")] protected bool _icon2Centered = false;
+    [XMLSkinElement("icon2Zoomed")] protected bool _icon2Zoomed = false;
+    [XMLSkinElement("icon2Align")] protected Alignment _icon2Align = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("icon2VAlign")] protected VAlignment _icon2VAlign = VAlignment.ALIGN_TOP;
+    [XMLSkinElement("icon2InlineLabel1")] protected bool _icon2InlineLabel1 = false;
+    [XMLSkinElement("shadowAngle1")] protected int _shadowAngle1 = 0;
+    [XMLSkinElement("shadowDistance1")] protected int _shadowDistance1 = 0;
+    [XMLSkinElement("shadowColor1")] protected long _shadowColor1 = 0xFF000000;
+    [XMLSkinElement("shadowAngle2")] protected int _shadowAngle2 = 0;
+    [XMLSkinElement("shadowDistance2")] protected int _shadowDistance2 = 0;
+    [XMLSkinElement("shadowColor2")] protected long _shadowColor2 = 0xFF000000;
+    [XMLSkin("textureFocusedLeft", "border")] protected string _strBorderTFL = "";
+    [XMLSkin("textureFocusedLeft", "position")] protected GUIImage.BorderPosition _borderPositionTFL = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+    [XMLSkin("textureFocusedLeft", "textureRepeat")] protected bool _borderTextureRepeatTFL = false;
+    [XMLSkin("textureFocusedLeft", "textureRotate")] protected bool _borderTextureRotateTFL = false;
+    [XMLSkin("textureFocusedLeft", "texture")] protected string _borderTextureFileNameTFL = "image_border.png";
+    [XMLSkin("textureFocusedLeft", "colorKey")] protected long _borderColorKeyTFL = 0xFFFFFFFF;
+    [XMLSkin("textureFocusedLeft", "corners")] protected bool _borderHasCornersTFL = false;
+    [XMLSkin("textureFocusedLeft", "cornerRotate")] protected bool _borderCornerTextureRotateTFL = true;
+    [XMLSkin("textureNonFocusedLeft", "border")] protected string _strBorderTNFL = "";
+    [XMLSkin("textureNonFocusedLeft", "position")] protected GUIImage.BorderPosition _borderPositionTNFL = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+    [XMLSkin("textureNonFocusedLeft", "textureRepeat")] protected bool _borderTextureRepeatTNFL = false;
+    [XMLSkin("textureNonFocusedLeft", "textureRotate")] protected bool _borderTextureRotateTNFL = false;
+    [XMLSkin("textureNonFocusedLeft", "texture")] protected string _borderTextureFileNameTNFL = "image_border.png";
+    [XMLSkin("textureNonFocusedLeft", "colorKey")] protected long _borderColorKeyTNFL = 0xFFFFFFFF;
+    [XMLSkin("textureNonFocusedLeft", "corners")] protected bool _borderHasCornersTNFL = false;
+    [XMLSkin("textureNonFocusedLeft", "cornerRotate")] protected bool _borderCornerTextureRotateTNFL = true;
+    [XMLSkin("textureFocusedMid", "border")] protected string _strBorderTFM = "";
+    [XMLSkin("textureFocusedMid", "position")] protected GUIImage.BorderPosition _borderPositionTFM = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+    [XMLSkin("textureFocusedMid", "textureRepeat")] protected bool _borderTextureRepeatTFM = false;
+    [XMLSkin("textureFocusedMid", "textureRotate")] protected bool _borderTextureRotateTFM = false;
+    [XMLSkin("textureFocusedMid", "texture")] protected string _borderTextureFileNameTFM = "image_border.png";
+    [XMLSkin("textureFocusedMid", "colorKey")] protected long _borderColorKeyTFM = 0xFFFFFFFF;
+    [XMLSkin("textureFocusedMid", "corners")] protected bool _borderHasCornersTFM = false;
+    [XMLSkin("textureFocusedMid", "cornerRotate")] protected bool _borderCornerTextureRotateTFM = true;
+    [XMLSkin("textureNonFocusedMid", "border")] protected string _strBorderTNFM = "";
+    [XMLSkin("textureNonFocusedMid", "position")] protected GUIImage.BorderPosition _borderPositionTNFM = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+    [XMLSkin("textureNonFocusedMid", "textureRepeat")] protected bool _borderTextureRepeatTNFM = false;
+    [XMLSkin("textureNonFocusedMid", "textureRotate")] protected bool _borderTextureRotateTNFM = false;
+    [XMLSkin("textureNonFocusedMid", "texture")] protected string _borderTextureFileNameTNFM = "image_border.png";
+    [XMLSkin("textureNonFocusedMid", "colorKey")] protected long _borderColorKeyTNFM = 0xFFFFFFFF;
+    [XMLSkin("textureNonFocusedMid", "corners")] protected bool _borderHasCornersTNFM = false;
+    [XMLSkin("textureNonFocusedMid", "cornerRotate")] protected bool _borderCornerTextureRotateTNFM = true;
+    [XMLSkin("textureFocusedRight", "border")] protected string _strBorderTFR = "";
+    [XMLSkin("textureFocusedRight", "position")] protected GUIImage.BorderPosition _borderPositionTFR = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+    [XMLSkin("textureFocusedRight", "textureRepeat")] protected bool _borderTextureRepeatTFR = false;
+    [XMLSkin("textureFocusedRight", "textureRotate")] protected bool _borderTextureRotateTFR = false;
+    [XMLSkin("textureFocusedRight", "texture")] protected string _borderTextureFileNameTFR = "image_border.png";
+    [XMLSkin("textureFocusedRight", "colorKey")] protected long _borderColorKeyTFR = 0xFFFFFFFF;
+    [XMLSkin("textureFocusedRight", "corners")] protected bool _borderHasCornersTFR = false;
+    [XMLSkin("textureFocusedRight", "cornerRotate")] protected bool _borderCornerTextureRotateTFR = true;
+    [XMLSkin("textureNonFocusedRight", "border")] protected string _strBorderTNFR = "";
+    [XMLSkin("textureNonFocusedRight", "position")] protected GUIImage.BorderPosition _borderPositionTNFR = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+    [XMLSkin("textureNonFocusedRight", "textureRepeat")] protected bool _borderTextureRepeatTNFR = false;
+    [XMLSkin("textureNonFocusedRight", "textureRotate")] protected bool _borderTextureRotateTNFR = false;
+    [XMLSkin("textureNonFocusedRight", "texture")] protected string _borderTextureFileNameTNFR = "image_border.png";
+    [XMLSkin("textureNonFocusedRight", "colorKey")] protected long _borderColorKeyTNFR = 0xFFFFFFFF;
+    [XMLSkin("textureNonFocusedRight", "corners")] protected bool _borderHasCornersTNFR = false;
+    [XMLSkin("textureNonFocusedRight", "cornerRotate")] protected bool _borderCornerTextureRotateTNFR = true;
+    [XMLSkin("textureIcon", "border")] protected string _strBorderTI = "";
+    [XMLSkin("textureIcon", "position")] protected GUIImage.BorderPosition _borderPositionTI = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+    [XMLSkin("textureIcon", "textureRepeat")] protected bool _borderTextureRepeatTI = false;
+    [XMLSkin("textureIcon", "textureRotate")] protected bool _borderTextureRotateTI = false;
+    [XMLSkin("textureIcon", "texture")] protected string _borderTextureFileNameTI = "image_border.png";
+    [XMLSkin("textureIcon", "colorKey")] protected long _borderColorKeyTI = 0xFFFFFFFF;
+    [XMLSkin("textureIcon", "corners")] protected bool _borderHasCornersTI = false;
+    [XMLSkin("textureIcon", "cornerRotate")] protected bool _borderCornerTextureRotateTI = true;
+    [XMLSkin("textureIcon2", "border")] protected string _strBorderTI2 = "";
+    [XMLSkin("textureIcon2", "position")] protected GUIImage.BorderPosition _borderPositionTI2 = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+    [XMLSkin("textureIcon2", "textureRepeat")] protected bool _borderTextureRepeatTI2 = false;
+    [XMLSkin("textureIcon2", "textureRotate")] protected bool _borderTextureRotateTI2 = false;
+    [XMLSkin("textureIcon2", "texture")] protected string _borderTextureFileNameTI2 = "image_border.png";
+    [XMLSkin("textureIcon2", "colorKey")] protected long _borderColorKeyTI2 = 0xFFFFFFFF;
+    [XMLSkin("textureIcon2", "corners")] protected bool _borderHasCornersTI2 = false;
+    [XMLSkin("textureIcon2", "cornerRotate")] protected bool _borderCornerTextureRotateTI2 = true;
+    [XMLSkin("textureFocusedLeft", "tileFill")] protected bool _textureFocusedLeftTileFill = false;
+    [XMLSkin("textureNonFocusedLeft", "tileFill")] protected bool _textureNonFocusedLeftTileFill = false;
+    [XMLSkin("textureFocusedMid", "tileFill")] protected bool _textureFocusedMidTileFill = false;
+    [XMLSkin("textureNonFocusedMid", "tileFill")] protected bool _textureNonFocusedMidTileFill = false;
+    [XMLSkin("textureFocusedRight", "tileFill")] protected bool _textureFocusedRightTileFill = false;
+    [XMLSkin("textureNonFocusedRight", "tileFill")] protected bool _textureNonFocusedRightTileFill = false;
 
     private GUILabelControl _labelControl1 = null;
     private GUILabelControl _labelControl2 = null;
@@ -131,7 +223,9 @@ namespace MediaPortal.GUI.Library
       _textureNonFocusedMid = strTextureNoFocusMid;
       _textureNonFocusedRight = strTextureNoFocusRight;
       _textureIcon = strTextureIcon;
+      _textureIcon2 = strTextureIcon;
       _imageIcon = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, 0, 0, strTextureIcon, 0);
+      _imageIcon2 = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, 0, 0, strTextureIcon, 0);
       _imageFocusedLeft = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureFocusLeft,
                                        0);
       _imageFocusedMid = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTextureFocusMid, 0);
@@ -147,6 +241,7 @@ namespace MediaPortal.GUI.Library
       _labelControl1 = new GUILabelControl(dwParentID);
       _labelControl2 = new GUILabelControl(dwParentID);
       _imageIcon.ParentControl = this;
+      _imageIcon2.ParentControl = this;
       _imageFocusedLeft.ParentControl = this;
       _imageFocusedMid.ParentControl = this;
       _imageFocusedRight.ParentControl = this;
@@ -163,8 +258,11 @@ namespace MediaPortal.GUI.Library
       _imageNonFocusedMid.DimColor = DimColor;
       _imageNonFocusedRight.DimColor = DimColor;
       _imageIcon.DimColor = DimColor;
+      _imageIcon2.DimColor = DimColor;
       _labelControl1.DimColor = DimColor;
       _labelControl2.DimColor = DimColor;
+
+      _imageIcon2.Visible = false; // Constructor creates icon2 as a copy of icon1.
     }
 
     /// <summary>
@@ -176,6 +274,7 @@ namespace MediaPortal.GUI.Library
       base.FinalizeConstruction();
 
       _imageIcon = new GUIImage(ParentID, GetID, _positionX, _positionY, 0, 0, _textureIcon, 0);
+      _imageIcon2 = new GUIImage(ParentID, GetID, _positionX, _positionY, 0, 0, _textureIcon2, 0);
       _imageFocusedLeft = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureFocusedLeft, 0);
       _imageFocusedMid = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureFocusedMid, 0);
       _imageFocusedRight = new GUIImage(ParentID, GetID, _positionX, _positionY, Width, Height, _textureFocusedRight, 0);
@@ -189,6 +288,7 @@ namespace MediaPortal.GUI.Library
       _labelControl1 = new GUILabelControl(ParentID);
       _labelControl2 = new GUILabelControl(ParentID);
       _imageIcon.ParentControl = this;
+      _imageIcon2.ParentControl = this;
       _imageFocusedLeft.ParentControl = this;
       _imageFocusedMid.ParentControl = this;
       _imageFocusedRight.ParentControl = this;
@@ -205,8 +305,42 @@ namespace MediaPortal.GUI.Library
       _imageNonFocusedMid.DimColor = DimColor;
       _imageNonFocusedRight.DimColor = DimColor;
       _imageIcon.DimColor = DimColor;
+      _imageIcon2.DimColor = DimColor;
       _labelControl1.DimColor = DimColor;
       _labelControl2.DimColor = DimColor;
+      _labelControl1.SetShadow(_shadowAngle1, _shadowDistance1, _shadowColor1);
+      _labelControl2.SetShadow(_shadowAngle2, _shadowDistance2, _shadowColor2);
+
+      _imageFocusedLeft.SetBorder(_strBorderTFL, _borderPositionTFL, _borderTextureRepeatTFL, _borderTextureRotateTFL,
+        _borderTextureFileNameTFL, _borderColorKeyTFL, _borderHasCornersTFL, _borderCornerTextureRotateTFL);
+
+      _imageNonFocusedLeft.SetBorder(_strBorderTNFL, _borderPositionTNFL, _borderTextureRepeatTNFL, _borderTextureRotateTNFL,
+        _borderTextureFileNameTNFL, _borderColorKeyTNFL, _borderHasCornersTNFL, _borderCornerTextureRotateTNFL);
+
+      _imageFocusedMid.SetBorder(_strBorderTFM, _borderPositionTFM, _borderTextureRepeatTFM, _borderTextureRotateTFM,
+        _borderTextureFileNameTFM, _borderColorKeyTFM, _borderHasCornersTFM, _borderCornerTextureRotateTFM);
+
+      _imageNonFocusedMid.SetBorder(_strBorderTNFM, _borderPositionTNFM, _borderTextureRepeatTNFM, _borderTextureRotateTNFM,
+        _borderTextureFileNameTNFM, _borderColorKeyTNFM, _borderHasCornersTNFM, _borderCornerTextureRotateTNFM);
+
+      _imageFocusedRight.SetBorder(_strBorderTFR, _borderPositionTFR, _borderTextureRepeatTFR, _borderTextureRotateTFR,
+        _borderTextureFileNameTFR, _borderColorKeyTFR, _borderHasCornersTFR, _borderCornerTextureRotateTFR);
+
+      _imageNonFocusedRight.SetBorder(_strBorderTNFR, _borderPositionTNFR, _borderTextureRepeatTNFR, _borderTextureRotateTNFR,
+        _borderTextureFileNameTNFR, _borderColorKeyTNFR, _borderHasCornersTNFR, _borderCornerTextureRotateTNFR);
+
+      _imageIcon.SetBorder(_strBorderTI, _borderPositionTI, _borderTextureRepeatTI, _borderTextureRotateTI,
+        _borderTextureFileNameTI, _borderColorKeyTI, _borderHasCornersTI, _borderCornerTextureRotateTI);
+
+      _imageIcon2.SetBorder(_strBorderTI2, _borderPositionTI2, _borderTextureRepeatTI2, _borderTextureRotateTI2,
+        _borderTextureFileNameTI2, _borderColorKeyTI2, _borderHasCornersTI2, _borderCornerTextureRotateTI2);
+
+      TileFillTFL = _textureFocusedLeftTileFill;
+      TileFillTNFL = _textureNonFocusedLeftTileFill;
+      TileFillTFM = _textureFocusedMidTileFill;
+      TileFillTNFM = _textureNonFocusedMidTileFill;
+      TileFillTFR = _textureFocusedRightTileFill;
+      TileFillTNFR = _textureNonFocusedRightTileFill;
     }
 
     /// <summary>
@@ -278,19 +412,20 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      //render the icon
-      if (_imageIcon != null)
-      {
-        _imageIcon.Render(timePassed);
-      }
-
-
       // render the 1st line of text on the button
       int iWidth = _imageNonFocusedMid.Width - 10 - _textOffsetX1;
-      if (iWidth <= 0)
+
+      // Shorten the text width so the text does not overlap a right aligned or inlined icon.
+      if (_imageIcon != null && (_iconAlign == Alignment.ALIGN_RIGHT) || IconInlineLabel1)
       {
-        iWidth = 1;
+        iWidth -= (_imageIcon.Width + IconOffsetX);
       }
+      if (_imageIcon2 != null && (_icon2Align == Alignment.ALIGN_RIGHT) || Icon2InlineLabel1)
+      {
+        iWidth -= (_imageIcon2.Width + Icon2OffsetX);
+      }
+
+      // render the 1st line of text on the button
       if (_imageNonFocusedMid.IsVisible && _cachedTextLabel1.Length > 0)
       {
         int widthLeft =
@@ -309,6 +444,29 @@ namespace MediaPortal.GUI.Library
         _labelControl1.TextAlignment = Alignment.ALIGN_LEFT;
         _labelControl1.FontName = _fontName1;
         _labelControl1.Label = _cachedTextLabel1;
+
+        // Before rendering the label determine whether or not an icon is positioned inline.  If we have an inline icon
+        // then determine whether we have enough room in the button image to render the icon without shortening the text.
+        // If there is enough room then do not shorten the text, otherwise shorten the text.
+        if (_imageIcon != null && IconInlineLabel1)
+        {
+          if (_labelControl1.TextWidth + IconOffsetX + IconWidth > iWidth)
+          {
+            iWidth -= (IconOffsetX + IconWidth);
+          }
+        }
+        if (_imageIcon2 != null && Icon2InlineLabel1)
+        {
+          if (_labelControl1.TextWidth + Icon2OffsetX + Icon2Width > iWidth)
+          {
+            iWidth -= (Icon2OffsetX + Icon2Width);
+          }
+        }
+        if (iWidth <= 0)
+        {
+          iWidth = 1;
+        }
+
         _labelControl1.Width = iWidth;
         _labelControl1.Render(timePassed);
       }
@@ -335,6 +493,44 @@ namespace MediaPortal.GUI.Library
         _labelControl2.Width = iWidth - 10;
         _labelControl2.Render(timePassed);
       }
+
+      //render the icon
+      if (_imageIcon != null)
+      {
+        // If the icon should be inline with the text then move it to the end of the text.
+        if (_iconInlineLabel1)
+        {
+          int iconX = _labelControl1.XPosition + System.Math.Min(_labelControl1.Width, _labelControl1.TextWidth) + IconOffsetX;
+          int iconY = _imageIcon.YPosition;
+          _imageIcon.SetPosition(iconX, iconY);
+        }
+        // Ensure that the icon stays within the bounds of the button, else do not render the icon.
+        if ((_imageIcon.XPosition >= _positionX) &&
+          (_imageIcon.XPosition + _imageIcon.Width <= _positionX + _width))
+        {
+          _imageIcon.Render(timePassed);
+        }
+      }
+
+      //render icon2
+      if (_imageIcon2 != null)
+     
+      {
+        // If the icon should be inline with the text then move it to the end of the text.
+        if (_icon2InlineLabel1)
+        {
+          int iconX = _labelControl1.XPosition + System.Math.Min(_labelControl1.Width, _labelControl1.TextWidth) + Icon2OffsetX;
+          int iconY = _imageIcon2.YPosition;
+          _imageIcon2.SetPosition(iconX, iconY);
+        }
+        // Ensure that the icon2 stays within the bounds of the button, else do not render the icon.
+        if ((_imageIcon2.XPosition >= _positionX) &&
+          (_imageIcon2.XPosition + _imageIcon2.Width <= _positionX + _width))
+        {
+          _imageIcon2.Render(timePassed);
+        }
+      }
+
       base.Render(timePassed);
     }
 
@@ -437,6 +633,7 @@ namespace MediaPortal.GUI.Library
       _imageNonFocusedMid.PreAllocResources();
       _imageNonFocusedRight.PreAllocResources();
       _imageIcon.PreAllocResources();
+      _imageIcon2.PreAllocResources();
     }
 
     /// <summary>
@@ -452,6 +649,7 @@ namespace MediaPortal.GUI.Library
       _imageNonFocusedMid.AllocResources();
       _imageNonFocusedRight.AllocResources();
       _imageIcon.AllocResources();
+      _imageIcon2.AllocResources();
 
       _labelControl1.AllocResources();
       _labelControl2.AllocResources();
@@ -505,7 +703,7 @@ namespace MediaPortal.GUI.Library
       _imageNonFocusedMid.SafeDispose();
       _imageNonFocusedRight.SafeDispose();
       _imageIcon.SafeDispose();
-
+      _imageIcon2.FreeResources();
 
       _labelControl1.SafeDispose();
       _labelControl2.SafeDispose();
@@ -537,40 +735,52 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string TexutureNoFocusLeftName
     {
-      get { return _imageNonFocusedLeft.FileName; }
+      get { return _textureNonFocusedLeft; } // _imageNonFocusedLeft.FileName
       set
       {
         if (value == null)
         {
           return;
         }
-        _imageNonFocusedLeft.SetFileName(value);
+        _textureNonFocusedLeft = value;
+        if (_imageNonFocusedLeft != null)
+        {
+          _imageNonFocusedLeft.SetFileName(value);
+        }
       }
     }
 
     public string TexutureNoFocusMidName
     {
-      get { return _imageNonFocusedMid.FileName; }
+      get { return _textureNonFocusedMid; } // _imageNonFocusedMid.FileName
       set
       {
         if (value == null)
         {
           return;
         }
-        _imageNonFocusedMid.SetFileName(value);
+        _textureNonFocusedMid = value;
+        if (_imageNonFocusedMid != null)
+        {
+          _imageNonFocusedMid.SetFileName(value);
+        }
       }
     }
 
     public string TexutureNoFocusRightName
     {
-      get { return _imageNonFocusedRight.FileName; }
+      get { return _textureNonFocusedRight; } // _imageNonFocusedRight.FileName
       set
       {
         if (value == null)
         {
           return;
         }
-        _imageNonFocusedRight.SetFileName(value);
+        _textureNonFocusedRight = value;
+        if (_imageNonFocusedRight != null)
+        {
+          _imageNonFocusedRight.SetFileName(value);
+        }
       }
     }
 
@@ -579,40 +789,52 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string TexutureFocusLeftName
     {
-      get { return _imageFocusedLeft.FileName; }
+      get { return _textureFocusedLeft; } // _imageFocusedLeft.FileName
       set
       {
         if (value == null)
         {
           return;
         }
-        _imageFocusedLeft.SetFileName(value);
+        _textureFocusedLeft = value;
+        if (_imageFocusedLeft != null)
+        {
+          _imageFocusedLeft.SetFileName(value);
+        }
       }
     }
 
     public string TexutureFocusMidName
     {
-      get { return _imageFocusedMid.FileName; }
+      get { return _textureFocusedMid; } // _imageFocusedMid.FileName
       set
       {
         if (value == null)
         {
           return;
         }
-        _imageFocusedMid.SetFileName(value);
+        _textureFocusedMid = value;
+        if (_imageFocusedMid != null)
+        {
+          _imageFocusedMid.SetFileName(value);
+        }
       }
     }
 
     public string TexutureFocusRightName
     {
-      get { return _imageFocusedRight.FileName; }
+      get { return _textureFocusedRight; } // _imageFocusedRight.FileName
       set
       {
         if (value == null)
         {
           return;
         }
-        _imageFocusedRight.SetFileName(value);
+        _textureFocusedRight = value;
+        if (_imageFocusedRight != null)
+        {
+          _imageFocusedRight.SetFileName(value);
+        }
       }
     }
 
@@ -642,6 +864,37 @@ namespace MediaPortal.GUI.Library
           if (value == string.Empty)
           {
             _imageIcon.IsVisible = false;
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get/set the filename of the icon2 texture
+    /// </summary>
+    public string TexutureIcon2
+    {
+      get
+      {
+        if (_imageIcon2 == null)
+        {
+          return string.Empty;
+        }
+        return _imageIcon2.FileName;
+      }
+      set
+      {
+        if (_imageIcon2 != null && _imageIcon2.FileName != value)
+        {
+          _imageIcon2.IsVisible = true;
+          _imageIcon2.SetFileName(value);
+          _imageIcon2.Width = _iconWidth;
+          _imageIcon2.Height = _iconHeight;
+          _reCalculate = true;
+
+          if (value == string.Empty)
+          {
+            _imageIcon2.IsVisible = false;
           }
         }
       }
@@ -1020,7 +1273,11 @@ namespace MediaPortal.GUI.Library
         _imageIcon.Centered = _iconCentered;
         _imageIcon.Zoom = _iconZoomed;
         _imageIcon.Refresh();
-        if (IconOffsetY < 0 || IconOffsetX < 0)
+
+        // The checks for center and middle align preserve legacy behavior and allow flexibility for the offset values when
+        // using alignment values.
+        if ((IconOffsetY < 0 || IconOffsetX < 0) &&
+          (_iconAlign != Alignment.ALIGN_CENTER && _iconVAlign != VAlignment.ALIGN_MIDDLE))
         {
           int iWidth = _imageIcon.TextureWidth;
           if (iWidth >= _width)
@@ -1038,7 +1295,93 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          _imageIcon.SetPosition(_positionX + IconOffsetX, _positionY + IconOffsetY);
+          int xPos = _positionX;
+          int yPos = _positionY;
+
+          switch (_iconAlign)
+          {
+            case Alignment.ALIGN_LEFT:
+              xPos = _positionX + IconOffsetX;
+              break;
+            case Alignment.ALIGN_RIGHT:
+              xPos = _positionX + _width - _imageIcon.TextureWidth - IconOffsetX;
+              break;
+            case Alignment.ALIGN_CENTER:
+              xPos = (_positionX + _width - _imageIcon.TextureWidth) / 2 + IconOffsetX;
+              break;
+          }
+          switch (_iconVAlign)
+          {
+            case VAlignment.ALIGN_TOP:
+              yPos = _positionY + IconOffsetY;
+              break;
+            case VAlignment.ALIGN_BOTTOM:
+              yPos = _positionY + _height - IconOffsetY;
+              break;
+            case VAlignment.ALIGN_MIDDLE:
+              yPos = _positionY + (_height / 2) - (_imageIcon.TextureHeight / 2) + IconOffsetY;
+              break;
+          }
+          _imageIcon.SetPosition(xPos, yPos);
+        }
+      }
+
+      if (_imageIcon2 != null)
+      {
+        _imageIcon2.KeepAspectRatio = _icon2KeepAspectRatio;
+        _imageIcon2.Centered = _icon2Centered;
+        _imageIcon2.Zoom = _icon2Zoomed;
+        _imageIcon2.Refresh();
+
+        // The checks for center and middle align preserve legacy behavior and allow flexibility for the offset values when
+        // using alignment values.
+        if ((Icon2OffsetY < 0 || Icon2OffsetX < 0) &&
+          (_icon2Align != Alignment.ALIGN_CENTER && _icon2VAlign != VAlignment.ALIGN_MIDDLE))
+        {
+          int iWidth = _imageIcon2.TextureWidth;
+          if (iWidth >= _width)
+          {
+            _imageIcon2.Width = _width;
+            iWidth = _width;
+          }
+          int offset = (iWidth + iWidth / 2);
+          if (offset > _width)
+          {
+            offset = _width;
+          }
+          _imageIcon2.SetPosition(_positionX + (_width) - offset,
+                                  _positionY + (_height / 2) - (_imageIcon2.TextureHeight / 2));
+        }
+        else
+        {
+          int xPos = _positionX;
+          int yPos = _positionY;
+
+          switch (_icon2Align)
+          {
+            case Alignment.ALIGN_LEFT:
+              xPos = _positionX + Icon2OffsetX;
+              break;
+            case Alignment.ALIGN_RIGHT:
+              xPos = _positionX + _width - _imageIcon2.TextureWidth - Icon2OffsetX;
+              break;
+            case Alignment.ALIGN_CENTER:
+              xPos = (_positionX + _width - _imageIcon2.TextureWidth) / 2 + Icon2OffsetX;
+              break;
+          }
+          switch (_icon2VAlign)
+          {
+            case VAlignment.ALIGN_TOP:
+              yPos = _positionY + Icon2OffsetY;
+              break;
+            case VAlignment.ALIGN_BOTTOM:
+              yPos = _positionY + _height - Icon2OffsetY;
+              break;
+            case VAlignment.ALIGN_MIDDLE:
+              yPos = _positionY + (_height / 2) - (_imageIcon2.TextureHeight / 2) + Icon2OffsetY;
+              break;
+          }
+          _imageIcon2.SetPosition(xPos, yPos);
         }
       }
     }
@@ -1092,6 +1435,148 @@ namespace MediaPortal.GUI.Library
         {
           _iconCentered = value;
           _reCalculate = true;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the icon alignment property
+    /// </summary>
+    public Alignment IconAlign
+    {
+      get { return _iconAlign; }
+      set
+      {
+        if (_iconAlign != value)
+        {
+          _iconAlign = value;
+          _reCalculate = true;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the icon vertical alignment property
+    /// </summary>
+    public VAlignment IconVAlign
+    {
+      get { return _iconVAlign; }
+      set
+      {
+        if (_iconVAlign != value)
+        {
+          _iconVAlign = value;
+          _reCalculate = true;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the icon inline label1 property
+    /// </summary>
+    public bool IconInlineLabel1
+    {
+      get { return _iconInlineLabel1; }
+      set
+      {
+        if (_iconInlineLabel1 != value)
+        {
+          _iconInlineLabel1 = value;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the icon2 to be zoomed into the dest. rectangle
+    /// </summary>
+    public bool Icon2Zoom
+    {
+      get { return _icon2Zoomed; }
+      set
+      {
+        if (_icon2Zoomed != value)
+        {
+          _icon2Zoomed = value;
+          _reCalculate = true;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the icon2 to keep it's aspectratio in the dest. rectangle
+    /// </summary>
+    public bool Icon2KeepAspectRatio
+    {
+      get { return _icon2KeepAspectRatio; }
+      set
+      {
+        if (_icon2KeepAspectRatio != value)
+        {
+          _icon2KeepAspectRatio = value;
+          _reCalculate = true;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the icon2 centered in the dest. rectangle
+    /// </summary>
+    public bool Icon2Centered
+    {
+      get { return _icon2Centered; }
+      set
+      {
+        if (_icon2Centered != value)
+        {
+          _icon2Centered = value;
+          _reCalculate = true;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the icon2 alignment property
+    /// </summary>
+    public Alignment Icon2Align
+    {
+      get { return _icon2Align; }
+      set
+      {
+        if (_icon2Align != value)
+        {
+          _icon2Align = value;
+          _reCalculate = true;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the icon2 vertical alignment property
+    /// </summary>
+    public VAlignment Icon2VAlign
+    {
+      get { return _icon2VAlign; }
+      set
+      {
+        if (_icon2VAlign != value)
+        {
+          _icon2VAlign = value;
+          _reCalculate = true;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the icon inline label1 property
+    /// </summary>
+    public bool Icon2InlineLabel1
+    {
+      get { return _icon2InlineLabel1; }
+      set
+      {
+        if (_icon2InlineLabel1 != value)
+        {
+          _icon2InlineLabel1 = value;
         }
       }
     }
@@ -1163,6 +1648,38 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Get/Set the x-position of the icon2
+    /// </summary>
+    public int Icon2OffsetX
+    {
+      get { return _icon2OffsetX; }
+      set
+      {
+        if (_icon2OffsetX != value)
+        {
+          _icon2OffsetX = value;
+          _reCalculate = true;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the y-position of the icon2
+    /// </summary>
+    public int Icon2OffsetY
+    {
+      get { return _icon2OffsetY; }
+      set
+      {
+        if (_icon2OffsetY != value)
+        {
+          _icon2OffsetY = value;
+          _reCalculate = true;
+        }
+      }
+    }
+
+    /// <summary>
     /// Get/Set the width of the icon
     /// </summary>
     public int IconWidth
@@ -1194,6 +1711,42 @@ namespace MediaPortal.GUI.Library
         if (_imageIcon != null)
         {
           _imageIcon.Height = _iconHeight;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the width of the icon2
+    /// </summary>
+    public int Icon2Width
+    {
+      get { return _icon2Width; }
+      set
+      {
+        _icon2Width = value;
+        if (_imageIcon2 != null)
+        {
+          _imageIcon2.Width = _icon2Width;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the height of the icon2
+    /// </summary>
+    public int Icon2Height
+    {
+      get { return _icon2Height; }
+      set
+      {
+        if (value < 0)
+        {
+          return;
+        }
+        _icon2Height = value;
+        if (_imageIcon2 != null)
+        {
+          _imageIcon2.Height = _icon2Height;
         }
       }
     }
@@ -1307,6 +1860,10 @@ namespace MediaPortal.GUI.Library
         {
           _imageIcon.DimColor = value;
         }
+        if (_imageIcon2 != null)
+        {
+          _imageIcon2.DimColor = value;
+        }
         if (_labelControl1 != null)
         {
           _labelControl1.DimColor = value;
@@ -1316,6 +1873,178 @@ namespace MediaPortal.GUI.Library
           _labelControl2.DimColor = value;
         }
       }
+    }
+
+    public void SetShadow1(int angle, int distance, long color)
+    {
+      _shadowAngle1 = angle;
+      _shadowDistance1 = distance;
+      _shadowColor1 = color;
+      _labelControl1.SetShadow(_shadowAngle1, _shadowDistance1, _shadowColor1);
+    }
+
+    public void SetShadow2(int angle, int distance, long color)
+    {
+      _shadowAngle2 = angle;
+      _shadowDistance2 = distance;
+      _shadowColor2 = color;
+      _labelControl2.SetShadow(_shadowAngle2, _shadowDistance2, _shadowColor2);
+    }
+
+    public void SetBorderTFL(string border, GUIImage.BorderPosition position, bool repeat, bool rotate,
+      string texture, long colorKey, bool hasCorners, bool cornerRotate)
+    {
+      _strBorderTFL = border;
+      _borderPositionTFL = position;
+      _borderTextureRepeatTFL = repeat;
+      _borderTextureRotateTFL = rotate;
+      _borderTextureFileNameTFL = texture;
+      _borderColorKeyTFL = colorKey;
+      _borderHasCornersTFL = hasCorners;
+      _borderCornerTextureRotateTFL = cornerRotate;
+      _imageFocusedLeft.SetBorder(_strBorderTFL, _borderPositionTFL, _borderTextureRepeatTFL, _borderTextureRotateTFL,
+        _borderTextureFileNameTFL, _borderColorKeyTFL, _borderHasCornersTFL, _borderCornerTextureRotateTFL);
+    }
+
+    public void SetBorderTNFL(string border, GUIImage.BorderPosition position, bool repeat, bool rotate,
+      string texture, long colorKey, bool hasCorners, bool cornerRotate)
+    {
+      _strBorderTNFL = border;
+      _borderPositionTNFL = position;
+      _borderTextureRepeatTNFL = repeat;
+      _borderTextureRotateTNFL = rotate;
+      _borderTextureFileNameTNFL = texture;
+      _borderColorKeyTNFL = colorKey;
+      _borderHasCornersTNFL = hasCorners;
+      _borderCornerTextureRotateTNFL = cornerRotate;
+      _imageNonFocusedLeft.SetBorder(_strBorderTNFL, _borderPositionTNFL, _borderTextureRepeatTNFL, _borderTextureRotateTNFL,
+        _borderTextureFileNameTNFL, _borderColorKeyTNFL, _borderHasCornersTNFL, _borderCornerTextureRotateTNFL);
+    }
+
+    public void SetBorderTFM(string border, GUIImage.BorderPosition position, bool repeat, bool rotate,
+      string texture, long colorKey, bool hasCorners, bool cornerRotate)
+    {
+      _strBorderTFM = border;
+      _borderPositionTFM = position;
+      _borderTextureRepeatTFM = repeat;
+      _borderTextureRotateTFM = rotate;
+      _borderTextureFileNameTFM = texture;
+      _borderColorKeyTFM = colorKey;
+      _borderHasCornersTFM = hasCorners;
+      _borderCornerTextureRotateTFM = cornerRotate;
+      _imageFocusedMid.SetBorder(_strBorderTFM, _borderPositionTFM, _borderTextureRepeatTFM, _borderTextureRotateTFM,
+        _borderTextureFileNameTFM, _borderColorKeyTFM, _borderHasCornersTFM, _borderCornerTextureRotateTFM);
+    }
+
+    public void SetBorderTNFM(string border, GUIImage.BorderPosition position, bool repeat, bool rotate,
+      string texture, long colorKey, bool hasCorners, bool cornerRotate)
+    {
+      _strBorderTNFM = border;
+      _borderPositionTNFM = position;
+      _borderTextureRepeatTNFM = repeat;
+      _borderTextureRotateTNFM = rotate;
+      _borderTextureFileNameTNFM = texture;
+      _borderColorKeyTNFM = colorKey;
+      _borderHasCornersTNFM = hasCorners;
+      _borderCornerTextureRotateTNFM = cornerRotate;
+      _imageNonFocusedMid.SetBorder(_strBorderTNFM, _borderPositionTNFM, _borderTextureRepeatTNFM, _borderTextureRotateTNFM,
+        _borderTextureFileNameTNFM, _borderColorKeyTNFM, _borderHasCornersTNFM, _borderCornerTextureRotateTNFM);
+    }
+
+    public void SetBorderTFR(string border, GUIImage.BorderPosition position, bool repeat, bool rotate,
+      string texture, long colorKey, bool hasCorners, bool cornerRotate)
+    {
+      _strBorderTFR = border;
+      _borderPositionTFR = position;
+      _borderTextureRepeatTFR = repeat;
+      _borderTextureRotateTFR = rotate;
+      _borderTextureFileNameTFR = texture;
+      _borderColorKeyTFR = colorKey;
+      _borderHasCornersTFR = hasCorners;
+      _borderCornerTextureRotateTFR = cornerRotate;
+      _imageFocusedRight.SetBorder(_strBorderTFR, _borderPositionTFR, _borderTextureRepeatTFR, _borderTextureRotateTFR,
+        _borderTextureFileNameTFR, _borderColorKeyTFR, _borderHasCornersTFR, _borderCornerTextureRotateTFR);
+    }
+
+    public void SetBorderTNFR(string border, GUIImage.BorderPosition position, bool repeat, bool rotate,
+      string texture, long colorKey, bool hasCorners, bool cornerRotate)
+    {
+      _strBorderTNFR = border;
+      _borderPositionTNFR = position;
+      _borderTextureRepeatTNFR = repeat;
+      _borderTextureRotateTNFR = rotate;
+      _borderTextureFileNameTNFR = texture;
+      _borderColorKeyTNFR = colorKey;
+      _borderHasCornersTNFR = hasCorners;
+      _borderCornerTextureRotateTNFR = cornerRotate;
+      _imageNonFocusedRight.SetBorder(_strBorderTNFR, _borderPositionTNFR, _borderTextureRepeatTNFR, _borderTextureRotateTNFR,
+        _borderTextureFileNameTNFR, _borderColorKeyTNFR, _borderHasCornersTNFR, _borderCornerTextureRotateTNFR);
+    }
+
+    public void SetBorderTI(string border, GUIImage.BorderPosition position, bool repeat, bool rotate,
+      string texture, long colorKey, bool hasCorners, bool cornerRotate)
+    {
+      _strBorderTI = border;
+      _borderPositionTI = position;
+      _borderTextureRepeatTI = repeat;
+      _borderTextureRotateTI = rotate;
+      _borderTextureFileNameTI = texture;
+      _borderColorKeyTI = colorKey;
+      _borderHasCornersTI = hasCorners;
+      _borderCornerTextureRotateTI = cornerRotate;
+      _imageIcon.SetBorder(_strBorderTI, _borderPositionTI, _borderTextureRepeatTI, _borderTextureRotateTI,
+        _borderTextureFileNameTI, _borderColorKeyTI, _borderHasCornersTI, _borderCornerTextureRotateTI);
+    }
+
+    public void SetBorderTI2(string border, GUIImage.BorderPosition position, bool repeat, bool rotate,
+      string texture, long colorKey, bool hasCorners, bool cornerRotate)
+    {
+      _strBorderTI2 = border;
+      _borderPositionTI2 = position;
+      _borderTextureRepeatTI2 = repeat;
+      _borderTextureRotateTI2 = rotate;
+      _borderTextureFileNameTI2 = texture;
+      _borderColorKeyTI2 = colorKey;
+      _borderHasCornersTI2 = hasCorners;
+      _borderCornerTextureRotateTI2 = cornerRotate;
+      _imageIcon2.SetBorder(_strBorderTI2, _borderPositionTI2, _borderTextureRepeatTI2, _borderTextureRotateTI2,
+        _borderTextureFileNameTI2, _borderColorKeyTI2, _borderHasCornersTI2, _borderCornerTextureRotateTI2);
+    }
+
+    public bool TileFillTFL
+    {
+      get { return _imageFocusedLeft.TileFill; }
+      set { _imageFocusedLeft.TileFill = value; }
+    }
+
+    public bool TileFillTNFL
+    {
+      get { return _imageNonFocusedLeft.TileFill; }
+      set { _imageNonFocusedLeft.TileFill = value; }
+    }
+
+    public bool TileFillTFM
+    {
+      get { return _imageFocusedMid.TileFill; }
+      set { _imageFocusedMid.TileFill = value; }
+    }
+
+    public bool TileFillTNFM
+    {
+      get { return _imageNonFocusedMid.TileFill; }
+      set { _imageNonFocusedMid.TileFill = value; }
+    }
+
+    public bool TileFillTFR
+    {
+      get { return _imageFocusedRight.TileFill; }
+      set { _imageFocusedRight.TileFill = value; }
+    }
+
+    public bool TileFillTNFR
+    {
+      get { return _imageNonFocusedRight.TileFill; }
+      set { _imageNonFocusedRight.TileFill = value; }
     }
   }
 }

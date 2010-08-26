@@ -375,36 +375,25 @@ namespace MediaPortal.Util
     public static bool IsLiveTv(string strPath)
     {
       if (strPath == null) return false;
-      try
-      {
-        if (strPath.ToLower().IndexOf("live.tv") >= 0) return true;
-        if (strPath.ToLower().IndexOf("live.ts") >= 0) return true;
-        if (strPath.ToLower().IndexOf("ts.tsbuffer") >= 0) return true;
-      }
-      catch (Exception) { }
-      return false;
+
+      Match ex = Regex.Match(strPath, @"(live\d+-\d+\.ts(\.tsbuffer(\d+\.ts)?)?)$");
+      return ex.Success;
     }
 
     public static bool IsRTSP(string strPath)
     {
       if (strPath == null) return false;
-      try
-      {
-        if (strPath.ToLower().IndexOf("rtsp:") >= 0) return true;
-      }
-      catch (Exception) { }
-      return false;
+
+      return strPath.Contains("rtsp:");
     }
 
     public static bool IsLiveRadio(string strPath)
     {
       if (strPath == null) return false;
-      try
-      {
-        if (strPath.ToLower().IndexOf("radio.ts") >= 0) return true;
-      }
-      catch (Exception) { }
-      return false;
+      //
+      // Bugged implementation: files are named "live3-0.ts.tsbuffer" as for LiveTv
+      //
+      return strPath.Contains("live-radio.ts");
     }
 
     public static bool IsVideo(string strPath)
@@ -421,13 +410,11 @@ namespace MediaPortal.Util
         if (IsPlayList(strPath))
           return false;
         string extensionFile = Path.GetExtension(strPath).ToLower();
-        switch (extensionFile)
+
+        if (extensionFile == ".ts")
         {
-          case ".tv":
-          case ".ts":
-          case ".sbe":
-          case ".dvr-ms":
-            return true;
+          // Forced check to avoid users messed configuration ( .ts remove from Videos extensions list)
+          return true;
         }
         if (VirtualDirectory.IsImageFile(extensionFile.ToLower()))
           return true;
@@ -447,10 +434,10 @@ namespace MediaPortal.Util
       {
         if (aPath.StartsWith(@"http://"))
         {
-          if (aPath.IndexOf(@"/last.mp3?") > 0)
+          if (aPath.Contains(@"/last.mp3?") || aPath.Contains(@"last.fm/"))
+          {
             return true;
-          if (aPath.Contains(@"last.fm/"))
-            return true;
+          }
         }
       }
       catch (Exception ex)
@@ -463,9 +450,9 @@ namespace MediaPortal.Util
     public static bool IsAVStream(string strPath)
     {
       if (strPath == null) return false;
-      if (strPath.ToLower().IndexOf("http:") >= 0) return true;
-      if (strPath.ToLower().IndexOf("https:") >= 0) return true;
-      if (strPath.ToLower().IndexOf("mms:") >= 0) return true;
+      if (strPath.StartsWith("http:")) return true;
+      if (strPath.StartsWith("https:")) return true;
+      if (strPath.StartsWith("mms:")) return true;
       return false;
     }
 
@@ -635,17 +622,26 @@ namespace MediaPortal.Util
 
     public static void SetThumbnails(ref GUIListItem item)
     {
-      if (item == null) return;
+      if (item == null || String.IsNullOrEmpty(item.Path))
+      {
+        Log.Debug("SetThumbnails: nothing to do.");
+        return;
+      }
+
       string strThumb = string.Empty;
 
       if (!item.IsFolder || (item.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower())))
       {
-        if (IsPicture(item.Path)) return;
+        if (IsPicture(item.Path))
+        {
+          Log.Debug("SetThumbnails: nothing to do.");
+          return;
+        }
 
         string[] thumbs = { Path.ChangeExtension(item.Path, ".jpg"), 
                             Path.ChangeExtension(item.Path, ".tbn"), 
                             Path.ChangeExtension(item.Path, ".png"),
-                            GetThumb(item.Path)};
+                            String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(item.Path))};
 
         bool foundVideoThumb = false;
         foreach (string s in thumbs)
@@ -660,15 +656,16 @@ namespace MediaPortal.Util
 
         if (!foundVideoThumb)
         {
+          Log.Debug("SetThumbnails: Video thumb NOT found!");
           bool createVideoThumbs;
           using (Profile.Settings xmlreader = new Profile.MPSettings())
           {
             createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
           }
 
-          Uri file = new Uri(item.Path);
-          if (IsVideo(item.Path) && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()) && (file.IsUnc || file.IsFile))
+          if (Path.IsPathRooted(item.Path) && IsVideo(item.Path) && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()))
           {
+            Log.Debug("SetThumbnails: Creating a Video thumb...");
             strThumb = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(item.Path));
             if (File.Exists(strThumb))
             {
@@ -1195,10 +1192,10 @@ namespace MediaPortal.Util
 
     public static bool IsCDDA(string strFile)
     {
-      if (strFile == null) return false;
-      if (strFile.Length <= 0) return false;
-      if (strFile.IndexOf("cdda:") >= 0) return true;
-      if (strFile.IndexOf(".cda") >= 0) return true;
+      if (String.IsNullOrEmpty(strFile)) return false;
+      if (strFile.StartsWith("cdda:")) return true;
+      string extension = Path.GetExtension(strFile).ToLower();
+      if (extension.Equals(".cda")) return true;
       return false;
     }
 
@@ -1707,15 +1704,15 @@ namespace MediaPortal.Util
       try
       {
         string extension = Path.GetExtension(strFile).ToLower();
-        if (strFile.ToLower().IndexOf("live.ts") >= 0) return false;
-        if (strFile.ToLower().IndexOf("live.tv") >= 0) return false;
+        if (IsLiveTv(strFile)) return false;
         if (extension.Equals(".sbe")) return false;
         if (extension.Equals(".dvr-ms")) return false;
         if (extension.Equals(".radio")) return false;
-        if (strFile.IndexOf("record0.") > 0 || strFile.IndexOf("record1.") > 0 ||
-            strFile.IndexOf("record2.") > 0 || strFile.IndexOf("record3.") > 0 ||
-            strFile.IndexOf("record4.") > 0 || strFile.IndexOf("record5.") > 0) return false;
-
+        Match regMatch = Regex.Match(strFile, @"record[0-9]\.");
+        if (regMatch.Success)
+        {
+          return false;
+        }
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
         {
           //using external player checking is now g_player side 

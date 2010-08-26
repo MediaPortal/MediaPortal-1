@@ -46,5 +46,7 @@ namespace TvLibrary.Interfaces
     /// <param name="channel">Channel to check</param>
     /// <returns>true, if the channels are on the same transponder</returns>
     bool IsDifferentTransponder(IChannel channel);
+
+    bool FreeToAir { get; }
   }
 }

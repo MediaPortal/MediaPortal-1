@@ -48,13 +48,14 @@ namespace TvService
   ///  - if at least 2 hours have past since the previous time the epg for the channel was grabbed
   ///  - if no cards are timeshifting or recording
   /// </summary>
-  public class EpgGrabber
+  public class EpgGrabber : IDisposable
   {
     #region variables
 
     private int _epgReGrabAfter = 4 * 60; //hours
     private readonly System.Timers.Timer _epgTimer = new System.Timers.Timer();
 
+    private bool _disposed;
     private bool _isRunning;
     private bool _reEntrant;
     private readonly TVController _tvController;
@@ -121,8 +122,16 @@ namespace TvService
       Log.Epg("EPG: grabber initialized for {0} transponders..", TransponderList.Instance.Count);
       _isRunning = true;
       IList<Card> cards = Card.ListAll();
-      _epgCards = new List<EpgCard>();
 
+      if (_epgCards != null)
+      {
+        foreach (EpgCard epgCard in _epgCards)
+        {
+          epgCard.Dispose();
+        }
+      }
+        
+      _epgCards = new List<EpgCard>();
 
       foreach (Card card in cards)
       {
@@ -167,7 +176,22 @@ namespace TvService
       foreach (EpgCard epgCard in _epgCards)
       {
         epgCard.Stop();
-        epgCard.Dispose();
+      }
+    }
+    #endregion
+
+    #region IDisposable Members
+
+    public void Dispose()
+    {
+      if (!_disposed)
+      {
+        _epgTimer.Dispose();
+        foreach (EpgCard epgCard in _epgCards)
+        {
+          epgCard.Dispose();
+        }
+        _disposed = true;
       }
     }
 
@@ -207,6 +231,8 @@ namespace TvService
         foreach (EpgCard card in _epgCards)
         {
           //Log.Epg("card:{0} grabbing:{1}", card.Card.IdCard, card.IsGrabbing);
+          if (!_isRunning)
+            return;
           if (card.IsGrabbing)
             continue;
           if (_tvController.AllCardsIdle == false)

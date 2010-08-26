@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace MediaPortal.DeployTool.Sections
@@ -76,11 +77,13 @@ namespace MediaPortal.DeployTool.Sections
       dlg.SelectedPath = textBoxDir.Text;
       if (dlg.ShowDialog() == DialogResult.OK)
       {
-        if (dlg.SelectedPath.EndsWith("\\"))
-          textBoxDir.Text = installationPath = dlg.SelectedPath + "MediaPortal TV Server";
-        else
-          textBoxDir.Text = installationPath = dlg.SelectedPath + "\\MediaPortal TV Server";
+        textBoxDir.Text = Path.Combine(dlg.SelectedPath, "MediaPortal TV Server");
       }
+    }
+
+    private void textBoxDir_TextChanged(object sender, EventArgs e)
+    {
+      installationPath = textBoxDir.Text;
     }
   }
 }

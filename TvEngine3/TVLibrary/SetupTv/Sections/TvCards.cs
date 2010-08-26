@@ -316,44 +316,56 @@ namespace SetupTv.Sections
     private void buttonUp_Click(object sender, EventArgs e)
     {
       mpListView1.BeginUpdate();
-      ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0)
-        return;
-      for (int i = 0; i < indexes.Count; ++i)
+      try
       {
-        int index = indexes[i];
-        if (index > 0)
+        ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
+        if (indexes.Count == 0)
+          return;
+        for (int i = 0; i < indexes.Count; ++i)
         {
-          ListViewItem item = mpListView1.Items[index];
-          mpListView1.Items.RemoveAt(index);
-          mpListView1.Items.Insert(index - 1, item);
+          int index = indexes[i];
+          if (index > 0)
+          {
+            ListViewItem item = mpListView1.Items[index];
+            mpListView1.Items.RemoveAt(index);
+            mpListView1.Items.Insert(index - 1, item);
+          }
         }
+        ReOrder();
       }
-      ReOrder();
-      mpListView1.EndUpdate();
+      finally
+      {
+        mpListView1.EndUpdate();
+      }
       _needRestart = true;
     }
 
     private void buttonDown_Click(object sender, EventArgs e)
     {
       mpListView1.BeginUpdate();
-      ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-      if (indexes.Count == 0)
-        return;
-      if (mpListView1.Items.Count < 2)
-        return;
-      for (int i = indexes.Count - 1; i >= 0; i--)
+      try
       {
-        int index = indexes[i];
-        ListViewItem item = mpListView1.Items[index];
-        mpListView1.Items.RemoveAt(index);
-        if (index + 1 < mpListView1.Items.Count)
-          mpListView1.Items.Insert(index + 1, item);
-        else
-          mpListView1.Items.Add(item);
+        ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
+        if (indexes.Count == 0)
+          return;
+        if (mpListView1.Items.Count < 2)
+          return;
+        for (int i = indexes.Count - 1; i >= 0; i--)
+        {
+          int index = indexes[i];
+          ListViewItem item = mpListView1.Items[index];
+          mpListView1.Items.RemoveAt(index);
+          if (index + 1 < mpListView1.Items.Count)
+            mpListView1.Items.Insert(index + 1, item);
+          else
+            mpListView1.Items.Add(item);
+        }
+        ReOrder();
       }
-      ReOrder();
-      mpListView1.EndUpdate();
+      finally
+      {
+        mpListView1.EndUpdate();
+      }
       _needRestart = true;
     }
 

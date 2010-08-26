@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Media.Animation;
+using MediaPortal.Configuration;
 using MediaPortal.Drawing;
 using MediaPortal.Profile;
 using MediaPortal.ExtensionMethods;
@@ -68,13 +69,16 @@ namespace MediaPortal.GUI.Library
     protected bool _flipX = false;
     protected bool _flipY = false;
     protected string _diffuseFileName = "";
+    protected string _maskFileName = "";
     private string _strBorder = "";
-    private string _strBorderPosition = "";
+    private GUIImage.BorderPosition _borderPosition = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     private bool _borderTextureRepeat = false;
     private bool _borderTextureRotate = false;
     private string _borderTextureFileName = "";
     private long _borderColorKey = 0;
-
+    private bool _borderHasCorners = false;
+    private bool _borderCornerTextureRotate = true;
+    private bool _tileFill = false;
     #endregion Fields
 
     #region Properties
@@ -153,6 +157,12 @@ namespace MediaPortal.GUI.Library
     {
       get { return _diffuseFileName; }
       set { _diffuseFileName = value; }
+    }
+
+    public string MaskFileName
+    {
+      get { return _maskFileName; }
+      set { _maskFileName = value; }
     }
 
     #endregion Properties
@@ -277,10 +287,12 @@ namespace MediaPortal.GUI.Library
         _images[index].Filtering = Filtering;
         _images[index].RepeatBehavior = _repeatBehavior;
         _images[index].DiffuseFileName = _diffuseFileName;
+        _images[index].MaskFileName = _maskFileName;
         _images[index].FlipY = _flipX;
         _images[index].FlipY = _flipY;
-        _images[index].SetBorder(_strBorder, _strBorderPosition, _borderTextureRepeat, _borderTextureRotate,
-                                 _borderTextureFileName, _borderColorKey);
+        _images[index].SetBorder(_strBorder, _borderPosition, _borderTextureRepeat,
+          _borderTextureRotate, _borderTextureFileName, _borderColorKey, _borderHasCorners, _borderCornerTextureRotate);
+        _images[index].TileFill = _tileFill;
         _images[index].AllocResources();
         //_images[index].ScaleToScreenResolution(); -> causes too big images in fullscreen
 
@@ -370,15 +382,23 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public void SetBorder(string border, string position, bool textureRepeat, bool textureRotate, string textureFilename,
-                          long colorKey)
+    public void SetBorder(string border, GUIImage.BorderPosition position, bool textureRepeat, bool textureRotate,
+      string textureFilename, long colorKey, bool hasCorners, bool cornerTextureRotate)
     {
       _strBorder = border;
-      _strBorderPosition = position;
+      _borderPosition = position;
       _borderTextureRepeat = textureRepeat;
       _borderTextureRotate = textureRotate;
       _borderTextureFileName = textureFilename;
       _borderColorKey = colorKey;
+      _borderHasCorners = hasCorners;
+      _borderCornerTextureRotate = cornerTextureRotate;
+    }
+
+    public bool TileFill
+    {
+      get { return _tileFill; }
+      set { _tileFill = value; }
     }
 
     public override int Width

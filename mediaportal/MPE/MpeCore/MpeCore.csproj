@@ -106,6 +106,12 @@
     <Compile Include="Classes\SectionPanel\BaseLayout.Designer.cs">
       <DependentUpon>BaseLayout.cs</DependentUpon>
     </Compile>
+    <Compile Include="Classes\SectionPanel\UserVericalLayout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Classes\SectionPanel\UserVericalLayout.Designer.cs">
+      <DependentUpon>UserVericalLayout.cs</DependentUpon>
+    </Compile>
     <Compile Include="Classes\TagCollection.cs" />
     <Compile Include="Classes\Util.cs" />
     <Compile Include="Classes\ProviderHelpers\SectionProviderHelper.cs" />

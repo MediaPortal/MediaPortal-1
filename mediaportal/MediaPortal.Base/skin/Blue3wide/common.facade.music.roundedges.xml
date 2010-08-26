@@ -122,6 +122,91 @@
           <animation effect="rotatey" start="0" end="20" center="525,0" tween="back" ease="easeout" time="300" reversible="false">focus</animation>
         </control>
         <control>
+          <description>Cover Flow view</description>
+          <type>coverflow</type>
+          <colordiffuse>90ffffff</colordiffuse>
+          <dimColor>90ffffff</dimColor>
+          <id>50</id>
+          <posX>0</posX>
+          <posY>250</posY>
+          <width>1280</width>
+          <height>720</height>
+          <onup>2</onup>
+          <onleft>2</onleft>
+          <selectedCard>0</selectedCard>
+          <cardWidth>250</cardWidth>
+          <cardHeight>250</cardHeight>
+          <angle>45.0</angle>
+          <sideShift>220.0</sideShift>
+          <sideGap>150.0</sideGap>
+          <sideDepth>250.0</sideDepth>
+          <offsetY>0.0</offsetY>
+          <selectedOffsetY>0.0</selectedOffsetY>
+          <speed>8.0</speed>
+          <backgroundColor>000000FF</backgroundColor>
+          <backgroundHeight>250</backgroundHeight>
+          <backgroundWidth>1280</backgroundWidth>
+          <backgroundX>0</backgroundX>
+          <backgroundY>470</backgroundY>
+          <backgroundDiffuse>FF000000</backgroundDiffuse>
+          <background>background2.png</background>
+          <showBackground>yes</showBackground>
+          <foregroundHeight>720</foregroundHeight>
+          <foregroundWidth>1280</foregroundWidth>
+          <foregroundX>0</foregroundX>
+          <foregroundY>0</foregroundY>
+          <foregroundDiffuse>FF000000</foregroundDiffuse>
+          <foreground>coverflow_foreground.png</foreground>
+          <showForeground>no</showForeground>
+          <showFrame>yes</showFrame>
+          <frame>Picture_cover.png</frame>
+          <frameFocus>Picture_cover2.png</frameFocus>
+          <frameWidth>250</frameWidth>
+          <frameHeight>250</frameHeight>
+          <spinSpeed>8.0</spinSpeed>
+          <unfocusedAlpha>FF</unfocusedAlpha>
+          <folderPrefix>[</folderPrefix>
+          <folderSuffix>]</folderSuffix>
+          <font1>font13</font1>
+          <font2>font10</font2>
+          <label1>#title</label1>
+          <label2>#genre</label2>
+          <textColor>FFFFFFFF</textColor>
+          <remoteColor>FFFF0000</remoteColor>
+          <playedColor>FFA0D0FF</playedColor>
+          <downloadColor>FF00FF00</downloadColor>
+          <selectedColor>FFFFFFFF</selectedColor>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>1</shadowDistance>
+          <shadowColor>FF000000</shadowColor>
+          <label1YOff>355</label1YOff>
+          <label2YOff>380</label2YOff>
+          <pageSize>5</pageSize>
+          <scrollbarBackground>bar_hor.png</scrollbarBackground>
+          <scrollbarLeft>mouse_left_horizontal.png</scrollbarLeft>
+          <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
+          <scrollbarYOff>405</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <cards flipY="yes" diffuse="Thumb_Mask.png" mask="video_poster_mask.png"></cards>
+          <subitems>
+            <subitem>
+              <![CDATA[
+                <controls>
+                  <control>
+                    <description>background</description>
+                    <type>image</type>
+                    <posX>0</posX>
+                    <posY>0</posY>
+                    <width>250</width>
+                    <height>250</height>
+                    <texture flipY="yes" diffuse="Thumb_Mask.png" mask="video_poster_mask.png">background2.png</texture>
+                  </control>
+                </controls>
+              ]]>
+            </subitem>
+          </subitems>
+        </control>        
+        <control>
           <description>playlist listcontrol</description>
           <type>playlistcontrol</type>
           <id>50</id>

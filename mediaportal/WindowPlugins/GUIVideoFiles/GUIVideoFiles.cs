@@ -172,6 +172,11 @@ namespace MediaPortal.GUI.Video
       _imdb = new IMDB(this);      
       // _currentFolder = null;
 
+      g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
+      g_Player.PlayBackEnded += new g_Player.EndedHandler(OnPlayBackEnded);
+      g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayBackStarted);
+      g_Player.PlayBackChanged += new g_Player.ChangedHandler(OnPlayBackChanged);
+
       LoadSettings();      
     }    
 
@@ -323,8 +328,6 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      RegisterEventHandlers();
-
       LoadFolderSettings(_currentFolder);
 
       //OnPageLoad is sometimes called when stopping playback.
@@ -332,34 +335,11 @@ namespace MediaPortal.GUI.Video
       LoadDirectory(_currentFolder, true);
     }
 
-    private void RegisterEventHandlers() 
-    {
-      UnRegisterEventHandlers();
-      g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
-      g_Player.PlayBackEnded += new g_Player.EndedHandler(OnPlayBackEnded);
-      g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayBackStarted);
-      g_Player.PlayBackChanged += new g_Player.ChangedHandler(OnPlayBackChanged);
-    }
-
     protected override void OnPageDestroy(int newWindowId)
     {
-      bool isVideoWindow = IsVideoWindow(newWindowId);
-
-      if (!isVideoWindow)
-      {
-        UnRegisterEventHandlers();
-      }
-
       _currentSelectedItem = facadeView.SelectedListItemIndex;
       SaveFolderSettings(_currentFolder);
       base.OnPageDestroy(newWindowId);
-    }
-
-    private void UnRegisterEventHandlers() {
-      g_Player.PlayBackStopped -= new g_Player.StoppedHandler(OnPlayBackStopped);
-      g_Player.PlayBackEnded -= new g_Player.EndedHandler(OnPlayBackEnded);
-      g_Player.PlayBackStarted -= new g_Player.StartedHandler(OnPlayBackStarted);
-      g_Player.PlayBackChanged -= new g_Player.ChangedHandler(OnPlayBackChanged);
     }
 
     public override bool OnMessage(GUIMessage message)
@@ -516,6 +496,11 @@ namespace MediaPortal.GUI.Video
       if (newFolderName == null)
       {
         Log.Warn("GUIVideoFiles::LoadDirectory called with invalid argument. newFolderName is null!");
+        return;
+      }
+
+      if (facadeView == null)
+      {
         return;
       }
 
@@ -1382,7 +1367,9 @@ namespace MediaPortal.GUI.Video
           if (_markWatchedFiles)
           {
             int fID = VideoDatabase.GetFileId(path);
-            if (VideoDatabase.GetMovieStopTime(fID) > 0)
+            byte[] resumeData = null;
+            int timeStopped = VideoDatabase.GetMovieStopTimeAndResumeData(fID, out resumeData);
+            if (timeStopped > 0 || resumeData != null)
               info.Watched = 1;
           }
         }
@@ -1591,11 +1578,8 @@ namespace MediaPortal.GUI.Video
       }
       if (_markWatchedFiles) // save a little performance
       {
-        if (GUIWindowManager.ActiveWindow == GetID)
-        {
-          LoadDirectory(_currentFolder, true, watchedMovies);
-          UpdateButtonStates();
-        }
+        LoadDirectory(_currentFolder, true, watchedMovies);
+        UpdateButtonStates();
       }
 
       if (SubEngine.GetInstance().IsModified())
@@ -1667,11 +1651,8 @@ namespace MediaPortal.GUI.Video
       }
       if (_markWatchedFiles) // save a little performance
       {
-        if (GUIWindowManager.ActiveWindow == GetID)
-        {
-          LoadDirectory(_currentFolder, true, watchedMovies);
-          UpdateButtonStates();
-        }
+        LoadDirectory(_currentFolder, true, watchedMovies);
+        UpdateButtonStates();
       }
     }
 

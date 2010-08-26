@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>748</id>
   <defaultcontrol>2</defaultcontrol>
@@ -98,12 +98,12 @@
       <description>upcoming episodes label</description>
       <type>label</type>
       <id>11</id>
-      <posX>480</posX>
-      <posY>350</posY>
-      <label>1041</label>
+      <posX>472</posX>
+      <posY>60</posY>
       <align>left</align>
-      <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
+      <width>800</width>
+      <label>646</label>
+      <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -111,26 +111,32 @@
       <description>upcoming episodes listcontrol</description>
       <type>listcontrol</type>
       <id>10</id>
-      <posY>385</posY>
-      <width>760</width>
-      <height>362</height>
-      <textXOff>88</textXOff>
+      <posX>462</posX>
+      <posY>95</posY>
+      <height>385</height>
+      <width>755</width>
+      <textXOff>10</textXOff>
       <textYOff>2</textYOff>
-      <textXOff2>743</textXOff2>
-      <textYOff2>36</textYOff2>
+      <textXOff2>746</textXOff2>
+      <textYOff2>32</textYOff2>
       <textXOff3>177</textXOff3>
-      <textYOff3>36</textYOff3>
-      <IconXOff>21</IconXOff>
-      <PinIconXOff>110</PinIconXOff>
-      <PinIconYOff>15</PinIconYOff>
-      <spinPosX>1125</spinPosX>
-      <itemWidth>74</itemWidth>
-      <itemHeight>52</itemHeight>
+      <textYOff3>32</textYOff3>
+      <IconXOff>10</IconXOff>
+      <PinIconXOff>80</PinIconXOff>
+      <PinIconYOff>37</PinIconYOff>
+      <PinIconWidth>35</PinIconWidth>
+      <PinIconHeight>25</PinIconHeight>
+      <spinWidth>46</spinWidth>
+      <spinHeight>33</spinHeight>
+      <spinPosX>1120</spinPosX>
+      <spinPosY>650</spinPosY>
+      <itemWidth>55</itemWidth>
+      <itemHeight>55</itemHeight>
       <textureFocus>album_background_focus.png</textureFocus>
       <textureNoFocus>album_background_nofocus.png</textureNoFocus>
-      <spaceBetweenItems>8</spaceBetweenItems>
-      <textureHeight>62</textureHeight>
+      <spaceBetweenItems>4</spaceBetweenItems>
       <keepaspectratio>yes</keepaspectratio>
+      <textureHeight>65</textureHeight>
       <font2>font10</font2>
       <font3>font10</font3>
       <onleft>2</onleft>
@@ -141,26 +147,64 @@
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
-      <description>Current program title</description>
+      <type>image</type>
+      <posX>462</posX>
+      <posY>475</posY>
+      <width>80</width>
+      <height>73</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <zoom>no</zoom>
+      <texture>#selectedthumb</texture>
+    </control>
+    <control>
+      <description>channel</description>
+      <id>16</id>
       <type>fadelabel</type>
-      <id>13</id>
-      <posX>480</posX>
-      <posY>125</posY>
-      <width>472</width>
-      <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
+      <posX>552</posX>
+      <posY>467</posY>
+      <align>left</align>
+      <width>674</width>
+      <textcolor>FFB2D4F5</textcolor>
+      <font>font12</font>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Current program time</description>
-      <type>label</type>
       <id>14</id>
-      <posX>480</posX>
-      <posY>150</posY>
+      <type>label</type>
+      <posX>552</posX>
+      <posY>495</posY>
+      <width>280</width>
       <align>left</align>
-      <font>font13</font>
+      <font>font12</font>
       <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Current program genre</description>
+      <type>label</type>
+      <id>17</id>
+      <posX>1215</posX>
+      <posY>495</posY>
+      <width>380</width>
+      <align>right</align>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Current program title</description>
+      <type>fadelabel</type>
+      <id>13</id>
+      <posX>552</posX>
+      <posY>523</posY>
+      <width>664</width>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
@@ -168,38 +212,13 @@
       <description>Description1</description>
       <type>textboxscrollup</type>
       <id>15</id>
-      <posX>480</posX>
-      <posY>175</posY>
-      <width>764</width>
-      <height>162</height>
+      <posX>462</posX>
+      <posY>560</posY>
+      <height>85</height>
+      <width>755</width>
       <label>#TV.RecordedTV.Description</label>
-      <font>font13</font>
+      <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-    </control>
-    <control>
-      <description>Current program channel</description>
-      <type>fadelabel</type>
-      <id>16</id>
-      <posX>1208</posX>
-      <posY>125</posY>
-      <width>227</width>
-      <align>right</align>
-      <font>font13</font>
-      <textcolor>FFFFFFFF</textcolor>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-    </control>
-    <control>
-      <description>genre</description>
-      <type>label</type>
-      <id>17</id>
-      <posX>1208</posX>
-      <posY>150</posY>
-      <align>right</align>
-      <font>font13</font>
-      <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>

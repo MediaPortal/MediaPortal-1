@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="Portuguese (Brazil)" characters="255">
   <Section name="unmapped">
     <String id="0">Programas</String>
@@ -7,6 +7,7 @@
     <String id="3">Vídeos</String>
     <String id="4">Guia da TV</String>
     <String id="5">Ajustes</String>
+    <String id="6">Sem nome</String>
     <String id="7">Arquivos</String>
     <String id="8">Tempo</String>
     <String id="9">Notícias</String>
@@ -31,6 +32,19 @@
     <String id="31">novembro</String>
     <String id="32">dezembro</String>
     <String id="50">DVDs</String>
+    <String id="51">Reproduzir Disco</String>
+    <String id="60">Aguarde a inicialização do serviço de TV</String>
+    <String id="61">Agurde {0} segundo(s) antes da inicialização...</String>
+    <String id="62">Inicializando DirectX...</String>
+    <String id="63">Inicializando dispositivos de entrada...</String>
+    <String id="64">Inicializando  plugins...</String>
+    <String id="65">Carregando keymap.xml...</String>
+    <String id="66">Carregando caracteres...</String>
+    <String id="67">Armazenado gráficos na memória cache...</String>
+    <String id="68">Carregando fontes...</String>
+    <String id="69">Carregando skin ({0})...</String>
+    <String id="70">Carregando plugins de janela...</String>
+    <String id="71">Inicializando gerenciador de janelas...</String>
     <String id="100">Exibir: ícones</String>
     <String id="101">Exibir: lista</String>
     <String id="102">Buscar arquivos</String>
@@ -325,6 +339,7 @@
     <String id="392">chuviscos</String>
     <String id="393">congelante</String>
     <String id="394">N/D</String>
+    <String id="395">Neblina</String>
     <String id="396">Selecionar local</String>
     <String id="397">Atualizar hora</String>
     <String id="398">Unidade de temperatura</String>
@@ -336,6 +351,7 @@
     <String id="404">Vento</String>
     <String id="405">P. de orvalho</String>
     <String id="406">Umidade</String>
+    <String id="407">Carregado</String>
     <String id="410">Acessando Weather.com</String>
     <String id="411">Obtendo condições do tempo para:</String>
     <String id="412">Impossivel obter dados</String>
@@ -420,6 +436,11 @@
     <String id="491">Usar ícones grandes</String>
     <String id="492">Linguagem de áudio</String>
     <String id="493">Ator</String>
+    <String id="495">Opções de classificação</String>
+    <String id="496">Opções</String>
+    <String id="497">Usuário</String>
+    <String id="498">Ações</String>
+    <String id="499">Menu de exibições</String>
     <String id="500">Menu de arquivo</String>
     <String id="501">Definir como destino</String>
     <String id="502">Impossível concluir a ação</String>
@@ -439,11 +460,42 @@
     <String id="516">Incapaz de apagar pasta de destino, ação não foi concluída</String>
     <String id="517">Erro fatal, ação não foi concluída</String>
     <String id="518">Apagar essa música?</String>
+    <String id="519">Sem Legenda</String>
+    <String id="527">Ordenar por: assistidos</String>
+    <String id="528">Artistas do Álbum</String>
+    <String id="529">Aparencia: Icones grandes</String>
     <String id="530">Disco com fotos inserido, deseja abrí-lo?</String>
     <String id="531">Disco com filmes inserido, deseja abrí-lo?</String>
     <String id="532">Disco de áudio inserido, deseja abrí-lo?</String>
+    <String id="533">guia do Rádio</String>
+    <String id="534">Moderado</String>
+    <String id="535">N</String>
+    <String id="536">L</String>
+    <String id="537">S</String>
+    <String id="538">O</String>
+    <String id="539">NE</String>
+    <String id="540">SE</String>
+    <String id="541">SO</String>
+    <String id="542">NO</String>
+    <String id="543">Trovão</String>
+    <String id="544">NNE</String>
+    <String id="545">ENE</String>
+    <String id="546">ESE</String>
+    <String id="547">SSE</String>
+    <String id="548">SSO</String>
+    <String id="549">OSO</String>
     <String id="550">Recortar</String>
+    <String id="551">ONO</String>
+    <String id="552">NNO</String>
+    <String id="553">Tarde</String>
+    <String id="554">muito</String>
     <String id="555">De {0} a {1} {2}</String>
+    <String id="556">diferentes</String>
+    <String id="561">Km/h</String>
+    <String id="562">mph</String>
+    <String id="563">Kn</String>
+    <String id="564">m/s</String>
+    <String id="565">bft</String>
     <String id="600">Guia da TV</String>
     <String id="601">Gravar agora</String>
     <String id="602">Canal:</String>
@@ -790,6 +842,8 @@
     <String id="1049">Hibernar</String>
     <String id="1050">sáb-dom</String>
     <String id="1051">Gravar sáb-dom</String>
+    <String id="1092">NTSC</String>
+    <String id="1093">PAL</String>
     <String id="1100">Importar CD</String>
     <String id="1101">Importar trilha escolhida</String>
     <String id="1102">Cancelar importação de CD</String>
@@ -979,6 +1033,10 @@
     <String id="3020">episódio</String>
     <String id="3021">parte</String>
     <String id="3022">de</String>
+    <String id="4000">Navegador</String>
+    <String id="4001">Favoritos</String>
+    <String id="4002">Impossível carregar URL</String>
+    <String id="4003">Favor especificar uma pasta de favoritos na configuração.</String>
     <String id="5900">trailers</String>
     <String id="5901">Exibir filmes</String>
     <String id="5902">Exibir quais filmes?</String>
@@ -1038,7 +1096,6 @@
     <String id="9009">Modelo da câmera:</String>
     <String id="9010">Equipamento:</String>
     <String id="9011">Ver comentários:</String>
-    <String id="99845">Verificar TV.com</String>
     <String id="12902">OSD do MSN Messenger</String>
     <String id="13000">Sistema:</String>
     <String id="13001">Fabricante:</String>
@@ -1060,7 +1117,6 @@
     <String id="13017">Ordenar por: data</String>
     <String id="13018">Ordenar por: classificação</String>
     <String id="16001">"Party Shuffle"</String>
-    <String id="25001">Aguardando página {0:X} ...!</String>
     <String id="19001">Tetris</String>
     <String id="19002">Novo jogo</String>
     <String id="19003">Música</String>
@@ -1074,6 +1130,7 @@
     <String id="19011">Pausa</String>
     <String id="19012">Fim do jogo</String>
     <String id="19100">GeoClock</String>
+    <String id="25001">Aguardando página {0:X} ...!</String>
     <String id="100000">Topo</String>
     <String id="100001">TV</String>
     <String id="100002">Imagens</String>
@@ -1081,7 +1138,6 @@
     <String id="100004">Ajustes</String>
     <String id="100005">Músicas</String>
     <String id="100006">Vídeos</String>
-    <String id="100007">Dados do sistema</String>
     <String id="100008">Ajustes-&gt;Geral</String>
     <String id="100009">Ajustes-&gt;Tela</String>
     <String id="100010">Ajustes-&gt;Tela-&gt;Calibração da UI</String>
@@ -1104,8 +1160,6 @@
     <String id="100029">Ajustes-&gt;Geral-&gt;LCD</String>
     <String id="100030">Rádio</String>
     <String id="100031">Ajustes-&gt;Tela-&gt;velocidade de rolagem</String>
-    <String id="100032">MSN Messenger</String>
-    <String id="100033">Bate-papo no MSN Messenger</String>
     <String id="100034">Plugins</String>
     <String id="100100">Diálogo de sim/não</String>
     <String id="100101">Diálogo de progresso</String>
@@ -1161,14 +1215,12 @@
     <String id="100705">Ajustes de skin</String>
     <String id="100748">Dados do programa</String>
     <String id="100749">TV/Sem sinal</String>
-    <String id="100750">Receitas</String>
     <String id="100755">Status</String>
     <String id="100756">Detalhes do status</String>
     <String id="100757">Configurações do status</String>
     <String id="100758">Diálogo do arquivo</String>
     <String id="100759">Dados da TV gravada</String>
     <String id="100760">Queimador</String>
-    <String id="100770">Explorer</String>
     <String id="101000">teclado</String>
     <String id="102000">Selecionar diálogo</String>
     <String id="102001">Música/dados</String>
@@ -1233,10 +1285,6 @@
     <String id="200035">Se sua cidade não estiver listada, você precisará sintonizar manualmente.</String>
     <String id="200036">Sintonia manual</String>
     <String id="200037">Pular&gt;</String>
-    <String id="4000">Navegador</String>
-    <String id="4001">Favoritos</String>
-    <String id="4002">Impossível carregar URL</String>
-    <String id="4003">Favor especificar uma pasta de favoritos na configuração.</String>
     <String id="200072">Episódios seguintes</String>
   </Section>
 </Language>

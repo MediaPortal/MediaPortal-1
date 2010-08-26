@@ -61,6 +61,7 @@ namespace TvLibrary.Implementations.DVB
     private readonly ConexantBDA _conexant;
     private readonly GenPixBDA _genpix;
     private readonly TeVii _TeVii;
+    private readonly DigitalDevices _DigitalDevices;
     
     private readonly IHardwareProvider _HWProvider;
 
@@ -232,6 +233,19 @@ namespace TvLibrary.Implementations.DVB
             return;
           }
           Release.DisposeToNull(ref _TeVii);
+
+          // DigitalDevices support
+          _DigitalDevices = new DigitalDevices(tunerFilter);
+          if (_DigitalDevices.IsGenericBDAS)
+          {
+            _genericbdas = _DigitalDevices;
+            if (_DigitalDevices.IsSupported)
+            {
+              _ciMenu = _DigitalDevices;
+            }
+            return; // detected
+          }        
+          Release.DisposeToNull(ref _DigitalDevices);
 
           Log.Log.WriteFile("Check for Conexant based card");
           _conexant = new ConexantBDA(tunerFilter);
@@ -650,6 +664,10 @@ namespace TvLibrary.Implementations.DVB
           int caPmtLen;
           byte[] caPmt = info.caPMT.CaPmtStruct(out caPmtLen);
           return _knc.SendPMT(caPmt, caPmtLen);
+        }
+        if (_DigitalDevices != null)
+        {
+          return _DigitalDevices.SendServiceIdToCam(channel.ServiceId);
         }
         if (_digitalEveryWhere != null)
         {

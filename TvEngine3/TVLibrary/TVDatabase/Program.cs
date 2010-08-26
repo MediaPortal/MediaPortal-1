@@ -945,9 +945,15 @@ namespace TvDatabase
 
     public static void ResetAllStates()
     {
-      string sql = "Update program set state=0 where state<>0;";
+      string sql = "Update Program set state=0 where state<>0;";
       SqlStatement stmt = new SqlStatement(StatementType.Update, Broker.Provider.GetCommand(), sql);
       stmt.Execute();
+      Gentle.Common.CacheManager.ClearQueryResultsByType(typeof(Program));
+    }
+
+    public void ClearRecordPendingState()
+    {
+      state &= ~(int)(ProgramState.RecordOncePending | ProgramState.RecordSeriesPending | ProgramState.PartialRecordSeriesPending);
     }
 
     public static IList<Program> RetrieveAllNotifications()

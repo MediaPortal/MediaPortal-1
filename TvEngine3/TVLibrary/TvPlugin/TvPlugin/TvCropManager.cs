@@ -52,7 +52,7 @@ namespace TvPlugin
     {
       get
       {
-        using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlreader = new MPSettings())
         {
           CropSettings cropSettings = new CropSettings(
             xmlreader.GetValueAsInt("tv", "croptop", 0),
@@ -66,7 +66,7 @@ namespace TvPlugin
       set
       {
         CropSettings cropSettings = value;
-        using (Settings xmlwriter = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+        using (Settings xmlwriter = new MPSettings())
         {
           xmlwriter.SetValue("tv", "croptop", cropSettings.Top);
           xmlwriter.SetValue("tv", "cropbottom", cropSettings.Bottom);

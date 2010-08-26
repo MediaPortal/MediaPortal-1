@@ -62,6 +62,7 @@ namespace MediaPortal.Configuration.Sections
                                    "Icons",
                                    "Big Icons",
                                    "Filmstrip",
+                                   "Cover Flow",
                                    "Albums",
                                  };
 

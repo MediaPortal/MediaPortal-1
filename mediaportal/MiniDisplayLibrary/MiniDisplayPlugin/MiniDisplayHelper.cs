@@ -156,7 +156,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
         CurrentStatus.CurrentPluginStatus = MPStatus.CurrentPluginStatus;
         CurrentStatus.CurrentIconMask = MPStatus.CurrentIconMask;
         CurrentStatus.MP_Is_Idle = MPStatus.MP_Is_Idle;
-        GetSystemVolume(ref CurrentStatus);
+
+        CurrentStatus.SystemVolumeLevel = MPStatus.SystemVolumeLevel;
+        CurrentStatus.IsMuted = MPStatus.IsMuted;
+        
         CurrentStatus.MediaPlayer_Active = MPStatus.MediaPlayer_Active;
         CurrentStatus.MediaPlayer_Playing = MPStatus.MediaPlayer_Playing;
         CurrentStatus.MediaPlayer_Paused = MPStatus.MediaPlayer_Paused;
@@ -182,20 +185,6 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
           Log.Debug("GetSystemStatus(): unable to update g_player properties (playback stop in progress?): " +
                     ex.Message);
         }
-      }
-    }
-
-    public static void GetSystemVolume(ref SystemStatus CurrentStatus)
-    {
-      try
-      {
-        CurrentStatus.SystemVolumeLevel = VolumeHandler.Instance.Volume;
-        CurrentStatus.IsMuted = VolumeHandler.Instance.IsMuted;
-      }
-      catch
-      {
-        CurrentStatus.SystemVolumeLevel = 0;
-        CurrentStatus.IsMuted = false;
       }
     }
 
@@ -811,6 +800,18 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       string str3;
       ulong num = 0L;
       string property = string.Empty;
+
+      try
+      {
+        MPStatus.SystemVolumeLevel = VolumeHandler.Instance.Volume;
+        MPStatus.IsMuted = VolumeHandler.Instance.IsMuted;
+      }
+      catch
+      {
+        MPStatus.SystemVolumeLevel = 0;
+        MPStatus.IsMuted = false;
+      }
+
       MPStatus.MediaPlayer_Active = false;
       MPStatus.MediaPlayer_Playing = false;
       MPStatus.MediaPlayer_Paused = false;

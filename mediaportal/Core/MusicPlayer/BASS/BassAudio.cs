@@ -300,7 +300,6 @@ namespace MediaPortal.Player
     private bool _useASIO = false;
     private string _asioDevice = string.Empty;
     private int _asioDeviceNumber = -1;
-    private int _asioNumberChannels = 2;
     private int _speed = 1;
     private DateTime _seekUpdate = DateTime.Now;
     private float _asioBalance = 0.00f;
@@ -944,15 +943,6 @@ namespace MediaPortal.Player
             // setup BASS - "no sound" device but 48000 (default for ASIO)
             initOK = (Bass.BASS_Init(0, 48000, 0, IntPtr.Zero) && BassAsio.BASS_ASIO_Init(_asioDeviceNumber));
 
-            // Get number of available output Channels
-            BASS_ASIO_INFO info = BassAsio.BASS_ASIO_GetInfo();
-            if (info != null)
-            {
-              _asioNumberChannels = info.outputs;
-            }
-
-            Log.Info("BASS: ASIO output to {0} channels", _asioNumberChannels);
-
             // When used in config the ASIO_INIT fails. Ignore it here, to be able using the visualisations
             if (Application.ExecutablePath.Contains("Configuration"))
             {
@@ -984,7 +974,7 @@ namespace MediaPortal.Player
           else if (_useASIO && _mixer == 0)
           {
             // For ASIO we neeed an Decoding Mixer with the number of Channels equals the ASIO Channels
-            _mixer = BassMix.BASS_Mixer_StreamCreate(44100, _asioNumberChannels,
+            _mixer = BassMix.BASS_Mixer_StreamCreate(44100, 2,
                                                      BASSFlag.BASS_MIXER_NONSTOP | BASSFlag.BASS_STREAM_DECODE);
             // assign ASIO and assume the ASIO format, samplerate and number of channels from the BASS stream
             _asioHandler = new BassAsioHandler(0, 0, _mixer);

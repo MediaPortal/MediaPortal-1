@@ -85,10 +85,10 @@ static HRESULT DrawRect(CComPtr<IDirect3DDevice9> pD3DDev, MYD3DVERTEX<0> v[4])
 
   do
 	{
-    HRESULT hr = pD3DDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-    hr = pD3DDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-    hr = pD3DDev->SetRenderState(D3DRS_ZENABLE, FALSE);
-    hr = pD3DDev->SetRenderState(D3DRS_STENCILENABLE, FALSE);
+    HRESULT hr;
+    DWORD alphaBlend;
+
+    hr = pD3DDev->GetRenderState(D3DRS_ALPHABLENDENABLE, &alphaBlend);
     hr = pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
     hr = pD3DDev->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA); 
     hr = pD3DDev->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA); 
@@ -105,6 +105,7 @@ static HRESULT DrawRect(CComPtr<IDirect3DDevice9> pD3DDev, MYD3DVERTEX<0> v[4])
     MYD3DVERTEX<0> tmp = v[2]; v[2] = v[3]; v[3] = tmp;
     hr = pD3DDev->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, v, sizeof(v[0]));	
 
+    hr = pD3DDev->SetRenderState(D3DRS_ALPHABLENDENABLE, alphaBlend);
     return S_OK;
     }
 	while(0);

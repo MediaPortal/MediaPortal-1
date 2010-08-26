@@ -43,7 +43,7 @@ namespace TvPlugin
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         _showAllChannelsGroup = xmlreader.GetValueAsBool("myradio", "showallchannelsgroup", true);
         _rememberLastGroup = xmlreader.GetValueAsBool("myradio", "rememberlastgroup", true);
@@ -53,7 +53,7 @@ namespace TvPlugin
 
     private void SaveSettings()
     {
-      using (Settings xmlreader = new Settings(Config.GetFile(Config.Dir.Config, "MediaPortal.xml")))
+      using (Settings xmlreader = new MPSettings())
       {
         xmlreader.SetValueAsBool("myradio", "showallchannelsgroup", _showAllChannelsGroup);
         xmlreader.SetValueAsBool("myradio", "rememberlastgroup", _rememberLastGroup);

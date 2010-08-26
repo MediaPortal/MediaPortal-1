@@ -34,7 +34,7 @@
 
 ##### HEISE_BUILD
 # Uncomment the following line to create a setup for "Heise Verlag" / ct' magazine  (without MPC-HC/Gabest Filters)
-;!define HEISE_BUILD
+#!define HEISE_BUILD
 # parameter for command line execution: /DHEISE_BUILD
 
 ##### BUILD_TYPE
@@ -90,8 +90,8 @@
 !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal"
 
 !define VER_MAJOR       1
-!define VER_MINOR       0
-!define VER_REVISION    7
+!define VER_MINOR       2
+!define VER_REVISION    0
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
@@ -103,11 +103,11 @@
 !if ${VER_BUILD} == 0       # it's an official release
   ;!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
   ;this is for display purposes
-  !define VERSION "1.1.0 RC3"
+  !define VERSION "1.2.0"
 !else                       # it's a svn release
   ;!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION} SVN build ${VER_BUILD} for TESTING ONLY"
   ;this is for display purposes
-  !define VERSION "1.1.0 RC3 SVN build ${VER_BUILD} for TESTING ONLY"
+  !define VERSION "1.2.0 SVN build ${VER_BUILD} for TESTING ONLY"
 !endif
 !endif
 
@@ -292,17 +292,8 @@ ShowUninstDetails show
 
   ; MPTray
   ${KillProcess} "MPTray.exe"
-  ${Select} $0
-    ${Case} "0"
-      ;${LOG_TEXT} "INFO" "KillProcess: ${Process} was killed successfully."
-      StrCpy $MPTray_Running 1
-    ${Case} "128"
-      ;${LOG_TEXT} "INFO" "KillProcess: ${Process} is not running."
-      StrCpy $MPTray_Running 0
-    ${CaseElse}
-      ;${LOG_TEXT} "ERROR" "KillProcess: Unknown result: $0"
-  ${EndSelect}
-
+  StrCpy $MPTray_Running $R0
+  
   ; MovieThumbnailer
   ${KillProcess} "mtn.exe"
 !macroend
@@ -409,6 +400,12 @@ Section "MediaPortal core files (required)" SecCore
     /x yac-area-codes.xml \
     /x mtn.c \
     "
+	
+  #Special build for Heise needs some files excluded.
+  #At the moment this is only lame_enc.dll
+  !define EXCLUDED_FILES_FOR_HEISE_BUILD "\
+    /x lame_enc.dll \
+	"
 
 ### AUTO-GENERATED   UNINSTALLATION CODE ###
   # Files which were diffed before including in installer
@@ -416,7 +413,11 @@ Section "MediaPortal core files (required)" SecCore
   #We can not use the complete mediaportal.base dir recoursivly , because the plugins, thumbs, weather need to be extracted to their special MPdir location
   # exluding only the folders does not work because /x plugins won't extract the \plugins AND musicplayer\plugins directory
   SetOutPath "$MPdir.Base"
-  File /nonfatal /x .svn ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
+  !ifdef HEISE_BUILD
+	File /nonfatal /x .svn ${EXCLUDED_CONFIG_FILES} ${EXCLUDED_FILES_FOR_HEISE_BUILD} "${MEDIAPORTAL.BASE}\*"
+  !else
+	File /nonfatal /x .svn ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
+  !endif
   SetOutPath "$MPdir.Base\MovieThumbnailer"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\MovieThumbnailer\*"
   SetOutPath "$MPdir.Base\MusicPlayer"
@@ -852,7 +853,7 @@ Section -Post
   !insertmacro SetRights
 
   ; start MpTray if it was running before
-  ${If} $MPTray_Running == 1
+  ${If} $MPTray_Running == 0
     ${LOG_TEXT} "INFO" "Starting MPTray..."
     Exec '"$MPdir.Base\MPTray.exe"'
   ${EndIf}
