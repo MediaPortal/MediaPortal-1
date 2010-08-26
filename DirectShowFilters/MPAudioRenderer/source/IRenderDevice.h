@@ -34,6 +34,7 @@ class IRenderDevice
 public:
 
   IRenderDevice(){};
+  virtual ~IRenderDevice(){};
 
   virtual HRESULT InitCoopLevel() = 0;
 	virtual HRESULT CheckFormat(WAVEFORMATEX* pwfx) = 0;
