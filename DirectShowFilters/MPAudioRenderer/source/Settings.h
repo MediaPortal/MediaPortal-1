@@ -38,6 +38,8 @@ public:
   bool m_bEnableAC3Encoding;
   
   int m_AC3bitrate;
+  double m_dMaxBias;
+  double m_dMinBias;
 
   REFERENCE_TIME m_hnsPeriod;
 

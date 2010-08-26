@@ -22,18 +22,20 @@ extern void LogRotate();
 
 int gAllowedAC3bitrates[9] = {192, 224, 256, 320, 384, 448, 512, 576, 640};
 
-AudioRendererSettings::AudioRendererSettings() : 
+AudioRendererSettings::AudioRendererSettings() :
   m_bLogSampleTimes(false),
   m_bUseWASAPI(true),
   m_bUseTimeStretching(false),
   m_bEnableAC3Encoding(false),
   m_hnsPeriod(0),
   m_AC3bitrate(448), 
+  m_dMaxBias(1.1),
+  m_dMinBias(0.9),
   m_WASAPIShareMode(AUDCLNT_SHAREMODE_EXCLUSIVE),
   m_wWASAPIPreferredDeviceId(NULL)
 {
   LogRotate();
-  Log("MP Audio Renderer - v0.75");
+  Log("MP Audio Renderer - v0.76");
 
   LoadSettingsFromRegistry();
 }
@@ -61,6 +63,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   LPCTSTR devicePeriod = TEXT("DevicePeriod");
   LPCTSTR enableAC3Encoding = TEXT("EnableAC3Encoding");
   LPCTSTR AC3bitrate = TEXT("AC3bitrate");
+  LPCTSTR maxBias = TEXT("MaxBias");
+  LPCTSTR minBias = TEXT("MinBias");
   LPCTSTR logSampleTimes = TEXT("LogSampleTimes");
   LPCTSTR WASAPIPreferredDevice = TEXT("WASAPIPreferredDevice");
   
@@ -71,6 +75,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   DWORD devicePeriodData = 500000;  // 50 ms
   DWORD enableAC3EncodingData = 0;
   DWORD AC3bitrateData = 448;       // maximum based on the DVD spec
+  DWORD maxBiasData = 11000;        // divide with 10000 to get real double value
+  DWORD minBiasData = 9000;         // divide with 10000 to get real double value
   DWORD logSampleTimesData = 0;
   LPCTSTR WASAPIPreferredDeviceData = new TCHAR[MAX_REG_LENGTH];
 
@@ -88,6 +94,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
     ReadRegistryKeyDword(hKey, enableAC3Encoding, enableAC3EncodingData);
     ReadRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
+    ReadRegistryKeyDword(hKey, maxBias, maxBiasData);
+    ReadRegistryKeyDword(hKey, minBias, minBiasData);
     ReadRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
     ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
 
@@ -96,6 +104,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   WASAPIExclusive:         %d", WASAPIExclusiveData);
     Log("   EnableAC3Encoding:       %d", enableAC3EncodingData);
     Log("   AC3bitrate:              %d", AC3bitrateData);
+    Log("   MaxBias:                 %d", maxBiasData);
+    Log("   MinBias:                 %d", minBiasData);
     Log("   LogSampleTimes:          %d", logSampleTimesData);
     Log("   DevicePeriod:            %d (1 == minimal, 0 == driver default, other user defined)", devicePeriodData);
     Log("   WASAPIPreferredDevice:   %s", WASAPIPreferredDeviceData);
@@ -119,6 +129,9 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       m_bEnableAC3Encoding = true;
     else
       m_bEnableAC3Encoding = false;
+
+    m_dMaxBias = (double)maxBiasData / 10000.0;
+    m_dMinBias = (double)minBiasData / 10000.0;
 
     if (logSampleTimesData > 0)
       m_bLogSampleTimes = true;

@@ -65,6 +65,8 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   m_bIsWin7(pIsWin7),
   m_pAVSyncClock(NULL),
   m_dBias(1.0),
+  m_dMaxBias(1.1),
+  m_dMinBias(1.1),
   m_bBiasAdjustmentDone(false),
   m_bInitialBiasAdjustmentDone(false),
   m_bDetectBias(false),
@@ -83,7 +85,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     HRESULT hr;
     LogRotate();
     Log("----- Owlsroost Version ------ instance 0x%x", this);
-    Log("---------- v0.0.38 ----------- instance 0x%x", this);
+    Log("---------- v0.0.39 ----------- instance 0x%x", this);
     Log("--- audio renderer testing --- instance 0x%x", this);
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
@@ -3195,7 +3197,7 @@ void MPEVRCustomPresenter::CalculateNSTStats(LONGLONG timeStamp)
 
 
   // This function calculates the (average) ratio between the presentation clock and
-  // system clock - ReClock modifies the presentation clock when performing speed up/down.
+  // system clock - Audio renderer can modify the presentation clock when performing speed up/down.
   // It must be called with the values returned from GetCorrelatedTime() as input
 void MPEVRCustomPresenter::CalculatePresClockDelta(LONGLONG presTime, LONGLONG sysTime)
 {
@@ -3215,14 +3217,14 @@ void MPEVRCustomPresenter::CalculatePresClockDelta(LONGLONG presTime, LONGLONG s
   
   double sysPrsRatio = (double)sysDiff/(double)prsDiff;
   
-  // Clamp large differences to within sensible ReClock speed up/down limits
-  if (sysPrsRatio > 1.06) 
+  // Clamp large differences to within sensible audio renderer speed up/down limits
+  if (sysPrsRatio > m_dMaxBias) 
   {
-    sysPrsRatio = 1.06;
+    sysPrsRatio = m_dMaxBias;
   }
-  else if (sysPrsRatio < 0.94)
+  else if (sysPrsRatio < m_dMinBias)
   {
-    sysPrsRatio = 0.94;
+    sysPrsRatio = m_dMinBias;
   }
 
   int tempNextPCD = (m_nNextPCD % NB_PCDSIZE);
@@ -3243,7 +3245,6 @@ void MPEVRCustomPresenter::CalculatePresClockDelta(LONGLONG presTime, LONGLONG s
   {
     m_fPCDMean = 1.0;
   }
-    
 }
 
 
@@ -3282,15 +3283,20 @@ void MPEVRCustomPresenter::GetAVSyncClockInterface()
 
   if (m_pAVSyncClock)
   {
+    m_pAVSyncClock->GetMaxBias(&m_dMaxBias);
+    m_pAVSyncClock->GetMinBias(&m_dMinBias);
+    
+    Log("   Allowed bias values between %1.10f and %1.10f", m_dMinBias, m_dMaxBias);
+
     if (S_OK == m_pAVSyncClock->SetBias(m_dBias))
     {
       m_bBiasAdjustmentDone = true;
-      Log("  Adjusting bias to: %f", m_dBias);
+      Log("  Adjusting bias to: %1.10f", m_dBias);
     }
     else
     {
       m_bBiasAdjustmentDone = false;
-      Log("  Failed to adjust bias to : %f", m_dBias);
+      Log("  Failed to adjust bias to : %1.10f", m_dBias);
     }
   }
 }
@@ -3301,29 +3307,26 @@ void MPEVRCustomPresenter::SetupAudioRenderer()
 
   double cycleDiff = GetCycleDifference();
 
-  Log("SetupAudioRenderer: cycleDiff: %f", cycleDiff);
+  Log("SetupAudioRenderer: cycleDiff: %1.10f", cycleDiff);
 
-  if (abs(cycleDiff) < 0.06)
+  m_dBias = 1.0 - cycleDiff;
+
+  if (m_pAVSyncClock)
   {
-    m_dBias = 1.0 - cycleDiff;
-
-    if (m_pAVSyncClock)
+    if (S_OK == m_pAVSyncClock->SetBias(m_dBias))
     {
-      if (S_OK == m_pAVSyncClock->SetBias(m_dBias))
-      {
-        m_bBiasAdjustmentDone = true;
-        Log("SetupAudioRenderer: adjust bias to : %f", m_dBias);
-      }
-      else
-      {
-        m_bBiasAdjustmentDone = false;
-        Log("SetupAudioRenderer: failed to adjust bias to : %f", m_dBias);
-      }
+      m_bBiasAdjustmentDone = true;
+      Log("SetupAudioRenderer: adjust bias to : %1.10f", m_dBias);
     }
     else
     {
-      Log("SetupAudioRenderer: adjust bias to : %f - wait audio renderer to be available", m_dBias);
+      m_bBiasAdjustmentDone = false;
+      Log("SetupAudioRenderer: failed to adjust bias to : %1.10f", m_dBias);
     }
+  }
+  else
+  {
+    Log("SetupAudioRenderer: adjust bias to : %1.10f - wait audio renderer to be available", m_dBias);
   }
 }
 

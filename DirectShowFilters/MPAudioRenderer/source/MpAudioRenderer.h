@@ -98,6 +98,8 @@ public:
   STDMETHOD(AdjustClock)(DOUBLE adjustment);
   STDMETHOD(SetBias)(DOUBLE bias);
   STDMETHOD(GetBias)(DOUBLE *bias);
+  STDMETHOD(GetMaxBias)(DOUBLE *pMaxBias);
+  STDMETHOD(GetMinBias)(DOUBLE *pMinBias);
 
   void AudioClock(UINT64& pTimestamp, UINT64& pQpc);
 

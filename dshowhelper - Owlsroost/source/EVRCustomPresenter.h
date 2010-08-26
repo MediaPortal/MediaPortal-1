@@ -398,6 +398,8 @@ protected:
   
   IAVSyncClock* m_pAVSyncClock;
   double        m_dBias;
+  double        m_dMaxBias;
+  double        m_dMinBias;
   bool          m_bBiasAdjustmentDone;
   bool          m_bInitialBiasAdjustmentDone;
   bool          m_bDetectBias;

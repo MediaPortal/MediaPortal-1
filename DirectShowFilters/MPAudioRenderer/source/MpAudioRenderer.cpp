@@ -670,6 +670,20 @@ HRESULT CMPAudioRenderer::EndFlush()
   return CBaseRenderer::EndFlush(); 
 }
 
+// TODO - implement TsReader side as well
+
+/*
+bool CMPAudioRenderer::CheckForLiveSouce()
+{
+  FILTER_INFO filterInfo;
+  ZeroMemory(&filterInfo, sizeof(filterInfo));
+  m_EVRFilter->QueryFilterInfo(&filterInfo); // This addref's the pGraph member
+
+  CComPtr<IBaseFilter> pBaseFilter;
+
+  HRESULT hr = filterInfo.pGraph->FindFilterByName(L"MediaPortal File Reader", &pBaseFilter);
+  filterInfo.pGraph->Release();
+}*/
 
 // IAVSyncClock interface implementation
 
@@ -697,29 +711,69 @@ HRESULT CMPAudioRenderer::SetBias(DOUBLE pBias)
 {
   CAutoLock cAutoLock(&m_csResampleLock);
 
+  bool ret = S_FALSE;
+
   if (m_Settings.m_bUseTimeStretching)
   {
     Log("SetBias: %1.10f", pBias);
 
-    m_dBias = pBias;
+    if (pBias < m_Settings.m_dMinBias)
+    {
+      Log("   bias value too small - using 1.0");
+      m_dBias = 1.0;
+      ret = S_FALSE; 
+    }
+    else if(pBias > m_Settings.m_dMaxBias)
+    {
+      Log("   bias value too big - using 1.0");
+      m_dBias = 1.0;
+      ret = S_FALSE; 
+    }
+    else
+    {
+      m_dBias = pBias;
+      ret = S_OK;  
+    }
+    
     m_Clock.SetBias(m_dBias);
     if (m_pSoundTouch)
     {
       m_pSoundTouch->setTempo(m_dAdjustment * m_dBias);
       Log("SetBias - updated SoundTouch tempo");
+      // ret is not set since we want to be able to indicate the too big / small bias value	  
     }
-    return S_OK;
+    else
+    {
+      Log("SetBias - no SoundTouch avaible!");
+      ret = S_FALSE;
+    }
   }
   else
   {
     Log("SetBias: %1.10f - failed, time stretching is disabled", pBias);
-    return S_FALSE;  
+    ret = S_FALSE;  
   }
+
+  return ret;
 }
 
 HRESULT CMPAudioRenderer::GetBias(DOUBLE* pBias)
 {
+  CheckPointer(pBias, E_POINTER);
   *pBias = m_Clock.Bias();
   return S_OK;
 }
 
+HRESULT CMPAudioRenderer::GetMaxBias(DOUBLE *pMaxBias)
+{
+  CheckPointer(pMaxBias, E_POINTER);
+  *pMaxBias = m_Settings.m_dMaxBias;
+  return S_OK;
+}
+
+HRESULT CMPAudioRenderer::GetMinBias(DOUBLE *pMinBias)
+{
+  CheckPointer(pMinBias, E_POINTER);
+  *pMinBias = m_Settings.m_dMinBias;
+  return S_OK;
+}

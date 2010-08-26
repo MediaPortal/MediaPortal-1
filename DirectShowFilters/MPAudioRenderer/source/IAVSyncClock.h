@@ -27,8 +27,10 @@ MIDL_INTERFACE("91A198BA-1C78-4c31-A50F-0F5C7578F078")
 IAVSyncClock: public IUnknown
 {
 public:
-	virtual HRESULT STDMETHODCALLTYPE AdjustClock(DOUBLE adjustment) = 0;
-	virtual HRESULT STDMETHODCALLTYPE SetBias(DOUBLE bias) = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetBias(DOUBLE *bias) = 0;
+  virtual HRESULT STDMETHODCALLTYPE AdjustClock(DOUBLE adjustment) = 0;
+  virtual HRESULT STDMETHODCALLTYPE SetBias(DOUBLE bias) = 0;
+  virtual HRESULT STDMETHODCALLTYPE GetBias(DOUBLE *bias) = 0;
+  virtual HRESULT STDMETHODCALLTYPE GetMaxBias(DOUBLE *bias) = 0;
+  virtual HRESULT STDMETHODCALLTYPE GetMinBias(DOUBLE *bias) = 0;
 };
 #endif // IAVSYNCCLOCK
