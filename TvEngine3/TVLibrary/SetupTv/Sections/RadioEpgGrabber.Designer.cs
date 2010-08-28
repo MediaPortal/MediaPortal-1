@@ -71,7 +71,6 @@ namespace SetupTv.Sections
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
       this.mpListView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView1_ItemChecked);
-      this.mpListView1.SelectedIndexChanged += new System.EventHandler(this.mpListView1_SelectedIndexChanged);
       this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
       // 
       // columnHeader1
@@ -119,7 +118,6 @@ namespace SetupTv.Sections
       this.mpListView2.TabIndex = 3;
       this.mpListView2.UseCompatibleStateImageBehavior = false;
       this.mpListView2.View = System.Windows.Forms.View.Details;
-      this.mpListView2.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView2_ItemChecked);
       // 
       // columnHeader2
       // 
@@ -139,7 +137,6 @@ namespace SetupTv.Sections
       this.mpLabel2.Size = new System.Drawing.Size(187, 13);
       this.mpLabel2.TabIndex = 4;
       this.mpLabel2.Text = "Grab EPG for the following languages:";
-      this.mpLabel2.Click += new System.EventHandler(this.mpLabel2_Click);
       // 
       // mpButtonAll
       // 

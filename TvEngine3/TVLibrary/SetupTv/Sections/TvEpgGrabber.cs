@@ -141,9 +141,37 @@ namespace SetupTv.Sections
             continue;
           if (ch.IsWebstream())
             continue;
-          int imageIndex = 1;
-          if (ch.FreeToAir == false)
-            imageIndex = 2;
+
+          bool hasFta = false;
+          bool hasScrambled = false;
+          IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
+          foreach (TuningDetail detail in tuningDetails)
+          {
+            if (detail.FreeToAir)
+            {
+              hasFta = true;
+            }
+            if (!detail.FreeToAir)
+            {
+              hasScrambled = true;
+            }
+
+          }
+
+          int imageIndex;
+          if (hasFta && hasScrambled)
+          {
+            imageIndex = 5;
+          }
+          else if (hasScrambled)
+          {
+            imageIndex = 4;
+          }
+          else
+          {
+            imageIndex = 3;
+          }
+
           ListViewItem item = mpListView1.Items.Add(ch.DisplayName, imageIndex);
           foreach (ChannelMap map in ch.ReferringChannelMap())
           {

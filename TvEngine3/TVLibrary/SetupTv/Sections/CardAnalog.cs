@@ -951,7 +951,6 @@ namespace SetupTv.Sections
           }
           dbChannel.IsTv = channel.IsTv;
           dbChannel.IsRadio = channel.IsRadio;
-          dbChannel.FreeToAir = true;
           dbChannel.Persist();
           layer.AddTuningDetails(dbChannel, channel);
           layer.MapChannelToCard(card, dbChannel, false);
@@ -1191,7 +1190,6 @@ namespace SetupTv.Sections
             item.Text = line;
             dbChannel.IsTv = channel.IsTv;
             dbChannel.IsRadio = channel.IsRadio;
-            dbChannel.FreeToAir = true;
             dbChannel.Persist();
 
             if (dbChannel.IsTv)

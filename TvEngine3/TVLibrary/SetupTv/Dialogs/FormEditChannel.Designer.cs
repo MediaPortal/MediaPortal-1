@@ -46,8 +46,12 @@ namespace SetupTv.Dialogs
       this.menuButtonEdit = new System.Windows.Forms.ToolStripMenuItem();
       this.menuButtonRemove = new System.Windows.Forms.ToolStripMenuItem();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.gbTuningdetails = new System.Windows.Forms.GroupBox();
+      this.btnAddTuningDetail = new System.Windows.Forms.Button();
+      this.btnEditTuningDetail = new System.Windows.Forms.Button();
+      this.btnRemoveTuningDetail = new System.Windows.Forms.Button();
       this.tuningDetailContextMenu.SuspendLayout();
+      this.gbTuningdetails.SuspendLayout();
       this.SuspendLayout();
       // 
       // mpButtonOk
@@ -113,7 +117,7 @@ namespace SetupTv.Dialogs
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.IsChannelListView = false;
       this.mpListView1.LargeImageList = this.imageList1;
-      this.mpListView1.Location = new System.Drawing.Point(19, 112);
+      this.mpListView1.Location = new System.Drawing.Point(6, 19);
       this.mpListView1.Name = "mpListView1";
       this.mpListView1.Size = new System.Drawing.Size(432, 206);
       this.mpListView1.SmallImageList = this.imageList1;
@@ -121,6 +125,7 @@ namespace SetupTv.Dialogs
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
       this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
+      this.mpListView1.SelectedIndexChanged += new System.EventHandler(this.mpListView1_SelectedIndexChanged);
       // 
       // id
       // 
@@ -152,27 +157,26 @@ namespace SetupTv.Dialogs
             this.menuButtonEdit,
             this.menuButtonRemove});
       this.tuningDetailContextMenu.Name = "tuningDetailContextMenu";
-      this.tuningDetailContextMenu.Size = new System.Drawing.Size(125, 70);
-      this.tuningDetailContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.tuningDetailContextMenu_Opening);
+      this.tuningDetailContextMenu.Size = new System.Drawing.Size(118, 70);
       // 
       // menuButtonAdd
       // 
       this.menuButtonAdd.Name = "menuButtonAdd";
-      this.menuButtonAdd.Size = new System.Drawing.Size(124, 22);
+      this.menuButtonAdd.Size = new System.Drawing.Size(152, 22);
       this.menuButtonAdd.Text = "Add";
       this.menuButtonAdd.Click += new System.EventHandler(this.menuButtonAdd_Click);
       // 
       // menuButtonEdit
       // 
       this.menuButtonEdit.Name = "menuButtonEdit";
-      this.menuButtonEdit.Size = new System.Drawing.Size(124, 22);
+      this.menuButtonEdit.Size = new System.Drawing.Size(152, 22);
       this.menuButtonEdit.Text = "Edit";
       this.menuButtonEdit.Click += new System.EventHandler(this.menuButtonEdit_Click);
       // 
       // menuButtonRemove
       // 
       this.menuButtonRemove.Name = "menuButtonRemove";
-      this.menuButtonRemove.Size = new System.Drawing.Size(124, 22);
+      this.menuButtonRemove.Size = new System.Drawing.Size(152, 22);
       this.menuButtonRemove.Text = "Remove";
       this.menuButtonRemove.Click += new System.EventHandler(this.menuButtonRemove_Click);
       // 
@@ -185,14 +189,50 @@ namespace SetupTv.Dialogs
       this.imageList1.Images.SetKeyName(2, "tv_scrambled.png");
       this.imageList1.Images.SetKeyName(3, "radio_fta_.png");
       // 
-      // mpLabel1
+      // gbTuningdetails
       // 
-      this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(19, 93);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(73, 13);
-      this.mpLabel1.TabIndex = 52;
-      this.mpLabel1.Text = "Tuningdetails:";
+      this.gbTuningdetails.Controls.Add(this.btnRemoveTuningDetail);
+      this.gbTuningdetails.Controls.Add(this.btnEditTuningDetail);
+      this.gbTuningdetails.Controls.Add(this.btnAddTuningDetail);
+      this.gbTuningdetails.Controls.Add(this.mpListView1);
+      this.gbTuningdetails.Location = new System.Drawing.Point(12, 78);
+      this.gbTuningdetails.Name = "gbTuningdetails";
+      this.gbTuningdetails.Size = new System.Drawing.Size(440, 267);
+      this.gbTuningdetails.TabIndex = 52;
+      this.gbTuningdetails.TabStop = false;
+      this.gbTuningdetails.Text = "Tuningdetails";
+      // 
+      // btnAddTuningDetail
+      // 
+      this.btnAddTuningDetail.Location = new System.Drawing.Point(6, 231);
+      this.btnAddTuningDetail.Name = "btnAddTuningDetail";
+      this.btnAddTuningDetail.Size = new System.Drawing.Size(75, 23);
+      this.btnAddTuningDetail.TabIndex = 52;
+      this.btnAddTuningDetail.Text = "Add";
+      this.btnAddTuningDetail.UseVisualStyleBackColor = true;
+      this.btnAddTuningDetail.Click += new System.EventHandler(this.menuButtonAdd_Click);
+      // 
+      // btnEditTuningDetail
+      // 
+      this.btnEditTuningDetail.Enabled = false;
+      this.btnEditTuningDetail.Location = new System.Drawing.Point(87, 231);
+      this.btnEditTuningDetail.Name = "btnEditTuningDetail";
+      this.btnEditTuningDetail.Size = new System.Drawing.Size(75, 23);
+      this.btnEditTuningDetail.TabIndex = 53;
+      this.btnEditTuningDetail.Text = "Edit";
+      this.btnEditTuningDetail.UseVisualStyleBackColor = true;
+      this.btnEditTuningDetail.Click += new System.EventHandler(this.menuButtonEdit_Click);
+      // 
+      // btnRemoveTuningDetail
+      // 
+      this.btnRemoveTuningDetail.Enabled = false;
+      this.btnRemoveTuningDetail.Location = new System.Drawing.Point(168, 231);
+      this.btnRemoveTuningDetail.Name = "btnRemoveTuningDetail";
+      this.btnRemoveTuningDetail.Size = new System.Drawing.Size(75, 23);
+      this.btnRemoveTuningDetail.TabIndex = 54;
+      this.btnRemoveTuningDetail.Text = "Remove";
+      this.btnRemoveTuningDetail.UseVisualStyleBackColor = true;
+      this.btnRemoveTuningDetail.Click += new System.EventHandler(this.menuButtonRemove_Click);
       // 
       // FormEditChannel
       // 
@@ -201,11 +241,10 @@ namespace SetupTv.Dialogs
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.mpButtonCancel;
       this.ClientSize = new System.Drawing.Size(464, 387);
+      this.Controls.Add(this.gbTuningdetails);
       this.Controls.Add(this.checkBoxVisibleInTvGuide);
-      this.Controls.Add(this.mpLabel1);
       this.Controls.Add(this.textBoxName);
       this.Controls.Add(this.label25);
-      this.Controls.Add(this.mpListView1);
       this.Controls.Add(this.mpButtonCancel);
       this.Controls.Add(this.mpButtonOk);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -216,6 +255,7 @@ namespace SetupTv.Dialogs
       this.Text = "Edit Channel";
       this.Shown += new System.EventHandler(this.FormEditChannel_Load);
       this.tuningDetailContextMenu.ResumeLayout(false);
+      this.gbTuningdetails.ResumeLayout(false);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -238,8 +278,11 @@ namespace SetupTv.Dialogs
     private System.Windows.Forms.ToolStripMenuItem menuButtonAdd;
     private System.Windows.Forms.ToolStripMenuItem menuButtonRemove;
     private System.Windows.Forms.ToolStripMenuItem menuButtonEdit;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private System.Windows.Forms.ColumnHeader details;
+    private System.Windows.Forms.GroupBox gbTuningdetails;
+    private System.Windows.Forms.Button btnRemoveTuningDetail;
+    private System.Windows.Forms.Button btnEditTuningDetail;
+    private System.Windows.Forms.Button btnAddTuningDetail;
 
   }
 }

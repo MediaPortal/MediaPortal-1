@@ -16,11 +16,11 @@ namespace SetupTv.Dialogs
     {
       if (TuningDetail != null)
       {
-        textBox5.Text = TuningDetail.Frequency.ToString();
-        textBox4.Text = TuningDetail.NetworkId.ToString();
-        textBox3.Text = TuningDetail.TransportId.ToString();
-        textBox2.Text = TuningDetail.ServiceId.ToString();
-        textBox1.Text = TuningDetail.Symbolrate.ToString();
+        textBoxFrequency.Text = TuningDetail.Frequency.ToString();
+        textBoxNetworkId.Text = TuningDetail.NetworkId.ToString();
+        textBoxTransportId.Text = TuningDetail.TransportId.ToString();
+        textBoxServiceId.Text = TuningDetail.ServiceId.ToString();
+        textBoxSymbolRate.Text = TuningDetail.Symbolrate.ToString();
         textBoxSwitch.Text = TuningDetail.SwitchingFrequency.ToString();
         textBoxDVBSChannel.Text = TuningDetail.ChannelNumber.ToString();
         textBoxDVBSPmt.Text = TuningDetail.PmtPid.ToString();
@@ -48,11 +48,11 @@ namespace SetupTv.Dialogs
         comboBoxDisEqc.SelectedIndex = TuningDetail.Diseqc;
       } else
       {
-        textBox5.Text = "";
-        textBox4.Text = "";
-        textBox3.Text = "";
-        textBox2.Text = "";
-        textBox1.Text = "";
+        textBoxFrequency.Text = "";
+        textBoxNetworkId.Text = "";
+        textBoxTransportId.Text = "";
+        textBoxServiceId.Text = "";
+        textBoxSymbolRate.Text = "";
         textBoxSwitch.Text = "";
         textBoxDVBSChannel.Text = "";
         textBoxDVBSPmt.Text = "";
@@ -84,11 +84,11 @@ namespace SetupTv.Dialogs
     private void UpdateTuningDetail()
     {
       TuningDetail.ChannelType = 3;
-      TuningDetail.Frequency = Int32.Parse(textBox5.Text);
-      TuningDetail.NetworkId = Int32.Parse(textBox4.Text);
-      TuningDetail.TransportId = Int32.Parse(textBox3.Text);
-      TuningDetail.ServiceId = Int32.Parse(textBox2.Text);
-      TuningDetail.Symbolrate = Int32.Parse(textBox1.Text);
+      TuningDetail.Frequency = Int32.Parse(textBoxFrequency.Text);
+      TuningDetail.NetworkId = Int32.Parse(textBoxNetworkId.Text);
+      TuningDetail.TransportId = Int32.Parse(textBoxTransportId.Text);
+      TuningDetail.ServiceId = Int32.Parse(textBoxServiceId.Text);
+      TuningDetail.Symbolrate = Int32.Parse(textBoxSymbolRate.Text);
       TuningDetail.SwitchingFrequency = Int32.Parse(textBoxSwitch.Text);
       TuningDetail.InnerFecRate = (int)(BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
       TuningDetail.Pilot = (int)(Pilot)(comboBoxPilot.SelectedIndex - 1);
@@ -118,17 +118,57 @@ namespace SetupTv.Dialogs
 
     private bool ValidateInput()
     {
-      if (textBox5.Text.Length == 0) { return false; }
+      if (textBoxFrequency.Text.Length == 0)
+      {
+        MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
+        return false;
+      }
       int lcn, freq, onid, tsid, sid, symbolrate, switchfreq, pmt;
-      if (!Int32.TryParse(textBoxDVBSChannel.Text, out lcn)) { return false; }
-      if (!Int32.TryParse(textBox5.Text, out freq)) { return false; }
-      if (!Int32.TryParse(textBox4.Text, out onid)) { return false; }
-      if (!Int32.TryParse(textBox3.Text, out tsid)) { return false; }
-      if (!Int32.TryParse(textBox2.Text, out sid)) { return false; }
-      if (!Int32.TryParse(textBox1.Text, out symbolrate)) { return false; }
-      if (!Int32.TryParse(textBoxSwitch.Text, out switchfreq)) { return false; }
-      if (!Int32.TryParse(textBoxDVBSPmt.Text, out pmt)) { return false; }
-      if (onid <= 0 && tsid < 0 && sid < 0) { return false; }
+      if (!Int32.TryParse(textBoxDVBSChannel.Text, out lcn))
+      {
+        MessageBox.Show(this, "Please enter a valid channel number!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxFrequency.Text, out freq))
+      {
+        MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxNetworkId.Text, out onid))
+      {
+        MessageBox.Show(this, "Please enter a valid network id!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxTransportId.Text, out tsid))
+      {
+        MessageBox.Show(this, "Please enter a valid transport id!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxServiceId.Text, out sid))
+      {
+        MessageBox.Show(this, "Please enter a valid service id!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxSymbolRate.Text, out symbolrate))
+      {
+        MessageBox.Show(this, "Please enter a valid symbol rate!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxSwitch.Text, out switchfreq))
+      {
+        MessageBox.Show(this, "Please enter a valid LNB switch!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxDVBSPmt.Text, out pmt))
+      {
+        MessageBox.Show(this, "Please enter a valid pmt id!", "Incorrect input");
+        return false;
+      }
+      if (onid <= 0 && tsid < 0 && sid < 0)
+      {
+        MessageBox.Show(this, "Please enter a valid network, transport and service id!", "Incorrect input");
+        return false;
+      }
       return true;
     }
   }

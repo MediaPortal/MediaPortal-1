@@ -186,17 +186,14 @@ namespace SetupTv.Sections
         }
 
         mpListView1.Items.Clear();
-        Channel.ListAll();
         SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+        sb.AddConstraint(Operator.Equals, "isTv", true);
         sb.AddOrderByField(true, "sortOrder");
         SqlStatement stmt = sb.GetStatement(true);
         IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
-        ChannelMap.ListAll();
         List<ListViewItem> items = new List<ListViewItem>();
         foreach (Channel ch in channels)
         {
-          if (ch.IsTv == false)
-            continue;
           items.Add(CreateListViewItemForChannel(ch, cards));
         }
 
@@ -488,8 +485,6 @@ namespace SetupTv.Sections
       //mpListView1.EndUpdate();
       OnSectionActivated();
     }
-
-    private void TvChannels_Load(object sender, EventArgs e) { }
 
     private void mpButtonDel_Click(object sender, EventArgs e)
     {

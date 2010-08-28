@@ -56,10 +56,12 @@ namespace SetupTv.Sections
       // 
       this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
       this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageList1.Images.SetKeyName(0, "radio_scrambled.png");
-      this.imageList1.Images.SetKeyName(1, "tv_fta_.png");
-      this.imageList1.Images.SetKeyName(2, "tv_scrambled.png");
-      this.imageList1.Images.SetKeyName(3, "radio_fta_.png");
+      this.imageList1.Images.SetKeyName(0, "radio_fta_.png");
+      this.imageList1.Images.SetKeyName(1, "radio_scrambled.png");
+      this.imageList1.Images.SetKeyName(2, "icon.radio_scrambled_and_fta.png");
+      this.imageList1.Images.SetKeyName(3, "tv_fta_.png");
+      this.imageList1.Images.SetKeyName(4, "tv_scrambled.png");
+      this.imageList1.Images.SetKeyName(5, "icon.tv_scrambled_and_fta.png");
       // 
       // tabControl1
       // 
@@ -180,6 +182,7 @@ namespace SetupTv.Sections
       this.mpListView2.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2,
             this.columnHeader4});
+      this.mpListView2.IsChannelListView = false;
       this.mpListView2.Location = new System.Drawing.Point(254, 51);
       this.mpListView2.Name = "mpListView2";
       this.mpListView2.Size = new System.Drawing.Size(217, 312);
@@ -217,6 +220,7 @@ namespace SetupTv.Sections
             this.columnHeader1,
             this.columnHeader3});
       this.mpListView1.FullRowSelect = true;
+      this.mpListView1.IsChannelListView = false;
       this.mpListView1.LargeImageList = this.imageList1;
       this.mpListView1.Location = new System.Drawing.Point(10, 51);
       this.mpListView1.Name = "mpListView1";

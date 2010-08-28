@@ -523,7 +523,7 @@ namespace SetupTv.Sections
             {
               //add new channel
               exists = false;
-              dbChannel = layer.AddChannel(channel.Provider, channel.Name);
+              dbChannel = layer.AddNewChannel(channel.Name);
               dbChannel.SortOrder = 10000;
               if (channel.LogicalChannelNumber >= 1)
               {
@@ -538,7 +538,6 @@ namespace SetupTv.Sections
 
             dbChannel.IsTv = channel.IsTv;
             dbChannel.IsRadio = channel.IsRadio;
-            dbChannel.FreeToAir = channel.FreeToAir;
             dbChannel.Persist();
 
             if (dbChannel.IsTv)
