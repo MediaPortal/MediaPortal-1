@@ -973,7 +973,7 @@ void WASAPIRenderer::StartAudioClient(IAudioClient** ppAudioClient)
       if (FAILED(hr))
       {
         m_bIsAudioClientStarted = false;
-        Log("   start failed (0x%08x)", hr);
+        Log("  start failed (0x%08x)", hr);
       }
       else
       {

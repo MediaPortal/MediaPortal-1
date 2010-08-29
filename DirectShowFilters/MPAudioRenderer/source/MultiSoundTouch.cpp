@@ -802,7 +802,6 @@ HRESULT CMultiSoundTouch::QueueSample(IMediaSample* pSample)
 
 uint CMultiSoundTouch::receiveSamples(short **outBuffer, uint maxSamples)
 {
-  static bool ignoreEmptySamples = true;
   IMediaSample* sample = NULL;
  
   {
@@ -813,15 +812,8 @@ uint CMultiSoundTouch::receiveSamples(short **outBuffer, uint maxSamples)
     // is received in audio renderer and this method gets called again...
     if(m_sampleOutQueue.empty())
     {
-      if (!ignoreEmptySamples)
-      {
-        Log("receiveSamples: Output sample queue was empty!");
-      }
       return 0;
     }
-
-    // just for logging (don't log the initial samples that are empty)
-    ignoreEmptySamples = false; 
 
     sample = m_sampleOutQueue.front();
     m_sampleOutQueue.erase(m_sampleOutQueue.begin());
