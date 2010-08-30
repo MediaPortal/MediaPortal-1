@@ -29,7 +29,6 @@ public:
   DirectSoundRenderer(CMPAudioRenderer* pRenderer, HRESULT *phr);
   ~DirectSoundRenderer();
 
-  HRESULT InitCoopLevel();
   HRESULT CheckFormat(WAVEFORMATEX* pwfx);
   HRESULT SetMediaType(const WAVEFORMATEX* pwfx);
   HRESULT CompleteConnect(IPin *pReceivePin);
@@ -56,6 +55,7 @@ public:
 
 private:
 
+  HRESULT InitCoopLevel();
   HRESULT CreateDSBuffer();
   HRESULT WriteSampleToDSBuffer(IMediaSample *pMediaSample, bool *looped);
   HRESULT ClearBuffer();

@@ -25,7 +25,6 @@ public:
   WASAPIRenderer(CMPAudioRenderer* pRenderer, HRESULT *phr);
   ~WASAPIRenderer();
 
-  HRESULT InitCoopLevel();
 	HRESULT CheckFormat(WAVEFORMATEX* pwfx);
 	HRESULT SetMediaType(const WAVEFORMATEX* pwfx);
   HRESULT CompleteConnect(IPin *pReceivePin);
@@ -53,6 +52,8 @@ private:
   // AVRT.dll (Vista or greater)
   typedef HANDLE (__stdcall *PTR_AvSetMmThreadCharacteristicsW)(LPCWSTR TaskName, LPDWORD TaskIndex);
   typedef BOOL (__stdcall *PTR_AvRevertMmThreadCharacteristics)(HANDLE AvrtHandle);
+
+  HRESULT EnableMMCSS();
 
   PTR_AvSetMmThreadCharacteristicsW		pfAvSetMmThreadCharacteristicsW;
   PTR_AvRevertMmThreadCharacteristics		pfAvRevertMmThreadCharacteristics;

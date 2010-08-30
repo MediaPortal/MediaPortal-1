@@ -36,12 +36,11 @@ public:
   IRenderDevice(){};
   virtual ~IRenderDevice(){};
 
-  virtual HRESULT InitCoopLevel() = 0;
-	virtual HRESULT CheckFormat(WAVEFORMATEX* pwfx) = 0;
-	virtual HRESULT SetMediaType(const WAVEFORMATEX* pwfx) = 0;
+  virtual HRESULT CheckFormat(WAVEFORMATEX* pwfx) = 0;
+  virtual HRESULT SetMediaType(const WAVEFORMATEX* pwfx) = 0;
   virtual HRESULT CompleteConnect(IPin *pReceivePin) = 0;
 
-	virtual HRESULT DoRenderSample(IMediaSample *pMediaSample, LONGLONG pSampleCounter) = 0;
+  virtual HRESULT DoRenderSample(IMediaSample *pMediaSample, LONGLONG pSampleCounter) = 0;
   virtual void    OnReceiveFirstSample(IMediaSample *pMediaSample) = 0;
 
   virtual HRESULT EndOfStream() = 0;

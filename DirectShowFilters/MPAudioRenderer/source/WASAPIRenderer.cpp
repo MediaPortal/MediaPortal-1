@@ -172,7 +172,7 @@ HRESULT WASAPIRenderer::PauseRendererThread()
   else
   {
     Log("   No thread was created!");
-	return S_FALSE;
+    return S_FALSE;
   }
 
   return S_OK;
@@ -246,7 +246,8 @@ HRESULT WASAPIRenderer::SetMediaType(const WAVEFORMATEX* pwfx)
 
 HRESULT WASAPIRenderer::CompleteConnect(IPin *pReceivePin)
 {
-  return InitCoopLevel();
+  EnableMMCSS();
+  return S_OK; // if enabling MMCSS fails it is not fatal error
 }
 
 HRESULT WASAPIRenderer::EndOfStream()
@@ -364,7 +365,7 @@ HRESULT WASAPIRenderer::SetRate(double dRate)
 }
 
 
-HRESULT WASAPIRenderer::InitCoopLevel()
+HRESULT WASAPIRenderer::EnableMMCSS()
 {
   if (!m_hTask)
   {
