@@ -36,6 +36,7 @@ namespace TvPlugin
     private bool _showAllChannelsGroup = true;
     private bool _rememberLastGroup = true;
     private string _rootGroup = "(none)";
+    private bool _autoTurnOnRadio = false;
 
     #endregion
 
@@ -48,6 +49,7 @@ namespace TvPlugin
         _showAllChannelsGroup = xmlreader.GetValueAsBool("myradio", "showallchannelsgroup", true);
         _rememberLastGroup = xmlreader.GetValueAsBool("myradio", "rememberlastgroup", true);
         _rootGroup = xmlreader.GetValueAsString("myradio", "rootgroup", "(none)");
+        _autoTurnOnRadio = xmlreader.GetValueAsBool("myradio", "autoturnonradio", false);
       }
     }
 
@@ -58,6 +60,7 @@ namespace TvPlugin
         xmlreader.SetValueAsBool("myradio", "showallchannelsgroup", _showAllChannelsGroup);
         xmlreader.SetValueAsBool("myradio", "rememberlastgroup", _rememberLastGroup);
         xmlreader.SetValue("myradio", "rootgroup", _rootGroup);
+        xmlreader.SetValueAsBool ("myradio", "autoturnonradio",_autoTurnOnRadio);
       }
     }
 
@@ -76,6 +79,7 @@ namespace TvPlugin
       NameValueCollection appSettings = ConfigurationManager.AppSettings;
       appSettings.Set("GentleConfigFile", gentle);
 
+      cbTurnOnRadio.Checked = _autoTurnOnRadio;
       cbShowAllChannelsGroup.Checked = _showAllChannelsGroup;
       cbRememberLastGroup.Checked = _rememberLastGroup;
       comboBoxGroups.Items.Clear();
@@ -111,6 +115,11 @@ namespace TvPlugin
     private void mpButtonOk_Click(object sender, EventArgs e)
     {
       SaveSettings();
+    }
+
+    private void cbTurnOnRadio_CheckedChanged(object sender, EventArgs e)
+    {
+      _autoTurnOnRadio = cbTurnOnRadio.Checked;
     }
   }
 }
