@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using TvDatabase;
@@ -153,12 +154,17 @@ namespace TvPlugin
 
     public static string GetDisplayTitle(Recording rec)
     {
-      return TitleDisplay(rec.Title, rec.EpisodeName, rec.SeriesNum, rec.EpisodeNum, rec.EpisodePart);
+      StringBuilder strBuilder = new StringBuilder();
+      TitleDisplay(strBuilder, rec.Title, rec.EpisodeName, rec.SeriesNum, rec.EpisodeNum, rec.EpisodePart);
+
+      return strBuilder.ToString();
     }
 
     public static string GetDisplayTitle(Program prog)
     {
-      return TitleDisplay(prog.Title, prog.EpisodeName, prog.SeriesNum, prog.EpisodeNum, prog.EpisodePart);
+      StringBuilder strBuilder = new StringBuilder();
+      TitleDisplay(strBuilder, prog.Title, prog.EpisodeName, prog.SeriesNum, prog.EpisodeNum, prog.EpisodePart);
+      return strBuilder.ToString();
     }
 
     ///
@@ -168,53 +174,62 @@ namespace TvPlugin
     /// 1: seriesNum.episodeNum.episodePart
     /// 2: episodeName
     /// 3: seriesNum.episodeNum.episodePart episodeName
-    public static string GetEpisodeInfo(string episodeName, string seriesNum, string episodeNum, string episodePart)
+    public static void GetEpisodeInfo(StringBuilder strBuilder, string episodeName, string seriesNum, string episodeNum, string episodePart)
     {
-      string episodeInfo = "";
+      bool episodeInfoWritten = false;
+
+      bool hasSeriesNum = !(String.IsNullOrEmpty(seriesNum));      
+      bool hasEpisodeNum = !(String.IsNullOrEmpty(episodeNum));
+      bool hasEpisodePart = !(String.IsNullOrEmpty(episodePart));
+      bool hasEpisodeName = !(String.IsNullOrEmpty(episodeName)) && (ShowEpisodeInfo == 2 || ShowEpisodeInfo == 3);
+
+      bool hasEpisodeInfo = (hasSeriesNum || hasEpisodeNum || hasEpisodePart || hasEpisodeName);
+
+      if (hasEpisodeInfo)
+      {
+        strBuilder.Append(" (");                
+      }         
+
       if (ShowEpisodeInfo == 1 || ShowEpisodeInfo == 3)
       {
-        if (!String.IsNullOrEmpty(seriesNum))
+        if (hasSeriesNum)
         {
-          episodeInfo = seriesNum.Trim();
+          strBuilder.Append(seriesNum.Trim());
+          episodeInfoWritten = true;
         }
-        if (!String.IsNullOrEmpty(episodeNum))
+        if (hasEpisodeNum)
         {
-          if (episodeInfo.Length != 0)
+          if (episodeInfoWritten)
           {
-            episodeInfo = episodeInfo + "." + episodeNum.Trim();
+            strBuilder.Append(".");                        
           }
-          else
-          {
-            episodeInfo = episodeNum.Trim();
-          }
+          strBuilder.Append(episodeNum.Trim());
+          episodeInfoWritten = true;
         }
-        if (!String.IsNullOrEmpty(episodePart))
+        if (hasEpisodePart)
         {
-          if (!String.IsNullOrEmpty(episodeInfo))
+          if (episodeInfoWritten)
           {
-            episodeInfo = episodeInfo + "." + episodePart.Trim();
+            strBuilder.Append(".");            
           }
-          else
-          {
-            episodeInfo = episodePart.Trim();
-          }
+          strBuilder.Append(episodePart.Trim());
+          episodeInfoWritten = true;
         }
       }
-      if (ShowEpisodeInfo == 2 || ShowEpisodeInfo == 3)
+      
+      if (hasEpisodeName)
       {
-        if (!String.IsNullOrEmpty(episodeName))
+        if (episodeInfoWritten)
         {
-          if (!String.IsNullOrEmpty(episodeInfo))
-          {
-            episodeInfo = episodeInfo + " " + episodeName;
-          }
-          else
-          {
-            episodeInfo = episodeName;
-          }
+          strBuilder.Append(" ");
         }
+        strBuilder.Append(episodeName);        
       }
-      return episodeInfo;
+
+      if (hasEpisodeInfo)
+      {
+        strBuilder.Append(")"); 
+      }      
     }
 
     /// <summary>
@@ -226,19 +241,11 @@ namespace TvPlugin
     /// <param name="episodeNum"></param>
     /// <param name="episodePart"></param>
     /// <returns></returns>
-    public static string TitleDisplay(string title, string episodeName, string seriesNum, string episodeNum,
+    public static void TitleDisplay(StringBuilder strBuilder, string title, string episodeName, string seriesNum, string episodeNum,
                                       string episodePart)
     {
-      string titleDisplay = GetEpisodeInfo(episodeName, seriesNum, episodeNum, episodePart);
-      if (!String.IsNullOrEmpty(titleDisplay))
-      {
-        titleDisplay = title + " (" + titleDisplay + ")";
-      }
-      else
-      {
-        titleDisplay = title;
-      }
-      return titleDisplay;
+      strBuilder.Append(title);
+      GetEpisodeInfo(strBuilder, episodeName, seriesNum, episodeNum, episodePart);      
     }
 
 
