@@ -247,7 +247,7 @@ HRESULT WASAPIRenderer::SetMediaType(const WAVEFORMATEX* pwfx)
 HRESULT WASAPIRenderer::CompleteConnect(IPin *pReceivePin)
 {
   EnableMMCSS();
-  return S_OK; // if enabling MMCSS fails it is not fatal error
+  return S_OK; // if enabling MMCSS fails it is not a fatal error
 }
 
 HRESULT WASAPIRenderer::EndOfStream()
@@ -376,7 +376,7 @@ HRESULT WASAPIRenderer::EnableMMCSS()
     if (pfAvSetMmThreadCharacteristicsW)
     {
       m_hTask = pfAvSetMmThreadCharacteristicsW(L"Pro Audio", &taskIndex);
-      Log("WASAPIRenderer::InitCoopLevel Putting thread in higher priority for Wasapi mode (lowest latency)");
+      Log("WASAPIRenderer::EnableMMCSS Putting thread in higher priority for WASAPI mode");
       
       if (!m_hTask)
       {
