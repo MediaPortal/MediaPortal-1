@@ -55,9 +55,6 @@ namespace MediaPortal.TagReader
     /// </returns>
     public static MusicTag ReadTag(string strFile)
     {
-      if (!IsAudio(strFile))
-        return null;
-
       // Read Cue info
       if (CueUtil.isCueFakeTrackFile(strFile))
       {
@@ -70,6 +67,9 @@ namespace MediaPortal.TagReader
           Log.Warn("TagReader: Exception reading file {0}. {1}", strFile, ex.Message);
         }
       }
+
+      if (!IsAudio(strFile))
+        return null;
 
       char[] trimChars = {' ', '\x00'};
 

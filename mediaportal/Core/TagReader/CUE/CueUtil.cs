@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using MediaPortal.TagReader;
 using TagLib;
 
@@ -279,6 +280,26 @@ namespace MediaPortal.TagReader
         catch (Exception ex)
         {
           Log.Warn("CueFakeTrackFile2MusicTag: Exception reading file {0}. {1}", fname, ex.Message);
+        }
+
+        // In case of having a multi file Cue sheet, we're not able to get the duration
+        // from the index entries. use MediaInfo then
+        if (musicTagCache.Duration == 0)
+        {
+          try
+          {
+            MediaInfo mi = new MediaInfo();
+            mi.Open(fname);
+            int durationms = 0;
+            int.TryParse(mi.Get(StreamKind.General, 0, "Duration"), out durationms);
+            musicTagCache.Duration = durationms/1000;
+            mi.Close();
+          }
+          catch (Exception ex1)
+          {
+
+            Log.Warn("CueFakeTrackFile2MusicTag: Exception retrieving duration for file {0}. {1}", fname, ex1.Message);
+          }
         }
 
         if (track.Performer != null && !String.Empty.Equals(track.Performer))

@@ -268,6 +268,10 @@ namespace MediaPortal.TagReader
             break;
           case "FILE":
             currentFile = ParseFile(file[i], trackOn);
+            if (currentFile.Filename != null && trackOn > -1) //if there's a file
+            {
+              m_Tracks[trackOn].DataFile = currentFile;
+            }
             break;
           case "FLAGS":
             ParseFlags(file[i], trackOn);
@@ -299,10 +303,9 @@ namespace MediaPortal.TagReader
           case "TRACK":
             trackOn++;
             ParseTrack(file[i], trackOn);
-            if (currentFile.Filename != "") //if there's a file
+            if (currentFile.Filename != null) //if there's a file
             {
               m_Tracks[trackOn].DataFile = currentFile;
-              //currentFile = new AudioFile();
             }
             break;
           default:
