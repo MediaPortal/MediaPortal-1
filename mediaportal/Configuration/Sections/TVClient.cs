@@ -95,6 +95,8 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox cbRelaxTsReader;
     private MPGroupBox mpGroupBox900;
     private MPTextBox mpTextBoxMacAddress;
+    private MPLabel mpLabelWOLTimeOut;
+    private MPNumericTextBox mpNumericTextBoxWOLTimeOut;
     private MPLabel mpLabel400;
     private MPCheckBox mpCheckBoxIsAutoMacAddressEnabled;
     private MPCheckBox mpCheckBoxIsWakeOnLanEnabled;
@@ -145,6 +147,7 @@ namespace MediaPortal.Configuration.Sections
         cbRelaxTsReader.Checked = xmlreader.GetValueAsBool("mytv", "relaxTsReader", false);
 
         mpCheckBoxIsWakeOnLanEnabled.Checked = xmlreader.GetValueAsBool("tvservice", "isWakeOnLanEnabled", false);
+        mpNumericTextBoxWOLTimeOut.Text = xmlreader.GetValueAsString("tvservice", "WOLTimeOut", "10"); 
         mpCheckBoxIsAutoMacAddressEnabled.Checked = xmlreader.GetValueAsBool("tvservice", "isAutoMacAddressEnabled",
                                                                              true);
         mpTextBoxMacAddress.Text = xmlreader.GetValueAsString("tvservice", "macAddress", "00:00:00:00:00:00");
@@ -322,6 +325,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("mytv", "relaxTsReader", cbRelaxTsReader.Checked);
 
         xmlwriter.SetValueAsBool("tvservice", "isWakeOnLanEnabled", mpCheckBoxIsWakeOnLanEnabled.Checked);
+        xmlwriter.SetValue("tvservice", "WOLTimeOut", mpNumericTextBoxWOLTimeOut.Text);
         xmlwriter.SetValueAsBool("tvservice", "isAutoMacAddressEnabled", mpCheckBoxIsAutoMacAddressEnabled.Checked);
         xmlwriter.SetValue("tvservice", "macAddress", mpTextBoxMacAddress.Text);
 
@@ -370,6 +374,8 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel400 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpCheckBoxIsAutoMacAddressEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBoxIsWakeOnLanEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpLabelWOLTimeOut = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpNumericTextBoxWOLTimeOut = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
       this.grpTsReader = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.cbRelaxTsReader = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox6 = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -534,7 +540,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlTVGeneral.Location = new System.Drawing.Point(0, 2);
       this.tabControlTVGeneral.Name = "tabControlTVGeneral";
       this.tabControlTVGeneral.SelectedIndex = 0;
-      this.tabControlTVGeneral.Size = new System.Drawing.Size(472, 408);
+      this.tabControlTVGeneral.Size = new System.Drawing.Size(472, 430);
       this.tabControlTVGeneral.TabIndex = 11;
       // 
       // tabPageGeneralSettings
@@ -547,7 +553,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageGeneralSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageGeneralSettings.Name = "tabPageGeneralSettings";
       this.tabPageGeneralSettings.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageGeneralSettings.Size = new System.Drawing.Size(464, 382);
+      this.tabPageGeneralSettings.Size = new System.Drawing.Size(464, 404);
       this.tabPageGeneralSettings.TabIndex = 0;
       this.tabPageGeneralSettings.Text = "General settings";
       this.tabPageGeneralSettings.UseVisualStyleBackColor = true;
@@ -555,6 +561,8 @@ namespace MediaPortal.Configuration.Sections
       // mpGroupBox900
       // 
       this.mpGroupBox900.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+      this.mpGroupBox900.Controls.Add(this.mpNumericTextBoxWOLTimeOut);
+      this.mpGroupBox900.Controls.Add(this.mpLabelWOLTimeOut);
       this.mpGroupBox900.Controls.Add(this.mpTextBoxMacAddress);
       this.mpGroupBox900.Controls.Add(this.mpLabel400);
       this.mpGroupBox900.Controls.Add(this.mpCheckBoxIsAutoMacAddressEnabled);
@@ -562,7 +570,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox900.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox900.Location = new System.Drawing.Point(16, 272);
       this.mpGroupBox900.Name = "mpGroupBox900";
-      this.mpGroupBox900.Size = new System.Drawing.Size(431, 95);
+      this.mpGroupBox900.Size = new System.Drawing.Size(431, 126);
       this.mpGroupBox900.TabIndex = 14;
       this.mpGroupBox900.TabStop = false;
       this.mpGroupBox900.Text = "Wake-On-Lan";
@@ -570,7 +578,7 @@ namespace MediaPortal.Configuration.Sections
       // mpTextBoxMacAddress
       // 
       this.mpTextBoxMacAddress.BorderColor = System.Drawing.Color.Empty;
-      this.mpTextBoxMacAddress.Location = new System.Drawing.Point(126, 63);
+      this.mpTextBoxMacAddress.Location = new System.Drawing.Point(126, 91);
       this.mpTextBoxMacAddress.MaxLength = 17;
       this.mpTextBoxMacAddress.Name = "mpTextBoxMacAddress";
       this.mpTextBoxMacAddress.Size = new System.Drawing.Size(97, 20);
@@ -580,7 +588,7 @@ namespace MediaPortal.Configuration.Sections
       // mpLabel400
       // 
       this.mpLabel400.AutoSize = true;
-      this.mpLabel400.Location = new System.Drawing.Point(41, 66);
+      this.mpLabel400.Location = new System.Drawing.Point(41, 94);
       this.mpLabel400.Name = "mpLabel400";
       this.mpLabel400.Size = new System.Drawing.Size(74, 13);
       this.mpLabel400.TabIndex = 6;
@@ -590,7 +598,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpCheckBoxIsAutoMacAddressEnabled.AutoSize = true;
       this.mpCheckBoxIsAutoMacAddressEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpCheckBoxIsAutoMacAddressEnabled.Location = new System.Drawing.Point(44, 42);
+      this.mpCheckBoxIsAutoMacAddressEnabled.Location = new System.Drawing.Point(44, 68);
       this.mpCheckBoxIsAutoMacAddressEnabled.Name = "mpCheckBoxIsAutoMacAddressEnabled";
       this.mpCheckBoxIsAutoMacAddressEnabled.Size = new System.Drawing.Size(192, 17);
       this.mpCheckBoxIsAutoMacAddressEnabled.TabIndex = 1;
@@ -611,6 +619,39 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBoxIsWakeOnLanEnabled.UseVisualStyleBackColor = true;
       this.mpCheckBoxIsWakeOnLanEnabled.CheckedChanged +=
         new System.EventHandler(this.mpCheckBoxIsWakeOnLanEnabled_CheckedChanged);
+      // 
+      // mpLabelWOLTimeOut
+      // 
+      this.mpLabelWOLTimeOut.AutoSize = true;
+      this.mpLabelWOLTimeOut.Location = new System.Drawing.Point(41, 45);
+      this.mpLabelWOLTimeOut.Name = "mpLabelWOLTimeOut";
+      this.mpLabelWOLTimeOut.Size = new System.Drawing.Size(72, 13);
+      this.mpLabelWOLTimeOut.TabIndex = 8;
+      this.mpLabelWOLTimeOut.Text = "WOL timeout:";
+      // 
+      // mpNumericTextBoxWOLTimeOut
+      // 
+      this.mpNumericTextBoxWOLTimeOut.AutoCompleteCustomSource.AddRange(new string[] {
+            "10",
+            "20",
+            "30",
+            "40",
+            "50",
+            "60",
+            "70",
+            "80",
+            "90"});
+      this.mpNumericTextBoxWOLTimeOut.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+      this.mpNumericTextBoxWOLTimeOut.Enabled = false;
+      this.mpNumericTextBoxWOLTimeOut.Location = new System.Drawing.Point(126, 42);
+      this.mpNumericTextBoxWOLTimeOut.MaxLength = 4;
+      this.mpNumericTextBoxWOLTimeOut.Name = "mpNumericTextBoxWOLTimeOut";
+      this.mpNumericTextBoxWOLTimeOut.Size = new System.Drawing.Size(45, 20);
+      this.mpNumericTextBoxWOLTimeOut.TabIndex = 9;
+      this.mpNumericTextBoxWOLTimeOut.Tag = "Default timeout is 10 seconds";
+      this.mpNumericTextBoxWOLTimeOut.Text = "10";
+      this.mpNumericTextBoxWOLTimeOut.Value = 10;
+      this.mpNumericTextBoxWOLTimeOut.WordWrap = false;
       // 
       // grpTsReader
       // 
@@ -1389,6 +1430,7 @@ namespace MediaPortal.Configuration.Sections
     {
       if (mpCheckBoxIsWakeOnLanEnabled.Checked)
       {
+        mpNumericTextBoxWOLTimeOut.Enabled = true;
         mpCheckBoxIsAutoMacAddressEnabled.Enabled = true;
 
         if (mpCheckBoxIsAutoMacAddressEnabled.Checked)
@@ -1402,6 +1444,7 @@ namespace MediaPortal.Configuration.Sections
       }
       else
       {
+        mpNumericTextBoxWOLTimeOut.Enabled = false;
         mpCheckBoxIsAutoMacAddressEnabled.Enabled = false;
         mpTextBoxMacAddress.Enabled = false;
       }
