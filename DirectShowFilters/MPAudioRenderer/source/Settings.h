@@ -34,6 +34,7 @@ public:
 public:
   bool m_bLogSampleTimes;
   bool m_bUseWASAPI;
+  bool m_WASAPIUseEventMode;
   bool m_bUseTimeStretching;
   bool m_bEnableAC3Encoding;
   
