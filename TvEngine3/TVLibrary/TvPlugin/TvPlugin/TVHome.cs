@@ -1241,6 +1241,7 @@ namespace TvPlugin
     {
       bool isWakeOnLanEnabled;
       bool isAutoMacAddressEnabled;
+      int intTimeOut;
       String macAddress;
       byte[] hwAddress;
 
@@ -1249,6 +1250,7 @@ namespace TvPlugin
       {
         isWakeOnLanEnabled = xmlreader.GetValueAsBool("tvservice", "isWakeOnLanEnabled", false);
         isAutoMacAddressEnabled = xmlreader.GetValueAsBool("tvservice", "isAutoMacAddressEnabled", false);
+        intTimeOut = xmlreader.GetValueAsInt("tvservice", "WOLTimeOut", 10);
       }
 
       //isWakeOnlanEnabled
@@ -1332,9 +1334,13 @@ namespace TvPlugin
             //Finally, start up the TV server
             Log.Info("TVHome: WOL - Start the TV server");
 
-            if (wakeOnLanManager.WakeupSystem(hwAddress, RemoteControl.HostName, 10))
+            if (wakeOnLanManager.WakeupSystem(hwAddress, RemoteControl.HostName, intTimeOut))
             {
               Log.Info("TVHome: WOL - The TV server started successfully!");
+            }
+            else
+            {
+              Log.Error("TVHome: WOL - Failed to start the TV server");
             }
           }
           catch (Exception ex)
