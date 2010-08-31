@@ -925,6 +925,14 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
 			>
 			<File
+				RelativePath=".\source\AC3EncoderFilter.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\BaseAudioSink.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\DirectSoundRenderer.cpp"
 				>
 			</File>
@@ -957,6 +965,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\QueuedAudioSink.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\Settings.cpp"
 				>
 			</File>
@@ -966,6 +978,10 @@
 			</File>
 			<File
 				RelativePath=".\source\SyncClock.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\ThreadDecouplingFilter.cpp"
 				>
 			</File>
 			<File
@@ -982,6 +998,14 @@
 			Filter="h;hpp;hxx;hm;inl;inc"
 			>
 			<File
+				RelativePath=".\source\AC3EncoderFilter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\BaseAudioSink.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\DirectSoundRenderer.h"
 				>
 			</File>
@@ -991,6 +1015,10 @@
 			</File>
 			<File
 				RelativePath=".\source\FilterApp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\IAudioSink.h"
 				>
 			</File>
 			<File
@@ -1007,6 +1035,10 @@
 			</File>
 			<File
 				RelativePath=".\source\MultiSoundTouch.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\QueuedAudioSink.h"
 				>
 			</File>
 			<File
@@ -1031,6 +1063,10 @@
 			</File>
 			<File
 				RelativePath=".\source\SyncClock.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\ThreadDecouplingFilter.h"
 				>
 			</File>
 			<File

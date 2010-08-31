@@ -33,6 +33,7 @@
 
 #include "IAVSyncClock.h"
 #include "IRenderDevice.h"
+#include "IAudioSink.h"
 
 #include "../SoundTouch/Include/SoundTouch.h"
 #include "MultiSoundTouch.h"
