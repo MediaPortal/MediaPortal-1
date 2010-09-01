@@ -1127,8 +1127,8 @@ DWORD WASAPIRenderer::RenderThread()
     }
     else if (result == WAIT_OBJECT_0 + 2) // data event
     {
-      UINT32 bufferSize = 1;
-      UINT32 currentPadding = 1;
+      UINT32 bufferSize = 0;
+      UINT32 currentPadding = 0;
       
       CAutoLock cRenderThreadLock(m_pRenderer->RenderThreadLock());
       HRESULT hr = S_FALSE;
@@ -1151,7 +1151,7 @@ DWORD WASAPIRenderer::RenderThread()
         }
       }
 
-      // Interface lock should be us safe different threads closing down the audio client
+      // Interface lock should keep us safe from different threads closing down the audio client
       if (m_pAudioClient && m_pRenderClient)
       {
         DWORD bufferFlags = 0;
@@ -1232,19 +1232,19 @@ DWORD WASAPIRenderer::RenderThread()
       }
       
       if (!m_pRenderer->Settings()->m_WASAPIUseEventMode)
-	  {
-	    hr = m_pAudioClient->GetCurrentPadding(&currentPadding);
+  	  {
+	      hr = m_pAudioClient->GetCurrentPadding(&currentPadding);
         if (SUCCEEDED(hr) && bufferSize > 0)
-		{
-		  liDueTime.QuadPart = (double)currentPadding / (double)bufferSize * (double)m_pRenderer->Settings()->m_hnsPeriod * -0.9;
+        {
+          liDueTime.QuadPart = (double)currentPadding / (double)bufferSize * (double)m_pRenderer->Settings()->m_hnsPeriod * -0.9;
           // Log(" currentPadding: %d QuadPart: %lld", currentPadding, liDueTime.QuadPart);
-		}
-		else
-		{
+        }
+        else
+        {
           liDueTime.QuadPart = (double)m_pRenderer->Settings()->m_hnsPeriod * -0.9;
-		  Log("WASAPIRenderer::Render thread: GetCurrentPadding failed (0x%08x)", hr);  
-		}
-		SetWaitableTimer(m_hDataEvent, &liDueTime, 0, NULL, NULL, 0);
+          Log("WASAPIRenderer::Render thread: GetCurrentPadding failed (0x%08x)", hr);  
+        }
+		    SetWaitableTimer(m_hDataEvent, &liDueTime, 0, NULL, NULL, 0);
       }
     }
     else
