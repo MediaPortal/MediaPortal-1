@@ -54,6 +54,7 @@ private:
   typedef BOOL (__stdcall *PTR_AvRevertMmThreadCharacteristics)(HANDLE AvrtHandle);
 
   HRESULT EnableMMCSS();
+  HRESULT RevertMMCSS();
 
   PTR_AvSetMmThreadCharacteristicsW		pfAvSetMmThreadCharacteristicsW;
   PTR_AvRevertMmThreadCharacteristics		pfAvRevertMmThreadCharacteristics;
@@ -85,6 +86,7 @@ private:
   IAudioClock*        m_pAudioClock;
   UINT64              m_nHWfreq;
   WAVEFORMATEX*       m_pRenderFormat;
+  DWORD               m_StreamFlags;
   
   // Rendering thread
   static DWORD WINAPI RenderThreadEntryPoint(LPVOID lpParameter);
