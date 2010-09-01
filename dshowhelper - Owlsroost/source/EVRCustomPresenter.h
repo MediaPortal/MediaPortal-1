@@ -376,7 +376,6 @@ protected:
   double        m_DetectedFrameRate;
   double        m_DetectedFrameTime;
   double        m_DetectedFrameTimeStdDev;
-  bool          m_bCorrectedFrameTime;
   bool          m_DetectedLock;
 
   int           m_frameRateRatio;
