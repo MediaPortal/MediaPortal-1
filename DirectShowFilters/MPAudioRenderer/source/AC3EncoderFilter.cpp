@@ -57,11 +57,15 @@ CAC3EncoderFilter::~CAC3EncoderFilter(void)
 
 HRESULT CAC3EncoderFilter::Init()
 {
+  HRESULT hr = InitAllocator();
+  if(FAILED(hr))
+    return hr;
   return CBaseAudioSink::Init();
 }
 
 HRESULT CAC3EncoderFilter::Cleanup()
 {
+  m_pMemAllocator.Release();
   return CBaseAudioSink::Cleanup();
 }
 
@@ -160,7 +164,8 @@ HRESULT CAC3EncoderFilter::PutSample(IMediaSample *pSample)
   if (bFormatChanged)
   {
     // process any remaining input
-    hr = ProcessData(NULL, 0, NULL);
+    if (!m_bPassThrough)
+      hr = ProcessAC3Data(NULL, 0, NULL);
     // Apply format change locally, 
     // next filter will evaluate the format change when it receives the sample
     hr = NegotiateFormat((WAVEFORMATEX*)pmt->pbFormat, 1);
@@ -171,6 +176,13 @@ HRESULT CAC3EncoderFilter::PutSample(IMediaSample *pSample)
       Log("AC3Encoder: PutSample failed to change format: 0x%08x", hr);
       return hr;
     }
+  }
+
+  if (m_bPassThrough)
+  {
+    if (m_pNextSink)
+      return m_pNextSink->PutSample(pSample);
+    return S_OK; // perhaps we should return S_FALSE to indicate sample was dropped
   }
 
   long nOffset = 0;
@@ -184,7 +196,7 @@ HRESULT CAC3EncoderFilter::PutSample(IMediaSample *pSample)
   while (nOffset < cbSampleData)
   {
     long cbProcessed = 0;
-    hr = ProcessData(pData+nOffset, cbSampleData - nOffset, &cbProcessed);
+    hr = ProcessAC3Data(pData+nOffset, cbSampleData - nOffset, &cbProcessed);
     nOffset += cbProcessed;
   }
   return hr;
@@ -192,7 +204,8 @@ HRESULT CAC3EncoderFilter::PutSample(IMediaSample *pSample)
 
 HRESULT CAC3EncoderFilter::EndOfStream()
 {
-  ProcessData(NULL, 0, NULL);
+  if(!m_bPassThrough)
+    ProcessAC3Data(NULL, 0, NULL);
   return CBaseAudioSink::EndOfStream();
 }
 
@@ -410,6 +423,7 @@ HRESULT CAC3EncoderFilter::RequestNextOutBuffer()
 }
 
 
+/*
 HRESULT CAC3EncoderFilter::ProcessPassThroughData(const BYTE *pData, long cbData, long *pcbDataProcessed)
 {
   HRESULT hr = S_OK;
@@ -463,6 +477,7 @@ HRESULT CAC3EncoderFilter::ProcessPassThroughData(const BYTE *pData, long cbData
     *pcbDataProcessed = bytesOutput;
   return hr;
 }
+*/
 
 HRESULT CAC3EncoderFilter::ProcessAC3Data(const BYTE *pData, long cbData, long *pcbDataProcessed)
 {

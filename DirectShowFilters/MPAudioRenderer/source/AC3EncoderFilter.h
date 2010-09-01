@@ -66,10 +66,10 @@ protected:
   long CreateAC3Bitstream(void *buf, size_t size, BYTE *pDataOut);
 
   // Processing
-  HRESULT ProcessPassThroughData(const BYTE *pData, long cbData, long *pcbDataProcessed);
+  //HRESULT ProcessPassThroughData(const BYTE *pData, long cbData, long *pcbDataProcessed);
   HRESULT ProcessAC3Data(const BYTE *pData, long cbData, long *pcbDataProcessed);
-  __inline HRESULT ProcessData(const BYTE *pData, long cbData, long *pcbDataProcessed)
-    { return m_bPassThrough? ProcessPassThroughData(pData, cbData, pcbDataProcessed) : ProcessAC3Data(pData, cbData, pcbDataProcessed); };
+  //__inline HRESULT ProcessData(const BYTE *pData, long cbData, long *pcbDataProcessed)
+  //  { return m_bPassThrough? ProcessPassThroughData(pData, cbData, pcbDataProcessed) : ProcessAC3Data(pData, cbData, pcbDataProcessed); };
   HRESULT RequestNextOutBuffer();
   HRESULT OutputNextSample();
   HRESULT ProcessAC3Frame(const BYTE *pData);
