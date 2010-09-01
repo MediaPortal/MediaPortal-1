@@ -248,13 +248,6 @@
     <Compile Include="AudioScrobbler\AudioscrobblerSettings.Designer.cs">
       <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="AutoCropper\AutoCropper.cs" />
-    <Compile Include="AutoCropper\AutoCropperSetup.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="AutoCropper\FrameAnalyzer.cs" />
-    <Compile Include="AutoCropper\MovingAverage.cs" />
-    <Compile Include="AutoCropper\PlugInBase.cs" />
     <Compile Include="CallerId\ISDN\CallerIdISDN.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -293,6 +286,23 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcher.cs" />
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcherConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcherConfig.designer.cs">
+      <DependentUpon>ViewModeSwitcherConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcherFrameAnalyzer.cs" />
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcherPlugInBase.cs" />
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcherRuleDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcherRuleDetail.designer.cs">
+      <DependentUpon>ViewModeSwitcherRuleDetail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcherRules.cs" />
+    <Compile Include="ViewModeSwitcher\ViewModeSwitcherSettings.cs" />
     <EmbeddedResource Include="AudioScrobbler\AudioscrobblerSettings.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
@@ -322,19 +332,27 @@
     <EmbeddedResource Include="MusicShareWatcher\MusicShareWatcher_deactivated.gif" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AutoCropper\AutoCropperSetup.resx">
-      <DependentUpon>AutoCropperSetup.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="MusicDBReorg\MusicDBReorgSettings.resx">
       <DependentUpon>MusicDBReorgSettings.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AutoCropper\Readme.txt" />
     <EmbeddedResource Include="MiniDisplay\MiniDisplay.lcd.gif" />
     <EmbeddedResource Include="MiniDisplay\MiniDisplay.lcd_deactivated.gif" />
+    <EmbeddedResource Include="MiniDisplay\SetupForm.resx">
+      <DependentUpon>SetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewModeSwitcher\ViewModeSwitcherConfig.resx">
+      <DependentUpon>ViewModeSwitcherConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewModeSwitcher\ViewModeSwitcherRuleDetail.resx">
+      <DependentUpon>ViewModeSwitcherRuleDetail.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ViewModeSwitcher\ViewModeSwitcherIconDisabled.png" />
+    <EmbeddedResource Include="ViewModeSwitcher\ViewModeSwitcherIconEnabled.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
