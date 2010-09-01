@@ -140,7 +140,6 @@ namespace SetupTv.Sections
         AddAttribute(nodechannel, "TimesWatched", channel.TimesWatched);
         AddAttribute(nodechannel, "TotalTimeWatched", channel.TotalTimeWatched);
         AddAttribute(nodechannel, "VisibleInGuide", channel.VisibleInGuide);
-        AddAttribute(nodechannel, "FreeToAir", channel.FreeToAir);
         AddAttribute(nodechannel, "DisplayName", channel.DisplayName);
 
         XmlNode nodeMaps = xmlDoc.CreateElement("mappings");
@@ -394,7 +393,6 @@ namespace SetupTv.Sections
               dbChannel.TimesWatched = timesWatched;
               dbChannel.TotalTimeWatched = totalTimeWatched;
               dbChannel.VisibleInGuide = visibileInGuide;
-              dbChannel.FreeToAir = FreeToAir;
               dbChannel.DisplayName = displayName;
               dbChannel.Persist();
 

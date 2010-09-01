@@ -66,11 +66,31 @@ namespace SetupTv.Dialogs
     {
       if (textBoxDVBIPChannel.Text.Length == 0) { return false; }
       int lcn, onid, tsid, sid, pmt;
-      if (!Int32.TryParse(textBoxDVBIPChannel.Text, out lcn)) { return false; }
-      if (!Int32.TryParse(textBoxDVBIPNetworkId.Text, out onid)) { return false; }
-      if (!Int32.TryParse(textBoxDVBIPTransportId.Text, out tsid)) { return false; }
-      if (!Int32.TryParse(textBoxDVBIPServiceId.Text, out sid)) { return false; }
-      if (!Int32.TryParse(textBoxDVBIPPmtPid.Text, out pmt)) { return false; }
+      if (!Int32.TryParse(textBoxDVBIPChannel.Text, out lcn))
+      {
+        MessageBox.Show(this, "Please enter a valid channel!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxDVBIPNetworkId.Text, out onid))
+      {
+        MessageBox.Show(this, "Please enter a valid network id!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxDVBIPTransportId.Text, out tsid))
+      {
+        MessageBox.Show(this, "Please enter a valid transport id!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxDVBIPServiceId.Text, out sid))
+      {
+        MessageBox.Show(this, "Please enter a valid service id!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxDVBIPPmtPid.Text, out pmt))
+      {
+        MessageBox.Show(this, "Please enter a valid network, transport and service id!", "Incorrect input");
+        return false;
+      }
       if (onid <= 0 && tsid < 0 && sid < 0) { return false; }
       return true;
     }

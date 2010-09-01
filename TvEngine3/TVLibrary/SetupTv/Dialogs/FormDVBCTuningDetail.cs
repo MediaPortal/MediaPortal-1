@@ -14,7 +14,7 @@ namespace SetupTv.Dialogs
     private void FormDVBCTuningDetail_Load(object sender, System.EventArgs e)
     {
       comboBoxDvbCModulation.Items.Clear();
-      foreach (ModulationType modValue in Enum.GetValues(typeof (ModulationType)))
+      foreach (ModulationType modValue in Enum.GetValues(typeof(ModulationType)))
       {
         comboBoxDvbCModulation.Items.Add(modValue);
       }
@@ -22,6 +22,7 @@ namespace SetupTv.Dialogs
       if (TuningDetail != null)
       {
         //Editing
+        textBoxChannel.Text = TuningDetail.ChannelNumber.ToString();
         textboxFreq.Text = TuningDetail.Frequency.ToString();
         textBoxONID.Text = TuningDetail.NetworkId.ToString();
         textBoxTSID.Text = TuningDetail.TransportId.ToString();
@@ -31,8 +32,10 @@ namespace SetupTv.Dialogs
         textBoxDVBCProvider.Text = TuningDetail.Provider;
         checkBoxDVBCfta.Checked = TuningDetail.FreeToAir;
         comboBoxDvbCModulation.SelectedItem = (ModulationType)TuningDetail.Modulation;
-      } else
+      }
+      else
       {
+        textBoxChannel.Text = "";
         textboxFreq.Text = "";
         textBoxONID.Text = "";
         textBoxTSID.Text = "";
@@ -61,6 +64,7 @@ namespace SetupTv.Dialogs
 
     private void UpdateTuningDetail()
     {
+      TuningDetail.ChannelNumber = Int32.Parse(textBoxChannel.Text);
       TuningDetail.Frequency = Convert.ToInt32(textboxFreq.Text);
       TuningDetail.NetworkId = Convert.ToInt32(textBoxONID.Text);
       TuningDetail.TransportId = Convert.ToInt32(textBoxTSID.Text);
@@ -76,13 +80,41 @@ namespace SetupTv.Dialogs
     private bool ValidateInput()
     {
       int freq, onid, tsid, sid, symbolrate, pmt;
-      if (!Int32.TryParse(textboxFreq.Text, out freq)) { return false; }
-      if (!Int32.TryParse(textBoxONID.Text, out onid)) { return false; }
-      if (!Int32.TryParse(textBoxTSID.Text, out tsid)) { return false; }
-      if (!Int32.TryParse(textBoxSID.Text, out sid)) { return false; }
-      if (!Int32.TryParse(textBoxSymbolRate.Text, out symbolrate)) { return false; }
-      if (!Int32.TryParse(textBoxDVBCPmt.Text, out pmt)) { return false; }
-      if (onid <= 0 || tsid < 0 || sid < 0) { return false; }
+      if (!Int32.TryParse(textboxFreq.Text, out freq))
+      {
+        MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxONID.Text, out onid))
+      {
+        MessageBox.Show(this, "Please enter a valid network id!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxTSID.Text, out tsid))
+      {
+        MessageBox.Show(this, "Please enter a valid transport id!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxSID.Text, out sid))
+      {
+        MessageBox.Show(this, "Please enter a valid service id!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxSymbolRate.Text, out symbolrate))
+      {
+        MessageBox.Show(this, "Please enter a valid symbolrate!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxDVBCPmt.Text, out pmt))
+      {
+        MessageBox.Show(this, "Please enter a valid pmt id!", "Incorrect input");
+        return false;
+      }
+      if (onid <= 0 || tsid < 0 || sid < 0)
+      {
+        MessageBox.Show(this, "Please enter a valid network, transport and service id!", "Incorrect input");
+        return false;
+      }
       return true;
     }
 

@@ -33,9 +33,9 @@ namespace SetupTv.Dialogs
       this.textBoxDVBTProvider = new System.Windows.Forms.TextBox();
       this.textBoxPmt = new System.Windows.Forms.TextBox();
       this.textBoxDVBTChannel = new System.Windows.Forms.TextBox();
-      this.textBox6 = new System.Windows.Forms.TextBox();
-      this.textBox7 = new System.Windows.Forms.TextBox();
-      this.textBox8 = new System.Windows.Forms.TextBox();
+      this.textBoxServiceId = new System.Windows.Forms.TextBox();
+      this.textBoxTransportId = new System.Windows.Forms.TextBox();
+      this.textBoxNetworkId = new System.Windows.Forms.TextBox();
       this.textBoxDVBTfreq = new System.Windows.Forms.TextBox();
       this.label50 = new System.Windows.Forms.Label();
       this.channelDVBT = new System.Windows.Forms.Label();
@@ -99,29 +99,29 @@ namespace SetupTv.Dialogs
       this.textBoxDVBTChannel.TabIndex = 90;
       this.textBoxDVBTChannel.Text = "0";
       // 
-      // textBox6
+      // textBoxServiceId
       // 
-      this.textBox6.Location = new System.Drawing.Point(87, 115);
-      this.textBox6.Name = "textBox6";
-      this.textBox6.Size = new System.Drawing.Size(146, 20);
-      this.textBox6.TabIndex = 83;
-      this.textBox6.Text = "-1";
+      this.textBoxServiceId.Location = new System.Drawing.Point(87, 115);
+      this.textBoxServiceId.Name = "textBoxServiceId";
+      this.textBoxServiceId.Size = new System.Drawing.Size(146, 20);
+      this.textBoxServiceId.TabIndex = 83;
+      this.textBoxServiceId.Text = "-1";
       // 
-      // textBox7
+      // textBoxTransportId
       // 
-      this.textBox7.Location = new System.Drawing.Point(87, 89);
-      this.textBox7.Name = "textBox7";
-      this.textBox7.Size = new System.Drawing.Size(146, 20);
-      this.textBox7.TabIndex = 82;
-      this.textBox7.Text = "-1";
+      this.textBoxTransportId.Location = new System.Drawing.Point(87, 89);
+      this.textBoxTransportId.Name = "textBoxTransportId";
+      this.textBoxTransportId.Size = new System.Drawing.Size(146, 20);
+      this.textBoxTransportId.TabIndex = 82;
+      this.textBoxTransportId.Text = "-1";
       // 
-      // textBox8
+      // textBoxNetworkId
       // 
-      this.textBox8.Location = new System.Drawing.Point(87, 63);
-      this.textBox8.Name = "textBox8";
-      this.textBox8.Size = new System.Drawing.Size(146, 20);
-      this.textBox8.TabIndex = 81;
-      this.textBox8.Text = "-1";
+      this.textBoxNetworkId.Location = new System.Drawing.Point(87, 63);
+      this.textBoxNetworkId.Name = "textBoxNetworkId";
+      this.textBoxNetworkId.Size = new System.Drawing.Size(146, 20);
+      this.textBoxNetworkId.TabIndex = 81;
+      this.textBoxNetworkId.Text = "-1";
       // 
       // textBoxDVBTfreq
       // 
@@ -215,9 +215,9 @@ namespace SetupTv.Dialogs
       this.Controls.Add(this.textBoxDVBTProvider);
       this.Controls.Add(this.textBoxPmt);
       this.Controls.Add(this.textBoxDVBTChannel);
-      this.Controls.Add(this.textBox6);
-      this.Controls.Add(this.textBox7);
-      this.Controls.Add(this.textBox8);
+      this.Controls.Add(this.textBoxServiceId);
+      this.Controls.Add(this.textBoxTransportId);
+      this.Controls.Add(this.textBoxNetworkId);
       this.Controls.Add(this.textBoxDVBTfreq);
       this.Controls.Add(this.label50);
       this.Controls.Add(this.channelDVBT);
@@ -241,9 +241,9 @@ namespace SetupTv.Dialogs
       this.Controls.SetChildIndex(this.channelDVBT, 0);
       this.Controls.SetChildIndex(this.label50, 0);
       this.Controls.SetChildIndex(this.textBoxDVBTfreq, 0);
-      this.Controls.SetChildIndex(this.textBox8, 0);
-      this.Controls.SetChildIndex(this.textBox7, 0);
-      this.Controls.SetChildIndex(this.textBox6, 0);
+      this.Controls.SetChildIndex(this.textBoxNetworkId, 0);
+      this.Controls.SetChildIndex(this.textBoxTransportId, 0);
+      this.Controls.SetChildIndex(this.textBoxServiceId, 0);
       this.Controls.SetChildIndex(this.textBoxDVBTChannel, 0);
       this.Controls.SetChildIndex(this.textBoxPmt, 0);
       this.Controls.SetChildIndex(this.textBoxDVBTProvider, 0);
@@ -261,9 +261,9 @@ namespace SetupTv.Dialogs
     private System.Windows.Forms.TextBox textBoxDVBTProvider;
     private System.Windows.Forms.TextBox textBoxPmt;
     private System.Windows.Forms.TextBox textBoxDVBTChannel;
-    private System.Windows.Forms.TextBox textBox6;
-    private System.Windows.Forms.TextBox textBox7;
-    private System.Windows.Forms.TextBox textBox8;
+    private System.Windows.Forms.TextBox textBoxServiceId;
+    private System.Windows.Forms.TextBox textBoxTransportId;
+    private System.Windows.Forms.TextBox textBoxNetworkId;
     private System.Windows.Forms.TextBox textBoxDVBTfreq;
     private System.Windows.Forms.Label label50;
     private System.Windows.Forms.Label channelDVBT;

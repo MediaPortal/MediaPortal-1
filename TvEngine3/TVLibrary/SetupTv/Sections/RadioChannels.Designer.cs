@@ -35,6 +35,7 @@ namespace SetupTv.Sections
       this.hdrGroup = new System.Windows.Forms.ColumnHeader();
       this.hdrProvider = new System.Windows.Forms.ColumnHeader();
       this.hdrTypes = new System.Windows.Forms.ColumnHeader();
+      this.hdrDetails = new System.Windows.Forms.ColumnHeader();
       this.channelListContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.addToFavoritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.deleteThisChannelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,7 +69,7 @@ namespace SetupTv.Sections
       this.groupTabContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.renameGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.deleteGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.hdrDetails = new System.Windows.Forms.ColumnHeader();
+      this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.channelListContextMenuStrip.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -96,9 +97,11 @@ namespace SetupTv.Sections
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.IsChannelListView = false;
       this.mpListView1.LabelEdit = true;
+      this.mpListView1.LargeImageList = this.imageList1;
       this.mpListView1.Location = new System.Drawing.Point(9, 44);
       this.mpListView1.Name = "mpListView1";
       this.mpListView1.Size = new System.Drawing.Size(438, 221);
+      this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 0;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
@@ -124,6 +127,10 @@ namespace SetupTv.Sections
       // 
       this.hdrTypes.Text = "Types";
       this.hdrTypes.Width = 50;
+      // 
+      // hdrDetails
+      // 
+      this.hdrDetails.Text = "Tuningdetails";
       // 
       // channelListContextMenuStrip
       // 
@@ -451,9 +458,16 @@ namespace SetupTv.Sections
       this.deleteGroupToolStripMenuItem.Text = "Delete Group";
       this.deleteGroupToolStripMenuItem.Click += new System.EventHandler(this.deleteGroupToolStripMenuItem_Click);
       // 
-      // hdrDetails
+      // imageList1
       // 
-      this.hdrDetails.Text = "Tuningdetails";
+      this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+      this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageList1.Images.SetKeyName(0, "radio_fta_.png");
+      this.imageList1.Images.SetKeyName(1, "radio_scrambled.png");
+      this.imageList1.Images.SetKeyName(2, "icon.radio_scrambled_and_fta.png");
+      this.imageList1.Images.SetKeyName(3, "tv_fta_.png");
+      this.imageList1.Images.SetKeyName(4, "tv_scrambled.png");
+      this.imageList1.Images.SetKeyName(5, "icon.tv_scrambled_and_fta.png");
       // 
       // RadioChannels
       // 
@@ -515,5 +529,6 @@ namespace SetupTv.Sections
   private System.Windows.Forms.ToolStripMenuItem renameGroupToolStripMenuItem;
   private System.Windows.Forms.ToolStripMenuItem deleteGroupToolStripMenuItem;
   private System.Windows.Forms.ColumnHeader hdrDetails;
+  private System.Windows.Forms.ImageList imageList1;
   }
 }

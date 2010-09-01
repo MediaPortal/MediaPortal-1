@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using Gentle.Framework;
 using SetupTv.Dialogs;
 using TvDatabase;
+using TvLibrary.Interfaces;
 using MediaPortal.UserInterface.Controls;
 using TvLibrary.Log;
 
@@ -32,6 +33,7 @@ namespace SetupTv.Sections
   public partial class ChannelsInRadioGroupControl : UserControl
   {
     private readonly MPListViewStringColumnSorter lvwColumnSorter;
+
     private static bool _userConfirmedAutoReorder = false;
     private SortOrder _lastSortOrder = SortOrder.None;
 
@@ -42,9 +44,8 @@ namespace SetupTv.Sections
       InitializeComponent();
 
       lvwColumnSorter = new MPListViewStringColumnSorter();
-      listView1.ListViewItemSorter = lvwColumnSorter;
       lvwColumnSorter.Order = SortOrder.None;
-
+      listView1.ListViewItemSorter = lvwColumnSorter;
       listView1.IsChannelListView = true;
     }
 
@@ -65,49 +66,32 @@ namespace SetupTv.Sections
         Application.DoEvents();
 
         Cursor.Current = Cursors.WaitCursor;
-
-        UpdateMenuAndTabs();
+		
+		UpdateMenuAndTabs();
 
         listView1.Items.Clear();
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(RadioGroupMap));
 
-        if (Group != null)
+        sb.AddConstraint(Operator.Equals, "idGroup", _channelGroup.IdGroup);
+        sb.AddOrderByField(true, "sortOrder");
+
+        SqlStatement stmt = sb.GetStatement(true);
+
+        IList<RadioGroupMap> maps = ObjectFactory.GetCollection<RadioGroupMap>(stmt.Execute());
+
+        foreach (RadioGroupMap map in maps)
         {
-          SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (RadioGroupMap));
-
-          sb.AddConstraint(Operator.Equals, "idGroup", Group.IdGroup);
-          sb.AddOrderByField(true, "sortOrder");
-
-          SqlStatement stmt = sb.GetStatement(true);
-
-          IList<RadioGroupMap> maps = ObjectFactory.GetCollection<RadioGroupMap>(stmt.Execute());
-
-          foreach (RadioGroupMap map in maps)
+          Channel channel = map.ReferencedChannel();
+          if (!channel.IsRadio)
           {
-            Channel channel = map.ReferencedChannel();
-            if (channel.IsRadio == false)
-            {
-              continue;
-            }
-
-            int imageIndex = 1;
-
-            if (channel.FreeToAir == false)
-            {
-              imageIndex = 2;
-            }
-
-            ListViewItem item = listView1.Items.Add(channel.DisplayName, imageIndex);
-
-            item.Checked = channel.VisibleInGuide;
-            item.Tag = map;
-
-            IList<TuningDetail> details = channel.ReferringTuningDetail();
-            if (details.Count > 0)
-            {
-              item.SubItems.Add(details[0].ChannelNumber.ToString());
-            }
+            continue;
           }
+          listView1.Items.Add(CreateItemForChannel(channel, map));
+
         }
+        bool isAllChannelsGroup = (_channelGroup.GroupName == TvConstants.RadioGroupNames.AllChannels);
+        removeChannelFromGroup.Enabled = !isAllChannelsGroup;
+        mpButtonDel.Enabled = !isAllChannelsGroup;
       }
       catch (Exception exp)
       {
@@ -119,20 +103,54 @@ namespace SetupTv.Sections
       }
     }
 
+    private ListViewItem CreateItemForChannel(Channel channel, object map)
+    {
+      bool hasFta = false;
+      bool hasScrambled = false;
+      IList<TuningDetail> tuningDetails = channel.ReferringTuningDetail();
+      foreach (TuningDetail detail in tuningDetails)
+      {
+        if (detail.FreeToAir)
+        {
+          hasFta = true;
+        }
+        if (!detail.FreeToAir)
+        {
+          hasScrambled = true;
+        }
+      }
+
+      int imageIndex;
+      if (hasFta && hasScrambled)
+      {
+        imageIndex = 2;
+      }
+      else if (hasScrambled)
+      {
+        imageIndex = 1;
+      }
+      else
+      {
+        imageIndex = 0;
+      }
+      
+      ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
+
+      item.Checked = channel.VisibleInGuide;
+      item.Tag = map;
+
+      IList<TuningDetail> details = channel.ReferringTuningDetail();
+      if (details.Count > 0)
+      {
+        item.SubItems.Add(details[0].ChannelNumber.ToString());
+      }
+      return item;
+    }
+
     private void listView1_ItemDrag(object sender, ItemDragEventArgs e)
     {
       if (e.Item is ListViewItem)
       {
-        ReOrder();
-      }
-      else if (e.Item is MPListView)
-      {
-        MPListView lv = e.Item as MPListView;
-        if (lv != listView1)
-        {
-          AddSelectedItemsToGroup(e.Item as MPListView);
-        }
-
         ReOrder();
       }
     }
@@ -150,7 +168,7 @@ namespace SetupTv.Sections
       }
     }
 
-    private void AddSelectedItemsToGroup(MPListView sourceListView)
+	private void AddSelectedItemsToGroup(MPListView sourceListView)
     {
       if (_channelGroup == null)
       {
@@ -215,8 +233,8 @@ namespace SetupTv.Sections
         addToFavoritesToolStripMenuItem.DropDownItems.Add(item);
       }
     }
-
-    private void addToFavoritesToolStripMenuItem_Click(object sender, EventArgs e)
+	
+	private void addToFavoritesToolStripMenuItem_Click(object sender, EventArgs e)
     {
       RadioChannelGroup group;
       ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
@@ -255,13 +273,13 @@ namespace SetupTv.Sections
         layer.AddChannelToRadioGroup(channel, group.GroupName);
       }
     }
-
+	
     private void removeChannelFromGroup_Click(object sender, EventArgs e)
     {
       mpButtonDel_Click(null, null);
     }
 
-    private void deleteThisChannelToolStripMenuItem_Click(object sender, EventArgs e)
+	private void deleteThisChannelToolStripMenuItem_Click(object sender, EventArgs e)
     {
       if (listView1.SelectedItems.Count > 0)
       {
@@ -298,8 +316,8 @@ namespace SetupTv.Sections
       ReOrder();
       OnActivated();
     }
-
-    private void editChannelToolStripMenuItem_Click(object sender, EventArgs e)
+	
+	private void editChannelToolStripMenuItem_Click(object sender, EventArgs e)
     {
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
       if (indexes.Count == 0)
@@ -321,30 +339,15 @@ namespace SetupTv.Sections
       }
       ReOrder();
     }
-
-    private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
-    {
-      editChannelToolStripMenuItem_Click(null, null);
-    }
-
-    private void listView1_AfterLabelEdit(object sender, LabelEditEventArgs e)
-    {
-      if (e.Label != null)
-      {
-        Channel channel = ((RadioGroupMap)listView1.Items[e.Item].Tag).ReferencedChannel();
-        channel.Name = e.Label;
-        channel.DisplayName = e.Label;
-        channel.Persist();
-      }
-    }
-
+	
     private void mpButtonPreview_Click(object sender, EventArgs e)
     {
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
       if (indexes.Count == 0)
         return;
-      RadioGroupMap map = (RadioGroupMap)listView1.Items[indexes[0]].Tag;
       FormPreview previewWindow = new FormPreview();
+
+      RadioGroupMap map = (RadioGroupMap)listView1.Items[indexes[0]].Tag;
       previewWindow.Channel = map.ReferencedChannel();
       previewWindow.ShowDialog(this);
     }
@@ -407,7 +410,7 @@ namespace SetupTv.Sections
     {
       if (listView1.SelectedItems.Count > 0)
       {
-        string holder = String.Format("Are you sure you want to delete these {0:d} channels?",
+        string holder = String.Format("Are you sure you want to remove these {0:d} channels?",
                                       listView1.SelectedItems.Count);
 
         if (MessageBox.Show(holder, "", MessageBoxButtons.YesNo) == DialogResult.No)
@@ -415,7 +418,6 @@ namespace SetupTv.Sections
           return;
         }
       }
-
 
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
       if (indexes.Count == 0)
@@ -427,7 +429,6 @@ namespace SetupTv.Sections
       for (int i = indexes.Count - 1; i >= 0; i--)
       {
         int index = indexes[i];
-
         if (index >= 0 && index < listView1.Items.Count)
         {
           ListViewItem item = listView1.Items[index];

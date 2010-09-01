@@ -34,11 +34,11 @@ namespace SetupTv.Dialogs
       this.textBoxDVBSPmt = new System.Windows.Forms.TextBox();
       this.textBoxDVBSChannel = new System.Windows.Forms.TextBox();
       this.textBoxSwitch = new System.Windows.Forms.TextBox();
-      this.textBox1 = new System.Windows.Forms.TextBox();
-      this.textBox2 = new System.Windows.Forms.TextBox();
-      this.textBox3 = new System.Windows.Forms.TextBox();
-      this.textBox4 = new System.Windows.Forms.TextBox();
-      this.textBox5 = new System.Windows.Forms.TextBox();
+      this.textBoxSymbolRate = new System.Windows.Forms.TextBox();
+      this.textBoxServiceId = new System.Windows.Forms.TextBox();
+      this.textBoxTransportId = new System.Windows.Forms.TextBox();
+      this.textBoxNetworkId = new System.Windows.Forms.TextBox();
+      this.textBoxFrequency = new System.Windows.Forms.TextBox();
       this.label34 = new System.Windows.Forms.Label();
       this.label47 = new System.Windows.Forms.Label();
       this.comboBoxRollOff = new System.Windows.Forms.ComboBox();
@@ -121,45 +121,45 @@ namespace SetupTv.Dialogs
       this.textBoxSwitch.TabIndex = 82;
       this.textBoxSwitch.Text = "11700000";
       // 
-      // textBox1
+      // textBoxSymbolRate
       // 
-      this.textBox1.Location = new System.Drawing.Point(84, 139);
-      this.textBox1.Name = "textBox1";
-      this.textBox1.Size = new System.Drawing.Size(129, 20);
-      this.textBox1.TabIndex = 81;
-      this.textBox1.Text = "22000";
+      this.textBoxSymbolRate.Location = new System.Drawing.Point(84, 139);
+      this.textBoxSymbolRate.Name = "textBoxSymbolRate";
+      this.textBoxSymbolRate.Size = new System.Drawing.Size(129, 20);
+      this.textBoxSymbolRate.TabIndex = 81;
+      this.textBoxSymbolRate.Text = "22000";
       // 
-      // textBox2
+      // textBoxServiceId
       // 
-      this.textBox2.Location = new System.Drawing.Point(84, 115);
-      this.textBox2.Name = "textBox2";
-      this.textBox2.Size = new System.Drawing.Size(129, 20);
-      this.textBox2.TabIndex = 80;
-      this.textBox2.Text = "-1";
+      this.textBoxServiceId.Location = new System.Drawing.Point(84, 115);
+      this.textBoxServiceId.Name = "textBoxServiceId";
+      this.textBoxServiceId.Size = new System.Drawing.Size(129, 20);
+      this.textBoxServiceId.TabIndex = 80;
+      this.textBoxServiceId.Text = "-1";
       // 
-      // textBox3
+      // textBoxTransportId
       // 
-      this.textBox3.Location = new System.Drawing.Point(84, 89);
-      this.textBox3.Name = "textBox3";
-      this.textBox3.Size = new System.Drawing.Size(129, 20);
-      this.textBox3.TabIndex = 79;
-      this.textBox3.Text = "-1";
+      this.textBoxTransportId.Location = new System.Drawing.Point(84, 89);
+      this.textBoxTransportId.Name = "textBoxTransportId";
+      this.textBoxTransportId.Size = new System.Drawing.Size(129, 20);
+      this.textBoxTransportId.TabIndex = 79;
+      this.textBoxTransportId.Text = "-1";
       // 
-      // textBox4
+      // textBoxNetworkId
       // 
-      this.textBox4.Location = new System.Drawing.Point(84, 63);
-      this.textBox4.Name = "textBox4";
-      this.textBox4.Size = new System.Drawing.Size(129, 20);
-      this.textBox4.TabIndex = 78;
-      this.textBox4.Text = "-1";
+      this.textBoxNetworkId.Location = new System.Drawing.Point(84, 63);
+      this.textBoxNetworkId.Name = "textBoxNetworkId";
+      this.textBoxNetworkId.Size = new System.Drawing.Size(129, 20);
+      this.textBoxNetworkId.TabIndex = 78;
+      this.textBoxNetworkId.Text = "-1";
       // 
-      // textBox5
+      // textBoxFrequency
       // 
-      this.textBox5.Location = new System.Drawing.Point(84, 37);
-      this.textBox5.Name = "textBox5";
-      this.textBox5.Size = new System.Drawing.Size(129, 20);
-      this.textBox5.TabIndex = 77;
-      this.textBox5.Text = "11097000";
+      this.textBoxFrequency.Location = new System.Drawing.Point(84, 37);
+      this.textBoxFrequency.Name = "textBoxFrequency";
+      this.textBoxFrequency.Size = new System.Drawing.Size(129, 20);
+      this.textBoxFrequency.TabIndex = 77;
+      this.textBoxFrequency.Text = "11097000";
       // 
       // label34
       // 
@@ -242,7 +242,9 @@ namespace SetupTv.Dialogs
             "4/5",
             "5/6",
             "5/11",
-            "7/8"});
+            "7/8",
+            "9/10",
+            "Max"});
       this.comboBoxInnerFecRate.Location = new System.Drawing.Point(85, 270);
       this.comboBoxInnerFecRate.Name = "comboBoxInnerFecRate";
       this.comboBoxInnerFecRate.Size = new System.Drawing.Size(129, 21);
@@ -352,10 +354,13 @@ namespace SetupTv.Dialogs
       this.comboBoxPol.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxPol.FormattingEnabled = true;
       this.comboBoxPol.Items.AddRange(new object[] {
+            "NotSet",
+            "NotDefined",
             "Horizontal",
             "Vertical",
             "CircularL",
-            "CircularR"});
+            "CircularR",
+            "Max"});
       this.comboBoxPol.Location = new System.Drawing.Point(84, 189);
       this.comboBoxPol.Name = "comboBoxPol";
       this.comboBoxPol.Size = new System.Drawing.Size(129, 21);
@@ -425,11 +430,11 @@ namespace SetupTv.Dialogs
       this.Controls.Add(this.textBoxDVBSPmt);
       this.Controls.Add(this.textBoxDVBSChannel);
       this.Controls.Add(this.textBoxSwitch);
-      this.Controls.Add(this.textBox1);
-      this.Controls.Add(this.textBox2);
-      this.Controls.Add(this.textBox3);
-      this.Controls.Add(this.textBox4);
-      this.Controls.Add(this.textBox5);
+      this.Controls.Add(this.textBoxSymbolRate);
+      this.Controls.Add(this.textBoxServiceId);
+      this.Controls.Add(this.textBoxTransportId);
+      this.Controls.Add(this.textBoxNetworkId);
+      this.Controls.Add(this.textBoxFrequency);
       this.Controls.Add(this.label34);
       this.Controls.Add(this.label47);
       this.Controls.Add(this.comboBoxRollOff);
@@ -475,11 +480,11 @@ namespace SetupTv.Dialogs
       this.Controls.SetChildIndex(this.comboBoxRollOff, 0);
       this.Controls.SetChildIndex(this.label47, 0);
       this.Controls.SetChildIndex(this.label34, 0);
-      this.Controls.SetChildIndex(this.textBox5, 0);
-      this.Controls.SetChildIndex(this.textBox4, 0);
-      this.Controls.SetChildIndex(this.textBox3, 0);
-      this.Controls.SetChildIndex(this.textBox2, 0);
-      this.Controls.SetChildIndex(this.textBox1, 0);
+      this.Controls.SetChildIndex(this.textBoxFrequency, 0);
+      this.Controls.SetChildIndex(this.textBoxNetworkId, 0);
+      this.Controls.SetChildIndex(this.textBoxTransportId, 0);
+      this.Controls.SetChildIndex(this.textBoxServiceId, 0);
+      this.Controls.SetChildIndex(this.textBoxSymbolRate, 0);
       this.Controls.SetChildIndex(this.textBoxSwitch, 0);
       this.Controls.SetChildIndex(this.textBoxDVBSChannel, 0);
       this.Controls.SetChildIndex(this.textBoxDVBSPmt, 0);
@@ -499,11 +504,11 @@ namespace SetupTv.Dialogs
     private System.Windows.Forms.TextBox textBoxDVBSPmt;
     private System.Windows.Forms.TextBox textBoxDVBSChannel;
     private System.Windows.Forms.TextBox textBoxSwitch;
-    private System.Windows.Forms.TextBox textBox1;
-    private System.Windows.Forms.TextBox textBox2;
-    private System.Windows.Forms.TextBox textBox3;
-    private System.Windows.Forms.TextBox textBox4;
-    private System.Windows.Forms.TextBox textBox5;
+    private System.Windows.Forms.TextBox textBoxSymbolRate;
+    private System.Windows.Forms.TextBox textBoxServiceId;
+    private System.Windows.Forms.TextBox textBoxTransportId;
+    private System.Windows.Forms.TextBox textBoxNetworkId;
+    private System.Windows.Forms.TextBox textBoxFrequency;
     private System.Windows.Forms.Label label34;
     private System.Windows.Forms.Label label47;
     private System.Windows.Forms.ComboBox comboBoxRollOff;

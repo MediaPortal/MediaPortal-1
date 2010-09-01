@@ -32,6 +32,7 @@ using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
 using MediaPortal.UserInterface.Controls;
+using System.Threading;
 
 namespace SetupTv.Sections
 {
@@ -61,6 +62,9 @@ namespace SetupTv.Sections
     private readonly MPListViewStringColumnSorter lvwColumnSorter2;
 
     private bool suppressRefresh = false;
+    private bool isScanning = false;
+    private bool abortScanning = false;
+    private Thread scanThread;
 
     public RadioChannels()
       : this("Radio Channels")
@@ -180,176 +184,200 @@ namespace SetupTv.Sections
         Cursor.Current = Cursors.WaitCursor;
 
         IList<Card> dbsCards = Card.ListAll();
-
         Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
-
         foreach (Card card in dbsCards)
         {
           cards[card.IdCard] = RemoteControl.Instance.Type(card.IdCard);
         }
-        base.OnSectionActivated();
 
         mpListView1.Items.Clear();
-        Channel.ListAll();
-        int channelCount = 0;
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+        sb.AddConstraint(Operator.Equals, "isRadio", true);
         sb.AddOrderByField(true, "sortOrder");
         SqlStatement stmt = sb.GetStatement(true);
         IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
-        ChannelMap.ListAll();
-
         List<ListViewItem> items = new List<ListViewItem>();
         foreach (Channel ch in channels)
         {
-          bool analog = false;
-          bool dvbc = false;
-          bool dvbt = false;
-          bool dvbs = false;
-          bool atsc = false;
-          bool dvbip = false;
-          bool webstream = false;
-          bool notmapped = true;
-          if (ch.IsRadio == false)
-            continue;
-          channelCount++;
-          if (ch.IsWebstream())
-          {
-            webstream = true;
-            notmapped = false;
-          }
-          if (notmapped)
-          {
-            IList<ChannelMap> maps = ch.ReferringChannelMap();
-            foreach (ChannelMap map in maps)
-            {
-              if (cards.ContainsKey(map.IdCard))
-              {
-                CardType type = cards[map.IdCard];
-                switch (type)
-                {
-                  case CardType.Analog:
-                    analog = true;
-                    notmapped = false;
-                    break;
-                  case CardType.DvbC:
-                    dvbc = true;
-                    notmapped = false;
-                    break;
-                  case CardType.DvbT:
-                    dvbt = true;
-                    notmapped = false;
-                    break;
-                  case CardType.DvbS:
-                    dvbs = true;
-                    notmapped = false;
-                    break;
-                  case CardType.Atsc:
-                    atsc = true;
-                    notmapped = false;
-                    break;
-                  case CardType.DvbIP:
-                    dvbip = true;
-                    notmapped = false;
-                    break;
-                }
-              }
-            }
-          }
-
-          ListViewItem item = new ListViewItem(ch.DisplayName);
-          item.Checked = ch.VisibleInGuide;
-          item.Tag = ch;
-
-          IList<string> groups = ch.GroupNames;
-          List<string> groupNames = new List<string>();
-          foreach (string groupName in groups)
-          {
-            if (groupName != TvConstants.RadioGroupNames.AllChannels)
-            {
-              groupNames.Add(groupName);
-            }
-          }
-          string group = String.Join(", ", groupNames.ToArray());
-          item.SubItems.Add(group);
-
-          List<string> providers = new List<string>();
-          IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
-          foreach (TuningDetail detail in tuningDetails)
-          {
-            if (!providers.Contains(detail.Provider))
-            {
-              providers.Add(detail.Provider);
-            }
-          }
-
-          string provider = String.Join(", ", providers.ToArray());
-          item.SubItems.Add(provider);
-
-          StringBuilder builder = new StringBuilder();
-
-          if (analog)
-          {
-            builder.Append("Analog");
-          }
-          if (notmapped)
-          {
-            if (builder.Length > 0)
-              builder.Append(",");
-            builder.Append("Channel not mapped to a card");
-          }
-          if (dvbc)
-          {
-            if (builder.Length > 0)
-              builder.Append(",");
-            builder.Append("DVB-C");
-          }
-          if (dvbt)
-          {
-            if (builder.Length > 0)
-              builder.Append(",");
-            builder.Append("DVB-T");
-          }
-          if (dvbs)
-          {
-            if (builder.Length > 0)
-              builder.Append(",");
-            builder.Append("DVB-S");
-          }
-          if (atsc)
-          {
-            if (builder.Length > 0)
-              builder.Append(",");
-            builder.Append("ATSC");
-          }
-          if (dvbip)
-          {
-            if (builder.Length > 0) builder.Append(",");
-            builder.Append("DVB-IP");
-          }
-          if (webstream)
-          {
-            if (builder.Length > 0)
-              builder.Append(",");
-            builder.Append("Webstream");
-          }
-          item.SubItems.Add(builder.ToString());
-
-         
-          items.Add(item);
+          items.Add(CreateListViewItemForChannel(ch, cards));
         }
+
         mpListView1.Items.AddRange(items.ToArray());
-        tabControl1.TabPages[0].Text = string.Format("Channels ({0})", channelCount);
+        tabControl1.TabPages[0].Text = string.Format("Channels ({0})", items.Count);
         mpListView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
       }
       catch (Exception exp)
       {
-        Log.Error("OnSectionActivated error: {0}", exp.Message);
+        Log.Error("RefreshAllChannels error: {0}", exp.Message);
       }
       finally
       {
         mpListView1.EndUpdate();
         Cursor.Current = Cursors.Default;
       }
+    }
+
+    private static ListViewItem CreateListViewItemForChannel(Channel ch, Dictionary<int, CardType> cards)
+    {
+      bool analog = false;
+      bool dvbc = false;
+      bool dvbt = false;
+      bool dvbs = false;
+      bool atsc = false;
+      bool dvbip = false;
+      bool webstream = false;
+      bool notmapped = true;
+      if (ch.IsWebstream())
+      {
+        webstream = true;
+        notmapped = false;
+      }
+      if (notmapped)
+      {
+        IList<ChannelMap> maps = ch.ReferringChannelMap();
+        foreach (ChannelMap map in maps)
+        {
+          if (cards.ContainsKey(map.IdCard))
+          {
+            CardType type = cards[map.IdCard];
+            switch (type)
+            {
+              case CardType.Analog:
+                analog = true;
+                notmapped = false;
+                break;
+              case CardType.DvbC:
+                dvbc = true;
+                notmapped = false;
+                break;
+              case CardType.DvbT:
+                dvbt = true;
+                notmapped = false;
+                break;
+              case CardType.DvbS:
+                dvbs = true;
+                notmapped = false;
+                break;
+              case CardType.Atsc:
+                atsc = true;
+                notmapped = false;
+                break;
+              case CardType.DvbIP:
+                dvbip = true;
+                notmapped = false;
+                break;
+            }
+          }
+        }
+      }
+      ListViewItem item = new ListViewItem(ch.DisplayName);
+      item.Checked = ch.VisibleInGuide;
+      item.Tag = ch;
+
+
+      IList<string> groups = ch.GroupNames;
+      List<string> groupNames = new List<string>();
+      foreach (string groupName in groups)
+      {
+        if (groupName != TvConstants.RadioGroupNames.AllChannels)
+        {
+          groupNames.Add(groupName);
+        }
+      }
+      string group = String.Join(", ", groupNames.ToArray());
+      item.SubItems.Add(group);
+
+      List<string> providers = new List<string>();
+      IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
+      bool hasFta = false;
+      bool hasScrambled = false;
+      foreach (TuningDetail detail in tuningDetails)
+      {
+        if (!providers.Contains(detail.Provider) && !String.IsNullOrEmpty(detail.Provider))
+        {
+          providers.Add(detail.Provider);
+        }
+        if (detail.FreeToAir)
+        {
+          hasFta = true;
+        }
+        if (!detail.FreeToAir)
+        {
+          hasScrambled = true;
+        }
+
+      }
+
+      string provider = String.Join(", ", providers.ToArray());
+      item.SubItems.Add(provider);
+
+      int imageIndex;
+      if (hasFta && hasScrambled)
+      {
+        imageIndex = 2;
+      }
+      else if (hasScrambled)
+      {
+        imageIndex = 1;
+      }
+      else
+      {
+        imageIndex = 0;
+      }
+      item.ImageIndex = imageIndex;
+
+      StringBuilder builder = new StringBuilder();
+
+      if (notmapped)
+      {
+        builder.Append("Channel not mapped to a card");
+      }
+      else
+      {
+        if (analog)
+        {
+          builder.Append("Analog");
+        }
+        if (dvbc)
+        {
+          if (builder.Length > 0)
+            builder.Append(",");
+          builder.Append("DVB-C");
+        }
+        if (dvbt)
+        {
+          if (builder.Length > 0)
+            builder.Append(",");
+          builder.Append("DVB-T");
+        }
+        if (dvbs)
+        {
+          if (builder.Length > 0)
+            builder.Append(",");
+          builder.Append("DVB-S");
+        }
+        if (atsc)
+        {
+          if (builder.Length > 0)
+            builder.Append(",");
+          builder.Append("ATSC");
+        }
+        if (dvbip)
+        {
+          if (builder.Length > 0) builder.Append(",");
+          builder.Append("DVB-IP");
+        }
+        if (webstream)
+        {
+          if (builder.Length > 0)
+            builder.Append(",");
+          builder.Append("Webstream");
+        }
+      }
+      item.SubItems.Add(builder.ToString());
+
+      item.SubItems.Add(tuningDetails.Count.ToString());
+      return item;
     }
 
     private void OnAddToFavoritesMenuItem_Click(object sender, EventArgs e)
@@ -413,7 +441,7 @@ namespace SetupTv.Sections
 
       NotifyForm dlg = new NotifyForm("Clearing all radio channels...",
                                       "This can take some time\n\nPlease be patient...");
-      dlg.Show();
+      dlg.Show(this);
       dlg.WaitForDisplay();
       IList<Channel> channels = Channel.ListAll();
       foreach (Channel channel in channels)
@@ -483,7 +511,7 @@ namespace SetupTv.Sections
         }
         NotifyForm dlg = new NotifyForm("Deleting selected radio channels...",
                                         "This can take some time\n\nPlease be patient...");
-        dlg.Show();
+        dlg.Show(this);
         dlg.WaitForDisplay();
 
         foreach (ListViewItem item in mpListView1.SelectedItems)
@@ -505,60 +533,6 @@ namespace SetupTv.Sections
           mpListView1.Items.Remove(item);
         }
         dlg.Close();
-        ReOrder();
-      }
-      finally
-      {
-        mpListView1.EndUpdate();
-      }
-    }
-
-    private void mpButtonUp_Click(object sender, EventArgs e)
-    {
-      mpListView1.BeginUpdate();
-      try
-      {
-        ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-        if (indexes.Count == 0)
-          return;
-        for (int i = 0; i < indexes.Count; ++i)
-        {
-          int index = indexes[i];
-          if (index > 0)
-          {
-            ListViewItem item = mpListView1.Items[index];
-            mpListView1.Items.RemoveAt(index);
-            mpListView1.Items.Insert(index - 1, item);
-          }
-        }
-        ReOrder();
-      }
-      finally
-      {
-        mpListView1.EndUpdate();
-      }
-    }
-
-    private void mpButtonDown_Click(object sender, EventArgs e)
-    {
-      mpListView1.BeginUpdate();
-      try
-      {
-        ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
-        if (indexes.Count == 0)
-          return;
-        if (mpListView1.Items.Count < 2)
-          return;
-        for (int i = indexes.Count - 1; i >= 0; i--)
-        {
-          int index = indexes[i];
-          ListViewItem item = mpListView1.Items[index];
-          mpListView1.Items.RemoveAt(index);
-          if (index + 1 < mpListView1.Items.Count)
-            mpListView1.Items.Insert(index + 1, item);
-          else
-            mpListView1.Items.Add(item);
-        }
         ReOrder();
       }
       finally
@@ -615,7 +589,23 @@ namespace SetupTv.Sections
       dlg.IsTv = false;
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
-        OnSectionActivated();
+        IList<Card> dbsCards = Card.ListAll();
+        Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
+        foreach (Card card in dbsCards)
+        {
+          cards[card.IdCard] = RemoteControl.Instance.Type(card.IdCard);
+        }
+        mpListView1.BeginUpdate();
+        try
+        {
+          mpListView1.Items[indexes[0]] = CreateListViewItemForChannel(channel, cards);
+          mpListView1.Sort();
+          ReOrder();
+        }
+        finally
+        {
+          mpListView1.EndUpdate();
+        }
       }
     }
 
@@ -669,35 +659,73 @@ namespace SetupTv.Sections
       dlg.Channel = null;
       dlg.IsTv = false;
       if (dlg.ShowDialog(this) == DialogResult.OK)
-        OnSectionActivated();
+      {
+        IList<Card> dbsCards = Card.ListAll();
+        Dictionary<int, CardType> cards = new Dictionary<int, CardType>();
+        foreach (Card card in dbsCards)
+        {
+          cards[card.IdCard] = RemoteControl.Instance.Type(card.IdCard);
+        }
+        mpListView1.BeginUpdate();
+        try
+        {
+          mpListView1.Items.Add(CreateListViewItemForChannel(dlg.Channel, cards));
+          mpListView1.Sort();
+          ReOrder();
+        }
+        finally
+        {
+          mpListView1.EndUpdate();
+        }
+      }
     }
 
     private void mpButtonUncheckEncrypted_Click(object sender, EventArgs e)
     {
       NotifyForm dlg = new NotifyForm("Unchecking all scrambled tv channels...",
                                       "This can take some time\n\nPlease be patient...");
-      dlg.Show();
+      dlg.Show(this);
       dlg.WaitForDisplay();
       foreach (ListViewItem item in mpListView1.Items)
       {
         Channel channel = (Channel)item.Tag;
-        if (!channel.FreeToAir)
+        bool hasFTA = false;
+        foreach (TuningDetail tuningDetail in channel.ReferringTuningDetail())
+        {
+          if (tuningDetail.FreeToAir)
+          {
+            hasFTA = true;
+            break;
+          }
+        }
+        if (!hasFTA)
+        {
           item.Checked = false;
+        }
       }
       dlg.Close();
     }
 
     private void mpButtonDeleteEncrypted_Click(object sender, EventArgs e)
     {
-      NotifyForm dlg = new NotifyForm("Clearing all scrambled tv channels...",
+      NotifyForm dlg = new NotifyForm("Deleting all scrambled tv channels...",
                                       "This can take some time\n\nPlease be patient...");
-      dlg.Show();
+      dlg.Show(this);
       dlg.WaitForDisplay();
       List<ListViewItem> itemsToRemove = new List<ListViewItem>();
       foreach (ListViewItem item in mpListView1.Items)
       {
         Channel channel = (Channel)item.Tag;
-        if (channel.FreeToAir == false)
+        bool hasFTA = false;
+        foreach (TuningDetail tuningDetail in channel.ReferringTuningDetail())
+        {
+          if (tuningDetail.FreeToAir)
+          {
+            hasFTA = true;
+            break;
+          }
+        }
+        if (!hasFTA)
         {
           channel.Delete();
           itemsToRemove.Add(item);
@@ -720,7 +748,7 @@ namespace SetupTv.Sections
       dlg.Filter = "playlists (*.m3u;*.pls;*.b4s;*.wpl)|*.m3u;*.pls;*.b4s;*.wpl";
       dlg.Multiselect = false;
       dlg.Title = "Select the playlist file to import";
-      if (dlg.ShowDialog() != DialogResult.OK)
+      if (dlg.ShowDialog(this) != DialogResult.OK)
         return;
       IPlayListIO listIO = PlayListFactory.CreateIO(dlg.FileName);
       PlayList playlist = new PlayList();
@@ -763,7 +791,7 @@ namespace SetupTv.Sections
     {
       NotifyForm dlg = new NotifyForm("Renaming selected tv channels by SID ...",
                                       "This can take some time\n\nPlease be patient...");
-      dlg.Show();
+      dlg.Show(this);
       dlg.WaitForDisplay();
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
@@ -784,8 +812,9 @@ namespace SetupTv.Sections
     {
       NotifyForm dlg = new NotifyForm("Adding SID in front of name...",
                                       "This can take some time\n\nPlease be patient...");
-      dlg.Show();
+      dlg.Show(this);
       dlg.WaitForDisplay();
+
       foreach (ListViewItem item in mpListView1.SelectedItems)
       {
         Channel channel = (Channel)item.Tag;
@@ -804,7 +833,7 @@ namespace SetupTv.Sections
     private void renumberChannelsBySIDToolStripMenuItem_Click(object sender, EventArgs e)
     {
       NotifyForm dlg = new NotifyForm("Renumbering radio channels...", "This can take some time\n\nPlease be patient...");
-      dlg.Show();
+      dlg.Show(this);
       dlg.WaitForDisplay();
 
       foreach (ListViewItem item in mpListView1.SelectedItems)
@@ -820,10 +849,37 @@ namespace SetupTv.Sections
       dlg.Close();
     }
 
+    private void StartScanThread()
+    {
+      scanThread = new Thread(ScanForUsableChannels);
+      scanThread.Name = "Channels test thread";
+      scanThread.Start();
+      mpButtonTestScrambled.Text = "Stop";
+    }
+
+    private void StopScanThread()
+    {
+      abortScanning = true;
+    }
+
     private void mpButtonTestScrambled_Click(object sender, EventArgs e)
     {
-      NotifyForm dlg = new NotifyForm("Testing all radio channels...", "Please be patient...");
-      dlg.Show();
+      if (isScanning)
+      {
+        StopScanThread();
+      }
+      else if (!abortScanning) // cancel in progress
+      {
+        StartScanThread();
+      }
+    }
+
+    private void ScanForUsableChannels()
+    {
+      abortScanning = false;
+      isScanning = true;
+      NotifyForm dlg = new NotifyForm("Testing all checked radio channels...", "Please be patient...");
+      dlg.Show(this);
       dlg.WaitForDisplay();
 
       // Create tunning objects Server, User and Card
@@ -833,23 +889,89 @@ namespace SetupTv.Sections
 
       foreach (ListViewItem item in mpListView1.Items)
       {
-        if (item.Checked == false) continue; // do not test "un-checked" channels
+        if (item.Checked == false)
+        {
+          continue; // do not test "un-checked" channels
+        }
         Channel _channel = (Channel)item.Tag; // get channel
         dlg.SetMessage(
           string.Format("Please be patient...\n\nTesting channel {0} ( {1} of {2} )",
                         _channel.DisplayName, item.Index + 1, mpListView1.Items.Count));
+        Application.DoEvents();
         TvResult result = _server.StartTimeShifting(ref _user, _channel.IdChannel, out _card);
-        // test the channel for scrambled or unable to start graph
-        if ((result == TvResult.ChannelIsScrambled))
-        {
-          item.Checked = false;
-        }
-        else if (result == TvResult.Succeeded)
+        if (result == TvResult.Succeeded)
         {
           _card.StopTimeShifting();
         }
+        else
+        {
+          item.Checked = false;
+          _channel.VisibleInGuide = false;
+          _channel.Persist();
+        }
+        if (abortScanning)
+        {
+          break;
+        }
       }
+      mpButtonTestScrambled.Text = "Test";
       dlg.Close();
+      isScanning = false;
+      abortScanning = false;
+    }
+
+    private void mpButtonUp_Click(object sender, EventArgs e)
+    {
+      mpListView1.BeginUpdate();
+      try
+      {
+        ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
+        if (indexes.Count == 0)
+          return;
+        for (int i = 0; i < indexes.Count; ++i)
+        {
+          int index = indexes[i];
+          if (index > 0)
+          {
+            ListViewItem item = mpListView1.Items[index];
+            mpListView1.Items.RemoveAt(index);
+            mpListView1.Items.Insert(index - 1, item);
+          }
+        }
+        ReOrder();
+      }
+      finally
+      {
+        mpListView1.EndUpdate();
+      }
+    }
+
+    private void mpButtonDown_Click(object sender, EventArgs e)
+    {
+      mpListView1.BeginUpdate();
+      try
+      {
+        ListView.SelectedIndexCollection indexes = mpListView1.SelectedIndices;
+        if (indexes.Count == 0)
+          return;
+        if (mpListView1.Items.Count < 2)
+          return;
+        for (int i = indexes.Count - 1; i >= 0; i--)
+        {
+          int index = indexes[i];
+          ListViewItem item = mpListView1.Items[index];
+          mpListView1.Items.RemoveAt(index);
+          if (index + 1 < mpListView1.Items.Count)
+            mpListView1.Items.Insert(index + 1, item);
+          else
+            mpListView1.Items.Add(item);
+        }
+        ReOrder();
+      }
+      finally
+      {
+        mpListView1.EndUpdate();
+      }
     }
 
     private void mpButtonAddGroup_Click(object sender, EventArgs e)

@@ -474,7 +474,6 @@ namespace SetupTv.Sections
       this.Controls.Add(this.tabControl1);
       this.Name = "TvChannels";
       this.Size = new System.Drawing.Size(474, 412);
-      this.Load += new System.EventHandler(this.TvChannels_Load);
       this.channelListContextMenuStrip.ResumeLayout(false);
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);

@@ -114,10 +114,6 @@ namespace SetupTv.Sections
       else
       {
         string timeShiftingFilename = string.Empty;
-        User user = new User();
-        user.Name = "setuptv";
-        user.IsAdmin = true; //fixing mantis bug 1513: recordings you start in manual control can not be stopped  
-        //user.Name = "setuptv" + id.ToString();
         int cardId = -1;
         foreach (ListViewItem listViewItem in mpListView1.SelectedItems)
         {
@@ -127,6 +123,9 @@ namespace SetupTv.Sections
             break; // Keep the first card enabled selected only
           }
         }
+        User user = new User();
+        user.Name = "setuptv-" + id + "-" + cardId;
+        user.IsAdmin = true; //fixing mantis bug 1513: recordings you start in manual control can not be stopped  
         user.CardId = cardId;
         TvResult result = server.StartTimeShifting(ref user, id, out card, cardId != -1);
         if (result != TvResult.Succeeded)
@@ -563,9 +562,35 @@ namespace SetupTv.Sections
         foreach (Channel ch in channels)
         {
           if (ch.IsTv == false) continue;
-          int imageIndex = 1;
-          if (ch.FreeToAir == false)
-            imageIndex = 2;
+          bool hasFta = false;
+          bool hasScrambled = false;
+          IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
+          foreach (TuningDetail detail in tuningDetails)
+          {
+            if (detail.FreeToAir)
+            {
+              hasFta = true;
+            }
+            if (!detail.FreeToAir)
+            {
+              hasScrambled = true;
+            }
+
+          }
+
+          int imageIndex;
+          if (hasFta && hasScrambled)
+          {
+            imageIndex = 5;
+          }
+          else if (hasScrambled)
+          {
+            imageIndex = 4;
+          }
+          else
+          {
+            imageIndex = 3;
+          }
           ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
 
           mpComboBoxChannels.Items.Add(item);
@@ -579,9 +604,35 @@ namespace SetupTv.Sections
         {
           Channel ch = map.ReferencedChannel();
           if (ch.IsTv == false) continue;
-          int imageIndex = 1;
-          if (ch.FreeToAir == false)
-            imageIndex = 2;
+          bool hasFta = false;
+          bool hasScrambled = false;
+          IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
+          foreach (TuningDetail detail in tuningDetails)
+          {
+            if (detail.FreeToAir)
+            {
+              hasFta = true;
+            }
+            if (!detail.FreeToAir)
+            {
+              hasScrambled = true;
+            }
+
+          }
+
+          int imageIndex;
+          if (hasFta && hasScrambled)
+          {
+            imageIndex = 5;
+          }
+          else if (hasScrambled)
+          {
+            imageIndex = 4;
+          }
+          else
+          {
+            imageIndex = 3;
+          }
           ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
           mpComboBoxChannels.Items.Add(item);
         }

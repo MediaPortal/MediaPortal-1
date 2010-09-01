@@ -103,11 +103,12 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
-      LoadLanguages();
+     
 
       mpListView1.BeginUpdate();
       try
       {
+        LoadLanguages();
         Dictionary<string, CardType> cards = new Dictionary<string, CardType>();
         IList<Card> dbsCards = Card.ListAll();
         foreach (Card card in dbsCards)
@@ -134,9 +135,37 @@ namespace SetupTv.Sections
             continue;
           if (ch.IsWebstream())
             continue;
-          int imageIndex = 3;
-          if (ch.FreeToAir == false)
+
+          bool hasFta = false;
+          bool hasScrambled = false;
+          IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
+          foreach (TuningDetail detail in tuningDetails)
+          {
+            if (detail.FreeToAir)
+            {
+              hasFta = true;
+            }
+            if (!detail.FreeToAir)
+            {
+              hasScrambled = true;
+            }
+
+          }
+
+          int imageIndex;
+          if (hasFta && hasScrambled)
+          {
+            imageIndex = 2;
+          }
+          else if (hasScrambled)
+          {
+            imageIndex = 1;
+          }
+          else
+          {
             imageIndex = 0;
+          }
+
           ListViewItem item = mpListView1.Items.Add(ch.DisplayName, imageIndex);
           foreach (ChannelMap map in ch.ReferringChannelMap())
           {
@@ -336,12 +365,6 @@ namespace SetupTv.Sections
         mpListView1.EndUpdate();
       }
     }
-
-    private void mpLabel2_Click(object sender, EventArgs e) {}
-
-    private void mpListView1_SelectedIndexChanged(object sender, EventArgs e) {}
-
-    private void mpListView2_ItemChecked(object sender, ItemCheckedEventArgs e) {}
 
     private void mpListView1_ColumnClick(object sender, ColumnClickEventArgs e)
     {
