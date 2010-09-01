@@ -665,6 +665,12 @@ HRESULT WASAPIRenderer::GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevic
   Log("WASAPIRenderer::GetAvailableAudioDevices");
   hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
 
+  if (FAILED(hr))
+  {
+    Log("   failed to get MMDeviceEnumerator");
+    return S_FALSE;
+  }
+
   IMMDevice* pEndpoint = NULL;
   IPropertyStore* pProps = NULL;
   LPWSTR pwszID = NULL;
