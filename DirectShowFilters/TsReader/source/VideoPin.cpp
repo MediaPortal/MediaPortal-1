@@ -366,8 +366,10 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             //now we have the final timestamp, set timestamp in sample
             REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
             pSample->SetSyncPoint(TRUE);
+
+            refTime /= m_dRateSeeking;
             pSample->SetTime(&refTime,&refTime);
-            if (1)
+            if (m_dRateSeeking == 1.0)
             {
               REFERENCE_TIME RefClock = 0;
               m_pTsReaderFilter->GetMediaPosition(&RefClock) ;

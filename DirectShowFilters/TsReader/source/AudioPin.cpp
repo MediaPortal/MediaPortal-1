@@ -384,7 +384,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           }
         }
 
-        if (m_bPresentSample)
+        if (m_bPresentSample && m_dRateSeeking == 1.0)
         {
           //do we need to set the discontinuity flag?
           if (m_bDiscontinuity || buffer->GetDiscontinuity())
@@ -399,9 +399,12 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           {
             //now we have the final timestamp, set timestamp in sample
             REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
+            refTime /= m_dRateSeeking;
+
             pSample->SetSyncPoint(TRUE);
+
             pSample->SetTime(&refTime,&refTime);
-            if (1)
+            if (m_dRateSeeking == 1.0)
             {
               REFERENCE_TIME RefClock = 0;
               m_pTsReaderFilter->GetMediaPosition(&RefClock) ;
@@ -471,11 +474,11 @@ HRESULT CAudioPin::ChangeStop()
 
 HRESULT CAudioPin::ChangeRate()
 {
-  if( m_dRateSeeking <= 0 )
+  /*if( m_dRateSeeking <= 0 )
   {
     m_dRateSeeking = 1.0;  // Reset to a reasonable value.
     return E_FAIL;
-  }
+  }*/
   UpdateFromSeek();
   return S_OK;
 }
