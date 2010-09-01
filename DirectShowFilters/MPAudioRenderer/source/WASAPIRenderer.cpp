@@ -1249,7 +1249,8 @@ DWORD WASAPIRenderer::RenderThread()
         else
         {
           liDueTime.QuadPart = (double)m_pRenderer->Settings()->m_hnsPeriod * -0.9;
-          Log("WASAPIRenderer::Render thread: GetCurrentPadding failed (0x%08x)", hr);  
+          if (hr != AUDCLNT_E_NOT_INITIALIZED)
+            Log("WASAPIRenderer::Render thread: GetCurrentPadding failed (0x%08x)", hr);  
         }
 		    SetWaitableTimer(m_hDataEvent, &liDueTime, 0, NULL, NULL, 0);
       }
