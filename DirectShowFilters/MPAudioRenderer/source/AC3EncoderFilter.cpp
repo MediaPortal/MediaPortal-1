@@ -306,7 +306,7 @@ WAVEFORMATEX *CAC3EncoderFilter::CreateAC3Format(int nSamplesPerSec, int nAC3Bit
 
 long CAC3EncoderFilter::CreateAC3Bitstream(void *buf, size_t size, BYTE *pDataOut)
 {
-  size_t length = m_nMaxCompressedAC3FrameSize + AC3_BITSTREAM_OVERHEAD;
+  size_t length = AC3_DATA_BURST_LENGTH; //m_nMaxCompressedAC3FrameSize + AC3_BITSTREAM_OVERHEAD;
 
   // IEC 61936 structure writing (HDMI bitstream, SPDIF)
   DWORD type = 0x0001; // CODEC_ID_SPDIF_AC3
@@ -489,7 +489,7 @@ HRESULT CAC3EncoderFilter::ProcessAC3Data(const BYTE *pData, long cbData, long *
     {
       long nOffset = m_pNextOutSample->GetActualDataLength();
       long nSize = m_pNextOutSample->GetSize();
-      if (nOffset + m_nMaxCompressedAC3FrameSize + AC3_BITSTREAM_OVERHEAD > nSize)
+      if (nOffset + AC3_DATA_BURST_LENGTH > nSize)
         hr = OutputNextSample();
     }
 
@@ -534,7 +534,7 @@ HRESULT CAC3EncoderFilter::ProcessAC3Data(const BYTE *pData, long cbData, long *
       // if there is not enough space in output sample, flush it
       long nOffset = m_pNextOutSample->GetActualDataLength();
       long nSize = m_pNextOutSample->GetSize();
-      if (nOffset + m_nMaxCompressedAC3FrameSize + AC3_BITSTREAM_OVERHEAD > nSize)
+      if (nOffset + AC3_DATA_BURST_LENGTH > nSize)
         hr = OutputNextSample();
     }
 
