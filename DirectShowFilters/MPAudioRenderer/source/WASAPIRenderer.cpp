@@ -102,8 +102,6 @@ WASAPIRenderer::WASAPIRenderer(CMPAudioRenderer* pRenderer, HRESULT *phr) :
   m_hResumeEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
   m_hStopRenderThreadEvent = CreateEvent(0, FALSE, FALSE, 0);
   
-  StartRendererThread();
-
   OSVERSIONINFO osvi;
   ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
   osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
@@ -127,6 +125,8 @@ WASAPIRenderer::WASAPIRenderer(CMPAudioRenderer* pRenderer, HRESULT *phr) :
   {
     pRenderer->Settings()->m_bUseWASAPI = false;	// WASAPI not available below Vista
   }
+
+  StartRendererThread();
 }
 
 WASAPIRenderer::~WASAPIRenderer()
@@ -1233,7 +1233,14 @@ DWORD WASAPIRenderer::RenderThread()
       
       if (!m_pRenderer->Settings()->m_WASAPIUseEventMode)
   	  {
-	      hr = m_pAudioClient->GetCurrentPadding(&currentPadding);
+        if (m_pAudioClient)
+        {
+          hr = m_pAudioClient->GetCurrentPadding(&currentPadding);
+        }
+        else
+        {
+          hr = S_FALSE;
+        }
         if (SUCCEEDED(hr) && bufferSize > 0)
         {
           liDueTime.QuadPart = (double)currentPadding / (double)bufferSize * (double)m_pRenderer->Settings()->m_hnsPeriod * -0.9;
