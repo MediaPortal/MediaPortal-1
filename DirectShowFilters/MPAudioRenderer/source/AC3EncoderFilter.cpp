@@ -18,8 +18,8 @@
 #include "AC3EncoderFilter.h"
 
 
-#define AC3_FRAME_LENGTH  1536
-
+#define AC3_OUT_BUFFER_SIZE   ((AC3_MAX_COMP_FRAME_SIZE + AC3_BITSTREAM_OVERHEAD) * 10)
+#define AC3_OUT_BUFFER_COUNT  20
 
 extern HRESULT CopyWaveFormatEx(WAVEFORMATEX **dst, const WAVEFORMATEX *src);
 extern void Log(const char *fmt, ...);
@@ -34,15 +34,26 @@ CAC3EncoderFilter::CAC3EncoderFilter(void)
 : m_bPassThrough(false)
 , m_pInputFormat(NULL)
 , m_pOutputFormat(NULL)
+, m_bOutFormatChanged(false)
+, m_cbRemainingInput(0)
+, m_pRemainingInput(NULL)
+, m_nFrameSize(AC3_FRAME_LENGTH * AC3_MAX_CHANNELS * 2)
+, m_pMemAllocator((IUnknown *)NULL)
+, m_pNextOutSample(NULL)
+, m_pEncoder(NULL)
+, m_nBitRate(640000)
+, m_rtInSampleTime(0)
+, m_nMaxCompressedAC3FrameSize(AC3_MAX_COMP_FRAME_SIZE)
 {
 }
 
 CAC3EncoderFilter::~CAC3EncoderFilter(void)
 {
+  CloseAC3Encoder(); // just in case
   SAFE_DELETE_WAVEFORMATEX(m_pInputFormat);
   SAFE_DELETE_WAVEFORMATEX(m_pOutputFormat);
+  SAFE_DELETE_ARRAY(m_pRemainingInput);
 }
-
 
 HRESULT CAC3EncoderFilter::Init()
 {
@@ -68,7 +79,7 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyC
 
   // try passthrough
   bool bApplyChanges = (nApplyChangesDepth !=0);
-  if (nApplyChangesDepth != INFINITE)
+  if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
 
   HRESULT hr = m_pNextSink->NegotiateFormat(pwfx, nApplyChangesDepth);
@@ -77,10 +88,13 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyC
     if (bApplyChanges)
     {
       m_bPassThrough = true;
+      SAFE_DELETE_ARRAY(m_pRemainingInput);
       SAFE_DELETE_WAVEFORMATEX(m_pInputFormat);
       CopyWaveFormatEx(&m_pInputFormat, pwfx);
       SAFE_DELETE_WAVEFORMATEX(m_pOutputFormat);
       CopyWaveFormatEx(&m_pOutputFormat, pwfx);
+      CloseAC3Encoder();
+      m_bOutFormatChanged = true;
     }
     return hr;
   }
@@ -91,7 +105,7 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyC
 
   // verify input format is PCM
   if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE && 
-      pwfx->cbSize >= sizeof(WAVEFORMATEXTENSIBLE)- sizeof(WAVEFORMATEX))
+      pwfx->cbSize >= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX))
   {
     if (((WAVEFORMATEXTENSIBLE *)pwfx)->SubFormat != KSDATAFORMAT_SUBTYPE_PCM)
       return VFW_E_TYPE_NOT_ACCEPTED;
@@ -112,10 +126,18 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyC
   if (bApplyChanges)
   {
     m_bPassThrough = false;
+    SAFE_DELETE_ARRAY(m_pRemainingInput);
     SAFE_DELETE_WAVEFORMATEX(m_pInputFormat);
     CopyWaveFormatEx(&m_pInputFormat, pwfx);
     SAFE_DELETE_WAVEFORMATEX(m_pOutputFormat);
     m_pOutputFormat = pAC3wfx;
+    m_nFrameSize = m_pInputFormat->nChannels * AC3_FRAME_LENGTH *2;
+    m_pRemainingInput = new BYTE[m_nFrameSize];
+    m_nMaxCompressedAC3FrameSize = (m_nBitRate/8 * AC3_FRAME_LENGTH + m_pInputFormat->nSamplesPerSec-1) / m_pInputFormat->nSamplesPerSec;
+    if(m_nMaxCompressedAC3FrameSize & 1)
+      m_nMaxCompressedAC3FrameSize++;
+    OpenAC3Encoder(m_nBitRate, m_pInputFormat->nChannels, m_pInputFormat->nSamplesPerSec);
+    m_bOutFormatChanged = true;
   }
   return S_OK;
 }
@@ -124,24 +146,114 @@ HRESULT CAC3EncoderFilter::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyC
 // Processing
 HRESULT CAC3EncoderFilter::PutSample(IMediaSample *pSample)
 {
-  return S_FALSE;
+  if (!pSample)
+    return S_OK;
+
+  AM_MEDIA_TYPE *pmt = NULL;
+  bool bFormatChanged = false;
+  
+  HRESULT hr = S_OK;
+
+  if (SUCCEEDED(pSample->GetMediaType(&pmt)) && pmt != NULL)
+    bFormatChanged = !FormatsEqual((WAVEFORMATEX*)pmt->pbFormat, m_pInputFormat);
+
+  if (bFormatChanged)
+  {
+    // process any remaining input
+    hr = ProcessData(NULL, 0, NULL);
+    // Apply format change locally, 
+    // next filter will evaluate the format change when it receives the sample
+    hr = NegotiateFormat((WAVEFORMATEX*)pmt->pbFormat, 1);
+    if (pmt)
+      DeleteMediaType(pmt);
+    if (FAILED(hr))
+    {
+      Log("AC3Encoder: PutSample failed to change format: 0x%08x", hr);
+      return hr;
+    }
+  }
+
+  long nOffset = 0;
+  long cbSampleData = pSample->GetActualDataLength();
+  BYTE *pData = NULL;
+  pSample->GetTime(&m_rtInSampleTime, NULL);
+
+  hr = pSample->GetPointer(&pData);
+  ASSERT(pData != NULL);
+
+  while (nOffset < cbSampleData)
+  {
+    long cbProcessed = 0;
+    hr = ProcessData(pData+nOffset, cbSampleData - nOffset, &cbProcessed);
+    nOffset += cbProcessed;
+  }
+  return hr;
 }
 
 HRESULT CAC3EncoderFilter::EndOfStream()
 {
-  return S_FALSE;
+  ProcessData(NULL, 0, NULL);
+  return CBaseAudioSink::EndOfStream();
 }
 
 HRESULT CAC3EncoderFilter::BeginFlush()
 {
-  return S_FALSE;
+  if (m_pMemAllocator)
+    m_pMemAllocator->Decommit();
+  
+  // locking?
+  m_cbRemainingInput = 0;
+  m_pNextOutSample = NULL;
+
+  return CBaseAudioSink::BeginFlush();
 }
 
 HRESULT CAC3EncoderFilter::EndFlush()
 {
-  return S_FALSE;
+  if (m_pMemAllocator)
+    m_pMemAllocator->Commit();
+
+  return CBaseAudioSink::EndFlush();
 }
 
+HRESULT CAC3EncoderFilter::InitAllocator()
+{
+  ALLOCATOR_PROPERTIES propIn;
+  ALLOCATOR_PROPERTIES propOut;
+  propIn.cBuffers = AC3_OUT_BUFFER_COUNT;
+  propIn.cbBuffer = AC3_OUT_BUFFER_SIZE * AC3_OUT_BUFFER_COUNT;
+  propIn.cbPrefix = 0;
+  propIn.cbAlign = 8;
+
+  HRESULT hr = S_OK;
+
+  CMemAllocator *pAllocator = new CMemAllocator("output sample allocator", NULL, &hr);
+
+  if (FAILED(hr))
+  {
+    Log("Failed to create sample allocator (0x%08x)", hr);
+    delete pAllocator;
+    return hr;
+  }
+
+  hr = pAllocator->QueryInterface(IID_IMemAllocator, (void **)&m_pMemAllocator);
+
+  if (FAILED(hr))
+  {
+    Log("Failed to get allocator interface (0x%08x)", hr);
+    delete pAllocator;
+    return hr;
+  }
+
+  m_pMemAllocator->SetProperties(&propIn, &propOut);
+  hr = m_pMemAllocator->Commit();
+  if (FAILED(hr))
+  {
+    Log("Failed to commit allocator properties (0x%08x)", hr);
+    m_pMemAllocator.Release();
+  }
+  return hr;
+}
 
 bool CAC3EncoderFilter::FormatsEqual(const WAVEFORMATEX *pwfx1, const WAVEFORMATEX *pwfx2)
 {
@@ -181,31 +293,15 @@ WAVEFORMATEX *CAC3EncoderFilter::CreateAC3Format(int nSamplesPerSec, int nAC3Bit
 
 long CAC3EncoderFilter::CreateAC3Bitstream(void *buf, size_t size, BYTE *pDataOut)
 {
-  size_t length = 0;
-  size_t repetition_burst = 0x800; // 2048 = AC3 
-
-  unsigned int size2 = AC3_FRAME_LENGTH * 4;
-  length = 0;
-
-  // Add 4 more words (8 bytes) for AC3/DTS (for backward compatibility, should be *4 for other codecs)
-  // AC3/DTS streams start with 8 blank bytes (why, don't know but let's going on with)
-  while (length < odd2even(size) + sizeof(WORD) * 8)
-    length += repetition_burst;
-
-  while (length < size2)
-  length += repetition_burst;
-
-  if (length == 0) length = repetition_burst;
+  size_t length = m_nMaxCompressedAC3FrameSize + AC3_BITSTREAM_OVERHEAD;
 
   // IEC 61936 structure writing (HDMI bitstream, SPDIF)
-  DWORD type = 0x0001;
+  DWORD type = 0x0001; // CODEC_ID_SPDIF_AC3
   short subDataType = 0; 
   short errorFlag = 0;
   short datatypeInfo = 0;
   short bitstreamNumber = 0;
   
-  type=1; // CODEC_ID_SPDIF_AC3
-
   DWORD Pc=type | (subDataType << 5) | (errorFlag << 7) | (datatypeInfo << 8) | (bitstreamNumber << 13);
 
   WORD *pDataOutW=(WORD*)pDataOut; // Header is filled with words instead of bytes
@@ -268,6 +364,221 @@ HRESULT CAC3EncoderFilter::CloseAC3Encoder()
 
   ac3_encoder_close(m_pEncoder);
   m_pEncoder = NULL;
+
+  return S_OK;
+}
+
+HRESULT CAC3EncoderFilter::OutputNextSample()
+{
+  HRESULT hr = S_OK;
+  if (m_pNextSink && m_pNextOutSample)
+  {
+    hr = m_pNextSink->PutSample(m_pNextOutSample);
+    if (FAILED(hr))
+      Log("AC3Encoder: Failed to output next sample: 0x%08x", hr);
+  }
+  m_pNextOutSample = NULL;
+  return hr;
+}
+
+HRESULT CAC3EncoderFilter::RequestNextOutBuffer()
+{
+  if (m_pMemAllocator == NULL)
+    return E_POINTER;
+
+  HRESULT hr = m_pMemAllocator->GetBuffer(&m_pNextOutSample, NULL, NULL, 0);
+  if(FAILED(hr))
+    return hr;
+
+  ASSERT(m_pNextOutSample != NULL);
+
+  m_pNextOutSample->SetActualDataLength(0);
+  REFERENCE_TIME rtStart = m_rtInSampleTime - (m_cbRemainingInput * UNITS / m_pInputFormat->nAvgBytesPerSec);
+  m_pNextOutSample->SetTime(&rtStart, NULL);
+
+  if (m_bOutFormatChanged)
+  {
+    AM_MEDIA_TYPE pmt;
+    if (SUCCEEDED(CreateAudioMediaType(m_pOutputFormat, &pmt, true)))
+    {
+      m_pNextOutSample->SetMediaType(&pmt);
+      FreeMediaType(pmt);
+    }
+    m_bOutFormatChanged = false;
+  }
+  return S_OK;
+}
+
+
+HRESULT CAC3EncoderFilter::ProcessPassThroughData(const BYTE *pData, long cbData, long *pcbDataProcessed)
+{
+  HRESULT hr = S_OK;
+  if (pData == NULL)  // need to flush any existing data
+  {
+    hr = OutputNextSample();
+    if (pcbDataProcessed)
+      *pcbDataProcessed = 0;
+    return hr;
+  }
+
+  long bytesOutput = 0;
+
+  while(cbData)
+  {
+    if (!m_pNextOutSample && FAILED(hr = RequestNextOutBuffer()))
+    {
+      if (pcbDataProcessed)
+        *pcbDataProcessed = bytesOutput + cbData;
+      return hr;
+    }
+
+    long nOffset = m_pNextOutSample->GetActualDataLength();
+    long nSize = m_pNextOutSample->GetSize();
+    long bytesToCopy = (cbData<(nSize-nOffset)? cbData : (nSize-nOffset));
+    BYTE *pOutData = NULL;
+
+    if (FAILED(hr = m_pNextOutSample->GetPointer(&pOutData)))
+    {
+      Log("AC3Encoder: Failed to get output buffer pointer: 0x%08x", hr);
+      if (pcbDataProcessed)
+        *pcbDataProcessed = bytesOutput + cbData;
+      return hr;
+    }
+
+    ASSERT(pOutData != NULL);
+
+    memcpy(pOutData + nOffset, pData, bytesToCopy);
+    nOffset += bytesToCopy;
+    pData += bytesToCopy;
+    cbData -= bytesToCopy;
+    bytesOutput += bytesToCopy;
+    m_rtInSampleTime += bytesToCopy * UNITS / m_pInputFormat->nAvgBytesPerSec;
+    m_pNextOutSample->SetActualDataLength(nOffset);
+
+    if (nOffset >= nSize)
+      hr = OutputNextSample();
+  }
+  
+  if (pcbDataProcessed)
+    *pcbDataProcessed = bytesOutput;
+  return hr;
+}
+
+HRESULT CAC3EncoderFilter::ProcessAC3Data(const BYTE *pData, long cbData, long *pcbDataProcessed)
+{
+  HRESULT hr = S_OK;
+
+  if (pData == NULL) // need to flush any existing data
+  {
+    if (m_pNextOutSample)
+    {
+      long nOffset = m_pNextOutSample->GetActualDataLength();
+      long nSize = m_pNextOutSample->GetSize();
+      if (nOffset + m_nMaxCompressedAC3FrameSize + AC3_BITSTREAM_OVERHEAD > nSize)
+        hr = OutputNextSample();
+    }
+
+    if (m_cbRemainingInput)
+    {
+      if(!m_pNextOutSample && FAILED(hr = RequestNextOutBuffer()))
+      {
+        m_cbRemainingInput = 0;
+        if (pcbDataProcessed)
+          *pcbDataProcessed = 0;
+        return hr;
+      }
+      
+      ASSERT(m_pRemainingInput != NULL);
+      memset(m_pRemainingInput + m_cbRemainingInput, 0, m_nFrameSize - m_cbRemainingInput);
+
+      hr = ProcessAC3Frame(m_pRemainingInput);
+      m_cbRemainingInput = 0;
+    }
+    if (pcbDataProcessed)
+      *pcbDataProcessed = 0;
+    return hr;
+  }
+
+  long bytesOutput = 0;
+
+  while(cbData)
+  {
+    // do we have enough data for a frame?
+    if (cbData + m_cbRemainingInput < m_nFrameSize)
+    {
+      // no, just keep remaining data in a buffer for next time
+      memcpy(m_pRemainingInput + m_cbRemainingInput, pData, cbData);
+      m_cbRemainingInput += cbData;
+      if (pcbDataProcessed)
+        *pcbDataProcessed = bytesOutput + cbData;
+      return hr;
+    }
+
+    if (m_pNextOutSample)
+    {
+      // if there is not enough space in output sample, flush it
+      long nOffset = m_pNextOutSample->GetActualDataLength();
+      long nSize = m_pNextOutSample->GetSize();
+      if (nOffset + m_nMaxCompressedAC3FrameSize + AC3_BITSTREAM_OVERHEAD > nSize)
+        hr = OutputNextSample();
+    }
+
+    // try to get an output buffer if none available
+    if (!m_pNextOutSample && FAILED(hr = RequestNextOutBuffer()))
+    {
+      if (pcbDataProcessed)
+        *pcbDataProcessed = bytesOutput + cbData;
+      return hr;
+    }
+
+    if (m_cbRemainingInput)
+    {
+      // we have left-overs from previous calls
+      int bytesToCopy = m_nFrameSize - m_cbRemainingInput;
+      memcpy(m_pRemainingInput + m_cbRemainingInput, pData, bytesToCopy);
+      hr = ProcessAC3Frame(m_pRemainingInput);
+      pData += bytesToCopy;
+      cbData -= bytesToCopy; 
+      bytesOutput += bytesToCopy;
+      m_rtInSampleTime += m_nFrameSize * UNITS / m_pInputFormat->nAvgBytesPerSec;
+      m_cbRemainingInput = 0;
+    }
+    else
+    {
+      hr = ProcessAC3Frame(pData);
+      pData += m_nFrameSize;
+      cbData -= m_nFrameSize; 
+      bytesOutput += m_nFrameSize;
+      m_rtInSampleTime += m_nFrameSize * UNITS / m_pInputFormat->nAvgBytesPerSec;
+    }
+  }
+  
+  if (pcbDataProcessed)
+    *pcbDataProcessed = bytesOutput;
+  return hr;
+}
+
+HRESULT CAC3EncoderFilter::ProcessAC3Frame(const BYTE *pData)
+{
+  HRESULT hr;
+  long nOffset = m_pNextOutSample->GetActualDataLength();
+  long nSize = m_pNextOutSample->GetSize();
+  BYTE *pOutData = NULL;
+
+  if (FAILED(hr = m_pNextOutSample->GetPointer(&pOutData)))
+  {
+    Log("AC3Encoder: Failed to get output buffer pointer: 0x%08x", hr);
+    return hr;
+  }
+
+  ASSERT(pOutData != NULL);
+  BYTE *buf = (BYTE*)alloca(m_nMaxCompressedAC3FrameSize); // temporary buffer
+
+  int AC3length = ac3_encoder_frame(m_pEncoder, (short*)pData, buf, m_nMaxCompressedAC3FrameSize);
+  nOffset += CreateAC3Bitstream(buf, AC3length, pOutData+nOffset);
+  m_pNextOutSample->SetActualDataLength(nOffset);
+  if (nOffset >= nSize)
+    OutputNextSample();
 
   return S_OK;
 }

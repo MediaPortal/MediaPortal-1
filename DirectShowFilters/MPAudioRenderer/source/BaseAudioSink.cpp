@@ -87,7 +87,7 @@ HRESULT CBaseAudioSink::EndStop()
 // Format negotiation
 HRESULT CBaseAudioSink::NegotiateFormat(const WAVEFORMATEX *pwfx, int nApplyChangesDepth)
 {
-  if (nApplyChangesDepth != INFINITE)
+  if (nApplyChangesDepth != INFINITE && nApplyChangesDepth > 0)
     nApplyChangesDepth--;
 
   if(m_pNextSink)
