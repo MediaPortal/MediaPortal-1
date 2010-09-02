@@ -213,9 +213,9 @@ static DWORD gdwDefaultChannelMask[] = {
   KSAUDIO_SPEAKER_STEREO | KSAUDIO_SPEAKER_GROUND_FRONT_CENTER,
   KSAUDIO_SPEAKER_QUAD,
   0, // 5 channels?
-  KSAUDIO_SPEAKER_5POINT1_SURROUND,
+  KSAUDIO_SPEAKER_5POINT1,
   0, // 7 channels?
-  KSAUDIO_SPEAKER_7POINT1_SURROUND
+  KSAUDIO_SPEAKER_7POINT1
 };
 
 void ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf)
@@ -236,6 +236,8 @@ void ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf)
   {
     pwfe->dwChannelMask = gdwDefaultChannelMask[pwfe->Format.nChannels];
   }
+  else
+    pwfe->dwChannelMask = 0;
 
   pwfe->Samples.wValidBitsPerSample = pwfe->Format.wBitsPerSample;
   pwfe->Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;

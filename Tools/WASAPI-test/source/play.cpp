@@ -64,7 +64,7 @@ HRESULT Play(
         (void**)&pAudioClient
     );
     if (FAILED(hr)) {
-        printf("IMMDevice::Activate(IAudioClient) failed: hr = 0x%08x\n", hr);
+        printf("IMMDevice::Activate(IAudioClient) failed:0x%08x\n", hr);
         return hr;
     }
 
@@ -90,20 +90,30 @@ HRESULT Play(
         &pwfxCM
     );
 
-    printf("%8d %2d %2d %8d %2d %6d",
+    printf("%8d %2d %2d %8d %2d %6d %2d",
     pWfx->nSamplesPerSec,
     pWfx->wBitsPerSample,
     pWfx->nChannels,
     pWfx->nAvgBytesPerSec,
     pWfx->nBlockAlign,
-    pWfx->wFormatTag);
+    pWfx->wFormatTag, 
+    pWfx->cbSize);
+
+    if(pWfx->cbSize == 22)
+    {
+      WAVEFORMATEXTENSIBLE* ex = (WAVEFORMATEXTENSIBLE*)pWfx;
+      printf(" %4d", ex->dwChannelMask);
+    }
+    else
+      printf("     ");
+
 
     if (AUDCLNT_E_UNSUPPORTED_FORMAT == hr) {
         printf(" - not supported\n");
         pAudioClient->Release();
         return hr;
     } else if (FAILED(hr)) {
-        printf(" - IAudioClient::IsFormatSupported failed: hr = 0x%08x.\n", hr);
+        printf(" - IAudioClient::IsFormatSupported:0x%08x.\n", hr);
         pAudioClient->Release();
         return hr;
     }
@@ -115,7 +125,7 @@ HRESULT Play(
         &hnsPeriod // only the device period
     );
     if (FAILED(hr)) {
-        printf("IAudioClient::GetDevicePeriod failed: hr = 0x%08x.\n", hr);
+        printf("IAudioClient::GetDevicePeriod:0x%08x.\n", hr);
         pAudioClient->Release();
         return hr;
     }
@@ -154,7 +164,7 @@ HRESULT Play(
         // get the buffer size, which will be aligned
         hr = pAudioClient->GetBufferSize(&nFramesInBuffer);
         if (FAILED(hr)) {
-            printf("   IAudioClient::GetBufferSize failed: hr = 0x%08x\n", hr);
+            printf("   IAudioClient::GetBufferSize:0x%08x\n", hr);
             return hr;
         }
         
@@ -178,7 +188,7 @@ HRESULT Play(
             (void**)&pAudioClient
         );
         if (FAILED(hr)) {
-            printf("   IMMDevice::Activate(IAudioClient) failed: hr = 0x%08x\n", hr);
+            printf("   IMMDevice::Activate(IAudioClient):0x%08x\n", hr);
             return hr;
         }
 
@@ -201,7 +211,7 @@ HRESULT Play(
         if (hr == AUDCLNT_E_UNSUPPORTED_FORMAT)
           printf(" - not supported\n");
         else
-          printf("   IAudioClient::Initialize failed: 0x%08x\n", hr);
+          printf("   IAudioClient::Initialize:0x%08x\n", hr);
         pAudioClient->Release();
         return hr;
     }
@@ -210,7 +220,7 @@ HRESULT Play(
     // let's see what buffer size we actually ended up with
     hr = pAudioClient->GetBufferSize(&nFramesInBuffer);
     if (FAILED(hr)) {
-        printf("   IAudioClient::GetBufferSize failed: hr = 0x%08x\n", hr);
+        printf("   IAudioClient::GetBufferSize:0x%08x\n", hr);
         pAudioClient->Release();
         return hr;
     }
@@ -232,7 +242,7 @@ HRESULT Play(
     HANDLE hNeedDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
     if (NULL == hNeedDataEvent) {
         DWORD dwErr = GetLastError();
-        printf("   CreateEvent failed: GetLastError = %u\n", dwErr);
+        printf("   CreateEvent failed:%u\n", dwErr);
         pAudioClient->Release();
         return HRESULT_FROM_WIN32(dwErr);
     }
@@ -242,7 +252,7 @@ HRESULT Play(
       // set it as the event handle
       hr = pAudioClient->SetEventHandle(hNeedDataEvent);
       if (FAILED(hr)) {
-          printf("   IAudioClient::SetEventHandle failed: hr = 0x%08x\n", hr);
+          printf("   IAudioClient::SetEventHandle:0x%08x\n", hr);
           CloseHandle(hNeedDataEvent);
           pAudioClient->Release();
           return hr;
@@ -256,7 +266,7 @@ HRESULT Play(
         (void**)&pAudioRenderClient
     );
     if (FAILED(hr)) {
-        printf("   IAudioClient::GetService(IAudioRenderClient) failed: hr 0x%08x\n", hr);
+        printf("   IAudioClient::GetService(IAudioRenderClient):0x%08x\n", hr);
         CloseHandle(hNeedDataEvent);
         pAudioClient->Release();
         return hr;
@@ -297,7 +307,7 @@ HRESULT Play(
     // call IAudioClient::Start
     hr = pAudioClient->Start();
     if (FAILED(hr)) {
-        printf("   IAudioClient::Start failed: hr = 0x%08x", hr);
+        printf("   IAudioClient::Start failed:0x%08x", hr);
         AvRevertMmThreadCharacteristics(hTask);
         pAudioRenderClient->Release();
         CloseHandle(hNeedDataEvent);
@@ -316,7 +326,7 @@ HRESULT Play(
 
     hr = pAudioRenderClient->GetBuffer(nFramesInBuffer - padding, &pData);
     if (FAILED(hr)) {
-        printf("   IAudioRenderClient::GetBuffer failed to post-roll silence: 0x%08x\n", hr);
+        printf("   IAudioRenderClient::GetBuffer failed to post-roll silence:0x%08x\n", hr);
         pAudioClient->Stop();
         AvRevertMmThreadCharacteristics(hTask);
         pAudioRenderClient->Release();        
@@ -327,7 +337,7 @@ HRESULT Play(
 
     hr = pAudioRenderClient->ReleaseBuffer(nFramesInBuffer - padding, AUDCLNT_BUFFERFLAGS_SILENT);
     if (FAILED(hr)) {
-        printf("   IAudioRenderClient::ReleaseBuffer failed trying to post-roll silence: hr = 0x%08x\n", hr);
+      printf("   IAudioRenderClient::ReleaseBuffer failed trying to post-roll silence:0x%08x\n", hr);
         pAudioClient->Stop();
         AvRevertMmThreadCharacteristics(hTask);
         pAudioRenderClient->Release();        
