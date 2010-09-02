@@ -17,7 +17,7 @@
 #include "stdafx.h"
 #include "ThreadDecouplingFilter.h"
 
-HRESULT CQueuedAudioSink::EndOfStream()
+HRESULT CThreadDecouplingFilter::EndOfStream()
 {
   // next filter does not know it runs on a separate thread
   // we should queue an EOS marker so that it gets processed in 
