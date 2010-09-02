@@ -240,9 +240,22 @@ HRESULT WASAPIRenderer::CheckFormat(WAVEFORMATEX* pwfx)
   if (hr != S_OK)
   {
     Log("WASAPIRenderer::CheckMediaType WASAPI client refused the format: (0x%08x)", hr);
-    LogWaveFormat(pwfxCM, "Closest match would be" );
-    CoTaskMemFree(pwfxCM);
-    return VFW_E_TYPE_NOT_ACCEPTED;
+    Log("   test with WAVEFORMATEX");
+    
+    WAVEFORMATEX* tmpPwfx = NULL; 
+    CopyWaveFormatEx(&tmpPwfx, pwfx);
+    tmpPwfx->cbSize = 0;
+
+    hr = m_pAudioClient->IsFormatSupported(m_pRenderer->Settings()->m_WASAPIShareMode, tmpPwfx, &pwfxCM);
+    if (hr != S_OK)
+    {
+      Log("WASAPIRenderer::CheckMediaType WASAPI client refused the format: (0x%08x)", hr);
+      LogWaveFormat(pwfxCM, "Closest match would be" );
+      SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
+      CoTaskMemFree(pwfxCM);
+      return VFW_E_TYPE_NOT_ACCEPTED;
+    }
+    SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
   }
   Log("WASAPIRenderer::CheckMediaType WASAPI client accepted the format");
 
@@ -521,6 +534,16 @@ HRESULT WASAPIRenderer::CheckAudioClient(const WAVEFORMATEX *pWaveFormatEx)
 
     hr = m_pAudioClient->IsFormatSupported(m_pRenderer->Settings()->m_WASAPIShareMode, m_pRenderFormat, NULL);    
   
+    if (FAILED(hr))
+    {
+      Log("   WASAPI client refused the format: (0x%08x) - try WAVEFORMATEX", hr);
+      WAVEFORMATEX* tmpPwfx = NULL; 
+      CopyWaveFormatEx(&tmpPwfx, m_pRenderFormat);
+      tmpPwfx->cbSize = 0;
+      hr = m_pAudioClient->IsFormatSupported(m_pRenderer->Settings()->m_WASAPIShareMode, tmpPwfx, NULL);
+      SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
+    }
+
     if (SUCCEEDED(hr))
     { 
       StopAudioClient(&m_pAudioClient);
