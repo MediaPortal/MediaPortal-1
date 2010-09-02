@@ -14,7 +14,10 @@ HRESULT Play(
     LPCWAVEFORMATEX pWfx,
     UINT32 nFrames,
     UINT32 nBytes,
-    IMMDevice *pMMDevice
+    IMMDevice *pMMDevice,
+    bool bDetailedInfo,
+    bool pExclusive,
+    bool pEventDriven
 );
 
 DWORD WINAPI PlayThreadFunction(LPVOID pContext) {
@@ -30,7 +33,10 @@ DWORD WINAPI PlayThreadFunction(LPVOID pContext) {
         pArgs->pWfx,
         pArgs->nFrames,
         pArgs->nBytes,
-        pArgs->pMMDevice
+        pArgs->pMMDevice,
+        pArgs->bDetailedInfo,
+        pArgs->pExclusive,
+        pArgs->pEventDriven
     );
 
     CoUninitialize();
@@ -43,23 +49,11 @@ HRESULT Play(
     LPCWAVEFORMATEX pWfx,
     UINT32 nFramesInFile,
     UINT32 nBytesInFile,
-    IMMDevice *pMMDevice
+    IMMDevice *pMMDevice,
+    bool pDetailedInfo,
+    bool pExclusive,
+    bool pEventDriven
 ) {
-
-    if (nFramesInFile == 0) {
-        printf("No frames in file.\n");
-        return E_INVALIDARG;
-    }
-    
-    if (nFramesInFile * pWfx->nBlockAlign != nBytesInFile) {
-        printf(
-            "Unexpected number of bytes in the file (%u) - expected %u.\n",
-            nBytesInFile,
-            nFramesInFile * pWfx->nBlockAlign
-        );
-        return E_INVALIDARG;
-    }
-
     HRESULT hr;
 
     // activate an IAudioClient
@@ -74,29 +68,42 @@ HRESULT Play(
         return hr;
     }
 
+    _AUDCLNT_SHAREMODE shareMode;
+    DWORD streamFlags;
+
+    if (pExclusive)
+      shareMode = AUDCLNT_SHAREMODE_EXCLUSIVE;
+    else
+      shareMode = AUDCLNT_SHAREMODE_SHARED;  
+
+    if (pEventDriven)
+      streamFlags = AUDCLNT_STREAMFLAGS_EVENTCALLBACK;
+    else
+      streamFlags = 0;
+      
+    WAVEFORMATEX *pwfxCM = NULL;
+
     // check to see if the format is supported
     hr = pAudioClient->IsFormatSupported(
-        AUDCLNT_SHAREMODE_EXCLUSIVE,
+        shareMode,
         pWfx,
-        NULL // can't suggest a "closest match" in exclusive mode
+        &pwfxCM
     );
 
-
-    printf("%d %d %d %d %d %d %d",
-    pWfx->wFormatTag,
-    pWfx->wBitsPerSample,
-    pWfx->cbSize,
-    pWfx->nAvgBytesPerSec,
-    pWfx->nChannels,
+    printf("%8d %2d %2d %8d %2d %6d",
     pWfx->nSamplesPerSec,
-    pWfx->nBlockAlign);
+    pWfx->wBitsPerSample,
+    pWfx->nChannels,
+    pWfx->nAvgBytesPerSec,
+    pWfx->nBlockAlign,
+    pWfx->wFormatTag);
 
     if (AUDCLNT_E_UNSUPPORTED_FORMAT == hr) {
-        printf("Audio device does not support the requested format.\n");
+        printf(" - not supported\n");
         pAudioClient->Release();
         return hr;
     } else if (FAILED(hr)) {
-        printf("IAudioClient::IsFormatSupported failed: hr = 0x%08x.\n", hr);
+        printf(" - IAudioClient::IsFormatSupported failed: hr = 0x%08x.\n", hr);
         pAudioClient->Release();
         return hr;
     }
@@ -123,14 +130,16 @@ HRESULT Play(
     );
 
 
-    printf("The default period for this device is %I64u hundred-nanoseconds, or %u frames.\n", hnsPeriod, nFramesInBuffer);
+    // printf("The default period for this device is %I64u hundred-nanoseconds, or %u frames.\n", hnsPeriod, nFramesInBuffer);
+
+    //printf("\n");
 
     // call IAudioClient::Initialize the first time
     // this may very well fail
     // if the device period is unaligned
     hr = pAudioClient->Initialize(
-        AUDCLNT_SHAREMODE_EXCLUSIVE,
-        AUDCLNT_STREAMFLAGS_EVENTCALLBACK,
+        shareMode,
+        streamFlags,
         hnsPeriod, hnsPeriod, pWfx, NULL
     );
     // if you get a compilation error on AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED,
@@ -139,12 +148,13 @@ HRESULT Play(
     if (AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED == hr) {
 
         // if the buffer size was not aligned, need to do the alignment dance
-        printf("Buffer size not aligned - doing the alignment dance.\n");
+        if(pDetailedInfo)
+          printf("   Buffer size not aligned\n");
         
         // get the buffer size, which will be aligned
         hr = pAudioClient->GetBufferSize(&nFramesInBuffer);
         if (FAILED(hr)) {
-            printf("IAudioClient::GetBufferSize failed: hr = 0x%08x\n", hr);
+            printf("   IAudioClient::GetBufferSize failed: hr = 0x%08x\n", hr);
             return hr;
         }
         
@@ -168,25 +178,30 @@ HRESULT Play(
             (void**)&pAudioClient
         );
         if (FAILED(hr)) {
-            printf("IMMDevice::Activate(IAudioClient) failed: hr = 0x%08x\n", hr);
+            printf("   IMMDevice::Activate(IAudioClient) failed: hr = 0x%08x\n", hr);
             return hr;
         }
 
         // try initialize again
-        printf("Trying again with periodicity of %I64u hundred-nanoseconds, or %u frames.\n", hnsPeriod, nFramesInBuffer);
+        if(pDetailedInfo)
+          printf("   Trying again with periodicity of %I64u hundred-nanoseconds, or %u frames.\n", hnsPeriod, nFramesInBuffer);
+        
         hr = pAudioClient->Initialize(
-            AUDCLNT_SHAREMODE_EXCLUSIVE,
-            AUDCLNT_STREAMFLAGS_EVENTCALLBACK,
+            shareMode,
+            streamFlags,
             hnsPeriod, hnsPeriod, pWfx, NULL
         );
 
         if (FAILED(hr)) {
-            printf("IAudioClient::Initialize failed, even with an aligned buffer: hr = 0x%08x\n", hr);
+            printf("   IAudioClient::Initialize failed, even with an aligned buffer: hr = 0x%08x\n", hr);
             pAudioClient->Release();
             return hr;
         }
     } else if (FAILED(hr)) {
-        printf("IAudioClient::Initialize failed: hr = 0x%08x\n", hr);
+        if (hr == AUDCLNT_E_UNSUPPORTED_FORMAT)
+          printf(" - not supported\n");
+        else
+          printf("   IAudioClient::Initialize failed: 0x%08x\n", hr);
         pAudioClient->Release();
         return hr;
     }
@@ -195,7 +210,7 @@ HRESULT Play(
     // let's see what buffer size we actually ended up with
     hr = pAudioClient->GetBufferSize(&nFramesInBuffer);
     if (FAILED(hr)) {
-        printf("IAudioClient::GetBufferSize failed: hr = 0x%08x\n", hr);
+        printf("   IAudioClient::GetBufferSize failed: hr = 0x%08x\n", hr);
         pAudioClient->Release();
         return hr;
     }
@@ -210,24 +225,28 @@ HRESULT Play(
             + 0.5 // rounding
         );
     
-    printf("We ended up with a period of %I64u hns or %u frames.\n", hnsPeriod, nFramesInBuffer);
+    if(pDetailedInfo)
+      printf("   We ended up with a period of %I64u hns or %u frames.\n", hnsPeriod, nFramesInBuffer);
 
     // make an event
     HANDLE hNeedDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
     if (NULL == hNeedDataEvent) {
         DWORD dwErr = GetLastError();
-        printf("CreateEvent failed: GetLastError = %u\n", dwErr);
+        printf("   CreateEvent failed: GetLastError = %u\n", dwErr);
         pAudioClient->Release();
         return HRESULT_FROM_WIN32(dwErr);
     }
 
-    // set it as the event handle
-    hr = pAudioClient->SetEventHandle(hNeedDataEvent);
-    if (FAILED(hr)) {
-        printf("IAudioClient::SetEventHandle failed: hr = 0x%08x\n", hr);
-        CloseHandle(hNeedDataEvent);
-        pAudioClient->Release();
-        return hr;
+    if (pEventDriven)
+    {
+      // set it as the event handle
+      hr = pAudioClient->SetEventHandle(hNeedDataEvent);
+      if (FAILED(hr)) {
+          printf("   IAudioClient::SetEventHandle failed: hr = 0x%08x\n", hr);
+          CloseHandle(hNeedDataEvent);
+          pAudioClient->Release();
+          return hr;
+      }
     }
     
     // activate an IAudioRenderClient
@@ -237,7 +256,7 @@ HRESULT Play(
         (void**)&pAudioRenderClient
     );
     if (FAILED(hr)) {
-        printf("IAudioClient::GetService(IAudioRenderClient) failed: hr 0x%08x\n", hr);
+        printf("   IAudioClient::GetService(IAudioRenderClient) failed: hr 0x%08x\n", hr);
         CloseHandle(hNeedDataEvent);
         pAudioClient->Release();
         return hr;
@@ -247,7 +266,7 @@ HRESULT Play(
     BYTE *pData;
     hr = pAudioRenderClient->GetBuffer(nFramesInBuffer, &pData); // just a "ping" buffer
     if (FAILED(hr)) {
-        printf("IAudioRenderClient::GetBuffer failed trying to pre-roll silence: hr = 0x%08x\n", hr);
+        printf("   IAudioRenderClient::GetBuffer failed trying to pre-roll silence: hr = 0x%08x\n", hr);
         pAudioRenderClient->Release();        
         CloseHandle(hNeedDataEvent);
         pAudioClient->Release();
@@ -256,7 +275,7 @@ HRESULT Play(
 
     hr = pAudioRenderClient->ReleaseBuffer(nFramesInBuffer, AUDCLNT_BUFFERFLAGS_SILENT);
     if (FAILED(hr)) {
-        printf("IAudioRenderClient::ReleaseBuffer failed trying to pre-roll silence: hr = 0x%08x\n", hr);
+        printf("   IAudioRenderClient::ReleaseBuffer failed trying to pre-roll silence: hr = 0x%08x\n", hr);
         pAudioRenderClient->Release();        
         CloseHandle(hNeedDataEvent);
         pAudioClient->Release();
@@ -268,7 +287,7 @@ HRESULT Play(
     HANDLE hTask = AvSetMmThreadCharacteristics(L"Playback", &nTaskIndex);
     if (NULL == hTask) {
         DWORD dwErr = GetLastError();
-        printf("AvSetMmThreadCharacteristics failed: last error = %u\n", dwErr);
+        printf("   AvSetMmThreadCharacteristics failed: last error = %u\n", dwErr);
         pAudioRenderClient->Release();        
         CloseHandle(hNeedDataEvent);
         pAudioClient->Release();
@@ -278,94 +297,26 @@ HRESULT Play(
     // call IAudioClient::Start
     hr = pAudioClient->Start();
     if (FAILED(hr)) {
-        printf("IAudioClient::Start failed: hr = 0x%08x", hr);
+        printf("   IAudioClient::Start failed: hr = 0x%08x", hr);
         AvRevertMmThreadCharacteristics(hTask);
         pAudioRenderClient->Release();
         CloseHandle(hNeedDataEvent);
         pAudioClient->Release();
     }
 
-    // render loop
-    for (
-        UINT32 nFramesPlayed = 0,
-            nFramesThisPass = nFramesInBuffer;
-        nFramesPlayed < nFramesInFile;
-        nFramesPlayed += nFramesThisPass
-    ) {
-        // in a production app there would be a timeout here
-        WaitForSingleObject(hNeedDataEvent, INFINITE);
+    DWORD res = 0;
+    if (pEventDriven)
+    {
+      res = WaitForSingleObject(hNeedDataEvent, INFINITE);
+    }
 
-        // need data
-        hr = pAudioRenderClient->GetBuffer(nFramesInBuffer, &pData);
-        if (FAILED(hr)) {
-            printf("IAudioRenderClient::GetBuffer failed: hr = 0x%08x\n", hr);
-            pAudioClient->Stop();
-            AvRevertMmThreadCharacteristics(hTask);
-            pAudioRenderClient->Release();        
-            CloseHandle(hNeedDataEvent);
-            pAudioClient->Release();
-            return hr;
-        }
+    UINT32 padding(0);
+    if(!pExclusive || !pEventDriven)
+      pAudioClient->GetCurrentPadding(&padding);
 
-        // is there a full buffer's worth of data left in the file?
-        if (nFramesPlayed + nFramesInBuffer > nFramesInFile) {
-            // nope - this is the last buffer
-            nFramesThisPass = nFramesInFile - nFramesPlayed;
-        }
-        UINT32 nBytesThisPass = nFramesThisPass * pWfx->nBlockAlign;
-
-        LONG nBytesGotten = mmioRead(hFile, (HPSTR)pData, nBytesThisPass);
-        if (0 == nBytesGotten) {
-            printf("Unexpectedly reached the end of the file.\n");
-            pAudioClient->Stop();
-            AvRevertMmThreadCharacteristics(hTask);
-            pAudioRenderClient->Release();        
-            CloseHandle(hNeedDataEvent);
-            pAudioClient->Release();
-            return E_UNEXPECTED;            
-        } else if (-1 == nBytesGotten) {
-            printf("Error reading from the file.\n");
-            pAudioClient->Stop();
-            AvRevertMmThreadCharacteristics(hTask);
-            pAudioRenderClient->Release();        
-            CloseHandle(hNeedDataEvent);
-            pAudioClient->Release();
-            return E_UNEXPECTED;            
-        } else if (nBytesGotten != (LONG)nBytesThisPass) {
-            printf("mmioRead got %d bytes instead of %u\n", nBytesGotten, nBytesThisPass);
-            pAudioClient->Stop();
-            AvRevertMmThreadCharacteristics(hTask);
-            pAudioRenderClient->Release();        
-            CloseHandle(hNeedDataEvent);
-            pAudioClient->Release();
-            return E_UNEXPECTED;
-        }
-
-        // if there's leftover buffer space, zero it out
-        // it would be much better if we could intelligently fill this with silence
-        // ah well, c'est la vie
-        if (nFramesThisPass < nFramesInBuffer) {
-            UINT32 nBytesToZero = (nFramesInBuffer * pWfx->nBlockAlign) - nBytesThisPass;
-            ZeroMemory(pData + nBytesGotten, nBytesToZero);
-        }
-
-        hr = pAudioRenderClient->ReleaseBuffer(nFramesInBuffer, 0); // no flags
-        if (FAILED(hr)) {
-            printf("IAudioRenderClient::ReleaseBuffer failed: hr = 0x%08x\n", hr);
-            pAudioClient->Stop();
-            AvRevertMmThreadCharacteristics(hTask);
-            pAudioRenderClient->Release();        
-            CloseHandle(hNeedDataEvent);
-            pAudioClient->Release();
-            return hr;
-        }
-    } // render loop
-
-    // add a buffer of silence for good measure
-    WaitForSingleObject(hNeedDataEvent, INFINITE);
-    hr = pAudioRenderClient->GetBuffer(nFramesInBuffer, &pData);
+    hr = pAudioRenderClient->GetBuffer(nFramesInBuffer - padding, &pData);
     if (FAILED(hr)) {
-        printf("IAudioRenderClient::GetBuffer failed trying to post-roll silence: hr = 0x%08x\n", hr);
+        printf("   IAudioRenderClient::GetBuffer failed to post-roll silence: 0x%08x\n", hr);
         pAudioClient->Stop();
         AvRevertMmThreadCharacteristics(hTask);
         pAudioRenderClient->Release();        
@@ -374,9 +325,9 @@ HRESULT Play(
         return hr;
     }
 
-    hr = pAudioRenderClient->ReleaseBuffer(nFramesInBuffer, AUDCLNT_BUFFERFLAGS_SILENT);
+    hr = pAudioRenderClient->ReleaseBuffer(nFramesInBuffer - padding, AUDCLNT_BUFFERFLAGS_SILENT);
     if (FAILED(hr)) {
-        printf("IAudioRenderClient::ReleaseBuffer failed trying to post-roll silence: hr = 0x%08x\n", hr);
+        printf("   IAudioRenderClient::ReleaseBuffer failed trying to post-roll silence: hr = 0x%08x\n", hr);
         pAudioClient->Stop();
         AvRevertMmThreadCharacteristics(hTask);
         pAudioRenderClient->Release();        
@@ -385,12 +336,13 @@ HRESULT Play(
         return hr;
     }
 
-    printf("Successfully played all %u frames.\n", nFramesInFile);
+    printf(" - Format works ok\n", nFramesInFile);
 
     pAudioClient->Stop();
     AvRevertMmThreadCharacteristics(hTask);
     pAudioRenderClient->Release();
     CloseHandle(hNeedDataEvent);
+    pAudioClient->Reset();
     pAudioClient->Release();
     
     return S_OK;

@@ -49,8 +49,8 @@ CPrefs::CPrefs(int argc, LPCWSTR argv[], HRESULT &hr)
                 // list the devices but don't actually play
                 hr = list_devices();
 
-                // don't actually play
-                if (S_OK == hr) {
+                if (S_OK == hr) 
+                {
                     hr = S_FALSE;
                 }
             } else {
@@ -60,49 +60,22 @@ CPrefs::CPrefs(int argc, LPCWSTR argv[], HRESULT &hr)
             }
             break;
 
-         // --file foo.wav
-         case 3:
-            if (0 == _wcsicmp(argv[1], L"--file")) {
-                HRESULT hrFile = open_file(argv[2], &m_hFile, &m_pWfx, &m_nBytes, &m_nFrames);
-                HRESULT hrDevice = get_default_device(&m_pMMDevice);
-
-                if (FAILED(hrFile)) { hr = hrFile; }
-                if (FAILED(hrDevice)) { hr = hrDevice; }
-            } else {
-                printf("Unexpected argument %ls\n", argv[1]);
-                hr = E_INVALIDARG;
-                usage(argv[0]);
+        // --device
+        case 3:
+            if (0 == _wcsicmp(argv[1], L"--device"))
+            {
+              HRESULT hrDevice = get_specific_device(argv[2], &m_pMMDevice);
             }
-            break;
-
-        // --file foo.wav --device "some device"
-        // --device "some device" --file foo.wav
-        case 5:
-            if (
-                0 == _wcsicmp(argv[1], L"--file") &&
-                0 == _wcsicmp(argv[3], L"--device")
-            ) {
-                HRESULT hrFile = open_file(argv[2], &m_hFile, &m_pWfx, &m_nBytes, &m_nFrames);
-                HRESULT hrDevice = get_specific_device(argv[4], &m_pMMDevice);
-
-                if (FAILED(hrFile)) { hr = hrFile; }
-                if (FAILED(hrDevice)) { hr = hrDevice; }
-            } else if (
-                0 == _wcsicmp(argv[1], L"--device") &&
-                0 == _wcsicmp(argv[3], L"--file")
-            ) {
-                HRESULT hrFile = open_file(argv[4], &m_hFile, &m_pWfx, &m_nBytes, &m_nFrames);
-                HRESULT hrDevice = get_specific_device(argv[2], &m_pMMDevice);
-
-                if (FAILED(hrFile)) { hr = hrFile; }
-                if (FAILED(hrDevice)) { hr = hrDevice; }
-            } else {
-                printf("Unexpected arguments: %ls %ls %ls %ls\n", argv[1], argv[2], argv[3], argv[4]);
-                hr = E_INVALIDARG;
-                usage(argv[0]);
+             
+            else 
+            {
+              printf("Unexpected argument %ls\n", argv[1]);
+              hr = E_INVALIDARG;
+              usage(argv[0]);
             }
-            break;
-        
+
+          break;
+
         default:
             printf("Unexpected argument count %u\n", argc);
             hr = E_INVALIDARG;
@@ -594,13 +567,12 @@ void usage(LPCWSTR exe) {
     printf(
         "%ls -?\n"
         "%ls --list-devices\n"
-        "%ls [--device \"Device long name\"] --file \"WAV file name\"\n"
+        "%ls [--device \"Device long name\"]\n"
         "\n"
         "    -? prints this message.\n"
         "    --list-devices displays the long names of all active playback devices.\n"
+        "    --device \"Device long name\" tests all supported audio formats\n"
         "\n"
-        "Plays the given file to the given device in WASAPI exclusive mode.\n"
-        "If no device is specified, plays to the default console device.\n"
         ,
         exe, exe, exe
     );

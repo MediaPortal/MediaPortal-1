@@ -1,12 +1,16 @@
 // play.h
 
 // pass an address to this structure to PlayThreadFunction
-struct PlayThreadArgs {
+struct PlayThreadArgs 
+{
     HMMIO hFile;
     LPCWAVEFORMATEX pWfx;
     UINT32 nFrames;
     UINT32 nBytes;
     IMMDevice *pMMDevice;
+    bool bDetailedInfo;
+    bool pExclusive;
+    bool pEventDriven;
     HRESULT hr;
 };
 
