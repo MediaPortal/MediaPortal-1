@@ -102,7 +102,7 @@ HRESULT Play(
     if(pWfx->cbSize == 22)
     {
       WAVEFORMATEXTENSIBLE* ex = (WAVEFORMATEXTENSIBLE*)pWfx;
-      printf(" %4d", ex->dwChannelMask);
+      printf(" %2d %4d", ex->Samples.wValidBitsPerSample, ex->dwChannelMask);
     }
     else
       printf("     ");

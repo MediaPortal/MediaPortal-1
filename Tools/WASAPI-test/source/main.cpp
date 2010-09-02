@@ -15,11 +15,11 @@
 int do_everything(int argc, LPCWSTR argv[]);
 void TestFormats(CPrefs* pPrefs, bool pExclusive, bool pEventDriven);
 void TestFormatsAC3(CPrefs* pPrefs, bool pExclusive, bool pEventDriven);
-void ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf);
+void ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf, int ValidBitsPerSample = 0);
 
-int float_bitDepth = 256;
+int float_bitDepth = 0x12020;
 
-int gAllowedBitDephts[4] = {16, 24, 32, float_bitDepth}; // 256 == float 32
+int gAllowedBitDephts[5] = {0x1010, 0x1818, 0x2018, 0x2020, float_bitDepth}; // 0x12020 == float 32
 int gAllowedChannels[8] = {1, 2, 3, 4, 5, 6, 7, 8};
 int gAllowedSampleRates[7] = {22050, 32000, 44100, 48000, 88200, 96000, 192000};
 int gAllowedSampleRatesAC3[3] = {32000, 44100, 48000};
@@ -101,15 +101,16 @@ void TestFormats(CPrefs* pPrefs, bool pExclusive, bool pEventDriven)
       {
         for (int i = 0; i < 2 ; i++)
         {
-          format.wBitsPerSample = gAllowedBitDephts[bd];
-          format.wFormatTag = WAVE_FORMAT_PCM;
+          int bitDepth = gAllowedBitDephts[bd];
+          format.wBitsPerSample = ((bitDepth >> 8) & 0x00ff);
+          format.wFormatTag = (bitDepth & 0x10000)? WAVE_FORMAT_IEEE_FLOAT : WAVE_FORMAT_PCM;
           
           // handle float with an ugly way
-          if (format.wBitsPerSample == float_bitDepth)
-          {
-            format.wBitsPerSample = 32;
-            format.wFormatTag = 0x3; //WAVE_FORMAT_IEEE_FLOAT
-          }
+          //if (format.wBitsPerSample == float_bitDepth)
+          //{
+          //  format.wBitsPerSample = 32;
+          //  format.wFormatTag = 0x3; //WAVE_FORMAT_IEEE_FLOAT
+          //}
 
           format.cbSize = 0;
           format.nChannels = gAllowedChannels[c];
@@ -123,17 +124,20 @@ void TestFormats(CPrefs* pPrefs, bool pExclusive, bool pEventDriven)
           pta.pEventDriven = pEventDriven;
           pta.hr = E_UNEXPECTED;
 
+          int validBitsPerSample = gAllowedBitDephts[bd] & 0x00ff;
           // try WAVEFORMATEXTENSIBLE since some drivers are weird 
           if (i == 1) 
           {
-            if (gAllowedBitDephts[bd] == float_bitDepth)
-              continue;
+            //if (gAllowedBitDephts[bd] == float_bitDepth)
+            //  continue;
 
-            ToWaveFormatExtensible(&formatEx, &format);
+            ToWaveFormatExtensible(&formatEx, &format, validBitsPerSample);
             pta.pWfx = (WAVEFORMATEX*)&formatEx;
           }
           else
           {
+            if (validBitsPerSample != format.wBitsPerSample)
+              continue; // Skip 24/32 format - not possible using WAVEFORMATEX
             pta.pWfx = &format;
           }
 
@@ -218,7 +222,7 @@ static DWORD gdwDefaultChannelMask[] = {
   KSAUDIO_SPEAKER_7POINT1
 };
 
-void ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf)
+void ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf, int ValidBitsPerSample)
 {
   //ASSERT(pwf->cbSize <= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX));
   memcpy(pwfe, pwf, sizeof(WAVEFORMATEX)/* + pwf->cbSize*/);
@@ -239,6 +243,6 @@ void ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf)
   else
     pwfe->dwChannelMask = 0;
 
-  pwfe->Samples.wValidBitsPerSample = pwfe->Format.wBitsPerSample;
+  pwfe->Samples.wValidBitsPerSample = ValidBitsPerSample? ValidBitsPerSample : pwfe->Format.wBitsPerSample;
   pwfe->Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
 }
