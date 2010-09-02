@@ -24,6 +24,11 @@ class CThreadDecouplingFilter :
 public:
   CThreadDecouplingFilter(void) {};
 
+// IAudioSink implementation
+public:
+  // Processing
+  virtual HRESULT EndOfStream();
+
 protected:
   virtual DWORD ThreadProc();
 };

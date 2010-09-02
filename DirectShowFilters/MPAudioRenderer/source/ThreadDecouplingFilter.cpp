@@ -17,6 +17,19 @@
 #include "stdafx.h"
 #include "ThreadDecouplingFilter.h"
 
+HRESULT CQueuedAudioSink::EndOfStream()
+{
+  // next filter does not know it runs on a separate thread
+  // we should queue an EOS marker so that it gets processed in 
+  // the same thread as the audio data.
+  PutSample(NULL); //
+  // wait until input queue is empty
+  //if(m_hInputQueueEmptyEvent)
+  //  WaitForSingleObject(m_hInputQueueEmptyEvent, END_OF_STREAM_FLUSH_TIMEOUT); // TODO make this depend on the amount of data in the queue
+  return S_OK;
+}
+
+
 DWORD CThreadDecouplingFilter::ThreadProc()
 {
   CComPtr<IMediaSample> pSample;
@@ -27,6 +40,11 @@ DWORD CThreadDecouplingFilter::ThreadProc()
     if (hr == MPAR_S_THREAD_STOPPING)
       return 0;
     if(m_pNextSink)
-      m_pNextSink->PutSample(pSample);
+    {
+      if(pSample)
+        m_pNextSink->PutSample(pSample);
+      else
+        m_pNextSink->EndOfStream();
+    }
   }
 }
