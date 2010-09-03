@@ -87,6 +87,8 @@ namespace SetupTv.Sections
         ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftWaitForUnscrambled", "5").Value), 1, 30);
       numericUpDownWaitTimeshifting.Value =
         ValueSanityCheck(Convert.ToDecimal(layer.GetSetting("timeshiftWaitForTimeshifting", "15").Value), 1, 30);
+      numericUpDownMaxFreeCardsToTry.Value = ValueSanityCheck(
+        Convert.ToDecimal(layer.GetSetting("timeshiftMaxFreeCardsToTry", "0").Value), 0, 100);
     }
 
     public override void SaveSettings()
@@ -110,6 +112,10 @@ namespace SetupTv.Sections
 
       s = layer.GetSetting("timeshiftWaitForTimeshifting", "15");
       s.Value = numericUpDownWaitTimeshifting.Value.ToString();
+      s.Persist();
+
+      s = layer.GetSetting("timeshiftMaxFreeCardsToTry", "0");
+      s.Value = numericUpDownMaxFreeCardsToTry.Value.ToString();
       s.Persist();
     }
 

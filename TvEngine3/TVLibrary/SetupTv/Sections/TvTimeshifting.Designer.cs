@@ -31,7 +31,16 @@ namespace SetupTv.Sections
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TvTimeshifting));
         this.tabControl1 = new System.Windows.Forms.TabControl();
         this.tpTimeshifing = new System.Windows.Forms.TabPage();
+        this.grpBoxTimeshiftingInfo = new MediaPortal.UserInterface.Controls.MPGroupBox();
+        this.lblMinFileSizeNeeded = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.lblFileSizeNeeded = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.lblTimeSD = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.lblTimeHD = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.lblOverhead = new MediaPortal.UserInterface.Controls.MPLabel();
         this.groupBox10 = new System.Windows.Forms.GroupBox();
+        this.label48 = new System.Windows.Forms.Label();
+        this.numericUpDownMaxFreeCardsToTry = new System.Windows.Forms.NumericUpDown();
+        this.label47 = new System.Windows.Forms.Label();
         this.numericUpDownWaitTimeshifting = new System.Windows.Forms.NumericUpDown();
         this.numericUpDownWaitUnscrambled = new System.Windows.Forms.NumericUpDown();
         this.numericUpDownMaxFileSize = new System.Windows.Forms.NumericUpDown();
@@ -128,15 +137,11 @@ namespace SetupTv.Sections
         this.label18 = new System.Windows.Forms.Label();
         this.label19 = new System.Windows.Forms.Label();
         this.label25 = new System.Windows.Forms.Label();
-        this.lblMinFileSizeNeeded = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.lblOverhead = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.lblFileSizeNeeded = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.grpBoxTimeshiftingInfo = new MediaPortal.UserInterface.Controls.MPGroupBox();
-        this.lblTimeHD = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.lblTimeSD = new MediaPortal.UserInterface.Controls.MPLabel();
         this.tabControl1.SuspendLayout();
         this.tpTimeshifing.SuspendLayout();
+        this.grpBoxTimeshiftingInfo.SuspendLayout();
         this.groupBox10.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFreeCardsToTry)).BeginInit();
         ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitTimeshifting)).BeginInit();
         ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitUnscrambled)).BeginInit();
         ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFileSize)).BeginInit();
@@ -168,7 +173,6 @@ namespace SetupTv.Sections
         ((System.ComponentModel.ISupportInitialize)(this.numericUpDownEpgTimeOut)).BeginInit();
         this.tabPageTS.SuspendLayout();
         this.groupBox3.SuspendLayout();
-        this.grpBoxTimeshiftingInfo.SuspendLayout();
         this.SuspendLayout();
         // 
         // tabControl1
@@ -197,8 +201,72 @@ namespace SetupTv.Sections
         this.tpTimeshifing.Text = "General";
         this.tpTimeshifing.UseVisualStyleBackColor = true;
         // 
+        // grpBoxTimeshiftingInfo
+        // 
+        this.grpBoxTimeshiftingInfo.Controls.Add(this.lblMinFileSizeNeeded);
+        this.grpBoxTimeshiftingInfo.Controls.Add(this.lblFileSizeNeeded);
+        this.grpBoxTimeshiftingInfo.Controls.Add(this.lblTimeSD);
+        this.grpBoxTimeshiftingInfo.Controls.Add(this.lblTimeHD);
+        this.grpBoxTimeshiftingInfo.Controls.Add(this.lblOverhead);
+        this.grpBoxTimeshiftingInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+        this.grpBoxTimeshiftingInfo.Location = new System.Drawing.Point(6, 190);
+        this.grpBoxTimeshiftingInfo.Name = "grpBoxTimeshiftingInfo";
+        this.grpBoxTimeshiftingInfo.Size = new System.Drawing.Size(304, 90);
+        this.grpBoxTimeshiftingInfo.TabIndex = 20;
+        this.grpBoxTimeshiftingInfo.TabStop = false;
+        this.grpBoxTimeshiftingInfo.Text = "Timeshifting Info";
+        // 
+        // lblMinFileSizeNeeded
+        // 
+        this.lblMinFileSizeNeeded.AutoSize = true;
+        this.lblMinFileSizeNeeded.ForeColor = System.Drawing.Color.Red;
+        this.lblMinFileSizeNeeded.Location = new System.Drawing.Point(6, 16);
+        this.lblMinFileSizeNeeded.Name = "lblMinFileSizeNeeded";
+        this.lblMinFileSizeNeeded.Size = new System.Drawing.Size(64, 13);
+        this.lblMinFileSizeNeeded.TabIndex = 18;
+        this.lblMinFileSizeNeeded.Text = "Filesize calc";
+        // 
+        // lblFileSizeNeeded
+        // 
+        this.lblFileSizeNeeded.AutoSize = true;
+        this.lblFileSizeNeeded.Location = new System.Drawing.Point(6, 31);
+        this.lblFileSizeNeeded.Name = "lblFileSizeNeeded";
+        this.lblFileSizeNeeded.Size = new System.Drawing.Size(80, 13);
+        this.lblFileSizeNeeded.TabIndex = 19;
+        this.lblFileSizeNeeded.Text = "Filesize needed";
+        // 
+        // lblTimeSD
+        // 
+        this.lblTimeSD.AutoSize = true;
+        this.lblTimeSD.Location = new System.Drawing.Point(6, 70);
+        this.lblTimeSD.Name = "lblTimeSD";
+        this.lblTimeSD.Size = new System.Drawing.Size(48, 13);
+        this.lblTimeSD.TabIndex = 19;
+        this.lblTimeSD.Text = "Time SD";
+        // 
+        // lblTimeHD
+        // 
+        this.lblTimeHD.AutoSize = true;
+        this.lblTimeHD.Location = new System.Drawing.Point(6, 57);
+        this.lblTimeHD.Name = "lblTimeHD";
+        this.lblTimeHD.Size = new System.Drawing.Size(49, 13);
+        this.lblTimeHD.TabIndex = 19;
+        this.lblTimeHD.Text = "Time HD";
+        // 
+        // lblOverhead
+        // 
+        this.lblOverhead.AutoSize = true;
+        this.lblOverhead.Location = new System.Drawing.Point(6, 44);
+        this.lblOverhead.Name = "lblOverhead";
+        this.lblOverhead.Size = new System.Drawing.Size(54, 13);
+        this.lblOverhead.TabIndex = 19;
+        this.lblOverhead.Text = "Overhead";
+        // 
         // groupBox10
         // 
+        this.groupBox10.Controls.Add(this.label48);
+        this.groupBox10.Controls.Add(this.numericUpDownMaxFreeCardsToTry);
+        this.groupBox10.Controls.Add(this.label47);
         this.groupBox10.Controls.Add(this.numericUpDownWaitTimeshifting);
         this.groupBox10.Controls.Add(this.numericUpDownWaitUnscrambled);
         this.groupBox10.Controls.Add(this.numericUpDownMaxFileSize);
@@ -216,10 +284,36 @@ namespace SetupTv.Sections
         this.groupBox10.Controls.Add(this.label46);
         this.groupBox10.Location = new System.Drawing.Point(6, 6);
         this.groupBox10.Name = "groupBox10";
-        this.groupBox10.Size = new System.Drawing.Size(304, 152);
+        this.groupBox10.Size = new System.Drawing.Size(304, 180);
         this.groupBox10.TabIndex = 17;
         this.groupBox10.TabStop = false;
         this.groupBox10.Text = "Timeshifting";
+        // 
+        // label48
+        // 
+        this.label48.AutoSize = true;
+        this.label48.Location = new System.Drawing.Point(246, 152);
+        this.label48.Name = "label48";
+        this.label48.Size = new System.Drawing.Size(29, 13);
+        this.label48.TabIndex = 37;
+        this.label48.Text = "0=all";
+        // 
+        // numericUpDownMaxFreeCardsToTry
+        // 
+        this.numericUpDownMaxFreeCardsToTry.Location = new System.Drawing.Point(153, 149);
+        this.numericUpDownMaxFreeCardsToTry.Name = "numericUpDownMaxFreeCardsToTry";
+        this.numericUpDownMaxFreeCardsToTry.Size = new System.Drawing.Size(87, 20);
+        this.numericUpDownMaxFreeCardsToTry.TabIndex = 36;
+        this.numericUpDownMaxFreeCardsToTry.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+        // 
+        // label47
+        // 
+        this.label47.AutoSize = true;
+        this.label47.Location = new System.Drawing.Point(6, 151);
+        this.label47.Name = "label47";
+        this.label47.Size = new System.Drawing.Size(127, 13);
+        this.label47.TabIndex = 35;
+        this.label47.Text = "Maximum free cards to try";
         // 
         // numericUpDownWaitTimeshifting
         // 
@@ -1394,67 +1488,6 @@ namespace SetupTv.Sections
         this.label25.TabIndex = 15;
         this.label25.Text = "Minimum";
         // 
-        // lblMinFileSizeNeeded
-        // 
-        this.lblMinFileSizeNeeded.AutoSize = true;
-        this.lblMinFileSizeNeeded.ForeColor = System.Drawing.Color.Red;
-        this.lblMinFileSizeNeeded.Location = new System.Drawing.Point(6, 16);
-        this.lblMinFileSizeNeeded.Name = "lblMinFileSizeNeeded";
-        this.lblMinFileSizeNeeded.Size = new System.Drawing.Size(64, 13);
-        this.lblMinFileSizeNeeded.TabIndex = 18;
-        this.lblMinFileSizeNeeded.Text = "Filesize calc";
-        // 
-        // lblOverhead
-        // 
-        this.lblOverhead.AutoSize = true;
-        this.lblOverhead.Location = new System.Drawing.Point(6, 44);
-        this.lblOverhead.Name = "lblOverhead";
-        this.lblOverhead.Size = new System.Drawing.Size(54, 13);
-        this.lblOverhead.TabIndex = 19;
-        this.lblOverhead.Text = "Overhead";
-        // 
-        // lblFileSizeNeeded
-        // 
-        this.lblFileSizeNeeded.AutoSize = true;
-        this.lblFileSizeNeeded.Location = new System.Drawing.Point(6, 31);
-        this.lblFileSizeNeeded.Name = "lblFileSizeNeeded";
-        this.lblFileSizeNeeded.Size = new System.Drawing.Size(80, 13);
-        this.lblFileSizeNeeded.TabIndex = 19;
-        this.lblFileSizeNeeded.Text = "Filesize needed";
-        // 
-        // grpBoxTimeshiftingInfo
-        // 
-        this.grpBoxTimeshiftingInfo.Controls.Add(this.lblMinFileSizeNeeded);
-        this.grpBoxTimeshiftingInfo.Controls.Add(this.lblFileSizeNeeded);
-        this.grpBoxTimeshiftingInfo.Controls.Add(this.lblTimeSD);
-        this.grpBoxTimeshiftingInfo.Controls.Add(this.lblTimeHD);
-        this.grpBoxTimeshiftingInfo.Controls.Add(this.lblOverhead);
-        this.grpBoxTimeshiftingInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-        this.grpBoxTimeshiftingInfo.Location = new System.Drawing.Point(6, 164);
-        this.grpBoxTimeshiftingInfo.Name = "grpBoxTimeshiftingInfo";
-        this.grpBoxTimeshiftingInfo.Size = new System.Drawing.Size(304, 90);
-        this.grpBoxTimeshiftingInfo.TabIndex = 20;
-        this.grpBoxTimeshiftingInfo.TabStop = false;
-        this.grpBoxTimeshiftingInfo.Text = "Timeshifting Info";
-        // 
-        // lblTimeHD
-        // 
-        this.lblTimeHD.AutoSize = true;
-        this.lblTimeHD.Location = new System.Drawing.Point(6, 57);
-        this.lblTimeHD.Name = "lblTimeHD";
-        this.lblTimeHD.Size = new System.Drawing.Size(49, 13);
-        this.lblTimeHD.TabIndex = 19;
-        this.lblTimeHD.Text = "Time HD";
-        // 
-        // lblTimeSD
-        // 
-        this.lblTimeSD.AutoSize = true;
-        this.lblTimeSD.Location = new System.Drawing.Point(6, 70);
-        this.lblTimeSD.Name = "lblTimeSD";
-        this.lblTimeSD.Size = new System.Drawing.Size(48, 13);
-        this.lblTimeSD.TabIndex = 19;
-        this.lblTimeSD.Text = "Time SD";
-        // 
         // TvTimeshifting
         // 
         this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1464,8 +1497,11 @@ namespace SetupTv.Sections
         this.Size = new System.Drawing.Size(474, 412);
         this.tabControl1.ResumeLayout(false);
         this.tpTimeshifing.ResumeLayout(false);
+        this.grpBoxTimeshiftingInfo.ResumeLayout(false);
+        this.grpBoxTimeshiftingInfo.PerformLayout();
         this.groupBox10.ResumeLayout(false);
         this.groupBox10.PerformLayout();
+        ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFreeCardsToTry)).EndInit();
         ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitTimeshifting)).EndInit();
         ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWaitUnscrambled)).EndInit();
         ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFileSize)).EndInit();
@@ -1508,8 +1544,6 @@ namespace SetupTv.Sections
         this.tabPageTS.ResumeLayout(false);
         this.groupBox3.ResumeLayout(false);
         this.groupBox3.PerformLayout();
-        this.grpBoxTimeshiftingInfo.ResumeLayout(false);
-        this.grpBoxTimeshiftingInfo.PerformLayout();
         this.ResumeLayout(false);
 
     }
@@ -1621,5 +1655,8 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox grpBoxTimeshiftingInfo;
     private MediaPortal.UserInterface.Controls.MPLabel lblTimeSD;
     private MediaPortal.UserInterface.Controls.MPLabel lblTimeHD;
+    private System.Windows.Forms.NumericUpDown numericUpDownMaxFreeCardsToTry;
+    private System.Windows.Forms.Label label47;
+    private System.Windows.Forms.Label label48;
   }
 }

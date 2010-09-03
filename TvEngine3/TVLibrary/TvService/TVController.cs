@@ -89,6 +89,11 @@ namespace TvService
     private TvCardCollection _localCardCollection;
 
     /// <summary>
+    /// Indicates how many free cards to try for timeshifting
+    /// </summary>
+    private int _maxFreeCardsToTry;
+
+    /// <summary>
     /// Initialized Conditional Access handler
     /// </summary>
     /// <param name="cardId">id of the card.</param>
@@ -557,6 +562,9 @@ namespace TvService
 
         //enumerate all tv cards in this pc...
         TvBusinessLayer layer = new TvBusinessLayer();
+
+        _maxFreeCardsToTry = Int32.Parse(layer.GetSetting("timeshiftMaxFreeCardsToTry", "0").Value);
+
         for (int i = 0; i < _localCardCollection.Cards.Count; ++i)
         {
           //for each card, check if its already mentioned in the database
@@ -2542,13 +2550,30 @@ namespace TvService
           return result;
         }
 
+        int maxCards;
+        if (_maxFreeCardsToTry == 0)
+        {
+            maxCards = freeCards.Count;
+        }
+        else
+        {
+            maxCards = Math.Min(_maxFreeCardsToTry, freeCards.Count);
+
+            if (maxCards > freeCards.Count)
+            {
+              maxCards = freeCards.Count;
+            }
+        }
+
+        Log.Write("Controller: try max {0} of {1} cards for timeshifting", maxCards, freeCards.Count);
+
         //keep tuning each card until we are succesful                
-        for (int i = 0; i < freeCards.Count; i++)
+        for (int i = 0; i < maxCards; i++)
         {
           if (i > 0)
           {
             Log.Write("Controller: Timeshifting failed, lets try next available card.");
-            cardChanged = (freeCards.Count > 1);
+            cardChanged = (maxCards > 1);
           }
           User userCopy = new User(user.Name, user.IsAdmin);
 
