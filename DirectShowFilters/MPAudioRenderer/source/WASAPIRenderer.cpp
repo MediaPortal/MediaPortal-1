@@ -661,17 +661,22 @@ HRESULT WASAPIRenderer::GetAudioDevice(IMMDevice **ppMMDevice)
     PROPVARIANT eventDriven;
     PropVariantInit(&eventDriven);
 
+    PROPVARIANT speakerMask;
+    PropVariantInit(&speakerMask);
+
     if (SUCCEEDED(pProps->GetValue(PKEY_Device_FriendlyName, &varName)) &&
         SUCCEEDED(pProps->GetValue(PKEY_AudioEndpoint_Supports_EventDriven_Mode, &eventDriven)) &&
         SUCCEEDED((*ppMMDevice)->GetId(&pwszID)))
     {
-      Log("Default audio endpoint: \"%S\" (%S) - supports pull mode: %d",varName.pwszVal, pwszID, eventDriven.intVal);
+      pProps->GetValue(PKEY_AudioEndpoint_PhysicalSpeakers, &speakerMask);
+      Log("Default audio endpoint: \"%S\" (%S) - pull mode: %d sprk mask: %d" ,varName.pwszVal, pwszID, eventDriven.intVal, speakerMask.uintVal);
     }
 
     CoTaskMemFree(pwszID);
     pwszID = NULL;
     PropVariantClear(&varName);
     PropVariantClear(&eventDriven);
+    PropVariantClear(&speakerMask);
     SAFE_RELEASE(pProps)
   }
 
@@ -721,6 +726,9 @@ HRESULT WASAPIRenderer::GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevic
       PROPVARIANT eventDriven;
       PropVariantInit(&eventDriven);
 
+      PROPVARIANT speakerMask;
+      PropVariantInit(&speakerMask);
+
       if (pProps->GetValue(PKEY_Device_FriendlyName, &varName) != S_OK)
         break;
 
@@ -735,13 +743,23 @@ HRESULT WASAPIRenderer::GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevic
       }
       else
       {
-        Log("   pull mode query failed!");
+        Log("  pull mode query failed!");
+      }
+
+      if (pProps->GetValue(PKEY_AudioEndpoint_PhysicalSpeakers, &speakerMask) == S_OK)
+      {
+        Log("  speaker mask: %d", speakerMask.uintVal);
+      }
+      else
+      {
+        Log("  PhysicalSpeakers query failed!");
       }
 
       CoTaskMemFree(pwszID);
       pwszID = NULL;
       PropVariantClear(&varName);
       PropVariantClear(&eventDriven);
+      PropVariantClear(&speakerMask);
       SAFE_RELEASE(pProps)
       SAFE_RELEASE(pEndpoint)
     }
