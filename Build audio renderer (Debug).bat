@@ -1,2 +1,2 @@
 @echo off
-call "Build audio renderer (Release).bat" Debug
+call "Build audio renderer.bat" Debug

@@ -32,7 +32,7 @@
 #include "dx9allocatorpresenter.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-//// #include "..\..\alloctracing.h"
+//#include "..\..\alloctracing.h"
 
 using namespace std;
 
@@ -40,6 +40,7 @@ HMODULE m_hModuleDXVA2    = NULL;
 HMODULE m_hModuleEVR      = NULL;
 HMODULE m_hModuleMFPLAT   = NULL;
 HMODULE m_hModuleDWMAPI   = NULL;
+HMODULE m_hModuleAVRT     = NULL;
 HMODULE m_hModuleW7Helper = NULL;
 
 TDXVA2CreateDirect3DDeviceManager9* m_pDXVA2CreateDirect3DDeviceManager9 = NULL;
@@ -50,6 +51,12 @@ TMFCreateMediaType*                 m_pMFCreateMediaType                 = NULL;
 // Vista / Windows 7 only
 TDwmEnableMMCSS*                    m_pDwmEnableMMCSS   = NULL;
 TW7GetRefreshRate*                  m_pW7GetRefreshRate = NULL;
+
+TAvSetMmThreadCharacteristicsW*     m_pAvSetMmThreadCharacteristicsW = NULL;
+TAvSetMmThreadPriority*             m_pAvSetMmThreadPriority = NULL;
+TAvRevertMmThreadCharacteristics*   m_pAvRevertMmThreadCharacteristics = NULL;
+
+
 
 BOOL m_bEVRLoaded    = false;
 char* m_RenderPrefix = "vmr9";
@@ -407,6 +414,15 @@ void UnloadEVR()
     }
     m_hModuleDWMAPI = NULL;
   }
+  if (m_hModuleAVRT != NULL)
+  {
+    Log("Freeing lib: avrt.dll");
+    if (!FreeLibrary(m_hModuleAVRT))
+    {
+      Log("avrt.dll could not be unloaded");
+    }
+    m_hModuleAVRT = NULL;
+  }
   if (m_hModuleW7Helper != NULL)
   {
     Log("Freeing lib: Win7RefreshRateHelper.dll");
@@ -461,6 +477,20 @@ bool LoadEVR()
               Log("Successfully loaded DWM dll");
               m_pDwmEnableMMCSS = (TDwmEnableMMCSS*)GetProcAddress(m_hModuleDWMAPI,"DwmEnableMMCSS");
             }
+
+
+            sprintf(DLLFileName,"%s\\avrt.dll", systemFolder);
+            m_hModuleAVRT = LoadLibrary(DLLFileName);
+            // Vista / Windows 7 only, allowed to return NULL. Remember to check agains NULL when using
+            if (m_hModuleAVRT)
+            {
+              Log("Successfully loaded AVRT dll");
+              m_pAvSetMmThreadCharacteristicsW   = (TAvSetMmThreadCharacteristicsW*)GetProcAddress(m_hModuleAVRT,"AvSetMmThreadCharacteristicsW");
+              m_pAvSetMmThreadPriority           = (TAvSetMmThreadPriority*)GetProcAddress(m_hModuleAVRT,"AvSetMmThreadPriority");
+              m_pAvRevertMmThreadCharacteristics = (TAvRevertMmThreadCharacteristics*)GetProcAddress(m_hModuleAVRT,"AvRevertMmThreadCharacteristics");
+            }
+
+
 
             if (IsWin7())
             {
