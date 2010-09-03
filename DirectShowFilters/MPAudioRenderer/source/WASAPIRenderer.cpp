@@ -366,9 +366,6 @@ HRESULT WASAPIRenderer::Pause(FILTER_STATE pState)
   }
 
   StopAudioClient(&m_pAudioClient);
-
-  m_bIsAudioClientStarted = false;
-
   return S_OK;
 }
 
@@ -545,14 +542,18 @@ HRESULT WASAPIRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
       CopyWaveFormatEx(&tmpPwfx, m_pRenderFormat);
       tmpPwfx->cbSize = 0;
       hr = m_pAudioClient->IsFormatSupported(m_pRenderer->Settings()->m_WASAPIShareMode, tmpPwfx, NULL);
+
+      // truncate the WAVEFORMATEXTENSIBLE part since driver is more happy with the WAVEFORMATEX
+      if (SUCCEEDED(hr))
+      {
+        pWaveFormatEx->cbSize = 0;
+      }
+
       SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
     }
 
     if (SUCCEEDED(hr))
     { 
-      // truncate the WAVEFORMATEXTENSIBLE part since driver is more happy with the WAVEFORMATEX
-      pWaveFormatEx->cbSize = 0;
-
       StopAudioClient(&m_pAudioClient);
 
       SAFE_RELEASE(m_pRenderClient);
