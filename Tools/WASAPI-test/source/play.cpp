@@ -17,7 +17,8 @@ HRESULT Play(
     IMMDevice *pMMDevice,
     bool bDetailedInfo,
     bool pExclusive,
-    bool pEventDriven
+    bool pEventDriven,
+    bool* pFormatOk
 );
 
 DWORD WINAPI PlayThreadFunction(LPVOID pContext) {
@@ -36,7 +37,8 @@ DWORD WINAPI PlayThreadFunction(LPVOID pContext) {
         pArgs->pMMDevice,
         pArgs->bDetailedInfo,
         pArgs->pExclusive,
-        pArgs->pEventDriven
+        pArgs->pEventDriven,
+        &pArgs->formatOk
     );
 
     CoUninitialize();
@@ -52,9 +54,11 @@ HRESULT Play(
     IMMDevice *pMMDevice,
     bool pDetailedInfo,
     bool pExclusive,
-    bool pEventDriven
+    bool pEventDriven,
+    bool* pFormatOk
 ) {
     HRESULT hr;
+    (*pFormatOk) = false;
 
     // activate an IAudioClient
     IAudioClient *pAudioClient;
@@ -105,7 +109,7 @@ HRESULT Play(
       printf(" %2d %4d", ex->Samples.wValidBitsPerSample, ex->dwChannelMask);
     }
     else
-      printf("     ");
+      printf("        ");
 
 
     if (AUDCLNT_E_UNSUPPORTED_FORMAT == hr) {
@@ -346,6 +350,7 @@ HRESULT Play(
         return hr;
     }
 
+    (*pFormatOk) = true;
     printf(" - Format works ok\n", nFramesInFile);
 
     pAudioClient->Stop();

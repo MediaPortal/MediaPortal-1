@@ -15,9 +15,12 @@
 int do_everything(int argc, LPCWSTR argv[]);
 void TestFormats(CPrefs* pPrefs, bool pExclusive, bool pEventDriven);
 void TestFormatsAC3(CPrefs* pPrefs, bool pExclusive, bool pEventDriven);
-void ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf, int ValidBitsPerSample = 0);
+void ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf, bool pAlternativeMask, int ValidBitsPerSample = 0);
 
 int float_bitDepth = 0x12020;
+
+int gFormatCount = 0;
+int gFormatOkCount = 0;
 
 int gAllowedBitDephts[5] = {0x1010, 0x1818, 0x2018, 0x2020, float_bitDepth}; // 0x12020 == float 32
 int gAllowedChannels[8] = {1, 2, 3, 4, 5, 6, 7, 8};
@@ -81,6 +84,8 @@ int do_everything(int argc, LPCWSTR argv[])
     printf("\n-------------------------------------------------------------------------\n");
     TestFormatsAC3(&prefs, true, true);
 
+    printf("\n\nWASAPI-test.exe version: 2   tested: %d ok: %d", gFormatCount, gFormatOkCount);
+
     return 0;
 }
 
@@ -99,66 +104,71 @@ void TestFormats(CPrefs* pPrefs, bool pExclusive, bool pEventDriven)
     {
       for (int bd = 0 ; bd < bitDepthCount ; bd++)
       {
-        for (int i = 0; i < 2 ; i++)
+        for (int i = 0; i < 2 ; i++) // wave format
         {
-          int bitDepth = gAllowedBitDephts[bd];
-          format.wBitsPerSample = ((bitDepth >> 8) & 0x00ff);
-          format.wFormatTag = (bitDepth & 0x10000)? WAVE_FORMAT_IEEE_FLOAT : WAVE_FORMAT_PCM;
+          int sprkMaskCount = 1;
+
+          // try multiple speaker configurations - currently only 6 and 8 channel setups 
+          // have different masks to try
+          if (c == 5 || c == 7)
+          {
+            sprkMaskCount = 2;
+          }
           
-          // handle float with an ugly way
-          //if (format.wBitsPerSample == float_bitDepth)
-          //{
-          //  format.wBitsPerSample = 32;
-          //  format.wFormatTag = 0x3; //WAVE_FORMAT_IEEE_FLOAT
-          //}
-
-          format.cbSize = 0;
-          format.nChannels = gAllowedChannels[c];
-          format.nSamplesPerSec = gAllowedSampleRates[sr];
-          format.nBlockAlign = format.wBitsPerSample / 8 * format.nChannels;
-          format.nAvgBytesPerSec = format.nSamplesPerSec * format.nBlockAlign;
-          
-          PlayThreadArgs pta = {0};
-          pta.pMMDevice = pPrefs->m_pMMDevice;
-          pta.pExclusive = pExclusive;
-          pta.pEventDriven = pEventDriven;
-          pta.hr = E_UNEXPECTED;
-
-          int validBitsPerSample = gAllowedBitDephts[bd] & 0x00ff;
-          // try WAVEFORMATEXTENSIBLE since some drivers are weird 
-          if (i == 1) 
+          for (int m = 0; m < sprkMaskCount ; m++)
           {
-            //if (gAllowedBitDephts[bd] == float_bitDepth)
-            //  continue;
+            int bitDepth = gAllowedBitDephts[bd];
+            format.wBitsPerSample = ((bitDepth >> 8) & 0x00ff);
+            format.wFormatTag = (bitDepth & 0x10000)? WAVE_FORMAT_IEEE_FLOAT : WAVE_FORMAT_PCM;
+            format.cbSize = 0;
+            format.nChannels = gAllowedChannels[c];
+            format.nSamplesPerSec = gAllowedSampleRates[sr];
+            format.nBlockAlign = format.wBitsPerSample / 8 * format.nChannels;
+            format.nAvgBytesPerSec = format.nSamplesPerSec * format.nBlockAlign;
+            
+            PlayThreadArgs pta = {0};
+            pta.pMMDevice = pPrefs->m_pMMDevice;
+            pta.pExclusive = pExclusive;
+            pta.pEventDriven = pEventDriven;
+            pta.hr = E_UNEXPECTED;
 
-            ToWaveFormatExtensible(&formatEx, &format, validBitsPerSample);
-            pta.pWfx = (WAVEFORMATEX*)&formatEx;
-          }
-          else
-          {
-            if (validBitsPerSample != format.wBitsPerSample)
-              continue; // Skip 24/32 format - not possible using WAVEFORMATEX
-            pta.pWfx = &format;
-          }
+            int validBitsPerSample = gAllowedBitDephts[bd] & 0x00ff;
+            // try WAVEFORMATEXTENSIBLE since some drivers are weird 
+            if (i == 1) 
+            {
+              ToWaveFormatExtensible(&formatEx, &format, m == 1 ? true : false, validBitsPerSample);
+              pta.pWfx = (WAVEFORMATEX*)&formatEx;
+            }
+            else
+            {
+              if (validBitsPerSample != format.wBitsPerSample)
+                continue; // Skip 24/32 format - not possible using WAVEFORMATEX
+              pta.pWfx = &format;
+            }
 
-          HANDLE hThread = CreateThread(NULL, 0, PlayThreadFunction, &pta, 0, NULL);
+            HANDLE hThread = CreateThread(NULL, 0, PlayThreadFunction, &pta, 0, NULL);
 
-          if (NULL == hThread) 
-          {
-            printf("CreateThread failed: GetLastError = %u\n", GetLastError());
-            return;
-          }
+            if (NULL == hThread) 
+            {
+              printf("CreateThread failed: GetLastError = %u\n", GetLastError());
+              return;
+            }
 
-          WaitForSingleObject(hThread, INFINITE);
+            gFormatCount++;
+            WaitForSingleObject(hThread, INFINITE);
 
-          if (FAILED(pta.hr)) 
-          {
-            //printf("Thread returned failing HRESULT 0x%08x", pta.hr);
-            CloseHandle(hThread);
-          }
-          else
-          {
-            CloseHandle(hThread);
+            if (FAILED(pta.hr)) 
+            {
+              //printf("Thread returned failing HRESULT 0x%08x", pta.hr);
+              CloseHandle(hThread);
+            }
+            else
+            {
+              if (pta.formatOk)
+                gFormatOkCount++;
+              
+              CloseHandle(hThread);
+            }
           }
         }
       }
@@ -192,19 +202,23 @@ void TestFormatsAC3(CPrefs* pPrefs, bool pExclusive, bool pEventDriven)
 
     if (NULL == hThread) 
     {
-        printf("CreateThread failed: GetLastError = %u\n", GetLastError());
-        return;
+      printf("CreateThread failed: GetLastError = %u\n", GetLastError());
+      return;
     }
 
+    gFormatCount++;
     WaitForSingleObject(hThread, INFINITE);
 
     if (FAILED(pta.hr)) 
     {
-        //printf("Thread returned failing HRESULT 0x%08x", pta.hr);
-        CloseHandle(hThread);
+      //printf("Thread returned failing HRESULT 0x%08x", pta.hr);
+      CloseHandle(hThread);
     }
     else
     {
+      if (pta.formatOk)
+        gFormatOkCount++;
+      
       CloseHandle(hThread);
     }
   }
@@ -222,7 +236,19 @@ static DWORD gdwDefaultChannelMask[] = {
   KSAUDIO_SPEAKER_7POINT1
 };
 
-void ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf, int ValidBitsPerSample)
+static DWORD gdwDefaultChannelMask2[] = {
+  0, // no channels - invalid
+  KSAUDIO_SPEAKER_MONO,
+  KSAUDIO_SPEAKER_STEREO,
+  KSAUDIO_SPEAKER_STEREO | KSAUDIO_SPEAKER_GROUND_FRONT_CENTER,
+  KSAUDIO_SPEAKER_QUAD,
+  0, // 5 channels?
+  KSAUDIO_SPEAKER_5POINT1_SURROUND,
+  0, // 7 channels?
+  KSAUDIO_SPEAKER_7POINT1_SURROUND
+};
+
+void ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf, bool pAlternativeMask, int ValidBitsPerSample)
 {
   //ASSERT(pwf->cbSize <= sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX));
   memcpy(pwfe, pwf, sizeof(WAVEFORMATEX)/* + pwf->cbSize*/);
@@ -237,8 +263,15 @@ void ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf, int V
     break;
   }
   if (pwfe->Format.nChannels >= 1 && pwfe->Format.nChannels <= 8)
-  {
-    pwfe->dwChannelMask = gdwDefaultChannelMask[pwfe->Format.nChannels];
+  { 
+    if (pAlternativeMask)
+    {
+      pwfe->dwChannelMask = gdwDefaultChannelMask[pwfe->Format.nChannels];
+    }
+    else
+    {
+      pwfe->dwChannelMask = gdwDefaultChannelMask2[pwfe->Format.nChannels];
+    }
   }
   else
     pwfe->dwChannelMask = 0;

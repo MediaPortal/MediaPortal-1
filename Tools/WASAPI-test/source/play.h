@@ -11,6 +11,7 @@ struct PlayThreadArgs
     bool bDetailedInfo;
     bool pExclusive;
     bool pEventDriven;
+    bool formatOk;
     HRESULT hr;
 };
 
