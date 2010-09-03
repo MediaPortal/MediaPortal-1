@@ -332,8 +332,8 @@ namespace SetupTv.Dialogs
             "Simple A",
             "Simple B",
             "Level 1 A/A",
-            "Level 1 B/A",
             "Level 1 A/B",
+            "Level 1 B/A",
             "Level 1 B/B"});
       this.comboBoxDisEqc.Location = new System.Drawing.Point(84, 217);
       this.comboBoxDisEqc.Name = "comboBoxDisEqc";
