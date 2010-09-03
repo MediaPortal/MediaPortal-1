@@ -94,7 +94,7 @@ HRESULT Play(
         &pwfxCM
     );
 
-    printf("%8d %2d %2d %8d %2d %6d %2d",
+    printf("%6d %2d %2d %8d %2d %6d %2d",
     pWfx->nSamplesPerSec,
     pWfx->wBitsPerSample,
     pWfx->nChannels,
