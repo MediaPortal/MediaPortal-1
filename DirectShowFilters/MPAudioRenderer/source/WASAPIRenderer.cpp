@@ -239,8 +239,8 @@ HRESULT WASAPIRenderer::CheckFormat(WAVEFORMATEX* pwfx)
   hr = m_pAudioClient->IsFormatSupported(m_pRenderer->Settings()->m_WASAPIShareMode, pwfx, &pwfxCM);
   if (hr != S_OK)
   {
-    Log("WASAPIRenderer::CheckMediaType WASAPI client refused the format: (0x%08x)", hr);
-    Log("   test with WAVEFORMATEX");
+    //Log("WASAPIRenderer::CheckMediaType WASAPI client refused the format: (0x%08x)", hr);
+    //Log("   test with WAVEFORMATEX");
     
     WAVEFORMATEX* tmpPwfx = NULL; 
     CopyWaveFormatEx(&tmpPwfx, pwfx);
@@ -255,6 +255,10 @@ HRESULT WASAPIRenderer::CheckFormat(WAVEFORMATEX* pwfx)
       CoTaskMemFree(pwfxCM);
       return VFW_E_TYPE_NOT_ACCEPTED;
     }
+
+    // truncate the WAVEFORMATEXTENSIBLE part since driver is more happy with the WAVEFORMATEX
+    pwfx->cbSize = 0;
+
     SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
   }
   Log("WASAPIRenderer::CheckMediaType WASAPI client accepted the format");
@@ -262,7 +266,7 @@ HRESULT WASAPIRenderer::CheckFormat(WAVEFORMATEX* pwfx)
   return S_OK;
 }
 
-HRESULT WASAPIRenderer::SetMediaType(const WAVEFORMATEX* pwfx)
+HRESULT WASAPIRenderer::SetMediaType(WAVEFORMATEX* pwfx)
 {
   // New media type set but render client already initialized => reset it
   if (m_pRenderClient)
@@ -498,7 +502,7 @@ HRESULT	WASAPIRenderer::DoRenderSample(IMediaSample *pMediaSample, LONGLONG /*pS
   return hr;
 }
 
-HRESULT WASAPIRenderer::CheckAudioClient(const WAVEFORMATEX *pWaveFormatEx)
+HRESULT WASAPIRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
 {
   CAutoLock cInterfaceLock(m_pRenderer->InterfaceLock());
   CAutoLock cRenderThreadLock(m_pRenderer->RenderThreadLock());
@@ -536,7 +540,7 @@ HRESULT WASAPIRenderer::CheckAudioClient(const WAVEFORMATEX *pWaveFormatEx)
   
     if (FAILED(hr))
     {
-      Log("   WASAPI client refused the format: (0x%08x) - try WAVEFORMATEX", hr);
+      //Log("   WASAPI client refused the format: (0x%08x) - try WAVEFORMATEX", hr);
       WAVEFORMATEX* tmpPwfx = NULL; 
       CopyWaveFormatEx(&tmpPwfx, m_pRenderFormat);
       tmpPwfx->cbSize = 0;
@@ -546,6 +550,9 @@ HRESULT WASAPIRenderer::CheckAudioClient(const WAVEFORMATEX *pWaveFormatEx)
 
     if (SUCCEEDED(hr))
     { 
+      // truncate the WAVEFORMATEXTENSIBLE part since driver is more happy with the WAVEFORMATEX
+      pWaveFormatEx->cbSize = 0;
+
       StopAudioClient(&m_pAudioClient);
 
       SAFE_RELEASE(m_pRenderClient);

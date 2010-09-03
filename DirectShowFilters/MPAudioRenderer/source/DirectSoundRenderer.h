@@ -30,7 +30,7 @@ public:
   ~DirectSoundRenderer();
 
   HRESULT CheckFormat(WAVEFORMATEX* pwfx);
-  HRESULT SetMediaType(const WAVEFORMATEX* pwfx);
+  HRESULT SetMediaType(WAVEFORMATEX* pwfx);
   HRESULT CompleteConnect(IPin *pReceivePin);
 
   HRESULT DoRenderSample(IMediaSample *pMediaSample, LONGLONG pSampleCounter);

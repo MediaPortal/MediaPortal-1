@@ -26,7 +26,7 @@ public:
   ~WASAPIRenderer();
 
 	HRESULT CheckFormat(WAVEFORMATEX* pwfx);
-	HRESULT SetMediaType(const WAVEFORMATEX* pwfx);
+	HRESULT SetMediaType(WAVEFORMATEX* pwfx);
   HRESULT CompleteConnect(IPin *pReceivePin);
 
 	HRESULT DoRenderSample(IMediaSample *pMediaSample, LONGLONG pSampleCounter);
@@ -63,7 +63,7 @@ private:
   HRESULT GetAvailableAudioDevices(IMMDeviceCollection **ppMMDevices, bool pLog); // caller must release ppMMDevices!
   HRESULT CreateAudioClient(IMMDevice *pMMDevice, IAudioClient **ppAudioClient);
   HRESULT InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudioClient *pAudioClient, IAudioRenderClient **ppRenderClient);
-  HRESULT CheckAudioClient(const WAVEFORMATEX *pWaveFormatEx);
+  HRESULT CheckAudioClient(WAVEFORMATEX *pWaveFormatEx);
   bool    CheckFormatChanged(const WAVEFORMATEX *pWaveFormatEx, WAVEFORMATEX **ppNewWaveFormatEx);
   HRESULT DoRenderSampleWasapi(IMediaSample *pMediaSample);
   HRESULT GetBufferSize(const WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
