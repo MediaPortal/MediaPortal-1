@@ -160,7 +160,6 @@ void CMultiSoundTouch::StopResamplingThread()
 }
 
 DEFINE_STREAM_FUNC(setRate,float, newRate)
-//DEFINE_STREAM_FUNC(setTempo, float, newTempo)
 DEFINE_STREAM_FUNC(setRateChange, float, newRate)
 DEFINE_STREAM_FUNC(setTempoChange, float, newTempo)
 DEFINE_STREAM_FUNC(setPitchOctaves, float, newPitch)
@@ -185,9 +184,6 @@ void CMultiSoundTouch::clear()
 // flush requires a specific handling since we need to be able to use the CAutoLock
 void CMultiSoundTouch::flush() 
 { 
-  //if (m_pMemAllocator)
-  //  m_pMemAllocator->Decommit();
-  
   CAutoLock allocatorLock(&m_allocatorLock);
   if (m_Streams) 
   { 
