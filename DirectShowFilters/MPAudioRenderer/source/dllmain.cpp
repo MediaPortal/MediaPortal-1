@@ -251,7 +251,7 @@ void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text)
     {
       WAVEFORMATEXTENSIBLE* tmp = (WAVEFORMATEXTENSIBLE*)pwfx;
       Log("  WAVE_FORMAT_EXTENSIBLE");
-      Log("  dwChannelMask %d", tmp->dwChannelMask);
+      Log("  dwChannelMask   %d", tmp->dwChannelMask);
 
       LPOLESTR str;
       LPSTR astr;
