@@ -119,8 +119,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   AC3bitrate:              %d", AC3bitrateData);
     Log("   MaxBias:                 %d", maxBiasData);
     Log("   MinBias:                 %d", minBiasData);
-    Log("   channelMaskOverride_5_1:  %d", channelMaskOverride_5_1Data);
-    Log("   channelMaskOverride_7_1:  %d", channelMaskOverride_7_1Data);
+    Log("   ChannelMaskOverride_5_1: %d", channelMaskOverride_5_1Data);
+    Log("   ChannelMaskOverride_7_1: %d", channelMaskOverride_7_1Data);
     Log("   LogSampleTimes:          %d", logSampleTimesData);
     Log("   DevicePeriod:            %d (1 == minimal, 0 == driver default, other user defined)", devicePeriodData);
     Log("   WASAPIPreferredDevice:   %s", WASAPIPreferredDeviceData);
