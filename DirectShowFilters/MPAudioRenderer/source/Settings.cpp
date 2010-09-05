@@ -32,11 +32,13 @@ AudioRendererSettings::AudioRendererSettings() :
   m_AC3bitrate(448), 
   m_dMaxBias(1.1),
   m_dMinBias(0.9),
+  m_dwChannelMaskOverride_5_1(0),
+  m_dwChannelMaskOverride_7_1(0),
   m_WASAPIShareMode(AUDCLNT_SHAREMODE_EXCLUSIVE),
   m_wWASAPIPreferredDeviceId(NULL)
 {
   LogRotate();
-  Log("MP Audio Renderer - v0.81");
+  Log("MP Audio Renderer - v0.82");
 
   LoadSettingsFromRegistry();
 }
@@ -67,6 +69,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   LPCTSTR AC3bitrate = TEXT("AC3bitrate");
   LPCTSTR maxBias = TEXT("MaxBias");
   LPCTSTR minBias = TEXT("MinBias");
+  LPCTSTR channelMaskOverride_5_1 = TEXT("channelMaskOverride_5_1");
+  LPCTSTR channelMaskOverride_7_1 = TEXT("channelMaskOverride_7_1");
   LPCTSTR logSampleTimes = TEXT("LogSampleTimes");
   LPCTSTR WASAPIPreferredDevice = TEXT("WASAPIPreferredDevice");
   
@@ -80,6 +84,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   DWORD AC3bitrateData = 448;       // maximum based on the DVD spec
   DWORD maxBiasData = 11000;        // divide with 10000 to get real double value
   DWORD minBiasData = 9000;         // divide with 10000 to get real double value
+  DWORD channelMaskOverride_5_1Data = 0;
+  DWORD channelMaskOverride_7_1Data = 0;
   DWORD logSampleTimesData = 0;
   LPCTSTR WASAPIPreferredDeviceData = new TCHAR[MAX_REG_LENGTH];
 
@@ -100,6 +106,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
     ReadRegistryKeyDword(hKey, maxBias, maxBiasData);
     ReadRegistryKeyDword(hKey, minBias, minBiasData);
+    ReadRegistryKeyDword(hKey, channelMaskOverride_5_1, channelMaskOverride_5_1Data);
+    ReadRegistryKeyDword(hKey, channelMaskOverride_7_1, channelMaskOverride_7_1Data);
     ReadRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
     ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
 
@@ -111,6 +119,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   AC3bitrate:              %d", AC3bitrateData);
     Log("   MaxBias:                 %d", maxBiasData);
     Log("   MinBias:                 %d", minBiasData);
+    Log("   channelMaskOverride_5_1:  %d", channelMaskOverride_5_1Data);
+    Log("   channelMaskOverride_7_1:  %d", channelMaskOverride_7_1Data);
     Log("   LogSampleTimes:          %d", logSampleTimesData);
     Log("   DevicePeriod:            %d (1 == minimal, 0 == driver default, other user defined)", devicePeriodData);
     Log("   WASAPIPreferredDevice:   %s", WASAPIPreferredDeviceData);
@@ -142,6 +152,16 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
 
     m_dMaxBias = (double)maxBiasData / 10000.0;
     m_dMinBias = (double)minBiasData / 10000.0;
+
+    if (channelMaskOverride_5_1Data > 0)
+      m_dwChannelMaskOverride_5_1 = channelMaskOverride_5_1Data;
+    else
+      m_dwChannelMaskOverride_5_1 = 0;
+
+    if (channelMaskOverride_7_1Data > 0)
+      m_dwChannelMaskOverride_7_1 = channelMaskOverride_7_1Data;
+    else
+      m_dwChannelMaskOverride_7_1 = 0;
 
     if (logSampleTimesData > 0)
       m_bLogSampleTimes = true;
@@ -195,6 +215,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
       WriteRegistryKeyDword(hKey, maxBias, maxBiasData);
       WriteRegistryKeyDword(hKey, minBias, minBiasData);
+      WriteRegistryKeyDword(hKey, channelMaskOverride_5_1, channelMaskOverride_5_1Data);
+      WriteRegistryKeyDword(hKey, channelMaskOverride_7_1, channelMaskOverride_7_1Data);
       WriteRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
       ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
     } 

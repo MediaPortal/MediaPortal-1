@@ -42,6 +42,9 @@ public:
   double m_dMaxBias;
   double m_dMinBias;
 
+  DWORD m_dwChannelMaskOverride_5_1;
+  DWORD m_dwChannelMaskOverride_7_1;
+
   REFERENCE_TIME m_hnsPeriod;
 
   AUDCLNT_SHAREMODE m_WASAPIShareMode;

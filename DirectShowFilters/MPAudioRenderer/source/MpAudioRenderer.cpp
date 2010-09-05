@@ -197,9 +197,22 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
 
   if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
   {
-    // TODO: should we do something specific here? At least W7 audio codec is providing this info
-    // WAVEFORMATPCMEX *test = (WAVEFORMATPCMEX *) pmt->Format();
-    // return VFW_E_TYPE_NOT_ACCEPTED;
+    WAVEFORMATEXTENSIBLE* tmp = (WAVEFORMATEXTENSIBLE*)pwfx;
+    
+    DWORD channelMask5_1 = m_Settings.m_dwChannelMaskOverride_5_1;
+    DWORD channelMask7_1 = m_Settings.m_dwChannelMaskOverride_7_1;
+
+    if (tmp->Format.nChannels == 6 && channelMask5_1 > 0)
+    {
+      Log("CheckMediaType:: overriding 5.1 channel mask to %d", channelMask5_1);
+      tmp->dwChannelMask = channelMask5_1;  
+    }
+
+    if (tmp->Format.nChannels == 8 && channelMask7_1 > 0)
+    {
+      Log("CheckMediaType:: overriding 7.1 channel mask to %d", channelMask7_1);
+      tmp->dwChannelMask = channelMask7_1;  
+    }
   }
 
   if (m_Settings.m_bUseTimeStretching)
