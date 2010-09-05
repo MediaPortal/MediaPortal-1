@@ -69,8 +69,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   LPCTSTR AC3bitrate = TEXT("AC3bitrate");
   LPCTSTR maxBias = TEXT("MaxBias");
   LPCTSTR minBias = TEXT("MinBias");
-  LPCTSTR channelMaskOverride_5_1 = TEXT("channelMaskOverride_5_1");
-  LPCTSTR channelMaskOverride_7_1 = TEXT("channelMaskOverride_7_1");
+  LPCTSTR channelMaskOverride_5_1 = TEXT("ChannelMaskOverride_5_1");
+  LPCTSTR channelMaskOverride_7_1 = TEXT("ChannelMaskOverride_7_1");
   LPCTSTR logSampleTimes = TEXT("LogSampleTimes");
   LPCTSTR WASAPIPreferredDevice = TEXT("WASAPIPreferredDevice");
   
