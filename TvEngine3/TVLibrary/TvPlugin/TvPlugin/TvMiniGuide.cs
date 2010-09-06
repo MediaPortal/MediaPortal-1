@@ -674,8 +674,9 @@ namespace TvPlugin
                 CalculateProgress(startTime, endTime).ToString());
               sb.Append("%");
 
-              if (endTime > nextEPGupdate)
+              if (endTime < nextEPGupdate || nextEPGupdate == DateTime.MinValue)
               {
+                nextEPGupdate = endTime;
                 SetNextEpgUpdate(endTime);
               }
             }
