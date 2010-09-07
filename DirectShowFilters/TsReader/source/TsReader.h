@@ -183,6 +183,8 @@ public:
   bool            m_bOnZap;
   bool            m_bForceSeekOnStop;
   bool            m_bRenderingClockTooFast;
+  bool            m_bForceSeekAfterRateChange;
+  bool            m_bSeekAfterRcDone;
 
 protected:
   void ThreadProc();

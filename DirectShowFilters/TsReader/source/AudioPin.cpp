@@ -479,6 +479,11 @@ HRESULT CAudioPin::ChangeRate()
     m_dRateSeeking = 1.0;  // Reset to a reasonable value.
     return E_FAIL;
   }*/
+  LogDebug("aud: ChangeRate, m_dRateSeeking %f, Force seek done %d",(float)m_dRateSeeking, m_pTsReaderFilter->m_bSeekAfterRcDone);
+  if (!m_pTsReaderFilter->m_bSeekAfterRcDone) //Don't force seek if another pin has already triggered it
+  {
+    m_pTsReaderFilter->m_bForceSeekAfterRateChange = true;
+  }
   UpdateFromSeek();
   return S_OK;
 }

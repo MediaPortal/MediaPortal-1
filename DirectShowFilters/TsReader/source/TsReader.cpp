@@ -170,7 +170,8 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   TCHAR filename[1024];
   GetLogFile(filename);
   ::DeleteFile(filename);
-  LogDebug("-------------- v1.4.4 ----------------");
+  LogDebug("--------- Fast forward debug ---------");
+  LogDebug("-------------- v0.4.5 ----------------");
 
   m_fileReader=NULL;
   m_fileDuration=NULL;
@@ -220,6 +221,8 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   SetMediaPosition(0) ;
   m_bStoppedForUnexpectedSeek=false ;
   m_bForceSeekOnStop=false ;
+  m_bForceSeekAfterRateChange=false ;
+  m_bSeekAfterRcDone=false ;
   m_MPmainThreadID = GetCurrentThreadId() ;
 }
 
@@ -424,7 +427,7 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
   double msec=(double)runTime.Millisecs();
   msec/=1000.0;
   LogDebug("CTsReaderFilter::Run(%05.2f) state %d seeking %d", msec, m_State, IsSeeking());
-
+  
   m_RandomCompensation = 0;
 
   if (m_bStreamCompensated && m_bLiveTv)
@@ -435,6 +438,8 @@ STDMETHODIMP CTsReaderFilter::Run(REFERENCE_TIME tStart)
   ShowBuffer=40;
 
   CAutoLock cObjectLock(m_pLock);
+
+  m_bSeekAfterRcDone = false;
 
   if(m_pSubtitlePin) m_pSubtitlePin->SetRunningStatus(true);
 	
@@ -501,6 +506,7 @@ STDMETHODIMP CTsReaderFilter::Stop()
 
   //reset vaues
   //m_bSeeking = false;
+  m_bSeekAfterRcDone = false;
   m_bStopping = false;
   if (m_bStreamCompensated)
   {
@@ -963,7 +969,7 @@ void CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
   // This remove all these stupid skips. 
   if(m_State == State_Stopped)
   {   
-    if ((m_bStoppedForUnexpectedSeek || (m_absSeekTime==rtAbsSeek)) && !m_bForceSeekOnStop)
+    if ((m_bStoppedForUnexpectedSeek || (m_absSeekTime==rtAbsSeek)) && !m_bForceSeekOnStop && !m_bForceSeekAfterRateChange)
     {
 //      LogDebug("CTsReaderFilter::--SeekStart() Stopped state -- No new seek %f", 
 //      (float)rtSeek.Millisecs()/1000.0f);
@@ -974,7 +980,7 @@ void CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
     }
   }
 
-  if (((m_absSeekTime==rtAbsSeek) && !m_bStreamCompensated) || (m_demultiplexer.IsMediaChanging() && !m_bOnZap && !m_bForceSeekOnStop))  
+  if (((m_absSeekTime==rtAbsSeek) && !m_bStreamCompensated && !m_bForceSeekAfterRateChange) || (m_demultiplexer.IsMediaChanging() && !m_bOnZap && !m_bForceSeekOnStop && !m_bForceSeekAfterRateChange))  
   {
     doSeek = false;
     LogDebug("CTsReaderFilter::--SeekStart()-- No new seek %f ( Abs %f / %f ) - Stream compensated: %d, OnZap: %d, Force %d, Media changing: %d", 
@@ -984,10 +990,16 @@ void CTsReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
   }
   else
   {
-    LogDebug("CTsReaderFilter::--SeekStart()-- LiveTv : %d, TimeShifting: %d %3.3f ( Abs %f / %f ), OnZap: %d, Force %d, Media changing %d",
-		m_bLiveTv,m_bTimeShifting,(float)rtSeek.Millisecs()/1000.0,(float)rtAbsSeek.Millisecs()/1000.0f, (float)m_duration.EndPcr().ToClock(),m_bOnZap,m_bForceSeekOnStop,m_demultiplexer.IsMediaChanging());
+    LogDebug("CTsReaderFilter::--SeekStart()-- LiveTv : %d, TimeShifting: %d %3.3f ( Abs %f / %f ), OnZap: %d, Force %d, ForceRC %d, Media changing %d",
+		m_bLiveTv,m_bTimeShifting,(float)rtSeek.Millisecs()/1000.0,(float)rtAbsSeek.Millisecs()/1000.0f, (float)m_duration.EndPcr().ToClock(),m_bOnZap,m_bForceSeekOnStop,m_bForceSeekAfterRateChange,m_demultiplexer.IsMediaChanging());
 
     m_bForceSeekOnStop = false ;
+    
+    if (m_bForceSeekAfterRateChange)
+    {
+      m_bSeekAfterRcDone = true;
+      m_bForceSeekAfterRateChange = false ; 
+    }
 
     if (m_bTimeShifting)
     {

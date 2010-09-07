@@ -457,6 +457,11 @@ HRESULT CVideoPin::ChangeRate()
     m_dRateSeeking = 1.0;  // Reset to a reasonable value.
     return E_FAIL;
   }
+  LogDebug("vid: ChangeRate, m_dRateSeeking %f, Force seek done %d",(float)m_dRateSeeking, m_pTsReaderFilter->m_bSeekAfterRcDone);
+  if (!m_pTsReaderFilter->m_bSeekAfterRcDone) //Don't force seek if another pin has already triggered it
+  {
+    m_pTsReaderFilter->m_bForceSeekAfterRateChange = true;
+  }
   UpdateFromSeek();
   return S_OK;
 }
@@ -464,6 +469,7 @@ HRESULT CVideoPin::ChangeRate()
 void CVideoPin::SetStart(CRefTime rtStartTime)
 {
   m_rtStart = rtStartTime ;
+  LogDebug("vid: SetStart, m_rtStart %f",(float)m_rtStart.Millisecs()/1000.0f);
 }
 
 STDMETHODIMP CVideoPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags)
@@ -478,7 +484,7 @@ STDMETHODIMP CVideoPin::SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LON
 void CVideoPin::UpdateFromSeek()
 {
   m_pTsReaderFilter->SeekPreStart(m_rtStart) ;
-//  LogDebug("vid: seek done %f/%f",(float)m_rtStart.Millisecs()/1000.0f,(float)m_rtDuration.Millisecs()/1000.0f);
+  LogDebug("vid: UpdateFromSeek, m_rtStart %f, m_dRateSeeking %f",(float)m_rtStart.Millisecs()/1000.0f,(float)m_dRateSeeking);
   return ;
 }
 
