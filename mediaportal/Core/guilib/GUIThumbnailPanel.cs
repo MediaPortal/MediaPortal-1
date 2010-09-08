@@ -1439,13 +1439,13 @@ namespace MediaPortal.GUI.Library
           _offset = (iPage - 1) * iItemsPerPage;
           iItem -= _offset;
 
-          while ((iItem <= _columnCount * (_rowCount - 1)) && (_offset > 0))
-          {
+          while ((iItem < _columnCount * (_rowCount - 1)) && (_offset > 0))
+            {
             _offset -= (_columnCount);
             iItem += (_columnCount);
           }
-          while (iItem > _columnCount)
-          {
+          while (iItem >= _columnCount)
+            {
             _cursorY++;
             iItem -= _columnCount;
           }
