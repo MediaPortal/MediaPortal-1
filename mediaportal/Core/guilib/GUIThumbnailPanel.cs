@@ -1427,6 +1427,7 @@ namespace MediaPortal.GUI.Library
         _cursorX = 0;
         _cursorY = 0;
         _offset = 0;
+        int selItem = iItem;
 
         if (_listItems.Count - iItem + 1 <= _columnCount) // special handling for the last rows
         {
@@ -1449,7 +1450,16 @@ namespace MediaPortal.GUI.Library
             _cursorY++;
             iItem -= _columnCount;
           }
+
           _cursorX = iItem;
+
+          // The following check is a complete hack used to make sure the list is drawn correctly in the specific situation for which
+          // it checks.  This hack exists because rewriting the entire algorithm above would have otherwise been necessary.
+          if (_cursorY == _rowCount - 1 && selItem != _listItems.Count && _cursorX == _columnCount - 1)
+          {
+            _offset += _columnCount;
+            --_cursorY;
+          }
 
           //_cursorX = _cursorY = 1;
           _controlUpDown.Value = iPage;
