@@ -67,7 +67,8 @@ private:
   bool    CheckFormatChanged(const WAVEFORMATEX *pWaveFormatEx, WAVEFORMATEX **ppNewWaveFormatEx);
   HRESULT DoRenderSampleWasapi(IMediaSample *pMediaSample);
   HRESULT GetBufferSize(const WAVEFORMATEX *pWaveFormatEx, REFERENCE_TIME *pHnsBufferPeriod);
-
+  
+  void CancelDataEvent();
   void StartAudioClient(IAudioClient** ppAudioClient);
   void StopAudioClient(IAudioClient** ppAudioClient);
 
@@ -92,6 +93,8 @@ private:
   static DWORD WINAPI RenderThreadEntryPoint(LPVOID lpParameter);
   DWORD RenderThread();
   DWORD m_threadId;
+ 
+  bool m_bThreadPaused;
 
   HRESULT StartRendererThread();
   HRESULT PauseRendererThread();
@@ -102,5 +105,6 @@ private:
   HANDLE m_hPauseEvent;
   HANDLE m_hResumeEvent;
   HANDLE m_hWaitPauseEvent;
+  HANDLE m_hWaitResumeEvent;
   HANDLE m_hStopRenderThreadEvent;
 };

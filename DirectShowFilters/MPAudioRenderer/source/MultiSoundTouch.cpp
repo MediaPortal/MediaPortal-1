@@ -694,6 +694,9 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
     }
   }
 
+  // Need to lock the resampling thread from accessing the streams
+  CAutoLock allocatorLock(&m_allocatorLock);
+
   // delete old ones
   std::vector<CSoundTouchEx *> *oldStreams = m_Streams;
   WAVEFORMATEXTENSIBLE *pOldFormat = m_pWaveFormat;

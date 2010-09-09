@@ -70,10 +70,12 @@ WASAPIRenderer::WASAPIRenderer(CMPAudioRenderer* pRenderer, HRESULT *phr) :
   m_dRate(1.0),
   m_threadId(0),
   m_hRenderThread(NULL),
+  m_bThreadPaused(false),
   m_hDataEvent(NULL),
   m_hPauseEvent(NULL),
   m_hWaitPauseEvent(NULL),
   m_hResumeEvent(NULL),
+  m_hWaitResumeEvent(NULL),
   m_hStopRenderThreadEvent(NULL),
   m_pAudioClock(NULL),
   m_nHWfreq(0),
@@ -100,6 +102,7 @@ WASAPIRenderer::WASAPIRenderer(CMPAudioRenderer* pRenderer, HRESULT *phr) :
   m_hPauseEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
   m_hWaitPauseEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
   m_hResumeEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+  m_hWaitResumeEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
   m_hStopRenderThreadEvent = CreateEvent(0, FALSE, FALSE, 0);
   
   OSVERSIONINFO osvi;
@@ -151,6 +154,8 @@ WASAPIRenderer::~WASAPIRenderer()
     CloseHandle(m_hWaitPauseEvent);
   if (m_hResumeEvent)
     CloseHandle(m_hResumeEvent);
+  if (m_hWaitResumeEvent)
+    CloseHandle(m_hWaitResumeEvent);
 
   SAFE_DELETE_WAVEFORMATEX(m_pRenderFormat);
 
@@ -173,12 +178,24 @@ HRESULT WASAPIRenderer::StopRendererThread()
   return S_OK;
 }
 
+void WASAPIRenderer::CancelDataEvent()
+{
+  if (!m_pRenderer->Settings()->m_WASAPIUseEventMode)
+  {
+    HRESULT hr = CancelWaitableTimer(m_hDataEvent);
+    if (FAILED(hr))
+      Log("WASAPIRenderer::CancelDataEvent - CancelWaitableTimer failed: (0x%08x)", hr);
+  }
+}
+
 HRESULT WASAPIRenderer::PauseRendererThread()
 {
   Log("WASAPIRenderer::PauseRendererThread");
   // Pause the render thread
   if (m_hRenderThread)
   {
+    CancelDataEvent();
+
     SetEvent(m_hPauseEvent);
     DWORD result = WaitForSingleObject(m_hWaitPauseEvent, INFINITE);
     if (result != 0)
@@ -210,8 +227,12 @@ HRESULT WASAPIRenderer::StartRendererThread()
   }
   else
   {
-    Log("WASAPIRenderer::StartRendererThread - resuming");
-    SetEvent(m_hResumeEvent);
+    if (m_bThreadPaused)
+    {
+      Log("WASAPIRenderer::StartRendererThread - resuming");
+      SetEvent(m_hResumeEvent);
+      WaitForSingleObject(m_hWaitResumeEvent, INFINITE);
+    }
   }
 
   return S_OK;
@@ -273,6 +294,7 @@ HRESULT WASAPIRenderer::SetMediaType(WAVEFORMATEX* pwfx)
   {
     Log("WASAPIRenderer::SetMediaType Render client already initialized. Reinitialization...");
     CheckAudioClient(pwfx);
+    return S_OK;
   }
   SAFE_DELETE_WAVEFORMATEX(m_pRenderFormat);
   CopyWaveFormatEx(&m_pRenderFormat, pwfx);
@@ -502,8 +524,7 @@ HRESULT	WASAPIRenderer::DoRenderSample(IMediaSample *pMediaSample, LONGLONG /*pS
 HRESULT WASAPIRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
 {
   CAutoLock cInterfaceLock(m_pRenderer->InterfaceLock());
-  CAutoLock cRenderThreadLock(m_pRenderer->RenderThreadLock());
-
+ 
   Log("WASAPIRenderer::CheckAudioClient");
   LogWaveFormat(pWaveFormatEx, "WASAPIRenderer::CheckAudioClient");
 
@@ -528,38 +549,45 @@ HRESULT WASAPIRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
   WAVEFORMATEX *pNewWaveFormatEx = NULL;
   if (CheckFormatChanged(pWaveFormatEx, &pNewWaveFormatEx))
   {
-    // Format has changed, audio client has to be reinitialized
     Log("WASAPIRenderer::CheckAudioClient Format changed, reinitialize the audio client");
-    SAFE_DELETE_WAVEFORMATEX(m_pRenderFormat);
-    m_pRenderFormat = pNewWaveFormatEx;
+    
+    { // Keep the render tread lock so it is safe to change the render format
+      CAutoLock cRaenderThreadLock(m_pRenderer->RenderThreadLock());
 
-    hr = m_pAudioClient->IsFormatSupported(m_pRenderer->Settings()->m_WASAPIShareMode, m_pRenderFormat, NULL);    
-  
-    if (FAILED(hr))
-    {
-      //Log("   WASAPI client refused the format: (0x%08x) - try WAVEFORMATEX", hr);
-      WAVEFORMATEX* tmpPwfx = NULL; 
-      CopyWaveFormatEx(&tmpPwfx, m_pRenderFormat);
-      tmpPwfx->cbSize = 0;
-      hr = m_pAudioClient->IsFormatSupported(m_pRenderer->Settings()->m_WASAPIShareMode, tmpPwfx, NULL);
-
-      // truncate the WAVEFORMATEXTENSIBLE part since driver is more happy with the WAVEFORMATEX
-      if (SUCCEEDED(hr))
+      hr = m_pAudioClient->IsFormatSupported(m_pRenderer->Settings()->m_WASAPIShareMode, m_pRenderFormat, NULL);    
+    
+      if (FAILED(hr))
       {
-        pWaveFormatEx->cbSize = 0;
-      }
+        //Log("   WASAPI client refused the format: (0x%08x) - try WAVEFORMATEX", hr);
+        WAVEFORMATEX* tmpPwfx = NULL; 
+        CopyWaveFormatEx(&tmpPwfx, m_pRenderFormat);
+        tmpPwfx->cbSize = 0;
+        hr = m_pAudioClient->IsFormatSupported(m_pRenderer->Settings()->m_WASAPIShareMode, tmpPwfx, NULL);
 
-      SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
-    }
+        // truncate the WAVEFORMATEXTENSIBLE part since driver is more happy with the WAVEFORMATEX
+        if (SUCCEEDED(hr))
+        {
+          pWaveFormatEx->cbSize = 0;
+        }
+
+        SAFE_DELETE_WAVEFORMATEX(tmpPwfx);
+      }
+    } // End of the render thread lock
 
     if (SUCCEEDED(hr))
     { 
-      StopAudioClient(&m_pAudioClient);
-
+      // While pausing the render thread (done by stop call) we cannot hold the render thread lock
+	  StopAudioClient(&m_pAudioClient);
+      
+      // Rendering thread shouldn't try to access the WASAPI device during recreation
+      CAutoLock cRenderThreadLock(m_pRenderer->RenderThreadLock());
       SAFE_RELEASE(m_pRenderClient);
       SAFE_RELEASE(m_pAudioClock);
       SAFE_RELEASE(m_pAudioClient);
       
+      SAFE_DELETE_WAVEFORMATEX(m_pRenderFormat);
+      m_pRenderFormat = pNewWaveFormatEx;
+
       hr = CreateAudioClient(m_pMMDevice, &m_pAudioClient);
     }
     else
@@ -577,6 +605,7 @@ HRESULT WASAPIRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
     return hr;  
   }
 
+  CAutoLock cRenderThreadLock(m_pRenderer->RenderThreadLock());
   SAFE_RELEASE(m_pRenderClient);
 
   if (SUCCEEDED (hr)) 
@@ -1053,8 +1082,6 @@ void WASAPIRenderer::StartAudioClient(IAudioClient** ppAudioClient)
 {
   if (!m_bIsAudioClientStarted)
   {
-    StartRendererThread();
-    
     Log("WASAPIRenderer::StartAudioClient");
     HRESULT hr = S_OK;
 
@@ -1068,6 +1095,7 @@ void WASAPIRenderer::StartAudioClient(IAudioClient** ppAudioClient)
       }
       else
       {
+        StartRendererThread();
         m_bIsAudioClientStarted = true;
       }
     }
@@ -1082,8 +1110,10 @@ void WASAPIRenderer::StartAudioClient(IAudioClient** ppAudioClient)
     LARGE_INTEGER liDueTime;
     liDueTime.QuadPart = 0LL;
   
+    CancelDataEvent();
+
     // We need to manually start the rendering thread when in polling mode
-	SetWaitableTimer(m_hDataEvent, &liDueTime, 0, NULL, NULL, 0);
+    SetWaitableTimer(m_hDataEvent, &liDueTime, 0, NULL, NULL, 0);
   }
 }
 
@@ -1094,6 +1124,9 @@ void WASAPIRenderer::StopAudioClient(IAudioClient** ppAudioClient)
     Log("WASAPIRenderer::StopAudioClient");
     HRESULT hr = S_OK;
 
+    m_bIsAudioClientStarted = false;
+
+    CancelDataEvent();
     PauseRendererThread();
 
     if (*ppAudioClient)
@@ -1102,7 +1135,7 @@ void WASAPIRenderer::StopAudioClient(IAudioClient** ppAudioClient)
       // Some amplifiers will "cache" the incomplete AC3 packets and that causes issues
       // when the next AC3 packets are received
       Sleep(Latency() / 10000);
-
+      
       hr = (*ppAudioClient)->Stop();
       if (FAILED(hr))
         Log("   stop failed (0x%08x)", hr);
@@ -1111,7 +1144,6 @@ void WASAPIRenderer::StopAudioClient(IAudioClient** ppAudioClient)
       if (FAILED(hr))
         Log("   reset failed (0x%08x)", hr);
     }
-    m_bIsAudioClientStarted = false;
   }
 }
 
@@ -1158,6 +1190,7 @@ DWORD WASAPIRenderer::RenderThread()
     else if (result == WAIT_OBJECT_0 + 1) // pause event
     {
       Log("WASAPIRenderer::Render thread - pausing");
+      m_bThreadPaused = true;
       ResetEvent(m_hResumeEvent);
       SetEvent(m_hWaitPauseEvent);
 
@@ -1172,6 +1205,8 @@ DWORD WASAPIRenderer::RenderThread()
       if (resultResume == WAIT_OBJECT_0 + 1) // resume event
       {
         Log("WASAPIRenderer::Render thread - resuming from pause");
+        m_bThreadPaused = false;
+        SetEvent(m_hWaitResumeEvent);
       }
     }
     else if (result == WAIT_OBJECT_0 + 2) // data event
@@ -1201,7 +1236,7 @@ DWORD WASAPIRenderer::RenderThread()
       }
 
       // Interface lock should keep us safe from different threads closing down the audio client
-      if (m_pAudioClient && m_pRenderClient)
+      if (m_pAudioClient && m_pRenderClient && m_bIsAudioClientStarted)
       {
         DWORD bufferFlags = 0;
         BYTE* data = NULL;
@@ -1219,7 +1254,7 @@ DWORD WASAPIRenderer::RenderThread()
         UINT32 bufferSizeInBytes = (bufferSize - currentPadding) * m_pRenderFormat->nBlockAlign;
 
         hr = m_pRenderClient->GetBuffer(bufferSize - currentPadding, &data);
-        if (SUCCEEDED(hr) && m_pRenderClient)
+        if (SUCCEEDED(hr))
         {
           if (writeSilence || !sample)
             bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
@@ -1227,15 +1262,24 @@ DWORD WASAPIRenderer::RenderThread()
           {
             UINT32 bytesCopied = 0;
             BYTE* sampleData = NULL;
+            UINT32 dataLeftInSample = 0;
             UINT32 sampleLength = sample->GetActualDataLength();
-            UINT32 dataLeftInSample = sampleLength - sampleOffset;
+            
+            // Sanity check to make sure that the calculation won't underflow
+            if (sampleOffset <= sampleLength)
+               dataLeftInSample = sampleLength - sampleOffset;
+            else
+            {
+              dataLeftInSample = 0;
+              sampleOffset = 0;
+            }
 
             sample->GetPointer(&sampleData);
 
             do
             {
               // no data in current sample anymore
-              if (sampleLength - sampleOffset == 0)
+              if (dataLeftInSample == 0)
               {
                 sample = NULL;
                 hr = m_pRenderer->SoundTouch()->GetNextSample(&sample, false);

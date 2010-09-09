@@ -234,6 +234,12 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
     {
       hr = m_pRenderDevice->CheckFormat(pwfx);
     }
+
+    if (SUCCEEDED(hr))
+    {
+      Log("CheckMediaType - request old samples to be flushed");
+      m_bFlushSamples = true;
+    }
   }
 
   return hr;
@@ -265,6 +271,18 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
   {
     // Do not render Micey Mouse(tm) audio
     return TRUE;
+  }
+
+  if (m_bFlushSamples)
+  {
+    CAutoLock cInterfaceLock(&m_InterfaceLock);
+    CAutoLock cRenderThreadLock(&m_RenderThreadLock);
+
+    m_pSoundTouch->BeginFlush();
+    m_pSoundTouch->clear();
+    m_pSoundTouch->EndFlush();
+    m_bDropSamples = false; // stream is continuous from this point on  
+    m_bFlushSamples = false;
   }
 
   m_dSampleCounter++;
@@ -363,18 +381,6 @@ BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
     }
   }
 
-  if (m_bFlushSamples)
-  {
-    CAutoLock cInterfaceLock(&m_InterfaceLock);
-    CAutoLock cRenderThreadLock(&m_RenderThreadLock);
-
-    m_pSoundTouch->BeginFlush();
-    m_pSoundTouch->clear();
-    m_pSoundTouch->EndFlush();
-    m_bDropSamples = false; // stream is continuous from this point on  
-    m_bFlushSamples = false;
-  }
-  
   if (m_dSampleCounter > 1 && !m_bDropSamples)
   {
     EXECUTE_ASSERT(SetEvent((HANDLE) m_RenderEvent));
@@ -571,6 +577,7 @@ STDMETHODIMP CMPAudioRenderer::Stop()
   Log("Stop");
 
   CAutoLock cInterfaceLock(&m_InterfaceLock);
+  CAutoLock cRenderThreadLock(&m_RenderThreadLock);
 
   if (m_pSoundTouch)
   {
@@ -647,7 +654,6 @@ HRESULT CMPAudioRenderer::BeginFlush()
   Log("BeginFlush");
 
   CAutoLock cInterfaceLock(&m_InterfaceLock);
-  CAutoLock cRenderThreadLock(&m_RenderThreadLock);
 
   HRESULT hrBase = CBaseRenderer::BeginFlush(); 
 
@@ -667,7 +673,6 @@ HRESULT CMPAudioRenderer::EndFlush()
   Log("EndFlush");
 
   CAutoLock cInterfaceLock(&m_InterfaceLock);
-  CAutoLock cRenderThreadLock(&m_RenderThreadLock);
   
   m_dSampleCounter = 0;
   m_rtNextSampleTime = 0;
