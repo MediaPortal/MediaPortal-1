@@ -94,9 +94,14 @@ HRESULT Play(
         &pwfxCM
     );
 
-    printf("%6d %2d %2d %8d %2d %5d %2d",
+    char cSampleType = (pWfx->wFormatTag == WAVE_FORMAT_IEEE_FLOAT ||
+                        (pWfx->cbSize == 22 &&
+                         (((WAVEFORMATEXTENSIBLE*)pWfx)->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)))? 'f' : 'i';
+
+    printf("%6d %2d%c %2d %8d %2d %5d %2d",
     pWfx->nSamplesPerSec,
     pWfx->wBitsPerSample,
+    cSampleType,
     pWfx->nChannels,
     pWfx->nAvgBytesPerSec,
     pWfx->nBlockAlign,
