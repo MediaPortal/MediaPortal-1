@@ -8,7 +8,7 @@ struct PlayThreadArgs
     UINT32 nFrames;
     UINT32 nBytes;
     IMMDevice *pMMDevice;
-    bool bDetailedInfo;
+    bool pDetailedInfo;
     bool pExclusive;
     bool pEventDriven;
     bool formatOk;

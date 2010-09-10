@@ -84,7 +84,7 @@ int do_everything(int argc, LPCWSTR argv[])
     printf("\n-------------------------------------------------------------------------\n");
     TestFormatsAC3(&prefs, true, true);
 
-    printf("\n\nWASAPI-test.exe version: 2   tested: %d ok: %d", gFormatCount, gFormatOkCount);
+    printf("\n\nWASAPI-test.exe version: 3   tested: %d ok: %d", gFormatCount, gFormatOkCount);
 
     return 0;
 }
@@ -130,6 +130,7 @@ void TestFormats(CPrefs* pPrefs, bool pExclusive, bool pEventDriven)
             pta.pMMDevice = pPrefs->m_pMMDevice;
             pta.pExclusive = pExclusive;
             pta.pEventDriven = pEventDriven;
+            pta.pDetailedInfo = pPrefs->pDetailedInfo;
             pta.hr = E_UNEXPECTED;
 
             int validBitsPerSample = gAllowedBitDephts[bd] & 0x00ff;
@@ -196,6 +197,7 @@ void TestFormatsAC3(CPrefs* pPrefs, bool pExclusive, bool pEventDriven)
     pta.pMMDevice = pPrefs->m_pMMDevice;
     pta.pExclusive = pExclusive;
     pta.pEventDriven = pEventDriven;
+    pta.pDetailedInfo = pPrefs->pDetailedInfo;
     pta.hr = E_UNEXPECTED;
 
     HANDLE hThread = CreateThread(NULL, 0, PlayThreadFunction, &pta, 0, NULL);

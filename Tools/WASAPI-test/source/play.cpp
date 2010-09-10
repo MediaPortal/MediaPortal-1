@@ -35,7 +35,7 @@ DWORD WINAPI PlayThreadFunction(LPVOID pContext) {
         pArgs->nFrames,
         pArgs->nBytes,
         pArgs->pMMDevice,
-        pArgs->bDetailedInfo,
+        pArgs->pDetailedInfo,
         pArgs->pExclusive,
         pArgs->pEventDriven,
         &pArgs->formatOk
@@ -94,35 +94,38 @@ HRESULT Play(
         &pwfxCM
     );
 
-    char cSampleType = (pWfx->wFormatTag == WAVE_FORMAT_IEEE_FLOAT ||
+    if (pDetailedInfo)
+    {
+	    char cSampleType = (pWfx->wFormatTag == WAVE_FORMAT_IEEE_FLOAT ||
                         (pWfx->cbSize == 22 &&
                          (((WAVEFORMATEXTENSIBLE*)pWfx)->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)))? 'f' : 'i';
+      printf("%6d %2d%c %2d %8d %2d %5d %2d",
+      pWfx->nSamplesPerSec,
+      pWfx->wBitsPerSample,
+      cSampleType,
+      pWfx->nChannels,
+      pWfx->nAvgBytesPerSec,
+      pWfx->nBlockAlign,
+      pWfx->wFormatTag, 
+      pWfx->cbSize);
 
-    printf("%6d %2d%c %2d %8d %2d %5d %2d",
-    pWfx->nSamplesPerSec,
-    pWfx->wBitsPerSample,
-    cSampleType,
-    pWfx->nChannels,
-    pWfx->nAvgBytesPerSec,
-    pWfx->nBlockAlign,
-    pWfx->wFormatTag, 
-    pWfx->cbSize);
-
-    if(pWfx->cbSize == 22)
-    {
-      WAVEFORMATEXTENSIBLE* ex = (WAVEFORMATEXTENSIBLE*)pWfx;
-      printf(" %2d %4d", ex->Samples.wValidBitsPerSample, ex->dwChannelMask);
+      if(pWfx->cbSize == 22)
+      {
+        WAVEFORMATEXTENSIBLE* ex = (WAVEFORMATEXTENSIBLE*)pWfx;
+        printf(" %2d %4d", ex->Samples.wValidBitsPerSample, ex->dwChannelMask);
+      }
+      else
+        printf("        ");
     }
-    else
-      printf("        ");
-
 
     if (AUDCLNT_E_UNSUPPORTED_FORMAT == hr) {
-        printf(" - not supported\n");
+        if (pDetailedInfo)
+          printf(" - not supported\n");
         pAudioClient->Release();
         return hr;
     } else if (FAILED(hr)) {
-        printf(" - IAudioClient::IsFormatSupported:0x%08x.\n", hr);
+        if (pDetailedInfo)
+          printf(" - IAudioClient::IsFormatSupported:0x%08x.\n", hr);
         pAudioClient->Release();
         return hr;
     }
@@ -218,9 +221,15 @@ HRESULT Play(
         }
     } else if (FAILED(hr)) {
         if (hr == AUDCLNT_E_UNSUPPORTED_FORMAT)
-          printf(" - not supported\n");
+        {
+          if (pDetailedInfo)
+            printf(" - not supported\n");
+        }
         else
-          printf("   IAudioClient::Initialize:0x%08x\n", hr);
+        {
+          if (pDetailedInfo)
+            printf("   IAudioClient::Initialize:0x%08x\n", hr);
+        }
         pAudioClient->Release();
         return hr;
     }
@@ -356,6 +365,27 @@ HRESULT Play(
     }
 
     (*pFormatOk) = true;
+
+    if (!pDetailedInfo)
+    {
+      printf("%6d %2d %2d %8d %2d %5d %2d",
+        pWfx->nSamplesPerSec,
+        pWfx->wBitsPerSample,
+        pWfx->nChannels,
+        pWfx->nAvgBytesPerSec,
+        pWfx->nBlockAlign,
+        pWfx->wFormatTag, 
+        pWfx->cbSize);
+
+      if(pWfx->cbSize == 22)
+      {
+        WAVEFORMATEXTENSIBLE* ex = (WAVEFORMATEXTENSIBLE*)pWfx;
+        printf(" %2d %4d", ex->Samples.wValidBitsPerSample, ex->dwChannelMask);
+      }
+      else
+        printf("        ");
+    }
+
     printf(" - Format works ok\n", nFramesInFile);
 
     pAudioClient->Stop();
