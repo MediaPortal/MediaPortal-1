@@ -46,8 +46,8 @@ protected:
   virtual HRESULT WaitForSample(DWORD dwTimeout);
   virtual HRESULT GetNextSample(IMediaSample **pSample, DWORD dwTimeout);
 
-  __inline HANDLE &StopThreadEvent() { return m_hEvents[0]; };
-  __inline HANDLE &InputSamplesAvailableEvent() { return m_hEvents[1]; };
+  //__inline HANDLE &StopThreadEvent() { return m_hEvents[0]; };
+  //__inline HANDLE &InputSamplesAvailableEvent() { return m_hEvents[1]; };
 
 // Internal implementation
 protected:
@@ -56,9 +56,8 @@ protected:
 
 protected:
   HANDLE m_hThread;
-  HANDLE m_hEvents[2];
-  //HANDLE m_hStopThreadEvent;
-  //HANDLE m_hInputQueueHasSamplesEvent;
+  HANDLE m_hStopThreadEvent;
+  HANDLE m_hInputSamplesAvailableEvent;
   //HANDLE m_hInputQueueEmptyEvent;
 
   CCritSec m_InputQueueLock;

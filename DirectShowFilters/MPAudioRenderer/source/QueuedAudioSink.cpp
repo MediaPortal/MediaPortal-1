@@ -22,18 +22,18 @@
 CQueuedAudioSink::CQueuedAudioSink(void)
 : m_hThread(NULL)
 {
-  memset(m_hEvents, 0, sizeof(m_hEvents));
-  StopThreadEvent() = CreateEvent(0, FALSE, FALSE, 0);
-  InputSamplesAvailableEvent() = CreateEvent(0, FALSE, FALSE, 0);
+  //memset(m_hEvents, 0, sizeof(m_hEvents));
+  m_hStopThreadEvent = CreateEvent(0, TRUE, FALSE, 0);
+  m_hInputSamplesAvailableEvent = CreateEvent(0, TRUE, FALSE, 0);
   //m_hInputQueueEmptyEvent = CreateEvent(0, FALSE, FALSE, 0);
 }
 
 CQueuedAudioSink::~CQueuedAudioSink(void)
 {
-  if (StopThreadEvent())
-    CloseHandle(StopThreadEvent());
-  if (InputSamplesAvailableEvent())
-    CloseHandle(InputSamplesAvailableEvent());
+  if (m_hStopThreadEvent)
+    CloseHandle(m_hStopThreadEvent);
+  if (m_hInputSamplesAvailableEvent)
+    CloseHandle(m_hInputSamplesAvailableEvent);
   //if (m_hInputQueueEmptyEvent)
   //  CloseHandle(m_hInputQueueEmptyEvent);
 }
@@ -47,7 +47,7 @@ HRESULT CQueuedAudioSink::Start()
 
   if (!m_hThread)
   {
-    ResetEvent(StopThreadEvent());
+    ResetEvent(m_hStopThreadEvent);
     m_hThread = CreateThread(0, 0, CQueuedAudioSink::ThreadEntryPoint, (LPVOID)this, 0, NULL);
   }
 
@@ -59,7 +59,7 @@ HRESULT CQueuedAudioSink::Start()
 
 HRESULT CQueuedAudioSink::BeginStop()
 {
-  SetEvent(StopThreadEvent());
+  SetEvent(m_hStopThreadEvent);
   return CBaseAudioSink::BeginStop();
 }
 
@@ -70,7 +70,7 @@ HRESULT CQueuedAudioSink::EndStop()
     WaitForSingleObject(m_hThread, INFINITE); //perhaps a reasonable timeout is needed
     CloseHandle(m_hThread);
     m_hThread = NULL;
-    ResetEvent(StopThreadEvent());
+    ResetEvent(m_hStopThreadEvent);
   }
 
   return CBaseAudioSink::EndStop();
@@ -81,7 +81,7 @@ HRESULT CQueuedAudioSink::PutSample(IMediaSample *pSample)
 {
   CAutoLock queueLock(&m_InputQueueLock);
   m_InputQueue.push(pSample);
-  SetEvent(InputSamplesAvailableEvent());
+  SetEvent(m_hInputSamplesAvailableEvent);
   //if(m_hInputQueueEmptyEvent)
   //  ResetEvent(m_hInputQueueEmptyEvent);
 
@@ -103,7 +103,7 @@ HRESULT CQueuedAudioSink::BeginFlush()
 {
   {
     CAutoLock queueLock(&m_InputQueueLock);
-    ResetEvent(InputSamplesAvailableEvent());
+    ResetEvent(m_hInputSamplesAvailableEvent);
     while (!m_InputQueue.empty())
       m_InputQueue.pop();
     //SetEvent(m_hInputQueueEmptyEvent);
@@ -120,17 +120,27 @@ HRESULT CQueuedAudioSink::BeginFlush()
 // Queue services
 HRESULT CQueuedAudioSink::WaitForSample(DWORD dwTimeout)
 {
-  switch(WaitForMultipleObjects(sizeof(m_hEvents)/sizeof(HANDLE), m_hEvents, FALSE, dwTimeout))
+  HANDLE hEvents[2] = {m_hStopThreadEvent, m_hInputSamplesAvailableEvent};
+
+  DWORD result = WaitForMultipleObjects(sizeof(hEvents)/sizeof(HANDLE), hEvents, FALSE, dwTimeout);
+  switch(result)
   {
   case WAIT_OBJECT_0: // Stop Event
     return MPAR_S_THREAD_STOPPING;
   case WAIT_OBJECT_0 + 1:
     return S_OK;
+  case WAIT_FAILED:
+    return HRESULT_FROM_WIN32(GetLastError());
   default:
     return S_FALSE;
   }
 }
 
+// Get the next sample in the queue. If there is none, wait for at most
+// dwTimeout milliseconds for one to become available before failing.
+// Returns: S_FALSE if no sample available
+// Threading: only one thread should be calling GetNextSample()
+// but it can be different from the one calling PutSample()
 HRESULT CQueuedAudioSink::GetNextSample(IMediaSample **pSample, DWORD dwTimeout)
 {
   HRESULT hr = WaitForSample(dwTimeout);
@@ -145,7 +155,7 @@ HRESULT CQueuedAudioSink::GetNextSample(IMediaSample **pSample, DWORD dwTimeout)
     (*pSample)->AddRef();
   m_InputQueue.pop();
   if (m_InputQueue.empty())
-    ResetEvent(InputSamplesAvailableEvent());
+    ResetEvent(m_hInputSamplesAvailableEvent);
   //if (m_InputQueue.empty())
   //  SetEvent(m_hInputQueueEmptyEvent);
   return S_OK;

@@ -55,10 +55,8 @@ public:
 
 protected:
   // Initialization
-  HRESULT InitAllocator();
+  HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *properties);
 
-  // Helpers
-  static bool FormatsEqual(const WAVEFORMATEX *pwfx1, const WAVEFORMATEX *pwfx2);
   WAVEFORMATEX *CreateAC3Format(int nSamplesPerSec, int nAC3BitRate);
 
   // AC3 Encoding
@@ -71,23 +69,15 @@ protected:
   HRESULT ProcessAC3Data(const BYTE *pData, long cbData, long *pcbDataProcessed);
   //__inline HRESULT ProcessData(const BYTE *pData, long cbData, long *pcbDataProcessed)
   //  { return m_bPassThrough? ProcessPassThroughData(pData, cbData, pcbDataProcessed) : ProcessAC3Data(pData, cbData, pcbDataProcessed); };
-  HRESULT RequestNextOutBuffer();
-  HRESULT OutputNextSample();
   HRESULT ProcessAC3Frame(const BYTE *pData);
 
 protected:
   bool m_bPassThrough;
-  WAVEFORMATEX *m_pInputFormat;
-  WAVEFORMATEX *m_pOutputFormat;
-  bool m_bOutFormatChanged;
-
   BYTE *m_pRemainingInput; // buffer for data left over from previous PutSample() call
   int m_cbRemainingInput; // valid byte count in above buffer
   int m_nFrameSize; // uncompressed size in bytes, based on input format
   REFERENCE_TIME m_rtInSampleTime; 
 
-  CComQIPtr<IMemAllocator> m_pMemAllocator;
-  CComPtr<IMediaSample> m_pNextOutSample;
   int m_nBitRate;
   AC3CodecContext* m_pEncoder;
   int m_nMaxCompressedAC3FrameSize; // based on output format; should always be even

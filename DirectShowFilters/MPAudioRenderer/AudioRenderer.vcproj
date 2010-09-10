@@ -933,6 +933,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\BitDepthAdapter.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\DirectSoundRenderer.cpp"
 				>
 			</File>
@@ -1003,6 +1007,10 @@
 			</File>
 			<File
 				RelativePath=".\source\BaseAudioSink.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\BitDepthAdapter.h"
 				>
 			</File>
 			<File

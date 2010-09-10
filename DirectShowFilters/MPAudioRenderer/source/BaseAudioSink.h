@@ -18,6 +18,9 @@
 
 #include "IAudioSink.h"
 
+#define DEFAULT_OUT_BUFFER_COUNT  (4)
+#define DEFAULT_OUT_BUFFER_SIZE   (0x1000)
+
 typedef class CBaseAudioSink CNullAudioFilter;
 
 class CBaseAudioSink :
@@ -53,6 +56,31 @@ public:
   virtual HRESULT EndFlush();
 
 protected:
+  // Helpers
+  static bool FormatsEqual(const WAVEFORMATEX *pwfx1, const WAVEFORMATEX *pwfx2);
+
+  // Initialization
+  HRESULT InitAllocator();
+  virtual HRESULT OnInitAllocatorProperties(ALLOCATOR_PROPERTIES *properties);
+
+  HRESULT SetInputFormat(const WAVEFORMATEX *pwfx);
+  HRESULT SetInputFormat(WAVEFORMATEX *pwfx, bool bAssumeOwnerShip = FALSE);
+  HRESULT SetOutputFormat(const WAVEFORMATEX *pwfx);
+  HRESULT SetOutputFormat(WAVEFORMATEX *pwfx, bool bAssumeOwnerShip = FALSE);
+
+  // Output handling
+  HRESULT RequestNextOutBuffer(REFERENCE_TIME rtStart);
+  HRESULT OutputNextSample();
+
+protected:
   IAudioSink *m_pNextSink;
+  WAVEFORMATEX *m_pInputFormat;
+  WAVEFORMATEX *m_pOutputFormat;
+  bool m_bOutFormatChanged;
+
+  // Output buffer support
+  CComQIPtr<IMemAllocator> m_pMemAllocator;
+  CComPtr<IMediaSample> m_pNextOutSample;
+
 
 };
