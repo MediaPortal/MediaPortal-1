@@ -1456,7 +1456,7 @@ namespace TvPlugin
         tbOnTvNext.Clear();
       }
 
-      SetRecorderStatus();
+      SetRecorderStatus(true);
 
       // Channel icon
       if (imgTvChannelLogo != null)
@@ -1586,10 +1586,15 @@ namespace TvPlugin
 
     private void SetRecorderStatus()
     {
+      SetRecorderStatus(false);
+    }
+
+    private void SetRecorderStatus(bool forced)
+    {
       if (imgRecIcon != null)
       {
         TimeSpan ts = DateTime.Now - _RecIconLastCheck;
-        if (ts.TotalSeconds > 15)
+        if (ts.TotalSeconds > 15 || forced)
         {
           bool isRecording = false;
           VirtualCard card;
