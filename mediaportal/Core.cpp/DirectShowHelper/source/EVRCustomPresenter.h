@@ -400,8 +400,6 @@ protected:
   double        m_dMaxBias;
   double        m_dMinBias;
   bool          m_bBiasAdjustmentDone;
-  bool          m_bInitialBiasAdjustmentDone;
-  bool          m_bDetectBias;
   double        m_dPhaseDeviations[NUM_PHASE_DEVIATIONS];
   int           m_nNextPhDev;
   double        m_sumPhaseDiff;

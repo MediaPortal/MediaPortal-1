@@ -68,8 +68,6 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   m_dMaxBias(1.1),
   m_dMinBias(0.9),
   m_bBiasAdjustmentDone(false),
-  m_bInitialBiasAdjustmentDone(false),
-  m_bDetectBias(false),
   m_dVariableFreq(1.0),
   m_dPreviousVariableFreq(1.0),
   m_iClockAdjustmentsDone(0),
@@ -85,7 +83,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     HRESULT hr;
     LogRotate();
     Log("----- Owlsroost Version ------ instance 0x%x", this);
-    Log("---------- v0.0.40 ----------- instance 0x%x", this);
+    Log("---------- v0.0.41 ----------- instance 0x%x", this);
     Log("--- audio renderer testing --- instance 0x%x", this);
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
@@ -968,19 +966,7 @@ HRESULT MPEVRCustomPresenter::RenegotiateMediaOutputType()
 
     if (SUCCEEDED(hr))
     {
-      if (!m_bInitialBiasAdjustmentDone)
-      {
-        Log("Detect bias enabled - first sample type negotiation");
-        SetupAudioRenderer();
-        m_bInitialBiasAdjustmentDone = true;
-      }
-      else if(m_bDetectBias)
-      {
-        Log("Detect bias enabled - sample type changed");
-        SetupAudioRenderer();
-        m_bDetectBias = false;
-      }
-
+      SetupAudioRenderer();
       fFoundMediaType = TRUE;
     }
   }
@@ -1882,7 +1868,6 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::ProcessMessage(MFVP_MESSAGE_TYPE
     case MFVP_MESSAGE_BEGINSTREAMING:
       // The EVR switched from stopped to paused. The presenter should allocate resources.
       Log("ProcessMessage MFVP_MESSAGE_BEGINSTREAMING");
-      m_bDetectBias = TRUE;
       m_bEndStreaming = FALSE;
       m_bInputAvailable = FALSE;
       m_bFirstInputNotify = FALSE;
@@ -1949,7 +1934,6 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockStart(MFTIME hnsSystemTim
   WakeThread(m_hWorker, &m_workerParams);
   NotifyWorker(true);
   NotifyScheduler(true);
-  m_bDetectBias = true;
   GetAVSyncClockInterface();
   return S_OK;
 }
@@ -3294,9 +3278,20 @@ void MPEVRCustomPresenter::SetupAudioRenderer()
 
   double cycleDiff = GetCycleDifference();
 
-  Log("SetupAudioRenderer: cycleDiff: %1.10f", cycleDiff);
+  double calculatedBias = 1.0 - cycleDiff;
 
-  m_dBias = 1.0 - cycleDiff;
+  if (m_dMaxBias < calculatedBias || m_dMinBias > calculatedBias)
+    return;
+
+  // try to filter out the incorrect frame rates that MS Video decoder can produce 
+  // on big CPU / GPU load
+  if (fabs(m_dBias - 1.0) < fabs(calculatedBias - 1.0) && 
+    m_bBiasAdjustmentDone && m_dBias != calculatedBias)
+    return;
+
+  m_dBias = calculatedBias;
+
+  Log("SetupAudioRenderer: cycleDiff: %1.10f", cycleDiff);
 
   if (m_pAVSyncClock)
   {
