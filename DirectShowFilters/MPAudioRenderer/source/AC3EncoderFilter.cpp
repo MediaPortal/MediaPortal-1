@@ -36,7 +36,7 @@ CAC3EncoderFilter::CAC3EncoderFilter(void)
 , m_pRemainingInput(NULL)
 , m_nFrameSize(AC3_FRAME_LENGTH * AC3_MAX_CHANNELS * 2)
 , m_pEncoder(NULL)
-, m_nBitRate(640000)
+, m_nBitRate(448000)
 , m_rtInSampleTime(0)
 , m_nMaxCompressedAC3FrameSize(AC3_MAX_COMP_FRAME_SIZE)
 {
