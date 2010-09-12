@@ -891,7 +891,7 @@ HRESULT WASAPIRenderer::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudi
         m_pRenderer->Settings()->m_hnsPeriod = defaultPeriod;
       else
         m_pRenderer->Settings()->m_hnsPeriod = minimumPeriod;
-      Log("WASAPIRenderer::InitAudioClient using device period from driver %d ms", m_pRenderer->Settings()->m_hnsPeriod / 10000);
+      Log("WASAPIRenderer::InitAudioClient using device period from driver %I64u ms", m_pRenderer->Settings()->m_hnsPeriod / 10000);
     }
     else
     {
@@ -1034,7 +1034,6 @@ HRESULT WASAPIRenderer::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudi
     Log("WASAPIRenderer::InitAudioClient service initialization success");
   }
 
-
   if (m_pRenderer->Settings()->m_WASAPIUseEventMode)
   {
     hr = m_pAudioClient->SetEventHandle(m_hDataEvent);
@@ -1044,6 +1043,12 @@ HRESULT WASAPIRenderer::InitAudioClient(const WAVEFORMATEX *pWaveFormatEx, IAudi
       return hr;
     }
   }
+
+  REFERENCE_TIME latency(0);
+  m_pAudioClient->GetStreamLatency(&latency);
+  
+  Log("WASAPIRenderer::InitAudioClient device reported latency %I64u ms - buffer based latency %I64u ms", 
+    latency / 10000, Latency() / 10000);
 
   return hr;
 }
