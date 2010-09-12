@@ -221,6 +221,23 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
     if (FAILED(hr))
       return hr;
   }
+  else
+  {
+    if (pwfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
+    {
+      WAVEFORMATEXTENSIBLE* tmp = (WAVEFORMATEXTENSIBLE*)pwfx;
+      if (tmp->SubFormat != KSDATAFORMAT_SUBTYPE_PCM && 
+          tmp->SubFormat != KSDATAFORMAT_SUBTYPE_IEEE_FLOAT)
+      {
+          return VFW_E_TYPE_NOT_ACCEPTED;
+      }
+    }
+    else if (pwfx->wFormatTag != WAVE_FORMAT_PCM && 
+             pwfx->wFormatTag != WAVE_FORMAT_IEEE_FLOAT)
+    {
+      return VFW_E_TYPE_NOT_ACCEPTED;
+    }
+  }
 
   if (m_pRenderDevice)
   {
