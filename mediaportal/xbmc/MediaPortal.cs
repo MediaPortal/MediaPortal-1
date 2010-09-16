@@ -94,6 +94,7 @@ public class MediaPortalApp : D3DApp, IRender
   private int timeScreenSaver = 300;
   private bool restoreTopMost = false;
   private bool _startWithBasicHome = false;
+  private bool _useOnlyOneHome = false;
   private bool _suspended = false;
   private bool _runAutomaticResume = false;
   private bool ignoreContextMenuAction = false;
@@ -1346,7 +1347,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
         }
       }
-      if (_startWithBasicHome)
+      if (_startWithBasicHome && File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
       {
         Log.Info("Main: OnResume - Switch to basic home screen");
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
@@ -1735,6 +1736,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       _useLongDateFormat = xmlreader.GetValueAsBool("home", "LongTimeFormat", false);
       _startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
+      _useOnlyOneHome = xmlreader.GetValueAsBool("general", "useonlyonehome", false);
       bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
       if (autosize && !GUIGraphicsContext.Fullscreen)
       {
@@ -2383,30 +2385,32 @@ public class MediaPortalApp : D3DApp, IRender
           //switch between several home windows
         case Action.ActionType.ACTION_SWITCH_HOME:
           GUIMessage homeMsg;
-          if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_HOME)
+          GUIWindow.Window newHome = _startWithBasicHome
+                                       ? GUIWindow.Window.WINDOW_SECOND_HOME
+                                       : GUIWindow.Window.WINDOW_HOME;
+          // do we prefer to use only one home screen?
+          if (_useOnlyOneHome) 
           {
-            homeMsg =
-              new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
-                             (int)GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
+            // skip if we are already in there
+            if (GUIWindowManager.ActiveWindow == (int)newHome)
+            {
+              return;
+            }
           }
-          else if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME)
-          {
-            homeMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
-                                     (int)GUIWindow.Window.WINDOW_HOME, 0, null);
-          }
+          // we like both 
           else
           {
-            if (_startWithBasicHome)
+            // if already in one home switch to the other
+            if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_HOME)
             {
-              homeMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
-                                       (int)GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
+              newHome = GUIWindow.Window.WINDOW_SECOND_HOME;
             }
-            else
+            else if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME)
             {
-              homeMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0,
-                                       (int)GUIWindow.Window.WINDOW_HOME, 0, null);
+              newHome = GUIWindow.Window.WINDOW_HOME;
             }
           }
+          homeMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)newHome, 0, null);
           GUIWindowManager.SendThreadMessage(homeMsg);
           return;
 

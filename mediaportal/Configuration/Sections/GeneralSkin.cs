@@ -35,6 +35,21 @@ namespace MediaPortal.Configuration.Sections
 {
   public class GeneralSkin : SectionSettings
   {
+    // IMPORTANT: the enumeration depends on the correct order of items in homeComboBox.
+    // The order is chosen to allow compositing SelectedIndex from bitmapped flags.
+    [Flags] private enum HomeUsageEnum
+    {
+      PreferClassic = 0,
+      PreferBasic = 1,
+      UseBoth = 0,
+      UseOnlyOne = 2,
+
+      //UseBothPreferClassic = UseBoth | PreferClassic,
+      //UseBothPreferBasic = UseBoth | PreferBasic,
+      //UseOnlyClassic = UseOnlyOne | PreferClassic,
+      //UseOnlyBasic = UseOnlyOne | PreferBasic,
+    }
+
     private string SkinDirectory;
     private string LanguageDirectory;
 
@@ -52,13 +67,14 @@ namespace MediaPortal.Configuration.Sections
     private PictureBox previewPictureBox;
     private LinkLabel linkLabel1;
     private MPGroupBox mpGroupBoxEngineSettings;
-    private CheckBox checkBoxBasicHome;
     private CheckBox checkBoxAutosizeToSkin;
     private CheckBox checkBoxEnableSounds;
     private NumericUpDown HorizontalScrollSpeedUpDown;
     private Label label1;
     private NumericUpDown VerticalScrollSpeedUpDown;
     private Label label3;
+    private MPComboBox homeComboBox;
+    private MPLabel mpLabel1;
     private new IContainer components = null;
 
     public GeneralSkin()
@@ -208,8 +224,11 @@ namespace MediaPortal.Configuration.Sections
         checkBoxUsePrefix.Checked = xmlreader.GetValueAsBool("general", "myprefix", false);
         checkBoxlangRTL.Checked = xmlreader.GetValueAsBool("general", "rtllang", false);
         languageComboBox.Text = xmlreader.GetValueAsString("skin", "language", languageComboBox.Text);
-        checkBoxBasicHome.Checked = xmlreader.GetValueAsBool("general", "startbasichome", false);
-        checkBoxBasicHome.Checked = xmlreader.GetValueAsBool("general", "startbasichome", false);
+        bool startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
+        bool useOnlyOneHome = xmlreader.GetValueAsBool("general", "useonlyonehome", false);
+        //homeComboBox.SelectedIndex = useOnlyOneHome ? (startWithBasicHome ? 3 : 2) : (startWithBasicHome ? 1 : 0);
+        homeComboBox.SelectedIndex = (int)((useOnlyOneHome ? HomeUsageEnum.UseOnlyOne : HomeUsageEnum.UseBoth) |
+                                           (startWithBasicHome ? HomeUsageEnum.PreferBasic : HomeUsageEnum.PreferClassic));
         checkBoxAutosizeToSkin.Checked = xmlreader.GetValueAsBool("general", "autosize", false);
         checkBoxEnableSounds.Checked = xmlreader.GetValueAsBool("general", "enableguisounds", true);
         HorizontalScrollSpeedUpDown.Value = xmlreader.GetValueAsInt("general", "ScrollSpeedRight", 1);
@@ -278,7 +297,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("general", "rtllang", checkBoxlangRTL.Checked);
         xmlwriter.SetValueAsBool("general", "myprefix", checkBoxUsePrefix.Checked);
         xmlwriter.SetValue("general", "skinobsoletecount", 0);
-        xmlwriter.SetValueAsBool("general", "startbasichome", checkBoxBasicHome.Checked);
+        xmlwriter.SetValueAsBool("general", "useonlyonehome", (homeComboBox.SelectedIndex & (int)HomeUsageEnum.UseOnlyOne) != 0);
+        xmlwriter.SetValueAsBool("general", "startbasichome", (homeComboBox.SelectedIndex & (int)HomeUsageEnum.PreferBasic) != 0);
         xmlwriter.SetValueAsBool("general", "autosize", checkBoxAutosizeToSkin.Checked);
         xmlwriter.SetValueAsBool("general", "enableguisounds", checkBoxEnableSounds.Checked);
         xmlwriter.SetValue("general", "ScrollSpeedRight", HorizontalScrollSpeedUpDown.Value);
@@ -313,7 +333,6 @@ namespace MediaPortal.Configuration.Sections
       this.HorizontalScrollSpeedUpDown = new System.Windows.Forms.NumericUpDown();
       this.checkBoxEnableSounds = new System.Windows.Forms.CheckBox();
       this.checkBoxAutosizeToSkin = new System.Windows.Forms.CheckBox();
-      this.checkBoxBasicHome = new System.Windows.Forms.CheckBox();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxUsePrefix = new System.Windows.Forms.CheckBox();
       this.checkBoxlangRTL = new System.Windows.Forms.CheckBox();
@@ -326,6 +345,8 @@ namespace MediaPortal.Configuration.Sections
       this.listViewAvailableSkins = new System.Windows.Forms.ListView();
       this.colName = new System.Windows.Forms.ColumnHeader();
       this.colVersion = new System.Windows.Forms.ColumnHeader();
+      this.homeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxAppearance.SuspendLayout();
       this.mpGroupBoxEngineSettings.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.VerticalScrollSpeedUpDown)).BeginInit();
@@ -356,13 +377,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBoxEngineSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBoxEngineSettings.Controls.Add(this.homeComboBox);
+      this.mpGroupBoxEngineSettings.Controls.Add(this.mpLabel1);
       this.mpGroupBoxEngineSettings.Controls.Add(this.label3);
       this.mpGroupBoxEngineSettings.Controls.Add(this.label1);
       this.mpGroupBoxEngineSettings.Controls.Add(this.VerticalScrollSpeedUpDown);
       this.mpGroupBoxEngineSettings.Controls.Add(this.HorizontalScrollSpeedUpDown);
       this.mpGroupBoxEngineSettings.Controls.Add(this.checkBoxEnableSounds);
       this.mpGroupBoxEngineSettings.Controls.Add(this.checkBoxAutosizeToSkin);
-      this.mpGroupBoxEngineSettings.Controls.Add(this.checkBoxBasicHome);
       this.mpGroupBoxEngineSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBoxEngineSettings.Location = new System.Drawing.Point(6, 191);
       this.mpGroupBoxEngineSettings.Name = "mpGroupBoxEngineSettings";
@@ -373,8 +395,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label3
       // 
+      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(295, 44);
+      this.label3.Location = new System.Drawing.Point(306, 66);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(103, 13);
       this.label3.TabIndex = 9;
@@ -382,8 +405,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
+      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(283, 20);
+      this.label1.Location = new System.Drawing.Point(294, 43);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(115, 13);
       this.label1.TabIndex = 8;
@@ -392,7 +416,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // VerticalScrollSpeedUpDown
       // 
-      this.VerticalScrollSpeedUpDown.Location = new System.Drawing.Point(404, 42);
+      this.VerticalScrollSpeedUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.VerticalScrollSpeedUpDown.Location = new System.Drawing.Point(415, 64);
       this.VerticalScrollSpeedUpDown.Maximum = new decimal(new int[] {
             5,
             0,
@@ -414,7 +439,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // HorizontalScrollSpeedUpDown
       // 
-      this.HorizontalScrollSpeedUpDown.Location = new System.Drawing.Point(404, 19);
+      this.HorizontalScrollSpeedUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.HorizontalScrollSpeedUpDown.Location = new System.Drawing.Point(415, 41);
       this.HorizontalScrollSpeedUpDown.Maximum = new decimal(new int[] {
             5,
             0,
@@ -456,16 +482,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxAutosizeToSkin.TabIndex = 4;
       this.checkBoxAutosizeToSkin.Text = "Autosize window mode to skin dimensions";
       this.checkBoxAutosizeToSkin.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxBasicHome
-      // 
-      this.checkBoxBasicHome.AutoSize = true;
-      this.checkBoxBasicHome.Location = new System.Drawing.Point(19, 19);
-      this.checkBoxBasicHome.Name = "checkBoxBasicHome";
-      this.checkBoxBasicHome.Size = new System.Drawing.Size(164, 17);
-      this.checkBoxBasicHome.TabIndex = 3;
-      this.checkBoxBasicHome.Text = "Start with BasicHome Screen";
-      this.checkBoxBasicHome.UseVisualStyleBackColor = true;
       // 
       // mpGroupBox1
       // 
@@ -602,6 +618,30 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.colVersion.Text = "Version";
       this.colVersion.Width = 56;
+      // 
+      // homeComboBox
+      // 
+      this.homeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.homeComboBox.BorderColor = System.Drawing.Color.Empty;
+      this.homeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.homeComboBox.Items.AddRange(new object[] {
+            "Classic and Basic, prefer Classic",
+            "Classic and Basic, prefer Basic",
+            "only Classic Home",
+            "only Basic Home"});
+      this.homeComboBox.Location = new System.Drawing.Point(118, 17);
+      this.homeComboBox.Name = "homeComboBox";
+      this.homeComboBox.Size = new System.Drawing.Size(325, 21);
+      this.homeComboBox.TabIndex = 11;
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Location = new System.Drawing.Point(16, 20);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(96, 16);
+      this.mpLabel1.TabIndex = 10;
+      this.mpLabel1.Text = "Home Screen:";
       // 
       // GeneralSkin
       // 
