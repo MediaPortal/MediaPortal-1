@@ -791,10 +791,33 @@ HRESULT CMultiSoundTouch::GetNextSample(IMediaSample** pSample, bool pReleaseOnl
 
 HRESULT CMultiSoundTouch::QueueSample(IMediaSample* pSample)
 {
-  CAutoLock cRendererLock(&m_sampleOutQueueLock);
+  if (pSample && m_pMemAllocator)
+  {
+    CAutoLock allocatorLock(&m_allocatorLock);
+    
+    IMediaSample* outSample = NULL;
+    m_pMemAllocator->GetBuffer(&outSample, NULL, NULL, 0);
 
-  pSample->AddRef();
-  m_sampleOutQueue.push_back(pSample);
+    if (outSample)
+    {
+      BYTE *pMediaBufferOut = NULL;
+      BYTE *pMediaBufferIn = NULL;
+      outSample->GetPointer(&pMediaBufferOut);
+      pSample->GetPointer(&pMediaBufferIn);
+
+      if (pMediaBufferOut && pMediaBufferIn)
+      {
+        long sampleLength = pSample->GetActualDataLength();
+        outSample->SetActualDataLength(sampleLength);
+        memcpy(pMediaBufferOut, pMediaBufferIn, sampleLength);
+
+        { // lock that the playback thread wont access the queue at the same time
+          CAutoLock cOutputQueueLock(&m_sampleOutQueueLock);
+          m_sampleOutQueue.push_back(outSample);
+        }
+      }
+    }
+  }
 
   return S_OK;
 }
