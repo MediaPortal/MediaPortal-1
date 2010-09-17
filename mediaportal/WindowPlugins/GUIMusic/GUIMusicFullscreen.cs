@@ -141,6 +141,21 @@ namespace MediaPortal.GUI.Video
           }
           break;
 
+        case Action.ActionType.ACTION_SMALL_STEP_FORWARD:
+          {
+            if (g_Player.CanSeek)
+            {
+              // seek forward 5 sec
+              double dPos = g_Player.Duration - g_Player.CurrentPosition;
+
+              if (dPos > 5)
+              {
+                g_Player.SeekAbsolute(g_Player.CurrentPosition + 5.0d);
+              }
+            }
+          }
+          break;
+
         case Action.ActionType.ACTION_PLAY:
         case Action.ActionType.ACTION_MUSIC_PLAY:
           {

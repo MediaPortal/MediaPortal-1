@@ -713,6 +713,7 @@ namespace MediaPortal.Configuration.Sections
                                      , "OSD_SHOW_VALUE_PLUS"
                                      , "OSD_SHOW_VALUE_MIN"
                                      , "SMALL_STEP_BACK"
+                                     , "SMALL_STEP_FORWARD"
                                      , "MUSIC_FORWARD"
                                      , "MUSIC_REWIND"
                                      , "MUSIC_PLAY"
@@ -823,6 +824,7 @@ namespace MediaPortal.Configuration.Sections
                             , Action.ActionType.ACTION_OSD_SHOW_VALUE_PLUS
                             , Action.ActionType.ACTION_OSD_SHOW_VALUE_MIN
                             , Action.ActionType.ACTION_SMALL_STEP_BACK
+                            , Action.ActionType.ACTION_SMALL_STEP_FORWARD
                             , Action.ActionType.ACTION_MUSIC_FORWARD
                             , Action.ActionType.ACTION_MUSIC_REWIND
                             , Action.ActionType.ACTION_MUSIC_PLAY
