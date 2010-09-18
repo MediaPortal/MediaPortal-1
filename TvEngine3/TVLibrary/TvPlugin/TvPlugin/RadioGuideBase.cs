@@ -113,7 +113,7 @@ namespace TvPlugin
     private DateTime _keyPressedTimer = DateTime.Now;
     private string _lineInput = String.Empty;
     private bool _useNewRecordingButtonColor = false;
-    //static bool _workerThreadRunning = false;
+    private bool _recalculateProgramOffset = true;
 
     #endregion
 
@@ -265,6 +265,7 @@ namespace TvPlugin
                     UpdateCurrentProgram();
                     UpdateHorizontalScrollbar();
                     UpdateVerticalScrollbar();
+                    updateSingleChannelNumber();
                     return;
                   }
                 }
@@ -293,6 +294,7 @@ namespace TvPlugin
                           SetFocus();
                           UpdateHorizontalScrollbar();
                           UpdateVerticalScrollbar();
+                          updateSingleChannelNumber();
                           return;
                         }
                         return;
@@ -339,10 +341,12 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_PAGE_UP:
           OnPageUp();
+          updateSingleChannelNumber();
           break;
 
         case Action.ActionType.ACTION_PAGE_DOWN:
           OnPageDown();
+          updateSingleChannelNumber();
           break;
 
         case Action.ActionType.ACTION_MOVE_LEFT:
@@ -350,6 +354,7 @@ namespace TvPlugin
             if (_cursorX >= 0)
             {
               OnLeft();
+              updateSingleChannelNumber();
               UpdateHorizontalScrollbar();
               return;
             }
@@ -360,6 +365,7 @@ namespace TvPlugin
             if (_cursorX >= 0)
             {
               OnRight();
+              updateSingleChannelNumber();
               UpdateHorizontalScrollbar();
               return;
             }
@@ -370,6 +376,7 @@ namespace TvPlugin
             if (_cursorX >= 0)
             {
               OnUp(true);
+              updateSingleChannelNumber();
               UpdateVerticalScrollbar();
               return;
             }
@@ -380,6 +387,7 @@ namespace TvPlugin
             if (_cursorX >= 0)
             {
               OnDown(true);
+              updateSingleChannelNumber();
               UpdateVerticalScrollbar();
             }
             else
@@ -642,6 +650,7 @@ namespace TvPlugin
               _viewingTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, _viewingTime.Hour,
                                           _viewingTime.Minute, 0, 0);
               _viewingTime = _viewingTime.AddDays(iDay);
+              _recalculateProgramOffset = true;
               Update(false);
               SetFocus();
               return true;
@@ -1128,24 +1137,6 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#Radio.Guide.Genre", _currentProgram.Genre);
         GUIPropertyManager.SetProperty("#Radio.Guide.Duration", GetDuration(_currentProgram));
         GUIPropertyManager.SetProperty("#Radio.Guide.TimeFromNow", GetStartTimeFromNow(_currentProgram));
-        ///@
-        /*
-        if (_currentProgram.Episode == "-") GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName", String.Empty);
-        else GUIPropertyManager.SetProperty("#TV.Guide.EpisodeName", _currentProgram.Episode);
-        if (_currentProgram.SeriesNum == "-") GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber", String.Empty);
-        else GUIPropertyManager.SetProperty("#TV.Guide.SeriesNumber", _currentProgram.SeriesNum);
-        if (_currentProgram.EpisodeNum == "-") GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber", String.Empty);
-        else GUIPropertyManager.SetProperty("#TV.Guide.EpisodeNumber", _currentProgram.EpisodeNum);
-        if (_currentProgram.EpisodePart == "-") GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart", String.Empty);
-        else GUIPropertyManager.SetProperty("#TV.Guide.EpisodePart", _currentProgram.EpisodePart);
-        if (_currentProgram.Date == "-") GUIPropertyManager.SetProperty("#TV.Guide.Date", String.Empty);
-        else GUIPropertyManager.SetProperty("#TV.Guide.Date", _currentProgram.Date);
-        if (_currentProgram.StarRating == "-") GUIPropertyManager.SetProperty("#TV.Guide.StarRating", String.Empty);
-        else GUIPropertyManager.SetProperty("#TV.Guide.StarRating", _currentProgram.StarRating);
-        if (_currentProgram.Classification == "-") GUIPropertyManager.SetProperty("#TV.Guide.Classification", String.Empty);
-        else GUIPropertyManager.SetProperty("#TV.Guide.Classification", _currentProgram.Classification);
-        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeDetail", _currentProgram.EpisodeDetails);
-         */
         _currentStartTime = Utils.datetolong(_currentProgram.StartTime);
         _currentEndTime = Utils.datetolong(_currentProgram.EndTime);
         _currentTitle = _currentProgram.Title;
@@ -1153,9 +1144,6 @@ namespace TvPlugin
         _currentChannel = strChannel;
 
         bool bRecording = _currentProgram.IsRecording || _currentProgram.IsRecordingOncePending;
-        //bool bSeries = false;
-        //bool bConflict = false;
-        
         if (bRecording)
         {
           GUIImage img = (GUIImage)GetControl((int)Controls.IMG_REC_PIN);
@@ -1230,7 +1218,6 @@ namespace TvPlugin
       {
         channelLabel.Label = channel.DisplayName;
       }
-      bool _recalculateProgramOffset = true;
       if (_recalculateProgramOffset)
       {
         _recalculateProgramOffset = false;
@@ -1939,27 +1926,57 @@ namespace TvPlugin
       {
         UnFocus();
       }
-      if (!_singleChannelView && _cursorY == 0 && _cursorX == 0 && _channelOffset == 0)
+
+      if (!_singleChannelView && _cursorY == -1)
       {
         _cursorX = -1;
-        GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Focus = true;
+        _cursorY = 0;
+        //GetControl((int)Controls.TVGROUP_BUTTON).Focus = false;
+        GetControl((int)Controls.SPINCONTROL_DAY).Focus = true;
         return;
+      }
+      if (!_singleChannelView && _cursorY == 0 && _cursorX == 0)
+      {
+        // Only focus the control if it is visible.
+        if (GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Visible)
+        {
+          _cursorX = -1;
+          GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Focus = true;
+          return;
+        }
       }
       if (_singleChannelView)
       {
+        if (_cursorX == 0 && _programOffset == 0 && _cursorY == 0)
+        {
+          // Don't focus the control when it is not visible.
+          if (GetControl((int)Controls.SPINCONTROL_DAY).IsVisible)
+          {
+            _cursorX = -1;
+            GetControl((int)Controls.SPINCONTROL_DAY).Focus = true;
+          }
+          return;
+        }
         if (_cursorX > 0)
         {
           _cursorX--;
+          if (updateScreen)
+          {
+            Update(false);
+          }
         }
         else if (_programOffset > 0)
         {
           _programOffset--;
+          if (updateScreen)
+          {
+            Update(false);
+          }
         }
 
         if (updateScreen)
         {
           Update(false);
-
           SetFocus();
           UpdateCurrentProgram();
           SetProperties();
@@ -1974,6 +1991,17 @@ namespace TvPlugin
           if (_channelOffset > 0)
           {
             _channelOffset--;
+            if (updateScreen)
+            {
+              Update(false);
+            }
+          }
+          // If the time interval spin control is not visible then consider scrolling the guide top to bottom.
+          if (_channelOffset == 0 && _channelList.Count > _channelCount &&
+            !GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Visible)
+          {
+            // We're at the top of the first page of channels.  Position to last channel in guide.
+            _channelOffset = _channelList.Count - 1;
             if (updateScreen)
             {
               Update(false);
@@ -1995,8 +2023,11 @@ namespace TvPlugin
         }
         return;
       }
+
+      // not on tvguide button
       if (_cursorY > 0)
       {
+        // if cursor is on a program in guide, try to find the "best time matching" program in new channel
         SetBestMatchingProgram(updateScreen, false);
       }
     }
@@ -2401,6 +2432,7 @@ namespace TvPlugin
         _backupChannelOffset = _channelOffset;
 
         _programOffset = _cursorY = _cursorX = 0;
+        _recalculateProgramOffset = true;
       }
       else
       {
@@ -2529,6 +2561,7 @@ namespace TvPlugin
     private void OnNextDay()
     {
       _viewingTime = _viewingTime.AddDays(1.0);
+      _recalculateProgramOffset = true;
       Update(false);
       SetFocus();
     }
@@ -2536,6 +2569,7 @@ namespace TvPlugin
     private void OnPreviousDay()
     {
       _viewingTime = _viewingTime.AddDays(-1.0);
+      _recalculateProgramOffset = true;
       Update(false);
       SetFocus();
     }
@@ -3048,6 +3082,30 @@ namespace TvPlugin
         }
       }
       return timeFromNow;
+    }
+
+    private void updateSingleChannelNumber()
+    {
+      // update selected channel 
+      if (!_singleChannelView)
+      {
+        _singleChannelNumber = _cursorX + _channelOffset;
+        if (_singleChannelNumber < 0)
+        {
+          _singleChannelNumber = 0;
+        }
+        if (_singleChannelNumber >= _channelList.Count)
+        {
+          _singleChannelNumber -= _channelList.Count;
+        }
+        // instead of direct casting us "as"; else it fails for other controls!
+        GUIButton3PartControl img = GetControl(_cursorX + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
+        ;
+        if (null != img)
+        {
+          _currentChannel = img.Label1;
+        }
+      }
     }
   }
 }
