@@ -256,6 +256,7 @@ namespace MediaPortal.Dialogs
             //base.OnMessage(message);
             // TODO: Establishes a circular loop
             // OnPageDestroy(_parentWindowID);
+            OnPageDestroy(GetID);  // mantis 2996: Dialog windows do not animate when closed
 
             _running = false;
             _parentWindowID = 0;
