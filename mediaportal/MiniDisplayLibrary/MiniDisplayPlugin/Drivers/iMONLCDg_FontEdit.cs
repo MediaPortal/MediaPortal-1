@@ -1,24 +1,4 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
-
-// Copyright (C) 2005-2010 Team MediaPortal
-// http://www.team-mediaportal.com
-// 
-// MediaPortal is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 2 of the License, or
-// (at your option) any later version.
-// 
-// MediaPortal is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
-
-#endregion
-
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -34,8 +14,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
   public class iMONLCDg_FontEdit : MPConfigForm
   {
-    private static readonly byte[,] _FontBuffer = new byte[0x100,6];
+    private static readonly byte[,] _FontBuffer = new byte[0x100, 6];
     private readonly Bitmap[] IconGraphics = new Bitmap[0x100];
+    private bool[] CopyBuffer = new bool[6 * 8];
     private CheckBox C0_B0;
     private CheckBox C0_B1;
     private CheckBox C0_B2;
@@ -94,6 +75,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private Button cmdSaveEdit;
     private Button cmdSetAll;
     // private IContainer components;
+    private Button cmdPaste;
+    private Button cmdCopy;
     private int EditIndex = -1;
     private PictureBox Icon0;
     private PictureBox Icon1;
@@ -452,19 +435,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         var column7 = new DataColumn("CData5");
         o.Rows.Clear();
         o.Columns.Clear();
-        column.DataType = typeof (byte);
+        column.DataType = typeof(byte);
         o.Columns.Add(column);
-        column2.DataType = typeof (byte);
+        column2.DataType = typeof(byte);
         o.Columns.Add(column2);
-        column3.DataType = typeof (byte);
+        column3.DataType = typeof(byte);
         o.Columns.Add(column3);
-        column4.DataType = typeof (byte);
+        column4.DataType = typeof(byte);
         o.Columns.Add(column4);
-        column5.DataType = typeof (byte);
+        column5.DataType = typeof(byte);
         o.Columns.Add(column5);
-        column6.DataType = typeof (byte);
+        column6.DataType = typeof(byte);
         o.Columns.Add(column6);
-        column7.DataType = typeof (byte);
+        column7.DataType = typeof(byte);
         o.Columns.Add(column7);
         o.Clear();
         try
@@ -479,16 +462,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             o.Rows.Add(row);
           }
-          var serializer = new XmlSerializer(typeof (DataTable));
+          var serializer = new XmlSerializer(typeof(DataTable));
           using (TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml")))
           {
             serializer.Serialize(textWriter, o);
-            textWriter.Close();  
+            textWriter.Close();
           }
         }
         catch (Exception exception)
         {
-          Log.Debug("CAUGHT EXCEPTION: {0}", new object[] {exception});
+          Log.Debug("CAUGHT EXCEPTION: {0}", new object[] { exception });
         }
         ClearIconDisplay();
         EnableIconSelection(false);
@@ -534,6 +517,41 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
     }
 
+    private void cmdCopy_Click(object sender, EventArgs e)
+    {
+      for (int i = 0; i < 6; i++)
+      {
+        for (int j = 0; j < 8; j++)
+        {
+          switch (GetEditPixel(i, j))
+          {
+            case CheckState.Unchecked:
+              CopyBuffer[i + j * 6] = false;
+              break;
+
+            case CheckState.Checked:
+            case CheckState.Indeterminate:
+              CopyBuffer[i + j * 6] = true;
+              break;
+          }
+        }
+      }
+      cmdPaste.Enabled = true;
+    }
+
+    private void cmdPaste_Click(object sender, EventArgs e)
+    {
+      for (int i = 0; i < 6; i++)
+      {
+        for (int j = 0; j < 8; j++)
+        {
+          bool state = CopyBuffer[i + j * 6];
+          SetEditPixel(i, j, state);
+        }
+      }
+    }
+
+
     public void CopyBufferToGraphics()
     {
       for (int i = 0; i < NumChars; i++)
@@ -566,7 +584,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          Log.Debug("Could not find control \"{0}\"", new object[] {key});
+          Log.Debug("Could not find control \"{0}\"", new object[] { key });
         }
       }
     }
@@ -593,6 +611,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       cmdSetAll.Enabled = Enable;
       cmdSaveEdit.Enabled = Enable;
       cmdCancelEdit.Enabled = Enable;
+      cmdCopy.Enabled = Enable;
+      if (!Enable)
+      {
+        cmdPaste.Enabled = Enable;
+      }
     }
 
     private void EnableIconSelection(bool Enable)
@@ -635,7 +658,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       catch (Exception exception)
       {
-        Log.Debug("CAUGHT EXCEPTION: {0}", new object[] {exception});
+        Log.Debug("CAUGHT EXCEPTION: {0}", new object[] { exception });
       }
     }
 
@@ -701,6 +724,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       cmdLoadCustom = new Button();
       cmdSave = new Button();
       cmdExit = new Button();
+      cmdCopy = new Button();
+      cmdPaste = new Button();
       Icon0 = new PictureBox();
       Icon1 = new PictureBox();
       Icon2 = new PictureBox();
@@ -1225,6 +1250,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       panel1.Controls.Add(cmdInvert);
       panel1.Controls.Add(cmdSetAll);
       panel1.Controls.Add(cmdClearAll);
+      panel1.Controls.Add(cmdCopy);
+      panel1.Controls.Add(cmdPaste);
       panel1.Controls.Add(lblCurrentIcon);
       panel1.Controls.Add(C4_B0);
       panel1.Controls.Add(C4_B1);
@@ -1277,7 +1304,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       panel1.Enabled = false;
       panel1.Location = new Point(6, 7);
       panel1.Name = "panel1";
-      panel1.Size = new Size(233, 144);
+      panel1.Size = new Size(302, 150);
       panel1.TabIndex = 288;
       // 
       // lblEditIndex
@@ -1293,7 +1320,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // cmdSaveEdit
       // 
       cmdSaveEdit.Enabled = false;
-      cmdSaveEdit.Location = new Point(170, 3);
+      cmdSaveEdit.Location = new Point(231, 3);
       cmdSaveEdit.Name = "cmdSaveEdit";
       cmdSaveEdit.Size = new Size(58, 23);
       cmdSaveEdit.TabIndex = 549;
@@ -1304,7 +1331,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // cmdCancelEdit
       // 
       cmdCancelEdit.Enabled = false;
-      cmdCancelEdit.Location = new Point(170, 27);
+      cmdCancelEdit.Location = new Point(231, 27);
       cmdCancelEdit.Name = "cmdCancelEdit";
       cmdCancelEdit.Size = new Size(58, 23);
       cmdCancelEdit.TabIndex = 548;
@@ -1326,7 +1353,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       // cmdSetAll
       // 
       cmdSetAll.Enabled = false;
-      cmdSetAll.Location = new Point(87, 26);
+      cmdSetAll.Location = new Point(87, 27);
       cmdSetAll.Name = "cmdSetAll";
       cmdSetAll.Size = new Size(58, 23);
       cmdSetAll.TabIndex = 546;
@@ -1345,6 +1372,29 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       cmdClearAll.UseVisualStyleBackColor = true;
       cmdClearAll.Click += cmdClearAll_Click;
       // 
+      // cmdCopy
+      // 
+      cmdCopy.Enabled = false;
+      cmdCopy.Location = new Point(156, 3);
+      cmdCopy.Name = "cmdCopy";
+      cmdCopy.Size = new Size(58, 23);
+      cmdCopy.TabIndex = 552;
+      cmdCopy.Text = "Copy";
+      cmdCopy.UseVisualStyleBackColor = true;
+      cmdCopy.Click += cmdCopy_Click;
+      // 
+      // cmdPaste
+      // 
+      cmdPaste.Enabled = false;
+      cmdPaste.Location = new Point(156, 27);
+      cmdPaste.Name = "cmdPaste";
+      cmdPaste.Size = new Size(58, 23);
+      cmdPaste.TabIndex = 553;
+      cmdPaste.Text = "Paste";
+      cmdPaste.UseVisualStyleBackColor = true;
+      cmdPaste.Click += cmdPaste_Click;
+
+      // 
       // lblCurrentIcon
       // 
       lblCurrentIcon.BorderStyle = BorderStyle.FixedSingle;
@@ -1352,7 +1402,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                                      ((0)));
       lblCurrentIcon.Location = new Point(3, 104);
       lblCurrentIcon.Name = "lblCurrentIcon";
-      lblCurrentIcon.Size = new Size(225, 33);
+      lblCurrentIcon.Size = new Size(275, 33);
       lblCurrentIcon.TabIndex = 544;
       lblCurrentIcon.TextAlign = ContentAlignment.MiddleCenter;
       // 
@@ -5334,25 +5384,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       var column7 = new DataColumn("CData5");
       table.Rows.Clear();
       table.Columns.Clear();
-      column.DataType = typeof (byte);
+      column.DataType = typeof(byte);
       table.Columns.Add(column);
-      column2.DataType = typeof (byte);
+      column2.DataType = typeof(byte);
       table.Columns.Add(column2);
-      column3.DataType = typeof (byte);
+      column3.DataType = typeof(byte);
       table.Columns.Add(column3);
-      column4.DataType = typeof (byte);
+      column4.DataType = typeof(byte);
       table.Columns.Add(column4);
-      column5.DataType = typeof (byte);
+      column5.DataType = typeof(byte);
       table.Columns.Add(column5);
-      column6.DataType = typeof (byte);
+      column6.DataType = typeof(byte);
       table.Columns.Add(column6);
-      column7.DataType = typeof (byte);
+      column7.DataType = typeof(byte);
       table.Columns.Add(column7);
       table.Clear();
       if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml")))
       {
         table.Rows.Clear();
-        var serializer = new XmlSerializer(typeof (DataTable));
+        var serializer = new XmlSerializer(typeof(DataTable));
         var xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml"));
         table = (DataTable)serializer.Deserialize(xmlReader);
         xmlReader.Close();
@@ -5396,7 +5446,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       catch (Exception exception)
       {
-        Log.Debug("CAUGHT EXCEPTION: {0}", new object[] {exception});
+        Log.Debug("CAUGHT EXCEPTION: {0}", new object[] { exception });
       }
     }
 
@@ -5413,7 +5463,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     private void SetIconEdit(int CharIndex)
     {
-      lblCurrentIcon.Text = "( Character " + CharIndex + " )";
+      lblCurrentIcon.Text = string.Format("( Character {0}/0x{0:X} )", CharIndex);
       DisplayIconForEditing(CharIndex);
       EditIndex = CharIndex;
       EnableEditPanel(true);
