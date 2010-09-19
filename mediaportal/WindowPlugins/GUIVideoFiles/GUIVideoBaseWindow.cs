@@ -47,6 +47,7 @@ namespace MediaPortal.GUI.Video
       List = 0,
       Icons = 1,
       LargeIcons = 2,
+      AlbumView = 3,
       FilmStrip = 4,
       PlayList = 5,
       CoverFlow = 6
@@ -131,6 +132,11 @@ namespace MediaPortal.GUI.Video
         m_strPlayListPath = xmlreader.GetValueAsString("movies", "playlists", playListFolder);
         m_strPlayListPath = Util.Utils.RemoveTrailingSlash(m_strPlayListPath);
       }
+      
+      if (AllowView(CurrentView) == false)
+      {
+        OnClicked(0, btnViewAs, 0); //switch to next valid one
+      }
 
       SwitchView();
     }
@@ -171,6 +177,8 @@ namespace MediaPortal.GUI.Video
           return View.LargeIcons;
         case "largeicons":
           return View.LargeIcons;
+        case "albums":
+          return View.AlbumView;
         case "filmstrip":
           return View.FilmStrip;
         case "playlist":
@@ -202,7 +210,7 @@ namespace MediaPortal.GUI.Video
 
     protected virtual bool AllowView(View view)
     {
-      if (view == View.PlayList)
+      if ((view == View.PlayList) || (view == View.AlbumView))
       {
         return false;
       }
@@ -337,6 +345,18 @@ namespace MediaPortal.GUI.Video
               break;
 
             case View.LargeIcons:
+              CurrentView = View.AlbumView;
+              if (!AllowView(CurrentView) || facadeView.AlbumListView == null)
+              {
+                shouldContinue = true;
+              }
+              else
+              {
+                facadeView.View = GUIFacadeControl.ViewMode.AlbumView;
+              }
+              break;
+
+            case View.AlbumView:
               CurrentView = View.FilmStrip;
               if (!AllowView(CurrentView) || facadeView.FilmstripView == null)
               {
@@ -529,6 +549,9 @@ namespace MediaPortal.GUI.Video
         case View.LargeIcons:
           strLine = GUILocalizeStrings.Get(417);
           break;
+        case View.AlbumView:
+          strLine = GUILocalizeStrings.Get(529);
+          break;
         case View.FilmStrip:
           strLine = GUILocalizeStrings.Get(733);
           break;
@@ -704,6 +727,9 @@ namespace MediaPortal.GUI.Video
           break;
         case View.LargeIcons:
           facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
+          break;
+        case View.AlbumView:
+          facadeView.View = GUIFacadeControl.ViewMode.AlbumView;
           break;
         case View.FilmStrip:
           facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;

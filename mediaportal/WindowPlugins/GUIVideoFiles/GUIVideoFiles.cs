@@ -263,11 +263,6 @@ namespace MediaPortal.GUI.Video
 
     #endregion
 
-    protected override bool AllowView(View view)
-    {
-      return base.AllowView(view);
-    }
-
     public override void OnAction(Action action)
     {
       if ((action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) && (facadeView.Focus))
@@ -468,6 +463,10 @@ namespace MediaPortal.GUI.Video
         }
       }
 
+      if (AllowView(CurrentView) == false)
+      {
+        OnClicked(0, btnViewAs, 0); //switch to next valid one
+      }
       SwitchView();
       UpdateButtonStates();
     }
@@ -680,11 +679,6 @@ namespace MediaPortal.GUI.Video
       }
 
       GUIWaitCursor.Hide();
-    }
-
-    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
-    {
-      base.OnClicked(controlId, control, actionType);
     }
 
     protected override void OnClick(int iItem)

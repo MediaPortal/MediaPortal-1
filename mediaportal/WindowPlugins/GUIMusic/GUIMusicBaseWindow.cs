@@ -243,6 +243,12 @@ namespace MediaPortal.GUI.Music
         m_strPlayListPath = xmlreader.GetValueAsString("music", "playlists", playListFolder);
         m_strPlayListPath = Util.Utils.RemoveTrailingSlash(m_strPlayListPath);
       }
+
+      if (AllowView(CurrentView) == false)
+      {
+        OnClicked(0, btnViewAs, 0); //switch to next valid one      
+      }
+
       SwitchView();
     }
 
