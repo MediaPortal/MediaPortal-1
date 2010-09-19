@@ -393,11 +393,9 @@ Section "MediaPortal core files (required)" SecCore
   !define EXCLUDED_CONFIG_FILES "\
     /x 'eHome Infrared Transceiver List XP.xml' \
     /x HelpReferences.xml \
-    /x ISDNCodes.xml \
     /x keymap.xml \
     /x MediaPortalDirs.xml \
     /x wikipedia.xml \
-    /x yac-area-codes.xml \
     /x mtn.c \
     "
 	
@@ -456,10 +454,8 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Config"
   File /nonfatal "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\HelpReferences.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\ISDNCodes.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\keymap.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\wikipedia.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\yac-area-codes.xml"
 
   SetOutPath "$MPdir.Config\scripts\MovieInfo"
   File /nonfatal "${MEDIAPORTAL.BASE}\scripts\MovieInfo\IMDB.csscript"
@@ -581,10 +577,8 @@ SectionEnd
   Delete "$MPdir.Config\CaptureCardDefinitions.xml"
   Delete "$MPdir.Config\eHome Infrared Transceiver List XP.xml"
   Delete "$MPdir.Config\HelpReferences.xml"
-  Delete "$MPdir.Config\ISDNCodes.xml"
   Delete "$MPdir.Config\keymap.xml"
   Delete "$MPdir.Config\wikipedia.xml"
-  Delete "$MPdir.Config\yac-area-codes.xml"
 
   Delete "$MPdir.Config\Installer\cleanup.xml"
   RMDir "$MPdir.Config\Installer"

@@ -208,10 +208,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\LibDriverCoreClient.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Office.Interop.Outlook, Version=10.0.4504.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\Microsoft.Office.Interop.Outlook.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -247,21 +243,6 @@
     </Compile>
     <Compile Include="AudioScrobbler\AudioscrobblerSettings.Designer.cs">
       <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CallerId\ISDN\CallerIdISDN.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="CallerId\ISDN\ISDNSetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CallerId\ISDN\ISDNWatch.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="CallerId\ISDN\OutlookHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="CallerId\YAC\CallerIdPlugin.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="MameDevice\MameDevice.cs">
       <SubType>Code</SubType>
@@ -306,9 +287,6 @@
     <EmbeddedResource Include="AudioScrobbler\AudioscrobblerSettings.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CallerId\ISDN\ISDNSetupForm.resx">
-      <DependentUpon>ISDNSetupForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MameDevice\MappingForm.resx">
       <DependentUpon>MappingForm.cs</DependentUpon>
