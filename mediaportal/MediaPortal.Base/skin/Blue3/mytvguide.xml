@@ -105,7 +105,8 @@
       <showrange>no</showrange>
       <orientation>horizontal</orientation>
       <align>center</align>
-      <onleft>60</onleft>
+      <onup>21</onup>
+	  <onleft>60</onleft>
       <onright>8</onright>
       <textureUp>arrow_round_right_nofocus.png</textureUp>
       <textureDown>arrow_round_left_nofocus.png</textureDown>
@@ -127,7 +128,8 @@
       <textureDown>arrow_round_left_nofocus.png</textureDown>
       <textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
       <textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
-      <onleft>6</onleft>
+      <onup>21</onup>
+	  <onleft>6</onleft>
       <onright>8</onright>
     </control>
     <control>
