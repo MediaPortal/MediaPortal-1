@@ -522,6 +522,13 @@ namespace MediaPortal.GUI.Music
       FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
       if (filter.SqlOperator == "group")
       {
+      	strThumb = GUIGraphicsContext.Skin + @"\media\alpha\" + item.Label + @".png";
+      	if (File.Exists(strThumb))
+        {
+          item.IconImage = strThumb;
+          item.IconImageBig = strThumb;
+          item.ThumbnailImage = strThumb;
+        }
         // Add Code here if users want to add pics showing "A", "B" and "C" ;)
       }
       else
