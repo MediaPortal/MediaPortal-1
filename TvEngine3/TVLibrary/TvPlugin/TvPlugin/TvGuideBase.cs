@@ -463,7 +463,7 @@ namespace TvPlugin
             }
             return;
           }
-          //break;
+        //break;
         case Action.ActionType.ACTION_SHOW_INFO:
           {
             ShowContextMenu();
@@ -482,21 +482,21 @@ namespace TvPlugin
             SetFocus();
           }
           break;
-        
+
         case Action.ActionType.ACTION_REWIND:
         case Action.ActionType.ACTION_MUSIC_REWIND:
           _viewingTime = _viewingTime.AddHours(-3);
           Update(false);
           SetFocus();
           break;
-        
+
         case Action.ActionType.ACTION_FORWARD:
         case Action.ActionType.ACTION_MUSIC_FORWARD:
           _viewingTime = _viewingTime.AddHours(3);
           Update(false);
           SetFocus();
           break;
-        
+
         case Action.ActionType.ACTION_DECREASE_TIMEBLOCK:
           {
             if (_timePerBlock > 15)
@@ -525,7 +525,7 @@ namespace TvPlugin
         case Action.ActionType.ACTION_TVGUIDE_DECREASE_DAY:
           OnPreviousDay();
           break;
-          // TV group changing actions
+        // TV group changing actions
         case Action.ActionType.ACTION_TVGUIDE_NEXT_GROUP:
           OnChangeTvGroup(1);
           break;
@@ -573,10 +573,10 @@ namespace TvPlugin
         GUIWaitCursor.Show();
         TVHome.Navigator.SetCurrentGroup(newIndex);
         // set name only, if group button not avail (avoids short "flashing" of text after switching group)
-//        if (!TvGroupButtonAvail)
-//        {
-          GUIPropertyManager.SetProperty("#TV.Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
-//        }
+        //        if (!TvGroupButtonAvail)
+        //        {
+        GUIPropertyManager.SetProperty("#TV.Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
+        //        }
         _cursorY = 1; // cursor should be on the program guide item
         _channelOffset = 0;
         // reset to top; otherwise focus could be out of screen if new group has less then old position
@@ -822,7 +822,7 @@ namespace TvPlugin
               */
               return true;
             }
-            //break;
+          //break;
 
           case GUIMessage.MessageType.GUI_MSG_CLICKED:
             int iControl = message.SenderControlId;
@@ -1504,7 +1504,7 @@ namespace TvPlugin
         _currentChannel = strChannel;
 
         bool bSeries = _currentProgram.IsRecordingSeries || _currentProgram.IsRecordingSeriesPending || _currentProgram.IsPartialRecordingSeriesPending;
-        bool bConflict = _currentProgram.HasConflict;        
+        bool bConflict = _currentProgram.HasConflict;
         bRecording = bSeries || (_currentProgram.IsRecording || _currentProgram.IsRecordingOncePending);
 
         if (bRecording)
@@ -1530,11 +1530,11 @@ namespace TvPlugin
           {
             if (bPartialRecording)
             {
-              img.SetFileName(Thumbs.TvPartialRecordingSeriesIcon);  
+              img.SetFileName(Thumbs.TvPartialRecordingSeriesIcon);
             }
             else
             {
-              img.SetFileName(Thumbs.TvRecordingSeriesIcon);  
+              img.SetFileName(Thumbs.TvRecordingSeriesIcon);
             }
           }
           else
@@ -2112,9 +2112,16 @@ namespace TvPlugin
                                long iStart, long iEnd, bool selectCurrentShow)
     {
       int channelNum = 0;
-      foreach (TuningDetail detail in channel.ReferringTuningDetail())
+      if (!_byIndex)
       {
-        channelNum = detail.ChannelNumber;
+        foreach (TuningDetail detail in channel.ReferringTuningDetail())
+        {
+          channelNum = detail.ChannelNumber;
+        }
+      }
+      else
+      {
+        channelNum = _channelList.IndexOf(channel) + 1;
       }
 
       string strLogo = GetChannelLogo(channel.DisplayName);
@@ -2757,7 +2764,7 @@ namespace TvPlugin
       {
         // if there are more channels to focus
         if (_cursorX + 1 < Math.Min(_channelList.Count, _channelCount))
-          {
+        {
           _cursorX++;
         }
         else
@@ -2810,14 +2817,14 @@ namespace TvPlugin
         return;
       }
       if (!_singleChannelView && _cursorY == 0 && _cursorX == 0)
+      {
+        // Only focus the control if it is visible.
+        if (GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Visible)
         {
-          // Only focus the control if it is visible.
-          if (GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Visible)
-          {
-            _cursorX = -1;
-            GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Focus = true;
-            return;
-          }
+          _cursorX = -1;
+          GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Focus = true;
+          return;
+        }
       }
       if (_singleChannelView)
       {
@@ -2999,14 +3006,14 @@ namespace TvPlugin
             {
               _cursorY = x;
               bOK = true;
-              break; 
+              break;
             }
 
             bool isvalid = false;
             DateTime time = DateTime.Now;
             if ((_currentProgram.StartTime >= prog.StartTime && _currentProgram.StartTime < prog.EndTime) ||
               (_currentProgram.EndTime <= prog.EndTime && _currentProgram.EndTime > prog.StartTime))
-              {
+            {
               if (m_dtStartTime <= prog.StartTime)
               {
                 isvalid = true;
@@ -3028,7 +3035,7 @@ namespace TvPlugin
                 isvalid = true;
               }
             }
-            
+
             if (isvalid)
             {
               _cursorY = x;
@@ -3534,16 +3541,16 @@ namespace TvPlugin
 
             Recording rec = null;
             if (isRec)
-            {              
-              rec = Recording.ActiveRecording(_currentProgram.Title, _currentProgram.IdChannel);              
+            {
+              rec = Recording.ActiveRecording(_currentProgram.Title, _currentProgram.IdChannel);
             }
-            else if (isRecNOepg)            
+            else if (isRecNOepg)
             {
               Schedule schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel().Name);
 
               if (schedule != null)
-              {                
-                rec = Recording.ActiveRecording(schedule.IdSchedule);                
+              {
+                rec = Recording.ActiveRecording(schedule.IdSchedule);
               }
             }
 
@@ -3551,7 +3558,7 @@ namespace TvPlugin
             {
               fileName = rec.FileName;
             }
-            
+
             if (!string.IsNullOrEmpty(fileName)) //are we really recording ?
             {
               Log.Info("TVGuide: clicked on a currently running recording");
@@ -3761,7 +3768,7 @@ namespace TvPlugin
       ShowProgramInfo();
     }
 
-    private void CheckRecordingConflicts() {}
+    private void CheckRecordingConflicts() { }
 
     private void OnPageUp()
     {
@@ -3950,7 +3957,7 @@ namespace TvPlugin
 
         // Last page adjust (To get a full page channel listing)
         if (iChannelNr > _channelList.Count - Math.Min(_channelList.Count, _channelCount) + 1)
-          // minimum of available channel/max visible channels
+        // minimum of available channel/max visible channels
         {
           _channelOffset = _channelList.Count - _channelCount;
           iChannelNr = iChannelNr - _channelOffset;
@@ -4002,7 +4009,7 @@ namespace TvPlugin
             }
           }
         }
-        catch {}
+        catch { }
 
         if (_channelList.Count == 0)
         {

@@ -90,7 +90,7 @@ namespace TvPlugin
     private readonly string local1056 = GUILocalizeStrings.Get(1056); // (unavailable)    
 
     private StringBuilder sb = new StringBuilder();
-    private StringBuilder sbTmp = new StringBuilder();      
+    private StringBuilder sbTmp = new StringBuilder();
 
     #region Serialisation
 
@@ -405,7 +405,7 @@ namespace TvPlugin
       GUIWaitCursor.Hide();
 
       Log.Debug("OnGroupChanged {0} took {1} msec", spinGroup.Value, bClock.ElapsedMilliseconds);
-      
+
     }
 
     /// <summary>
@@ -414,7 +414,7 @@ namespace TvPlugin
     public void FillGroupList()
     {
       benchClock = Stopwatch.StartNew();
-      
+
       ChannelGroup current = null;
       _channelGroupList = TVHome.Navigator.Groups;
       // empty list of channels currently in the 
@@ -463,13 +463,13 @@ namespace TvPlugin
 
         if (tvChannelList != null)
         {
-          Log.Debug("TvMiniGuide: GetChannelListByGroup caching channels from DB.");          
+          Log.Debug("TvMiniGuide: GetChannelListByGroup caching channels from DB.");
           _tvGroupChannelListCache.Add(idGroup, tvChannelList);
           return tvChannelList;
         }
       }
       return new List<Channel>();
-    }        
+    }
 
     /// <summary>
     /// Fill the list with channels
@@ -478,7 +478,7 @@ namespace TvPlugin
     {
       List<Channel> tvChannelList = GetChannelListByGroup();
 
-      benchClock = Stopwatch.StartNew();      
+      benchClock = Stopwatch.StartNew();
 
       DateTime nextEPGupdate = GetNextEpgUpdate();
       Dictionary<int, NowAndNext> listNowNext = GetNowAndNext(tvChannelList, nextEPGupdate);
@@ -491,7 +491,7 @@ namespace TvPlugin
       string ChannelLogo = "";
       //List<int> RecChannels = null;
       //List<int> TSChannels = null;
-      int SelectedID = 0;      
+      int SelectedID = 0;
       int channelID = 0;
       bool DisplayStatusInfo = true;
 
@@ -533,9 +533,9 @@ namespace TvPlugin
       }
 
       for (int i = 0; i < tvChannelList.Count; i++)
-      {        
-        Channel CurrentChan = tvChannelList[i];        
-        
+      {
+        Channel CurrentChan = tvChannelList[i];
+
         if (CurrentChan.VisibleInGuide)
         {
           ChannelState CurrentChanState = ChannelState.tunable;
@@ -552,7 +552,7 @@ namespace TvPlugin
           item.TVTag = CurrentChan.DisplayName;
           item.MusicTag = CurrentChan;
 
-          sb.Append(CurrentChan.DisplayName);          
+          sb.Append(CurrentChan.DisplayName);
           ChannelLogo = Utils.GetCoverArt(Thumbs.TVChannel, CurrentChan.DisplayName);
 
           // if we are watching this channel mark it
@@ -603,7 +603,7 @@ namespace TvPlugin
                   sb.Append(local1055);
                 }
                 break;
-              case ChannelState.recording: 
+              case ChannelState.recording:
                 if (showChannelStateIcons)
                 {
                   item.PinImage = Thumbs.TvIsRecordingIcon;
@@ -627,10 +627,10 @@ namespace TvPlugin
           sbTmp.Length = 0;
 
           NowAndNext currentNowAndNext = null;
-          bool hasNowNext = listNowNext.TryGetValue(channelID, out currentNowAndNext);          
+          bool hasNowNext = listNowNext.TryGetValue(channelID, out currentNowAndNext);
 
           if (hasNowNext)
-          {            
+          {
             if (!string.IsNullOrEmpty(currentNowAndNext.TitleNow))
             {
               TVUtil.TitleDisplay(sbTmp, currentNowAndNext.TitleNow, currentNowAndNext.EpisodeName,
@@ -656,9 +656,16 @@ namespace TvPlugin
           if (_showChannelNumber == true)
           {
             sb.Append(" - ");
-            foreach (TuningDetail detail in tvChannelList[i].ReferringTuningDetail())
+            if (!_byIndex)
             {
-              sb.Append(detail.ChannelNumber);
+              foreach (TuningDetail detail in tvChannelList[i].ReferringTuningDetail())
+              {
+                sb.Append(detail.ChannelNumber);
+              }
+            }
+            else
+            {
+              sb.Append(i + 1);
             }
           }
 
@@ -726,14 +733,14 @@ namespace TvPlugin
 
 
       TvBusinessLayer layer = new TvBusinessLayer();
-      if (_listNowNext.TryGetValue(idGroup, out getNowAndNext))      
+      if (_listNowNext.TryGetValue(idGroup, out getNowAndNext))
       {
         bool updateNow = (DateTime.Now >= nextEPGupdate);
         if (updateNow)
         {
           getNowAndNext = layer.GetNowAndNext(tvChannelList);
           _listNowNext[idGroup] = getNowAndNext;
-        }        
+        }
       }
       else
       {
@@ -761,7 +768,7 @@ namespace TvPlugin
       DateTime nextEPGupdate = DateTime.MinValue;
       int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
 
-      _nextEPGupdate.TryGetValue(idGroup, out nextEPGupdate);      
+      _nextEPGupdate.TryGetValue(idGroup, out nextEPGupdate);
       return nextEPGupdate;
     }
 
