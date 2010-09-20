@@ -82,6 +82,11 @@ namespace MediaPortal.GUI.Library
     protected bool _upDownControlVisible = true;
     [XMLSkinElement("textalign")]
     protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("textalign3")]
+    protected Alignment _text3Alignment = Alignment.ALIGN_LEFT;
+
+    [XMLSkinElement("textcontent3")]
+    protected string _text3Content = string.Empty;
 
     protected GUIFont _font = null;
     protected GUIFont _font2 = null;
@@ -193,29 +198,48 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textureFocus")]
     protected string _buttonFocusName = "";
 
-    [XMLSkin("textureNoFocus", "border")] protected string _strBorderBNF = "";
-    [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionBNF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
-    [XMLSkin("textureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatBNF = false;
-    [XMLSkin("textureNoFocus", "textureRotate")] protected bool _borderTextureRotateBNF = false;
-    [XMLSkin("textureNoFocus", "texture")] protected string _borderTextureFileNameBNF = "image_border.png";
-    [XMLSkin("textureNoFocus", "colorKey")] protected long _borderColorKeyBNF = 0xFFFFFFFF;
-    [XMLSkin("textureNoFocus", "corners")] protected bool _borderHasCornersBNF = false;
-    [XMLSkin("textureNoFocus", "cornerRotate")] protected bool _borderCornerTextureRotateBNF = true;
+    [XMLSkin("textureNoFocus", "border")]
+    protected string _strBorderBNF = "";
+    [XMLSkin("textureNoFocus", "position")]
+    protected GUIImage.BorderPosition _borderPositionBNF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+    [XMLSkin("textureNoFocus", "textureRepeat")]
+    protected bool _borderTextureRepeatBNF = false;
+    [XMLSkin("textureNoFocus", "textureRotate")]
+    protected bool _borderTextureRotateBNF = false;
+    [XMLSkin("textureNoFocus", "texture")]
+    protected string _borderTextureFileNameBNF = "image_border.png";
+    [XMLSkin("textureNoFocus", "colorKey")]
+    protected long _borderColorKeyBNF = 0xFFFFFFFF;
+    [XMLSkin("textureNoFocus", "corners")]
+    protected bool _borderHasCornersBNF = false;
+    [XMLSkin("textureNoFocus", "cornerRotate")]
+    protected bool _borderCornerTextureRotateBNF = true;
 
-    [XMLSkin("textureFocus", "border")] protected string _strBorderBF = "";
-    [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionBF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
-    [XMLSkin("textureFocus", "textureRepeat")] protected bool _borderTextureRepeatBF = false;
-    [XMLSkin("textureFocus", "textureRotate")] protected bool _borderTextureRotateBF = false;
-    [XMLSkin("textureFocus", "texture")] protected string _borderTextureFileNameBF = "image_border.png";
-    [XMLSkin("textureFocus", "colorKey")] protected long _borderColorKeyBF = 0xFFFFFFFF;
-    [XMLSkin("textureFocus", "corners")] protected bool _borderHasCornersBF = false;
-    [XMLSkin("textureFocus", "cornerRotate")] protected bool _borderCornerTextureRotateBF = true;
+    [XMLSkin("textureFocus", "border")]
+    protected string _strBorderBF = "";
+    [XMLSkin("textureFocus", "position")]
+    protected GUIImage.BorderPosition _borderPositionBF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+    [XMLSkin("textureFocus", "textureRepeat")]
+    protected bool _borderTextureRepeatBF = false;
+    [XMLSkin("textureFocus", "textureRotate")]
+    protected bool _borderTextureRotateBF = false;
+    [XMLSkin("textureFocus", "texture")]
+    protected string _borderTextureFileNameBF = "image_border.png";
+    [XMLSkin("textureFocus", "colorKey")]
+    protected long _borderColorKeyBF = 0xFFFFFFFF;
+    [XMLSkin("textureFocus", "corners")]
+    protected bool _borderHasCornersBF = false;
+    [XMLSkin("textureFocus", "cornerRotate")]
+    protected bool _borderCornerTextureRotateBF = true;
 
 
 
-    [XMLSkinElement("scrollbarbg")] protected string _scrollbarBackgroundName = "";
-    [XMLSkinElement("scrollbartop")] protected string _scrollbarTopName = "";
-    [XMLSkinElement("scrollbarbottom")] protected string _scrollbarBottomName = "";
+    [XMLSkinElement("scrollbarbg")]
+    protected string _scrollbarBackgroundName = "";
+    [XMLSkinElement("scrollbartop")]
+    protected string _scrollbarTopName = "";
+    [XMLSkinElement("scrollbarbottom")]
+    protected string _scrollbarBottomName = "";
 
     [XMLSkinElement("spinColor")]
     protected long _spinControlColor;
@@ -796,7 +820,7 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      if (pItem.Label3.Length > 0)
+      if (pItem.Label3.Length > 0 || !string.IsNullOrEmpty(_text3Content))
       {
         dwColor = _textColor3;
 
@@ -861,7 +885,9 @@ namespace MediaPortal.GUI.Library
               label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
             }
             label3.Label = pItem.Label3;
-            label3.TextAlignment = Alignment.ALIGN_LEFT;
+            if (!string.IsNullOrEmpty(_text3Content))
+              label3.Label = SetLabel(_text3Content, pItem);
+            label3.TextAlignment = _text3Alignment;
             label3.FontName = _fontName3Name;
             label3.Width = (_width - _textOffsetX - _imageWidth - GUIGraphicsContext.ScaleHorizontal(34));
 
@@ -871,6 +897,62 @@ namespace MediaPortal.GUI.Library
         }
       }
       pItem = null;
+    }
+
+    private string SetLabel(string textContent, GUIListItem item)
+    {
+      string label = string.Empty;
+      switch (textContent.ToLowerInvariant())
+      {
+        case "#selectedindex":
+          if (item.Label == "..")
+            label = string.Empty;
+          else
+          {
+            int index = _listItems.IndexOf(item);
+            if (_listItems[0].Label != "..")
+              index++;
+            label = index.ToString();
+          }
+          break;
+
+        case "#selecteditem":
+          label = item.Label;
+          break;
+
+        case "#selecteditem2":
+          label = item.Label2;
+          break;
+
+        /*case "#itemcount":
+          label = GUIPropertyManager.GetProperty("#itemcount");
+          break;
+
+        case "#selectedthumb":
+          label = item.ThumbnailImage;
+          break;*/
+
+        case "#rating":
+          label = item.Rating.ToString();
+          break;
+
+        case "#duration":
+          label = MediaPortal.Util.Utils.SecondsToHMSString(item.Duration);
+          break;
+
+        case "#shortduration":
+          label = MediaPortal.Util.Utils.SecondsToShortHMSString(item.Duration);
+          break;
+
+        case "#dvdlabel":
+          label = item.DVDLabel;
+          break;
+
+        case "#year":
+          label = item.Year.ToString();
+          break;
+      }
+      return label;
     }
 
     /// <summary>
@@ -1604,14 +1686,14 @@ namespace MediaPortal.GUI.Library
         {
           lock (GUIGraphicsContext.RenderLock)
           {
-          GUITextureManager.CleanupThumbs();
-          foreach (GUIListItem item in _listItems)
-          {
-            item.FreeMemory();
+            GUITextureManager.CleanupThumbs();
+            foreach (GUIListItem item in _listItems)
+            {
+              item.FreeMemory();
+            }
+            _refresh = true;
+            return true;
           }
-          _refresh = true;
-          return true;
-        }
         }
 
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
@@ -1627,8 +1709,8 @@ namespace MediaPortal.GUI.Library
         {
           lock (GUIGraphicsContext.RenderLock)
           {
-          Clear();
-        }
+            Clear();
+          }
         }
         if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEMS)
         {
@@ -2149,8 +2231,8 @@ namespace MediaPortal.GUI.Library
     }
 
     protected virtual void ReleaseButtons()
-    {      
-      _listButtons.DisposeAndClear();      
+    {
+      _listButtons.DisposeAndClear();
     }
 
     /// <summary>
@@ -2221,19 +2303,19 @@ namespace MediaPortal.GUI.Library
     public override void Dispose()
     {
       base.Dispose();
-     
-    _font = null;
-    _font2 = null;
-    _font3 = null;
 
-    _upDownControl.SafeDispose();
-    _listButtons.DisposeAndClear();
-    _verticalScrollbar.SafeDispose();
+      _font = null;
+      _font2 = null;
+      _font3 = null;
 
-    _listItems.DisposeAndClear();
-    _labelControls1.DisposeAndClear();
-    _labelControls2.DisposeAndClear();
-    _labelControls3.DisposeAndClear();      
+      _upDownControl.SafeDispose();
+      _listButtons.DisposeAndClear();
+      _verticalScrollbar.SafeDispose();
+
+      _listItems.DisposeAndClear();
+      _labelControls1.DisposeAndClear();
+      _labelControls2.DisposeAndClear();
+      _labelControls3.DisposeAndClear();
     }
 
     /// <summary>
@@ -3668,6 +3750,12 @@ namespace MediaPortal.GUI.Library
       set { _textAlignment = value; }
     }
 
+    public Alignment Text3Alignment
+    {
+      get { return _text3Alignment; }
+      set { _text3Alignment = value; }
+    }
+
     public ListType TypeOfList
     {
       get { return _listType; }
@@ -3720,6 +3808,12 @@ namespace MediaPortal.GUI.Library
     {
       get { return _downloadColor; }
       set { _downloadColor = value; }
+    }
+
+    public string Text3Content
+    {
+      get { return _text3Content; }
+      set { _text3Content = value; }
     }
   }
 }
