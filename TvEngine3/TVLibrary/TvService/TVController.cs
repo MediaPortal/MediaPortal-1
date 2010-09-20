@@ -2811,6 +2811,7 @@ namespace TvService
     {
       try
       {
+        Gentle.Common.CacheManager.ClearQueryResultsByType(typeof(Schedule));
         if (_scheduler != null)
         {
           _scheduler.ResetTimer();
