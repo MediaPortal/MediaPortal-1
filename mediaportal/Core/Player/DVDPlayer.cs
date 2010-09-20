@@ -1869,7 +1869,7 @@ namespace MediaPortal.Player
       {
         try
         {
-          int hr = _dvdCtrl.SelectAudioStream(value, DvdCmdFlags.Flush | DvdCmdFlags.SendEvents, out _cmdOption);
+          int hr = _dvdCtrl.SelectAudioStream(value, DvdCmdFlags.None, out _cmdOption);
           if (hr != 0)
           {
             Log.Error("DVDPlayer:Failed to set audiostream to {0} with error code:{1}", value, hr);
