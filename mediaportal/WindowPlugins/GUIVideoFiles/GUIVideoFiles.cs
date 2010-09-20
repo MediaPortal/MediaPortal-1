@@ -288,8 +288,8 @@ namespace MediaPortal.GUI.Video
       if (action.wID == Action.ActionType.ACTION_DELETE_ITEM)
       {
         ShowFileMenu(true);
+        return;
       }
-
       base.OnAction(action);
     }
 
@@ -1899,6 +1899,7 @@ namespace MediaPortal.GUI.Video
     private void OnShowFileMenu(bool preselectDelete)
     {
       GUIListItem item = facadeView.SelectedListItem;
+      int selectedItem = facadeView.SelectedListItemIndex;
       
       if (item == null)
       {
@@ -1932,13 +1933,11 @@ namespace MediaPortal.GUI.Video
       //final
       if (dlgFile.Reload())
       {
-        int selectedItem = facadeView.SelectedListItemIndex;
         if (_currentFolder != dlgFile.GetSourceDir())
         {
           selectedItem = -1;
         }
 
-        //_currentFolder = Path.GetDirectoryName(dlgFile.GetSourceDir());
         LoadDirectory(_currentFolder);
         if (selectedItem >= 0)
         {
