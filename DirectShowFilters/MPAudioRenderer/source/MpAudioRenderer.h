@@ -118,6 +118,7 @@ private:
 
   HRESULT GetReferenceClockInterface(REFIID riid, void **ppv);
   WAVEFORMATEX* CreateWaveFormatForAC3(int pSamplesPerSec);
+  void FlushSamples();
 
   WAVEFORMATEX*         m_pWaveFileFormat;
   CBaseReferenceClock*	m_pReferenceClock;
@@ -137,15 +138,10 @@ private:
   REFERENCE_TIME m_rtNextSampleTime;
   REFERENCE_TIME m_rtPrevSampleTime;
 
-  // Stream has discontinuity error(s), data must be dropped if gaps are too wide
-  bool m_bDropSamples;
-
   // Flush old audio samples only after the new A/V sync point is reached
   bool m_bFlushSamples;
 
   AudioRendererSettings m_Settings;
 
   IRenderDevice* m_pRenderDevice;
-
-  
 };

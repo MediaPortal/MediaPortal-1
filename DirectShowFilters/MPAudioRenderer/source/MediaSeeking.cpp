@@ -132,6 +132,6 @@ STDMETHODIMP CMPAudioRenderer::GetRate(double* pdRate)
 STDMETHODIMP CMPAudioRenderer::GetPreroll(LONGLONG *pPreroll)
 {
   CheckPointer(pPreroll, E_POINTER);
-  (*pPreroll) = m_pRenderDevice->Latency();
+  (*pPreroll) = m_pRenderDevice->Latency() * 2;
   return S_OK;
 }

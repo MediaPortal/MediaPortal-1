@@ -70,7 +70,6 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_dSampleCounter(0)
 , m_rtNextSampleTime(0)
 , m_rtPrevSampleTime(0)
-, m_bDropSamples(false)
 , m_bFlushSamples(false)
 , m_pVolumeHandler(NULL)
 {
@@ -277,163 +276,92 @@ void CMPAudioRenderer::OnReceiveFirstSample(IMediaSample *pMediaSample)
 
 BOOL CMPAudioRenderer::ScheduleSample(IMediaSample *pMediaSample)
 {
+  if (!pMediaSample) return false;
+
   REFERENCE_TIME rtSampleTime = 0;
   REFERENCE_TIME rtSampleEndTime = 0;
+  REFERENCE_TIME rtSampleDuration = 0;
   REFERENCE_TIME rtTime = 0;
+  UINT nFrames = 0;
+  bool discontinuityDetected = false;
 
-  // Is someone pulling our leg
-  if (!pMediaSample) return FALSE;
+  if (m_bFlushSamples)
+  {
+    FlushSamples();
+  }
 
   if (m_dRate >= 2.0 || m_dRate <= -2.0)
   {
     // Do not render Micey Mouse(tm) audio
-    return TRUE;
+    m_dSampleCounter++;
+    return false;
   }
-
-  if (m_bFlushSamples)
-  {
-    CAutoLock cInterfaceLock(&m_InterfaceLock);
-    CAutoLock cRenderThreadLock(&m_RenderThreadLock);
-
-    m_pSoundTouch->BeginFlush();
-    m_pSoundTouch->clear();
-    m_pSoundTouch->EndFlush();
-    m_bDropSamples = false; // stream is continuous from this point on  
-    m_bFlushSamples = false;
-  }
-
-  m_dSampleCounter++;
-
-  // Get the next sample due up for rendering.  If there aren't any ready
-  // then GetNextSampleTimes returns an error.  If there is one to be done
-  // then it succeeds and yields the sample times. If it is due now then
-  // it returns S_OK other if it's to be done when due it returns S_FALSE
+  
   HRESULT hr = GetSampleTimes(pMediaSample, &rtSampleTime, &rtSampleEndTime);
-  if (FAILED(hr)) return FALSE;
+  if (FAILED(hr)) return false;
+
+  long sampleLength = pMediaSample->GetActualDataLength();
+
+  nFrames = sampleLength / m_pWaveFileFormat->nBlockAlign;
+  rtSampleDuration = nFrames * UNITS / m_pWaveFileFormat->nSamplesPerSec;
 
   // Get media time
   m_pClock->GetTime(&rtTime);
   rtTime = rtTime - m_tStart;
-  rtTime += m_pRenderDevice->Latency();
-  
-  long sampleLenght = pMediaSample->GetActualDataLength();
-
-  UINT nFrames = sampleLenght / m_pWaveFileFormat->nBlockAlign;
-  REFERENCE_TIME rtSampleDuration = nFrames * UNITS / m_pWaveFileFormat->nSamplesPerSec;
-  REFERENCE_TIME rtLate = rtTime - rtSampleTime;  
-
-  if (rtSampleTime - m_pRenderDevice->Latency() < 0)
-  {
-    // Preroll samples are ignored. During this time the device's audio
-    // latency will be "eliminated". Preroll amount has been set to match the 
-    // device's buffer latency. Unfortunately IsPreroll() is not working on
-    // all source filters so we have to use own calculation
-    
-    //Log("preroll sample - rtTime: %.3f ms rtSampleTime: %.3f ms ", rtTime/10000.0, rtSampleTime/10000.0);
-    
-    m_rtNextSampleTime = rtSampleTime + rtSampleDuration;
-
-    EXECUTE_ASSERT(SetEvent((HANDLE)m_RenderEvent));
-    return TRUE;
-  }
+  rtSampleTime -= m_pRenderDevice->Latency() * 2;
 
   // Try to keep the A/V sync when data has been dropped
   if ((abs(rtSampleTime - m_rtNextSampleTime) > MAX_SAMPLE_TIME_ERROR) && m_dSampleCounter > 1)
   {
-    m_bDropSamples = true;
+    discontinuityDetected = true;
     Log("  Dropped audio data detected: diff: %.3f ms MAX_SAMPLE_TIME_ERROR: %.3f ms", ((double)rtSampleTime - (double)m_rtNextSampleTime) / 10000.0, (double)MAX_SAMPLE_TIME_ERROR / 10000.0);
   }
-  else if (rtLate > rtSampleDuration)
-  {
-    m_bDropSamples = true;
-  }
-  else if(rtLate  <= rtSampleDuration && m_bDropSamples)
-  {
-    m_bDropSamples = false;
-    Log("  Live stream position after ::Run has been reached");
-  }
 
-  m_rtNextSampleTime = rtSampleTime + rtSampleDuration;
-  
-  if(m_Settings.m_bLogSampleTimes)
-    Log("  rtTime: %5.3f ms rtSampleTime: %5.3f ms diff: %5.3f ms size: %d",
-      rtTime / 10000.0, rtSampleTime / 10000.0, (rtTime - rtSampleTime) / 10000.0, sampleLenght);
-
-  // The whole timespan of the sample is late
-  if( rtLate > rtSampleDuration && m_bDropSamples)
+  if (rtSampleTime - rtTime > 0)
   {
-    Log("  dropping whole sample - late: %.3f ms dur: %.3f ms", 
-      rtLate / 10000.0, rtSampleDuration / 10000.0);
-
-    pMediaSample->SetActualDataLength(0);
-
-    // Triggers next sample to be scheduled
-    EXECUTE_ASSERT(SetEvent((HANDLE)m_RenderEvent));
-    return TRUE;
-  }
-  else if (m_bDropSamples && rtLate > 0)
-  {
-    long newLenght = m_pWaveFileFormat->nBlockAlign * ((rtSampleDuration - rtLate) * m_pWaveFileFormat->nSamplesPerSec / UNITS);
-    long sampleLenght = pMediaSample->GetActualDataLength();
+    if(m_Settings.m_bLogSampleTimes)
+      Log("     sample rtTime: %.3f ms rtSampleTime: %.3f ms", rtTime / 10000.0, rtSampleTime / 10000.0);
     
-    // Just some sanity checks
-    if( newLenght < 0 )
+    if (m_dSampleCounter == 0 || discontinuityDetected)
     {
-      newLenght = 0;
+      ASSERT(m_dwAdvise == 0);
+      ASSERT(m_pClock);
+      WaitForSingleObject((HANDLE)m_RenderEvent, 0);
+      hr = m_pClock->AdviseTime((REFERENCE_TIME)m_tStart, rtSampleTime, (HEVENT)(HANDLE)m_RenderEvent, &m_dwAdvise);
     }
     else
     {
-      newLenght = min(newLenght, sampleLenght);
+      DoRenderSample(pMediaSample);
+      hr = S_FALSE;
     }
-
-    Log("  dropping part of sample %d / %d bytes", newLenght, sampleLenght);
-    pMediaSample->SetActualDataLength(newLenght);
-
-    BYTE* sampleData = NULL;
-    pMediaSample->GetPointer(&sampleData);
-    if (sampleData)
-    {
-      // Discard the oldest sample data to match the start timestamp
-      memmove(sampleData, sampleData + newLenght, newLenght);
-    }
-  }
-
-  if (m_dSampleCounter > 1 && !m_bDropSamples)
-  {
-    EXECUTE_ASSERT(SetEvent((HANDLE) m_RenderEvent));
-    m_rtPrevSampleTime = rtSampleTime;
-    return TRUE;
-  }
-
-  if (m_dRate <= 1.1)
-  {
-    // Discard all old data in queues
-    if (m_bDropSamples)
-    {
-      m_bFlushSamples = true;
-    }
-
-    ASSERT(m_dwAdvise == 0);
-    ASSERT(m_pClock);
-    WaitForSingleObject((HANDLE)m_RenderEvent, 0);
-
-    hr = m_pClock->AdviseTime((REFERENCE_TIME)m_tStart, rtSampleTime, (HEVENT)(HANDLE)m_RenderEvent, &m_dwAdvise);
-    
-    if (SUCCEEDED(hr)) return TRUE;
+    m_dSampleCounter++;
   }
   else
   {
-    hr = DoRenderSample(pMediaSample);
+    Log("DROP sample rtTime: %.3f ms rtSampleTime: %.3f ms", rtTime / 10000.0, rtSampleTime / 10000.0);
+    hr = S_FALSE;
   }
 
-  m_rtPrevSampleTime = rtSampleTime;
+  m_rtNextSampleTime = rtSampleTime + rtSampleDuration;
 
-  // We could not schedule the next sample for rendering despite the fact
-  // we have a valid sample here. This is a fair indication that either
-  // the system clock is wrong or the time stamp for the sample is duff
-  ASSERT(m_dwAdvise == 0);
+  if (hr == S_OK) 
+    return true;
+  else
+    return false;
+}
 
-  return FALSE;
+void CMPAudioRenderer::FlushSamples()
+{
+  Log("Flushing samples");
+
+  CAutoLock cInterfaceLock(&m_InterfaceLock);
+  CAutoLock cRenderThreadLock(&m_RenderThreadLock);
+
+  m_pSoundTouch->BeginFlush();
+  m_pSoundTouch->clear();
+  m_pSoundTouch->EndFlush();
+  m_bFlushSamples = false;
+  m_dSampleCounter = 0;
 }
 
 HRESULT	CMPAudioRenderer::DoRenderSample(IMediaSample *pMediaSample)
@@ -575,6 +503,8 @@ STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
 
   CAutoLock cInterfaceLock(&m_InterfaceLock);
   
+  FlushSamples();
+
   HRESULT	hr;
 
   if (m_State == State_Running) return NOERROR;

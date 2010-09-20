@@ -128,8 +128,6 @@ WASAPIRenderer::WASAPIRenderer(CMPAudioRenderer* pRenderer, HRESULT *phr) :
   {
     pRenderer->Settings()->m_bUseWASAPI = false;	// WASAPI not available below Vista
   }
-
-  StartRendererThread();
 }
 
 WASAPIRenderer::~WASAPIRenderer()
@@ -190,6 +188,9 @@ void WASAPIRenderer::CancelDataEvent()
 
 HRESULT WASAPIRenderer::PauseRendererThread()
 {
+  if (m_bThreadPaused)
+    return S_OK;
+
   Log("WASAPIRenderer::PauseRendererThread");
   // Pause the render thread
   if (m_hRenderThread)
@@ -351,8 +352,6 @@ HRESULT WASAPIRenderer::Run(REFERENCE_TIME tStart)
       //return hr;
     }
   }
-
-  StartAudioClient(&m_pAudioClient);
 
   return hr;
 }
@@ -1100,9 +1099,9 @@ void WASAPIRenderer::StartAudioClient(IAudioClient** ppAudioClient)
       }
       else
       {
-        StartRendererThread();
         m_bIsAudioClientStarted = true;
       }
+      StartRendererThread();
     }
   }
   else
