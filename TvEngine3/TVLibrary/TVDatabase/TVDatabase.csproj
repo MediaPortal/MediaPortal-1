@@ -75,6 +75,7 @@
     <Compile Include="ChannelMap.cs" />
     <Compile Include="Conflict.cs" />
     <Compile Include="EpisodeFormatter.cs" />
+    <Compile Include="SoftwareEncoder.cs" />
     <Compile Include="RadioGroupMap.cs" />
     <Compile Include="RadioChannelGroup.cs" />
     <Compile Include="DiSEqCMotor.cs" />

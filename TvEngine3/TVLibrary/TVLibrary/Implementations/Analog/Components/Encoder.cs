@@ -19,9 +19,11 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using TvLibrary.Implementations.DVB;
+using TvDatabase;
 
 namespace TvLibrary.Implementations.Analog.Components
 {
@@ -131,6 +133,7 @@ namespace TvLibrary.Implementations.Analog.Components
     /// </summary>
     private bool _pinVideoConnected;
 
+    private TvBusinessLayer _layer;
     #endregion
 
     #region properties
@@ -268,6 +271,7 @@ namespace TvLibrary.Implementations.Analog.Components
     public bool CreateFilterInstance(IFilterGraph2 _graphBuilder, Tuner _tuner, TvAudio _tvAudio, Crossbar _crossbar,
                                      Capture _capture)
     {
+      _layer = new TvBusinessLayer();
       // now things get difficult.
       // Here we can have the following situations:
       // 1. we're done, the video capture filter has a mpeg-2 audio output pin
@@ -1486,24 +1490,17 @@ namespace TvLibrary.Implementations.Analog.Components
       Log.Log.WriteFile("analog: AddAudioCompressor {0}", FilterGraphTools.LogPinInfo(_pinAnalogAudio));
       DsDevice[] devices1 = DsDevice.GetDevicesOfCat(FilterCategory.AudioCompressorCategory);
       DsDevice[] devices2 = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
-      string[] audioEncoders = new[]
-                                 {
-                                   "InterVideo Audio Encoder", "Ulead MPEG Audio Encoder",
-                                   "MainConcept MPEG Audio Encoder", "MainConcept Demo MPEG Audio Encoder",
-                                   "CyberLink Audio Encoder", "CyberLink Audio Encoder(Twinhan)",
-                                   "Pinnacle MPEG Layer-2 Audio Encoder", "MainConcept (Hauppauge) MPEG Audio Encoder",
-                                   "NVIDIA Audio Encoder", "MainConcept (HCW) Layer II Audio Encoder"
-                                 };
-      DsDevice[] audioDevices = new DsDevice[audioEncoders.Length];
-      for (int x = 0; x < audioEncoders.Length; ++x)
+      IList<SoftwareEncoder> audioEncoders = _layer.GetSofwareEncodersAudio();
+      DsDevice[] audioDevices = new DsDevice[audioEncoders.Count];
+      for (int x = 0; x < audioEncoders.Count; ++x)
       {
         audioDevices[x] = null;
       }
       for (int i = 0; i < devices1.Length; i++)
       {
-        for (int x = 0; x < audioEncoders.Length; ++x)
+        for (int x = 0; x < audioEncoders.Count; ++x)
         {
-          if (audioEncoders[x] == devices1[i].Name)
+          if (audioEncoders[x].Name == devices1[i].Name)
           {
             audioDevices[x] = devices1[i];
             break;
@@ -1512,9 +1509,9 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       for (int i = 0; i < devices2.Length; i++)
       {
-        for (int x = 0; x < audioEncoders.Length; ++x)
+        for (int x = 0; x < audioEncoders.Count; ++x)
         {
-          if (audioEncoders[x] == devices2[i].Name)
+          if (audioEncoders[x].Name == devices2[i].Name)
           {
             audioDevices[x] = devices2[i];
             break;
@@ -1591,25 +1588,17 @@ namespace TvLibrary.Implementations.Analog.Components
       Log.Log.WriteFile("analog: AddVideoCompressor");
       DsDevice[] devices1 = DsDevice.GetDevicesOfCat(FilterCategory.VideoCompressorCategory);
       DsDevice[] devices2 = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
-      string[] videoEncoders = new[]
-                                 {
-                                   "InterVideo Video Encoder", "Ulead MPEG Encoder", "MainConcept MPEG Video Encoder",
-                                   "MainConcept Demo MPEG Video Encoder", "CyberLink MPEG Video Encoder",
-                                   "CyberLink MPEG Video Encoder(Twinhan)", "MainConcept (Hauppauge) MPEG Video Encoder"
-                                   ,
-                                   "nanocosmos MPEG Video Encoder", "Pinnacle MPEG 2 Encoder",
-                                   "MainConcept (HCW) MPEG-2 Video Encoder"
-                                 };
-      DsDevice[] videoDevices = new DsDevice[videoEncoders.Length];
-      for (int x = 0; x < videoEncoders.Length; ++x)
+      IList<SoftwareEncoder> videoEncoders = _layer.GetSofwareEncodersVideo();
+      DsDevice[] videoDevices = new DsDevice[videoEncoders.Count];
+      for (int x = 0; x < videoEncoders.Count; ++x)
       {
         videoDevices[x] = null;
       }
       for (int i = 0; i < devices1.Length; i++)
       {
-        for (int x = 0; x < videoEncoders.Length; ++x)
+        for (int x = 0; x < videoEncoders.Count; ++x)
         {
-          if (videoEncoders[x] == devices1[i].Name)
+          if (videoEncoders[x].Name == devices1[i].Name)
           {
             videoDevices[x] = devices1[i];
             break;
@@ -1618,9 +1607,9 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       for (int i = 0; i < devices2.Length; i++)
       {
-        for (int x = 0; x < videoEncoders.Length; ++x)
+        for (int x = 0; x < videoEncoders.Count; ++x)
         {
-          if (videoEncoders[x] == devices2[i].Name)
+          if (videoEncoders[x].Name == devices2[i].Name)
           {
             videoDevices[x] = devices2[i];
             break;

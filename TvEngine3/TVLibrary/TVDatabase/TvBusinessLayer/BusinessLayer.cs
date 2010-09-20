@@ -21,6 +21,7 @@
 #region Usings
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
@@ -3271,6 +3272,24 @@ namespace TvDatabase
     //string _descriptionTemplate;
     //string _epgLanguages;
 
+    #endregion
+
+    #region SoftwareEncoders
+    public IList<SoftwareEncoder> GetSofwareEncodersVideo() {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(SoftwareEncoder));
+      sb.AddConstraint(Operator.Equals, "type", 0);
+      sb.AddOrderByField(true, "priority");
+      SqlStatement stmt = sb.GetStatement(true);
+      return ObjectFactory.GetCollection<SoftwareEncoder>(stmt.Execute());
+    }
+
+    public IList<SoftwareEncoder> GetSofwareEncodersAudio() {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(SoftwareEncoder));
+      sb.AddConstraint(Operator.Equals, "type", 1);
+      sb.AddOrderByField(true, "priority");
+      SqlStatement stmt = sb.GetStatement(true);
+      return ObjectFactory.GetCollection<SoftwareEncoder>(stmt.Execute());
+    }
     #endregion
   }
 }

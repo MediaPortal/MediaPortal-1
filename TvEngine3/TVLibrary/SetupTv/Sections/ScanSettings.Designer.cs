@@ -59,6 +59,22 @@ namespace SetupTv.Sections
       this.label4 = new System.Windows.Forms.Label();
       this.label5 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
+      this.tabPageSoftwareEncoder = new System.Windows.Forms.TabPage();
+      this.labelSoftwareEncoder = new System.Windows.Forms.Label();
+      this.groupBoxVideo = new System.Windows.Forms.GroupBox();
+      this.buttonVideoDown = new System.Windows.Forms.Button();
+      this.buttonVideoUp = new System.Windows.Forms.Button();
+      this.mpListViewVideo = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeaderVideoInstalled = new System.Windows.Forms.ColumnHeader();
+      this.columnHeaderVideoPriority = new System.Windows.Forms.ColumnHeader();
+      this.columnHeaderVideoName = new System.Windows.Forms.ColumnHeader();
+      this.groupBoxAudio = new System.Windows.Forms.GroupBox();
+      this.buttonAudioDown = new System.Windows.Forms.Button();
+      this.buttonAudioUp = new System.Windows.Forms.Button();
+      this.mpListViewAudio = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeaderAudioInstalled = new System.Windows.Forms.ColumnHeader();
+      this.columnHeaderAudioPriority = new System.Windows.Forms.ColumnHeader();
+      this.columnHeaderAudioName = new System.Windows.Forms.ColumnHeader();
       this.tabControl1.SuspendLayout();
       this.tabPageApplication.SuspendLayout();
       this.groupBox8.SuspendLayout();
@@ -73,6 +89,9 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCAT)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPAT)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTune)).BeginInit();
+      this.tabPageSoftwareEncoder.SuspendLayout();
+      this.groupBoxVideo.SuspendLayout();
+      this.groupBoxAudio.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -82,6 +101,7 @@ namespace SetupTv.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPageApplication);
       this.tabControl1.Controls.Add(this.tabPageScan);
+      this.tabControl1.Controls.Add(this.tabPageSoftwareEncoder);
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
@@ -490,6 +510,165 @@ namespace SetupTv.Sections
       this.label6.TabIndex = 6;
       this.label6.Text = "SDT/VCT:";
       // 
+      // tabPageSoftwareEncoder
+      // 
+      this.tabPageSoftwareEncoder.Controls.Add(this.labelSoftwareEncoder);
+      this.tabPageSoftwareEncoder.Controls.Add(this.groupBoxVideo);
+      this.tabPageSoftwareEncoder.Controls.Add(this.groupBoxAudio);
+      this.tabPageSoftwareEncoder.Location = new System.Drawing.Point(4, 22);
+      this.tabPageSoftwareEncoder.Name = "tabPageSoftwareEncoder";
+      this.tabPageSoftwareEncoder.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageSoftwareEncoder.Size = new System.Drawing.Size(476, 428);
+      this.tabPageSoftwareEncoder.TabIndex = 4;
+      this.tabPageSoftwareEncoder.Text = "Software Encoders";
+      this.tabPageSoftwareEncoder.UseVisualStyleBackColor = true;
+      // 
+      // labelSoftwareEncoder
+      // 
+      this.labelSoftwareEncoder.AutoSize = true;
+      this.labelSoftwareEncoder.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelSoftwareEncoder.Location = new System.Drawing.Point(17, 14);
+      this.labelSoftwareEncoder.Name = "labelSoftwareEncoder";
+      this.labelSoftwareEncoder.Size = new System.Drawing.Size(412, 13);
+      this.labelSoftwareEncoder.TabIndex = 5;
+      this.labelSoftwareEncoder.Text = "This section is only for analog cards that don\'t have  hardware encoder";
+      // 
+      // groupBoxVideo
+      // 
+      this.groupBoxVideo.Controls.Add(this.buttonVideoDown);
+      this.groupBoxVideo.Controls.Add(this.buttonVideoUp);
+      this.groupBoxVideo.Controls.Add(this.mpListViewVideo);
+      this.groupBoxVideo.Location = new System.Drawing.Point(8, 31);
+      this.groupBoxVideo.Name = "groupBoxVideo";
+      this.groupBoxVideo.Size = new System.Drawing.Size(449, 176);
+      this.groupBoxVideo.TabIndex = 2;
+      this.groupBoxVideo.TabStop = false;
+      this.groupBoxVideo.Text = "Video Encoders";
+      // 
+      // buttonVideoDown
+      // 
+      this.buttonVideoDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonVideoDown.Location = new System.Drawing.Point(368, 145);
+      this.buttonVideoDown.Name = "buttonVideoDown";
+      this.buttonVideoDown.Size = new System.Drawing.Size(75, 23);
+      this.buttonVideoDown.TabIndex = 3;
+      this.buttonVideoDown.Text = "Down";
+      this.buttonVideoDown.UseVisualStyleBackColor = true;
+      this.buttonVideoDown.Click += new System.EventHandler(this.button2_Click);
+      // 
+      // buttonVideoUp
+      // 
+      this.buttonVideoUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonVideoUp.Location = new System.Drawing.Point(287, 144);
+      this.buttonVideoUp.Name = "buttonVideoUp";
+      this.buttonVideoUp.Size = new System.Drawing.Size(75, 23);
+      this.buttonVideoUp.TabIndex = 2;
+      this.buttonVideoUp.Text = "Up";
+      this.buttonVideoUp.UseVisualStyleBackColor = true;
+      this.buttonVideoUp.Click += new System.EventHandler(this.button1_Click);
+      // 
+      // mpListViewVideo
+      // 
+      this.mpListViewVideo.AllowDrop = true;
+      this.mpListViewVideo.AllowRowReorder = true;
+      this.mpListViewVideo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpListViewVideo.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderVideoInstalled,
+            this.columnHeaderVideoPriority,
+            this.columnHeaderVideoName});
+      this.mpListViewVideo.FullRowSelect = true;
+      this.mpListViewVideo.IsChannelListView = false;
+      this.mpListViewVideo.Location = new System.Drawing.Point(6, 19);
+      this.mpListViewVideo.Name = "mpListViewVideo";
+      this.mpListViewVideo.Size = new System.Drawing.Size(437, 119);
+      this.mpListViewVideo.TabIndex = 1;
+      this.mpListViewVideo.UseCompatibleStateImageBehavior = false;
+      this.mpListViewVideo.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeaderVideoInstalled
+      // 
+      this.columnHeaderVideoInstalled.Text = "Installed";
+      this.columnHeaderVideoInstalled.Width = 110;
+      // 
+      // columnHeaderVideoPriority
+      // 
+      this.columnHeaderVideoPriority.Text = "Priority";
+      // 
+      // columnHeaderVideoName
+      // 
+      this.columnHeaderVideoName.Text = "Name";
+      this.columnHeaderVideoName.Width = 230;
+      // 
+      // groupBoxAudio
+      // 
+      this.groupBoxAudio.Controls.Add(this.buttonAudioDown);
+      this.groupBoxAudio.Controls.Add(this.buttonAudioUp);
+      this.groupBoxAudio.Controls.Add(this.mpListViewAudio);
+      this.groupBoxAudio.Location = new System.Drawing.Point(8, 213);
+      this.groupBoxAudio.Name = "groupBoxAudio";
+      this.groupBoxAudio.Size = new System.Drawing.Size(449, 187);
+      this.groupBoxAudio.TabIndex = 4;
+      this.groupBoxAudio.TabStop = false;
+      this.groupBoxAudio.Text = "Audio Encoders";
+      // 
+      // buttonAudioDown
+      // 
+      this.buttonAudioDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonAudioDown.Location = new System.Drawing.Point(366, 155);
+      this.buttonAudioDown.Name = "buttonAudioDown";
+      this.buttonAudioDown.Size = new System.Drawing.Size(75, 23);
+      this.buttonAudioDown.TabIndex = 3;
+      this.buttonAudioDown.Text = "Down";
+      this.buttonAudioDown.UseVisualStyleBackColor = true;
+      this.buttonAudioDown.Click += new System.EventHandler(this.button3_Click);
+      // 
+      // buttonAudioUp
+      // 
+      this.buttonAudioUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonAudioUp.Location = new System.Drawing.Point(287, 155);
+      this.buttonAudioUp.Name = "buttonAudioUp";
+      this.buttonAudioUp.Size = new System.Drawing.Size(75, 23);
+      this.buttonAudioUp.TabIndex = 2;
+      this.buttonAudioUp.Text = "Up";
+      this.buttonAudioUp.UseVisualStyleBackColor = true;
+      this.buttonAudioUp.Click += new System.EventHandler(this.button4_Click);
+      // 
+      // mpListViewAudio
+      // 
+      this.mpListViewAudio.AllowDrop = true;
+      this.mpListViewAudio.AllowRowReorder = true;
+      this.mpListViewAudio.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpListViewAudio.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderAudioInstalled,
+            this.columnHeaderAudioPriority,
+            this.columnHeaderAudioName});
+      this.mpListViewAudio.FullRowSelect = true;
+      this.mpListViewAudio.IsChannelListView = false;
+      this.mpListViewAudio.Location = new System.Drawing.Point(6, 19);
+      this.mpListViewAudio.Name = "mpListViewAudio";
+      this.mpListViewAudio.Size = new System.Drawing.Size(437, 130);
+      this.mpListViewAudio.TabIndex = 1;
+      this.mpListViewAudio.UseCompatibleStateImageBehavior = false;
+      this.mpListViewAudio.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeaderAudioInstalled
+      // 
+      this.columnHeaderAudioInstalled.Text = "Installed";
+      this.columnHeaderAudioInstalled.Width = 110;
+      // 
+      // columnHeaderAudioPriority
+      // 
+      this.columnHeaderAudioPriority.Text = "Priority";
+      // 
+      // columnHeaderAudioName
+      // 
+      this.columnHeaderAudioName.Text = "Name";
+      this.columnHeaderAudioName.Width = 230;
+      // 
       // ScanSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -516,6 +695,10 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCAT)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPAT)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTune)).EndInit();
+      this.tabPageSoftwareEncoder.ResumeLayout(false);
+      this.tabPageSoftwareEncoder.PerformLayout();
+      this.groupBoxVideo.ResumeLayout(false);
+      this.groupBoxAudio.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -550,6 +733,22 @@ namespace SetupTv.Sections
     private System.Windows.Forms.NumericUpDown numericUpDownPAT;
     private System.Windows.Forms.NumericUpDown numericUpDownTune;
     private System.Windows.Forms.GroupBox groupBox8;
+    private System.Windows.Forms.TabPage tabPageSoftwareEncoder;
+    private System.Windows.Forms.GroupBox groupBoxVideo;
+    private MediaPortal.UserInterface.Controls.MPListView mpListViewVideo;
+    private System.Windows.Forms.ColumnHeader columnHeaderVideoInstalled;
+    private System.Windows.Forms.ColumnHeader columnHeaderVideoPriority;
+    private System.Windows.Forms.ColumnHeader columnHeaderVideoName;
+    private System.Windows.Forms.Button buttonVideoDown;
+    private System.Windows.Forms.Button buttonVideoUp;
+    private System.Windows.Forms.Label labelSoftwareEncoder;
+    private System.Windows.Forms.GroupBox groupBoxAudio;
+    private System.Windows.Forms.Button buttonAudioDown;
+    private System.Windows.Forms.Button buttonAudioUp;
+    private MediaPortal.UserInterface.Controls.MPListView mpListViewAudio;
+    private System.Windows.Forms.ColumnHeader columnHeaderAudioInstalled;
+    private System.Windows.Forms.ColumnHeader columnHeaderAudioPriority;
+    private System.Windows.Forms.ColumnHeader columnHeaderAudioName;
     private System.Windows.Forms.NumericUpDown numericUpDownAnalog;
     private System.Windows.Forms.Label label21;
     private System.Windows.Forms.Label label24;
