@@ -65,14 +65,15 @@ namespace TvPlugin
       return true;
     }
 
-    protected override void OnPageDestroy(int new_windowId)
+/*    protected override void OnPageDestroy(int new_windowId)
     {
-      base.OnPageDestroy(new_windowId);
       if (_running)
       {
-        PageDestroy();
+        PageDestroy();  // => this is causing endless loop in GUIDialogWindow
       }
+      base.OnPageDestroy(new_windowId);
     }
+    */
 
     /// <summary>
     /// changes the current tv group and refreshes guide display
