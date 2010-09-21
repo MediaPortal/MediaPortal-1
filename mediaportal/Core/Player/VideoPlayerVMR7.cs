@@ -46,6 +46,7 @@ namespace MediaPortal.Player
       public bool Current;
       public string Filter;
       public StreamType Type;
+      public int LCID;
     } ;
 
     protected class FilterStreams
@@ -1145,7 +1146,8 @@ namespace MediaPortal.Player
     {
       get
       {
-        for (int i = 0; i < FStreams.GetStreamCount(StreamType.Audio); i++)
+        int audioStreams = AudioStreams;
+        for (int i = 0; i < audioStreams; i++)
         {
           if (FStreams.GetStreamInfos(StreamType.Audio, i).Current)
           {
@@ -1156,7 +1158,8 @@ namespace MediaPortal.Player
       }
       set
       {
-        for (int i = 0; i < FStreams.GetStreamCount(StreamType.Audio); i++)
+        int audioStreams = AudioStreams;
+        for (int i = 0; i < audioStreams; i++)
         {
           if (FStreams.GetStreamInfos(StreamType.Audio, i).Current)
           {
@@ -1176,7 +1179,32 @@ namespace MediaPortal.Player
     /// Property to get the language for an audio stream
     /// </summary>
     public override string AudioLanguage(int iStream)
-    {
+    {      
+      #region return splitter IAMStreamSelect LCID
+      int LCIDCheck = FStreams.GetStreamInfos(StreamType.Audio, iStream).LCID;
+      
+      if (LCIDCheck != 0)
+      {
+        int size = Util.Win32API.GetLocaleInfo(LCIDCheck, 2, null, 0);
+        if (size > 0)
+        {
+          string languageName = new string(' ', size);
+          Util.Win32API.GetLocaleInfo(LCIDCheck, 2, languageName, size);
+
+          if (!string.IsNullOrEmpty(languageName))
+          {
+            if (languageName.Contains("\0"))
+              languageName = languageName.Substring(0, languageName.IndexOf("\0"));
+
+            if (languageName.Contains("("))
+              languageName = languageName.Substring(0, languageName.IndexOf("("));
+
+            return languageName.Trim();
+          }
+        }
+      }
+      #endregion
+
       string streamName = FStreams.GetStreamInfos(StreamType.Audio, iStream).Name;
       // remove prefix, which is added by Haali Media Splitter
       streamName = Regex.Replace(streamName, @"^A: ", "");
@@ -1332,6 +1360,7 @@ namespace MediaPortal.Player
                   FSInfos.Current = false;
                   FSInfos.Filter = filter;
                   FSInfos.Name = sName;
+                  FSInfos.LCID = sPLCid;
                   FSInfos.Id = istream;
                   FSInfos.Type = StreamType.Unknown;
                   //Avoid listing ffdshow video filter's plugins amongst subtitle and audio streams.
@@ -1367,9 +1396,9 @@ namespace MediaPortal.Player
                   {
                     FSInfos.Type = StreamType.Subtitle_shown;
                   }
-                  Log.Debug("VideoPlayer: FoundStreams: Type={0}; Name={1}, Filter={2}, Id={3}, PDWGroup={4}",
+                  Log.Debug("VideoPlayer: FoundStreams: Type={0}; Name={1}, Filter={2}, Id={3}, PDWGroup={4}, LCID={5}",
                             FSInfos.Type.ToString(), FSInfos.Name, FSInfos.Filter, FSInfos.Id.ToString(),
-                            sPDWGroup.ToString());
+							sPDWGroup.ToString(), sPLCid.ToString());
 
                   switch (FSInfos.Type)
                   {

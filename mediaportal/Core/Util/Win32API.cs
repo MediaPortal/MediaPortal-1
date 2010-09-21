@@ -198,6 +198,16 @@ namespace MediaPortal.Util
     [DllImport("kernel32.dll")]
     public static extern bool SetDllDirectory(string PathName);
 
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+    public static extern int GetLocaleInfo(
+      // The locale identifier.
+       int Locale,
+      // The information type.
+       int LCType,
+      // The buffer size.
+       [In, MarshalAs(UnmanagedType.LPWStr)] string lpLCData, int cchData
+     );
+
     #endregion
 
     #region Structures
