@@ -38,7 +38,6 @@ namespace MediaPortal.Player
   public abstract class VideoPlayerVMR7 : IPlayer
   {
     protected const int MAX_STREAMS = 100;
-
     protected struct FilterStreamInfos
     {
       public int Id;
@@ -194,6 +193,7 @@ namespace MediaPortal.Player
     protected DateTime updateTimer;
     protected FilterStreams FStreams = null;
     protected double[] chapters = null;
+    protected string[] chaptersname = null;
     private DateTime elapsedTimer = DateTime.Now;
 
     protected const string defaultLanguageCulture = "EN";
@@ -201,6 +201,11 @@ namespace MediaPortal.Player
     public override double[] Chapters
     {
       get { return chapters; }
+    }
+
+    public override string[] ChaptersName
+    {
+      get { return chaptersname; }
     }
 
     private VMR7Util vmr7 = null;
@@ -1325,14 +1330,16 @@ namespace MediaPortal.Player
                   if (pEs.get_MarkerCount(out markerCount) == 0 && markerCount > 0)
                   {
                     chapters = new double[markerCount];
+                    chaptersname = new string[markerCount];
                     for (int i = 1; i <= markerCount; i++)
                     {
                       double markerTime = 0;
                       pEs.GetMarkerTime(i, out markerTime);
                       chapters[i - 1] = markerTime;
-                      //there is no usage to chapter's names right now
-                      //string name = null;
-                      //pEs.GetMarkerName(i, out name);
+                      //fill up chapter names
+                      string name = null;
+                      pEs.GetMarkerName(i, out name);
+                      chaptersname[i - 1] = name;
                     }
                   }
                 }

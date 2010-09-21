@@ -246,7 +246,6 @@ namespace MediaPortal.GUI.Video
       base.ResetAllControls();
     }
 
-
     private void OnOsdAction(Action action)
     {
       if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI) ||
@@ -1199,8 +1198,7 @@ namespace MediaPortal.GUI.Video
       }
       else if (g_Player.HasChapters) // For video files with chapters
       {
-        dlg.AddLocalizedString(976); // Next chapter
-        dlg.AddLocalizedString(975); // Previous chapter
+        dlg.AddLocalizedString(200091);
       }
 
       if (g_Player.IsVideo)
@@ -1254,9 +1252,93 @@ namespace MediaPortal.GUI.Video
           GUIGraphicsContext.IsFullScreenVideo = false;
           GUIWindowManager.ShowPreviousWindow();
           break;
+
+        case 200091:
+          ShowChapterStreamsMenu();
+          break;
       }
     }
 
+    private void ShowChapterStreamsMenu()
+    {
+      if (dlg == null)
+      {
+        dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+      }
+      if (dlg == null)
+      {
+        return;
+      }
+      dlg.Reset();
+      dlg.SetHeading(200091); // Chapters Streams
+
+      // Previous chapter
+      dlg.Add(String.Format("{0}", GUILocalizeStrings.Get(975)));
+      // Next chapter
+      dlg.Add(String.Format("{0}", GUILocalizeStrings.Get(976)));
+      
+      //List all chapters
+      double[] chaptersList = new double[0];
+      //List all chapters Name
+      string[] chaptersname = new string[0];
+     
+      chaptersname = g_Player.ChaptersName;
+      chaptersList = g_Player.Chapters;
+      for (int i = 0; i < chaptersList.Length; i++)
+      {
+        GUIListItem item = new GUIListItem();
+        if (chaptersname == null)
+        {
+          item.Label = (String.Format("{0} #{1}", GUILocalizeStrings.Get(200091), (i + 1)));
+          item.Label2 = Util.Utils.SecondsToHMSString((int)chaptersList[i]);
+          dlg.Add(item);
+        }
+        else
+        {
+          if (string.IsNullOrEmpty(chaptersname[i]))
+          {
+            item.Label = (String.Format("{0} #{1}", GUILocalizeStrings.Get(200091), (i + 1)));
+            item.Label2 = Util.Utils.SecondsToHMSString((int)chaptersList[i]);
+            dlg.Add(item);
+          }
+          else
+          {
+            item.Label = (String.Format("{0} #{1}: {2}", GUILocalizeStrings.Get(200091), (i + 1), chaptersname[i]));
+            item.Label2 = Util.Utils.SecondsToHMSString((int)chaptersList[i]);
+            dlg.Add(item);
+          }
+        }
+      }
+      
+      // show dialog and wait for result
+      _IsDialogVisible = true;
+      dlg.DoModal(GetID);
+      _IsDialogVisible = false;
+
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }      
+      else if (dlg.SelectedLabel == 0)
+      {
+        Action actionPrevChapter = new Action(Action.ActionType.ACTION_PREV_CHAPTER, 0, 0);
+        GUIGraphicsContext.OnAction(actionPrevChapter);
+      }
+      else if (dlg.SelectedLabel == 1)
+      { 
+        Action actionNextChapter = new Action(Action.ActionType.ACTION_NEXT_CHAPTER, 0, 0);
+        GUIGraphicsContext.OnAction(actionNextChapter);
+      }
+      else
+      {
+        // get selected Chapters
+        int selectedChapterIndex = dlg.SelectedLabel - 2;
+
+        // set mplayers play position
+        g_Player.SeekAbsolute(chaptersList[selectedChapterIndex]);
+      }
+    }
+      
     // Add audio stream selection to be able to switch audio streams in .ts recordings
     private void ShowAudioStreamsMenu()
     {
@@ -1349,8 +1431,8 @@ namespace MediaPortal.GUI.Video
         {
           strLang = strLang.Substring(0, ipos);
         }
-
-        dlg.Add(strLang);
+        if (!string.IsNullOrEmpty(strLang))
+          dlg.Add(strLang);
       }
 
       // select/focus the subtitle, which is active atm
@@ -1531,7 +1613,6 @@ namespace MediaPortal.GUI.Video
         screenState.NotifyDialogVisible = NotifyDialogVisible;
         updateGUI = true;
       }
-
 
       if (g_Player.Speed != screenState.Speed)
       {

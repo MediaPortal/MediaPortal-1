@@ -520,6 +520,14 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
+    /// Property to get chapters name
+    /// </summary>
+    public virtual string[] ChaptersName
+    {
+      get { return null; }
+    }
+
+    /// <summary>
     /// Method which is called by MP if the player needs to update its video window
     /// because the coordinates have been changed
     /// </summary>

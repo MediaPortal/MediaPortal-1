@@ -95,6 +95,7 @@ namespace MediaPortal.Player
 
     private static string _currentFileName = ""; //holds the actual file being played. Usefull for rtsp streams. 
     private static double[] _chapters = null;
+    private static string[] _chaptersname = null;
     private static double[] _jumpPoints = null;
     private static bool _autoComSkip = false;
     private static bool _loadAutoComSkipSetting = true;
@@ -622,6 +623,7 @@ namespace MediaPortal.Player
         GUIGraphicsContext.IsPlayingVideo = false;
         CachePlayer();
         _chapters = null;
+        _chaptersname = null;
         _jumpPoints = null;
 
         if (!keepExclusiveModeOn && !keepTimeShifting)
@@ -1343,6 +1345,10 @@ namespace MediaPortal.Player
             {
               _chapters = _player.Chapters;
             }
+            if (_chaptersname == null)
+            {
+              _chaptersname = _player.ChaptersName;
+            }
             OnStarted();
           }
           return bResult;
@@ -1678,6 +1684,30 @@ namespace MediaPortal.Player
       }
     }
 
+    public static double[] Chapters 
+    {
+      get
+      {
+        if (_player == null)
+        {
+          return null;
+        }
+        return _chapters;
+      }
+    }
+
+    public static string[] ChaptersName
+    {
+      get
+      {
+        if (_player == null)
+        {
+          return null;
+        }
+        return _chaptersname;
+      }
+    }
+
     public static int Width
     {
       get
@@ -1964,7 +1994,6 @@ namespace MediaPortal.Player
         return _player.HasVideo;
       }
     }
-
 
     public static bool HasViz
     {
