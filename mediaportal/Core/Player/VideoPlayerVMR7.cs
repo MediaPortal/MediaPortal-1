@@ -1352,6 +1352,10 @@ namespace MediaPortal.Player
                 filter = foundfilterinfos.achName;
                 int cStreams = 0;
                 pStrm.Count(out cStreams);
+                if (cStreams < 2)
+                {
+                  continue;
+                }
                 //GET STREAMS
                 for (int istream = 0; istream < cStreams; istream++)
                 {
@@ -1371,7 +1375,7 @@ namespace MediaPortal.Player
                   FSInfos.Id = istream;
                   FSInfos.Type = StreamType.Unknown;
                   //Avoid listing ffdshow video filter's plugins amongst subtitle and audio streams.
-                  if ((FSInfos.Filter == "ffdshow Video Decoder" || FSInfos.Filter == "ffdshow raw video filter") &&
+                  if ((FSInfos.Filter == "ffdshow DXVA Video Decoder" || FSInfos.Filter == "ffdshow Video Decoder" || FSInfos.Filter == "ffdshow raw video filter") &&
                       ((sPDWGroup == 1) || (sPDWGroup == 2)))
                   {
                     FSInfos.Type = StreamType.Unknown;
