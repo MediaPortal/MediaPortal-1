@@ -517,7 +517,7 @@ namespace TvService
 
                     if (_cardHandler.IsIdle)
                     {
-                        _cardHandler.StopCard(user);
+                        _cardHandler.PauseCard(user);
                     }
                     else
                     {

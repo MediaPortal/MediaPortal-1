@@ -66,6 +66,7 @@ namespace TvService
     bool IsScrambled(ref User user);
 
     void StopCard(User user);
+    void PauseCard(User user);
     void SetParameters();
     void Dispose();
   }

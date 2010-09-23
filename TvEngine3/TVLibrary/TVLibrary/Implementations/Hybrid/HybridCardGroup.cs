@@ -97,6 +97,14 @@ namespace TvLibrary.Implementations.Hybrid
     }
 
     /// <summary>
+    /// Pauses the current graph
+    /// </summary>
+    public void PauseGraph()
+    {
+      _cards[_currentCardIndex].PauseGraph();
+    }
+
+    /// <summary>
     /// returns true if card is currently grabbing the epg
     /// </summary>
     /// <value></value>

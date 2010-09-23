@@ -53,6 +53,12 @@ namespace TvLibrary.Interfaces
     bool SupportsSubChannels { get; }
 
     /// <summary>
+    /// Gets wether or not card supports pausing the graph.
+    /// </summary>
+    bool SupportsPauseGraph { get; }
+    
+
+    /// <summary>
     /// Gets or sets the timeout parameters.
     /// </summary>
     /// <value>The parameters.</value>
@@ -84,6 +90,12 @@ namespace TvLibrary.Interfaces
     /// </summary>
     /// <returns></returns>
     void StopGraph();
+
+    /// <summary>
+    /// Pauses the current graph
+    /// </summary>
+    /// <returns></returns>
+    void PauseGraph();
 
     /// <summary>
     /// returns the min. channel number for analog cards

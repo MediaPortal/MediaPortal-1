@@ -116,6 +116,52 @@ namespace TvLibrary.Implementations.Analog
       return true;
     }
 
+
+    /// <summary>
+    /// Pause the current graph
+    /// </summary>
+    /// <returns></returns>
+    public override void PauseGraph()
+    {
+      if (!CheckThreadId())
+        return;
+      FreeAllSubChannels();
+      FilterState state;
+      if (_graphBuilder == null)
+        return;
+      IMediaControl mediaCtl = (_graphBuilder as IMediaControl);
+      if (mediaCtl == null)
+      {
+        throw new TvException("Can not convert graphBuilder to IMediaControl");
+      }
+      mediaCtl.GetState(10, out state);
+
+      Log.Log.WriteFile("analog: PauseGraph state:{0}", state);
+      _isScanning = false;
+      if (_tsFileSink != null)
+      {
+        IMPRecord record = _tsFileSink as IMPRecord;
+        if (record != null)
+        {
+          record.StopTimeShifting(_subChannelId);
+          record.StopRecord(_subChannelId);
+        }
+      }
+      if (state != FilterState.Running)
+      {
+        _graphState = GraphState.Created;
+        return;
+      }
+      int hr = mediaCtl.Pause();
+      if (hr < 0 || hr > 1)
+      {
+        Log.Log.WriteFile("analog: PauseGraph returns:0x{0:X}", hr);
+        throw new TvException("Unable to pause graph");
+      }
+      Log.Log.WriteFile("analog: Graph paused");
+    }
+
+
     /// <summary>
     /// Stops the current graph
     /// </summary>
@@ -633,7 +679,7 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Methods which starts the graph
     /// </summary>
-    private void RunGraph(int subChannel)
+    public override void RunGraph(int subChannel)
     {
       bool graphRunning = GraphRunning();
 

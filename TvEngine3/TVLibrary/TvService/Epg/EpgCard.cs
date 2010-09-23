@@ -197,7 +197,7 @@ namespace TvService
 
           _state = EpgState.Idle;
           _tvController.StopGrabbingEpg(_user);
-          _tvController.StopCard(_user);
+          _tvController.PauseCard(_user);
           _user.CardId = -1;
           _currentTransponder.InUse = false;
           return 0;
@@ -678,7 +678,7 @@ namespace TvService
         if (_state != EpgState.Idle && _user.CardId >= 0)
         {
           _tvController.StopGrabbingEpg(_user);
-          _tvController.StopCard(_user);
+          _tvController.PauseCard(_user);
         }
         _currentTransponder.InUse = false;
         _state = EpgState.Idle;

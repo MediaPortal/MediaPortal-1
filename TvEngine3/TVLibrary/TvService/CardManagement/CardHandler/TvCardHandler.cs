@@ -789,6 +789,60 @@ namespace TvService
       }
     }
 
+
+    /// <summary>
+    /// Pauses the card.
+    /// </summary>
+    public void PauseCard(User user)
+    {
+      try
+      {
+        if (_dbsCard.Enabled == false)
+          return;
+        if (IsLocal == false)
+        {
+          try
+          {
+            RemoteControl.HostName = _dbsCard.ReferencedServer().HostName;
+            RemoteControl.Instance.PauseCard(user);
+            return;
+          }
+          catch (Exception)
+          {
+            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            return;
+          }
+        }
+        Log.Info("Pausecard");
+
+        //remove all subchannels, except for this user...
+        ITvSubChannel[] channels = _card.SubChannels;
+        for (int i = 0; i < channels.Length; ++i)
+        {
+          _card.FreeSubChannel(channels[i].SubChannelId);
+        }
+
+        TvCardContext context = _card.Context as TvCardContext;
+        if (context != null)
+        {
+          context.Clear();
+        }
+
+        if (_card.SupportsPauseGraph)
+        {
+          _card.PauseGraph(); 
+        }
+        else
+        {
+          _card.StopGraph();
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
+    }
+
     /// <summary>
     /// Stops the card.
     /// </summary>

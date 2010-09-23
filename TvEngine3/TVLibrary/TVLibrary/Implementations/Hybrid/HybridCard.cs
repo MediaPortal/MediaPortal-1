@@ -78,6 +78,14 @@ namespace TvLibrary.Implementations.Hybrid
     #region properties
 
     /// <summary>
+    /// Gets wether or not card supports pausing the graph.
+    /// </summary>
+    public bool SupportsPauseGraph
+    {
+      get { return true; }
+    }
+
+    /// <summary>
     /// returns true if card is currently present
     /// </summary>
     public bool CardPresent
@@ -174,6 +182,14 @@ namespace TvLibrary.Implementations.Hybrid
     public void StopGraph()
     {
       _group.StopGraph();
+    }
+
+    /// <summary>
+    /// Pauses the current graph
+    /// </summary>
+    public void PauseGraph()
+    {
+      _group.PauseGraph();
     }
 
 

@@ -224,6 +224,14 @@ namespace TvLibrary.Implementations
     #region properties
 
     /// <summary>
+    /// Gets wether or not card supports pausing the graph.
+    /// </summary>
+    public virtual bool SupportsPauseGraph
+    {
+      get { return true; }      
+    }
+
+    /// <summary>
     /// Gets or sets the unique id of this card
     /// </summary>
     public virtual int CardId
@@ -590,6 +598,17 @@ namespace TvLibrary.Implementations
     public abstract void StopGraph();
 
     /// <summary>
+    /// Pauses the current graph
+    /// </summary>
+    ///     
+    public abstract void PauseGraph();
+
+    /// <summary>
+    /// Starts the graph
+    /// </summary>
+    public abstract void RunGraph(int subChannel);
+
+    /// <summary>
     /// A derrived class should activate / deactivate the epg grabber
     /// </summary>
     /// <param name="value">Mode</param>
@@ -681,8 +700,15 @@ namespace TvLibrary.Implementations
         _subChannelId = 0;
         if (!continueGraph)
         {
-          Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, stopping graph");
-          StopGraph();
+          Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, pausing graph");          
+          if (SupportsPauseGraph)
+          {
+            PauseGraph();  
+          }
+          else
+          {
+            StopGraph();  
+          }          
         }
         else
         {

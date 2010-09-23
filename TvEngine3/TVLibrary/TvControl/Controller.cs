@@ -837,6 +837,12 @@ namespace TvControl
     /// <param name="user">The user.</param>
     void StopCard(User user);
 
+    /// <summary>
+    /// Pauses the card.
+    /// </summary>
+    /// <param name="user">The user.</param>
+    void PauseCard(User user);
+
 
     /// <summary>
     /// Query what card would be used for timeshifting on any given channel

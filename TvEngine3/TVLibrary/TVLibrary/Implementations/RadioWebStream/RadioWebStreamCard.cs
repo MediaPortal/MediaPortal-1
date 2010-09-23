@@ -322,6 +322,23 @@ namespace TvLibrary.Implementations.RadioWebStream
     }
 
     /// <summary>
+    /// Gets wether or not card supports pausing the graph.
+    /// </summary>
+    public bool SupportsPauseGraph
+    {
+      get { return false; }
+    }
+
+    /// <summary>
+    /// Pause the current graph
+    /// </summary>
+    /// <returns></returns>
+    public void PauseGraph()
+    {
+      if (!CheckThreadId()) return;
+    }
+
+    /// <summary>
     /// Returns if the tuner belongs to a hybrid card
     /// </summary>
     public bool IsHybrid

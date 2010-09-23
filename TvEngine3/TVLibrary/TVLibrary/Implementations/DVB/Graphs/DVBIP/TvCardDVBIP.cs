@@ -246,6 +246,14 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
+    /// Gets wether or not card supports pausing the graph.
+    /// </summary>
+    public override bool SupportsPauseGraph
+    {
+      get { return false; }
+    }
+
+    /// <summary>
     /// Stops graph
     /// </summary>
     public override void StopGraph()

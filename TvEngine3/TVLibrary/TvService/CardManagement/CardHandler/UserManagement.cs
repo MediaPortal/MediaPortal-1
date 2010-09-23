@@ -151,8 +151,15 @@ namespace TvService
         }
       }
       if (_cardHandler.IsIdle)
-      {
-        _cardHandler.Card.StopGraph();
+      {        
+        if (_cardHandler.Card.SupportsPauseGraph)
+        {
+          _cardHandler.Card.PauseGraph(); 
+        }
+        else
+        {
+          _cardHandler.Card.StopGraph();
+        }
       }
     }
 

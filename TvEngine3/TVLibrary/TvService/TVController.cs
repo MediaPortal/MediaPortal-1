@@ -29,6 +29,7 @@ using System.Diagnostics;
 using System.Reflection;
 using TvLibrary;
 using TvLibrary.Implementations;
+using TvLibrary.Implementations.DVB;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.Analog;
 using TvLibrary.Implementations.Hybrid;
@@ -612,11 +613,12 @@ namespace TvService
                     if (card.PreloadCard)
                     {
                       Log.Info("Controller: preloading card :{0}", card.Name);
-                      card.BuildGraph();
+                      card.BuildGraph();                      
                       if (unknownCard is TvCardAnalog)
                       {
                         ((TvCardAnalog)unknownCard).ReloadCardConfiguration();
                       }
+                      card.RunGraph(0);                                            
                     }
                     else
                     {
@@ -1821,6 +1823,13 @@ namespace TvService
       if (ValidateTvControllerParams(user))
         return;
       _cards[user.CardId].StopCard(user);
+    }
+
+    public void PauseCard(User user)
+    {
+      if (ValidateTvControllerParams(user))
+        return;
+      _cards[user.CardId].PauseCard(user);
     }
 
     public bool StopTimeShifting(ref User user, TvStoppedReason reason)

@@ -127,6 +127,38 @@ namespace TvLibrary.Implementations.Analog
     /// Stops the current graph
     /// </summary>
     /// <returns></returns>
+    public override void PauseGraph()
+    {
+      FreeAllSubChannels();
+      FilterState state;
+      if (_graphBuilder == null)
+        return;
+      IMediaControl mediaCtl = (_graphBuilder as IMediaControl);
+      if (mediaCtl == null)
+      {
+        throw new TvException("Can not convert graphBuilder to IMediaControl");
+      }
+      mediaCtl.GetState(10, out state);
+      Log.Log.WriteFile("HDPVR: PauseGraph state:{0}", state);
+      _isScanning = false;
+      if (state != FilterState.Running)
+      {
+        _graphState = GraphState.Created;
+        return;
+      }
+      int hr = mediaCtl.Pause();
+      if (hr < 0 || hr > 1)
+      {
+        Log.Log.WriteFile("HDPVR: PauseGraph returns:0x{0:X}", hr);
+        throw new TvException("Unable to pause graph");
+      }
+      Log.Log.WriteFile("HDPVR: Graph paused");
+    }
+
+    /// <summary>
+    /// Stops the current graph
+    /// </summary>
+    /// <returns></returns>
     public override void StopGraph()
     {
       FreeAllSubChannels();
@@ -767,7 +799,7 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Method which starts the graph
     /// </summary>
-    private void RunGraph(int subChannel)
+    public override void RunGraph(int subChannel)
     {
       bool graphRunning = GraphRunning();
 

@@ -633,7 +633,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Methods which starts the graph
     /// </summary>
-    protected void RunGraph(int subChannel)
+    public override void RunGraph(int subChannel)
     {
       bool graphRunning = GraphRunning();
 
@@ -680,6 +680,41 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
+    /// Methods which pauses the graph
+    /// </summary>
+    public override void PauseGraph()
+    {
+      Log.Log.WriteFile("dvb:PauseGraph called");
+      if (!CheckThreadId())
+        return;
+      _epgGrabbing = false;
+      _isScanning = false;
+      FreeAllSubChannels();
+      if (_mdplugs != null)
+      {
+        _mdplugs.FreeAllChannels();
+      }
+      if (_graphBuilder == null)
+        return;
+      
+      FilterState state;
+      ((IMediaControl)_graphBuilder).GetState(10, out state);
+      if (state != FilterState.Running)
+      {
+        Log.Log.WriteFile("dvb:StopGraph filterstate already paused, returning.");
+        return;
+      }
+      Log.Log.WriteFile("dvb:PauseGraph");
+      int hr = ((IMediaControl)_graphBuilder).Pause();
+      if (hr < 0 || hr > 1)
+      {
+        Log.Log.Error("dvb:PauseGraph returns:0x{0:X}", hr);
+        throw new TvException("Unable to pause graph");
+      }
+      _graphState = GraphState.Created;        
+    }
+
+    /// <summary>
     /// Methods which stops the graph
     /// </summary>
     public override void StopGraph()
@@ -722,7 +757,13 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
+        int hr = ((IMediaControl)_graphBuilder).Stop();        
         Log.Log.WriteFile("dvb:StopGraph - conditionalAccess.AllowedToStopGraph = false");
+        if (hr < 0 || hr > 1)
+        {
+          Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
+          throw new TvException("Unable to stop graph");
+        }
         _graphState = GraphState.Created;
       }
     }
