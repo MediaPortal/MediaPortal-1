@@ -41,6 +41,7 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel labelAutoPlay;
 
     private string m_strDefaultRegionLanguage = "English";
+    private MPCheckBox showClosedCaptions;
 
     private string[] autoPlayOptions = new string[]
                                          {
@@ -98,6 +99,7 @@ namespace MediaPortal.Configuration.Sections
                                                                                   m_strDefaultRegionLanguage);
 
         showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "showsubtitles", false);
+        showClosedCaptions.Checked = xmlreader.GetValueAsBool("dvdplayer", "showclosedcaptions", false);
 
         string autoPlayText = xmlreader.GetValueAsString("dvdplayer", "autoplay", "Ask");
         switch (autoPlayText)
@@ -126,6 +128,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("dvdplayer", "subtitlelanguage", defaultSubtitleLanguageComboBox.Text);
 
         xmlwriter.SetValueAsBool("dvdplayer", "showsubtitles", showSubtitlesCheckBox.Checked);
+        xmlwriter.SetValueAsBool("dvdplayer", "showclosedcaptions", showClosedCaptions.Checked);
 
         string autoPlayText;
 
@@ -163,16 +166,16 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.labelAutoPlay = new MediaPortal.UserInterface.Controls.MPLabel();
       this.autoPlayComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.showClosedCaptions = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.showClosedCaptions);
       this.groupBox1.Controls.Add(this.defaultAudioLanguagelabel);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.defaultAudioLanguageComboBox);
@@ -206,10 +209,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultAudioLanguageComboBox
       // 
-      this.defaultAudioLanguageComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultAudioLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultAudioLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultAudioLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultAudioLanguageComboBox.Location = new System.Drawing.Point(168, 68);
@@ -220,10 +221,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultSubtitleLanguageComboBox
       // 
-      this.defaultSubtitleLanguageComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultSubtitleLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultSubtitleLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultSubtitleLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultSubtitleLanguageComboBox.Location = new System.Drawing.Point(168, 44);
@@ -236,19 +235,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.showSubtitlesCheckBox.AutoSize = true;
       this.showSubtitlesCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.showSubtitlesCheckBox.Location = new System.Drawing.Point(168, 20);
+      this.showSubtitlesCheckBox.Location = new System.Drawing.Point(19, 19);
       this.showSubtitlesCheckBox.Name = "showSubtitlesCheckBox";
       this.showSubtitlesCheckBox.Size = new System.Drawing.Size(206, 17);
       this.showSubtitlesCheckBox.TabIndex = 0;
-      this.showSubtitlesCheckBox.Text = "Force subtitles (overrides disc defaults)";
+      this.showSubtitlesCheckBox.Text = "Show subtitles (overrides disc defaults)";
       this.showSubtitlesCheckBox.UseVisualStyleBackColor = true;
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.labelAutoPlay);
       this.mpGroupBox2.Controls.Add(this.autoPlayComboBox);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -270,16 +267,25 @@ namespace MediaPortal.Configuration.Sections
       // 
       // autoPlayComboBox
       // 
-      this.autoPlayComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.autoPlayComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.autoPlayComboBox.BorderColor = System.Drawing.Color.Empty;
       this.autoPlayComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.autoPlayComboBox.Location = new System.Drawing.Point(168, 24);
       this.autoPlayComboBox.Name = "autoPlayComboBox";
       this.autoPlayComboBox.Size = new System.Drawing.Size(288, 21);
       this.autoPlayComboBox.TabIndex = 1;
+      // 
+      // showClosedCaptions
+      // 
+      this.showClosedCaptions.AutoSize = true;
+      this.showClosedCaptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.showClosedCaptions.Location = new System.Drawing.Point(242, 19);
+      this.showClosedCaptions.Name = "showClosedCaptions";
+      this.showClosedCaptions.Size = new System.Drawing.Size(153, 17);
+      this.showClosedCaptions.TabIndex = 5;
+      this.showClosedCaptions.Text = "Show Closed Captions (CC)";
+      this.showClosedCaptions.UseVisualStyleBackColor = true;
       // 
       // DVD
       // 
@@ -292,6 +298,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion

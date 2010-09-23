@@ -56,11 +56,13 @@ namespace MediaPortal.Player
       string aspectRatio = "";
       string displayMode = "";
       bool turnoffDXVA = false;
+      bool showClosedCaptions = false;
       int codecValue = 0;
       string codecType = "";
 
       using (Settings xmlreader = new MPSettings())
       {
+        showClosedCaptions = xmlreader.GetValueAsBool("dvdplayer", "showclosedcaptions", false);
         dvdDNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
 
         if (dvdDNavigator.ToLower().Contains("cyberlink dvd navigator"))
@@ -251,19 +253,19 @@ namespace MediaPortal.Player
         }
         if (basefilter != null)
         {
-          Log.Info("Dvdplayer9:Disabling Line21 Decoder (Closed Captions)");        
+          Log.Info("Dvdplayer9: Line21 Decoder (Closed Captions), in use: {0}", showClosedCaptions);        
           _line21Decoder = (IAMLine21Decoder)basefilter;
           if (_line21Decoder != null)
           {
-            AMLine21CCState state = AMLine21CCState.Off;
+            AMLine21CCState state = showClosedCaptions ? AMLine21CCState.On : AMLine21CCState.Off;
             hr = _line21Decoder.SetServiceState(state);
             if (hr == 0)
             {
-              Log.Info("DVDPlayer9:Closed Captions disabled");
+              Log.Info("DVDPlayer9: Closed Captions state change successful");
             }
             else
             {
-              Log.Info("DVDPlayer9:Failed to disable Closed Captions");
+              Log.Info("DVDPlayer9: Failed to change Closed Captions state");
             }
           }
         }
