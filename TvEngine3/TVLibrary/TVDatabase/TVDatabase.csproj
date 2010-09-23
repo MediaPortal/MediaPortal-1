@@ -74,6 +74,7 @@
     <Compile Include="ChannelLinkageMap.cs" />
     <Compile Include="ChannelMap.cs" />
     <Compile Include="Conflict.cs" />
+    <Compile Include="PendingDeletion.cs" />
     <Compile Include="EpisodeFormatter.cs" />
     <Compile Include="SoftwareEncoder.cs" />
     <Compile Include="RadioGroupMap.cs" />

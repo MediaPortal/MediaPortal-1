@@ -38,20 +38,20 @@ namespace TvService
     /// will be deleted(for example the releated matroska .xml file)
     /// If the above results in an empty folder, it is also removed.
     /// </summary>
-    /// <param name="rec">The recording we want to delete the files for.</param>
-    public bool DeleteRecordingOnDisk(Recording rec)
+    /// <param name="fileNameForRec">The recording we want to delete the files for.</param>
+    public static bool DeleteRecordingOnDisk(string fileNameForRec)
     {
-      Log.Debug("DeleteRecordingOnDisk: '{0}'", rec.FileName);
-
+      Log.Debug("DeleteRecordingOnDisk: '{0}'", fileNameForRec);
+      bool result = false;
       try
       {
         // Check if directory exists first, otherwise GetFiles throws an error
-        if (Directory.Exists(Path.GetDirectoryName(rec.FileName)))
+        if (Directory.Exists(Path.GetDirectoryName(fileNameForRec)))
         {
           // Find and delete all files with same name(without extension) in the recording dir
           string[] relatedFiles =
-            Directory.GetFiles(Path.GetDirectoryName(rec.FileName),
-                               Path.GetFileNameWithoutExtension(rec.FileName) + @".*");
+            Directory.GetFiles(Path.GetDirectoryName(fileNameForRec),
+                               Path.GetFileNameWithoutExtension(fileNameForRec) + @".*");
 
           foreach (string fileName in relatedFiles)
           {
@@ -60,15 +60,32 @@ namespace TvService
             File.Delete(fileName);
           }
 
-          CleanRecordingFolders(rec.FileName);
+          CleanRecordingFolders(fileNameForRec);
         }
+        result = true; // files deleted, return success
       }
       catch (Exception ex)
       {
         Log.Error("RecordingFileHandler: Error while deleting a recording from disk: {0}", ex.Message);
-        return false; // files not deleted, return failure
-      }
-      return true; // files deleted, return success
+        result = false; // files not deleted, return failure
+
+        try
+        {
+          bool doesPendingDeletionExist = (PendingDeletion.Retrieve(fileNameForRec) != null);
+          if (!doesPendingDeletionExist)
+          {
+            Log.Error("RecordingFileHandler: adding filename to list of pending deletions: {0}", fileNameForRec);
+            PendingDeletion addNewPendingDeletion = new PendingDeletion(fileNameForRec);
+            addNewPendingDeletion.Persist();
+          }
+        }
+        catch (Exception ex2)
+        {
+          Log.Error("DeleteRecordingOnDisk - tried to add to list of pending delitions exception={0}, filename={1}", ex2.Message, fileNameForRec);
+        }        
+      }      
+
+      return result;
     }
 
     /// <summary>
@@ -119,7 +136,9 @@ namespace TvService
                       Log.Debug("RecordingFileHandler: Deleted empty recording dir - {0}", deleteDir);
                       DirectoryInfo di = Directory.GetParent(deleteDir);
                       if (di != null)
+                      {
                         deleteDir = di.FullName;
+                      }
                     }
                     else
                     {

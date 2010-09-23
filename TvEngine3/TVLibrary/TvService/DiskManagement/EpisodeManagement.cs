@@ -88,9 +88,8 @@ namespace TvService
                   oldestEpisode.StartTime.ToLongDateString(),
                   oldestEpisode.StartTime.ToLongTimeString());
 
-        // Delete the file from disk and the recording entry from the database.
-        RecordingFileHandler handler = new RecordingFileHandler();
-        bool result = handler.DeleteRecordingOnDisk(oldestEpisode);
+        // Delete the file from disk and the recording entry from the database.        
+        bool result = RecordingFileHandler.DeleteRecordingOnDisk(oldestEpisode.FileName);
         if (result)
         {
           oldestEpisode.Delete();

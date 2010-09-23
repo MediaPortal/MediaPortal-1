@@ -758,23 +758,9 @@ namespace TvService
           _scheduler = new Scheduler(this);
           _scheduler.Start();
         }
-
-        // setup heartbeat monitoring thread.
-        // useful for kicking idle/dead clients.
-        Log.Info("Controller: setup HeartBeat Monitor");
-
-        //stop thread, just incase it is running.
-        if (heartBeatMonitorThread != null)
-        {
-          if (heartBeatMonitorThread.IsAlive)
-          {
-            heartBeatMonitorThread.Abort();
-          }
-        }
-        heartBeatMonitorThread = new Thread(HeartBeatMonitor);
-        heartBeatMonitorThread.Name = "HeartBeatMonitor";
-        heartBeatMonitorThread.IsBackground = true;
-        heartBeatMonitorThread.Start();
+        
+        SetupHeartbeatThread();
+        ExecutePendingDeletions();
 
         // Re-evaluate program states
         Log.Info("Controller: recalculating program states");
@@ -788,6 +774,25 @@ namespace TvService
       }
       Log.Info("Controller: initalized");
       return true;
+    }
+
+    private void SetupHeartbeatThread() {
+      // setup heartbeat monitoring thread.
+      // useful for kicking idle/dead clients.
+      Log.Info("Controller: setup HeartBeat Monitor");
+
+      //stop thread, just incase it is running.
+      if (heartBeatMonitorThread != null)
+      {
+        if (heartBeatMonitorThread.IsAlive)
+        {
+          heartBeatMonitorThread.Abort();
+        }
+      }
+      heartBeatMonitorThread = new Thread(HeartBeatMonitor);
+      heartBeatMonitorThread.Name = "HeartBeatMonitor";
+      heartBeatMonitorThread.IsBackground = true;
+      heartBeatMonitorThread.Start();
     }
 
     #endregion
@@ -2117,9 +2122,8 @@ namespace TvService
           return false;
         }
 
-        _streamer.RemoveFile(rec.FileName);
-        RecordingFileHandler handler = new RecordingFileHandler();
-        bool result = handler.DeleteRecordingOnDisk(rec);
+        _streamer.RemoveFile(rec.FileName);        
+        bool result = RecordingFileHandler.DeleteRecordingOnDisk(rec.FileName);
         if (result)
         {
           rec.Delete();
@@ -4107,5 +4111,43 @@ namespace TvService
     }
 
     #endregion
+
+    public void ExecutePendingDeletions()
+    {
+      try
+      {
+
+       // System.Diagnostics.Debugger.Launch();
+        List<int> pendingDelitionRemove = new List<int>();
+        IList<PendingDeletion> pendingDeletions = PendingDeletion.ListAll();
+
+        Log.Debug("ExecutePendingDeletions: number of pending deletions : " + Convert.ToString(pendingDeletions.Count));
+
+        foreach (PendingDeletion pendingDelition in pendingDeletions)
+        {
+          Log.Debug("ExecutePendingDeletions: trying to remove file : " + pendingDelition.FileName);
+
+          bool wasDeleted = RecordingFileHandler.DeleteRecordingOnDisk(pendingDelition.FileName);
+          if (wasDeleted)
+          {
+            pendingDelitionRemove.Add(pendingDelition.IdPendingDeletion);
+          }
+        }
+
+        foreach (int id in pendingDelitionRemove)
+        {
+          PendingDeletion pendingDelition = PendingDeletion.Retrieve(id);
+
+          if (pendingDelition != null)
+          {
+            pendingDelition.Remove();
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("ExecutePendingDeletions exception : " + ex.Message);
+      }
+    }
   }
 }

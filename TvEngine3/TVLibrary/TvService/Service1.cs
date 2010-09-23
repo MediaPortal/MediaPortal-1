@@ -484,6 +484,16 @@ namespace TvService
                     : PowerEventType.QueryStandByFailed);
         }
       }
+      else if (powerStatus == PowerEventType.ResumeAutomatic ||
+               powerStatus == PowerEventType.ResumeCritical ||
+               powerStatus == PowerEventType.ResumeStandBy ||
+               powerStatus == PowerEventType.ResumeSuspend
+        )
+      {
+        _controller.ExecutePendingDeletions();
+        // call Recording-folder cleanup, just in case we have empty folders.
+      }
+
 
       return false;
     }
