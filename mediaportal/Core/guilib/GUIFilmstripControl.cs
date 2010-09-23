@@ -118,6 +118,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("showFrame")] protected bool _showFrame = true;
     [XMLSkinElement("showFolder")] protected bool _showFolder = true;
     [XMLSkinElement("frameFocus")] protected string _frameFocusName = "";
+    [XMLSkinElement("keepaspectratio")] protected bool _keepAspectRatio = true;
 
     [XMLSkin("thumbs", "flipX")] protected bool _flipX = false;
     [XMLSkin("thumbs", "flipY")] protected bool _flipY = false;
@@ -467,7 +468,7 @@ namespace MediaPortal.GUI.Library
                                 _thumbNailPositionY - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized,
                                 _thumbNailHeight + 2 * iOverSized, pItem.ThumbnailImage, 0x0);
           pImage.ParentControl = this;
-          pImage.KeepAspectRatio = true;
+          pImage.KeepAspectRatio = _keepAspectRatio;
           pImage.ZoomFromTop = !pItem.IsFolder;
           pImage.FlipX = _flipX;
           pImage.FlipY = _flipY;
@@ -534,7 +535,7 @@ namespace MediaPortal.GUI.Library
                                   _thumbNailPositionY - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized,
                                   _thumbNailHeight + 2 * iOverSized, pItem.IconImageBig, 0x0);
             pImage.ParentControl = this;
-            pImage.KeepAspectRatio = true;
+            pImage.KeepAspectRatio = _keepAspectRatio;
             pImage.ZoomFromTop = !pItem.IsFolder;
             pImage.AllocResources();
             pImage.FlipX = _flipX;
@@ -3462,6 +3463,15 @@ namespace MediaPortal.GUI.Library
     {
       get { return _enableSMSsearch; }
       set { _enableSMSsearch = value; }
+    }
+
+    /// <summary>
+    /// Get/set if the aspectration of the images of the items needs to be kept.
+    /// </summary>
+    public bool KeepAspectRatio
+    {
+      get { return _keepAspectRatio; }
+      set { _keepAspectRatio = value; }
     }
   }
 }

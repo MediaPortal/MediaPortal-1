@@ -193,6 +193,7 @@
     <IconXOff>8</IconXOff>
     <IconYOff>8</IconYOff>
     <suffix>|</suffix>
+	<keepaspectratio>false</keepaspectratio>
   </control>
   <control>
     <description>default checklistcontrol</description>
@@ -447,6 +448,7 @@
     <InfoImagediffuse>ffffffff</InfoImagediffuse>
     <textXOff>0</textXOff>
     <textYOff>0</textYOff>
+	<keepaspectratio>true</keepaspectratio>
   </control>
   <control>
     <description>default fadelabel</description>
