@@ -575,43 +575,57 @@ namespace MediaPortal.GUI.Video
         itemlist = _virtualDirectory.GetDirectoryExt(_currentFolder);
         if (_mapSettings.Stack)
         {
-          List<GUIListItem> itemfiltered = new List<GUIListItem>(itemlist.Count);
-          for (int x = 0; x < itemlist.Count; ++x)
+          Dictionary<string, List<GUIListItem>> stackings = new Dictionary<string, List<GUIListItem>>(itemlist.Count);
+
+          for (int i = 0; i < itemlist.Count; ++i)
           {
-            bool addItem = true;
-            GUIListItem item1 = (GUIListItem)itemlist[x];
-            for (int y = 0; y < itemlist.Count; ++y)
+            GUIListItem item1 = itemlist[i];
+            string cleanFilename = item1.Label;
+            Util.Utils.RemoveStackEndings(ref cleanFilename);
+            List<GUIListItem> innerList;
+            if (stackings.TryGetValue(cleanFilename, out innerList))
             {
-              GUIListItem item2 = (GUIListItem)itemlist[y];
-              if (x != y)
+              for (int j = 0; j < innerList.Count; j++)
               {
-                if (!item1.IsFolder || !item2.IsFolder)
+                GUIListItem item2 = innerList[j];
+                if ((!item1.IsFolder || !item2.IsFolder)
+                    && (!item1.IsRemote && !item2.IsRemote)
+                    && Util.Utils.ShouldStack(item1.Path, item2.Path))
                 {
-                  if (!item1.IsRemote && !item2.IsRemote)
+                  if (String.Compare(item1.Path, item2.Path, true) > 0)
                   {
-                    if (Util.Utils.ShouldStack(item1.Path, item2.Path))
-                    {
-                      if (String.Compare(item1.Path, item2.Path, true) > 0)
-                      {
-                        addItem = false;
-                        // Update to reflect the stacked size
-                        item2.FileInfo.Length += item1.FileInfo.Length;
-                      }
-                    }
+                    item2.FileInfo.Length += item1.FileInfo.Length;
                   }
+                  else
+                  {
+                    // keep item1, it's path is lexicographically before item2 path
+                    item1.FileInfo.Length += item2.FileInfo.Length;
+                    innerList[j] = item1;
+                  }
+                }
+                else // not stackable
+                {
+                  innerList.Add(item2);
                 }
               }
             }
-
-            if (addItem)
+            else
             {
-              string label = item1.Label;
-              if ((VirtualDirectory.IsValidExtension(item1.Path, Util.Utils.VideoExtensions, false)))
-              {
-                Util.Utils.RemoveStackEndings(ref label);
-              }
-              item1.Label = label;
-              itemfiltered.Add(item1);
+              innerList = new List<GUIListItem> {item1};
+              stackings.Add(cleanFilename, innerList);
+            }
+          }
+
+          List<GUIListItem> itemfiltered = new List<GUIListItem>(itemlist.Count);
+          foreach (KeyValuePair<string, List<GUIListItem>> pair in stackings)
+          {
+            List<GUIListItem> innerList = pair.Value;
+            for (int i = 0; i < innerList.Count; i++)
+            {
+              GUIListItem item = innerList[i];
+              if ((VirtualDirectory.IsValidExtension(item.Path, Util.Utils.VideoExtensions, false)))
+                item.Label = pair.Key;
+              itemfiltered.Add(item);
             }
           }
           itemlist = itemfiltered;
@@ -627,7 +641,6 @@ namespace MediaPortal.GUI.Video
           selectDVDHandler = new SelectDVDHandler();
           GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
         }
-
         // folder.jpg will already be assigned from "itemlist = virtualDirectory.GetDirectory(_currentFolder);" here
         selectDVDHandler.SetIMDBThumbs(itemlist, _markWatchedFiles, _eachFolderIsMovie);
 
