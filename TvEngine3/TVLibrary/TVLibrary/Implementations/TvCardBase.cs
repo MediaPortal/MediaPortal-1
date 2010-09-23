@@ -51,8 +51,9 @@ namespace TvLibrary.Implementations
       if (_devicePath != null)
       {
         GetPreloadBitAndCardId();
+        GetSupportsPauseGraph();
       }
-    }
+    }   
 
     #endregion
 
@@ -80,6 +81,11 @@ namespace TvLibrary.Implementations
     /// Indicates, if the card should be preloaded
     /// </summary>
     protected bool _preloadCard;
+
+    /// <summary>
+    /// Indicates, if the card supports pausegraph, otherwise stopgraph will be used when card is idle.
+    /// </summary>
+    protected bool _stopGraph;
 
     /// <summary>
     /// Scanning Paramters
@@ -228,7 +234,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     public virtual bool SupportsPauseGraph
     {
-      get { return true; }      
+      get { return !_stopGraph; }      
     }
 
     /// <summary>
@@ -512,6 +518,20 @@ namespace TvLibrary.Implementations
         {
           _preloadCard = dbsCard.PreloadCard;
           _cardId = dbsCard.IdCard;
+          break;
+        }
+      }
+    }
+
+    private void GetSupportsPauseGraph()
+    {
+      //fetch stopgraph value from db and apply it.
+      IList<Card> cardsInDbs = Card.ListAll();
+      foreach (Card dbsCard in cardsInDbs)
+      {
+        if (dbsCard.DevicePath.Equals(_devicePath))
+        {
+          _stopGraph = dbsCard.StopGraph;          
           break;
         }
       }

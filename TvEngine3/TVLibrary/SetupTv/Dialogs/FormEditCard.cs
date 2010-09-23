@@ -71,10 +71,13 @@ namespace SetupTv.Sections
       {
         checkBoxPreloadCard.Enabled = false;
         _card.PreloadCard = false;
-      }
-
+      }      
+      
       checkBoxPreloadCard.Checked = _card.PreloadCard;
       checkBoxCAMenabled.Checked = _card.CAM;
+
+      radioStopCard.Checked = _card.StopGraph;
+      radioPauseCard.Checked = !radioStopCard.Checked;
 
       setCAMLimitVisibility();
       Text += " " + _card.Name;
@@ -105,6 +108,7 @@ namespace SetupTv.Sections
         _card.GrabEPG = checkBoxAllowEpgGrab.Checked;
       }
       _card.PreloadCard = checkBoxPreloadCard.Checked;
+      _card.StopGraph = radioStopCard.Checked;      
 
       _card.CAM = checkBoxCAMenabled.Checked;
       _card.netProvider = (int)comboBoxNetProvider.SelectedItem;

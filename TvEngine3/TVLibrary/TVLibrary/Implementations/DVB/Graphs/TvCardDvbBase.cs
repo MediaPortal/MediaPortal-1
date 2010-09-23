@@ -701,7 +701,7 @@ namespace TvLibrary.Implementations.DVB
       ((IMediaControl)_graphBuilder).GetState(10, out state);
       if (state != FilterState.Running)
       {
-        Log.Log.WriteFile("dvb:StopGraph filterstate already paused, returning.");
+        Log.Log.WriteFile("dvb:PauseGraph filterstate already paused, returning.");
         return;
       }
       Log.Log.WriteFile("dvb:PauseGraph");

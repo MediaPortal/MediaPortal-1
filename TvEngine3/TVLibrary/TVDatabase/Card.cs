@@ -60,6 +60,7 @@ namespace TvDatabase
     [TableColumn("recordingFormat", NotNull = true)] private int recordingFormat;
     [TableColumn("decryptLimit", NotNull = true)] private int decryptLimit;
     [TableColumn("preload", NotNull = true)] private bool preloadCard;
+    [TableColumn("stopgraph", NotNull = true)] private bool stopGraph;
 
     [TableColumn("CAM", NotNull = true)] private bool CAModule;
     [TableColumn("NetProvider", NotNull = true)] private int NetProvider;
@@ -137,6 +138,19 @@ namespace TvDatabase
       {
         isChanged |= preloadCard != value;
         preloadCard = value;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column stopGraph
+    /// </summary>
+    public bool StopGraph
+    {
+      get { return stopGraph; }
+      set
+      {
+        isChanged |= stopGraph != value;
+        stopGraph = value;
       }
     }
 

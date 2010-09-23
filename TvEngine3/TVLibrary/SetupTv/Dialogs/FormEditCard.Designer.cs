@@ -45,6 +45,9 @@ namespace SetupTv.Sections
       this.groupBox4 = new System.Windows.Forms.GroupBox();
       this.lblProvider = new MediaPortal.UserInterface.Controls.MPLabel();
       this.comboBoxNetProvider = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.radioPauseCard = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioStopCard = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDecryptLimit)).BeginInit();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
@@ -83,7 +86,7 @@ namespace SetupTv.Sections
       // mpButtonSave
       // 
       this.mpButtonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButtonSave.Location = new System.Drawing.Point(225, 384);
+      this.mpButtonSave.Location = new System.Drawing.Point(225, 475);
       this.mpButtonSave.Name = "mpButtonSave";
       this.mpButtonSave.Size = new System.Drawing.Size(75, 23);
       this.mpButtonSave.TabIndex = 1;
@@ -108,7 +111,7 @@ namespace SetupTv.Sections
       // 
       this.mpButtonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.mpButtonCancel.Location = new System.Drawing.Point(306, 384);
+      this.mpButtonCancel.Location = new System.Drawing.Point(306, 475);
       this.mpButtonCancel.Name = "mpButtonCancel";
       this.mpButtonCancel.Size = new System.Drawing.Size(75, 23);
       this.mpButtonCancel.TabIndex = 6;
@@ -199,19 +202,22 @@ namespace SetupTv.Sections
       // 
       // groupBox3
       // 
+      this.groupBox3.Controls.Add(this.mpLabel1);
+      this.groupBox3.Controls.Add(this.radioStopCard);
+      this.groupBox3.Controls.Add(this.radioPauseCard);
       this.groupBox3.Controls.Add(this.checkBoxPreloadCard);
       this.groupBox3.Location = new System.Drawing.Point(12, 244);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(369, 45);
+      this.groupBox3.Size = new System.Drawing.Size(369, 136);
       this.groupBox3.TabIndex = 9;
       this.groupBox3.TabStop = false;
-      this.groupBox3.Text = "Preload Card";
+      this.groupBox3.Text = "Adv. Tuning Options";
       // 
       // groupBox4
       // 
       this.groupBox4.Controls.Add(this.lblProvider);
       this.groupBox4.Controls.Add(this.comboBoxNetProvider);
-      this.groupBox4.Location = new System.Drawing.Point(12, 295);
+      this.groupBox4.Location = new System.Drawing.Point(12, 386);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(369, 83);
       this.groupBox4.TabIndex = 10;
@@ -237,13 +243,45 @@ namespace SetupTv.Sections
       this.comboBoxNetProvider.Size = new System.Drawing.Size(334, 21);
       this.comboBoxNetProvider.TabIndex = 0;
       // 
+      // radioPauseCard
+      // 
+      this.radioPauseCard.AutoSize = true;
+      this.radioPauseCard.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.radioPauseCard.Location = new System.Drawing.Point(34, 70);
+      this.radioPauseCard.Name = "radioPauseCard";
+      this.radioPauseCard.Size = new System.Drawing.Size(185, 17);
+      this.radioPauseCard.TabIndex = 1;
+      this.radioPauseCard.TabStop = true;
+      this.radioPauseCard.Text = "Pause card (faster for some cards)";
+      this.radioPauseCard.UseVisualStyleBackColor = true;
+      // 
+      // radioStopCard
+      // 
+      this.radioStopCard.AutoSize = true;
+      this.radioStopCard.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.radioStopCard.Location = new System.Drawing.Point(34, 93);
+      this.radioStopCard.Name = "radioStopCard";
+      this.radioStopCard.Size = new System.Drawing.Size(156, 17);
+      this.radioStopCard.TabIndex = 2;
+      this.radioStopCard.TabStop = true;
+      this.radioStopCard.Text = "Stop card (more compatible)";
+      this.radioStopCard.UseVisualStyleBackColor = true;
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Location = new System.Drawing.Point(15, 50);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(235, 17);
+      this.mpLabel1.TabIndex = 3;
+      this.mpLabel1.Text = "When card enters idle state do the following:";
+      // 
       // FormEditCard
       // 
       this.AcceptButton = this.mpButtonSave;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.mpButtonCancel;
-      this.ClientSize = new System.Drawing.Size(393, 420);
+      this.ClientSize = new System.Drawing.Size(393, 511);
       this.Controls.Add(this.groupBox4);
       this.Controls.Add(this.groupBox3);
       this.Controls.Add(this.groupBox2);
@@ -289,5 +327,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.GroupBox groupBox4;
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxNetProvider;
     private MediaPortal.UserInterface.Controls.MPLabel lblProvider;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioStopCard;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioPauseCard;
   }
 }
