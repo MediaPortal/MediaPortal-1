@@ -78,9 +78,12 @@ namespace MediaPortal.GUI.Video
       PANEL2 = 150
     } ;
 
-    [SkinControl(500)] protected GUIImage imgVolumeMuteIcon;
-    [SkinControl(501)] protected GUIVolumeBar imgVolumeBar;
-    [SkinControl(502)] protected GUIImage imgActionForbiddenIcon;
+    [SkinControl(500)]
+    protected GUIImage imgVolumeMuteIcon;
+    [SkinControl(501)]
+    protected GUIVolumeBar imgVolumeBar;
+    [SkinControl(502)]
+    protected GUIImage imgActionForbiddenIcon;
 
     private bool _isOsdVisible = false;
     private bool _showStep = false;
@@ -407,14 +410,14 @@ namespace MediaPortal.GUI.Video
 
       switch (action.wID)
       {
-          // previous : play previous song from playlist
+        // previous : play previous song from playlist
         case Action.ActionType.ACTION_PREV_ITEM:
           {
             //g_playlistPlayer.PlayPrevious();
           }
           break;
 
-          // next : play next song from playlist
+        // next : play next song from playlist
         case Action.ActionType.ACTION_NEXT_ITEM:
           {
             //g_playlistPlayer.PlayNext();
@@ -627,7 +630,7 @@ namespace MediaPortal.GUI.Video
             }
             return;
           }
-          //break;
+        //break;
 
         case Action.ActionType.ACTION_MOVE_UP:
         case Action.ActionType.ACTION_BIG_STEP_FORWARD:
@@ -680,7 +683,7 @@ namespace MediaPortal.GUI.Video
             }
             return;
           }
-          //break;
+        //break;
 
         case Action.ActionType.ACTION_SHOW_MPLAYER_OSD:
           //g_application.m_pPlayer.ToggleOSD();
@@ -715,8 +718,19 @@ namespace MediaPortal.GUI.Video
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
                                               (int)Control.LABEL_ROW1, 0, 0, null);
               g_Player.SwitchToNextAudio();
-              msg.Label = string.Format("{0} ({1}/{2})", g_Player.AudioLanguage(g_Player.CurrentAudioStream),
-                                        g_Player.CurrentAudioStream + 1, g_Player.AudioStreams);
+
+              String language = g_Player.AudioLanguage(g_Player.CurrentAudioStream);
+              if (String.Equals(language, "Audio") || String.Equals(language, ""))
+              {
+                msg.Label = string.Format("{0} ({1}/{2})", g_Player.AudioType(g_Player.CurrentAudioStream),
+                                          g_Player.CurrentAudioStream + 1, g_Player.AudioStreams);
+              }
+              else
+              {
+                msg.Label = string.Format("{0}, {1} ({2}/{3})", language, g_Player.AudioType(g_Player.CurrentAudioStream),
+                                          g_Player.CurrentAudioStream + 1, g_Player.AudioStreams);
+              }
+
               OnMessage(msg);
               Log.Info("GUIVideoFullscreen: switched audio to {0}", msg.Label);
             }
@@ -759,7 +773,7 @@ namespace MediaPortal.GUI.Video
           }
           break;
 
-          // PAUSE action is handled globally in the Application class
+        // PAUSE action is handled globally in the Application class
         case Action.ActionType.ACTION_PAUSE:
           g_Player.Pause();
           ScreenStateChanged();
@@ -1123,7 +1137,7 @@ namespace MediaPortal.GUI.Video
               _isOsdVisible = false;
               GUIWindowManager.IsOsdVisible = false;
               GUIGraphicsContext.IsFullScreenVideo = false;
-                            
+
               GUILayerManager.UnRegisterLayer(this);
 
               /*imgVolumeMuteIcon.SafeDispose();
@@ -1216,7 +1230,7 @@ namespace MediaPortal.GUI.Video
       }
       switch (dlg.SelectedId)
       {
-          // Add audio stream selection to be able to switch audio streams in .ts recordings
+        // Add audio stream selection to be able to switch audio streams in .ts recordings
         case 492:
           ShowAudioStreamsMenu();
           break;
@@ -1276,12 +1290,12 @@ namespace MediaPortal.GUI.Video
       dlg.Add(String.Format("{0}", GUILocalizeStrings.Get(975)));
       // Next chapter
       dlg.Add(String.Format("{0}", GUILocalizeStrings.Get(976)));
-      
+
       //List all chapters
       double[] chaptersList = new double[0];
       //List all chapters Name
       string[] chaptersname = new string[0];
-     
+
       chaptersname = g_Player.ChaptersName;
       chaptersList = g_Player.Chapters;
       for (int i = 0; i < chaptersList.Length; i++)
@@ -1309,7 +1323,7 @@ namespace MediaPortal.GUI.Video
           }
         }
       }
-      
+
       // show dialog and wait for result
       _IsDialogVisible = true;
       dlg.DoModal(GetID);
@@ -1318,14 +1332,14 @@ namespace MediaPortal.GUI.Video
       if (dlg.SelectedId == -1)
       {
         return;
-      }      
+      }
       else if (dlg.SelectedLabel == 0)
       {
         Action actionPrevChapter = new Action(Action.ActionType.ACTION_PREV_CHAPTER, 0, 0);
         GUIGraphicsContext.OnAction(actionPrevChapter);
       }
       else if (dlg.SelectedLabel == 1)
-      { 
+      {
         Action actionNextChapter = new Action(Action.ActionType.ACTION_NEXT_CHAPTER, 0, 0);
         GUIGraphicsContext.OnAction(actionNextChapter);
       }
@@ -1338,7 +1352,7 @@ namespace MediaPortal.GUI.Video
         g_Player.SeekAbsolute(chaptersList[selectedChapterIndex]);
       }
     }
-      
+
     // Add audio stream selection to be able to switch audio streams in .ts recordings
     private void ShowAudioStreamsMenu()
     {

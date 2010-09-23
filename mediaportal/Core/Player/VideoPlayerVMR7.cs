@@ -280,7 +280,7 @@ namespace MediaPortal.Player
         catch(DeviceLostException)
         {
         }*/
-        DirectShowUtil.SetARMode(graphBuilder, AspectRatioMode.Stretched);        
+        DirectShowUtil.SetARMode(graphBuilder, AspectRatioMode.Stretched);
         // DsUtils.DumpFilters(graphBuilder);
         try
         {
@@ -1132,7 +1132,7 @@ namespace MediaPortal.Player
       mediaCtrl.StopWhenReady();
     }
 
-    protected virtual void OnInitialized() {}
+    protected virtual void OnInitialized() { }
 
     #region subtitle/audio stream selection
 
@@ -1184,10 +1184,10 @@ namespace MediaPortal.Player
     /// Property to get the language for an audio stream
     /// </summary>
     public override string AudioLanguage(int iStream)
-    {      
+    {
       #region return splitter IAMStreamSelect LCID
       int LCIDCheck = FStreams.GetStreamInfos(StreamType.Audio, iStream).LCID;
-      
+
       if (LCIDCheck != 0)
       {
         int size = Util.Win32API.GetLocaleInfo(LCIDCheck, 2, null, 0);
@@ -1217,7 +1217,14 @@ namespace MediaPortal.Player
       // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
       // where "trackname" is stream's "trackname" property muxed in the mkv.
       Regex regex = new Regex(@"\[.+\]");
+      //Audio - English, Dolby Digital, 48.0 kHz, 6 chn, 640.0 kbit/s 
+      //Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
+      Regex regexMPS = new Regex(@"Audio\s*-\s*(?<1>.+?),\s*.+?,\s*.+?,\s*.+?,\s*.+", RegexOptions.IgnoreCase);
+      Regex regexMPC = new Regex("([^, ]+)");
       Match result = regex.Match(streamName);
+      Match resultMPS = regexMPS.Match(streamName);
+      Match resultMPC = regexMPC.Match(streamName);
+
       if (result.Success)
       {
         //Cut off and translate the language part
@@ -1231,6 +1238,32 @@ namespace MediaPortal.Player
           streamName = language;
         }
       }
+      else if (resultMPS.Success)
+      // check for mpegsplitter response format, e.g.:  
+      // Audio - English, Dolby Digital, 48.0 kHz, 6 chn, 640.0 kbit/s 
+      {
+        string language = Util.Utils.TranslateLanguageString(resultMPS.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+        }
+      }
+      else if (resultMPC.Success)
+      // check for mpc-hc audio response format, e.g.: 
+      // English, DTS-HD MA core 1536k (Audio 1) - 48000 Hz, 6 channels dts (libavcodec)
+      {
+        string language = Util.Utils.TranslateLanguageString(resultMPC.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+        }
+      }
+
+      // Remove extraneous info from splitter in parenthesis at end of line, e.g.:
+      // English, DTS-HD MA core 1536k (Audio 1) - 48000 Hz, 6 channels dts (libavcodec)
+      // Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
+      streamName = Regex.Replace(streamName, @"\(.+?\)$", "");
+
       return streamName;
     }
 
@@ -1246,12 +1279,56 @@ namespace MediaPortal.Player
       // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
       // where "trackname" is stream's "trackname" property muxed in the mkv.
       Regex regex = new Regex(@"\[.+\]");
+      //Audio - English, Dolby Digital, 48.0 kHz, 6 chn, 640.0 kbit/s 
+      //Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
+      Regex regexMPS = new Regex(@"Audio\s*-\s*.+?,\s*(?<1>.+?,\s*.+?,\s*.+?,\s*.+)", RegexOptions.IgnoreCase);
+      Regex regexMPSNoLang = new Regex(@"Audio\s*-\s*(?<1>.+?,\s*.+?,\s*.+?,\s*.+)", RegexOptions.IgnoreCase);
+      Regex regexMPC = new Regex(@"\S+,\s+(?<1>.+)");
       Match result = regex.Match(streamName);
+      Match resultMPS = regexMPS.Match(streamName);
+      Match resultMPSNoLang = regexMPSNoLang.Match(streamName);
+      Match resultMPC = regexMPC.Match(streamName);
       if (result.Success)
       {
         //Get the trackname part by removing the language part from the string.
         streamName = regex.Replace(streamName, "").Trim();
       }
+      else if (resultMPS.Success)
+      // check for mpegsplitter response format, e.g.:  
+      // Audio - English, Dolby Digital, 48.0 kHz, 6 chn, 640.0 kbit/s 
+      {
+        string audioType = Util.Utils.TranslateLanguageString(resultMPS.Groups[1].Value);
+        if (audioType.Length > 0)
+        {
+          streamName = audioType;
+        }
+      }
+      else if (resultMPSNoLang.Success)
+      // check for mpegsplitter response format, e.g.:  
+      // Audio - Dolby Digital, 48.0 kHz, 6 chn, 640.0 kbit/s 
+      {
+        string audioType = Util.Utils.TranslateLanguageString(resultMPS.Groups[1].Value);
+        if (audioType.Length > 0)
+        {
+          streamName = audioType;
+        }
+      }
+      else if (resultMPC.Success)
+      // check for mpc-hc audio response format, e.g.: 
+      // English, DTS-HD MA core 1536k (Audio 1) - 48000 Hz, 6 channels dts (libavcodec)
+      {
+        string audioType = Util.Utils.TranslateLanguageString(resultMPC.Groups[1].Value);
+        if (audioType.Length > 0)
+        {
+          streamName = audioType;
+        }
+      }
+
+      // Remove extraneous info from splitter in parenthesis at end of line, e.g.:
+      // English, DTS-HD MA core 1536k (Audio 1) - 48000 Hz, 6 channels dts (libavcodec)
+      // Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
+      streamName = Regex.Replace(streamName, @"\(.+?\)$", "");
+
       return streamName;
     }
 
@@ -1288,6 +1365,19 @@ namespace MediaPortal.Player
       if (result.Success)
       {
         streamName = result.Groups[1].Value;
+      }
+      else
+      {
+        // mpeg splitter subtitle format
+        Match m = Regex.Match(streamName, @"Subtitle\s+-\s+(?<1>.+?),", RegexOptions.IgnoreCase);
+        if (m.Success)
+        {
+          string language = Util.Utils.TranslateLanguageString(m.Groups[1].Value);
+          if (language.Length > 0)
+          {
+            streamName = language;
+          }
+        }
       }
 
       return streamName;
@@ -1380,36 +1470,36 @@ namespace MediaPortal.Player
                   {
                     FSInfos.Type = StreamType.Unknown;
                   }
-                    //VIDEO
+                  //VIDEO
                   else if (sPDWGroup == 0)
                   {
                     FSInfos.Type = StreamType.Video;
                   }
-                    //AUDIO
+                  //AUDIO
                   else if (sPDWGroup == 1)
                   {
                     FSInfos.Type = StreamType.Audio;
                   }
-                    //SUBTITLE
+                  //SUBTITLE
                   else if (sPDWGroup == 2 && sName.LastIndexOf("off") == -1 && sName.LastIndexOf("Hide ") == -1 &&
                            sName.LastIndexOf("No ") == -1 && sName.LastIndexOf("Miscellaneous ") == -1)
                   {
                     FSInfos.Type = StreamType.Subtitle;
                   }
-                    //NO SUBTITILE TAG
+                  //NO SUBTITILE TAG
                   else if ((sPDWGroup == 2 && (sName.LastIndexOf("off") != -1 || sName.LastIndexOf("No ") != -1)) ||
                            (sPDWGroup == 6590033 && sName.LastIndexOf("Hide ") != -1))
                   {
                     FSInfos.Type = StreamType.Subtitle_hidden;
                   }
-                    //DirectVobSub SHOW SUBTITLE TAG
+                  //DirectVobSub SHOW SUBTITLE TAG
                   else if (sPDWGroup == 6590033 && sName.LastIndexOf("Show ") != -1)
                   {
                     FSInfos.Type = StreamType.Subtitle_shown;
                   }
                   Log.Debug("VideoPlayer: FoundStreams: Type={0}; Name={1}, Filter={2}, Id={3}, PDWGroup={4}, LCID={5}",
                             FSInfos.Type.ToString(), FSInfos.Name, FSInfos.Filter, FSInfos.Id.ToString(),
-							sPDWGroup.ToString(), sPLCid.ToString());
+              sPDWGroup.ToString(), sPLCid.ToString());
 
                   switch (FSInfos.Type)
                   {
@@ -1437,7 +1527,7 @@ namespace MediaPortal.Player
           DirectShowUtil.ReleaseComObject(enumFilters);
         }
       }
-      catch {}
+      catch { }
       return true;
     }
 
@@ -1457,7 +1547,7 @@ namespace MediaPortal.Player
           DirectShowUtil.ReleaseComObject(foundfilter);
         }
       }
-      catch {}
+      catch { }
       return true;
     }
 
