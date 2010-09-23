@@ -355,8 +355,17 @@ namespace TvPlugin
 
     private static bool IsRecordingProgram(Program program, out Schedule recordingSchedule,
                                            bool filterCanceledRecordings)
-    {      
+    {            
       recordingSchedule = null;
+
+      if (!(
+        program.IsRecording ||                 
+        program.IsRecordingOncePending ||         
+        program.IsRecordingSeriesPending))
+      {        
+        return false;        
+      }
+
       IList<Schedule> schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
       {
