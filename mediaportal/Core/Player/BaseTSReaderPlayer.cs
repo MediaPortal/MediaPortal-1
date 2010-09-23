@@ -311,15 +311,15 @@ namespace MediaPortal.Player
         }
         if (sType.subType == MEDIASUBTYPE_MPEG1_PAYLOAD)
         {
-          return "Mpeg1";
+          return "MPEG1";
         }
         if (sType.subType == MEDIASUBTYPE_MPEG1_AUDIO)
         {
-          return "Mpeg1";
+          return "MPEG1";
         }
         if (sType.subType == MEDIASUBTYPE_MPEG2_AUDIO)
         {
-          return "Mpeg2";
+          return "MPEG2";
         }
         if (sType.subType == MEDIASUBTYPE_LATM_AAC_AUDIO) //MediaSubType.LATMAAC)
         {
@@ -376,8 +376,16 @@ namespace MediaPortal.Player
           pStrm.Info(iStream, out sType, out sFlag, out sPLCid, out sPDWGroup, out sName, out pppunk, out ppobject);
         }
         */
-
-        return sName.Trim();
+        sName = sName.Trim();
+        foreach (System.Globalization.CultureInfo ci in System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.NeutralCultures))
+        {
+          if (sName.Equals(ci.ThreeLetterISOLanguageName) || ci.EnglishName.StartsWith(sName, StringComparison.InvariantCultureIgnoreCase))
+          {
+            sName = Util.Utils.TranslateLanguageString(ci.EnglishName);
+            break;
+          }
+        }
+        return sName;
       }
       else
       {

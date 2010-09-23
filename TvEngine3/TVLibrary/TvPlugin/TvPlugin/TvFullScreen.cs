@@ -2149,7 +2149,7 @@ namespace TvPlugin
       for (int i = 0; i < g_Player.AudioStreams; i++)
       {
         GUIListItem item = new GUIListItem();
-        item.Label = String.Format("{0}:{1}", g_Player.AudioLanguage(i), g_Player.AudioType(i));
+        item.Label = String.Format("{0}: {1}", g_Player.AudioLanguage(i), g_Player.AudioType(i));
         dlg.Add(item);
       }
 

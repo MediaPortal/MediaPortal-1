@@ -1261,7 +1261,7 @@ STDMETHODIMP CStreamSwitcherFilter::Info(long lIndex, AM_MEDIA_TYPE** ppmt, DWOR
 		*plcid = 0;
 
 	if(pdwGroup)
-		*pdwGroup = 0;
+		*pdwGroup = (m_pOutput->CurrentMediaType().majortype == MEDIATYPE_Audio) ? 1 : 0;		
 
 	if(ppszName && (*ppszName = (WCHAR*)CoTaskMemAlloc((wcslen(pPin->Name())+1)*sizeof(WCHAR))))
 		wcscpy(*ppszName, pPin->Name());

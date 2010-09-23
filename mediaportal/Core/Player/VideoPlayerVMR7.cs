@@ -31,6 +31,7 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Player.Subtitles;
+using System.Collections.Generic;
 
 
 namespace MediaPortal.Player
@@ -1181,7 +1182,7 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// Property to get the language for an audio stream
+    /// Property to get the language from stream name
     /// </summary>
     public override string AudioLanguage(int iStream)
     {
@@ -1204,13 +1205,31 @@ namespace MediaPortal.Player
             if (languageName.Contains("("))
               languageName = languageName.Substring(0, languageName.IndexOf("("));
 
-            return languageName.Trim();
+            return Util.Utils.TranslateLanguageString(languageName.Trim());
           }
         }
       }
       #endregion
 
       string streamName = FStreams.GetStreamInfos(StreamType.Audio, iStream).Name;
+      #region External Audio File
+      if (streamName.EndsWith(".mp3") || streamName.EndsWith(".ac3") || streamName.EndsWith(".mka") || streamName.EndsWith(".dts"))
+      {
+        streamName = Path.GetFileNameWithoutExtension(streamName).Replace(Path.GetFileNameWithoutExtension(m_strCurrentFile), "").Trim('.');
+
+        if (string.IsNullOrEmpty(streamName))
+          streamName = GUILocalizeStrings.Get(2599);
+        else
+          streamName = Util.Utils.TranslateLanguageString(streamName);
+
+        return streamName;
+      }
+      #endregion
+
+      // No stream info from splitter
+      if (streamName.Contains(Path.GetFileName(m_strCurrentFile)))
+        return GUILocalizeStrings.Get(2599);
+
       // remove prefix, which is added by Haali Media Splitter
       streamName = Regex.Replace(streamName, @"^A: ", "");
       // Check if returned string contains both language and trackname info
@@ -1268,11 +1287,20 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// Property to get the name for an audio stream
+    /// Property to get the type of an audio stream
     /// </summary>
     public override string AudioType(int iStream)
     {
       string streamName = FStreams.GetStreamInfos(StreamType.Audio, iStream).Name;
+      if (streamName.EndsWith(".mp3") || streamName.EndsWith(".ac3") || streamName.EndsWith(".mka") || streamName.EndsWith(".dts"))
+      {
+        return Path.GetExtension(streamName).ToUpper().Replace(".", "");         
+      }
+
+      // No stream info from splitter
+      if (streamName.Contains(Path.GetFileName(m_strCurrentFile)))
+        return Path.GetExtension(m_strCurrentFile).ToUpper().Replace(".", ""); 
+
       // remove prefix, which is added by Haali Media Splitter
       streamName = Regex.Replace(streamName, @"^A: ", "");
       // Check if returned string contains both language and trackname info

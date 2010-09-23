@@ -1375,7 +1375,7 @@ namespace MediaPortal.GUI.Video
         }
         else
         {
-          dlg.Add(String.Format("{0}:{1}", g_Player.AudioLanguage(i), audioType));
+          dlg.Add(String.Format("{0}: {1}", g_Player.AudioLanguage(i), audioType));
         }
       }
 
