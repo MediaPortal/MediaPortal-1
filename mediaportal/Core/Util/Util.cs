@@ -653,65 +653,30 @@ namespace MediaPortal.Util
             break;
           }
         }
-
-        if (!foundVideoThumb)
+		    bool createVideoThumbs;
+        using (Profile.Settings xmlreader = new Profile.MPSettings())
         {
-          Log.Debug("SetThumbnails: Video thumb NOT found!");
-          bool createVideoThumbs;
-          using (Profile.Settings xmlreader = new Profile.MPSettings())
-          {
-            createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
-          }
+          createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+        }
+
+        if (createVideoThumbs && !foundVideoThumb)
+        {
 
           if (Path.IsPathRooted(item.Path) && IsVideo(item.Path) && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()))
           {
-            Log.Debug("SetThumbnails: Creating a Video thumb...");
-            strThumb = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(item.Path));
-            if (File.Exists(strThumb))
+
+            Log.Debug("SetThumbnails: Thumbs for video (" + GetFilename(item.Path) + ") not found. Creating a new video thumb...");
+            Thread extractVideoThumbThread = new Thread(GetVideoThumb)
             {
-              try
-              {
-                File.SetLastAccessTime(strThumb, DateTime.Now);
-                //useful for later creating a process plugin that deletes old thumbnails
-                if (!File.Exists(ConvertToLargeCoverArt(strThumb)))
-                {
-                  File.Copy(strThumb, ConvertToLargeCoverArt(strThumb));
-                  File.SetLastAccessTime(ConvertToLargeCoverArt(strThumb), DateTime.Now);
-                }
-              }
-              catch (Exception ex)
-              {
-                Log.Error(ex);
-              }
-              item.IconImage = strThumb;
-              string strLargeThumb = ConvertToLargeCoverArt(strThumb);
-              if (File.Exists(strLargeThumb))
-              {
-                item.ThumbnailImage = strLargeThumb;
-                item.IconImageBig = strLargeThumb;
-              }
-              else
-              {
-                item.ThumbnailImage = strThumb;
-                item.IconImageBig = strThumb;
-              }
-            }
-            else if (createVideoThumbs)
-            {
-              Thread extractVideoThumbThread = new Thread(GetVideoThumb)
-                                                 {
-                                                   Name = "ExtractVideoThumb",
-                                                   IsBackground = true,
-                                                   Priority = ThreadPriority.Lowest
-                                                 };
-              extractVideoThumbThread.Start(item);
-            }
+              Name = "ExtractVideoThumb",
+              IsBackground = true,
+              Priority = ThreadPriority.Lowest
+            };
+            extractVideoThumbThread.Start(item);
           }
           return;
         }
-
-        // now strThumb exists
-        item.ThumbnailImage = strThumb;
+		    item.ThumbnailImage = strThumb;
         item.IconImage = strThumb;
         item.IconImageBig = strThumb;
       }
