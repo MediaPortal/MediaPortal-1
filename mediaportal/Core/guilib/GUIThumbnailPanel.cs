@@ -243,6 +243,7 @@ namespace MediaPortal.GUI.Library
     private char _previousKey = (char)0;
     protected string _searchString = "";
     protected int _lastSearchItem = 0;
+    protected bool _enableSMSsearch = true;
 
     protected GUIAnimation _frameNoFocusControl = null;
     protected GUIAnimation _frameFocusControl = null;
@@ -1564,6 +1565,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="Key"></param>
     private void Press(char Key)
     {
+      if (!_enableSMSsearch) return;
+
       // Check key timeout
       CheckTimer();
       // Check different key pressed
@@ -3252,5 +3255,12 @@ namespace MediaPortal.GUI.Library
       int currentRow = CalculateRows(_offset + _cursorY * _columnCount + _cursorX);
       int nextRow = CalculateRows(_offset + _cursorY * _columnCount + _cursorX + itemInc);
     }
+
+    public bool EnableSMSsearch
+    {
+      get { return _enableSMSsearch; }
+      set { _enableSMSsearch = value; }
+    }
+    
   }
 }

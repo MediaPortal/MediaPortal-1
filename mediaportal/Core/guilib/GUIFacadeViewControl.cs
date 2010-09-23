@@ -221,6 +221,29 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public bool EnableSMSsearch
+    {
+      get
+      {
+        if (_viewList != null) return _viewList.EnableSMSsearch;
+        if (_viewAlbum != null) return _viewAlbum.EnableSMSsearch;
+        if (_viewFilmStrip != null) return _viewFilmStrip.EnableSMSsearch;
+        if (_viewPlayList != null) return _viewPlayList.EnableSMSsearch;
+        if (_viewThumbnail != null) return _viewThumbnail.EnableSMSsearch;
+        if (_viewCoverFlow != null) return _viewCoverFlow.EnableSMSsearch;
+        return false;
+      }
+      set
+      {
+        if (_viewList != null) _viewList.EnableSMSsearch = value;
+        if (_viewAlbum != null) _viewAlbum.EnableSMSsearch = value;
+        if (_viewFilmStrip != null) _viewFilmStrip.EnableSMSsearch = value;
+        if (_viewPlayList != null) _viewPlayList.EnableSMSsearch = value;
+        if (_viewThumbnail != null) _viewThumbnail.EnableSMSsearch = value;
+        if (_viewCoverFlow != null) _viewCoverFlow.EnableSMSsearch = value;
+      }
+    }
+
     public override void AddAnimations(List<VisualEffect> animations)
     {
       //base.AddAnimations(animations);
