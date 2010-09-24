@@ -106,7 +106,6 @@ namespace MediaPortal.WebEPG
       request.ReplaceTag("[MONTH]", _requestTime.DateTime.ToString("MMMM", culture));
       request.ReplaceTag("[DD]", String.Format("{0:00}", _requestTime.Day));
       request.ReplaceTag("[_D]", _requestTime.Day.ToString());
-      request.ReplaceTag("[WEEKDAY]", _requestTime.DateTime.ToString(_data.WeekDay, culture));
 
       // this fix is needed for countries where the first day (0) is Sunday (not Monday)
       // thoose grabbers should include OffsetStart="1" in the Search tag.
@@ -121,6 +120,16 @@ namespace MediaPortal.WebEPG
       }
       request.ReplaceTag("[DAY_OF_WEEK]", dayNum.ToString());
 
+      // check for script defined weekdayname and use it if found
+      if (_data.WeekDayNames != null && dayNum < _data.WeekDayNames.Length && _data.WeekDayNames[dayNum] != String.Empty)
+      {
+        request.ReplaceTag("[WEEKDAY]", _data.WeekDayNames[dayNum]);
+      }
+      else
+      {
+        request.ReplaceTag("[WEEKDAY]", _requestTime.DateTime.ToString(_data.WeekDay, culture));
+      }
+      
       request.ReplaceTag("[LIST_OFFSET]", ((_offset * _data.MaxListingCount) + _data.ListStart).ToString());
       request.ReplaceTag("[PAGE_OFFSET]", (_offset + _data.PageStart).ToString());
 

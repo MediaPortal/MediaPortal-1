@@ -39,6 +39,7 @@ namespace MediaPortal.WebEPG.Config.Grabber
     [XmlAttribute("language")] public string SearchLang = "en-US";
     [XmlAttribute("baseDate")] public string BaseDate;
     [XmlArray("DayNames")] [XmlArrayItem("Day")] public string[] DayNames;
+    [XmlArray("WeekDayNames")] [XmlArrayItem("WeekDay")] public string[] WeekDayNames;
 
     #endregion
   }
