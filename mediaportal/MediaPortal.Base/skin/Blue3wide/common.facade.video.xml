@@ -272,7 +272,7 @@
                     <height>150</height>
                     <label>#plot</label>
                     <font>font9</font>
-                    <lineSpacing>1.2</lineSpacing>
+                    <lineSpacing>1</lineSpacing>
                     <textcolor>FFFFFFFF</textcolor>
                   </control>
 
