@@ -157,6 +157,11 @@ namespace MediaPortal.Utils.Web
       Uri newUri = new Uri(Uri, relativeUri);
       HTTPRequest newHTTPRequest = new HTTPRequest(newUri);
       newHTTPRequest._encoding = this._encoding;
+      // Copy this also otherwise data is lost
+      // Caused sublink delay in WebEPG always to be 0
+      newHTTPRequest._externalBrowser = this._externalBrowser;
+      newHTTPRequest._cookies = this._cookies;
+      newHTTPRequest._delay = this._delay;
       return newHTTPRequest;
     }
 

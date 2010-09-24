@@ -142,6 +142,7 @@ namespace MediaPortal.WebEPG.Parser
       if (_sublinkParser != null && _sublinkRequest == null)
       {
         _sublinkRequest = new HTTPRequest(site);
+        _sublinkRequest.Delay = 0; // do not use delay for sublinks unless explicitly requested
       }
       return _listingParser.ParseUrl(site);
     }
@@ -190,10 +191,13 @@ namespace MediaPortal.WebEPG.Parser
         if (_sublinkParser != null)
         {
           HTTPRequest sublinkRequest = new HTTPRequest(_sublinkRequest);
-          if (sublinkRequest.Delay < 500)
-          {
-            sublinkRequest.Delay = 500;
-          }
+// Minimum delay disabled because of a bug it wasn't being used anyway (always 0) and
+// possibly not needed to start using now.
+// Enabling has serious impact on grabspeed.
+//          if (sublinkRequest.Delay < 500)
+//          {
+//            sublinkRequest.Delay = 500;
+//          }
           if (_listingParser.GetHyperLink(index, _sublinkMatch, ref sublinkRequest))
           {
             data.SublinkRequest = sublinkRequest;
