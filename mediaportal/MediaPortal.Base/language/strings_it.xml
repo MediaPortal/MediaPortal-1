@@ -1266,6 +1266,7 @@
     <String id="2612">Ungherese</String>
     <String id="2613">Russo</String>
     <String id="2614">Ucraino</String>
+    <String id="2615">Tedesco</String>
     <String id="2650">Ricarica font, prego attendere...</String>
     <String id="2700">Apertura menu CI</String>
     <String id="2997">ore</String>
@@ -1878,6 +1879,8 @@
     <String id="200019">Premi il pulsante Fine per chiudere questo wizard</String>
     <String id="200020">Fine</String>
     <String id="200021">Impostazioni TV - EPG</String>
+    <String id="990000">Settimanalmente su questo canale</String>
+    <String id="990001">{0} sul canale {1}</String>
     <String id="200022">MediaPortal ha rilevato le seguenti schede TV:</String>
     <String id="200023">Premi il pulsante Avanti per configurare queste schede</String>
     <String id="200024">Impostazioni TV</String>
@@ -1926,5 +1929,6 @@
     <String id="200070">Controllare il firewall</String>
     <String id="200071">Cancellare questa cartella e tutte le sottocartelle?</String>
     <String id="200072">Prossimi episodi</String>
+    <String id="200091">Capitolo</String>
   </Section>
 </Language>

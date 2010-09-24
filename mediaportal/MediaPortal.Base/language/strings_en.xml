@@ -1880,7 +1880,7 @@
     <String id="200020">Finish</String>
     <String id="200021">TV Set-up - EPG</String>
     <String id="990000">Weekly on this channel</String>
-    <String id="990001">{0} on channel {1}</string>	
+    <String id="990001">{0} on channel {1}</String>	
     <String id="200022">MediaPortal has found the following tv-cards:</String>
     <String id="200023">Press the Next button to configure these cards</String>
     <String id="200024">TV Set-up</String>
