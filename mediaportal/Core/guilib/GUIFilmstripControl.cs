@@ -1299,6 +1299,15 @@ namespace MediaPortal.GUI.Library
               iItem -= (_columns);
               iPage++;
             }
+            if ((iItem != _scrollStartOffset) && (_listItems.Count > _scrollStartOffset)) 
+            { // adjust in the middle
+              int delta = _scrollStartOffset - iItem;
+              if (_offset >= delta)
+              {
+                iItem += delta;
+                _offset -= delta;
+              }
+            }
             if (_upDownControl != null)
             {
               _upDownControl.Value = iPage;
