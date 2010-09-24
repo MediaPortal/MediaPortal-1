@@ -222,19 +222,22 @@ namespace MediaPortal.GUI.Library
       Hashtable defines = new Hashtable();  // An empty set of defines.
       XmlDocument doc = new XmlDocument();
 
-      doc.LoadXml((string)GetSubItem(0));
-      XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/controls/*");
-
-      foreach (XmlNode node in nodeList)
+      if (SubItemCount > 0)  // avoid exception when no SubItems are available
       {
-        try
+        doc.LoadXml((string)GetSubItem(0));
+        XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/controls/*");
+
+        foreach (XmlNode node in nodeList)
         {
-          GUIControl newControl = GUIControlFactory.Create(_windowId, node, defines, null);
-          _cardBackControls.Add(newControl);
-        }
-        catch (Exception ex)
-        {
-          Log.Error("GUICoverFlow: Unable to load control. exception:{0}", ex.ToString());
+          try
+          {
+            GUIControl newControl = GUIControlFactory.Create(_windowId, node, defines, null);
+            _cardBackControls.Add(newControl);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("GUICoverFlow: Unable to load control. exception:{0}", ex.ToString());
+          }
         }
       }
     }
