@@ -59,14 +59,14 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("backgroundX")] protected int _backgroundPositionX;
     [XMLSkinElement("backgroundY")] protected int _backgroundPositionY;
     [XMLSkinElement("backgroundDiffuse")] protected int _backgroundDiffuseColor;
-    [XMLSkinElement("background")] protected string _backgroundTextureName;
+    [XMLSkinElement("background")] protected string _backgroundTextureName = "-";
     [XMLSkinElement("showBackground")] protected bool _showBackground = false;
     [XMLSkinElement("foregroundHeight")] protected int _foregroundHeight;
     [XMLSkinElement("foregroundWidth")] protected int _foregroundWidth;
     [XMLSkinElement("foregroundX")] protected int _foregroundPositionX;
     [XMLSkinElement("foregroundY")] protected int _foregroundPositionY;
     [XMLSkinElement("foregroundDiffuse")] protected int _foregroundDiffuseColor;
-    [XMLSkinElement("foreground")] protected string _foregroundTextureName;
+    [XMLSkinElement("foreground")] protected string _foregroundTextureName = "-";
     [XMLSkinElement("showForeground")] protected bool _showForeground = false;
     [XMLSkinElement("showFrame")] protected bool _showFrame = true;
     [XMLSkinElement("frame")] protected string _frameName = "";

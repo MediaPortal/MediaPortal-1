@@ -115,13 +115,13 @@
           <selectedCard>0</selectedCard>
           <cardWidth>207</cardWidth>
           <cardHeight>151</cardHeight>
-          <angle>30.0</angle>
-          <sideShift>100.0</sideShift>
-          <sideGap>20.0</sideGap>
-          <sideDepth>50.0</sideDepth>
-          <offsetY>0.0</offsetY>
-          <selectedOffsetY>0.0</selectedOffsetY>
-          <speed>8.0</speed>
+          <angle>30</angle>
+          <sideShift>100</sideShift>
+          <sideGap>20</sideGap>
+          <sideDepth>50</sideDepth>
+          <offsetY>0</offsetY>
+          <selectedOffsetY>0</selectedOffsetY>
+          <speed>8</speed>
           <backgroundColor>000000FF</backgroundColor>
           <backgroundHeight>400</backgroundHeight>
           <backgroundWidth>1280</backgroundWidth>
@@ -133,7 +133,7 @@
           <showFrame>yes</showFrame>
           <frame>Picture_cover.png</frame>
           <frameFocus>Picture_cover.png</frameFocus>
-          <spinSpeed>8.0</spinSpeed>
+          <spinSpeed>8</spinSpeed>
           <unfocusedAlpha>FF</unfocusedAlpha>
           <folderPrefix>[</folderPrefix>
           <folderSuffix>]</folderSuffix>
