@@ -48,7 +48,7 @@ namespace MediaPortal.Player
     private string _videoResolution = string.Empty;
     private int _videoDuration = 0;
     private bool _DVDenabled = false;
-    private string _ParseSpeed = "0.5"; // MediaInfo 0.7.34 default
+    private string _ParseSpeed;
 
     //Audio
     private int _audioRate = 0;
@@ -74,7 +74,7 @@ namespace MediaPortal.Player
       using (Settings xmlreader = new MPSettings())
       {
         _DVDenabled = xmlreader.GetValueAsBool("dvdplayer", "mediainfoused", false);
-        _ParseSpeed = xmlreader.GetValueAsString("debug", "MediaInfoParsespeed", "0.5");
+        _ParseSpeed = xmlreader.GetValueAsString("debug", "MediaInfoParsespeed", "0.3"); // fix delay introduced after 0.7.26: http://sourceforge.net/tracker/?func=detail&aid=3013548&group_id=86862&atid=581181
       }
       bool isTV = Util.Utils.IsLiveTv(strFile);
       bool isRadio = Util.Utils.IsLiveRadio(strFile);
