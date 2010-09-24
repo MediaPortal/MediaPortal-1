@@ -1874,6 +1874,8 @@
     <String id="200040">Skip Stufe entfernen</String>
     <String id="200041">Empfangs-Details</String>
     <String id="200042">Unterkanäle</String>
+    <String id="990000">Wöchentlich an Tag X auf diesem Kanal</String>
+    <String id="990001">{0} immer auf {1}</String>        
     <String id="200043">Aufnahmen aufräumen</String>
     <String id="200044">Ungültige Aufnahmen</String>
     <String id="200045">Gesehene und ungültige Aufnahmen</String>

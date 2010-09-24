@@ -1853,6 +1853,8 @@
     <String id="200019">Tryk Afslut for at lukke denne vejledning</String>
     <String id="200020">Afslut</String>
     <String id="200021">TV opsætning - EPG</String>
+    <String id="990000">Ugentligt på denne kanal</String>
+    <String id="990001">{0} på kanal {1}</string>	    
     <String id="200022">MediaPortal har fundet følgende tv-kort:</String>
     <String id="200023">Tryk på Næste for at indstille disse kort</String>
     <String id="200024">TV-opsætning</String>
