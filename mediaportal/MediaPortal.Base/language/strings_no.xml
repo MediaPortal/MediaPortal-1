@@ -1266,6 +1266,7 @@
     <String id="2612">Ungarsk</String>
     <String id="2613">Russisk</String>
     <String id="2614">Ukrainsk</String>
+    <String id="2615">Tysk</String>
     <String id="2650">Laster skrifttyper på nytt, venligst vent...</String>
     <String id="2700">Åpne CI meny</String>
     <String id="2997">t</String>
@@ -1878,6 +1879,8 @@
     <String id="200019">Trykk "Avslutt" for å lukke assistenten.</String>
     <String id="200020">Avslutt</String>
     <String id="200021">TV-oppsett - EPG</String>
+    <String id="990000">Hver uke på denne kanalen</String>
+    <String id="990001">{0} på kanal {1}</String>	
     <String id="200022">MediaPortal har funnet følgende TV-kort</String>
     <String id="200023">Trykk "Neste" for å konfiguere disse kortene</String>
     <String id="200024">TV-oppsett</String>
@@ -1926,5 +1929,6 @@
     <String id="200070">Vennligst sjekk brannmurinnstillingene dine</String>
     <String id="200071">Slette denne mappen og alle undermapper?</String>
     <String id="200072">Episoder som kommer snart</String>
+    <String id="200091">Kapittel</String>
   </Section>
 </Language>
