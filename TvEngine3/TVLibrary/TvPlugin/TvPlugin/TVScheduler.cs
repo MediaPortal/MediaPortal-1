@@ -658,6 +658,7 @@ namespace TvPlugin
         {
           string strTime;
           string strType;
+          string day;
 
           switch (rec.ScheduleType)
           {
@@ -696,7 +697,6 @@ namespace TvPlugin
               item.Label2 = String.Format("{0} {1}", strType, strTime);
               break;
             case (int)ScheduleRecordingType.Weekly:
-              string day;
               switch (rec.StartTime.DayOfWeek)
               {
                 case DayOfWeek.Monday:
@@ -734,7 +734,34 @@ namespace TvPlugin
             case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
               item.Label2 = GUILocalizeStrings.Get(651);
               break;
+           case (int) ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
+             switch (rec.StartTime.DayOfWeek)
+             {
+                 case DayOfWeek.Monday:
+                     day = GUILocalizeStrings.Get(11);
+                     break;
+                 case DayOfWeek.Tuesday:
+                     day = GUILocalizeStrings.Get(12);
+                     break;
+                 case DayOfWeek.Wednesday:
+                     day = GUILocalizeStrings.Get(13);
+                     break;
+                 case DayOfWeek.Thursday:
+                     day = GUILocalizeStrings.Get(14);
+                     break;
+                 case DayOfWeek.Friday:
+                     day = GUILocalizeStrings.Get(15);
+                     break;
+                 case DayOfWeek.Saturday:
+                     day = GUILocalizeStrings.Get(16);
+                     break;
+                 default:
+                     day = GUILocalizeStrings.Get(17);
+                     break;
           }
+             item.Label2 = GUILocalizeStrings.Get(990001, new object[] { day, rec.ReferencedChannel().DisplayName });
+             break;              
+        }
         }
         else
         {
@@ -1048,6 +1075,9 @@ namespace TvPlugin
           case ScheduleRecordingType.Weekends:
             dlg.SelectedLabel = 6;
             break;
+          case ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
+            dlg.SelectedLabel = 7;
+            break;
         }
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1)
@@ -1082,6 +1112,10 @@ namespace TvPlugin
             break;
           case 6: //Weekends
             rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
+            rec.Canceled = Schedule.MinSchedule;
+            break;
+          case 7://Weekly everytime, this channel
+            rec.ScheduleType = (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel;
             rec.Canceled = Schedule.MinSchedule;
             break;
         }
@@ -1162,6 +1196,9 @@ namespace TvPlugin
           break;
         case ScheduleRecordingType.Weekly:
           strType = GUILocalizeStrings.Get(679); //Weekly
+          break;
+        case ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
+          strType = String.Format(GUILocalizeStrings.Get(990000), schedule.ReferencedChannel().DisplayName); ;//Weekly Everytime on this channel
           break;
       }
       return strType;

@@ -314,6 +314,9 @@ namespace TvPlugin
         case 6: //Weekend
           rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
           break;
+        case 7://everytime weekly, this channel
+          rec.ScheduleType = (int) ScheduleRecordingType.WeeklyEveryTimeOnThisChannel;
+          break;
       }
 
 

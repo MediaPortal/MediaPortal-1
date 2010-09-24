@@ -111,6 +111,9 @@ namespace TvPlugin
           programs = Program.RetrieveEveryTimeOnEveryChannel(rec.ProgramName, _days);
           break;
 
+        case (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
+          programs = Program.RetrieveWeeklyEveryTimeOnThisChannel(startTime, endTime, rec.ProgramName, rec.ReferencedChannel().IdChannel);
+          break;
       }
       recordings = AddProgramsToSchedulesList(rec, programs);
       return recordings;

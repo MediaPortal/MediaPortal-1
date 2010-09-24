@@ -42,7 +42,8 @@ namespace TvDatabase
     EveryTimeOnThisChannel,
     EveryTimeOnEveryChannel,
     Weekends,
-    WorkingDays
+    WorkingDays,
+    WeeklyEveryTimeOnThisChannel
   }
 
   /// <summary>
@@ -664,6 +665,23 @@ namespace TvDatabase
             }
             break;
 
+          case (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
+            List<Program> prgsWeeklyEveryTimeOnThisChannel = (List<Program>)Program.RetrieveWeeklyEveryTimeOnThisChannel(schedule.startTime, schedule.endTime, schedule.programName, schedule.ReferencedChannel().IdChannel);
+
+            if (prgsWeeklyEveryTimeOnThisChannel != null && prgsWeeklyEveryTimeOnThisChannel.Count > 0) 
+            {
+              foreach (Program prgWeeklyEveryTimeOnThisChannel in prgsWeeklyEveryTimeOnThisChannel)
+              {
+                if (!schedule.IsSerieIsCanceled(prgWeeklyEveryTimeOnThisChannel.StartTime))
+                {
+                  prgWeeklyEveryTimeOnThisChannel.IsRecordingOncePending = false;
+                  prgWeeklyEveryTimeOnThisChannel.IsRecordingSeriesPending = !clear;
+                  prgWeeklyEveryTimeOnThisChannel.Persist();
+                }
+              }
+            }
+            break;
+			
           case (int)ScheduleRecordingType.Weekends:
             List<Program> prgsWeekends =
               (List<Program>)
@@ -745,7 +763,8 @@ namespace TvDatabase
     public static bool IsPartialRecording(Schedule schedule, Program prg) 
     {
       if (schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnEveryChannel ||
-          schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel)
+          schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel ||
+		  schedule.ScheduleType == (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel)
       {
         return false;
       }
@@ -1113,6 +1132,16 @@ namespace TvDatabase
           if (program.Title == ProgramName && program.IdChannel == IdChannel)
           {
             if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime, program.IdChannel))
+            {
+              return false;
+            }
+            return true;
+          }
+          break;
+        case ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
+          if (program.Title == ProgramName && program.IdChannel == IdChannel && StartTime.DayOfWeek == program.StartTime.DayOfWeek)
+          {
+            if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime))
             {
               return false;
             }

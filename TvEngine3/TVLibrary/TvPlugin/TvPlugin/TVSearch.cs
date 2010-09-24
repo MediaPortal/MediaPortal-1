@@ -1243,6 +1243,7 @@ namespace TvPlugin
         }
         dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WorkingDays)));
         dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WeekendDays)));
+        dlg.Add(GUILocalizeStrings.Get(990000));  // 990000=Weekly everytime on this channel
 
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1)
@@ -1299,6 +1300,9 @@ namespace TvPlugin
             break;
           case 7: //Weekends
             rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
+            break;
+          case 8://Weekly everytime, this channel
+            rec.ScheduleType = (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel;
             break;
         }
         rec.Persist();

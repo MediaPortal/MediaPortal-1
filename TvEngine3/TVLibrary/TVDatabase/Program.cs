@@ -690,6 +690,26 @@ namespace TvDatabase
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
+    public static IList<Program> RetrieveWeeklyEveryTimeOnThisChannel(DateTime startTime, DateTime endTime, string title, int channelId)
+    {
+        //select * from 'foreigntable'
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
+
+        // where foreigntable.foreignkey = ourprimarykey
+        sb.AddConstraint(Operator.Equals, "Title", title);
+        sb.AddConstraint(Operator.Equals, "idChannel", channelId);
+        sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", DateTime.Now);
+        sb.AddConstraint(Operator.LessThanOrEquals, "endTime", DateTime.MaxValue);
+
+        AddWeekdayConstraint(sb, "startTime", ((int)startTime.DayOfWeek + 1).ToString());
+        // passing true indicates that we'd like a list of elements, i.e. that no primary key
+        // constraints from the type being retrieved should be added to the statement
+        SqlStatement stmt = sb.GetStatement(true);
+
+        // execute the statement/query and create a collection of User instances from the result set
+        return ObjectFactory.GetCollection<Program>(stmt.Execute());
+    }	
+
     public static IList<Program> RetrieveEveryTimeOnEveryChannel(string title)
     {
       return  RetrieveByTitleAndTimesInterval(title, DateTime.Now, DateTime.MaxValue);

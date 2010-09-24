@@ -305,6 +305,21 @@ namespace TvPlugin
             strType = GUILocalizeStrings.Get(649);
             item.Label2 = String.Format("{0} {1} {2}", strType, day, strTime);
             break;
+          case (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
+            switch (rec.StartTime.DayOfWeek)
+            {
+                case DayOfWeek.Monday: day = GUILocalizeStrings.Get(11); break;
+                case DayOfWeek.Tuesday: day = GUILocalizeStrings.Get(12); break;
+                case DayOfWeek.Wednesday: day = GUILocalizeStrings.Get(13); break;
+                case DayOfWeek.Thursday: day = GUILocalizeStrings.Get(14); break;
+                case DayOfWeek.Friday: day = GUILocalizeStrings.Get(15); break;
+                case DayOfWeek.Saturday: day = GUILocalizeStrings.Get(16); break;
+                default: day = GUILocalizeStrings.Get(17); break;
+            }
+
+            item.Label = rec.ProgramName;
+            item.Label2 = GUILocalizeStrings.Get(990001, new object[] { day, rec.ReferencedChannel().DisplayName });
+            break;
           case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
             item.Label = rec.ProgramName;
             item.Label2 = GUILocalizeStrings.Get(650, new object[] {rec.ReferencedChannel().DisplayName});

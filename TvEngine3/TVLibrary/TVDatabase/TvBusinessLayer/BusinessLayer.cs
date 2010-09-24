@@ -3134,8 +3134,36 @@ namespace TvDatabase
         return recordings;
       }
 
+      IList<Program> programs;
+      if (rec.ScheduleType == (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel)
+      {
+           //Log.Debug("get {0} {1} EveryTimeOnThisChannel", rec.ProgramName, rec.ReferencedChannel().Name);
+           programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel());
+           foreach (Program prog in programs)
+           {
+               // dtDay.DayOfWeek == rec.StartTime.DayOfWeek
+               // Log.Debug("BusinessLayer.cs Program prog in programs WeeklyEveryTimeOnThisChannel: {0} {1} prog.StartTime.DayOfWeek == rec.StartTime.DayOfWeek {2} == {3}", rec.ProgramName, rec.ReferencedChannel().Name, prog.StartTime.DayOfWeek, rec.StartTime.DayOfWeek);
+               if (prog.StartTime.DayOfWeek == rec.StartTime.DayOfWeek && rec.IsRecordingProgram(prog, false))
+               {
+                   Schedule recNew = rec.Clone();
+                   recNew.ScheduleType = (int)ScheduleRecordingType.Once;
+                   recNew.IdChannel = prog.IdChannel;
+                   recNew.StartTime = prog.StartTime;
+                   recNew.EndTime = prog.EndTime;
+                   recNew.Series = true;
+                   if (rec.IsSerieIsCanceled(recNew.StartTime))
+                   {
+                     recNew.Canceled = recNew.StartTime;
+                   }
+                   recordings.Add(recNew);
 
-      IList<Program> programs = rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel
+                   //Log.Debug("BusinessLayer.cs Added Recording WeeklyEveryTimeOnThisChannel: {0} {1} prog.StartTime.DayOfWeek == rec.StartTime.DayOfWeek {2} == {3}", rec.ProgramName, rec.ReferencedChannel().Name, prog.StartTime.DayOfWeek, rec.StartTime.DayOfWeek);
+               }
+           }
+           return recordings;
+      }
+
+      programs = rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel
                                   ? layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName,
                                                                 rec.ReferencedChannel())
                                   : layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, null);

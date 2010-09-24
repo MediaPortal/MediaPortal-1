@@ -1091,7 +1091,8 @@ namespace TvPlugin
           || (schedule.ScheduleType == (int)ScheduleRecordingType.Weekly)
           || (schedule.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
           || (schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnEveryChannel)
-          || (schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel))
+          || (schedule.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel)
+          || (schedule.ScheduleType == (int) ScheduleRecordingType.WeeklyEveryTimeOnThisChannel))          
       {
         GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
         if (dlg == null)
@@ -1326,6 +1327,7 @@ namespace TvPlugin
         }
         dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WorkingDays)));
         dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WeekendDays)));
+        dlg.AddLocalizedString(990000); // 990000=Weekly everytime on this channel
 
         dlg.DoModal(GetID);
         if (dlg.SelectedLabel == -1)
@@ -1356,6 +1358,9 @@ namespace TvPlugin
             break;
           case 6: //Weekends
             scheduleType = (int)ScheduleRecordingType.Weekends;
+            break;
+          case 7://Weekly everytime, this channel
+            scheduleType = (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel;
             break;
         }
         CreateProgram(CurrentProgram, scheduleType);

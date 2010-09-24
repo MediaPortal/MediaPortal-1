@@ -154,6 +154,7 @@ namespace TvEngine
       getWeeklySchedules(scheduleList, scheduleListToParse);
       getWeekendsSchedules(scheduleList, scheduleListToParse);
       getWorkingDaysSchedules(scheduleList, scheduleListToParse);
+      getWeeklyEveryTimeOnThisChannelSchedules(scheduleList, scheduleListToParse);
       getEveryTimeOnEveryChannelSchedules(scheduleList, scheduleListToParse);
       getEveryTimeOnThisChannelSchedules(scheduleList, scheduleListToParse);
       removeCanceledSchedules(scheduleListToParse);
@@ -690,6 +691,44 @@ namespace TvEngine
       foreach (Schedule sched in refFillList) schedulesList.Remove(sched);
     }
 
+    /// <summary>
+    /// Gets the Weekly every time on this channel schedules.
+    /// </summary>
+    /// <param name="schedulesList">The schedules list.</param>
+    /// <returns></returns>
+    private void getWeeklyEveryTimeOnThisChannelSchedules(IList<Schedule> schedulesList, IList<Schedule> refFillList)
+    {
+       TvBusinessLayer layer = new TvBusinessLayer();
+       foreach (Schedule schedule in schedulesList)
+       {
+           ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
+           if (schedule.Canceled != Schedule.MinSchedule) continue;
+           if (scheduleType != ScheduleRecordingType.WeeklyEveryTimeOnThisChannel) continue;
+           Channel channel = Channel.Retrieve(schedule.IdChannel);
+           IList<Program> programsList = layer.SearchMinimalPrograms(DateTime.Now, DateTime.Now.AddMonths(1), schedule.ProgramName, channel);
+           if (programsList != null)
+           {
+               foreach (Program program in programsList)
+                {
+                  if (program.StartTime.DayOfWeek == schedule.StartTime.DayOfWeek)
+                  {
+                    Schedule incomingSchedule = schedule.Clone();
+                    incomingSchedule.IdChannel = program.IdChannel;
+                    incomingSchedule.ProgramName = program.Title;
+                    incomingSchedule.StartTime = program.StartTime;
+                    incomingSchedule.EndTime = program.EndTime;
+ 
+                    incomingSchedule.PreRecordInterval = schedule.PreRecordInterval;
+                    incomingSchedule.PostRecordInterval = schedule.PostRecordInterval;
+                    refFillList.Add(incomingSchedule);
+                  }
+                }
+            }//foreach (Program _program in _programsList)
+        }//foreach (Schedule _Schedule in schedulesList)
+        layer = null;
+        foreach (Schedule sched in refFillList) schedulesList.Remove(sched);
+    }
+	
     /// <summary>
     /// Removes every cancled schedule.
     /// </summary>

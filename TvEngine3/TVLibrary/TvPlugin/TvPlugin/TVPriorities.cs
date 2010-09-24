@@ -309,6 +309,7 @@ namespace TvPlugin
                                        rec.StartTime.ToShortDateString(),
                                        rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                        rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+		string day;
         switch ((ScheduleRecordingType)rec.ScheduleType)
         {
           case ScheduleRecordingType.Once:
@@ -347,7 +348,6 @@ namespace TvPlugin
             break;
 
           case ScheduleRecordingType.Weekly:
-            string day;
             switch (rec.StartTime.DayOfWeek)
             {
               case DayOfWeek.Monday:
@@ -378,6 +378,21 @@ namespace TvPlugin
                                     rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             strType = GUILocalizeStrings.Get(649);
             item.Label2 = String.Format("{0} {1} {2}", strType, day, strTime);
+            break;
+          case ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
+            switch (rec.StartTime.DayOfWeek)
+            {
+                case DayOfWeek.Monday: day = GUILocalizeStrings.Get(11); break;
+                case DayOfWeek.Tuesday: day = GUILocalizeStrings.Get(12); break;
+                case DayOfWeek.Wednesday: day = GUILocalizeStrings.Get(13); break;
+                case DayOfWeek.Thursday: day = GUILocalizeStrings.Get(14); break;
+                case DayOfWeek.Friday: day = GUILocalizeStrings.Get(15); break;
+                case DayOfWeek.Saturday: day = GUILocalizeStrings.Get(16); break;
+                default: day = GUILocalizeStrings.Get(17); break;
+            }
+
+            item.Label = rec.ProgramName;
+            item.Label2 = GUILocalizeStrings.Get(990001, new object[] { day, rec.ReferencedChannel().DisplayName });
             break;
           case ScheduleRecordingType.EveryTimeOnThisChannel:
             item.Label = rec.ProgramName;
@@ -575,6 +590,7 @@ namespace TvPlugin
         }
         dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WorkingDays)));
         dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WeekendDays)));
+        dlg.Add(GUILocalizeStrings.Get(990000));// 990000=Weekly everytime on this channel		
         switch ((ScheduleRecordingType)rec.ScheduleType)
         {
           case ScheduleRecordingType.Once:
@@ -597,6 +613,9 @@ namespace TvPlugin
             break;
           case ScheduleRecordingType.Weekends:
             dlg.SelectedLabel = 6;
+            break;
+          case ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
+            dlg.SelectedLabel = 7;
             break;
         }
         dlg.DoModal(GetID);
@@ -634,6 +653,10 @@ namespace TvPlugin
             rec.ScheduleType = (int)ScheduleRecordingType.Weekends;
             rec.Canceled = Schedule.MinSchedule;
             break;
+          case 7://weekly everytime, this channel
+            rec.ScheduleType = (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel;
+            rec.Canceled = Schedule.MinSchedule;
+            break;
         }
         rec.Persist();
         TvServer server = new TvServer();
@@ -669,6 +692,9 @@ namespace TvPlugin
           break;
         case ScheduleRecordingType.Weekly:
           strType = GUILocalizeStrings.Get(679); //Weekly
+          break;
+        case ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
+          strType = GUILocalizeStrings.Get(990000);//Weekly Everytime on this channel
           break;
       }
       return strType;

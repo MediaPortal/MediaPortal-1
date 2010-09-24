@@ -83,6 +83,11 @@ namespace SetupTv.Sections
             item.SubItems.Add("Once");
             item.SubItems.Add(String.Format("{0}", schedule.StartTime.ToString("dd-MM-yyyy HH:mm:ss", mmddFormat)));
             break;
+          case ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
+            item.ImageIndex = 0;
+            item.SubItems.Add("Weekly Always");
+            item.SubItems.Add(schedule.StartTime.DayOfWeek.ToString());
+            break;
           case ScheduleRecordingType.EveryTimeOnThisChannel:
             item.ImageIndex = 0;
             item.SubItems.Add("Always");

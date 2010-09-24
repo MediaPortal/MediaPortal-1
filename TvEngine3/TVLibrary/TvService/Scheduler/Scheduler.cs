@@ -666,7 +666,40 @@ namespace TvService
         case ScheduleRecordingType.EveryTimeOnEveryChannel:
           isTimeToRecord = IsTimeToRecordEveryTimeOnEveryChannel(schedule);
           break;
+
+        case ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
+          isTimeToRecord = IsTimeToRecordWeeklyEveryTimeOnThisChannel(schedule, currentTime);
+          break;
       }
+      return isTimeToRecord;
+    }
+
+    private bool IsTimeToRecordWeeklyEveryTimeOnThisChannel(Schedule schedule, DateTime currentTime)
+    {
+      bool isTimeToRecord = false;    
+      TvDatabase.Program current = schedule.ReferencedChannel().GetProgramAt(currentTime.AddMinutes(schedule.PreRecordInterval), schedule.ProgramName);
+
+        if (current != null)
+        {
+            // (currentTime.DayOfWeek == schedule.StartTime.DayOfWeek)
+            // Log.Debug("Scheduler.cs WeeklyEveryTimeOnThisChannel: {0} {1} current.StartTime.DayOfWeek == schedule.StartTime.DayOfWeek {2} == {3}", schedule.ProgramName, schedule.ReferencedChannel().Name, current.StartTime.DayOfWeek, schedule.StartTime.DayOfWeek);
+            if (current.StartTime.DayOfWeek == schedule.StartTime.DayOfWeek) 
+            {
+                if (currentTime >= current.StartTime.AddMinutes(-schedule.PreRecordInterval) &&
+                    currentTime <= current.EndTime.AddMinutes(schedule.PostRecordInterval))
+                {
+                    if (!schedule.IsSerieIsCanceled(current.StartTime))
+                    {
+                       bool createSpawnedOnceSchedule = CreateSpawnedOnceSchedule(schedule, current);
+                       if (createSpawnedOnceSchedule)
+                       {
+                           ResetTimer(); //lets process the spawned once schedule at once.
+                       }
+                    }            
+                }
+	        }
+        }        
+      
       return isTimeToRecord;
     }
 
