@@ -196,8 +196,11 @@ namespace TvPlugin
         }
 
         xmlwriter.SetValueAsBool("myradio", "sortascending", sortAscending);
-        xmlwriter.SetValue("myradio", "lastgroup", lastFolder);                
-        xmlwriter.SetValue("myradio", "channel", _currentChannel.Name);
+        xmlwriter.SetValue("myradio", "lastgroup", lastFolder);
+        if (_currentChannel != null)
+        {
+            xmlwriter.SetValue("myradio", "channel", _currentChannel.Name);
+        }
         
       }
     }
