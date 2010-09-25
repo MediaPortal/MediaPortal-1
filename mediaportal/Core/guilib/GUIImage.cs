@@ -939,20 +939,22 @@ namespace MediaPortal.GUI.Library
       _listTextures = null;   
     }
 
-    private void ReleaseTexture(string file, Texture texture)
-    {
-      if (!string.IsNullOrEmpty(file))
-      {
-        if (logtextures)
-        {
-          Log.Debug("GUIImage: Dispose - {0}", file);
+    private void ReleaseTexture(string file, Texture texture) {
+        if (!string.IsNullOrEmpty(file)) {
+
+            if (logtextures) {
+                Log.Debug("GUIImage: Dispose - {0}", file);
+            }
+
+            CachedTexture cachedTexture = GUITextureManager.GetCachedTexture(file);
+            if (cachedTexture != null && !cachedTexture.Persistent) {
+                texture = null;
+                GUITextureManager.ReleaseTexture(file);
+            }
+            else {
+                texture = null;
+            }
         }
-        if (GUITextureManager.IsTemporary(file))        
-        {          
-          texture = null;
-          GUITextureManager.ReleaseTexture(file);
-        }
-      }
     }
 
     private void Cleanup()

@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -27,6 +28,8 @@ using DShowNET.Helper;
 using Microsoft.DirectX.Direct3D;
 using System.Runtime.CompilerServices;
 using MediaPortal.ExtensionMethods;
+using MediaPortal.Configuration;
+using MediaPortal.Util;
 //using MediaPortal.EventSubscriptionManager;
 
 namespace MediaPortal.GUI.Library
@@ -44,7 +47,7 @@ namespace MediaPortal.GUI.Library
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
-    
+
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
@@ -96,7 +99,7 @@ namespace MediaPortal.GUI.Library
         {
           unsafe
           {
-          	_image.Disposing -= new EventHandler(D3DTexture_Disposing);
+            _image.Disposing -= new EventHandler(D3DTexture_Disposing);
             _image.Disposing += new EventHandler(D3DTexture_Disposing);
             IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(_image);
             _textureNumber = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
@@ -218,8 +221,8 @@ namespace MediaPortal.GUI.Library
               foreach (EventHandler eventDelegate in Disposed.GetInvocationList())
               {
                 Disposed -= eventDelegate;
-              } 
-            }            
+              }
+            }
           }
           disposed = true;
         }
@@ -310,7 +313,7 @@ namespace MediaPortal.GUI.Library
 
     // Track whether Dispose has been called.
     private bool disposed = false;
-    private string _fileName = ""; // filename of the texture
+    private string _fileName = string.Empty; // filename of the texture
     private List<Frame> _listFrames = new List<Frame>(); // array to hold all frames
     private int _textureWidth = 0; // width of the texture
     private int _textureHeight = 0; // height of the texture
@@ -345,8 +348,64 @@ namespace MediaPortal.GUI.Library
     public string Name
     {
       get { return _fileName; }
-      set { _fileName = value; }
+      set
+      {
+        _fileName = value;
+        _persistent = null;
+      }
     }
+
+    public bool Persistent
+    {
+      get
+      {
+        if (_persistent == null)
+        {
+
+          /* Temporary: (textures that are disposed)
+           * - all not skin images
+           * 
+           * Persistant: (textures that are kept in cache)
+           * - all skin graphics
+           * 
+           */
+          if (String.IsNullOrEmpty(_fileName))
+          {
+            _persistent = true;
+          }
+          else if (_fileName == "-")
+          {
+            _persistent = true;
+          }
+          else if (_fileName.IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos").ToLower()) >= 0)
+          {
+            _persistent = true;
+          }
+          else if (_fileName.IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, "radio").ToLower()) >= 0)
+          {
+            _persistent = true;
+          }
+          else if (_fileName.IndexOf(@"skin\") >= 0)
+          {
+            // todo: these hardcoded path exceptions within the skin folder should not be needed
+            if (_fileName.IndexOf(@"media\animations\") == 0 && _fileName.IndexOf(@"media\Tetris\") == 0)
+            {
+              _persistent = true;
+            }
+          }
+          else
+          {
+            _persistent = false;
+          }
+        }
+
+        return (bool)_persistent;
+      }
+      set
+      {
+        _persistent = value;
+      }
+    } protected bool? _persistent;
 
     /// <summary>
     /// Get/set the DirectX texture for the 1st frame
@@ -465,6 +524,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+
     #endregion
 
     #region IDisposable Members
@@ -526,7 +586,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-
     /// <summary>
     /// Releases the resources used by the texture.
     /// </summary>
@@ -541,5 +600,38 @@ namespace MediaPortal.GUI.Library
     }
 
     #endregion
+
+    public override bool Equals(object obj)
+    {
+      // If parameter is null return false.
+      if (obj == null)
+      {
+        return false;
+      }
+
+      CachedTexture texture = obj as CachedTexture;
+      if (texture == null)
+      {
+        return false;
+      }
+
+      return Equals(texture);
+    }
+
+    public bool Equals(CachedTexture texture)
+    {
+      if (texture == null)
+      {
+        return false;
+      }
+
+      return (this.Name == texture.Name);
+    }
+
+    public override int GetHashCode()
+    {
+      return this.Name.GetHashCode();
+    }
+
   }
 }
