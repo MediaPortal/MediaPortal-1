@@ -21,57 +21,60 @@
 using System;
 using System.Xml;
 using System.IO;
-using SetupTv;
+using TvLibrary.Log;
 
 namespace MediaPortal.Playlists
 {
-  public class PlayListWPLIO : IPlayListIO
-  {
-    public bool Load(PlayList playlist, string fileName)
+    public class PlayListWPLIO : IPlayListIO
     {
-      playlist.Clear();
+        public bool Load(PlayList playlist, string playlistFileName)
+        {
+            playlist.Clear();
 
-      try
-      {
-        string basePath = Path.GetDirectoryName(Path.GetFullPath(fileName));
-        XmlDocument doc = new XmlDocument();
-        doc.Load(fileName);
-        if (doc.DocumentElement == null)
-          return false;
-        XmlNode nodeRoot = doc.DocumentElement.SelectSingleNode("/smil/body/seq");
-        if (nodeRoot == null)
-          return false;
-        XmlNodeList nodeEntries = nodeRoot.SelectNodes("media");
-        if (nodeEntries != null)
-          foreach (XmlNode node in nodeEntries)
-          {
-            XmlNode srcNode = node.Attributes.GetNamedItem("src");
-            if (srcNode != null)
+            try
             {
-              if (srcNode.InnerText != null)
-              {
-                if (srcNode.InnerText.Length > 0)
-                {
-                  fileName = srcNode.InnerText;
-                  Utils.GetQualifiedFilename(basePath, ref fileName);
-                  PlayListItem newItem = new PlayListItem(fileName, fileName, 0);
-                  newItem.Type = PlayListItem.PlayListItemType.Audio;
-                  string description = Path.GetFileName(fileName);
-                  newItem.Description = description;
-                  playlist.Add(newItem);
-                }
-              }
+                var doc = new XmlDocument();
+                doc.Load(playlistFileName);
+                if (doc.DocumentElement == null)
+                    return false;
+                XmlNode nodeRoot = doc.DocumentElement.SelectSingleNode("/smil/body/seq");
+                if (nodeRoot == null)
+                    return false;
+                XmlNodeList nodeEntries = nodeRoot.SelectNodes("media");
+                if (nodeEntries != null)
+                    foreach (XmlNode node in nodeEntries)
+                    {
+                        XmlNode srcNode = node.Attributes.GetNamedItem("src");
+                        if (srcNode != null)
+                        {
+                            if (srcNode.InnerText != null)
+                            {
+                                if (srcNode.InnerText.Length > 0)
+                                {
+                                    var playlistUrl = srcNode.InnerText;
+                                    var newItem = new PlayListItem(playlistUrl, playlistUrl, 0)
+                                                      {
+                                                          Type = PlayListItem.PlayListItemType.Audio
+                                                      };
+                                    string description = Path.GetFileName(playlistUrl);
+                                    newItem.Description = description;
+                                    playlist.Add(newItem);
+                                }
+                            }
+                        }
+                    }
+                return true;
             }
-          }
-        return true;
-      }
-      catch (Exception) {}
-      return false;
-    }
+            catch (Exception e)
+            {
+                Log.Error(e.StackTrace);
+            }
+            return false;
+        }
 
-    public void Save(PlayList playListParam, string fileName)
-    {
-      throw new Exception("The method or operation is not implemented.");
+        public void Save(PlayList playListParam, string fileName)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
     }
-  }
 }
