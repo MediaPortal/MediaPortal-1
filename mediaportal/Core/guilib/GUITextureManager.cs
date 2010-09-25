@@ -435,7 +435,7 @@ namespace MediaPortal.GUI.Library
           cachedTexture.Disposed += new EventHandler(cachedTexture_Disposed);
           _cachedTextures.Add(cachedTexture);
 
-          Log.Debug("TextureManager: added: memoryImage  " + " total count: " + _cache.Count + ", mem left (MB): " +
+          Log.Debug("TextureManager: added: memoryImage  " + " total count: " + _cachedTextures.Count + ", mem left (MB): " +
               ((uint)GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576));
           return cachedTexture.Frames;
         }
@@ -515,7 +515,7 @@ namespace MediaPortal.GUI.Library
 
           _cachedTextures.Add(cachedTexture);
 
-          Log.Debug("TextureManager: added: memoryImage  " + " total count: " + _cache.Count + ", mem left (MB): " +
+          Log.Debug("TextureManager: added: memoryImage  " + " total count: " + _cachedTextures.Count + ", mem left (MB): " +
                     ((uint)GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576));
           return cachedTexture.Frames;
         }
