@@ -26,11 +26,9 @@ using SetupTv.Dialogs;
 using TvControl;
 using MediaPortal.Playlists;
 using Gentle.Framework;
-using DirectShowLib.BDA;
 using TvDatabase;
 using TvLibrary.Log;
 using TvLibrary.Interfaces;
-using TvLibrary.Implementations;
 using MediaPortal.UserInterface.Controls;
 using System.Threading;
 
@@ -774,6 +772,7 @@ namespace SetupTv.Sections
         iInserted++;
       }
       MessageBox.Show("Imported " + iInserted + " new channels from playlist");
+      OnSectionActivated();
     }
 
     private void mpButtonPreview_Click(object sender, EventArgs e)
