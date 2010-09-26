@@ -230,7 +230,7 @@ namespace MediaPortal.Player
         }
         else
         {
-          if (AudioType(CurrentAudioStream).Contains("DD+"))
+          if (AudioType(CurrentAudioStream).Equals("AC3plus"))
           {
             audioFilter = strDDPLUSAudioCodec;
           }

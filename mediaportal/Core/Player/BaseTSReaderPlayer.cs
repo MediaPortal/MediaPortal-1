@@ -307,19 +307,19 @@ namespace MediaPortal.Player
         }
         if (sType.subType == MEDIASUBTYPE_DDPLUS_AUDIO)
         {
-          return "DD+";
+          return "AC3plus";
         }
         if (sType.subType == MEDIASUBTYPE_MPEG1_PAYLOAD)
         {
-          return "MPEG1";
+          return "Mpeg1";
         }
         if (sType.subType == MEDIASUBTYPE_MPEG1_AUDIO)
         {
-          return "MPEG1";
+          return "Mpeg1";
         }
         if (sType.subType == MEDIASUBTYPE_MPEG2_AUDIO)
         {
-          return "MPEG2";
+          return "Mpeg2";
         }
         if (sType.subType == MEDIASUBTYPE_LATM_AAC_AUDIO) //MediaSubType.LATMAAC)
         {
@@ -329,13 +329,9 @@ namespace MediaPortal.Player
         {
           return "AAC";
         }
-        return Strings.Unknown;
       }
-      else
-      {
-        return Strings.Unknown;
-      }
-    }
+      return Strings.Unknown;
+    }    
 
     /// <summary>
     /// Implements the AudioLanguage member which interfaces the TsReader filter to get the IAMStreamSelect interface for getting info about a stream
@@ -377,20 +373,33 @@ namespace MediaPortal.Player
         }
         */
         sName = sName.Trim();
-        foreach (System.Globalization.CultureInfo ci in System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.NeutralCultures))
+        if (sName.Length > 3) //dual language track
         {
-          if (sName.Equals(ci.ThreeLetterISOLanguageName) || ci.EnglishName.StartsWith(sName, StringComparison.InvariantCultureIgnoreCase))
-          {
-            sName = Util.Utils.TranslateLanguageString(ci.EnglishName);
-            break;
-          }
+          string lang = GetFullLanguageName(sName.Substring(0, 3));
+          sName = string.Format("{0}/{1} ({2})", lang, GetFullLanguageName(sName.Substring(3, 3)), sName);
         }
-        return sName;
+        else
+          sName = string.Format("{0} ({1})", GetFullLanguageName(sName), sName);
+
+        return sName;    
       }
       else
       {
         return Strings.Unknown;
       }
+    }
+
+    private string GetFullLanguageName(string language)
+    {
+      foreach (System.Globalization.CultureInfo ci in System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.NeutralCultures))
+      {
+        if (language.Equals(ci.ThreeLetterISOLanguageName) || ci.EnglishName.StartsWith(language, StringComparison.InvariantCultureIgnoreCase))
+        {
+          language = Util.Utils.TranslateLanguageString(ci.EnglishName);
+          break;
+        }
+      }
+      return language;
     }
 
     public override bool SupportsReplay

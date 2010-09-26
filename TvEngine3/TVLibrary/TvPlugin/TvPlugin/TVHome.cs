@@ -2970,6 +2970,8 @@ namespace TvPlugin
         }
 
         stream.Language = g_Player.AudioLanguage(i);
+        string [] lang = stream.Language.Split('(');
+        stream.Language = lang[1].Substring(0, lang[1].Length - 1);
         streamsList.Add(stream);
       }
       return streamsList.ToArray();
