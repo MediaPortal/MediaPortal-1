@@ -2543,7 +2543,7 @@ namespace MediaPortal.Util
 
           if (File.Exists(defaultBackground))
           {
-            using (FileStream fs = new FileStream(defaultBackground, FileMode.Open, FileAccess.ReadWrite))
+            using (FileStream fs = new FileStream(defaultBackground, FileMode.Open, FileAccess.Read))
             {
               using (Image imgFolder = Image.FromStream(fs, true, false))
               {
@@ -2609,20 +2609,16 @@ namespace MediaPortal.Util
 
                   try
                   {
-                    if (File.Exists(aThumbPath))
-                      FileDelete(aThumbPath);
-
-                    string tmpFile = Path.Combine(Path.GetTempPath(), "folderpreview.jpg");
-                    if (File.Exists(tmpFile))
-                      FileDelete(tmpFile);
-
+                    string tmpFile = Path.GetTempFileName();
+                    Log.Debug("Saving thumb!");
                     bmp.Save(tmpFile, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
-
+                    
                     // we do not want a folderL.jpg
                     if (aThumbPath.ToLowerInvariant().Contains(@"folder.jpg"))
                     {
                       Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution,
                                               (int)Thumbs.ThumbLargeResolution, 0, false);
+                      FileDelete(tmpFile);
                     }
                     else if (Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbResolution,
                                                      (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
@@ -2630,6 +2626,7 @@ namespace MediaPortal.Util
                       aThumbPath = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
                       Picture.CreateThumbnail(tmpFile, aThumbPath, (int)Thumbs.ThumbLargeResolution,
                                               (int)Thumbs.ThumbLargeResolution, 0, false);
+                      FileDelete(tmpFile);
                     }
 
                     if (MediaPortal.Player.g_Player.Playing)
