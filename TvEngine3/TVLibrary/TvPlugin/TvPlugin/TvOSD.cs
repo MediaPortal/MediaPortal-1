@@ -23,7 +23,6 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using Gentle.Framework;
-using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -274,7 +273,12 @@ namespace TvPlugin
                 }
               }
             }
-            return;
+            if (g_Player.IsTVRecording)
+            {
+                Log.Debug("TvOSD: stop from recorded TV");
+                g_Player.Stop();
+            }
+              return;
           }
 
 
