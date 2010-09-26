@@ -602,11 +602,13 @@ namespace MediaPortal.GUI.Video
                     item1.FileInfo.Length += item2.FileInfo.Length;
                     innerList[j] = item1;
                   }
+                  item1 = null;
+                  break;
                 }
-                else // not stackable
-                {
-                  innerList.Add(item2);
-                }
+              }
+              if (item1 != null)// not stackable
+              {
+                innerList.Add(item1);
               }
             }
             else
