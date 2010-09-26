@@ -875,7 +875,6 @@
     </EmbeddedResource>
     <None Include="Resources\config.ico" />
     <None Include="Resources\wizard_background.png" />
-    <None Include="Resources\wizard_header.jpg" />
     <None Include="Resources\remote.HidKeys.png" />
     <None Include="Resources\remote.FireDtv.png" />
     <None Include="Resources\remote.Centarea.png" />
@@ -887,7 +886,6 @@
     <None Include="Resources\remote.MceVista.png" />
     <None Include="Resources\remote.Mce2004.png" />
     <None Include="Resources\remote.Mce2005TT.png" />
-    <EmbeddedResource Include="Resources\mplogo.gif" />
     <None Include="Resources\mepo_donation.png" />
   </ItemGroup>
   <ItemGroup>

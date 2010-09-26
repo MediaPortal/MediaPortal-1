@@ -148,19 +148,13 @@
   <data name="icon_folder" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\icon_folder.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="mplogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\mplogo.gif;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="remote_FireDtv" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\remote.FireDtv.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="wizard_header" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\wizard_header.jpg;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="mepo_donation" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\mepo_donation.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="mplogo1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="mplogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\mplogo.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logo_PayPal" type="System.Resources.ResXFileRef, System.Windows.Forms">
