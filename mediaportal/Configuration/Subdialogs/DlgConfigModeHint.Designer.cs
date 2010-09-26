@@ -81,10 +81,10 @@
       this.radioButtonNormal.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.radioButtonNormal.Location = new System.Drawing.Point(28, 91);
       this.radioButtonNormal.Name = "radioButtonNormal";
-      this.radioButtonNormal.Size = new System.Drawing.Size(97, 17);
+      this.radioButtonNormal.Size = new System.Drawing.Size(109, 17);
       this.radioButtonNormal.TabIndex = 1;
       this.radioButtonNormal.TabStop = true;
-      this.radioButtonNormal.Text = "Normal mode";
+      this.radioButtonNormal.Text = "Standard mode";
       this.radioButtonNormal.UseVisualStyleBackColor = true;
       // 
       // radioButtonAdvanced
@@ -94,9 +94,9 @@
       this.radioButtonAdvanced.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.radioButtonAdvanced.Location = new System.Drawing.Point(28, 144);
       this.radioButtonAdvanced.Name = "radioButtonAdvanced";
-      this.radioButtonAdvanced.Size = new System.Drawing.Size(115, 17);
+      this.radioButtonAdvanced.Size = new System.Drawing.Size(94, 17);
       this.radioButtonAdvanced.TabIndex = 2;
-      this.radioButtonAdvanced.Text = "Advanced mode";
+      this.radioButtonAdvanced.Text = "Expert mode";
       this.radioButtonAdvanced.UseVisualStyleBackColor = true;
       // 
       // lblNormal
