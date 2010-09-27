@@ -124,6 +124,11 @@ namespace MediaPortal.GUI.Video
 
     private List<GUIListItem> _cachedItems = new List<GUIListItem>();
     private string _cachedDir = null;
+    
+    private bool _resetSMSsearch = false;
+    private bool _oldStateSMSsearch;
+    private DateTime _resetSMSsearchDelay;
+    protected bool _enableSMSsearch = true;
 
     #endregion
 
@@ -1899,6 +1904,18 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    public override void Process()
+    {
+      if ((_resetSMSsearch == true) && (_resetSMSsearchDelay.Subtract(DateTime.Now).Seconds < -2))
+      {
+        _resetSMSsearchDelay = DateTime.Now;
+        _resetSMSsearch = true;
+        facadeView.EnableSMSsearch = _oldStateSMSsearch;
+      }
+
+      base.Process();
+    }
+
     private bool GetUserInputString(ref string sString)
     {
       VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
@@ -1951,6 +1968,9 @@ namespace MediaPortal.GUI.Video
       _fileMenuDestinationDir = dlgFile.GetDestinationDir();
 
       //final
+      _oldStateSMSsearch = facadeView.EnableSMSsearch;
+      facadeView.EnableSMSsearch = false;
+
       if (dlgFile.Reload())
       {
         int selectedItem = facadeView.SelectedListItemIndex;
@@ -1971,6 +1991,8 @@ namespace MediaPortal.GUI.Video
 
       dlgFile.DeInit();
       dlgFile = null;
+      _resetSMSsearchDelay = DateTime.Now;
+      _resetSMSsearch = true;
     }
 
     private bool SelectCurrentItem()
@@ -2437,6 +2459,12 @@ namespace MediaPortal.GUI.Video
 
       // play movie...
       PlayMovieFromPlayList(askForResumeMovie);
+    }
+
+    public bool EnableSMSsearch
+    {
+      get { return _enableSMSsearch; }
+      set { _enableSMSsearch = value; }
     }
 
     #region IMDB.IProgress

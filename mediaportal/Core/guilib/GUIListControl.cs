@@ -227,6 +227,8 @@ namespace MediaPortal.GUI.Library
     private char _previousKey = (char)0;
     protected string _searchString = "";
     protected int _lastSearchItem = 0;
+    protected bool _enableSMSsearch = true;
+
 
     public GUIListControl(int dwParentID)
       : base(dwParentID) { }
@@ -1808,6 +1810,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="Key"></param>
     private void Press(char Key)
     {
+      if (!_enableSMSsearch) return;
       // Check key timeout
       CheckTimer();
 
@@ -3687,6 +3690,12 @@ namespace MediaPortal.GUI.Library
     {
       get { return _downloadColor; }
       set { _downloadColor = value; }
+    }
+
+    public bool EnableSMSsearch
+    {
+      get { return _enableSMSsearch; }
+      set { _enableSMSsearch = value; }
     }
   }
 }
