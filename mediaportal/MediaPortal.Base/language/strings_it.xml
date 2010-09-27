@@ -31,18 +31,6 @@
     <String id="30">Ottobre</String>
     <String id="31">Novembre</String>
     <String id="32">Dicembre</String>
-    <String id="33">Gen</String>
-    <String id="34">Feb</String>
-    <String id="35">Mar</String>
-    <String id="36">Apr</String>
-    <String id="37">Mag</String>
-    <String id="38">Giu</String>
-    <String id="39">Lug</String>
-    <String id="40">Ago</String>
-    <String id="41">Set</String>
-    <String id="42">Ott</String>
-    <String id="43">Nov</String>
-    <String id="44">Dic</String>
     <String id="50" prefix="I miei ">DVD</String>
     <String id="51">Riproduci disco</String>
     <String id="60">Attesa attivazione del servizio TV...</String>
@@ -364,8 +352,6 @@
     <String id="405">P.to di rugiada</String>
     <String id="406">Umidità</String>
     <String id="407">Pesante</String>
-    <String id="408">Inserire nome località</String>
-    <String id="409">Rimuovere località</String>
     <String id="410">Accesso a Weather.com</String>
     <String id="411">Acquisizione tempo atmosferico per:</String>
     <String id="412">Impossibile reperire dati atmosferici</String>
@@ -475,12 +461,6 @@
     <String id="517">Errore critico, operazione non completata</String>
     <String id="518">Eliminare questa canzone?</String>
     <String id="519">Sottotitoli disattivati</String>
-    <String id="520">Nessuna località trovata</String>
-    <String id="521">Numero non valido</String>
-    <String id="522">Solo numeri positivi!</String>
-    <String id="523">Skip a zero non è permesso!</String>
-    <String id="524">3 ore di skip è il massimo!</String>
-    <String id="525">Skip step già definita</String>
     <String id="527">Ordina per: Visto</String>
     <String id="528">Artisti dell'Album</String>
     <String id="529">Vista: Elenco icone grandi</String>
@@ -520,9 +500,6 @@
     <String id="563">kn</String>
     <String id="564">m/s</String>
     <String id="565">bft</String>
-    <String id="566">Info veloci sul tempo</String>
-    <String id="567">Aggiungere città</String>
-    <String id="568">Rimuovere città</String>
     <String id="590">P. 100</String>
     <String id="591">P. 200</String>
     <String id="592">P. 300</String>
@@ -711,7 +688,6 @@
     <String id="784">Ruota di 270°</String>
     <String id="789">Adesso: </String>
     <String id="790">Dopo: </String>
-    <String id="791">Vista: Movimento cover</String>
     <String id="798">Basso</String>
     <String id="799">Alto</String>
     <String id="800">Comincia con</String>
@@ -1266,7 +1242,6 @@
     <String id="2612">Ungherese</String>
     <String id="2613">Russo</String>
     <String id="2614">Ucraino</String>
-    <String id="2615">Tedesco</String>
     <String id="2650">Ricarica font, prego attendere...</String>
     <String id="2700">Apertura menu CI</String>
     <String id="2997">ore</String>
@@ -1402,7 +1377,6 @@
     <String id="6039">Codec Audio LATM AAC</String>
     <String id="6040">Ieri</String>
     <String id="6041">Due giorni fa</String>
-    <String id="6042">Aggiungi un numero di secondi per lo skip</String>
     <String id="6050">Settimana corrente</String>
     <String id="6060">Mese corrente</String>
     <String id="6070">Anno corrente</String>
@@ -1848,8 +1822,10 @@
     <String id="106666">Power Scheduler in attesa</String>
     <String id="107700" prefix="La mia ">TV/Televideo</String>
     <String id="107701" prefix="La mia ">TV/Televideo</String>
+    <String id="107776" prefix="Il mio ">Tetris</String>
     <String id="107777" prefix="Il mio ">Sudoku</String>
     <String id="107890" prefix="La mia ">Radio Last.fm</String>
+    <String id="107900">Dialogo di testo</String>
     <String id="108888">Menù Musica</String>
     <String id="109000">MiniDisplay - Configurazione</String>
     <String id="109001">MiniDisplay - Configurazione - Retroilluminazione</String>
@@ -1879,8 +1855,6 @@
     <String id="200019">Premi il pulsante Fine per chiudere questo wizard</String>
     <String id="200020">Fine</String>
     <String id="200021">Impostazioni TV - EPG</String>
-    <String id="990000">Settimanalmente su questo canale</String>
-    <String id="990001">{0} sul canale {1}</String>
     <String id="200022">MediaPortal ha rilevato le seguenti schede TV:</String>
     <String id="200023">Premi il pulsante Avanti per configurare queste schede</String>
     <String id="200024">Impostazioni TV</String>
@@ -1929,6 +1903,5 @@
     <String id="200070">Controllare il firewall</String>
     <String id="200071">Cancellare questa cartella e tutte le sottocartelle?</String>
     <String id="200072">Prossimi episodi</String>
-    <String id="200091">Capitolo</String>
   </Section>
 </Language>
