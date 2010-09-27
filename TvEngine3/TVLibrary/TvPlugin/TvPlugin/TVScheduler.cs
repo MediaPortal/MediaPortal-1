@@ -546,7 +546,7 @@ namespace TvPlugin
           }
 
           item = Schedule2ListItem(schedule);
-          item.MusicTag = schedule;
+          item.TVTag = schedule;
           listSchedules.Add(item);
           total++;
         }
@@ -561,7 +561,7 @@ namespace TvPlugin
             if (showSeries)
             {
               item = Schedule2ListItem(rec);
-              item.MusicTag = rec;
+              item.TVTag = rec;
               item.IsFolder = true;
               listSchedules.Add(item);
               total++;
@@ -601,7 +601,7 @@ namespace TvPlugin
               continue;
             }
             item = Schedule2ListItem(rec);
-            item.MusicTag = rec;
+            item.TVTag = rec;
             listSchedules.Add(item);
             total++;
           }
@@ -651,9 +651,10 @@ namespace TvPlugin
         {
           continue;
         }
-        Schedule rec = (Schedule)item.TVTag;
+        Schedule rec = (Schedule)item.TVTag;        
+        item.Label = TVUtil.GetDisplayTitle(rec);
 
-        item.Label = rec.ProgramName;
+
         if (showSeries)
         {
           string strTime;
@@ -765,7 +766,17 @@ namespace TvPlugin
         }
         else
         {
-          item.Label2 = Utils.GetNamedDate(rec.StartTime);
+          Program program = Program.RetrieveByTitleTimesAndChannel(rec.ProgramName, rec.StartTime,
+                                                      rec.EndTime, rec.IdChannel);
+            if (program != null)
+            {
+                item.Label2 = Utils.GetNamedDate(rec.StartTime);
+            }
+            else
+            {
+                item.Label2 = String.Empty;
+            }
+
         }
       }
     }

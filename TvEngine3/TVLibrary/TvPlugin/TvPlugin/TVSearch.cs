@@ -68,10 +68,12 @@ namespace TvPlugin
     {
       Name,
       Date,
-      Channel
+      Channel,
+      Auto
     }
 
     private SortMethod currentSortMethod = SortMethod.Name;
+    private SortMethod chosenSortMethod = SortMethod.Auto;
     private bool sortAscending = true;
     private IList<Schedule> listRecordings;
 
@@ -266,16 +268,19 @@ namespace TvPlugin
       }
       else if (control == btnSortBy)
       {
-        switch (currentSortMethod)
+        switch (chosenSortMethod)
         {
+          case SortMethod.Auto:
+            chosenSortMethod = SortMethod.Name;
+            break;
           case SortMethod.Name:
-            currentSortMethod = SortMethod.Channel;
+            chosenSortMethod = SortMethod.Channel;
             break;
           case SortMethod.Channel:
-            currentSortMethod = SortMethod.Date;
+            chosenSortMethod = SortMethod.Date;
             break;
           case SortMethod.Date:
-            currentSortMethod = SortMethod.Name;
+            chosenSortMethod = SortMethod.Auto;
             break;
         }
         Update();
@@ -360,6 +365,36 @@ namespace TvPlugin
       int currentItemId = 0;
       listView.Clear();
       titleView.Clear();
+      
+      //visibility was previously been set at many different points in code
+      //if filteshow variable is set then this is looking at actual shows so
+      //details should be visible else they shouldn't
+      // Jameson_UK - 8th May 2010
+      if (chosenSortMethod == SortMethod.Auto && filterShow == String.Empty)
+      {
+          currentSortMethod = SortMethod.Name;
+      }
+      else
+      {
+          currentSortMethod = SortMethod.Date;
+      }
+
+      bool showDetails = true;
+      if (filterShow == String.Empty)
+      {
+        showDetails = false;
+      }
+
+      lblProgramDescription.IsVisible = showDetails;
+      if (lblProgramGenre != null)
+      {
+          lblProgramGenre.IsVisible = showDetails;
+      }
+      lblProgramTime.IsVisible = showDetails;
+      lblProgramTitle.IsVisible = showDetails;
+      lblChannel.IsVisible = showDetails;
+  
+
       if (currentLevel == 0 && currentSearchMode == SearchMode.Genre)
       {
         listView.IsVisible = true;
@@ -382,17 +417,7 @@ namespace TvPlugin
         {
           btnSearchDescription.Disabled = true;
         }
-        lblProgramDescription.IsVisible = false;
-        if (lblProgramGenre != null)
-        {
-          lblProgramGenre.IsVisible = false;
-        }
-        lblProgramTime.IsVisible = false;
-        lblProgramTitle.IsVisible = false;
-        if (lblChannel != null)
-        {
-          lblChannel.IsVisible = false;
-        }
+
         listView.Height = lblProgramDescription.YPosition - listView.YPosition;
         lblNumberOfItems.YPosition = listView.SpinY;
       }
@@ -406,17 +431,6 @@ namespace TvPlugin
 
           if (filterShow == String.Empty)
           {
-            lblProgramDescription.IsVisible = false;
-            if (lblProgramGenre != null)
-            {
-              lblProgramGenre.IsVisible = false;
-            }
-            lblProgramTime.IsVisible = false;
-            lblProgramTitle.IsVisible = false;
-            if (lblChannel != null)
-            {
-              lblChannel.IsVisible = false;
-            }
             if (imgTvLogo != null)
             {
               imgTvLogo.IsVisible = false;
@@ -437,17 +451,6 @@ namespace TvPlugin
           }
           else
           {
-            lblProgramDescription.IsVisible = true;
-            if (lblProgramGenre != null)
-            {
-              lblProgramGenre.IsVisible = true;
-            }
-            lblProgramTime.IsVisible = true;
-            lblProgramTitle.IsVisible = true;
-            if (lblChannel != null)
-            {
-              lblChannel.IsVisible = true;
-            }
             if (imgTvLogo != null)
             {
               imgTvLogo.IsVisible = true;
@@ -476,17 +479,6 @@ namespace TvPlugin
           titleView.IsVisible = false;
           GUIControl.FocusControl(GetID, listView.GetID);
 
-          lblProgramDescription.IsVisible = false;
-          if (lblProgramGenre != null)
-          {
-            lblProgramGenre.IsVisible = false;
-          }
-          lblProgramTime.IsVisible = false;
-          lblProgramTitle.IsVisible = false;
-          if (lblChannel != null)
-          {
-            lblChannel.IsVisible = false;
-          }
           if (imgTvLogo != null)
           {
             imgTvLogo.IsVisible = false;
@@ -610,8 +602,19 @@ namespace TvPlugin
 
               item = new GUIListItem();
               item.IsFolder = false;
-              item.Label = program.Title;
-              item.Label2 = strTime;
+              //check if we are filtering for specific show or just letter
+              if (filterShow == String.Empty)
+              {
+                  //not searching for episode data so show just title
+                  item.Label = program.Title;
+                  item.Label2 = String.Empty;
+              }
+              else
+              {
+                  //searching for specific show so add episode data to display
+                  item.Label = TVUtil.GetDisplayTitle(program);
+                  item.Label2 = strTime;
+              }
               item.Path = program.Title;
               item.TVTag = program;
               item.ItemId = currentItemId;
@@ -744,11 +747,26 @@ namespace TvPlugin
 
               GUIListItem item = new GUIListItem();
               item.IsFolder = false;
-              item.Label = program.Title;
-              if (program.StartTime > DateTime.MinValue)
+
+              //check if we are filtering for specific show or just letter
+              if (filterShow == String.Empty)
               {
-                item.Label2 = strTime;
+                  //not searching for episode data so show just title
+                  item.Label = program.Title;
+                  item.Label2 = String.Empty;
               }
+              else
+              {
+                  //searching for specific show so add episode data to display
+                  item.Label = TVUtil.GetDisplayTitle(program);
+                  
+                  //moved this if statement but can not see it is doing anything?
+                  //if (program.StartTime > DateTime.MinValue)
+                  //{
+                      item.Label2 = strTime;
+                  //}
+              }
+
               item.Path = program.Title;
               item.TVTag = program;
               item.ItemId = currentItemId;
@@ -856,11 +874,25 @@ namespace TvPlugin
 
               GUIListItem item = new GUIListItem();
               item.IsFolder = false;
-              item.Label = program.Title;
-              if (program.StartTime > DateTime.MinValue)
+              //check if we are filtering for specific show or just letter
+              if (filterShow == String.Empty)
               {
-                item.Label2 = strTime;
+                  //not searching for episode data so show just title
+                  item.Label = program.Title;
+                  item.Label2 = String.Empty;
               }
+              else
+              {
+                  //searching for specific show so add episode data to display
+                  item.Label = TVUtil.GetDisplayTitle(program);
+
+                  //moved this if statement but can not see it is doing anything?
+                  //if (program.StartTime > DateTime.MinValue)
+                  //{
+                  item.Label2 = strTime;
+                  //}
+              }
+
               item.Path = program.Title;
               item.TVTag = program;
               item.ItemId = currentItemId;
@@ -935,8 +967,11 @@ namespace TvPlugin
       OnSort();
 
       string strLine = String.Empty;
-      switch (currentSortMethod)
+      switch (chosenSortMethod)
       {
+        case SortMethod.Auto:
+          strLine = "Auto";
+          break;
         case SortMethod.Name:
           strLine = GUILocalizeStrings.Get(622);
           break;
@@ -1348,6 +1383,10 @@ namespace TvPlugin
     private void UpdateDescription()
     {
       if (currentLevel == 0 && currentSearchMode == SearchMode.Genre)
+      {
+        return;
+      }
+      if (filterShow == String.Empty)
       {
         return;
       }

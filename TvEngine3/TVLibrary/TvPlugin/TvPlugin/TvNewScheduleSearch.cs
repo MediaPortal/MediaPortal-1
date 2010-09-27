@@ -237,7 +237,7 @@ namespace TvPlugin
       foreach (Program program in listPrograms)
       {
         GUIListItem item = new GUIListItem();
-        item.Label = program.Title;
+        item.Label = TVUtil.GetDisplayTitle(program);
         string logo = Utils.GetCoverArt(Thumbs.TVChannel, program.ReferencedChannel().DisplayName);
         if (!File.Exists(logo))
         {

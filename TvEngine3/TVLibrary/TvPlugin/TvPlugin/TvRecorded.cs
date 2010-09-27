@@ -1291,7 +1291,7 @@ namespace TvPlugin
           mediaType = GUIResumeDialog.MediaType.LiveRecording;
 
         GUIResumeDialog.Result result =
-          GUIResumeDialog.ShowResumeDialog(rec.Title, rec.StopTime, mediaType);
+          GUIResumeDialog.ShowResumeDialog(TVUtil.GetDisplayTitle(rec), rec.StopTime, mediaType);
 
         switch (result)
         {
@@ -1366,7 +1366,7 @@ namespace TvPlugin
         }
         //populates recording metadata to g_player;
         g_Player.currentFileName = rec.FileName;
-        g_Player.currentTitle = rec.Title;
+        g_Player.currentTitle = TVUtil.GetDisplayTitle(rec);
         g_Player.currentDescription = rec.Description;
 
         rec.TimesWatched++;
@@ -1426,7 +1426,7 @@ namespace TvPlugin
         string chName = GetRecordingDisplayName(rec);
 
         dlgYesNo.SetLine(1, chName);
-        dlgYesNo.SetLine(2, rec.Title);
+        dlgYesNo.SetLine(2, TVUtil.GetDisplayTitle(rec));
         dlgYesNo.SetLine(3, string.Empty);
         dlgYesNo.DoModal(GetID);
         if (!dlgYesNo.IsConfirmed)
@@ -1487,7 +1487,7 @@ namespace TvPlugin
         {
           dlgOk.SetHeading(257);
           dlgOk.SetLine(1, GUILocalizeStrings.Get(200054));
-          dlgOk.SetLine(2, rec.Title);
+          dlgOk.SetLine(2, TVUtil.GetDisplayTitle(rec));
           dlgOk.DoModal(GetID);
         }
       }
@@ -1625,7 +1625,7 @@ namespace TvPlugin
                                        rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                        rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.Title", rec.Title);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.Title", TVUtil.GetDisplayTitle(rec));
         GUIPropertyManager.SetProperty("#TV.RecordedTV.Genre", rec.Genre);
         GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", strTime);
         GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", rec.Description);

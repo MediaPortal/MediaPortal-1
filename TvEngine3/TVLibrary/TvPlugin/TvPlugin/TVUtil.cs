@@ -155,6 +155,24 @@ namespace TvPlugin
       }
     }
 
+    public static string GetDisplayTitle(Schedule schedule)
+    {
+      string displayname = "";
+      Program program = Program.RetrieveByTitleTimesAndChannel(schedule.ProgramName, schedule.StartTime,
+                                                       schedule.EndTime, schedule.IdChannel);
+
+      //if we have found program details then use nicely formatted name
+      if (program != null)
+      {
+        displayname = TVUtil.GetDisplayTitle(program);
+      }
+      else
+      {
+        displayname = schedule.ProgramName;
+      }
+      return displayname;
+    }
+
     public static string GetDisplayTitle(Recording rec)
     {
       StringBuilder strBuilder = new StringBuilder();
@@ -351,6 +369,9 @@ namespace TvPlugin
 
       return fileName;
     }
+
+    
+
 
 
     #region scheduler helper methods
@@ -683,11 +704,11 @@ namespace TvPlugin
         Schedule spawnedSchedule = Schedule.RetrieveSpawnedSchedule(IdSchedule, schedule.StartTime);
         if (spawnedSchedule != null)
         {
-          recordingTitle = Recording.ActiveRecording(spawnedSchedule.IdSchedule).Title;
+          recordingTitle = TVUtil.GetDisplayTitle(Recording.ActiveRecording(spawnedSchedule.IdSchedule));
         }
         else
         {
-          recordingTitle = Recording.ActiveRecording(IdSchedule).Title;
+          recordingTitle = TVUtil.GetDisplayTitle(Recording.ActiveRecording(IdSchedule));
         }
       }
       return recordingTitle;
