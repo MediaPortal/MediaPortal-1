@@ -189,7 +189,7 @@ namespace TvEngine
         DateTime lastProgram = DateTime.MinValue;
         if (programsInDbs.Count > 0)
         {
-          TvDatabase.Program p = (TvDatabase.Program)programsInDbs[0];
+          TvDatabase.IProgram p = (TvDatabase.Program)programsInDbs[0];
           lastProgram = p.EndTime;
         }
         lastProgramForChannel[ch.IdChannel] = lastProgram;

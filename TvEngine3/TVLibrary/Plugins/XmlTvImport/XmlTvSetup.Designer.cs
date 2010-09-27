@@ -28,9 +28,9 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabSettings = new System.Windows.Forms.TabPage();
       this.panel1 = new System.Windows.Forms.Panel();
@@ -93,7 +93,6 @@ namespace SetupTv.Sections
       this.label27 = new System.Windows.Forms.Label();
       this.dateTimePickerScheduler = new System.Windows.Forms.DateTimePicker();
       this.label20 = new System.Windows.Forms.Label();
-      this.label4 = new System.Windows.Forms.Label();
       this.label24 = new System.Windows.Forms.Label();
       this.label25 = new System.Windows.Forms.Label();
       this.label26 = new System.Windows.Forms.Label();
@@ -108,6 +107,8 @@ namespace SetupTv.Sections
       this.label6 = new System.Windows.Forms.Label();
       this.saveFileExport = new System.Windows.Forms.SaveFileDialog();
       this.folderBrowserDialogTVGuide = new System.Windows.Forms.FolderBrowserDialog();
+      this.radioDownloadOnSchedule = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioDownloadOnWakeUp = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.tabControl1.SuspendLayout();
       this.tabSettings.SuspendLayout();
       this.panel1.SuspendLayout();
@@ -585,14 +586,14 @@ namespace SetupTv.Sections
       this.dataGridChannelMappings.Location = new System.Drawing.Point(6, 94);
       this.dataGridChannelMappings.MultiSelect = false;
       this.dataGridChannelMappings.Name = "dataGridChannelMappings";
-      dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridChannelMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+      dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.dataGridChannelMappings.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
       this.dataGridChannelMappings.Size = new System.Drawing.Size(454, 317);
       this.dataGridChannelMappings.TabIndex = 2;
       // 
@@ -606,8 +607,8 @@ namespace SetupTv.Sections
       // tuningChannel
       // 
       this.tuningChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle4.BackColor = System.Drawing.Color.White;
-      this.tuningChannel.DefaultCellStyle = dataGridViewCellStyle4;
+      dataGridViewCellStyle7.BackColor = System.Drawing.Color.White;
+      this.tuningChannel.DefaultCellStyle = dataGridViewCellStyle7;
       this.tuningChannel.HeaderText = "Tuning Channel";
       this.tuningChannel.Name = "tuningChannel";
       this.tuningChannel.ReadOnly = true;
@@ -616,8 +617,8 @@ namespace SetupTv.Sections
       // guideChannel
       // 
       this.guideChannel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      dataGridViewCellStyle5.BackColor = System.Drawing.Color.White;
-      this.guideChannel.DefaultCellStyle = dataGridViewCellStyle5;
+      dataGridViewCellStyle8.BackColor = System.Drawing.Color.White;
+      this.guideChannel.DefaultCellStyle = dataGridViewCellStyle8;
       this.guideChannel.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
       this.guideChannel.HeaderText = "Guide channel";
       this.guideChannel.Name = "guideChannel";
@@ -676,9 +677,9 @@ namespace SetupTv.Sections
       this.groupBox4.Controls.Add(this.lblLastTransferAt);
       this.groupBox4.Controls.Add(this.label33);
       this.groupBox4.Controls.Add(this.label36);
-      this.groupBox4.Location = new System.Drawing.Point(9, 216);
+      this.groupBox4.Location = new System.Drawing.Point(9, 248);
       this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(426, 119);
+      this.groupBox4.Size = new System.Drawing.Size(426, 92);
       this.groupBox4.TabIndex = 34;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "transfer status report:";
@@ -719,17 +720,18 @@ namespace SetupTv.Sections
       // 
       // groupBox3
       // 
+      this.groupBox3.Controls.Add(this.radioDownloadOnWakeUp);
+      this.groupBox3.Controls.Add(this.radioDownloadOnSchedule);
       this.groupBox3.Controls.Add(this.chkScheduler);
       this.groupBox3.Controls.Add(this.label27);
       this.groupBox3.Controls.Add(this.dateTimePickerScheduler);
       this.groupBox3.Controls.Add(this.label20);
-      this.groupBox3.Controls.Add(this.label4);
       this.groupBox3.Controls.Add(this.label24);
       this.groupBox3.Controls.Add(this.label25);
       this.groupBox3.Controls.Add(this.label26);
       this.groupBox3.Location = new System.Drawing.Point(9, 116);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(426, 94);
+      this.groupBox3.Size = new System.Drawing.Size(426, 126);
       this.groupBox3.TabIndex = 33;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Schedule:";
@@ -737,17 +739,18 @@ namespace SetupTv.Sections
       // chkScheduler
       // 
       this.chkScheduler.AutoSize = true;
-      this.chkScheduler.Location = new System.Drawing.Point(146, 47);
+      this.chkScheduler.Location = new System.Drawing.Point(9, 19);
       this.chkScheduler.Name = "chkScheduler";
       this.chkScheduler.Size = new System.Drawing.Size(65, 17);
       this.chkScheduler.TabIndex = 36;
       this.chkScheduler.Text = "Enabled";
       this.chkScheduler.UseVisualStyleBackColor = true;
+      this.chkScheduler.CheckedChanged += new System.EventHandler(this.chkScheduler_CheckedChanged);
       // 
       // label27
       // 
       this.label27.AutoSize = true;
-      this.label27.Location = new System.Drawing.Point(6, 16);
+      this.label27.Location = new System.Drawing.Point(17, 38);
       this.label27.Name = "label27";
       this.label27.Size = new System.Drawing.Size(399, 13);
       this.label27.TabIndex = 35;
@@ -757,7 +760,7 @@ namespace SetupTv.Sections
       // dateTimePickerScheduler
       // 
       this.dateTimePickerScheduler.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-      this.dateTimePickerScheduler.Location = new System.Drawing.Point(46, 45);
+      this.dateTimePickerScheduler.Location = new System.Drawing.Point(157, 60);
       this.dateTimePickerScheduler.Name = "dateTimePickerScheduler";
       this.dateTimePickerScheduler.ShowUpDown = true;
       this.dateTimePickerScheduler.Size = new System.Drawing.Size(77, 20);
@@ -770,15 +773,6 @@ namespace SetupTv.Sections
       this.label20.Name = "label20";
       this.label20.Size = new System.Drawing.Size(0, 13);
       this.label20.TabIndex = 24;
-      // 
-      // label4
-      // 
-      this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(7, 48);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(33, 13);
-      this.label4.TabIndex = 31;
-      this.label4.Text = "Time:";
       // 
       // label24
       // 
@@ -892,6 +886,32 @@ namespace SetupTv.Sections
       this.saveFileExport.Title = "Export the mapped guidechannels";
       this.saveFileExport.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileExport_FileOk);
       // 
+      // radioDownloadOnSchedule
+      // 
+      this.radioDownloadOnSchedule.AutoSize = true;
+      this.radioDownloadOnSchedule.Checked = true;
+      this.radioDownloadOnSchedule.Enabled = false;
+      this.radioDownloadOnSchedule.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.radioDownloadOnSchedule.Location = new System.Drawing.Point(20, 64);
+      this.radioDownloadOnSchedule.Name = "radioDownloadOnSchedule";
+      this.radioDownloadOnSchedule.Size = new System.Drawing.Size(112, 17);
+      this.radioDownloadOnSchedule.TabIndex = 38;
+      this.radioDownloadOnSchedule.TabStop = true;
+      this.radioDownloadOnSchedule.Text = "Scheduled at time:";
+      this.radioDownloadOnSchedule.UseVisualStyleBackColor = true;
+      // 
+      // radioDownloadOnWakeUp
+      // 
+      this.radioDownloadOnWakeUp.AutoSize = true;
+      this.radioDownloadOnWakeUp.Enabled = false;
+      this.radioDownloadOnWakeUp.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.radioDownloadOnWakeUp.Location = new System.Drawing.Point(20, 83);
+      this.radioDownloadOnWakeUp.Name = "radioDownloadOnWakeUp";
+      this.radioDownloadOnWakeUp.Size = new System.Drawing.Size(358, 17);
+      this.radioDownloadOnWakeUp.TabIndex = 39;
+      this.radioDownloadOnWakeUp.Text = "Force download when tvservice starts/resumes (but only once per day)";
+      this.radioDownloadOnWakeUp.UseVisualStyleBackColor = true;
+      // 
       // XmlTvSetup
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -992,8 +1012,7 @@ namespace SetupTv.Sections
 		private System.Windows.Forms.TextBox txtRemoteURL;
 		private System.Windows.Forms.GroupBox groupBox3;
 		private System.Windows.Forms.DateTimePicker dateTimePickerScheduler;
-		private System.Windows.Forms.Label label20;
-		private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.Label label20;
 		private System.Windows.Forms.Label label24;
 		private System.Windows.Forms.Label label25;
 		private System.Windows.Forms.Label label26;
@@ -1003,7 +1022,9 @@ namespace SetupTv.Sections
 		private System.Windows.Forms.Label lblTransferStatus;
 		private System.Windows.Forms.Label lblLastTransferAt;
 		private System.Windows.Forms.Label label33;
-		private System.Windows.Forms.Label label36;
+    private System.Windows.Forms.Label label36;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioDownloadOnWakeUp;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioDownloadOnSchedule;
 
 
   }

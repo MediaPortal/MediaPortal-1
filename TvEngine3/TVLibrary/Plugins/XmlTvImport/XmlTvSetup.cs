@@ -38,6 +38,9 @@ namespace SetupTv.Sections
 {
   public partial class XmlTvSetup : SectionSettings
   {
+    private const string _shortTimePattern24Hrs = "HH:mm";
+    private const string _shortTimePattern12Hrs = "hh:mm";
+
     public XmlTvSetup()
       : this("XmlTv") {}
 
@@ -81,13 +84,20 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml");
       setting.Value = txtRemoteURL.Text;
       setting.Persist();
-
+      
       setting = layer.GetSetting("xmlTvRemoteScheduleTime", "06:30");
-      setting.Value = dateTimePickerScheduler.Text;
+      DateTimeFormatInfo DTFI = new DateTimeFormatInfo();
+      DTFI.ShortDatePattern = _shortTimePattern24Hrs;
+      DateTime xmlTvRemoteScheduleTime = dateTimePickerScheduler.Value;
+      setting.Value = xmlTvRemoteScheduleTime.ToString("t", DTFI);
       setting.Persist();
 
       setting = layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false");
       setting.Value = chkScheduler.Checked ? "true" : "false";
+      setting.Persist();
+
+      setting = layer.GetSetting("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", "false");
+      setting.Value = radioDownloadOnWakeUp.Checked ? "true" : "false";
       setting.Persist();
 
 
@@ -113,6 +123,8 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
+      UpdateRadioButtonsState();
+
       TvBusinessLayer layer = new TvBusinessLayer();
       textBoxFolder.Text = layer.GetSetting("xmlTv", XmlTvImporter.DefaultOutputFolder).Value;
       checkBox1.Checked = layer.GetSetting("xmlTvUseTimeZone", "false").Value == "true";
@@ -128,11 +140,14 @@ namespace SetupTv.Sections
       labelStatus.Text = layer.GetSetting("xmlTvResultStatus", "").Value;
 
       chkScheduler.Checked = (layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
+      radioDownloadOnWakeUp.Checked = (layer.GetSetting("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", "false").Value == "true");
+      radioDownloadOnSchedule.Checked = !radioDownloadOnWakeUp.Checked;
+
       txtRemoteURL.Text = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml").Value;
 
       DateTime dt = DateTime.Now;
       DateTimeFormatInfo DTFI = new DateTimeFormatInfo();
-      DTFI.ShortDatePattern = "HH:mm";
+      DTFI.ShortDatePattern = _shortTimePattern24Hrs;
 
       try
       {
@@ -143,7 +158,7 @@ namespace SetupTv.Sections
         // maybe 12 hr time (us) instead. lets re-parse it.
         try
         {
-          DTFI.ShortDatePattern = "hh:mm";
+          DTFI.ShortDatePattern = _shortTimePattern12Hrs;
           dt = DateTime.Parse(layer.GetSetting("xmlTvRemoteScheduleTime", "06:30").Value, DTFI);
         }
         catch
@@ -828,8 +843,18 @@ namespace SetupTv.Sections
       //persist stuff when changing tabs in the plugin.
       this.OnSectionDeActivated();
 
-      //load settings
+      //load settings      
       this.OnSectionActivated();
+    }
+
+    private void chkScheduler_CheckedChanged(object sender, EventArgs e)
+    {
+      UpdateRadioButtonsState();
+    }
+
+    private void UpdateRadioButtonsState() {
+      radioDownloadOnSchedule.Enabled = chkScheduler.Checked;
+      radioDownloadOnWakeUp.Enabled = chkScheduler.Checked;
     }
   }
 }
