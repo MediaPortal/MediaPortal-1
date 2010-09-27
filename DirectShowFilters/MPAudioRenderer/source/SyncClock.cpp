@@ -54,7 +54,6 @@ void CSyncClock::SetBias(double pBias)
    m_dBias = pBias;
 }
 
-
 void CSyncClock::SetAdjustment(double pAdjustment)
 {
   m_dAdjustment = pAdjustment;
@@ -74,7 +73,6 @@ double CSyncClock::Drift()
 {
   return m_dSystemClockMultiplier;
 }
-
 
 REFERENCE_TIME CSyncClock::GetPrivateTime()
 {
