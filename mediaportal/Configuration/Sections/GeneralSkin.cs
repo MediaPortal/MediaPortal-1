@@ -37,7 +37,8 @@ namespace MediaPortal.Configuration.Sections
   {
     // IMPORTANT: the enumeration depends on the correct order of items in homeComboBox.
     // The order is chosen to allow compositing SelectedIndex from bitmapped flags.
-    [Flags] private enum HomeUsageEnum
+    [Flags]
+    private enum HomeUsageEnum
     {
       PreferClassic = 0,
       PreferBasic = 1,
@@ -183,12 +184,11 @@ namespace MediaPortal.Configuration.Sections
       //
       previewPictureBox.Image = null;
 
-      Stream s = GetType().Assembly.GetManifestResourceStream("MediaPortal.Configuration.Resources.mplogo.gif");
-      Image img = Image.FromStream(s);
+      Image img = Properties.Resources.mplogo;
 
       if (File.Exists(previewFile))
       {
-        using (s = new FileStream(previewFile, FileMode.Open, FileAccess.Read))
+        using (Stream s = new FileStream(previewFile, FileMode.Open, FileAccess.Read))
         {
           img = Image.FromStream(s);
         }
