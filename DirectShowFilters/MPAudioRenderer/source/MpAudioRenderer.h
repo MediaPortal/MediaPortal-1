@@ -127,7 +127,7 @@ private:
   CMultiSoundTouch*	    m_pSoundTouch;
    
 private:
-  CSyncClock      m_Clock;
+  CSyncClock*     m_pClock;
   CVolumeHandler* m_pVolumeHandler;
   double          m_dBias;
   double          m_dAdjustment;

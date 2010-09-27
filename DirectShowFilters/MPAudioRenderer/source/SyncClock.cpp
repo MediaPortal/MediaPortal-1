@@ -26,7 +26,7 @@
 
 extern void Log(const char *fmt, ...);
 
-CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer)
+CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer, bool pUseHWRefClock)
   : CBaseReferenceClock(NAME("SyncClock"), pUnk, phr),
   m_pCurrentRefClock(0),
   m_pPrevRefClock(0),
@@ -37,7 +37,8 @@ CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer
   m_dStartTimeHW(0),
   m_dPrevTimeHW(0),
   m_dPrevQpcHW(0),
-  m_dSystemClockMultiplier(1.0)
+  m_dSystemClockMultiplier(1.0),
+  m_bHWBasedRefClock(pUseHWRefClock)
 {
   m_dwPrevSystemTime = timeGetTime();
   m_rtPrivateTime = (UNITS / MILLISECONDS) * m_dwPrevSystemTime;
@@ -126,7 +127,10 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
   }
 
   m_dwPrevSystemTime = dwTime;
-  delta = (REFERENCE_TIME)(delta * (UNITS / MILLISECONDS) * m_dAdjustment * m_dBias * m_dSystemClockMultiplier);
+  delta = (REFERENCE_TIME)(delta * (UNITS / MILLISECONDS) * m_dAdjustment * m_dBias);
+
+  if (m_bHWBasedRefClock)
+    delta *= m_dSystemClockMultiplier;
 
   //Log("mul: %.10f delta: %I64d - hwClock: %I64d hwQpc: %I64d qpc: %I64d clock diff: %I64d qpc diff: %I64d", m_dSystemClockMultiplier, delta, hwClock, hwQpc, qpcNow, hwClock - m_dStartTimeHW, hwQpc - m_dStartQpcHW);
 

@@ -60,7 +60,6 @@ extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text);
 
 CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 : CBaseRenderer(__uuidof(this), NAME("MediaPortal - Audio Renderer"), punk, phr)
-, m_Clock(static_cast<IBaseFilter*>(this), phr, this)
 , m_pSoundTouch(NULL)
 , m_dRate(1.0)
 , m_pReferenceClock(NULL)
@@ -74,6 +73,17 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
 , m_pVolumeHandler(NULL)
 {
   Log("CMPAudioRenderer - instance 0x%x", this);
+
+  m_pClock = new CSyncClock(static_cast<IBaseFilter*>(this), phr, this, m_Settings.m_bHWBasedRefClock);
+
+  if (!m_pClock)
+  {
+    if(phr)
+    {
+      *phr = E_OUTOFMEMORY;
+      return;
+    }
+  }
 
   if (m_Settings.m_bUseWASAPI)
   {
@@ -379,7 +389,7 @@ STDMETHODIMP CMPAudioRenderer::NonDelegatingQueryInterface(REFIID riid, void **p
 {
   if (riid == IID_IReferenceClock)
   {
-    return GetInterface(static_cast<IReferenceClock*>(&m_Clock), ppv);
+    return GetInterface(static_cast<IReferenceClock*>(m_pClock), ppv);
   }
 
   if (riid == IID_IAVSyncClock) 
@@ -662,7 +672,7 @@ HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
   if (m_Settings.m_bUseTimeStretching)
   {
     m_dAdjustment = pAdjustment;
-    m_Clock.SetAdjustment(m_dAdjustment);
+    m_pClock->SetAdjustment(m_dAdjustment);
     if (m_pSoundTouch)
     {
       m_pSoundTouch->setTempo(m_dAdjustment * m_dBias);
@@ -703,7 +713,7 @@ HRESULT CMPAudioRenderer::SetBias(DOUBLE pBias)
       ret = S_OK;  
     }
     
-    m_Clock.SetBias(m_dBias);
+    m_pClock->SetBias(m_dBias);
     if (m_pSoundTouch)
     {
       m_pSoundTouch->setTempo(m_dAdjustment * m_dBias);
@@ -728,7 +738,7 @@ HRESULT CMPAudioRenderer::SetBias(DOUBLE pBias)
 HRESULT CMPAudioRenderer::GetBias(DOUBLE* pBias)
 {
   CheckPointer(pBias, E_POINTER);
-  *pBias = m_Clock.Bias();
+  *pBias = m_pClock->Bias();
   return S_OK;
 }
 
@@ -748,7 +758,7 @@ HRESULT CMPAudioRenderer::GetMinBias(DOUBLE *pMinBias)
 
 HRESULT CMPAudioRenderer::GetClockDrift(DOUBLE *pDrift)
 {
-  *pDrift = m_Clock.Drift();
+  *pDrift = m_pClock->Drift();
   return S_OK;
 }
 

@@ -24,7 +24,7 @@ class CSyncClock: public CBaseReferenceClock
 {
 
 public:
-  CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer);
+  CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer, bool pUseHWRefClock);
 
   REFERENCE_TIME GetPrivateTime();
 
@@ -48,6 +48,8 @@ private:
   UINT64  m_dPrevTimeHW;
   UINT64  m_dPrevQpcHW;
   double  m_dSystemClockMultiplier;
+
+  bool m_bHWBasedRefClock;
 
   // Not owned
   IReferenceClock*  m_pCurrentRefClock;
