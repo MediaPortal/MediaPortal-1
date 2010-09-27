@@ -335,30 +335,33 @@ namespace MediaPortal.GUI.Video
       IMDBMovie movieDetails = new IMDBMovie();
       bool bMovieInfoFound = false;
 
-      if (VideoDatabase.HasMovieInfo(fileName))
+      if (!g_Player.IsTVRecording)
       {
-        VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
-        bMovieInfoFound = true;
-      }
-      else if (File.Exists(Path.ChangeExtension(fileName, ".xml")))
-      {
-        MatroskaTagInfo info = MatroskaTagHandler.Fetch(Path.ChangeExtension(fileName, ".xml"));
-        movieDetails.Title = info.title;
-        movieDetails.Plot = info.description;
-        movieDetails.Genre = info.genre;
-        GUIPropertyManager.SetProperty("#Play.Current.Channel", info.channelName);
-        string logo = Util.Utils.GetCoverArt(Thumbs.TVChannel, info.channelName);
-        if (!File.Exists(logo))
+        if (VideoDatabase.HasMovieInfo(fileName))
         {
-          logo = "defaultVideoBig.png";
+          VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
+          bMovieInfoFound = true;
         }
-        GUIPropertyManager.SetProperty("#Play.Current.Thumb", logo);
-        _thumbLogo = logo;
-        bMovieInfoFound = true;
-      }
-      if (bMovieInfoFound)
-      {
-        movieDetails.SetPlayProperties();
+        else if (File.Exists(Path.ChangeExtension(fileName, ".xml")))
+        {
+          MatroskaTagInfo info = MatroskaTagHandler.Fetch(Path.ChangeExtension(fileName, ".xml"));
+          movieDetails.Title = info.title;
+          movieDetails.Plot = info.description;
+          movieDetails.Genre = info.genre;
+          GUIPropertyManager.SetProperty("#Play.Current.Channel", info.channelName);
+          string logo = Util.Utils.GetCoverArt(Thumbs.TVChannel, info.channelName);
+          if (!File.Exists(logo))
+          {
+            logo = "defaultVideoBig.png";
+          }
+          GUIPropertyManager.SetProperty("#Play.Current.Thumb", logo);
+          _thumbLogo = logo;
+          bMovieInfoFound = true;
+        }
+        if (bMovieInfoFound)
+        {
+          movieDetails.SetPlayProperties();
+        }
       }
       else if (g_Player.IsTV && g_Player.IsTimeShifting)
       {
