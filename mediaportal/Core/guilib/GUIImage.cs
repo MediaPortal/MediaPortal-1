@@ -37,7 +37,7 @@ namespace MediaPortal.GUI.Library
   /// A GUIControl for displaying Images.
   /// </summary>
   public class GUIImage : GUIControl
-  {        
+  {
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh,
                                                             float uoff, float voff, float umax, float vmax, int color,
@@ -47,7 +47,7 @@ namespace MediaPortal.GUI.Library
     private static extern unsafe void FontEngineDrawTexture2(int textureNo1, float x, float y, float nw, float nh,
                                                              float uoff, float voff, float umax, float vmax, int color,
                                                              float[,] matrix, int textureNo2, float uoff2, float voff2,
-                                                             float umax2, float vmax2);    
+                                                             float umax2, float vmax2);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, float nh,
@@ -97,29 +97,52 @@ namespace MediaPortal.GUI.Library
     private int _currentAnimationLoop = 0;
     private int _currentFrameNumber = 0;
 
-    [XMLSkinElement("colorkey")] protected long m_dwColorKey = 0;
-    [XMLSkinElement("texture")] protected string _textureFileNameTag = "";
-    [XMLSkinElement("keepaspectratio")] protected bool _keepAspectRatio = false;
-    [XMLSkinElement("zoom")] protected bool _zoomIn = false;
-    [XMLSkinElement("zoomfromtop")] protected bool _zoomFromTop = false;
-    [XMLSkinElement("fixedheight")] protected bool _isFixedHeight = false;
-    [XMLSkinElement("RepeatBehavior")] protected RepeatBehavior _repeatBehavior = RepeatBehavior.Forever;
-    [XMLSkin("texture", "flipX")] protected bool _flipX = false;
-    [XMLSkin("texture", "flipY")] protected bool _flipY = false;
-    [XMLSkin("texture", "diffuse")] protected string _diffuseFileName = "";
-    [XMLSkin("texture", "mask")] protected string _maskFileName = "";
-    [XMLSkinElement("filtered")] protected bool _filterImage = true;
-    [XMLSkinElement("centered")] protected bool _centerImage = false;
-    [XMLSkinElement("border")] protected string _strBorder = "";
-    [XMLSkin("border", "position")] protected BorderPosition _borderPosition = BorderPosition.BORDER_IMAGE_OUTSIDE;
-    [XMLSkin("border", "textureRepeat")] protected bool _borderTextureRepeat = false;
-    [XMLSkin("border", "textureRotate")] protected bool _borderTextureRotate = false;
-    [XMLSkin("border", "texture")] protected string _borderTextureFileName = "image_border.png";
-    [XMLSkin("border", "colorKey")] protected long _borderColorKey = 0xFFFFFFFF;
-    [XMLSkin("border", "corners")] protected bool _borderHasCorners = false; // implies use of e.g., "image_border_corner.png"
-    [XMLSkin("border", "cornerRotate")] protected bool _borderCornerTextureRotate = true;
-    [XMLSkinElement("imagepath")] private string _imagePath = "";  // Image path used to store VUMeter files
-    [XMLSkinElement("tileFill")] private bool _tileFill = false;  // Will tile a texture to the rectangle rather than stretch it
+    [XMLSkinElement("colorkey")]
+    protected long m_dwColorKey = 0;
+    [XMLSkinElement("texture")]
+    protected string _textureFileNameTag = "";
+    [XMLSkinElement("keepaspectratio")]
+    protected bool _keepAspectRatio = false;
+    [XMLSkinElement("zoom")]
+    protected bool _zoomIn = false;
+    [XMLSkinElement("zoomfromtop")]
+    protected bool _zoomFromTop = false;
+    [XMLSkinElement("fixedheight")]
+    protected bool _isFixedHeight = false;
+    [XMLSkinElement("RepeatBehavior")]
+    protected RepeatBehavior _repeatBehavior = RepeatBehavior.Forever;
+    [XMLSkin("texture", "flipX")]
+    protected bool _flipX = false;
+    [XMLSkin("texture", "flipY")]
+    protected bool _flipY = false;
+    [XMLSkin("texture", "diffuse")]
+    protected string _diffuseFileName = "";
+    [XMLSkin("texture", "mask")]
+    protected string _maskFileName = "";
+    [XMLSkinElement("filtered")]
+    protected bool _filterImage = true;
+    [XMLSkinElement("centered")]
+    protected bool _centerImage = false;
+    [XMLSkinElement("border")]
+    protected string _strBorder = "";
+    [XMLSkin("border", "position")]
+    protected BorderPosition _borderPosition = BorderPosition.BORDER_IMAGE_OUTSIDE;
+    [XMLSkin("border", "textureRepeat")]
+    protected bool _borderTextureRepeat = false;
+    [XMLSkin("border", "textureRotate")]
+    protected bool _borderTextureRotate = false;
+    [XMLSkin("border", "texture")]
+    protected string _borderTextureFileName = "image_border.png";
+    [XMLSkin("border", "colorKey")]
+    protected long _borderColorKey = 0xFFFFFFFF;
+    [XMLSkin("border", "corners")]
+    protected bool _borderHasCorners = false; // implies use of e.g., "image_border_corner.png"
+    [XMLSkin("border", "cornerRotate")]
+    protected bool _borderCornerTextureRotate = true;
+    [XMLSkinElement("imagepath")]
+    private string _imagePath = "";  // Image path used to store VUMeter files
+    [XMLSkinElement("tileFill")]
+    private bool _tileFill = false;  // Will tile a texture to the rectangle rather than stretch it
 
     private int _diffuseTexWidth = 0;
     private int _diffuseTexHeight = 0;
@@ -659,7 +682,7 @@ namespace MediaPortal.GUI.Library
 
         if (_registeredForEvent == false)
         {
-        	GUIPropertyManager.OnPropertyChanged -=
+          GUIPropertyManager.OnPropertyChanged -=
             new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
           GUIPropertyManager.OnPropertyChanged +=
             new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
@@ -669,7 +692,7 @@ namespace MediaPortal.GUI.Library
 
         //reset animation
         BeginAnimation();
-               
+
         _listTextures = null;
 
         string textureFiles = _textureFileNameTag;
@@ -701,7 +724,7 @@ namespace MediaPortal.GUI.Library
           }
 
           if (logtextures)
-          {            
+          {
             Log.Info("GUIImage:AllocResources:{0} {1}", fileName, _debugGuid);
             Log.Info("stacktrace: {0} ", _debugCaller);
           }
@@ -725,8 +748,8 @@ namespace MediaPortal.GUI.Library
               using (Image memoryImage = bitmap)
               {
                 frameCount = GUITextureManager.LoadFromMemoryEx(memoryImage, fileName, m_dwColorKey,
-                                                                out _memoryImageTexture);  
-              }              
+                                                                out _memoryImageTexture);
+              }
             }
             else
               frameCount = GUITextureManager.LoadFromMemoryEx(_memoryImage, fileName, m_dwColorKey,
@@ -782,8 +805,8 @@ namespace MediaPortal.GUI.Library
                 _saveList.CopyTo(_listTextures, 0);
               }
               else
-              {                
-                UnsubscribeAndReleaseListTextures();                
+              {
+                UnsubscribeAndReleaseListTextures();
               }
               _currentFrameNumber = 0;
               break;
@@ -812,7 +835,7 @@ namespace MediaPortal.GUI.Library
         _packedTexture.Dispose();
         _packedTexture = null;
       }
-      UnsubscribeOnPropertyChanged();      
+      UnsubscribeOnPropertyChanged();
     }
 
     private void OnListTexturesDisposedEvent(object sender, EventArgs e)
@@ -859,7 +882,7 @@ namespace MediaPortal.GUI.Library
       Dispose();
       if (_registeredForEvent == false)
       {
-      	GUIPropertyManager.OnPropertyChanged -=
+        GUIPropertyManager.OnPropertyChanged -=
           new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
         GUIPropertyManager.OnPropertyChanged +=
           new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
@@ -883,18 +906,18 @@ namespace MediaPortal.GUI.Library
       _allocated = false;
       UnsubscribeOnPropertyChanged();
       UnsubscribeAndReleaseListTextures();
-      Cleanup();      
-      
+      Cleanup();
+
       _memoryImage.SafeDispose();
       _memoryImageTexture = null;
       //_debugDisposed = true;      
     }
 
     private void UnsubscribeOnPropertyChanged()
-    {      
+    {
       GUIPropertyManager.OnPropertyChanged -=
         new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
-      _registeredForEvent = false;      
+      _registeredForEvent = false;
     }
 
     private void UnsubscribeListTextures()
@@ -906,7 +929,7 @@ namespace MediaPortal.GUI.Library
           CachedTexture.Frame frame = _listTextures[i];
           if (frame != null)
           {
-            frame.Disposed -= new EventHandler(OnListTexturesDisposedEvent);            
+            frame.Disposed -= new EventHandler(OnListTexturesDisposedEvent);
           }
         }
       }
@@ -923,31 +946,38 @@ namespace MediaPortal.GUI.Library
           if (frame != null)
           {
             frame.Disposed -= new EventHandler(OnListTexturesDisposedEvent);
-            ReleaseTexture(frame.ImageName, frame.Image);            
+            ReleaseTexture(frame.ImageName, frame.Image);
           }
         }
       }
-      _listTextures = null;   
+      _listTextures = null;
     }
 
     private void ReleaseTexture(string file, Texture texture)
     {
       if (!string.IsNullOrEmpty(file))
       {
+
         if (logtextures)
         {
           Log.Debug("GUIImage: Dispose - {0}", file);
         }
-        if (GUITextureManager.IsTemporary(file))        
-        {          
+
+        CachedTexture cachedTexture = GUITextureManager.GetCachedTexture(file);
+        if (cachedTexture != null && !cachedTexture.Persistent)
+        {
           texture = null;
           GUITextureManager.ReleaseTexture(file);
+        }
+        else
+        {
+          texture = null;
         }
       }
     }
 
     private void Cleanup()
-    {      
+    {
       _cachedTextureFileName = "";
       //m_image = null;
       UnsubscribeListTextures();
@@ -955,7 +985,7 @@ namespace MediaPortal.GUI.Library
       {
         _packedTexture.Disposing -= new EventHandler(OnPackedTexturesDisposedEvent);
       }
-      
+
       _currentFrameNumber = 0;
       _currentAnimationLoop = 0;
       _imageWidth = 0;
@@ -963,14 +993,14 @@ namespace MediaPortal.GUI.Library
       _textureWidth = 0;
       _textureHeight = 0;
       _allocated = false;
-      
+
       ReleaseTexture(_cachedTextureFileName, _packedTexture);
-      ReleaseTexture(_diffuseFileName, _diffuseTexture); 
+      ReleaseTexture(_diffuseFileName, _diffuseTexture);
 
       _packedDiffuseTextureNo = -1;
       _packedTexture = null;
       _diffuseTexture = null;
-    }    
+    }
 
     /// <summary>
     /// Sets the state to render the image
@@ -1399,7 +1429,7 @@ namespace MediaPortal.GUI.Library
             float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
 
             if (_tileFill)
-              {
+            {
               // Get a texture from the texture file.
               if (GUITextureManager.Load(_textureFileNameTag, m_dwColorKey, -1, -1, true) == 0)
               {
@@ -1445,8 +1475,8 @@ namespace MediaPortal.GUI.Library
                   float uoff, voff, umax, vmax, uoffm, voffm, umaxm, vmaxm;
                   uoff = _uoff;
                   voff = _voff;
-                  umax = _umax +_uoff;
-                  vmax = _vmax +_voff;
+                  umax = _umax + _uoff;
+                  vmax = _vmax + _voff;
                   uoffm = _masktexUoff;
                   voffm = _masktexVoff;
                   umaxm = _masktexUmax + _masktexUoff;
@@ -1829,7 +1859,7 @@ namespace MediaPortal.GUI.Library
           height = Height;
           break;
       }
-      
+
       switch (_borderPosition)
       {
         // Border at center position
@@ -1851,7 +1881,7 @@ namespace MediaPortal.GUI.Library
           th = height - bt - bb;
           break;
 
-      // Border at outside position
+        // Border at outside position
         case BorderPosition.BORDER_IMAGE_OUTSIDE:
         case BorderPosition.BORDER_CONTROL_OUTSIDE:
           tx = posX;
@@ -2457,14 +2487,14 @@ namespace MediaPortal.GUI.Library
     {
       int pitch;
       if (_memoryImageTexture == null)
-      {        
+      {
         bitmap = null;
         return false;
       }
       using (GraphicsStream gs = _memoryImageTexture.LockRectangle(0, LockFlags.Discard, out pitch))
       {
-        bitmap = new Bitmap(_memoryImageWidth, _memoryImageHeight, pitch, PixelFormat.Format32bppArgb, gs.InternalData);  
-      }            
+        bitmap = new Bitmap(_memoryImageWidth, _memoryImageHeight, pitch, PixelFormat.Format32bppArgb, gs.InternalData);
+      }
       return true;
     }
 
@@ -2474,7 +2504,7 @@ namespace MediaPortal.GUI.Library
     }
 
     public void RemoveMemoryImageTexture()
-    {      
+    {
       _memoryImageTexture = null;
       GUITextureManager.ReleaseTexture(_textureFileNameTag);
       _textureFileNameTag = String.Empty;
