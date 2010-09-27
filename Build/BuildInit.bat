@@ -15,6 +15,23 @@ set progpath=%ProgramFiles%
 if not "%ProgramFiles(x86)%".=="". set progpath=%ProgramFiles(x86)%
 
 
+REM set other MP related paths
+set SVN_ROOT=..
+set DeployVersionSVN="%SVN_ROOT%\Tools\Script & Batch tools\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe"
+
+set CommonMPTV="%SVN_ROOT%\Common-MP-TVE3"
+set DirectShowFilters="%SVN_ROOT%\DirectShowFilters"
+set MediaPortal="%SVN_ROOT%\mediaportal"
+set TVLibrary="%SVN_ROOT%\TvEngine3\TVLibrary"
+
+
+REM detect if log file has been set, otherwise use %project%.log
+if not %log%!==! goto CUSTOM_LOG_FILE
+set log=%project%.log
+:CUSTOM_LOG_FILE
+
+
+REM init log file, write dev env...
 echo.
 echo. > %log%
 echo -= %project% =-
