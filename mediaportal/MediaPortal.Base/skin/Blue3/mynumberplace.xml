@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>7777</id>
   <defaultcontrol>2</defaultcontrol>
@@ -190,7 +190,6 @@
       <posY>111</posY>
       <width>400</width>
       <height>400</height>
-      <animation>ZoomInFromMiddle</animation>
       <mpe>
         <layout>Grid</layout>
         <spring>no</spring>
@@ -233,7 +232,6 @@
       <posY>108</posY>
       <width>400</width>
       <height>400</height>
-      <animation>ZoomInFromMiddle</animation>
       <control>
         <type>image</type>
         <id>976</id>
@@ -265,7 +263,6 @@
       <posY>111</posY>
       <width>400</width>
       <height>400</height>
-      <animation>ZoomInFromMiddle</animation>
       <mpe>
         <layout>Grid</layout>
         <spring>no</spring>
