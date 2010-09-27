@@ -1822,8 +1822,10 @@
     <String id="106666">Power Scheduler in attesa</String>
     <String id="107700" prefix="La mia ">TV/Televideo</String>
     <String id="107701" prefix="La mia ">TV/Televideo</String>
+    <String id="107776" prefix="Il mio ">Tetris</String>
     <String id="107777" prefix="Il mio ">Sudoku</String>
     <String id="107890" prefix="La mia ">Radio Last.fm</String>
+    <String id="107900">Dialogo di testo</String>
     <String id="108888">Menù Musica</String>
     <String id="109000">MiniDisplay - Configurazione</String>
     <String id="109001">MiniDisplay - Configurazione - Retroilluminazione</String>
