@@ -261,10 +261,13 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
   return hr;
 }
 
-void CMPAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
+HRESULT CMPAudioRenderer::AudioClock(UINT64& pTimestamp, UINT64& pQpc)
 {
   if (m_pRenderDevice)
-    m_pRenderDevice->AudioClock(pTimestamp, pQpc);
+    return m_pRenderDevice->AudioClock(pTimestamp, pQpc);
+  else
+    return S_FALSE;
+
   //TRACE(_T("AudioClock query pos: %I64d qpc: %I64d"), pTimestamp, pQpc);
 }
 
@@ -742,3 +745,10 @@ HRESULT CMPAudioRenderer::GetMinBias(DOUBLE *pMinBias)
   *pMinBias = m_Settings.m_dMinBias;
   return S_OK;
 }
+
+HRESULT CMPAudioRenderer::GetClockDrift(DOUBLE *pDrift)
+{
+  *pDrift = m_Clock.Drift();
+  return S_OK;
+}
+

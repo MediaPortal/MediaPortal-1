@@ -32,5 +32,6 @@ public:
   virtual HRESULT STDMETHODCALLTYPE GetBias(DOUBLE *bias) = 0;
   virtual HRESULT STDMETHODCALLTYPE GetMaxBias(DOUBLE *bias) = 0;
   virtual HRESULT STDMETHODCALLTYPE GetMinBias(DOUBLE *bias) = 0;
+  virtual HRESULT STDMETHODCALLTYPE GetClockDrift(DOUBLE *drift) = 0;
 };
 #endif // IAVSYNCCLOCK

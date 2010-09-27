@@ -101,8 +101,9 @@ public:
   STDMETHOD(GetBias)(DOUBLE *bias);
   STDMETHOD(GetMaxBias)(DOUBLE *pMaxBias);
   STDMETHOD(GetMinBias)(DOUBLE *pMinBias);
+  STDMETHOD(GetClockDrift)(DOUBLE *drift);
 
-  void AudioClock(UINT64& pTimestamp, UINT64& pQpc);
+  HRESULT AudioClock(UINT64& pTimestamp, UINT64& pQpc);
 
   // RenderDevice(s) uses these getters
   WAVEFORMATEX* WaveFormat() { return m_pWaveFileFormat; }

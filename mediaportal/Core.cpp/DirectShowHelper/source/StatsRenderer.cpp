@@ -239,6 +239,13 @@ void StatsRenderer::DrawStats()
         m_pPresenter->m_avPhaseDiff, m_pPresenter->m_iClockAdjustmentsDone);
       DrawText(rc, strText);
       OffsetRect(&rc, 0, TextHeight);
+
+      double audioSystemClock = 0.0;
+      m_pPresenter->m_pAVSyncClock->GetClockDrift(&audioSystemClock);
+
+      strText.Format("Aud. sys. drift: %.10f ", audioSystemClock);
+      DrawText(rc, strText);
+      OffsetRect(&rc, 0, TextHeight);
     }
 
     OffsetRect(&rc, 0, TextHeight); // Extra "line feed"

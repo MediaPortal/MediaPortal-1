@@ -394,9 +394,9 @@ HRESULT WASAPIRenderer::AudioClock(ULONGLONG& pTimestamp, ULONGLONG& pQpc)
 {
   if (m_pAudioClock)
   {
-    m_pAudioClock->GetPosition(&pTimestamp, &pQpc);
+    HRESULT hr = m_pAudioClock->GetPosition(&pTimestamp, &pQpc);
     pTimestamp = pTimestamp * 10000000 / m_nHWfreq;
-    return S_OK;
+    return hr;
   }
   return S_FALSE;
 }
