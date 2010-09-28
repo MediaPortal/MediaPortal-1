@@ -31,6 +31,18 @@
     <String id="30">oktober</String>
     <String id="31">november</String>
     <String id="32">december</String>
+    <String id="33">Jan</String>
+    <String id="34">Feb</String>
+    <String id="35">Mar</String>
+    <String id="36">Apr</String>
+    <String id="37">Maj</String>
+    <String id="38">Jun</String>
+    <String id="39">Jul</String>
+    <String id="40">Aug</String>
+    <String id="41">Sep</String>
+    <String id="42">Okt</String>
+    <String id="43">Nov</String>
+    <String id="44">Dec</String>
     <String id="50">Mine DVDer</String>
     <String id="51">Afspil disc</String>
     <String id="60">Venter på at TV service starter...</String>
@@ -1854,7 +1866,7 @@
     <String id="200020">Afslut</String>
     <String id="200021">TV opsætning - EPG</String>
     <String id="990000">Ugentligt på denne kanal</String>
-    <String id="990001">{0} på kanal {1}</string>	    
+    <String id="990001">{0} på kanal {1}</String>	    
     <String id="200022">MediaPortal har fundet følgende tv-kort:</String>
     <String id="200023">Tryk på Næste for at indstille disse kort</String>
     <String id="200024">TV-opsætning</String>
