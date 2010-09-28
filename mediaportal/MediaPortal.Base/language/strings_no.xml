@@ -31,18 +31,6 @@
     <String id="30">oktober</String>
     <String id="31">november</String>
     <String id="32">desember</String>
-    <String id="33">Jan</String>
-    <String id="34">Feb</String>
-    <String id="35">Mar</String>
-    <String id="36">Apr</String>
-    <String id="37">Mai</String>
-    <String id="38">Jun</String>
-    <String id="39">Jul</String>
-    <String id="40">Aug</String>
-    <String id="41">Sep</String>
-    <String id="42">Okt</String>
-    <String id="43">Nov</String>
-    <String id="44">Des</String>
     <String id="50" prefix="Mine ">DVDer</String>
     <String id="51">Spill av disk</String>
     <String id="60">Venter på at TV Service skal starte...</String>
@@ -364,8 +352,6 @@
     <String id="405">Duggpunkt</String>
     <String id="406">Fuktighet</String>
     <String id="407">Mye</String>
-    <String id="408">Skriv inn et by navn</String>
-    <String id="409">Fjern sted</String>
     <String id="410">Kobler til Weather.com</String>
     <String id="411">Henter været for:</String>
     <String id="412">Kunne ikke hente værdata</String>
@@ -475,12 +461,6 @@
     <String id="517">Kritisk feil, handlingen er ikke fullført</String>
     <String id="518">Slette denne sangen?</String>
     <String id="519">Ingen undertekst</String>
-    <String id="520">Ingen sted funnet</String>
-    <String id="521">Ikke et gyldig heltall</String>
-    <String id="522">Kun postive tall!</String>
-    <String id="523">Null som stegverdi ikke tillat!</String>
-    <String id="524">Maks 3 timer som stegverdi!</String>
-    <String id="525">Steget finnes allerede</String>
     <String id="527">Sorter etter: Sett</String>
     <String id="528">Album Artist</String>
     <String id="529">Vis: Liste, Store Ikoner</String>
@@ -520,9 +500,6 @@
     <String id="563">kn</String>
     <String id="564">m/s</String>
     <String id="565">bft</String>
-    <String id="566">Kjapp vær informasjon</String>
-    <String id="567">Legg til by</String>
-    <String id="568">Fjern by</String>
     <String id="590">S. 100</String>
     <String id="591">S. 200</String>
     <String id="592">S. 300</String>
@@ -711,7 +688,6 @@
     <String id="784">Roter 270°</String>
     <String id="789">Nå: </String>
     <String id="790">Neste: </String>
-    <String id="791">Utseende: Cover Flow</String>
     <String id="798">lav</String>
     <String id="799">høy</String>
     <String id="800">Begynner med</String>
@@ -1266,7 +1242,6 @@
     <String id="2612">Ungarsk</String>
     <String id="2613">Russisk</String>
     <String id="2614">Ukrainsk</String>
-    <String id="2615">Tysk</String>
     <String id="2650">Laster skrifttyper på nytt, venligst vent...</String>
     <String id="2700">Åpne CI meny</String>
     <String id="2997">t</String>
@@ -1402,7 +1377,6 @@
     <String id="6039">LATM AAC lydkodek</String>
     <String id="6040">I går</String>
     <String id="6041">To dager siden</String>
-    <String id="6042">Skriv inn en stegverdi i sekunder</String>
     <String id="6050">Denne uken</String>
     <String id="6060">Denne måneden</String>
     <String id="6070">Dette året</String>
@@ -1848,8 +1822,10 @@
     <String id="106666">Power Scheduler Venter</String>
     <String id="107700" prefix="Min ">TV/Tekst-TV</String>
     <String id="107701" prefix="Min ">TV/Tekst-TV</String>
+    <String id="107776" prefix="My ">Tetris</String>
     <String id="107777" prefix="Min ">Sudoku</String>
     <String id="107890" prefix="Min ">Last.fm radio</String>
+    <String id="107900">Dialog</String>
     <String id="108888">Musikk meny</String>
     <String id="109000">Mini Display - Oppsett</String>
     <String id="109001">Mini Display - Oppsett - Baklys</String>
@@ -1879,8 +1855,6 @@
     <String id="200019">Trykk "Avslutt" for å lukke assistenten.</String>
     <String id="200020">Avslutt</String>
     <String id="200021">TV-oppsett - EPG</String>
-    <String id="990000">Hver uke på denne kanalen</String>
-    <String id="990001">{0} på kanal {1}</String>	
     <String id="200022">MediaPortal har funnet følgende TV-kort</String>
     <String id="200023">Trykk "Neste" for å konfiguere disse kortene</String>
     <String id="200024">TV-oppsett</String>
@@ -1929,6 +1903,5 @@
     <String id="200070">Vennligst sjekk brannmurinnstillingene dine</String>
     <String id="200071">Slette denne mappen og alle undermapper?</String>
     <String id="200072">Episoder som kommer snart</String>
-    <String id="200091">Kapittel</String>
   </Section>
 </Language>
