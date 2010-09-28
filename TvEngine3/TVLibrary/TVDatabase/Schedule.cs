@@ -1533,6 +1533,22 @@ namespace TvDatabase
       {
         return getList[0];
       }
+      else
+      {
+        //select * from 'foreigntable'
+        sb = new SqlBuilder(StatementType.Select, typeof(Schedule));
+        sb.AddConstraint(Operator.Equals, "idParentSchedule", parentScheduleId);        
+        // passing true indicates that we'd like a list of elements, i.e. that no primary key
+        // constraints from the type being retrieved should be added to the statement
+        stmt = sb.GetStatement(true);
+
+        // execute the statement/query and create a collection of User instances from the result set
+        getList = ObjectFactory.GetCollection<Schedule>(stmt.Execute());
+        if (getList.Count != 0)
+        {
+          return getList[0];
+        }
+      }
       return null;
     }
   }

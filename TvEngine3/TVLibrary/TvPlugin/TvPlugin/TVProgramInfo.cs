@@ -353,9 +353,10 @@ namespace TvPlugin
                            rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
     }
 
-    private static bool IsRecordingProgram(Program program, out Schedule recordingSchedule,
+    private static bool IsRecordingProgram(int programID, out Schedule recordingSchedule,
                                            bool filterCanceledRecordings)
-    {            
+    {
+      Program program = Program.Retrieve(programID);
       recordingSchedule = null;
 
       if (!(
@@ -577,7 +578,7 @@ namespace TvPlugin
         Schedule recordingSchedule = currentSchedule;
         if (!isActualUpcomingEps)
         {          
-          isRecPrg = IsRecordingProgram(episode, out recordingSchedule, true);        
+          isRecPrg = IsRecordingProgram(episode.IdProgram, out recordingSchedule, true);        
         }
         if (isRecPrg)
         {          
@@ -680,7 +681,7 @@ namespace TvPlugin
       	// Removed loop over all schedules as this was not actually 
       	// needed and was causing performance issues
         Schedule recSched;
-        isRecording = IsRecordingProgram(CurrentProgram, out recSched, true);
+        isRecording = IsRecordingProgram(CurrentProgram.IdProgram, out recSched, true);
 
         if (isRecording && (ScheduleRecordingType)recSched.ScheduleType != ScheduleRecordingType.Once)
         {
@@ -717,7 +718,7 @@ namespace TvPlugin
     private void OnPreRecordInterval()
     {
       Schedule rec = currentSchedule;
-      if (currentSchedule == null && !IsRecordingProgram(CurrentProgram, out rec, false))
+      if (currentSchedule == null && !IsRecordingProgram(CurrentProgram.IdProgram, out rec, false))
       {
         return;
       }
@@ -799,7 +800,7 @@ namespace TvPlugin
     private void OnPostRecordInterval()
     {
       Schedule rec = currentSchedule;
-      if (currentSchedule == null && !IsRecordingProgram(CurrentProgram, out rec, false))
+      if (currentSchedule == null && !IsRecordingProgram(CurrentProgram.IdProgram, out rec, false))
       {
         return;
       }
@@ -877,7 +878,7 @@ namespace TvPlugin
     private void OnSetQuality()
     {
       Schedule rec = currentSchedule;
-      if (currentSchedule == null && !IsRecordingProgram(CurrentProgram, out rec, false))
+      if (currentSchedule == null && !IsRecordingProgram(CurrentProgram.IdProgram, out rec, false))
       {
         return;
       }
@@ -1019,7 +1020,7 @@ namespace TvPlugin
     private void OnSetEpisodes()
     {
       Schedule rec = currentSchedule;
-      if (currentSchedule == null && !IsRecordingProgram(CurrentProgram, out rec, false))
+      if (currentSchedule == null && !IsRecordingProgram(CurrentProgram.IdProgram, out rec, false))
       {
         return;
       }
@@ -1040,7 +1041,7 @@ namespace TvPlugin
       {
         CancelProgram(program, currentSchedule);
       }
-      else if (IsRecordingProgram(program, out recordingSchedule, true)) // check if schedule is already existing
+      else if (IsRecordingProgram(program.IdProgram, out recordingSchedule, true)) // check if schedule is already existing
       {
         CancelProgram(program, recordingSchedule);
       }
@@ -1165,7 +1166,7 @@ namespace TvPlugin
       Schedule schedule;
       Schedule saveSchedule = null;
       TvBusinessLayer layer = new TvBusinessLayer();
-      if (IsRecordingProgram(program, out schedule, false)) // check if schedule is already existing
+      if (IsRecordingProgram(program.IdProgram, out schedule, false)) // check if schedule is already existing
       {
         Log.Debug("TVProgramInfo.CreateProgram - series schedule found ID={0}, Type={1}", schedule.IdSchedule,
                   schedule.ScheduleType);
@@ -1425,7 +1426,7 @@ namespace TvPlugin
     private void OnKeep()
     {
       Schedule rec = currentSchedule;
-      if (currentSchedule == null && !IsRecordingProgram(CurrentProgram, out rec, false))
+      if (currentSchedule == null && !IsRecordingProgram(CurrentProgram.IdProgram, out rec, false))
       {
         return;
       }

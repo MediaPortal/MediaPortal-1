@@ -977,7 +977,7 @@ namespace TvPlugin
 
                 //populates recording metadata to g_player;
                 g_Player.currentFileName = recDB.FileName;
-                g_Player.currentTitle = recDB.Title;
+                g_Player.currentTitle = TVUtil.GetDisplayTitle(recDB);
                 g_Player.currentDescription = recDB.Description;
 
                 recDB.TimesWatched++;
