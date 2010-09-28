@@ -492,6 +492,34 @@ namespace TvPlugin
         }
       }
       return wasDeleted;
+    }
+
+    /// <summary>
+    /// Deletes a single or a complete schedule.
+    /// The user is being prompted if the schedule is currently recording.
+    /// If the schedule is currently recording, then this is stopped also.    
+    /// </summary>
+    /// <param name="Schedule">schedule id to be deleted</param>    
+    /// <param name="canceledStartTime">start time of the schedule to cancel</param>    
+    /// <returns>true if the schedule was deleted, otherwise false</returns>
+    public static bool DeleteRecAndSchedWithPrompt(Schedule schedule, Program prg)
+    {      
+      bool wasDeleted = false;
+      if (IsValidSchedule(schedule))
+      {                
+        Schedule parentSchedule = null;
+        bool confirmed = true;
+        GetParentAndSpawnSchedule(ref schedule, out parentSchedule);
+        confirmed = PromptDeleteRecording(schedule.IdSchedule, prg);
+
+        if (confirmed)
+        {
+          DateTime canceledStartTime = prg.StartTime;
+          int idChannel = prg.IdChannel;
+          wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule, idChannel, canceledStartTime);
+        }
+      }
+      return wasDeleted;
     }   
 
     /// <summary>
@@ -506,18 +534,12 @@ namespace TvPlugin
     {
       bool wasDeleted = false;
       if (IsValidSchedule(schedule))
-      {        
-        Schedule parentSchedule = null;
-        bool confirmed = true;
-        GetParentAndSpawnSchedule(ref schedule, out parentSchedule);
-        confirmed = PromptDeleteRecording(schedule.IdSchedule);
-
-        if (confirmed)
-        {
-          wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule, idChannel, canceledStartTime);          
-        }        
+      {
+        Program prg = Program.RetrieveByTitleAndTimes(schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        wasDeleted = DeleteRecAndSchedWithPrompt(schedule, prg);
       }
-      return wasDeleted;
+      
+      return wasDeleted;     
     }   
 
         /// <summary>
@@ -550,9 +572,9 @@ namespace TvPlugin
       {        
         Schedule parentSchedule = null;        
         bool confirmed = true;
-        GetParentAndSpawnSchedule(ref schedule, out parentSchedule);        
-        confirmed = PromptDeleteRecording(schedule.IdSchedule);
+        GetParentAndSpawnSchedule(ref schedule, out parentSchedule);
         
+        confirmed = PromptDeleteRecording(schedule.IdSchedule);        
         if (confirmed)
         {
           wasDeleted = StopRecAndDeleteEntireSchedule(schedule, parentSchedule, canceledStartTime);
@@ -717,24 +739,49 @@ namespace TvPlugin
     private static bool PromptDeleteRecording(int IdSchedule)
     {
       bool confirmed = false;
+
       bool isRec = TvDatabase.Schedule.IsScheduleRecording(IdSchedule);
 
       if (isRec)
       {
-        GUIDialogYesNo dlgYesNo = (GUIDialogYesNo) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-        if (null == dlgYesNo)
-        {
-          Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
-        }
-        else
-        {
-          dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
-          dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730)); //This schedule is recording. If you delete
-          dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731)); //the schedule then the recording is stopped.
-          dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
-          dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-          confirmed = dlgYesNo.IsConfirmed;
-        }
+        confirmed = SetupConfirmDelRecDialogue();
+      }
+      else
+      {
+        confirmed = true;
+      }
+      return confirmed;
+    }
+
+    private static bool SetupConfirmDelRecDialogue()
+    {
+      bool confirmed = false;
+      GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+      if (null == dlgYesNo)
+      {
+        Log.Error("TVProgramInfo.DeleteRecordingPrompt: ERROR no GUIDialogYesNo found !!!!!!!!!!");
+      }
+      else
+      {
+        dlgYesNo.SetHeading(GUILocalizeStrings.Get(653)); //Delete this recording?
+        dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730)); //This schedule is recording. If you delete
+        dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731)); //the schedule then the recording is stopped.
+        dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732)); //are you sure
+        dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+        confirmed = dlgYesNo.IsConfirmed;
+      }
+      return confirmed;
+    }
+
+    private static bool PromptDeleteRecording(int IdSchedule, Program prg)
+    {
+      bool confirmed = false;      
+            
+      bool isRec = TvDatabase.Schedule.IsScheduleRecording(IdSchedule, prg);
+
+      if (isRec)
+      {
+        confirmed = SetupConfirmDelRecDialogue();        
       }
       else
       {

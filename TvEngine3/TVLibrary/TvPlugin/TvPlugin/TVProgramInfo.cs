@@ -1128,13 +1128,15 @@ namespace TvPlugin
         {
           TVUtil.DeleteRecAndEntireSchedWithPrompt(schedule, program.StartTime);
           ResetCurrentScheduleAndProgram(schedule);
+          Program.ResetPendingState(program.IdProgram);
         }
         else
         {
-          TVUtil.DeleteRecAndSchedWithPrompt(schedule, program.StartTime, program.IdChannel);  
-        }
-        
-        Program.ResetPendingState(program.IdProgram);
+          if (TVUtil.DeleteRecAndSchedWithPrompt(schedule, program))
+          {
+            Program.ResetPendingState(program.IdProgram);
+          }
+        }                
       }
     }
 

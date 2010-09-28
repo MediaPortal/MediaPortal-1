@@ -525,8 +525,9 @@ namespace TvDatabase
       return null;
     }
 
-    public static bool IsScheduleRecording(int id)
+    public static bool IsScheduleRecording(int id, Program prg)
     {
+      bool isScheduleRecording = false;
       Schedule schedule = Schedule.Retrieve(id);
 
       if (schedule != null)
@@ -534,10 +535,39 @@ namespace TvDatabase
         Schedule spawnedSchedule = Schedule.RetrieveSpawnedSchedule(id, schedule.startTime);
         if (spawnedSchedule != null)
         {
-          return (Recording.ActiveRecording(spawnedSchedule.idSchedule) != null);
+          schedule = spawnedSchedule;
+        }
+
+        if (prg != null)
+        {
+          DateTime now = DateTime.Now;
+          if ((prg.StartTime == schedule.startTime && prg.EndTime == schedule.endTime) &&
+             (prg.StartTime <= now && prg.EndTime >= now ))
+          {
+            isScheduleRecording = (Recording.ActiveRecording(schedule.idSchedule) != null); 
+          }          
         }
       }
-      return (Recording.ActiveRecording(id) != null);
+
+      return isScheduleRecording;
+    }
+
+    public static bool IsScheduleRecording(int id)
+    {
+      bool isScheduleRecording = false;
+      Schedule schedule = Schedule.Retrieve(id);
+
+      if (schedule != null)
+      {
+        Schedule spawnedSchedule = Schedule.RetrieveSpawnedSchedule(id, schedule.startTime);
+        if (spawnedSchedule != null)
+        {
+          schedule = spawnedSchedule;
+        }
+        isScheduleRecording = (Recording.ActiveRecording(schedule.idSchedule) != null);        
+      }
+
+      return isScheduleRecording;                  
     }
 
     /// <summary>
