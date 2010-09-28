@@ -587,12 +587,12 @@ namespace TvPlugin
     {
       bool wasDeleted = CancelEpisode(canceledStartTime, parentSchedule, idChannel);
 
-      if (!wasDeleted)
+      if (!wasDeleted && canceledStartTime == schedule.StartTime)
       {
         wasDeleted = DeleteSchedule(schedule.IdSchedule);
+        StopRecording(schedule);
       }
-      
-      StopRecording(schedule);
+            
       TvServer server = new TvServer();
       server.OnNewSchedule();      
       return wasDeleted;
