@@ -358,15 +358,7 @@ namespace TvPlugin
     {
       Program program = Program.Retrieve(programID);
       recordingSchedule = null;
-
-      if (!(
-        program.IsRecording ||                 
-        program.IsRecordingOncePending ||         
-        program.IsRecordingSeriesPending))
-      {        
-        return false;        
-      }
-
+      
       IList<Schedule> schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
       {
