@@ -25,10 +25,8 @@ set MediaPortal="%SVN_ROOT%\mediaportal"
 set TVLibrary="%SVN_ROOT%\TvEngine3\TVLibrary"
 
 
-REM detect if log file has been set, otherwise use %project%.log
-if not %log%!==! goto CUSTOM_LOG_FILE
+REM set log file
 set log=%project%.log
-:CUSTOM_LOG_FILE
 
 
 REM init log file, write dev env...
