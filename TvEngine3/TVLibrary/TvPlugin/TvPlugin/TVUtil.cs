@@ -199,14 +199,14 @@ namespace TvPlugin
     {
       bool episodeInfoWritten = false;
 
-      bool hasSeriesNum = !(String.IsNullOrEmpty(seriesNum));      
-      bool hasEpisodeNum = !(String.IsNullOrEmpty(episodeNum));
-      bool hasEpisodePart = !(String.IsNullOrEmpty(episodePart));
+      bool hasSeriesNum = !(String.IsNullOrEmpty(seriesNum)) && (ShowEpisodeInfo == 1 || ShowEpisodeInfo == 3);      
+      bool hasEpisodeNum = !(String.IsNullOrEmpty(episodeNum)) && (ShowEpisodeInfo == 1 || ShowEpisodeInfo == 3);
+      bool hasEpisodePart = !(String.IsNullOrEmpty(episodePart)) && (ShowEpisodeInfo == 1 || ShowEpisodeInfo == 3);
       bool hasEpisodeName = !(String.IsNullOrEmpty(episodeName)) && (ShowEpisodeInfo == 2 || ShowEpisodeInfo == 3);
 
       bool hasEpisodeInfo = (hasSeriesNum || hasEpisodeNum || hasEpisodePart || hasEpisodeName);
 
-      if (hasEpisodeInfo)
+      if (hasEpisodeInfo && ShowEpisodeInfo != 0)
       {
         strBuilder.Append(" (");                
       }         
@@ -247,7 +247,7 @@ namespace TvPlugin
         strBuilder.Append(episodeName);        
       }
 
-      if (hasEpisodeInfo)
+      if (hasEpisodeInfo && ShowEpisodeInfo !=0)
       {
         strBuilder.Append(")"); 
       }      
