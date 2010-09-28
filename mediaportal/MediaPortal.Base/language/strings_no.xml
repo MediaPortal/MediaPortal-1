@@ -1822,8 +1822,10 @@
     <String id="106666">Power Scheduler Venter</String>
     <String id="107700" prefix="Min ">TV/Tekst-TV</String>
     <String id="107701" prefix="Min ">TV/Tekst-TV</String>
+    <String id="107776" prefix="My ">Tetris</String>
     <String id="107777" prefix="Min ">Sudoku</String>
     <String id="107890" prefix="Min ">Last.fm radio</String>
+    <String id="107900">Dialog</String>
     <String id="108888">Musikk meny</String>
     <String id="109000">Mini Display - Oppsett</String>
     <String id="109001">Mini Display - Oppsett - Baklys</String>
