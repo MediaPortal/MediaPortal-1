@@ -43,6 +43,7 @@ namespace MediaPortal.GUI.Library
     private static CachedTextureCollection _cachedTextures = new CachedTextureCollection();
     private static Dictionary<string, DownloadedImage> _cachedDownloads = new Dictionary<string, DownloadedImage>();
     private static HashSet<CachedTexture> _cleanupQueue = new HashSet<CachedTexture>();
+    private static HashSet<CachedTexture> _tempTextures = new HashSet<CachedTexture>();    
 
     private static TexturePacker _packer = new TexturePacker();
     private static readonly object _syncRoot = new object();
@@ -69,9 +70,9 @@ namespace MediaPortal.GUI.Library
         Log.Debug("TextureManager: Dispose()");
         _packer.SafeDispose();
 
-        _cleanupQueue.DisposeAndClearCollection();
         _cachedTextures.DisposeAndClear();
         _cachedDownloads.DisposeAndClear();
+        ReleaseTextures();
 
         string[] files = null;
 
@@ -103,10 +104,6 @@ namespace MediaPortal.GUI.Library
       {
         if (_cachedTextures.TryGetValue(filename, out cachedTexture))
         {
-
-          // if present in the the cleanup queue remove it cause it is still being used
-          _cleanupQueue.Remove(cachedTexture);
-
           return cachedTexture;
         }
       }
@@ -221,10 +218,6 @@ namespace MediaPortal.GUI.Library
       {
         if (_cachedTextures.TryGetValue(fileName, out cachedTexture))
         {
-
-          // if present in the the cleanup queue remove it cause it is still being used
-          _cleanupQueue.Remove(cachedTexture);
-
           return cachedTexture.Frames;
         }
 
@@ -313,9 +306,13 @@ namespace MediaPortal.GUI.Library
 
               cachedTexture.Disposed += new EventHandler(cachedTexture_Disposed);
 
-              if (persistent)
+              if (persistent) 
               {
                 cachedTexture.Persistent = persistent;
+              }
+              else if (!cachedTexture.Persistent) 
+              {
+                _tempTextures.Add(cachedTexture);
               }
 
               _cachedTextures.Add(cachedTexture);
@@ -348,8 +345,13 @@ namespace MediaPortal.GUI.Library
             if (persistent)
             {
               cachedTexture.Persistent = persistent;
+            } 
+            else if (!cachedTexture.Persistent) {
+              _tempTextures.Add(cachedTexture);
             }
+            
             _cachedTextures.Add(cachedTexture);
+
             return 1;
           }
         }
@@ -377,10 +379,6 @@ namespace MediaPortal.GUI.Library
 
         if (_cachedTextures.TryGetValue(textureName, out cachedTexture))
         {
-
-          // if present in the the cleanup queue remove it cause it is still being used
-          _cleanupQueue.Remove(cachedTexture);
-
           return cachedTexture.Frames;
         }
 
@@ -433,6 +431,11 @@ namespace MediaPortal.GUI.Library
           memoryImage.SafeDispose();
           memoryImage = null;
           cachedTexture.Disposed += new EventHandler(cachedTexture_Disposed);
+
+          if (!cachedTexture.Persistent) {
+            _tempTextures.Add(cachedTexture);
+          }
+          
           _cachedTextures.Add(cachedTexture);
 
           Log.Debug("TextureManager: added: memoryImage  " + " total count: " + _cachedTextures.Count + ", mem left (MB): " +
@@ -470,9 +473,6 @@ namespace MediaPortal.GUI.Library
 
         if (_cachedTextures.TryGetValue(cacheName, out cachedTexture))
         {
-          _cleanupQueue.Remove(cachedTexture);
-          texture = cachedTexture.texture.Image;
-
           return cachedTexture.Frames;
         }
 
@@ -513,6 +513,10 @@ namespace MediaPortal.GUI.Library
           //memoryImage = null;
           cachedTexture.Disposed += new EventHandler(cachedTexture_Disposed);
 
+          if (!cachedTexture.Persistent) {
+            _tempTextures.Add(cachedTexture);
+          }
+
           _cachedTextures.Add(cachedTexture);
 
           Log.Debug("TextureManager: added: memoryImage  " + " total count: " + _cachedTextures.Count + ", mem left (MB): " +
@@ -535,6 +539,7 @@ namespace MediaPortal.GUI.Library
       lock (_syncRoot)
       {
         texture.Disposed -= new EventHandler(cachedTexture_Disposed);
+        _cachedTextures.Remove(texture);
         _cleanupQueue.Add(texture);
       }
     }
@@ -609,7 +614,7 @@ namespace MediaPortal.GUI.Library
       {
         Log.Error("TextureManager: LoadGraphic - invalid thumb({0})", fileName);
         Format fmt = Format.A8R8G8B8;
-        string fallback = GUIGraphicsContext.Skin + @"\media\" + "black.png";
+        string fallback = GUIGraphicsContext.Skin + @"\media\black.png";
 
         ImageInformation info2 = new ImageInformation();
         texture = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
@@ -662,9 +667,6 @@ namespace MediaPortal.GUI.Library
           return null;
         }
 
-        // if present in the the cleanup queue remove it cause it is still being used
-        _cleanupQueue.Remove(cachedTexture);
-
         iTextureWidth = cachedTexture.Width;
         iTextureHeight = cachedTexture.Height;
         return (CachedTexture.Frame)cachedTexture[iImage];
@@ -693,6 +695,7 @@ namespace MediaPortal.GUI.Library
       {
         if (_cachedTextures.TryGetValue(fileName, out texture))
         {
+          _cachedTextures.Remove(texture);
           _cleanupQueue.Add(texture);
         }
       }
@@ -739,8 +742,10 @@ namespace MediaPortal.GUI.Library
       {
         lock (_syncRoot)
         {
-          List<CachedTexture> cleanup = _cachedTextures.Where(t => !t.Persistent).ToList();
-          _cleanupQueue.UnionWith(cleanup);
+          if (_tempTextures.Count > 0) {
+            _cleanupQueue.UnionWith(_tempTextures);
+            _tempTextures.Clear();
+          }
         }
       }
       catch (Exception ex)

@@ -949,16 +949,13 @@ namespace MediaPortal.GUI.Library
           Log.Debug("GUIImage: Dispose - {0}", file);
         }
 
+        texture = null;
         CachedTexture cachedTexture = GUITextureManager.GetCachedTexture(file);
-        if (cachedTexture != null && !cachedTexture.Persistent)
+        if (cachedTexture != null && !cachedTexture.Persistent) 
         {
-          texture = null;
           GUITextureManager.ReleaseTexture(file);
         }
-        else
-        {
-          texture = null;
-        }
+
       }
     }
 

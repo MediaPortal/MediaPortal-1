@@ -361,7 +361,6 @@ namespace MediaPortal.GUI.Library
       {
         if (_persistent == null)
         {
-
           /* Temporary: (textures that are disposed)
            * - all not skin images
            * 
@@ -372,33 +371,33 @@ namespace MediaPortal.GUI.Library
           if (String.IsNullOrEmpty(_fileName))
           {
             _persistent = true;
-          }
-          else if (_fileName == "-")
-          {
-            _persistent = true;
-          }
-          else if (_fileName.IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos").ToLower()) >= 0)
-          {
-            _persistent = true;
-          }
-          else if (_fileName.IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, "radio").ToLower()) >= 0)
-          {
-            _persistent = true;
-          }
-          else if (_fileName.IndexOf(@"skin\") >= 0)
-          {
-            // todo: these hardcoded path exceptions within the skin folder should not be needed
-            if (_fileName.IndexOf(@"media\animations\") == 0 && _fileName.IndexOf(@"media\Tetris\") == 0)
+          } 
+          else {
+            _persistent = false;
+
+            string filename = _fileName.ToLower();
+            if (filename == "-")
             {
               _persistent = true;
             }
-          }
-          else
-          {
-            _persistent = false;
+            else if (filename.IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos").ToLower()) >= 0)
+            {
+              _persistent = true;
+            }
+            else if (filename.IndexOf(Config.GetSubFolder(Config.Dir.Thumbs, "radio").ToLower()) >= 0)
+            {
+              _persistent = true;
+            }
+            else if (filename.IndexOf(@"skin\") >= 0)
+            {
+              // todo: these hardcoded path exceptions within the skin folder should not be needed
+              if (filename.IndexOf(@"media\animations\") == 0 && filename.IndexOf(@"media\tetris\") == 0)
+              {
+                _persistent = true;
+              }
+            }
           }
         }
-
         return (bool)_persistent;
       }
       set
