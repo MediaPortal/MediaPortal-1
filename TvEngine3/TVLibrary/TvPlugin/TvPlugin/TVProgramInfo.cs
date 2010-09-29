@@ -569,8 +569,9 @@ namespace TvPlugin
         bool isRecPrg = isActualUpcomingEps;
         Schedule recordingSchedule = currentSchedule;
         if (!isActualUpcomingEps)
-        {          
-          isRecPrg = IsRecordingProgram(episode.IdProgram, out recordingSchedule, true);        
+        {
+            isRecPrg = (episode.IsRecording || episode.IsRecordingOncePending || episode.IsRecordingSeriesPending) &&
+                          IsRecordingProgram(episode.IdProgram, out recordingSchedule, true);
         }
         if (isRecPrg)
         {          
