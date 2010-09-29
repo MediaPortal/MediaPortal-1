@@ -234,16 +234,17 @@ void StatsRenderer::DrawStats()
     {
       OffsetRect(&rc, 0, TextHeight); // Extra "line feed"
   
-      strText.Format("Detd bias: %.10f | BiasAdj: %d | AudAdj: %.6f | AvePhDiff: %.6f | NumAdj: %d", 
+      strText.Format("Detd bias: %.7f | BiasAdj: %d | AudAdj: %.6f | AvePhDiff: %.6f | NumAdj: %d", 
         m_pPresenter->m_dBias, m_pPresenter->m_bBiasAdjustmentDone, m_pPresenter->m_dVariableFreq, 
         m_pPresenter->m_avPhaseDiff, m_pPresenter->m_iClockAdjustmentsDone);
       DrawText(rc, strText);
       OffsetRect(&rc, 0, TextHeight);
 
-      double audioSystemClock = 0.0;
-      m_pPresenter->m_pAVSyncClock->GetClockDrift(&audioSystemClock);
+      CLOCKDATA clockData;
+      m_pPresenter->m_pAVSyncClock->GetClockData(&clockData);
 
-      strText.Format("Aud. sys. drift: %.10f ", audioSystemClock);
+      strText.Format("Aud. sys. drift: %.7f HW vs. sys: %3d ms HW vs corr: %3d ms", 
+        clockData.driftMultiplier, clockData.driftHWvsSystem, clockData.driftHWvsCorrected);
       DrawText(rc, strText);
       OffsetRect(&rc, 0, TextHeight);
     }

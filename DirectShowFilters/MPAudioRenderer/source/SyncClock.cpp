@@ -21,6 +21,7 @@
 #include "stdafx.h"
 #include "SyncClock.h"
 #include "MpAudioRenderer.h"
+#include "TimeSource.h"
 
 #include "alloctracing.h"
 
@@ -35,10 +36,15 @@ CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer
   m_pAudioRenderer(pRenderer),
   m_dStartQpcHW(0),
   m_dStartTimeHW(0),
+  m_dStartTimeSystem(0),
+  m_dStartTimeCorrected(0),
   m_dPrevTimeHW(0),
   m_dPrevQpcHW(0),
   m_dSystemClockMultiplier(1.0),
-  m_bHWBasedRefClock(pUseHWRefClock)
+  m_bHWBasedRefClock(pUseHWRefClock),
+  m_dDurationHW(0),
+  m_dDurationSystem(0),
+  m_dDurationCorrected(0)
 {
   m_dwPrevSystemTime = timeGetTime();
   m_rtPrivateTime = (UNITS / MILLISECONDS) * m_dwPrevSystemTime;
@@ -69,14 +75,19 @@ double CSyncClock::Adjustment()
   return m_dAdjustment;
 }
 
-double CSyncClock::Drift()
+void CSyncClock::GetClockData(CLOCKDATA *pClockData)
 {
-  return m_dSystemClockMultiplier;
+  // pointer is validated already in CMPAudioRenderer
+  pClockData->driftMultiplier = m_dSystemClockMultiplier;
+  pClockData->driftHWvsSystem = m_dDurationHW - m_dDurationSystem;
+  pClockData->driftHWvsCorrected = m_dDurationHW - m_dDurationCorrected / m_dBias;
 }
 
 REFERENCE_TIME CSyncClock::GetPrivateTime()
 {
   CAutoLock cObjectLock(this);
+
+  LONGLONG qpcNow = GetCurrentTimestamp();
 
   DWORD dwTime = timeGetTime();
 
@@ -92,10 +103,24 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
     if (m_dStartTimeHW == 0)
       m_dStartTimeHW = hwClock;
 
+    if (m_dStartTimeSystem == 0)
+      m_dStartTimeSystem = dwTime;
+
+    if (m_dStartTimeCorrected == 0)
+      m_dStartTimeCorrected = m_rtPrivateTime;
+
+    m_dDurationHW = (hwClock - m_dStartTimeHW) / 10000;
+    m_dDurationSystem = (dwTime - m_dStartTimeSystem); 
+    m_dDurationCorrected = (m_rtPrivateTime - m_dStartTimeCorrected) / 10000;
+
+    //Log("hw: %I64d sys: %I64d cor: %I64d hwsy: %I64d hwcor: %I64d", m_dDurationHW, m_dDurationSystem, m_dDurationCorrected, m_dDurationHW - m_dDurationSystem, m_dDurationHW - m_dDurationCorrected);
+
     if (m_dPrevTimeHW > hwClock)
     {
       m_dStartTimeHW = m_dPrevTimeHW = hwClock;
       m_dStartQpcHW = m_dPrevQpcHW = hwQpc;
+      m_dStartTimeSystem = dwTime;
+      m_dStartTimeCorrected = m_rtPrivateTime;
     }
     else
     {
@@ -103,9 +128,9 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
       double qpcDiff = hwQpc - m_dStartQpcHW;
 
       if (clockDiff > 0 && qpcDiff > 0)
-        m_dSystemClockMultiplier =  clockDiff / qpcDiff;
+        m_dSystemClockMultiplier = clockDiff / qpcDiff;
 
-      // TODO id this needed?
+      // TODO is this needed?
       if (m_dSystemClockMultiplier < 0.95 || m_dSystemClockMultiplier > 1.05)
         m_dSystemClockMultiplier = 1.0;
 
@@ -121,7 +146,7 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
   REFERENCE_TIME delta = REFERENCE_TIME(dwTime) - REFERENCE_TIME(m_dwPrevSystemTime);
   if(dwTime < m_dwPrevSystemTime)
   {
-    delta +=  REFERENCE_TIME(UINT_MAX) + 1;
+    delta += REFERENCE_TIME(UINT_MAX) + 1;
   }
 
   m_dwPrevSystemTime = dwTime;

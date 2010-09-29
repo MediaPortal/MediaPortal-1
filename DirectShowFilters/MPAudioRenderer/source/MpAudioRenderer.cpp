@@ -756,9 +756,10 @@ HRESULT CMPAudioRenderer::GetMinBias(DOUBLE *pMinBias)
   return S_OK;
 }
 
-HRESULT CMPAudioRenderer::GetClockDrift(DOUBLE *pDrift)
+HRESULT CMPAudioRenderer::GetClockData(CLOCKDATA *pClockData)
 {
-  *pDrift = m_pClock->Drift();
+  CheckPointer(pClockData, E_POINTER);
+  m_pClock->GetClockData(pClockData);
   return S_OK;
 }
 

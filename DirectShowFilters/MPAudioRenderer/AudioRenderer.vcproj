@@ -989,6 +989,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\TimeSource.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\VolumeHandler.cpp"
 				>
 			</File>
@@ -1075,6 +1079,10 @@
 			</File>
 			<File
 				RelativePath=".\source\ThreadDecouplingFilter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\TimeSource.h"
 				>
 			</File>
 			<File

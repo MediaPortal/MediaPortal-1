@@ -101,7 +101,7 @@ public:
   STDMETHOD(GetBias)(DOUBLE *bias);
   STDMETHOD(GetMaxBias)(DOUBLE *pMaxBias);
   STDMETHOD(GetMinBias)(DOUBLE *pMinBias);
-  STDMETHOD(GetClockDrift)(DOUBLE *drift);
+  STDMETHOD(GetClockData)(CLOCKDATA *pClockData);
 
   HRESULT AudioClock(UINT64& pTimestamp, UINT64& pQpc);
 

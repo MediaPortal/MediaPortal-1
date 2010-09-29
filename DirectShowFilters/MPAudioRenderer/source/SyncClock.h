@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "IAVSyncClock.h"
+
 class CMPAudioRenderer;
 
 class CSyncClock: public CBaseReferenceClock
@@ -33,7 +35,7 @@ public:
 
   double Bias();
   double Adjustment();
-  double Drift();
+  void GetClockData(CLOCKDATA *pClockData);
 
   void SetDiff(DWORD diff);
 
@@ -43,10 +45,19 @@ private:
 
   REFERENCE_TIME  m_rtPrivateTime;
   DWORD           m_dwPrevSystemTime;
+
   UINT64  m_dStartQpcHW;
   UINT64  m_dStartTimeHW;
+  UINT64  m_dStartTimeSystem;
+  UINT64  m_dStartTimeCorrected;
+
+  UINT64  m_dDurationHW;
+  UINT64  m_dDurationSystem;
+  UINT64  m_dDurationCorrected;
+
   UINT64  m_dPrevTimeHW;
   UINT64  m_dPrevQpcHW;
+
   double  m_dSystemClockMultiplier;
 
   bool m_bHWBasedRefClock;

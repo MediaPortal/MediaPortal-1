@@ -308,7 +308,7 @@ DWORD CMultiSoundTouch::ResampleThread()
               
               if (pMediaBufferOut)
               {
-                int maxBufferSamples = OUT_BUFFER_SIZE/m_pWaveFormat->Format.nBlockAlign;
+                int maxBufferSamples = OUT_BUFFER_SIZE / m_pWaveFormat->Format.nBlockAlign;
                 if (sampleLength > maxBufferSamples)
                   sampleLength = maxBufferSamples;
 
@@ -334,6 +334,11 @@ DWORD CMultiSoundTouch::ResampleThread()
                   outSample->SetActualDataLength(sampleLength * m_pWaveFormat->Format.nBlockAlign);
                   receiveSamplesInternal((short*)pMediaBufferOut, sampleLength);
 
+                  //UINT32 nFrames = sampleLength / m_pWaveFormat->Format.nBlockAlign;
+                  //REFERENCE_TIME rtSampleDuration = nFrames * UNITS / m_pWaveFormat->Format.nSamplesPerSec;
+
+                  //Log(" %f act len %f", rtSampleDuration / 10000.0,  (rtSampleDuration / 10000.0 ) / m_fCurrentTempo);
+                  
                   //Log("sampleLength: %d remaining samples: %d", sampleLength, numSamples());
                 }
 
