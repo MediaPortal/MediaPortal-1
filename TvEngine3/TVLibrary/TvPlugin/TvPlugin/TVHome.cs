@@ -1829,17 +1829,12 @@ namespace TvPlugin
       {
         return;
       }
-
-      UpdateGUIonPlaybackStateChange(false);
-      StopPlayback(type);
-
-      if (type == g_Player.MediaType.Radio || type == g_Player.MediaType.TV)
-      {
-        UpdateGUIonPlaybackStateChange(false);
-      }
+      
+      StopPlayback();
+      UpdateGUIonPlaybackStateChange(false);      
     }
 
-    private static void StopPlayback(g_Player.MediaType type) 
+    private static void StopPlayback() 
     {
       
       //gemx: fix for 0001181: Videoplayback does not work if tvservice.exe is not running 
@@ -3530,7 +3525,7 @@ namespace TvPlugin
 
       if (!g_Player.Play(timeshiftFileName, mediaType))
       {
-        StopPlayback(g_Player.MediaType.TV);
+        StopPlayback();
       }
 
       benchClock.Stop();
