@@ -34,6 +34,7 @@ public:
 public:
   bool m_bLogSampleTimes;
   bool m_bHWBasedRefClock;
+  bool m_bEnableSyncAdjustment;
   bool m_bUseWASAPI;
   bool m_WASAPIUseEventMode;
   bool m_bUseTimeStretching;

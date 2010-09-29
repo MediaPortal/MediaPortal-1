@@ -25,6 +25,7 @@ int gAllowedAC3bitrates[9] = {192, 224, 256, 320, 384, 448, 512, 576, 640};
 AudioRendererSettings::AudioRendererSettings() :
   m_bLogSampleTimes(false),
   m_bHWBasedRefClock(true),
+  m_bEnableSyncAdjustment(true),
   m_bUseWASAPI(true),
   m_WASAPIUseEventMode(true),
   m_bUseTimeStretching(false),
@@ -39,7 +40,7 @@ AudioRendererSettings::AudioRendererSettings() :
   m_wWASAPIPreferredDeviceId(NULL)
 {
   LogRotate();
-  Log("MP Audio Renderer - v0.91");
+  Log("MP Audio Renderer - v0.92");
 
   LoadSettingsFromRegistry();
 }
@@ -75,6 +76,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   LPCTSTR logSampleTimes = TEXT("LogSampleTimes");
   LPCTSTR WASAPIPreferredDevice = TEXT("WASAPIPreferredDevice");
   LPCTSTR HWBasedRefClock = TEXT("HWBasedRefClock");
+  LPCTSTR enableSyncAdjustment = TEXT("EnableSyncAdjustment");
   
   // Default values for the settings in registry
   DWORD forceDirectSoundData = 0;
@@ -90,6 +92,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   DWORD channelMaskOverride_7_1Data = 0;
   DWORD logSampleTimesData = 0;
   DWORD HWBasedRefClockData = 1;
+  DWORD enableSyncAdjustmentData = 1;
   LPCTSTR WASAPIPreferredDeviceData = new TCHAR[MAX_REG_LENGTH];
 
   ZeroMemory((void*)WASAPIPreferredDeviceData, MAX_REG_LENGTH);
@@ -113,6 +116,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, channelMaskOverride_7_1, channelMaskOverride_7_1Data);
     ReadRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
     ReadRegistryKeyDword(hKey, HWBasedRefClock, HWBasedRefClockData);
+    ReadRegistryKeyDword(hKey, enableSyncAdjustment, enableSyncAdjustmentData);
     ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
 
     Log("   ForceDirectSound:        %d", forceDirectSoundData);
@@ -127,6 +131,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   ChannelMaskOverride_7_1: %d", channelMaskOverride_7_1Data);
     Log("   LogSampleTimes:          %d", logSampleTimesData);
     Log("   HWBasedRefClock:         %d", HWBasedRefClockData);
+    Log("   EnableSyncAdjustment:    %d", enableSyncAdjustmentData);
     Log("   DevicePeriod:            %d (1 == minimal, 0 == driver default, other user defined)", devicePeriodData);
     Log("   WASAPIPreferredDevice:   %s", WASAPIPreferredDeviceData);
 
@@ -177,6 +182,11 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       m_bHWBasedRefClock = true;
     else
       m_bHWBasedRefClock = false;
+
+    if (enableSyncAdjustmentData > 0)
+      m_bEnableSyncAdjustment = true;
+    else
+      m_bEnableSyncAdjustment = false;
 
     m_hnsPeriod = devicePeriodData;
 
@@ -229,6 +239,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, channelMaskOverride_7_1, channelMaskOverride_7_1Data);
       WriteRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
       WriteRegistryKeyDword(hKey, HWBasedRefClock, HWBasedRefClockData);
+      WriteRegistryKeyDword(hKey, enableSyncAdjustment, enableSyncAdjustmentData);
       ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
     } 
     else 

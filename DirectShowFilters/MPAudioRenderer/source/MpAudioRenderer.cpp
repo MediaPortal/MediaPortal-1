@@ -669,7 +669,7 @@ HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
 {
   CAutoLock cAutoLock(&m_csResampleLock);
   
-  if (m_Settings.m_bUseTimeStretching)
+  if (m_Settings.m_bUseTimeStretching && m_Settings.m_bEnableSyncAdjustment)
   {
     m_dAdjustment = pAdjustment;
     m_pClock->SetAdjustment(m_dAdjustment);

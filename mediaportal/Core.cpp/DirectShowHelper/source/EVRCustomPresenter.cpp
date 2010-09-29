@@ -3359,8 +3359,11 @@ void MPEVRCustomPresenter::AdjustAVSync(double currentPhaseDiff)
 
   if (m_pAVSyncClock && m_dVariableFreq != m_dPreviousVariableFreq)
   {
-    m_pAVSyncClock->AdjustClock(1.0/m_dVariableFreq);
-    m_iClockAdjustmentsDone++;
+    HRESULT hr = m_pAVSyncClock->AdjustClock(1.0/m_dVariableFreq);
+    if (hr == S_OK)
+    {
+      m_iClockAdjustmentsDone++;
+    }
   }
 
   m_dPreviousVariableFreq = m_dVariableFreq;
