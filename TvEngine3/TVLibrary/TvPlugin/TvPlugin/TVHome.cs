@@ -1192,7 +1192,7 @@ namespace TvPlugin
       settingsLoaded = true;
     }
 
-    private void SaveSettings()
+    private static void SaveSettings()
     {
       if (m_navigator != null)
       {
@@ -1831,7 +1831,17 @@ namespace TvPlugin
       }
 
       UpdateGUIonPlaybackStateChange(false);
+      StopPlayback(type);
 
+      if (type == g_Player.MediaType.Radio || type == g_Player.MediaType.TV)
+      {
+        UpdateGUIonPlaybackStateChange(false);
+      }
+    }
+
+    private static void StopPlayback(g_Player.MediaType type) 
+    {
+      
       //gemx: fix for 0001181: Videoplayback does not work if tvservice.exe is not running 
       if (!Connected)
       {
@@ -1849,10 +1859,6 @@ namespace TvPlugin
       Card.User.Name = new User().Name;
       Card.StopTimeShifting();
 
-      if (type == g_Player.MediaType.Radio || type == g_Player.MediaType.TV)
-      {
-        UpdateGUIonPlaybackStateChange(false);
-      }
       _recoverTV = false;
       _playbackStopped = true;
     }
@@ -3522,7 +3528,11 @@ namespace TvPlugin
         }
       }
 
-      g_Player.Play(timeshiftFileName, mediaType);
+      if (!g_Player.Play(timeshiftFileName, mediaType))
+      {
+        StopPlayback(g_Player.MediaType.TV);
+      }
+
       benchClock.Stop();
       Log.Warn("tvhome:startplay.  Phase 2 - {0} ms - Done starting g_Player.Play()",
                benchClock.ElapsedMilliseconds.ToString());
