@@ -32,16 +32,19 @@ using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
 using MediaPortal.ExtensionMethods;
 
+
 namespace MediaPortal.GUI.Library
 {
   public class GUITextureManager
   {
     private const int MAX_THUMB_WIDTH = 512;
     private const int MAX_THUMB_HEIGHT = 512;
-    private static List<CachedTexture> _cache = new List<CachedTexture>();
+
     private static CachedTextureCollection _cachedTextures = new CachedTextureCollection();
     private static Dictionary<string, DownloadedImage> _cachedDownloads = new Dictionary<string, DownloadedImage>();
     private static HashSet<CachedTexture> _cleanupQueue = new HashSet<CachedTexture>();
+    private static HashSet<CachedTexture> _tempTextures = new HashSet<CachedTexture>();    
+
     private static TexturePacker _packer = new TexturePacker();
     private static readonly object _syncRoot = new object();
 
@@ -67,9 +70,9 @@ namespace MediaPortal.GUI.Library
         Log.Debug("TextureManager: Dispose()");
         _packer.SafeDispose();
 
-        _cleanupQueue.DisposeAndClearCollection();
         _cachedTextures.DisposeAndClear();
         _cachedDownloads.DisposeAndClear();
+        ReleaseTextures();
 
         string[] files = null;
 
@@ -101,10 +104,10 @@ namespace MediaPortal.GUI.Library
       {
         if (_cachedTextures.TryGetValue(filename, out cachedTexture))
         {
-          // if present in the the cleanup queue remove it cause it is still being used
-          _cleanupQueue.Remove(cachedTexture); return cachedTexture;
+          return cachedTexture;
         }
       }
+
       return null;
     }
 
@@ -180,6 +183,7 @@ namespace MediaPortal.GUI.Library
           return image.FileName;
         }
       }
+
       return path;
     }
 
@@ -224,10 +228,6 @@ namespace MediaPortal.GUI.Library
       {
         if (_cachedTextures.TryGetValue(fileName, out cachedTexture))
         {
-
-          // if present in the the cleanup queue remove it cause it is still being used
-          _cleanupQueue.Remove(cachedTexture);
-
           return cachedTexture.Frames;
         }
 
@@ -255,6 +255,7 @@ namespace MediaPortal.GUI.Library
             if (theImage != null)
             {
               cachedTexture = new CachedTexture();
+
               cachedTexture.Name = fileName;
               FrameDimension oDimension = new FrameDimension(theImage.FrameDimensionsList[0]);
               cachedTexture.Frames = theImage.GetFrameCount(oDimension);
@@ -315,9 +316,13 @@ namespace MediaPortal.GUI.Library
 
               cachedTexture.Disposed += new EventHandler(cachedTexture_Disposed);
 
-              if (persistent)
+              if (persistent) 
               {
                 cachedTexture.Persistent = persistent;
+              }
+              else if (!cachedTexture.Persistent) 
+              {
+                _tempTextures.Add(cachedTexture);
               }
 
               _cachedTextures.Add(cachedTexture);
@@ -332,6 +337,7 @@ namespace MediaPortal.GUI.Library
           }
           return 0;
         }
+
         if (File.Exists(fileName))
         {
           int width, height;
@@ -349,12 +355,16 @@ namespace MediaPortal.GUI.Library
             if (persistent)
             {
               cachedTexture.Persistent = persistent;
+            } 
+            else if (!cachedTexture.Persistent) {
+              _tempTextures.Add(cachedTexture);
             }
+            
             _cachedTextures.Add(cachedTexture);
+
             return 1;
           }
         }
-
       }
       return 0;
     }
@@ -379,8 +389,6 @@ namespace MediaPortal.GUI.Library
 
         if (_cachedTextures.TryGetValue(textureName, out cachedTexture))
         {
-          // if present in the the cleanup queue remove it cause it is still being used
-          _cleanupQueue.Remove(cachedTexture);
           return cachedTexture.Frames;
         }
 
@@ -423,8 +431,8 @@ namespace MediaPortal.GUI.Library
               Format.A8R8G8B8,
               GUIGraphicsContext.GetTexturePoolType(),
               Filter.None,
-             Filter.None,
-             (int)lColorKey,
+              Filter.None,
+              (int)lColorKey,
               ref info2);
             cachedTexture.Width = info2.Width;
             cachedTexture.Height = info2.Height;
@@ -433,10 +441,15 @@ namespace MediaPortal.GUI.Library
           memoryImage.SafeDispose();
           memoryImage = null;
           cachedTexture.Disposed += new EventHandler(cachedTexture_Disposed);
+
+          if (!cachedTexture.Persistent) {
+            _tempTextures.Add(cachedTexture);
+          }
+          
           _cachedTextures.Add(cachedTexture);
 
-          Log.Debug("TextureManager: added: memoryImage  " + " total: " + _cachedTextures.Count + " mem left: " +
-                    GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+          Log.Debug("TextureManager: added: memoryImage  " + " total count: " + _cachedTextures.Count + ", mem left (MB): " +
+              ((uint)GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576));
           return cachedTexture.Frames;
         }
         catch (Exception ex)
@@ -460,6 +473,7 @@ namespace MediaPortal.GUI.Library
     public static int LoadFromMemoryEx(Image memoryImage, string name, long lColorKey, out Texture texture)
     {
       Log.Debug("TextureManagerEx: load from memory: {0}", name);
+
       texture = null;
       string cacheName = name.ToLower();
 
@@ -469,12 +483,8 @@ namespace MediaPortal.GUI.Library
 
         if (_cachedTextures.TryGetValue(cacheName, out cachedTexture))
         {
-          _cleanupQueue.Remove(cachedTexture);
-          texture = cachedTexture.texture.Image;
-
           return cachedTexture.Frames;
         }
-
 
         if (memoryImage == null)
         {
@@ -513,10 +523,14 @@ namespace MediaPortal.GUI.Library
           //memoryImage = null;
           cachedTexture.Disposed += new EventHandler(cachedTexture_Disposed);
 
+          if (!cachedTexture.Persistent) {
+            _tempTextures.Add(cachedTexture);
+          }
+
           _cachedTextures.Add(cachedTexture);
 
-          Log.Debug("TextureManager: added: memoryImage  " + " total: " + _cachedTextures.Count + " mem left: " +
-                    GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
+          Log.Debug("TextureManager: added: memoryImage  " + " total count: " + _cachedTextures.Count + ", mem left (MB): " +
+                    ((uint)GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1048576));
           return cachedTexture.Frames;
         }
         catch (Exception ex)
@@ -535,12 +549,12 @@ namespace MediaPortal.GUI.Library
       lock (_syncRoot)
       {
         texture.Disposed -= new EventHandler(cachedTexture_Disposed);
+        _cachedTextures.Remove(texture);
         _cleanupQueue.Add(texture);
       }
     }
 
-    private static Texture LoadGraphic(string fileName, long lColorKey, int iMaxWidth, int iMaxHeight, out int width,
-                                       out int height)
+    private static Texture LoadGraphic(string fileName, long lColorKey, int iMaxWidth, int iMaxHeight, out int width, out int height)
     {
       width = 0;
       height = 0;
@@ -610,7 +624,7 @@ namespace MediaPortal.GUI.Library
       {
         Log.Error("TextureManager: LoadGraphic - invalid thumb({0})", fileName);
         Format fmt = Format.A8R8G8B8;
-        string fallback = GUIGraphicsContext.Skin + @"\media\" + "black.png";
+        string fallback = GUIGraphicsContext.Skin + @"\media\black.png";
 
         ImageInformation info2 = new ImageInformation();
         texture = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
@@ -726,6 +740,7 @@ namespace MediaPortal.GUI.Library
       {
         fileName = fileNameOrg;
       }
+
       CachedTexture cachedTexture;
       lock (_syncRoot)
       {
@@ -733,9 +748,6 @@ namespace MediaPortal.GUI.Library
         {
           return null;
         }
-
-        // if present in the the cleanup queue remove it cause it is still being used
-        _cleanupQueue.Remove(cachedTexture);
 
         iTextureWidth = cachedTexture.Width;
         iTextureHeight = cachedTexture.Height;
@@ -745,7 +757,6 @@ namespace MediaPortal.GUI.Library
 
     public static void ReleaseTexture(string fileName)
     {
-
       if (string.IsNullOrEmpty(fileName))
       {
         return;
@@ -766,6 +777,7 @@ namespace MediaPortal.GUI.Library
       {
         if (_cachedTextures.TryGetValue(fileName, out texture))
         {
+          _cachedTextures.Remove(texture);
           _cleanupQueue.Add(texture);
         }
       }
@@ -782,6 +794,7 @@ namespace MediaPortal.GUI.Library
         {
           return;
         }
+
         foreach (CachedTexture texture in _cleanupQueue)
         {
 
@@ -789,6 +802,7 @@ namespace MediaPortal.GUI.Library
           {
             _cachedTextures.Remove(texture);
           }
+
           try
           {
             texture.SafeDispose();
@@ -798,6 +812,7 @@ namespace MediaPortal.GUI.Library
             Log.Error("TextureManager: Error in ReleaseTexture({0}) - {1}", texture.Name, ex.Message);
           }
         }
+
         _cleanupQueue.Clear();
       }
     }
@@ -814,8 +829,10 @@ namespace MediaPortal.GUI.Library
       {
         lock (_syncRoot)
         {
-          List<CachedTexture> cleanup = _cachedTextures.Where(t => !t.Persistent).ToList();
-          _cleanupQueue.UnionWith(cleanup);
+          if (_tempTextures.Count > 0) {
+            _cleanupQueue.UnionWith(_tempTextures);
+            _tempTextures.Clear();
+          }
         }
       }
       catch (Exception ex)
