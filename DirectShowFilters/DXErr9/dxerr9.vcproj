@@ -67,7 +67,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxerr9.lib comsupp.lib"
+				AdditionalDependencies="dxerr.lib comsuppwd.lib"
 				OutputFile="bin\Debug/dxerr9.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Debug_MBCS&quot;;&quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"
@@ -150,7 +150,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="dxerr9.lib comsuppw.lib"
+				AdditionalDependencies="dxerr.lib comsuppw.lib"
 				OutputFile="bin\Release/dxerr9.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(DSHOW_BASE)Release_MBCS&quot;;&quot;$(DXSDK_DIR)lib\x86&quot;;&quot;$(WINDOWS_SDK)\lib&quot;"

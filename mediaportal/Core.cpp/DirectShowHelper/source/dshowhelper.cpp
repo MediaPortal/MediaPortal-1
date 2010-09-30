@@ -1077,7 +1077,7 @@ bool DvrMsCreate(LONG *id, IBaseFilter* streamBufferSink, LPCWSTR strPath, DWORD
       return false;
     }
     IStreamBufferRecordControl* pRecord;
-    pRecUnk->QueryInterface(IID_IStreamBufferRecordControl,(void**)&pRecord);
+    pRecUnk->QueryInterface(__uuidof(IStreamBufferRecordControl),(void**)&pRecord);
     if (pRecord == NULL)
     {
       Log("CStreamBufferRecorder::Create() cannot get IStreamBufferRecordControl");

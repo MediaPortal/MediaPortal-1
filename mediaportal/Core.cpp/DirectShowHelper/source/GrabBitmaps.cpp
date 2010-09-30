@@ -23,7 +23,7 @@
 #define __IDxtAlphaSetter_INTERFACE_DEFINED__
 #define __IDxtJpeg_INTERFACE_DEFINED__
 #define __IDxtKey_INTERFACE_DEFINED__
-#include <qedit.h>
+#include "qedit.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 //#include "..\..\alloctracing.h"

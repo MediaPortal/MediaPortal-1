@@ -252,26 +252,6 @@ CTsReaderFilter::~CTsReaderFilter()
 
 STDMETHODIMP CTsReaderFilter::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 {
-  if (riid == IID_IStreamBufferConfigure)
-  {
-    //LogDebug("filt:IID_IStreamBufferConfigure()");
-  }
-  if (riid == IID_IStreamBufferInitialize)
-  {
-    //LogDebug("filt:IID_IStreamBufferInitialize()");
-  }
-  if (riid == IID_IStreamBufferMediaSeeking||riid == IID_IStreamBufferMediaSeeking2)
-  {
-    //LogDebug("filt:IID_IStreamBufferMediaSeeking()");
-  }
-  if (riid == IID_IStreamBufferSource)
-  {
-    //LogDebug("filt:IID_IStreamBufferSource()");
-  }
-  if (riid == IID_IStreamBufferDataCounters)
-  {
-    //LogDebug("filt:IID_IStreamBufferDataCounters()");
-  }
   if (riid == IID_IMediaSeeking)
   {
     LogDebug("filt:IID_IMediaSeeking()");

@@ -70,26 +70,6 @@ bool CVideoPin::IsConnected()
 }
 STDMETHODIMP CVideoPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 {
-  if (riid == IID_IStreamBufferConfigure)
-  {
-    //LogDebug("vid:IID_IStreamBufferConfigure()");
-  }
-  if (riid == IID_IStreamBufferInitialize)
-  {
-    //LogDebug("vid:IID_IStreamBufferInitialize()");
-  }
-  if (riid == IID_IStreamBufferMediaSeeking||riid == IID_IStreamBufferMediaSeeking2)
-  {
-    //LogDebug("vid:IID_IStreamBufferMediaSeeking()");
-  }
-  if (riid == IID_IStreamBufferSource)
-  {
-    //LogDebug("vid:IID_IStreamBufferSource()");
-  }
-  if (riid == IID_IStreamBufferDataCounters)
-  {
-    //LogDebug("vid:IID_IStreamBufferDataCounters()");
-  }
   if (riid == IID_IMediaSeeking)
   {
     return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
