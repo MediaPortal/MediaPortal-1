@@ -127,25 +127,11 @@ namespace MediaPortal.Database
     public static void AddIndex(SQLiteClient dbHandle, string indexName, string strSQL)
     {
       SQLiteResultSet results;
-      bool res = false;
       results =
-        dbHandle.Execute("SELECT name FROM sqlite_master WHERE name='" + indexName +
-                         "' and type='index' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='index' ORDER BY name");
-      if (results != null && results.Rows.Count > 0)
-      {
-        if (results.Rows.Count == 1)
-        {
-          SQLiteResultSet.Row arr = results.Rows[0];
-          if (arr.fields.Count == 1)
-          {
-            if (arr.fields[0] == indexName)
-            {
-              res = true;
-            }
-          }
-        }
-      }
-      if (res == true)
+        dbHandle.Execute("SELECT name FROM sqlite_master WHERE name='" + indexName + "' and type='index' " +
+                         "UNION "+
+                         "SELECT name FROM sqlite_temp_master WHERE name ='" + indexName + "' and type='index'");
+      if (results != null && results.Rows.Count == 1)
       {
         return;
       }
