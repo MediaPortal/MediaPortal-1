@@ -155,7 +155,7 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
   if (m_bHWBasedRefClock)
     delta /= m_dSystemClockMultiplier;
 
-  Log("mul: %.10f delta: %I64d - hwClock: %I64d hwQpc: %I64d qpc: %I64d clock diff: %I64d qpc diff: %I64d", m_dSystemClockMultiplier, delta, hwClock, hwQpc, qpcNow, hwClock - m_dStartTimeHW, hwQpc - m_dStartQpcHW);
+  //Log("mul: %.10f delta: %I64d - hwClock: %I64d hwQpc: %I64d qpc: %I64d clock diff: %I64d qpc diff: %I64d", m_dSystemClockMultiplier, delta, hwClock, hwQpc, qpcNow, hwClock - m_dStartTimeHW, hwQpc - m_dStartQpcHW);
 
   m_rtPrivateTime = m_rtPrivateTime + delta;
 
