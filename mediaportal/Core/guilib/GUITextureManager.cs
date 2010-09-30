@@ -111,16 +111,6 @@ namespace MediaPortal.GUI.Library
       return null;
     }
 
-    public static void StartPreLoad()
-    {
-      //TODO
-    }
-
-    public static void EndPreLoad()
-    {
-      //TODO
-    }
-
     public static Image Resample(Image imgSrc, int iMaxWidth, int iMaxHeight)
     {
       int width = imgSrc.Width;
@@ -158,30 +148,26 @@ namespace MediaPortal.GUI.Library
     private static string GetFileName(string fileName)
     {
       string path = GetFullPath(fileName);
-
       string fixedPath = fileName.ToLower().Trim();
+      DownloadedImage image;
+
       if (fixedPath.IndexOf(@"http:") >= 0)
       {
         lock (_syncRoot)
         {
-          DownloadedImage image;
-          if (_cachedDownloads.TryGetValue(path, out image))
+          if (!_cachedDownloads.TryGetValue(path, out image))
           {
-            if (image.ShouldDownLoad)
-            {
-              image.Download();
-            }
-            return image.FileName;
-          }
-          else
-          {
-            image = new DownloadedImage(fileName);
-            image.Download();
+            image = new DownloadedImage(fileName); 
             _cachedDownloads.Add(fileName, image);
           }
-
-          return image.FileName;
         }
+
+        if (image.ShouldDownLoad) 
+        {
+          image.Download();
+        }
+        
+        return image.FileName;
       }
 
       return path;
@@ -751,7 +737,7 @@ namespace MediaPortal.GUI.Library
 
         iTextureWidth = cachedTexture.Width;
         iTextureHeight = cachedTexture.Height;
-        return (CachedTexture.Frame)cachedTexture[iImage];
+        return cachedTexture[iImage] as CachedTexture.Frame;
       }
     }
 
