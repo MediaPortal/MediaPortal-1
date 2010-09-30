@@ -329,9 +329,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Content Include="mp.ico" />
-    <Content Include="mplogo.gif" />
     <Content Include="mplogo.png" />
-    <Content Include="mplogo_new.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
