@@ -2032,7 +2032,6 @@ public class MediaPortalApp : D3DApp, IRender
     finally
     {
       //Log.Info("app:render() done");
-      GUITextureManager.ReleaseTextures();
       reentrant = false;
     }
   }
