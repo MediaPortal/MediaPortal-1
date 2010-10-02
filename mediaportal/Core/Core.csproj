@@ -323,7 +323,6 @@
     <Compile Include="ExtensionMethods\ListExtMethods.cs" />
     <Compile Include="ExtensionMethods\DictionaryExtMethods.cs" />
     <Compile Include="ExtensionMethods\ObjectMethods.cs" />
-    <Compile Include="guilib\CachedTextureCollection.cs" />
     <Compile Include="guilib\GUIInternalOverlayWindow.cs" />
     <Compile Include="guilib\GUIInternalWindow.cs" />
     <Compile Include="guilib\GUISpinButton.cs" />

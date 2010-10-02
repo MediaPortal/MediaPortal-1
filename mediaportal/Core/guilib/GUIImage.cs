@@ -882,6 +882,7 @@ namespace MediaPortal.GUI.Library
     [MethodImpl(MethodImplOptions.Synchronized)]
     public override void Dispose()
     {
+     
       if (logtextures)
       {
         Log.Info("GUIImage:Dispose:{0} {1}", _debugCachedTextureFileName, _debugGuid);
@@ -943,19 +944,15 @@ namespace MediaPortal.GUI.Library
     {
       if (!string.IsNullOrEmpty(file))
       {
-
         if (logtextures)
         {
           Log.Debug("GUIImage: Dispose - {0}", file);
         }
-
-        texture = null;
-        CachedTexture cachedTexture = GUITextureManager.GetCachedTexture(file);
-        if (cachedTexture != null && !cachedTexture.Persistent) 
-        {
+        if (GUITextureManager.IsTemporary(file))        
+        {          
+          texture = null;
           GUITextureManager.ReleaseTexture(file);
         }
-
       }
     }
 
