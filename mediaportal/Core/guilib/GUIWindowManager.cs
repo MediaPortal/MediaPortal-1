@@ -699,7 +699,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="iWindowID">window id of the window to activate</param>    
     public static void ActivateWindow(int windowId)
     {
-      ActivateWindow(windowId, false, false);
+      ActivateWindow(windowId, false, false, null);
     }
 
     /// <summary>
@@ -711,7 +711,30 @@ namespace MediaPortal.GUI.Library
     /// <param name="bReplaceWindow">replace current window</param>    
     public static void ActivateWindow(int windowId, bool replaceWindow)
     {
-      ActivateWindow(windowId, replaceWindow, false);
+      ActivateWindow(windowId, replaceWindow, false, null);
+    }
+
+    /// <summary>
+    /// This function will show/present/activate the window specified
+    /// and pass a parameter to the window.
+    /// </summary>
+    /// <param name="windowId">window id of the window to activate</param>
+    /// <param name="loadParameter">a parameter string to pass to the new window</param>
+    public static void ActivateWindow(int windowId, String loadParameter)
+    {
+      ActivateWindow(windowId, false, false, loadParameter);
+    }
+
+    /// <summary>
+    /// This function will show/present/activate the window specified
+    /// and pass a parameter to the window.
+    /// </summary>
+    /// <param name="windowId">window id of the window to activate</param>
+    /// <param name="loadParameter">a parameter string to pass to the new window</param>
+    /// <param name="bReplaceWindow">replace current window</param>  
+    public static void ActivateWindow(int windowId, String loadParameter, bool replaceWindow)
+    {
+      ActivateWindow(windowId, replaceWindow, false, loadParameter);
     }
 
     private static void RemoveDoubleHistory(int newWindow)
@@ -777,9 +800,9 @@ namespace MediaPortal.GUI.Library
           break;
       }
       return matches;
-    } 
+    }
 
-    private static void ActivateWindow(int newWindowId, bool replaceWindow, bool skipHistory)
+    private static void ActivateWindow(int newWindowId, bool replaceWindow, bool skipHistory, String loadParameter)
     {
       _isSwitchingToNewWindow = true;
       try
@@ -923,7 +946,7 @@ namespace MediaPortal.GUI.Library
           OnActivateWindow(newWindow.GetID);
         }
         msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, newWindow.GetID, 0, 0, _previousActiveWindowId,
-                             0, null);
+                             0, loadParameter);
         newWindow.OnMessage(msg);
       }
       catch (Exception ex)
@@ -975,7 +998,7 @@ namespace MediaPortal.GUI.Library
         ShowPreviousWindow();
 
       if (_previousActiveWindowId != ActiveWindow)
-        ActivateWindow(_previousActiveWindowId, false, true);
+        ActivateWindow(_previousActiveWindowId, false, true, null);
     }
 
     /// <summary>

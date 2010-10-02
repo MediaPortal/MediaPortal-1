@@ -264,6 +264,7 @@ namespace MediaPortal.GUI.Library
     protected bool _isOverlayAllowed = true;
     protected int _isOverlayAllowedCondition = 0;
     private Object instance;
+    protected string _loadParameter = null;
 
     //-1=default from topbar.xml 
     // 0=flase from skin.xml
@@ -1603,6 +1604,16 @@ namespace MediaPortal.GUI.Library
               Log.Debug("Window: {0} init", this.ToString());
 
               _hasRendered = false;
+
+              if (message.Object != null && message.Object.GetType() == typeof(string))
+              {
+                _loadParameter = (string)message.Object;
+              }
+              else
+              {
+                _loadParameter = null;
+              }
+
               OnPageLoad();
 
               TemporaryAnimationTrigger();

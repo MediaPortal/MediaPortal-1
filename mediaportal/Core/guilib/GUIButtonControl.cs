@@ -38,6 +38,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("hyperlink")] protected int _hyperLinkWindowId = -1;
+    //string parameter that will be passed to the plugin when plugin is opened
+    [XMLSkinElement("hyperlinkParameter")]
+    protected string _hyperLinkParameter = "";
     [XMLSkin("hyperlink", "history")] protected bool _addToHistory = true;
     [XMLSkinElement("action")] protected int _actionId = -1;
     [XMLSkinElement("script")] protected string _scriptAction = "";
@@ -416,7 +419,14 @@ namespace MediaPortal.GUI.Library
           // If this links to another window go to the window.
           if (_hyperLinkWindowId >= 0)
           {
-            GUIWindowManager.ActivateWindow((int) _hyperLinkWindowId, !_addToHistory);
+            if (_hyperLinkParameter != null && !_hyperLinkParameter.Equals(""))
+            {//the link also contains a parameter that we want to pass to the plugin
+              GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId, _hyperLinkParameter, !_addToHistory);
+            }
+            else
+            {
+              GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId, !_addToHistory);
+            }
             return;
           }
           // If this button corresponds to an action generate that action.
