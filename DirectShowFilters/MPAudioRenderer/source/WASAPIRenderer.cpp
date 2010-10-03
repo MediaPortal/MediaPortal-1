@@ -1215,6 +1215,20 @@ DWORD WASAPIRenderer::RenderThread()
     }
     else if (result == WAIT_OBJECT_0 + 2) // data event
     {
+      /*
+	  UINT64 hwClock(0);
+      UINT64 hwQpc(0);
+
+      static UINT64 hwClockPrev(0);
+      static UINT64 hwQpcPrev(0);
+
+      m_pRenderer->AudioClock(hwClock, hwQpc);
+
+      Log("%I64d %I64d %0.10f", hwClock - hwClockPrev, hwQpc - hwQpcPrev, (hwClock - hwClockPrev)/(hwQpc - hwQpcPrev));
+      
+      hwQpcPrev = hwQpc;
+      hwClockPrev = hwClock;*/
+
       UINT32 bufferSize = 0;
       UINT32 currentPadding = 0;
       

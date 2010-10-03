@@ -44,15 +44,12 @@ CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer
   m_bHWBasedRefClock(pUseHWRefClock),
   m_dDurationHW(0),
   m_dDurationSystem(0),
-  m_dDurationCorrected(0)
+  m_dDurationCorrected(0),
+  m_llDeltaError(0.0),
+  m_llOverallCorrection(0),
+  m_dwPrevSystemTime(0),
+  m_rtPrivateTime(0)
 {
-  m_dwPrevSystemTime = timeGetTime();
-  m_rtPrivateTime = (UNITS / MILLISECONDS) * m_dwPrevSystemTime;
-}
-
-void CSyncClock::SetDiff(DWORD diff)
-{
-   m_rtPrivateTime = m_rtPrivateTime + (UNITS / MILLISECONDS) * diff;
 }
 
 void CSyncClock::SetBias(double pBias)
@@ -79,23 +76,31 @@ void CSyncClock::GetClockData(CLOCKDATA *pClockData)
 {
   // pointer is validated already in CMPAudioRenderer
   pClockData->driftMultiplier = m_dSystemClockMultiplier;
-  pClockData->driftHWvsSystem = m_dDurationHW - m_dDurationSystem;
-  pClockData->driftHWvsCorrected = m_dDurationHW - m_dDurationCorrected / m_dBias;
+  pClockData->driftHWvsSystem = (m_dDurationHW - m_dDurationSystem) / 10000;
+  pClockData->driftHWvsCorrected = m_llOverallCorrection / 10000;
 }
 
 REFERENCE_TIME CSyncClock::GetPrivateTime()
 {
   CAutoLock cObjectLock(this);
 
-  LONGLONG qpcNow = GetCurrentTimestamp();
-
-  DWORD dwTime = timeGetTime();
+  UINT64 qpcNow = GetCurrentTimestamp();
 
   UINT64 hwClock(0);
   UINT64 hwQpc(0);
+
+  UINT64 hwClockEnd(0);
+  UINT64 hwQpcEnd(0);
+
   HRESULT hr = m_pAudioRenderer->AudioClock(hwClock, hwQpc);
 
-  if (hr == S_OK)
+  if (m_dStartTimeSystem == 0)
+    m_dStartTimeSystem = qpcNow;
+
+  if (m_dwPrevSystemTime == 0)
+    m_dwPrevSystemTime = qpcNow;
+
+  if (hwClock > 10000000 && hr == S_OK)
   {
     if (m_dStartQpcHW == 0)
       m_dStartQpcHW = hwQpc;
@@ -103,61 +108,88 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
     if (m_dStartTimeHW == 0)
       m_dStartTimeHW = hwClock;
 
-    if (m_dStartTimeSystem == 0)
-      m_dStartTimeSystem = dwTime;
-
     if (m_dStartTimeCorrected == 0)
       m_dStartTimeCorrected = m_rtPrivateTime;
 
-    m_dDurationHW = (hwClock - m_dStartTimeHW) / 10000;
-    m_dDurationSystem = (dwTime - m_dStartTimeSystem); 
-    m_dDurationCorrected = (m_rtPrivateTime - m_dStartTimeCorrected) / 10000;
-
-    //Log("hw: %I64d sys: %I64d cor: %I64d hwsy: %I64d hwcor: %I64d", m_dDurationHW, m_dDurationSystem, m_dDurationCorrected, m_dDurationHW - m_dDurationSystem, m_dDurationHW - m_dDurationCorrected);
+    m_dDurationHW = (hwClock - m_dStartTimeHW);
+    m_dDurationSystem = (qpcNow - m_dStartTimeSystem); 
+    m_dDurationCorrected = (m_rtPrivateTime - m_dStartTimeCorrected);
 
     if (m_dPrevTimeHW > hwClock)
     {
       m_dStartTimeHW = m_dPrevTimeHW = hwClock;
       m_dStartQpcHW = m_dPrevQpcHW = hwQpc;
-      m_dStartTimeSystem = dwTime;
+      m_dStartTimeSystem = qpcNow;
       m_dStartTimeCorrected = m_rtPrivateTime;
+      m_llDeltaError = 0;
+      m_llOverallCorrection = 0;
     }
     else
     {
       double clockDiff = hwClock - m_dStartTimeHW;
       double qpcDiff = hwQpc - m_dStartQpcHW;
 
+      double prevMultiplier = m_dSystemClockMultiplier;
+
       if (clockDiff > 0 && qpcDiff > 0)
         m_dSystemClockMultiplier = clockDiff / qpcDiff;
 
-      // TODO is this needed?
       if (m_dSystemClockMultiplier < 0.95 || m_dSystemClockMultiplier > 1.05)
-        m_dSystemClockMultiplier = 1.0;
+        m_dSystemClockMultiplier = prevMultiplier;
 
       m_dPrevTimeHW = hwClock;
       m_dPrevQpcHW = hwQpc;
     }
   }
+  else if (hr != S_OK)
+  {
+    Log("AudioClock() returned error (0x%08x)");
+  }
+  
+  INT64 delta = qpcNow - m_dwPrevSystemTime;
+  INT64 deltaOrig = delta;
+
+  if (qpcNow < m_dwPrevSystemTime)
+  {
+    delta += REFERENCE_TIME(ULLONG_MAX) + 1;
+  }
+
+  m_dwPrevSystemTime = qpcNow;
+  delta = (REFERENCE_TIME)(delta * (UNITS / MILLISECONDS));
+  double dAdjustment;
+  if (m_bHWBasedRefClock)
+  {
+    dAdjustment = m_dAdjustment * m_dBias * m_dSystemClockMultiplier;
+  }
   else
   {
-    //Log("AudioClock() returned error (0x%08x)");
+    dAdjustment = m_dAdjustment * m_dBias;
   }
-
-  REFERENCE_TIME delta = REFERENCE_TIME(dwTime) - REFERENCE_TIME(m_dwPrevSystemTime);
-  if(dwTime < m_dwPrevSystemTime)
+  double ddelta= ((double) delta) * dAdjustment;
+  delta = (REFERENCE_TIME) ddelta;
+  m_llDeltaError += ddelta - delta;
+  
+  const double deltaErrorLimit = 1.0;
+  
+  if (m_llDeltaError > deltaErrorLimit)
   {
-    delta += REFERENCE_TIME(UINT_MAX) + 1;
+    delta += deltaErrorLimit * 10000;
+    m_llDeltaError -= deltaErrorLimit;
+    m_llOverallCorrection += deltaErrorLimit;
+  }
+  else if (m_llDeltaError < -deltaErrorLimit)
+  {
+    delta -= deltaErrorLimit * 10000;
+    m_llDeltaError += deltaErrorLimit;
+    m_llOverallCorrection -= deltaErrorLimit;
+  }
+  
+  //if (hwQpc - m_dStartQpcHW > 600000000)
+  {
+    //Log("mul: %.10f de: %8I64d de.orig: %8I64d de.err: %.10f bias: %.10f adj: %.10f hwQpc: %I64d hwClock: %I64d", 
+      //m_dSystemClockMultiplier, delta / 10000, deltaOrig, m_ddeltaError, m_dBias, m_dAdjustment, hwQpc, hwClock);
   }
 
-  m_dwPrevSystemTime = dwTime;
-  delta = (REFERENCE_TIME)(delta * (UNITS / MILLISECONDS) * m_dAdjustment * m_dBias);
-
-  if (m_bHWBasedRefClock)
-    delta /= m_dSystemClockMultiplier;
-
-  //Log("mul: %.10f delta: %I64d - hwClock: %I64d hwQpc: %I64d qpc: %I64d clock diff: %I64d qpc diff: %I64d", m_dSystemClockMultiplier, delta, hwClock, hwQpc, qpcNow, hwClock - m_dStartTimeHW, hwQpc - m_dStartQpcHW);
-
-  m_rtPrivateTime = m_rtPrivateTime + delta;
-
+  m_rtPrivateTime = m_rtPrivateTime + delta / 10000;
   return m_rtPrivateTime;
 }
