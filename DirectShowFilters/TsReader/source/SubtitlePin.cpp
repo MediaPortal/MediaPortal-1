@@ -69,26 +69,6 @@ bool CSubtitlePin::IsConnected()
 }
 STDMETHODIMP CSubtitlePin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 {
-  if (riid == IID_IStreamBufferConfigure)
-  {
-    LogDebug("sub:IID_IStreamBufferConfigure()");
-  }
-  if (riid == IID_IStreamBufferInitialize)
-  {
-    LogDebug("sub:IID_IStreamBufferInitialize()");
-  }
-  if (riid == IID_IStreamBufferMediaSeeking||riid == IID_IStreamBufferMediaSeeking2)
-  {
-    LogDebug("sub:IID_IStreamBufferMediaSeeking()");
-  }
-  if (riid == IID_IStreamBufferSource)
-  {
-    LogDebug("sub:IID_IStreamBufferSource()");
-  }
-  if (riid == IID_IStreamBufferDataCounters)
-  {
-    LogDebug("sub:IID_IStreamBufferDataCounters()");
-  }
   if (riid == IID_IMediaSeeking)
   {
     return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );

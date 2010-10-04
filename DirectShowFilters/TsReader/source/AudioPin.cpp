@@ -80,26 +80,6 @@ CAudioPin::~CAudioPin()
 }
 STDMETHODIMP CAudioPin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 {
-  if (riid == IID_IStreamBufferConfigure)
-  {
-    LogDebug("aud:IID_IStreamBufferConfigure()");
-  }
-  if (riid == IID_IStreamBufferInitialize)
-  {
-    LogDebug("aud:IID_IStreamBufferInitialize()");
-  }
-  if (riid == IID_IStreamBufferMediaSeeking||riid == IID_IStreamBufferMediaSeeking2)
-  {
-    LogDebug("aud:IID_IStreamBufferMediaSeeking()");
-  }
-  if (riid == IID_IStreamBufferSource)
-  {
-    LogDebug("aud:IID_IStreamBufferSource()");
-  }
-  if (riid == IID_IStreamBufferDataCounters)
-  {
-    LogDebug("aud:IID_IStreamBufferDataCounters()");
-  }
   if (riid == IID_IMediaSeeking)
   {
     return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );

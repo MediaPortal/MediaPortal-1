@@ -165,10 +165,9 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-                                AdditionalOptions="/MP"
+				AdditionalOptions="/MP"
 				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;"
-		
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -182,7 +181,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalOptions="/IGNORE:4221 /IGNORE:4006"
-				AdditionalDependencies="d3d9.lib ddraw.lib"
+				AdditionalDependencies="d3d9.lib"
 				OutputFile="..\..\lib\$(ProjectName)RU.lib"
 			/>
 			<Tool
@@ -226,8 +225,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-                                AdditionalOptions="/MP"
-
+				AdditionalOptions="/MP"
 				PreprocessorDefinitions="_WIN64;NDEBUG;_LIB"
 				EnableEnhancedInstructionSet="0"
 			/>
@@ -278,7 +276,6 @@
 				RelativePath="DX9SubPic.cpp"
 				>
 			</File>
-
 			<File
 				RelativePath="MemSubPic.cpp"
 				>

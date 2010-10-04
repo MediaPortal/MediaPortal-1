@@ -25,11 +25,11 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 
 extern "C" DXERR9_API LPCWSTR GetDXErrorString(HRESULT DXError)
 {
-	return _bstr_t(::DXGetErrorString9(DXError));
+	return _bstr_t(::DXGetErrorString(DXError));
 }
 
 
 extern "C" DXERR9_API LPCWSTR GetDXErrorDescription(HRESULT DXError)
 {
-	return _bstr_t(::DXGetErrorDescription9(DXError));
+	return _bstr_t(::DXGetErrorDescription(DXError));
 }

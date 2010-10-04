@@ -85,7 +85,7 @@
 				LinkLibraryDependencies="false"
 				UseUnicodeResponseFiles="false"
 				AdditionalDependencies="strmbase.lib msvcrt.lib winmm.lib ws2_32.lib livemedia555.lib dvbcoreutils.lib"
-				ShowProgress="1"
+				ShowProgress="0"
 				OutputFile="bin\Release/TsReader.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
