@@ -243,8 +243,8 @@ void StatsRenderer::DrawStats()
       CLOCKDATA clockData;
       m_pPresenter->m_pAVSyncClock->GetClockData(&clockData);
 
-      strText.Format("A vs S rate: %.7f HW vs. sys: %3d ms dError cor: %3d ms", 
-        clockData.driftMultiplier, clockData.driftHWvsSystem, clockData.driftHWvsCorrected);
+      strText.Format("HW vs system: %.7fx HW vs. sys: %3d ms dError corr: %3d ms Adjustment drift: %.7f ms", 
+        clockData.driftMultiplier, clockData.driftHWvsSystem, clockData.driftHWvsCorrected, clockData.driftAdjustment);
       DrawText(rc, strText);
       OffsetRect(&rc, 0, TextHeight);
     }

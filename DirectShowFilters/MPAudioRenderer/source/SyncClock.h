@@ -36,29 +36,32 @@ public:
   double Bias();
   double Adjustment();
   void GetClockData(CLOCKDATA *pClockData);
-  void NotifySample(REFERENCE_TIME pSampleTime);
+  void ProvideAdjustmentDrift(double pDrift);
+  double AdjustmentDrift();
 
 private:
-  DOUBLE m_dAdjustment;
-  DOUBLE m_dBias;
+  double m_dAdjustment;
+  double m_dAdjustmentDrift;
+  double m_dBias;
 
-  UINT64 m_rtPrivateTime;
+  UINT64 m_ullPrivateTime;
+  UINT64 m_ullPrevSystemTime;
+
+  UINT64 m_ullStartQpcHW;
+  UINT64 m_ullStartTimeHW;
+  UINT64 m_ullStartTimeSystem;
+  UINT64 m_ullStartTimeCorrected;
+
+  INT64 m_llDurationHW;
+  INT64 m_llDurationSystem;
+  INT64 m_llDurationCorrected;
+
+  UINT64 m_ullPrevTimeHW;
+  UINT64 m_ullPrevQpcHW;
   UINT64 m_dwPrevSystemTime;
 
-  UINT64 m_dStartQpcHW;
-  UINT64 m_dStartTimeHW;
-  UINT64 m_dStartTimeSystem;
-  UINT64 m_dStartTimeCorrected;
-
-  INT64 m_dDurationHW;
-  INT64 m_dDurationSystem;
-  INT64 m_dDurationCorrected;
-
-  UINT64 m_dPrevTimeHW;
-  UINT64 m_dPrevQpcHW;
-
-  double  m_llDeltaError;
-  INT64  m_llOverallCorrection;
+  double m_dDeltaError;
+  INT32 m_lOverallCorrection;
 
   double  m_dSystemClockMultiplier;
 

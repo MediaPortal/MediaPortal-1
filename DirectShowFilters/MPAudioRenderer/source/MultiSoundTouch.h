@@ -25,30 +25,31 @@
 #include "../SoundTouch/Include/SoundTouch.h"
 #include "../AC3_encoder/ac3enc.h"
 #include "SoundTouchEx.h"
+#include "SyncClock.h"
 
 typedef signed __int64 int64_t;
 
 class CMultiSoundTouch
 {
 public:
-  CMultiSoundTouch(bool pEnableAC3Encoding, int AC3bitrate);
+  CMultiSoundTouch(bool pEnableAC3Encoding, int AC3bitrate, CSyncClock* pClock);
   ~CMultiSoundTouch();
 
   /// Sets new rate control value. Normal rate = 1.0, smaller values
   /// represent slower rate, larger faster rates.
-  void setRate(float newRate);
+  void setRate(double newRate);
 
   /// Sets new tempo control value. Normal tempo = 1.0, smaller values
   /// represent slower tempo, larger faster tempo.
-  void setTempo(float newTempo);
+  void setTempo(double newTempo, double newAdjustment);
 
   /// Sets new rate control value as a difference in percents compared
   /// to the original rate (-50 .. +100 %)
-  void setRateChange(float newRate);
+  void setRateChange(double newRate);
 
   /// Sets new tempo control value as a difference in percents compared
   /// to the original tempo (-50 .. +100 %)
-  void setTempoChange(float newTempo);
+  void setTempoChange(double newTempo);
 
   /// Sets pitch change in octaves compared to the original pitch  
   /// (-1.00 .. +1.00)
@@ -120,15 +121,17 @@ public:
 
 protected:
   HRESULT ToWaveFormatExtensible(WAVEFORMATEXTENSIBLE *pwfe, WAVEFORMATEX *pwf);
-  void setTempoInternal(float newTempo);
+  void setTempoInternal(double newTempo, double newAdjustment);
 
 private:
 
   static const uint SAMPLE_LEN = 0x40000;
   std::vector<CSoundTouchEx *> *m_Streams;
   WAVEFORMATEXTENSIBLE *m_pWaveFormat;
-  float m_fCurrentTempo;
-  float m_fNewTempo;
+  double m_fCurrentTempo;
+  double m_fCurrentAdjustment;
+  double m_fNewTempo;
+  double m_fNewAdjustment;
 
   soundtouch::SAMPLETYPE m_temp[2*SAMPLE_LEN];
   HANDLE m_hThread;
@@ -148,6 +151,9 @@ private:
   CCritSec m_allocatorLock;
 
   IMediaSample* m_pPreviousSample;
+
+  // Reference clock, not owned
+  CSyncClock* m_pClock;
 
   // Threading 
   static DWORD WINAPI ResampleThreadEntryPoint(LPVOID lpParameter);

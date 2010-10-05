@@ -101,7 +101,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
       return;
   }
 
-  m_pSoundTouch = new CMultiSoundTouch(m_Settings.m_bEnableAC3Encoding, m_Settings.m_AC3bitrate);
+  m_pSoundTouch = new CMultiSoundTouch(m_Settings.m_bEnableAC3Encoding, m_Settings.m_AC3bitrate, m_pClock);
   
   if (!m_pSoundTouch)
   {
@@ -675,7 +675,7 @@ HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
     m_pClock->SetAdjustment(m_dAdjustment);
     if (m_pSoundTouch)
     {
-      m_pSoundTouch->setTempo(m_dAdjustment * m_dBias);
+      m_pSoundTouch->setTempo(m_dBias, m_dAdjustment);
     }
     return S_OK;
   }
@@ -716,7 +716,7 @@ HRESULT CMPAudioRenderer::SetBias(DOUBLE pBias)
     m_pClock->SetBias(m_dBias);
     if (m_pSoundTouch)
     {
-      m_pSoundTouch->setTempo(m_dAdjustment * m_dBias);
+      m_pSoundTouch->setTempo(m_dBias, m_dAdjustment);
       Log("SetBias - updated SoundTouch tempo");
       // ret is not set since we want to be able to indicate the too big / small bias value	  
     }

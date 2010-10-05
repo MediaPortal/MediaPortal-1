@@ -34,21 +34,22 @@ CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer
   m_dAdjustment(1.0),
   m_dBias(1.0),
   m_pAudioRenderer(pRenderer),
-  m_dStartQpcHW(0),
-  m_dStartTimeHW(0),
-  m_dStartTimeSystem(0),
-  m_dStartTimeCorrected(0),
-  m_dPrevTimeHW(0),
-  m_dPrevQpcHW(0),
+  m_ullStartQpcHW(0),
+  m_ullStartTimeHW(0),
+  m_ullStartTimeSystem(0),
+  m_ullStartTimeCorrected(0),
+  m_ullPrevTimeHW(0),
+  m_ullPrevQpcHW(0),
   m_dSystemClockMultiplier(1.0),
   m_bHWBasedRefClock(pUseHWRefClock),
-  m_dDurationHW(0),
-  m_dDurationSystem(0),
-  m_dDurationCorrected(0),
-  m_llDeltaError(0.0),
-  m_llOverallCorrection(0),
-  m_dwPrevSystemTime(0),
-  m_rtPrivateTime(0)
+  m_llDurationHW(0),
+  m_llDurationSystem(0),
+  m_llDurationCorrected(0),
+  m_dDeltaError(0.0),
+  m_lOverallCorrection(0),
+  m_ullPrevSystemTime(0),
+  m_ullPrivateTime(0),
+  m_dAdjustmentDrift(0.0)
 {
 }
 
@@ -76,8 +77,21 @@ void CSyncClock::GetClockData(CLOCKDATA *pClockData)
 {
   // pointer is validated already in CMPAudioRenderer
   pClockData->driftMultiplier = m_dSystemClockMultiplier;
-  pClockData->driftHWvsSystem = (m_dDurationHW - m_dDurationSystem) / 10000;
-  pClockData->driftHWvsCorrected = m_llOverallCorrection / 10000;
+  pClockData->driftHWvsSystem = (m_llDurationHW - m_llDurationSystem) / 10000;
+  pClockData->driftAdjustment = m_dAdjustmentDrift / 10000.0;
+  pClockData->driftHWvsCorrected = m_lOverallCorrection / 10000;
+}
+
+void CSyncClock::ProvideAdjustmentDrift(double drift)
+{
+  CAutoLock cObjectLock(this);
+  m_dAdjustmentDrift += drift;
+}
+
+double CSyncClock::AdjustmentDrift()
+{
+  CAutoLock cObjectLock(this);
+  return m_dAdjustmentDrift;
 }
 
 REFERENCE_TIME CSyncClock::GetPrivateTime()
@@ -94,40 +108,40 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
 
   HRESULT hr = m_pAudioRenderer->AudioClock(hwClock, hwQpc);
 
-  if (m_dStartTimeSystem == 0)
-    m_dStartTimeSystem = qpcNow;
+  if (m_ullStartTimeSystem == 0)
+    m_ullStartTimeSystem = qpcNow;
 
-  if (m_dwPrevSystemTime == 0)
-    m_dwPrevSystemTime = qpcNow;
+  if (m_ullPrevSystemTime == 0)
+    m_ullPrevSystemTime = qpcNow;
 
   if (hwClock > 10000000 && hr == S_OK)
   {
-    if (m_dStartQpcHW == 0)
-      m_dStartQpcHW = hwQpc;
+    if (m_ullStartQpcHW == 0)
+      m_ullStartQpcHW = hwQpc;
 
-    if (m_dStartTimeHW == 0)
-      m_dStartTimeHW = hwClock;
+    if (m_ullStartTimeHW == 0)
+      m_ullStartTimeHW = hwClock;
 
-    if (m_dStartTimeCorrected == 0)
-      m_dStartTimeCorrected = m_rtPrivateTime;
+    if (m_ullStartTimeCorrected == 0)
+      m_ullStartTimeCorrected = m_ullPrivateTime;
 
-    m_dDurationHW = (hwClock - m_dStartTimeHW);
-    m_dDurationSystem = (qpcNow - m_dStartTimeSystem); 
-    m_dDurationCorrected = (m_rtPrivateTime - m_dStartTimeCorrected);
+    m_llDurationHW = (hwClock - m_ullStartTimeHW);
+    m_llDurationSystem = (qpcNow - m_ullStartTimeSystem); 
+    m_llDurationCorrected = (m_ullPrivateTime - m_ullStartTimeCorrected);
 
-    if (m_dPrevTimeHW > hwClock)
+    if (m_ullPrevTimeHW > hwClock)
     {
-      m_dStartTimeHW = m_dPrevTimeHW = hwClock;
-      m_dStartQpcHW = m_dPrevQpcHW = hwQpc;
-      m_dStartTimeSystem = qpcNow;
-      m_dStartTimeCorrected = m_rtPrivateTime;
-      m_llDeltaError = 0;
-      m_llOverallCorrection = 0;
+      m_ullStartTimeHW = m_ullPrevTimeHW = hwClock;
+      m_ullStartQpcHW = m_ullPrevQpcHW = hwQpc;
+      m_ullStartTimeSystem = qpcNow;
+      m_ullStartTimeCorrected = m_ullPrivateTime;
+      m_dDeltaError = 0;
+      m_lOverallCorrection = 0;
     }
     else
     {
-      double clockDiff = hwClock - m_dStartTimeHW;
-      double qpcDiff = hwQpc - m_dStartQpcHW;
+      double clockDiff = hwClock - m_ullStartTimeHW;
+      double qpcDiff = hwQpc - m_ullStartQpcHW;
 
       double prevMultiplier = m_dSystemClockMultiplier;
 
@@ -137,26 +151,26 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
       if (m_dSystemClockMultiplier < 0.95 || m_dSystemClockMultiplier > 1.05)
         m_dSystemClockMultiplier = prevMultiplier;
 
-      m_dPrevTimeHW = hwClock;
-      m_dPrevQpcHW = hwQpc;
+      m_ullPrevTimeHW = hwClock;
+      m_ullPrevQpcHW = hwQpc;
     }
   }
   else if (hr != S_OK)
   {
-    Log("AudioClock() returned error (0x%08x)");
+    //Log("AudioClock() returned error (0x%08x)");
   }
   
-  INT64 delta = qpcNow - m_dwPrevSystemTime;
+  INT64 delta = qpcNow - m_ullPrevSystemTime;
   INT64 deltaOrig = delta;
 
-  if (qpcNow < m_dwPrevSystemTime)
+  if (qpcNow < m_ullPrevSystemTime)
   {
     delta += REFERENCE_TIME(ULLONG_MAX) + 1;
   }
 
-  m_dwPrevSystemTime = qpcNow;
-  delta = (REFERENCE_TIME)(delta * (UNITS / MILLISECONDS));
-  double dAdjustment;
+  m_ullPrevSystemTime = qpcNow;
+  double dAdjustment = 1.0;
+
   if (m_bHWBasedRefClock)
   {
     dAdjustment = m_dAdjustment * m_dBias * m_dSystemClockMultiplier;
@@ -165,31 +179,37 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
   {
     dAdjustment = m_dAdjustment * m_dBias;
   }
-  double ddelta= ((double) delta) * dAdjustment;
-  delta = (REFERENCE_TIME) ddelta;
-  m_llDeltaError += ddelta - delta;
-  
-  const double deltaErrorLimit = 1.0;
-  
-  if (m_llDeltaError > deltaErrorLimit)
+
+  if (m_dAdjustment != 1.0)
   {
-    delta += deltaErrorLimit * 10000;
-    m_llDeltaError -= deltaErrorLimit;
-    m_llOverallCorrection += deltaErrorLimit;
-  }
-  else if (m_llDeltaError < -deltaErrorLimit)
-  {
-    delta -= deltaErrorLimit * 10000;
-    m_llDeltaError += deltaErrorLimit;
-    m_llOverallCorrection -= deltaErrorLimit;
-  }
-  
-  //if (hwQpc - m_dStartQpcHW > 600000000)
-  {
-    //Log("mul: %.10f de: %8I64d de.orig: %8I64d de.err: %.10f bias: %.10f adj: %.10f hwQpc: %I64d hwClock: %I64d", 
-      //m_dSystemClockMultiplier, delta / 10000, deltaOrig, m_ddeltaError, m_dBias, m_dAdjustment, hwQpc, hwClock);
+    m_dAdjustmentDrift -= (m_dAdjustment * delta -  delta);  
   }
 
-  m_rtPrivateTime = m_rtPrivateTime + delta / 10000;
-  return m_rtPrivateTime;
+  double ddelta= ((double) delta) * dAdjustment;
+  delta = (REFERENCE_TIME) ddelta;
+  m_dDeltaError += ddelta - delta;
+  
+  const double deltaErrorLimit = 10000.0;
+
+  if (m_dDeltaError > deltaErrorLimit)
+  {
+    delta += deltaErrorLimit;
+    m_dDeltaError -= deltaErrorLimit;
+    m_lOverallCorrection += deltaErrorLimit;
+  }
+  else if (m_dDeltaError < -deltaErrorLimit)
+  {
+    delta -= deltaErrorLimit;
+    m_dDeltaError += deltaErrorLimit;
+    m_lOverallCorrection -= deltaErrorLimit;
+  }
+  
+  //if (hwQpc - m_ullStartQpcHW > 600000000)
+  {
+    //Log("mul: %.10f de: %8I64d de.orig: %8I64d de.err: %.10f bias: %.10f adj: %.10f hwQpc: %I64d hwClock: %I64d", 
+      //m_dSystemClockMultiplier, delta, deltaOrig, m_dDeltaError, m_dBias, m_dAdjustment, hwQpc, hwClock);
+  }
+
+  m_ullPrivateTime = m_ullPrivateTime + delta;
+  return m_ullPrivateTime;
 }

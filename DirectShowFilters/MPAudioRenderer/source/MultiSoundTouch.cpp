@@ -97,8 +97,9 @@ DWORD WINAPI CMultiSoundTouch::ResampleThreadEntryPoint(LPVOID lpParameter)
   return ((CMultiSoundTouch *)lpParameter)->ResampleThread();
 }
 
-CMultiSoundTouch::CMultiSoundTouch(bool pEnableAC3Encoding, int AC3bitrate) 
-: m_Streams(NULL)
+CMultiSoundTouch::CMultiSoundTouch(bool pEnableAC3Encoding, int AC3bitrate, CSyncClock* pClock) 
+: m_pClock(pClock)
+, m_Streams(NULL)
 , m_bFlushSamples(false)
 , m_pMemAllocator(NULL)
 , m_hSampleArrivedEvent(NULL)
@@ -112,6 +113,8 @@ CMultiSoundTouch::CMultiSoundTouch(bool pEnableAC3Encoding, int AC3bitrate)
 , m_bEnableAC3Encoding(pEnableAC3Encoding)
 , m_dAC3bitrate(AC3bitrate)
 , m_fCurrentTempo(1.0)
+, m_fNewAdjustment(1.0)
+, m_fCurrentAdjustment(1.0)
 , m_fNewTempo(1.0)
 {
   // Use separate thread per channnel pair?
@@ -159,9 +162,9 @@ void CMultiSoundTouch::StopResamplingThread()
   WaitForSingleObject(m_hWaitThreadToExitEvent, INFINITE);
 }
 
-DEFINE_STREAM_FUNC(setRate,float, newRate)
-DEFINE_STREAM_FUNC(setRateChange, float, newRate)
-DEFINE_STREAM_FUNC(setTempoChange, float, newTempo)
+DEFINE_STREAM_FUNC(setRate, double, newRate)
+DEFINE_STREAM_FUNC(setRateChange, double, newRate)
+DEFINE_STREAM_FUNC(setTempoChange, double, newTempo)
 DEFINE_STREAM_FUNC(setPitchOctaves, float, newPitch)
 DEFINE_STREAM_FUNC(setPitchSemiTones, int, newPitch)
 DEFINE_STREAM_FUNC(setPitchSemiTones, float, newPitch)
@@ -192,19 +195,22 @@ void CMultiSoundTouch::flush()
   } 
 }
 
-void CMultiSoundTouch::setTempo(float newTempo)
+void CMultiSoundTouch::setTempo(double newTempo, double newAdjustment)
 {
   m_fNewTempo = newTempo;
+  m_fNewAdjustment = newAdjustment;
 }
 
-void CMultiSoundTouch::setTempoInternal(float newTempo)
+void CMultiSoundTouch::setTempoInternal(double newTempo, double newAdjustment)
 {
   if (m_Streams) 
   { 
     for(int i=0; i<m_Streams->size(); i++) 
-      m_Streams->at(i)->setTempo(newTempo); 
+      m_Streams->at(i)->setTempo(newTempo * newAdjustment); 
+
+    m_fCurrentTempo = newTempo;
+    m_fCurrentAdjustment = newAdjustment;
   } 
-  m_fCurrentTempo = newTempo;
 }
 
 DWORD CMultiSoundTouch::ResampleThread()
@@ -288,12 +294,47 @@ DWORD CMultiSoundTouch::ResampleThread()
         
         if ((hr == S_OK) && m_pMemAllocator)
         {
-          if(m_Streams != NULL && m_fNewTempo != m_fCurrentTempo)
-            setTempoInternal(m_fNewTempo);
+          bool driftAdjusted = false;
+          uint unprocessedSamplesBefore = numUnprocessedSamples();
+          uint unprocessedSamplesAfter = 0;
+
+          double currentDrift = m_pClock->AdjustmentDrift();
+
+          if (m_fNewTempo != m_fCurrentTempo || m_fNewAdjustment != m_fCurrentAdjustment)
+          {
+            setTempoInternal(m_fNewTempo, m_fNewAdjustment);
+          }
+          else if (m_fCurrentAdjustment == 1.0 && m_fNewAdjustment == 1.0)
+          {
+            if (currentDrift > 10000.0) // 1 ms
+            {
+              setTempoInternal(m_fNewTempo, 0.997);
+              driftAdjusted = true;
+            }
+            else if (currentDrift < -10000.0) // -1 ms
+            {
+              setTempoInternal(m_fNewTempo, 1.003);
+              driftAdjusted = true;
+            }
+          }
 
           // Process the sample 
           putSamplesInternal((const short*)pMediaBuffer, size / m_pWaveFormat->Format.nBlockAlign);
-          
+          unprocessedSamplesAfter = numUnprocessedSamples();
+
+          if (m_fCurrentAdjustment != 1.0)
+          {
+            UINT32 nFrames = (size - unprocessedSamplesAfter + unprocessedSamplesBefore) / m_pWaveFormat->Format.nBlockAlign;
+            REFERENCE_TIME rtSampleDuration = nFrames * UNITS / m_pWaveFormat->Format.nSamplesPerSec;
+            double drift = rtSampleDuration * (m_fCurrentAdjustment - 1.0);
+            m_pClock->ProvideAdjustmentDrift(drift);
+          }
+
+          if (driftAdjusted)
+          {
+            setTempoInternal(m_fNewTempo, m_fNewAdjustment);
+          }
+
           unsigned int sampleLength = numSamples();
 
           if ((!m_pEncoder && sampleLength > 0) || (m_pEncoder && sampleLength >= AC3_FRAME_LENGHT))
@@ -333,15 +374,8 @@ DWORD CMultiSoundTouch::ResampleThread()
                 {
                   outSample->SetActualDataLength(sampleLength * m_pWaveFormat->Format.nBlockAlign);
                   receiveSamplesInternal((short*)pMediaBufferOut, sampleLength);
-
-                  //UINT32 nFrames = sampleLength / m_pWaveFormat->Format.nBlockAlign;
-                  //REFERENCE_TIME rtSampleDuration = nFrames * UNITS / m_pWaveFormat->Format.nSamplesPerSec;
-
-                  //Log(" %f act len %f", rtSampleDuration / 10000.0,  (rtSampleDuration / 10000.0 ) / m_fCurrentTempo);
-                  
                   //Log("sampleLength: %d remaining samples: %d", sampleLength, numSamples());
                 }
-
                 { // lock that the playback thread wont access the queue at the same time
                   CAutoLock cOutputQueueLock(&m_sampleOutQueueLock);
                   m_sampleOutQueue.push_back(outSample);
@@ -721,7 +755,7 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
     SAFE_DELETE(oldStreams);
   }
 
-  setTempoInternal(m_fNewTempo);
+  setTempoInternal(m_fNewTempo, m_fNewAdjustment);
 
   if (m_bEnableAC3Encoding && m_pWaveFormat)
   {
