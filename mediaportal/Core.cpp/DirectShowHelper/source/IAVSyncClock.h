@@ -23,8 +23,8 @@ struct CLOCKDATA
 {
   double driftMultiplier;
   double driftAdjustment;
-  INT32 driftHWvsSystem;
-  INT32 driftHWvsCorrected;
+  double driftHWvsSystem;
+  double driftHWvsCorrected;
 };
 
 // {91A198BA-1C78-4c31-A50F-0F5C7578F078}

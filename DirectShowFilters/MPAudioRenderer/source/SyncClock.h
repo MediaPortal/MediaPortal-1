@@ -50,11 +50,9 @@ private:
   UINT64 m_ullStartQpcHW;
   UINT64 m_ullStartTimeHW;
   UINT64 m_ullStartTimeSystem;
-  UINT64 m_ullStartTimeCorrected;
 
   INT64 m_llDurationHW;
   INT64 m_llDurationSystem;
-  INT64 m_llDurationCorrected;
 
   UINT64 m_ullPrevTimeHW;
   UINT64 m_ullPrevQpcHW;

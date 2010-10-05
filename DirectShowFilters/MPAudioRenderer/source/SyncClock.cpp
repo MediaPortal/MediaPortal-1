@@ -37,14 +37,12 @@ CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer
   m_ullStartQpcHW(0),
   m_ullStartTimeHW(0),
   m_ullStartTimeSystem(0),
-  m_ullStartTimeCorrected(0),
   m_ullPrevTimeHW(0),
   m_ullPrevQpcHW(0),
   m_dSystemClockMultiplier(1.0),
   m_bHWBasedRefClock(pUseHWRefClock),
   m_llDurationHW(0),
   m_llDurationSystem(0),
-  m_llDurationCorrected(0),
   m_dDeltaError(0.0),
   m_lOverallCorrection(0),
   m_ullPrevSystemTime(0),
@@ -75,9 +73,9 @@ double CSyncClock::Adjustment()
 
 void CSyncClock::GetClockData(CLOCKDATA *pClockData)
 {
-  // pointer is validated already in CMPAudioRenderer
+  // pClockData pointer is validated already in CMPAudioRenderer
   pClockData->driftMultiplier = m_dSystemClockMultiplier;
-  pClockData->driftHWvsSystem = (m_llDurationHW - m_llDurationSystem) / 10000;
+  pClockData->driftHWvsSystem = (m_llDurationHW - m_llDurationSystem) / 10000.0;
   pClockData->driftAdjustment = m_dAdjustmentDrift / 10000.0;
   pClockData->driftHWvsCorrected = m_lOverallCorrection / 10000;
 }
@@ -122,19 +120,14 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
     if (m_ullStartTimeHW == 0)
       m_ullStartTimeHW = hwClock;
 
-    if (m_ullStartTimeCorrected == 0)
-      m_ullStartTimeCorrected = m_ullPrivateTime;
-
     m_llDurationHW = (hwClock - m_ullStartTimeHW);
     m_llDurationSystem = (qpcNow - m_ullStartTimeSystem); 
-    m_llDurationCorrected = (m_ullPrivateTime - m_ullStartTimeCorrected);
 
     if (m_ullPrevTimeHW > hwClock)
     {
       m_ullStartTimeHW = m_ullPrevTimeHW = hwClock;
       m_ullStartQpcHW = m_ullPrevQpcHW = hwQpc;
       m_ullStartTimeSystem = qpcNow;
-      m_ullStartTimeCorrected = m_ullPrivateTime;
       m_dDeltaError = 0;
       m_lOverallCorrection = 0;
     }
