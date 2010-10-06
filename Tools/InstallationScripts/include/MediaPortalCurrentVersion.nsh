@@ -37,5 +37,17 @@
     !define VER_BUILD   0
 !endif
 
-;this is for display purposes
-!define VERSION "1.2.0"
+
+!if ${BUILD_TYPE} == "Debug"
+  !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION} >>DEBUG<< build ${VER_BUILD} for TESTING ONLY"
+!else
+!if ${VER_BUILD} == 0       # it's an official release
+  ;!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
+  ;this is for display purposes
+  !define VERSION "1.2.0"
+!else                       # it's a svn release
+  ;!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION} SVN build ${VER_BUILD} for TESTING ONLY"
+  ;this is for display purposes
+  !define VERSION "1.2.0 SVN build ${VER_BUILD} for TESTING ONLY"
+!endif
+!endif
