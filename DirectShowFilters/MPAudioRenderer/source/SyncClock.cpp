@@ -77,7 +77,7 @@ void CSyncClock::GetClockData(CLOCKDATA *pClockData)
   pClockData->driftMultiplier = m_dSystemClockMultiplier;
   pClockData->driftHWvsSystem = (m_llDurationHW - m_llDurationSystem) / 10000.0;
   pClockData->driftAdjustment = m_dAdjustmentDrift / 10000.0;
-  pClockData->driftHWvsCorrected = m_lOverallCorrection / 10000;
+  pClockData->driftHWvsCorrected = m_lOverallCorrection / 10000.0;
 }
 
 void CSyncClock::ProvideAdjustmentDrift(double drift)
