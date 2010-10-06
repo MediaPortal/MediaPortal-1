@@ -1513,6 +1513,12 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
           char frame_type = tc[((p[5]>>3)&7)];                     // Extract frame type (IBP). Just info.
           int frame_count = (p[5]>>6)+(p[4]<<2);                   // Extract temporal frame count to rebuild timestamp ( if required )
 
+          // TODO: try to drop non I-Frames when > 2.0x playback speed
+          //if (frame_type != 'I')
+
+			//double rate = 0.0;
+            //m_filter.GetVideoPin()->GetRate(&rate);
+
           m_pl.AddTail(p2);
 //          LogDebug("DeMultiplexer::FillVideo Frame length : %d %x %x", size, *(DWORD*)start, *(DWORD*)next);
         
