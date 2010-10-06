@@ -269,6 +269,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\IAVSyncClock.h"
+				>
+			</File>
+			<File
 				RelativePath=".\source\MyQueue.h"
 				>
 			</File>

@@ -29,6 +29,7 @@
 
 #include <dxva2api.h>
 #include <dwmapi.h>
+#include <Avrt.h>
 
 // This class is exported from the dshowhelper.dll
 class DSHOWHELPER_API Cdshowhelper 
@@ -58,6 +59,16 @@ extern TDwmEnableMMCSS* m_pDwmEnableMMCSS;
 
 typedef double __stdcall TW7GetRefreshRate();
 extern TW7GetRefreshRate* m_pW7GetRefreshRate;
+
+typedef HANDLE __stdcall TAvSetMmThreadCharacteristicsW(LPCWSTR TaskName, LPDWORD TaskIndex);
+extern TAvSetMmThreadCharacteristicsW*  m_pAvSetMmThreadCharacteristicsW;
+
+typedef BOOL __stdcall TAvRevertMmThreadCharacteristics(HANDLE AvrtHandle);
+extern TAvRevertMmThreadCharacteristics*  m_pAvRevertMmThreadCharacteristics;
+
+typedef BOOL __stdcall TAvSetMmThreadPriority(HANDLE AvrtHandle, AVRT_PRIORITY Priority);
+extern TAvSetMmThreadPriority*  m_pAvSetMmThreadPriority;
+
 
 HRESULT MyGetService(IUnknown* punkObject, REFGUID guidService, REFIID riid, LPVOID* ppvObject);
 
