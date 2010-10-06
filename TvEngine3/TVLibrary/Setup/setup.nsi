@@ -83,13 +83,8 @@
 !define COMMON_APPDATA        "$APPDATA\Team MediaPortal\MediaPortal TV Server"
 !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal TV Server"
 
-!define VER_MAJOR       1
-!define VER_MINOR       2
-!define VER_REVISION    0
-!ifndef VER_BUILD
-    !define VER_BUILD   0
-!endif
-
+; import version from shared file
+!include "${svn_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
 
 !if ${BUILD_TYPE} == "Debug"
   !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION} >>DEBUG<< build ${VER_BUILD} for TESTING ONLY"

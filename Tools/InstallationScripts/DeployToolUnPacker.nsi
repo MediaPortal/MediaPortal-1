@@ -46,9 +46,7 @@ Name "MediaPortal Unpacker"
 !define PRODUCT_PUBLISHER     "Team MediaPortal"
 !define PRODUCT_WEB_SITE      "www.team-mediaportal.com"
 
-!define VER_MAJOR       1
-!define VER_MINOR       2
-!define VER_REVISION    0
+; needs to be done before importing MediaPortalCurrentVersion, because there the VER_BUILD will be set, if not already.
 !ifdef VER_BUILD ; means !build_release was used
   !undef VER_BUILD
 
@@ -58,13 +56,10 @@ Name "MediaPortal Unpacker"
   !if ${VER_BUILD} == 0
     !warning "It seems there was an error, reading the svn revision. 0 will be used."
   !endif
-!else
-  !define VER_BUILD       0
 !endif
 
-;this is for display purposes
-!define VERSION "1.2.0"
-
+; import version from shared file
+!include "${svn_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
 
 #---------------------------------------------------------------------------
 # BUILD sources
