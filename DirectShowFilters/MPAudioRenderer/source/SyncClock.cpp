@@ -112,7 +112,7 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
   if (m_ullPrevSystemTime == 0)
     m_ullPrevSystemTime = qpcNow;
 
-  if (hwClock > 10000000 && hr == S_OK)
+  if (hr == S_OK)
   {
     if (m_ullStartQpcHW == 0)
       m_ullStartQpcHW = hwQpc;
