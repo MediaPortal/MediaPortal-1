@@ -324,7 +324,7 @@ DWORD CMultiSoundTouch::ResampleThread()
 
           if (m_fCurrentAdjustment != 1.0)
           {
-            UINT32 nFrames = (size - unprocessedSamplesAfter + unprocessedSamplesBefore) / m_pWaveFormat->Format.nBlockAlign;
+            UINT32 nFrames = size / m_pWaveFormat->Format.nBlockAlign - unprocessedSamplesAfter + unprocessedSamplesBefore;
             REFERENCE_TIME rtSampleDuration = nFrames * UNITS / m_pWaveFormat->Format.nSamplesPerSec;
             double drift = rtSampleDuration * (m_fCurrentAdjustment - 1.0);
             m_pClock->ProvideAdjustmentDrift(drift);
