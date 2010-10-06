@@ -52,6 +52,8 @@
 #---------------------------------------------------------------------------
 # path definitions
 !define svn_ROOT "..\..\.."
+!define svn_OUT "${svn_ROOT}\Release"
+
 !define svn_MP "${svn_ROOT}\mediaportal"
 !define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
 !define svn_Common_MP_TVE3 "${svn_ROOT}\Common-MP-TVE3"
@@ -216,9 +218,9 @@ UninstPage custom un.UninstallModePage un.UninstallModePageLeave
 Name          "${PRODUCT_NAME}"
 BrandingText  "${PRODUCT_NAME} ${VERSION} by ${PRODUCT_PUBLISHER}"
 !if ${VER_BUILD} == 0
-  OutFile "Release\package-tvengine.exe"
+  OutFile "${svn_OUT}\package-tvengine.exe"
 !else
-  OutFile "Release\Setup-TvEngine-svn-${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.exe"
+  OutFile "${svn_OUT}\Setup-TvEngine-svn-${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.exe"
 !endif
 InstallDir ""
 CRCCheck on

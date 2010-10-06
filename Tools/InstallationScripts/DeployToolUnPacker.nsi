@@ -45,6 +45,8 @@ Name "MediaPortal Unpacker"
 #---------------------------------------------------------------------------
 # path definitions
 !define svn_ROOT "..\.."
+!define svn_OUT "${svn_ROOT}\Release"
+
 !define svn_MP "${svn_ROOT}\mediaportal"
 !define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
 !define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
@@ -100,9 +102,9 @@ Name "MediaPortal Unpacker"
 Icon "${svn_DeployTool}\Install.ico"
 !define /date buildTIMESTAMP "%Y-%m-%d-%H-%M"
 !if ${VER_BUILD} == 0
-  OutFile "MediaPortalSetup_${VERSION}_${buildTIMESTAMP}.exe"
+  OutFile "${svn_OUT}\MediaPortalSetup_${VERSION}_${buildTIMESTAMP}.exe"
 !else
-  OutFile "MediaPortalSetup_${VERSION}_SVN${VER_BUILD}_${buildTIMESTAMP}.exe"
+  OutFile "${svn_OUT}\MediaPortalSetup_${VERSION}_SVN${VER_BUILD}_${buildTIMESTAMP}.exe"
 !endif
 InstallDir "$TEMP\MediaPortal Installation"
 
@@ -137,8 +139,8 @@ Section
   File /r /x .svn /x *.pdb /x *.vshost.exe "${svn_DeployTool}\bin\Release\*"
 
   SetOutPath $INSTDIR\deploy
-  File "${svn_MP}\Setup\Release\package-mediaportal.exe"
-  File "${svn_TVServer}\Setup\Release\package-tvengine.exe"
+  File "${svn_OUT}\package-mediaportal.exe"
+  File "${svn_OUT}\package-tvengine.exe"
 
   SetOutPath $INSTDIR\HelpContent\SetupGuide
   File /r /x .svn "${svn_DeployTool}\HelpContent\SetupGuide\*"

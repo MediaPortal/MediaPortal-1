@@ -52,6 +52,8 @@
 #---------------------------------------------------------------------------
 # path definitions
 !define svn_ROOT "..\.."
+!define svn_OUT "${svn_ROOT}\Release"
+
 !define svn_MP "${svn_ROOT}\mediaportal"
 !define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
 !define svn_Common_MP_TVE3 "${svn_ROOT}\Common-MP-TVE3"
@@ -59,7 +61,6 @@
 !define svn_DirectShowFilters "${svn_ROOT}\DirectShowFilters"
 !define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
 !define svn_TvEngine2 "${svn_ROOT}\TvEngine2"
-
 
 # additional path definitions
 !ifdef SVN_BUILD
@@ -221,9 +222,9 @@ UninstPage custom un.UninstallModePage un.UninstallModePageLeave
 Name          "${PRODUCT_NAME}"
 BrandingText  "${PRODUCT_NAME} ${VERSION} by ${PRODUCT_PUBLISHER}"
 !if ${VER_BUILD} == 0       # it's an official release
-  OutFile "Release\package-mediaportal.exe"
+  OutFile "${svn_OUT}\package-mediaportal.exe"
 !else                       # it's a svn release
-  OutFile "Release\Setup-MediaPortal-svn-${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.exe"
+  OutFile "${svn_OUT}\Setup-MediaPortal-svn-${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.exe"
 !endif
 InstallDir ""
 CRCCheck on
