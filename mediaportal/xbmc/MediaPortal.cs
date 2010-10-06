@@ -422,6 +422,10 @@ public class MediaPortalApp : D3DApp, IRender
         applicationPath = Path.GetDirectoryName(applicationPath);
         Directory.SetCurrentDirectory(applicationPath);
         Log.Info("Main: Set current directory to: {0}", applicationPath);
+
+        //Localization strings for new splashscreen and for MediaPortal itself
+        LoadLanguageString();
+
 #if !DEBUG
         string version = ConfigurationManager.AppSettings["version"];
         //ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
@@ -551,7 +555,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
 
 #if !DEBUG
-  // Check TvPlugin version
+          // Check TvPlugin version
           string MpExe = Assembly.GetExecutingAssembly().Location;
           string tvPlugin = Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll";
           if (File.Exists(tvPlugin) && !_avoidVersionChecking)
@@ -584,47 +588,47 @@ public class MediaPortalApp : D3DApp, IRender
         try
         {
 #endif
-        Application.DoEvents();
-        if (splashScreen != null)
-        {
-          splashScreen.SetInformation(GUILocalizeStrings.Get(62)); // Initializing DirectX...
-        }
-
-        MediaPortalApp app = new MediaPortalApp();
-        Log.Debug("Main: Initializing DirectX");
-        if (app.CreateGraphicsSample())
-        {
-          IMessageFilter filter = new ThreadMessageFilter(app);
-          Application.AddMessageFilter(filter);
-          // Initialize Input Devices
+          Application.DoEvents();
           if (splashScreen != null)
           {
-            splashScreen.SetInformation(GUILocalizeStrings.Get(63)); // Initializing input devices...
+            splashScreen.SetInformation(GUILocalizeStrings.Get(62)); // Initializing DirectX...
           }
-          InputDevices.Init();
-          try
+
+          MediaPortalApp app = new MediaPortalApp();
+          Log.Debug("Main: Initializing DirectX");
+          if (app.CreateGraphicsSample())
           {
-            //app.PreRun();
-            Log.Info("Main: Running");
-            GUIGraphicsContext.BlankScreen = false;
-            Application.Run(app);
-            app.Focus();
-            Debug.WriteLine("after Application.Run");
+            IMessageFilter filter = new ThreadMessageFilter(app);
+            Application.AddMessageFilter(filter);
+            // Initialize Input Devices
+            if (splashScreen != null)
+            {
+              splashScreen.SetInformation(GUILocalizeStrings.Get(63)); // Initializing input devices...
+            }
+            InputDevices.Init();
+            try
+            {
+              //app.PreRun();
+              Log.Info("Main: Running");
+              GUIGraphicsContext.BlankScreen = false;
+              Application.Run(app);
+              app.Focus();
+              Debug.WriteLine("after Application.Run");
+            }
+            //#if !DEBUG
+            catch (Exception ex)
+            {
+              Log.Error(ex);
+              Log.Error("MediaPortal stopped due to an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+              _mpCrashed = true;
+            }
+            //#endif
+            finally
+            {
+              Application.RemoveMessageFilter(filter);
+            }
+            app.OnExit();
           }
-          //#if !DEBUG
-          catch (Exception ex)
-          {
-            Log.Error(ex);
-            Log.Error("MediaPortal stopped due to an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-            _mpCrashed = true;
-          }
-          //#endif
-          finally
-          {
-            Application.RemoveMessageFilter(filter);
-          }
-          app.OnExit();
-        }
 #if !DEBUG
         }
         catch (Exception ex)
@@ -789,15 +793,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       using (Settings xmlreader = new MPSettings())
       {
-        if (_strSkinOverride.Length > 0)
-        {
-          m_strSkin = _strSkinOverride;
-        }
-        else
-        {
-          m_strSkin = xmlreader.GetValueAsString("skin", "name", "Blue3");
-        }
-        m_strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
+        m_strSkin = _strSkinOverride.Length > 0 ? _strSkinOverride : xmlreader.GetValueAsString("skin", "name", "Blue3");
         _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", true);
         GUIGraphicsContext.MouseSupport = xmlreader.GetValueAsBool("general", "mousesupport", false);
         GUIGraphicsContext.AllowRememberLastFocusedItem = xmlreader.GetValueAsBool("general",
@@ -811,7 +807,6 @@ public class MediaPortalApp : D3DApp, IRender
     catch (Exception)
     {
       m_strSkin = "Blue3";
-      m_strLanguage = "English";
     }
     SetStyle(ControlStyles.Opaque, true);
     SetStyle(ControlStyles.UserPaint, true);
@@ -1534,6 +1529,38 @@ public class MediaPortalApp : D3DApp, IRender
   }
 
   /// <summary>
+  /// Load string_xx.xml based on config
+  /// </summary>
+  private static void LoadLanguageString()
+  {
+    string mylang;
+    try
+    {
+      using (Settings xmlreader = new MPSettings())
+      {
+        mylang = xmlreader.GetValueAsString("skin", "language", "English");
+      }
+    }
+    catch
+    {
+      Log.Warn("Load language file failed, fallback to \"English\"");
+      mylang = "English";
+    }
+    Log.Info("Loading selected language: " + mylang);
+    try
+    {
+      GUILocalizeStrings.Load(mylang);
+    }
+    catch (Exception ex)
+    {
+      MessageBox.Show(
+        String.Format("Failed to load your language! Aborting startup...\n\n{0}\nstack:{1}", ex.Message, ex.StackTrace),
+        "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+      Application.Exit();
+    }
+  }
+
+  /// <summary>
   /// saves last active module.
   /// </summary>
   private void SaveLastActiveModule()
@@ -1691,20 +1718,8 @@ public class MediaPortalApp : D3DApp, IRender
     GUITextureManager.Dispose();
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(65)); // Loading keymap.xml...
     ActionTranslator.Load();
-    UpdateSplashScreenMessage(GUILocalizeStrings.Get(66)); // Loading strings...
     GUIGraphicsContext.Skin = m_strSkin;
     GUIGraphicsContext.ActiveForm = Handle;
-    try
-    {
-      GUILocalizeStrings.Load(m_strLanguage); //Config.GetFile(Config.Dir.Language, m_strLanguage, "strings.xml"));
-    }
-    catch (Exception exl)
-    {
-      MessageBox.Show(
-        String.Format("Failed to load your language! Aborting startup...\n\n{0}\nstack:{1}", exl.Message, exl.StackTrace),
-        "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-      Close();
-    }
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(67)); // Caching graphics...
     try
     {
@@ -3763,10 +3778,10 @@ public class MediaPortalApp : D3DApp, IRender
         return;
       }
 #if !DEBUG
-    if (splashScreen != null)
-    {
-      splashScreen.AllowWindowOverlay((Form)form);
-    }
+      if (splashScreen != null)
+      {
+        splashScreen.AllowWindowOverlay((Form)form);
+      }
 #endif
       form.ShowDialog(this);
     }
