@@ -52,14 +52,9 @@
 #---------------------------------------------------------------------------
 # path definitions
 !define svn_ROOT "..\..\.."
-!define svn_OUT "${svn_ROOT}\Release"
-
-!define svn_MP "${svn_ROOT}\mediaportal"
-!define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
-!define svn_Common_MP_TVE3 "${svn_ROOT}\Common-MP-TVE3"
-!define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
-!define svn_DirectShowFilters "${svn_ROOT}\DirectShowFilters"
 !define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
+# common script init
+!include "${svn_InstallScripts}\include\MediaPortalScriptInit.nsh"
 
 # additional path definitions
 !define TVSERVER.BASE "${svn_TVServer}\TVServer.Base"

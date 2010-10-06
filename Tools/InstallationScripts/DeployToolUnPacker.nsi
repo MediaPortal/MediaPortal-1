@@ -45,13 +45,9 @@ Name "MediaPortal Unpacker"
 #---------------------------------------------------------------------------
 # path definitions
 !define svn_ROOT "..\.."
-!define svn_OUT "${svn_ROOT}\Release"
-
-!define svn_MP "${svn_ROOT}\mediaportal"
-!define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
-!define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
 !define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
-!define svn_DeployVersionSVN "${svn_ROOT}\Tools\Script & Batch tools\DeployVersionSVN"
+# common script init
+!include "${svn_InstallScripts}\include\MediaPortalScriptInit.nsh"
 
 
 #---------------------------------------------------------------------------
