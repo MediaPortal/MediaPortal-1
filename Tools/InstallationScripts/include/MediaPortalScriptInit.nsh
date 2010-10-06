@@ -41,4 +41,4 @@
 
 !define svn_DeployVersionSVN "${svn_ROOT}\Tools\Script & Batch tools\DeployVersionSVN"
 
-!system 'mkdir "${svn_OUT}"' = 0
+!system 'mkdir "${svn_OUT}"'
