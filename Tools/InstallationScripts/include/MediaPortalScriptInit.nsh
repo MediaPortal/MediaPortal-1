@@ -29,6 +29,17 @@
 #
 #**********************************************************************************************************#
 
+##### BUILD_TYPE
+# Uncomment the following line to create a setup in debug mode
+;!define BUILD_TYPE "Debug"
+# parameter for command line execution: /DBUILD_TYPE=Debug
+# by default BUILD_TYPE is set to "Release"
+!ifndef BUILD_TYPE
+  !define BUILD_TYPE "Release"
+!endif
+
+
+##### path definitions
 !define svn_OUT "${svn_ROOT}\Release"
 
 !define svn_MP "${svn_ROOT}\mediaportal"

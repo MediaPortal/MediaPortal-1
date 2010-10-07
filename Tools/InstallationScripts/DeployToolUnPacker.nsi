@@ -26,23 +26,9 @@
 #**********************************************************************************************************#
 
 #---------------------------------------------------------------------------
-# SPECIAL BUILDS
-#---------------------------------------------------------------------------
-##### BUILD_TYPE
-# Uncomment the following line to create a setup in debug mode
-;!define BUILD_TYPE "Debug"
-# parameter for command line execution: /DBUILD_TYPE=Debug
-# by default BUILD_TYPE is set to "Release"
-!ifndef BUILD_TYPE
-  !define BUILD_TYPE "Release"
-!endif
-
-Name "MediaPortal Unpacker"
-;SetCompressor /SOLID lzma
-
-#---------------------------------------------------------------------------
 # DEVELOPMENT ENVIRONMENT
 #---------------------------------------------------------------------------
+!define SKRIPT_NAME "MediaPortal Unpacker"
 # path definitions
 !define svn_ROOT "..\.."
 !define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
@@ -95,6 +81,8 @@ Name "MediaPortal Unpacker"
 #---------------------------------------------------------------------------
 # INSTALLER ATTRIBUTES
 #---------------------------------------------------------------------------
+Name          "${SKRIPT_NAME}"
+BrandingText  "${PRODUCT_NAME} ${VERSION} by ${PRODUCT_PUBLISHER}"
 Icon "${svn_DeployTool}\Install.ico"
 !define /date buildTIMESTAMP "%Y-%m-%d-%H-%M"
 !if ${VER_BUILD} == 0

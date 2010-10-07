@@ -37,15 +37,6 @@
 ;!define HEISE_BUILD
 # parameter for command line execution: /DHEISE_BUILD
 
-##### BUILD_TYPE
-# Uncomment the following line to create a setup in debug mode
-;!define BUILD_TYPE "Debug"
-# parameter for command line execution: /DBUILD_TYPE=Debug
-# by default BUILD_TYPE is set to "Release"
-!ifndef BUILD_TYPE
-  !define BUILD_TYPE "Release"
-!endif
-
 
 #---------------------------------------------------------------------------
 # DEVELOPMENT ENVIRONMENT
@@ -58,7 +49,6 @@
 
 # additional path definitions
 !define TVSERVER.BASE "${svn_TVServer}\TVServer.Base"
-#!define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
 !ifdef SVN_BUILD
   !define MEDIAPORTAL.BASE "E:\compile\compare_mp1_test"
 !else
@@ -212,9 +202,9 @@ UninstPage custom un.UninstallModePage un.UninstallModePageLeave
 #---------------------------------------------------------------------------
 Name          "${PRODUCT_NAME}"
 BrandingText  "${PRODUCT_NAME} ${VERSION} by ${PRODUCT_PUBLISHER}"
-!if ${VER_BUILD} == 0
+!if ${VER_BUILD} == 0       # it's an official release
   OutFile "${svn_OUT}\package-tvengine.exe"
-!else
+!else                       # it's a svn release
   OutFile "${svn_OUT}\Setup-TvEngine-svn-${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.exe"
 !endif
 InstallDir ""
