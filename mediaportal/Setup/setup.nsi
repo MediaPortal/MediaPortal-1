@@ -41,7 +41,9 @@
 #---------------------------------------------------------------------------
 # DEVELOPMENT ENVIRONMENT
 #---------------------------------------------------------------------------
-# path definitions
+# SKRIPT_NAME is needed to diff between the install scripts in imported headers
+!define SKRIPT_NAME "MediaPortal"
+# path definitions, all others are done in MediaPortalScriptInit
 !define svn_ROOT "..\.."
 !define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
 # common script init

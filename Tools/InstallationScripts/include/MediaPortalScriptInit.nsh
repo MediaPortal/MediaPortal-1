@@ -20,12 +20,14 @@
 
 #**********************************************************************************************************#
 #
-#                         MediaPortal's Current Version
+#                         MediaPortal's NSIS initialization
 #
 #    This file is included in:
 #       - MediaPortal setup
 #       - TVServer setup
 #       - DeployTool unpacker
+#
+#     Here are commonly used special builds and paths defined.
 #
 #**********************************************************************************************************#
 
