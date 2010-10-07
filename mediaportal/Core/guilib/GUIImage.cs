@@ -870,24 +870,31 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Free the DirectX resources needed for rendering this GUIImage.
     /// </summary>
-    [MethodImpl(MethodImplOptions.Synchronized)]
     public override void Dispose()
     {
-      if (logtextures)
-      {
-        Log.Info("GUIImage:Dispose:{0} {1}", _debugCachedTextureFileName, _debugGuid);
-        //Log.Info("stacktrace:{0}", _debugCachedTextureFileName, _debugGuid);
-      }
+      lock (GUIGraphicsContext.RenderLock) {
+        lock (this) 
+        {
+          if (!_allocated)
+          {
+            return;
+          }
+          
+          if (logtextures) {
+            Log.Info("GUIImage:Dispose:{0} {1}", _debugCachedTextureFileName, _debugGuid);
+          }
 
-      //base.Dispose(); // breaks fade in/out animations-.
-      _allocated = false;
-      UnsubscribeOnPropertyChanged();
-      UnsubscribeAndReleaseListTextures();
-      Cleanup();      
-      
-      _memoryImage.SafeDispose();
-      _memoryImageTexture = null;
-      //_debugDisposed = true;      
+          //base.Dispose(); // breaks fade in/out animations-.
+          _allocated = false;
+          UnsubscribeOnPropertyChanged();
+          UnsubscribeAndReleaseListTextures();
+          Cleanup();
+
+          _memoryImage.SafeDispose();
+          _memoryImageTexture = null;
+          //_debugDisposed = true;   
+        }
+      }
     }
 
     private void UnsubscribeOnPropertyChanged()
