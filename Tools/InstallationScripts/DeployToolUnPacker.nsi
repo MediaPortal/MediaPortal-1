@@ -24,6 +24,8 @@
 #       1. Latest NSIS version from http://nsis.sourceforge.net/Download
 #
 #**********************************************************************************************************#
+!echo $%COMPUTERNAME%
+!error
 
 #---------------------------------------------------------------------------
 # DEVELOPMENT ENVIRONMENT
