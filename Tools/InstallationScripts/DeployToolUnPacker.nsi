@@ -24,8 +24,6 @@
 #       1. Latest NSIS version from http://nsis.sourceforge.net/Download
 #
 #**********************************************************************************************************#
-!echo $%COMPUTERNAME%
-!error
 
 #---------------------------------------------------------------------------
 # DEVELOPMENT ENVIRONMENT
@@ -126,8 +124,17 @@ Section
   File /r /x .svn /x *.pdb /x *.vshost.exe "${svn_DeployTool}\bin\Release\*"
 
   SetOutPath $INSTDIR\deploy
+#code after build scripts are fixed
+!if "$%COMPUTERNAME%" != "S15341228"
   File "${svn_OUT}\package-mediaportal.exe"
   File "${svn_OUT}\package-tvengine.exe"
+!else
+
+#code before build scripts are fixed
+  File "${svn_MP}\Setup\Release\package-mediaportal.exe"
+  File "${svn_TVServer}\Setup\Release\package-tvengine.exe"
+#end of workaound code
+!endif
 
   SetOutPath $INSTDIR\HelpContent\SetupGuide
   File /r /x .svn "${svn_DeployTool}\HelpContent\SetupGuide\*"

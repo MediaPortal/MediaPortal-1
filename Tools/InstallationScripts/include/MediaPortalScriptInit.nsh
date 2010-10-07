@@ -30,6 +30,8 @@
 #     Here are commonly used special builds and paths defined.
 #
 #**********************************************************************************************************#
+!echo "%COMPUTERNAME% = $%COMPUTERNAME%"
+
 
 ##### BUILD_TYPE
 # Uncomment the following line to create a setup in debug mode
@@ -42,7 +44,6 @@
 
 
 ##### path definitions
-!define svn_OUT "${svn_ROOT}\Release"
 
 !define svn_MP "${svn_ROOT}\mediaportal"
 !define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
@@ -53,5 +54,28 @@
 !define svn_TvEngine2 "${svn_ROOT}\TvEngine2"
 
 !define svn_DeployVersionSVN "${svn_ROOT}\Tools\Script & Batch tools\DeployVersionSVN"
+
+#code after build scripts are fixed
+!if "$%COMPUTERNAME%" != "S15341228"
+!define svn_OUT "${svn_ROOT}\Release"
+!else
+
+#code before build scripts are fixed
+!if "${SKRIPT_NAME}" == "MediaPortal"
+  !define svn_OUT "${svn_MP}\Setup\Release"
+!else
+
+  !if "${SKRIPT_NAME}" == "MediaPortal TV Server / Client"
+    !define svn_OUT "${svn_TVServer}\Setup\Release"
+  !else
+
+    !if "${SKRIPT_NAME}" == "MediaPortal Unpacker"
+      !define svn_OUT "${svn_InstallScripts}"
+    !endif
+
+  !endif
+!endif
+#end of workaound code
+!endif
 
 !system 'mkdir "${svn_OUT}"'
