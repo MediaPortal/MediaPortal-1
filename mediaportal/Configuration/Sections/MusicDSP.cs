@@ -399,7 +399,7 @@ namespace MediaPortal.Configuration.Sections
       {
         _waDspPlugin = _waDspPlugins[pluginInfo.FilePath];
         BassWaDsp.BASS_WADSP_Start(_waDspPlugin, 0, 0);
-        BassWaDsp.BASS_WADSP_Config(_waDspPlugin, 0);
+        BassWaDsp.BASS_WADSP_Config(_waDspPlugin);
       }
     }
 
@@ -719,11 +719,11 @@ namespace MediaPortal.Configuration.Sections
       // WinAmp Plugins
 
       // Get the available plugins in the directory and fill the found listbox
-      WINAMP_DSP[] dsps = BassWaDsp.BASS_WADSP_FindPlugins(pluginPath);
-      foreach (WINAMP_DSP winampPlugin in dsps)
+      WINAMP_DSP.FindPlugins(pluginPath);
+      foreach (WINAMP_DSP winampPlugin in WINAMP_DSP.PlugIns)
       {
-        DSPPluginInfo pluginInfo = new DSPPluginInfo(DSPPluginInfo.PluginType.Winamp, winampPlugin.file,
-                                                     winampPlugin.description);
+        DSPPluginInfo pluginInfo = new DSPPluginInfo(DSPPluginInfo.PluginType.Winamp, winampPlugin.File,
+                                                     winampPlugin.Description);
         if (pluginInfo.IsBlackListed)
         {
           Log.Info("DSP Plugin {0} may not be used, as it is known for causing problems.", pluginInfo.FilePath);

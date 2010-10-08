@@ -20,10 +20,11 @@
 
 using System;
 using System.Drawing;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using Un4seen.Bass.AddOn.Vis;
+using BassVis_Api;
 
 namespace MediaPortal.Visualization
 {
@@ -55,7 +56,8 @@ namespace MediaPortal.Visualization
     protected static BassAudioEngine _Bass = null;
     protected bool _Initialized = false;
     protected bool _IsPreviewVisualization = false;
-    protected BASS_VIS_PARAM _visParam = null;
+    protected BASSVIS_PARAM _visParam = null;
+    protected BASSVIS_PARAM _baseVisParam = null;
 
     #region Properties
 
@@ -76,7 +78,7 @@ namespace MediaPortal.Visualization
       get { return _Initialized; }
     }
 
-    public BASS_VIS_PARAM VizParam
+    public BASSVIS_PARAM VizParam
     {
       get { return _visParam; }
     }
@@ -103,20 +105,17 @@ namespace MediaPortal.Visualization
       VisualizationWindow = vizCtrl;
 
       // Init BAssVis
+      IntPtr hInstance = Marshal.GetHINSTANCE(Assembly.GetExecutingAssembly().GetModules()[0]);
       switch (VizPluginInfo.VisualizationType)
       {
         case VisualizationInfo.PluginType.Sonique:
-          BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_SONIQUE,
-                                BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE),
-                                GUIGraphicsContext.form.Handle);
-          _visParam = new BASS_VIS_PARAM(BASSVISPlugin.BASSVISKIND_SONIQUE);
+          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_SONIQUE, hInstance, GUIGraphicsContext.form.Handle);
+          _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_SONIQUE);
           break;
 
         case VisualizationInfo.PluginType.Winamp:
-          BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_WINAMP,
-                                BassVis.GetWindowLongPtr(GUIGraphicsContext.form.Handle, (int)GWLIndex.GWL_HINSTANCE),
-                                GUIGraphicsContext.form.Handle);
-          _visParam = new BASS_VIS_PARAM(BASSVISPlugin.BASSVISKIND_WINAMP);
+          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_WINAMP, hInstance, GUIGraphicsContext.form.Handle);
+          _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_WINAMP);
           break;
       }
     }
@@ -220,13 +219,7 @@ namespace MediaPortal.Visualization
           int i = 0;
           try
           {
-            BassVis.BASS_VIS_Free(_visParam);
-            while (!BassVis.BASS_VIS_IsFree(_visParam) && i < 5)
-            {
-              BassVis.BASS_VIS_Free(_visParam);
-              i++;
-              System.Threading.Thread.Sleep(20);
-            }
+            BassVis.BASSVIS_Free(_visParam, ref _baseVisParam);
           }
           catch (AccessViolationException) {}
 
@@ -235,7 +228,7 @@ namespace MediaPortal.Visualization
 
         if (_visParam != null)
         {
-          BassVis.BASS_VIS_Quit(_visParam);
+          BassVis.BASSVIS_Quit(_visParam);
           _visParam = null;
         }
         return true;

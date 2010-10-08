@@ -30,7 +30,7 @@ using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Visualization;
 using Un4seen.Bass;
-using Un4seen.Bass.AddOn.Vis;
+using BassVis_Api;
 
 #pragma warning disable 108
 
@@ -118,7 +118,7 @@ namespace MediaPortal.Configuration.Sections
     private bool VisualizationsInitialized = false;
     private bool SuppressVisualizationRestart = false;
     private bool EnqueueNext = true;
-    private BASS_VIS_PARAM _visParam = null;
+    private BASSVIS_PARAM _visParam = null;
 
     #endregion
 
@@ -678,7 +678,7 @@ namespace MediaPortal.Configuration.Sections
         // Close eventually open Winamp stuff
         if (_visParam != null)
         {
-          BassVis.BASS_VIS_Quit(_visParam);
+          BassVis.BASSVIS_Quit(_visParam);
         }
 
         // Make sure we shut down the viz engine
@@ -1893,16 +1893,16 @@ namespace MediaPortal.Configuration.Sections
       if (_visParam != null)
       {
         // Free first the previous winamp plugin
-        BassVis.BASS_VIS_Quit(_visParam);
+        BassVis.BASSVIS_Quit(_visParam);
       }
-      _visParam = new BASS_VIS_PARAM(BASSVISPlugin.BASSVISKIND_WINAMP);
-      BassVis.BASS_VIS_Init(BASSVISPlugin.BASSVISKIND_WINAMP, System.Diagnostics.Process.GetCurrentProcess().Handle,
+      _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_WINAMP);
+      BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_WINAMP, System.Diagnostics.Process.GetCurrentProcess().Handle,
                             MediaPortal.GUI.Library.GUIGraphicsContext.form.Handle);
-      int tmpVis = BassVis.BASS_VIS_GetPluginHandle(BASSVISPlugin.BASSVISKIND_WINAMP, VizPluginInfo.FilePath);
+      int tmpVis = BassVis.BASSVIS_GetPluginHandle(BASSVISKind.BASSVISKIND_WINAMP, VizPluginInfo.FilePath);
       if (tmpVis != 0)
       {
-        int numModules = BassVis.BASS_VIS_GetModulePresetCount(_visParam, VizPluginInfo.FilePath);
-        BassVis.BASS_VIS_Config(_visParam, 0);
+        int numModules = BassVis.BASSVIS_GetModulePresetCount(_visParam, VizPluginInfo.FilePath);
+        BassVis.BASSVIS_Config(_visParam, 0);
       }
     }
   }

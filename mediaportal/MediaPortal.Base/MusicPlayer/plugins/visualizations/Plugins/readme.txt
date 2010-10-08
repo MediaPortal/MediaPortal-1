@@ -1,0 +1,1 @@
+Place all Winamp Vis in this folder
