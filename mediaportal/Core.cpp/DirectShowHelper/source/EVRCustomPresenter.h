@@ -100,7 +100,7 @@ class MPEVRCustomPresenter
 {
 
 public:
-  MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter* EVRFilter, BOOL pIsWin7);
+  MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter* EVRFilter, bool pIsWin7);
   virtual ~MPEVRCustomPresenter();
 
   //IQualProp (stub)
@@ -348,6 +348,9 @@ protected:
   void CalculateNSTStats(LONGLONG timeStamp);
   void CalculatePresClockDelta(LONGLONG presTime, LONGLONG sysTime);
 
+  bool QueryFpsFromVideoMSDecoder();
+  bool ExtractAvgTimePerFrame(const AM_MEDIA_TYPE* pmt, REFERENCE_TIME& rtAvgTimePerFrame);
+
   double m_dDetectedScanlineTime;
   double m_dEstRefreshCycle; 
   bool   m_estRefreshLock;
@@ -393,7 +396,8 @@ protected:
   LONGLONG      m_lastPresentTime;
   LONGLONG      m_lastDelayErr;
   
-  BOOL          m_bIsWin7;
+  bool          m_bIsWin7;
+  bool          m_bMsVideoCodec;
   
   IAVSyncClock* m_pAVSyncClock;
   double        m_dBias;

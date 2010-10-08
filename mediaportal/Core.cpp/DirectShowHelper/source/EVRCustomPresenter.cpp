@@ -58,11 +58,12 @@ void LogGUID(REFGUID guid)
   CoTaskMemFree(str);
 }
 
-MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter* EVRFilter, BOOL pIsWin7):
+MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter* EVRFilter, bool pIsWin7):
   m_refCount(1), 
   m_qScheduledSamples(NUM_SURFACES),
   m_EVRFilter(EVRFilter),
   m_bIsWin7(pIsWin7),
+  m_bMsVideoCodec(true),
   m_pAVSyncClock(NULL),
   m_dBias(1.0),
   m_dMaxBias(1.1),
@@ -83,7 +84,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     HRESULT hr;
     LogRotate();
     Log("----- Owlsroost Version ------ instance 0x%x", this);
-    Log("---------- v0.0.46 ----------- instance 0x%x", this);
+    Log("---------- v0.0.47 ----------- instance 0x%x", this);
     Log("--- audio renderer testing --- instance 0x%x", this);
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
@@ -158,7 +159,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
       break; //only go round the loop again if we don't get a good result
     }
   }
-  
+
   m_pStatsRenderer = new StatsRenderer(this, m_pD3DDev);
 }
 
@@ -760,7 +761,9 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
 
     if (hr == 0 && videoFormat->videoInfo.FramesPerSecond.Numerator != 0)
     {
-      m_rtTimePerFrame = (10000000I64*videoFormat->videoInfo.FramesPerSecond.Denominator)/videoFormat->videoInfo.FramesPerSecond.Numerator;
+      if (!m_bMsVideoCodec || m_bMsVideoCodec && m_rtTimePerFrame == 0)
+        m_rtTimePerFrame = (10000000I64*videoFormat->videoInfo.FramesPerSecond.Denominator)/videoFormat->videoInfo.FramesPerSecond.Numerator;
+
       Log("Time Per Frame: %.3f ms", (double)m_rtTimePerFrame/10000.0);
       // HD
       if (videoFormat->videoInfo.dwHeight >= 720 || videoFormat->videoInfo.dwWidth >= 1280)
@@ -3162,7 +3165,6 @@ void MPEVRCustomPresenter::CalculateNSTStats(LONGLONG timeStamp)
   {
     m_fCFPMean = cfpDiff;
   }
-  
 }
 
 
@@ -3215,7 +3217,48 @@ void MPEVRCustomPresenter::CalculatePresClockDelta(LONGLONG presTime, LONGLONG s
   {
     m_fPCDMean = 1.0;
   }
-    
+}
+
+bool MPEVRCustomPresenter::QueryFpsFromVideoMSDecoder()
+{
+  FILTER_INFO filterInfo;
+  ZeroMemory(&filterInfo, sizeof(filterInfo));
+  m_EVRFilter->QueryFilterInfo(&filterInfo); // This addref's the pGraph member
+
+  CComPtr<IBaseFilter> pBaseFilter;
+
+  HRESULT hr = filterInfo.pGraph->FindFilterByName(L"Microsoft DTV-DVD Video Decoder", &pBaseFilter);
+  filterInfo.pGraph->Release();
+  if (hr == S_OK)
+  {
+    IPin* pin;
+    HRESULT rr = pBaseFilter->FindPin(L"Video Input", &pin);
+    CMediaType mt; 
+    pin->ConnectionMediaType(&mt);
+    ExtractAvgTimePerFrame(&mt, m_rtTimePerFrame);
+
+    Log("Found Microsoft DTV-DVD Video Decoder - using the FPS from Video Input pin");
+    return true;
+  }
+
+  return false;
+}
+
+
+bool MPEVRCustomPresenter::ExtractAvgTimePerFrame(const AM_MEDIA_TYPE* pmt, REFERENCE_TIME& rtAvgTimePerFrame)
+{
+	if (pmt->formattype==FORMAT_VideoInfo)
+		rtAvgTimePerFrame = ((VIDEOINFOHEADER*)pmt->pbFormat)->AvgTimePerFrame;
+	else if (pmt->formattype==FORMAT_VideoInfo2)
+		rtAvgTimePerFrame = ((VIDEOINFOHEADER2*)pmt->pbFormat)->AvgTimePerFrame;
+	else if (pmt->formattype==FORMAT_MPEGVideo)
+		rtAvgTimePerFrame = ((MPEG1VIDEOINFO*)pmt->pbFormat)->hdr.AvgTimePerFrame;
+	else if (pmt->formattype==FORMAT_MPEG2Video)
+		rtAvgTimePerFrame = ((MPEG2VIDEOINFO*)pmt->pbFormat)->hdr.AvgTimePerFrame;
+	else
+		return false;
+
+	return true;
 }
 
 
@@ -3227,6 +3270,9 @@ void MPEVRCustomPresenter::GetAVSyncClockInterface()
   {
     return;
   }
+
+  m_bMsVideoCodec = QueryFpsFromVideoMSDecoder();
+  SetupAudioRenderer();
 
   FILTER_INFO filterInfo;
   ZeroMemory(&filterInfo, sizeof(filterInfo));
@@ -3360,7 +3406,7 @@ void MPEVRCustomPresenter::AdjustAVSync(double currentPhaseDiff)
   if (m_pAVSyncClock && m_dVariableFreq != m_dPreviousVariableFreq)
   {
     HRESULT hr = m_pAVSyncClock->AdjustClock(1.0/m_dVariableFreq);
-    if (hr == S_OK)
+    if (hr == S_OK && m_dPreviousVariableFreq == 1.0)
     {
       m_iClockAdjustmentsDone++;
     }
