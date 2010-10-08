@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -116,6 +117,10 @@ namespace MediaPortal.GUI.Pictures
                   if (recreateThumbs || !File.Exists(thumbnailImage))
                   {
                     Thread.Sleep(10);
+
+                    iRotate = Util.Picture.GetRotateByExif(item.Path);
+                    Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item.Path);
+                    
                     if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution,
                                                      (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall))
                     {

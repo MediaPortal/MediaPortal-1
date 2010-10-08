@@ -1006,6 +1006,36 @@ namespace MediaPortal.Util
         }
       }
     }
+
+
+
+    public static int GetRotateByExif(string imageFile)
+    {
+      Image image = Image.FromFile(imageFile);
+      return GetRotateByExif(image);
+    }
+    
+    public static int GetRotateByExif(Image image)
+    {
+      PropertyItem[] propItems = image.PropertyItems;
+      foreach (PropertyItem propItem in propItems)
+      {
+        if (propItem.Id == 0x112)
+        {
+          int iType = Convert.ToInt16(propItem.Value[0]);
+          switch (iType)
+          {
+            case 06: return 1; // 90 degree:  112/03/06 00
+            case 03: return 2; // 180 degree: 112/03/03 00
+            case 08: return 3; // 270 degree: 112/03/08 00
+          }
+          break;
+        }
+      }
+      return 0; // not rotated
+    }
+
+
   }
 
 //public class Picture

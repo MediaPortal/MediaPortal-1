@@ -2493,6 +2493,21 @@ namespace MediaPortal.Util
         try
         {
           img = Image.FromFile(strFileName);
+          int iRotation = Util.Picture.GetRotateByExif(img);
+          switch (iRotation)
+          {
+            case 1:
+              img.RotateFlip(RotateFlipType.Rotate90FlipNone);
+              break;
+            case 2:
+              img.RotateFlip(RotateFlipType.Rotate180FlipNone);
+              break;
+            case 3:
+              img.RotateFlip(RotateFlipType.Rotate270FlipNone);
+              break;
+            default:
+              break;
+          }
 
           if (img != null)
             g.DrawImage(img, x, y, w, h);
