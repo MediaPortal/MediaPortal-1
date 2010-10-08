@@ -790,8 +790,9 @@ namespace MediaPortal.Player
           bool setRateFailed = false;
           if (_CodecSupportsFastSeeking)
           {
-            if (g_Player.IsVideo) // only for video
-              VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
+            // Inform dshowhelper of playback rate changes
+            VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
+              
             if (iSpeed != value)
             {
               _usingFastSeeking = true;
