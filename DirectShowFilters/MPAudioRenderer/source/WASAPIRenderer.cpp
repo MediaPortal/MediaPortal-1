@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "WASAPIRenderer.h"
+#include "TimeSource.h"
 
 #include "alloctracing.h"
 
@@ -82,6 +83,8 @@ WASAPIRenderer::WASAPIRenderer(CMPAudioRenderer* pRenderer, HRESULT *phr) :
   m_pRenderFormat(NULL),
   m_StreamFlags(AUDCLNT_STREAMFLAGS_EVENTCALLBACK)
 {
+  ResetClockData();
+
   IMMDeviceCollection* devices = NULL;
   GetAvailableAudioDevices(&devices, true);
   SAFE_RELEASE(devices); // currently only log available devices
@@ -318,6 +321,7 @@ HRESULT WASAPIRenderer::BeginFlush()
   Log("WASAPIRenderer::BeginFlush");
 
   m_bDiscardCurrentSample = true;
+  ResetClockData();
 
   StopAudioClient(&m_pAudioClient);
   return S_OK;
@@ -333,6 +337,8 @@ HRESULT WASAPIRenderer::Run(REFERENCE_TIME tStart)
   Log("WASAPIRenderer::Run");
 
   HRESULT hr = 0;
+
+  ResetClockData();
 
   hr = CheckAudioClient(m_pRenderFormat);
   if (FAILED(hr)) 
@@ -392,13 +398,82 @@ HRESULT WASAPIRenderer::Pause(FILTER_STATE pState)
 
 HRESULT WASAPIRenderer::AudioClock(ULONGLONG& pTimestamp, ULONGLONG& pQpc)
 {
+  CAutoLock cAutoLock(&m_csClockLock);
+
+  if (m_dClockPosIn == m_dClockPosOut || m_dClockDataCollectionCount < CLOCK_DATA_SIZE)
+    return S_FALSE;
+
+  // check for discontinuity point
+  if ((m_ullHwClock[m_dClockPosIn] < m_ullHwClock[m_dClockPosOut]) ||
+       m_ullHwQpc[m_dClockPosIn] < m_ullHwQpc[m_dClockPosOut])
+  {
+    ResetClockData();
+    return S_FALSE;
+  }
+
+  //Log("m_dClockPosIn: %d m_dClockPosOut: %d diff: %I64u",m_dClockPosIn, m_dClockPosOut, m_ullHwClock[m_dClockPosIn] - m_ullHwClock[m_dClockPosOut] );
+
+  UINT64 clock = m_ullHwClock[m_dClockPosIn] - m_ullHwClock[m_dClockPosOut];
+  UINT64 qpc = m_ullHwQpc[m_dClockPosIn] - m_ullHwQpc[m_dClockPosOut];
+
+  if (qpc == 0)
+    return S_FALSE;
+
+  UINT64 qpcNow = GetCurrentTimestamp() - m_ullHwQpc[m_dClockPosOut];
+
+  pTimestamp = cMulDiv64(clock, qpcNow, qpc) + m_ullHwClock[m_dClockPosOut];
+  pQpc = qpcNow + m_ullHwQpc[m_dClockPosOut];
+
+  return S_OK;
+}
+
+static UINT64 prevPos = 0; // for debugging only, remove later
+
+void WASAPIRenderer::UpdateAudioClock()
+{
   if (m_pAudioClock)
   {
-    HRESULT hr = m_pAudioClock->GetPosition(&pTimestamp, &pQpc);
-    pTimestamp = pTimestamp * 10000000 / m_nHWfreq;
-    return hr;
+    CAutoLock cAutoLock(&m_csClockLock);
+
+    UINT64 timestamp = 0;
+    UINT64 qpc = 0;
+    HRESULT hr = m_pAudioClock->GetPosition(&timestamp, &qpc);
+    if (hr != S_OK)
+      return; // no point in adding the data into collection when we cannot get real data
+
+    UINT64 ullHwClock = cMulDiv64(timestamp, 10000000, m_nHWfreq);
+    
+    if (prevPos > ullHwClock)
+      Log("UpdateAudioClock: prevPos: %I64u > ullHwClock: %I64u diff: %I64u ", prevPos, ullHwClock, prevPos - ullHwClock);
+
+    prevPos = ullHwClock;
+
+    if (m_dClockPosIn == m_dClockPosOut)
+    {
+        m_ullHwClock[m_dClockPosIn] = ullHwClock;
+        m_ullHwQpc[m_dClockPosIn] = qpc;
+    }
+    m_dClockPosIn = (m_dClockPosIn + 1) % CLOCK_DATA_SIZE;
+    //if (m_dClockPosIn == m_dClockPosOut)
+    m_dClockPosOut = (m_dClockPosIn + 1) % CLOCK_DATA_SIZE;
+
+    //Log("update: m_dClockPosIn: %d m_dClockPosOut: %d diff: %I64u",m_dClockPosIn, m_dClockPosOut, m_ullHwClock[m_dClockPosOut] - m_ullHwClock[m_dClockPosIn]);
+
+    m_ullHwClock[m_dClockPosIn] = ullHwClock;
+    m_ullHwQpc[m_dClockPosIn] = qpc;
+    m_dClockDataCollectionCount++;
   }
-  return S_FALSE;
+}
+
+void WASAPIRenderer::ResetClockData()
+{
+  CAutoLock cAutoLock(&m_csClockLock);
+  Log("WASAPIRenderer::ResetClockData");
+  m_dClockPosIn = 0;
+  m_dClockPosOut = 0;
+  m_dClockDataCollectionCount = 0;
+  ZeroMemory((void*)&m_ullHwClock, sizeof(UINT64) * CLOCK_DATA_SIZE);
+  ZeroMemory((void*)&m_ullHwQpc, sizeof(UINT64) * CLOCK_DATA_SIZE);
 }
 
 REFERENCE_TIME WASAPIRenderer::Latency()
@@ -1215,19 +1290,7 @@ DWORD WASAPIRenderer::RenderThread()
     }
     else if (result == WAIT_OBJECT_0 + 2) // data event
     {
-      /*
-	  UINT64 hwClock(0);
-      UINT64 hwQpc(0);
-
-      static UINT64 hwClockPrev(0);
-      static UINT64 hwQpcPrev(0);
-
-      m_pRenderer->AudioClock(hwClock, hwQpc);
-
-      Log("%I64d %I64d %0.10f", hwClock - hwClockPrev, hwQpc - hwQpcPrev, (hwClock - hwClockPrev)/(hwQpc - hwQpcPrev));
-      
-      hwQpcPrev = hwQpc;
-      hwClockPrev = hwClock;*/
+      UpdateAudioClock();
 
       UINT32 bufferSize = 0;
       UINT32 currentPadding = 0;

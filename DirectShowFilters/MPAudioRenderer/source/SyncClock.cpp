@@ -106,16 +106,14 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
 
   HRESULT hr = m_pAudioRenderer->AudioClock(hwClock, hwQpc);
 
-  if (m_ullStartTimeSystem == 0)
-    m_ullStartTimeSystem = qpcNow;
-
-  if (m_ullPrevSystemTime == 0)
-    m_ullPrevSystemTime = qpcNow;
-
   if (hr == S_OK)
   {
     if (m_ullStartQpcHW == 0)
+    {
       m_ullStartQpcHW = hwQpc;
+      m_ullStartTimeSystem = qpcNow;
+      m_ullPrevSystemTime = qpcNow;
+    }
 
     if (m_ullStartTimeHW == 0)
       m_ullStartTimeHW = hwClock;
@@ -151,6 +149,11 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
   else if (hr != S_OK)
   {
     //Log("AudioClock() returned error (0x%08x)");
+    if (m_ullStartTimeSystem == 0)
+      m_ullStartTimeSystem = qpcNow;
+
+    if (m_ullPrevSystemTime == 0)
+      m_ullPrevSystemTime = qpcNow;
   }
   
   INT64 delta = qpcNow - m_ullPrevSystemTime;

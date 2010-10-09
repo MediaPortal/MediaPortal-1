@@ -19,6 +19,8 @@
 #include "MpAudioRenderer.h"
 #include "IRenderDevice.h"
 
+#define CLOCK_DATA_SIZE 10
+
 class WASAPIRenderer : public IRenderDevice
 {
 public:
@@ -56,6 +58,9 @@ private:
   HRESULT EnableMMCSS();
   HRESULT RevertMMCSS();
 
+  void UpdateAudioClock();
+  void ResetClockData();
+
   PTR_AvSetMmThreadCharacteristicsW		pfAvSetMmThreadCharacteristicsW;
   PTR_AvRevertMmThreadCharacteristics		pfAvRevertMmThreadCharacteristics;
 
@@ -88,7 +93,15 @@ private:
   UINT64              m_nHWfreq;
   WAVEFORMATEX*       m_pRenderFormat;
   DWORD               m_StreamFlags;
-  
+
+  // Audio HW clock data
+  CCritSec            m_csClockLock;
+  UINT64              m_ullHwClock[CLOCK_DATA_SIZE];
+  UINT64              m_ullHwQpc[CLOCK_DATA_SIZE];
+  UINT64              m_dClockDataCollectionCount;
+  int                 m_dClockPosIn;
+  int                 m_dClockPosOut;
+ 
   // Rendering thread
   static DWORD WINAPI RenderThreadEntryPoint(LPVOID lpParameter);
   DWORD RenderThread();
