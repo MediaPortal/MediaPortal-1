@@ -1701,6 +1701,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 1, 0, SPIF_SENDWININICHANGE);
     }
+    Environment.Exit(0);
   }
 
   /// <summary>
