@@ -588,6 +588,21 @@ namespace TvPlugin
       }
     }
 
+    private void UpdateOverlayAllowed()
+    {
+      if (_isOverlayAllowedCondition == 0)
+      {
+        return;
+      }
+      bool bWasAllowed = GUIGraphicsContext.Overlay;
+      _isOverlayAllowed = GUIInfoManager.GetBool(_isOverlayAllowedCondition, GetID);
+      if (bWasAllowed != _isOverlayAllowed)
+      {
+        GUIGraphicsContext.Overlay = _isOverlayAllowed;
+      }
+    }
+    
+    
     public override bool OnMessage(GUIMessage message)
     {
       try
@@ -689,6 +704,30 @@ namespace TvPlugin
               InitControls();
 
               base.OnMessage(message);
+
+              UpdateOverlayAllowed();
+              GUIGraphicsContext.Overlay = _isOverlayAllowed;
+
+              // set topbar autohide 
+              switch (_autoHideTopbarType)
+              {
+                case AutoHideTopBar.No:
+                  _autoHideTopbar = false;
+                  break;
+                case AutoHideTopBar.Yes:
+                  _autoHideTopbar = true;
+                  break;
+                default:
+                  _autoHideTopbar = GUIGraphicsContext.DefaultTopBarHide;
+                  break;
+              }
+              GUIGraphicsContext.AutoHideTopBar = _autoHideTopbar;
+              GUIGraphicsContext.TopBarHidden = _autoHideTopbar;
+              GUIGraphicsContext.DisableTopBar = _disableTopBar;
+              
+ 
+
+              
               ///@
               ///_notifyList = new List<TVNotify>();
 
