@@ -77,7 +77,7 @@ namespace TvPlugin
     private bool sortAscending = true;
     private IList<Schedule> listRecordings;
 
-    private SearchMode currentSearchMode = SearchMode.Genre;
+    private SearchMode currentSearchMode = SearchMode.Title;
     private int currentLevel = 0;
     private string currentGenre = String.Empty;
     private string filterLetter = "A";
@@ -365,35 +365,22 @@ namespace TvPlugin
       int currentItemId = 0;
       listView.Clear();
       titleView.Clear();
-      
-      //visibility was previously been set at many different points in code
-      //if filteshow variable is set then this is looking at actual shows so
-      //details should be visible else they shouldn't
-      // Jameson_UK - 8th May 2010
-      if (chosenSortMethod == SortMethod.Auto && filterShow == String.Empty)
+    
+      if (chosenSortMethod == SortMethod.Auto)
       {
+        if (filterShow == String.Empty)
+        {
           currentSortMethod = SortMethod.Name;
+        }
+        else
+        {
+          currentSortMethod = SortMethod.Date;
+        }
       }
       else
       {
-          currentSortMethod = SortMethod.Date;
+          currentSortMethod = chosenSortMethod;
       }
-
-      bool showDetails = true;
-      if (filterShow == String.Empty)
-      {
-        showDetails = false;
-      }
-
-      lblProgramDescription.IsVisible = showDetails;
-      if (lblProgramGenre != null)
-      {
-          lblProgramGenre.IsVisible = showDetails;
-      }
-      lblProgramTime.IsVisible = showDetails;
-      lblProgramTitle.IsVisible = showDetails;
-      lblChannel.IsVisible = showDetails;
-  
 
       if (currentLevel == 0 && currentSearchMode == SearchMode.Genre)
       {
@@ -970,7 +957,7 @@ namespace TvPlugin
       switch (chosenSortMethod)
       {
         case SortMethod.Auto:
-          strLine = "Auto";
+          strLine = GUILocalizeStrings.Get(1202);
           break;
         case SortMethod.Name:
           strLine = GUILocalizeStrings.Get(622);
@@ -1382,65 +1369,65 @@ namespace TvPlugin
 
     private void UpdateDescription()
     {
-      if (currentLevel == 0 && currentSearchMode == SearchMode.Genre)
-      {
-        return;
-      }
-      if (filterShow == String.Empty)
-      {
-        return;
-      }
+      // have commented out setting lblProgramTitle.Label
+      // this is because this label was never actually set in 
+      // previous versions of code (Skins are using #TV.Search.Title)
+      // also there is a bug with FadeLabels being set to String.Empty
+      // which leads to this label not being updated when it should be
       GUIListItem item = GetSelectedItem();
       Program prog = null;
       if (item != null)
       {
         prog = item.TVTag as Program;
       }
-      if (prog == null)
+      
+      if (filterShow == String.Empty || item.Label == ".." || item.IsFolder || prog == null)
       {
-        GUIPropertyManager.SetProperty("#TV.Search.Title", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Search.Genre", String.Empty);
+        lblProgramTime.Label = String.Empty;
+        lblProgramDescription.Label = String.Empty;
+        lblChannel.Label = String.Empty;
         GUIPropertyManager.SetProperty("#TV.Search.Time", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Search.Description", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Search.thumb", String.Empty);
         GUIPropertyManager.SetProperty("#TV.Search.Channel", String.Empty);
+        if (prog == null)
+        {
+          // see comment at top of method
+          //lblProgramTitle.Label = String.Empty;
+          lblProgramGenre.Label = String.Empty;
+          GUIPropertyManager.SetProperty("#TV.Search.Title", String.Empty);
+          GUIPropertyManager.SetProperty("#TV.Search.Genre", String.Empty);
+        }
+        else
+        {
+          // see comment at top of method
+          //lblProgramTitle.Label = prog.Title;
+          lblProgramGenre.Label = prog.Genre;
+          GUIPropertyManager.SetProperty("#TV.Search.Title", prog.Title);
+          GUIPropertyManager.SetProperty("#TV.Search.Genre", prog.Genre);
+        }
         return;
       }
-
+      
       string strTime = String.Format("{0} {1} - {2}",
                                      Utils.GetShortDayString(prog.StartTime),
                                      prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                      prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
-      GUIPropertyManager.SetProperty("#TV.Search.Title", prog.Title);
+      
+      GUIPropertyManager.SetProperty("#TV.Search.Title", TVUtil.GetDisplayTitle(prog));      
       GUIPropertyManager.SetProperty("#TV.Search.Time", strTime);
+      GUIPropertyManager.SetProperty("#TV.Search.Description", prog.Description);
+      GUIPropertyManager.SetProperty("#TV.Search.Genre", prog.Genre);
+      GUIPropertyManager.SetProperty("#TV.Search.Channel", prog.ReferencedChannel().DisplayName);
+
+      // see comment at top of method
+      //lblProgramTitle.Label = TVUtil.GetDisplayTitle(prog);
       lblProgramTime.Label = strTime;
-      lblProgramTime.IsVisible = true;
-      if (prog != null)
-      {
-        GUIPropertyManager.SetProperty("#TV.Search.Description", prog.Description);
-        GUIPropertyManager.SetProperty("#TV.Search.Genre", prog.Genre);
-        GUIPropertyManager.SetProperty("#TV.Search.Channel", prog.ReferencedChannel().DisplayName);
-
-        lblProgramDescription.Label = prog.Description;
-        lblProgramDescription.IsVisible = true;
-        lblProgramGenre.Label = prog.Genre;
-        lblProgramGenre.IsVisible = true;
-      }
-      else
-      {
-        GUIPropertyManager.SetProperty("#TV.Search.Description", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Search.Genre", String.Empty);
-
-        lblProgramDescription.Label = String.Empty;
-        lblProgramDescription.IsVisible = false;
-        lblProgramGenre.Label = String.Empty;
-        lblProgramGenre.IsVisible = false;
-      }
+      lblProgramDescription.Label = prog.Description;
+      lblProgramGenre.Label = prog.Genre;
 
       if (lblChannel != null)
       {
-        lblChannel.IsVisible = true;
         lblChannel.Label = prog.ReferencedChannel().DisplayName;
       }
 
