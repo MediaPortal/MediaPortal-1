@@ -81,6 +81,7 @@ namespace MediaPortal.Configuration.Sections
       this.aacAudioCodecComboBox.Location = new System.Drawing.Point(168, 96);
       this.aacAudioCodecComboBox.Name = "aacAudioCodecComboBox";
       this.aacAudioCodecComboBox.Size = new System.Drawing.Size(282, 21);
+      this.aacAudioCodecComboBox.Sorted = true;
       this.aacAudioCodecComboBox.TabIndex = 15;
       // 
       // autoDecoderSettings
@@ -114,6 +115,7 @@ namespace MediaPortal.Configuration.Sections
       this.h264videoCodecComboBox.Location = new System.Drawing.Point(168, 48);
       this.h264videoCodecComboBox.Name = "h264videoCodecComboBox";
       this.h264videoCodecComboBox.Size = new System.Drawing.Size(282, 21);
+      this.h264videoCodecComboBox.Sorted = true;
       this.h264videoCodecComboBox.TabIndex = 9;
       this.h264videoCodecComboBox.SelectedIndexChanged += new System.EventHandler(this.h264videoCodecComboBox_SelectedIndexChanged);
       // 
@@ -126,6 +128,7 @@ namespace MediaPortal.Configuration.Sections
       this.audioRendererComboBox.Location = new System.Drawing.Point(168, 120);
       this.audioRendererComboBox.Name = "audioRendererComboBox";
       this.audioRendererComboBox.Size = new System.Drawing.Size(282, 21);
+      this.audioRendererComboBox.Sorted = true;
       this.audioRendererComboBox.TabIndex = 7;
       // 
       // label3
@@ -153,6 +156,7 @@ namespace MediaPortal.Configuration.Sections
       this.audioCodecComboBox.Location = new System.Drawing.Point(168, 72);
       this.audioCodecComboBox.Name = "audioCodecComboBox";
       this.audioCodecComboBox.Size = new System.Drawing.Size(282, 21);
+      this.audioCodecComboBox.Sorted = true;
       this.audioCodecComboBox.TabIndex = 3;
       // 
       // videoCodecComboBox
@@ -164,6 +168,7 @@ namespace MediaPortal.Configuration.Sections
       this.videoCodecComboBox.Location = new System.Drawing.Point(168, 24);
       this.videoCodecComboBox.Name = "videoCodecComboBox";
       this.videoCodecComboBox.Size = new System.Drawing.Size(282, 21);
+      this.videoCodecComboBox.Sorted = true;
       this.videoCodecComboBox.TabIndex = 1;
       this.videoCodecComboBox.SelectedIndexChanged += new System.EventHandler(this.videoCodecComboBox_SelectedIndexChanged);
       // 
