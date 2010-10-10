@@ -109,8 +109,8 @@
     <String id="149">MAC</String>
     <String id="150">IP:</String>
     <String id="151">Collegamento:</String>
-    <String id="152">Bidirezionale</String>
-    <String id="153">Monodirezionale</String>
+    <String id="152">Monodirezionale</String>
+    <String id="153">Bidirezionale</String>
     <String id="154">Capacità</String>
     <String id="155">Drive</String>
     <String id="156">Liberi</String>
@@ -535,7 +535,7 @@
     <String id="601">Registra ora</String>
     <String id="602">Canale</String>
     <String id="603">Programmazione</String>
-    <String id="604">TV Registrata</String>
+    <String id="604">TV registrata</String>
     <String id="605" prefix="La mia ">TV</String>
     <String id="606">Caricamento nuova Guida TV</String>
     <String id="607">Carica</String>
@@ -725,6 +725,8 @@
     <String id="808">Ingredienti</String>
     <String id="809">Direzioni</String>
     <String id="810">Sintonizzatore</String>
+    <String id="811">Radio registrata</String>
+    <String id="812">Stazioni radio</String>
     <String id="820">Cancellare registrazioni non viste?</String>
     <String id="830">Azzera stato "già visto"</String>
     <String id="831">Espelli disco removibile</String>
@@ -990,6 +992,7 @@
     <String id="1198">Navigatore del DVD</String>
     <String id="1200">Wizard delle impostazioni</String>
     <String id="1201">Riproduci il video dall'inizio</String>
+    <String id="1202">Ordina per: Automatico</String>
     <String id="1211">Riproduci il video da {0}</String>
     <String id="1300" prefix="Le mie ">Serie TV</String>
     <String id="1440" prefix="Il mio ">Televideo</String>
