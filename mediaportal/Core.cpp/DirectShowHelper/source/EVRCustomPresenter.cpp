@@ -58,7 +58,7 @@ void LogGUID(REFGUID guid)
   CoTaskMemFree(str);
 }
 
-MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter* EVRFilter, bool pIsWin7):
+MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter* EVRFilter, BOOL pIsWin7):
   m_refCount(1), 
   m_qScheduledSamples(NUM_SURFACES),
   m_EVRFilter(EVRFilter),

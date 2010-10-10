@@ -100,7 +100,7 @@ class MPEVRCustomPresenter
 {
 
 public:
-  MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter* EVRFilter, bool pIsWin7);
+  MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter* EVRFilter, BOOL pIsWin7);
   virtual ~MPEVRCustomPresenter();
 
   //IQualProp (stub)
@@ -396,7 +396,7 @@ protected:
   LONGLONG      m_lastPresentTime;
   LONGLONG      m_lastDelayErr;
   
-  bool          m_bIsWin7;
+  BOOL          m_bIsWin7;
   bool          m_bMsVideoCodec;
   
   IAVSyncClock* m_pAVSyncClock;
