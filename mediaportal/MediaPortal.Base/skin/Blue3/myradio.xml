@@ -189,8 +189,16 @@
 			<id>8</id>
 			<label>533</label>
 			<onright>50</onright>
-			<ondown>99</ondown>
 			<hyperlink>762</hyperlink>	
+		</control>
+		<control>
+			<description>Recorded Radio</description>
+			<type>button</type>
+			<id>9</id>
+			<label>914</label>
+			<onright>50</onright>
+			<ondown>99</ondown>
+			<hyperlink>763</hyperlink>	
 		</control>
 	  </control>
 	 </control>

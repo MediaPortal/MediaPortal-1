@@ -725,6 +725,8 @@
     <String id="808">Ingredients</String>
     <String id="809">Directions</String>
     <String id="810">Card</String>
+	<String id="811">Recorded Radio</String>
+	<String id="812">Radio Stations</String>
     <String id="820">Delete unwatched recording?</String>
     <String id="830">Reset watched status</String>
     <String id="831">Eject removable drive</String>
