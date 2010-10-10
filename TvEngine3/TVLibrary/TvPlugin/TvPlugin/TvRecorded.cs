@@ -820,6 +820,7 @@ namespace TvPlugin
       {
         GUIControl.ClearControl(GetID, facadeView.GetID);
 
+        IList<RadioGroupMap> radiogroups = RadioGroupMap.ListAll();
         IList<Recording> recordings = Recording.ListAll();
         if (_currentLabel == string.Empty)
         {
@@ -828,6 +829,16 @@ namespace TvPlugin
             // catch exceptions here so MP will go on and list further recs
             try
             {
+              bool isRadioChannel = false;
+              foreach (RadioGroupMap radiogroup in radiogroups)
+              {
+                if (rec.IdChannel == radiogroup.IdChannel)
+                {
+                  isRadioChannel = true;
+                  break;
+                }
+              }
+              if (isRadioChannel == true) continue;  // only TVChannels are allowed 
               bool add = true;
 
               // combine recordings with the same name to a folder located on top
