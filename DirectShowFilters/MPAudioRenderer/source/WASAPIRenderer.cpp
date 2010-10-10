@@ -630,7 +630,7 @@ HRESULT WASAPIRenderer::CheckAudioClient(WAVEFORMATEX *pWaveFormatEx)
 
       hr = m_pAudioClient->IsFormatSupported(m_pRenderer->Settings()->m_WASAPIShareMode, m_pRenderFormat, NULL);    
     
-      if (FAILED(hr))
+      if (FAILED(hr) && m_pRenderFormat)
       {
         //Log("   WASAPI client refused the format: (0x%08x) - try WAVEFORMATEX", hr);
         WAVEFORMATEX* tmpPwfx = NULL; 

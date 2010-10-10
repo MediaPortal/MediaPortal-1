@@ -734,7 +734,9 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
   }
 
   // Need to lock the resampling thread from accessing the streams
-  m_pMemAllocator->Decommit();
+  if (m_pMemAllocator)
+    m_pMemAllocator->Decommit();
+
   CAutoLock allocatorLock(&m_allocatorLock);
 
   // delete old ones
