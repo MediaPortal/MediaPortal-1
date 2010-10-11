@@ -613,6 +613,18 @@ namespace MediaPortal.GUI.Library
           VisualEffect effect = new VisualEffect();
           if (effect.Create(element))
           {
+            if (effect.AnimationType == AnimationType.VisibleChange)
+            {
+              effect.AnimationType = AnimationType.Visible;
+              //if (effect.IsReversible)
+              {
+                VisualEffect effect2 = (VisualEffect)effect.CloneReverse();
+                effect2.AnimationType = AnimationType.Hidden;
+                //animations.Add(effect);
+                animations.Add(effect2);
+                //continue;
+              }
+            }
             animations.Add(effect);
             continue;
           }

@@ -33,6 +33,7 @@ namespace MediaPortal.GUI.Library
     Visible,
     Focus,
     Conditional,
+    VisibleChange
   } ;
 
   public enum EffectType
@@ -173,9 +174,14 @@ namespace MediaPortal.GUI.Library
     public bool Create(XmlNode node)
     {
       string animType = node.InnerText.ToLower();
-      if (String.Compare(animType, "visible", true) == 0 || String.Compare(animType, "visiblechange", true) == 0)
+      if (String.Compare(animType, "visible", true) == 0)
       {
         _type = AnimationType.Visible;
+      }
+
+      else if (String.Compare(animType, "visiblechange", true) == 0)
+      {
+        _type = AnimationType.VisibleChange;
       }
       else if (String.Compare(animType, "hidden", true) == 0)
       {
@@ -869,6 +875,25 @@ namespace MediaPortal.GUI.Library
     {
       get { return _amount; }
       set { _amount = value; }
+    }
+
+    //For creating visiblechange animation
+    public object CloneReverse()
+    {
+      VisualEffect effect = (VisualEffect)Clone();
+      float startX = effect.EndX;
+      float endX = effect.StartX;
+      float startY = effect.EndY;
+      float endY = effect.StartY;
+      int startAlpha = effect._endAlpha;
+      int endAlpha = effect._startAlpha;
+      effect._startX = startX;
+      effect._startY = startY;
+      effect._endX = endX;
+      effect._endY = endY;
+      effect._startAlpha = startAlpha;
+      effect._endAlpha = endAlpha;
+      return effect;
     }
 
     #region ICloneable Members
