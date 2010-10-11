@@ -589,18 +589,28 @@ namespace MediaPortal.GUI.Library
       List<VisualEffect> animations = new List<VisualEffect>();
       List<VisualEffect> thumbAnimations = new List<VisualEffect>();
       XmlNodeList childNodes = pControlNode.ChildNodes;
+      bool hasVisiblecondition = false;
       foreach (XmlNode element in childNodes)
       {
         if (element.Name == "visible")
         {
           if (element.InnerText != null)
           {
+            hasVisiblecondition = true;
             if (element.InnerText != "yes" && element.InnerText != "no")
             {
               if (element.InnerText.Length != 0)
               {
                 int iVisibleCondition = 0;
                 bool allowHiddenFocus = false;
+                //Add parent's visible condition in addition to ours
+                XmlNode parentNode = pControlNode.ParentNode;
+                if (IsGroupControl(parentNode))
+                {
+                  string parentVisiblecondition = GetVisibleConditionXML(parentNode);
+                  if (!string.IsNullOrEmpty(parentVisiblecondition) && parentVisiblecondition != "yes" && parentVisiblecondition != "no")
+                    element.InnerText += "+[" + parentVisiblecondition + "]";
+                }
                 GetConditionalVisibility(element, control, ref iVisibleCondition, ref allowHiddenFocus);
                 control.SetVisibleCondition(iVisibleCondition, allowHiddenFocus);
                 continue;
@@ -739,6 +749,28 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
+      
+      //Set parent control's visible condition as ours wn if we're children of a group
+      if (!hasVisiblecondition)
+      {
+        XmlNode parentNode = pControlNode.ParentNode;
+        if (IsGroupControl(parentNode))
+        {
+          XmlDocument tempDoc = new XmlDocument();
+          XmlNode elem = tempDoc.CreateElement("visible");
+          int iVisibleCondition = 0;
+          bool allowHiddenFocus = true;
+          string parentVisiblecondition = GetVisibleConditionXML(parentNode);
+          if (!string.IsNullOrEmpty(parentVisiblecondition) && parentVisiblecondition != "yes" && parentVisiblecondition != "no")
+          {
+            elem.InnerText = parentVisiblecondition;
+            XmlNode visibleNode = pControlNode.OwnerDocument.ImportNode(elem, true);
+            pControlNode.AppendChild(visibleNode);
+            GetConditionalVisibility(visibleNode, control, ref iVisibleCondition, ref allowHiddenFocus);
+            control.SetVisibleCondition(iVisibleCondition, allowHiddenFocus);
+          }
+        }
+      }
       if (animations.Count > 0)
       {
         control.SetAnimations(animations);
@@ -748,6 +780,49 @@ namespace MediaPortal.GUI.Library
         control.SetThumbAnimations(thumbAnimations);
       }
     }
+
+    private static bool IsGroupControl(XmlNode node)
+    {
+      Type controlType = GetControlType(node);
+      return (controlType == typeof (GUIActionGroup) || controlType == typeof (GUIGroup));
+    }
+
+    private static string GetVisibleConditionXML(XmlNode pControlNode)
+      {
+        string result = string.Empty;
+        XmlAttribute styleAttribute = pControlNode.Attributes["Style"];
+
+        if (styleAttribute != null)
+        {
+          XmlNode styleNode = _cachedStyleNodes[styleAttribute.Value];
+
+          if (styleNode != null)
+          {
+            result = GetVisibleConditionXML(styleNode);
+          }
+        }
+        XmlNodeList childNodes = pControlNode.ChildNodes;
+        foreach (XmlNode element in childNodes)
+        {
+          if (element.Name == "visible")
+          {
+            if (element.InnerText != null)
+            {
+              if (element.InnerText != "yes" && element.InnerText != "no")
+              {
+                if (element.InnerText.Length != 0)
+                {
+                  if (result == string.Empty)
+                    result = element.InnerText;
+                  else
+                    result += "[+" + element.InnerText + "]";
+                }
+              }
+            }
+          }
+        }
+        return result;
+      }
 
     private static void AddSubitemsToControl(XmlNode subItemsNode, GUIControl control)
     {

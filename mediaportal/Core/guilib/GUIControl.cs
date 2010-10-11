@@ -71,6 +71,7 @@ namespace MediaPortal.GUI.Library
     private bool _visibleFromSkinCondition = true;
     private int _visibleCondition = 0;
     private bool _allowHiddenFocus = false;
+    private bool _visibilityInitialized = false;
     private bool _hasCamera = false;
     private Point _camera;
 
@@ -761,11 +762,15 @@ namespace MediaPortal.GUI.Library
         }
         if (IsVisible && !value)
         {
-          QueueAnimation(AnimationType.Hidden);
+          //only do animations after visibility has been initializaed
+          if(_visibilityInitialized) 
+            QueueAnimation(AnimationType.Hidden);
         }
         else if (!IsVisible && value)
         {
-          QueueAnimation(AnimationType.Visible);
+          //only do animations after visibility has been initializaed
+          if (_visibilityInitialized) 
+            QueueAnimation(AnimationType.Visible);
         }
         IsVisible = value;
       }
@@ -1915,6 +1920,9 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
+      //Make sure to initialize visibility
+      if (!_visibilityInitialized)
+        SetInitialVisibility();
       bool bWasVisible = _visibleFromSkinCondition;
       _visibleFromSkinCondition = GUIInfoManager.GetBool(_visibleCondition, ParentID);
       if (GUIGraphicsContext.Animations == false)
@@ -1926,14 +1934,17 @@ namespace MediaPortal.GUI.Library
       {
         // automatic change of visibility - queue the in effect
         //    CLog::DebugLog("Visibility changed to visible for control id %i", m_dwControlID);
-        QueueAnimation(AnimationType.Visible);
+        if (_visibilityInitialized)
+          QueueAnimation(AnimationType.Visible);
       }
       else if (bWasVisible && !_visibleFromSkinCondition)
       {
         // automatic change of visibility - do the out effect
         //    CLog::DebugLog("Visibility changed to hidden for control id %i", m_dwControlID);
-        QueueAnimation(AnimationType.Hidden);
+        if (_visibilityInitialized)
+          QueueAnimation(AnimationType.Hidden);
       }
+      _visibilityInitialized = true;
     }
 
     public virtual void SetInitialVisibility()
