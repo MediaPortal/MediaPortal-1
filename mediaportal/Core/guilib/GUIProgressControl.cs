@@ -202,7 +202,7 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleVertical(ref iHeightLeft);
       GUIGraphicsContext.ScaleVertical(ref iHeightRight);
 
-      int offset = _offset;
+      int offset = (_offset != 0) ? _offset : 12; // Legacy offset
       GUIGraphicsContext.ScaleHorizontal(ref offset);
       float fWidth = _percentage;
       if (fWidth > 100.0f)
