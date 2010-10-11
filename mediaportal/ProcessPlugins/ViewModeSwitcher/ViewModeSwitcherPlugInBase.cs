@@ -61,7 +61,7 @@ namespace ProcessPlugins.ViewModeSwitcher
 
     public bool DefaultEnabled()
     {
-      return true;
+      return false;
     }
 
     public bool HasSetup()
