@@ -39,6 +39,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("lefttexture")] private string _leftTextureName;
     [XMLSkinElement("midtexture")] private string _midTextureName;
     [XMLSkinElement("righttexture")] private string _rightTextureName;
+    [XMLSkinElement("innerheight")] private int _innerheight;
+    [XMLSkinElement("offset")] private int _offset;
+
     private GUIAnimation _imageBackGround = null;
     private GUIAnimation _imageLeft = null;
     private GUIAnimation _imageMid = null;
@@ -191,28 +194,28 @@ namespace MediaPortal.GUI.Library
       GUIFontManager.Present();
 
       int iWidthLeft = _imageLeft.TextureWidth;
-      int iHeightLeft = _height; //_imageLeft.TextureHeight;
+      int iHeightLeft = (_innerheight != 0) ? _innerheight : _imageLeft.TextureHeight; // Legacy skin don't use innerheight
       int iWidthRight = _imageRight.TextureWidth;
-      int iHeightRight = _height; //_imageRight.TextureHeight;
+      int iHeightRight = (_innerheight != 0) ? _innerheight : _imageRight.TextureHeight;
       GUIGraphicsContext.ScaleHorizontal(ref iWidthLeft);
       GUIGraphicsContext.ScaleHorizontal(ref iWidthRight);
       GUIGraphicsContext.ScaleVertical(ref iHeightLeft);
       GUIGraphicsContext.ScaleVertical(ref iHeightRight);
-      //iHeight=20;
-      int off = 0; //12;
-      GUIGraphicsContext.ScaleHorizontal(ref off);
+
+      int offset = _offset;
+      GUIGraphicsContext.ScaleHorizontal(ref offset);
       float fWidth = _percentage;
       if (fWidth > 100.0f)
       {
         fWidth = 100.0f;
       }
 
-      fWidth *= (float)(_imageBackGround.Width - 2 * off - iWidthLeft - iWidthRight);
+      fWidth *= (float)(_imageBackGround.Width - 2 * offset - iWidthLeft - iWidthRight);
       fWidth /= 100.0f;
 
 
 
-      int iXPos = off + _imageBackGround.XPosition;
+      int iXPos = offset + _imageBackGround.XPosition;
 
       int iYPos = _imageBackGround.YPosition + (iBkgHeight - iHeightLeft) / 2;
 
