@@ -712,6 +712,7 @@ public class MediaPortalApp : D3DApp, IRender
           MessageBoxIcon.Error);
       }
     }
+    Environment.Exit(0);
   }
 
 #if !DEBUG
@@ -1701,7 +1702,6 @@ public class MediaPortalApp : D3DApp, IRender
     {
       SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 1, 0, SPIF_SENDWININICHANGE);
     }
-    Environment.Exit(0);
   }
 
   /// <summary>
