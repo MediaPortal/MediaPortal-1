@@ -40,7 +40,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("midtexture")] private string _midTextureName;
     [XMLSkinElement("righttexture")] private string _rightTextureName;
     [XMLSkinElement("innerheight")] private int _innerheight;
-    [XMLSkinElement("offset")] private int _offset;
+    [XMLSkinElement("offset")] private int _offset =-1;
 
     private GUIAnimation _imageBackGround = null;
     private GUIAnimation _imageLeft = null;
@@ -202,7 +202,7 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleVertical(ref iHeightLeft);
       GUIGraphicsContext.ScaleVertical(ref iHeightRight);
 
-      int offset = (_offset != 0) ? _offset : 12; // Legacy offset
+      int offset = (_offset != -1) ? _offset : 12; // Legacy offset
       GUIGraphicsContext.ScaleHorizontal(ref offset);
       float fWidth = _percentage;
       if (fWidth > 100.0f)
