@@ -76,7 +76,10 @@ namespace TvPlugin
     private bool _deleteWatchedShows = false;
     private int _iSelectedItem = 0;
     private string _currentLabel = string.Empty;
-    private int _rootItem = 0; 
+    private int _rootItem = 0;
+    private bool _resetSMSsearch = false;
+    private bool _oldStateSMSsearch;
+    private DateTime _resetSMSsearchDelay;
 
     #endregion
 
@@ -520,10 +523,18 @@ namespace TvPlugin
       }
     }
 
+
     public override void Process()
     {
-      throw new NotImplementedException();
-      //TVHome.UpdateProgressPercentageBar();
+      TVHome.UpdateProgressPercentageBar();
+      if ((_resetSMSsearch == true) && (_resetSMSsearchDelay.Subtract(DateTime.Now).Seconds < -2))
+      {
+        _resetSMSsearchDelay = DateTime.Now;
+        _resetSMSsearch = true;
+        facadeView.EnableSMSsearch = _oldStateSMSsearch;
+      }
+
+      base.Process();
     }
        
     
@@ -1298,6 +1309,9 @@ namespace TvPlugin
 
     private void DeleteRecordingAndUpdateGUI(Recording rec)
     {
+      _oldStateSMSsearch = facadeView.EnableSMSsearch;
+      facadeView.EnableSMSsearch = false;
+
       TryDeleteRecordingAndNotifyUser(rec);
 
       CacheManager.Clear();
@@ -1308,6 +1322,9 @@ namespace TvPlugin
         _iSelectedItem--;
       }
       GUIControl.SelectItemControl(GetID, facadeView.GetID, _iSelectedItem);
+
+      _resetSMSsearchDelay = DateTime.Now;
+      _resetSMSsearch = true;
     }
 
 
