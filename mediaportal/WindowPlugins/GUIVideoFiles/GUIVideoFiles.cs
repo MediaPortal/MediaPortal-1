@@ -1598,8 +1598,23 @@ namespace MediaPortal.GUI.Video
       }
       if (_markWatchedFiles) // save a little performance
       {
-        LoadDirectory(_currentFolder, true, watchedMovies);
-        UpdateButtonStates();
+        if (VideoState.StartWindow == GetID) // Is play initiator share or dbview?
+        {
+          LoadDirectory(_currentFolder, true, watchedMovies);
+          UpdateButtonStates();
+        }
+        else
+        {
+          // Update db view watched status for played movie
+          IMDBMovie movie = new IMDBMovie();
+          VideoDatabase.GetMovieInfo(filename, ref movie);
+          if (!movie.IsEmpty)
+          {
+            movie.Watched = 1;
+            VideoDatabase.SetMovieInfoById(movie.ID, ref movie);
+          }
+          UpdateButtonStates();
+        }
       }
 
       if (SubEngine.GetInstance().IsModified())
