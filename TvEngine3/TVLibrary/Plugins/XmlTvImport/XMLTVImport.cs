@@ -687,6 +687,7 @@ namespace TvEngine
                           continue;
                         }
 
+                        title = title.Replace("\r\n", " ");
                         Program prog = new Program(chan.IdChannel, longtodate(startDate), longtodate(stopDate), title,
                                                    description, category, Program.ProgramState.None,
                                                    System.Data.SqlTypes.SqlDateTime.MinValue.Value, seriesNum,
