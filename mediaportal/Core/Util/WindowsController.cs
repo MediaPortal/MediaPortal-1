@@ -176,7 +176,11 @@ namespace MediaPortal.Util
       env.how = how;
       env.force = force;
       env.after = after;
-      (new Thread(ExitWindowsDefaultThread)).Start(env);
+      // If restart is Hibernate or Suspend then do is async
+      if (how == RestartOptions.Hibernate || how == RestartOptions.Suspend)
+          (new Thread(ExitWindowsDefaultThread)).Start(env);
+      else
+          ExitWindowsDefaultThread(env);
     }
 
     protected static void ExitWindowsDefaultThread(object _data)
