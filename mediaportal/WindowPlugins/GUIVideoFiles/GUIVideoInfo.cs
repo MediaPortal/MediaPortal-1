@@ -51,6 +51,9 @@ namespace MediaPortal.GUI.Video
         GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Normal);
       }
 
+      // Changed code - added IMDB and TMDB cover search
+	    // We will check IMPAW and IMDB to show extra covers(if nothing there last try will be TMDB)
+      // Better for not to use all three beacuse of big number of same covers
       private void PerformRequest()
       {
         try
@@ -59,13 +62,16 @@ namespace MediaPortal.GUI.Video
           {
             return;
           }
-          // Search for more pictures
+          // Search for more covers
           string[] thumbUrls = new string[1];
           IMDBMovie movie = _aMovie;
-          IMPawardsSearch impSearch = new IMPawardsSearch();
-          impSearch.Search(movie.Title);
-          AmazonImageSearch amazonSearch = new AmazonImageSearch();
-          amazonSearch.Search(movie.Title);
+          // IMDB GUI and IMPAwards Covers Search  Deda 30.4.2010
+          IMDBSearch imdbSearch = new IMDBSearch();
+          imdbSearch.SearchCovers(movie.IMDBNumber);
+          // IMPAward search
+          IMPAwardsSearch impSearch = new IMPAwardsSearch();
+          impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+          
           int thumb = 0;
 
           if (movie.ThumbURL != string.Empty)
@@ -73,11 +79,43 @@ namespace MediaPortal.GUI.Video
             thumbUrls[0] = movie.ThumbURL;
             thumb = 1;
           }
-
-          int pictureCount = amazonSearch.Count + impSearch.Count + thumb;
-          if (pictureCount == 0)
+          int pictureCount =  impSearch.Count + imdbSearch.Count + thumb;
+          //Hugh, no covers, lets pull our last card
+          if ((imdbSearch.Count == 0) & (impSearch.Count == 0))
           {
-            return;
+            // TMDB
+            // Last defence in search for covers - will be counted if previous methods fails
+            TMDBCoverSearch tmdbSearch = new TMDBCoverSearch();
+            tmdbSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+            // Nothing found, we loose -> exit
+            if (tmdbSearch.Count == 0)
+            {
+              return;
+            }
+            else
+            // Last defence survived, so lets grab what we can from TMDB and get out of here
+            {
+              pictureCount = tmdbSearch.Count;
+              
+              int pictureIndextmdb = 0;
+              thumbUrls = new string[pictureCount];
+
+              if ((tmdbSearch.Count > 0) && (tmdbSearch[0] != string.Empty))
+              {
+                for (int i = 0; i < tmdbSearch.Count; ++i)
+                {
+                  if (thumbUrls[0] != tmdbSearch[i])
+                  {
+                    thumbUrls[pictureIndextmdb++] = tmdbSearch[i];
+                  }
+                }
+              }
+              if (AmazonImagesDownloaded != null)
+              {
+                AmazonImagesDownloaded(thumbUrls);
+              }
+              return;
+            }
           }
 
           int pictureIndex = 0;
@@ -87,15 +125,7 @@ namespace MediaPortal.GUI.Video
           {
             thumbUrls[pictureIndex++] = movie.ThumbURL;
           }
-
-          if (amazonSearch.Count > 0)
-          {
-            for (int i = 0; i < amazonSearch.Count; ++i)
-            {
-              thumbUrls[pictureIndex++] = amazonSearch[i];
-            }
-          }
-
+          // IMP Award check and add
           if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
           {
             for (int i = 0; i < impSearch.Count; ++i)
@@ -103,6 +133,16 @@ namespace MediaPortal.GUI.Video
               thumbUrls[pictureIndex++] = impSearch[i];
             }
           }
+
+          // IMDB Count check and add into thumbs Deda 30.4.2010
+          if ((imdbSearch.Count > 0) && (imdbSearch[0] != string.Empty))
+          {
+              for (int i = 0; i < imdbSearch.Count; ++i)
+              {
+                  thumbUrls[pictureIndex++] = imdbSearch[i];
+              }
+          }
+          
           if (AmazonImagesDownloaded != null)
           {
             AmazonImagesDownloaded(thumbUrls);
@@ -270,11 +310,20 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    // Changed - covers and the same movie name
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
       if (control == btnRefresh)
       {
+        string title = currentMovie.Title;
+        int id = currentMovie.ID;
+        string file = currentMovie.Path + "\\" + currentMovie.File;
+        // Delete covers
+        FanArt.DeleteCovers(title, id);
+        //Delete fanarts
+        FanArt.DeleteFanarts(file, title);
+
         if (IMDBFetcher.RefreshIMDB(this, ref currentMovie, false, false, true))
         {
           if ((imageSearchThread != null) && (imageSearchThread.IsAlive))
@@ -315,8 +364,12 @@ namespace MediaPortal.GUI.Video
         }
 
         currentMovie.ThumbURL = coverArtUrls[item];
-        string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
-        string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
+        //string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
+        //string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
+        // Title suffix for problem with covers and movie with the same name
+        string titleExt = currentMovie.Title + "{" + currentMovie.ID + "}";
+        string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
+        string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
         Util.Utils.FileDelete(coverArtImage);
         Util.Utils.FileDelete(largeCoverArtImage);
         Refresh(false);
@@ -392,6 +445,9 @@ namespace MediaPortal.GUI.Video
       set { folderForThumbs = value; }
     }
 
+    // Changed - added null check, if skinner put wrong control type, here 
+    // is the consequence ie. wrong control type in DialogVideoInfo.xml 
+    // breaks thumb downloader thread: line 56 private void PerformRequest()
     private void Update()
     {
       if (currentMovie == null)
@@ -399,28 +455,42 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      //cast->image
+      // cast->image
       if (viewmode == ViewMode.Cast)
       {
-        tbPlotArea.IsVisible = false;
-        tbTextArea.IsVisible = true;
-        imgCoverArt.IsVisible = true;
-        lblDisc.IsVisible = false;
-        spinDisc.IsVisible = false;
-        btnPlot.Selected = false;
-        btnCast.Selected = true;
+        if (tbPlotArea != null)
+          tbPlotArea.IsVisible = false;
+        if (tbTextArea != null)
+          tbTextArea.IsVisible = true;
+        if (imgCoverArt != null)
+          imgCoverArt.IsVisible = true;
+        if (lblDisc != null)
+          lblDisc.IsVisible = false;
+        if (spinDisc != null)
+          spinDisc.IsVisible = false;
+        if (btnPlot != null)
+          btnPlot.Selected = false;
+        if (btnCast != null)
+          btnCast.Selected = true;
       }
-      //cast->plot
+      // cast->plot
       if (viewmode == ViewMode.Image)
       {
-        tbPlotArea.IsVisible = true;
-        tbTextArea.IsVisible = false;
-        imgCoverArt.IsVisible = true;
-        lblDisc.IsVisible = true;
-        spinDisc.IsVisible = true;
-        btnPlot.Selected = true;
-        btnCast.Selected = false;
-      }
+        if (tbPlotArea != null)
+          tbPlotArea.IsVisible = true;
+        if (tbTextArea != null)
+          tbTextArea.IsVisible = false;
+        if (imgCoverArt != null)
+          imgCoverArt.IsVisible = true;
+        if (lblDisc != null)
+          lblDisc.IsVisible = true;
+        if (spinDisc != null)
+          spinDisc.IsVisible = true;
+        if (btnPlot != null)
+          btnPlot.Selected = true;
+        if (btnCast != null)
+          btnCast.Selected = false;
+       }
 
       btnWatched.Selected = (currentMovie.Watched != 0);
       currentMovie.SetProperties();
@@ -432,7 +502,7 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-
+    //Changed - covers and same movie names
     private void Refresh(bool forceFolderThumb)
     {
       string coverArtImage = string.Empty;
@@ -442,8 +512,11 @@ namespace MediaPortal.GUI.Video
         string imageUrl = currentMovie.ThumbURL;
         if (imageUrl.Length > 0)
         {
-          coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
-          largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
+          //coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
+          //largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
+          string titleExt = currentMovie.Title + "{" + currentMovie.ID + "}";
+          coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
+          largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
           //added by BoelShit
           string largeCoverArtImageConvert = Util.Utils.ConvertToLargeCoverArt(coverArtImage); //edited by Boelshit
 

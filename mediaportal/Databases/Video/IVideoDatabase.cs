@@ -43,6 +43,10 @@ namespace MediaPortal.Video.Database
     void RemoveGenresForMovie(int lMovieId);
     int AddActor(string strActor1);
     void GetActors(ArrayList actors);
+    // Actor by name
+    void GetActorByName(string actorName, ArrayList actors);
+    // changed - Added actors by movieID
+    void GetActorsByMovieID(int idMovie, ref ArrayList actors);
     void AddActorToMovie(int lMovieId, int lActorId);
     void DeleteActor(string actor);
     void RemoveActorsForMovie(int lMovieId);
@@ -70,6 +74,8 @@ namespace MediaPortal.Video.Database
     int GetMovieId(string strFilenameAndPath);
     bool HasSubtitle(string strFilenameAndPath);
     void SetThumbURL(int lMovieId, string thumbURL);
+    // Fanart
+    void SetFanartURL(int lMovieId, string fanartURL);
     void SetDVDLabel(int lMovieId, string strDVDLabel1);
     void GetYears(ArrayList years);
     void GetMoviesByGenre(string strGenre1, ref ArrayList movies);

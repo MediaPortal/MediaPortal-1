@@ -136,6 +136,18 @@ namespace MediaPortal.Video.Database
       _database.GetActors(actors);
     }
 
+    // Get actor by name
+    public static void GetActorByName(string actorName, ArrayList actors)
+    {
+      _database.GetActorByName(actorName, actors);
+    }
+
+    // Changed Added actors by movie ID
+    public static void GetActorsByMovieID(int idMovie, ref ArrayList actorsByMovieID)
+    {
+      _database.GetActorsByMovieID(idMovie, ref actorsByMovieID);
+    }
+    
     public static void AddActorToMovie(int lMovieId, int lActorId)
     {
       _database.AddActorToMovie(lMovieId, lActorId);
@@ -269,6 +281,12 @@ namespace MediaPortal.Video.Database
     public static void SetThumbURL(int lMovieId, string thumbURL)
     {
       _database.SetThumbURL(lMovieId, thumbURL);
+    }
+
+    // Fanart
+    public static void SetFanartURL(int lMovieId, string fanartURL)
+    {
+      _database.SetFanartURL(lMovieId, fanartURL);
     }
 
     public static void SetDVDLabel(int lMovieId, string strDVDLabel1)

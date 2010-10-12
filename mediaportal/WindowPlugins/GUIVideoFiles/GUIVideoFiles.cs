@@ -34,6 +34,7 @@ using MediaPortal.Services;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using MediaPortal.Player.Subtitles;
+using MediaPortal.Profile;
 
 #pragma warning disable 108
 
@@ -1079,6 +1080,9 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    // CHANGED
+
+    // GUI Item file name handler - share view ->IMDB
     protected override void OnInfo(int iItem)
     {
       _currentSelectedItem = facadeView.SelectedListItemIndex;
@@ -1145,12 +1149,27 @@ namespace MediaPortal.GUI.Video
       if ((VideoDatabase.GetMovieInfo(strFile, ref movieDetails) == -1) ||
           (movieDetails.IsEmpty))
       {
+        // Movie is not in the database
         if (bFoundFile)
         {
           AddFileToDatabase(strFile);
         }
-        movieDetails.SearchString = Path.GetFileNameWithoutExtension(strMovie);
-        movieDetails.File = Path.GetFileName(strFile);
+
+        // Changed - Movie folder title
+        using (MediaPortal.Profile.Settings xmlreader = new MPSettings())
+        {
+          bool foldercheck = xmlreader.GetValueAsBool("moviedatabase", "usefolderastitle", false);
+          if (foldercheck == true)
+          {
+            movieDetails.SearchString = Path.GetFileName(Path.GetDirectoryName(strMovie));
+          }
+          else
+          {
+            movieDetails.SearchString = Path.GetFileNameWithoutExtension(strMovie);
+          }
+          movieDetails.File = Path.GetFileName(strFile);
+        }
+        // End change
         if (movieDetails.File == string.Empty)
         {
           movieDetails.Path = strFile;
@@ -1166,6 +1185,7 @@ namespace MediaPortal.GUI.Video
           return;
         }
       }
+      // Movie is in the database
       GUIVideoInfo videoInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_INFO);
       videoInfo.Movie = movieDetails;
       if (pItem.IsFolder)
@@ -1180,12 +1200,21 @@ namespace MediaPortal.GUI.Video
 
       if (movieDetails != null)
       {
-        string thumbPath = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
+        // Add file name beacuse in the movie.details it's empty -> FanArt on shares helper
+        movieDetails.File = Path.GetFileName(strFile);
+
+        // Title suffix for problem with covers and movie with the same name
+        //string thumbPath = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
+        string titleExt = movieDetails.Title + "{" + movieDetails.ID + "}";
+        string thumbPath = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
 
         if (string.IsNullOrEmpty(thumbPath) || !File.Exists(thumbPath))
         {
+          //thumbPath = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
+          //  Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(pItem.Path, ".jpg"))));
           thumbPath = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
-            Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(pItem.Path, ".jpg"))));
+                                    Util.Utils.MakeFileName(
+                                      Util.Utils.SplitFilename(Path.ChangeExtension(pItem.Path + titleExt, ".jpg"))));
         }
 
         if (File.Exists(thumbPath))
@@ -1881,7 +1910,7 @@ namespace MediaPortal.GUI.Video
           }
           ArrayList availablePaths = new ArrayList();
           availablePaths.Add(item.Path);
-          IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, _scanSkipExisting, _getActors);
+          IMDBFetcher.ScanIMDB(this, availablePaths, _isFuzzyMatching, _scanSkipExisting, _getActors, false);
           LoadDirectory(_currentFolder);
           break;
 
@@ -2181,7 +2210,7 @@ namespace MediaPortal.GUI.Video
         IMDBActor imdbActor = new IMDBActor();
         for (int x = 0; x < _imdb.Count; ++x)
         {
-          _imdb.GetActorDetails(_imdb[x], out imdbActor);
+          _imdb.GetActorDetails(_imdb[x], true, out imdbActor);
           if (imdbActor.ThumbnailUrl != null && imdbActor.ThumbnailUrl.Length > 0)
           {
             break;
@@ -2229,7 +2258,7 @@ namespace MediaPortal.GUI.Video
             IMDBActor imdbActor = new IMDBActor();
             for (int x = 0; x < _imdb.Count; ++x)
             {
-              _imdb.GetActorDetails(_imdb[x], out imdbActor);
+              _imdb.GetActorDetails(_imdb[x], false, out imdbActor);
               if (imdbActor.ThumbnailUrl != null && imdbActor.ThumbnailUrl.Length > 0)
               {
                 break;

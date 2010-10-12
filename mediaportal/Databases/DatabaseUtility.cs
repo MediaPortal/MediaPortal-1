@@ -70,12 +70,31 @@ namespace MediaPortal.Database
       {
         return false;
       }
-      results = m_db.Execute("SELECT * FROM '" + table + "'");
+      // This only works for tables that are not empty
+      //results = m_db.Execute("SELECT * FROM '" + table + "'");
+      //if (results != null)
+      //{
+      //  for (int i = 0; i < results.ColumnNames.Count; ++i)
+      //  {
+      //    if ((string)results.ColumnNames[i] == column)
+      //    {
+      //      return true;
+      //    }
+      //  }
+      //}
+      //return false;
+
+      // We will use --> PRAGMA table_info( your_table_name )
+      // PRAGMA returns one row for each column in the named table. 
+      // Columns in the result set include the columnID, column name, data type, 
+      // whether or not the column can be NULL, and the default value for the column.
+      // More info: http://www.sqlite.org/pragma.html
+      results = m_db.Execute("PRAGMA table_info('" + table + "')");
       if (results != null)
       {
-        for (int i = 0; i < results.ColumnNames.Count; ++i)
+        for (int i = 0; i < results.Rows.Count; ++i)
         {
-          if ((string)results.ColumnNames[i] == column)
+          if ((string)results.Rows[i].fields[1] == column) // fields[1] is column name
           {
             return true;
           }

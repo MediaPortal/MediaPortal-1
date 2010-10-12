@@ -439,16 +439,21 @@
     <Compile Include="UserInterfaceControls\MPNumericUpDown.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UserInterfaceControls\MPProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UserInterfaceControls\MPToolTip.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Util\EncryptDecrypt.cs" />
+    <Compile Include="Util\FanArt.cs" />
     <Compile Include="Util\FastImage.cs" />
     <Compile Include="Util\FilterChecker.cs" />
     <Compile Include="Util\FolderThumbCacher.cs" />
     <Compile Include="Util\FolderThumbCreator.cs" />
     <Compile Include="Util\HResult.cs" />
     <Compile Include="Util\HTMLParser.cs" />
+    <Compile Include="Util\IMDBSearch.cs" />
     <Compile Include="Util\IMPawardsSearch.cs" />
     <Compile Include="Util\PathUtility.cs" />
     <Compile Include="Util\PRNG.cs" />
@@ -457,6 +462,7 @@
     <Compile Include="Util\RemovableDriveHelper.cs" />
     <Compile Include="Util\StopWatch.cs" />
     <Compile Include="Util\ThumbExtractor.cs" />
+    <Compile Include="Util\TMDBCoversSearch.cs" />
     <Compile Include="Util\TVProgramDescription.cs" />
     <Compile Include="Util\UnhandledExceptionLogger.cs" />
     <Compile Include="UserInterfaceControls\MPTabPage.cs">

@@ -144,6 +144,7 @@ namespace MediaPortal.Util
     private static ArrayList m_ImageExtensions = new ArrayList();
 
     private static string[] _artistNamePrefixes;
+    private static string[] _movieNamePrefixes;
 
     private static bool m_bHideExtensions = false;
     private static bool enableGuiSounds;
@@ -166,6 +167,10 @@ namespace MediaPortal.Util
         m_bHideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
         string artistNamePrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         _artistNamePrefixes = artistNamePrefixes.Split(',');
+
+        // Movie title prefix strip
+        string movieNamePrefixes = xmlreader.GetValueAsString("moviedatabase", "titleprefixes", "The, Les, Die");
+        _movieNamePrefixes = movieNamePrefixes.Split(',');
 
         string strTmp = xmlreader.GetValueAsString("music", "extensions", AudioExtensionsDefault);
         Tokens tok = new Tokens(strTmp, new[] { ',' });
@@ -1272,8 +1277,8 @@ namespace MediaPortal.Util
       // Chemelli: added "+" as separator to allow IMDB scripts usage of this function
       //
       string[] pattern = {
-                           "\\[[0-9]{1,2}-[0-9]{1,2}\\]",
-                           "[-_+ ]\\({0,1}(cd|dis[ck]|part|dvd)[-_+ ]{0,1}[0-9]{1,2}\\){0,1}"
+                           "\\[(?<digit>[0-9]{1,2})-[0-9]{1,2}\\]",
+                             "[-_+ ]\\({0,1}(cd|dis[ck]|part|dvd)[-_+ ]{0,1}(?<digit>[0-9]{1,2})\\){0,1}"
                          };
       return pattern;
     }
@@ -2721,6 +2726,35 @@ namespace MediaPortal.Util
             artistName = string.Format("{0}, {1}", tempName, artistName.Substring(0, prefix.Length));
           else
             artistName = tempName;
+
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    // Move the prefix of movie to the end of the string for better sorting
+    public static bool StripMovieNamePrefix(ref string movieName, bool appendPrefix)
+    {
+      string temp = movieName.ToLower();
+
+      foreach (string s in _movieNamePrefixes)
+      {
+        if (s.Length == 0)
+          continue;
+
+        string prefix = s;
+        prefix = prefix.Trim().ToLower();
+        int pos = temp.IndexOf(prefix + " ");
+        if (pos == 0)
+        {
+          string tempName = movieName.Substring(prefix.Length).Trim();
+
+          if (appendPrefix)
+            movieName = string.Format("{0}, {1}", tempName, movieName.Substring(0, prefix.Length));
+          else
+            movieName = tempName;
 
           return true;
         }

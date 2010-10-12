@@ -34,9 +34,7 @@ namespace MediaPortal.Configuration.Sections
     private MPButton button2;
     private MPLabel label1;
     private MPLabel label2;
-    private ProgressBar progressBar;
     private Object instance;
-    private ProgressBar progressBar1;
     private MPLabel mpLabel1;
     private MPButton mpButton1;
 
@@ -47,6 +45,8 @@ namespace MediaPortal.Configuration.Sections
 
     private int count = 0;
     private int total = 0;
+    private MPProgressBar progressBar;
+    private MPProgressBar progressBar1;
     private bool cancelScan = false;
 
     public DlgProgress()
@@ -87,17 +87,15 @@ namespace MediaPortal.Configuration.Sections
       this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.progressBar = new System.Windows.Forms.ProgressBar();
-      this.progressBar1 = new System.Windows.Forms.ProgressBar();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.progressBar = new MediaPortal.UserInterface.Controls.MPProgressBar();
+      this.progressBar1 = new MediaPortal.UserInterface.Controls.MPProgressBar();
       this.SuspendLayout();
       // 
       // button2
       // 
-      this.button2.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.button2.Location = new System.Drawing.Point(326, 114);
       this.button2.Name = "button2";
       this.button2.Size = new System.Drawing.Size(56, 23);
@@ -122,33 +120,9 @@ namespace MediaPortal.Configuration.Sections
       this.label2.TabIndex = 5;
       this.label2.Text = "label2";
       // 
-      // progressBar
-      // 
-      this.progressBar.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBar.Location = new System.Drawing.Point(12, 46);
-      this.progressBar.Name = "progressBar";
-      this.progressBar.Size = new System.Drawing.Size(370, 15);
-      this.progressBar.TabIndex = 5;
-      // 
-      // progressBar1
-      // 
-      this.progressBar1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBar1.Location = new System.Drawing.Point(12, 91);
-      this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(370, 15);
-      this.progressBar1.TabIndex = 6;
-      // 
       // mpLabel1
       // 
-      this.mpLabel1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpLabel1.Location = new System.Drawing.Point(12, 73);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(351, 16);
@@ -157,9 +131,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpButton1
       // 
-      this.mpButton1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButton1.Location = new System.Drawing.Point(239, 114);
       this.mpButton1.Name = "mpButton1";
       this.mpButton1.Size = new System.Drawing.Size(82, 23);
@@ -168,17 +140,31 @@ namespace MediaPortal.Configuration.Sections
       this.mpButton1.UseVisualStyleBackColor = true;
       this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
       // 
+      // progressBar
+      // 
+      this.progressBar.Location = new System.Drawing.Point(12, 49);
+      this.progressBar.Name = "progressBar";
+      this.progressBar.Size = new System.Drawing.Size(368, 15);
+      this.progressBar.TabIndex = 9;
+      // 
+      // progressBar1
+      // 
+      this.progressBar1.Location = new System.Drawing.Point(12, 92);
+      this.progressBar1.Name = "progressBar1";
+      this.progressBar1.Size = new System.Drawing.Size(368, 15);
+      this.progressBar1.TabIndex = 10;
+      // 
       // DlgProgress
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.ClientSize = new System.Drawing.Size(392, 139);
+      this.ClientSize = new System.Drawing.Size(392, 145);
+      this.Controls.Add(this.progressBar1);
+      this.Controls.Add(this.progressBar);
       this.Controls.Add(this.mpButton1);
       this.Controls.Add(this.mpLabel1);
-      this.Controls.Add(this.progressBar1);
       this.Controls.Add(this.label2);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.button2);
-      this.Controls.Add(this.progressBar);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.MaximumSize = new System.Drawing.Size(417, 173);
       this.MinimumSize = new System.Drawing.Size(250, 173);
@@ -187,6 +173,7 @@ namespace MediaPortal.Configuration.Sections
       this.Text = "Searching IMDB...";
       this.Load += new System.EventHandler(this.DlgProgress_Load);
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -211,6 +198,7 @@ namespace MediaPortal.Configuration.Sections
       SetPercentage(0);
       SetHeading("");
       button2.Enabled = true;
+      this.cancelScan = false;
     }
 
     public void DisableCancel()

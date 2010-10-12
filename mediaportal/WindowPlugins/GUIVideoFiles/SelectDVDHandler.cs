@@ -208,6 +208,7 @@ namespace MediaPortal.GUI.Video
       return false;
     }
 
+    // Changed - cover for movies with the same name
     public void SetIMDBThumbs(IList items, bool markWatchedFiles, bool eachMovieHasDedicatedFolder)
     {
       GUIListItem pItem;
@@ -268,7 +269,10 @@ namespace MediaPortal.GUI.Video
             {
               pItem.Label = String.Format("({0}:) {1}", pItem.Path.Substring(0, 1), movieDetails.Title);
             }
-            strThumb = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
+            //strThumb = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
+            // Title suffix for problem with covers and movie with the same name
+            string titleExt = movieDetails.Title + "{" + movieDetails.ID + "}";
+            strThumb = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
 
             if (movieDetails.Watched > 0 && markWatchedFiles)
             {
@@ -302,8 +306,11 @@ namespace MediaPortal.GUI.Video
 
           if (!File.Exists(strThumb) || string.IsNullOrEmpty(strThumb))
           {
+            //strThumb = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
+            //                         Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(file, ".jpg"))));
+            string titleExt =  movieDetails.Title + "{" + movieDetails.ID + "}";
             strThumb = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
-                                     Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(file, ".jpg"))));
+                                     Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(file + titleExt, ".jpg"))));
             if (!File.Exists(strThumb))
             {
               continue;

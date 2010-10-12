@@ -24,6 +24,8 @@ using System.IO;
 using System.Windows.Forms;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Video.Database;
+using MediaPortal.Profile;
+using System.Text.RegularExpressions;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -32,20 +34,20 @@ namespace MediaPortal.Configuration.Sections
   /// </summary>
   public class DlgMovieConflicts : MPConfigForm, IMDB.IProgress
   {
-    private ListView listView1;
-    private ColumnHeader columnHeader1;
-    private MPButton button2;
-    private MPLabel label1;
-    private MPLabel label2;
-    private MPTextBox textBoxTitle;
-    private MPButton buttonFind;
-    private DlgProgress progressDialog = new DlgProgress();
-    private string newMovieToFind = string.Empty;
+    private ListView _listView1;
+    private ColumnHeader _columnHeader1;
+    private MPButton _button2;
+    private MPLabel _label1;
+    private MPLabel _label2;
+    private MPTextBox _textBoxTitle;
+    private MPButton _buttonFind;
+    private DlgProgress _progressDialog = new DlgProgress();
+    private string _newMovieToFind = string.Empty;
 
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private Container components = null;
+    private Container _components = null;
 
     public DlgMovieConflicts()
     {
@@ -66,9 +68,9 @@ namespace MediaPortal.Configuration.Sections
     {
       if (disposing)
       {
-        if (components != null)
+        if (_components != null)
         {
-          components.Dispose();
+          _components.Dispose();
         }
       }
       base.Dispose(disposing);
@@ -78,17 +80,18 @@ namespace MediaPortal.Configuration.Sections
     {
       get
       {
-        if (listView1.SelectedIndices.Count <= 0)
+        if (_listView1.SelectedIndices.Count <= 0)
         {
           return 0;
         }
-        return listView1.SelectedIndices[0];
+        return _listView1.SelectedIndices[0];
       }
     }
 
+    // Changed code-Just red color as warning for conflicts
     public void AddMovie(string movie)
     {
-      listView1.Items.Add(movie);
+      _listView1.Items.Add(movie).ForeColor = System.Drawing.Color.Red;
     }
 
     #region Windows Form Designer generated code
@@ -99,106 +102,107 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.listView1 = new System.Windows.Forms.ListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.textBoxTitle = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.buttonFind = new MediaPortal.UserInterface.Controls.MPButton();
+      this._listView1 = new System.Windows.Forms.ListView();
+      this._columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this._button2 = new MediaPortal.UserInterface.Controls.MPButton();
+      this._label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this._label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this._textBoxTitle = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this._buttonFind = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // listView1
       // 
-      this.listView1.Anchor =
+      this._listView1.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)
            | System.Windows.Forms.AnchorStyles.Right)));
-      this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-                                        {
-                                          this.columnHeader1
-                                        });
-      this.listView1.Location = new System.Drawing.Point(8, 34);
-      this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(447, 281);
-      this.listView1.TabIndex = 0;
-      this.listView1.UseCompatibleStateImageBehavior = false;
-      this.listView1.View = System.Windows.Forms.View.Details;
-      this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
+      this._listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
+                                         {
+                                           this._columnHeader1
+                                         });
+      this._listView1.Location = new System.Drawing.Point(8, 34);
+      this._listView1.Name = "_listView1";
+      this._listView1.Size = new System.Drawing.Size(447, 281);
+      this._listView1.TabIndex = 0;
+      this._listView1.UseCompatibleStateImageBehavior = false;
+      this._listView1.View = System.Windows.Forms.View.Details;
+      this._listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
       // 
       // columnHeader1
       // 
-      this.columnHeader1.Text = "Name";
-      this.columnHeader1.Width = 440;
+      this._columnHeader1.Text = "Name";
+      this._columnHeader1.Width = 440;
       // 
       // button2
       // 
-      this.button2.Anchor =
+      this._button2.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.button2.Location = new System.Drawing.Point(399, 347);
-      this.button2.Name = "button2";
-      this.button2.Size = new System.Drawing.Size(56, 23);
-      this.button2.TabIndex = 2;
-      this.button2.Text = "Close";
-      this.button2.UseVisualStyleBackColor = true;
-      this.button2.Click += new System.EventHandler(this.button2_Click);
+      this._button2.Location = new System.Drawing.Point(399, 347);
+      this._button2.Name = "_button2";
+      this._button2.Size = new System.Drawing.Size(56, 23);
+      this._button2.TabIndex = 2;
+      this._button2.Text = "Close";
+      this._button2.UseVisualStyleBackColor = true;
+      this._button2.Click += new System.EventHandler(this.button2_Click);
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 8);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(352, 23);
-      this.label1.TabIndex = 3;
-      this.label1.Text = "There was a conflict with the following files/movies:";
+      this._label1.Location = new System.Drawing.Point(16, 8);
+      this._label1.Name = "_label1";
+      this._label1.Size = new System.Drawing.Size(352, 23);
+      this._label1.TabIndex = 3;
+      this._label1.Text = "There was a conflict with the following files/movies:";
       // 
       // label2
       // 
-      this.label2.Anchor =
+      this._label2.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.label2.Location = new System.Drawing.Point(7, 320);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(32, 17);
-      this.label2.TabIndex = 5;
-      this.label2.Text = "Title:";
+      this._label2.Location = new System.Drawing.Point(7, 320);
+      this._label2.Name = "_label2";
+      this._label2.Size = new System.Drawing.Size(32, 20);
+      this._label2.TabIndex = 5;
+      this._label2.Text = "Title:";
+      this._label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // textBoxTitle
       // 
-      this.textBoxTitle.Anchor =
+      this._textBoxTitle.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
            | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxTitle.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxTitle.Location = new System.Drawing.Point(36, 320);
-      this.textBoxTitle.Name = "textBoxTitle";
-      this.textBoxTitle.Size = new System.Drawing.Size(358, 20);
-      this.textBoxTitle.TabIndex = 6;
+      this._textBoxTitle.BorderColor = System.Drawing.Color.Empty;
+      this._textBoxTitle.Location = new System.Drawing.Point(36, 320);
+      this._textBoxTitle.Name = "_textBoxTitle";
+      this._textBoxTitle.Size = new System.Drawing.Size(358, 20);
+      this._textBoxTitle.TabIndex = 6;
       // 
       // buttonFind
       // 
-      this.buttonFind.Anchor =
+      this._buttonFind.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonFind.Location = new System.Drawing.Point(399, 319);
-      this.buttonFind.Name = "buttonFind";
-      this.buttonFind.Size = new System.Drawing.Size(56, 23);
-      this.buttonFind.TabIndex = 7;
-      this.buttonFind.Text = "Find";
-      this.buttonFind.UseVisualStyleBackColor = true;
-      this.buttonFind.Click += new System.EventHandler(this.buttonFind_Click);
+      this._buttonFind.Location = new System.Drawing.Point(399, 319);
+      this._buttonFind.Name = "_buttonFind";
+      this._buttonFind.Size = new System.Drawing.Size(56, 23);
+      this._buttonFind.TabIndex = 7;
+      this._buttonFind.Text = "Find";
+      this._buttonFind.UseVisualStyleBackColor = true;
+      this._buttonFind.Click += new System.EventHandler(this.buttonFind_Click);
       // 
       // DlgMovieConflicts
       // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.ClientSize = new System.Drawing.Size(464, 376);
-      this.Controls.Add(this.buttonFind);
-      this.Controls.Add(this.textBoxTitle);
-      this.Controls.Add(this.label2);
-      this.Controls.Add(this.label1);
-      this.Controls.Add(this.button2);
-      this.Controls.Add(this.listView1);
+      this.Controls.Add(this._buttonFind);
+      this.Controls.Add(this._textBoxTitle);
+      this.Controls.Add(this._label2);
+      this.Controls.Add(this._label1);
+      this.Controls.Add(this._button2);
+      this.Controls.Add(this._listView1);
       this.MinimumSize = new System.Drawing.Size(393, 354);
       this.Name = "DlgMovieConflicts";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -218,44 +222,39 @@ namespace MediaPortal.Configuration.Sections
 
     private void buttonFind_Click(object sender, EventArgs e)
     {
-      if (listView1.SelectedItems == null)
-      {
-        return;
-      }
       int index = 0;
-      ListViewItem listItem = listView1.SelectedItems[0];
-      if (textBoxTitle.Text == string.Empty)
+      ListViewItem listItem = _listView1.SelectedItems[0];
+      if (_textBoxTitle.Text == string.Empty)
       {
         MessageBox.Show("Please select a movie", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         ;
         return;
       }
-      progressDialog.Total = 1;
-      progressDialog.Count = 1;
+      _progressDialog.Total = 1;
+      _progressDialog.Count = 1;
 
       string file = listItem.Text;
       IMDBMovie movieDetails = new IMDBMovie();
-      int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
       string path, filename;
       Util.Utils.Split(file, out path, out filename);
       movieDetails.Path = path;
       movieDetails.File = filename;
-      movieDetails.SearchString = textBoxTitle.Text;
+      movieDetails.SearchString = _textBoxTitle.Text;
       if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false, false))
       {
         if (movieDetails != null)
         {
           index = listItem.Index;
-          listView1.Items.Remove(listItem);
-          if (listView1.Items.Count > 0)
+          _listView1.Items.Remove(listItem);
+          if (_listView1.Items.Count > 0)
           {
-            if (index >= listView1.Items.Count)
+            if (index >= _listView1.Items.Count)
             {
-              index = listView1.Items.Count - 1;
+              index = _listView1.Items.Count - 1;
             }
-            listView1.SelectedIndices.Clear();
-            listView1.SelectedIndices.Add(index);
-            listView1.Update();
+            _listView1.SelectedIndices.Clear();
+            _listView1.SelectedIndices.Add(index);
+            _listView1.Update();
           }
           else
           {
@@ -266,35 +265,56 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+    // Changed - remove CDx from movie name
     private void listView1_SelectedIndexChanged(object sender, EventArgs e)
     {
-      if (listView1.SelectedItems.Count > 0)
+      if (_listView1.SelectedItems.Count > 0)
       {
-        string strFileName = listView1.SelectedItems[0].Text;
+        string strFileName = _listView1.SelectedItems[0].Text;
         string strMovieName = string.Empty;
         if (Util.Utils.IsDVD(strFileName))
         {
-          //DVD
+          // DVD
           string strDrive = strFileName.Substring(0, 2);
           strMovieName = Util.Utils.GetDriveName(strDrive);
         }
         else if (strFileName.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO") >= 0)
         {
-          //DVD folder
+          // DVD folder
           string dvdFolder = strFileName.Substring(0, strFileName.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO"));
           strMovieName = Path.GetFileName(dvdFolder);
         }
         else
         {
-          //Movie 
-          strMovieName = Path.GetFileNameWithoutExtension(strFileName);
+          // Movie - Movie folder title + remove CD from title
+          using (Settings xmlreader = new MPSettings())
+          {
+            bool foldercheck = xmlreader.GetValueAsBool("moviedatabase", "usefolderastitle", false);
+            if (foldercheck)
+            {
+              strMovieName = Path.GetFileName(Path.GetDirectoryName(strFileName));
+            }
+            else
+            {
+              strMovieName = Path.GetFileNameWithoutExtension(strFileName);
+            }
+            // Test pattern (CD, DISK, Part, X-Y...) and remove it from filename
+            string[] pattern = Util.Utils.StackExpression();
+            for (int i = 0; i < pattern.Length; i++)
+            {
+              if (foldercheck == false && Regex.IsMatch(strMovieName, pattern[i], RegexOptions.IgnoreCase))
+              {
+                strMovieName = Regex.Replace(strMovieName, pattern[i], "", RegexOptions.IgnoreCase);
+              }
+            }
+          }
         }
 
-        textBoxTitle.Text = strMovieName;
+        _textBoxTitle.Text = strMovieName;
       }
       else
       {
-        textBoxTitle.Text = "";
+        _textBoxTitle.Text = "";
       }
     }
 
@@ -302,37 +322,37 @@ namespace MediaPortal.Configuration.Sections
 
     public bool OnDisableCancel(IMDBFetcher fetcher)
     {
-      if (progressDialog.IsInstance(fetcher))
+      if (_progressDialog.IsInstance(fetcher))
       {
-        progressDialog.DisableCancel();
+        _progressDialog.DisableCancel();
       }
       return true;
     }
 
     public void OnProgress(string line1, string line2, string line3, int percent)
     {
-      progressDialog.SetLine1(line1);
-      progressDialog.SetLine2(line2);
+      _progressDialog.SetLine1(line1);
+      _progressDialog.SetLine2(line2);
       if (percent > 0)
       {
-        progressDialog.SetPercentage(percent);
+        _progressDialog.SetPercentage(percent);
       }
-      progressDialog.Update();
+      _progressDialog.Update();
     }
 
     public bool OnSearchStarting(IMDBFetcher fetcher)
     {
-      progressDialog.ResetProgress();
-      progressDialog.SetHeading("Searching IMDB...");
-      progressDialog.SetLine1(fetcher.MovieName);
-      progressDialog.SetLine2(string.Empty);
-      progressDialog.Instance = fetcher;
+      _progressDialog.ResetProgress();
+      _progressDialog.SetHeading("Searching IMDB...");
+      _progressDialog.SetLine1(fetcher.MovieName);
+      _progressDialog.SetLine2(string.Empty);
+      _progressDialog.Instance = fetcher;
       return true;
     }
 
     public bool OnSearchStarted(IMDBFetcher fetcher)
     {
-      DialogResult result = progressDialog.ShowDialog(this);
+      DialogResult result = _progressDialog.ShowDialog(this);
       this.Update();
       if (result == DialogResult.Cancel)
       {
@@ -343,9 +363,9 @@ namespace MediaPortal.Configuration.Sections
 
     public bool OnSearchEnd(IMDBFetcher fetcher)
     {
-      if (progressDialog.IsInstance(fetcher))
+      if (_progressDialog.IsInstance(fetcher))
       {
-        progressDialog.CloseProgress();
+        _progressDialog.CloseProgress();
       }
       return true;
     }
@@ -358,18 +378,18 @@ namespace MediaPortal.Configuration.Sections
 
     public bool OnDetailsStarting(IMDBFetcher fetcher)
     {
-      progressDialog.ResetProgress();
-      progressDialog.SetHeading("Downloading Movie details...");
-      progressDialog.SetLine1("Downloading Movie details...");
-      progressDialog.SetLine2(fetcher.MovieName);
-      progressDialog.Instance = fetcher;
+      _progressDialog.ResetProgress();
+      _progressDialog.SetHeading("Downloading Movie details...");
+      _progressDialog.SetLine1("Downloading Movie details...");
+      _progressDialog.SetLine2(fetcher.MovieName);
+      _progressDialog.Instance = fetcher;
       return true;
     }
 
     public bool OnDetailsStarted(IMDBFetcher fetcher)
     {
-      progressDialog.Instance = fetcher;
-      DialogResult result = progressDialog.ShowDialog(this);
+      _progressDialog.Instance = fetcher;
+      DialogResult result = _progressDialog.ShowDialog(this);
       this.Update();
       if (result == DialogResult.Cancel)
       {
@@ -380,27 +400,27 @@ namespace MediaPortal.Configuration.Sections
 
     public bool OnDetailsEnd(IMDBFetcher fetcher)
     {
-      if (progressDialog.IsInstance(fetcher))
+      if (_progressDialog.IsInstance(fetcher))
       {
-        progressDialog.CloseProgress();
+        _progressDialog.CloseProgress();
       }
       return true;
     }
 
     public bool OnActorsStarting(IMDBFetcher fetcher)
     {
-      progressDialog.ResetProgress();
-      progressDialog.SetHeading("Downloading Actor info...");
-      progressDialog.SetLine1("Downloading Actor info...");
-      progressDialog.SetLine2(fetcher.MovieName);
-      progressDialog.Instance = fetcher;
+      _progressDialog.ResetProgress();
+      _progressDialog.SetHeading("Downloading Actor info...");
+      _progressDialog.SetLine1("Downloading Actor info...");
+      _progressDialog.SetLine2(fetcher.MovieName);
+      _progressDialog.Instance = fetcher;
       return true;
     }
 
     public bool OnActorsStarted(IMDBFetcher fetcher)
     {
-      progressDialog.Instance = fetcher;
-      DialogResult result = progressDialog.ShowDialog(this);
+      _progressDialog.Instance = fetcher;
+      DialogResult result = _progressDialog.ShowDialog(this);
       this.Update();
       if (result == DialogResult.Cancel)
       {
@@ -423,7 +443,7 @@ namespace MediaPortal.Configuration.Sections
 
     public bool OnRequestMovieTitle(IMDBFetcher fetcher, out string movieName)
     {
-      movieName = newMovieToFind;
+      movieName = _newMovieToFind;
       if (movieName == string.Empty)
       {
         return false;
@@ -449,7 +469,7 @@ namespace MediaPortal.Configuration.Sections
       selectedMovie = dlg.SelectedItem;
       if (dlg.IsNewFind)
       {
-        newMovieToFind = dlg.NewTitleToFind;
+        _newMovieToFind = dlg.NewTitleToFind;
         selectedMovie = -1;
       }
       return true;
@@ -479,10 +499,10 @@ namespace MediaPortal.Configuration.Sections
 
     private void DlgMovieConflicts_Load(object sender, EventArgs e)
     {
-      if (listView1.Items.Count > 0)
+      if (_listView1.Items.Count > 0)
       {
-        listView1.SelectedIndices.Clear();
-        listView1.SelectedIndices.Add(0);
+        _listView1.SelectedIndices.Clear();
+        _listView1.SelectedIndices.Add(0);
       }
     }
   }

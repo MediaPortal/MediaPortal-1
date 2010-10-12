@@ -487,7 +487,7 @@ namespace MediaPortal.GUI.Video
       }
       if (where == "actor")
       {
-        return movie.actorId;
+        return movie.ActorID;
       }
       if (where == "title")
       {
@@ -495,7 +495,7 @@ namespace MediaPortal.GUI.Video
       }
       if (where == "genre")
       {
-        return movie.genreId;
+        return movie.GenreID;
       }
       if (where == "year")
       {

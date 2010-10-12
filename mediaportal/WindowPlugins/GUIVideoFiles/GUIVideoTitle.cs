@@ -306,7 +306,7 @@ namespace MediaPortal.GUI.Video
       }
       if (handler.CurrentLevelWhere == "actor")
       {
-        IMDBActor actor = VideoDatabase.GetActorInfo(movie.actorId);
+        IMDBActor actor = VideoDatabase.GetActorInfo(movie.ActorID);
         if (actor != null)
         {
           dlg.Reset();
@@ -653,6 +653,10 @@ namespace MediaPortal.GUI.Video
       }
       if (!item.IsRemote)
       {
+        // Delete covers
+        FanArt.DeleteCovers(movie.Title, movie.ID);
+        // Delete fanarts
+        FanArt.DeleteFanarts(movie.File, movie.Title);
         VideoDatabase.DeleteMovieInfoById(movie.ID);
       }
     }
@@ -694,6 +698,7 @@ namespace MediaPortal.GUI.Video
       infoDlg.DoModal(GetID);
     }
 
+    // Changed - covers with the same movie name
     private void SetIMDBThumbs(ArrayList items)
     {
       for (int x = 0; x < items.Count; ++x)
@@ -705,7 +710,10 @@ namespace MediaPortal.GUI.Video
         {
           if (movie.ID >= 0)
           {
-            coverArtImage = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movie.Title);
+            //coverArtImage = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movie.Title);
+            // Title suffix for problem with covers and movie with the same name
+            string titleExt = movie.Title + "{" + movie.ID + "}";
+            coverArtImage = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
             if (File.Exists(coverArtImage))
             {
               listItem.ThumbnailImage = coverArtImage;
@@ -746,6 +754,8 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+
+    // Changed - covers with the same movie name
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
       IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
@@ -757,7 +767,9 @@ namespace MediaPortal.GUI.Video
       if (movie.ID >= 0)
       {
         string coverArtImage;
-        coverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movie.Title);
+        //coverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movie.Title);
+        string titleExt = movie.Title + "{" + movie.ID + "}";
+        coverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
         if (File.Exists(coverArtImage))
         {
           facadeView.FilmstripView.InfoImageFileName = coverArtImage;
