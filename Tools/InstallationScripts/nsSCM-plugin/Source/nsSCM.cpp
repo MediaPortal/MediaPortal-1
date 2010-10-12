@@ -255,77 +255,6 @@ NSISFunction(Start)
   RET (rc);
 }
 
-// this method has been taken from http://www.microsoft.com/msj/0298/service.aspx
-BOOL WaitForServiceToReachState(SC_HANDLE hService, DWORD dwDesiredState,
-                                 SERVICE_STATUS* pss, DWORD dwMilliseconds) 
-{
-  DWORD dwLastState, dwLastCheckPoint;
-  BOOL  fFirstTime = TRUE; // Don't compare state & checkpoint the first time through
-  BOOL  fServiceOk = TRUE;
-  DWORD dwTimeout = GetTickCount() + dwMilliseconds;
-
-  // Loop until the service reaches the desired state,
-  // an error occurs, or we timeout
-  while(TRUE) 
-  {
-    // Get current state of service
-    fServiceOk = ::QueryServiceStatus(hService, pss);
-
-    // If we can't query the service, we're done
-    if (!fServiceOk) break;
-
-    // If the service reaches the desired state, we're done
-    if (pss->dwCurrentState == dwDesiredState) break;
-
-    // If we timed-out, we're done
-    if ((dwMilliseconds != INFINITE) && (dwTimeout > GetTickCount())) 
-	{
-      SetLastError(ERROR_TIMEOUT); 
-      break;
-    }
-
-    // If this is our first time, save the service's state & checkpoint
-    if (fFirstTime) 
-	{
-      dwLastState = pss->dwCurrentState;
-      dwLastCheckPoint = pss->dwCheckPoint;
-      fFirstTime = FALSE;
-    } 
-	else 
-	{
-      // If not first time & state has changed, save state & checkpoint
-      if (dwLastState != pss->dwCurrentState) 
-	  {
-        dwLastState = pss->dwCurrentState;
-        dwLastCheckPoint = pss->dwCheckPoint;
-	  } 
-	  else 
-	  {
-        // State hasn't change, check that checkpoint is increasing
-        if (pss->dwCheckPoint > dwLastCheckPoint) 
-		{
-          // Checkpoint has increased, save checkpoint
-          dwLastCheckPoint = pss->dwCheckPoint;
-        } 
-		else 
-		{
-          // Checkpoint hasn't increased, service failed, we're done!
-          fServiceOk = FALSE; 
-          break;
-        }
-      }
-    }
-	   
-	// We're not done, wait the specified period of time
-	Sleep(pss->dwWaitHint);
-  }
-
-  // Note: The last SERVICE_STATUS is returned to the caller so
-  // that the caller can check the service state and error codes.
-  return(fServiceOk);
- }
-
-
 // 1
 // <name of service:startstop name>
 
@@ -352,26 +281,10 @@ NSISFunction(Stop)
    }
 
   SERVICE_STATUS serviceStatus;
-  
-  if( !ControlService( schService, SERVICE_CONTROL_STOP, &serviceStatus ) )
-  {
-    DWORD dwErrCode = GetLastError(); 
-
-    if( dwErrCode != ERROR_SERVICE_NOT_ACTIVE )
-    {
-      RET_ERROR ();
-    }
-  }
-
-  // Wait until it stopped (or timeout expired)
-  if( !WaitForServiceToReachState( schService, SERVICE_STOPPED, &serviceStatus, INFINITE ) )
-  {
-	RET_ERROR ();
-  }
-  
+  BOOL rc = ControlService (schService, SERVICE_CONTROL_STOP, &serviceStatus);
   CloseServiceHandle (schService);
 
-  RET_SUCCESS();
+  RET (rc);
 }
 
 #if 0

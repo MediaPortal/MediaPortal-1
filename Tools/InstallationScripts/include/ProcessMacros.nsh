@@ -71,12 +71,25 @@
 
     nsSCM::Stop /NOUNLOAD "${Service}"
     Pop $0
-    Pop $1
 
     ${If} $0 == "error"
       ${LOG_TEXT} "INFO" "StopService: Unable to stop ${Service} (error $1)."
       Abort "Unable to stop ${Service} (error $1). Installation aborted."
     ${Else}
+
+      StrCpy $R0 0
+      ${Do}
+        ${If} $R0 > 0
+          ${LOG_TEXT} "INFO" "StopService: sleeping 20ms and recheking service status..."
+          Sleep 20
+        ${EndIF}
+
+        IntOp $R0 $R0 + 1
+        nsSCM::QueryStatus /NOUNLOAD "${Service}"
+        Pop $0
+        Pop $1
+      ${LoopUntil} $1 = 1
+
       ${LOG_TEXT} "INFO" "StopService: ${Service} was stopped successfully."
     ${EndIF}
 
