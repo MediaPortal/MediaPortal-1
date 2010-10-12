@@ -123,6 +123,7 @@ namespace TvService
           //gibman 
           // RecordingFormat 0 = ts
           // RecordingFormat 1 = mpeg
+          fileName = fileName.Replace("\r\n", " ");
           fileName = System.IO.Path.ChangeExtension(fileName, ".ts");
 
           useErrorDetection = true;
