@@ -166,6 +166,8 @@ namespace MediaPortal.GUI.Library
         if (_containsProperty)
         {
           strText = GUIPropertyManager.Parse(strText);
+          if (strText == null)
+            strText = string.Empty;
         }
 
         if (_previousText != strText)
@@ -214,7 +216,10 @@ namespace MediaPortal.GUI.Library
           } while (ipos >= 0 && strText.Length > 0);
         }
       }
-
+      else
+      {
+        _listLabels.DisposeAndClearList();
+      }
       // if there are no labels do not render
       if (_listLabels.Count == 0)
       {
