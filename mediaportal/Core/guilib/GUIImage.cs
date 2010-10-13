@@ -109,7 +109,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("texture", "diffuse")] protected string _diffuseFileName = "";
     [XMLSkin("texture", "mask")] protected string _maskFileName = "";
     [XMLSkinElement("filtered")] protected bool _filterImage = true;
-    [XMLSkinElement("centered")] protected bool _centerImage = false;
+    [XMLSkinElement("align")] protected Alignment _imageAlignment = Alignment.ALIGN_LEFT;
+    [XMLSkinElement("valign")] protected VAlignment _imageVAlignment = VAlignment.ALIGN_TOP;
     [XMLSkinElement("border")] protected string _strBorder = "";
     [XMLSkin("border", "position")] protected BorderPosition _borderPosition = BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("border", "textureRepeat")] protected bool _borderTextureRepeat = false;
@@ -1128,12 +1129,24 @@ namespace MediaPortal.GUI.Library
       m_iRenderWidth = (int)Math.Round(nw);
       m_iRenderHeight = (int)Math.Round(nh);
 
-      // if necessary then center the image 
+      // if necessary then align the image 
       // in the controls rectangle
-      if (_centerImage)
+      if (_imageAlignment == Alignment.ALIGN_CENTER)
       {
         x += ((((float)_width) - nw) / 2.0f);
+      }
+      else if (_imageAlignment == Alignment.ALIGN_RIGHT)
+      {
+        x += ((float)_width - nw);
+      }
+
+      if (_imageVAlignment == VAlignment.ALIGN_MIDDLE)
+      {
         y += ((((float)_height) - nh) / 2.0f);
+      }
+      else if (_imageVAlignment == VAlignment.ALIGN_BOTTOM)
+      {
+        y += ((float)_height - nh);
       }
 
       // Calculate source Texture
@@ -2229,14 +2242,57 @@ namespace MediaPortal.GUI.Library
     /// Property which indicates if the image should be centered in the
     /// given rectangle of the control
     /// </summary>
+    [Obsolete("ImageAlignment/ImageVAlignment should be used. (<align>/<valign> tag)")]
+    [XMLSkinElement("centered")]
     public bool Centered
     {
-      get { return _centerImage; }
+      get { return _imageAlignment == Alignment.ALIGN_CENTER && _imageVAlignment == VAlignment.ALIGN_MIDDLE; }
       set
       {
-        if (_centerImage != value)
+        if (value && (_imageAlignment != Alignment.ALIGN_CENTER || _imageVAlignment != VAlignment.ALIGN_MIDDLE))
         {
-          _centerImage = value;
+          _imageAlignment = Alignment.ALIGN_CENTER;
+          _imageVAlignment = VAlignment.ALIGN_MIDDLE;
+          _reCalculate = true;
+        }
+        else if (!value && _imageAlignment == Alignment.ALIGN_CENTER && _imageVAlignment == VAlignment.ALIGN_MIDDLE)
+        {
+          _imageAlignment = Alignment.ALIGN_LEFT;
+          _imageVAlignment = VAlignment.ALIGN_TOP;
+          _reCalculate = true;
+      }
+    }
+    }
+
+    /// <summary>
+    /// Property which indicates if the image alignment in the
+    /// given rectangle of the control
+    /// </summary>
+    public Alignment ImageAlignment
+    {
+      get { return _imageAlignment; }
+      set
+      {
+        if (_imageAlignment != value)
+        {
+          _imageAlignment = value;
+          _reCalculate = true;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Property which indicates if the image alignment in the
+    /// given rectangle of the control
+    /// </summary>
+    public VAlignment ImageVAlignment
+    {
+      get { return _imageVAlignment; }
+      set
+      {
+        if (_imageVAlignment != value)
+        {
+          _imageVAlignment = value;
           _reCalculate = true;
         }
       }
