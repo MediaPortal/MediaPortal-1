@@ -53,12 +53,12 @@ public:
 
   /// Sets pitch change in octaves compared to the original pitch  
   /// (-1.00 .. +1.00)
-  void setPitchOctaves(float newPitch);
+  void setPitchOctaves(double newPitch);
 
   /// Sets pitch change in semi-tones compared to the original pitch
   /// (-12 .. +12)
   void setPitchSemiTones(int newPitch);
-  void setPitchSemiTones(float newPitch);
+  void setPitchSemiTones(double newPitch);
 
   /// Sets sample rate.
   void setSampleRate(uint srate);

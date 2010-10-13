@@ -157,7 +157,7 @@ void SoundTouch::setChannels(uint numChannels)
 
 // Sets new rate control value. Normal rate = 1.0, smaller values
 // represent slower rate, larger faster rates.
-void SoundTouch::setRate(float newRate)
+void SoundTouch::setRate(double newRate)
 {
     virtualRate = newRate;
     calcEffectiveRateAndTempo();
@@ -167,7 +167,7 @@ void SoundTouch::setRate(float newRate)
 
 // Sets new rate control value as a difference in percents compared
 // to the original rate (-50 .. +100 %)
-void SoundTouch::setRateChange(float newRate)
+void SoundTouch::setRateChange(double newRate)
 {
     virtualRate = 1.0f + 0.01f * newRate;
     calcEffectiveRateAndTempo();
@@ -177,7 +177,7 @@ void SoundTouch::setRateChange(float newRate)
 
 // Sets new tempo control value. Normal tempo = 1.0, smaller values
 // represent slower tempo, larger faster tempo.
-void SoundTouch::setTempo(float newTempo)
+void SoundTouch::setTempo(double newTempo)
 {
     virtualTempo = newTempo;
     calcEffectiveRateAndTempo();
@@ -187,7 +187,7 @@ void SoundTouch::setTempo(float newTempo)
 
 // Sets new tempo control value as a difference in percents compared
 // to the original tempo (-50 .. +100 %)
-void SoundTouch::setTempoChange(float newTempo)
+void SoundTouch::setTempoChange(double newTempo)
 {
     virtualTempo = 1.0f + 0.01f * newTempo;
     calcEffectiveRateAndTempo();
@@ -197,7 +197,7 @@ void SoundTouch::setTempoChange(float newTempo)
 
 // Sets new pitch control value. Original pitch = 1.0, smaller values
 // represent lower pitches, larger values higher pitch.
-void SoundTouch::setPitch(float newPitch)
+void SoundTouch::setPitch(double newPitch)
 {
     virtualPitch = newPitch;
     calcEffectiveRateAndTempo();
@@ -207,9 +207,9 @@ void SoundTouch::setPitch(float newPitch)
 
 // Sets pitch change in octaves compared to the original pitch
 // (-1.00 .. +1.00)
-void SoundTouch::setPitchOctaves(float newPitch)
+void SoundTouch::setPitchOctaves(double newPitch)
 {
-    virtualPitch = (float)exp(0.69314718056f * newPitch);
+    virtualPitch = (double)exp(0.69314718056f * newPitch);
     calcEffectiveRateAndTempo();
 }
 
@@ -219,12 +219,12 @@ void SoundTouch::setPitchOctaves(float newPitch)
 // (-12 .. +12)
 void SoundTouch::setPitchSemiTones(int newPitch)
 {
-    setPitchOctaves((float)newPitch / 12.0f);
+    setPitchOctaves((double)newPitch / 12.0f);
 }
 
 
 
-void SoundTouch::setPitchSemiTones(float newPitch)
+void SoundTouch::setPitchSemiTones(double newPitch)
 {
     setPitchOctaves(newPitch / 12.0f);
 }
@@ -234,8 +234,8 @@ void SoundTouch::setPitchSemiTones(float newPitch)
 // nominal control values.
 void SoundTouch::calcEffectiveRateAndTempo()
 {
-    float oldTempo = tempo;
-    float oldRate = rate;
+    double oldTempo = tempo;
+    double oldRate = rate;
 
     tempo = virtualTempo / virtualPitch;
     rate = virtualPitch * virtualRate;

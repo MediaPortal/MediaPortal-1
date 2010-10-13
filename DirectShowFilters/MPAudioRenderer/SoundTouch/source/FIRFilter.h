@@ -128,14 +128,14 @@ public:
     class FIRFilter3DNow : public FIRFilter
     {
     protected:
-        float *filterCoeffsUnalign;
-        float *filterCoeffsAlign;
+        double *filterCoeffsUnalign;
+        double *filterCoeffsAlign;
 
-        virtual uint evaluateFilterStereo(float *dest, const float *src, uint numSamples) const;
+        virtual uint evaluateFilterStereo(double *dest, const double *src, uint numSamples) const;
     public:
         FIRFilter3DNow();
         ~FIRFilter3DNow();
-        virtual void setCoefficients(const float *coeffs, uint newLength, uint uResultDivFactor);
+        virtual void setCoefficients(const double *coeffs, uint newLength, uint uResultDivFactor);
     };
 
 #endif  // ALLOW_3DNOW
@@ -146,15 +146,15 @@ public:
     class FIRFilterSSE : public FIRFilter
     {
     protected:
-        float *filterCoeffsUnalign;
-        float *filterCoeffsAlign;
+        double *filterCoeffsUnalign;
+        double *filterCoeffsAlign;
 
-        virtual uint evaluateFilterStereo(float *dest, const float *src, uint numSamples) const;
+        virtual uint evaluateFilterStereo(double *dest, const double *src, uint numSamples) const;
     public:
         FIRFilterSSE();
         ~FIRFilterSSE();
 
-        virtual void setCoefficients(const float *coeffs, uint newLength, uint uResultDivFactor);
+        virtual void setCoefficients(const double *coeffs, uint newLength, uint uResultDivFactor);
     };
 
 #endif // ALLOW_SSE

@@ -507,8 +507,8 @@ void CSoundTouchEx::StereoInterleaveFloat(const soundtouch::SAMPLETYPE *inBuffer
   
   while(count--)
   {
-    *(float *)(pOutBuffer + m_nOutLeftOffset) = SampleInt16ToFloat(*inBuffer++);
-    *(float *)(pOutBuffer + m_nOutRightOffset) = SampleInt16ToFloat(*inBuffer++);
+    *(double *)(pOutBuffer + m_nOutLeftOffset) = SampleInt16ToFloat(*inBuffer++);
+    *(double *)(pOutBuffer + m_nOutRightOffset) = SampleInt16ToFloat(*inBuffer++);
     pOutBuffer += m_nOutFrameSize;
   }
 }
@@ -559,7 +559,7 @@ void CSoundTouchEx::MonoDeInterleaveFloat(const void *inBuffer, soundtouch::SAMP
   
   while(count--)
   {
-    *outBuffer++ = SampleFloatToInt16(*(float *)pInBuffer, 0x0000FFFFL, m_lInSampleErrorLeft);
+    *outBuffer++ = SampleFloatToInt16(*(double *)pInBuffer, 0x0000FFFFL, m_lInSampleErrorLeft);
     pInBuffer += m_nInFrameSize;
   }
 }
@@ -604,7 +604,7 @@ void CSoundTouchEx::MonoInterleaveFloat(const soundtouch::SAMPLETYPE *inBuffer, 
 
   while(count--)
   {
-    *(float *)pOutBuffer = SampleInt16ToFloat(*inBuffer++);
+    *(double *)pOutBuffer = SampleInt16ToFloat(*inBuffer++);
     pOutBuffer += m_nOutFrameSize;
   }
 }
@@ -653,8 +653,8 @@ void CSoundTouchEx::StereoDeInterleaveFloat(const void *inBuffer, soundtouch::SA
 
   while(count--)
   {
-    *outBuffer++ = *(float *)(pInBuffer + m_nInLeftOffset);
-    *outBuffer++ = *(float *)(pInBuffer + m_nInRightOffset);
+    *outBuffer++ = *(double *)(pInBuffer + m_nInLeftOffset);
+    *outBuffer++ = *(double *)(pInBuffer + m_nInRightOffset);
     pInBuffer += m_nInFrameSize;
   }
 }
@@ -701,8 +701,8 @@ void CSoundTouchEx::StereoInterleaveFloat(const soundtouch::SAMPLETYPE *inBuffer
 
   while(count--)
   {
-    *(float *)(pOutBuffer + m_nOutLeftOffset) = *inBuffer++;
-    *(float *)(pOutBuffer + m_nOutRightOffset) = *inBuffer++;
+    *(double *)(pOutBuffer + m_nOutLeftOffset) = *inBuffer++;
+    *(double *)(pOutBuffer + m_nOutRightOffset) = *inBuffer++;
     pOutBuffer += m_nOutFrameSize;
   }
 }
@@ -752,7 +752,7 @@ void CSoundTouchEx::MonoDeInterleaveFloat(const void *inBuffer, soundtouch::SAMP
 
   while(count--)
   {
-    *outBuffer++ = *(float *)pInBuffer;
+    *outBuffer++ = *(double *)pInBuffer;
     pInBuffer += m_nInFrameSize;
   }
 }
@@ -796,7 +796,7 @@ void CSoundTouchEx::MonoInterleaveFloat(const soundtouch::SAMPLETYPE *inBuffer, 
 
   while(count--)
   {
-    *(float *)pOutBuffer = *inBuffer++;
+    *(double *)pOutBuffer = *inBuffer++;
     pOutBuffer += m_nOutFrameSize;
   }
 }

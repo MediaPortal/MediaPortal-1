@@ -71,10 +71,10 @@ using namespace soundtouch;
 #include <math.h>
 
 // Calculates cross correlation of two buffers
-double TDStretchSSE::calcCrossCorrStereo(const float *pV1, const float *pV2) const
+double TDStretchSSE::calcCrossCorrStereo(const double *pV1, const double *pV2) const
 {
     int i;
-    const float *pVec1;
+    const double *pVec1;
     const __m128 *pVec2;
     __m128 vSum, vNorm;
 
@@ -106,7 +106,7 @@ double TDStretchSSE::calcCrossCorrStereo(const float *pV1, const float *pV2) con
 
     // Calculates the cross-correlation value between 'pV1' and 'pV2' vectors
     // Note: pV2 _must_ be aligned to 16-bit boundary, pV1 need not.
-    pVec1 = (const float*)pV1;
+    pVec1 = (const double*)pV1;
     pVec2 = (const __m128*)pV2;
     vSum = vNorm = _mm_setzero_ps();
 
@@ -139,11 +139,11 @@ double TDStretchSSE::calcCrossCorrStereo(const float *pV1, const float *pV2) con
     }
 
     // return value = vSum[0] + vSum[1] + vSum[2] + vSum[3]
-    float *pvNorm = (float*)&vNorm;
+    double *pvNorm = (double*)&vNorm;
     double norm = sqrt(pvNorm[0] + pvNorm[1] + pvNorm[2] + pvNorm[3]);
     if (norm < 1e-9) norm = 1.0;    // to avoid div by zero
 
-    float *pvSum = (float*)&vSum;
+    double *pvSum = (double*)&vSum;
     return (double)(pvSum[0] + pvSum[1] + pvSum[2] + pvSum[3]) / norm;
 
     /* This is approximately corresponding routine in C-language yet without normalization:
@@ -273,10 +273,10 @@ FIRFilterSSE::~FIRFilterSSE()
 
 
 // (overloaded) Calculates filter coefficients for SSE routine
-void FIRFilterSSE::setCoefficients(const float *coeffs, uint newLength, uint uResultDivFactor)
+void FIRFilterSSE::setCoefficients(const double *coeffs, uint newLength, uint uResultDivFactor)
 {
     uint i;
-    float fDivider;
+    double fDivider;
 
     FIRFilter::setCoefficients(coeffs, newLength, uResultDivFactor);
 
@@ -284,10 +284,10 @@ void FIRFilterSSE::setCoefficients(const float *coeffs, uint newLength, uint uRe
     // also rearrange coefficients suitably for 3DNow!
     // Ensure that filter coeffs array is aligned to 16-byte boundary
     delete[] filterCoeffsUnalign;
-    filterCoeffsUnalign = new float[2 * newLength + 4];
-    filterCoeffsAlign = (float *)(((unsigned long)filterCoeffsUnalign + 15) & (ulong)-16);
+    filterCoeffsUnalign = new double[2 * newLength + 4];
+    filterCoeffsAlign = (double *)(((unsigned long)filterCoeffsUnalign + 15) & (ulong)-16);
 
-    fDivider = (float)resultDivider;
+    fDivider = (double)resultDivider;
 
     // rearrange the filter coefficients for mmx routines 
     for (i = 0; i < newLength; i ++)
@@ -300,7 +300,7 @@ void FIRFilterSSE::setCoefficients(const float *coeffs, uint newLength, uint uRe
 
 
 // SSE-optimized version of the filter routine for stereo sound
-uint FIRFilterSSE::evaluateFilterStereo(float *dest, const float *source, uint numSamples) const
+uint FIRFilterSSE::evaluateFilterStereo(double *dest, const double *source, uint numSamples) const
 {
     int count = (int)((numSamples - length) & (uint)-2);
     int j;
@@ -318,12 +318,12 @@ uint FIRFilterSSE::evaluateFilterStereo(float *dest, const float *source, uint n
     // filter is evaluated for two stereo samples with each iteration, thus use of 'j += 2'
     for (j = 0; j < count; j += 2)
     {
-        const float *pSrc;
+        const double *pSrc;
         const __m128 *pFil;
         __m128 sum1, sum2;
         uint i;
 
-        pSrc = (const float*)source;              // source audio data
+        pSrc = (const double*)source;              // source audio data
         pFil = (const __m128*)filterCoeffsAlign;  // filter coefficients. NOTE: Assumes coefficients 
                                                   // are aligned to 16-byte boundary
         sum1 = sum2 = _mm_setzero_ps();

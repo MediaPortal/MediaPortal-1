@@ -68,10 +68,10 @@ using namespace soundtouch;
 
 /// decay constant for calculating RMS volume sliding average approximation 
 /// (time constant is about 10 sec)
-const float avgdecay = 0.99986f;
+const double avgdecay = 0.99986f;
 
 /// Normalization coefficient for calculating RMS sliding average approximation.
-const float avgnorm = (1 - avgdecay);
+const double avgnorm = (1 - avgdecay);
 
 
 
@@ -108,8 +108,8 @@ BPMDetect::BPMDetect(int numChannels, int aSampleRate)
     assert(windowLen > windowStart);
 
     // allocate new working objects
-    xcorr = new float[windowLen];
-    memset(xcorr, 0, windowLen * sizeof(float));
+    xcorr = new double[windowLen];
+    memset(xcorr, 0, windowLen * sizeof(double));
 
     // allocate processing buffer
     buffer = new FIFOSampleBuffer();
@@ -210,7 +210,7 @@ void BPMDetect::updateXCorr(int process_samples)
                                         // The 'xcorr_decay' should be a value that's smaller than but 
                                         // close to one, and should also depend on 'process_samples' value.
 
-        xcorr[offs] += (float)sum;
+        xcorr[offs] += (double)sum;
     }
 }
 
@@ -219,23 +219,23 @@ void BPMDetect::updateXCorr(int process_samples)
 // Calculates envelope of the sample data
 void BPMDetect::calcEnvelope(SAMPLETYPE *samples, int numsamples) 
 {
-    const float decay = 0.7f;               // decay constant for smoothing the envelope
-    const float norm = (1 - decay);
+    const double decay = 0.7f;               // decay constant for smoothing the envelope
+    const double norm = (1 - decay);
 
     int i;
     LONG_SAMPLETYPE out;
-    float val;
+    double val;
 
     for (i = 0; i < numsamples; i ++) 
     {
         // calc average RMS volume
         RMSVolumeAccu *= avgdecay;
-        val = (float)fabs((float)samples[i]);
+        val = (double)fabs((double)samples[i]);
         RMSVolumeAccu += val * val;
 
         // cut amplitudes that are below 2 times average RMS volume
         // (we're interested in peak values, not the silent moments)
-        val -= 2 * (float)sqrt(RMSVolumeAccu * avgnorm);
+        val -= 2 * (double)sqrt(RMSVolumeAccu * avgnorm);
         val = (val > 0) ? val : 0;
 
         // smooth amplitude envelope
@@ -292,7 +292,7 @@ void BPMDetect::inputSamples(const SAMPLETYPE *samples, int numSamples)
 
 
 
-float BPMDetect::getBpm()
+double BPMDetect::getBpm()
 {
     double peakPos;
     PeakFinder peakFinder;
@@ -304,5 +304,5 @@ float BPMDetect::getBpm()
     if (peakPos < 1e-6) return 0.0; // detection failed.
 
     // calculate BPM
-    return (float)(60.0 * (((double)sampleRate / (double)decimateBy) / peakPos));
+    return (double)(60.0 * (((double)sampleRate / (double)decimateBy) / peakPos));
 }

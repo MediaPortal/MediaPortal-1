@@ -526,7 +526,7 @@ STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
 
   if (m_dRate >= 1.0 && m_pSoundTouch)
   {
-    m_pSoundTouch->setRateChange((float)(m_dRate-1.0)*100);
+    m_pSoundTouch->setRateChange((m_dRate-1.0)*100);
   }
      
   return CBaseRenderer::Run(tStart);

@@ -75,13 +75,13 @@ class BPMDetect
 {
 protected:
     /// Auto-correlation accumulator bins.
-    float *xcorr;
+    double *xcorr;
     
     /// Amplitude envelope sliding average approximation level accumulator
-    float envelopeAccu;
+    double envelopeAccu;
 
     /// RMS volume sliding average approximation level accumulator
-    float RMSVolumeAccu;
+    double RMSVolumeAccu;
 
     /// Sample average counter.
     int decimateCount;
@@ -153,7 +153,7 @@ public:
     /// 'inputSamples' function.
     ///
     /// \return Beats-per-minute rate, or zero if detection failed.
-    float getBpm();
+    double getBpm();
 };
 
 }

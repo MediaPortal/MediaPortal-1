@@ -85,10 +85,10 @@ using namespace soundtouch;
 
 
 // Calculates cross correlation of two buffers
-double TDStretch3DNow::calcCrossCorrStereo(const float *pV1, const float *pV2) const
+double TDStretch3DNow::calcCrossCorrStereo(const double *pV1, const double *pV2) const
 {
     int overlapLengthLocal = overlapLength;
-    float corr = 0;
+    double corr = 0;
 
     // Calculates the cross-correlation value between 'pV1' and 'pV2' vectors
     /*
@@ -190,10 +190,10 @@ FIRFilter3DNow::~FIRFilter3DNow()
 
 
 // (overloaded) Calculates filter coefficients for 3DNow! routine
-void FIRFilter3DNow::setCoefficients(const float *coeffs, uint newLength, uint uResultDivFactor)
+void FIRFilter3DNow::setCoefficients(const double *coeffs, uint newLength, uint uResultDivFactor)
 {
     uint i;
-    float fDivider;
+    double fDivider;
 
     FIRFilter::setCoefficients(coeffs, newLength, uResultDivFactor);
 
@@ -201,10 +201,10 @@ void FIRFilter3DNow::setCoefficients(const float *coeffs, uint newLength, uint u
     // also rearrange coefficients suitably for 3DNow!
     // Ensure that filter coeffs array is aligned to 16-byte boundary
     delete[] filterCoeffsUnalign;
-    filterCoeffsUnalign = new float[2 * newLength + 4];
-    filterCoeffsAlign = (float *)(((uint)filterCoeffsUnalign + 15) & (uint)-16);
+    filterCoeffsUnalign = new double[2 * newLength + 4];
+    filterCoeffsAlign = (double *)(((uint)filterCoeffsUnalign + 15) & (uint)-16);
 
-    fDivider = (float)resultDivider;
+    fDivider = (double)resultDivider;
 
     // rearrange the filter coefficients for mmx routines 
     for (i = 0; i < newLength; i ++)
@@ -216,9 +216,9 @@ void FIRFilter3DNow::setCoefficients(const float *coeffs, uint newLength, uint u
 
 
 // 3DNow!-optimized version of the filter routine for stereo sound
-uint FIRFilter3DNow::evaluateFilterStereo(float *dest, const float *src, uint numSamples) const
+uint FIRFilter3DNow::evaluateFilterStereo(double *dest, const double *src, uint numSamples) const
 {
-    float *filterCoeffsLocal = filterCoeffsAlign;
+    double *filterCoeffsLocal = filterCoeffsAlign;
     uint count = (numSamples - length) & (uint)-2;
     uint lengthLocal = length / 4;
 

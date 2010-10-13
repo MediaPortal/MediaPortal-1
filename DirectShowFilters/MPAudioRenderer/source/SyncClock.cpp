@@ -106,7 +106,7 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
 
   HRESULT hr = m_pAudioRenderer->AudioClock(hwClock, hwQpc);
 
-  if (hr == S_OK)
+  if (hr == S_OK && hwClock > 5000000)
   {
     if (m_ullStartQpcHW == 0)
     {
