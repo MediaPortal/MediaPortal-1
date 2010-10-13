@@ -61,7 +61,7 @@ namespace SetupTv.Sections
     #region Constructors
 
     public TvTimeshifting()
-      : this("Timeshifting") {}
+      : this("Timeshifting") { }
 
     public TvTimeshifting(string name)
       : base(name)
@@ -156,6 +156,8 @@ namespace SetupTv.Sections
         comboBoxCards.SelectedIndex = 0;
       }
 
+      TimeshiftSpaceAdditionalInfo();
+
       base.OnSectionActivated();
     }
 
@@ -224,34 +226,27 @@ namespace SetupTv.Sections
       return Value;
     }
 
-    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e) {}
+    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e) { }
 
     #endregion
 
-    private void groupBoxTimeshiftSettings_Enter(object sender, EventArgs e) {}
-
     private void numericUpDownMaxFileSize_ValueChanged(object sender, EventArgs e)
     {
-        lblMinFileSizeNeeded.Text = "Minimum drive space needed: ";
-        lblMinFileSizeNeeded.Text += (3 * numericUpDownMaxFileSize.Value) + " MByte";
-        lblFileSizeNeeded.Text = "Drive space needed: ";
-        lblFileSizeNeeded.Text += (numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) + numericUpDownMaxFileSize.Value + " MByte";
-        lblOverhead.Text = "Drive space overhead needed: ";
-        lblOverhead.Text += numericUpDownMaxFileSize.Value + " MByte";
-        lblTimeSD.Text = "Maximum timeshifting for SD content: approx." + ((float)(numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) / 100f * 2.75f) + " Minutes";
-        lblTimeHD.Text = "Maximum timeshifting for HD content: approx." + ((float)(numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) / 100f * 1.00f) + " Minutes";
+      TimeshiftSpaceAdditionalInfo();
     }
 
     private void numericUpDownMinFiles_ValueChanged(object sender, EventArgs e)
     {
-        lblMinFileSizeNeeded.Text = "Minimum drive space needed: ";
-        lblMinFileSizeNeeded.Text += (3 * numericUpDownMaxFileSize.Value)+ " MByte";
-        lblFileSizeNeeded.Text = "Drive space needed: ";
-        lblFileSizeNeeded.Text += (numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) + numericUpDownMaxFileSize.Value + " MByte";
-        lblOverhead.Text = "Drive space overhead needed: ";
-        lblOverhead.Text += numericUpDownMaxFileSize.Value + " MByte";
-        lblTimeSD.Text = "Maximum timeshifting for SD content: approx." + ((float)(numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) / 100f * 2.75f) + " Minutes";
-        lblTimeHD.Text = "Maximum timeshifting for HD content: approx." + ((float)(numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) / 100f * 1.00f) + " Minutes";
+      TimeshiftSpaceAdditionalInfo();
+    }
+
+    private void TimeshiftSpaceAdditionalInfo()
+    {
+      lblMinFileSizeNeeded.Text = "Minimum drive space needed           : " + (3 * numericUpDownMaxFileSize.Value).ToString().PadLeft(8) + " MByte";
+      lblFileSizeNeeded.Text = "Drive space needed                         : " + ((numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) + numericUpDownMaxFileSize.Value).ToString().PadLeft(7) + " MByte";
+      lblOverhead.Text = "Drive space overhead needed         : " + numericUpDownMaxFileSize.Value.ToString().PadLeft(8) + " MByte";
+      lblTimeSD.Text = "Maximum timeshifting for SD content: approx. " + ((float)(numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) / 100f * 2.75f) + " Minutes";
+      lblTimeHD.Text = "Maximum timeshifting for HD content: approx. " + ((float)(numericUpDownMinFiles.Value * numericUpDownMaxFileSize.Value) / 100f * 1.00f) + " Minutes";
     }
   }
 }
