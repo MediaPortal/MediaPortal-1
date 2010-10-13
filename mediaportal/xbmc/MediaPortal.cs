@@ -2693,8 +2693,15 @@ public class MediaPortalApp : D3DApp, IRender
 
           //stop playback
           case Action.ActionType.ACTION_STOP:
-            if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
+            
+            //When MyPictures Plugin shows the pictures we want to stop the slide show only, not the player
+            if ((GUIWindow.Window)(Enum.Parse(typeof(GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) == GUIWindow.Window.WINDOW_SLIDESHOW)
             {
+                break;
+            }
+              
+            if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
+            {  
               Log.Info("Main: Stopping media");
               g_Player.Stop();
               return;

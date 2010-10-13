@@ -516,18 +516,39 @@ namespace MediaPortal.GUI.Pictures
           selectedItemIndex += SlideShow._currentSlideIndex+1;*/
         int direction = GUISlideShow.SlideDirection;
         GUISlideShow.SlideDirection = 0;
+        
+        //forward
         if (direction == 1)
-          selectedItemIndex++;
-        else
-          if (direction == -1)
+        {
+            selectedItemIndex++;
+        }
+        //Backward
+        if (direction == -1)
+        {
             selectedItemIndex--;
+        }
         GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItemIndex);
-        if (direction != 0)
-          OnClick(selectedItemIndex);
-        else if (SlideShow._currentSlideIndex != -1)
-          OnSlideShow(selectedItemIndex);
-      }
 
+        //Slide Show 
+        if (SlideShow._isSlideShow)
+        {
+            if (SlideShow._returnedFromVideoPlayback)
+            {
+                SlideShow._returnedFromVideoPlayback = false;
+            }
+            OnSlideShow(selectedItemIndex);
+        }
+        //OnClick
+        else if (direction != 0)
+        {
+            if (SlideShow._returnedFromVideoPlayback)
+            {
+                SlideShow._returnedFromVideoPlayback = false;
+            }
+            OnClick(selectedItemIndex);
+        }
+      }
+      
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
     }
 
@@ -2002,6 +2023,11 @@ namespace MediaPortal.GUI.Pictures
       {
         return string.Empty;
       }
+      if (Util.Utils.IsVideo(fileName))
+      {
+            return String.Format(@"{0}\{1}.jpg", Thumbs.Videos, Util.Utils.EncryptLine(fileName));
+      }
+      
       return String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(fileName));
     }
 
@@ -2011,6 +2037,11 @@ namespace MediaPortal.GUI.Pictures
       {
         return string.Empty;
       }
+      if (Util.Utils.IsVideo(fileName))
+      {
+         return String.Format(@"{0}\{1}L.jpg", Thumbs.Videos, Util.Utils.EncryptLine(fileName));
+      }
+        
       return String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(fileName));
     }
 

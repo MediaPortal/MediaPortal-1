@@ -25,11 +25,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Threading;
-using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
-using MediaPortal.Picture.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using Microsoft.DirectX.Direct3D;
@@ -66,17 +64,72 @@ namespace MediaPortal.GUI.Pictures
         tmpGUIpictures.SetSelectedItemIndex(_currentSlideIndex);
       if (Util.Utils.IsVideo(slideFilePath))
       {
-        _returnedFromVideoPlayback = true;
-        g_Player.Play(slideFilePath, g_Player.MediaType.Video);
-        g_Player.ShowFullScreenWindow();
-        _returnedFromVideoPlayback = true;
+          if (g_Player.IsMusic || g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting))
+          {
+              pauseMusic();
+          }
+
+          if (g_Player.Playing && (!g_Player.IsMusic || !g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting)))
+          {
+              //we skip the video in the picture slide show
+              _currentSlide = _slideCache.GetCurrentSlide(_slideList[++_currentSlideIndex]);
+              _slideDirection = 0;
+              return _currentSlide;
+          }
+
+          _loadVideoPlayback = true;
+
+          g_Player.Play(slideFilePath, g_Player.MediaType.Video);
+          g_Player.ShowFullScreenWindow();
+
+          _loadVideoPlayback = false;
+          _returnedFromVideoPlayback = true;
+
       }
       else
         _slideDirection = 0;
       return _currentSlide;
     }
 
-    private void PrefetchNextSlide()
+      private void pauseMusic()
+      {
+          pausedMusic = true;
+          pausedMusicPlaylist = playlistPlayer;
+          pausedPlayListType = playlistPlayer.CurrentPlaylistType;
+          isPausedMusicCDA = g_Player.IsCDA;
+          pausedMusicFileName = g_Player.CurrentFile;
+          pausedMusicLastPosition = g_Player.CurrentPosition;
+          g_Player.Stop();
+      }
+
+      private void resumePausedMusic()
+      {
+          pausedMusic = false;
+          Log.Debug("Marv:" + "ResumePausedMusic: pausedMusicFileName: "+ pausedMusicFileName);
+          if (pausedPlayListType != PlayListType.PLAYLIST_NONE && !isPausedMusicCDA)
+          {
+              playlistPlayer = pausedMusicPlaylist;
+              playlistPlayer.CurrentPlaylistType = pausedPlayListType;
+              playlistPlayer.Play(pausedMusicFileName);
+              g_Player.SeekAbsolute(pausedMusicLastPosition);
+          }
+          else
+          {
+              playlistPlayer = pausedMusicPlaylist;
+              playlistPlayer.CurrentPlaylistType = pausedPlayListType;
+              playlistPlayer.Play(pausedMusicFileName);
+
+              //we need a little pause, cause the cd player is to slow
+              while(!(g_Player.CurrentPosition > 0) )
+              {
+                  Thread.Sleep(1);
+              }
+              g_Player.SeekAbsolute(pausedMusicLastPosition); 
+          }
+          
+      }
+
+      private void PrefetchNextSlide()
     {
       if (_slideList.Count != 0)
       {
@@ -174,7 +227,7 @@ namespace MediaPortal.GUI.Pictures
     public int _currentSlideIndex = 0;
     private int _lastSlideShown = -1;
     private int _transitionMethod = 0;
-    private bool _isSlideShow = false;
+    internal bool _isSlideShow = false;
     private bool _infoVisible = false;
     private bool _zoomInfoVisible = false;
     private bool _autoHideOsd = true;
@@ -185,8 +238,15 @@ namespace MediaPortal.GUI.Pictures
     private bool _update = false;
     private bool _useRandomTransitions = true;
     private float _defaultZoomFactor = 1.0f;
-    private static bool _returnedFromVideoPlayback = false;
+    internal bool _returnedFromVideoPlayback = false;
+    internal bool _loadVideoPlayback = false;
     private static int _slideDirection = 0; //-1=backwards, 0=nothing, 1=forward
+    private String pausedMusicFileName;
+    private double pausedMusicLastPosition;
+    private bool pausedMusic;
+    private PlayListPlayer pausedMusicPlaylist;
+    private PlayListType pausedPlayListType;
+    private bool isPausedMusicCDA;
 
 
     private bool _isPictureZoomed
@@ -273,9 +333,11 @@ namespace MediaPortal.GUI.Pictures
           _showOverlayFlag = GUIGraphicsContext.Overlay;
           GUIGraphicsContext.Overlay = false;
           base.OnMessage(message);
-
+    
           if (_returnedFromVideoPlayback)
-            GUIWindowManager.ShowPreviousWindow();
+          {
+              GUIWindowManager.ShowPreviousWindow();
+          }
           else
           {
             _update = false;
@@ -286,12 +348,9 @@ namespace MediaPortal.GUI.Pictures
           return true;
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          if (!_returnedFromVideoPlayback)
-            Reset();
-          if (_returnedFromVideoPlayback && !_isSlideShow)
-            Reset();
+          if (!_returnedFromVideoPlayback && !_loadVideoPlayback)
+              Reset();
           GUIGraphicsContext.Overlay = _showOverlayFlag;
-          _returnedFromVideoPlayback = false;
           break;
 
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
@@ -637,12 +696,18 @@ namespace MediaPortal.GUI.Pictures
 
     public override void Render(float timePassed)
     {
-      if (g_Player.Playing)
+      if (_loadVideoPlayback)
       {
         base.Render(timePassed);
+        _loadVideoPlayback = false;
         return;
       }
-      //Log.Info("Render:{0} {1} {2}", timePassed, _renderTimer, _frameCounter);
+
+        if (pausedMusic)
+        {
+            resumePausedMusic();
+        }
+        //Log.Info("Render:{0} {1} {2}", timePassed, _renderTimer, _frameCounter);
       if (!_isPaused && !_isPictureZoomed)
       {
         if (_frameCounter > 0)
@@ -1031,7 +1096,7 @@ namespace MediaPortal.GUI.Pictures
       _zoomInfoVisible = false;
       _isSlideShow = false;
       _isPaused = false;
-
+      _loadVideoPlayback = false;
       _zoomFactorBackground = _defaultZoomFactor;
       _currentZoomFactor = _defaultZoomFactor;
       _kenBurnsEffect = 0;
@@ -2613,13 +2678,8 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    private void ShowPreviousWindow()
+    private static void ShowPreviousWindow()
     {
-      if (_isBackgroundMusicPlaying)
-      {
-        g_Player.Stop();
-      }
-
       GUIWindowManager.ShowPreviousWindow();
     }
 
