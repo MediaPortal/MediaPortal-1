@@ -139,7 +139,7 @@ internal class Grabber : IIMDBScriptGrabber
             {
               //Original Movie title (Extension "IMDB")
               IMDB.IMDBUrl url = new IMDB.IMDBUrl
-                ("http://imdb.com" + imdbURL, imdbTitle + " " + imdbOptions + "", "IMDB");
+                ("http://akas.imdb.com" + imdbURL, imdbTitle + " " + imdbOptions + "", "IMDB");
               elements.Add(url);
               iCount++;
 
@@ -172,7 +172,7 @@ internal class Grabber : IIMDBScriptGrabber
                 {
                   //AKA movie title (extension "IMDB_With_AKA")
                   url = new IMDB.IMDBUrl
-                    ("http://imdb.com" + imdbURL, imdbTitle + " " + imdbakaOptions + " (IMDB_With_AKA)", "IMDB");
+                    ("http://akas.imdb.com" + imdbURL, imdbTitle + " " + imdbakaOptions + " (IMDB_With_AKA)", "IMDB");
                   elements.Add(url);
                 }
                 imdbAlias = imdbAlias.NextMatch();
@@ -240,7 +240,7 @@ internal class Grabber : IIMDBScriptGrabber
             {
               //Original movie name (extension (" IMDB"))
               IMDB.IMDBUrl url = new IMDB.IMDBUrl
-                ("http://imdb.com" + imdbURL, imdbTitle + " " + imdbOptions + "", "IMDB");
+                ("http://akas.imdb.com" + imdbURL, imdbTitle + " " + imdbOptions + "", "IMDB");
               elements.Add(url);
               iCount++;
 
@@ -273,7 +273,7 @@ internal class Grabber : IIMDBScriptGrabber
                 {
                   //AKA movie name (extension "IMDB_With_AKA")
                   url = new IMDB.IMDBUrl
-                    ("http://imdb.com" + imdbURL, imdbTitle + " " + imdbakaOptions + " (IMDB_With_AKA)", "IMDB");
+                    ("http://akas.imdb.com" + imdbURL, imdbTitle + " " + imdbakaOptions + " (IMDB_With_AKA)", "IMDB");
                   elements.Add(url);
                   imdbAlias = imdbAlias.NextMatch();
                 }
@@ -519,7 +519,7 @@ internal class Grabber : IIMDBScriptGrabber
       movieDetails.PlotOutline = HttpUtility.HtmlDecode(Utils.stripHTMLtags(shortPlot));
 
       // Plot long
-      string strPlotUrl = "http://imdb.com/title/" + movieDetails.IMDBNumber + "/plotsummary";
+      string strPlotUrl = "http://akas.imdb.com/title/" + movieDetails.IMDBNumber + "/plotsummary";
       try
       {
         string absoluteUri;
@@ -556,7 +556,7 @@ internal class Grabber : IIMDBScriptGrabber
       {
         string review =
           Utils.stripHTMLtags(strReview.Groups["review"].Value.Replace("\n", " ").Trim());
-          //movieDetails.UserReview = HttpUtility.HtmlDecode(review);
+          movieDetails.UserReview = HttpUtility.HtmlDecode(review);
       }
       return true;
     }

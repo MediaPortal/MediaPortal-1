@@ -131,7 +131,7 @@ namespace MediaPortal.Util
 
       actorList.Clear();
 
-      string movieURL = "http://www.imdb.com/title/" + imdbMovieID;
+      string movieURL = "http://akas.imdb.com/title/" + imdbMovieID;
       string strBodyActors = GetPage(movieURL, "utf-8");
 
       // Director

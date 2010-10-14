@@ -652,7 +652,7 @@ namespace MediaPortal.Video.Database
 
       _elements.Clear();
 
-      string strURL = String.Format("http://www.imdb.com/find?s=nm&q=" + strSearch, strSearch);
+      string strURL = String.Format("http://akas.imdb.com/find?s=nm&q=" + strSearch, strSearch);
       FindIMDBActor(strURL);
     }
 

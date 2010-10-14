@@ -3974,8 +3974,7 @@ namespace MediaPortal.Configuration.Sections
       cbTitle.Items[cbSlectedIndex] = movieItem;
     }
 
-    #endregion
-
+    // New movie button action
     private void btnNew_Click(object sender, EventArgs e)
     {
       int count = cbTitle.Items.Count - 1;
@@ -3983,5 +3982,8 @@ namespace MediaPortal.Configuration.Sections
       tabControl2.SelectedIndex = 2;
       AddFile();
     }
+
+    #endregion
+
   }
 }
