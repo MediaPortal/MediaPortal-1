@@ -536,7 +536,7 @@ namespace TvPlugin
 
             IList<Program> titles;
             TvBusinessLayer layer = new TvBusinessLayer();
-            titles = layer.SearchProgramsPerGenre(currentGenre, filterShow);
+            titles = layer.SearchProgramsPerGenre(currentGenre, filterShow,ChannelType.Tv);
             foreach (Program program in titles)
             {
               //dont show programs which have ended
@@ -647,23 +647,23 @@ namespace TvPlugin
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchPrograms("%[^a-z]");
+                titles = layer.SearchPrograms("%[^a-z]", ChannelType.Tv);
                 //titles = layer.SearchPrograms("");
               }
               else
               {
-                titles = layer.SearchPrograms("%" + filterShow);
+                titles = layer.SearchPrograms("%" + filterShow, ChannelType.Tv);
               }
             }
             else
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchPrograms(filterLetter);
+                titles = layer.SearchPrograms(filterLetter, ChannelType.Tv);
               }
               else
               {
-                titles = layer.SearchPrograms("%" + filterShow);
+                titles = layer.SearchPrograms("%" + filterShow, ChannelType.Tv);
               }
             }
             foreach (Program program in titles)
@@ -789,22 +789,22 @@ namespace TvPlugin
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchProgramsByDescription("");
+                titles = layer.SearchProgramsByDescription("", ChannelType.Tv);
               }
               else
               {
-                titles = layer.SearchProgramsByDescription(filterShow);
+                titles = layer.SearchProgramsByDescription(filterShow, ChannelType.Tv);
               }
             }
             else
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchProgramsByDescription(filterLetter);
+                titles = layer.SearchProgramsByDescription(filterLetter, ChannelType.Tv);
               }
               else
               {
-                titles = layer.SearchProgramsByDescription(filterShow);
+                titles = layer.SearchProgramsByDescription(filterShow, ChannelType.Tv);
               }
             }
             foreach (Program program in titles)
