@@ -154,22 +154,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public override void ScaleToScreenResolution()
-    {
-      base.ScaleToScreenResolution();
-      if (_imageBackGround != null)
-      {
-        int x = _imageBackGround.XPosition;
-        int y = _imageBackGround.YPosition;
-
-        GUIGraphicsContext.ScalePosToScreenResolution(ref x, ref y);
-
-        _imageBackGround.XPosition = x;
-        _imageBackGround.YPosition = y;
-      }
-    }
-
-
     /// <summary>
     /// Renders the progress control.
     /// </summary>
