@@ -230,6 +230,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_NUMBERPLACE = 7777, // rtv - sudoku clone
       WINDOW_RADIO_LASTFM = 7890,
       WINDOW_MUSIC_MENU = 8888, // for harley
+      WINDOW_SEARCH_RADIO=8900 // gemx
 
 
       // Please use IDs up to 9999 only. Let everything above be reserved for external Plugin developers without SVN access.
