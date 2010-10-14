@@ -154,6 +154,22 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public override void ScaleToScreenResolution()
+    {
+      base.ScaleToScreenResolution();
+      if (_imageBackGround != null)
+      {
+        int x = _imageBackGround.XPosition;
+        int y = _imageBackGround.YPosition;
+
+        GUIGraphicsContext.ScalePosToScreenResolution(ref x, ref y);
+
+        _imageBackGround.XPosition = x;
+        _imageBackGround.YPosition = y;
+      }
+    }
+
+
     /// <summary>
     /// Renders the progress control.
     /// </summary>
@@ -186,7 +202,7 @@ namespace MediaPortal.GUI.Library
 
       // Render the background
       int iBkgHeight = _height;
-      GUIGraphicsContext.ScaleVertical(ref iBkgHeight);
+      //GUIGraphicsContext.ScaleVertical(ref iBkgHeight); // fixing scaling bug 
       _imageBackGround.Height = iBkgHeight;
       _imageBackGround.SetPosition(_imageBackGround.XPosition, _imageBackGround.YPosition);
       _imageBackGround.Render(timePassed);
