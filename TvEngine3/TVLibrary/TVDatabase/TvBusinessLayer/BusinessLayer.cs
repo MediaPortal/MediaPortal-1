@@ -60,6 +60,14 @@ namespace TvDatabase
     //All
   }
 
+  public enum ChannelType
+  {
+    Tv,
+    Radio,
+    Web,
+    All
+  }
+
   #endregion
 
   public class TvBusinessLayer
@@ -1746,7 +1754,12 @@ namespace TvDatabase
       return genres;
     }
 
+    //GEMX: for downwards compatibility
     public IList<Program> SearchProgramsPerGenre(string currentGenre, string searchCriteria)
+    {
+      return SearchProgramsPerGenre(currentGenre, searchCriteria, ChannelType.All);
+    }
+    public IList<Program> SearchProgramsPerGenre(string currentGenre, string searchCriteria,ChannelType channelType)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       StringBuilder SqlSelectCommand = new StringBuilder();
@@ -1760,6 +1773,15 @@ namespace TvDatabase
       {
         SqlSelectCommand.AppendFormat("and title like '{0}%' ", searchCriteria);
       }
+      switch (channelType)
+      {
+        case ChannelType.Radio:
+          SqlSelectCommand.Append("and c.isTv=0 ");
+          break;
+        case ChannelType.Tv:
+          SqlSelectCommand.Append("and c.isTv=1 ");
+          break;
+      }
       SqlSelectCommand.Append("and c.visibleInGuide = 1 order by title, startTime");
       SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof (Program)).GetStatement(true);
       SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, stmt.Command, SqlSelectCommand.ToString(),
@@ -1767,7 +1789,12 @@ namespace TvDatabase
       return ObjectFactory.GetCollection<Program>(ManualJoinSQL.Execute());
     }
 
+    //GEMX: for downwards compatibility
     public IList<Program> SearchPrograms(string searchCriteria)
+    {
+      return SearchPrograms(searchCriteria, ChannelType.All);
+    }
+    public IList<Program> SearchPrograms(string searchCriteria,ChannelType channelType)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       StringBuilder SqlSelectCommand = new StringBuilder();
@@ -1778,6 +1805,15 @@ namespace TvDatabase
       {
         SqlSelectCommand.AppendFormat("and title like '{0}%' ", EscapeSQLString(searchCriteria));
       }
+      switch (channelType)
+      {
+        case ChannelType.Radio:
+          SqlSelectCommand.Append("and c.isTv=0 ");
+          break;
+        case ChannelType.Tv:
+          SqlSelectCommand.Append("and c.isTv=1 ");
+          break;
+      }
       SqlSelectCommand.Append("and c.visibleInGuide = 1 order by title,startTime");
       SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof (Program)).GetStatement(true);
       SqlStatement ManualJoinSQL = new SqlStatement(StatementType.Select, stmt.Command, SqlSelectCommand.ToString(),
@@ -1785,7 +1821,12 @@ namespace TvDatabase
       return ObjectFactory.GetCollection<Program>(ManualJoinSQL.Execute());
     }
 
+    //GEMX: for downwards compatibility
     public IList<Program> SearchProgramsByDescription(string searchCriteria)
+    {
+      return SearchProgramsByDescription(searchCriteria, ChannelType.All);
+    }
+    public IList<Program> SearchProgramsByDescription(string searchCriteria,ChannelType channelType)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       StringBuilder SqlSelectCommand = new StringBuilder();
@@ -1794,6 +1835,15 @@ namespace TvDatabase
       if (searchCriteria.Length > 0)
       {
         SqlSelectCommand.AppendFormat("and description like '{0}%' ", EscapeSQLString(searchCriteria));
+      }
+      switch (channelType)
+      {
+        case ChannelType.Radio:
+          SqlSelectCommand.Append("and c.isTv=0 ");
+          break;
+        case ChannelType.Tv:
+          SqlSelectCommand.Append("and c.isTv=1 ");
+          break;
       }
       SqlSelectCommand.Append("and c.visibleInGuide = 1 order by description, startTime");
       SqlStatement stmt = new SqlBuilder(StatementType.Select, typeof (Program)).GetStatement(true);
