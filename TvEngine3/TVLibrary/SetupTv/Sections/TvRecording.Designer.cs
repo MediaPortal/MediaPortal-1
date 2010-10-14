@@ -32,6 +32,10 @@ namespace SetupTv.Sections
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tpSettings = new System.Windows.Forms.TabPage();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.groupBoxRecording = new System.Windows.Forms.GroupBox();
+      this.label48 = new System.Windows.Forms.Label();
+      this.numericUpDownMaxFreeCardsToTry = new System.Windows.Forms.NumericUpDown();
+      this.lblMaxFreeCards = new System.Windows.Forms.Label();
       this.groupBoxScheduler = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxPreventDupes = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.comboBoxFirstWorkingDay = new System.Windows.Forms.ComboBox();
@@ -95,6 +99,8 @@ namespace SetupTv.Sections
       this.tabControl1.SuspendLayout();
       this.tpSettings.SuspendLayout();
       this.groupBox1.SuspendLayout();
+      this.groupBoxRecording.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFreeCardsToTry)).BeginInit();
       this.groupBoxScheduler.SuspendLayout();
       this.groupBoxGap.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPostRec)).BeginInit();
@@ -122,7 +128,7 @@ namespace SetupTv.Sections
       this.tabControl1.Location = new System.Drawing.Point(3, 3);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(471, 409);
+      this.tabControl1.Size = new System.Drawing.Size(471, 527);
       this.tabControl1.TabIndex = 0;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
@@ -132,7 +138,7 @@ namespace SetupTv.Sections
       this.tpSettings.Location = new System.Drawing.Point(4, 22);
       this.tpSettings.Name = "tpSettings";
       this.tpSettings.Padding = new System.Windows.Forms.Padding(3);
-      this.tpSettings.Size = new System.Drawing.Size(463, 383);
+      this.tpSettings.Size = new System.Drawing.Size(463, 501);
       this.tpSettings.TabIndex = 0;
       this.tpSettings.Text = "General";
       this.tpSettings.UseVisualStyleBackColor = true;
@@ -142,14 +148,56 @@ namespace SetupTv.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.groupBoxRecording);
       this.groupBox1.Controls.Add(this.groupBoxScheduler);
       this.groupBox1.Controls.Add(this.groupBoxGap);
       this.groupBox1.Controls.Add(this.checkBoxAutoDelete);
       this.groupBox1.Location = new System.Drawing.Point(6, 3);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(451, 374);
+      this.groupBox1.Size = new System.Drawing.Size(451, 492);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
+      // 
+      // groupBoxRecording
+      // 
+      this.groupBoxRecording.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxRecording.Controls.Add(this.label48);
+      this.groupBoxRecording.Controls.Add(this.numericUpDownMaxFreeCardsToTry);
+      this.groupBoxRecording.Controls.Add(this.lblMaxFreeCards);
+      this.groupBoxRecording.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxRecording.Location = new System.Drawing.Point(15, 19);
+      this.groupBoxRecording.Name = "groupBoxRecording";
+      this.groupBoxRecording.Size = new System.Drawing.Size(418, 62);
+      this.groupBoxRecording.TabIndex = 18;
+      this.groupBoxRecording.TabStop = false;
+      this.groupBoxRecording.Text = "Recording";
+      // 
+      // label48
+      // 
+      this.label48.AutoSize = true;
+      this.label48.Location = new System.Drawing.Point(246, 29);
+      this.label48.Name = "label48";
+      this.label48.Size = new System.Drawing.Size(29, 13);
+      this.label48.TabIndex = 37;
+      this.label48.Text = "0=all";
+      // 
+      // numericUpDownMaxFreeCardsToTry
+      // 
+      this.numericUpDownMaxFreeCardsToTry.Location = new System.Drawing.Point(153, 26);
+      this.numericUpDownMaxFreeCardsToTry.Name = "numericUpDownMaxFreeCardsToTry";
+      this.numericUpDownMaxFreeCardsToTry.Size = new System.Drawing.Size(87, 20);
+      this.numericUpDownMaxFreeCardsToTry.TabIndex = 36;
+      this.numericUpDownMaxFreeCardsToTry.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      // 
+      // lblMaxFreeCards
+      // 
+      this.lblMaxFreeCards.AutoSize = true;
+      this.lblMaxFreeCards.Location = new System.Drawing.Point(6, 28);
+      this.lblMaxFreeCards.Name = "lblMaxFreeCards";
+      this.lblMaxFreeCards.Size = new System.Drawing.Size(127, 13);
+      this.lblMaxFreeCards.TabIndex = 35;
+      this.lblMaxFreeCards.Text = "Maximum free cards to try";
       // 
       // groupBoxScheduler
       // 
@@ -162,7 +210,7 @@ namespace SetupTv.Sections
       this.groupBoxScheduler.Controls.Add(this.labelEpisodeKey);
       this.groupBoxScheduler.Controls.Add(this.checkboxSchedulerPriority);
       this.groupBoxScheduler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxScheduler.Location = new System.Drawing.Point(15, 112);
+      this.groupBoxScheduler.Location = new System.Drawing.Point(15, 180);
       this.groupBoxScheduler.Name = "groupBoxScheduler";
       this.groupBoxScheduler.Size = new System.Drawing.Size(418, 166);
       this.groupBoxScheduler.TabIndex = 14;
@@ -251,7 +299,7 @@ namespace SetupTv.Sections
       this.groupBoxGap.Controls.Add(this.numericUpDownPreRec);
       this.groupBoxGap.Controls.Add(this.label4);
       this.groupBoxGap.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxGap.Location = new System.Drawing.Point(15, 19);
+      this.groupBoxGap.Location = new System.Drawing.Point(15, 87);
       this.groupBoxGap.Name = "groupBoxGap";
       this.groupBoxGap.Size = new System.Drawing.Size(418, 84);
       this.groupBoxGap.TabIndex = 13;
@@ -316,7 +364,7 @@ namespace SetupTv.Sections
       this.label4.AutoSize = true;
       this.label4.Location = new System.Drawing.Point(166, 56);
       this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(145, 13);
+      this.label4.Size = new System.Drawing.Size(140, 13);
       this.label4.TabIndex = 5;
       this.label4.Text = "minute(s) after program ends";
       // 
@@ -324,7 +372,7 @@ namespace SetupTv.Sections
       // 
       this.checkBoxAutoDelete.AutoSize = true;
       this.checkBoxAutoDelete.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxAutoDelete.Location = new System.Drawing.Point(30, 314);
+      this.checkBoxAutoDelete.Location = new System.Drawing.Point(30, 382);
       this.checkBoxAutoDelete.Name = "checkBoxAutoDelete";
       this.checkBoxAutoDelete.Size = new System.Drawing.Size(252, 17);
       this.checkBoxAutoDelete.TabIndex = 6;
@@ -338,7 +386,7 @@ namespace SetupTv.Sections
       this.tpCustom.Location = new System.Drawing.Point(4, 22);
       this.tpCustom.Name = "tpCustom";
       this.tpCustom.Padding = new System.Windows.Forms.Padding(3);
-      this.tpCustom.Size = new System.Drawing.Size(463, 383);
+      this.tpCustom.Size = new System.Drawing.Size(463, 501);
       this.tpCustom.TabIndex = 1;
       this.tpCustom.Text = "Custom paths and filenames";
       this.tpCustom.UseVisualStyleBackColor = true;
@@ -521,7 +569,7 @@ namespace SetupTv.Sections
       this.tpDiskQuota.Controls.Add(this.label11);
       this.tpDiskQuota.Location = new System.Drawing.Point(4, 22);
       this.tpDiskQuota.Name = "tpDiskQuota";
-      this.tpDiskQuota.Size = new System.Drawing.Size(463, 383);
+      this.tpDiskQuota.Size = new System.Drawing.Size(463, 501);
       this.tpDiskQuota.TabIndex = 2;
       this.tpDiskQuota.Text = "Disk quota";
       this.tpDiskQuota.UseVisualStyleBackColor = true;
@@ -628,7 +676,7 @@ namespace SetupTv.Sections
       this.tpRecording.Controls.Add(this.groupBoxRecordSettings);
       this.tpRecording.Location = new System.Drawing.Point(4, 22);
       this.tpRecording.Name = "tpRecording";
-      this.tpRecording.Size = new System.Drawing.Size(463, 383);
+      this.tpRecording.Size = new System.Drawing.Size(463, 501);
       this.tpRecording.TabIndex = 3;
       this.tpRecording.Text = "Folders";
       this.tpRecording.UseVisualStyleBackColor = true;
@@ -747,7 +795,7 @@ namespace SetupTv.Sections
       this.tpRecordImport.Location = new System.Drawing.Point(4, 22);
       this.tpRecordImport.Name = "tpRecordImport";
       this.tpRecordImport.Padding = new System.Windows.Forms.Padding(3);
-      this.tpRecordImport.Size = new System.Drawing.Size(463, 383);
+      this.tpRecordImport.Size = new System.Drawing.Size(463, 501);
       this.tpRecordImport.TabIndex = 4;
       this.tpRecordImport.Text = "Database import";
       this.tpRecordImport.UseVisualStyleBackColor = true;
@@ -842,11 +890,14 @@ namespace SetupTv.Sections
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.tabControl1);
       this.Name = "TvRecording";
-      this.Size = new System.Drawing.Size(474, 412);
+      this.Size = new System.Drawing.Size(474, 530);
       this.tabControl1.ResumeLayout(false);
       this.tpSettings.ResumeLayout(false);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
+      this.groupBoxRecording.ResumeLayout(false);
+      this.groupBoxRecording.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMaxFreeCardsToTry)).EndInit();
       this.groupBoxScheduler.ResumeLayout(false);
       this.groupBoxScheduler.PerformLayout();
       this.groupBoxGap.ResumeLayout(false);
@@ -935,5 +986,9 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ComboBox comboBoxFormat;
     private System.Windows.Forms.TextBox textBoxCustomFormat;
     private System.Windows.Forms.Label labelCustomFormat;
+    private System.Windows.Forms.GroupBox groupBoxRecording;
+    private System.Windows.Forms.Label label48;
+    private System.Windows.Forms.NumericUpDown numericUpDownMaxFreeCardsToTry;
+    private System.Windows.Forms.Label lblMaxFreeCards;
   }
 }

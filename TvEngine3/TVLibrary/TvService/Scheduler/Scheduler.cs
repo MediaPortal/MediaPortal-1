@@ -74,6 +74,16 @@ namespace TvService
     private bool _preventDuplicateEpisodes;
     private int _preventDuplicateEpisodesKey;
     private Thread _schedulerThread = null;
+    /// <summary>
+    /// Indicates how many free cards to try for recording
+    /// </summary>
+    private int _maxRecordFreeCardsToTry;
+                
+
+    /// <summary>
+    /// Indicates how many free cards to try for timeshifting
+    /// </summary>
+    private int _maxTimeshiftFreeCardsToTry;
 
     #endregion
    
@@ -311,7 +321,8 @@ namespace TvService
       TvBusinessLayer layer = new TvBusinessLayer();
       _createTagInfoXML = (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
       _preventDuplicateEpisodes = (layer.GetSetting("PreventDuplicates", "no").Value == "yes");
-      _preventDuplicateEpisodesKey = Convert.ToInt32(layer.GetSetting("EpisodeKey", "0").Value);
+      _preventDuplicateEpisodesKey = Convert.ToInt32(layer.GetSetting("EpisodeKey", "0").Value);      
+      _maxRecordFreeCardsToTry = Int32.Parse(layer.GetSetting("recordMaxFreeCardsToTry", "0").Value);
     }
 
     private static void ResetRecordingStates()
@@ -890,11 +901,80 @@ namespace TvService
       if (freeCards.Count == 0)
       {
         return;
-      }
-        
-      CardDetail cardInfo = null;
+      }      
+     
+      CardDetail cardInfo = GetCardInfo(RecDetail, freeCards);
 
+      if (cardInfo != null)
+      {
+        int maxCards = GetMaxCards(freeCards);
+        Log.Write("scheduler: try max {0} of {1} cards for recording", maxCards, freeCards.Count);
+
+        //keep tuning each card until we are succesful                
+        for (int i = 0; i < maxCards; i++)
+        {
+          if (i > 0)
+          {
+            Log.Write("scheduler: recording failed, lets try next available card.");
+          }
+
+          try
+          {
+            user.CardId = cardInfo.Id;
+
+            StartRecordingNotification(RecDetail);
+            SetupRecordingFolder(cardInfo);
+
+            if (StartRecordingOnDisc(RecDetail, ref user, cardInfo))
+            {
+              CreateRecording(RecDetail);
+              SetRecordingProgramState(RecDetail);
+
+              _recordingsInProgressList.Add(RecDetail);
+
+              RecordingStartedNotification(RecDetail);
+              SetupQualityControl(RecDetail);
+              WriteMatroskaFile(RecDetail);
+
+              Log.Write("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}", _recordingsInProgressList.Count,
+                        RecDetail.Schedule.IdSchedule, RecDetail.CardInfo.Card.Name);
+            }
+            else
+            {
+              continue; //try next card  
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Write(ex);
+          }
+        }
+      }      
+    }
+
+    private int GetMaxCards(List<CardDetail> freeCards)
+    {
+      int maxCards;
+      if (_maxRecordFreeCardsToTry == 0)
+      {
+        maxCards = freeCards.Count;
+      }
+      else
+      {
+        maxCards = Math.Min(_maxRecordFreeCardsToTry, freeCards.Count);
+
+        if (maxCards > freeCards.Count)
+        {
+          maxCards = freeCards.Count;
+        }
+      }
+      return maxCards;
+    }
+
+    private CardDetail GetCardInfo(RecordingDetail RecDetail, List<CardDetail> freeCards)
+    {
       //first try to start recording using the recommended card
+      CardDetail cardInfo;
       cardInfo = FindRecommendedCard(RecDetail, freeCards);
 
       if (cardInfo == null)
@@ -903,7 +983,7 @@ namespace TvService
       }
 
       if (cardInfo == null)
-      {        
+      {
         cardInfo = FindFirstAvailableCardInUse(freeCards);
       }
 
@@ -913,39 +993,10 @@ namespace TvService
       }
 
       if (cardInfo == null)
-      {       
+      {
         cardInfo = HijackCardForRecording(freeCards);
       }
-
-      if (cardInfo != null)
-      {
-        try
-        {
-          user.CardId = cardInfo.Id;
-
-          StartRecordingNotification(RecDetail);
-          SetupRecordingFolder(cardInfo);
-
-          if (StartRecordingOnDisc(RecDetail, ref user, cardInfo))
-          {
-            CreateRecording(RecDetail);
-            SetRecordingProgramState(RecDetail);
-
-            _recordingsInProgressList.Add(RecDetail);
-
-            RecordingStartedNotification(RecDetail);
-            SetupQualityControl(RecDetail);
-            WriteMatroskaFile(RecDetail);
-
-            Log.Write("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}", _recordingsInProgressList.Count,
-                      RecDetail.Schedule.IdSchedule, RecDetail.CardInfo.Card.Name);
-          }
-        }
-        catch (Exception ex)
-        {
-          Log.Write(ex);
-        }
-      }
+      return cardInfo;
     }
 
     private CardDetail FindRecommendedCard(RecordingDetail RecDetail, List<CardDetail> freeCards)

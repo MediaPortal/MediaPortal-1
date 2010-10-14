@@ -185,10 +185,14 @@ namespace SetupTv.Sections
     #region Serialization
 
     public override void LoadSettings()
-    {
+    {      
       numericUpDownPreRec.Value = 5;
       numericUpDownPostRec.Value = 5;
       TvBusinessLayer layer = new TvBusinessLayer();
+
+      numericUpDownMaxFreeCardsToTry.Value = ValueSanityCheck(
+        Convert.ToInt32(layer.GetSetting("recordMaxFreeCardsToTry", "0").Value), 0, 100);
+
       checkBoxAutoDelete.Checked = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
       checkBoxPreventDupes.Checked = (layer.GetSetting("PreventDuplicates", "no").Value == "yes");
       comboBoxFirstWorkingDay.SelectedIndex = Convert.ToInt32(layer.GetSetting("FirstWorkingDay", "0").Value);
@@ -230,6 +234,22 @@ namespace SetupTv.Sections
 
       LoadComboBoxDrive();
     }
+
+    private static decimal ValueSanityCheck(int value, int min, int max)
+    {
+      if (value < min)
+      {
+        return min;
+      }
+        
+      if (value > max)
+      {
+        return max;
+      }
+        
+      return value;
+    }
+
 
     public override void SaveSettings()
     {
@@ -279,6 +299,10 @@ namespace SetupTv.Sections
 
       setting = layer.GetSetting("EpisodeKey", "0");
       setting.Value = comboBoxEpisodeKey.SelectedIndex.ToString();
+      setting.Persist();
+
+      setting = layer.GetSetting("recordMaxFreeCardsToTry", "0");
+      setting.Value = numericUpDownMaxFreeCardsToTry.Value.ToString();
       setting.Persist();
 
       UpdateDriveInfo(true);
