@@ -881,6 +881,7 @@ namespace TvService
       return newRecording;
     }
 
+
     /// <summary>
     /// Starts recording the recording specified
     /// </summary>
@@ -901,25 +902,20 @@ namespace TvService
       if (freeCards.Count == 0)
       {
         return;
-      }      
-     
-      CardDetail cardInfo = GetCardInfo(RecDetail, freeCards);
+      }
 
-      if (cardInfo != null)
+      int maxCards = GetMaxCards(freeCards);
+      Log.Write("scheduler: try max {0} of {1} cards for recording", maxCards, freeCards.Count);
+
+      CardDetail prevCardDetail = null;
+      //keep tuning each card until we are succesful                
+      for (int i = 0; i < maxCards; i++)
       {
-        int maxCards = GetMaxCards(freeCards);
-        Log.Write("scheduler: try max {0} of {1} cards for recording", maxCards, freeCards.Count);
-
-        //keep tuning each card until we are succesful                
-        for (int i = 0; i < maxCards; i++)
-        {
-          if (i > 0)
-          {
-            Log.Write("scheduler: recording failed, lets try next available card.");
-          }
-
+        CardDetail cardInfo = GetCardInfo(RecDetail, freeCards);
+        if (cardInfo != null)
+        {          
           try
-          {
+          {            
             user.CardId = cardInfo.Id;
 
             StartRecordingNotification(RecDetail);
@@ -936,17 +932,23 @@ namespace TvService
               SetupQualityControl(RecDetail);
               WriteMatroskaFile(RecDetail);
 
-              Log.Write("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}", _recordingsInProgressList.Count,
+              Log.Write("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}",
+                        _recordingsInProgressList.Count,
                         RecDetail.Schedule.IdSchedule, RecDetail.CardInfo.Card.Name);
               break;
-            }            
+            }
           }
           catch (Exception ex)
           {
             Log.Write(ex);
           }
+          Log.Write("scheduler: recording failed, lets try next available card.");           
+          if (freeCards.Contains(cardInfo))
+          {
+            freeCards.Remove(cardInfo);
+          }
         }
-      }      
+      }
     }
 
     private int GetMaxCards(List<CardDetail> freeCards)
