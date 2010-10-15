@@ -120,7 +120,6 @@
     <Compile Include="Service1.Designer.cs">
       <DependentUpon>Service1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CardManagement\CardHandler\TvCardHandler.cs" />
     <Compile Include="TsCopier.cs" />

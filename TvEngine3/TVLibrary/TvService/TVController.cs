@@ -758,8 +758,8 @@ namespace TvService
           _scheduler = new Scheduler(this);
           _scheduler.Start();
         }
-        
-        SetupHeartbeatThread();
+
+        SetupHeartbeatThread();  
         ExecutePendingDeletions();
 
         // Re-evaluate program states
@@ -771,7 +771,8 @@ namespace TvService
       {
         Log.Write("TvControllerException: {0}\r\n{1}", ex.ToString(), ex.StackTrace);
         return false;
-      }
+      }      
+
       Log.Info("Controller: initalized");
       return true;
     }
@@ -823,17 +824,20 @@ namespace TvService
     {
       Log.Info("Controller: DeInit.");
       try
-      {
+      {        
         if (heartBeatMonitorThread != null)
         {
-          if (heartBeatMonitorThread.IsAlive)
+          if (!Service1.HasThreadCausedAnUnhandledException(heartBeatMonitorThread))
           {
-            Log.Info("Controller: HeartBeat monitor stopped...");
-            try
+            if (heartBeatMonitorThread.IsAlive)
             {
-              heartBeatMonitorThread.Abort();
+              Log.Info("Controller: HeartBeat monitor stopped...");
+              try
+              {
+                heartBeatMonitorThread.Abort();
+              }
+              catch (Exception) {}
             }
-            catch (Exception) {}
           }
         }
 
@@ -2488,7 +2492,7 @@ namespace TvService
     /// TvResult indicating whether method succeeded
     /// </returns>
     public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card, bool forceCardId, out bool cardChanged)
-    {
+    {      
       cardChanged = false;
       if (user == null)
       {
@@ -3630,6 +3634,7 @@ namespace TvService
         }
         // note; client signals heartbeats each 15 sec.
         Thread.Sleep(HEARTBEAT_MAX_SECS_EXCEED_ALLOWED * 1000); //sleep for 30 secs. before checking heartbeat again
+        //throw new Exception("heartbeat died on purpose, causing an unhandled exception");
       }
     }
 
@@ -4147,6 +4152,45 @@ namespace TvService
       catch (Exception ex)
       {
         Log.Error("ExecutePendingDeletions exception : " + ex.Message);
+      }
+    }
+
+    private bool _onResumeDone = false;
+
+    public void OnResume()
+    {
+      if (!_onResumeDone)
+      {
+
+        Log.Info("TvController.OnResume()");
+        SetupHeartbeatThread();
+
+        if (_scheduler != null)
+        {
+          _scheduler.Start();
+        }
+      }
+      _onResumeDone = true;
+    }
+
+    public void OnSuspend()
+    {
+      _onResumeDone = false;
+      Log.Info("TvController.OnSuspend()");
+      if (heartBeatMonitorThread != null && heartBeatMonitorThread.IsAlive)
+      {
+        heartBeatMonitorThread.Abort();
+        heartBeatMonitorThread = null;
+      }      
+      if (_scheduler != null)
+      {
+        _scheduler.Stop();  
+      }      
+
+      User tmpUser = new User();
+      foreach (ITvCardHandler cardhandler in this.CardCollection.Values)
+      {
+        cardhandler.StopCard(tmpUser);
       }
     }
   }
