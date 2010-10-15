@@ -306,11 +306,8 @@ namespace MediaPortal.GUI.Video
 
           if (!File.Exists(strThumb) || string.IsNullOrEmpty(strThumb))
           {
-            //strThumb = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
-            //                         Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(file, ".jpg"))));
-            string titleExt =  movieDetails.Title + "{" + movieDetails.ID + "}";
             strThumb = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
-                                     Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(file + titleExt, ".jpg"))));
+                                     Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(file, ".jpg"))));
             if (!File.Exists(strThumb))
             {
               continue;
