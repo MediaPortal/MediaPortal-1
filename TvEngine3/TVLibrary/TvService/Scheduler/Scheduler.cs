@@ -938,11 +938,8 @@ namespace TvService
 
               Log.Write("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}", _recordingsInProgressList.Count,
                         RecDetail.Schedule.IdSchedule, RecDetail.CardInfo.Card.Name);
-            }
-            else
-            {
-              continue; //try next card  
-            }
+              break;
+            }            
           }
           catch (Exception ex)
           {
