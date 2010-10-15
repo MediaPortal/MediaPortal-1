@@ -1945,6 +1945,10 @@ namespace MediaPortal.Visualization
                   sleepMS = 0;
                 }
 
+                if (Viz.IsWinampVis())
+                {
+                  continue;
+                }
 
                 // Is it a Soundspectrum Viz, then we use, what their render returned in sleepMS
                 if (IsSoundSpectrumViz)
@@ -2025,7 +2029,7 @@ namespace MediaPortal.Visualization
 
       try
       {
-        if ((_EnableStatusOverlays || !FullScreen) && !IsWmpVis())
+        if ((_EnableStatusOverlays || !FullScreen) && !IsWmpVis() && !Viz.IsWinampVis())
         {
           if (DialogWindowIsActive)
           {
