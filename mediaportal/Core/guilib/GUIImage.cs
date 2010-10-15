@@ -813,7 +813,8 @@ namespace MediaPortal.GUI.Library
         _packedTexture.Dispose();
         _packedTexture = null;
       }
-      UnsubscribeOnPropertyChanged();      
+      if(!App.IsShuttingDown) // if the app is shutting down, this is useless and causes huge delays in case many images have been allocated
+        UnsubscribeOnPropertyChanged();       
     }
 
     private void OnListTexturesDisposedEvent(object sender, EventArgs e)

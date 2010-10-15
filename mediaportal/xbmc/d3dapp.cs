@@ -1864,6 +1864,8 @@ namespace MediaPortal
       ready = false;
       if (GUIGraphicsContext.DX9Device != null)
       {
+        // indicate we are shutting down
+        App.IsShuttingDown = true;
         // remove the device lost and reset handlers as application is already closing down
         GUIGraphicsContext.DX9Device.DeviceLost -= new EventHandler(this.OnDeviceLost);
         GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);

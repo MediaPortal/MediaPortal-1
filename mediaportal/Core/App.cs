@@ -88,6 +88,12 @@ namespace MediaPortal
       get { return _properties; }
     }
 
+    /// <summary>
+    /// Indicates the Application is about to shut down
+    /// </summary>
+    public static bool IsShuttingDown 
+    { get; set; }
+
     #endregion Properties
 
     #region Fields
