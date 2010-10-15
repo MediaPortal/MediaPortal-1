@@ -1343,11 +1343,29 @@ namespace MediaPortal.Music.Database
 
     private void ExtractCoverArt(MusicTag tag)
     {
-      string formattedArtist = tag.Artist.Trim(trimChars);
       string formattedAlbum = tag.Album.Trim(trimChars);
-      if (_stripArtistPrefixes)
+
+      // Mantis 3078: Filename for Multiple Artists should not contain a semicolon, cause it wouldn't be found later on
+      int i = 0;
+      string formattedArtist = "";
+      string[] strArtistSplit = tag.Artist.Split(new char[] { ';', '|' });
+      foreach (string strArtist in strArtistSplit)
       {
-        Util.Utils.StripArtistNamePrefix(ref formattedArtist, true);
+        string s = strArtist.Trim();
+        if (_stripArtistPrefixes)
+        {
+          Util.Utils.StripArtistNamePrefix(ref s, true);
+        }
+
+        // Concatenate multiple Artists with " _ "
+        // When we search for multiple artists Covers: "artist a | artist b", the string " | " gets replaced by " _ ",
+        // so we need to build the file accordingly
+        if (i > 0)
+        {
+          formattedArtist += " _ ";
+        }
+        formattedArtist += s.Trim();
+        i++;
       }
 
       string tagAlbumName = string.Format("{0}-{1}", formattedArtist, formattedAlbum);
