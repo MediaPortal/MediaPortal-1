@@ -167,6 +167,8 @@ namespace MediaPortal.Configuration.Sections
 
     private ArrayList _conflictFiles = new ArrayList();
 
+    private List<BaseShares.ShareData> _sharesData = null;
+
     #region ctor
 
     public MovieDatabase()
@@ -212,14 +214,13 @@ namespace MediaPortal.Configuration.Sections
 
       if (section != null)
       {
-        ArrayList shares = (ArrayList)section.GetSetting("shares");
-
-        foreach (string share in shares)
+        _sharesData = (List<BaseShares.ShareData>)section.GetSetting("sharesdata");
+        foreach (BaseShares.ShareData share in _sharesData)
         {
           //
           // Add to share to list box and default to selected
           //
-          sharesListBox.Items.Add(share, CheckState.Checked);
+          sharesListBox.Items.Add(share.Folder, share.ScanShare);
         }
       }
 
@@ -423,6 +424,8 @@ namespace MediaPortal.Configuration.Sections
 
     private void sharesListBox_ItemCheck(object sender, ItemCheckEventArgs e)
     {
+      BaseShares.ShareData share = _sharesData[e.Index];
+      share.ScanShare = e.NewValue == CheckState.Checked ? true : false;
       UpdateControlStatus();
     }
 

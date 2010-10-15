@@ -625,7 +625,7 @@ namespace MediaPortal.Configuration.Sections
 
           // For Music Shares, we can indicate, if we want to scan them every time
           bool shareScanData = false;
-          if (section == "music")
+          if (section == "music" || section == "movies")
           {
             string shareScan = String.Format("sharescan{0}", index);
             shareScanData = xmlreader.GetValueAsBool(section, shareScan, true);
@@ -642,7 +642,7 @@ namespace MediaPortal.Configuration.Sections
             newShare.RemoteFolder = shareRemotePathData;
             newShare.DefaultView = (ShareData.Views)shareView;
 
-            if (section == "music")
+            if (section == "music" || section == "movies")
             {
               newShare.ScanShare = shareScanData;
             }
@@ -692,7 +692,7 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.RemoveEntry(section, shareRemotePath);
           xmlwriter.RemoveEntry(section, shareViewPath);
 
-          if (section == "music")
+          if (section == "music" || section == "movies")
           {
             string shareScan = String.Format("sharescan{0}", index);
             xmlwriter.RemoveEntry(section, shareScan);
@@ -744,7 +744,7 @@ namespace MediaPortal.Configuration.Sections
               xmlwriter.SetValue(section, shareRemotePath, shareRemotePathData);
               xmlwriter.SetValue(section, shareViewPath, shareView);
 
-              if (section == "music")
+              if (section == "music" || section == "movies")
               {
                 string shareScan = String.Format("sharescan{0}", index);
                 xmlwriter.SetValueAsBool(section, shareScan, shareScanData);
