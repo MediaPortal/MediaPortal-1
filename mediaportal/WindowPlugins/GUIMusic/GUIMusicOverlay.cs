@@ -75,6 +75,7 @@ namespace MediaPortal.GUI.Music
     private bool _didRenderLastTime = false;
     private bool _visualisationEnabled = true;
     private bool _useID3 = false;
+    private bool _stripArtistPrefixes = false;
     private bool _settingVisEnabled = true;
     private PlayListPlayer playlistPlayer;
 
@@ -92,6 +93,7 @@ namespace MediaPortal.GUI.Music
         _settingVisEnabled = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", false) && _useBassEngine;
         _visualisationEnabled = _settingVisEnabled;
         _useID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
+        _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
       }
     }
 
@@ -481,8 +483,6 @@ namespace MediaPortal.GUI.Music
       thumb = string.Empty;
       MusicTag tag = null;
 
-      tag = TagReader.TagReader.ReadTag(fileName);
-
       if (g_Player.IsRadio)
       {
         // then check which radio station we're playing
@@ -506,8 +506,37 @@ namespace MediaPortal.GUI.Music
             thumb = string.Empty;
           }
         }
-      } //if (g_Player.IsRadio)
+      }
+      else
+      {
+        tag = TagReader.TagReader.ReadTag(fileName);
 
+        // Mantis 3077: Handle Multiple Artists
+        // We need to replace the string ";" by an " | " so that it looks like coming from the Database
+        string[] strArtistSplit = tag.Artist.Split(new char[] { ';', '|' });
+
+        if (strArtistSplit.Length > 1)
+        {
+          int i = 0;
+          string formattedArtist = "";
+          foreach (string strArtist in strArtistSplit)
+          {
+            string s = strArtist.Trim();
+            if (_stripArtistPrefixes)
+            {
+              Util.Utils.StripArtistNamePrefix(ref s, true);
+            }
+
+            if (i > 0)
+            {
+              formattedArtist += " | ";
+            }
+            formattedArtist += s.Trim();
+            i++;
+          }
+          tag.Artist = formattedArtist;
+        }
+      }
 
       // efforts only for important track
       bool isCurrent = (g_Player.CurrentFile == fileName);
