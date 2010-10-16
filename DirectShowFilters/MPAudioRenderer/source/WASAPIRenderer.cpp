@@ -457,7 +457,7 @@ void WASAPIRenderer::UpdateAudioClock()
     //if (m_dClockPosIn == m_dClockPosOut)
     m_dClockPosOut = (m_dClockPosIn + 1) % CLOCK_DATA_SIZE;
 
-    //Log("update: m_dClockPosIn: %d m_dClockPosOut: %d diff: %I64u",m_dClockPosIn, m_dClockPosOut, m_ullHwClock[m_dClockPosOut] - m_ullHwClock[m_dClockPosIn]);
+    //Log("HW clock diff: %I64u QPC diff: %I64u", m_ullHwClock[m_dClockPosOut] - m_ullHwClock[m_dClockPosIn], m_ullHwQpc[m_dClockPosOut] - m_ullHwQpc[m_dClockPosIn]);
 
     m_ullHwClock[m_dClockPosIn] = ullHwClock;
     m_ullHwQpc[m_dClockPosIn] = qpc;
