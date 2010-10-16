@@ -397,14 +397,7 @@ namespace MediaPortal.GUI.Library
           _fadeIn = true && _allowFadeIn;
           _currentFrame = 0;
           timeElapsed = 0.0f;
-          if (message.Label != null)
-          {
-            string strLabel = message.Label;
-            if (strLabel.Length > 0)
-            {
-              _listLabels.Add(strLabel);
-            }
-          }
+          Label = message.Label ?? string.Empty;
         }
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
         {
