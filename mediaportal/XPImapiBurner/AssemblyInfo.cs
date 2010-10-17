@@ -31,18 +31,3 @@ using System.Reflection;
   AssemblyDescription(
     "Component used to create data CDs without invoking the Windows XP wizard UI.  This component requires Windows XP or Windows 2003 Server."
     )]
-
-
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("1.2.0.*")]
-[assembly: AssemblyFileVersion("1.2.0.0")]

@@ -61,6 +61,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="Classes\MruStripMenu.cs" />
     <Compile Include="Classes\ProgramArguments.cs" />
     <Compile Include="Classes\TreeView.cs">

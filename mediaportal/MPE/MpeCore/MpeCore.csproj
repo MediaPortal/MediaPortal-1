@@ -67,6 +67,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="Classes\ActionExecuteLocationEnum.cs" />
     <Compile Include="Classes\ActionItem.cs" />
     <Compile Include="Classes\ActionItemCollection.cs" />

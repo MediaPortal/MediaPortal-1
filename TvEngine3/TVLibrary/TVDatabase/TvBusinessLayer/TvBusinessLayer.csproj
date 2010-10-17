@@ -71,6 +71,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="BusinessLayer.cs" />
     <Compile Include="EpgDBUpdater.cs" />
     <Compile Include="MatroskaTagLib.cs" />

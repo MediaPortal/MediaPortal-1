@@ -69,6 +69,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="PowerScheduler.cs" />
     <Compile Include="PowerSchedulerClientPlugin.cs" />
     <Compile Include="PowerSchedulerClientSetup.cs">

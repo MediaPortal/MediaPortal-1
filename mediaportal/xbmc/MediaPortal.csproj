@@ -257,6 +257,9 @@
     <None Include="App.config" />
     <None Include="MediaPortal.exe.manifest" />
     <None Include="PostBuild.bat" />
+    <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="CodecsForm.cs">
       <SubType>Form</SubType>
     </Compile>

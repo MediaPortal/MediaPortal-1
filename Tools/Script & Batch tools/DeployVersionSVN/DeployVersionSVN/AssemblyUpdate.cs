@@ -57,6 +57,8 @@ namespace DeployVersionSVN
     {
       DirectoryInfo dir = new DirectoryInfo(directory);
 
+      UpdateFile(dir, "SolutionInfo.cs");
+      UpdateFile(dir, "AssemblyInfo.cs");
       SearchDirectory(dir);
     }
 
@@ -67,14 +69,15 @@ namespace DeployVersionSVN
         if (dir.Name != ".svn" && dir.Name != "obj" && dir.Name != "bin")
         {
           SearchDirectory(dir);
-          UpdateFile(dir);
+          UpdateFile(dir, "SolutionInfo.cs");
+          UpdateFile(dir, "AssemblyInfo.cs");
         }
       }
     }
 
-    private void UpdateFile(DirectoryInfo directory)
+    private void UpdateFile(DirectoryInfo directory, string filename)
     {
-      foreach (FileInfo file in directory.GetFiles("AssemblyInfo.cs"))
+      foreach (FileInfo file in directory.GetFiles(filename))
       {
         foreach (string excludedFile in _excludedFiles)
           if (file.FullName.Contains(excludedFile))

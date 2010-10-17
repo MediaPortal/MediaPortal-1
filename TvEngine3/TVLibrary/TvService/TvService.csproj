@@ -80,6 +80,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="CardManagement\CardAllocation\AdvancedCardAllocation.cs" />
     <Compile Include="CardManagement\CardAllocation\CardAllocationBase.cs" />
     <Compile Include="CardManagement\CardAllocation\ChannelStates.cs" />

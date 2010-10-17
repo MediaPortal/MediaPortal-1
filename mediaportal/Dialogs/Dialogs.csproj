@@ -138,6 +138,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="Dialogs\GUIDialogCIMenu.cs" />
     <Compile Include="Dialogs\GUIDialogMenu.cs">
       <SubType>Code</SubType>

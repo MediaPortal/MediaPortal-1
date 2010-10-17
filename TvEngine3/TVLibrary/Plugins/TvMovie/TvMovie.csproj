@@ -68,6 +68,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="TvMovie.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TvMovieDatabase.cs" />

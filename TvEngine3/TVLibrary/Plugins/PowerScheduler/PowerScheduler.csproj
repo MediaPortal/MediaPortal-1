@@ -64,6 +64,9 @@
   </Target>
   -->
   <ItemGroup>
+    <Compile Include="..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="Handlers\ActiveNetworkHandler.cs" />
     <Compile Include="Handlers\ActiveSharesHandler.cs" />
     <Compile Include="Handlers\ActiveStreamsHandler.cs" />

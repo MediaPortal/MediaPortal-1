@@ -117,6 +117,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="config\ChannelGrabberInfo.cs" />
     <Compile Include="config\Grabber\ChannelInfo.cs">
       <SubType>Code</SubType>

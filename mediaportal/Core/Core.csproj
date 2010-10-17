@@ -273,6 +273,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
+      <Link>SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="App.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
