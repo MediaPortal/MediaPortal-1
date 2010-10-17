@@ -214,12 +214,6 @@ namespace MediaPortal.GUI.Music
       g_Player.PlayBackStopped += new g_Player.StoppedHandler(OnPlayBackStopped);
       g_Player.PlayBackEnded += new g_Player.EndedHandler(OnPlayBackEnded);
 
-      // Get notification, that an Internet Stream has changed
-      BassMusicPlayer.Player.InternetStreamSongChanged +=
-        new BassAudioEngine.InternetStreamSongChangedDelegate(OnInternetStreamSongChanged);
-
-      // GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
-
       LoadSettings();
     }
 
@@ -550,6 +544,11 @@ namespace MediaPortal.GUI.Music
     {
       base.OnPageLoad();
 
+      // Get notification, that an Internet Stream has changed
+      // Moved out of the constructor, since it would cause loading of BASS in the Main thread,
+      // because it is called by the Plugin Manager
+      BassMusicPlayer.Player.InternetStreamSongChanged += OnInternetStreamSongChanged;
+
       facadeAlbumInfo.Clear();
       facadeTagInfo.Clear();
       ImagePathContainer.Clear();
@@ -647,6 +646,8 @@ namespace MediaPortal.GUI.Music
 
       // Make sure we clear any images we added so we revert back the coverart image
       ClearVisualizationImages();
+
+      BassMusicPlayer.Player.InternetStreamSongChanged -= OnInternetStreamSongChanged;
 
       base.OnPageDestroy(new_windowId);
     }
