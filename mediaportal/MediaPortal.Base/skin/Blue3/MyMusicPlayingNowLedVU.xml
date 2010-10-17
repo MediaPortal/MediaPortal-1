@@ -5,6 +5,13 @@
   <defaultcontrol>33</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
+     <control>
+      <type>label</type>
+      <description>Dummy label to cause focus on top tracks / related tracks</description>
+      <id>888</id>
+      <posX>2060</posX>
+      <label>-</label>
+    </control>
     <control>
       <type>image</type>
       <description>background image</description>

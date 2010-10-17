@@ -99,6 +99,8 @@ namespace MediaPortal.GUI.Music
       IMGLIST_FAMOUS_TRACK1 = 87,
       IMGLIST_FAMOUS_TRACK2 = 88,
       IMGLIST_FAMOUS_TRACK3 = 89,
+      
+      LBL_FORCE_FOCUS = 888,
 
       VUMETER_LEFT = 999,
       VUMETER_RIGHT = 998,
@@ -146,6 +148,7 @@ namespace MediaPortal.GUI.Music
     [SkinControl((int)ControlIDs.IMGLIST_FAMOUS_TRACK3)] protected GUIImageList ImgListFamousTrack3 = null;
     [SkinControl((int)ControlIDs.VUMETER_LEFT)] protected GUIImage VUMeterLeft = null;
     [SkinControl((int)ControlIDs.VUMETER_RIGHT)] protected GUIImage VUMeterRight = null;
+    [SkinControl((int)ControlIDs.LBL_FORCE_FOCUS)] protected GUILabelControl lblForceFocus = null;
 
     #endregion
 
@@ -964,8 +967,14 @@ namespace MediaPortal.GUI.Music
         }
 
         UpdateImagePathContainer();
-
-        GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_ALBUM_INFO));
+        
+        // previously focus was set all the time
+        // to maintain previous functionality set focus if
+        // defauly skin control is present
+        if (lblForceFocus != null)
+        {
+		      GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_ALBUM_INFO));
+        }
       }
     }
 
@@ -1043,9 +1052,16 @@ namespace MediaPortal.GUI.Music
             LblBestTagTracks.Label = GUILocalizeStrings.Get(33031) + TagTracks[0].Genre;
             LblBestTagTracks.Visible = true;
           }
+          
           if (facadeAlbumInfo == null || facadeAlbumInfo.Count == 0)
           {
-            GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_TAG_INFO));
+            // previously focus was set all the time
+            // to maintain previous functionality set focus if
+            // defauly skin control is present
+          	if (lblForceFocus != null)
+            {
+              GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_TAG_INFO));
+            }
           }
         }
       }
