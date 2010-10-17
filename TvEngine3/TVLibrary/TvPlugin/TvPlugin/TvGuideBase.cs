@@ -2678,6 +2678,15 @@ namespace TvPlugin
                 img.TileFillTFR = buttonRunningTemplate.TileFillTFR;
                 img.TileFillTNFR = buttonRunningTemplate.TileFillTNFR;
               }
+              else if (bRecording && _useNewRecordingButtonColor)
+              {
+                img.TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
+                img.TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
+                img.TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
+                img.TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
+                img.TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
+                img.TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
+              }
               else if (!(bRecording && bPartialRecording && _useNewRecordingButtonColor))
               {
                 img.TexutureFocusLeftName = "tvguide_button_selected_left.png";
