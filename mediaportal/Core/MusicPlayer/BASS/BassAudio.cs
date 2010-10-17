@@ -1057,6 +1057,7 @@ namespace MediaPortal.Player
       GUIGraphicsContext.form.Disposed += new EventHandler(OnAppFormDisposed);
 
       VizWindow = new VisualizationWindow(this);
+      VizWindow.Visible = false;
       VizManager = new VisualizationManager(this, VizWindow);
       TargetFPS = VizFPS;
 

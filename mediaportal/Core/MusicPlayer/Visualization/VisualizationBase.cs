@@ -212,20 +212,6 @@ namespace MediaPortal.Visualization
     {
       try
       {
-        if (_visParam.VisHandle != 0)
-        {
-          // wait max 5 loops for Vis to get freed
-          // Might cause infinite loop with some vis
-          int i = 0;
-          try
-          {
-            BassVis.BASSVIS_Free(_visParam, ref _baseVisParam);
-          }
-          catch (AccessViolationException) {}
-
-          _visParam.VisHandle = 0;
-        }
-
         if (_visParam != null)
         {
           BassVis.BASSVIS_Quit(_visParam);
