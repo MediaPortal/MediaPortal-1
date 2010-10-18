@@ -208,7 +208,7 @@ namespace MediaPortal.TagReader
       }
       catch (Exception ex)
       {
-        Log.Error("Exception processing CUE File {0}: {1} {2}", filename, ex.Message, ex.StackTrace);
+        Log.Error("Exception processing CUE File {0}: {1}", filename, ex.Message);
       }
     }
 

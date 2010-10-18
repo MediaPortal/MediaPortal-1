@@ -869,18 +869,25 @@ namespace MediaPortal.Music.Database
       // Now we will remove the CUE data file from the database, since we will add Fake Tracks in the next step
       foreach (string cueFile in cueFiles)
       {
-        CueSheet cueSheet = new CueSheet(cueFile);
-        string cuePath = Path.GetDirectoryName(cueFile);
-        string cueDataFile = cuePath + "\\" + cueSheet.Tracks[0].DataFile.Filename;
-        DatabaseUtility.RemoveInvalidChars(ref cueDataFile);
-        strSQL = String.Format("delete from tracks where strPath='{0}'", cueDataFile);
         try
         {
-          DirectExecute(strSQL);
+          CueSheet cueSheet = new CueSheet(cueFile);
+          string cuePath = Path.GetDirectoryName(cueFile);
+          string cueDataFile = cuePath + "\\" + cueSheet.Tracks[0].DataFile.Filename;
+          DatabaseUtility.RemoveInvalidChars(ref cueDataFile);
+          strSQL = String.Format("delete from tracks where strPath='{0}'", cueDataFile);
+          try
+          {
+            DirectExecute(strSQL);
+          }
+          catch (Exception ex)
+          {
+            Log.Error("Error deleting song from Database: {0}", ex.Message);
+          }
         }
         catch (Exception ex)
         {
-          Log.Error("Error deleting song from Database: {0}", ex.Message);
+          Log.Error("Exception Processing CUE File: {0}: {1}", cueFile, ex.Message);
         }
       }
 
