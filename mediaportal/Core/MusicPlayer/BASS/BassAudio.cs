@@ -1235,7 +1235,7 @@ namespace MediaPortal.Player
     /// <returns></returns>
     public bool CreateVisualization(VisualizationInfo vizPluginInfo)
     {
-      if (vizPluginInfo == null || VizWindow == null)
+      if (vizPluginInfo == null || vizPluginInfo.VisualizationType == VisualizationInfo.PluginType.None || VizWindow == null)
       {
         return false;
       }
