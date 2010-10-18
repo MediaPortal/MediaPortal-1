@@ -42,7 +42,7 @@ namespace DShowNET.Helper
   {
     private const int magicConstant = -759872593;
 
-    static DirectShowUtil() {}
+    static DirectShowUtil() { }
 
     public static IBaseFilter AddFilterToGraph(IGraphBuilder graphBuilder, string strFilterName)
     {
@@ -56,7 +56,7 @@ namespace DShowNET.Helper
         IBaseFilter NewFilter = null;
         foreach (Filter filter in Filters.LegacyFilters)
         {
-          if (String.Compare(filter.Name, strFilterName, true) == 0 && (clsid == Guid.Empty || filter.CLSID == clsid) )
+          if (String.Compare(filter.Name, strFilterName, true) == 0 && (clsid == Guid.Empty || filter.CLSID == clsid))
           {
             NewFilter = (IBaseFilter)Marshal.BindToMoniker(filter.MonikerString);
 
@@ -127,7 +127,10 @@ namespace DShowNET.Helper
               if (setAsReferenceClock)
               {
                 hr.Set((graphBuilder as IMediaFilter).SetSyncSource(NewFilter as IReferenceClock));
-                Log.Debug("setAsReferenceClock sync source " + hr.ToDXString());
+                if (hr != 0)
+                {
+                  Log.Warn("setAsReferenceClock sync source " + hr.ToDXString());
+                }
               }
               return NewFilter;
             }
@@ -138,7 +141,7 @@ namespace DShowNET.Helper
           Log.Error("DirectShowUtils: failed filter {0} not found", strFilterName);
         }
       }
-      catch {}
+      catch { }
       Log.Info("DirectShowUtils: First try to insert new audio renderer {0} failed ", strFilterName);
 
       try
@@ -223,7 +226,10 @@ namespace DShowNET.Helper
                   if (setAsReferenceClock)
                   {
                     hr.Set((graphBuilder as IMediaFilter).SetSyncSource(pBasefilter[0] as IReferenceClock));
-                    Log.Info("setAsReferenceClock sync source " + hr.ToDXString());
+                    if (hr != 0)
+                    {
+                      Log.Warn("setAsReferenceClock sync source " + hr.ToDXString());
+                    }
                   }
                   ReleaseComObject(pBasefilter[0]);
                   pBasefilter[0] = null;
@@ -283,7 +289,10 @@ namespace DShowNET.Helper
               if (setAsReferenceClock)
               {
                 hr.Set((graphBuilder as IMediaFilter).SetSyncSource(NewFilter as IReferenceClock));
-                Log.Debug("setAsReferenceClock sync source " + hr.ToDXString());
+                if (hr != 0)
+                {
+                  Log.Warn("setAsReferenceClock sync source " + hr.ToDXString());
+                }
               }
               return NewFilter;
             }
@@ -409,7 +418,7 @@ namespace DShowNET.Helper
           FilterInfo info;
           filters[0].QueryFilterInfo(out info);
           ReleaseComObject(info.pGraph);
-          
+
           string filtername = info.achName;
           ReleaseComObject(filters[0]);
           if (filtername.Equals(name))
@@ -448,10 +457,10 @@ namespace DShowNET.Helper
       int hr;
       FilterInfo info;
       PinInfo outputInfo;
-      
+
       to.QueryFilterInfo(out info);
       ReleaseComObject(info.pGraph);
-      
+
       outputPin.QueryPinInfo(out outputInfo);
       DsUtils.FreePinInfo(outputInfo);
 
@@ -651,7 +660,7 @@ namespace DShowNET.Helper
       ArrayList allFiltersR = new ArrayList();
       IEnumFilters enumFilters;
       graphBuilder.EnumFilters(out enumFilters);
-      for (;;)
+      for (; ; )
       {
         int ffetched;
         IBaseFilter[] filters = new IBaseFilter[1];
@@ -679,10 +688,10 @@ namespace DShowNET.Helper
       ReleaseComObject(enumFilters);
       //if someone has a better way to sort the filters by their merits, PLEASE change the following
       //(i know there must be something more elegant)
-      Array aM = allMerits.ToArray(typeof (uint));
-      Array aF = allFilters.ToArray(typeof (IBaseFilter));
-      Array aMR = allMeritsR.ToArray(typeof (uint));
-      Array aFR = allFiltersR.ToArray(typeof (IBaseFilter));
+      Array aM = allMerits.ToArray(typeof(uint));
+      Array aF = allFilters.ToArray(typeof(IBaseFilter));
+      Array aMR = allMeritsR.ToArray(typeof(uint));
+      Array aFR = allFiltersR.ToArray(typeof(IBaseFilter));
       Array.Sort(aM, aF);
       Array.Sort(aMR, aFR);
       ArrayList ret = new ArrayList();
@@ -700,7 +709,7 @@ namespace DShowNET.Helper
         ReleaseComObject(filter);
       }
     }
-    
+
     public static bool TryConnect(IGraphBuilder graphbuilder, IBaseFilter source, Guid mediaType, string targetFilter)
     {
       if (string.IsNullOrEmpty(targetFilter))
@@ -916,7 +925,7 @@ namespace DShowNET.Helper
               }
             }
 
-            ReleaseComObject(i.pGraph);            
+            ReleaseComObject(i.pGraph);
             hr = graphBuilder.Render(pins[0]);
             if (hr != 0)
               Log.Debug(" - failed");
@@ -950,7 +959,7 @@ namespace DShowNET.Helper
       FilterInfo info;
       filter.QueryFilterInfo(out info);
       ReleaseComObject(info.pGraph);
-      
+
       int hr = filter.EnumPins(out pinEnum);
       if ((hr == 0) && (pinEnum != null))
       {
@@ -990,7 +999,7 @@ namespace DShowNET.Helper
                 {
                   hr = 0;
                   if (TryConnect(graphBuilder, info.achName, pins[0], tryAllFilters))
-                    //if ((hr=graphBuilder.Render(pins[0])) == 0)
+                  //if ((hr=graphBuilder.Render(pins[0])) == 0)
                   {
                     Log.Info("  render ok");
                   }
@@ -1147,7 +1156,7 @@ namespace DShowNET.Helper
           {
             bool filterUsed = false;
             bool hasOut = false;
-            bool hasIn = false;            
+            bool hasIn = false;
             pinEnum.Reset();
             IPin[] pins = new IPin[1];
             while (pinEnum.Next(1, pins, out fetched) == 0)
@@ -1174,12 +1183,12 @@ namespace DShowNET.Helper
               hr = graphBuilder.RemoveFilter(filter);
               DsError.ThrowExceptionForHR(hr);
               if (hr == 0)
-                Log.Debug(" - remove done");              
+                Log.Debug(" - remove done");
             }
           }
           ReleaseComObject(info.pGraph);
           ReleaseComObject(filter);
-        }        
+        }
       }
       catch (Exception error)
       {
@@ -1201,7 +1210,7 @@ namespace DShowNET.Helper
       Log.Info("Disconnecting all pins from filter {0}", info.achName);
       DirectShowUtil.ReleaseComObject(info.pGraph);
       bool allDisconnected = true;
-      for (;;)
+      for (; ; )
       {
         IPin[] pins = new IPin[1];
         int fetched;
@@ -1273,7 +1282,7 @@ namespace DShowNET.Helper
         return false;
       }
       int count = 0;
-      for (;;)
+      for (; ; )
       {
         AMMediaType[] types = new AMMediaType[1];
         int fetched;
@@ -1307,7 +1316,7 @@ namespace DShowNET.Helper
       FilterInfo info;
       filter.QueryFilterInfo(out info);
       ReleaseComObject(info.pGraph);
-      
+
       int hr = filter.EnumPins(out pinEnum);
       if ((hr == 0) && (pinEnum != null))
       {
@@ -1345,7 +1354,7 @@ namespace DShowNET.Helper
                 {
                   hr = 0;
                   if (TryConnect(graphBuilder, info.achName, pins[0]))
-                    //if ((hr = graphBuilder.Render(pins[0])) == 0)
+                  //if ((hr = graphBuilder.Render(pins[0])) == 0)
                   {
                     Log.Info("  render ok");
                   }
@@ -1672,7 +1681,7 @@ namespace DShowNET.Helper
           ienumFilt = null;
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
       finally
       {
         if (ienumFilt != null)
@@ -1717,7 +1726,7 @@ namespace DShowNET.Helper
           FilterInfo info;
           filter.QueryFilterInfo(out info);
           ReleaseComObject(info.pGraph);
-       
+
           try
           {
             if (!String.IsNullOrEmpty(filterName))
@@ -1727,7 +1736,7 @@ namespace DShowNET.Helper
                 hr = graphBuilder.RemoveFilter(filter);
                 DsError.ThrowExceptionForHR(hr);
                 ReleaseComObject(filter);
-                Log.Debug("Remove filter from graph: {0}", info.achName);          
+                Log.Debug("Remove filter from graph: {0}", info.achName);
               }
             }
             else
@@ -1735,8 +1744,8 @@ namespace DShowNET.Helper
               hr = graphBuilder.RemoveFilter(filter);
               DsError.ThrowExceptionForHR(hr);
               int i = ReleaseComObject(filter);
-              Log.Debug("Remove filter from graph: {0} {1}", info.achName,i );          
-            }            
+              Log.Debug("Remove filter from graph: {0} {1}", info.achName, i);
+            }
           }
           catch (Exception error)
           {
@@ -1813,7 +1822,7 @@ namespace DShowNET.Helper
           ienumFilt = null;
         }
       }
-      catch (Exception) {}
+      catch (Exception) { }
       finally
       {
         if (ienumFilt != null)
@@ -1835,7 +1844,7 @@ namespace DShowNET.Helper
       try
       {
         IErrorLog errorLog = null;
-        Guid bagId = typeof (IPropertyBag).GUID;
+        Guid bagId = typeof(IPropertyBag).GUID;
         mon.BindToStorage(null, null, ref bagId, out bagObj);
         bag = (IPropertyBag)bagObj;
         object val = "";
@@ -2025,7 +2034,7 @@ namespace DShowNET.Helper
 
       if (obj != null)
       {
-        Stopwatch stopwatch = Stopwatch.StartNew();        
+        Stopwatch stopwatch = Stopwatch.StartNew();
         while (returnVal > 0 && stopwatch.ElapsedMilliseconds < timeOut)
         {
           returnVal = Marshal.ReleaseComObject(obj);
@@ -2038,7 +2047,7 @@ namespace DShowNET.Helper
             return returnVal;
           }
         }
-      }      
+      }
 
       StackTrace st = new StackTrace(true);
       Log.Error("Exception while releasing COM object (NULL) - stacktrace: {0}", st);
