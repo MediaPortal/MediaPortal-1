@@ -20,7 +20,10 @@
 
 using System;
 using System.ServiceProcess;
+using System.Threading;
 using Microsoft.Win32;
+using TvDatabase;
+using TvControl;
 using TvLibrary.Log;
 
 namespace SetupTv
@@ -30,6 +33,17 @@ namespace SetupTv
   /// </summary>
   public class ServiceHelper
   {
+
+    /// <summary>
+    /// Read from DB card detection delay 
+    /// </summary>
+    /// <returns>number of seconds</returns>
+    public static int DefaultTimeOut()
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      return Convert.ToInt16(layer.GetSetting("delayCardDetect", "0").Value) + 10;
+    }
+
     /// <summary>
     /// Does a given service exist
     /// </summary>
@@ -61,7 +75,8 @@ namespace SetupTv
         {
           //Try an call something to see if the server is alive.
           //
-          int serverId = TvControl.RemoteControl.Instance.IdServer;
+          WaitInitialized(DefaultTimeOut() * 1000);
+          int serverId = RemoteControl.Instance.IdServer;
           return true;
         }
         catch (Exception ex)
@@ -80,11 +95,7 @@ namespace SetupTv
             {
               if (String.Compare(service.ServiceName, "TvService", true) == 0)
               {
-                if (service.Status == ServiceControllerStatus.Running)
-                {
-                  return true;
-                }
-                return false;
+                return service.Status == ServiceControllerStatus.Running;
               }
             }
           }
@@ -100,6 +111,37 @@ namespace SetupTv
     }
 
     /// <summary>
+    /// Is TvService fully initialized?
+    /// </summary>
+    public static bool IsInitialized
+    {
+      get
+      {
+        return WaitInitialized(0);
+      }
+    }
+
+    /// <summary>
+    /// Wait until TvService is fully initialized
+    /// </summary>
+    /// <param name="millisecondsTimeout">the maximum time to wait in milliseconds</param>
+    /// <remarks>If <paramref name="millisecondsTimeout"/> is 0, the current status is immediately returned.
+    /// Use <paramref name="millisecondsTimeout"/>=-1 to wait indefinitely</remarks>
+    /// <returns>true if thTvService is initialized</returns>
+    public static bool WaitInitialized(int millisecondsTimeout)
+    {
+      try
+      {
+        EventWaitHandle initialized = EventWaitHandle.OpenExisting(RemoteControl.InitializedEventName);
+        return initialized.WaitOne(millisecondsTimeout);
+      }
+      catch (Exception) // either we have no right, or the event does not exist
+      {
+        return false;
+      }
+    }
+
+    /// <summary>
     /// Is the status of TvService == Stopped
     /// </summary>
     public static bool IsStopped
@@ -111,9 +153,7 @@ namespace SetupTv
         {
           if (String.Compare(service.ServiceName, "TvService", true) == 0)
           {
-            if (service.Status == ServiceControllerStatus.Stopped)
-              return true;
-            return false;
+            return service.Status == ServiceControllerStatus.Stopped;
           }
         }
         return false;
@@ -134,6 +174,7 @@ namespace SetupTv
           if (service.Status == ServiceControllerStatus.Running)
           {
             service.Stop();
+            service.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(DefaultTimeOut()));
             return true;
           }
         }
@@ -159,20 +200,10 @@ namespace SetupTv
         {
           if (service.Status == ServiceControllerStatus.Stopped)
           {
-            int hackCounter = 0;
-
             service.Start();
-
-            while (!IsRunning && hackCounter < 60)
-            {
-              System.Threading.Thread.Sleep(250);
-              hackCounter++;
-            }
-            return (hackCounter == 60) ? false : true;
-          }
-          if (service.Status == ServiceControllerStatus.Running)
-          {
-            return true;
+            service.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(DefaultTimeOut()));
+            // Service is running, but on slow machines still take some time to answer network queries
+            return IsRunning;
           }
         }
       }
@@ -185,30 +216,13 @@ namespace SetupTv
     /// <returns>Always true</returns>
     public static bool Restart()
     {
-      int hackCounter = 0;
       if (!IsInstalled(@"TvService"))
+      {
         return false;
-
+      }
       Stop();
-
-      while (!IsStopped && hackCounter < 120) // wait a maximum of 30 seconds
-      {
-        System.Threading.Thread.Sleep(250);
-        hackCounter++;
-      }
-      if (hackCounter == 120)
-        return false;
-
-      hackCounter = 0;
-      System.Threading.Thread.Sleep(1000);
-
       Start();
-      while (!IsRunning && hackCounter < 60)
-      {
-        System.Threading.Thread.Sleep(250);
-        hackCounter++;
-      }
-      return (hackCounter == 60) ? false : true;
+      return true;
     }
 
     /// <summary>
@@ -279,7 +293,7 @@ namespace SetupTv
         {
           if (rKey != null)
           {
-            rKey.SetValue("DependOnService", new string[] {dependsOnService, "Netman"}, RegistryValueKind.MultiString);
+            rKey.SetValue("DependOnService", new[] { dependsOnService, "Netman" }, RegistryValueKind.MultiString);
             rKey.SetValue("Start", 2, RegistryValueKind.DWord); // Set TVService to autostart
           }
         }

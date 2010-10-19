@@ -274,6 +274,7 @@ namespace TvService
 
     #region variables
 
+    private EventWaitHandle _InitializedEvent;
     private bool _started;    
     private TVController _controller;
     private readonly List<PowerEventHandler> _powerEventHandlers;
@@ -293,6 +294,7 @@ namespace TvService
       _powerEventHandlers = new List<PowerEventHandler>();
       GlobalServiceProvider.Instance.Add<IPowerEventHandler>(this);
       AddPowerEventHandler(OnPowerEventHandler);
+      _InitializedEvent = new EventWaitHandle(false, EventResetMode.ManualReset, RemoteControl.InitializedEventName);
       // setup the remoting channels
       try
       {
@@ -736,6 +738,7 @@ namespace TvService
         return;
       Log.WriteFile("TV Service: stopping");
 
+      _InitializedEvent.Reset();
       StopRemoting();
       RemoteControl.Clear();
       if (_controller != null)
@@ -788,6 +791,7 @@ namespace TvService
 
         StartRemoting();
         _started = true;
+        _InitializedEvent.Set();
         Log.Info("TV service: Started");
                 
         while (true)
