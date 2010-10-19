@@ -709,7 +709,7 @@ namespace MediaPortal.Video.Database
               parser.extractTo("</a>", ref name);
               name = new HTMLUtil().ConvertHTMLToAnsi(name);
               name = Util.Utils.RemoveParenthesis(name).Trim();
-              IMDBUrl newUrl = new IMDBUrl("http://us.imdb.com" + url, name, "IMDB");
+              IMDBUrl newUrl = new IMDBUrl("http://akas.imdb.com" + url, name, "IMDB");
               _elements.Add(newUrl);
             }
             else
@@ -733,7 +733,7 @@ namespace MediaPortal.Video.Database
               parser.extractTo("</a>", ref name);
               name = new HTMLUtil().ConvertHTMLToAnsi(name);
               name = Util.Utils.RemoveParenthesis(name).Trim();
-              IMDBUrl newUrl = new IMDBUrl("http://us.imdb.com" + url, name, "IMDB");
+              IMDBUrl newUrl = new IMDBUrl("http://akas.imdb.com" + url, name, "IMDB");
               _elements.Add(newUrl);
             }
             else

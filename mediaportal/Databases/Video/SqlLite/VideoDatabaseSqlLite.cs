@@ -1004,7 +1004,7 @@ namespace MediaPortal.Video.Database
         // Writers
         strLine = details1.WritingCredits;
         DatabaseUtility.RemoveInvalidChars(ref strLine);
-        details1.WritingCredits = strLine;
+        details1.WritingCredits = strLine.Replace("''", "'");
         // Genres
         strLine = details1.Genre;
         DatabaseUtility.RemoveInvalidChars(ref strLine);
@@ -1020,7 +1020,7 @@ namespace MediaPortal.Video.Database
 
         // add director
         int lDirector = -1;
-        lDirector = AddActor(details.Director);
+        lDirector = AddActor(details.Director.Replace("''", "'"));
         AddActorToMovie(lMovieId, lDirector);
         // add all genres
         string szGenres = details.Genre;

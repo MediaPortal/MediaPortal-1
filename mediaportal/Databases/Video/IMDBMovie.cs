@@ -19,7 +19,6 @@
 #endregion
 
 using MediaPortal.GUI.Library;
-using MediaPortal.Profile;
 using MediaPortal.Util;
 
 namespace MediaPortal.Video.Database
@@ -299,19 +298,10 @@ namespace MediaPortal.Video.Database
     public void SetProperties()
     {
       // Temporary join plot + user review
-      string joinedPlot = Plot;
-      if (UserReview != "" && UserReview.ToLower() != "unknown")
-      {
-        string strReview = GUILocalizeStrings.Get(177).ToUpper();
-        string strUserReview = "\n\n****" + strReview + "****\n\n";
-        joinedPlot = Plot + strUserReview + UserReview;
-      }
-
-      // Changed - cover with the same movie name
-      //string strThumb = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, Title);
+      string joinedPlot = GetJoinedPlot();
       // Title suffix for problem with covers and movie with the same name
-      string titleExt = Title + "{" + ID + "}";
-      string strThumb = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+      string strThumb = GetStrThumb();
+
       GUIPropertyManager.SetProperty("#director", Director);
       GUIPropertyManager.SetProperty("#genre", Genre);
       GUIPropertyManager.SetProperty("#cast", Cast);
@@ -340,19 +330,10 @@ namespace MediaPortal.Video.Database
     public void SetPlayProperties()
     {
       // Temporary join plot + user review
-      string joinedPlot = Plot;
-      if (UserReview != "" && UserReview.ToLower() != "unknown")
-      {
-        string strReview = GUILocalizeStrings.Get(177).ToUpper();
-        string strUserReview = "\n\n****" + strReview + "****\n\n";
-        joinedPlot = Plot + strUserReview + UserReview;
-      }
-
-      // Changed - cover with the same movie name
-      //string strThumb = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, Title);
+      string joinedPlot = GetJoinedPlot();
       // Title suffix for problem with covers and movie with the same name
-      string titleExt = Title + "{" + ID + "}";
-      string strThumb = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
+      string strThumb = GetStrThumb();
+
       GUIPropertyManager.SetProperty("#Play.Current.Director", Director);
       GUIPropertyManager.SetProperty("#Play.Current.Genre", Genre);
       GUIPropertyManager.SetProperty("#Play.Current.Cast", Cast);
@@ -376,6 +357,24 @@ namespace MediaPortal.Video.Database
         strValue = "yes";
       }
       GUIPropertyManager.SetProperty("#Play.Current.IsWatched", strValue);
+    }
+
+    private string GetJoinedPlot()
+    {
+      string joinedPlot = Plot;
+      if (UserReview != "" && UserReview.ToLower() != "unknown")
+      {
+        string strReview = GUILocalizeStrings.Get(177).ToUpper();
+        string strUserReview = "\n\n****" + strReview + "****\n\n";
+        joinedPlot = Plot + strUserReview + UserReview;
+      }
+      return joinedPlot;
+    }
+
+    private string GetStrThumb()
+    {
+      string titleExt = Title + "{" + ID + "}";
+      return Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
     }
   }
 }

@@ -1611,10 +1611,7 @@ namespace MediaPortal.Configuration.Sections
       pbSearchCover.Value = 0;
 
       // Draw percentage into progressbar
-      int percent = 0;
-      pbSearchCover.CreateGraphics().DrawString(percent + "%",
-                                                new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                                new PointF(pbSearchCover.Width / 2 - 10, pbSearchCover.Height / 2 - 7));
+      ProgressBarDrawPercentage(ref pbSearchCover, 0);
 
       // Local images
       string strFilename = string.Empty;
@@ -1625,11 +1622,8 @@ namespace MediaPortal.Configuration.Sections
       {
         max++;
         pbSearchCover.Maximum = max;
-        pbSearchCover.Refresh();
-        pbSearchCover.CreateGraphics().DrawString("Searching Local IMG... " + percent + "%",
-                                                  new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                                  new PointF(pbSearchCover.Width / 2 - 100, pbSearchCover.Height / 2 - 7));
-
+        ProgressBarAdvance(ref pbSearchCover, "Searching Local IMG... ", true);
+        
         DirectoryInfo di = new DirectoryInfo(strPath);
         FileInfo[] jpgFiles = di.GetFiles("*.jpg");
 
@@ -1642,23 +1636,14 @@ namespace MediaPortal.Configuration.Sections
           coversListBox.Refresh();
           ++count;
         }
-        pbSearchCover.Value++;
-        pbSearchCover.Refresh();
-        // Draw percentage on pbar
-        percent = (int)((pbSearchCover.Value / (double)pbSearchCover.Maximum) * 100);
-        pbSearchCover.CreateGraphics().DrawString("Searching Local IMG... " + percent + "%",
-                                                  new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                                  new PointF(pbSearchCover.Width / 2 - 100, pbSearchCover.Height / 2 - 7));
+        ProgressBarAdvance(ref pbSearchCover, "Searching Local IMG... ", false);
       }
 
       // TMDB Cover search
       if (tmdbCheckBox.Checked)
       {
-        pbSearchCover.Refresh();
-        pbSearchCover.CreateGraphics().DrawString("Searching TMDB... " + percent + "%",
-                                                  new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                                  new PointF(pbSearchCover.Width / 2 - 100, pbSearchCover.Height / 2 - 7));
-
+        ProgressBarAdvance(ref pbSearchCover, "Searching TMDB... ", true);
+        
         TMDBCoverSearch tmdbSearch = new TMDBCoverSearch();
         // Call is made by IMDBNumber parameter because we're targeting specific movie not guessing
         tmdbSearch.SearchCovers(tbCoverSearchStr.Text, CurrentMovie.IMDBNumber);
@@ -1671,23 +1656,14 @@ namespace MediaPortal.Configuration.Sections
             coversListBox.Refresh();
           }
         }
-        pbSearchCover.Value++;
-        pbSearchCover.Refresh();
-        // Draw percentage on pbar
-        percent = (int)(((double)pbSearchCover.Value / (double)pbSearchCover.Maximum) * 100);
-        pbSearchCover.CreateGraphics().DrawString("Searching TMDB... " + percent + "%",
-                                                  new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                                  new PointF(pbSearchCover.Width / 2 - 100, pbSearchCover.Height / 2 - 7));
+        ProgressBarAdvance(ref pbSearchCover, "Searching TMDB... ", false);
       }
 
       // IMPAwards covers
       if (impawCheckBox.Checked)
       {
-        pbSearchCover.Refresh();
-        pbSearchCover.CreateGraphics().DrawString("Searching IMPAw... " + percent + "%",
-                                                  new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                                  new PointF(pbSearchCover.Width / 2 - 100, pbSearchCover.Height / 2 - 7));
-
+        ProgressBarAdvance(ref pbSearchCover, "Searching IMPAw... ", true);
+       
         IMPAwardsSearch impSearch = new IMPAwardsSearch();
         impSearch.SearchCovers(CurrentMovie.Title, CurrentMovie.IMDBNumber);
 
@@ -1703,23 +1679,14 @@ namespace MediaPortal.Configuration.Sections
             coversListBox.Refresh();
           }
         }
-        pbSearchCover.Value++;
-        pbSearchCover.Refresh();
-        // Draw percentage on pbar
-        percent = (int)((pbSearchCover.Value / (double)pbSearchCover.Maximum) * 100);
-        pbSearchCover.CreateGraphics().DrawString("Searching IMP Awards... " + percent + "%",
-                                                  new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                                  new PointF(pbSearchCover.Width / 2 - 100, pbSearchCover.Height / 2 - 7));
+        ProgressBarAdvance(ref pbSearchCover, "Searching IMP Awards... ", false);
       }
 
       // IMDB Cover Search
       if (imdbCheckBox.Checked)
       {
-        pbSearchCover.Refresh();
-        pbSearchCover.CreateGraphics().DrawString("Searching IMDB... " + percent + "%",
-                                                  new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                                  new PointF(pbSearchCover.Width / 2 - 100, pbSearchCover.Height / 2 - 7));
-
+        ProgressBarAdvance(ref pbSearchCover, "Searching IMDB... ", true);
+        
         IMDBSearch imdbSearch = new IMDBSearch();
         // Call is made by IMDBNumber parameter because we're targeting specific movie not guessing
         imdbSearch.SearchCovers(CurrentMovie.IMDBNumber);
@@ -1741,13 +1708,7 @@ namespace MediaPortal.Configuration.Sections
             }
           }
         }
-        pbSearchCover.Value++;
-        pbSearchCover.Refresh();
-        // Draw percentage on pbar
-        percent = (int)((pbSearchCover.Value / (double)pbSearchCover.Maximum) * 100);
-        pbSearchCover.CreateGraphics().DrawString("Searching IMDB... " + percent + "%",
-                                                  new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                                  new PointF(pbSearchCover.Width / 2 - 100, pbSearchCover.Height / 2 - 7));
+        ProgressBarAdvance(ref pbSearchCover, "Searching IMDB... ", false);
       }
 
       if (coversListBox.Items.Count == 0)
@@ -2943,11 +2904,7 @@ namespace MediaPortal.Configuration.Sections
       pbSearchCover.Value = 0;
 
       // Draw percentage into progressbar
-      int percent = 0;
-      pbSearchCover.CreateGraphics().DrawString(percent + "%",
-                                                new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                                new PointF(pbSearchCover.Width / 2 - 10, pbSearchCover.Height / 2 - 7));
-
+      ProgressBarDrawPercentage(ref pbSearchCover, 0);
       Cursor = Cursors.WaitCursor;
 
       for (int i = 0; i < moviecollection; ++i)
@@ -2993,13 +2950,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Progressbar advance
         //
-        pbSearchCover.Value++;
-        pbSearchCover.Refresh();
-        //Draw percentage into progressbar
-        percent = (int)((pbSearchCover.Value / (double)pbSearchCover.Maximum) * 100);
-        pbSearchCover.CreateGraphics().DrawString(percent + "%",
-                                                  new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                                  new PointF(pbSearchCover.Width / 2 - 10, pbSearchCover.Height / 2 - 7));
+        ProgressBarAdvance(ref pbSearchCover, string.Empty, false);
       }
       pbSearchCover.Value = 0;
       // Refresh all movies
@@ -3161,16 +3112,12 @@ namespace MediaPortal.Configuration.Sections
       {
         Cursor = Cursors.WaitCursor;
         // Pbar intialization
-        pbRefreshArts.Value = 1;
-        pbRefreshArts.Step = 1;
-        pbRefreshArts.Maximum = movieCollection + 1;
+        pbRefreshArts.Value = 0;
+        pbRefreshArts.Maximum = movieCollection;
         pbRefreshArts.Refresh();
 
         // Draw percentage on pbar
-        int percent = 0;
-        pbRefreshArts.CreateGraphics().DrawString(percent + "%",
-                                                  new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                                  new PointF(pbRefreshArts.Width / 2 - 10, pbRefreshArts.Height / 2 - 7));
+        ProgressBarDrawPercentage(ref pbRefreshArts, 0);
 
         for (int i = 0; i < movieCollection; ++i)
         {
@@ -3194,14 +3141,7 @@ namespace MediaPortal.Configuration.Sections
             VideoDatabase.SetFanartURL(item.Movie.ID, fanartSearch.DefaultFanartURL);
             tbFanartLocation.Text = fanartSearch.DefaultFanartURL;
           }
-          pbRefreshArts.PerformStep();
-          pbRefreshArts.Refresh(); // Need this to view progress
-          // Draw percentage on pbar
-          percent = (int)((pbRefreshArts.Value / (double)pbRefreshArts.Maximum) * 100);
-          pbRefreshArts.CreateGraphics().DrawString(percent + "%",
-                                                    new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                                    new PointF(pbRefreshArts.Width / 2 - 10,
-                                                               pbRefreshArts.Height / 2 - 7));
+          ProgressBarAdvance(ref pbRefreshArts, string.Empty, false);
         }
       }
       else
@@ -3714,13 +3654,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Progressbar advance
         //
-        pbTools.Value++;
-        pbTools.Refresh();
-        //Draw percentage into progressbar
-        int percent = (int)((pbTools.Value / (double)pbTools.Maximum) * 100);
-        pbTools.CreateGraphics().DrawString(percent + "%",
-                                            new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                            new PointF(pbTools.Width / 2 - 10, pbTools.Height / 2 - 7));
+        ProgressBarAdvance(ref pbTools, string.Empty, false);
       }
       pbTools.Value = 0;
       // Refresh actors list view
@@ -3828,15 +3762,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Progressbar advance
         //
-        pbTools.Value++;
-        pbTools.Refresh();
-        //
-        //Draw percentage into progressbar
-        //
-        int percent = (int)((pbTools.Value / (double)pbTools.Maximum) * 100);
-        pbTools.CreateGraphics().DrawString(percent + "%",
-                                            new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                            new PointF(pbTools.Width / 2 - 10, pbTools.Height / 2 - 7));
+        ProgressBarAdvance(ref pbTools, string.Empty, false);
       }
       pbTools.Value = 0;
       cbTitle.SelectedIndex = 0;
@@ -3903,15 +3829,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Progressbar advance
         //
-        pbTools.Value++;
-        pbTools.Refresh();
-        //
-        //Draw percentage into progressbar
-        //
-        int percent = (int)((pbTools.Value / (double)pbTools.Maximum) * 100);
-        pbTools.CreateGraphics().DrawString(percent + "%",
-                                            new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                            new PointF(pbTools.Width / 2 - 10, pbTools.Height / 2 - 7));
+        ProgressBarAdvance(ref pbTools, string.Empty, false);
       }
       pbTools.Value = 0;
       cbTitle.SelectedIndex = 0;
@@ -3988,5 +3906,29 @@ namespace MediaPortal.Configuration.Sections
 
     #endregion
 
+    // Progress bar advance
+    private void ProgressBarAdvance(ref UserInterface.Controls.MPProgressBar progressBar, string text, bool refreshOnly)
+    {
+      if (!refreshOnly)
+      {
+        progressBar.Value++;
+      }
+      progressBar.Refresh();
+      //
+      //Draw percentage into progressbar
+      //
+      int percent = (int)((progressBar.Value / (double)progressBar.Maximum) * 100);
+      progressBar.CreateGraphics().DrawString(text + percent + "%",
+                                          new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
+                                          new PointF(progressBar.Width / 2 - 10, progressBar.Height / 2 - 7));
+    }
+
+    // Progress bar draw percentage
+    private void ProgressBarDrawPercentage(ref UserInterface.Controls.MPProgressBar progressBar, int percent)
+    {
+      progressBar.CreateGraphics().DrawString(percent + "%",
+                                                new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
+                                                new PointF(progressBar.Width / 2 - 10, progressBar.Height / 2 - 7));
+    }
   }
 }
