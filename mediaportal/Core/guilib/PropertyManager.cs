@@ -304,7 +304,9 @@ namespace MediaPortal.GUI.Library
       bool changed = false;
       lock (_properties)
       {
-        changed = (!_properties.ContainsKey(tag) || _properties[tag] != tagvalue);
+        string oldValue;
+        changed = !_properties.TryGetValue(tag, out oldValue) || oldValue != tagvalue; // saves one lookup
+        //changed = (!_properties.ContainsKey(tag) || _properties[tag] != tagvalue);
         if (changed)
         {
           _properties[tag] = tagvalue;

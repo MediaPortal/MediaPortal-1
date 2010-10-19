@@ -658,7 +658,7 @@ namespace MediaPortal.GUI.Library
           return;
         }
 
-        if (_registeredForEvent == false)
+        if (_registeredForEvent == false && _containsProperty)
         {
         	GUIPropertyManager.OnPropertyChanged -=
             new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
@@ -859,7 +859,7 @@ namespace MediaPortal.GUI.Library
     private void FreeResourcesAndRegEvent()
     {
       Dispose();
-      if (_registeredForEvent == false)
+      if (_registeredForEvent == false && _containsProperty)
       {
       	GUIPropertyManager.OnPropertyChanged -=
           new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
@@ -2193,6 +2193,9 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
+        if(_containsProperty) //we had a property before, not anymore, therefor, unsubscribe
+          GUIPropertyManager.OnPropertyChanged -=
+            new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
         _containsProperty = false;
       }
       //reallocate & load then new image
