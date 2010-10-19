@@ -165,6 +165,7 @@ namespace MediaPortal.Video.Database
       private string _id;
       private int _limit = DEFAULT_SEARCH_LIMIT;
       private IIMDBScriptGrabber _grabber;
+      private bool _grabberLoaded;
 
       public string ID
       {
@@ -180,7 +181,16 @@ namespace MediaPortal.Video.Database
 
       public IIMDBScriptGrabber Grabber
       {
-        get { return _grabber; }
+        get 
+        { 
+            if(!_grabberLoaded)
+            {
+                if(!LoadScript())
+                    Grabber = null;
+                _grabberLoaded = true; // only try to load it once
+            }
+            return _grabber;
+        }
         set { _grabber = value; }
       }
 
@@ -188,11 +198,6 @@ namespace MediaPortal.Video.Database
       {
         ID = id;
         Limit = limit;
-        
-        if (!LoadScript())
-          {
-            Grabber = null;
-          }
       }
 
       public bool LoadScript()
