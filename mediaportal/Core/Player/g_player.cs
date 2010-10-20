@@ -106,9 +106,9 @@ namespace MediaPortal.Player
 
     public delegate void StoppedHandler(MediaType type, int stoptime, string filename);
     public delegate void EndedHandler(MediaType type, string filename);
-    public delegate void StartedHandler(MediaType type, string filename);        
+    public delegate void StartedHandler(MediaType type, string filename);
     public delegate void ChangedHandler(MediaType type, int stoptime, string filename);
-    
+
     public delegate void AudioTracksReadyHandler();
     public delegate void TVChannelChangeHandler();
 
@@ -437,7 +437,7 @@ namespace MediaPortal.Player
     //called when TV channel is changed
     private static void OnTVChannelChanged()
     {
-      if (TVChannelChanged != null) 
+      if (TVChannelChanged != null)
       {
         TVChannelChanged();
       }
@@ -1219,7 +1219,8 @@ namespace MediaPortal.Player
         //                    we will also use *.radio.ts and *.tv.ts
 
         // Exception for ts files with no video stream = radio
-        bool checkTSisRadio = Path.GetExtension(strFile).ToLower() == ".ts" && !_mediaInfo.hasVideo;
+        bool checkTSisRadio = Path.GetExtension(strFile).ToLower() == ".ts" && MediaInfoWrapper.MediaInfoExist() &&
+                              !_mediaInfo.hasVideo;
 
         if (checkTSisRadio)
         {
@@ -1684,7 +1685,7 @@ namespace MediaPortal.Player
       }
     }
 
-    public static double[] Chapters 
+    public static double[] Chapters
     {
       get
       {

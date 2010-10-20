@@ -69,8 +69,24 @@ namespace MediaPortal.Player
 
     #region ctor's
 
+    public static bool MediaInfoExist()
+    {
+      string dll = Configuration.Config.Dir.Base + "\\MediaInfo.dll";
+      bool enable = File.Exists(dll);
+      if (!enable)
+      {
+        Log.Warn("MediaInfoWrapper: disabled because \"%s\" is missing", dll);
+      }
+      return enable;
+    }
+
     public MediaInfoWrapper(string strFile)
     {
+      if (!MediaInfoExist())
+      {
+        return;
+      }
+
       using (Settings xmlreader = new MPSettings())
       {
         _DVDenabled = xmlreader.GetValueAsBool("dvdplayer", "mediainfoused", false);
