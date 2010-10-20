@@ -180,15 +180,19 @@ namespace MediaPortal.GUI.Library
             float fTextWidth = 0, fTextHeight = 0;
             wszText2 = String.Format("{0}", strLabel2);
             _font.GetTextExtent(wszText2, ref fTextWidth, ref fTextHeight);
-            dMaxWidth -= (int) (fTextWidth);
+            dMaxWidth -= (int)(fTextWidth);
+            uint color = (uint)_textColor;
+            color = GUIGraphicsContext.MergeAlpha(color);
             if (Shadow)
             {
-              _font.DrawShadowTextWidth((float)dwPosX + dMaxWidth, (float)dwPosY + 2, _textColor, wszText2, _textAlignment,
-                 _shadowAngle, _shadowDistance, _shadowColor, (float)fTextWidth);
+              uint sc = (uint)_shadowColor;
+              sc = GUIGraphicsContext.MergeAlpha(sc);
+              _font.DrawShadowTextWidth((float)dwPosX + dMaxWidth, (float)dwPosY + 2, color, wszText2, _textAlignment,
+                 _shadowAngle, _shadowDistance, sc, (float)fTextWidth);
             }
             else
             {
-              _font.DrawTextWidth((float)dwPosX + dMaxWidth, (float)dwPosY + 2, _textColor, wszText2, (float)fTextWidth,
+              _font.DrawTextWidth((float)dwPosX + dMaxWidth, (float)dwPosY + 2, color, wszText2, (float)fTextWidth,
                                   _textAlignment);
             }
           }
@@ -201,16 +205,22 @@ namespace MediaPortal.GUI.Library
               x = (float)dwPosX;
               break;
           }
-          if (Shadow)
           {
-            _font.DrawShadowTextWidth(x, (float)dwPosY + 2, _textColor, wszText1, _textAlignment,
-               _shadowAngle, _shadowDistance, _shadowColor, (float)dMaxWidth);
+            uint color = (uint)_textColor;
+            color = GUIGraphicsContext.MergeAlpha(color);
+            if (Shadow)
+            {
+              uint sc = (uint)_shadowColor;
+              sc = GUIGraphicsContext.MergeAlpha(sc);
+              _font.DrawShadowTextWidth(x, (float)dwPosY + 2, color, wszText1, _textAlignment,
+                 _shadowAngle, _shadowDistance, sc, (float)dMaxWidth);
+            }
+            else
+            {
+              _font.DrawTextWidth(x, (float)dwPosY + 2, color, wszText1, (float)dMaxWidth, _textAlignment);
+            }
+            dwPosY += (int)(_itemHeight * _lineSpacing);
           }
-          else
-          {
-            _font.DrawTextWidth(x, (float)dwPosY + 2, _textColor, wszText1, (float)dMaxWidth, _textAlignment);
-          }
-          dwPosY += (int)(_itemHeight * _lineSpacing);
         }
       }
       if (_upDownEnabled)
