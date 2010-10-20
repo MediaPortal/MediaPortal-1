@@ -136,6 +136,7 @@ namespace MediaPortal.Music.Database
     // Utils
     private static bool _artistsStripped = false;
     private static bool _getLastfmCover = true;
+    private static bool _switchArtist = false;
     private static string _artistPrefixes = string.Empty;
 
     // Other internal properties.    
@@ -206,6 +207,7 @@ namespace MediaPortal.Music.Database
         _artistPrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         _artistsStripped = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
         _getLastfmCover = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmcovers", true);
+        _switchArtist = xmlreader.GetValueAsBool("musicmisc", "switchArtistOnLastFMSubmit", false);
 
         string tmpPass;
 
@@ -1673,6 +1675,20 @@ namespace MediaPortal.Music.Database
     [MethodImpl(MethodImplOptions.Synchronized)]
     public static string UndoArtistPrefix(string aStrippedArtist)
     {
+      // Some tag may contain the artist in form of "LastName, FirstName"
+      // This causes the last.fm "Keep your stats clean" Cover to be retrieved
+      // When this option is set, we change the artist back to "FirstNAme LAstNAme". 
+      // e.g. "Collins, Phil" becomes "Phil Collins" on last.fm submit
+      if (_switchArtist)
+      {
+        int iPos = aStrippedArtist.IndexOf(',');
+        if (iPos > 0)
+        {
+          aStrippedArtist = String.Format("{0} {1}", aStrippedArtist.Substring(iPos + 2),
+                                          aStrippedArtist.Substring(0, iPos));
+        }
+      }
+
       //"The, Les, Die"
       if (_artistsStripped)
       {
