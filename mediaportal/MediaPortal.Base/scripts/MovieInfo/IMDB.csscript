@@ -11,6 +11,7 @@ using System.Web;
 using System.Text.RegularExpressions;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+using System.Windows.Forms;
 
 internal class Grabber : IIMDBScriptGrabber
 {
@@ -402,14 +403,14 @@ internal class Grabber : IIMDBScriptGrabber
         {
           strActor = string.Empty;
           strActor = m.Groups["actor"].Value;
-          strActor = Utils.stripHTMLtags(strActor).Trim().Replace("\n","");
+          strActor = Utils.stripHTMLtags(strActor).Trim().Replace("\n", "");
           strActor = HttpUtility.HtmlDecode(strActor).Replace(",", ";");
 
           strRole = string.Empty;
           strRole = m.Groups["role"].Value;
-          strRole = Utils.stripHTMLtags(strRole).Trim().Replace("\n","");
-          strRole = HttpUtility.HtmlDecode(strRole).Replace(",", ";");
-
+          strRole = Utils.stripHTMLtags(strRole).Trim().Replace("\n", "");
+          strRole = HttpUtility.HtmlDecode(strRole).Replace(",", ";").Replace("  ", "").Replace("(", " (");
+		  
           movieDetails.Cast += strActor;
           if (strRole != string.Empty)
             movieDetails.Cast += " as " + strRole;
@@ -426,13 +427,13 @@ internal class Grabber : IIMDBScriptGrabber
           strActor = string.Empty;
           strActor = m.Groups["actor"].Value;
           strActor = Utils.stripHTMLtags(strActor).Trim();
-          strActor = HttpUtility.HtmlDecode(strActor).Replace(",", ";");
+          strActor = HttpUtility.HtmlDecode(strActor).Replace(",", ";").Replace("\n","");
 
           strRole = string.Empty;
           strRole = m.Groups["role"].Value;
           strRole = Utils.stripHTMLtags(strRole).Trim();
-          strRole = HttpUtility.HtmlDecode(strRole).Replace(",", ";");
-
+          strRole = HttpUtility.HtmlDecode(strRole).Replace(",", ";").Replace("\n","");
+		  
           movieDetails.Cast += strActor;
           if (strRole != string.Empty)
             movieDetails.Cast += " as " + strRole;
