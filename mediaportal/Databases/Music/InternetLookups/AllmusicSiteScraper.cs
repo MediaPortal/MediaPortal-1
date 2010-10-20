@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -34,68 +35,143 @@ namespace MediaPortal.Music.Database
   /// </summary>
   public class AllmusicSiteScraper
   {
+    #region Enum
+
     public enum SearchBy : int
     {
       Artists = 1,
       Albums
     } ;
 
+    #endregion
+
+    #region Variables 
+
     internal const string MAINURL = "http://www.allmusic.com";
-    internal const string URLPROGRAM = "/cg/amg.dll";
-    internal const string JAVASCRIPTZ = "p=amg&token=&sql=";
-    protected ArrayList m_codes = new ArrayList(); // if multiple..
-    protected ArrayList m_values = new ArrayList(); // if multiple..
-    protected bool m_multiple = false;
-    protected string m_htmlCode = null;
-    protected string m_queryString = "";
+    internal const string URLPROGRAM = "/search";
+    internal const string ARTISTSEARCH = "search_term={0}&x=34&y=8&search_type=artist";
+    internal const string ALBUMSEARCH = "search_term={0}&x=34&y=8&search_type=album";
+    protected List<string> _codes = new List<string>(); // if multiple..
+    protected List<string> _values = new List<string>(); // if multiple..
+    protected List<MusicAlbumInfo> _albumList = new List<MusicAlbumInfo>();
+    protected bool _multiple = false;
+    protected string _htmlCode = null;
+    protected string _queryString = "";
+    protected SearchBy _searchby = SearchBy.Artists;
+    #endregion
+
+    #region ctor
 
     public AllmusicSiteScraper()
     {
-      //
-      // TODO: Add constructor logic here
-      //
     }
 
+    #endregion
+
+    #region Public Methods
+
+    /// <summary>
+    /// Do we have Multiple hits on the searchg
+    /// </summary>
+    /// <returns></returns>
     public bool IsMultiple()
     {
-      return m_multiple;
+      return _multiple;
     }
 
-    public string[] GetItemsFound()
+    /// <summary>
+    /// Retrieve the Items found
+    /// </summary>
+    /// <returns></returns>
+    public List<string> GetItemsFound()
     {
-      return (string[])m_values.ToArray(typeof (string));
+      return _values;
     }
 
+    /// <summary>
+    /// Retrieve the Albums Found
+    /// </summary>
+    /// <returns></returns>
+    public List<MusicAlbumInfo> GetAlbumsFound()
+    {
+      return _albumList;
+    }
+
+    /// <summary>
+    /// Get the HTML Content
+    /// </summary>
+    /// <returns></returns>
     public string GetHtmlContent()
     {
-      return m_htmlCode;
+      return _htmlCode;
     }
 
+    /// <summary>
+    /// Get page as per selected index
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
     public bool FindInfoByIndex(int index)
     {
-      if (index < 0 || index > m_codes.Count - 1)
+      if (index < 0)
       {
         return false;
       }
 
-      string strGetData = m_queryString + m_codes[index];
+      string url = "";
+      if (_searchby == SearchBy.Artists)
+      {
+        url = _codes[index];
+      }
+      else
+      {
+        url = _albumList[index].AlbumURL;
+      }
 
-      string strHTML = GetHTTP(MAINURL + URLPROGRAM + "?" + strGetData);
+      string strHTML = GetHTTP(url);
       if (strHTML.Length == 0)
       {
         return false;
       }
 
-      m_htmlCode = strHTML; // save the html content...
+      _htmlCode = strHTML; // save the html content...
       return true;
     }
 
+    public bool FindAlbumInfo(string strAlbum, string artistName, int releaseYear)
+    {
+      _searchby = SearchBy.Albums;
+      _albumList.Clear();
+      if (FindInfo(SearchBy.Albums, strAlbum))
+      {
+        // Sort the Album
+        artistName = SwitchArtist(artistName);
+        _albumList.Sort(new AlbumSort(strAlbum, artistName, releaseYear));
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Search on Allmusic for the requested string
+    /// </summary>
+    /// <param name="searchBy"></param>
+    /// <param name="searchStr"></param>
+    /// <returns></returns>
     public bool FindInfo(SearchBy searchBy, string searchStr)
     {
+      _searchby = searchBy;
       HTMLUtil util = new HTMLUtil();
-      searchStr = searchStr.Replace(",", ""); // Remove Comma, as it causes problems with Search
-      string strPostData = String.Format("P=amg&opt1={0}&sql={1}&Image1.x=18&Image1.y=14", (int)searchBy,
-                                         HttpUtility.UrlEncode(searchStr));
+      string strPostData = "";
+      if (SearchBy.Albums == searchBy)
+      {
+        strPostData = string.Format(ALBUMSEARCH, HttpUtility.UrlEncode(searchStr));  
+      }
+      else
+      {
+        searchStr = SwitchArtist(searchStr);
+        strPostData = string.Format(ARTISTSEARCH, HttpUtility.UrlEncode(searchStr));  
+      }
 
       string strHTML = PostHTTP(MAINURL + URLPROGRAM, strPostData);
       if (strHTML.Length == 0)
@@ -103,7 +179,7 @@ namespace MediaPortal.Music.Database
         return false;
       }
 
-      m_htmlCode = strHTML; // save the html content...
+      _htmlCode = strHTML; // save the html content...
 
       Regex multiples = new Regex(
         @"\sSearch\sResults\sfor:",
@@ -115,16 +191,18 @@ namespace MediaPortal.Music.Database
 
       if (multiples.IsMatch(strHTML))
       {
-        string pattern = "bogus";
+        string pattern = "";
         if (searchBy.ToString().Equals("Artists"))
         {
-          pattern = @"<a\shref.*?sql=(?<code>(11:|41).*?)"">(?<name>.*?)</a>.*?<TD" +
-                    @"\sclass.*?>(?<name2>.*?)</TD>.*?""cell"">(?<name3>.*?)</td>";
+          pattern = @"<tr.*?>\s*?.*?<td\s*?class=""relevance\stext-center"">\s*?.*\s*?.*</td>" +
+                    @"\s*?.*<td.*\s*?.*</td>\s*?.*<td>.*<a.*href=""(?<code>.*?)"">(?<name>.*)</a>.*</td>" +
+                    @"\s*?.*<td>(?<detail>.*)</td>\s*?.*<td>(?<detail2>.*)</td>";
         }
-        else if (searchBy.ToString().Equals("Albums")) // below patter needs to be checked
+        else if (searchBy.ToString().Equals("Albums")) 
         {
-          pattern = @"""cell"">(?<name2>.*?)</TD>.*?style.*?word;"">(?<name3>.*?)<" +
-                    @"/TD>.*?onclick=""z\('(?<code>.*?)'\)"">(?<name>.*?)</a>";
+          pattern = @"<tr.*?>\s*?.*?<td\s*?class=""relevance\stext-center"">\s*?.*\s*?.*</td>" +
+                    @"\s*?.*<td.*\s*?.*</td>\s*?.*<td>.*<a.*href=""(?<code>.*?)"">(?<name>.*)</a>.*</td>" +
+                    @"\s*?.*<td>(?<detail>.*)</td>\s*?.*<td>.*</td>\s*?.*<td>(?<detail2>.*)</td>";
         }
 
 
@@ -142,8 +220,8 @@ namespace MediaPortal.Music.Database
         {
           string code = m.Groups["code"].ToString();
           string name = m.Groups["name"].ToString();
-          string detail = m.Groups["name2"].ToString();
-          string detail2 = m.Groups["name3"].ToString();
+          string detail = m.Groups["detail"].ToString();
+          string detail2 = m.Groups["detail2"].ToString();
 
           util.RemoveTags(ref name);
           util.ConvertHTMLToAnsi(name, out name);
@@ -151,61 +229,83 @@ namespace MediaPortal.Music.Database
           util.RemoveTags(ref detail);
           util.ConvertHTMLToAnsi(detail, out detail);
 
-          util.RemoveTags(ref detail);
-          util.ConvertHTMLToAnsi(detail, out detail);
-
           util.RemoveTags(ref detail2);
           util.ConvertHTMLToAnsi(detail2, out detail2);
 
-          detail += " - " + detail2;
-          Console.Out.WriteLine("code = {0}, name = {1}, detail = {2}", code, name, detail);
-          if (detail.Length > 0)
+          if (SearchBy.Artists == searchBy)
           {
-            m_codes.Add(code);
-            m_values.Add(name + " - " + detail);
+            detail += " - " + detail2;
+            if (detail.Length > 0)
+            {
+              _codes.Add(code);
+              _values.Add(name + " - " + detail);
+            }
+            else
+            {
+              _codes.Add(code);
+              _values.Add(name);
+            }
           }
           else
           {
-            m_codes.Add(code);
-            m_values.Add(name);
+            MusicAlbumInfo albumInfo = new MusicAlbumInfo();
+            albumInfo.AlbumURL = code;
+            albumInfo.Artist = detail;
+            albumInfo.Title = name;
+            albumInfo.DateOfRelease = detail2;
+            _albumList.Add(albumInfo);
           }
         }
-        m_queryString = JAVASCRIPTZ;
-        Console.Out.WriteLine("url = {0}", m_queryString);
-        m_multiple = true;
+        _multiple = true;
       }
       else // found the right one
       {}
       return true;
     }
 
+    #endregion
+
+    #region Private Methods
+
+    /// <summary>
+    /// Post method for posting te search form
+    /// </summary>
+    /// <param name="strURL"></param>
+    /// <param name="strData"></param>
+    /// <returns></returns>
     internal static string PostHTTP(string strURL, string strData)
     {
       try
       {
         string strBody;
 
-        string strUri = String.Format("{0}?{1}", strURL, strData);
-        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(strUri);
+        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(strURL);
         try
         {
           // Use the current user in case an NTLM Proxy or similar is used.
-          // request.Proxy = WebProxy.GetDefaultProxy();
           req.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
         catch (Exception) {}
+
+        req.Method = "POST";
         req.ProtocolVersion = HttpVersion.Version11;
         req.UserAgent =
-          "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; Maxthon; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04307.00";
+          "Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5";
+        req.ContentType = "application/x-www-form-urlencoded";
+        req.ContentLength = strData.Length;
+
+        // Post the Data
+        StreamWriter sw = new StreamWriter(req.GetRequestStream());
+        sw.Write(strData);
+        sw.Close();
+
         HttpWebResponse result = (HttpWebResponse)req.GetResponse();
 
         try
         {
           Stream ReceiveStream = result.GetResponseStream();
 
-          // 1252 is encoding for Windows format
-          Encoding encode = Encoding.GetEncoding(1252);
-          using (StreamReader sr = new StreamReader(ReceiveStream, encode))
+          using (StreamReader sr = new StreamReader(ReceiveStream, Encoding.Default))
           {
             strBody = sr.ReadToEnd();  
           }
@@ -224,12 +324,18 @@ namespace MediaPortal.Music.Database
       return "";
     }
 
+    /// <summary>
+    /// Retrieve HTTP content as per given URL
+    /// </summary>
+    /// <param name="strURL"></param>
+    /// <returns></returns>
     internal static string GetHTTP(string strURL)
     {
       string retval = null;
 
       // Initialize the WebRequest.
       WebRequest myRequest = WebRequest.Create(strURL);
+
       try
       {
         // Use the current user in case an NTLM Proxy or similar is used.
@@ -243,9 +349,7 @@ namespace MediaPortal.Music.Database
 
       Stream ReceiveStream = myResponse.GetResponseStream();
 
-      // 1252 is encoding for Windows format
-      Encoding encode = Encoding.GetEncoding(1252);
-      using (StreamReader sr = new StreamReader(ReceiveStream, encode))
+      using (StreamReader sr = new StreamReader(ReceiveStream, Encoding.Default))
       {
         retval = sr.ReadToEnd();  
       }      
@@ -256,15 +360,22 @@ namespace MediaPortal.Music.Database
       return retval;
     }
 
-    [STAThread]
-    private static void Main(string[] args)
+    /// <summary>
+    /// AllMusic has problems finding the right artist, if it is tagged e.g. Collins, Phil
+    /// so we return Phil Collins for the search
+    /// </summary>
+    /// <param name="artist"></param>
+    /// <returns></returns>
+    internal static string SwitchArtist(string artist)
     {
-      MusicArtistInfo artist = new MusicArtistInfo();
-      MusicAlbumInfo album = new MusicAlbumInfo();
-      AllmusicSiteScraper prog = new AllmusicSiteScraper();
-
-      prog.FindInfo(SearchBy.Artists, "Disturbed");
-      artist.Parse(prog.GetHtmlContent());
+      int iPos = artist.IndexOf(',');
+      if (iPos > 0)
+      {
+        artist = String.Format("{0} {1}", artist.Substring(iPos + 2), artist.Substring(0, iPos));
+      }
+      return artist;
     }
+
+    #endregion
   }
 }

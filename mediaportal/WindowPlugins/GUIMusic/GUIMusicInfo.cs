@@ -203,7 +203,6 @@ namespace MediaPortal.GUI.Music
       {
         return;
       }
-      string strTmp;
       lblAlbum.Label = albumInfo.Title;
       lblArtist.Label = albumInfo.Artist;
       lblDate.Label = albumInfo.DateOfRelease;
@@ -215,14 +214,8 @@ namespace MediaPortal.GUI.Music
       }
       lblRating.Label = rating;
       lblGenre.Label = albumInfo.Genre;
-
-      lblTone.Clear();
-      lblTone.Add(albumInfo.Tones.Trim());
-      strTmp = albumInfo.Tones;
-      strTmp.Trim();
-
-      lblStyles.Clear();
-      lblStyles.Add(albumInfo.Styles.Trim());
+      lblTone.Label = albumInfo.Tones.Trim();
+      lblStyles.Label = albumInfo.Styles.Trim();
 
       if (showReview)
       {

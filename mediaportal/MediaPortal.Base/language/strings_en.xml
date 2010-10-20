@@ -617,9 +617,9 @@
     <String id="683">Finished</String>
     <String id="684">Cancelled</String>
     <String id="685">Sort by: Status</String>
-    <String id="686">Born</String>
-    <String id="687">Years Active</String>
-    <String id="688">Instruments</String>
+    <String id="686">Born:</String>
+    <String id="687">Years Active:</String>
+    <String id="688">Instruments:</String>
     <String id="689">Bio.</String>
     <String id="690">Discography (Albums)</String>
     <String id="691">Discography (compilations, boxes)</String>

@@ -26,7 +26,7 @@
       <id>1</id>
       <posX>100</posX>
       <posY>100</posY>
-      <label>493</label>
+      <label>171</label>
       <font>font13</font>
       <textcolor>FFB2D4F5</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>

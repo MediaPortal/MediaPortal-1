@@ -210,14 +210,8 @@ namespace MediaPortal.GUI.Music
       lblYearsActive.Label = artistInfo.YearsActive;
       lblGenre.Label = artistInfo.Genres;
       lblInstruments.Label = artistInfo.Instruments;
-
-      // scroll Tones
-      lblTones.Clear();
-      lblTones.Add(artistInfo.Tones.Trim());
-
-      // scroll Styles
-      lblStyles.Clear();
-      lblStyles.Add(artistInfo.Styles.Trim());
+      lblTones.Label = artistInfo.Tones;
+      lblStyles.Label = artistInfo.Styles;
 
       if (viewBio)
       {
