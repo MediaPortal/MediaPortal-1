@@ -224,7 +224,7 @@ DWORD CMultiSoundTouch::ResampleThread()
   handles[0] = m_hStopThreadEvent;
   handles[1] = m_hSampleArrivedEvent;
 
-  while(true)
+  while (true)
   {
     // Check event for stop thread
     if (WaitForSingleObject(m_hStopThreadEvent, 0) == WAIT_OBJECT_0)
@@ -294,50 +294,41 @@ DWORD CMultiSoundTouch::ResampleThread()
         
         if ((hr == S_OK) && m_pMemAllocator)
         {
-          bool driftAdjusted = false;
           uint unprocessedSamplesBefore = numUnprocessedSamples();
           uint unprocessedSamplesAfter = 0;
 
-          double currentDrift = m_pClock->AdjustmentDrift();
+          UINT32 nFrames = size / m_pWaveFormat->Format.nBlockAlign;
+          REFERENCE_TIME estimatedSampleDuration = nFrames * UNITS / m_pWaveFormat->Format.nSamplesPerSec;
 
-          if (m_fNewTempo != m_fCurrentTempo || m_fNewAdjustment != m_fCurrentAdjustment)
-          {
-            setTempoInternal(m_fNewTempo, m_fNewAdjustment);
-          }
-          else if (m_fCurrentAdjustment == 1.0 && m_fNewAdjustment == 1.0)
-          {
-            if (currentDrift > 10000.0) // 1 ms
-            {
-              setTempoInternal(m_fNewTempo, 0.997);
-              driftAdjusted = true;
-            }
-            else if (currentDrift < -10000.0) // -1 ms
-            {
-              setTempoInternal(m_fNewTempo, 1.003);
-              driftAdjusted = true;
-            }
-          }
+          double AVMult = m_pClock->SuggestedAudioMultiplier(estimatedSampleDuration);
+          double bias = m_pClock->GetBias();
+		  double adjustment = m_pClock->Adjustment();
+          setTempoInternal(AVMult * bias * adjustment, 1.0); // this should be the same as previous line, but in future we want to get rid of the 2nd parameter
 
           // Process the sample 
           putSamplesInternal((const short*)pMediaBuffer, size / m_pWaveFormat->Format.nBlockAlign);
           unprocessedSamplesAfter = numUnprocessedSamples();
 
-          if (m_fCurrentAdjustment != 1.0)
+          UINT32 nOutFrames = numSamples();
+
+          if (nOutFrames > 0)
           {
-            UINT32 nFrames = size / m_pWaveFormat->Format.nBlockAlign - unprocessedSamplesAfter + unprocessedSamplesBefore;
-            REFERENCE_TIME rtSampleDuration = nFrames * UNITS / m_pWaveFormat->Format.nSamplesPerSec;
-            double drift = rtSampleDuration * (m_fCurrentAdjustment - 1.0);
-            m_pClock->ProvideAdjustmentDrift(drift);
+            static double dur = 0.0; 
+            static double durRes = 0.0; 
+
+            UINT32 nInFrames = (size / m_pWaveFormat->Format.nBlockAlign) - unprocessedSamplesAfter + unprocessedSamplesBefore;
+            double rtSampleDuration = (double)nInFrames * (double)UNITS / (double)m_pWaveFormat->Format.nSamplesPerSec;
+            double rtProcessedSampleDuration = (double)nOutFrames * (double)UNITS / (double)m_pWaveFormat->Format.nSamplesPerSec;
+
+            dur += rtSampleDuration / 10000.0;
+            durRes += estimatedSampleDuration / 10000.0;
+            m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, AVMult);
+            
+            //Log("%s",m_pClock->DebugData());
+            //Log("adjustment: %f durr: %f est %f diff %f %I64d %f %f frames: %d outFrames: %d", adjustment, dur, durRes, dur - durRes, rtSampleDuration, rtSampleDuration/10000.0, rtProcessedSampleDuration / 10000.0, nInFrames, nOutFrames); 
           }
 
-          if (driftAdjusted)
-          {
-            setTempoInternal(m_fNewTempo, m_fNewAdjustment);
-          }
-
-          unsigned int sampleLength = numSamples();
-
-          if ((!m_pEncoder && sampleLength > 0) || (m_pEncoder && sampleLength >= AC3_FRAME_LENGHT))
+          if ((!m_pEncoder && nOutFrames > 0) || (m_pEncoder && nOutFrames >= AC3_FRAME_LENGHT))
           {
             IMediaSample* outSample = NULL;
             m_pMemAllocator->GetBuffer(&outSample, NULL, NULL, 0);
@@ -350,8 +341,8 @@ DWORD CMultiSoundTouch::ResampleThread()
               if (pMediaBufferOut)
               {
                 int maxBufferSamples = OUT_BUFFER_SIZE / m_pWaveFormat->Format.nBlockAlign;
-                if (sampleLength > maxBufferSamples)
-                  sampleLength = maxBufferSamples;
+                if (nOutFrames > maxBufferSamples)
+                  nOutFrames = maxBufferSamples;
 
                 if (m_pEncoder)
                 {
@@ -372,8 +363,8 @@ DWORD CMultiSoundTouch::ResampleThread()
                 }
                 else
                 {
-                  outSample->SetActualDataLength(sampleLength * m_pWaveFormat->Format.nBlockAlign);
-                  receiveSamplesInternal((short*)pMediaBufferOut, sampleLength);
+                  outSample->SetActualDataLength(nOutFrames * m_pWaveFormat->Format.nBlockAlign);
+                  receiveSamplesInternal((short*)pMediaBufferOut, nOutFrames);
                   //Log("sampleLength: %d remaining samples: %d", sampleLength, numSamples());
                 }
                 { // lock that the playback thread wont access the queue at the same time

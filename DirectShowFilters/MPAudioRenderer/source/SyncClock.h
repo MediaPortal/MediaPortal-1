@@ -19,12 +19,12 @@
 #pragma once
 
 #include "IAVSyncClock.h"
+#include "SynchCorrection.h"
 
 class CMPAudioRenderer;
 
 class CSyncClock: public CBaseReferenceClock
 {
-
 public:
   CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer, bool pUseHWRefClock);
 
@@ -36,13 +36,17 @@ public:
   double Bias();
   double Adjustment();
   void GetClockData(CLOCKDATA *pClockData);
-  void ProvideAdjustmentDrift(double pDrift);
-  double AdjustmentDrift();
+
+  void AudioResampled(double sourceLength, double resampleLength, double driftMultiplier);
+  double SuggestedAudioMultiplier(UINT64 sampleLength);
+  double GetBias();
+  void setAVMult(double mult);
+  char* DebugData();
 
 private:
   double m_dAdjustment;
-  double m_dAdjustmentDrift;
   double m_dBias;
+  double m_dSystemClockMultiplier;
 
   UINT64 m_ullPrivateTime;
   UINT64 m_ullPrevSystemTime;
@@ -58,12 +62,9 @@ private:
   UINT64 m_ullPrevQpcHW;
   UINT64 m_dwPrevSystemTime;
 
-  double m_dDeltaError;
-  INT32 m_lOverallCorrection;
-
-  double  m_dSystemClockMultiplier;
-
   bool m_bHWBasedRefClock;
+
+  SynchCorrection m_SynchCorrection;
 
   // Not owned
   IReferenceClock*  m_pCurrentRefClock;

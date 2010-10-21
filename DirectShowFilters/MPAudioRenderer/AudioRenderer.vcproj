@@ -1363,6 +1363,34 @@
 				</File>
 			</Filter>
 		</Filter>
+		<Filter
+			Name="SynchCorrection"
+			>
+			<File
+				RelativePath=".\source\AudioClockTracker.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\AudioClockTracker.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\ClockAdjuster.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\ClockAdjuster.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\SynchCorrection.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\source\SynchCorrection.h"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 		<Global
