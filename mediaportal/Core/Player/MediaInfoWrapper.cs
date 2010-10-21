@@ -71,11 +71,11 @@ namespace MediaPortal.Player
 
     public static bool MediaInfoExist()
     {
-      string dll = Configuration.Config.Dir.Base + "\\MediaInfo.dll";
+      string dll = Configuration.Config.GetFolder(Configuration.Config.Dir.Base) + "\\MediaInfo.dll";
       bool enable = File.Exists(dll);
       if (!enable)
       {
-        Log.Warn("MediaInfoWrapper: disabled because \"%s\" is missing", dll);
+        Log.Warn("MediaInfoWrapper: disabled because \"{0}\" is missing", dll);
       }
       return enable;
     }
