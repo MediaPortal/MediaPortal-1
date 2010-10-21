@@ -122,27 +122,27 @@ namespace MediaPortal.Configuration.Sections
 
       if (rk != null)
       {
-        foreach (string skName in rk.GetValueNames())
+        try
         {
-          try
+          foreach (string skName in rk.GetValueNames())
           {
             if (skName.ToLower().Contains(Search.ToLower()))
             {
               SoftwarePath = rk.GetValue(skName).ToString().Replace("\"", "");
-              
-                
+
               //Old versions of DaemonTools and VirtualCloneDrive
               SoftwarePath = SoftwarePath.Substring(0, SoftwarePath.LastIndexOf(@"\")) + @"\daemon.exe";
-              if(System.IO.File.Exists(SoftwarePath))
+              if (System.IO.File.Exists(SoftwarePath))
                 break;
               //New versions of DaemonTools
               SoftwarePath = SoftwarePath.Substring(0, SoftwarePath.LastIndexOf(@"\")) + @"\DTLite.exe";
               break;
             }
+
+            rk.Close();
           }
-          catch (Exception) { }
         }
-        rk.Close();
+        catch (Exception) { }
       }
       return SoftwarePath;
     }
