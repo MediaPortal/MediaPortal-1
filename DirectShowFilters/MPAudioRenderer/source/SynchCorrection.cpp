@@ -27,75 +27,76 @@ SynchCorrection::SynchCorrection(void) :
   m_ullClockError(0),
   m_dlastAdjustment(1.0)
 {
-  debugLine = new char[1023];
+  m_pDebugLine = new char[1023];
 }
 
 SynchCorrection::~SynchCorrection(void)
 {
-  delete debugLine;
+  delete m_pDebugLine;
 }
 
 double SynchCorrection::SuggestedAudioMultiplier(INT64 sampleLength)
 {
-  return GetRequiredAdjustment(sampleLength, m_Bias.getAdjustment(), m_dAVmult, 
-    m_Bias.getAdjustments(), m_Adjustment.getAdjustments(), AVTracker.getAudioProcessed(), 
-    AVTracker.getAudioResampled(), m_Bias.GetTotalBaseTime());
+  return GetRequiredAdjustment(sampleLength, m_Bias.GetAdjustment(), m_dAVmult, 
+    m_Bias.GetAdjustments(), m_Adjustment.GetAdjustments(), m_AVTracker.GetAudioProcessed(), 
+    m_AVTracker.GetAudioResampled(), m_Bias.GetTotalBaseTime());
 }
 
 // call after resampling to indicate what was resampled
 void SynchCorrection::AudioResampled(double sourceLength, double resampleLength, double driftFactor)
 {
-  AVTracker.ResampleComplete(sourceLength, resampleLength, driftFactor);
-  if (AVTracker.getAudioProcessed() != 0 && m_ullClockError == 0)
+  m_AVTracker.ResampleComplete(sourceLength, resampleLength, driftFactor);
+  if (m_AVTracker.GetAudioProcessed() != 0 && m_ullClockError == 0)
   {
-    m_ullClockError = m_Bias.GetTotalBaseTime() - m_Bias.getAdjustments() - m_Adjustment.getAdjustments();
+    m_ullClockError = m_Bias.GetTotalBaseTime() - m_Bias.GetAdjustments() - m_Adjustment.GetAdjustments();
   }
 }
 
-INT64 SynchCorrection::getAudioTime()
+INT64 SynchCorrection::GetAudioTime()
 {
-  return AVTracker.getAudioProcessed();
+  return m_AVTracker.GetAudioProcessed();
 }
 
-INT64 SynchCorrection::getResampledAudioTime()
+INT64 SynchCorrection::GetResampledAudioTime()
 {
-  return AVTracker.getAudioResampled();
+  return m_AVTracker.GetAudioResampled();
 }
-double SynchCorrection::getCurrentDrift()
+double SynchCorrection::GetCurrentDrift()
 {
-  return TotalAudioDrift(m_dAVmult, m_Bias.getAdjustment(), 
-    m_Bias.getAdjustments(), m_Adjustment.getAdjustments(), AVTracker.getAudioProcessed(), 
-    AVTracker.getAudioResampled(),m_Bias.GetTotalBaseTime());
+  return TotalAudioDrift(m_dAVmult, m_Bias.GetAdjustment(), m_Bias.GetAdjustments(), 
+    m_Adjustment.GetAdjustments(), m_AVTracker.GetAudioProcessed(), 
+    m_AVTracker.GetAudioResampled(), m_Bias.GetTotalBaseTime());
 }
 
 char* SynchCorrection::DebugData()
 {
-  sprintf(debugLine,"Base Clock : %I64d clock error : %I64d adjAdjustments : %I64d biasAdjustments : %I64d Audio Processed : %I64d Audio Out : %I64d bias : %f Drift Multiplier : %f Drift : %f",
+  sprintf(m_pDebugLine,"Base Clock : %I64d clock error : %I64d adjAdjustments : %I64d biasAdjustments : %I64d Audio Processed : %I64d Audio Out : %I64d bias : %f Drift Multiplier : %f Drift : %f",
     m_Bias.GetTotalBaseTime(),
     m_ullClockError,
-    m_Adjustment.getAdjustments(),
-    m_Bias.getAdjustments(),
-    AVTracker.getAudioProcessed(),
-    AVTracker.getAudioResampled(),
-    m_Bias.getAdjustment(),
+    m_Adjustment.GetAdjustments(),
+    m_Bias.GetAdjustments(),
+    m_AVTracker.GetAudioProcessed(),
+    m_AVTracker.GetAudioResampled(),
+    m_Bias.GetAdjustment(),
     m_dAVmult,
-    TotalAudioDrift(m_dAVmult,m_Bias.getAdjustment(), m_Bias.getAdjustments(),m_Adjustment.getAdjustments(), AVTracker.getAudioProcessed(),AVTracker.getAudioResampled(),m_Bias.GetTotalBaseTime()));
+    TotalAudioDrift(m_dAVmult, m_Bias.GetAdjustment(), m_Bias.GetAdjustments(), m_Adjustment.GetAdjustments(), 
+    m_AVTracker.GetAudioProcessed(), m_AVTracker.GetAudioResampled(), m_Bias.GetTotalBaseTime()));
 
-  return debugLine;
+  return m_pDebugLine;
 }
 
-void SynchCorrection::setAVMult(double mult)
+void SynchCorrection::SetAVMult(double mult)
 {
   m_dAVmult = 1.0 / mult;
 }
 
-double SynchCorrection::getAVMult()
+double SynchCorrection::GetAVMult()
 {
   return m_dAVmult;
 }
 
 // used for the adjustment - it also corrects bias
-void SynchCorrection::setAdjustment(double adjustment)
+void SynchCorrection::SetAdjustment(double adjustment)
 {
   if (adjustment != m_dlastAdjustment)
   {
@@ -114,12 +115,12 @@ void SynchCorrection::setAdjustment(double adjustment)
     else if (adjustment < 1)
       m_dBiasDir = DIRDOWN;
 
-    m_Bias.SetAdjuster(m_Bias.getAdjustment() + m_dBiasCorrection * (double)m_dBiasDir);
+    m_Bias.SetAdjuster(m_Bias.GetAdjustment() + m_dBiasCorrection * (double)m_dBiasDir);
   }
   m_Adjustment.SetAdjuster(adjustment);
 }
 
-void SynchCorrection::setBias(double bias)
+void SynchCorrection::SetBias(double bias)
 {
   m_Bias.SetAdjuster(bias);
 }
@@ -128,17 +129,17 @@ void SynchCorrection::setBias(double bias)
 INT64 SynchCorrection::GetCorrectedTimeDelta(INT64 time)
 {
   m_ullTotalTime += time;
-  return time + m_Bias.Adjustment(time, m_Adjustment.getAdjustment()) + m_Adjustment.Adjustment(time);
+  return time + m_Bias.Adjustment(time, m_Adjustment.GetAdjustment()) + m_Adjustment.Adjustment(time);
 }
 
 double SynchCorrection::GetAdjustment()
 {
-  return m_Adjustment.getAdjustment();
+  return m_Adjustment.GetAdjustment();
 }
 
 double SynchCorrection::GetBias()
 {
-  return m_Bias.getAdjustment();
+  return m_Bias.GetAdjustment();
 }
 
 double SynchCorrection::TotalAudioDrift(double AVMult,double biasMultiplier, INT64 biasAdjustment, INT64 adjustmentAdjustment, INT64 totalAudioProcessed, INT64 totalAudioAfterSampling, INT64 totalBaseTime)
@@ -152,7 +153,7 @@ double SynchCorrection::TotalAudioDrift(double AVMult,double biasMultiplier, INT
 //  double expectedProcessedAudio = (double) (referenceTime-m_ullClockError)*AVMult + (double)(totalAudioProcessed-totalBaseTime+m_ullClockError) * biasMultiplier * AVMult;
 
 //  return totalAudioAfterSampling - expectedProcessedAudio;
-	return AVTracker.getCurrentDrift(AVMult);
+	return m_AVTracker.GetCurrentDrift(AVMult);
 }
 
 double SynchCorrection::GetRequiredAdjustment(long sampleTime, double biasMultiplier, double AVMult, INT64 biasAdjustment, INT64 adjustmentAdjustment, INT64 totalAudioProcessed, INT64 totalAudioAfterSampling, INT64 totalBaseTime)

@@ -50,14 +50,14 @@ CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer
 
 void CSyncClock::SetBias(double pBias)
 {
-  m_SynchCorrection.setBias(pBias);
+  m_SynchCorrection.SetBias(pBias);
   m_dBias = pBias;
 }
 
 void CSyncClock::SetAdjustment(double pAdjustment)
 {
 
-  m_SynchCorrection.setAdjustment(pAdjustment);
+  m_SynchCorrection.SetAdjustment(pAdjustment);
   m_dAdjustment = pAdjustment;
 }
 
@@ -74,9 +74,9 @@ double CSyncClock::Adjustment()
 void CSyncClock::GetClockData(CLOCKDATA *pClockData)
 {
   // pClockData pointer is validated already in CMPAudioRenderer
-  pClockData->driftMultiplier = m_SynchCorrection.getAVMult();
+  pClockData->driftMultiplier = m_SynchCorrection.GetAVMult();
   pClockData->driftHWvsSystem = (m_llDurationHW - m_llDurationSystem) / 10000.0;
-  pClockData->driftAdjustment = m_SynchCorrection.getCurrentDrift() / 10000.0;
+  pClockData->driftAdjustment = m_SynchCorrection.GetCurrentDrift() / 10000.0;
   pClockData->driftHWvsCorrected = 0.0; // remove this and rename others...
 }
 
@@ -101,12 +101,6 @@ double CSyncClock::GetBias()
 {
   CAutoLock cObjectLock(this);
   return m_SynchCorrection.GetBias();
-}
-
-void CSyncClock::setAVMult(double mult)
-{
-  CAutoLock cObjectLock(this);
-  return m_SynchCorrection.setAVMult(mult);
 }
 
 REFERENCE_TIME CSyncClock::GetPrivateTime()
@@ -159,7 +153,7 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
 
 	  if (m_bHWBasedRefClock)
 	  {
-        m_SynchCorrection.setAVMult(m_dSystemClockMultiplier);
+        m_SynchCorrection.SetAVMult(m_dSystemClockMultiplier);
       }
 
       m_ullPrevTimeHW = hwClock;

@@ -33,12 +33,12 @@ void ClockAdjuster::SetAdjuster(double val)
   m_dMultVal = val;
 }
 
-double ClockAdjuster::getAdjustment()
+double ClockAdjuster::GetAdjustment()
 {
   return m_dMultVal;
 }
 
-INT64 ClockAdjuster::getAdjustments()
+INT64 ClockAdjuster::GetAdjustments()
 {
   return m_llAdjustmentsMade;
 }
@@ -62,13 +62,13 @@ INT64 ClockAdjuster::Adjustment(INT64 time)
 // reference clock delta in relation to this adjuster
 INT64 ClockAdjuster::Adjustment(UINT64 time, double otherMultiplier)
 {
-    INT64 ret = 0;
-    double otherMultAdjustment = ((double)time) * otherMultiplier -(double)time;
-    double fullAdjustment = ((double)time) *  otherMultiplier * m_dMultVal  - otherMultAdjustment;
-	fullAdjustment+= m_dError;
-    ret = (INT64)fullAdjustment - time;
-    m_llAdjustmentsMade += ret;
-    m_ullTotalTime += time;
-    m_dError = fullAdjustment-(double)time - (double)ret;
-    return ret;
+  INT64 ret = 0;
+  double otherMultAdjustment = ((double)time) * otherMultiplier -(double)time;
+  double fullAdjustment = ((double)time) * otherMultiplier * m_dMultVal - otherMultAdjustment;
+  fullAdjustment += m_dError;
+  ret = (INT64)fullAdjustment - time;
+  m_llAdjustmentsMade += ret;
+  m_ullTotalTime += time;
+  m_dError = fullAdjustment-(double)time - (double)ret;
+  return ret;
 }

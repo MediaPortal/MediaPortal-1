@@ -24,8 +24,8 @@ public:
 	ClockAdjuster(void);
 	~ClockAdjuster(void);
   void SetAdjuster(double val);
-  double getAdjustment();
-  INT64 getAdjustments();
+  double GetAdjustment();
+  INT64 GetAdjustments();
   INT64 GetTotalBaseTime();
   // reference clock delta in relation to this adjuster
   virtual INT64 Adjustment(INT64 time);

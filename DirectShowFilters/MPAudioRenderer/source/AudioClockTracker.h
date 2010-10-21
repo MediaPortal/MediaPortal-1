@@ -27,9 +27,9 @@ public:
 
   void ResampleComplete(double sampleTime, double resampleTime, double AVMult);
   void DriftCorrected(double correctionAmount);
-  INT64 getAudioProcessed();
-  INT64 getAudioResampled();
-  double getCurrentDrift(double AVMult);
+  INT64 GetAudioProcessed();
+  INT64 GetAudioResampled();
+  double GetCurrentDrift(double AVMult);
 
 protected:
 

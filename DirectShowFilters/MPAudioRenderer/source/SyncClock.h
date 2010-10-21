@@ -40,7 +40,6 @@ public:
   void AudioResampled(double sourceLength, double resampleLength, double driftMultiplier);
   double SuggestedAudioMultiplier(UINT64 sampleLength);
   double GetBias();
-  void setAVMult(double mult);
   char* DebugData();
 
 private:
