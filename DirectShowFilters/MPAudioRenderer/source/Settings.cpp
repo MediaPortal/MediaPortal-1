@@ -40,7 +40,7 @@ AudioRendererSettings::AudioRendererSettings() :
   m_wWASAPIPreferredDeviceId(NULL)
 {
   LogRotate();
-  Log("MP Audio Renderer - v0.97");
+  Log("MP Audio Renderer - v0.98");
 
   LoadSettingsFromRegistry();
 }
