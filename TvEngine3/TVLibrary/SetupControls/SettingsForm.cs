@@ -137,8 +137,6 @@ namespace SetupControls
 
     public virtual void helpToolStripSplitButton_ButtonClick(object sender, EventArgs e) {}
 
-    public virtual void updateHelpToolStripMenuItem_Click(object sender, EventArgs e) {}
-
     public virtual void configToolStripSplitButton_ButtonClick(object sender, EventArgs e) {}
   }
 }

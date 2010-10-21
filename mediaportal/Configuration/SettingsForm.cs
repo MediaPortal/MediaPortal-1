@@ -96,12 +96,11 @@ namespace MediaPortal.Configuration
     private int hintShowCount = 0;
     private LinkLabel linkLabel1;
     private ToolStrip toolStrip1;
-    private ToolStripSplitButton helpToolStripSplitButton;
+    private ToolStripButton helpToolStripSplitButton;
     private ToolStripSplitButton configToolStripSplitButton;
     private ToolStripMenuItem thumbsToolStripMenuItem;
     private ToolStripMenuItem logsToolStripMenuItem;
     private ToolStripMenuItem databaseToolStripMenuItem;
-    private ToolStripMenuItem updateHelpToolStripMenuItem;
     private ToolStripMenuItem skinsToolStripMenuItem;
     private SectionSettings _previousSection = null;
     private MPButton cancelButton;
@@ -725,8 +724,7 @@ namespace MediaPortal.Configuration
       this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-      this.helpToolStripSplitButton = new System.Windows.Forms.ToolStripSplitButton();
-      this.updateHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.helpToolStripSplitButton = new System.Windows.Forms.ToolStripButton();
       this.configToolStripSplitButton = new System.Windows.Forms.ToolStripSplitButton();
       this.thumbsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.logsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -841,6 +839,7 @@ namespace MediaPortal.Configuration
       // 
       // toolStrip1
       // 
+      this.toolStrip1.ImeMode = System.Windows.Forms.ImeMode.On;
       this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.helpToolStripSplitButton,
             this.configToolStripSplitButton,
@@ -854,25 +853,12 @@ namespace MediaPortal.Configuration
       // helpToolStripSplitButton
       // 
       this.helpToolStripSplitButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-      this.helpToolStripSplitButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.updateHelpToolStripMenuItem});
       this.helpToolStripSplitButton.Image = global::MediaPortal.Configuration.Properties.Resources.icon_help;
       this.helpToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.helpToolStripSplitButton.Name = "helpToolStripSplitButton";
-      this.helpToolStripSplitButton.Size = new System.Drawing.Size(60, 22);
+      this.helpToolStripSplitButton.Size = new System.Drawing.Size(52, 22);
       this.helpToolStripSplitButton.Text = "Help";
       this.helpToolStripSplitButton.ToolTipText = "Opens the online wiki page for the active configuration section.";
-      this.helpToolStripSplitButton.ButtonClick += new System.EventHandler(this.helpToolStripSplitButton_ButtonClick);
-      // 
-      // updateHelpToolStripMenuItem
-      // 
-      this.updateHelpToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_refresh;
-      this.updateHelpToolStripMenuItem.Name = "updateHelpToolStripMenuItem";
-      this.updateHelpToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
-      this.updateHelpToolStripMenuItem.Text = "Update Help";
-      this.updateHelpToolStripMenuItem.ToolTipText = "Online update for the help references file. Use it if an incorrect wiki page was " +
-          "opened.";
-      this.updateHelpToolStripMenuItem.Click += new System.EventHandler(this.updateHelpToolStripMenuItem_Click);
       // 
       // configToolStripSplitButton
       // 
@@ -884,7 +870,7 @@ namespace MediaPortal.Configuration
       this.configToolStripSplitButton.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
       this.configToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.configToolStripSplitButton.Name = "configToolStripSplitButton";
-      this.configToolStripSplitButton.Size = new System.Drawing.Size(117, 22);
+      this.configToolStripSplitButton.Size = new System.Drawing.Size(125, 22);
       this.configToolStripSplitButton.Text = "User Config files";
       this.configToolStripSplitButton.ButtonClick += new System.EventHandler(this.configToolStripSplitButton_ButtonClick);
       // 
@@ -892,7 +878,7 @@ namespace MediaPortal.Configuration
       // 
       this.thumbsToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
       this.thumbsToolStripMenuItem.Name = "thumbsToolStripMenuItem";
-      this.thumbsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+      this.thumbsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
       this.thumbsToolStripMenuItem.Text = "Open Thumbs directory";
       this.thumbsToolStripMenuItem.Click += new System.EventHandler(this.thumbsToolStripMenuItem_Click);
       // 
@@ -900,7 +886,7 @@ namespace MediaPortal.Configuration
       // 
       this.logsToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
       this.logsToolStripMenuItem.Name = "logsToolStripMenuItem";
-      this.logsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+      this.logsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
       this.logsToolStripMenuItem.Text = "Open Log directory";
       this.logsToolStripMenuItem.Click += new System.EventHandler(this.logsToolStripMenuItem_Click);
       // 
@@ -908,7 +894,7 @@ namespace MediaPortal.Configuration
       // 
       this.databaseToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
       this.databaseToolStripMenuItem.Name = "databaseToolStripMenuItem";
-      this.databaseToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+      this.databaseToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
       this.databaseToolStripMenuItem.Text = "Open Database directory";
       this.databaseToolStripMenuItem.Click += new System.EventHandler(this.databaseToolStripMenuItem_Click);
       // 
@@ -916,7 +902,7 @@ namespace MediaPortal.Configuration
       // 
       this.skinsToolStripMenuItem.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
       this.skinsToolStripMenuItem.Name = "skinsToolStripMenuItem";
-      this.skinsToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+      this.skinsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
       this.skinsToolStripMenuItem.Text = "Open Skins directory";
       this.skinsToolStripMenuItem.Click += new System.EventHandler(this.skinsToolStripMenuItem_Click);
       // 
@@ -1300,11 +1286,6 @@ namespace MediaPortal.Configuration
     private void helpToolStripSplitButton_ButtonClick(object sender, EventArgs e)
     {
       HelpSystem.ShowHelp(_previousSection.ToString());
-    }
-
-    private void updateHelpToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-      HelpSystem.UpdateHelpReferences();
     }
 
     private void OpenMpDirectory(Config.Dir dir)

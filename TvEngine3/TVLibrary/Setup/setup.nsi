@@ -441,7 +441,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
   File "${svn_TVServer}\TvService\Gentle.config"
-  File "${TVSERVER.BASE}\HelpReferences.xml"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION   for TVServer

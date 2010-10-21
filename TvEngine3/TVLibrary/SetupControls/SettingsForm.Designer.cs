@@ -61,9 +61,8 @@ namespace SetupControls
       this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-      this.helpToolStripSplitButton = new System.Windows.Forms.ToolStripSplitButton();
-      this.updateHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.configToolStripSplitButton = new System.Windows.Forms.ToolStripSplitButton();
+      this.helpToolStripSplitButton = new System.Windows.Forms.ToolStripButton();
+      this.configToolStripSplitButton = new System.Windows.Forms.ToolStripButton();
       this.toolStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -185,34 +184,22 @@ namespace SetupControls
       // helpToolStripSplitButton
       // 
       this.helpToolStripSplitButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-      this.helpToolStripSplitButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.updateHelpToolStripMenuItem});
       this.helpToolStripSplitButton.Image = global::SetupControls.Properties.Resources.icon_help;
       this.helpToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.helpToolStripSplitButton.Name = "helpToolStripSplitButton";
-      this.helpToolStripSplitButton.Size = new System.Drawing.Size(60, 22);
+      this.helpToolStripSplitButton.Size = new System.Drawing.Size(52, 22);
       this.helpToolStripSplitButton.Text = "Help";
       this.helpToolStripSplitButton.ToolTipText = "Opens the online wiki page for the active configuration section.";
-      this.helpToolStripSplitButton.ButtonClick += new System.EventHandler(this.helpToolStripSplitButton_ButtonClick);
-      // 
-      // updateHelpToolStripMenuItem
-      // 
-      this.updateHelpToolStripMenuItem.Image = global::SetupControls.Properties.Resources.icon_refresh;
-      this.updateHelpToolStripMenuItem.Name = "updateHelpToolStripMenuItem";
-      this.updateHelpToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-      this.updateHelpToolStripMenuItem.Text = "Update Help";
-      this.updateHelpToolStripMenuItem.ToolTipText = "Online update for the help references file. Use it if an incorrect wiki page was " +
-          "opened.";
-      this.updateHelpToolStripMenuItem.Click += new System.EventHandler(this.updateHelpToolStripMenuItem_Click);
+      this.helpToolStripSplitButton.Click += new System.EventHandler(this.helpToolStripSplitButton_ButtonClick);
       // 
       // configToolStripSplitButton
       // 
       this.configToolStripSplitButton.Image = global::SetupControls.Properties.Resources.icon_folder;
       this.configToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.configToolStripSplitButton.Name = "configToolStripSplitButton";
-      this.configToolStripSplitButton.Size = new System.Drawing.Size(131, 22);
+      this.configToolStripSplitButton.Size = new System.Drawing.Size(129, 22);
       this.configToolStripSplitButton.Text = "Open Log directory";
-      this.configToolStripSplitButton.ButtonClick += new System.EventHandler(this.configToolStripSplitButton_ButtonClick);
+      this.configToolStripSplitButton.Click += new System.EventHandler(this.configToolStripSplitButton_ButtonClick);
       // 
       // SettingsForm
       // 
@@ -253,8 +240,7 @@ namespace SetupControls
     private MediaPortal.UserInterface.Controls.MPGradientLabel headerLabel;
     private System.Windows.Forms.LinkLabel linkLabel1;
     protected System.Windows.Forms.ToolStrip toolStrip1;
-    protected System.Windows.Forms.ToolStripSplitButton helpToolStripSplitButton;
-    protected System.Windows.Forms.ToolStripSplitButton configToolStripSplitButton;
-    protected System.Windows.Forms.ToolStripMenuItem updateHelpToolStripMenuItem;
+    protected System.Windows.Forms.ToolStripButton helpToolStripSplitButton;
+    protected System.Windows.Forms.ToolStripButton configToolStripSplitButton;
   }
 }

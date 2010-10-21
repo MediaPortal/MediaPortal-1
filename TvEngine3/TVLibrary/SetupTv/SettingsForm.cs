@@ -719,11 +719,6 @@ namespace SetupTv
       HelpSystem.ShowHelp(_previousSection.ToString());
     }
 
-    public override void updateHelpToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-      HelpSystem.UpdateHelpReferences();
-    }
-
     public override void configToolStripSplitButton_ButtonClick(object sender, EventArgs e)
     {
       Process process = new Process();

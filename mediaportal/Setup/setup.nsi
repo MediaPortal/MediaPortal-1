@@ -361,7 +361,6 @@ Section "MediaPortal core files (required)" SecCore
   #MediaPortal Paths should not be overwritten
   !define EXCLUDED_CONFIG_FILES "\
     /x 'eHome Infrared Transceiver List XP.xml' \
-    /x HelpReferences.xml \
     /x keymap.xml \
     /x MediaPortalDirs.xml \
     /x wikipedia.xml \
@@ -422,7 +421,6 @@ Section "MediaPortal core files (required)" SecCore
   ; Config Files
   SetOutPath "$MPdir.Config"
   File /nonfatal "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\HelpReferences.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\keymap.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\wikipedia.xml"
 
@@ -545,7 +543,6 @@ SectionEnd
   ; Config Files
   Delete "$MPdir.Config\CaptureCardDefinitions.xml"
   Delete "$MPdir.Config\eHome Infrared Transceiver List XP.xml"
-  Delete "$MPdir.Config\HelpReferences.xml"
   Delete "$MPdir.Config\keymap.xml"
   Delete "$MPdir.Config\wikipedia.xml"
 
