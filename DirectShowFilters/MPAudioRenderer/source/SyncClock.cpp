@@ -43,6 +43,7 @@ CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer
   m_bHWBasedRefClock(pUseHWRefClock),
   m_llDurationHW(0),
   m_llDurationSystem(0),
+  m_dSuggestedAudioMultiplier(1.0),
   m_ullPrevSystemTime(0),
   m_ullPrivateTime(0)
 {
@@ -76,8 +77,8 @@ void CSyncClock::GetClockData(CLOCKDATA *pClockData)
   // pClockData pointer is validated already in CMPAudioRenderer
   pClockData->driftMultiplier = m_SynchCorrection.GetAVMult();
   pClockData->driftHWvsSystem = (m_llDurationHW - m_llDurationSystem) / 10000.0;
-  pClockData->driftAdjustment = m_SynchCorrection.GetCurrentDrift() / 10000.0;
-  pClockData->driftHWvsCorrected = 0.0; // remove this and rename others...
+  pClockData->currentDrift = m_SynchCorrection.GetCurrentDrift() / 10000.0;
+  pClockData->resamplingAdjustment = m_dSuggestedAudioMultiplier;
 }
 
 void CSyncClock::AudioResampled(double sourceLength, double resampleLength,double driftMultiplier)
@@ -94,7 +95,10 @@ char* CSyncClock::DebugData()
 double CSyncClock::SuggestedAudioMultiplier(UINT64 sampleLength)
 {
   CAutoLock cObjectLock(this);
-  return m_SynchCorrection.SuggestedAudioMultiplier(sampleLength);
+  
+  // store for EVR stats renderer
+  m_dSuggestedAudioMultiplier = m_SynchCorrection.SuggestedAudioMultiplier(sampleLength);
+  return m_dSuggestedAudioMultiplier;
 }
 
 double CSyncClock::GetBias()
@@ -132,11 +136,15 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
     m_llDurationHW = (hwClock - m_ullStartTimeHW);
     m_llDurationSystem = (qpcNow - m_ullStartTimeSystem); 
 
+    // Discontinuity in the stream time line detected
     if (m_ullPrevTimeHW > hwClock)
     {
       m_ullStartTimeHW = m_ullPrevTimeHW = hwClock;
       m_ullStartQpcHW = m_ullPrevQpcHW = hwQpc;
       m_ullStartTimeSystem = qpcNow;
+      
+      m_SynchCorrection.Reset();
+      m_SynchCorrection.SetBias(m_dBias);
     }
     else
     {

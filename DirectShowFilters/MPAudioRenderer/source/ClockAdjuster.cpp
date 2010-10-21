@@ -16,16 +16,21 @@
 
 #include "ClockAdjuster.h"
 
-ClockAdjuster::ClockAdjuster(void) :
-  m_dError (0.0),
-  m_dMultVal(1.0),
-  m_llAdjustmentsMade(0),
-	m_ullTotalTime(0)
+ClockAdjuster::ClockAdjuster(void)
+{
+  Reset();
+}
+
+ClockAdjuster::~ClockAdjuster()
 {
 }
 
-ClockAdjuster::~ClockAdjuster(void)
+void ClockAdjuster::Reset()
 {
+  m_dError = 0.0;
+  m_dMultVal = 1.0;  
+  m_llAdjustmentsMade = 0;
+  m_ullTotalTime = 0;
 }
 
 void ClockAdjuster::SetAdjuster(double val)

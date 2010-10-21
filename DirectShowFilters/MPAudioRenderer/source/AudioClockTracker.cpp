@@ -16,20 +16,25 @@
 
 #include "AudioClockTracker.h"
 
-AudioClockTracker::AudioClockTracker() :
-  m_dAudioProcessedError(0.0),
-  m_dAudioResampledError(0.0),
-  m_llAudioProcessed(0),
-  m_llAudioResampled(0),
-  m_dAudioDriftCorrected(0.0),
-  m_dAudioDrift(0.0),
-  m_dUndriftedAudioProcessed(0.0),
-  m_dDriftedAudioProcessed(0.0)
+AudioClockTracker::AudioClockTracker()
 {
+  Reset();
 }
 
 AudioClockTracker::~AudioClockTracker()
 {
+}
+
+void AudioClockTracker::Reset()
+{
+  m_dAudioProcessedError = 0.0;
+  m_dAudioResampledError = 0.0;
+  m_llAudioProcessed = 0;
+  m_llAudioResampled = 0;
+  m_dAudioDriftCorrected = 0.0;
+  m_dAudioDrift = 0.0;
+  m_dUndriftedAudioProcessed = 0.0;
+  m_dDriftedAudioProcessed = 0.0; 
 }
 
 void AudioClockTracker::ResampleComplete(double sampleTime, double resampleTime, double AVMult)
@@ -59,7 +64,7 @@ void AudioClockTracker::DriftCorrected(double correctionAmount)
 
 double AudioClockTracker::GetCurrentDrift(double AVMult)
 {
-	return m_dDriftedAudioProcessed - m_dUndriftedAudioProcessed * AVMult;
+  return m_dDriftedAudioProcessed - m_dUndriftedAudioProcessed * AVMult;
 }
 
 INT64 AudioClockTracker::GetAudioProcessed()

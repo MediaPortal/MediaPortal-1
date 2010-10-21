@@ -19,6 +19,8 @@
 #include <stddef.h>
 #include <stdarg.h>
 
+extern void Log(const char *fmt, ...);
+
 SynchCorrection::SynchCorrection(void) :
   m_dBiasCorrection(0.0001),
   m_dBiasDir(0),
@@ -28,11 +30,27 @@ SynchCorrection::SynchCorrection(void) :
   m_dlastAdjustment(1.0)
 {
   m_pDebugLine = new char[1023];
+  Reset();
 }
 
 SynchCorrection::~SynchCorrection(void)
 {
   delete m_pDebugLine;
+}
+
+void SynchCorrection::Reset()
+{
+  Log("SynchCorrection::Reset");
+  m_dBiasCorrection = 0.0001;
+  m_dBiasDir = 0;
+  m_dAVmult = 1.0;
+  m_ullTotalTime = 0;
+  m_ullClockError = 0;
+  m_dlastAdjustment = 1.0;
+
+  m_Bias.Reset();
+  m_Adjustment.Reset();
+  m_AVTracker.Reset();
 }
 
 double SynchCorrection::SuggestedAudioMultiplier(INT64 sampleLength)

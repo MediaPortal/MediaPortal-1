@@ -24,6 +24,7 @@ public:
 
   AudioClockTracker();
   ~AudioClockTracker();
+  void Reset();
 
   void ResampleComplete(double sampleTime, double resampleTime, double AVMult);
   void DriftCorrected(double correctionAmount);

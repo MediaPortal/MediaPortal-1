@@ -44,6 +44,8 @@ public:
 
 private:
   double m_dAdjustment;
+  double m_dSuggestedAudioMultiplier;
+    
   double m_dBias;
   double m_dSystemClockMultiplier;
 

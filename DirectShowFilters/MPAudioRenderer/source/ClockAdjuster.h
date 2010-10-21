@@ -21,8 +21,10 @@
 class ClockAdjuster
 {
 public:
-	ClockAdjuster(void);
-	~ClockAdjuster(void);
+  ClockAdjuster(void);
+  ~ClockAdjuster(void);
+  void Reset();
+  
   void SetAdjuster(double val);
   double GetAdjustment();
   INT64 GetAdjustments();
@@ -32,12 +34,12 @@ public:
   INT64 ClockAdjuster::Adjustment(UINT64 time, double otherMultiplier);
 
 protected:
-	// current error
-	double m_dError;
-	// current adjustment rate
-	double m_dMultVal;
-	// adjustments made
-	INT64 m_llAdjustmentsMade;
-	// time adjustments are over
-	INT64 m_ullTotalTime;
+  // current error
+  double m_dError;
+  // current adjustment rate
+  double m_dMultVal;
+  // adjustments made
+  INT64 m_llAdjustmentsMade;
+  // time adjustments are over
+  INT64 m_ullTotalTime;
 };

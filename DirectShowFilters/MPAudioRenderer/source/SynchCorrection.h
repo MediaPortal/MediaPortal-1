@@ -28,9 +28,13 @@
 class SynchCorrection
 {
 public:
-  SynchCorrection(void);
-  ~SynchCorrection(void);
-  // suggested adjustment - this can be ignored if you want
+  SynchCorrection();
+  ~SynchCorrection();
+  
+  // Call reset when a discontinuity happens in the audio stream (drifting resets to zero etc)
+  void Reset();
+  
+  // Suggested adjustment - this can be ignored if you want
   // I'll add in some logic to keep it at 1.0 if the material is near 1:1
   // sample length is not currently used - but it could be useful
   double SuggestedAudioMultiplier(INT64 sampleLength);
@@ -42,10 +46,10 @@ public:
   // I still don't have a picture of what >1 means so I still might have it wrong
   void SetAVMult(double mult);
   double GetAVMult();
-  // used for the adjustment - it also corrects bias
+  // Used for the adjustment - it also corrects bias
   void SetAdjustment(double adjustment);
   void SetBias(double bias);
-  // recalculation of the delta value for the reference clock
+  // Recalculation of the delta value for the reference clock
   INT64 GetCorrectedTimeDelta(INT64 time);
   double GetAdjustment();
   double GetBias();
