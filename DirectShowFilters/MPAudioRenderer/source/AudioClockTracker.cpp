@@ -34,7 +34,7 @@ AudioClockTracker::~AudioClockTracker()
 
 void AudioClockTracker::ResampleComplete(double sampleTime, double resampleTime, double AVMult)
 {
-  m_dDriftedAudioProcessed += resampleTime / AVMult;
+  m_dUndriftedAudioProcessed += resampleTime / AVMult;
   m_dDriftedAudioProcessed += resampleTime;
   m_llAudioProcessed += (INT64)sampleTime;
   m_llAudioResampled += (INT64)resampleTime;
@@ -59,7 +59,7 @@ void AudioClockTracker::DriftCorrected(double correctionAmount)
 
 double AudioClockTracker::GetCurrentDrift(double AVMult)
 {
-  return m_dDriftedAudioProcessed - m_dUndriftedAudioProcessed * AVMult;
+	return m_dDriftedAudioProcessed - m_dUndriftedAudioProcessed * AVMult;
 }
 
 INT64 AudioClockTracker::GetAudioProcessed()
