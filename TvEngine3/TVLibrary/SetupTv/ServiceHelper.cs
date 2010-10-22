@@ -38,7 +38,7 @@ namespace SetupTv
     /// Read from DB card detection delay 
     /// </summary>
     /// <returns>number of seconds</returns>
-    public static int DefaultTimeOut()
+    public static int DefaultInitTimeOut()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       return Convert.ToInt16(layer.GetSetting("delayCardDetect", "0").Value) + 10;
@@ -69,42 +69,18 @@ namespace SetupTv
     {
       get
       {
-        //Patch to be able to use the TvServer Configuration 
-        //when running in debug mode
         try
         {
-          //Try an call something to see if the server is alive.
-          //
-          WaitInitialized(DefaultTimeOut() * 1000);
-          int serverId = RemoteControl.Instance.IdServer;
-          return true;
+          using (ServiceController sc = new ServiceController("TvService"))
+          {
+            return sc.Status == ServiceControllerStatus.Running;
+          }
         }
         catch (Exception ex)
         {
-          if (!(ex is System.Runtime.Remoting.RemotingException || ex is System.Net.Sockets.SocketException))
-          {
-            Log.Error(
-              "ServiceHelper: Could not check whether the tvservice is running. Please check your network as well. \nError: {0}",
-              ex.ToString());
-          }
-
-          try
-          {
-            ServiceController[] services = ServiceController.GetServices();
-            foreach (ServiceController service in services)
-            {
-              if (String.Compare(service.ServiceName, "TvService", true) == 0)
-              {
-                return service.Status == ServiceControllerStatus.Running;
-              }
-            }
-          }
-          catch (Exception ex2)
-          {
-            Log.Error(
-              "ServiceHelper: Fallback to check whether the tvservice is running failed as well. Please check your installation. \nError: {0}",
-              ex2.ToString());
-          }
+          Log.Error(
+            "ServiceHelper: Check whether the tvservice is running failed. Please check your installation. \nError: {0}",
+            ex.ToString());
           return false;
         }
       }
@@ -119,6 +95,15 @@ namespace SetupTv
       {
         return WaitInitialized(0);
       }
+    }
+
+    /// <summary>
+    /// Wait until TvService is fully initialized, wait for the default timeout
+    /// </summary>
+    /// <returns>true if thTvService is initialized</returns>
+    public static bool WaitInitialized()
+    {
+      return WaitInitialized(DefaultInitTimeOut() * 1000);
     }
 
     /// <summary>
@@ -137,8 +122,39 @@ namespace SetupTv
       }
       catch (Exception) // either we have no right, or the event does not exist
       {
-        return false;
+        // do nothing about it
       }
+      // Fall back: try to call a method on the server (for earlier versions of TvService)
+      DateTime expires = millisecondsTimeout == -1? DateTime.MaxValue : DateTime.Now.AddMilliseconds(millisecondsTimeout);
+
+      // Note if millisecondsTimeout = 0, we never enter the loop and always return false
+      // There is no way to determine if TvService is initialized without waiting
+      while (DateTime.Now < expires)
+      {
+        try
+        {
+          RemoteControl.Clear();
+          int cards = RemoteControl.Instance.Cards;
+          return true;
+        }
+        catch (System.Runtime.Remoting.RemotingException)
+        {
+          Log.Info("ServiceHelper: Waiting for tvserver to initialize. (remoting not initialized)");
+        }
+        catch (System.Net.Sockets.SocketException)
+        {
+          Log.Info("ServiceHelper: Waiting for tvserver to initialize. (socket not initialized)");
+        }
+        catch(Exception ex)
+        {
+          Log.Error(
+            "ServiceHelper: Could not check whether the tvservice is running. Please check your network as well. \nError: {0}",
+            ex.ToString());
+          break;
+        }
+        Thread.Sleep(250); 
+      }
+      return false;
     }
 
     /// <summary>
@@ -148,15 +164,20 @@ namespace SetupTv
     {
       get
       {
-        ServiceController[] services = ServiceController.GetServices();
-        foreach (ServiceController service in services)
+        try
         {
-          if (String.Compare(service.ServiceName, "TvService", true) == 0)
+          using (ServiceController sc = new ServiceController("TvService"))
           {
-            return service.Status == ServiceControllerStatus.Stopped;
+            return sc.Status == ServiceControllerStatus.Stopped; // should we consider Stopping as stopped?
           }
         }
-        return false;
+        catch (Exception ex)
+        {
+          Log.Error(
+            "ServiceHelper: Check whether the tvservice is stopped failed. Please check your installation. \nError: {0}",
+            ex.ToString());
+          return false;
+        }
       }
     }
 
@@ -166,20 +187,33 @@ namespace SetupTv
     /// <returns></returns>
     public static bool Stop()
     {
-      ServiceController[] services = ServiceController.GetServices();
-      foreach (ServiceController service in services)
+      try
       {
-        if (String.Compare(service.ServiceName, "TvService", true) == 0)
+        using (ServiceController sc = new ServiceController("TvService"))
         {
-          if (service.Status == ServiceControllerStatus.Running)
+          switch (sc.Status)
           {
-            service.Stop();
-            service.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(DefaultTimeOut()));
-            return true;
+            case ServiceControllerStatus.Running:
+              sc.Stop();
+              break;
+            case ServiceControllerStatus.StopPending:
+              break;
+            case ServiceControllerStatus.Stopped:
+              return true;
+            default:
+              return false;
           }
+          sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(60));
+          return sc.Status == ServiceControllerStatus.Stopped;
         }
       }
-      return false;
+      catch (Exception ex)
+      {
+        Log.Error(
+          "ServiceHelper: Stopping tvservice failed. Please check your installation. \nError: {0}",
+          ex.ToString());
+        return false;
+      }
     }
 
     /// <summary>
@@ -193,21 +227,33 @@ namespace SetupTv
 
     public static bool Start(string aServiceName)
     {
-      ServiceController[] services = ServiceController.GetServices();
-      foreach (ServiceController service in services)
+      try
       {
-        if (String.Compare(service.ServiceName, aServiceName, true) == 0)
+        using (ServiceController sc = new ServiceController(aServiceName))
         {
-          if (service.Status == ServiceControllerStatus.Stopped)
+          switch (sc.Status)
           {
-            service.Start();
-            service.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(DefaultTimeOut()));
-            // Service is running, but on slow machines still take some time to answer network queries
-            return IsRunning;
+            case ServiceControllerStatus.Stopped:
+              sc.Start();
+              break;
+            case ServiceControllerStatus.StartPending:
+              break;
+            case ServiceControllerStatus.Running:
+              return true;
+            default:
+              return false;
           }
+          sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(60));
+          return sc.Status == ServiceControllerStatus.Running;
         }
       }
-      return false;
+      catch (Exception ex)
+      {
+        Log.Error(
+          "ServiceHelper: Starting {0} failed. Please check your installation. \nError: {1}",
+          aServiceName, ex.ToString());
+        return false;
+      }
     }
 
     /// <summary>
@@ -221,8 +267,7 @@ namespace SetupTv
         return false;
       }
       Stop();
-      Start();
-      return true;
+      return Start();
     }
 
     /// <summary>

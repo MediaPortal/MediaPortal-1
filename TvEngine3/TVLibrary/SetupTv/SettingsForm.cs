@@ -148,6 +148,7 @@ namespace SetupTv
                       server.Persist();
                       RemoteControl.Clear();
                       ServiceHelper.Restart();
+                      ServiceHelper.WaitInitialized();
                     }
                     else
                     {

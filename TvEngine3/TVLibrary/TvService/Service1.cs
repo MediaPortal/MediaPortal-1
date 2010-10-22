@@ -181,6 +181,9 @@ namespace TvService
         }
 
         _tvServiceThread.Start();
+        //when running as a thread this should be removed (work for 1.2 beta rel.) --> 
+        _tvServiceThread.Join();//wait for thread to finish.
+        
       }      
     }
 
@@ -793,11 +796,13 @@ namespace TvService
         _started = true;
         _InitializedEvent.Set();
         Log.Info("TV service: Started");
-                
-        while (true)
+               
+        //when running as a thread this is needed (work for 1.2 beta rel.) --> 
+        /*while (true)
         {
           Thread.Sleep(1000);
-        }
+        }*/
+
         //System.Diagnostics.Debugger.Launch();
         //throw new Exception("die");
       }      

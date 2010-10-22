@@ -249,6 +249,7 @@ namespace SetupTv
         ServiceHelper.Start();
       }
 
+      ServiceHelper.WaitInitialized();
       int cards = 0;
       try
       {
@@ -258,6 +259,7 @@ namespace SetupTv
       {
         Log.Info("---- restart tvservice----");
         ServiceHelper.Restart();
+        ServiceHelper.WaitInitialized();
         try
         {
           RemoteControl.Clear();

@@ -612,13 +612,19 @@ namespace TvService
                     TvCardBase card = (TvCardBase)unknownCard;
                     if (card.PreloadCard)
                     {
-                      Log.Info("Controller: preloading card :{0}", card.Name);
-                      card.BuildGraph();                      
-                      if (unknownCard is TvCardAnalog)
+                      try
                       {
-                        ((TvCardAnalog)unknownCard).ReloadCardConfiguration();
+                        Log.Info("Controller: preloading card :{0}", card.Name);
+                        card.BuildGraph();
+                        if (unknownCard is TvCardAnalog)
+                        {
+                          ((TvCardAnalog)unknownCard).ReloadCardConfiguration();
+                        }                        
                       }
-                      card.RunGraph(0);                                            
+                      catch (Exception ex)
+                      {
+                        Log.Error("failed to preload card '{0}', ex = {1}", card.Name, ex);
+                      }                                       
                     }
                     else
                     {

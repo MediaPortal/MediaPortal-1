@@ -228,6 +228,20 @@ namespace SetupTv.Sections
         return;
       }
       buttonRestart.Text = "Stop Service";
+      if (!ServiceHelper.IsInitialized)
+      {
+        mpButtonReGrabEpg.Enabled = false;
+        mpButtonTimeShift.Text = "Start TimeShift";
+        mpButtonTimeShift.Enabled = false;
+        mpButtonRec.Text = "Record";
+        mpButtonRec.Enabled = false;
+        mpGroupBox1.Visible = false;
+        comboBoxGroups.Enabled = false;
+        mpComboBoxChannels.Enabled = false;
+        mpListView1.Items.Clear();
+        return;
+      }
+        
       if (!buttonRestart.Visible)
         buttonRestart.Visible = true;
       mpButtonReGrabEpg.Enabled = true;
@@ -456,7 +470,10 @@ namespace SetupTv.Sections
         RemoteControl.Clear();
         if (ServiceHelper.IsStopped)
         {
-          if (ServiceHelper.Start()) {}
+          if (ServiceHelper.Start())
+          {
+            ServiceHelper.WaitInitialized();
+          }
         }
         else if (ServiceHelper.IsRunning)
         {
