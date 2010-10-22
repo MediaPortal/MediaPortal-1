@@ -1291,7 +1291,10 @@ namespace TvEngine.PowerScheduler
         psi.WindowStyle = ProcessWindowStyle.Minimized;
         psi.Arguments = action;
         psi.ErrorDialog = false;
-        psi.Verb = "runas";
+        if (OSInfo.OSInfo.VistaOrLater())
+        {
+          psi.Verb = "runas";
+        }
 
         p.StartInfo = psi;
         LogVerbose("Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
