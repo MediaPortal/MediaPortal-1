@@ -23,6 +23,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -1271,7 +1272,11 @@ namespace MediaPortal.Plugins.Process
         }
         catch (Exception ex)
         {
-          Log.Error(ex);
+          string tvpluginDir = Config.GetSubFolder(Config.Dir.Plugins, "windows") + "TvPlugin.dll";
+          if (File.Exists(tvpluginDir))
+          {
+            Log.Error(ex);
+          }
           // Should we also clear the connection? 
           //RemotePowerControl.Clear();
         }
