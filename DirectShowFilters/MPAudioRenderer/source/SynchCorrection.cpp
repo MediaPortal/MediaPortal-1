@@ -21,13 +21,7 @@
 
 extern void Log(const char *fmt, ...);
 
-SynchCorrection::SynchCorrection(void) :
-  m_dBiasCorrection(0.0001),
-  m_dBiasDir(0),
-  m_dAVmult(1.0),
-  m_ullTotalTime(0),
-  m_ullClockError(0),
-  m_dlastAdjustment(1.0)
+SynchCorrection::SynchCorrection(void) 
 {
   m_pDebugLine = new char[1023];
   Reset();
@@ -97,8 +91,9 @@ char* SynchCorrection::DebugData()
     m_AVTracker.GetAudioResampled(),
     m_Bias.GetAdjustment(),
     m_dAVmult,
-    TotalAudioDrift(m_dAVmult, m_Bias.GetAdjustment(), m_Bias.GetAdjustments(), m_Adjustment.GetAdjustments(), 
-    m_AVTracker.GetAudioProcessed(), m_AVTracker.GetAudioResampled(), m_Bias.GetTotalBaseTime()));
+    TotalAudioDrift(m_dAVmult, m_Bias.GetAdjustment(), m_Bias.GetAdjustments(), 
+      m_Adjustment.GetAdjustments(), m_AVTracker.GetAudioProcessed(), 
+      m_AVTracker.GetAudioResampled(), m_Bias.GetTotalBaseTime()));
 
   return m_pDebugLine;
 }
@@ -160,7 +155,9 @@ double SynchCorrection::GetBias()
   return m_Bias.GetAdjustment();
 }
 
-double SynchCorrection::TotalAudioDrift(double AVMult,double biasMultiplier, INT64 biasAdjustment, INT64 adjustmentAdjustment, INT64 totalAudioProcessed, INT64 totalAudioAfterSampling, INT64 totalBaseTime)
+double SynchCorrection::TotalAudioDrift(double AVMult,double biasMultiplier, INT64 biasAdjustment, 
+                                        INT64 adjustmentAdjustment, INT64 totalAudioProcessed, 
+                                        INT64 totalAudioAfterSampling, INT64 totalBaseTime)
 {
   //We expect that the expected 
 //  UINT64 referenceTime = totalBaseTime+biasAdjustment+adjustmentAdjustment;
@@ -174,12 +171,15 @@ double SynchCorrection::TotalAudioDrift(double AVMult,double biasMultiplier, INT
 	return m_AVTracker.GetCurrentDrift(AVMult);
 }
 
-double SynchCorrection::GetRequiredAdjustment(long sampleTime, double biasMultiplier, double AVMult, INT64 biasAdjustment, INT64 adjustmentAdjustment, INT64 totalAudioProcessed, INT64 totalAudioAfterSampling, INT64 totalBaseTime)
+double SynchCorrection::GetRequiredAdjustment(long sampleTime, double biasMultiplier, double AVMult, 
+                                              INT64 biasAdjustment, INT64 adjustmentAdjustment, 
+                                              INT64 totalAudioProcessed, INT64 totalAudioAfterSampling, INT64 totalBaseTime)
 {
   double ret = AVMult;
   double allowableDrift = 10000.0; // 1 ms
   double adjustmentFactor = 0.005; // 0.5%
-  double totalAudioDrift = TotalAudioDrift(AVMult,biasMultiplier,biasAdjustment,adjustmentAdjustment,totalAudioProcessed,totalAudioAfterSampling,totalBaseTime);
+  double totalAudioDrift = TotalAudioDrift(AVMult, biasMultiplier, biasAdjustment,
+    adjustmentAdjustment, totalAudioProcessed, totalAudioAfterSampling, totalBaseTime);
   if (totalAudioDrift > allowableDrift)
   { // we've stretched too much shift down for a while
     ret = AVMult - adjustmentFactor;
