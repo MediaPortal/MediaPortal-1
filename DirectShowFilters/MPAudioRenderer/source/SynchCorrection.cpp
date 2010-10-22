@@ -18,6 +18,7 @@
 #include "AudioClockTracker.h"
 #include <stddef.h>
 #include <stdarg.h>
+#include "alloctracing.h"
 
 extern void Log(const char *fmt, ...);
 
@@ -29,7 +30,7 @@ SynchCorrection::SynchCorrection(void)
 
 SynchCorrection::~SynchCorrection(void)
 {
-  delete m_pDebugLine;
+  delete[] m_pDebugLine;
 }
 
 void SynchCorrection::Reset()

@@ -57,9 +57,11 @@ public:
 
 private:
   INT64 GetAudioTime();
-  double GetRequiredAdjustment(long sampleTime, double biasMultiplier, double AVMult, INT64 biasAdjustment, INT64 adjustmentAdjustment, INT64 totalAudioProcessed, INT64 totalAudioAfterSampling, INT64 totalBaseTime);
+  double GetRequiredAdjustment(long sampleTime, double biasMultiplier, double AVMult, INT64 biasAdjustment, 
+    INT64 adjustmentAdjustment, INT64 totalAudioProcessed, INT64 totalAudioAfterSampling, INT64 totalBaseTime);
   INT64 GetResampledAudioTime();
-  double TotalAudioDrift(double AVMult,double biasMultiplier,INT64 biasAdjustment, INT64 adjustmentAdjustment, INT64 totalAudioProcessed, INT64 totalAudioAfterSampling, INT64 totalBaseTime);
+  double TotalAudioDrift(double AVMult, double biasMultiplier, INT64 biasAdjustment, INT64 adjustmentAdjustment, 
+    INT64 totalAudioProcessed, INT64 totalAudioAfterSampling, INT64 totalBaseTime);
 
   double m_dBiasCorrection;
   double m_dlastAdjustment;

@@ -15,6 +15,7 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include "AudioClockTracker.h"
+#include "alloctracing.h"
 
 AudioClockTracker::AudioClockTracker()
 {

@@ -147,6 +147,7 @@ CMPAudioRenderer::~CMPAudioRenderer()
 
   delete m_pSoundTouch;
   delete m_pRenderDevice;
+  delete m_pClock;
 
   if (m_pReferenceClock)
   {
