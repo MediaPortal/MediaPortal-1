@@ -492,13 +492,16 @@ internal class Grabber : IIMDBScriptGrabber
       // Runtime
       regexPattern =
         "<h5>Runtime:</h5>.*?(?<movieRuntime>\\d+)\\smin\\s+|(?<movieRuntime>\\d+)\\smin&nbsp;&nbsp;-&nbsp;&nbsp;";
-      int runtime = int.Parse(Regex.Match(strBody, regexPattern).Groups["movieRuntime"].Value);
-      movieDetails.RunTime = runtime;
+      int runtime;
+      if (int.TryParse(Regex.Match(strBody, regexPattern).Groups["movieRuntime"].Value,out runtime))
+      {
+        movieDetails.RunTime = runtime;
+      }
 
       // Tagline
       regexPattern =
         @"<h5>Tagline.</h5>[^>]+>[^\r]?(?<movieTagline>[^<]+)|<h4[^>]*>Tagline[s]?:</h4>[\s\f\r]*(?<movieTagline>[^<]+)";
-      string tagline = Regex.Match(strBody, regexPattern).Groups["movieTagline"].Value;
+      string tagline = Regex.Match(strBody, regexPattern).Groups["movieTagline"].Value.Replace("\n", string.Empty);;
       movieDetails.TagLine = HttpUtility.HtmlDecode(tagline);
 
       // Rating
