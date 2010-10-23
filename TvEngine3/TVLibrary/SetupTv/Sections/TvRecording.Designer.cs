@@ -396,6 +396,7 @@ namespace SetupTv.Sections
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.AutoSize = true;
       this.groupBox2.Controls.Add(this.labelCustomFormat);
       this.groupBox2.Controls.Add(this.textBoxCustomFormat);
       this.groupBox2.Controls.Add(this.comboBoxFormat);
@@ -686,6 +687,7 @@ namespace SetupTv.Sections
       this.groupBoxRecordSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxRecordSettings.AutoSize = true;
       this.groupBoxRecordSettings.Controls.Add(this.buttonSameRecFolder);
       this.groupBoxRecordSettings.Controls.Add(this.textBoxRecordingFormat);
       this.groupBoxRecordSettings.Controls.Add(this.pictureBox1);
@@ -905,6 +907,7 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPostRec)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPreRec)).EndInit();
       this.tpCustom.ResumeLayout(false);
+      this.tpCustom.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
       this.groupBox3.ResumeLayout(false);
@@ -912,6 +915,7 @@ namespace SetupTv.Sections
       this.tpDiskQuota.ResumeLayout(false);
       this.tpDiskQuota.PerformLayout();
       this.tpRecording.ResumeLayout(false);
+      this.tpRecording.PerformLayout();
       this.groupBoxRecordSettings.ResumeLayout(false);
       this.groupBoxRecordSettings.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
