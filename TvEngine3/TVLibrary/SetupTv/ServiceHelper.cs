@@ -129,8 +129,10 @@ namespace SetupTv
 
       // Note if millisecondsTimeout = 0, we never enter the loop and always return false
       // There is no way to determine if TvService is initialized without waiting
-      while (DateTime.Now < expires)
+      int tries = 0;
+      while (DateTime.Now < expires || tries == 0)
       {
+        tries++;
         try
         {
           RemoteControl.Clear();
