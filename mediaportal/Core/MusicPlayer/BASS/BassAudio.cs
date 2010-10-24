@@ -2729,9 +2729,13 @@ namespace MediaPortal.Player
       _CrossFading = false;
 
       int stream = GetCurrentStream();
-      Log.Debug("BASS: Stop of stream {0}", stream);
+      Log.Debug("BASS: Stop of stream {0}. File: {1}", stream, CurrentFile);
       try
       {
+        // Unregister all SYNCs and free the channel manually.
+        // Otherwise, the HandleSongEnded would be called twice
+        UnregisterPlaybackEvents(stream, StreamEventSyncHandles[CurrentStreamIndex]);
+
         if (_SoftStop)
         {
           Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, -1, 500);
