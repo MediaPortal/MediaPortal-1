@@ -32,15 +32,17 @@ void AudioClockTracker::Reset()
   m_dAudioResampledError = 0.0;
   m_llAudioProcessed = 0;
   m_llAudioResampled = 0;
-  m_dAudioDriftCorrected = 0.0;
-  m_dAudioDrift = 0.0;
   m_dUndriftedAudioProcessed = 0.0;
   m_dDriftedAudioProcessed = 0.0; 
 }
 
-void AudioClockTracker::ResampleComplete(double sampleTime, double resampleTime, double AVMult)
+void AudioClockTracker::ResampleComplete(double sampleTime, double resampleTime, double bias, double adjustment, double AVMult)
 {
-  m_dUndriftedAudioProcessed += resampleTime / AVMult;
+  // Work out how much the resampling would have been if not for the hardware clock adjustment
+  // it is unreliable as it applies over the whole stream length - not just this sample
+  // i.e. a change in the hardware clock adjustment needs to be applied retrospectively to any
+  // already processed samples
+  m_dUndriftedAudioProcessed += sampleTime * bias * adjustment;
   m_dDriftedAudioProcessed += resampleTime;
   m_llAudioProcessed += (INT64)sampleTime;
   m_llAudioResampled += (INT64)resampleTime;
@@ -56,11 +58,6 @@ void AudioClockTracker::ResampleComplete(double sampleTime, double resampleTime,
     m_llAudioResampled++;
     m_dAudioResampledError -= 1.0;
   }
-}
-
-void AudioClockTracker::DriftCorrected(double correctionAmount)
-{
-  m_dAudioDriftCorrected += correctionAmount;
 }
 
 double AudioClockTracker::GetCurrentDrift(double AVMult)

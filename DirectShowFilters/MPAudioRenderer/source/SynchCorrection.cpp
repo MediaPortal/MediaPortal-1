@@ -40,7 +40,6 @@ void SynchCorrection::Reset()
   m_dBiasDir = 0;
   m_dAVmult = 1.0;
   m_ullTotalTime = 0;
-  m_ullClockError = 0;
   m_dlastAdjustment = 1.0;
 
   m_Bias.Reset();
@@ -48,53 +47,35 @@ void SynchCorrection::Reset()
   m_AVTracker.Reset();
 }
 
-double SynchCorrection::SuggestedAudioMultiplier(INT64 sampleLength)
+double SynchCorrection::SuggestedAudioMultiplier(double sampleLength)
 {
-  return GetRequiredAdjustment(sampleLength, m_Bias.GetAdjustment(), m_dAVmult, 
-    m_Bias.GetAdjustments(), m_Adjustment.GetAdjustments(), m_AVTracker.GetAudioProcessed(), 
-    m_AVTracker.GetAudioResampled(), m_Bias.GetTotalBaseTime());
+  return GetRequiredAdjustment(sampleLength,  m_dAVmult);
 }
 
 // call after resampling to indicate what was resampled
-void SynchCorrection::AudioResampled(double sourceLength, double resampleLength, double driftFactor)
+void SynchCorrection::AudioResampled(double sourceLength, double resampleLength,double bias, double adjustment, double driftFactor)
 {
-  m_AVTracker.ResampleComplete(sourceLength, resampleLength, driftFactor);
-  if (m_AVTracker.GetAudioProcessed() != 0 && m_ullClockError == 0)
-  {
-    m_ullClockError = m_Bias.GetTotalBaseTime() - m_Bias.GetAdjustments() - m_Adjustment.GetAdjustments();
-  }
+  m_AVTracker.ResampleComplete(sourceLength, resampleLength, bias, adjustment, driftFactor);
 }
 
-INT64 SynchCorrection::GetAudioTime()
-{
-  return m_AVTracker.GetAudioProcessed();
-}
 
-INT64 SynchCorrection::GetResampledAudioTime()
-{
-  return m_AVTracker.GetAudioResampled();
-}
 double SynchCorrection::GetCurrentDrift()
 {
-  return TotalAudioDrift(m_dAVmult, m_Bias.GetAdjustment(), m_Bias.GetAdjustments(), 
-    m_Adjustment.GetAdjustments(), m_AVTracker.GetAudioProcessed(), 
-    m_AVTracker.GetAudioResampled(), m_Bias.GetTotalBaseTime());
+  return TotalAudioDrift(m_dAVmult);
 }
 
 char* SynchCorrection::DebugData()
 {
-  sprintf(m_pDebugLine,"Base Clock : %I64d clock error : %I64d adjAdjustments : %I64d biasAdjustments : %I64d Audio Processed : %I64d Audio Out : %I64d bias : %f Drift Multiplier : %f Drift : %f",
+  sprintf(m_pDebugLine,"Base Clock : %I64d adjAdjustments : %I64d biasAdjustments : %I64d Audio Processed : %I64d Audio Out : %I64d bias : %f adjustment : %f Drift Multiplier : %f Drift : %f",
     m_Bias.GetTotalBaseTime(),
-    m_ullClockError,
     m_Adjustment.GetAdjustments(),
     m_Bias.GetAdjustments(),
     m_AVTracker.GetAudioProcessed(),
     m_AVTracker.GetAudioResampled(),
     m_Bias.GetAdjustment(),
+    m_Adjustment.GetAdjustment(),
     m_dAVmult,
-    TotalAudioDrift(m_dAVmult, m_Bias.GetAdjustment(), m_Bias.GetAdjustments(), 
-      m_Adjustment.GetAdjustments(), m_AVTracker.GetAudioProcessed(), 
-      m_AVTracker.GetAudioResampled(), m_Bias.GetTotalBaseTime()));
+    TotalAudioDrift(m_dAVmult));
 
   return m_pDebugLine;
 }
@@ -134,9 +115,19 @@ void SynchCorrection::SetAdjustment(double adjustment)
   m_Adjustment.SetAdjuster(adjustment);
 }
 
+double SynchCorrection::GetAdjustment()
+{
+  return m_Adjustment.GetAdjustment();
+}
+
 void SynchCorrection::SetBias(double bias)
 {
   m_Bias.SetAdjuster(bias);
+}
+
+double SynchCorrection::GetBias()
+{
+  return m_Bias.GetAdjustment();
 }
 
 // recalculation of the delta value for the reference clock
@@ -146,48 +137,24 @@ INT64 SynchCorrection::GetCorrectedTimeDelta(INT64 time)
   return time + m_Bias.Adjustment(time, m_Adjustment.GetAdjustment()) + m_Adjustment.Adjustment(time);
 }
 
-double SynchCorrection::GetAdjustment()
+// get the current drift
+double SynchCorrection::TotalAudioDrift(double AVMult)
 {
-  return m_Adjustment.GetAdjustment();
+  return m_AVTracker.GetCurrentDrift(AVMult);
 }
 
-double SynchCorrection::GetBias()
-{
-  return m_Bias.GetAdjustment();
-}
-
-double SynchCorrection::TotalAudioDrift(double AVMult,double biasMultiplier, INT64 biasAdjustment, 
-                                        INT64 adjustmentAdjustment, INT64 totalAudioProcessed, 
-                                        INT64 totalAudioAfterSampling, INT64 totalBaseTime)
-{
-  //We expect that the expected 
-//  UINT64 referenceTime = totalBaseTime+biasAdjustment+adjustmentAdjustment;
-  //(referenceTime-m_ullClockError)*AVMult = stream time on the reference clock adjusted for drift (this should be already output)
-  // (double)(totalAudioProcessed-totalBaseTime+m_ullClockError) = remaining audio in buffer
-  //  (double)(totalAudioProcessed-totalBaseTime+m_ullClockError) * biasMultiplier * AVMult = what the resampling should be
-  // m_ullClockError needs to be within a second or two or the stream start (ideally should be after)
-//  double expectedProcessedAudio = (double) (referenceTime-m_ullClockError)*AVMult + (double)(totalAudioProcessed-totalBaseTime+m_ullClockError) * biasMultiplier * AVMult;
-
-//  return totalAudioAfterSampling - expectedProcessedAudio;
-	return m_AVTracker.GetCurrentDrift(AVMult);
-}
-
-double SynchCorrection::GetRequiredAdjustment(long sampleTime, double biasMultiplier, double AVMult, 
-                                              INT64 biasAdjustment, INT64 adjustmentAdjustment, 
-                                              INT64 totalAudioProcessed, INT64 totalAudioAfterSampling, INT64 totalBaseTime)
+// get the adjustment required to match the hardware clocks
+double SynchCorrection::GetRequiredAdjustment(double sampleTime, double AVMult)
 {
   double ret = AVMult;
-  double allowableDrift = 10000.0; // 1 ms
-  double adjustmentFactor = 0.005; // 0.5%
-  double totalAudioDrift = TotalAudioDrift(AVMult, biasMultiplier, biasAdjustment,
-    adjustmentAdjustment, totalAudioProcessed, totalAudioAfterSampling, totalBaseTime);
-  if (totalAudioDrift > allowableDrift)
+  double totalAudioDrift = TotalAudioDrift(AVMult);
+  if (totalAudioDrift > ALLOWED_DRIFT)
   { // we've stretched too much shift down for a while
-    ret = AVMult - adjustmentFactor;
+    ret = AVMult - CORRECTION_RATE;
   }
-  if (totalAudioDrift < allowableDrift * -1.0)
+  if (totalAudioDrift < ALLOWED_DRIFT * -1.0)
   { // haven't streched enough
-    ret = AVMult + adjustmentFactor;
+    ret = AVMult + CORRECTION_RATE;
   } 
   return ret;
 }

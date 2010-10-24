@@ -38,7 +38,7 @@ public:
   HRESULT Run(REFERENCE_TIME tStart);
   void GetClockData(CLOCKDATA *pClockData);
 
-  void AudioResampled(double sourceLength, double resampleLength, double driftMultiplier);
+  void AudioResampled(double sourceLength, double resampleLength, double bias, double adjustment, double driftMultiplier);
   double SuggestedAudioMultiplier(UINT64 sampleLength);
   double GetBias();
   char* DebugData();

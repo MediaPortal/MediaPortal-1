@@ -88,10 +88,10 @@ void CSyncClock::GetClockData(CLOCKDATA *pClockData)
   pClockData->resamplingAdjustment = m_dSuggestedAudioMultiplier;
 }
 
-void CSyncClock::AudioResampled(double sourceLength, double resampleLength,double driftMultiplier)
+void CSyncClock::AudioResampled(double sourceLength, double resampleLength, double bias, double adjustment, double driftMultiplier)
 {
   CAutoLock cObjectLock(this);
-  m_SynchCorrection.AudioResampled(sourceLength, resampleLength, driftMultiplier); 
+  m_SynchCorrection.AudioResampled(sourceLength, resampleLength, bias, adjustment, driftMultiplier); 
 }
 
 char* CSyncClock::DebugData()

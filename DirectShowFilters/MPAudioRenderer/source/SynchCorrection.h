@@ -24,6 +24,8 @@
 // TODO use enum?
 #define DIRUP 1 // speeding up the clock as calculated bias is too high
 #define DIRDOWN -1 // slowing downthe clock as calculated bias is too low
+#define ALLOWED_DRIFT 10000.0 //allow drift to go to 1 ms before correction
+#define CORRECTION_RATE 0.005 //apply this extra correction when the ALLOWED_DRIFT is breached 0.5%
 
 class SynchCorrection
 {
@@ -35,33 +37,32 @@ public:
   void Reset();
   
   // Suggested adjustment - this can be ignored if you want
-  // I'll add in some logic to keep it at 1.0 if the material is near 1:1
-  // sample length is not currently used - but it could be useful
-  double SuggestedAudioMultiplier(INT64 sampleLength);
+  double SuggestedAudioMultiplier(double sampleLength);
   // call after resampling to indicate what was resampled
-  void AudioResampled(double sourceLength, double resampleLength,double driftFactor);
+  void AudioResampled(double sourceLength, double resampleLength,double bias, double adjustment, double driftFactor);
   // estimate of the current drift
   double GetCurrentDrift();
+
   // The current AV Drift (mult) value
-  // I still don't have a picture of what >1 means so I still might have it wrong
+  // This is the difference in hardware clocks
   void SetAVMult(double mult);
   double GetAVMult();
+
   // Used for the adjustment - it also corrects bias
   void SetAdjustment(double adjustment);
+  double GetAdjustment();
+
   void SetBias(double bias);
+  double GetBias();
+
   // Recalculation of the delta value for the reference clock
   INT64 GetCorrectedTimeDelta(INT64 time);
-  double GetAdjustment();
-  double GetBias();
+  // This is used for degugging
   char* DebugData();
 
 private:
-  INT64 GetAudioTime();
-  double GetRequiredAdjustment(long sampleTime, double biasMultiplier, double AVMult, INT64 biasAdjustment, 
-    INT64 adjustmentAdjustment, INT64 totalAudioProcessed, INT64 totalAudioAfterSampling, INT64 totalBaseTime);
-  INT64 GetResampledAudioTime();
-  double TotalAudioDrift(double AVMult, double biasMultiplier, INT64 biasAdjustment, INT64 adjustmentAdjustment, 
-    INT64 totalAudioProcessed, INT64 totalAudioAfterSampling, INT64 totalBaseTime);
+  double GetRequiredAdjustment(double sampleTime, double AVMult);
+  double TotalAudioDrift(double AVMult);
 
   double m_dBiasCorrection;
   double m_dlastAdjustment;
@@ -72,5 +73,4 @@ private:
   ClockAdjuster m_Adjustment;
   AudioClockTracker m_AVTracker;
   char* m_pDebugLine;
-  INT64 m_ullClockError;
 };

@@ -26,10 +26,13 @@ public:
   ~AudioClockTracker();
   void Reset();
 
-  void ResampleComplete(double sampleTime, double resampleTime, double AVMult);
-  void DriftCorrected(double correctionAmount);
+  // informs code that a resample has been done
+  void ResampleComplete(double sampleTime, double resampleTime, double bias, double adjustment, double AVMult);
+  // debug information on amount processed (in non-corrected time)
   INT64 GetAudioProcessed();
+  // debug information on amount processed through resampler
   INT64 GetAudioResampled();
+  // the current uncorrected drift
   double GetCurrentDrift(double AVMult);
 
 protected:
@@ -38,8 +41,6 @@ protected:
   double m_dUndriftedAudioProcessed;
   double m_dDriftedAudioProcessed;
   double m_dAudioResampledError;
-  double m_dAudioDrift;
-  double m_dAudioDriftCorrected;
   INT64 m_llAudioProcessed;
   INT64 m_llAudioResampled;
 };

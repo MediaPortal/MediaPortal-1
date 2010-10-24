@@ -24,13 +24,18 @@ public:
   ClockAdjuster(void);
   ~ClockAdjuster(void);
   void Reset();
-  
+  // get / set pair for the multiplier
   void SetAdjuster(double val);
   double GetAdjustment();
+  // returns the total adjustments made
   INT64 GetAdjustments();
+  // returns the time over which the adjustments are made
   INT64 GetTotalBaseTime();
   // reference clock delta in relation to this adjuster
   virtual INT64 Adjustment(INT64 time);
+  // gets the delta relative to another adjustment value
+  // i.e. if sample is x ms adjustment is x*y ms 
+  // if another adjustment is present then x*y*z
   INT64 ClockAdjuster::Adjustment(UINT64 time, double otherMultiplier);
 
 protected:

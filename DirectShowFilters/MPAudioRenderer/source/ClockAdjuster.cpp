@@ -65,7 +65,7 @@ INT64 ClockAdjuster::Adjustment(INT64 time)
     m_dError = fullAdjustment-(double)time - (double)ret;
     return ret;
 }
-// reference clock delta in relation to this adjuster
+// reference clock delta in relation to this adjuster corrected for a second adjuster
 INT64 ClockAdjuster::Adjustment(UINT64 time, double otherMultiplier)
 {
   INT64 ret = 0;

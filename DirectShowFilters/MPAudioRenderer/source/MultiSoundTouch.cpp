@@ -320,12 +320,14 @@ DWORD CMultiSoundTouch::ResampleThread()
             double rtSampleDuration = (double)nInFrames * (double)UNITS / (double)m_pWaveFormat->Format.nSamplesPerSec;
             double rtProcessedSampleDuration = (double)nOutFrames * (double)UNITS / (double)m_pWaveFormat->Format.nSamplesPerSec;
 
-            dur += rtSampleDuration / 10000.0;
-            durRes += estimatedSampleDuration / 10000.0;
-            m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, AVMult);
+            m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, bias, adjustment, AVMult);
             
             //Log("%s",m_pClock->DebugData());
-            //Log("adjustment: %f durr: %f est %f diff %f %I64d %f %f frames: %d outFrames: %d", adjustment, dur, durRes, dur - durRes, rtSampleDuration, rtSampleDuration/10000.0, rtProcessedSampleDuration / 10000.0, nInFrames, nOutFrames); 
+            /*
+            dur += rtSampleDuration / 10000.0;
+            durRes += estimatedSampleDuration / 10000.0;
+            Log("adjustment: %f durr: %f est %f diff %f %I64d %f %f frames: %d outFrames: %d", adjustment, dur, durRes, dur - durRes, rtSampleDuration, rtSampleDuration/10000.0, rtProcessedSampleDuration / 10000.0, nInFrames, nOutFrames); 
+            */
           }
 
           if ((!m_pEncoder && nOutFrames > 0) || (m_pEncoder && nOutFrames >= AC3_FRAME_LENGHT))
