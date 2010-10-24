@@ -72,6 +72,13 @@ double CSyncClock::Adjustment()
   return m_dAdjustment;
 }
 
+HRESULT CSyncClock::Run(REFERENCE_TIME /*tStart*/)
+{
+  m_SynchCorrection.Reset();
+  m_SynchCorrection.SetBias(m_dBias);
+  return S_OK;
+}
+
 void CSyncClock::GetClockData(CLOCKDATA *pClockData)
 {
   // pClockData pointer is validated already in CMPAudioRenderer
@@ -142,9 +149,6 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
       m_ullStartTimeHW = m_ullPrevTimeHW = hwClock;
       m_ullStartQpcHW = m_ullPrevQpcHW = hwQpc;
       m_ullStartTimeSystem = qpcNow;
-      
-      m_SynchCorrection.Reset();
-      m_SynchCorrection.SetBias(m_dBias);
     }
     else
     {
@@ -159,8 +163,8 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
       if (m_dSystemClockMultiplier < 0.95 || m_dSystemClockMultiplier > 1.05)
         m_dSystemClockMultiplier = prevMultiplier;
 
-	  if (m_bHWBasedRefClock)
-	  {
+      if (m_bHWBasedRefClock)
+      {
         m_SynchCorrection.SetAVMult(m_dSystemClockMultiplier);
       }
 
@@ -187,7 +191,6 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
   }
 
   m_ullPrevSystemTime = qpcNow;
-  
 
   INT64 synchCorrectedDelta = m_SynchCorrection.GetCorrectedTimeDelta(deltaOrig);
 

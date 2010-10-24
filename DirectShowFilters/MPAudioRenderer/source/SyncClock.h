@@ -35,6 +35,7 @@ public:
 
   double Bias();
   double Adjustment();
+  HRESULT Run(REFERENCE_TIME tStart);
   void GetClockData(CLOCKDATA *pClockData);
 
   void AudioResampled(double sourceLength, double resampleLength, double driftMultiplier);
