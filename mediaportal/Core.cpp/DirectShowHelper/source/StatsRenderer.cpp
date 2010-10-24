@@ -243,7 +243,7 @@ void StatsRenderer::DrawStats()
       CLOCKDATA clockData;
       m_pPresenter->m_pAVSyncClock->GetClockData(&clockData);
 
-      strText.Format("HW vs system: %.7fx HW vs. sys: %+.3f ms resampling adj.: %.3f ms Adj drift: %+.3f ms", 
+      strText.Format("HW vs system: %.7fx HW vs. sys: %+.3f ms resampling adj.: %.3f Adj drift: %+.3f ms", 
         clockData.driftMultiplier, clockData.driftHWvsSystem, clockData.resamplingAdjustment, clockData.currentDrift);
       DrawText(rc, strText);
       OffsetRect(&rc, 0, TextHeight);
