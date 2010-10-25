@@ -10,8 +10,18 @@
     <BandWidth>8</BandWidth>
     <Offset>0</Offset>
   </DVBTTuning>
+    <DVBTTuning>
+    <Frequency>634000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>0</Offset>
+  </DVBTTuning>
   <DVBTTuning>
     <Frequency>666000</Frequency>
+    <BandWidth>8</BandWidth>
+    <Offset>0</Offset>
+  </DVBTTuning>
+    <DVBTTuning>
+    <Frequency>714000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>0</Offset>
   </DVBTTuning>
