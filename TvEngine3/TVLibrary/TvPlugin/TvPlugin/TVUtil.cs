@@ -587,7 +587,7 @@ namespace TvPlugin
     {
       bool wasDeleted = CancelEpisode(canceledStartTime, parentSchedule, idChannel);
 
-      if (!wasDeleted || canceledStartTime == schedule.StartTime)
+      if (!wasDeleted && canceledStartTime == schedule.StartTime)
       {
         wasDeleted = DeleteSchedule(schedule.IdSchedule);
         StopRecording(schedule);
