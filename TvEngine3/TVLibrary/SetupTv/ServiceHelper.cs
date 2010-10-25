@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Security.AccessControl;
 using System.ServiceProcess;
 using System.Threading;
 using Microsoft.Win32;
@@ -74,15 +75,15 @@ namespace SetupTv
           using (ServiceController sc = new ServiceController("TvService"))
           {
             return sc.Status == ServiceControllerStatus.Running;
-          }
+        }
         }
         catch (Exception ex)
         {
-          Log.Error(
+            Log.Error(
             "ServiceHelper: Check whether the tvservice is running failed. Please check your installation. \nError: {0}",
-            ex.ToString());
+              ex.ToString());
           return false;
-        }
+          }
       }
     }
 
@@ -117,22 +118,21 @@ namespace SetupTv
     {
       try
       {
-        EventWaitHandle initialized = EventWaitHandle.OpenExisting(RemoteControl.InitializedEventName);
+        EventWaitHandle initialized = EventWaitHandle.OpenExisting(RemoteControl.InitializedEventName, EventWaitHandleRights.Synchronize);
         return initialized.WaitOne(millisecondsTimeout);
       }
-      catch (Exception) // either we have no right, or the event does not exist
+      catch (Exception ex) // either we have no right, or the event does not exist
       {
-        // do nothing about it
+        Log.Error("Failed to wait for {0}", RemoteControl.InitializedEventName);
+        Log.Write(ex);
       }
       // Fall back: try to call a method on the server (for earlier versions of TvService)
       DateTime expires = millisecondsTimeout == -1? DateTime.MaxValue : DateTime.Now.AddMilliseconds(millisecondsTimeout);
 
       // Note if millisecondsTimeout = 0, we never enter the loop and always return false
       // There is no way to determine if TvService is initialized without waiting
-      int tries = 0;
-      while (DateTime.Now < expires || tries == 0)
+      while (DateTime.Now < expires)
       {
-        tries++;
         try
         {
           RemoteControl.Clear();
@@ -147,14 +147,14 @@ namespace SetupTv
         {
           Log.Info("ServiceHelper: Waiting for tvserver to initialize. (socket not initialized)");
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
           Log.Error(
             "ServiceHelper: Could not check whether the tvservice is running. Please check your network as well. \nError: {0}",
             ex.ToString());
           break;
         }
-        Thread.Sleep(250); 
+        Thread.Sleep(250);
       }
       return false;
     }
@@ -178,9 +178,9 @@ namespace SetupTv
           Log.Error(
             "ServiceHelper: Check whether the tvservice is stopped failed. Please check your installation. \nError: {0}",
             ex.ToString());
-          return false;
-        }
+        return false;
       }
+    }
     }
 
     /// <summary>
@@ -201,7 +201,7 @@ namespace SetupTv
             case ServiceControllerStatus.StopPending:
               break;
             case ServiceControllerStatus.Stopped:
-              return true;
+            return true;
             default:
               return false;
           }
@@ -214,8 +214,8 @@ namespace SetupTv
         Log.Error(
           "ServiceHelper: Stopping tvservice failed. Please check your installation. \nError: {0}",
           ex.ToString());
-        return false;
-      }
+      return false;
+    }
     }
 
     /// <summary>
@@ -241,7 +241,7 @@ namespace SetupTv
             case ServiceControllerStatus.StartPending:
               break;
             case ServiceControllerStatus.Running:
-              return true;
+            return true;
             default:
               return false;
           }
@@ -254,8 +254,8 @@ namespace SetupTv
         Log.Error(
           "ServiceHelper: Starting {0} failed. Please check your installation. \nError: {1}",
           aServiceName, ex.ToString());
-        return false;
-      }
+      return false;
+    }
     }
 
     /// <summary>

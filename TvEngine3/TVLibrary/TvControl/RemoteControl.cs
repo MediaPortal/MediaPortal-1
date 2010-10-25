@@ -43,7 +43,7 @@ namespace TvControl
   {
     #region consts
 
-    public const string InitializedEventName = "MPTVServiceInitializedEvent";
+    public const string InitializedEventName = @"Global\MPTVServiceInitializedEvent";
 
     private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION = 3000; //msecs
     private const int MAX_WAIT_FOR_SERVER_REMOTING_CONNECTION_INITIAL = 20000; //msecs

@@ -25,6 +25,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Configuration.Install;
 using System.Diagnostics;
+using System.Security.Principal;
 using System.ServiceProcess;
 using System.Threading;
 using System.Windows.Forms;
@@ -38,6 +39,7 @@ using TvEngine;
 using TvEngine.Interfaces;
 using TvLibrary.Interfaces;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
 
 namespace TvService
 {
@@ -297,7 +299,27 @@ namespace TvService
       _powerEventHandlers = new List<PowerEventHandler>();
       GlobalServiceProvider.Instance.Add<IPowerEventHandler>(this);
       AddPowerEventHandler(OnPowerEventHandler);
-      _InitializedEvent = new EventWaitHandle(false, EventResetMode.ManualReset, RemoteControl.InitializedEventName);
+      try
+      {
+        Log.Debug("Setting up EventWaitHandle with name: {0}", RemoteControl.InitializedEventName);
+
+        EventWaitHandleAccessRule rule =
+          new EventWaitHandleAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null),
+                                        EventWaitHandleRights.FullControl, AccessControlType.Allow);
+        EventWaitHandleSecurity sec = new EventWaitHandleSecurity();
+        sec.AddAccessRule(rule);
+        bool eventCreated;
+        _InitializedEvent = new EventWaitHandle(false, EventResetMode.ManualReset, RemoteControl.InitializedEventName,
+                                                out eventCreated, sec);
+        if (!eventCreated)
+        {
+          Log.Info("{0} was not created", RemoteControl.InitializedEventName);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
       // setup the remoting channels
       try
       {
@@ -741,7 +763,10 @@ namespace TvService
         return;
       Log.WriteFile("TV Service: stopping");
 
-      _InitializedEvent.Reset();
+      if (_InitializedEvent != null)
+      {
+        _InitializedEvent.Reset(); 
+      }      
       StopRemoting();
       RemoteControl.Clear();
       if (_controller != null)
@@ -768,43 +793,43 @@ namespace TvService
       //System.Diagnostics.Debugger.Launch();
       try
       {
-        if (_started)
-          return;
-
-        Log.Info("TV service: Starting");
-        
-        Thread.CurrentThread.Name = "TVService";
-
-        FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
-
-        Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " +
-                      OSInfo.OSInfo.GetOSDisplayVersion());
-
-        //Check for unsupported operating systems
-        OSPrerequisites.OsCheck(false);
-
-        _powerEventThread = new Thread(PowerEventThread);
-        _powerEventThread.Name = "PowerEventThread";
-        _powerEventThread.IsBackground = true;
-        _powerEventThread.Start();
-        //currentProcess.PriorityClass = ProcessPriorityClass.High;
-        _controller = new TVController();
-        _controller.Init();
-        StartPlugins();
-
-        StartRemoting();
-        _started = true;
-        _InitializedEvent.Set();
-        Log.Info("TV service: Started");
-               
-        //when running as a thread this is needed (work for 1.2 beta rel.) --> 
-        /*while (true)
+        if (!_started)
         {
-          Thread.Sleep(1000);
-        }*/
+          Log.Info("TV service: Starting");
 
-        //System.Diagnostics.Debugger.Launch();
-        //throw new Exception("die");
+          Thread.CurrentThread.Name = "TVService";
+
+          FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
+
+          Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " +
+                        OSInfo.OSInfo.GetOSDisplayVersion());
+
+          //Check for unsupported operating systems
+          OSPrerequisites.OsCheck(false);
+
+          _powerEventThread = new Thread(PowerEventThread);
+          _powerEventThread.Name = "PowerEventThread";
+          _powerEventThread.IsBackground = true;
+          _powerEventThread.Start();
+          //currentProcess.PriorityClass = ProcessPriorityClass.High;
+          _controller = new TVController();
+          _controller.Init();
+          StartPlugins();
+
+          StartRemoting();
+          _started = true;
+          if (_InitializedEvent != null)
+          {
+            _InitializedEvent.Set();
+          }           
+          Log.Info("TV service: Started");
+
+          //when running as a thread this is needed (work for 1.2 beta rel.) --> 
+          /*while (true)
+          {
+            Thread.Sleep(1000);
+          }*/          
+        }
       }      
       catch (Exception ex)
       {
