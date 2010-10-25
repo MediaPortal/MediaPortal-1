@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
     <control>
@@ -113,10 +113,10 @@
           <selectedCard>0</selectedCard>
           <cardWidth>250</cardWidth>
           <cardHeight>360</cardHeight>
-          <angle>45</angle>
-          <sideShift>220</sideShift>
-          <sideGap>150</sideGap>
-          <sideDepth>250</sideDepth>
+          <angle>65</angle>
+          <sideShift>250</sideShift>
+          <sideGap>80</sideGap>
+          <sideDepth>150</sideDepth>
           <offsetY>0</offsetY>
           <selectedOffsetY>0</selectedOffsetY>
           <speed>8</speed>
@@ -245,7 +245,7 @@
                     <description>Director</description>
                     <type>label</type>
                     <posX>20</posX>
-                    <posY>140</posY>
+                    <posY>120</posY>
                     <width>210</width>
                     <label>Director</label>
                     <font>font10</font>
@@ -256,7 +256,7 @@
                     <description>director</description>
                     <type>label</type>
                     <posX>20</posX>
-                    <posY>160</posY>
+                    <posY>140</posY>
                     <width>210</width>
                     <label>#director</label>
                     <font>font9</font>
@@ -267,12 +267,12 @@
                     <description>plot</description>
                     <type>textboxscrollup</type>
                     <posX>20</posX>
-                    <posY>180</posY>
+                    <posY>165</posY>
                     <width>210</width>
-                    <height>150</height>
+                    <height>90</height>
                     <label>#plot</label>
                     <font>font9</font>
-                    <lineSpacing>1</lineSpacing>
+                    <lineSpacing>2</lineSpacing>
                     <textcolor>FFFFFFFF</textcolor>
                   </control>
 
@@ -290,7 +290,7 @@
                     <font>font9</font>
                     <align>left</align>
                     <textcolor>FFFFFFFF</textcolor>
-<visible>no</visible>
+                    <visible>no</visible>
                   </control>
 
 

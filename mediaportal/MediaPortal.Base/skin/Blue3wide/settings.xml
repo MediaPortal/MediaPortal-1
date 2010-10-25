@@ -1,7 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>4</id>
-  <defaultcontrol>3</defaultcontrol>
+  <defaultcontrol>4</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:5</define>
   <define>#header.image:settings_logo.png</define>
@@ -22,21 +22,13 @@
       <posY>206</posY>
       <layout>StackLayout</layout>
       <control>
-        <description>Wizard</description>
-        <type>button</type>
-        <id>3</id>
-        <width>350</width>
-        <label>1200</label>
-        <hyperlink>615</hyperlink>
-        <onup>17</onup>
-      </control>
-      <control>
         <description>General</description>
         <type>button</type>
         <id>4</id>
         <width>350</width>
         <label>128</label>
         <hyperlink>705</hyperlink>
+        <onup>17</onup>
       </control>
       <control>
         <description>Screen</description>

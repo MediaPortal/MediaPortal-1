@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
     <control>
@@ -110,6 +110,107 @@
           <animation effect="rotatey" start="20" end="0" center="525,0" tween="back" ease="easeout"  time="500" reversible="false">unfocus</animation>
       	  <animation effect="rotatey" start="0" end="20" center="525,0"  tween="back" ease="easeout"   time="500" reversible="false">focus</animation>
         </control>
+        <control>
+          <description>Cover Flow view</description>
+          <type>coverflow</type>
+          <colordiffuse>90ffffff</colordiffuse>
+          <dimColor>90ffffff</dimColor>
+          <id>50</id>
+          <posX>0</posX>
+          <posY>150</posY>
+          <width>720</width>
+          <height>576</height>
+          <onup>2</onup>
+          <onleft>2</onleft>
+          <selectedCard>0</selectedCard>
+          <cardWidth>240</cardWidth>
+          <cardHeight>240</cardHeight>
+          <angle>65</angle>
+          <sideShift>150</sideShift>
+          <sideGap>40</sideGap>
+          <sideDepth>180</sideDepth>
+          <offsetY>0</offsetY>
+          <selectedOffsetY>0</selectedOffsetY>
+          <speed>8</speed>
+          <backgroundHeight>576</backgroundHeight>
+          <backgroundWidth>720</backgroundWidth>
+          <backgroundX>0</backgroundX>
+          <backgroundY>170</backgroundY>
+          <backgroundDiffuse>FF000000</backgroundDiffuse>
+          <background>background2.png</background>
+          <showBackground>no</showBackground>
+          <foregroundHeight>576</foregroundHeight>
+          <foregroundWidth>720</foregroundWidth>
+          <foregroundX>0</foregroundX>
+          <foregroundY>0</foregroundY>
+          <foregroundDiffuse>FF000000</foregroundDiffuse>
+          <foreground>coverflow_foreground.png</foreground>
+          <showForeground>yes</showForeground>
+          <showFrame>yes</showFrame>
+          <frame>Picture_cover2.png</frame>
+          <frameFocus>Picture_cover2.png</frameFocus>
+          <frameWidth>240</frameWidth>
+          <frameHeight>240</frameHeight>
+          <spinSpeed>8</spinSpeed>
+          <unfocusedAlpha>FF</unfocusedAlpha>
+          <folderPrefix>[</folderPrefix>
+          <folderSuffix>]</folderSuffix>
+          <font1>font13</font1>
+          <font2>font10</font2>
+          <label1>#title</label1>
+          <label2>#genre</label2>
+          <textColor>FFFFFFFF</textColor>
+          <remoteColor>FFFF0000</remoteColor>
+          <playedColor>FFA0D0FF</playedColor>
+          <downloadColor>FF00FF00</downloadColor>
+          <selectedColor>FFFFFFFF</selectedColor>
+          <shadowAngle>65</shadowAngle>
+          <shadowDistance>0</shadowDistance>
+          <shadowColor>FF000000</shadowColor>
+          <label1YOff>305</label1YOff>
+          <label2YOff>330</label2YOff>
+          <pageSize>100</pageSize>
+          <scrollbarBackground>bar_hor.png</scrollbarBackground>
+          <scrollbarLeft>mouse_left_horizontal.png</scrollbarLeft>
+          <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
+          <scrollbarYOff>345</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <cards flipY="yes" diffuse="Thumb_Mask.png" mask="video_poster_mask.png"></cards>
+          <subitems>
+            <subitem>
+              <![CDATA[                 <controls>
+              <control>
+                <description>background</description>
+                <type>image</type>
+                <posX>0</posX>
+                <posY>0</posY>
+                <width>240</width>
+                <height>240</height>
+                <texture flipY="yes" diffuse="Thumb_Mask.png" mask="video_poster_mask.png">background2.png</texture>
+              </control>
+              <control>
+                <description>Movie Details</description>
+                <type>label</type>
+                <posX>10</posX>
+                <posY>10</posY>
+                <width>210</width>
+                <label>Music Details</label>
+                <font>font10</font>
+                <textcolor>FFFFFFFF</textcolor>
+              </control>
+              <control>
+                <description>genre</description>
+                <type>label</type>
+                <posX>10</posX>
+                <posY>40</posY>
+                <width>210</width>
+                <label>#selecteditem</label>
+                <font>font9</font>
+                <textcolor>FFFFFFFF</textcolor>
+              </control>
+          </controls>]]></subitem>
+      </subitems>
+    </control>
         <control>
           <description>playlist listcontrol</description>
           <type>playlistcontrol</type>

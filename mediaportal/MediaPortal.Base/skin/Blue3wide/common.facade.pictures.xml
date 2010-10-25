@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
     <control>
@@ -58,10 +58,10 @@
           <renderFocusText>no</renderFocusText>
           <renderUnfocusText>yes</renderUnfocusText>
           <showFrame>true</showFrame>
-		  <frameNoFocus>Thumb_frame_nofocus.png</frameNoFocus>
-		  <frameFocus>Thumb_frame_nofocus.png</frameFocus>
-		  <font>font9</font>
-		  <dimColor>ffffffff</dimColor>
+          <frameNoFocus>Thumb_frame_nofocus.png</frameNoFocus>
+          <frameFocus>Thumb_frame_nofocus.png</frameFocus>
+          <font>font9</font>
+          <dimColor>ffffffff</dimColor>
         </control>
         <control>
           <description>Filmstrip view</description>
@@ -87,10 +87,8 @@
           <frame>Picture_cover.png</frame>
           <frameFocus>Picture_cover.png</frameFocus>
           <background>emtpy.png</background>
-          <thumbs flipY="true" diffuse="Thumb_Mask.png">
-          </thumbs>
-          <InfoImage flipY="true" diffuse="Thumb_Mask.png">
-          </InfoImage>
+          <thumbs flipY="true" diffuse="Thumb_Mask.png"></thumbs>
+          <InfoImage flipY="true" diffuse="Thumb_Mask.png"></InfoImage>
           <showFrame>yes</showFrame>
           <showFolder>yes</showFolder>
           <showBackGround>no</showBackGround>
@@ -104,62 +102,115 @@
         <control>
           <description>Cover Flow view</description>
           <type>coverflow</type>
+          <colordiffuse>90ffffff</colordiffuse>
           <dimColor>90ffffff</dimColor>
           <id>50</id>
           <posX>0</posX>
-          <posY>255</posY>
+          <posY>200</posY>
           <width>1280</width>
           <height>720</height>
           <onup>2</onup>
           <onleft>2</onleft>
           <selectedCard>0</selectedCard>
-          <cardWidth>207</cardWidth>
-          <cardHeight>151</cardHeight>
-          <angle>30</angle>
-          <sideShift>100</sideShift>
-          <sideGap>20</sideGap>
-          <sideDepth>50</sideDepth>
+          <cardWidth>360</cardWidth>
+          <cardHeight>360</cardHeight>
+          <angle>65</angle>
+          <sideShift>250</sideShift>
+          <sideGap>80</sideGap>
+          <sideDepth>150</sideDepth>
           <offsetY>0</offsetY>
           <selectedOffsetY>0</selectedOffsetY>
           <speed>8</speed>
-          <backgroundColor>000000FF</backgroundColor>
-          <backgroundHeight>400</backgroundHeight>
+          <backgroundHeight>250</backgroundHeight>
           <backgroundWidth>1280</backgroundWidth>
           <backgroundX>0</backgroundX>
-          <backgroundY>0</backgroundY>
+          <backgroundY>470</backgroundY>
           <backgroundDiffuse>FF000000</backgroundDiffuse>
-          <background>-</background>
-          <showBackground>no</showBackground>
+          <background>background2.png</background>
+          <showBackground>yes</showBackground>
+          <foregroundHeight>720</foregroundHeight>
+          <foregroundWidth>1280</foregroundWidth>
+          <foregroundX>0</foregroundX>
+          <foregroundY>0</foregroundY>
+          <foregroundDiffuse>FF000000</foregroundDiffuse>
+          <foreground>coverflow_foreground.png</foreground>
+          <showForeground>no</showForeground>
           <showFrame>yes</showFrame>
-          <frame>Picture_cover.png</frame>
-          <frameFocus>Picture_cover.png</frameFocus>
+          <frame>Picture_cover2.png</frame>
+          <frameFocus>Picture_cover2.png</frameFocus>
+          <frameWidth>360</frameWidth>
+          <frameHeight>360</frameHeight>
           <spinSpeed>8</spinSpeed>
           <unfocusedAlpha>FF</unfocusedAlpha>
           <folderPrefix>[</folderPrefix>
           <folderSuffix>]</folderSuffix>
           <font1>font13</font1>
           <font2>font10</font2>
-          <label1>#title</label1>
-          <label2>#genre</label2>
+          <label1>#selecteditem</label1>
+          <label2>#selecteditem2</label2>
           <textColor>FFFFFFFF</textColor>
           <remoteColor>FFFF0000</remoteColor>
           <playedColor>FFA0D0FF</playedColor>
           <downloadColor>FF00FF00</downloadColor>
           <selectedColor>FFFFFFFF</selectedColor>
           <shadowAngle>45</shadowAngle>
-          <shadowDistance>1</shadowDistance>
+          <shadowDistance>0</shadowDistance>
           <shadowColor>FF000000</shadowColor>
-          <label1YOff>380</label1YOff>
-          <label2YOff>390</label2YOff>
-          <pageSize>10</pageSize>
+          <label1YOff>405</label1YOff>
+          <label2YOff>430</label2YOff>
+          <pageSize>5</pageSize>
           <scrollbarBackground>bar_hor.png</scrollbarBackground>
           <scrollbarLeft>mouse_left_horizontal.png</scrollbarLeft>
           <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
-          <scrollbarYOff>400</scrollbarYOff>
+          <scrollbarYOff>455</scrollbarYOff>
           <showScrollbar>yes</showScrollbar>
-          <cards flipY="yes" diffuse="Thumb_Mask.png"></cards>
-        </control>
+          <cards flipY="yes" diffuse="Thumb_Mask.png" mask="video_poster_mask.png"></cards>
+          <subitems>
+            <subitem>
+              <![CDATA[                 <controls>
+              <control>
+                <description>background</description>
+                <type>image</type>
+                <posX>0</posX>
+                <posY>0</posY>
+                <width>360</width>
+                <height>360</height>
+                <texture flipY="yes" diffuse="Thumb_Mask.png" mask="video_poster_mask.png">background2.png</texture>
+              </control>
+              <control>
+                <description>Movie Details</description>
+                <type>label</type>
+                <posX>20</posX>
+                <posY>10</posY>
+                <width>210</width>
+                <label>Picture Details</label>
+                <font>font10</font>
+                <textcolor>FFFFFFFF</textcolor>
+              </control>
+              <control>
+                <description>genre</description>
+                <type>label</type>
+                <posX>20</posX>
+                <posY>40</posY>
+                <width>210</width>
+                <label>#selecteditem</label>
+                <font>font9</font>
+                <textcolor>FFFFFFFF</textcolor>
+              </control>
+              <control>
+                <description>year</description>
+                <type>label</type>
+                <posX>20</posX>
+                <posY>60</posY>
+                <width>210</width>
+                <label>#selecteditem2</label>
+                <font>font9</font>
+                <textcolor>FFFFFFFF</textcolor>
+              </control>
+            </controls>]]></subitem>
+        </subitems>
       </control>
     </control>
-  </controls>
+  </control>
+</controls>
 </window>
