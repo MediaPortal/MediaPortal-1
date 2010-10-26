@@ -306,7 +306,7 @@ namespace MediaPortal.GUI.Music
           return View.FilmStrip;
         case "playlist":
           return View.PlayList;
-        case "coverflow":
+        case "cover flow":
           return View.CoverFlow;
       }
       if (!string.IsNullOrEmpty(s))
