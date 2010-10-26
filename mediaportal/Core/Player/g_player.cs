@@ -1270,7 +1270,7 @@ namespace MediaPortal.Player
           OnChanged(strFile);
           OnStopped();
           bool doStop = true;
-          if (Util.Utils.IsAudio(strFile))
+          if (type != MediaType.Video && Util.Utils.IsAudio(strFile))
           {
             if (type == MediaType.Unknown)
             {
