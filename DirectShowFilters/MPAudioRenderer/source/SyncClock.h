@@ -39,7 +39,7 @@ public:
   void GetClockData(CLOCKDATA *pClockData);
 
   void AudioResampled(double sourceLength, double resampleLength, double bias, double adjustment, double driftMultiplier);
-  double SuggestedAudioMultiplier(UINT64 sampleLength);
+  double SuggestedAudioMultiplier(UINT64 sampleLength, double bias, double adjustment);
   double GetBias();
   char* DebugData();
 

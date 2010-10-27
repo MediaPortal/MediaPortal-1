@@ -300,10 +300,10 @@ DWORD CMultiSoundTouch::ResampleThread()
           UINT32 nFrames = size / m_pWaveFormat->Format.nBlockAlign;
           REFERENCE_TIME estimatedSampleDuration = nFrames * UNITS / m_pWaveFormat->Format.nSamplesPerSec;
 
-          double AVMult = m_pClock->SuggestedAudioMultiplier(estimatedSampleDuration);
           double bias = m_pClock->GetBias();
 		  double adjustment = m_pClock->Adjustment();
-          setTempoInternal(AVMult * bias * adjustment, 1.0); // this should be the same as previous line, but in future we want to get rid of the 2nd parameter
+          double AVMult = m_pClock->SuggestedAudioMultiplier(estimatedSampleDuration, bias, adjustment);
+          setTempoInternal(AVMult, 1.0); // this should be the same as previous line, but in future we want to get rid of the 2nd parameter
 
           // Process the sample 
           putSamplesInternal((const short*)pMediaBuffer, size / m_pWaveFormat->Format.nBlockAlign);

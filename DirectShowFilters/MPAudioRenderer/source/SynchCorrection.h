@@ -25,7 +25,10 @@
 #define DIRUP 1 // speeding up the clock as calculated bias is too high
 #define DIRDOWN -1 // slowing downthe clock as calculated bias is too low
 #define ALLOWED_DRIFT 10000.0 //allow drift to go to 1 ms before correction
-#define CORRECTION_RATE 0.005 //apply this extra correction when the ALLOWED_DRIFT is breached 0.5%
+#define CORRECTION_RATE 1.005 //apply this extra correction when the ALLOWED_DRIFT is breached 0.5%
+#define QUALITY_DRIFT_LIMIT 80000.0 //drift allowed before correction
+#define QUALITY_CORRECTION_LIMIT 60000.0 //correction limit
+#define QUALITY_CORRECTION_MULTIPLIER 1.02 //correction rate
 
 class SynchCorrection
 {
@@ -37,7 +40,7 @@ public:
   void Reset();
   
   // Suggested adjustment - this can be ignored if you want
-  double SuggestedAudioMultiplier(double sampleLength);
+  double SuggestedAudioMultiplier(double sampleLength, double bias, double adjustment);
   // call after resampling to indicate what was resampled
   void AudioResampled(double sourceLength, double resampleLength,double bias, double adjustment, double driftFactor);
   // estimate of the current drift
@@ -61,16 +64,24 @@ public:
   char* DebugData();
 
 private:
-  double GetRequiredAdjustment(double sampleTime, double AVMult);
+  double GetRequiredAdjustment(double sampleTime, double AVMult, double bias, double adjustment);
   double TotalAudioDrift(double AVMult);
 
   double m_dBiasCorrection;
   double m_dlastAdjustment;
-  int m_dBiasDir;
+  int m_iBiasDir;
   double m_dAVmult;
   INT64 m_ullTotalTime;
   ClockAdjuster m_Bias;
   ClockAdjuster m_Adjustment;
   AudioClockTracker m_AVTracker;
   char* m_pDebugLine;
+  bool m_bDriftCorrectionEnabled;
+  bool m_bBiasCorrectionEnabled;
+  bool m_bAdjustmentCorrectionEnabled;
+
+  bool m_bQualityMode;
+  bool m_bQualityCorrectionOn;
+  int m_iQualityDir;
+
 };

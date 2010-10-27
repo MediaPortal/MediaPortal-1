@@ -99,12 +99,12 @@ char* CSyncClock::DebugData()
   return m_SynchCorrection.DebugData(); 
 }
 
-double CSyncClock::SuggestedAudioMultiplier(UINT64 sampleLength)
+double CSyncClock::SuggestedAudioMultiplier(UINT64 sampleLength, double bias, double adjustment)
 {
   CAutoLock cObjectLock(this);
   
   // store for EVR stats renderer
-  m_dSuggestedAudioMultiplier = m_SynchCorrection.SuggestedAudioMultiplier(sampleLength);
+  m_dSuggestedAudioMultiplier = m_SynchCorrection.SuggestedAudioMultiplier(sampleLength, bias, adjustment);
   return m_dSuggestedAudioMultiplier;
 }
 

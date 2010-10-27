@@ -37,19 +37,25 @@ void SynchCorrection::Reset()
 {
   Log("SynchCorrection::Reset");
   m_dBiasCorrection = 0.0001;
-  m_dBiasDir = 0;
+  m_iBiasDir = 0;
   m_dAVmult = 1.0;
   m_ullTotalTime = 0;
   m_dlastAdjustment = 1.0;
+  m_bQualityMode=false;
+  m_iQualityDir=0;
+  m_bQualityCorrectionOn=false;
+  m_bDriftCorrectionEnabled=true;
+  m_bBiasCorrectionEnabled=true;
+  m_bAdjustmentCorrectionEnabled=true;
 
   m_Bias.Reset();
   m_Adjustment.Reset();
   m_AVTracker.Reset();
 }
 
-double SynchCorrection::SuggestedAudioMultiplier(double sampleLength)
+double SynchCorrection::SuggestedAudioMultiplier(double sampleLength, double bias, double adjustment)
 {
-  return GetRequiredAdjustment(sampleLength,  m_dAVmult);
+  return GetRequiredAdjustment(sampleLength,  m_dAVmult, bias, adjustment);
 }
 
 // call after resampling to indicate what was resampled
@@ -96,21 +102,21 @@ void SynchCorrection::SetAdjustment(double adjustment)
   if (adjustment != m_dlastAdjustment)
   {
 	  m_dlastAdjustment=adjustment;
-    if (m_dBiasDir != 0) // there has been an adjustment already
+    if (m_iBiasDir != 0) // there has been an adjustment already
     {
       // if the direction is different we have overshot so half the correction
-      if ((m_dBiasDir == DIRUP) && (adjustment < 1))
+      if ((m_iBiasDir == DIRUP) && (adjustment < 1))
         m_dBiasCorrection /= 2;
-      else if ((m_dBiasDir == DIRDOWN) && (adjustment > 1)) 
+      else if ((m_iBiasDir == DIRDOWN) && (adjustment > 1)) 
         m_dBiasCorrection /= 2;
     }
 
     if (adjustment > 1)
-      m_dBiasDir = DIRUP;
+      m_iBiasDir = DIRUP;
     else if (adjustment < 1)
-      m_dBiasDir = DIRDOWN;
+      m_iBiasDir = DIRDOWN;
 
-    m_Bias.SetAdjuster(m_Bias.GetAdjustment() + m_dBiasCorrection * (double)m_dBiasDir);
+    m_Bias.SetAdjuster(m_Bias.GetAdjustment() + m_dBiasCorrection * (double)m_iBiasDir);
   }
   m_Adjustment.SetAdjuster(adjustment);
 }
@@ -122,6 +128,10 @@ double SynchCorrection::GetAdjustment()
 
 void SynchCorrection::SetBias(double bias)
 {
+  if (bias > 0.99 &&  bias<1.01) 
+	m_bQualityMode=true;
+  else
+    m_bQualityMode=false;
   m_Bias.SetAdjuster(bias);
 }
 
@@ -144,17 +154,54 @@ double SynchCorrection::TotalAudioDrift(double AVMult)
 }
 
 // get the adjustment required to match the hardware clocks
-double SynchCorrection::GetRequiredAdjustment(double sampleTime, double AVMult)
+double SynchCorrection::GetRequiredAdjustment(double sampleTime, double AVMult, double bias, double adjustment)
 {
-  double ret = AVMult;
+  double ret = AVMult*bias*adjustment;
   double totalAudioDrift = TotalAudioDrift(AVMult);
   if (totalAudioDrift > ALLOWED_DRIFT)
   { // we've stretched too much shift down for a while
-    ret = AVMult - CORRECTION_RATE;
+    ret = ret * (1.0/ CORRECTION_RATE);
   }
   if (totalAudioDrift < ALLOWED_DRIFT * -1.0)
   { // haven't streched enough
-    ret = AVMult + CORRECTION_RATE;
+    ret = ret * CORRECTION_RATE;
   } 
+  if (m_bQualityMode)
+  {
+    ret=1.0; // 1 to 1 playback unless proved otherwise
+	  if (m_bQualityCorrectionOn) // we are correcting drift
+	  {
+		  if (((m_iQualityDir==DIRUP) && (totalAudioDrift>QUALITY_CORRECTION_LIMIT)) ||
+			  ((m_iQualityDir==DIRDOWN) && (totalAudioDrift<QUALITY_CORRECTION_LIMIT*-1.0)))
+		  {
+			  //we've corrected enough
+			  m_bQualityCorrectionOn=false;
+			  m_iQualityDir=0;
+		  }
+		  if (m_iQualityDir==DIRUP) //behind so stretch
+		  {
+			  ret=QUALITY_CORRECTION_MULTIPLIER;
+		  }
+		  else if (m_iQualityDir==DIRDOWN) // in front so slow
+		  {
+			  ret=1.0/QUALITY_CORRECTION_MULTIPLIER;
+		  }
+	  }
+	  else // not correcting now so check for breach
+	  {
+		  if (totalAudioDrift>QUALITY_DRIFT_LIMIT)
+		  {
+			  m_bQualityCorrectionOn=true;
+			  m_iQualityDir=DIRDOWN;
+		  }
+		  else if (totalAudioDrift<QUALITY_DRIFT_LIMIT*-1.0)
+		  {
+			  m_bQualityCorrectionOn=true;
+			  m_iQualityDir=DIRUP;
+		  }
+	  }
+  }
   return ret;
 }
+
+
