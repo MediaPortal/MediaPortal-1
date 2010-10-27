@@ -1329,28 +1329,17 @@ namespace MediaPortal.GUI.Music
 
       if (playList.Count > 0)
       {
-        //SV
-        //playlistPlayer.Reset();
-
         if (!g_Player.IsMusic || !UsingInternalMusicPlayer)
         {
           playlistPlayer.Reset();
         }
 
+        // If we have selected a Folder == Album then we want to have gapless playback
+        if (pItem.IsFolder && UsingInternalMusicPlayer)
+        {
+          BassMusicPlayer.Player.SwitchToGaplessPlaybackMode();
+        }
         playlistPlayer.Play(playStartIndex);
-
-        //if (PlayNowJumpToWindowID != -1)
-        //{
-        //    if (PlayNowJumpToWindowID == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
-        //    {
-        //        GUIMusicPlayingNow nowPlayingWnd = (GUIMusicPlayingNow)GUIWindowManager.GetWindow(PlayNowJumpToWindowID);
-
-        //        if (nowPlayingWnd != null)
-        //            nowPlayingWnd.MusicWindow = this;
-        //    }
-
-        //    GUIWindowManager.ActivateWindow(PlayNowJumpToWindowID);
-        //}
 
         if (!g_Player.Playing)
         {
@@ -1358,7 +1347,6 @@ namespace MediaPortal.GUI.Music
           playlistPlayer.Play(playStartIndex);
         }
 
-        //SV
         bool didJump = DoPlayNowJumpTo(playList.Count);
         Log.Info("GUIMusicGenres: Doing Play now jump to: {0} ({1})", PlayNowJumpTo, didJump);
       }

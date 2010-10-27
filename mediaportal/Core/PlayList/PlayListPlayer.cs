@@ -363,6 +363,12 @@ namespace MediaPortal.Playlists
 
         if (!_repeatPlayList)
         {
+          // Switch back to standard playback mode
+          if (Player.BassMusicPlayer.IsDefaultMusicPlayer)
+          {
+            Player.BassMusicPlayer._Player.SwitchToDefaultPlaybackMode();
+          }
+
           _currentPlayList = PlayListType.PLAYLIST_NONE;
           return;
         }

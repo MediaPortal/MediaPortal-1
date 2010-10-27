@@ -2248,6 +2248,12 @@ namespace MediaPortal.GUI.Music
           playlistPlayer.Reset();
         }
 
+        // If we have selected a Folder == Album then we want to have gapless playback
+        if (pItem.IsFolder && UsingInternalMusicPlayer)
+        {
+          BassMusicPlayer.Player.SwitchToGaplessPlaybackMode();
+        }
+
         playlistPlayer.Play(playStartIndex);
 
         if (!g_Player.Playing)
