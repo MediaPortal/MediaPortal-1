@@ -22,7 +22,6 @@
 
 using System;
 using System.Runtime.InteropServices;
-
 #endregion
 
 namespace TvEngine.PowerScheduler.Interfaces
@@ -34,7 +33,7 @@ namespace TvEngine.PowerScheduler.Interfaces
     /// <summary>
     /// Does the PowerManager allow/prevent standby?
     /// </summary>
-    private bool _standbyAllowed = false;
+    private bool _standbyAllowed = true;
 
     #endregion
 
@@ -67,7 +66,13 @@ namespace TvEngine.PowerScheduler.Interfaces
       /// Use together with the above options to report a
       /// state until explicitly changed.
       /// </summary>
-      Continuous = 0x80000000
+      Continuous = 0x80000000,
+
+      /// <summary>
+      /// Enables away mode. This value must be specified with Continuous. 
+      /// Away mode should be used only by media-recording and media-distribution applications that must perform critical background processing on desktop computers while the computer appears to be sleeping.
+      /// </summary>
+      Awaymode_Required = 0x00000040
     }
 
     [DllImport("kernel32.dll", EntryPoint = "SetThreadExecutionState")]
@@ -76,13 +81,16 @@ namespace TvEngine.PowerScheduler.Interfaces
     #endregion
 
     #region Power management wrapper methods
-
+    
     /// <summary>
     /// Set the PowerManager to allow standby
     /// </summary>
     /// <returns>bool indicating whether or not standby is allowed</returns>
     public bool AllowStandby()
     {
+      // If was prevented, enable
+      if(!_standbyAllowed)
+        SetThreadExecutionState(ExecutionState.Continuous);
       _standbyAllowed = true;
       return true;
     }
@@ -95,12 +103,9 @@ namespace TvEngine.PowerScheduler.Interfaces
     {
       lock (this)
       {
-        ExecutionState result = SetThreadExecutionState(ExecutionState.SystemRequired);
-        //Log.Debug("PowerManager.PreventStandBy: SetThreadExecutionState() returned: {0}", result.ToString());
-        if (result == ExecutionState.Error)
-        {
-          return false;
-        }
+        // If was allowed, disable
+        if (_standbyAllowed)
+          SetThreadExecutionState(ExecutionState.Continuous | ExecutionState.SystemRequired | ExecutionState.Awaymode_Required);
         _standbyAllowed = false;
         return true;
       }

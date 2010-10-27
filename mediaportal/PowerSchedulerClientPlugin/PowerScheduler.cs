@@ -41,6 +41,7 @@ using MediaPortal.Services;
 using MediaPortal.Util;
 using TvEngine.PowerScheduler;
 using TvEngine.PowerScheduler.Interfaces;
+using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
 
 #endregion
@@ -88,7 +89,6 @@ namespace MediaPortal.Plugins.Process
     private bool _refreshSettings = false;
     private DateTime _lastUserTime = DateTime.Now; // last time the user was doing sth (action/watching)
     private PowerSettings _settings;
-    private PowerManager _powerManager;
     private List<IStandbyHandler> _standbyHandlers;
     private List<IWakeupHandler> _wakeupHandlers;
     private bool _idle;
@@ -147,9 +147,6 @@ namespace MediaPortal.Plugins.Process
         GUIWindowManager.Add(ref win);
       }
 
-
-      _powerManager = new PowerManager();
-
       GUIWindowManager.OnNewAction += new OnActionHandler(this.OnAction);
       // Create the timer that will wakeup the system after a specific amount of time after the
       // system has been put into standby
@@ -184,8 +181,6 @@ namespace MediaPortal.Plugins.Process
       _wakeupTimer.Close();
       GUIWindowManager.OnNewAction -= new OnActionHandler(this.OnAction);
 
-      _powerManager.AllowStandby();
-      _powerManager = null;
       SendPowerSchedulerEvent(PowerSchedulerEventType.Stopped);
       Log.Info("PowerScheduler client plugin stopped");
     }
@@ -606,8 +601,6 @@ namespace MediaPortal.Plugins.Process
         }
 
         _currentDisAllowShutdown = false;
-
-        _powerManager.AllowStandby();
 
         return false;
       }
