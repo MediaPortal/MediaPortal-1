@@ -123,8 +123,9 @@ namespace MediaPortal.Dialogs
       TimeSpan ts = DateTime.Now - keyTimer;
       if (ts.TotalMilliseconds >= 1000)
       {
-        selectOption(keySelection);
-        keySelection = string.Empty;
+          string keySelectionCopy = keySelection;
+          keySelection = string.Empty;
+          selectOption(keySelectionCopy);
       }
     }
 
