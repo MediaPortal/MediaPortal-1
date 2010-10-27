@@ -32,6 +32,7 @@ using System.Timers;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 
@@ -1360,9 +1361,14 @@ namespace MediaPortal.GUI.Library
 
     private bool CardAllowedToSpin()
     {
+      // Make sure that we have a FileInfo object. In a Music DB View, it would be null
+      if (SelectedListItem.FileInfo == null)
+      {
+        SelectedListItem.FileInfo = new FileInformation();
+      }
+
       // Do not allow the card to spin if there is no back of the card defined.
-      return (_cardBackControls.Count > 0) &&
-             SelectedListItem.FileInfo != null;
+      return (_cardBackControls.Count > 0);
     }
 
     private void NotifyCardToSpin()
