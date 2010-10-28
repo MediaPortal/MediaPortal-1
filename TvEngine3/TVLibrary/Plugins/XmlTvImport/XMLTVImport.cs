@@ -687,14 +687,14 @@ namespace TvEngine
                           continue;
                         }
 
-                        title = title.Replace("\r\n", "\r");
-                        title = title.Replace("\r", " ");
+                        title = title.Replace("\r\n", "\n");
+                        title = title.Replace("\n", " ");
 
-                        description = description.Replace("\r\n", "\r");
-                        description = description.Replace("\r", " ");
+                        description = description.Replace("\r\n", "\n");
+                        description = description.Replace("\n", " ");
 
-                        episodeName = episodeName.Replace("\r\n", "\r");
-                        episodeName = episodeName.Replace("\r", " ");
+                        episodeName = episodeName.Replace("\r\n", "\n");
+                        episodeName = episodeName.Replace("\n", " ");
                         
                         Program prog = new Program(chan.IdChannel, longtodate(startDate), longtodate(stopDate), title,
                                                    description, category, Program.ProgramState.None,
