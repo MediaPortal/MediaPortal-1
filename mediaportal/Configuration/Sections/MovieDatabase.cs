@@ -511,17 +511,17 @@ namespace MediaPortal.Configuration.Sections
           {
             File.Delete(database);
             // FanArt delete all files
+            string configDir;
+            FanArt.GetFanArtFolder(out configDir);
             if (useFanartCheckBox.CheckState == CheckState.Checked)
             {
               DialogResult dialogResultFanart = MessageBox.Show("Delete all fanarts (All files in " +
-                                                                Config.GetFolder(Config.Dir.Thumbs) +
-                                                                @"\Skin Fanart\movies\"" will be deleted) ?",
+                                                                configDir +
+                                                                " will be deleted) ?",
                                                                 "Information", MessageBoxButtons.YesNo,
                                                                 MessageBoxIcon.Question);
               if (dialogResultFanart == DialogResult.Yes)
               {
-                string configDir = Config.GetFolder(Config.Dir.Thumbs) +
-                                   @"\Skin Fanart\movies\";
                 string files = @"*.jpg"; // Only delete jpg files
                 string[] fileList = Directory.GetFiles(configDir, files);
                 foreach (string file in fileList)
@@ -2044,8 +2044,8 @@ namespace MediaPortal.Configuration.Sections
         _fuzzyMatchingCheckBox.Checked = _isFuzzyMatching;
 
         // FanArt setting
-        string configDir = Config.GetFolder
-                             (Config.Dir.Thumbs) + @"\Skin Fanart\movies\";
+        string configDir;
+        FanArt.GetFanArtFolder(out configDir);
         if (Directory.Exists(configDir))
         {
           _useFanArt = xmlreader.GetValueAsBool("moviedatabase", "usefanart", false);
@@ -2670,8 +2670,8 @@ namespace MediaPortal.Configuration.Sections
         tbFASearchString.Text = tbTitle.Text; // Update fanart search string
         if (_clearListBox)
           fanartListBox.Items.Clear();
-        string configDir = Config.GetFolder(Config.Dir.Thumbs) +
-                           @"\Skin Fanart\movies\";
+        string configDir;
+        FanArt.GetFanArtFolder(out configDir);
         pictureBoxFanArt.ImageLocation = configDir + item.Movie.Title + ".jpg";
 
         // Actor details and actor movies fill or clear
@@ -3033,9 +3033,8 @@ namespace MediaPortal.Configuration.Sections
         {
           Cursor = Cursors.WaitCursor;
           pictureBoxFanArt.ImageLocation = fanart.Url;
-
-          string configDir = Config.GetFolder(Config.Dir.Thumbs) +
-                             @"\Skin Fanart\movies\";
+          string configDir;
+          FanArt.GetFanArtFolder(out configDir);
           string tempFile = fanart.Url;
           string ext = tempFile.Substring(tempFile.LastIndexOf(".")); // Temporary only jpg but lets prepare it
 
@@ -3277,8 +3276,8 @@ namespace MediaPortal.Configuration.Sections
     // FanArt CheckBox
     private void useFanart_CheckedChanged(object sender, EventArgs e)
     {
-      string configDir = Config.GetFolder(Config.Dir.Thumbs) +
-                         @"\Skin Fanart\movies\";
+      string configDir;
+      FanArt.GetFanArtFolder(out configDir);
       if (Directory.Exists(configDir))
       {
         _useFanArt = ((CheckBox)sender).Checked;

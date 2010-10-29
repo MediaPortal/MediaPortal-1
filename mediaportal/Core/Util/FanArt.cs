@@ -103,7 +103,8 @@ namespace MediaPortal.Util
           string matchBackdrop = "<image\\stype=\"backdrop\"\\surl=\"(?<BackDrop>.*?)\"";
 
           // Check FanArt Plugin directory in MP configuration folder (it will exists if FA plugin is installed)
-          string configDir = Config.GetFolder(Config.Dir.Thumbs) + @"\Skin Fanart\movies\";
+          string configDir;
+          GetFanArtFolder(out configDir);
           // Check if FanArt directory Exists
           if (Directory.Exists(configDir))
           {
@@ -214,7 +215,8 @@ namespace MediaPortal.Util
         }
 
         // Check FanArt Plugin directory in MP configuration folder (it will exists if FA plugin is installed)
-        string configDir = Config.GetFolder(Config.Dir.Thumbs) + @"\Skin Fanart\movies\";
+        string configDir;
+        GetFanArtFolder(out configDir);
         // Check if FanArt directory Exists
         if (Directory.Exists(configDir))
         {
@@ -275,7 +277,8 @@ namespace MediaPortal.Util
     {
       fileart = "";
       // FanArt directory
-      string configDir = Config.GetFolder(Config.Dir.Thumbs) + @"\Skin Fanart\movies\";
+      string configDir;
+      GetFanArtFolder(out configDir);
       if (Directory.Exists(configDir))
       {
         fileart = configDir + title + ".jpg";
@@ -310,8 +313,8 @@ namespace MediaPortal.Util
         return;
       }
 
-      string configDir = Config.GetFolder(Config.Dir.Thumbs) +
-                         @"\Skin Fanart\movies\";
+      string configDir;
+      GetFanArtFolder(out configDir);
       if (File.Exists(configDir + title + ".jpg"))
       {
         File.Delete(configDir + title + ".jpg");
@@ -355,6 +358,13 @@ namespace MediaPortal.Util
           File.Delete(fileMovie);
         }
       }
+    }
+
+    // Returns default MP fanart folder
+    public static void GetFanArtFolder(out string fanartFolder)
+    {
+      // FanArt directory
+      fanartFolder = Config.GetFolder(Config.Dir.Thumbs) + @"\Skin FanArt\Scraper\Movies\";
     }
 
     // Split path and filename
