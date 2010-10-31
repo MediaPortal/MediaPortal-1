@@ -85,7 +85,7 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
     }
   }
 
-  m_pClock->SetAudioDelay(m_Settings.m_lAudioDelay * 100000); // setting in registry is in ms
+  m_pClock->SetAudioDelay(m_Settings.m_lAudioDelay * 10000); // setting in registry is in ms
 
   if (m_Settings.m_bUseWASAPI)
   {
