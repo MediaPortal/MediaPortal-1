@@ -32,6 +32,7 @@ public:
 
   void SetBias(double pBias);
   void SetAdjustment(double pAdjustment);
+  void SetAudioDelay(INT64 pAudioDelay);
 
   double Bias();
   double Adjustment();

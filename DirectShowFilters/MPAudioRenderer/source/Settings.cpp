@@ -34,6 +34,7 @@ AudioRendererSettings::AudioRendererSettings() :
   m_AC3bitrate(448), 
   m_dMaxBias(1.1),
   m_dMinBias(0.9),
+  m_lAudioDelay(0),
   m_dwChannelMaskOverride_5_1(0),
   m_dwChannelMaskOverride_7_1(0),
   m_WASAPIShareMode(AUDCLNT_SHAREMODE_EXCLUSIVE),
@@ -71,6 +72,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   LPCTSTR AC3bitrate = TEXT("AC3bitrate");
   LPCTSTR maxBias = TEXT("MaxBias");
   LPCTSTR minBias = TEXT("MinBias");
+  LPCTSTR audioDelay = TEXT("AudioDelay");
   LPCTSTR channelMaskOverride_5_1 = TEXT("ChannelMaskOverride_5_1");
   LPCTSTR channelMaskOverride_7_1 = TEXT("ChannelMaskOverride_7_1");
   LPCTSTR logSampleTimes = TEXT("LogSampleTimes");
@@ -88,6 +90,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   DWORD AC3bitrateData = 448;       // maximum based on the DVD spec
   DWORD maxBiasData = 11000;        // divide with 10000 to get real double value
   DWORD minBiasData = 9000;         // divide with 10000 to get real double value
+  DWORD audioDelayData = 0;         // in ms
   DWORD channelMaskOverride_5_1Data = 0;
   DWORD channelMaskOverride_7_1Data = 0;
   DWORD logSampleTimesData = 0;
@@ -112,6 +115,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
     ReadRegistryKeyDword(hKey, maxBias, maxBiasData);
     ReadRegistryKeyDword(hKey, minBias, minBiasData);
+    ReadRegistryKeyDword(hKey, audioDelay, audioDelayData);
     ReadRegistryKeyDword(hKey, channelMaskOverride_5_1, channelMaskOverride_5_1Data);
     ReadRegistryKeyDword(hKey, channelMaskOverride_7_1, channelMaskOverride_7_1Data);
     ReadRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
@@ -127,6 +131,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     Log("   AC3bitrate:              %d", AC3bitrateData);
     Log("   MaxBias:                 %d", maxBiasData);
     Log("   MinBias:                 %d", minBiasData);
+    Log("   AudioDelay:              %d", audioDelayData);
     Log("   ChannelMaskOverride_5_1: %d", channelMaskOverride_5_1Data);
     Log("   ChannelMaskOverride_7_1: %d", channelMaskOverride_7_1Data);
     Log("   LogSampleTimes:          %d", logSampleTimesData);
@@ -162,6 +167,8 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
 
     m_dMaxBias = (double)maxBiasData / 10000.0;
     m_dMinBias = (double)minBiasData / 10000.0;
+
+    m_lAudioDelay = audioDelayData;
 
     if (channelMaskOverride_5_1Data > 0)
       m_dwChannelMaskOverride_5_1 = channelMaskOverride_5_1Data;
@@ -235,6 +242,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
       WriteRegistryKeyDword(hKey, maxBias, maxBiasData);
       WriteRegistryKeyDword(hKey, minBias, minBiasData);
+      WriteRegistryKeyDword(hKey, audioDelay, audioDelayData);
       WriteRegistryKeyDword(hKey, channelMaskOverride_5_1, channelMaskOverride_5_1Data);
       WriteRegistryKeyDword(hKey, channelMaskOverride_7_1, channelMaskOverride_7_1Data);
       WriteRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);

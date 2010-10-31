@@ -62,6 +62,11 @@ void CSyncClock::SetAdjustment(double pAdjustment)
   m_dAdjustment = pAdjustment;
 }
 
+void CSyncClock::SetAudioDelay(INT64 pAudioDelay)
+{
+  m_SynchCorrection.SetAudioDelay(pAudioDelay);
+}
+
 double CSyncClock::Bias()
 {
   return m_dBias;
