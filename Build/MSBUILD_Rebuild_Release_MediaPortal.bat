@@ -21,7 +21,7 @@ rem %DeployVersionSVN% /svn="%MediaPortal%" /revert >> %log%
 
 echo.
 echo Reading the svn revision...
-%DeployVersionSVN% /svn="%MediaPortal%" /GetVersion >> %log%
+%DeployVersionSVN% /svn="%CommonMPTV%" /GetVersion >> %log%
 rem SET /p version=<version.txt >> %log%
 SET version=%errorlevel%
 DEL version.txt >> %log%
