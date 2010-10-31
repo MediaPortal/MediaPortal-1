@@ -23,7 +23,7 @@
 
 #include "MultiSoundTouch.h"
 
-#define AC3_FRAME_LENGHT  1536
+#define AC3_FRAME_LENGTH  1536
 #define OUT_BUFFER_SIZE   65536
 #define OUT_BUFFER_COUNT  20
 
@@ -311,13 +311,12 @@ DWORD CMultiSoundTouch::ResampleThread()
 
           UINT32 nOutFrames = numSamples();
 
-          if ((!m_pEncoder && nOutFrames > 0) || (m_pEncoder && nOutFrames >= AC3_FRAME_LENGHT))
+          if ((!m_pEncoder && nOutFrames > 0) || (m_pEncoder && nOutFrames >= AC3_FRAME_LENGTH))
           {
             // with AC3 encoder enabled, the resampled buffer is not emptied completely
             if (m_pEncoder)
-              nOutFrames = nOutFrames - nOutFrames % AC3_FRAME_LENGHT;  
+              nOutFrames = nOutFrames - nOutFrames % AC3_FRAME_LENGTH;  
             
-
             UINT32 nInFrames = (size / m_pWaveFormat->Format.nBlockAlign) - unprocessedSamplesAfter + unprocessedSamplesBefore;
             double rtSampleDuration = (double)nInFrames * (double)UNITS / (double)m_pWaveFormat->Format.nSamplesPerSec;
             double rtProcessedSampleDuration = (double)nOutFrames * (double)UNITS / (double)m_pWaveFormat->Format.nSamplesPerSec;
@@ -353,9 +352,9 @@ DWORD CMultiSoundTouch::ResampleThread()
                   BYTE resampledData[OUT_BUFFER_SIZE];
                   long resultLenght = 0;
 
-                  while (numSamples() >= AC3_FRAME_LENGHT)
+                  while (numSamples() >= AC3_FRAME_LENGTH)
                   {
-                    (void)receiveSamplesInternal((short*)resampledData, AC3_FRAME_LENGHT);
+                    (void)receiveSamplesInternal((short*)resampledData, AC3_FRAME_LENGTH);
                     int AC3lenght = ac3_encoder_frame(m_pEncoder, (short*)resampledData, outbuf, sizeof(outbuf));
                     resultLenght += CreateAC3Bitstream(outbuf, AC3lenght, pMediaBufferOut + resultLenght);
                   }
@@ -975,7 +974,7 @@ long CMultiSoundTouch::CreateAC3Bitstream(void *buf, size_t size, BYTE *pDataOut
   size_t length = 0;
   size_t repetition_burst = 0x800; // 2048 = AC3 
 
-  unsigned int size2 = AC3_FRAME_LENGHT * 4;
+  unsigned int size2 = AC3_FRAME_LENGTH * 4;
   length = 0;
 
   // Add 4 more words (8 bytes) for AC3/DTS (for backward compatibility, should be *4 for other codecs)
