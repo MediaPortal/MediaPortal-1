@@ -29,7 +29,7 @@
       </control>
       <control>
         <description>Language</description>
-        <type>selectbutton</type>
+        <type>button</type>
         <id>11</id>
         <posX>99</posX>
         <posY>233</posY>

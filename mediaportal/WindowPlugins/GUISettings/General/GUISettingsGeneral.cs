@@ -39,12 +39,12 @@ namespace WindowPlugins.GUISettings
   public class GUISettingsGeneral : GUIInternalWindow
   {
     [SkinControl(10)] protected GUIButtonControl btnSkin = null;
-    [SkinControl(11)] protected GUISelectButtonControl btnLanguage = null;
+    [SkinControl(11)] protected GUIButtonControl btnLanguage = null;
     [SkinControl(12)] protected GUIToggleButtonControl btnFullscreen = null;
     [SkinControl(13)] protected GUIToggleButtonControl btnScreenSaver = null;
     [SkinControl(20)] protected GUIImage imgSkinPreview = null;
 
-    private int selectedLangIndex;
+    private string selectedLangName;
     private string selectedSkinName;
     private bool selectedFullScreen;
     private bool selectedScreenSaver;
@@ -108,7 +108,38 @@ namespace WindowPlugins.GUISettings
       }
       if (control == btnLanguage)
       {
-        OnLanguageChanged();
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+        if (dlg == null)
+        {
+          return;
+        }
+        dlg.Reset();
+        dlg.SetHeading(248); // menu
+        string[] languages = GUILocalizeStrings.SupportedLanguages();
+        foreach (string lang in languages) 
+        {
+          dlg.Add(lang);
+        }
+        string currentLanguage = btnLanguage.Label;
+        dlg.SelectedLabel = 0;
+        for (int i = 0; i < languages.Length; i++)
+        {
+          if (languages[i].ToLower() == currentLanguage.ToLower())
+          {
+            dlg.SelectedLabel = i;
+            break;
+          }
+        }
+        dlg.DoModal(GetID);
+        if (dlg.SelectedId == -1)
+        {
+          return;
+        }
+        if (String.Compare(dlg.SelectedLabelText, btnLanguage.Label, true) != 0)
+        {
+          btnLanguage.Label = dlg.SelectedLabelText;
+          OnLanguageChanged();
+        }
         return;
       }
       base.OnClicked(controlId, control, actionType);
@@ -137,7 +168,7 @@ namespace WindowPlugins.GUISettings
       {
         xmlwriter.SetValueAsBool("general", "startfullscreen", btnFullscreen.Selected);
         xmlwriter.SetValueAsBool("general", "IdleTimer", btnScreenSaver.Selected);
-        xmlwriter.SetValue("skin", "language", btnLanguage.SelectedLabel);
+        xmlwriter.SetValue("skin", "language", btnLanguage.Label);
         xmlwriter.SetValue("skin", "name", btnSkin.Label);
       }
     }
@@ -162,27 +193,12 @@ namespace WindowPlugins.GUISettings
 
     private void SetLanguages()
     {
-      GUIControl.ClearControl(GetID, btnLanguage.GetID);
       string currentLanguage = string.Empty;
       using (Settings xmlreader = new MPSettings())
       {
         currentLanguage = xmlreader.GetValueAsString("skin", "language", "English");
       }
-      string LanguageDirectory = Config.GetFolder(Config.Dir.Language);
-      int lang = 0;
-
-      string[] languages = GUILocalizeStrings.SupportedLanguages();
-
-      foreach (string language in languages)
-      {
-        GUIControl.AddItemLabelControl(GetID, btnLanguage.GetID, language);
-
-        if (language.ToLower() == currentLanguage.ToLower())
-        {
-          GUIControl.SelectItemControl(GetID, btnLanguage.GetID, lang);
-        }
-        lang++;
-      }
+      btnLanguage.Label = currentLanguage;
     }
 
     private void SetSkins()
@@ -235,7 +251,7 @@ namespace WindowPlugins.GUISettings
     private void BackupButtons()
     {
       selectedSkinName = btnSkin.Label;
-      selectedLangIndex = btnLanguage.SelectedItem;
+      selectedLangName = btnLanguage.Label;
       selectedFullScreen = btnFullscreen.Selected;
       selectedScreenSaver = btnScreenSaver.Selected;
     }
@@ -243,7 +259,7 @@ namespace WindowPlugins.GUISettings
     private void RestoreButtons()
     {
       btnSkin.Label = selectedSkinName;
-      GUIControl.SelectItemControl(GetID, btnLanguage.GetID, selectedLangIndex);
+      btnLanguage.Label = selectedLangName;
       if (selectedFullScreen)
       {
         GUIControl.SelectControl(GetID, btnFullscreen.GetID);
@@ -307,7 +323,7 @@ namespace WindowPlugins.GUISettings
       // Backup the buttons, needed later
       BackupButtons();
       SaveSettings();
-      GUILocalizeStrings.ChangeLanguage(btnLanguage.SelectedLabel);
+      GUILocalizeStrings.ChangeLanguage(btnLanguage.Label);
       GUIFontManager.LoadFonts(GUIGraphicsContext.Skin + @"\fonts.xml");
       GUIFontManager.InitializeDeviceObjects();
       GUIWindowManager.OnResize();
