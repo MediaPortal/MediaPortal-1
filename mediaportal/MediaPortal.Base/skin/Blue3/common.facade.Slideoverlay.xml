@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+
+  <control>
+  <description>caption of the selected item</description>
+  <type>label</type>
+  <overlay>yes</overlay>
+  <id>999</id>
+  <posX>430</posX>
+  <posY>187</posY>
+  <width>200</width>
+  <height>75</height>
+  <font>font14</font>
+  <label>#Play.Current.Title</label>
+  </control>
+- <control>
+  <description>caption of the selected item</description>
+  <type>label</type>
+  <overlay>yes</overlay>
+  <id>999</id>
+  <posX>430</posX>
+  <posY>207</posY>
+  <width>200</width>
+  <height>75</height>
+  <font>font14</font>
+  <label>#Play.Current.Artist</label>
+  </control>
+- <control>
+  <description>caption of the selected item</description>
+  <type>label</type>
+  <overlay>yes</overlay>
+  <id>999</id>
+  <posX>430</posX>
+  <posY>227</posY>
+  <width>200</width>
+  <height>75</height>
+  <font>font14</font>
+  <label>#Play.Current.Album</label>
+  </control>
+- <control>
+  <description>caption of the selected item2</description>
+  <allowoverlay>yes</allowoverlay>
+  <type>label</type>
+  <overlay>yes</overlay>
+  <id>0</id>
+  <posX>478</posX>
+  <posY>245</posY>
+  <width>200</width>
+  <height>70</height>
+  <font>font48</font>
+  <align>left</align>
+  <textcolor>20ffffff</textcolor>
+  <label>#currentplaytime</label>
+  </control>
+- <control>
+  <description>music logo</description>
+  <type>image</type>
+  <overlay>yes</overlay>
+  <id>1</id>
+  <posX>319</posX>
+  <posY>198</posY>
+  <width>91</width>
+  <height>97</height>
+  <keepaspectratio>yes</keepaspectratio>
+  <centered>yes</centered>
+  <texture>#Play.Current.Thumb</texture>
+  </control>
+- <control>
+  <description>Progress background</description>
+  <type>image</type>
+  <id>1</id>
+  <posX>335</posX>
+  <posY>158</posY>
+  <width>250</width>
+  <height>20</height>
+  <texture>osd_progress_background.png</texture>
+  </control>
+- <control>
+  <description>progress bar</description>
+  <type>progress</type>
+  <id>20</id>
+  <posX>322</posX>
+  <posY>162</posY>
+  <width>259</width>
+  <height>15</height>
+  <label>#percentage</label>
+  <visible>yes</visible>
+  </control>
+
+    <control>
+      <description>Date</description>
+      <type>label</type>
+      <id>200</id>
+      <posX>700</posX>
+      <posY>30</posY>
+      <label>#date</label>
+      <align>right</align>
+      <font>font14</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>201</id>
+      <posX>700</posX>
+      <posY>48</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font14</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+
+  </controls>
+</window>

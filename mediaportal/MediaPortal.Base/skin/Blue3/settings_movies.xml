@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>703</id>
+  <defaultcontrol>24</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:6022</define>
+  <define>#header.image:settings_logo.png</define>
+  <define>#header.hover:hover_my videos.png</define>
+  <controls>
+    <import>common.settings.xml</import>
+    <control>
+      <description>buttons</description>
+      <type>group</type>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="800,0">WindowOpen</animation>
+      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
+      <posX>56</posX>
+      <posY>151</posY>
+      <layout>GridLayout(0, 6, 52, 8, 1)</layout>
+      <control>
+        <description>MPEG-2 Video Codecs</description>
+        <type>button</type>
+        <id>24</id>
+        <label>6000</label>
+        <onup>17</onup>
+      </control>
+      <control>
+        <description>H.264 Video Codecs</description>
+        <type>button</type>
+        <id>29</id>
+        <label>6036</label>
+      </control>
+      <control>
+        <description>Audio Codecs</description>
+        <type>button</type>
+        <id>25</id>
+        <label>6001</label>
+      </control>
+      <control>
+        <description>AAC Audio Codecs</description>
+        <type>button</type>
+        <id>30</id>
+        <label>6039</label>
+      </control>
+      <control>
+        <description>Audio Renderer</description>
+        <type>button</type>
+        <id>27</id>
+        <label>6002</label>
+      </control>
+      <control>
+        <description>Apect Ratio</description>
+        <type>button</type>
+        <id>28</id>
+        <label>6004</label>
+      </control>
+      <control>
+        <description>Subtitles On/Off</description>
+        <type>togglebutton</type>
+        <id>31</id>
+        <label>1196</label>
+      </control>
+      <control>
+        <description>Subtitle Language</description>
+        <type>button</type>
+        <id>32</id>
+        <label>1029</label>
+      </control>
+      <control>
+        <description>Audio Language</description>
+        <type>button</type>
+        <id>33</id>
+        <label>492</label>
+        <ondown>99</ondown>
+      </control>
+    </control>
+  </controls>
+</window>

@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>613</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label:126</define>
+  <define>#header.image:television_logo.png</define>
+  <define>#header.hover:-</define>
+  <controls>
+    <import>common.window1.xml</import>
+    <control>
+      <description>Date</description>
+      <type>label</type>
+      <id>200</id>
+      <posX>690</posX>
+      <posY>30</posY>
+      <label>#date</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>201</id>
+      <posX>690</posX>
+      <posY>50</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Number of Files Label</description>
+      <type>label</type>
+      <id>12</id>
+      <posX>260</posX>
+      <posY>410</posY>
+      <label>#itemcount</label>
+      <align>left</align>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>660</posX>
+      <posY>70</posY>
+      <width>400</width>
+      <label>#selecteditem</label>
+      <font>font13</font>
+      <align>right</align>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <posX>40</posX>
+      <posY>97</posY>
+      <layout>StackLayout</layout>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <control>
+        <description>View-As button</description>
+        <type>button</type>
+        <id>2</id>
+        <label>100</label>
+        <onleft>2</onleft>
+        <onright>10</onright>
+        <onup>17</onup>
+        <ondown>3</ondown>
+      </control>
+      <control>
+        <type>sortbutton</type>
+        <id>3</id>
+        <label>620</label>
+        <onleft>2</onleft>
+        <onright>10</onright>
+        <onup>2</onup>
+        <ondown>5</ondown>
+      </control>
+      <control>
+        <description>Clear button</description>
+        <type>button</type>
+        <id>5</id>
+        <label>192</label>
+        <onleft>6</onleft>
+        <onright>10</onright>
+        <onup>2</onup>
+        <ondown>99</ondown>
+      </control>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <control>
+        <description>scheduler recordings listcontrol</description>
+        <type>listcontrol</type>
+        <id>10</id>
+        <height>370</height>
+        <textXOff>50</textXOff>
+        <textYOff>2</textYOff>
+        <textXOff2>420</textXOff2>
+        <textYOff2>29</textYOff2>
+        <textXOff3>100</textXOff3>
+        <textYOff3>29</textYOff3>
+        <IconXOff>12</IconXOff>
+        <spinPosX>606</spinPosX>
+        <spinPosY>418</spinPosY>
+        <itemWidth>35</itemWidth>
+        <itemHeight>35</itemHeight>
+        <textureFocus>album_background_focus.png</textureFocus>
+        <textureNoFocus>album_background_nofocus.png</textureNoFocus>
+        <spaceBetweenItems>5</spaceBetweenItems>
+        <textureHeight>50</textureHeight>
+        <keepaspectratio>no</keepaspectratio>
+        <font2>font10</font2>
+        <font3>font10</font3>
+        <onleft>2</onleft>
+        <onright>11</onright>
+        <onup>2</onup>
+        <ondown>2</ondown>
+      </control>
+      <control>
+        <description>listcontrol</description>
+        <type>listcontrol</type>
+        <id>11</id>
+        <onleft>10</onleft>
+        <onright>2</onright>
+        <onup>2</onup>
+        <ondown>2</ondown>
+        <spinColor>FFFFFFFF</spinColor>
+        <textcolor>FFFFFFFF</textcolor>
+      </control>
+      <control>
+        <description>Current program title</description>
+        <type>fadelabel</type>
+        <id>13</id>
+        <posX>260</posX>
+        <posY>440</posY>
+        <width>250</width>
+        <label>#TV.RecordedTV.Title</label>
+        <font>font13</font>
+        <textcolor>FFFFFFFF</textcolor>
+      </control>
+      <control>
+        <description>Current program time</description>
+        <type>label</type>
+        <id>14</id>
+        <posX>260</posX>
+        <posY>460</posY>
+        <label>#TV.RecordedTV.Time</label>
+        <align>left</align>
+        <font>font13</font>
+        <textcolor>FFB2D4F5</textcolor>
+      </control>
+      <control>
+        <description>Description1</description>
+        <type>textboxscrollup</type>
+        <id>15</id>
+        <posX>260</posX>
+        <posY>485</posY>
+        <width>430</width>
+        <height>65</height>
+        <label>#TV.RecordedTV.Description</label>
+        <font>font13</font>
+        <textcolor>FFFFFFFF</textcolor>
+      </control>
+      <control>
+        <description>genre</description>
+        <type>label</type>
+        <id>17</id>
+        <posX>660</posX>
+        <posY>460</posY>
+        <label>#TV.RecordedTV.Genre</label>
+        <align>right</align>
+        <font>font13</font>
+        <textcolor>FFB2D4F5</textcolor>
+      </control>
+    </control>
+  </controls>
+</window>

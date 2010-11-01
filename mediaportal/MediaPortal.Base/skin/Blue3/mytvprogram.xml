@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>748</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.image:television_logo.png</define>
+  <define>#header.label:1037</define>
+  <define>#header.hover:-</define>
+  <define>#selecteditem:</define>
+  <controls>
+    <import>common.window.xml</import>
+    <import>common.time.xml</import>
+    <control>
+      <type>group</type>
+      <layout>StackLayout</layout>
+      <description>group element</description>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <posX>40</posX>
+      <posY>97</posY>
+      <control>
+        <description>Record</description>
+        <type>button</type>
+        <id>2</id>
+        <onup>17</onup>
+        <ondown>3</ondown>
+        <onright>10</onright>
+      </control>
+      <control>
+        <description>Advanced Record</description>
+        <type>button</type>
+        <id>3</id>
+        <label>1038</label>
+        <onup>2</onup>
+        <ondown>4</ondown>
+        <onright>10</onright>
+      </control>
+      <control>
+        <description>Keep</description>
+        <type>button</type>
+        <id>4</id>
+        <label>1042</label>
+        <onup>2</onup>
+        <ondown>5</ondown>
+        <onright>10</onright>
+      </control>
+      <control>
+        <description>Notify</description>
+        <type>togglebutton</type>
+        <id>5</id>
+        <label>1040</label>
+        <font>font13</font>
+        <textcolor>White</textcolor>
+        <colordiffuse>White</colordiffuse>
+        <disabledcolor>60ffffff</disabledcolor>
+        <onup>4</onup>
+        <ondown>6</ondown>
+        <onright>10</onright>
+      </control>
+      <control>
+        <description>Quality</description>
+        <type>button</type>
+        <id>6</id>
+        <label>882</label>
+        <onup>5</onup>
+        <ondown>7</ondown>
+        <onright>10</onright>
+      </control>
+      <control>
+        <description>Episodes</description>
+        <type>button</type>
+        <id>7</id>
+        <label>888</label>
+        <onup>6</onup>
+        <ondown>8</ondown>
+        <onright>10</onright>
+      </control>
+      <control>
+        <description>PreRecord</description>
+        <type>button</type>
+        <id>8</id>
+        <label>1444</label>
+        <onup>7</onup>
+        <ondown>9</ondown>
+        <onright>10</onright>
+      </control>
+      <control>
+        <description>PostRecord</description>
+        <type>button</type>
+        <id>9</id>
+        <label>1445</label>
+        <onup>8</onup>
+        <ondown>99</ondown>
+        <onright>10</onright>
+      </control>
+    </control>
+    <control>
+      <description>upcoming episodes label</description>
+      <type>label</type>
+      <id>11</id>
+      <posX>268</posX>
+      <posY>77</posY>
+      <width>400</width>
+      <align>left</align>
+      <label>646</label>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>upcoming episodes listcontrol</description>
+      <type>listcontrol</type>
+      <id>10</id>
+      <posX>260</posX>
+      <posY>97</posY>
+      <height>310</height>
+      <width>425</width>
+      <textXOff>0</textXOff>
+      <textYOff>2</textYOff>
+      <textXOff2>420</textXOff2>
+      <textYOff2>25</textYOff2>
+      <textXOff3>80</textXOff3>
+      <textYOff3>27</textYOff3>
+      <IconXOff>5</IconXOff>
+      <IconYOff>4</IconYOff>
+      <PinIconWidth>20</PinIconWidth>
+      <PinIconHeight>15</PinIconHeight>
+      <PinIconXOff>50</PinIconXOff>
+      <PinIconYOff>29</PinIconYOff>
+      <spinWidth>26</spinWidth>
+      <spinHeight>27</spinHeight>
+      <spinPosX>625</spinPosX>
+      <spinPosY>530</spinPosY>
+      <itemWidth>40</itemWidth>
+      <itemHeight>40</itemHeight>
+      <textureFocus>album_background_focus.png</textureFocus>
+      <textureNoFocus>album_background_nofocus.png</textureNoFocus>
+      <spaceBetweenItems>4</spaceBetweenItems>
+      <keepaspectratio>yes</keepaspectratio>
+      <textureHeight>50</textureHeight>
+      <font2>font10</font2>
+      <font3>font10</font3>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <onup>2</onup>
+      <ondown>2</ondown>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <type>image</type>
+      <posX>260</posX>
+      <posY>399</posY>
+      <width>45</width>
+      <height>45</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <zoom>no</zoom>
+      <texture>#selectedthumb</texture>
+    </control>
+    <control>
+      <description>channel</description>
+      <id>16</id>
+      <type>fadelabel</type>
+      <posX>310</posX>
+      <posY>394</posY>
+      <width>375</width>
+      <align>left</align>
+      <textcolor>FFB2D4F5</textcolor>
+      <font>font12</font>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Current program time</description>
+      <id>14</id>
+      <type>label</type>
+      <posX>310</posX>
+      <posY>411</posY>
+      <width>180</width>
+      <align>left</align>
+      <font>font12</font>
+      <textcolor>FFB2D4F5</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Current program genre</description>
+      <type>label</type>
+      <id>17</id>
+      <posX>683</posX>
+      <posY>411</posY>
+      <width>195</width>
+      <align>right</align>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Current program title</description>
+      <type>fadelabel</type>
+      <id>13</id>
+      <posX>310</posX>
+      <posY>428</posY>
+      <width>375</width>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Description1</description>
+      <type>textboxscrollup</type>
+      <id>15</id>
+      <posX>260</posX>
+      <posY>455</posY>
+      <height>68</height>
+      <width>425</width>
+      <label>#TV.RecordedTV.Description</label>
+      <font>font11</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+  </controls>
+</window>

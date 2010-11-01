@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MPinstallerCleenup>
+  <GroupSubstitution>
+    <Substitution key="16:9" value="Skins"/>
+  </GroupSubstitution>
+  <NameCleanups>
+    <Substitution key="\(MPI\)" value=""/>
+    <Substitution key="\(Mpi\)" value=""/>	
+    <Substitution key="RC\d" value=""/>		
+	<Substitution key=" v(\d.)*." value=""/>	
+    <Substitution key="\d\.\d" value=""/>	
+  </NameCleanups>
+</MPinstallerCleenup>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<ehomelist version="1">
+	<transceiver deviceid="#vid_0471&amp;pid_0815" name="Microsoft/Philips 2005" />
+	<transceiver deviceid="#vid_045e&amp;pid_006d" name="Microsoft/Philips 2004" />
+	<transceiver deviceid="#vid_1460&amp;pid_9150" name="HP" />
+	<transceiver deviceid="#vid_107b&amp;pid_3009" name="FIC Spectra/Mycom Mediacenter" />
+	<transceiver deviceid="#vid_0609&amp;pid_031d" name="Toshiba/Hauppauge SMK MCE remote" />
+	<transceiver deviceid="#vid_1784&amp;pid_0001" name="another Hauppauge OEM MCE remote" />
+	<transceiver deviceid="#vid_1784&amp;pid_0006" name="another Hauppauge OEM MCE remote 2" />
+	<transceiver deviceid="#vid_03ee&amp;pid_2501" name="Mitsumi MCE remote" />
+	<transceiver deviceid="#vid_1509&amp;pid_9242" name="Fujitsu Scaleo-E" />
+	<transceiver deviceid="#vid_2304&amp;pid_0225" name="Pinnacle PCTV Remote" />
+	<transceiver deviceid="#vid_051c&amp;pid_c001" name="Shuttle MCE Remote" />
+	<transceiver deviceid="#vid_1308&amp;pid_c001" name="another Shuttle MCE Remote" />
+    <transceiver deviceid="#vid_04b4&amp;pid_0100" name="Centarea Master Remote II" />
+</ehomelist>

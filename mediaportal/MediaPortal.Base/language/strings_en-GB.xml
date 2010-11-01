@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Language name="English (United Kingdom)" characters="255">
+  <Section name="unmapped">
+    <String id="0" prefix="My ">Programmes</String>
+    <String id="62">Initialising DirectX...</String>
+    <String id="63">Initialising input devices...</String>
+    <String id="71">Initialising window manager...</String>
+    <String id="274">Subtitles' position</String>
+    <String id="347">Flatten</String>
+    <String id="385">Fine</String>
+    <String id="411">Retrieving weather for:</String>
+    <String id="412">Unable to retrieve weather data</String>
+    <String id="705">Retrieving RSS feed for</String>
+  </Section>
+</Language>

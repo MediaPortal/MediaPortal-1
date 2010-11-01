@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+	<id>9000</id>
+	<defaultcontrol>5</defaultcontrol>
+	<allowoverlay>yes</allowoverlay>
+	<define>#header.label:109000</define>
+	<define>#header.image:settings_logo.png</define>
+	<define>#header.hover:hover_settings.png</define>
+	<!-- cheat a little, we don't use two of the items in the imported file to blank their labels -->
+	<define>#itemcount:-</define>
+	<define>#selecteditem:-</define>
+	<controls>
+		<import>common.window.xml</import>
+		<control>
+			<description>Plugin is not configured.</description>
+			<type>label</type>
+			<id>3</id>
+			<width>300</width>
+			<posX>497</posX>
+			<posY>206</posY>
+			<label>9101</label>
+		</control>
+		<control>
+			<description>Please run configure.exe first!</description>
+			<type>label</type>
+			<id>4</id>
+			<width>300</width>
+			<posX>497</posX>
+			<posY>256</posY>
+			<label>9102</label>
+		</control>
+		<control>
+			<description>buttons</description>
+			<type>group</type>
+			<animation effect="fade" time="250">WindowOpen</animation>
+			<animation effect="fade" time="250">WindowClose</animation>
+			<animation effect="slide" time="150" start="-300,0">WindowOpen</animation>
+			<animation effect="slide" time="250" end="-300,0">WindowClose</animation>
+			<posX>497</posX>
+			<posY>206</posY>
+			<layout>StackLayout</layout>
+			<control>
+				<description>Keypad Options</description>
+				<type>button</type>
+				<id>5</id>
+				<width>300</width>
+				<label>9103</label>
+				<hyperlink>9005</hyperlink>
+				<onup>17</onup>
+			</control>
+			<control>
+				<description>Display Options</description>
+				<type>button</type>
+				<id>6</id>
+				<width>300</width>
+				<label>9104</label>
+				<hyperlink>9003</hyperlink>
+				<onup>17</onup>
+			</control>
+			<control>
+				<description>Display Control Options</description>
+				<type>button</type>
+				<id>7</id>
+				<width>300</width>
+				<label>9105</label>
+				<hyperlink>9002</hyperlink>
+			</control>
+			<control>
+				<description>Equalizer Options</description>
+				<type>button</type>
+				<id>8</id>
+				<width>300</width>
+				<label>9106</label>
+				<hyperlink>9004</hyperlink>
+			</control>
+			<control>
+				<description>Backlight Options</description>
+				<type>button</type>
+				<id>9</id>
+				<width>300</width>
+				<label>9107</label>
+				<hyperlink>9001</hyperlink>
+			</control>
+			<control>
+				<description>Remote Options</description>
+				<type>button</type>
+				<id>10</id>
+				<width>300</width>
+				<label>9108</label>
+				<hyperlink>9006</hyperlink>
+			</control>
+			<control>
+				<description>Monitor Power States</description>
+				<type>togglebutton</type>
+				<id>11</id>
+				<width>300</width>
+				<label>9109</label>
+			</control>
+			<control>
+				<description>Contrast</description>
+				<type>selectbutton</type>
+				<id>12</id>
+				<width>300</width>
+				<label>9110</label>
+			</control>
+			<control>
+				<description>Brightness</description>
+				<type>selectbutton</type>
+				<id>13</id>
+				<width>300</width>
+				<label>9111</label>
+			</control>
+		</control>
+	</controls>
+</window>

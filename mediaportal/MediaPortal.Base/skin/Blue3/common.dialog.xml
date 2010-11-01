@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <width>720</width>
+      <height>576</height>
+      <texture>black.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>158</posX>
+      <posY>187</posY>
+      <width>404</width>
+      <height>232</height>
+      <texture>dialog_background.png</texture>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>dialog Heading</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>210</posX>
+      <posY>220</posY>
+      <width>295</width>
+      <label>0</label>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>dialog line 1</description>
+      <type>fadelabel</type>
+      <id>2</id>
+      <posX>210</posX>
+      <posY>250</posY>
+      <width>295</width>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>dialog line 2</description>
+      <type>label</type>
+      <id>3</id>
+      <posX>210</posX>
+      <posY>278</posY>
+      <label>0</label>
+      <width>295</width>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>dialog line 3</description>
+      <type>label</type>
+      <id>4</id>
+      <posX>210</posX>
+      <posY>298</posY>
+      <label>0</label>
+      <width>295</width>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>dialog line 4</description>
+      <type>label</type>
+      <id>5</id>
+      <posX>210</posX>
+      <posY>318</posY>
+      <label>0</label>
+      <width>295</width>
+      <font>font13</font>
+      <textcolor>ffffffff</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+  </controls>
+</window>
