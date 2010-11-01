@@ -39,7 +39,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("lefttexture")] private string _leftTextureName;
     [XMLSkinElement("midtexture")] private string _midTextureName;
     [XMLSkinElement("righttexture")] private string _rightTextureName;
-    [XMLSkinElement("innerheight")] private int _innerheight;
+    [XMLSkinElement("innerheight")] private int _innerheight=-1;
     [XMLSkinElement("offset")] private int _offset =-1;
 
     private GUIAnimation _imageBackGround = null;
@@ -191,12 +191,10 @@ namespace MediaPortal.GUI.Library
       _imageBackGround.SetPosition(_imageBackGround.XPosition, _imageBackGround.YPosition);
       _imageBackGround.Render(timePassed);
 
-      GUIFontManager.Present();
-
       int iWidthLeft = _imageLeft.TextureWidth;
-      int iHeightLeft = (_innerheight != 0) ? _innerheight : _imageLeft.TextureHeight; // Legacy skin don't use innerheight
+      int iHeightLeft = (_innerheight != -1) ? _innerheight : _imageLeft.TextureHeight; // Legacy skin don't use innerheight
       int iWidthRight = _imageRight.TextureWidth;
-      int iHeightRight = (_innerheight != 0) ? _innerheight : _imageRight.TextureHeight;
+      int iHeightRight = (_innerheight != -1) ? _innerheight : _imageRight.TextureHeight;
       GUIGraphicsContext.ScaleHorizontal(ref iWidthLeft);
       GUIGraphicsContext.ScaleHorizontal(ref iWidthRight);
       GUIGraphicsContext.ScaleVertical(ref iHeightLeft);
