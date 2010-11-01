@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="MPRepository"
+                   namespace="MPRepository.Items">
+
+  <class name="MPItemComment">
+    <id name="Id" unsaved-value="0">
+      <generator class="identity" />
+    </id>
+    <many-to-one name="User" />
+    <property name="Time" />
+    <property name="Text" length="4096" />
+  </class>
+</hibernate-mapping>
