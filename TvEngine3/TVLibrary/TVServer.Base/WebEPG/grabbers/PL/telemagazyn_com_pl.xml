@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info availableDays="14" timezone="" version="2.1.0" />
+  <Channels>
+    <Channel id="tvp1.pl" siteId="TVP1" />
+    <Channel id="tvp2.pl" siteId="TVP2" />
+    <Channel id="POLSAT.COM.pl" siteId="POLS" />
+    <Channel id="tvn.pl" siteId="TVN" />
+    <Channel id="tv4.pl" siteId="PTV4" />
+    <Channel id="tvn7.pl" siteId="RTL7" />
+    <Channel id="tvpkultura.pl" siteId="TVKU" />
+    <Channel id="tvpolonia.com" siteId="TVPL" />
+    <Channel id="pulstv.pl" siteId="PULS" />
+    <Channel id="eurosport@eurosport.com" siteId="EUSP" />
+    <Channel id="eurosport2@eurosport.com" siteId="EU2P" />
+    <Channel id="polsatsport.com.pl" siteId="PCSO" />
+    <Channel id="alekino.pl" siteId="ALEK" />
+    <Channel id="axn.pl" siteId="AXNP" />
+    <Channel id="europaeuropa.pl" siteId="WZJC" />
+    <Channel id="hallmarkchannel.com" siteId="HLMK" />
+    <Channel id="cartoonnetwork.pl" siteId="CANW" />
+    <Channel id="jetix.pl" siteId="FXKD" />
+    <Channel id="tvnturbo.pl" siteId="TVTU" />
+    <Channel id="kinopolska.pl" siteId="KPTV" />
+    <Channel id="tcm.pl" siteId="TCMP" />
+    <Channel id="warszawa@tvp3.pl" siteId="TRWA" />
+    <Channel id="discoverychannel.pl" siteId="DSCV" />
+    <Channel id="civilisation@discoverychannel.pl" siteId="DSCC" />
+    <Channel id="Sci-Trek@discoverychannel.pl" siteId="DSCT" />
+    <Channel id="TravelandAdventure@discoverychannel.pl" siteId="DSTA" />
+    <Channel id="animalplanet.com" siteId="ANPL" />
+    <Channel id="nationalgeographic.com" siteId="NGEO" />
+    <Channel id="travelchannel.com" siteId="TRVL" />
+    <Channel id="planete@planete.com" siteId="PLNT" />
+    <Channel id="realitytv.co.uk" siteId="RTV" />
+    <Channel id="polonia1.pl" siteId="PLN1" />
+    <Channel id="polsat2@polsat.com.pl" siteId="POL2" />
+    <Channel id="tmt.pl" siteId="TMTP" />
+    <Channel id="mtv.pl" siteId="MTVP" />
+    <Channel id="classic@mtv.pl" siteId="MTVC" />
+    <Channel id="vivapolska.tv" siteId="VIPL" />
+    <Channel id="romantica.pl" siteId="ROMN" />
+    <Channel id="tvn24.pl" siteId="TV24" />
+    <Channel id="club" siteId="WZCL" />
+    <Channel id="extremesports.tv" siteId="WZES" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.telemagazyn.com.pl/?p=1&amp;dzien=[YYYY]-[MM]-[DD]&amp;godzina=3&amp;nadawca=" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="&lt;!-- naglowki programow koniec --&gt;" end="&lt;!-- zamkniecie kolumn z programem koniec --&gt;">
+        <SectionTemplate tags="DS">
+          <TemplateText>
+&lt;div&gt;&lt;span&gt;&lt;#START&gt;&lt;/span&gt;&lt;#TITLE&gt;-&lt;#GENRE&gt;,&lt;/div&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

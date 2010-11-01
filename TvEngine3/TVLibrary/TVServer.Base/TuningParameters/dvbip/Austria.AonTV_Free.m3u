@@ -1,0 +1,155 @@
+#EXTM3U
+#EXTINF:0,ORF 1
+udp://@239.0.2.60:8208
+#EXTINF:0,ORF 2-W
+udp://@239.0.2.61:8208
+#EXTINF:0,ATV
+udp://@239.0.2.62:8208
+#EXTINF:0,PULS 4
+udp://@239.0.2.98:8208
+#EXTINF:0,SAT.1 Österreich
+udp://@239.0.2.66:8208
+#EXTINF:0,RTL Österreich
+udp://@239.0.2.65:8208
+#EXTINF:0,Pro7 Österreich
+udp://@239.0.2.67:8208
+#EXTINF:0,VOX Österreich
+udp://@239.0.2.70:8208
+#EXTINF:0,Austria 9
+udp://@239.0.2.47:8208
+#EXTINF:0,Servus TV
+udp://@239.0.2.36:8208
+#EXTINF:0,RTL II Österreich
+udp://@239.0.2.68:8208
+#EXTINF:0,Kabel1 Österreich
+udp://@239.0.2.69:8208
+#EXTINF:0,Das Vierte
+udp://@239.0.2.2:8208
+#EXTINF:0,Tele 5
+udp://@239.0.2.38:8208
+#EXTINF:0,ARD/Das Erste
+udp://@239.0.2.63:8208
+#EXTINF:0,ZDF
+udp://@239.0.2.64:8208
+#EXTINF:0,BR
+udp://@239.0.2.80:8208
+#EXTINF:0,SF1
+udp://@239.0.2.49:8208
+#EXTINF:0,SF2
+udp://@239.0.2.48:8208
+#EXTINF:0,3sat
+udp://@239.0.2.75:8208
+#EXTINF:0,arte
+udp://@239.0.2.76:8208
+#EXTINF:0,Super RTL Österreich
+udp://@239.0.2.71:8208
+#EXTINF:0,KI.KA
+udp://@239.0.2.74:8208
+#EXTINF:0,Nick
+udp://@239.0.2.88:8208
+#EXTINF:0,DSF
+udp://@239.0.2.3:8208
+#EXTINF:0,Eurosport
+udp://@239.0.2.85:8208
+#EXTINF:0,Eurosport 2
+udp://@239.0.2.104:8208
+#EXTINF:0,TW1
+udp://@239.0.2.97:8208
+#EXTINF:0,DMAX
+udp://@239.0.2.28:8208
+#EXTINF:0,QVC
+udp://@239.0.2.44:8208
+#EXTINF:0,HSE 24
+udp://@239.0.2.42:8208
+#EXTINF:0,9Live
+udp://@239.0.2.89:8208
+#EXTINF:0,Okto
+udp://@239.0.2.37:8208
+#EXTINF:0,MTV Österreich
+udp://@239.0.2.87:8208
+#EXTINF:0,Viva
+udp://@239.0.2.86:8208
+#EXTINF:0,go tv
+udp://@239.0.2.99:8208
+#EXTINF:0,Lala TV
+udp://@239.0.2.40:8208
+#EXTINF:0,BRalpha
+udp://@239.0.2.90:8208
+#EXTINF:0,Phoenix
+udp://@239.0.2.84:8208 
+#EXTINF:0,Eins Plus
+udp://@239.0.2.91:8208
+#EXTINF:0,Eins Extra
+udp://@239.0.2.92:8208
+#EXTINF:0,Eins Festival
+udp://@239.0.2.93:8208
+#EXTINF:0,ZDF Info
+udp://@239.0.2.94:8208
+#EXTINF:0,ZDF Neo
+udp://@239.0.2.95:8208
+#EXTINF:0,ZDF Theaterkanal
+udp://@239.0.2.96:8208
+#EXTINF:0,SWR Fernsehen
+udp://@239.0.2.81:8208
+#EXTINF:0,MDR Fernsehen
+udp://@239.0.2.79:8208
+#EXTINF:0,NDR Fernsehen
+udp://@239.0.2.77:8208
+#EXTINF:0,WDR Fernsehen
+udp://@239.0.2.78:8208
+#EXTINF:0,HR Fernsehen/Hessen
+udp://@239.0.2.82:8208
+#EXTINF:0,RBB Berlin-Brandenburg
+udp://@239.0.2.83:8208
+#EXTINF:0,n-tv
+udp://@239.0.2.72:8208
+#EXTINF:0,Euronews
+udp://@239.0.2.46:8208
+#EXTINF:0,Bloomberg TV
+udp://@239.0.2.29:8208
+#EXTINF:0,CNN International
+udp://@239.0.2.1:8208
+#EXTINF:0,Al Jazeera
+udp://@239.0.2.30:8208
+#EXTINF:0,BBC World
+udp://@239.0.2.102:8208
+#EXTINF:0,BBC Entertainment
+udp://@239.0.2.103:8208
+#EXTINF:0,Rai Due
+udp://@239.0.2.5:8208
+#EXTINF:0,TV5
+udp://@239.0.2.7:8208
+#EXTINF:0,France 24
+udp://@239.0.2.45:8208
+#EXTINF:0,TRT Türk
+udp://@239.0.2.32:8208
+#EXTINF:0,RTS Sat
+udp://@239.0.2.202:8208
+#EXTINF:0,HRT1
+udp://@239.0.2.201:8208
+#EXTINF:0,ORF2-B
+udp://@239.0.2.22:8208
+#EXTINF:0,ORF2-K
+udp://@239.0.2.25:8208
+#EXTINF:0,ORF2-NÖ
+udp://@239.0.2.20:8208
+#EXTINF:0,ORF2-OÖ
+udp://@239.0.2.21:8208
+#EXTINF:0,ORF2-S
+udp://@239.0.2.24:8208
+#EXTINF:0,ORF2-St
+udp://@239.0.2.23:8208
+#EXTINF:0,ORF2-T
+udp://@239.0.2.26:8208
+#EXTINF:0,ORF2-V
+udp://@239.0.2.27:8208
+#EXTINF:0,Hitradio Ö3
+udp://@239.0.2.6:8208
+#EXTINF:0,SR
+udp://@239.0.2.14:8208
+#EXTINF:0,Rai Uno
+udp://@239.0.2.15:8208
+#EXTINF:0,Rai Tre
+udp://@239.0.2.31:8208 
+#EXTINF:0,aonTV-Info
+udp://@239.0.2.100:8208
