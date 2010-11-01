@@ -1362,7 +1362,7 @@ namespace MediaPortal.GUI.Library
     private bool CardAllowedToSpin()
     {
       // Make sure that we have a FileInfo object. In a Music DB View, it would be null
-      if (SelectedListItem.FileInfo == null)
+      if (SelectedListItem != null && SelectedListItem.FileInfo == null)
       {
         SelectedListItem.FileInfo = new FileInformation();
       }
