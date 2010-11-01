@@ -1,0 +1,268 @@
+
+This file is a summary of the actual changes. Please consult the repository history
+features for a full historical record of the changes.
+
+For a complete list of changes between any two releases, execute the Subversion command
+
+    svn log -r <start>:<end> http://www.mertner.com/svn/gentle/gentle
+    
+where <start> and <end> are the revisions to include in the output. Recent releases
+have their revision spans marked below (listed after the version number).
+
+
+CHANGELOG
+
+  2008-03-14  [v1.5.0] [1043:1237]
+							This release is a wrap-up release with bugfixes and improvements made
+							to Gentle since the last release. The project has been updated to use
+							and support generics and can therefore no longer be used with .NET 1.1.
+							The NullableType<T> structure should be supported, although this remains
+							largely untested. Most provider libraries have been updated to recent
+							releases. IPersistent has been refactored to use a bade interface IEntity
+							that makes it easier to use Gentle in repository-style DALs.
+							Note that Visual Studio 2008 is required for opening the project files.
+
+              [v1.2.9] [974:1042]
+  2006-06-06  This release features a complete rewrite of the cache subsystem
+              with significant performance improvements as a result. There have
+              also been several minor improvements and bugfixes throughout the
+              code base.
+
+              [v1.2.8] [930:973]
+  2006-03-04  This release fixes a number of bugs throughout the library, and contains
+              updated provider libraries for MySQL, PostgreSQL, Firebird and Sybase.
+              Upgrading users should note that the namespace for TypedArrayItemBase has 
+              changed to Gentle.Framework. A preliminary provider library for DB2 has
+              been added (helpers wanted for completing the implementation). Also note
+              that the source repository has moved to a new URL (see above).
+
+              [v1.2.7] [870:929]
+  2005-12-05  This release features improved performance and better transaction support.
+              Logging has been cleaned up and is now fully categorized. NullValue can 
+              now be used with Guids. There have been improvements to the Firebird, 
+              MySQL and Oracle providers, and the log4net library has been updated. 
+              There have also been a number of general bugfixes and improvements.
+
+              [v1.2.6] [821:869]
+  2005-10-10  This release fixes a range of bugs and annoyances throughout the code.
+              Improvements have been made to inheritance mapping, validation, and 
+              logging. Gentle now checks that missing provider libraries are 
+              referenced before complaining.
+
+              [v1.2.5] [803:820]
+  2005-07-16  This release fixes a bug introduced in 1.2.4 affecting the configuration 
+              subsystem. Error reporting and the cache subsystem have been improved.
+              
+              [v1.2.4] [762:802]
+  2005-07-08  This release adds working SQLite support, and contains important 
+              improvements to the configuration and caching subsystems. A vast number 
+              of minor issues have been resolved.
+
+              [v1.2.3] [730:761]
+  2005-05-08  This release features improved error reporting, and corrects a large
+              number of minor issues. An exception is now thrown for missing provider 
+              libraries defined in the config file. 
+              
+              [v1.2.2] [717:729]
+  2005-04-04  This release fixes a bug introduced in 1.2.1 affecting reserved word 
+              handling. A bug affecting concurrency handling when using unnamed 
+              parameters was fixed.
+
+              [v1.2.1] [630:716]
+  2005-03-31  This release adds a validation subsystem, as well as numerous 
+              improvements throughout. There have been critical bugfixes to 
+              core components; existing users should upgrade. Gentle is now 
+              CLS compliant, and Mono (1.1.4+) is fully supported.
+              
+              [v1.2.0]
+  2005-02-12  This release adds a provider for SQL Server CE, and improvements to the 
+              configuration subsystem, error reporting, and various other components.
+              A bug affecting the use of multiple brokers has been fixed. MySQL users
+              should upgrade due to critical bugs in the MySQL library shipped with 
+              previous versions.
+  
+              [v1.1.3]
+  2004-12-31  This release adds an improved configuration subsystem, and contains a 
+              large number of fixes and improvements affecting reserved word handling, 
+              serialization, database analysis, transactions, and more.
+
+              [v1.1.2]
+  2004-10-25  This release contains a number of minor bugfixes and improvements. To
+              compile Gentle from source you must first register the key used to sign
+              the assembly in the CSP (see the README for additional info on this). 
+
+              [v1.1.1]
+  2004-07-04  This release contains bugfixes and performance improvements. 
+
+              [v1.1.0]
+  2004-06-21  This release adds dynamic loading of provider libraries, automatic lowest
+              cost constructor selection, vastly improved transaction handling, a 
+              completely reworked configuration file handler, support for decorating
+              private members, and many other improvements. There have been many fixes
+              for Jet/Access, Firebird, MySQL and Sybase users. Please refer to the 
+              readme file for detailed upgrade instructions.
+
+              [v1.0.4]
+  2004-05-17  This release adds preliminary support for Sybase. Support for GUIDs in
+              SQL Server and BLOBs in both MySQL and SQL Server was added. Firebird
+              support has been vastly improved and there are a number of minor fixes
+              throughout.
+
+              [v1.0.3]
+  2004-04-28  Updated provider library and Firebird support files [Carlos]. There may
+              still be minor issues with Firebird but most testcases now run fine.
+
+  2004-04-25  Fixed a number of bugs in the MS Access and Firebird code. Various
+              improvements and fixes were applied to some of the core classes.
+
+As of version 1.0.2 changes have been aggregated and are listed here with less detail.
+
+              [v1.0.2]
+  2004-04-22  Database script for SQLite added [ch].
+
+  2004-04-21  Added full support for Oracle access using the OracleODP provider [as].
+
+  2004-04-15  Fixed a bug that caused test cases to interact and fail when executed
+              all at once. If you encounter a failing test case try to run it on its
+              own before reporting a bug.
+
+  2004-04-14  Fixed a bug that prevented the same column from appearing multiple
+              times in the constraint list. Fixed a bug with paging and added test
+              cases for both issues.
+
+  2004-04-12  Added support for soft deleting objects with a concurrency column by
+              setting the concurrency value to -1. Rows marked with a concurrency
+              value of -1 will not be returned by any of the retrieve methods.
+
+  2004-04-11  Added support for dynamically specifying the table name (see the Key
+              class and ITableName interface for details on usage). Added support
+              for paging (Next/Previous) to SqlResult.
+
+  2004-04-09  Fixed a missing type conversion for Oracle users [Andreas Seibt,
+              Petrel].
+
+              [v1.0.1]
+  2004-04-08  Added support for generating a DataView from an SqlResult. The
+              analyzer for SQL Server now supports obtaining the identity columns.
+              Fixed a bug in SqlResult where column names would only be available
+              if rows were retrieved.
+
+  2004-04-05  Fixed a number of bugs that would prevent test cases from running if
+              concurrency control was disabled.
+
+              [v1.0.0]
+  2004-04-04  Added support for Enum properties (will be persisted as integers).
+              Introduced a new sample parent class (GentleBase) providing defaults
+              for the primary key field as well as concurrency control. Changed the
+              Member class to test the new base class.
+
+  2004-04-03  Added support for automatic concurrency control (update statements
+              only) using the ConcurrencyControlColumn attribute. Added a new
+              configuration key "Options/ConcurrencyControl" to allow Gentle to
+              ignore the concurrency attribute. Applied a number of minor fixes
+              kindly reported back by users.
+
+              [v0.9.9]
+  2004-03-21  Updated the UserRole test cases to not use reserved words and updated
+              the database scripts for all databases. Applied a number of fixes for
+              Oracle support [Andreas Siebt]. Various minor fixes throughout.
+
+  2004-03-16  Fixed GentleList implementation [bugfixes; list content is no longer
+              touched for n:m relations (relation management only); objects in 1:n
+              lists are still managed]. Fixed a number of bugs for Oracle [Andreas
+              Siebt].
+
+  2004-03-14  Implemented list classes GentleList and GentleRelation for
+              automatic management of 1:n and n:m relations. Added testcases for
+              the Gentle list classes. Fixed a number of bugs affecting objects
+              with aggregated primary keys.
+
+  2004-03-13  Added support for Oracle [Andreas Siebt]. Minor bugfixes. Added
+              reserved word checking for MS SQL Server and MS Access.
+
+  2004-03-09  Renamed Config handler to GentleSectionHandler and the configuration
+              section name to "gentle". Fixed the Transaction class. Passing an
+              empty SqlResult to ObjectFactory.GetInstance now throws an error.
+
+              [v0.9.8]
+  2004-03-07  Added support for MS Access (Jet) [Vinicius (Vinny) A. DaSilva].
+              Added support for Firebird [Carlos Guzmán Álvarez]. Fixed a number
+              of bugs affecting MySQL and PostgreSQL users. Added support for
+              limit and offset clauses to the SqlBuilder.
+
+  2004-02-29  Implemented caching database metadata analyzer for SQL92 compliant
+              engines (replaces SqlServerAnalyzer for MS SQL Server). Updated the
+              NAnt build scripts [Clayton Harbour].
+
+  2004-02-26  Made ObjectMap.Construct return proper GentleExceptions. Fixed a
+              bug where DateTime.MinValue would always translate to null. Fixed
+              a bug causing Broker.Retrieve only to work when the Key contained
+              primary key field(s). Fixed compilation on Mono.
+
+              [v0.9.7]
+  2004-02-24  Fixed a bug introduced in 0.9.6 that broke all error reporting. Added
+              support for primary key detection to SqlServerAnalyzer. Added support
+              for using SqlResults as In/NotIn constraint input to SqlBuilder.
+
+              [v0.9.6]
+  2004-02-22  Merged changes to use log4net for logging [Clayton Harbour]. Renamed
+              FrameworkException to GentleException and various minor code cleanups.
+
+  2004-02-16  Added support for row limit (TOP) and order by clauses to SqlBuilder.
+              Fixed a bug with property/column mapping [Clayton Harbour]. Fixed a
+              bug where SqlBuilder in some cases would generate illegal sql for
+              Operator.Equals. Added support for Operator.NotEquals.
+
+              [v0.9.5]
+  2004-02-15  Added support for Operator.In and Operator.NotIn constraints using
+              an ArrayList of data elements and property name. Generalized the
+              test cases for SQL factory verification to be provider independent.
+
+  2004-02-14  Added fix for DateTime null handling (now works without setting
+              DefaultValue). Added missing Error declarations and corresponding
+              external message definitions.
+
+              [v0.9.4]
+  2004-02-09  Added partial metadata extraction for PostgreSQL.
+
+  2004-02-08  Implemented support for transactions.
+
+  2004-02-06  Added automatic metadata extraction support for MySQL. Added
+              proper handling of null values, as well as string and datetime
+              clipping for invalid values. Some code cleanup and fixes.
+
+              [v0.9.3]
+  2004-02-04  Added support for extracting field type/size information
+              from the system tables (MS SQL Server only, for now).
+              Improved the SqlResult and SqlStatement classes with a bunch
+              of convenience methods. Various minor improvements and fixes.
+
+  2004-02-03  Extended TableColumn to allow specification of DbType, Size
+              and DefaultValue. Added support for the new TableColumn properties
+              throughout the framework.
+
+              [v0.9.2]
+  2004-02-02  Added support for converting between business objects and
+              DataViews. Use the new CustomView attribute to declare views.
+
+  2004-02-01  Started work on object caching using Michael Bouck's cache
+              class. Use the TableName attribute to set caching strategy
+              per type. Also started work on ObjectGraph for automatic
+              join resolution.
+
+  2004-01-31  Added a bunch of data accessor methods to the SqlResult class.
+
+  2004-01-30  Fixed the problem with the ByteFX MySQL provider. Added support
+              for translating foreign key columns using the ForeignKey
+              attribute.
+
+              [v0.9.1]
+  2004-01-27  Added MySQL and SQLite support. The ByteFX provider for
+              MySQL appears to be broken. SQLite is yet untested.
+
+  2004-01-25  Publishing of errors to the Windows event log no longer uses
+              the ExceptionManagement libraries (dependency removed).
+              Reworked some of the Config file handling.
+
+              [v0.9.0]
+  2004-01-21  Initial source code release.
