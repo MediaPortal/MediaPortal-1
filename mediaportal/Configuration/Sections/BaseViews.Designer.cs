@@ -10,7 +10,7 @@
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
       this.groupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.lblViews = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cbViews = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -94,6 +94,8 @@
       // 
       // dataGrid
       // 
+      this.dataGrid.AllowDrop = true;
+      this.dataGrid.AllowUserToAddRows = false;
       this.dataGrid.AllowUserToDeleteRows = false;
       this.dataGrid.AllowUserToResizeColumns = false;
       this.dataGrid.AllowUserToResizeRows = false;
@@ -101,14 +103,15 @@
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.dataGrid.BackgroundColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle1.BackColor = System.Drawing.Color.LightSteelBlue;
-      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dataGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+      dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle2.BackColor = System.Drawing.Color.LightSteelBlue;
+      dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dataGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+      this.dataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
       this.dataGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dgSelection,
             this.dgOperator,
@@ -124,9 +127,14 @@
       this.dataGrid.RowHeadersVisible = false;
       this.dataGrid.Size = new System.Drawing.Size(440, 258);
       this.dataGrid.TabIndex = 4;
+      this.dataGrid.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnMouseDown);
+      this.dataGrid.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnMouseMove);
+      this.dataGrid.DragOver += new System.Windows.Forms.DragEventHandler(this.OnDragOver);
+      this.dataGrid.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnCellPainting);
       this.dataGrid.CurrentCellDirtyStateChanged += new System.EventHandler(this.dataGrid_CurrentCellDirtyStateChanged);
       this.dataGrid.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGrid_DataError);
-      this.dataGrid.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.dataGrid_KeyPress);
+      this.dataGrid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGrid_KeyDown);
+      this.dataGrid.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnDragDrop);
       // 
       // dgSelection
       // 
@@ -187,9 +195,9 @@
       this.lblActionCodes.Name = "lblActionCodes";
       this.lblActionCodes.Size = new System.Drawing.Size(440, 29);
       this.lblActionCodes.TabIndex = 7;
-      this.lblActionCodes.Text = "Actions Codes in last column: a = Insert line after, b = Insert line before, d = " +
-          "delete line";
-      this.lblActionCodes.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+      this.lblActionCodes.Text = "Use the \"Ins\" and \"Del\" key to insert and delete lines. Drag the rows to change o" +
+          "rder";
+      this.lblActionCodes.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // btnSave
       // 
