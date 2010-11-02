@@ -64,6 +64,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Common-MP-TVE3\OsInfo\OSInfo.cs">
+      <Link>OSInfo.cs</Link>
+    </Compile>
     <Compile Include="InstallationChecks\VCRedist2008Checker.cs" />
     <Compile Include="InstallationChecks\DiskSpaceChecker.cs" />
     <Compile Include="InstallationChecks\InternetChecker.cs" />
@@ -118,7 +121,6 @@
     <Compile Include="MPListView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="OSInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="DeployDialog.resx">

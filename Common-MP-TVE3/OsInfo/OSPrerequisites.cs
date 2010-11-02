@@ -18,10 +18,16 @@
 
 #endregion
 
+using System;
 using System.Windows.Forms;
-using TvLibrary.Log;
 
-namespace TvControl
+#if MediaPortal
+using MediaPortal.ServiceImplementations;
+#else
+using TvLibrary.Log;
+#endif
+
+namespace MediaPortal.Configuration
 {
   ///<summary>
   /// OS related checks
@@ -42,24 +48,24 @@ namespace TvControl
       switch (OSInfo.OSInfo.GetOSSupported())
       {
         case OSInfo.OSInfo.OsSupport.Blocked:
-          Log.Error("****************************************");
-          Log.Error("* ERROR, OS can't be used for TVServer *");
-          Log.Error("****************************************");
+          Log.Error("*******************************************");
+          Log.Error("* ERROR, OS can't be used for MediaPortal *");
+          Log.Error("*******************************************");
           if (dispMessage)
           {
             MessageBox.Show(MSG_NOT_INSTALLABLE, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OK, MessageBoxIcon.Error);
           }
-          Application.Exit();
+          Environment.Exit(-100);
           break;
         case OSInfo.OSInfo.OsSupport.NotSupported:
           //Used .Info as .Warning is missing
-          Log.Info("****************************************");
-          Log.Info("* WARNING, OS not officially supported *");
-          Log.Info("****************************************");
+          Log.Info("*******************************************");
+          Log.Info("* WARNING, OS not officially supported    *");
+          Log.Info("*******************************************");
           if (dispMessage)
           {
             res = MessageBox.Show(MSG_NOT_SUPPORTED, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-            if (res == DialogResult.Cancel) Application.Exit();
+            if (res == DialogResult.Cancel) Environment.Exit(-200);
           }
           break;
         default:
@@ -68,7 +74,7 @@ namespace TvControl
       if (dispMessage && OSInfo.OSInfo.OSServicePackMinor != 0)
       {
         res = MessageBox.Show(MSG_BETA_SERVICE_PACK, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-        if (res == DialogResult.Cancel) Application.Exit();
+        if (res == DialogResult.Cancel) Environment.Exit(-300);
       }
     }
   }

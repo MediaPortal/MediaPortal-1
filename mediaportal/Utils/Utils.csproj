@@ -77,7 +77,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MediaPortal</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -109,6 +109,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Common-MP-TVE3\OsInfo\OSInfo.cs">
+      <Link>Configuration\OSInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Common-MP-TVE3\OsInfo\OSPrerequisites.cs">
+      <Link>Configuration\OSPrerequisites.cs</Link>
+    </Compile>
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
@@ -125,8 +131,6 @@
     <Compile Include="Configuration\DirectXCheck.cs" />
     <Compile Include="Configuration\ISettingsPrefetchable.cs" />
     <Compile Include="Configuration\ISettingsProvider.cs" />
-    <Compile Include="Configuration\OSInfo.cs" />
-    <Compile Include="Configuration\OSPrerequisites.cs" />
     <Compile Include="Configuration\PluginIconsAttribute.cs" />
     <Compile Include="Configuration\Registry.cs" />
     <Compile Include="Configuration\Settings.cs" />
