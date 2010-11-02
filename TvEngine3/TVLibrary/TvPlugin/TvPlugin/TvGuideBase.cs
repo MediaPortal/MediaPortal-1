@@ -49,6 +49,13 @@ namespace TvPlugin
   {
     #region constants
 
+    class TvGuideChannel
+    {
+      public Channel channel;
+      public int channelNum;
+      public string strLogo;
+    }
+
     private const int MaxDaysInGuide = 30;
     private const int RowID = 1000;
     private const int ColID = 10;
@@ -103,8 +110,9 @@ namespace TvPlugin
     private DateTime _updateTimerRecExpected = DateTime.Now;
     private DateTime _viewingTime = DateTime.Now;
     private int _channelOffset = 0;
-    private List<Channel> _channelList = new List<Channel>();
+    private List<TvGuideChannel> _channelList = new List<TvGuideChannel>();
     private IList<Schedule> _recordingList = new List<Schedule>();
+    private Dictionary<int, GUIButton3PartControl> _controls = new Dictionary<int, GUIButton3PartControl>();
 
     private int _timePerBlock = 30; // steps of 30 minutes
     private int _channelCount = 5;
@@ -118,11 +126,8 @@ namespace TvPlugin
     private long _currentStartTime = 0;
     private long _currentEndTime = 0;
     private Program _currentProgram = null;
-    //private static string _tvGuideFileName;
-    //private static FileSystemWatcher _tvGuideFileWatcher = null;
     private bool _needUpdate = false;
     private DateTime m_dtStartTime = DateTime.Now;
-    //private bool _useColorsForGenres = false;
     private ArrayList _colorList = new ArrayList();
     private bool _singleChannelView = false;
     private int _programOffset = 0;
@@ -131,16 +136,14 @@ namespace TvPlugin
     private bool _showChannelLogos = false;
     private TvServer _server = null;
 
-    /// List<TVNotify> _notifyList = new List<TVNotify>();
     private int _backupCursorX = 0;
-
     private int _backupCursorY = 0;
     private int _backupChannelOffset = 0;
     private DateTime _updateTimer = DateTime.Now;
 
     private DateTime _keyPressedTimer = DateTime.Now;
     private string _lineInput = String.Empty;
-    //static bool _workerThreadRunning = false;
+
     private bool _byIndex = false;
     private bool _showChannelNumber = false;
     private int _channelNumberMaxLength = 3;
@@ -152,6 +155,17 @@ namespace TvPlugin
     private bool _useHdProgramIcon = false;
     private string _hdtvProgramText = String.Empty;
 
+    private GUILabelControl _titleDarkTemplate;
+    private GUILabelControl _titleTemplate;
+    private GUILabelControl _genreDarkTemplate;
+    private GUILabelControl _genreTemplate;
+
+    private GUIButton3PartControl _programPartialRecordTemplate;
+    private GUIButton3PartControl _programRecordTemplate;
+    private GUIButton3PartControl _programNotifyTemplate;
+    private GUIButton3PartControl _programNotRunningTemplate;
+    private GUIButton3PartControl _programRunningTemplate;
+ 
     // current minimum/maximum indexes
     //private int MaxXIndex; // means rows here (channels)
     private int MinYIndex; // means cols here (programs/time)
@@ -572,11 +586,8 @@ namespace TvPlugin
         // update list
         GUIWaitCursor.Show();
         TVHome.Navigator.SetCurrentGroup(newIndex);
-        // set name only, if group button not avail (avoids short "flashing" of text after switching group)
-        //        if (!TvGroupButtonAvail)
-        //        {
         GUIPropertyManager.SetProperty("#TV.Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
-        //        }
+
         _cursorY = 1; // cursor should be on the program guide item
         _channelOffset = 0;
         // reset to top; otherwise focus could be out of screen if new group has less then old position
@@ -660,21 +671,8 @@ namespace TvPlugin
               base.OnMessage(message);
               SaveSettings();
               _recordingList.Clear();
-              ///@
-              /*
-              if (!GUIGraphicsContext.IsTvWindow(message.Param1))
-              {
-                if (!g_Player.Playing && !Recorder.IsRadio())
-                {
-                  if (GUIGraphicsContext.ShowBackground)
-                  {
-                    // stop timeshifting & viewing... 
 
-                    Recorder.StopViewing();
-                  }
-                }
-              }
-              _notifyList = null;*/
+              _controls = null;
               _channelList = null;
               _recordingList = null;
               _currentProgram = null;
@@ -724,17 +722,7 @@ namespace TvPlugin
               GUIGraphicsContext.AutoHideTopBar = _autoHideTopbar;
               GUIGraphicsContext.TopBarHidden = _autoHideTopbar;
               GUIGraphicsContext.DisableTopBar = _disableTopBar;
-              
- 
-
-              
-              ///@
-              ///_notifyList = new List<TVNotify>();
-
               LoadSettings();
-              ///@
-              ///TVDatabase.GetNotifies(_notifyList, false);
-
               GUIControl cntlPanel = GetControl((int)Controls.PANEL_BACKGROUND);
               GUIImage cntlChannelTemplate = (GUIImage)GetControl((int)Controls.CHANNEL_TEMPLATE);
 
@@ -759,7 +747,7 @@ namespace TvPlugin
                   _currentChannel = TVHome.Navigator.CurrentChannel; //contains the display name
                   for (int i = 0; i < _channelList.Count; i++)
                   {
-                    Channel chan = (Channel)_channelList[i];
+                    Channel chan = ((TvGuideChannel)_channelList[i]).channel;
                     if (chan.DisplayName.Equals(_currentChannel))
                     {
                       _cursorX = i;
@@ -773,7 +761,6 @@ namespace TvPlugin
                 _cursorX -= _channelCount;
                 _channelOffset += _channelCount;
               }
-              //CheckNewTVGuide();
 
               GUISpinControl cntlDay = GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
               if (cntlDay != null)
@@ -850,15 +837,6 @@ namespace TvPlugin
               }
               UpdateCurrentProgram();
 
-              /*
-              if (!g_Player.Playing)
-              {
-                Log.Debug("turn tv on");
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
-                msg.SendToTargetWindow = true;
-                GUIWindowManager.SendThreadMessage(msg);
-              }
-              */
               return true;
             }
           //break;
@@ -1099,6 +1077,18 @@ namespace TvPlugin
         GUIImage cntlHeaderBkgImg = (GUIImage)GetControl((int)Controls.IMG_TIME1);
         GUIImage cntlChannelTemplate = (GUIImage)GetControl((int)Controls.CHANNEL_TEMPLATE);
 
+
+        _titleDarkTemplate = GetControl((int)Controls.LABEL_TITLE_DARK_TEMPLATE) as GUILabelControl;
+        _titleTemplate = GetControl((int)Controls.LABEL_TITLE_TEMPLATE) as GUILabelControl;
+        _genreDarkTemplate = GetControl((int)Controls.LABEL_GENRE_DARK_TEMPLATE) as GUILabelControl;
+        _genreTemplate = GetControl((int)Controls.LABEL_GENRE_TEMPLATE) as GUILabelControl;
+
+	      _programPartialRecordTemplate = GetControl((int)Controls.BUTTON_PROGRAM_PARTIAL_RECORD) as GUIButton3PartControl;
+        _programRecordTemplate = GetControl((int)Controls.BUTTON_PROGRAM_RECORD) as GUIButton3PartControl;
+        _programNotifyTemplate = GetControl((int)Controls.BUTTON_PROGRAM_NOTIFY) as GUIButton3PartControl;
+        _programNotRunningTemplate = GetControl((int)Controls.BUTTON_PROGRAM_NOT_RUNNING) as GUIButton3PartControl;
+        _programRunningTemplate = GetControl((int)Controls.BUTTON_PROGRAM_RUNNING) as GUIButton3PartControl;
+
         _showChannelLogos = cntlChannelImg != null;
         if (_showChannelLogos)
         {
@@ -1328,13 +1318,6 @@ namespace TvPlugin
 
         if (_singleChannelView)
         {
-          if (_cursorY == 0)
-          {
-            //_singleChannelNumber=_cursorX + _channelOffset;
-            //if (_singleChannelNumber >= _channelList.Count) _singleChannelNumber-=_channelList.Count;
-            //GUIButton3PartControl img=(GUIButton3PartControl)GetControl(_cursorX+(int)Controls.IMG_CHAN1);
-            //if (null!=img) _currentChannel=img.Label1;
-          }
           // show all buttons (could be less visible if channels < rows)
           for (int iChannel = 0; iChannel < _channelCount; iChannel++)
           {
@@ -1343,7 +1326,7 @@ namespace TvPlugin
               imgBut.IsVisible = true;
           }
 
-          Channel channel = (Channel)_channelList[_singleChannelNumber];
+          Channel channel = (Channel)_channelList[_singleChannelNumber].channel;
           setGuideHeadingVisibility(false);
           RenderSingleChannel(channel);
         }
@@ -1358,7 +1341,7 @@ namespace TvPlugin
           {
             if (chan < _channelList.Count)
             {
-              visibleChannels.Add(_channelList[chan]);
+              visibleChannels.Add(_channelList[chan].channel);
             }
             chan++;
             if (chan >= _channelList.Count && visibleChannels.Count < _channelList.Count)
@@ -1381,8 +1364,8 @@ namespace TvPlugin
           {
             if (chan < _channelList.Count)
             {
-              Channel channel = (Channel)_channelList[chan];
-              RenderChannel(ref programs, iChannel, channel, iStart, iEnd, selectCurrentShow);
+              TvGuideChannel tvGuideChannel = (TvGuideChannel)_channelList[chan];
+              RenderChannel(ref programs, iChannel, tvGuideChannel, iStart, iEnd, selectCurrentShow);
               // remember bottom y position from last visible button
               GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1 + iChannel) as GUIButton3PartControl;
               if (imgBut != null)
@@ -1468,7 +1451,7 @@ namespace TvPlugin
       {
         channel = 0;
       }
-      Channel chan = (Channel)_channelList[channel];
+      Channel chan = (Channel)_channelList[channel].channel;
       string strChannel = chan.DisplayName;
       if (strChannel == null)
       {
@@ -1616,7 +1599,7 @@ namespace TvPlugin
       {
         if (chan < _channelList.Count)
         {
-          Channel tvChan = _channelList[chan];
+          Channel tvChan = _channelList[chan].channel;
 
           strLogo = GetChannelLogo(tvChan.DisplayName);
           GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
@@ -1938,11 +1921,11 @@ namespace TvPlugin
         if (program.IsRunningAt(dt))
         {
           img.TextColor2 = 0xff101010;
-          labelTemplate = GetControl((int)Controls.LABEL_GENRE_DARK_TEMPLATE) as GUILabelControl;
+          labelTemplate = _genreDarkTemplate;
         }
         else
         {
-          labelTemplate = GetControl((int)Controls.LABEL_GENRE_TEMPLATE) as GUILabelControl;
+          labelTemplate = _genreTemplate;
         }
 
         if (labelTemplate != null)
@@ -1959,7 +1942,7 @@ namespace TvPlugin
 
         if (program.IsRunningAt(dt))
         {
-          GUIButton3PartControl buttonRunningTemplate = GetControl((int)Controls.BUTTON_PROGRAM_RUNNING) as GUIButton3PartControl;
+          GUIButton3PartControl buttonRunningTemplate = _programRunningTemplate;
           if (buttonRunningTemplate != null)
           {
             buttonRunningTemplate.IsVisible = false;
@@ -2147,29 +2130,18 @@ namespace TvPlugin
       return false;
     }
 
-    private void RenderChannel(ref Dictionary<int, List<Program>> mapPrograms, int iChannel, Channel channel,
+    private void RenderChannel(ref Dictionary<int, List<Program>> mapPrograms, int iChannel, TvGuideChannel tvGuideChannel,
                                long iStart, long iEnd, bool selectCurrentShow)
     {
       int channelNum = 0;
-      if (!_byIndex)
-      {
-        foreach (TuningDetail detail in channel.ReferringTuningDetail())
-        {
-          channelNum = detail.ChannelNumber;
-        }
-      }
-      else
-      {
-        channelNum = _channelList.IndexOf(channel) + 1;
-      }
+      Channel channel = tvGuideChannel.channel;
 
-      string strLogo = GetChannelLogo(channel.DisplayName);
       GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
       if (img != null)
       {
         if (_showChannelLogos)
         {
-          img.TexutureIcon = strLogo;
+          img.TexutureIcon = tvGuideChannel.strLogo;
         }
         if (channelNum > 0 && _showChannelNumber)
         {
@@ -2185,16 +2157,12 @@ namespace TvPlugin
 
       List<Program> programs = null;
       if (mapPrograms.ContainsKey(channel.IdChannel))
-      {
         programs = mapPrograms[channel.IdChannel];
-      }
-      //TvBusinessLayer layer = new TvBusinessLayer();
-      //programs = layer.GetPrograms(channel, Utils.longtodate(iStart), Utils.longtodate(iEnd));
+ 
       bool noEPG = (programs == null || programs.Count == 0);
       if (noEPG)
       {
         DateTime dt = Utils.longtodate(iEnd);
-        //dt=dt.AddMinutes(_timePerBlock);
         long iProgEnd = Utils.datetolong(dt);
         Program prog = new Program(channel.IdChannel, Utils.longtodate(iStart), Utils.longtodate(iProgEnd),
                                    GUILocalizeStrings.Get(736), "", "", Program.ProgramState.None, DateTime.MinValue,
@@ -2207,290 +2175,311 @@ namespace TvPlugin
         programs.Add(prog);
       }
 
-      if (programs != null && programs.Count > 0)
+      int iProgram = 0;
+      int iPreviousEndXPos = 0;
+
+      int width = GetControl((int)Controls.LABEL_TIME1 + 1).XPosition;
+      width -= GetControl((int)Controls.LABEL_TIME1).XPosition;
+
+      int height = GetControl((int)Controls.IMG_CHAN1 + 1).YPosition;
+      height -= GetControl((int)Controls.IMG_CHAN1).YPosition;
+
+      foreach (Program program in programs)
       {
-        int iProgram = 0;
-        int iPreviousEndXPos = 0;
+        if (Utils.datetolong(program.EndTime) <= iStart)
+          continue;
 
-        foreach (Program program in programs)
+        string strTitle = TVUtil.GetDisplayTitle(program);
+        bool bStartsBefore = false;
+        bool bEndsAfter = false;
+        
+        if (Utils.datetolong(program.StartTime) < iStart)
+          bStartsBefore = true;
+
+        if (Utils.datetolong(program.EndTime) > iEnd)
+          bEndsAfter = true;
+
+        if (iProgram == _cursorY - 1 && iChannel == _cursorX)
         {
-          if (Utils.datetolong(program.EndTime) <= iStart)
+          _currentProgram = program;
+          SetProperties();
+        }
+
+        DateTime dtBlokStart = new DateTime();
+        dtBlokStart = _viewingTime;
+        dtBlokStart = dtBlokStart.AddMilliseconds(-dtBlokStart.Millisecond);
+        dtBlokStart = dtBlokStart.AddSeconds(-dtBlokStart.Second);
+
+        bool bSeries = false;
+        bool bRecording = false;
+        bool bConflict = false;
+        bool bPartialRecording = false;
+
+        bConflict = program.HasConflict;
+        bSeries = (program.IsRecordingSeries || program.IsRecordingSeriesPending);
+        bRecording = bSeries || (program.IsRecording || program.IsRecordingOncePending);
+        bPartialRecording = program.IsPartialRecordingSeriesPending;
+        bool bManual = program.IsRecordingManual;
+
+        if (noEPG && !bRecording)
+        {
+          bRecording = IsRecordingNoEPG(channel.Name);
+        }
+
+        bool bProgramIsHD = program.Description.Contains(_hdtvProgramText);
+
+        int iStartXPos = 0;
+        int iEndXPos = 0;
+        for (int iBlok = 0; iBlok < _numberOfBlocks; iBlok++)
+        {
+          float fWidthEnd = (float)width;
+          DateTime dtBlokEnd = dtBlokStart.AddMinutes(_timePerBlock - 1);
+          if (program.RunningAt(dtBlokStart, dtBlokEnd))
           {
-            continue;
-          }
-
-          string strTitle = TVUtil.GetDisplayTitle(program);
-          bool bStartsBefore = false;
-          bool bEndsAfter = false;
-          if (Utils.datetolong(program.StartTime) < iStart)
-          {
-            bStartsBefore = true;
-          }
-          if (Utils.datetolong(program.EndTime) > iEnd)
-          {
-            bEndsAfter = true;
-          }
-
-          if (iProgram == _cursorY - 1 && iChannel == _cursorX)
-          {
-            _currentProgram = program;
-            SetProperties();
-          }
-          int width = GetControl((int)Controls.LABEL_TIME1 + 1).XPosition;
-          width -= GetControl((int)Controls.LABEL_TIME1).XPosition;
-
-          int height = GetControl((int)Controls.IMG_CHAN1 + 1).YPosition;
-          height -= GetControl((int)Controls.IMG_CHAN1).YPosition;
-
-          DateTime dtBlokStart = new DateTime();
-          dtBlokStart = _viewingTime;
-          dtBlokStart = dtBlokStart.AddMilliseconds(-dtBlokStart.Millisecond);
-          dtBlokStart = dtBlokStart.AddSeconds(-dtBlokStart.Second);
-
-          bool bSeries = false;
-          bool bRecording = false;
-          bool bConflict = false;
-          bool bPartialRecording = false;
-
-          bConflict = program.HasConflict;
-          bSeries = (program.IsRecordingSeries || program.IsRecordingSeriesPending);
-          bRecording = bSeries || (program.IsRecording || program.IsRecordingOncePending);
-          bPartialRecording = program.IsPartialRecordingSeriesPending;
-          bool bManual = program.IsRecordingManual;
-
-          if (noEPG && !bRecording)
-          {
-            bRecording = IsRecordingNoEPG(channel.Name);
-          }
-
-          bool bProgramIsHD = program.Description.Contains(_hdtvProgramText);
-
-          int iStartXPos = 0;
-          int iEndXPos = 0;
-          for (int iBlok = 0; iBlok < _numberOfBlocks; iBlok++)
-          {
-            float fWidthEnd = (float)width;
-            DateTime dtBlokEnd = dtBlokStart.AddMinutes(_timePerBlock - 1);
-            if (program.RunningAt(dtBlokStart, dtBlokEnd))
+            //dtBlokEnd = dtBlokStart.AddSeconds(_timePerBlock * 60);
+            if (program.EndTime <= dtBlokEnd)
             {
-              //dtBlokEnd = dtBlokStart.AddSeconds(_timePerBlock * 60);
-              if (program.EndTime <= dtBlokEnd)
+              TimeSpan dtSpan = dtBlokEnd - program.EndTime;
+              int iEndMin = _timePerBlock - (dtSpan.Minutes);
+
+              fWidthEnd = (((float)iEndMin) / ((float)_timePerBlock)) * ((float)(width));
+              if (bEndsAfter)
               {
-                TimeSpan dtSpan = dtBlokEnd - program.EndTime;
-                int iEndMin = _timePerBlock - (dtSpan.Minutes);
-
-                fWidthEnd = (((float)iEndMin) / ((float)_timePerBlock)) * ((float)(width));
-                if (bEndsAfter)
-                {
-                  fWidthEnd = (float)width;
-                }
-              }
-
-              if (iStartXPos == 0)
-              {
-                TimeSpan ts = program.StartTime - dtBlokStart;
-                int iStartMin = ts.Hours * 60;
-                iStartMin += ts.Minutes;
-                if (ts.Seconds == 59)
-                {
-                  iStartMin += 1;
-                }
-                float fWidth = (((float)iStartMin) / ((float)_timePerBlock)) * ((float)(width));
-
-                if (bStartsBefore)
-                {
-                  fWidth = 0;
-                }
-
-                iStartXPos = GetControl(iBlok + (int)Controls.LABEL_TIME1).XPosition;
-                iStartXPos += (int)fWidth;
-                iEndXPos = GetControl(iBlok + (int)Controls.LABEL_TIME1).XPosition + (int)fWidthEnd;
-              }
-              else
-              {
-                iEndXPos = GetControl(iBlok + (int)Controls.LABEL_TIME1).XPosition + (int)fWidthEnd;
+                fWidthEnd = (float)width;
               }
             }
-            dtBlokStart = dtBlokStart.AddMinutes(_timePerBlock);
-          }
 
-          if (iStartXPos >= 0)
-          {
-            if (iPreviousEndXPos > iStartXPos)
+            if (iStartXPos == 0)
             {
-              iStartXPos = iPreviousEndXPos;
-            }
-            if (iEndXPos <= iStartXPos + 5)
-            {
-              iEndXPos = iStartXPos + 6; // at least 1 pixel width
-            }
+              TimeSpan ts = program.StartTime - dtBlokStart;
+              int iStartMin = ts.Hours * 60;
+              iStartMin += ts.Minutes;
+              if (ts.Seconds == 59)
+              {
+                iStartMin += 1;
+              }
+              float fWidth = (((float)iStartMin) / ((float)_timePerBlock)) * ((float)(width));
 
-            int ypos = GetControl(iChannel + (int)Controls.IMG_CHAN1).YPosition;
-            int iControlId = GUIDE_COMPONENTID_START + iChannel * RowID + iProgram * ColID;
-            int iWidth = iEndXPos - iStartXPos;
-            if (iWidth > 3)
-            {
-              iWidth -= 3;
+              if (bStartsBefore)
+              {
+                fWidth = 0;
+              }
+
+              iStartXPos = GetControl(iBlok + (int)Controls.LABEL_TIME1).XPosition;
+              iStartXPos += (int)fWidth;
+              iEndXPos = GetControl(iBlok + (int)Controls.LABEL_TIME1).XPosition + (int)fWidthEnd;
             }
             else
             {
-              iWidth = 1;
+              iEndXPos = GetControl(iBlok + (int)Controls.LABEL_TIME1).XPosition + (int)fWidthEnd;
             }
+          }
+          dtBlokStart = dtBlokStart.AddMinutes(_timePerBlock);
+        }
 
-            GUIButton3PartControl buttonTemplate = GetControl((int)Controls.BUTTON_PROGRAM_NOT_RUNNING) as GUIButton3PartControl;
-            img = GetControl(iControlId) as GUIButton3PartControl;
-            if (img == null)
+        if (iStartXPos >= 0)
+        {
+          if (iPreviousEndXPos > iStartXPos)
+          {
+            iStartXPos = iPreviousEndXPos;
+          }
+          if (iEndXPos <= iStartXPos + 5)
+          {
+            iEndXPos = iStartXPos + 6; // at least 1 pixel width
+          }
+
+          int ypos = GetControl(iChannel + (int)Controls.IMG_CHAN1).YPosition;
+          int iControlId = GUIDE_COMPONENTID_START + iChannel * RowID + iProgram * ColID;
+          int iWidth = iEndXPos - iStartXPos;
+          if (iWidth > 3)
+          {
+            iWidth -= 3;
+          }
+          else
+          {
+            iWidth = 1;
+          }
+
+          string TexutureFocusLeftName = "tvguide_button_selected_left.png";
+          string TexutureFocusMidName = "tvguide_button_selected_middle.png";
+          string TexutureFocusRightName = "tvguide_button_selected_right.png";
+          string TexutureNoFocusLeftName = "tvguide_button_light_left.png";
+          string TexutureNoFocusMidName = "tvguide_button_light_middle.png";
+          string TexutureNoFocusRightName = "tvguide_button_light_right.png";
+
+          bool TileFillTFL = false;
+          bool TileFillTNFL = false;
+          bool TileFillTFM = false;
+          bool TileFillTNFM = false;
+          bool TileFillTFR = false;
+          bool TileFillTNFR = false;
+
+          if (_programNotRunningTemplate != null)
+          {
+            _programNotRunningTemplate.IsVisible = false;
+            TexutureFocusLeftName = _programNotRunningTemplate.TexutureFocusLeftName;
+            TexutureFocusMidName = _programNotRunningTemplate.TexutureFocusMidName;
+            TexutureFocusRightName = _programNotRunningTemplate.TexutureFocusRightName;
+            TexutureNoFocusLeftName = _programNotRunningTemplate.TexutureNoFocusLeftName;
+            TexutureNoFocusMidName = _programNotRunningTemplate.TexutureNoFocusMidName;
+            TexutureNoFocusRightName = _programNotRunningTemplate.TexutureNoFocusRightName;
+            TileFillTFL = _programNotRunningTemplate.TileFillTFL;
+            TileFillTNFL = _programNotRunningTemplate.TileFillTNFL;
+            TileFillTFM = _programNotRunningTemplate.TileFillTFM;
+            TileFillTNFM = _programNotRunningTemplate.TileFillTNFM;
+            TileFillTFR = _programNotRunningTemplate.TileFillTFR;
+            TileFillTNFR = _programNotRunningTemplate.TileFillTNFR;
+          }
+
+          bool isNew = false;
+
+          if (!_controls.TryGetValue((int)iControlId, out img))
+          {
+              img = new GUIButton3PartControl(GetID, iControlId, iStartXPos, ypos, iWidth, height - 2,
+                                              TexutureFocusLeftName,
+                                              TexutureFocusMidName,
+                                              TexutureFocusRightName,
+                                              TexutureNoFocusLeftName,
+                                              TexutureNoFocusMidName,
+                                              TexutureNoFocusRightName,
+                                              String.Empty);
+
+              isNew = true;
+          }
+          else
+          {
+            img.Focus = false;
+            img.SetPosition(iStartXPos, ypos);
+            img.Width = iWidth;
+            img.IsVisible = true;
+            img.DoUpdate();
+          }
+
+          img.RenderLeft = false;
+          img.RenderRight = false;
+
+          img.TexutureIcon = String.Empty;
+          if (ShouldNotifyProgram(program))
+          {
+            if (_programNotifyTemplate != null)
             {
-              if (buttonTemplate != null)
-              {
-                buttonTemplate.IsVisible = false;
-                img = new GUIButton3PartControl(GetID, iControlId, iStartXPos, ypos, iWidth, height - 2,
-                                                buttonTemplate.TexutureFocusLeftName,
-                                                buttonTemplate.TexutureFocusMidName,
-                                                buttonTemplate.TexutureFocusRightName,
-                                                buttonTemplate.TexutureNoFocusLeftName,
-                                                buttonTemplate.TexutureNoFocusMidName,
-                                                buttonTemplate.TexutureNoFocusRightName,
-                                                String.Empty);
+              _programNotifyTemplate.IsVisible = false;
+              TexutureFocusLeftName = _programNotifyTemplate.TexutureFocusLeftName;
+              TexutureFocusMidName = _programNotifyTemplate.TexutureFocusMidName;
+              TexutureFocusRightName = _programNotifyTemplate.TexutureFocusRightName;
+              TexutureNoFocusLeftName = _programNotifyTemplate.TexutureNoFocusLeftName;
+              TexutureNoFocusMidName = _programNotifyTemplate.TexutureNoFocusMidName;
+              TexutureNoFocusRightName = _programNotifyTemplate.TexutureNoFocusRightName;
+              TileFillTFL = _programNotifyTemplate.TileFillTFL;
+              TileFillTNFL = _programNotifyTemplate.TileFillTNFL;
+              TileFillTFM = _programNotifyTemplate.TileFillTFM;
+              TileFillTNFM = _programNotifyTemplate.TileFillTNFM;
+              TileFillTFR = _programNotifyTemplate.TileFillTFR;
+              TileFillTNFR = _programNotifyTemplate.TileFillTNFR;
 
-                img.TileFillTFL = buttonTemplate.TileFillTFL;
-                img.TileFillTNFL = buttonTemplate.TileFillTNFL;
-                img.TileFillTFM = buttonTemplate.TileFillTFM;
-                img.TileFillTNFM = buttonTemplate.TileFillTNFM;
-                img.TileFillTFR = buttonTemplate.TileFillTFR;
-                img.TileFillTNFR = buttonTemplate.TileFillTNFR;
-              }
-              else
-              {
-                img = new GUIButton3PartControl(GetID, iControlId, iStartXPos, ypos, iWidth, height - 2,
-                                                "tvguide_button_selected_left.png",
-                                                "tvguide_button_selected_middle.png",
-                                                "tvguide_button_selected_right.png",
-                                                "tvguide_button_light_left.png",
-                                                "tvguide_button_light_middle.png",
-                                                "tvguide_button_light_right.png",
-                                                String.Empty);
-              }
-              img.AllocResources();
-              GUIControl cntl = (GUIControl)img;
-              Add(ref cntl);
+              // Use of the button template control implies use of the icon.  Use a blank image if the icon is not desired.
+              img.TexutureIcon = Thumbs.TvNotifyIcon;
+              img.IconOffsetX = _programNotifyTemplate.IconOffsetX;
+              img.IconOffsetY = _programNotifyTemplate.IconOffsetY;
+              img.IconAlign = _programNotifyTemplate.IconAlign;
+              img.IconVAlign = _programNotifyTemplate.IconVAlign;
+              img.IconInlineLabel1 = _programNotifyTemplate.IconInlineLabel1;
             }
             else
             {
-              if (buttonTemplate != null)
+              if (_useNewNotifyButtonColor)
               {
-                buttonTemplate.IsVisible = false;
-                img.TexutureFocusLeftName = buttonTemplate.TexutureFocusLeftName;
-                img.TexutureFocusMidName = buttonTemplate.TexutureFocusMidName;
-                img.TexutureFocusRightName = buttonTemplate.TexutureFocusRightName;
-                img.TexutureNoFocusLeftName = buttonTemplate.TexutureNoFocusLeftName;
-                img.TexutureNoFocusMidName = buttonTemplate.TexutureNoFocusMidName;
-                img.TexutureNoFocusRightName = buttonTemplate.TexutureNoFocusRightName;
-                img.TileFillTFL = buttonTemplate.TileFillTFL;
-                img.TileFillTNFL = buttonTemplate.TileFillTNFL;
-                img.TileFillTFM = buttonTemplate.TileFillTFM;
-                img.TileFillTNFM = buttonTemplate.TileFillTNFM;
-                img.TileFillTFR = buttonTemplate.TileFillTFR;
-                img.TileFillTNFR = buttonTemplate.TileFillTNFR;
+                TexutureFocusLeftName = "tvguide_notifyButton_Focus_left.png";
+                TexutureFocusMidName = "tvguide_notifyButton_Focus_middle.png";
+                TexutureFocusRightName = "tvguide_notifyButton_Focus_right.png";
+                TexutureNoFocusLeftName = "tvguide_notifyButton_noFocus_left.png";
+                TexutureNoFocusMidName = "tvguide_notifyButton_noFocus_middle.png";
+                TexutureNoFocusRightName = "tvguide_notifyButton_noFocus_right.png";
               }
               else
               {
-                img.TexutureFocusLeftName = "tvguide_button_selected_left.png";
-                img.TexutureFocusMidName = "tvguide_button_selected_middle.png";
-                img.TexutureFocusRightName = "tvguide_button_selected_right.png";
-                img.TexutureNoFocusLeftName = "tvguide_button_light_left.png";
-                img.TexutureNoFocusMidName = "tvguide_button_light_middle.png";
-                img.TexutureNoFocusRightName = "tvguide_button_light_right.png";
-              }
-              img.Focus = false;
-              img.SetPosition(iStartXPos, ypos);
-              img.Width = iWidth;
-              img.IsVisible = true;
-              img.DoUpdate();
-            }
-            img.RenderLeft = false;
-            img.RenderRight = false;
-
-            img.TexutureIcon = String.Empty;
-            if (ShouldNotifyProgram(program))
-            {
-              GUIButton3PartControl buttonNotifyTemplate = GetControl((int)Controls.BUTTON_PROGRAM_NOTIFY) as GUIButton3PartControl;
-              if (buttonNotifyTemplate != null)
-              {
-                buttonNotifyTemplate.IsVisible = false;
-                img.TexutureFocusLeftName = buttonNotifyTemplate.TexutureFocusLeftName;
-                img.TexutureFocusMidName = buttonNotifyTemplate.TexutureFocusMidName;
-                img.TexutureFocusRightName = buttonNotifyTemplate.TexutureFocusRightName;
-                img.TexutureNoFocusLeftName = buttonNotifyTemplate.TexutureNoFocusLeftName;
-                img.TexutureNoFocusMidName = buttonNotifyTemplate.TexutureNoFocusMidName;
-                img.TexutureNoFocusRightName = buttonNotifyTemplate.TexutureNoFocusRightName;
-                img.TileFillTFL = buttonNotifyTemplate.TileFillTFL;
-                img.TileFillTNFL = buttonNotifyTemplate.TileFillTNFL;
-                img.TileFillTFM = buttonNotifyTemplate.TileFillTFM;
-                img.TileFillTNFM = buttonNotifyTemplate.TileFillTNFM;
-                img.TileFillTFR = buttonNotifyTemplate.TileFillTFR;
-                img.TileFillTNFR = buttonNotifyTemplate.TileFillTNFR;
-
-                // Use of the button template control implies use of the icon.  Use a blank image if the icon is not desired.
                 img.TexutureIcon = Thumbs.TvNotifyIcon;
-                img.IconOffsetX = buttonNotifyTemplate.IconOffsetX;
-                img.IconOffsetY = buttonNotifyTemplate.IconOffsetY;
-                img.IconAlign = buttonNotifyTemplate.IconAlign;
-                img.IconVAlign = buttonNotifyTemplate.IconVAlign;
-                img.IconInlineLabel1 = buttonNotifyTemplate.IconInlineLabel1;
+              }
+            }
+          }
+          if (bRecording)
+          {
+            GUIButton3PartControl buttonRecordTemplate = _programRecordTemplate;
+
+            // Select the partial recording template if needed.
+            if (bPartialRecording)
+            {
+              buttonRecordTemplate = _programPartialRecordTemplate;
+            }
+
+            if (buttonRecordTemplate != null)
+            {
+              buttonRecordTemplate.IsVisible = false;
+              TexutureFocusLeftName = buttonRecordTemplate.TexutureFocusLeftName;
+              TexutureFocusMidName = buttonRecordTemplate.TexutureFocusMidName;
+              TexutureFocusRightName = buttonRecordTemplate.TexutureFocusRightName;
+              TexutureNoFocusLeftName = buttonRecordTemplate.TexutureNoFocusLeftName;
+              TexutureNoFocusMidName = buttonRecordTemplate.TexutureNoFocusMidName;
+              TexutureNoFocusRightName = buttonRecordTemplate.TexutureNoFocusRightName;
+              TileFillTFL = buttonRecordTemplate.TileFillTFL;
+              TileFillTNFL = buttonRecordTemplate.TileFillTNFL;
+              TileFillTFM = buttonRecordTemplate.TileFillTFM;
+              TileFillTNFM = buttonRecordTemplate.TileFillTNFM;
+              TileFillTFR = buttonRecordTemplate.TileFillTFR;
+              TileFillTNFR = buttonRecordTemplate.TileFillTNFR;
+
+              // Use of the button template control implies use of the icon.  Use a blank image if the icon is not desired.
+              if (bConflict)
+              {
+                TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
+                TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
+                TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
+                TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
+                TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
+                TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
               }
               else
               {
-                if (_useNewNotifyButtonColor)
+                if (bConflict)
                 {
-                  img.TexutureFocusLeftName = "tvguide_notifyButton_Focus_left.png";
-                  img.TexutureFocusMidName = "tvguide_notifyButton_Focus_middle.png";
-                  img.TexutureFocusRightName = "tvguide_notifyButton_Focus_right.png";
-                  img.TexutureNoFocusLeftName = "tvguide_notifyButton_noFocus_left.png";
-                  img.TexutureNoFocusMidName = "tvguide_notifyButton_noFocus_middle.png";
-                  img.TexutureNoFocusRightName = "tvguide_notifyButton_noFocus_right.png";
+                  img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
+                }
+                else if (bSeries)
+                {
+                  img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
                 }
                 else
                 {
-                  img.TexutureIcon = Thumbs.TvNotifyIcon;
+                  img.TexutureIcon = Thumbs.TvRecordingIcon;
                 }
               }
+              img.IconOffsetX = buttonRecordTemplate.IconOffsetX;
+              img.IconOffsetY = buttonRecordTemplate.IconOffsetY;
+              img.IconAlign = buttonRecordTemplate.IconAlign;
+              img.IconVAlign = buttonRecordTemplate.IconVAlign;
+              img.IconInlineLabel1 = buttonRecordTemplate.IconInlineLabel1;
             }
-            if (bRecording)
+            else
             {
-              GUIButton3PartControl buttonRecordTemplate = GetControl((int)Controls.BUTTON_PROGRAM_RECORD) as GUIButton3PartControl;
-
-              // Select the partial recording template if needed.
-              if (bPartialRecording)
+              if (bPartialRecording && _useNewPartialRecordingButtonColor)
               {
-                buttonRecordTemplate = GetControl((int)Controls.BUTTON_PROGRAM_PARTIAL_RECORD) as GUIButton3PartControl;
+                TexutureFocusLeftName = "tvguide_partRecButton_Focus_left.png";
+                TexutureFocusMidName = "tvguide_partRecButton_Focus_middle.png";
+                TexutureFocusRightName = "tvguide_partRecButton_Focus_right.png";
+                TexutureNoFocusLeftName = "tvguide_partRecButton_noFocus_left.png";
+                TexutureNoFocusMidName = "tvguide_partRecButton_noFocus_middle.png";
+                TexutureNoFocusRightName = "tvguide_partRecButton_noFocus_right.png";
               }
-
-              if (buttonRecordTemplate != null)
+              else
               {
-                buttonRecordTemplate.IsVisible = false;
-                img.TexutureFocusLeftName = buttonRecordTemplate.TexutureFocusLeftName;
-                img.TexutureFocusMidName = buttonRecordTemplate.TexutureFocusMidName;
-                img.TexutureFocusRightName = buttonRecordTemplate.TexutureFocusRightName;
-                img.TexutureNoFocusLeftName = buttonRecordTemplate.TexutureNoFocusLeftName;
-                img.TexutureNoFocusMidName = buttonRecordTemplate.TexutureNoFocusMidName;
-                img.TexutureNoFocusRightName = buttonRecordTemplate.TexutureNoFocusRightName;
-                img.TileFillTFL = buttonRecordTemplate.TileFillTFL;
-                img.TileFillTNFL = buttonRecordTemplate.TileFillTNFL;
-                img.TileFillTFM = buttonRecordTemplate.TileFillTFM;
-                img.TileFillTNFM = buttonRecordTemplate.TileFillTNFM;
-                img.TileFillTFR = buttonRecordTemplate.TileFillTFR;
-                img.TileFillTNFR = buttonRecordTemplate.TileFillTNFR;
-
-                // Use of the button template control implies use of the icon.  Use a blank image if the icon is not desired.
-                if (bConflict)
+                if (_useNewRecordingButtonColor)
                 {
-                  img.TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
-                  img.TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
-                  img.TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
-                  img.TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
-                  img.TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
-                  img.TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
+                  TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
+                  TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
+                  TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
+                  TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
+                  TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
+                  TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
                 }
                 else
                 {
@@ -2507,232 +2496,208 @@ namespace TvPlugin
                     img.TexutureIcon = Thumbs.TvRecordingIcon;
                   }
                 }
-                img.IconOffsetX = buttonRecordTemplate.IconOffsetX;
-                img.IconOffsetY = buttonRecordTemplate.IconOffsetY;
-                img.IconAlign = buttonRecordTemplate.IconAlign;
-                img.IconVAlign = buttonRecordTemplate.IconVAlign;
-                img.IconInlineLabel1 = buttonRecordTemplate.IconInlineLabel1;
-              }
-              else
-              {
-                if (bPartialRecording && _useNewPartialRecordingButtonColor)
-                {
-                  img.TexutureFocusLeftName = "tvguide_partRecButton_Focus_left.png";
-                  img.TexutureFocusMidName = "tvguide_partRecButton_Focus_middle.png";
-                  img.TexutureFocusRightName = "tvguide_partRecButton_Focus_right.png";
-                  img.TexutureNoFocusLeftName = "tvguide_partRecButton_noFocus_left.png";
-                  img.TexutureNoFocusMidName = "tvguide_partRecButton_noFocus_middle.png";
-                  img.TexutureNoFocusRightName = "tvguide_partRecButton_noFocus_right.png";
-                }
-                else
-                {
-                  if (_useNewRecordingButtonColor)
-                  {
-                    img.TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
-                    img.TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
-                    img.TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
-                    img.TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
-                    img.TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
-                    img.TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
-                  }
-                  else
-                  {
-                    if (bConflict)
-                    {
-                      img.TexutureIcon = Thumbs.TvConflictRecordingIcon;
-                    }
-                    else if (bSeries)
-                    {
-                      img.TexutureIcon = Thumbs.TvRecordingSeriesIcon;
-                    }
-                    else
-                    {
-                      img.TexutureIcon = Thumbs.TvRecordingIcon;
-                    }
-                  }
-                }
               }
             }
-
-            img.TexutureIcon2 = String.Empty;
-            if (bProgramIsHD)
-            {
-              if (buttonTemplate != null)
-              {
-                img.TexutureIcon2 = buttonTemplate.TexutureIcon2;
-              }
-              else
-              {
-                if (_useHdProgramIcon)
-                {
-                  img.TexutureIcon2 = "tvguide_hd_program.png";
-                }
-              }
-              img.Icon2InlineLabel1 = true;
-              img.Icon2VAlign = GUIControl.VAlignment.ALIGN_MIDDLE;
-              img.Icon2OffsetX = 5;
-            }
-            img.Data = program.Clone();
-            img.ColourDiffuse = GetColorForGenre(program.Genre);
-            height = height - 10;
-            height /= 2;
-            iWidth = iEndXPos - iStartXPos;
-            if (iWidth > 10)
-            {
-              iWidth -= 10;
-            }
-            else
-            {
-              iWidth = 1;
-            }
-
-            DateTime dt = DateTime.Now;
-
-            img.TextOffsetX1 = 5;
-            img.TextOffsetY1 = 5;
-            img.FontName1 = "font13";
-            img.TextColor1 = 0xffffffff;
-            img.Label1 = strTitle;
-            GUILabelControl labelTemplate;
-            if (program.IsRunningAt(dt))
-            {
-              labelTemplate = GetControl((int)Controls.LABEL_TITLE_DARK_TEMPLATE) as GUILabelControl;
-            }
-            else
-            {
-              labelTemplate = GetControl((int)Controls.LABEL_TITLE_TEMPLATE) as GUILabelControl;
-            }
-
-            if (labelTemplate != null)
-            {
-              img.FontName1 = labelTemplate.FontName;
-              img.TextColor1 = labelTemplate.TextColor;
-              img.TextColor2 = labelTemplate.TextColor;
-              img.TextOffsetX1 = labelTemplate.XPosition;
-              img.TextOffsetY1 = labelTemplate.YPosition;
-              img.SetShadow1(labelTemplate.ShadowAngle, labelTemplate.ShadowDistance, labelTemplate.ShadowColor);
-
-              // This is a legacy behavior check.  Adding labelTemplate.XPosition and labelTemplate.YPosition requires
-              // skinners to add these values to the skin xml unless this check exists.  Perform a sanity check on the
-              // x,y position to ensure it falls into the bounds of the button.  If it does not then fall back to use the
-              // legacy values.  This check is necessary because the x,y position (without skin file changes) will be taken
-              // from either the references.xml control template or the controls coded defaults.
-              if (img.TextOffsetY1 > img.Height)
-              {
-                // Set legacy values.
-                img.TextOffsetX1 = 5;
-                img.TextOffsetY1 = 5;
-              }
-            }
-            img.TextOffsetX2 = 5;
-            img.TextOffsetY2 = img.Height / 2;
-            img.FontName2 = "font13";
-            img.TextColor2 = 0xffffffff;
-
-            if (program.IsRunningAt(dt))
-            {
-              labelTemplate = GetControl((int)Controls.LABEL_GENRE_DARK_TEMPLATE) as GUILabelControl;
-            }
-            else
-            {
-              labelTemplate = GetControl((int)Controls.LABEL_GENRE_TEMPLATE) as GUILabelControl;
-            }
-            if (labelTemplate != null)
-            {
-              img.FontName2 = labelTemplate.FontName;
-              img.TextColor2 = labelTemplate.TextColor;
-              img.Label2 = program.Genre;
-              img.TextOffsetX2 = labelTemplate.XPosition;
-              img.TextOffsetY2 = labelTemplate.YPosition;
-              img.SetShadow2(labelTemplate.ShadowAngle, labelTemplate.ShadowDistance, labelTemplate.ShadowColor);
-
-              // This is a legacy behavior check.  Adding labelTemplate.XPosition and labelTemplate.YPosition requires
-              // skinners to add these values to the skin xml unless this check exists.  Perform a sanity check on the
-              // x,y position to ensure it falls into the bounds of the button.  If it does not then fall back to use the
-              // legacy values.  This check is necessary because the x,y position (without skin file changes) will be taken
-              // from either the references.xml control template or the controls coded defaults.
-              if (img.TextOffsetY2 > img.Height)
-              {
-                // Set legacy values.
-                img.TextOffsetX2 = 5;
-                img.TextOffsetY2 = 5;
-              }
-            }
-
-            if (program.IsRunningAt(dt))
-            {
-              GUIButton3PartControl buttonRunningTemplate = GetControl((int)Controls.BUTTON_PROGRAM_RUNNING) as GUIButton3PartControl;
-              if (!bRecording && !bPartialRecording && buttonRunningTemplate != null)
-              {
-                buttonRunningTemplate.IsVisible = false;
-                img.TexutureFocusLeftName = buttonRunningTemplate.TexutureFocusLeftName;
-                img.TexutureFocusMidName = buttonRunningTemplate.TexutureFocusMidName;
-                img.TexutureFocusRightName = buttonRunningTemplate.TexutureFocusRightName;
-                img.TexutureNoFocusLeftName = buttonRunningTemplate.TexutureNoFocusLeftName;
-                img.TexutureNoFocusMidName = buttonRunningTemplate.TexutureNoFocusMidName;
-                img.TexutureNoFocusRightName = buttonRunningTemplate.TexutureNoFocusRightName;
-                img.TileFillTFL = buttonRunningTemplate.TileFillTFL;
-                img.TileFillTNFL = buttonRunningTemplate.TileFillTNFL;
-                img.TileFillTFM = buttonRunningTemplate.TileFillTFM;
-                img.TileFillTNFM = buttonRunningTemplate.TileFillTNFM;
-                img.TileFillTFR = buttonRunningTemplate.TileFillTFR;
-                img.TileFillTNFR = buttonRunningTemplate.TileFillTNFR;
-              }
-              else if (bRecording && _useNewRecordingButtonColor)
-              {
-                img.TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
-                img.TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
-                img.TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
-                img.TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
-                img.TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
-                img.TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
-              }
-              else if (!(bRecording && bPartialRecording && _useNewRecordingButtonColor))
-              {
-                img.TexutureFocusLeftName = "tvguide_button_selected_left.png";
-                img.TexutureFocusMidName = "tvguide_button_selected_middle.png";
-                img.TexutureFocusRightName = "tvguide_button_selected_right.png";
-                img.TexutureNoFocusLeftName = "tvguide_button_left.png";
-                img.TexutureNoFocusMidName = "tvguide_button_middle.png";
-                img.TexutureNoFocusRightName = "tvguide_button_right.png";
-              }
-              if (selectCurrentShow && iChannel == _cursorX)
-              {
-                _cursorY = iProgram + 1;
-                _currentProgram = program;
-                m_dtStartTime = program.StartTime;
-                SetProperties();
-              }
-            }
-
-            if (bEndsAfter)
-            {
-              img.RenderRight = true;
-
-              img.TexutureFocusRightName = "tvguide_arrow_selected_right.png";
-              img.TexutureNoFocusRightName = "tvguide_arrow_light_right.png";
-              if (program.IsRunningAt(dt))
-              {
-                img.TexutureNoFocusRightName = "tvguide_arrow_right.png";
-              }
-            }
-            if (bStartsBefore)
-            {
-              img.RenderLeft = true;
-              img.TexutureFocusLeftName = "tvguide_arrow_selected_left.png";
-              img.TexutureNoFocusLeftName = "tvguide_arrow_light_left.png";
-              if (program.IsRunningAt(dt))
-              {
-                img.TexutureNoFocusLeftName = "tvguide_arrow_left.png";
-              }
-            }
-
-            img.SetPosition(img.XPosition, img.YPosition);
-            img.DoUpdate();
-            iProgram++;
           }
-          iPreviousEndXPos = iEndXPos;
+
+          img.TexutureIcon2 = String.Empty;
+          if (bProgramIsHD)
+          {
+            if (_programNotRunningTemplate != null)
+            {
+              img.TexutureIcon2 = _programNotRunningTemplate.TexutureIcon2;
+            }
+            else
+            {
+              if (_useHdProgramIcon)
+              {
+                img.TexutureIcon2 = "tvguide_hd_program.png";
+              }
+            }
+            img.Icon2InlineLabel1 = true;
+            img.Icon2VAlign = GUIControl.VAlignment.ALIGN_MIDDLE;
+            img.Icon2OffsetX = 5;
+          }
+          img.Data = program.Clone();
+          img.ColourDiffuse = GetColorForGenre(program.Genre);
+
+          iWidth = iEndXPos - iStartXPos;
+          if (iWidth > 10)
+          {
+            iWidth -= 10;
+          }
+          else
+          {
+            iWidth = 1;
+          }
+
+          DateTime dt = DateTime.Now;
+
+          img.TextOffsetX1 = 5;
+          img.TextOffsetY1 = 5;
+          img.FontName1 = "font13";
+          img.TextColor1 = 0xffffffff;
+          img.Label1 = strTitle;
+          GUILabelControl labelTemplate;
+          if (program.IsRunningAt(dt))
+          {
+            labelTemplate = _titleDarkTemplate;
+          }
+          else
+          {
+            labelTemplate = _titleTemplate;
+          }
+
+          if (labelTemplate != null)
+          {
+            img.FontName1 = labelTemplate.FontName;
+            img.TextColor1 = labelTemplate.TextColor;
+            img.TextColor2 = labelTemplate.TextColor;
+            img.TextOffsetX1 = labelTemplate.XPosition;
+            img.TextOffsetY1 = labelTemplate.YPosition;
+            img.SetShadow1(labelTemplate.ShadowAngle, labelTemplate.ShadowDistance, labelTemplate.ShadowColor);
+
+            // This is a legacy behavior check.  Adding labelTemplate.XPosition and labelTemplate.YPosition requires
+            // skinners to add these values to the skin xml unless this check exists.  Perform a sanity check on the
+            // x,y position to ensure it falls into the bounds of the button.  If it does not then fall back to use the
+            // legacy values.  This check is necessary because the x,y position (without skin file changes) will be taken
+            // from either the references.xml control template or the controls coded defaults.
+            if (img.TextOffsetY1 > img.Height)
+            {
+              // Set legacy values.
+              img.TextOffsetX1 = 5;
+              img.TextOffsetY1 = 5;
+            }
+          }
+          img.TextOffsetX2 = 5;
+          img.TextOffsetY2 = img.Height / 2;
+          img.FontName2 = "font13";
+          img.TextColor2 = 0xffffffff;
+
+          if (program.IsRunningAt(dt))
+          {
+            labelTemplate = _genreDarkTemplate;
+          }
+          else
+          {
+            labelTemplate = _genreTemplate;
+          }
+          if (labelTemplate != null)
+          {
+            img.FontName2 = labelTemplate.FontName;
+            img.TextColor2 = labelTemplate.TextColor;
+            img.Label2 = program.Genre;
+            img.TextOffsetX2 = labelTemplate.XPosition;
+            img.TextOffsetY2 = labelTemplate.YPosition;
+            img.SetShadow2(labelTemplate.ShadowAngle, labelTemplate.ShadowDistance, labelTemplate.ShadowColor);
+
+            // This is a legacy behavior check.  Adding labelTemplate.XPosition and labelTemplate.YPosition requires
+            // skinners to add these values to the skin xml unless this check exists.  Perform a sanity check on the
+            // x,y position to ensure it falls into the bounds of the button.  If it does not then fall back to use the
+            // legacy values.  This check is necessary because the x,y position (without skin file changes) will be taken
+            // from either the references.xml control template or the controls coded defaults.
+            if (img.TextOffsetY2 > img.Height)
+            {
+              // Set legacy values.
+              img.TextOffsetX2 = 5;
+              img.TextOffsetY2 = 5;
+            }
+          }
+
+          if (program.IsRunningAt(dt))
+          {
+            GUIButton3PartControl buttonRunningTemplate = _programRunningTemplate;
+            if (!bRecording && !bPartialRecording && buttonRunningTemplate != null)
+            {
+              buttonRunningTemplate.IsVisible = false;
+              TexutureFocusLeftName = buttonRunningTemplate.TexutureFocusLeftName;
+              TexutureFocusMidName = buttonRunningTemplate.TexutureFocusMidName;
+              TexutureFocusRightName = buttonRunningTemplate.TexutureFocusRightName;
+              TexutureNoFocusLeftName = buttonRunningTemplate.TexutureNoFocusLeftName;
+              TexutureNoFocusMidName = buttonRunningTemplate.TexutureNoFocusMidName;
+              TexutureNoFocusRightName = buttonRunningTemplate.TexutureNoFocusRightName;
+              TileFillTFL = buttonRunningTemplate.TileFillTFL;
+              TileFillTNFL = buttonRunningTemplate.TileFillTNFL;
+              TileFillTFM = buttonRunningTemplate.TileFillTFM;
+              TileFillTNFM = buttonRunningTemplate.TileFillTNFM;
+              TileFillTFR = buttonRunningTemplate.TileFillTFR;
+              TileFillTNFR = buttonRunningTemplate.TileFillTNFR;
+            }
+            else if (bRecording && _useNewRecordingButtonColor)
+            {
+              TexutureFocusLeftName = "tvguide_recButton_Focus_left.png";
+              TexutureFocusMidName = "tvguide_recButton_Focus_middle.png";
+              TexutureFocusRightName = "tvguide_recButton_Focus_right.png";
+              TexutureNoFocusLeftName = "tvguide_recButton_noFocus_left.png";
+              TexutureNoFocusMidName = "tvguide_recButton_noFocus_middle.png";
+              TexutureNoFocusRightName = "tvguide_recButton_noFocus_right.png";
+            }
+            else if (!(bRecording && bPartialRecording && _useNewRecordingButtonColor))
+            {
+              TexutureFocusLeftName = "tvguide_button_selected_left.png";
+              TexutureFocusMidName = "tvguide_button_selected_middle.png";
+              TexutureFocusRightName = "tvguide_button_selected_right.png";
+              TexutureNoFocusLeftName = "tvguide_button_left.png";
+              TexutureNoFocusMidName = "tvguide_button_middle.png";
+              TexutureNoFocusRightName = "tvguide_button_right.png";
+            }
+            if (selectCurrentShow && iChannel == _cursorX)
+            {
+              _cursorY = iProgram + 1;
+              _currentProgram = program;
+              m_dtStartTime = program.StartTime;
+              SetProperties();
+            }
+          }
+
+          if (bEndsAfter)
+          {
+            img.RenderRight = true;
+
+            TexutureFocusRightName = "tvguide_arrow_selected_right.png";
+            TexutureNoFocusRightName = "tvguide_arrow_light_right.png";
+            if (program.IsRunningAt(dt))
+            {
+              TexutureNoFocusRightName = "tvguide_arrow_right.png";
+            }
+          }
+          if (bStartsBefore)
+          {
+            img.RenderLeft = true;
+            TexutureFocusLeftName = "tvguide_arrow_selected_left.png";
+            TexutureNoFocusLeftName = "tvguide_arrow_light_left.png";
+            if (program.IsRunningAt(dt))
+            {
+              TexutureNoFocusLeftName = "tvguide_arrow_left.png";
+            }
+          }
+
+          img.TexutureFocusLeftName = TexutureFocusLeftName;
+          img.TexutureFocusMidName = TexutureFocusMidName;
+          img.TexutureFocusRightName = TexutureFocusRightName;
+          img.TexutureNoFocusLeftName = TexutureNoFocusLeftName;
+          img.TexutureNoFocusMidName = TexutureNoFocusMidName;
+          img.TexutureNoFocusRightName = TexutureNoFocusRightName;
+
+          img.TileFillTFL = TileFillTFL;
+          img.TileFillTNFL = TileFillTNFL;
+          img.TileFillTFM = TileFillTFM;
+          img.TileFillTNFM = TileFillTNFM;
+          img.TileFillTFR = TileFillTFR;
+          img.TileFillTNFR = TileFillTNFR;
+
+          if (isNew)
+          {
+            img.AllocResources();
+            GUIControl cntl = (GUIControl)img;
+            _controls.Add((int)iControlId, img);
+            Add(ref cntl);
+          }
+          else
+            img.DoUpdate();
+          iProgram++;
         }
+        iPreviousEndXPos = iEndXPos;
       }
     }
 
@@ -3976,7 +3941,7 @@ namespace TvPlugin
       {
         while (iCounter < _channelList.Count && found == false)
         {
-          chan = (Channel)_channelList[iCounter];
+          chan = (Channel)_channelList[iCounter].channel;
           foreach (TuningDetail detail in chan.ReferringTuningDetail())
           {
             if (detail.ChannelNumber == searchChannel)
@@ -4033,14 +3998,12 @@ namespace TvPlugin
 
     private void GetChannels(bool refresh)
     {
-      if (refresh)
+      if (refresh || _channelList == null)
       {
-        _channelList = new List<Channel>();
+        _channelList = new List<TvGuideChannel>();
+        _controls = new Dictionary<int, GUIButton3PartControl>();
       }
-      if (_channelList == null)
-      {
-        _channelList = new List<Channel>();
-      }
+
       if (_channelList.Count == 0)
       {
         try
@@ -4049,10 +4012,22 @@ namespace TvPlugin
           {
             foreach (GroupMap chan in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
             {
-              Channel ch = chan.ReferencedChannel();
-              if (ch.VisibleInGuide && ch.IsTv)
+              TvGuideChannel tvGuidChannel = new TvGuideChannel();
+              tvGuidChannel.channel = chan.ReferencedChannel();
+
+              if (tvGuidChannel.channel.VisibleInGuide && tvGuidChannel.channel.IsTv)
               {
-                _channelList.Add(ch);
+                if (_byIndex)
+                {
+                  tvGuidChannel.channelNum = _channelList.Count + 1;
+                }
+                else
+                {
+                  foreach (TuningDetail detail in tvGuidChannel.channel.ReferringTuningDetail())
+                    tvGuidChannel.channelNum = detail.ChannelNumber;
+                }
+                tvGuidChannel.strLogo = GetChannelLogo(tvGuidChannel.channel.DisplayName);
+                _channelList.Add(tvGuidChannel);
               }
             }
           }
@@ -4061,32 +4036,17 @@ namespace TvPlugin
 
         if (_channelList.Count == 0)
         {
-          Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false,
-                                           DateTime.MinValue, 0, true, "", true, GUILocalizeStrings.Get(911));
+          TvGuideChannel tvGuidChannel = new TvGuideChannel();
+          tvGuidChannel.channel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false,
+                                              DateTime.MinValue, 0, true, "", true, GUILocalizeStrings.Get(911));
           for (int i = 0; i < 10; ++i)
           {
-            _channelList.Add(newChannel);
+            _channelList.Add(tvGuidChannel);
           }
         }
       }
     }
 
-    ///@
-    /*
-    private void import_ShowProgress(MediaPortal.TV.Database.XMLTVImport.Stats stats)
-    {
-      GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-      if (dlgProgress != null)
-      {
-        int iChannels = stats.Channels;
-        int iPrograms = stats.Programs;
-        string strChannels = GUILocalizeStrings.Get(627) + iChannels.ToString();
-        string strPrograms = GUILocalizeStrings.Get(628) + iPrograms.ToString();
-        dlgProgress.SetLine(1, stats.Status);
-        dlgProgress.SetLine(2, strChannels + " " + strPrograms);
-        dlgProgress.Progress();
-      }
-    }*/
     private void UpdateVerticalScrollbar()
     {
       if (_channelList == null || _channelList.Count == 0)
