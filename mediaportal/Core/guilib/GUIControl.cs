@@ -1852,6 +1852,8 @@ namespace MediaPortal.GUI.Library
       if (GUIGraphicsContext.Animations)
       {
         _transform.Reset();
+        float centerX = 0, centerY = 0;
+        GetCenter(ref centerX, ref centerY);
         for (int i = 0; i < _animations.Count; i++)
         {
           VisualEffect anim = _animations[i];
@@ -1861,10 +1863,6 @@ namespace MediaPortal.GUI.Library
           // and render the animation effect
           float centerXOrg = anim.CenterX;
           float centerYOrg = anim.CenterY;
-          float centerX = 0, centerY = 0;
-          GetCenter(ref centerX, ref centerY);
-          //GUIGraphicsContext.ScaleHorizontal(ref centerX);
-          //GUIGraphicsContext.ScaleVertical(ref centerY);
           anim.SetCenter(centerX, centerY);
           anim.RenderAnimation(ref _transform);
           anim.CenterX = centerXOrg;
