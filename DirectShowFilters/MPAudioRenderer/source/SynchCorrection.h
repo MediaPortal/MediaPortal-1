@@ -26,7 +26,7 @@
 #define DIRDOWN -1 // slowing downthe clock as calculated bias is too low
 #define ALLOWED_DRIFT 10000.0 //allow drift to go to 1 ms before correction
 #define CORRECTION_RATE 1.005 //apply this extra correction when the ALLOWED_DRIFT is breached 0.5%
-#define QUALITY_DRIFT_LIMIT 200000.0 //drift allowed before correction
+#define QUALITY_DRIFT_LIMIT 80000.0 //drift allowed before correction
 #define QUALITY_CORRECTION_LIMIT 60000.0 //correction limit
 #define QUALITY_CORRECTION_MULTIPLIER 1.02 //correction rate
 #define QUALITY_BIAS_LIMIT 0.01 // if the bias is within this of one we use quality mode

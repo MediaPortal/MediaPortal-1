@@ -314,24 +314,22 @@ DWORD CMultiSoundTouch::ResampleThread()
           if ((!m_pEncoder && nOutFrames > 0) || (m_pEncoder && nOutFrames >= AC3_FRAME_LENGTH))
           {
             // with AC3 encoder enabled, the resampled buffer is not emptied completely
+						UINT32 nOrigOutFrames=nOutFrames;
+						static UINT32 nFrameCorr=0;
+						static UINT32 nPrevFrameCorr=0;
             if (m_pEncoder)
-              nOutFrames = nOutFrames - nOutFrames % AC3_FRAME_LENGTH;  
+						{
+							nPrevFrameCorr=nFrameCorr;
+							nFrameCorr=nOutFrames % AC3_FRAME_LENGTH;
+						}
+            nOutFrames = nOutFrames - nFrameCorr;  
             
             UINT32 nInFrames = (size / m_pWaveFormat->Format.nBlockAlign) - unprocessedSamplesAfter + unprocessedSamplesBefore;
             double rtSampleDuration = (double)nInFrames * (double)UNITS / (double)m_pWaveFormat->Format.nSamplesPerSec;
-            double rtProcessedSampleDuration = (double)nOutFrames * (double)UNITS / (double)m_pWaveFormat->Format.nSamplesPerSec;
+            double rtProcessedSampleDuration = (double)(nOrigOutFrames-nPrevFrameCorr) * (double)UNITS / (double)m_pWaveFormat->Format.nSamplesPerSec;
 
             m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, bias, adjustment, AVMult);
             
-            //Log("%s",m_pClock->DebugData());
-            /*
-            static double dur = 0.0; 
-            static double durRes = 0.0; 
-			
-            dur += rtSampleDuration / 10000.0;
-            durRes += estimatedSampleDuration / 10000.0;
-            Log("AVMult %f adjustment: %f durr: %f est %f diff %f %f %f frames: %d outFrames: %d", AVMult, adjustment, dur, durRes, dur - durRes, rtSampleDuration/10000.0, rtProcessedSampleDuration / 10000.0, nInFrames, nOutFrames); 
-            */
             IMediaSample* outSample = NULL;
             m_pMemAllocator->GetBuffer(&outSample, NULL, NULL, 0);
 
