@@ -27,7 +27,7 @@ using MediaPortal.ServiceImplementations;
 using TvLibrary.Log;
 #endif
 
-namespace MediaPortal.Configuration
+namespace OSPrerequisites
 {
   ///<summary>
   /// OS related checks

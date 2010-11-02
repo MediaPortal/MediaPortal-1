@@ -123,7 +123,7 @@ namespace SetupTv
       Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
 
       //Check for unsupported operating systems
-      OSPrerequisites.OsCheck(true);
+      OSPrerequisites.OSPrerequisites.OsCheck(true);
 
       NameValueCollection appSettings = ConfigurationManager.AppSettings;
       appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", Log.GetPathName()));

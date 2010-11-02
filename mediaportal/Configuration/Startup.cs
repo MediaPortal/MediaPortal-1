@@ -64,7 +64,7 @@ namespace MediaPortal.Configuration
       Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
 
       //Check for unsupported operating systems
-      OSPrerequisites.OsCheck(true);
+      OSPrerequisites.OSPrerequisites.OsCheck(true);
 
       Log.Info("Verifying DirectX 9");
       if (!DirectXCheck.IsInstalled())

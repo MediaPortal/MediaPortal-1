@@ -805,7 +805,7 @@ namespace TvService
                         OSInfo.OSInfo.GetOSDisplayVersion());
 
           //Check for unsupported operating systems
-          OSPrerequisites.OsCheck(false);
+          OSPrerequisites.OSPrerequisites.OsCheck(false);
 
           _powerEventThread = new Thread(PowerEventThread);
           _powerEventThread.Name = "PowerEventThread";

@@ -353,7 +353,7 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
 
       //Check for unsupported operating systems
-      OSPrerequisites.OsCheck(false);
+      OSPrerequisites.OSPrerequisites.OsCheck(false);
 
       //Log last install of WindowsUpdate patches
       string LastSuccessTime = "NEVER !!!";
