@@ -1,5 +1,5 @@
-/* 
- * $Id: GolombBuffer.h 1785 2010-04-09 14:12:59Z xhmikosr $
+/*
+ * $Id: GolombBuffer.h 2533 2010-09-12 12:45:26Z xhmikosr $
  *
  * (C) 2006-2010 see AUTHORS
  *
@@ -32,20 +32,36 @@ public:
 	INT64			SExpGolombRead();
 	void			BitByteAlign();
 
-	inline BYTE		ReadByte()	{ return (BYTE) BitRead ( 8); };
-	inline SHORT	ReadShort() { return (SHORT)BitRead (16); };
-	inline DWORD	ReadDword() { return (DWORD)BitRead (32); };
+	inline BYTE		ReadByte()	{
+		return (BYTE) BitRead ( 8);
+	};
+	inline SHORT	ReadShort() {
+		return (SHORT)BitRead (16);
+	};
+	inline DWORD	ReadDword() {
+		return (DWORD)BitRead (32);
+	};
 	void			ReadBuffer(BYTE* pDest, int nSize);
-	
+
 	void			Reset();
 	void			Reset(BYTE* pNewBuffer, int nNewSize);
 
-	void			SetSize(int nValue) { m_nSize = nValue; };
-	int				GetSize()			const { return m_nSize; };
-	int				RemainingSize() 	const { return m_nSize - m_nBitPos; };
-	bool			IsEOF()				const { return m_nBitPos >= m_nSize; };
+	void			SetSize(int nValue) {
+		m_nSize = nValue;
+	};
+	int				GetSize()			const {
+		return m_nSize;
+	};
+	int				RemainingSize() 	const {
+		return m_nSize - m_nBitPos;
+	};
+	bool			IsEOF()				const {
+		return m_nBitPos >= m_nSize;
+	};
 	INT64			GetPos();
-	BYTE*			GetBufferPos()		{ return m_pBuffer + m_nBitPos; };
+	BYTE*			GetBufferPos()		{
+		return m_pBuffer + m_nBitPos;
+	};
 
 	void			SkipBytes(int nCount);
 

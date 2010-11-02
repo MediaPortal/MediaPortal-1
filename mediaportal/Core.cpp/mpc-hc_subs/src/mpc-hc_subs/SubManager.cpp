@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <d3d9.h>
+#include <memory.h>
 #include "..\subpic\ISubPic.h"
 #include "..\subpic\DX9SubPic.h"
 #include "..\subpic\SubPicQueueImpl.h"
@@ -11,6 +12,8 @@
 #include "SubManager.h"
 #include "TextPassThruFilter.h"
 #include "IPinHook.h"
+#include "DumpQIQS.cpp"
+#include "ITrackInfo.h"
 
 STSStyle g_style;
 BOOL g_overrideUserStyles;
@@ -18,6 +21,7 @@ int g_subPicsBufferAhead(3);
 CSize g_textureSize(800, 600);
 bool g_pow2tex(true);
 BOOL g_disableAnim(TRUE);
+BOOL g_onlyShowForcedSubs;
 
 CSubManager::CSubManager(IDirect3DDevice9* d3DDev, SIZE size, HRESULT& hr)
 	: m_d3DDev(d3DDev),
@@ -296,19 +300,36 @@ static bool isTextConnection(IPin* pPin)
 }
 
 //load internal subtitles through TextPassThruFilter
-void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB)
+void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB, bool onlyShowForcedSubs)
 {
 	BeginEnumFilters(pGB, pEF, pBF)
 	{
 		ATLTRACE(L"Processing filter: %s", GetFilterName(pBF).GetString());
 		if(!IsSplitter(pBF)) continue;
 		ATLTRACE("Is splitter!");
+		if (m_pSS != 0 && CComQIPtr<IAMStreamSelect>(pBF) != 0) 
+		{
+			ATLTRACE("Skipping - IAMStreamSelect filter already set!");
+			continue;
+		}
+
+		CComQIPtr<ITrackInfo> pTrackInfo;
+		int index = -1;
+		if (onlyShowForcedSubs) {
+			pTrackInfo = pBF;
+			if (!pTrackInfo) {
+				ATLTRACE("Skipping - using forced subtitles and ITrackInfo is not supported");
+				continue;
+			}
+		}
+
 		BeginEnumPins(pBF, pEP, pPin)
 		{
 			PIN_DIRECTION pindir;
 			pPin->QueryDirection(&pindir);
 			if (pindir != PINDIR_OUTPUT)
 				continue;
+			index++;
 			CComPtr<IPin> pPinTo;
 			pPin->ConnectedTo(&pPinTo);
 			if (pPinTo)
@@ -320,12 +341,17 @@ void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB)
 			}
 			else if (!IsTextPin(pPin))
 				continue;
-			
-			if (m_pSS != 0 && CComQIPtr<IAMStreamSelect>(pBF) != 0) 
-			{
-				ATLTRACE("only one IAMStreamSelect filter is supported!");
-				continue;
+
+			if (pTrackInfo) {
+				TrackElement trackElement;
+				memset(&trackElement, 0, sizeof(trackElement));
+				pTrackInfo->GetTrackInfo(index, &trackElement);
+				if (!trackElement.FlagForced) {
+					ATLTRACE("Skipping - using forced subtitles and track %d is not forced", index);
+					continue;
+				}
 			}
+			
 
 			CComQIPtr<IBaseFilter> pTPTF = new CTextPassThruFilter(this);
 			CStringW name;
@@ -388,6 +414,7 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF)
 			LCID lcid = 0;
 			DWORD dwGroup = 0;
 			WCHAR* pszName = NULL;
+
 			if(FAILED(m_pSS->Info(i, NULL, &dwFlags, &lcid, &dwGroup, &pszName, NULL, NULL)))
 				continue;
 
@@ -420,7 +447,7 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF)
 
 }
 
-void CSubManager::LoadExternalSubtitles(const wchar_t* filename, const wchar_t* subpaths)
+void CSubManager::LoadExternalSubtitles(const wchar_t* filename, const wchar_t* subpaths, bool onlyShowForcedSubs)
 {
 	m_movieFile = filename;
 	CAtlArray<CString> paths;
@@ -489,11 +516,13 @@ void CSubManager::LoadExternalSubtitles(const wchar_t* filename, const wchar_t* 
 			if(!pSubStream)
 			{
 				CAutoPtr<CVobSubFile> pVSF(new CVobSubFile(&m_csSubLock));
-				if(CString(CPath(ret[i].fn).GetExtension()).MakeLower() == _T(".idx") && pVSF && pVSF->Open(ret[i].fn) && pVSF->GetStreamCount() > 0)
+				if(CString(CPath(ret[i].fn).GetExtension()).MakeLower() == _T(".idx") && pVSF && pVSF->Open(ret[i].fn) && pVSF->GetStreamCount() > 0) {
+					pVSF->m_fOnlyShowForcedSubs = onlyShowForcedSubs;
 					pSubStream = pVSF.Detach();
+				}
 			}
 
-			if(!pSubStream)
+			if(!pSubStream && !onlyShowForcedSubs)
 			{
 				CAutoPtr<CRenderedTextSubtitle> pRTS(new CRenderedTextSubtitle(&m_csSubLock));
 				if(pRTS && pRTS->Open(ret[i].fn, DEFAULT_CHARSET) && pRTS->GetStreamCount() > 0) {
@@ -566,8 +595,9 @@ void CSubManager::LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB, co
 		CComQIPtr<IMemInputPin> pMemInputPin = pPin;
 		HookNewSegmentAndReceive((IPinC*)(IPin*)pPin, (IMemInputPinC*)(IMemInputPin*)pMemInputPin);
 	}
-	LoadInternalSubtitles(pGB);	
-	LoadExternalSubtitles(fn, paths);
+	bool onlyShowForcedSubs = g_onlyShowForcedSubs ? true : false;
+	LoadInternalSubtitles(pGB, onlyShowForcedSubs);
+	LoadExternalSubtitles(fn, paths, onlyShowForcedSubs);
 	if(GetCount() > 0)
 	{
 		m_iSubtitleSel = 0x80000000; //stream 0, disabled

@@ -27,6 +27,12 @@ void SetAdvancedOptions(int subPicsBufferAhead, SIZE textureSize, BOOL pow2tex, 
 	g_disableAnim = disableAnim;
 }
 
+void SetShowForcedOnly(BOOL onlyShowForcedSubs)
+{
+	g_onlyShowForcedSubs = onlyShowForcedSubs;
+}
+
+
 BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_t* fn, IGraphBuilder* pGB, const wchar_t* paths)
 {
 	g_subManager.Free();

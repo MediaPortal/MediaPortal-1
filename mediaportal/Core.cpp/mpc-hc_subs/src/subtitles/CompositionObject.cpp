@@ -1,5 +1,5 @@
-/* 
- * $Id: CompositionObject.cpp 1982 2010-05-29 04:04:26Z kinddragon $
+/*
+ * $Id: CompositionObject.cpp 2585 2010-09-18 12:39:20Z xhmikosr $
  *
  * (C) 2006-2010 see AUTHORS
  *
@@ -262,7 +262,7 @@ void CompositionObject::Dvb2PixelsCodeString(SubPicDesc& spd, CGolombBuffer& gb,
 			}
 		}
 
-		if (nX+nCount > m_width) 
+		if (nX+nCount > m_width)
 		{
 			ASSERT (FALSE);
 			break;
@@ -335,7 +335,7 @@ void CompositionObject::Dvb4PixelsCodeString(SubPicDesc& spd, CGolombBuffer& gb,
 			}
 		}
 
-		if (nX+nCount > m_width) 
+		if (nX+nCount > m_width)
 		{
 			ASSERT (FALSE);
 			break;
@@ -383,7 +383,7 @@ void CompositionObject::Dvb8PixelsCodeString(SubPicDesc& spd, CGolombBuffer& gb,
 			}
 		}
 
-		if (nX+nCount > m_width) 
+		if (nX+nCount > m_width)
 		{
 			ASSERT (FALSE);
 			break;

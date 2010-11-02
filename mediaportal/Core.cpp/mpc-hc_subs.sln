@@ -2,12 +2,12 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libssf", "mpc-hc_subs\src\subtitles\libssf\libssf.vcproj", "{DD9D2D92-2241-408A-859E-B85D444B7E3C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "subtitles", "mpc-hc_subs\src\subtitles\subtitles.vcproj", "{5E56335F-0FB1-4EEA-B240-D8DC5E0608E4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Subtitles", "mpc-hc_subs\src\subtitles\subtitles.vcproj", "{5E56335F-0FB1-4EEA-B240-D8DC5E0608E4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DD9D2D92-2241-408A-859E-B85D444B7E3C} = {DD9D2D92-2241-408A-859E-B85D444B7E3C}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DSUtil", "mpc-hc_subs\src\dsutil\dsutil.vcproj", "{FC70988B-1AE5-4381-866D-4F405E28AC42}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DSUtil", "mpc-hc_subs\src\dsutil\DSUtil.vcproj", "{FC70988B-1AE5-4381-866D-4F405E28AC42}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C2082189-3ECB-4079-91FA-89D3C8A305C0} = {C2082189-3ECB-4079-91FA-89D3C8A305C0}
 		{E8A3F6FA-AE1C-4C8E-A0B6-9C8480324EAA} = {E8A3F6FA-AE1C-4C8E-A0B6-9C8480324EAA}

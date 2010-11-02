@@ -65,6 +65,10 @@ namespace MediaPortal.Player.Subtitles
         fOutLine = defStyle.isBorderOutline;        
         vobSub.put_TextSettings(logFont, size, defStyle.fontColor, fShadow, fOutLine, fAdvancedRenderer);
         vobSub.put_FileName(filename);
+
+        bool fBuffer, fOnlyForced, fPolygonize;
+        vobSub.get_VobSubSettings(out fBuffer, out fOnlyForced, out fPolygonize);
+        vobSub.put_VobSubSettings(fBuffer, !this.autoShow, fPolygonize);
       }
 
       { //load sub streams

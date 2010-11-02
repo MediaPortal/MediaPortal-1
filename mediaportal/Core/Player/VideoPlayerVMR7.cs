@@ -323,15 +323,14 @@ namespace MediaPortal.Player
 
     private void SelectSubtitles()
     {
+      if (SubtitleStreams == 0) return;
       CultureInfo ci = null;
-      bool showSubtitles = true;
 
       using (Settings xmlreader = new MPSettings())
       {
         try
         {
           ci = new CultureInfo(xmlreader.GetValueAsString("subtitles", "language", defaultLanguageCulture));
-          showSubtitles = xmlreader.GetValueAsBool("subtitles", "enabled", true);
         }
         catch (Exception ex)
         {
@@ -353,7 +352,7 @@ namespace MediaPortal.Player
           break;
         }
       }
-      EnableSubtitle = showSubtitles;
+      EnableSubtitle = true;
     }
 
     private void SelectAudioLanguage()

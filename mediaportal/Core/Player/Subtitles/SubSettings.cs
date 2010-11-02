@@ -73,6 +73,7 @@ namespace MediaPortal.Player.Subtitles
     protected bool posRelativeToFrame = false;
     protected bool overrideASSStyle;
     protected string subPaths;
+    protected bool autoShow;
 
     public void LoadSettings()
     {
@@ -96,6 +97,7 @@ namespace MediaPortal.Player.Subtitles
         posRelativeToFrame = xmlreader.GetValueAsBool("subtitles", "subPosRelative", false);
         overrideASSStyle = xmlreader.GetValueAsBool("subtitles", "subStyleOverride", false);
         subPaths = xmlreader.GetValueAsString("subtitles", "paths", @".\");
+        autoShow = xmlreader.GetValueAsBool("subtitles", "enabled", true);
         LoadAdvancedSettings(xmlreader);
       }
     }

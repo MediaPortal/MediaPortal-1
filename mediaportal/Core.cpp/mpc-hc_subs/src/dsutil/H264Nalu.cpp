@@ -1,5 +1,5 @@
-/* 
- * $Id: H264Nalu.cpp 1785 2010-04-09 14:12:59Z xhmikosr $
+/*
+ * $Id: H264Nalu.cpp 2533 2010-09-12 12:45:26Z xhmikosr $
  *
  * (C) 2006-2010 see AUTHORS
  *

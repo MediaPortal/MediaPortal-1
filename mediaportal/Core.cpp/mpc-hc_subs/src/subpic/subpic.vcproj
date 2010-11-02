@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1250"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="SubPic"
 	ProjectGUID="{D514EA4D-EAFB-47A9-A437-A582CA571251}"
 	RootNamespace="SubPic"
@@ -44,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
-				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;"
+				AdditionalIncludeDirectories="../BaseClasses"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="d3d9.lib "
+				AdditionalDependencies="d3d9.lib dxguid.lib"
 				OutputFile="..\..\lib\$(ProjectName)DU.lib"
 				AdditionalLibraryDirectories=""
 			/>
@@ -166,7 +166,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
-				AdditionalIncludeDirectories="&quot;$(DSHOW_BASE)&quot;"
+				AdditionalIncludeDirectories="..\BaseClasses"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;"
 			/>
 			<Tool
@@ -181,7 +181,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalOptions="/IGNORE:4221 /IGNORE:4006"
-				AdditionalDependencies="d3d9.lib"
+				AdditionalDependencies="d3d9.lib ddraw.lib dxguid.lib"
 				OutputFile="..\..\lib\$(ProjectName)RU.lib"
 			/>
 			<Tool

@@ -9,6 +9,7 @@ extern int g_subPicsBufferAhead;
 extern CSize g_textureSize;
 extern bool g_pow2tex;
 extern BOOL g_disableAnim;
+extern BOOL g_onlyShowForcedSubs;
 
 class CSubManager
 {
@@ -38,8 +39,8 @@ private:
 	void InvalidateSubtitle(ISubStream* pSubStream, REFERENCE_TIME rtInvalidate);
 
 	//load internal subtitles through TextPassThruFilter
-	void LoadInternalSubtitles(IGraphBuilder* pGB);
-	void LoadExternalSubtitles(const wchar_t* fn, const wchar_t* paths);
+	void LoadInternalSubtitles(IGraphBuilder* pGB, bool onlyShowForcedSubs);
+	void LoadExternalSubtitles(const wchar_t* fn, const wchar_t* paths, bool onlyShowForcedSubs);
 
 	void UpdateSubtitle();
 	void ApplyStyle(CRenderedTextSubtitle* pRTS);

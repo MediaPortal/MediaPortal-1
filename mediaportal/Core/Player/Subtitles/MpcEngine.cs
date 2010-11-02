@@ -97,11 +97,11 @@ namespace MediaPortal.Player.Subtitles
     {
       LoadSettings();
       MpcSubtitles.SetDefaultStyle(ref this.defStyle, this.overrideASSStyle);
-
+      MpcSubtitles.SetShowForcedOnly(!this.autoShow);
       //remove DirectVobSub
       DirectVobSubUtil.RemoveFromGraph(graphBuilder);
       {
-//remove InternalScriptRenderer as it takes subtitle pin
+        //remove InternalScriptRenderer as it takes subtitle pin
         IBaseFilter isr = null;
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.InternalScriptRenderer, out isr);
         if (isr != null)
@@ -248,14 +248,15 @@ namespace MediaPortal.Player.Subtitles
       [DllImport("mpcSubs.dll", ExactSpelling = true)]
       public static extern void SetDelay(int delay_ms);
 
-      //in milliseconds
-
       [DllImport("mpcSubs.dll", ExactSpelling = true)]
       public static extern void FreeSubtitles();
 
       [DllImport("mpcSubs.dll", ExactSpelling = true)]
       public static extern void SetAdvancedOptions(int subPicsBufferAhead, Size textureSize, bool pow2tex,
                                                    bool disableAnimation);
+
+      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      public static extern void SetShowForcedOnly(bool onlyShowForcedSubs);
     }
   }
 }

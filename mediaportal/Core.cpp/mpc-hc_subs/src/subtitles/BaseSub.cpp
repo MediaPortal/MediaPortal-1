@@ -1,5 +1,5 @@
-/* 
- * $Id: BaseSub.cpp 1785 2010-04-09 14:12:59Z xhmikosr $
+/*
+ * $Id: BaseSub.cpp 2585 2010-09-18 12:39:20Z xhmikosr $
  *
  * (C) 2006-2010 see AUTHORS
  *
@@ -24,7 +24,7 @@
 #include "BaseSub.h"
 
 CBaseSub::CBaseSub(SUBTITLE_TYPE nType)
-		: m_nType(nType)
+	: m_nType(nType)
 {
 }
 

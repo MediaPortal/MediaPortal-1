@@ -1,5 +1,5 @@
-/* 
- * $Id: BaseSub.h 1785 2010-04-09 14:12:59Z xhmikosr $
+/*
+ * $Id: BaseSub.h 2585 2010-09-18 12:39:20Z xhmikosr $
  *
  * (C) 2006-2010 see AUTHORS
  *
@@ -50,5 +50,5 @@ public:
 	virtual HRESULT			GetTextureSize (POSITION pos, SIZE& MaxTextureSize, SIZE& VideoSize, POINT& VideoTopLeft) = NULL;
 
 protected :
-	SUBTITLE_TYPE					m_nType;
+	SUBTITLE_TYPE			m_nType;
 };

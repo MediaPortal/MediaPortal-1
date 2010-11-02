@@ -43,7 +43,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/MP"
 				AdditionalIncludeDirectories="..\..\include;..\BaseClasses;..\thirdparty\VirtualDub\h\"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;"
 			/>
@@ -102,7 +101,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/MP"
 				AdditionalIncludeDirectories="..\..\include;..\BaseClasses"
 				PreprocessorDefinitions="_WIN64;_DEBUG;_LIB;"
 				DebugInformationFormat="3"
@@ -143,7 +141,6 @@
 			InheritedPropertySheets="..\common.vsprops;..\release.vsprops"
 			UseOfMFC="1"
 			CharacterSet="1"
-			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -163,10 +160,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/MP"
 				AdditionalIncludeDirectories="..\..\include;..\BaseClasses;..\thirdparty\VirtualDub\h\"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
-				DisableSpecificWarnings="4244"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -205,7 +200,6 @@
 			InheritedPropertySheets="..\common.vsprops;..\release.vsprops"
 			UseOfMFC="1"
 			CharacterSet="1"
-			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -225,7 +219,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/MP"
 				AdditionalIncludeDirectories="..\..\include;..\BaseClasses"
 				PreprocessorDefinitions="_WIN64;NDEBUG;_LIB"
 				EnableEnhancedInstructionSet="0"
