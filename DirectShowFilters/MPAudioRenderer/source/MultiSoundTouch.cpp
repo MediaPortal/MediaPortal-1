@@ -317,10 +317,15 @@ DWORD CMultiSoundTouch::ResampleThread()
 						UINT32 nOrigOutFrames=nOutFrames;
 						static UINT32 nFrameCorr=0;
 						static UINT32 nPrevFrameCorr=0;
+
+						nPrevFrameCorr=nFrameCorr;
             if (m_pEncoder)
 						{
-							nPrevFrameCorr=nFrameCorr;
 							nFrameCorr=nOutFrames % AC3_FRAME_LENGTH;
+						}
+						else
+						{
+							nFrameCorr=0;
 						}
             nOutFrames = nOutFrames - nFrameCorr;  
             
