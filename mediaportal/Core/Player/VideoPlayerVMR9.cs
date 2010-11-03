@@ -188,40 +188,43 @@ namespace MediaPortal.Player
           }
           DirectShowUtil.ReleaseComObject(baseFilter); baseFilter = null;
         }
-        
-        #region load external audio streams        
-        //load audio file (ac3, dts, mka, mp3) only with if the name matches partially with video file.
-        string[] audioFiles = Directory.GetFiles(Path.GetDirectoryName(m_strCurrentFile), Path.GetFileNameWithoutExtension(m_strCurrentFile) + "*.*");
-        bool audioSwitcherLoaded = false;
-        foreach (string file in audioFiles)
+        // check if current "File" is a file... it could also be a URL
+        // Directory.Getfiles, ... will other give us an exception
+        if (File.Exists(m_strCurrentFile))
         {
-          switch (Path.GetExtension(file))
-          {
-            case ".mp3":
-            case ".dts":
-            case ".mka":
-            case ".ac3":
-              if (!audioSwitcherLoaded)
-              {
-                IBaseFilter switcher = DirectShowUtil.GetFilterByName(graphBuilder, "MediaPortal AudioSwitcher");
-                if (switcher != null)
+            #region load external audio streams
+            //load audio file (ac3, dts, mka, mp3) only with if the name matches partially with video file.
+            string[] audioFiles = Directory.GetFiles(Path.GetDirectoryName(m_strCurrentFile), Path.GetFileNameWithoutExtension(m_strCurrentFile) + "*.*");
+            bool audioSwitcherLoaded = false;
+            foreach (string file in audioFiles)
+            {
+                switch (Path.GetExtension(file))
                 {
-                  DirectShowUtil.ReleaseComObject(switcher);
-                  switcher = null;
+                    case ".mp3":
+                    case ".dts":
+                    case ".mka":
+                    case ".ac3":
+                        if (!audioSwitcherLoaded)
+                        {
+                            IBaseFilter switcher = DirectShowUtil.GetFilterByName(graphBuilder, "MediaPortal AudioSwitcher");
+                            if (switcher != null)
+                            {
+                                DirectShowUtil.ReleaseComObject(switcher);
+                                switcher = null;
+                            }
+                            else
+                            {
+                                DirectShowUtil.AddFilterToGraph(graphBuilder, "MediaPortal AudioSwitcher");
+                            }
+                            audioSwitcherLoaded = true;
+                        }
+                        graphBuilder.RenderFile(file, string.Empty);
+                        Log.Debug("VideoPlayerVMR9 : External audio file loaded \"{0}\"", file);
+                        break;
                 }
-                else
-                {
-                  DirectShowUtil.AddFilterToGraph(graphBuilder, "MediaPortal AudioSwitcher");
-                }
-                audioSwitcherLoaded = true;                  
-              }
-              graphBuilder.RenderFile(file, string.Empty);
-              Log.Debug("VideoPlayerVMR9 : External audio file loaded \"{0}\"", file);
-              break;
-          }
+            }
+            #endregion
         }
-        #endregion
-
         DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, source);
         DirectShowUtil.ReleaseComObject(source); source = null;
         DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
