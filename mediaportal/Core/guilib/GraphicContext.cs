@@ -149,7 +149,7 @@ namespace MediaPortal.GUI.Library
     private static bool m_bEditMode = false; //boolean indicating if we are in skin edit mode
     private static bool m_bAnimations = true; //boolean indicating animiations are turned on or off
     private static IRender m_renderFrame = null;
-    private static bool vmr9Active = false;
+    private static volatile bool vmr9Active = false;
     private static bool m_bisvmr9Exclusive = false;
     private static bool m_bisevr = false;
     private static int m_iMaxFPS = 50;
@@ -157,7 +157,7 @@ namespace MediaPortal.GUI.Library
     private static float m_fCurrentFPS = 0;
     private static float m_fVMR9FPS = 0;
     private static float lasttime = 0f;
-    private static bool vmr9RenderBusy = false;
+    private static volatile  bool vmr9RenderBusy = false;
     private static bool blankScreen = false;
     private static bool idleTimePowerSaving = false;
     private static bool turnOffMonitor = false;
@@ -171,7 +171,6 @@ namespace MediaPortal.GUI.Library
     private const int WM_SYSCOMMAND = 0x0112;
     private const int MONITOR_ON = -1;
     private const int MONITOR_OFF = 2;
-    private static bool _useSeparateRenderThread = false;
     public static bool _useScreenSelector = false;
     private static AdapterInformation _currentFullscreenAdapterInfo = null;
     private static int _currentScreenNumber = -1;
@@ -254,21 +253,6 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
-      }
-    }
-
-    public static bool UseSeparateRenderThread
-    {
-      get { return _useSeparateRenderThread; }
-      set
-      {
-        _useSeparateRenderThread = value;
-        if (_useSeparateRenderThread)
-        {
-          Log.Warn("GraphicContext: Using separate thread for GUI rendering");
-        }
-        //else
-        //  Log.Info("GraphicContext: not using separate thread for GUI rendering");
       }
     }
 
@@ -1457,7 +1441,6 @@ namespace MediaPortal.GUI.Library
 
     public static bool InVmr9Render
     {
-      [MethodImpl(MethodImplOptions.Synchronized)]
       get { return vmr9RenderBusy; }
       set { vmr9RenderBusy = value; }
     }

@@ -758,9 +758,6 @@ public class MediaPortalApp : D3DApp, IRender
       lastActiveModule = xmlreader.GetValueAsInt("general", "lastactivemodule", -1);
       lastActiveModuleFullscreen = xmlreader.GetValueAsBool("general", "lastactivemodulefullscreen", false);
       screenNumber = xmlreader.GetValueAsInt("screenselector", "screennumber", screenNumber);
-      //GUIGraphicsContext.UseSeparateRenderThread = xmlreader.GetValueAsBool("general", "userenderthread", true);
-      // BAV: to be fixed -> until then deactivated to save user aggrivation 
-      GUIGraphicsContext.UseSeparateRenderThread = false;
     }
     if (GUIGraphicsContext._useScreenSelector)
     {
@@ -1411,18 +1408,7 @@ public class MediaPortalApp : D3DApp, IRender
       g_Player.Process();
       HandleMessage();
       FrameMove();
-      //if (GUIGraphicsContext.UseSeparateRenderThread)
-      //{
-      //  // the part of FullRender() [ from Render3DEnvironment(); ] which is needed on Resume...
-      //  if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST)
-      //  {
-      //    RecoverDevice();
-      //  }
-      //}
-      //else
-      //{
       FullRender();
-      //}
       if (GUIGraphicsContext.Vmr9Active)
       {
         Thread.Sleep(50);
@@ -2252,10 +2238,6 @@ public class MediaPortalApp : D3DApp, IRender
           }
         }
       }
-      //if (GUIGraphicsContext.UseSeparateRenderThread)
-      //{
-      //  HandleCursor();
-      //}
     }
 #if !DEBUG
     catch (Exception ex)

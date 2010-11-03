@@ -1415,43 +1415,53 @@ namespace MediaPortal
         Thread.Sleep(100);
         return;
       }
-
+	  
       ResumePlayer();
-
+	  HandleCursor();
+	  
+      // In minitv mode allow to loose focus
+      if ((ActiveForm != this) && (alwaysOnTop) && !miniTvMode && (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING))
+      {
+          this.Activate();
+      }
+		
       if (GUIGraphicsContext.Vmr9Active)
       {
-        HandleCursor();
-
-        // in minitv mode allow to loose focus
-        if ((ActiveForm != this) && (alwaysOnTop) && !miniTvMode)
-        {
-          this.Activate();
-        }
-
         return;
       }
+	  
       // Render a frame during idle time (no messages are waiting)
       if (active && ready)
       {
-#if DEBUG
-#else
+#if !DEBUG
         try
         {
 #endif
-        if ((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this) ||
-            (GUIGraphicsContext.SaveRenderCycles))
+			if ((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this) || (GUIGraphicsContext.SaveRenderCycles))
+			{
+			  // Yield some CPU time to other processes
+			  DoSleep(100); // 100 milliseconds
+			}
+			RecoverDevice();
+			try
+			{
+			  if (!GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+			  {
+				lock (GUIGraphicsContext.RenderLock)
+				{
+					Render(GUIGraphicsContext.TimePassed);
+				}
+			  }
+			}
+			catch (Exception ex)
+			{
+			  Log.Error("d3dapp: Exception: {0}", ex);
+			}
+#if !DEBUG
+        } 
+		catch (Exception ee)
         {
-          // Yield some CPU time to other processes
-#if !PROFILING
-          Thread.Sleep(100); // 100 milliseconds
-#endif
-        }
-        Render3DEnvironment();
-#if DEBUG
-#else
-        } catch (Exception ee)
-        {
-          Log.Info("D3D: Exception {0}", ee);
+          Log.Info("d3dapp: Exception {0}", ee);
           MessageBox.Show("An exception has occurred.  MediaPortal has to be closed.\r\n\r\n" + ee.ToString(),
                           "Exception",
                           MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1469,14 +1479,6 @@ namespace MediaPortal
         }
 #endif
       }
-
-      HandleCursor();
-
-      // in minitv mode allow to loose focus
-      if ((ActiveForm != this) && (alwaysOnTop) && !miniTvMode)
-      {
-        Activate();
-      }
     }
 
 
@@ -1484,7 +1486,7 @@ namespace MediaPortal
     {
       if (sleepTime <= 0)
       {
-        sleepTime = 5;
+        sleepTime = 1;
       }
 #if !PROFILING
       Thread.Sleep(sleepTime);
@@ -1613,30 +1615,6 @@ namespace MediaPortal
       }
     }
 
-    /// <summary>
-    /// Draws the scene 
-    /// </summary>
-    public void Render3DEnvironment()
-    {
-      RecoverDevice();
-
-      try
-      {
-        //if (!GUIGraphicsContext.Vmr9Active)
-        if (!GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-        {
-          lock (GUIGraphicsContext.RenderLock)
-          {
-            Render(GUIGraphicsContext.TimePassed);
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("d3dapp: Exception: {0}", ex);
-      }
-    }
-
     private void TvWaitThread()
     {
       while (!g_Player.Playing)
@@ -1684,38 +1662,6 @@ namespace MediaPortal
         }
       }
     }
-
-    private bool ShouldUseSleepingTime()
-    {
-      // Render the scene as normal
-      if (GUIGraphicsContext.Vmr9Active)
-      {
-        if (GUIGraphicsContext.Vmr9FPS > 5f)
-        {
-          // if we're playing a movie with vmr9 then the player will draw the GUI
-          // so we just sleep 50msec here ...
-          return false;
-        }
-      }
-
-      //if we're playing a movie or watching tv (fullscreen)
-      if (GUIGraphicsContext.IsFullScreenVideo)
-      {
-        return false;
-      }
-      return true;
-    }
-
-    private int GetSleepingTime()
-    {
-      if (!ShouldUseSleepingTime())
-      {
-        return 100;
-      }
-
-      return m_iSleepingTime;
-    }
-
 
     /// <summary>
     ///Get the  statistics 
@@ -1795,11 +1741,11 @@ namespace MediaPortal
           break;
       }
 
-      frameStatsLine1 = String.Format("last {0} fps ({1}x{2}), {3} {4}{5}{6} {7}",
+      frameStatsLine1 = String.Format("last {0} fps ({1}x{2}), {3}{4}{5}",
                                       GUIGraphicsContext.CurrentFPS.ToString("f2"),
                                       GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth,
                                       GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight,
-                                      GetSleepingTime(), strFmt, strDepthFmt, strMultiSample, ShouldUseSleepingTime());
+                                      strFmt, strDepthFmt, strMultiSample);
 
       frameStatsLine2 = String.Format("");
 
@@ -1992,25 +1938,7 @@ namespace MediaPortal
         handle.Close();
       }
       catch {}
-      if (GUIGraphicsContext.UseSeparateRenderThread)
-      {
-        Thread processThread = new Thread(ProcessLoop);
-        processThread.Name = "ProcessingThread";
-        processThread.IsBackground = true;
-        processThread.Start();
-      }
-
       bool result = ShowLastActiveModule();
-    }
-
-    private void ProcessLoop()
-    {
-      while (true)
-      {
-        OnProcess();
-        FrameMove();
-        Thread.Sleep(50);
-      }
     }
 
     private void TvDelayThread()
@@ -2019,15 +1947,6 @@ namespace MediaPortal
       Thread.Sleep(200);
       g_Player.ShowFullScreenWindow();
     }
-
-    /*
-    private void ModuleDelayThread(int lastActiveModule)
-    {
-      //we have to use a small delay before calling module.                              
-      Thread.Sleep(500);
-      GUIWindowManager.ActivateWindow(lastActiveModule);            
-    }
-    */
 
     protected bool ShowLastActiveModule()
     {
@@ -2082,16 +2001,9 @@ namespace MediaPortal
           try
           {
             GUIWindowManager.ActivateWindow(lastActiveModule);
-            /*            
-            ThreadStart ts = delegate() { ModuleDelayThread(lastActiveModule); };            
-            Thread moduleDelayThread = new Thread(ts);            
-            moduleDelayThread.Start();
-            */
 
             if (lastActiveModule == (int)GUIWindow.Window.WINDOW_TV && lastActiveModuleFullscreen)
-            {
-              //GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV);
-              //GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);                            
+            {                       
 
               Thread tvDelayThread = new Thread(TvDelayThread);
               tvDelayThread.IsBackground = true;
@@ -2855,23 +2767,16 @@ namespace MediaPortal
     {
       do
       {
-        if (!GUIGraphicsContext.UseSeparateRenderThread)
-        {
-          OnProcess();
-          FrameMove();
-        }
+        OnProcess();
+        FrameMove();
         StartFrameClock();
         FullRender();
-        {
-          WaitForFrameClock();
-        }
+        WaitForFrameClock();
+
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
         {
           break;
         }
-        // Suggested by gibman. Let's see if this works. Can't be bad  
-        // disabled by Bavarian: caused mantis bug 1021 => please try to reduce FPS in Setting -> this maybe have the same affect
-        //Thread.Sleep(10); // 10 milliseconds - fixes sluggish GUI due to 100% cpu usage when turning TV off in a multiseat client and returning to the home screen or any other screen.
       } while (AppStillIdle());
     }
 
