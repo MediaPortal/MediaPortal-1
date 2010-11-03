@@ -188,6 +188,7 @@
       // 
       this.dgRestriction.HeaderText = "Restriction";
       this.dgRestriction.Name = "dgRestriction";
+      this.dgRestriction.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
       this.dgRestriction.ToolTipText = "Restrict the selected rows by the value specified";
       this.dgRestriction.Width = 75;
       // 
@@ -195,6 +196,7 @@
       // 
       this.dgLimit.HeaderText = "Limit";
       this.dgLimit.Name = "dgLimit";
+      this.dgLimit.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
       this.dgLimit.ToolTipText = "Enter a Limit for Rows to be returned";
       this.dgLimit.Width = 48;
       // 
