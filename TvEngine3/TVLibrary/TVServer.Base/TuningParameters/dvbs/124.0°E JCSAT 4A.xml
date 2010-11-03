@@ -270,4 +270,13 @@
     <Pilot>On</Pilot>
     <Rolloff>ThirtyFive</Rolloff>
   </Transponder>
+  <Transponder>
+    <CarrierFrequency>12703000</CarrierFrequency>
+    <Polarisation>LinearH</Polarisation>
+    <SymbolRate>23303</SymbolRate>
+    <Modulation>Mod8Psk</Modulation>
+    <InnerFecRate>Rate3_5</InnerFecRate>
+    <Pilot>On</Pilot>
+    <Rolloff>ThirtyFive</Rolloff>
+  </Transponder>
 </ArrayOfTransponder>
