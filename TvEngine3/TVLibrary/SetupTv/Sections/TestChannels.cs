@@ -137,9 +137,7 @@ namespace SetupTv.Sections
     private bool _running = false;
     private object _lock = new object();
     private int _concurrentTunes = 0;
-    Dictionary<string, bool> _users = new Dictionary<string, bool>();
-
-    private Thread _channelTestThread = null;
+    Dictionary<string, bool> _users = new Dictionary<string, bool>();    
 
     private void ChannelTestThread(List<Channel> channelsO)
     {      
@@ -222,31 +220,10 @@ namespace SetupTv.Sections
 
       _running = !_running;
       
-      UpdateButtonCaption();
-
-      List<Channel> channelsO = null;
-
-      if (_channelTestThread == null)
+      UpdateButtonCaption();      
+                    
+      if (_running)      
       {
-        //_channelTestThread = new Thread(ChannelTestThread);
-        _channelTestThread = new Thread(new ParameterizedThreadStart(delegate { ChannelTestThread(channelsO); }));        
-        _channelTestThread.Name = "Channel Test Thread";
-        _channelTestThread.IsBackground = true;
-        _channelTestThread.Priority = ThreadPriority.Lowest;                
-        
-      }
-      
-      if (!_running)
-      {        
-        if (_channelTestThread.IsAlive)
-        {
-          _channelTestThread.Abort();
-          _channelTestThread = null;
-        }        
-      }
-      else
-      {
-
         mpListViewLog.Items.Clear();
         _total = 0;
         _succeeded = 0;
@@ -261,6 +238,11 @@ namespace SetupTv.Sections
         ChannelGroup group = ChannelGroup.Retrieve(idItem.Id);
         IList<GroupMap> maps = group.ReferringGroupMap();
 
+        List<Channel> channelsO = null;
+        Thread channelTestThread = new Thread(new ParameterizedThreadStart(delegate { ChannelTestThread(channelsO); }));
+        channelTestThread.Name = "Channel Test Thread";
+        channelTestThread.IsBackground = true;
+        channelTestThread.Priority = ThreadPriority.Lowest;                
         channelsO = channels as List<Channel>;
         foreach (GroupMap map in maps)
         {
@@ -273,7 +255,7 @@ namespace SetupTv.Sections
         _usersShareChannels = chkShareChannels.Checked;
         _tunedelay = txtTuneDelay.Value;
         _concurrentTunes = txtConcurrentTunes.Value;
-        _channelTestThread.Start(channelsO);
+        channelTestThread.Start(channelsO);
       }      
 
     }
